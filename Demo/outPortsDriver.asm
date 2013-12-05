@@ -1,7 +1,8 @@
 #include "xc.inc"
 
+    psect outDriver,class=CODE
 
-end
+    global _writePort
 
-
-
+_writePort:
+    ret
