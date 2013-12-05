@@ -1,0 +1,1 @@
+ build/default/production/_ext/1472/outPortsDriver.d  build/default/production/_ext/1472/outPortsDriver.obj:  ../outPortsDriver.asm

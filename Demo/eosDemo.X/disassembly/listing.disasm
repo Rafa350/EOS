@@ -1,0 +1,675 @@
+Disassembly Listing for eosDemo
+Generated From:
+C:/Projectes/Projectes MPLAB/EOS/Demo/eosDemo.X/dist/default/production/eosDemo.X.production.elf
+05/12/2013 13:23:55
+
+---  C:/Projectes/Projectes MPLAB/EOS/Source/SysMain.c  -------------------------------------------------
+1:             #include "eos.h"
+2:             
+3:             
+4:             #if defined(__XC8)
+5:             extern void usrInitialize(void);
+6:             extern void usrSetup(void);
+7:             void usrTick(void);
+8:             void usrLoop(void);
+9:             #endif
+10:            
+11:            #if defined(__XC32)
+12:            __attribute__((weak)) void usrInitialize(void) {
+13:            }
+14:            
+15:            __attribute__((weak)) void usrSetup(void) {
+16:            }
+17:            
+18:            __attribute__((weak)) void usrTick(void) {
+19:            }
+20:            
+21:            __attribute__((weak)) void usrLoop(void) {
+22:               
+23:            }
+24:            #endif
+25:            
+26:            
+27:            /*************************************************************************
+28:             *
+29:             *       Interrupcio TICK del EOS, cal cridarla cada 1ms
+30:             *
+31:             *       Funcio:
+32:             *           void eosTick(void)
+33:             *
+34:             *************************************************************************/
+35:            
+36:            void eosTick(void) {
+37:            
+38:            #ifdef EOS_USE_OUTPUTS
+39:                sysOutTick();
+40:            #endif
+41:            
+42:            #ifdef EOS_USE_INPUTS
+43:                sysInpTick();
+44:            #endif
+45:            }
+46:            
+47:            
+48:            /*************************************************************************
+49:             *
+50:             *       Interrupcio general del EOS
+51:             *
+52:             *       Funcio:
+53:             *           void eosInterrupt(void)
+54:             * 
+55:             *       Notes:
+56:             *          Per millorar el rendiment es millor cridar des de
+57:             *          l'aplicacio del usuari, a cada gestor d'interrupcio
+58:             *          individualment
+59:             *
+60:             *************************************************************************/
+61:            
+62:            void eosInterrupt(void) {
+63:                
+64:            #ifdef EOS_USE_OUTPUTS
+65:                sysOutInterrupt();
+66:            #endif
+67:            
+68:            #ifdef EOS_USE_INPUTS
+69:                sysInpInterrupt();
+70:            #endif
+71:            }
+72:            
+73:            
+74:            /*************************************************************************
+75:             *
+76:             *       Entrada a l'aplicacio. Inicialitza el sistema, i executa
+77:             *       el bucle d'usuari
+78:             *
+79:             *       Funcio:
+80:             *           void eosMain(void)
+81:             *
+82:             *************************************************************************/
+83:            
+84:            void eosMain(void) {
+85:            
+86:                usrInitialize();
+FE4A  EC09     CALL 0xFE12, 0
+FE4C  F07F     NOP
+87:            
+88:            #ifdef EOS_USE_OUTPUTS
+89:                sysOutInitialize();
+FE4E  EC53     CALL 0xFEA6, 0
+FE50  F07F     NOP
+90:            #endif
+91:            
+92:            #ifdef EOS_USE_INPUTS
+93:                sysInpInitialize();
+94:            #endif
+95:            
+96:            #if !defined(__DEBUG) && defined(EOS_USE_WATCHDOG)
+97:                EnableWDT();
+98:            #endif
+99:            
+100:               usrSetup();
+FE52  EC04     CALL 0xFE08, 0
+FE54  F07F     NOP
+101:               while (TRUE) {
+102:           
+103:           #ifdef EOS_USE_OUTPUTS
+104:                   sysOutLoop();
+FE56  EC86     CALL 0xFF0C, 0
+FE58  F07F     NOP
+105:           #endif
+106:           
+107:           #ifdef EOS_USE_INPUTS
+108:                   sysInpLoop();
+109:           #endif
+110:                   usrLoop();
+FE5A  EC1A     CALL 0xFE34, 0
+111:           
+112:           #if !defined(__DEBUG) && defined(EOS_USE_WATCHDOG)
+113:                   ClearWDT();
+114:           #endif
+115:               }
+116:           }
+117:            
+118:           
+119:           /*************************************************************************
+120:            *
+121:            *       Entrada a l'aplicacio desde el compilador
+122:            *
+123:            *       Funcio:
+124:            *           void main(void)
+125:            *
+126:            *************************************************************************/
+127:           
+128:           #ifdef EOS_USE_SYSMAIN
+129:           void main(void) {
+130:           
+131:               eosMain();
+FE0A  EC25     CALL 0xFE4A, 0
+FE0C  F07F     NOP
+132:           }
+FE0E  EF00     GOTO 0x0
+133:           #endif
+---  C:/Projectes/Projectes MPLAB/EOS/Source/Ports/OutPorts.c  ------------------------------------------
+1:             #include "eos.h"
+2:             
+3:             
+4:             #if defined(EOS_USE_OUTPUTS)
+5:             
+6:             
+7:             #if !defined(EOS_NUM_OUTPUTS) || (EOS_NUM_OUTPUTS < 1) || (EOS_NUM_OUTPUTS > 32)
+8:             #error 'EOS_NUM_OUTPUTS' ha de estar en el intervalo 1..16
+9:             #endif
+10:            
+11:            typedef struct {             // Estat del port
+12:                UINT16 timeout;          // -Contador de temps pels pulsos
+13:                UINT8 state:1;           // -Indica si esta actiu o no
+14:            } PORTINFO;
+15:            
+16:            static PORTINFO ports[EOS_NUM_OUTPUTS];
+17:            
+18:            
+19:            /*************************************************************************
+20:             *
+21:             *       Inicialitza la gestio de les sortides
+22:             *
+23:             *       Funcio:
+24:             *           void eosOutInitialize(void)
+25:             *
+26:             *************************************************************************/
+27:            
+28:            void sysOutInitialize(void) {
+29:            
+30:            #if defined(usrOutInitialize)
+31:                usrOutInitialize();
+FEA6  0EC0     MOVLW 0xC0
+FEA8  1689     ANDWF LATA, F, ACCESS
+FEAA  0EF0     MOVLW 0xF0
+FEAC  168B     ANDWF LATC, F, ACCESS
+FEAE  0ED0     MOVLW 0xD0
+FEB0  010F     MOVLB 0xF
+FEB2  010F     MOVLB 0xF
+FEB4  1738     ANDWF 0x38, F, BANKED
+FEB6  0EF3     MOVLW 0xF3
+FEB8  010F     MOVLB 0xF
+FEBA  010F     MOVLB 0xF
+FEBC  173A     ANDWF 0x3A, F, BANKED
+FEBE  0EC0     MOVLW 0xC0
+FEC0  1692     ANDWF TRISA, F, ACCESS
+FEC2  0EF0     MOVLW 0xF0
+FEC4  1694     ANDWF TRISC, F, ACCESS
+32:            #else
+33:            #error No se definio 'usrOutInitialize'
+34:            #endif
+35:            
+36:                UINT8 out = EOS_NUM_OUTPUTS - 1;
+FEC6  6E31     MOVWF __pcstackCOMRAM, ACCESS
+FEC8  0E0F     MOVLW 0xF
+FECA  6E32     MOVWF s, ACCESS
+FECC  5031     MOVF __pcstackCOMRAM, W, ACCESS
+37:                do {
+38:                    ports[out].timeout = 0;
+FECE  5032     MOVF s, W, ACCESS
+FED0  0D03     MULLW 0x3
+FED2  0E01     MOVLW 0x1
+FED4  24F3     ADDWF PRODL, W, ACCESS
+FED6  6ED9     MOVWF FSR2L, ACCESS
+FED8  0E00     MOVLW 0x0
+FEDA  20F4     ADDWFC PRODH, W, ACCESS
+FEDC  6EDA     MOVWF FSR2H, ACCESS
+FEDE  0E00     MOVLW 0x0
+FEE0  6EDE     MOVWF POSTINC2, ACCESS
+FEE2  0E00     MOVLW 0x0
+FEE4  6EDD     MOVWF POSTDEC2, ACCESS
+39:                    ports[out].state = 0;
+FEE6  5032     MOVF s, W, ACCESS
+FEE8  0D03     MULLW 0x3
+FEEA  0E02     MOVLW 0x2
+FEEC  26F3     ADDWF PRODL, F, ACCESS
+FEEE  0E00     MOVLW 0x0
+FEF0  22F4     ADDWFC PRODH, F, ACCESS
+FEF2  0E01     MOVLW 0x1
+FEF4  24F3     ADDWF PRODL, W, ACCESS
+FEF6  6ED9     MOVWF FSR2L, ACCESS
+FEF8  0E00     MOVLW 0x0
+FEFA  20F4     ADDWFC PRODH, W, ACCESS
+FEFC  6EDA     MOVWF FSR2H, ACCESS
+FEFE  0EFE     MOVLW 0xFE
+FF00  16DF     ANDWF INDF2, F, ACCESS
+40:                } while (out--);
+FF02  0632     DECF s, F, ACCESS
+FF04  2832     INCF s, W, ACCESS
+FF06  B4D8     BTFSC STATUS, 2, ACCESS
+FF0A  D7E1     BRA 0xFECE
+41:            }
+FF08  0012     RETURN 0
+42:            
+43:            
+44:            /*************************************************************************
+45:             *
+46:             *       Tasca de control de les sortides. Es crida cada 1ms
+47:             *
+48:             *       Funcio:
+49:             *           void eosOutTick(void)
+50:             *
+51:             *************************************************************************/
+52:            
+53:            void sysOutTick(void) {
+54:            
+55:                // Actualitza les sortides temporitzades
+56:                //
+57:                UINT8 out = EOS_NUM_OUTPUTS - 1;
+58:                do {
+59:                    UINT16 to = ports[out].timeout;
+60:                    if (to != 0) {
+61:                        to -= 1;
+62:                        if (to == 0)
+63:                            ports[out].state = !ports[out].state;
+64:                        ports[out].timeout = to;
+65:                    }
+66:                } while (out--);
+67:            }
+68:            
+69:            
+70:            /*************************************************************************
+71:             *
+72:             *       Tasca de control de les sortides. Es crida en cada cicle
+73:             *
+74:             *       Funcio:
+75:             *           void eosOutLoop(void)
+76:             *
+77:             *************************************************************************/
+78:            
+79:            void sysOutLoop(void){
+80:            
+81:                di();
+FF0C  9EF2     BCF INTCON, 7, ACCESS
+82:                
+83:                UINT8 out = EOS_NUM_OUTPUTS - 1;
+FF0E  6E31     MOVWF __pcstackCOMRAM, ACCESS
+FF10  0E0F     MOVLW 0xF
+FF12  6E33     MOVWF out, ACCESS
+FF14  5031     MOVF __pcstackCOMRAM, W, ACCESS
+84:                do {
+85:            #ifdef usrOutWrite
+86:                  usrOutWrite(out, ports[out].state);
+FF16  5033     MOVF out, W, ACCESS
+FF18  0D03     MULLW 0x3
+FF1A  0E02     MOVLW 0x2
+FF1C  26F3     ADDWF PRODL, F, ACCESS
+FF1E  0E00     MOVLW 0x0
+FF20  22F4     ADDWFC PRODH, F, ACCESS
+FF22  0E01     MOVLW 0x1
+FF24  24F3     ADDWF PRODL, W, ACCESS
+FF26  6ED9     MOVWF FSR2L, ACCESS
+FF28  0E00     MOVLW 0x0
+FF2A  20F4     ADDWFC PRODH, W, ACCESS
+FF2C  6EDA     MOVWF FSR2H, ACCESS
+FF2E  50DF     MOVF INDF2, W, ACCESS
+FF30  0B01     ANDLW 0x1
+FF32  6E32     MOVWF s, ACCESS
+FF34  6633     TSTFSZ out, ACCESS
+FF36  D006     BRA 0xFF44
+FF38  B032     BTFSC s, 0, ACCESS
+FF3A  D002     BRA 0xFF40
+FF3C  9A80     BCF PORTA, 5, ACCESS
+FF3E  D001     BRA 0xFF42
+FF40  8A80     BSF PORTA, 5, ACCESS
+FF42  D058     BRA 0xFFF4
+FF44  0433     DECF out, W, ACCESS
+FF46  A4D8     BTFSS STATUS, 2, ACCESS
+FF48  D006     BRA 0xFF56
+FF4A  B032     BTFSC s, 0, ACCESS
+FF4C  D002     BRA 0xFF52
+FF4E  9880     BCF PORTA, 4, ACCESS
+FF50  D001     BRA 0xFF54
+FF52  8880     BSF PORTA, 4, ACCESS
+FF54  D04F     BRA 0xFFF4
+FF56  5033     MOVF out, W, ACCESS
+FF58  0A02     XORLW 0x2
+FF5A  A4D8     BTFSS STATUS, 2, ACCESS
+FF5C  D006     BRA 0xFF6A
+FF5E  B032     BTFSC s, 0, ACCESS
+FF60  D002     BRA 0xFF66
+FF62  9280     BCF PORTA, 1, ACCESS
+FF64  D001     BRA 0xFF68
+FF66  8280     BSF PORTA, 1, ACCESS
+FF68  D045     BRA 0xFFF4
+FF6A  5033     MOVF out, W, ACCESS
+FF6C  0A03     XORLW 0x3
+FF6E  A4D8     BTFSS STATUS, 2, ACCESS
+FF70  D006     BRA 0xFF7E
+FF72  B032     BTFSC s, 0, ACCESS
+FF74  D002     BRA 0xFF7A
+FF76  9680     BCF PORTA, 3, ACCESS
+FF78  D001     BRA 0xFF7C
+FF7A  8680     BSF PORTA, 3, ACCESS
+FF7C  D03B     BRA 0xFFF4
+FF7E  5033     MOVF out, W, ACCESS
+FF80  0A04     XORLW 0x4
+FF82  A4D8     BTFSS STATUS, 2, ACCESS
+FF84  D006     BRA 0xFF92
+FF86  B032     BTFSC s, 0, ACCESS
+FF88  D002     BRA 0xFF8E
+FF8A  9480     BCF PORTA, 2, ACCESS
+FF8C  D001     BRA 0xFF90
+FF8E  8480     BSF PORTA, 2, ACCESS
+FF90  D031     BRA 0xFFF4
+FF92  5033     MOVF out, W, ACCESS
+FF94  0A05     XORLW 0x5
+FF96  A4D8     BTFSS STATUS, 2, ACCESS
+FF98  D006     BRA 0xFFA6
+FF9A  B032     BTFSC s, 0, ACCESS
+FF9C  D002     BRA 0xFFA2
+FF9E  9080     BCF PORTA, 0, ACCESS
+FFA0  D001     BRA 0xFFA4
+FFA2  8080     BSF PORTA, 0, ACCESS
+FFA4  D027     BRA 0xFFF4
+FFA6  5033     MOVF out, W, ACCESS
+FFA8  0A06     XORLW 0x6
+FFAA  A4D8     BTFSS STATUS, 2, ACCESS
+FFAC  D006     BRA 0xFFBA
+FFAE  B032     BTFSC s, 0, ACCESS
+FFB0  D002     BRA 0xFFB6
+FFB2  9282     BCF PORTC, 1, ACCESS
+FFB4  D001     BRA 0xFFB8
+FFB6  8282     BSF PORTC, 1, ACCESS
+FFB8  D01D     BRA 0xFFF4
+FFBA  5033     MOVF out, W, ACCESS
+FFBC  0A07     XORLW 0x7
+FFBE  A4D8     BTFSS STATUS, 2, ACCESS
+FFC0  D006     BRA 0xFFCE
+FFC2  B032     BTFSC s, 0, ACCESS
+FFC4  D002     BRA 0xFFCA
+FFC6  9682     BCF PORTC, 3, ACCESS
+FFC8  D001     BRA 0xFFCC
+FFCA  8682     BSF PORTC, 3, ACCESS
+FFCC  D013     BRA 0xFFF4
+FFCE  5033     MOVF out, W, ACCESS
+FFD0  0A08     XORLW 0x8
+FFD2  A4D8     BTFSS STATUS, 2, ACCESS
+FFD4  D006     BRA 0xFFE2
+FFD6  B032     BTFSC s, 0, ACCESS
+FFD8  D002     BRA 0xFFDE
+FFDA  9482     BCF PORTC, 2, ACCESS
+FFDC  D001     BRA 0xFFE0
+FFDE  8482     BSF PORTC, 2, ACCESS
+FFE0  D009     BRA 0xFFF4
+FFE2  5033     MOVF out, W, ACCESS
+FFE4  0A09     XORLW 0x9
+FFE6  A4D8     BTFSS STATUS, 2, ACCESS
+FFE8  D005     BRA 0xFFF4
+FFEA  B032     BTFSC s, 0, ACCESS
+FFEC  D002     BRA 0xFFF2
+FFEE  9082     BCF PORTC, 0, ACCESS
+FFF0  D001     BRA 0xFFF4
+FFF2  8082     BSF PORTC, 0, ACCESS
+87:            #else
+88:            #error No se definio 'usrOutWrite'
+89:            #endif
+90:                } while (out--);
+FFF4  0633     DECF out, F, ACCESS
+FFF6  2833     INCF out, W, ACCESS
+FFF8  A4D8     BTFSS STATUS, 2, ACCESS
+FFFA  D78D     BRA 0xFF16
+91:                
+92:                ei();
+FFFC  8EF2     BSF INTCON, 7, ACCESS
+93:            }
+94:            
+95:            
+96:            /*************************************************************************
+97:             *
+98:             *       Asigna l'estat a una sortida
+99:             *
+100:            *       Funcio:
+101:            *           void eosOutSet(UINT8 out, BOOL s)
+102:            *
+103:            *       Entrada:
+104:            *           out: Numero de sortida
+105:            *           s  : El nou estat a asignar
+106:            *
+107:            *************************************************************************/
+108:           
+109:           void eosOutSet(UINT8 out, BOOL s) {
+110:           
+111:               if (out < EOS_NUM_OUTPUTS) {
+FE60  0E10     MOVLW 0x10
+FE62  6031     CPFSLT __pcstackCOMRAM, ACCESS
+FE64  0012     RETURN 0
+112:                   di();
+FE66  9EF2     BCF INTCON, 7, ACCESS
+113:                   ports[out].state = s;
+FE68  5031     MOVF __pcstackCOMRAM, W, ACCESS
+FE6A  0D03     MULLW 0x3
+FE6C  0E02     MOVLW 0x2
+FE6E  26F3     ADDWF PRODL, F, ACCESS
+FE70  0E00     MOVLW 0x0
+FE72  22F4     ADDWFC PRODH, F, ACCESS
+FE74  0E01     MOVLW 0x1
+FE76  24F3     ADDWF PRODL, W, ACCESS
+FE78  6ED9     MOVWF FSR2L, ACCESS
+FE7A  0E00     MOVLW 0x0
+FE7C  20F4     ADDWFC PRODH, W, ACCESS
+FE7E  6EDA     MOVWF FSR2H, ACCESS
+FE80  50DF     MOVF INDF2, W, ACCESS
+FE82  1832     XORWF s, W, ACCESS
+FE84  0BFE     ANDLW 0xFE
+FE86  1832     XORWF s, W, ACCESS
+FE88  6EDF     MOVWF INDF2, ACCESS
+114:                   ports[out].timeout  = 0;
+FE8A  5031     MOVF __pcstackCOMRAM, W, ACCESS
+FE8C  0D03     MULLW 0x3
+FE8E  0E01     MOVLW 0x1
+FE90  24F3     ADDWF PRODL, W, ACCESS
+FE92  6ED9     MOVWF FSR2L, ACCESS
+FE94  0E00     MOVLW 0x0
+FE96  20F4     ADDWFC PRODH, W, ACCESS
+FE98  6EDA     MOVWF FSR2H, ACCESS
+FE9A  0E00     MOVLW 0x0
+FE9C  6EDE     MOVWF POSTINC2, ACCESS
+FE9E  0E00     MOVLW 0x0
+FEA0  6EDD     MOVWF POSTDEC2, ACCESS
+115:                   ei();
+FEA2  8EF2     BSF INTCON, 7, ACCESS
+FEA4  0012     RETURN 0
+116:               }
+117:           }
+118:           
+119:           
+120:           /*************************************************************************
+121:            *
+122:            *       Llegeix l'estat d'una sortida
+123:            *
+124:            *       Funcio:
+125:            *           BOOL eosOutGet(UINT8 out)
+126:            *
+127:            *       Entrada:
+128:            *           out: Numero de sortida
+129:            *
+130:            *       Retorn:
+131:            *           L'estat de la sortida
+132:            *
+133:            *************************************************************************/
+134:           
+135:           BOOL eosOutGet(UINT8 out) {
+136:           
+137:               if (out < EOS_NUM_OUTPUTS) {
+138:                   di();
+139:                   BOOL result = ports[out].state;
+140:                   ei();
+141:                   return result;
+142:               }
+143:               else
+144:                   return FALSE;
+145:           }
+146:           
+147:           
+148:           /*************************************************************************
+149:            *
+150:            *       Genera un puls
+151:            *
+152:            *       Funcio:
+153:            *           void eosOutPulse(UINT8 out, UINT16 time)
+154:            *
+155:            *       Entrada:
+156:            *           out : Numero de sortida
+157:            *           time: Llargada del puls en ms
+158:            *
+159:            *       Notes:
+160:            *           Si el puls encara es actiu, simplement l'allarga el temps
+161:            *           especificat
+162:            *
+163:            *************************************************************************/
+164:           
+165:           void eosOutPulse(UINT8 out, UINT16 time) {
+166:           
+167:               if ((out < EOS_NUM_OUTPUTS) && (time != 0)) {
+168:                   di();
+169:                   if (ports[out].timeout == 0) {
+170:                       ports[out].state = !ports[out].state;
+171:                   }
+172:                   ports[out].timeout = time;
+173:                   ei();
+174:               }
+175:           }
+176:           
+177:           
+178:           /*************************************************************************
+179:            *
+180:            *       Inverteix l'estat d'una sortida
+181:            *
+182:            *       Funcio:
+183:            *           void eosOutToggle(UINT8 out)
+184:            *
+185:            *       Entrada:
+186:            *           out: El numero de sortida
+187:            *
+188:            *************************************************************************/
+189:           
+190:           void eosOutToggle(UINT8 out) {
+191:           
+192:               if (out < EOS_NUM_OUTPUTS) {
+193:                   di();
+194:                   ports[out].state = !ports[out].state;
+195:                   ports[out].timeout = 0;
+196:                   ei();
+197:               }
+198:           }
+199:           
+200:           
+201:           /*************************************************************************
+202:            *
+203:            *       Posa totes les sortides a OFF
+204:            *
+205:            *       Funcio:
+206:            *           void eosOutAllOFF(void)
+207:            *
+208:            *************************************************************************/
+209:           
+210:           void eosOutAllOFF(void) {
+211:           
+212:               UINT8 out = EOS_NUM_OUTPUTS - 1;
+213:               do {
+214:                   ports[out].state = 0;
+215:                   ports[out].timeout = 0;
+216:               } while (out--);
+217:           }
+218:           
+219:           
+220:           #endif
+---  C:/Projectes/Projectes MPLAB/EOS/Demo/Main.c  ------------------------------------------------------
+1:             #include "eos.h"
+2:             
+3:             
+4:             /*************************************************************************
+5:              *
+6:              *       Inicialitza el hardware
+7:              *
+8:              *       Funcio:
+9:              *           void usrInitialize(void) 
+10:             *
+11:             **************************************************************************/
+12:            
+13:            #if defined(_12F1822) || defined(_16F1823) || defined(_16F1825) || defined(_16F1829)
+14:            void usrInitialize(void) {
+15:            
+16:                // Configuracio del oscilador (Fosc = 32MHz)
+17:                // -Oscilador intern HS a 8MHz
+18:                // -PLL x4 --> 8MHz x 4 = 32MHz
+19:                // -Oscilador primari seleccionat en CONFIG
+20:                //
+21:                OSCCONbits.SPLLEN = 1;        // Activa PLLx4 (Esta OFF en CONFIG2)
+22:                OSCCONbits.SCS = 0;           // Oscilador primari en CONFIG.FOSC
+23:                OSCCONbits.IRCF = 0x0E;       // 8MHz a la entrada del PLL
+24:            
+25:                // Espera que s'estabilitzi l'oscilador
+26:                //
+27:                while (!OSCSTATbits.HFIOFS)
+28:                    continue;
+29:            }
+30:            
+31:            #elif defined(_18F23K22) || defined(_18F24K22) || defined(_18F25K22) || defined(_18F26K22) || \
+32:                  defined(_18F43K22) || defined(_18F44K22) || defined(_18F45K22) || defined(_18F46K22)
+33:            void usrInitialize(void) {
+34:            
+35:                // Configuracio del oscilador (Fosc = 64MHz)
+36:                // -Oscilador intern HS a 16MHz
+37:                // -PLL x4 --> 16MHz x 4 = 64MHz
+38:                // -Oscilador primari seleccionat en CONFIG
+39:                //
+40:            #ifdef __DEBUG
+41:                OSCCONbits.SCS = 0;           // Oscilador primari en CONFIG.FOSC
+42:            #else
+43:                OSCTUNEbits.PLLEN = 1;        // PLL enabled (x4)
+FE12  8C9B     BSF OSCTUNE, 6, ACCESS
+44:                OSCCONbits.IRCF = 7;          // 16MHz en HFINTOSC
+FE14  88D3     BSF OSCCON, 4, ACCESS
+FE16  8AD3     BSF OSCCON, 5, ACCESS
+FE18  8CD3     BSF OSCCON, 6, ACCESS
+45:                OSCTUNEbits.INTSRC = 1;       // 31.25 clock from HS
+FE1A  8E9B     BSF OSCTUNE, 7, ACCESS
+46:                OSCCONbits.SCS = 0;           // Oscilador primari en CONFIG.FOSC
+FE1C  0EFC     MOVLW 0xFC
+FE1E  16D3     ANDWF OSCCON, F, ACCESS
+47:            
+48:                // Espera que s'estabilitzi l'oscilador
+49:                //
+50:            #ifdef USE_OSC_INTERNAL
+51:                while (!OSCCONbits.HFIOFS)
+52:                    continue;
+53:            #endif
+54:            #endif
+55:            }
+FE20  0012     RETURN 0
+56:            
+57:            #elif defined(__XC32)
+58:            void usrInitialize(void) {
+59:                SYSTEMConfigPerformance(GetSystemClock());
+60:                INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
+61:            }
+62:            
+63:            #else
+64:            #error Hardware no soportado
+65:            #endif
+66:            
+67:            
+68:            void usrSetup(void) {
+69:            
+70:            }
+FE08  0012     RETURN 0
+71:            
+72:            void usrLoop(void) {
+73:            
+74:                eosOutSet(0, 1);
+FE34  6E33     MOVWF out, ACCESS
+FE36  0E00     MOVLW 0x0
+FE38  6E31     MOVWF __pcstackCOMRAM, ACCESS
+FE3A  5033     MOVF out, W, ACCESS
+FE3C  6E34     MOVWF 0x34, ACCESS
+FE3E  0E01     MOVLW 0x1
+FE40  6E32     MOVWF s, ACCESS
+FE42  5034     MOVF 0x34, W, ACCESS
+FE44  EC30     CALL 0xFE60, 0
+FE46  F07F     NOP
+75:            }
+FE48  0012     RETURN 0
