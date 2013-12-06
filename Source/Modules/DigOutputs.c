@@ -9,8 +9,8 @@
 #endif
 
 typedef struct {             // Estat del port
-    UINT16 timeout;          // -Contador de temps pels pulsos
-    UINT8 state:1;           // -Indica si esta actiu o no
+    UINT16 timeout;          // -Contador de temps pels pulsos en ms
+    unsigned state:1;        // -Indica si esta actiu o no
 } PORTINFO;
 
 static PORTINFO ports[EOS_NUM_OUTPUTS];
@@ -27,41 +27,39 @@ static PORTINFO ports[EOS_NUM_OUTPUTS];
 
 void sysOutInitialize(void) {
 
-#if defined(usrOutInitialize)
-    usrOutInitialize();
-#else
-#error No se definio 'usrOutInitialize'
-#endif
+    __halOutInitialize();
 
     UINT8 out = EOS_NUM_OUTPUTS - 1;
     do {
-        ports[out].timeout = 0;
-        ports[out].state = 0;
+        PORTINFO *p = &ports[out];
+        p->timeout = 0;
+        p->state = 0;
     } while (out--);
 }
 
 
 /*************************************************************************
  *
- *       Tasca de control de les sortides. Es crida cada 1ms
+ *       Interrupcio Tick
  *
  *       Funcio:
- *           void eosOutTick(void)
+ *           void eosOutTickInterrupt(void)
  *
  *************************************************************************/
 
-void sysOutTick(void) {
+void sysOutTickInterrupt(void) {
 
     // Actualitza les sortides temporitzades
     //
     UINT8 out = EOS_NUM_OUTPUTS - 1;
     do {
-        UINT16 to = ports[out].timeout;
+        PORTINFO *p = &ports[out];
+        UINT16 to = p->timeout;
         if (to != 0) {
             to -= 1;
             if (to == 0)
-                ports[out].state = !ports[out].state;
-            ports[out].timeout = to;
+                p->state = !p->state;
+            p->timeout = to;
         }
     } while (out--);
 }
@@ -78,18 +76,14 @@ void sysOutTick(void) {
 
 void sysOutLoop(void){
 
-    di();
+    eosDisableInterrupts();
     
     UINT8 out = EOS_NUM_OUTPUTS - 1;
     do {
-#ifdef usrOutWrite
-      usrOutWrite(out, ports[out].state);
-#else
-#error No se definio 'usrOutWrite'
-#endif
+      __halOutWrite(out, ports[out].state);
     } while (out--);
     
-    ei();
+    eosEnableInterrupts();
 }
 
 
@@ -109,10 +103,14 @@ void sysOutLoop(void){
 void eosOutSet(UINT8 out, BOOL s) {
 
     if (out < EOS_NUM_OUTPUTS) {
-        di();
-        ports[out].state = s;
-        ports[out].timeout  = 0;
-        ei();
+
+        eosDisableInterrupts();
+
+        PORTINFO *p = &ports[out];
+        p->state = s;
+        p->timeout  = 0;
+
+        eosEnableInterrupts();
     }
 }
 
@@ -135,9 +133,12 @@ void eosOutSet(UINT8 out, BOOL s) {
 BOOL eosOutGet(UINT8 out) {
 
     if (out < EOS_NUM_OUTPUTS) {
-        di();
+
+        eosDisableInterrupts();
+
         BOOL result = ports[out].state;
-        ei();
+        eosEnableInterrupts();
+
         return result;
     }
     else
@@ -165,12 +166,15 @@ BOOL eosOutGet(UINT8 out) {
 void eosOutPulse(UINT8 out, UINT16 time) {
 
     if ((out < EOS_NUM_OUTPUTS) && (time != 0)) {
-        di();
-        if (ports[out].timeout == 0) {
-            ports[out].state = !ports[out].state;
-        }
-        ports[out].timeout = time;
-        ei();
+
+        eosDisableInterrupts();
+        
+        PORTINFO *p = &ports[out];
+        if (p->timeout == 0)
+            p->state = !p->state;
+        p->timeout = time;
+
+        eosEnableInterrupts();
     }
 }
 
@@ -190,10 +194,14 @@ void eosOutPulse(UINT8 out, UINT16 time) {
 void eosOutToggle(UINT8 out) {
 
     if (out < EOS_NUM_OUTPUTS) {
-        di();
-        ports[out].state = !ports[out].state;
-        ports[out].timeout = 0;
-        ei();
+
+        eosDisableInterrupts();
+
+        PORTINFO *p = &ports[out];
+        p->state = !p->state;
+        p->timeout = 0;
+
+        eosEnableInterrupts();
     }
 }
 
@@ -211,8 +219,11 @@ void eosOutAllOFF(void) {
 
     UINT8 out = EOS_NUM_OUTPUTS - 1;
     do {
-        ports[out].state = 0;
-        ports[out].timeout = 0;
+
+        PORTINFO *p = &ports[out];
+        p->state = 0;
+        p->timeout = 0;
+
     } while (out--);
 }
 

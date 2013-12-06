@@ -59,9 +59,31 @@
         PORTCbits.RC0 = v;        \
 }
 
+#elif defined(HARDWARE_PIC32_ESK)
+
+// Definicions per PLIB32
+//
+#define GetSystemClock()          (80000000L)
+
+
+// Definicions pel modul d'entrades digitals
+//
+#define usrInpInitialize() {      \
+}
+
+#define usrInpWrite(inp, s) {     \
+}
+
+#define usrInpRead(inp) {         \
+}
+
+// Definicions pel modul de sortides digitals
+//
+#define LED1  0
+#define LED2  1
+#define LED3  2
+
 #endif
-
-
 
 #endif
 

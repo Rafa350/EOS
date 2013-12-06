@@ -4,10 +4,17 @@
 # NOCDDL
 #
 CND_BASEDIR=`pwd`
-# default configuration
-CND_ARTIFACT_DIR_default=dist/default/production
-CND_ARTIFACT_NAME_default=eosDemo.X.production.hex
-CND_ARTIFACT_PATH_default=dist/default/production/eosDemo.X.production.hex
-CND_PACKAGE_DIR_default=${CND_DISTDIR}/default/package
-CND_PACKAGE_NAME_default=eosdemo.x.tar
-CND_PACKAGE_PATH_default=${CND_DISTDIR}/default/package/eosdemo.x.tar
+# MD-CPU04B configuration
+CND_ARTIFACT_DIR_MD-CPU04B=dist/MD-CPU04B/production
+CND_ARTIFACT_NAME_MD-CPU04B=eosDemo.X.production.hex
+CND_ARTIFACT_PATH_MD-CPU04B=dist/MD-CPU04B/production/eosDemo.X.production.hex
+CND_PACKAGE_DIR_MD-CPU04B=${CND_DISTDIR}/MD-CPU04B/package
+CND_PACKAGE_NAME_MD-CPU04B=eosdemo.x.tar
+CND_PACKAGE_PATH_MD-CPU04B=${CND_DISTDIR}/MD-CPU04B/package/eosdemo.x.tar
+# PIC32-ETH-SK configuration
+CND_ARTIFACT_DIR_PIC32-ETH-SK=dist/PIC32-ETH-SK/production
+CND_ARTIFACT_NAME_PIC32-ETH-SK=eosDemo.X.production.hex
+CND_ARTIFACT_PATH_PIC32-ETH-SK=dist/PIC32-ETH-SK/production/eosDemo.X.production.hex
+CND_PACKAGE_DIR_PIC32-ETH-SK=${CND_DISTDIR}/PIC32-ETH-SK/package
+CND_PACKAGE_NAME_PIC32-ETH-SK=eosdemo.x.tar
+CND_PACKAGE_PATH_PIC32-ETH-SK=${CND_DISTDIR}/PIC32-ETH-SK/package/eosdemo.x.tar

@@ -27,11 +27,11 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 PROJECTNAME=eosDemo.X
 
 # Active Configuration
-DEFAULTCONF=default
+DEFAULTCONF=PIC32-ETH-SK
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=default 
+ALLCONFS=MD-CPU04B PIC32-ETH-SK 
 
 
 # build
@@ -45,13 +45,15 @@ ALLCONFS=default
 
 # clobber
 .clobber-impl: .clobber-pre .depcheck-impl
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=default clean
+	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=MD-CPU04B clean
+	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=PIC32-ETH-SK clean
 
 
 
 # all
 .all-impl: .all-pre .depcheck-impl
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=default build
+	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=MD-CPU04B build
+	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=PIC32-ETH-SK build
 
 
 

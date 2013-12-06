@@ -54,11 +54,41 @@ void usrInitialize(void) {
 #endif
 }
 
-#elif defined(__XC32)
+#elif defined(__PIC32MX)
+
+#define PB_DIV                2
+#define PRESCALE              256
+#define TOGGLES_PER_SEC       1000
+#define T1_TICK               (GetSystemClock() / PB_DIV / PRESCALE / TOGGLES_PER_SEC)
+
 void usrInitialize(void) {
+
     SYSTEMConfigPerformance(GetSystemClock());
+
+    // Configura el temporitzador per que generi interrupcions TICK cada 1ms
+    //
+    OpenTimer1(T1_INT_ON | T1_SOURCE_INT | T1_PS_1_256, T1_TICK);
+    ConfigIntTimer1(T1_INT_ON | T1_INT_PRIOR_2);
+
+    // Activa interrupcions multivector
+    //
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
 }
+
+void __ISR(_TIMER_1_VECTOR, ipl2) Timer1Handler(void) {
+
+    eosTickInterrupt();
+    
+    mT1ClearIntFlag();
+}
+
+
+/*void __ISR(_CHANGE_NOTICE_VECTOR, ipl2) ChangePinsHandler(void) {
+
+    sysInpChangeInterrupt();
+
+    mCNClearIntFlag();
+}*/
 
 #else
 #error Hardware no soportado
@@ -67,9 +97,11 @@ void usrInitialize(void) {
 
 void usrSetup(void) {
 
+    eosOutPulse(2, 10000);
 }
 
 void usrLoop(void) {
 
-    eosOutSet(0, 1);
+    eosOutSet(0, eosInpGet(0) || eosInpGet(2));
+    eosOutSet(1, eosInpGet(1) || eosInpGet(2));
 }

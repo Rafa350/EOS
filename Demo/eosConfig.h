@@ -14,7 +14,7 @@
 
 // Parametres del modul d'entrades digitals
 //
-//#define EOS_USE_INPUTS            // Activa el modul
+#define EOS_USE_INPUTS            // Activa el modul
 #define EOS_NUM_INPUTS    16      // Numero maxim d'entrades
 
 

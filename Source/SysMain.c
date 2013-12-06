@@ -1,14 +1,14 @@
 #include "eos.h"
 
 
-#if defined(__XC8)
+#if defined(__PIC18)
 extern void usrInitialize(void);
 extern void usrSetup(void);
 void usrTick(void);
 void usrLoop(void);
 #endif
 
-#if defined(__XC32)
+#if defined(__PIC32MX)
 __attribute__((weak)) void usrInitialize(void) {
 }
 
@@ -29,44 +29,18 @@ __attribute__((weak)) void usrLoop(void) {
  *       Interrupcio TICK del EOS, cal cridarla cada 1ms
  *
  *       Funcio:
- *           void eosTick(void)
+ *           void eosTickInterrupt(void)
  *
  *************************************************************************/
 
-void eosTick(void) {
+void eosTickInterrupt(void) {
 
 #ifdef EOS_USE_OUTPUTS
-    sysOutTick();
+    sysOutTickInterrupt();
 #endif
 
 #ifdef EOS_USE_INPUTS
-    sysInpTick();
-#endif
-}
-
-
-/*************************************************************************
- *
- *       Interrupcio general del EOS
- *
- *       Funcio:
- *           void eosInterrupt(void)
- * 
- *       Notes:
- *          Per millorar el rendiment es millor cridar des de
- *          l'aplicacio del usuari, a cada gestor d'interrupcio
- *          individualment
- *
- *************************************************************************/
-
-void eosInterrupt(void) {
-    
-#ifdef EOS_USE_OUTPUTS
-    sysOutInterrupt();
-#endif
-
-#ifdef EOS_USE_INPUTS
-    sysInpInterrupt();
+    sysInpTickInterrupt();
 #endif
 }
 
