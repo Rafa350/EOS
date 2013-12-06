@@ -19,12 +19,13 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="eos" projectFiles="true">
         <logicalFolder name="f1" displayName="Modules" projectFiles="true">
-          <itemPath>../../Source/Ports/InpPorts.c</itemPath>
-          <itemPath>../../Source/Ports/OutPorts.c</itemPath>
+          <itemPath>../../Source/Modules/DigInputs.c</itemPath>
+          <itemPath>../../Source/Modules/DigOutputs.c</itemPath>
+          <itemPath>../../Source/Modules/Timers.c</itemPath>
         </logicalFolder>
         <itemPath>../../Source/SysMain.c</itemPath>
       </logicalFolder>
-      <logicalFolder name="f2" displayName="hal" projectFiles="true">
+      <logicalFolder name="f2" displayName="Hal" projectFiles="true">
         <itemPath>../HalOutPorts.c</itemPath>
         <itemPath>../HalInpPorts.c</itemPath>
       </logicalFolder>
@@ -293,6 +294,7 @@
         <property key="wpo-lto" value="false"/>
       </C32Global>
       <SKDEPIC32PlatformTool>
+        <property key="debugoptions.useswbreakpoints" value="true"/>
         <property key="whatToProgram" value="all"/>
       </SKDEPIC32PlatformTool>
     </conf>

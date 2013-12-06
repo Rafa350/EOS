@@ -29,12 +29,12 @@ void sysOutInitialize(void) {
 
     __halOutInitialize();
 
-    UINT8 out = EOS_NUM_OUTPUTS - 1;
+    UINT8 outputId = EOS_NUM_OUTPUTS - 1;
     do {
-        PORTINFO *p = &ports[out];
+        PORTINFO *p = &ports[outputId];
         p->timeout = 0;
-        p->state = 0;
-    } while (out--);
+        p->state = FALSE;
+    } while (outputId--);
 }
 
 
@@ -51,9 +51,9 @@ void sysOutTickInterrupt(void) {
 
     // Actualitza les sortides temporitzades
     //
-    UINT8 out = EOS_NUM_OUTPUTS - 1;
+    UINT8 outputId = EOS_NUM_OUTPUTS - 1;
     do {
-        PORTINFO *p = &ports[out];
+        PORTINFO *p = &ports[outputId];
         UINT16 to = p->timeout;
         if (to != 0) {
             to -= 1;
@@ -61,7 +61,7 @@ void sysOutTickInterrupt(void) {
                 p->state = !p->state;
             p->timeout = to;
         }
-    } while (out--);
+    } while (outputId--);
 }
 
 
@@ -76,14 +76,14 @@ void sysOutTickInterrupt(void) {
 
 void sysOutLoop(void){
 
-    eosDisableInterrupts();
-    
-    UINT8 out = EOS_NUM_OUTPUTS - 1;
+    UINT8 outputId = EOS_NUM_OUTPUTS - 1;
     do {
-      __halOutWrite(out, ports[out].state);
-    } while (out--);
-    
-    eosEnableInterrupts();
+
+        eosDisableInterrupts();
+        __halOutWrite(outputId, ports[outputId].state);
+        eosEnableInterrupts();
+
+    } while (outputId--);
 }
 
 
@@ -92,22 +92,22 @@ void sysOutLoop(void){
  *       Asigna l'estat a una sortida
  *
  *       Funcio:
- *           void eosOutSet(UINT8 out, BOOL s)
+ *           void eosOutSet(UINT8 outputId, BOOL state)
  *
  *       Entrada:
- *           out: Numero de sortida
- *           s  : El nou estat a asignar
+ *           outputId: Numero de sortida
+ *           state   : El nou estat a asignar
  *
  *************************************************************************/
 
-void eosOutSet(UINT8 out, BOOL s) {
+void eosOutSet(UINT8 outputId, BOOL state) {
 
-    if (out < EOS_NUM_OUTPUTS) {
+    if (outputId < EOS_NUM_OUTPUTS) {
 
         eosDisableInterrupts();
 
-        PORTINFO *p = &ports[out];
-        p->state = s;
+        PORTINFO *p = &ports[outputId];
+        p->state = state;
         p->timeout  = 0;
 
         eosEnableInterrupts();
@@ -120,23 +120,22 @@ void eosOutSet(UINT8 out, BOOL s) {
  *       Llegeix l'estat d'una sortida
  *
  *       Funcio:
- *           BOOL eosOutGet(UINT8 out)
+ *           BOOL eosOutGet(UINT8 outputId)
  *
  *       Entrada:
- *           out: Numero de sortida
+ *           outputId: Numero de sortida
  *
  *       Retorn:
  *           L'estat de la sortida
  *
  *************************************************************************/
 
-BOOL eosOutGet(UINT8 out) {
+BOOL eosOutGet(UINT8 outputId) {
 
-    if (out < EOS_NUM_OUTPUTS) {
+    if (outputId < EOS_NUM_OUTPUTS) {
 
         eosDisableInterrupts();
-
-        BOOL result = ports[out].state;
+        BOOL result = ports[outputId].state;
         eosEnableInterrupts();
 
         return result;
@@ -151,11 +150,11 @@ BOOL eosOutGet(UINT8 out) {
  *       Genera un puls
  *
  *       Funcio:
- *           void eosOutPulse(UINT8 out, UINT16 time)
+ *           void eosOutPulse(UINT8 outputId, UINT16 time)
  *
  *       Entrada:
- *           out : Numero de sortida
- *           time: Llargada del puls en ms
+ *           outputId: Numero de sortida
+ *           time    : Llargada del puls en ms
  *
  *       Notes:
  *           Si el puls encara es actiu, simplement l'allarga el temps
@@ -163,13 +162,13 @@ BOOL eosOutGet(UINT8 out) {
  *
  *************************************************************************/
 
-void eosOutPulse(UINT8 out, UINT16 time) {
+void eosOutPulse(UINT8 outputId, UINT16 time) {
 
-    if ((out < EOS_NUM_OUTPUTS) && (time != 0)) {
+    if ((outputId < EOS_NUM_OUTPUTS) && (time != 0)) {
 
         eosDisableInterrupts();
         
-        PORTINFO *p = &ports[out];
+        PORTINFO *p = &ports[outputId];
         if (p->timeout == 0)
             p->state = !p->state;
         p->timeout = time;
@@ -184,20 +183,20 @@ void eosOutPulse(UINT8 out, UINT16 time) {
  *       Inverteix l'estat d'una sortida
  *
  *       Funcio:
- *           void eosOutToggle(UINT8 out)
+ *           void eosOutToggle(UINT8 outputId)
  *
  *       Entrada:
- *           out: El numero de sortida
+ *           outputId: El numero de sortida
  *
  *************************************************************************/
 
-void eosOutToggle(UINT8 out) {
+void eosOutToggle(UINT8 outputId) {
 
-    if (out < EOS_NUM_OUTPUTS) {
+    if (outputId < EOS_NUM_OUTPUTS) {
 
         eosDisableInterrupts();
 
-        PORTINFO *p = &ports[out];
+        PORTINFO *p = &ports[outputId];
         p->state = !p->state;
         p->timeout = 0;
 
@@ -217,14 +216,14 @@ void eosOutToggle(UINT8 out) {
 
 void eosOutAllOFF(void) {
 
-    UINT8 out = EOS_NUM_OUTPUTS - 1;
+    UINT8 outputId = EOS_NUM_OUTPUTS - 1;
     do {
 
-        PORTINFO *p = &ports[out];
+        PORTINFO *p = &ports[outputId];
         p->state = 0;
         p->timeout = 0;
 
-    } while (out--);
+    } while (outputId--);
 }
 
 

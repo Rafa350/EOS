@@ -31,7 +31,7 @@ extern void eosTickInterrupt(void);
 #endif
 
 
-// Gestio dels ports de sortida digital
+// Modul de sortides digitals
 //
 #ifdef EOS_USE_OUTPUTS
 
@@ -40,13 +40,13 @@ extern void eosTickInterrupt(void);
 #endif
 
 #ifndef __halOutWrite
-#define __halOutWrite(out, s)     halOutWrite(out, s)
+#define __halOutWrite(o, s)       halOutWrite(o, s)
 #endif
 
-extern void eosOutSet(UINT8 out, BOOL s);
-extern BOOL eosOutGet(UINT8 out);
-extern void eosOutToggle(UINT8 out);
-extern void eosOutPulse(UINT8 out, UINT16 timeOut);
+extern void eosOutSet(UINT8 outputId, BOOL state);
+extern BOOL eosOutGet(UINT8 outputId);
+extern void eosOutToggle(UINT8 outputId);
+extern void eosOutPulse(UINT8 outputId, UINT16 timeOut);
 extern void eosOutAllOFF(void);
 
 extern void sysOutInitialize(void);
@@ -54,10 +54,10 @@ extern void sysOutLoop(void);
 extern void sysOutTickInterrupt(void);
 
 extern void halOutInitialize(void);
-extern void halOutWrite(UINT8 out, BOOL s);
+extern void halOutWrite(UINT8 outputId, BOOL state);
 #endif
 
-// Gestio dels ports d'entrada digital
+// Modul d'entrades digitals
 //
 #ifdef EOS_USE_INPUTS
 
@@ -66,21 +66,33 @@ extern void halOutWrite(UINT8 out, BOOL s);
 #endif
 
 #ifndef __halInpRead
-#define __halInpRead(inp)         halInpRead(inp)
+#define __halInpRead(i)           halInpRead(i)
 #endif
 
-extern BOOL eosInpGet(UINT8 inp);
-extern BOOL eosInpPosEdge(UINT8 inp);
-extern BOOL eosInpNegEdge(UINT8 inp);
+extern BOOL eosInpGet(UINT8 inputId);
+extern BOOL eosInpPosEdge(UINT8 inputId);
+extern BOOL eosInpNegEdge(UINT8 inputId);
 
 extern void sysInpInitialize(void);
 extern void sysInpLoop(void);
 extern void sysInpTickInterrupt(void);
 
 extern void halInpInitialize(void);
-extern BOOL halInpRead(UINT8 inp);
+extern BOOL halInpRead(UINT8 inputId);
 #endif
 
+// Modul de temporitzadors
+//
+#ifdef EOS_USE_TIMERS
+extern void eosTimStart(UINT8 timerId, UINT16 time);
+extern BOOL eosTinGet(UINT8 timerId);
+extern void eosTimPauer(UINT8 timerId);
+extern void eosTimContinue(UINT8 timerId);
+
+extern void sysTimInitialize(void);
+extern void sysTimLoop(void);
+extern void sysTimTickInterrupt(void);
+#endif
 
 #endif	
 

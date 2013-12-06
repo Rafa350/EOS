@@ -21,7 +21,12 @@
 // Parametres del modul de sortides digitals
 //
 #define EOS_USE_OUTPUTS           // Activa el modul
-#define EOS_NUM_OUTPUTS   16      // Numero m'axim de sortides
+#define EOS_NUM_OUTPUTS   16      // Numero maxim de sortides
+
+// Parametres del modul de temporitzadors
+//
+#define EOS_USE_TIMERS            // Activa el modul
+#define EOS_NUM_TIMERS    16      // Numero maxim de temporitzadors
 
 
 #endif

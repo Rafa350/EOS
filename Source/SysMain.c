@@ -42,6 +42,10 @@ void eosTickInterrupt(void) {
 #ifdef EOS_USE_INPUTS
     sysInpTickInterrupt();
 #endif
+
+#ifdef EOS_USE_TIMERS
+    sysTimTickInterrupt();
+#endif
 }
 
 
@@ -67,11 +71,16 @@ void eosMain(void) {
     sysInpInitialize();
 #endif
 
+#ifdef EOS_USE_TIMERS
+    sysTimInitialize();
+#endif
+
 #if !defined(__DEBUG) && defined(EOS_USE_WATCHDOG)
     EnableWDT();
 #endif
 
     usrSetup();
+    
     while (TRUE) {
 
 #ifdef EOS_USE_OUTPUTS
@@ -81,6 +90,11 @@ void eosMain(void) {
 #ifdef EOS_USE_INPUTS
         sysInpLoop();
 #endif
+
+#ifdef EOS_USE_TIMERS
+        sysTimLoop();
+#endif
+
         usrLoop();
 
 #if !defined(__DEBUG) && defined(EOS_USE_WATCHDOG)
