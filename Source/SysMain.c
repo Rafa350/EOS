@@ -1,14 +1,13 @@
 #include "eos.h"
 
 
-#if defined(__PIC18)
+#if defined(_PIC18)
 extern void usrInitialize(void);
 extern void usrSetup(void);
 void usrTick(void);
 void usrLoop(void);
-#endif
 
-#if defined(__PIC32MX)
+#elif defined(__PIC32MX)
 __attribute__((weak)) void usrInitialize(void) {
 }
 
@@ -46,6 +45,10 @@ void eosTickInterrupt(void) {
 #ifdef EOS_USE_TIMERS
     sysTimTickInterrupt();
 #endif
+
+#ifdef EOS_USE_LEDSTATUS
+    sysLedTickInterrupt();
+#endif
 }
 
 
@@ -61,7 +64,7 @@ void eosTickInterrupt(void) {
 
 void eosMain(void) {
 
-    usrInitialize();
+    __halInitialize();
 
 #ifdef EOS_USE_OUTPUTS
     sysOutInitialize();
@@ -75,12 +78,17 @@ void eosMain(void) {
     sysTimInitialize();
 #endif
 
+#ifdef EOS_USE_LEDSTATUS
+    sysLedInitialize();
+#endif
+
 #if !defined(__DEBUG) && defined(EOS_USE_WATCHDOG)
-    EnableWDT();
+    eosEnableWatchdog();
 #endif
 
     usrSetup();
-    
+    eosEnableInterrupts();
+ 
     while (TRUE) {
 
 #ifdef EOS_USE_OUTPUTS
@@ -98,7 +106,7 @@ void eosMain(void) {
         usrLoop();
 
 #if !defined(__DEBUG) && defined(EOS_USE_WATCHDOG)
-        ClearWDT();
+        eosClearWatchdog();
 #endif
     }
 }

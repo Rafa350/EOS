@@ -59,29 +59,44 @@
         PORTCbits.RC0 = v;        \
 }
 
+#elif defined(HARDWARE_PICKIT3)
+
+// Definicions per orcilador
+//
+#define USE_OSC_INTERNAL
+
+// Definicions pel modul de sortides digitals
+//
+#define SetLED1(s)      eosOutSet(0, s)
+#define SetLED2(s)      eosOutSet(1, s)
+#define SetLED3(s)      eosOutSet(2, s)
+#define SetLED4(s)      eosOutSet(3, s)
+#define SetLED5(s)      eosOutSet(4, s)
+#define SetLED6(s)      eosOutSet(5, s)
+#define SetLED7(s)      eosOutSet(6, s)
+#define SetLED8(s)      eosOutSet(7, s)
+
+
 #elif defined(HARDWARE_PIC32_ESK)
 
 // Definicions per PLIB32
 //
 #define GetSystemClock()          (80000000L)
+#define GetPeriphericalClock()    (GetSystemClock() / 2)
+#define GetInstructionClock()     (GetSystemClock() / 2)
 
 
 // Definicions pel modul d'entrades digitals
 //
-#define usrInpInitialize() {      \
-}
-
-#define usrInpWrite(inp, s) {     \
-}
-
-#define usrInpRead(inp) {         \
-}
+#define GetSW1()        eosInpGet(0)
+#define GetSW2()        eosInpGet(1)
+#define GetSW3()        eosInpGet(2)
 
 // Definicions pel modul de sortides digitals
 //
-#define LED1  0
-#define LED2  1
-#define LED3  2
+#define SetLED1(s)      eosOutSet(0, s)
+#define SetLED2(s)      eosOutSet(1, s)
+#define SetLED3(s)      eosOutSet(2, s)
 
 #endif
 

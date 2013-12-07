@@ -9,6 +9,10 @@
 #endif
 
 
+#define PATTERN_ON    0x7FFF
+#define PATTERN_OFF   0x8000
+#define PATTERN_MASK  0xFFFF
+
 typedef struct {
     UINT16 pattern;
     unsigned state:1;
@@ -29,8 +33,6 @@ static PORTINFO ports[EOS_NUM_INPUTS];
  *************************************************************************/
 
 void sysInpInitialize(void) {
-
-    __halInpInitialize();
 
     UINT8 inputId = EOS_NUM_INPUTS - 1;
     do {
@@ -83,11 +85,12 @@ void sysInpLoop(void) {
         eosDisableInterrupts();
 
         PORTINFO *p = &ports[inputId];
-        if (p->pattern == 0xFF00) {
+        UINT16 pattern = p->pattern & PATTERN_MASK;
+        if (pattern == PATTERN_OFF) {
             p->state = FALSE;
             p->negEdge = TRUE;
         }
-        else if (p->pattern == 0x00FF) {
+        else if (pattern == PATTERN_ON) {
             p->state = TRUE;
             p->posEdge = TRUE;
         }

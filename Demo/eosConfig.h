@@ -9,7 +9,8 @@
 // Parametres del systema
 //
 #define EOS_USE_SYSMAIN
-//#define EOS_USE_WATCHDOG
+#define EOS_USE_LEDSTATUS
+#define EOS_USE_WATCHDOG
 
 
 // Parametres del modul d'entrades digitals

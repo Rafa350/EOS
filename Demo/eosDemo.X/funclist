@@ -1,10 +1,25 @@
-_sysOutInitialize: CODE, 65190 0 102
-_main: CODE, 65034 0 8
-_eosOutSet: CODE, 65120 0 70
-__initialization: CODE, 65058 0 12
-_usrLoop: CODE, 65076 0 22
-_eosMain: CODE, 65098 0 22
-_usrSetup: CODE, 65032 0 2
-_usrInitialize: CODE, 65042 0 16
-_sysOutLoop: CODE, 65292 0 244
-Total: 498
+_sysOutInitialize: CODE, 1028 0 118
+_halInpRead: CODE, 2052 0 4
+_ISR: CODE, 8 0 138
+_halInitialize: CODE, 1820 0 58
+_sysInpTickInterrupt: CODE, 1552 0 94
+_sysTimTickInterrupt: CODE, 1646 0 88
+_main: CODE, 2044 0 8
+_sysOutTickInterrupt: CODE, 1146 0 104
+_halLedSet: CODE, 2022 0 12
+_eosOutPulse: CODE, 584 0 176
+_eosTimStart: CODE, 1250 0 102
+__initialization: CODE, 1974 0 24
+_sysLedInitialize: CODE, 2034 0 10
+_usrLoop: CODE, 2056 0 2
+_eosMain: CODE, 1878 0 48
+_usrSetup: CODE, 1454 0 98
+_halOutWrite: CODE, 1734 0 86
+_eosTickInterrupt: CODE, 2004 0 18
+_sysLedTickInterrupt: CODE, 1926 0 48
+_sysInpLoop: CODE, 378 0 206
+_sysTimLoop: CODE, 1352 0 102
+_sysInpInitialize: CODE, 760 0 146
+_sysOutLoop: CODE, 150 0 228
+_sysTimInitialize: CODE, 906 0 122
+Total: 2040
