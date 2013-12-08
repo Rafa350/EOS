@@ -61,7 +61,7 @@
 
 #elif defined(HARDWARE_PICKIT3)
 
-// Definicions per orcilador
+// Definicions per oscilador
 //
 #define USE_OSC_INTERNAL
 

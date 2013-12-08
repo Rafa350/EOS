@@ -25,7 +25,7 @@ static PORTINFO ports[EOS_NUM_INPUTS];
 
 /*************************************************************************
  *
- *       Inicialitza la gestio de les entrades
+ *       Inicialitzacio del modul
  *
  *       Funcio:
  *           void sysInpInitialize(void)
@@ -34,22 +34,22 @@ static PORTINFO ports[EOS_NUM_INPUTS];
 
 void sysInpInitialize(void) {
 
-    UINT8 inputId = EOS_NUM_INPUTS - 1;
+    UINT8 id = EOS_NUM_INPUTS - 1;
     do {
 
-        PORTINFO *p = &ports[inputId];
+        PORTINFO *p = &ports[id];
         p->pattern = 0;
         p->state = FALSE;
         p->posEdge = FALSE;
         p->negEdge = FALSE;
 
-    } while (inputId--);
+    } while (id--);
 }
 
 
 /*************************************************************************
  *
- *       Interrupcio Tick
+ *       Interrupcio Tick del modul
  *
  *       Funcio:
  *           void sysInpTickInterrupt(void)
@@ -58,19 +58,19 @@ void sysInpInitialize(void) {
 
 void sysInpTickInterrupt(void) {
 
-    UINT8 inputId = EOS_NUM_INPUTS - 1;
+    UINT8 id = EOS_NUM_INPUTS - 1;
     do {
 
-        PORTINFO *p = &ports[inputId];
-        p->pattern = (p->pattern << 1) | __halInpPortRead(inputId);
+        PORTINFO *p = &ports[id];
+        p->pattern = (p->pattern << 1) | __halInpPortRead(id);
 
-    } while (inputId--);
+    } while (id--);
 }
 
 
 /*************************************************************************
  *
- *       Tasca de control de les entrades. Es crida cada cicle
+ *       Gestio del modul
  *
  *       Funcio:
  *           void sysInpLoop(void)
@@ -79,12 +79,12 @@ void sysInpTickInterrupt(void) {
 
 void sysInpLoop(void) {
 
-    UINT8 inputId = EOS_NUM_INPUTS - 1;
+    UINT8 id = EOS_NUM_INPUTS - 1;
     do {
 
         eosDisableInterrupts();
 
-        PORTINFO *p = &ports[inputId];
+        PORTINFO *p = &ports[id];
         UINT16 pattern = p->pattern & PATTERN_MASK;
         if (pattern == PATTERN_OFF) {
             p->state = FALSE;
@@ -97,7 +97,7 @@ void sysInpLoop(void) {
 
         eosEnableInterrupts();
 
-    } while (inputId--);
+    } while (id--);
 }
 
 
@@ -106,20 +106,20 @@ void sysInpLoop(void) {
  *       Obte l'estat d'una entrada
  *
  *       Funcio:
- *           BOOL eosInpGet(UINT8 inputId)
+ *           BOOL eosInpGet(UINT8 id)
  *
  *       Entrada:
- *           inputId: Numero d'entrada
+ *           id: Numero d'entrada
  *
  *       Retorn:
  *           TRUE si esta en estat actiu (ON), FALSE en cas contrari
  *
  *************************************************************************/
 
-BOOL eosInpGet(UINT8 inputId) {
+BOOL eosInpGet(UINT8 id) {
 
-    if (inputId < EOS_NUM_INPUTS)
-        return ports[inputId].state;
+    if (id < EOS_NUM_INPUTS)
+        return ports[id].state;
     else
         return FALSE;
 }
@@ -130,10 +130,10 @@ BOOL eosInpGet(UINT8 inputId) {
  *       Detecta si ha arribat un flanc positiu a una entrada
  *
  *       Funcio:
- *           BOOL eosInpPosEdge(UINT8 inputId)
+ *           BOOL eosInpPosEdge(UINT8 id)
  *
  *       Entrada:
- *           inputId: Numero d'entrada
+ *           id: Numero d'entrada
  *
  *       Retorn:
  *           TRUE si s'ha detectat un flanc positiu
@@ -144,11 +144,11 @@ BOOL eosInpGet(UINT8 inputId) {
  *
  *************************************************************************/
 
-BOOL eosInpPosEdge(UINT8 inputId) {
+BOOL eosInpPosEdge(UINT8 id) {
 
-    if (inputId < EOS_NUM_INPUTS) {
+    if (id < EOS_NUM_INPUTS) {
 
-        PORTINFO *p = &ports[inputId];
+        PORTINFO *p = &ports[id];
         BOOL result = p->posEdge;
         p->posEdge = FALSE;
 
@@ -164,10 +164,10 @@ BOOL eosInpPosEdge(UINT8 inputId) {
  *       Detecta si ha arribat un flanc negatiu a una entrada
  *
  *       Funcio:
- *           BOOL eosInpNegEdge(UINT8 inputId)
+ *           BOOL eosInpNegEdge(UINT8 id)
  *
  *       Entrada:
- *           inputId: Numero d'entrada
+ *           id: Numero d'entrada
  *
  *       Retorn:
  *           TRUE si s'ha detectat un flanc negatiu
@@ -178,11 +178,11 @@ BOOL eosInpPosEdge(UINT8 inputId) {
  *
  *************************************************************************/
 
-BOOL eosInpNegEdge(UINT8 inputId) {
+BOOL eosInpNegEdge(UINT8 id) {
 
-    if (inputId < EOS_NUM_INPUTS) {
+    if (id < EOS_NUM_INPUTS) {
 
-        PORTINFO *p = &ports[inputId];
+        PORTINFO *p = &ports[id];
         BOOL result = p->negEdge;
         p->negEdge = FALSE;
 
@@ -198,18 +198,18 @@ BOOL eosInpNegEdge(UINT8 inputId) {
  *       Reseteja el detector de flancs per aquesta entrada
  *
  *       Funcio:
- *           void eosInpClearEdge(UINT8 inputId)
+ *           void eosInpClearEdge(UINT8 id)
  *
  *       Entrada:
- *           inputId: Numero d'entrada
+ *           id: Numero d'entrada
  *
  *************************************************************************/
 
-void eosInpClearEdge(UINT8 inputId) {
+void eosInpClearEdge(UINT8 id) {
 
-    if (inputId < EOS_NUM_INPUTS) {
+    if (id < EOS_NUM_INPUTS) {
         
-        PORTINFO *p = &ports[inputId];
+        PORTINFO *p = &ports[id];
         p->posEdge = FALSE;
         p->negEdge = FALSE;
     }

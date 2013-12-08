@@ -9,7 +9,7 @@
 #endif
 
 
-static VARTYPE variables[EOS_NUM_VARIABLES];
+static unsigned variables[EOS_NUM_VARIABLES];
 
 
 
@@ -24,10 +24,10 @@ static VARTYPE variables[EOS_NUM_VARIABLES];
 
 void sysVarInitialize(void) {
 
-    UINT8 varId = EOS_NUM_VARIABLES - 1;
+    UINT8 id = EOS_NUM_VARIABLES - 1;
     do {
-        variables[varId] = 0;
-    } while (varId--);
+        variables[id] = 0;
+    } while (id--);
 }
 
 
@@ -43,7 +43,7 @@ void sysVarInitialize(void) {
 void eosVarSave(void) {
 
     eosDisableInterrupts();
-    __halVarSave((BYTE*) variables, sizeof(variables));
+    __halVarSave((void*) variables, sizeof(variables));
     eosEnableInterrupts();
 }
 
@@ -60,7 +60,7 @@ void eosVarSave(void) {
 void eosVarRestore(void) {
 
     eosDisableInterrupts();
-    __halVarRestore((BYTE*) variables, sizeof(variables));
+    __halVarRestore((void*) variables, sizeof(variables));
     eosEnableInterrupts();
 }
 
@@ -70,10 +70,10 @@ void eosVarRestore(void) {
  *       Obte el valor d'una variable
  *
  *       Funcio:
- *           VARTYPE eosVarGet(UINT8 varId)
+ *           unsigned eosVarGet(UINT8 id)
  *
  *       Entrada:
- *           varId: Numero de la variable
+ *           id: Numero de la variable
  *
  *       Retorn:
  *           El valor de la variable
@@ -83,10 +83,10 @@ void eosVarRestore(void) {
  *
  *************************************************************************/
 
-VARTYPE eosVarGet(UINT8 varId) {
+unsigned eosVarGet(UINT8 id) {
 
-    if (varId < EOS_NUM_VARIABLES)
-        return variables[varId];
+    if (id < EOS_NUM_VARIABLES)
+        return variables[id];
     else
         return 0;
 }
@@ -97,18 +97,18 @@ VARTYPE eosVarGet(UINT8 varId) {
  *       Assigna un valor a una variable
  *
  *       Funcio:
- *           void eosVarSet(UINT8 varId, VARTYPE value)
+ *           void eosVarSet(UINT8 id, unsigned value)
  *
  *       Entrada:
- *           varId: El numero de la variable
+ *           id   : El numero de la variable
  *           value: El valor
  *
  *************************************************************************/
 
-void eosVarSet(UINT8 varId, VARTYPE value) {
+void eosVarSet(UINT8 id, unsigned value) {
 
-    if (varId < EOS_NUM_VARIABLES)
-        variables[varId] = value;
+    if (id < EOS_NUM_VARIABLES)
+        variables[id] = value;
 }
 
 

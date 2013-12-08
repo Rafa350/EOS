@@ -9,7 +9,7 @@
 
 
 typedef struct {
-    UINT16 counter;
+    unsigned counter;
     unsigned state:1;
     unsigned pause:1;
 } TIMERINFO;
@@ -28,15 +28,15 @@ static TIMERINFO timers[EOS_NUM_TIMERS];
 
 void sysTimInitialize(void){
 
-    UINT8 timerId = EOS_NUM_TIMERS - 1;
+    UINT8 id = EOS_NUM_TIMERS - 1;
     do {
 
-        TIMERINFO *t = &timers[timerId];
+        TIMERINFO *t = &timers[id];
         t->counter = 0;
         t->state = FALSE;
         t->pause = FALSE;
 
-    } while (timerId--);
+    } while (id--);
 }
 
 
@@ -93,21 +93,21 @@ void sysTimLoop(void) {
  *       Inicia un temporitzador
  *
  *       Funcio:
- *           void eosTimStart(UINT8 timerId, UINT16 time)
+ *           void eosTimStart(UINT8 timerId, unsigned time)
  *
  *       Entrada:
- *           timerId: Numero de temporitzador
- *           time   : Temps en milsegons
+ *           id  : Numero de temporitzador
+ *           time: Temps en milsegons
  *
  *************************************************************************/
 
-void eosTimStart(UINT8 timerId, UINT16 time) {
+void eosTimStart(UINT8 id, unsigned time) {
 
-    if (timerId < EOS_NUM_TIMERS) {
+    if (id < EOS_NUM_TIMERS) {
 
         eosDisableInterrupts();
         
-        TIMERINFO *t = &timers[timerId];
+        TIMERINFO *t = &timers[id];
         t->counter = time;
         t->state = FALSE;
         t->pause = FALSE;

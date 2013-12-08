@@ -8,6 +8,10 @@
         <itemPath>../../Include/eos.h</itemPath>
         <itemPath>../eosConfig.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="f2" displayName="usb" projectFiles="true">
+        <itemPath>../usb_config.h</itemPath>
+        <itemPath>../FSconfig.h</itemPath>
+      </logicalFolder>
       <itemPath>../HardwareProfile.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -25,12 +29,22 @@
           <itemPath>../../Source/Modules/Variables.c</itemPath>
           <itemPath>../../Source/Modules/Inputs.c</itemPath>
           <itemPath>../../Source/Modules/Outputs.c</itemPath>
+          <itemPath>../../Source/Modules/UsbHost.c</itemPath>
         </logicalFolder>
         <itemPath>../../Source/SysMain.c</itemPath>
+        <itemPath>../../Source/SysAlloc.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f4" displayName="freertos" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="f2" displayName="hal" projectFiles="true">
         <itemPath>../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c</itemPath>
         <itemPath>../Hal/Hal_PICKIT3_44pin_Demo_Board.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f3" displayName="usb" projectFiles="true">
+        <itemPath>../usb_config.c</itemPath>
+        <itemPath>../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/usb_host.c</itemPath>
+        <itemPath>../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/MSD Host Driver/usb_host_msd.c</itemPath>
+        <itemPath>../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/MSD Host Driver/usb_host_msd_scsi.c</itemPath>
       </logicalFolder>
       <itemPath>../Config.c</itemPath>
       <itemPath>../Main.c</itemPath>
@@ -43,7 +57,8 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>../../Source</Elem>
-    <Elem>../Hal</Elem>
+    <Elem>..</Elem>
+    <Elem>../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -77,6 +92,18 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
+      <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/MSD Host Driver/usb_host_msd.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/MSD Host Driver/usb_host_msd_scsi.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/usb_host.c"
+            ex="true"
+            overriding="false">
+      </item>
       <item path="../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c"
             ex="true"
             overriding="false">
@@ -94,6 +121,8 @@
         </HI-TECH-LINK>
         <XC8-config-global>
         </XC8-config-global>
+      </item>
+      <item path="../usb_config.c" ex="true" overriding="false">
       </item>
       <HI-TECH-COMP>
         <property key="asmlist" value="true"/>
@@ -241,7 +270,8 @@
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
-        <property key="extra-include-directories" value="..\;..\..\Include"/>
+        <property key="extra-include-directories"
+                  value="..\;..\..\Include;c:\Microchip Solutions v2013-06-15\Microchip\Include"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
         <property key="make-warnings-into-errors" value="false"/>
@@ -282,7 +312,7 @@
         <property key="extra-lib-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
-        <property key="heap-size" value=""/>
+        <property key="heap-size" value="8192"/>
         <property key="input-libraries" value=""/>
         <property key="linker-symbols" value=""/>
         <property key="map-file" value="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
@@ -361,6 +391,18 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
+      <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/MSD Host Driver/usb_host_msd.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/MSD Host Driver/usb_host_msd_scsi.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/usb_host.c"
+            ex="true"
+            overriding="false">
+      </item>
       <item path="../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c"
             ex="true"
             overriding="false">
@@ -371,10 +413,13 @@
         <XC8-config-global>
         </XC8-config-global>
       </item>
+      <item path="../usb_config.c" ex="true" overriding="false">
+      </item>
       <HI-TECH-COMP>
         <property key="asmlist" value="true"/>
         <property key="define-macros" value="HARDWARE_PICKIT3"/>
-        <property key="extra-include-directories" value="..\;..\..\Include"/>
+        <property key="extra-include-directories"
+                  value="..\;..\..\Include;c:\Microchip Solutions v2013-06-15\Microchip\Include"/>
         <property key="identifier-length" value="255"/>
         <property key="operation-mode" value="free"/>
         <property key="opt-xc8-compiler-strict_ansi" value="false"/>
@@ -440,7 +485,6 @@
         <property key="ToolFirmwareFilePath"
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>

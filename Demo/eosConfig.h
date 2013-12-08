@@ -11,6 +11,7 @@
 #define EOS_USE_SYSMAIN
 #define EOS_USE_LEDSTATUS
 //#define EOS_USE_WATCHDOG
+//#define EOS_USE_FREERTOS
 
 
 // Parametres del modul d'entrades digitals
@@ -40,6 +41,11 @@
 #define EOS_USE_VARIABLES         // Activa el modul
 #define EOS_NUM_VARIABLES 64      // Numero maxim de variables
 #define EOS_VAR_EEPROMBASE 0      // Adressa inicial en la EEPROM
+
+
+// Parametres del modul USB
+//
+//#define EOS_USE_USBHOST           // Activa el modul
 
 
 #endif

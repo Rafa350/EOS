@@ -31,5 +31,5 @@ void usrSetup(void) {
 void usrLoop(void) {
 
     eosOutSet(0, eosInpGet(0) || eosInpGet(2));
-    eosOutSet(1, eosInpGet(1) || eosInpGet(2));
+    //eosOutSet(1, eosInpGet(1) || eosInpGet(2));
 }

@@ -86,6 +86,10 @@ void eosMain(void) {
     sysLedInitialize();
 #endif
 
+#ifdef EOS_USE_USBHOST
+    sysUsbHostInitialize();
+#endif
+
 #if !defined(__DEBUG) && defined(EOS_USE_WATCHDOG)
     eosEnableWatchdog();
 #endif
@@ -105,6 +109,10 @@ void eosMain(void) {
 
 #ifdef EOS_USE_TIMERS
         sysTimLoop();
+#endif
+
+#ifdef EOS_USE_USBHOST
+        sysUsbHostLoop();
 #endif
 
         usrLoop();

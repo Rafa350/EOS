@@ -151,11 +151,11 @@ BOOL eosOutGet(UINT8 outputId) {
  *       Genera un puls
  *
  *       Funcio:
- *           void eosOutPulse(UINT8 outputId, UINT16 time)
+ *           void eosOutPulse(UINT8 id, unsigned time)
  *
  *       Entrada:
- *           outputId: Numero de sortida
- *           time    : Llargada del puls en ms
+ *           id  : Numero de sortida
+ *           time: Llargada del puls en ms
  *
  *       Notes:
  *           Si el puls encara es actiu, simplement l'allarga el temps
@@ -163,13 +163,13 @@ BOOL eosOutGet(UINT8 outputId) {
  *
  *************************************************************************/
 
-void eosOutPulse(UINT8 outputId, UINT16 time) {
+void eosOutPulse(UINT8 id, unsigned time) {
 
-    if ((outputId < EOS_NUM_OUTPUTS) && (time != 0)) {
+    if ((id < EOS_NUM_OUTPUTS) && (time != 0)) {
 
         eosDisableInterrupts();
         
-        PORTINFO *p = &ports[outputId];
+        PORTINFO *p = &ports[id];
         if (p->counter == 0)
             p->state = !p->state;
         p->counter = time;
