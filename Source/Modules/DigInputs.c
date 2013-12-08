@@ -62,7 +62,7 @@ void sysInpTickInterrupt(void) {
     do {
 
         PORTINFO *p = &ports[inputId];
-        p->pattern = (p->pattern << 1) | __halInpRead(inputId);
+        p->pattern = (p->pattern << 1) | __halInpPortRead(inputId);
 
     } while (inputId--);
 }

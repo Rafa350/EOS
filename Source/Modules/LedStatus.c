@@ -38,7 +38,7 @@ void sysLedTickInterrupt(void) {
     if (!--tick)
         tick = INI_TICK;
 
-    __halLedSet(tick < 25);
+    __halLedPortWrite(tick < 25);
 }
 
 

@@ -86,7 +86,7 @@ void sysOutLoop(void){
             p->timeout = FALSE;
             p->state = !p->state;
         }
-        __halOutWrite(outputId, p->state);
+        __halOutPortWrite(outputId, p->state);
 
         eosEnableInterrupts();
 

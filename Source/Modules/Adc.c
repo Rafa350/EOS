@@ -1,7 +1,7 @@
 #include "eos.h"
 
 
-#ifdef EOS_USE_ADC)
+#ifdef EOS_USE_ADC
 
 
 typedef struct {

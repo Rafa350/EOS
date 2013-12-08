@@ -47,8 +47,8 @@ extern void halInitialize(void);
 //
 #ifdef EOS_USE_OUTPUTS
 
-#ifndef __halOutWrite
-#define __halOutWrite(o, s)       halOutWrite(o, s)
+#ifndef __halOutPortWrite
+#define __halOutPortWrite(o, s)   halOutPortWrite(o, s)
 #endif
 
 extern void eosOutSet(UINT8 outputId, BOOL state);
@@ -61,15 +61,15 @@ extern void sysOutInitialize(void);
 extern void sysOutLoop(void);
 extern void sysOutTickInterrupt(void);
 
-extern void halOutWrite(UINT8 outputId, BOOL state);
+extern void halOutPortWrite(UINT8 outputId, BOOL state);
 #endif
 
 // Modul d'entrades digitals
 //
 #ifdef EOS_USE_INPUTS
 
-#ifndef __halInpRead
-#define __halInpRead(i)           halInpRead(i)
+#ifndef __halInpPortRead
+#define __halInpPortRead(i)       halInpPortRead(i)
 #endif
 
 extern BOOL eosInpGet(UINT8 inputId);
@@ -80,7 +80,7 @@ extern void sysInpInitialize(void);
 extern void sysInpLoop(void);
 extern void sysInpTickInterrupt(void);
 
-extern BOOL halInpRead(UINT8 inputId);
+extern BOOL halInpPortRead(UINT8 inputId);
 #endif
 
 // Modul de conversio AD
@@ -104,18 +104,41 @@ extern void sysTimLoop(void);
 extern void sysTimTickInterrupt(void);
 #endif
 
+// Modul de variables
+//
+#ifdef EOS_USE_VARIABLES
+
+typedef UINT16 VARTYPE;
+
+typedef struct {
+    UINT8 varId;
+    VARTYPE value;
+} VARINIT;
+
+extern void eosVarSet(UINT8 varId, VARTYPE value);
+extern VARTYPE eosVarGet(UINT8 varId);
+extern void eosVarSave(void);
+extern void eosVarRestore(void);
+extern void eosVarSetTable(VARINIT *data, UINT8 dataLen);
+#ifdef _PIC18
+extern void eosVarSetTableROM(VARINIT *data, UINT8 dataLen);
+#endif
+
+extern void sysVarInitialize(void);
+#endif
+
 // Modul indicador d'estat
 //
 #ifdef EOS_USE_LEDSTATUS
 
-#ifndef __halLedSet
-#define __halLedSet(s)            halLedSet(s)
+#ifndef __halLedPortWrite
+#define __halLedPortWrite(s)      halLedPortWrite(s)
 #endif
 
 extern void sysLedInitialize(void);
 extern void sysLedTickInterrupt(void);
 
-extern void halLedSet(BOOL state);
+extern void halLedPortWrite(BOOL state);
 #endif
 
 

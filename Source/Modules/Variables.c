@@ -5,18 +5,18 @@
 
 
 #if !defined(EOS_NUM_VARIABLES) || (EOS_NUM_VARIABLES < 1) || (EOS_NUM_VARIABLES > 64)
-#error 'EOS_NUM_VARIABLES' ha de estar en el intervalo 1..32
+#error 'EOS_NUM_VARIABLES' ha de estar en el intervalo 1..64
 #endif
 
 #ifndef VAR_EEPROM_BASE
 #define VAR_EEPROM_BASE     0
 #endif
 
-#if (VAR_EEPROM_BASE + (NUM_VARIABLES * 2) > _EEPROMSIZE)
+#if (VAR_EEPROM_BASE + (EOS_NUM_VARIABLES * 2) > _EEPROMSIZE) && defined(_PIC18)
 #error No hay suficiente EEPROM para almacenar las variables. Modifique 'EOS_NUM_VARIABLES'.
 #endif
 
-static UINT16 variables[EOS_NUM_VARIABLES];
+static VARTYPE variables[EOS_NUM_VARIABLES];
 
 
 
@@ -25,16 +25,16 @@ static UINT16 variables[EOS_NUM_VARIABLES];
  *       Inicialitza la gestio de les variables
  *
  *       Funcio:
- *           void eosVarInitialize(void)
+ *           void sysVarInitialize(void)
  *
  *************************************************************************/
 
-void eosVarInitialize(void) {
+void sysVarInitialize(void) {
 
-    UINT8 var = EOS_NUM_VARIABLES - 1;
+    UINT8 varId = EOS_NUM_VARIABLES - 1;
     do {
-        variables[var] = 0;
-    } while (var--);
+        variables[varId] = 0;
+    } while (varId--);
 }
 
 
@@ -47,26 +47,30 @@ void eosVarInitialize(void) {
  *
  **************************************************************************/
 
-void varSave(void) {
+#ifdef _PIC18x
+void eosVarSave(void) {
 
     UINT8 var;
     UINT16 addr;
 
     addr = VAR_EEPROM_BASE;
 
-    di();
+    eosDisableInterrupts();
+
     EECON1bits.EEPGD = 0;
     EECON1bits.CFGS = 0;
     EECON1bits.WREN = 1;
 
-    var = NUM_VARIABLES - 1;
+    varId = EOS_NUM_VARIABLES - 1;
     do {
 
         // Guarda la part baixa de la variable
         //
         EEADR = addr & 0x00FF;
+#if _EEPROMSIZE > 256
         EEADRH = (addr >> 8) & 0x03;
-        EEDATA = variables[var] & 0x00FF;
+#endif
+        EEDATA = variables[varId] & 0x00FF;
         EECON2 = 0x55;
         EECON2 = 0xAA;
         EECON1bits.WR = 1;
@@ -77,8 +81,10 @@ void varSave(void) {
         // Guarda la part alta de la variable
         //
         EEADR = addr & 0x00FF;
+#if _EEPROMSIZE > 256
         EEADRH = (addr >> 8) & 0x03;
-        EEDATA = variables[var] >> 8;
+#endif
+        EEDATA = variables[varId] >> 8;
         EECON2 = 0x55;
         EECON2 = 0xAA;
         EECON1bits.WR = 1;
@@ -86,11 +92,13 @@ void varSave(void) {
             continue;
         addr++;
 
-    } while (var--);
+    } while (varId--);
 
     EECON1bits.WREN = 0;
-    ei();
+
+    eosEnableInterrupts();
 }
+#endif
 
 
 /*************************************************************************
@@ -102,20 +110,23 @@ void varSave(void) {
  *
  **************************************************************************/
 
-void varRestore(void) {
+#ifdef _PIC18x
+void eosVarRestore(void) {
 
     UINT8 var;
     UINT16 addr, data;
 
     addr = VAR_EEPROM_BASE;
 
-    var = NUM_VARIABLES - 1;
+    var = EOS_NUM_VARIABLES - 1;
     do {
 
-        // Llegeix la part baixa de la variable
+        // Llegeix el primer byte de la variable
         //
         EEADR = addr & 0x0ff;
+#if _EEPROMSIZE > 256
         EEADRH = (addr >> 8) & 0x03;
+#endif
         EECON1bits.CFGS = 0;
         EECON1bits.EEPGD = 0;
         EECON1bits.RD = 1;
@@ -124,20 +135,28 @@ void varRestore(void) {
         data = EEDATA;
         addr++;
 
-        // Llegeix la part alta de la variable
+#if sizeof(VARTYPE) > 1
+
+        // Llegeix el segon byte de la variable
         //
         EEADR = addr & 0x0ff;
+#if _EEPROMSIZE > 256
         EEADRH = (addr >> 8) & 0x03;
+#endif
         EECON1bits.CFGS = 0;
         EECON1bits.EEPGD = 0;
         EECON1bits.RD = 1;
         NOP();          // Nop may be required for latency at high frequencies
         NOP();          // Nop may be required for latency at high frequencies
-        variables[var] = (EEDATA << 8) | data;
+        data |= (EEDATA << 8);
         addr++;
+#endif
+
+        variables[var] =  data;
 
     } while (var--);
 }
+#endif
 
 
 /*************************************************************************
@@ -145,10 +164,10 @@ void varRestore(void) {
  *       Obte el valor d'una variable
  *
  *       Funcio:
- *           UINT16 varGet(UINT8 var)
+ *           VARTYPE eosVarGet(UINT8 varId)
  *
  *       Entrada:
- *           var: Numero de la variable
+ *           varId: Numero de la variable
  *
  *       Retorn:
  *           El valor de la variable
@@ -158,34 +177,12 @@ void varRestore(void) {
  *
  *************************************************************************/
 
-UINT16 varGet(UINT8 var) {
+VARTYPE eosVarGet(UINT8 varId) {
 
-#ifdef MODE_MASTER
-    UINT8 addr;
-    BYTE data[5];
-#endif
-
-    if (var < NUM_VARIABLES)
-        return variables[var];
-
-#ifdef MODE_MASTER
-    else {
-        data[0] = CMD_VAR_GET | (var & 0b00011111);
-        data[1] = CalcCheckSum((BYTE*) data, 1);
-        addr = var & 0b11100000;
-        if (masterSendCommand(addr, (BYTE*) data, 2)) {
-            if (masterGetResponse(addr, (BYTE*) data, sizeof(data)))
-                return (data[0] << 8) | data[1];
-            else
-                return 0;
-        }
-        else
-            return 0;
-    }
-#else
+    if (varId < EOS_NUM_VARIABLES)
+        return variables[varId];
     else
         return 0;
-#endif
 }
 
 
@@ -194,30 +191,18 @@ UINT16 varGet(UINT8 var) {
  *       Assigna un valor a una variable
  *
  *       Funcio:
- *           void varSet(UINT8 var, UINT16 value)
+ *           void eosVarSet(UINT8 varId, VARTYPE value)
  *
  *       Entrada:
- *           var  : El numero de la variable
+ *           varId: El numero de la variable
  *           value: El valor
  *
  *************************************************************************/
 
-void varSet(UINT8 var, UINT16 value) {
+void eosVarSet(UINT8 varId, VARTYPE value) {
 
-    BYTE data[4];
-
-    if (var < NUM_VARIABLES)
-        variables[var] = value;
-
-#ifdef MODE_MASTER
-    else {
-        data[0] = CMD_VAR_SET | (var & 0b00011111);
-        data[1] = value >> 8;
-        data[2] = value & 0xFF;
-        data[3] = CalcCheckSum((BYTE*) data, sizeof(data) - 1);
-        masterSendCommand(var & 0b11100000, (BYTE*) data, sizeof(data));
-    }
-#endif
+    if (varId < EOS_NUM_VARIABLES)
+        variables[varId] = value;
 }
 
 
@@ -226,8 +211,8 @@ void varSet(UINT8 var, UINT16 value) {
  *       Assigna valors a variables a partir d'una taula
  *
  *       Funcio:
- *           void varSetTable(VARINIT *data, UINT8 size)
- *           void varSetTableROM(VARINIT const *data, UINT8 size)
+ *           void eosVarSetTable(VARINIT *data, UINT8 dataLen)
+ *           void eosVarSetTableROM(VARINIT const *data, UINT8 dataLen)
  *
  *       Entrada:
  *           data: Taula d'inicialitzacio
@@ -235,17 +220,19 @@ void varSet(UINT8 var, UINT16 value) {
  *
  *************************************************************************/
 
-void varSetTable(VARINIT *data, UINT8 size) {
+void eosVarSetTable(VARINIT *data, UINT8 dataLen) {
 
-    while (size--)
-        varSet(data[size].var, data[size].value);
+    while (dataLen--)
+        eosVarSet(data[dataLen].varId, data[dataLen].value);
 }
 
-void varSetTableROM(VARINIT const *data, UINT8 size) {
+#ifdef _PIC18
+void varSetTableROM(VARINIT const *data, UINT8 dataLen) {
 
-    while (size--)
-        varSet(data[size].var, data[size].value);
+    while (dataLen--)
+        eosVarSet(data[dataLen].varId, data[dataLen].value);
 }
+#endif
 
 
 #endif

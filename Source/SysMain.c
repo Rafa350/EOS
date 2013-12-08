@@ -78,6 +78,10 @@ void eosMain(void) {
     sysTimInitialize();
 #endif
 
+#ifdef EOS_USE_VARIABLES
+    sysVarInitialize();
+#endif
+
 #ifdef EOS_USE_LEDSTATUS
     sysLedInitialize();
 #endif

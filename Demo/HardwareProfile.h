@@ -88,15 +88,19 @@
 
 // Definicions pel modul d'entrades digitals
 //
+#define EOS_NUM_INPUTS       3    // Numero maxim d'entrades
 #define GetSW1()        eosInpGet(0)
 #define GetSW2()        eosInpGet(1)
 #define GetSW3()        eosInpGet(2)
 
+
 // Definicions pel modul de sortides digitals
 //
+#define EOS_NUM_OUTPUTS      2    // Numero maxim de sortides
+
 #define SetLED1(s)      eosOutSet(0, s)
 #define SetLED2(s)      eosOutSet(1, s)
-#define SetLED3(s)      eosOutSet(2, s)
+
 
 #endif
 
