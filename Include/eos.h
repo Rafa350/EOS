@@ -108,6 +108,14 @@ extern void sysTimTickInterrupt(void);
 //
 #ifdef EOS_USE_VARIABLES
 
+#ifndef __halVarSave
+#define __halVarSave(d, s)        halVarSave(d, s)
+#endif
+
+#ifndef __halVarRestore
+#define __halVarRestore(d, s)     halVarRestore(d, s)
+#endif
+
 typedef UINT16 VARTYPE;
 
 typedef struct {
@@ -125,6 +133,9 @@ extern void eosVarSetTableROM(VARINIT *data, UINT8 dataLen);
 #endif
 
 extern void sysVarInitialize(void);
+
+extern void halVarSave(BYTE *data, UINT dataSize);
+extern void halVarRestore(BYTE *data, UINT dataSize);
 #endif
 
 // Modul indicador d'estat

@@ -5,7 +5,7 @@
 
 
 #if !defined(EOS_NUM_OUTPUTS) || (EOS_NUM_OUTPUTS < 1) || (EOS_NUM_OUTPUTS > 32)
-#error 'EOS_NUM_OUTPUTS' ha de estar en el intervalo 1..16
+#error 'EOS_NUM_OUTPUTS' ha de estar en el intervalo 1..32
 #endif
 
 typedef struct {             // Estat del port

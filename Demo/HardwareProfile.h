@@ -82,13 +82,12 @@
 // Definicions per PLIB32
 //
 #define GetSystemClock()          (80000000L)
-#define GetPeriphericalClock()    (GetSystemClock() / 2)
-#define GetInstructionClock()     (GetSystemClock() / 2)
 
 
 // Definicions pel modul d'entrades digitals
 //
 #define EOS_NUM_INPUTS       3    // Numero maxim d'entrades
+
 #define GetSW1()        eosInpGet(0)
 #define GetSW2()        eosInpGet(1)
 #define GetSW3()        eosInpGet(2)
