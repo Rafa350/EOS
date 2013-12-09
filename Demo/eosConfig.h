@@ -40,7 +40,6 @@
 //
 #define EOS_USE_VARIABLES         // Activa el modul
 #define EOS_NUM_VARIABLES 64      // Numero maxim de variables
-#define EOS_VAR_EEPROMBASE 0      // Adressa inicial en la EEPROM
 
 
 // Parametres del modul USB

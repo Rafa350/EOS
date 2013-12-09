@@ -51,14 +51,14 @@ void sysTimInitialize(void){
 
 void sysTimTickInterrupt(void) {
 
-    UINT8 timerId = EOS_NUM_TIMERS - 1;
+    UINT8 id = EOS_NUM_TIMERS - 1;
     do {
 
-        TIMERINFO *t = &timers[timerId];
+        TIMERINFO *t = &timers[id];
         if (!t->pause && t->counter)
             t->counter--;
 
-    } while (timerId--);
+    } while (id--);
 }
 
 
@@ -73,9 +73,9 @@ void sysTimTickInterrupt(void) {
 
 void sysTimLoop(void) {
 
-    UINT8 timerId = EOS_NUM_TIMERS - 1;
+    UINT8 id = EOS_NUM_TIMERS - 1;
     do {
-        TIMERINFO *t = &timers[timerId];
+        TIMERINFO *t = &timers[id];
 
         eosDisableInterrupts();
 
@@ -84,7 +84,7 @@ void sysTimLoop(void) {
 
         eosEnableInterrupts();
 
-    } while (timerId--);
+    } while (id--);
 }
 
 
@@ -122,20 +122,20 @@ void eosTimStart(UINT8 id, unsigned time) {
  *       Posa un temporitzador en pausa
  *
  *       Funcio:
- *           void eosTimPause(UINT8 timerId)
+ *           void eosTimPause(UINT8 id)
  *
  *       Entrada:
- *           timerId: Numero de temporitzador
+ *           id: Numero de temporitzador
  *
  *************************************************************************/
 
-void eosTimPause(UINT8 timerId) {
+void eosTimPause(UINT8 id) {
 
-    if (timerId < EOS_NUM_TIMERS) {
+    if (id < EOS_NUM_TIMERS) {
 
         eosDisableInterrupts();
 
-        timers[timerId].pause = TRUE;
+        timers[id].pause = TRUE;
 
         eosEnableInterrupts();
     }
@@ -147,20 +147,20 @@ void eosTimPause(UINT8 timerId) {
  *       Treu el temporitzador del estat pausat
  *
  *       Funcio:
- *           void eosTimContinue(UINT8 timerId)
+ *           void eosTimContinue(UINT8 id)
  *
  *       Entrada:
- *           timerId: Numero de temporitzador
+ *           id: Numero de temporitzador
  *
  *************************************************************************/
 
-void eosTimContinue(UINT8 timerId) {
+void eosTimContinue(UINT8 id) {
 
-    if (timerId < EOS_NUM_TIMERS) {
+    if (id < EOS_NUM_TIMERS) {
 
         eosDisableInterrupts();
 
-        timers[timerId].pause = FALSE;
+        timers[id].pause = FALSE;
         
         eosEnableInterrupts();
     }
@@ -172,20 +172,20 @@ void eosTimContinue(UINT8 timerId) {
  *       Obte l'estat d'un temporitzador
  *
  *       Funcio:
- *           BOOL eosTimGet(UINT8 timerId)
+ *           BOOL eosTimGet(UINT8 id)
  *
  *       Entrada:
- *           timerId: Numero de temporitzador
+ *           id: Numero de temporitzador
  *
  *       Retorn:
  *           TRUE si ha pasat el temps programat. FALSE en cas contrari
  *
  *************************************************************************/
 
-BOOL eosTimGet(UINT8 timerId) {
+BOOL eosTimGet(UINT8 id) {
 
-    if (timerId < EOS_NUM_TIMERS) 
-        return timers[timerId].state;
+    if (id < EOS_NUM_TIMERS) 
+        return timers[id].state;
     else
         return FALSE;
 }

@@ -39,6 +39,7 @@
       <logicalFolder name="f2" displayName="hal" projectFiles="true">
         <itemPath>../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c</itemPath>
         <itemPath>../Hal/Hal_PICKIT3_44pin_Demo_Board.c</itemPath>
+        <itemPath>../Hal/Hal_MDCPU04B.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="usb" projectFiles="true">
         <itemPath>../usb_config.c</itemPath>
@@ -70,7 +71,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
-        <languageToolchainVersion>1.21</languageToolchainVersion>
+        <languageToolchainVersion>1.20</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -95,14 +96,34 @@
       <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/MSD Host Driver/usb_host_msd.c"
             ex="true"
             overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/MSD Host Driver/usb_host_msd_scsi.c"
             ex="true"
             overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/usb_host.c"
             ex="true"
             overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
+      </item>
+      <item path="../../Source/SysAlloc.c" ex="true" overriding="false">
       </item>
       <item path="../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c"
             ex="true"
@@ -123,6 +144,12 @@
         </XC8-config-global>
       </item>
       <item path="../usb_config.c" ex="true" overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <HI-TECH-COMP>
         <property key="asmlist" value="true"/>
@@ -229,7 +256,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.30</languageToolchainVersion>
+        <languageToolchainVersion>1.21</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -251,6 +278,8 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
+      <item path="../Hal/Hal_MDCPU04B.c" ex="true" overriding="false">
+      </item>
       <item path="../Hal/Hal_PICKIT3_44pin_Demo_Board.c" ex="true" overriding="false">
         <C32>
         </C32>
@@ -369,7 +398,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
-        <languageToolchainVersion>1.21</languageToolchainVersion>
+        <languageToolchainVersion>1.20</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -394,14 +423,36 @@
       <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/MSD Host Driver/usb_host_msd.c"
             ex="true"
             overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/MSD Host Driver/usb_host_msd_scsi.c"
             ex="true"
             overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/usb_host.c"
             ex="true"
             overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
+      </item>
+      <item path="../../Source/SysAlloc.c" ex="true" overriding="false">
+      </item>
+      <item path="../Hal/Hal_MDCPU04B.c" ex="true" overriding="false">
       </item>
       <item path="../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c"
             ex="true"
@@ -414,6 +465,12 @@
         </XC8-config-global>
       </item>
       <item path="../usb_config.c" ex="true" overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <HI-TECH-COMP>
         <property key="asmlist" value="true"/>

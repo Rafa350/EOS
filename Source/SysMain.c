@@ -2,19 +2,11 @@
 
 
 #if defined(_PIC18)
-extern void usrInitialize(void);
 extern void usrSetup(void);
-void usrTick(void);
 void usrLoop(void);
 
 #elif defined(__PIC32MX)
-__attribute__((weak)) void usrInitialize(void) {
-}
-
 __attribute__((weak)) void usrSetup(void) {
-}
-
-__attribute__((weak)) void usrTick(void) {
 }
 
 __attribute__((weak)) void usrLoop(void) {
