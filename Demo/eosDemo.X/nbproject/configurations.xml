@@ -124,6 +124,12 @@
         </XC8-config-global>
       </item>
       <item path="../../Source/SysAlloc.c" ex="true" overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c"
             ex="true"
@@ -279,6 +285,16 @@
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <item path="../Hal/Hal_MDCPU04B.c" ex="true" overriding="false">
+        <C32>
+        </C32>
+        <C32-AS>
+        </C32-AS>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <item path="../Hal/Hal_PICKIT3_44pin_Demo_Board.c" ex="true" overriding="false">
         <C32>
@@ -451,8 +467,20 @@
         </XC8-config-global>
       </item>
       <item path="../../Source/SysAlloc.c" ex="true" overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../Hal/Hal_MDCPU04B.c" ex="true" overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c"
             ex="true"

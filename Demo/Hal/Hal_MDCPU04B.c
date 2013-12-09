@@ -23,7 +23,6 @@ void halInitialize(void) {
     OSCTUNEbits.PLLEN = 1;        // PLL enabled (x4)
     OSCCONbits.IRCF = 7;          // 16MHz en HFINTOSC
     OSCTUNEbits.INTSRC = 1;       // 31.25 clock from HS
-    OSCCONbits.IRCF = 6;          // 8MHz
     OSCCONbits.SCS = 0;           // Oscilador primari definit en CONFIG.FOSC
 #endif
 
@@ -37,12 +36,14 @@ void halInitialize(void) {
     // Configura el temporitzador TMR2
     // -Genera una interrupcio cada 1ms
     //
-    PR2 = 125;                    // Conta fins a 125
-    T2CONbits.T2CKPS = 3;         // Divisor per 64 --> (Fosc / 4) / 64 = 125KHz
-    T2CONbits.T2OUTPS = 0;        // Divisor per 1
-    T2CONbits.TMR2ON = 1;         // Inicia el conteig
-    TMR2IF = 0;                   // Borra el flag d'interrupcions
-    TMR2IE = 1;                   // Autoritza interrupcions de TMR2
+    TMR0L = 125;                  // Conta fins a 125
+    T0CONbits.T08BIT = 1;         // Modus 8 bits
+    T0CONbits.T0CS = 0;           // Fosc/4
+    T0CONbits.PSA = 0;            // Divisor activat
+    T0CONbits.T0PS = 5;           // Divisor 1:64
+    T0CONbits.TMR0ON = 1;         // Temporitzador activat
+    TMR0IF = 0;
+    TMR0IE = 1;                   // Permet interrupcions en TMR0
 
     // Inicialitza els ports d'entrada
     //
@@ -68,6 +69,10 @@ void halInitialize(void) {
     LATDbits.LATD5 = 0;
     TRISDbits.TRISD5 = 0;
 
+#ifdef EOS_USE_WATCHDOG
+    WDTCONbits.WDTPS = 0x0A;      // Es dispara cada segon
+#endif
+
     // Configura les interrupcions
     //
     IPEN = 0;                     // Interrupcions sense prioritats
@@ -80,7 +85,7 @@ void halInitialize(void) {
  *       Escriptura en el port de sortida
  *
  *       Funcio:
- *           void halOutWrite(UINT8 id, BOOL state)
+ *           void halOutPortWrite(UINT8 id, BOOL state)
  *
  *       Entrada:
  *           id   : Numero de sortida
@@ -91,32 +96,102 @@ void halInitialize(void) {
 void halOutPortWrite(UINT8 id, BOOL state) {
 
     BOOL s = state;
-    if (id == 0)
-        LATAbits.LATA5 = s;
-    else if (id == 1)
-        LATAbits.LATA4 = s;
-    else if (id == 2)
-        LATAbits.LATA1 = s;
-    else if (id == 3)
-        LATAbits.LATA3 = s;
-    else if (id == 4)
-        LATAbits.LATA2 = s;
-    else if (id == 5)
-        LATAbits.LATA0 = s;
-    else if (id == 6)
-        LATCbits.LATC1 = s;
-    else if (id == 7)
-        LATCbits.LATC3 = s;
-    else if (id == 8)
-        LATCbits.LATC2 = s;
-    else if (id == 9)
-        LATCbits.LATC0 = s;
+    switch (id) {
+        case 0:
+            LATAbits.LATA5 = s;
+            break;
+
+        case 1:
+            LATAbits.LATA4 = s;
+            break;
+
+
+        case 2:
+            LATAbits.LATA1 = s;
+            break;
+
+        case 3:
+            LATAbits.LATA3 = s;
+            break;
+
+        case 4:
+            LATAbits.LATA2 = s;
+            break;
+
+        case 5:
+            LATAbits.LATA0 = s;
+            break;
+
+        case 6:
+            LATCbits.LATC1 = s;
+            break;
+
+        case 7:
+            LATCbits.LATC3 = s;
+            break;
+
+        case 8:
+            LATCbits.LATC2 = s;
+            break;
+
+        case 9:
+            LATCbits.LATC0 = s;
+            break;
+    }
 }
 
 
+/*************************************************************************
+ *
+ *       Lectura d'un port d'entrada
+ *
+ *       Funcio:
+ *           BOOL halInpPortRead(UINT8 id)
+ *
+ *       Entrada:
+ *           id: Identificador del port
+ *
+ *       Retorn:
+ *           Estst del port
+ *
+ *************************************************************************/
+
 BOOL halInpPortRead(UINT8 id) {
 
-    return FALSE;
+    switch (id) {
+        case 0:
+            return PORTBbits.RB1;
+        
+        case 1:
+            return PORTBbits.RB0;
+        
+        case 2:
+            return PORTBbits.RB3;
+        
+        case 3:
+            return PORTBbits.RB2;
+        
+        case 4:
+            return PORTBbits.RB5;
+        
+        case 5:
+            return PORTBbits.RB4;
+        
+        case 6:
+            return PORTBbits.RB7;
+        
+        case 7:
+            return PORTBbits.RB6;
+        
+        case 8:
+            return PORTEbits.RE0;
+        
+        case 9:
+            return PORTEbits.RE1;
+        
+        default:
+            return FALSE;
+    }
 }
 
 
@@ -149,8 +224,8 @@ void halLedPortWrite(BOOL state) {
 
 void interrupt ISR(void) {
 
-    if (TMR2IF && TMR2IE) {
+    if (TMR0IF && TMR0IE) {
         eosTickInterrupt();
-        TMR2IF = 0;
+        TMR0IF = 0;
     }
 }

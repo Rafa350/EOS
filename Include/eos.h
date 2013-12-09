@@ -60,6 +60,9 @@ extern void eosOutToggle(UINT8 id);
 extern void eosOutPulse(UINT8 id, unsigned timeOut);
 extern void eosOutAllOFF(void);
 
+#define eosOutSetON(id)                eosOutSet(id, TRUE)
+#define eosOutSetOFF(id)               eosOutSet(id, FALSE)
+
 extern void sysOutInitialize(void);
 extern void sysOutLoop(void);
 extern void sysOutTickInterrupt(void);
