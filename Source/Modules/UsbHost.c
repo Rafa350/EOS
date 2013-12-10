@@ -46,6 +46,8 @@ void sysUsbHostLoop(void) {
         deviceAttached = TRUE;
         eosOutSet(1, TRUE);
     }
+    else
+        eosOutSet(1, FALSE);
 }
 
 
@@ -81,7 +83,7 @@ BOOL USB_ApplicationEventHandler(BYTE address, USB_EVENT event, void *data, DWOR
         case EVENT_OUT_OF_MEMORY:
             return TRUE;
 
-        case EVENT_UNSPECIFIED_ERROR:   // This should never be generated.
+        case EVENT_UNSPECIFIED_ERROR:
             return TRUE;
 
         default:

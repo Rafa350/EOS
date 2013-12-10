@@ -22,7 +22,7 @@
       </runprofile>
     </conf>
     <conf name="PIC32-ETH-SK" type="2">
-      <platformToolSN></platformToolSN>
+      <platformToolSN>:=MPLABCommUSB:=04D8:=00E0:=0000:=Microchip Technology Inc.:=Microchip Custom USB Device:=BUR103433408:=x:=en</platformToolSN>
       <languageToolchainDir>C:\Program Files\Microchip\xc32\v1.30\bin</languageToolchainDir>
       <mdbdebugger version="1">
         <placeholder1>place holder 1</placeholder1>
