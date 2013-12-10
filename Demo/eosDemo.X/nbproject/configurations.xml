@@ -8,6 +8,11 @@
         <itemPath>../../Include/eos.h</itemPath>
         <itemPath>../eosConfig.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="f3" displayName="freertos" projectFiles="true">
+        <itemPath>../FreeRTOSConfig.h</itemPath>
+        <itemPath>../../../FreeRTOSV7.4.2/FreeRTOS/Source/include/FreeRTOS.h</itemPath>
+        <itemPath>../../../FreeRTOSV7.4.2/FreeRTOS/Source/include/task.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f2" displayName="usb" projectFiles="true">
         <itemPath>../usb_config.h</itemPath>
         <itemPath>../FSconfig.h</itemPath>
@@ -31,10 +36,14 @@
           <itemPath>../../Source/Modules/Outputs.c</itemPath>
           <itemPath>../../Source/Modules/UsbHost.c</itemPath>
         </logicalFolder>
-        <itemPath>../../Source/SysMain.c</itemPath>
-        <itemPath>../../Source/SysAlloc.c</itemPath>
+        <itemPath>../../Source/Memory.c</itemPath>
+        <itemPath>../../Source/Start.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="freertos" projectFiles="true">
+        <itemPath>../../../FreeRTOSV7.4.2/FreeRTOS/Source/tasks.c</itemPath>
+        <itemPath>../../../FreeRTOSV7.4.2/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+        <itemPath>../../../FreeRTOSV7.4.2/FreeRTOS/Source/portable/MPLAB/PIC32MX/port2.c</itemPath>
+        <itemPath>../../../FreeRTOSV7.4.2/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="hal" projectFiles="true">
         <itemPath>../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c</itemPath>
@@ -60,6 +69,7 @@
     <Elem>../../Source</Elem>
     <Elem>..</Elem>
     <Elem>../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB</Elem>
+    <Elem>../../../FreeRTOSV7.4.2/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -71,7 +81,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
-        <languageToolchainVersion>1.20</languageToolchainVersion>
+        <languageToolchainVersion>1.21</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -116,14 +126,6 @@
       <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/usb_host.c"
             ex="true"
             overriding="false">
-        <HI-TECH-COMP>
-        </HI-TECH-COMP>
-        <HI-TECH-LINK>
-        </HI-TECH-LINK>
-        <XC8-config-global>
-        </XC8-config-global>
-      </item>
-      <item path="../../Source/SysAlloc.c" ex="true" overriding="false">
         <HI-TECH-COMP>
         </HI-TECH-COMP>
         <HI-TECH-LINK>
@@ -262,7 +264,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.21</languageToolchainVersion>
+        <languageToolchainVersion>1.30</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -314,9 +316,9 @@
         <property key="enable-omit-frame-pointer" value="false"/>
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="false"/>
-        <property key="exclude-floating-point" value="false"/>
+        <property key="exclude-floating-point" value="true"/>
         <property key="extra-include-directories"
-                  value="..\;..\..\Include;c:\Microchip Solutions v2013-06-15\Microchip\Include"/>
+                  value="..\;..\..\Include;c:\Microchip Solutions v2013-06-15\Microchip\Include;..\..\..\FreeRTOSV7.4.2\FreeRTOS\Source\include;..\..\..\FreeRTOSV7.4.2\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
         <property key="make-warnings-into-errors" value="false"/>
@@ -334,10 +336,11 @@
       <C32-AS>
         <property key="assembler-symbols" value=""/>
         <property key="enable-symbols" value="true"/>
-        <property key="exclude-floating-point-library" value="false"/>
+        <property key="exclude-floating-point-library" value="true"/>
         <property key="expand-macros" value="false"/>
         <property key="extra-include-directories-for-assembler" value=""/>
-        <property key="extra-include-directories-for-preprocessor" value=""/>
+        <property key="extra-include-directories-for-preprocessor"
+                  value="..\..\..\FreeRTOSV7.4.2\FreeRTOS\Source\portable\MPLAB\PIC32MX;..\..\..\FreeRTOSV7.4.2\FreeRTOS\Source\include"/>
         <property key="false-conditionals" value="false"/>
         <property key="keep-locals" value="false"/>
         <property key="list-assembly" value="false"/>
@@ -414,7 +417,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
-        <languageToolchainVersion>1.20</languageToolchainVersion>
+        <languageToolchainVersion>1.21</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -459,14 +462,6 @@
       <item path="../../../../../../../../Microchip Solutions v2013-06-15/Microchip/USB/usb_host.c"
             ex="true"
             overriding="false">
-        <HI-TECH-COMP>
-        </HI-TECH-COMP>
-        <HI-TECH-LINK>
-        </HI-TECH-LINK>
-        <XC8-config-global>
-        </XC8-config-global>
-      </item>
-      <item path="../../Source/SysAlloc.c" ex="true" overriding="false">
         <HI-TECH-COMP>
         </HI-TECH-COMP>
         <HI-TECH-LINK>

@@ -8,10 +8,6 @@
 #include "plib.h"
 #endif
 
-#ifndef __HARDWAREPROFILE_H
-#include "hardwareprofile.h"
-#endif
-
 #ifndef __EOSCONFIG_H
 #include "eosconfig.h"
 #endif
@@ -26,8 +22,10 @@ extern void eosMain(void);
 #endif
 extern void eosTickInterrupt(void);
 extern void eosDelay(unsigned);
-extern void* eosMemAlloc(unsigned size);
-extern void eosMemFree(void *p);
+extern void* eosAlloc(unsigned size);
+extern void* eosRealloc(void *p, unsigned size);
+extern void* eosAllocString(const char *s);
+extern void eosFree(void *p);
 
 extern void halInitialize(void);
 

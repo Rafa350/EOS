@@ -3,7 +3,7 @@
                                                                                 
 Software License Agreement                                                      
                                                                                 
-Copyright ï¿½ 2007-2008 Microchip Technology Inc.  All rights reserved.           
+Copyright © 2007-2008 Microchip Technology Inc.  All rights reserved.           
                                                                                 
 Microchip licenses to you the right to use, modify, copy and distribute Software
 only when embedded on a Microchip microcontroller or digital signal controller  
@@ -29,74 +29,46 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 
 // Created by the Microchip USBConfig Utility, Version 2.0.0.0, 11/18/2008, 8:08:56
 
-#ifndef _usb_config_h_
-#define _usb_config_h_
+#include "GenericTypeDefs.h"
+#include "HardwareProfile.h"
+#include "USB/usb.h"
+#include "USB/usb_host_msd.h"
+#include "USB/usb_host_msd_scsi.h"
 
-#if defined(__PIC24F__)
-    #include <p24Fxxxx.h>
-#elif defined(__18CXX)
-    #include <p18cxxx.h>
-#elif defined(__PIC32MX__)
-    #include <p32xxxx.h>
-    #include "plib.h"
-#elif defined (__dsPIC33EP512MU810__)
-    #include <p33Exxxx.h>
-#elif defined (__PIC24EP512GU810__)
-    #include <p24Exxxx.h>
-#else
+// *****************************************************************************
+// Media Interface Function Pointer Table for the Mass Storage client driver
+// *****************************************************************************
 
-    #error No processor header file.
-#endif
+CLIENT_DRIVER_TABLE usbMediaInterfaceTable =
+{                                           
+    USBHostMSDSCSIInitialize,
+    USBHostMSDSCSIEventHandler,
+    0
+};
 
-#define _USB_CONFIG_VERSION_MAJOR 2
-#define _USB_CONFIG_VERSION_MINOR 0
-#define _USB_CONFIG_VERSION_DOT   0
-#define _USB_CONFIG_VERSION_BUILD 0
+// *****************************************************************************
+// Client Driver Function Pointer Table for the USB Embedded Host foundation
+// *****************************************************************************
 
-// Supported USB Configurations
-
-#define USB_SUPPORT_HOST
-
-// Hardware Configuration
-
-//USB_PING_PONG__FULL_PING_PONG
-#define USB_PING_PONG_MODE  USB_PING_PONG__FULL_PING_PONG 
-
-// Host Configuration
-
-#define NUM_TPL_ENTRIES 2
-#define USB_NUM_CONTROL_NAKS 200
-#define USB_SUPPORT_INTERRUPT_TRANSFERS
-#define USB_NUM_INTERRUPT_NAKS 3
-#define USB_SUPPORT_BULK_TRANSFERS
-#define USB_NUM_BULK_NAKS 20000
-//#define USB_SUPPORT_ISOCHRONOUS_TRANSFERS
-#define USB_INITIAL_VBUS_CURRENT (100/2)
-#define USB_INSERT_TIME (250+1)
-#define USB_HOST_APP_EVENT_HANDLER USB_ApplicationEventHandler
-
-// Host Mass Storage Client Driver Configuration
-
-//#define USB_ENABLE_TRANSFER_EVENT
-
-#define USB_MAX_MASS_STORAGE_DEVICES 1
-
-// Helpful Macros
-
-#define USBTasks()                  \
-    {                               \
-        USBHostTasks();             \
-        USBHostMSDTasks();          \
+CLIENT_DRIVER_TABLE usbClientDrvTable[] =
+{                                        
+    {
+        USBHostMSDInitialize,
+        USBHostMSDEventHandler,
+        0
     }
+};
 
-#define USBInitialize(x)            \
-    {                               \
-        USBHostInit(x);             \
-    }
+// *****************************************************************************
+// USB Embedded Host Targeted Peripheral List (TPL)
+// *****************************************************************************
+
+USB_TPL usbTPL[] =
+{
+    { INIT_CL_SC_P( 8ul, 6ul, 0x50ul ), 0, 0, {TPL_CLASS_DRV} } // Most types of MSD flash drives
+    ,
+    { INIT_CL_SC_P( 8ul, 5ul, 0x50ul ), 0, 0, {TPL_CLASS_DRV} } // Some MSD flash drives use this instead
+};
 
 
-#define USB_MALLOC(s)   eosAlloc(s)
-#define USB_FREE(p)     eosFree(p)
-
-#endif
 

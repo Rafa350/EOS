@@ -140,6 +140,7 @@ void halVarRestore(void *data, unsigned dataSize) {
 
 }
 
+
 /*************************************************************************
  *
  *       Interrupcio del temporitzador
