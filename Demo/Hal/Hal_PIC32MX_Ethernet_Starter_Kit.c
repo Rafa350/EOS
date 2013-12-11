@@ -1,28 +1,38 @@
 #include "eos.h"
 
+#include "peripheral/ports/plib_ports.h"
+//#include "peripheral/osc/plib_osc.h"
+#include "peripheral/tmr/plib_tmr.h"
 
-static IoPortId outPortIds[EOS_NUM_OUTPUTS] = {
-    IOPORT_D,
-    IOPORT_D,
-    //IOPORT_D
+
+static PORTS_CHANNEL outPortChannel[EOS_NUM_OUTPUTS] = {
+    PORT_CHANNEL_D,
+    PORT_CHANNEL_D,
+    //PORT_CHANNEL_PORT_D
 };
 
-static unsigned outPortBits[EOS_NUM_OUTPUTS] = {
-    BIT_0,
-    BIT_1,
-    //BIT_2
+static PORTS_BIT_POS outPortBit[EOS_NUM_OUTPUTS] = {
+    PORTS_BIT_POS_0,
+    PORTS_BIT_POS_1,
+    //PORTS_BIT_POS_2
 };
 
-static IoPortId inpPortIds[EOS_NUM_INPUTS] =  {
-    IOPORT_D,
-    IOPORT_D,
-    IOPORT_D
+static PORTS_CHANNEL inpPortChannel[EOS_NUM_INPUTS] =  {
+    PORT_CHANNEL_D,
+    PORT_CHANNEL_D,
+    PORT_CHANNEL_D
 };
 
-static unsigned inpPortBits[EOS_NUM_INPUTS] = {
-    BIT_6,
-    BIT_7,
-    BIT_13
+static PORTS_BIT_POS inpPortBit[EOS_NUM_INPUTS] = {
+    PORTS_BIT_POS_6,
+    PORTS_BIT_POS_7,
+    PORTS_BIT_POS_13
+};
+
+static int inpPullUpChannel[EOS_NUM_INPUTS] = {
+    CN15,
+    CN16,
+    CN19
 };
 
 
@@ -37,6 +47,8 @@ static unsigned inpPortBits[EOS_NUM_INPUTS] = {
 
 void halInitialize(void) {
 
+    extern unsigned int SYSTEMConfigPerformance(unsigned int sys_clock);
+
     unsigned i;
 
     // Configura el sistema
@@ -45,26 +57,40 @@ void halInitialize(void) {
 
     // Configura el temporitzador per que generi interrupcions TICK cada 1ms
     //
-    OpenTimer5(T5_INT_ON | T5_SOURCE_INT | T5_PS_1_256, GetSystemClock() / 256 / 1000);
-    ConfigIntTimer5(T5_INT_ON | T5_INT_PRIOR_2);
+    PLIB_TMR_Stop(TMR_ID_2);
+    PLIB_TMR_ClockSourceSelect(TMR_ID_2, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
+    PLIB_TMR_PrescaleSelect(TMR_ID_2, TMR_PRESCALE_VALUE_64);
+    PLIB_TMR_Mode16BitEnable(TMR_ID_2);
+    PLIB_TMR_Counter16BitClear(TMR_ID_2);
+    PLIB_TMR_Period16BitSet(TMR_ID_2, GetPeriphericalClock() / 64 / 1000);
 
     // Inicialitza els ports de sortida
     //
     for (i = 0; i < EOS_NUM_OUTPUTS; i++)
-        PORTSetPinsDigitalOut(outPortIds[i], outPortBits[i]);
+        PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, outPortChannel[i], outPortBit[i]);
 
     // Inicialitza els ports d'entrada
     //
-    for (i = 0; i < EOS_NUM_INPUTS; i++)
-        PORTSetPinsDigitalIn(inpPortIds[i], inpPortBits[i]);
+    for (i = 0; i < EOS_NUM_INPUTS; i++) {
+        PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, inpPortChannel[i], inpPortBit[i]);
+        PLIB_PORTS_ChangeNoticePullUpEnable(PORTS_ID_0, inpPullUpChannel[i]);
+    }
 
     // Inicialitza el led
     //
-    mPORTDSetPinsDigitalOut(BIT_2);
+    PLIB_PORTS_PinClear(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_2);
+    PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_2);
 
     // Configura les interrupcions
     //
-    INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
+    PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_TIMER_2);
+    PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_T2, INT_PRIORITY_LEVEL2);
+    PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_T2, INT_SUBPRIORITY_LEVEL0);
+    PLIB_INT_MultiVectorSelect(INT_ID_0);
+
+    // Activa el temporitzador i comença a generar interrupcions TICK
+    //
+    PLIB_TMR_Start(TMR_ID_2);
 }
 
 
@@ -73,20 +99,20 @@ void halInitialize(void) {
  *       Escriu en un port de sortida
  *
  *       Funcio:
- *           void halOutPortWrite(UINT8 outputId, BOOL state)
+ *           void halOutPortWrite(UINT8 id, BOOL state)
  *
  *       Entrada:
- *           outputId: Identificador del port
- *           state   : Esl nou estat
+ *           id   : Identificador del port
+ *           state: Esl nou estat
  *
  *************************************************************************/
 
-void halOutPortWrite(UINT8 outputId, BOOL state) {
+void halOutPortWrite(UINT8 id, BOOL state) {
     
     if (state)
-        PORTSetBits(outPortIds[outputId], outPortBits[outputId]);
+        PLIB_PORTS_PinSet(PORTS_ID_0, outPortChannel[id], outPortBit[id]);
     else
-        PORTClearBits(outPortIds[outputId], outPortBits[outputId]);
+        PLIB_PORTS_PinClear(PORTS_ID_0, outPortChannel[id], outPortBit[id]);
 }
 
 
@@ -105,9 +131,9 @@ void halOutPortWrite(UINT8 outputId, BOOL state) {
  *
  *************************************************************************/
 
-BOOL halInpPortRead(UINT8 inputId) {
+BOOL halInpPortRead(UINT8 id) {
 
-    return PORTReadBits(inpPortIds[inputId], inpPortBits[inputId]) == 0;
+    return !PLIB_PORTS_PinGet(PORTS_ID_0, inpPortChannel[id], inpPortBit[id]);
 }
 
 
@@ -126,9 +152,9 @@ BOOL halInpPortRead(UINT8 inputId) {
 void halLedPortWrite(BOOL state) {
 
     if (state)
-        mPORTDSetBits(BIT_2);
+        PLIB_PORTS_PinSet(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_2);
     else
-        mPORTDClearBits(BIT_2);
+        PLIB_PORTS_PinClear(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_2);
 }
 
 
@@ -150,9 +176,9 @@ void halVarRestore(void *data, unsigned dataSize) {
  *
  *************************************************************************/
 
-void __ISR(_TIMER_5_VECTOR, ipl2) TickHandler(void) {
+void  __attribute__((interrupt(ipl2), vector(_TIMER_2_VECTOR))) TickHandler(void) {
 
     eosTickInterrupt();
     
-    mT5ClearIntFlag();
+    PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_2);
 }

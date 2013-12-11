@@ -12,6 +12,7 @@
 #define EOS_USE_LEDSTATUS
 //#define EOS_USE_WATCHDOG
 //#define EOS_USE_FREERTOS
+#define EOS_USE_HARMONY
 
 
 

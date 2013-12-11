@@ -4,13 +4,18 @@
 #include "xc.h"
 #include "GenericTypeDefs.h"
 
-#ifdef __PIC32MX
-#include "plib.h"
-#endif
-
 #ifndef __EOSCONFIG_H
 #include "eosconfig.h"
 #endif
+
+#ifdef __PIC32MX
+#ifdef EOS_USE_HARMONY
+#include "peripheral/int/plib_int.h"
+#else
+#include "plib.h"
+#endif
+#endif
+
 
 #ifndef __halInitialize
 #define __halInitialize()         halInitialize()
@@ -36,11 +41,19 @@ extern void halInitialize(void);
 #define eosDisableWatchdog()      WDTCONbits.SWDTEN = 0
 #define eosClearWatchdog()        CLRWDT()
 #elif defined(__PIC32MX)
+#ifdef EOS_USE_HARMONY
+#define eosEnableInterrupts()     PLIB_INT_Enable(INT_ID_0)
+#define eosDisableInterrupts()    PLIB_INT_Disable(INT_ID_0)
+#define eosEnableWatchdog()       EnableWDT()
+#define eosDisableWatchdog()      DisablWDT()
+#define eosClearWatchdog()        ClearWDT()
+#else
 #define eosEnableInterrupts()     INTEnableInterrupts()
 #define eosDisableInterrupts()    INTDisableInterrupts()
 #define eosEnableWatchdog()       EnableWDT()
 #define eosDisableWatchdog()      DisablWDT()
 #define eosClearWatchdog()        ClearWDT()
+#endif
 #endif
 
 

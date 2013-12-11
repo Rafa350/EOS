@@ -30,7 +30,7 @@
 // Definicions per PLIB32
 //
 #define GetSystemClock()          (80000000L)
-#define GetPeriphericalClock()    (GetSystemClock() / 2)
+#define GetPeriphericalClock()    (GetSystemClock() / 1)
 
 
 // Definicions pel modul d'entrades digitals
@@ -47,7 +47,7 @@
 
 // Desinicions pel modul USB
 //
-#define EOS_USE_USBHOST
+//#define EOS_USE_USBHOST
 
 #endif
 

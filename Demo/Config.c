@@ -179,7 +179,7 @@
 #pragma config FPLLIDIV = DIV_2         // PLL Input divider
 #pragma config FPLLODIV = DIV_1         // PLL Output divider
 #pragma config FPLLMUL  = MUL_20        // PLL Multiplier
-#pragma config FPBDIV   = DIV_2         // Periferical clock divisor
+#pragma config FPBDIV   = DIV_1         // Periferical clock divisor
 #pragma config UPLLEN   = ON            // USB PLL Enabled
 #pragma config UPLLIDIV = DIV_2         // USB PLL Input Divider
 
