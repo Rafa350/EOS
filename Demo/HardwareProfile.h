@@ -23,6 +23,15 @@
 //
 #define USE_OSC_INTERNAL
 
+// Definicions pel modul d'entrades
+//
+//#define EOS_USE_INPUTS
+//#define EOS_NUM_INPUTS       0
+
+// Definicio pl modul de sortides
+//
+#define EOS_USE_OUTPUTS
+#define EOS_NUM_OUTPUTS      7
 
 
 #elif defined(HARDWARE_PIC32_ESK)

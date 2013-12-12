@@ -12,8 +12,8 @@
 
 void usrSetup(void) {
 
-//    eosOutPulse(0, 1000);
-//    eosOutPulse(1, 2000);
+    eosOutPulse(0, 1000);
+    eosOutPulse(1, 2000);
 }
 
 
@@ -28,6 +28,6 @@ void usrSetup(void) {
 
 void usrLoop(void) {
 
-    eosOutSet(0, eosInpGet(0) || eosInpGet(2));
-    eosOutSet(1, eosInpGet(1) || eosInpGet(2));
+//    eosOutSet(0, eosInpGet(0) || eosInpGet(2));
+//    eosOutSet(1, eosInpGet(1) || eosInpGet(2));
 }

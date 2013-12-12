@@ -38,8 +38,10 @@
           <itemPath>../../Source/Modules/Outputs.c</itemPath>
           <itemPath>../../Source/Modules/UsbHost.c</itemPath>
         </logicalFolder>
-        <itemPath>../../Source/Memory.c</itemPath>
-        <itemPath>../../Source/Start.c</itemPath>
+        <logicalFolder name="f3" displayName="System" projectFiles="true">
+          <itemPath>../../Source/System/Memory.c</itemPath>
+          <itemPath>../../Source/System/Start.c</itemPath>
+        </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f4" displayName="freertos" projectFiles="true">
       </logicalFolder>
