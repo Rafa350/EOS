@@ -1,7 +1,6 @@
 #include "eos.h"
 
 #include "peripheral/ports/plib_ports.h"
-//#include "peripheral/osc/plib_osc.h"
 #include "peripheral/tmr/plib_tmr.h"
 
 
@@ -159,11 +158,9 @@ void halLedPortWrite(BOOL state) {
 
 
 void halVarSave(void *data, unsigned dataSize) {
-
 }
 
 void halVarRestore(void *data, unsigned dataSize) {
-
 }
 
 

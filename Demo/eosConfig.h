@@ -15,6 +15,15 @@
 #define EOS_USE_HARMONY
 
 
+// Definicions pel modul de temporitzadors
+//
+#define EOS_USE_TIMERS
+#define EOS_NUM_TIMERS       16
+
+// Definicions pel modul de variables
+//
+#define EOS_USE_VARIABLES
+#define EOS_NUM_VARIABLES    32
 
 #endif
 

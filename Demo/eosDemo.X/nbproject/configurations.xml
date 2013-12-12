@@ -27,6 +27,8 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="f1" displayName="eos" projectFiles="true">
+        <logicalFolder name="f2" displayName="Drivers" projectFiles="true">
+        </logicalFolder>
         <logicalFolder name="f1" displayName="Modules" projectFiles="true">
           <itemPath>../../Source/Modules/Timers.c</itemPath>
           <itemPath>../../Source/Modules/LedStatus.c</itemPath>
@@ -102,6 +104,12 @@
       <item path="../../../../../../../../microchip/harmony/v0_70b/bsp/sk_pic32_mx_usb/config_performance.c"
             ex="true"
             overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c"
             ex="true"
@@ -407,6 +415,12 @@
       <item path="../../../../../../../../microchip/harmony/v0_70b/bsp/sk_pic32_mx_usb/config_performance.c"
             ex="true"
             overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../Hal/Hal_MDCPU04B.c" ex="true" overriding="false">
         <HI-TECH-COMP>
