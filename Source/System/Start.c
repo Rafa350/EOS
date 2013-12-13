@@ -38,7 +38,7 @@ void eosTickInterrupt(void) {
     sysTimTickInterrupt();
 #endif
 
-#ifdef EOS_USE_LEDSTATUS
+#ifdef eosDBG_UseLed
     sysLedTickInterrupt();
 #endif
 }
@@ -74,7 +74,7 @@ void eosMain(void) {
     sysVarInitialize();
 #endif
 
-#ifdef EOS_USE_LEDSTATUS
+#ifdef eosDBG_UseLed
     sysLedInitialize();
 #endif
 

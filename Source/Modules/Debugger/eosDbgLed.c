@@ -1,12 +1,16 @@
 #include "eos.h"
 
 
-#ifdef EOS_USE_LEDSTATUS
+#ifdef eosDBG_UseLed
 
 
 #define INI_TICK   1000      // 1000 cicles de interrupcio de 1mS
 
 static UINT16 tick;          // Contador de temps
+
+
+extern void halLedInitialize(void);
+extern void halLedPortWrite(BOOL state);
 
 
 /*************************************************************************
@@ -19,6 +23,8 @@ static UINT16 tick;          // Contador de temps
  *************************************************************************/
 
 void sysLedInitialize(void) {
+
+    halLedInitialize();
 
     tick = INI_TICK;
 }
@@ -38,7 +44,7 @@ void sysLedTickInterrupt(void) {
     if (!--tick)
         tick = INI_TICK;
 
-    __halLedPortWrite(tick < 25);
+    halLedPortWrite(tick < 25);
 }
 
 

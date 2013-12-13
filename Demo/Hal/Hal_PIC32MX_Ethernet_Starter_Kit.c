@@ -63,11 +63,6 @@ void halInitialize(void) {
     PLIB_TMR_Counter16BitClear(TMR_ID_2);
     PLIB_TMR_Period16BitSet(TMR_ID_2, GetPeriphericalClock() / 64 / 1000);
 
-    // Inicialitza el led
-    //
-    PLIB_PORTS_PinClear(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_2);
-    PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_2);
-
     // Configura les interrupcions
     //
     PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_TIMER_2);
@@ -163,6 +158,24 @@ void halInpInitialize(void) {
 BOOL halInpPortRead(UINT8 id) {
 
     return !PLIB_PORTS_PinGet(PORTS_ID_0, inpPortChannel[id], inpPortBit[id]);
+}
+
+
+/*************************************************************************
+ *
+ *     Inicialitza el modul
+ *
+ *     Funcio:
+ *         void halLedInitialize(void)
+ *
+ *************************************************************************/
+
+void halLedInitialize(void) {
+
+    // Inicialitza el led
+    //
+    PLIB_PORTS_PinClear(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_2);
+    PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_2);
 }
 
 

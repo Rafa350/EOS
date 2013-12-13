@@ -64,18 +64,8 @@ extern void sysUsbHostInitialize(void);
 extern void sysUsbHostLoop(void);
 #endif
 
-// Modul indicador d'estat
-//
-#ifdef EOS_USE_LEDSTATUS
-
-#ifndef __halLedPortWrite
-#define __halLedPortWrite(state)       halLedPortWrite(state)
-#endif
-
-extern void sysLedInitialize(void);
-extern void sysLedTickInterrupt(void);
-
-extern void halLedPortWrite(BOOL state);
+#if defined(eosDBG_UseLed)
+#include "Modules/Debugger/eosDebugger.h"
 #endif
 
 #if defined(eosPLC_UseInputs) || \
