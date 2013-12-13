@@ -63,13 +63,6 @@ void halInitialize(void) {
     PLIB_TMR_Counter16BitClear(TMR_ID_2);
     PLIB_TMR_Period16BitSet(TMR_ID_2, GetPeriphericalClock() / 64 / 1000);
 
-    // Inicialitza els ports d'entrada
-    //
-    for (i = 0; i < eosPLC_NumInputs; i++) {
-        PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, inpPortChannel[i], inpPortBit[i]);
-        PLIB_PORTS_ChangeNoticePullUpEnable(PORTS_ID_0, inpPullUpChannel[i]);
-    }
-
     // Inicialitza el led
     //
     PLIB_PORTS_PinClear(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_2);
@@ -90,7 +83,7 @@ void halInitialize(void) {
 
 /*************************************************************************
  *
- *     Inicialitza el modul PLC-Outputs
+ *     Inicialitza el modul
  *
  *     Funcio:
  *         void halOutInitialize(void)
@@ -127,6 +120,28 @@ void halOutPortWrite(UINT8 id, BOOL state) {
         PLIB_PORTS_PinSet(PORTS_ID_0, outPortChannel[id], outPortBit[id]);
     else
         PLIB_PORTS_PinClear(PORTS_ID_0, outPortChannel[id], outPortBit[id]);
+}
+
+
+/*************************************************************************
+ *
+ *     Inicialitza el modul
+ *
+ *     Funcio:
+ *         void halInpInitialize(void)
+ *
+ *************************************************************************/
+
+void halInpInitialize(void) {
+
+    unsigned i;
+
+    // Inicialitza els ports d'entrada
+    //
+    for (i = 0; i < eosPLC_NumInputs; i++) {
+        PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, inpPortChannel[i], inpPortBit[i]);
+        PLIB_PORTS_ChangeNoticePullUpEnable(PORTS_ID_0, inpPullUpChannel[i]);
+    }
 }
 
 

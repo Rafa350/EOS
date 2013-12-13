@@ -26,15 +26,15 @@ __attribute__((weak)) void usrLoop(void) {
 
 void eosTickInterrupt(void) {
 
-#ifdef EOS_USE_OUTPUTS
+#ifdef eosPLC_UseOutputs
     sysOutTickInterrupt();
 #endif
 
-#ifdef EOS_USE_INPUTS
+#ifdef eosPLC_UseInputs
     sysInpTickInterrupt();
 #endif
 
-#ifdef EOS_USE_TIMERS
+#ifdef eosPLC_UseTimers
     sysTimTickInterrupt();
 #endif
 
@@ -58,19 +58,19 @@ void eosMain(void) {
 
     __halInitialize();
 
-#ifdef EOS_USE_OUTPUTS
+#ifdef eosPLC_UseOutputs
     sysOutInitialize();
 #endif
 
-#ifdef EOS_USE_INPUTS
+#ifdef eosPLC_UseInputs
     sysInpInitialize();
 #endif
 
-#ifdef EOS_USE_TIMERS
+#ifdef eosPLC_UseTimers
     sysTimInitialize();
 #endif
 
-#ifdef EOS_USE_VARIABLES
+#ifdef eosPLC_UseVariables
     sysVarInitialize();
 #endif
 
@@ -91,15 +91,15 @@ void eosMain(void) {
  
     while (TRUE) {
 
-#ifdef EOS_USE_OUTPUTS
+#ifdef eosPLC_UseOutputs
         sysOutLoop();
 #endif
 
-#ifdef EOS_USE_INPUTS
+#ifdef eosPLC_UseInputs
         sysInpLoop();
 #endif
 
-#ifdef EOS_USE_TIMERS
+#ifdef eosPLC_UseTimers
         sysTimLoop();
 #endif
 

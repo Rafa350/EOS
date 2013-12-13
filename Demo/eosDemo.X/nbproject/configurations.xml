@@ -33,6 +33,9 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="eos" projectFiles="true">
         <logicalFolder name="f1" displayName="Modules" projectFiles="true">
+          <logicalFolder name="f2" displayName="Debugger" projectFiles="true">
+            <itemPath>../../Source/Modules/Debugger/eosDbgLed.c</itemPath>
+          </logicalFolder>
           <logicalFolder name="f1" displayName="Plc" projectFiles="true">
             <itemPath>../../Source/Modules/Plc/eosPlcAdc.c</itemPath>
             <itemPath>../../Source/Modules/Plc/eosPlcInputs.c</itemPath>
@@ -40,7 +43,6 @@
             <itemPath>../../Source/Modules/Plc/eosPlcTimers.c</itemPath>
             <itemPath>../../Source/Modules/Plc/eosPlcVariables.c</itemPath>
           </logicalFolder>
-          <itemPath>../../Source/Modules/LedStatus.c</itemPath>
           <itemPath>../../Source/Modules/UsbHost.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="System" projectFiles="true">

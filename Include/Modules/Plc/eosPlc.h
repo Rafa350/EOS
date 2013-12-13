@@ -6,7 +6,7 @@
 #endif
 
 
-// Modul de sortides digitals
+// Sortides digitals
 //
 #ifdef eosPLC_UseOutputs
 
@@ -25,7 +25,7 @@ extern void sysOutTickInterrupt(void);
 
 #endif
 
-// Modul d'entrades digitals
+// Entrades digitals
 //
 #ifdef eosPLC_UseInputs
 
@@ -39,7 +39,7 @@ extern void sysInpTickInterrupt(void);
 
 #endif
 
-// Modul de conversio AD
+// Conversio AD
 //
 #ifdef eosPLC_UseAdc
 extern UINT16 eosAdcGet(UINT8 adcId);
@@ -47,7 +47,7 @@ extern UINT16 eosAdcGet(UINT8 adcId);
 extern void sysAdcInitialize(void);
 #endif
 
-// Modul de temporitzadors
+// Temporitzadors
 //
 #ifdef eosUSE_UseTimers
 extern void eosTimStart(UINT8 id, unsigned time);
@@ -60,7 +60,7 @@ extern void sysTimLoop(void);
 extern void sysTimTickInterrupt(void);
 #endif
 
-// Modul de variables
+// Variables
 //
 #ifdef eosPLC_UseVariables
 
