@@ -57,102 +57,6 @@ extern void halInitialize(void);
 #endif
 
 
-// Modul de sortides digitals
-//
-#ifdef EOS_USE_OUTPUTS
-
-#ifndef __halOutPortWrite
-#define __halOutPortWrite(id, state)   halOutPortWrite(id, state)
-#endif
-
-extern void eosOutSet(UINT8 id, BOOL state);
-extern BOOL eosOutGet(UINT8 id);
-extern void eosOutToggle(UINT8 id);
-extern void eosOutPulse(UINT8 id, unsigned timeOut);
-extern void eosOutAllOFF(void);
-
-#define eosOutSetON(id)                eosOutSet(id, TRUE)
-#define eosOutSetOFF(id)               eosOutSet(id, FALSE)
-
-extern void sysOutInitialize(void);
-extern void sysOutLoop(void);
-extern void sysOutTickInterrupt(void);
-
-extern void halOutPortWrite(UINT8 id, BOOL state);
-#endif
-
-// Modul d'entrades digitals
-//
-#ifdef EOS_USE_INPUTS
-
-#ifndef __halInpPortRead
-#define __halInpPortRead(id)           halInpPortRead(id)
-#endif
-
-extern BOOL eosInpGet(UINT8 id);
-extern BOOL eosInpPosEdge(UINT8 id);
-extern BOOL eosInpNegEdge(UINT8 id);
-
-extern void sysInpInitialize(void);
-extern void sysInpLoop(void);
-extern void sysInpTickInterrupt(void);
-
-extern BOOL halInpPortRead(UINT8 inputId);
-#endif
-
-// Modul de conversio AD
-//
-#ifdef EOS_USE_ADC
-extern UINT16 eosAdcGet(UINT8 adcId);
-
-extern void sysAdcInitialize(void);
-#endif
-
-// Modul de temporitzadors
-//
-#ifdef EOS_USE_TIMERS
-extern void eosTimStart(UINT8 id, unsigned time);
-extern BOOL eosTinGet(UINT8 id);
-extern void eosTimPause(UINT8 id);
-extern void eosTimContinue(UINT8 id);
-
-extern void sysTimInitialize(void);
-extern void sysTimLoop(void);
-extern void sysTimTickInterrupt(void);
-#endif
-
-// Modul de variables
-//
-#ifdef EOS_USE_VARIABLES
-
-#ifndef __halVarSave
-#define __halVarSave(data, size)       halVarSave(data, size)
-#endif
-
-#ifndef __halVarRestore
-#define __halVarRestore(data, size)    halVarRestore(data, size)
-#endif
-
-typedef struct {
-    UINT8 varId;
-    unsigned value;
-} VARINIT;
-
-extern void eosVarSet(UINT8 id, unsigned value);
-extern unsigned eosVarGet(UINT8 id);
-extern void eosVarSave(void);
-extern void eosVarRestore(void);
-extern void eosVarSetTable(VARINIT *data, UINT8 dataLen);
-#ifdef _PIC18
-extern void eosVarSetTableROM(VARINIT *data, UINT8 dataLen);
-#endif
-
-extern void sysVarInitialize(void);
-
-extern void halVarSave(void *data, unsigned dataSize);
-extern void halVarRestore(void *data, unsigned dataSize);
-#endif
-
 // Modul USB Host
 //
 #if defined(EOS_USE_USBHOST) && defined(__PIC32MX)
@@ -172,6 +76,13 @@ extern void sysLedInitialize(void);
 extern void sysLedTickInterrupt(void);
 
 extern void halLedPortWrite(BOOL state);
+#endif
+
+#if defined(eosPLC_UseInputs) || \
+    defined(eosPLC_UseOutputs) || \
+    defined(eosPLC_UseVariables) || \
+    defined(eosPLC_UseTimers)
+#include "Modules/Plc/eosPLC.h"
 #endif
 
 

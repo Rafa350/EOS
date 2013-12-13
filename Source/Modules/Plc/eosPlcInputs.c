@@ -1,11 +1,11 @@
-#include "eos.h"
+#include "Modules/Plc/eosPlc.h"
 
 
-#ifdef EOS_USE_INPUTS
+#ifdef eosPLC_UseInputs
 
 
-#if !defined(EOS_NUM_INPUTS) || (EOS_NUM_INPUTS < 1) || (EOS_NUM_INPUTS > 32)
-#error 'EOS_NUM_INPUTS' ha de estar en el intervalo 1..32
+#if !defined(eosPLC_NumInputs) || (eosPLC_NumInputs < 1) || (eosPLC_NumInputs > 32)
+#error 'eosPLC_NumInputs' ha de estar en el intervalo 1..32
 #endif
 
 
@@ -20,7 +20,10 @@ typedef struct {
     unsigned negEdge:1;
 } PORTINFO;
 
-static PORTINFO ports[EOS_NUM_INPUTS];
+static PORTINFO ports[eosPLC_NumInputs];
+
+extern void halInpInitialize(void);
+extern BOOL halInpPortRead(UINT8 id);
 
 
 /*************************************************************************
@@ -34,7 +37,9 @@ static PORTINFO ports[EOS_NUM_INPUTS];
 
 void sysInpInitialize(void) {
 
-    UINT8 id = EOS_NUM_INPUTS - 1;
+    halInpInitialize();
+
+    UINT8 id = eosPLC_NumInputs - 1;
     do {
 
         PORTINFO *p = &ports[id];
@@ -58,11 +63,11 @@ void sysInpInitialize(void) {
 
 void sysInpTickInterrupt(void) {
 
-    UINT8 id = EOS_NUM_INPUTS - 1;
+    UINT8 id = eosPLC_NumInputs - 1;
     do {
 
         PORTINFO *p = &ports[id];
-        p->pattern = (p->pattern << 1) | __halInpPortRead(id);
+        p->pattern = (p->pattern << 1) | (halInpPortRead(id) ? 1 : 0);
 
     } while (id--);
 }
@@ -79,7 +84,7 @@ void sysInpTickInterrupt(void) {
 
 void sysInpLoop(void) {
 
-    UINT8 id = EOS_NUM_INPUTS - 1;
+    UINT8 id = eosPLC_NumInputs - 1;
     do {
 
         eosDisableInterrupts();
@@ -118,7 +123,7 @@ void sysInpLoop(void) {
 
 BOOL eosInpGet(UINT8 id) {
 
-    if (id < EOS_NUM_INPUTS)
+    if (id < eosPLC_NumInputs)
         return ports[id].state;
     else
         return FALSE;
@@ -146,7 +151,7 @@ BOOL eosInpGet(UINT8 id) {
 
 BOOL eosInpPosEdge(UINT8 id) {
 
-    if (id < EOS_NUM_INPUTS) {
+    if (id < eosPLC_NumInputs) {
 
         PORTINFO *p = &ports[id];
         BOOL result = p->posEdge;
@@ -180,7 +185,7 @@ BOOL eosInpPosEdge(UINT8 id) {
 
 BOOL eosInpNegEdge(UINT8 id) {
 
-    if (id < EOS_NUM_INPUTS) {
+    if (id < eosPLC_NumInputs) {
 
         PORTINFO *p = &ports[id];
         BOOL result = p->negEdge;
@@ -207,7 +212,7 @@ BOOL eosInpNegEdge(UINT8 id) {
 
 void eosInpClearEdge(UINT8 id) {
 
-    if (id < EOS_NUM_INPUTS) {
+    if (id < eosPLC_NumInputs) {
         
         PORTINFO *p = &ports[id];
         p->posEdge = FALSE;

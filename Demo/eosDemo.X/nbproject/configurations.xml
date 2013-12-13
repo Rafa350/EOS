@@ -5,6 +5,11 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="f1" displayName="eos" projectFiles="true">
+        <logicalFolder name="f1" displayName="Modules" projectFiles="true">
+          <logicalFolder name="f1" displayName="Plc" projectFiles="true">
+            <itemPath>../../Include/Modules/Plc/eosPlc.h</itemPath>
+          </logicalFolder>
+        </logicalFolder>
         <itemPath>../../Include/eos.h</itemPath>
         <itemPath>../eosConfig.h</itemPath>
       </logicalFolder>
@@ -27,15 +32,15 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="f1" displayName="eos" projectFiles="true">
-        <logicalFolder name="f2" displayName="Drivers" projectFiles="true">
-        </logicalFolder>
         <logicalFolder name="f1" displayName="Modules" projectFiles="true">
-          <itemPath>../../Source/Modules/Timers.c</itemPath>
+          <logicalFolder name="f1" displayName="Plc" projectFiles="true">
+            <itemPath>../../Source/Modules/Plc/eosPlcAdc.c</itemPath>
+            <itemPath>../../Source/Modules/Plc/eosPlcInputs.c</itemPath>
+            <itemPath>../../Source/Modules/Plc/eosPlcOutputs.c</itemPath>
+            <itemPath>../../Source/Modules/Plc/eosPlcTimers.c</itemPath>
+            <itemPath>../../Source/Modules/Plc/eosPlcVariables.c</itemPath>
+          </logicalFolder>
           <itemPath>../../Source/Modules/LedStatus.c</itemPath>
-          <itemPath>../../Source/Modules/Adc.c</itemPath>
-          <itemPath>../../Source/Modules/Variables.c</itemPath>
-          <itemPath>../../Source/Modules/Inputs.c</itemPath>
-          <itemPath>../../Source/Modules/Outputs.c</itemPath>
           <itemPath>../../Source/Modules/UsbHost.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="System" projectFiles="true">
@@ -70,6 +75,7 @@
     <Elem>../../../FreeRTOSV7.4.2/FreeRTOS/Source</Elem>
     <Elem>../../../../../../../../Microchip Solutions v2013-06-15/Microchip/MDD File System</Elem>
     <Elem>../../../../../../../../microchip/harmony/v0_70b/bsp/sk_pic32_mx_usb</Elem>
+    <Elem>../../Include/Modules/Plc</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

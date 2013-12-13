@@ -1,10 +1,10 @@
-#include "eos.h"
+#include "Modules/Plc/eosPlc.h"
 
 
-#if defined(EOS_USE_TIMERS)
+#if defined(eosPLC_UseTimers)
 
-#if !defined(EOS_NUM_TIMERS) || (EOS_NUM_TIMERS < 1) || (EOS_NUM_TIMERS > 64)
-#error 'EOS_NUM_TIMERS' ha de estar en el intervalo 1..64
+#if !defined(eosPLC_NumTimers) || (eosPLC_NumTimers < 1) || (eosPLC_NumTimers > 64)
+#error 'eosPLC_NumTimers' ha de estar en el intervalo 1..64
 #endif
 
 
@@ -14,7 +14,7 @@ typedef struct {
     unsigned pause:1;
 } TIMERINFO;
 
-static TIMERINFO timers[EOS_NUM_TIMERS];
+static TIMERINFO timers[eosPLC_NumTimers];
 
 
 /*************************************************************************
@@ -28,7 +28,7 @@ static TIMERINFO timers[EOS_NUM_TIMERS];
 
 void sysTimInitialize(void){
 
-    UINT8 id = EOS_NUM_TIMERS - 1;
+    UINT8 id = eosPLC_NumTimers - 1;
     do {
 
         TIMERINFO *t = &timers[id];
@@ -51,7 +51,7 @@ void sysTimInitialize(void){
 
 void sysTimTickInterrupt(void) {
 
-    UINT8 id = EOS_NUM_TIMERS - 1;
+    UINT8 id = eosPLC_NumTimers - 1;
     do {
 
         TIMERINFO *t = &timers[id];
@@ -73,7 +73,7 @@ void sysTimTickInterrupt(void) {
 
 void sysTimLoop(void) {
 
-    UINT8 id = EOS_NUM_TIMERS - 1;
+    UINT8 id = eosPLC_NumTimers - 1;
     do {
         TIMERINFO *t = &timers[id];
 
@@ -103,7 +103,7 @@ void sysTimLoop(void) {
 
 void eosTimStart(UINT8 id, unsigned time) {
 
-    if (id < EOS_NUM_TIMERS) {
+    if (id < eosPLC_NumTimers) {
 
         eosDisableInterrupts();
         
@@ -131,7 +131,7 @@ void eosTimStart(UINT8 id, unsigned time) {
 
 void eosTimPause(UINT8 id) {
 
-    if (id < EOS_NUM_TIMERS) {
+    if (id < eosPLC_NumTimers) {
 
         eosDisableInterrupts();
 
@@ -156,7 +156,7 @@ void eosTimPause(UINT8 id) {
 
 void eosTimContinue(UINT8 id) {
 
-    if (id < EOS_NUM_TIMERS) {
+    if (id < eosPLC_NumTimers) {
 
         eosDisableInterrupts();
 
@@ -184,7 +184,7 @@ void eosTimContinue(UINT8 id) {
 
 BOOL eosTimGet(UINT8 id) {
 
-    if (id < EOS_NUM_TIMERS) 
+    if (id < eosPLC_NumTimers)
         return timers[id].state;
     else
         return FALSE;

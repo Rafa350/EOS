@@ -1,4 +1,4 @@
-#include "eos.h"
+#include "Modules/Plc/eosPlc.h"
 
 
 #ifdef EOS_USE_ADC

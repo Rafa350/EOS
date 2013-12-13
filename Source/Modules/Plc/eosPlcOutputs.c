@@ -1,10 +1,10 @@
-#include "eos.h"
+#include "Modules/Plc/eosPlc.h"
 
 
-#if defined(EOS_USE_OUTPUTS)
+#if defined(eosPLC_UseOutputs)
 
 
-#if !defined(EOS_NUM_OUTPUTS) || (EOS_NUM_OUTPUTS < 1) || (EOS_NUM_OUTPUTS > 32)
+#if !defined(eosPLC_NumOutputs) || (eosPLC_NumOutputs < 1) || (eosPLC_NumOutputs > 32)
 #error 'EOS_NUM_OUTPUTS' ha de estar en el intervalo 1..32
 #endif
 
@@ -14,7 +14,11 @@ typedef struct {             // Estat del port
     unsigned state:1;        // -Indica si esta actiu o no
 } PORTINFO;
 
-static PORTINFO ports[EOS_NUM_OUTPUTS];
+static PORTINFO ports[eosPLC_NumOutputs];
+
+
+extern void halOutInitialize(void);
+extern void halOutPortWrite(UINT8 id, BOOL state);
 
 
 /*************************************************************************
@@ -28,7 +32,9 @@ static PORTINFO ports[EOS_NUM_OUTPUTS];
 
 void sysOutInitialize(void) {
 
-    UINT8 outputId = EOS_NUM_OUTPUTS - 1;
+    halOutInitialize();
+
+    UINT8 outputId =  eosPLC_NumOutputs - 1;
     do {
         PORTINFO *p = &ports[outputId];
         p->state = FALSE;
@@ -51,7 +57,7 @@ void sysOutTickInterrupt(void) {
 
     // Actualitza les sortides temporitzades
     //
-    UINT8 outputId = EOS_NUM_OUTPUTS - 1;
+    UINT8 outputId = eosPLC_NumOutputs - 1;
     do {
         PORTINFO *p = &ports[outputId];
         UINT16 counter = p->counter;
@@ -76,7 +82,7 @@ void sysOutTickInterrupt(void) {
 
 void sysOutLoop(void){
 
-    UINT8 outputId = EOS_NUM_OUTPUTS - 1;
+    UINT8 outputId = eosPLC_NumOutputs - 1;
     do {
 
         eosDisableInterrupts();
@@ -86,7 +92,7 @@ void sysOutLoop(void){
             p->timeout = FALSE;
             p->state = !p->state;
         }
-        __halOutPortWrite(outputId, p->state);
+        halOutPortWrite(outputId, p->state);
 
         eosEnableInterrupts();
 
@@ -109,7 +115,7 @@ void sysOutLoop(void){
 
 void eosOutSet(UINT8 outputId, BOOL state) {
 
-    if (outputId < EOS_NUM_OUTPUTS) {
+    if (outputId < eosPLC_NumOutputs) {
 
         PORTINFO *p = &ports[outputId];
         p->state = state;
@@ -139,7 +145,7 @@ void eosOutSet(UINT8 outputId, BOOL state) {
 
 BOOL eosOutGet(UINT8 outputId) {
 
-    if (outputId < EOS_NUM_OUTPUTS) 
+    if (outputId < eosPLC_NumOutputs)
         return ports[outputId].state;
     else
         return FALSE;
@@ -165,7 +171,7 @@ BOOL eosOutGet(UINT8 outputId) {
 
 void eosOutPulse(UINT8 id, unsigned time) {
 
-    if ((id < EOS_NUM_OUTPUTS) && (time != 0)) {
+    if ((id < eosPLC_NumOutputs) && (time != 0)) {
 
         eosDisableInterrupts();
         
@@ -194,7 +200,7 @@ void eosOutPulse(UINT8 id, unsigned time) {
 
 void eosOutToggle(UINT8 outputId) {
 
-    if (outputId < EOS_NUM_OUTPUTS) {
+    if (outputId < eosPLC_NumOutputs) {
 
         PORTINFO *p = &ports[outputId];
         p->state = !p->state;
@@ -218,7 +224,7 @@ void eosOutToggle(UINT8 outputId) {
 
 void eosOutAllOFF(void) {
 
-    UINT8 outputId = EOS_NUM_OUTPUTS - 1;
+    UINT8 outputId = eosPLC_NumOutputs - 1;
     do {
 
         PORTINFO *p = &ports[outputId];

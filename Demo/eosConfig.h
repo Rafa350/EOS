@@ -17,13 +17,13 @@
 
 // Definicions pel modul de temporitzadors
 //
-#define EOS_USE_TIMERS
-#define EOS_NUM_TIMERS       16
+#define eosPLC_UseTimers
+#define eosPLC_NumTimers     16
 
 // Definicions pel modul de variables
 //
-#define EOS_USE_VARIABLES
-#define EOS_NUM_VARIABLES    32
+#define eosPLC_UseVariables
+#define eosPLC_NumVariables  32
 
 #endif
 

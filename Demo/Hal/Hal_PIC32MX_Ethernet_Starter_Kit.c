@@ -4,31 +4,31 @@
 #include "peripheral/tmr/plib_tmr.h"
 
 
-static PORTS_CHANNEL outPortChannel[EOS_NUM_OUTPUTS] = {
+static PORTS_CHANNEL outPortChannel[eosPLC_NumOutputs] = {
     PORT_CHANNEL_D,
     PORT_CHANNEL_D,
     //PORT_CHANNEL_PORT_D
 };
 
-static PORTS_BIT_POS outPortBit[EOS_NUM_OUTPUTS] = {
+static PORTS_BIT_POS outPortBit[eosPLC_NumOutputs] = {
     PORTS_BIT_POS_0,
     PORTS_BIT_POS_1,
     //PORTS_BIT_POS_2
 };
 
-static PORTS_CHANNEL inpPortChannel[EOS_NUM_INPUTS] =  {
+static PORTS_CHANNEL inpPortChannel[eosPLC_NumInputs] =  {
     PORT_CHANNEL_D,
     PORT_CHANNEL_D,
     PORT_CHANNEL_D
 };
 
-static PORTS_BIT_POS inpPortBit[EOS_NUM_INPUTS] = {
+static PORTS_BIT_POS inpPortBit[eosPLC_NumInputs] = {
     PORTS_BIT_POS_6,
     PORTS_BIT_POS_7,
     PORTS_BIT_POS_13
 };
 
-static int inpPullUpChannel[EOS_NUM_INPUTS] = {
+static int inpPullUpChannel[eosPLC_NumInputs] = {
     CN15,
     CN16,
     CN19
@@ -63,14 +63,9 @@ void halInitialize(void) {
     PLIB_TMR_Counter16BitClear(TMR_ID_2);
     PLIB_TMR_Period16BitSet(TMR_ID_2, GetPeriphericalClock() / 64 / 1000);
 
-    // Inicialitza els ports de sortida
-    //
-    for (i = 0; i < EOS_NUM_OUTPUTS; i++)
-        PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, outPortChannel[i], outPortBit[i]);
-
     // Inicialitza els ports d'entrada
     //
-    for (i = 0; i < EOS_NUM_INPUTS; i++) {
+    for (i = 0; i < eosPLC_NumInputs; i++) {
         PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, inpPortChannel[i], inpPortBit[i]);
         PLIB_PORTS_ChangeNoticePullUpEnable(PORTS_ID_0, inpPullUpChannel[i]);
     }
@@ -90,6 +85,26 @@ void halInitialize(void) {
     // Activa el temporitzador i comença a generar interrupcions TICK
     //
     PLIB_TMR_Start(TMR_ID_2);
+}
+
+
+/*************************************************************************
+ *
+ *     Inicialitza el modul PLC-Outputs
+ *
+ *     Funcio:
+ *         void halOutInitialize(void)
+ *
+ *************************************************************************/
+
+void halOutInitialize(void) {
+
+    unsigned i;
+
+    // Inicialitza els ports de sortida
+    //
+    for (i = 0; i < eosPLC_NumOutputs; i++)
+        PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, outPortChannel[i], outPortBit[i]);
 }
 
 

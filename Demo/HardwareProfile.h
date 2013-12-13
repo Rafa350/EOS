@@ -44,14 +44,14 @@
 
 // Definicions pel modul d'entrades digitals
 //
-#define EOS_USE_INPUTS
-#define EOS_NUM_INPUTS       3    // Numero maxim d'entrades
+#define eosPLC_UseInputs
+#define eosPLC_NumInputs     3    // Numero maxim d'entrades
 
 
 // Definicions pel modul de sortides digitals
 //
-#define EOS_USE_OUTPUTS
-#define EOS_NUM_OUTPUTS      2    // Numero maxim de sortides
+#define eosPLC_UseOutputs
+#define eosPLC_NumOutputs    2    // Numero maxim de sortides
 
 
 // Desinicions pel modul USB

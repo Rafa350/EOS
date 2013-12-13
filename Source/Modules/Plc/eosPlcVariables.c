@@ -1,15 +1,15 @@
-#include "eos.h"
+#include "Modules/Plc/eosPlc.h"
 
 
-#ifdef EOS_USE_VARIABLES
+#ifdef eosPLC_UseVariables
 
 
-#if !defined(EOS_NUM_VARIABLES) || (EOS_NUM_VARIABLES < 1) || (EOS_NUM_VARIABLES > 64)
-#error 'EOS_NUM_VARIABLES' ha de estar en el intervalo 1..64
+#if !defined(eosPLC_NumVariables) || (eosPLC_NumVariables < 1) || (eosPLC_NumVariables > 64)
+#error 'eosPLC_NumVariables' ha de estar en el intervalo 1..64
 #endif
 
 
-static unsigned variables[EOS_NUM_VARIABLES];
+static unsigned variables[eosPLC_NumVariables];
 
 
 
@@ -24,7 +24,7 @@ static unsigned variables[EOS_NUM_VARIABLES];
 
 void sysVarInitialize(void) {
 
-    UINT8 id = EOS_NUM_VARIABLES - 1;
+    UINT8 id = eosPLC_NumVariables - 1;
     do {
         variables[id] = 0;
     } while (id--);
@@ -85,7 +85,7 @@ void eosVarRestore(void) {
 
 unsigned eosVarGet(UINT8 id) {
 
-    if (id < EOS_NUM_VARIABLES)
+    if (id < eosPLC_NumVariables)
         return variables[id];
     else
         return 0;
@@ -107,7 +107,7 @@ unsigned eosVarGet(UINT8 id) {
 
 void eosVarSet(UINT8 id, unsigned value) {
 
-    if (id < EOS_NUM_VARIABLES)
+    if (id < eosPLC_NumVariables)
         variables[id] = value;
 }
 
