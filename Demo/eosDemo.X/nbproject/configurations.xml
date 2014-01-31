@@ -93,7 +93,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
-        <languageToolchainVersion>1.21</languageToolchainVersion>
+        <languageToolchainVersion>1.30</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -238,7 +238,12 @@
         <property key="voltagevalue" value="3.25"/>
       </PICkit3PlatformTool>
       <XC8-config-global>
+        <property key="advanced-elf" value="true"/>
         <property key="output-file-format" value="-mcof,+elf"/>
+        <property key="stack-size-high" value="auto"/>
+        <property key="stack-size-low" value="auto"/>
+        <property key="stack-size-main" value="auto"/>
+        <property key="stack-type" value="compiled"/>
       </XC8-config-global>
     </conf>
     <conf name="PIC32-ETH-SK" type="2">
@@ -249,7 +254,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.30</languageToolchainVersion>
+        <languageToolchainVersion>1.31</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -306,6 +311,7 @@
         <property key="extra-include-directories"
                   value="..\;..\..\Include;c:\Microchip Solutions v2013-06-15\Microchip\Include;..\..\..\FreeRTOSV7.4.2\FreeRTOS\Source\include;..\..\..\FreeRTOSV7.4.2\FreeRTOS\Source\portable\MPLAB\PIC32MX;c:\microchip\harmony\v0_70b\framework"/>
         <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
         <property key="make-warnings-into-errors" value="false"/>
         <property key="optimization-level" value=""/>
@@ -347,6 +353,7 @@
         <property key="extra-lib-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
         <property key="heap-size" value="8192"/>
         <property key="input-libraries" value=""/>
         <property key="linker-symbols" value=""/>
@@ -374,6 +381,7 @@
         <property key="exclude-floating-point" value="true"/>
         <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
         <property key="make-warnings-into-errors" value="false"/>
         <property key="optimization-level" value=""/>
@@ -404,7 +412,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
-        <languageToolchainVersion>1.21</languageToolchainVersion>
+        <languageToolchainVersion>1.30</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -550,7 +558,12 @@
         <property key="voltagevalue" value="3.25"/>
       </PICkit3PlatformTool>
       <XC8-config-global>
+        <property key="advanced-elf" value="true"/>
         <property key="output-file-format" value="-mcof,+elf"/>
+        <property key="stack-size-high" value="auto"/>
+        <property key="stack-size-low" value="auto"/>
+        <property key="stack-size-main" value="auto"/>
+        <property key="stack-type" value="compiled"/>
       </XC8-config-global>
     </conf>
   </confs>
