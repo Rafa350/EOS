@@ -1,7 +1,7 @@
 #include "Modules/Plc/eosPlc.h"
 
 
-#if defined(eosPLC_UseOutputs)
+#ifdef eosPLC_UseOutputs
 
 
 #if !defined(eosPLC_NumOutputs) || (eosPLC_NumOutputs < 1) || (eosPLC_NumOutputs > 32)
@@ -9,8 +9,8 @@
 #endif
 
 typedef struct {             // Estat del port
-    UINT16 counter;          // -Contador de temps pels pulsos en ms
-    unsigned timeout:1;      // -India el final del temps
+    unsigned counter;        // -Contador de temps ms
+    unsigned blink;          // -Temps de cicle ON/OFF
     unsigned state:1;        // -Indica si esta actiu o no
 } PORTINFO;
 
@@ -39,7 +39,7 @@ void sysOutInitialize(void) {
         PORTINFO *p = &ports[outputId];
         p->state = FALSE;
         p->counter = 0;
-        p->timeout = FALSE;
+        p->blink = 0;
     } while (outputId--);
 }
 
@@ -60,11 +60,13 @@ void sysOutTickInterrupt(void) {
     UINT8 outputId = eosPLC_NumOutputs - 1;
     do {
         PORTINFO *p = &ports[outputId];
-        UINT16 counter = p->counter;
+        unsigned counter = p->counter;
         if (counter) {
             counter--;
-            if (!counter)
-                p->timeout = TRUE;
+            if (!counter) {
+                p->state = !p->state;
+                counter = p->blink;
+            }
             p->counter = counter;
         }
     } while (outputId--);
@@ -85,15 +87,10 @@ void sysOutLoop(void){
     UINT8 outputId = eosPLC_NumOutputs - 1;
     do {
 
-        eosDisableInterrupts();
-
         PORTINFO *p = &ports[outputId];
-        if (p->timeout) {
-            p->timeout = FALSE;
-            p->state = !p->state;
-        }
-        halOutPortWrite(outputId, p->state);
 
+        eosDisableInterrupts();
+        halOutPortWrite(outputId, p->state);
         eosEnableInterrupts();
 
     } while (outputId--);
@@ -118,37 +115,13 @@ void eosOutSet(UINT8 outputId, BOOL state) {
     if (outputId < eosPLC_NumOutputs) {
 
         PORTINFO *p = &ports[outputId];
-        p->state = state;
 
         eosDisableInterrupts();
-        p->counter  = 0;
-        p->timeout = FALSE;
+        p->state = state;
+        p->counter = 0;
+        p->blink = 0;
         eosEnableInterrupts();
     }
-}
-
-
-/*************************************************************************
- *
- *       Llegeix l'estat d'una sortida
- *
- *       Funcio:
- *           BOOL eosOutGet(UINT8 outputId)
- *
- *       Entrada:
- *           outputId: Numero de sortida
- *
- *       Retorn:
- *           L'estat de la sortida
- *
- *************************************************************************/
-
-BOOL eosOutGet(UINT8 outputId) {
-
-    if (outputId < eosPLC_NumOutputs)
-        return ports[outputId].state;
-    else
-        return FALSE;
 }
 
 
@@ -173,14 +146,46 @@ void eosOutPulse(UINT8 id, unsigned time) {
 
     if ((id < eosPLC_NumOutputs) && (time != 0)) {
 
-        eosDisableInterrupts();
-        
         PORTINFO *p = &ports[id];
-        if (p->counter == 0)
+
+        eosDisableInterrupts();
+        if (!p->counter)
             p->state = !p->state;
         p->counter = time;
-        p->timeout = FALSE;
+        p->blink = 0;
+        eosEnableInterrupts();
+    }
+}
 
+
+/*************************************************************************
+ *
+ *       Genera un puls periodic
+ *
+ *       Funcio:
+ *           void eosOutBlink(UINT8 id, unsigned time)
+ *
+ *       Entrada:
+ *           id  : Numero de sortida
+ *           time: Llargada del puls en ms
+ *
+ *       Notes:
+ *           Si el puls encara es actiu, simplement l'allarga el temps
+ *           especificat
+ *
+ *************************************************************************/
+
+void eosOutBlink(UINT8 id, unsigned time) {
+
+    if ((id < eosPLC_NumOutputs) && (time != 0)) {
+
+        PORTINFO *p = &ports[id];
+
+        eosDisableInterrupts();
+        if (!p->counter)
+            p->state = !p->state;
+        p->counter = time;
+        p->blink = time;
         eosEnableInterrupts();
     }
 }
@@ -203,11 +208,11 @@ void eosOutToggle(UINT8 outputId) {
     if (outputId < eosPLC_NumOutputs) {
 
         PORTINFO *p = &ports[outputId];
-        p->state = !p->state;
 
         eosDisableInterrupts();
+        p->state = !p->state;
         p->counter = 0;
-        p->timeout = FALSE;
+        p->blink = 0;
         eosEnableInterrupts();
     }
 }
@@ -228,11 +233,11 @@ void eosOutAllOFF(void) {
     do {
 
         PORTINFO *p = &ports[outputId];
-        p->state = 0;
 
         eosDisableInterrupts();
+        p->state = 0;
         p->counter = 0;
-        p->timeout = FALSE;
+        p->blink = 0;
         eosEnableInterrupts();
 
     } while (outputId--);

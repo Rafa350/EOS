@@ -1,7 +1,7 @@
 #include "Modules/Plc/eosPlc.h"
 
 
-#ifdef EOS_USE_ADC
+#ifdef eosPLC_UseADC
 
 
 typedef struct {

@@ -11,6 +11,8 @@
 
 static unsigned variables[eosPLC_NumVariables];
 
+extern void halVarSave(void *data, unsigned dataSize);
+extern void halVarRestore(void *data, unsigned dataSize);
 
 
 /*************************************************************************
@@ -43,7 +45,7 @@ void sysVarInitialize(void) {
 void eosVarSave(void) {
 
     eosDisableInterrupts();
-    __halVarSave((void*) variables, sizeof(variables));
+    halVarSave((void*) variables, sizeof(variables));
     eosEnableInterrupts();
 }
 
@@ -60,7 +62,7 @@ void eosVarSave(void) {
 void eosVarRestore(void) {
 
     eosDisableInterrupts();
-    __halVarRestore((void*) variables, sizeof(variables));
+    halVarRestore((void*) variables, sizeof(variables));
     eosEnableInterrupts();
 }
 

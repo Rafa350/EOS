@@ -1,7 +1,7 @@
 #include "Modules/Plc/eosPlc.h"
 
 
-#if defined(eosPLC_UseTimers)
+#ifdef eosPLC_UseTimers
 
 #if !defined(eosPLC_NumTimers) || (eosPLC_NumTimers < 1) || (eosPLC_NumTimers > 64)
 #error 'eosPLC_NumTimers' ha de estar en el intervalo 1..64

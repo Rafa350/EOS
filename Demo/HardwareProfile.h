@@ -25,13 +25,13 @@
 
 // Definicions pel modul d'entrades
 //
-//#define EOS_USE_INPUTS
-//#define EOS_NUM_INPUTS       0
+#define eosPLC_UseInputs          // Utilitza el modul d'entrades
+#define eosPLC_NumInputs     2    // Numero maxim d'entrades
 
-// Definicio pl modul de sortides
+// Definicios pel modul de sortides
 //
-#define EOS_USE_OUTPUTS
-#define EOS_NUM_OUTPUTS      7
+#define eosPLC_UseOutputs         // Utilitza el modul de sortides
+#define eosPLC_NumOutputs    7    // Numero maxim de sortides
 
 
 #elif defined(HARDWARE_PIC32_ESK)

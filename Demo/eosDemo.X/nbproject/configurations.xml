@@ -57,10 +57,10 @@
       <logicalFolder name="f4" displayName="freertos" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="f2" displayName="hal" projectFiles="true">
-        <itemPath>../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c</itemPath>
-        <itemPath>../Hal/Hal_PICKIT3_44pin_Demo_Board.c</itemPath>
         <itemPath>../Hal/Hal_MDCPU04B.c</itemPath>
         <itemPath>../../../../../../../../microchip/harmony/v0_70b/bsp/sk_pic32_mx_usb/config_performance.c</itemPath>
+        <itemPath>../Hal/Hal_44-Pin-Demo-Board.c</itemPath>
+        <itemPath>../Hal/Hal_PIC32-Ethernet-Starter-Kit.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="usb" projectFiles="true">
       </logicalFolder>
@@ -99,7 +99,6 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../microchip/harmony/v0_70b/bin/framework/peripheral/PIC32MX795F512L_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <loading>
@@ -126,9 +125,7 @@
         <XC8-config-global>
         </XC8-config-global>
       </item>
-      <item path="../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c"
-            ex="true"
-            overriding="false">
+      <item path="../Hal/Hal_44-Pin-Demo-Board.c" ex="true" overriding="false">
         <HI-TECH-COMP>
         </HI-TECH-COMP>
         <HI-TECH-LINK>
@@ -136,7 +133,9 @@
         <XC8-config-global>
         </XC8-config-global>
       </item>
-      <item path="../Hal/Hal_PICKIT3_44pin_Demo_Board.c" ex="true" overriding="false">
+      <item path="../Hal/Hal_PIC32-Ethernet-Starter-Kit.c"
+            ex="true"
+            overriding="false">
         <HI-TECH-COMP>
         </HI-TECH-COMP>
         <HI-TECH-LINK>
@@ -246,7 +245,7 @@
         <property key="stack-type" value="compiled"/>
       </XC8-config-global>
     </conf>
-    <conf name="PIC32-ETH-SK" type="2">
+    <conf name="PIC32-Ethernet-Starter-Kit" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <targetDevice>PIC32MX795F512L</targetDevice>
@@ -277,7 +276,7 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
-      <item path="../Hal/Hal_MDCPU04B.c" ex="true" overriding="false">
+      <item path="../Hal/Hal_44-Pin-Demo-Board.c" ex="true" overriding="false">
         <C32>
         </C32>
         <C32-AS>
@@ -289,7 +288,7 @@
         <C32Global>
         </C32Global>
       </item>
-      <item path="../Hal/Hal_PICKIT3_44pin_Demo_Board.c" ex="true" overriding="false">
+      <item path="../Hal/Hal_MDCPU04B.c" ex="true" overriding="false">
         <C32>
         </C32>
         <C32-AS>
@@ -404,7 +403,7 @@
         <property key="whatToProgram" value="all"/>
       </SKDEPIC32PlatformTool>
     </conf>
-    <conf name="PICKIT3" type="2">
+    <conf name="44-Pin-Demo-Board" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <targetDevice>PIC18F45K20</targetDevice>
@@ -418,7 +417,6 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../microchip/harmony/v0_70b/bin/framework/peripheral/PIC32MX795F512L_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <loading>
@@ -453,7 +451,7 @@
         <XC8-config-global>
         </XC8-config-global>
       </item>
-      <item path="../Hal/Hal_PIC32MX_Ethernet_Starter_Kit.c"
+      <item path="../Hal/Hal_PIC32-Ethernet-Starter-Kit.c"
             ex="true"
             overriding="false">
         <HI-TECH-COMP>

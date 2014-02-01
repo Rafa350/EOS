@@ -85,10 +85,10 @@
 #pragma config EBTRB    = OFF       // Boot block table read protection
 
 
-#elif defined(_18F43K20) || defined(_18F44K20) || defined(_18F45K20) || defined(_18F46K20)
+#elif defined(HARDWARE_PICKIT3) && defined(_18F45K20)
 
 // -----------------------------------------------------------------------
-// PIC18F2xK20, PIC18F4xK20
+// PICKIT3 44-Pin Demo Board (PIC18F45K20)
 // -----------------------------------------------------------------------
 
 // Opcions del oscilador
@@ -168,7 +168,7 @@
       defined(__32MX795F512L__)
 
 // -----------------------------------------------------------------------
-// PIC32MX EHTERNET STARTER KIT (PIC32MX795F521L)
+// PIC32MX Ethernet Starter Kit (PIC32MX795F521L)
 // -----------------------------------------------------------------------
 
 // Configuracio del oscilador

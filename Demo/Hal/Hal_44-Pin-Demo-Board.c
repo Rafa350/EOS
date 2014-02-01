@@ -55,6 +55,12 @@ void halInitialize(void) {
 }
 
 
+void halOutInitialize(void) {
+
+    TRISD &= 0b10000000;
+}
+
+
 /*************************************************************************
  *
  *       Escriptura en el port de sortida
@@ -70,7 +76,7 @@ void halInitialize(void) {
 
 void halOutPortWrite(UINT8 id, BOOL state) {
 
-    if (id < 3) {
+    if (id < 7) {
         if (state)
             LATD |= (1 << id);
         else
@@ -79,9 +85,20 @@ void halOutPortWrite(UINT8 id, BOOL state) {
 }
 
 
+void halInpInitialize(void) {
+
+}
+
+
 BOOL halInpPortRead(UINT8 id) {
 
     return FALSE;
+}
+
+
+void halLedInitialize(void) {
+
+    TRISDbits.TRISD7 = 0;
 }
 
 

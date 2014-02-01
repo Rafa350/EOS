@@ -11,9 +11,9 @@
 #ifdef eosPLC_UseOutputs
 
 extern void eosOutSet(UINT8 id, BOOL state);
-extern BOOL eosOutGet(UINT8 id);
 extern void eosOutToggle(UINT8 id);
 extern void eosOutPulse(UINT8 id, unsigned timeOut);
+extern void eosOutBlink(UINT8 id, unsigned timeOut);
 extern void eosOutAllOFF(void);
 
 #define eosOutSetON(id)                eosOutSet(id, TRUE)
@@ -49,9 +49,9 @@ extern void sysAdcInitialize(void);
 
 // Temporitzadors
 //
-#ifdef eosUSE_UseTimers
+#ifdef eosPLC_UseTimers
 extern void eosTimStart(UINT8 id, unsigned time);
-extern BOOL eosTinGet(UINT8 id);
+extern BOOL eosTimGet(UINT8 id);
 extern void eosTimPause(UINT8 id);
 extern void eosTimContinue(UINT8 id);
 
@@ -63,14 +63,6 @@ extern void sysTimTickInterrupt(void);
 // Variables
 //
 #ifdef eosPLC_UseVariables
-
-#ifndef __halVarSave
-#define __halVarSave(data, size)       halVarSave(data, size)
-#endif
-
-#ifndef __halVarRestore
-#define __halVarRestore(data, size)    halVarRestore(data, size)
-#endif
 
 typedef struct {
     UINT8 varId;
@@ -88,8 +80,6 @@ extern void eosVarSetTableROM(VARINIT *data, UINT8 dataLen);
 
 extern void sysVarInitialize(void);
 
-extern void halVarSave(void *data, unsigned dataSize);
-extern void halVarRestore(void *data, unsigned dataSize);
 #endif
 
 

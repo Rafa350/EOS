@@ -15,6 +15,7 @@ void usrSetup(void) {
     eosOutPulse(0, 1000);
     eosOutPulse(1, 2000);
     eosTimStart(0, 5000);
+    eosOutBlink(3, 250);
 }
 
 
