@@ -40,11 +40,11 @@
             <itemPath>../../Source/Modules/Debugger/eosDbgLed.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="Plc" projectFiles="true">
-            <itemPath>../../Source/Modules/Plc/eosPlcAdc.c</itemPath>
-            <itemPath>../../Source/Modules/Plc/eosPlcInputs.c</itemPath>
-            <itemPath>../../Source/Modules/Plc/eosPlcOutputs.c</itemPath>
-            <itemPath>../../Source/Modules/Plc/eosPlcTimers.c</itemPath>
-            <itemPath>../../Source/Modules/Plc/eosPlcVariables.c</itemPath>
+            <itemPath>../../Source/Modules/Plc/eosAdc.c</itemPath>
+            <itemPath>../../Source/Modules/Plc/eosInputs.c</itemPath>
+            <itemPath>../../Source/Modules/Plc/eosOutputs.c</itemPath>
+            <itemPath>../../Source/Modules/Plc/eosTimers.c</itemPath>
+            <itemPath>../../Source/Modules/Plc/eosVariables.c</itemPath>
           </logicalFolder>
           <itemPath>../../Source/Modules/UsbHost.c</itemPath>
         </logicalFolder>
@@ -313,7 +313,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value=""/>
+        <property key="optimization-level" value="-O1"/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -350,6 +350,13 @@
         <property key="exclude-floating-point-library" value="true"/>
         <property key="exclude-standard-libraries" value="false"/>
         <property key="extra-lib-directories" value=""/>
+        <property key="fill-flash-options-addr" value=""/>
+        <property key="fill-flash-options-const" value=""/>
+        <property key="fill-flash-options-how" value="0"/>
+        <property key="fill-flash-options-inc-const" value="1"/>
+        <property key="fill-flash-options-increment" value=""/>
+        <property key="fill-flash-options-seq" value=""/>
+        <property key="fill-flash-options-what" value="0"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
@@ -383,7 +390,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value=""/>
+        <property key="optimization-level" value="-O1"/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>

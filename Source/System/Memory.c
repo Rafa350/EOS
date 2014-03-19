@@ -3,7 +3,7 @@
 #ifdef __PIC32MX
 
 
-#ifdef EOS_USE_FREERTOS
+#ifdef eosOPT_FREERTOS
 #include "FreeRTOS.h"
 #endif
 
@@ -26,7 +26,7 @@
 #ifndef eosAlloc
 void *eosAlloc(unsigned size) {
 
-#ifdef EOS_USE_FREERTOS
+#ifdef eosOPT_FREERTOS
     return pvPortMalloc(size);
 #else
     return malloc(size);
@@ -75,7 +75,7 @@ void *eosAllocString(const char* str) {
 
 void* eosRealloc(void *p, unsigned size) {
 
-#ifdef EOS_USE_FREERTOS
+#ifdef eosOPT_FREERTOS
     void *p2 = pvPortMalloc(size);
     if (p2) {
         memcpy(p2, p, size);
@@ -103,7 +103,7 @@ void* eosRealloc(void *p, unsigned size) {
 #ifndef eosFree
 void eosFree(void *p) {
 
-#ifdef EOS_USE_FREERTOS
+#ifdef eosOPT_FREERTOS
     vPortFree(p);
 #else
     free(p);

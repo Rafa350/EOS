@@ -26,19 +26,19 @@ __attribute__((weak)) void usrLoop(void) {
 
 void eosTickInterrupt(void) {
 
-#ifdef eosPLC_UseOutputs
+#ifdef eosUSE_OUTPUTS
     sysOutTickInterrupt();
 #endif
 
-#ifdef eosPLC_UseInputs
+#ifdef eosUSE_INPUTS
     sysInpTickInterrupt();
 #endif
 
-#ifdef eosPLC_UseTimers
+#ifdef eosUSE_TIMERS
     sysTimTickInterrupt();
 #endif
 
-#ifdef eosDBG_UseLed
+#ifdef eosUSE_LED
     sysLedTickInterrupt();
 #endif
 }
@@ -58,23 +58,23 @@ void eosMain(void) {
 
     __halInitialize();
 
-#ifdef eosPLC_UseOutputs
+#ifdef eosUSE_OUTPUTS
     sysOutInitialize();
 #endif
 
-#ifdef eosPLC_UseInputs
+#ifdef eosUSE_INPUTS
     sysInpInitialize();
 #endif
 
-#ifdef eosPLC_UseTimers
+#ifdef eosUSE_TIMERS
     sysTimInitialize();
 #endif
 
-#ifdef eosPLC_UseVariables
+#ifdef eosUSE_VARIABLES
     sysVarInitialize();
 #endif
 
-#ifdef eosDBG_UseLed
+#ifdef eosUSE_LED
     sysLedInitialize();
 #endif
 
@@ -82,7 +82,7 @@ void eosMain(void) {
     sysUsbHostInitialize();
 #endif
 
-#if !defined(__DEBUG) && defined(EOS_USE_WATCHDOG)
+#if !defined(__DEBUG) && defined(eosOPT_WATCHDOG)
     eosEnableWatchdog();
 #endif
 
@@ -91,15 +91,15 @@ void eosMain(void) {
  
     while (TRUE) {
 
-#ifdef eosPLC_UseOutputs
+#ifdef eosUSE_OUTPUTS
         sysOutLoop();
 #endif
 
-#ifdef eosPLC_UseInputs
+#ifdef eosUSE_INPUTS
         sysInpLoop();
 #endif
 
-#ifdef eosPLC_UseTimers
+#ifdef eosUSE_TIMERS
         sysTimLoop();
 #endif
 
@@ -109,7 +109,7 @@ void eosMain(void) {
 
         usrLoop();
 
-#if !defined(__DEBUG) && defined(EOS_USE_WATCHDOG)
+#if !defined(__DEBUG) && defined(eosOPT_WATCHDOG)
         eosClearWatchdog();
 #endif
     }
@@ -125,7 +125,7 @@ void eosMain(void) {
  *
  *************************************************************************/
 
-#ifdef EOS_USE_SYSMAIN
+#ifdef eosOPT_SYSMAIN
 void main(void) {
 
     eosMain();

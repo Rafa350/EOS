@@ -22,7 +22,7 @@
 #endif
 
 
-#ifdef EOS_USE_SYSMAIN
+#ifdef eosOPT_SYSMAIN
 extern void eosMain(void);
 #endif
 extern void eosTickInterrupt(void);
@@ -64,14 +64,14 @@ extern void sysUsbHostInitialize(void);
 extern void sysUsbHostLoop(void);
 #endif
 
-#if defined(eosDBG_UseLed)
+#if defined(eosUSE_LED)
 #include "Modules/Debugger/eosDebugger.h"
 #endif
 
-#if defined(eosPLC_UseInputs) || \
-    defined(eosPLC_UseOutputs) || \
-    defined(eosPLC_UseVariables) || \
-    defined(eosPLC_UseTimers)
+#if defined(eosUSE_INPUTS) || \
+    defined(eosUSE_OUTPUTS) || \
+    defined(eosUSE_VARIABLES) || \
+    defined(eosUSE_TIMERS)
 #include "Modules/Plc/eosPLC.h"
 #endif
 

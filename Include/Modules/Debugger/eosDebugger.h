@@ -8,7 +8,7 @@
 
 // Indicador d'estat
 //
-#ifdef eosDBG_UseLed
+#ifdef eosUSE_LED
 
 extern void sysLedInitialize(void);
 extern void sysLedTickInterrupt(void);

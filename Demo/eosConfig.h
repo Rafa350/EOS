@@ -8,27 +8,36 @@
 
 // Parametres del sistema
 //
-#define EOS_USE_SYSMAIN
-//#define EOS_USE_WATCHDOG
-//#define EOS_USE_FREERTOS
-#define EOS_USE_HARMONY
+#define eosOPT_SYSMAIN      // Utilitza la entrada del sistema
+//#define eosOPT_WATCHDOG   // Utilitza el WatchDog
+//#define eosOPT_FREERTOS   // Utilitza FreeRTOS
+#define eosOPT_HARMONY      // Utilitza Harmony
 
 
-// Definicions pel modul de depuracio
+// Configura el modul de depuracio (LED)
 //
-#define eosDBG_UseLed
+#define eosUSE_LED
 
-
-// Definicions pel modul de temporitzadors
+// Configura el modul d'entrades (INPUTS)
 //
-#define eosPLC_UseTimers
-#define eosPLC_NumTimers     16
+#define eosUSE_INPUTS
+#define eosCFG_INPUTS_NumInputs        8
 
-
-// Definicions pel modul de variables
+// Configura el modul de sortides (OUTPUTS)
 //
-#define eosPLC_UseVariables
-#define eosPLC_NumVariables  32
+#define eosUSE_OUTPUTS
+#define eosCFG_OUTPUTS_NumOutputs      8
+
+// Configura el modul de temporitzadors (TIMERS)
+//
+#define eosUSE_TIMERS
+#define eosCFG_TIMERS_NumTimers        16
+
+
+// Configura el modul de variables (VARIABLES)
+//
+#define eosUSE_VARIABLES
+#define eosCFG_VARIABLES_NumVariables  32
 
 
 #endif

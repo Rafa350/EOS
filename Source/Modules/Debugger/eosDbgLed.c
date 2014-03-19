@@ -1,7 +1,7 @@
 #include "eos.h"
 
 
-#ifdef eosDBG_UseLed
+#ifdef eosUSE_LED
 
 
 #define INI_TICK   1000      // 1000 cicles de interrupcio de 1mS

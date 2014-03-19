@@ -8,7 +8,7 @@
 
 // Sortides digitals
 //
-#ifdef eosPLC_UseOutputs
+#ifdef eosUSE_OUTPUTS
 
 extern void eosOutSet(UINT8 id, BOOL state);
 extern void eosOutToggle(UINT8 id);
@@ -27,7 +27,7 @@ extern void sysOutTickInterrupt(void);
 
 // Entrades digitals
 //
-#ifdef eosPLC_UseInputs
+#ifdef eosUSE_INPUTS
 
 extern BOOL eosInpGet(UINT8 id);
 extern BOOL eosInpPosEdge(UINT8 id);
@@ -41,7 +41,7 @@ extern void sysInpTickInterrupt(void);
 
 // Conversio AD
 //
-#ifdef eosPLC_UseAdc
+#ifdef eosUSE_ADC
 extern UINT16 eosAdcGet(UINT8 adcId);
 
 extern void sysAdcInitialize(void);
@@ -49,7 +49,7 @@ extern void sysAdcInitialize(void);
 
 // Temporitzadors
 //
-#ifdef eosPLC_UseTimers
+#ifdef eosUSE_TIMERS
 extern void eosTimStart(UINT8 id, unsigned time);
 extern BOOL eosTimGet(UINT8 id);
 extern void eosTimPause(UINT8 id);
@@ -62,7 +62,7 @@ extern void sysTimTickInterrupt(void);
 
 // Variables
 //
-#ifdef eosPLC_UseVariables
+#ifdef eosUSE_VARIABLES
 
 typedef struct {
     UINT8 varId;
