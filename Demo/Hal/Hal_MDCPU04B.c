@@ -85,7 +85,7 @@ void halInitialize(void) {
  *       Escriptura en el port de sortida
  *
  *       Funcio:
- *           void halOutPortWrite(UINT8 id, BOOL state)
+ *           void halPortWrite(UINT8 id, BOOL state)
  *
  *       Entrada:
  *           id   : Numero de sortida
@@ -93,7 +93,7 @@ void halInitialize(void) {
  *
  *************************************************************************/
 
-void halOutPortWrite(UINT8 id, BOOL state) {
+void halPortWrite(UINT8 id, BOOL state) {
 
     BOOL s = state;
     switch (id) {
@@ -146,7 +146,7 @@ void halOutPortWrite(UINT8 id, BOOL state) {
  *       Lectura d'un port d'entrada
  *
  *       Funcio:
- *           BOOL halInpPortRead(UINT8 id)
+ *           BOOL halPortRead(UINT8 id)
  *
  *       Entrada:
  *           id: Identificador del port
@@ -156,7 +156,7 @@ void halOutPortWrite(UINT8 id, BOOL state) {
  *
  *************************************************************************/
 
-BOOL halInpPortRead(UINT8 id) {
+BOOL halPortRead(UINT8 id) {
 
     switch (id) {
         case 0:

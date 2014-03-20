@@ -8,12 +8,14 @@
 //
 #define USE_OSC_XTAL
 
-// Definicions pel modul d'entrades
+// Configura el modul d'entrades
 //
+#define eosUSE_INPUTS
 #define eosCFG_INPUTS_NumInputs        10
 
-// Definicio pl modul de sortides
+// Configura el modul de sortides
 //
+#define eosUSE_OUTPUTS
 #define eosCFG_OUTPUTS_NumOutputs      10
 
 

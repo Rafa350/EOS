@@ -24,8 +24,6 @@ extern void halLedPortWrite(BOOL state);
 
 void sysLedInitialize(void) {
 
-    halLedInitialize();
-
     tick = INI_TICK;
 }
 

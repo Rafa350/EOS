@@ -22,8 +22,7 @@ typedef struct {
 
 static PORTINFO ports[eosCFG_INPUTS_NumInputs];
 
-extern void halInpInitialize(void);
-extern BOOL halInpPortRead(UINT8 id);
+extern BOOL halPortRead(UINT8 id);
 
 
 /*************************************************************************
@@ -36,8 +35,6 @@ extern BOOL halInpPortRead(UINT8 id);
  *************************************************************************/
 
 void sysInpInitialize(void) {
-
-    halInpInitialize();
 
     UINT8 id = eosCFG_INPUTS_NumInputs - 1;
     do {
@@ -67,7 +64,7 @@ void sysInpTickInterrupt(void) {
     do {
 
         PORTINFO *p = &ports[id];
-        p->pattern = (p->pattern << 1) | (halInpPortRead(id) ? 1 : 0);
+        p->pattern = (p->pattern << 1) | (halPortRead(id) ? 1 : 0);
     
     } while (id--);
 }

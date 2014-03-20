@@ -1,9 +1,12 @@
 #include "eos.h"
 
 
+extern void halInitialize(void);
+
+
 #if defined(_PIC18)
 extern void usrSetup(void);
-void usrLoop(void);
+extern void usrLoop(void);
 
 #elif defined(__PIC32MX)
 __attribute__((weak)) void usrSetup(void) {

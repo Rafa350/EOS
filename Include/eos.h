@@ -9,16 +9,11 @@
 #endif
 
 #ifdef __PIC32MX
-#ifdef EOS_USE_HARMONY
+#ifdef eosOPT_HARMONY
 #include "peripheral/int/plib_int.h"
 #else
 #include "plib.h"
 #endif
-#endif
-
-
-#ifndef __halInitialize
-#define __halInitialize()         halInitialize()
 #endif
 
 
@@ -31,8 +26,6 @@ extern void* eosAlloc(unsigned size);
 extern void* eosRealloc(void *p, unsigned size);
 extern void* eosAllocString(const char *s);
 extern void eosFree(void *p);
-
-extern void halInitialize(void);
 
 #if defined(_PIC18)
 #define eosEnableInterrupts()     ei()

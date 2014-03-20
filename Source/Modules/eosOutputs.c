@@ -17,8 +17,7 @@ typedef struct {             // Estat del port
 static PORTINFO ports[eosCFG_OUTPUTS_NumOutputs];
 
 
-extern void halOutInitialize(void);
-extern void halOutPortWrite(UINT8 id, BOOL state);
+extern void halPortWrite(UINT8 id, BOOL state);
 
 
 /*************************************************************************
@@ -31,8 +30,6 @@ extern void halOutPortWrite(UINT8 id, BOOL state);
  *************************************************************************/
 
 void sysOutInitialize(void) {
-
-    halOutInitialize();
 
     UINT8 id = eosCFG_OUTPUTS_NumOutputs - 1;
     do {
@@ -94,7 +91,7 @@ void sysOutLoop(void) {
         PORTINFO *p = &ports[id];
 
         eosDisableInterrupts();
-        halOutPortWrite(id, p->state);
+        halPortWrite(id, p->state);
         eosEnableInterrupts();
 
     } while (id--);
