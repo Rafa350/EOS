@@ -1,5 +1,6 @@
 _sysOutInitialize: CODE, 1744 0 118
 _eosInpGet: CODE, 2578 0 56
+_halLedWrite: CODE, 2826 0 16
 _eosTimGet: CODE, 2522 0 56
 _ISR: CODE, 8 0 126
 _halInitialize: CODE, 1974 0 112
@@ -19,7 +20,6 @@ _usrSetup: CODE, 2464 0 58
 _eosTickInterrupt: CODE, 2808 0 18
 _eosOutBlink: CODE, 904 0 176
 _sysLedTickInterrupt: CODE, 2728 0 46
-_halLedPortWrite: CODE, 2826 0 16
 _sysInpLoop: CODE, 138 0 202
 _sysTimLoop: CODE, 2086 0 100
 _halPortRead: CODE, 534 0 194

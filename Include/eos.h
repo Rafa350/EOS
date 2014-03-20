@@ -34,7 +34,7 @@ extern void eosFree(void *p);
 #define eosDisableWatchdog()      WDTCONbits.SWDTEN = 0
 #define eosClearWatchdog()        CLRWDT()
 #elif defined(__PIC32MX)
-#ifdef EOS_USE_HARMONY
+#ifdef eosOPT_HARMONY
 #define eosEnableInterrupts()     PLIB_INT_Enable(INT_ID_0)
 #define eosDisableInterrupts()    PLIB_INT_Disable(INT_ID_0)
 #define eosEnableWatchdog()       EnableWDT()
@@ -52,20 +52,22 @@ extern void eosFree(void *p);
 
 // Modul USB Host
 //
-#if defined(EOS_USE_USBHOST) && defined(__PIC32MX)
+#if defined(eosUSE_USBHOST) && defined(__PIC32MX)
 extern void sysUsbHostInitialize(void);
 extern void sysUsbHostLoop(void);
 #endif
 
-#if defined(eosUSE_LED)
-#include "Modules/Debugger/eosDebugger.h"
+// Modul LED
+//
+#if defined(eosUSE_LED) && !defined(__EOSLED_H)
+#include "Modules/eosLed.h"
 #endif
 
 #if defined(eosUSE_INPUTS) || \
     defined(eosUSE_OUTPUTS) || \
     defined(eosUSE_VARIABLES) || \
     defined(eosUSE_TIMERS)
-#include "Modules/Plc/eosPLC.h"
+#include "Modules/eosModules.h"
 #endif
 
 

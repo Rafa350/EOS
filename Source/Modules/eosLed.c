@@ -9,8 +9,7 @@
 static UINT16 tick;          // Contador de temps
 
 
-extern void halLedInitialize(void);
-extern void halLedPortWrite(BOOL state);
+extern void halLedWrite(BOOL state);
 
 
 /*************************************************************************
@@ -42,7 +41,7 @@ void sysLedTickInterrupt(void) {
     if (!--tick)
         tick = INI_TICK;
 
-    halLedPortWrite(tick < 25);
+    halLedWrite(tick < 25);
 }
 
 

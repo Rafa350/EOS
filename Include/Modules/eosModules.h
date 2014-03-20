@@ -1,5 +1,5 @@
-#ifndef __EOSPLC_H
-#define	__EOSPLC_H
+#ifndef __EOSMODULES_H
+#define	__EOSMODULES_H
 
 #ifndef __EOS_H
 #include "eos.h"

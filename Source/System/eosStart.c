@@ -59,7 +59,7 @@ void eosTickInterrupt(void) {
 
 void eosMain(void) {
 
-    __halInitialize();
+    halInitialize();
 
 #ifdef eosUSE_OUTPUTS
     sysOutInitialize();

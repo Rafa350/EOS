@@ -1,4 +1,4 @@
-#include "Modules/Plc/eosPlc.h"
+#include "eos.h"
 
 
 #ifdef eosUSE_OUTPUTS

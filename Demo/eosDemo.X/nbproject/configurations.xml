@@ -9,6 +9,10 @@
         <itemPath>../eosConfig.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Eos" projectFiles="true">
+        <logicalFolder name="f1" displayName="Modules" projectFiles="true">
+          <itemPath>../../Include/Modules/eosLed.h</itemPath>
+          <itemPath>../../Include/Modules/eosModules.h</itemPath>
+        </logicalFolder>
         <itemPath>../../Include/eos.h</itemPath>
       </logicalFolder>
     </logicalFolder>
@@ -36,8 +40,9 @@
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Hal" projectFiles="true">
-        <itemPath>../Hal/Hal_MDCPU04B.c</itemPath>
         <itemPath>../Hal/Hal_44-Pin-Demo-Board.c</itemPath>
+        <itemPath>../Hal/Hal_MD-CPU04B.c</itemPath>
+        <itemPath>../Hal/Hal_PIC32MX-Ethernet-Starter-Kit.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Main" projectFiles="true">
         <itemPath>../Config.c</itemPath>
@@ -89,6 +94,10 @@
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <item path="../Hal/Hal_44-Pin-Demo-Board.c" ex="true" overriding="false">
+      </item>
+      <item path="../Hal/Hal_PIC32MX-Ethernet-Starter-Kit.c"
+            ex="true"
+            overriding="false">
       </item>
       <HI-TECH-COMP>
         <property key="asmlist" value="false"/>

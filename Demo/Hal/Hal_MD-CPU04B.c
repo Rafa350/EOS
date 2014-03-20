@@ -69,7 +69,7 @@ void halInitialize(void) {
     LATDbits.LATD5 = 0;
     TRISDbits.TRISD5 = 0;
 
-#ifdef EOS_USE_WATCHDOG
+#ifdef eosOPT_WATCHDOG
     WDTCONbits.WDTPS = 0x0A;      // Es dispara cada segon
 #endif
 
@@ -200,14 +200,14 @@ BOOL halPortRead(UINT8 id) {
  *       Canvia l'estar del indicador LED
  *
  *       Funcio:
- *           void halLedPortWrite(BOOL state)
+ *           void halLedWrite(BOOL state)
  *
  *       Entrada:
  *           state: El nou estat del led
  *
  *************************************************************************/
 
-void halLedPortWrite(BOOL state) {
+void halLedWrite(BOOL state) {
 
     LATDbits.LATD5 = state;
 }
