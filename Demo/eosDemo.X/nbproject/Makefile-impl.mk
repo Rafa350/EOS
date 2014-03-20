@@ -27,11 +27,11 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 PROJECTNAME=eosDemo.X
 
 # Active Configuration
-DEFAULTCONF=44-Pin-Demo-Board
+DEFAULTCONF=MD-CPU04B
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=MD-CPU04B PIC32-Ethernet-Starter-Kit 44-Pin-Demo-Board 
+ALLCONFS=MD-CPU04B 
 
 
 # build
@@ -46,16 +46,12 @@ ALLCONFS=MD-CPU04B PIC32-Ethernet-Starter-Kit 44-Pin-Demo-Board
 # clobber
 .clobber-impl: .clobber-pre .depcheck-impl
 	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=MD-CPU04B clean
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=PIC32-Ethernet-Starter-Kit clean
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=44-Pin-Demo-Board clean
 
 
 
 # all
 .all-impl: .all-pre .depcheck-impl
 	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=MD-CPU04B build
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=PIC32-Ethernet-Starter-Kit build
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=44-Pin-Demo-Board build
 
 
 

@@ -2,11 +2,11 @@
 #define	__EOSCONFIG_H
 
 #ifndef __HARDWAREPROFILE_H
-#include "hardwareprofile.h"
+#include "HardwareProfile.h"
 #endif
 
 
-// Parametres del sistema
+// Opcions del sistema del sistema
 //
 #define eosOPT_SYSMAIN      // Utilitza la entrada del sistema
 //#define eosOPT_WATCHDOG   // Utilitza el WatchDog
@@ -20,13 +20,13 @@
 
 // Configura el modul d'entrades (INPUTS)
 //
-#define eosUSE_INPUTS
-#define eosCFG_INPUTS_NumInputs        8
+//#define eosUSE_INPUTS
+//#define eosCFG_INPUTS_NumInputs        8
 
 // Configura el modul de sortides (OUTPUTS)
 //
-#define eosUSE_OUTPUTS
-#define eosCFG_OUTPUTS_NumOutputs      8
+//#define eosUSE_OUTPUTS
+//#define eosCFG_OUTPUTS_NumOutputs      8
 
 // Configura el modul de temporitzadors (TIMERS)
 //

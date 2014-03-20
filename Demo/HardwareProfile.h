@@ -10,11 +10,11 @@
 
 // Definicions pel modul d'entrades
 //
-#define EOS_NUM_INPUTS       10
+#define eosCFG_INPUTS_NumInputs        10
 
 // Definicio pl modul de sortides
 //
-#define EOS_NUM_OUTPUTS      10
+#define eosCFG_OUTPUTS_NumOutputs      10
 
 
 #elif defined(HARDWARE_PICKIT3)

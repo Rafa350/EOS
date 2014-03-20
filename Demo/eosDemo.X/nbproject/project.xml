@@ -3,13 +3,13 @@
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
             <name>eosDemo</name>
-            <creation-uuid>e303271b-503c-43a4-a166-4de3cbd4eda6</creation-uuid>
+            <creation-uuid>af300bfa-d549-452e-b652-1e0a01322b0c</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>
             <cpp-extensions/>
             <header-extensions>h</header-extensions>
-            <sourceEncoding>ISO-8859-1</sourceEncoding>
             <asminc-extensions/>
+            <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
         </data>
     </configuration>
