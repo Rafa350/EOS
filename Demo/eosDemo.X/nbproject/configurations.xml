@@ -25,13 +25,13 @@
                    projectFiles="true">
       <logicalFolder name="f2" displayName="Eos" projectFiles="true">
         <logicalFolder name="f1" displayName="Modules" projectFiles="true">
-          <itemPath>../../Source/Modules/UsbHost.c</itemPath>
           <itemPath>../../Source/Modules/eosAdc.c</itemPath>
           <itemPath>../../Source/Modules/eosInputs.c</itemPath>
           <itemPath>../../Source/Modules/eosLed.c</itemPath>
           <itemPath>../../Source/Modules/eosOutputs.c</itemPath>
           <itemPath>../../Source/Modules/eosTimers.c</itemPath>
           <itemPath>../../Source/Modules/eosVariables.c</itemPath>
+          <itemPath>../../Source/Modules/eosUsbHost.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
           <itemPath>../../Source/System/eosKernel.c</itemPath>
@@ -94,10 +94,22 @@
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <item path="../Hal/Hal_44-Pin-Demo-Board.c" ex="true" overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../Hal/Hal_PIC32MX-Ethernet-Starter-Kit.c"
             ex="true"
             overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <HI-TECH-COMP>
         <property key="asmlist" value="false"/>
