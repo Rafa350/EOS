@@ -32,6 +32,8 @@
           <itemPath>../../Source/Modules/eosTimers.c</itemPath>
           <itemPath>../../Source/Modules/eosVariables.c</itemPath>
           <itemPath>../../Source/Modules/eosUsbHost.c</itemPath>
+          <itemPath>../../Source/Modules/eosI2CMaster.c</itemPath>
+          <itemPath>../../Source/Modules/eosI2CSlave.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
           <itemPath>../../Source/System/eosKernel.c</itemPath>

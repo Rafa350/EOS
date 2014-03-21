@@ -81,7 +81,7 @@ void eosMain(void) {
     sysLedInitialize();
 #endif
 
-#ifdef EOS_USE_USBHOST
+#ifdef eosUSE_USBHOST
     sysUsbHostInitialize();
 #endif
 
@@ -106,7 +106,7 @@ void eosMain(void) {
         sysTimLoop();
 #endif
 
-#ifdef EOS_USE_USBHOST
+#ifdef eosUSE_USBHOST
         sysUsbHostLoop();
 #endif
 

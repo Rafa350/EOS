@@ -40,5 +40,13 @@
 #define eosCFG_VARIABLES_NumVariables  32
 
 
+// Configura el modul i2c Master (I2CMASTER)
+//
+
+
+// Configura el modul i2cSlave (I2CSLAVE)
+//
+
+
 #endif
 
