@@ -75,6 +75,12 @@ extern void sysUsbHostLoop(void);
 #include "Modules/eosOutputs.h"
 #endif
 
+// Modul STEP
+//
+#if defined(eosUSE_STEP) && !defined(__EOSSTEP_H)
+#include "Modules/eosStep.h"
+#endif
+
 #if defined(eosUSE_INPUTS) || \
     defined(eosUSE_VARIABLES) || \
     defined(eosUSE_TIMERS)

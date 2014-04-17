@@ -381,7 +381,7 @@
         <property key="data-model-size-of-float" value="24"/>
         <property key="display-class-usage" value="false"/>
         <property key="display-hex-usage" value="false"/>
-        <property key="display-overall-usage" value="true"/>
+        <property key="display-overall-usage" value="false"/>
         <property key="display-psect-usage" value="false"/>
         <property key="fill-flash-options-addr" value=""/>
         <property key="fill-flash-options-const" value=""/>
@@ -408,7 +408,6 @@
         <property key="ToolFirmwareFilePath"
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

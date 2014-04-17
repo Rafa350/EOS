@@ -37,6 +37,10 @@ void eosTickInterrupt(void) {
     sysInpTickInterrupt();
 #endif
 
+#ifdef eosUSE_STEP
+    sysStpTickInterrupt();
+#endif
+
 #ifdef eosUSE_TIMERS
     sysTimTickInterrupt();
 #endif
@@ -67,6 +71,10 @@ void eosMain(void) {
 
 #ifdef eosUSE_INPUTS
     sysInpInitialize();
+#endif
+
+#ifdef eosUSE_STEP
+    sysStpInitialize();
 #endif
 
 #ifdef eosUSE_TIMERS

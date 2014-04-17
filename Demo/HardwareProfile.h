@@ -33,6 +33,11 @@
 #define eosUSE_OUTPUTS                      // Utilitza el modul de sortides
 #define eosCFG_OUTPUTS_NumOutputs      7    // Numero maxim de sortides
 
+// Definicions pel modul de control de motors
+//
+#define eosUSE_STEP                         // Utilitza el modul de control de motor
+#define eosCFG_STEP_NumMotors          3    // Numero de motors
+
 
 #elif defined(HARDWARE_PIC32_ESK)
 
