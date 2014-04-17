@@ -21,19 +21,17 @@
 
 #elif defined(HARDWARE_PICKIT3)
 
-// Definicions per oscilador
-//
 #define USE_OSC_INTERNAL
 
 // Definicions pel modul d'entrades
 //
-#define eosPLC_UseInputs          // Utilitza el modul d'entrades
-#define eosPLC_NumInputs     2    // Numero maxim d'entrades
+#define eosUSE_INPUTS                       // Utilitza el modul d'entrades
+#define eosCFG_INPUTS_NumInputs        2    // Numero maxim d'entrades
 
 // Definicios pel modul de sortides
 //
-#define eosPLC_UseOutputs         // Utilitza el modul de sortides
-#define eosPLC_NumOutputs    7    // Numero maxim de sortides
+#define eosUSE_OUTPUTS                      // Utilitza el modul de sortides
+#define eosCFG_OUTPUTS_NumOutputs      7    // Numero maxim de sortides
 
 
 #elif defined(HARDWARE_PIC32_ESK)

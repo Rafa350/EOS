@@ -63,8 +63,19 @@ extern void sysUsbHostLoop(void);
 #include "Modules/eosLed.h"
 #endif
 
+// Modul INPUTS
+//
+#if defined(eosUSE_INPUTS) && !defined(__EOSINPUTS_H)
+#include "Modules/eosInputs.h"
+#endif
+
+// Modul OUTPUTS
+//
+#if defined(eosUSE_OUTPUTS) && !defined(__EOSOUTPUTS_H)
+#include "Modules/eosOutputs.h"
+#endif
+
 #if defined(eosUSE_INPUTS) || \
-    defined(eosUSE_OUTPUTS) || \
     defined(eosUSE_VARIABLES) || \
     defined(eosUSE_TIMERS)
 #include "Modules/eosModules.h"

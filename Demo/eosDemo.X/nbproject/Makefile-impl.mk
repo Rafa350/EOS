@@ -27,11 +27,11 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 PROJECTNAME=eosDemo.X
 
 # Active Configuration
-DEFAULTCONF=MD-CPU04B
+DEFAULTCONF=PICKIT3
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=MD-CPU04B 
+ALLCONFS=MD-CPU04B PICKIT3 
 
 
 # build
@@ -46,12 +46,14 @@ ALLCONFS=MD-CPU04B
 # clobber
 .clobber-impl: .clobber-pre .depcheck-impl
 	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=MD-CPU04B clean
+	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=PICKIT3 clean
 
 
 
 # all
 .all-impl: .all-pre .depcheck-impl
 	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=MD-CPU04B build
+	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=PICKIT3 build
 
 
 

@@ -1,6 +1,11 @@
 #include "eos.h"
 
 
+#if !defined(HARDWARE_PICKIT3)
+#error Hardware incorrecto
+#endif
+
+
 /*************************************************************************
  *
  *       Inicialitza el hardware
@@ -23,7 +28,6 @@ void halInitialize(void) {
     OSCTUNEbits.PLLEN = 1;        // PLL enabled (x4)
     OSCCONbits.IRCF = 7;          // 16MHz en HFINTOSC
     OSCTUNEbits.INTSRC = 1;       // 31.25 clock from HS
-    OSCCONbits.IRCF = 6;          // 8MHz
     OSCCONbits.SCS = 0;           // Oscilador primari definit en CONFIG.FOSC
 #endif
 
@@ -39,14 +43,27 @@ void halInitialize(void) {
     //
     PR2 = 125;                    // Conta fins a 125
     T2CONbits.T2CKPS = 3;         // Divisor per 64 --> (Fosc / 4) / 64 = 125KHz
-    T2CONbits.T2OUTPS = 0;        // Divisor per 1
+    T2CONbits.T2OUTPS = 1;        // Divisor per 2
     T2CONbits.TMR2ON = 1;         // Inicia el conteig
     TMR2IF = 0;                   // Borra el flag d'interrupcions
     TMR2IE = 1;                   // Autoritza interrupcions de TMR2
 
+    // Inicialitza el port del indicador LED
+    //
+#ifdef eosUSE_LED
+    TRISDbits.TRISD7 = 0;
+#endif
+
+    // Inicialitza els ports d'entrada
+    //
+#ifdef eosUSE_INPUTS
+#endif
+
     // Inicialitza els ports de sortida
     //
-    TRISD = 0b00000000;           // Port D tot com sortides
+#ifdef eosUSE_OUTPUTS
+    TRISD &= 0b10000000;
+#endif
 
     // Configura les interrupcions
     //
@@ -55,18 +72,12 @@ void halInitialize(void) {
 }
 
 
-void halOutInitialize(void) {
-
-    TRISD &= 0b10000000;
-}
-
-
 /*************************************************************************
  *
  *       Escriptura en el port de sortida
  *
  *       Funcio:
- *           void halOutWrite(UINT8 id, BOOL state)
+ *           void halPortWrite(UINT8 id, BOOL state)
  *
  *       Entrada:
  *           id   : Numero de sortida
@@ -74,7 +85,8 @@ void halOutInitialize(void) {
  *
  *************************************************************************/
 
-void halOutPortWrite(UINT8 id, BOOL state) {
+#ifdef eosUSE_OUTPUTS
+void halPortWrite(UINT8 id, BOOL state) {
 
     if (id < 7) {
         if (state)
@@ -83,23 +95,15 @@ void halOutPortWrite(UINT8 id, BOOL state) {
             LATD &= ~(1 << id);
     }
 }
+#endif
 
 
-void halInpInitialize(void) {
-
-}
-
-
-BOOL halInpPortRead(UINT8 id) {
+#ifdef eosUSE_INPUTS
+BOOL halPortRead(UINT8 id) {
 
     return FALSE;
 }
-
-
-void halLedInitialize(void) {
-
-    TRISDbits.TRISD7 = 0;
-}
+#endif
 
 
 /*************************************************************************
@@ -107,14 +111,14 @@ void halLedInitialize(void) {
  *       Canvia l'estar del indicador LED
  *
  *       Funcio:
- *           void halLedPortWrite(BOOL state)
+ *           void halLedWrite(BOOL state)
  *
  *       Entrada:
  *           state: El nou estat del led
  *
  *************************************************************************/
 
-void halLedPortWrite(BOOL state) {
+void halLedWrite(BOOL state) {
 
     LATDbits.LATD7 = state;
 }

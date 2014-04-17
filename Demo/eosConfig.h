@@ -26,7 +26,7 @@
 // Configura el modul de sortides (OUTPUTS)
 //
 //#define eosUSE_OUTPUTS
-//#define eosCFG_OUTPUTS_NumOutputs      8
+//#define eosCFG_OUTPUTS_NumOutputs      7
 
 // Configura el modul de temporitzadors (TIMERS)
 //

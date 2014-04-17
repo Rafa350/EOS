@@ -8,6 +8,7 @@
 #error 'EOS_NUM_OUTPUTS' ha de estar en el intervalo 1..32
 #endif
 
+
 typedef struct {             // Estat del port
     unsigned counter;        // -Contador de temps ms
     unsigned blink;          // -Temps de cicle ON/OFF
