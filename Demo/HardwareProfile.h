@@ -31,7 +31,7 @@
 // Definicios pel modul de sortides
 //
 #define eosUSE_OUTPUTS                      // Utilitza el modul de sortides
-#define eosCFG_OUTPUTS_NumOutputs      7    // Numero maxim de sortides
+#define eosCFG_OUTPUTS_NumOutputs      6    // Numero maxim de sortides
 
 // Definicions pel modul de control de motors
 //

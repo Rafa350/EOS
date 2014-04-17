@@ -14,19 +14,6 @@ extern UINT16 eosAdcGet(UINT8 adcId);
 extern void sysAdcInitialize(void);
 #endif
 
-// Temporitzadors
-//
-#ifdef eosUSE_TIMERS
-extern void eosTimStart(UINT8 id, unsigned time);
-extern BOOL eosTimGet(UINT8 id);
-extern void eosTimPause(UINT8 id);
-extern void eosTimContinue(UINT8 id);
-
-extern void sysTimInitialize(void);
-extern void sysTimLoop(void);
-extern void sysTimTickInterrupt(void);
-#endif
-
 // Variables
 //
 #ifdef eosUSE_VARIABLES

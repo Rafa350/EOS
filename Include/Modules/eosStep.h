@@ -10,7 +10,8 @@
 //
 #ifdef eosUSE_STEP
 
-extern BOOL eosStpMove(UINT8 id, unsigned upRamp, unsigned dwRamo, unsigned speed, int steps);
+extern void eosStpMove(UINT8 id, unsigned upRamp, unsigned dwRamo, unsigned speed, int steps);
+extern BOOL eosStpIsBusy(UINT8 id);
 
 extern void sysStpInitialize(void);
 extern void sysStpTickInterrupt(void);

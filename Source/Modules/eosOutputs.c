@@ -5,7 +5,7 @@
 
 
 #if !defined(eosCFG_OUTPUTS_NumOutputs) || (eosCFG_OUTPUTS_NumOutputs < 1) || (eosCFG_OUTPUTS_NumOutputs > 32)
-#error 'EOS_NUM_OUTPUTS' ha de estar en el intervalo 1..32
+#error 'eosCFG_OUTPUTS_NumOutputs' ha de estar en el intervalo 1..32
 #endif
 
 
