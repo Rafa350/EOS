@@ -258,12 +258,30 @@
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <item path="../Config/Config_MD-CPU04B.c" ex="true" overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../Config/Config_PIC32MX-Ethernet-Starter-Kit.c"
             ex="true"
             overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../Hal/Hal_MD-CPU04B.c" ex="true" overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="../Hal/Hal_PIC32MX-Ethernet-Starter-Kit.c"
             ex="true"
