@@ -1,6 +1,7 @@
 #ifndef __EOS_H
 #define	__EOS_H
 
+
 #include "xc.h"
 #include "GenericTypeDefs.h"
 
@@ -15,6 +16,25 @@
 #include "plib.h"
 #endif
 #endif
+
+
+// Codis de retorn de les funcions de la llibreria
+//
+#define eos_RESULT_BASE      0
+#define eos_RESULT_SUCCESS   (eos_RESULT_BASE + 0)
+#define eos_RESULT_FIRST     (eos_RESULT_BASE + 1)
+
+// Codis d'error de les funcions de la llibreria
+//
+#define eos_ERROR_BASE       500
+#define eos_ERROR_PARAMS     (eos_ERROR_BASE + 0)
+#define eos_ERROR_ALLOC      (eos_ERROR_BASE + 1)
+#define eos_ERROR_FIRST      (eos_ERROR_BASE + 500)
+
+// Definicio de tipus base de la llibraria
+//
+typedef UINT16 eosResult;    // Resultat d'una funcio
+typedef void* eosHandle;     // Handler d'un objecte
 
 
 #ifdef eosOPT_SYSMAIN
