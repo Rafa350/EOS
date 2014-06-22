@@ -66,6 +66,40 @@ eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *handle) {
 
 /*************************************************************************
  *
+ *       Comprova si la cua es buida
+ *
+ *       Funcio:
+ *           eosResult eosQueueGetIsEmpry(eosHandle handle, BOOL *isEmpry)
+ *
+ *       Entrada:
+ *           handle: Handler de la cua
+ *
+ *       Sortida:
+ *           isEmpty: TRUE si la cua es buida
+ *
+ *       Retorn:
+ *           eos_RESULT_SUCCESS si tot es correcte
+ *
+ *************************************************************************/
+
+eosResult eosQueueGetIsEmpty(eosHandle handle, BOOL *isEmpty) {
+
+    // Verifica els parametres
+    //
+    if (handle == NULL)
+        return eos_ERROR_PARAMS;
+    if (isEmpty == NULL)
+        return eos_ERROR_PARAMS;
+
+    Queue *q = (Queue*) handle;
+    *isEmpty = q->count == 0;
+
+    return eos_RESULT_SUCCESS;
+}
+
+
+/*************************************************************************
+ *
  *       Afegeix un element en la cua
  *
  *       Funcio:

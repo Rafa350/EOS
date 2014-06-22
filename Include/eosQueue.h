@@ -19,8 +19,11 @@ typedef struct {             // Parametres d'inicialitzacio de la cua
 
 extern eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *handle);
 extern eosResult eosQueueDestroy(eosHandle handle);
-extern eosResult eosQueuePut(eosHandle handle, void* data);
+
+extern eosResult eosQueuePut(eosHandle handle, void *data);
 extern eosResult eosQueueGet(eosHandle handle, void *data);
+
+extern eosResult eosQueueGetIsEmpty(eosHandle handle, BOOL *isEmpty);
 
 
 #endif

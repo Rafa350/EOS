@@ -22,7 +22,8 @@
 //
 #define eos_RESULT_BASE      0
 #define eos_RESULT_SUCCESS   (eos_RESULT_BASE + 0)
-#define eos_RESULT_FIRST     (eos_RESULT_BASE + 1)
+#define eos_RESULT_PENDING   (eos_RESULT_BASE + 1)
+#define eos_RESULT_FIRST     (eos_RESULT_BASE + 2)
 
 // Codis d'error de les funcions de la llibreria
 //
