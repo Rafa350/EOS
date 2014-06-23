@@ -92,7 +92,12 @@ eosResult eosQueueGetIsEmpty(eosHandle handle, BOOL *isEmpty) {
         return eos_ERROR_PARAMS;
 
     Queue *q = (Queue*) handle;
+
+    eosDisableInterrupts();
+    
     *isEmpty = q->count == 0;
+
+    eosEnableInterrupts();
 
     return eos_RESULT_SUCCESS;
 }
@@ -127,7 +132,7 @@ eosResult eosQueuePut(eosHandle handle, void* data) {
 
     eosResult result = eos_RESULT_SUCCESS;
 
-	//VOS_ENTER_CRITICAL_SECTION
+    eosDisableInterrupts();
 
 	if (q->count < q->length) {
 
@@ -140,7 +145,7 @@ eosResult eosQueuePut(eosHandle handle, void* data) {
     else
         result = eosQUEUE_ERROR_FULL;
 
-	//VOS_EXIT_CRITICAL_SECTION
+    eosEnableInterrupts();
 
     return result;
 }
@@ -175,7 +180,7 @@ eosResult eosQueueGet(eosHandle handle, void *data) {
 
     eosResult result = eos_RESULT_SUCCESS;
 
-	//VOS_ENTER_CRITICAL_SECTION
+    eosDisableInterrupts();
 
 	if (q->count > 0) {
 	    memcpy(data, q->tail, q->size);
@@ -187,7 +192,7 @@ eosResult eosQueueGet(eosHandle handle, void *data) {
 	else
         result = eosQUEUE_ERROR_EMPTY;
 
-	//VOS_EXIT_CRITICAL_SECTION
+    eosEnableInterrupts();
 
 	return result;
 }
