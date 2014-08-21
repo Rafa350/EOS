@@ -112,4 +112,61 @@ void eosFree(void *p) {
 #endif
 
 
+/*************************************************************************
+ *
+ *       Crea un bloc de memoria
+ *
+ *       Funcio:
+ *           eosResult eosMemoryCreate(unsigned size, eosHandle *handle)
+ *
+ *       Entrada:
+ *           size: Tamany del bloc en bytes
+ *
+ *       Sortida:
+ *           handle: El handler del bloc de momoria
+ *
+ *       Retorn:
+ *           eos_RESULT_SUCCESS si tot es correcte
+ *
+ *************************************************************************/
+
+eosResult eosMemoryCreate(unsigned size, eosHandle *handle) {
+
+    if (size == 0)
+        return eos_ERROR_PARAMS;
+
+    if (handle == NULL)
+        return eos_ERROR_PARAMS;
+
+    *handle = eosAlloc(size);
+    return (*handle == NULL) ? eos_ERROR_ALLOC : eos_RESULT_SUCCESS;
+}
+
+
+/*************************************************************************
+ *
+ *       Destrueix un bloc de memoria
+ *
+ *       Funcio:
+ *           eosResult eosMemoryDestroy(eosHandle handle)
+ *
+ *       Entrada:
+ *           handle: El handler del bloc de momoria
+ *
+ *       Retorn:
+ *           eos_RESULT_SUCCESS si tot es correcte
+ *
+ *************************************************************************/
+
+eosResult eosMemoryDestroy(eosHandle handle) {
+
+    if (handle == NULL)
+        return eos_ERROR_PARAMS;
+
+    eosFree(handle);
+
+    return eos_RESULT_SUCCESS;
+}
+
+
 #endif // ifdef(__PIC32MX)

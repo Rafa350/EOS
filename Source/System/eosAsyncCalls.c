@@ -19,9 +19,11 @@ void onPrintLabelSuccess() {
     callCancelAll();
 
     doAirAssistOFF();
+    doVaccumON();
     doPistonDown();
     
-    callOnChangeInput(onPistonBottom, INP_PB, ON, ONCE);
+    callOnChangeInput(onPistonBottomSuccess, INP_PB, ON, ONCE);
+    callOnDelay(onPistonBottomTimeout, 1000);
 }
 
 void onPrintLabelTimeout() {
@@ -33,12 +35,15 @@ void onPrintLabelTimeout() {
     doVaccumOFF();
 }
 
-void onPistonBottom() {
+void onPistonBottomSuccess() {
 
     callOnInputChange(onPistonTop, INP_PT, ON, ONCE);
     doVaccumOFF();
     doAirJetPULSE();
     doPistonUp();
+}
+
+void onPistonBottomTimeout() {
 }
 
 void onPistonTop() {

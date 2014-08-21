@@ -11,6 +11,9 @@ extern void* eosRealloc(void *p, unsigned size);
 extern void* eosAllocString(const char *s);
 extern void eosFree(void *p);
 
+extern eosResult eosMemoryCreate(unsigned size, eosHandle *handle);
+extern eosResult eosMemoryDestroy(eosHandle handle);
+
 
 
 #endif

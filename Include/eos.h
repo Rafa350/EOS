@@ -43,10 +43,6 @@ extern void eosMain(void);
 #endif
 extern void eosTickInterrupt(void);
 extern void eosDelay(unsigned);
-extern void* eosAlloc(unsigned size);
-extern void* eosRealloc(void *p, unsigned size);
-extern void* eosAllocString(const char *s);
-extern void eosFree(void *p);
 
 #if defined(_PIC18)
 #define eosEnableInterrupts()     ei()
