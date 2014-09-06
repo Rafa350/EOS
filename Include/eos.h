@@ -34,8 +34,8 @@
 
 // Definicio de tipus base de la llibraria
 //
-typedef UINT16 eosResult;    // Resultat d'una funcio
-typedef void* eosHandle;     // Handler d'un objecte
+typedef UINT16 eosResult;         // Resultat d'una funcio
+typedef struct {} *eosHandle;     // Handler d'un objecte
 
 
 #ifdef eosOPT_SYSMAIN
