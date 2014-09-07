@@ -1,5 +1,5 @@
-#include "eosQueue.h"
-#include "eosMemory.h"
+#include "System/eosQueue.h"
+#include "System/eosMemory.h"
 
 
 typedef struct {        // Cua FIFO

@@ -1,4 +1,4 @@
-#include "eosMemory.h"
+#include "System/eosMemory.h"
 
 #ifdef __PIC32MX
 
