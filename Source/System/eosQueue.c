@@ -46,19 +46,19 @@ eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *handle) {
     //
     int queueSize = params->length * params->size;
 
-    PQueue pQueue = eosAlloc(sizeof(Queue) + queueSize);
-    if (pQueue == NULL)
+    PQueue queue = eosAlloc(sizeof(Queue) + queueSize);
+    if (queue == NULL)
         return eos_ERROR_ALLOC;
 
-    pQueue->start = (BYTE*) pQueue + sizeof(Queue);
-    pQueue->end = pQueue->start + queueSize;
-    pQueue->size = params->size;
-    pQueue->length = params->length;
-    pQueue->count = 0;
-	pQueue->tail = pQueue->start;
-	pQueue->head = pQueue->start;
+    queue->start = (BYTE*) queue + sizeof(Queue);
+    queue->end = queue->start + queueSize;
+    queue->size = params->size;
+    queue->length = params->length;
+    queue->count = 0;
+	queue->tail = queue->start;
+	queue->head = queue->start;
 
-    *handle = (eosHandle) pQueue;
+    *handle = (eosHandle) queue;
 
     return eos_RESULT_SUCCESS;
 }
@@ -91,11 +91,11 @@ eosResult eosQueueGetIsEmpty(eosHandle handle, BOOL *isEmpty) {
     if (isEmpty == NULL)
         return eos_ERROR_PARAMS;
 
-    PQueue pQueue = (PQueue) handle;
+    PQueue queue = (PQueue) handle;
 
     eosDisableInterrupts();
     
-    *isEmpty = pQueue->count == 0;
+    *isEmpty = queue->count == 0;
 
     eosEnableInterrupts();
 
@@ -128,19 +128,19 @@ eosResult eosQueuePut(eosHandle handle, void* data) {
     if (data == NULL)
         return eos_ERROR_PARAMS;
 
-    PQueue pQueue = (PQueue) handle;
+    PQueue queue = (PQueue) handle;
 
     eosResult result = eos_RESULT_SUCCESS;
 
     eosDisableInterrupts();
 
-	if (pQueue->count < pQueue->length) {
+	if (queue->count < queue->length) {
 
-        memcpy(pQueue->head, data, pQueue->size);
-	    pQueue->head = pQueue->head + pQueue->size;
-	    if (pQueue->head >= pQueue->end)
-	        pQueue->head = pQueue->start;
-		pQueue->count++;
+        memcpy(queue->head, data, queue->size);
+	    queue->head = queue->head + queue->size;
+	    if (queue->head >= queue->end)
+	        queue->head = queue->start;
+		queue->count++;
 	}
     else
         result = eosQUEUE_ERROR_FULL;
@@ -176,18 +176,18 @@ eosResult eosQueueGet(eosHandle handle, void *data) {
     if (data == NULL)
         return eos_ERROR_PARAMS;
 
-    PQueue pQueue = (PQueue) handle;
+    PQueue queue = (PQueue) handle;
 
     eosResult result = eos_RESULT_SUCCESS;
 
     eosDisableInterrupts();
 
-	if (pQueue->count > 0) {
-	    memcpy(data, pQueue->tail, pQueue->size);
-		pQueue->tail = pQueue->tail + pQueue->size;
-	    if (pQueue->tail >= pQueue->end)
-	        pQueue->tail = pQueue->start;
-		pQueue->count--;
+	if (queue->count > 0) {
+	    memcpy(data, queue->tail, queue->size);
+		queue->tail = queue->tail + queue->size;
+	    if (queue->tail >= queue->end)
+	        queue->tail = queue->start;
+		queue->count--;
     }
 	else
         result = eosQUEUE_ERROR_EMPTY;

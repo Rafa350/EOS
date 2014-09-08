@@ -10,26 +10,31 @@
 //
 #define eos_ERROR_TIMER_UNAVAILABLE    eos_ERROR_FIRST
 
+
 typedef void (*eosTimerCallback)(void *context);
 
-typedef struct {                       // Parametres d'inicialitzacio
-    unsigned timeOut;                  // -Periode
+typedef struct {                       // Parametres d'inicialitzacio del servei
+    unsigned maxTimers;                // -Numero maxim de temporitzadors
+} eosTimerInitializeParams;
+
+typedef struct {                       // Parametres de creacio d'un temporitzador
+    unsigned timeout;                  // -Periode
     eosTimerCallback callback;         // -Funcio callback
     void *context;                     // -Parametre de la funcio callback
 } eosTimerCreateParams;
 
 
-extern eosResult eosTimerInitialize(void);
-extern eosResult eosTimerTerminate(void);
-extern eosResult eosTimerTask(void);
+extern eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hService);
+extern eosResult eosTimerTerminate(eosHandle hService);
+extern eosResult eosTimerTask(eosHandle hService);
 
 extern void eosTimerISRTick(void *context);
 
-extern eosResult eosTimerCreate(eosTimerCreateParams *params, eosHandle *handle);
-extern eosResult eosTimerDestroy(eosHandle handle);
+extern eosResult eosTimerCreate(eosHandle hService, eosTimerCreateParams *params, eosHandle *hTimer);
+extern eosResult eosTimerDestroy(eosHandle hTimer);
 
-extern eosHandle eosTimerDelayStart(unsigned timeout);
-extern BOOL eosTimerDelayGetStatus(eosHandle handle);
+extern eosHandle eosTimerDelayStart(eosHandle hService, unsigned timeout);
+extern BOOL eosTimerDelayGetStatus(eosHandle hTimer);
 
 
 #endif

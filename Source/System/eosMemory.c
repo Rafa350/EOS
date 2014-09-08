@@ -1,7 +1,5 @@
 #include "System/eosMemory.h"
 
-#ifdef __PIC32MX
-
 
 #ifdef eosOPT_FREERTOS
 #include "FreeRTOS.h"
@@ -167,6 +165,3 @@ eosResult eosMemoryDestroy(eosHandle handle) {
 
     return eos_RESULT_SUCCESS;
 }
-
-
-#endif // ifdef(__PIC32MX)
