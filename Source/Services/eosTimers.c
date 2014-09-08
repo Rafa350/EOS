@@ -10,10 +10,10 @@ typedef enum {                    // Estat del servei
 } State;
 
 typedef struct {                  // Bloc de control del temporitzador
+    BOOL inUse;                   // -Indica si esta en us
     unsigned timeout;             // -Temps en ms
     eosTimerCallback callback;    // -Funcio callback
     void *context;                // -Parametre de la funcio callback
-    struct __DATA *service;       // -Servei 
 } Timer, *PTimer;
 
 typedef struct __DATA {           // Dades internes
@@ -21,7 +21,6 @@ typedef struct __DATA {           // Dades internes
     BOOL terminate;               // -Indica si cal acabar
     unsigned triggered;           // -Indica event del temporitzador
     unsigned maxTimers;           // -Numero maxim de temporitzadors
-    unsigned numTimers;           // -Numero de temporitzadors actius
     PTimer timers;                // -Llista de temporitzadors actius
 } Service, *PService;
 
@@ -63,7 +62,6 @@ eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hServi
     service->state = STATE_INITIALIZE;
     service->triggered = 0;
     service->maxTimers = params->maxTimers;
-    service->numTimers = 0;
     service->terminate = FALSE;
     service->timers = (PTimer)((BYTE*) service + sizeof(Service));
     memset(service->timers, 0, timersSize);
@@ -143,7 +141,7 @@ eosResult eosTimerTask(eosHandle hService) {
                 int i;
                 for (i = 0; i < service->maxTimers; i++) {
                     PTimer timer = &service->timers[i];
-                    if ((timer->service != NULL) && (timer->timeout > 0)) {
+                    if (timer->inUse && (timer->timeout > 0)) {
                         if ((timer->timeout -= triggered) <= 0) {
                             timer->timeout = 0;
 
@@ -216,24 +214,20 @@ eosResult eosTimerCreate(eosHandle hService, eosTimerCreateParams *params,
 
     PService service = (PService) hService;
 
-    if (service->numTimers >= service->maxTimers)
-        return eos_ERROR_TIMER_UNAVAILABLE;
-
     int i;
     for (i = 0; i < service->maxTimers; i++) {
         PTimer timer = &service->timers[i];
-        if (timer->service == NULL) {
-            service->numTimers += 1;
+        if (!timer->inUse) {
             timer->timeout = params->timeout;
             timer->callback = params->callback;
             timer->context = params->context;
-            timer->service = service;
+            timer->inUse = TRUE;
             *hTimer = (eosHandle) timer;
             break;
         }
     }
 
-    return eos_RESULT_SUCCESS;
+    return i == service->maxTimers ? eos_ERROR_INVALID : eos_RESULT_SUCCESS;
 }
 
 
@@ -258,11 +252,8 @@ eosResult eosTimerDestroy(eosHandle hTimer) {
         return eos_ERROR_PARAMS;
 
     PTimer timer = (PTimer) hTimer;
-    timer->service = NULL;
+    timer->inUse = FALSE;
 
-    PService service = timer->service;
-    service->numTimers -= 1;
-    
     return eos_RESULT_SUCCESS;
 }
 
@@ -300,6 +291,21 @@ eosHandle eosTimerDelayStart(eosHandle hService, unsigned timeout) {
     return hTimer;
 }
 
+
+/*************************************************************************
+ *
+ *       Comprova si ha finalitzat el retard
+ *
+ *       Funcio:
+ *           BOOL eosTimerDelayGetStatus(eosHandle hTimer)
+ *
+ *       Entrada:
+ *           hTimer: Handler del timer
+ *
+ *       Retorn:
+ *           TRUE si ha finalitzat el retard
+ *
+ *************************************************************************/
 
 BOOL eosTimerDelayGetStatus(eosHandle hTimer) {
 

@@ -18,20 +18,20 @@ typedef enum  {                   // Estat del servei
     STATE_ACTIVE,                 // -Actiu
 } State;
 
-typedef struct {                  // Funcio adjuntes
-    eosTickCallback callback;     // -Funcio
-    void *context;                // -Contexte
+typedef struct {                  // Funcio adjunte
+    eosTickCallback callback;     // -Funcio callback
+    void *context;                // -Parametre de la funcio callback
 } Attach, *PAttach;
 
-typedef struct {                  // Dades internes
+typedef struct {                  // Dades internes del servei
     State state;                  // -Estat
     BOOL terminate;               // -Indica si cal acabar
     unsigned maxAttaches;         // -Numero maxim d'adjunts
     PAttach attaches;             // -llista d'adjunts
-} Data, *PData;
+} Service, *PService;
 
 
-static PData isrData = NULL;
+static PService isrService = NULL;
 
 
 static void InitTimer(void);
@@ -45,41 +45,41 @@ static void StopTimer(void);
  *
  *       Funcio:
  *           eosResult eosTickInitialize(eosTickInitializeParams *params,
- *               eosHandle *handle)
+ *               eosHandle *hService)
  *
  *       Entrada:
  *           params: Parametres d'inicialitzacio
  *
  *       Sortida:
- *           handle: El handler del servei
+ *           hService: El handler del servei
  *
  *       Retorn:
  *           eos_RETURN_SUCCESS si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosTickInitialize(eosTickInitializeParams *params, eosHandle *handle) {
+eosResult eosTickInitialize(eosTickInitializeParams *params, eosHandle *hService) {
 
     if (params == NULL)
         return eos_ERROR_PARAMS;
-    if (handle == NULL)
+    if (hService == NULL)
         return eos_ERROR_PARAMS;
 
     unsigned attachesSize = sizeof(Attach) * params->maxAttaches;
 
-    PData data = eosAlloc(sizeof(Data) + attachesSize);
-    if (data == NULL)
+    PService service = eosAlloc(sizeof(Service) + attachesSize);
+    if (service == NULL)
         return eos_ERROR_ALLOC;
 
-    data->state = STATE_INITIALIZE;
-    data->terminate = FALSE;
-    data->maxAttaches = params->maxAttaches;
-    data->attaches = (PAttach)((BYTE*) data + sizeof(Data));
-    memset(data->attaches, 0, attachesSize);
+    service->state = STATE_INITIALIZE;
+    service->terminate = FALSE;
+    service->maxAttaches = params->maxAttaches;
+    service->attaches = (PAttach)((BYTE*) service + sizeof(Service));
+    memset(service->attaches, 0, attachesSize);
 
     InitTimer();
 
-    *handle = (eosHandle) data;
+    *hService = (eosHandle) service;
 
     return eos_RESULT_SUCCESS;
 }
@@ -90,23 +90,23 @@ eosResult eosTickInitialize(eosTickInitializeParams *params, eosHandle *handle) 
  *       Finalitza el servei
  *
  *       Funcio:
- *           eosResult eosTimerTerminate(eosHandle handle)
+ *           eosResult eosTimerTerminate(eosHandle hService)
  *
  *       Entrada:
- *           handle: El handler del servei
+ *           hService: El handler del servei
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosTickTerminate(eosHandle handle) {
+eosResult eosTickTerminate(eosHandle hService) {
 
-    if (handle == NULL)
+    if (hService == NULL)
         return eos_ERROR_PARAMS;
 
-    PData data = (PData) handle;
-    data->terminate = TRUE;
+    PService service = (PService) hService;
+    service->terminate = TRUE;
 
     return eos_RESULT_SUCCESS;
 }
@@ -117,39 +117,39 @@ eosResult eosTickTerminate(eosHandle handle) {
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           eosResult eosTickTask(eosHandle handle)
+ *           eosResult eosTickTask(eosHandle hService)
  *
  *       Entrada:
- *           handle: Handler del servei
+ *           hService: Handler del servei
  *
  *       Return:
  *           eos_RESULT_SUCCESS si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosTickTask(eosHandle handle) {
+eosResult eosTickTask(eosHandle hService) {
 
-    if (handle == NULL)
+    if (hService == NULL)
         return eos_ERROR_PARAMS;
 
-    PData data = (PData) handle;
+    PService service = (PService) hService;
 
-    switch (data->state) {
+    switch (service->state) {
         case STATE_INITIALIZE:
-            isrData = data;
+            isrService = service;
             StartTimer();
-            data->state = STATE_ACTIVE;
+            service->state = STATE_ACTIVE;
             break;
 
         case STATE_TERMINATE:
-            //eosFree(data);
+            //eosFree(service);
             break;
 
         case STATE_ACTIVE: {
-            if (data->terminate) {
+            if (service->terminate) {
                 StopTimer();
-                isrData = NULL;
-                data->state = STATE_TERMINATE;
+                isrService = NULL;
+                service->state = STATE_TERMINATE;
             }
             break;
         }
@@ -164,11 +164,11 @@ eosResult eosTickTask(eosHandle handle) {
  *       Asigna una funcio per disparar
  *
  *       Funcio:
- *           eosResult eosTickAttach(eosHandle handle,
+ *           eosResult eosTickAttach(eosHandle hService,
  *               eosTickCallback callback, void *context)
  *
  *       Entrada:
- *           handle  : Handler del servei
+ *           hService: Handler del servei
  *           callback: Funcio a asignar
  *           context : Contexte
  *
@@ -180,19 +180,19 @@ eosResult eosTickTask(eosHandle handle) {
  *
  *************************************************************************/
 
-eosResult eosTickAttach(eosHandle handle, eosTickCallback callback, void *context) {
+eosResult eosTickAttach(eosHandle hService, eosTickCallback callback, void *context) {
 
-    if (handle == NULL)
+    if (hService == NULL)
         return eos_ERROR_PARAMS;
     if (callback == NULL)
         return eos_ERROR_PARAMS;
 
     int i;
-    PData data = (PData) handle;
+    PService service = (PService) hService;
 
     eosDisableInterrupts();
-    for (i = 0; i < data->maxAttaches; i++) {
-        PAttach attach = &data->attaches[i];
+    for (i = 0; i < service->maxAttaches; i++) {
+        PAttach attach = &service->attaches[i];
         if (attach->callback == NULL) {
             attach->callback = callback;
             attach->context = context;
@@ -201,7 +201,7 @@ eosResult eosTickAttach(eosHandle handle, eosTickCallback callback, void *contex
     }
     eosEnableInterrupts();
 
-    return i == data->maxAttaches ? eos_ERROR_INVALID : eos_RESULT_SUCCESS;
+    return i == service->maxAttaches ? eos_ERROR_INVALID : eos_RESULT_SUCCESS;
 }
 
 
@@ -210,10 +210,10 @@ eosResult eosTickAttach(eosHandle handle, eosTickCallback callback, void *contex
  *       Desasigna una funcio
  *
  *       Funcio:
- *           eosResult eosTickUnAttach(eosHandle handle, eosTickCallback callback)
+ *           eosResult eosTickUnAttach(eosHandle hService, eosTickCallback callback)
  *
  *       Entrada:
- *           handle  : Handler del servei
+ *           hService: Handler del servei
  *           callback: La funcio
  *
  *       Retorn:
@@ -221,27 +221,27 @@ eosResult eosTickAttach(eosHandle handle, eosTickCallback callback, void *contex
  *
  *************************************************************************/
 
-eosResult eosTickUnAttach(eosHandle handle, eosTickCallback callback) {
+eosResult eosTickUnAttach(eosHandle hService, eosTickCallback callback) {
 
-    if (handle == NULL)
+    if (hService == NULL)
         return eos_ERROR_PARAMS;
     if (callback == NULL)
         return eos_ERROR_PARAMS;
 
     int i;
-    PData data = (PData) handle;
+    PService service = (PService) hService;
     
     eosDisableInterrupts();
-    for (i = 0; i < data->maxAttaches; i++) {
-        PAttach attach = &data->attaches[i];
+    for (i = 0; i < service->maxAttaches; i++) {
+        PAttach attach = &service->attaches[i];
         if (attach->callback == callback) {
             attach->callback = NULL;
-            return eos_RESULT_SUCCESS;
+            break;
         }
     }
     eosEnableInterrupts();
 
-    return eos_ERROR_INVALID;
+    return i == service->maxAttaches ? eos_ERROR_INVALID : eos_RESULT_SUCCESS;
 }
 
 
@@ -315,10 +315,10 @@ static void StopTimer(void) {
 
 void __ISR(TIMER_CORE_VECTOR, ipl2) eosTickTMRInterruptService(void) {
 
-    if (isrData != NULL) {
+    if (isrService != NULL) {
         int i;
-        for (i = 0; i < isrData->maxAttaches; i++) {
-            PAttach attach = &isrData->attaches[i];
+        for (i = 0; i < isrService->maxAttaches; i++) {
+            PAttach attach = &isrService->attaches[i];
             if (attach->callback != NULL)
                 attach->callback(attach->context);
         }

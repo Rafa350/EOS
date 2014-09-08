@@ -15,6 +15,7 @@ typedef void (*eosTimerCallback)(void *context);
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
     unsigned maxTimers;                // -Numero maxim de temporitzadors
+    eosHandle hTickService;            // -Servei TICK
 } eosTimerInitializeParams;
 
 typedef struct {                       // Parametres de creacio d'un temporitzador
