@@ -9,7 +9,7 @@ typedef struct {        // Cua FIFO
     BYTE *start;        // -Punter al inici de la cua
     BYTE *end;          // -Punter al final de la cua
     BYTE *tail;         // -Punter a l'ultim element insertat
-    BYTE *head;         // -punter al primer element per extreure
+    BYTE *head;         // -Punter al primer element per extreure
 } Queue, *PQueue;
 
 
