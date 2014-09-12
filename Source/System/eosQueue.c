@@ -38,9 +38,9 @@ eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *handle) {
     // Verifica els parametres
     //
     if (handle == NULL)
-        return eos_ERROR_PARAMS;
+        return eos_ERROR_PARAM_NULL;
     if (params == NULL)
-        return eos_ERROR_PARAMS;
+        return eos_ERROR_PARAM_NULL;
 
     // Inicialitza la cua
     //
@@ -87,9 +87,9 @@ eosResult eosQueueGetIsEmpty(eosHandle handle, BOOL *isEmpty) {
     // Verifica els parametres
     //
     if (handle == NULL)
-        return eos_ERROR_PARAMS;
+        return eos_ERROR_PARAM_NULL;
     if (isEmpty == NULL)
-        return eos_ERROR_PARAMS;
+        return eos_ERROR_PARAM_NULL;
 
     PQueue queue = (PQueue) handle;
 
@@ -124,9 +124,9 @@ eosResult eosQueuePut(eosHandle handle, void* data) {
     // Verifica els parametres
     //
     if (handle == NULL)
-        return eos_ERROR_PARAMS;
+        return eos_ERROR_PARAM_NULL;
     if (data == NULL)
-        return eos_ERROR_PARAMS;
+        return eos_ERROR_PARAM_NULL;
 
     PQueue queue = (PQueue) handle;
 
@@ -172,9 +172,9 @@ eosResult eosQueueGet(eosHandle handle, void *data) {
     // Verifica els parametres
     //
     if (handle == NULL)
-        return eos_ERROR_PARAMS;
+        return eos_ERROR_PARAM_NULL;
     if (data == NULL)
-        return eos_ERROR_PARAMS;
+        return eos_ERROR_PARAM_NULL;
 
     PQueue queue = (PQueue) handle;
 

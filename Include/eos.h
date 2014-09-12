@@ -28,9 +28,11 @@
 // Codis d'error de les funcions de la llibreria
 //
 #define eos_ERROR_BASE            500
-#define eos_ERROR_PARAMS          (eos_ERROR_BASE + 0)
-#define eos_ERROR_ALLOC           (eos_ERROR_BASE + 1)
-#define eos_ERROR_INVALID         (eos_ERROR_BASE + 2)
+#define eos_ERROR_PARAM_NULL      (eos_ERROR_BASE + 0)
+#define eos_ERROR_PARAM_RANGE     (eos_ERROR_BASE + 1)
+#define eos_ERROR_PARAM_INVALID   (eos_ERROR_BASE + 2)
+#define eos_ERROR_ALLOC           (eos_ERROR_BASE + 3)
+#define eos_ERROR_OPERATION       (eos_ERROR_BASE + 4)
 #define eos_ERROR_FIRST           (eos_ERROR_BASE + 500)
 
 // Definicio de tipus base de la llibraria

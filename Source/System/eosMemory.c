@@ -131,10 +131,9 @@ void eosFree(void *p) {
 eosResult eosMemoryCreate(unsigned size, eosHandle *handle) {
 
     if (size == 0)
-        return eos_ERROR_PARAMS;
-
+        return eos_ERROR_PARAM_NULL;
     if (handle == NULL)
-        return eos_ERROR_PARAMS;
+        return eos_ERROR_PARAM_NULL;
 
     *handle = eosAlloc(size);
     return (*handle == NULL) ? eos_ERROR_ALLOC : eos_RESULT_SUCCESS;
@@ -159,7 +158,7 @@ eosResult eosMemoryCreate(unsigned size, eosHandle *handle) {
 eosResult eosMemoryDestroy(eosHandle handle) {
 
     if (handle == NULL)
-        return eos_ERROR_PARAMS;
+        return eos_ERROR_PARAM_NULL;
 
     eosFree(handle);
 
