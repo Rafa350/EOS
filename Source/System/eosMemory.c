@@ -11,10 +11,11 @@
  *       Obte un bloc de memoria
  *
  *       Funcio:
- *           void *eosAlloc(unsigned size)
+ *           void *eosAlloc(
+ *               unsigned size)
  *
  *       Entrada:
- *           size: El tamany del bloc en bytes
+ *           size       : El tamany del bloc en bytes
  *
  *       Retorn:
  *           L'adressa del bloc de momoria. NULL en cas d'error
@@ -38,10 +39,11 @@ void *eosAlloc(unsigned size) {
  *       Obte una bloc de memoria per una cadena
  *
  *       Funcio:
- *           void* eosAllocString(const char *str)
+ *           void* eosAllocString(
+ *               const char *str)
  *
  *       Entrada:
- *           str: La cadena a memoritzar
+ *           str        : La cadena a memoritzar
  *
  *       Retorn:
  *           Punter al bloc de memoria, NULL en cas d'error
@@ -60,11 +62,13 @@ void *eosAllocString(const char* str) {
  *       Modifica un bloc de memoria
  *
  *       Funcio:
- *           void* eosRealloc(void *p, unsigned size)
+ *           void* eosRealloc(
+ *              void *p,
+ *              unsigned size)
  *
  *       Entrada:
- *           p   : Punter al bloc a modificar
- *           size: Tamany el bytes del bloc
+ *           p          : Punter al bloc a modificar
+ *           size       : Tamany el bytes del bloc
  *
  *       Retorn:
  *           Punter al bloc de memoria, NULL en cas d'error
@@ -91,10 +95,11 @@ void* eosRealloc(void *p, unsigned size) {
  *       Allibera un bloc de memoria
  *
  *       Funcio:
- *           void eosFree(void *p)
+ *           void eosFree(
+ *               void *p)
  *
  *       Entrada:
- *           p: Adressa del bloc a alliberar
+ *           p          : Adressa del bloc a alliberar
  *
  *************************************************************************/
 
@@ -115,28 +120,30 @@ void eosFree(void *p) {
  *       Crea un bloc de memoria
  *
  *       Funcio:
- *           eosResult eosMemoryCreate(unsigned size, eosHandle *handle)
+ *           eosResult eosMemoryCreate(
+ *               unsigned size,
+ *               eosHandle *hMemory)
  *
  *       Entrada:
- *           size: Tamany del bloc en bytes
+ *           size       : Tamany del bloc en bytes
  *
  *       Sortida:
- *           handle: El handler del bloc de momoria
+ *           hMemory    : El handler del bloc de momoria
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosMemoryCreate(unsigned size, eosHandle *handle) {
+eosResult eosMemoryCreate(unsigned size, eosHandle *hMemory) {
 
     if (size == 0)
         return eos_ERROR_PARAM_NULL;
-    if (handle == NULL)
+    if (hMemory == NULL)
         return eos_ERROR_PARAM_NULL;
 
-    *handle = eosAlloc(size);
-    return (*handle == NULL) ? eos_ERROR_ALLOC : eos_RESULT_SUCCESS;
+    *hMemory = (eosHandle) eosAlloc(size);
+    return (*hMemory == NULL) ? eos_ERROR_ALLOC : eos_RESULT_SUCCESS;
 }
 
 
@@ -145,22 +152,23 @@ eosResult eosMemoryCreate(unsigned size, eosHandle *handle) {
  *       Destrueix un bloc de memoria
  *
  *       Funcio:
- *           eosResult eosMemoryDestroy(eosHandle handle)
+ *           eosResult eosMemoryDestroy(
+ *               eosHandle hMemory)
  *
  *       Entrada:
- *           handle: El handler del bloc de momoria
+ *           hMemory    : El handler del bloc de momoria
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosMemoryDestroy(eosHandle handle) {
+eosResult eosMemoryDestroy(eosHandle hMemory) {
 
-    if (handle == NULL)
+    if (hMemory == NULL)
         return eos_ERROR_PARAM_NULL;
 
-    eosFree(handle);
+    eosFree((void*) hMemory);
 
     return eos_RESULT_SUCCESS;
 }

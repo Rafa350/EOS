@@ -20,24 +20,24 @@ typedef struct {        // Cua FIFO
  *       Funcio:
  *           eosResult eosQueueCreate(
  *               eosQueueCreateParams *params,
- *               eosHandle *handle)
+ *               eosHandle *hQueue)
  *
  *       Entrada:
- *           params: Parametres d'inicialitzacio de la cua
+ *           params     : Parametres d'inicialitzacio de la cua
  *
  *       Sortida:
- *           handle: El handler de la cua
+ *           hQueue     : El handler de la cua
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correxte
  *
  *************************************************************************/
 
-eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *handle) {
+eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *hQueue) {
 
     // Verifica els parametres
     //
-    if (handle == NULL)
+    if (hQueue == NULL)
         return eos_ERROR_PARAM_NULL;
     if (params == NULL)
         return eos_ERROR_PARAM_NULL;
@@ -58,7 +58,7 @@ eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *handle) {
 	queue->tail = queue->start;
 	queue->head = queue->start;
 
-    *handle = (eosHandle) queue;
+    *hQueue = (eosHandle) queue;
 
     return eos_RESULT_SUCCESS;
 }
@@ -69,29 +69,31 @@ eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *handle) {
  *       Comprova si la cua es buida
  *
  *       Funcio:
- *           eosResult eosQueueGetIsEmpry(eosHandle handle, BOOL *isEmpry)
+ *           eosResult eosQueueGetIsEmpry(
+ *               eosHandle hQueue,
+ *               BOOL *isEmpry)
  *
  *       Entrada:
- *           handle: Handler de la cua
+ *           hQueue     : Handler de la cua
  *
  *       Sortida:
- *           isEmpty: TRUE si la cua es buida
+ *           isEmpty    : TRUE si la cua es buida
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosQueueGetIsEmpty(eosHandle handle, BOOL *isEmpty) {
+eosResult eosQueueGetIsEmpty(eosHandle hQueue, BOOL *isEmpty) {
 
     // Verifica els parametres
     //
-    if (handle == NULL)
+    if (hQueue == NULL)
         return eos_ERROR_PARAM_NULL;
     if (isEmpty == NULL)
         return eos_ERROR_PARAM_NULL;
 
-    PQueue queue = (PQueue) handle;
+    PQueue queue = (PQueue) hQueue;
 
     eosDisableInterrupts();
     
@@ -108,27 +110,29 @@ eosResult eosQueueGetIsEmpty(eosHandle handle, BOOL *isEmpty) {
  *       Afegeix un element en la cua
  *
  *       Funcio:
- *           eosResult eosQueuePut(eosHandle handle, void* data)
+ *           eosResult eosQueuePut(
+ *               eosHandle hQueue,
+ *               void* data)
  *
  *       Entrada:
- *           handle: Handler de la cua
- *           data  : Punter al buffer de l'element a afeigit
+ *           hQueue     : Handler de la cua
+ *           data       : Punter al buffer de l'element a afeigit
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosQueuePut(eosHandle handle, void* data) {
+eosResult eosQueuePut(eosHandle hQueue, void* data) {
 
     // Verifica els parametres
     //
-    if (handle == NULL)
+    if (hQueue == NULL)
         return eos_ERROR_PARAM_NULL;
     if (data == NULL)
         return eos_ERROR_PARAM_NULL;
 
-    PQueue queue = (PQueue) handle;
+    PQueue queue = (PQueue) hQueue;
 
     eosResult result = eos_RESULT_SUCCESS;
 
@@ -156,27 +160,29 @@ eosResult eosQueuePut(eosHandle handle, void* data) {
  *       Exteru un element en la cua
  *
  *       Funcio:
- *           eosResult eosQueueGet(eosHandle handle, void* data)
+ *           eosResult eosQueueGet(
+ *               eosHandle hQueue,
+ *               void* data)
  *
  *       Entrada:
- *           handle: Handler de la cua
- *           data  : Punter al buffer de l'element a exterure
+ *           hQueue     : Handler de la cua
+ *           data       : Punter al buffer de l'element a exterure
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosQueueGet(eosHandle handle, void *data) {
+eosResult eosQueueGet(eosHandle hQueue, void *data) {
 
     // Verifica els parametres
     //
-    if (handle == NULL)
+    if (hQueue == NULL)
         return eos_ERROR_PARAM_NULL;
     if (data == NULL)
         return eos_ERROR_PARAM_NULL;
 
-    PQueue queue = (PQueue) handle;
+    PQueue queue = (PQueue) hQueue;
 
     eosResult result = eos_RESULT_SUCCESS;
 

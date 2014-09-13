@@ -31,7 +31,6 @@ typedef struct {                  // Dades internes del servei
     State state;                  // -Estat
     BOOL terminate;               // -Indica si cal acabar
     unsigned maxAttaches;         // -Numero maxim d'adjunts
-    unsigned numAttaches;         // -Numero actual d'adjunts
     PAttach attaches;             // -Llista d'adjunts
 } Service, *PService;
 
@@ -97,11 +96,10 @@ eosResult eosTickInitialize(eosTickInitializeParams *params, eosHandle *hService
     service->state = SS_INITIALIZE;
     service->terminate = FALSE;
     service->maxAttaches = params->maxAttaches;
-    service->numAttaches = 0;
 
     service->attaches = attaches;
     unsigned i;
-    for (i = 0; i < service->numAttaches; i++)
+    for (i = 0; i < service->maxAttaches; i++)
         service->attaches[i].callback = NULL;
 
     // Inicialitza el temporitzador
@@ -248,7 +246,6 @@ eosResult eosTickAttach(eosHandle hService, eosTickCallback callback, void *cont
         if (attach->callback == NULL) {
             attach->callback = callback;
             attach->context = context;
-            service->numAttaches++;
             break;
         }
     }
@@ -292,11 +289,6 @@ eosResult eosTickUnAttach(eosHandle hService, eosTickCallback callback) {
 
     PService service = (PService) hService;
 
-    // Comprova si hi ha quelcom per eliminar
-    //
-    if (service->numAttaches == 0)
-        return eos_ERROR_OPERATION;
-
     // Entra en la seccio critica
     //
     BOOL intFlag = DisableInterrupt();
@@ -308,7 +300,6 @@ eosResult eosTickUnAttach(eosHandle hService, eosTickCallback callback) {
         PAttach attach = &service->attaches[i];
         if (attach->callback == callback) {
             attach->callback = NULL;
-            service->numAttaches -= 1;
             break;
         }
     }
@@ -398,7 +389,7 @@ void __ISR(TIMER_CORE_VECTOR, ipl2) eosTickTMRInterruptService(void) {
 
     if (isrService != NULL) {
         int i;
-        for (i = 0; i < isrService->numAttaches; i++) {
+        for (i = 0; i < isrService->maxAttaches; i++) {
             PAttach attach = &isrService->attaches[i];
             if (attach->callback != NULL)
                 attach->callback(attach->context);
