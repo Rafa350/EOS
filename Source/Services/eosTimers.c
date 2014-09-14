@@ -18,6 +18,8 @@ typedef enum {                    // Estat del temporitzador
 typedef struct {                  // Bloc de control del temporitzador
     TimerState state;             // -Estat
     unsigned timeout;             // -Temps en ms
+    unsigned counter;             // -Contador de temps en ms
+    eosTimerType type;            // -Tipus de temporitzador
     eosTimerCallback callback;    // -Funcio callback
     void *context;                // -Parametre de la funcio callback
 } Timer, *PTimer;
@@ -173,16 +175,22 @@ eosResult eosTimerTask(eosHandle hService) {
                 unsigned i;
                 for (i = 0; i < service->maxTimers; i++) {
                     PTimer timer = &service->timers[i];
-                    if (timer->state == TS_ACTIVE) {
-                        if (triggered > timer->timeout)
-                            timer->timeout = 0;
-                        else
-                            timer->timeout -= triggered;
 
-                        if (timer->timeout == 0) {
-                            timer->state = TS_INACTIVE;
+                    if (timer->state == TS_ACTIVE) {
+                        if (triggered > timer->counter)
+                            timer->counter = 0;
+                        else
+                            timer->counter -= triggered;
+
+                        if (timer->counter == 0) {
                             if (timer->callback != NULL)
                                 timer->callback(timer->context);
+
+                            if (timer->type == TT_CYCLIC)
+                                timer->counter = timer->timeout;
+
+                            else
+                                timer->state = timer->type == TT_ONE_SHOT_AUTODESTROY ? TS_FREE : TS_INACTIVE;
                         }
                     }
                 }
@@ -258,6 +266,8 @@ eosResult eosTimerCreate(eosHandle hService, eosTimerCreateParams *params,
         PTimer timer = &service->timers[i];
         if (!timer->state == TS_FREE) {
             timer->timeout = params->timeout;
+            timer->counter = params->timeout;
+            timer->type = params->type;
             timer->callback = params->callback;
             timer->context = params->context;
             timer->state = TS_ACTIVE;
@@ -326,6 +336,7 @@ eosHandle eosTimerDelayStart(eosHandle hService, unsigned timeout) {
 
     eosTimerCreateParams params;
     params.timeout = timeout;
+    params.type = TT_ONE_SHOT;
     params.callback = NULL;
     params.context = NULL;
 
@@ -357,12 +368,10 @@ BOOL eosTimerDelayGetStatus(eosHandle hTimer) {
     if (hTimer == NULL)
         return FALSE;
 
-    BOOL result = FALSE;
-    PTimer timer = (PTimer) hTimer;
-    if (timer->state == TS_INACTIVE) {
-        result = TRUE;
+    if (((PTimer) hTimer)->counter == 0) {
         eosTimerDestroy(hTimer);
+        return TRUE;
     }
-
-    return result;
+    else
+        return FALSE;
 }
