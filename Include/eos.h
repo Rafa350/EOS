@@ -55,6 +55,7 @@ extern void eosDelay(unsigned);
 #define eosClearWatchdog()        CLRWDT()
 #elif defined(__PIC32MX)
 #ifdef eosOPT_HARMONY
+#define eosGetInterruptState()    PLIB_INT_IsEnabled(INT_ID_0)
 #define eosEnableInterrupts()     PLIB_INT_Enable(INT_ID_0)
 #define eosDisableInterrupts()    PLIB_INT_Disable(INT_ID_0)
 #define eosEnableWatchdog()       EnableWDT()

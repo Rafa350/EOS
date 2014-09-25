@@ -29,7 +29,7 @@ typedef struct  {                 // Dades internes
     BOOL terminate;               // -Indica si cal acabar
     unsigned triggered;           // -Indica event del temporitzador
     unsigned maxTimers;           // -Numero maxim de temporitzadors
-    PTimer timers;                // -Llista de temporitzadors actius
+    PTimer timers;                // -Llista de temporitzadors
 } Service, *PService;
 
 
@@ -163,7 +163,7 @@ eosResult eosTimerTask(eosHandle hService) {
 
         case SS_ACTIVE: {
 
-            BOOL intFlag = PLIB_INT_IsEnabled(INT_ID_0);
+            BOOL intFlag = eosGetInterruptState();
             eosDisableInterrupts();
             unsigned triggered = service->triggered;
             service->triggered = 0;
