@@ -44,7 +44,7 @@ eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *hQueue) {
 
     // Inicialitza la cua
     //
-    int queueSize = params->length * params->size;
+    int queueSize = params->maxItems * params->size;
 
     PQueue queue = eosAlloc(sizeof(Queue) + queueSize);
     if (queue == NULL)
@@ -53,7 +53,7 @@ eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *hQueue) {
     queue->start = (BYTE*) queue + sizeof(Queue);
     queue->end = queue->start + queueSize;
     queue->size = params->size;
-    queue->length = params->length;
+    queue->length = params->maxItems;
     queue->count = 0;
 	queue->tail = queue->start;
 	queue->head = queue->start;

@@ -4,17 +4,11 @@
 
 #include "xc.h"
 #include "GenericTypeDefs.h"
+#include "peripheral/int/plib_int.h"
+
 
 #ifndef __EOSCONFIG_H
 #include "eosconfig.h"
-#endif
-
-#ifdef __PIC32MX
-#ifdef eosOPT_HARMONY
-#include "peripheral/int/plib_int.h"
-#else
-#include "plib.h"
-#endif
 #endif
 
 
@@ -37,8 +31,9 @@
 
 // Definicio de tipus base de la llibraria
 //
-typedef UINT16 eosResult;         // Resultat d'una funcio
+typedef unsigned eosResult;       // Resultat d'una funcio
 typedef struct {} *eosHandle;     // Handler d'un objecte
+typedef void (*eosCallback)(void *context); // Funcio callback
 
 
 #ifdef eosOPT_SYSMAIN
@@ -47,72 +42,12 @@ extern void eosMain(void);
 extern void eosTickInterrupt(void);
 extern void eosDelay(unsigned);
 
-#if defined(_PIC18)
-#define eosEnableInterrupts()     ei()
-#define eosDisableInterrupts()    di()
-#define eosEnableWatchdog()       WDTCONbits.SWDTEN = 1
-#define eosDisableWatchdog()      WDTCONbits.SWDTEN = 0
-#define eosClearWatchdog()        CLRWDT()
-#elif defined(__PIC32MX)
-#ifdef eosOPT_HARMONY
 #define eosGetInterruptState()    PLIB_INT_IsEnabled(INT_ID_0)
 #define eosEnableInterrupts()     PLIB_INT_Enable(INT_ID_0)
 #define eosDisableInterrupts()    PLIB_INT_Disable(INT_ID_0)
 #define eosEnableWatchdog()       EnableWDT()
 #define eosDisableWatchdog()      DisablWDT()
 #define eosClearWatchdog()        ClearWDT()
-#else
-#define eosEnableInterrupts()     INTEnableInterrupts()
-#define eosDisableInterrupts()    INTDisableInterrupts()
-#define eosEnableWatchdog()       EnableWDT()
-#define eosDisableWatchdog()      DisablWDT()
-#define eosClearWatchdog()        ClearWDT()
-#endif
-#endif
-
-
-// Modul USB Host
-//
-#if defined(eosUSE_USBHOST) && defined(__PIC32MX)
-extern void sysUsbHostInitialize(void);
-extern void sysUsbHostLoop(void);
-#endif
-
-// Modul LED
-//
-#if defined(eosUSE_LED) && !defined(__EOSLED_H)
-#include "Modules/eosLed.h"
-#endif
-
-// Modul INPUTS
-//
-#if defined(eosUSE_INPUTS) && !defined(__EOSINPUTS_H)
-#include "Modules/eosInputs.h"
-#endif
-
-// Modul OUTPUTS
-//
-#if defined(eosUSE_OUTPUTS) && !defined(__EOSOUTPUTS_H)
-#include "Modules/eosOutputs.h"
-#endif
-
-// Modul TIMERS
-//
-#if defined(eosUSE_TIMERS) && !defined(__EOSTIMERS_H)
-#include "Modules/eosTimers.h"
-#endif
-
-// Modul STEP
-//
-#if defined(eosUSE_STEP) && !defined(__EOSSTEP_H)
-#include "Modules/eosStep.h"
-#endif
-
-#if defined(eosUSE_INPUTS) || \
-    defined(eosUSE_VARIABLES) || \
-    defined(eosUSE_TIMERS)
-#include "Modules/eosModules.h"
-#endif
 
 
 #endif	

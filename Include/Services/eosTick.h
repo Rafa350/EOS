@@ -7,8 +7,6 @@
 #endif
 
 
-typedef void (*eosTickCallback)(void *context);
-
 typedef struct {                       // Parametres d'inicialitzacio del servei
     unsigned maxAttaches;              // -Numero maxim d'adjunts
 } eosTickInitializeParams;
@@ -18,8 +16,8 @@ extern eosResult eosTickInitialize(eosTickInitializeParams *params, eosHandle *h
 extern eosResult eosTickTerminate(eosHandle hService);
 extern eosResult eosTickTask(eosHandle hService);
 
-extern eosResult eosTickAttach(eosHandle hService, eosTickCallback callback, void *context);
-extern eosResult eosTickUnAttach(eosHandle hService, eosTickCallback callback);
+extern eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context);
+extern eosResult eosTickUnAttach(eosHandle hService, eosCallback callback);
 
 
 #endif

@@ -1,12 +1,13 @@
 #include "System/eosMemory.h"
 #include "Services/eosTimers.h"
+#include "Services/eosTick.h"
 #include "HardwareProfile.h"
 
 
 typedef enum {                    // Estat del servei
-    SS_INITIALIZE,                // -Inicialitza
-    SS_TERMINATE,                 // -Finalitza
-    SS_ACTIVE,                    // -Actiu
+    serviceStateInitialize,       // -Inicialitza
+    serviceStateTerminate,        // -Finalitza
+    serviceStateActive,           // -Actiu
 } ServiceState;
 
 typedef enum {                    // Estat del temporitzador
@@ -20,7 +21,7 @@ typedef struct {                  // Bloc de control del temporitzador
     unsigned timeout;             // -Temps en ms
     unsigned counter;             // -Contador de temps en ms
     eosTimerType type;            // -Tipus de temporitzador
-    eosTimerCallback callback;    // -Funcio callback
+    eosCallback callback;         // -Funcio callback
     void *context;                // -Parametre de la funcio callback
 } Timer, *PTimer;
 
@@ -73,7 +74,7 @@ eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hServi
 
     // Inicialitza les estructures de dades
     //
-    service->state = SS_INITIALIZE;
+    service->state = serviceStateInitialize;
     service->triggered = 0;
     service->maxTimers = params->maxTimers;
     service->terminate = FALSE;
@@ -82,6 +83,11 @@ eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hServi
     unsigned i;
     for (i = 0; i < service->maxTimers; i++)
         service->timers[i].state = TS_FREE;
+
+    // Asigna la funcio d'interrupcio TICK
+    //
+    if (params->hTickService)
+        eosTickAttach(params->hTickService, eosTimerISRTick, (eosHandle) service);
 
     // Retorna resultats i finalitza
     //
@@ -118,7 +124,7 @@ eosResult eosTimerTerminate(eosHandle hService) {
     // Notifica el final i espera que finalitzi
     //
     service->terminate = TRUE;
-    while (service->state != SS_TERMINATE)
+    while (service->state != serviceStateTerminate)
         eosTimerTask(hService);
 
     // Allibera la memoria de les estructures de dades
@@ -154,14 +160,14 @@ eosResult eosTimerTask(eosHandle hService) {
     PService service = (PService) hService;
 
     switch (service->state) {
-        case SS_INITIALIZE:
-            service->state = SS_ACTIVE;
+        case serviceStateInitialize:
+            service->state = serviceStateActive;
             break;
 
-        case SS_TERMINATE:
+        case serviceStateTerminate:
             break;
 
-        case SS_ACTIVE: {
+        case serviceStateActive: {
 
             BOOL intFlag = eosGetInterruptState();
             eosDisableInterrupts();
@@ -196,7 +202,7 @@ eosResult eosTimerTask(eosHandle hService) {
                 }
             }
             if (service->terminate)
-                service->state = SS_TERMINATE;
+                service->state = serviceStateTerminate;
             break;
         }
     }

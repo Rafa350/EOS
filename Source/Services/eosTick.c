@@ -23,7 +23,7 @@ typedef enum  {                   // Estat del servei
 } State;
 
 typedef struct {                  // Funcio adjunta
-    eosTickCallback callback;     // -Funcio callback
+    eosCallback callback;         // -Funcio callback
     void *context;                // -Parametre de la funcio callback
 } Attach, *PAttach;
 
@@ -207,7 +207,7 @@ eosResult eosTickTask(eosHandle hService) {
  *       Funcio:
  *           eosResult eosTickAttach(
  *               eosHandle hService,
- *               eosTickCallback callback,
+ *               eosCallback callback,
  *               void *context)
  *
  *       Entrada:
@@ -223,7 +223,7 @@ eosResult eosTickTask(eosHandle hService) {
  *
  *************************************************************************/
 
-eosResult eosTickAttach(eosHandle hService, eosTickCallback callback, void *context) {
+eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context) {
 
     // Comprova els parametres
     //
@@ -269,7 +269,7 @@ eosResult eosTickAttach(eosHandle hService, eosTickCallback callback, void *cont
  *       Funcio:
  *           eosResult eosTickUnAttach(
  *               eosHandle hService,
- *               eosTickCallback callback)
+ *               eosCallback callback)
  *
  *       Entrada:
  *           hService   : Handler del servei
@@ -280,7 +280,7 @@ eosResult eosTickAttach(eosHandle hService, eosTickCallback callback, void *cont
  *
  *************************************************************************/
 
-eosResult eosTickUnAttach(eosHandle hService, eosTickCallback callback) {
+eosResult eosTickUnAttach(eosHandle hService, eosCallback callback) {
 
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;

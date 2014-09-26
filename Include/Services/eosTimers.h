@@ -11,9 +11,6 @@
 #define eos_ERROR_TIMER_UNAVAILABLE    eos_ERROR_FIRST
 
 
-typedef void (*eosTimerCallback)(void *context);
-
-
 typedef struct {                       // Parametres d'inicialitzacio del servei
     unsigned maxTimers;                // -Numero maxim de temporitzadors
     eosHandle hTickService;            // -Servei TICK
@@ -28,7 +25,7 @@ typedef enum {                         // Tipus de temporitzador
 typedef struct {                       // Parametres de creacio d'un temporitzador
     unsigned timeout;                  // -Periode
     eosTimerType type;                 // -Tipus de temporitzador
-    eosTimerCallback callback;         // -Funcio callback
+    eosCallback callback;              // -Funcio callback
     void *context;                     // -Parametre de la funcio callback
 } eosTimerCreateParams;
 

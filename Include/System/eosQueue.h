@@ -12,7 +12,7 @@
 
 
 typedef struct {             // Parametres d'inicialitzacio de la cua
-    unsigned length;         // -Capacitat de la cua en elements
+    unsigned maxItems;       // -Capacitat de la cua en elements
     unsigned size;           // -Tamany de cada element en bytes
 } eosQueueCreateParams;
 
