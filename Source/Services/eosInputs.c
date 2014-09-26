@@ -13,6 +13,7 @@ typedef struct {             // Dates d'una entrada
     BOOL active;             // -Indica si esta actiu
     PORTS_CHANNEL channel;   // -Canal del port
     PORTS_BIT_POS position;  // -Pin del port
+    BOOL inverted;           // -Senyal invertida;
     eosInputEvent callOn;    // -Modus de crida
     eosCallback callback;    // -Funcio callback
     void *context;           // -Parametre de la funcio callback
@@ -45,6 +46,8 @@ typedef struct {
 static BOOL hasEvents(PService service);
 static void throwEvent(PService service);
 static void enqueueEvent(PService service, PInput input, eosInputEvent event);
+static void initPort(PInput input);
+static BOOL getPort(PInput input);
 
 
 /*************************************************************************
@@ -234,7 +237,7 @@ void eosInputsISRTick(void *context) {
         if (input->active) {
 
             input->pattern <<= 1;
-            if (PLIB_PORTS_PinGet(PORTS_ID_0, input->channel, input->position))
+            if (getPort(input))
                 input->pattern |= 1;
 
             if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
@@ -261,7 +264,7 @@ void eosInputsISRTick(void *context) {
  *       Funcio:
  *           eosResult eosInputsCreate(
  *               eosHandle hService,
- *               eosInputCreateParams *params,
+ *               eosInputsCreateParams *params,
  *               eosHandle *hInput)
  *
  *       Entrada:
@@ -276,7 +279,7 @@ void eosInputsISRTick(void *context) {
  *
  *************************************************************************/
 
-eosResult eosInputsCreate(eosHandle hService, eosInputCreateParams *params, eosHandle *hInput) {
+eosResult eosInputsCreate(eosHandle hService, eosInputsCreateParams *params, eosHandle *hInput) {
 
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
@@ -292,16 +295,21 @@ eosResult eosInputsCreate(eosHandle hService, eosInputCreateParams *params, eosH
         PInput input = &service->inputs[i];
         if (!input->active) {
             input->active = TRUE;
-            input->state = FALSE;
             input->posEdge = FALSE;
             input->negEdge = FALSE;
             input->channel = params->channel;
             input->position = params->position;
+            input->inverted = params->inverted;
             input->callOn = params->callOn;
             input->callback = params->callback;
             input->context = params->context;
 
-            PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, params->channel, params->position);
+            initPort(input);
+            input->state = getPort(input);
+            if (input->state)
+                input->pattern = 0xFFFFFFFF;
+            else
+                input->pattern = 0x00000000;
 
             *hInput = (eosHandle) input;
             break;
@@ -401,4 +409,17 @@ static BOOL hasEvents(PService service) {
 
     BOOL isEmpty;
     return (eosQueueGetIsEmpty(service->hQueue, &isEmpty) == eos_RESULT_SUCCESS) && !isEmpty;
+}
+
+
+static void initPort(PInput input) {
+
+    PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, input->channel, input->position);
+}
+
+
+static BOOL getPort(PInput input) {
+
+    BOOL p = PLIB_PORTS_PinGet(PORTS_ID_0, input->channel, input->position);
+    return input->inverted ? !p : p;
 }

@@ -24,10 +24,11 @@ typedef struct {                  // Context de la funcio callback
 typedef struct {                  // Paramstres de creacio d'entrades
     PORTS_CHANNEL channel;        // -Canal del port
     PORTS_BIT_POS position;       // -Pin del port
+    BOOL inverted;                // -Inverteix la entrada
     eosInputEvent callOn;         // -Event on es crida a la funcio
     eosCallback callback;         // -Funcio callback
     void *context;                // -Parametre de la funcio callback
-} eosInputCreateParams;
+} eosInputsCreateParams;
 
 typedef struct {                  // Parametres d'inicialitzacio del servei
     unsigned maxInputs;           // -Numero maxim d'entrades a procesar
@@ -42,7 +43,7 @@ extern eosResult eosInputsTask(eosHandle hService);
 
 extern void eosInputsISRTick(void *context);
 
-extern eosResult eosInputsCreate(eosHandle hService, eosInputCreateParams *params, eosHandle *hInput);
+extern eosResult eosInputsCreate(eosHandle hService, eosInputsCreateParams *params, eosHandle *hInput);
 extern eosResult eosInputsDestroy(eosHandle hInput);
 
 extern BOOL eosInputGet(eosHandle hInput);
