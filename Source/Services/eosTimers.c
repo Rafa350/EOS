@@ -11,9 +11,9 @@ typedef enum {                    // Estat del servei
 } ServiceState;
 
 typedef enum {                    // Estat del temporitzador
-    TS_FREE,                      // -Lliure
-    TS_ACTIVE,                    // -Actiu (Esta contant)
-    TS_INACTIVE                   // -Inactiu (Esta en pausa)
+    timerStateFree,               // -Lliure
+    timerStateActive,             // -Actiu (Esta contant)
+    timerStateInactive            // -Inactiu (Esta en pausa)
 } TimerState;
 
 typedef struct {                  // Bloc de control del temporitzador
@@ -82,7 +82,7 @@ eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hServi
     
     unsigned i;
     for (i = 0; i < service->maxTimers; i++)
-        service->timers[i].state = TS_FREE;
+        service->timers[i].state = timerStateFree;
 
     // Asigna la funcio d'interrupcio TICK
     //
@@ -182,7 +182,7 @@ eosResult eosTimerTask(eosHandle hService) {
                 for (i = 0; i < service->maxTimers; i++) {
                     PTimer timer = &service->timers[i];
 
-                    if (timer->state == TS_ACTIVE) {
+                    if (timer->state == timerStateActive) {
                         if (triggered > timer->counter)
                             timer->counter = 0;
                         else
@@ -196,7 +196,7 @@ eosResult eosTimerTask(eosHandle hService) {
                                 timer->counter = timer->timeout;
 
                             else
-                                timer->state = timer->type == TT_ONE_SHOT_AUTODESTROY ? TS_FREE : TS_INACTIVE;
+                                timer->state = timer->type == TT_ONE_SHOT_AUTODESTROY ? timerStateFree : timerStateInactive;
                         }
                     }
                 }
@@ -270,13 +270,13 @@ eosResult eosTimerCreate(eosHandle hService, eosTimerCreateParams *params,
     unsigned i;
     for (i = 0; i < service->maxTimers; i++) {
         PTimer timer = &service->timers[i];
-        if (!timer->state == TS_FREE) {
+        if (!timer->state == timerStateFree) {
             timer->timeout = params->timeout;
             timer->counter = params->timeout;
             timer->type = params->type;
             timer->callback = params->callback;
             timer->context = params->context;
-            timer->state = TS_ACTIVE;
+            timer->state = timerStateActive;
             *hTimer = (eosHandle) timer;
             break;
         }
@@ -310,7 +310,7 @@ eosResult eosTimerDestroy(eosHandle hTimer) {
         return eos_ERROR_PARAM_NULL;
 
     PTimer timer = (PTimer) hTimer;
-    timer->state = TS_FREE;
+    timer->state = timerStateFree;
 
     return eos_RESULT_SUCCESS;
 }

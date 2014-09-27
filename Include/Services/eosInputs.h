@@ -46,9 +46,9 @@ extern void eosInputsISRTick(void *context);
 extern eosResult eosInputsCreate(eosHandle hService, eosInputsCreateParams *params, eosHandle *hInput);
 extern eosResult eosInputsDestroy(eosHandle hInput);
 
-extern BOOL eosInputGet(eosHandle hInput);
-extern BOOL eosInputPosEdge(eosHandle hInput);
-extern BOOL eosInputNegEdga(eosHandle hInput);
+extern BOOL eosInputsGet(eosHandle hInput);
+extern BOOL eosInputsPosEdge(eosHandle hInput);
+extern BOOL eosInputsNegEdga(eosHandle hInput);
 
 
 #endif	
