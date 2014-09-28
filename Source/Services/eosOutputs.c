@@ -19,6 +19,7 @@ typedef enum {               // Estat del servei
 
 typedef struct {             // Dades del servei
     ServiceState state;      // -Estat del servei
+    eosHandle hTickService;  // -Servei TICK
     unsigned maxOutputs;     // -Numero maxim d'entrades a gestionar
     POutput outputs;         // -Llista de sortides
     BOOL terminate;          // -Indica si cal finalitzar el servei
@@ -28,6 +29,7 @@ typedef struct {             // Dades del servei
 static void portInitialize(POutput output);
 static BOOL portGet(POutput output);
 static void portSet(POutput output, BOOL state);
+static void portToggle(POutput output);
 
 
 /*************************************************************************
@@ -75,6 +77,7 @@ eosResult eosOutputsInitialize(eosOutputsInitializeParams *params, eosHandle *hS
     service->maxOutputs = params->maxOutputs;
     service->outputs = outputs;
     service->terminate = FALSE;
+    service->hTickService = params->hTickService;
 
     unsigned i;
     for (i = 0; i < service->maxOutputs; i++)
@@ -82,8 +85,8 @@ eosResult eosOutputsInitialize(eosOutputsInitializeParams *params, eosHandle *hS
 
     // Asigna la funcio d'interrupcio TICK
     //
-    if (params->hTickService)
-        eosTickAttach(params->hTickService, eosOutputsISRTick, (eosHandle) service);
+    if (service->hTickService)
+        eosTickAttach(service->hTickService, eosOutputsISRTick, (eosHandle) service);
 
     // Retorna resultats i finalitza
     //
@@ -122,6 +125,9 @@ eosResult eosOutputsTerminate(eosHandle hService) {
     service->terminate = TRUE;
     while (service->state != serviceStateTerminate)
         eosTimerTask(hService);
+
+    if (service->hTickService)
+        eosTickDeattach(service->hTickService, eosOutputsISRTick);
 
     // Allibera la memoria de les estructures de dades
     //
@@ -356,13 +362,28 @@ static BOOL portGet(POutput output) {
  *           output     : Dates de la sortida
  *           state      : L'estat a asignar
  *
- *       Retorn:
- *           Estat de la entrada
- *
  **************************************************************************/
 
 static void portSet(POutput output, BOOL state) {
 
     PLIB_PORTS_PinWrite(PORTS_ID_0, output->channel, output->position,
         output->inverted ? !state : state);
+}
+
+
+/*************************************************************************
+ *
+ *       Canvia l'estat del port d'entrada
+ *
+ *       Funcio:
+ *           void portToggle(POutput output)
+ *
+ *       Entrada:
+ *           output     : Dates de la sortida
+ *
+ **************************************************************************/
+
+static void portToggle(POutput output) {
+
+    PLIB_PORTS_PinToggle(PORTS_ID_0, output->channel, output->position);
 }

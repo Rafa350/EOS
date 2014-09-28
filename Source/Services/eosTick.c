@@ -267,7 +267,7 @@ eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context)
  *       Desasigna una funcio
  *
  *       Funcio:
- *           eosResult eosTickUnAttach(
+ *           eosResult eosTickDeattach(
  *               eosHandle hService,
  *               eosCallback callback)
  *
@@ -280,7 +280,7 @@ eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context)
  *
  *************************************************************************/
 
-eosResult eosTickUnAttach(eosHandle hService, eosCallback callback) {
+eosResult eosTickDeattach(eosHandle hService, eosCallback callback) {
 
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;

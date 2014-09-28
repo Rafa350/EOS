@@ -17,7 +17,7 @@ extern eosResult eosTickTerminate(eosHandle hService);
 extern eosResult eosTickTask(eosHandle hService);
 
 extern eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context);
-extern eosResult eosTickUnAttach(eosHandle hService, eosCallback callback);
+extern eosResult eosTickDeattach(eosHandle hService, eosCallback callback);
 
 
 #endif

@@ -32,6 +32,7 @@ typedef enum {               // Estat del servei
 typedef struct {             // Dades del servei
     ServiceState state;      // -Estat del servei
     unsigned maxInputs;      // -Numero maxim d'entrades a gestionar
+    eosHandle hTickService;  // -Servei TICK
     eosHandle hQueue;        // -Cua d'events
     PInput inputs;           // -Llista d'entrades
     BOOL terminate;          // -Indica si cal finalitzar el servei
@@ -72,6 +73,8 @@ eosResult eosInputsInitialize(eosInputsInitializeParams *params, eosHandle *hSer
 
     // Comprova els parametres
     //
+    if (params == NULL)
+        return eos_ERROR_PARAM_NULL;
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
 
@@ -96,7 +99,7 @@ eosResult eosInputsInitialize(eosInputsInitializeParams *params, eosHandle *hSer
     if (eosQueueCreate(&queueParams, &hQueue) != eos_RESULT_SUCCESS) {
         eosFree(inputs);
         eosFree(service);
-        return eos_ERROR_OPERATION;
+        return eos_ERROR_ALLOC;
     }
 
     // Inicialitza les estructures de dades
@@ -105,6 +108,7 @@ eosResult eosInputsInitialize(eosInputsInitializeParams *params, eosHandle *hSer
     service->maxInputs = params->maxInputs;
     service->inputs = inputs;
     service->hQueue = hQueue;
+    service->hTickService = params->hTickService;
     service->terminate = FALSE;
 
     unsigned i;
@@ -113,8 +117,8 @@ eosResult eosInputsInitialize(eosInputsInitializeParams *params, eosHandle *hSer
 
     // Asigna la funcio d'interrupcio TICK
     //
-    if (params->hTickService)
-        eosTickAttach(params->hTickService, eosInputsISRTick, (eosHandle) service);
+    if (service->hTickService)
+        eosTickAttach(service->hTickService, eosInputsISRTick, (eosHandle) service);
 
     // Retorna resultats i finalitza
     //
@@ -153,6 +157,11 @@ eosResult eosInputsTerminate(eosHandle hService) {
     service->terminate = TRUE;
     while (service->state != serviceStateTerminate)
         eosTimerTask(hService);
+
+    // Desasigna la funcio d'interrupcio TICK
+    //
+    if (service->hTickService)
+        eosTickDeattach(service->hTickService, eosInputsISRTick);
 
     // Allibera la memoria de les estructures de dades
     //
