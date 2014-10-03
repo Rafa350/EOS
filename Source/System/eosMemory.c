@@ -1,7 +1,7 @@
 #include "System/eosMemory.h"
 
 
-#ifdef eosOPT_FREERTOS
+#ifdef eos_OPTION_FREERTOS
 #include "FreeRTOS.h"
 #endif
 
@@ -25,7 +25,7 @@
 #ifndef eosAlloc
 void *eosAlloc(unsigned size) {
 
-#ifdef eosOPT_FREERTOS
+#ifdef eos_OPTION_FREERTOS
     return pvPortMalloc(size);
 #else
     return malloc(size);
@@ -77,7 +77,7 @@ void *eosAllocString(const char* str) {
 
 void* eosRealloc(void *p, unsigned size) {
 
-#ifdef eosOPT_FREERTOS
+#ifdef eos_OPTION_FREERTOS
     void *p2 = pvPortMalloc(size);
     if (p2) {
         memcpy(p2, p, size);
@@ -106,7 +106,7 @@ void* eosRealloc(void *p, unsigned size) {
 #ifndef eosFree
 void eosFree(void *p) {
 
-#ifdef eosOPT_FREERTOS
+#ifdef eos_OPTION_FREERTOS
     vPortFree(p);
 #else
     free(p);

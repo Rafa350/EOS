@@ -7,8 +7,13 @@
 #include "peripheral/int/plib_int.h"
 
 
-#ifndef __EOSCONFIG_H
-#include "eosconfig.h"
+// Opcions predefinides, si cal, s'han de desabilitar en eosConfig.h
+//
+#define eos_OPTION_CheckInputParams
+
+
+#ifndef __EOS_CONFIG_H
+#include "eosConfig.h"
 #endif
 
 
@@ -35,12 +40,8 @@ typedef unsigned eosResult;       // Resultat d'una funcio
 typedef struct {} *eosHandle;     // Handler d'un objecte
 typedef void (*eosCallback)(void *context); // Funcio callback
 
-
-#ifdef eosOPT_SYSMAIN
 extern void eosMain(void);
-#endif
-extern void eosTickInterrupt(void);
-extern void eosDelay(unsigned);
+extern eosHandle eosGetTickServiceHandle(void);
 
 #define eosGetInterruptState()    PLIB_INT_IsEnabled(INT_ID_0)
 #define eosEnableInterrupts()     PLIB_INT_Enable(INT_ID_0)

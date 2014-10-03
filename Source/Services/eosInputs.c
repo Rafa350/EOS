@@ -73,10 +73,12 @@ eosResult eosInputsInitialize(eosInputsInitializeParams *params, eosHandle *hSer
 
     // Comprova els parametres
     //
+#ifdef eos_OPTION_CheckInputParams
     if (params == NULL)
         return eos_ERROR_PARAM_NULL;
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     // Crea les estructures de dades en el HEAP
     //
@@ -147,8 +149,10 @@ eosResult eosInputsTerminate(eosHandle hService) {
 
     // Comprova els parametres
     //
+#ifdef eos_OPTION_CheckInputParams
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     PService service = (PService) hService;
 
@@ -191,8 +195,10 @@ eosResult eosInputsTerminate(eosHandle hService) {
 
 eosResult eosInputsTask(eosHandle hService) {
 
+#ifdef eos_OPTION_CheckInputParams
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     PService service = (PService) hService;
 
@@ -252,8 +258,10 @@ eosResult eosInputsTask(eosHandle hService) {
 
 void eosInputsISRTick(void *context) {
 
+#ifdef eos_OPTION_CheckInputParams
     if (context == NULL)
         return;
+#endif
 
     PService service = (PService) context;
     if (service->state == serviceStateActive) {
@@ -309,12 +317,14 @@ void eosInputsISRTick(void *context) {
 
 eosResult eosInputsCreate(eosHandle hService, eosInputsCreateParams *params, eosHandle *hInput) {
 
+#ifdef eos_OPTION_CheckInputParams
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
     if (params == NULL)
         return eos_ERROR_PARAM_NULL;
     if (hInput == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     PService service = (PService) hService;
 
@@ -322,7 +332,6 @@ eosResult eosInputsCreate(eosHandle hService, eosInputsCreateParams *params, eos
     for (i = 0; i < service->maxInputs; i++) {
         PInput input = &service->inputs[i];
         if (!input->active) {
-            input->active = TRUE;
             input->posEdge = FALSE;
             input->negEdge = FALSE;
             input->channel = params->channel;
@@ -340,6 +349,12 @@ eosResult eosInputsCreate(eosHandle hService, eosInputsCreateParams *params, eos
                 input->pattern = 0x00000000;
 
             *hInput = (eosHandle) input;
+
+            // Activar al final per evitar tenir que
+            // desactivar les interrupcions
+            //
+            input->active = TRUE;
+
             break;
         }
     }
@@ -367,8 +382,10 @@ eosResult eosInputsCreate(eosHandle hService, eosInputsCreateParams *params, eos
 
 eosResult eosInputsDestroy(eosHandle hInput) {
 
+#ifdef eos_OPTION_CheckInputParams
     if (hInput == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     PInput input = (PInput) hInput;
     input->active = FALSE;
@@ -394,8 +411,10 @@ eosResult eosInputsDestroy(eosHandle hInput) {
 
 BOOL eosInputsGet(eosHandle hInput) {
 
+#ifdef eos_OPTION_CheckInputParams
     if (hInput == NULL)
         return FALSE;
+#endif
 
     PInput input = (PInput) hInput;
     return input->state;
@@ -419,8 +438,10 @@ BOOL eosInputsGet(eosHandle hInput) {
 
 BOOL eosInputsPosEdge(eosHandle hInput) {
 
+#ifdef eos_OPTION_CheckInputParams
     if (hInput == NULL)
         return FALSE;
+#endif
 
     PInput input = (PInput) hInput;
     BOOL result = input->posEdge;
@@ -446,8 +467,10 @@ BOOL eosInputsPosEdge(eosHandle hInput) {
 
 BOOL eosInputsNegEdge(eosHandle hInput) {
 
+#ifdef eos_OPTION_CheckInputParams
     if (hInput == NULL)
         return FALSE;
+#endif
 
     PInput input = (PInput) hInput;
     BOOL result = input->negEdge;

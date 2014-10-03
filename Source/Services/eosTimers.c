@@ -55,10 +55,12 @@ eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hServi
 
     // Comprova els parametres
     //
+#ifdef eos_OPTION_CheckInputParams
     if (params == NULL)
         return eos_ERROR_PARAM_NULL;
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     // Crea les estructures de dades en el HEAP
     //
@@ -86,8 +88,11 @@ eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hServi
 
     // Asigna la funcio d'interrupcio TICK
     //
-    if (params->hTickService)
-        eosTickAttach(params->hTickService, eosTimerISRTick, (eosHandle) service);
+    eosHandle hTickService = params->hTickService;
+    if (hTickService == NULL)
+        hTickService = eosGetTickServiceHandle();
+    if (hTickService != NULL)
+        eosTickAttach(hTickService, eosTimerISRTick, (eosHandle) service);
 
     // Retorna resultats i finalitza
     //

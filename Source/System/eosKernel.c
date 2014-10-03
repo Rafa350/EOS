@@ -1,32 +1,100 @@
 #include "eos.h"
+#include "Services/eosTick.h"
+#include "system/devcon/sys_devcon.h"
+#include "peripheral/int/plib_int.h"
+#include "HardwareProfile.h"
 
-#ifdef __PIC32MX
 
-
-#ifdef eosOPT_FREERTOS
+#ifdef eos_OPTION_FREERTOS
 #include "freertos.h"
 #endif
 
 
-void sysInitialize(void) {
+SYS_DEVCON_INIT devconInit = {
+    .moduleInit = {0},
+};
+
+
+static eosHandle hTickService;
+
+
+// Funcions a definir en l'aplicacio del usuari
+//
+extern void appSetup(void);
+extern void appLoop(void);
+
+
+void eosTaskInitialize(void) {
 }
 
 
-void eosCreateTask(void) {
+void eosTaskCreate(void) {
 }
 
-void eosSchedule(void) {
 
-#ifdef eosOPT_FREERTOS
+void eosTaskSchedule(void) {
+
+#ifdef eos_OPTION_FREERTOS
     vTaskStartSchedule();
+
+#else
 #endif
 }
 
-void eosCreateQueue(void) {
+
+/*************************************************************************
+ *
+ *       Obte el handler del servei TICK intern
+ *
+ *       Funcio:
+ *           eosHandle eosGetTickServiceHandle(void)
+ *
+ *       Retorn:
+ *           El handler del servei
+ *
+ *************************************************************************/
+
+eosHandle eosGetTickServiceHandle(void) {
+
+    return hTickService;
 }
 
-void eosDeleteQueue(void) {   
+
+/*************************************************************************
+ *
+ *       Punt d'entrada del sistema EOS
+ *
+ *       Funcio:
+ *           void eosMain(void)
+ *
+ *************************************************************************/
+
+void eosMain(void) {
+
+    // Inicialitzacio del sistema
+    //
+    SYS_DEVCON_Initialize(SYS_DEVCON_INDEX_0, (SYS_MODULE_INIT*) &devconInit);
+    SYS_DEVCON_PerformanceConfig(CLOCK_SYSTEM_HZ);
+    PLIB_INT_MultiVectorSelect(INT_ID_0);
+
+    // Inicialitza el servei TICK
+    //
+    eosTickInitializeParams tickParams;
+    tickParams.maxAttaches = 10;
+    eosTickInitialize(&tickParams, &hTickService);
+
+    // Inicialitzacio de l'aplicacio d'usuari
+    //
+    appSetup();
+    
+    while (TRUE) {
+
+        // Procesa les tasques del sistema
+        //
+        eosTickTask(hTickService);
+
+        // Procesa les tasques de l'aplicacio d'usuari
+        //
+        appLoop();
+    }
 }
-
-
-#endif

@@ -33,7 +33,6 @@ typedef struct {                       // Parametres de creacio d'un temporitzad
 extern eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hService);
 extern eosResult eosTimerTerminate(eosHandle hService);
 extern eosResult eosTimerTask(eosHandle hService);
-
 extern void eosTimerISRTick(void *context);
 
 extern eosResult eosTimerCreate(eosHandle hService, eosTimerCreateParams *params, eosHandle *hTimer);

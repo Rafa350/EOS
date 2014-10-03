@@ -5,7 +5,9 @@
 #include "eos.h"
 #endif
 
+#ifndef _PLIB_PORTS_H
 #include "peripheral/ports/plib_ports.h"
+#endif
 
 
 typedef enum {                    // Events del servei
@@ -37,15 +39,20 @@ typedef struct {                  // Parametres d'inicialitzacio del servei
 } eosInputsInitializeParams;
 
 
+// Inicialitzacio, finalitzacio i gestio del servei
+//
 extern eosResult eosInputsInitialize(eosInputsInitializeParams *params, eosHandle *hService);
 extern eosResult eosInputsTerminate(eosHandle hService);
 extern eosResult eosInputsTask(eosHandle hService);
-
 extern void eosInputsISRTick(void *context);
 
+// Creacio, destruccio i gestio dels objectes
+//
 extern eosResult eosInputsCreate(eosHandle hService, eosInputsCreateParams *params, eosHandle *hInput);
 extern eosResult eosInputsDestroy(eosHandle hInput);
 
+// Operacions amb els objectes
+//
 extern BOOL eosInputsGet(eosHandle hInput);
 extern BOOL eosInputsPosEdge(eosHandle hInput);
 extern BOOL eosInputsNegEdga(eosHandle hInput);
