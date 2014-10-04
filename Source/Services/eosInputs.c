@@ -32,10 +32,10 @@ typedef enum {               // Estat del servei
 typedef struct {             // Dades del servei
     ServiceState state;      // -Estat del servei
     unsigned maxInputs;      // -Numero maxim d'entrades a gestionar
-    eosHandle hTickService;  // -Servei TICK
     eosHandle hQueue;        // -Cua d'events
     PInput inputs;           // -Llista d'entrades
     BOOL terminate;          // -Indica si cal finalitzar el servei
+    eosHandle hAttach;       // -Handler del servei TICK
 } Service, *PService;
 
 typedef struct {             // Element de la cua d'events
@@ -80,37 +80,27 @@ eosResult eosInputsInitialize(eosInputsInitializeParams *params, eosHandle *hSer
         return eos_ERROR_PARAM_NULL;
 #endif
 
-    // Crea les estructures de dades en el HEAP
-    //
-    PService service = eosAlloc(sizeof(Service));
-    if (service == NULL)
-        return eos_ERROR_ALLOC;
-
-    PInput inputs = eosAlloc(sizeof(Input) * params->maxInputs);
-    if (inputs == NULL) {
-        eosFree(service);
-        return eos_ERROR_ALLOC;
-    }
-
     // Crea la cua d'events
     //
     eosHandle hQueue;
     eosQueueCreateParams queueParams;
     queueParams.maxItems = params->maxEventQueue;
-    queueParams.size = sizeof(QueueItem);
-    if (eosQueueCreate(&queueParams, &hQueue) != eos_RESULT_SUCCESS) {
-        eosFree(inputs);
-        eosFree(service);
+    queueParams.itemSize = sizeof(QueueItem);
+    if (eosQueueCreate(&queueParams, &hQueue) != eos_RESULT_SUCCESS)
         return eos_ERROR_ALLOC;
-    }
+
+    // Crea les estructures de dades en el HEAP
+    //
+    PService service = eosAlloc(sizeof(Service) + sizeof(Input) * params->maxInputs);
+    if (service == NULL)
+        return eos_ERROR_ALLOC;
 
     // Inicialitza les estructures de dades
     //
     service->state = serviceStateInitialize;
     service->maxInputs = params->maxInputs;
-    service->inputs = inputs;
+    service->inputs = (PInput)((BYTE*) service + sizeof(Service));
     service->hQueue = hQueue;
-    service->hTickService = params->hTickService;
     service->terminate = FALSE;
 
     unsigned i;
@@ -119,8 +109,13 @@ eosResult eosInputsInitialize(eosInputsInitializeParams *params, eosHandle *hSer
 
     // Asigna la funcio d'interrupcio TICK
     //
-    if (service->hTickService)
-        eosTickAttach(service->hTickService, eosInputsISRTick, (eosHandle) service);
+    eosHandle hTickService = params->hTickService;
+    if (hTickService == NULL)
+        hTickService = eosGetTickServiceHandle();
+    if (hTickService != NULL)
+        eosTickAttach(hTickService, eosInputsISRTick, (eosHandle) service, &service->hAttach);
+    else
+        service->hAttach = NULL;
 
     // Retorna resultats i finalitza
     //
@@ -164,13 +159,12 @@ eosResult eosInputsTerminate(eosHandle hService) {
 
     // Desasigna la funcio d'interrupcio TICK
     //
-    if (service->hTickService)
-        eosTickDeattach(service->hTickService, eosInputsISRTick);
+    if (service->hAttach)
+        eosTickDeattach(service->hAttach);
 
     // Allibera la memoria de les estructures de dades
     //
     eosQueueDestroy(service->hQueue);
-    eosFree(service->inputs);
     eosFree(service);
 
     return eos_RESULT_SUCCESS;

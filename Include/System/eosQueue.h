@@ -13,17 +13,19 @@
 
 typedef struct {             // Parametres d'inicialitzacio de la cua
     unsigned maxItems;       // -Capacitat de la cua en elements
-    unsigned size;           // -Tamany de cada element en bytes
+    unsigned itemSize;       // -Tamany de cada element en bytes
 } eosQueueCreateParams;
 
 
 extern eosResult eosQueueCreate(eosQueueCreateParams *params, eosHandle *hQueue);
-extern eosResult eosQueueDestroy(eosHandle handle);
+extern eosResult eosQueueDestroy(eosHandle hQueue);
 
 extern eosResult eosQueuePut(eosHandle hQueue, void *data);
 extern eosResult eosQueueGet(eosHandle hQueue, void *data);
 
 extern eosResult eosQueueGetIsEmpty(eosHandle hQueue, BOOL *isEmpty);
+eosResult eosQueueEnumerate(eosHandle hQueue);
+eosResult eosQueueEnumerateNext(eosHandle hQueue, void *data);
 
 
 #endif

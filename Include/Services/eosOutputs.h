@@ -37,9 +37,9 @@ extern eosResult eosOutputsDestroy(eosHandle hOutput);
 // Operacions amb els objectes
 //
 extern BOOL eosOutputsGet(eosHandle hOutput);
-extern BOOL eosOutputsSet(eosHandle hOutput, BOOL state);
-extern BOOL eosOutputsToggle(eosHandle hOutput);
-extern BOOL eosOutputsPulse(eosHandle hOutput, unsigned time);
+extern void eosOutputsSet(eosHandle hOutput, BOOL state);
+extern void eosOutputsToggle(eosHandle hOutput);
+extern void eosOutputsPulse(eosHandle hOutput, unsigned time);
 
 
 #endif	

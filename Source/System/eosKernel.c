@@ -80,7 +80,7 @@ void eosMain(void) {
     // Inicialitza el servei TICK
     //
     eosTickInitializeParams tickParams;
-    tickParams.maxAttaches = 10;
+    tickParams.maxAttaches = eos_OPTION_MaxTickAttaches;
     eosTickInitialize(&tickParams, &hTickService);
 
     // Inicialitzacio de l'aplicacio d'usuari

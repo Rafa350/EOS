@@ -17,8 +17,8 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 extern eosResult eosTickInitialize(eosTickInitializeParams *params, eosHandle *hService);
 extern eosResult eosTickTerminate(eosHandle hService);
 extern eosResult eosTickTask(eosHandle hService);
-extern eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context);
-extern eosResult eosTickDeattach(eosHandle hService, eosCallback callback);
+extern eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context, eosHandle *hAttach);
+extern eosResult eosTickDeattach(eosHandle hAttach);
 
 
 #endif

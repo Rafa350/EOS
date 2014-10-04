@@ -31,6 +31,7 @@ typedef struct  {                 // Dades internes
     unsigned triggered;           // -Indica event del temporitzador
     unsigned maxTimers;           // -Numero maxim de temporitzadors
     PTimer timers;                // -Llista de temporitzadors
+    eosHandle hAttach;            // -Handler del servei TICK
 } Service, *PService;
 
 
@@ -64,15 +65,9 @@ eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hServi
 
     // Crea les estructures de dades en el HEAP
     //
-    PService service = eosAlloc(sizeof(Service));
+    PService service = eosAlloc(sizeof(Service) + sizeof(Timer) * params->maxTimers);
     if (service == NULL)
         return eos_ERROR_ALLOC;
-
-    PTimer timers = eosAlloc(sizeof(Timer) * params->maxTimers);
-    if (timers == NULL) {
-        eosFree(service);
-        return eos_ERROR_ALLOC;
-    }
 
     // Inicialitza les estructures de dades
     //
@@ -80,7 +75,7 @@ eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hServi
     service->triggered = 0;
     service->maxTimers = params->maxTimers;
     service->terminate = FALSE;
-    service->timers = timers;
+    service->timers = (PTimer)((BYTE*) service + sizeof(Service));
     
     unsigned i;
     for (i = 0; i < service->maxTimers; i++)
@@ -92,7 +87,9 @@ eosResult eosTimerInitialize(eosTimerInitializeParams *params, eosHandle *hServi
     if (hTickService == NULL)
         hTickService = eosGetTickServiceHandle();
     if (hTickService != NULL)
-        eosTickAttach(hTickService, eosTimerISRTick, (eosHandle) service);
+        eosTickAttach(hTickService, eosTimerISRTick, (eosHandle) service, &service->hAttach);
+    else
+        service->hAttach = NULL;
 
     // Retorna resultats i finalitza
     //
@@ -132,9 +129,13 @@ eosResult eosTimerTerminate(eosHandle hService) {
     while (service->state != serviceStateTerminate)
         eosTimerTask(hService);
 
+    // Desasigna la funcio d'interrupcio TICK
+    //
+    if (service->hAttach)
+        eosTickDeattach(service->hAttach);
+
     // Allibera la memoria de les estructures de dades
     //
-    eosFree(service->timers);
     eosFree(service);
 
     return eos_RESULT_SUCCESS;

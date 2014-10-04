@@ -20,10 +20,10 @@ typedef enum {               // Estat del servei
 
 typedef struct {             // Dades del servei
     ServiceState state;      // -Estat del servei
-    eosHandle hTickService;  // -Servei TICK
     unsigned maxOutputs;     // -Numero maxim d'entrades a gestionar
     POutput outputs;         // -Llista de sortides
     BOOL terminate;          // -Indica si cal finalitzar el servei
+    eosHandle hAttach;       // -Handler del servei TICK
 } Service, *PService;
 
 
@@ -66,23 +66,16 @@ eosResult eosOutputsInitialize(eosOutputsInitializeParams *params, eosHandle *hS
 
     // Crea les estructures de dades en el HEAP
     //
-    PService service = eosAlloc(sizeof(Service));
+    PService service = eosAlloc(sizeof(Service) + (sizeof(Output) * params->maxOutputs));
     if (service == NULL)
         return eos_ERROR_ALLOC;
-
-    POutput outputs = eosAlloc(sizeof(Output) * params->maxOutputs);
-    if (outputs == NULL) {
-        eosFree(service);
-        return eos_ERROR_ALLOC;
-    }
 
     // Inicialitza les estructures de dades
     //
     service->state = serviceStateInitialize;
     service->maxOutputs = params->maxOutputs;
-    service->outputs = outputs;
     service->terminate = FALSE;
-    service->hTickService = params->hTickService;
+    service->outputs = (POutput)((BYTE*) service + sizeof(Service));
 
     unsigned i;
     for (i = 0; i < service->maxOutputs; i++)
@@ -90,8 +83,13 @@ eosResult eosOutputsInitialize(eosOutputsInitializeParams *params, eosHandle *hS
 
     // Asigna la funcio d'interrupcio TICK
     //
-    if (service->hTickService)
-        eosTickAttach(service->hTickService, eosOutputsISRTick, (eosHandle) service);
+    eosHandle hTickService = params->hTickService;
+    if (hTickService == NULL)
+        hTickService = eosGetTickServiceHandle();
+    if (hTickService != NULL)
+        eosTickAttach(hTickService, eosOutputsISRTick, (eosHandle) service, &service->hAttach);
+    else
+        service->hAttach = NULL;
 
     // Retorna resultats i finalitza
     //
@@ -133,12 +131,11 @@ eosResult eosOutputsTerminate(eosHandle hService) {
     while (service->state != serviceStateTerminate)
         eosTimerTask(hService);
 
-    if (service->hTickService)
-        eosTickDeattach(service->hTickService, eosOutputsISRTick);
+    if (service->hAttach)
+        eosTickDeattach(service->hAttach);
 
     // Allibera la memoria de les estructures de dades
     //
-    eosFree(service->outputs);
     eosFree(service);
 
     return eos_RESULT_SUCCESS;
@@ -340,7 +337,7 @@ BOOL eosOutputsGet(eosHandle hOutput) {
 }
 
 
-void eosOutputSet(eosHandle hOutput, BOOL state) {
+void eosOutputsSet(eosHandle hOutput, BOOL state) {
 
 #ifdef eos_OPTION_CheckInputParams
     if (hOutput == NULL)
@@ -351,7 +348,7 @@ void eosOutputSet(eosHandle hOutput, BOOL state) {
 }
 
 
-void eosOutputToggle(eosHandle hOutput) {
+void eosOutputsToggle(eosHandle hOutput) {
 
 #ifdef eos_OPTION_CheckInputParams
     if (hOutput == NULL)
@@ -362,7 +359,7 @@ void eosOutputToggle(eosHandle hOutput) {
 }
 
 
-void eosOutputPulse(eosHandle hOutput, unsigned time) {
+void eosOutputsPulse(eosHandle hOutput, unsigned time) {
 
 #ifdef eos_OPTION_CheckInputParams
     if (hOutput == NULL)
@@ -373,7 +370,8 @@ void eosOutputPulse(eosHandle hOutput, unsigned time) {
 
     BOOL intFlag = eosGetInterruptState();
     eosDisableInterrupts();
-    portToggle(output);
+    if (!output->time)
+        portToggle(output);
     output->time = time;
     if (intFlag)
         eosEnableInterrupts();

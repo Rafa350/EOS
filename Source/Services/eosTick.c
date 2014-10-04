@@ -17,10 +17,10 @@
 // Definicio de tipus
 //
 typedef enum  {                   // Estat del servei
-    SS_INITIALIZE,                // -Inicialitza
-    SS_TERMINATE,                 // -Finalitza
-    SS_ACTIVE,                    // -Actiu
-} State;
+    serviceStateInitialize,       // -Inicialitza
+    serviceStateTerminate,        // -Finalitza
+    serviceStateActive,           // -Actiu
+} ServiceState;
 
 typedef struct {                  // Funcio adjunta
     eosCallback callback;         // -Funcio callback
@@ -28,7 +28,7 @@ typedef struct {                  // Funcio adjunta
 } Attach, *PAttach;
 
 typedef struct {                  // Dades internes del servei
-    State state;                  // -Estat
+    ServiceState state;           // -Estat
     BOOL terminate;               // -Indica si cal acabar
     unsigned maxAttaches;         // -Numero maxim d'adjunts
     PAttach attaches;             // -Llista d'adjunts
@@ -81,23 +81,17 @@ eosResult eosTickInitialize(eosTickInitializeParams *params, eosHandle *hService
 
     // Crea les estructures de dades en el HEAP
     //
-    PService service = eosAlloc(sizeof(Service));
+    PService service = eosAlloc(sizeof(Service) + sizeof(Attach) * params->maxAttaches);
     if (service == NULL)
         return eos_ERROR_ALLOC;
 
-    PAttach attaches = eosAlloc(sizeof(Attach) * params->maxAttaches) ;
-    if (attaches == NULL) {
-        eosFree(service);
-        return eos_ERROR_ALLOC;
-    }
-
     // Inicialitza les estructures de dades
     //
-    service->state = SS_INITIALIZE;
+    service->state = serviceStateInitialize;
     service->terminate = FALSE;
     service->maxAttaches = params->maxAttaches;
+    service->attaches = (PAttach)((BYTE*) service + sizeof(Service));
 
-    service->attaches = attaches;
     unsigned i;
     for (i = 0; i < service->maxAttaches; i++)
         service->attaches[i].callback = NULL;
@@ -141,12 +135,11 @@ eosResult eosTickTerminate(eosHandle hService) {
     // Notifica el final i espera que finalitzi
     //
     service->terminate = TRUE;
-    while (service->state != SS_TERMINATE)
+    while (service->state != serviceStateTerminate)
         eosTickTask(hService);
 
     // Allibera la memoria de les estructures de dades
     //
-    eosFree(service->attaches);
     eosFree(service);
 
     return eos_RESULT_SUCCESS;
@@ -177,20 +170,20 @@ eosResult eosTickTask(eosHandle hService) {
     PService service = (PService) hService;
 
     switch (service->state) {
-        case SS_INITIALIZE:
+        case serviceStateInitialize:
             isrService = service;
             StartTimer();
-            service->state = SS_ACTIVE;
+            service->state = serviceStateActive;
             break;
 
-        case SS_TERMINATE:
+        case serviceStateTerminate:
             break;
 
-        case SS_ACTIVE: {
+        case serviceStateActive: {
             if (service->terminate) {
                 StopTimer();
                 isrService = NULL;
-                service->state = SS_TERMINATE;
+                service->state = serviceStateTerminate;
             }
             break;
         }
@@ -208,12 +201,16 @@ eosResult eosTickTask(eosHandle hService) {
  *           eosResult eosTickAttach(
  *               eosHandle hService,
  *               eosCallback callback,
- *               void *context)
+ *               void *context,
+ *               eosHandle *hAttach)
  *
  *       Entrada:
  *           hService   : Handler del servei
  *           callback   : Funcio a asignar
  *           context    : Contexte
+ *
+ *       Sortida:
+ *           hAttach    : Handler del attach
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correcte
@@ -223,7 +220,8 @@ eosResult eosTickTask(eosHandle hService) {
  *
  *************************************************************************/
 
-eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context) {
+eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context,
+    eosHandle *hAttach) {
 
     // Comprova els parametres
     //
@@ -246,6 +244,7 @@ eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context)
         if (attach->callback == NULL) {
             attach->callback = callback;
             attach->context = context;
+            *hAttach = (eosHandle) attach;
             break;
         }
     }
@@ -268,26 +267,20 @@ eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context)
  *
  *       Funcio:
  *           eosResult eosTickDeattach(
- *               eosHandle hService,
- *               eosCallback callback)
+ *               eosHandle hAttach)
  *
  *       Entrada:
- *           hService   : Handler del servei
- *           callback   : La funcio
+ *           hAttach    : Handler del attach
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosTickDeattach(eosHandle hService, eosCallback callback) {
+eosResult eosTickDeattach(eosHandle hAttach) {
 
-    if (hService == NULL)
+    if (hAttach == NULL)
         return eos_ERROR_PARAM_NULL;
-    if (callback == NULL)
-        return eos_ERROR_PARAM_NULL;
-
-    PService service = (PService) hService;
 
     // Entra en la seccio critica
     //
@@ -295,22 +288,13 @@ eosResult eosTickDeattach(eosHandle hService, eosCallback callback) {
 
     // Elimina la entrada de la llista
     //
-    unsigned i = 0;
-    for (i = 0; i < service->maxAttaches; i++) {
-        PAttach attach = &service->attaches[i];
-        if (attach->callback == callback) {
-            attach->callback = NULL;
-            break;
-        }
-    }
+    PAttach attach = (PAttach) hAttach;
+    attach->callback = NULL;
 
     // Surt de la seccio critica
     //
     if (intFlag)
         EnableInterrupt();
-
-    if (i == service->maxAttaches)
-        return eos_ERROR_OPERATION;
 
     return eos_RESULT_SUCCESS;
 }
