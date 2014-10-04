@@ -14,7 +14,7 @@ typedef struct {             // Dates d'una entrada
     PORTS_CHANNEL channel;   // -Canal del port
     PORTS_BIT_POS position;  // -Pin del port
     BOOL inverted;           // -Senyal invertida;
-    eosInputEvent callOn;    // -Modus de crida
+    eosInputEvent callEvent; // -Modus de crida
     eosCallback callback;    // -Funcio callback
     void *context;           // -Parametre de la funcio callback
     UINT32 pattern;          // -Patro de filtratge
@@ -272,13 +272,13 @@ void eosInputsISRTick(void *context) {
                 if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
                     input->state = TRUE;
                     input->posEdge = TRUE;
-                    if (input->callback && (input->callOn == inputEventPosEdge))
+                    if (input->callback && (input->callEvent == inputEventPosEdge))
                         enqueueEvent(service, input, inputEventPosEdge);
                 }
                 else if ((input->pattern & PATTERN_MASK) == PATTERN_OFF) {
                     input->state = FALSE;
                     input->negEdge = TRUE;
-                    if (input->callback && (input->callOn == inputEventNegEdge))
+                    if (input->callback && (input->callEvent == inputEventNegEdge))
                         enqueueEvent(service, input, inputEventNegEdge);
                 }
             }
@@ -331,7 +331,7 @@ eosResult eosInputsCreate(eosHandle hService, eosInputsCreateParams *params, eos
             input->channel = params->channel;
             input->position = params->position;
             input->inverted = params->inverted;
-            input->callOn = params->callOn;
+            input->callEvent = params->callEvent;
             input->callback = params->callback;
             input->context = params->context;
 

@@ -27,7 +27,7 @@ typedef struct {                  // Paramstres de creacio d'entrades
     PORTS_CHANNEL channel;        // -Canal del port
     PORTS_BIT_POS position;       // -Pin del port
     BOOL inverted;                // -Inverteix la entrada
-    eosInputEvent callOn;         // -Event on es crida a la funcio
+    eosInputEvent callEvent;      // -Event on es crida a la funcio
     eosCallback callback;         // -Funcio callback
     void *context;                // -Parametre de la funcio callback
 } eosInputsCreateParams;
