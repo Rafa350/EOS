@@ -41,7 +41,6 @@ typedef struct {                  // Parametres de creacio d'entrades
 } eosInputParams;
 
 typedef struct {                  // Parametres d'inicialitzacio del servei
-    unsigned maxEventQueue;       // -Numero maxim d'events en la cua
     eosHandle hTickService;       // -Servei TICK
 } eosInputServiceParams;
 

@@ -173,8 +173,9 @@ eosTimer* eosTimerCreate(eosTimerService* service, eosTimerParams *params) {
         timer->counter = params->timeout;
         timer->callback = params->callback;
         timer->context = params->context;
-        timer->nextTimer = service->firstTimer;
+
         timer->service = service;
+        timer->nextTimer = service->firstTimer;
         service->firstTimer = timer;
     }
 

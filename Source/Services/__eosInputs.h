@@ -37,17 +37,10 @@ typedef struct __INPUT eosInput;
 
 struct __INPUT_SERVICE {          // Dades del servei
     unsigned state;               // -Estat del servei
-    eosHandle hQueue;             // -Cua d'events
     struct __INPUT* firstInput;   // -Primera entrada de la llista
     eosHandle hAttach;            // -Handler del servei TICK
 };
 typedef struct __INPUT_SERVICE eosInputService;
-
-
-typedef struct {             // Element de la cua d'events
-    eosInput* input;         // -L'entrada
-    unsigned when;           // -Qunant hi ha que executar la funcio callback
-} QueueItem;
 
 
 #include "Services/eosInputs.h"
