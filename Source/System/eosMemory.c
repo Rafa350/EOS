@@ -23,7 +23,7 @@
  *************************************************************************/
 
 #ifndef eosAlloc
-void *  eosAlloc(unsigned size) {
+void* eosAlloc(unsigned size) {
 
 #ifdef eos_OPTION_FREERTOS
     return pvPortMalloc(size);

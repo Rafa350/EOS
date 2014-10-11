@@ -74,10 +74,12 @@ eosResult eosTickInitialize(eosTickInitializeParams *params, eosHandle *hService
 
     // Comprova els parametres
     //
+#ifdef eos_OPTION_CheckInputParams
     if (params == NULL)
         return eos_ERROR_PARAM_NULL;
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     // Crea les estructures de dades en el HEAP
     //
@@ -127,8 +129,10 @@ eosResult eosTickTerminate(eosHandle hService) {
 
     // Comprova els parametres
     //
+#ifdef eos_OPTION_CheckInputParams
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     PService service = (PService) hService;
 
@@ -164,8 +168,10 @@ eosResult eosTickTerminate(eosHandle hService) {
 
 eosResult eosTickTask(eosHandle hService) {
 
+#ifdef eos_OPTION_CheckInputParams
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     PService service = (PService) hService;
 
@@ -225,10 +231,12 @@ eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context,
 
     // Comprova els parametres
     //
+#ifdef eos_OPTION_CheckInputParams
     if (hService == NULL)
         return eos_ERROR_PARAM_NULL;
     if (callback == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     PService service = (PService) hService;
 
@@ -279,8 +287,10 @@ eosResult eosTickAttach(eosHandle hService, eosCallback callback, void *context,
 
 eosResult eosTickDeattach(eosHandle hAttach) {
 
+#ifdef eos_OPTION_CheckInputParams
     if (hAttach == NULL)
         return eos_ERROR_PARAM_NULL;
+#endif
 
     // Entra en la seccio critica
     //
