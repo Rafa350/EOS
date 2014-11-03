@@ -48,8 +48,8 @@ typedef struct {                  // Parametres d'inicialitzacio del servei
 // Gestio del servei
 //
 extern eosInputService* eosInputServiceInitialize(eosInputServiceParams* params);
-extern void eosInputServiceTask(eosInputService* Service);
-extern void eosInputServiceISRTick(void* context);
+extern void eosInputServiceTask(eosInputService* service);
+extern void eosInputServiceISRTick(eosInputService *service);
 
 // Creacio, destruccio i gestio dels objectes
 //

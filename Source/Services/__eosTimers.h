@@ -22,36 +22,38 @@
 
 // Indicadors del temporitzador
 //
-#define TF_PAUSED                 0x0001    // Temporitzador en pausa
-#define TF_TYPE                   0x0006    // Tipus de temporitzador
-#define TF_TYPE_CYCLIC            0x0002    // -Ciclic
-#define TF_TYPE_AUTODESTROY       0x0003    // -Destruccio automatica
+#define TF_PAUSED            0x0001    // Temporitzador en pausa
+#define TF_TYPE              0x0006    // Tipus de temporitzador
+#define TF_TYPE_CYCLIC       0x0002    // -Ciclic
+#define TF_TYPE_AUTODESTROY  0x0003    // -Destruccio automatica
 
 
-struct __MESSAGE {                // Missatge
-    unsigned command;             // -Identificador de la comanda
-    struct __TIMER *timer;        // -Temporitzador
+struct __MESSAGE {                     // Missatge
+    unsigned command;                  // -Identificador de la comanda
+    struct __TIMER *timer;             // -Temporitzador
 };
-typedef struct __MESSAGE Message;
 
-struct __TIMER {                  // Dades internes del temporitzador
+struct __TIMER {                       // Dades internes del temporitzador
     struct __TIMER_SERVICE *service;   // -Servei asociat
-    unsigned flags;               // -Indicadors
-    unsigned timeout;             // -Temps en ms
-    unsigned counter;             // -Contador de temps en ms
-    eosCallback callback;         // -Funcio callback
-    void *context;                // -Parametre de la funcio callback
-    struct __TIMER *nextTimer;    // -Seguent temporitzadorde la llista
+    unsigned flags;                    // -Indicadors
+    unsigned timeout;                  // -Temps en ms
+    unsigned counter;                  // -Contador de temps en ms
+    eosCallback callback;              // -Funcio callback
+    void *context;                     // -Parametre de la funcio callback
+    struct __TIMER *nextTimer;         // -Seguent temporitzadorde la llista
 };
-typedef struct __TIMER eosTimer;
 
-struct __TIMER_SERVICE {          // Dades internesdel servei
-    unsigned state;               // -Estat
-    unsigned triggered;           // -Indica event del temporitzador
-    eosHandle hQueue;             // -Cua de missatges
-    eosHandle hAttach;            // -Handler del servei TICK
-    struct __TIMER *firstTimer;   // -Primer temporitzador de la llista
+struct __TIMER_SERVICE {               // Dades internes del servei
+    unsigned state;                    // -Estat
+    unsigned triggered;                // -Indica event del temporitzador
+    eosHandle hQueue;                  // -Cua de missatges
+    eosHandle hAttach;                 // -Handler del servei TICK
+    struct __TIMER *firstTimer;        // -Primer temporitzador de la llista
 };
+
+
+typedef struct __MESSAGE Message;
+typedef struct __TIMER eosTimer;
 typedef struct __TIMER_SERVICE eosTimerService;
 
 

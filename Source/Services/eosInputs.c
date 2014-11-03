@@ -25,7 +25,6 @@ static BOOL portGet(eosInput* input);
 
 eosInputService* eosInputServiceInitialize(eosInputServiceParams *params) {
 
-
     eosInputService* service = eosAlloc(sizeof(eosInputService));
     if (service) {
 
@@ -38,7 +37,7 @@ eosInputService* eosInputServiceInitialize(eosInputServiceParams *params) {
         if (hTickService == NULL)
             hTickService = eosGetTickServiceHandle();
         if (hTickService != NULL)
-            eosTickAttach(hTickService, eosInputServiceISRTick, (eosHandle) service, &service->hAttach);
+            eosTickAttach(hTickService, (eosCallback) eosInputServiceISRTick, (void*) service, &service->hAttach);
         else
             service->hAttach = NULL;
     }
@@ -100,16 +99,15 @@ void eosInputServiceTask(eosInputService* service) {
  *
  *       Funcio:
  *           void eosInputServiceISRTick(
- *               void* context)
+ *               eosInputService *service)
  *
  *       Entrada:
- *           context: El servei
+ *           service: El servei
  *
  *************************************************************************/
 
-void eosInputServiceISRTick(void* context) {
+void eosInputServiceISRTick(eosInputService *service) {
 
-    eosInputService* service = (eosInputService*) context;
     if (service->state == SS_RUNNING) {
         
         eosInput *input = service->firstInput;

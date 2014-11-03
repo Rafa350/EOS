@@ -1,144 +1,50 @@
-#include "Services/eosOutputs.h"
+#include "Services/__eosOutputs.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
-#include "System/eosQueue.h"
 
 
-typedef struct {             // Dates d'una entrada
-    BOOL active;             // -Indica si esta actiu
-    PORTS_CHANNEL channel;   // -Canal del port
-    PORTS_BIT_POS position;  // -Pin del port
-    BOOL inverted;           // -Senyal invertida;
-    unsigned time;           // -Temps restant del puls
-} Output, *POutput;
-
-typedef enum {               // Estat del servei
-    serviceStateInitialize,  // -Inicialitza
-    serviceStateTerminate,   // -Finalitza
-    serviceStateActive       // -Actiu
-} ServiceState;
-
-typedef struct {             // Dades del servei
-    ServiceState state;      // -Estat del servei
-    unsigned maxOutputs;     // -Numero maxim d'entrades a gestionar
-    POutput outputs;         // -Llista de sortides
-    BOOL terminate;          // -Indica si cal finalitzar el servei
-    eosHandle hAttach;       // -Handler del servei TICK
-} Service, *PService;
-
-
-static void portInitialize(POutput output);
-static BOOL portGet(POutput output);
-static void portSet(POutput output, BOOL state);
-static void portToggle(POutput output);
+static void portInitialize(eosOutput* output);
+static BOOL portGet(eosOutput* output);
+static void portSet(eosOutput* output, BOOL state);
+static void portToggle(eosOutput* output);
 
 
 /*************************************************************************
  *
- *       Inicialitzacio el servei
+ *       Inicialitzacio el servei de gestio de sortides
  *
  *       Funcio:
- *           eosResult eosOutputsInitialize(
- *               eosOutputsInitializeParams *params,
- *               eosHandle *hService)
+ *           eosOutputService* eosOutputServiceInitialize(
+ *               eosOutputServiceParams *params)
  *
  *       Entrada:
- *           params     : Parametres d'inicialitzacio
- *
- *       Sortida:
- *           hService   : El handler del servei
+ *           params : Parametres d'inicialitzacio del servei
  *
  *       Retorn:
- *           eos_RETURN_SUCCESS si tot es correcte
+ *           El servei creat. NULL en cas d'error
  *
  *************************************************************************/
 
-eosResult eosOutputsInitialize(eosOutputsInitializeParams *params, eosHandle *hService) {
+eosOutputService* eosOutputServiceInitialize(eosOutputServiceParams *params) {
 
-    // Comprova els parametres
-    //
-#ifdef eos_OPTION_CheckInputParams
-    if (params == NULL)
-        return eos_ERROR_PARAM_NULL;
-    if (hService == NULL)
-        return eos_ERROR_PARAM_NULL;
-#endif
+    eosOutputService* service = eosAlloc(sizeof(eosOutputService));
+    if (service) {
 
-    // Crea les estructures de dades en el HEAP
-    //
-    PService service = eosAlloc(sizeof(Service) + (sizeof(Output) * params->maxOutputs));
-    if (service == NULL)
-        return eos_ERROR_ALLOC;
+        service->state = SS_INITIALIZING;
+        service->firstOutput = NULL;
 
-    // Inicialitza les estructures de dades
-    //
-    service->state = serviceStateInitialize;
-    service->maxOutputs = params->maxOutputs;
-    service->terminate = FALSE;
-    service->outputs = (POutput)((BYTE*) service + sizeof(Service));
-
-    unsigned i;
-    for (i = 0; i < service->maxOutputs; i++)
-        service->outputs[i].active = FALSE;
-
-    // Asigna la funcio d'interrupcio TICK
-    //
-    eosHandle hTickService = params->hTickService;
-    if (hTickService == NULL)
-        hTickService = eosGetTickServiceHandle();
-    if (hTickService != NULL)
-        eosTickAttach(hTickService, eosOutputsISRTick, (eosHandle) service, &service->hAttach);
-    else
-        service->hAttach = NULL;
-
-    // Retorna resultats i finalitza
-    //
-    *hService = (eosHandle) service;
-    return eos_RESULT_SUCCESS;
-}
-
-
-/*************************************************************************
- *
- *       Finalitza el servei
- *
- *       Funcio:
- *           eosResult eosOutputdTerminate(
- *               eosHandle hService)
- *
- *       Entrada:
- *           hService   : Handler del servei
- *
- *       Retorn:
- *           eos_RESULT_SUCCESS si tot es correcte
- *
- *************************************************************************/
-
-eosResult eosOutputsTerminate(eosHandle hService) {
-
-    // Comprova els parametres
-    //
-#ifdef eos_OPTION_CheckInputParams
-    if (hService == NULL)
-        return eos_ERROR_PARAM_NULL;
-#endif
-
-    PService service = (PService) hService;
-
-    // Notifica el final i espera que finalitzi
-    //
-    service->terminate = TRUE;
-    while (service->state != serviceStateTerminate)
-        eosTimerTask(hService);
-
-    if (service->hAttach)
-        eosTickDeattach(service->hAttach);
-
-    // Allibera la memoria de les estructures de dades
-    //
-    eosFree(service);
-
-    return eos_RESULT_SUCCESS;
+        // Asigna la funcio d'interrupcio TICK
+        //
+        eosHandle hTickService = params->hTickService;
+        if (hTickService == NULL)
+            hTickService = eosGetTickServiceHandle();
+        if (hTickService != NULL)
+            eosTickAttach(hTickService, (eosCallback) eosOutputServiceISRTick, (void*) service, &service->hAttach);
+        else
+            service->hAttach = NULL;
+    }
+    
+    return service;
 }
 
 
@@ -147,41 +53,24 @@ eosResult eosOutputsTerminate(eosHandle hService) {
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           eosResult eosOutputsTask(
- *               eosHandle hService)
+ *           void eosOutputServiceTask(
+ *               eosOutputService* service)
  * 
  *       Entrada:
- *           hService   : Handler del servei
- *
- *       Retorn:
- *           eos_RESULT_SUCCESS si tot es correcte
+ *           service : El servei a procesar
  *
  *************************************************************************/
 
-eosResult eosOutputsTask(eosHandle hService) {
-
-#ifdef eos_OPTION_CheckInputParams
-    if (hService == NULL)
-        return eos_ERROR_PARAM_NULL;
-#endif
-
-    PService service = (PService) hService;
+void eosOutputServiceTask(eosOutputService* service) {
 
     switch (service->state) {
-        case serviceStateInitialize:
-            service->state = serviceStateActive;
+        case SS_INITIALIZING:
+            service->state = SS_RUNNING;
             break;
 
-        case serviceStateActive:
-            if (service->terminate)
-                service->state = serviceStateTerminate;
-            break;
-
-        case serviceStateTerminate:
+        case SS_RUNNING:
             break;
     }
-
-    return eos_RESULT_SUCCESS;
 }
 
 
@@ -190,30 +79,25 @@ eosResult eosOutputsTask(eosHandle hService) {
  *       Gestiona la interrupcio TICK
  *
  *       Funcio:
- *           void eosOutputsISRTick(void *context)
+ *           void eosOutputServiceISRTick(
+ *               void *service)
  *
  *       Entrada:
- *           context: Handler del sevei
+ *           service: El servei a procesar
  *
  *************************************************************************/
 
-void eosOutputsISRTick(void *context) {
+void eosOutputServiceISRTick(eosOutputService *service) {
 
-#ifdef eos_OPTION_CheckInputParams
-    if (context == NULL)
-        return;
-#endif
-
-    PService service = (PService) context;
-    if (service->state == serviceStateActive) {
-        unsigned i;
-        for (i = 0; i < service->maxOutputs; i++) {
-            POutput output = &service->outputs[i];
+    if (service->state == SS_RUNNING) {
+        eosOutput *output = service->firstOutput;
+        while (output) {
             if (output->active && output->time) {
                 output->time -= 1;
                 if (!output->time)
                     portToggle(output);
             }
+            output = output->nextOutput;
         }
     }
 }
@@ -225,148 +109,97 @@ void eosOutputsISRTick(void *context) {
  *
  *       Funcio:
  *           eosResult eosOutputsCreate(
- *               eosHandle hService,
- *               eosOutputsCreateParams *params,
- *               eosHandle *hInput)
+ *               eosOutputService *service,
+ *               eosOutputParams *params)
  *
  *       Entrada:
- *           hService   : Handler del servei
- *           params     : Parametres de la sortida
- *
- *       Sortida:
- *           hOutput    : Handler de la sortida
+ *           service : El servei
+ *           params  : Parametres d'inicialitzacio de la sortida
  *
  *       Retorn:
- *           eos_RESULT_SUCCESS si tot es correcte
+ *           La sortida creada, NULL en cas d'error
  *
  *************************************************************************/
 
-eosResult eosOutputsCreate(eosHandle hService, eosOutputsCreateParams *params, eosHandle *hOutput) {
+eosOutput* eosOutputCreate(eosOutputService *service, eosOutputParams *params) {
 
-#ifdef eos_OPTION_CheckInputParams
-    if (hService == NULL)
-        return eos_ERROR_PARAM_NULL;
-    if (params == NULL)
-        return eos_ERROR_PARAM_NULL;
-    if (hOutput == NULL)
-        return eos_ERROR_PARAM_NULL;
-#endif
+    eosOutput *output = eosAlloc(sizeof(eosOutput));
+    if (output) {
+        output->channel = params->channel;
+        output->position = params->position;
+        output->inverted = params->inverted;
+        output->time = 0;
 
-    PService service = (PService) hService;
+        BOOL intFlag = eosGetInterruptState();
+        eosDisableInterrupts();
 
-    unsigned i;
-    for (i = 0; i < service->maxOutputs; i++) {
-        POutput output = &service->outputs[i];
-        if (!output->active) {
-            output->channel = params->channel;
-            output->position = params->position;
-            output->inverted = params->inverted;
-            output->time = 0;
+        output->service = service;
+        output->nextOutput = service->firstOutput;
+        service->firstOutput = output;
 
-            portInitialize(output);
+        if (intFlag)
+            eosEnableInterrupts();
 
-            *hOutput = (eosHandle) output;
-
-            // Activar al final per evitar tenir que
-            // desactivar les interrupcions
-            //
-            output->active = TRUE;
-
-            break;
-        }
+        portInitialize(output);
     }
-    if (i == service->maxOutputs)
-        return eos_ERROR_OPERATION;
 
-    return eos_RESULT_SUCCESS;
+    return output;
 }
 
 
 /*************************************************************************
  *
- *       Destrueix una entrada
+ *       Destrueix una sortida
  *
  *       Funcio:
- *           eosResult eosOutputsDestroy(eosHandle hOutput)
+ *           void eosOutputDestroy(
+ *               eosOutput* output)
  *
  *       Entrada:
- *           hOutput    : Handler de la sortida
- *
- *       Retorn:
- *           eos_RESULT_SUCCESS si tot es correcte
+ *           output     : La sortida a destruir
  *
  *************************************************************************/
 
-eosResult eosOutputsDestroy(eosHandle hOutput) {
+void eosOutputDestroy(eosOutput* output) {
 
-#ifdef eos_OPTION_CheckInputParams
-    if (hOutput == NULL)
-        return eos_ERROR_PARAM_NULL;
-#endif
-
-    POutput output = (POutput) hOutput;
-    output->active = FALSE;
-
-    return eos_RESULT_SUCCESS;
 }
 
 
 /*************************************************************************
  *
- *       Obte l'estat de l'entrada
+ *       Obte l'estat d'una sortida
  *
  *       Funcio:
- *           BOOL eosOutputsGet(eosHandle hOutput)
+ *           BOOL eosOutputsGet(
+ *               eosOutput* output)
  *
  *       Entrada:
- *           hOutput    : Handler de la sortida
+ *           output : La sortida
  *
  *       Retorn:
- *           L'estat de l'entrada
+ *           L'estat de la sortida
  *
  *************************************************************************/
 
-BOOL eosOutputsGet(eosHandle hOutput) {
+BOOL eosOutputsGet(eosOutput* output) {
 
-#ifdef eos_OPTION_CheckInputParams
-    if (hOutput == NULL)
-        return FALSE;
-#endif
-
-    return portGet((POutput) hOutput);
+    return portGet(output);
 }
 
 
-void eosOutputsSet(eosHandle hOutput, BOOL state) {
+void eosOutputsSet(eosOutput* output, BOOL state) {
 
-#ifdef eos_OPTION_CheckInputParams
-    if (hOutput == NULL)
-        return;
-#endif
-
-    portSet((POutput) hOutput, state);
+    portSet(output, state);
 }
 
 
-void eosOutputsToggle(eosHandle hOutput) {
+void eosOutputsToggle(eosOutput* output) {
 
-#ifdef eos_OPTION_CheckInputParams
-    if (hOutput == NULL)
-        return;
-#endif
-
-    portToggle((POutput) hOutput);
+    portToggle(output);
 }
 
 
-void eosOutputsPulse(eosHandle hOutput, unsigned time) {
-
-#ifdef eos_OPTION_CheckInputParams
-    if (hOutput == NULL)
-        return;
-#endif
-
-    POutput output = (POutput) hOutput;
+void eosOutputsPulse(eosOutput* output, unsigned time) {
 
     BOOL intFlag = eosGetInterruptState();
     eosDisableInterrupts();
@@ -383,14 +216,15 @@ void eosOutputsPulse(eosHandle hOutput, unsigned time) {
  *       Inicialitza el port de sortida
  *
  *       Funcio:
- *           void portInitialize(POutput output)
+ *           void portInitialize(
+ *               eosOutput* output)
  *
  *       Entrada:
- *           output     : Dades de l'entrada
+ *           output : El port
  *
  *************************************************************************/
 
-static void portInitialize(POutput output) {
+static void portInitialize(eosOutput* output) {
 
     PLIB_PORTS_PinWrite(PORTS_ID_0, output->channel, output->position, FALSE);
     PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, output->channel, output->position);
@@ -399,20 +233,21 @@ static void portInitialize(POutput output) {
 
 /*************************************************************************
  *
- *       Obte l'estat del port d'entrada
+ *       Obte l'estat del port de sortida
  *
  *       Funcio:
- *           BOOL portGet(POutput output)
+ *           BOOL portGet(
+ *               eosOutput* output)
  *
  *       Entrada:
- *           output     : Dates de la sortida
+ *           output : El port
  *
  *       Retorn:
- *           Estat de la entrada
+ *           Estat de la sortida
  *
  **************************************************************************/
 
-static BOOL portGet(POutput output) {
+static BOOL portGet(eosOutput* output) {
 
     BOOL p = PLIB_PORTS_PinGetLatched(PORTS_ID_0, output->channel, output->position);
     return output->inverted ? !p : p;
@@ -421,18 +256,20 @@ static BOOL portGet(POutput output) {
 
 /*************************************************************************
  *
- *       Asigna l'estat del port d'entrada
+ *       Asigna l'estat del port de sortida
  *
  *       Funcio:
- *           void portSet(POutput output, BOOL state)
+ *           void portSet(
+ *               eosOutput* output,
+ *               BOOL state)
  *
  *       Entrada:
- *           output     : Dates de la sortida
- *           state      : L'estat a asignar
+ *           output : El port
+ *           state  : L'estat a asignar
  *
  **************************************************************************/
 
-static void portSet(POutput output, BOOL state) {
+static void portSet(eosOutput* output, BOOL state) {
 
     PLIB_PORTS_PinWrite(PORTS_ID_0, output->channel, output->position,
         output->inverted ? !state : state);
@@ -444,14 +281,15 @@ static void portSet(POutput output, BOOL state) {
  *       Canvia l'estat del port d'entrada
  *
  *       Funcio:
- *           void portToggle(POutput output)
+ *           void portToggle(
+ *               eosOutput* output)
  *
  *       Entrada:
- *           output     : Dates de la sortida
+ *           output : El port
  *
  **************************************************************************/
 
-static void portToggle(POutput output) {
+static void portToggle(eosOutput* output) {
 
     PLIB_PORTS_PinToggle(PORTS_ID_0, output->channel, output->position);
 }

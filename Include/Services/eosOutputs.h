@@ -9,37 +9,43 @@
 #include "peripheral/ports/plib_ports.h"
 #endif
 
+#ifndef __EOS_OUTPUTS_H__
+struct __OUTPUT {};
+typedef struct __OUTPUT eosOutput;
+
+struct __OUTPUT_SERVICE {};
+typedef struct __OUTPUT_SERVICE eosOutputService;
+#endif
+
 
 typedef struct {                  // Paramstres de creacio d'entrades
     PORTS_CHANNEL channel;        // -Canal del port
     PORTS_BIT_POS position;       // -Pin del port
     BOOL inverted;                // -Inverteix la sortida
-} eosOutputsCreateParams;
+} eosOutputParams;
 
 typedef struct {                  // Parametres d'inicialitzacio del servei
-    unsigned maxOutputs;          // -Numero maxim de sortides a procesar
     eosHandle hTickService;       // -Servei TICK
-} eosOutputsInitializeParams;
+} eosOutputServiceParams;
 
 
-// Inicialitzacio, finalitzacio i gestio del servei
+// Gestio del servei
 //
-extern eosResult eosOutputsInitialize(eosOutputsInitializeParams *params, eosHandle *hService);
-extern eosResult eosOutputsTerminate(eosHandle hService);
-extern eosResult eosOutputsTask(eosHandle hService);
-extern void eosOutputsISRTick(void *context);
+extern eosOutputService* eosOutputServiceInitialize(eosOutputServiceParams *params);
+extern void eosOutputServiceTask(eosOutputService* service);
+extern void eosOutputServiceISRTick(eosOutputService *service);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosResult eosOutputsCreate(eosHandle hService, eosOutputsCreateParams *params, eosHandle *hOutput);
-extern eosResult eosOutputsDestroy(eosHandle hOutput);
+extern eosOutput* eosOutputCreate(eosOutputService *service, eosOutputParams *params);
+extern void eosOutputDestroy(eosOutput *output);
 
 // Operacions amb els objectes
 //
-extern BOOL eosOutputsGet(eosHandle hOutput);
-extern void eosOutputsSet(eosHandle hOutput, BOOL state);
-extern void eosOutputsToggle(eosHandle hOutput);
-extern void eosOutputsPulse(eosHandle hOutput, unsigned time);
+extern BOOL eosOutputGet(eosOutput* output);
+extern void eosOutputSet(eosOutput* output, BOOL state);
+extern void eosOutputToggle(eosOutput* output);
+extern void eosOutputPulse(eosOutput* output, unsigned time);
 
 
 #endif	
