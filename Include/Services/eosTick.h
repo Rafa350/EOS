@@ -6,9 +6,9 @@
 #include "eos.h"
 #endif
 
+
 #ifndef __EOS_TICK_H__
-struct __TICK_SERVICE {};
-typedef struct __TICK_SERVICE eosTickService;
+typedef struct {} eosTickService;
 #endif
 
 
@@ -22,7 +22,7 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 extern eosTickService* eosTickServiceInitialize(eosTickServiceParams *params);
 extern void eosTickServiceTask(eosTickService* service);
 extern void eosTickAttach(eosTickService* service, eosCallback callback, void *context);
-
+extern eosTickService* eosGetTickServiceHandle();
 
 #endif
 

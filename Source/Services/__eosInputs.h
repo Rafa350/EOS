@@ -39,7 +39,6 @@ struct __INPUT {                       // Dades d'una entrada
 struct __INPUT_SERVICE {               // Dades del servei
     unsigned state;                    // -Estat del servei
     struct __INPUT* firstInput;        // -Primera entrada de la llista
-    eosHandle hAttach;                 // -Handler del servei TICK
 };
 
 

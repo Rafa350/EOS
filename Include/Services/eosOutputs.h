@@ -1,31 +1,34 @@
 #ifndef __EOS_OUTPUTS_H
 #define	__EOS_OUTPUTS_H
 
+
 #ifndef __EOS_H
 #include "eos.h"
+#endif
+
+#ifndef __EOS_TICK_H
+#include "Services/eosTick.h"
 #endif
 
 #ifndef _PLIB_PORTS_H
 #include "peripheral/ports/plib_ports.h"
 #endif
 
-#ifndef __EOS_OUTPUTS_H__
-struct __OUTPUT {};
-typedef struct __OUTPUT eosOutput;
 
-struct __OUTPUT_SERVICE {};
-typedef struct __OUTPUT_SERVICE eosOutputService;
+#ifndef __EOS_OUTPUTS_H__
+typedef struct {} eosOutput;
+typedef struct {} eosOutputService;
 #endif
 
 
-typedef struct {                  // Paramstres de creacio d'entrades
-    PORTS_CHANNEL channel;        // -Canal del port
-    PORTS_BIT_POS position;       // -Pin del port
-    BOOL inverted;                // -Inverteix la sortida
+typedef struct {                       // Paramstres de creacio d'entrades
+    PORTS_CHANNEL channel;             // -Canal del port
+    PORTS_BIT_POS position;            // -Pin del port
+    BOOL inverted;                     // -Inverteix la sortida
 } eosOutputParams;
 
 typedef struct {                  // Parametres d'inicialitzacio del servei
-    eosHandle hTickService;       // -Servei TICK
+    eosTickService *tickService;  // -Servei TICK
 } eosOutputServiceParams;
 
 

@@ -38,13 +38,11 @@ eosTimerService* eosTimerServiceInitialize(eosTimerServiceParams *params) {
    
         // Asigna la funcio d'interrupcio TICK
         //
-        eosHandle hTickService = params->hTickService;
-        if (hTickService == NULL)
-            hTickService = eosGetTickServiceHandle();
-        if (hTickService != NULL)
-            eosTickAttach(hTickService, eosTimerServiceISRTick, (eosHandle) service, &service->hAttach);
-        else
-            service->hAttach = NULL;
+        eosTickService* tickService = params->tickService;
+        if (tickService == NULL)
+            tickService = eosGetTickServiceHandle();
+        if (tickService != NULL)
+            eosTickAttach(tickService, (eosCallback) eosTimerServiceISRTick, (void*) service);
     }
 
     return service;

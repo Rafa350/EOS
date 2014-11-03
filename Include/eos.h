@@ -41,7 +41,7 @@ typedef struct {} *eosHandle;     // Handler d'un objecte
 typedef void (*eosCallback)(void *context); // Funcio callback
 
 extern void eosMain(void);
-extern eosHandle eosGetTickServiceHandle(void);
+//extern eosTickService* eosGetTickServiceHandle(void);
 
 #define eosGetInterruptState()    PLIB_INT_IsEnabled(INT_ID_0)
 #define eosEnableInterrupts()     PLIB_INT_Enable(INT_ID_0)

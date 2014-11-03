@@ -30,7 +30,6 @@ struct __OUTPUT {                      // Dates d'una sortida
 struct __OUTPUT_SERVICE {              // Dades del servei
     unsigned state;                    // -Estat del servei
     struct __OUTPUT *firstOutput;      // -Llista de sortides
-    eosHandle hAttach;                 // -Handler del servei TICK
 };
 
 

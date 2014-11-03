@@ -5,17 +5,19 @@
 #include "eos.h"
 #endif
 
-#ifndef __EOS_TIMERS_H__
-struct __TIMER {};
-typedef struct __TIMER eosTimer;
+#ifndef __EOS_TICK_H
+#include "Services/eosTick.h"
+#endif
 
-struct __TIMER_SERVICE {};
-typedef struct __TIMER_SERVICE eosTimerService;
+
+#ifndef __EOS_TIMERS_H__
+typedef struct {} eosTimer;
+typedef struct {} eosTimerService;
 #endif
 
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    eosHandle hTickService;            // -Servei TICK
+    eosTickService* tickService;       // -Servei TICK
 } eosTimerServiceParams;
 
 typedef enum {                         // Tipus de temporitzador

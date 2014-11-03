@@ -47,7 +47,6 @@ struct __TIMER_SERVICE {               // Dades internes del servei
     unsigned state;                    // -Estat
     unsigned triggered;                // -Indica event del temporitzador
     eosHandle hQueue;                  // -Cua de missatges
-    eosHandle hAttach;                 // -Handler del servei TICK
     struct __TIMER *firstTimer;        // -Primer temporitzador de la llista
 };
 

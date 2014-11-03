@@ -51,7 +51,6 @@ eosTickService* eosTickServiceInitialize(eosTickServiceParams *params) {
     if (service) {
 
         service->state = SS_INITIALIZING;
-        service->terminate = FALSE;
         service->maxAttaches = params->maxAttaches;
         service->attaches = (struct __ATTACH*)((BYTE*) service + sizeof(eosTickService));
 
@@ -79,7 +78,7 @@ eosTickService* eosTickServiceInitialize(eosTickServiceParams *params) {
  *
  *************************************************************************/
 
-void eosTickServiceTask(eosTickService service) {
+void eosTickServiceTask(eosTickService* service) {
 
     switch (service->state) {
         case SS_INITIALIZING:
@@ -100,7 +99,7 @@ void eosTickServiceTask(eosTickService service) {
  *
  *       Funcio:
  *           void eosTickAttach(
- *               eosTickService *service
+ *               eosTickService* service
  *               eosCallback callback,
  *               void *context,
  *               eosHandle *hAttach)
