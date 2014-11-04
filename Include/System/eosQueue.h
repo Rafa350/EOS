@@ -7,8 +7,8 @@
 #endif
 
 
-#define eosQUEUE_ERROR_FULL       (eos_ERROR_FIRST + 0)
-#define eosQUEUE_ERROR_EMPTY      (eos_ERROR_FIRST + 1)
+#define eosQUEUE_ERROR_FULL       (eos_ERROR_USER + 0)
+#define eosQUEUE_ERROR_EMPTY      (eos_ERROR_USER + 1)
 
 
 typedef struct {             // Parametres d'inicialitzacio de la cua

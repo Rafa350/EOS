@@ -15,7 +15,7 @@
  *               unsigned size)
  *
  *       Entrada:
- *           size       : El tamany del bloc en bytes
+ *           size: El tamany del bloc en bytes
  *
  *       Retorn:
  *           L'adressa del bloc de momoria. NULL en cas d'error
@@ -43,7 +43,7 @@ void* eosAlloc(unsigned size) {
  *               const char *str)
  *
  *       Entrada:
- *           str        : La cadena a memoritzar
+ *           str: La cadena a memoritzar
  *
  *       Retorn:
  *           Punter al bloc de memoria, NULL en cas d'error
@@ -67,8 +67,8 @@ void *eosAllocString(const char* str) {
  *              unsigned size)
  *
  *       Entrada:
- *           p          : Punter al bloc a modificar
- *           size       : Tamany el bytes del bloc
+ *           p   : Punter al bloc a modificar
+ *           size: Tamany el bytes del bloc
  *
  *       Retorn:
  *           Punter al bloc de memoria, NULL en cas d'error
@@ -99,7 +99,7 @@ void* eosRealloc(void *p, unsigned size) {
  *               void *p)
  *
  *       Entrada:
- *           p          : Adressa del bloc a alliberar
+ *           p: Adressa del bloc a alliberar
  *
  *************************************************************************/
 

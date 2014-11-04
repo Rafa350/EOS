@@ -15,7 +15,7 @@ SYS_DEVCON_INIT devconInit = {
 };
 
 
-static eosTickService* tickService;
+static eosTickService tickService;
 
 
 // Funcions a definir en l'aplicacio del usuari
@@ -47,14 +47,14 @@ void eosTaskSchedule(void) {
  *       Obte el handler del servei TICK intern
  *
  *       Funcio:
- *           eosTickService* eosGetTickServiceHandle(void)
+ *           eosTickService eosGetTickServiceHandle(void)
  *
  *       Retorn:
  *           El servei TICK
  *
  *************************************************************************/
 
-eosTickService* eosGetTickServiceHandle(void) {
+eosTickService eosGetTickServiceHandle(void) {
 
     return tickService;
 }
@@ -80,8 +80,7 @@ void eosMain(void) {
     // Inicialitza el servei TICK
     //
     eosTickServiceParams tickServiceParams;
-    tickServiceParams.maxAttaches = eos_OPTION_MaxTickAttaches;
-    tickService = eosTickServiceInitialize(&tickServiceParams);
+    eosTickServiceInitialize(&tickServiceParams, &tickService);
 
     // Inicialitzacio de l'aplicacio d'usuari
     //

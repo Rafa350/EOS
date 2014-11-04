@@ -1,14 +1,61 @@
-#include "Services/__eosTimers.h"
+#define __EOS_TIMERS_INTERNAL
+#include "Services/eosTimers.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
 #include "System/eosQueue.h"
 #include "HardwareProfile.h"
 
 
-static void destroyMessageQueue(eosTimerService* service);
-static void sendMessage(eosTimerService* service, Message* message);
-static BOOL receiveMessage(eosTimerService* service, Message* message);
-static void processMessage(eosTimerService* service);
+// Comandes
+//
+#define CMD_NOP                   0    // NOP
+#define CMD_PAUSE                 1    // Posa un temporitzador en pausa
+#define CMD_CONTINUE              2    // Reanuda un temporitzador
+#define CMD_RESET                 3    // Reseteja un temporitzador
+#define CMD_REMOVE                4    // Elimina un temporitzador
+
+// Estats del servei
+//
+#define SS_INITIALIZING           0    // Inicialitzant
+#define SS_RUNNING                1    // Executant
+
+// Indicadors del temporitzador
+//
+#define TF_PAUSED            0x0001    // Temporitzador en pausa
+#define TF_TYPE              0x0006    // Tipus de temporitzador
+#define TF_TYPE_CYCLIC       0x0002    // -Ciclic
+#define TF_TYPE_AUTODESTROY  0x0003    // -Destruccio automatica
+
+
+typedef struct {                       // Missatge
+    unsigned command;                  // -Identificador de la comanda
+    struct __eosTimer *timer;          // -Temporitzador
+} Message;
+
+struct __eosTimer {                    // Dades internes del temporitzador
+    struct __eosTimerService *service; // -Servei asociat
+    unsigned flags;                    // -Indicadors
+    unsigned timeout;                  // -Temps en ms
+    unsigned counter;                  // -Contador de temps en ms
+    eosCallback callback;              // -Funcio callback
+    void *context;                     // -Parametre de la funcio callback
+    struct __eosTimer *nextTimer;      // -Seguent temporitzadorde la llista
+};
+
+struct __eosTimerService {             // Dades internes del servei
+    unsigned state;                    // -Estat
+    unsigned triggered;                // -Indica event del temporitzador
+    eosHandle hQueue;                  // -Cua de missatges
+    struct __eosTimer *firstTimer;     // -Primer temporitzador de la llista
+};
+
+
+// Definicio de funcions locals
+//
+static void destroyMessageQueue(eosTimerService service);
+static void sendMessage(eosTimerService service, Message* message);
+static BOOL receiveMessage(eosTimerService service, Message* message);
+static void processMessage(eosTimerService service);
 
 
 /*************************************************************************
@@ -16,36 +63,45 @@ static void processMessage(eosTimerService* service);
  *       Inicialitza el servei
  *
  *       Funcio:
- *           eosTimerService* eosTimerServiceInitialize(
- *               eosTimerServiceParams *params);
+ *           eosResult eosTimerServiceInitialize(
+ *               eosTimerServiceParams *params,
+ *               eosTimerService *service);
+ *
+ *       Entrada:
+ *           params: Parametres d'inicialitzacio del servei
+ *
+ *       Sortida:
+ *           service: El handler del servei
  *
  *       Retorn:
- *           Punter al servei creat
+ *           El resultat de l'operacio
  * 
  *************************************************************************/
 
-eosTimerService* eosTimerServiceInitialize(eosTimerServiceParams *params) {
+eosResult eosTimerServiceInitialize(eosTimerServiceParams *params, eosTimerService *_service) {
 
-    eosTimerService* service = eosAlloc(sizeof(eosTimerService));
-    if (service) {
+    eosTimerService service = eosAlloc(sizeof(struct __eosTimerService));
+    if (service == NULL)
+        return eos_ERROR_ALLOC;
     
-        // Inicialitza les estructures de dades
-        //
-        service->state = SS_INITIALIZING;
-        service->triggered = 0;
-        service->hQueue = NULL;
-        service->firstTimer = NULL;
+    // Inicialitza les estructures de dades
+    //
+    service->state = SS_INITIALIZING;
+    service->triggered = 0;
+    service->hQueue = NULL;
+    service->firstTimer = NULL;
    
-        // Asigna la funcio d'interrupcio TICK
-        //
-        eosTickService* tickService = params->tickService;
-        if (tickService == NULL)
-            tickService = eosGetTickServiceHandle();
-        if (tickService != NULL)
-            eosTickAttach(tickService, (eosCallback) eosTimerServiceISRTick, (void*) service);
-    }
+    // Asigna la funcio d'interrupcio TICK
+    //
+    eosTickService tickService = params->tickService;
+    if (tickService == NULL)
+        tickService = eosGetTickServiceHandle();
+    if (tickService != NULL)
+        eosTickAttach(tickService, (eosCallback) eosTimerServiceISRTick, (void*) service);
 
-    return service;
+    *_service = service;
+
+    return eos_RESULT_SUCCESS;
 }
 
 
@@ -55,14 +111,14 @@ eosTimerService* eosTimerServiceInitialize(eosTimerServiceParams *params) {
  *
  *       Funcio:
  *           void eosTimerServiceTask(
- *               eosTimerService* service)
+ *               eosTimerService service)
  *
  *       Entrada:
- *           service   : Punter al servei
+ *           service: El handler del servei
  *
  *************************************************************************/
 
-void eosTimerServiceTask(eosTimerService* service) {
+void eosTimerServiceTask(eosTimerService service) {
 
     switch (service->state) {
         case SS_INITIALIZING:
@@ -84,7 +140,7 @@ void eosTimerServiceTask(eosTimerService* service) {
             //
             if (triggered > 0) {
 
-                eosTimer* timer = service->firstTimer;
+                eosTimer timer = service->firstTimer;
                 while (timer) {
                     if ((timer->flags & TF_PAUSED) != TF_PAUSED) {
 
@@ -131,17 +187,16 @@ void eosTimerServiceTask(eosTimerService* service) {
  *
  *       Funcio:
  *           void eosTimerServiceISRTick(
- *               void *context)
+ *               eosTimerService service)
  *
  *       Entrada:
- *           context    : Punter al servei
+ *           service: El handler del servei
  *
  *************************************************************************/
 
-void eosTimerServiceISRTick(void *context) {
+void eosTimerServiceISRTick(eosTimerService service) {
 
-    if (context)
-        ((eosTimerService*) context)->triggered += 1;
+    service->triggered += 1;
 }
 
 
@@ -150,34 +205,41 @@ void eosTimerServiceISRTick(void *context) {
  *       Crea un temporitzador
  *
  *       Funcio:
- *           eosTimer* eosTimerCreate(
- *               eosTimerService* service,
- *               eosTimerParams *params)
+ *           eosResult eosTimerCreate(
+ *               eosTimerService service,
+ *               eosTimerParams *params,
+ *               eosTimer *timer)
  *
  *       Entrada:
- *           service    : Punter al servei
- *           params     : Parametres d'inicialitzacio
+ *           service: Handler del servei
+ *           params : Parametres d'inicialitzacio
+ *
+ *       Sortida:
+ *           timer: El handler del temporitzador
  *
  *       Retorm:
- *           Punter al temporitzador
+ *           El resultat de l'operacio
  *
  *************************************************************************/
 
-eosTimer* eosTimerCreate(eosTimerService* service, eosTimerParams *params) {
+eosResult eosTimerCreate(eosTimerService service, eosTimerParams *params, eosTimer *_timer) {
 
-    eosTimer* timer = eosAlloc(sizeof(eosTimer));
-    if (timer) {
-        timer->timeout = params->timeout;
-        timer->counter = params->timeout;
-        timer->callback = params->callback;
-        timer->context = params->context;
+    eosTimer timer = eosAlloc(sizeof(struct __eosTimer));
+    if (timer == NULL)
+        return eos_ERROR_ALLOC;
 
-        timer->service = service;
-        timer->nextTimer = service->firstTimer;
-        service->firstTimer = timer;
-    }
+    timer->timeout = params->timeout;
+    timer->counter = params->timeout;
+    timer->callback = params->callback;
+    timer->context = params->context;
 
-    return timer;
+    timer->service = service;
+    timer->nextTimer = service->firstTimer;
+    service->firstTimer = timer;
+
+    *_timer = timer;
+
+    return eos_RESULT_SUCCESS;
 }
 
 
@@ -186,20 +248,21 @@ eosTimer* eosTimerCreate(eosTimerService* service, eosTimerParams *params) {
  *       Destrueix un temporitzador
  *
  *       Funcio:
- *           void eosTimerDestroy(
- *               eosTimer* timer)
+ *           eosResult eosTimerDestroy(
+ *               eosTimer timer)
  *
  *       Entrada:
- *           timer      : Punter al temporitzador
+ *           timer: El handler del temporitzador
  *
  *************************************************************************/
 
-void eosTimerDestroy(eosTimer* timer) {
+eosResult eosTimerDestroy(eosTimer timer) {
 
+    return eos_RESULT_SUCCESS;
 }
 
 
-void eosTimerPause(eosTimer* timer) {
+void eosTimerPause(eosTimer timer) {
 
     Message message;
     message.command = CMD_PAUSE;
@@ -208,7 +271,7 @@ void eosTimerPause(eosTimer* timer) {
 }
 
 
-void eosTimerContinue(eosTimer* timer) {
+void eosTimerContinue(eosTimer timer) {
 
     Message message;
     message.command = CMD_CONTINUE;
@@ -217,7 +280,7 @@ void eosTimerContinue(eosTimer* timer) {
 }
 
 
-void eosTimerReset(eosTimer* timer) {
+void eosTimerReset(eosTimer timer) {
 
     Message message;
     message.command = CMD_RESET;
@@ -231,27 +294,32 @@ void eosTimerReset(eosTimer* timer) {
  *       Crea un temporitzador per gestionar un retard
  *
  *       Funcio:
- *           eosTimer* eosTimerDelayStart(
+ *           eosTimer eosTimerDelayStart(
  *               eosTimerService* service,
  *               unsigned timeout)
  *
  *       Entrada:
- *           service    : Punter al servei
- *           timeout    : Retard en ms
+ *           service: El handler del servei
+ *           timeout: Retard en ms
  *
- *       Retorn: Punter al temporitzador. NULL en cas d'error
+ *       Retorn:
+ *           El handler del temporitzador. NULL en cas d'error
  *
  *************************************************************************/
 
-eosTimer* eosTimerDelayStart(eosTimerService *service, unsigned timeout) {
+eosTimer eosTimerDelayStart(eosTimerService service, unsigned timeout) {
 
     eosTimerParams params;
     params.timeout = timeout;
     params.type = TT_ONE_SHOT;
     params.callback = NULL;
     params.context = NULL;
-        
-    return eosTimerCreate(service, &params);
+
+    eosTimer timer;
+    if (eosTimerCreate(service, &params, &timer) == eos_RESULT_SUCCESS)
+        return timer;
+    else
+        return NULL;
 }
 
 
@@ -261,17 +329,17 @@ eosTimer* eosTimerDelayStart(eosTimerService *service, unsigned timeout) {
  *
  *       Funcio:
  *           BOOL eosTimerDelayGetStatus(
- *               eosTimer *timer)
+ *               eosTimer timer)
  *
  *       Entrada:
- *           timer      : El timer
+ *           timer: El handler del temporitzador
  *
  *       Retorn:
  *           TRUE si ha finalitzat el retard
  *
  *************************************************************************/
 
-BOOL eosTimerDelayGetStatus(eosTimer* timer) {
+BOOL eosTimerDelayGetStatus(eosTimer timer) {
 
     if (timer->counter == 0) {
         eosTimerDestroy(timer);
@@ -282,7 +350,7 @@ BOOL eosTimerDelayGetStatus(eosTimer* timer) {
 }
 
 
-static void sendMessage(eosTimerService* service, Message* message) {
+static void sendMessage(eosTimerService service, Message* message) {
 
     if (service->hQueue == NULL) {
 
@@ -297,7 +365,7 @@ static void sendMessage(eosTimerService* service, Message* message) {
 }
 
 
-static BOOL receiveMessage(eosTimerService* service, Message* message) {
+static BOOL receiveMessage(eosTimerService service, Message* message) {
 
     if (service->hQueue)
         return eosQueueGet(service->hQueue, message) == eos_RESULT_SUCCESS;
@@ -307,21 +375,21 @@ static BOOL receiveMessage(eosTimerService* service, Message* message) {
 }
 
 
-static void destroyMessageQueue(eosTimerService* service) {
+static void destroyMessageQueue(eosTimerService service) {
 
     if (service->hQueue)
         eosQueueDestroy(service->hQueue);
 }
 
 
-static void processMessage(eosTimerService* service) {
+static void processMessage(eosTimerService service) {
 
     Message __message;
     Message* message = &__message;
 
     while (receiveMessage(service, message)) {
 
-        eosTimer* timer = message->timer;
+        eosTimer timer = message->timer;
 
         switch (message->command) {
             case CMD_PAUSE:

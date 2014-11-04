@@ -22,7 +22,7 @@
 #define eos_RESULT_BASE           0
 #define eos_RESULT_SUCCESS        (eos_RESULT_BASE + 0)
 #define eos_RESULT_PENDING        (eos_RESULT_BASE + 1)
-#define eos_RESULT_FIRST          (eos_RESULT_BASE + 2)
+#define eos_RESULT_USER           (eos_RESULT_BASE + 100)
 
 // Codis d'error de les funcions de la llibreria
 //
@@ -32,7 +32,8 @@
 #define eos_ERROR_PARAM_INVALID   (eos_ERROR_BASE + 2)
 #define eos_ERROR_ALLOC           (eos_ERROR_BASE + 3)
 #define eos_ERROR_OPERATION       (eos_ERROR_BASE + 4)
-#define eos_ERROR_FIRST           (eos_ERROR_BASE + 500)
+#define eos_ERROR_BUSY            (eos_ERROR_BASE + 5)
+#define eos_ERROR_USER            (eos_ERROR_BASE + 500)
 
 // Definicio de tipus base de la llibraria
 //
@@ -41,7 +42,6 @@ typedef struct {} *eosHandle;     // Handler d'un objecte
 typedef void (*eosCallback)(void *context); // Funcio callback
 
 extern void eosMain(void);
-//extern eosTickService* eosGetTickServiceHandle(void);
 
 #define eosGetInterruptState()    PLIB_INT_IsEnabled(INT_ID_0)
 #define eosEnableInterrupts()     PLIB_INT_Enable(INT_ID_0)

@@ -10,14 +10,16 @@
 #endif
 
 
-#ifndef __EOS_TIMERS_H__
-typedef struct {} eosTimer;
-typedef struct {} eosTimerService;
+#ifndef __EOS_TIMERS_INTERNAL
+struct __eosTimer {};
+struct __eosTimerService {};
 #endif
 
+typedef struct __eosTimer *eosTimer;
+typedef struct __eosTimerService *eosTimerService;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    eosTickService* tickService;       // -Servei TICK
+    eosTickService tickService;        // -Servei TICK
 } eosTimerServiceParams;
 
 typedef enum {                         // Tipus de temporitzador
@@ -36,25 +38,25 @@ typedef struct {                       // Parametres de creacio d'un temporitzad
 
 // Gestio del servei
 //
-extern eosTimerService* eosTimerServiceInitialize(eosTimerServiceParams* params);
-extern void eosTimerServiceTask(eosTimerService* service);
-extern void eosTimerServiceISRTick(void* context);
+extern eosResult eosTimerServiceInitialize(eosTimerServiceParams* params, eosTimerService *service);
+extern void eosTimerServiceTask(eosTimerService service);
+extern void eosTimerServiceISRTick(eosTimerService service);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosTimer* eosTimerCreate(eosTimerService* service, eosTimerParams* params);
-extern void eosTimerDestroy(eosTimer* timer);
+extern eosResult eosTimerCreate(eosTimerService service, eosTimerParams* params, eosTimer *timer);
+extern eosResult eosTimerDestroy(eosTimer timer);
 
 // Operacions amb els objectes
 //
-extern void eosTimerPause(eosTimer* timer);
-extern void eosTimerContinue(eosTimer* timer);
-extern void eosTimerReset(eosTimer* timer);
+extern void eosTimerPause(eosTimer timer);
+extern void eosTimerContinue(eosTimer timer);
+extern void eosTimerReset(eosTimer timer);
 
 // Operacions especials
 //
-extern eosTimer* eosTimerDelayStart(eosTimerService* service, unsigned timeout);
-extern BOOL eosTimerDelayGetStatus(eosTimer* timer);
+extern eosTimer eosTimerDelayStart(eosTimerService service, unsigned timeout);
+extern BOOL eosTimerDelayGetStatus(eosTimer timer);
 
 
 #endif

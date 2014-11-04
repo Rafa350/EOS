@@ -7,22 +7,23 @@
 #endif
 
 
-#ifndef __EOS_TICK_H__
-typedef struct {} eosTickService;
+#ifndef __EOS_TICK_INTERNAL
+struct __eosTickService {};
 #endif
 
+typedef struct __eosTickService *eosTickService;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    unsigned maxAttaches;              // -Numero maxim d'adjunts
 } eosTickServiceParams;
 
 
 // Inicialitzacio, finalitzacio i gestio del servei
 //
-extern eosTickService* eosTickServiceInitialize(eosTickServiceParams *params);
-extern void eosTickServiceTask(eosTickService* service);
-extern void eosTickAttach(eosTickService* service, eosCallback callback, void *context);
-extern eosTickService* eosGetTickServiceHandle();
+extern eosResult eosTickServiceInitialize(eosTickServiceParams *params, eosTickService *service);
+extern void eosTickServiceTask(eosTickService service);
+
+extern void eosTickAttach(eosTickService service, eosCallback callback, void *context);
+extern eosTickService eosGetTickServiceHandle();
 
 #endif
 
