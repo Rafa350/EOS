@@ -64,9 +64,9 @@ extern eosResult eosInputDestroy(eosInput input);
 
 // Operacions amb els objectes
 //
-extern BOOL eosInputsGet(eosInput input);
-extern BOOL eosInputsPosEdge(eosInput input);
-extern BOOL eosInputsNegEdge(eosInput input);
+extern BOOL eosInputGet(eosInput input);
+extern BOOL eosInputPosEdge(eosInput input);
+extern BOOL eosInputNegEdge(eosInput input);
 
 
 #endif	

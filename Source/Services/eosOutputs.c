@@ -217,7 +217,7 @@ eosResult eosOutputDestroy(eosOutput output) {
  *
  *************************************************************************/
 
-BOOL eosOutputsGet(eosOutput output) {
+BOOL eosOutputGet(eosOutput output) {
 
     return portGet(output);
 }
@@ -238,7 +238,7 @@ BOOL eosOutputsGet(eosOutput output) {
  *
  *************************************************************************/
 
-void eosOutputsSet(eosOutput output, BOOL state) {
+void eosOutputSet(eosOutput output, BOOL state) {
 
     portSet(output, state);
 }
@@ -249,7 +249,7 @@ void eosOutputsSet(eosOutput output, BOOL state) {
  *       Inverteix l'estat d'una sortida
  *
  *       Funcio:
- *           BOOL eosOutputsToggle(
+ *           BOOL eosOutputToggle(
  *               eosOutput output)
  *
  *       Entrada:
@@ -257,7 +257,7 @@ void eosOutputsSet(eosOutput output, BOOL state) {
  *
  *************************************************************************/
 
-void eosOutputsToggle(eosOutput output) {
+void eosOutputToggle(eosOutput output) {
 
     portToggle(output);
 }

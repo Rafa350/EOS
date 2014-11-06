@@ -61,9 +61,6 @@ static BOOL portGet(eosInput input);
 
 eosResult eosInputServiceInitialize(eosInputServiceParams *params, eosInputService *_service) {
 
-    if (params == NULL || _service == NULL)
-        return eos_ERROR_PARAM_NULL;
-
     eosInputService service = eosAlloc(sizeof(struct __eosInputService));
     if (service == NULL)
         return eos_ERROR_ALLOC;

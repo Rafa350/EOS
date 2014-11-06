@@ -45,7 +45,7 @@ struct __eosTimer {                    // Dades internes del temporitzador
 struct __eosTimerService {             // Dades internes del servei
     unsigned state;                    // -Estat
     unsigned triggered;                // -Indica event del temporitzador
-    eosHandle hQueue;                  // -Cua de missatges
+    eosQueue queue;                    // -Cua de missatges
     struct __eosTimer *firstTimer;     // -Primer temporitzador de la llista
 };
 
@@ -88,7 +88,7 @@ eosResult eosTimerServiceInitialize(eosTimerServiceParams *params, eosTimerServi
     //
     service->state = SS_INITIALIZING;
     service->triggered = 0;
-    service->hQueue = NULL;
+    service->queue = NULL;
     service->firstTimer = NULL;
    
     // Asigna la funcio d'interrupcio TICK
@@ -352,23 +352,27 @@ BOOL eosTimerDelayGetStatus(eosTimer timer) {
 
 static void sendMessage(eosTimerService service, Message* message) {
 
-    if (service->hQueue == NULL) {
+    eosQueue queue = service->queue;
+    if (queue == NULL) {
 
-        eosQueueCreateParams qp;
-        qp.itemSize = sizeof(Message);
-        qp.maxItems = 10;
-        eosQueueCreate(&qp, &service->hQueue);
+        eosQueue queue = service->queue;
+        service->queue = queue;
+
+        eosQueueParams queueParams;
+        queueParams.itemSize = sizeof(Message);
+        queueParams.maxItems = 10;
+        eosQueueCreate(&queueParams, &queue);
     }
 
-    if (service->hQueue != NULL)
-        eosQueuePut(service->hQueue, message);
+    if (queue != NULL)
+        eosQueuePut(queue, message);
 }
 
 
 static BOOL receiveMessage(eosTimerService service, Message* message) {
 
-    if (service->hQueue)
-        return eosQueueGet(service->hQueue, message) == eos_RESULT_SUCCESS;
+    if (service->queue)
+        return eosQueueGet(service->queue, message) == eos_RESULT_SUCCESS;
 
     else
         return FALSE;
@@ -377,8 +381,8 @@ static BOOL receiveMessage(eosTimerService service, Message* message) {
 
 static void destroyMessageQueue(eosTimerService service) {
 
-    if (service->hQueue)
-        eosQueueDestroy(service->hQueue);
+    if (service->queue)
+        eosQueueDestroy(service->queue);
 }
 
 

@@ -50,6 +50,10 @@ extern void eosMain(void);
 #define eosDisableWatchdog()      DisablWDT()
 #define eosClearWatchdog()        ClearWDT()
 
+#define eosCheckError(e)            ((e) >= eos_ERROR_BASE)
+#define eosCheckSuccess(e)          ((e) == eos_RESULT_SUCCESS)
+#define eosCheckPending(e)          ((e) == eos_RESULT_PENDING)
+
 
 #endif	
 
