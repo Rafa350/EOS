@@ -20,8 +20,8 @@ struct __eosOutput {};
 struct __eosOutputService{};
 #endif
 
-typedef struct __eosOutput *eosOutput;
-typedef struct __eosOutputService *eosOutputService;
+typedef struct __eosOutput *eosHOutput;
+typedef struct __eosOutputService *eosHOutputService;
 
 typedef struct {                       // Parametres d'inicialitzacio de les sortides
     PORTS_CHANNEL channel;             // -Canal del port
@@ -30,27 +30,27 @@ typedef struct {                       // Parametres d'inicialitzacio de les sor
 } eosOutputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    eosTickService tickService;        // -Servei TICK
+    eosHTickService hTickService;      // -Servei TICK
 } eosOutputServiceParams;
 
 
 // Gestio del servei
 //
-extern eosResult eosOutputServiceInitialize(eosOutputServiceParams *params, eosOutputService *service);
-extern void eosOutputServiceTask(eosOutputService service);
-extern void eosOutputServiceISRTick(eosOutputService service);
+extern eosResult eosOutputServiceInitialize(eosOutputServiceParams *params, eosHOutputService *hService);
+extern void eosOutputServiceTask(eosHOutputService hService);
+extern void eosOutputServiceISRTick(eosHOutputService hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosResult eosOutputCreate(eosOutputService service, eosOutputParams *params, eosOutput *output);
-extern eosResult eosOutputDestroy(eosOutput output);
+extern eosResult eosOutputCreate(eosHOutputService hService, eosOutputParams *params, eosHOutput *hOutput);
+extern eosResult eosOutputDestroy(eosHOutput hOutput);
 
 // Operacions amb els objectes
 //
-extern BOOL eosOutputGet(eosOutput output);
-extern void eosOutputSet(eosOutput output, BOOL state);
-extern void eosOutputToggle(eosOutput output);
-extern void eosOutputPulse(eosOutput output, unsigned time);
+extern BOOL eosOutputGet(eosHOutput hOutput);
+extern void eosOutputSet(eosHOutput hOutput, BOOL state);
+extern void eosOutputToggle(eosHOutput hOutput);
+extern void eosOutputPulse(eosHOutput hOutput, unsigned time);
 
 
 #endif	

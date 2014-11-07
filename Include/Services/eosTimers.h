@@ -15,11 +15,11 @@ struct __eosTimer {};
 struct __eosTimerService {};
 #endif
 
-typedef struct __eosTimer *eosTimer;
-typedef struct __eosTimerService *eosTimerService;
+typedef struct __eosTimer *eosHTimer;
+typedef struct __eosTimerService *eosHTimerService;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    eosTickService tickService;        // -Servei TICK
+    eosHTickService hTickService;      // -Servei TICK
 } eosTimerServiceParams;
 
 typedef enum {                         // Tipus de temporitzador
@@ -38,25 +38,25 @@ typedef struct {                       // Parametres de creacio d'un temporitzad
 
 // Gestio del servei
 //
-extern eosResult eosTimerServiceInitialize(eosTimerServiceParams* params, eosTimerService *service);
-extern void eosTimerServiceTask(eosTimerService service);
-extern void eosTimerServiceISRTick(eosTimerService service);
+extern eosResult eosTimerServiceInitialize(eosTimerServiceParams* params, eosHTimerService *hService);
+extern void eosTimerServiceTask(eosHTimerService hService);
+extern void eosTimerServiceISRTick(eosHTimerService hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosResult eosTimerCreate(eosTimerService service, eosTimerParams* params, eosTimer *timer);
-extern eosResult eosTimerDestroy(eosTimer timer);
+extern eosResult eosTimerCreate(eosHTimerService hService, eosTimerParams* params, eosHTimer *hTimer);
+extern eosResult eosTimerDestroy(eosHTimer hTimer);
 
 // Operacions amb els objectes
 //
-extern void eosTimerPause(eosTimer timer);
-extern void eosTimerContinue(eosTimer timer);
-extern void eosTimerReset(eosTimer timer);
+extern eosResult eosTimerPause(eosHTimer hTimer);
+extern eosResult eosTimerContinue(eosHTimer hTimer);
+extern eosResult eosTimerReset(eosHTimer hTimer);
 
 // Operacions especials
 //
-extern eosTimer eosTimerDelayStart(eosTimerService service, unsigned timeout);
-extern BOOL eosTimerDelayGetStatus(eosTimer timer);
+extern eosHTimer eosTimerDelayStart(eosHTimerService hService, unsigned timeout);
+extern BOOL eosTimerDelayGetStatus(eosHTimer timer);
 
 
 #endif

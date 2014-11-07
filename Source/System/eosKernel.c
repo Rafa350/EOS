@@ -15,7 +15,7 @@ SYS_DEVCON_INIT devconInit = {
 };
 
 
-static eosTickService tickService;
+static eosHTickService hTickService;
 
 
 // Funcions a definir en l'aplicacio del usuari
@@ -50,13 +50,13 @@ void eosTaskSchedule(void) {
  *           eosTickService eosGetTickServiceHandle(void)
  *
  *       Retorn:
- *           El servei TICK
+ *           El handler del servei TICK
  *
  *************************************************************************/
 
-eosTickService eosGetTickServiceHandle(void) {
+eosHTickService eosGetTickServiceHandle(void) {
 
-    return tickService;
+    return hTickService;
 }
 
 
@@ -80,7 +80,7 @@ void eosMain(void) {
     // Inicialitza el servei TICK
     //
     eosTickServiceParams tickServiceParams;
-    eosTickServiceInitialize(&tickServiceParams, &tickService);
+    eosTickServiceInitialize(&tickServiceParams, &hTickService);
 
     // Inicialitzacio de l'aplicacio d'usuari
     //
@@ -90,7 +90,7 @@ void eosMain(void) {
 
         // Procesa les tasques del sistema
         //
-        eosTickServiceTask(tickService);
+        eosTickServiceTask(hTickService);
 
         // Procesa les tasques de l'aplicacio d'usuari
         //

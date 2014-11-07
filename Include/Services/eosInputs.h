@@ -27,12 +27,12 @@ struct __axInput {};
 struct __axInputService {};
 #endif
 
-typedef struct __eosInput *eosInput;
-typedef struct __eosInputService *eosInputService;
+typedef struct __eosInput *eosHInput;
+typedef struct __eosInputService *eosHInputService;
 
 typedef struct {                       // Context de la funcio callback
-    eosInputService service;           // -El handler del servei
-    eosInput input;                    // -El handler de l'entrada
+    eosHInputService hService;         // -El handler del servei
+    eosHInput hInput;                  // -El handler de l'entrada
     void *context;                     // -Contexte definit en l'aplicacio d'usuari
     unsigned when;                     // -Quant hi ha que fer la crida
 } eosInputCallbackContext;
@@ -47,26 +47,26 @@ typedef struct {                       // Parametres d'inicializacio de les entr
 } eosInputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    eosTickService tickService;        // -Servei TICK
+    eosHTickService hTickService;      // -Servei TICK
 } eosInputServiceParams;
 
 
 // Gestio del servei
 //
-extern eosResult eosInputServiceInitialize(eosInputServiceParams* params, eosInputService *service);
-extern void eosInputServiceTask(eosInputService service);
-extern void eosInputServiceISRTick(eosInputService service);
+extern eosResult eosInputServiceInitialize(eosInputServiceParams* params, eosHInputService *hService);
+extern void eosInputServiceTask(eosHInputService hService);
+extern void eosInputServiceISRTick(eosHInputService hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosResult eosInputCreate(eosInputService service, eosInputParams* params, eosInput *input);
-extern eosResult eosInputDestroy(eosInput input);
+extern eosResult eosInputCreate(eosHInputService hService, eosInputParams* params, eosHInput *hInput);
+extern eosResult eosInputDestroy(eosHInput hInput);
 
 // Operacions amb els objectes
 //
-extern BOOL eosInputGet(eosInput input);
-extern BOOL eosInputPosEdge(eosInput input);
-extern BOOL eosInputNegEdge(eosInput input);
+extern BOOL eosInputGet(eosHInput hInput);
+extern BOOL eosInputPosEdge(eosHInput hInput);
+extern BOOL eosInputNegEdge(eosHInput hInput);
 
 
 #endif	
