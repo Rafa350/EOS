@@ -44,7 +44,7 @@ typedef struct __eosTimer {            // Dades internes del temporitzador
 typedef struct __eosTimerService {     // Dades internes del servei
     States state;                      // -Estat
     unsigned triggered;                // -Indica event del temporitzador
-    eosQueue commandQueue;             // -Cua de comandes
+    eosHQueue hCommandQueue;           // -Cua de comandes
     eosHTimer hFirstTimer;             // -Primer temporitzador de la llista
 } TimerService;
 
@@ -79,11 +79,11 @@ eosResult eosTimerServiceInitialize(
     
     // Inicialitza la cua de commandes
     //
-    eosQueue queue;
+    eosHQueue hQueue;
     eosQueueParams queueParams;
     queueParams.itemSize = sizeof(Command);
     queueParams.maxItems = 10;
-    if (eosQueueCreate(&queueParams, &queue) != eos_RESULT_SUCCESS) {
+    if (eosQueueCreate(&queueParams, &hQueue) != eos_RESULT_SUCCESS) {
         eosFree(hService);
         return eos_ERROR_ALLOC;
     }
@@ -93,7 +93,7 @@ eosResult eosTimerServiceInitialize(
     hService->state = state_Initializing;
     hService->triggered = 0;
     hService->hFirstTimer = NULL;
-    hService->commandQueue = queue;
+    hService->hCommandQueue = hQueue;
 
     // Asigna la funcio d'interrupcio TICK
     //
@@ -179,7 +179,7 @@ void eosTimerServiceTask(
             // Procesa les comandes pendents
             //
             Command command;
-            while (eosQueueGet(hService->commandQueue, &command) == eos_RESULT_SUCCESS) {
+            while (eosQueueGet(hService->hCommandQueue, &command) == eos_RESULT_SUCCESS) {
 
                 eosHTimer hTimer = command.hTimer;
 
@@ -297,7 +297,7 @@ eosResult eosTimerPause(
     Command command;
     command.opCode = opCode_Pause;
     command.hTimer = hTimer;
-    eosQueuePut(hTimer->hService->commandQueue, &command);
+    eosQueuePut(hTimer->hService->hCommandQueue, &command);
 
     return eos_RESULT_SUCCESS;
 }
@@ -309,7 +309,7 @@ eosResult eosTimerContinue(
     Command command;
     command.opCode = opCode_Continue;
     command.hTimer = hTimer;
-    eosQueuePut(hTimer->hService->commandQueue, &command);
+    eosQueuePut(hTimer->hService->hCommandQueue, &command);
 
     return eos_RESULT_SUCCESS;
 }
@@ -321,7 +321,7 @@ eosResult eosTimerReset(
     Command command;
     command.opCode = opCode_Reset;
     command.hTimer = hTimer;
-    eosQueuePut(hTimer->hService->commandQueue, &command);
+    eosQueuePut(hTimer->hService->hCommandQueue, &command);
 
     return eos_RESULT_SUCCESS;
 }

@@ -14,7 +14,7 @@
 struct __eosQueue {};
 #endif
 
-typedef struct __eosQueue *eosQueue;
+typedef struct __eosQueue *eosHQueue;
 
 typedef struct {             // Parametres d'inicialitzacio de la cua
     unsigned maxItems;       // -Capacitat de la cua en elements
@@ -22,15 +22,15 @@ typedef struct {             // Parametres d'inicialitzacio de la cua
 } eosQueueParams;
 
 
-extern eosResult eosQueueCreate(eosQueueParams *params, eosQueue *queue);
-extern eosResult eosQueueDestroy(eosQueue queue);
+extern eosResult eosQueueCreate(eosQueueParams *params, eosHQueue *hQueue);
+extern eosResult eosQueueDestroy(eosHQueue hQueue);
 
-extern eosResult eosQueuePut(eosQueue queue, void *data);
-extern eosResult eosQueueGet(eosQueue queue, void *data);
+extern eosResult eosQueuePut(eosHQueue hQueue, void *data);
+extern eosResult eosQueueGet(eosHQueue hQueue, void *data);
 
-extern eosResult eosQueueGetIsEmpty(eosQueue queue, BOOL *isEmpty);
-eosResult eosQueueEnumerate(eosQueue queue);
-eosResult eosQueueEnumerateNext(eosQueue queue, void *data);
+extern eosResult eosQueueGetIsEmpty(eosHQueue hQueue, BOOL *isEmpty);
+eosResult eosQueueEnumerate(eosHQueue hQueue);
+eosResult eosQueueEnumerateNext(eosHQueue hQueue, void *data);
 
 
 #endif

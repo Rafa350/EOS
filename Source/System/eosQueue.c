@@ -3,7 +3,7 @@
 #include "System/eosMemory.h"
 
 
-struct __eosQueue {                    // Cua FIFO
+typedef struct __eosQueue {            // Cua FIFO
     unsigned itemSize;                 // -Tamany de cada element
     unsigned maxItems;                 // -Numero maxim d'elements en la cua
     unsigned numItems;                 // -Numero actual d'elements en la cua
@@ -11,7 +11,7 @@ struct __eosQueue {                    // Cua FIFO
     BYTE *end;                         // -Punter al final de la cua
     BYTE *tail;                        // -Punter a l'ultim element insertat
     BYTE *head;                        // -Punter al primer element per extreure
-};
+} Queue;
 
 
 /*************************************************************************
@@ -21,47 +21,40 @@ struct __eosQueue {                    // Cua FIFO
  *       Funcio:
  *           eosResult eosQueueCreate(
  *               eosQueueParams *params,
- *               eosQueue *queue)
+ *               eosQueue *hQueue)
  *
  *       Entrada:
  *           params: Parametres d'inicialitzacio de la cua
  *
  *       Sortida:
- *           queue: El handler de la cua
+ *           hQueue: El handler de la cua
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correxte
  *
  *************************************************************************/
 
-eosResult eosQueueCreate(eosQueueParams *params, eosQueue *_queue) {
-
-    // Verifica els parametres
-    //
-#ifdef eos_OPTION_CheckInputParams
-    if (_queue == NULL)
-        return eos_ERROR_PARAM_NULL;
-    if (params == NULL)
-        return eos_ERROR_PARAM_NULL;
-#endif
+eosResult eosQueueCreate(
+    eosQueueParams *params,
+    eosHQueue *_hQueue) {
 
     // Inicialitza la cua
     //
     int queueSize = params->maxItems * params->itemSize;
 
-    eosQueue queue = eosAlloc(sizeof(struct __eosQueue) + queueSize);
-    if (queue == NULL)
+    eosHQueue hQueue = eosAlloc(sizeof(Queue) + queueSize);
+    if (hQueue == NULL)
         return eos_ERROR_ALLOC;
 
-    queue->start = (BYTE*) queue + sizeof(struct __eosQueue);
-    queue->end = queue->start + queueSize;
-    queue->itemSize = params->itemSize;
-    queue->maxItems = params->maxItems;
-    queue->numItems = 0;
-	queue->tail = queue->start;
-	queue->head = queue->start;
+    hQueue->start = (BYTE*) hQueue + sizeof(Queue);
+    hQueue->end = hQueue->start + queueSize;
+    hQueue->itemSize = params->itemSize;
+    hQueue->maxItems = params->maxItems;
+    hQueue->numItems = 0;
+	hQueue->tail = hQueue->start;
+	hQueue->head = hQueue->start;
 
-    *_queue = queue;
+    *_hQueue = hQueue;
 
     return eos_RESULT_SUCCESS;
 }
@@ -73,11 +66,11 @@ eosResult eosQueueCreate(eosQueueParams *params, eosQueue *_queue) {
  *
  *       Funcio:
  *           eosResult eosQueueGetIsEmpry(
- *               eosQueue queue,
+ *               eosHQueue hQueue,
  *               BOOL *isEmpry)
  *
  *       Entrada:
- *           queue: Handler de la cua
+ *           hQueue: Handler de la cua
  *
  *       Sortida:
  *           isEmpty: TRUE si la cua es buida
@@ -87,20 +80,13 @@ eosResult eosQueueCreate(eosQueueParams *params, eosQueue *_queue) {
  *
  *************************************************************************/
 
-eosResult eosQueueGetIsEmpty(eosQueue queue, BOOL *isEmpty) {
-
-    // Verifica els parametres
-    //
-#ifdef eos_OPTION_CheckInputParams
-    if (queue == NULL)
-        return eos_ERROR_PARAM_NULL;
-    if (isEmpty == NULL)
-        return eos_ERROR_PARAM_NULL;
-#endif
+eosResult eosQueueGetIsEmpty(
+    eosHQueue hQueue,
+    BOOL *isEmpty) {
 
     eosDisableInterrupts();
     
-    *isEmpty = queue->numItems == 0;
+    *isEmpty = hQueue->numItems == 0;
 
     eosEnableInterrupts();
 
@@ -114,11 +100,11 @@ eosResult eosQueueGetIsEmpty(eosQueue queue, BOOL *isEmpty) {
  *
  *       Funcio:
  *           eosResult eosQueuePut(
- *               eosQueue queue,
+ *               eosHQueue hQueue,
  *               void* data)
  *
  *       Entrada:
- *           queue: Handler de la cua
+ *           hQueue: Handler de la cua
  *           data : Punter al buffer de l'element a afeigit
  *
  *       Retorn:
@@ -126,28 +112,21 @@ eosResult eosQueueGetIsEmpty(eosQueue queue, BOOL *isEmpty) {
  *
  *************************************************************************/
 
-eosResult eosQueuePut(eosQueue queue, void* data) {
-
-    // Verifica els parametres
-    //
-#ifdef eos_OPTION_CheckInputParams
-    if (queue == NULL)
-        return eos_ERROR_PARAM_NULL;
-    if (data == NULL)
-        return eos_ERROR_PARAM_NULL;
-#endif
+eosResult eosQueuePut(
+    eosHQueue hQueue,
+    void* data) {
 
     eosResult result = eos_RESULT_SUCCESS;
 
     eosDisableInterrupts();
 
-	if (queue->numItems < queue->maxItems) {
+	if (hQueue->numItems < hQueue->maxItems) {
 
-        memcpy(queue->head, data, queue->itemSize);
-	    queue->head = queue->head + queue->itemSize;
-	    if (queue->head >= queue->end)
-	        queue->head = queue->start;
-		queue->numItems++;
+        memcpy(hQueue->head, data, hQueue->itemSize);
+	    hQueue->head = hQueue->head + hQueue->itemSize;
+	    if (hQueue->head >= hQueue->end)
+	        hQueue->head = hQueue->start;
+		hQueue->numItems++;
 	}
     else
         result = eosQUEUE_ERROR_FULL;
@@ -164,39 +143,32 @@ eosResult eosQueuePut(eosQueue queue, void* data) {
  *
  *       Funcio:
  *           eosResult eosQueueGet(
- *               eosQueue queue,
+ *               eosHQueue hQueue,
  *               void* data)
  *
  *       Entrada:
- *           queue: Handler de la cua
- *           data : Punter al buffer de l'element a exterure
+ *           hQueue: Handler de la cua
+ *           data  : Punter al buffer de l'element a exterure
  *
  *       Retorn:
  *           eos_RESULT_SUCCESS si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosQueueGet(eosQueue queue, void *data) {
-
-    // Verifica els parametres
-    //
-#ifdef eos_OPTION_CheckInputParams
-    if (queue == NULL)
-        return eos_ERROR_PARAM_NULL;
-    if (data == NULL)
-        return eos_ERROR_PARAM_NULL;
-#endif
+eosResult eosQueueGet(
+    eosHQueue hQueue,
+    void *data) {
 
     eosResult result = eos_RESULT_SUCCESS;
 
     eosDisableInterrupts();
 
-	if (queue->numItems > 0) {
-	    memcpy(data, queue->tail, queue->itemSize);
-		queue->tail = queue->tail + queue->itemSize;
-	    if (queue->tail >= queue->end)
-	        queue->tail = queue->start;
-		queue->numItems--;
+	if (hQueue->numItems > 0) {
+	    memcpy(data, hQueue->tail, hQueue->itemSize);
+		hQueue->tail = hQueue->tail + hQueue->itemSize;
+	    if (hQueue->tail >= hQueue->end)
+	        hQueue->tail = hQueue->start;
+		hQueue->numItems--;
     }
 	else
         result = eosQUEUE_ERROR_EMPTY;

@@ -12,8 +12,8 @@ typedef enum {                         // Estats del servei
 typedef struct __eosOutput {           // Dates d'una sortida
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
-    BOOL inverted;                     // -Senyal invertida;
-    unsigned time;                     // -Temps restant del puls
+    BOOL inverted;                     // -Senyal invertida
+    unsigned tickCount;                // -Tics restant del puls
     eosHOutputService hService;        // -El servei al que pertany
     eosHOutput hNextOutput;            // -Seguent sortida
 } Output;
@@ -30,6 +30,8 @@ static void portInitialize(eosHOutput hOutput);
 static BOOL portGet(eosHOutput hOutput);
 static void portSet(eosHOutput hOutput, BOOL state);
 static void portToggle(eosHOutput hOutput);
+
+#define MStoTICK(ms)    (ms)          // Converteix milisegons a ticks
 
 
 /*************************************************************************
@@ -123,9 +125,9 @@ void eosOutputServiceISRTick(
     if (hService->state == state_Running) {
         eosHOutput hOutput = hService->hFirstOutput;
         while (hOutput) {
-            if (hOutput->time) {
-                hOutput->time -= 1;
-                if (!hOutput->time)
+            if (hOutput->tickCount) {
+                hOutput->tickCount -= 1;
+                if (!hOutput->tickCount)
                     portToggle(hOutput);
             }
             hOutput = hOutput->hNextOutput;
@@ -168,7 +170,7 @@ eosResult eosOutputCreate(
     hOutput->channel = params->channel;
     hOutput->position = params->position;
     hOutput->inverted = params->inverted;
-    hOutput->time = 0;
+    hOutput->tickCount = 0;
 
     BOOL intFlag = eosGetInterruptState();
     eosDisableInterrupts();
@@ -295,9 +297,9 @@ void eosOutputsPulse(
 
     BOOL intFlag = eosGetInterruptState();
     eosDisableInterrupts();
-    if (!hOutput->time)
+    if (!hOutput->tickCount)
         portToggle(hOutput);
-    hOutput->time = time;
+    hOutput->tickCount = MStoTICK(time);
     if (intFlag)
         eosEnableInterrupts();
 }

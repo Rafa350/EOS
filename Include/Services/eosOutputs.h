@@ -51,6 +51,9 @@ extern BOOL eosOutputGet(eosHOutput hOutput);
 extern void eosOutputSet(eosHOutput hOutput, BOOL state);
 extern void eosOutputToggle(eosHOutput hOutput);
 extern void eosOutputPulse(eosHOutput hOutput, unsigned time);
+extern void eosOutputDelayedSet(eosHOutput hOutput, unsigned delay, BOOL state);
+extern void eosOutputDelayedToggle(eosHOutput hOutput, unsigned delay);
+extern void eosOutputDelayedPulse(eosHOutput hOutput, unsigned delay, unsigned time);
 
 
 #endif	
