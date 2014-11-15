@@ -53,13 +53,13 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 
 // Gestio del servei
 //
-extern eosResult eosInputServiceInitialize(eosInputServiceParams* params, eosHInputService *hService);
+extern eosResult eosInputServiceInitialize(eosInputServiceParams *params, eosHInputService *hService);
 extern void eosInputServiceTask(eosHInputService hService);
 extern void eosInputServiceISRTick(eosHInputService hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosResult eosInputCreate(eosHInputService hService, eosInputParams* params, eosHInput *hInput);
+extern eosResult eosInputCreate(eosHInputService hService, eosInputParams *params, eosHInput *hInput);
 extern eosResult eosInputDestroy(eosHInput hInput);
 
 // Operacions amb els objectes

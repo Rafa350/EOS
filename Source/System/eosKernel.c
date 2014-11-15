@@ -86,6 +86,10 @@ void eosMain(void) {
     //
     appSetup();
     
+    // Autoritza les interrupcions
+    //
+    eosEnableInterrupts();
+
     while (TRUE) {
 
         // Procesa les tasques del sistema

@@ -49,6 +49,7 @@ extern void eosMain(void);
 #define eosEnableWatchdog()       EnableWDT()
 #define eosDisableWatchdog()      DisablWDT()
 #define eosClearWatchdog()        ClearWDT()
+#define __ISR_Entry(v)            v##_ISR(void)
 
 #define eosCheckError(e)            ((e) >= eos_ERROR_BASE)
 #define eosCheckSuccess(e)          ((e) == eos_RESULT_SUCCESS)

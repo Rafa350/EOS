@@ -9,10 +9,10 @@
 
 // Definicions depenens del temporitzador utilitzat
 //
-#define TIMER_ID             TMR_ID_4
-#define TIMER_INT_VECTOR     INT_VECTOR_T4
-#define TIMER_INT_SOURCE     INT_SOURCE_TIMER_4
-#define TIMER_CORE_VECTOR    _TIMER_4_VECTOR
+#define TICK_TIMER_ID             TMR_ID_4
+#define TICK_TIMER_INT_VECTOR     INT_VECTOR_T4
+#define TICK_TIMER_INT_SOURCE     INT_SOURCE_TIMER_4
+#define TICK_TIMER_CORE_VECTOR    _TIMER_4_VECTOR
 
 
 typedef enum  {                        // Estats del servei
@@ -165,20 +165,20 @@ void eosTickAttach(
 
 static void InitTimer(void) {
 
-    PLIB_TMR_Stop(TIMER_ID);
+    PLIB_TMR_Stop(TICK_TIMER_ID);
 
     // Inicialitza el temporitzador per genera una interrupcio a 1KHz (1ms)
     //
-    PLIB_TMR_ClockSourceSelect(TIMER_ID, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
-    PLIB_TMR_PrescaleSelect(TIMER_ID, TMR_PRESCALE_VALUE_16);
-    PLIB_TMR_Mode16BitEnable(TIMER_ID);
-    PLIB_TMR_Counter16BitClear(TIMER_ID);
-    PLIB_TMR_Period16BitSet(TIMER_ID, CLOCK_PERIPHERICAL_HZ / 16 / 1000);
+    PLIB_TMR_ClockSourceSelect(TICK_TIMER_ID, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
+    PLIB_TMR_PrescaleSelect(TICK_TIMER_ID, TMR_PRESCALE_VALUE_16);
+    PLIB_TMR_Mode16BitEnable(TICK_TIMER_ID);
+    PLIB_TMR_Counter16BitClear(TICK_TIMER_ID);
+    PLIB_TMR_Period16BitSet(TICK_TIMER_ID, CLOCK_PERIPHERICAL_HZ / 16 / 1000);
 
     // Configura les interrupcions del temporitzador
     //
-    PLIB_INT_VectorPrioritySet(INT_ID_0, TIMER_INT_VECTOR, INT_PRIORITY_LEVEL2);
-    PLIB_INT_VectorSubPrioritySet(INT_ID_0, TIMER_INT_VECTOR, INT_SUBPRIORITY_LEVEL0);
+    PLIB_INT_VectorPrioritySet(INT_ID_0, TICK_TIMER_INT_VECTOR, INT_PRIORITY_LEVEL2);
+    PLIB_INT_VectorSubPrioritySet(INT_ID_0, TICK_TIMER_INT_VECTOR, INT_SUBPRIORITY_LEVEL0);
 }
 
 
@@ -193,8 +193,8 @@ static void InitTimer(void) {
 
 static void StartTimer(void) {
 
-    PLIB_INT_SourceEnable(INT_ID_0, TIMER_INT_SOURCE);
-    PLIB_TMR_Start(TIMER_ID);
+    PLIB_INT_SourceEnable(INT_ID_0, TICK_TIMER_INT_SOURCE);
+    PLIB_TMR_Start(TICK_TIMER_ID);
 }
 
 
@@ -209,8 +209,8 @@ static void StartTimer(void) {
 
 static void StopTimer(void) {
 
-    PLIB_TMR_Stop(TIMER_ID);
-    PLIB_INT_SourceDisable(INT_ID_0, TIMER_INT_SOURCE);
+    PLIB_TMR_Stop(TICK_TIMER_ID);
+    PLIB_INT_SourceDisable(INT_ID_0, TICK_TIMER_INT_SOURCE);
 }
 
 
@@ -218,12 +218,9 @@ static void StopTimer(void) {
  *
  *       Gestiona la interrupcio del temporitzador
  *
- *       Funcio:
- *           void eosTickTMRInterruptService(void)
- *
  *************************************************************************/
 
-void __ISR(TIMER_CORE_VECTOR, ipl2) eosTickTMRInterruptService(void) {
+void __ISR(TICK_TIMER_CORE_VECTOR, ipl2) __ISR_Entry(TICK_TIMER_CORE_VECTOR) {
 
     eosHTickService hService = eosGetTickServiceHandle();
     if (hService != NULL) {
@@ -235,7 +232,7 @@ void __ISR(TIMER_CORE_VECTOR, ipl2) eosTickTMRInterruptService(void) {
         }
     }
 
-    PLIB_INT_SourceFlagClear(INT_ID_0, TIMER_INT_SOURCE);
+    PLIB_INT_SourceFlagClear(INT_ID_0, TICK_TIMER_INT_SOURCE);
 }
 
 
@@ -253,8 +250,8 @@ void __ISR(TIMER_CORE_VECTOR, ipl2) eosTickTMRInterruptService(void) {
 
 static BOOL DisableInterrupt(void) {
     
-    BOOL intFlag = PLIB_INT_SourceIsEnabled(INT_ID_0, TIMER_INT_SOURCE);
-    PLIB_INT_SourceDisable(INT_ID_0, TIMER_INT_SOURCE);
+    BOOL intFlag = PLIB_INT_SourceIsEnabled(INT_ID_0, TICK_TIMER_INT_SOURCE);
+    PLIB_INT_SourceDisable(INT_ID_0, TICK_TIMER_INT_SOURCE);
     return intFlag;
 }
 
@@ -270,5 +267,5 @@ static BOOL DisableInterrupt(void) {
 
 static void EnableInterrupt(void) {
 
-    PLIB_INT_SourceEnable(INT_ID_0, TIMER_INT_SOURCE);
+    PLIB_INT_SourceEnable(INT_ID_0, TICK_TIMER_INT_SOURCE);
 }
