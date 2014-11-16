@@ -15,13 +15,6 @@
 #endif
 
 
-// Quant hi ha que fer la crida
-//
-#define INPUT_ON_CHANGE           0    // Quant hi ha un canvi
-#define INPUT_ON_POSEDGE          1    // Qunat hi ha un flanc positiu
-#define INPUT_ON_NEGEDGE          2    // Qunat hi ha un flanc negatiu
-
-
 #ifndef __EOS_INPUTS_INTERNAL
 struct __axInput {};
 struct __axInputService {};
@@ -30,20 +23,14 @@ struct __axInputService {};
 typedef struct __eosInput *eosHInput;
 typedef struct __eosInputService *eosHInputService;
 
-typedef struct {                       // Context de la funcio callback
-    eosHInputService hService;         // -El handler del servei
-    eosHInput hInput;                  // -El handler de l'entrada
-    void *context;                     // -Contexte definit en l'aplicacio d'usuari
-    unsigned when;                     // -Quant hi ha que fer la crida
-} eosInputCallbackContext;
-
 typedef struct {                       // Parametres d'inicializacio de les entrades
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
     BOOL inverted;                     // -Inverteix la entrada
-    unsigned when;                     // -Quant hi ha que fer la crida
-    eosCallback callback;              // -Funcio callback
-    void *context;                     // -Parametre de la funcio callback
+    eosCallback onPosEdge;             // -Event POS_EDGE
+    eosCallback onNegEdge;             // -EVENT NEG_EDGE
+    eosCallback onChange;              // -EVENT CHANGE
+    void *context;                     // -Parametres del event
 } eosInputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei

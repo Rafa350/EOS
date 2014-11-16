@@ -101,7 +101,7 @@ eosResult eosTimerServiceInitialize(
     if (hTickService == NULL)
         hTickService = eosGetTickServiceHandle();
     if (hTickService != NULL)
-        eosTickAttach(hTickService, (eosCallback) eosTimerServiceISRTick, (void*) hService);
+        eosTickAttach(hTickService, (eosTickCallback) eosTimerServiceISRTick, (void*) hService);
 
     *_hService = hService;
 
@@ -163,7 +163,7 @@ void eosTimerServiceTask(
                             // Crida a la funcio callback
                             //
                             if (hTimer->callback != NULL)
-                                hTimer->callback(hTimer->context);
+                                hTimer->callback(hTimer, hTimer->context);
 
                             // Si es ciclc, reicicia el contador
                             //

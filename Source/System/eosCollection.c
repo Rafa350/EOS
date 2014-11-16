@@ -1,13 +1,14 @@
+#define __EOS_COLLECTION_INTERNAL
 #include "System/eosCollection.h"
 #include "System/eosMemory.h"
 
 
-typedef struct {                       // Dades de la coleccio
+typedef struct __eosCollection {       // Dades de la coleccio
     unsigned itemSize;                 // -Tamany de cada item en bytes
     unsigned maxItems;                 // -Numero maxim d'items
     unsigned numItems;                 // -Numero actual d'items
     BYTE *start;                       // -Punter al inici de la coleccio
-} Collection, *PCollection;
+} Collection;
 
 
 /*************************************************************************
@@ -17,7 +18,7 @@ typedef struct {                       // Dades de la coleccio
  *       Funcio:
  *           eosResult eosCollectionCreate(
  *               eosCollectionCreateParams *params,
- *               eosHandle *hCollection)
+ *               eosHCollection *hCollection)
  *
  *       Entrada:
  *           params     : Parametres de creacio de la coleccio
@@ -30,7 +31,7 @@ typedef struct {                       // Dades de la coleccio
  *
  *************************************************************************/
 
-eosResult eosCollectionCreate(eosCollectionCreateParams *params,  eosHandle *hCollection) {
+eosResult eosCollectionCreate(eosCollectionCreateParams *params,  eosHCollection *hCollection) {
     
 #ifdef eos_OPTION_CheckInputParams
     if (params == NULL)
@@ -41,7 +42,7 @@ eosResult eosCollectionCreate(eosCollectionCreateParams *params,  eosHandle *hCo
 
     unsigned collectionSize = params->maxItems * params->itemSize;
 
-    PCollection collection = eosAlloc(sizeof(Collection) + collectionSize);
+    eosHCollection collection = eosAlloc(sizeof(Collection) + collectionSize);
     if (collection == NULL)
         return eos_ERROR_ALLOC;
     
@@ -50,25 +51,25 @@ eosResult eosCollectionCreate(eosCollectionCreateParams *params,  eosHandle *hCo
     collection->numItems = 0;
     collection->start = (BYTE*) collection + sizeof(Collection);
 
-    *hCollection = (eosHandle) collection;
+    *hCollection = (eosHCollection) collection;
 
     return eos_RESULT_SUCCESS;
 }
 
 
-eosResult eosCollectionDestroy(eosHandle hCollection) {
+eosResult eosCollectionDestroy(eosHCollection hCollection) {
 
 #ifdef eos_OPTION_CheckInputParams
     if (hCollection == NULL)
         return eos_ERROR_PARAM_NULL;
 #endif
     
-    eosFree((PCollection) hCollection);
+    eosFree((eosHCollection) hCollection);
 }
 
-eosResult eosCollectionAdd(eosHandle hCollection, void *data) {
+eosResult eosCollectionAdd(eosHCollection hCollection, void *data) {
 
-    PCollection collection = (PCollection) hCollection;
+    eosHCollection collection = (eosHCollection) hCollection;
 
     if (collection->numItems == collection->maxItems)
         return eos_ERROR_OPERATION;
@@ -80,17 +81,17 @@ eosResult eosCollectionAdd(eosHandle hCollection, void *data) {
 }
 
 
-eosResult eosCollectionRemove(eosHandle hCollection, void *data) {
+eosResult eosCollectionRemove(eosHCollection hCollection, void *data) {
 
 }
 
 
-eosResult eosCollectionEnumerate(eosHandle hCollection) {
+eosResult eosCollectionEnumerate(eosHCollection hCollection) {
 
 }
 
 
-eosResult eosCollectionEnumerateNext(eosHandle hCollection, void *data) {
+eosResult eosCollectionEnumerateNext(eosHCollection hCollection, void *data) {
 
 }
 

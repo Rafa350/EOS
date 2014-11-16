@@ -42,6 +42,8 @@ typedef struct {                       // Parametres d'una transaccio
     BYTE *rxBuffer;                    // -Buffer de recepcio
     unsigned rxSize;                   // -Tamany del buffer de recepcio
     unsigned rxCount;                  // -Numero de bytes rebuts
+    eosCallback onEndOfTransaction;    // -Event END_OF_TRANSACTION
+    void *context;                     // -Parametre del event
 } eosI2CTransactionParams;
 
 

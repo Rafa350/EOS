@@ -71,7 +71,7 @@ eosResult eosOutputServiceInitialize(
     if (hTickService == NULL)
         hTickService = eosGetTickServiceHandle();
     if (hTickService != NULL)
-        eosTickAttach(hTickService, (eosCallback) eosOutputServiceISRTick, hService);
+        eosTickAttach(hTickService, (eosTickCallback) eosOutputServiceISRTick, hService);
     
     *_hService = hService;
 

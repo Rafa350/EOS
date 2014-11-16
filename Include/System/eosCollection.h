@@ -5,6 +5,11 @@
 #include "eos.h"
 #endif
 
+#ifndef __EOS_COLLECTION_INTERNAL
+struct __eosCollection {};
+#endif
+
+typedef struct __eosCollection *eosHCollection;
 
 typedef struct {                  // Parametres d'inicialitzacio de la cua
     unsigned maxItems;            // -Numero maxim d'items en la cua
@@ -12,14 +17,14 @@ typedef struct {                  // Parametres d'inicialitzacio de la cua
 } eosCollectionCreateParams;
 
 
-eosResult eosCollectionCreate(eosCollectionCreateParams *params, eosHandle *hCollection);
-eosResult eosCollectionDestroy(eosHandle hCollection);
+eosResult eosCollectionCreate(eosCollectionCreateParams *params, eosHCollection *hCollection);
+eosResult eosCollectionDestroy(eosHCollection hCollection);
 
-eosResult eosCollectionAdd(eosHandle hCollection, void *data);
-eosResult eosCollectionRemove(eosHandle hCollection, void *data);
+eosResult eosCollectionAdd(eosHCollection hCollection, void *data);
+eosResult eosCollectionRemove(eosHCollection hCollection, void *data);
 
-eosResult eosCollectionEnumerate(eosHandle hCollection);
-eosResult eosCollectionEnumerateNext(eosHandle hCollection, void *data);
+eosResult eosCollectionEnumerate(eosHCollection hCollection);
+eosResult eosCollectionEnumerateNext(eosHCollection hCollection, void *data);
 
 
 #endif

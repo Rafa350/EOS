@@ -38,8 +38,7 @@
 // Definicio de tipus base de la llibraria
 //
 typedef unsigned eosResult;       // Resultat d'una funcio
-typedef struct {} *eosHandle;     // Handler d'un objecte
-typedef void (*eosCallback)(void *context); // Funcio callback
+typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
 
 extern void eosMain(void);
 

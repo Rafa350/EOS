@@ -16,19 +16,19 @@
 
 
 typedef enum  {                        // Estats del servei
-    state_Initializing,                // -Inicialitzant
-    state_Running                      // -Execucio
-} States;
+    ssInitializing,                    // -Inicialitzant
+    ssRunning                          // -Execucio
+} ServiceStates;
 
 typedef struct __Attach {              // Funcio adjunta
     eosHTickService hService;          // -Servei al que pertany
     struct __Attach *nextAttach;       // -Seguent adjunt
-    eosCallback callback;              // -Funcio callback
-    void *context;                     // -Parametre de la funcio callback
+    eosTickCallback onTick;            // -Event TICK
+    void *onTickContext;               // -Parametres del event TICK
 } Attach;
 
 typedef struct __eosTickService {      // Dades internes del servei
-    unsigned state;                    // -Estat
+    ServiceStates state;               // -Estat
     unsigned maxAttaches;              // -Numero maxim d'adjunts
     Attach *firstAttach;               // -Primer adjunt
 } TickService;
@@ -71,7 +71,7 @@ eosResult eosTickServiceInitialize(
     if (hService == NULL)
         return eos_ERROR_ALLOC;
 
-    hService->state = state_Initializing;
+    hService->state = ssInitializing;
     hService->firstAttach = NULL;
 
     InitTimer();
@@ -99,12 +99,12 @@ void eosTickServiceTask(
     eosHTickService hService) {
 
     switch (hService->state) {
-        case state_Initializing:
+        case ssInitializing:
             StartTimer();
-            hService->state = state_Running;
+            hService->state = ssRunning;
             break;
 
-        case state_Running:
+        case ssRunning:
             break;
     }
 }
@@ -117,26 +117,26 @@ void eosTickServiceTask(
  *       Funcio:
  *           void eosTickAttach(
  *               eosHTickService hService
- *               eosCallback callback,
- *               void *context)
+ *               eosTickCallback onTick,
+ *               void *onTickContext)
  *
  *       Entrada:
- *           hService: El servei
- *           callback: Funcio a asignar
- *           context : Contexte
+ *           hService      : El servei
+ *           onTick        : Callback del event TICK
+ *           onTickContext : Contexte del event TICK
  *
  *************************************************************************/
 
 void eosTickAttach(
     eosHTickService hService,
-    eosCallback callback,
-    void *context) {
+    eosTickCallback onTick,
+    void *onTickContext) {
 
     Attach *attach = eosAlloc(sizeof(Attach));
     if (attach) {
 
-        attach->callback = callback;
-        attach->context = context;
+        attach->onTick = onTick;
+        attach->onTickContext = onTickContext;
 
         // Entra en la seccio critica
         //
@@ -226,8 +226,8 @@ void __ISR(TICK_TIMER_CORE_VECTOR, ipl2) __ISR_Entry(TICK_TIMER_CORE_VECTOR) {
     if (hService != NULL) {
         Attach *attach = hService->firstAttach;
         while (attach) {
-            if (attach->callback != NULL)
-                attach->callback(attach->context);
+            if (attach->onTick != NULL)
+                attach->onTick(attach->onTickContext);
             attach = attach->nextAttach;
         }
     }

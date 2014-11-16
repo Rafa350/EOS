@@ -4,10 +4,10 @@
 #include "System/eosMemory.h"
 
 
-typedef enum {
-    state_Initializing,                // Inicialitzant
-    state_Running                      // En execucio
-} States;
+typedef enum {                         // Estats del servei
+    ssInitializing,                    // -Inicialitzant
+    ssRunning                          // -En execucio
+} ServiceStates;
 
 #define PATTERN_ON       0x00007FFF
 #define PATTERN_OFF      0x00008000
@@ -19,9 +19,10 @@ typedef struct __eosInput {            // Dades d'una entrada
     eosHInput hNextInput;              // -Seguent entrada
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
-    BOOL inverted;                     // -Senyal invertida;
-    unsigned when;                     // -Quant hi ha que executar la funcio callback
-    eosCallback callback;              // -Funcio callback
+    BOOL inverted;                     // -Senyal invertida
+    eosCallback onPosEdge;             // -Event POSEDGE
+    eosCallback onNegEdge;             // -Event NEGEDGE
+    eosCallback onChange;              // -Event CHANGE
     void *context;                     // -Parametre de la funcio callback
     UINT32 pattern;                    // -Patro de filtratge
     BOOL state;                        // -Indicador ON/OFF
@@ -30,7 +31,7 @@ typedef struct __eosInput {            // Dades d'una entrada
 } Input;
 
 typedef struct __eosInputService {     // Dades del servei
-    States state;                      // -Estat del servei
+    ServiceStates state;               // -Estat del servei
     eosHInput hFirstInput;             // -Primera entrada de la llista
 } InputService;
 
@@ -67,7 +68,7 @@ eosResult eosInputServiceInitialize(
     if (hService == NULL)
         return eos_ERROR_ALLOC;
 
-    hService->state = state_Initializing;
+    hService->state = ssInitializing;
     hService->hFirstInput = NULL;
 
     // Asigna la funcio d'interrupcio TICK
@@ -76,7 +77,7 @@ eosResult eosInputServiceInitialize(
     if (hTickService == NULL)
         hTickService = eosGetTickServiceHandle();
     if (hTickService != NULL)
-        eosTickAttach(hTickService, (eosCallback) eosInputServiceISRTick, hService);
+        eosTickAttach(hTickService, (eosTickCallback) eosInputServiceISRTick, hService);
 
     *_hService = hService;
    
@@ -101,26 +102,34 @@ void eosInputServiceTask(
     eosHInputService hService) {
 
     switch (hService->state) {
-        case state_Initializing:
-            hService->state = state_Running;
+        case ssInitializing:
+            hService->state = ssRunning;
             break;
 
-        case state_Running: {
+        case ssRunning: {
 
             eosHInput hInput = hService->hFirstInput;
             while (hInput) {
 
-                if ((hInput->posEdge && hInput->when == INPUT_ON_POSEDGE) ||
-                    (hInput->negEdge && hInput->when == INPUT_ON_NEGEDGE)) {
-
-                    eosInputCallbackContext context;
-                    context.hService = hService;
-                    context.hInput = hInput;
-                    context.when = hInput->when;
-                    context.context = hInput->context;
-                    hInput->callback(&context);
-                    hInput->posEdge = FALSE;
-                    hInput->negEdge = FALSE;
+                if (hInput->posEdge) {
+                    if (hInput->onPosEdge) {
+                        hInput->onPosEdge(hInput, hInput->context);
+                        hInput->posEdge = FALSE;
+                    }
+                    else if (hInput->onChange) {
+                        hInput->onChange(hInput, hInput->context);
+                        hInput->posEdge = FALSE;
+                    }
+                }
+                if (hInput->negEdge) {
+                    if (hInput->onNegEdge) {
+                        hInput->onNegEdge(hInput, hInput->context);
+                        hInput->negEdge = FALSE;
+                    }
+                    else if (hInput->onChange) {
+                        hInput->onChange(hInput, hInput->context);
+                        hInput->negEdge = FALSE;
+                    }
                 }
 
                 hInput = hInput->hNextInput;
@@ -148,7 +157,7 @@ void eosInputServiceTask(
 void eosInputServiceISRTick(
     eosHInputService hService) {
 
-    if (hService->state == state_Running) {
+    if (hService->state == ssRunning) {
         
         eosHInput hInput = hService->hFirstInput;
         while (hInput) {
@@ -208,8 +217,9 @@ eosResult eosInputCreate(
     hInput->channel = params->channel;
     hInput->position = params->position;
     hInput->inverted = params->inverted;
-    hInput->when = params->when;
-    hInput->callback = params->callback;
+    hInput->onPosEdge = params->onPosEdge;
+    hInput->onNegEdge = params->onNegEdge;
+    hInput->onChange = params->onChange;
     hInput->context = params->context;
 
     BOOL intFlag = eosGetInterruptState();
