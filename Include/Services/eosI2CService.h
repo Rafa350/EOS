@@ -29,16 +29,17 @@ typedef struct {                       // Parametres del servei
 } eosI2CServiceParams;
 
 typedef enum {                         // Tipus de transaccio
-    type_Send,                         // -Transmissio al escalu
-    type_Receive,                      // -Recepcio des de l'escalu
-    type_SendAndReceive                // -Combinat de transmissio i recepcio
+    ttRead,                            // -Lectura
+    ttWrite,                           // -Escriptura
+    ttWriteRead                        // -Escriptura i lectura posterior
 } TransactionType;
 
 typedef struct {                       // Parametres d'una transaccio
+    unsigned address;                  // -Adressa del esclau
     TransactionType type;              // -Tipus de transaccio
-    BYTE *txData;                      // -Buffer de transmissio
+    BYTE *txBuffer;                    // -Buffer de transmissio
     unsigned txCount;                  // -Numero de bytes en el buffer de transmissio
-    BYTE *rxData;                      // -Buffer de recepcio
+    BYTE *rxBuffer;                    // -Buffer de recepcio
     unsigned rxSize;                   // -Tamany del buffer de recepcio
     unsigned rxCount;                  // -Numero de bytes rebuts
 } eosI2CTransactionParams;
