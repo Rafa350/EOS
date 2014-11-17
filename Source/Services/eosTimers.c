@@ -36,8 +36,8 @@ typedef struct __eosTimer {            // Dades internes del temporitzador
     unsigned flags;                    // -Indicadors
     unsigned timeout;                  // -Temps en ms
     unsigned counter;                  // -Contador de temps en ms
-    eosCallback callback;              // -Funcio callback
-    void *context;                     // -Parametre de la funcio callback
+    eosCallback onTimeout;             // -Event TIMEOUT
+    void *context;                     // -Parametre del events
     eosHTimer hNextTimer;              // -Seguent temporitzadorde la llista
 } Timer;
 
@@ -162,8 +162,8 @@ void eosTimerServiceTask(
 
                             // Crida a la funcio callback
                             //
-                            if (hTimer->callback != NULL)
-                                hTimer->callback(hTimer, hTimer->context);
+                            if (hTimer->onTimeout != NULL)
+                                hTimer->onTimeout(hTimer, hTimer->context);
 
                             // Si es ciclc, reicicia el contador
                             //
@@ -258,7 +258,7 @@ eosResult eosTimerCreate(
 
     hTimer->timeout = params->timeout;
     hTimer->counter = params->timeout;
-    hTimer->callback = params->callback;
+    hTimer->onTimeout = params->onTimeout;
     hTimer->context = params->context;
 
     hTimer->hService = hService;
@@ -352,7 +352,7 @@ eosHTimer eosTimerDelayStart(
     eosTimerParams params;
     params.timeout = timeout;
     params.type = TT_ONE_SHOT;
-    params.callback = NULL;
+    params.onTimeout = NULL;
     params.context = NULL;
 
     eosHTimer hTimer;

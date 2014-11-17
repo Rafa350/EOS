@@ -1,6 +1,6 @@
 #define __EOS_I2CMASTER_INTERNAL
 #include "HardwareProfile.h"
-#include "Services/eosI2CService.h"
+#include "Services/eosI2CMaster.h"
 #include "System/eosMemory.h"
 #include "System/eosQueue.h"
 #include "sys/attribs.h"

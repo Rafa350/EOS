@@ -1,5 +1,5 @@
-#ifndef __EOS_I2SSERVICE_H
-#define __EOS_I2CSERVICE_H
+#ifndef __EOS_I2CMASTER_H
+#define __EOS_I2CMASTER_H
 
 
 #ifndef __EOS_H

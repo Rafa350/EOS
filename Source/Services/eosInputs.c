@@ -23,7 +23,7 @@ typedef struct __eosInput {            // Dades d'una entrada
     eosCallback onPosEdge;             // -Event POSEDGE
     eosCallback onNegEdge;             // -Event NEGEDGE
     eosCallback onChange;              // -Event CHANGE
-    void *context;                     // -Parametre de la funcio callback
+    void *context;                     // -Parametre dels events
     UINT32 pattern;                    // -Patro de filtratge
     BOOL state;                        // -Indicador ON/OFF
     BOOL posEdge;                      // -Indica si s'ha rebut un falc positiu
