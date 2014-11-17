@@ -36,11 +36,11 @@ typedef struct __eosTickService {      // Dades internes del servei
 
 // Definicio de functions locals
 //
-static void InitTimer(void);
-static void StartTimer(void);
-static void StopTimer(void);
-static BOOL DisableInterrupt(void);
-static void EnableInterrupt(void);
+static void timerInitialize(void);
+static void timerStart(void);
+static void timerStop(void);
+static BOOL disableInterrupt(void);
+static void enableInterrupt(void);
 
 
 /*************************************************************************
@@ -74,7 +74,7 @@ eosResult eosTickServiceInitialize(
     hService->state = ssInitializing;
     hService->firstAttach = NULL;
 
-    InitTimer();
+    timerInitialize();
 
     *_hService = hService;
 
@@ -100,7 +100,7 @@ void eosTickServiceTask(
 
     switch (hService->state) {
         case ssInitializing:
-            StartTimer();
+            timerStart();
             hService->state = ssRunning;
             break;
 
@@ -140,7 +140,7 @@ void eosTickAttach(
 
         // Entra en la seccio critica
         //
-        BOOL intFlag = DisableInterrupt();
+        BOOL intFlag = disableInterrupt();
 
         attach->hService = hService;
         attach->nextAttach = hService->firstAttach;
@@ -149,7 +149,7 @@ void eosTickAttach(
         // Surt de la seccio critica
         //
         if (intFlag)
-            EnableInterrupt();
+            enableInterrupt();
     }
 }
 
@@ -159,11 +159,11 @@ void eosTickAttach(
  *       Inicialitza el temporitzador
  *
  *       Funcio:
- *           void InitTimer(void)
+ *           void timerInitialize(void)
  *
  *************************************************************************/
 
-static void InitTimer(void) {
+static void timerInitialize(void) {
 
     PLIB_TMR_Stop(TICK_TIMER_ID);
 
@@ -187,11 +187,11 @@ static void InitTimer(void) {
  *       Activa el temporitzador, i comença a generar interrupcions
  *
  *       Funcio:
- *           void StartTimer(void) 
+ *           void timerStart(void)
  *
  *************************************************************************/
 
-static void StartTimer(void) {
+static void timerStart(void) {
 
     PLIB_INT_SourceEnable(INT_ID_0, TICK_TIMER_INT_SOURCE);
     PLIB_TMR_Start(TICK_TIMER_ID);
@@ -203,11 +203,11 @@ static void StartTimer(void) {
  *       Descativa el temporitzador
  *
  *       Funcio:
- *           void StopTimer(void)
+ *           void timerStop(void)
  *
  *************************************************************************/
 
-static void StopTimer(void) {
+static void timerStop(void) {
 
     PLIB_TMR_Stop(TICK_TIMER_ID);
     PLIB_INT_SourceDisable(INT_ID_0, TICK_TIMER_INT_SOURCE);
@@ -241,14 +241,14 @@ void __ISR(TICK_TIMER_CORE_VECTOR, ipl2) __ISR_Entry(TICK_TIMER_CORE_VECTOR) {
  *       Desactiva la interrupcio
  *
  *       Funcio:
- *           BOOL DisableInterrupt(void)
+ *           BOOL disableInterrupt(void)
  *
  *       Retorn:
  *           Estat anterior de la interrupcio
  *
  *************************************************************************/
 
-static BOOL DisableInterrupt(void) {
+static BOOL disableInterrupt(void) {
     
     BOOL intFlag = PLIB_INT_SourceIsEnabled(INT_ID_0, TICK_TIMER_INT_SOURCE);
     PLIB_INT_SourceDisable(INT_ID_0, TICK_TIMER_INT_SOURCE);
@@ -261,11 +261,11 @@ static BOOL DisableInterrupt(void) {
  *       Activa la interrupcio
  *
  *       Funcio:
- *           void EnableInterrupt(void)
+ *           void enableInterrupt(void)
  *
  *************************************************************************/
 
-static void EnableInterrupt(void) {
+static void enableInterrupt(void) {
 
     PLIB_INT_SourceEnable(INT_ID_0, TICK_TIMER_INT_SOURCE);
 }
