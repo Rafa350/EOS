@@ -239,9 +239,9 @@ eosResult eosI2CMasterStartTransaction(
 
 
 BOOL eosI2CMasterTransactionIsPending(
-    eosHI2CMasterService hTransaction) {
+    eosHI2CMasterService hService) {
 
-    return hTransaction->state != tsFinished;
+    return hService->state != tsFinished;
 }
 
 
