@@ -118,6 +118,7 @@ eosResult eosI2CMasterServiceInitialize(
     hService->id = params->id;
     hService->state = ssInitializing;
     hService->hCommandQueue = hQueue;
+    hService->hCurrentTransaction = NULL;
 
     // Afegeix el servei a la llista de serveis
     //
@@ -239,9 +240,9 @@ eosResult eosI2CMasterStartTransaction(
 
 
 BOOL eosI2CMasterTransactionIsPending(
-    eosHI2CMasterService hService) {
+    eosHI2CTransaction hTransaction) {
 
-    return hService->state != tsFinished;
+    return hTransaction->state != tsFinished;
 }
 
 

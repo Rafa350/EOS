@@ -53,7 +53,7 @@ extern void eosI2CMasterServiceISRTick(eosHI2CMasterService hService);
 
 extern eosResult eosI2CMasterStartTransaction(eosHI2CMasterService hService, eosI2CTransactionParams *params, eosHI2CTransaction *hTransaction);
 extern eosResult eosI2CMasterCancelTransaction(eosHI2CTransaction hTransaction);
-extern BOOL eosI2CMasterTransactionIsPending(eosHI2CMasterService hService);
+extern BOOL eosI2CMasterTransactionIsPending(eosHI2CTransaction hTransaction);
 
 
 #endif
