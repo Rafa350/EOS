@@ -16,15 +16,16 @@
 
 
 #ifndef __EOS_I2CMASTER_INTERNAL
-struct __I2CMasterService {};
-struct __I2CTransaction {};
+struct __eosI2CMasterService {};
+struct __eosI2CTransaction {};
 #endif
 
-typedef struct __I2CMasterService *eosHI2CMasterService;
-typedef struct __I2CTransaction *eosHI2CTransaction;
+typedef struct __eosI2CMasterService *eosHI2CMasterService;
+typedef struct __eosI2CTransaction *eosHI2CTransaction;
 
 typedef struct {                       // Parametres del servei
     I2C_MODULE_ID id;                  // -Modul I2C
+    unsigned queueSize;                // -Tamany de la cua de transaccions
     eosHTickService hTickService;      // -Handler del servei TICK
 } eosI2CServiceParams;
 
@@ -42,7 +43,7 @@ typedef struct {                       // Parametres d'una transaccio
     BYTE *rxBuffer;                    // -Buffer de recepcio
     unsigned rxSize;                   // -Tamany del buffer de recepcio
     unsigned rxCount;                  // -Numero de bytes rebuts
-    eosCallback onEndOfTransaction;    // -Event END_OF_TRANSACTION
+    eosCallback onEndTransaction;      // -Event END_TRANSACTION
     void *context;                     // -Parametre del event
 } eosI2CTransactionParams;
 
@@ -53,7 +54,7 @@ extern void eosI2CMasterServiceISRTick(eosHI2CMasterService hService);
 
 extern eosResult eosI2CMasterStartTransaction(eosHI2CMasterService hService, eosI2CTransactionParams *params, eosHI2CTransaction *hTransaction);
 extern eosResult eosI2CMasterCancelTransaction(eosHI2CTransaction hTransaction);
-extern BOOL eosI2CMasterTransactionIsPending(eosHI2CTransaction hTransaction);
+extern bool eosI2CMasterTransactionIsPending(eosHI2CTransaction hTransaction);
 
 
 #endif

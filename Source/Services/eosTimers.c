@@ -79,11 +79,10 @@ eosResult eosTimerServiceInitialize(
     
     // Inicialitza la cua de commandes
     //
-    eosHQueue hQueue;
     eosQueueParams queueParams;
     queueParams.itemSize = sizeof(Command);
     queueParams.maxItems = 10;
-    if (eosQueueCreate(&queueParams, &hQueue) != eos_RESULT_SUCCESS) {
+    if (eosQueueCreate(&queueParams, &hService->hCommandQueue) != eos_RESULT_SUCCESS) {
         eosFree(hService);
         return eos_ERROR_ALLOC;
     }
@@ -93,7 +92,6 @@ eosResult eosTimerServiceInitialize(
     hService->state = state_Initializing;
     hService->triggered = 0;
     hService->hFirstTimer = NULL;
-    hService->hCommandQueue = hQueue;
 
     // Asigna la funcio d'interrupcio TICK
     //

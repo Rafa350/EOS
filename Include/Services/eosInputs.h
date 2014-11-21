@@ -16,8 +16,8 @@
 
 
 #ifndef __EOS_INPUTS_INTERNAL
-struct __axInput {};
-struct __axInputService {};
+struct __eosInput {};
+struct __eosInputService {};
 #endif
 
 typedef struct __eosInput *eosHInput;
