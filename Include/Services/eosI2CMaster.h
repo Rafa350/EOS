@@ -15,6 +15,11 @@
 #endif
 
 
+#define eos_ERROR_I2C_INVALID_MODULE   (eos_ERROR_USER + 0)
+#define eos_ERROR_I2C_TOO_SERVICES     (eos_ERROR_USER + 1)
+#define eos_ERROR_I2C_TOO_TRANSACTIONS (eos_ERROR_USER + 2)
+
+
 #ifndef __EOS_I2CMASTER_INTERNAL
 struct __eosI2CMasterService {};
 struct __eosI2CTransaction {};
@@ -25,7 +30,6 @@ typedef struct __eosI2CTransaction *eosHI2CTransaction;
 
 typedef struct {                       // Parametres del servei
     I2C_MODULE_ID id;                  // -Modul I2C
-    unsigned queueSize;                // -Tamany de la cua de transaccions
     eosHTickService hTickService;      // -Handler del servei TICK
 } eosI2CServiceParams;
 
@@ -33,11 +37,11 @@ typedef enum {                         // Tipus de transaccio
     ttRead,                            // -Lectura
     ttWrite,                           // -Escriptura
     ttWriteRead                        // -Escriptura i lectura posterior
-} TransactionType;
+} eosI2CTransactionType;
 
 typedef struct {                       // Parametres d'una transaccio
     unsigned address;                  // -Adressa del esclau
-    TransactionType type;              // -Tipus de transaccio
+    eosI2CTransactionType type;        // -Tipus de transaccio
     BYTE *txBuffer;                    // -Buffer de transmissio
     unsigned txCount;                  // -Numero de bytes en el buffer de transmissio
     BYTE *rxBuffer;                    // -Buffer de recepcio
@@ -48,13 +52,11 @@ typedef struct {                       // Parametres d'una transaccio
 } eosI2CTransactionParams;
 
 
-extern eosResult eosI2CMasterServiceInitialize(eosI2CServiceParams *params, eosHI2CMasterService *hService);
+extern eosHI2CMasterService eosI2CMasterServiceInitialize(eosI2CServiceParams *params);
 extern void eosI2CMasterServiceTask(eosHI2CMasterService hService);
 extern void eosI2CMasterServiceISRTick(eosHI2CMasterService hService);
 
-extern eosResult eosI2CMasterStartTransaction(eosHI2CMasterService hService, eosI2CTransactionParams *params, eosHI2CTransaction *hTransaction);
-extern eosResult eosI2CMasterCancelTransaction(eosHI2CTransaction hTransaction);
-extern bool eosI2CMasterTransactionIsPending(eosHI2CTransaction hTransaction);
+extern eosHI2CTransaction eosI2CMasterStartTransaction(eosHI2CMasterService hService, eosI2CTransactionParams *params);
 
 
 #endif

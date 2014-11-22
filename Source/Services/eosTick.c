@@ -16,8 +16,8 @@
 
 
 typedef enum  {                        // Estats del servei
-    ssInitializing,                    // -Inicialitzant
-    ssRunning                          // -Execucio
+    serviceInitializing,               // -Inicialitzant
+    serviceRunning                     // -Execucio
 } ServiceStates;
 
 typedef struct __Attach {              // Funcio adjunta
@@ -48,37 +48,29 @@ static void enableInterrupt(void);
  *       Inicialitza el servei
  *
  *       Funcio:
- *           eosResult eosTickServiceInitialize(
- *               eosTickServiceParams *params,
- *               eosHTickService *hService)
+ *           eosHTickService eosTickServiceInitialize(
+ *               eosTickServiceParams *params)
  *
  *       Entrada:
  *           params : Parametres d'inicialitzacio
  *
- *       Sortida:
- *           hService: Handler del servei
- *
  *       Retorn:
- *           El resultat de l'operacio
+ *           El handler del servei. NULL en cas d'error
  *
  *************************************************************************/
 
-eosResult eosTickServiceInitialize(
-    eosTickServiceParams *params,
-    eosHTickService *_hService) {
+eosHTickService eosTickServiceInitialize(
+    eosTickServiceParams *params) {
 
     eosHTickService hService = eosAlloc(sizeof(TickService));
-    if (hService == NULL)
-        return eos_ERROR_ALLOC;
+    if (hService) {
 
-    hService->state = ssInitializing;
-    hService->firstAttach = NULL;
+        hService->state = serviceInitializing;
+        hService->firstAttach = NULL;
 
-    timerInitialize();
-
-    *_hService = hService;
-
-    return eos_RESULT_SUCCESS;
+        timerInitialize();
+    }
+    return hService;
 }
 
 
@@ -99,12 +91,12 @@ void eosTickServiceTask(
     eosHTickService hService) {
 
     switch (hService->state) {
-        case ssInitializing:
+        case serviceInitializing:
             timerStart();
-            hService->state = ssRunning;
+            hService->state = serviceRunning;
             break;
 
-        case ssRunning:
+        case serviceRunning:
             break;
     }
 }

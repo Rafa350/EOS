@@ -80,7 +80,7 @@ void eosMain(void) {
     // Inicialitza el servei TICK
     //
     eosTickServiceParams tickServiceParams;
-    eosTickServiceInitialize(&tickServiceParams, &hTickService);
+    hTickService = eosTickServiceInitialize(&tickServiceParams);
 
     // Inicialitzacio de l'aplicacio d'usuari
     //

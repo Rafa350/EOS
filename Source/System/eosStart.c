@@ -19,3 +19,10 @@ void main(void) {
     eosMain();
 }
 #endif
+
+
+void eosFatalError(eosResult result) {
+
+    while (true)
+        continue;
+}

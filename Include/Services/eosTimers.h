@@ -38,25 +38,25 @@ typedef struct {                       // Parametres de creacio d'un temporitzad
 
 // Gestio del servei
 //
-extern eosResult eosTimerServiceInitialize(eosTimerServiceParams* params, eosHTimerService *hService);
+extern eosHTimerService eosTimerServiceInitialize(eosTimerServiceParams *params);
 extern void eosTimerServiceTask(eosHTimerService hService);
 extern void eosTimerServiceISRTick(eosHTimerService hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosResult eosTimerCreate(eosHTimerService hService, eosTimerParams* params, eosHTimer *hTimer);
-extern eosResult eosTimerDestroy(eosHTimer hTimer);
+extern eosHTimer eosTimerCreate(eosHTimerService hService, eosTimerParams *params);
+extern void eosTimerDestroy(eosHTimer hTimer);
 
 // Operacions amb els objectes
 //
-extern eosResult eosTimerPause(eosHTimer hTimer);
-extern eosResult eosTimerContinue(eosHTimer hTimer);
-extern eosResult eosTimerReset(eosHTimer hTimer);
+extern void eosTimerPause(eosHTimer hTimer);
+extern void eosTimerContinue(eosHTimer hTimer);
+extern void eosTimerReset(eosHTimer hTimer);
 
 // Operacions especials
 //
 extern eosHTimer eosTimerDelayStart(eosHTimerService hService, unsigned timeout);
-extern BOOL eosTimerDelayGetStatus(eosHTimer timer);
+extern bool eosTimerDelayGetStatus(eosHTimer timer);
 
 
 #endif

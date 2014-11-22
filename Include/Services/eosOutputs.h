@@ -26,7 +26,7 @@ typedef struct __eosOutputService *eosHOutputService;
 typedef struct {                       // Parametres d'inicialitzacio de les sortides
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
-    BOOL inverted;                     // -Inverteix la sortida
+    bool inverted;                     // -Inverteix la sortida
 } eosOutputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
@@ -36,22 +36,22 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 
 // Gestio del servei
 //
-extern eosResult eosOutputServiceInitialize(eosOutputServiceParams *params, eosHOutputService *hService);
+extern eosHOutputService eosOutputServiceInitialize(eosOutputServiceParams *params);
 extern void eosOutputServiceTask(eosHOutputService hService);
 extern void eosOutputServiceISRTick(eosHOutputService hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosResult eosOutputCreate(eosHOutputService hService, eosOutputParams *params, eosHOutput *hOutput);
-extern eosResult eosOutputDestroy(eosHOutput hOutput);
+extern eosHOutput eosOutputCreate(eosHOutputService hService, eosOutputParams *params);
+extern void eosOutputDestroy(eosHOutput hOutput);
 
 // Operacions amb els objectes
 //
-extern BOOL eosOutputGet(eosHOutput hOutput);
-extern void eosOutputSet(eosHOutput hOutput, BOOL state);
+extern bool eosOutputGet(eosHOutput hOutput);
+extern void eosOutputSet(eosHOutput hOutput, bool state);
 extern void eosOutputToggle(eosHOutput hOutput);
 extern void eosOutputPulse(eosHOutput hOutput, unsigned time);
-extern void eosOutputDelayedSet(eosHOutput hOutput, unsigned delay, BOOL state);
+extern void eosOutputDelayedSet(eosHOutput hOutput, unsigned delay, bool state);
 extern void eosOutputDelayedToggle(eosHOutput hOutput, unsigned delay);
 extern void eosOutputDelayedPulse(eosHOutput hOutput, unsigned delay, unsigned time);
 
