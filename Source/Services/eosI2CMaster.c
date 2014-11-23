@@ -43,7 +43,10 @@ typedef enum {                         // Estat de la transaccio
     transactionWaitStart,              // -Esperant START
     transactionWaitRestart,            // -Esperant RESTART
     transactionSendData,               // -Transmetent dades
+    transactionStartReceiveData,       // -Inicia la recepcio de dades
     transactionReceiveData,            // -Rebent dades
+    transactionAck,                    // -ACK transmitit
+    transactionNak,                    // -NAK transmitit
     transactionWaitStop,               // -Esperant STOP
     transactionFinished                // -Finalitzada
 } TransactionStates;
@@ -111,12 +114,13 @@ eosHI2CMasterService eosI2CMasterServiceInitialize(
     eosI2CServiceParams *params) {
 
     eosHI2CMasterService hService = allocService();
-    if (hService != NULL) {
-        hService->id = params->id;
-        hService->state = serviceInitializing;
-        hService->hFirstTransaction = NULL;
-        hService->hLastTransaction = NULL;
-    }
+    if (!hService)
+        return NULL;
+
+    hService->id = params->id;
+    hService->state = serviceInitializing;
+    hService->hFirstTransaction = NULL;
+    hService->hLastTransaction = NULL;
 
     return hService;
 }
@@ -151,9 +155,10 @@ void eosI2CMasterServiceTask(
 
         case serviceWaitBeginTransaction:
             if (PLIB_I2C_BusIsIdle(hService->id)) {
-                PLIB_I2C_MasterStart(hService->id);
                 hService->hFirstTransaction->state = transactionWaitStart;
                 hService->state = serviceWaitEndTransaction;
+                PLIB_I2C_MasterStart(hService->id);
+                // A partir d'aqui ja es generen interrupcions I2C
             }
             break;
 
@@ -213,30 +218,29 @@ eosHI2CTransaction eosI2CMasterStartTransaction(
     eosHI2CMasterService hService,
     eosI2CTransactionParams *params) {
 
-
     eosHI2CTransaction hTransaction = allocTransaction();
-    if (hTransaction != NULL) {
+    if (!hTransaction)
+        return NULL;
 
-        hTransaction->id = hService->id;
-        hTransaction->state = transactionIdle;
-        hTransaction->address = params->address;
-        hTransaction->type = params->type;
-        hTransaction->txBuffer = params->txBuffer;
-        hTransaction->txCount = params->txCount;
-        hTransaction->rxBuffer = params->rxBuffer;
-        hTransaction->rxSize = params->rxSize;
-        hTransaction->onEndTransaction = params->onEndTransaction;
-        hTransaction->context = params->context;
+    hTransaction->id = hService->id;
+    hTransaction->state = transactionIdle;
+    hTransaction->address = params->address;
+    hTransaction->type = params->type;
+    hTransaction->txBuffer = params->txBuffer;
+    hTransaction->txCount = params->txCount;
+    hTransaction->rxBuffer = params->rxBuffer;
+    hTransaction->rxSize = params->rxSize;
+    hTransaction->onEndTransaction = params->onEndTransaction;
+    hTransaction->context = params->context;
 
-        hTransaction->hNextTransaction = NULL;
-        if (hService->hFirstTransaction == NULL) {
-            hService->hFirstTransaction = hTransaction;
-            hService->hLastTransaction = hTransaction;
-        }
-        else {
-            hService->hFirstTransaction->hNextTransaction = hTransaction;
-            hService->hLastTransaction = hTransaction;
-        }
+    hTransaction->hNextTransaction = NULL;
+    if (hService->hFirstTransaction == NULL) {
+        hService->hFirstTransaction = hTransaction;
+        hService->hLastTransaction = hTransaction;
+    }
+    else {
+        hService->hFirstTransaction->hNextTransaction = hTransaction;
+        hService->hLastTransaction = hTransaction;
     }
 
     return hTransaction;
@@ -370,6 +374,7 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
     if (hTransaction != NULL) {
 
         switch (hTransaction->state) {
+
             case transactionWaitStart:
 
                 // Si hi ha colissio, reinicia la transmissio
@@ -392,7 +397,7 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                     PLIB_I2C_TransmitterByteSend(id, addr.byte);
                     hTransaction->index = 0;
                     if (hTransaction->type == ttRead)
-                        hTransaction->state = transactionReceiveData;
+                        hTransaction->state = transactionStartReceiveData;
                     else
                         hTransaction->state = transactionSendData;
                 }
@@ -424,6 +429,45 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                         hTransaction->state = transactionWaitStop;
                     }
                 }
+                break;
+
+            case transactionStartReceiveData:
+
+                // Si l'escau ha respos ACK, llegeix un byte
+                //
+                if (PLIB_I2C_TransmitterByteWasAcknowledged(id)) {
+                    PLIB_I2C_MasterReceiverClock1Byte(id);
+                    hTransaction->state = transactionReceiveData;
+                }
+
+                // En cas contrari finalitza la transmissio
+                //
+                else {
+                    PLIB_I2C_MasterStop(id);
+                    hTransaction->state = transactionWaitStop;
+                }
+                break;
+
+            case transactionReceiveData:
+                hTransaction->rxBuffer[hTransaction->index++] = PLIB_I2C_ReceivedByteGet(id);
+                if (hTransaction->index < hTransaction->rxSize) {
+                    PLIB_I2C_ReceivedByteAcknowledge(id, true);
+                    hTransaction->state = transactionAck;
+                }
+                else {
+                    PLIB_I2C_ReceivedByteAcknowledge(id, false);
+                    hTransaction->state = transactionNak;
+                }
+                break;
+
+            case transactionAck:
+                PLIB_I2C_MasterReceiverClock1Byte(id);
+                hTransaction->state = transactionReceiveData;
+                break;
+
+            case transactionNak:
+                PLIB_I2C_MasterStop(id);
+                hTransaction->state = transactionWaitStop;
                 break;
 
             case transactionWaitStop:

@@ -26,7 +26,7 @@ typedef struct __eosInputService *eosHInputService;
 typedef struct {                       // Parametres d'inicializacio de les entrades
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
-    BOOL inverted;                     // -Inverteix la entrada
+    bool inverted;                     // -Inverteix la entrada
     eosCallback onPosEdge;             // -Event POS_EDGE
     eosCallback onNegEdge;             // -EVENT NEG_EDGE
     eosCallback onChange;              // -EVENT CHANGE
@@ -40,20 +40,20 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 
 // Gestio del servei
 //
-extern eosResult eosInputServiceInitialize(eosInputServiceParams *params, eosHInputService *hService);
+extern eosHInputService eosInputServiceInitialize(eosInputServiceParams *params);
 extern void eosInputServiceTask(eosHInputService hService);
 extern void eosInputServiceISRTick(eosHInputService hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosResult eosInputCreate(eosHInputService hService, eosInputParams *params, eosHInput *hInput);
-extern eosResult eosInputDestroy(eosHInput hInput);
+extern eosHInput eosInputCreate(eosHInputService hService, eosInputParams *params);
+extern void eosInputDestroy(eosHInput hInput);
 
 // Operacions amb els objectes
 //
-extern BOOL eosInputGet(eosHInput hInput);
-extern BOOL eosInputPosEdge(eosHInput hInput);
-extern BOOL eosInputNegEdge(eosHInput hInput);
+extern bool eosInputGet(eosHInput hInput);
+extern bool eosInputPosEdge(eosHInput hInput);
+extern bool eosInputNegEdge(eosHInput hInput);
 
 
 #endif	
