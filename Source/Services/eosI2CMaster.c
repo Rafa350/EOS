@@ -43,6 +43,8 @@ typedef enum {                         // Estat de la transaccio
     transactionWaitStart,              // -Esperant START
     transactionWaitRestart,            // -Esperant RESTART
     transactionSendData,               // -Transmetent dades
+    transactionSendStart,              // -Inici de transmissio de dades
+    transactionSendFinish,             // -Final de transmissio de dades
     transactionStartReceiveData,       // -Inicia la recepcio de dades
     transactionReceiveData,            // -Rebent dades
     transactionAck,                    // -ACK transmitit
@@ -403,7 +405,9 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                 }
                 break;
 
+            case transactionSendStart:
             case transactionSendData:
+            case transactionSendFinish:
 
                 // Si hi ha colissio, reinicia la transmissio
                 //
@@ -415,13 +419,28 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                     hTransaction->state = transactionWaitStart;
                 }
             
+                // En cas contrari, continua enviat els bytes pendents
+                //
                 else {
-                    // Si l'esclau ha respos ACK, continua els bytes pendents
+                
+                    // Si l'esclau ha respos ACK, continua amb els bytes pendents
                     //
-                    if (PLIB_I2C_TransmitterByteWasAcknowledged(id) &&
-                        (hTransaction->index < hTransaction->txCount))
-                        PLIB_I2C_TransmitterByteSend(id, hTransaction->txBuffer[hTransaction->index++]);
-
+                    if (PLIB_I2C_TransmitterByteWasAcknowledged(id) && (htransaction->state != transactionSendFinish)) {
+                    
+                        if (hTransmission->state == transactionSendStart) {
+                            PLIB_I2C_TransmitterByteSend(id, hTransaction->txCount);
+                            hTransaction->state = transactionSendData; 
+                        }
+                        else {
+                            if (hTransaction->index < hTransaction->txCount))
+                                PLIB_I2C_TransmitterByteSend(id, hTransaction->txBuffer[hTransaction->index++]);
+                            else { 
+                                PLIB_I2C_TransmitterByteSend(id, 0xFF);
+                                hTransaction->state = transactionSendFinish;
+                            }
+                        }
+                    }
+                    
                     // En cas contrari finalitza la transmissio
                     //
                     else {
