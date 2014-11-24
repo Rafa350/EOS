@@ -40,11 +40,11 @@ typedef enum {                         // Estats del servei
 
 typedef enum {                         // Estat de la transaccio
     transactionIdle,                   // -En espera de iniciar
-    transactionWaitStart,              // -Esperant START
-    transactionWaitRestart,            // -Esperant RESTART
-    transactionSendData,               // -Transmetent dades
-    transactionSendStart,              // -Inici de transmissio de dades
-    transactionSendFinish,             // -Final de transmissio de dades
+    transactionSendAddress,            // -Transmeteix l'adressa
+    transactionSendLength,             // -Transmeteix el byte de longitut
+    transactionSendData,               // -Transmeteix un byte de dades
+    transactionSendCheck,              // -Transmeteix el byte de verificacio
+    transactionSendFinished,           // -Ha finalitzat la transmissio
     transactionStartReceiveData,       // -Inicia la recepcio de dades
     transactionReceiveData,            // -Rebent dades
     transactionAck,                    // -ACK transmitit
@@ -59,7 +59,10 @@ typedef struct __eosI2CTransaction {   // Dades internes d'una transaccio
     TransactionStates state;           // -Estat de la transaccio
     BYTE address;                      // -Adressa de l'esclau
     eosI2CTransactionType type;        // -Tipus de transaccio
+    bool sendLength;                   // -True per enviar la longitut
+    bool sendCheck;                    // -True per enviar el byte de verificacio
     unsigned index;                    // -Index per les transferencies
+    BYTE check;                        // -Byte de verificacio
     eosCallback onEndTransaction;      // -Event END_TRANSACTION
     void *context;                     // -Parametres del event
     BYTE *txBuffer;                    // -Buffer de transmissio
@@ -67,6 +70,7 @@ typedef struct __eosI2CTransaction {   // Dades internes d'una transaccio
     BYTE *rxBuffer;                    // -Buffer de recepcio
     unsigned rxCount;                  // -Numero de bytes en el buffer de recepcio
     unsigned rxSize;                   // -Tamany del buffer de recepcio en bytes
+    unsigned error;                    // -Codi d'error
     eosHI2CTransaction hNextTransaction;    // -Seguent transaccio en la cua
 } I2CTransaction;
 
@@ -157,7 +161,7 @@ void eosI2CMasterServiceTask(
 
         case serviceWaitBeginTransaction:
             if (PLIB_I2C_BusIsIdle(hService->id)) {
-                hService->hFirstTransaction->state = transactionWaitStart;
+                hService->hFirstTransaction->state = transactionSendAddress;
                 hService->state = serviceWaitEndTransaction;
                 PLIB_I2C_MasterStart(hService->id);
                 // A partir d'aqui ja es generen interrupcions I2C
@@ -234,6 +238,8 @@ eosHI2CTransaction eosI2CMasterStartTransaction(
     hTransaction->rxSize = params->rxSize;
     hTransaction->onEndTransaction = params->onEndTransaction;
     hTransaction->context = params->context;
+    hTransaction->sendLength = params->sendLength;
+    hTransaction->sendCheck = params->sendCheck;
 
     hTransaction->hNextTransaction = NULL;
     if (hService->hFirstTransaction == NULL) {
@@ -377,7 +383,7 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
 
         switch (hTransaction->state) {
 
-            case transactionWaitStart:
+            case transactionSendAddress:
 
                 // Si hi ha colissio, reinicia la transmissio
                 //
@@ -388,26 +394,37 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                     PLIB_I2C_MasterStart(id);
                 }
 
-                // Si tot es correcte, envia l'adressa de l'escalu
-                //
                 else {
+
+                    // Envia l'adressa del esclau
+                    //
                     I2C_7_BIT_ADDRESS addr;
                     PLIB_I2C_ADDRESS_7_BIT_FORMAT(
                         addr, 
                         hTransaction->address, 
                         hTransaction->type == ttRead ? I2C_READ : I2C_WRITE);
                     PLIB_I2C_TransmitterByteSend(id, addr.byte);
+
                     hTransaction->index = 0;
+                    hTransaction->check = addr.byte;
+
                     if (hTransaction->type == ttRead)
                         hTransaction->state = transactionStartReceiveData;
-                    else
-                        hTransaction->state = transactionSendData;
+                    else {
+                        if (hTransaction->sendLength)
+                            hTransaction->state = transactionSendLength;
+                        else if (hTransaction->txCount > 0)
+                            hTransaction->state = transactionSendData;
+                        else
+                            hTransaction->state = transactionSendFinished;
+                    }
                 }
                 break;
 
-            case transactionSendStart:
+            case transactionSendLength:
             case transactionSendData:
-            case transactionSendFinish:
+            case transactionSendCheck:
+            case transactionSendFinished:
 
                 // Si hi ha colissio, reinicia la transmissio
                 //
@@ -416,28 +433,43 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                     while (!PLIB_I2C_BusIsIdle(id))
                         continue;
                     PLIB_I2C_MasterStart(id);
-                    hTransaction->state = transactionWaitStart;
+                    hTransaction->state = transactionSendAddress;
                 }
             
-                // En cas contrari, continua enviat els bytes pendents
-                //
                 else {
                 
                     // Si l'esclau ha respos ACK, continua amb els bytes pendents
                     //
-                    if (PLIB_I2C_TransmitterByteWasAcknowledged(id) && (htransaction->state != transactionSendFinish)) {
-                    
-                        if (hTransmission->state == transactionSendStart) {
-                            PLIB_I2C_TransmitterByteSend(id, hTransaction->txCount);
-                            hTransaction->state = transactionSendData; 
-                        }
-                        else {
-                            if (hTransaction->index < hTransaction->txCount))
-                                PLIB_I2C_TransmitterByteSend(id, hTransaction->txBuffer[hTransaction->index++]);
-                            else { 
-                                PLIB_I2C_TransmitterByteSend(id, 0xFF);
-                                hTransaction->state = transactionSendFinish;
+                    if (PLIB_I2C_TransmitterByteWasAcknowledged(id) && 
+                        (hTransaction->state != transactionSendFinished)) {
+
+                        switch (hTransaction->state) {
+                            case transactionSendLength:
+                                hTransaction->check += hTransaction->txCount;
+                                PLIB_I2C_TransmitterByteSend(id, hTransaction->txCount);
+                                if (hTransaction->txCount > 0)
+                                    hTransaction->state = transactionSendData;
+                                else
+                                    hTransaction->state = transactionSendFinished;
+                                break;
+
+                            case transactionSendData: {
+                                BYTE data = hTransaction->txBuffer[hTransaction->index++];
+                                hTransaction->check += data;
+                                PLIB_I2C_TransmitterByteSend(id, data);
+                                if (hTransaction->index == hTransaction->txCount) {
+                                    if (hTransaction->sendCheck)
+                                        hTransaction->state = transactionSendCheck;
+                                    else
+                                        hTransaction->state = transactionSendFinished;
+                                }
+                                break;
                             }
+
+                            case transactionSendCheck:
+                                PLIB_I2C_TransmitterByteSend(id, hTransaction->check);
+                                hTransaction->state = transactionSendFinished;
+                                break;
                         }
                     }
                     

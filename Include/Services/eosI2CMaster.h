@@ -49,6 +49,8 @@ typedef struct {                       // Parametres d'una transaccio
     unsigned rxCount;                  // -Numero de bytes rebuts
     eosCallback onEndTransaction;      // -Event END_TRANSACTION
     void *context;                     // -Parametre del event
+    bool sendLength;                   // -Transmeteix la longitut de la trama
+    bool sendCheck;                    // -Transmeteix el byte de verificacio
 } eosI2CTransactionParams;
 
 
