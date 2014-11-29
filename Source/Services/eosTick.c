@@ -9,10 +9,17 @@
 
 // Definicions depenens del temporitzador utilitzat
 //
+#if eosOPTIONS_TICK_TMR == 1
+#elif eosOPTIONS_TICK_TMR == 2
+#elif eosOPTIONS_TICK_TMR == 3
+#elif eosOPTIONS_TICK_TMR == 4
 #define TICK_TIMER_ID             TMR_ID_4
 #define TICK_TIMER_INT_VECTOR     INT_VECTOR_T4
 #define TICK_TIMER_INT_SOURCE     INT_SOURCE_TIMER_4
 #define TICK_TIMER_CORE_VECTOR    _TIMER_4_VECTOR
+#else
+#error No de declaro la opcion eosOPTIONS_TICK_TMR
+#endif
 
 
 typedef enum  {                        // Estats del servei

@@ -27,10 +27,6 @@
 #define I2C5_CORE_VECTOR          _I2C_5_VECTOR
 
 
-#define SERVICE_POOL_SIZE         I2C_NUMBER_OF_MODULES  // Tamany del pool de serveis
-#define TRANSACTION_POOL_SIZE     20   // Tamany del pool de transaccions
-
-
 typedef enum {                         // Estats del servei
     serviceInitializing,               // -Inicialitzant
     serviceProcessQueue,               // -Procesa la cua de transaccions
@@ -45,8 +41,10 @@ typedef enum {                         // Estat de la transaccio
     transactionSendData,               // -Transmeteix un byte de dades
     transactionSendCheck,              // -Transmeteix el byte de verificacio
     transactionSendFinished,           // -Ha finalitzat la transmissio
-    transactionStartReceiveData,       // -Inicia la recepcio de dades
-    transactionReceiveData,            // -Rebent dades
+    transactionStartReceive,           // -Inicia la recepcio de dades
+    transactionReceiveLength,          // -Rebent un byte de longitut
+    transactionReceiveData,            // -Rebent un byte de dades
+    transactionReceiveCheck,           // -Rebent un byte de verificacio
     transactionAck,                    // -ACK transmitit
     transactionNak,                    // -NAK transmitit
     transactionWaitStop,               // -Esperant STOP
@@ -58,10 +56,10 @@ typedef struct __eosI2CTransaction {   // Dades internes d'una transaccio
     I2C_MODULE_ID id;                  // -Identificador de modul i2c
     TransactionStates state;           // -Estat de la transaccio
     BYTE address;                      // -Adressa de l'esclau
-    eosI2CTransactionType type;        // -Tipus de transaccio
-    bool sendLength;                   // -True per enviar la longitut
-    bool sendCheck;                    // -True per enviar el byte de verificacio
-    unsigned index;                    // -Index per les transferencies
+    unsigned index;                    // -Index
+    unsigned maxIndex;                 // -Valor maxim per 'index'
+    bool waitingSlaveACK;              // -Esperant ACK/NAK del esclau
+    bool writeMode;                    // -Indica si esta en modus escriptura
     BYTE check;                        // -Byte de verificacio
     eosCallback onEndTransaction;      // -Event END_TRANSACTION
     void *context;                     // -Parametres del event
@@ -83,11 +81,15 @@ typedef struct __eosI2CMasterService { // Dades internes del servei
 } I2CMasterService;
 
 
+// Pool de memoria per transaccions
+//
 static bool transactionPoolInitialized = false;
-static I2CTransaction transactionPool[TRANSACTION_POOL_SIZE];
+static I2CTransaction transactionPool[eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS];
 
+// Pool de memoria pels serveis
+//
 static bool servicePoolInitialized = false;
-static I2CMasterService servicePool[SERVICE_POOL_SIZE];
+static I2CMasterService servicePool[eosOPTIONS_I2CMASTER_MAX_INSTANCES];
 
 
 static void i2cInitialize(I2C_MODULE_ID id);
@@ -161,8 +163,11 @@ void eosI2CMasterServiceTask(
 
         case serviceWaitBeginTransaction:
             if (PLIB_I2C_BusIsIdle(hService->id)) {
-                hService->hFirstTransaction->state = transactionSendAddress;
+                eosHI2CTransaction hTransaction = hService->hFirstTransaction;
+                hTransaction->writeMode = hTransaction->txBuffer && hTransaction->txCount;
+                hTransaction->state = transactionSendAddress;
                 hService->state = serviceWaitEndTransaction;
+
                 PLIB_I2C_MasterStart(hService->id);
                 // A partir d'aqui ja es generen interrupcions I2C
             }
@@ -224,6 +229,10 @@ eosHI2CTransaction eosI2CMasterStartTransaction(
     eosHI2CMasterService hService,
     eosI2CTransactionParams *params) {
 
+    if ((params->txBuffer == NULL || params->txCount == 0) &&
+       (params->rxBuffer == NULL || params->rxSize  == 0))
+        return NULL;
+
     eosHI2CTransaction hTransaction = allocTransaction();
     if (!hTransaction)
         return NULL;
@@ -231,15 +240,12 @@ eosHI2CTransaction eosI2CMasterStartTransaction(
     hTransaction->id = hService->id;
     hTransaction->state = transactionIdle;
     hTransaction->address = params->address;
-    hTransaction->type = params->type;
     hTransaction->txBuffer = params->txBuffer;
     hTransaction->txCount = params->txCount;
     hTransaction->rxBuffer = params->rxBuffer;
     hTransaction->rxSize = params->rxSize;
     hTransaction->onEndTransaction = params->onEndTransaction;
     hTransaction->context = params->context;
-    hTransaction->sendLength = params->sendLength;
-    hTransaction->sendCheck = params->sendCheck;
 
     hTransaction->hNextTransaction = NULL;
     if (hService->hFirstTransaction == NULL) {
@@ -372,7 +378,11 @@ static void i2cInitialize(I2C_MODULE_ID id) {
  *       Procesa els events de la comunicacio I2C
  *
  *       Funcio:
- *           void i2cInterruptService() 
+ *           void i2cInterruptService()
+ *
+ *       Notes:
+ *           Transmissio/Recepcio en format de trama
+ *           |LENGTH|DATA-1|DATA-2| . . . |DATA-n|CHECK|
  *
  *************************************************************************/
 
@@ -402,22 +412,16 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                     PLIB_I2C_ADDRESS_7_BIT_FORMAT(
                         addr, 
                         hTransaction->address, 
-                        hTransaction->type == ttRead ? I2C_READ : I2C_WRITE);
+                        hTransaction->writeMode ? I2C_WRITE : I2C_READ);
                     PLIB_I2C_TransmitterByteSend(id, addr.byte);
 
                     hTransaction->index = 0;
                     hTransaction->check = addr.byte;
 
-                    if (hTransaction->type == ttRead)
-                        hTransaction->state = transactionStartReceiveData;
-                    else {
-                        if (hTransaction->sendLength)
-                            hTransaction->state = transactionSendLength;
-                        else if (hTransaction->txCount > 0)
-                            hTransaction->state = transactionSendData;
-                        else
-                            hTransaction->state = transactionSendFinished;
-                    }
+                    if (hTransaction->writeMode)
+                        hTransaction->state = transactionSendLength;
+                    else
+                        hTransaction->state = transactionStartReceive;
                 }
                 break;
 
@@ -457,12 +461,8 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                                 BYTE data = hTransaction->txBuffer[hTransaction->index++];
                                 hTransaction->check += data;
                                 PLIB_I2C_TransmitterByteSend(id, data);
-                                if (hTransaction->index == hTransaction->txCount) {
-                                    if (hTransaction->sendCheck)
-                                        hTransaction->state = transactionSendCheck;
-                                    else
-                                        hTransaction->state = transactionSendFinished;
-                                }
+                                if (hTransaction->index == hTransaction->txCount) 
+                                    hTransaction->state = transactionSendCheck;
                                 break;
                             }
 
@@ -482,13 +482,13 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                 }
                 break;
 
-            case transactionStartReceiveData:
+            case transactionStartReceive:
 
                 // Si l'escau ha respos ACK, llegeix un byte
                 //
                 if (PLIB_I2C_TransmitterByteWasAcknowledged(id)) {
                     PLIB_I2C_MasterReceiverClock1Byte(id);
-                    hTransaction->state = transactionReceiveData;
+                    hTransaction->state = transactionReceiveLength;
                 }
 
                 // En cas contrari finalitza la transmissio
@@ -499,26 +499,59 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                 }
                 break;
 
+            case transactionReceiveLength: {
+                BYTE data = PLIB_I2C_ReceivedByteGet(id);
+                hTransaction->maxIndex = min(hTransaction->rxSize, data);
+                hTransaction->check += data;
+                PLIB_I2C_ReceivedByteAcknowledge(id, true);
+                hTransaction->waitingSlaveACK = true;
+                if (hTransaction->maxIndex > 0)
+                    hTransaction->state = transactionReceiveData;
+                else
+                    hTransaction->state = transactionReceiveCheck;
+                break;
+            }
+
             case transactionReceiveData:
-                hTransaction->rxBuffer[hTransaction->index++] = PLIB_I2C_ReceivedByteGet(id);
-                if (hTransaction->index < hTransaction->rxSize) {
-                    PLIB_I2C_ReceivedByteAcknowledge(id, true);
-                    hTransaction->state = transactionAck;
+                if (hTransaction->waitingSlaveACK) {
+                    PLIB_I2C_MasterReceiverClock1Byte(id);
+                    hTransaction->waitingSlaveACK = false;
                 }
                 else {
-                    PLIB_I2C_ReceivedByteAcknowledge(id, false);
-                    hTransaction->state = transactionNak;
+                    BYTE data = PLIB_I2C_ReceivedByteGet(id);
+                    hTransaction->rxBuffer[hTransaction->index++] = data;
+                    hTransaction->check += data;
+                    PLIB_I2C_ReceivedByteAcknowledge(id, true);
+                    hTransaction->waitingSlaveACK = true;
+                    if (hTransaction->index == hTransaction->maxIndex)
+                        hTransaction->state = transactionReceiveCheck;
                 }
                 break;
 
-            case transactionAck:
-                PLIB_I2C_MasterReceiverClock1Byte(id);
-                hTransaction->state = transactionReceiveData;
-                break;
+            case transactionReceiveCheck:
+                if (hTransaction->waitingSlaveACK) {
+                    PLIB_I2C_MasterReceiverClock1Byte(id);
+                    hTransaction->waitingSlaveACK = false;
+                }
+                else  {
+                    BYTE data = PLIB_I2C_ReceivedByteGet(id);
 
-            case transactionNak:
-                PLIB_I2C_MasterStop(id);
-                hTransaction->state = transactionWaitStop;
+                    // Si s'ha definit el buffer de recepcio, es posa en modus lectura
+                    // i inicia la transaccio de nou
+                    //
+                    if (hTransaction->rxBuffer && hTransaction->rxSize) {
+                        PLIB_I2C_MasterStartRepeat(id);
+                        hTransaction->writeMode = false;
+                        hTransaction->state = transactionSendAddress;
+                    }
+
+                    // En cas contrari finalitza
+                    //
+                    else {
+                        PLIB_I2C_MasterStop(id);
+                        hTransaction->state = transactionWaitStop;
+                    }
+                }
                 break;
 
             case transactionWaitStop:

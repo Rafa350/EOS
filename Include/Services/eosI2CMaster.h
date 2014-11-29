@@ -33,15 +33,8 @@ typedef struct {                       // Parametres del servei
     eosHTickService hTickService;      // -Handler del servei TICK
 } eosI2CServiceParams;
 
-typedef enum {                         // Tipus de transaccio
-    ttRead,                            // -Lectura
-    ttWrite,                           // -Escriptura
-    ttWriteRead                        // -Escriptura i lectura posterior
-} eosI2CTransactionType;
-
 typedef struct {                       // Parametres d'una transaccio
     unsigned address;                  // -Adressa del esclau
-    eosI2CTransactionType type;        // -Tipus de transaccio
     BYTE *txBuffer;                    // -Buffer de transmissio
     unsigned txCount;                  // -Numero de bytes en el buffer de transmissio
     BYTE *rxBuffer;                    // -Buffer de recepcio
@@ -49,8 +42,6 @@ typedef struct {                       // Parametres d'una transaccio
     unsigned rxCount;                  // -Numero de bytes rebuts
     eosCallback onEndTransaction;      // -Event END_TRANSACTION
     void *context;                     // -Parametre del event
-    bool sendLength;                   // -Transmeteix la longitut de la trama
-    bool sendCheck;                    // -Transmeteix el byte de verificacio
 } eosI2CTransactionParams;
 
 

@@ -33,6 +33,10 @@ static void portToggle(eosHOutput hOutput);
 
 #define MStoTICK(ms)    (ms)          // Converteix milisegons a ticks
 
+#define __allocService()              ((eosHOutputService) eosAlloc(sizeof(OutputService)))
+#define __allocOutput()               ((eosHOutput) eosAlloc(sizeof(Output)))
+#define __freeOutput(a)               eosFree((void*) a)
+
 
 /*************************************************************************
  *
@@ -53,7 +57,7 @@ static void portToggle(eosHOutput hOutput);
 eosHOutputService eosOutputServiceInitialize(
     eosOutputServiceParams *params) {
 
-    eosHOutputService hService = eosAlloc(sizeof(OutputService));
+    eosHOutputService hService = __allocService();
     if (hService) {
 
         hService->state = state_Initializing;
@@ -150,7 +154,7 @@ eosHOutput eosOutputCreate(
     eosHOutputService hService,
     eosOutputParams *params) {
 
-    eosHOutput hOutput = eosAlloc(sizeof(Output));
+    eosHOutput hOutput = __allocOutput();
     if (hOutput) {
 
         hOutput->channel = params->channel;
@@ -190,6 +194,8 @@ eosHOutput eosOutputCreate(
 
 void eosOutputDestroy(
     eosHOutput hOutput) {
+
+    __freeOutput(hOutput);
 }
 
 

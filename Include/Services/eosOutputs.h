@@ -17,7 +17,7 @@
 
 #ifndef __EOS_OUTPUTS_INTERNAL
 struct __eosOutput {};
-struct __eosOutputService{};
+struct __eosOutputService {};
 #endif
 
 typedef struct __eosOutput *eosHOutput;

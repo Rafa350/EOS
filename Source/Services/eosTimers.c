@@ -5,10 +5,6 @@
 #include "HardwareProfile.h"
 
 
-#define SERVICE_POOL_SIZE        1     // Tamany del pool de serveis
-#define TIMER_POOL_SIZE         10     // Tamany del pool de temporitzadors
-
-
 typedef enum {                         // Codis d'operacio
     opCode_Pause,                      // -Posa un temporitzador en pausa
     opCode_Continue,                   // -Reanuda un temporitzador
@@ -54,11 +50,15 @@ typedef struct __eosTimerService {     // Dades internes del servei
 } TimerService;
 
 
+// Pool de memoria pels serveis
+//
 static bool timerServicePoolInitialized = false;
-static TimerService timerServicePool[SERVICE_POOL_SIZE];
+static TimerService timerServicePool[eosOPTIONS_TIMERS_MAX_INSTANCES];
 
+// Pool de memoria pels timers
+//
 static bool timerPoolInitialized = false;
-static Timer timerPool[TIMER_POOL_SIZE];
+static Timer timerPool[eosOPTIONS_TIMERS_MAX_TIMERS];
 
 
 static eosHTimerService allocTimerService(void);
