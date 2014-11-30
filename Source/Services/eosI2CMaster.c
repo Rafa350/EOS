@@ -30,8 +30,8 @@
 typedef enum {                         // Estats del servei
     serviceInitializing,               // -Inicialitzant
     serviceProcessQueue,               // -Procesa la cua de transaccions
-    serviceWaitBeginTransaction,       // -Espera el inici de la transaccio
-    serviceWaitEndTransaction          // -Espera el final de la transaccio
+    serviceWaitEndTransaction,         // -Espera el final de la transaccio
+    serviceWaitEndDelay                // -Espera el final del retard
 } ServiceStates;
 
 typedef enum {                         // Estat de la transaccio
@@ -76,8 +76,10 @@ typedef struct __eosI2CMasterService { // Dades internes del servei
     bool inUse;                        // -Inica si esta en un en el pool
     I2C_MODULE_ID id;                  // -El identificador del modul i2c
     ServiceStates state;               // -Estat del servei
+    eosHI2CTransaction hCurrentTransaction; // -Transaccio en proces
     eosHI2CTransaction hFirstTransaction;   // -Primera transaccio de la cua
     eosHI2CTransaction hLastTransaction;    // -Ultima transaccio de la cua
+    unsigned tickCount;                // -Contador de ticks
 } I2CMasterService;
 
 
@@ -129,6 +131,15 @@ eosHI2CMasterService eosI2CMasterServiceInitialize(
     hService->state = serviceInitializing;
     hService->hFirstTransaction = NULL;
     hService->hLastTransaction = NULL;
+    hService->tickCount = 0;
+
+    // Asigna la funcio d'interrupcio TICK
+    //
+    eosHTickService hTickService = params->hTickService;
+    if (hTickService == NULL)
+        hTickService = eosGetTickServiceHandle();
+    if (hTickService != NULL)
+        eosTickAttach(hTickService, (eosTickCallback) eosI2CMasterServiceISRTick, hService);
 
     return hService;
 }
@@ -157,32 +168,68 @@ void eosI2CMasterServiceTask(
             break;
 
         case serviceProcessQueue:
-            if (hService->hFirstTransaction != NULL)
-                hService->state = serviceWaitBeginTransaction;
-            break;
 
-        case serviceWaitBeginTransaction:
-            if (PLIB_I2C_BusIsIdle(hService->id)) {
-                eosHI2CTransaction hTransaction = hService->hFirstTransaction;
-                hTransaction->writeMode = hTransaction->txBuffer && hTransaction->txCount;
-                hTransaction->state = transactionSendAddress;
-                hService->state = serviceWaitEndTransaction;
+            // Comprova si hi ha alguna transaccio en la cua
+            //
+            if (hService->hFirstTransaction != NULL) {
 
-                PLIB_I2C_MasterStart(hService->id);
-                // A partir d'aqui ja es generen interrupcions I2C
+                // Comprova si el bus esta lliure
+                //
+                if (PLIB_I2C_BusIsIdle(hService->id)) {
+
+                    // Treu la primera transaccio de la cua
+                    //
+                    eosHI2CTransaction hTransaction = hService->hFirstTransaction;
+                    hService->hFirstTransaction = hService->hFirstTransaction->hNextTransaction;
+
+                    // Prepara la transaccio
+                    //
+                    hTransaction->writeMode = hTransaction->txBuffer && hTransaction->txCount;
+                    hTransaction->state = transactionSendAddress;
+
+                    hService->state = serviceWaitEndTransaction;
+                    hService->hCurrentTransaction = hTransaction;
+
+                    // Inicia la comunicacio. A partir d'aquest punt es
+                    // generen les interrupcions del modul I2C
+                    //
+                    PLIB_I2C_MasterStart(hService->id);
+                }
             }
             break;
 
         case serviceWaitEndTransaction: {
-                eosHI2CTransaction hTransaction = hService->hFirstTransaction;
+
+                eosHI2CTransaction hTransaction = hService->hCurrentTransaction;
+                
+                // Comprova si ha finalitzat la transaccio
+                //
                 if (hTransaction->state == transactionFinished) {
+
+                    // Crida a la funcio callback, si esta definida
+                    //
                     if (hTransaction->onEndTransaction != NULL)
                         hTransaction->onEndTransaction(hTransaction, hTransaction->context);
-                    hService->hFirstTransaction = hTransaction->hNextTransaction;
+
+                    // Destrueix la transaccio
+                    //
                     freeTransaction(hTransaction);
-                    hService->state = serviceProcessQueue;
+
+                    // Retart entre transaccions
+                    //
+                    bool intState = eosGetInterruptState();
+                    eosDisableInterrupts();
+                    hService->tickCount = eosOPTIONS_I2CMASTER_END_TRANSACTION_DELAY;
+                    if (intState)
+                        eosEnableInterrupts();
+                    hService->state = serviceWaitEndDelay;
                 }
             }
+            break;
+
+        case serviceWaitEndDelay:
+            if (!hService->tickCount)
+                hService->state = serviceProcessQueue;
             break;
     }
 }
@@ -204,6 +251,8 @@ void eosI2CMasterServiceTask(
 void eosI2CMasterServiceISRTick(
     eosHI2CMasterService hService) {
 
+    if (hService->tickCount > 0)
+        hService->tickCount--;
 }
 
 
@@ -247,6 +296,8 @@ eosHI2CTransaction eosI2CMasterStartTransaction(
     hTransaction->onEndTransaction = params->onEndTransaction;
     hTransaction->context = params->context;
 
+    // Afegeix la transaccio a la cua
+    //
     hTransaction->hNextTransaction = NULL;
     if (hService->hFirstTransaction == NULL) {
         hService->hFirstTransaction = hTransaction;
@@ -454,7 +505,7 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                                 if (hTransaction->txCount > 0)
                                     hTransaction->state = transactionSendData;
                                 else
-                                    hTransaction->state = transactionSendFinished;
+                                    hTransaction->state = transactionSendCheck;
                                 break;
 
                             case transactionSendData: {
@@ -473,11 +524,26 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                         }
                     }
                     
-                    // En cas contrari finalitza la transmissio
+                    // En cas contrari finalitza la transmissio o continua
+                    // la amb recepcio de dades desde l'esclau
                     //
                     else {
-                        PLIB_I2C_MasterStop(id);
-                        hTransaction->state = transactionWaitStop;
+
+                        // Si s'ha definit el buffer de recepcio, es posa en modus lectura
+                        // i inicia la transaccio de nou per rebre la resposta de l'esclau
+                        //
+                        if (hTransaction->rxBuffer && hTransaction->rxSize) {
+                            PLIB_I2C_MasterStartRepeat(id);
+                            hTransaction->writeMode = false;
+                            hTransaction->state = transactionSendAddress;
+                        }
+
+                        // En cas contrari finalitza
+                        //
+                        else {
+                            PLIB_I2C_MasterStop(id);
+                            hTransaction->state = transactionWaitStop;
+                        }
                     }
                 }
                 break;
@@ -535,22 +601,10 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                 }
                 else  {
                     BYTE data = PLIB_I2C_ReceivedByteGet(id);
-
-                    // Si s'ha definit el buffer de recepcio, es posa en modus lectura
-                    // i inicia la transaccio de nou
-                    //
-                    if (hTransaction->rxBuffer && hTransaction->rxSize) {
-                        PLIB_I2C_MasterStartRepeat(id);
-                        hTransaction->writeMode = false;
-                        hTransaction->state = transactionSendAddress;
-                    }
-
-                    // En cas contrari finalitza
-                    //
-                    else {
-                        PLIB_I2C_MasterStop(id);
-                        hTransaction->state = transactionWaitStop;
-                    }
+                    // TODO: Verificar el byte de control
+                    hTransaction->rxCount = hTransaction->index;
+                    PLIB_I2C_MasterStop(id);
+                    hTransaction->state = transactionWaitStop;
                 }
                 break;
 
