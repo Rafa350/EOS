@@ -37,6 +37,7 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 // Gestio del servei
 //
 extern eosHOutputService eosOutputServiceInitialize(eosOutputServiceParams *params);
+extern bool eosOutputIsInitialized(eosHOutputService hService);
 extern void eosOutputServiceTask(eosHOutputService hService);
 extern void eosOutputServiceISRTick(eosHOutputService hService);
 

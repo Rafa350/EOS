@@ -147,6 +147,29 @@ eosHI2CMasterService eosI2CMasterServiceInitialize(
 
 /*************************************************************************
  *
+ *       Comprova si el servei esta inicialitzat
+ *
+ *       Funcio:
+ *           bool eosI2CMasterServiceIsInitialized(
+ *               eosHI2CMasterService hService)
+ *
+ *       Entrada:
+ *           hService: El handler del servei
+ *
+ *       Retorn:
+ *           true si es inicialitzat, false en cas contrari
+ *
+ *************************************************************************/
+
+bool eosI2CMasterServiceIsInitialized(
+    eosHI2CMasterService hService) {
+
+    return hService->state != serviceInitializing;
+}
+
+
+/*************************************************************************
+ *
  *       Procesa les tasques del servei
  *
  *       Funcio:
@@ -295,6 +318,7 @@ eosHI2CTransaction eosI2CMasterStartTransaction(
     hTransaction->rxSize = params->rxSize;
     hTransaction->onEndTransaction = params->onEndTransaction;
     hTransaction->context = params->context;
+    hTransaction->error = 0;
 
     // Afegeix la transaccio a la cua
     //
@@ -309,6 +333,13 @@ eosHI2CTransaction eosI2CMasterStartTransaction(
     }
 
     return hTransaction;
+}
+
+
+unsigned eosI2CMasterGetTransactionResult(
+    eosHI2CTransaction hTransaction) {
+
+    return hTransaction->error;
 }
 
 
@@ -601,7 +632,8 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
                 }
                 else  {
                     BYTE data = PLIB_I2C_ReceivedByteGet(id);
-                    // TODO: Verificar el byte de control
+                    if (data != hTransaction->check)
+                        hTransaction->error = 1;
                     hTransaction->rxCount = hTransaction->index;
                     PLIB_I2C_MasterStop(id);
                     hTransaction->state = transactionWaitStop;

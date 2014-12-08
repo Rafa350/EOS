@@ -40,6 +40,7 @@ typedef struct {                       // Parametres de creacio d'un temporitzad
 // Gestio del servei
 //
 extern eosHTimerService eosTimerServiceInitialize(eosTimerServiceParams *params);
+extern bool eosTimerServiceIsInitialized(eosHTimerService hService);
 extern void eosTimerServiceTask(eosHTimerService hService);
 extern void eosTimerServiceISRTick(eosHTimerService hService);
 

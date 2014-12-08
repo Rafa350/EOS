@@ -19,24 +19,19 @@ typedef struct __eosQueue {            // Cua FIFO
  *       Crea una cua de tipus FIFO
  *
  *       Funcio:
- *           eosResult eosQueueCreate(
- *               eosQueueParams *params,
- *               eosQueue *hQueue)
+ *           eosHQueue eosQueueCreate(
+ *               eosQueueParams *params)
  *
  *       Entrada:
  *           params: Parametres d'inicialitzacio de la cua
  *
- *       Sortida:
- *           hQueue: El handler de la cua
- *
  *       Retorn:
- *           eos_RESULT_SUCCESS si tot es correxte
+ *           El handler de la cua. NULL en cas d'error
  *
  *************************************************************************/
 
-eosResult eosQueueCreate(
-    eosQueueParams *params,
-    eosHQueue *_hQueue) {
+eosHQueue eosQueueCreate(
+    eosQueueParams *params) {
 
     // Inicialitza la cua
     //
@@ -44,7 +39,7 @@ eosResult eosQueueCreate(
 
     eosHQueue hQueue = eosAlloc(sizeof(Queue) + queueSize);
     if (hQueue == NULL)
-        return eos_ERROR_ALLOC;
+        return NULL;
 
     hQueue->start = (BYTE*) hQueue + sizeof(Queue);
     hQueue->end = hQueue->start + queueSize;
@@ -54,9 +49,7 @@ eosResult eosQueueCreate(
 	hQueue->tail = hQueue->start;
 	hQueue->head = hQueue->start;
 
-    *_hQueue = hQueue;
-
-    return eos_RESULT_SUCCESS;
+    return hQueue;
 }
 
 
@@ -65,32 +58,27 @@ eosResult eosQueueCreate(
  *       Comprova si la cua es buida
  *
  *       Funcio:
- *           eosResult eosQueueGetIsEmpry(
- *               eosHQueue hQueue,
- *               BOOL *isEmpry)
+ *           bool eosQueueGetIsEmpry(
+ *               eosHQueue hQueue)
  *
  *       Entrada:
  *           hQueue: Handler de la cua
  *
- *       Sortida:
- *           isEmpty: TRUE si la cua es buida
- *
  *       Retorn:
- *           eos_RESULT_SUCCESS si tot es correcte
+ *           true si la cua es buida
  *
  *************************************************************************/
 
-eosResult eosQueueGetIsEmpty(
-    eosHQueue hQueue,
-    BOOL *isEmpty) {
+bool eosQueueGetIsEmpty(
+    eosHQueue hQueue) {
 
     eosDisableInterrupts();
     
-    *isEmpty = hQueue->numItems == 0;
+    bool isEmpty = hQueue->numItems == 0;
 
     eosEnableInterrupts();
 
-    return eos_RESULT_SUCCESS;
+    return isEmpty;
 }
 
 
@@ -99,7 +87,7 @@ eosResult eosQueueGetIsEmpty(
  *       Afegeix un element en la cua
  *
  *       Funcio:
- *           eosResult eosQueuePut(
+ *           bool eosQueuePut(
  *               eosHQueue hQueue,
  *               void* data)
  *
@@ -108,15 +96,15 @@ eosResult eosQueueGetIsEmpty(
  *           data : Punter al buffer de l'element a afeigit
  *
  *       Retorn:
- *           eos_RESULT_SUCCESS si tot es correcte
+ *           true si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosQueuePut(
+bool eosQueuePut(
     eosHQueue hQueue,
     void* data) {
 
-    eosResult result = eos_RESULT_SUCCESS;
+    eosResult result = true;
 
     eosDisableInterrupts();
 
@@ -129,7 +117,7 @@ eosResult eosQueuePut(
 		hQueue->numItems++;
 	}
     else
-        result = eosQUEUE_ERROR_FULL;
+        result = false;
 
     eosEnableInterrupts();
 
@@ -142,7 +130,7 @@ eosResult eosQueuePut(
  *       Exteru un element en la cua
  *
  *       Funcio:
- *           eosResult eosQueueGet(
+ *           bool eosQueueGet(
  *               eosHQueue hQueue,
  *               void* data)
  *
@@ -151,15 +139,15 @@ eosResult eosQueuePut(
  *           data  : Punter al buffer de l'element a exterure
  *
  *       Retorn:
- *           eos_RESULT_SUCCESS si tot es correcte
+ *           True si tot es correcte
  *
  *************************************************************************/
 
-eosResult eosQueueGet(
+bool eosQueueGet(
     eosHQueue hQueue,
     void *data) {
 
-    eosResult result = eos_RESULT_SUCCESS;
+    eosResult result = true;
 
     eosDisableInterrupts();
 
@@ -171,7 +159,7 @@ eosResult eosQueueGet(
 		hQueue->numItems--;
     }
 	else
-        result = eosQUEUE_ERROR_EMPTY;
+        result = false;
 
     eosEnableInterrupts();
 

@@ -22,13 +22,13 @@ typedef struct {             // Parametres d'inicialitzacio de la cua
 } eosQueueParams;
 
 
-extern eosResult eosQueueCreate(eosQueueParams *params, eosHQueue *hQueue);
-extern eosResult eosQueueDestroy(eosHQueue hQueue);
+extern eosHQueue eosQueueCreate(eosQueueParams *params);
+extern void eosQueueDestroy(eosHQueue hQueue);
 
-extern eosResult eosQueuePut(eosHQueue hQueue, void *data);
-extern eosResult eosQueueGet(eosHQueue hQueue, void *data);
+extern bool eosQueuePut(eosHQueue hQueue, void *data);
+extern bool eosQueueGet(eosHQueue hQueue, void *data);
 
-extern eosResult eosQueueGetIsEmpty(eosHQueue hQueue, BOOL *isEmpty);
+extern bool eosQueueGetIsEmpty(eosHQueue hQueue);
 eosResult eosQueueEnumerate(eosHQueue hQueue);
 eosResult eosQueueEnumerateNext(eosHQueue hQueue, void *data);
 

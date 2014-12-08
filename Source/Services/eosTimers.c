@@ -86,32 +86,32 @@ eosHTimerService eosTimerServiceInitialize(
     eosTimerServiceParams *params) {
 
     eosHTimerService hService = allocTimerService();
-    if (hService) {
-    
-        // Inicialitza la cua de commandes
-        //
-        eosQueueParams queueParams;
-        queueParams.itemSize = sizeof(Command);
-        queueParams.maxItems = 10;
-        if (eosQueueCreate(&queueParams, &hService->hCommandQueue) != eos_RESULT_SUCCESS) {
-            eosFree(hService);
-            return NULL;
-        }
+    if (hService == NULL)
+        return NULL;
 
-        // Inicialitza les estructures de dades
-        //
-        hService->state = serviceStateInitializing;
-        hService->triggered = 0;
-        hService->hFirstTimer = NULL;
-
-        // Asigna la funcio d'interrupcio TICK
-        //
-        eosHTickService hTickService = params->hTickService;
-        if (hTickService == NULL)
-            hTickService = eosGetTickServiceHandle();
-        if (hTickService != NULL)
-            eosTickAttach(hTickService, (eosTickCallback) eosTimerServiceISRTick, (void*) hService);
+    // Inicialitza la cua de commandes
+    //
+    eosQueueParams queueParams;
+    queueParams.itemSize = sizeof(Command);
+    queueParams.maxItems = 10;
+    if ((hService->hCommandQueue = eosQueueCreate(&queueParams)) == NULL) {
+        eosFree(hService);
+        return NULL;
     }
+
+    // Inicialitza les estructures de dades
+    //
+    hService->state = serviceStateInitializing;
+    hService->triggered = 0;
+    hService->hFirstTimer = NULL;
+
+    // Asigna la funcio d'interrupcio TICK
+    //
+    eosHTickService hTickService = params->hTickService;
+    if (hTickService == NULL)
+        hTickService = eosGetTickServiceHandle();
+    if (hTickService != NULL)
+        eosTickAttach(hTickService, (eosTickCallback) eosTimerServiceISRTick, (void*) hService);
 
     return hService;
 }
@@ -187,7 +187,7 @@ void eosTimerServiceTask(
             // Procesa les comandes pendents
             //
             Command command;
-            while (eosQueueGet(hService->hCommandQueue, &command) == eos_RESULT_SUCCESS) {
+            while (eosQueueGet(hService->hCommandQueue, &command)) {
 
                 eosHTimer hTimer = command.hTimer;
 

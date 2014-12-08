@@ -46,6 +46,10 @@ extern void eosMain(void);
 #define eosGetInterruptState()    PLIB_INT_IsEnabled(INT_ID_0)
 #define eosEnableInterrupts()     PLIB_INT_Enable(INT_ID_0)
 #define eosDisableInterrupts()    PLIB_INT_Disable(INT_ID_0)
+
+#define eosEnterCriticalSection()
+#define eosExitCriticalSection()
+
 #define eosEnableWatchdog()       EnableWDT()
 #define eosDisableWatchdog()      DisablWDT()
 #define eosClearWatchdog()        ClearWDT()
