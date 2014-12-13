@@ -9,14 +9,21 @@
 #include "DisplayService.h"
 
 
+#define MSG_NULL               0
 #define MSG_INITIALIZE         1
 #define MSG_PAINT              2
 #define MSG_ACTIVATE           3
 #define MSG_DEACTIVATE         4
 
-#define MSG_SELECTOR_UP      100
-#define MSG_SELECTOR_DOWN    101
+#define MSG_SELECTOR_INC     100
+#define MSG_SELECTOR_DEC     101
 #define MSG_SELECTOR_CLICK   102
+//#define MSG_SELECTOR_PRESS   103
+//#define MSG_SELECTOR_RELEASE 104
+
+#define MSG_KEYBOARD_CLICK   110
+//#define MSG_KEYBOARD_PRESS   111
+//#define MSG_KEYBOARD_RELEASE 112
 
 
 typedef struct __eosFormsService *eosHFormsService;
@@ -56,8 +63,8 @@ extern bool eosFormsGetMessage(eosHFormsService hService, eosFormsMessage *messa
 
 extern eosHForm eosFormsCreateForm(eosHFormsService hService, eosFormParams *params);
 extern eosHForm eosFormsGetActiveForm(eosHFormsService hService);
-extern eosHForm eosFormsSetActiveForm(eosHFormsService hService, eosHForm hForm);
-extern void eosFormsRefresh(eosHFormsService hService, eosHForm hForm);
+extern eosHForm eosFormsSetActiveForm(eosHForm hForm);
+extern void eosFormsRefreshForm(eosHForm hForm);
 
 extern void *eosFormsGetPrivateData(eosHForm hForm);
 

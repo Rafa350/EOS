@@ -9,6 +9,7 @@ typedef enum {                         // Estats del servei
 } ServiceStates;
 
 typedef struct __eosForm {             // Dades del formulari
+    eosHFormsService hService;         // -Handler del servei
     eosCallback onMessage;             // -Callback de cada missatge
     eosHForm hNextForm;                // -Seguent form de la llista
     void *privateData;                 // -Dades privades del formulari
@@ -80,7 +81,8 @@ void eosFormsServiceTask(
 
     switch (hService->state) {
         case serviceInitializing:
-            hService->state = serviceRunning;
+            if (axDisplayServiceIsInitialized(hService->hDisplayService))
+                hService->state = serviceRunning;
             break;
 
         case serviceRunning: {
@@ -88,9 +90,15 @@ void eosFormsServiceTask(
             eosFormsMessage message;
 
             while (eosFormsGetMessage(hService, &message)) {
-                eosHForm hForm = message.hForm;
-                if ((hForm != NULL) &&  (hForm->onMessage != NULL))
-                    hForm->onMessage(hService, &message);
+
+                if (hService->onMessage != NULL)
+                    hService->onMessage(hService, &message);
+
+                if (message.id != MSG_NULL) {
+                    eosHForm hForm = message.hForm;
+                    if ((hForm != NULL) &&  (hForm->onMessage != NULL))
+                        hForm->onMessage(hService, &message);
+                }
             }
             break;
         }
@@ -127,6 +135,7 @@ eosHForm eosFormsCreateForm(
     hForm->privateData = eosAlloc(params->privateDataSize);
     hForm->onMessage = params->onMessage;
     hForm->hNextForm = hService->hFirstForm;
+    hForm->hService = hService;
     hService->hFirstForm = hForm;
     
     eosFormsMessage message;
@@ -167,11 +176,9 @@ eosHForm eosFormsGetActiveForm(
  *
  *       Funcio:
  *           eosHForm eosFormsSetActiveForm(
- *               eosHFormsService hService,
  *               eosHForm hForm)
  *
  *       Entrada:
- *           hService: El handler del servei
  *           hForm   : El formulari a activat
  *
  *       Retorn:
@@ -180,39 +187,74 @@ eosHForm eosFormsGetActiveForm(
  *************************************************************************/
 
 eosHForm eosFormsSetActiveForm(
-    eosHFormsService hService,
     eosHForm hForm) {
     
     eosFormsMessage message;
 
+    eosHFormsService hService = hForm->hService;
+
     eosHForm hInactiveForm = hService->hActiveForm;
-    
-    message.id = MSG_DEACTIVATE;
-    message.hForm = hInactiveForm;
-    eosFormsSendMessage(hService, &message);
+    if (hInactiveForm != NULL) {
+        message.id = MSG_DEACTIVATE;
+        message.hForm = hInactiveForm;
+        eosFormsSendMessage(hService, &message);
+    }
     
     hService->hActiveForm = hForm;
 
-    message.id = MSG_ACTIVATE;
-    message.hForm = hForm;
-    eosFormsSendMessage(hService, &message);
+    if (hForm != NULL) {
+        message.id = MSG_ACTIVATE;
+        message.hForm = hForm;
+        eosFormsSendMessage(hService, &message);
+    }
     
     return hInactiveForm;
 }
 
 
-void eosFormsRefresh(eosHFormsService hService, eosHForm hForm) {
+/*************************************************************************
+ *
+ *       Refresca un formulari
+ *
+ *       Funcio:
+ *           void eosFormsRefresh(
+ *               eosHForm hForm)
+ *
+ *       Entrada:
+ *           hForm   : El handler del formulari
+ *
+ *************************************************************************/
+
+void eosFormsRefresh(
+    eosHForm hForm) {
     
     eosFormsMessage message;
     
     message.id = MSG_PAINT;
     message.hForm = hForm;
-    message.msgPaint.hDisplayService = hService->hDisplayService;
-    eosFormsSendMessage(hService, &message);
+    message.msgPaint.hDisplayService = hForm->hService->hDisplayService;
+    eosFormsSendMessage(hForm->hService, &message);
 }
 
 
-void *eosFormsGetPrivateData(eosHForm hForm) {
+/*************************************************************************
+ *
+ *       Obte les dades privades del formulari
+ *
+ *       Funcio:
+ *           void *eosFormsGetPrivateData(
+ *               eosHForm hForm)
+ *
+ *       Entrada:
+ *           hForm: El handler del formulari
+ *
+ *       Retorn:
+ *           Punter a les dades privades
+ *
+ *************************************************************************/
+
+void *eosFormsGetPrivateData(
+    eosHForm hForm) {
 
     return hForm->privateData;
 }
