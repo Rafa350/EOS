@@ -10,6 +10,7 @@ typedef enum {                         // Estats del servei
 
 typedef struct __eosForm {             // Dades del formulari
     eosHFormsService hService;         // -Handler del servei
+    eosHForm hParent;                  // -Handler del form pare
     eosCallback onMessage;             // -Callback de cada missatge
     eosHForm hNextForm;                // -Seguent form de la llista
     void *privateData;                 // -Dades privades del formulari
@@ -132,6 +133,7 @@ eosHForm eosFormsCreateForm(
     if (hForm == NULL)
         return NULL;
 
+    hForm->hParent = params->hParent;
     hForm->privateData = eosAlloc(params->privateDataSize);
     hForm->onMessage = params->onMessage;
     hForm->hNextForm = hService->hFirstForm;
@@ -257,6 +259,13 @@ void *eosFormsGetPrivateData(
     eosHForm hForm) {
 
     return hForm->privateData;
+}
+
+
+eosHForm eosFormsGetParent(
+    eosHForm hForm) {
+
+    return hForm->hParent;
 }
 
 

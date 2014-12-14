@@ -25,6 +25,8 @@
 //#define MSG_KEYBOARD_PRESS   111
 //#define MSG_KEYBOARD_RELEASE 112
 
+#define MSG_COMMAND          120
+
 
 typedef struct __eosFormsService *eosHFormsService;
 typedef struct __eosForm *eosHForm;
@@ -41,12 +43,16 @@ typedef struct {
         struct {
             axHDisplayService hDisplayService;
         } msgPaint;
+        struct {
+            unsigned command;
+        } msgCommand;
     };
 } eosFormsMessage;
 
-typedef struct {
-    eosCallback onMessage;
-    unsigned privateDataSize;
+typedef struct {                  // Parametres d'inicialitzacio del form
+    eosHForm hParent;             // -Form pare
+    eosCallback onMessage;        // -Callback per gestionar els missatges
+    unsigned privateDataSize;     // -Tamany de les dades privades en bytes
 } eosFormParams;
 
 typedef struct {
@@ -67,6 +73,7 @@ extern eosHForm eosFormsSetActiveForm(eosHForm hForm);
 extern void eosFormsRefreshForm(eosHForm hForm);
 
 extern void *eosFormsGetPrivateData(eosHForm hForm);
+extern eosHForm eosFormsGetParent(eosHForm hForm);
 
 
 #endif
