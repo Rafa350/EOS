@@ -13,8 +13,8 @@ typedef enum {                         // Codis d'operacio
 } OpCodes;
 
 typedef enum {                         // Estat del servei
-    serviceStateInitializing,          // -Inicialitzant
-    serviceStateRunning                // -Executant
+    serviceInitializing,               // -Inicialitzant
+    serviceRunning                     // -Executant
 } ServiceStates;
 
 // Indicadors del temporitzador
@@ -101,7 +101,7 @@ eosHTimerService eosTimerServiceInitialize(
 
     // Inicialitza les estructures de dades
     //
-    hService->state = serviceStateInitializing;
+    hService->state = serviceInitializing;
     hService->triggered = 0;
     hService->hFirstTimer = NULL;
 
@@ -134,11 +134,11 @@ void eosTimerServiceTask(
     eosHTimerService hService) {
 
     switch (hService->state) {
-        case serviceStateInitializing:
-            hService->state = serviceStateRunning;
+        case serviceInitializing:
+            hService->state = serviceRunning;
             break;
 
-        case serviceStateRunning: {
+        case serviceRunning: {
 
             // Obte el numero de tick pendents de procesar
             //
@@ -256,17 +256,17 @@ eosHTimer eosTimerCreate(
     eosTimerParams *params) {
 
     eosHTimer hTimer = allocTimer();
-    if (hTimer) {
+    if (hTimer == NULL)
+        return NULL;
 
-        hTimer->timeout = params->timeout;
-        hTimer->counter = params->timeout;
-        hTimer->onTimeout = params->onTimeout;
-        hTimer->context = params->context;
+    hTimer->timeout = params->timeout;
+    hTimer->counter = params->timeout;
+    hTimer->onTimeout = params->onTimeout;
+    hTimer->context = params->context;
 
-        hTimer->hService = hService;
-        hTimer->hNextTimer = hService->hFirstTimer;
-        hService->hFirstTimer = hTimer;
-    }
+    hTimer->hService = hService;
+    hTimer->hNextTimer = hService->hFirstTimer;
+    hService->hFirstTimer = hTimer;
 
     return hTimer;
 }

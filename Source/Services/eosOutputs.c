@@ -5,9 +5,9 @@
 
 
 typedef enum {                         // Estats del servei
-    state_Initializing,                // -Inicialitzant
-    state_Running                      // -En execucio
-} States;
+    serviceInitializing,               // -Inicialitzant
+    serviceRunning                     // -En execucio
+} ServiceStates;
 
 typedef struct __eosOutput {           // Dates d'una sortida
     PORTS_CHANNEL channel;             // -Canal del port
@@ -19,7 +19,7 @@ typedef struct __eosOutput {           // Dates d'una sortida
 } Output;
 
 typedef struct __eosOutputService {    // Dades del servei
-    States state;                      // -Estat del servei
+    ServiceStates state;               // -Estat del servei
     eosHOutput hFirstOutput;           // -Primera sortida
 } OutputService;
 
@@ -60,7 +60,7 @@ eosHOutputService eosOutputServiceInitialize(
     eosHOutputService hService = __allocService();
     if (hService) {
 
-        hService->state = state_Initializing;
+        hService->state = serviceInitializing;
         hService->hFirstOutput = NULL;
 
         // Asigna la funcio d'interrupcio TICK
@@ -93,11 +93,11 @@ void eosOutputServiceTask(
     eosHOutputService hService) {
 
     switch (hService->state) {
-        case state_Initializing:
-            hService->state = state_Running;
+        case serviceInitializing:
+            hService->state = serviceRunning;
             break;
 
-        case state_Running:
+        case serviceRunning:
             break;
     }
 }
@@ -119,7 +119,7 @@ void eosOutputServiceTask(
 void eosOutputServiceISRTick(
     eosHOutputService hService) {
 
-    if (hService->state == state_Running) {
+    if (hService->state == serviceRunning) {
         eosHOutput hOutput = hService->hFirstOutput;
         while (hOutput) {
             if (hOutput->tickCount) {
@@ -155,25 +155,25 @@ eosHOutput eosOutputCreate(
     eosOutputParams *params) {
 
     eosHOutput hOutput = __allocOutput();
-    if (hOutput) {
+    if (hOutput == NULL)
+        return NULL;
 
-        hOutput->channel = params->channel;
-        hOutput->position = params->position;
-        hOutput->inverted = params->inverted;
-        hOutput->tickCount = 0;
+    hOutput->channel = params->channel;
+    hOutput->position = params->position;
+    hOutput->inverted = params->inverted;
+    hOutput->tickCount = 0;
 
-        bool intFlag = eosGetInterruptState();
-        eosDisableInterrupts();
+    bool intFlag = eosGetInterruptState();
+    eosDisableInterrupts();
 
-        hOutput->hService = hService;
-        hOutput->hNextOutput = hService->hFirstOutput;
-        hService->hFirstOutput = hOutput;
+    hOutput->hService = hService;
+    hOutput->hNextOutput = hService->hFirstOutput;
+    hService->hFirstOutput = hOutput;
 
-        if (intFlag)
-            eosEnableInterrupts();
+    if (intFlag)
+        eosEnableInterrupts();
 
-        portInitialize(hOutput);
-    }
+    portInitialize(hOutput);
 
     return hOutput;
 }

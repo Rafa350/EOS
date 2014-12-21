@@ -134,8 +134,9 @@ eosHForm eosFormsCreateForm(
         return NULL;
 
     hForm->hParent = params->hParent;
-    hForm->privateData = eosAlloc(params->privateDataSize);
+    hForm->privateData = params->privateData;
     hForm->onMessage = params->onMessage;
+
     hForm->hNextForm = hService->hFirstForm;
     hForm->hService = hService;
     hService->hFirstForm = hForm;
@@ -191,12 +192,11 @@ eosHForm eosFormsGetActiveForm(
 eosHForm eosFormsSetActiveForm(
     eosHForm hForm) {
     
-    eosFormsMessage message;
-
     eosHFormsService hService = hForm->hService;
 
     eosHForm hInactiveForm = hService->hActiveForm;
     if (hInactiveForm != NULL) {
+        eosFormsMessage message;
         message.id = MSG_DEACTIVATE;
         message.hForm = hInactiveForm;
         eosFormsSendMessage(hService, &message);
@@ -205,6 +205,7 @@ eosHForm eosFormsSetActiveForm(
     hService->hActiveForm = hForm;
 
     if (hForm != NULL) {
+        eosFormsMessage message;
         message.id = MSG_ACTIVATE;
         message.hForm = hForm;
         eosFormsSendMessage(hService, &message);
@@ -268,6 +269,12 @@ eosHForm eosFormsGetParent(
     return hForm->hParent;
 }
 
+
+eosHFormsService eosFormsGetService(
+    eosHForm hForm) {
+
+    return hForm->hService;
+}
 
 /*************************************************************************
  *
