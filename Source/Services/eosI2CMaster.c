@@ -349,7 +349,7 @@ unsigned eosI2CMasterGetTransactionResult(
  *
  *************************************************************************/
 
-void __ISR(I2C1_CORE_VECTOR, ipl2) __ISR_Entry(I2C1_CORE_VECTOR) {
+void __ISR(I2C1_CORE_VECTOR, IPL2SOFT) __ISR_Entry(I2C1_CORE_VECTOR) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, I2C1_INT_SOURCE_MASTER)) {
         i2cInterruptService(I2C_ID_1);
@@ -357,7 +357,7 @@ void __ISR(I2C1_CORE_VECTOR, ipl2) __ISR_Entry(I2C1_CORE_VECTOR) {
     }
 }
 
-void __ISR(I2C2_CORE_VECTOR, ipl2) __ISR_Entry(I2C2_CORE_VECTOR) {
+void __ISR(I2C2_CORE_VECTOR, IPL2SOFT) __ISR_Entry(I2C2_CORE_VECTOR) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, I2C2_INT_SOURCE_MASTER)) {
         i2cInterruptService(I2C_ID_2);
@@ -365,7 +365,7 @@ void __ISR(I2C2_CORE_VECTOR, ipl2) __ISR_Entry(I2C2_CORE_VECTOR) {
     }
 }
 
-void __ISR(I2C3_CORE_VECTOR, ipl2) __ISR_Entry(I2C3_CORE_VECTOR) {
+void __ISR(I2C3_CORE_VECTOR, IPL2SOFT) __ISR_Entry(I2C3_CORE_VECTOR) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, I2C3_INT_SOURCE_MASTER)) {
         i2cInterruptService(I2C_ID_3);
@@ -373,7 +373,7 @@ void __ISR(I2C3_CORE_VECTOR, ipl2) __ISR_Entry(I2C3_CORE_VECTOR) {
     }
 }
 
-void __ISR(I2C4_CORE_VECTOR, ipl2) __ISR_Entry(I2C4_CORE_VECTOR) {
+void __ISR(I2C4_CORE_VECTOR, IPL2SOFT) __ISR_Entry(I2C4_CORE_VECTOR) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, I2C4_INT_SOURCE_MASTER)) {
         i2cInterruptService(I2C_ID_4);
@@ -381,7 +381,7 @@ void __ISR(I2C4_CORE_VECTOR, ipl2) __ISR_Entry(I2C4_CORE_VECTOR) {
     }
 }
 
-void __ISR(I2C5_CORE_VECTOR, ipl2) __ISR_Entry(I2C5_CORE_VECTOR) {
+void __ISR(I2C5_CORE_VECTOR, IPL2SOFT) __ISR_Entry(I2C5_CORE_VECTOR) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, I2C5_INT_SOURCE_MASTER)) {
         i2cInterruptService(I2C_ID_5);

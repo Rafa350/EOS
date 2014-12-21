@@ -20,6 +20,7 @@ typedef struct {
 
 
 static void onMessage(eosHFormsService hService, eosFormsMessage *message);
+
 static void initialize(eosHForm hForm);
 static void moveNext(eosHForm hForm);
 static void movePrev(eosHForm hForm);
