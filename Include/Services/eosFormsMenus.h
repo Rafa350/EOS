@@ -10,8 +10,6 @@
 #include <Services/eosForms.h>
 #endif
 
-#include "DisplayService.h"
-
 
 typedef struct {
     BYTE *resource;
