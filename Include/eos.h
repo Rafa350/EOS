@@ -35,10 +35,15 @@
 #define eos_ERROR_BUSY            (eos_ERROR_BASE + 5)
 #define eos_ERROR_USER            (eos_ERROR_BASE + 500)
 
-// Definicio de tipus base de la llibraria
+// Definicio de tipus base de la llibreria
 //
 typedef unsigned eosResult;       // Resultat d'una funcio
 typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
+
+typedef struct {
+    void *object;
+    void (*method)(void *object, void *params);
+} eosEvent;
 
 extern void eosMain(void);
 #define eosSetError(code, str)

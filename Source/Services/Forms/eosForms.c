@@ -14,7 +14,7 @@ typedef struct __eosForm {             // Dades del formulari
     eosCallback onMessage;             // -Callback de cada missatge
     eosHForm hNextForm;                // -Seguent form de la llista
     void *privateData;                 // -Dades privades del formulari
-} eosForm;
+} Form;
 
 typedef struct __eosFormsService {     // Dades del servei
     ServiceStates state;               // -Estat del servei
@@ -23,7 +23,7 @@ typedef struct __eosFormsService {     // Dades del servei
     eosHQueue hQueue;                  // -Cua de missatges
     eosHForm hActiveForm;              // -Formulari actiu
     eosHForm hFirstForm;               // -Primer formulari de la llista
-} eosFormsService;
+} FormsService;
 
 
 /*************************************************************************
@@ -45,7 +45,7 @@ typedef struct __eosFormsService {     // Dades del servei
 eosHFormsService eosFormsServiceInitialize(
     eosFormsServiceParams *params) {
 
-    eosHFormsService hService = eosAlloc(sizeof(eosFormsService));
+    eosHFormsService hService = eosAlloc(sizeof(FormsService));
     if (hService == NULL)
         return NULL;
 
@@ -82,7 +82,7 @@ void eosFormsServiceTask(
 
     switch (hService->state) {
         case serviceInitializing:
-            if (axDisplayServiceIsInitialized(hService->hDisplayService))
+            if (axDisplayServiceIsReady(hService->hDisplayService))
                 hService->state = serviceRunning;
             break;
 
@@ -129,7 +129,7 @@ eosHForm eosFormsCreateForm(
     eosHFormsService hService,
     eosFormParams *params) {
 
-    eosHForm hForm = eosAlloc(sizeof(eosForm));
+    eosHForm hForm = eosAlloc(sizeof(Form));
     if (hForm == NULL)
         return NULL;
 

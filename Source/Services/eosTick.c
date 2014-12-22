@@ -1,4 +1,3 @@
-#define __EOS_TICK_INTERNAL
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
 #include "HardwareProfile.h"
@@ -69,7 +68,7 @@ static void enableInterrupt(void);
 eosHTickService eosTickServiceInitialize(
     eosTickServiceParams *params) {
 
-    eosHTickService hService = eosAlloc(sizeof(TickService));
+    eosHTickService hService = (eosHTickService) eosAlloc(sizeof(TickService));
     if (hService) {
 
         hService->state = serviceInitializing;
@@ -219,7 +218,7 @@ static void timerStop(void) {
  *
  *************************************************************************/
 
-void __ISR(TICK_TIMER_CORE_VECTOR, ipl2) __ISR_Entry(TICK_TIMER_CORE_VECTOR) {
+void __ISR(TICK_TIMER_CORE_VECTOR, IPL2SOFT) __ISR_Entry(TICK_TIMER_CORE_VECTOR) {
 
     eosHTickService hService = eosGetTickServiceHandle();
     if (hService != NULL) {

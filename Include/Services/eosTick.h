@@ -7,10 +7,6 @@
 #endif
 
 
-#ifndef __EOS_TICK_INTERNAL
-struct __eosTickService {};
-#endif
-
 typedef struct __eosTickService *eosHTickService;
 
 typedef void (*eosTickCallback)(void *context);

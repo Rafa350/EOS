@@ -1,4 +1,3 @@
-#define __EOS_INPUTS_INTERNAL
 #include "Services/eosInputs.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
@@ -16,7 +15,7 @@ typedef enum {                         // Estats del servei
 
 typedef struct __eosInput {            // Dades d'una entrada
     eosHInputService hService;         // -El servei al que pertany
-    eosHInput hNextInput;              // -Seguent entrada
+    eosHInput hNextInput;              // -Seguent element
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
     bool inverted;                     // -Senyal invertida
@@ -32,16 +31,12 @@ typedef struct __eosInput {            // Dades d'una entrada
 
 typedef struct __eosInputService {     // Dades del servei
     ServiceStates state;               // -Estat del servei
-    eosHInput hFirstInput;             // -Primera entrada de la llista
+    eosHInput hFirstInput;             // -Primer element de la llista
 } InputService;
 
 
 static void portInitialize(eosHInput hInput);
 static bool portGet(eosHInput hInput);
-
-#define __allocService()              ((eosHInputService) eosAlloc(sizeof(InputService)))
-#define __allocInput()                ((eosHInput) eosAlloc(sizeof(Input)))
-#define __freeInput(a)                eosFree((void*) a)
 
 
 /*************************************************************************
@@ -63,7 +58,7 @@ static bool portGet(eosHInput hInput);
 eosHInputService eosInputServiceInitialize(
     eosInputServiceParams *params) {
 
-    eosHInputService hService = __allocService();
+    eosHInputService hService = (eosHInputService) eosAlloc(sizeof(InputService));
     if (hService == NULL)
         return NULL;
 
@@ -76,7 +71,7 @@ eosHInputService eosInputServiceInitialize(
     if (hTickService == NULL)
         hTickService = eosGetTickServiceHandle();
     if (hTickService != NULL)
-        eosTickAttach(hTickService, (eosTickCallback) eosInputServiceISRTick, hService);
+        eosTickAttach(hTickService, (eosTickCallback) eosInputServiceTick, hService);
 
     return hService;
 }
@@ -143,7 +138,7 @@ void eosInputServiceTask(
  *       Gestiona la interrupcio TICK
  *
  *       Funcio:
- *           void eosInputServiceISRTick(
+ *           void eosInputServiceTick(
  *               eosHInputService hService)
  *
  *       Entrada:
@@ -151,7 +146,7 @@ void eosInputServiceTask(
  *
  *************************************************************************/
 
-void eosInputServiceISRTick(
+void eosInputServiceTick(
     eosHInputService hService) {
 
     if (hService->state == serviceRunning) {
@@ -200,7 +195,7 @@ eosHInput eosInputCreate(
     eosHInputService hService,
     eosInputParams* params) {
 
-    eosHInput hInput = __allocInput();
+    eosHInput hInput = (eosHInput) eosAlloc(sizeof(Input));
     if (hInput == NULL)
         return NULL;
 
@@ -251,7 +246,6 @@ eosHInput eosInputCreate(
 void eosInputDestroy(
     eosHInput hInput) {
 
-    __freeInput(hInput);
 }
 
 

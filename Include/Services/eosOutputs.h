@@ -15,11 +15,6 @@
 #endif
 
 
-#ifndef __EOS_OUTPUTS_INTERNAL
-struct __eosOutput {};
-struct __eosOutputService {};
-#endif
-
 typedef struct __eosOutput *eosHOutput;
 typedef struct __eosOutputService *eosHOutputService;
 
@@ -37,9 +32,9 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 // Gestio del servei
 //
 extern eosHOutputService eosOutputServiceInitialize(eosOutputServiceParams *params);
-extern bool eosOutputIsInitialized(eosHOutputService hService);
+extern bool eosOutputIsReady(eosHOutputService hService);
 extern void eosOutputServiceTask(eosHOutputService hService);
-extern void eosOutputServiceISRTick(eosHOutputService hService);
+extern void eosOutputServiceTick(eosHOutputService hService);
 
 // Creacio, destruccio i gestio dels objectes
 //

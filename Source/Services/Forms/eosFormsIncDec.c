@@ -21,6 +21,10 @@ eosHForm eosFormsCreateIncDec(
     eosIncDecParams *params) {
 
     PrivateData *data = (PrivateData*) eosAlloc(sizeof(PrivateData));
+    data->minValue = 0;
+    data->maxValue = 99999;
+    data->value = 0;
+    data->delta = 1;
 
     eosFormParams formParams;
     memset(&formParams, 0, sizeof(formParams));
@@ -35,7 +39,6 @@ static void onMessage(
     eosFormsMessage *message) {
 
     eosHForm hForm = message->hForm;
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
     switch (message->id) {
         case MSG_INITIALIZE:
@@ -59,7 +62,8 @@ static void onMessage(
 }
 
 
-static void valueInc(eosHForm hForm){
+static void valueInc(
+    eosHForm hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
@@ -70,7 +74,8 @@ static void valueInc(eosHForm hForm){
 }
 
 
-static void valueDec(eosHForm hForm){
+static void valueDec(
+    eosHForm hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 

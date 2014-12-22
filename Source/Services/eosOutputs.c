@@ -1,4 +1,3 @@
-#define __EOS_OUTPUTS_INTERNAL
 #include "Services/eosOutputs.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
@@ -33,9 +32,6 @@ static void portToggle(eosHOutput hOutput);
 
 #define MStoTICK(ms)    (ms)          // Converteix milisegons a ticks
 
-#define __allocService()              ((eosHOutputService) eosAlloc(sizeof(OutputService)))
-#define __allocOutput()               ((eosHOutput) eosAlloc(sizeof(Output)))
-#define __freeOutput(a)               eosFree((void*) a)
 
 
 /*************************************************************************
@@ -57,20 +53,20 @@ static void portToggle(eosHOutput hOutput);
 eosHOutputService eosOutputServiceInitialize(
     eosOutputServiceParams *params) {
 
-    eosHOutputService hService = __allocService();
-    if (hService) {
+    eosHOutputService hService = (eosHOutputService) eosAlloc(sizeof(OutputService));
+    if (hService == NULL)
+        return NULL;
 
-        hService->state = serviceInitializing;
-        hService->hFirstOutput = NULL;
+    hService->state = serviceInitializing;
+    hService->hFirstOutput = NULL;
 
-        // Asigna la funcio d'interrupcio TICK
-        //
-        eosHTickService hTickService = params->hTickService;
-        if (hTickService == NULL)
-            hTickService = eosGetTickServiceHandle();
-        if (hTickService != NULL)
-            eosTickAttach(hTickService, (eosTickCallback) eosOutputServiceISRTick, hService);
-    }
+    // Asigna la funcio d'interrupcio TICK
+    //
+    eosHTickService hTickService = params->hTickService;
+    if (hTickService == NULL)
+        hTickService = eosGetTickServiceHandle();
+    if (hTickService != NULL)
+        eosTickAttach(hTickService, (eosTickCallback) eosOutputServiceTick, hService);
 
     return hService;
 }
@@ -116,10 +112,11 @@ void eosOutputServiceTask(
  *
  *************************************************************************/
 
-void eosOutputServiceISRTick(
+void eosOutputServiceTick(
     eosHOutputService hService) {
 
     if (hService->state == serviceRunning) {
+
         eosHOutput hOutput = hService->hFirstOutput;
         while (hOutput) {
             if (hOutput->tickCount) {
@@ -129,6 +126,7 @@ void eosOutputServiceISRTick(
             }
             hOutput = hOutput->hNextOutput;
         }
+        
     }
 }
 
@@ -154,7 +152,7 @@ eosHOutput eosOutputCreate(
     eosHOutputService hService,
     eosOutputParams *params) {
 
-    eosHOutput hOutput = __allocOutput();
+    eosHOutput hOutput = (eosHOutput) eosAlloc(sizeof(Output));
     if (hOutput == NULL)
         return NULL;
 
@@ -195,7 +193,6 @@ eosHOutput eosOutputCreate(
 void eosOutputDestroy(
     eosHOutput hOutput) {
 
-    __freeOutput(hOutput);
 }
 
 
@@ -286,9 +283,11 @@ void eosOutputsPulse(
 
     BOOL intFlag = eosGetInterruptState();
     eosDisableInterrupts();
+
     if (!hOutput->tickCount)
         portToggle(hOutput);
     hOutput->tickCount = MStoTICK(time);
+
     if (intFlag)
         eosEnableInterrupts();
 }

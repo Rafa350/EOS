@@ -15,11 +15,6 @@
 #endif
 
 
-#ifndef __EOS_INPUTS_INTERNAL
-struct __eosInput {};
-struct __eosInputService {};
-#endif
-
 typedef struct __eosInput *eosHInput;
 typedef struct __eosInputService *eosHInputService;
 
@@ -41,9 +36,9 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 // Gestio del servei
 //
 extern eosHInputService eosInputServiceInitialize(eosInputServiceParams *params);
-extern bool eosInputServiceIsInitialized(eosHInputService hService);
+extern bool eosInputServiceIsReady(eosHInputService hService);
 extern void eosInputServiceTask(eosHInputService hService);
-extern void eosInputServiceISRTick(eosHInputService hService);
+extern void eosInputServiceTick(eosHInputService hService);
 
 // Creacio, destruccio i gestio dels objectes
 //

@@ -20,11 +20,6 @@
 #define eos_ERROR_I2C_TOO_TRANSACTIONS (eos_ERROR_USER + 2)
 
 
-#ifndef __EOS_I2CMASTER_INTERNAL
-struct __eosI2CMasterService {};
-struct __eosI2CTransaction {};
-#endif
-
 typedef struct __eosI2CMasterService *eosHI2CMasterService;
 typedef struct __eosI2CTransaction *eosHI2CTransaction;
 
@@ -46,9 +41,9 @@ typedef struct {                       // Parametres d'una transaccio
 
 
 extern eosHI2CMasterService eosI2CMasterServiceInitialize(eosI2CServiceParams *params);
-extern bool eosI2CMasterIsInitialized(eosHI2CMasterService hService);
+extern bool eosI2CMasterIsReady(eosHI2CMasterService hService);
 extern void eosI2CMasterServiceTask(eosHI2CMasterService hService);
-extern void eosI2CMasterServiceISRTick(eosHI2CMasterService hService);
+extern void eosI2CMasterServiceTick(eosHI2CMasterService hService);
 
 extern eosHI2CTransaction eosI2CMasterStartTransaction(eosHI2CMasterService hService, eosI2CTransactionParams *params);
 extern unsigned eosI2CMasterGetTransactionResult(eosHI2CTransaction hTransaction);

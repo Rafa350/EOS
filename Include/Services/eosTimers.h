@@ -11,11 +11,6 @@
 #endif
 
 
-#ifndef __EOS_TIMERS_INTERNAL
-struct __eosTimer {};
-struct __eosTimerService {};
-#endif
-
 typedef struct __eosTimer *eosHTimer;
 typedef struct __eosTimerService *eosHTimerService;
 
@@ -40,9 +35,9 @@ typedef struct {                       // Parametres de creacio d'un temporitzad
 // Gestio del servei
 //
 extern eosHTimerService eosTimerServiceInitialize(eosTimerServiceParams *params);
-extern bool eosTimerServiceIsInitialized(eosHTimerService hService);
+extern bool eosTimerServiceIsReady(eosHTimerService hService);
 extern void eosTimerServiceTask(eosHTimerService hService);
-extern void eosTimerServiceISRTick(eosHTimerService hService);
+extern void eosTimerServiceTick(eosHTimerService hService);
 
 // Creacio, destruccio i gestio dels objectes
 //

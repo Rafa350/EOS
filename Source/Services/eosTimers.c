@@ -1,4 +1,3 @@
-#define __EOS_TIMERS_INTERNAL
 #include "Services/eosTimers.h"
 #include "Services/eosTick.h"
 #include "System/eosQueue.h"
@@ -111,7 +110,7 @@ eosHTimerService eosTimerServiceInitialize(
     if (hTickService == NULL)
         hTickService = eosGetTickServiceHandle();
     if (hTickService != NULL)
-        eosTickAttach(hTickService, (eosTickCallback) eosTimerServiceISRTick, (void*) hService);
+        eosTickAttach(hTickService, (eosTickCallback) eosTimerServiceTick, (void*) hService);
 
     return hService;
 }
@@ -218,7 +217,7 @@ void eosTimerServiceTask(
  *       Gestiona la interrupcio TICK
  *
  *       Funcio:
- *           void eosTimerServiceISRTick(
+ *           void eosTimerServiceTick(
  *               eosHTimerService hService)
  *
  *       Entrada:
@@ -226,7 +225,7 @@ void eosTimerServiceTask(
  *
  *************************************************************************/
 
-void eosTimerServiceISRTick(
+void eosTimerServiceTick(
     eosHTimerService hService) {
 
     hService->triggered += 1;

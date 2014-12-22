@@ -67,6 +67,7 @@ typedef struct {
 
 
 extern eosHFormsService eosFormsServiceInitialize(eosFormsServiceParams *params);
+extern bool eosFormServiceIsReady(eosHFormsService hService);
 extern void eosFormsServiceTask(eosHFormsService hForms);
 
 extern void eosFormsSendMessage(eosHFormsService hService, eosFormsMessage *message);

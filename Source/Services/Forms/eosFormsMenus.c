@@ -27,7 +27,7 @@ static void movePrev(eosHForm hForm);
 static void moveFirst(eosHForm hForm);
 static void moveLast(eosHForm hForm);
 static void select(eosHForm hForm);
-static void draw(PrivateData *data, axHDisplayService hDisplay);
+static void draw(eosHForm hForm, axHDisplayService hDisplay);
 
 
 /*************************************************************************
@@ -83,7 +83,6 @@ static void onMessage(
     eosFormsMessage *message) {
 
     eosHForm hForm = message->hForm;
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
     switch (message->id) {
         case MSG_INITIALIZE:
@@ -95,7 +94,7 @@ static void onMessage(
             break;
 
         case MSG_PAINT:
-            draw(data, message->msgPaint.hDisplayService);
+            draw(hForm, message->msgPaint.hDisplayService);
             break;
 
         case MSG_SELECTOR_DEC:
@@ -116,14 +115,14 @@ static void onMessage(
 
 /*************************************************************************
  *
- *       Procesa el missatge MSG_INITIALIZE
+ *       Inicialitza el form
  *
  *       Funcio:
  *           void initialize(
- *               eosHForm hForm
+ *               eosHForm hForm)
  *
  *       Entrada:
- *           hForm: Handler del formulari
+ *           hForm: Handler del form
  *
  *************************************************************************/
 
@@ -147,18 +146,20 @@ static void initialize(
  *
  *       Funcio:
  *           void draw(
- *               PrivateData *data,
+ *               eosHForm hForm,
  *               axHDisplayService hDisplay)
  *
  *       Entrada:
- *           data    : Dades privades del form
- *           hDisplay: El handler del display
+ *           hForm   : Handler del form
+ *           hDisplay: Handler del display
  *
  *************************************************************************/
 
 static void draw(
-    PrivateData *data,
+    eosHForm hForm,
     axHDisplayService hDisplay) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
     if (axDisplayBeginCommand(hDisplay)) {
 
@@ -210,7 +211,7 @@ static void draw(
  *               eosHForm hForm)
  *
  *       Entrada:
- *           hForm: Handler del form
+ *           hForm: El handler del form
  *
  *************************************************************************/
 

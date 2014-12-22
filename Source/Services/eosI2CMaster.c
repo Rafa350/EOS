@@ -1,4 +1,3 @@
-#define __EOS_I2CMASTER_INTERNAL
 #include "HardwareProfile.h"
 #include "Services/eosI2CMaster.h"
 #include "sys/attribs.h"
@@ -139,7 +138,7 @@ eosHI2CMasterService eosI2CMasterServiceInitialize(
     if (hTickService == NULL)
         hTickService = eosGetTickServiceHandle();
     if (hTickService != NULL)
-        eosTickAttach(hTickService, (eosTickCallback) eosI2CMasterServiceISRTick, hService);
+        eosTickAttach(hTickService, (eosTickCallback) eosI2CMasterServiceTick, hService);
 
     return hService;
 }
@@ -147,21 +146,21 @@ eosHI2CMasterService eosI2CMasterServiceInitialize(
 
 /*************************************************************************
  *
- *       Comprova si el servei esta inicialitzat
+ *       Comprova si el servei esta preparat
  *
  *       Funcio:
- *           bool eosI2CMasterServiceIsInitialized(
+ *           bool eosI2CMasterServiceIsReady(
  *               eosHI2CMasterService hService)
  *
  *       Entrada:
  *           hService: El handler del servei
  *
  *       Retorn:
- *           true si es inicialitzat, false en cas contrari
+ *           True si el servei esta preparat, false en cas contrari
  *
  *************************************************************************/
 
-bool eosI2CMasterServiceIsInitialized(
+bool eosI2CMasterServiceIsReady(
     eosHI2CMasterService hService) {
 
     return hService->state != serviceInitializing;
@@ -263,7 +262,7 @@ void eosI2CMasterServiceTask(
  *       Gestiona la interrupcio TICK
  *
  *       Funcio:
- *           void eosI2CMasterServiceISRTick(
+ *           void eosI2CMasterServiceTick(
  *               eosHI2CMasterService hService)
  *
  *       Entrada:
@@ -271,7 +270,7 @@ void eosI2CMasterServiceTask(
  *
  *************************************************************************/
 
-void eosI2CMasterServiceISRTick(
+void eosI2CMasterServiceTick(
     eosHI2CMasterService hService) {
 
     if (hService->tickCount > 0)
