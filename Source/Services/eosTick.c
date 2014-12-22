@@ -45,7 +45,7 @@ typedef struct __eosTickService {      // Dades internes del servei
 static void timerInitialize(void);
 static void timerStart(void);
 static void timerStop(void);
-static BOOL disableInterrupt(void);
+static bool disableInterrupt(void);
 static void enableInterrupt(void);
 
 
@@ -239,16 +239,16 @@ void __ISR(TICK_TIMER_CORE_VECTOR, IPL2SOFT) __ISR_Entry(TICK_TIMER_CORE_VECTOR)
  *       Desactiva la interrupcio
  *
  *       Funcio:
- *           BOOL disableInterrupt(void)
+ *           bool disableInterrupt(void)
  *
  *       Retorn:
  *           Estat anterior de la interrupcio
  *
  *************************************************************************/
 
-static BOOL disableInterrupt(void) {
+static bool disableInterrupt(void) {
     
-    BOOL intFlag = PLIB_INT_SourceIsEnabled(INT_ID_0, TICK_TIMER_INT_SOURCE);
+    bool intFlag = PLIB_INT_SourceIsEnabled(INT_ID_0, TICK_TIMER_INT_SOURCE);
     PLIB_INT_SourceDisable(INT_ID_0, TICK_TIMER_INT_SOURCE);
     return intFlag;
 }

@@ -49,18 +49,12 @@ typedef struct __eosTimerService {     // Dades internes del servei
 } TimerService;
 
 
-// Pool de memoria pels serveis
-//
-static bool timerServicePoolInitialized = false;
-static TimerService timerServicePool[eosOPTIONS_TIMERS_MAX_INSTANCES];
-
 // Pool de memoria pels timers
 //
 static bool timerPoolInitialized = false;
 static Timer timerPool[eosOPTIONS_TIMERS_MAX_TIMERS];
 
 
-static eosHTimerService allocTimerService(void);
 static eosHTimer allocTimer(void);
 static void freeTimer(eosHTimer hTimer);
 
@@ -84,7 +78,7 @@ static void freeTimer(eosHTimer hTimer);
 eosHTimerService eosTimerServiceInitialize(
     eosTimerServiceParams *params) {
 
-    eosHTimerService hService = allocTimerService();
+    eosHTimerService hService = (eosHTimerService) eosAlloc(sizeof(TimerService));
     if (hService == NULL)
         return NULL;
 
@@ -378,40 +372,6 @@ bool eosTimerDelayGetStatus(
     }
     else
         return false;
-}
-
-
-/*************************************************************************
- *
- *       Crea una objecte TimerService
- *
- *       Funcio:
- *           eosHTimerService allocTimerService(void)
- *
- *       Retorn:
- *           El handler del objecte creat. NULL en cas d'error
- *
- *************************************************************************/
-
-static eosHTimerService allocTimerService(void) {
-
-    int i;
-
-    if (!timerServicePoolInitialized) {
-        for (i = 0; i < sizeof(timerServicePool) / sizeof(timerServicePool[0]); i++)
-            timerServicePool[i].inUse = false;
-        timerServicePoolInitialized = true;
-    }
-
-    for (i = 0; i < sizeof(timerServicePool) / sizeof(timerServicePool[0]); i++) {
-        eosHTimerService hService = &timerServicePool[i];
-        if (!hService->inUse) {
-            hService->inUse = true;
-            return hService;
-        }
-    }
-
-    return NULL;
 }
 
 

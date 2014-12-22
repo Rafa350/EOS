@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "Services/eosFormsIncDec.h"
 #include "DisplayService.h"
 
@@ -14,7 +15,26 @@ static void onMessage(eosHFormsService hService, eosFormsMessage *message);
 
 static void valueInc(eosHForm hForm);
 static void valueDec(eosHForm hForm);
+static void draw(eosHForm hForm, axHDisplayService hDisplay);
 
+
+/*************************************************************************
+ *
+ *       Crea un form de increment/decrement
+ *
+ *       Funcio:
+ *           eosHForm eosFormsCreateIncDec(
+ *               eosHFormsService hService,
+ *               eosIncDecParams *params)
+ *
+ *       Entrada:
+ *           hService: Handler del servei
+ *           params  : Parametres d'inicialitzacio
+ *
+ *       Retorn:
+ *           El handler del form
+ *
+ *************************************************************************/
 
 eosHForm eosFormsCreateIncDec(
     eosHFormsService hService,
@@ -34,6 +54,21 @@ eosHForm eosFormsCreateIncDec(
 }
 
 
+/*************************************************************************
+ *
+ *       Procesa els missatges que arribin al form
+ *
+ *       Funcio:
+ *           void onMessage(
+ *               eosHFormsService hService,
+ *               eosFormsMessage *message)
+ *
+ *       Entrada:
+ *           hService: El handler del sevei
+ *           message : El missatge a procesar
+ *
+ **************************************************************************/
+
 static void onMessage(
     eosHFormsService hService,
     eosFormsMessage *message) {
@@ -49,6 +84,7 @@ static void onMessage(
             break;
 
         case MSG_PAINT:
+            draw(hForm, message->msgPaint.hDisplayService);
             break;
 
         case MSG_SELECTOR_INC:
@@ -61,6 +97,26 @@ static void onMessage(
     }
 }
 
+
+static void draw(
+    eosHForm hForm,
+    axHDisplayService hDisplay) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+
+    if (axDisplayBeginCommand(hDisplay)) {
+
+        char text[20];
+        sprintf(text, "%d", data->value);
+
+        axDisplayAddCommandClear(hDisplay);
+        axDisplayAddCommandDrawText(hDisplay, 0, 0, text, 0, -1);
+        axDisplayAddCommandDrawLine(hDisplay, 0, 10, 127, 10);
+        axDisplayAddCommandRefresh(hDisplay);
+        axDisplayEndCommand(hDisplay);
+    }
+
+}
 
 static void valueInc(
     eosHForm hForm) {

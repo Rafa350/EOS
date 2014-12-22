@@ -41,8 +41,8 @@ typedef unsigned eosResult;       // Resultat d'una funcio
 typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
 
 typedef struct {
-    void *object;
-    void (*method)(void *object, void *params);
+    void *target;
+    void (*method)(void *target, void *sender, void *params);
 } eosEvent;
 
 extern void eosMain(void);

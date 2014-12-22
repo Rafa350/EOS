@@ -20,13 +20,12 @@ typedef struct {
 
 
 static void onMessage(eosHFormsService hService, eosFormsMessage *message);
-
 static void initialize(eosHForm hForm);
-static void moveNext(eosHForm hForm);
-static void movePrev(eosHForm hForm);
-static void moveFirst(eosHForm hForm);
-static void moveLast(eosHForm hForm);
-static void select(eosHForm hForm);
+static void nextItem(eosHForm hForm);
+static void prevItem(eosHForm hForm);
+static void firstItem(eosHForm hForm);
+static void lastItem(eosHForm hForm);
+static void selectItem(eosHForm hForm);
 static void draw(eosHForm hForm, axHDisplayService hDisplay);
 
 
@@ -57,6 +56,7 @@ eosHForm eosFormsCreateMenu(
 
     eosFormParams formParams;
     memset(&formParams, 0, sizeof(formParams));
+    formParams.hParent = params->hParent;
     formParams.onMessage = (eosCallback) onMessage;
     formParams.privateData = data;
     return eosFormsCreateForm(hService, &formParams);
@@ -65,7 +65,7 @@ eosHForm eosFormsCreateMenu(
 
 /*************************************************************************
  *
- *       Procesa els missatges que arribin al formulari
+ *       Procesa els missatges que arribin al form
  *
  *       Funcio:
  *           void onMessage(
@@ -98,15 +98,15 @@ static void onMessage(
             break;
 
         case MSG_SELECTOR_DEC:
-            movePrev(hForm);
+            prevItem(hForm);
             break;
 
         case MSG_SELECTOR_INC:
-            moveNext(hForm);
+            nextItem(hForm);
             break;
 
         case MSG_SELECTOR_CLICK: {
-            select(hForm);
+            selectItem(hForm);
             break;
         }
     }
@@ -207,7 +207,7 @@ static void draw(
  *       Mou el selector al primer item del menu
  *
  *       Funcio:
- *           void moveFirst(
+ *           void firstItem(
  *               eosHForm hForm)
  *
  *       Entrada:
@@ -215,7 +215,7 @@ static void draw(
  *
  *************************************************************************/
 
-static void moveFirst(
+static void firstItem(
     eosHForm hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
@@ -234,7 +234,7 @@ static void moveFirst(
  *       Mou el selector a l'ultim item del menu
  *
  *       Funcio:
- *           void moveLast(
+ *           void lastItem(
  *               eosHForm hForm)
  *
  *       Entrada:
@@ -242,7 +242,7 @@ static void moveFirst(
  *
  *************************************************************************/
 
-static void moveLast(
+static void lastItem(
     eosHForm hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
@@ -261,7 +261,7 @@ static void moveLast(
  *       Mou el selector el seguent item del menu
  *
  *       Funcio:
- *           void moveNext(
+ *           void nextItem(
  *               eosHForm hForm)
  *
  *       Entrada:
@@ -269,7 +269,7 @@ static void moveLast(
  *
  *************************************************************************/
 
-static void moveNext(
+static void nextItem(
     eosHForm hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
@@ -289,7 +289,7 @@ static void moveNext(
  *       Mou el selector a l'anterior item del menu
  *
  *       Funcio:
- *           void movePrev(
+ *           void prevItem(
  *               eosHForm hForm)
  *
  *       Entrada:
@@ -297,7 +297,7 @@ static void moveNext(
  *
  *************************************************************************/
 
-static void movePrev(
+static void prevItem(
     eosHForm hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
@@ -317,7 +317,7 @@ static void movePrev(
  *       Selecciona el item actual
  *
  *       Funcio:
- *           void select(
+ *           void selectItem(
  *               eosHForm hForm)
  *
  *       Entrada:
@@ -328,7 +328,7 @@ static void movePrev(
  *
  *************************************************************************/
 
-static void select(
+static void selectItem(
     eosHForm hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);

@@ -12,6 +12,7 @@
 
 
 typedef struct {
+    eosHForm hParent;
     BYTE *resource;
 } eosMenuParams;
 
