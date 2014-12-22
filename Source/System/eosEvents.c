@@ -1,9 +1,8 @@
 #include "eos.h"
 
 
-void eosCallEvent(eosEvent *event, void *sender, void *params) {
+void eosThrowEvent(eosEvent *event, void *params) {
 
-    if (event->method != NULL)
-        event->method(event->target, sender, params);
-
+    if (event && event->method)
+        event->method(event->target, params);
 }

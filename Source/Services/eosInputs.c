@@ -19,9 +19,9 @@ typedef struct __eosInput {            // Dades d'una entrada
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
     bool inverted;                     // -Senyal invertida
-    eosCallback onPosEdge;             // -Event POSEDGE
-    eosCallback onNegEdge;             // -Event NEGEDGE
-    eosCallback onChange;              // -Event CHANGE
+    eosEvent onPosEdge;                // -Event POSEDGE
+    eosEvent onNegEdge;                // -Event NEGEDGE
+    eosEvent onChange;                 // -Event CHANGE
     void *context;                     // -Parametre dels events
     UINT32 pattern;                    // -Patro de filtratge
     bool state;                        // -Indicador ON/OFF
@@ -104,22 +104,23 @@ void eosInputServiceTask(
             while (hInput) {
 
                 if (hInput->posEdge) {
-                    if (hInput->onPosEdge) {
-                        hInput->onPosEdge(hInput, hInput->context);
+
+                    if (hInput->onPosEdge.method) {
+                        hInput->onPosEdge.method(hInput->onPosEdge.target, hInput);
                         hInput->posEdge = FALSE;
                     }
-                    else if (hInput->onChange) {
-                        hInput->onChange(hInput, hInput->context);
+                    else if (hInput->onChange.method) {
+                        hInput->onChange.method(hInput->onChange.target, hInput);
                         hInput->posEdge = FALSE;
                     }
                 }
                 if (hInput->negEdge) {
-                    if (hInput->onNegEdge) {
-                        hInput->onNegEdge(hInput, hInput->context);
+                    if (hInput->onNegEdge.method) {
+                        hInput->onNegEdge.method(hInput->onNegEdge.target, hInput);
                         hInput->negEdge = FALSE;
                     }
-                    else if (hInput->onChange) {
-                        hInput->onChange(hInput, hInput->context);
+                    else if (hInput->onChange.method) {
+                        hInput->onChange.method(hInput->onChange.target, hInput);
                         hInput->negEdge = FALSE;
                     }
                 }
@@ -207,7 +208,6 @@ eosHInput eosInputCreate(
     hInput->onPosEdge = params->onPosEdge;
     hInput->onNegEdge = params->onNegEdge;
     hInput->onChange = params->onChange;
-    hInput->context = params->context;
 
     bool intFlag = eosGetInterruptState();
     eosDisableInterrupts();

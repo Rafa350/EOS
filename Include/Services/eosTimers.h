@@ -27,8 +27,7 @@ typedef enum {                         // Tipus de temporitzador
 typedef struct {                       // Parametres de creacio d'un temporitzador
     unsigned timeout;                  // -Periode
     eosTimerType type;                 // -Tipus de temporitzador
-    eosCallback onTimeout;             // -Evemnt TIMEOUT
-    void *context;                     // -Parametre dels events
+    eosEvent onTimeout;                // -Event TIMEOUT
 } eosTimerParams;
 
 

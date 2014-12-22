@@ -35,15 +35,24 @@
 #define eos_ERROR_BUSY            (eos_ERROR_BASE + 5)
 #define eos_ERROR_USER            (eos_ERROR_BASE + 500)
 
+
 // Definicio de tipus base de la llibreria
 //
 typedef unsigned eosResult;       // Resultat d'una funcio
 typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
 
+
+// Control dels events
+//
+typedef void (*eosEventMethod)(void *target, void *params);
 typedef struct {
     void *target;
-    void (*method)(void *target, void *sender, void *params);
+    eosEventMethod method;
 } eosEvent;
+
+extern void eosThrowEvent(eosEvent *event, void *params);
+#define eosIsDefinedEvent(e)  ((e)->method)
+
 
 extern void eosMain(void);
 #define eosSetError(code, str)

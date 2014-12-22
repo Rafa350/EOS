@@ -56,13 +56,14 @@ typedef struct {
 
 typedef struct {                  // Parametres d'inicialitzacio del form
     eosHForm hParent;             // -Form pare
-    eosCallback onMessage;        // -Callback per gestionar els missatges
+    eosCallback onMessage;        // -Funcio per gestionar els missatges
     void *privateData;            // -Dades privades
 } eosFormParams;
 
-typedef struct {
+typedef struct {                  // Parametres d'inicialitzacio del servei
     axHDisplayService hDisplayService;
-    eosCallback onMessage;
+    eosCallback onMessage;        // -Funcio per procesar els missatges
+    void *globalData;             // -Dades globals a tots els forms
 } eosFormsServiceParams;
 
 

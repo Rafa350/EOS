@@ -22,10 +22,9 @@ typedef struct {                       // Parametres d'inicializacio de les entr
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
     bool inverted;                     // -Inverteix la entrada
-    eosCallback onPosEdge;             // -Event POS_EDGE
-    eosCallback onNegEdge;             // -EVENT NEG_EDGE
-    eosCallback onChange;              // -EVENT CHANGE
-    void *context;                     // -Parametres del event
+    eosEvent onPosEdge;                // -Event POS_EDGE
+    eosEvent onNegEdge;                // -EVENT NEG_EDGE
+    eosEvent onChange;                 // -EVENT CHANGE
 } eosInputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
