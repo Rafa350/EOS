@@ -23,12 +23,12 @@ typedef struct __eosOutputService {    // Dades del servei
 } OutputService;
 
 
-// Definicions de funcions locals
+// Funcions d'acces al hardware
 //
-static void portInitialize(eosHOutput hOutput);
-static bool portGet(eosHOutput hOutput);
-static void portSet(eosHOutput hOutput, bool state);
-static void portToggle(eosHOutput hOutput);
+static void halPortInitialize(eosHOutput hOutput);
+static bool halPortGet(eosHOutput hOutput);
+static void halPortSet(eosHOutput hOutput, bool state);
+static void halPortToggle(eosHOutput hOutput);
 
 #define MStoTICK(ms)    (ms)          // Converteix milisegons a ticks
 
@@ -119,14 +119,15 @@ void eosOutputServiceTick(
 
         eosHOutput hOutput = hService->hFirstOutput;
         while (hOutput) {
+
             if (hOutput->tickCount) {
                 hOutput->tickCount -= 1;
                 if (!hOutput->tickCount)
-                    portToggle(hOutput);
+                    halPortToggle(hOutput);
             }
+
             hOutput = hOutput->hNextOutput;
-        }
-        
+        }        
     }
 }
 
@@ -171,7 +172,7 @@ eosHOutput eosOutputCreate(
     if (intFlag)
         eosEnableInterrupts();
 
-    portInitialize(hOutput);
+    halPortInitialize(hOutput);
 
     return hOutput;
 }
@@ -215,7 +216,7 @@ void eosOutputDestroy(
 bool eosOutputGet(
     eosHOutput hOutput) {
 
-    return portGet(hOutput);
+    return halPortGet(hOutput);
 }
 
 
@@ -238,7 +239,7 @@ void eosOutputSet(
     eosHOutput hOutput,
     bool state) {
 
-    portSet(hOutput, state);
+    halPortSet(hOutput, state);
 }
 
 
@@ -258,7 +259,7 @@ void eosOutputSet(
 void eosOutputToggle(
     eosHOutput hOutput) {
 
-    portToggle(hOutput);
+   halPortToggle(hOutput);
 }
 
 
@@ -285,7 +286,7 @@ void eosOutputsPulse(
     eosDisableInterrupts();
 
     if (!hOutput->tickCount)
-        portToggle(hOutput);
+        halPortToggle(hOutput);
     hOutput->tickCount = MStoTICK(time);
 
     if (intFlag)
@@ -298,7 +299,7 @@ void eosOutputsPulse(
  *       Inicialitza el port de sortida
  *
  *       Funcio:
- *           void portInitialize(
+ *           void halPortInitialize(
  *               eosHOutput hOutput)
  *
  *       Entrada:
@@ -306,7 +307,7 @@ void eosOutputsPulse(
  *
  *************************************************************************/
 
-static void portInitialize(
+static void halPortInitialize(
     eosHOutput hOutput) {
 
     PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position, FALSE);
@@ -319,7 +320,7 @@ static void portInitialize(
  *       Obte l'estat del port de sortida
  *
  *       Funcio:
- *           bool portGet(
+ *           bool halPortGet(
  *               eosHOutput hOutput)
  *
  *       Entrada:
@@ -330,7 +331,7 @@ static void portInitialize(
  *
  **************************************************************************/
 
-static bool portGet(
+static bool halPortGet(
     eosHOutput hOutput) {
 
     bool p = PLIB_PORTS_PinGetLatched(PORTS_ID_0, hOutput->channel, hOutput->position);
@@ -343,7 +344,7 @@ static bool portGet(
  *       Asigna l'estat del port de sortida
  *
  *       Funcio:
- *           void portSet(
+ *           void halPortSet(
  *               eosHOutput hOutput,
  *               bool state)
  *
@@ -353,8 +354,9 @@ static bool portGet(
  *
  **************************************************************************/
 
-static void portSet(
-    eosHOutput hOutput, bool state) {
+static void halPortSet(
+    eosHOutput hOutput,
+    bool state) {
 
     PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position,
         hOutput->inverted ? !state : state);
@@ -366,7 +368,7 @@ static void portSet(
  *       Canvia l'estat del port d'entrada
  *
  *       Funcio:
- *           void portToggle(
+ *           void halPortToggle(
  *               eosHOutput hOutput)
  *
  *       Entrada:
@@ -374,7 +376,7 @@ static void portSet(
  *
  **************************************************************************/
 
-static void portToggle(
+static void halPortToggle(
     eosHOutput hOutput) {
 
     PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);

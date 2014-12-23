@@ -123,7 +123,7 @@ eosHI2CMasterService eosI2CMasterServiceInitialize(
     eosI2CServiceParams *params) {
 
     eosHI2CMasterService hService = allocService();
-    if (!hService)
+    if (hService == NULL)
         return NULL;
 
     hService->id = params->id;
@@ -305,7 +305,7 @@ eosHI2CTransaction eosI2CMasterStartTransaction(
         return NULL;
 
     eosHI2CTransaction hTransaction = allocTransaction();
-    if (!hTransaction)
+    if (hTransaction == NULL)
         return NULL;
 
     hTransaction->id = hService->id;

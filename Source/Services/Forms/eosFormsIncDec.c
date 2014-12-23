@@ -79,14 +79,6 @@ static void onMessage(
         case MSG_INITIALIZE:
             break;
 
-        case MSG_ACTIVATE:
-            eosFormsRefresh(hForm);
-            break;
-
-        case MSG_PAINT:
-            draw(hForm, message->msgPaint.hDisplayService);
-            break;
-
         case MSG_SELECTOR_INC:
             valueInc(hForm);
             break;

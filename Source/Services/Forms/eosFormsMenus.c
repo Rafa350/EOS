@@ -4,29 +4,31 @@
 
 #define MAX_LEVELS  10
 
-typedef struct {
-    unsigned offset;
-    unsigned numItems;
-    unsigned firstItem;
-    unsigned currentItem;
+typedef struct {                       // Informacio d'un menu
+    unsigned offset;                   // -Offset al menu
+    unsigned numItems;                 // -Numero de items
+    unsigned firstItem;                // -Primer item a mostrar
+    unsigned currentItem;              // -Item actual
 } MenuInfo;
 
-typedef struct {
-    BYTE *resource;
-    unsigned level;
-    MenuInfo info[MAX_LEVELS];
-    unsigned showItems;
+typedef struct {                       // Dades privades
+    BYTE *resource;                    // -Recurs del menu
+    unsigned level;                    // -Nivell de submenus
+    MenuInfo info[MAX_LEVELS];         // -Pila d'informacio del menu
+    unsigned showItems;                // -Numero d'items a mostrar
 } PrivateData;
 
 
 static void onMessage(eosHFormsService hService, eosFormsMessage *message);
-static void initialize(eosHForm hForm);
+
+static void onActivate(eosHForm hForm, eosHForm hInactiveForm);
+static void onPaint(eosHForm hForm, axHDisplayService hDisplayService);
+
 static void nextItem(eosHForm hForm);
 static void prevItem(eosHForm hForm);
 static void firstItem(eosHForm hForm);
 static void lastItem(eosHForm hForm);
 static void selectItem(eosHForm hForm);
-static void draw(eosHForm hForm, axHDisplayService hDisplay);
 
 
 /*************************************************************************
@@ -53,13 +55,25 @@ eosHForm eosFormsCreateMenu(
 
     PrivateData *data = (PrivateData*) eosAlloc(sizeof(PrivateData));
     data->resource = params->resource;
+    data->showItems = 5;
+    data->level = 0;
+    data->info[0].offset = 0;
+    data->info[0].numItems = data->resource[0];
+    data->info[0].firstItem = 0;
+    data->info[0].currentItem = 0;
 
     eosFormParams formParams;
     memset(&formParams, 0, sizeof(formParams));
     formParams.hParent = params->hParent;
     formParams.onMessage = (eosCallback) onMessage;
     formParams.privateData = data;
-    return eosFormsCreateForm(hService, &formParams);
+    
+    eosHForm hForm = eosFormsCreateForm(hService, &formParams);
+
+    eosFormsSetOnActivate(hForm, hForm, (eosEventMethod) onActivate);
+    eosFormsSetOnPaint(hForm, hForm, (eosEventMethod) onPaint);
+
+    return hForm;
 }
 
 
@@ -85,18 +99,6 @@ static void onMessage(
     eosHForm hForm = message->hForm;
 
     switch (message->id) {
-        case MSG_INITIALIZE:
-            initialize(hForm);
-            break;
-
-        case MSG_ACTIVATE:
-            eosFormsRefresh(hForm);
-            break;
-
-        case MSG_PAINT:
-            draw(hForm, message->msgPaint.hDisplayService);
-            break;
-
         case MSG_SELECTOR_DEC:
             prevItem(hForm);
             break;
@@ -115,37 +117,33 @@ static void onMessage(
 
 /*************************************************************************
  *
- *       Inicialitza el form
+ *       Procesa l'event OnActivate
  *
  *       Funcio:
- *           void initialize(
- *               eosHForm hForm)
+ *           void onActivate(
+ *               eosHForm hForm,
+ *               eosHForm hInactiveForm)
  *
  *       Entrada:
- *           hForm: Handler del form
+ *           hForm        : El handler del form
+ *           hInactiveForm: El form que ha estat desactivat
  *
  *************************************************************************/
 
-static void initialize(
-    eosHForm hForm) {
+static void onActivate(
+    eosHForm hForm,
+    eosHForm hInactiveForm) {
 
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
-
-    data->showItems = 5;
-    data->level = 0;
-    data->info[0].offset = 0;
-    data->info[0].numItems = data->resource[0];
-    data->info[0].firstItem = 0;
-    data->info[0].currentItem = 0;
+    eosFormsRefresh(hForm);
 }
 
 
 /*************************************************************************
  *
- *       Presenta el menu en el display
+ *       Procesa l'event OnPaint
  *
  *       Funcio:
- *           void draw(
+ *           void onPaint(
  *               eosHForm hForm,
  *               axHDisplayService hDisplay)
  *
@@ -155,7 +153,7 @@ static void initialize(
  *
  *************************************************************************/
 
-static void draw(
+static void onPaint(
     eosHForm hForm,
     axHDisplayService hDisplay) {
 

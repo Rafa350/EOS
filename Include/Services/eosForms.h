@@ -11,9 +11,6 @@
 
 #define MSG_NULL               0
 #define MSG_INITIALIZE         1
-#define MSG_PAINT              2
-#define MSG_ACTIVATE           3
-#define MSG_DEACTIVATE         4
 
 #define MSG_SELECTOR_INC     100
 #define MSG_SELECTOR_DEC     101
@@ -70,18 +67,22 @@ typedef struct {                  // Parametres d'inicialitzacio del servei
 extern eosHFormsService eosFormsServiceInitialize(eosFormsServiceParams *params);
 extern bool eosFormServiceIsReady(eosHFormsService hService);
 extern void eosFormsServiceTask(eosHFormsService hForms);
-
 extern void eosFormsSendMessage(eosHFormsService hService, eosFormsMessage *message);
 extern bool eosFormsGetMessage(eosHFormsService hService, eosFormsMessage *message);
 
 extern eosHForm eosFormsCreateForm(eosHFormsService hService, eosFormParams *params);
-extern eosHForm eosFormsGetActiveForm(eosHFormsService hService);
-extern eosHForm eosFormsSetActiveForm(eosHForm hForm);
 extern void eosFormsRefreshForm(eosHForm hForm);
 
+extern eosHForm eosFormsGetActiveForm(eosHFormsService hService);
 extern void *eosFormsGetPrivateData(eosHForm hForm);
 extern eosHForm eosFormsGetParent(eosHForm hForm);
 extern eosHFormsService eosFormsGetService(eosHForm hForm);
+
+extern eosHForm eosFormsSetActiveForm(eosHForm hForm);
+
+extern void eosFormsSetOnActivate(eosHForm hForm, eosEventTarget target, eosEventMethod method);
+extern void eosFormsSetOnDeactivate(eosHForm hForm, eosEventTarget target, eosEventMethod method);
+extern void eosFormsSetOnPaint(eosHForm hForm, eosEventTarget target, eosEventMethod method);
 
 
 #endif

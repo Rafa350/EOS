@@ -45,13 +45,16 @@ typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
 // Control dels events
 //
 typedef void (*eosEventMethod)(void *target, void *params);
+typedef void *eosEventTarget;
 typedef struct {
-    void *target;
+    eosEventTarget target;
     eosEventMethod method;
 } eosEvent;
 
 extern void eosThrowEvent(eosEvent *event, void *params);
-#define eosIsDefinedEvent(e)  ((e)->method)
+#define eosEventDefine(e, t, m)  (e).method = m; (e).target = t
+#define eosEventIsDefined(e)  ((e).method != NULL)
+#define eosEventClear(e)      (e).method = NULL
 
 
 extern void eosMain(void);

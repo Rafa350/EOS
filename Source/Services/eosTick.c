@@ -40,13 +40,13 @@ typedef struct __eosTickService {      // Dades internes del servei
 } TickService;
 
 
-// Definicio de functions locals
+// Funcions d'acces al hardware
 //
-static void timerInitialize(void);
-static void timerStart(void);
-static void timerStop(void);
-static bool disableInterrupt(void);
-static void enableInterrupt(void);
+static void halTimerInitialize(void);
+static void halTimerStart(void);
+static void halTimerStop(void);
+static bool halDisableInterrupt(void);
+static void halEnableInterrupt(void);
 
 
 /*************************************************************************
@@ -69,13 +69,14 @@ eosHTickService eosTickServiceInitialize(
     eosTickServiceParams *params) {
 
     eosHTickService hService = (eosHTickService) eosAlloc(sizeof(TickService));
-    if (hService) {
+    if (hService == NULL)
+        return NULL;
 
-        hService->state = serviceInitializing;
-        hService->firstAttach = NULL;
+    hService->state = serviceInitializing;
+    hService->firstAttach = NULL;
 
-        timerInitialize();
-    }
+    halTimerInitialize();
+
     return hService;
 }
 
@@ -98,7 +99,7 @@ void eosTickServiceTask(
 
     switch (hService->state) {
         case serviceInitializing:
-            timerStart();
+            halTimerStart();
             hService->state = serviceRunning;
             break;
 
@@ -138,7 +139,7 @@ void eosTickAttach(
 
         // Entra en la seccio critica
         //
-        BOOL intFlag = disableInterrupt();
+        BOOL intFlag = halDisableInterrupt();
 
         attach->hService = hService;
         attach->nextAttach = hService->firstAttach;
@@ -147,7 +148,7 @@ void eosTickAttach(
         // Surt de la seccio critica
         //
         if (intFlag)
-            enableInterrupt();
+            halEnableInterrupt();
     }
 }
 
@@ -157,11 +158,11 @@ void eosTickAttach(
  *       Inicialitza el temporitzador
  *
  *       Funcio:
- *           void timerInitialize(void)
+ *           void halTimerInitialize(void)
  *
  *************************************************************************/
 
-static void timerInitialize(void) {
+static void halTimerInitialize(void) {
 
     PLIB_TMR_Stop(TICK_TIMER_ID);
 
@@ -185,11 +186,11 @@ static void timerInitialize(void) {
  *       Activa el temporitzador, i comença a generar interrupcions
  *
  *       Funcio:
- *           void timerStart(void)
+ *           void halTimerStart(void)
  *
  *************************************************************************/
 
-static void timerStart(void) {
+static void halTimerStart(void) {
 
     PLIB_INT_SourceEnable(INT_ID_0, TICK_TIMER_INT_SOURCE);
     PLIB_TMR_Start(TICK_TIMER_ID);
@@ -201,11 +202,11 @@ static void timerStart(void) {
  *       Descativa el temporitzador
  *
  *       Funcio:
- *           void timerStop(void)
+ *           void halTimerStop(void)
  *
  *************************************************************************/
 
-static void timerStop(void) {
+static void halTimerStop(void) {
 
     PLIB_TMR_Stop(TICK_TIMER_ID);
     PLIB_INT_SourceDisable(INT_ID_0, TICK_TIMER_INT_SOURCE);
@@ -239,14 +240,14 @@ void __ISR(TICK_TIMER_CORE_VECTOR, IPL2SOFT) __ISR_Entry(TICK_TIMER_CORE_VECTOR)
  *       Desactiva la interrupcio
  *
  *       Funcio:
- *           bool disableInterrupt(void)
+ *           bool halDisableInterrupt(void)
  *
  *       Retorn:
  *           Estat anterior de la interrupcio
  *
  *************************************************************************/
 
-static bool disableInterrupt(void) {
+static bool halDisableInterrupt(void) {
     
     bool intFlag = PLIB_INT_SourceIsEnabled(INT_ID_0, TICK_TIMER_INT_SOURCE);
     PLIB_INT_SourceDisable(INT_ID_0, TICK_TIMER_INT_SOURCE);
@@ -259,11 +260,11 @@ static bool disableInterrupt(void) {
  *       Activa la interrupcio
  *
  *       Funcio:
- *           void enableInterrupt(void)
+ *           void halEnableInterrupt(void)
  *
  *************************************************************************/
 
-static void enableInterrupt(void) {
+static void halEnableInterrupt(void) {
 
     PLIB_INT_SourceEnable(INT_ID_0, TICK_TIMER_INT_SOURCE);
 }
