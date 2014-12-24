@@ -11,9 +11,9 @@ typedef enum {                         // Codis d'operacio
     opCode_Remove                      // -Elimina un temporitzador
 } OpCodes;
 
-typedef enum {                         // Estat del servei
-    serviceInitializing,               // -Inicialitzant
-    serviceRunning                     // -Executant
+typedef enum {                              // Estat del servei
+    serviceInitializing,                    // -Inicialitzant
+    serviceRunning                          // -Executant
 } ServiceStates;
 
 // Indicadors del temporitzador
@@ -31,11 +31,11 @@ typedef struct {                       // Commanda
 
 typedef struct __eosTimer {            // Dades internes del temporitzador
     bool inUse;                        // -Indica si esta en us en el pool
-    eosHTimerService hService;         // -Servei asociat
+    eosHTimerService hService;         // -Handler del servei
     unsigned flags;                    // -Indicadors
     unsigned timeout;                  // -Temps en ms
     unsigned counter;                  // -Contador de temps en ms
-    eosEvent onTimeout;                // -Event TIMEOUT
+    eosTimerCallback onTimeout;        // -Notifica timeout
     eosHTimer hNextTimer;              // -Seguent temporitzadorde la llista
 } Timer;
 
@@ -162,8 +162,8 @@ void eosTimerServiceTask(
 
                             // Crida a la funcio callback
                             //
-                            if (hTimer->onTimeout.method)
-                                hTimer->onTimeout.method(hTimer->onTimeout.target, hTimer);
+                            if (hTimer->onTimeout)
+                                hTimer->onTimeout(hTimer);
 
                             // Si es ciclc, reicicia el contador
                             //

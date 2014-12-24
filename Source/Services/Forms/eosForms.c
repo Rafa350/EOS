@@ -12,10 +12,7 @@ typedef struct __eosForm {             // Dades del formulari
     eosHFormsService hService;         // -Handler del servei
     eosHForm hNextForm;                // -Seguent form de la llista
     eosHForm hParent;                  // -Handler del form pare
-    eosCallback onMessage;             // -Callback de cada missatge
-    eosEvent onActivate;               // -Event OnActivate
-    eosEvent onDeactivate;             // -Event OnDeactivate
-    eosEvent onPaint;                  // -Event OnPaint
+    eosFormsOnMessageCallback onMessage;    // -Callback de cada missatge
     bool needRedraw;                   // -Indica si cal redibuixar
     void *privateData;                 // -Dades privades del formulari
 } Form;
@@ -23,11 +20,14 @@ typedef struct __eosForm {             // Dades del formulari
 typedef struct __eosFormsService {     // Dades del servei
     ServiceStates state;               // -Estat del servei
     axHDisplayService hDisplayService; // -Servei de display
-    eosCallback onMessage;             // -Calback en cada missatge
+    eosFormsOnMessageCallback onMessage;    // -Calback en cada missatge
     eosHQueue hQueue;                  // -Cua de missatges
     eosHForm hActiveForm;              // -Formulari actiu
     eosHForm hFirstForm;               // -Primer formulari de la llista
 } FormsService;
+
+
+static bool eosFormsGetMessage(eosHFormsService hService, eosFormsMessage *message);
 
 
 /*************************************************************************
@@ -115,8 +115,11 @@ void eosFormsServiceTask(
             eosHForm hForm = hService->hFirstForm;
             while (hForm) {
                 if (hForm->needRedraw) {
-                    if (eosEventIsDefined(hForm->onPaint))
-                        hForm->onPaint.method(hForm->onPaint.target, hService->hDisplayService);
+                    eosFormsMessage message;
+                    message.id = MSG_PAINT;
+                    message.hForm = hForm;
+                    message.msgPaint.hDisplayService = hService->hDisplayService;
+                    eosFormsSendMessage(hService, &message);
                     hForm->needRedraw = false;
                 }
                 hForm = hForm->hNextForm;
@@ -150,102 +153,28 @@ eosHForm eosFormsCreateForm(
     eosHFormsService hService,
     eosFormParams *params) {
 
-    eosHForm hForm = eosAlloc(sizeof(Form));
+    eosHForm hForm = eosAlloc(sizeof(Form) + params->privateDataSize);
     if (hForm == NULL)
         return NULL;
 
     hForm->hParent = params->hParent;
-    hForm->privateData = params->privateData;
+    if (params->privateDataSize > 0)
+        hForm->privateData = (BYTE*) hForm + sizeof(Form);
+    else
+        hForm->privateData = NULL;
     hForm->onMessage = params->onMessage;
-    eosEventClear(hForm->onActivate);
-    eosEventClear(hForm->onDeactivate);
-    eosEventClear(hForm->onPaint);
-
     hForm->hNextForm = hService->hFirstForm;
     hForm->hService = hService;
     hService->hFirstForm = hForm;
-    
+
     eosFormsMessage message;
     message.id = MSG_INITIALIZE;
     message.hForm = hForm;
+    message.msgInitialize.privateParams = params->privateParams;
+    message.msgInitialize.privateData = hForm->privateData;
     eosFormsSendMessage(hService, &message);
 
     return hForm;
-}
-
-
-/*************************************************************************
- *
- *       Asigna el event OnActivate
- *
- *       Funcio:
- *           void eosFormsSetOnActivate(
- *               eosHForm hForm,
- *               eosEventTarget target,
- *               eosEventMethod method)
- *
- *       Entrada:
- *           hForm   : Handler del form
- *           hTarget : Handler del form desti
- *
- *************************************************************************/
-
-void eosFormsSetOnActivate(
-    eosHForm hForm,
-    eosEventTarget target,
-    eosEventMethod method) {
-
-    eosEventDefine(hForm->onActivate, target, method);
-}
-
-
-/*************************************************************************
- *
- *       Asigna el event OnDeactivate
- *
- *       Funcio:
- *           void eosFormsSetOnDeactivate(
- *               eosHForm hForm,
- *               eosEventTarget target,
- *               eosEventMethod method)
- *
- *       Entrada:
- *           hForm   : Handler del form
- *           hTarget : Handler del form desti
- *
- *************************************************************************/
-
-void eosFormsSetOnDeactivate(
-    eosHForm hForm,
-    eosEventTarget target,
-    eosEventMethod method) {
-
-    eosEventDefine(hForm->onDeactivate, target, method);
-}
-
-
-/*************************************************************************
- *
- *       Asigna el event OnPaint
- *
- *       Funcio:
- *           void eosFormsSetOnPaint(
- *               eosHForm hForm,
- *               eosEventTarget target,
- *               eosEventMethod method)
- *
- *       Entrada:
- *           hForm   : Handler del form
- *           hTarget : Handler del form desti
- *
- *************************************************************************/
-
-void eosFormsSetOnPaint(
-    eosHForm hForm,
-    eosEventTarget target,
-    eosEventMethod method) {
-
-    eosEventDefine(hForm->onPaint, target, method);
 }
 
 
@@ -283,30 +212,31 @@ eosHForm eosFormsGetActiveForm(
  *       Entrada:
  *           hForm: El formulari a activat
  *
- *       Retorn:
- *           El anterior formulari actiu
- *
  *************************************************************************/
 
-eosHForm eosFormsSetActiveForm(
+void eosFormsSetActiveForm(
     eosHForm hForm) {
     
     eosHFormsService hService = hForm->hService;
 
     eosHForm hInactiveForm = hService->hActiveForm;
     if (hInactiveForm != NULL) {
-        if (eosEventIsDefined(hInactiveForm->onDeactivate))
-            hInactiveForm->onDeactivate.method(hInactiveForm->onDeactivate.target, hForm);
+        eosFormsMessage message;
+        message.id = MSG_DEACTIVATE;
+        message.hForm = hInactiveForm;
+        message.msgDeactivate.hNewActive = hForm;
+        eosFormsSendMessage(hService, &message);
     }
     
     hService->hActiveForm = hForm;
 
     if (hForm != NULL) {
-        if (eosEventIsDefined(hForm->onActivate))
-            hForm->onActivate.method(hForm->onActivate.target, hInactiveForm);
+        eosFormsMessage message;
+        message.id = MSG_ACTIVATE;
+        message.hForm = hForm;
+        message.msgActivate.hOldActive = hInactiveForm;
+        eosFormsSendMessage(hService, &message);
     }
-    
-    return hInactiveForm;
 }
 
 
@@ -372,6 +302,29 @@ eosHFormsService eosFormsGetService(
  *       Envia un missatge a la cua
  *
  *       Funcio:
+ *           void eosFormsPostMessage(
+ *              eosHFormsService hService,
+ *              eosFormsMessage *message)
+ *
+ *       Entrada:
+ *           hService: El handler del servei
+ *           message : El missatge
+ *
+ *************************************************************************/
+
+void eosFormsPostMessage(
+    eosHFormsService hService,
+    eosFormsMessage *message) {
+
+    eosQueuePut(hService->hQueue, message);
+}
+
+
+/*************************************************************************
+ *
+ *       Envia un missatge directament al form
+ *
+ *       Funcio:
  *           void eosFormsSendMessage(
  *              eosHFormsService hService,
  *              eosFormsMessage *message)
@@ -386,7 +339,7 @@ void eosFormsSendMessage(
     eosHFormsService hService,
     eosFormsMessage *message) {
 
-    eosQueuePut(hService->hQueue, message);
+    message->hForm->onMessage(hService, message);
 }
 
 

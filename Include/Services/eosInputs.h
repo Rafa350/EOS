@@ -18,13 +18,15 @@
 typedef struct __eosInput *eosHInput;
 typedef struct __eosInputService *eosHInputService;
 
+typedef void (*eosInputCallback)(eosHInput hInput);
+
 typedef struct {                       // Parametres d'inicializacio de les entrades
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
     bool inverted;                     // -Inverteix la entrada
-    eosEvent onPosEdge;                // -Event POS_EDGE
-    eosEvent onNegEdge;                // -EVENT NEG_EDGE
-    eosEvent onChange;                 // -EVENT CHANGE
+    eosInputCallback onPosEdge;        // -Notifica flanc positiu
+    eosInputCallback onNegEdge;        // -Notifica flanc negatiu
+    eosInputCallback onChange;         // -Notifica canvi
 } eosInputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei

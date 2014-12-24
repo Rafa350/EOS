@@ -12,10 +12,12 @@ typedef struct {
 
 
 static void onMessage(eosHFormsService hService, eosFormsMessage *message);
-
-static void valueInc(eosHForm hForm);
-static void valueDec(eosHForm hForm);
-static void draw(eosHForm hForm, axHDisplayService hDisplay);
+static void onMsgActivate(eosFormsMessage *message);
+static void onMsgInitialize(eosFormsMessage *message);
+static void onMsgSelectorInc(eosFormsMessage *message);
+static void onMsgSelectorDec(eosFormsMessage *message);
+static void onMsgSelectorClick(eosFormsMessage *message);
+static void onMsgPaint(eosFormsMessage *message);
 
 
 /*************************************************************************
@@ -40,16 +42,12 @@ eosHForm eosFormsCreateIncDec(
     eosHFormsService hService,
     eosIncDecParams *params) {
 
-    PrivateData *data = (PrivateData*) eosAlloc(sizeof(PrivateData));
-    data->minValue = 0;
-    data->maxValue = 99999;
-    data->value = 0;
-    data->delta = 1;
-
     eosFormParams formParams;
     memset(&formParams, 0, sizeof(formParams));
-    formParams.onMessage = (eosCallback) onMessage;
-    formParams.privateData = data;
+    formParams.privateParams = params;
+    formParams.privateDataSize = sizeof(PrivateData);
+    formParams.onMessage = onMessage;
+    
     return eosFormsCreateForm(hService, &formParams);
 }
 
@@ -73,27 +71,73 @@ static void onMessage(
     eosHFormsService hService,
     eosFormsMessage *message) {
 
-    eosHForm hForm = message->hForm;
-
     switch (message->id) {
         case MSG_INITIALIZE:
+            onMsgInitialize(message);
             break;
 
-        case MSG_SELECTOR_INC:
-            valueInc(hForm);
+        case MSG_ACTIVATE:
+            onMsgActivate(message);
             break;
 
-        case MSG_SELECTOR_DEC:
-            valueDec(hForm);
+        case MSG_PAINT:
+            onMsgPaint(message);
+            break;
+
+        case MSG_SELECTOR:
+            switch (message->msgSelector.event) {
+                case EV_SELECTOR_INC:
+                    onMsgSelectorInc(message);
+                    break;
+
+                case EV_SELECTOR_DEC:
+                    onMsgSelectorDec(message);
+                    break;
+
+                case EV_SELECTOR_CLICK:
+                    break;
+            }
             break;
     }
 }
 
 
-static void draw(
-    eosHForm hForm,
-    axHDisplayService hDisplay) {
+/*************************************************************************
+ *
+ *       Procesa el missatge MSG_ACTIVATE
+ *
+ *       Funcio:
+ *           void onMsgActivate(
+ *               eosFormsMessage *message)
+ *
+ *       Entrada:
+ *           message: El missatge a procesar
+ *
+ *************************************************************************/
 
+static void onMsgActivate(
+    eosFormsMessage *message) {
+
+    eosFormsRefresh(message->hForm);
+}
+
+
+static void onMsgInitialize(
+    eosFormsMessage *message) {
+
+    PrivateData *data = eosFormsGetPrivateData(message->hForm);
+    data->minValue = 0;
+    data->maxValue = 99999;
+    data->value = 0;
+    data->delta = 1;
+}
+
+
+static void onMsgPaint(
+    eosFormsMessage *message) {
+
+    eosHForm hForm = message->hForm;
+    axHDisplayService hDisplay = message->msgPaint.hDisplayService;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
     if (axDisplayBeginCommand(hDisplay)) {
@@ -110,25 +154,26 @@ static void draw(
 
 }
 
-static void valueInc(
-    eosHForm hForm) {
 
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+static void onMsgSelectorInc(
+    eosFormsMessage *message) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
 
     if (data->value + data->delta < data->maxValue) {
         data->value += data->delta;
-        eosFormsRefresh(hForm);
+        eosFormsRefresh(message->hForm);
     }
 }
 
 
-static void valueDec(
-    eosHForm hForm) {
+static void onMsgSelectorDec(
+    eosFormsMessage *message) {
 
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
 
     if (data->value - data->delta > data->minValue) {
         data->value -= data->delta;
-        eosFormsRefresh(hForm);
+        eosFormsRefresh(message->hForm);
     }
 }

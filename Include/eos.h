@@ -42,21 +42,6 @@ typedef unsigned eosResult;       // Resultat d'una funcio
 typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
 
 
-// Control dels events
-//
-typedef void (*eosEventMethod)(void *target, void *params);
-typedef void *eosEventTarget;
-typedef struct {
-    eosEventTarget target;
-    eosEventMethod method;
-} eosEvent;
-
-extern void eosThrowEvent(eosEvent *event, void *params);
-#define eosEventDefine(e, t, m)  (e).method = m; (e).target = t
-#define eosEventIsDefined(e)  ((e).method != NULL)
-#define eosEventClear(e)      (e).method = NULL
-
-
 extern void eosMain(void);
 #define eosSetError(code, str)
 

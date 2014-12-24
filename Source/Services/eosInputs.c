@@ -19,9 +19,9 @@ typedef struct __eosInput {            // Dades d'una entrada
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
     bool inverted;                     // -Senyal invertida
-    eosEvent onPosEdge;                // -Event POSEDGE
-    eosEvent onNegEdge;                // -Event NEGEDGE
-    eosEvent onChange;                 // -Event CHANGE
+    eosInputCallback onPosEdge;        // -Event POSEDGE
+    eosInputCallback onNegEdge;        // -Event NEGEDGE
+    eosInputCallback onChange;         // -Event CHANGE
     void *context;                     // -Parametre dels events
     UINT32 pattern;                    // -Patro de filtratge
     bool state;                        // -Indicador ON/OFF
@@ -106,23 +106,23 @@ void eosInputServiceTask(
 
                 if (hInput->posEdge) {
 
-                    if (eosEventIsDefined(hInput->onPosEdge)) {
-                        hInput->onPosEdge.method(hInput->onPosEdge.target, hInput);
+                    if (hInput->onPosEdge != NULL) {
+                        hInput->onPosEdge(hInput);
                         hInput->posEdge = FALSE;
                     }
-                    else if (eosEventIsDefined(hInput->onChange)) {
-                        hInput->onChange.method(hInput->onChange.target, hInput);
+                    else if (hInput->onChange != NULL) {
+                        hInput->onChange(hInput);
                         hInput->posEdge = FALSE;
                     }
                 }
 
                 if (hInput->negEdge) {
-                    if (eosEventIsDefined(hInput->onNegEdge)) {
-                        hInput->onNegEdge.method(hInput->onNegEdge.target, hInput);
+                    if (hInput->onNegEdge != NULL) {
+                        hInput->onNegEdge(hInput);
                         hInput->negEdge = FALSE;
                     }
-                    else if (eosEventIsDefined(hInput->onChange)) {
-                        hInput->onChange.method(hInput->onChange.target, hInput);
+                    else if (hInput->onChange != NULL) {
+                        hInput->onChange(hInput);
                         hInput->negEdge = FALSE;
                     }
                 }

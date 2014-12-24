@@ -11,24 +11,24 @@ typedef struct {                       // Informacio d'un menu
     unsigned currentItem;              // -Item actual
 } MenuInfo;
 
+typedef void (*eosMenuCallback)(eosHForm hForm);
+
 typedef struct {                       // Dades privades
     BYTE *resource;                    // -Recurs del menu
     unsigned level;                    // -Nivell de submenus
     MenuInfo info[MAX_LEVELS];         // -Pila d'informacio del menu
     unsigned showItems;                // -Numero d'items a mostrar
+    eosMenuCallback onMenuFormatItem;  // -Event OnMenuFormatItem
 } PrivateData;
 
 
 static void onMessage(eosHFormsService hService, eosFormsMessage *message);
-
-static void onActivate(eosHForm hForm, eosHForm hInactiveForm);
-static void onPaint(eosHForm hForm, axHDisplayService hDisplayService);
-
-static void nextItem(eosHForm hForm);
-static void prevItem(eosHForm hForm);
-static void firstItem(eosHForm hForm);
-static void lastItem(eosHForm hForm);
-static void selectItem(eosHForm hForm);
+static void onMsgInitialize(eosFormsMessage *message);
+static void onMsgPaint(eosFormsMessage *message);
+static void onMsgActivate(eosFormsMessage *message);
+static void onMsgSelectorInc(eosFormsMessage *message);
+static void onMsgSelectorDec(eosFormsMessage *message);
+static void onMsgSelectorClick(eosFormsMessage *message);
 
 
 /*************************************************************************
@@ -53,27 +53,14 @@ eosHForm eosFormsCreateMenu(
     eosHFormsService hService,
     eosMenuParams *params) {
 
-    PrivateData *data = (PrivateData*) eosAlloc(sizeof(PrivateData));
-    data->resource = params->resource;
-    data->showItems = 5;
-    data->level = 0;
-    data->info[0].offset = 0;
-    data->info[0].numItems = data->resource[0];
-    data->info[0].firstItem = 0;
-    data->info[0].currentItem = 0;
-
     eosFormParams formParams;
     memset(&formParams, 0, sizeof(formParams));
     formParams.hParent = params->hParent;
-    formParams.onMessage = (eosCallback) onMessage;
-    formParams.privateData = data;
+    formParams.onMessage = onMessage;
+    formParams.privateParams = params;
+    formParams.privateDataSize = sizeof(PrivateData);
     
-    eosHForm hForm = eosFormsCreateForm(hService, &formParams);
-
-    eosFormsSetOnActivate(hForm, hForm, (eosEventMethod) onActivate);
-    eosFormsSetOnPaint(hForm, hForm, (eosEventMethod) onPaint);
-
-    return hForm;
+    return eosFormsCreateForm(hService, &formParams);
 }
 
 
@@ -96,67 +83,107 @@ static void onMessage(
     eosHFormsService hService,
     eosFormsMessage *message) {
 
-    eosHForm hForm = message->hForm;
-
     switch (message->id) {
-        case MSG_SELECTOR_DEC:
-            prevItem(hForm);
+        case MSG_INITIALIZE:
+            onMsgInitialize(message);
             break;
 
-        case MSG_SELECTOR_INC:
-            nextItem(hForm);
+        case MSG_ACTIVATE:
+            onMsgActivate(message);
             break;
 
-        case MSG_SELECTOR_CLICK: {
-            selectItem(hForm);
+        case MSG_PAINT:
+            onMsgPaint(message);
             break;
-        }
+            
+        case MSG_KEYBOARD:
+            break;
+
+        case MSG_SELECTOR:
+            switch (message->msgSelector.event) {
+                case EV_SELECTOR_DEC:
+                    onMsgSelectorDec(message);
+                    break;
+
+                case EV_SELECTOR_INC:
+                    onMsgSelectorInc(message);
+                    break;
+
+                case EV_SELECTOR_CLICK: {
+                    onMsgSelectorClick(message);
+                    break;
+                }
+            }
+            break;
     }
 }
 
 
 /*************************************************************************
  *
- *       Procesa l'event OnActivate
+ *       Procesa el missatge MSG_INITIALIZE
  *
  *       Funcio:
- *           void onActivate(
- *               eosHForm hForm,
- *               eosHForm hInactiveForm)
+ *           void onMsgInitialize(
+ *               eosFormsMessage *message)
  *
  *       Entrada:
- *           hForm        : El handler del form
- *           hInactiveForm: El form que ha estat desactivat
+ *           message: El missatge a procesar
  *
  *************************************************************************/
 
-static void onActivate(
-    eosHForm hForm,
-    eosHForm hInactiveForm) {
+static void onMsgInitialize(
+    eosFormsMessage *message) {
 
-    eosFormsRefresh(hForm);
+    PrivateData *data = (PrivateData*) message->msgInitialize.privateData;
+    data->resource = ((eosMenuParams*) message->msgInitialize.privateParams)->resource;
+    data->showItems = 5;
+    data->level = 0;
+    data->info[0].offset = 0;
+    data->info[0].numItems = data->resource[0];
+    data->info[0].firstItem = 0;
+    data->info[0].currentItem = 0;
 }
 
 
 /*************************************************************************
  *
- *       Procesa l'event OnPaint
+ *       Procesa el missatge MSG_ACTIVATE
  *
  *       Funcio:
- *           void onPaint(
- *               eosHForm hForm,
- *               axHDisplayService hDisplay)
+ *           void onMsgActivate(
+ *               eosFormsMessage *message)
  *
  *       Entrada:
- *           hForm   : Handler del form
- *           hDisplay: Handler del display
+ *           message: El missatge a procesar
  *
  *************************************************************************/
 
-static void onPaint(
-    eosHForm hForm,
-    axHDisplayService hDisplay) {
+static void onMsgActivate(
+    eosFormsMessage *message) {
 
+    eosFormsRefresh(message->hForm);
+}
+
+
+/*************************************************************************
+ *
+ *       Procesa el missatge MSG_PAINT
+ *
+ *       Funcio:
+ *           void onMsgPaint(
+ *               eosFormsMessage *message)
+ *
+ *       Entrada:
+ *           message: El missatge a procesar
+ *
+ *************************************************************************/
+
+static void onMsgPaint(
+    eosFormsMessage  *message) {
+
+    eosHForm hForm = message->hForm;
+    axHDisplayService hDisplay = message->msgPaint.hDisplayService;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
     if (axDisplayBeginCommand(hDisplay)) {
@@ -182,6 +209,10 @@ static void onPaint(
 
             unsigned itemTitleLen = resource[itemOffset + 1];
             char *itemTitle = &resource[itemOffset + 2];
+
+            if (data->onMenuFormatItem) {
+
+            }
 
             if (i == info->currentItem) {
                 axDisplayAddCommandFillRectangle(hDisplay, 0, k, 127, k + 8);
@@ -213,7 +244,7 @@ static void onPaint(
  *
  *************************************************************************/
 
-static void firstItem(
+/*static void firstItem(
     eosHForm hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
@@ -224,7 +255,7 @@ static void firstItem(
         info->firstItem = 0;
         eosFormsRefresh(hForm);
     }
-}
+}*/
 
 
 /*************************************************************************
@@ -240,7 +271,7 @@ static void firstItem(
  *
  *************************************************************************/
 
-static void lastItem(
+/*static void lastItem(
     eosHForm hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
@@ -252,83 +283,82 @@ static void lastItem(
         eosFormsRefresh(hForm);
     }
 }
+*/
 
 
 /*************************************************************************
  *
- *       Mou el selector el seguent item del menu
+ *       Procesa el missatge MSG_SELECTOR_INC
  *
  *       Funcio:
- *           void nextItem(
- *               eosHForm hForm)
+ *           void onMsgSelectorInc
+ *               eosFormsMessage *message)
  *
  *       Entrada:
- *           hForm: Handler del form
+ *           message: El missatge a procesar
  *
  *************************************************************************/
 
-static void nextItem(
-    eosHForm hForm) {
+static void onMsgSelectorInc(
+    eosFormsMessage *message) {
 
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
     MenuInfo *info = &data->info[data->level];
 
     if (info->currentItem < info->numItems - 1) {
         info->currentItem++;
         if (info->firstItem + data->showItems <= info->currentItem)
             info->firstItem++;
-        eosFormsRefresh(hForm);
+        eosFormsRefresh(message->hForm);
     }
 }
 
 
 /*************************************************************************
  *
- *       Mou el selector a l'anterior item del menu
+ *       Procesa el missatge MSG_SELECTOR_DEC
  *
  *       Funcio:
- *           void prevItem(
- *               eosHForm hForm)
+ *           void onMsgSelectorDec(
+ *               eosFormsMessage *message)
  *
  *       Entrada:
- *           hForm: Handler del form
+ *           message: El missatge a procesar
  *
  *************************************************************************/
 
-static void prevItem(
-    eosHForm hForm) {
+static void onMsgSelectorDec(
+    eosFormsMessage *message) {
 
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
     MenuInfo *info = &data->info[data->level];
 
     if (info->currentItem > 0) {
         info->currentItem--;
         if (info->firstItem > info->currentItem)
             info->firstItem--;
-        eosFormsRefresh(hForm);
+        eosFormsRefresh(message->hForm);
     }
 }
 
 
 /*************************************************************************
  *
- *       Selecciona el item actual
+ *       Procesa el missatge MSG_SELECTOR_CLICK
  *
  *       Funcio:
- *           void selectItem(
- *               eosHForm hForm)
+ *           void onMsgSelectorClick(
+ *               eosFormsMessage *message)
  *
  *       Entrada:
- *           hForm: Hander del form
- *
- *       Retorn:
- *           Comanda seleccionada
+ *           message: El missatge a procsar
  *
  *************************************************************************/
 
-static void selectItem(
-    eosHForm hForm) {
+static void onMsgSelectorClick(
+    eosFormsMessage *message) {
 
+    eosHForm hForm = message->hForm;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
     BYTE *resource = data->resource;
 

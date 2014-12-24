@@ -24,10 +24,12 @@ typedef enum {                         // Tipus de temporitzador
     TT_CYCLIC,                         // -Ciclic
 } eosTimerType;
 
+typedef void (*eosTimerCallback)(eosHTimer hTimer);
+
 typedef struct {                       // Parametres de creacio d'un temporitzador
     unsigned timeout;                  // -Periode
     eosTimerType type;                 // -Tipus de temporitzador
-    eosEvent onTimeout;                // -Event TIMEOUT
+    eosTimerCallback onTimeout;        // -Notifica timeout
 } eosTimerParams;
 
 
