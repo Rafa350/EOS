@@ -4,6 +4,7 @@
 
 
 typedef struct {
+    char *title;
     int minValue;
     int maxValue;
     int delta;
@@ -18,6 +19,8 @@ static void onMsgSelectorInc(eosFormsMessage *message);
 static void onMsgSelectorDec(eosFormsMessage *message);
 static void onMsgSelectorClick(eosFormsMessage *message);
 static void onMsgPaint(eosFormsMessage *message);
+
+static void notify(eosHForm hForm, unsigned event);
 
 
 /*************************************************************************
@@ -44,6 +47,7 @@ eosHForm eosFormsCreateIncDec(
 
     eosFormParams formParams;
     memset(&formParams, 0, sizeof(formParams));
+    formParams.hParent = params->hParent;
     formParams.privateParams = params;
     formParams.privateDataSize = sizeof(PrivateData);
     formParams.onMessage = onMessage;
@@ -95,6 +99,7 @@ static void onMessage(
                     break;
 
                 case EV_SELECTOR_CLICK:
+                    onMsgSelectorClick(message);
                     break;
             }
             break;
@@ -125,11 +130,14 @@ static void onMsgActivate(
 static void onMsgInitialize(
     eosFormsMessage *message) {
 
-    PrivateData *data = eosFormsGetPrivateData(message->hForm);
-    data->minValue = 0;
-    data->maxValue = 99999;
-    data->value = 0;
-    data->delta = 1;
+    eosIncDecParams *params = (eosIncDecParams*) message->msgInitialize.privateParams;
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
+
+    data->title = params->title;
+    data->minValue = params->minValue;
+    data->maxValue = params->maxValue;
+    data->value = params->value;
+    data->delta = params->delta;
 }
 
 
@@ -163,6 +171,7 @@ static void onMsgSelectorInc(
     if (data->value + data->delta < data->maxValue) {
         data->value += data->delta;
         eosFormsRefresh(message->hForm);
+        notify(message->hForm, EV_INCDEC_CHANGED);
     }
 }
 
@@ -175,5 +184,25 @@ static void onMsgSelectorDec(
     if (data->value - data->delta > data->minValue) {
         data->value -= data->delta;
         eosFormsRefresh(message->hForm);
+        notify(message->hForm, EV_INCDEC_CHANGED);
     }
+}
+
+static void onMsgSelectorClick(
+    eosFormsMessage *message) {
+
+    notify(message->hForm, EV_INCDEC_END);
+}
+
+
+static void notify(eosHForm hForm, unsigned event) {
+
+    eosFormsMessage message;
+
+    message.id = MSG_NOTIFY;
+    message.hForm = eosFormsGetParent(hForm);
+    message.msgNotify.hSender = hForm;
+    message.msgNotify.event = event;
+
+    eosFormsSendMessage(eosFormsGetService(hForm), &message);
 }

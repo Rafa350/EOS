@@ -10,25 +10,25 @@
 
 
 #define MSG_NULL               0
-#define MSG_INITIALIZE         1
-#define MSG_ACTIVATE           2
-#define MSG_DEACTIVATE         3
-#define MSG_PAINT              4
+#define MSG_INITIALIZE         1       // Inicialitzacio del form
+#define MSG_ACTIVATE           2       // Activacio del form
+#define MSG_DEACTIVATE         3       // Desactivacio del form
+#define MSG_PAINT              4       // Redibuix del form
 
-#define MSG_SELECTOR         100
-#define EV_SELECTOR_INC        1
-#define EV_SELECTOR_DEC        2
-#define EV_SELECTOR_CLICK      3
+#define MSG_SELECTOR         100       // Event del selector
+#define EV_SELECTOR_INC        1       // -Increment del selector
+#define EV_SELECTOR_DEC        2       // -Decrement del selector
+#define EV_SELECTOR_CLICK      3       // -Click del boto
 
-#define MSG_KEYBOARD         101
-#define EV_KEYBOARD_UP         1
-#define EV_KEYBOARD_DOWN       2
-#define EV_KEYBOARD_LEFT       3
-#define EV_KEYBOARD_RIGHT      4
-#define EV_KEYBOARD_OK         5
+#define MSG_KEYBOARD         101       // Event del teclat
+#define EV_KEYBOARD_UP         1       // -Tecla UP
+#define EV_KEYBOARD_DOWN       2       // -Tecla DOWN
+#define EV_KEYBOARD_LEFT       3       // -Tecla LEFT
+#define EV_KEYBOARD_RIGHT      4       // -Tecla RIGHT
+#define EV_KEYBOARD_OK         5       // -Tecla OK
 
-#define MSG_COMMAND          120
-#define MSG_NOTIFY           121
+#define MSG_COMMAND          102       // Comanda
+#define MSG_NOTIFY           103       // Event de nofificacio d'un altre form
 
 
 typedef struct __eosFormsService *eosHFormsService;
@@ -52,6 +52,11 @@ typedef struct {
 } MsgInitialize;
 
 typedef struct {
+    eosHForm hSender;
+    unsigned event;
+} MsgNotify;
+
+typedef struct {
     axHDisplayService hDisplayService;
 } MsgPaint;
 
@@ -69,6 +74,7 @@ typedef struct {
         MsgDeactivate msgDeactivate;
         MsgCommand msgCommand;
         MsgInitialize msgInitialize;
+        MsgNotify msgNotify;
         MsgPaint msgPaint;
         MsgSelector msgSelector;
     };
