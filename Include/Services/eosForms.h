@@ -10,10 +10,11 @@
 
 
 #define MSG_NULL               0
-#define MSG_INITIALIZE         1       // Inicialitzacio del form
-#define MSG_ACTIVATE           2       // Activacio del form
-#define MSG_DEACTIVATE         3       // Desactivacio del form
-#define MSG_PAINT              4       // Redibuix del form
+#define MSG_CREATE             1       // Creacio del form
+#define MSG_DESTROY            2       // Destruccio del form
+#define MSG_ACTIVATE           3       // Activacio del form
+#define MSG_DEACTIVATE         4       // Desactivacio del form
+#define MSG_PAINT              5       // Redibuix del form
 
 #define MSG_SELECTOR         100       // Event del selector
 #define EV_SELECTOR_INC        1       // -Increment del selector
@@ -43,13 +44,13 @@ typedef struct {
 } MsgCommand;
 
 typedef struct {
-    eosHForm hNewActive;
-} MsgDeactivate;
-
-typedef struct {
     void *privateParams;
     void *privateData;
-} MsgInitialize;
+} MsgCreate;
+
+typedef struct {
+    eosHForm hNewActive;
+} MsgDeactivate;
 
 typedef struct {
     eosHForm hSender;
@@ -73,7 +74,7 @@ typedef struct {
         MsgActivate msgActivate;
         MsgDeactivate msgDeactivate;
         MsgCommand msgCommand;
-        MsgInitialize msgInitialize;
+        MsgCreate msgCreate;
         MsgNotify msgNotify;
         MsgPaint msgPaint;
         MsgSelector msgSelector;
@@ -103,6 +104,7 @@ extern void eosFormsSendMessage(eosHFormsService hService, eosFormsMessage *mess
 extern void eosFormsPostMessage(eosHFormsService hService, eosFormsMessage *message);
 
 extern eosHForm eosFormsCreateForm(eosHFormsService hService, eosFormParams *params);
+extern void eosFormsDestroyForm(eosHForm hForm);
 extern void eosFormsRefreshForm(eosHForm hForm);
 
 extern eosHForm eosFormsGetActiveForm(eosHFormsService hService);

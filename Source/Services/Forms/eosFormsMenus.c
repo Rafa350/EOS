@@ -23,7 +23,7 @@ typedef struct {                       // Dades privades
 
 
 static void onMessage(eosHFormsService hService, eosFormsMessage *message);
-static void onMsgInitialize(eosFormsMessage *message);
+static void onMsgCreate(eosFormsMessage *message);
 static void onMsgPaint(eosFormsMessage *message);
 static void onMsgActivate(eosFormsMessage *message);
 static void onMsgSelectorInc(eosFormsMessage *message);
@@ -84,8 +84,8 @@ static void onMessage(
     eosFormsMessage *message) {
 
     switch (message->id) {
-        case MSG_INITIALIZE:
-            onMsgInitialize(message);
+        case MSG_CREATE:
+            onMsgCreate(message);
             break;
 
         case MSG_ACTIVATE:
@@ -124,7 +124,7 @@ static void onMessage(
  *       Procesa el missatge MSG_INITIALIZE
  *
  *       Funcio:
- *           void onMsgInitialize(
+ *           void onMsgCreate(
  *               eosFormsMessage *message)
  *
  *       Entrada:
@@ -132,11 +132,12 @@ static void onMessage(
  *
  *************************************************************************/
 
-static void onMsgInitialize(
+static void onMsgCreate(
     eosFormsMessage *message) {
 
-    PrivateData *data = (PrivateData*) message->msgInitialize.privateData;
-    data->resource = ((eosMenuParams*) message->msgInitialize.privateParams)->resource;
+    PrivateData *data = (PrivateData*) message->msgCreate.privateData;
+
+    data->resource = ((eosMenuParams*) message->msgCreate.privateParams)->resource;
     data->showItems = 5;
     data->level = 0;
     data->info[0].offset = 0;

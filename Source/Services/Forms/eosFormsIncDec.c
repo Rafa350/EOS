@@ -14,7 +14,7 @@ typedef struct {
 
 static void onMessage(eosHFormsService hService, eosFormsMessage *message);
 static void onMsgActivate(eosFormsMessage *message);
-static void onMsgInitialize(eosFormsMessage *message);
+static void onMsgCreate(eosFormsMessage *message);
 static void onMsgSelectorInc(eosFormsMessage *message);
 static void onMsgSelectorDec(eosFormsMessage *message);
 static void onMsgSelectorClick(eosFormsMessage *message);
@@ -76,8 +76,8 @@ static void onMessage(
     eosFormsMessage *message) {
 
     switch (message->id) {
-        case MSG_INITIALIZE:
-            onMsgInitialize(message);
+        case MSG_CREATE:
+            onMsgCreate(message);
             break;
 
         case MSG_ACTIVATE:
@@ -127,10 +127,10 @@ static void onMsgActivate(
 }
 
 
-static void onMsgInitialize(
+static void onMsgCreate(
     eosFormsMessage *message) {
 
-    eosIncDecParams *params = (eosIncDecParams*) message->msgInitialize.privateParams;
+    eosIncDecParams *params = (eosIncDecParams*) message->msgCreate.privateParams;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
 
     data->title = params->title;
@@ -150,12 +150,16 @@ static void onMsgPaint(
 
     if (axDisplayBeginCommand(hDisplay)) {
 
+        axDisplayAddCommandClear(hDisplay);
+        if (data->title != NULL)
+            axDisplayAddCommandDrawText(hDisplay, 0, 0, data->title, 0, -1);
+        axDisplayAddCommandDrawLine(hDisplay, 0, 10, 127, 10);
+        axDisplayAddCommandDrawLine(hDisplay, 0, 53, 127, 53);
+
         char text[20];
         sprintf(text, "%d", data->value);
 
-        axDisplayAddCommandClear(hDisplay);
-        axDisplayAddCommandDrawText(hDisplay, 0, 0, text, 0, -1);
-        axDisplayAddCommandDrawLine(hDisplay, 0, 10, 127, 10);
+        axDisplayAddCommandDrawText(hDisplay, 10, 30, text, 0, -1);
         axDisplayAddCommandRefresh(hDisplay);
         axDisplayEndCommand(hDisplay);
     }

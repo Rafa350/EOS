@@ -1,4 +1,3 @@
-#define __EOS_QUEUE_INTERNAL
 #include "System/eosQueue.h"
 #include "System/eosMemory.h"
 

@@ -10,10 +10,6 @@
 #define eosQUEUE_ERROR_FULL       (eos_ERROR_USER + 0)
 #define eosQUEUE_ERROR_EMPTY      (eos_ERROR_USER + 1)
 
-#ifndef __EOS_QUEUE_INTERNAL
-struct __eosQueue {};
-#endif
-
 typedef struct __eosQueue *eosHQueue;
 
 typedef struct {             // Parametres d'inicialitzacio de la cua
