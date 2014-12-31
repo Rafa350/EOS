@@ -649,7 +649,7 @@ static void i2cInterruptService(I2C_MODULE_ID id) {
 
 /*************************************************************************
  *
- *       Obte la transaccio asociada al mocul
+ *       Obte la transaccio asociada al modul
  *
  *       Funcio:
  *           eosHI2CTransaction getTransactionById(I2C_MODULE_ID id)

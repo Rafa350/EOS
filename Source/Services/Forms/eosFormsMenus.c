@@ -11,14 +11,11 @@ typedef struct {                       // Informacio d'un menu
     unsigned currentItem;              // -Item actual
 } MenuInfo;
 
-typedef void (*eosMenuCallback)(eosHForm hForm);
-
 typedef struct {                       // Dades privades
     BYTE *resource;                    // -Recurs del menu
     unsigned level;                    // -Nivell de submenus
     MenuInfo info[MAX_LEVELS];         // -Pila d'informacio del menu
     unsigned showItems;                // -Numero d'items a mostrar
-    eosMenuCallback onMenuFormatItem;  // -Event OnMenuFormatItem
 } PrivateData;
 
 
@@ -29,6 +26,7 @@ static void onMsgActivate(eosFormsMessage *message);
 static void onMsgSelectorInc(eosFormsMessage *message);
 static void onMsgSelectorDec(eosFormsMessage *message);
 static void onMsgSelectorClick(eosFormsMessage *message);
+static void notify(eosHForm hForm, unsigned event, void *parameters);
 
 
 /*************************************************************************
@@ -211,15 +209,19 @@ static void onMsgPaint(
             unsigned itemTitleLen = resource[itemOffset + 1];
             char *itemTitle = &resource[itemOffset + 2];
 
-            if (data->onMenuFormatItem) {
-
-            }
-
             if (i == info->currentItem) {
                 axDisplayAddCommandFillRectangle(hDisplay, 0, k, 127, k + 8);
                 axDisplayAddCommandSetColor(hDisplay, 0, 1);
             }
             axDisplayAddCommandDrawText(hDisplay, 10, k, itemTitle, 0, itemTitleLen);
+
+            eosMenuNotifyGetValue notifyParams;
+            notifyParams.command = resource[itemOffset + 2 + itemTitleLen];
+            notifyParams.itemValue = NULL;
+            notify(message->hForm, EV_MENU_GETVALUE, &notifyParams);
+            if (notifyParams.itemValue != NULL)
+                axDisplayAddCommandDrawText(hDisplay, 80, k, notifyParams.itemValue, 0, -1);
+
             axDisplayAddCommandSetColor(hDisplay, 1, 0);
 
             i += 1;
@@ -404,4 +406,21 @@ static void onMsgSelectorClick(
             }
             break;
     }
+}
+
+
+static void notify(
+    eosHForm hForm,
+    unsigned event,
+    void *parameters) {
+
+    eosFormsMessage message;
+
+    message.id = MSG_NOTIFY;
+    message.hForm = eosFormsGetParent(hForm);
+    message.msgNotify.hSender = hForm;
+    message.msgNotify.event = event;
+    message.msgNotify.parameters = parameters;
+
+    eosFormsSendMessage(eosFormsGetService(hForm), &message);
 }

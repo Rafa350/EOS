@@ -10,6 +10,14 @@
 #include <Services/eosForms.h>
 #endif
 
+                                       // Notificacions MSG_NOTIFY
+#define EV_MENU_GETVALUE          1    // -Obte el valor del item
+
+typedef struct {                       // Parametres del missatge de notificacio
+    unsigned command;
+    char *itemValue;
+} eosMenuNotifyGetValue;
+
 
 typedef struct {
     eosHForm hParent;

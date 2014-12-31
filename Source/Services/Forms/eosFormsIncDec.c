@@ -199,7 +199,9 @@ static void onMsgSelectorClick(
 }
 
 
-static void notify(eosHForm hForm, unsigned event) {
+static void notify(
+    eosHForm hForm,
+    unsigned event) {
 
     eosFormsMessage message;
 
@@ -207,6 +209,7 @@ static void notify(eosHForm hForm, unsigned event) {
     message.hForm = eosFormsGetParent(hForm);
     message.msgNotify.hSender = hForm;
     message.msgNotify.event = event;
+    message.msgNotify.parameters = NULL;
 
     eosFormsSendMessage(eosFormsGetService(hForm), &message);
 }

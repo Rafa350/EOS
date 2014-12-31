@@ -5,6 +5,7 @@
 typedef struct {
     char *title;
     char **items;
+    unsigned numItems;
     unsigned selectedIndex;
 } PrivateData;
 
@@ -27,6 +28,7 @@ eosHForm eosFormsCreateList(
 
     eosFormParams formParams;
     memset(&formParams, 0, sizeof(formParams));
+    formParams.hParent = params->hParent;
     formParams.privateDataSize = sizeof(PrivateData);
     formParams.privateParams = params;
     formParams.onMessage = onMessage;
@@ -46,6 +48,10 @@ static void onMessage(
 
         case MSG_ACTIVATE:
             onMsgActivate(message);
+            break;
+
+        case MSG_PAINT:
+            onMsgPaint(message);
             break;
         
         case MSG_SELECTOR:
@@ -67,34 +73,55 @@ static void onMessage(
 }
 
 
-static void onMsgCreate(eosFormsMessage *message) {
+static void onMsgCreate(
+    eosFormsMessage *message) {
 
     eosListParams *params = (eosListParams*) message->msgCreate.privateParams;
     PrivateData *data = (PrivateData*) message->msgCreate.privateData;
     data->title = params->title;
     data->items = params->items;
-    data->selectedIndex = -1;
+    data->numItems = params->numItems;
+    data->selectedIndex = 0;
 }
 
 
-static void onMsgActivate(eosFormsMessage *message) {
+static void onMsgActivate(
+    eosFormsMessage *message) {
 
     eosFormsRefresh(message->hForm);
 }
 
 
-static void onMsgSelectorInc(eosFormsMessage *message) {
+static void onMsgSelectorInc(
+    eosFormsMessage *message) {
 
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
+
+    if (data->selectedIndex < (data->numItems - 1)) {
+        data->selectedIndex++;
+        eosFormsRefresh(message->hForm);
+        notify(message->hForm, EV_LIST_CHANGED);
+    }
 }
 
 
-static void onMsgSelectorDec(eosFormsMessage *message) {
+static void onMsgSelectorDec(
+    eosFormsMessage *message) {
 
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
+
+    if (data->selectedIndex > 0) {
+        data->selectedIndex--;
+        eosFormsRefresh(message->hForm);
+        notify(message->hForm, EV_LIST_CHANGED);
+    }
 }
 
 
-static void onMsgSelectorClick(eosFormsMessage *message) {
+static void onMsgSelectorClick(
+    eosFormsMessage *message) {
 
+    notify(message->hForm, EV_LIST_END);
 }
 
 
@@ -113,11 +140,27 @@ static void onMsgPaint(eosFormsMessage *message) {
         axDisplayAddCommandDrawLine(hDisplay, 0, 53, 127, 53);
 
         if (data->selectedIndex != -1) {
-            char text[20];
-            sprintf(text, "%d", data->items[data->selectedIndex]);
+            char *text = data->items[data->selectedIndex];
             axDisplayAddCommandDrawText(hDisplay, 10, 30, text, 0, -1);
         }
+        
         axDisplayAddCommandRefresh(hDisplay);
         axDisplayEndCommand(hDisplay);
     }
+}
+
+
+static void notify(
+    eosHForm hForm,
+    unsigned event) {
+
+    eosFormsMessage message;
+
+    message.id = MSG_NOTIFY;
+    message.hForm = eosFormsGetParent(hForm);
+    message.msgNotify.hSender = hForm;
+    message.msgNotify.event = event;
+    message.msgNotify.parameters = NULL;
+
+    eosFormsSendMessage(eosFormsGetService(hForm), &message);
 }
