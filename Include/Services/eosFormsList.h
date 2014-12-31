@@ -14,7 +14,7 @@
 typedef struct {
     eosHForm hParent;
     char *title;
-    char *values[];
+    char **items;
 } eosListParams;
 
 extern eosHForm eosFormsCreateList(eosHFormsService hService, eosListParams *params);
