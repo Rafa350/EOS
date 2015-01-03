@@ -32,7 +32,6 @@ typedef struct __eosFormsService {     // Dades del servei
 } FormsService;
 
 
-static bool eosFormsGetMessage(eosHFormsService hService, eosFormsMessage *message);
 static void processMessages(eosHFormsService hService);
 static void processRedraw(eosHFormsService hService);
 static void processDestroy(eosHFormsService hService);
@@ -186,7 +185,7 @@ eosHForm eosFormsCreateForm(
  *
  *************************************************************************/
 
-void __attribute__ ((always_inline)) eosFormsDestroyForm(
+void eosFormsDestroyForm(
     eosHForm hForm) {
 
     eosHFormsService hService = hForm->hService;

@@ -209,7 +209,7 @@ static void notify(
     message.hForm = eosFormsGetParent(hForm);
     message.msgNotify.hSender = hForm;
     message.msgNotify.event = event;
-    message.msgNotify.parameters = NULL;
+    message.msgNotify.params = NULL;
 
     eosFormsSendMessage(eosFormsGetService(hForm), &message);
 }

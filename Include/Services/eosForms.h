@@ -55,7 +55,7 @@ typedef struct {
 typedef struct {
     eosHForm hSender;
     unsigned event;
-    void *parameters;
+    void *params;
 } MsgNotify;
 
 typedef struct {

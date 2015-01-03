@@ -26,7 +26,7 @@ static void onMsgActivate(eosFormsMessage *message);
 static void onMsgSelectorInc(eosFormsMessage *message);
 static void onMsgSelectorDec(eosFormsMessage *message);
 static void onMsgSelectorClick(eosFormsMessage *message);
-static void notify(eosHForm hForm, unsigned event, void *parameters);
+static void notify(eosHForm hForm, unsigned event, void *params);
 
 
 /*************************************************************************
@@ -220,7 +220,7 @@ static void onMsgPaint(
             notifyParams.itemValue = NULL;
             notify(message->hForm, EV_MENU_GETVALUE, &notifyParams);
             if (notifyParams.itemValue != NULL)
-                axDisplayAddCommandDrawText(hDisplay, 80, k, notifyParams.itemValue, 0, -1);
+                axDisplayAddCommandDrawText(hDisplay, 60, k, notifyParams.itemValue, 0, -1);
 
             axDisplayAddCommandSetColor(hDisplay, 1, 0);
 
@@ -409,10 +409,27 @@ static void onMsgSelectorClick(
 }
 
 
+/*************************************************************************
+ *
+ *       Envia un missatge de notificacio al pare del form
+ *
+ *       Funcio:
+ *           void notify(
+ *               eosHForm hForm,
+ *               unsigned event,
+ *               void *parameters)
+ *
+ *       Entrada:
+ *           hForm : El form que emiteix la notificacio
+ *           event : El codi del event
+ *           params: Parametres del event
+ *
+ *************************************************************************/
+
 static void notify(
     eosHForm hForm,
     unsigned event,
-    void *parameters) {
+    void *params) {
 
     eosFormsMessage message;
 
@@ -420,7 +437,7 @@ static void notify(
     message.hForm = eosFormsGetParent(hForm);
     message.msgNotify.hSender = hForm;
     message.msgNotify.event = event;
-    message.msgNotify.parameters = parameters;
+    message.msgNotify.params = params;
 
     eosFormsSendMessage(eosFormsGetService(hForm), &message);
 }

@@ -245,25 +245,6 @@ eosHInput eosInputCreate(
 
 void eosInputDestroy(
     eosHInput hInput) {
-/*
-    eosHInputService hService = hInput->hService;
-    
-    eosHInput hCurrentInput = hService->hFirstInput;
-    eosHInput hPrevInput = NULL;
-    while (hCurrentInput) {
-        if (hCurrentInput == hInput) {
-            if (hPrevInput)
-                hPrevInput->hNextInput = hCurrentInput->hNextInput;
-            else
-                hService->hFirstInput = hCurrentInput->hNextInput;
-            eosFree(hInput);
-            return;
-
-        }
-
-        hPrevInput = hCurrentInput;
-        hCurrentInput = hCurrentInput->hNextInput;
-    }*/
 }
 
 
