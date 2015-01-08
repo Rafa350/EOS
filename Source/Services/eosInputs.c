@@ -200,6 +200,7 @@ eosHInput eosInputCreate(
     if (hInput == NULL)
         return NULL;
 
+    hInput->hService = hService;
     hInput->posEdge = FALSE;
     hInput->negEdge = FALSE;
     hInput->channel = params->channel;
@@ -212,7 +213,6 @@ eosHInput eosInputCreate(
     bool intFlag = eosGetInterruptState();
     eosDisableInterrupts();
 
-    hInput->hService = hService;
     hInput->hNextInput = hService->hFirstInput;
     hService->hFirstInput = hInput;
 

@@ -157,6 +157,7 @@ eosHOutput eosOutputCreate(
     if (hOutput == NULL)
         return NULL;
 
+    hOutput->hService = hService;   
     hOutput->channel = params->channel;
     hOutput->position = params->position;
     hOutput->inverted = params->inverted;
@@ -165,7 +166,6 @@ eosHOutput eosOutputCreate(
     bool intFlag = eosGetInterruptState();
     eosDisableInterrupts();
 
-    hOutput->hService = hService;
     hOutput->hNextOutput = hService->hFirstOutput;
     hService->hFirstOutput = hOutput;
 
@@ -259,7 +259,7 @@ void eosOutputSet(
 void eosOutputToggle(
     eosHOutput hOutput) {
 
-   halPortToggle(hOutput);
+    halPortToggle(hOutput);
 }
 
 
