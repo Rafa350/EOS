@@ -1,5 +1,5 @@
-#ifndef __EOS_OUTPUTS_H
-#define	__EOS_OUTPUTS_H
+#ifndef __EOS_OUTPUT_H
+#define	__EOS_OUTPUT_H
 
 
 #ifndef __EOS_H

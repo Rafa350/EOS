@@ -23,6 +23,8 @@
 typedef struct __eosI2CMasterService *eosHI2CMasterService;
 typedef struct __eosI2CTransaction *eosHI2CTransaction;
 
+typedef void (*eosI2CMasterCallback)(eosHI2CTransaction hTransaction);
+
 typedef struct {                       // Parametres del servei
     I2C_MODULE_ID id;                  // -Modul I2C
     eosHTickService hTickService;      // -Handler del servei TICK
@@ -34,8 +36,7 @@ typedef struct {                       // Parametres d'una transaccio
     unsigned txCount;                  // -Numero de bytes en el buffer de transmissio
     BYTE *rxBuffer;                    // -Buffer de recepcio
     unsigned rxSize;                   // -Tamany del buffer de recepcio
-    unsigned rxCount;                  // -Numero de bytes rebuts
-    eosCallback onEndTransaction;      // -Event END_TRANSACTION
+    eosI2CMasterCallback onEndTransaction;  // -Event END_TRANSACTION
     void *context;                     // -Parametre del event
 } eosI2CTransactionParams;
 
@@ -46,6 +47,7 @@ extern void eosI2CMasterServiceTask(eosHI2CMasterService hService);
 extern void eosI2CMasterServiceTick(eosHI2CMasterService hService);
 
 extern eosHI2CTransaction eosI2CMasterStartTransaction(eosHI2CMasterService hService, eosI2CTransactionParams *params);
+extern void *eosI2CMasterGetTransactionContext(eosHI2CTransaction hTransaction);
 extern unsigned eosI2CMasterGetTransactionResult(eosHI2CTransaction hTransaction);
 
 

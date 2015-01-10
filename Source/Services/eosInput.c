@@ -1,4 +1,4 @@
-#include "Services/eosInputs.h"
+#include "Services/eosInput.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
 
@@ -37,8 +37,8 @@ typedef struct __eosInputService {     // Dades del servei
 
 // Funcions d'acces al hardware
 //
-static void halPortInitialize(eosHInput hInput);
-static bool halPortGet(eosHInput hInput);
+static void portInitialize(eosHInput hInput);
+static bool portGet(eosHInput hInput);
 
 
 /*************************************************************************
@@ -156,7 +156,7 @@ void eosInputServiceTick(
         while (hInput) {
 
             hInput->pattern <<= 1;
-            if (halPortGet(hInput))
+            if (portGet(hInput))
                 hInput->pattern |= 1;
 
             if ((hInput->pattern & PATTERN_MASK) == PATTERN_ON) {
@@ -210,17 +210,15 @@ eosHInput eosInputCreate(
     hInput->onNegEdge = params->onNegEdge;
     hInput->onChange = params->onChange;
 
-    bool intFlag = eosGetInterruptState();
-    eosDisableInterrupts();
+    bool state = eosDisableInterrupts();
 
     hInput->hNextInput = hService->hFirstInput;
     hService->hFirstInput = hInput;
 
-    if (intFlag)
-        eosEnableInterrupts();
+    eosRestoreInterrupts(state);
 
-    halPortInitialize(hInput);
-    hInput->state = halPortGet(hInput);
+    portInitialize(hInput);
+    hInput->state = portGet(hInput);
     if (hInput->state)
         hInput->pattern = 0xFFFFFFFF;
     else
@@ -264,7 +262,7 @@ void eosInputDestroy(
  *
  *************************************************************************/
 
-bool eosInputGet(
+bool __attribute__ ((always_inline)) eosInputGet(
     eosHInput hInput) {
 
     return hInput->state;
@@ -326,7 +324,7 @@ bool eosInputNegEdge(
  *       Inicialitza el port d'entrada
  *
  *       Funcio:
- *           void halPortInitialize(
+ *           void portInitialize(
  *               eosHInput hInput)
  *
  *       Entrada:
@@ -334,7 +332,7 @@ bool eosInputNegEdge(
  *
  *************************************************************************/
 
-static void halPortInitialize(
+static void portInitialize(
     eosHInput hInput) {
 
     PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, hInput->channel, hInput->position);
@@ -346,7 +344,7 @@ static void halPortInitialize(
  *       Obte l'estat del port d'entrada
  *
  *       Funcio:
- *           bool halPortGet(
+ *           bool portGet(
  *               eosHInput hInput)
  *
  *       Entrada:
@@ -357,7 +355,7 @@ static void halPortInitialize(
  *
  **************************************************************************/
 
-static bool halPortGet(
+static bool portGet(
     eosHInput hInput) {
 
     bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hInput->channel, hInput->position);

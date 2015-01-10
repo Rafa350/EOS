@@ -1,5 +1,5 @@
-#ifndef __EOS_TIMERS_H
-#define __EOS_TIMERS_H
+#ifndef __EOS_TIMER_H
+#define __EOS_TIMER_H
 
 
 #ifndef __EOS_H

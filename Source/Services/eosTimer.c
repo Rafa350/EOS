@@ -1,4 +1,4 @@
-#include "Services/eosTimers.h"
+#include "Services/eosTimer.h"
 #include "Services/eosTick.h"
 #include "System/eosQueue.h"
 #include "HardwareProfile.h"
@@ -134,12 +134,10 @@ void eosTimerServiceTask(
 
             // Obte el numero de tick pendents de procesar
             //
-            BOOL intFlag = eosGetInterruptState();
-            eosDisableInterrupts();
+            BOOL intState = eosDisableInterrupts();
             unsigned triggered = hService->triggered;
             hService->triggered = 0;
-            if (intFlag)
-                eosEnableInterrupts();
+            eosRestoreInterrupts(intState);
 
             // Procesa els ticks pendents
             //

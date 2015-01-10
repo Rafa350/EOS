@@ -1,5 +1,5 @@
-#ifndef __EOS_INPUTS_H
-#define	__EOS_INPUTS_H
+#ifndef __EOS_INPUT_H
+#define	__EOS_INPUT_H
 
 
 #ifndef __EOS_H
@@ -52,6 +52,12 @@ extern bool eosInputGet(eosHInput hInput);
 extern bool eosInputPosEdge(eosHInput hInput);
 extern bool eosInputNegEdge(eosHInput hInput);
 
+
+typedef struct {
+    SYS_MODULE_INIT moduleInit;
+} DRV_INPUT_INIT;
+
+extern SYS_MODULE_OBJ DRV_INPUT_Initialize(const SYS_MODULE_INDEX, const DRV_INPUT_INIT * const init);
 
 #endif	
 

@@ -9,6 +9,10 @@
 // Definicions depenens del temporitzador utilitzat
 //
 #if eosOPTIONS_TICK_TMR == 1
+#define TICK_TIMER_ID             TMR_ID_1
+#define TICK_TIMER_INT_VECTOR     INT_VECTOR_T1
+#define TICK_TIMER_INT_SOURCE     INT_SOURCE_TIMER_1
+#define TICK_TIMER_CORE_VECTOR    _TIMER_1_VECTOR
 #elif eosOPTIONS_TICK_TMR == 2
 #elif eosOPTIONS_TICK_TMR == 3
 #elif eosOPTIONS_TICK_TMR == 4
@@ -39,14 +43,12 @@ typedef struct __eosTickService {      // Dades internes del servei
     Attach *firstAttach;               // -Primer adjunt
 } TickService;
 
+static eosHTickService hService = NULL;
 
-// Funcions d'acces al hardware
-//
-static void halTimerInitialize(void);
-static void halTimerStart(void);
-static void halTimerStop(void);
-static bool halDisableInterrupt(void);
-static void halEnableInterrupt(void);
+
+static void timerInitialize(void);
+static void timerStart(void);
+static void timerStop(void);
 
 
 /*************************************************************************
@@ -68,14 +70,15 @@ static void halEnableInterrupt(void);
 eosHTickService eosTickServiceInitialize(
     eosTickServiceParams *params) {
 
-    eosHTickService hService = (eosHTickService) eosAlloc(sizeof(TickService));
+    if (hService != NULL)
+        return hService;
+    
+    hService = (eosHTickService) eosAlloc(sizeof(TickService));
     if (hService == NULL)
         return NULL;
 
     hService->state = serviceInitializing;
     hService->firstAttach = NULL;
-
-    halTimerInitialize();
 
     return hService;
 }
@@ -99,7 +102,8 @@ void eosTickServiceTask(
 
     switch (hService->state) {
         case serviceInitializing:
-            halTimerStart();
+            timerInitialize();
+            timerStart();
             hService->state = serviceRunning;
             break;
 
@@ -137,18 +141,13 @@ void eosTickAttach(
         attach->onTick = onTick;
         attach->onTickContext = onTickContext;
 
-        // Entra en la seccio critica
-        //
-        BOOL intFlag = halDisableInterrupt();
+        bool state = eosDisableInterruptSource(TICK_TIMER_INT_SOURCE);
 
         attach->hService = hService;
         attach->nextAttach = hService->firstAttach;
         hService->firstAttach = attach;
 
-        // Surt de la seccio critica
-        //
-        if (intFlag)
-            halEnableInterrupt();
+        eosRestoreInterruptSource(TICK_TIMER_INT_SOURCE, state);
     }
 }
 
@@ -158,11 +157,11 @@ void eosTickAttach(
  *       Inicialitza el temporitzador
  *
  *       Funcio:
- *           void halTimerInitialize(void)
+ *           void timerInitialize(void)
  *
  *************************************************************************/
 
-static void halTimerInitialize(void) {
+static void timerInitialize(void) {
 
     PLIB_TMR_Stop(TICK_TIMER_ID);
 
@@ -186,11 +185,11 @@ static void halTimerInitialize(void) {
  *       Activa el temporitzador, i comença a generar interrupcions
  *
  *       Funcio:
- *           void halTimerStart(void)
+ *           void timerStart(void)
  *
  *************************************************************************/
 
-static void halTimerStart(void) {
+static void timerStart(void) {
 
     PLIB_INT_SourceEnable(INT_ID_0, TICK_TIMER_INT_SOURCE);
     PLIB_TMR_Start(TICK_TIMER_ID);
@@ -202,11 +201,11 @@ static void halTimerStart(void) {
  *       Descativa el temporitzador
  *
  *       Funcio:
- *           void halTimerStop(void)
+ *           void timerStop(void)
  *
  *************************************************************************/
 
-static void halTimerStop(void) {
+static void timerStop(void) {
 
     PLIB_TMR_Stop(TICK_TIMER_ID);
     PLIB_INT_SourceDisable(INT_ID_0, TICK_TIMER_INT_SOURCE);
@@ -232,39 +231,4 @@ void __ISR(TICK_TIMER_CORE_VECTOR, IPL2SOFT) __ISR_Entry(TICK_TIMER_CORE_VECTOR)
     }
 
     PLIB_INT_SourceFlagClear(INT_ID_0, TICK_TIMER_INT_SOURCE);
-}
-
-
-/*************************************************************************
- *
- *       Desactiva la interrupcio
- *
- *       Funcio:
- *           bool halDisableInterrupt(void)
- *
- *       Retorn:
- *           Estat anterior de la interrupcio
- *
- *************************************************************************/
-
-static bool halDisableInterrupt(void) {
-    
-    bool intFlag = PLIB_INT_SourceIsEnabled(INT_ID_0, TICK_TIMER_INT_SOURCE);
-    PLIB_INT_SourceDisable(INT_ID_0, TICK_TIMER_INT_SOURCE);
-    return intFlag;
-}
-
-
-/*************************************************************************
- *
- *       Activa la interrupcio
- *
- *       Funcio:
- *           void halEnableInterrupt(void)
- *
- *************************************************************************/
-
-static void halEnableInterrupt(void) {
-
-    PLIB_INT_SourceEnable(INT_ID_0, TICK_TIMER_INT_SOURCE);
 }

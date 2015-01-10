@@ -45,12 +45,14 @@ typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
 extern void eosMain(void);
 #define eosSetError(code, str)
 
-#define eosGetInterruptState()    PLIB_INT_IsEnabled(INT_ID_0)
-#define eosEnableInterrupts()     PLIB_INT_Enable(INT_ID_0)
-#define eosDisableInterrupts()    PLIB_INT_Disable(INT_ID_0)
+extern bool eosDisableInterrupts();
+extern void eosEnableInterrupts();
+extern void eosRestoreInterrupts(bool state);
 
-#define eosEnterCriticalSection()
-#define eosExitCriticalSection()
+extern bool eosDisableInterruptSource(INT_SOURCE source);
+extern void eosEnableInterruptSource(INT_SOURCE source);
+extern void eosRestoreInterruptSource(INT_SOURCE source, bool state);
+
 
 #define eosEnableWatchdog()       EnableWDT()
 #define eosDisableWatchdog()      DisablWDT()

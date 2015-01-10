@@ -278,7 +278,7 @@ void eosFormsSetActiveForm(
  *
  *************************************************************************/
 
-void  __attribute__ ((always_inline)) eosFormsRefresh(
+void __attribute__ ((always_inline)) eosFormsRefresh(
     eosHForm hForm) {
 
     hForm->needRedraw = true;
