@@ -15,10 +15,10 @@
 #endif
 
 
-typedef struct __eosInput *eosHInput;
-typedef struct __eosInputService *eosHInputService;
+typedef struct __eosInput *eosInputHandle;
+typedef struct __eosInputService *eosInputServiceHandle;
 
-typedef void (*eosInputCallback)(eosHInput hInput);
+typedef void (*eosInputCallback)(eosInputHandle hInput);
 
 typedef struct {                       // Parametres d'inicializacio de les entrades
     PORTS_CHANNEL channel;             // -Canal del port
@@ -30,34 +30,28 @@ typedef struct {                       // Parametres d'inicializacio de les entr
 } eosInputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    eosHTickService hTickService;      // -Servei TICK
+    eosTickServiceHandle hTickService; // -Servei TICK
 } eosInputServiceParams;
 
 
 // Gestio del servei
 //
-extern eosHInputService eosInputServiceInitialize(eosInputServiceParams *params);
-extern bool eosInputServiceIsReady(eosHInputService hService);
-extern void eosInputServiceTask(eosHInputService hService);
-extern void eosInputServiceTick(eosHInputService hService);
+extern eosInputServiceHandle eosInputServiceInitialize(eosInputServiceParams *params);
+extern bool eosInputServiceIsReady(eosInputServiceHandle hService);
+extern void eosInputServiceTask(eosInputServiceHandle hService);
+extern void eosInputServiceTick(eosInputServiceHandle hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosHInput eosInputCreate(eosHInputService hService, eosInputParams *params);
-extern void eosInputDestroy(eosHInput hInput);
+extern eosInputHandle eosInputCreate(eosInputServiceHandle hService, eosInputParams *params);
+extern void eosInputDestroy(eosInputHandle hInput);
 
 // Operacions amb els objectes
 //
-extern bool eosInputGet(eosHInput hInput);
-extern bool eosInputPosEdge(eosHInput hInput);
-extern bool eosInputNegEdge(eosHInput hInput);
+extern bool eosInputGet(eosInputHandle hInput);
+extern bool eosInputPosEdge(eosInputHandle hInput);
+extern bool eosInputNegEdge(eosInputHandle hInput);
 
-
-typedef struct {
-    SYS_MODULE_INIT moduleInit;
-} DRV_INPUT_INIT;
-
-extern SYS_MODULE_OBJ DRV_INPUT_Initialize(const SYS_MODULE_INDEX, const DRV_INPUT_INIT * const init);
 
 #endif	
 

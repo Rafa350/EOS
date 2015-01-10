@@ -71,11 +71,11 @@ eosHQueue eosQueueCreate(
 bool eosQueueGetIsEmpty(
     eosHQueue hQueue) {
 
-    eosDisableInterrupts();
+    bool intState = eosInterruptDisable();
     
     bool isEmpty = hQueue->numItems == 0;
 
-    eosEnableInterrupts();
+    eosInterruptRestore(intState);
 
     return isEmpty;
 }
@@ -105,7 +105,7 @@ bool eosQueuePut(
 
     eosResult result = true;
 
-    eosDisableInterrupts();
+    bool intState = eosInterruptDisable();
 
 	if (hQueue->numItems < hQueue->maxItems) {
 
@@ -118,7 +118,7 @@ bool eosQueuePut(
     else
         result = false;
 
-    eosEnableInterrupts();
+    eosInterruptRestore(intState);
 
     return result;
 }
@@ -148,7 +148,7 @@ bool eosQueueGet(
 
     eosResult result = true;
 
-    eosDisableInterrupts();
+    bool intState = eosInterruptDisable();
 
 	if (hQueue->numItems > 0) {
 	    memcpy(data, hQueue->tail, hQueue->itemSize);
@@ -160,7 +160,7 @@ bool eosQueueGet(
 	else
         result = false;
 
-    eosEnableInterrupts();
+    eosInterruptRestore(intState);
 
 	return result;
 }

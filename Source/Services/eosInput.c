@@ -6,7 +6,7 @@
 typedef enum {                         // Estats del servei
     serviceInitializing,               // -Inicialitzant
     serviceRunning                     // -En execucio
-} ServiceStates;
+} eosInputServiceState;
 
 #define PATTERN_ON       0x00007FFF
 #define PATTERN_OFF      0x00008000
@@ -14,8 +14,8 @@ typedef enum {                         // Estats del servei
 
 
 typedef struct __eosInput {            // Dades d'una entrada
-    eosHInputService hService;         // -El servei al que pertany
-    eosHInput hNextInput;              // -Seguent element
+    eosInputServiceHandle hService;    // -El servei al que pertany
+    eosInputHandle hNextInput;         // -Seguent element
     PORTS_CHANNEL channel;             // -Canal del port
     PORTS_BIT_POS position;            // -Pin del port
     bool inverted;                     // -Senyal invertida
@@ -27,18 +27,19 @@ typedef struct __eosInput {            // Dades d'una entrada
     bool state;                        // -Indicador ON/OFF
     bool posEdge;                      // -Indica si s'ha rebut un flanc positiu
     bool negEdge;                      // -Indica si s'ha rebut un flanc negatiu
-} Input;
+} eosInput;
 
 typedef struct __eosInputService {     // Dades del servei
-    ServiceStates state;               // -Estat del servei
-    eosHInput hFirstInput;             // -Primer element de la llista
-} InputService;
+    eosInputServiceState state;        // -Estat del servei
+    bool haveChanges;                  // -Indica si hi han canvis
+    eosInputHandle hFirstInput;        // -Primer element de la llista
+} eosInputService;
 
 
 // Funcions d'acces al hardware
 //
-static void portInitialize(eosHInput hInput);
-static bool portGet(eosHInput hInput);
+static void portInitialize(eosInputHandle hInput);
+static bool portGet(eosInputHandle hInput);
 
 
 /*************************************************************************
@@ -46,7 +47,7 @@ static bool portGet(eosHInput hInput);
  *       Inicialitzacio el servei
  *
  *       Funcio:
- *           eosHInputService eosInputServiceInitialize(
+ *           eosInputServiceHandle eosInputServiceInitialize(
  *               eosInputServiceParams *params)
  *
  *       Entrada:
@@ -57,19 +58,20 @@ static bool portGet(eosHInput hInput);
  *
  *************************************************************************/
 
-eosHInputService eosInputServiceInitialize(
+eosInputServiceHandle eosInputServiceInitialize(
     eosInputServiceParams *params) {
 
-    eosHInputService hService = (eosHInputService) eosAlloc(sizeof(InputService));
+    eosInputServiceHandle hService = (eosInputServiceHandle) eosAlloc(sizeof(eosInputService));
     if (hService == NULL)
         return NULL;
 
     hService->state = serviceInitializing;
+    hService->haveChanges = false;
     hService->hFirstInput = NULL;
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosHTickService hTickService = params->hTickService;
+    eosTickServiceHandle hTickService = params->hTickService;
     if (hTickService == NULL)
         hTickService = eosGetTickServiceHandle();
     if (hTickService != NULL)
@@ -85,7 +87,7 @@ eosHInputService eosInputServiceInitialize(
  *
  *       Funcio:
  *           void eosInputServiceTask(
- *               eosHInputService hService)
+ *               eosInputServiceHandle hService)
  * 
  *       Entrada:
  *           hService: El handler servei
@@ -93,41 +95,52 @@ eosHInputService eosInputServiceInitialize(
  *************************************************************************/
 
 void eosInputServiceTask(
-    eosHInputService hService) {
+    eosInputServiceHandle hService) {
 
     switch (hService->state) {
+
         case serviceInitializing:
             hService->state = serviceRunning;
             break;
 
         case serviceRunning: {
-            eosHInput hInput = hService->hFirstInput;
-            while (hInput) {
+            
+            // Si no hi ha canvis, no cal procesar cap entrada,
+            // aixi es guanya temps de proces
+            //
+            bool intState = eosInterruptDisable();
+            bool haveChanges = hService->haveChanges;
+            hService->haveChanges = false;
+            eosInterruptRestore(intState);
 
-                if (hInput->posEdge) {
+            if (haveChanges) {
+                eosInputHandle hInput = hService->hFirstInput;
+                while (hInput) {
 
-                    if (hInput->onPosEdge != NULL) {
-                        hInput->onPosEdge(hInput);
-                        hInput->posEdge = FALSE;
+                    if (hInput->posEdge) {
+                        if (hInput->onPosEdge != NULL) {
+                            hInput->onPosEdge(hInput);
+                            hInput->posEdge = FALSE;
+                        }
+                        else if (hInput->onChange != NULL) {
+                            hInput->onChange(hInput);
+                            hInput->posEdge = FALSE;
+                        }
                     }
-                    else if (hInput->onChange != NULL) {
-                        hInput->onChange(hInput);
-                        hInput->posEdge = FALSE;
+
+                    if (hInput->negEdge) {
+                        if (hInput->onNegEdge != NULL) {
+                            hInput->onNegEdge(hInput);
+                            hInput->negEdge = FALSE;
+                        }
+                        else if (hInput->onChange != NULL) {
+                            hInput->onChange(hInput);
+                            hInput->negEdge = FALSE;
+                        }
                     }
+
+                    hInput = hInput->hNextInput;
                 }
-
-                if (hInput->negEdge) {
-                    if (hInput->onNegEdge != NULL) {
-                        hInput->onNegEdge(hInput);
-                        hInput->negEdge = FALSE;
-                    }
-                    else if (hInput->onChange != NULL) {
-                        hInput->onChange(hInput);
-                        hInput->negEdge = FALSE;
-                    }
-                }
-
-                hInput = hInput->hNextInput;
             }
             break;
         }
@@ -141,18 +154,19 @@ void eosInputServiceTask(
  *
  *       Funcio:
  *           void eosInputServiceTick(
- *               eosHInputService hService)
+ *               eosInputServiceHandle hService)
  *
  *       Entrada:
- *           hSservice: El handler servei
+ *           hService: El handler servei
  *
  *************************************************************************/
 
 void eosInputServiceTick(
-    eosHInputService hService) {
+    eosInputServiceHandle hService) {
 
-    if (hService->state == serviceRunning) {       
-        eosHInput hInput = hService->hFirstInput;
+    if (hService->state == serviceRunning) {
+
+        eosInputHandle hInput = hService->hFirstInput;
         while (hInput) {
 
             hInput->pattern <<= 1;
@@ -160,12 +174,14 @@ void eosInputServiceTick(
                 hInput->pattern |= 1;
 
             if ((hInput->pattern & PATTERN_MASK) == PATTERN_ON) {
-                hInput->state = TRUE;
-                hInput->posEdge = TRUE;
+                hInput->state = true;
+                hInput->posEdge = true;
+                hService->haveChanges = true;
             }
             else if ((hInput->pattern & PATTERN_MASK) == PATTERN_OFF) {
-                hInput->state = FALSE;
-                hInput->negEdge = TRUE;
+                hInput->state = false;
+                hInput->negEdge = true;
+                hService->haveChanges = true;
             }
 
             hInput = hInput->hNextInput;
@@ -179,8 +195,8 @@ void eosInputServiceTick(
  *       Crea una entrada
  *
  *       Funcio:
- *           eosHInpot eosInputCreate(
- *               eosHInputService hService,
+ *           eosInputHandle eosInputCreate(
+ *               eosInputServiceHandle hService,
  *               eosInputParams* params)
  *
  *       Entrada:
@@ -192,11 +208,11 @@ void eosInputServiceTick(
  *
  *************************************************************************/
 
-eosHInput eosInputCreate(
-    eosHInputService hService,
+eosInputHandle eosInputCreate(
+    eosInputServiceHandle hService,
     eosInputParams* params) {
 
-    eosHInput hInput = (eosHInput) eosAlloc(sizeof(Input));
+    eosInputHandle hInput = (eosInputHandle) eosAlloc(sizeof(eosInput));
     if (hInput == NULL)
         return NULL;
 
@@ -210,12 +226,10 @@ eosHInput eosInputCreate(
     hInput->onNegEdge = params->onNegEdge;
     hInput->onChange = params->onChange;
 
-    bool state = eosDisableInterrupts();
-
+    bool state = eosInterruptDisable();
     hInput->hNextInput = hService->hFirstInput;
     hService->hFirstInput = hInput;
-
-    eosRestoreInterrupts(state);
+    eosInterruptRestore(state);
 
     portInitialize(hInput);
     hInput->state = portGet(hInput);
@@ -234,7 +248,7 @@ eosHInput eosInputCreate(
  *
  *       Funcio:
  *           void eosInputDestroy(
- *               eosHInput hInput)
+ *               eosInputHandle hInput)
  *
  *       Entrada:
  *          input: El handler de l'entrada
@@ -242,7 +256,7 @@ eosHInput eosInputCreate(
  *************************************************************************/
 
 void eosInputDestroy(
-    eosHInput hInput) {
+    eosInputHandle hInput) {
 }
 
 
@@ -252,7 +266,7 @@ void eosInputDestroy(
  *
  *       Funcio:
  *           bool eosInputGet(
- *               eosHInput hInput)
+ *               eosInputHandle hInput)
  *
  *       Entrada:
  *           hInput: El handler de l'entrada
@@ -263,7 +277,7 @@ void eosInputDestroy(
  *************************************************************************/
 
 bool __attribute__ ((always_inline)) eosInputGet(
-    eosHInput hInput) {
+    eosInputHandle hInput) {
 
     return hInput->state;
 }
@@ -275,22 +289,25 @@ bool __attribute__ ((always_inline)) eosInputGet(
  *
  *       Funcio:
  *           bool eosInputPosEdge(
- *               eosHInput hInput)
+ *               eosInputHandle hInput)
  *
  *       Entrada:
  *           hInput: El handler de l'entrada
  *
  *       Retorn:
- *           TRUE si s'ha produit el flanc
+ *           True si s'ha produit el flanc
  *
  *************************************************************************/
 
 bool eosInputPosEdge(
-    eosHInput hInput) {
+    eosInputHandle hInput) {
 
-    bool result = hInput->posEdge;
-    hInput->posEdge = FALSE;
-    return result;
+    if (hInput->posEdge) {
+        hInput->posEdge = false;
+        return true;
+    }
+    else
+        return false;
 }
 
 
@@ -300,22 +317,25 @@ bool eosInputPosEdge(
  *
  *       Funcio:
  *           bool eosInputNegEdge(
- *               eosHInput hInput)
+ *               eosInputHandle hInput)
  *
  *       Entrada:
  *           hInput: L'entrada
  *
  *       Retorn:
- *           TRUE si s'ha produit el flanc
+ *           True si s'ha produit el flanc
  *
  *************************************************************************/
 
 bool eosInputNegEdge(
-    eosHInput hInput) {
+    eosInputHandle hInput) {
 
-    bool result = hInput->negEdge;
-    hInput->negEdge = FALSE;
-    return result;
+    if (hInput->negEdge) {
+        hInput->negEdge = false;
+        return true;
+    }
+    else
+        return false;
 }
 
 
@@ -325,7 +345,7 @@ bool eosInputNegEdge(
  *
  *       Funcio:
  *           void portInitialize(
- *               eosHInput hInput)
+ *               eosInputHandle hInput)
  *
  *       Entrada:
  *           hInput: El handler de l'entrada
@@ -333,7 +353,7 @@ bool eosInputNegEdge(
  *************************************************************************/
 
 static void portInitialize(
-    eosHInput hInput) {
+    eosInputHandle hInput) {
 
     PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, hInput->channel, hInput->position);
 }
@@ -345,7 +365,7 @@ static void portInitialize(
  *
  *       Funcio:
  *           bool portGet(
- *               eosHInput hInput)
+ *               eosInputHandle hInput)
  *
  *       Entrada:
  *           hInput: El handler de l'entrada
@@ -356,7 +376,7 @@ static void portInitialize(
  **************************************************************************/
 
 static bool portGet(
-    eosHInput hInput) {
+    eosInputHandle hInput) {
 
     bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hInput->channel, hInput->position);
     return hInput->inverted ? !p : p;

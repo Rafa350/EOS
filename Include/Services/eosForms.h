@@ -59,7 +59,7 @@ typedef struct {
 } MsgNotify;
 
 typedef struct {
-    axHDisplayService hDisplayService;
+    axDisplayServiceHandle hDisplayService;
 } MsgPaint;
 
 typedef struct {
@@ -92,7 +92,7 @@ typedef struct {                            // Parametres d'inicialitzacio del f
 } eosFormParams;
 
 typedef struct {                            // Parametres d'inicialitzacio del servei
-    axHDisplayService hDisplayService;
+    axDisplayServiceHandle hDisplayService;
     eosFormsOnMessageCallback onMessage;    // -Funcio per procesar els missatges
     void *globalData;                       // -Dades globals a tots els forms
 } eosFormsServiceParams;

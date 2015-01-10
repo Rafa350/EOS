@@ -11,10 +11,10 @@ typedef enum {                         // Codis d'operacio
     opCode_Remove                      // -Elimina un temporitzador
 } OpCodes;
 
-typedef enum {                              // Estat del servei
-    serviceInitializing,                    // -Inicialitzant
-    serviceRunning                          // -Executant
-} ServiceStates;
+typedef enum {                         // Estat del servei
+    serviceInitializing,               // -Inicialitzant
+    serviceRunning                     // -Executant
+} eosTimerServiceState;
 
 // Indicadors del temporitzador
 //
@@ -26,36 +26,32 @@ typedef enum {                              // Estat del servei
 
 typedef struct {                       // Commanda
     OpCodes opCode;                    // -Codi d'operacio
-    eosHTimer hTimer;                  // -Temporitzador al que aplicar la comanda
+    eosTimerHandle hTimer;             // -Temporitzador al que aplicar la comanda
 } Command;
 
 typedef struct __eosTimer {            // Dades internes del temporitzador
     bool inUse;                        // -Indica si esta en us en el pool
-    eosHTimerService hService;         // -Handler del servei
+    eosTimerServiceHandle hService;    // -Handle del servei
     unsigned flags;                    // -Indicadors
     unsigned timeout;                  // -Temps en ms
     unsigned counter;                  // -Contador de temps en ms
     eosTimerCallback onTimeout;        // -Notifica timeout
-    eosHTimer hNextTimer;              // -Seguent temporitzadorde la llista
-} Timer;
+    eosTimerHandle hNextTimer;         // -Seguent temporitzadorde la llista
+} eosTimer;
 
 typedef struct __eosTimerService {     // Dades internes del servei
     bool inUse;                        // -Indica si esta en us en el pool
-    ServiceStates state;               // -Estat
+    eosTimerServiceState state;        // -Estat
     unsigned triggered;                // -Indica event del temporitzador
     eosHQueue hCommandQueue;           // -Cua de comandes
-    eosHTimer hFirstTimer;             // -Primer temporitzador de la llista
-} TimerService;
+    eosTimerHandle hFirstTimer;        // -Primer temporitzador de la llista
+    eosTimer *timerPool;               // -Pool de memoria
+    unsigned timerPoolSize;            // -Numero maxim d'elements en el pool de memoria
+} eosTimerService;
 
 
-// Pool de memoria pels timers
-//
-static bool timerPoolInitialized = false;
-static Timer timerPool[eosOPTIONS_TIMERS_MAX_TIMERS];
-
-
-static eosHTimer allocTimer(void);
-static void freeTimer(eosHTimer hTimer);
+static eosTimerHandle allocTimer(eosTimerServiceHandle hService);
+static void freeTimer(eosTimerHandle hTimer);
 
 
 /*************************************************************************
@@ -63,21 +59,27 @@ static void freeTimer(eosHTimer hTimer);
  *       Inicialitza el servei
  *
  *       Funcio:
- *           eosHTimerService eosTimerServiceInitialize(
+ *           eosTimerServiceHandle eosTimerServiceInitialize(
  *               eosTimerServiceParams *params)
  *
  *       Entrada:
  *           params: Parametres d'inicialitzacio del servei
  *
  *       Retorn:
- *           El handler del servei. NULL en cas d'error
+ *           El Handle del servei. NULL en cas d'error
  * 
  *************************************************************************/
 
-eosHTimerService eosTimerServiceInitialize(
+eosTimerServiceHandle eosTimerServiceInitialize(
     eosTimerServiceParams *params) {
 
-    eosHTimerService hService = (eosHTimerService) eosAlloc(sizeof(TimerService));
+    if (params->maxTimers < 10)
+        params->maxTimers = 10;
+
+    unsigned timerPoolSize = sizeof(eosTimer) * params->maxTimers;
+
+    eosTimerServiceHandle hService = (eosTimerServiceHandle) eosAlloc(sizeof(eosTimerService)
+        + timerPoolSize);
     if (hService == NULL)
         return NULL;
 
@@ -96,10 +98,12 @@ eosHTimerService eosTimerServiceInitialize(
     hService->state = serviceInitializing;
     hService->triggered = 0;
     hService->hFirstTimer = NULL;
+    hService->timerPool = (eosTimer*)((BYTE*)hService + sizeof(eosTimer));
+    hService->timerPoolSize = params->maxTimers;
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosHTickService hTickService = params->hTickService;
+    eosTickServiceHandle hTickService = params->hTickService;
     if (hTickService == NULL)
         hTickService = eosGetTickServiceHandle();
     if (hTickService != NULL)
@@ -115,17 +119,18 @@ eosHTimerService eosTimerServiceInitialize(
  *
  *       Funcio:
  *           void eosTimerServiceTask(
- *               eosHTimerService hService)
+ *               eosTimerServiceHandle hService)
  *
  *       Entrada:
- *           hService: El handler del servei
+ *           hService: El Handle del servei
  *
  *************************************************************************/
 
 void eosTimerServiceTask(
-    eosHTimerService hService) {
+    eosTimerServiceHandle hService) {
 
     switch (hService->state) {
+        
         case serviceInitializing:
             hService->state = serviceRunning;
             break;
@@ -134,16 +139,16 @@ void eosTimerServiceTask(
 
             // Obte el numero de tick pendents de procesar
             //
-            BOOL intState = eosDisableInterrupts();
+            bool intState = eosInterruptDisable();
             unsigned triggered = hService->triggered;
             hService->triggered = 0;
-            eosRestoreInterrupts(intState);
+            eosInterruptRestore(intState);
 
             // Procesa els ticks pendents
             //
             if (triggered > 0) {
 
-                eosHTimer hTimer = hService->hFirstTimer;
+                eosTimerHandle hTimer = hService->hFirstTimer;
                 while (hTimer) {
                     if ((hTimer->flags & TF_PAUSED) != TF_PAUSED) {
 
@@ -179,7 +184,7 @@ void eosTimerServiceTask(
             Command command;
             while (eosQueueGet(hService->hCommandQueue, &command)) {
 
-                eosHTimer hTimer = command.hTimer;
+                eosTimerHandle hTimer = command.hTimer;
 
                 switch (command.opCode) {
                     case opCode_Pause:
@@ -209,15 +214,15 @@ void eosTimerServiceTask(
  *
  *       Funcio:
  *           void eosTimerServiceTick(
- *               eosHTimerService hService)
+ *               eosTimerServiceHandle hService)
  *
  *       Entrada:
- *           hService: El handler del servei
+ *           hService: El Handle del servei
  *
  *************************************************************************/
 
 void eosTimerServiceTick(
-    eosHTimerService hService) {
+    eosTimerServiceHandle hService) {
 
     hService->triggered += 1;
 }
@@ -228,32 +233,32 @@ void eosTimerServiceTick(
  *       Crea un temporitzador
  *
  *       Funcio:
- *           eosHTimer eosTimerCreate(
- *               eosHTimerService hService,
+ *           eosTimerHandle eosTimerCreate(
+ *               eosTimerServiceHandle hService,
  *               eosTimerParams *params)
  *
  *       Entrada:
- *           hService: Handler del servei
+ *           hService: Handle del servei
  *           params : Parametres d'inicialitzacio
  *
  *       Retorm:
- *           El handler del timer. NULL en cas d'error
+ *           El Handle del timer. NULL en cas d'error
  *
  *************************************************************************/
 
-eosHTimer eosTimerCreate(
-    eosHTimerService hService,
+eosTimerHandle eosTimerCreate(
+    eosTimerServiceHandle hService,
     eosTimerParams *params) {
 
-    eosHTimer hTimer = allocTimer();
+    eosTimerHandle hTimer = allocTimer(hService);
     if (hTimer == NULL)
         return NULL;
 
+    hTimer->hService = hService;
     hTimer->timeout = params->timeout;
     hTimer->counter = params->timeout;
     hTimer->onTimeout = params->onTimeout;
 
-    hTimer->hService = hService;
     hTimer->hNextTimer = hService->hFirstTimer;
     hService->hFirstTimer = hTimer;
 
@@ -267,22 +272,22 @@ eosHTimer eosTimerCreate(
  *
  *       Funcio:
  *           void eosTimerDestroy(
- *               eosHTimer hTimer)
+ *               eosTimerHandle hTimer)
  *
  *       Entrada:
- *           hTimer: El handler del temporitzador
+ *           hTimer: El Handle del temporitzador
  *
  *************************************************************************/
 
 void eosTimerDestroy(
-    eosHTimer hTimer) {
+    eosTimerHandle hTimer) {
 
     freeTimer(hTimer);
 }
 
 
 void eosTimerPause(
-    eosHTimer hTimer) {
+    eosTimerHandle hTimer) {
 
     Command command;
     command.opCode = opCode_Pause;
@@ -292,7 +297,7 @@ void eosTimerPause(
 
 
 void eosTimerContinue(
-    eosHTimer hTimer) {
+    eosTimerHandle hTimer) {
 
     Command command;
     command.opCode = opCode_Continue;
@@ -302,7 +307,7 @@ void eosTimerContinue(
 
 
 void eosTimerReset(
-    eosHTimer hTimer) {
+    eosTimerHandle hTimer) {
 
     Command command;
     command.opCode = opCode_Reset;
@@ -316,21 +321,21 @@ void eosTimerReset(
  *       Crea un temporitzador per gestionar un retard
  *
  *       Funcio:
- *           eosHTimer eosTimerDelayStart(
- *               eosHTimerService hService,
+ *           eosTimerHandle eosTimerDelayStart(
+ *               eosTimerServiceHandle hService,
  *               unsigned timeout)
  *
  *       Entrada:
- *           service: El handler del servei
+ *           service: El Handle del servei
  *           timeout: Retard en ms
  *
  *       Retorn:
- *           El handler del temporitzador. NULL en cas d'error
+ *           El Handle del temporitzador. NULL en cas d'error
  *
  *************************************************************************/
 
-eosHTimer eosTimerDelayStart(
-    eosHTimerService hService,
+eosTimerHandle eosTimerDelayStart(
+    eosTimerServiceHandle hService,
     unsigned timeout) {
 
     eosTimerParams timerParams;
@@ -348,10 +353,10 @@ eosHTimer eosTimerDelayStart(
  *
  *       Funcio:
  *           bool eosTimerDelayGetStatus(
- *               eosHTimer hTimer)
+ *               eosTimerHandle hTimer)
  *
  *       Entrada:
- *           hTimer: El handler del temporitzador
+ *           hTimer: El Handle del temporitzador
  *
  *       Retorn:
  *           true si ha finalitzat el retard
@@ -359,7 +364,7 @@ eosHTimer eosTimerDelayStart(
  *************************************************************************/
 
 bool eosTimerDelayGetStatus(
-    eosHTimer hTimer) {
+    eosTimerHandle hTimer) {
 
     if (hTimer->counter == 0) {
         eosTimerDestroy(hTimer);
@@ -375,25 +380,23 @@ bool eosTimerDelayGetStatus(
  *       Crea una objecte Timer
  *
  *       Funcio:
- *           eosHTimer allocTimer(void)
+ *           eosTimerHandle allocTimer(
+ *               eosTimerServiceHandle hService)
+ *
+ *       Entrada:
+ *           hService: Handler del servei
  *
  *       Retorn:
- *           El handler del objecte creat. NULL en cas d'error
+ *           El Handle del objecte creat. NULL en cas d'error
  *
  *************************************************************************/
 
-static eosHTimer allocTimer(void) {
+static eosTimerHandle allocTimer(
+    eosTimerServiceHandle hService) {
 
-    int i;
-
-    if (!timerPoolInitialized) {
-        for (i = 0; i < sizeof(timerPool) / sizeof(timerPool[0]); i++)
-            timerPool[i].inUse = false;
-        timerPoolInitialized = true;
-    }
-
-    for (i = 0; i < sizeof(timerPool) / sizeof(timerPool[0]); i++) {
-        eosHTimer hTimer = &timerPool[i];
+    unsigned i;
+    for (i = 0; i < hService->timerPoolSize; i++) {
+        eosTimerHandle hTimer = &hService->timerPool[i];
         if (!hTimer->inUse) {
             hTimer->inUse = true;
             return hTimer;
@@ -409,14 +412,16 @@ static eosHTimer allocTimer(void) {
  *       Destrueix un objecte Timer
  *
  *       Funcio:
- *           void freeTimer(eosHTimer hTimer)
+ *           void freeTimer(
+ *               eosTimerHandle hTimer)
  *
  *       Entrada:
- *           hTimer: Handler del objecte a destruir
+ *           hTimer: Handle del objecte a destruir
  *
  *************************************************************************/
 
-static void freeTimer(eosHTimer hTimer) {
+static void freeTimer(
+    eosTimerHandle hTimer) {
 
     hTimer->inUse = false;
 }

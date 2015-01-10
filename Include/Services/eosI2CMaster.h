@@ -20,14 +20,14 @@
 #define eos_ERROR_I2C_TOO_TRANSACTIONS (eos_ERROR_USER + 2)
 
 
-typedef struct __eosI2CMasterService *eosHI2CMasterService;
-typedef struct __eosI2CTransaction *eosHI2CTransaction;
+typedef struct __eosI2CMasterService *eosI2CMasterServiceHandle;
+typedef struct __eosI2CTransaction *eosI2CTransactionHandle;
 
-typedef void (*eosI2CMasterCallback)(eosHI2CTransaction hTransaction);
+typedef void (*eosI2CMasterCallback)(eosI2CTransactionHandle hTransaction);
 
 typedef struct {                       // Parametres del servei
     I2C_MODULE_ID id;                  // -Modul I2C
-    eosHTickService hTickService;      // -Handler del servei TICK
+    eosTickServiceHandle hTickService; // -Handler del servei TICK
 } eosI2CServiceParams;
 
 typedef struct {                       // Parametres d'una transaccio
@@ -41,14 +41,14 @@ typedef struct {                       // Parametres d'una transaccio
 } eosI2CTransactionParams;
 
 
-extern eosHI2CMasterService eosI2CMasterServiceInitialize(eosI2CServiceParams *params);
-extern bool eosI2CMasterIsReady(eosHI2CMasterService hService);
-extern void eosI2CMasterServiceTask(eosHI2CMasterService hService);
-extern void eosI2CMasterServiceTick(eosHI2CMasterService hService);
+extern eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(eosI2CServiceParams *params);
+extern bool eosI2CMasterIsReady(eosI2CMasterServiceHandle hService);
+extern void eosI2CMasterServiceTask(eosI2CMasterServiceHandle hService);
+extern void eosI2CMasterServiceTick(eosI2CMasterServiceHandle hService);
 
-extern eosHI2CTransaction eosI2CMasterStartTransaction(eosHI2CMasterService hService, eosI2CTransactionParams *params);
-extern void *eosI2CMasterGetTransactionContext(eosHI2CTransaction hTransaction);
-extern unsigned eosI2CMasterGetTransactionResult(eosHI2CTransaction hTransaction);
+extern eosI2CTransactionHandle eosI2CMasterStartTransaction(eosI2CMasterServiceHandle hService, eosI2CTransactionParams *params);
+extern void *eosI2CMasterGetTransactionContext(eosI2CTransactionHandle hTransaction);
+extern unsigned eosI2CMasterGetTransactionResult(eosI2CTransactionHandle hTransaction);
 
 
 #endif

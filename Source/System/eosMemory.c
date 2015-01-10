@@ -52,7 +52,7 @@ void* eosAlloc(unsigned size) {
 
 void *eosAllocString(const char* str) {
 
-    int size = strlen(str) + 1;
+    unsigned size = strlen(str) + 1;
     return memcpy(eosAlloc(size), str, size);
 }
 

@@ -4,7 +4,8 @@
 
 #include "xc.h"
 #include "GenericTypeDefs.h"
-#include "peripheral/int/plib_int.h"
+#include "system/int/sys_int.h"
+#include "system/wdt/sys_wdt.h"
 
 
 // Opcions predefinides, si cal, s'han de desabilitar en eosConfig.h
@@ -45,19 +46,21 @@ typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
 extern void eosMain(void);
 #define eosSetError(code, str)
 
-extern bool eosDisableInterrupts();
-extern void eosEnableInterrupts();
-extern void eosRestoreInterrupts(bool state);
-
-extern bool eosDisableInterruptSource(INT_SOURCE source);
-extern void eosEnableInterruptSource(INT_SOURCE source);
-extern void eosRestoreInterruptSource(INT_SOURCE source, bool state);
-
-
-#define eosEnableWatchdog()       EnableWDT()
-#define eosDisableWatchdog()      DisablWDT()
-#define eosClearWatchdog()        ClearWDT()
+// Gestio de les interrupcions
+//
+#define eosInterruptEnable()           SYS_INT_Enable()
+#define eosInterruptDisable()          SYS_INT_Disable()
+#define eosInterruptRestore(state)     if (state) SYS_INT_Enable()
+#define eosInterruptSourceEnable(source)    SYS_INT_SourceEnable(source)
+#define eosInterruptSourceDisable(source)   SYS_INT_SourceDisable(source)
+#define eosInterruptSourceRestore(source, state) if (state) SYS_INT_SourceEnable(source)
 #define __ISR_Entry(v)            v##_ISR(void)
+
+// Gestio del watchdog
+//
+#define eosWatchdogEnable()            SYS_WDT_Enable(false)
+#define eosWatchdogDisable()           SYS_WDT_Disable()
+#define eosWatchdogClearg()            SYS_WDT_TimeClear()
 
 #define eosCheckError(e)            ((e) >= eos_ERROR_BASE)
 #define eosCheckSuccess(e)          ((e) == eos_RESULT_SUCCESS)

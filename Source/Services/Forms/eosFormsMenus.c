@@ -182,7 +182,7 @@ static void onMsgPaint(
     eosFormsMessage  *message) {
 
     eosHForm hForm = message->hForm;
-    axHDisplayService hDisplay = message->msgPaint.hDisplayService;
+    axDisplayServiceHandle hDisplay = message->msgPaint.hDisplayService;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
     if (axDisplayBeginCommand(hDisplay)) {

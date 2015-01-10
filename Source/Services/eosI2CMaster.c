@@ -31,7 +31,7 @@ typedef enum {                         // Estats del servei
     serviceProcessQueue,               // -Procesa la cua de transaccions
     serviceWaitEndTransaction,         // -Espera el final de la transaccio
     serviceWaitEndDelay                // -Espera el final del retard
-} ServiceStates;
+} eosI2CMasterServiceState;
 
 typedef enum {                         // Estat de la transaccio
     transactionIdle,                   // -En espera de iniciar
@@ -48,12 +48,12 @@ typedef enum {                         // Estat de la transaccio
     transactionNak,                    // -NAK transmitit
     transactionWaitStop,               // -Esperant STOP
     transactionFinished                // -Finalitzada
-} TransactionStates;
+} eosI2CTransactionState;
 
 typedef struct __eosI2CTransaction {   // Dades internes d'una transaccio
     bool inUse;                        // -Indica si esta en us en el pool
     I2C_MODULE_ID id;                  // -Identificador de modul i2c
-    TransactionStates state;           // -Estat de la transaccio
+    eosI2CTransactionState state;      // -Estat de la transaccio
     BYTE address;                      // -Adressa de l'esclau
     unsigned index;                    // -Index
     unsigned maxIndex;                 // -Valor maxim per 'index'
@@ -68,32 +68,32 @@ typedef struct __eosI2CTransaction {   // Dades internes d'una transaccio
     unsigned rxCount;                  // -Numero de bytes en el buffer de recepcio
     unsigned rxSize;                   // -Tamany del buffer de recepcio en bytes
     unsigned error;                    // -Codi d'error
-    eosHI2CTransaction hNextTransaction;    // -Seguent transaccio en la cua
-} I2CTransaction;
+    eosI2CTransactionHandle hNextTransaction;    // -Seguent transaccio en la cua
+} eosI2CTransaction;
 
 typedef struct __eosI2CMasterService { // Dades internes del servei
     I2C_MODULE_ID id;                  // -El identificador del modul i2c
-    ServiceStates state;               // -Estat del servei
-    eosHI2CTransaction hCurrentTransaction; // -Transaccio en proces
-    eosHI2CTransaction hFirstTransaction;   // -Primera transaccio de la cua
-    eosHI2CTransaction hLastTransaction;    // -Ultima transaccio de la cua
-    eosHI2CTransaction hTransactionPool;    // -Pool de transaccions
+    eosI2CMasterServiceState state;    // -Estat del servei
+    eosI2CTransactionHandle hCurrentTransaction; // -Transaccio en proces
+    eosI2CTransactionHandle hFirstTransaction;   // -Primera transaccio de la cua
+    eosI2CTransactionHandle hLastTransaction;    // -Ultima transaccio de la cua
+    eosI2CTransactionHandle hTransactionPool;    // -Pool de transaccions
     unsigned tickCount;                // -Contador de ticks
-} I2CMasterService;
+} eosI2CMasterService;
 
-static eosHI2CTransaction transactionMap[I2C_NUMBER_OF_MODULES];
+static eosI2CTransactionHandle transactionMap[I2C_NUMBER_OF_MODULES];
 
 
 // Pool de memoria per transaccions
 //
 static bool transactionPoolInitialized = false;
-static I2CTransaction transactionPool[eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS];
+static eosI2CTransaction transactionPool[eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS];
 
 static void i2cInitialize(I2C_MODULE_ID id);
 static void i2cInterruptService(I2C_MODULE_ID id);
 
-static eosHI2CTransaction allocTransaction(void);
-static void freeTransaction(eosHI2CTransaction hTransaction);
+static eosI2CTransactionHandle allocTransaction(void);
+static void freeTransaction(eosI2CTransactionHandle hTransaction);
 
 
 /*************************************************************************
@@ -101,7 +101,7 @@ static void freeTransaction(eosHI2CTransaction hTransaction);
  *       Inicialitza el servei
  *
  *       Funcio:
- *           eosHI2CMasterServicet eosI2CMasterServiceInitialize(
+ *           eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
  *              eosI2CServiceParams *params)
  *
  *       Entrada:
@@ -112,19 +112,19 @@ static void freeTransaction(eosHI2CTransaction hTransaction);
  *
  *************************************************************************/
 
-eosHI2CMasterService eosI2CMasterServiceInitialize(
+eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
     eosI2CServiceParams *params) {
 
-    unsigned transactionPoolSize = sizeof(I2CTransaction) * eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS;
+    unsigned transactionPoolSize = sizeof(eosI2CTransaction) * eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS;
     
-    eosHI2CMasterService hService = (eosHI2CMasterService) eosAlloc(
-        sizeof(I2CMasterService) + transactionPoolSize);
+    eosI2CMasterServiceHandle hService = (eosI2CMasterServiceHandle) eosAlloc(
+        sizeof(eosI2CMasterService) + transactionPoolSize);
     if (hService == NULL)
         return NULL;
 
     hService->id = params->id;
     hService->state = serviceInitializing;
-    hService->hTransactionPool = (eosHI2CTransaction)((BYTE*) hService + transactionPoolSize);
+    hService->hTransactionPool = (eosI2CTransactionHandle)((BYTE*) hService + transactionPoolSize);
     hService->hFirstTransaction = NULL;
     hService->hLastTransaction = NULL;
     hService->tickCount = 0;
@@ -133,7 +133,7 @@ eosHI2CMasterService eosI2CMasterServiceInitialize(
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosHTickService hTickService = params->hTickService;
+    eosTickServiceHandle hTickService = params->hTickService;
     if (hTickService == NULL)
         hTickService = eosGetTickServiceHandle();
     if (hTickService != NULL)
@@ -149,7 +149,7 @@ eosHI2CMasterService eosI2CMasterServiceInitialize(
  *
  *       Funcio:
  *           bool eosI2CMasterServiceIsReady(
- *               eosHI2CMasterService hService)
+ *               eosI2CMasterServiceHandle hService)
  *
  *       Entrada:
  *           hService: El handler del servei
@@ -160,7 +160,7 @@ eosHI2CMasterService eosI2CMasterServiceInitialize(
  *************************************************************************/
 
 bool __attribute__ ((always_inline)) eosI2CMasterServiceIsReady(
-    eosHI2CMasterService hService) {
+    eosI2CMasterServiceHandle hService) {
 
     return hService->state != serviceInitializing;
 }
@@ -172,7 +172,7 @@ bool __attribute__ ((always_inline)) eosI2CMasterServiceIsReady(
  *
  *       Funcio:
  *           void eosI2CMasterServiceTask(
- *               eosHI2CMasterService hService)
+ *               eosI2CMasterServiceHandle hService)
  *
  *       Entrada:
  *           hService: El handler del servei
@@ -180,7 +180,7 @@ bool __attribute__ ((always_inline)) eosI2CMasterServiceIsReady(
  *************************************************************************/
 
 void eosI2CMasterServiceTask(
-    eosHI2CMasterService hService) {
+    eosI2CMasterServiceHandle hService) {
 
     switch (hService->state) {
         case serviceInitializing:
@@ -200,7 +200,7 @@ void eosI2CMasterServiceTask(
 
                     // Treu la primera transaccio de la cua
                     //
-                    eosHI2CTransaction hTransaction = hService->hFirstTransaction;
+                    eosI2CTransactionHandle hTransaction = hService->hFirstTransaction;
                     hService->hFirstTransaction = hService->hFirstTransaction->hNextTransaction;
 
                     // Prepara la transaccio
@@ -222,7 +222,7 @@ void eosI2CMasterServiceTask(
 
         case serviceWaitEndTransaction: {
 
-                eosHI2CTransaction hTransaction = hService->hCurrentTransaction;
+                eosI2CTransactionHandle hTransaction = hService->hCurrentTransaction;
                 
                 // Comprova si ha finalitzat la transaccio
                 //
@@ -260,7 +260,7 @@ void eosI2CMasterServiceTask(
  *
  *       Funcio:
  *           void eosI2CMasterServiceTick(
- *               eosHI2CMasterService hService)
+ *               eosI2CMasterServiceHandle hService)
  *
  *       Entrada:
  *           hService: El handler del servei
@@ -268,7 +268,7 @@ void eosI2CMasterServiceTask(
  *************************************************************************/
 
 void eosI2CMasterServiceTick(
-    eosHI2CMasterService hService) {
+    eosI2CMasterServiceHandle hService) {
 
     if (hService->tickCount > 0)
         hService->tickCount--;
@@ -280,8 +280,8 @@ void eosI2CMasterServiceTick(
  *       Inicia una transaccio
  *
  *       Funcio:
- *           eosHI2CTransaction eosI2CMasterStartTransaction(
- *               eosHI2CMasterService hService,
+ *           eosI2CTransactionHandle eosI2CMasterStartTransaction(
+ *               eosI2CMasterServiceHandle hService,
  *               eosI2CTransactionParams *params)
  *
  *       Entrada:
@@ -293,15 +293,15 @@ void eosI2CMasterServiceTick(
  *
  *************************************************************************/
 
-eosHI2CTransaction eosI2CMasterStartTransaction(
-    eosHI2CMasterService hService,
+eosI2CTransactionHandle eosI2CMasterStartTransaction(
+    eosI2CMasterServiceHandle hService,
     eosI2CTransactionParams *params) {
 
     if ((params->txBuffer == NULL || params->txCount == 0) &&
        (params->rxBuffer == NULL || params->rxSize  == 0))
         return NULL;
 
-    eosHI2CTransaction hTransaction = allocTransaction();
+    eosI2CTransactionHandle hTransaction = allocTransaction();
     if (hTransaction == NULL)
         return NULL;
 
@@ -333,13 +333,13 @@ eosHI2CTransaction eosI2CMasterStartTransaction(
 
 
 unsigned __attribute__ ((always_inline)) eosI2CMasterGetTransactionResult(
-    eosHI2CTransaction hTransaction) {
+    eosI2CTransactionHandle hTransaction) {
 
     return hTransaction->error;
 }
 
 void * __attribute__ ((always_inline)) eosI2CMasterGetTransactionContext(
-    eosHI2CTransaction hTransaction) {
+    eosI2CTransactionHandle hTransaction) {
 
     return hTransaction->context;
 }
@@ -478,7 +478,7 @@ static void i2cInitialize(
 static void i2cInterruptService(
     I2C_MODULE_ID id) {
 
-    eosHI2CTransaction hTransaction = transactionMap[id];
+    eosI2CTransactionHandle hTransaction = transactionMap[id];
     if (hTransaction != NULL) {
 
         switch (hTransaction->state) {
@@ -661,14 +661,14 @@ static void i2cInterruptService(
  *       Crea una objecte I2CTransaction
  *
  *       Funcio:
- *           eosHI2CTransaction allocTransaction(void)
+ *           eosI2CTransactionHandle allocTransaction(void)
  *
  *       Retorn:
  *           El handler del objecte creat. NULL en cas d'error
  *
  *************************************************************************/
 
-static eosHI2CTransaction allocTransaction(void) {
+static eosI2CTransactionHandle allocTransaction(void) {
 
     int i = 0;
 
@@ -679,7 +679,7 @@ static eosHI2CTransaction allocTransaction(void) {
     }
 
     for (i = 0; i < sizeof(transactionPool) / sizeof(transactionPool[0]); i++) {
-        eosHI2CTransaction hTransaction = &transactionPool[i];
+        eosI2CTransactionHandle hTransaction = &transactionPool[i];
         if (!hTransaction->inUse) {
             hTransaction->inUse = true;
             return hTransaction;
@@ -696,14 +696,15 @@ static eosHI2CTransaction allocTransaction(void) {
  *
  *       Funcio:
  *           void freeTransaction(
- *               eosHI2CTransaction hTransaction)
+ *               eosI2CTransactionHandle hTransaction)
  *
  *       Entrada:
  *           hTransaction: El objecte a destruir
  *
  *************************************************************************/
 
-static void freeTransaction(eosHI2CTransaction hTransaction) {
+static void freeTransaction(
+    eosI2CTransactionHandle hTransaction) {
 
     hTransaction->inUse = false;
 }

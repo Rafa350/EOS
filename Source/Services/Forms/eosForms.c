@@ -21,7 +21,7 @@ typedef struct __eosForm {             // Dades del formulari
 
 typedef struct __eosFormsService {     // Dades del servei
     ServiceStates state;               // -Estat del servei
-    axHDisplayService hDisplayService; // -Servei de display
+    axDisplayServiceHandle hDisplayService; // -Servei de display
     eosFormsOnMessageCallback onMessage;    // -Calback en cada missatge
     eosHQueue hQueue;                  // -Cua de missatges
     eosHForm hActiveForm;              // -Formulari actiu

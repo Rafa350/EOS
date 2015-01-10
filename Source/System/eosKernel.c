@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "Services/eosTick.h"
 #include "system/devcon/sys_devcon.h"
-#include "peripheral/int/plib_int.h"
+#include "system/int/sys_int.h"
 #include "HardwareProfile.h"
 
 
@@ -15,7 +15,7 @@ SYS_DEVCON_INIT devconInit = {
 };
 
 
-static eosHTickService hTickService;
+static eosTickServiceHandle hTickService;
 
 
 // Funcions a definir en l'aplicacio del usuari
@@ -47,14 +47,14 @@ void eosTaskSchedule(void) {
  *       Obte el handler del servei TICK intern
  *
  *       Funcio:
- *           eosTickService eosGetTickServiceHandle(void)
+ *           eosTickServiceHandle eosGetTickServiceHandle(void)
  *
  *       Retorn:
  *           El handler del servei TICK
  *
  *************************************************************************/
 
-eosHTickService eosGetTickServiceHandle(void) {
+eosTickServiceHandle eosGetTickServiceHandle(void) {
 
     return hTickService;
 }
@@ -75,7 +75,11 @@ void eosMain(void) {
     //
     SYS_DEVCON_Initialize(SYS_DEVCON_INDEX_0, (SYS_MODULE_INIT*) &devconInit);
     SYS_DEVCON_PerformanceConfig(CLOCK_SYSTEM_HZ);
-    PLIB_INT_MultiVectorSelect(INT_ID_0);
+
+    // Inicialitza les interrupcions
+    //
+    SYS_INT_Initialize();
+    SYS_INT_Enable();
 
     // Inicialitza el servei TICK
     //
@@ -86,11 +90,7 @@ void eosMain(void) {
     //
     appSetup();
     
-    // Autoritza les interrupcions
-    //
-    eosEnableInterrupts();
-
-    while (TRUE) {
+    while (true) {
 
         // Procesa les tasques del sistema
         //

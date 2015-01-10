@@ -11,11 +11,12 @@
 #endif
 
 
-typedef struct __eosTimer *eosHTimer;
-typedef struct __eosTimerService *eosHTimerService;
+typedef struct __eosTimer *eosTimerHandle;
+typedef struct __eosTimerService *eosTimerServiceHandle;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    eosHTickService hTickService;      // -Servei TICK
+    eosTickServiceHandle hTickService; // -Servei TICK
+    unsigned maxTimers;                // -Numero maxim de timers
 } eosTimerServiceParams;
 
 typedef enum {                         // Tipus de temporitzador
@@ -24,7 +25,7 @@ typedef enum {                         // Tipus de temporitzador
     TT_CYCLIC,                         // -Ciclic
 } eosTimerType;
 
-typedef void (*eosTimerCallback)(eosHTimer hTimer);
+typedef void (*eosTimerCallback)(eosTimerHandle hTimer);
 
 typedef struct {                       // Parametres de creacio d'un temporitzador
     unsigned timeout;                  // -Periode
@@ -35,26 +36,26 @@ typedef struct {                       // Parametres de creacio d'un temporitzad
 
 // Gestio del servei
 //
-extern eosHTimerService eosTimerServiceInitialize(eosTimerServiceParams *params);
-extern bool eosTimerServiceIsReady(eosHTimerService hService);
-extern void eosTimerServiceTask(eosHTimerService hService);
-extern void eosTimerServiceTick(eosHTimerService hService);
+extern eosTimerServiceHandle eosTimerServiceInitialize(eosTimerServiceParams *params);
+extern bool eosTimerServiceIsReady(eosTimerServiceHandle hService);
+extern void eosTimerServiceTask(eosTimerServiceHandle hService);
+extern void eosTimerServiceTick(eosTimerServiceHandle hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosHTimer eosTimerCreate(eosHTimerService hService, eosTimerParams *params);
-extern void eosTimerDestroy(eosHTimer hTimer);
+extern eosTimerHandle eosTimerCreate(eosTimerServiceHandle hService, eosTimerParams *params);
+extern void eosTimerDestroy(eosTimerHandle hTimer);
 
 // Operacions amb els objectes
 //
-extern void eosTimerPause(eosHTimer hTimer);
-extern void eosTimerContinue(eosHTimer hTimer);
-extern void eosTimerReset(eosHTimer hTimer);
+extern void eosTimerPause(eosTimerHandle hTimer);
+extern void eosTimerContinue(eosTimerHandle hTimer);
+extern void eosTimerReset(eosTimerHandle hTimer);
 
 // Operacions especials
 //
-extern eosHTimer eosTimerDelayStart(eosHTimerService hService, unsigned timeout);
-extern bool eosTimerDelayGetStatus(eosHTimer timer);
+extern eosTimerHandle eosTimerDelayStart(eosTimerServiceHandle hService, unsigned timeout);
+extern bool eosTimerDelayGetStatus(eosTimerHandle hTimer);
 
 
 #endif

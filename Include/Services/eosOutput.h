@@ -15,8 +15,8 @@
 #endif
 
 
-typedef struct __eosOutput *eosHOutput;
-typedef struct __eosOutputService *eosHOutputService;
+typedef struct __eosOutput *eosOutputHandle;
+typedef struct __eosOutputService *eosOutputServiceHandle;
 
 typedef struct {                       // Parametres d'inicialitzacio de les sortides
     PORTS_CHANNEL channel;             // -Canal del port
@@ -25,31 +25,31 @@ typedef struct {                       // Parametres d'inicialitzacio de les sor
 } eosOutputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    eosHTickService hTickService;      // -Servei TICK
+    eosTickServiceHandle hTickService; // -Servei TICK
 } eosOutputServiceParams;
 
 
 // Gestio del servei
 //
-extern eosHOutputService eosOutputServiceInitialize(eosOutputServiceParams *params);
-extern bool eosOutputIsReady(eosHOutputService hService);
-extern void eosOutputServiceTask(eosHOutputService hService);
-extern void eosOutputServiceTick(eosHOutputService hService);
+extern eosOutputServiceHandle eosOutputServiceInitialize(eosOutputServiceParams *params);
+extern bool eosOutputIsReady(eosOutputServiceHandle hService);
+extern void eosOutputServiceTask(eosOutputServiceHandle hService);
+extern void eosOutputServiceTick(eosOutputServiceHandle hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosHOutput eosOutputCreate(eosHOutputService hService, eosOutputParams *params);
-extern void eosOutputDestroy(eosHOutput hOutput);
+extern eosOutputHandle eosOutputCreate(eosOutputServiceHandle hService, eosOutputParams *params);
+extern void eosOutputDestroy(eosOutputHandle hOutput);
 
 // Operacions amb els objectes
 //
-extern bool eosOutputGet(eosHOutput hOutput);
-extern void eosOutputSet(eosHOutput hOutput, bool state);
-extern void eosOutputToggle(eosHOutput hOutput);
-extern void eosOutputPulse(eosHOutput hOutput, unsigned time);
-extern void eosOutputDelayedSet(eosHOutput hOutput, unsigned delay, bool state);
-extern void eosOutputDelayedToggle(eosHOutput hOutput, unsigned delay);
-extern void eosOutputDelayedPulse(eosHOutput hOutput, unsigned delay, unsigned time);
+extern bool eosOutputGet(eosOutputHandle hOutput);
+extern void eosOutputSet(eosOutputHandle hOutput, bool state);
+extern void eosOutputToggle(eosOutputHandle hOutput);
+extern void eosOutputPulse(eosOutputHandle hOutput, unsigned time);
+extern void eosOutputDelayedSet(eosOutputHandle hOutput, unsigned delay, bool state);
+extern void eosOutputDelayedToggle(eosOutputHandle hOutput, unsigned delay);
+extern void eosOutputDelayedPulse(eosOutputHandle hOutput, unsigned delay, unsigned time);
 
 
 #endif	
