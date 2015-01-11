@@ -1,6 +1,5 @@
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
-#include "HardwareProfile.h"
 #include "sys/attribs.h"
 #include "peripheral/int/plib_int.h"
 #include "peripheral/tmr/plib_tmr.h"
@@ -25,24 +24,28 @@
 #endif
 
 
+typedef struct __eosTickService *eosTickServiceHandle;
+typedef struct __eosTickAttach *eosTickAttachHandle;
+
 typedef enum  {                        // Estats del servei
     serviceInitializing,               // -Inicialitzant
     serviceRunning                     // -Execucio
 } eosTickServiceState;
 
-typedef struct __Attach {              // Funcio adjunta
-    eosTickServiceHandle hService;     // -Servei al que pertany
-    struct __Attach *nextAttach;       // -Seguent adjunt
+typedef struct __eosTickAttach {       // Funcio adjunta
+    eosTickServiceHandle hService;     // -Handler del servei
+    eosTickAttachHandle hNextAttach;   // -Seguent adjunt
     eosTickCallback onTick;            // -Event TICK
     void *onTickContext;               // -Parametres del event TICK
-} Attach;
+} eosTickAttach;
 
 typedef struct __eosTickService {      // Dades internes del servei
     eosTickServiceState state;         // -Estat
-    unsigned maxAttaches;              // -Numero maxim d'adjunts
-    Attach *firstAttach;               // -Primer adjunt
+    eosTickAttachHandle hFirstAttach;  // -Primer adjunt
 } eosTickService;
 
+
+static eosTickService service;
 static eosTickServiceHandle hService = NULL;
 
 
@@ -56,31 +59,28 @@ static void timerStop(void);
  *       Inicialitza el servei
  *
  *       Funcio:
- *           eosTickServiceHandle eosTickServiceInitialize(
+ *           bool eosTickServiceInitialize(
  *               eosTickServiceParams *params)
  *
  *       Entrada:
  *           params : Parametres d'inicialitzacio
  *
  *       Retorn:
- *           El handler del servei. NULL en cas d'error
+ *           True si tot es correcte, false en cas contrari
  *
  *************************************************************************/
 
-eosTickServiceHandle eosTickServiceInitialize(
+bool eosTickServiceInitialize(
     eosTickServiceParams *params) {
 
     if (hService != NULL)
-        return hService;
-    
-    hService = (eosTickServiceHandle) eosAlloc(sizeof(eosTickService));
-    if (hService == NULL)
-        return NULL;
+        return false;
 
+    hService = &service;
     hService->state = serviceInitializing;
-    hService->firstAttach = NULL;
+    hService->hFirstAttach = NULL;
 
-    return hService;
+    return true;
 }
 
 
@@ -89,18 +89,14 @@ eosTickServiceHandle eosTickServiceInitialize(
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void eosTickServiceTask(
- *               eosTickServiceHandle hService)
- *
- *       Entrada:
- *           service : El handler del servei
+ *           void eosTickServiceTask(void)
  *
  *************************************************************************/
 
-void eosTickServiceTask(
-    eosTickServiceHandle hService) {
+void eosTickServiceTask(void) {
 
     switch (hService->state) {
+        
         case serviceInitializing:
             timerInitialize();
             timerStart();
@@ -118,37 +114,34 @@ void eosTickServiceTask(
  *       Asigna una funcio per disparar
  *
  *       Funcio:
- *           void eosTickAttach(
- *               eosTickServiceHandle hService
+ *           bool eosTickAttachFunction(
  *               eosTickCallback onTick,
  *               void *onTickContext)
  *
  *       Entrada:
- *           hService      : El servei
  *           onTick        : Callback del event TICK
  *           onTickContext : Contexte del event TICK
  *
  *************************************************************************/
 
-void eosTickAttach(
-    eosTickServiceHandle hService,
+bool eosTickAttachFunction(
     eosTickCallback onTick,
     void *onTickContext) {
 
-    Attach *attach = eosAlloc(sizeof(Attach));
-    if (attach) {
+    eosTickAttachHandle hAttach = eosAlloc(sizeof(eosTickAttach));
+    if (hAttach == NULL)
+        return false;
 
-        attach->onTick = onTick;
-        attach->onTickContext = onTickContext;
+    hAttach->hService = hService;
+    hAttach->onTick = onTick;
+    hAttach->onTickContext = onTickContext;
 
-        bool state = eosInterruptSourceDisable(TICK_TIMER_INT_SOURCE);
+    bool intState = eosInterruptSourceDisable(TICK_TIMER_INT_SOURCE);
+    hAttach->hNextAttach = hService->hFirstAttach;
+    hService->hFirstAttach = hAttach;
+    eosInterruptSourceRestore(TICK_TIMER_INT_SOURCE, intState);
 
-        attach->hService = hService;
-        attach->nextAttach = hService->firstAttach;
-        hService->firstAttach = attach;
-
-        eosInterruptSourceRestore(TICK_TIMER_INT_SOURCE, state);
-    }
+    return true;
 }
 
 
@@ -220,12 +213,13 @@ static void timerStop(void) {
 
 void __ISR(TICK_TIMER_CORE_VECTOR, IPL2SOFT) __ISR_Entry(TICK_TIMER_CORE_VECTOR) {
 
-    if (hService != NULL) {
-        Attach *attach = hService->firstAttach;
-        while (attach) {
-            if (attach->onTick != NULL)
-                attach->onTick(attach->onTickContext);
-            attach = attach->nextAttach;
+    if (hService->state == serviceRunning) {
+
+        eosTickAttachHandle hAttach = hService->hFirstAttach;
+        while (hAttach) {
+            if (hAttach->onTick != NULL)
+                hAttach->onTick(hAttach->onTickContext);
+            hAttach = hAttach->hNextAttach;
         }
     }
 

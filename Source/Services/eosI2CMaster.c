@@ -116,12 +116,17 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
     eosI2CServiceParams *params) {
 
     unsigned transactionPoolSize = sizeof(eosI2CTransaction) * eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS;
-    
+
+    // Crea el bloc de memoria complert per servei. Inclueix el propi
+    // servei i el pool de transaccions
+    //
     eosI2CMasterServiceHandle hService = (eosI2CMasterServiceHandle) eosAlloc(
         sizeof(eosI2CMasterService) + transactionPoolSize);
     if (hService == NULL)
         return NULL;
 
+    // -Inicialitza les dades internes del servei
+    //
     hService->id = params->id;
     hService->state = serviceInitializing;
     hService->hTransactionPool = (eosI2CTransactionHandle)((BYTE*) hService + transactionPoolSize);
@@ -129,15 +134,13 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
     hService->hLastTransaction = NULL;
     hService->tickCount = 0;
 
+    // -Inicialitza el mapa de transaccions per les interrupcions
+    //
     transactionMap[hService->id] = NULL;
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosTickServiceHandle hTickService = params->hTickService;
-    if (hTickService == NULL)
-        hTickService = eosGetTickServiceHandle();
-    if (hTickService != NULL)
-        eosTickAttach(hTickService, (eosTickCallback) eosI2CMasterServiceTick, hService);
+    eosTickAttachFunction((eosTickCallback) eosI2CMasterServiceTick, hService);
 
     return hService;
 }

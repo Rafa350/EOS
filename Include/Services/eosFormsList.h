@@ -16,13 +16,13 @@
 
 
 typedef struct {
-    eosHForm hParent;
+    eosFormHandle hParent;
     char *title;
     char **items;
     unsigned numItems;
 } eosListParams;
 
-extern eosHForm eosFormsCreateList(eosHFormsService hService, eosListParams *params);
+extern eosFormHandle eosFormsCreateList(eosFormsServiceHandle hService, eosListParams *params);
 
 
 #endif

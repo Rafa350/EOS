@@ -27,7 +27,6 @@ typedef void (*eosI2CMasterCallback)(eosI2CTransactionHandle hTransaction);
 
 typedef struct {                       // Parametres del servei
     I2C_MODULE_ID id;                  // -Modul I2C
-    eosTickServiceHandle hTickService; // -Handler del servei TICK
 } eosI2CServiceParams;
 
 typedef struct {                       // Parametres d'una transaccio

@@ -3,6 +3,8 @@
 #include "System/eosMemory.h"
 
 
+typedef struct __eosOutputService *eosOutputServiceHandle;
+
 typedef enum {                         // Estats del servei
     serviceInitializing,               // -Inicialitzant
     serviceRunning                     // -En execucio
@@ -23,6 +25,10 @@ typedef struct __eosOutputService {    // Dades del servei
 } eosOutputService;
 
 
+static eosOutputService service;
+static eosOutputServiceHandle hService = NULL;
+
+static void tickFunction(void *context);
 static void portInitialize(eosOutputHandle hOutput);
 static bool portGet(eosOutputHandle hOutput);
 static void portSet(eosOutputHandle hOutput, bool state);
@@ -34,36 +40,42 @@ static void portToggle(eosOutputHandle hOutput);
  *       Inicialitzacio el servei de gestio de sortides
  *
  *       Funcio:
- *           eosOutputServiceHandle eosOutputServiceInitialize(
+ *           bool eosOutputServiceInitialize(
  *               eosOutputServiceParams *params)
  *
  *       Entrada:
  *           params: Parametres d'inicialitzacio del servei
  *
  *       Retorn:
- *           El handler del servei. NULL en cas d'error
+ *           True si tot es correcte
  *
  *************************************************************************/
 
-eosOutputServiceHandle eosOutputServiceInitialize(
+bool eosOutputServiceInitialize(
     eosOutputServiceParams *params) {
 
-    eosOutputServiceHandle hService = (eosOutputServiceHandle) eosAlloc(sizeof(eosOutputService));
-    if (hService == NULL)
-        return NULL;
+    // Comprova si ja esta inicialitzat
+    //
+    if (hService)
+        return false;
 
+    // Inicialitza les dades internes del servei
+    //
+    hService = &service;
     hService->state = serviceInitializing;
     hService->hFirstOutput = NULL;
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosTickServiceHandle hTickService = params->hTickService;
-    if (hTickService == NULL)
-        hTickService = eosGetTickServiceHandle();
-    if (hTickService != NULL)
-        eosTickAttach(hTickService, (eosTickCallback) eosOutputServiceTick, hService);
+    eosTickAttachFunction((eosTickCallback) tickFunction, NULL);
 
-    return hService;
+    return true;
+}
+
+
+bool __attribute__ ((always_inline)) eosOutputServiceIsReady(void) {
+
+    return hService && (hService->state != serviceInitializing);
 }
 
 
@@ -72,57 +84,23 @@ eosOutputServiceHandle eosOutputServiceInitialize(
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void eosOutputServiceTask(
- *               eosOutputServiceHandle hService)
- * 
- *       Entrada:
- *           hService: El handler del servei
+ *           void eosOutputServiceTask(void)
  *
  *************************************************************************/
 
-void eosOutputServiceTask(
-    eosOutputServiceHandle hService) {
+void eosOutputServiceTask(void) {
 
-    switch (hService->state) {
-        case serviceInitializing:
-            hService->state = serviceRunning;
-            break;
+    if (hService) {
 
-        case serviceRunning:
-            break;
-    }
-}
+        switch (hService->state) {
 
+            case serviceInitializing:
+                hService->state = serviceRunning;
+                break;
 
-/*************************************************************************
- *
- *       Gestiona la interrupcio TICK
- *
- *       Funcio:
- *           void eosOutputServiceTick(
- *               eosOutputServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del servei
- *
- *************************************************************************/
-
-void eosOutputServiceTick(
-    eosOutputServiceHandle hService) {
-
-    if (hService->state == serviceRunning) {
-
-        eosOutputHandle hOutput = hService->hFirstOutput;
-        while (hOutput) {
-
-            if (hOutput->tickCount) {
-                hOutput->tickCount -= 1;
-                if (!hOutput->tickCount)
-                    portToggle(hOutput);
-            }
-
-            hOutput = hOutput->hNextOutput;
-        }        
+            case serviceRunning:
+                break;
+        }
     }
 }
 
@@ -133,36 +111,47 @@ void eosOutputServiceTick(
  *
  *       Funcio:
  *           eosOutputHandle eosOutputsCreate(
- *               eosOutputServiceHandle hService,
  *               eosOutputParams *params)
  *
  *       Entrada:
- *           hService: El handler servei
- *           params  : Parametres d'inicialitzacio de la sortida
+ *           params: Parametres d'inicialitzacio de la sortida
+ *
  *       Retorn:
  *           El handler de la sortida. NULL en cas d'error
  *
  *************************************************************************/
 
 eosOutputHandle eosOutputCreate(
-    eosOutputServiceHandle hService,
     eosOutputParams *params) {
 
-    eosOutputHandle hOutput = (eosOutputHandle) eosAlloc(sizeof(eosOutput));
+    // Comprova que el servei estiqui inicialitzat
+    //
+    if (!hService)
+        return NULL;
+
+    // Crea el bloc de memoria
+    //
+    eosOutputHandle hOutput = eosAlloc(sizeof(eosOutput));
     if (hOutput == NULL)
         return NULL;
 
+    // Inicialitza les dades internes de la sortida
+    //
     hOutput->hService = hService;   
     hOutput->channel = params->channel;
     hOutput->position = params->position;
     hOutput->inverted = params->inverted;
     hOutput->tickCount = 0;
 
+    // Afegeis la sortida a la llista de sortides del servei
+    //
     bool intState = eosInterruptDisable();
     hOutput->hNextOutput = hService->hFirstOutput;
     hService->hFirstOutput = hOutput;
     eosInterruptRestore(intState);
 
+    // Inicialitza el ort fisic
+    //
     portInitialize(hOutput);
 
     return hOutput;
@@ -207,7 +196,10 @@ void eosOutputDestroy(
 bool __attribute__ ((always_inline)) eosOutputGet(
     eosOutputHandle hOutput) {
 
-    return portGet(hOutput);
+    if (hOutput)
+        return portGet(hOutput);
+    else
+        return false;
 }
 
 
@@ -230,7 +222,8 @@ void __attribute__ ((always_inline)) eosOutputSet(
     eosOutputHandle hOutput,
     bool state) {
 
-    portSet(hOutput, state);
+    if (hOutput)
+        portSet(hOutput, state);
 }
 
 
@@ -250,7 +243,8 @@ void __attribute__ ((always_inline)) eosOutputSet(
 void __attribute__ ((always_inline)) eosOutputToggle(
     eosOutputHandle hOutput) {
 
-    portToggle(hOutput);
+    if (hOutput)
+        portToggle(hOutput);
 }
 
 
@@ -273,13 +267,46 @@ void eosOutputsPulse(
     eosOutputHandle hOutput,
     unsigned time) {
 
-    bool intState = eosInterruptDisable();
+    if (hOutput && (time > 0)) {
+        bool intState = eosInterruptDisable();
+        if (!hOutput->tickCount)
+            portToggle(hOutput);
+        hOutput->tickCount = time;
+        eosInterruptRestore(intState);
+    }
+}
 
-    if (!hOutput->tickCount)
-        portToggle(hOutput);
-    hOutput->tickCount = time;
 
-    eosInterruptRestore(intState);
+/*************************************************************************
+ *
+ *       Gestiona la interrupcio TICK
+ *
+ *       Funcio:
+ *           void tickFunction(
+ *               void *context)
+ *
+ *       Entrada:
+ *           context: En aquest cas NULL
+ *
+ *************************************************************************/
+
+static void tickFunction(
+    void *context) {
+
+    if (hService && (hService->state == serviceRunning)) {
+
+        eosOutputHandle hOutput = hService->hFirstOutput;
+        while (hOutput) {
+
+            if (hOutput->tickCount) {
+                hOutput->tickCount -= 1;
+                if (!hOutput->tickCount)
+                    portToggle(hOutput);
+            }
+
+            hOutput = hOutput->hNextOutput;
+        }
+    }
 }
 
 

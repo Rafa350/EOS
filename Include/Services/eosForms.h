@@ -32,11 +32,11 @@
 #define MSG_NOTIFY           103       // Event de nofificacio d'un altre form
 
 
-typedef struct __eosFormsService *eosHFormsService;
-typedef struct __eosForm *eosHForm;
+typedef struct __eosFormsService *eosFormsServiceHandle;
+typedef struct __eosForm *eosFormHandle;
 
 typedef struct {
-    eosHForm hOldActive;
+    eosFormHandle hOldActive;
 } MsgActivate;
 
 typedef struct {
@@ -49,11 +49,11 @@ typedef struct {
 } MsgCreate;
 
 typedef struct {
-    eosHForm hNewActive;
+    eosFormHandle hNewActive;
 } MsgDeactivate;
 
 typedef struct {
-    eosHForm hSender;
+    eosFormHandle hSender;
     unsigned event;
     void *params;
 } MsgNotify;
@@ -69,7 +69,7 @@ typedef struct {
 } MsgSelector;
 
 typedef struct {
-    eosHForm hForm;
+    eosFormHandle hForm;
     unsigned id;
     union {
         MsgActivate msgActivate;
@@ -82,10 +82,10 @@ typedef struct {
     };
 } eosFormsMessage;
 
-typedef void (*eosFormsOnMessageCallback)(eosHFormsService hService, eosFormsMessage *message);
+typedef void (*eosFormsOnMessageCallback)(eosFormsServiceHandle hService, eosFormsMessage *message);
 
 typedef struct {                            // Parametres d'inicialitzacio del form
-    eosHForm hParent;                       // -Form pare
+    eosFormHandle hParent;                  // -Form pare
     eosFormsOnMessageCallback onMessage;    // -Funcio per gestionar els missatges
     unsigned privateDataSize;               // -Tamany de les dades privates
     void *privateParams;                    // -Parametres d'inicialitzacio privats
@@ -98,22 +98,22 @@ typedef struct {                            // Parametres d'inicialitzacio del s
 } eosFormsServiceParams;
 
 
-extern eosHFormsService eosFormsServiceInitialize(eosFormsServiceParams *params);
-extern bool eosFormServiceIsReady(eosHFormsService hService);
-extern void eosFormsServiceTask(eosHFormsService hForms);
-extern void eosFormsSendMessage(eosHFormsService hService, eosFormsMessage *message);
-extern void eosFormsPostMessage(eosHFormsService hService, eosFormsMessage *message);
+extern eosFormsServiceHandle eosFormsServiceInitialize(eosFormsServiceParams *params);
+extern bool eosFormServiceIsReady(eosFormsServiceHandle hService);
+extern void eosFormsServiceTask(eosFormsServiceHandle hForms);
+extern void eosFormsSendMessage(eosFormsServiceHandle hService, eosFormsMessage *message);
+extern void eosFormsPostMessage(eosFormsServiceHandle hService, eosFormsMessage *message);
 
-extern eosHForm eosFormsCreateForm(eosHFormsService hService, eosFormParams *params);
-extern void eosFormsDestroyForm(eosHForm hForm);
-extern void eosFormsRefreshForm(eosHForm hForm);
+extern eosFormHandle eosFormsCreateForm(eosFormsServiceHandle hService, eosFormParams *params);
+extern void eosFormsDestroyForm(eosFormHandle hForm);
+extern void eosFormsRefreshForm(eosFormHandle hForm);
 
-extern eosHForm eosFormsGetActiveForm(eosHFormsService hService);
-extern void *eosFormsGetPrivateData(eosHForm hForm);
-extern eosHForm eosFormsGetParent(eosHForm hForm);
-extern eosHFormsService eosFormsGetService(eosHForm hForm);
+extern eosFormHandle eosFormsGetActiveForm(eosFormsServiceHandle hService);
+extern void *eosFormsGetPrivateData(eosFormHandle hForm);
+extern eosFormHandle eosFormsGetParent(eosFormHandle hForm);
+extern eosFormsServiceHandle eosFormsGetService(eosFormHandle hForm);
 
-extern void eosFormsSetActiveForm(eosHForm hForm);
+extern void eosFormsSetActiveForm(eosFormHandle hForm);
 
 
 #endif

@@ -16,7 +16,7 @@
 
 
 typedef struct {                       // Parametres d'inicialitzacio
-    eosHForm hParent;                  // -Form pare. Es el que reb les notificacions
+    eosFormHandle hParent;             // -Form pare. Es el que reb les notificacions
     char* title;                       // -Titlo
     int minValue;                      // -Valor minim
     int maxValue;                      // -Valor maxim
@@ -24,7 +24,7 @@ typedef struct {                       // Parametres d'inicialitzacio
     int value;                         // -Valor inicial
 } eosIncDecParams;
 
-extern eosHForm eosFormsCreateIncDec(eosHFormsService hService, eosIncDecParams *params);
+extern eosFormHandle eosFormsCreateIncDec(eosFormsServiceHandle hService, eosIncDecParams *params);
 
 
 #endif

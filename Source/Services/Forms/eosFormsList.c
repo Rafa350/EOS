@@ -10,7 +10,7 @@ typedef struct {
 } PrivateData;
 
 
-static void onMessage(eosHFormsService hServide, eosFormsMessage *message);
+static void onMessage(eosFormsServiceHandle hServide, eosFormsMessage *message);
 
 static void onMsgActivate(eosFormsMessage *message);
 static void onMsgCreate(eosFormsMessage *message);
@@ -19,11 +19,11 @@ static void onMsgSelectorDec(eosFormsMessage *message);
 static void onMsgSelectorClick(eosFormsMessage *message);
 static void onMsgPaint(eosFormsMessage *message);
 
-static void notify(eosHForm hForm, unsigned event);
+static void notify(eosFormHandle hForm, unsigned event);
 
 
-eosHForm eosFormsCreateList(
-    eosHFormsService hService,
+eosFormHandle eosFormsCreateList(
+    eosFormsServiceHandle hService,
     eosListParams *params) {
 
     eosFormParams formParams;
@@ -38,7 +38,7 @@ eosHForm eosFormsCreateList(
 
 
 static void onMessage(
-    eosHFormsService hServide,
+    eosFormsServiceHandle hServide,
     eosFormsMessage *message) {
 
     switch (message->id) {
@@ -127,7 +127,7 @@ static void onMsgSelectorClick(
 
 static void onMsgPaint(eosFormsMessage *message) {
 
-    eosHForm hForm = message->hForm;
+    eosFormHandle hForm = message->hForm;
     axDisplayServiceHandle hDisplay = message->msgPaint.hDisplayService;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
@@ -151,7 +151,7 @@ static void onMsgPaint(eosFormsMessage *message) {
 
 
 static void notify(
-    eosHForm hForm,
+    eosFormHandle hForm,
     unsigned event) {
 
     eosFormsMessage message;

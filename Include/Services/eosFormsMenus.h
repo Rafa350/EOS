@@ -20,11 +20,11 @@ typedef struct {                       // Parametres del missatge de notificacio
 
 
 typedef struct {
-    eosHForm hParent;
+    eosFormHandle hParent;
     BYTE *resource;
 } eosMenuParams;
 
-extern eosHForm eosFormsCreateMenu(eosHFormsService hService, eosMenuParams *params);
+extern eosFormHandle eosFormsCreateMenu(eosFormsServiceHandle hService, eosMenuParams *params);
 
 
 #endif

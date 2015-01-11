@@ -9,32 +9,32 @@ typedef enum {                         // Estats del servei
 } ServiceStates;
 
 typedef struct __eosForm {             // Dades del formulari
-    eosHFormsService hService;         // -Handler del servei
-    eosHForm hNextForm;                // -Seguent form de la llista
-    eosHForm hPrevForm;                // -Anterior form de la llista
-    eosHForm hParent;                  // -Handler del form pare
+    eosFormsServiceHandle hService;    // -Handler del servei
+    eosFormHandle hNextForm;           // -Seguent form de la llista
+    eosFormHandle hPrevForm;           // -Anterior form de la llista
+    eosFormHandle hParent;             // -Handler del form pare
     eosFormsOnMessageCallback onMessage;    // -Callback de cada missatge
     bool needRedraw;                   // -Indica si cal redibuixar
     bool needDestroy;                  // -Indica si cal destruirlo
     void *privateData;                 // -Dades privades del formulari
-} Form;
+} eosForm;
 
 typedef struct __eosFormsService {     // Dades del servei
     ServiceStates state;               // -Estat del servei
     axDisplayServiceHandle hDisplayService; // -Servei de display
     eosFormsOnMessageCallback onMessage;    // -Calback en cada missatge
     eosHQueue hQueue;                  // -Cua de missatges
-    eosHForm hActiveForm;              // -Formulari actiu
-    eosHForm hFirstForm;               // -Primer form de la llista
-    eosHForm hLastForm;                // -Ultim form de la llista
+    eosFormHandle hActiveForm;         // -Formulari actiu
+    eosFormHandle hFirstForm;          // -Primer form de la llista
+    eosFormHandle hLastForm;           // -Ultim form de la llista
     bool redrawPending;                // -Hi han forms pendents de redibuixar
     bool destroyPending;               // -Hi han forms pendents de destruir
-} FormsService;
+} eosFormsService;
 
 
-static void processMessages(eosHFormsService hService);
-static void processRedraw(eosHFormsService hService);
-static void processDestroy(eosHFormsService hService);
+static void processMessages(eosFormsServiceHandle hService);
+static void processRedraw(eosFormsServiceHandle hService);
+static void processDestroy(eosFormsServiceHandle hService);
 
 
 /*************************************************************************
@@ -42,7 +42,7 @@ static void processDestroy(eosHFormsService hService);
  *       Inicialitza el servei
  *
  *       Funcio:
- *           eosHFormsService eosFormsServiceInitialize(
+ *           eosFormsServiceHandle eosFormsServiceInitialize(
  *               eosFormsServiceParams *params)
  *
  *       Entrada:
@@ -53,10 +53,10 @@ static void processDestroy(eosHFormsService hService);
  *
  *************************************************************************/
 
-eosHFormsService eosFormsServiceInitialize(
+eosFormsServiceHandle eosFormsServiceInitialize(
     eosFormsServiceParams *params) {
 
-    eosHFormsService hService = eosAlloc(sizeof(FormsService));
+    eosFormsServiceHandle hService = eosAlloc(sizeof(eosFormsService));
     if (hService == NULL)
         return NULL;
 
@@ -84,7 +84,7 @@ eosHFormsService eosFormsServiceInitialize(
  *
  *       Funcio:
  *           void eosFormsServiceTask(
- *               eosHFormsService hService)
+ *               eosFormsServiceHandle hService)
  *
  *       Entrada:
  *           hService: Handler del servei
@@ -92,7 +92,7 @@ eosHFormsService eosFormsServiceInitialize(
  *************************************************************************/
 
 void eosFormsServiceTask(
-    eosHFormsService hService) {
+    eosFormsServiceHandle hService) {
 
     switch (hService->state) {
         case serviceInitializing:
@@ -117,8 +117,8 @@ void eosFormsServiceTask(
  *       Crea un form
  *
  *       Funcio:
- *           eosHForm eosFormsCreateForm(
- *               eosHFormsService hService,
+ *           eosFormHandle eosFormsCreateForm(
+ *               eosFormsServiceHandle hService,
  *               eosFormParams *params)
  *
  *       Entrada:
@@ -130,17 +130,17 @@ void eosFormsServiceTask(
  *
  *************************************************************************/
 
-eosHForm eosFormsCreateForm(
-    eosHFormsService hService,
+eosFormHandle eosFormsCreateForm(
+    eosFormsServiceHandle hService,
     eosFormParams *params) {
 
-    eosHForm hForm = eosAlloc(sizeof(Form) + params->privateDataSize);
+    eosFormHandle hForm = eosAlloc(sizeof(eosForm) + params->privateDataSize);
     if (hForm == NULL)
         return NULL;
 
     hForm->hParent = params->hParent;
     if (params->privateDataSize > 0)
-        hForm->privateData = (BYTE*) hForm + sizeof(Form);
+        hForm->privateData = (BYTE*) hForm + sizeof(eosForm);
     else
         hForm->privateData = NULL;
     hForm->onMessage = params->onMessage;
@@ -178,7 +178,7 @@ eosHForm eosFormsCreateForm(
  *
  *       Funcio:
  *          void eosFormsDestroyForm(
- *              eosHForm hForm)
+ *              eosFormHandle hForm)
  *
  *       Entrada:
  *           hForm: El handler del form
@@ -186,9 +186,9 @@ eosHForm eosFormsCreateForm(
  *************************************************************************/
 
 void eosFormsDestroyForm(
-    eosHForm hForm) {
+    eosFormHandle hForm) {
 
-    eosHFormsService hService = hForm->hService;
+    eosFormsServiceHandle hService = hForm->hService;
 
     if (hService->hActiveForm == hForm)
         eosFormsSetActiveForm(NULL);
@@ -208,8 +208,8 @@ void eosFormsDestroyForm(
  *       Obte el formulari actiu
  *
  *       Funcio:
- *           eosHForm eosFormsGetActiveForm(
- *               eosHFormsService hService)
+ *           eosFormHandle eosFormsGetActiveForm(
+ *               eosFormsServiceHandle hService)
  *
  *       Entrada:
  *           hService: El handler del servei
@@ -219,8 +219,8 @@ void eosFormsDestroyForm(
  *
  **************************************************************************/
 
-eosHForm __attribute__ ((always_inline)) eosFormsGetActiveForm(
-    eosHFormsService hService) {
+eosFormHandle __attribute__ ((always_inline)) eosFormsGetActiveForm(
+    eosFormsServiceHandle hService) {
 
     return hService->hActiveForm;
 }
@@ -231,8 +231,8 @@ eosHForm __attribute__ ((always_inline)) eosFormsGetActiveForm(
  *       Canvia el formulari actiu
  *
  *       Funcio:
- *           eosHForm eosFormsSetActiveForm(
- *               eosHForm hForm)
+ *           eosFormHandle eosFormsSetActiveForm(
+ *               eosFormHandle hForm)
  *
  *       Entrada:
  *           hForm: El formulari a activat
@@ -240,11 +240,11 @@ eosHForm __attribute__ ((always_inline)) eosFormsGetActiveForm(
  *************************************************************************/
 
 void eosFormsSetActiveForm(
-    eosHForm hForm) {
+    eosFormHandle hForm) {
     
-    eosHFormsService hService = hForm->hService;
+    eosFormsServiceHandle hService = hForm->hService;
 
-    eosHForm hInactiveForm = hService->hActiveForm;
+    eosFormHandle hInactiveForm = hService->hActiveForm;
     if (hInactiveForm != NULL) {
         eosFormsMessage message;
         message.id = MSG_DEACTIVATE;
@@ -271,7 +271,7 @@ void eosFormsSetActiveForm(
  *
  *       Funcio:
  *           void eosFormsRefresh(
- *               eosHForm hForm)
+ *               eosFormHandle hForm)
  *
  *       Entrada:
  *           hForm   : El handler del formulari
@@ -279,7 +279,7 @@ void eosFormsSetActiveForm(
  *************************************************************************/
 
 void __attribute__ ((always_inline)) eosFormsRefresh(
-    eosHForm hForm) {
+    eosFormHandle hForm) {
 
     hForm->needRedraw = true;
     hForm->hService->redrawPending = true;
@@ -292,7 +292,7 @@ void __attribute__ ((always_inline)) eosFormsRefresh(
  *
  *       Funcio:
  *           void *eosFormsGetPrivateData(
- *               eosHForm hForm)
+ *               eosFormHandle hForm)
  *
  *       Entrada:
  *           hForm: El handler del formulari
@@ -303,7 +303,7 @@ void __attribute__ ((always_inline)) eosFormsRefresh(
  *************************************************************************/
 
 void *  __attribute__ ((always_inline)) eosFormsGetPrivateData(
-    eosHForm hForm) {
+    eosFormHandle hForm) {
 
     return hForm->privateData;
 }
@@ -314,8 +314,8 @@ void *  __attribute__ ((always_inline)) eosFormsGetPrivateData(
  *       Obte el form pare
  *
  *       Funcio:
- *           eosHForm  eosFormsGetParent(
- *               eosHForm hForm)
+ *           eosFormHandle  eosFormsGetParent(
+ *               eosFormHandle hForm)
  *
  *       Entrada:
  *           hForm: El handler del form
@@ -325,8 +325,8 @@ void *  __attribute__ ((always_inline)) eosFormsGetPrivateData(
  *
  *************************************************************************/
 
-eosHForm  __attribute__ ((always_inline)) eosFormsGetParent(
-    eosHForm hForm) {
+eosFormHandle  __attribute__ ((always_inline)) eosFormsGetParent(
+    eosFormHandle hForm) {
 
     return hForm->hParent;
 }
@@ -337,8 +337,8 @@ eosHForm  __attribute__ ((always_inline)) eosFormsGetParent(
  *       Obte el handler del servei
  *
  *       Funcio:
- *           eosHFormsService  eosFormsGetService(
- *               eosHForm hForm)
+ *           eosFormsServiceHandle  eosFormsGetService(
+ *               eosFormHandle hForm)
  *
  *       Entrada:
  *           hForm: El handler del form
@@ -348,8 +348,8 @@ eosHForm  __attribute__ ((always_inline)) eosFormsGetParent(
  *
  *************************************************************************/
 
-eosHFormsService  __attribute__ ((always_inline)) eosFormsGetService(
-    eosHForm hForm) {
+eosFormsServiceHandle  __attribute__ ((always_inline)) eosFormsGetService(
+    eosFormHandle hForm) {
 
     return hForm->hService;
 }
@@ -361,7 +361,7 @@ eosHFormsService  __attribute__ ((always_inline)) eosFormsGetService(
  *
  *       Funcio:
  *           void eosFormsPostMessage(
- *              eosHFormsService hService,
+ *              eosFormsServiceHandle hService,
  *              eosFormsMessage *message)
  *
  *       Entrada:
@@ -371,7 +371,7 @@ eosHFormsService  __attribute__ ((always_inline)) eosFormsGetService(
  *************************************************************************/
 
 void eosFormsPostMessage(
-    eosHFormsService hService,
+    eosFormsServiceHandle hService,
     eosFormsMessage *message) {
 
     eosQueuePut(hService->hQueue, message);
@@ -384,7 +384,7 @@ void eosFormsPostMessage(
  *
  *       Funcio:
  *           void eosFormsSendMessage(
- *              eosHFormsService hService,
+ *              eosFormsServiceHandle hService,
  *              eosFormsMessage *message)
  *
  *       Entrada:
@@ -394,7 +394,7 @@ void eosFormsPostMessage(
  *************************************************************************/
 
 void eosFormsSendMessage(
-    eosHFormsService hService,
+    eosFormsServiceHandle hService,
     eosFormsMessage *message) {
 
     message->hForm->onMessage(hService, message);
@@ -407,7 +407,7 @@ void eosFormsSendMessage(
  *
  *       Funcio:
  *           void processMessages(
- *               eosHFormsService hService)
+ *               eosFormsServiceHandle hService)
  *
  *       Entrada:
  *           hService: El handler del servei
@@ -415,7 +415,7 @@ void eosFormsSendMessage(
  *************************************************************************/
 
 static void processMessages(
-    eosHFormsService hService) {
+    eosFormsServiceHandle hService) {
 
     eosFormsMessage message;
     while (eosQueueGet(hService->hQueue, &message)) {
@@ -424,7 +424,7 @@ static void processMessages(
             hService->onMessage(hService, &message);
 
         if (message.id != MSG_NULL) {
-            eosHForm hForm = message.hForm;
+            eosFormHandle hForm = message.hForm;
             if ((hForm != NULL) &&  (hForm->onMessage != NULL))
                 hForm->onMessage(hService, &message);
         }
@@ -438,7 +438,7 @@ static void processMessages(
  *
  *       Funcio:
  *           void processRedraw(
- *               eosHFormsService hService)
+ *               eosFormsServiceHandle hService)
  *
  *       Entrada:
  *           hService: El handler del servei
@@ -446,10 +446,10 @@ static void processMessages(
  *************************************************************************/
 
 static void processRedraw(
-    eosHFormsService hService) {
+    eosFormsServiceHandle hService) {
 
     if (hService->redrawPending) {
-        eosHForm hForm = hService->hFirstForm;
+        eosFormHandle hForm = hService->hFirstForm;
         while (hForm) {
             if (hForm->needRedraw) {
                 eosFormsMessage message;
@@ -472,7 +472,7 @@ static void processRedraw(
  *
  *       Funcio:
  *           void processRedraw(
- *               eosHFormsService hService)
+ *               eosFormsServiceHandle hService)
  *
  *       Entrada:
  *           hService: El handler del servei
@@ -480,7 +480,7 @@ static void processRedraw(
  *************************************************************************/
 
 static void processDestroy(
-    eosHFormsService hService) {
+    eosFormsServiceHandle hService) {
 
     if (hService->destroyPending) {
 
@@ -488,7 +488,7 @@ static void processDestroy(
     
         do {
             done = true;
-            eosHForm hForm = hService->hFirstForm;
+            eosFormHandle hForm = hService->hFirstForm;
             while (hForm && done) {
                 if (hForm->needDestroy) {
                     done = false;

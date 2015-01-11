@@ -16,7 +16,6 @@
 
 
 typedef struct __eosInput *eosInputHandle;
-typedef struct __eosInputService *eosInputServiceHandle;
 
 typedef void (*eosInputCallback)(eosInputHandle hInput);
 
@@ -30,20 +29,18 @@ typedef struct {                       // Parametres d'inicializacio de les entr
 } eosInputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    eosTickServiceHandle hTickService; // -Servei TICK
 } eosInputServiceParams;
 
 
 // Gestio del servei
 //
-extern eosInputServiceHandle eosInputServiceInitialize(eosInputServiceParams *params);
-extern bool eosInputServiceIsReady(eosInputServiceHandle hService);
-extern void eosInputServiceTask(eosInputServiceHandle hService);
-extern void eosInputServiceTick(eosInputServiceHandle hService);
+extern bool eosInputServiceInitialize(eosInputServiceParams *params);
+extern bool eosInputServiceIsReady(void);
+extern void eosInputServiceTask(void);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosInputHandle eosInputCreate(eosInputServiceHandle hService, eosInputParams *params);
+extern eosInputHandle eosInputCreate(eosInputParams *params);
 extern void eosInputDestroy(eosInputHandle hInput);
 
 // Operacions amb els objectes

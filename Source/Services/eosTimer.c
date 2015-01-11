@@ -1,5 +1,6 @@
 #include "Services/eosTimer.h"
 #include "Services/eosTick.h"
+#include "System/eosMemory.h"
 #include "System/eosQueue.h"
 #include "HardwareProfile.h"
 
@@ -50,6 +51,7 @@ typedef struct __eosTimerService {     // Dades internes del servei
 } eosTimerService;
 
 
+static void tickFunction(eosTimerServiceHandle hService);
 static eosTimerHandle allocTimer(eosTimerServiceHandle hService);
 static void freeTimer(eosTimerHandle hTimer);
 
@@ -78,7 +80,7 @@ eosTimerServiceHandle eosTimerServiceInitialize(
 
     unsigned timerPoolSize = sizeof(eosTimer) * params->maxTimers;
 
-    eosTimerServiceHandle hService = (eosTimerServiceHandle) eosAlloc(sizeof(eosTimerService)
+    eosTimerServiceHandle hService = eosAlloc(sizeof(eosTimerService)
         + timerPoolSize);
     if (hService == NULL)
         return NULL;
@@ -103,11 +105,7 @@ eosTimerServiceHandle eosTimerServiceInitialize(
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosTickServiceHandle hTickService = params->hTickService;
-    if (hTickService == NULL)
-        hTickService = eosGetTickServiceHandle();
-    if (hTickService != NULL)
-        eosTickAttach(hTickService, (eosTickCallback) eosTimerServiceTick, (void*) hService);
+    eosTickAttachFunction((eosTickCallback) tickFunction, (void*) hService);
 
     return hService;
 }
@@ -129,80 +127,83 @@ eosTimerServiceHandle eosTimerServiceInitialize(
 void eosTimerServiceTask(
     eosTimerServiceHandle hService) {
 
-    switch (hService->state) {
-        
-        case serviceInitializing:
-            hService->state = serviceRunning;
-            break;
+    if (hService) {
 
-        case serviceRunning: {
+        switch (hService->state) {
 
-            // Obte el numero de tick pendents de procesar
-            //
-            bool intState = eosInterruptDisable();
-            unsigned triggered = hService->triggered;
-            hService->triggered = 0;
-            eosInterruptRestore(intState);
+            case serviceInitializing:
+                hService->state = serviceRunning;
+                break;
 
-            // Procesa els ticks pendents
-            //
-            if (triggered > 0) {
+            case serviceRunning: {
 
-                eosTimerHandle hTimer = hService->hFirstTimer;
-                while (hTimer) {
-                    if ((hTimer->flags & TF_PAUSED) != TF_PAUSED) {
+                // Obte el numero de tick pendents de procesar
+                //
+                bool intState = eosInterruptDisable();
+                unsigned triggered = hService->triggered;
+                hService->triggered = 0;
+                eosInterruptRestore(intState);
 
-                        // Decrementa el contador
-                        //
-                        if (triggered > hTimer->counter)
-                            hTimer->counter = 0;
-                        else
-                            hTimer->counter -= triggered;
+                // Procesa els ticks pendents
+                //
+                if (triggered > 0) {
 
-                        // Si el contador arriba a zero...
-                        //
-                        if (hTimer->counter == 0) {
+                    eosTimerHandle hTimer = hService->hFirstTimer;
+                    while (hTimer) {
+                        if ((hTimer->flags & TF_PAUSED) != TF_PAUSED) {
 
-                            // Crida a la funcio callback
+                            // Decrementa el contador
                             //
-                            if (hTimer->onTimeout)
-                                hTimer->onTimeout(hTimer);
+                            if (triggered > hTimer->counter)
+                                hTimer->counter = 0;
+                            else
+                                hTimer->counter -= triggered;
 
-                            // Si es ciclc, reicicia el contador
+                            // Si el contador arriba a zero...
                             //
-                            if ((hTimer->flags & TF_TYPE) == TF_TYPE_CYCLIC)
-                                hTimer->counter = hTimer->timeout;
+                            if (hTimer->counter == 0) {
+
+                                // Crida a la funcio callback
+                                //
+                                if (hTimer->onTimeout)
+                                    hTimer->onTimeout(hTimer);
+
+                                // Si es ciclc, reicicia el contador
+                                //
+                                if ((hTimer->flags & TF_TYPE) == TF_TYPE_CYCLIC)
+                                    hTimer->counter = hTimer->timeout;
+                            }
                         }
+
+                        hTimer = hTimer->hNextTimer;
                     }
-
-                    hTimer = hTimer->hNextTimer;
                 }
-            }
 
-            // Procesa les comandes pendents
-            //
-            Command command;
-            while (eosQueueGet(hService->hCommandQueue, &command)) {
+                // Procesa les comandes pendents
+                //
+                Command command;
+                while (eosQueueGet(hService->hCommandQueue, &command)) {
 
-                eosTimerHandle hTimer = command.hTimer;
+                    eosTimerHandle hTimer = command.hTimer;
 
-                switch (command.opCode) {
-                    case opCode_Pause:
-                        hTimer->flags |= TF_PAUSED;
-                        break;
+                    switch (command.opCode) {
+                        case opCode_Pause:
+                            hTimer->flags |= TF_PAUSED;
+                            break;
 
-                    case opCode_Continue:
-                        hTimer->flags &= ~TF_PAUSED;
-                        break;
+                        case opCode_Continue:
+                            hTimer->flags &= ~TF_PAUSED;
+                            break;
 
-                    case opCode_Reset:
-                        hTimer->flags &= ~TF_PAUSED;
-                        hTimer->counter = hTimer->timeout;
-                        break;
+                        case opCode_Reset:
+                            hTimer->flags &= ~TF_PAUSED;
+                            hTimer->counter = hTimer->timeout;
+                            break;
+                    }
                 }
-            }
 
-            break;
+                break;
+            }
         }
     }
 }
@@ -213,15 +214,15 @@ void eosTimerServiceTask(
  *       Gestiona la interrupcio TICK
  *
  *       Funcio:
- *           void eosTimerServiceTick(
+ *           void tickFunction(
  *               eosTimerServiceHandle hService)
  *
  *       Entrada:
- *           hService: El Handle del servei
+ *           hService: Handler del servei
  *
  *************************************************************************/
 
-void eosTimerServiceTick(
+static void tickFunction(
     eosTimerServiceHandle hService) {
 
     hService->triggered += 1;
@@ -249,6 +250,9 @@ void eosTimerServiceTick(
 eosTimerHandle eosTimerCreate(
     eosTimerServiceHandle hService,
     eosTimerParams *params) {
+
+    if (!hService)
+        return NULL;
 
     eosTimerHandle hTimer = allocTimer(hService);
     if (hTimer == NULL)
@@ -289,30 +293,36 @@ void eosTimerDestroy(
 void eosTimerPause(
     eosTimerHandle hTimer) {
 
-    Command command;
-    command.opCode = opCode_Pause;
-    command.hTimer = hTimer;
-    eosQueuePut(hTimer->hService->hCommandQueue, &command);
+    if (hTimer) {
+        Command command;
+        command.opCode = opCode_Pause;
+        command.hTimer = hTimer;
+        eosQueuePut(hTimer->hService->hCommandQueue, &command);
+    }
 }
 
 
 void eosTimerContinue(
     eosTimerHandle hTimer) {
 
-    Command command;
-    command.opCode = opCode_Continue;
-    command.hTimer = hTimer;
-    eosQueuePut(hTimer->hService->hCommandQueue, &command);
+    if (hTimer) {
+        Command command;
+        command.opCode = opCode_Continue;
+        command.hTimer = hTimer;
+        eosQueuePut(hTimer->hService->hCommandQueue, &command);
+    }
 }
 
 
 void eosTimerReset(
     eosTimerHandle hTimer) {
 
-    Command command;
-    command.opCode = opCode_Reset;
-    command.hTimer = hTimer;
-    eosQueuePut(hTimer->hService->hCommandQueue, &command);
+    if (hTimer) {
+        Command command;
+        command.opCode = opCode_Reset;
+        command.hTimer = hTimer;
+        eosQueuePut(hTimer->hService->hCommandQueue, &command);
+    }
 }
 
 
@@ -366,7 +376,7 @@ eosTimerHandle eosTimerDelayStart(
 bool eosTimerDelayGetStatus(
     eosTimerHandle hTimer) {
 
-    if (hTimer->counter == 0) {
+    if (hTimer && (hTimer->counter == 0)) {
         eosTimerDestroy(hTimer);
         return true;
     }

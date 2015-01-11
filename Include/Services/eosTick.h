@@ -7,8 +7,6 @@
 #endif
 
 
-typedef struct __eosTickService *eosTickServiceHandle;
-
 typedef void (*eosTickCallback)(void *context);
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
@@ -17,11 +15,10 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 
 // Inicialitzacio, finalitzacio i gestio del servei
 //
-extern eosTickServiceHandle eosTickServiceInitialize(eosTickServiceParams *params);
-extern void eosTickServiceTask(eosTickServiceHandle hService);
+extern bool eosTickServiceInitialize(eosTickServiceParams *params);
+extern void eosTickServiceTask(void);
 
-extern void eosTickAttach(eosTickServiceHandle hService, eosTickCallback onTick, void *onTickContext);
-extern eosTickServiceHandle eosGetTickServiceHandle();
+extern bool eosTickAttachFunction(eosTickCallback onTick, void *onTickContext);
 
 
 #endif

@@ -15,9 +15,6 @@ SYS_DEVCON_INIT devconInit = {
 };
 
 
-static eosTickServiceHandle hTickService;
-
-
 // Funcions a definir en l'aplicacio del usuari
 //
 extern void appSetup(void);
@@ -44,24 +41,6 @@ void eosTaskSchedule(void) {
 
 /*************************************************************************
  *
- *       Obte el handler del servei TICK intern
- *
- *       Funcio:
- *           eosTickServiceHandle eosGetTickServiceHandle(void)
- *
- *       Retorn:
- *           El handler del servei TICK
- *
- *************************************************************************/
-
-eosTickServiceHandle eosGetTickServiceHandle(void) {
-
-    return hTickService;
-}
-
-
-/*************************************************************************
- *
  *       Punt d'entrada del sistema EOS
  *
  *       Funcio:
@@ -71,9 +50,11 @@ eosTickServiceHandle eosGetTickServiceHandle(void) {
 
 void eosMain(void) {
 
+    SYS_MODULE_OBJ hDevCon;
+
     // Inicialitzacio del sistema
     //
-    SYS_DEVCON_Initialize(SYS_DEVCON_INDEX_0, (SYS_MODULE_INIT*) &devconInit);
+    hDevCon = SYS_DEVCON_Initialize(SYS_DEVCON_INDEX_0, (SYS_MODULE_INIT*) &devconInit);
     SYS_DEVCON_PerformanceConfig(CLOCK_SYSTEM_HZ);
 
     // Inicialitza les interrupcions
@@ -84,7 +65,8 @@ void eosMain(void) {
     // Inicialitza el servei TICK
     //
     eosTickServiceParams tickServiceParams;
-    hTickService = eosTickServiceInitialize(&tickServiceParams);
+    memset(&tickServiceParams, 0, sizeof(tickServiceParams));
+    eosTickServiceInitialize(&tickServiceParams);
 
     // Inicialitzacio de l'aplicacio d'usuari
     //
@@ -92,9 +74,11 @@ void eosMain(void) {
     
     while (true) {
 
+        SYS_DEVCON_Tasks(hDevCon);
+
         // Procesa les tasques del sistema
         //
-        eosTickServiceTask(hTickService);
+        eosTickServiceTask();
 
         // Procesa les tasques de l'aplicacio d'usuari
         //

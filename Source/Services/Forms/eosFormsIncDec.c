@@ -12,7 +12,7 @@ typedef struct {
 } PrivateData;
 
 
-static void onMessage(eosHFormsService hService, eosFormsMessage *message);
+static void onMessage(eosFormsServiceHandle hService, eosFormsMessage *message);
 static void onMsgActivate(eosFormsMessage *message);
 static void onMsgCreate(eosFormsMessage *message);
 static void onMsgSelectorInc(eosFormsMessage *message);
@@ -20,7 +20,7 @@ static void onMsgSelectorDec(eosFormsMessage *message);
 static void onMsgSelectorClick(eosFormsMessage *message);
 static void onMsgPaint(eosFormsMessage *message);
 
-static void notify(eosHForm hForm, unsigned event);
+static void notify(eosFormHandle hForm, unsigned event);
 
 
 /*************************************************************************
@@ -28,8 +28,8 @@ static void notify(eosHForm hForm, unsigned event);
  *       Crea un form de increment/decrement
  *
  *       Funcio:
- *           eosHForm eosFormsCreateIncDec(
- *               eosHFormsService hService,
+ *           eosFormHandle eosFormsCreateIncDec(
+ *               eosFormsServiceHandle hService,
  *               eosIncDecParams *params)
  *
  *       Entrada:
@@ -41,8 +41,8 @@ static void notify(eosHForm hForm, unsigned event);
  *
  *************************************************************************/
 
-eosHForm eosFormsCreateIncDec(
-    eosHFormsService hService,
+eosFormHandle eosFormsCreateIncDec(
+    eosFormsServiceHandle hService,
     eosIncDecParams *params) {
 
     eosFormParams formParams;
@@ -62,7 +62,7 @@ eosHForm eosFormsCreateIncDec(
  *
  *       Funcio:
  *           void onMessage(
- *               eosHFormsService hService,
+ *               eosFormsServiceHandle hService,
  *               eosFormsMessage *message)
  *
  *       Entrada:
@@ -72,7 +72,7 @@ eosHForm eosFormsCreateIncDec(
  **************************************************************************/
 
 static void onMessage(
-    eosHFormsService hService,
+    eosFormsServiceHandle hService,
     eosFormsMessage *message) {
 
     switch (message->id) {
@@ -144,7 +144,7 @@ static void onMsgCreate(
 static void onMsgPaint(
     eosFormsMessage *message) {
 
-    eosHForm hForm = message->hForm;
+    eosFormHandle hForm = message->hForm;
     axDisplayServiceHandle hDisplay = message->msgPaint.hDisplayService;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
@@ -200,7 +200,7 @@ static void onMsgSelectorClick(
 
 
 static void notify(
-    eosHForm hForm,
+    eosFormHandle hForm,
     unsigned event) {
 
     eosFormsMessage message;

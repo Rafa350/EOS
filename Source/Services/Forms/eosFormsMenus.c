@@ -19,14 +19,14 @@ typedef struct {                       // Dades privades
 } PrivateData;
 
 
-static void onMessage(eosHFormsService hService, eosFormsMessage *message);
+static void onMessage(eosFormsServiceHandle hService, eosFormsMessage *message);
 static void onMsgCreate(eosFormsMessage *message);
 static void onMsgPaint(eosFormsMessage *message);
 static void onMsgActivate(eosFormsMessage *message);
 static void onMsgSelectorInc(eosFormsMessage *message);
 static void onMsgSelectorDec(eosFormsMessage *message);
 static void onMsgSelectorClick(eosFormsMessage *message);
-static void notify(eosHForm hForm, unsigned event, void *params);
+static void notify(eosFormHandle hForm, unsigned event, void *params);
 
 
 /*************************************************************************
@@ -34,8 +34,8 @@ static void notify(eosHForm hForm, unsigned event, void *params);
  *       Crea un form de menus
  *
  *       Funcio:
- *           eosHForm eosFormsCreateMenu(
- *               eosHFormsService hService,
+ *           eosFormHandle eosFormsCreateMenu(
+ *               eosFormsServiceHandle hService,
  *               eosMenuParams *params)
  *
  *       Entrada:
@@ -47,8 +47,8 @@ static void notify(eosHForm hForm, unsigned event, void *params);
  *
  *************************************************************************/
 
-eosHForm eosFormsCreateMenu(
-    eosHFormsService hService,
+eosFormHandle eosFormsCreateMenu(
+    eosFormsServiceHandle hService,
     eosMenuParams *params) {
 
     eosFormParams formParams;
@@ -68,7 +68,7 @@ eosHForm eosFormsCreateMenu(
  *
  *       Funcio:
  *           void onMessage(
- *               eosHFormsService hService,
+ *               eosFormsServiceHandle hService,
  *               eosFormsMessage *message)
  *
  *       Entrada:
@@ -78,7 +78,7 @@ eosHForm eosFormsCreateMenu(
  **************************************************************************/
 
 static void onMessage(
-    eosHFormsService hService,
+    eosFormsServiceHandle hService,
     eosFormsMessage *message) {
 
     switch (message->id) {
@@ -181,7 +181,7 @@ static void onMsgActivate(
 static void onMsgPaint(
     eosFormsMessage  *message) {
 
-    eosHForm hForm = message->hForm;
+    eosFormHandle hForm = message->hForm;
     axDisplayServiceHandle hDisplay = message->msgPaint.hDisplayService;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
@@ -240,7 +240,7 @@ static void onMsgPaint(
  *
  *       Funcio:
  *           void firstItem(
- *               eosHForm hForm)
+ *               eosFormHandle hForm)
  *
  *       Entrada:
  *           hForm: El handler del form
@@ -248,7 +248,7 @@ static void onMsgPaint(
  *************************************************************************/
 
 /*static void firstItem(
-    eosHForm hForm) {
+    eosFormHandle hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
     MenuInfo *info = &data->info[data->level];
@@ -267,7 +267,7 @@ static void onMsgPaint(
  *
  *       Funcio:
  *           void lastItem(
- *               eosHForm hForm)
+ *               eosFormHandle hForm)
  *
  *       Entrada:
  *           hForm: Handler del form
@@ -275,7 +275,7 @@ static void onMsgPaint(
  *************************************************************************/
 
 /*static void lastItem(
-    eosHForm hForm) {
+    eosFormHandle hForm) {
 
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
     MenuInfo *info = &data->info[data->level];
@@ -361,7 +361,7 @@ static void onMsgSelectorDec(
 static void onMsgSelectorClick(
     eosFormsMessage *message) {
 
-    eosHForm hForm = message->hForm;
+    eosFormHandle hForm = message->hForm;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
     BYTE *resource = data->resource;
 
@@ -374,8 +374,8 @@ static void onMsgSelectorClick(
         case 0: {
             unsigned command = resource[itemOffset + 2 +  resource[itemOffset + 1]];
             if (command != 0) {
-                eosHFormsService hService = eosFormsGetService(hForm);
-                eosHForm hParent = eosFormsGetParent(hForm);
+                eosFormsServiceHandle hService = eosFormsGetService(hForm);
+                eosFormHandle hParent = eosFormsGetParent(hForm);
                 if (hParent != NULL) {
                     eosFormsMessage cmdMessage;
                     cmdMessage.id = MSG_COMMAND;
@@ -415,7 +415,7 @@ static void onMsgSelectorClick(
  *
  *       Funcio:
  *           void notify(
- *               eosHForm hForm,
+ *               eosFormHandle hForm,
  *               unsigned event,
  *               void *parameters)
  *
@@ -427,7 +427,7 @@ static void onMsgSelectorClick(
  *************************************************************************/
 
 static void notify(
-    eosHForm hForm,
+    eosFormHandle hForm,
     unsigned event,
     void *params) {
 

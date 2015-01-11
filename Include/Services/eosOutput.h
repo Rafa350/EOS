@@ -16,7 +16,6 @@
 
 
 typedef struct __eosOutput *eosOutputHandle;
-typedef struct __eosOutputService *eosOutputServiceHandle;
 
 typedef struct {                       // Parametres d'inicialitzacio de les sortides
     PORTS_CHANNEL channel;             // -Canal del port
@@ -25,20 +24,18 @@ typedef struct {                       // Parametres d'inicialitzacio de les sor
 } eosOutputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    eosTickServiceHandle hTickService; // -Servei TICK
 } eosOutputServiceParams;
 
 
 // Gestio del servei
 //
-extern eosOutputServiceHandle eosOutputServiceInitialize(eosOutputServiceParams *params);
-extern bool eosOutputIsReady(eosOutputServiceHandle hService);
-extern void eosOutputServiceTask(eosOutputServiceHandle hService);
-extern void eosOutputServiceTick(eosOutputServiceHandle hService);
+extern bool eosOutputServiceInitialize(eosOutputServiceParams *params);
+extern bool eosOutputServiceIsReady(void);
+extern void eosOutputServiceTask(void);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosOutputHandle eosOutputCreate(eosOutputServiceHandle hService, eosOutputParams *params);
+extern eosOutputHandle eosOutputCreate(eosOutputParams *params);
 extern void eosOutputDestroy(eosOutputHandle hOutput);
 
 // Operacions amb els objectes
