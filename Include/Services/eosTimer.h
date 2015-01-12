@@ -12,7 +12,6 @@
 
 
 typedef struct __eosTimer *eosTimerHandle;
-typedef struct __eosTimerService *eosTimerServiceHandle;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
     unsigned maxTimers;                // -Numero maxim de timers
@@ -35,13 +34,13 @@ typedef struct {                       // Parametres de creacio d'un temporitzad
 
 // Gestio del servei
 //
-extern eosTimerServiceHandle eosTimerServiceInitialize(eosTimerServiceParams *params);
-extern bool eosTimerServiceIsReady(eosTimerServiceHandle hService);
-extern void eosTimerServiceTask(eosTimerServiceHandle hService);
+extern bool eosTimerServiceInitialize(eosTimerServiceParams *params);
+extern bool eosTimerServiceIsReady(void);
+extern void eosTimerServiceTask(void);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosTimerHandle eosTimerCreate(eosTimerServiceHandle hService, eosTimerParams *params);
+extern eosTimerHandle eosTimerCreate(eosTimerParams *params);
 extern void eosTimerDestroy(eosTimerHandle hTimer);
 
 // Operacions amb els objectes
@@ -52,7 +51,7 @@ extern void eosTimerReset(eosTimerHandle hTimer);
 
 // Operacions especials
 //
-extern eosTimerHandle eosTimerDelayStart(eosTimerServiceHandle hService, unsigned timeout);
+extern eosTimerHandle eosTimerDelayStart(unsigned timeout);
 extern bool eosTimerDelayGetStatus(eosTimerHandle hTimer);
 
 
