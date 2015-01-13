@@ -15,6 +15,7 @@
 #endif
 
 
+typedef struct __eosInputService *eosInputServiceHandle;
 typedef struct __eosInput *eosInputHandle;
 
 typedef void (*eosInputCallback)(eosInputHandle hInput);

@@ -11,6 +11,7 @@
 #endif
 
 
+typedef struct __eosTimerService *eosTimerServiceHandle;
 typedef struct __eosTimer *eosTimerHandle;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei

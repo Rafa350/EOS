@@ -15,6 +15,7 @@
 #endif
 
 
+typedef struct __eosOutputService *eosOutputServiceHandle;
 typedef struct __eosOutput *eosOutputHandle;
 
 typedef struct {                       // Parametres d'inicialitzacio de les sortides

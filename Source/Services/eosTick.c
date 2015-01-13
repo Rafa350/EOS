@@ -24,7 +24,6 @@
 #endif
 
 
-typedef struct __eosTickService *eosTickServiceHandle;
 typedef struct __eosTickAttach *eosTickAttachHandle;
 
 typedef enum  {                        // Estats del servei
@@ -45,7 +44,6 @@ typedef struct __eosTickService {      // Dades internes del servei
 } eosTickService;
 
 
-static eosTickService service;
 static eosTickServiceHandle hService = NULL;
 
 
@@ -73,10 +71,15 @@ static void timerStop(void);
 bool eosTickServiceInitialize(
     eosTickServiceParams *params) {
 
-    if (hService != NULL)
+    // Comprova que no estigui inicialitzat
+    //
+    if (hService)
         return false;
 
-    hService = &service;
+    hService = eosAlloc(sizeof(eosTickService));
+    if (!hService)
+        return false;
+
     hService->state = serviceInitializing;
     hService->hFirstAttach = NULL;
 

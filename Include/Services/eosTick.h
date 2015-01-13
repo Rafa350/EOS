@@ -7,6 +7,8 @@
 #endif
 
 
+typedef struct __eosTickService *eosTickServiceHandle;
+
 typedef void (*eosTickCallback)(void *context);
 
 typedef struct {                       // Parametres d'inicialitzacio del servei

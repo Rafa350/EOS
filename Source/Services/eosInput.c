@@ -3,8 +3,6 @@
 #include "System/eosMemory.h"
 
 
-typedef struct __eosInputService *eosInputServiceHandle;
-
 typedef enum {                         // Estats del servei
     serviceInitializing,               // -Inicialitzant
     serviceRunning                     // -En execucio
@@ -38,7 +36,6 @@ typedef struct __eosInputService {     // Dades del servei
 } eosInputService;
 
 
-static eosInputService service;
 static eosInputServiceHandle hService = NULL;
 
 
@@ -66,12 +63,17 @@ static bool portGet(eosInputHandle hInput);
 bool eosInputServiceInitialize(
     eosInputServiceParams *params) {
 
-    if (hService != NULL)
+    // Comprova que no estigui inicialitzat
+    //
+    if (hService)
+        return false;
+
+    hService = eosAlloc(sizeof(eosInputService));
+    if (!hService)
         return false;
 
     // Inicialitza les variables internes del servei
     //
-    hService = &service;
     hService->state = serviceInitializing;
     hService->haveChanges = false;
     hService->hFirstInput = NULL;

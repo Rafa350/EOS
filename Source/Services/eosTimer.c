@@ -30,8 +30,6 @@ typedef struct {                       // Commanda
     eosTimerHandle hTimer;             // -Temporitzador al que aplicar la comanda
 } Command;
 
-typedef struct __eosTimerService *eosTimerServiceHandle;
-
 typedef struct __eosTimer {            // Dades internes del temporitzador
     bool inUse;                        // -Indica si esta en us en el pool
     eosTimerServiceHandle hService;    // -Handle del servei

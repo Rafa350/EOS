@@ -3,8 +3,6 @@
 #include "System/eosMemory.h"
 
 
-typedef struct __eosOutputService *eosOutputServiceHandle;
-
 typedef enum {                         // Estats del servei
     serviceInitializing,               // -Inicialitzant
     serviceRunning                     // -En execucio
@@ -25,7 +23,6 @@ typedef struct __eosOutputService {    // Dades del servei
 } eosOutputService;
 
 
-static eosOutputService service;
 static eosOutputServiceHandle hService = NULL;
 
 static void tickFunction(void *context);
@@ -59,9 +56,12 @@ bool eosOutputServiceInitialize(
     if (hService)
         return false;
 
+    hService = eosAlloc(sizeof(eosOutputService));
+    if (!hService)
+        return false;
+
     // Inicialitza les dades internes del servei
     //
-    hService = &service;
     hService->state = serviceInitializing;
     hService->hFirstOutput = NULL;
 
