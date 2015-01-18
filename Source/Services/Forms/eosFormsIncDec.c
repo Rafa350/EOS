@@ -3,16 +3,18 @@
 #include "DisplayService.h"
 
 
-typedef struct {
-    char *title;
-    int minValue;
-    int maxValue;
-    int delta;
-    int value;
+typedef struct {             // Dades privades del form
+    char *title;             // -Titol
+    char *prefix;            // -Prefix del valor
+    char *suffix;            // -Sufix del valor
+    int minValue;            // -Valor minim
+    int maxValue;            // -Valor maxim
+    int delta;               // -Quantitat per incrementar o decrementar
+    int value;               // -Valor actual
 } PrivateData;
 
 
-static void onMessage(eosFormsServiceHandle hService, eosFormsMessage *message);
+static void onMessage(eosFormsMessage *message);
 static void onMsgActivate(eosFormsMessage *message);
 static void onMsgCreate(eosFormsMessage *message);
 static void onMsgSelectorInc(eosFormsMessage *message);
@@ -20,7 +22,8 @@ static void onMsgSelectorDec(eosFormsMessage *message);
 static void onMsgSelectorClick(eosFormsMessage *message);
 static void onMsgPaint(eosFormsMessage *message);
 
-static void notify(eosFormHandle hForm, unsigned event);
+static void notifyChanged(eosFormHandle hForm);
+static void notifyEnd(eosFormHandle hForm);
 
 
 /*************************************************************************
@@ -29,12 +32,10 @@ static void notify(eosFormHandle hForm, unsigned event);
  *
  *       Funcio:
  *           eosFormHandle eosFormsCreateIncDec(
- *               eosFormsServiceHandle hService,
  *               eosIncDecParams *params)
  *
  *       Entrada:
- *           hService: Handler del servei
- *           params  : Parametres d'inicialitzacio
+ *           params: Parametres d'inicialitzacio
  *
  *       Retorn:
  *           El handler del form
@@ -42,7 +43,6 @@ static void notify(eosFormHandle hForm, unsigned event);
  *************************************************************************/
 
 eosFormHandle eosFormsCreateIncDec(
-    eosFormsServiceHandle hService,
     eosIncDecParams *params) {
 
     eosFormParams formParams;
@@ -52,7 +52,86 @@ eosFormHandle eosFormsCreateIncDec(
     formParams.privateDataSize = sizeof(PrivateData);
     formParams.onMessage = onMessage;
     
-    return eosFormsCreateForm(hService, &formParams);
+    return eosFormsCreateForm(&formParams);
+}
+
+
+void eosFormsIncDecSetMinValue(
+    eosFormHandle hForm,
+    int minValue) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    data->minValue = minValue;
+    data->value = max(data->value, data->minValue);
+    eosFormsRefresh(hForm);
+}
+
+
+void eosFormsIncDecSetMaxValue(
+    eosFormHandle hForm,
+    int maxValue) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    data->maxValue = maxValue;
+    data->value = min(data->value, data->maxValue);
+    eosFormsRefresh(hForm);
+}
+
+
+void eosFormsIncDecSetValue(
+    eosFormHandle hForm,
+    int value) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    data->value = min(max(data->value, data->minValue), data->maxValue);
+    eosFormsRefresh(hForm);
+}
+
+
+void eosFormsIncDecSetDelta(
+    eosFormHandle hForm,
+    int delta) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    data->delta = delta;
+    eosFormsRefresh(hForm);
+}
+
+
+void eosFormsIncDecSetPrefix(
+    eosFormHandle hForm,
+    char *prefix) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    data->prefix = prefix ? prefix : "";
+    eosFormsRefresh(hForm);
+}
+
+
+void eosFormsIncDecSetSuffix(
+    eosFormHandle hForm,
+    char *suffix) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    data->suffix = suffix ? suffix : "";
+    eosFormsRefresh(hForm);
+}
+
+
+void eosFormsIncDecSetTitle(
+    eosFormHandle hForm,
+    char *title) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    data->title = title ? title : "";
+    eosFormsRefresh(hForm);
+}
+
+
+int eosFormsIncDecGetValue(eosFormHandle hForm) {
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    return data->value;
 }
 
 
@@ -62,7 +141,6 @@ eosFormHandle eosFormsCreateIncDec(
  *
  *       Funcio:
  *           void onMessage(
- *               eosFormsServiceHandle hService,
  *               eosFormsMessage *message)
  *
  *       Entrada:
@@ -72,7 +150,6 @@ eosFormHandle eosFormsCreateIncDec(
  **************************************************************************/
 
 static void onMessage(
-    eosFormsServiceHandle hService,
     eosFormsMessage *message) {
 
     switch (message->id) {
@@ -127,19 +204,49 @@ static void onMsgActivate(
 }
 
 
+/*************************************************************************
+ *
+ *       Procesa el missatge MSG_CREATE
+ *
+ *       Funcio:
+ *           void onMsgCreate(
+ *               eosFormsMessage *message)
+ *
+ *       Entrada:
+ *           message: El missatge a procesar
+ *
+ *************************************************************************/
+
 static void onMsgCreate(
     eosFormsMessage *message) {
 
     eosIncDecParams *params = (eosIncDecParams*) message->msgCreate.privateParams;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
 
+    // Inicialitza les dades privades
+    //
     data->title = params->title;
     data->minValue = params->minValue;
     data->maxValue = params->maxValue;
-    data->value = params->value;
+    data->value = min(max(params->value, params->minValue), params->maxValue);
     data->delta = params->delta;
+    data->prefix = params->prefix ? params->prefix : "";
+    data->suffix = params->suffix ? params->suffix : "";
 }
 
+
+/*************************************************************************
+ *
+ *       Procesa el missatge MSG_PAINT
+ *
+ *       Funcio:
+ *           void onMsgPaint(
+ *               eosFormsMessage *message)
+ *
+ *       Entrada:
+ *           message: El missatge a procesar
+ *
+ *************************************************************************/
 
 static void onMsgPaint(
     eosFormsMessage *message) {
@@ -156,8 +263,8 @@ static void onMsgPaint(
         axDisplayAddCommandDrawLine(hDisplay, 0, 10, 127, 10);
         axDisplayAddCommandDrawLine(hDisplay, 0, 53, 127, 53);
 
-        char text[20];
-        sprintf(text, "%d", data->value);
+        char text[40];
+        sprintf(text, "%s%d%s", data->prefix, data->value, data->suffix);
 
         axDisplayAddCommandDrawText(hDisplay, 10, 30, text, 0, -1);
         axDisplayAddCommandRefresh(hDisplay);
@@ -167,6 +274,19 @@ static void onMsgPaint(
 }
 
 
+/*************************************************************************
+ *
+ *       Procesa el missatge MSG_SELECTOR/EV_SELECTOR_INC
+ *
+ *       Funcio:
+ *           void onMsgSelectorInc(
+ *               eosFormsMessage *message)
+ *
+ *       Entrada:
+ *           message: El missatge a procesar
+ *
+ *************************************************************************/
+
 static void onMsgSelectorInc(
     eosFormsMessage *message) {
 
@@ -175,10 +295,23 @@ static void onMsgSelectorInc(
     if (data->value + data->delta < data->maxValue) {
         data->value += data->delta;
         eosFormsRefresh(message->hForm);
-        notify(message->hForm, EV_INCDEC_CHANGED);
+        notifyChanged(message->hForm);
     }
 }
 
+
+/*************************************************************************
+ *
+ *       Procesa el missatge MSG_SELECTOR/EV_SELECTOR_DEC
+ *
+ *       Funcio:
+ *           void onMsgSelectorDec(
+ *               eosFormsMessage *message)
+ *
+ *       Entrada:
+ *           message: El missatge a procesar
+ *
+ *************************************************************************/
 
 static void onMsgSelectorDec(
     eosFormsMessage *message) {
@@ -188,28 +321,75 @@ static void onMsgSelectorDec(
     if (data->value - data->delta > data->minValue) {
         data->value -= data->delta;
         eosFormsRefresh(message->hForm);
-        notify(message->hForm, EV_INCDEC_CHANGED);
+        notifyChanged(message->hForm);
     }
 }
+
+
+/*************************************************************************
+ *
+ *       Procesa el missatge MSG_SELECTOR/EV_SELECTOR_CLICK
+ *
+ *       Funcio:
+ *           void onMsgSelectorClick(
+ *               eosFormsMessage *message)
+ *
+ *       Entrada:
+ *           message: El missatge a procesar
+ *
+ *************************************************************************/
 
 static void onMsgSelectorClick(
     eosFormsMessage *message) {
 
-    notify(message->hForm, EV_INCDEC_END);
+    notifyEnd(message->hForm);
+}
+
+/*************************************************************************
+ *
+ *       Envia un missatge de notificacio CHANGED al form pare
+ *
+ *       Funcio:
+ *           void notifyChanged(
+ *               eosFormHandle hForm)
+ *
+ *       Entrada:
+ *           hForm: Handler del form
+ *
+ *************************************************************************/
+
+static void notifyChanged(
+    eosFormHandle hForm) {
+
+    eosIncDecNotifyChanged params;
+
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    params.value = data->value;
+
+    eosFormsSendNotify(hForm, EV_INCDEC_CHANGED, &params);
 }
 
 
-static void notify(
-    eosFormHandle hForm,
-    unsigned event) {
+/*************************************************************************
+ *
+ *       Envia un missatge de notificacio END al form pare
+ *
+ *       Funcio:
+ *           void notifyEnd(
+ *               eosFormHandle hForm)
+ *
+ *       Entrada:
+ *           hForm: Handler del form
+ *
+ *************************************************************************/
 
-    eosFormsMessage message;
+static void notifyEnd(
+    eosFormHandle hForm) {
 
-    message.id = MSG_NOTIFY;
-    message.hForm = eosFormsGetParent(hForm);
-    message.msgNotify.hSender = hForm;
-    message.msgNotify.event = event;
-    message.msgNotify.params = NULL;
+    eosIncDecNotifyEnd params;
 
-    eosFormsSendMessage(eosFormsGetService(hForm), &message);
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    params.value = data->value;
+
+    eosFormsSendNotify(hForm, EV_INCDEC_END, &params);
 }

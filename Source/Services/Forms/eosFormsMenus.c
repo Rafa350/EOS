@@ -19,7 +19,7 @@ typedef struct {                       // Dades privades
 } PrivateData;
 
 
-static void onMessage(eosFormsServiceHandle hService, eosFormsMessage *message);
+static void onMessage(eosFormsMessage *message);
 static void onMsgCreate(eosFormsMessage *message);
 static void onMsgPaint(eosFormsMessage *message);
 static void onMsgActivate(eosFormsMessage *message);
@@ -35,7 +35,6 @@ static void notify(eosFormHandle hForm, unsigned event, void *params);
  *
  *       Funcio:
  *           eosFormHandle eosFormsCreateMenu(
- *               eosFormsServiceHandle hService,
  *               eosMenuParams *params)
  *
  *       Entrada:
@@ -48,7 +47,6 @@ static void notify(eosFormHandle hForm, unsigned event, void *params);
  *************************************************************************/
 
 eosFormHandle eosFormsCreateMenu(
-    eosFormsServiceHandle hService,
     eosMenuParams *params) {
 
     eosFormParams formParams;
@@ -58,7 +56,7 @@ eosFormHandle eosFormsCreateMenu(
     formParams.privateParams = params;
     formParams.privateDataSize = sizeof(PrivateData);
     
-    return eosFormsCreateForm(hService, &formParams);
+    return eosFormsCreateForm(&formParams);
 }
 
 
@@ -68,7 +66,6 @@ eosFormHandle eosFormsCreateMenu(
  *
  *       Funcio:
  *           void onMessage(
- *               eosFormsServiceHandle hService,
  *               eosFormsMessage *message)
  *
  *       Entrada:
@@ -78,7 +75,6 @@ eosFormHandle eosFormsCreateMenu(
  **************************************************************************/
 
 static void onMessage(
-    eosFormsServiceHandle hService,
     eosFormsMessage *message) {
 
     switch (message->id) {
@@ -134,8 +130,11 @@ static void onMsgCreate(
     eosFormsMessage *message) {
 
     PrivateData *data = (PrivateData*) message->msgCreate.privateData;
+    eosMenuParams *params = (eosMenuParams*) message->msgCreate.privateParams;
 
-    data->resource = ((eosMenuParams*) message->msgCreate.privateParams)->resource;
+    // Inicialitza les dades privades
+    //
+    data->resource = params->resource;
     data->showItems = 5;
     data->level = 0;
     data->info[0].offset = 0;
@@ -373,17 +372,7 @@ static void onMsgSelectorClick(
     switch (resource[itemOffset] & 0x03) {
         case 0: {
             unsigned command = resource[itemOffset + 2 +  resource[itemOffset + 1]];
-            if (command != 0) {
-                eosFormsServiceHandle hService = eosFormsGetService(hForm);
-                eosFormHandle hParent = eosFormsGetParent(hForm);
-                if (hParent != NULL) {
-                    eosFormsMessage cmdMessage;
-                    cmdMessage.id = MSG_COMMAND;
-                    cmdMessage.hForm = hParent;
-                    cmdMessage.msgCommand.command = command;
-                    eosFormsSendMessage(hService, &cmdMessage);
-                }
-            }
+            eosFormsSendCommand(hForm, command);
             break;
         }
 
@@ -439,5 +428,5 @@ static void notify(
     message.msgNotify.event = event;
     message.msgNotify.params = params;
 
-    eosFormsSendMessage(eosFormsGetService(hForm), &message);
+    eosFormsSendMessage(&message);
 }

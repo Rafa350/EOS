@@ -89,6 +89,7 @@ static eosI2CTransactionHandle transactionMap[I2C_NUMBER_OF_MODULES];
 static bool transactionPoolInitialized = false;
 static eosI2CTransaction transactionPool[eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS];
 
+static void tickFunction(eosI2CMasterServiceHandle hService);
 static void i2cInitialize(I2C_MODULE_ID id);
 static void i2cInterruptService(I2C_MODULE_ID id);
 
@@ -129,7 +130,7 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
     //
     hService->id = params->id;
     hService->state = serviceInitializing;
-    hService->hTransactionPool = (eosI2CTransactionHandle)((BYTE*) hService + transactionPoolSize);
+    hService->hTransactionPool = (eosI2CTransactionHandle)((BYTE*) hService + sizeof(eosI2CMasterService));
     hService->hFirstTransaction = NULL;
     hService->hLastTransaction = NULL;
     hService->tickCount = 0;
@@ -140,7 +141,7 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosTickAttachFunction((eosTickCallback) eosI2CMasterServiceTick, hService);
+    eosTickAttachFunction((eosTickCallback) tickFunction, hService);
 
     return hService;
 }
@@ -259,27 +260,6 @@ void eosI2CMasterServiceTask(
 
 /*************************************************************************
  *
- *       Gestiona la interrupcio TICK
- *
- *       Funcio:
- *           void eosI2CMasterServiceTick(
- *               eosI2CMasterServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del servei
- *
- *************************************************************************/
-
-void eosI2CMasterServiceTick(
-    eosI2CMasterServiceHandle hService) {
-
-    if (hService->tickCount > 0)
-        hService->tickCount--;
-}
-
-
-/*************************************************************************
- *
  *       Inicia una transaccio
  *
  *       Funcio:
@@ -346,6 +326,28 @@ void * __attribute__ ((always_inline)) eosI2CMasterGetTransactionContext(
 
     return hTransaction->context;
 }
+
+
+/*************************************************************************
+ *
+ *       Gestiona la interrupcio TICK
+ *
+ *       Funcio:
+ *           void tickFuncion(
+ *               eosI2CMasterServiceHandle hService)
+ *
+ *       Entrada:
+ *           hService: El handler del servei
+ *
+ *************************************************************************/
+
+static void tickFunction(
+    eosI2CMasterServiceHandle hService) {
+
+    if (hService->tickCount > 0)
+        hService->tickCount--;
+}
+
 
 /*************************************************************************
  *

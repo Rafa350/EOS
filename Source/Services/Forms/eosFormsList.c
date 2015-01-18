@@ -2,16 +2,15 @@
 #include "DisplayService.h"
 
 
-typedef struct {
-    char *title;
-    char **items;
-    unsigned numItems;
-    unsigned selectedIndex;
+typedef struct {             // Dades privades
+    char *title;             // -Titol
+    char **items;            // -Llista d'items
+    unsigned numItems;       // -Nimbre d'items en la llista
+    unsigned selectedIndex;  // -Index de la seleccio actual
 } PrivateData;
 
 
-static void onMessage(eosFormsServiceHandle hServide, eosFormsMessage *message);
-
+static void onMessage(eosFormsMessage *message);
 static void onMsgActivate(eosFormsMessage *message);
 static void onMsgCreate(eosFormsMessage *message);
 static void onMsgSelectorInc(eosFormsMessage *message);
@@ -22,8 +21,23 @@ static void onMsgPaint(eosFormsMessage *message);
 static void notify(eosFormHandle hForm, unsigned event);
 
 
+/*************************************************************************
+ *
+ *       Crea un form de seleccio per llista
+ *
+ *       Funcio:
+ *           eosFormHandle eosFormsCreateList(
+ *               eosIncDecParams *params)
+ *
+ *       Entrada:
+ *           params: Parametres d'inicialitzacio
+ *
+ *       Retorn:
+ *           El handler del form
+ *
+ *************************************************************************/
+
 eosFormHandle eosFormsCreateList(
-    eosFormsServiceHandle hService,
     eosListParams *params) {
 
     eosFormParams formParams;
@@ -33,12 +47,11 @@ eosFormHandle eosFormsCreateList(
     formParams.privateParams = params;
     formParams.onMessage = onMessage;
 
-    return eosFormsCreateForm(hService, &formParams);
+    return eosFormsCreateForm(&formParams);
 }
 
 
 static void onMessage(
-    eosFormsServiceHandle hServide,
     eosFormsMessage *message) {
 
     switch (message->id) {
@@ -78,6 +91,9 @@ static void onMsgCreate(
 
     eosListParams *params = (eosListParams*) message->msgCreate.privateParams;
     PrivateData *data = (PrivateData*) message->msgCreate.privateData;
+
+    // Inicialitza les dades privades
+    //
     data->title = params->title;
     data->items = params->items;
     data->numItems = params->numItems;
@@ -162,5 +178,5 @@ static void notify(
     message.msgNotify.event = event;
     message.msgNotify.params = NULL;
 
-    eosFormsSendMessage(eosFormsGetService(hForm), &message);
+    eosFormsSendMessage(&message);
 }

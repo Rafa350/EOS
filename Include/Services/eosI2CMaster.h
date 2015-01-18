@@ -43,7 +43,6 @@ typedef struct {                       // Parametres d'una transaccio
 extern eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(eosI2CServiceParams *params);
 extern bool eosI2CMasterIsReady(eosI2CMasterServiceHandle hService);
 extern void eosI2CMasterServiceTask(eosI2CMasterServiceHandle hService);
-extern void eosI2CMasterServiceTick(eosI2CMasterServiceHandle hService);
 
 extern eosI2CTransactionHandle eosI2CMasterStartTransaction(eosI2CMasterServiceHandle hService, eosI2CTransactionParams *params);
 extern void *eosI2CMasterGetTransactionContext(eosI2CTransactionHandle hTransaction);

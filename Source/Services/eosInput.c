@@ -166,7 +166,7 @@ void eosInputServiceTask(void) {
  *               eosInputParams* params)
  *
  *       Entrada:
- *           params  : Parametres de la entrada
+ *           params: Parametres de la entrada
  *
  *       Retorn:
  *           El handler de la entrada

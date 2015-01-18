@@ -18,6 +18,7 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 // Inicialitzacio, finalitzacio i gestio del servei
 //
 extern bool eosTickServiceInitialize(eosTickServiceParams *params);
+extern bool eosTickServiceIsReady(void);
 extern void eosTickServiceTask(void);
 
 extern bool eosTickAttachFunction(eosTickCallback onTick, void *onTickContext);

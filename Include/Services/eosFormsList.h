@@ -22,7 +22,7 @@ typedef struct {
     unsigned numItems;
 } eosListParams;
 
-extern eosFormHandle eosFormsCreateList(eosFormsServiceHandle hService, eosListParams *params);
+extern eosFormHandle eosFormsCreateList(eosListParams *params);
 
 
 #endif

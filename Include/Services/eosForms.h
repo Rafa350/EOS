@@ -82,7 +82,7 @@ typedef struct {
     };
 } eosFormsMessage;
 
-typedef void (*eosFormsOnMessageCallback)(eosFormsServiceHandle hService, eosFormsMessage *message);
+typedef void (*eosFormsOnMessageCallback)(eosFormsMessage *message);
 
 typedef struct {                            // Parametres d'inicialitzacio del form
     eosFormHandle hParent;                  // -Form pare
@@ -98,20 +98,22 @@ typedef struct {                            // Parametres d'inicialitzacio del s
 } eosFormsServiceParams;
 
 
-extern eosFormsServiceHandle eosFormsServiceInitialize(eosFormsServiceParams *params);
-extern bool eosFormServiceIsReady(eosFormsServiceHandle hService);
-extern void eosFormsServiceTask(eosFormsServiceHandle hForms);
-extern void eosFormsSendMessage(eosFormsServiceHandle hService, eosFormsMessage *message);
-extern void eosFormsPostMessage(eosFormsServiceHandle hService, eosFormsMessage *message);
+extern bool eosFormsServiceInitialize(eosFormsServiceParams *params);
+extern bool eosFormServiceIsReady(void);
+extern void eosFormsServiceTask(void);
 
-extern eosFormHandle eosFormsCreateForm(eosFormsServiceHandle hService, eosFormParams *params);
+extern void eosFormsSendMessage(eosFormsMessage *message);
+extern void eosFormsPostMessage(eosFormsMessage *message);
+extern void eosFormsSendNotify(eosFormHandle hSender, unsigned event, void *params);
+extern void eosFormsSendCommand(eosFormHandle hSender, unsigned command);
+
+extern eosFormHandle eosFormsCreateForm(eosFormParams *params);
 extern void eosFormsDestroyForm(eosFormHandle hForm);
 extern void eosFormsRefreshForm(eosFormHandle hForm);
 
-extern eosFormHandle eosFormsGetActiveForm(eosFormsServiceHandle hService);
+extern eosFormHandle eosFormsGetActiveForm(void);
 extern void *eosFormsGetPrivateData(eosFormHandle hForm);
 extern eosFormHandle eosFormsGetParent(eosFormHandle hForm);
-extern eosFormsServiceHandle eosFormsGetService(eosFormHandle hForm);
 
 extern void eosFormsSetActiveForm(eosFormHandle hForm);
 
