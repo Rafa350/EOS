@@ -19,5 +19,16 @@ extern void* eosRealloc(void *p, unsigned size);
 extern void* eosAllocString(const char *s);
 
 
+// Heap
+
+
+// Pool
+
+typedef struct __eosPool *eosHPool;
+
+extern eosHPool eosPoolCreate(unsigned elementSize, unsigned maxElements);
+extern void *eosPoolAlloc(eosHPool hPool);
+extern void eosPoolFree(void *p);
+
 
 #endif

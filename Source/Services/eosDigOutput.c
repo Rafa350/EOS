@@ -153,10 +153,10 @@ eosDigOutputHandle eosDigOutputCreate(
     hService->hFirstOutput = hOutput;
     eosInterruptRestore(intState);
 
-    // Inicialitza el port fisic
+    // Inicialitza el port fisic a estat OFF
     //
-    halPortSet(hOutput->port, hOutput->pin, false);
-    halPortSet(hOutput->port, hOutput->pin);
+    halPortSetupOutput(hOutput->port, hOutput->pin);
+    halPortSet(hOutput->port, hOutput->pin, hOutput->inverted ? true : false);
 
     return hOutput;
 }
@@ -301,7 +301,7 @@ static void tickFunction(
             if (hOutput->tickCount) {
                 hOutput->tickCount -= 1;
                 if (!hOutput->tickCount)
-                    portToggle(hOutput);
+                    halPortToggle(hOutput->port, hOutput->pin);
             }
 
             hOutput = hOutput->hNextOutput;
