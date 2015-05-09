@@ -1,6 +1,7 @@
-#include "Services/eosOutput.h"
+#include "Services/eosDigOutput.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
+#include "peripheral/ports/plib_ports.h"
 
 
 typedef enum {                         // Estats del servei
@@ -8,28 +9,37 @@ typedef enum {                         // Estats del servei
     serviceRunning                     // -En execucio
 } eosOutputServiceState;
 
-typedef struct __eosOutput {           // Dates d'una sortida
-    PORTS_CHANNEL channel;             // -Canal del port
-    PORTS_BIT_POS position;            // -Pin del port
+typedef struct __eosDigOutput {        // Dates d'una sortida
+    eosDigOutputChannel channel;       // -Canal del port
+    unsigned position;                 // -Pin del port
     bool inverted;                     // -Senyal invertida
     unsigned tickCount;                // -Tics restant del puls
-    eosOutputServiceHandle hService;   // -El servei al que pertany
-    eosOutputHandle hNextOutput;       // -Seguent sortida
-} eosOutput;
+    eosDigOutputServiceHandle hService;// -El servei al que pertany
+    eosDigOutputHandle hNextOutput;    // -Seguent sortida
+} eosDigOutput;
 
-typedef struct __eosOutputService {    // Dades del servei
+typedef struct __eosDigOutputService { // Dades del servei
     eosOutputServiceState state;       // -Estat del servei
-    eosOutputHandle hFirstOutput;      // -Primera sortida
-} eosOutputService;
+    eosDigOutputHandle hFirstOutput;   // -Primera sortida
+} eosDigOutputService;
 
 
-static eosOutputServiceHandle hService = NULL;
+static PORTS_CHANNEL channelMap[] = {
+    PORT_CHANNEL_A,
+    PORT_CHANNEL_B,
+    PORT_CHANNEL_C,
+    PORT_CHANNEL_D,
+    PORT_CHANNEL_E,
+    PORT_CHANNEL_F
+};
 
-static void tickFunction(void *context);
-static void portInitialize(eosOutputHandle hOutput);
-static bool portGet(eosOutputHandle hOutput);
-static void portSet(eosOutputHandle hOutput, bool state);
-static void portToggle(eosOutputHandle hOutput);
+static bool initialized = false;
+
+static void tickFunction(eosDigOutputServiceHandle hService);
+static void portInitialize(eosDigOutputHandle hOutput);
+static bool portGet(eosDigOutputHandle hOutput);
+static void portSet(eosDigOutputHandle hOutput, bool state);
+static void portToggle(eosDigOutputHandle hOutput);
 
 
 /*************************************************************************
@@ -37,28 +47,28 @@ static void portToggle(eosOutputHandle hOutput);
  *       Inicialitzacio el servei de gestio de sortides
  *
  *       Funcio:
- *           bool eosOutputServiceInitialize(
+ *           eosDigOutputServiceHandle eosDigOutputServiceInitialize(
  *               eosOutputServiceParams *params)
  *
  *       Entrada:
  *           params: Parametres d'inicialitzacio del servei
  *
  *       Retorn:
- *           True si tot es correcte
+ *           El handler del servei. NULL en cas d'error
  *
  *************************************************************************/
 
-bool eosOutputServiceInitialize(
-    eosOutputServiceParams *params) {
+eosDigOutputServiceHandle eosDigOutputServiceInitialize(
+    eosDigOutputServiceParams *params) {
 
     // Comprova si ja esta inicialitzat
     //
-    if (hService)
-        return false;
+    if (initialized)
+        return NULL;
 
-    hService = eosAlloc(sizeof(eosOutputService));
+    eosDigOutputServiceHandle hService = eosAlloc(sizeof(eosDigOutputService));
     if (!hService)
-        return false;
+        return NULL;
 
     // Inicialitza les dades internes del servei
     //
@@ -67,13 +77,16 @@ bool eosOutputServiceInitialize(
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosTickAttachFunction((eosTickCallback) tickFunction, NULL);
+    eosTickAttachFunction((eosTickCallback) tickFunction, hService);
 
-    return true;
+    initialized = true;
+
+    return hService;
 }
 
 
-bool __attribute__ ((always_inline)) eosOutputServiceIsReady(void) {
+bool __attribute__ ((always_inline)) eosDigOutputServiceIsReady(
+    eosDigOutputServiceHandle hService) {
 
     return hService && (hService->state != serviceInitializing);
 }
@@ -84,11 +97,16 @@ bool __attribute__ ((always_inline)) eosOutputServiceIsReady(void) {
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void eosOutputServiceTask(void)
+ *           void eosDigOutputServiceTask(
+ *               eosDigOutputServiceHandle hService)
+ *
+ *       Entrada:
+ *           hService: El handler del servei
  *
  *************************************************************************/
 
-void eosOutputServiceTask(void) {
+void eosDigOutputServiceTask(
+    eosDigOutputServiceHandle hService) {
 
     if (hService) {
 
@@ -110,28 +128,26 @@ void eosOutputServiceTask(void) {
  *       Crea una sortida
  *
  *       Funcio:
- *           eosOutputHandle eosOutputsCreate(
+ *           eosDigOutputHandle eosDigOutputsCreate(
+ *               eosDigOutputServiceHandle hService,
  *               eosOutputParams *params)
  *
  *       Entrada:
- *           params: Parametres d'inicialitzacio de la sortida
+ *           hService: El handler del servei
+ *           params  : Parametres d'inicialitzacio de la sortida
  *
  *       Retorn:
  *           El handler de la sortida. NULL en cas d'error
  *
  *************************************************************************/
 
-eosOutputHandle eosOutputCreate(
-    eosOutputParams *params) {
-
-    // Comprova que el servei estiqui inicialitzat
-    //
-    if (!hService)
-        return NULL;
+eosDigOutputHandle eosDigOutputCreate(
+    eosDigOutputServiceHandle hService,
+    eosDigOutputParams *params) {
 
     // Crea el bloc de memoria
     //
-    eosOutputHandle hOutput = eosAlloc(sizeof(eosOutput));
+    eosDigOutputHandle hOutput = eosAlloc(sizeof(eosDigOutput));
     if (hOutput == NULL)
         return NULL;
 
@@ -163,16 +179,16 @@ eosOutputHandle eosOutputCreate(
  *       Destrueix una sortida
  *
  *       Funcio:
- *           void eosOutputDestroy(
- *               eosOutputHandle hOutput)
+ *           void eosDigOutputDestroy(
+ *               eosDigOutputHandle hOutput)
  *
  *       Entrada:
  *           hOutput: El handler de la sortida
  *
  *************************************************************************/
 
-void eosOutputDestroy(
-    eosOutputHandle hOutput) {
+void eosDigOutputDestroy(
+    eosDigOutputHandle hOutput) {
 
 }
 
@@ -182,8 +198,8 @@ void eosOutputDestroy(
  *       Obte l'estat d'una sortida
  *
  *       Funcio:
- *           bool eosOutputsGet(
- *               eosOutputHandle hOutput)
+ *           bool eosDigOutputsGet(
+ *               eosDigOutputHandle hOutput)
  *
  *       Entrada:
  *           hOutput: El handler de la sortida
@@ -193,8 +209,8 @@ void eosOutputDestroy(
  *
  *************************************************************************/
 
-bool __attribute__ ((always_inline)) eosOutputGet(
-    eosOutputHandle hOutput) {
+bool __attribute__ ((always_inline)) eosDigOutputGet(
+    eosDigOutputHandle hOutput) {
 
     if (hOutput)
         return portGet(hOutput);
@@ -208,8 +224,8 @@ bool __attribute__ ((always_inline)) eosOutputGet(
  *       Assigna l'estat d'una sortida
  *
  *       Funcio:
- *           void eosOutputsSet(
- *               eosOutputHandle hOutput,
+ *           void eosDigOutputsSet(
+ *               eosDigOutputHandle hOutput,
  *               bool state)
  *
  *       Entrada:
@@ -218,8 +234,8 @@ bool __attribute__ ((always_inline)) eosOutputGet(
  *
  *************************************************************************/
 
-void __attribute__ ((always_inline)) eosOutputSet(
-    eosOutputHandle hOutput,
+void __attribute__ ((always_inline)) eosDigOutputSet(
+    eosDigOutputHandle hOutput,
     bool state) {
 
     if (hOutput)
@@ -232,16 +248,16 @@ void __attribute__ ((always_inline)) eosOutputSet(
  *       Inverteix l'estat d'una sortida
  *
  *       Funcio:
- *           void eosOutputToggle(
- *               eosOutput hOutput)
+ *           void eosDigOutputToggle(
+ *               eosDigOutput hOutput)
  *
  *       Entrada:
  *           hOutput: El handler de la sortida
  *
  *************************************************************************/
 
-void __attribute__ ((always_inline)) eosOutputToggle(
-    eosOutputHandle hOutput) {
+void __attribute__ ((always_inline)) eosDigOutputToggle(
+    eosDigOutputHandle hOutput) {
 
     if (hOutput)
         portToggle(hOutput);
@@ -253,8 +269,8 @@ void __attribute__ ((always_inline)) eosOutputToggle(
  *       Genera un puls d'inversio de l'estat d'una sortida
  *
  *       Funcio:
- *           void eosOutputsPulse(
- *               eosOutput hOutput,
+ *           void eosDigOutputsPulse(
+ *               eosDigOutput hOutput,
  *               unsigned time)
  *
  *       Entrada:
@@ -263,8 +279,8 @@ void __attribute__ ((always_inline)) eosOutputToggle(
  *
  *************************************************************************/
 
-void eosOutputsPulse(
-    eosOutputHandle hOutput,
+void eosDigOutputsPulse(
+    eosDigOutputHandle hOutput,
     unsigned time) {
 
     if (hOutput && (time > 0)) {
@@ -283,19 +299,19 @@ void eosOutputsPulse(
  *
  *       Funcio:
  *           void tickFunction(
- *               void *context)
+ *               eosDigOutputServiceHandle *hService)
  *
  *       Entrada:
- *           context: En aquest cas NULL
+ *           hService: El handler del servei
  *
  *************************************************************************/
 
 static void tickFunction(
-    void *context) {
+    eosDigOutputServiceHandle hService) {
 
     if (hService && (hService->state == serviceRunning)) {
 
-        eosOutputHandle hOutput = hService->hFirstOutput;
+        eosDigOutputHandle hOutput = hService->hFirstOutput;
         while (hOutput) {
 
             if (hOutput->tickCount) {
@@ -316,7 +332,7 @@ static void tickFunction(
  *
  *       Funcio:
  *           void portInitialize(
- *               eosOutputHandle hOutput)
+ *               eosDigOutputHandle hOutput)
  *
  *       Entrada:
  *           hOutput: El handler de la sortida
@@ -324,10 +340,18 @@ static void tickFunction(
  *************************************************************************/
 
 static void portInitialize(
-    eosOutputHandle hOutput) {
+    eosDigOutputHandle hOutput) {
 
-    PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position, FALSE);
-    PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, hOutput->channel, hOutput->position);
+    PLIB_PORTS_PinWrite(
+            PORTS_ID_0,
+            channelMap[hOutput->channel],
+            hOutput->position,
+            FALSE);
+    
+    PLIB_PORTS_PinDirectionOutputSet(
+            PORTS_ID_0,
+            channelMap[hOutput->channel],
+            hOutput->position);
 }
 
 
@@ -337,7 +361,7 @@ static void portInitialize(
  *
  *       Funcio:
  *           bool portGet(
- *               eosOutputHandle hOutput)
+ *               eosDigOutputHandle hOutput)
  *
  *       Entrada:
  *           hOutput: El handler de la sortida
@@ -348,9 +372,13 @@ static void portInitialize(
  **************************************************************************/
 
 static bool portGet(
-    eosOutputHandle hOutput) {
+    eosDigOutputHandle hOutput) {
 
-    bool p = PLIB_PORTS_PinGetLatched(PORTS_ID_0, hOutput->channel, hOutput->position);
+    bool p = PLIB_PORTS_PinGetLatched(
+        PORTS_ID_0,
+        channelMap[hOutput->channel],
+        hOutput->position);
+
     return hOutput->inverted ? !p : p;
 }
 
@@ -361,7 +389,7 @@ static bool portGet(
  *
  *       Funcio:
  *           void portSet(
- *               eosOutputHandle hOutput,
+ *               eosDigOutputHandle hOutput,
  *               bool state)
  *
  *       Entrada:
@@ -371,10 +399,13 @@ static bool portGet(
  **************************************************************************/
 
 static void portSet(
-    eosOutputHandle hOutput,
+    eosDigOutputHandle hOutput,
     bool state) {
 
-    PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position,
+    PLIB_PORTS_PinWrite(
+        PORTS_ID_0,
+        channelMap[hOutput->channel],
+        hOutput->position,
         hOutput->inverted ? !state : state);
 }
 
@@ -385,7 +416,7 @@ static void portSet(
  *
  *       Funcio:
  *           void portToggle(
- *               eosOutputHandle hOutput)
+ *               eosDigOutputHandle hOutput)
  *
  *       Entrada:
  *           hOutput: El handler de la sortida
@@ -393,7 +424,10 @@ static void portSet(
  **************************************************************************/
 
 static void portToggle(
-    eosOutputHandle hOutput) {
+    eosDigOutputHandle hOutput) {
 
-    PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);
+    PLIB_PORTS_PinToggle(
+        PORTS_ID_0,
+        channelMap[hOutput->channel],
+        hOutput->position);
 }
