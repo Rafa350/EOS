@@ -1,7 +1,6 @@
 #include "Services/eosDigInput.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
-#include "peripheral/ports/plib_ports.h"
 
 
 typedef enum {                         // Estats del servei
@@ -17,8 +16,8 @@ typedef enum {                         // Estats del servei
 typedef struct __eosDigInput {         // Dades d'una entrada
     eosDigInputServiceHandle hService; // -El servei al que pertany
     eosDigInputHandle hNextInput;      // -Seguent element
-    eosDigInputChannel channel;        // -Canal del port
-    unsigned position;                 // -Pin del port
+    unsigned port;                     // -Canal del port
+    unsigned pin;                      // -Pin del port
     bool inverted;                     // -Senyal invertida
     eosDigInputCallback onPosEdge;     // -Event POSEDGE
     eosDigInputCallback onNegEdge;     // -Event NEGEDGE
@@ -36,20 +35,9 @@ typedef struct __eosDigInputService {  // Dades del servei
 } eosDigInputService;
 
 
-static PORTS_CHANNEL channelMap[] = { 
-    PORT_CHANNEL_A,
-    PORT_CHANNEL_B,
-    PORT_CHANNEL_C, 
-    PORT_CHANNEL_D,
-    PORT_CHANNEL_E,
-    PORT_CHANNEL_F
-};
-
 static bool initialized = false;       // Controla singleton
 
 static void tickFunction(eosDigInputServiceHandle hInput);
-static void portInitialize(eosDigInputHandle hInput);
-static bool portGet(eosDigInputHandle hInput);
 
 
 /*************************************************************************
@@ -205,8 +193,8 @@ eosDigInputHandle eosDigInputCreate(
     hInput->hService = hService;
     hInput->posEdge = false;
     hInput->negEdge = false;
-    hInput->channel = params->channel;
-    hInput->position = params->position;
+    hInput->port = params->port;
+    hInput->pin = params->pin;
     hInput->inverted = params->inverted;
     hInput->onPosEdge = params->onPosEdge;
     hInput->onNegEdge = params->onNegEdge;
@@ -217,8 +205,11 @@ eosDigInputHandle eosDigInputCreate(
     hService->hFirstInput = hInput;
     eosInterruptRestore(state);
 
-    portInitialize(hInput);
-    hInput->state = portGet(hInput);
+    halPortSetupInput(hInput->port, hInput->pin);
+
+    bool p = halPortGet(hInput->port, hInput->pin);
+    hInput->state = hInput->inverted ? !p : p;
+
     if (hInput->state)
         hInput->pattern = 0xFFFFFFFF;
     else
@@ -347,7 +338,11 @@ static void tickFunction(
         while (hInput) {
 
             hInput->pattern <<= 1;
-            if (portGet(hInput))
+
+            bool p = halPortGet(hInput->port, hInput->pin);
+            p = hInput->inverted ? !p : p;
+
+            if (p)
                 hInput->pattern |= 1;
 
             if ((hInput->pattern & PATTERN_MASK) == PATTERN_ON) {
@@ -364,55 +359,4 @@ static void tickFunction(
             hInput = hInput->hNextInput;
         }
     }
-}
-
-
-/*************************************************************************
- *
- *       Inicialitza el port d'entrada
- *
- *       Funcio:
- *           void portInitialize(
- *               eosDigInputHandle hInput)
- *
- *       Entrada:
- *           hInput: El handler de l'entrada
- *
- *************************************************************************/
-
-static void portInitialize(
-    eosDigInputHandle hInput) {
-
-    PLIB_PORTS_PinDirectionInputSet(
-        PORTS_ID_0,
-        channelMap[hInput->channel],
-        hInput->position);
-}
-
-
-/*************************************************************************
- *
- *       Obte l'estat del port d'entrada
- *
- *       Funcio:
- *           bool portGet(
- *               eosDigInputHandle hInput)
- *
- *       Entrada:
- *           hInput: El handler de l'entrada
- *
- *       Retorn:
- *           Estat de la entrada
- *
- **************************************************************************/
-
-static bool portGet(
-    eosDigInputHandle hInput) {
-
-    bool p = PLIB_PORTS_PinGet(
-        PORTS_ID_0,
-        channelMap[hInput->channel],
-        hInput->position);
-
-    return hInput->inverted ? !p : p;
 }

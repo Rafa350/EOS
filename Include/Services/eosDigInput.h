@@ -14,20 +14,11 @@
 typedef struct __eosDigInputService *eosDigInputServiceHandle;
 typedef struct __eosDigInput *eosDigInputHandle;
 
-typedef enum {
-    eosDigInputChannel_A = 0,          // Canal d'entrada A
-    eosDigInputChannel_B,              // Canal d'entrada B
-    eosDigInputChannel_C,              // Canal d'entrada C
-    eosDigInputChannel_D,              // Canal d'entrada D
-    eosDigInputChannel_E,              // Canal d'entrada E
-    eosDigInputChannel_F               // Canal d'entrada F
-} eosDigInputChannel;
-
 typedef void (*eosDigInputCallback)(eosDigInputHandle hInput);
 
 typedef struct {                       // Parametres d'inicializacio de les entrades
-    eosDigInputChannel channel;        // -Canal del port
-    unsigned position;                 // -Pin del port
+    unsigned port;                     // -Port
+    unsigned pin;                      // -Pin
     bool inverted;                     // -Inverteix la entrada
     eosDigInputCallback onPosEdge;     // -Notifica flanc positiu
     eosDigInputCallback onNegEdge;     // -Notifica flanc negatiu

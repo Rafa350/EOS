@@ -17,6 +17,10 @@
 #include "eosConfig.h"
 #endif
 
+#ifndef __EOS_HAL_H
+#include "eosHal.h"
+#endif
+
 
 // Codis de retorn de les funcions de la llibreria
 //

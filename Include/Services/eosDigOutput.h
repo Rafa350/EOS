@@ -10,22 +10,13 @@
 #include "Services/eosTick.h"
 #endif
 
-typedef enum {
-    eosDigOutputChannel_A = 0,         // Canal de sortida A
-    eosDigOutputChannel_B,             // Canal de sortida B
-    eosDigOutputChannel_C,             // Canal de sortida C
-    eosDigOutputChannel_D,             // Canal de sortida D
-    eosDigOutputChannel_E,             // Canal de sortida E
-    eosDigOutputChannel_F              // Canal de sortida F
-} eosDigOutputChannel;
-
 
 typedef struct __eosDigOutputService *eosDigOutputServiceHandle;
 typedef struct __eosDigOutput *eosDigOutputHandle;
 
 typedef struct {                       // Parametres d'inicialitzacio de les sortides
-    eosDigOutputChannel channel;       // -Canal del port
-    unsigned position;                 // -Pin del port
+    unsigned port;                     // -Port
+    unsigned pin;                      // -Pin
     bool inverted;                     // -Inverteix la sortida
 } eosDigOutputParams;
 

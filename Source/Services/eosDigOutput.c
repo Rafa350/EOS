@@ -1,7 +1,6 @@
 #include "Services/eosDigOutput.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
-#include "peripheral/ports/plib_ports.h"
 
 
 typedef enum {                         // Estats del servei
@@ -10,8 +9,8 @@ typedef enum {                         // Estats del servei
 } eosOutputServiceState;
 
 typedef struct __eosDigOutput {        // Dates d'una sortida
-    eosDigOutputChannel channel;       // -Canal del port
-    unsigned position;                 // -Pin del port
+    unsigned port;                     // -Port
+    unsigned pin;                      // -Pin
     bool inverted;                     // -Senyal invertida
     unsigned tickCount;                // -Tics restant del puls
     eosDigOutputServiceHandle hService;// -El servei al que pertany
@@ -24,22 +23,10 @@ typedef struct __eosDigOutputService { // Dades del servei
 } eosDigOutputService;
 
 
-static PORTS_CHANNEL channelMap[] = {
-    PORT_CHANNEL_A,
-    PORT_CHANNEL_B,
-    PORT_CHANNEL_C,
-    PORT_CHANNEL_D,
-    PORT_CHANNEL_E,
-    PORT_CHANNEL_F
-};
 
 static bool initialized = false;
 
 static void tickFunction(eosDigOutputServiceHandle hService);
-static void portInitialize(eosDigOutputHandle hOutput);
-static bool portGet(eosDigOutputHandle hOutput);
-static void portSet(eosDigOutputHandle hOutput, bool state);
-static void portToggle(eosDigOutputHandle hOutput);
 
 
 /*************************************************************************
@@ -154,8 +141,8 @@ eosDigOutputHandle eosDigOutputCreate(
     // Inicialitza les dades internes de la sortida
     //
     hOutput->hService = hService;   
-    hOutput->channel = params->channel;
-    hOutput->position = params->position;
+    hOutput->port = params->port;
+    hOutput->pin = params->pin;
     hOutput->inverted = params->inverted;
     hOutput->tickCount = 0;
 
@@ -166,9 +153,10 @@ eosDigOutputHandle eosDigOutputCreate(
     hService->hFirstOutput = hOutput;
     eosInterruptRestore(intState);
 
-    // Inicialitza el ort fisic
+    // Inicialitza el port fisic
     //
-    portInitialize(hOutput);
+    halPortSet(hOutput->port, hOutput->pin, false);
+    halPortSet(hOutput->port, hOutput->pin);
 
     return hOutput;
 }
@@ -212,10 +200,8 @@ void eosDigOutputDestroy(
 bool __attribute__ ((always_inline)) eosDigOutputGet(
     eosDigOutputHandle hOutput) {
 
-    if (hOutput)
-        return portGet(hOutput);
-    else
-        return false;
+    bool p = halPortGet(hOutput->port, hOutput->pin);
+    return hOutput->inverted ? !p : p;
 }
 
 
@@ -238,8 +224,7 @@ void __attribute__ ((always_inline)) eosDigOutputSet(
     eosDigOutputHandle hOutput,
     bool state) {
 
-    if (hOutput)
-        portSet(hOutput, state);
+    halPortSet(hOutput->port, hOutput->pin, hOutput->inverted ? !state : state);
 }
 
 
@@ -259,8 +244,7 @@ void __attribute__ ((always_inline)) eosDigOutputSet(
 void __attribute__ ((always_inline)) eosDigOutputToggle(
     eosDigOutputHandle hOutput) {
 
-    if (hOutput)
-        portToggle(hOutput);
+    halPortToggle(hOutput->port, hOutput->pin);
 }
 
 
@@ -286,7 +270,7 @@ void eosDigOutputsPulse(
     if (hOutput && (time > 0)) {
         bool intState = eosInterruptDisable();
         if (!hOutput->tickCount)
-            portToggle(hOutput);
+            halPortToggle(hOutput->port, hOutput->pin);
         hOutput->tickCount = time;
         eosInterruptRestore(intState);
     }
@@ -323,111 +307,4 @@ static void tickFunction(
             hOutput = hOutput->hNextOutput;
         }
     }
-}
-
-
-/*************************************************************************
- *
- *       Inicialitza el port de sortida
- *
- *       Funcio:
- *           void portInitialize(
- *               eosDigOutputHandle hOutput)
- *
- *       Entrada:
- *           hOutput: El handler de la sortida
- *
- *************************************************************************/
-
-static void portInitialize(
-    eosDigOutputHandle hOutput) {
-
-    PLIB_PORTS_PinWrite(
-            PORTS_ID_0,
-            channelMap[hOutput->channel],
-            hOutput->position,
-            FALSE);
-    
-    PLIB_PORTS_PinDirectionOutputSet(
-            PORTS_ID_0,
-            channelMap[hOutput->channel],
-            hOutput->position);
-}
-
-
-/*************************************************************************
- *
- *       Obte l'estat del port de sortida
- *
- *       Funcio:
- *           bool portGet(
- *               eosDigOutputHandle hOutput)
- *
- *       Entrada:
- *           hOutput: El handler de la sortida
- *
- *       Retorn:
- *           Estat de la sortida
- *
- **************************************************************************/
-
-static bool portGet(
-    eosDigOutputHandle hOutput) {
-
-    bool p = PLIB_PORTS_PinGetLatched(
-        PORTS_ID_0,
-        channelMap[hOutput->channel],
-        hOutput->position);
-
-    return hOutput->inverted ? !p : p;
-}
-
-
-/*************************************************************************
- *
- *       Asigna l'estat del port de sortida
- *
- *       Funcio:
- *           void portSet(
- *               eosDigOutputHandle hOutput,
- *               bool state)
- *
- *       Entrada:
- *           hOutput: El handlerd e la sortida
- *           state  : L'estat a asignar
- *
- **************************************************************************/
-
-static void portSet(
-    eosDigOutputHandle hOutput,
-    bool state) {
-
-    PLIB_PORTS_PinWrite(
-        PORTS_ID_0,
-        channelMap[hOutput->channel],
-        hOutput->position,
-        hOutput->inverted ? !state : state);
-}
-
-
-/*************************************************************************
- *
- *       Canvia l'estat del port d'entrada
- *
- *       Funcio:
- *           void portToggle(
- *               eosDigOutputHandle hOutput)
- *
- *       Entrada:
- *           hOutput: El handler de la sortida
- *
- **************************************************************************/
-
-static void portToggle(
-    eosDigOutputHandle hOutput) {
-
-    PLIB_PORTS_PinToggle(
-        PORTS_ID_0,
-        channelMap[hOutput->channel],
-        hOutput->position);
 }
