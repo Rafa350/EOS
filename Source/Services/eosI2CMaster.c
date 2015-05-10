@@ -141,7 +141,7 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosTickAttachFunction((eosTickCallback) tickFunction, hService);
+    eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
 
     return hService;
 }

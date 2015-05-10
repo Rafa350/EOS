@@ -14,6 +14,8 @@ SYS_DEVCON_INIT devconInit = {
     .moduleInit = {0},
 };
 
+static eosTickServiceHandle hTickService = NULL;
+
 
 // Funcions a definir en l'aplicacio del usuari
 //
@@ -66,7 +68,8 @@ void eosMain(void) {
     //
     eosTickServiceParams tickServiceParams;
     memset(&tickServiceParams, 0, sizeof(tickServiceParams));
-    eosTickServiceInitialize(&tickServiceParams);
+    tickServiceParams.timer = halTimer_TMR4;
+    hTickService = eosTickServiceInitialize(&tickServiceParams);
 
     // Inicialitzacio de l'aplicacio d'usuari
     //
@@ -78,7 +81,7 @@ void eosMain(void) {
 
         // Procesa les tasques del sistema
         //
-        eosTickServiceTask();
+        eosTickServiceTask(hTickService);
 
         // Procesa les tasques de l'aplicacio d'usuari
         //

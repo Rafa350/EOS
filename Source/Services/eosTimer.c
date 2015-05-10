@@ -111,7 +111,7 @@ bool eosTimerServiceInitialize(
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosTickAttachFunction((eosTickCallback) tickFunction, NULL);
+    eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
 
     return true;
 }

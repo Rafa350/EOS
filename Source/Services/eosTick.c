@@ -1,7 +1,5 @@
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
-#include "sys/attribs.h"
-#include "peripheral/int/plib_int.h"
 #include "peripheral/tmr/plib_tmr.h"
 
 
@@ -24,32 +22,34 @@
 #endif
 
 
-typedef struct __eosTickAttach *eosTickAttachHandle;
+typedef struct __eosTick *eosTickHandle;
 
 typedef enum  {                        // Estats del servei
     serviceInitializing,               // -Inicialitzant
     serviceRunning                     // -Execucio
 } eosTickServiceState;
 
-typedef struct __eosTickAttach {       // Funcio adjunta
+typedef struct __eosTick {             // Dades del callback
     eosTickServiceHandle hService;     // -Handler del servei
-    eosTickAttachHandle hNextAttach;   // -Seguent adjunt
+    eosTickHandle hNextItem;           // -Seguent item
     eosTickCallback onTick;            // -Event TICK
     void *onTickContext;               // -Parametres del event TICK
-} eosTickAttach;
+} eosTick;
 
-typedef struct __eosTickService {      // Dades internes del servei
+typedef struct __eosTickService {      // Dades del servei
     eosTickServiceState state;         // -Estat
-    eosTickAttachHandle hFirstAttach;  // -Primer adjunt
+    eosTickHandle hFirstItem;          // -Primer item
+    unsigned timer;                    // -Temporitzador
 } eosTickService;
 
 
-static eosTickServiceHandle hService = NULL;
+static eosTickServiceHandle serviceMap[5];
+static eosTickServiceHandle hDefaultService = NULL;
+static bool initialized = false;
 
 
-static void timerInitialize(void);
-static void timerStart(void);
-static void timerStop(void);
+static void timerInitialize(unsigned timer);
+static void timerInterruptCallback(unsigned timer);
 
 
 /*************************************************************************
@@ -57,33 +57,40 @@ static void timerStop(void);
  *       Inicialitza el servei
  *
  *       Funcio:
- *           bool eosTickServiceInitialize(
+ *           eosTickServiceHandle eosTickServiceInitialize(
  *               eosTickServiceParams *params)
  *
  *       Entrada:
  *           params : Parametres d'inicialitzacio
  *
  *       Retorn:
- *           True si tot es correcte, false en cas contrari
+ *           El handler del servei. NULL en cas d'error
  *
  *************************************************************************/
 
-bool eosTickServiceInitialize(
+eosTickServiceHandle eosTickServiceInitialize(
     eosTickServiceParams *params) {
 
     // Comprova que no estigui inicialitzat
     //
-    if (hService)
-        return false;
+    if (initialized)
+        return NULL;
 
-    hService = eosAlloc(sizeof(eosTickService));
+    eosTickServiceHandle hService = eosAlloc(sizeof(eosTickService));
     if (!hService)
-        return false;
+        return NULL;
 
+    hService->timer = params->timer;
     hService->state = serviceInitializing;
-    hService->hFirstAttach = NULL;
+    hService->hFirstItem = NULL;
 
-    return true;
+    initialized = true;
+
+    serviceMap[hService->timer] = hService;
+    if (hDefaultService == NULL)
+        hDefaultService = hService;
+
+    return hService;
 }
 
 
@@ -92,17 +99,21 @@ bool eosTickServiceInitialize(
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void eosTickServiceTask(void)
+ *           void eosTickServiceTask(
+ *               eosTickServiuceHandle hService)
+ *
+ *       Entrada:
+ *           hService: Handler del servei
  *
  *************************************************************************/
 
-void eosTickServiceTask(void) {
+void eosTickServiceTask(
+    eosTickServiceHandle hService) {
 
     switch (hService->state) {
         
         case serviceInitializing:
-            timerInitialize();
-            timerStart();
+            timerInitialize(hService->timer);
             hService->state = serviceRunning;
             break;
 
@@ -117,31 +128,37 @@ void eosTickServiceTask(void) {
  *       Asigna una funcio per disparar
  *
  *       Funcio:
- *           bool eosTickAttachFunction(
+ *           bool eosTickRegisterCallback(
+ *               eosTickServiceHandle hService
  *               eosTickCallback onTick,
  *               void *onTickContext)
  *
  *       Entrada:
+ *           hService      : Handler del servei
  *           onTick        : Callback del event TICK
  *           onTickContext : Contexte del event TICK
  *
  *************************************************************************/
 
-bool eosTickAttachFunction(
+bool eosTickRegisterCallback(
+    eosTickServiceHandle hService,
     eosTickCallback onTick,
     void *onTickContext) {
 
-    eosTickAttachHandle hAttach = eosAlloc(sizeof(eosTickAttach));
-    if (hAttach == NULL)
+    if (hService == NULL)
+        hService = hDefaultService;
+
+    eosTickHandle hTick = eosAlloc(sizeof(eosTick));
+    if (hTick == NULL)
         return false;
 
-    hAttach->hService = hService;
-    hAttach->onTick = onTick;
-    hAttach->onTickContext = onTickContext;
+    hTick->hService = hService;
+    hTick->onTick = onTick;
+    hTick->onTickContext = onTickContext;
 
     bool intState = eosInterruptSourceDisable(TICK_TIMER_INT_SOURCE);
-    hAttach->hNextAttach = hService->hFirstAttach;
-    hService->hFirstAttach = hAttach;
+    hTick->hNextItem = hService->hFirstItem;
+    hService->hFirstItem = hTick;
     eosInterruptSourceRestore(TICK_TIMER_INT_SOURCE, intState);
 
     return true;
@@ -153,13 +170,18 @@ bool eosTickAttachFunction(
  *       Inicialitza el temporitzador
  *
  *       Funcio:
- *           void timerInitialize(void)
+ *           void timerInitialize(
+ *               unsigned timer)
+ *
+ *       Entrada:
+ *           timer: Identificador del temporitzador
  *
  *************************************************************************/
 
-static void timerInitialize(void) {
+static void timerInitialize(
+    unsigned timer) {
 
-    PLIB_TMR_Stop(TICK_TIMER_ID);
+    halTimerStop(timer);
 
     // Inicialitza el temporitzador per genera una interrupcio a 1KHz (1ms)
     //
@@ -171,40 +193,10 @@ static void timerInitialize(void) {
 
     // Configura les interrupcions del temporitzador
     //
-    PLIB_INT_VectorPrioritySet(INT_ID_0, TICK_TIMER_INT_VECTOR, INT_PRIORITY_LEVEL2);
-    PLIB_INT_VectorSubPrioritySet(INT_ID_0, TICK_TIMER_INT_VECTOR, INT_SUBPRIORITY_LEVEL0);
-}
-
-
-/*************************************************************************
- *
- *       Activa el temporitzador, i comença a generar interrupcions
- *
- *       Funcio:
- *           void timerStart(void)
- *
- *************************************************************************/
-
-static void timerStart(void) {
-
-    PLIB_INT_SourceEnable(INT_ID_0, TICK_TIMER_INT_SOURCE);
-    PLIB_TMR_Start(TICK_TIMER_ID);
-}
-
-
-/*************************************************************************
- *
- *       Descativa el temporitzador
- *
- *       Funcio:
- *           void timerStop(void)
- *
- *************************************************************************/
-
-static void timerStop(void) {
-
-    PLIB_TMR_Stop(TICK_TIMER_ID);
-    PLIB_INT_SourceDisable(INT_ID_0, TICK_TIMER_INT_SOURCE);
+    halTimerSetInterruptPriority(timer, 2, 0);
+    halTimerSetInterruptEnable(timer, true);
+    halTimerSetInterruptCallback(timer, timerInterruptCallback);
+    halTimerStart(timer);
 }
 
 
@@ -212,19 +204,25 @@ static void timerStop(void) {
  *
  *       Gestiona la interrupcio del temporitzador
  *
+ *       Funcio:
+ *           void timerInterruptCallback(
+ *               unsigned timer)
+ *
+ *       Entrada:
+ *           timer: Identificador del temporitzador
+ *
  *************************************************************************/
 
-void __ISR(TICK_TIMER_CORE_VECTOR, IPL2SOFT) __ISR_Entry(TICK_TIMER_CORE_VECTOR) {
+static void timerInterruptCallback(unsigned timer) {
 
-    if (hService->state == serviceRunning) {
+    eosTickServiceHandle hService = serviceMap[timer];
+    if (hService && (hService->state == serviceRunning)) {
 
-        eosTickAttachHandle hAttach = hService->hFirstAttach;
-        while (hAttach) {
-            if (hAttach->onTick != NULL)
-                hAttach->onTick(hAttach->onTickContext);
-            hAttach = hAttach->hNextAttach;
+        eosTickHandle hTick = hService->hFirstItem;
+        while (hTick) {
+            if (hTick->onTick != NULL)
+                hTick->onTick(hTick->onTickContext);
+            hTick = hTick->hNextItem;
         }
     }
-
-    PLIB_INT_SourceFlagClear(INT_ID_0, TICK_TIMER_INT_SOURCE);
 }

@@ -76,13 +76,29 @@ eosDigInputServiceHandle eosDigInputServiceInitialize(
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosTickAttachFunction((eosTickCallback) tickFunction, hService);
+    eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
 
     initialized = true;
 
     return hService;
 }
 
+
+/************************************************************************
+ *
+ *       Comprova que el servei esta preparat i en funcionament
+ *
+ *       Funcio:
+ *           bool eosDigInputServiceIsReady(
+ *               eosDigInputServiceHandle hService)
+ *
+ *       Entrada:
+ *           hService: El handler del servei
+ *
+ *       Retorn:
+ *           True si esta preparat. False en cas contrari
+ *
+ ************************************************************************/
 
 bool __attribute__ ((always_inline)) eosDigInputServiceIsReady(
     eosDigInputServiceHandle hService) {
@@ -107,55 +123,52 @@ bool __attribute__ ((always_inline)) eosDigInputServiceIsReady(
 void eosDigInputServiceTask(
     eosDigInputServiceHandle hService) {
 
-    if (hService) {
+    switch (hService->state) {
 
-        switch (hService->state) {
+        case serviceInitializing:
+            hService->state = serviceRunning;
+            break;
 
-            case serviceInitializing:
-                hService->state = serviceRunning;
-                break;
+        case serviceRunning: {
 
-            case serviceRunning: {
+            // Si no hi ha canvis, no cal procesar cap entrada,
+            // aixi es guanya temps de proces
+            //
+            bool intState = eosInterruptDisable();
+            bool haveChanges = hService->haveChanges;
+            hService->haveChanges = false;
+            eosInterruptRestore(intState);
 
-                // Si no hi ha canvis, no cal procesar cap entrada,
-                // aixi es guanya temps de proces
-                //
-                bool intState = eosInterruptDisable();
-                bool haveChanges = hService->haveChanges;
-                hService->haveChanges = false;
-                eosInterruptRestore(intState);
+            if (haveChanges) {
+                eosDigInputHandle hInput = hService->hFirstInput;
+                while (hInput) {
 
-                if (haveChanges) {
-                    eosDigInputHandle hInput = hService->hFirstInput;
-                    while (hInput) {
-
-                        if (hInput->posEdge) {
-                            if (hInput->onPosEdge != NULL) {
-                                hInput->onPosEdge(hInput);
-                                hInput->posEdge = FALSE;
-                            }
-                            else if (hInput->onChange != NULL) {
-                                hInput->onChange(hInput);
-                                hInput->posEdge = FALSE;
-                            }
+                    if (hInput->posEdge) {
+                        if (hInput->onPosEdge != NULL) {
+                            hInput->onPosEdge(hInput);
+                            hInput->posEdge = FALSE;
                         }
-
-                        if (hInput->negEdge) {
-                            if (hInput->onNegEdge != NULL) {
-                                hInput->onNegEdge(hInput);
-                                hInput->negEdge = FALSE;
-                            }
-                            else if (hInput->onChange != NULL) {
-                                hInput->onChange(hInput);
-                                hInput->negEdge = FALSE;
-                            }
+                        else if (hInput->onChange != NULL) {
+                            hInput->onChange(hInput);
+                            hInput->posEdge = FALSE;
                         }
-
-                        hInput = hInput->hNextInput;
                     }
+
+                    if (hInput->negEdge) {
+                        if (hInput->onNegEdge != NULL) {
+                            hInput->onNegEdge(hInput);
+                            hInput->negEdge = FALSE;
+                        }
+                        else if (hInput->onChange != NULL) {
+                            hInput->onChange(hInput);
+                            hInput->negEdge = FALSE;
+                        }
+                    }
+
+                    hInput = hInput->hNextInput;
                 }
-                break;
             }
+            break;
         }
     }
 }
@@ -182,9 +195,6 @@ void eosDigInputServiceTask(
 eosDigInputHandle eosDigInputCreate(
     eosDigInputServiceHandle hService,
     eosDigInputParams *params) {
-
-    if (!hService)
-        return NULL;
 
     eosDigInputHandle hInput = eosAlloc(sizeof(eosDigInput));
     if (hInput == NULL)
@@ -256,7 +266,7 @@ void eosDigInputDestroy(
 bool __attribute__ ((always_inline)) eosDigInputGet(
     eosDigInputHandle hInput) {
 
-    return hInput && hInput->state;
+    return hInput->state;
 }
 
 
@@ -279,7 +289,7 @@ bool __attribute__ ((always_inline)) eosDigInputGet(
 bool eosDigInputPosEdge(
     eosDigInputHandle hInput) {
 
-    if (hInput && hInput->posEdge) {
+    if (hInput->posEdge) {
         hInput->posEdge = false;
         return true;
     }
@@ -307,7 +317,7 @@ bool eosDigInputPosEdge(
 bool eosDigInputNegEdge(
     eosDigInputHandle hInput) {
 
-    if (hInput && hInput->negEdge) {
+    if (hInput->negEdge) {
         hInput->negEdge = false;
         return true;
     }

@@ -64,13 +64,29 @@ eosDigOutputServiceHandle eosDigOutputServiceInitialize(
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosTickAttachFunction((eosTickCallback) tickFunction, hService);
+    eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
 
     initialized = true;
 
     return hService;
 }
 
+
+/************************************************************************
+ *
+ *       Comprova que el servei esta preparat i en funcionament
+ *
+ *       Funcio:
+ *           bool eosDigOutputServiceIsReady(
+ *               eosDigOutputServiceHandle hService)
+ *
+ *       Entrada:
+ *           hService: El handler del servei
+ *
+ *       Retorn:
+ *           True si esta preparat. False en cas contrari
+ * 
+ ************************************************************************/
 
 bool __attribute__ ((always_inline)) eosDigOutputServiceIsReady(
     eosDigOutputServiceHandle hService) {
@@ -95,17 +111,14 @@ bool __attribute__ ((always_inline)) eosDigOutputServiceIsReady(
 void eosDigOutputServiceTask(
     eosDigOutputServiceHandle hService) {
 
-    if (hService) {
+    switch (hService->state) {
 
-        switch (hService->state) {
+        case serviceInitializing:
+            hService->state = serviceRunning;
+            break;
 
-            case serviceInitializing:
-                hService->state = serviceRunning;
-                break;
-
-            case serviceRunning:
-                break;
-        }
+        case serviceRunning:
+            break;
     }
 }
 
@@ -267,7 +280,7 @@ void eosDigOutputsPulse(
     eosDigOutputHandle hOutput,
     unsigned time) {
 
-    if (hOutput && (time > 0)) {
+    if (time > 0) {
         bool intState = eosInterruptDisable();
         if (!hOutput->tickCount)
             halPortToggle(hOutput->port, hOutput->pin);

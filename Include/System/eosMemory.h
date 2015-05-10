@@ -21,13 +21,19 @@ extern void* eosAllocString(const char *s);
 
 // Heap
 
+typedef struct __eosHeap *eosHeapHandle;
+
+extern eosHeapHandle eosHeapCreate(unsigned size);
+extern void *eosHeapAlloc(eosHeapHandle hHeap, unsigned size);
+extern void eosHeapFree(void *p);
+
 
 // Pool
 
-typedef struct __eosPool *eosHPool;
+typedef struct __eosPool *eosPoolHandle;
 
-extern eosHPool eosPoolCreate(unsigned elementSize, unsigned maxElements);
-extern void *eosPoolAlloc(eosHPool hPool);
+extern eosPoolHandle eosPoolCreate(unsigned elementSize, unsigned maxElements);
+extern void *eosPoolAlloc(eosPoolHandle hPool);
 extern void eosPoolFree(void *p);
 
 

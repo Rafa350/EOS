@@ -1,29 +1,30 @@
-#define __EOS_POOL_INTERNAL
-#include "system/eosPool.h"
+#include "system/eosMemory.h"
 
 
 typedef struct __eosPool {
     unsigned maxItems;
     unsigned itemSize;
     BYTE *items;
-} Pool;
+} eosPool;
 
 typedef struct {
     bool allocated;
 } ItemHeader;
 
 
-eosHPool eosPoolCreate(unsigned elementSize, unsigned maxElements) {
+eosPoolHandle eosPoolCreate(
+    unsigned elementSize,
+    unsigned maxElements) {
 
     unsigned itemSize = sizeof(ItemHeader) + ((elementSize + 3) & 0xFFFFFFFC);
 
-    eosHPool hPool = (eosHPool) eosAlloc(sizeof(Pool) + itemSize * maxElements);
+    eosPoolHandle hPool = (eosPoolHandle) eosAlloc(sizeof(eosPool) + itemSize * maxElements);
     if (hPool == NULL)
         return  NULL;
 
     hPool->itemSize = itemSize;
     hPool->maxItems = maxElements;
-    hPool->items = (BYTE*) hPool + sizeof(Pool);
+    hPool->items = (BYTE*) hPool + sizeof(eosPool);
 
     unsigned i;
     unsigned ii = (hPool->itemSize) * hPool->maxItems;
@@ -36,7 +37,8 @@ eosHPool eosPoolCreate(unsigned elementSize, unsigned maxElements) {
 }
 
 
-void *eosPoolAlloc(eosHPool hPool) {
+void *eosPoolAlloc(
+    eosPoolHandle hPool) {
 
     unsigned i;
     unsigned ii = (hPool->itemSize) * hPool->maxItems;
@@ -52,7 +54,8 @@ void *eosPoolAlloc(eosHPool hPool) {
 }
 
 
-void eosPoolFree(void *p) {
+void eosPoolFree(
+    void *p) {
 
-    ((ItemHeader*)p)->allocated = false;
+    ((ItemHeader*)((BYTE*) p - sizeof(ItemHeader)))->allocated = false;
 }

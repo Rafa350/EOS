@@ -22,13 +22,13 @@ void halPortSetupInput(
 void halPortSet(
     unsigned port,
     unsigned pin,
-    unsigned state) {
+    bool state) {
 
     PLIB_PORTS_PinWrite(PORTS_ID_0, (PORTS_CHANNEL) port, (PORTS_BIT_POS) pin, state);
 }
 
 
-unsigned halPortGet(
+bool halPortGet(
     unsigned port,
     unsigned pin) {
 
