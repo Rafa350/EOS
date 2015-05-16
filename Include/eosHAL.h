@@ -29,12 +29,10 @@ extern void halPortToggle(unsigned port, unsigned pin);
 
 typedef void (*halTimerInterruptCallback) (unsigned timer);
 
-extern void halTimerSetInterruptCallback(unsigned timer,
-    halTimerInterruptCallback callback);
+extern void halTimerSetInterruptCallback(unsigned timer, halTimerInterruptCallback callback);
 extern void halTimerStart(unsigned timer);
 extern void halTimerStop(unsigned timer);
-extern void halTimerSetInterruptPriority(unsigned timer, unsigned priority,
-    unsigned subPriority);
+extern void halTimerSetInterruptPriority(unsigned timer, unsigned priority, unsigned subPriority);
 extern bool halTimerSetInterruptEnable(unsigned timer, bool enabled);
 
 
