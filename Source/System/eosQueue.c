@@ -45,8 +45,8 @@ eosHQueue eosQueueCreate(
     hQueue->itemSize = params->itemSize;
     hQueue->maxItems = params->maxItems;
     hQueue->numItems = 0;
-	hQueue->tail = hQueue->start;
-	hQueue->head = hQueue->start;
+    hQueue->tail = hQueue->start;
+    hQueue->head = hQueue->start;
 
     return hQueue;
 }
@@ -107,14 +107,14 @@ bool eosQueuePut(
 
     bool intState = eosInterruptDisable();
 
-	if (hQueue->numItems < hQueue->maxItems) {
+    if (hQueue->numItems < hQueue->maxItems) {
 
         memcpy(hQueue->head, data, hQueue->itemSize);
-	    hQueue->head = hQueue->head + hQueue->itemSize;
-	    if (hQueue->head >= hQueue->end)
-	        hQueue->head = hQueue->start;
-		hQueue->numItems++;
-	}
+        hQueue->head = hQueue->head + hQueue->itemSize;
+        if (hQueue->head >= hQueue->end)
+            hQueue->head = hQueue->start;
+        hQueue->numItems++;
+    }
     else
         result = false;
 
@@ -150,17 +150,17 @@ bool eosQueueGet(
 
     bool intState = eosInterruptDisable();
 
-	if (hQueue->numItems > 0) {
-	    memcpy(data, hQueue->tail, hQueue->itemSize);
-		hQueue->tail = hQueue->tail + hQueue->itemSize;
-	    if (hQueue->tail >= hQueue->end)
-	        hQueue->tail = hQueue->start;
-		hQueue->numItems--;
+    if (hQueue->numItems > 0) {
+        memcpy(data, hQueue->tail, hQueue->itemSize);
+	hQueue->tail = hQueue->tail + hQueue->itemSize;
+        if (hQueue->tail >= hQueue->end)
+            hQueue->tail = hQueue->start;
+    	hQueue->numItems--;
     }
-	else
+    else
         result = false;
 
     eosInterruptRestore(intState);
 
-	return result;
+    return result;
 }

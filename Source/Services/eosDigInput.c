@@ -37,6 +37,8 @@ typedef struct __eosDigInputService {  // Dades del servei
 
 static bool initialized = false;       // Controla singleton
 
+static eosDigInputServiceHandle allocService(void);
+static eosDigInputHandle allocInput(void);
 static void tickFunction(eosDigInputServiceHandle hInput);
 
 

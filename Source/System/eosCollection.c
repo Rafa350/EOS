@@ -94,4 +94,3 @@ eosResult eosCollectionEnumerate(eosHCollection hCollection) {
 eosResult eosCollectionEnumerateNext(eosHCollection hCollection, void *data) {
 
 }
-
