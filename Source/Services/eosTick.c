@@ -1,5 +1,6 @@
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
+#include "System/eosCollection.h"
 #include "peripheral/tmr/plib_tmr.h"
 
 
