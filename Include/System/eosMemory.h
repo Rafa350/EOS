@@ -6,20 +6,15 @@
 #endif
 
 
-#ifdef eos_OPTION_AllocMacro
-#define eosAlloc(s)          malloc(s)
-#define eosFree(p)           free(p)
-#else
-extern void* eosAlloc(unsigned size);
-extern void eosFree(void *p);
-#endif
-
-
 extern void* eosRealloc(void *p, unsigned size);
 extern void* eosAllocString(const char *s);
 
 
 // Heap
+
+#define eosAlloc(s)          eosHeapAlloc(NULL, s)
+#define eosRealloc(p, s)     eosHeapRealloc(NULL, p, s)
+#define eosFree(p)           eosHeapFree(p)
 
 typedef struct __eosHeap *eosHeapHandle;
 

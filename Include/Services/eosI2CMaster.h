@@ -10,10 +10,6 @@
 #include "peripheral/i2c/plib_i2c.h"
 #endif
 
-#ifndef __EOS_TICK_H
-#include "Services/eosTick.h"
-#endif
-
 
 #define eos_ERROR_I2C_INVALID_MODULE   (eos_ERROR_USER + 0)
 #define eos_ERROR_I2C_TOO_SERVICES     (eos_ERROR_USER + 1)

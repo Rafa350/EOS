@@ -6,10 +6,6 @@
 #include "eos.h"
 #endif
 
-#ifndef __EOS_TICK_H
-#include "Services/eosTick.h"
-#endif
-
 
 typedef struct __eosTimerService *eosTimerServiceHandle;
 typedef struct __eosTimer *eosTimerHandle;
@@ -35,13 +31,13 @@ typedef struct {                       // Parametres de creacio d'un temporitzad
 
 // Gestio del servei
 //
-extern bool eosTimerServiceInitialize(eosTimerServiceParams *params);
-extern bool eosTimerServiceIsReady(void);
-extern void eosTimerServiceTask(void);
+extern eosTimerServiceHandle eosTimerServiceInitialize(eosTimerServiceParams *params);
+extern bool eosTimerServiceIsReady(eosTimerServiceHandle hService);
+extern void eosTimerServiceTask(eosTimerServiceHandle hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosTimerHandle eosTimerCreate(eosTimerParams *params);
+extern eosTimerHandle eosTimerCreate(eosTimerServiceHandle hService, eosTimerParams *params);
 extern void eosTimerDestroy(eosTimerHandle hTimer);
 
 // Operacions amb els objectes
@@ -52,7 +48,7 @@ extern void eosTimerReset(eosTimerHandle hTimer);
 
 // Operacions especials
 //
-extern eosTimerHandle eosTimerDelayStart(unsigned timeout);
+extern eosTimerHandle eosTimerDelayStart(eosTimerServiceHandle hService, unsigned timeout);
 extern bool eosTimerDelayGetStatus(eosTimerHandle hTimer);
 
 
