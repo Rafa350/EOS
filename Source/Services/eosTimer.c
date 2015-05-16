@@ -51,10 +51,9 @@ typedef struct __eosTimerService {     // Dades internes del servei
 } eosTimerService;
 
 
-static eosTimerServiceHandle hService = NULL;
+static bool initialized = false;
 
-
-static void tickFunction(void *context);
+static void tickFunction(eosTimerServiceHandle hService);
 static eosTimerHandle allocTimer(eosTimerServiceHandle hService);
 static void freeTimer(eosTimerHandle hTimer);
 
@@ -64,22 +63,22 @@ static void freeTimer(eosTimerHandle hTimer);
  *       Inicialitza el servei
  *
  *       Funcio:
- *           bool eosTimerServiceInitialize(
+ *           eosTimerServiceHandle eosTimerServiceInitialize(
  *               eosTimerServiceParams *params)
  *
  *       Entrada:
  *           params: Parametres d'inicialitzacio del servei
  *
  *       Retorn:
- *           True si tot es correcte, false en cas contrari
+ *           El handler del servei. NULL en cas d'error
  * 
  *************************************************************************/
 
-bool eosTimerServiceInitialize(
+eosTimerServiceHandle eosTimerServiceInitialize(
     eosTimerServiceParams *params) {
 
-    if (!hService)
-        return false;
+    if (initialized)
+        return NULL;
 
     if (params->maxTimers < 10)
         params->maxTimers = 10;
@@ -113,7 +112,9 @@ bool eosTimerServiceInitialize(
     //
     eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
 
-    return true;
+    initialized = true;
+    
+    return hService;
 }
 
 
@@ -122,11 +123,16 @@ bool eosTimerServiceInitialize(
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void eosTimerServiceTask(void)
+ *           void eosTimerServiceTask(
+ *               eosTimerServiceHandle hService)
+ *
+ *       Entrada:
+ *           hService: Handler del servei
  *
  *************************************************************************/
 
-void eosTimerServiceTask(void) {
+void eosTimerServiceTask(
+    eosTimerServiceHandle hService) {
 
     if (hService) {
 
@@ -169,7 +175,7 @@ void eosTimerServiceTask(void) {
                                 if (hTimer->onTimeout)
                                     hTimer->onTimeout(hTimer);
 
-                                // Si es ciclc, reicicia el contador
+                                // Si es ciclc, reinicia el contador
                                 //
                                 if ((hTimer->flags & TF_TYPE) == TF_TYPE_CYCLIC)
                                     hTimer->counter = hTimer->timeout;
@@ -216,15 +222,15 @@ void eosTimerServiceTask(void) {
  *
  *       Funcio:
  *           void tickFunction(
- *               void *context)
+ *               eosTimerServiceHandle hService)
  *
  *       Entrada:
- *           context: En aquest cas NULL
+ *           hService: Handler del servei
  *
  *************************************************************************/
 
 static void tickFunction(
-    void *context) {
+    eosTimerServiceHandle hService) {
 
     hService->triggered += 1;
 }
@@ -236,10 +242,12 @@ static void tickFunction(
  *
  *       Funcio:
  *           eosTimerHandle eosTimerCreate(
+ *               eosTimerServiceHandle hService
  *               eosTimerParams *params)
  *
  *       Entrada:
- *           params : Parametres d'inicialitzacio
+ *           hService: Handler del servei
+ *           params  : Parametres d'inicialitzacio
  *
  *       Retorm:
  *           El Handle del timer. NULL en cas d'error
@@ -247,10 +255,8 @@ static void tickFunction(
  *************************************************************************/
 
 eosTimerHandle eosTimerCreate(
+    eosTimerServiceHandle hService,
     eosTimerParams *params) {
-
-    if (!hService)
-        return NULL;
 
     eosTimerHandle hTimer = allocTimer(hService);
     if (hTimer == NULL)
@@ -330,10 +336,12 @@ void eosTimerReset(
  *
  *       Funcio:
  *           eosTimerHandle eosTimerDelayStart(
+ *               eosTimerServiceHandle hService
  *               unsigned timeout)
  *
  *       Entrada:
- *           timeout: Retard en ms
+ *           hService: Handler del servei
+ *           timeout : Retard en ms
  *
  *       Retorn:
  *           El Handle del temporitzador. NULL en cas d'error
@@ -341,6 +349,7 @@ void eosTimerReset(
  *************************************************************************/
 
 eosTimerHandle eosTimerDelayStart(
+    eosTimerServiceHandle hService,
     unsigned timeout) {
 
     eosTimerParams timerParams;
@@ -348,7 +357,7 @@ eosTimerHandle eosTimerDelayStart(
     timerParams.timeout = timeout;
     timerParams.type = TT_ONE_SHOT;
 
-    return eosTimerCreate(&timerParams);
+    return eosTimerCreate(hService, &timerParams);
 }
 
 
