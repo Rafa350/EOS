@@ -25,6 +25,7 @@ typedef struct __eosHeap *eosHeapHandle;
 
 extern eosHeapHandle eosHeapCreate(unsigned size);
 extern void *eosHeapAlloc(eosHeapHandle hHeap, unsigned size);
+extern void *eosHeapRealloc(void *p, unsigned size);
 extern void eosHeapFree(void *p);
 
 
