@@ -6,10 +6,6 @@
 #include "eos.h"
 #endif
 
-#ifndef __EOS_TICK_H
-#include "Services/eosTick.h"
-#endif
-
 
 typedef struct __eosDigOutputService *eosDigOutputServiceHandle;
 typedef struct __eosDigOutput *eosDigOutputHandle;
@@ -26,15 +22,13 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 
 // Gestio del servei
 //
-extern eosDigOutputServiceHandle eosDigOutputServiceInitialize(
-    eosDigOutputServiceParams *params);
+extern eosDigOutputServiceHandle eosDigOutputServiceInitialize(eosDigOutputServiceParams *params);
 extern bool eosDigOutputServiceIsReady(eosDigOutputServiceHandle hService);
 extern void eosDigOutputServiceTask(eosDigOutputServiceHandle hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
-extern eosDigOutputHandle eosDigOutputCreate(eosDigOutputServiceHandle hService,
-    eosDigOutputParams *params);
+extern eosDigOutputHandle eosDigOutputCreate(eosDigOutputServiceHandle hService, eosDigOutputParams *params);
 extern void eosDigOutputDestroy(eosDigOutputHandle hOutput);
 
 // Operacions amb els objectes
