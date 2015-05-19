@@ -1,5 +1,6 @@
-#include "HardwareProfile.h"
+#include "System/eosMemory.h"
 #include "Services/eosI2CMaster.h"
+#include "Services/eosTick.h"
 #include "sys/attribs.h"
 #include "peripheral/i2c/plib_i2c.h"
 #include "peripheral/int/plib_int.h"

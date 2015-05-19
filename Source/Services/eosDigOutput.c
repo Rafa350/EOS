@@ -26,6 +26,8 @@ typedef struct __eosDigOutputService { // Dades del servei
 
 static bool initialized = false;
 
+static eosDigOutputServiceHandle createDigOutputServiceHandle(void);
+static eosDigOutputHandle createDigOutputHandle(void);
 static void tickFunction(eosDigOutputServiceHandle hService);
 
 
@@ -287,6 +289,18 @@ void eosDigOutputsPulse(
         hOutput->tickCount = time;
         eosInterruptRestore(intState);
     }
+}
+
+
+static eosDigOutputServiceHandle createDigOutputServiceHandle(void) {
+    
+    return (eosDigOutputServiceHandle) eosAlloc(sizeof(eosDigOutputService));
+}
+
+
+static eosDigOutputHandle createDigOutputHandle(void) {
+    
+    return (eosDigOutputHandle) eosAlloc(sizeof(eosDigOutput));
 }
 
 

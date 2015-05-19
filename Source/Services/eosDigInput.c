@@ -37,8 +37,8 @@ typedef struct __eosDigInputService {  // Dades del servei
 
 static bool initialized = false;       // Controla singleton
 
-static eosDigInputServiceHandle allocService(void);
-static eosDigInputHandle allocInput(void);
+static eosDigInputServiceHandle createDigInputServiceHandle(void);
+static eosDigInputHandle createDigInputHandle(void);
 static void tickFunction(eosDigInputServiceHandle hInput);
 
 
@@ -66,7 +66,7 @@ eosDigInputServiceHandle eosDigInputServiceInitialize(
     if (initialized)
          return NULL;
 
-    eosDigInputServiceHandle hService = eosAlloc(sizeof(eosDigInputService));
+    eosDigInputServiceHandle hService = createDigInputServiceHandle();
     if (!hService)
         return NULL;
 
@@ -198,7 +198,7 @@ eosDigInputHandle eosDigInputCreate(
     eosDigInputServiceHandle hService,
     eosDigInputParams *params) {
 
-    eosDigInputHandle hInput = eosAlloc(sizeof(eosDigInput));
+    eosDigInputHandle hInput = createDigInputHandle();
     if (hInput == NULL)
         return NULL;
 
@@ -325,6 +325,18 @@ bool eosDigInputNegEdge(
     }
     else
         return false;
+}
+
+
+static eosDigInputServiceHandle createDigInputServiceHandle(void) {
+    
+    return (eosDigInputServiceHandle) eosAlloc(sizeof(eosDigInputService));
+}
+
+
+static eosDigInputHandle createDigInputHandle(void) {
+    
+    return (eosDigInputHandle) eosAlloc(sizeof(eosDigInput));
 }
 
 
