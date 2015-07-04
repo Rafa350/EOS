@@ -102,7 +102,7 @@ eosDigInputServiceHandle eosDigInputServiceInitialize(
  *
  ************************************************************************/
 
-bool __attribute__ ((always_inline)) eosDigInputServiceIsReady(
+bool eosDigInputServiceIsReady(
     eosDigInputServiceHandle hService) {
 
     return hService && (hService->state != serviceInitializing);
@@ -265,7 +265,7 @@ void eosDigInputDestroy(
  *
  *************************************************************************/
 
-bool __attribute__ ((always_inline)) eosDigInputGet(
+bool eosDigInputGet(
     eosDigInputHandle hInput) {
 
     return hInput->state;

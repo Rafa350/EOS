@@ -164,7 +164,7 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
  *
  *************************************************************************/
 
-bool __attribute__ ((always_inline)) eosI2CMasterServiceIsReady(
+bool eosI2CMasterServiceIsReady(
     eosI2CMasterServiceHandle hService) {
 
     return hService->state != serviceInitializing;
@@ -316,13 +316,13 @@ eosI2CTransactionHandle eosI2CMasterStartTransaction(
 }
 
 
-unsigned __attribute__ ((always_inline)) eosI2CMasterGetTransactionResult(
+unsigned eosI2CMasterGetTransactionResult(
     eosI2CTransactionHandle hTransaction) {
 
     return hTransaction->error;
 }
 
-void * __attribute__ ((always_inline)) eosI2CMasterGetTransactionContext(
+void *eosI2CMasterGetTransactionContext(
     eosI2CTransactionHandle hTransaction) {
 
     return hTransaction->context;

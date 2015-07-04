@@ -204,7 +204,7 @@ void eosFormsDestroyForm(
  *
  **************************************************************************/
 
-eosFormHandle __attribute__ ((always_inline)) eosFormsGetActiveForm(void) {
+eosFormHandle eosFormsGetActiveForm(void) {
 
     return hService->hActiveForm;
 }
@@ -260,7 +260,7 @@ void eosFormsSetActiveForm(
  *
  *************************************************************************/
 
-void __attribute__ ((always_inline)) eosFormsRefresh(
+void eosFormsRefresh(
     eosFormHandle hForm) {
 
     hForm->needRedraw = true;
@@ -284,7 +284,7 @@ void __attribute__ ((always_inline)) eosFormsRefresh(
  *
  *************************************************************************/
 
-void *  __attribute__ ((always_inline)) eosFormsGetPrivateData(
+void *eosFormsGetPrivateData(
     eosFormHandle hForm) {
 
     return hForm->privateData;
@@ -307,7 +307,7 @@ void *  __attribute__ ((always_inline)) eosFormsGetPrivateData(
  *
  *************************************************************************/
 
-eosFormHandle  __attribute__ ((always_inline)) eosFormsGetParent(
+eosFormHandle  eosFormsGetParent(
     eosFormHandle hForm) {
 
     return hForm->hParent;

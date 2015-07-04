@@ -90,7 +90,7 @@ eosDigOutputServiceHandle eosDigOutputServiceInitialize(
  * 
  ************************************************************************/
 
-bool __attribute__ ((always_inline)) eosDigOutputServiceIsReady(
+bool eosDigOutputServiceIsReady(
     eosDigOutputServiceHandle hService) {
 
     return hService && (hService->state != serviceInitializing);
@@ -212,7 +212,7 @@ void eosDigOutputDestroy(
  *
  *************************************************************************/
 
-bool __attribute__ ((always_inline)) eosDigOutputGet(
+bool eosDigOutputGet(
     eosDigOutputHandle hOutput) {
 
     bool p = halPortGet(hOutput->port, hOutput->pin);
@@ -235,7 +235,7 @@ bool __attribute__ ((always_inline)) eosDigOutputGet(
  *
  *************************************************************************/
 
-void __attribute__ ((always_inline)) eosDigOutputSet(
+void eosDigOutputSet(
     eosDigOutputHandle hOutput,
     bool state) {
 
@@ -256,7 +256,7 @@ void __attribute__ ((always_inline)) eosDigOutputSet(
  *
  *************************************************************************/
 
-void __attribute__ ((always_inline)) eosDigOutputToggle(
+void eosDigOutputToggle(
     eosDigOutputHandle hOutput) {
 
     halPortToggle(hOutput->port, hOutput->pin);
