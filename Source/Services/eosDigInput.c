@@ -148,22 +148,22 @@ void eosDigInputServiceTask(
                     if (hInput->posEdge) {
                         if (hInput->onPosEdge != NULL) {
                             hInput->onPosEdge(hInput);
-                            hInput->posEdge = FALSE;
+                            hInput->posEdge = false;
                         }
                         else if (hInput->onChange != NULL) {
                             hInput->onChange(hInput);
-                            hInput->posEdge = FALSE;
+                            hInput->posEdge = false;
                         }
                     }
 
                     if (hInput->negEdge) {
                         if (hInput->onNegEdge != NULL) {
                             hInput->onNegEdge(hInput);
-                            hInput->negEdge = FALSE;
+                            hInput->negEdge = false;
                         }
                         else if (hInput->onChange != NULL) {
                             hInput->onChange(hInput);
-                            hInput->negEdge = FALSE;
+                            hInput->negEdge = false;
                         }
                     }
 

@@ -1,15 +1,18 @@
 #include "system/eosMemory.h"
 
 
-typedef struct __eosPool {
-    unsigned maxItems;
-    unsigned itemSize;
-    BYTE *items;
+typedef struct __eosPool {   // Pool
+    unsigned maxItems;       // -Numero maxim d'items en el pool
+    unsigned itemSize;       // -Tamsny de cada item
+    BYTE *items;             // -Buffer de memoria
 } eosPool;
 
-typedef struct {
-    bool allocated;
+typedef struct {             // Capcelera dels items del pool
+    bool allocated;          // -Indica si esta en us
 } ItemHeader;
+
+#define ptrFromItem(i)       (BYTE*)(i) + sizeof(ItemHeader)
+#define itemFromPtr(p)       (ItemHeader*)((BYTE*)(p) - sizeof(ItemHeader))
 
 
 eosPoolHandle eosPoolCreate(
