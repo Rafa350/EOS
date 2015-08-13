@@ -416,31 +416,31 @@ static void i2cInitialize(
         case I2C_ID_1:
             PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C1, __intPriority);
             PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C1, __intSubPriority);
-            PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_1_MASTER);
+            eosInterruptSourceEnable(INT_SOURCE_I2C_1_MASTER);
             break;
 
         case I2C_ID_2:
             PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C2, __intPriority);
             PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C2, __intSubPriority);
-            PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_2_MASTER);
+            eosInterruptSourceEnable(INT_SOURCE_I2C_2_MASTER);
             break;
 
         case I2C_ID_3:
             PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C3, __intPriority);
             PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C3, __intSubPriority);
-            PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_3_MASTER);
+            eosInterruptSourceEnable(INT_SOURCE_I2C_3_MASTER);
             break;
 
         case I2C_ID_4:
             PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C4, __intPriority);
             PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C4, __intSubPriority);
-            PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_4_MASTER);
+            eosInterruptSourceEnable(INT_SOURCE_I2C_4_MASTER);
             break;
 
         case I2C_ID_5:
             PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C5, __intPriority);
             PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C5, __intSubPriority);
-            PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_5_MASTER);
+            eosInterruptSourceEnable(INT_SOURCE_I2C_5_MASTER);
             break;
     }
 

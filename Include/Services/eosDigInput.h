@@ -2,9 +2,8 @@
 #define	__EOS_DIGINPUT_H
 
 
-#ifndef __EOS_H
 #include "eos.h"
-#endif
+#include "peripheral/ports/plib_ports.h"
 
 
 typedef struct __eosDigInputService *eosDigInputServiceHandle;
@@ -13,8 +12,8 @@ typedef struct __eosDigInput *eosDigInputHandle;
 typedef void (*eosDigInputCallback)(eosDigInputHandle hInput);
 
 typedef struct {                       // Parametres d'inicializacio de les entrades
-    unsigned port;                     // -Port
-    unsigned pin;                      // -Pin
+    PORTS_CHANNEL channel;             // -Canal
+    PORTS_BIT_POS position;            // -Posicio
     bool inverted;                     // -Inverteix la entrada
     eosDigInputCallback onPosEdge;     // -Notifica flanc positiu
     eosDigInputCallback onNegEdge;     // -Notifica flanc negatiu

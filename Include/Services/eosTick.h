@@ -2,9 +2,7 @@
 #define __EOS_TICK_H
 
 
-#ifndef __EOS_H
 #include "eos.h"
-#endif
 
 
 typedef struct __eosTickService *eosTickServiceHandle;
@@ -23,6 +21,9 @@ extern void eosTickServiceTask(eosTickServiceHandle hTickService);
 
 extern void eosTickRegisterCallback(eosTickServiceHandle hTickService,
     eosTickCallback onTick, void *onTickContext);
+
+extern bool eosTickServiceLock(void);
+extern void eosTickServiceUnlock(bool lock);
 
 
 #endif

@@ -2,9 +2,7 @@
 #define __EOS_TIMER_H
 
 
-#ifndef __EOS_H
 #include "eos.h"
-#endif
 
 
 typedef struct __eosTimerService *eosTimerServiceHandle;

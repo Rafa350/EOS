@@ -53,7 +53,7 @@ typedef struct __eosTimerService {     // Dades internes del servei
 
 static bool initialized = false;
 
-static void tickFunction(eosTimerServiceHandle hService);
+static void __tickFunction(eosTimerServiceHandle hService);
 static eosTimerHandle allocTimer(eosTimerServiceHandle hService);
 static void freeTimer(eosTimerHandle hTimer);
 
@@ -110,7 +110,7 @@ eosTimerServiceHandle eosTimerServiceInitialize(
 
     // Asigna la funcio d'interrupcio TICK
     //
-    eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
+    eosTickRegisterCallback(NULL, (eosTickCallback) __tickFunction, hService);
 
     initialized = true;
     
@@ -146,10 +146,10 @@ void eosTimerServiceTask(
 
                 // Obte el numero de tick pendents de procesar
                 //
-                bool intState = eosInterruptDisable();
+                bool lock = eosTickServiceLock();
                 unsigned triggered = hService->triggered;
                 hService->triggered = 0;
-                eosInterruptRestore(intState);
+                eosTickServiceUnlock(lock);
 
                 // Procesa els ticks pendents
                 //
@@ -221,7 +221,7 @@ void eosTimerServiceTask(
  *       Gestiona la interrupcio TICK
  *
  *       Funcio:
- *           void tickFunction(
+ *           void __tickFunction(
  *               eosTimerServiceHandle hService)
  *
  *       Entrada:
@@ -229,7 +229,7 @@ void eosTimerServiceTask(
  *
  *************************************************************************/
 
-static void tickFunction(
+static void __tickFunction(
     eosTimerServiceHandle hService) {
 
     hService->triggered += 1;

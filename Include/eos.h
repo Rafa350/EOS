@@ -6,6 +6,7 @@
 #include "GenericTypeDefs.h"
 #include "system/int/sys_int.h"
 #include "system/wdt/sys_wdt.h"
+#include "peripheral/int/plib_int.h"
 
 
 // Opcions predefinides, si cal, s'han de desabilitar en eosConfig.h
@@ -15,10 +16,6 @@
 
 #ifndef __EOS_CONFIG_H
 #include "eosConfig.h"
-#endif
-
-#ifndef __EOS_HAL_H
-#include "eosHal.h"
 #endif
 
 
@@ -45,7 +42,6 @@
 //
 typedef unsigned eosResult;       // Resultat d'una funcio
 typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
-typedef void (*eosInterruptCallback)(unsigned vector);    // Funcio callback per interrupcions
 
 
 extern void eosMain(void);
@@ -53,13 +49,13 @@ extern void eosMain(void);
 
 // Gestio de les interrupcions
 //
-#define eosInterruptEnable()           SYS_INT_Enable()
-#define eosInterruptDisable()          SYS_INT_Disable()
-#define eosInterruptRestore(state)     if (state) SYS_INT_Enable()
-#define eosInterruptSourceEnable(source)    SYS_INT_SourceEnable(source)
-#define eosInterruptSourceDisable(source)   SYS_INT_SourceDisable(source)
-#define eosInterruptSourceRestore(source, state) if (state) SYS_INT_SourceEnable(source)
-#define __ISR_Entry(v)            v##_ISR(void)
+#define eosInterruptEnable()                PLIB_INT_Enable(INT_ID_0)
+#define eosInterruptRestore(e)              if (e) PLIB_INT_Enable(INT_ID_0)
+#define eosInterruptSourceEnable(s)         PLIB_INT_SourceEnable(INT_ID_0, s)
+#define eosInterruptSourceRestore(s, e)     if (e) PLIB_INT_SourceEnable(INT_ID_0, s)
+
+extern bool eosInterruptDisable();
+extern bool eosInterruptSourceDisable(INT_SOURCE source);
 
 // Gestio del watchdog
 //

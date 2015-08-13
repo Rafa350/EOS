@@ -101,9 +101,10 @@ void eosTickServiceTask(
             PLIB_TMR_Period16BitSet(__timerId, CLOCK_PERIPHERICAL_HZ / 16 / 1000);
             PLIB_INT_VectorPrioritySet(INT_ID_0, __intVector, __intPriority);
             PLIB_INT_VectorSubPrioritySet(INT_ID_0, __intVector, __intSubPriority);
-            PLIB_INT_SourceEnable(INT_ID_0, __intSource);
-            hService->state = serviceRunning;
             PLIB_TMR_Start(__timerId);
+            
+            hService->state = serviceRunning;
+            eosInterruptSourceEnable(__intSource);
             break;
 
         case serviceRunning:
@@ -145,17 +146,44 @@ void eosTickRegisterCallback(
             hTick->onTick = onTick;
             hTick->onTickContext = onTickContext;
 
-            bool intEnabled = PLIB_INT_SourceIsEnabled(INT_ID_0, __intSource);
-            if (intEnabled)
-                PLIB_INT_SourceDisable(INT_ID_0, __intSource);
-
+            bool enabled = eosInterruptSourceDisable(__intSource);
+            
             hTick->hNextItem = hService->hFirstItem;
             hService->hFirstItem = hTick;
 
-            if (intEnabled)
-                PLIB_INT_SourceEnable(INT_ID_0, __intSource);
+            eosInterruptSourceRestore(__intSource, enabled);
         }
     }
+}
+
+
+/*************************************************************************
+ *
+ *       Bloqueja el servei
+ * 
+ *       Funcio:
+ *           bool eosTickServiceLock(void) 
+ *
+ *************************************************************************/
+
+bool eosTickServiceLock(void) {
+
+    return eosInterruptSourceDisable(__intSource);
+}
+
+
+/*************************************************************************
+ *
+ *       Desbloqueja el servei
+ * 
+ *       Funcio:
+ *           bool eosTickServiceUnlock(bool lock) 
+ *
+ *************************************************************************/
+
+void eosTickServiceUnlock(bool lock) {
+    
+    eosInterruptSourceRestore(__intSource, lock);
 }
 
 
