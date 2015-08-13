@@ -12,7 +12,6 @@ typedef struct __eosTickService *eosTickServiceHandle;
 typedef void (*eosTickCallback)(void *context);
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
-    unsigned timer;                    // Temporitzador
 } eosTickServiceParams;
 
 
@@ -22,7 +21,7 @@ extern eosTickServiceHandle eosTickServiceInitialize(eosTickServiceParams *param
 extern bool eosTickServiceIsReady(eosTickServiceHandle hTickService);
 extern void eosTickServiceTask(eosTickServiceHandle hTickService);
 
-extern bool eosTickRegisterCallback(eosTickServiceHandle hTickService,
+extern void eosTickRegisterCallback(eosTickServiceHandle hTickService,
     eosTickCallback onTick, void *onTickContext);
 
 

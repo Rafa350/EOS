@@ -6,25 +6,8 @@
 #include "peripheral/int/plib_int.h"
 
 
-#define I2C1_INT_VECTOR           INT_VECTOR_I2C1
-#define I2C1_INT_SOURCE_MASTER    INT_SOURCE_I2C_1_MASTER
-#define I2C1_CORE_VECTOR          _I2C_1_VECTOR
-
-#define I2C2_INT_VECTOR           INT_VECTOR_I2C2
-#define I2C2_INT_SOURCE_MASTER    INT_SOURCE_I2C_2_MASTER
-#define I2C2_CORE_VECTOR          _I2C_2_VECTOR
-
-#define I2C3_INT_VECTOR           INT_VECTOR_I2C3
-#define I2C3_INT_SOURCE_MASTER    INT_SOURCE_I2C_3_MASTER
-#define I2C3_CORE_VECTOR          _I2C_3_VECTOR
-
-#define I2C4_INT_VECTOR           INT_VECTOR_I2C4
-#define I2C4_INT_SOURCE_MASTER    INT_SOURCE_I2C_4_MASTER
-#define I2C4_CORE_VECTOR          _I2C_4_VECTOR
-
-#define I2C5_INT_VECTOR           INT_VECTOR_I2C5
-#define I2C5_INT_SOURCE_MASTER    INT_SOURCE_I2C_5_MASTER
-#define I2C5_CORE_VECTOR          _I2C_5_VECTOR
+#define __intPriority                  INT_PRIORITY_LEVEL2
+#define __intSubPriority               INT_SUBPRIORITY_LEVEL0
 
 
 typedef enum {                         // Estats del servei
@@ -124,26 +107,26 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
     //
     eosI2CMasterServiceHandle hService = (eosI2CMasterServiceHandle) eosAlloc(
         sizeof(eosI2CMasterService) + transactionPoolSize);
-    if (hService == NULL)
-        return NULL;
+    if (hService != NULL) {
 
-    // -Inicialitza les dades internes del servei
-    //
-    hService->id = params->id;
-    hService->state = serviceInitializing;
-    hService->hTransactionPool = (eosI2CTransactionHandle)((BYTE*) hService + sizeof(eosI2CMasterService));
-    hService->hFirstTransaction = NULL;
-    hService->hLastTransaction = NULL;
-    hService->tickCount = 0;
+        // -Inicialitza les dades internes del servei
+        //
+        hService->id = params->id;
+        hService->state = serviceInitializing;
+        hService->hTransactionPool = (eosI2CTransactionHandle)((BYTE*) hService + sizeof(eosI2CMasterService));
+        hService->hFirstTransaction = NULL;
+        hService->hLastTransaction = NULL;
+        hService->tickCount = 0;
 
-    // -Inicialitza el mapa de transaccions per les interrupcions
-    //
-    transactionMap[hService->id] = NULL;
+        // -Inicialitza el mapa de transaccions per les interrupcions
+        //
+        transactionMap[hService->id] = NULL;
 
-    // Asigna la funcio d'interrupcio TICK
-    //
-    eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
-
+        // Asigna la funcio d'interrupcio TICK
+        //
+        eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
+    }
+    
     return hService;
 }
 
@@ -286,32 +269,32 @@ eosI2CTransactionHandle eosI2CMasterStartTransaction(
         return NULL;
 
     eosI2CTransactionHandle hTransaction = allocTransaction();
-    if (hTransaction == NULL)
-        return NULL;
+    if (hTransaction != NULL) {
 
-    hTransaction->id = hService->id;
-    hTransaction->state = transactionIdle;
-    hTransaction->address = params->address;
-    hTransaction->txBuffer = params->txBuffer;
-    hTransaction->txCount = params->txCount;
-    hTransaction->rxBuffer = params->rxBuffer;
-    hTransaction->rxSize = params->rxSize;
-    hTransaction->onEndTransaction = params->onEndTransaction;
-    hTransaction->context = params->context;
-    hTransaction->error = 0;
+        hTransaction->id = hService->id;
+        hTransaction->state = transactionIdle;
+        hTransaction->address = params->address;
+        hTransaction->txBuffer = params->txBuffer;
+        hTransaction->txCount = params->txCount;
+        hTransaction->rxBuffer = params->rxBuffer;
+        hTransaction->rxSize = params->rxSize;
+        hTransaction->onEndTransaction = params->onEndTransaction;
+        hTransaction->context = params->context;
+        hTransaction->error = 0;
 
-    // Afegeix la transaccio a la cua
-    //
-    hTransaction->hNextTransaction = NULL;
-    if (hService->hFirstTransaction == NULL) {
-        hService->hFirstTransaction = hTransaction;
-        hService->hLastTransaction = hTransaction;
+        // Afegeix la transaccio a la cua
+        //
+        hTransaction->hNextTransaction = NULL;
+        if (hService->hFirstTransaction == NULL) {
+            hService->hFirstTransaction = hTransaction;
+            hService->hLastTransaction = hTransaction;
+        }
+        else {
+            hService->hFirstTransaction->hNextTransaction = hTransaction;
+            hService->hLastTransaction = hTransaction;
+        }
     }
-    else {
-        hService->hFirstTransaction->hNextTransaction = hTransaction;
-        hService->hLastTransaction = hTransaction;
-    }
-
+    
     return hTransaction;
 }
 
@@ -352,47 +335,50 @@ static void tickFunction(
 
 /*************************************************************************
  *
- *       Gestiona les interrupcios dels moduls I2C
+ *       Funcio ISR del modul I2C
+ * 
+ *       Funcio:
+ *          void eosI2CMasterServiceISRx(void)
  *
  *************************************************************************/
 
-void __ISR(I2C1_CORE_VECTOR, IPL2SOFT) __ISR_Entry(I2C1_CORE_VECTOR) {
+void __ISR(_I2C_1_VECTOR, IPL2SOFT) eosI2CMasterServiceISR1(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, I2C1_INT_SOURCE_MASTER)) {
+    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_1_MASTER)) {
         i2cInterruptService(I2C_ID_1);
-        PLIB_INT_SourceFlagClear(INT_ID_0, I2C1_INT_SOURCE_MASTER);
+        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_2_MASTER);
     }
 }
 
-void __ISR(I2C2_CORE_VECTOR, IPL2SOFT) __ISR_Entry(I2C2_CORE_VECTOR) {
+void __ISR(_I2C_2_VECTOR, IPL2SOFT) eosI2CMasterServiceISR2(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, I2C2_INT_SOURCE_MASTER)) {
+    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_2_MASTER)) {
         i2cInterruptService(I2C_ID_2);
-        PLIB_INT_SourceFlagClear(INT_ID_0, I2C2_INT_SOURCE_MASTER);
+        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_2_MASTER);
     }
 }
 
-void __ISR(I2C3_CORE_VECTOR, IPL2SOFT) __ISR_Entry(I2C3_CORE_VECTOR) {
+void __ISR(_I2C_3_VECTOR, IPL2SOFT) eosI2CMasterServiceISR3(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, I2C3_INT_SOURCE_MASTER)) {
+    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_3_MASTER)) {
         i2cInterruptService(I2C_ID_3);
-        PLIB_INT_SourceFlagClear(INT_ID_0, I2C3_INT_SOURCE_MASTER);
+        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_3_MASTER);
     }
 }
 
-void __ISR(I2C4_CORE_VECTOR, IPL2SOFT) __ISR_Entry(I2C4_CORE_VECTOR) {
+void __ISR(_I2C_4_VECTOR, IPL2SOFT) eosI2CMasterServiceISR4(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, I2C4_INT_SOURCE_MASTER)) {
+    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_4_MASTER)) {
         i2cInterruptService(I2C_ID_4);
-        PLIB_INT_SourceFlagClear(INT_ID_0, I2C4_INT_SOURCE_MASTER);
+        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_4_MASTER);
     }
 }
 
-void __ISR(I2C5_CORE_VECTOR, IPL2SOFT) __ISR_Entry(I2C5_CORE_VECTOR) {
+void __ISR(_I2C_5_VECTOR, IPL2SOFT) eosI2CMasterServiceISR5(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, I2C5_INT_SOURCE_MASTER)) {
+    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_5_MASTER)) {
         i2cInterruptService(I2C_ID_5);
-        PLIB_INT_SourceFlagClear(INT_ID_0, I2C5_INT_SOURCE_MASTER);
+        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_5_MASTER);
     }
 }
 
@@ -428,33 +414,33 @@ static void i2cInitialize(
     //
     switch(id) {
         case I2C_ID_1:
-            PLIB_INT_VectorPrioritySet(INT_ID_0, I2C1_INT_VECTOR, INT_PRIORITY_LEVEL2);
-            PLIB_INT_VectorSubPrioritySet(INT_ID_0, I2C1_INT_VECTOR, INT_SUBPRIORITY_LEVEL0);
-            PLIB_INT_SourceEnable(INT_ID_0, I2C1_INT_SOURCE_MASTER);
+            PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C1, __intPriority);
+            PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C1, __intSubPriority);
+            PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_1_MASTER);
             break;
 
         case I2C_ID_2:
-            PLIB_INT_VectorPrioritySet(INT_ID_0, I2C2_INT_VECTOR, INT_PRIORITY_LEVEL2);
-            PLIB_INT_VectorSubPrioritySet(INT_ID_0, I2C2_INT_VECTOR, INT_SUBPRIORITY_LEVEL0);
-            PLIB_INT_SourceEnable(INT_ID_0, I2C2_INT_SOURCE_MASTER);
+            PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C2, __intPriority);
+            PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C2, __intSubPriority);
+            PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_2_MASTER);
             break;
 
         case I2C_ID_3:
-            PLIB_INT_VectorPrioritySet(INT_ID_0, I2C3_INT_VECTOR, INT_PRIORITY_LEVEL2);
-            PLIB_INT_VectorSubPrioritySet(INT_ID_0, I2C3_INT_VECTOR, INT_SUBPRIORITY_LEVEL0);
-            PLIB_INT_SourceEnable(INT_ID_0, I2C3_INT_SOURCE_MASTER);
+            PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C3, __intPriority);
+            PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C3, __intSubPriority);
+            PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_3_MASTER);
             break;
 
         case I2C_ID_4:
-            PLIB_INT_VectorPrioritySet(INT_ID_0, I2C4_INT_VECTOR, INT_PRIORITY_LEVEL2);
-            PLIB_INT_VectorSubPrioritySet(INT_ID_0, I2C4_INT_VECTOR, INT_SUBPRIORITY_LEVEL0);
-            PLIB_INT_SourceEnable(INT_ID_0, I2C4_INT_SOURCE_MASTER);
+            PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C4, __intPriority);
+            PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C4, __intSubPriority);
+            PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_4_MASTER);
             break;
 
         case I2C_ID_5:
-            PLIB_INT_VectorPrioritySet(INT_ID_0, I2C5_INT_VECTOR, INT_PRIORITY_LEVEL2);
-            PLIB_INT_VectorSubPrioritySet(INT_ID_0, I2C5_INT_VECTOR, INT_SUBPRIORITY_LEVEL0);
-            PLIB_INT_SourceEnable(INT_ID_0, I2C5_INT_SOURCE_MASTER);
+            PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C5, __intPriority);
+            PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C5, __intSubPriority);
+            PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_5_MASTER);
             break;
     }
 

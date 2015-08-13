@@ -1,6 +1,8 @@
 #include "Services/eosDigOutput.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
+#include "peripheral/ports/plib_ports.h"
+
 
 
 typedef enum {                         // Estats del servei
@@ -9,8 +11,8 @@ typedef enum {                         // Estats del servei
 } eosOutputServiceState;
 
 typedef struct __eosDigOutput {        // Dates d'una sortida
-    unsigned port;                     // -Port
-    unsigned pin;                      // -Pin
+    PORTS_CHANNEL port;                // -Port
+    PORTS_BIT_POS pin;                 // -Pin
     bool inverted;                     // -Senyal invertida
     unsigned tickCount;                // -Tics restant del puls
     eosDigOutputServiceHandle hService;// -El servei al que pertany
@@ -23,8 +25,8 @@ typedef struct __eosDigOutputService { // Dades del servei
 } eosDigOutputService;
 
 
+static eosDigOutputServiceHandle __hService = NULL;
 
-static bool initialized = false;
 
 static eosDigOutputServiceHandle createDigOutputServiceHandle(void);
 static eosDigOutputHandle createDigOutputHandle(void);
@@ -50,27 +52,17 @@ static void tickFunction(eosDigOutputServiceHandle hService);
 eosDigOutputServiceHandle eosDigOutputServiceInitialize(
     eosDigOutputServiceParams *params) {
 
-    // Comprova si ja esta inicialitzat
-    //
-    if (initialized)
-        return NULL;
+    if (__hService == NULL) {
+        eosDigOutputServiceHandle hService = eosAlloc(sizeof(eosDigOutputService));
+        if (hService != NULL) {
 
-    eosDigOutputServiceHandle hService = eosAlloc(sizeof(eosDigOutputService));
-    if (!hService)
-        return NULL;
-
-    // Inicialitza les dades internes del servei
-    //
-    hService->state = serviceInitializing;
-    hService->hFirstOutput = NULL;
-
-    // Asigna la funcio d'interrupcio TICK
-    //
-    eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
-
-    initialized = true;
-
-    return hService;
+            hService->state = serviceInitializing;
+            hService->hFirstOutput = NULL;
+            
+            __hService = hService;
+        }        
+    }
+    return __hService;
 }
 
 
@@ -93,7 +85,7 @@ eosDigOutputServiceHandle eosDigOutputServiceInitialize(
 bool eosDigOutputServiceIsReady(
     eosDigOutputServiceHandle hService) {
 
-    return hService && (hService->state != serviceInitializing);
+    return hService->state != serviceInitializing;
 }
 
 
@@ -117,6 +109,7 @@ void eosDigOutputServiceTask(
 
         case serviceInitializing:
             hService->state = serviceRunning;
+            eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
             break;
 
         case serviceRunning:
@@ -150,29 +143,29 @@ eosDigOutputHandle eosDigOutputCreate(
     // Crea el bloc de memoria
     //
     eosDigOutputHandle hOutput = eosAlloc(sizeof(eosDigOutput));
-    if (hOutput == NULL)
-        return NULL;
+    if (hOutput != NULL) {
 
-    // Inicialitza les dades internes de la sortida
-    //
-    hOutput->hService = hService;   
-    hOutput->port = params->port;
-    hOutput->pin = params->pin;
-    hOutput->inverted = params->inverted;
-    hOutput->tickCount = 0;
+        // Inicialitza les dades internes de la sortida
+        //
+        hOutput->hService = hService;   
+        hOutput->port = (PORTS_CHANNEL) params->port;
+        hOutput->pin = (PORTS_BIT_POS) params->pin;
+        hOutput->inverted = params->inverted;
+        hOutput->tickCount = 0;
 
-    // Afegeis la sortida a la llista de sortides del servei
-    //
-    bool intState = eosInterruptDisable();
-    hOutput->hNextOutput = hService->hFirstOutput;
-    hService->hFirstOutput = hOutput;
-    eosInterruptRestore(intState);
+        // Afegeis la sortida a la llista de sortides del servei
+        //
+        bool intState = eosInterruptDisable();
+        hOutput->hNextOutput = hService->hFirstOutput;
+        hService->hFirstOutput = hOutput;
+        eosInterruptRestore(intState);
 
-    // Inicialitza el port fisic a estat OFF
-    //
-    halPortSetupOutput(hOutput->port, hOutput->pin);
-    halPortSet(hOutput->port, hOutput->pin, hOutput->inverted ? true : false);
-
+        // Inicialitza el port fisic a estat OFF
+        //
+        PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->port, hOutput->pin, hOutput->inverted ? true : false);
+        PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, hOutput->port, hOutput->pin);
+    }
+    
     return hOutput;
 }
 
@@ -215,7 +208,7 @@ void eosDigOutputDestroy(
 bool eosDigOutputGet(
     eosDigOutputHandle hOutput) {
 
-    bool p = halPortGet(hOutput->port, hOutput->pin);
+    bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hOutput->port, hOutput->pin);
     return hOutput->inverted ? !p : p;
 }
 
@@ -239,7 +232,8 @@ void eosDigOutputSet(
     eosDigOutputHandle hOutput,
     bool state) {
 
-    halPortSet(hOutput->port, hOutput->pin, hOutput->inverted ? !state : state);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->port, hOutput->pin,
+        hOutput->inverted ? !state : state);
 }
 
 
@@ -259,7 +253,7 @@ void eosDigOutputSet(
 void eosDigOutputToggle(
     eosDigOutputHandle hOutput) {
 
-    halPortToggle(hOutput->port, hOutput->pin);
+    PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->port, hOutput->pin);    
 }
 
 
@@ -285,7 +279,7 @@ void eosDigOutputsPulse(
     if (time > 0) {
         bool intState = eosInterruptDisable();
         if (!hOutput->tickCount)
-            halPortToggle(hOutput->port, hOutput->pin);
+            PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->port, hOutput->pin);    
         hOutput->tickCount = time;
         eosInterruptRestore(intState);
     }
@@ -320,18 +314,13 @@ static eosDigOutputHandle createDigOutputHandle(void) {
 static void tickFunction(
     eosDigOutputServiceHandle hService) {
 
-    if (hService && (hService->state == serviceRunning)) {
-
-        eosDigOutputHandle hOutput = hService->hFirstOutput;
-        while (hOutput) {
-
-            if (hOutput->tickCount) {
-                hOutput->tickCount -= 1;
-                if (!hOutput->tickCount)
-                    halPortToggle(hOutput->port, hOutput->pin);
-            }
-
-            hOutput = hOutput->hNextOutput;
+    eosDigOutputHandle hOutput = hService->hFirstOutput;
+    while (hOutput) {
+        if (hOutput->tickCount) {
+            hOutput->tickCount -= 1;
+            if (!hOutput->tickCount)
+                PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->port, hOutput->pin);    
         }
+        hOutput = hOutput->hNextOutput;
     }
 }

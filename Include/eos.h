@@ -45,6 +45,7 @@
 //
 typedef unsigned eosResult;       // Resultat d'una funcio
 typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
+typedef void (*eosInterruptCallback)(unsigned vector);    // Funcio callback per interrupcions
 
 
 extern void eosMain(void);

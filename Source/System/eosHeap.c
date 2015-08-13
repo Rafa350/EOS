@@ -1,15 +1,8 @@
 #include "System/eosMemory.h"
 
 
-#ifdef eos_OPTION_FREERTOS
-#include "FreeRTOS.h"
-#endif
-
-
 typedef struct __eosHeap {   
 } eosHeap;
-
-
 
 
 /*************************************************************************
@@ -57,12 +50,7 @@ void *eosHeapAlloc(
     eosHeapHandle hHeap,
     unsigned size) {
 
-#ifdef eos_OPTION_FREERTOS
-    return pvPortMalloc(size);
-#else
     return malloc(size);
-#endif
-    
 }
 
 
@@ -118,16 +106,7 @@ void *eosHeapRealloc(
     void *p,
     unsigned size) {
 
-#ifdef eos_OPTION_FREERTOS
-    void *p2 = pvPortMalloc(size);
-    if (p2) {
-        memcpy(p2, p, size);
-        vPortFree(p);
-    }
-    return p2;
-#else
     return realloc(p, size);
-#endif
 }
 
 
@@ -147,10 +126,5 @@ void *eosHeapRealloc(
 void eosHeapFree(
     void *p) {
 
-#ifdef eos_OPTION_FREERTOS
-    vPortFree(p);
-#else
     free(p);
-#endif
-    
 }

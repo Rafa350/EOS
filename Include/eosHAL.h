@@ -5,20 +5,6 @@
 #include <stdbool.h>
 
 
-// Ports IO
-#define halPort_PORTA   0
-#define halPort_PORTB   1
-#define halPort_PORTC   2
-#define halPort_PORTD   3
-#define halPort_PORTE   4
-#define halPort_NUM_PORTS 5
-
-extern void halPortSetupInput(unsigned port, unsigned pin);
-extern void halPortSetupOutput(unsigned port, unsigned pin);
-extern void halPortSet(unsigned port, unsigned pin, bool state);
-extern bool halPortGet(unsigned port, unsigned pin);
-extern void halPortToggle(unsigned port, unsigned pin);
-
 // Timers
 #define halTimer_TMR1   0
 #define halTimer_TMR2   1

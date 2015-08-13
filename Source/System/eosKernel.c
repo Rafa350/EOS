@@ -5,16 +5,12 @@
 #include "HardwareProfile.h"
 
 
-#ifdef eos_OPTION_FREERTOS
-#include "freertos.h"
-#endif
-
-
 SYS_DEVCON_INIT devconInit = {
     .moduleInit = {0},
 };
 
 static eosTickServiceHandle hTickService = NULL;
+static SYS_MODULE_OBJ hDevCon;
 
 
 // Funcions a definir en l'aplicacio del usuari
@@ -23,37 +19,17 @@ extern void appSetup(void);
 extern void appLoop(void);
 
 
-void eosTaskInitialize(void) {
-}
-
-
-void eosTaskCreate(void) {
-}
-
-
-void eosTaskSchedule(void) {
-
-#ifdef eos_OPTION_FREERTOS
-    vTaskStartSchedule();
-
-#else
-#endif
-}
-
-
 /*************************************************************************
  *
- *       Punt d'entrada del sistema EOS
+ *       Inicialitza el sistema
  *
  *       Funcio:
- *           void eosMain(void)
+ *           void eosSetup() 
  *
  *************************************************************************/
 
-void eosMain(void) {
-
-    SYS_MODULE_OBJ hDevCon;
-
+static void eosSetup() {
+    
     // Inicialitzacio del sistema
     //
     hDevCon = SYS_DEVCON_Initialize(SYS_DEVCON_INDEX_0, (SYS_MODULE_INIT*) &devconInit);
@@ -68,23 +44,42 @@ void eosMain(void) {
     //
     eosTickServiceParams tickServiceParams;
     memset(&tickServiceParams, 0, sizeof(tickServiceParams));
-    tickServiceParams.timer = halTimer_TMR4;
     hTickService = eosTickServiceInitialize(&tickServiceParams);
+}
 
-    // Inicialitzacio de l'aplicacio d'usuari
-    //
+
+/*************************************************************************
+ *
+ *       Procesa les tasques del sistema
+ *
+ *       Funcio:
+ *           void eosLoop()
+ * 
+ *************************************************************************/
+
+static void eosLoop() {
+
+    SYS_DEVCON_Tasks(hDevCon);
+    eosTickServiceTask(hTickService);
+}
+
+
+/*************************************************************************
+ *
+ *       Punt d'entrada del sistema EOS
+ *
+ *       Funcio:
+ *           void eosMain(void)
+ *
+ *************************************************************************/
+
+void eosMain(void) {
+
+    eosSetup();
     appSetup();
     
     while (true) {
-
-        SYS_DEVCON_Tasks(hDevCon);
-
-        // Procesa les tasques del sistema
-        //
-        eosTickServiceTask(hTickService);
-
-        // Procesa les tasques de l'aplicacio d'usuari
-        //
+        eosLoop();
         appLoop();
     }
 }

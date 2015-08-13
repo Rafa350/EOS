@@ -4,14 +4,14 @@
 
 /*************************************************************************
  *
- *       Entrada a l'aplicacio desde el compilador
+ *       Entrada a l'aplicacio
  *
  *       Funcio:
  *           void main(void)
  *
  *************************************************************************/
 
-#ifdef eos_OPTION_Main
+#ifdef eosOPTION_Main
 void main(void) {
 
     // Crida a la funcio d'entrada al EOS

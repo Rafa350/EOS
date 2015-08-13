@@ -1,6 +1,7 @@
 #include "Services/eosDigInput.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
+#include "peripheral/ports/plib_ports.h"
 
 
 typedef enum {                         // Estats del servei
@@ -16,8 +17,8 @@ typedef enum {                         // Estats del servei
 typedef struct __eosDigInput {         // Dades d'una entrada
     eosDigInputServiceHandle hService; // -El servei al que pertany
     eosDigInputHandle hNextInput;      // -Seguent element
-    unsigned port;                     // -Canal del port
-    unsigned pin;                      // -Pin del port
+    PORTS_CHANNEL port;                // -Canal del port
+    PORTS_BIT_POS pin;                 // -Pin del port
     bool inverted;                     // -Senyal invertida
     eosDigInputCallback onPosEdge;     // -Event POSEDGE
     eosDigInputCallback onNegEdge;     // -Event NEGEDGE
@@ -35,11 +36,12 @@ typedef struct __eosDigInputService {  // Dades del servei
 } eosDigInputService;
 
 
-static bool initialized = false;       // Controla singleton
+static eosDigInputServiceHandle __hService = NULL;
+
 
 static eosDigInputServiceHandle createDigInputServiceHandle(void);
 static eosDigInputHandle createDigInputHandle(void);
-static void tickFunction(eosDigInputServiceHandle hInput);
+static void __tickFunction(eosDigInputServiceHandle hInput);
 
 
 /*************************************************************************
@@ -61,28 +63,19 @@ static void tickFunction(eosDigInputServiceHandle hInput);
 eosDigInputServiceHandle eosDigInputServiceInitialize(
     eosDigInputServiceParams *params) {
 
-    // Comprova que no estigui inicialitzat
-    //
-    if (initialized)
-         return NULL;
+    if (__hService == NULL) {
+        eosDigInputServiceHandle hService = createDigInputServiceHandle();
+        if (hService != NULL) {
 
-    eosDigInputServiceHandle hService = createDigInputServiceHandle();
-    if (!hService)
-        return NULL;
+            hService->state = serviceInitializing;
+            hService->haveChanges = false;
+            hService->hFirstInput = NULL;
+        
+            __hService = hService;
+        }
+    }
 
-    // Inicialitza les variables internes del servei
-    //
-    hService->state = serviceInitializing;
-    hService->haveChanges = false;
-    hService->hFirstInput = NULL;
-
-    // Asigna la funcio d'interrupcio TICK
-    //
-    eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService);
-
-    initialized = true;
-
-    return hService;
+    return __hService;
 }
 
 
@@ -104,7 +97,7 @@ eosDigInputServiceHandle eosDigInputServiceInitialize(
 
 bool eosDigInputServiceIsReady(
     eosDigInputServiceHandle hService) {
-
+    
     return hService && (hService->state != serviceInitializing);
 }
 
@@ -129,6 +122,7 @@ void eosDigInputServiceTask(
 
         case serviceInitializing:
             hService->state = serviceRunning;
+            eosTickRegisterCallback(NULL, (eosTickCallback) __tickFunction, hService);
             break;
 
         case serviceRunning: {
@@ -199,34 +193,37 @@ eosDigInputHandle eosDigInputCreate(
     eosDigInputParams *params) {
 
     eosDigInputHandle hInput = createDigInputHandle();
-    if (hInput == NULL)
-        return NULL;
+    if (hInput != NULL) {
 
-    hInput->hService = hService;
-    hInput->posEdge = false;
-    hInput->negEdge = false;
-    hInput->port = params->port;
-    hInput->pin = params->pin;
-    hInput->inverted = params->inverted;
-    hInput->onPosEdge = params->onPosEdge;
-    hInput->onNegEdge = params->onNegEdge;
-    hInput->onChange = params->onChange;
+        hInput->hService = hService;
+        hInput->posEdge = false;
+        hInput->negEdge = false;
+        hInput->port = (PORTS_CHANNEL) params->port;
+        hInput->pin = (PORTS_BIT_POS) params->pin;
+        hInput->inverted = params->inverted;
+        hInput->onPosEdge = params->onPosEdge;
+        hInput->onNegEdge = params->onNegEdge;
+        hInput->onChange = params->onChange;
 
-    bool state = eosInterruptDisable();
-    hInput->hNextInput = hService->hFirstInput;
-    hService->hFirstInput = hInput;
-    eosInterruptRestore(state);
+        bool state = eosInterruptDisable();
+        hInput->hNextInput = hService->hFirstInput;
+        hService->hFirstInput = hInput;
+        eosInterruptRestore(state);
 
-    halPortSetupInput(hInput->port, hInput->pin);
+        if (true)
+            PLIB_PORTS_ChangeNoticePullUpPerPortEnable(PORTS_ID_0, hInput->port, hInput->pin);
+        PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, hInput->port, hInput->pin);
 
-    bool p = halPortGet(hInput->port, hInput->pin);
-    hInput->state = hInput->inverted ? !p : p;
+        bool p =  PLIB_PORTS_PinGet(PORTS_ID_0, hInput->port, hInput->pin);
+        
+        hInput->state = hInput->inverted ? !p : p;
 
-    if (hInput->state)
-        hInput->pattern = 0xFFFFFFFF;
-    else
-        hInput->pattern = 0x00000000;
-
+        if (hInput->state)
+            hInput->pattern = 0xFFFFFFFF;
+        else
+            hInput->pattern = 0x00000000;
+    }
+    
     return hInput;
 }
 
@@ -345,7 +342,7 @@ static eosDigInputHandle createDigInputHandle(void) {
  *       Gestiona la interrupcio TICK
  *
  *       Funcio:
- *           void tickFunction(
+ *           void __tickFunction(
  *               eosDigInputServiceHandle hService)
  *
  *       Entrada:
@@ -353,34 +350,31 @@ static eosDigInputHandle createDigInputHandle(void) {
  *
  *************************************************************************/
 
-static void tickFunction(
+static void __tickFunction(
     eosDigInputServiceHandle hService) {
 
-    if (hService && (hService->state == serviceRunning)) {
+    eosDigInputHandle hInput = hService->hFirstInput;
+    while (hInput) {
 
-        eosDigInputHandle hInput = hService->hFirstInput;
-        while (hInput) {
+        hInput->pattern <<= 1;
 
-            hInput->pattern <<= 1;
+        bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hInput->port, hInput->pin);
+        p = hInput->inverted ? !p : p;
 
-            bool p = halPortGet(hInput->port, hInput->pin);
-            p = hInput->inverted ? !p : p;
+        if (p)
+            hInput->pattern |= 1;
 
-            if (p)
-                hInput->pattern |= 1;
-
-            if ((hInput->pattern & PATTERN_MASK) == PATTERN_ON) {
-                hInput->state = true;
-                hInput->posEdge = true;
-                hService->haveChanges = true;
-            }
-            else if ((hInput->pattern & PATTERN_MASK) == PATTERN_OFF) {
-                hInput->state = false;
-                hInput->negEdge = true;
-                hService->haveChanges = true;
-            }
-
-            hInput = hInput->hNextInput;
+        if ((hInput->pattern & PATTERN_MASK) == PATTERN_ON) {
+            hInput->state = true;
+            hInput->posEdge = true;
+            hService->haveChanges = true;
         }
+        else if ((hInput->pattern & PATTERN_MASK) == PATTERN_OFF) {
+            hInput->state = false;
+            hInput->negEdge = true;
+            hService->haveChanges = true;
+        }
+
+        hInput = hInput->hNextInput;
     }
 }
