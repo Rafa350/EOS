@@ -31,10 +31,7 @@
       <logicalFolder name="f2" displayName="Eos" projectFiles="true">
         <logicalFolder name="f1" displayName="Modules" projectFiles="true">
           <itemPath>../../Source/Modules/eosAdc.c</itemPath>
-          <itemPath>../../Source/Modules/eosInputs.c</itemPath>
           <itemPath>../../Source/Modules/eosLed.c</itemPath>
-          <itemPath>../../Source/Modules/eosOutputs.c</itemPath>
-          <itemPath>../../Source/Modules/eosTimers.c</itemPath>
           <itemPath>../../Source/Modules/eosVariables.c</itemPath>
           <itemPath>../../Source/Modules/eosUsbHost.c</itemPath>
           <itemPath>../../Source/Modules/eosI2CMaster.c</itemPath>
@@ -42,7 +39,6 @@
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
           <itemPath>../../Source/System/eosKernel.c</itemPath>
-          <itemPath>../../Source/System/eosMemory.c</itemPath>
           <itemPath>../../Source/System/eosStart.c</itemPath>
         </logicalFolder>
       </logicalFolder>

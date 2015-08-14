@@ -30,6 +30,8 @@ typedef struct __eosTick {             // Dades del callback
     eosTickHandle hNextItem;           // -Seguent item
     eosTickCallback onTick;            // -Event TICK
     void *onTickContext;               // -Parametres del event TICK
+    bool deferred;                     // -Execucio diferida
+    bool pending;                      // -Pendent d'execucio
 } eosTick;
 
 typedef struct __eosTickService {      // Dades del servei
@@ -107,8 +109,17 @@ void eosTickServiceTask(
             eosInterruptSourceEnable(__intSource);
             break;
 
-        case serviceRunning:
+        case serviceRunning: {
+            eosTickHandle hTick = hService->hFirstItem;
+            while (hTick != NULL) {
+                if ((hTick->onTick != NULL) && hTick->pending) {
+                    hTick->onTick(hTick->onTickContext);
+                    hTick->pending = false;
+                }
+                hTick = hTick->hNextItem;
+            }
             break;
+        }
     }
 }
 
@@ -121,19 +132,22 @@ void eosTickServiceTask(
  *           void eosTickRegisterCallback(
  *               eosTickServiceHandle hService
  *               eosTickCallback onTick,
- *               void *onTickContext)
+ *               void *onTickContext,
+ *               bool deferred)
  *
  *       Entrada:
  *           hService      : Handler del servei
  *           onTick        : Callback del event TICK
  *           onTickContext : Contexte del event TICK
+ *           deferred      : Execucio diferida fora de la interrupcio
  *
  *************************************************************************/
 
 void eosTickRegisterCallback(
     eosTickServiceHandle hService,
     eosTickCallback onTick,
-    void *onTickContext) {
+    void *onTickContext,
+    bool deferred) {
 
     if (hService == NULL)
         hService = __hService;
@@ -145,6 +159,8 @@ void eosTickRegisterCallback(
             hTick->hService = hService;
             hTick->onTick = onTick;
             hTick->onTickContext = onTickContext;
+            hTick->deferred = deferred;
+            hTick->pending = false;
 
             bool enabled = eosInterruptSourceDisable(__intSource);
             
@@ -200,10 +216,14 @@ void __isrAttributes eosTickServiceISR(void) {
 
     eosTickHandle hTick = __hService->hFirstItem;
     while (hTick != NULL) {
-        if (hTick->onTick != NULL)
-            hTick->onTick(hTick->onTickContext);
+        if (hTick->onTick != NULL) {
+            if (hTick->deferred)
+                hTick->pending = true;
+            else 
+                hTick->onTick(hTick->onTickContext);
+        }
         hTick = hTick->hNextItem;
     }
 
-    PLIB_INT_SourceFlagClear(INT_ID_0, __intSource);
+    eosInterruptSourceFlagClear(__intSource);
 }

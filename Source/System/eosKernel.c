@@ -16,7 +16,7 @@ static SYS_MODULE_OBJ hDevCon;
 // Funcions a definir en l'aplicacio del usuari
 //
 extern void appSetup(void);
-extern void appLoop(void);
+extern void appTask(void);
 
 
 /*************************************************************************
@@ -53,11 +53,11 @@ static void eosSetup() {
  *       Procesa les tasques del sistema
  *
  *       Funcio:
- *           void eosLoop()
+ *           void eosTask()
  * 
  *************************************************************************/
 
-static void eosLoop() {
+static void eosTask() {
 
     SYS_DEVCON_Tasks(hDevCon);
     eosTickServiceTask(hTickService);
@@ -79,7 +79,7 @@ void eosMain(void) {
     appSetup();
     
     while (true) {
-        eosLoop();
-        appLoop();
+        eosTask();
+        appTask();
     }
 }

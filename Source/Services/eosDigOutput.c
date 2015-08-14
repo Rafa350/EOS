@@ -56,7 +56,7 @@ eosDigOutputServiceHandle eosDigOutputServiceInitialize(
             hService->state = serviceInitializing;
             hService->hFirstOutput = NULL;
             
-            eosTickRegisterCallback(NULL, (eosTickCallback) __tickFunction, hService);
+            eosTickRegisterCallback(NULL, (eosTickCallback) __tickFunction, hService, false);
 
             __hService = hService;
         }        
