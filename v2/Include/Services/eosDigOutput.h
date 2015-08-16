@@ -22,8 +22,6 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 // Gestio del servei
 //
 extern eosDigOutputServiceHandle eosDigOutputServiceInitialize(eosDigOutputServiceParams *params);
-extern bool eosDigOutputServiceIsReady(eosDigOutputServiceHandle hService);
-extern void eosDigOutputServiceTask(eosDigOutputServiceHandle hService);
 
 // Creacio, destruccio i gestio dels objectes
 //

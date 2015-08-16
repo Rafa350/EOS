@@ -21,9 +21,9 @@
         </environment>
       </runprofile>
     </conf>
-    <conf name="NewConfiguration" type="2">
+    <conf name="PIC32MX_USK" type="2">
       <platformToolSN></platformToolSN>
-      <languageToolchainDir>C:\Program Files\Microchip\xc8\v1.34\bin</languageToolchainDir>
+      <languageToolchainDir>C:\Program Files\Microchip\xc32\v1.40\bin</languageToolchainDir>
       <mdbdebugger version="1">
         <placeholder1>place holder 1</placeholder1>
         <placeholder2>place holder 2</placeholder2>

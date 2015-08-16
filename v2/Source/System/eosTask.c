@@ -6,8 +6,7 @@
 
 
 typedef struct __eosTask {
-    TaskHandle_t rtosHandle;
-    
+    TaskHandle_t rtosTask;    
 } eosTask;
 
 
@@ -16,27 +15,38 @@ typedef struct __eosTask {
  *       Crea una tasca
  *
  *       Funcio:
- *           eosTaskHandle eosTaskCreate(eosTaskParams *params) 
+ *           eosTaskHandle eosTaskCreate(
+ *               unsigned priority, 
+ *               unsigned stackSize, 
+ *               eosTaskFunction taskFunction, 
+ *               void *taskParams) 
  * 
  *       Entrada:
- *           params: Parametres
+ *           priority : Prioritat
+ *           stackSize: Tamany de la pila
+ *           taskFunction: Funcio de la tasca
+ *           taskParams  : Parametres de la tasca
  * 
  *       Retorn:
  *           Handler de la tasca
  *
  *************************************************************************/
 
-eosTaskHandle eosTaskCreate(eosTaskParams *params) {
+eosTaskHandle eosTaskCreate(
+    unsigned priority, 
+    unsigned stackSize, 
+    eosTaskFunction taskFunction, 
+    void *taskParams) {
     
     eosTaskHandle hTask = eosAlloc(sizeof(struct __eosTask));
     if (hTask != NULL) {
-        xTaskCreate(
-            params->function, 
-            params->name, 
-            params->stackSize, 
-            params->params, 
-            tskIDLE_PRIORITY, 
-            &hTask->rtosHandle);
+        
+        if (xTaskCreate(taskFunction, NULL, stackSize, taskParams, 
+            tskIDLE_PRIORITY,  &hTask->rtosTask) != pdPASS) {
+
+            eosFree(hTask);
+            hTask = NULL;
+        }
     }
     
     return hTask;
@@ -48,14 +58,16 @@ eosTaskHandle eosTaskCreate(eosTaskParams *params) {
  *       Retarda la tasca en numero de milisegons especificat
  *
  *       Funcio:
- *           void eosTaskDelay(unsigned delay) 
+ *           void eosTaskDelay(
+ *               unsigned delay) 
  *
  *       Entrada:
  *           delay: Numero de milisegons per retardar
  *
  *************************************************************************/
 
-void eosTaskDelay(unsigned delay) {
+void eosTaskDelay(
+    unsigned delay) {
 
     vTaskDelay(delay / portTICK_PERIOD_MS);
 }
@@ -66,7 +78,7 @@ void eosTaskDelay(unsigned delay) {
  *       Posa en marxa el planificador i executa les tasques definides
  *
  *       Funcio:
- *           void eosTaskRun(*) 
+ *           void eosTaskRun(void) 
  *
  *************************************************************************/
 

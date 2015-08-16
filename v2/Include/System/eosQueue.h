@@ -7,10 +7,7 @@
 #endif
 
 
-#define eosQUEUE_ERROR_FULL       (eos_ERROR_USER + 0)
-#define eosQUEUE_ERROR_EMPTY      (eos_ERROR_USER + 1)
-
-typedef struct __eosQueue *eosHQueue;
+typedef struct __eosQueue *eosQueueHandle;
 
 typedef struct {             // Parametres d'inicialitzacio de la cua
     unsigned maxItems;       // -Capacitat de la cua en elements
@@ -18,15 +15,18 @@ typedef struct {             // Parametres d'inicialitzacio de la cua
 } eosQueueParams;
 
 
-extern eosHQueue eosQueueCreate(eosQueueParams *params);
-extern void eosQueueDestroy(eosHQueue hQueue);
+// Creacio i destruccio de la cua
+//
+extern eosQueueHandle eosQueueCreate(eosQueueParams *params);
+extern void eosQueueDestroy(eosQueueHandle hQueue);
 
-extern bool eosQueuePut(eosHQueue hQueue, void *data);
-extern bool eosQueueGet(eosHQueue hQueue, void *data);
+// Insercio i extraccio d'elements en la cua
+//
+extern bool eosQueuePut(eosQueueHandle hQueue, void *data, unsigned timeout);
+extern bool eosQueueGet(eosQueueHandle hQueue, void *data, unsigned timeout);
+extern bool eosQueueISRPut(eosQueueHandle hQueue, void *data);
+extern bool eosQueueISRGet(eosQueueHandle hQueue, void *data);
 
-extern bool eosQueueGetIsEmpty(eosHQueue hQueue);
-eosResult eosQueueEnumerate(eosHQueue hQueue);
-eosResult eosQueueEnumerateNext(eosHQueue hQueue, void *data);
 
 
 #endif

@@ -120,10 +120,10 @@
 #define configMAX_CO_ROUTINE_PRIORITIES         2
 
 /* Software timer related definitions. */
-#define configUSE_TIMERS                        0
-#define configTIMER_TASK_PRIORITY               
-#define configTIMER_QUEUE_LENGTH                
-#define configTIMER_TASK_STACK_DEPTH            
+#define configUSE_TIMERS                        1
+#define configTIMER_TASK_PRIORITY               3
+#define configTIMER_QUEUE_LENGTH                32
+#define configTIMER_TASK_STACK_DEPTH            512
 
 /* Misc */
 #define configUSE_APPLICATION_TASK_TAG          0

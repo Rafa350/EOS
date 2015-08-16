@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "System/eosTask.h"
-#include "Services/eosTick.h"
+#include "Services/eosDigOutput.h"
 
 
 static void task1(void *params) {
@@ -21,16 +21,6 @@ static void task2(void *params) {
     }
 }
 
-static void task3(void *params) {
-
-    eosTickServiceParams serviceParams;
-    eosTickServiceHandle hService = eosTickServiceInitialize(&serviceParams);
-    while (true) {
-        eosTickServiceTask(hService);
-        eosTaskDelay(100);
-    }    
-}
-
 
 /*************************************************************************
  *
@@ -43,30 +33,10 @@ static void task3(void *params) {
 
 void appSetup(void) {
     
-    static eosTaskParams taskParams[3] = {
-        {
-            .name = "task 1",
-            .function = task1,
-            .params = NULL,
-            .stackSize = 1024                    
-        },
-        {
-            .name = "task 2",
-            .function = task2,
-            .params = NULL,
-            .stackSize = 1024                    
-        },
-        {
-            .name = "task 3",
-            .function = task3,
-            .params = NULL,
-            .stackSize = 1024                    
-        }
-    };
-
-    unsigned i;
-    for (i = 0; i < sizeof(taskParams) / sizeof(taskParams[0]); i++)
-        eosTaskCreate(&taskParams[i]);
+    eosTaskCreate(0, 512, task1, NULL);
+    eosTaskCreate(0, 512, task2, NULL);
+    
+    eosDigOutputServiceInitialize(NULL);
 }
 
 

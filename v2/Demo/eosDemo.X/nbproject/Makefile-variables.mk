@@ -11,10 +11,10 @@ CND_ARTIFACT_PATH_PIC32MX_ESK=dist/PIC32MX_ESK/production/eosDemo.X.production.h
 CND_PACKAGE_DIR_PIC32MX_ESK=${CND_DISTDIR}/PIC32MX_ESK/package
 CND_PACKAGE_NAME_PIC32MX_ESK=eosdemo.x.tar
 CND_PACKAGE_PATH_PIC32MX_ESK=${CND_DISTDIR}/PIC32MX_ESK/package/eosdemo.x.tar
-# NewConfiguration configuration
-CND_ARTIFACT_DIR_NewConfiguration=dist/NewConfiguration/production
-CND_ARTIFACT_NAME_NewConfiguration=eosDemo.X.production.hex
-CND_ARTIFACT_PATH_NewConfiguration=dist/NewConfiguration/production/eosDemo.X.production.hex
-CND_PACKAGE_DIR_NewConfiguration=${CND_DISTDIR}/NewConfiguration/package
-CND_PACKAGE_NAME_NewConfiguration=eosdemo.x.tar
-CND_PACKAGE_PATH_NewConfiguration=${CND_DISTDIR}/NewConfiguration/package/eosdemo.x.tar
+# PIC32MX_USK configuration
+CND_ARTIFACT_DIR_PIC32MX_USK=dist/PIC32MX_USK/production
+CND_ARTIFACT_NAME_PIC32MX_USK=eosDemo.X.production.hex
+CND_ARTIFACT_PATH_PIC32MX_USK=dist/PIC32MX_USK/production/eosDemo.X.production.hex
+CND_PACKAGE_DIR_PIC32MX_USK=${CND_DISTDIR}/PIC32MX_USK/package
+CND_PACKAGE_NAME_PIC32MX_USK=eosdemo.x.tar
+CND_PACKAGE_PATH_PIC32MX_USK=${CND_DISTDIR}/PIC32MX_USK/package/eosdemo.x.tar

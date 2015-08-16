@@ -31,7 +31,7 @@ DEFAULTCONF=PIC32MX_ESK
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=PIC32MX_ESK NewConfiguration 
+ALLCONFS=PIC32MX_ESK PIC32MX_USK 
 
 
 # build
@@ -46,14 +46,14 @@ ALLCONFS=PIC32MX_ESK NewConfiguration
 # clobber
 .clobber-impl: .clobber-pre .depcheck-impl
 	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=PIC32MX_ESK clean
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=NewConfiguration clean
+	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=PIC32MX_USK clean
 
 
 
 # all
 .all-impl: .all-pre .depcheck-impl
 	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=PIC32MX_ESK build
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=NewConfiguration build
+	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=PIC32MX_USK build
 
 
 

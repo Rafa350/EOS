@@ -24,12 +24,12 @@
 
 // Opcions de configuracio pel servei 'Inputs'
 //
+#define eosOPTIONS_UseDigInputService
 
 
 // Opcions de configuracio pel servei 'Outputs'
 //
-#define eosOPTIONS_OUTPUTS_MAX_INSTANCES         1    // Numero maxim d'instancies del servei
-#define eosOPTIONS_OUTPUTS_MAX_OUTPUTS          32    // Numero maxim de sortides
+#define eosOPTIONS_UseDigOutputService
 
 
 // Opcions de configuracio pel servei 'I2CMaster'

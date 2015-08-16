@@ -1,3 +1,7 @@
+#include "eos.h"
+
+#ifdef eosOPTIONS_UseDigInputService
+
 #include "Services/eosDigInput.h"
 #include "Services/eosTick.h"
 #include "System/eosMemory.h"
@@ -365,3 +369,6 @@ static void __tickFunction(
         hInput = hInput->hNextInput;
     }
 }
+
+
+#endif
