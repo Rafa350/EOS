@@ -41,7 +41,10 @@ eosTaskHandle eosTaskCreate(
     eosTaskHandle hTask = eosAlloc(sizeof(struct __eosTask));
     if (hTask != NULL) {
         
-        if (xTaskCreate(taskFunction, NULL, stackSize, taskParams, 
+        if (stackSize < configMINIMAL_STACK_SIZE)
+            stackSize = configMINIMAL_STACK_SIZE;
+        
+        if (xTaskCreate(taskFunction, "", stackSize, taskParams, 
             tskIDLE_PRIORITY,  &hTask->rtosTask) != pdPASS) {
 
             eosFree(hTask);
@@ -55,21 +58,63 @@ eosTaskHandle eosTaskCreate(
 
 /*************************************************************************
  *
- *       Retarda la tasca en numero de milisegons especificat
+ *       Retarda la tasca el numero de tics especificat
  *
  *       Funcio:
  *           void eosTaskDelay(
  *               unsigned delay) 
  *
  *       Entrada:
- *           delay: Numero de milisegons per retardar
+ *           delay: Numero de tics a retardar
  *
  *************************************************************************/
 
 void eosTaskDelay(
     unsigned delay) {
 
-    vTaskDelay(delay / portTICK_PERIOD_MS);
+    vTaskDelay(delay);
+}
+
+
+/*************************************************************************
+ *
+ *       Retarda la tasca el numero de tics especificat
+ *
+ *       Funcio:
+ *           void eosTaskDelay(
+ *               unsigned delay,
+ *               unsigned *lastTick) 
+ *
+ *       Entrada:
+ *           delay   : Numero de tick a retardar
+ *           lastTick: Numero de tick actual
+ * 
+ *       Sortida:
+ *           lastTick: El numero de tick actualitzat
+ *
+ *************************************************************************/
+
+void eosTaskDelayUntil(unsigned delay, unsigned *lastTick) {
+    
+    vTaskDelayUntil(lastTick, delay);
+}
+
+
+/*************************************************************************
+ *
+ *       Obte el numero de tick actual
+ * 
+ *       Funcio:
+ *           unsigned eosTaskGetTickCount(void) 
+ * 
+ *       Retorn:
+ *           Numero de tick actual
+ *
+ *************************************************************************/
+
+unsigned eosTaskGetTickCount(void) {
+    
+    return xTaskGetTickCount();
 }
 
 
@@ -85,4 +130,28 @@ void eosTaskDelay(
 void eosTaskRun(void) {
     
     vTaskStartScheduler();
+}
+
+
+void eosTaskEnterCriticalSection(void) {
+    
+    taskENTER_CRITICAL();
+}
+
+
+void eosTaskExitCriticalSection(void) {
+    
+    taskEXIT_CRITICAL();
+}
+
+
+void eosTaskSuspendAll(void) {
+    
+    vTaskSuspendAll();
+}
+
+
+void eosTaskResumeAll(void) {
+    
+    xTaskResumeAll();
 }

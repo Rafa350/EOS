@@ -26,7 +26,6 @@ extern eosDigOutputServiceHandle eosDigOutputServiceInitialize(eosDigOutputServi
 // Creacio, destruccio i gestio dels objectes
 //
 extern eosDigOutputHandle eosDigOutputCreate(eosDigOutputServiceHandle hService, eosDigOutputParams *params);
-extern void eosDigOutputDestroy(eosDigOutputHandle hOutput);
 
 // Operacions amb els objectes
 //

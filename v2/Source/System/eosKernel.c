@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "Services/eosTick.h"
 #include "system/devcon/sys_devcon.h"
 #include "system/int/sys_int.h"
 #include "HardwareProfile.h"

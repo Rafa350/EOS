@@ -4,12 +4,14 @@
 
 #include "Services/eosDigOutput.h"
 #include "System/eosMemory.h"
+#include "System/eosTask.h"
 #include "peripheral/ports/plib_ports.h"
-#include "FreeRTOS.h"
-#include "timers.h"
 
 
-typedef struct __eosDigOutput {        // Dates d'una sortida
+#define TASK_PERIOD 10
+
+
+typedef struct __eosDigOutput {        // Dades d'una sortida
     PORTS_CHANNEL channel;             // -Canal
     PORTS_BIT_POS position;            // -Posicio
     bool inverted;                     // -Senyal invertida
@@ -20,10 +22,11 @@ typedef struct __eosDigOutput {        // Dates d'una sortida
 
 typedef struct __eosDigOutputService { // Dades del servei
     eosDigOutputHandle hFirstOutput;   // -Primera sortida
+    eosTaskHandle hTask;               // -Tasca del servei
 } eosDigOutputService;
 
 
-static void timerCallback(TimerHandle_t rtosTimer);
+static void task(void *params);
 
 
 /*************************************************************************
@@ -48,58 +51,10 @@ eosDigOutputServiceHandle eosDigOutputServiceInitialize(
     eosDigOutputServiceHandle hService = eosAlloc(sizeof(eosDigOutputService));
     if (hService != NULL) {
         hService->hFirstOutput = NULL;
+        hService->hTask = eosTaskCreate(0, 512, task, hService);
     }
     
     return hService;
-}
-
-
-/*************************************************************************
- *
- *       Procesa les tasques del servei
- *
- *       Funcio:
- *           void task(
- *               void *param)
- *
- *       Entrada:
- *           param : Parametre (hService)
- *
- *************************************************************************/
-
-static void task(void *param) {
-
-    eosDigOutputServiceHandle hService = param;
-
-    TRISDbits.TRISD2 = 0;
-    while (true) {
-        PORTDbits.RD2 = !LATDbits.LATD2;
-        eosTaskDelay(300);
-        eosTaskDelay(500);
-        /*Command command;
-        if (eosQueueGet(hService->hQueue, &command, 1000)) {
-            eosDigOutputHandle hOutput = command.hTarget;
-            switch (command.cmd) {
-                case cmdCode_SET:
-                    PLIB_PORTS_PinWrite(
-                        PORTS_ID_0, 
-                        hOutput->channel, 
-                        hOutput->position, 
-                        hOutput->inverted ? command.param1 : !command.param1);
-                    break;
-                    
-                case cmdCode_TOGGLE:
-                    PLIB_PORTS_PinToggle(
-                        PORTS_ID_0, 
-                        hOutput->channel, 
-                        hOutput->position);
-                    break;
-                    
-                case cmdCode_PULSE:
-         
-            }
-        }*/
-    }
 }
 
 
@@ -139,11 +94,10 @@ eosDigOutputHandle eosDigOutputCreate(
         hOutput->timeout = 0;
 
         // Afegeis la sortida a la llista de sortides del servei
-        //
-        bool lock = eosTickServiceLock();
+        eosTaskSuspendAll();
         hOutput->hNextOutput = hService->hFirstOutput;
         hService->hFirstOutput = hOutput;
-        eosTickServiceUnlock(lock);
+        eosTaskResumeAll();
 
         // Inicialitza el port fisic a estat OFF
         //
@@ -152,25 +106,6 @@ eosDigOutputHandle eosDigOutputCreate(
     }
     
     return hOutput;
-}
-
-
-/*************************************************************************
- *
- *       Destrueix una sortida
- *
- *       Funcio:
- *           void eosDigOutputDestroy(
- *               eosDigOutputHandle hOutput)
- *
- *       Entrada:
- *           hOutput: El handler de la sortida
- *
- *************************************************************************/
-
-void eosDigOutputDestroy(
-    eosDigOutputHandle hOutput) {
-
 }
 
 
@@ -216,9 +151,12 @@ bool eosDigOutputGet(
 void eosDigOutputSet(
     eosDigOutputHandle hOutput,
     bool state) {
-    
+
+    eosTaskSuspendAll();
     PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position, 
         hOutput->inverted ? state : !state);
+    hOutput->timeout = 0;
+    eosTaskResumeAll();
 }
 
 
@@ -238,16 +176,20 @@ void eosDigOutputSet(
 void eosDigOutputToggle(
     eosDigOutputHandle hOutput) {
 
+    eosTaskSuspendAll();
     PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);
+    hOutput->timeout = 0;
+    eosTaskResumeAll();
 }
 
 
 /*************************************************************************
  *
- *       Genera un puls d'inversio de l'estat d'una sortida
+ *       Genera un puls d'inversio de l'estat d'una sortida. La resolucio
+ *       es en multiples de TASK_PERIOD
  *
  *       Funcio:
- *           void eosDigOutputsPulse(
+ *           void eosDigOutputPulse(
  *               eosDigOutput hOutput,
  *               unsigned time)
  *
@@ -260,23 +202,59 @@ void eosDigOutputToggle(
  *
  *************************************************************************/
 
-void eosDigOutputsPulse(
+void eosDigOutputPulse(
     eosDigOutputHandle hOutput,
     unsigned time) {
+    
+    if (time >= TASK_PERIOD) {
 
-    if (hOutput->timeout > 0)
-        PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);
-    hOutput->timeout = time;
+        eosTaskSuspendAll();
+        if (hOutput->timeout == 0)
+            PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);
+        hOutput->timeout = time / TASK_PERIOD;
+        eosTaskResumeAll();
+    }
 }
 
 
-static void timerCallback(TimerHandle_t rtosTimer) {
-    
-    eosDigOutputHandle hOutput = (eosDigOutputHandle) pvTimerGetTimerID(rtosTimer);
-    if (hOutput->timeout > 0) {
-        hOutput->timeout -= 1;
-        if (hOutput->timeout == 0)
-            PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);
+/*************************************************************************
+ *
+ *       Procesa les tasques del servei
+ *
+ *       Funcio:
+ *           void task(
+ *               void *param)
+ *
+ *       Entrada:
+ *           param : Parametre (hService)
+ *
+ *************************************************************************/
+
+static void task(void *param) {
+
+    unsigned tc = eosTaskGetTickCount();
+    eosDigOutputServiceHandle hService = param;
+
+    while (true) {
+
+        eosTaskDelayUntil(TASK_PERIOD, &tc);
+        
+        eosTaskSuspendAll();
+        
+        eosDigOutputHandle hOutput = hService->hFirstOutput;
+        while (hOutput != NULL) {
+            
+            unsigned timeout = hOutput->timeout;
+            if (timeout > 0) {
+                timeout -= 1;
+                if (timeout == 0)
+                    PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);
+                hOutput->timeout = timeout;
+            }        
+            hOutput = hOutput->hNextOutput;
+        }
+        
+        eosTaskResumeAll();
     }
 }
 

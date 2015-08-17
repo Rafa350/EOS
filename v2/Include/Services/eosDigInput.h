@@ -27,13 +27,10 @@ typedef struct {                       // Parametres d'inicialitzacio del servei
 // Gestio del servei
 //
 extern eosDigInputServiceHandle eosDigInputServiceInitialize(eosDigInputServiceParams *params);
-extern bool eosDigInputServiceIsReady(eosDigInputServiceHandle hService);
-extern void eosDigInputServiceTask(eosDigInputServiceHandle hService);
 
 // Creacio, destruccio i gestio dels objectes
 //
 extern eosDigInputHandle eosDigInputCreate(eosDigInputServiceHandle hService, eosDigInputParams *params);
-extern void eosDigInputDestroy(eosDigInputHandle hInput);
 
 // Operacions amb els objectes
 //
