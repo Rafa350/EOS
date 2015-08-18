@@ -24,6 +24,8 @@ typedef struct __eosHeap {
 
 eosHeapHandle eosHeapCreate(
     unsigned size) {
+    
+    eosDebugVerify(size > 0);
 
     return NULL;
 }
@@ -50,65 +52,10 @@ eosHeapHandle eosHeapCreate(
 void *eosHeapAlloc(
     eosHeapHandle hHeap,
     unsigned size) {
+    
+    eosDebugVerify(size > 0);
 
     return pvPortMalloc(size);
-}
-
-
-/*************************************************************************
- *
- *       Obte una bloc de memoria per una cadena
- *
- *       Funcio:
- *           void* eosHealAllocString(
- *               eosHeapHandle hHeap,
- *               const char *str)
- *
- *       Entrada:
- *           hHeap: Handler del heap
- *           str  : La cadena a memoritzar
- *
- *       Retorn:
- *           Punter al bloc de memoria, NULL en cas d'error
- *
- *************************************************************************/
-
-void *eosHeapAllocString(
-    eosHeapHandle hHeap,
-    const char* str) {
-
-    unsigned size = strlen(str) + 1;
-    return memcpy(eosHeapAlloc(hHeap, size), str, size);
-}
-
-
-/*************************************************************************
- *
- *       Modifica un bloc de memoria del heap
- *
- *       Funcio:
- *           void *eosHeapRealloc(
- *               eosHeapHandle hHeap,
- *               void *p,
- *               unsigned size)
- *
- *       Entrada:
- *           hHeap: Handler del heap
- *           p    : El bloc de momoria
- *           size : El nou tamany del bloc de memoria
- *
- *       Retorn:
- *           Punter al bloc de memoria. NULL en cas d'error
- *
- *************************************************************************/
-
-void *eosHeapRealloc(
-    eosHeapHandle hHeap,
-    void *p,
-    unsigned size) {
-
-    void *np = eosHeapAlloc(hHeap, size);
-    return np;
 }
 
 
@@ -127,6 +74,8 @@ void *eosHeapRealloc(
 
 void eosHeapFree(
     void *p) {
+    
+    eosDebugVerify(p != NULL);
 
     vPortFree(p);
 }

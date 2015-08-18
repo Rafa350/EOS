@@ -11,32 +11,25 @@
 #define eosOPTION_Harmony
 
 
-// Opcions de configuracio del servei 'Tick'
-//
-#define eosTickServiceConfig_UseTMR4                  // Temporitzador a utilitzar
-
-
-// Opcions de configuracio pel servei 'Timers'
-//
-#define eosOPTIONS_TIMERS_MAX_INSTANCES          1    // Numero maxim d'instancies del servei
-#define eosOPTIONS_TIMERS_MAX_TIMERS             20   // Numero maxim de temporitzadors
-
-
 // Opcions de configuracio pel servei 'Inputs'
 //
-#define eosOPTIONS_UseDigInputService
+#define eosOPTIONS_UseDigInputService                    1
+#define eosDigInputService_MaxInputs                    16
 
 
 // Opcions de configuracio pel servei 'Outputs'
 //
-#define eosOPTIONS_UseDigOutputService
+#define eosOPTIONS_UseDigOutputService                   1
+#define eosDigOutputService_MaxOutputs                  16
 
 
 // Opcions de configuracio pel servei 'I2CMaster'
 //
-#define eosOPTIONS_I2CMASTER_MAX_INSTANCES       4    // Numero maxim d'instancies del servei
-#define eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS    100  // Numero maxim de transaccions en cua
-#define eosOPTIONS_I2CMASTER_END_TRANSACTION_DELAY 15 // Retard final de la transaccio
+#define eosOPTIONS_UseI2CMasterService                   1
+#define eosI2CMasterService_MaxInstances                 2 
+#define eosI2CMasterService_MaxTransactions             20  
+#define eosI2CMasterService_EndTransactionDelay         15 
+#define eosI2CMasterService_TransactionTimeout        1000
 
 
 // Opcions de configuracio pel servei 'Forms'

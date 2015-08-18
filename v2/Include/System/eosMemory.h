@@ -9,16 +9,12 @@
 // Heap
 
 #define eosAlloc(s)          eosHeapAlloc(NULL, s)
-#define eosAllocString(p)    eosHeapAllocString(NULL, p)
-#define eosRealloc(p, s)     eosHeapRealloc(NULL, p, s)
 #define eosFree(p)           eosHeapFree(p)
 
 typedef struct __eosHeap *eosHeapHandle;
 
 extern eosHeapHandle eosHeapCreate(unsigned size);
 extern void *eosHeapAlloc(eosHeapHandle hHeap, unsigned size);
-extern void *eosHeapAllocString(eosHeapHandle hHeap, const char *s);
-extern void *eosHeapRealloc(eosHeapHandle hHeap, void *p, unsigned size);
 extern void eosHeapFree(void *p);
 
 

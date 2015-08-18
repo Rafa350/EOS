@@ -9,7 +9,7 @@
 typedef struct __eosDigInputService *eosDigInputServiceHandle;
 typedef struct __eosDigInput *eosDigInputHandle;
 
-typedef void (*eosDigInputCallback)(eosDigInputHandle hInput);
+typedef void (*eosDigInputCallback)(eosDigInputHandle hInput, void *context);
 
 typedef struct {                       // Parametres d'inicializacio de les entrades
     PORTS_CHANNEL channel;             // -Canal
@@ -18,6 +18,7 @@ typedef struct {                       // Parametres d'inicializacio de les entr
     eosDigInputCallback onPosEdge;     // -Notifica flanc positiu
     eosDigInputCallback onNegEdge;     // -Notifica flanc negatiu
     eosDigInputCallback onChange;      // -Notifica canvi
+    void *context;
 } eosDigInputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei

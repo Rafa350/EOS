@@ -1,10 +1,14 @@
+#include "eos.h"
+
+#if eosOPTIONS_UseI2CMasterService == 1
+
 #include "System/eosMemory.h"
+#include "System/eosInterrupts.h"
 #include "System/eosTask.h"
 #include "System/eosQueue.h"
+#include "System/eosSemaphore.h"
 #include "Services/eosI2CMaster.h"
 #include "sys/attribs.h"
-#include "peripheral/i2c/plib_i2c.h"
-#include "peripheral/int/plib_int.h"
 
 
 #define __intPriority                  INT_PRIORITY_LEVEL2
@@ -31,6 +35,7 @@ typedef enum {                         // Estat de la transaccio
 typedef struct __eosI2CTransaction {   // Dades internes d'una transaccio
     bool inUse;                        // -Indica si esta en us en el pool
     I2C_MODULE_ID id;                  // -Identificador de modul i2c
+    eosSemaphoreHandle hSemaphore;     // -Semafor per notificar el fi de la transaccio
     eosI2CTransactionState state;      // -Estat de la transaccio
     BYTE address;                      // -Adressa de l'esclau
     unsigned index;                    // -Index
@@ -39,6 +44,7 @@ typedef struct __eosI2CTransaction {   // Dades internes d'una transaccio
     bool writeMode;                    // -Indica si esta en modus escriptura
     BYTE check;                        // -Byte de verificacio
     eosI2CMasterCallback onEndTransaction;  // -Event END_TRANSACTION
+    eosI2CMasterCallback onError;      // -Event ON_ERROR
     void *context;                     // -Parametres del event
     BYTE *txBuffer;                    // -Buffer de transmissio
     unsigned txCount;                  // -Numero de bytes a transmetre
@@ -46,24 +52,19 @@ typedef struct __eosI2CTransaction {   // Dades internes d'una transaccio
     unsigned rxCount;                  // -Numero de bytes en el buffer de recepcio
     unsigned rxSize;                   // -Tamany del buffer de recepcio en bytes
     unsigned error;                    // -Codi d'error
-    eosI2CTransactionHandle hNextTransaction;    // -Seguent transaccio en la cua
 } eosI2CTransaction;
 
 typedef struct __eosI2CMasterService { // Dades internes del servei
     I2C_MODULE_ID id;                  // -El identificador del modul i2c
-    eosI2CTransactionHandle hCurrentTransaction; // -Transaccio en proces
-    eosI2CTransactionHandle hTransactionPool;    // -Pool de transaccions
     eosTaskHandle hTask;               // -Handler de la tasca
     eosQueueHandle hTransactionQueue;  // -Handler de la cua de transaccions
+    eosSemaphoreHandle hSemaphore;     // -Semafor de fi de transaccio
+    eosPoolHandle hPool;               // -Pool de memoria per les transaccions
 } eosI2CMasterService;
 
+
+static unsigned serviceCount = 0;
 static eosI2CTransactionHandle transactionMap[I2C_NUMBER_OF_MODULES];
-
-
-// Pool de memoria per transaccions
-//
-static bool transactionPoolInitialized = false;
-static eosI2CTransaction transactionPool[eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS];
 
 static void task(void *params);
 static void i2cInitialize(I2C_MODULE_ID id);
@@ -73,9 +74,7 @@ extern void __ISR(_I2C_1_VECTOR, IPL2SOFT) isrI2C1Wrapper(void);
 extern void __ISR(_I2C_2_VECTOR, IPL2SOFT) isrI2C2Wrapper(void);
 extern void __ISR(_I2C_3_VECTOR, IPL2SOFT) isrI2C3Wrapper(void);
 extern void __ISR(_I2C_4_VECTOR, IPL2SOFT) isrI2C4Wrapper(void);
-
-static eosI2CTransactionHandle allocTransaction(void);
-static void freeTransaction(eosI2CTransactionHandle hTransaction);
+extern void __ISR(_I2C_5_VECTOR, IPL2SOFT) isrI2C5Wrapper(void);
 
 
 /*************************************************************************
@@ -96,28 +95,39 @@ static void freeTransaction(eosI2CTransactionHandle hTransaction);
 
 eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
     eosI2CServiceParams *params) {
+    
+    eosDebugVerify(params != NULL);
 
-    unsigned transactionPoolSize = sizeof(eosI2CTransaction) * eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS;
-
-    // Crea el bloc de memoria complert per servei. Inclueix el propi
-    // servei i el pool de transaccions
-    //
-    eosI2CMasterServiceHandle hService = (eosI2CMasterServiceHandle) eosAlloc(
-        sizeof(eosI2CMasterService) + transactionPoolSize);
+    eosI2CMasterServiceHandle hService = eosAlloc(sizeof(eosI2CMasterService));
     if (hService != NULL) {
+        
+        serviceCount++;
+        eosDebugVerify(serviceCount < (unsigned) I2C_NUMBER_OF_MODULES );
+        eosDebugVerify(serviceCount < (unsigned) eosI2CMasterService_MaxInstances);
 
         // -Inicialitza les dades internes del servei
         //
         hService->id = params->id;
-        hService->hTransactionPool = (eosI2CTransactionHandle)((BYTE*) hService + sizeof(eosI2CMasterService));
+        
+        // -Crea el pool de memoria per les transaccions
+        //
+        hService->hPool = eosPoolCreate(sizeof(eosI2CTransaction), eosI2CMasterService_MaxTransactions);
+        eosDebugVerify(hService->hPool != NULL);
         
         // -Crea la tasca de gestio
         //        
         hService->hTask = eosTaskCreate(0, 512, task, hService);
+        eosDebugVerify(hService->hTask != NULL);
         
         // -Crea la cua de transaccions
         //
-        hService->hTransactionQueue = eosQueueCreate(sizeof(eosI2CTransactionHandle), 10);
+        hService->hTransactionQueue = eosQueueCreate(sizeof(eosI2CTransactionHandle), eosI2CMasterService_MaxTransactions);
+        eosDebugVerify(hService->hTransactionQueue != NULL);
+        
+        // -Crea el semaforo de final de transaccio
+        //
+        hService->hSemaphore = eosSemaphoreCreate();
+        eosDebugVerify(hService->hSemaphore != NULL);
 
         // -Inicialitza el mapa de transaccions per les interrupcions
         //
@@ -145,54 +155,50 @@ static void task(
     void *params) {
 
     eosI2CMasterServiceHandle hService = params;
+    I2C_MODULE_ID id = hService->id;
     
-    i2cInitialize(hService->id);
+    i2cInitialize(id);
 
     while (true) {
-        
+           
         eosI2CTransactionHandle hTransaction;
-        while (eosQueueGet(hService->hTransactionQueue, &hTransaction, 1000)) {
+        while (eosQueueGet(hService->hTransactionQueue, &hTransaction, 0xFFFFFFFF)) {
         
             // Espera a que el bus estigui lliure
             //
-            while (!PLIB_I2C_BusIsIdle(hService->id)) 
+            while (!PLIB_I2C_BusIsIdle(id)) 
                 eosTaskDelay(20);
 
             // Prepara la transaccio
             //
             hTransaction->writeMode = hTransaction->txBuffer && hTransaction->txCount;
             hTransaction->state = transactionSendAddress;
-
-            hService->hCurrentTransaction = hTransaction;
+            hTransaction->hSemaphore = hService->hSemaphore;
 
             // Inicia la comunicacio. A partir d'aquest punt es
             // generen les interrupcions del modul I2C
             //
-            transactionMap[hService->id] = hTransaction;
-            PLIB_I2C_MasterStart(hService->id);
+            transactionMap[id] = hTransaction;
+            PLIB_I2C_MasterStart(id);
 
             // Espera que finalitzi la transaccio
             //
-
-             eosI2CTransactionHandle hTransaction = hService->hCurrentTransaction;
+            if (eosSemaphoreTake(hService->hSemaphore, eosI2CMasterService_TransactionTimeout)) {
                 
-            // Comprova si ha finalitzat la transaccio
-            //
-            if (hTransaction->state == transactionFinished) {
-
                 // Crida a la funcio callback, si esta definida
                 //
                 if (hTransaction->onEndTransaction != NULL)
-                    hTransaction->onEndTransaction(hTransaction);
-
-                // Destrueix la transaccio
-                //
-                freeTransaction(hTransaction);
-                transactionMap[hService->id] = NULL;
+                    hTransaction->onEndTransaction(hTransaction, hTransaction->context);
 
                 // Retart entre transaccions
                 //
+                eosTaskDelay(eosI2CMasterService_EndTransactionDelay);
             } 
+            
+            // Destrueix la transaccio
+            //
+            eosPoolFree(hTransaction);
+            transactionMap[id] = NULL;
         }
     }
 }
@@ -219,12 +225,15 @@ static void task(
 eosI2CTransactionHandle eosI2CMasterStartTransaction(
     eosI2CMasterServiceHandle hService,
     eosI2CTransactionParams *params) {
+    
+    eosDebugVerify(hService != NULL);
+    eosDebugVerify(params != NULL);
 
     if ((params->txBuffer == NULL || params->txCount == 0) &&
        (params->rxBuffer == NULL || params->rxSize  == 0))
         return NULL;
-
-    eosI2CTransactionHandle hTransaction = allocTransaction();
+    
+    eosI2CTransactionHandle hTransaction = eosPoolAlloc(hService->hPool);
     if (hTransaction != NULL) {
 
         hTransaction->id = hService->id;
@@ -240,7 +249,7 @@ eosI2CTransactionHandle eosI2CMasterStartTransaction(
 
         // Afegeix la transaccio a la cua
         //
-        eosQueuePut(hService->hTransactionQueue, hTransaction, 1000);
+        eosQueuePut(hService->hTransactionQueue, &hTransaction, 1000);
     }
     
     return hTransaction;
@@ -251,12 +260,6 @@ unsigned eosI2CMasterGetTransactionResult(
     eosI2CTransactionHandle hTransaction) {
 
     return hTransaction->error;
-}
-
-void *eosI2CMasterGetTransactionContext(
-    eosI2CTransactionHandle hTransaction) {
-
-    return hTransaction->context;
 }
 
 
@@ -271,7 +274,7 @@ void *eosI2CMasterGetTransactionContext(
 
 void isrI2C1Handler(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_1_MASTER)) {
+    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_1_MASTER)) {
         i2cInterruptService(I2C_ID_1);
         eosInterruptSourceFlagClear(INT_SOURCE_I2C_1_MASTER);
     }
@@ -279,7 +282,7 @@ void isrI2C1Handler(void) {
 
 void isrI2C2Handler(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_2_MASTER)) {
+    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_2_MASTER)) {
         i2cInterruptService(I2C_ID_2);
         eosInterruptSourceFlagClear(INT_SOURCE_I2C_2_MASTER);
     }
@@ -287,7 +290,7 @@ void isrI2C2Handler(void) {
 
 void isrI2C3Handler(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_3_MASTER)) {
+    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_3_MASTER)) {
         i2cInterruptService(I2C_ID_3);
         eosInterruptSourceFlagClear(INT_SOURCE_I2C_3_MASTER);
     }
@@ -295,7 +298,7 @@ void isrI2C3Handler(void) {
 
 void isrI2C4Handler(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_4_MASTER)) {
+    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_4_MASTER)) {
         i2cInterruptService(I2C_ID_4);
         eosInterruptSourceFlagClear(INT_SOURCE_I2C_4_MASTER);
     }
@@ -303,7 +306,7 @@ void isrI2C4Handler(void) {
 
 void isrI2C5Handler(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_5_MASTER)) {
+    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_5_MASTER)) {
         i2cInterruptService(I2C_ID_5);
         eosInterruptSourceFlagClear(INT_SOURCE_I2C_5_MASTER);
     }
@@ -569,61 +572,11 @@ static void i2cInterruptService(
 
             case transactionWaitStop:
                 hTransaction->state = transactionFinished;
+                eosSemaphoreISRGive(hTransaction->hSemaphore);
                 break;
         }
     }
 }
 
 
-/*************************************************************************
- *
- *       Crea una objecte I2CTransaction
- *
- *       Funcio:
- *           eosI2CTransactionHandle allocTransaction(void)
- *
- *       Retorn:
- *           El handler del objecte creat. NULL en cas d'error
- *
- *************************************************************************/
-
-static eosI2CTransactionHandle allocTransaction(void) {
-
-    int i = 0;
-
-    if (!transactionPoolInitialized) {
-        for (i = 0; i < sizeof(transactionPool) / sizeof(transactionPool[0]); i++)
-            transactionPool[i].inUse = false;
-        transactionPoolInitialized = true;
-    }
-
-    for (i = 0; i < sizeof(transactionPool) / sizeof(transactionPool[0]); i++) {
-        eosI2CTransactionHandle hTransaction = &transactionPool[i];
-        if (!hTransaction->inUse) {
-            hTransaction->inUse = true;
-            return hTransaction;
-        }
-    }
-    
-    return NULL;
-}
-
-
-/*************************************************************************
- *
- *       Destrueix un objecte I2Ctransaction
- *
- *       Funcio:
- *           void freeTransaction(
- *               eosI2CTransactionHandle hTransaction)
- *
- *       Entrada:
- *           hTransaction: El objecte a destruir
- *
- *************************************************************************/
-
-static void freeTransaction(
-    eosI2CTransactionHandle hTransaction) {
-
-    hTransaction->inUse = false;
-}
+#endif

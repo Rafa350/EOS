@@ -59,8 +59,9 @@ eosTaskHandle eosTaskCreate(
 
 void eosTaskDelay(
     unsigned delay) {
-
-    vTaskDelay(delay);
+    
+    if (delay > 0)
+        vTaskDelay(delay);
 }
 
 
@@ -84,7 +85,8 @@ void eosTaskDelay(
 
 void eosTaskDelayUntil(unsigned delay, unsigned *lastTick) {
     
-    vTaskDelayUntil(lastTick, delay);
+    if (delay > 0)
+        vTaskDelayUntil(lastTick, delay);
 }
 
 

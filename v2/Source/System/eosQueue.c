@@ -31,23 +31,6 @@ eosQueueHandle eosQueueCreate(
 
 /*************************************************************************
  *
- *       Borra el contingut de la cua
- *
- *       Funcio:
- *           void eosQueueClear(
- *               eosQueueHandle hQueue) 
- * 
- *       Entrada:
- *           hQueue: El handler de la cua
- * 
- *************************************************************************/
-
-void eosQueueClear(eosQueueHandle hQueue) {
-        
-}
-
-/*************************************************************************
- *
  *       Afegeix un element en la cua
  *
  *       Funcio:

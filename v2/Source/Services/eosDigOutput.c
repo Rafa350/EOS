@@ -1,6 +1,6 @@
 #include "eos.h"
 
-#ifdef eosOPTIONS_UseDigOutputService
+#if eosOPTIONS_UseDigOutputService == 1
 
 #include "Services/eosDigOutput.h"
 #include "System/eosMemory.h"
@@ -80,6 +80,9 @@ eosDigOutputHandle eosDigOutputCreate(
     eosDigOutputServiceHandle hService,
     eosDigOutputParams *params) {
 
+    eosDebugVerify(hService != NULL);
+    eosDebugVerify(params != NULL);
+
     // Crea el bloc de memoria
     //
     eosDigOutputHandle hOutput = eosAlloc(sizeof(eosDigOutput));
@@ -127,6 +130,8 @@ eosDigOutputHandle eosDigOutputCreate(
 
 bool eosDigOutputGet(
     eosDigOutputHandle hOutput) {
+    
+    eosDebugVerify(hOutput != NULL);
 
     bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hOutput->channel, hOutput->position);
     return hOutput->inverted ? !p : p;
@@ -152,6 +157,8 @@ void eosDigOutputSet(
     eosDigOutputHandle hOutput,
     bool state) {
 
+    eosDebugVerify(hOutput != NULL);
+
     eosTaskSuspendAll();
     PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position, 
         hOutput->inverted ? state : !state);
@@ -175,6 +182,8 @@ void eosDigOutputSet(
 
 void eosDigOutputToggle(
     eosDigOutputHandle hOutput) {
+
+    eosDebugVerify(hOutput != NULL);
 
     eosTaskSuspendAll();
     PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);
@@ -205,7 +214,9 @@ void eosDigOutputToggle(
 void eosDigOutputPulse(
     eosDigOutputHandle hOutput,
     unsigned time) {
-    
+
+    eosDebugVerify(hOutput != NULL);
+
     if (time >= TASK_PERIOD) {
 
         eosTaskSuspendAll();

@@ -18,6 +18,8 @@
           <itemPath>../../Include/System/eosMemory.h</itemPath>
           <itemPath>../../Include/System/eosQueue.h</itemPath>
           <itemPath>../../Include/System/eosTimer.h</itemPath>
+          <itemPath>../../Include/System/eosSemaphore.h</itemPath>
+          <itemPath>../../Include/System/eosInterrupts.h</itemPath>
         </logicalFolder>
         <itemPath>../../Include/eos.h</itemPath>
         <itemPath>../eosConfig.h</itemPath>
@@ -57,6 +59,8 @@
           <itemPath>../../Source/System/eosHeap.c</itemPath>
           <itemPath>../../Source/System/eosInterrupt.c</itemPath>
           <itemPath>../../Source/System/eosQueue.c</itemPath>
+          <itemPath>../../Source/System/eosSemaphore.c</itemPath>
+          <itemPath>../../Source/System/eosPool.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">

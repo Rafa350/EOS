@@ -6,7 +6,6 @@
 #include "GenericTypeDefs.h"
 #include "system/int/sys_int.h"
 #include "system/wdt/sys_wdt.h"
-#include "peripheral/int/plib_int.h"
 
 
 // Opcions predefinides, si cal, s'han de desabilitar en eosConfig.h
@@ -45,19 +44,10 @@ typedef void (*eosCallback)(void *sender, void *context); // Funcio callback
 
 
 extern void eosMain(void);
-#define eosSetError(code, str)
+
+#define eosDebugVerify(x)
 
 
-// Gestio de les interrupcions
-//
-#define eosInterruptEnable()                PLIB_INT_Enable(INT_ID_0)
-#define eosInterruptRestore(e)              if (e) PLIB_INT_Enable(INT_ID_0)
-#define eosInterruptSourceEnable(s)         PLIB_INT_SourceEnable(INT_ID_0, s)
-#define eosInterruptSourceRestore(s, e)     if (e) PLIB_INT_SourceEnable(INT_ID_0, s)
-#define eosInterruptSourceFlagClear(s)      PLIB_INT_SourceFlagClear(INT_ID_0, s)
-
-extern bool eosInterruptDisable();
-extern bool eosInterruptSourceDisable(INT_SOURCE source);
 
 // Gestio del watchdog
 //

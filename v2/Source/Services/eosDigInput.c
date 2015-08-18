@@ -1,6 +1,6 @@
 #include "eos.h"
 
-#ifdef eosOPTIONS_UseDigInputService
+#if eosOPTIONS_UseDigInputService == 1
 
 #include "Services/eosDigInput.h"
 #include "System/eosMemory.h"
@@ -22,6 +22,7 @@ typedef struct __eosDigInput {         // Dades d'una entrada
     eosDigInputCallback onPosEdge;     // -Event POSEDGE
     eosDigInputCallback onNegEdge;     // -Event NEGEDGE
     eosDigInputCallback onChange;      // -Event CHANGE
+    void *context;                     // -Parametre del event
     UINT32 pattern;                    // -Patro de filtratge
     bool state;                        // -Indicador ON/OFF
     bool posEdge;                      // -Indica si s'ha rebut un flanc positiu
@@ -58,9 +59,9 @@ eosDigInputServiceHandle eosDigInputServiceInitialize(
 
     eosDigInputServiceHandle hService = eosAlloc(sizeof(eosDigInputService));
     if (hService != NULL) {
-            hService->hFirstInput = NULL;
-            hService->hTask = eosTaskCreate(0, 512, task, hService);
-       }
+        hService->hFirstInput = NULL;
+        hService->hTask = eosTaskCreate(0, 512, task, hService);
+   }
 
     return hService;
 }
@@ -87,6 +88,9 @@ eosDigInputServiceHandle eosDigInputServiceInitialize(
 eosDigInputHandle eosDigInputCreate(
     eosDigInputServiceHandle hService,
     eosDigInputParams *params) {
+    
+    eosDebugVerify(hService != NULL);
+    eosDebugVerify(params != NULL);
 
     eosDigInputHandle hInput = eosAlloc(sizeof(eosDigInput));
     if (hInput != NULL) {
@@ -141,6 +145,8 @@ eosDigInputHandle eosDigInputCreate(
 
 bool eosDigInputGet(
     eosDigInputHandle hInput) {
+    
+    eosDebugVerify(hInput != NULL);
 
     return hInput->state;
 }
@@ -164,6 +170,8 @@ bool eosDigInputGet(
 
 bool eosDigInputPosEdge(
     eosDigInputHandle hInput) {
+
+    eosDebugVerify(hInput != NULL);
 
     if (hInput->posEdge) {
         hInput->posEdge = false;
@@ -192,6 +200,8 @@ bool eosDigInputPosEdge(
 
 bool eosDigInputNegEdge(
     eosDigInputHandle hInput) {
+
+    eosDebugVerify(hInput != NULL);
 
     if (hInput->negEdge) {
         hInput->negEdge = false;
@@ -224,8 +234,6 @@ static void task(
         
         eosTaskDelayUntil(10, &tc);
         
-        eosTaskSuspendAll();
-        
         eosDigInputHandle hInput = hService->hFirstInput;
         while (hInput) {
 
@@ -240,11 +248,11 @@ static void task(
                 hInput->state = true;
                 hInput->posEdge = true;
                 if (hInput->onPosEdge != NULL) {
-                    hInput->onPosEdge(hInput);
+                    hInput->onPosEdge(hInput, hInput->context);
                     hInput->posEdge = false;
                 }
                 else if (hInput->onChange != NULL) {
-                    hInput->onChange(hInput);
+                    hInput->onChange(hInput, hInput->context);
                     hInput->posEdge = false;
                 }
             }
@@ -252,19 +260,17 @@ static void task(
                 hInput->state = false;
                 hInput->negEdge = true;
                 if (hInput->onNegEdge != NULL) {
-                    hInput->onNegEdge(hInput);
+                    hInput->onNegEdge(hInput, hInput->context);
                     hInput->negEdge = false;
                 }
                 else if (hInput->onChange != NULL) {
-                    hInput->onChange(hInput);
+                    hInput->onChange(hInput, hInput->context);
                     hInput->negEdge = false;
                 }
             }
 
             hInput = hInput->hNextInput;
         }
-        
-        eosTaskResumeAll();
     }
 }
 
