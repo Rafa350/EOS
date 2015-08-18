@@ -1,13 +1,7 @@
 #include "eos.h"
 #include "System/eosTask.h"
-#include "System/eosMemory.h"
 #include "FreeRTOS.h"
 #include "task.h"
-
-
-typedef struct __eosTask {
-    TaskHandle_t rtosTask;    
-} eosTask;
 
 
 /*************************************************************************
@@ -38,21 +32,15 @@ eosTaskHandle eosTaskCreate(
     eosTaskFunction taskFunction, 
     void *taskParams) {
     
-    eosTaskHandle hTask = eosAlloc(sizeof(struct __eosTask));
-    if (hTask != NULL) {
-        
-        if (stackSize < configMINIMAL_STACK_SIZE)
-            stackSize = configMINIMAL_STACK_SIZE;
-        
-        if (xTaskCreate(taskFunction, "", stackSize, taskParams, 
-            tskIDLE_PRIORITY,  &hTask->rtosTask) != pdPASS) {
-
-            eosFree(hTask);
-            hTask = NULL;
-        }
-    }
+    if (stackSize < configMINIMAL_STACK_SIZE)
+        stackSize = configMINIMAL_STACK_SIZE;
     
-    return hTask;
+    eosTaskHandle hTask;
+    if (xTaskCreate(taskFunction, "", stackSize, taskParams, 
+        tskIDLE_PRIORITY, &hTask) == pdPASS)
+        return hTask;
+    else
+        return NULL;
 }
 
 

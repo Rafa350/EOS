@@ -111,7 +111,6 @@ eosDigInputHandle eosDigInputCreate(
         PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, hInput->channel, hInput->position);
 
         bool p =  PLIB_PORTS_PinGet(PORTS_ID_0, hInput->channel, hInput->position);
-        
         hInput->state = hInput->inverted ? !p : p;
 
         if (hInput->state)

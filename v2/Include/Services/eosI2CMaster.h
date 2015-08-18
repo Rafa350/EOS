@@ -2,13 +2,8 @@
 #define __EOS_I2CMASTER_H
 
 
-#ifndef __EOS_H
 #include "eos.h"
-#endif
-
-#ifndef _PLIB_I2C_H
 #include "peripheral/i2c/plib_i2c.h"
-#endif
 
 
 #define eos_ERROR_I2C_INVALID_MODULE   (eos_ERROR_USER + 0)
@@ -37,8 +32,6 @@ typedef struct {                       // Parametres d'una transaccio
 
 
 extern eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(eosI2CServiceParams *params);
-extern bool eosI2CMasterIsReady(eosI2CMasterServiceHandle hService);
-extern void eosI2CMasterServiceTask(eosI2CMasterServiceHandle hService);
 
 extern eosI2CTransactionHandle eosI2CMasterStartTransaction(eosI2CMasterServiceHandle hService, eosI2CTransactionParams *params);
 extern void *eosI2CMasterGetTransactionContext(eosI2CTransactionHandle hTransaction);

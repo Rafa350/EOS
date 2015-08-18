@@ -1,12 +1,6 @@
 #include "System/eosQueue.h"
-#include "System/eosMemory.h"
 #include "FreeRTOS.h"
 #include "queue.h"
-
-
-typedef struct __eosQueue {            
-    QueueHandle_t rtosHandle;
-} eosQueue;
 
 
 /*************************************************************************
@@ -15,10 +9,12 @@ typedef struct __eosQueue {
  *
  *       Funcio:
  *           eosQueueHandle eosQueueCreate(
- *               eosQueueParams *params)
+ *               unsigned itemSize,
+ *               unsigned maxItems)
  *
  *       Entrada:
- *           params: Parametres d'inicialitzacio de la cua
+ *           itemSize: Tamany de cada item
+ *           maxItems: Numero maxim d'items en la cua
  *
  *       Retorn:
  *           El handler de la cua. NULL en cas d'error
@@ -26,21 +22,29 @@ typedef struct __eosQueue {
  *************************************************************************/
 
 eosQueueHandle eosQueueCreate(
-    eosQueueParams *params) {
+    unsigned  itemSize,
+    unsigned maxItems) {
     
-    eosQueueHandle hQueue = eosAlloc(sizeof(eosQueue));
-    if (hQueue != NULL) {
-        
-        hQueue->rtosHandle = xQueueCreate(params->maxItems, params->itemSize);
-        if (hQueue->rtosHandle == NULL) {
-            
-            eosFree(hQueue);
-            hQueue = NULL;
-        }
-    }
-    return hQueue;
+    return xQueueCreate(maxItems, itemSize);
 }
 
+
+/*************************************************************************
+ *
+ *       Borra el contingut de la cua
+ *
+ *       Funcio:
+ *           void eosQueueClear(
+ *               eosQueueHandle hQueue) 
+ * 
+ *       Entrada:
+ *           hQueue: El handler de la cua
+ * 
+ *************************************************************************/
+
+void eosQueueClear(eosQueueHandle hQueue) {
+        
+}
 
 /*************************************************************************
  *
@@ -67,7 +71,7 @@ bool eosQueuePut(
     void* data,
     unsigned timeout) {
     
-    return xQueueSend(hQueue, data, timeout / portTICK_PERIOD_MS) == pdPASS;
+    return xQueueSendToBack(hQueue, data, timeout) == pdPASS;
 }
 
 
@@ -96,7 +100,7 @@ bool eosQueueGet(
     void *data,
     unsigned timeout) {
 
-    return xQueueReceive(hQueue, data, timeout / portTICK_PERIOD_MS) == pdPASS;
+    return xQueueReceive(hQueue, data, timeout) == pdPASS;
 }
 
 

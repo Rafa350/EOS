@@ -1,6 +1,6 @@
 #include "System/eosMemory.h"
+#include "System/eosTask.h"
 #include "Services/eosI2CMaster.h"
-#include "Services/eosTick.h"
 #include "sys/attribs.h"
 #include "peripheral/i2c/plib_i2c.h"
 #include "peripheral/int/plib_int.h"
@@ -62,7 +62,7 @@ typedef struct __eosI2CMasterService { // Dades internes del servei
     eosI2CTransactionHandle hFirstTransaction;   // -Primera transaccio de la cua
     eosI2CTransactionHandle hLastTransaction;    // -Ultima transaccio de la cua
     eosI2CTransactionHandle hTransactionPool;    // -Pool de transaccions
-    unsigned tickCount;                // -Contador de ticks
+    eosTaskHandle hTask;               // -Handler de la tasca
 } eosI2CMasterService;
 
 static eosI2CTransactionHandle transactionMap[I2C_NUMBER_OF_MODULES];
@@ -73,9 +73,14 @@ static eosI2CTransactionHandle transactionMap[I2C_NUMBER_OF_MODULES];
 static bool transactionPoolInitialized = false;
 static eosI2CTransaction transactionPool[eosOPTIONS_I2CMASTER_MAX_TRANSACTIONS];
 
-static void tickFunction(eosI2CMasterServiceHandle hService);
+static void task(void *params);
 static void i2cInitialize(I2C_MODULE_ID id);
 static void i2cInterruptService(I2C_MODULE_ID id);
+
+extern void __ISR(_I2C_1_VECTOR, IPL2SOFT) isrI2C1Wrapper(void);
+extern void __ISR(_I2C_2_VECTOR, IPL2SOFT) isrI2C2Wrapper(void);
+extern void __ISR(_I2C_3_VECTOR, IPL2SOFT) isrI2C3Wrapper(void);
+extern void __ISR(_I2C_4_VECTOR, IPL2SOFT) isrI2C4Wrapper(void);
 
 static eosI2CTransactionHandle allocTransaction(void);
 static void freeTransaction(eosI2CTransactionHandle hTransaction);
@@ -115,16 +120,15 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
         hService->state = serviceInitializing;
         hService->hTransactionPool = (eosI2CTransactionHandle)((BYTE*) hService + sizeof(eosI2CMasterService));
         hService->hFirstTransaction = NULL;
-        hService->hLastTransaction = NULL;
-        hService->tickCount = 0;
+        hService->hLastTransaction = NULL;   
+        
+        // -Crea la tasca de gestio
+        //        
+        hService->hTask = eosTaskCreate(0, 512, task, hService);
 
         // -Inicialitza el mapa de transaccions per les interrupcions
         //
         transactionMap[hService->id] = NULL;
-
-        // Asigna la funcio d'interrupcio TICK
-        //
-        eosTickRegisterCallback(NULL, (eosTickCallback) tickFunction, hService, false);
     }
     
     return hService;
@@ -133,43 +137,22 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
 
 /*************************************************************************
  *
- *       Comprova si el servei esta preparat
- *
- *       Funcio:
- *           bool eosI2CMasterServiceIsReady(
- *               eosI2CMasterServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del servei
- *
- *       Retorn:
- *           True si el servei esta preparat, false en cas contrari
- *
- *************************************************************************/
-
-bool eosI2CMasterServiceIsReady(
-    eosI2CMasterServiceHandle hService) {
-
-    return hService->state != serviceInitializing;
-}
-
-
-/*************************************************************************
- *
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void eosI2CMasterServiceTask(
- *               eosI2CMasterServiceHandle hService)
+ *           void task(
+ *               void *params)
  *
  *       Entrada:
- *           hService: El handler del servei
+ *           params: Parametre (hService)
  *
  *************************************************************************/
 
-void eosI2CMasterServiceTask(
-    eosI2CMasterServiceHandle hService) {
+static void task(
+    void *params) {
 
+    eosI2CMasterServiceHandle hService = params;
+    
     switch (hService->state) {
         case serviceInitializing:
             i2cInitialize(hService->id);
@@ -228,15 +211,15 @@ void eosI2CMasterServiceTask(
 
                     // Retart entre transaccions
                     //
-                    hService->tickCount = eosOPTIONS_I2CMASTER_END_TRANSACTION_DELAY;
+                    //hService->tickCount = eosOPTIONS_I2CMASTER_END_TRANSACTION_DELAY;
                     hService->state = serviceWaitEndDelay;
                 }
             }
             break;
 
         case serviceWaitEndDelay:
-            if (!hService->tickCount)
-                hService->state = serviceProcessQueue;
+            //if (!hService->tickCount)
+              //  hService->state = serviceProcessQueue;
             break;
     }
 }
@@ -314,71 +297,50 @@ void *eosI2CMasterGetTransactionContext(
 
 /*************************************************************************
  *
- *       Gestiona la interrupcio TICK
- *
- *       Funcio:
- *           void tickFuncion(
- *               eosI2CMasterServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del servei
- *
- *************************************************************************/
-
-static void tickFunction(
-    eosI2CMasterServiceHandle hService) {
-
-    if (hService->tickCount > 0)
-        hService->tickCount--;
-}
-
-
-/*************************************************************************
- *
  *       Funcio ISR del modul I2C
  * 
  *       Funcio:
- *          void eosI2CMasterServiceISRx(void)
+ *          void isrI2CxHandler(void)
  *
  *************************************************************************/
 
-void __ISR(_I2C_1_VECTOR, IPL2SOFT) eosI2CMasterServiceISR1(void) {
+void isrI2C1Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_1_MASTER)) {
         i2cInterruptService(I2C_ID_1);
-        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_2_MASTER);
+        eosInterruptSourceFlagClear(INT_SOURCE_I2C_1_MASTER);
     }
 }
 
-void __ISR(_I2C_2_VECTOR, IPL2SOFT) eosI2CMasterServiceISR2(void) {
+void isrI2C2Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_2_MASTER)) {
         i2cInterruptService(I2C_ID_2);
-        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_2_MASTER);
+        eosInterruptSourceFlagClear(INT_SOURCE_I2C_2_MASTER);
     }
 }
 
-void __ISR(_I2C_3_VECTOR, IPL2SOFT) eosI2CMasterServiceISR3(void) {
+void isrI2C3Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_3_MASTER)) {
         i2cInterruptService(I2C_ID_3);
-        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_3_MASTER);
+        eosInterruptSourceFlagClear(INT_SOURCE_I2C_3_MASTER);
     }
 }
 
-void __ISR(_I2C_4_VECTOR, IPL2SOFT) eosI2CMasterServiceISR4(void) {
+void isrI2C4Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_4_MASTER)) {
         i2cInterruptService(I2C_ID_4);
-        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_4_MASTER);
+        eosInterruptSourceFlagClear(INT_SOURCE_I2C_4_MASTER);
     }
 }
 
-void __ISR(_I2C_5_VECTOR, IPL2SOFT) eosI2CMasterServiceISR5(void) {
+void isrI2C5Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_5_MASTER)) {
         i2cInterruptService(I2C_ID_5);
-        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_5_MASTER);
+        eosInterruptSourceFlagClear(INT_SOURCE_I2C_5_MASTER);
     }
 }
 
