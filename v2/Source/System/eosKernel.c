@@ -37,13 +37,10 @@ static void eosSetup() {
     // Inicialitza les interrupcions
     //
     SYS_INT_Initialize();
-    SYS_INT_Enable();
-
-    // Inicialitza el servei TICK
+    
+    // Desactiva els ports analogics
     //
-/*    eosTickServiceParams tickServiceParams;
-    memset(&tickServiceParams, 0, sizeof(tickServiceParams));
-    hTickService = eosTickServiceInitialize(&tickServiceParams);*/
+    AD1PCFG = 0xFFFF;
 }
 
 
@@ -58,8 +55,6 @@ static void eosSetup() {
 
 static void eosTask() {
 
-//    SYS_DEVCON_Tasks(hDevCon);
-//    eosTickServiceTask(hTickService);
 }
 
 

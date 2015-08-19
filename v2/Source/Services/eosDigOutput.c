@@ -101,6 +101,7 @@ eosDigOutputHandle eosDigOutputCreate(
         hOutput->timeout = 0;
 
         // Afegeis la sortida a la llista de sortides del servei
+        //
         eosTaskSuspendAll();
         hOutput->hNextOutput = hService->hFirstOutput;
         hService->hFirstOutput = hOutput;
@@ -162,8 +163,10 @@ void eosDigOutputSet(
     eosDebugVerify(hOutput != NULL);
 
     eosTaskSuspendAll();
+    
     portSet(hOutput, state);
     hOutput->timeout = 0;
+    
     eosTaskResumeAll();
 }
 

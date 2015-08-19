@@ -170,8 +170,10 @@ bool eosDigInputPosEdge(
 
     eosDebugVerify(hInput != NULL);
 
+    eosTaskSuspendAll();
     bool result = hInput->posEdge;
     hInput->posEdge = false;
+    eosTaskResumeAll();
     return result;
 }
 
@@ -197,9 +199,11 @@ bool eosDigInputNegEdge(
 
     eosDebugVerify(hInput != NULL);
 
-   bool result = hInput->negEdge;
-   hInput->negEdge = false;
-   return result;
+    eosTaskSuspendAll();
+    bool result = hInput->negEdge;
+    hInput->negEdge = false;
+    eosTaskResumeAll();
+    return result;
 }
 
 
@@ -225,7 +229,11 @@ static void task(
         
         eosTaskDelayUntil(10, &tc);
         
-        eosDigInputHandle hInput = hService->hFirstInput;
+        eosDigInputHandle hInput;
+        
+        // Explora les entrades per coneixa el seu estat
+        //
+        hInput = hService->hFirstInput;
         while (hInput) {
 
             hInput->pattern <<= 1;
@@ -259,23 +267,74 @@ static void task(
 
             hInput = hInput->hNextInput;
         }
+        
+        // Crida a les funcions callback corresponents
+        //
+        /*hInput = hService->hFirstInput;
+        while (hInput) {
+
+            hInput = hInput->hNextInput;
+        }*/
+        
+        // Reseteja flags i variables temporals
+        //
+        /*
+        eosTaskSuspendAll();
+        hInput = hService->hFirstInput;
+        while (hInput) {
+
+            hInput = hInput->hNextInput;
+        }
+        eosTaskResumeAll();*/
     }
 }
 
 
+/*************************************************************************
+ *
+ *       Inicialitza el port d'una entrada
+ *
+ *       Funcio:
+ *           void portInitialize(
+ *               eosDigInputHandle hInput) 
+ * 
+ *       Entrada:
+ *           hInput: Hander de la entrada
+ *
+ *************************************************************************/
+
 static void portInitialize(
     eosDigInputHandle hInput) {
+       
+    /*if (PLIB_PORTS_ExistsPinMode(PORTS_ID_0))
+        PLIB_PORTS_PinModeSelect(PORTS_ID_0, PORTS_ANALOG_PIN_0, PORTS_PIN_MODE_DIGITAL);
+    else if (PLIB_PORTS_ExistsPinModePerPort(PORTS_ID_0))
+        PLIB_PORTS_PinModePerPortSelect(PORTS_ID_0, hInput->channel, hInput->position, PORTS_PIN_MODE_DIGITAL);
     
-    AD1PCFG = 0xFFFF;
-    //PLIB_PORTS_PinModeSelect();
-    //PLIB_PORTS_ChangeNoticePullUpEnable();
-
-    //PLIB_PORTS_PinModePerPortSelect(PORTS_ID_0, hInput->channel, hInput->position, PORTS_PIN_MODE_DIGITAL);
-    //if (true)
-    //    PLIB_PORTS_ChangeNoticePullUpPerPortEnable(PORTS_ID_0, hInput->channel, hInput->position);
+    if (PLIB_PORTS_ExistsChangeNoticePullUp(PORTS_ID_0))
+        PLIB_PORTS_ChangeNoticePullUpEnable(PORTS_ID_0, 0);
+    else if (PLIB_PORTS_ExistsChangeNoticePullUpPerPort(PORTS_ID_0))
+        PLIB_PORTS_ChangeNoticePullUpPerPortEnable(PORTS_ID_0, hInput->channel, hInput->position);
+    */
     PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, hInput->channel, hInput->position);
 }
 
+
+/*************************************************************************
+ *
+ *       Lectura del port d'una entrada
+ *
+ *       Funcio:
+ *           bool portGet(
+ *               eosDigInputHandle hInput) 
+ * 
+ *       Entrada:
+ *           hInput: Handler de l'entrada
+ * 
+ *       Retorn:
+ *           Valor lleigit del port
+ *
+ *************************************************************************/
 
 static bool portGet(
     eosDigInputHandle hInput) {
