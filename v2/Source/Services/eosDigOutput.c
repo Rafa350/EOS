@@ -27,6 +27,10 @@ typedef struct __eosDigOutputService { // Dades del servei
 
 
 static void task(void *params);
+static void portInitialize(eosDigOutputHandle hOutput);
+static bool portGet(eosDigOutputHandle hOutput);
+static void portSet(eosDigOutputHandle hOutput, bool state);
+static void portToggle(eosDigOutputHandle hOutput);
 
 
 /*************************************************************************
@@ -104,8 +108,7 @@ eosDigOutputHandle eosDigOutputCreate(
 
         // Inicialitza el port fisic a estat OFF
         //
-        PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position, hOutput->inverted ? true : false);
-        PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, hOutput->channel, hOutput->position);
+        portInitialize(hOutput);
     }
     
     return hOutput;
@@ -133,8 +136,7 @@ bool eosDigOutputGet(
     
     eosDebugVerify(hOutput != NULL);
 
-    bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hOutput->channel, hOutput->position);
-    return hOutput->inverted ? !p : p;
+    return portGet(hOutput);
 }
 
 
@@ -160,8 +162,7 @@ void eosDigOutputSet(
     eosDebugVerify(hOutput != NULL);
 
     eosTaskSuspendAll();
-    PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position, 
-        hOutput->inverted ? state : !state);
+    portSet(hOutput, state);
     hOutput->timeout = 0;
     eosTaskResumeAll();
 }
@@ -186,8 +187,10 @@ void eosDigOutputToggle(
     eosDebugVerify(hOutput != NULL);
 
     eosTaskSuspendAll();
-    PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);
+    
+    portToggle(hOutput);
     hOutput->timeout = 0;
+    
     eosTaskResumeAll();
 }
 
@@ -220,9 +223,11 @@ void eosDigOutputPulse(
     if (time >= TASK_PERIOD) {
 
         eosTaskSuspendAll();
+        
         if (hOutput->timeout == 0)
-            PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);
+            portToggle(hOutput);
         hOutput->timeout = time / TASK_PERIOD;
+        
         eosTaskResumeAll();
     }
 }
@@ -259,7 +264,7 @@ static void task(void *param) {
             if (timeout > 0) {
                 timeout -= 1;
                 if (timeout == 0)
-                    PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);
+                    portToggle(hOutput);
                 hOutput->timeout = timeout;
             }        
             hOutput = hOutput->hNextOutput;
@@ -267,6 +272,38 @@ static void task(void *param) {
         
         eosTaskResumeAll();
     }
+}
+
+
+static void portInitialize(
+    eosDigOutputHandle hOutput) {
+        
+    PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position, hOutput->inverted ? true : false);
+    PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, hOutput->channel, hOutput->position);
+}
+
+
+static bool portGet(
+    eosDigOutputHandle hOutput) {
+    
+    bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hOutput->channel, hOutput->position);
+    return hOutput->inverted ? !p : p;
+}
+
+
+static void portSet(
+    eosDigOutputHandle hOutput, 
+    bool state) {
+    
+    PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position, 
+        hOutput->inverted ? state : !state);
+}
+
+
+static void portToggle(
+    eosDigOutputHandle hOutput) {
+
+    PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);    
 }
 
 

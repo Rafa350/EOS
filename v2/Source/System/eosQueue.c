@@ -29,6 +29,13 @@ eosQueueHandle eosQueueCreate(
 }
 
 
+void eosQueueClear(
+    eosQueueHandle hQueue) {
+
+    xQueueReset(hQueue);
+}
+
+
 /*************************************************************************
  *
  *       Afegeix un element en la cua

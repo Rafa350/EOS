@@ -68,7 +68,7 @@ static eosI2CTransactionHandle transactionMap[I2C_NUMBER_OF_MODULES];
 
 static void task(void *params);
 static void i2cInitialize(I2C_MODULE_ID id);
-static void i2cInterruptService(I2C_MODULE_ID id);
+static void i2cInterrupt(I2C_MODULE_ID id);
 
 extern void __ISR(_I2C_1_VECTOR, IPL2SOFT) isrI2C1Wrapper(void);
 extern void __ISR(_I2C_2_VECTOR, IPL2SOFT) isrI2C2Wrapper(void);
@@ -140,6 +140,118 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
 
 /*************************************************************************
  *
+ *       Inicia una transaccio
+ *
+ *       Funcio:
+ *           eosI2CTransactionHandle eosI2CMasterStartTransaction(
+ *               eosI2CMasterServiceHandle hService,
+ *               eosI2CTransactionParams *params)
+ *
+ *       Entrada:
+ *           hService: El handler del servei
+ *           params  : Parametres de la transaccio
+ *
+ *       Retorn:
+ *           El handler de la transaccio. NULL en cas d'error
+ *
+ *************************************************************************/
+
+eosI2CTransactionHandle eosI2CMasterStartTransaction(
+    eosI2CMasterServiceHandle hService,
+    eosI2CTransactionParams *params) {
+    
+    eosDebugVerify(hService != NULL);
+    eosDebugVerify(params != NULL);
+
+    if ((params->txBuffer == NULL || params->txCount == 0) &&
+       (params->rxBuffer == NULL || params->rxSize  == 0))
+        return NULL;
+    
+    eosI2CTransactionHandle hTransaction = eosPoolAlloc(hService->hPool);
+    if (hTransaction != NULL) {
+
+        hTransaction->id = hService->id;
+        hTransaction->state = transactionIdle;
+        hTransaction->address = params->address;
+        hTransaction->txBuffer = params->txBuffer;
+        hTransaction->txCount = params->txCount;
+        hTransaction->rxBuffer = params->rxBuffer;
+        hTransaction->rxSize = params->rxSize;
+        hTransaction->onEndTransaction = params->onEndTransaction;
+        hTransaction->context = params->context;
+        hTransaction->error = 0;
+
+        // Afegeix la transaccio a la cua
+        //
+        if (!eosQueuePut(hService->hTransactionQueue, &hTransaction, 5000)) {
+            eosPoolFree(hTransaction);
+            hTransaction = NULL;
+        }
+    }
+    
+    return hTransaction;
+}
+
+
+unsigned eosI2CMasterGetTransactionResult(
+    eosI2CTransactionHandle hTransaction) {
+
+    return hTransaction->error;
+}
+
+
+/*************************************************************************
+ *
+ *       Funcio ISR del modul I2C
+ * 
+ *       Funcio:
+ *          void isrI2CxHandler(void)
+ *
+ *************************************************************************/
+
+void isrI2C1Handler(void) {
+
+    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_1_MASTER)) {
+        i2cInterrupt(I2C_ID_1);
+        eosInterruptSourceFlagClear(INT_SOURCE_I2C_1_MASTER);
+    }
+}
+
+void isrI2C2Handler(void) {
+
+    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_2_MASTER)) {
+        i2cInterrupt(I2C_ID_2);
+        eosInterruptSourceFlagClear(INT_SOURCE_I2C_2_MASTER);
+    }
+}
+
+void isrI2C3Handler(void) {
+
+    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_3_MASTER)) {
+        i2cInterrupt(I2C_ID_3);
+        eosInterruptSourceFlagClear(INT_SOURCE_I2C_3_MASTER);
+    }
+}
+
+void isrI2C4Handler(void) {
+
+    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_4_MASTER)) {
+        i2cInterrupt(I2C_ID_4);
+        eosInterruptSourceFlagClear(INT_SOURCE_I2C_4_MASTER);
+    }
+}
+
+void isrI2C5Handler(void) {
+
+    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_5_MASTER)) {
+        i2cInterrupt(I2C_ID_5);
+        eosInterruptSourceFlagClear(INT_SOURCE_I2C_5_MASTER);
+    }
+}
+
+
+/*************************************************************************
+ *
  *       Procesa les tasques del servei
  *
  *       Funcio:
@@ -189,126 +301,24 @@ static void task(
                 //
                 if (hTransaction->onEndTransaction != NULL)
                     hTransaction->onEndTransaction(hTransaction, hTransaction->context);
-
-                // Retart entre transaccions
+            }
+            else {
+                
+                // Crida a la funcio callback, si esta definida
                 //
-                eosTaskDelay(eosI2CMasterService_EndTransactionDelay);
-            } 
+                if (hTransaction->onError != NULL)
+                    hTransaction->onError(hTransaction, hTransaction->context);
+            }
+
+            // Retart entre transaccions
+            //
+            eosTaskDelay(eosI2CMasterService_EndTransactionDelay);
             
             // Destrueix la transaccio
             //
             eosPoolFree(hTransaction);
             transactionMap[id] = NULL;
         }
-    }
-}
-
-
-/*************************************************************************
- *
- *       Inicia una transaccio
- *
- *       Funcio:
- *           eosI2CTransactionHandle eosI2CMasterStartTransaction(
- *               eosI2CMasterServiceHandle hService,
- *               eosI2CTransactionParams *params)
- *
- *       Entrada:
- *           hService: El handler del servei
- *           params  : Parametres de la transaccio
- *
- *       Retorn:
- *           El handler de la transaccio. NULL en cas d'error
- *
- *************************************************************************/
-
-eosI2CTransactionHandle eosI2CMasterStartTransaction(
-    eosI2CMasterServiceHandle hService,
-    eosI2CTransactionParams *params) {
-    
-    eosDebugVerify(hService != NULL);
-    eosDebugVerify(params != NULL);
-
-    if ((params->txBuffer == NULL || params->txCount == 0) &&
-       (params->rxBuffer == NULL || params->rxSize  == 0))
-        return NULL;
-    
-    eosI2CTransactionHandle hTransaction = eosPoolAlloc(hService->hPool);
-    if (hTransaction != NULL) {
-
-        hTransaction->id = hService->id;
-        hTransaction->state = transactionIdle;
-        hTransaction->address = params->address;
-        hTransaction->txBuffer = params->txBuffer;
-        hTransaction->txCount = params->txCount;
-        hTransaction->rxBuffer = params->rxBuffer;
-        hTransaction->rxSize = params->rxSize;
-        hTransaction->onEndTransaction = params->onEndTransaction;
-        hTransaction->context = params->context;
-        hTransaction->error = 0;
-
-        // Afegeix la transaccio a la cua
-        //
-        eosQueuePut(hService->hTransactionQueue, &hTransaction, 1000);
-    }
-    
-    return hTransaction;
-}
-
-
-unsigned eosI2CMasterGetTransactionResult(
-    eosI2CTransactionHandle hTransaction) {
-
-    return hTransaction->error;
-}
-
-
-/*************************************************************************
- *
- *       Funcio ISR del modul I2C
- * 
- *       Funcio:
- *          void isrI2CxHandler(void)
- *
- *************************************************************************/
-
-void isrI2C1Handler(void) {
-
-    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_1_MASTER)) {
-        i2cInterruptService(I2C_ID_1);
-        eosInterruptSourceFlagClear(INT_SOURCE_I2C_1_MASTER);
-    }
-}
-
-void isrI2C2Handler(void) {
-
-    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_2_MASTER)) {
-        i2cInterruptService(I2C_ID_2);
-        eosInterruptSourceFlagClear(INT_SOURCE_I2C_2_MASTER);
-    }
-}
-
-void isrI2C3Handler(void) {
-
-    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_3_MASTER)) {
-        i2cInterruptService(I2C_ID_3);
-        eosInterruptSourceFlagClear(INT_SOURCE_I2C_3_MASTER);
-    }
-}
-
-void isrI2C4Handler(void) {
-
-    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_4_MASTER)) {
-        i2cInterruptService(I2C_ID_4);
-        eosInterruptSourceFlagClear(INT_SOURCE_I2C_4_MASTER);
-    }
-}
-
-void isrI2C5Handler(void) {
-
-    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_5_MASTER)) {
-        i2cInterruptService(I2C_ID_5);
-        eosInterruptSourceFlagClear(INT_SOURCE_I2C_5_MASTER);
     }
 }
 
@@ -385,7 +395,7 @@ static void i2cInitialize(
  *       Procesa els events de la comunicacio I2C
  *
  *       Funcio:
- *           void i2cInterruptService(
+ *           void i2cInterrupt(
  *              I2C_MODULE_ID id)
  *
  *       Entrada:
@@ -397,7 +407,7 @@ static void i2cInitialize(
  *
  *************************************************************************/
 
-static void i2cInterruptService(
+static void i2cInterrupt(
     I2C_MODULE_ID id) {
 
     eosI2CTransactionHandle hTransaction = transactionMap[id];

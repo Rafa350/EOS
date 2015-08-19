@@ -36,6 +36,8 @@ typedef struct __eosDigInputService {  // Dades del servei
 
 
 static void task(void *params);
+static void portInitialize(eosDigInputHandle hInput);
+static bool portGet(eosDigInputHandle hInput);
 
 
 /*************************************************************************
@@ -110,13 +112,8 @@ eosDigInputHandle eosDigInputCreate(
         hService->hFirstInput = hInput;
         eosTaskResumeAll();
 
-        if (true)
-            PLIB_PORTS_ChangeNoticePullUpPerPortEnable(PORTS_ID_0, hInput->channel, hInput->position);
-        PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, hInput->channel, hInput->position);
-
-        bool p =  PLIB_PORTS_PinGet(PORTS_ID_0, hInput->channel, hInput->position);
-        hInput->state = hInput->inverted ? !p : p;
-
+        portInitialize(hInput);
+        hInput->state = portGet(hInput);
         if (hInput->state)
             hInput->pattern = 0xFFFFFFFF;
         else
@@ -173,12 +170,9 @@ bool eosDigInputPosEdge(
 
     eosDebugVerify(hInput != NULL);
 
-    if (hInput->posEdge) {
-        hInput->posEdge = false;
-        return true;
-    }
-    else
-        return false;
+    bool result = hInput->posEdge;
+    hInput->posEdge = false;
+    return result;
 }
 
 
@@ -203,12 +197,9 @@ bool eosDigInputNegEdge(
 
     eosDebugVerify(hInput != NULL);
 
-    if (hInput->negEdge) {
-        hInput->negEdge = false;
-        return true;
-    }
-    else
-        return false;
+   bool result = hInput->negEdge;
+   hInput->negEdge = false;
+   return result;
 }
 
 
@@ -238,10 +229,7 @@ static void task(
         while (hInput) {
 
             hInput->pattern <<= 1;
-
-            bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hInput->channel, hInput->position);
-            p = hInput->inverted ? !p : p;
-            if (p)
+            if (portGet(hInput))
                 hInput->pattern |= 1;
 
             if ((hInput->pattern & PATTERN_MASK) == PATTERN_ON) {
@@ -273,5 +261,28 @@ static void task(
         }
     }
 }
+
+
+static void portInitialize(
+    eosDigInputHandle hInput) {
+    
+    AD1PCFG = 0xFFFF;
+    //PLIB_PORTS_PinModeSelect();
+    //PLIB_PORTS_ChangeNoticePullUpEnable();
+
+    //PLIB_PORTS_PinModePerPortSelect(PORTS_ID_0, hInput->channel, hInput->position, PORTS_PIN_MODE_DIGITAL);
+    //if (true)
+    //    PLIB_PORTS_ChangeNoticePullUpPerPortEnable(PORTS_ID_0, hInput->channel, hInput->position);
+    PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, hInput->channel, hInput->position);
+}
+
+
+static bool portGet(
+    eosDigInputHandle hInput) {
+    
+    bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hInput->channel, hInput->position);
+    return hInput->inverted ? !p : p;
+}
+
 
 #endif
