@@ -125,5 +125,5 @@ void appSetup(void) {
 
 void appTask(void) {
 
-    eosTaskRun();
+    eosStartScheduler();
 }

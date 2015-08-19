@@ -7,6 +7,7 @@
 
 typedef void *eosSemaphoreHandle;
 
+
 extern eosSemaphoreHandle eosSemaphoreCreate(void);
 extern bool eosSemaphoreTake(eosSemaphoreHandle hSemaphore, unsigned timeout);
 extern void eosSemaphoreGive(eosSemaphoreHandle hSemaphore);

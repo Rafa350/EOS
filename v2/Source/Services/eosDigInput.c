@@ -22,6 +22,9 @@ typedef struct __eosDigInput {         // Dades d'una entrada
     eosDigInputCallback onPosEdge;     // -Event POSEDGE
     eosDigInputCallback onNegEdge;     // -Event NEGEDGE
     eosDigInputCallback onChange;      // -Event CHANGE
+    bool onPosEdgeFired;
+    bool onNegEdgeFired;
+    bool onChangeFired;
     void *context;                     // -Parametre del event
     UINT32 pattern;                    // -Patro de filtratge
     bool state;                        // -Indicador ON/OFF
@@ -106,11 +109,17 @@ eosDigInputHandle eosDigInputCreate(
         hInput->onPosEdge = params->onPosEdge;
         hInput->onNegEdge = params->onNegEdge;
         hInput->onChange = params->onChange;
+        hInput->onPosEdgeFired = false;
+        hInput->onNegEdgeFired = false;
+        hInput->onChangeFired = false;
 
-        eosTaskSuspendAll();
+        eosCriticalSectionInfo csInfo;
+        eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
+
         hInput->hNextInput = hService->hFirstInput;
         hService->hFirstInput = hInput;
-        eosTaskResumeAll();
+
+        eosLeaveCriticalSection(&csInfo);
 
         portInitialize(hInput);
         hInput->state = portGet(hInput);
@@ -229,11 +238,16 @@ static void task(
         
         eosTaskDelayUntil(10, &tc);
         
-        eosDigInputHandle hInput;
+        eosDigInputHandle hInput, hFirstInput;
+        eosCriticalSectionInfo csInfo;
         
         // Explora les entrades per coneixa el seu estat
         //
-        hInput = hService->hFirstInput;
+        eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
+        
+        hFirstInput = hService->hFirstInput;
+        
+        hInput = hFirstInput;
         while (hInput) {
 
             hInput->pattern <<= 1;
@@ -243,49 +257,64 @@ static void task(
             if ((hInput->pattern & PATTERN_MASK) == PATTERN_ON) {
                 hInput->state = true;
                 hInput->posEdge = true;
-                if (hInput->onPosEdge != NULL) {
-                    hInput->onPosEdge(hInput, hInput->context);
-                    hInput->posEdge = false;
-                }
-                else if (hInput->onChange != NULL) {
-                    hInput->onChange(hInput, hInput->context);
-                    hInput->posEdge = false;
-                }
+                if (hInput->onPosEdge != NULL) 
+                    hInput->onPosEdgeFired = true;
+                else if (hInput->onChange != NULL) 
+                    hInput->onChangeFired = true;
             }
             else if ((hInput->pattern & PATTERN_MASK) == PATTERN_OFF) {
                 hInput->state = false;
                 hInput->negEdge = true;
-                if (hInput->onNegEdge != NULL) {
-                    hInput->onNegEdge(hInput, hInput->context);
-                    hInput->negEdge = false;
-                }
-                else if (hInput->onChange != NULL) {
-                    hInput->onChange(hInput, hInput->context);
-                    hInput->negEdge = false;
-                }
+                if (hInput->onNegEdge != NULL) 
+                    hInput->onNegEdgeFired = true;
+                else if (hInput->onChange != NULL) 
+                    hInput->onChangeFired = true;
             }
 
             hInput = hInput->hNextInput;
         }
         
+        eosLeaveCriticalSection(&csInfo);
+        
         // Crida a les funcions callback corresponents
         //
-        /*hInput = hService->hFirstInput;
+        hInput = hFirstInput;
         while (hInput) {
-
+            
+            if (hInput->onPosEdgeFired) 
+                hInput->onPosEdge(hInput, hInput->context);
+            else if (hInput->onNegEdgeFired) 
+                hInput->onNegEdge(hInput, hInput->context);
+            else if (hInput->onChangeFired) 
+                hInput->onChange(hInput, hInput->context);
+            
             hInput = hInput->hNextInput;
-        }*/
+        }
         
         // Reseteja flags i variables temporals
         //
-        /*
-        eosTaskSuspendAll();
-        hInput = hService->hFirstInput;
-        while (hInput) {
+        eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
 
+        hInput = hFirstInput;
+        while (hInput) {
+            
+            if (hInput->onPosEdgeFired) {
+                hInput->onPosEdgeFired = false;
+                hInput->posEdge = false;
+            }
+            if (hInput->onNegEdgeFired) {
+                hInput->onNegEdgeFired = false;
+                hInput->negEdge = false;
+            }
+            if (hInput->onChangeFired) {
+                hInput->onChangeFired = false;
+                hInput->posEdge = false;
+            }           
+            
             hInput = hInput->hNextInput;
         }
-        eosTaskResumeAll();*/
+
+        eosLeaveCriticalSection(&csInfo);
     }
 }
 

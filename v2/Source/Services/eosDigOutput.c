@@ -102,10 +102,13 @@ eosDigOutputHandle eosDigOutputCreate(
 
         // Afegeis la sortida a la llista de sortides del servei
         //
-        eosTaskSuspendAll();
+        eosCriticalSectionInfo csInfo;
+        eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
+        
         hOutput->hNextOutput = hService->hFirstOutput;
         hService->hFirstOutput = hOutput;
-        eosTaskResumeAll();
+        
+        eosLeaveCriticalSection(&csInfo);
 
         // Inicialitza el port fisic a estat OFF
         //
@@ -189,12 +192,13 @@ void eosDigOutputToggle(
 
     eosDebugVerify(hOutput != NULL);
 
-    eosTaskSuspendAll();
+    eosCriticalSectionInfo csInfo;
+    eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
     
     portToggle(hOutput);
     hOutput->timeout = 0;
     
-    eosTaskResumeAll();
+    eosLeaveCriticalSection(&csInfo);
 }
 
 
@@ -225,13 +229,14 @@ void eosDigOutputPulse(
 
     if (time >= TASK_PERIOD) {
 
-        eosTaskSuspendAll();
+        eosCriticalSectionInfo csInfo;
+        eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
         
         if (hOutput->timeout == 0)
             portToggle(hOutput);
         hOutput->timeout = time / TASK_PERIOD;
         
-        eosTaskResumeAll();
+        eosLeaveCriticalSection(&csInfo);
     }
 }
 
@@ -258,7 +263,8 @@ static void task(void *param) {
 
         eosTaskDelayUntil(TASK_PERIOD, &tc);
         
-        eosTaskSuspendAll();
+        eosCriticalSectionInfo csInfo;
+        eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
         
         eosDigOutputHandle hOutput = hService->hFirstOutput;
         while (hOutput != NULL) {
@@ -272,8 +278,8 @@ static void task(void *param) {
             }        
             hOutput = hOutput->hNextOutput;
         }
-        
-        eosTaskResumeAll();
+
+        eosLeaveCriticalSection(&csInfo);
     }
 }
 

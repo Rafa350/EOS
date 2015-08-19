@@ -70,7 +70,7 @@ void eosTaskDelay(
  *       Retarda la tasca el numero de tics especificat
  *
  *       Funcio:
- *           void eosTaskDelay(
+ *           void eosTaskDelayUntil(
  *               unsigned delay,
  *               unsigned *lastTick) 
  *
@@ -95,14 +95,14 @@ void eosTaskDelayUntil(unsigned delay, unsigned *lastTick) {
  *       Obte el numero de tick actual
  * 
  *       Funcio:
- *           unsigned eosTaskGetTickCount(void) 
+ *           unsigned eosGetTickCount(void) 
  * 
  *       Retorn:
  *           Numero de tick actual
  *
  *************************************************************************/
 
-unsigned eosTaskGetTickCount(void) {
+unsigned eosGetTickCount(void) {
     
     return xTaskGetTickCount();
 }
@@ -113,35 +113,103 @@ unsigned eosTaskGetTickCount(void) {
  *       Posa en marxa el planificador i executa les tasques definides
  *
  *       Funcio:
- *           void eosTaskRun(void) 
+ *           void eosStartScheduler(void) 
  *
  *************************************************************************/
 
-void eosTaskRun(void) {
+void eosStartScheduler(void) {
     
     vTaskStartScheduler();
 }
 
 
-void eosTaskEnterCriticalSection(void) {
-    
-    taskENTER_CRITICAL();
+/*************************************************************************
+ *
+ *       Obte l'estat del planificador
+ * 
+ *       Funcio:
+ *           eosSchedulerState eosGetSchedulerState(void)
+ * 
+ *       Return:
+ *           Estat del planificador
+ *
+ *************************************************************************/
+
+eosSchedulerState eosGetSchedulerState(void) {
+
+    switch (xTaskGetSchedulerState()) {
+        case taskSCHEDULER_RUNNING:
+            return eosSchedulerStateRunning;
+            
+        case taskSCHEDULER_SUSPENDED:
+            return eosSchedulerStateSuspended;
+            
+        case taskSCHEDULER_NOT_STARTED:
+        default:
+            return eosSchedulerStateNotStarted;
+    }
 }
 
 
-void eosTaskExitCriticalSection(void) {
+/*************************************************************************
+ *
+ *       Entra en una seccio critica
+ * 
+ *       Funcio:
+ *           void eosEnterCriticalSection(
+ *               eosCriticalSectionSeverity severity,
+ *               eosCriticalSectionInfo *info) 
+ *
+ *       Entrada:
+ *           severity: Nivell de severitat
+ *           info    : punter a la informacio de recuperacio
+ * 
+ *************************************************************************/
+
+void eosEnterCriticalSection(
+    eosCriticalSectionSeverity severity,
+    eosCriticalSectionInfo *info) {
     
-    taskEXIT_CRITICAL();
+    switch (severity) {
+        case eosCriticalSectionSeverityHigh:
+            portENTER_CRITICAL();
+            break;
+
+        case eosCriticalSectionSeverityLow:
+        default:
+            vTaskSuspendAll();
+            break;
+    }
+
+    info->severity = severity;
 }
 
 
-void eosTaskSuspendAll(void) {
-    
-    vTaskSuspendAll();
-}
+/*************************************************************************
+ *
+ *       Surt de la seccio critica
+ * 
+ *       Funcio:
+ *           void eosLeaveCriticalSection(
+ *               eosCriticalSectionInfo *info) 
+ *
+ *       Entrada:
+ *           info: Informacio de recuperacio obtinguda de la
+ *                 funcio 'eosEnterCriticalSection'
+ *
+ *************************************************************************/
 
-
-void eosTaskResumeAll(void) {
+void eosLeaveCriticalSection(
+    eosCriticalSectionInfo *info) {
     
-    xTaskResumeAll();
+    switch (info->severity) {
+        case eosCriticalSectionSeverityHigh:
+            portEXIT_CRITICAL();
+            break;
+            
+        case eosCriticalSectionSeverityLow:
+        default:
+            xTaskResumeAll();
+            break;
+    }
 }

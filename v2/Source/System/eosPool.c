@@ -85,7 +85,8 @@ void *eosPoolAlloc(
     
     void *p = NULL;
     
-    eosTaskSuspendAll();
+    eosCriticalSectionInfo csInfo;
+    eosEnterCriticalSection(eosCriticalSectionSeverityHigh, &csInfo);
 
     unsigned i;
     unsigned ii = (hPool->itemSize) * hPool->maxItems;
@@ -98,7 +99,7 @@ void *eosPoolAlloc(
         }
     }
     
-    eosTaskResumeAll();
+    eosLeaveCriticalSection(&csInfo);
 
     return p;
 }
@@ -123,9 +124,10 @@ void eosPoolFree(
     
     eosDebugVerify(p != NULL);
 
-    eosTaskSuspendAll();
+    eosCriticalSectionInfo csInfo;
+    eosEnterCriticalSection(eosCriticalSectionSeverityHigh, &csInfo);
     
     ((ItemHeader*)((BYTE*) p - sizeof(ItemHeader)))->allocated = false;
     
-    eosTaskResumeAll();
+    eosLeaveCriticalSection(&csInfo);
 }
