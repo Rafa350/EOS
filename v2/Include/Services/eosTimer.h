@@ -7,14 +7,26 @@
 #endif
 
 
+typedef struct __eosTimerService *eosTimerServiceHandle;
 typedef struct __eosTimer *eosTimerHandle;
-typedef void (*eosTimerCallback)(eosTimerHandle hTimer, void *params);
+typedef void (*eosTimerCallback)(eosTimerHandle hTimer, void *context);
+
+typedef struct {
+} eosTimerServiceParams;
+
+typedef struct {
+    unsigned period;
+    bool autoreload;
+    eosTimerCallback onTimeout;
+    void* context;
+} eosTimerParams;
 
 
-extern eosTimerHandle eosTimerCreate(eosTimerCallback timerFunction, void *params);
-extern void eosTimerStart(eosTimerHandle hTimer, unsigned timeout);
-extern void eosTimerPause(eosTimerHandle hTimer);
-extern void eosTimerContinue(eosTimerHandle hTimer);
+extern eosTimerServiceHandle eosTimerServiceCreate(eosTimerServiceParams *params);
+extern eosTimerHandle eosTimerCreate(eosTimerServiceHandle hService, eosTimerParams *params);
+extern void eosTimerStart(eosTimerHandle hTimer, unsigned blockTime);
+extern void eosTimerStop(eosTimerHandle hTimer, unsigned blockTime);
+extern void eosTimerReStart(eosTimerHandle hTimer, unsigned blockTime);
 
 
 #endif	

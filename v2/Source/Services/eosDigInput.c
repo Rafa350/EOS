@@ -5,6 +5,12 @@
 #include "Services/eosDigInput.h"
 #include "System/eosMemory.h"
 #include "System/eosTask.h"
+
+// FreeRTOS
+#include "FreeRTOS.h"
+#include "task.h"
+
+// Harmony
 #include "peripheral/ports/plib_ports.h"
 
 
@@ -61,11 +67,14 @@ static bool portGet(eosDigInputHandle hInput);
 
 eosDigInputServiceHandle eosDigInputServiceInitialize(
     eosDigInputServiceParams *params) {
+    
+    eosDebugVerify(params != NULL);
 
     eosDigInputServiceHandle hService = eosAlloc(sizeof(eosDigInputService));
     if (hService != NULL) {
         hService->hFirstInput = NULL;
-        hService->hTask = eosTaskCreate(0, 512, task, hService);
+        hService->hTask = eosTaskCreate(tskIDLE_PRIORITY + params->priority, 
+                512, task, hService);
    }
 
     return hService;

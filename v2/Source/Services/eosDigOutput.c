@@ -5,6 +5,12 @@
 #include "Services/eosDigOutput.h"
 #include "System/eosMemory.h"
 #include "System/eosTask.h"
+
+// FreeRTOS
+#include "FreeRTOS.h"
+#include "task.h"
+
+// Harmony
 #include "peripheral/ports/plib_ports.h"
 
 
@@ -51,11 +57,17 @@ static void portToggle(eosDigOutputHandle hOutput);
 
 eosDigOutputServiceHandle eosDigOutputServiceInitialize(
     eosDigOutputServiceParams *params) {
+    
+    eosDebugVerify(params != NULL);
 
     eosDigOutputServiceHandle hService = eosAlloc(sizeof(eosDigOutputService));
     if (hService != NULL) {
         hService->hFirstOutput = NULL;
-        hService->hTask = eosTaskCreate(0, 512, task, hService);
+        hService->hTask = eosTaskCreate(
+            tskIDLE_PRIORITY + params->priority, 
+            512, 
+            task, 
+            hService);
     }
     
     return hService;

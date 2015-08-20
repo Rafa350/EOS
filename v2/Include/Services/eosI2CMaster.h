@@ -16,6 +16,7 @@ typedef void (*eosI2CMasterCallback)(eosI2CTransactionHandle hTransaction, void 
 
 typedef struct {                       // Parametres del servei
     I2C_MODULE_ID id;                  // -Modul I2C
+    unsigned priority;                 // -Prioritat de la tasca del servei
 } eosI2CServiceParams;
 
 typedef struct {                       // Parametres d'una transaccio

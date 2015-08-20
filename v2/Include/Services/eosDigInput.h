@@ -25,6 +25,7 @@ typedef struct {                       // Parametres d'inicializacio de les entr
 } eosDigInputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
+    unsigned priority;                 // -Prioritat de la tasca de del servei
 } eosDigInputServiceParams;
 
 

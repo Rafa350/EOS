@@ -19,6 +19,7 @@ typedef struct {                       // Parametres d'inicialitzacio de les sor
 } eosDigOutputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei
+    unsigned priority;                 // -Prioritat de la tasca del servei
 } eosDigOutputServiceParams;
 
 

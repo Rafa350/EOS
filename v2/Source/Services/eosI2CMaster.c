@@ -8,7 +8,16 @@
 #include "System/eosQueue.h"
 #include "System/eosSemaphore.h"
 #include "Services/eosI2CMaster.h"
+
 #include "sys/attribs.h"
+
+// Harmony
+#include "peripheral/int/plib_int.h"
+#include "Peripheral/i2c/plib_i2c.h"
+
+// FreeRTOS
+#include "FreeRTOS.h"
+#include "task.h"
 
 
 #define __intPriority                  INT_PRIORITY_LEVEL2
@@ -112,17 +121,20 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
         
         // -Crea el pool de memoria per les transaccions
         //
-        hService->hPool = eosPoolCreate(sizeof(eosI2CTransaction), eosI2CMasterService_MaxTransactions);
+        hService->hPool = eosPoolCreate(sizeof(eosI2CTransaction), 
+                eosI2CMasterService_MaxTransactions);
         eosDebugVerify(hService->hPool != NULL);
         
         // -Crea la tasca de gestio
         //        
-        hService->hTask = eosTaskCreate(0, 512, task, hService);
+        hService->hTask = eosTaskCreate(tskIDLE_PRIORITY + params->priority, 
+                512, task, hService);
         eosDebugVerify(hService->hTask != NULL);
         
         // -Crea la cua de transaccions
         //
-        hService->hTransactionQueue = eosQueueCreate(sizeof(eosI2CTransactionHandle), eosI2CMasterService_MaxTransactions);
+        hService->hTransactionQueue = eosQueueCreate(sizeof(eosI2CTransactionHandle), 
+                eosI2CMasterService_MaxTransactions);
         eosDebugVerify(hService->hTransactionQueue != NULL);
         
         // -Crea el semaforo de final de transaccio

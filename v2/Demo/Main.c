@@ -3,6 +3,8 @@
 #include "Services/eosDigOutput.h"
 #include "Services/eosDigInput.h"
 #include "Services/eosI2CMaster.h"
+
+// Harmony
 #include "peripheral/ports/plib_ports.h"
 #include "peripheral/i2c/plib_i2c.h"
 
@@ -53,8 +55,12 @@ static void posEdgeFunction(eosDigInputHandle hInput, void *context) {
 
 static void setupDigInputService(void) {
     
-    eosDigInputServiceHandle hDigInputService = eosDigInputServiceInitialize(NULL);
+    eosDigInputServiceParams serviceParams;
     eosDigInputParams params;
+
+    memset(&serviceParams, 0, sizeof(serviceParams));
+    serviceParams.priority = 1;
+    eosDigInputServiceHandle hDigInputService = eosDigInputServiceInitialize(&serviceParams);
     
     memset(&params, 0, sizeof(params));
     params.channel = SW_1_CHN;
@@ -66,8 +72,12 @@ static void setupDigInputService(void) {
 
 static void setupDigOutputService(void) {
     
-    eosDigOutputServiceHandle hDigOutputService = eosDigOutputServiceInitialize(NULL);
+    eosDigOutputServiceParams serviceParams;
     eosDigOutputParams params;
+    
+    memset(&serviceParams, 0, sizeof(serviceParams));
+    serviceParams.priority = 1;
+    eosDigOutputServiceHandle hDigOutputService = eosDigOutputServiceInitialize(&serviceParams);
     
     memset(&params, 0, sizeof(params));
     params.channel = LED_1_CHN;
@@ -87,10 +97,12 @@ static void setupDigOutputService(void) {
 
 static void setupI2CMasterService(void) {
     
-    eosI2CServiceParams params;
-    memset(&params, 0, sizeof(params));
-    params.id = I2C_ID_2;
-    hI2CMasterService = eosI2CMasterServiceInitialize(&params);
+    eosI2CServiceParams serviceParams;
+    
+    memset(&serviceParams, 0, sizeof(serviceParams));
+    serviceParams.id = I2C_ID_2;
+    serviceParams.priority = 2;
+    hI2CMasterService = eosI2CMasterServiceInitialize(&serviceParams);
 }
 
 
