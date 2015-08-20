@@ -165,12 +165,13 @@ void eosDigOutputSet(
 
     eosDebugVerify(hOutput != NULL);
 
-    eosTaskSuspendAll();
+    eosCriticalSectionInfo csInfo;
+    eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
     
     portSet(hOutput, state);
     hOutput->timeout = 0;
     
-    eosTaskResumeAll();
+    eosLeaveCriticalSection(&csInfo);
 }
 
 
@@ -256,7 +257,7 @@ void eosDigOutputPulse(
 
 static void task(void *param) {
 
-    unsigned tc = eosTaskGetTickCount();
+    unsigned tc = eosGetTickCount();
     eosDigOutputServiceHandle hService = param;
 
     while (true) {

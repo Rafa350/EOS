@@ -2,7 +2,10 @@
 #define	__EOS_DIGINPUT_H
 
 
+#ifndef __EOS_H
 #include "eos.h"
+#endif
+
 #include "peripheral/ports/plib_ports.h"
 
 

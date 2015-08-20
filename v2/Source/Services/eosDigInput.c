@@ -26,7 +26,7 @@ typedef struct __eosDigInput {         // Dades d'una entrada
     bool onNegEdgeFired;
     bool onChangeFired;
     void *context;                     // -Parametre del event
-    UINT32 pattern;                    // -Patro de filtratge
+    uint32_t pattern;                  // -Patro de filtratge
     bool state;                        // -Indicador ON/OFF
     bool posEdge;                      // -Indica si s'ha rebut un flanc positiu
     bool negEdge;                      // -Indica si s'ha rebut un flanc negatiu
@@ -179,10 +179,14 @@ bool eosDigInputPosEdge(
 
     eosDebugVerify(hInput != NULL);
 
-    eosTaskSuspendAll();
+    eosCriticalSectionInfo csInfo;
+    eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
+    
     bool result = hInput->posEdge;
     hInput->posEdge = false;
-    eosTaskResumeAll();
+
+    eosLeaveCriticalSection(&csInfo);
+
     return result;
 }
 
@@ -208,10 +212,14 @@ bool eosDigInputNegEdge(
 
     eosDebugVerify(hInput != NULL);
 
-    eosTaskSuspendAll();
+    eosCriticalSectionInfo csInfo;
+    eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
+
     bool result = hInput->negEdge;
     hInput->negEdge = false;
-    eosTaskResumeAll();
+
+    eosLeaveCriticalSection(&csInfo);
+
     return result;
 }
 
@@ -231,7 +239,7 @@ bool eosDigInputNegEdge(
 static void task(
     void *params) {
 
-    unsigned tc = eosTaskGetTickCount();
+    unsigned tc = eosGetTickCount();
     eosDigInputServiceHandle hService = params;
 
     while (true) {

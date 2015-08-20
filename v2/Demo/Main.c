@@ -57,8 +57,8 @@ static void setupDigInputService(void) {
     eosDigInputParams params;
     
     memset(&params, 0, sizeof(params));
-    params.channel = PORT_CHANNEL_D;
-    params.position = PORTS_BIT_POS_6;
+    params.channel = SW_1_CHN;
+    params.position = SW_1_POS;
     params.inverted = true;
     params.onPosEdge = posEdgeFunction;
     eosDigInputCreate(hDigInputService, &params);
@@ -70,18 +70,18 @@ static void setupDigOutputService(void) {
     eosDigOutputParams params;
     
     memset(&params, 0, sizeof(params));
-    params.channel = PORT_CHANNEL_D;
-    params.position = PORTS_BIT_POS_0;
+    params.channel = LED_1_CHN;
+    params.position = LED_1_POS;
     hLedRED = eosDigOutputCreate(hDigOutputService, &params);
 
     memset(&params, 0, sizeof(params));
-    params.channel = PORT_CHANNEL_D;
-    params.position = PORTS_BIT_POS_1;
+    params.channel = LED_2_CHN;
+    params.position = LED_2_POS;
     hLedAMBER = eosDigOutputCreate(hDigOutputService, &params);
 
     memset(&params, 0, sizeof(params));
-    params.channel = PORT_CHANNEL_D;
-    params.position = PORTS_BIT_POS_2;
+    params.channel = LED_3_CHN;
+    params.position = LED_3_POS;
     hLedGREEN = eosDigOutputCreate(hDigOutputService, &params);
 }
 
@@ -99,11 +99,13 @@ static void setupI2CMasterService(void) {
  *       Inicialitzacio de l'aplicacio d'usuari
  *
  *       Funcio:
- *           void appSetup(void)
+ *           void main(void)
  *
  *************************************************************************/
 
-void appSetup(void) {
+void main(void) {
+    
+    eosInitialize();
     
     eosTaskCreate(0, 512, task1, NULL);
     eosTaskCreate(0, 512, task2, NULL);
@@ -111,19 +113,6 @@ void appSetup(void) {
     setupDigInputService();
     setupDigOutputService();
     setupI2CMasterService();
-}
-
-
-/*************************************************************************
- *
- *       Bucle principal de l'aplicacio
- *
- *       Funcio:
- *           void usrTask(void)
- *
- *************************************************************************/
-
-void appTask(void) {
-
+    
     eosStartScheduler();
 }

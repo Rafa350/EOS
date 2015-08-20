@@ -5,12 +5,6 @@
 #include "HardwareProfile.h"
 
 
-// Opcions de configuracio del 'Kernel'
-//
-#define eosOPTION_Main
-#define eosOPTION_Harmony
-
-
 // Opcions de configuracio pel servei 'Inputs'
 //
 #define eosOPTIONS_UseDigInputService                    1

@@ -5,13 +5,13 @@
 typedef struct __eosPool {   // Pool
     unsigned maxItems;       // -Numero maxim d'items en el pool
     unsigned itemSize;       // -Tamsny de cada item
-    BYTE *items;             // -Buffer de memoria
+    uint8_t *items;          // -Buffer de memoria
 } eosPool;
 
 typedef struct {             // Capcelera dels items del pool
     union {
         bool allocated;      // -Indica si esta en us
-        UINT32 dummy;        // -Espai per alinear a 32 bits
+        uint32_t dummy;      // -Espai per alinear a 32 bits
     };
 } ItemHeader;
 
@@ -48,7 +48,7 @@ eosPoolHandle eosPoolCreate(
 
         hPool->itemSize = itemSize;
         hPool->maxItems = maxElements;
-        hPool->items = (BYTE*) hPool + sizeof(eosPool);
+        hPool->items = (uint8_t*) hPool + sizeof(eosPool);
 
         unsigned i;
         unsigned ii = (hPool->itemSize) * hPool->maxItems;
@@ -94,7 +94,7 @@ void *eosPoolAlloc(
         ItemHeader *item = (ItemHeader*) &hPool->items[i];
         if (!item->allocated) {
             item->allocated = true;
-            p = (BYTE*) item + sizeof(ItemHeader);
+            p = (uint8_t*) item + sizeof(ItemHeader);
             break;
         }
     }
@@ -127,7 +127,7 @@ void eosPoolFree(
     eosCriticalSectionInfo csInfo;
     eosEnterCriticalSection(eosCriticalSectionSeverityHigh, &csInfo);
     
-    ((ItemHeader*)((BYTE*) p - sizeof(ItemHeader)))->allocated = false;
+    ((ItemHeader*)((uint8_t*) p - sizeof(ItemHeader)))->allocated = false;
     
     eosLeaveCriticalSection(&csInfo);
 }

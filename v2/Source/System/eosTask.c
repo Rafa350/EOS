@@ -1,5 +1,5 @@
-#include "eos.h"
 #include "System/eosTask.h"
+
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -22,7 +22,7 @@
  *           taskParams  : Parametres de la tasca
  * 
  *       Retorn:
- *           Handler de la tasca
+ *           Handler de la tasca. NULL en cas d'error
  *
  *************************************************************************/
 

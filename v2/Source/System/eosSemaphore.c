@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "System/eosSemaphore.h"
 #include "FreeRTos.h"
 #include "semphr.h"
@@ -6,6 +7,12 @@
 eosSemaphoreHandle eosSemaphoreCreate(void) {
     
     return xSemaphoreCreateBinary();
+}
+
+
+eosSemaphoreHandle eosSemaphoreCreateCounting(unsigned startCount, unsigned maxCount) {
+    
+    return xSemaphoreCreateCounting(maxCount, startCount);
 }
 
 

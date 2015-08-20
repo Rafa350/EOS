@@ -1,15 +1,13 @@
 #ifndef __EOS_MEMORY_H
 #define __EOS_MEMORY_H
 
+
 #ifndef __EOS_H
 #include "eos.h"
 #endif
 
 
-// Heap
-
-#define eosAlloc(s)          eosHeapAlloc(NULL, s)
-#define eosFree(p)           eosHeapFree(p)
+// Gestio de memoria tipus 'Heap'
 
 typedef struct __eosHeap *eosHeapHandle;
 
@@ -18,7 +16,7 @@ extern void *eosHeapAlloc(eosHeapHandle hHeap, unsigned size);
 extern void eosHeapFree(void *p);
 
 
-// Pool
+// Gestio de memoria tipus 'Pool'
 
 typedef struct __eosPool *eosPoolHandle;
 

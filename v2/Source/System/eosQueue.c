@@ -5,7 +5,7 @@
 
 /*************************************************************************
  *
- *       Crea una cua de tipus FIFO
+ *       Crea una cua
  *
  *       Funcio:
  *           eosQueueHandle eosQueueCreate(
@@ -28,6 +28,19 @@ eosQueueHandle eosQueueCreate(
     return xQueueCreate(maxItems, itemSize);
 }
 
+
+/*************************************************************************
+ *
+ *       Buida el contingut d'una cua
+ * 
+ *       Funcio:
+ *         void eosQueueClear(
+ *             eosQueueHandle hQueue) 
+ * 
+ *       Entrada:
+ *           hQueue: Handler de la cua
+ *
+ *************************************************************************/
 
 void eosQueueClear(
     eosQueueHandle hQueue) {

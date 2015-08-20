@@ -37,18 +37,18 @@ typedef struct __eosI2CTransaction {   // Dades internes d'una transaccio
     I2C_MODULE_ID id;                  // -Identificador de modul i2c
     eosSemaphoreHandle hSemaphore;     // -Semafor per notificar el fi de la transaccio
     eosI2CTransactionState state;      // -Estat de la transaccio
-    BYTE address;                      // -Adressa de l'esclau
+    uint8_t address;                   // -Adressa de l'esclau
     unsigned index;                    // -Index
     unsigned maxIndex;                 // -Valor maxim per 'index'
     bool waitingSlaveACK;              // -Esperant ACK/NAK del esclau
     bool writeMode;                    // -Indica si esta en modus escriptura
-    BYTE check;                        // -Byte de verificacio
+    uint8_t check;                     // -Byte de verificacio
     eosI2CMasterCallback onEndTransaction;  // -Event END_TRANSACTION
     eosI2CMasterCallback onError;      // -Event ON_ERROR
     void *context;                     // -Parametres del event
-    BYTE *txBuffer;                    // -Buffer de transmissio
+    uint8_t *txBuffer;                 // -Buffer de transmissio
     unsigned txCount;                  // -Numero de bytes a transmetre
-    BYTE *rxBuffer;                    // -Buffer de recepcio
+    uint8_t *rxBuffer;                 // -Buffer de recepcio
     unsigned rxCount;                  // -Numero de bytes en el buffer de recepcio
     unsigned rxSize;                   // -Tamany del buffer de recepcio en bytes
     unsigned error;                    // -Codi d'error
@@ -101,9 +101,10 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
     eosI2CMasterServiceHandle hService = eosAlloc(sizeof(eosI2CMasterService));
     if (hService != NULL) {
         
-        serviceCount++;
         eosDebugVerify(serviceCount < (unsigned) I2C_NUMBER_OF_MODULES );
         eosDebugVerify(serviceCount < (unsigned) eosI2CMasterService_MaxInstances);
+        
+        serviceCount++;
 
         // -Inicialitza les dades internes del servei
         //
@@ -480,7 +481,7 @@ static void i2cInterrupt(
                                 break;
 
                             case transactionSendData: {
-                                BYTE data = hTransaction->txBuffer[hTransaction->index++];
+                                uint8_t data = hTransaction->txBuffer[hTransaction->index++];
                                 hTransaction->check += data;
                                 PLIB_I2C_TransmitterByteSend(id, data);
                                 if (hTransaction->index == hTransaction->txCount) 
@@ -537,7 +538,7 @@ static void i2cInterrupt(
                 break;
 
             case transactionReceiveLength: {
-                BYTE data = PLIB_I2C_ReceivedByteGet(id);
+                uint8_t data = PLIB_I2C_ReceivedByteGet(id);
                 hTransaction->maxIndex = min(hTransaction->rxSize, data);
                 hTransaction->check += data;
                 PLIB_I2C_ReceivedByteAcknowledge(id, true);
@@ -555,7 +556,7 @@ static void i2cInterrupt(
                     hTransaction->waitingSlaveACK = false;
                 }
                 else {
-                    BYTE data = PLIB_I2C_ReceivedByteGet(id);
+                    uint8_t data = PLIB_I2C_ReceivedByteGet(id);
                     hTransaction->rxBuffer[hTransaction->index++] = data;
                     hTransaction->check += data;
                     PLIB_I2C_ReceivedByteAcknowledge(id, true);
@@ -571,7 +572,7 @@ static void i2cInterrupt(
                     hTransaction->waitingSlaveACK = false;
                 }
                 else  {
-                    BYTE data = PLIB_I2C_ReceivedByteGet(id);
+                    uint8_t data = PLIB_I2C_ReceivedByteGet(id);
                     if (data != hTransaction->check)
                         hTransaction->error = 1;
                     hTransaction->rxCount = hTransaction->index;

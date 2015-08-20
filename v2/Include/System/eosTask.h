@@ -2,6 +2,11 @@
 #define __EOS_TASK_H
 
 
+#ifndef __EOS_H
+#include "eos.h"
+#endif
+
+
 typedef void *eosTaskHandle;
 typedef void (*eosTaskFunction)(void *params);
 

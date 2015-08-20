@@ -2,13 +2,11 @@
 #define __EOS_I2CMASTER_H
 
 
+#ifndef __EOS_H
 #include "eos.h"
+#endif
+
 #include "peripheral/i2c/plib_i2c.h"
-
-
-#define eos_ERROR_I2C_INVALID_MODULE   (eos_ERROR_USER + 0)
-#define eos_ERROR_I2C_TOO_SERVICES     (eos_ERROR_USER + 1)
-#define eos_ERROR_I2C_TOO_TRANSACTIONS (eos_ERROR_USER + 2)
 
 
 typedef struct __eosI2CMasterService *eosI2CMasterServiceHandle;
@@ -22,9 +20,9 @@ typedef struct {                       // Parametres del servei
 
 typedef struct {                       // Parametres d'una transaccio
     unsigned address;                  // -Adressa del esclau
-    BYTE *txBuffer;                    // -Buffer de transmissio
+    uint8_t *txBuffer;                 // -Buffer de transmissio
     unsigned txCount;                  // -Numero de bytes en el buffer de transmissio
-    BYTE *rxBuffer;                    // -Buffer de recepcio
+    uint8_t *rxBuffer;                 // -Buffer de recepcio
     unsigned rxSize;                   // -Tamany del buffer de recepcio
     eosI2CMasterCallback onEndTransaction;  // -Event END_TRANSACTION
     eosI2CMasterCallback onError;      // -Event ON_ERROR

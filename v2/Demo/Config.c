@@ -1,5 +1,4 @@
-#include "xc.h"
-#include "GenericTypedefs.h"
+#include <xc.h>
 #include "HardwareProfile.h"
 
 

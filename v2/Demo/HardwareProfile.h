@@ -10,13 +10,23 @@
 
 // Configuracio dels leds indicadors
 //
-#define LED1_CHN        PORT_D
-#define LED1_POS        1
+#define LED_1_CHN       PORTS_CHANNEL_D
+#define LED_1_POS       PORT_BIT_POS_0
 
-#define LED2_CHN        3
-#define LED2_POS        2
+#define LED_2_CHN       PORTS_CHANNEL_D
+#define LED_2_POS       PORT_BIT_POS_1
 
-#define LED3_CHN        3
-#define LED3_POS        0
+#define LED_3_CHN       PORTS_CHANNEL_D
+#define LED_3_POS       PORT_BIT_POS_2
+
+#define SW_1_CHN        PORTS_CHANNEL_D
+#define SW_1_POS        PORT_BIT_POS_6
+
+#define SW_2_CHN        PORTS_CHANNEL_D
+#define SW_2_POS        PORT_BIT_POS_7
+
+#define SW_3_CHN        PORTS_CHANNEL_D
+#define SW_3_POS        PORT_BIT_POS_13
+
 
 #endif

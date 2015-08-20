@@ -13,8 +13,13 @@ bool eosInterruptDisable(void) {
 
 bool eosInterruptSourceDisable(INT_SOURCE source) {
     
+    INT_STATE_GLOBAL state = PLIB_INT_GetStateAndDisable(INT_ID_0);
+    
     bool enabled = PLIB_INT_SourceIsEnabled(INT_ID_0, source);
     if (enabled)
         PLIB_INT_SourceDisable(INT_ID_0, source);
+    
+    PLIB_INT_SetState(INT_ID_0, state);
+    
     return enabled;
 }

@@ -20,6 +20,15 @@
 	.set	noreorder
 	.set 	noat
 		
+/*************************************************************************
+ *
+ *       Punt d'entrada del del vector de interrupcio _I2C_1_VECTOR
+ *
+ *       Funcio:
+ *           isrI2C1Wrapper
+ *
+ *************************************************************************/
+	
 	.ent	isrI2C1Wrapper
 isrI2C1Wrapper:
 	portSAVE_CONTEXT
@@ -27,6 +36,16 @@ isrI2C1Wrapper:
 	nop
 	portRESTORE_CONTEXT
 	.end	isrI2C1Wrapper
+	
+	
+/*************************************************************************
+ *
+ *       Punt d'entrada del del vector de interrupcio _I2C_2_VECTOR
+ *
+ *       Funcio:
+ *           isrI2C2Wrapper
+ *
+ *************************************************************************/
 	
 	.ent	isrI2C2Wrapper
 isrI2C2Wrapper:
@@ -36,6 +55,16 @@ isrI2C2Wrapper:
 	portRESTORE_CONTEXT
 	.end	isrI2C2Wrapper	
 	
+	
+/*************************************************************************
+ *
+ *       Punt d'entrada del del vector de interrupcio _I2C_3_VECTOR
+ *
+ *       Funcio:
+ *           isrI2C3Wrapper
+ *
+ *************************************************************************/
+	
 	.ent	isrI2C3Wrapper
 isrI2C3Wrapper:
 	portSAVE_CONTEXT
@@ -43,7 +72,17 @@ isrI2C3Wrapper:
 	nop
 	portRESTORE_CONTEXT
 	.end	isrI2C3Wrapper
-		
+	
+	
+/*************************************************************************
+ *
+ *       Punt d'entrada del del vector de interrupcio _I2C_4_VECTOR
+ *
+ *       Funcio:
+ *           isrI2C4Wrapper
+ *
+ *************************************************************************/
+	
 	.ent	isrI2C4Wrapper
 isrI2C4Wrapper:
 	portSAVE_CONTEXT
@@ -52,6 +91,16 @@ isrI2C4Wrapper:
 	portRESTORE_CONTEXT
 	.end	isrI2C4Wrapper
 	
+	
+/*************************************************************************
+ *
+ *       Punt d'entrada del del vector de interrupcio _I2C_5_VECTOR
+ *
+ *       Funcio:
+ *           isrI2C5Wrapper
+ *
+ *************************************************************************/
+	
 	.ent	isrI2C5Wrapper
 isrI2C5Wrapper:
 	portSAVE_CONTEXT
@@ -59,6 +108,5 @@ isrI2C5Wrapper:
 	nop
 	portRESTORE_CONTEXT
 	.end	isrI2C5Wrapper
-	
 	
 	
