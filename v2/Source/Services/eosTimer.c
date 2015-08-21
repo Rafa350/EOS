@@ -24,7 +24,7 @@ typedef struct __eosTimerService {
 static void timerCallback(TimerHandle_t rtosTimer);
 
 
-eosTimerServiceHandle eosTimerServiceCreate(
+eosTimerServiceHandle eosTimerServiceInitialize(
     eosTimerServiceParams *params) {
     
     eosDebugVerify(params != NULL);

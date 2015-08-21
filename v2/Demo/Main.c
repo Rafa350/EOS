@@ -3,6 +3,7 @@
 #include "Services/eosDigOutput.h"
 #include "Services/eosDigInput.h"
 #include "Services/eosI2CMaster.h"
+#include "Services/eosTimer.h"
 
 // Harmony
 #include "peripheral/ports/plib_ports.h"
@@ -15,6 +16,8 @@ static char buffer[100];
 static eosDigOutputHandle hLedRED;
 static eosDigOutputHandle hLedAMBER;
 static eosDigOutputHandle hLedGREEN;
+
+static eosTimerHandle hTimer;
 
 
 static void task1(void *params) {
@@ -33,9 +36,15 @@ static void task2(void *params) {
     }
 }
 
-static void posEdgeFunction(eosDigInputHandle hInput, void *context) {
-
+static void timerFunction(eosTimerHandle hTimer, void *context) {
+    
     eosDigOutputToggle(hLedGREEN);    
+}
+
+
+static void posEdgeFunction(eosDigInputHandle hInput, void *context) {
+   
+    eosTimerStart(hTimer, 1000);
     
     eosI2CTransactionParams transactionParams;
     memset(&transactionParams, 0, sizeof(transactionParams));
@@ -105,6 +114,23 @@ static void setupI2CMasterService(void) {
     hI2CMasterService = eosI2CMasterServiceInitialize(&serviceParams);
 }
 
+static void setupTimerService(void) {
+    
+    eosTimerServiceParams serviceParams;
+    eosTimerParams params;
+    
+    eosTimerServiceHandle hTimerService;
+    
+    memset(&serviceParams, 0, sizeof(serviceParams));
+    hTimerService = eosTimerServiceInitialize(&serviceParams);
+    
+    memset(&params, 0, sizeof(params));
+    params.period = 1000;
+    params.autoreload = true;
+    params.onTimeout = timerFunction;
+    hTimer = eosTimerCreate(hTimerService, &params);
+}
+
 
 /*************************************************************************
  *
@@ -125,6 +151,7 @@ void main(void) {
     setupDigInputService();
     setupDigOutputService();
     setupI2CMasterService();
+    setupTimerService();
     
     eosStartScheduler();
 }
