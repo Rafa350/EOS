@@ -1,8 +1,11 @@
 #include "eos.h"
+
+#include "HardwareProfile.h"
+
+// Harmony
 #include "peripheral/int/plib_int.h"
 #include "peripheral/pcache/plib_pcache.h"
 #include "peripheral/bmx/plib_bmx.h"
-#include "HardwareProfile.h"
 
 
 void __attribute__((nomips16)) PerformanceConfig( 

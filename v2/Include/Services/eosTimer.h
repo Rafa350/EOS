@@ -24,9 +24,9 @@ typedef struct {
 
 extern eosTimerServiceHandle eosTimerServiceInitialize(eosTimerServiceParams *params);
 extern eosTimerHandle eosTimerCreate(eosTimerServiceHandle hService, eosTimerParams *params);
-extern void eosTimerStart(eosTimerHandle hTimer, unsigned blockTime);
-extern void eosTimerStop(eosTimerHandle hTimer, unsigned blockTime);
-extern void eosTimerReStart(eosTimerHandle hTimer, unsigned blockTime);
+extern void eosTimerStart(eosTimerHandle hTimer, unsigned timeout);
+extern void eosTimerStop(eosTimerHandle hTimer, unsigned timeout);
+extern void eosTimerReStart(eosTimerHandle hTimer, unsigned timeout);
 
 
 #endif	

@@ -1,5 +1,7 @@
+#include "eos.h"
 #include "System/eosTask.h"
 
+// FreeRTOS
 #include "FreeRTOS.h"
 #include "task.h"
 

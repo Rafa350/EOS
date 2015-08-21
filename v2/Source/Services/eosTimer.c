@@ -67,31 +67,31 @@ eosTimerHandle eosTimerCreate(
 
 void eosTimerStart(
     eosTimerHandle hTimer, 
-    unsigned blockTime) {
+    unsigned timeout) {
     
     eosDebugVerify(hTimer != NULL);
     
-    xTimerStart(hTimer->rtosTimer, blockTime);
+    xTimerStart(hTimer->rtosTimer, timeout);
 }
 
 
 void eosTimerStop(
     eosTimerHandle hTimer,
-    unsigned blockTime) {
+    unsigned timeout) {
     
     eosDebugVerify(hTimer != NULL);
 
-    xTimerStop(hTimer->rtosTimer, blockTime);
+    xTimerStop(hTimer->rtosTimer, timeout);
 }
 
 
 void eosTimerRestart(
     eosTimerHandle hTimer,
-    unsigned blockTime) {
+    unsigned timeout) {
     
     eosDebugVerify(hTimer != NULL);
 
-    xTimerReset(hTimer->rtosTimer, blockTime);
+    xTimerReset(hTimer->rtosTimer, timeout);
 }
 
 

@@ -1,5 +1,7 @@
 #include "eos.h"
 #include "System/eosSemaphore.h"
+
+// FreeRTOS
 #include "FreeRTos.h"
 #include "semphr.h"
 

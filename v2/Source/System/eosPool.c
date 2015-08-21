@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "system/eosMemory.h"
 #include "System/eosTask.h"
 

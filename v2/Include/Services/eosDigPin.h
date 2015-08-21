@@ -15,9 +15,9 @@ typedef struct {                       // Configuracio dels pins
 
 extern eosDigPinInfo eosDigPins[];     
 
-#define eosDigPins_BEGIN   eosDigPinInfo eosDigPins[] = {
-#define eosDigPins_END     }
-#define eosDigPins_ENTRY(c, p)  {c, p}
+#define eosDigPins_BEGIN          eosDigPinInfo eosDigPins[] = {
+#define eosDigPins_END            }
+#define eosDigPins_ENTRY(c, p)    {c, p}
 
 #define eosDigPinOutputMode(pin) \
     PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, eosDigPins[pin].channel, eosDigPins[pin].position);

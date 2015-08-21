@@ -1,42 +1,36 @@
-#include "Services/eosForms.h"
+#include "eos.h"
+
+#include "Services/Forms/eosForms.h"
 #include "System/eosQueue.h"
+#include "System/eosTask.h"
 #include "System/eosMemory.h"
 
 
-typedef enum {                         // Estats del servei
-    serviceInitializing,               // -Inicialitzant
-    serviceRunning                     // -Procesat de missatges
-} ServiceStates;
-
 typedef struct __eosForm {             // Dades del formulari
+    eosFormsServiceHandle hService;    // -Handler del servei
     eosFormHandle hNextForm;           // -Seguent form de la llista
     eosFormHandle hPrevForm;           // -Anterior form de la llista
     eosFormHandle hParent;             // -Handler del form pare
-    eosFormsOnMessageCallback onMessage;    // -Callback de cada missatge
-    bool needRedraw;                   // -Indica si cal redibuixar
+    eosFormsOnMessageCallback onMessage;    // -Event onMessage
+    eosFormsOnPaintCallback onPaint;   // -Event onPaint
+    bool onPaintPending;               // -Indica si cal redibuixar
     bool needDestroy;                  // -Indica si cal destruirlo
     void *privateData;                 // -Dades privades del formulari
 } eosForm;
 
 typedef struct __eosFormsService {     // Dades del servei
-    ServiceStates state;               // -Estat del servei
-    axDisplayServiceHandle hDisplayService; // -Servei de display
-    eosFormsOnMessageCallback onMessage;    // -Calback en cada missatge
-    eosHQueue hQueue;                  // -Cua de missatges
+    eosDisplayServiceHandle hDisplayService;// -Servei de display
+    eosFormsOnMessageCallback onMessage;    // -Event onMessage
+    eosTaskHandle hTask;               // -Tasca del servei
+    eosQueueHandle hMessageQueue;      // -Cua de missatges
+    eosQueueHandle hPaintQueue;        // -Cua de repintat
     eosFormHandle hActiveForm;         // -Formulari actiu
     eosFormHandle hFirstForm;          // -Primer form de la llista
     eosFormHandle hLastForm;           // -Ultim form de la llista
-    bool redrawPending;                // -Hi han forms pendents de redibuixar
-    bool destroyPending;               // -Hi han forms pendents de destruir
 } eosFormsService;
 
 
-static eosFormsServiceHandle hService = NULL;
-
-
-static void processMessages(void);
-static void processRedraw(void);
-static void processDestroy(void);
+static void task(void *params);
 
 
 /*************************************************************************
@@ -55,60 +49,31 @@ static void processDestroy(void);
  *
  *************************************************************************/
 
-bool eosFormsServiceInitialize(
+eosFormsServiceHandle eosFormsServiceInitialize(
     eosFormsServiceParams *params) {
 
-    if (hService)
-        return false;
+    eosDebugVerify(params != NULL);
 
-    hService = eosAlloc(sizeof(eosFormsService));
-    if (!hService)
-        return false;
+    eosFormsServiceHandle hService = eosAlloc(sizeof(eosFormsService));
+    if (hService != NULL) {
 
-    hService->state = serviceInitializing;
-    hService->hDisplayService = params->hDisplayService;
-    hService->onMessage = params->onMessage;
-    hService->hFirstForm = NULL;
-    hService->hLastForm = NULL;
-    hService->hActiveForm = NULL;
-    hService->redrawPending = false;
-    hService->destroyPending = false;
+        hService->hDisplayService = params->hDisplayService;
+        hService->onMessage = params->onMessage;
+        hService->hFirstForm = NULL;
+        hService->hLastForm = NULL;
+        hService->hActiveForm = NULL;
 
-    eosQueueParams queueParams;
-    queueParams.itemSize = sizeof(eosFormsMessage);
-    queueParams.maxItems = eosOPTIONS_FORMS_MAX_QUEUE_SIZE;
-    hService->hQueue = eosQueueCreate(&queueParams);
-    
-    return true;
-}
+        hService->hMessageQueue = eosQueueCreate(sizeof(eosFormsMessage), 100);
+        eosDebugVerify(hService->hMessageQueue != NULL);
 
-
-/*************************************************************************
- *
- *       Procesa les tasques del servei
- *
- *       Funcio:
- *           void eosFormsServiceTask(void)
- *
- *************************************************************************/
-
-void eosFormsServiceTask(void) {
-
-    switch (hService->state) {
-        case serviceInitializing:
-
-            // Espera que el servei de display estigui preparat
-            //
-            if (axDisplayServiceIsReady(hService->hDisplayService))
-                hService->state = serviceRunning;
-            break;
-
-        case serviceRunning: 
-            processMessages();
-            processRedraw();
-            processDestroy();
-            break;
+        hService->hPaintQueue = eosQueueCreate(sizeof(eosFormHandle), 10);
+        eosDebugVerify(hService->hPaintQueue != NULL);
+        
+        hService->hTask = eosTaskCreate(0, 1024, task, hService);
+        eosDebugVerify(hService->hTask != NULL);
     }
+    
+    return hService;
 }
 
 
@@ -118,10 +83,12 @@ void eosFormsServiceTask(void) {
  *
  *       Funcio:
  *           eosFormHandle eosFormsCreateForm(
+ *               eosFormsServiceHandle hService,
  *               eosFormParams *params)
  *
  *       Entrada:
- *           params: Parametres d'inicialitzacio
+ *           hService: Handler del servei
+ *           params  : Parametres d'inicialitzacio
  *
  *       Retorn:
  *           El handler del form, NULL en cas d'error
@@ -129,41 +96,44 @@ void eosFormsServiceTask(void) {
  *************************************************************************/
 
 eosFormHandle eosFormsCreateForm(
+    eosFormsServiceHandle hService,
     eosFormParams *params) {
+    
+    eosDebugVerify(params != NULL);
 
     eosFormHandle hForm = eosAlloc(sizeof(eosForm) + params->privateDataSize);
-    if (hForm == NULL)
-        return NULL;
+    if (hForm != NULL) {
 
-    hForm->hParent = params->hParent;
-    if (params->privateDataSize > 0)
-        hForm->privateData = (void*) ((BYTE*) hForm + sizeof(eosForm));
-    else
-        hForm->privateData = NULL;
-    hForm->onMessage = params->onMessage;
-    hForm->needDestroy = false;
-    hForm->needRedraw = false;
+        hForm->hParent = params->hParent;
+        if (params->privateDataSize > 0)
+            hForm->privateData = (void*) ((uint8_t*) hForm + sizeof(eosForm));
+        else
+            hForm->privateData = NULL;
+        hForm->onMessage = params->onMessage;
+        hForm->needDestroy = false;
+        hForm->needRedraw = false;
+
+        if (hService->hFirstForm == NULL) {
+            hService->hFirstForm = hForm;
+            hService->hLastForm = hForm;
+            hForm->hNextForm = NULL;
+            hForm->hPrevForm = NULL;
+        }
+        else {
+            hForm->hNextForm = NULL;
+            hForm->hPrevForm = hService->hLastForm;
+            hService->hLastForm->hNextForm = hForm;
+            hService->hLastForm = hForm;
+        }
+
+        eosFormsMessage message;
+        message.id = MSG_CREATE;
+        message.hForm = hForm;
+        message.msgCreate.privateParams = params->privateParams;
+        message.msgCreate.privateData = hForm->privateData;
+        eosFormsSendMessage(&message);
+    }
     
-    if (hService->hFirstForm == NULL) {
-        hService->hFirstForm = hForm;
-        hService->hLastForm = hForm;
-        hForm->hNextForm = NULL;
-        hForm->hPrevForm = NULL;
-    }
-    else {
-        hForm->hNextForm = NULL;
-        hForm->hPrevForm = hService->hLastForm;
-        hService->hLastForm->hNextForm = hForm;
-        hService->hLastForm = hForm;
-    }
-
-    eosFormsMessage message;
-    message.id = MSG_CREATE;
-    message.hForm = hForm;
-    message.msgCreate.privateParams = params->privateParams;
-    message.msgCreate.privateData = hForm->privateData;
-    eosFormsSendMessage(&message);
-
     return hForm;
 }
 
@@ -183,12 +153,15 @@ eosFormHandle eosFormsCreateForm(
 
 void eosFormsDestroyForm(
     eosFormHandle hForm) {
+    
+    eosDebugVerify(hForm != NULL);
 
+    eosFormsServiceHandle hService = hForm->hService;
+    
     if (hService->hActiveForm == hForm)
-        eosFormsSetActiveForm(NULL);
+        eosFormsSetActiveForm(hService, NULL);
     hForm->needRedraw = false;
     hForm->needDestroy = true;
-    hService->destroyPending = true;
 }
 
 
@@ -197,14 +170,21 @@ void eosFormsDestroyForm(
  *       Obte el formulari actiu
  *
  *       Funcio:
- *           eosFormHandle eosFormsGetActiveForm(void)
+ *           eosFormHandle eosFormsGetActiveForm(
+ *               eosFormsServiceHandle hService)
  *
+ *       Entrada:
+ *           hService: Handler del servei
+ * 
  *       Retorn:
  *           El handler del formulari actiu
  *
  **************************************************************************/
 
-eosFormHandle eosFormsGetActiveForm(void) {
+eosFormHandle eosFormsGetActiveForm(
+    eosFormsServiceHandle hService) {
+    
+    eosDebugVerify(hService != NULL);
 
     return hService->hActiveForm;
 }
@@ -216,15 +196,20 @@ eosFormHandle eosFormsGetActiveForm(void) {
  *
  *       Funcio:
  *           eosFormHandle eosFormsSetActiveForm(
+ *               eosFormsServiceHandle hService,
  *               eosFormHandle hForm)
  *
  *       Entrada:
- *           hForm: El formulari a activat
+ *           hService: El handler del servei
+ *           hForm   : El formulari a activat
  *
  *************************************************************************/
 
 void eosFormsSetActiveForm(
+    eosFormsServiceHandle hService,
     eosFormHandle hForm) {
+    
+    eosDebugVerify(hService != NULL);
     
     eosFormHandle hInactiveForm = hService->hActiveForm;
     if (hInactiveForm != NULL) {
@@ -263,8 +248,12 @@ void eosFormsSetActiveForm(
 void eosFormsRefresh(
     eosFormHandle hForm) {
 
-    hForm->needRedraw = true;
-    hService->redrawPending = true;
+    eosDebugVerify(hForm != NULL);
+    
+    if (!hForm->onPaintPending) {
+        hForm->onPaintPending = true;   
+        eosQueuePut(hForm->hService->hPaintQueue, &hForm, 0);
+    }
 }
 
 
@@ -296,7 +285,7 @@ void *eosFormsGetPrivateData(
  *       Obte el form pare
  *
  *       Funcio:
- *           eosFormHandle  eosFormsGetParent(
+ *           eosFormHandle eosFormsGetParent(
  *               eosFormHandle hForm)
  *
  *       Entrada:
@@ -331,7 +320,7 @@ eosFormHandle  eosFormsGetParent(
 void eosFormsPostMessage(
     eosFormsMessage *message) {
 
-    eosQueuePut(hService->hQueue, message);
+    eosQueuePut(message->hForm->hService->hMessageQueue, message, 0);
 }
 
 
@@ -420,104 +409,46 @@ void eosFormsSendCommand(
 
 /*************************************************************************
  *
- *       Procesa els missatges pendents en la cua de missatges
+ *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void processMessages(void)
+ *           void task(void)
  *
  *************************************************************************/
 
-static void processMessages(void) {
-
-    eosFormsMessage message;
-    while (eosQueueGet(hService->hQueue, &message)) {
-
-        if (hService->onMessage != NULL)
-            hService->onMessage(&message);
-
-        if (message.id != MSG_NULL) {
-            eosFormHandle hForm = message.hForm;
-            if ((hForm != NULL) &&  (hForm->onMessage != NULL))
-                hForm->onMessage(&message);
-        }
-    }
-}
-
-
-/*************************************************************************
- *
- *       Procesa les ordres de redibuix dels forms
- *
- *       Funcio:
- *           void processRedraw(void)
- *
- *************************************************************************/
-
-static void processRedraw(void) {
-
-    if (hService->redrawPending) {
-        eosFormHandle hForm = hService->hFirstForm;
-        while (hForm) {
-            if (hForm->needRedraw) {
-                eosFormsMessage message;
-                message.id = MSG_PAINT;
-                message.hForm = hForm;
-                message.msgPaint.hDisplayService = hService->hDisplayService;
-                eosFormsSendMessage(&message);
-                hForm->needRedraw = false;
-            }
-            hForm = hForm->hNextForm;
-        }
-        hService->redrawPending = false;
-    }
-}
-
-
-/*************************************************************************
- *
- *       Procesa les ordres de destruccio dels forms
- *
- *       Funcio:
- *           void processRedraw(void)
- *
- *************************************************************************/
-
-static void processDestroy(void) {
-
-    if (hService->destroyPending) {
-
-        bool done;
+static void task(
+    void *params) {
     
-        do {
-            done = true;
-            eosFormHandle hForm = hService->hFirstForm;
-            while (hForm && done) {
-                if (hForm->needDestroy) {
-                    done = false;
+    eosFormHandle hForm;
+    eosFormsServiceHandle hService = params;
 
-                    eosFormsMessage message;
-                    message.id = MSG_DESTROY;
-                    message.hForm = hForm;
-                    eosFormsSendMessage(&message);
+    while (true) {
 
-                    if (hForm->hNextForm)
-                        hForm->hNextForm->hPrevForm = hForm->hPrevForm;
-                    else
-                        hService->hLastForm = hForm->hPrevForm;
+        // Procesa els missatges de la cua
+        //
+        eosFormsMessage message;
+        while (eosQueueGet(hService->hMessageQueue, &message, 0)) {
 
-                    if (hForm->hPrevForm)
-                        hForm->hPrevForm->hNextForm = hForm->hNextForm;
-                    else
-                        hService->hFirstForm = hForm->hNextForm;
+            if (hService->onMessage != NULL)
+                hService->onMessage(&message);
 
-                    eosFree(hForm);
-                }
-                else
-                    hForm = hForm->hNextForm;
+            if (message.id != MSG_NULL) {
+                hForm = message.hForm;
+                if ((hForm != NULL) &&  (hForm->onMessage != NULL))
+                    hForm->onMessage(&message);
             }
-
-        } while (!done);
+        }
         
-        hService->destroyPending = false;
+        // Procesa el repintat pendent
+        //
+        while (eosQueueGet(hService->hPaintQueue, &hForm, 0)) {
+            if (hForm->onPaint != NULL)
+                hForm->onPaint(hService->hDisplayService);
+            hForm->onPaintPending = false;
+        }        
+                
+        // Procesa la destruccio pendent
+        //    
     }
 }
+

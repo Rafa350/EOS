@@ -1,4 +1,7 @@
+#include "eos.h"
 #include "System/eosQueue.h"
+
+// FreeRTOS
 #include "FreeRTOS.h"
 #include "queue.h"
 
