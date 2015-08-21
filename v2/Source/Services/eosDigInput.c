@@ -10,9 +10,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-// Harmony
-#include "peripheral/ports/plib_ports.h"
-
 
 #define PATTERN_ON       0x0000007F
 #define PATTERN_OFF      0x00000080
@@ -22,8 +19,7 @@
 typedef struct __eosDigInput {         // Dades d'una entrada
     eosDigInputServiceHandle hService; // -El servei al que pertany
     eosDigInputHandle hNextInput;      // -Seguent element
-    PORTS_CHANNEL channel;             // -Canal
-    PORTS_BIT_POS position;            // -Posicio
+    eosDigPinID pin;                   // -Identificador del pin
     bool inverted;                     // -Senyal invertida
     eosDigInputCallback onPosEdge;     // -Event POSEDGE
     eosDigInputCallback onNegEdge;     // -Event NEGEDGE
@@ -112,8 +108,7 @@ eosDigInputHandle eosDigInputCreate(
         hInput->hService = hService;
         hInput->posEdge = false;
         hInput->negEdge = false;
-        hInput->channel = params->channel;
-        hInput->position = params->position;
+        hInput->pin = params->pin;
         hInput->inverted = params->inverted;
         hInput->onPosEdge = params->onPosEdge;
         hInput->onNegEdge = params->onNegEdge;
@@ -362,7 +357,7 @@ static void portInitialize(
     else if (PLIB_PORTS_ExistsChangeNoticePullUpPerPort(PORTS_ID_0))
         PLIB_PORTS_ChangeNoticePullUpPerPortEnable(PORTS_ID_0, hInput->channel, hInput->position);
     */
-    PLIB_PORTS_PinDirectionInputSet(PORTS_ID_0, hInput->channel, hInput->position);
+    eosDigPinInputMode(hInput->pin);
 }
 
 
@@ -385,7 +380,7 @@ static void portInitialize(
 static bool portGet(
     eosDigInputHandle hInput) {
     
-    bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hInput->channel, hInput->position);
+    bool p = eosDigPinGet(hInput->pin);
     return hInput->inverted ? !p : p;
 }
 

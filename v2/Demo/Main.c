@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "System/eosTask.h"
+#include "Services/eosDigPin.h"
 #include "Services/eosDigOutput.h"
 #include "Services/eosDigInput.h"
 #include "Services/eosI2CMaster.h"
@@ -18,6 +19,15 @@ static eosDigOutputHandle hLedAMBER;
 static eosDigOutputHandle hLedGREEN;
 
 static eosTimerHandle hTimer;
+
+eosDigPins_BEGIN
+    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_0),
+    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_1),
+    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_2),
+    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_6),
+    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_7),
+    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_13),
+eosDigPins_END;
 
 
 static void task1(void *params) {
@@ -72,8 +82,7 @@ static void setupDigInputService(void) {
     eosDigInputServiceHandle hDigInputService = eosDigInputServiceInitialize(&serviceParams);
     
     memset(&params, 0, sizeof(params));
-    params.channel = SW_1_CHN;
-    params.position = SW_1_POS;
+    params.pin = pinSW1;
     params.inverted = true;
     params.onPosEdge = posEdgeFunction;
     eosDigInputCreate(hDigInputService, &params);
@@ -89,18 +98,15 @@ static void setupDigOutputService(void) {
     eosDigOutputServiceHandle hDigOutputService = eosDigOutputServiceInitialize(&serviceParams);
     
     memset(&params, 0, sizeof(params));
-    params.channel = LED_1_CHN;
-    params.position = LED_1_POS;
+    params.pin = pinLED1;
     hLedRED = eosDigOutputCreate(hDigOutputService, &params);
 
     memset(&params, 0, sizeof(params));
-    params.channel = LED_2_CHN;
-    params.position = LED_2_POS;
+    params.pin = pinLED2;
     hLedAMBER = eosDigOutputCreate(hDigOutputService, &params);
 
     memset(&params, 0, sizeof(params));
-    params.channel = LED_3_CHN;
-    params.position = LED_3_POS;
+    params.pin = pinLED3;
     hLedGREEN = eosDigOutputCreate(hDigOutputService, &params);
 }
 

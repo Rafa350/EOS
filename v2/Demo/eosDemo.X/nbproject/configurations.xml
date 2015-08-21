@@ -13,6 +13,7 @@
           <itemPath>../../Include/Services/eosDigInput.h</itemPath>
           <itemPath>../../Include/Services/eosI2CMaster.h</itemPath>
           <itemPath>../../Include/Services/eosTimer.h</itemPath>
+          <itemPath>../../Include/Services/eosDigPin.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="System" projectFiles="true">
           <itemPath>../../Include/System/eosTask.h</itemPath>
@@ -131,7 +132,7 @@
         </archiverTool>
         <loading>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
-          <parseOnProdLoad>false</parseOnProdLoad>
+          <parseOnProdLoad>true</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
       </compileType>

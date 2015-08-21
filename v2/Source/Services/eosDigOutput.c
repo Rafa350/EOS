@@ -10,16 +10,12 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-// Harmony
-#include "peripheral/ports/plib_ports.h"
-
 
 #define TASK_PERIOD 10
 
 
 typedef struct __eosDigOutput {        // Dades d'una sortida
-    PORTS_CHANNEL channel;             // -Canal
-    PORTS_BIT_POS position;            // -Posicio
+    eosDigPinID pin;                   // -Pin
     bool inverted;                     // -Senyal invertida
     unsigned timeout;                  // -Contador de temps
     eosDigOutputServiceHandle hService;// -El servei al que pertany
@@ -107,9 +103,7 @@ eosDigOutputHandle eosDigOutputCreate(
         // Inicialitza les dades internes de la sortida
         //
         hOutput->hService = hService;   
-        hOutput->channel = params->channel;
-        hOutput->position = params->position;
-        hOutput->inverted = params->inverted;
+        hOutput->pin = params->pin;
         hOutput->timeout = 0;
 
         // Afegeis la sortida a la llista de sortides del servei
@@ -300,15 +294,15 @@ static void task(void *param) {
 static void portInitialize(
     eosDigOutputHandle hOutput) {
         
-    PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position, hOutput->inverted ? true : false);
-    PLIB_PORTS_PinDirectionOutputSet(PORTS_ID_0, hOutput->channel, hOutput->position);
+    eosDigPinSet(hOutput->pin, hOutput->inverted ? true : false);
+    eosDigPinOutputMode(hOutput->pin);    
 }
 
 
 static bool portGet(
     eosDigOutputHandle hOutput) {
     
-    bool p = PLIB_PORTS_PinGet(PORTS_ID_0, hOutput->channel, hOutput->position);
+    bool p = eosDigPinGet(hOutput->pin);
     return hOutput->inverted ? !p : p;
 }
 
@@ -317,15 +311,14 @@ static void portSet(
     eosDigOutputHandle hOutput, 
     bool state) {
     
-    PLIB_PORTS_PinWrite(PORTS_ID_0, hOutput->channel, hOutput->position, 
-        hOutput->inverted ? state : !state);
+    eosDigPinSet(hOutput->pin, state);
 }
 
 
 static void portToggle(
     eosDigOutputHandle hOutput) {
 
-    PLIB_PORTS_PinToggle(PORTS_ID_0, hOutput->channel, hOutput->position);    
+    eosDigPinToggle(hOutput->pin);
 }
 
 

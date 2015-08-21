@@ -6,15 +6,16 @@
 #include "eos.h"
 #endif
 
-#include "peripheral/ports/plib_ports.h"
+#ifndef __EOS_DIGPIN_H
+#include "Services/eosDigPin.h"
+#endif
 
 
 typedef struct __eosDigOutputService *eosDigOutputServiceHandle;
 typedef struct __eosDigOutput *eosDigOutputHandle;
 
 typedef struct {                       // Parametres d'inicialitzacio de les sortides
-    PORTS_CHANNEL channel;             // -Canal
-    PORTS_BIT_POS position;            // -Posicio
+    eosDigPinID pin;                   // -Identificador del pin
     bool inverted;                     // -Inverteix la sortida
 } eosDigOutputParams;
 
