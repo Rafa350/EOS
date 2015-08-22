@@ -29,7 +29,7 @@
 #define MSG_NOTIFY           103       // Event de nofificacio d'un altre form
 
 
-typedef struct __eosDisplayServiceHandle *eosDisplayServiceHandle;
+typedef struct __eosDisplayHandle *eosDisplayHandle;
 typedef struct __eosFormsService *eosFormsServiceHandle;
 typedef struct __eosForm *eosFormHandle;
 
@@ -77,7 +77,7 @@ typedef struct {
 
 
 typedef void (*eosFormsOnMessageCallback)(eosFormsMessage *message);
-typedef void (*eosFormsOnPaintCallback)(eosDisplayServiceHandle hDisplay);
+typedef void (*eosFormsOnPaintCallback)(eosDisplayHandle hDisplay);
 
 typedef struct {                            // Parametres d'inicialitzacio del form
     eosFormHandle hParent;                  // -Form pare
@@ -88,7 +88,7 @@ typedef struct {                            // Parametres d'inicialitzacio del f
 } eosFormParams;
 
 typedef struct {                            // Parametres d'inicialitzacio del servei
-    eosDisplayServiceHandle hDisplayService;
+    eosDisplayHandle hDisplay;
     eosFormsOnMessageCallback onMessage;    // -Funcio per procesar els missatges
     void *globalData;                       // -Dades globals a tots els forms
 } eosFormsServiceParams;
