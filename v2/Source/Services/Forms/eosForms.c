@@ -13,13 +13,13 @@ typedef struct __eosForm {             // Dades del formulari
     eosFormHandle hParent;             // -Handler del form pare
     eosFormsOnMessageCallback onMessage;    // -Event onMessage
     eosFormsOnPaintCallback onPaint;   // -Event onPaint
-    bool onPaintPending;               // -Indica si cal redibuixar
-    bool needDestroy;                  // -Indica si cal destruirlo
+    bool paintPending;                 // -Indica si esta pendent de pinter
+    bool destroyPending;               // -Indica si esta pendent de destruir
     void *privateData;                 // -Dades privades del formulari
 } eosForm;
 
 typedef struct __eosFormsService {     // Dades del servei
-    eosDisplayServiceHandle hDisplayService;// -Servei de display
+    eosDisplayHandle hDisplay;         // -Handler del display
     eosFormsOnMessageCallback onMessage;    // -Event onMessage
     eosTaskHandle hTask;               // -Tasca del servei
     eosQueueHandle hMessageQueue;      // -Cua de missatges
@@ -57,7 +57,7 @@ eosFormsServiceHandle eosFormsServiceInitialize(
     eosFormsServiceHandle hService = eosAlloc(sizeof(eosFormsService));
     if (hService != NULL) {
 
-        hService->hDisplayService = params->hDisplayService;
+        hService->hDisplay = params->hDisplay;
         hService->onMessage = params->onMessage;
         hService->hFirstForm = NULL;
         hService->hLastForm = NULL;
@@ -116,8 +116,8 @@ eosFormHandle eosFormsCreateForm(
         else
             hForm->privateData = NULL;
         hForm->onMessage = params->onMessage;
-        hForm->needDestroy = false;
-        hForm->onPaintPending = false;
+        hForm->destroyPending = false;
+        hForm->paintPending = false;
 
         if (hService->hFirstForm == NULL) {
             hService->hFirstForm = hForm;
@@ -162,12 +162,12 @@ void eosFormsDestroyForm(
     
     eosDebugVerify(hForm != NULL);
 
-    eosFormsServiceHandle hService = hForm->hService;
-    
-    if (hService->hActiveForm == hForm)
-        eosFormsSetActiveForm(hService, NULL);
-    hForm->onPaintPending = false;
-    hForm->needDestroy = true;
+    if (!hForm->destroyPending) {
+        hForm->destroyPending = true;
+        eosFormsServiceHandle hService = hForm->hService;
+        if (hService->hActiveForm == hForm)
+            eosFormsSetActiveForm(hService, NULL);
+    }
 }
 
 
@@ -256,8 +256,8 @@ void eosFormsRefresh(
 
     eosDebugVerify(hForm != NULL);
     
-    if (!hForm->onPaintPending) {
-        hForm->onPaintPending = true;   
+    if (!hForm->paintPending) {
+        hForm->paintPending = true;   
         eosQueuePut(hForm->hService->hPaintQueue, &hForm, 0);
     }
 }
@@ -452,9 +452,9 @@ static void task(
         // Procesa el repintat pendent
         //
         while (eosQueueGet(hService->hPaintQueue, &hForm, 0)) {
-            if (hForm->onPaint != NULL)
-                hForm->onPaint(hService->hDisplayService);
-            hForm->onPaintPending = false;
+            if ((hForm->onPaint != NULL) && !hForm->destroyPending)
+                hForm->onPaint(hService->hDisplay);
+            hForm->paintPending = false;
         }        
                 
         // Procesa la destruccio pendent
