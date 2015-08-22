@@ -63,12 +63,18 @@ eosFormsServiceHandle eosFormsServiceInitialize(
         hService->hLastForm = NULL;
         hService->hActiveForm = NULL;
 
+        // -Crea la cua de missatges
+        //
         hService->hMessageQueue = eosQueueCreate(sizeof(eosFormsMessage), 100);
         eosDebugVerify(hService->hMessageQueue != NULL);
 
+        // -Crea la cua de forms pendents de repintat
+        //
         hService->hPaintQueue = eosQueueCreate(sizeof(eosFormHandle), 10);
         eosDebugVerify(hService->hPaintQueue != NULL);
         
+        // -Crea la tasca de control del servei
+        //
         hService->hTask = eosTaskCreate(0, 1024, task, hService);
         eosDebugVerify(hService->hTask != NULL);
     }
@@ -111,7 +117,7 @@ eosFormHandle eosFormsCreateForm(
             hForm->privateData = NULL;
         hForm->onMessage = params->onMessage;
         hForm->needDestroy = false;
-        hForm->needRedraw = false;
+        hForm->onPaintPending = false;
 
         if (hService->hFirstForm == NULL) {
             hService->hFirstForm = hForm;
@@ -160,7 +166,7 @@ void eosFormsDestroyForm(
     
     if (hService->hActiveForm == hForm)
         eosFormsSetActiveForm(hService, NULL);
-    hForm->needRedraw = false;
+    hForm->onPaintPending = false;
     hForm->needDestroy = true;
 }
 
@@ -412,7 +418,11 @@ void eosFormsSendCommand(
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void task(void)
+ *           void task(
+ *               void *params)
+ * 
+ *       Entrada:
+ *           params: Parametres de la tasca (hService)
  *
  *************************************************************************/
 
