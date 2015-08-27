@@ -15,7 +15,7 @@ typedef struct __axDisplayService *axDisplayServiceHandle;
 
 typedef struct {
     eosI2CMasterServiceHandle hI2CMasterService;
-    BYTE i2cAddr;
+    uint8_t i2cAddr;
 } axDisplayServiceParams;
 
 
@@ -27,14 +27,14 @@ extern bool axDisplayBeginCommand(axDisplayServiceHandle hService);
 extern bool axDisplayEndCommand(axDisplayServiceHandle hService);
 extern bool axDisplayIsBusy(axDisplayServiceHandle hService);
 
-extern bool axDisplayAddUINT8(axDisplayServiceHandle hService, UINT8 data);
-extern bool axDisplayAddUINT16(axDisplayServiceHandle hService, UINT16 data);
+extern bool axDisplayAddUINT8(axDisplayServiceHandle hService, uint8_t data);
+extern bool axDisplayAddUINT16(axDisplayServiceHandle hService, uint16_t data);
 extern bool axDisplayAddString(axDisplayServiceHandle hService, const char *data);
-extern bool axDisplayAddBytes(axDisplayServiceHandle hService, const BYTE *data, unsigned dataLen);
+extern bool axDisplayAddBytes(axDisplayServiceHandle hService, const uint8_t *data, unsigned dataLen);
 extern bool axDisplayAddCommandClear(axDisplayServiceHandle hService);
 extern bool axDisplayAddCommandRefresh(axDisplayServiceHandle hService);
-extern bool axDisplayAddCommandSetColor(axDisplayServiceHandle hService, UINT8 fgColor, UINT8 bkColor);
-extern bool axDisplayAddCommandSetFont(axDisplayServiceHandle hService, UINT8 font);
+extern bool axDisplayAddCommandSetColor(axDisplayServiceHandle hService, uint8_t fgColor, uint8_t bkColor);
+extern bool axDisplayAddCommandSetFont(axDisplayServiceHandle hService, uint8_t font);
 extern bool axDisplayAddCommandMoveTo(axDisplayServiceHandle hService, int x, int y);
 extern bool axDisplayAddCommandDrawLine(axDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
 extern bool axDisplayAddCommandDrawRectangle(axDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
