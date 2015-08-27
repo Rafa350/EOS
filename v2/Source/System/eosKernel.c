@@ -8,8 +8,8 @@
 #include "peripheral/bmx/plib_bmx.h"
 
 
-void __attribute__((nomips16)) PerformanceConfig( 
-    unsigned int sysclk) {
+static void __attribute__((nomips16)) PerformanceConfig( 
+    unsigned sysclk) {
     
     bool int_flag = false;
     register unsigned long tmp;

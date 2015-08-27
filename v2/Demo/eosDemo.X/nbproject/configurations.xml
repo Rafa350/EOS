@@ -63,6 +63,7 @@
           <itemPath>../../Source/Services/eosI2CMaster.c</itemPath>
           <itemPath>../../Source/Services/eosI2CMasterISRWrapper.S</itemPath>
           <itemPath>../../Source/Services/eosTimer.c</itemPath>
+          <itemPath>../../Source/Services/eosAppLoop.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
           <itemPath>../../Source/System/eosKernel.c</itemPath>
