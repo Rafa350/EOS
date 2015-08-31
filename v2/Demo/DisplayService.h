@@ -11,35 +11,33 @@
 #endif
 
 
-typedef struct __axDisplayService *axDisplayServiceHandle;
+typedef struct __eosDisplayService *eosDisplayServiceHandle;
 
 typedef struct {
     eosI2CMasterServiceHandle hI2CMasterService;
     uint8_t i2cAddr;
-} axDisplayServiceParams;
+} eosDisplayServiceParams;
 
 
-extern axDisplayServiceHandle axDisplayServiceInitialize(axDisplayServiceParams *params);
-extern bool axDisplayServiceIsReady(axDisplayServiceHandle hService);
-extern void axDisplayServiceTask(axDisplayServiceHandle hService);
+extern eosDisplayServiceHandle eosDisplayServiceInitialize(eosDisplayServiceParams *params);
 
-extern bool axDisplayBeginCommand(axDisplayServiceHandle hService);
-extern bool axDisplayEndCommand(axDisplayServiceHandle hService);
-extern bool axDisplayIsBusy(axDisplayServiceHandle hService);
+extern bool eosDisplayBeginCommand(eosDisplayServiceHandle hService);
+extern bool eosDisplayEndCommand(eosDisplayServiceHandle hService);
+extern bool eosDisplayIsBusy(eosDisplayServiceHandle hService);
 
-extern bool axDisplayAddUINT8(axDisplayServiceHandle hService, uint8_t data);
-extern bool axDisplayAddUINT16(axDisplayServiceHandle hService, uint16_t data);
-extern bool axDisplayAddString(axDisplayServiceHandle hService, const char *data);
-extern bool axDisplayAddBytes(axDisplayServiceHandle hService, const uint8_t *data, unsigned dataLen);
-extern bool axDisplayAddCommandClear(axDisplayServiceHandle hService);
-extern bool axDisplayAddCommandRefresh(axDisplayServiceHandle hService);
-extern bool axDisplayAddCommandSetColor(axDisplayServiceHandle hService, uint8_t fgColor, uint8_t bkColor);
-extern bool axDisplayAddCommandSetFont(axDisplayServiceHandle hService, uint8_t font);
-extern bool axDisplayAddCommandMoveTo(axDisplayServiceHandle hService, int x, int y);
-extern bool axDisplayAddCommandDrawLine(axDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
-extern bool axDisplayAddCommandDrawRectangle(axDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
-extern bool axDisplayAddCommandFillRectangle(axDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
-extern bool axDisplayAddCommandDrawText(axDisplayServiceHandle hService, int x, int y, const char *text, unsigned offset, unsigned length);
+extern bool eosDisplayAddUINT8(eosDisplayServiceHandle hService, uint8_t data);
+extern bool eosDisplayAddUINT16(eosDisplayServiceHandle hService, uint16_t data);
+extern bool eosDisplayAddString(eosDisplayServiceHandle hService, const char *data);
+extern bool eosDisplayAddBytes(eosDisplayServiceHandle hService, const uint8_t *data, unsigned dataLen);
+extern bool eosDisplayAddCommandClear(eosDisplayServiceHandle hService);
+extern bool eosDisplayAddCommandRefresh(eosDisplayServiceHandle hService);
+extern bool eosDisplayAddCommandSetColor(eosDisplayServiceHandle hService, uint8_t fgColor, uint8_t bkColor);
+extern bool eosDisplayAddCommandSetFont(eosDisplayServiceHandle hService, uint8_t font);
+extern bool eosDisplayAddCommandMoveTo(eosDisplayServiceHandle hService, int x, int y);
+extern bool eosDisplayAddCommandDrawLine(eosDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
+extern bool eosDisplayAddCommandDrawRectangle(eosDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
+extern bool eosDisplayAddCommandFillRectangle(eosDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
+extern bool eosDisplayAddCommandDrawText(eosDisplayServiceHandle hService, int x, int y, const char *text, unsigned offset, unsigned length);
 
 
 #endif

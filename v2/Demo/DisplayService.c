@@ -7,14 +7,7 @@
 
 #define BUFFER_SIZE               1000      // Tamany del buffer
 
-typedef enum {                              // Estat del servei
-    serviceInitializing,                    // -Initcialitzant el servei
-    serviceRunning,                         // -Executant el servei
-    serviceWaitingEndTransaction            // -Esperant el final de la transaccio
-} axDisplayServiceState;
-
-typedef struct __axDisplayService {         // Dades internes del servei
-    axDisplayServiceState state;            // -Estat del servei
+typedef struct __eosDisplayService {         // Dades internes del servei
     eosI2CMasterServiceHandle hI2CMasterService; // -Handler del servei I2C
     uint8_t i2cAddr;                        // -Adressa I2C del display
     uint8_t *buffer;
@@ -22,7 +15,7 @@ typedef struct __axDisplayService {         // Dades internes del servei
     unsigned bufferCount;
     bool bufferError;
     bool isBusy;
-} axDisplayService;
+} eosDisplayService;
 
 
 static void onEndTransaction(eosI2CTransactionHandle hTransaction, void *context);
@@ -41,8 +34,8 @@ static void onEndTransaction(eosI2CTransactionHandle hTransaction, void *context
  *       Inicialitza el servei
  *
  *       Funcio:
- *           axDisplayServiceHandle axDisplayServiceInitialize(
- *               axDisplayServiceParams *params)
+ *           eosDisplayServiceHandle eosDisplayServiceInitialize(
+ *               eosDisplayServiceParams *params)
  *
  *       Entrada:
  *           params: Parametres del servei
@@ -52,73 +45,22 @@ static void onEndTransaction(eosI2CTransactionHandle hTransaction, void *context
  *
  *************************************************************************/
 
-axDisplayServiceHandle axDisplayServiceInitialize(
-    axDisplayServiceParams *params) {
+eosDisplayServiceHandle eosDisplayServiceInitialize(
+    eosDisplayServiceParams *params) {
 
-    axDisplayServiceHandle hService = (axDisplayServiceHandle) eosAlloc(sizeof(axDisplayService));
-    if (hService == NULL)
-        return NULL;
+    eosDisplayServiceHandle hService = (eosDisplayServiceHandle) eosAlloc(sizeof(eosDisplayService));
+    if (hService != NULL) {
 
-    hService->state = serviceInitializing;
-    hService->hI2CMasterService = params->hI2CMasterService;
-    hService->i2cAddr = params->i2cAddr;
+        hService->hI2CMasterService = params->hI2CMasterService;
+        hService->i2cAddr = params->i2cAddr;
 
-    hService->bufferSize = BUFFER_SIZE;
-    hService->buffer = (uint8_t*) eosAlloc(hService->bufferSize);
-    hService->isBusy = false;
+        hService->bufferSize = BUFFER_SIZE;
+        hService->buffer = (uint8_t*) eosAlloc(hService->bufferSize);
+        eosDebugVerify(hService->buffer != NULL);
+        hService->isBusy = false;
+    }
 
     return hService;
-}
-
-
-/*************************************************************************
- *
- *       Comprova si el servei esta inicialitzat
- *
- *       Funcio:
- *           bool axDisplayServiceIsReady(
- *               axDisplayServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del servei
- *
- *       Retorn:
- *           true si es inicialitzat, false en cas contrari
- *
- *************************************************************************/
-
-bool axDisplayServiceIsReady(
-    axDisplayServiceHandle hService) {
-
-    return hService->state != serviceInitializing;
-}
-
-
-/*************************************************************************
- *
- *       Procesa les tasques del servei
- *
- *       Funcio:
- *           void eosDisplayServiceTask(
- *               eosDisplayServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del servei
- *
- *************************************************************************/
-
-void axDisplayServiceTask(
-    axDisplayServiceHandle hService) {
-
-    switch (hService->state) {
-        case serviceInitializing:
-            if (eosI2CMasterServiceIsReady(hService->hI2CMasterService))
-                hService->state = serviceRunning;
-            break;
-
-        case serviceRunning:
-            break;
-    }
 }
 
 
@@ -127,8 +69,8 @@ void axDisplayServiceTask(
  *       Inicia l'escriptura d'una comanda pel display
  *
  *       Funcio:
- *           bool axDisplayBeginCommand(
- *               axDisplayServiceHandle hService)
+ *           bool eosDisplayBeginCommand(
+ *               elsDisplayServiceHandle hService)
  *
  *       Entrada:
  *           hService: El handler del display
@@ -138,8 +80,8 @@ void axDisplayServiceTask(
  *
  *************************************************************************/
 
-bool axDisplayBeginCommand(
-    axDisplayServiceHandle hService) {
+bool eosDisplayBeginCommand(
+    eosDisplayServiceHandle hService) {
 
     if (hService->isBusy)
         return false;
@@ -156,8 +98,8 @@ bool axDisplayBeginCommand(
  *       Finalitza la escriptura d'una comanda del display
  *
  *       Funcio:
- *           bool axDisplayEndCommand(
- *               axDisplayServiceHandle hService)
+ *           bool eosDisplayEndCommand(
+ *               eosDisplayServiceHandle hService)
  *
  *       Entrada:
  *           hService: El handler del display
@@ -167,8 +109,8 @@ bool axDisplayBeginCommand(
  * 
  *************************************************************************/
 
-bool axDisplayEndCommand(
-    axDisplayServiceHandle hService) {
+bool eosDisplayEndCommand(
+    eosDisplayServiceHandle hService) {
     
     if (hService->bufferError)
         return false;
@@ -197,8 +139,8 @@ bool axDisplayEndCommand(
  *       Afegeix un UINT8 a la comanda
  *
  *       Funcio:
- *           bool axDisplayAddUINT8(
- *               axDisplayServiceHandle hService,
+ *           bool eosDisplayAddUINT8(
+ *               eosDisplayServiceHandle hService,
  *               uint8_t data)
  *
  *       Entrada:
@@ -210,8 +152,8 @@ bool axDisplayEndCommand(
  *
  *************************************************************************/
 
-bool inline axDisplayAddUINT8(
-    axDisplayServiceHandle hService,
+bool inline eosDisplayAddUINT8(
+    eosDisplayServiceHandle hService,
     uint8_t data) {
 
     if (!hService->bufferError) {
@@ -227,8 +169,8 @@ bool inline axDisplayAddUINT8(
  *       Afegeix un UINT16 a la comanda
  *
  *       Funcio:
- *           bool axDisplayAddUINT16(
- *               axDisplayServiceHandle hService,
+ *           bool eosDisplayAddUINT16(
+ *               eosDisplayServiceHandle hService,
  *               uint16_t data)
  *
  *       Entrada:
@@ -240,8 +182,8 @@ bool inline axDisplayAddUINT8(
  *
  *************************************************************************/
 
-bool inline axDisplayAddUINT16(
-    axDisplayServiceHandle hService,
+bool inline eosDisplayAddUINT16(
+    eosDisplayServiceHandle hService,
     uint16_t data) {
 
     if (!hService->bufferError) {
@@ -257,8 +199,8 @@ bool inline axDisplayAddUINT16(
  *       Afegeix una cadena a la comanda
  *
  *       Funcio:
- *           bool axDisplayAddString(
- *               axDisplayServiceHandle hService,
+ *           bool eosDisplayAddString(
+ *               eosDisplayServiceHandle hService,
  *               const char *data)
  *
  *       Entrada:
@@ -270,8 +212,8 @@ bool inline axDisplayAddUINT16(
  *
  *************************************************************************/
 
-bool axDisplayAddString(
-    axDisplayServiceHandle hService,
+bool eosDisplayAddString(
+    eosDisplayServiceHandle hService,
     const char *data) {
 
     if (!hService->bufferError) {
@@ -289,8 +231,8 @@ bool axDisplayAddString(
  *       Afegeix una sequencia de bytes a la comanda
  *
  *       Funcio:
- *           bool axDisplayAddBytes(
- *               axDisplayServiceHandle hService,
+ *           bool eosDisplayAddBytes(
+ *               eosDisplayServiceHandle hService,
  *               const uint8_t *data,
  *               unsigned dataLen)
  *
@@ -304,8 +246,8 @@ bool axDisplayAddString(
  *
  *************************************************************************/
 
-bool axDisplayAddBytes(
-    axDisplayServiceHandle hService,
+bool eosDisplayAddBytes(
+    eosDisplayServiceHandle hService,
     const uint8_t *data,
     unsigned dataLen) {
 
@@ -318,8 +260,8 @@ bool axDisplayAddBytes(
 }
 
 
-bool axDisplayAddCommandClear(
-    axDisplayServiceHandle hService) {
+bool eosDisplayAddCommandClear(
+    eosDisplayServiceHandle hService) {
 
     if (!hService->bufferError) {
         if (hService->bufferCount + sizeof(uint8_t) < hService->bufferSize)
@@ -332,8 +274,8 @@ bool axDisplayAddCommandClear(
 }
 
 
-bool axDisplayAddCommandRefresh(
-    axDisplayServiceHandle hService) {
+bool eosDisplayAddCommandRefresh(
+    eosDisplayServiceHandle hService) {
 
     if (!hService->bufferError) {
         if (hService->bufferCount + sizeof(uint8_t) < hService->bufferSize)
@@ -346,8 +288,8 @@ bool axDisplayAddCommandRefresh(
 }
 
 
-bool axDisplayAddCommandSetColor(
-    axDisplayServiceHandle hService,
+bool eosDisplayAddCommandSetColor(
+    eosDisplayServiceHandle hService,
     uint8_t fgColor,
     uint8_t bkColor) {
 
@@ -365,8 +307,8 @@ bool axDisplayAddCommandSetColor(
 }
 
 
-bool axDisplayAddCommandSetFont(
-    axDisplayServiceHandle hService,
+bool eosDisplayAddCommandSetFont(
+    eosDisplayServiceHandle hService,
     uint8_t font) {
 
     if (!hService->bufferError) {
@@ -382,8 +324,8 @@ bool axDisplayAddCommandSetFont(
 }
 
 
-bool axDisplayAddCommandMoveTo(
-    axDisplayServiceHandle hService,
+bool eosDisplayAddCommandMoveTo(
+    eosDisplayServiceHandle hService,
     int x,
     int y) {
 
@@ -401,8 +343,8 @@ bool axDisplayAddCommandMoveTo(
 }
 
 
-bool axDisplayAddCommandDrawLine(
-    axDisplayServiceHandle hService,
+bool eosDisplayAddCommandDrawLine(
+    eosDisplayServiceHandle hService,
     int x1,
     int y1,
     int x2,
@@ -423,15 +365,15 @@ bool axDisplayAddCommandDrawLine(
         msg.x2 = x2;
         msg.y2 = y2;
 
-        axDisplayAddBytes(hService, (uint8_t*) &msg, 12);//sizeof(msg));
+        eosDisplayAddBytes(hService, (uint8_t*) &msg, 12);//sizeof(msg));
     }
 
     return hService->bufferError;
 }
 
 
-bool axDisplayAddCommandDrawRectangle(
-    axDisplayServiceHandle hService,
+bool eosDisplayAddCommandDrawRectangle(
+    eosDisplayServiceHandle hService,
     int x1,
     int y1,
     int x2,
@@ -452,15 +394,15 @@ bool axDisplayAddCommandDrawRectangle(
         msg.x2 = x2;
         msg.y2 = y2;
 
-        axDisplayAddBytes(hService, (uint8_t*) &msg, 12);//sizeof(msg));
+        eosDisplayAddBytes(hService, (uint8_t*) &msg, 12);//sizeof(msg));
     }
 
     return hService->bufferError;
 }
 
 
-bool axDisplayAddCommandFillRectangle(
-    axDisplayServiceHandle hService,
+bool eosDisplayAddCommandFillRectangle(
+    eosDisplayServiceHandle hService,
     int x1,
     int y1,
     int x2,
@@ -486,8 +428,8 @@ bool axDisplayAddCommandFillRectangle(
 }
 
 
-bool axDisplayAddCommandDrawText(
-    axDisplayServiceHandle hService,
+bool eosDisplayAddCommandDrawText(
+    eosDisplayServiceHandle hService,
     int x,
     int y,
     const char *text,
@@ -509,7 +451,7 @@ bool axDisplayAddCommandDrawText(
             __addUINT16(hService, x);
             __addUINT16(hService, y);
             __addUINT8(hService, len);
-            axDisplayAddBytes(hService, &text[offset], len);
+            eosDisplayAddBytes(hService, &text[offset], len);
         }
         else
             hService->bufferError = true;
@@ -524,8 +466,8 @@ bool axDisplayAddCommandDrawText(
  *       Comprova si el display es ocupat
  *
  *       Funcio:
- *           bool axDisplayIsBusy(
- *               axDisplayServiceHandle hService)
+ *           bool eosDisplayIsBusy(
+ *               eosDisplayServiceHandle hService)
  *
  *       Entrada:
  *           hService: El handler del display
@@ -535,8 +477,8 @@ bool axDisplayAddCommandDrawText(
  *
  *************************************************************************/
 
-bool axDisplayIsBusy(
-    axDisplayServiceHandle hService) {
+bool eosDisplayIsBusy(
+    eosDisplayServiceHandle hService) {
 
     return hService->isBusy;
 }
@@ -561,6 +503,6 @@ static void onEndTransaction(
     eosI2CTransactionHandle hTransaction,
     void *context) {
 
-    axDisplayServiceHandle hService = (axDisplayServiceHandle) context;
+    eosDisplayServiceHandle hService = (eosDisplayServiceHandle) context;
     hService->isBusy = false;
 }

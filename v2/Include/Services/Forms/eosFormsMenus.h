@@ -7,7 +7,7 @@
 #endif
 
 #ifndef __EOS_FORMS_H
-#include <Services/eosForms.h>
+#include <Services/Forms/eosForms.h>
 #endif
 
                                        // Notificacions MSG_NOTIFY
@@ -30,10 +30,11 @@ typedef struct {                       // Parametres de notificacio PAINT
 
 typedef struct {
     eosFormHandle hParent;
-    BYTE *resource;
+    uint8_t *resource;
 } eosMenuParams;
 
-extern eosFormHandle eosFormsCreateMenu(eosMenuParams *params);
+
+extern eosFormHandle eosFormsCreateMenu(eosFormsServiceHandle hService,  eosMenuParams *params);
 
 
 #endif

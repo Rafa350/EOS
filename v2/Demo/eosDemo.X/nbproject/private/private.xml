@@ -4,9 +4,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Rafael/Documents/Projectes/Projectes%20MPLAB/EOS/v2/Source/Services/eosAppLoop.c</file>
-            <file>file:/C:/Users/Rafael/Documents/Projectes/Projectes%20MPLAB/EOS/v2/Source/System/eosKernel.c</file>
+            <file>file:/C:/Users/Rafael/Documents/Projectes/Projectes%20MPLAB/EOS/v2/Demo/DisplayService.c</file>
+            <file>file:/C:/Users/Rafael/Documents/Projectes/Projectes%20MPLAB/EOS/v2/Source/Services/Forms/eosFormsMenus.c</file>
             <file>file:/C:/Users/Rafael/Documents/Projectes/Projectes%20MPLAB/EOS/v2/Demo/Main.c</file>
+            <file>file:/C:/Users/Rafael/Documents/Projectes/Projectes%20MPLAB/EOS/v2/Demo/DisplayService.h</file>
         </group>
     </open-files>
 </project-private>

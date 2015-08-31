@@ -1,4 +1,6 @@
-#include "Services/eosFormsMenus.h"
+#include "eos.h"
+
+#include "Services/Forms/eosFormsMenus.h"
 #include "DisplayService.h"
 
 
@@ -12,17 +14,18 @@ typedef struct {                       // Informacio d'un menu
 } MenuInfo;
 
 typedef struct {                       // Dades privades
-    BYTE *resource;                    // -Recurs del menu
+    uint8_t *resource;                 // -Recurs del menu
     unsigned level;                    // -Nivell de submenus
     MenuInfo info[MAX_LEVELS];         // -Pila d'informacio del menu
     unsigned showItems;                // -Numero d'items a mostrar
 } PrivateData;
 
 
+static void onCreate(eosFormHandle hForm, void *privateParams);
+static void onPaint(eosFormHandle hForm, eosDisplayServiceHandle hDisplay);
+static void onActivate(eosFormHandle hForm, eosFormHandle hFormDeactivated);
+
 static void onMessage(eosFormsMessage *message);
-static void onMsgCreate(eosFormsMessage *message);
-static void onMsgPaint(eosFormsMessage *message);
-static void onMsgActivate(eosFormsMessage *message);
 static void onMsgSelectorInc(eosFormsMessage *message);
 static void onMsgSelectorDec(eosFormsMessage *message);
 static void onMsgSelectorClick(eosFormsMessage *message);
@@ -35,6 +38,7 @@ static void notify(eosFormHandle hForm, unsigned event, void *params);
  *
  *       Funcio:
  *           eosFormHandle eosFormsCreateMenu(
+ *               eosFormsServiceHandle hService,
  *               eosMenuParams *params)
  *
  *       Entrada:
@@ -47,16 +51,20 @@ static void notify(eosFormHandle hForm, unsigned event, void *params);
  *************************************************************************/
 
 eosFormHandle eosFormsCreateMenu(
+    eosFormsServiceHandle hService, 
     eosMenuParams *params) {
 
     eosFormParams formParams;
     memset(&formParams, 0, sizeof(formParams));
     formParams.hParent = params->hParent;
+    formParams.onCreate = onCreate;
+    formParams.onActivate = onActivate;
     formParams.onMessage = onMessage;
+    formParams.onPaint = onPaint;
     formParams.privateParams = params;
     formParams.privateDataSize = sizeof(PrivateData);
     
-    return eosFormsCreateForm(&formParams);
+    return eosFormsCreateForm(hService, &formParams);
 }
 
 
@@ -78,18 +86,6 @@ static void onMessage(
     eosFormsMessage *message) {
 
     switch (message->id) {
-        case MSG_CREATE:
-            onMsgCreate(message);
-            break;
-
-        case MSG_ACTIVATE:
-            onMsgActivate(message);
-            break;
-
-        case MSG_PAINT:
-            onMsgPaint(message);
-            break;
-            
         case MSG_KEYBOARD:
             break;
 
@@ -115,22 +111,25 @@ static void onMessage(
 
 /*************************************************************************
  *
- *       Procesa el missatge MSG_INITIALIZE
+ *       Procesa el event onCreate
  *
  *       Funcio:
- *           void onMsgCreate(
- *               eosFormsMessage *message)
+ *           void onCreate(
+ *               eosFormHandle hForm,
+ *               void *privateParams)
  *
  *       Entrada:
- *           message: El missatge a procesar
+ *           hForm: Handler del form
+ *           privateParams: Parametres de creacio del form
  *
  *************************************************************************/
 
-static void onMsgCreate(
-    eosFormsMessage *message) {
+static void onCreate(
+    eosFormHandle hForm,
+    void *privateParams) {
 
-    PrivateData *data = (PrivateData*) message->msgCreate.privateData;
-    eosMenuParams *params = (eosMenuParams*) message->msgCreate.privateParams;
+    eosMenuParams *params = (eosMenuParams*) privateParams;
+    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
     // Inicialitza les dades privades
     //
@@ -146,56 +145,60 @@ static void onMsgCreate(
 
 /*************************************************************************
  *
- *       Procesa el missatge MSG_ACTIVATE
+ *       Procesa el event onActivate
  *
  *       Funcio:
- *           void onMsgActivate(
- *               eosFormsMessage *message)
+ *           void onActivate(
+ *               eosFormHandle hForm,
+ *               eosFormHandle hFormDeactivated)
  *
  *       Entrada:
- *           message: El missatge a procesar
+ *           hForm           : Handler del form
+ *           hFormDeactivated: Handler del form desactivat
  *
  *************************************************************************/
 
-static void onMsgActivate(
-    eosFormsMessage *message) {
+static void onActivate(
+    eosFormHandle hForm,
+    eosFormHandle hFormDeactivated) {
 
-    eosFormsRefresh(message->hForm);
+    eosFormsRefresh(hForm);
 }
 
 
 /*************************************************************************
  *
- *       Procesa el missatge MSG_PAINT
+ *       Procesa el event ON_PAINT
  *
  *       Funcio:
- *           void onMsgPaint(
- *               eosFormsMessage *message)
+ *           void onPaint(
+ *               eosFormHandle hForm,
+ *               eosDisplayServiceHandle hDisplay)
  *
  *       Entrada:
- *           message: El missatge a procesar
+ *           hForm   : Handle del form
+ *           hDisplay: hANDLE DEL DISPLAY
  *
  *************************************************************************/
 
-static void onMsgPaint(
-    eosFormsMessage  *message) {
+static void onPaint(
+    eosFormHandle hForm,
+    eosDisplayServiceHandle hDisplay) {
 
-    eosFormHandle hForm = message->hForm;
-    axDisplayServiceHandle hDisplay = message->msgPaint.hDisplayService;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
 
-    if (axDisplayBeginCommand(hDisplay)) {
+    if (eosDisplayBeginCommand(hDisplay)) {
 
-        BYTE *resource = data->resource;
+        uint8_t *resource = data->resource;
         MenuInfo *info = &data->info[data->level];
 
         unsigned offset = info->offset;
         unsigned titleLen = resource[offset + 1];
         char *title = &resource[offset + 2];
 
-        axDisplayAddCommandClear(hDisplay);
-        axDisplayAddCommandDrawText(hDisplay, 0, 0, title, 0, titleLen);
-        axDisplayAddCommandDrawLine(hDisplay, 0, 10, 127, 10);
+        eosDisplayAddCommandClear(hDisplay);
+        eosDisplayAddCommandDrawText(hDisplay, 0, 0, title, 0, titleLen);
+        eosDisplayAddCommandDrawLine(hDisplay, 0, 10, 127, 10);
 
         unsigned i = info->firstItem;
         unsigned j = min(info->numItems, data->showItems);
@@ -209,26 +212,27 @@ static void onMsgPaint(
             char *itemTitle = &resource[itemOffset + 2];
 
             if (i == info->currentItem) {
-                axDisplayAddCommandFillRectangle(hDisplay, 0, k, 127, k + 8);
-                axDisplayAddCommandSetColor(hDisplay, 0, 1);
+                eosDisplayAddCommandFillRectangle(hDisplay, 0, k, 127, k + 8);
+                eosDisplayAddCommandSetColor(hDisplay, 0, 1);
             }
-            axDisplayAddCommandDrawText(hDisplay, 10, k, itemTitle, 0, itemTitleLen);
+            eosDisplayAddCommandDrawText(hDisplay, 10, k, itemTitle, 0, itemTitleLen);
 
+            /*
             eosMenuNotifyGetValue notifyParams;
             notifyParams.command = resource[itemOffset + 2 + itemTitleLen];
             notifyParams.itemValue = NULL;
-            notify(message->hForm, EV_MENU_GETVALUE, &notifyParams);
+            notify(hForm, EV_MENU_GETVALUE, &notifyParams);
             if (notifyParams.itemValue != NULL)
-                axDisplayAddCommandDrawText(hDisplay, 60, k, notifyParams.itemValue, 0, -1);
-
-            axDisplayAddCommandSetColor(hDisplay, 1, 0);
+                eosDisplayAddCommandDrawText(hDisplay, 60, k, notifyParams.itemValue, 0, -1);
+            */
+            eosDisplayAddCommandSetColor(hDisplay, 1, 0);
 
             i += 1;
             k += 10;
         }
 
-        axDisplayAddCommandRefresh(hDisplay);
-        axDisplayEndCommand(hDisplay);
+        eosDisplayAddCommandRefresh(hDisplay);
+        eosDisplayEndCommand(hDisplay);
     }
 }
 
@@ -362,7 +366,7 @@ static void onMsgSelectorClick(
 
     eosFormHandle hForm = message->hForm;
     PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
-    BYTE *resource = data->resource;
+    uint8_t *resource = data->resource;
 
     unsigned offset = data->info[data->level].offset;
     unsigned currentItem = data->info[data->level].currentItem;

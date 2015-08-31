@@ -12,14 +12,17 @@ typedef struct __eosForm {             // Dades del formulari
     eosFormHandle hPrevForm;           // -Anterior form de la llista
     eosFormHandle hParent;             // -Handler del form pare
     eosFormsOnMessageCallback onMessage;    // -Event onMessage
+    eosFormsOnCreateCallback onCreate;      // -Event onCreate
     eosFormsOnPaintCallback onPaint;   // -Event onPaint
+    eosFormsOnActivateCallback onActivate;  // -Event onActivate
+    eosFormsOnDeactivateCallback onDeactivate;   // -Event onDeactivate
     bool paintPending;                 // -Indica si esta pendent de pinter
     bool destroyPending;               // -Indica si esta pendent de destruir
     void *privateData;                 // -Dades privades del formulari
 } eosForm;
 
 typedef struct __eosFormsService {     // Dades del servei
-    eosDisplayHandle hDisplay;         // -Handler del display
+    eosDisplayServiceHandle hDisplayService;// -Handler del display
     eosFormsOnMessageCallback onMessage;    // -Event onMessage
     eosTaskHandle hTask;               // -Tasca del servei
     eosQueueHandle hMessageQueue;      // -Cua de missatges
@@ -57,7 +60,7 @@ eosFormsServiceHandle eosFormsServiceInitialize(
     eosFormsServiceHandle hService = eosAlloc(sizeof(eosFormsService));
     if (hService != NULL) {
 
-        hService->hDisplay = params->hDisplay;
+        hService->hDisplayService = params->hDisplayService;
         hService->onMessage = params->onMessage;
         hService->hFirstForm = NULL;
         hService->hLastForm = NULL;
@@ -105,17 +108,25 @@ eosFormHandle eosFormsCreateForm(
     eosFormsServiceHandle hService,
     eosFormParams *params) {
     
+    eosDebugVerify(hService != NULL);
     eosDebugVerify(params != NULL);
 
     eosFormHandle hForm = eosAlloc(sizeof(eosForm) + params->privateDataSize);
     if (hForm != NULL) {
 
+        hForm->hService = hService;
         hForm->hParent = params->hParent;
         if (params->privateDataSize > 0)
             hForm->privateData = (void*) ((uint8_t*) hForm + sizeof(eosForm));
         else
             hForm->privateData = NULL;
+        
         hForm->onMessage = params->onMessage;
+        hForm->onCreate = params->onCreate;
+        hForm->onPaint = params->onPaint,
+        hForm->onActivate = params->onActivate;
+        hForm->onDeactivate = params->onDeactivate;
+        
         hForm->destroyPending = false;
         hForm->paintPending = false;
 
@@ -132,12 +143,8 @@ eosFormHandle eosFormsCreateForm(
             hService->hLastForm = hForm;
         }
 
-        eosFormsMessage message;
-        message.id = MSG_CREATE;
-        message.hForm = hForm;
-        message.msgCreate.privateParams = params->privateParams;
-        message.msgCreate.privateData = hForm->privateData;
-        eosFormsSendMessage(&message);
+        if (hForm->onCreate != NULL)
+            hForm->onCreate(hForm, params->privateParams);
     }
     
     return hForm;
@@ -207,7 +214,12 @@ eosFormHandle eosFormsGetActiveForm(
  *
  *       Entrada:
  *           hService: El handler del servei
- *           hForm   : El formulari a activat
+ *           hForm   : El formulari a activat. NULL si no es vol activar 
+ *                     cap
+ * 
+ *       Notes:
+ *           Es genera un event onDeactivate en el form a desactivar i un
+ *           event onActivate en el form a activar
  *
  *************************************************************************/
 
@@ -218,23 +230,14 @@ void eosFormsSetActiveForm(
     eosDebugVerify(hService != NULL);
     
     eosFormHandle hInactiveForm = hService->hActiveForm;
-    if (hInactiveForm != NULL) {
-        eosFormsMessage message;
-        message.id = MSG_DEACTIVATE;
-        message.hForm = hInactiveForm;
-        message.msgDeactivate.hNewActive = hForm;
-        eosFormsSendMessage(&message);
-    }
+    
+    if ((hInactiveForm != NULL) && (hInactiveForm->onDeactivate != NULL))
+        hInactiveForm->onDeactivate(hInactiveForm, hForm);
     
     hService->hActiveForm = hForm;
 
-    if (hForm != NULL) {
-        eosFormsMessage message;
-        message.id = MSG_ACTIVATE;
-        message.hForm = hForm;
-        message.msgActivate.hOldActive = hInactiveForm;
-        eosFormsSendMessage(&message);
-    }
+    if ((hForm != NULL) && (hForm->onActivate != NULL))
+        hForm->onActivate(hForm, hInactiveForm);
 }
 
 
@@ -453,7 +456,7 @@ static void task(
         //
         while (eosQueueGet(hService->hPaintQueue, &hForm, 0)) {
             if ((hForm->onPaint != NULL) && !hForm->destroyPending)
-                hForm->onPaint(hService->hDisplay);
+                hForm->onPaint(hForm, hService->hDisplayService);
             hForm->paintPending = false;
         }        
                 
