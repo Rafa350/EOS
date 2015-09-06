@@ -1,0 +1,2 @@
+PROJECT(EOS_DEMO CXX)
+ADD_EXECUTABLE(demo.hex main.c)

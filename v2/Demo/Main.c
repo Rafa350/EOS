@@ -52,8 +52,8 @@ static void posEdgeFunction(
     
     eosDisplayBeginCommand(hDisplayService);
     eosDisplayAddCommandClear(hDisplayService);
-//    eosDisplayAddCommandDrawText(hDisplayService, 0, 0, "Hello world", 0, -1);
-//    eosDisplayAddCommandDrawLine(hDisplayService, 0, 10, 127, 10);
+    eosDisplayAddCommandDrawText(hDisplayService, 0, 0, "Hello world", 0, -1);
+    eosDisplayAddCommandDrawLine(hDisplayService, 0, 10, 127, 10);
     eosDisplayAddCommandRefresh(hDisplayService);
     eosDisplayEndCommand(hDisplayService);
 }

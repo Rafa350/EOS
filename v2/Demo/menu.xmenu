@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <menuResource resourceId="MnuMain">
+        <menu title="MENU">
+            <menuItem title="Configuration...">
+                <menu title="CONFIGURATION">
+                
+                    <!-- Opcions de configuracio dels eixos -->
+                    <menuItem title="Axis...">
+                        <menu title="AXIS">
+                        
+                            <!--Configuracio del eix X -->
+                            <menuItem title="X-Axis...">
+                                <menu title="X-AXIS">
+                                    <menuItem title="Limits..">
+                                        <menu title="X-AXIS LIMITS">
+                                            <commandItem title="Jerk" displayFormat="" command="CMD_SET_XJERK" />
+                                            <commandItem title="Accel" displayFormat="" command="CMD_SET_XMAXACCEL" />
+                                            <commandItem title="Speed" displayFormat="" command="CMD_SET_XMAXSPEED" />
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <menuItem title="Scale...">
+                                        <menu title="X-AXIS SCALE">
+                                            <commandItem title="Steps" displayFormat="" command="CMD_SET_XNUMSTEPS" />
+                                            <commandItem title="Units" displayFormat="" command="CMD_SET_XNUMUNITS" />
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <exitItem title="Back" />
+                                </menu>
+                            </menuItem>
+
+                            <!--Configuracio del eix Y -->
+                            <menuItem title="Y-Axis...">
+                                <menu title="Y-AXIS">
+                                    <menuItem title="Limits..">
+                                        <menu title="X-AXIS LIMITS">
+                                            <commandItem title="Jerk" displayFormat="" command="CMD_SET_YJERK" />
+                                            <commandItem title="Accel" displayFormat="" command="CMD_SET_YMAXACCEL" />
+                                            <commandItem title="Speed" displayFormat="" command="CMD_SET_YMAXSPEED" />
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <menuItem title="Scale...">
+                                        <menu title="X_AXIS SCALE">
+                                            <commandItem title="Steps" displayFormat="" command="CMD_SET_YNUMSTEPS" />
+                                            <commandItem title="Units" displayFormat="" command="CMD_SET_YNUMUNITS" />
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <exitItem title="Back" />
+                                </menu>
+                            </menuItem>
+
+                            <!--Configuracio del eix Z -->
+                            <menuItem title="Z-Axis...">
+                                <menu title="Z-AXIS">
+                                    <menuItem title="Limits..">
+                                        <menu title="Z-AXIS LIMITS">
+                                            <commandItem title="Jerk" displayFormat="" command="CMD_SET_ZJERK" />
+                                            <commandItem title="Accel" displayFormat="" command="CMD_SET_ZMAXACCEL" />
+                                            <commandItem title="Speed" displayFormat="" command="CMD_SET_ZMAXSPEED" />
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <menuItem title="Scale...">
+                                        <menu title="Z-AXIS SCALE">
+                                            <commandItem title="Steps" displayFormat="" command="CMD_SET_ZNUMSTEPS" />
+                                            <commandItem title="Units" displayFormat="" command="CMD_SET_ZNUMUNITS" />
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <exitItem title="Back" />
+                                </menu>
+                            </menuItem>
+
+                            <exitItem title="Back" />
+                        </menu>
+                    </menuItem>
+                    
+                    <menuItem title="Switches...">
+                        <menu title="SWITCHES">
+                            <commandItem title="Program" displayFormat="" command="CMD_CFG_PROGRAM" />
+                            <menuItem title="Steps...">
+                                <menu title="STEPS">
+                                    <menuItem title="Print label...">
+                                        <menu title="PRINT LABEL">
+                                            <!-- Retard al inici de cicle -->
+                                            <commandItem title="PRE-DELAY" displayFormat="" command="CMD_PRINT_PRE_DELAY" />
+                                            <!-- Retard al final de cicle -->
+                                            <commandItem title="POST-DELAY" displayFormat="" command="CMD_PRINT_POST_DELAY"/>
+                                            <!-- Indica si cal esperar una seyal externa per imprimir -->
+                                            <commandItem title="WAIT" displayFormat="" command="CMD_PRINT_WAIT_MODE"/>
+                                            <!-- Indica si el buit es actiu durant la impresio -->
+                                            <commandItem title="VACUUM" displayFormat="" command="CMD_PRINT_VACUUM_MODE" />
+                                            <!-- Temps maxim del cicle, se es sobrepasa es genera un error -->
+                                            <commandItem title="TIMEOUT" displayFormat="" command="CMD_PRINT_TIMEOUT"/>
+                                            <exitItem title="Back" />
+                                       </menu>
+                                    </menuItem>
+                                    <menuItem title="Arm up...">
+                                        <menu title="ARM UP">
+                                            <!-- Retard al inici de cicle -->
+                                            <commandItem title="PRE-DELAY" displayFormat="" command="CMD_UP_PRE_DELAY" />
+                                            <!-- Retard al final de cicle -->
+                                            <commandItem title="POST-DELAY" displayFormat="" command="CMD_UP_POST_DELAY"/>
+                                            <!-- Temps maxim del cicle, se es sobrepasa es genera un error -->
+                                            <commandItem title="TIMEOUT" displayFormat="" command="CMD_UP_TIMEOUT"/>
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <menuItem title="Arm down...">
+                                        <menu title="ARM DOWN">
+                                            <!-- Retard al inici de cicle -->
+                                            <commandItem title="PRE-DELAY" displayFormat="" command="CMD_DOWN_PRE_DELAY" />
+                                            <!-- Retard al final de cicle -->
+                                            <commandItem title="POST-DELAY" displayFormat="" command="CMD_DOWN_POST_DELAY"/>
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <menuItem title="APPLY BY CONTACT...">
+                                        <menu title="APPLY BY CONTACT">
+                                            <!-- Temps maxim del cicle, se es sobrepasa es genera un error -->
+                                            <commandItem title="TIMEOUT" displayFormat="" command="CMD_APPLYTOUCH_TIMEOUT" />
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <menuItem title="APPLY BY TRIGGER...">
+                                        <menu title="APPLY BY TRIGGER">
+                                            <!-- Retard al inici de cicle -->
+                                            <commandItem title="PRE-DELAY" displayFormat="" command="CMD_APPLYTRIGGER_PRE_DELAY" />
+                                            <!-- Retard al final de cicle -->
+                                            <commandItem title="POST-DELAY" displayFormat="" command="CMD_APPLYTRIGGER_POST_DELAY"/>
+                                            <!-- Indica si cal detectar l'impacte -->
+                                            <commandItem title="DETECT TOUCH" displayFormat="" command="CMD_APPLYTRIGGER_TOUCHRETURN"/>
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <exitItem title="Back" />
+                                </menu>
+                            </menuItem>
+                            <exitItem title="Back" />
+                        </menu>
+                    </menuItem>
+                    <exitItem title="Back" />
+                </menu>
+            </menuItem>
+            <menuItem title="Diagnostics...">
+                <menu title="DIAGNOSTICS">
+                    <menuItem title="AUTO-TEST...">
+                        <menu title="AUTO-TEST">
+                            <commandItem title="Active" displayFormat="" command="CMD_CFG_TEST_ACTIVE" />
+                            <commandItem title="Interval" displayFormat="" command="CMD_CFG_TEST_INTERVAL" />
+                            <exitItem title="Back" />
+                        </menu>
+                    </menuItem>
+                    <exitItem title="Back" />
+                </menu>
+            </menuItem>
+            <menuItem title="Service...">
+                <menu title="SERVICE">
+                    <commandItem title="Reset defaults" displayFormat="" command="CMD_RESET_DEFAULTS" />
+                    <exitItem title="Exit" />
+                </menu>
+            </menuItem>
+            <commandItem title="Exit" command="CMD_EXIT"/>
+        </menu>
+    </menuResource>
+</resources>

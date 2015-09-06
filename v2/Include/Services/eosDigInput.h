@@ -21,8 +21,8 @@ typedef struct {                       // Parametres d'inicializacio de les entr
     bool inverted;                     // -Inverteix la entrada
     eosDigInputCallback onPosEdge;     // -Notifica flanc positiu
     eosDigInputCallback onNegEdge;     // -Notifica flanc negatiu
-    eosDigInputCallback onChange;      // -Notifica canvi
-    void *context;
+    eosDigInputCallback onChange;      // -Notifica canvi de nivell
+    void *context;                     // -Parametre de les funcions callback
 } eosDigInputParams;
 
 typedef struct {                       // Parametres d'inicialitzacio del servei

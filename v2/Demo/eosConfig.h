@@ -5,13 +5,13 @@
 #include "HardwareProfile.h"
 
 
-// Opcions de configuracio pel servei 'Inputs'
+// Opcions de configuracio pel servei 'DigInput'
 //
 #define eosOPTIONS_UseDigInputService                    1
 #define eosDigInputService_MaxInputs                    16
 
 
-// Opcions de configuracio pel servei 'Outputs'
+// Opcions de configuracio pel servei 'DigOutput'
 //
 #define eosOPTIONS_UseDigOutputService                   1
 #define eosDigOutputService_MaxOutputs                  16

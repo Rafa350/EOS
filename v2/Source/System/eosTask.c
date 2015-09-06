@@ -39,7 +39,7 @@ eosTaskHandle eosTaskCreate(
     
     eosTaskHandle hTask;
     if (xTaskCreate(taskFunction, "", stackSize, taskParams, 
-        tskIDLE_PRIORITY, &hTask) == pdPASS)
+        tskIDLE_PRIORITY + priority, &hTask) == pdPASS)
         return hTask;
     else
         return NULL;

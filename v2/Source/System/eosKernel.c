@@ -8,6 +8,9 @@
 #include "peripheral/bmx/plib_bmx.h"
 
 
+extern void appInitialize(void);
+
+
 static void __attribute__((nomips16)) PerformanceConfig( 
     unsigned sysclk) {
     
@@ -92,4 +95,13 @@ void eosInitialize() {
     // Desactiva els ports analogics
     //
     AD1PCFG = 0xFFFF;
+}
+
+
+
+void __main(void) {
+    
+    eosInitialize();
+    appInitialize();
+    eosStartScheduler();
 }
