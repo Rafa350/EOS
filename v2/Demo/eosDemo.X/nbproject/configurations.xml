@@ -30,6 +30,8 @@
           <itemPath>../../Include/System/eosQueue.h</itemPath>
           <itemPath>../../Include/System/eosSemaphore.h</itemPath>
           <itemPath>../../Include/System/eosInterrupts.h</itemPath>
+          <itemPath>../../Include/System/eosApplication.hpp</itemPath>
+          <itemPath>../../Include/System/eosProcess.hpp</itemPath>
         </logicalFolder>
         <itemPath>../../Include/eos.h</itemPath>
         <itemPath>../eosConfig.h</itemPath>
@@ -72,12 +74,14 @@
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
           <itemPath>../../Source/System/eosKernel.c</itemPath>
-          <itemPath>../../Source/System/eosTask.c</itemPath>
           <itemPath>../../Source/System/eosHeap.c</itemPath>
           <itemPath>../../Source/System/eosInterrupt.c</itemPath>
           <itemPath>../../Source/System/eosQueue.c</itemPath>
           <itemPath>../../Source/System/eosSemaphore.c</itemPath>
           <itemPath>../../Source/System/eosPool.c</itemPath>
+          <itemPath>../../Source/System/eosApplication.cpp</itemPath>
+          <itemPath>../../Source/System/eosTask.c</itemPath>
+          <itemPath>../../Source/System/eosProcess.cpp</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">
@@ -133,7 +137,7 @@
         <targetDevice>PIC32MX795F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>SKDEPIC32PlatformTool</platformTool>
+        <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>1.40</languageToolchainVersion>
         <platform>3</platform>
@@ -249,7 +253,8 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exceptions" value="true"/>
         <property key="exclude-floating-point" value="false"/>
-        <property key="extra-include-directories" value=""/>
+        <property key="extra-include-directories"
+                  value="..\;..\..\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
@@ -282,6 +287,7 @@
         <property key="COMPARATOR" value="true"/>
         <property key="DMA" value="true"/>
         <property key="ETHERNET CONTROLLER" value="true"/>
+        <property key="Freeze All Other Peripherals" value="true"/>
         <property key="I2C1" value="true"/>
         <property key="I2C2" value="true"/>
         <property key="I2C3" value="true"/>
@@ -532,6 +538,7 @@
         <property key="CHANGE NOTICE" value="true"/>
         <property key="COMPARATOR" value="true"/>
         <property key="DMA" value="true"/>
+        <property key="Freeze All Other Peripherals" value="true"/>
         <property key="I2C1" value="true"/>
         <property key="I2C2" value="true"/>
         <property key="INPUT CAPTURE 1" value="true"/>
@@ -833,6 +840,7 @@
         <property key="COMPARATOR" value="true"/>
         <property key="DMA" value="true"/>
         <property key="ETHERNET CONTROLLER" value="true"/>
+        <property key="Freeze All Other Peripherals" value="true"/>
         <property key="I2C1" value="true"/>
         <property key="I2C2" value="true"/>
         <property key="I2C3" value="true"/>
