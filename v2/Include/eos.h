@@ -23,6 +23,10 @@ extern void eosInitialize(void);
 #define eosAlloc(s)          eosHeapAlloc(NULL, s)
 #define eosFree(p)           eosHeapFree(p)
 
+#ifndef max
+#define max(a, b)  (a) > (b) ? a : b
+#define min(a, b)  (a) < (b) ? a : b
+#endif
 
 // Funcions de depuracio
 //

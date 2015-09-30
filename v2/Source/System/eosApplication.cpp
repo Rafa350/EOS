@@ -3,6 +3,7 @@
 
 // FreeRTOS
 #include "FreeRTOS.h"
+#include "task.h"
 
 
 void *operator new(size_t size) {
@@ -22,6 +23,13 @@ eos::Application::Application() {
 }
 
 
+void eos::Application::addProcess(eos::HProcess process) {
+    
+}
+
+
 void eos::Application::execute() {
     
+    
+    vTaskStartScheduler();
 }
