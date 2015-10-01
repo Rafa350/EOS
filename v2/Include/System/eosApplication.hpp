@@ -2,7 +2,7 @@
 #define	__EOS_APPLICATION_HPP
 
 
-#include "System/eosProcess.hpp"
+#include "eos.hpp"
 
 
 namespace eos {
@@ -10,12 +10,8 @@ namespace eos {
     class Application {
         public:
             Application();
-            void addProcess(eos::HProcess process);
-            void addQueue();
             void execute();
     };
-    
-    typedef Application *HApplication;
 }
 
 

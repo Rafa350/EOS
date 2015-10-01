@@ -1,5 +1,5 @@
-#include "eos.h"
-#include "System/eosQueue.h"
+// EOS
+#include "System/eosQueue.hpp"
 
 // FreeRTOS
 #include "FreeRTOS.h"
@@ -8,10 +8,10 @@
 
 /*************************************************************************
  *
- *       Crea una cua
+ *       Constructor
  *
  *       Funcio:
- *           eosQueueHandle eosQueueCreate(
+ *           eos::QueueBase::QueueBase(
  *               unsigned itemSize,
  *               unsigned maxItems)
  *
@@ -19,16 +19,13 @@
  *           itemSize: Tamany de cada item
  *           maxItems: Numero maxim d'items en la cua
  *
- *       Retorn:
- *           El handler de la cua. NULL en cas d'error
- *
  *************************************************************************/
 
-eosQueueHandle eosQueueCreate(
+eos::QueueBase::QueueBase(
     unsigned  itemSize,
     unsigned maxItems) {
     
-    return xQueueCreate(maxItems, itemSize);
+    handle = xQueueCreate(maxItems, itemSize);
 }
 
 
@@ -37,18 +34,13 @@ eosQueueHandle eosQueueCreate(
  *       Buida el contingut d'una cua
  * 
  *       Funcio:
- *         void eosQueueClear(
- *             eosQueueHandle hQueue) 
- * 
- *       Entrada:
- *           hQueue: Handler de la cua
+ *         void eos::QueueBase::clear()
  *
  *************************************************************************/
 
-void eosQueueClear(
-    eosQueueHandle hQueue) {
+void eos::QueueBase::clear() {
 
-    xQueueReset(hQueue);
+    xQueueReset(handle);
 }
 
 
@@ -57,13 +49,11 @@ void eosQueueClear(
  *       Afegeix un element en la cua
  *
  *       Funcio:
- *           bool eosQueuePut(
- *               eosQueueHandle hQueue,
+ *           bool eos::QueueBase::put(
  *               void* data,
  *               unsigned timeout)
  *
  *       Entrada:
- *           hQueue : Handler de la cua
  *           data   : Punter al buffer de l'element a afeigit
  *           timeout: Temps maxim d'espera
  *
@@ -72,12 +62,11 @@ void eosQueueClear(
  *
  *************************************************************************/
 
-bool eosQueuePut(
-    eosQueueHandle hQueue,
+bool eos::QueueBase::put(
     void* data,
     unsigned timeout) {
     
-    return xQueueSendToBack(hQueue, data, timeout) == pdPASS;
+    return xQueueSendToBack(handle, data, timeout) == pdPASS;
 }
 
 
@@ -86,13 +75,11 @@ bool eosQueuePut(
  *       Extreu un element en la cua
  *
  *       Funcio:
- *           bool eosQueueGet(
- *               eosQueueHandle hQueue,
+ *           bool eos::QueueBase::get(
  *               void* data,
  *               unsigned timeout)
  *
  *       Entrada:
- *           hQueue : Handler de la cua
  *           data   : Punter al buffer de l'element a exterure
  *           timeout: Temps maxim d'espera
  *
@@ -101,20 +88,19 @@ bool eosQueuePut(
  *
  *************************************************************************/
 
-bool eosQueueGet(
-    eosQueueHandle hQueue,
+bool eos::QueueBase::get(
     void *data,
     unsigned timeout) {
 
-    return xQueueReceive(hQueue, data, timeout) == pdPASS;
+    return xQueueReceive(handle, data, timeout) == pdPASS;
 }
 
 
-bool eosQueueISRPut(eosQueueHandle hQueue, void *data) {
+bool eos::QueueBase::putISR(void *data) {
     
 }
 
 
-bool eosQueueISRGet(eosQueueHandle hQueue, void *data) {
+bool eos::QueueBase::getISR(void *data) {
     
 }

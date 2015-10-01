@@ -2,6 +2,8 @@
 #define	__EOS_INTERRUPTS_H
 
 
+extern "C" {
+
 #include "peripheral/int/plib_int.h"
 
 
@@ -14,6 +16,8 @@
 
 extern bool eosInterruptDisable();
 extern bool eosInterruptSourceDisable(INT_SOURCE source);
+
+}
 
 
 #endif	

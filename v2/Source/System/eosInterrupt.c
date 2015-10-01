@@ -1,4 +1,4 @@
-#include "eos.h"
+#include "eos.hpp"
 
 // Harmony
 #include "peripheral/int/plib_int.h"

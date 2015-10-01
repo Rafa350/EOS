@@ -12,29 +12,24 @@
         <itemPath>../HardwareProfile.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Eos" projectFiles="true">
+        <logicalFolder name="f3" displayName="HAL" projectFiles="true">
+        </logicalFolder>
         <logicalFolder name="f2" displayName="Services" projectFiles="true">
-          <logicalFolder name="f1" displayName="Forms" projectFiles="true">
-            <itemPath>../../Include/Services/Forms/eosForms.h</itemPath>
-            <itemPath>../../Include/Services/Forms/eosFormsMenus.h</itemPath>
-          </logicalFolder>
-          <itemPath>../../Include/Services/eosDigOutput.h</itemPath>
-          <itemPath>../../Include/Services/eosDigInput.h</itemPath>
-          <itemPath>../../Include/Services/eosI2CMaster.h</itemPath>
-          <itemPath>../../Include/Services/eosTimer.h</itemPath>
           <itemPath>../../Include/Services/eosDigPin.h</itemPath>
-          <itemPath>../../Include/Services/eosAppLoop.h</itemPath>
+          <itemPath>../../Include/Services/eosAppLoop.hpp</itemPath>
+          <itemPath>../../Include/Services/eosDigOutput.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="System" projectFiles="true">
-          <itemPath>../../Include/System/eosTask.h</itemPath>
           <itemPath>../../Include/System/eosMemory.h</itemPath>
-          <itemPath>../../Include/System/eosQueue.h</itemPath>
-          <itemPath>../../Include/System/eosSemaphore.h</itemPath>
           <itemPath>../../Include/System/eosInterrupts.h</itemPath>
           <itemPath>../../Include/System/eosApplication.hpp</itemPath>
-          <itemPath>../../Include/System/eosProcess.hpp</itemPath>
+          <itemPath>../../Include/System/eosTask.hpp</itemPath>
+          <itemPath>../../Include/System/eosQueue.hpp</itemPath>
+          <itemPath>../../Include/System/eosSemaphore.hpp</itemPath>
+          <itemPath>../../Include/System/eosVector.hpp</itemPath>
         </logicalFolder>
-        <itemPath>../../Include/eos.h</itemPath>
         <itemPath>../eosConfig.h</itemPath>
+        <itemPath>../../Include/eos.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Frameworks" projectFiles="true">
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
@@ -53,35 +48,23 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
-        <itemPath>../Main.c</itemPath>
         <itemPath>../Config.c</itemPath>
         <itemPath>../rtos_hooks.c</itemPath>
-        <itemPath>../DisplayService.c</itemPath>
         <itemPath>../MnuMain.c</itemPath>
+        <itemPath>../Main.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Eos" projectFiles="true">
         <logicalFolder name="f1" displayName="Services" projectFiles="true">
-          <logicalFolder name="f1" displayName="Forms" projectFiles="true">
-            <itemPath>../../Source/Services/Forms/eosForms.c</itemPath>
-            <itemPath>../../Source/Services/Forms/eosFormsMenus.c</itemPath>
-          </logicalFolder>
-          <itemPath>../../Source/Services/eosDigOutput.c</itemPath>
-          <itemPath>../../Source/Services/eosDigInput.c</itemPath>
-          <itemPath>../../Source/Services/eosI2CMaster.c</itemPath>
-          <itemPath>../../Source/Services/eosI2CMasterISRWrapper.S</itemPath>
-          <itemPath>../../Source/Services/eosTimer.c</itemPath>
-          <itemPath>../../Source/Services/eosAppLoop.c</itemPath>
+          <itemPath>../../Source/Services/eosAppLoop.cpp</itemPath>
+          <itemPath>../../Source/Services/eosDigOutput.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
           <itemPath>../../Source/System/eosKernel.c</itemPath>
-          <itemPath>../../Source/System/eosHeap.c</itemPath>
           <itemPath>../../Source/System/eosInterrupt.c</itemPath>
-          <itemPath>../../Source/System/eosQueue.c</itemPath>
-          <itemPath>../../Source/System/eosSemaphore.c</itemPath>
-          <itemPath>../../Source/System/eosPool.c</itemPath>
           <itemPath>../../Source/System/eosApplication.cpp</itemPath>
-          <itemPath>../../Source/System/eosTask.c</itemPath>
-          <itemPath>../../Source/System/eosProcess.cpp</itemPath>
+          <itemPath>../../Source/System/eosTask.cpp</itemPath>
+          <itemPath>../../Source/System/eosQueue.cpp</itemPath>
+          <itemPath>../../Source/System/eosSemaphore.cpp</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">
@@ -254,7 +237,7 @@
         <property key="exceptions" value="true"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="..\;..\..\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;..\..\Include;C:\microchip\harmony\v1_05\framework;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>

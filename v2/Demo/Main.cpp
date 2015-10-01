@@ -1,30 +1,32 @@
-#include "eos.h"
-#include "System/eosTask.h"
+#include "eos.hpp"
+#include "System/eosApplication.hpp"
+#include "System/eosTask.hpp"
+
 #include "Services/eosDigPin.h"
-#include "Services/eosDigOutput.h"
-#include "Services/eosDigInput.h"
-#include "Services/eosI2CMaster.h"
-#include "Services/eosTimer.h"
-#include "Services/Forms/eosForms.h"
-#include "Services/Forms/eosFormsMenus.h"
+#include "Services/eosDigOutput.hpp"
+//#include "Services/eosDigInput.h"
+//#include "Services/eosI2CMaster.h"
+//#include "Services/eosTimer.h"
+//#include "Services/Forms/eosForms.h"
+//#include "Services/Forms/eosFormsMenus.h"
 
 // Harmony
 #include "peripheral/ports/plib_ports.h"
-#include "peripheral/i2c/plib_i2c.h"
-#include "DisplayService.h"
+//#include "peripheral/i2c/plib_i2c.h"
+//#include "DisplayService.h"
 
 
-static eosI2CMasterServiceHandle hI2CMasterService;
-static eosDisplayServiceHandle hDisplayService;
-static eosFormsServiceHandle hFormsService;
+//static eosI2CMasterServiceHandle hI2CMasterService;
+//static eosDisplayServiceHandle hDisplayService;
+//static eosFormsServiceHandle hFormsService;
 
-static char buffer[100];
+//static char buffer[100];
 
-static eosDigOutputHandle hLedRED;
-static eosDigOutputHandle hLedAMBER;
-static eosDigOutputHandle hLedGREEN;
+static eos::DigOutput *ledRED;
+static eos::DigOutput *ledAMBER;
+static eos::DigOutput *ledGREEN;
 
-static eosTimerHandle hTimer;
+//static eosTimerHandle hTimer;
 
 eosDigPins_BEGIN
     eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_0),
@@ -36,7 +38,7 @@ eosDigPins_BEGIN
 eosDigPins_END;
 
 
-static void task1(void *params) {
+/*static void task1(void *params) {
 
     while (true) {
         eosDigOutputPulse(hLedRED, 50);
@@ -73,30 +75,18 @@ static void setupDigInputService(void) {
     params.onPosEdge = posEdgeFunction;
     eosDigInputCreate(hDigInputService, &params);
 }
-
+*/
 
 static void setupDigOutputService(void) {
-    
-    eosDigOutputServiceParams serviceParams;
-    eosDigOutputParams params;
-    
-    memset(&serviceParams, 0, sizeof(serviceParams));
-    serviceParams.priority = 1;
-    eosDigOutputServiceHandle hDigOutputService = eosDigOutputServiceInitialize(&serviceParams);
-    
-    memset(&params, 0, sizeof(params));
-    params.pin = pinLED1;
-    hLedRED = eosDigOutputCreate(hDigOutputService, &params);
 
-    memset(&params, 0, sizeof(params));
-    params.pin = pinLED2;
-    hLedAMBER = eosDigOutputCreate(hDigOutputService, &params);
-
-    memset(&params, 0, sizeof(params));
-    params.pin = pinLED3;
-    hLedGREEN = eosDigOutputCreate(hDigOutputService, &params);
+    eos::DigOutputService *service = new eos::DigOutputService();
+   
+    ledRED = new eos::DigOutput(service, pinLED1, false);
+    ledAMBER = new eos::DigOutput(service, pinLED2, false);
+    ledGREEN = new eos::DigOutput(service, pinLED3, false);
 }
 
+/*
 static void setupI2CMasterService(void) {
     
     eosI2CServiceParams serviceParams;
@@ -106,7 +96,7 @@ static void setupI2CMasterService(void) {
     serviceParams.priority = 2;
     hI2CMasterService = eosI2CMasterServiceInitialize(&serviceParams);
 }
-
+*/
 /*
 static void setupTimerService(void) {
     
@@ -125,7 +115,7 @@ static void setupTimerService(void) {
     hTimer = eosTimerCreate(hTimerService, &params);
 }
 */
-
+/*
 static void setupFormsService(void) {
     
     eosDisplayServiceParams displayServiceParams;
@@ -135,7 +125,7 @@ static void setupFormsService(void) {
     displayServiceParams.i2cAddr = 0x62 >> 1;
     hDisplayService = eosDisplayServiceInitialize(&displayServiceParams);
    
-    /*eosFormsServiceParams formsServiceParams;
+    eosFormsServiceParams formsServiceParams;
     extern uint8_t menuMnuMain[];
     
     memset(&formsServiceParams, 0, sizeof(formsServiceParams));
@@ -146,30 +136,23 @@ static void setupFormsService(void) {
     memset(&menuParams, 0, sizeof(menuParams));
     menuParams.resource = menuMnuMain;
     eosFormHandle hMenu = eosFormsCreateMenu(hFormsService, &menuParams);
-    eosFormsSetActiveForm(hFormsService, hMenu);*/
+    eosFormsSetActiveForm(hFormsService, hMenu);
 }
-
+*/
 
 /*************************************************************************
  *
  *       Inicialitzacio de l'aplicacio d'usuari
  *
  *       Funcio:
- *           void main(void)
+ *           int main(void)
  *
  *************************************************************************/
 
-void main(void) {
+int main(void) {
     
-    eosInitialize();
+    eos::Application app;
+    app.execute();
     
-    eosTaskCreate(0, 512, task1, NULL);
-    
-    setupDigInputService();
-    setupDigOutputService();
-    //setupTimerService();
-    setupI2CMasterService();
-    setupFormsService();
-    
-    eosStartScheduler();
+    return 0;
 }

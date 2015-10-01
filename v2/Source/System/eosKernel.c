@@ -1,4 +1,4 @@
-#include "eos.h"
+#include "eos.hpp"
 
 #include "HardwareProfile.h"
 
@@ -6,9 +6,6 @@
 #include "peripheral/int/plib_int.h"
 #include "peripheral/pcache/plib_pcache.h"
 #include "peripheral/bmx/plib_bmx.h"
-
-
-extern void appInitialize(void);
 
 
 static void __attribute__((nomips16)) PerformanceConfig( 
@@ -95,13 +92,4 @@ void eosInitialize() {
     // Desactiva els ports analogics
     //
     AD1PCFG = 0xFFFF;
-}
-
-
-
-void __main(void) {
-    
-    eosInitialize();
-    appInitialize();
-    eosStartScheduler();
 }

@@ -2,6 +2,9 @@
 #define	__EOS_DIGPIN_H
 
 
+extern "C" {
+    
+
 #include "peripheral/ports/plib_ports.h"
 
 
@@ -33,6 +36,9 @@ extern eosDigPinInfo eosDigPins[];
 
 #define eosDigPinToggle(pin) \
     PLIB_PORTS_PinToggle(PORTS_ID_0, eosDigPins[pin].channel, eosDigPins[pin].position)
+
+
+}
 
 
 #endif	

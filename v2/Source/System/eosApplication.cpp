@@ -6,11 +6,13 @@
 #include "task.h"
 
 
+extern "C" void eosInitialize();
+
+
 void *operator new(size_t size) {
     
     return pvPortMalloc(size);
 }
-
 
 void operator delete(void *ptr) {
     
@@ -18,18 +20,22 @@ void operator delete(void *ptr) {
 }
 
 
+/*************************************************************************
+ *
+ *       Constructor
+ * 
+ *       Funcio:
+ *           eos::Application::Application() 
+ *
+ *************************************************************************/
+
 eos::Application::Application() {
     
-}
-
-
-void eos::Application::addProcess(eos::HProcess process) {
-    
+    eosInitialize();
 }
 
 
 void eos::Application::execute() {
-    
-    
+        
     vTaskStartScheduler();
 }

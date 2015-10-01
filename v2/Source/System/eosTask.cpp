@@ -1,5 +1,5 @@
 // EOS 
-#include "System/eosProcess.hpp"
+#include "System/eosTask.hpp"
 
 // FreeRTOS 
 #include "FreeRTOS.h"
@@ -11,7 +11,7 @@
  *       Constructor
  * 
  *       Funcio:
- *           eos::Process::Process(
+ *           eos::Task::Task(
  *               unsigned stackSize, 
  *               unsigned priority) 
  * 
@@ -21,11 +21,11 @@
  *
  *************************************************************************/
 
-eos::Process::Process(
+eos::Task::Task(
     unsigned stackSize, 
     unsigned priority) {
     
-    xTaskCreate(eos::Process::function, "", stackSize, this, tskIDLE_PRIORITY + priority, &taskHandle);
+    xTaskCreate(eos::Task::function, "", stackSize, this, tskIDLE_PRIORITY + priority, &handle);
 }
 
 
@@ -34,32 +34,32 @@ eos::Process::Process(
  *       Destructor
  * 
  *       Funcio:
- *           eos::Process::~Process() 
+ *           eos::Task::~Task() 
  *
  *************************************************************************/
 
-eos::Process::~Process() {
+eos::Task::~Task() {
     
-    vTaskDelete(taskHandle);
+    vTaskDelete(handle);
 }
 
 
-void eos::Process::function(
+void eos::Task::function(
     void *params) {
     
-    eos::HProcess process = (eos::HProcess) params;
+    eos::Task *task = reinterpret_cast<eos::Task*>(params);
     while (true)
-        process->run();
+        task->run();
 }
 
 
-unsigned eos::Process::getTickCount() {
+unsigned eos::Task::getTickCount() {
 
     return xTaskGetTickCount();   
 }
 
 
-void eos::Process::delay(
+void eos::Task::delay(
     unsigned time) {
 
     if (time > 0)
@@ -67,7 +67,7 @@ void eos::Process::delay(
 }
 
 
-void eos::Process::delayUntil(
+void eos::Task::delayUntil(
     unsigned time, 
     unsigned *lastTick) {
     
@@ -76,25 +76,25 @@ void eos::Process::delayUntil(
 }
 
 
-void eos::Process::enterCriticalSection() {
+void eos::Task::enterCriticalSection() {
 
     taskENTER_CRITICAL();
 }
 
 
-void eos::Process::exitCriticalSection() {
+void eos::Task::exitCriticalSection() {
     
     taskEXIT_CRITICAL();
 }
 
 
-void eos::Process::suspendAllThreads() {
+void eos::Task::suspendAllThreads() {
     
     vTaskSuspendAll();
 }
 
 
-void eos::Process::resumeAllThreads() {
+void eos::Task::resumeAllThreads() {
 
     xTaskResumeAll();
 }
