@@ -9,52 +9,66 @@ namespace eos {
     
     template <typename elementType>
     class Vector {
+        private:
+            unsigned count;
+            unsigned size;
+            elementType *elementPtr;
+
         public:
             Vector() :
+                count(0),
                 size(0),
-                space(0),
                 elementPtr(nullptr) {            
             }
                 
             ~Vector() {
                 
-                if (space > 0)
+                if (size > 0)
                     delete[] elementPtr;
             }
             
             void add(const elementType &element) {
                 
-                if (size == space) {
-                    space += 10;
-                    elementType *newElementPtr = new elementType[space];
-                    if (size > 0)
-                        memcpy(newElementPtr, elementPtr, size);
-                    delete[] elementPtr;
+                if (count == size) {
+                    size += 10;
+                    elementType *newElementPtr = new elementType[size];
+                    if (count > 0) {
+                        memcpy(newElementPtr, elementPtr, count);
+                        delete[] elementPtr;
+                    }
                     
                     elementPtr = newElementPtr;
                 }
                 
-                elementPtr[size++] = element;
+                elementPtr[count++] = element;
             }
             
             void remove(const elementType &element) {
                 
             }
             
-            inline unsigned getSize() { 
+            void clear() {
+
+                if (size > 0)
+                    delete[] elementPtr;
+                count = 0;
+                size = 0;
+            }
+            
+            inline unsigned getCount() { 
                 
-                return size; 
+                return count; 
+            }
+            
+            inline elementType &getElement(const unsigned index) {
+
+                return elementPtr[index];                
             }
             
             inline elementType &operator[](const unsigned index) {
                 
                 return elementPtr[index];
-            }
-            
-        private:
-            unsigned size;
-            unsigned space;
-            elementType *elementPtr;
+            }           
     };
 }
 

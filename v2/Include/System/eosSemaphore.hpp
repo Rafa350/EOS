@@ -8,14 +8,15 @@
 namespace eos {
 
     class BinarySemaphore {
+        private:
+            void *handle;
+
         public:
             BinarySemaphore();
             ~BinarySemaphore();
             bool take(unsigned timeout);
             bool give();
             void giveISR();
-        private:
-            void *handle;
     };
 }
 

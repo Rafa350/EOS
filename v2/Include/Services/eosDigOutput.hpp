@@ -4,53 +4,54 @@
 
 #include "eos.hpp"
 #include "System/eosTask.hpp"
-#include "Services/eosDigPin.h"
 #include "System/eosVector.hpp"
 
 
 namespace eos {
     
     class DigOutput;
+    class DigOutputService;
     
-    class DigOutputService {
+    class DigOutputService: public IRunable {      
         
-        class ServiceTask: public Task {
-            public:
-                ServiceTask(DigOutputService *service);
-                void run();
-            private:
-                DigOutputService *service;
-        };
+        private:
+            typedef Vector<DigOutput*> Outputs;
         
-        typedef Vector<DigOutput*> OutputVector;
+        private:
+            Task task;
+            Outputs outputs;
         
         public:
             DigOutputService();
             void add(DigOutput *output);
         private:
-            ServiceTask task;
-            OutputVector outputs;
+            void run();
     };
     
     class DigOutput {
+        
+        private:
+            uint8_t pin;
+            bool inverted;
+            unsigned timeout;
+        
         public:
-            DigOutput(unsigned pin, bool inverted);
-            DigOutput(DigOutputService *service, unsigned pin, bool inverted);
+            DigOutput(uint8_t pin, bool inverted);
+            DigOutput(DigOutputService *service, uint8_t pin, bool inverted);
             bool get();
             void set(bool state);
             void toggle();
             void pulse(unsigned time);
-            void delayerSet(unsigned delay, bool state);
-            void delayerToggle(unsigned delay);
-            void delayerPulse(unsigned delay, unsigned time);
+            void delayedSet(unsigned delay, bool state);
+            void delayedToggle(unsigned delay);
+            void delayedPulse(unsigned delay, unsigned time);
         private:
-            unsigned pin;
-            unsigned timeout;
-            bool inverted;
             void pinInitialize();
             bool pinGet();
             void pinSet(bool state);
             void pinToggle();
+            
+        friend class eos::DigOutputService;
     };
 }
 

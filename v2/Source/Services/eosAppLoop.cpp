@@ -12,7 +12,8 @@
  *
  *************************************************************************/
 
-eos::AppLoopService::AppLoopService() {
+eos::AppLoopService::AppLoopService():
+    task(512, eos::TaskPriority::normal, this) {
 }
 
 
@@ -21,11 +22,11 @@ eos::AppLoopService::AppLoopService() {
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void eos::AppLoopService::ServiceTask::run()
+ *           void eos::AppLoopService::run()
  *
  *************************************************************************/
 
-void eos::AppLoopService::ServiceTask::run() {
+void eos::AppLoopService::run() {
     
 /*    appSetup();
     while (true)

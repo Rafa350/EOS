@@ -7,18 +7,15 @@
 
 namespace eos {
     
-    class AppLoopService {
-        
-        class ServiceTask: public Task {
-            public:
-                ServiceTask():Task(512, 5){}
-                void run();
-        };
-        
+    class AppLoopService: public IRunable {
+
+        private:
+            Task task;
+                
         public:
             AppLoopService();
         private:
-            ServiceTask task;
+            void run();
     };
 }
 

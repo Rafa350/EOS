@@ -7,33 +7,34 @@
 
 namespace eos {
     
-    class QueueBase {
+    class GenericQueue {
+        private:
+            void *handle;
+        
         public:
-            ~QueueBase();
+            ~GenericQueue();
             void clear();
             virtual bool put(void *data, unsigned timeout);
             virtual bool get(void *data, unsigned timeout);
             virtual bool putISR(void *data);
             virtual bool getISR(void *data);            
         private:
-            QueueBase(unsigned itemSize, unsigned maxItems);
-            void *handle;
-        
+            GenericQueue(unsigned itemSize, unsigned maxItems);       
     };
     
     template <typename itemType>
-    class Queue: public QueueBase {
+    class Queue: public GenericQueue {
         public:
-            Queue(unsigned maxItems):
-                QueueBase(sizeof(itemType), maxItems) {
+            inline Queue(unsigned maxItems):
+                GenericQueue(sizeof(itemType), maxItems) {
             }
             
-            bool put(itemType *data, unsigned timeout) {
-                return QueueBase::put((void*) data, timeout);
+            inline bool put(itemType *data, unsigned timeout) {
+                return GenericQueue::put((void*) data, timeout);
             }
             
-            bool get(itemType *data, unsigned timeout) {
-                return QueueBase::get((void*) data, timeout);
+            inline bool get(itemType *data, unsigned timeout) {
+                return GenericQueue::get((void*) data, timeout);
             }
     };
 }

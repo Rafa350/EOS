@@ -1,16 +1,12 @@
-// EOS
-#include "eos.hpp"
-
-#if eosOPTIONS_UseDigOutputService == 1
 #include "Services/eosDigOutput.hpp"
 #include "System/eosTask.hpp"
-
-// FreeRTOS
+#include "HAL/halGPIO.h"
 #include "FReeRTOS.h"
 #include "task.h"
 
 
-#define TASK_PERIOD 10
+#define TASK_PERIOD     10
+#define TASK_STACK     512
 
 
 /*************************************************************************
@@ -22,7 +18,8 @@
  *
  *************************************************************************/
 
-eos::DigOutputService::DigOutputService() {
+eos::DigOutputService::DigOutputService() :
+    task(TASK_STACK, eos::TaskPriority::normal, this) {
 }
 
 
@@ -42,63 +39,45 @@ eos::DigOutputService::DigOutputService() {
 void eos::DigOutputService::add(
     eos::DigOutput* output) {
     
+    eos::Task::enterCriticalSection();
     outputs.add(output);
+    eos::Task::exitCriticalSection();
 }
 
 
 /*************************************************************************
  *
- *       Constructor
+ *       Executa la tasca de control de servei
  * 
  *       Funcio:
- *           eos::DigOutputService::ServiceTask::ServiceTask(
- *               eos::DigOutputService *service)
- * 
- *       Entrada:
- *           service: El servei
+ *           void eos::DigOutputService::run() 
  *
  *************************************************************************/
 
-eos::DigOutputService::ServiceTask::ServiceTask(
-    eos::DigOutputService *service) :
-    Task(512, 5) {
+void eos::DigOutputService::run() {
     
-    this->service = service;
-}
-
-
-/*************************************************************************
- *
- *       Procesa les tasques del servei
- *
- *       Funcio:
- *           void eos::DigOutputService::ServiceTask::run() 
- *
- *************************************************************************/
-
-void eos::DigOutputService::ServiceTask::run() {
-
-    unsigned tc = eosGetTickCount();
+    unsigned tc = eos::Task::getTickCount();
 
     while (true) {
 
-        delayUntil(TASK_PERIOD, &tc);
+        eos::Task::delayUntil(TASK_PERIOD, &tc);
         
         eos::Task::enterCriticalSection();
         
-        for (unsigned i = 0; i < service->outputs.getSize(); i++) {            
-            eos::DigOutput *output = service->outputs[i];
-            unsigned timeout = output->timeout;
-            if (timeout > 0) {
-                timeout -= 1;
-                if (timeout == 0)
-                    output->portToggle();
-                output->timeout = timeout;
-            }        
+        for (unsigned i = 0; i < outputs.getCount(); i++) {            
+            eos::DigOutput *output = outputs[i];
+    
+            unsigned t = output->timeout;
+            if (t > 0) {
+                t -= 1;
+                if (t == 0)
+                    output->pinToggle();
+                output->timeout = t;
+            }       
         }
 
         eos::Task::exitCriticalSection();
-    }
+    }    
 }
 
 
@@ -118,7 +97,7 @@ void eos::DigOutputService::ServiceTask::run() {
  *************************************************************************/
 
 eos::DigOutput::DigOutput(
-    unsigned pin,
+    uint8_t pin,
     bool inverted): 
     DigOutput(nullptr, pin, inverted) {    
 }
@@ -143,17 +122,17 @@ eos::DigOutput::DigOutput(
 
 eos::DigOutput::DigOutput(
     eos::DigOutputService *service,
-    unsigned pin,
+    uint8_t pin,
     bool inverted) {
-    
-    if (service != nullptr)
-        service->add(this);
 
     this->pin = pin;
     this->inverted = inverted;
     this->timeout = 0;
 
     pinInitialize();
+
+    if (service != nullptr)
+        service->add(this);
 }
 
 
@@ -255,14 +234,14 @@ void eos::DigOutput::pulse(
 
 void eos::DigOutput::pinInitialize() {
         
-    eosDigPinSet(pin, inverted ? true : false);
-    eosDigPinOutputMode(pin);    
+    halGPIOPinSetState(pin, inverted ? true : false);
+    halGPIOPinSetModeOutput(pin);    
 }
 
 
 bool eos::DigOutput::pinGet() {
     
-    bool p = eosDigPinGet(pin);
+    bool p = halGPIOPinGetState(pin);
     return inverted ? !p : p;
 }
 
@@ -270,14 +249,11 @@ bool eos::DigOutput::pinGet() {
 void eos::DigOutput::pinSet(
     bool state) {
     
-    eosDigPinSet(pin, state);
+    halGPIOPinSetState(pin, state);
 }
 
 
 void eos::DigOutput::pinToggle() {
 
-    eosDigPinToggle(pin);
+    halGPIOPinToggleState(pin);
 }
-
-
-#endif

@@ -1,7 +1,4 @@
-// EOS 
 #include "System/eosTask.hpp"
-
-// FreeRTOS 
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -13,19 +10,30 @@
  *       Funcio:
  *           eos::Task::Task(
  *               unsigned stackSize, 
- *               unsigned priority) 
+ *               eos::TaskPriority priority,
+ *               eos::IRunable *runable) 
  * 
  *       Entrada:
  *           stackSize: Tamsny de la pila
  *           priority : Prioritat del proces
+ *           runable  : Objecte que implementa IRunable
  *
  *************************************************************************/
 
 eos::Task::Task(
     unsigned stackSize, 
-    unsigned priority) {
+    eos::TaskPriority priority,
+    eos::IRunable *runable) {
     
-    xTaskCreate(eos::Task::function, "", stackSize, this, tskIDLE_PRIORITY + priority, &handle);
+    this->runable = runable;
+    
+    xTaskCreate(
+        eos::Task::function, 
+        "", 
+        stackSize, 
+        this, 
+        tskIDLE_PRIORITY + unsigned(priority), 
+        &handle);
 }
 
 
@@ -48,8 +56,8 @@ void eos::Task::function(
     void *params) {
     
     eos::Task *task = reinterpret_cast<eos::Task*>(params);
-    while (true)
-        task->run();
+    while (true) 
+        task->runable->run();
 }
 
 

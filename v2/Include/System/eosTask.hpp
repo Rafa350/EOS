@@ -7,9 +7,25 @@
 
 namespace eos {
     
-    class Task {
+    class IRunable {
         public:
-            Task(unsigned stackSize, unsigned priority);
+            virtual void run() = 0;
+    };
+    
+    enum class TaskPriority {
+        idle = 0,
+        low = 1,
+        normal = 2,
+        high = 3
+    };
+    
+    class Task {
+        private:
+            void *handle;
+            IRunable *runable;
+
+        public:
+            Task(unsigned stackSize, TaskPriority priority, IRunable *runable);
             virtual ~Task();
             static void delay(unsigned time);
             static void delayUntil(unsigned time, unsigned *lastTick);
@@ -18,10 +34,7 @@ namespace eos {
             static void exitCriticalSection();
             static void suspendAllThreads();
             static void resumeAllThreads();
-        protected:
-            virtual void run() = 0;
         private:     
-            void *handle;
             static void function(void *params);
     };    
 }

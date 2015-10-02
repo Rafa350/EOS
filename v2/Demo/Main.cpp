@@ -1,8 +1,5 @@
 #include "eos.hpp"
 #include "System/eosApplication.hpp"
-#include "System/eosTask.hpp"
-
-#include "Services/eosDigPin.h"
 #include "Services/eosDigOutput.hpp"
 //#include "Services/eosDigInput.h"
 //#include "Services/eosI2CMaster.h"
@@ -11,7 +8,6 @@
 //#include "Services/Forms/eosFormsMenus.h"
 
 // Harmony
-#include "peripheral/ports/plib_ports.h"
 //#include "peripheral/i2c/plib_i2c.h"
 //#include "DisplayService.h"
 
@@ -27,16 +23,6 @@ static eos::DigOutput *ledAMBER;
 static eos::DigOutput *ledGREEN;
 
 //static eosTimerHandle hTimer;
-
-eosDigPins_BEGIN
-    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_0),
-    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_1),
-    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_2),
-    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_6),
-    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_7),
-    eosDigPins_ENTRY(PORT_CHANNEL_D, PORTS_BIT_POS_13),
-eosDigPins_END;
-
 
 /*static void task1(void *params) {
 
@@ -84,6 +70,10 @@ static void setupDigOutputService(void) {
     ledRED = new eos::DigOutput(service, pinLED1, false);
     ledAMBER = new eos::DigOutput(service, pinLED2, false);
     ledGREEN = new eos::DigOutput(service, pinLED3, false);
+
+    ledRED->pulse(1000);
+    ledAMBER->pulse(2000);
+    ledGREEN->pulse(3000);
 }
 
 /*
@@ -150,6 +140,8 @@ static void setupFormsService(void) {
  *************************************************************************/
 
 int main(void) {
+    
+    setupDigOutputService();
     
     eos::Application app;
     app.execute();

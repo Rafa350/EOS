@@ -1,7 +1,4 @@
-// EOS
 #include "System/eosQueue.hpp"
-
-// FreeRTOS
 #include "FreeRTOS.h"
 #include "queue.h"
 
@@ -11,7 +8,7 @@
  *       Constructor
  *
  *       Funcio:
- *           eos::QueueBase::QueueBase(
+ *           eos::GenericQueue::GenericQueue(
  *               unsigned itemSize,
  *               unsigned maxItems)
  *
@@ -21,8 +18,8 @@
  *
  *************************************************************************/
 
-eos::QueueBase::QueueBase(
-    unsigned  itemSize,
+eos::GenericQueue::GenericQueue(
+    unsigned itemSize,
     unsigned maxItems) {
     
     handle = xQueueCreate(maxItems, itemSize);
@@ -34,11 +31,11 @@ eos::QueueBase::QueueBase(
  *       Buida el contingut d'una cua
  * 
  *       Funcio:
- *         void eos::QueueBase::clear()
+ *         void eos::GenericQueue::clear()
  *
  *************************************************************************/
 
-void eos::QueueBase::clear() {
+void eos::GenericQueue::clear() {
 
     xQueueReset(handle);
 }
@@ -49,7 +46,7 @@ void eos::QueueBase::clear() {
  *       Afegeix un element en la cua
  *
  *       Funcio:
- *           bool eos::QueueBase::put(
+ *           bool eos::GenericQueue::put(
  *               void* data,
  *               unsigned timeout)
  *
@@ -62,7 +59,7 @@ void eos::QueueBase::clear() {
  *
  *************************************************************************/
 
-bool eos::QueueBase::put(
+bool eos::GenericQueue::put(
     void* data,
     unsigned timeout) {
     
@@ -75,7 +72,7 @@ bool eos::QueueBase::put(
  *       Extreu un element en la cua
  *
  *       Funcio:
- *           bool eos::QueueBase::get(
+ *           bool eos::GenericQueue::get(
  *               void* data,
  *               unsigned timeout)
  *
@@ -88,7 +85,7 @@ bool eos::QueueBase::put(
  *
  *************************************************************************/
 
-bool eos::QueueBase::get(
+bool eos::GenericQueue::get(
     void *data,
     unsigned timeout) {
 
@@ -96,11 +93,11 @@ bool eos::QueueBase::get(
 }
 
 
-bool eos::QueueBase::putISR(void *data) {
+bool eos::GenericQueue::putISR(void *data) {
     
 }
 
 
-bool eos::QueueBase::getISR(void *data) {
+bool eos::GenericQueue::getISR(void *data) {
     
 }
