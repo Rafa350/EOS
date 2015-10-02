@@ -5,6 +5,7 @@
 #include "eos.hpp"
 #include "System/eosTask.hpp"
 #include "System/eosVector.hpp"
+#include "System/eosCallbacks.hpp"
 
 
 namespace eos {
@@ -30,6 +31,9 @@ namespace eos {
 
     class DigInput {
         private:
+            typedef CallbackP1<DigInput, int> DigInputEvent;
+
+        private:
             uint8_t pin;
             uint32_t pattern;
             bool inverted;
@@ -39,6 +43,9 @@ namespace eos {
             bool onPosEdgeFired;
             bool onNegEdgeFired;
             bool onChangeFired;
+            DigInputEvent *onPosEdge;
+            DigInputEvent *onNegEdge;
+            DigInputEvent *onChange;
         
         public:
             DigInput(uint8_t pin, bool inverted);
@@ -46,6 +53,9 @@ namespace eos {
             bool get();
             bool isPosEdge();
             bool isNegEdge();
+            void setOnPosEdgeEvent();
+            void setOnNegEdgeEvent();
+            void setOnChangeEvent();
         private:
             void pinInitialize();
             bool pinGet();

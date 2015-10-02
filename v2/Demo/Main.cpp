@@ -1,4 +1,5 @@
 #include "eos.hpp"
+#include "System/eosCallbacks.hpp"
 #include "System/eosApplication.hpp"
 #include "Services/eosDigOutput.hpp"
 //#include "Services/eosDigInput.h"
@@ -144,7 +145,11 @@ int main(void) {
     setupDigOutputService();
     
     eos::Application app;
-    app.execute();
     
+    eos::CallbackP1R<eos::Application, bool, int> cb(&app, &eos::Application::x);
+    int r = cb(10);
+    
+    app.execute();
+
     return 0;
 }

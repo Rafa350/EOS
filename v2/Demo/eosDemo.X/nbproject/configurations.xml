@@ -28,6 +28,7 @@
           <itemPath>../../Include/System/eosQueue.hpp</itemPath>
           <itemPath>../../Include/System/eosSemaphore.hpp</itemPath>
           <itemPath>../../Include/System/eosVector.hpp</itemPath>
+          <itemPath>../../Include/System/eosCallbacks.hpp</itemPath>
         </logicalFolder>
         <itemPath>../eosConfig.h</itemPath>
         <itemPath>../../Include/eos.hpp</itemPath>
