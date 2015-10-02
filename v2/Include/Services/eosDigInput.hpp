@@ -15,14 +15,14 @@ namespace eos {
     class DigInputService: public IRunable {
         
         private:
-            typedef eosVector<DirInput> Inputs;
+            typedef Vector<DigInput*> Inputs;
 
         private:
             Task task;
             Inputs inputs;
             
         public:
-            DigInputService():
+            DigInputService();
             void add(DigInput *input);
         private:
             void run();
@@ -31,13 +31,26 @@ namespace eos {
     class DigInput {
         private:
             uint8_t pin;
+            uint32_t pattern;
             bool inverted;
+            bool state;
+            bool posEdge;
+            bool negEdge;
+            bool onPosEdgeFired;
+            bool onNegEdgeFired;
+            bool onChangeFired;
         
         public:
             DigInput(uint8_t pin, bool inverted);
+            DigInput(DigInputService *service, uint8_t pin, bool inverted);
             bool get();
-            bool posEdge();
-            bool negEdge();
+            bool isPosEdge();
+            bool isNegEdge();
+        private:
+            void pinInitialize();
+            bool pinGet();
+        
+        friend class eos::DigInputService;
     };
 
 }
