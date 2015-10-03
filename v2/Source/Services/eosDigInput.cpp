@@ -3,6 +3,9 @@
 #include "HAL/halGPIO.h"
 
 
+const unsigned taskStackSize = 512;
+const eos::TaskPriority taskPriority = eos::TaskPriority::normal;
+
 
 #define PATTERN_ON       0x0000007F
 #define PATTERN_OFF      0x00000080
@@ -19,7 +22,7 @@
  *************************************************************************/
 
 eos::DigInputService::DigInputService() :
-    task(512, eos::TaskPriority::normal, this) {
+    task(taskStackSize, taskPriority, this) {
 }
 
 
@@ -52,18 +55,18 @@ void eos::DigInputService::run() {
             if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
                 input->state = true;
                 input->posEdge = true;
-                //if (input->onPosEdge != NULL) 
-                //    input->onPosEdgeFired = true;
-                //else if (input->onChange != NULL) 
-                //    input->onChangeFired = true;
+                if (input->onPosEdge != nullptr) 
+                    input->onPosEdgeFired = true;
+                else if (input->onChange != nullptr) 
+                    input->onChangeFired = true;
             }
             else if ((input->pattern & PATTERN_MASK) == PATTERN_OFF) {
                 input->state = false;
                 input->negEdge = true;
-                //if (input->onNegEdge != NULL) 
-                //    input->onNegEdgeFired = true;
-                //else if (input->onChange != NULL) 
-                //    input->onChangeFired = true;
+                if (input->onNegEdge != nullptr) 
+                    input->onNegEdgeFired = true;
+                else if (input->onChange != nullptr) 
+                    input->onChangeFired = true;
             }
         }
         
@@ -75,12 +78,12 @@ void eos::DigInputService::run() {
             
             DigInput *input = inputs[i];
             
-            /*if (input->onPosEdgeFired) 
-                input->onPosEdge(input, input->context);
+            if (input->onPosEdgeFired) 
+                input->onPosEdge->execute(input);
             else if (input->onNegEdgeFired) 
-                input->onNegEdge(input, input->context);
+                input->onNegEdge->execute(input);
             else if (input->onChangeFired) 
-                input->onChange(input, input->context);*/
+                input->onChange->execute(input);
         }
         
         // Reseteja flags i variables temporals
@@ -109,6 +112,21 @@ void eos::DigInputService::run() {
     }    
 }
 
+
+/*************************************************************************
+ *
+ *       Constructor
+ * 
+ *       Funcio:
+ *           eos::DigInput::DigInput(
+ *               uint8_t pin, 
+ *               bool inverted)
+ * 
+ *       Entrada:
+ *           pin     : Numero e pin
+ *           inverted: Indica si la senyal va invertida
+ * 
+ *************************************************************************/
 
 eos::DigInput::DigInput(
     uint8_t pin, 
@@ -144,12 +162,12 @@ eos::DigInput::DigInput(
 
     posEdge = false;
     negEdge = false;
-    /*    hInput->onPosEdge = params->onPosEdge;
-        hInput->onNegEdge = params->onNegEdge;
-        hInput->onChange = params->onChange;*/
     onPosEdgeFired = false;
     onNegEdgeFired = false;
     onChangeFired = false;   
+    onPosEdge = nullptr;
+    onNegEdge = nullptr;
+    onChange = nullptr;
 
     pinInitialize();
     state = pinGet();
@@ -157,24 +175,6 @@ eos::DigInput::DigInput(
     
     if (service != nullptr)
         service->add(this);
-}
-
-
-/*************************************************************************
- *
- *       Obte l'estat de l'entrada
- *
- *       Funcio:
- *           bool eos::DigInput::get()
- *
- *       Retorn:
- *           L'estat de l'entrada
- *
- *************************************************************************/
-
-bool eos::DigInput::get() {
-    
-    return state;
 }
 
 
@@ -233,11 +233,11 @@ bool eos::DigInput::isNegEdge() {
  *       Inicialitza el port d'una entrada
  *
  *       Funcio:
- *           void eos::DigInput::pinInitialize()
+ *           void eos::DigInput::pinInitialize() const
  *
  *************************************************************************/
 
-void eos::DigInput::pinInitialize() {
+void eos::DigInput::pinInitialize() const {
 
     halGPIOPinSetModeInput(pin);
 }
@@ -248,14 +248,14 @@ void eos::DigInput::pinInitialize() {
  *       Lectura del port d'una entrada
  *
  *       Funcio:
- *           bool eosDigInput::pinGet()
+ *           bool eosDigInput::pinGet() const
  * 
  *       Retorn:
  *           Valor lleigit del port
  *
  *************************************************************************/
 
-bool eos::DigInput::pinGet() {
+bool eos::DigInput::pinGet() const {
     
     bool p = halGPIOPinGetState(pin);
     return inverted ? !p : p;

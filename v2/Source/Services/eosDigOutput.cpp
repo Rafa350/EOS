@@ -6,7 +6,9 @@
 
 
 #define TASK_PERIOD     10
-#define TASK_STACK     512
+
+const unsigned taskStackSize = 512;
+const eos::TaskPriority taskPriority = eos::TaskPriority::normal;
 
 
 /*************************************************************************
@@ -19,7 +21,7 @@
  *************************************************************************/
 
 eos::DigOutputService::DigOutputService() :
-    task(TASK_STACK, eos::TaskPriority::normal, this) {
+    task(taskStackSize, taskPriority, this) {
 }
 
 
@@ -64,7 +66,8 @@ void eos::DigOutputService::run() {
         
         eos::Task::enterCriticalSection();
         
-        for (unsigned i = 0; i < outputs.getCount(); i++) {            
+        for (unsigned i = 0; i < outputs.getCount(); i++) {          
+            
             eos::DigOutput *output = outputs[i];
     
             unsigned t = output->timeout;
@@ -148,7 +151,7 @@ eos::DigOutput::DigOutput(
  *
  *************************************************************************/
 
-bool eos::DigOutput::get() {
+bool eos::DigOutput::get() const {
 
     return pinGet();
 }
@@ -232,14 +235,14 @@ void eos::DigOutput::pulse(
 }
 
 
-void eos::DigOutput::pinInitialize() {
+void eos::DigOutput::pinInitialize() const {
         
     halGPIOPinSetState(pin, inverted ? true : false);
     halGPIOPinSetModeOutput(pin);    
 }
 
 
-bool eos::DigOutput::pinGet() {
+bool eos::DigOutput::pinGet() const {
     
     bool p = halGPIOPinGetState(pin);
     return inverted ? !p : p;
@@ -247,13 +250,13 @@ bool eos::DigOutput::pinGet() {
 
 
 void eos::DigOutput::pinSet(
-    bool state) {
+    bool state) const {
     
     halGPIOPinSetState(pin, state);
 }
 
 
-void eos::DigOutput::pinToggle() {
+void eos::DigOutput::pinToggle() const {
 
     halGPIOPinToggleState(pin);
 }

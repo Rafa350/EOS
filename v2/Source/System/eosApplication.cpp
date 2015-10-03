@@ -1,23 +1,7 @@
-// EOS
 #include "System/eosApplication.hpp"
-
-// FreeRTOS
+#include "HAL/halSYS.h"
 #include "FreeRTOS.h"
 #include "task.h"
-
-
-extern "C" void eosInitialize();
-
-
-void *operator new(size_t size) {
-    
-    return pvPortMalloc(size);
-}
-
-void operator delete(void *ptr) {
-    
-    vPortFree(ptr);
-}
 
 
 /*************************************************************************
@@ -31,9 +15,18 @@ void operator delete(void *ptr) {
 
 eos::Application::Application() {
     
-    eosInitialize();
+    halSYSInitialize();
 }
 
+
+/*************************************************************************
+ *
+ *       Inicia el planificador de tasques
+ * 
+ *       Funcio:
+ *           void eos::Application::execute() 
+ *
+ *************************************************************************/
 
 void eos::Application::execute() {
         

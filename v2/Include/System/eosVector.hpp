@@ -55,17 +55,17 @@ namespace eos {
                 size = 0;
             }
             
-            inline unsigned getCount() { 
+            inline unsigned getCount() const { 
                 
                 return count; 
             }
             
-            inline elementType &getElement(const unsigned index) {
+            inline const elementType &getElement(const unsigned index) const {
 
                 return elementPtr[index];                
             }
             
-            inline elementType &operator[](const unsigned index) {
+            inline const elementType &operator[](const unsigned index) const {
                 
                 return elementPtr[index];
             }           

@@ -8,6 +8,16 @@
 #include "System/eosCallbacks.hpp"
 
 
+#define EV_DigInput_onPosEdge(cls, instance, method) \
+    new eos::CallbackP1<cls, eos::DigInput*>(instance, method)
+
+#define EV_DigInput_onNegEdge(cls, instance, method) \
+    new eos::CallbackP1<cls, eos::DigInput*>(instance, method)
+
+#define EV_DigInput_onChange(cls, instance, method) \
+    new eos::CallbackP1<cls, eos::DigInput*>(instance, method)
+
+
 namespace eos {
     
     class DigInputService;
@@ -30,8 +40,8 @@ namespace eos {
     };
 
     class DigInput {
-        private:
-            typedef CallbackP1<DigInput, int> DigInputEvent;
+        public:
+            typedef ICallbackP1<DigInput*> IDigInputEvent;
 
         private:
             uint8_t pin;
@@ -43,22 +53,22 @@ namespace eos {
             bool onPosEdgeFired;
             bool onNegEdgeFired;
             bool onChangeFired;
-            DigInputEvent *onPosEdge;
-            DigInputEvent *onNegEdge;
-            DigInputEvent *onChange;
+            IDigInputEvent *onPosEdge;
+            IDigInputEvent *onNegEdge;
+            IDigInputEvent *onChange;
         
         public:
             DigInput(uint8_t pin, bool inverted);
             DigInput(DigInputService *service, uint8_t pin, bool inverted);
-            bool get();
+            inline bool get() const { return state; }
             bool isPosEdge();
             bool isNegEdge();
-            void setOnPosEdgeEvent();
-            void setOnNegEdgeEvent();
-            void setOnChangeEvent();
+            void setOnPosEdge(IDigInputEvent *event) { onPosEdge = event; }
+            void setOnNegEdge(IDigInputEvent *event) { onNegEdge = event; }
+            void setOnChange(IDigInputEvent *event) { onChange = event; }
         private:
-            void pinInitialize();
-            bool pinGet();
+            void pinInitialize() const;
+            bool pinGet() const;
         
         friend class eos::DigInputService;
     };

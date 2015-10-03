@@ -1,8 +1,4 @@
-#include "eos.hpp"
-
 #include "HardwareProfile.h"
-
-// Harmony
 #include "peripheral/int/plib_int.h"
 #include "peripheral/pcache/plib_pcache.h"
 #include "peripheral/bmx/plib_bmx.h"
@@ -75,11 +71,11 @@ static void __attribute__((nomips16)) PerformanceConfig(
  *       Inicialitza el sistema
  *
  *       Funcio:
- *           void eosInitialize() 
+ *           void halSYSInitialize() 
  *
  *************************************************************************/
 
-void eosInitialize() {
+void halSYSInitialize() {
     
     // Inicialitzacio del sistema
     //

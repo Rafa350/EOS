@@ -11,7 +11,6 @@ namespace eos {
         public:
             Application();
             void execute();
-            bool x(int a)  { return a > 0; }
     };
 }
 

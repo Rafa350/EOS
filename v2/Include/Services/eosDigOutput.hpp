@@ -38,7 +38,7 @@ namespace eos {
         public:
             DigOutput(uint8_t pin, bool inverted);
             DigOutput(DigOutputService *service, uint8_t pin, bool inverted);
-            bool get();
+            bool get() const;
             void set(bool state);
             void toggle();
             void pulse(unsigned time);
@@ -46,10 +46,10 @@ namespace eos {
             void delayedToggle(unsigned delay);
             void delayedPulse(unsigned delay, unsigned time);
         private:
-            void pinInitialize();
-            bool pinGet();
-            void pinSet(bool state);
-            void pinToggle();
+            void pinInitialize() const;
+            bool pinGet() const;
+            void pinSet(bool state) const;
+            void pinToggle() const;
             
         friend class eos::DigOutputService;
     };

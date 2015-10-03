@@ -2,7 +2,7 @@
 #include "System/eosCallbacks.hpp"
 #include "System/eosApplication.hpp"
 #include "Services/eosDigOutput.hpp"
-//#include "Services/eosDigInput.h"
+#include "Services/eosDigInput.hpp"
 //#include "Services/eosI2CMaster.h"
 //#include "Services/eosTimer.h"
 //#include "Services/Forms/eosForms.h"
@@ -19,9 +19,32 @@
 
 //static char buffer[100];
 
-static eos::DigOutput *ledRED;
-static eos::DigOutput *ledAMBER;
-static eos::DigOutput *ledGREEN;
+class MyApplication: public eos::Application {
+    private:
+        eos::DigOutput *ledRED;
+        eos::DigOutput *ledAMBER;
+        eos::DigOutput *ledGREEN;
+        eos::DigInput *swRED;
+        eos::DigInput *swAMBER;
+        eos::DigInput *swGREEN;
+
+    public :
+        MyApplication();
+    private:
+        void setupDigInputService();
+        void setupDigOutputService();
+        void onSwRED(eos::DigInput *input);
+        void onSwAMBER(eos::DigInput *input);
+        void onSwGREEN(eos::DigInput *input);
+};
+
+
+MyApplication::MyApplication() {
+    
+    setupDigOutputService();
+    setupDigInputService();
+}
+
 
 //static eosTimerHandle hTimer;
 
@@ -46,25 +69,22 @@ static void posEdgeFunction(
     eosDisplayAddCommandRefresh(hDisplayService);
     eosDisplayEndCommand(hDisplayService);
 }
-
-static void setupDigInputService(void) {
-    
-    eosDigInputServiceParams serviceParams;
-    eosDigInputParams params;
-
-    memset(&serviceParams, 0, sizeof(serviceParams));
-    serviceParams.priority = 1;
-    eosDigInputServiceHandle hDigInputService = eosDigInputServiceInitialize(&serviceParams);
-    
-    memset(&params, 0, sizeof(params));
-    params.pin = pinSW1;
-    params.inverted = true;
-    params.onPosEdge = posEdgeFunction;
-    eosDigInputCreate(hDigInputService, &params);
-}
 */
+void MyApplication::setupDigInputService(void) {
 
-static void setupDigOutputService(void) {
+    eos::DigInputService *service = new eos::DigInputService();
+
+    swRED = new eos::DigInput(service, pinSW1, true);
+    swAMBER = new eos::DigInput(service, pinSW2, true);
+    swGREEN = new eos::DigInput(service, pinSW3, true);    
+    
+    swRED->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwRED));
+    swAMBER->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwAMBER));
+    swGREEN->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwGREEN));
+}
+
+
+void MyApplication::setupDigOutputService(void) {
 
     eos::DigOutputService *service = new eos::DigOutputService();
    
@@ -72,11 +92,25 @@ static void setupDigOutputService(void) {
     ledAMBER = new eos::DigOutput(service, pinLED2, false);
     ledGREEN = new eos::DigOutput(service, pinLED3, false);
 
-    ledRED->pulse(1000);
-    ledAMBER->pulse(2000);
-    ledGREEN->pulse(3000);
+    ledRED->pulse(500);
+    ledAMBER->pulse(1000);
+    ledGREEN->pulse(1500);
 }
 
+void MyApplication::onSwRED(eos::DigInput* input){
+
+    ledRED->pulse(1000);
+}
+
+void MyApplication::onSwAMBER(eos::DigInput* input){
+    
+    ledAMBER->pulse(1000);
+}
+
+void MyApplication::onSwGREEN(eos::DigInput* input){
+    
+    ledGREEN->pulse(1000);
+}
 /*
 static void setupI2CMasterService(void) {
     
@@ -142,14 +176,8 @@ static void setupFormsService(void) {
 
 int main(void) {
     
-    setupDigOutputService();
-    
-    eos::Application app;
-    
-    eos::CallbackP1R<eos::Application, bool, int> cb(&app, &eos::Application::x);
-    int r = cb(10);
-    
-    app.execute();
+    MyApplication *app = new MyApplication();
+    app->execute();
 
     return 0;
 }
