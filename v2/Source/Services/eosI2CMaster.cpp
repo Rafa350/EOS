@@ -1,27 +1,17 @@
-#include "eos.h"
-
-#if eosOPTIONS_UseI2CMasterService == 1
-
-#include "System/eosMemory.h"
+#include "Services/eosI2CMaster.hpp"
 #include "System/eosInterrupts.h"
-#include "System/eosTask.h"
-#include "System/eosQueue.h"
-#include "System/eosSemaphore.h"
-#include "Services/eosI2CMaster.h"
+#include "System/eosTask.hpp"
+#include "System/eosQueue.hpp"
+#include "System/eosSemaphore.hpp"
 
-#include "sys/attribs.h"
-
-// Harmony
 #include "peripheral/int/plib_int.h"
 #include "Peripheral/i2c/plib_i2c.h"
 
-// FreeRTOS
-#include "FreeRTOS.h"
-#include "task.h"
 
-
-#define __intPriority                  INT_PRIORITY_LEVEL2
-#define __intSubPriority               INT_SUBPRIORITY_LEVEL0
+const unsigned taskStackSize = 512;
+const eos::TaskPriority taskPriority = eos::TaskPriority::normal;
+const unsigned queueMaxItems = 20;
+const unsigned baudRate = 100000;
 
 
 typedef enum {                         // Estat de la transaccio
@@ -63,27 +53,8 @@ typedef struct __eosI2CTransaction {   // Dades internes d'una transaccio
     unsigned error;                    // -Codi d'error
 } eosI2CTransaction;
 
-typedef struct __eosI2CMasterService { // Dades internes del servei
-    I2C_MODULE_ID id;                  // -El identificador del modul i2c
-    eosTaskHandle hTask;               // -Handler de la tasca
-    eosQueueHandle hTransactionQueue;  // -Handler de la cua de transaccions
-    eosSemaphoreHandle hSemaphore;     // -Semafor de fi de transaccio
-    eosPoolHandle hPool;               // -Pool de memoria per les transaccions
-} eosI2CMasterService;
 
-
-static unsigned serviceCount = 0;
-static eosI2CTransactionHandle transactionMap[I2C_NUMBER_OF_MODULES];
-
-static void task(void *params);
-static void i2cInitialize(I2C_MODULE_ID id);
-static void i2cInterrupt(I2C_MODULE_ID id);
-
-extern void __ISR(_I2C_1_VECTOR, IPL2SOFT) isrI2C1Wrapper(void);
-extern void __ISR(_I2C_2_VECTOR, IPL2SOFT) isrI2C2Wrapper(void);
-extern void __ISR(_I2C_3_VECTOR, IPL2SOFT) isrI2C3Wrapper(void);
-extern void __ISR(_I2C_4_VECTOR, IPL2SOFT) isrI2C4Wrapper(void);
-extern void __ISR(_I2C_5_VECTOR, IPL2SOFT) isrI2C5Wrapper(void);
+eos::I2CMasterTransaction *transactionMap[5];
 
 
 /*************************************************************************
@@ -91,63 +62,20 @@ extern void __ISR(_I2C_5_VECTOR, IPL2SOFT) isrI2C5Wrapper(void);
  *       Inicialitza el servei
  *
  *       Funcio:
- *           eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
- *              eosI2CServiceParams *params)
+ *           eos::I2CMasterService::I2CMasterService(
+ *              unsigned moduleId)
  *
  *       Entrada:
- *           params: Parametres d'inicialitzacio del servei
- *
- *       Retorn:
- *           El handler del servei, NULL en cas d'error
+ *           moduleId: Identificador del modulI2C
  *
  *************************************************************************/
 
-eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
-    eosI2CServiceParams *params) {
-    
-    eosDebugVerify(params != NULL);
+eos::I2CMasterService::I2CMasterService(
+    unsigned moduleId) :
+    task(taskStackSize, taskPriority, this),
+    queue(queueMaxItems) {
 
-    eosI2CMasterServiceHandle hService = eosAlloc(sizeof(eosI2CMasterService));
-    if (hService != NULL) {
-        
-        eosDebugVerify(serviceCount < (unsigned) I2C_NUMBER_OF_MODULES );
-        eosDebugVerify(serviceCount < (unsigned) eosI2CMasterService_MaxInstances);
-        
-        serviceCount++;
-
-        // -Inicialitza les dades internes del servei
-        //
-        hService->id = params->id;
-        
-        // -Crea el pool de memoria per les transaccions
-        //
-        hService->hPool = eosPoolCreate(sizeof(eosI2CTransaction), 
-                eosI2CMasterService_MaxTransactions);
-        eosDebugVerify(hService->hPool != NULL);
-        
-        // -Crea la tasca de gestio
-        //        
-        hService->hTask = eosTaskCreate(tskIDLE_PRIORITY + params->priority, 
-                512, task, hService);
-        eosDebugVerify(hService->hTask != NULL);
-        
-        // -Crea la cua de transaccions
-        //
-        hService->hTransactionQueue = eosQueueCreate(sizeof(eosI2CTransactionHandle), 
-                eosI2CMasterService_MaxTransactions);
-        eosDebugVerify(hService->hTransactionQueue != NULL);
-        
-        // -Crea el semaforo de final de transaccio
-        //
-        hService->hSemaphore = eosSemaphoreCreate();
-        eosDebugVerify(hService->hSemaphore != NULL);
-
-        // -Inicialitza el mapa de transaccions per les interrupcions
-        //
-        transactionMap[hService->id] = NULL;
-    }
-    
-    return hService;
+    this->moduleId = moduleId;        
 }
 
 
@@ -156,110 +84,18 @@ eosI2CMasterServiceHandle eosI2CMasterServiceInitialize(
  *       Inicia una transaccio
  *
  *       Funcio:
- *           eosI2CTransactionHandle eosI2CMasterStartTransaction(
- *               eosI2CMasterServiceHandle hService,
- *               eosI2CTransactionParams *params)
+ *           void eos::I2CMasterService::startTransaction(
+ *               eosI2CMasterTransaction *transaction)
  *
  *       Entrada:
- *           hService: El handler del servei
- *           params  : Parametres de la transaccio
- *
- *       Retorn:
- *           El handler de la transaccio. NULL en cas d'error
+ *           transaction : La transaccio a iniciar
  *
  *************************************************************************/
 
-eosI2CTransactionHandle eosI2CMasterStartTransaction(
-    eosI2CMasterServiceHandle hService,
-    eosI2CTransactionParams *params) {
+void eos::I2CMasterService::startTransaction(
+    eos::I2CMasterTransaction *transaction) {
     
-    eosDebugVerify(hService != NULL);
-    eosDebugVerify(params != NULL);
-
-    if ((params->txBuffer == NULL || params->txCount == 0) &&
-       (params->rxBuffer == NULL || params->rxSize  == 0))
-        return NULL;
-    
-    eosI2CTransactionHandle hTransaction = eosPoolAlloc(hService->hPool);
-    if (hTransaction != NULL) {
-
-        hTransaction->id = hService->id;
-        hTransaction->state = transactionIdle;
-        hTransaction->address = params->address;
-        hTransaction->txBuffer = params->txBuffer;
-        hTransaction->txCount = params->txCount;
-        hTransaction->rxBuffer = params->rxBuffer;
-        hTransaction->rxSize = params->rxSize;
-        hTransaction->onEndTransaction = params->onEndTransaction;
-        hTransaction->context = params->context;
-        hTransaction->error = 0;
-
-        // Afegeix la transaccio a la cua
-        //
-        if (!eosQueuePut(hService->hTransactionQueue, &hTransaction, 5000)) {
-            eosPoolFree(hTransaction);
-            hTransaction = NULL;
-        }
-    }
-    
-    return hTransaction;
-}
-
-
-unsigned eosI2CMasterGetTransactionResult(
-    eosI2CTransactionHandle hTransaction) {
-
-    return hTransaction->error;
-}
-
-
-/*************************************************************************
- *
- *       Funcio ISR del modul I2C
- * 
- *       Funcio:
- *          void isrI2CxHandler(void)
- *
- *************************************************************************/
-
-void isrI2C1Handler(void) {
-
-    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_1_MASTER)) {
-        i2cInterrupt(I2C_ID_1);
-        eosInterruptSourceFlagClear(INT_SOURCE_I2C_1_MASTER);
-    }
-}
-
-void isrI2C2Handler(void) {
-
-    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_2_MASTER)) {
-        i2cInterrupt(I2C_ID_2);
-        eosInterruptSourceFlagClear(INT_SOURCE_I2C_2_MASTER);
-    }
-}
-
-void isrI2C3Handler(void) {
-
-    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_3_MASTER)) {
-        i2cInterrupt(I2C_ID_3);
-        eosInterruptSourceFlagClear(INT_SOURCE_I2C_3_MASTER);
-    }
-}
-
-void isrI2C4Handler(void) {
-
-    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_4_MASTER)) {
-        i2cInterrupt(I2C_ID_4);
-        eosInterruptSourceFlagClear(INT_SOURCE_I2C_4_MASTER);
-    }
-}
-
-void isrI2C5Handler(void) {
-
-    if (eosInterruptSourceFlagGet(INT_SOURCE_I2C_5_MASTER)) {
-        i2cInterrupt(I2C_ID_5);
-        eosInterruptSourceFlagClear(INT_SOURCE_I2C_5_MASTER);
-    }
+    queue.put(transaction, 5000);
 }
 
 
@@ -268,31 +104,23 @@ void isrI2C5Handler(void) {
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void task(
- *               void *params)
- *
- *       Entrada:
- *           params: Parametre (hService)
+ *           void eos::I2CMasterService::run()
  *
  *************************************************************************/
 
-static void task(
-    void *params) {
+void eos::I2CMasterService::run() {
 
-    eosI2CMasterServiceHandle hService = params;
-    I2C_MODULE_ID id = hService->id;
-    
-    i2cInitialize(id);
+    halI2CMasterInitialize(moduleId, baudRate, interruptCallback, this);
 
     while (true) {
            
-        eosI2CTransactionHandle hTransaction;
-        while (eosQueueGet(hService->hTransactionQueue, &hTransaction, 0xFFFFFFFF)) {
+        eos::I2CMasterTransaction *transaction;
+        while (queue.get(transaction, 0xFFFFFFFF)) {
         
             // Espera a que el bus estigui lliure
             //
-            while (!PLIB_I2C_BusIsIdle(id)) 
-                eosTaskDelay(20);
+            while (!halI2CMasterIsBusIdle(moduleId)) 
+                eos::Task::delay(20);
 
             // Prepara la transaccio
             //
@@ -303,8 +131,8 @@ static void task(
             // Inicia la comunicacio. A partir d'aquest punt es
             // generen les interrupcions del modul I2C
             //
-            transactionMap[id] = hTransaction;
-            PLIB_I2C_MasterStart(id);
+            transactionMap[moduleId] = hTransaction;
+            halI2CMasterStart(moduleId);
 
             // Espera que finalitzi la transaccio
             //
@@ -325,81 +153,22 @@ static void task(
 
             // Retart entre transaccions
             //
-            eosTaskDelay(eosI2CMasterService_EndTransactionDelay);
+            eos::Task::delay(eosI2CMasterService_EndTransactionDelay);
             
             // Destrueix la transaccio
             //
             eosPoolFree(hTransaction);
-            transactionMap[id] = NULL;
+            transactionMap[moduleId] = NULL;
         }
     }
 }
 
 
-/************************************************************************
- *
- *       Inicialitza el modul I2C
- *
- *       Funcio:
- *           void i2cInitialize(
- *               I2C_MODULE_ID id)
- *
- *       Entrada:
- *           id: Identificador del modul I2C
- *
- ************************************************************************/
-
-static void i2cInitialize(
-    I2C_MODULE_ID id) {
+void eos::I2CMasterService::interruptCallback(
+    unsigned moduleId,
+    void *param) {
     
-    // Inicialitzacio general del modul
-    //
-    PLIB_I2C_SlaveClockStretchingEnable(id);
-    PLIB_I2C_SMBDisable(id);
-    PLIB_I2C_HighFrequencyDisable(id);
-    PLIB_I2C_StopInIdleEnable(id);
-
-    // Selecciona la frequencia de treball
-    //
-    PLIB_I2C_BaudRateSet(id, CLOCK_PERIPHERICAL_HZ, 100000);
-
-    // Configura les interrupcions
-    //
-    switch(id) {
-        case I2C_ID_1:
-            PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C1, __intPriority);
-            PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C1, __intSubPriority);
-            eosInterruptSourceEnable(INT_SOURCE_I2C_1_MASTER);
-            break;
-
-        case I2C_ID_2:
-            PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C2, __intPriority);
-            PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C2, __intSubPriority);
-            eosInterruptSourceEnable(INT_SOURCE_I2C_2_MASTER);
-            break;
-
-        case I2C_ID_3:
-            PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C3, __intPriority);
-            PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C3, __intSubPriority);
-            eosInterruptSourceEnable(INT_SOURCE_I2C_3_MASTER);
-            break;
-
-        case I2C_ID_4:
-            PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C4, __intPriority);
-            PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C4, __intSubPriority);
-            eosInterruptSourceEnable(INT_SOURCE_I2C_4_MASTER);
-            break;
-
-        case I2C_ID_5:
-            PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C5, __intPriority);
-            PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C5, __intSubPriority);
-            eosInterruptSourceEnable(INT_SOURCE_I2C_5_MASTER);
-            break;
-    }
-
-    // Activa el modul
-    //
-    PLIB_I2C_Enable(id);
+    eos::I2CMasterService *service = param;
 }
 
 
@@ -600,6 +369,3 @@ static void i2cInterrupt(
         }
     }
 }
-
-
-#endif

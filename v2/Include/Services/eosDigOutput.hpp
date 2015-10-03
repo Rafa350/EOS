@@ -10,26 +10,24 @@
 namespace eos {
     
     class DigOutput;
-    class DigOutputService;
     
+    typedef IVector<DigOutput*> IDigOutputVector;
+    typedef Vector<DigOutput*> DigOutputVector;
+
     class DigOutputService: public IRunable {      
-        
-        private:
-            typedef Vector<DigOutput*> Outputs;
-        
         private:
             Task task;
-            Outputs outputs;
-        
+            DigOutputVector outputs;        
+            
         public:
             DigOutputService();
             void add(DigOutput *output);
+            inline const IDigOutputVector &getOutputs() const { return outputs; }
         private:
             void run();
     };
     
-    class DigOutput {
-        
+    class DigOutput {        
         private:
             uint8_t pin;
             bool inverted;

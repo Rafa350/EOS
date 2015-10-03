@@ -20,29 +20,27 @@
 
 namespace eos {
     
-    class DigInputService;
     class DigInput;
+
+    typedef IVector<DigInput*> IDigInputVector;
+    typedef Vector<DigInput*> DigInputVector;
+    typedef ICallbackP1<DigInput*> IDigInputEvent;
     
     class DigInputService: public IRunable {
         
         private:
-            typedef Vector<DigInput*> Inputs;
-
-        private:
             Task task;
-            Inputs inputs;
+            DigInputVector inputs;
             
         public:
             DigInputService();
             void add(DigInput *input);
+            inline const IDigInputVector &getInputs() const { return inputs; }
         private:
             void run();
     };
 
     class DigInput {
-        public:
-            typedef ICallbackP1<DigInput*> IDigInputEvent;
-
         private:
             uint8_t pin;
             uint32_t pattern;

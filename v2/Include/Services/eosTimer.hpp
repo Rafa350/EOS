@@ -14,24 +14,22 @@
 namespace eos {
     
     class Timer;
-    class TimerService;
+
+    typedef IVector<Timer*> ITimerVector;
+    typedef Vector<Timer*> TimerVector;
+    typedef ICallbackP1<Timer*> ITimerEvent;
     
     class TimerService {
         private:
-            typedef Vector<Timer*> Timers;
-            
-        private:
-            Timers timers;
+            TimerVector timers;
 
         public:
             TimerService();
             void add(Timer *timer);
+            inline const ITimerVector &getTimers() const { return timers; }
     };
     
     class Timer {
-        public:
-            typedef ICallbackP1<Timer*> ITimerEvent;
-
         private:
             void *handler;     
             ITimerEvent *onTimeout;

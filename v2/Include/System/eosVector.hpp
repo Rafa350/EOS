@@ -8,7 +8,15 @@
 namespace eos {
     
     template <typename elementType>
-    class Vector {
+    class IVector {
+        public:
+            virtual unsigned getCount() const = 0;
+            virtual const elementType &getElement(const unsigned index) const = 0;
+            virtual const elementType &operator[](const unsigned index) const = 0;
+    };
+    
+    template <typename elementType>
+    class Vector: public IVector<elementType> {
         private:
             unsigned count;
             unsigned size;
@@ -55,17 +63,17 @@ namespace eos {
                 size = 0;
             }
             
-            inline unsigned getCount() const { 
+            unsigned getCount() const { 
                 
                 return count; 
             }
             
-            inline const elementType &getElement(const unsigned index) const {
+            const elementType &getElement(const unsigned index) const {
 
                 return elementPtr[index];                
             }
             
-            inline const elementType &operator[](const unsigned index) const {
+            const elementType &operator[](const unsigned index) const {
                 
                 return elementPtr[index];
             }           

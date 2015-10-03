@@ -3,6 +3,7 @@
 #include "System/eosApplication.hpp"
 #include "Services/eosDigOutput.hpp"
 #include "Services/eosDigInput.hpp"
+#include "Services/eosTimer.hpp"
 //#include "Services/eosI2CMaster.h"
 //#include "Services/eosTimer.h"
 //#include "Services/Forms/eosForms.h"
@@ -12,10 +13,6 @@
 //#include "peripheral/i2c/plib_i2c.h"
 //#include "DisplayService.h"
 
-
-//static eosI2CMasterServiceHandle hI2CMasterService;
-//static eosDisplayServiceHandle hDisplayService;
-//static eosFormsServiceHandle hFormsService;
 
 //static char buffer[100];
 
@@ -27,15 +24,20 @@ class MyApplication: public eos::Application {
         eos::DigInput *swRED;
         eos::DigInput *swAMBER;
         eos::DigInput *swGREEN;
+        eos::Timer *timer;
 
     public :
         MyApplication();
     private:
         void setupDigInputService();
         void setupDigOutputService();
+        void setupTimerService();
+        
         void onSwRED(eos::DigInput *input);
         void onSwAMBER(eos::DigInput *input);
         void onSwGREEN(eos::DigInput *input);
+        
+        void onTimeout(eos::Timer *timer);
 };
 
 
@@ -43,10 +45,9 @@ MyApplication::MyApplication() {
     
     setupDigOutputService();
     setupDigInputService();
+    setupTimerService();
 }
 
-
-//static eosTimerHandle hTimer;
 
 /*static void task1(void *params) {
 
@@ -70,21 +71,22 @@ static void posEdgeFunction(
     eosDisplayEndCommand(hDisplayService);
 }
 */
-void MyApplication::setupDigInputService(void) {
+void MyApplication::setupDigInputService() {
 
     eos::DigInputService *service = new eos::DigInputService();
 
     swRED = new eos::DigInput(service, pinSW1, true);
-    swAMBER = new eos::DigInput(service, pinSW2, true);
-    swGREEN = new eos::DigInput(service, pinSW3, true);    
-    
     swRED->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwRED));
+   
+    swAMBER = new eos::DigInput(service, pinSW2, true);
     swAMBER->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwAMBER));
+    
+    swGREEN = new eos::DigInput(service, pinSW3, true);    
     swGREEN->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwGREEN));
 }
 
 
-void MyApplication::setupDigOutputService(void) {
+void MyApplication::setupDigOutputService() {
 
     eos::DigOutputService *service = new eos::DigOutputService();
    
@@ -97,20 +99,6 @@ void MyApplication::setupDigOutputService(void) {
     ledGREEN->pulse(1500);
 }
 
-void MyApplication::onSwRED(eos::DigInput* input){
-
-    ledRED->pulse(1000);
-}
-
-void MyApplication::onSwAMBER(eos::DigInput* input){
-    
-    ledAMBER->pulse(1000);
-}
-
-void MyApplication::onSwGREEN(eos::DigInput* input){
-    
-    ledGREEN->pulse(1000);
-}
 /*
 static void setupI2CMasterService(void) {
     
@@ -122,24 +110,16 @@ static void setupI2CMasterService(void) {
     hI2CMasterService = eosI2CMasterServiceInitialize(&serviceParams);
 }
 */
-/*
-static void setupTimerService(void) {
+
+void MyApplication::setupTimerService() {
     
-    eosTimerServiceParams serviceParams;
-    eosTimerParams params;
-    
-    eosTimerServiceHandle hTimerService;
-    
-    memset(&serviceParams, 0, sizeof(serviceParams));
-    hTimerService = eosTimerServiceInitialize(&serviceParams);
-    
-    memset(&params, 0, sizeof(params));
-    params.period = 1000;
-    params.autoreload = true;
-    params.onTimeout = timerFunction;
-    hTimer = eosTimerCreate(hTimerService, &params);
+    eos::TimerService *service = new eos::TimerService();
+
+    timer = new eos::Timer(service, 1000, true);
+    timer->setOnTimeout(EV_Timer_onTimeout(MyApplication, this, &MyApplication::onTimeout));
+    timer->start(1000);
 }
-*/
+
 /*
 static void setupFormsService(void) {
     
@@ -165,6 +145,27 @@ static void setupFormsService(void) {
 }
 */
 
+void MyApplication::onSwRED(eos::DigInput *input){
+
+    ledRED->pulse(1000);
+}
+
+void MyApplication::onSwAMBER(eos::DigInput *input){
+    
+    ledAMBER->pulse(1000);
+}
+
+void MyApplication::onSwGREEN(eos::DigInput *input){
+    
+    ledGREEN->pulse(1000);
+}
+
+void MyApplication::onTimeout(eos::Timer *timer) {
+    
+    ledRED->pulse(500);
+}
+
+
 /*************************************************************************
  *
  *       Inicialitzacio de l'aplicacio d'usuari
@@ -175,7 +176,7 @@ static void setupFormsService(void) {
  *************************************************************************/
 
 int main(void) {
-    
+       
     MyApplication *app = new MyApplication();
     app->execute();
 
