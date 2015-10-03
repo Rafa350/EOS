@@ -1,104 +1,63 @@
-#include "eos.h"
-
-#include "System/eosMemory.h"
-#include "Services/eosTimer.h"
-#include "System/eosTask.h"
-
-// FreeRTOS
+#include "eos.hpp"
+#include "Services/eosTimer.hpp"
 #include "FreeRTOS.h"
 #include "timers.h"
 
 
-typedef struct __eosTimer {
-    TimerHandle_t rtosTimer;
-    eosTimerCallback onTimeout;
-    void *context;
-    eosTimerHandle hNextTimer;
-} eosTimer;
-
-typedef struct __eosTimerService {
-    eosTimerHandle hFirstTimer;
-} eosTimerService;
-
-
-static void timerCallback(TimerHandle_t rtosTimer);
-
-
-eosTimerServiceHandle eosTimerServiceInitialize(
-    eosTimerServiceParams *params) {
-    
-    eosDebugVerify(params != NULL);
-
-    eosTimerServiceHandle hService = eosAlloc(sizeof(eosTimerService));
-    if (hService != NULL) {
-        hService->hFirstTimer = NULL;
-    }
-    
-    return hService;
+eos::TimerService::TimerService() {
 }
 
 
-eosTimerHandle eosTimerCreate(
-    eosTimerServiceHandle hService, 
-        eosTimerParams *params) {
+void eos::TimerService::add(Timer *timer) {
     
-    eosDebugVerify(hService != NULL);
-    eosDebugVerify(params != NULL);
-    
-    eosTimerHandle hTimer = eosAlloc(sizeof(eosTimer));
-    if (hTimer) {
-        hTimer->onTimeout = params->onTimeout;
-        hTimer->context = params->context;
-        hTimer->rtosTimer = xTimerCreate("", params->period, params->autoreload, 
-            (void*) hTimer, timerCallback);
-        
-        eosCriticalSectionInfo csInfo;
-        eosEnterCriticalSection(eosCriticalSectionSeverityLow, &csInfo);
-        
-        hTimer->hNextTimer = hService->hFirstTimer;
-        hService->hFirstTimer = hTimer;
-        
-        eosLeaveCriticalSection(&csInfo);
-    }
-    
-    return  hTimer;
+    timers.add(timer);
 }
 
 
-void eosTimerStart(
-    eosTimerHandle hTimer, 
+eos::Timer::Timer(
+    unsigned period,
+    bool autoreload) :
+    Timer(nullptr, period, autoreload) {
+}
+
+
+eos::Timer::Timer(
+    eos::TimerService *service, 
+    unsigned period,
+    bool autoreload) {
+    
+    handler = xTimerCreate("", period, autoreload, (void*) this, timerCallback);
+    
+    if (service != nullptr)
+        service->add(this);
+}
+
+
+void eos::Timer::start(
     unsigned timeout) {
     
-    eosDebugVerify(hTimer != NULL);
-    
-    xTimerStart(hTimer->rtosTimer, timeout);
+    xTimerStart(handler, timeout);
 }
 
 
-void eosTimerStop(
-    eosTimerHandle hTimer,
+void eos::Timer::stop(
     unsigned timeout) {
     
-    eosDebugVerify(hTimer != NULL);
-
-    xTimerStop(hTimer->rtosTimer, timeout);
+    xTimerStop(handler, timeout);
 }
 
 
-void eosTimerRestart(
-    eosTimerHandle hTimer,
+void eos::Timer::restart(
     unsigned timeout) {
     
-    eosDebugVerify(hTimer != NULL);
-
-    xTimerReset(hTimer->rtosTimer, timeout);
+    xTimerReset(handler, timeout);
 }
 
 
-static void timerCallback(
-    TimerHandle_t rtosTimer) {
+void eos::Timer::timerCallback(
+    void *handler) {
     
-    eosTimerHandle hTimer = pvTimerGetTimerID(rtosTimer);
-    if (hTimer->onTimeout != NULL)
-        hTimer->onTimeout(hTimer, hTimer->context);
+    eos::Timer *timer = (eos::Timer*) pvTimerGetTimerID(handler);
+    if (timer->onTimeout != nullptr)
+        timer->onTimeout->execute(timer);
 }

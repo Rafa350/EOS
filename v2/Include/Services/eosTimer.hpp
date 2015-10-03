@@ -2,31 +2,51 @@
 #define	__EOS_TIMER_H
 
 
-#ifndef __EOS_H
-#include "eos.h"
-#endif
+#include "eos.hpp"
+#include "System/eosCallbacks.hpp"
+#include "System/eosVector.hpp"
 
 
-typedef struct __eosTimerService *eosTimerServiceHandle;
-typedef struct __eosTimer *eosTimerHandle;
-typedef void (*eosTimerCallback)(eosTimerHandle hTimer, void *context);
-
-typedef struct {
-} eosTimerServiceParams;
-
-typedef struct {
-    unsigned period;
-    bool autoreload;
-    eosTimerCallback onTimeout;
-    void* context;
-} eosTimerParams;
+#define EV_Timer_onTimeout(cls, instance, method) \
+    new eos::CallbackP1<cls, eos::Timer*>(instance, method)
 
 
-extern eosTimerServiceHandle eosTimerServiceInitialize(eosTimerServiceParams *params);
-extern eosTimerHandle eosTimerCreate(eosTimerServiceHandle hService, eosTimerParams *params);
-extern void eosTimerStart(eosTimerHandle hTimer, unsigned timeout);
-extern void eosTimerStop(eosTimerHandle hTimer, unsigned timeout);
-extern void eosTimerReStart(eosTimerHandle hTimer, unsigned timeout);
+namespace eos {
+    
+    class Timer;
+    class TimerService;
+    
+    class TimerService {
+        private:
+            typedef Vector<Timer*> Timers;
+            
+        private:
+            Timers timers;
+
+        public:
+            TimerService();
+            void add(Timer *timer);
+    };
+    
+    class Timer {
+        public:
+            typedef ICallbackP1<Timer*> ITimerEvent;
+
+        private:
+            void *handler;     
+            ITimerEvent *onTimeout;
+            
+        public:
+            Timer(unsigned period, bool autoreload);
+            Timer(TimerService *service, unsigned period, bool autoreload);
+            void start(unsigned timeout);
+            void stop(unsigned timeout);
+            void restart(unsigned timeout);
+            inline void setOnTimeout(ITimerEvent *event) { onTimeout = event; }
+        private:
+            static void timerCallback(void *handler);
+    };
+}
 
 
 #endif	

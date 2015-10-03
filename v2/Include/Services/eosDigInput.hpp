@@ -63,9 +63,9 @@ namespace eos {
             inline bool get() const { return state; }
             bool isPosEdge();
             bool isNegEdge();
-            void setOnPosEdge(IDigInputEvent *event) { onPosEdge = event; }
-            void setOnNegEdge(IDigInputEvent *event) { onNegEdge = event; }
-            void setOnChange(IDigInputEvent *event) { onChange = event; }
+            inline void setOnPosEdge(IDigInputEvent *event) { onPosEdge = event; }
+            inline void setOnNegEdge(IDigInputEvent *event) { onNegEdge = event; }
+            inline void setOnChange(IDigInputEvent *event) { onChange = event; }
         private:
             void pinInitialize() const;
             bool pinGet() const;
