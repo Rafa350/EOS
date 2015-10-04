@@ -12,14 +12,13 @@ namespace eos {
             void *handle;
         
         public:
+            GenericQueue(unsigned itemSize, unsigned maxItems);                   
             ~GenericQueue();
             void clear();
-            virtual bool put(void *data, unsigned timeout);
-            virtual bool get(void *data, unsigned timeout);
-            virtual bool putISR(void *data);
-            virtual bool getISR(void *data);            
-        private:
-            GenericQueue(unsigned itemSize, unsigned maxItems);       
+            bool put(void *data, unsigned timeout);
+            bool get(void *data, unsigned timeout);
+            bool putISR(void *data);
+            bool getISR(void *data);            
     };
     
     template <typename itemType>
@@ -29,12 +28,12 @@ namespace eos {
                 GenericQueue(sizeof(itemType), maxItems) {
             }
             
-            inline bool put(itemType *data, unsigned timeout) {
-                return GenericQueue::put((void*) data, timeout);
+            inline bool put(itemType &data, unsigned timeout) {
+                return GenericQueue::put((void*) &data, timeout);
             }
             
-            inline bool get(itemType *data, unsigned timeout) {
-                return GenericQueue::get((void*) data, timeout);
+            inline bool get(itemType &data, unsigned timeout) {
+                return GenericQueue::get((void*) &data, timeout);
             }
     };
 }

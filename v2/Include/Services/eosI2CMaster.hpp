@@ -5,34 +5,66 @@
 #include "eos.hpp"
 #include "System/eosTask.hpp"
 #include "System/eosQueue.hpp"
+#include "System/eosSemaphore.hpp"
 #include "System/eosCallbacks.hpp"
 
 
 namespace eos {
-    
-    class I2CMasterTransaction;
-    
-    typedef Queue<I2CMasterTransaction*> TransactionQueue;
-
+       
     class I2CMasterService: IRunable {
+        private:
+            enum class State {          // Estat de la transaccio
+                idle,                   // -En espera de iniciar
+                sendAddress,            // -Transmeteix l'adressa
+                sendLength,             // -Transmeteix el byte de longitut
+                sendData,               // -Transmeteix un byte de dades
+                sendCheck,              // -Transmeteix el byte de verificacio
+                sendFinished,           // -Ha finalitzat la transmissio
+                startReceive,           // -Inicia la recepcio de dades
+                receiveLength,          // -Rebent un byte de longitut
+                receiveData,            // -Rebent un byte de dades
+                receiveCheck,           // -Rebent un byte de verificacio
+                ack,                    // -ACK transmitit
+                nak,                    // -NAK transmitit
+                waitStop,               // -Esperant STOP
+                finished                // -Finalitzada
+            };        
+            
+            typedef struct {
+                bool inUse;
+                uint8_t addr;
+                uint8_t *txBuffer;
+                uint8_t *rxBuffer;
+                unsigned txCount;
+                unsigned rxCount;
+                unsigned rxSize;
+            } Transaction;
+
+            typedef Queue<Transaction*> TransactionQueue;
+
         private:
             unsigned moduleId;
             Task task;
             TransactionQueue queue;
+            Transaction *transaction;
+            Transaction transactions[10];
+            BinarySemaphore semaphore;
+            unsigned index;
+            unsigned maxIndex;
+            uint8_t check;
+            uint8_t error;
+            bool waitingSlaveACK;   
+            bool writeMode;         
+            State state;
             
         public:
             I2CMasterService(unsigned moduleId);
-            void startTransaction(I2CMasterTransaction *transaction);
+            bool startTransaction(uint8_t addr, uint8_t *txBuffer, unsigned txCount, uint8_t *rxBuffer, unsigned rxSize);
         private:
-            void run();
             static void interruptCallback(unsigned moduleId, void *param);
+            void stateMachine();
+            void run();
     };
-
-    class I2CMasterTransaction {
-        public:
-            I2CMasterTransaction(uint8_t addr, uint8_t *txBuffer, unsigned txCount, uint8_t *rxBuffer, unsigned rxSize);
-    };
-
 }
 
 

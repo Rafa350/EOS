@@ -8,8 +8,8 @@
 static const INT_PRIORITY_LEVEL intPriority = INT_PRIORITY_LEVEL2;
 static const INT_SUBPRIORITY_LEVEL intSubPriority = INT_SUBPRIORITY_LEVEL0;
 
-static I2CInterruptCallback interruptCallback = NULL;
-static void *interruptParam;
+static I2CInterruptCallback callbacks[I2C_NUMBER_OF_MODULES];
+static I2CInterruptParam params[I2C_NUMBER_OF_MODULES];
 
 
 extern void __ISR(_I2C_1_VECTOR, IPL2SOFT) isrI2C1Wrapper(void);
@@ -21,7 +21,7 @@ extern void __ISR(_I2C_5_VECTOR, IPL2SOFT) isrI2C5Wrapper(void);
 
 static I2C_MODULE_ID getHarmonyID(unsigned moduleId) {
     
-    static I2C_MODULE_ID idTable[] = {
+    static I2C_MODULE_ID idTable[I2C_NUMBER_OF_MODULES] = {
         I2C_ID_1, I2C_ID_2, I2C_ID_3, I2C_ID_4, I2C_ID_5
     };
     
@@ -46,13 +46,13 @@ void halI2CMasterInitialize(
     unsigned moduleId,
     unsigned baudRate,
     I2CInterruptCallback callback,
-    void *param) {
+    I2CInterruptParam param) {
+    
+    callbacks[moduleId] = callback;
+    params[moduleId] = param;
     
     I2C_MODULE_ID id = getHarmonyID(moduleId);
-    
-    interruptCallback = callback;
-    interruptParam = param;
-    
+
     // Inicialitzacio general del modul
     //
     PLIB_I2C_SlaveClockStretchingEnable(id);
@@ -110,9 +110,86 @@ void halI2CMasterStart(unsigned moduleId) {
 }
 
 
-bool halI2CMasterIsBufIdle(unsigned moduleId) {
+void halI2CMasterStop(unsigned moduleId) {
+ 
+    PLIB_I2C_MasterStop(getHarmonyID(moduleId));
+}
+
+
+void halI2CMasterStartRepeat(unsigned moduleId) {
+
+    PLIB_I2C_MasterStartRepeat(getHarmonyID(moduleId));
+}
+
+
+bool halI2CIsBusIdle(unsigned moduleId) {
  
     return PLIB_I2C_BusIsIdle(getHarmonyID(moduleId));
+}
+
+
+bool halI2CArbitrationLossHasOccurred(unsigned moduleId) {
+
+    return PLIB_I2C_ArbitrationLossHasOccurred(getHarmonyID(moduleId));
+}
+
+
+void halI2CArbitrarionLossClear(unsigned moduleId) {
+
+    PLIB_I2C_ArbitrationLossClear(getHarmonyID(moduleId));
+}
+
+
+void halI2CTransmitterByteSend(unsigned moduleId, uint8_t data) {
+    
+    PLIB_I2C_TransmitterByteSend(getHarmonyID(moduleId), data);
+}
+
+
+bool halI2CTransmitterByteWasAcknowledged(unsigned moduleId) {
+                    
+    return PLIB_I2C_TransmitterByteWasAcknowledged(getHarmonyID(moduleId));
+}
+
+
+uint8_t halI2CReceivedByteGet(unsigned moduleId) {
+
+    return PLIB_I2C_ReceivedByteGet(getHarmonyID(moduleId));
+}
+
+
+void halI2CMasterReceiverClock1Byte(unsigned moduleId) {
+ 
+    PLIB_I2C_MasterReceiverClock1Byte(getHarmonyID(moduleId));
+}
+
+
+void halI2CReceivedByteAcknowledge(unsigned moduleId, bool ack) {
+ 
+    PLIB_I2C_ReceivedByteAcknowledge(getHarmonyID(moduleId), ack);
+}
+
+
+/*************************************************************************
+ *
+ *       Crida al callback adequat a cada modul I2C
+ * 
+ *       Funcio:
+ *           void doCallback(
+ *               I2C_MODULE_ID id)
+ * 
+ *       Entrada:
+ *           id: Numero de modul I2C
+ *
+ *************************************************************************/
+
+static void doCallback(
+    I2C_MODULE_ID id) {
+    
+    unsigned moduleId = getEosID(id);    
+    I2CInterruptCallback callback = callbacks[moduleId];
+    if (callback != NULL)
+        callback(moduleId, params[moduleId]);
 }
 
 
@@ -128,8 +205,7 @@ bool halI2CMasterIsBufIdle(unsigned moduleId) {
 void isrI2C1Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_1_MASTER)) {
-        if (interruptCallback)
-            interruptCallback(getEosID(I2C_ID_1), interruptParam);
+        doCallback(I2C_ID_1);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_1_MASTER);
     }
 }
@@ -137,8 +213,7 @@ void isrI2C1Handler(void) {
 void isrI2C2Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_2_MASTER)) {
-        if (interruptCallback)
-            interruptCallback(getEosID(I2C_ID_2), interruptParam);
+        doCallback(I2C_ID_2); 
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_2_MASTER);
     }
 }
@@ -146,8 +221,7 @@ void isrI2C2Handler(void) {
 void isrI2C3Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_3_MASTER)) {
-        if (interruptCallback)
-            interruptCallback(getEosID(I2C_ID_3), interruptParam);
+        doCallback(I2C_ID_3);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_3_MASTER);
     }
 }
@@ -155,8 +229,7 @@ void isrI2C3Handler(void) {
 void isrI2C4Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_4_MASTER)) {
-        if (interruptCallback)
-            interruptCallback(getEosID(I2C_ID_4), interruptParam);
+        doCallback(I2C_ID_4);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_4_MASTER);
     }
 }
@@ -164,9 +237,7 @@ void isrI2C4Handler(void) {
 void isrI2C5Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_5_MASTER)) {
-        if (interruptCallback)
-            interruptCallback(getEosID(I2C_ID_5), interruptParam);
+        doCallback(I2C_ID_5);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_5_MASTER);
     }
 }
-
