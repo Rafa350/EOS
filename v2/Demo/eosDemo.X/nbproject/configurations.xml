@@ -5,7 +5,6 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="f4" displayName="App" projectFiles="true">
-        <itemPath>../DisplayService.h</itemPath>
         <itemPath>../MnuMain.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Config" projectFiles="true">

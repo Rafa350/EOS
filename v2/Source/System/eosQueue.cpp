@@ -28,6 +28,21 @@ eos::GenericQueue::GenericQueue(
 
 /*************************************************************************
  *
+ *       Destructor
+ * 
+ *       Funcio:
+ *           eos::GenericQueue::~GenericQueue() 
+ *
+ *************************************************************************/
+
+eos::GenericQueue::~GenericQueue() {
+    
+    vQueueDelete(handle);
+}
+
+
+/*************************************************************************
+ *
  *       Buida el contingut d'una cua
  * 
  *       Funcio:

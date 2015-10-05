@@ -38,6 +38,7 @@ namespace eos {
                 unsigned txCount;
                 unsigned rxCount;
                 unsigned rxSize;
+                BinarySemaphore *semaphore;
             } Transaction;
 
             typedef Queue<Transaction*> TransactionQueue;
@@ -59,7 +60,10 @@ namespace eos {
             
         public:
             I2CMasterService(unsigned moduleId);
-            bool startTransaction(uint8_t addr, uint8_t *txBuffer, unsigned txCount, uint8_t *rxBuffer, unsigned rxSize);
+            inline bool startTransaction(uint8_t addr, void *txBuffer, unsigned txCount, unsigned timeout) {
+                return startTransaction(addr, txBuffer, txCount, nullptr, 0, timeout);
+            }
+            bool startTransaction(uint8_t addr, void *txBuffer, unsigned txCount, void *rxBuffer, unsigned rxSize, unsigned timeout);
         private:
             static void interruptCallback(unsigned moduleId, void *param);
             void stateMachine();

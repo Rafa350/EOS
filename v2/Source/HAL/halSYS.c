@@ -87,5 +87,5 @@ void halSYSInitialize() {
     
     // Desactiva els ports analogics
     //
-    AD1PCFG = 0xFFFF;
+    AD1PCFGSET = 0x00FF;
 }

@@ -46,10 +46,11 @@ eos::I2CMasterService::I2CMasterService(
  *       Funcio:
  *           bool eos::I2CMasterService::startTransaction(
  *               uint8_t addr,
- *               uint8_t *txBuffer,
+ *               void *txBuffer,
  *               unsigned txCount,
- *               uint8_t *rxBuffer,
- *               unsigned rxSize) 
+ *               void *rxBuffer,
+ *               unsigned rxSize,
+ *               unsigned timeout) 
  *
  *       Entrada:
  *           addr    : Adressa I2C del desti
@@ -57,6 +58,7 @@ eos::I2CMasterService::I2CMasterService(
  *           txCount : Numero de bytes en el buffer de transmissio
  *           rxBuffer: Buffer de recepcio
  *           rxSize  : Tamany del buffer de recepcio
+ *           timeout : Tamps maxim d'espera
  * 
  *       Retorn:
  *           True si tot es correcte, false en cas contrari
@@ -65,21 +67,25 @@ eos::I2CMasterService::I2CMasterService(
 
 bool eos::I2CMasterService::startTransaction(
     uint8_t addr,
-    uint8_t *txBuffer,
+    void *txBuffer,
     unsigned txCount,
-    uint8_t *rxBuffer,
-    unsigned rxSize) {
+    void *rxBuffer,
+    unsigned rxSize,
+    unsigned timeout) {
+    
+    BinarySemaphore semaphore;
 
     Transaction *transaction = nullptr;
     for (unsigned i = 0; i < sizeof(transactions) / sizeof(transactions[0]); i++) {
         transaction = &transactions[i];
         if (!transaction->inUse) {
             transaction->addr = addr;
-            transaction->txBuffer = txBuffer;
+            transaction->txBuffer = (uint8_t*) txBuffer;
             transaction->txCount = txCount;
-            transaction->rxBuffer = rxBuffer;
+            transaction->rxBuffer = (uint8_t*) rxBuffer;
             transaction->rxSize = rxSize;
             transaction->rxCount = 0;
+            transaction->semaphore = &semaphore;
             transaction->inUse = true;
             break;
         }
@@ -89,7 +95,7 @@ bool eos::I2CMasterService::startTransaction(
         return false;
     else {
         queue.put(transaction, 5000);
-        return true;
+        return semaphore.take(timeout);
     }
 }
 
@@ -133,15 +139,10 @@ void eos::I2CMasterService::run() {
             // Espera que finalitzi la transaccio
             //
             if (semaphore.take(eosI2CMasterService_TransactionTimeout)) {
-                
-                // Crida a la funcio callback, si esta definida
-                //
             }
             else {
-                
-                // Crida a la funcio callback, si esta definida
-                //
             }
+            transaction->semaphore->give();
 
             // Retart entre transaccions
             //

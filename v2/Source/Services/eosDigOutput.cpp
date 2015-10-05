@@ -238,7 +238,7 @@ void eos::DigOutput::pulse(
 void eos::DigOutput::pinInitialize() const {
         
     halGPIOPinSetState(pin, inverted ? true : false);
-    halGPIOPinSetModeOutput(pin);    
+    halGPIOPinSetModeOutput(pin, false);    
 }
 
 

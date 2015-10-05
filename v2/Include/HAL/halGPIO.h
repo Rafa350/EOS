@@ -7,8 +7,8 @@ extern "C" {
     
 #include <stdbool.h>
 #include <stdint.h>
-    
-void halGPIOPinSetModeOutput(uint8_t pin);
+      
+void halGPIOPinSetModeOutput(uint8_t pin, bool openDrain);
 void halGPIOPinSetModeInput(uint8_t pin);
 bool halGPIOPinGetState(uint8_t pin);
 void halGPIOPinSetState(uint8_t pin, bool state);

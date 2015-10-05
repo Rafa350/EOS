@@ -134,7 +134,7 @@ bool halI2CArbitrationLossHasOccurred(unsigned moduleId) {
 }
 
 
-void halI2CArbitrarionLossClear(unsigned moduleId) {
+void halI2CArbitrationLossClear(unsigned moduleId) {
 
     PLIB_I2C_ArbitrationLossClear(getHarmonyID(moduleId));
 }

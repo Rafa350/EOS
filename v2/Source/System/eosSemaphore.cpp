@@ -1,14 +1,35 @@
-// EOS
 #include "System/eosSemaphore.hpp"
-
-// FreeRTOS
 #include "FreeRTos.h"
 #include "semphr.h"
 
 
+/*************************************************************************
+ *
+ *       Constructor
+ *
+ *       Funcio:
+ *           eos::BinarySemaphore::BinarySemaphore()
+ *
+ *************************************************************************/
+
 eos::BinarySemaphore::BinarySemaphore() {
     
     handle = xSemaphoreCreateBinary();
+}
+
+
+/*************************************************************************
+ *
+ *       Destructor
+ * 
+ *       Funcio:
+ *           eos::BinarySemaphore::~BinarySemaphore() 
+ *
+ *************************************************************************/
+
+eos::BinarySemaphore::~BinarySemaphore() {
+
+    vSemaphoreDelete(handle);
 }
 
 

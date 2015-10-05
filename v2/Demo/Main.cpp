@@ -4,6 +4,7 @@
 #include "Services/eosDigOutput.hpp"
 #include "Services/eosDigInput.hpp"
 #include "Services/eosTimer.hpp"
+#include "Services/eosI2CMaster.hpp"
 //#include "Services/eosI2CMaster.h"
 //#include "Services/eosTimer.h"
 //#include "Services/Forms/eosForms.h"
@@ -18,6 +19,10 @@
 
 class MyApplication: public eos::Application {
     private:
+        eos::DigInputService *digInputService;
+        eos::DigOutputService *digOutputService;
+        eos::I2CMasterService *i2cMasterService;
+        eos::TimerService *timerService;
         eos::DigOutput *ledRED;
         eos::DigOutput *ledAMBER;
         eos::DigOutput *ledGREEN;
@@ -32,6 +37,7 @@ class MyApplication: public eos::Application {
         void setupDigInputService();
         void setupDigOutputService();
         void setupTimerService();
+        void setupI2CMasterService();
         
         void onSwRED(eos::DigInput *input);
         void onSwAMBER(eos::DigInput *input);
@@ -46,6 +52,7 @@ MyApplication::MyApplication() {
     setupDigOutputService();
     setupDigInputService();
     setupTimerService();
+    setupI2CMasterService();
 }
 
 
@@ -73,49 +80,44 @@ static void posEdgeFunction(
 */
 void MyApplication::setupDigInputService() {
 
-    eos::DigInputService *service = new eos::DigInputService();
+    digInputService = new eos::DigInputService();
 
-    swRED = new eos::DigInput(service, pinSW1, true);
+    swRED = new eos::DigInput(digInputService, pinSW1, true);
     swRED->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwRED));
    
-    swAMBER = new eos::DigInput(service, pinSW2, true);
+    swAMBER = new eos::DigInput(digInputService, pinSW2, true);
     swAMBER->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwAMBER));
     
-    swGREEN = new eos::DigInput(service, pinSW3, true);    
+    swGREEN = new eos::DigInput(digInputService, pinSW3, true);    
     swGREEN->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwGREEN));
 }
 
 
 void MyApplication::setupDigOutputService() {
 
-    eos::DigOutputService *service = new eos::DigOutputService();
+    digOutputService = new eos::DigOutputService();
    
-    ledRED = new eos::DigOutput(service, pinLED1, false);
-    ledAMBER = new eos::DigOutput(service, pinLED2, false);
-    ledGREEN = new eos::DigOutput(service, pinLED3, false);
+    ledRED = new eos::DigOutput(digOutputService, pinLED1, false);
+    ledAMBER = new eos::DigOutput(digOutputService, pinLED2, false);
+    ledGREEN = new eos::DigOutput(digOutputService, pinLED3, false);
 
     ledRED->pulse(500);
     ledAMBER->pulse(1000);
     ledGREEN->pulse(1500);
 }
 
-/*
-static void setupI2CMasterService(void) {
-    
-    eosI2CServiceParams serviceParams;
-    
-    memset(&serviceParams, 0, sizeof(serviceParams));
-    serviceParams.id = I2C_ID_2;
-    serviceParams.priority = 2;
-    hI2CMasterService = eosI2CMasterServiceInitialize(&serviceParams);
+
+void MyApplication::setupI2CMasterService() {
+
+    i2cMasterService = new eos::I2CMasterService(1);
 }
-*/
+
 
 void MyApplication::setupTimerService() {
     
-    eos::TimerService *service = new eos::TimerService();
+    timerService = new eos::TimerService();
 
-    timer = new eos::Timer(service, 1000, true);
+    timer = new eos::Timer(timerService, 1000, true);
     timer->setOnTimeout(EV_Timer_onTimeout(MyApplication, this, &MyApplication::onTimeout));
     timer->start(1000);
 }
@@ -158,6 +160,9 @@ void MyApplication::onSwAMBER(eos::DigInput *input){
 void MyApplication::onSwGREEN(eos::DigInput *input){
     
     ledGREEN->pulse(1000);
+
+    const char *buffer = "\x10\x30";   
+    i2cMasterService->startTransaction(0x62, (void*) buffer, 2, NULL, 0, 5000);
 }
 
 void MyApplication::onTimeout(eos::Timer *timer) {
