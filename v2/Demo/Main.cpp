@@ -3,6 +3,7 @@
 #include "System/eosApplication.hpp"
 #include "Services/eosDigOutput.hpp"
 #include "Services/eosDigInput.hpp"
+#include "Services/eosFSM.hpp"
 #include "Services/eosTimer.hpp"
 #include "Services/eosI2CMaster.hpp"
 //#include "Services/eosI2CMaster.h"
@@ -30,6 +31,7 @@ class MyApplication: public eos::Application {
         eos::DigInput *swAMBER;
         eos::DigInput *swGREEN;
         eos::Timer *timer;
+        eos::StateMachineService *stateMachine;
 
     public :
         MyApplication();
@@ -53,6 +55,7 @@ MyApplication::MyApplication() {
     setupDigInputService();
     setupTimerService();
     setupI2CMasterService();
+    setupStateMachineService();
 }
 
 
@@ -120,6 +123,12 @@ void MyApplication::setupTimerService() {
     timer = new eos::Timer(timerService, 1000, true);
     timer->setOnTimeout(EV_Timer_onTimeout(MyApplication, this, &MyApplication::onTimeout));
     timer->start(1000);
+}
+
+
+void MyApplication::setupStateMachine() {
+    
+    stateMachine = new eos::StateMachine();
 }
 
 /*
