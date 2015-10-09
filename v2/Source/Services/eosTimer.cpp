@@ -4,34 +4,37 @@
 #include "timers.h"
 
 
+using namespace eos;
+
+
 /*************************************************************************
  *
  *       Contructor
  * 
  *       Funcio:
- *           eos::TimerService::TimerService() 
+ *           TimerService::TimerService() 
  *
  *************************************************************************/
 
-eos::TimerService::TimerService() {
+TimerService::TimerService() {
 }
 
 
-void eos::TimerService::add(Timer *timer) {
+void TimerService::add(Timer *timer) {
     
     timers.add(timer);
 }
 
 
-eos::Timer::Timer(
+Timer::Timer(
     unsigned period,
     bool autoreload) :
     Timer(nullptr, period, autoreload) {
 }
 
 
-eos::Timer::Timer(
-    eos::TimerService *service, 
+Timer::Timer(
+    TimerService *service, 
     unsigned period,
     bool autoreload) {
     
@@ -42,31 +45,31 @@ eos::Timer::Timer(
 }
 
 
-void eos::Timer::start(
+void Timer::start(
     unsigned timeout) {
     
     xTimerStart(handler, timeout);
 }
 
 
-void eos::Timer::stop(
+void Timer::stop(
     unsigned timeout) {
     
     xTimerStop(handler, timeout);
 }
 
 
-void eos::Timer::restart(
+void Timer::restart(
     unsigned timeout) {
     
     xTimerReset(handler, timeout);
 }
 
 
-void eos::Timer::timerCallback(
+void Timer::timerCallback(
     void *handler) {
     
-    eos::Timer *timer = (eos::Timer*) pvTimerGetTimerID(handler);
+    Timer *timer = (Timer*) pvTimerGetTimerID(handler);
     if (timer->onTimeout != nullptr)
         timer->onTimeout->execute(timer);
 }

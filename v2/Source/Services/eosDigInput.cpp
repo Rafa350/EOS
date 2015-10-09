@@ -3,8 +3,11 @@
 #include "HAL/halGPIO.h"
 
 
+using namespace eos;
+
+
 const unsigned taskStackSize = 512;
-const eos::TaskPriority taskPriority = eos::TaskPriority::normal;
+const TaskPriority taskPriority = eos::TaskPriority::normal;
 
 
 #define PATTERN_ON       0x0000007F
@@ -21,28 +24,28 @@ const eos::TaskPriority taskPriority = eos::TaskPriority::normal;
  *
  *************************************************************************/
 
-eos::DigInputService::DigInputService() :
+DigInputService::DigInputService() :
     task(taskStackSize, taskPriority, this) {
 }
 
 
-void eos::DigInputService::add(eos::DigInput *input) {
+void DigInputService::add(eos::DigInput *input) {
     
     inputs.add(input);
 }
 
 
-void eos::DigInputService::run() {
+void DigInputService::run() {
     
     unsigned tc = eos::Task::getTickCount();
 
     while (true) {
         
-        eos::Task::delayUntil(10, &tc);
+        Task::delayUntil(10, &tc);
         
         // Explora les entrades per coneixa el seu estat
         //
-        eos::Task::enterCriticalSection();
+        Task::enterCriticalSection();
 
         for (unsigned i = 0; i < inputs.getCount(); i++) {
             
@@ -70,7 +73,7 @@ void eos::DigInputService::run() {
             }
         }
         
-        eos::Task::exitCriticalSection();
+        Task::exitCriticalSection();
         
         // Crida a les funcions callback corresponents
         //
@@ -88,7 +91,7 @@ void eos::DigInputService::run() {
         
         // Reseteja flags i variables temporals
         //
-        eos::Task::enterCriticalSection();
+        Task::enterCriticalSection();
 
         for (unsigned i = 0; i < inputs.getCount(); i++) {
             
@@ -118,7 +121,7 @@ void eos::DigInputService::run() {
  *       Constructor
  * 
  *       Funcio:
- *           eos::DigInput::DigInput(
+ *           DigInput::DigInput(
  *               uint8_t pin, 
  *               bool inverted)
  * 
@@ -128,10 +131,10 @@ void eos::DigInputService::run() {
  * 
  *************************************************************************/
 
-eos::DigInput::DigInput(
+DigInput::DigInput(
     uint8_t pin, 
     bool inverted):
-    eos::DigInput(nullptr, pin, inverted) {
+    DigInput(nullptr, pin, inverted) {
 }
 
 
@@ -140,7 +143,7 @@ eos::DigInput::DigInput(
  *       Constructor
  *
  *       Funcio:
- *           eos::DigInput::DigInput(
+ *           DigInput::DigInput(
  *               eos::DigInputService *service,
  *               uint8_t pin, 
  *               bool inverted)
@@ -152,8 +155,8 @@ eos::DigInput::DigInput(
  *
  *************************************************************************/
 
-eos::DigInput::DigInput(
-    eos::DigInputService *service,
+DigInput::DigInput(
+    DigInputService *service,
     uint8_t pin, 
     bool inverted) {
     
@@ -183,21 +186,21 @@ eos::DigInput::DigInput(
  *       Comprova si s'ha produit un flanc ascendent (OFF->ON)
  *
  *       Funcio:
- *           bool eos::DigInput::isPosEdge()
+ *           bool DigInput::isPosEdge()
  *
  *       Retorn:
  *           True si s'ha produit el flanc
  *
  *************************************************************************/
 
-bool eos::DigInput::isPosEdge() {
+bool DigInput::isPosEdge() {
 
-    eos::Task::enterCriticalSection();
+    Task::enterCriticalSection();
     
     bool result = posEdge;
     posEdge = false;
 
-    eos::Task::exitCriticalSection();
+    Task::exitCriticalSection();
 
     return result;
 }
@@ -208,21 +211,21 @@ bool eos::DigInput::isPosEdge() {
  *       Comprova si s'ha produit un flanc descendent (ON->OFF)
  *
  *       Funcio:
- *           bool eos::DigInput::isNegEdge()
+ *           bool DigInput::isNegEdge()
  *
  *       Retorn:
  *           True si s'ha produit el flanc
  *
  *************************************************************************/
 
-bool eos::DigInput::isNegEdge() {
+bool DigInput::isNegEdge() {
 
-    eos::Task::enterCriticalSection();
+    Task::enterCriticalSection();
     
     bool result = negEdge;
     negEdge = false;
 
-    eos::Task::exitCriticalSection();
+    Task::exitCriticalSection();
 
     return result;
 }
@@ -233,11 +236,11 @@ bool eos::DigInput::isNegEdge() {
  *       Inicialitza el port d'una entrada
  *
  *       Funcio:
- *           void eos::DigInput::pinInitialize() const
+ *           void DigInput::pinInitialize() const
  *
  *************************************************************************/
 
-void eos::DigInput::pinInitialize() const {
+void DigInput::pinInitialize() const {
 
     halGPIOPinSetModeInput(pin);
 }
@@ -248,14 +251,14 @@ void eos::DigInput::pinInitialize() const {
  *       Lectura del port d'una entrada
  *
  *       Funcio:
- *           bool eosDigInput::pinGet() const
+ *           bool DigInput::pinGet() const
  * 
  *       Retorn:
  *           Valor lleigit del port
  *
  *************************************************************************/
 
-bool eos::DigInput::pinGet() const {
+bool DigInput::pinGet() const {
     
     bool p = halGPIOPinGetState(pin);
     return inverted ? !p : p;

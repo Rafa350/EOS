@@ -67,6 +67,10 @@
           <itemPath>../../Source/HAL/halI2CInterruptWrapper.S</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="Services" projectFiles="true">
+          <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
+            <itemPath>../../Source/Services/Fsm/eosStateMachine.cpp</itemPath>
+            <itemPath>../../Source/Services/Fsm/eosStateBase.cpp</itemPath>
+          </logicalFolder>
           <itemPath>../../Source/Services/eosAppLoop.cpp</itemPath>
           <itemPath>../../Source/Services/eosDigOutput.cpp</itemPath>
           <itemPath>../../Source/Services/eosDigInput.cpp</itemPath>

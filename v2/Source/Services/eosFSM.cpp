@@ -10,7 +10,7 @@ using namespace eos;
  * 
  *      Funcio:
  *          StateMachineService::StateMachineService(
- *              IStateMachine *sm) 
+ *              StateMachine *sm) 
  * 
  *      Entrada:
  *          sm: Implementacio de la maquina d'estats
@@ -18,23 +18,10 @@ using namespace eos;
  *************************************************************************/
 
 StateMachineService::StateMachineService(
-    IStateMachine *sm) {
+    StateMachine *sm): 
+    eventQueue(10) {
         
     this->sm = sm;
-}
-
-
-/*************************************************************************
- * 
- *      Destructor
- * 
- *      Funcio:
- *          StateMachineService::~StateMachineService() 
- * 
- *************************************************************************/
-
-StateMachineService::~StateMachineService() {
-    
 }
 
 
@@ -53,14 +40,9 @@ void StateMachineService::run() {
         
         Event event;
         
-        if (externalEventQueue.get(event)) {
-            do {
-                sm->processEvent(event);
-            } while (internalEventQueue(event));
-        }
-        
+        if (eventQueue.get(event, 1000)) 
+            sm->acceptEvent(event);
     }
-    
 }
 
 
@@ -69,35 +51,22 @@ void StateMachineService::run() {
  *       Envia un event extern a la maquina d'estats
  * 
  *       Funcio:
- *           void StateMachineService::ExternalEvent(
- *               Event event)
+ *           bool StateMachineService::acceptEvent(
+ *               Event event,
+ *               unsigned timeout)
  * 
  *       Funcio:
  *           event: El event
+ *           timeout: Temos mkaxim d'espera
+ * 
+ *       Retorn:
+ *           TRue si ha acceptat l'event. False en cas contari
  *
  *************************************************************************/
 
-void StateMachineService::ExternalEvent(
-    Event event) {
+bool StateMachineService::acceptEvent(
+    Event event,
+    unsigned timeout) {
     
-    externalEventQueue.put(event, -1);
-}
-
-
-/*************************************************************************
- *
- *       Envia un event intern a la maquina d'estats
- * 
- *       Funcio:
- *           void StateMachineService::InternalEvent(
- *               Event event)
- * 
- *       Funcio:
- *           event: El event
- *
- *************************************************************************/
-
-void StateMachineService::InternalEvent(Event event) {
-    
-    internalEventQueue.put(event, 0);
+    return eventQueue.put(event, timeout);
 }

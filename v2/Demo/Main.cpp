@@ -31,7 +31,7 @@ class MyApplication: public eos::Application {
         eos::DigInput *swAMBER;
         eos::DigInput *swGREEN;
         eos::Timer *timer;
-        eos::StateMachineService *stateMachine;
+        eos::StateMachineService *stateMachineService;
 
     public :
         MyApplication();
@@ -40,6 +40,7 @@ class MyApplication: public eos::Application {
         void setupDigOutputService();
         void setupTimerService();
         void setupI2CMasterService();
+        void setupStateMachineService();
         
         void onSwRED(eos::DigInput *input);
         void onSwAMBER(eos::DigInput *input);
@@ -126,9 +127,9 @@ void MyApplication::setupTimerService() {
 }
 
 
-void MyApplication::setupStateMachine() {
+void MyApplication::setupStateMachineService() {
     
-    stateMachine = new eos::StateMachine();
+    stateMachineService = new eos::StateMachineService(nullptr);
 }
 
 /*

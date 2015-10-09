@@ -5,10 +5,13 @@
 #include "task.h"
 
 
+using namespace eos;
+
+
 #define TASK_PERIOD     10
 
 const unsigned taskStackSize = 512;
-const eos::TaskPriority taskPriority = eos::TaskPriority::normal;
+const TaskPriority taskPriority = TaskPriority::normal;
 
 
 /*************************************************************************
@@ -16,11 +19,11 @@ const eos::TaskPriority taskPriority = eos::TaskPriority::normal;
  *       Constructor
  *
  *       Funcio:
- *           eos::DigOutputService::DigOutputService()
+ *           DigOutputService::DigOutputService()
  *
  *************************************************************************/
 
-eos::DigOutputService::DigOutputService() :
+DigOutputService::DigOutputService() :
     task(taskStackSize, taskPriority, this) {
 }
 
@@ -30,20 +33,20 @@ eos::DigOutputService::DigOutputService() :
  *       Afegeig una sortida al servei
  *
  *       Funcio:
- *           void eos::DigOutputService::add(
- *               eos::DigOutput* output) 
+ *           void DigOutputService::add(
+ *               DigOutput* output) 
  * 
  *       Entrada:
  *           output: La sortida a afeigit
  *
  *************************************************************************/
 
-void eos::DigOutputService::add(
-    eos::DigOutput* output) {
+void DigOutputService::add(
+    DigOutput* output) {
     
-    eos::Task::enterCriticalSection();
+    Task::enterCriticalSection();
     outputs.add(output);
-    eos::Task::exitCriticalSection();
+    Task::exitCriticalSection();
 }
 
 
@@ -52,23 +55,23 @@ void eos::DigOutputService::add(
  *       Executa la tasca de control de servei
  * 
  *       Funcio:
- *           void eos::DigOutputService::run() 
+ *           void DigOutputService::run() 
  *
  *************************************************************************/
 
-void eos::DigOutputService::run() {
+void DigOutputService::run() {
     
-    unsigned tc = eos::Task::getTickCount();
+    unsigned tc = Task::getTickCount();
 
     while (true) {
 
-        eos::Task::delayUntil(TASK_PERIOD, &tc);
+        Task::delayUntil(TASK_PERIOD, &tc);
         
-        eos::Task::enterCriticalSection();
+        Task::enterCriticalSection();
         
         for (unsigned i = 0; i < outputs.getCount(); i++) {          
             
-            eos::DigOutput *output = outputs[i];
+            DigOutput *output = outputs[i];
     
             unsigned t = output->timeout;
             if (t > 0) {
@@ -79,7 +82,7 @@ void eos::DigOutputService::run() {
             }       
         }
 
-        eos::Task::exitCriticalSection();
+        Task::exitCriticalSection();
     }    
 }
 
@@ -99,7 +102,7 @@ void eos::DigOutputService::run() {
  *
  *************************************************************************/
 
-eos::DigOutput::DigOutput(
+DigOutput::DigOutput(
     uint8_t pin,
     bool inverted): 
     DigOutput(nullptr, pin, inverted) {    
@@ -112,7 +115,7 @@ eos::DigOutput::DigOutput(
  *  
  *       Funcio:
  *           eos:DigOutput::DigOutputs(
- *               eos::DigOutputService *service,
+ *               DigOutputService *service,
  *               unsigned pin,
  *               bool inverted)
  *
@@ -123,8 +126,8 @@ eos::DigOutput::DigOutput(
  *
  *************************************************************************/
 
-eos::DigOutput::DigOutput(
-    eos::DigOutputService *service,
+DigOutput::DigOutput(
+    DigOutputService *service,
     uint8_t pin,
     bool inverted) {
 
@@ -144,14 +147,14 @@ eos::DigOutput::DigOutput(
  *       Obte l'estat d'una sortida
  *
  *       Funcio:
- *           bool eos::DigOutput::get()
+ *           bool DigOutput::get()
  *
  *       Retorn:
  *           L'estat de la sortida
  *
  *************************************************************************/
 
-bool eos::DigOutput::get() const {
+bool DigOutput::get() const {
 
     return pinGet();
 }
@@ -162,7 +165,7 @@ bool eos::DigOutput::get() const {
  *       Assigna l'estat d'una sortida
  *
  *       Funcio:
- *           void eos::DigOutput::set(
+ *           void DigOutput::set(
  *               bool state)
  *
  *       Entrada:
@@ -170,15 +173,15 @@ bool eos::DigOutput::get() const {
  *
  *************************************************************************/
 
-void eos::DigOutput::set(
+void DigOutput::set(
     bool state) {
 
-    eos::Task::enterCriticalSection();
+    Task::enterCriticalSection();
     
     pinSet(state);
     timeout = 0;
     
-    eos::Task::exitCriticalSection();
+    Task::exitCriticalSection();
 }
 
 
@@ -187,18 +190,18 @@ void eos::DigOutput::set(
  *       Inverteix l'estat d'una sortida
  *
  *       Funcio:
- *           void eos::DigOutput::toggle()
+ *           void DigOutput::toggle()
  *
  *************************************************************************/
 
-void eos::DigOutput::toggle() {
+void DigOutput::toggle() {
 
-    eos::Task::enterCriticalSection();
+    Task::enterCriticalSection();
     
     pinToggle();
     timeout = 0;
     
-    eos::Task::exitCriticalSection();
+    Task::exitCriticalSection();
 }
 
 
@@ -208,7 +211,7 @@ void eos::DigOutput::toggle() {
  *       es en multiples de TASK_PERIOD
  *
  *       Funcio:
- *           void eos::DigOutput::pulse(
+ *           void DigOutput::pulse(
  *               unsigned time)
  *
  *       Entrada:
@@ -219,44 +222,44 @@ void eos::DigOutput::toggle() {
  *
  *************************************************************************/
 
-void eos::DigOutput::pulse(
+void DigOutput::pulse(
     unsigned time) {
 
     if (time >= TASK_PERIOD) {
 
-        eos::Task::enterCriticalSection();
+        Task::enterCriticalSection();
         
         if (timeout == 0)
             pinToggle();
         timeout = time / TASK_PERIOD;
         
-        eos::Task::exitCriticalSection();
+        Task::exitCriticalSection();
     }
 }
 
 
-void eos::DigOutput::pinInitialize() const {
+void DigOutput::pinInitialize() const {
         
     halGPIOPinSetState(pin, inverted ? true : false);
     halGPIOPinSetModeOutput(pin, false);    
 }
 
 
-bool eos::DigOutput::pinGet() const {
+bool DigOutput::pinGet() const {
     
     bool p = halGPIOPinGetState(pin);
     return inverted ? !p : p;
 }
 
 
-void eos::DigOutput::pinSet(
+void DigOutput::pinSet(
     bool state) const {
     
     halGPIOPinSetState(pin, state);
 }
 
 
-void eos::DigOutput::pinToggle() const {
+void DigOutput::pinToggle() const {
 
     halGPIOPinToggleState(pin);
 }

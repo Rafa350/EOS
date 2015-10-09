@@ -8,8 +8,11 @@
 #define min(a, b)    (a) < (b) ? a : b
 
 
+using namespace eos;
+
+
 const unsigned taskStackSize = 512;
-const eos::TaskPriority taskPriority = eos::TaskPriority::normal;
+const TaskPriority taskPriority = TaskPriority::normal;
 const unsigned queueMaxItems = 20;
 const unsigned baudRate = 100000;
 
@@ -19,7 +22,7 @@ const unsigned baudRate = 100000;
  *       Inicialitza el servei
  *
  *       Funcio:
- *           eos::I2CMasterService::I2CMasterService(
+ *           I2CMasterService::I2CMasterService(
  *              unsigned moduleId)
  *
  *       Entrada:
@@ -27,7 +30,7 @@ const unsigned baudRate = 100000;
  *
  *************************************************************************/
 
-eos::I2CMasterService::I2CMasterService(
+I2CMasterService::I2CMasterService(
     unsigned moduleId) :
     task(taskStackSize, taskPriority, this),
     queue(queueMaxItems) {
@@ -44,7 +47,7 @@ eos::I2CMasterService::I2CMasterService(
  *       Inicia una transaccio
  *
  *       Funcio:
- *           bool eos::I2CMasterService::startTransaction(
+ *           bool I2CMasterService::startTransaction(
  *               uint8_t addr,
  *               void *txBuffer,
  *               unsigned txCount,
@@ -65,7 +68,7 @@ eos::I2CMasterService::I2CMasterService(
  *
  *************************************************************************/
 
-bool eos::I2CMasterService::startTransaction(
+bool I2CMasterService::startTransaction(
     uint8_t addr,
     void *txBuffer,
     unsigned txCount,
@@ -105,11 +108,11 @@ bool eos::I2CMasterService::startTransaction(
  *       Procesa les tasques del servei
  *
  *       Funcio:
- *           void eos::I2CMasterService::run()
+ *           void I2CMasterService::run()
  *
  *************************************************************************/
 
-void eos::I2CMasterService::run() {
+void I2CMasterService::run() {
 
     halI2CMasterInitialize(
         moduleId, 
@@ -124,7 +127,7 @@ void eos::I2CMasterService::run() {
             // Espera a que el bus estigui lliure
             //
             while (!halI2CIsBusIdle(moduleId)) 
-                eos::Task::delay(20);
+                Task::delay(20);
 
             // Inicialitza la transaccio
             //
@@ -146,7 +149,7 @@ void eos::I2CMasterService::run() {
 
             // Retart entre transaccions
             //
-            eos::Task::delay(eosI2CMasterService_EndTransactionDelay);
+            Task::delay(eosI2CMasterService_EndTransactionDelay);
             
             // Finalitza el us de la transaccio
             //
@@ -161,7 +164,7 @@ void eos::I2CMasterService::run() {
  *       Procesa els events de la comunicacio I2C
  *
  *       Funcio:
- *           void eos::I2CMasterService::interruptCallback(
+ *           void I2CMasterService::interruptCallback(
  *              unsigned moduleId, 
  *              void* param)
  *
@@ -175,16 +178,16 @@ void eos::I2CMasterService::run() {
  *
  *************************************************************************/
 
-void eos::I2CMasterService::interruptCallback(
+void I2CMasterService::interruptCallback(
     unsigned moduleId, 
     void* param) {
 
-    eos::I2CMasterService *service = (eos::I2CMasterService*) param;
+    I2CMasterService *service = (I2CMasterService*) param;
     service->stateMachine();
 }
 
 
-void eos::I2CMasterService::stateMachine() {
+void I2CMasterService::stateMachine() {
     
     switch (state) {
 
