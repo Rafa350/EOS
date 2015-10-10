@@ -30,7 +30,7 @@ namespace eos {
                 finished                // -Finalitzada
             };        
             
-            typedef struct {
+            struct Transaction {
                 bool inUse;
                 uint8_t addr;
                 uint8_t *txBuffer;
@@ -39,7 +39,7 @@ namespace eos {
                 unsigned rxCount;
                 unsigned rxSize;
                 BinarySemaphore *semaphore;
-            } Transaction;
+            };
 
             typedef Queue<Transaction*> TransactionQueue;
 

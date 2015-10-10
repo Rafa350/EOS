@@ -8,42 +8,59 @@
 
 
 namespace eos {
+    
+    namespace fsm {
+        
+        typedef unsigned Event;
+        
+        class StateMachine;
+        
+        class IController {
+            public:
+                virtual void outSet(unsigned out) = 0;
+                virtual void outClear(unsigned out) = 0;
+                virtual void outToggle(unsigned out) = 0;
+                virtual void outPulse(unsigned out) = 0;
+                virtual void timStart(unsigned tim, unsigned timeout) = 0;
+        };
+        
+        class State {
+            public:
+                virtual void enterAction();
+                virtual void exitAction();
+                virtual State* transition(Event event);
+        };
 
-    typedef unsigned Event;
-    
-    class StateBase {
-        public:
-            virtual void enterAction();
-            virtual void exitAction();
-            virtual StateBase *transition(Event event);
-    };
-    
-    class StateMachine {
-        private:
-            StateBase *initialState;
-            StateBase *state;
-        public:
-            StateMachine();
-            void acceptEvent(Event event);
-    };
-    
+        class StateMachine {
+            private:
+                State* initialState;
+                State* state;
+            public:
+                StateMachine();
+                ~StateMachine();
+                void start();
+                void acceptEvent(Event event);
+        };
+        
+    }
+
     class StateMachineService: public IRunable {
 
         private:
-            typedef Queue<Event> EventQueue;
-        
+            typedef Queue<fsm::Event> EventQueue;
+
         private:
-            StateMachine *sm;
+            fsm::StateMachine *sm;
             EventQueue eventQueue;
-        
+
         public:
-            StateMachineService(StateMachine *sm);
-            bool acceptEvent(Event event, unsigned timeout);
+            StateMachineService(fsm::StateMachine *sm);
+            bool acceptEvent(fsm::Event event, unsigned timeout);
         private:
             void run();
-            void processEvent(Event event);
+            void processEvent(fsm::Event event);
     };
-    
+   
 }
 
 

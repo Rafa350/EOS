@@ -1,31 +1,65 @@
 #include "Services/eosFSM.hpp"
 
 
-using namespace eos;
+using namespace eos::fsm;
 
+
+/*************************************************************************
+ *
+ *       Constructor
+ * 
+ *       Funcio:
+ *           StateMachine::StateMachine()
+ *
+ *************************************************************************/
 
 StateMachine::StateMachine() {
     
     state = nullptr;
+    initialState = nullptr;
 }
 
 
-void StateMachine::acceptEvent(Event event) {
-    
-    if (state == nullptr) { 
-        state = initialState;
-        state->enterAction();
-    }
+/*************************************************************************
+ *
+ *       Inicia la maquina d'estats i es posa en l'estat inicial
+ *
+ *       Funcio:
+ *           void StateMachine::start() 
+ * 
+ *************************************************************************/
 
-    StateBase *newState = state->transition(event);
+void StateMachine::start() {
+    
+    state = initialState;
+    state->enterAction();
+}
+
+
+/*************************************************************************
+ *
+ *       Accepta un event
+ * 
+ *       Funcio:
+ *           void StateMachine::acceptEvent(
+ *               Event event) 
+ * 
+ *       Entrada:
+ *           event: El event
+ *
+ *************************************************************************/
+
+void StateMachine::acceptEvent(
+    Event event) {
+
+    State* newState = state->transition(event);
     if (newState == nullptr)
         newState = state;
 
     if (newState != state) {
         state->exitAction();
-        newState->enterAction();
         state = newState;
+        state->enterAction();
     }
-    
 }
 
