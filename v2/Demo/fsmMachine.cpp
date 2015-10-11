@@ -5,9 +5,14 @@
 
 
 MyMachine::MyMachine(eos::fsm::IController *ctl) {
-    stateInitialPause = new InitialPauseState(this, ctl);
-    stateArmUp = new ArmUpState(this, ctl);
-    stateFinalPause = new FinalPauseState(this, ctl);
-    stateError = new ErrorState(this, ctl);
-    stateStop = new StopState(this, ctl);
+    stateArmUpStart = new ArmUpStartState(this, ctl);
+    stateArmUpMove = new ArmUpMoveState(this, ctl);
+    stateArmUpEnd = new ArmUpEndState(this, ctl);
+    stateArmDownStart = new ArmDownStartState(this, ctl);
+    stateArmDownStop = new ArmDownStopState(this, ctl);
+    statePrintLabelStart = new PrintLabelStartState(this, ctl);
+    statePrintLabelPrint = new PrintLabelPrintState(this, ctl);
+    statePrintLabelEnd = new PrintLabelEndState(this, ctl);
+    stateErrorWaitForReset = new ErrorWaitForResetState(this, ctl);
+    start(stateArmUpStart);
 }

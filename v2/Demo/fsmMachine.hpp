@@ -7,18 +7,26 @@
 
 class MyMachine: public eos::fsm::StateMachine {
     private:
-        eos::fsm::State *stateInitialPause;
-        eos::fsm::State *stateArmUp;
-        eos::fsm::State *stateFinalPause;
-        eos::fsm::State *stateError;
-        eos::fsm::State *stateStop;
+        eos::fsm::State *stateArmUpStart;
+        eos::fsm::State *stateArmUpMove;
+        eos::fsm::State *stateArmUpEnd;
+        eos::fsm::State *stateArmDownStart;
+        eos::fsm::State *stateArmDownStop;
+        eos::fsm::State *statePrintLabelStart;
+        eos::fsm::State *statePrintLabelPrint;
+        eos::fsm::State *statePrintLabelEnd;
+        eos::fsm::State *stateErrorWaitForReset;
     public:
         MyMachine(eos::fsm::IController *ctl);
-        eos::fsm::State *getInitialPauseState() const { return stateInitialPause; }
-        eos::fsm::State *getArmUpState() const { return stateArmUp; }
-        eos::fsm::State *getFinalPauseState() const { return stateFinalPause; }
-        eos::fsm::State *getErrorState() const { return stateError; }
-        eos::fsm::State *getStopState() const { return stateStop; }
+        eos::fsm::State *getArmUpStartState() const { return stateArmUpStart; }
+        eos::fsm::State *getArmUpMoveState() const { return stateArmUpMove; }
+        eos::fsm::State *getArmUpEndState() const { return stateArmUpEnd; }
+        eos::fsm::State *getArmDownStartState() const { return stateArmDownStart; }
+        eos::fsm::State *getArmDownStopState() const { return stateArmDownStop; }
+        eos::fsm::State *getPrintLabelStartState() const { return statePrintLabelStart; }
+        eos::fsm::State *getPrintLabelPrintState() const { return statePrintLabelPrint; }
+        eos::fsm::State *getPrintLabelEndState() const { return statePrintLabelEnd; }
+        eos::fsm::State *getErrorWaitForResetState() const { return stateErrorWaitForReset; }
 };
 
 

@@ -17,11 +17,13 @@ namespace eos {
         
         class IController {
             public:
+                virtual bool inpGet(unsigned inp) = 0;
                 virtual void outSet(unsigned out) = 0;
                 virtual void outClear(unsigned out) = 0;
                 virtual void outToggle(unsigned out) = 0;
-                virtual void outPulse(unsigned out) = 0;
+                virtual void outPulse(unsigned out, unsigned timeout) = 0;
                 virtual void timStart(unsigned tim, unsigned timeout) = 0;
+                virtual unsigned varGet(unsigned var) = 0;
         };
         
         class State {
@@ -33,12 +35,11 @@ namespace eos {
 
         class StateMachine {
             private:
-                State *initialState;
                 State *state;
             public:
                 StateMachine();
                 ~StateMachine();
-                void start();
+                void start(State *initialState);
                 void acceptEvent(Event event);
                 State *getState() const;
         };

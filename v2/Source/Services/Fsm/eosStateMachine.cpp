@@ -16,7 +16,6 @@ using namespace eos::fsm;
 StateMachine::StateMachine() {
     
     state = nullptr;
-    initialState = nullptr;
 }
 
 
@@ -25,11 +24,16 @@ StateMachine::StateMachine() {
  *       Inicia la maquina d'estats i es posa en l'estat inicial
  *
  *       Funcio:
- *           void StateMachine::start() 
+ *           void StateMachine::start(
+ *               State *initialState) 
+ * 
+ *       Entrada:
+ *           initialState: Estat inicial
  * 
  *************************************************************************/
 
-void StateMachine::start() {
+void StateMachine::start(
+    State *initialState) {
     
     state = initialState;
     state->enterAction();
