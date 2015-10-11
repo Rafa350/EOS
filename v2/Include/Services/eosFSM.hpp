@@ -28,18 +28,19 @@ namespace eos {
             public:
                 virtual void enterAction();
                 virtual void exitAction();
-                virtual State* transition(Event event);
+                virtual State *transition(Event event);
         };
 
         class StateMachine {
             private:
-                State* initialState;
-                State* state;
+                State *initialState;
+                State *state;
             public:
                 StateMachine();
                 ~StateMachine();
                 void start();
                 void acceptEvent(Event event);
+                State *getState() const;
         };
         
     }

@@ -62,6 +62,7 @@
         <itemPath>../MnuMain.c</itemPath>
         <itemPath>../Main.cpp</itemPath>
         <itemPath>../fsmStates.cpp</itemPath>
+        <itemPath>../fsmMachine.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Eos" projectFiles="true">
         <logicalFolder name="f3" displayName="HAL" projectFiles="true">

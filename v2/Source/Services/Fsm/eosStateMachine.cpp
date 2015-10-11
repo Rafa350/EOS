@@ -53,9 +53,6 @@ void StateMachine::acceptEvent(
     Event event) {
 
     State* newState = state->transition(event);
-    if (newState == nullptr)
-        newState = state;
-
     if (newState != state) {
         state->exitAction();
         state = newState;

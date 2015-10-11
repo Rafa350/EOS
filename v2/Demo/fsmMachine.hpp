@@ -6,12 +6,19 @@
 
 
 class MyMachine: public eos::fsm::StateMachine {
+    private:
+        eos::fsm::State *stateInitialPause;
+        eos::fsm::State *stateArmUp;
+        eos::fsm::State *stateFinalPause;
+        eos::fsm::State *stateError;
+        eos::fsm::State *stateStop;
     public:
-        eos::fsm::State *InitialPauseState;
-        eos::fsm::State *ArmUpState;
-        eos::fsm::State *FinalPauseState;
-        eos::fsm::State *ErrorState;
-        eos::fsm::State *StopState;
+        MyMachine(eos::fsm::IController *ctl);
+        eos::fsm::State *getInitialPauseState() const { return stateInitialPause; }
+        eos::fsm::State *getArmUpState() const { return stateArmUp; }
+        eos::fsm::State *getFinalPauseState() const { return stateFinalPause; }
+        eos::fsm::State *getErrorState() const { return stateError; }
+        eos::fsm::State *getStopState() const { return stateStop; }
 };
 
 
