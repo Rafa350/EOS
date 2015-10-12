@@ -15,7 +15,7 @@ namespace eos {
         
         class StateMachine;
         
-        class IController {
+        class IContext {
             public:
                 virtual bool inpGet(unsigned inp) = 0;
                 virtual void outSet(unsigned out) = 0;
@@ -35,13 +35,15 @@ namespace eos {
 
         class StateMachine {
             private:
+                IContext *context;
                 State *state;
             public:
-                StateMachine();
+                StateMachine(IContext *context);
                 ~StateMachine();
                 void start(State *initialState);
                 void acceptEvent(Event event);
-                State *getState() const;
+                State *getState() const { return state; }
+                IContext *getContext() const { return context; }
         };
         
     }

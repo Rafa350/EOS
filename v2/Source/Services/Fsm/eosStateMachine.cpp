@@ -9,13 +9,19 @@ using namespace eos::fsm;
  *       Constructor
  * 
  *       Funcio:
- *           StateMachine::StateMachine()
+ *           StateMachine::StateMachine(
+ *               IContext *context)
+ * 
+ *       Entrada:
+ *           context: Contexte de la maquina
  *
  *************************************************************************/
 
-StateMachine::StateMachine() {
+StateMachine::StateMachine(
+    IContext *context) {
     
-    state = nullptr;
+    this->state = nullptr;
+    this->context = context;
 }
 
 
