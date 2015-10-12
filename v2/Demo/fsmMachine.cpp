@@ -7,6 +7,8 @@
 MyMachine::MyMachine(eos::fsm::IContext *context) :
     eos::fsm::StateMachine(context) {
 
+    stateWaitTriggerWait = new WaitTriggerWaitState(this, context);
+    stateWaitTriggerDelay = new WaitTriggerDelayState(this, context);
     stateArmUpStart = new ArmUpStartState(this, context);
     stateArmUpMove = new ArmUpMoveState(this, context);
     stateArmUpEnd = new ArmUpEndState(this, context);

@@ -4,6 +4,36 @@
 #include "fsmStates.hpp"
 
 
+WaitTriggerWaitState::WaitTriggerWaitState(MyMachine *sm, eos::fsm::IContext *ctx) {
+    this->sm = sm;
+    this->ctx = ctx;
+}
+
+eos::fsm::State *WaitTriggerWaitState::transition(eos::fsm::Event event) {
+    switch (event) {
+        case INP_TR:
+            return sm->getWaitTriggerDelayState();
+    }
+    return nullptr;
+};
+
+WaitTriggerDelayState::WaitTriggerDelayState(MyMachine *sm, eos::fsm::IContext *ctx) {
+    this->sm = sm;
+    this->ctx = ctx;
+}
+
+void WaitTriggerDelayState::enterAction() {
+    ctx->timStart(TIM_T1, 100);
+}
+
+eos::fsm::State *WaitTriggerDelayState::transition(eos::fsm::Event event) {
+    switch (event) {
+        case EV_T1:
+            return sm->getWaitTriggerState();
+    }
+    return nullptr;
+};
+
 ArmUpStartState::ArmUpStartState(MyMachine *sm, eos::fsm::IContext *ctx) {
     this->sm = sm;
     this->ctx = ctx;
@@ -18,7 +48,7 @@ eos::fsm::State *ArmUpStartState::transition(eos::fsm::Event event) {
         case EV_T1:
             return sm->getArmUpMoveState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 ArmUpMoveState::ArmUpMoveState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -42,7 +72,7 @@ eos::fsm::State *ArmUpMoveState::transition(eos::fsm::Event event) {
         case EV_T1:
             return sm->getErrorWaitForResetState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 ArmUpEndState::ArmUpEndState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -59,7 +89,7 @@ eos::fsm::State *ArmUpEndState::transition(eos::fsm::Event event) {
         case EV_T1:
             return sm->getErrorWaitForResetState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 ArmDownStartState::ArmDownStartState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -76,7 +106,7 @@ eos::fsm::State *ArmDownStartState::transition(eos::fsm::Event event) {
         case EV_T1:
             return sm->getArmDownStopState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 ArmDownStopState::ArmDownStopState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -95,7 +125,7 @@ eos::fsm::State *ArmDownStopState::transition(eos::fsm::Event event) {
         case EV_T1:
             return sm->getErrorWaitForResetState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 PrintLabelStartState::PrintLabelStartState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -112,7 +142,7 @@ eos::fsm::State *PrintLabelStartState::transition(eos::fsm::Event event) {
         case EV_T1:
             return sm->getPrintLabelPrintState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 PrintLabelPrintState::PrintLabelPrintState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -147,7 +177,7 @@ eos::fsm::State *PrintLabelPrintState::transition(eos::fsm::Event event) {
             ctx->outClear(OUT_AA);
             return sm->getPrintLabelEndState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 PrintLabelEndState::PrintLabelEndState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -164,7 +194,7 @@ eos::fsm::State *PrintLabelEndState::transition(eos::fsm::Event event) {
         case EV_T1:
             return sm->getPrintLabelState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 ApplyByContactStartState::ApplyByContactStartState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -181,7 +211,7 @@ eos::fsm::State *ApplyByContactStartState::transition(eos::fsm::Event event) {
         case EV_T1:
             return sm->getApplyByContactApplyState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 ApplyByContactApplyState::ApplyByContactApplyState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -199,7 +229,7 @@ eos::fsm::State *ApplyByContactApplyState::transition(eos::fsm::Event event) {
             ctx->outPulse(OUT_AJ, );
             return sm->getApplyByContactEndState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 ApplyByContactEndState::ApplyByContactEndState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -216,7 +246,7 @@ eos::fsm::State *ApplyByContactEndState::transition(eos::fsm::Event event) {
         case EV_T1:
             return sm->getApplyByContactPrintState();
     }
-    return sm->getState();
+    return nullptr;
 };
 
 ErrorWaitForResetState::ErrorWaitForResetState(MyMachine *sm, eos::fsm::IContext *ctx) {
@@ -234,6 +264,6 @@ eos::fsm::State *ErrorWaitForResetState::transition(eos::fsm::Event event) {
             ctx->outClear(OUT_ER);
             return sm->getErrorWaitForResetState();
     }
-    return sm->getState();
+    return nullptr;
 };
 

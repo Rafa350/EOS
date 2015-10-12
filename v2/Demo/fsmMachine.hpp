@@ -7,6 +7,8 @@
 
 class MyMachine: public eos::fsm::StateMachine {
     private:
+        eos::fsm::State *stateWaitTriggerWait;
+        eos::fsm::State *stateWaitTriggerDelay;
         eos::fsm::State *stateArmUpStart;
         eos::fsm::State *stateArmUpMove;
         eos::fsm::State *stateArmUpEnd;
@@ -21,6 +23,8 @@ class MyMachine: public eos::fsm::StateMachine {
         eos::fsm::State *stateErrorWaitForReset;
     public:
         MyMachine(eos::fsm::IContext *context);
+        eos::fsm::State *getWaitTriggerWaitState() const { return stateWaitTriggerWait; }
+        eos::fsm::State *getWaitTriggerDelayState() const { return stateWaitTriggerDelay; }
         eos::fsm::State *getArmUpStartState() const { return stateArmUpStart; }
         eos::fsm::State *getArmUpMoveState() const { return stateArmUpMove; }
         eos::fsm::State *getArmUpEndState() const { return stateArmUpEnd; }

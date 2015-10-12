@@ -7,6 +7,25 @@
 #include "fsmMachine.hpp"
 
 
+class WaitTriggerWaitState: public eos::fsm::State {
+    private:
+        MyMachine *sm;
+        eos::fsm::IContext *ctx;
+    public:
+        WaitTriggerWaitState(MyMachine *sm, eos::fsm::IContext *ctx);
+        eos::fsm::State *transition(eos::fsm::Event event);
+};
+
+class WaitTriggerDelayState: public eos::fsm::State {
+    private:
+        MyMachine *sm;
+        eos::fsm::IContext *ctx;
+    public:
+        WaitTriggerDelayState(MyMachine *sm, eos::fsm::IContext *ctx);
+        void enterAction();
+        eos::fsm::State *transition(eos::fsm::Event event);
+};
+
 class ArmUpStartState: public eos::fsm::State {
     private:
         MyMachine *sm;
