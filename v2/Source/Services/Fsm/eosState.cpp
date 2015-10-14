@@ -6,6 +6,26 @@ using namespace eos::fsm;
 
 /*************************************************************************
  *
+ *       Constructor
+ * 
+ *       Funcio:
+ *           State::State(
+ *               StateMachine *sm) 
+ * 
+ *       Entrada: 
+ *           sm: La maquina d'estats a la que pertany
+ *
+ *************************************************************************/
+
+State::State(
+    StateMachine *sm) {
+    
+    this->sm = sm;
+}
+
+
+/*************************************************************************
+ *
  *       Accio a executar al entrar en un estat
  * 
  *       Funcio:
@@ -45,8 +65,7 @@ void State::exitAction() {
  *
  *************************************************************************/
 
-State *State::transition(Event event) {
+State *State::transition(
+    Event event) {
     
-    return nullptr;
 }
-

@@ -7,20 +7,20 @@
 MyMachine::MyMachine(eos::fsm::IContext *context) :
     eos::fsm::StateMachine(context) {
 
-    stateWaitTriggerWait = new WaitTriggerWaitState(this, context);
-    stateWaitTriggerDelay = new WaitTriggerDelayState(this, context);
-    stateArmUpStart = new ArmUpStartState(this, context);
-    stateArmUpMove = new ArmUpMoveState(this, context);
-    stateArmUpEnd = new ArmUpEndState(this, context);
-    stateArmDownStart = new ArmDownStartState(this, context);
-    stateArmDownStop = new ArmDownStopState(this, context);
-    statePrintLabelStart = new PrintLabelStartState(this, context);
-    statePrintLabelPrint = new PrintLabelPrintState(this, context);
-    statePrintLabelEnd = new PrintLabelEndState(this, context);
-    stateApplyByContactStart = new ApplyByContactStartState(this, context);
-    stateApplyByContactApply = new ApplyByContactApplyState(this, context);
-    stateApplyByContactEnd = new ApplyByContactEndState(this, context);
-    stateErrorWaitForReset = new ErrorWaitForResetState(this, context);
+    stateWaitTriggerWait = new WaitTriggerWaitState(this);
+    stateWaitTriggerDelay = new WaitTriggerDelayState(this);
+    stateArmUpStart = new ArmUpStartState(this);
+    stateArmUpMove = new ArmUpMoveState(this);
+    stateArmUpEnd = new ArmUpEndState(this);
+    stateArmDownStart = new ArmDownStartState(this);
+    stateArmDownStop = new ArmDownStopState(this);
+    statePrintLabelStart = new PrintLabelStartState(this);
+    statePrintLabelPrint = new PrintLabelPrintState(this);
+    statePrintLabelEnd = new PrintLabelEndState(this);
+    stateApplyByContactStart = new ApplyByContactStartState(this);
+    stateApplyByContactApply = new ApplyByContactApplyState(this);
+    stateApplyByContactEnd = new ApplyByContactEndState(this);
+    stateErrorWaitForReset = new ErrorWaitForResetState(this);
 
     start(stateArmUpStart);
 }

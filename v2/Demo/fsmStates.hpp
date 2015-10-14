@@ -8,141 +8,99 @@
 
 
 class WaitTriggerWaitState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        WaitTriggerWaitState(MyMachine *sm, eos::fsm::IContext *ctx);
-        eos::fsm::State *transition(eos::fsm::Event event);
+        WaitTriggerWaitState(MyMachine *sm);
+        void transition(eos::fsm::Event event);
 };
 
 class WaitTriggerDelayState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        WaitTriggerDelayState(MyMachine *sm, eos::fsm::IContext *ctx);
+        WaitTriggerDelayState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class ArmUpStartState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        ArmUpStartState(MyMachine *sm, eos::fsm::IContext *ctx);
+        ArmUpStartState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class ArmUpMoveState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        ArmUpMoveState(MyMachine *sm, eos::fsm::IContext *ctx);
+        ArmUpMoveState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class ArmUpEndState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        ArmUpEndState(MyMachine *sm, eos::fsm::IContext *ctx);
+        ArmUpEndState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class ArmDownStartState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        ArmDownStartState(MyMachine *sm, eos::fsm::IContext *ctx);
+        ArmDownStartState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class ArmDownStopState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        ArmDownStopState(MyMachine *sm, eos::fsm::IContext *ctx);
+        ArmDownStopState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class PrintLabelStartState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        PrintLabelStartState(MyMachine *sm, eos::fsm::IContext *ctx);
+        PrintLabelStartState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class PrintLabelPrintState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        PrintLabelPrintState(MyMachine *sm, eos::fsm::IContext *ctx);
+        PrintLabelPrintState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class PrintLabelEndState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        PrintLabelEndState(MyMachine *sm, eos::fsm::IContext *ctx);
+        PrintLabelEndState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class ApplyByContactStartState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        ApplyByContactStartState(MyMachine *sm, eos::fsm::IContext *ctx);
+        ApplyByContactStartState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class ApplyByContactApplyState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        ApplyByContactApplyState(MyMachine *sm, eos::fsm::IContext *ctx);
-        eos::fsm::State *transition(eos::fsm::Event event);
+        ApplyByContactApplyState(MyMachine *sm);
+        void transition(eos::fsm::Event event);
 };
 
 class ApplyByContactEndState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        ApplyByContactEndState(MyMachine *sm, eos::fsm::IContext *ctx);
+        ApplyByContactEndState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 class ErrorWaitForResetState: public eos::fsm::State {
-    private:
-        MyMachine *sm;
-        eos::fsm::IContext *ctx;
     public:
-        ErrorWaitForResetState(MyMachine *sm, eos::fsm::IContext *ctx);
+        ErrorWaitForResetState(MyMachine *sm);
         void enterAction();
-        eos::fsm::State *transition(eos::fsm::Event event);
+        void transition(eos::fsm::Event event);
 };
 
 

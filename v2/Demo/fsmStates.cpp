@@ -4,266 +4,359 @@
 #include "fsmStates.hpp"
 
 
-WaitTriggerWaitState::WaitTriggerWaitState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+WaitTriggerWaitState::WaitTriggerWaitState(MyMachine *sm):
+    State(sm) { 
 }
 
-eos::fsm::State *WaitTriggerWaitState::transition(eos::fsm::Event event) {
+void WaitTriggerWaitState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case INP_TR:
-            return sm->getWaitTriggerDelayState();
+            sm->setState(sm->getWaitTriggerDelayState());
+            break;
     }
-    return nullptr;
 };
 
-WaitTriggerDelayState::WaitTriggerDelayState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+WaitTriggerDelayState::WaitTriggerDelayState(MyMachine *sm):
+    State(sm) { 
 }
 
 void WaitTriggerDelayState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->timStart(TIM_T1, 100);
 }
 
-eos::fsm::State *WaitTriggerDelayState::transition(eos::fsm::Event event) {
+void WaitTriggerDelayState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
-            return sm->getWaitTriggerState();
+            sm->setState(sm->getWaitTriggerState());
+            break;
     }
-    return nullptr;
 };
 
-ArmUpStartState::ArmUpStartState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+ArmUpStartState::ArmUpStartState(MyMachine *sm):
+    State(sm) { 
 }
 
 void ArmUpStartState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->timStart(TIM_T1, ArmUpPreDelay);
 }
 
-eos::fsm::State *ArmUpStartState::transition(eos::fsm::Event event) {
+void ArmUpStartState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
-            return sm->getArmUpMoveState();
+            sm->setState(sm->getArmUpMoveState());
+            break;
     }
-    return nullptr;
 };
 
-ArmUpMoveState::ArmUpMoveState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+ArmUpMoveState::ArmUpMoveState(MyMachine *sm):
+    State(sm) { 
 }
 
 void ArmUpMoveState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->outClear(OUT_PD);
     ctx->outSet(OUT_PU);
     ctx->timStart(TIM_T1, ArmUpTimeout);
 }
 
-eos::fsm::State *ArmUpMoveState::transition(eos::fsm::Event event) {
+void ArmUpMoveState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_PT:
             if (PistonTopCondition) {
-                return sm->getArmUpEndState();
+                sm->setState(sm->getArmUpEndState());
             }
             break;
         case EV_T1:
-            return sm->getErrorWaitForResetState();
+            sm->setState(sm->getErrorWaitForResetState());
+            break;
     }
-    return nullptr;
 };
 
-ArmUpEndState::ArmUpEndState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+ArmUpEndState::ArmUpEndState(MyMachine *sm):
+    State(sm) { 
 }
 
 void ArmUpEndState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->timStart(TIM_T1, ArmUpPostDelay);
 }
 
-eos::fsm::State *ArmUpEndState::transition(eos::fsm::Event event) {
+void ArmUpEndState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
-            return sm->getErrorWaitForResetState();
+            sm->setState(sm->getErrorWaitForResetState());
+            break;
     }
-    return nullptr;
 };
 
-ArmDownStartState::ArmDownStartState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+ArmDownStartState::ArmDownStartState(MyMachine *sm):
+    State(sm) { 
 }
 
 void ArmDownStartState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->timStart(TIM_T1, ArmDownPreDelay);
 }
 
-eos::fsm::State *ArmDownStartState::transition(eos::fsm::Event event) {
+void ArmDownStartState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
-            return sm->getArmDownStopState();
+            sm->setState(sm->getArmDownStopState());
+            break;
     }
-    return nullptr;
 };
 
-ArmDownStopState::ArmDownStopState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+ArmDownStopState::ArmDownStopState(MyMachine *sm):
+    State(sm) { 
 }
 
 void ArmDownStopState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->outClear(OUT_PU);
     ctx->outClear(OUT_PD);
     ctx->timStart(TIM_T1, ArmDownPostDelay);
 }
 
-eos::fsm::State *ArmDownStopState::transition(eos::fsm::Event event) {
+void ArmDownStopState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
-            return sm->getErrorWaitForResetState();
+            sm->setState(sm->getErrorWaitForResetState());
+            break;
     }
-    return nullptr;
 };
 
-PrintLabelStartState::PrintLabelStartState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+PrintLabelStartState::PrintLabelStartState(MyMachine *sm):
+    State(sm) { 
 }
 
 void PrintLabelStartState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->timStart(TIM_T1, PrintLabelPreDelay);
 }
 
-eos::fsm::State *PrintLabelStartState::transition(eos::fsm::Event event) {
+void PrintLabelStartState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
-            return sm->getPrintLabelPrintState();
+            sm->setState(sm->getPrintLabelPrintState());
+            break;
     }
-    return nullptr;
 };
 
-PrintLabelPrintState::PrintLabelPrintState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+PrintLabelPrintState::PrintLabelPrintState(MyMachine *sm):
+    State(sm) { 
 }
 
 void PrintLabelPrintState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->timStart(TIM_T1, AirAssistDelay);
     ctx->timStart(TIM_T2, VacuumDelay);
     ctx->timStart(TIM_T3, PrintLabelTimeout);
     ctx->outPulse(OUT_PL, 100);
 }
 
-eos::fsm::State *PrintLabelPrintState::transition(eos::fsm::Event event) {
+void PrintLabelPrintState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
             ctx->outSet(OUT_AA);
-            return sm->getPrintLabelState();
+            sm->setState(sm->getPrintLabelState());
+            break;
         case EV_T2:
             if (PrintVacuumModeOnCondition) {
                 ctx->outSet(OUT_VC);
-                return sm->getPrintLabelState();
+                sm->setState(sm->getPrintLabelState());
             }
             break;
         case EV_T3:
             ctx->outClear(OUT_VC);
             ctx->outClear(OUT_AA);
-            return sm->getErrorWaitForResetState();
+            sm->setState(sm->getErrorWaitForResetState());
+            break;
         case EV_LR:
             ctx->outSet(OUT_VC);
             ctx->outClear(OUT_AA);
-            return sm->getPrintLabelEndState();
+            sm->setState(sm->getPrintLabelEndState());
+            break;
     }
-    return nullptr;
 };
 
-PrintLabelEndState::PrintLabelEndState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+PrintLabelEndState::PrintLabelEndState(MyMachine *sm):
+    State(sm) { 
 }
 
 void PrintLabelEndState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->timStart(TIM_T1, PrintLabelPostDelay);
 }
 
-eos::fsm::State *PrintLabelEndState::transition(eos::fsm::Event event) {
+void PrintLabelEndState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
-            return sm->getPrintLabelState();
+            sm->setState(sm->getPrintLabelState());
+            break;
     }
-    return nullptr;
 };
 
-ApplyByContactStartState::ApplyByContactStartState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+ApplyByContactStartState::ApplyByContactStartState(MyMachine *sm):
+    State(sm) { 
 }
 
 void ApplyByContactStartState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->timStart(TIM_T1, ApplyByContactPreDelay);
 }
 
-eos::fsm::State *ApplyByContactStartState::transition(eos::fsm::Event event) {
+void ApplyByContactStartState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
-            return sm->getApplyByContactApplyState();
+            sm->setState(sm->getApplyByContactApplyState());
+            break;
     }
-    return nullptr;
 };
 
-ApplyByContactApplyState::ApplyByContactApplyState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+ApplyByContactApplyState::ApplyByContactApplyState(MyMachine *sm):
+    State(sm) { 
 }
 
-eos::fsm::State *ApplyByContactApplyState::transition(eos::fsm::Event event) {
+void ApplyByContactApplyState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
             ctx->outClear(OUT_VC);
-            return sm->getErrorWaitForResetState();
+            sm->setState(sm->getErrorWaitForResetState());
+            break;
         case EV_PB:
             ctx->outClear(OUT_VC);
             ctx->outPulse(OUT_AJ, );
-            return sm->getApplyByContactEndState();
+            sm->setState(sm->getApplyByContactEndState());
+            break;
     }
-    return nullptr;
 };
 
-ApplyByContactEndState::ApplyByContactEndState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+ApplyByContactEndState::ApplyByContactEndState(MyMachine *sm):
+    State(sm) { 
 }
 
 void ApplyByContactEndState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->timStart(TIM_T1, ApplyByContactPostDelay);
 }
 
-eos::fsm::State *ApplyByContactEndState::transition(eos::fsm::Event event) {
+void ApplyByContactEndState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case EV_T1:
-            return sm->getApplyByContactPrintState();
+            sm->setState(sm->getApplyByContactPrintState());
+            break;
     }
-    return nullptr;
 };
 
-ErrorWaitForResetState::ErrorWaitForResetState(MyMachine *sm, eos::fsm::IContext *ctx) {
-    this->sm = sm;
-    this->ctx = ctx;
+ErrorWaitForResetState::ErrorWaitForResetState(MyMachine *sm):
+    State(sm) { 
 }
 
 void ErrorWaitForResetState::enterAction() {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     ctx->outSet(OUT_ER);
 }
 
-eos::fsm::State *ErrorWaitForResetState::transition(eos::fsm::Event event) {
+void ErrorWaitForResetState::transition(eos::fsm::Event event) {
+
+    MyMachine *sm = getStateMachine();
+    eos::fsm::IContext *ctx = sm->getContext();
+
     switch (event) {
         case INP_ST:
             ctx->outClear(OUT_ER);
-            return sm->getErrorWaitForResetState();
+            sm->setState(sm->getErrorWaitForResetState());
+            break;
     }
-    return nullptr;
 };
 

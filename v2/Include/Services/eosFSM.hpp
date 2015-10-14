@@ -27,10 +27,15 @@ namespace eos {
         };
         
         class State {
+            private:
+                StateMachine *sm;
             public:
+                State(StateMachine *sm);
                 virtual void enterAction();
                 virtual void exitAction();
-                virtual State *transition(Event event);
+                virtual void transition(Event event);
+            protected:
+                StateMachine *getStateMachine();
         };
         
         class StateController {
@@ -49,13 +54,15 @@ namespace eos {
         class StateMachine {
             private:
                 IContext *context;
-                State *state;
+                StateController states;
             public:
                 StateMachine(IContext *context);
                 ~StateMachine();
                 void start(State *initialState);
                 void acceptEvent(Event event);
-                State *getState() const { return state; }
+                void setState(State *state);
+                void pushState(State *state);
+                void popState();
                 IContext *getContext() const { return context; }
         };
         

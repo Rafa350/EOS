@@ -40,21 +40,21 @@
 #define VAR_VacuumDelay                33
 
 
-#define PistonTopCondition             ctl->inpGet(INP_PT)
+#define PistonTopCondition             ctx->inpGet(INP_PT)
 #define PrintVacuumModeOnCondition     true
 
-#define ArmUpPreDelay                  ctl->varGet(VAR_ArmUpPreDelay)
-#define ArmUpPostDelay                 ctl->varGet(VAR_ArmUpPostDelay)
-#define ArmUpTimeout                   ctl->varGet(VAR_ArmUpTimeout)
+#define ArmUpPreDelay                  ctx->varGet(VAR_ArmUpPreDelay)
+#define ArmUpPostDelay                 ctx->varGet(VAR_ArmUpPostDelay)
+#define ArmUpTimeout                   ctx->varGet(VAR_ArmUpTimeout)
 
-#define ArmDownPreDelay                ctl->varGet(VAR_ArmDownPreDelay)
-#define ArmDownPostDelay               ctl->varGet(VAR_ArmDownPostDelay)
+#define ArmDownPreDelay                ctx->varGet(VAR_ArmDownPreDelay)
+#define ArmDownPostDelay               ctx->varGet(VAR_ArmDownPostDelay)
 
-#define PrintLabelPreDelay             ctl->varGet(VAR_PrintLabelPreDelay)
-#define PrintLabelPostDelay            ctl->varGet(VAR_PrintLabelPostDelay)
-#define PrintLabelTimeout              ctl->varGet(VAR_PrintLabelTimeout)
+#define PrintLabelPreDelay             ctx->varGet(VAR_PrintLabelPreDelay)
+#define PrintLabelPostDelay            ctx->varGet(VAR_PrintLabelPostDelay)
+#define PrintLabelTimeout              ctx->varGet(VAR_PrintLabelTimeout)
 
-#define AirAssistDelay                 ctl->varGet(VAR_AirAssistDelay)
-#define VacuumDelay                    ctl->varGet(VAR_VacuumDelay)
+#define AirAssistDelay                 ctx->varGet(VAR_AirAssistDelay)
+#define VacuumDelay                    ctx->varGet(VAR_VacuumDelay)
 
 #endif
