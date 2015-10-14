@@ -32,6 +32,19 @@ namespace eos {
                 virtual void exitAction();
                 virtual State *transition(Event event);
         };
+        
+        class StateController {
+            private:
+                State *stack[];
+                unsigned level;
+                unsigned size;
+            public:
+                StateController(unsigned size);      
+                State *get() const;
+                void set(State *state);
+                void push(State *state);
+                void pop();
+        };
 
         class StateMachine {
             private:
