@@ -15,6 +15,19 @@ namespace eos {
             virtual const elementType &operator[](const unsigned index) const = 0;
     };
     
+    class GenericVector {
+        private:
+            unsigned itemSize;
+            unsigned maxItems;
+            void *data;
+        public:
+            GenericVector(unsigned itemSize, unsigned maxItems);
+            ~GenericVector();
+            void set(unsigned index, void* data);
+            void get(unsigned index, void* data);
+            
+    };
+    
     template <typename elementType>
     class Vector: public IVector<elementType> {
         private:

@@ -37,6 +37,7 @@
           <itemPath>../../Include/System/eosVector.hpp</itemPath>
           <itemPath>../../Include/System/eosCallbacks.hpp</itemPath>
           <itemPath>../../Include/System/eosStack.hpp</itemPath>
+          <itemPath>../../Include/System/eosList.hpp</itemPath>
         </logicalFolder>
         <itemPath>../eosConfig.h</itemPath>
         <itemPath>../../Include/eos.hpp</itemPath>
@@ -91,6 +92,8 @@
           <itemPath>../../Source/System/eosQueue.cpp</itemPath>
           <itemPath>../../Source/System/eosSemaphore.cpp</itemPath>
           <itemPath>../../Source/System/eosGlobalAlloc.cpp</itemPath>
+          <itemPath>../../Source/System/eosVector.cpp</itemPath>
+          <itemPath>../../Source/System/eosList.cpp</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">

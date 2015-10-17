@@ -68,7 +68,8 @@ namespace eos {
                 count = 0;
                 size = 0;
             }
-    };
+    };   
+    
 }
 
 
