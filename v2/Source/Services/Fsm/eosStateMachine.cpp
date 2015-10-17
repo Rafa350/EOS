@@ -18,8 +18,7 @@ using namespace eos::fsm;
  *************************************************************************/
 
 StateMachine::StateMachine(
-    IContext *context):
-    states(10) {
+    IContext *context) {
     
     this->context = context;
 }
@@ -62,12 +61,30 @@ void StateMachine::start(
 void StateMachine::acceptEvent(
     Event event) {
 
-    State *curState = states.get();
+    State *curState = states.top();
     curState->transition(event);
-    State *newState = states.get();
+    State *newState = states.top();
     if (newState != curState) {
         curState->exitAction();
         newState->enterAction();
     }
 }
 
+
+void StateMachine::setState(State* state) {
+    
+    states.pop();
+    states.push(state);
+}
+
+
+void StateMachine::pushState(State* state) {
+    
+    states.push(state);
+}
+
+
+void StateMachine::popState() {
+
+    states.pop();
+}

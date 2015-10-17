@@ -5,6 +5,7 @@
 #include "eos.hpp"
 #include "System/eosTask.hpp"
 #include "System/eosQueue.hpp"
+#include "System/eosStack.hpp"
 
 
 namespace eos {
@@ -37,24 +38,11 @@ namespace eos {
             protected:
                 StateMachine *getStateMachine();
         };
-        
-        class StateController {
-            private:
-                State *stack[];
-                unsigned level;
-                unsigned size;
-            public:
-                StateController(unsigned size);      
-                State *get() const;
-                void set(State *state);
-                void push(State *state);
-                void pop();
-        };
 
         class StateMachine {
             private:
                 IContext *context;
-                StateController states;
+                Stack<State*> states;
             public:
                 StateMachine(IContext *context);
                 ~StateMachine();

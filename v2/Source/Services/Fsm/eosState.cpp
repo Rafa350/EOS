@@ -57,7 +57,7 @@ void State::exitAction() {
  *       Procesa els events
  * 
  *       Funcio:
- *           State *State::transition(
+ *           void State::transition(
  *               Event event) 
  * 
  *       Entrada:
@@ -65,7 +65,7 @@ void State::exitAction() {
  *
  *************************************************************************/
 
-State *State::transition(
+void State::transition(
     Event event) {
     
 }
