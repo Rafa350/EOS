@@ -7,20 +7,9 @@
 MyMachine::MyMachine(eos::fsm::IContext *context) :
     eos::fsm::StateMachine(context) {
 
-    stateWaitTriggerWait = new WaitTriggerWaitState(this);
-    stateWaitTriggerDelay = new WaitTriggerDelayState(this);
-    stateArmUpStart = new ArmUpStartState(this);
-    stateArmUpMove = new ArmUpMoveState(this);
-    stateArmUpEnd = new ArmUpEndState(this);
-    stateArmDownStart = new ArmDownStartState(this);
-    stateArmDownStop = new ArmDownStopState(this);
-    statePrintLabelStart = new PrintLabelStartState(this);
-    statePrintLabelPrint = new PrintLabelPrintState(this);
-    statePrintLabelEnd = new PrintLabelEndState(this);
-    stateApplyByContactStart = new ApplyByContactStartState(this);
-    stateApplyByContactApply = new ApplyByContactApplyState(this);
-    stateApplyByContactEnd = new ApplyByContactEndState(this);
-    stateErrorWaitForReset = new ErrorWaitForResetState(this);
+    stateLoopSW1 = new LoopSW1State(this);
+    stateLoopSW2 = new LoopSW2State(this);
+    stateLoopSW3 = new LoopSW3State(this);
 
-    start(stateArmUpStart);
+    start(stateLoopSW1);
 }
