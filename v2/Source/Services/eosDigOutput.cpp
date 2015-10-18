@@ -1,8 +1,6 @@
 #include "Services/eosDigOutput.hpp"
 #include "System/eosTask.hpp"
 #include "HAL/halGPIO.h"
-#include "FReeRTOS.h"
-#include "task.h"
 
 
 using namespace eos;
@@ -69,9 +67,10 @@ void DigOutputService::run() {
         
         Task::enterCriticalSection();
         
-        for (unsigned i = 0; i < outputs.getCount(); i++) {          
+        DigOutputListIterator iterator(outputs);
+        while (!iterator.isEnd()) {
             
-            DigOutput *output = outputs[i];
+            DigOutput *output = iterator.current();
     
             unsigned t = output->timeout;
             if (t > 0) {
@@ -80,6 +79,8 @@ void DigOutputService::run() {
                     output->pinToggle();
                 output->timeout = t;
             }       
+            
+            ++iterator;
         }
 
         Task::exitCriticalSection();

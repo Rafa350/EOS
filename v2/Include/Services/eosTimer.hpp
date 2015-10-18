@@ -4,7 +4,7 @@
 
 #include "eos.hpp"
 #include "System/eosCallbacks.hpp"
-#include "System/eosVector.hpp"
+#include "System/eosList.hpp"
 
 
 #define EV_Timer_onTimeout(cls, instance, method) \
@@ -15,18 +15,17 @@ namespace eos {
     
     class Timer;
 
-    typedef IVector<Timer*> ITimerVector;
-    typedef Vector<Timer*> TimerVector;
+    typedef List<Timer*> TimerList;
+    typedef ListIterator<Timer*> TimerListIterator;
     typedef ICallbackP1<Timer*> ITimerEvent;
     
     class TimerService {
         private:
-            TimerVector timers;
+            TimerList timers;
 
         public:
             TimerService();
             void add(Timer *timer);
-            inline const ITimerVector &getTimers() const { return timers; }
     };
     
     class Timer {

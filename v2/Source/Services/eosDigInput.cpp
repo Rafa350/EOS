@@ -1,6 +1,7 @@
 #include "Services/eosDigInput.hpp"
 #include "System/eosTask.hpp"
 #include "HAL/halGPIO.h"
+#include "System/eosList.hpp"
 
 
 using namespace eos;
@@ -47,9 +48,10 @@ void DigInputService::run() {
         //
         Task::enterCriticalSection();
 
-        for (unsigned i = 0; i < inputs.getCount(); i++) {
+        DigInputListIterator iterator(inputs);
+        while (!iterator.isEnd()) {
             
-            DigInput *input = inputs[i];
+            DigInput *input = iterator.current();
             
             input->pattern <<= 1;
             if (input->pinGet())
@@ -71,15 +73,18 @@ void DigInputService::run() {
                 else if (input->onChange != nullptr) 
                     input->onChangeFired = true;
             }
+            
+            ++iterator;
         }
         
         Task::exitCriticalSection();
         
         // Crida a les funcions callback corresponents
         //
-        for (unsigned i = 0; i < inputs.getCount(); i++) {
+        iterator.reset();
+        while (!iterator.isEnd()) {
             
-            DigInput *input = inputs[i];
+            DigInput *input = iterator.current();
             
             if (input->onPosEdgeFired) 
                 input->onPosEdge->execute(input);
@@ -87,15 +92,18 @@ void DigInputService::run() {
                 input->onNegEdge->execute(input);
             else if (input->onChangeFired) 
                 input->onChange->execute(input);
+            
+            ++iterator;
         }
         
         // Reseteja flags i variables temporals
         //
         Task::enterCriticalSection();
 
-        for (unsigned i = 0; i < inputs.getCount(); i++) {
+        iterator.reset();
+        while (!iterator.isEnd()) {
             
-            DigInput *input = inputs[i];
+            DigInput *input = iterator.current();
             
             if (input->onPosEdgeFired) {
                 input->onPosEdgeFired = false;
@@ -109,6 +117,8 @@ void DigInputService::run() {
                 input->onChangeFired = false;
                 input->posEdge = false;
             }           
+            
+            ++iterator;
         }
 
         eos::Task::exitCriticalSection();

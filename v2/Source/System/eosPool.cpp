@@ -1,6 +1,9 @@
-#include "eos.h"
-#include "system/eosMemory.h"
-#include "System/eosTask.h"
+#include "eos.hpp"
+#include "system/eosMemory.hpp"
+#include "System/eosTask.hpp"
+
+
+using namespace eos;
 
 
 typedef struct __eosPool {   // Pool
@@ -39,12 +42,9 @@ eosPoolHandle eosPoolCreate(
     unsigned elementSize,
     unsigned maxElements) {
     
-    eosDebugVerify(elementSize > 0);
-    eosDebugVerify(numElements > 0);
-
     unsigned itemSize = (sizeof(ItemHeader) + elementSize + 7) & ~0x7;
 
-    eosPoolHandle hPool = (eosPoolHandle) eosAlloc(sizeof(eosPool) + itemSize * maxElements);
+    eosPoolHandle hPool = (eosPoolHandle) eosHeapAlloc(nullptr, sizeof(eosPool) + itemSize * maxElements);
     if (hPool != NULL) {
 
         hPool->itemSize = itemSize;
@@ -82,12 +82,9 @@ eosPoolHandle eosPoolCreate(
 void *eosPoolAlloc(
     eosPoolHandle hPool) {
     
-    eosDebugVerify(hPool != NULL);
-    
     void *p = NULL;
-    
-    eosCriticalSectionInfo csInfo;
-    eosEnterCriticalSection(eosCriticalSectionSeverityHigh, &csInfo);
+        
+    Task::enterCriticalSection();
 
     unsigned i;
     unsigned ii = (hPool->itemSize) * hPool->maxItems;
@@ -99,8 +96,8 @@ void *eosPoolAlloc(
             break;
         }
     }
-    
-    eosLeaveCriticalSection(&csInfo);
+
+    Task::exitCriticalSection();
 
     return p;
 }
@@ -123,12 +120,9 @@ void *eosPoolAlloc(
 void eosPoolFree(
     void *p) {
     
-    eosDebugVerify(p != NULL);
-
-    eosCriticalSectionInfo csInfo;
-    eosEnterCriticalSection(eosCriticalSectionSeverityHigh, &csInfo);
+    Task::enterCriticalSection();
     
     ((ItemHeader*)((uint8_t*) p - sizeof(ItemHeader)))->allocated = false;
-    
-    eosLeaveCriticalSection(&csInfo);
+
+    Task::exitCriticalSection();
 }

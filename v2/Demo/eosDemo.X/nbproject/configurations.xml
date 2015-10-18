@@ -28,16 +28,15 @@
           <itemPath>../../Include/Services/eosFSM.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="System" projectFiles="true">
-          <itemPath>../../Include/System/eosMemory.h</itemPath>
           <itemPath>../../Include/System/eosInterrupts.h</itemPath>
           <itemPath>../../Include/System/eosApplication.hpp</itemPath>
           <itemPath>../../Include/System/eosTask.hpp</itemPath>
           <itemPath>../../Include/System/eosQueue.hpp</itemPath>
           <itemPath>../../Include/System/eosSemaphore.hpp</itemPath>
-          <itemPath>../../Include/System/eosVector.hpp</itemPath>
           <itemPath>../../Include/System/eosCallbacks.hpp</itemPath>
           <itemPath>../../Include/System/eosStack.hpp</itemPath>
           <itemPath>../../Include/System/eosList.hpp</itemPath>
+          <itemPath>../../Include/System/eosMemory.hpp</itemPath>
         </logicalFolder>
         <itemPath>../eosConfig.h</itemPath>
         <itemPath>../../Include/eos.hpp</itemPath>
@@ -92,8 +91,9 @@
           <itemPath>../../Source/System/eosQueue.cpp</itemPath>
           <itemPath>../../Source/System/eosSemaphore.cpp</itemPath>
           <itemPath>../../Source/System/eosGlobalAlloc.cpp</itemPath>
-          <itemPath>../../Source/System/eosVector.cpp</itemPath>
           <itemPath>../../Source/System/eosList.cpp</itemPath>
+          <itemPath>../../Source/System/eosHeap.cpp</itemPath>
+          <itemPath>../../Source/System/eosPool.cpp</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">

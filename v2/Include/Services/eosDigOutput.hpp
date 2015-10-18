@@ -4,25 +4,24 @@
 
 #include "eos.hpp"
 #include "System/eosTask.hpp"
-#include "System/eosVector.hpp"
+#include "System/eosList.hpp"
 
 
 namespace eos {
     
     class DigOutput;
     
-    typedef IVector<DigOutput*> IDigOutputVector;
-    typedef Vector<DigOutput*> DigOutputVector;
+    typedef List<DigOutput*> DigOutputList;
+    typedef ListIterator<DigOutput*> DigOutputListIterator;
 
     class DigOutputService: public IRunable {      
         private:
             Task task;
-            DigOutputVector outputs;        
+            DigOutputList outputs;        
             
         public:
             DigOutputService();
             void add(DigOutput *output);
-            inline const IDigOutputVector &getOutputs() const { return outputs; }
         private:
             void run();
     };
@@ -49,7 +48,7 @@ namespace eos {
             void pinSet(bool state) const;
             void pinToggle() const;
             
-        friend class eos::DigOutputService;
+        friend class DigOutputService;
     };
 }
 

@@ -1,4 +1,5 @@
 #include "eos.hpp"
+#include "System/eosList.hpp"
 #include "System/eosCallbacks.hpp"
 #include "System/eosApplication.hpp"
 #include "Services/eosDigOutput.hpp"

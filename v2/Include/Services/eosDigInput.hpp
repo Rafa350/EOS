@@ -4,7 +4,7 @@
 
 #include "eos.hpp"
 #include "System/eosTask.hpp"
-#include "System/eosVector.hpp"
+#include "System/eosList.hpp"
 #include "System/eosCallbacks.hpp"
 
 
@@ -22,20 +22,19 @@ namespace eos {
     
     class DigInput;
 
-    typedef IVector<DigInput*> IDigInputVector;
-    typedef Vector<DigInput*> DigInputVector;
+    typedef List<DigInput*> DigInputList;
+    typedef ListIterator<DigInput*> DigInputListIterator;
     typedef ICallbackP1<DigInput*> IDigInputEvent;
     
     class DigInputService: public IRunable {
         
         private:
             Task task;
-            DigInputVector inputs;
+            DigInputList inputs;
             
         public:
             DigInputService();
             void add(DigInput *input);
-            inline const IDigInputVector &getInputs() const { return inputs; }
         private:
             void run();
     };
@@ -68,7 +67,7 @@ namespace eos {
             void pinInitialize() const;
             bool pinGet() const;
         
-        friend class eos::DigInputService;
+        friend class DigInputService;
     };
 
 }

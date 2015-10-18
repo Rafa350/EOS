@@ -1,6 +1,4 @@
-#include "System/eosMemory.h"
-
-// FreeRTOS
+#include "System/eosMemory.hpp"
 #include "FreeRTOS.h"
 
 
@@ -26,8 +24,6 @@ typedef struct __eosHeap {
 
 eosHeapHandle eosHeapCreate(
     unsigned size) {
-    
-    eosDebugVerify(size > 0);
 
     return NULL;
 }
@@ -55,8 +51,6 @@ void *eosHeapAlloc(
     eosHeapHandle hHeap,
     unsigned size) {
     
-    eosDebugVerify(size > 0);
-
     return pvPortMalloc(size);
 }
 
@@ -76,8 +70,6 @@ void *eosHeapAlloc(
 
 void eosHeapFree(
     void *p) {
-    
-    eosDebugVerify(p != NULL);
 
     vPortFree(p);
 }
