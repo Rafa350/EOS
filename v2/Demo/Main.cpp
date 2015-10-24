@@ -7,20 +7,16 @@
 #include "Services/eosFSM.hpp"
 #include "Services/eosTimer.hpp"
 #include "Services/eosI2CMaster.hpp"
+//#include "Services/Forms/eosForms.h"
+//#include "Services/Forms/eosFormsMenus.h"
+//#include "DisplayService.h"
 #include "fsmDefines.hpp"
 #include "fsmStates.hpp"
 #include "fsmMachine.hpp"
-//#include "Services/eosI2CMaster.h"
-//#include "Services/eosTimer.h"
-//#include "Services/Forms/eosForms.h"
-//#include "Services/Forms/eosFormsMenus.h"
-
-// Harmony
-//#include "peripheral/i2c/plib_i2c.h"
-//#include "DisplayService.h"
 
 
 //static char buffer[100];
+
 
 class MyApplication: public eos::Application {
     private:
@@ -91,13 +87,13 @@ void MyApplication::setupDigInputService() {
     digInputService = new eos::DigInputService();
 
     swRED = new eos::DigInput(digInputService, pinSW1, true);
-    swRED->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwRED));
+    swRED->setOnChange(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwRED));
    
     swAMBER = new eos::DigInput(digInputService, pinSW2, true);
-    swAMBER->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwAMBER));
+    swAMBER->setOnChange(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwAMBER));
     
     swGREEN = new eos::DigInput(digInputService, pinSW3, true);    
-    swGREEN->setOnPosEdge(EV_DigInput_onPosEdge(MyApplication, this, &MyApplication::onSwGREEN));
+    swGREEN->setOnChange(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwGREEN));
 }
 
 
@@ -125,9 +121,9 @@ void MyApplication::setupTimerService() {
     
     timerService = new eos::TimerService();
 
-    timer = new eos::Timer(timerService, 1000, true);
+    timer = new eos::Timer(timerService, true);
     timer->setOnTimeout(EV_Timer_onTimeout(MyApplication, this, &MyApplication::onTimeout));
-    timer->start(1000);
+    timer->start(1000, 100);
 }
 
 
@@ -163,17 +159,20 @@ static void setupFormsService(void) {
 
 void MyApplication::onSwRED(eos::DigInput *input){
 
-    ledRED->pulse(1000);
+    if (input->get())
+        ledRED->pulse(1000);
 }
 
 void MyApplication::onSwAMBER(eos::DigInput *input){
     
-    ledAMBER->pulse(1000);
+    if (input->get())
+        ledAMBER->pulse(1000);
 }
 
 void MyApplication::onSwGREEN(eos::DigInput *input){
     
-    ledGREEN->pulse(1000);
+    if (input->get())
+        ledGREEN->pulse(1000);
 
     const char *buffer = "\x10\x30";   
     i2cMasterService->startTransaction(0x62, (void*) buffer, 2, NULL, 0, 5000);

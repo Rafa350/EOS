@@ -182,9 +182,9 @@
       <C32>
         <property key="additional-warnings" value="false"/>
         <property key="enable-app-io" value="false"/>
-        <property key="enable-omit-frame-pointer" value="false"/>
+        <property key="enable-omit-frame-pointer" value="true"/>
         <property key="enable-symbols" value="true"/>
-        <property key="enable-unroll-loops" value="false"/>
+        <property key="enable-unroll-loops" value="true"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
                   value="..\;..\..\Include;C:\microchip\harmony\v1_05\framework;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
@@ -192,7 +192,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value=""/>
+        <property key="optimization-level" value="-O1"/>
         <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -260,25 +260,25 @@
       <C32CPP>
         <property key="additional-warnings" value="false"/>
         <property key="check-new" value="false"/>
-        <property key="eh-specs" value="true"/>
+        <property key="eh-specs" value="false"/>
         <property key="enable-app-io" value="false"/>
-        <property key="enable-omit-frame-pointer" value="false"/>
-        <property key="enable-symbols" value="true"/>
-        <property key="enable-unroll-loops" value="false"/>
-        <property key="exceptions" value="true"/>
+        <property key="enable-omit-frame-pointer" value="true"/>
+        <property key="enable-symbols" value="false"/>
+        <property key="enable-unroll-loops" value="true"/>
+        <property key="exceptions" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
                   value="..\;..\..\Include;C:\microchip\harmony\v1_05\framework;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="isolate-each-function" value="false"/>
+        <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value=""/>
+        <property key="optimization-level" value="-O1"/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
         <property key="preprocessor-macros" value=""/>
-        <property key="rtti" value="true"/>
+        <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
@@ -532,7 +532,7 @@
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
         <property key="preprocessor-macros" value=""/>
-        <property key="rtti" value="true"/>
+        <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
@@ -751,7 +751,7 @@
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
         <property key="preprocessor-macros" value=""/>
-        <property key="rtti" value="true"/>
+        <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>

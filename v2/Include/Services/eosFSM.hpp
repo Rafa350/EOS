@@ -36,7 +36,7 @@ namespace eos {
                 virtual void exitAction();
                 virtual void transition(Event event);
             protected:
-                StateMachine *getStateMachine();
+                StateMachine *getStateMachine() const { return sm; }
         };
 
         class StateMachine {

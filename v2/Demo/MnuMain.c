@@ -3,15 +3,15 @@
  *       Archivo generado con PicResourceCompiler
  *       No modificar!
  *
- *       Date : 31/08/2015 18:23:51
+ *       Date : 24/10/2015 12:25:00
  *
  ************************************************************************/
 
-
+#include <stdint.h>
 #include "MnuMain.h"
 
 
-const unsigned char menuMnuMain[] = {
+const uint8_t menuMnuMain[] = {
 
               // MENUINFO
 /* 0000 */    0x04, 

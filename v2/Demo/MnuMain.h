@@ -3,7 +3,7 @@
  *       Archivo generado desde un archivo de recursos
  *       No modificar!
  *
- *       Fecha de generación  : 31/08/2015 18:23:51
+ *       Fecha de generación  : 24/10/2015 12:25:00
  *       Version del generador: 1.1.0.0
  *
  ************************************************************************/
@@ -45,7 +45,7 @@
 #define CMD_EXIT 133
 
 
-extern const unsigned char menuMnuMain[];
+extern const uint8_t menuMnuMain[];
 
 
 /************************************************************************/

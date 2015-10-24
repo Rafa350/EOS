@@ -187,6 +187,15 @@ void I2CMasterService::interruptCallback(
 }
 
 
+/*************************************************************************
+ *
+ *       Maquina d'estats per porocesar les comunicacions
+ * 
+ *       Funcio::
+ *           void I2CMasterService::stateMachine() 
+ *
+ *************************************************************************/
+
 void I2CMasterService::stateMachine() {
     
     switch (state) {

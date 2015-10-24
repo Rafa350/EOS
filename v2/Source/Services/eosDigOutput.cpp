@@ -42,9 +42,7 @@ DigOutputService::DigOutputService() :
 void DigOutputService::add(
     DigOutput* output) {
     
-    Task::enterCriticalSection();
     outputs.add(output);
-    Task::exitCriticalSection();
 }
 
 
@@ -65,8 +63,6 @@ void DigOutputService::run() {
 
         Task::delayUntil(TASK_PERIOD, &tc);
         
-        Task::enterCriticalSection();
-        
         DigOutputListIterator iterator(outputs);
         while (!iterator.isEnd()) {
             
@@ -82,31 +78,7 @@ void DigOutputService::run() {
             
             ++iterator;
         }
-
-        Task::exitCriticalSection();
     }    
-}
-
-
-/*************************************************************************
- *
- *       Constructor      
- *  
- *       Funcio:
- *           eos:DigOutput::DigOutputs(
- *               unsigned pin,
- *               bool inverted)
- *
- *       Entrada:
- *           pin     : Numero de pin hardware
- *           inverted: True si treballa amb logica negativa
- *
- *************************************************************************/
-
-DigOutput::DigOutput(
-    uint8_t pin,
-    bool inverted): 
-    DigOutput(nullptr, pin, inverted) {    
 }
 
 
@@ -138,8 +110,7 @@ DigOutput::DigOutput(
 
     pinInitialize();
 
-    if (service != nullptr)
-        service->add(this);
+    service->add(this);
 }
 
 

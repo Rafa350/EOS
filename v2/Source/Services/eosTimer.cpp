@@ -20,49 +20,62 @@ TimerService::TimerService() {
 }
 
 
-void TimerService::add(Timer *timer) {
+/*************************************************************************
+ *
+ *       Afegeix un temporitzador al servei
+ * 
+ *       Funcio:
+ *           void TimerService::add(
+ *               Timer *timer) 
+ * 
+ *       Entrada:
+ *           timer: El temporitzado a afeigir
+ *
+ *************************************************************************/
+
+void TimerService::add(
+    Timer *timer) {
     
     timers.add(timer);
 }
 
 
 Timer::Timer(
-    unsigned period,
-    bool autoreload) :
-    Timer(nullptr, period, autoreload) {
-}
-
-
-Timer::Timer(
     TimerService *service, 
-    unsigned period,
     bool autoreload) {
     
-    handler = xTimerCreate("", period, autoreload, (void*) this, timerCallback);
+    this->autoreload = autoreload;
+    handler = nullptr;
     
-    if (service != nullptr)
-        service->add(this);
+    service->add(this);
+}
+
+Timer::~Timer() {
+    
+    if (handler != nullptr)
+        xTimerDelete(handler, 100);
 }
 
 
 void Timer::start(
-    unsigned timeout) {
-    
-    xTimerStart(handler, timeout);
+    unsigned timeout,
+    unsigned blockTime) {
+
+    if (handler == nullptr) {
+        handler = xTimerCreate("", timeout, autoreload, (void*) this, timerCallback);
+        xTimerStart(handler, blockTime);
+    }
+    else {
+        xTimerChangePeriod(handler, timeout, blockTime);
+    }
 }
 
 
 void Timer::stop(
-    unsigned timeout) {
+    unsigned blockTime) {
     
-    xTimerStop(handler, timeout);
-}
-
-
-void Timer::restart(
-    unsigned timeout) {
-    
-    xTimerReset(handler, timeout);
+    if (handler != nullptr)
+        xTimerStop(handler, blockTime);
 }
 
 

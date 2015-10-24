@@ -31,14 +31,14 @@ namespace eos {
     class Timer {
         private:
             void *handler;     
+            bool autoreload;
             ITimerEvent *onTimeout;
             
         public:
-            Timer(unsigned period, bool autoreload);
-            Timer(TimerService *service, unsigned period, bool autoreload);
-            void start(unsigned timeout);
-            void stop(unsigned timeout);
-            void restart(unsigned timeout);
+            Timer(TimerService *service, bool autoreload);
+            ~Timer();
+            void start(unsigned timeout, unsigned blockTime);
+            void stop(unsigned blockTime);
             inline void setOnTimeout(ITimerEvent *event) { onTimeout = event; }
         private:
             static void timerCallback(void *handler);

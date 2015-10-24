@@ -33,7 +33,6 @@ namespace eos {
             unsigned timeout;
         
         public:
-            DigOutput(uint8_t pin, bool inverted);
             DigOutput(DigOutputService *service, uint8_t pin, bool inverted);
             bool get() const;
             void set(bool state);

@@ -71,18 +71,54 @@ void StateMachine::acceptEvent(
 }
 
 
-void StateMachine::setState(State* state) {
+/*************************************************************************
+ *
+ *       Cabvia a un nou estat
+ * 
+ *       Funcio:
+ *           void StateMachine::setState(
+ *               State* state) 
+ * 
+ *       Entrada:
+ *           state: El nou estat
+ *
+ *************************************************************************/
+
+void StateMachine::setState(
+    State* state) {
     
     states.pop();
     states.push(state);
 }
 
 
+/*************************************************************************
+ *
+ *       Canvia a un nou estat, salvant en la pila el actual
+ * 
+ *       Funcio:
+ *           void StateMachine::pushState(
+ *               State* state)
+ *
+ *       Entrada:
+ *           state: El nou estat
+ *
+ *************************************************************************/
+
 void StateMachine::pushState(State* state) {
     
     states.push(state);
 }
 
+
+/*************************************************************************
+ *
+ *       Canvia a l'ultim estat recuperat de la pila
+ *
+ *       Funcio:
+ *           void StateMachine::popState() 
+ *
+ *************************************************************************/
 
 void StateMachine::popState() {
 

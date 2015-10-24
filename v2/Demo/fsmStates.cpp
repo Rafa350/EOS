@@ -5,7 +5,7 @@
 
 
 LoopSW1State::LoopSW1State(eos::fsm::StateMachine *sm):
-    State(sm) {
+    eos::fsm::State(sm) {
 }
 
 void LoopSW1State::enterAction() {
@@ -25,7 +25,7 @@ void LoopSW1State::transition(eos::fsm::Event event) {
 }
 
 LoopSW2State::LoopSW2State(eos::fsm::StateMachine *sm):
-    State(sm) {
+    eos::fsm::State(sm) {
 }
 
 void LoopSW2State::enterAction() {
@@ -45,7 +45,7 @@ void LoopSW2State::transition(eos::fsm::Event event) {
 }
 
 LoopSW3State::LoopSW3State(eos::fsm::StateMachine *sm):
-    State(sm) {
+    eos::fsm::State(sm) {
 }
 
 void LoopSW3State::enterAction() {
