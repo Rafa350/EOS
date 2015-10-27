@@ -69,3 +69,59 @@ void State::transition(
     Event event) {
     
 }
+
+
+/*************************************************************************
+ *
+ *       Canvia a un nou estat
+ * 
+ *       Funcio: 
+ *           void State::setState(
+ *               State *state) 
+ * 
+ *       Entrada:
+ *           state: El nou estat
+ *
+ *************************************************************************/
+
+void State::setState(
+    State *state) {
+    
+    sm->setState(state);
+}
+    
+
+/*************************************************************************
+ *
+ *       Canvia a un nou estat, salvant l'ancual en la pila per
+ *       poder ser recuperat posteriorment
+ * 
+ *       Funcio:
+ *           void State::pushState(
+ *               State *state) 
+ * 
+ *       Entrada:
+ *           state: El nou estat
+ *
+ *************************************************************************/
+
+void State::pushState(
+    State *state) {
+    
+    sm->pushState(state);
+}
+    
+
+/*************************************************************************
+ *
+ *       Canvia al ultim estat de la pila
+ * 
+ *       Funcio:
+ *           void State::popState() 
+ *
+ *************************************************************************/
+
+void State::popState() {
+    
+    sm->popState();    
+}
