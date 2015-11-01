@@ -1,4 +1,4 @@
-#include <p32xxxx.h>
+#include <xc_asm.h>
 #include <sys/asm.h>
 #include "ISR_Support.h"
 
@@ -47,6 +47,7 @@ isrI2C1Wrapper:
  *
  *************************************************************************/
 	
+#ifdef _I2C2	
 	.ent	isrI2C2Wrapper
 isrI2C2Wrapper:
 	portSAVE_CONTEXT
@@ -54,6 +55,7 @@ isrI2C2Wrapper:
 	nop
 	portRESTORE_CONTEXT
 	.end	isrI2C2Wrapper	
+#endif	
 	
 	
 /*************************************************************************
@@ -65,6 +67,7 @@ isrI2C2Wrapper:
  *
  *************************************************************************/
 	
+#ifdef _I2C3	
 	.ent	isrI2C3Wrapper
 isrI2C3Wrapper:
 	portSAVE_CONTEXT
@@ -72,6 +75,7 @@ isrI2C3Wrapper:
 	nop
 	portRESTORE_CONTEXT
 	.end	isrI2C3Wrapper
+#endif	
 	
 	
 /*************************************************************************
@@ -82,7 +86,8 @@ isrI2C3Wrapper:
  *           isrI2C4Wrapper
  *
  *************************************************************************/
-	
+
+#ifdef _I2C4
 	.ent	isrI2C4Wrapper
 isrI2C4Wrapper:
 	portSAVE_CONTEXT
@@ -90,6 +95,7 @@ isrI2C4Wrapper:
 	nop
 	portRESTORE_CONTEXT
 	.end	isrI2C4Wrapper
+#endif	
 	
 	
 /*************************************************************************
@@ -100,7 +106,8 @@ isrI2C4Wrapper:
  *           isrI2C5Wrapper
  *
  *************************************************************************/
-	
+
+#ifdef _I2C5	
 	.ent	isrI2C5Wrapper
 isrI2C5Wrapper:
 	portSAVE_CONTEXT
@@ -108,5 +115,4 @@ isrI2C5Wrapper:
 	nop
 	portRESTORE_CONTEXT
 	.end	isrI2C5Wrapper
-	
-	
+#endif

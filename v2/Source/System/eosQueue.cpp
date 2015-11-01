@@ -63,11 +63,11 @@ void eos::GenericQueue::clear() {
  *       Funcio:
  *           bool eos::GenericQueue::put(
  *               void* data,
- *               unsigned timeout)
+ *               unsigned blockTime)
  *
  *       Entrada:
- *           data   : Punter al buffer de l'element a afeigit
- *           timeout: Temps maxim d'espera
+ *           data     : Punter al buffer de l'element a afeigit
+ *           blockTime: Temps maxim de bloqueig
  *
  *       Retorn:
  *           true si tot es correcte
@@ -76,9 +76,9 @@ void eos::GenericQueue::clear() {
 
 bool eos::GenericQueue::put(
     void* data,
-    unsigned timeout) {
+    unsigned blockTime) {
     
-    return xQueueSendToBack(handle, data, timeout) == pdPASS;
+    return xQueueSendToBack(handle, data, blockTime) == pdPASS;
 }
 
 
@@ -89,11 +89,11 @@ bool eos::GenericQueue::put(
  *       Funcio:
  *           bool eos::GenericQueue::get(
  *               void* data,
- *               unsigned timeout)
+ *               unsigned blockTime)
  *
  *       Entrada:
- *           data   : Punter al buffer de l'element a exterure
- *           timeout: Temps maxim d'espera
+ *           data     : Punter al buffer de l'element a exterure
+ *           blockTime: Temps maxim de bloqueig
  *
  *       Retorn:
  *           True si tot es correcte
@@ -102,9 +102,9 @@ bool eos::GenericQueue::put(
 
 bool eos::GenericQueue::get(
     void *data,
-    unsigned timeout) {
+    unsigned blockTime) {
 
-    return xQueueReceive(handle, data, timeout) == pdPASS;
+    return xQueueReceive(handle, data, blockTime) == pdPASS;
 }
 
 

@@ -14,7 +14,7 @@ namespace eos {
         public:
             BinarySemaphore();
             ~BinarySemaphore();
-            bool take(unsigned timeout);
+            bool take(unsigned blockTime);
             bool give();
             void giveISR();
     };

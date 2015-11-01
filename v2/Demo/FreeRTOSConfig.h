@@ -90,7 +90,9 @@
 #define configMAX_PRIORITIES                    ( 6UL )
 #define configMINIMAL_STACK_SIZE                ( 512 )
 #define configISR_STACK_SIZE                    ( 512 )
+#ifndef configTOTAL_HEAP_SIZE
 #define configTOTAL_HEAP_SIZE                   ( ( size_t ) 32000 )
+#endif
 #define configMAX_TASK_NAME_LEN                 ( 16 )
 #define configUSE_16_BIT_TICKS                  0
 #define configIDLE_SHOULD_YIELD                 1

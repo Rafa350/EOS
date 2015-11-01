@@ -6,6 +6,13 @@
 #include "System/eosTask.hpp"
 #include "System/eosQueue.hpp"
 #include "System/eosStack.hpp"
+#include "System/eosCallbacks.hpp"
+
+
+#define EV_Fsm_onEvent(cls, instance, method) \
+    new eos::CallbackP1<cls, eos::StateMachine*>(instance, method)
+#define EV_Fsm_onAction(cls, instance, method) \
+    new eos::CallbackP1<cls, eos::StateMachine*>(instance, method)
 
 
 namespace eos {
@@ -59,6 +66,9 @@ namespace eos {
         
     }
 
+    class StateMachineService;
+    typedef ICallbackP1<StateMachineService*> IStateMachineServiceEvent;
+
     class StateMachineService: public IRunable {
 
         private:
@@ -67,10 +77,14 @@ namespace eos {
         private:
             fsm::StateMachine *sm;
             EventQueue eventQueue;
+            IStateMachineServiceEvent *onEvent;
+            IStateMachineServiceEvent *onAction;
 
         public:
             StateMachineService(fsm::StateMachine *sm);
             bool acceptEvent(fsm::Event event, unsigned timeout);
+            inline void setOnEvent(IStateMachineServiceEvent *event) { onEvent = event; }
+            inline void setOnAction(IStateMachineServiceEvent *event) { onAction = event; }
         private:
             void run();
             void processEvent(fsm::Event event);

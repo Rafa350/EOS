@@ -4,10 +4,10 @@
 #include "System/eosApplication.hpp"
 #include "Services/eosDigOutput.hpp"
 #include "Services/eosDigInput.hpp"
-#include "Services/eosFSM.hpp"
+#include "Services/Fsm/eosFSM.hpp"
 #include "Services/eosTimer.hpp"
 #include "Services/eosI2CMaster.hpp"
-//#include "Services/Forms/eosForms.h"
+#include "Services/Forms/eosForms.hpp"
 //#include "Services/Forms/eosFormsMenus.h"
 //#include "DisplayService.h"
 #include "fsmDefines.hpp"
@@ -24,6 +24,7 @@ class MyApplication: public eos::Application {
         eos::DigOutputService *digOutputService;
         eos::I2CMasterService *i2cMasterService;
         eos::TimerService *timerService;
+        eos::FormsService *formsService;
         eos::DigOutput *ledRED;
         eos::DigOutput *ledAMBER;
         eos::DigOutput *ledGREEN;
@@ -40,6 +41,7 @@ class MyApplication: public eos::Application {
         void setupDigOutputService();
         void setupTimerService();
         void setupI2CMasterService();
+        void setupFormsService();
         void setupStateMachineService();
         
         void onSwRED(eos::DigInput *input);
@@ -132,8 +134,8 @@ void MyApplication::setupStateMachineService() {
     stateMachineService = new eos::StateMachineService(nullptr);
 }
 
-/*
-static void setupFormsService(void) {
+
+void MyApplication::setupFormsService() {
     
     eosDisplayServiceParams displayServiceParams;
 
@@ -155,7 +157,7 @@ static void setupFormsService(void) {
     eosFormHandle hMenu = eosFormsCreateMenu(hFormsService, &menuParams);
     eosFormsSetActiveForm(hFormsService, hMenu);
 }
-*/
+
 
 void MyApplication::onSwRED(eos::DigInput *input){
 

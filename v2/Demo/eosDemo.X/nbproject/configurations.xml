@@ -20,12 +20,17 @@
           <itemPath>../../Include/HAL/halI2C.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="Services" projectFiles="true">
+          <logicalFolder name="f2" displayName="Forms" projectFiles="true">
+            <itemPath>../../Include/Services/Forms/eosForms.hpp</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
+            <itemPath>../../Include/Services/Fsm/eosFSM.hpp</itemPath>
+          </logicalFolder>
           <itemPath>../../Include/Services/eosAppLoop.hpp</itemPath>
           <itemPath>../../Include/Services/eosDigOutput.hpp</itemPath>
           <itemPath>../../Include/Services/eosDigInput.hpp</itemPath>
           <itemPath>../../Include/Services/eosTimer.hpp</itemPath>
           <itemPath>../../Include/Services/eosI2CMaster.hpp</itemPath>
-          <itemPath>../../Include/Services/eosFSM.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="System" projectFiles="true">
           <itemPath>../../Include/System/eosInterrupts.h</itemPath>
@@ -73,16 +78,19 @@
           <itemPath>../../Source/HAL/halI2CInterruptWrapper.S</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="Services" projectFiles="true">
+          <logicalFolder name="f2" displayName="Forms" projectFiles="true">
+            <itemPath>../../Source/Services/Forms/eosForms.cpp</itemPath>
+          </logicalFolder>
           <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
             <itemPath>../../Source/Services/Fsm/eosStateMachine.cpp</itemPath>
             <itemPath>../../Source/Services/Fsm/eosState.cpp</itemPath>
+            <itemPath>../../Source/Services/Fsm/eosFSM.cpp</itemPath>
           </logicalFolder>
           <itemPath>../../Source/Services/eosAppLoop.cpp</itemPath>
           <itemPath>../../Source/Services/eosDigOutput.cpp</itemPath>
           <itemPath>../../Source/Services/eosDigInput.cpp</itemPath>
           <itemPath>../../Source/Services/eosTimer.cpp</itemPath>
           <itemPath>../../Source/Services/eosI2CMaster.cpp</itemPath>
-          <itemPath>../../Source/Services/eosFSM.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
           <itemPath>../../Source/System/eosInterrupt.c</itemPath>
@@ -151,7 +159,7 @@
         <targetDevice>PIC32MX795F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>SKDEPIC32PlatformTool</platformTool>
+        <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>1.40</languageToolchainVersion>
         <platform>3</platform>
@@ -191,12 +199,12 @@
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
-        <property key="make-warnings-into-errors" value="false"/>
+        <property key="make-warnings-into-errors" value="true"/>
         <property key="optimization-level" value="-O1"/>
         <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value=""/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_ESK"/>
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
         <property key="use-cci" value="false"/>
@@ -223,7 +231,7 @@
         <property key="oXC32asm-list-to-file" value="false"/>
         <property key="omit-debug-dirs" value="false"/>
         <property key="omit-forms" value="false"/>
-        <property key="preprocessor-macros" value=""/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_PINGUINO_MICRO"/>
         <property key="warning-level" value=""/>
       </C32-AS>
       <C32-LD>
@@ -277,7 +285,7 @@
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value=""/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_ESK"/>
         <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="use-cci" value="false"/>
@@ -462,7 +470,8 @@
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
-        <property key="extra-include-directories" value=""/>
+        <property key="extra-include-directories"
+                  value="..\;..\..\Include;C:\microchip\harmony\v1_05\framework;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
@@ -471,7 +480,7 @@
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value=""/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32MX_USK"/>
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
         <property key="use-cci" value="false"/>
@@ -522,7 +531,8 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exceptions" value="true"/>
         <property key="exclude-floating-point" value="false"/>
-        <property key="extra-include-directories" value=""/>
+        <property key="extra-include-directories"
+                  value="..\;..\..\Include;C:\microchip\harmony\v1_05\framework;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
@@ -531,7 +541,7 @@
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value=""/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_USK"/>
         <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="use-cci" value="false"/>
@@ -622,7 +632,7 @@
     <conf name="PINGUINO" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <targetDevice>PIC32MX795F512L</targetDevice>
+        <targetDevice>PIC32MX440F256H</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
@@ -670,7 +680,8 @@
         <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value=""/>
+        <property key="preprocessor-macros"
+                  value="HARDWARE_PIC32_PINGUINO_MICRO;configTOTAL_HEAP_SIZE=8000"/>
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
         <property key="use-cci" value="false"/>
@@ -697,7 +708,7 @@
         <property key="oXC32asm-list-to-file" value="false"/>
         <property key="omit-debug-dirs" value="false"/>
         <property key="omit-forms" value="false"/>
-        <property key="preprocessor-macros" value=""/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_PINGUINO_MICRO"/>
         <property key="warning-level" value=""/>
       </C32-AS>
       <C32-LD>
@@ -741,7 +752,8 @@
         <property key="enable-unroll-loops" value="true"/>
         <property key="exceptions" value="true"/>
         <property key="exclude-floating-point" value="false"/>
-        <property key="extra-include-directories" value=""/>
+        <property key="extra-include-directories"
+                  value="..\;..\..\Include;C:\microchip\harmony\v1_05\framework;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
@@ -750,7 +762,8 @@
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value=""/>
+        <property key="preprocessor-macros"
+                  value="HARDWARE_PIC32_PINGUINO_MICRO;configTOTAL_HEAP_SIZE=8000"/>
         <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="use-cci" value="false"/>
@@ -848,18 +861,12 @@
       <PICkit3PlatformTool>
         <property key="ADC 1" value="true"/>
         <property key="AutoSelectMemRanges" value="auto"/>
-        <property key="CAN1" value="true"/>
-        <property key="CAN2" value="true"/>
         <property key="CHANGE NOTICE" value="true"/>
         <property key="COMPARATOR" value="true"/>
         <property key="DMA" value="true"/>
-        <property key="ETHERNET CONTROLLER" value="true"/>
         <property key="Freeze All Other Peripherals" value="true"/>
         <property key="I2C1" value="true"/>
         <property key="I2C2" value="true"/>
-        <property key="I2C3" value="true"/>
-        <property key="I2C4" value="true"/>
-        <property key="I2C5" value="true"/>
         <property key="INPUT CAPTURE 1" value="true"/>
         <property key="INPUT CAPTURE 2" value="true"/>
         <property key="INPUT CAPTURE 3" value="true"/>
@@ -873,10 +880,7 @@
         <property key="OUTPUT COMPARE 5" value="true"/>
         <property key="PARALLEL MASTER/SLAVE PORT" value="true"/>
         <property key="REAL TIME CLOCK" value="true"/>
-        <property key="SPI 1" value="true"/>
         <property key="SPI 2" value="true"/>
-        <property key="SPI 3" value="true"/>
-        <property key="SPI 4" value="true"/>
         <property key="SecureSegment.SegmentProgramming" value="FullChipProgramming"/>
         <property key="TIMER1" value="true"/>
         <property key="TIMER2" value="true"/>
@@ -888,10 +892,6 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
-        <property key="UART3" value="true"/>
-        <property key="UART4" value="true"/>
-        <property key="UART5" value="true"/>
-        <property key="UART6" value="true"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -902,15 +902,13 @@
         <property key="memories.flashdata" value="true"/>
         <property key="memories.id" value="true"/>
         <property key="memories.programmemory" value="true"/>
-        <property key="memories.programmemory.end"
-                  value="${memories.programmemory.end.value}"/>
+        <property key="memories.programmemory.end" value="0x1d03ffff"/>
         <property key="memories.programmemory.partition2" value="true"/>
         <property key="memories.programmemory.partition2.end"
                   value="${memories.programmemory.partition2.end.value}"/>
         <property key="memories.programmemory.partition2.start"
                   value="${memories.programmemory.partition2.start.value}"/>
-        <property key="memories.programmemory.start"
-                  value="${memories.programmemory.start.value}0"/>
+        <property key="memories.programmemory.start" value="0x1d000000"/>
         <property key="poweroptions.powerenable" value="false"/>
         <property key="programmertogo.imagename" value=""/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
@@ -919,14 +917,12 @@
         <property key="programoptions.preservedataflash" value="false"/>
         <property key="programoptions.preserveeeprom" value="false"/>
         <property key="programoptions.preserveprogramrange" value="false"/>
-        <property key="programoptions.preserveprogramrange.end"
-                  value="${memories.programmemory.end.value}"/>
-        <property key="programoptions.preserveprogramrange.start"
-                  value="${memories.programmemory.start.value}"/>
+        <property key="programoptions.preserveprogramrange.end" value="0x1d03ffff"/>
+        <property key="programoptions.preserveprogramrange.start" value="0x1d000000"/>
         <property key="programoptions.preserveuserid" value="false"/>
         <property key="programoptions.programcalmem" value="false"/>
         <property key="programoptions.programuserotp" value="false"/>
-        <property key="programoptions.testmodeentrymethod" value="VPPFirst"/>
+        <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
         <property key="programoptions.usehighvoltageonmclr" value="false"/>
         <property key="programoptions.uselvpprogramming" value="false"/>
         <property key="voltagevalue" value="3.25"/>

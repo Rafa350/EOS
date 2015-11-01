@@ -1,5 +1,5 @@
 @echo off
 
-"..\..\..\..\Projectes VS\FSMCompiler\Out\bin\x86\Release\FSMCompiler.exe" machine.xsm /MH:fsmMachine.hpp /MC:fsmMachine.cpp /SH:fsmStates.hpp /SC:fsmStates.cpp /SBCN:eos::fsm::State /MCN:MyMachine /MBCN:eos::fsm::StateMachine
+"..\..\..\..\Projectes VS\FSMCompiler\Out\bin\x86\Release\FSMCompiler.exe" machine.xsm /P:MachineHeaderFileName=fsmMachine.hpp /P:MachineCodeFileName=fsmMachine.cpp /P:StateHeaderFileName=fsmStates.hpp /P:StateCodeFileName=fsmStates.cpp /P:StateBaseClassName=eos::fsm::State /P:MachineClassName=MyMachine /P:MachineBaseClassName=eos::fsm::StateMachine
 
 pause

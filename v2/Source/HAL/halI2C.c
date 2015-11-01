@@ -13,16 +13,36 @@ static I2CInterruptParam params[I2C_NUMBER_OF_MODULES];
 
 
 extern void __ISR(_I2C_1_VECTOR, IPL2SOFT) isrI2C1Wrapper(void);
+#ifdef _I2C2
 extern void __ISR(_I2C_2_VECTOR, IPL2SOFT) isrI2C2Wrapper(void);
+#endif
+#ifdef _I2C3
 extern void __ISR(_I2C_3_VECTOR, IPL2SOFT) isrI2C3Wrapper(void);
+#endif
+#ifdef _I2C4
 extern void __ISR(_I2C_4_VECTOR, IPL2SOFT) isrI2C4Wrapper(void);
+#endif
+#ifdef _I2C5
 extern void __ISR(_I2C_5_VECTOR, IPL2SOFT) isrI2C5Wrapper(void);
+#endif
 
 
 static I2C_MODULE_ID getHarmonyID(unsigned moduleId) {
     
     static I2C_MODULE_ID idTable[I2C_NUMBER_OF_MODULES] = {
-        I2C_ID_1, I2C_ID_2, I2C_ID_3, I2C_ID_4, I2C_ID_5
+        I2C_ID_1, 
+#ifdef _I2C2        
+        I2C_ID_2,   
+#endif        
+#ifdef _I2C3        
+        I2C_ID_3, 
+#endif        
+#ifdef _I2C4     
+        I2C_ID_4, 
+#endif        
+#ifdef _I2C5        
+        I2C_ID_5
+#endif        
     };
     
     return idTable[moduleId];
@@ -32,12 +52,25 @@ static I2C_MODULE_ID getHarmonyID(unsigned moduleId) {
 static unsigned getEosID(I2C_MODULE_ID id) {
     
     switch (id) {
-        case I2C_ID_2: return 1;
-        case I2C_ID_3: return 2;
-        case I2C_ID_4: return 3;
-        case I2C_ID_5: return 4;
         default:
-        case I2C_ID_1: return 0;
+        case I2C_ID_1: 
+            return 0;
+#ifdef _I2C2
+        case I2C_ID_2: 
+            return 1;
+#endif        
+#ifdef _I2C3
+        case I2C_ID_3: 
+            return 2;
+#endif        
+#ifdef _I2C4
+        case I2C_ID_4: 
+            return 3;
+#endif        
+#ifdef _I2C5
+        case I2C_ID_5: 
+            return 4;
+#endif        
     }
 }
 
@@ -73,29 +106,37 @@ void halI2CMasterInitialize(
             PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_1_MASTER);
             break;
 
+#ifdef _I2C2
         case I2C_ID_2:
             PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C2, intPriority);
             PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C2, intSubPriority);
             PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_2_MASTER);
             break;
+#endif            
 
+#ifdef _I2C3
         case I2C_ID_3:
             PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C3, intPriority);
             PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C3, intSubPriority);
             PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_3_MASTER);
             break;
+#endif            
 
+#ifdef _I2C4
         case I2C_ID_4:
             PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C4, intPriority);
             PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C4, intSubPriority);
             PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_4_MASTER);
             break;
+#endif            
 
+#ifdef _I2C5
         case I2C_ID_5:
             PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_I2C5, intPriority);
             PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_I2C5, intSubPriority);
             PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_I2C_5_MASTER);
             break;
+#endif            
     }
 
     // Activa el modul
@@ -210,6 +251,7 @@ void isrI2C1Handler(void) {
     }
 }
 
+#ifdef _I2C2
 void isrI2C2Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_2_MASTER)) {
@@ -217,7 +259,9 @@ void isrI2C2Handler(void) {
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_2_MASTER);
     }
 }
+#endif            
 
+#ifdef _I2C3
 void isrI2C3Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_3_MASTER)) {
@@ -225,7 +269,9 @@ void isrI2C3Handler(void) {
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_3_MASTER);
     }
 }
+#endif            
 
+#ifdef _I2C4
 void isrI2C4Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_4_MASTER)) {
@@ -233,7 +279,9 @@ void isrI2C4Handler(void) {
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_4_MASTER);
     }
 }
+#endif            
 
+#ifdef _I2C5
 void isrI2C5Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_I2C_5_MASTER)) {
@@ -241,3 +289,4 @@ void isrI2C5Handler(void) {
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_I2C_5_MASTER);
     }
 }
+#endif            

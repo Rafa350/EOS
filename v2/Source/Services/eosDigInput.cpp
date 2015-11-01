@@ -7,7 +7,7 @@ using namespace eos;
 
 
 const unsigned taskStackSize = 512;
-const TaskPriority taskPriority = eos::TaskPriority::normal;
+const TaskPriority taskPriority = TaskPriority::normal;
 
 
 #define PATTERN_ON       0x0000007F

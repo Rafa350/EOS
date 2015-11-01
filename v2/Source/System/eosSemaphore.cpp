@@ -34,9 +34,9 @@ eos::BinarySemaphore::~BinarySemaphore() {
 
 
 bool eos::BinarySemaphore::take(
-    unsigned timeout) {
+    unsigned blockTime) {
     
-    return xSemaphoreTake(handle, timeout);
+    return xSemaphoreTake(handle, blockTime);
 }
 
 

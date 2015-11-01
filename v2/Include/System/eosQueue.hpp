@@ -15,8 +15,8 @@ namespace eos {
             GenericQueue(unsigned itemSize, unsigned maxItems);                   
             ~GenericQueue();
             void clear();
-            bool put(void *data, unsigned timeout);
-            bool get(void *data, unsigned timeout);
+            bool put(void *data, unsigned blockTime);
+            bool get(void *data, unsigned blockTime);
             bool putISR(void *data);
             bool getISR(void *data);            
     };
@@ -28,12 +28,12 @@ namespace eos {
                 GenericQueue(sizeof(itemType), maxItems) {
             }
             
-            inline bool put(itemType &data, unsigned timeout) {
-                return GenericQueue::put((void*) &data, timeout);
+            inline bool put(itemType &data, unsigned blockTime) {
+                return GenericQueue::put((void*) &data, blockTime);
             }
             
-            inline bool get(itemType &data, unsigned timeout) {
-                return GenericQueue::get((void*) &data, timeout);
+            inline bool get(itemType &data, unsigned blockTime) {
+                return GenericQueue::get((void*) &data, blockTime);
             }
     };
 }

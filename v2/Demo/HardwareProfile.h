@@ -2,7 +2,7 @@
 #define __HARDWARE_PROFILE_H
 
 
-// Configurarcio del sistema
+// Configuracio del sistema
 //
 #define CLOCK_SYSTEM_HZ            80000000
 #define CLOCK_PERIPHERICAL_HZ      (CLOCK_SYSTEM_HZ / 1)
