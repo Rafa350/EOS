@@ -105,12 +105,19 @@ Form *FormsService::activate(
     Form *inactiveForm = activeForm;
     
     if ((inactiveForm != nullptr) && (inactiveForm->onDeactivate != nullptr))
-        inactiveForm->onDeactivate(form);
+        inactiveForm->onDeactivate->execute(form);
     
     activeForm = form;
 
     if ((form != nullptr) && (form->onActivate != nullptr))
-        form->onActivate(inactiveForm);
+        form->onActivate->execute(inactiveForm);
+}
+
+
+void FormsService::sendMessage(
+    Message message) {
+    
+    messageQueue.get(message, 1000);
 }
 
 
@@ -135,6 +142,7 @@ Form::Form(
 
     service->add(this);
     
+    this->service = service;
     this->parent = parent;
     paintPending = true;
 }
@@ -155,47 +163,6 @@ void Form::refresh() {
         paintPending = true;   
         //eosQueuePut(hForm->hService->hPaintQueue, &hForm, 0);
     }
-}
-
-
-/*************************************************************************
- *
- *       Envia un missatge a la cua
- *
- *       Funcio:
- *           void eosFormsPostMessage(
- *              eosFormsMessage *message)
- *
- *       Entrada:
- *           hService: El handler del servei
- *           message : El missatge
- *
- *************************************************************************/
-
-void eosFormsPostMessage(
-    eosFormsMessage *message) {
-
-    eosQueuePut(message->hForm->hService->hMessageQueue, message, 0);
-}
-
-
-/*************************************************************************
- *
- *       Envia un missatge directament al form i espera que es procesi
- *
- *       Funcio:
- *           void eosFormsSendMessage(
- *              eosFormsMessage *message)
- *
- *       Entrada:
- *           message: El missatge
- *
- *************************************************************************/
-
-void eosFormsSendMessage(
-    eosFormsMessage *message) {
-
-    message->hForm->onMessage(message);
 }
 
 

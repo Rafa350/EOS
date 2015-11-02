@@ -61,6 +61,7 @@ MyApplication::MyApplication() {
     setupTimerService();
     setupI2CMasterService();
     setupStateMachineService();
+    setupFormsService();
 }
 
 
@@ -139,7 +140,7 @@ void MyApplication::setupStateMachineService() {
 
 void MyApplication::setupFormsService() {
     
-    eosDisplayServiceParams displayServiceParams;
+/*    eosDisplayServiceParams displayServiceParams;
 
     memset(&displayServiceParams, 0, sizeof(displayServiceParams));
     displayServiceParams.hI2CMasterService = hI2CMasterService;
@@ -147,12 +148,12 @@ void MyApplication::setupFormsService() {
     hDisplayService = eosDisplayServiceInitialize(&displayServiceParams);
    
     extern uint8_t menuMnuMain[];
-    
+  */  
     formsService = new eos::FormsService();
     
-    menuParams.resource = menuMnuMain;
+    /*menuParams.resource = menuMnuMain;
     menuForm = eosFormsCreateMenu(hFormsService, &menuParams);
-    formsService->activate(menuForm);
+    formsService->activate(menuForm);*/
 }
 
 

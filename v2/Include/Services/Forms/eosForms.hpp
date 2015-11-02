@@ -6,6 +6,13 @@
 #include "System/eosTask.hpp"
 #include "System/eosList.hpp"
 #include "System/eosQueue.hpp"
+#include "System/eosCallbacks.hpp"
+
+
+#define EV_Form_onActivate(cls, instance, method) \
+    new eos::CallbackP1<cls, eos::Form*>(instance, method)
+#define EV_Form_onDeactivate(cls, instance, method) \
+    new eos::CallbackP1<cls, eos::Form*>(instance, method)
 
 
 #define MSG_NULL               0
@@ -60,6 +67,9 @@ namespace eos {
     typedef List<Form*> FormList;
     typedef ListIterator<Form*> FormListIterator;
     
+    typedef ICallbackP1<Form*> IFormEvent;
+    
+    
     class FormsService: public IRunable {
         private:
             typedef unsigned Message;
@@ -77,14 +87,18 @@ namespace eos {
             void add(Form *form);
             Form *activate(Form *form);
             Form *getActiveForm() { return activeForm; }
+            void sendMessage(Message message);
         private:
             void run();
     };
     
     class Form {
         private:
+            FormsService *service;
             Form *parent;
             bool paintPending;
+            IFormEvent *onActivate;
+            IFormEvent *onDeactivate;
             
         public:
             Form(FormsService *service, Form *parent);
@@ -92,6 +106,10 @@ namespace eos {
             void paint();
             void activate();
             Form *getParent() { return parent; }
+            inline void setOnActivate(IFormEvent *event) { onActivate = event; }
+            inline void setOnDeactivate(IFormEvent *event) { onDeactivate = event; }
+            
+        friend class FormsService;
     };
 }
 
