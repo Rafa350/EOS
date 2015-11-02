@@ -2,7 +2,7 @@
 #define __FSM_MACHINE_HPP
 
 
-#include "Services/eosFSM.hpp"
+#include "Services/Fsm/eosFSM.hpp"
 
 
 class MyMachine: public eos::fsm::StateMachine {

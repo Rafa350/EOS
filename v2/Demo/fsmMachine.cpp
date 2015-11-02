@@ -1,4 +1,4 @@
-#include "Services/eosFSM.hpp"
+#include "Services/Fsm/eosFSM.hpp"
 #include "fsmDefines.hpp"
 #include "fsmMachine.hpp"
 #include "fsmStates.hpp"

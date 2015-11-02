@@ -31,8 +31,10 @@ class MyApplication: public eos::Application {
         eos::DigInput *swRED;
         eos::DigInput *swAMBER;
         eos::DigInput *swGREEN;
-        eos::Timer *timer;
+        eos::Timer *timer;        
         eos::StateMachineService *stateMachineService;
+        eos::Form *menuForm;
+        eos::Form *mainForm;
 
     public :
         MyApplication();
@@ -144,18 +146,13 @@ void MyApplication::setupFormsService() {
     displayServiceParams.i2cAddr = 0x62 >> 1;
     hDisplayService = eosDisplayServiceInitialize(&displayServiceParams);
    
-    eosFormsServiceParams formsServiceParams;
     extern uint8_t menuMnuMain[];
     
-    memset(&formsServiceParams, 0, sizeof(formsServiceParams));
-    formsServiceParams.hDisplayService = hDisplayService;
-    hFormsService = eosFormsServiceInitialize(&formsServiceParams);
+    formsService = new eos::FormsService();
     
-    eosMenuParams menuParams;
-    memset(&menuParams, 0, sizeof(menuParams));
     menuParams.resource = menuMnuMain;
-    eosFormHandle hMenu = eosFormsCreateMenu(hFormsService, &menuParams);
-    eosFormsSetActiveForm(hFormsService, hMenu);
+    menuForm = eosFormsCreateMenu(hFormsService, &menuParams);
+    formsService->activate(menuForm);
 }
 
 

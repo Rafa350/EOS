@@ -4,6 +4,8 @@
 
 #include "eos.hpp"
 #include "System/eosTask.hpp"
+#include "System/eosList.hpp"
+#include "System/eosQueue.hpp"
 
 
 #define MSG_NULL               0

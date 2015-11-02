@@ -2,7 +2,7 @@
 #define __FSM_STATES_HPP
 
 
-#include "Services/eosFSM.hpp"
+#include "Services/Fsm/eosFSM.hpp"
 
 
 class LoopSW1State: public eos::fsm::State {
