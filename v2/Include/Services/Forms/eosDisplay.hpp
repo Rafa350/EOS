@@ -1,45 +1,45 @@
-#ifndef __AX_DISPLAYSERVICE_H
-#define	__AX_DISPLAYSERVICE_H
+#ifndef __EOS_DISPLAY_HPP
+#define	__EOS_DISPLAY_HPP
 
 
-#ifndef __EOS_H
-#include "eos.h"
-#endif
-
-#ifndef __EOS_I2CMASTER_H
-#include "Services/eosI2CMaster.h"
-#endif
+#include "eos.hpp"
+#include "System/eosTask.hpp"
+#include "Services/eosI2CMaster.hpp"
 
 
-typedef struct __axDisplayService *axDisplayServiceHandle;
+namespace eos {
 
-typedef struct {
-    eosI2CMasterServiceHandle hI2CMasterService;
-    BYTE i2cAddr;
-} axDisplayServiceParams;
+    class DisplayService: IRunable {
+        private:
+            I2CMasterService *i2cService;
+            uint8_t addr;
+            uint8_t *buffer;
+            unsigned bufferSize;
+            unsigned bufferCount;
+            bool bufferError;
+            
+        public:
+            DisplayService(I2CMasterService *i2cService, uint8_t addr);
+            bool BeginCommand();
+            bool EndCommand();
+            bool addUINT8(uint8_t data);
+            bool addUINT16(uint8_t data);
+            bool addString(const char *data);
+            bool addBytes(const uint8_t *data, unsigned dataLen);
+            bool addCommandClear();
+            bool addCommandRefresh();
+            bool addCommandSetColor(uint8_t fgColor, uint8_t bkColor);
+            bool addCommandSetFont(uint8_t font);
+            bool addCommandMoveTo(int x, int y);
+            bool addCommandDrawLine(int x1, int y1, int x2, int y2);
+            bool addCommandDrawRectangle(int x1, int y1, int x2, int y2);
+            bool addCommandFillRectangle(int x1, int y1, int x2, int y2);
+            bool addCommandDrawText(int x, int y, const char *text, unsigned offset, unsigned length);
+        private:
+            void run();
+    };
 
-
-extern axDisplayServiceHandle axDisplayServiceInitialize(axDisplayServiceParams *params);
-extern bool axDisplayServiceIsReady(axDisplayServiceHandle hService);
-extern void axDisplayServiceTask(axDisplayServiceHandle hService);
-
-extern bool axDisplayBeginCommand(axDisplayServiceHandle hService);
-extern bool axDisplayEndCommand(axDisplayServiceHandle hService);
-extern bool axDisplayIsBusy(axDisplayServiceHandle hService);
-
-extern bool axDisplayAddUINT8(axDisplayServiceHandle hService, UINT8 data);
-extern bool axDisplayAddUINT16(axDisplayServiceHandle hService, UINT16 data);
-extern bool axDisplayAddString(axDisplayServiceHandle hService, const char *data);
-extern bool axDisplayAddBytes(axDisplayServiceHandle hService, const BYTE *data, unsigned dataLen);
-extern bool axDisplayAddCommandClear(axDisplayServiceHandle hService);
-extern bool axDisplayAddCommandRefresh(axDisplayServiceHandle hService);
-extern bool axDisplayAddCommandSetColor(axDisplayServiceHandle hService, UINT8 fgColor, UINT8 bkColor);
-extern bool axDisplayAddCommandSetFont(axDisplayServiceHandle hService, UINT8 font);
-extern bool axDisplayAddCommandMoveTo(axDisplayServiceHandle hService, int x, int y);
-extern bool axDisplayAddCommandDrawLine(axDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
-extern bool axDisplayAddCommandDrawRectangle(axDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
-extern bool axDisplayAddCommandFillRectangle(axDisplayServiceHandle hService, int x1, int y1, int x2, int y2);
-extern bool axDisplayAddCommandDrawText(axDisplayServiceHandle hService, int x, int y, const char *text, unsigned offset, unsigned length);
+}
 
 
 #endif

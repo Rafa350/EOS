@@ -1,124 +1,47 @@
-#include "DisplayService.h"
-#include "System/eosMemory.h"
-#include "Services/eosI2CMaster.h"
-#include "../MD-DSP04/DSP04Messages.h"
+#include "Services/eosDisplay.hpp"
+#include "../../../MD-DSP04/DSP04Messages.h"
 #include "string.h"
 
 
 #define BUFFER_SIZE               1000      // Tamany del buffer
 
-typedef enum {                              // Estat del servei
-    serviceInitializing,                    // -Initcialitzant el servei
-    serviceRunning,                         // -Executant el servei
-    serviceWaitingEndTransaction            // -Esperant el final de la transaccio
-} axDisplayServiceState;
 
-typedef struct __axDisplayService {         // Dades internes del servei
-    axDisplayServiceState state;            // -Estat del servei
-    eosI2CMasterServiceHandle hI2CMasterService; // -Handler del servei I2C
-    BYTE i2cAddr;                           // -Adressa I2C del display
-    BYTE *buffer;
-    unsigned bufferSize;
-    unsigned bufferCount;
-    bool bufferError;
-    bool isBusy;
-} axDisplayService;
+#define min(a, b)    (a) < (b) ? a : b
+
+#define __addUINT8(data)                           \
+    buffer[bufferCount++] = (data)
+
+#define __addUINT16(data)                          \
+    buffer[bufferCount++] = (data) & 0x00FF;       \
+    buffer[bufferCount++] = ((data) & 0xFF00) >> 8
 
 
-static void onEndTransaction(eosI2CTransactionHandle hTransaction);
-
-#define __addUINT8(hService, data)                                           \
-    hService->buffer[hService->bufferCount++] = (data)
-
-#define __addUINT16(hService, data)                                          \
-    hService->buffer[hService->bufferCount++] = (data) & 0x00FF;             \
-    hService->buffer[hService->bufferCount++] = ((data) & 0xFF00) >> 8
-
+using namespace eos;
 
 
 /*************************************************************************
  *
- *       Inicialitza el servei
+ *       Constructor
  *
  *       Funcio:
- *           axDisplayServiceHandle axDisplayServiceInitialize(
- *               axDisplayServiceParams *params)
+ *           DisplayService::DisplayService(
+ *               I2CMasterService *i2cService,
+ *               uint8_t addr) 
  *
  *       Entrada:
- *           params: Parametres del servei
- *
- *       Retorn:
- *           El handler del display. NULL en cas d'error
+ *           i2cMaster: Servei de comunicacions i2c
+ *           addr     : Adressa i2c
  *
  *************************************************************************/
 
-axDisplayServiceHandle axDisplayServiceInitialize(
-    axDisplayServiceParams *params) {
+DisplayService::DisplayService(
+    I2CMasterService *i2cService,
+    uint8_t addr) {
 
-    axDisplayServiceHandle hService = (axDisplayServiceHandle) eosAlloc(sizeof(axDisplayService));
-    if (hService == NULL)
-        return NULL;
-
-    hService->state = serviceInitializing;
-    hService->hI2CMasterService = params->hI2CMasterService;
-    hService->i2cAddr = params->i2cAddr;
-
-    hService->bufferSize = BUFFER_SIZE;
-    hService->buffer = (BYTE*) eosAlloc(hService->bufferSize);
-    hService->isBusy = false;
-
-    return hService;
-}
-
-
-/*************************************************************************
- *
- *       Comprova si el servei esta inicialitzat
- *
- *       Funcio:
- *           bool axDisplayServiceIsReady(
- *               axDisplayServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del servei
- *
- *       Retorn:
- *           true si es inicialitzat, false en cas contrari
- *
- *************************************************************************/
-
-bool axDisplayServiceIsReady(
-    axDisplayServiceHandle hService) {
-
-    return hService->state != serviceInitializing;
-}
-
-
-/*************************************************************************
- *
- *       Procesa les tasques del servei
- *
- *       Funcio:
- *           void eosDisplayServiceTask(
- *               eosDisplayServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del servei
- *
- *************************************************************************/
-
-void axDisplayServiceTask(
-    axDisplayServiceHandle hService) {
-
-    switch (hService->state) {
-        case serviceInitializing:
-            if (eosI2CMasterServiceIsReady(hService->hI2CMasterService))
-                hService->state = serviceRunning;
-            break;
-
-        case serviceRunning:
-            break;
-    }
+    i2cService = i2cService;
+    addr = addr;
+    bufferSize = 1000;
+    buffer = new uint8_t[](bufferSize);
 }
 
 
@@ -127,27 +50,18 @@ void axDisplayServiceTask(
  *       Inicia l'escriptura d'una comanda pel display
  *
  *       Funcio:
- *           bool axDisplayBeginCommand(
- *               axDisplayServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del display
+ *           bool DisplayService::BeginCommand()
  *
  *       Retorn:
  *           true si tot es correcte, false si el display es ocupat
  *
  *************************************************************************/
 
-bool axDisplayBeginCommand(
-    axDisplayServiceHandle hService) {
+bool DisplayService::BeginCommand() {
 
-    if (hService->isBusy)
-        return false;
-    else {
-        hService->bufferCount = 0;
-        hService->bufferError = false;
-        return true;
-    }
+    bufferCount = 0;
+    bufferError = false;
+    return true;
 }
 
 
@@ -156,39 +70,30 @@ bool axDisplayBeginCommand(
  *       Finalitza la escriptura d'una comanda del display
  *
  *       Funcio:
- *           bool axDisplayEndCommand(
- *               axDisplayServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del display
+ *           bool DisplayService::EndCommand()
  *
  *       Retorn:
  *           true si l'operacio s'ha efectuat correctament
  * 
  *************************************************************************/
 
-bool axDisplayEndCommand(
-    axDisplayServiceHandle hService) {
+bool DisplayService::EndCommand() {
     
-    if (hService->bufferError)
+    if (bufferError)
         return false;
+    
+    else {
+        if (i2cService->startTransaction(
+            addr,
+            buffer,
+            bufferCount,
+            0,
+            nullptr)) {
 
-    // Crea la transaccio
-    //
-    eosI2CTransactionParams transactionParams;
-    memset(&transactionParams, 0, sizeof(transactionParams));
-    transactionParams.address = hService->i2cAddr;
-    transactionParams.txBuffer = hService->buffer;
-    transactionParams.txCount = hService->bufferCount;
-    transactionParams.onEndTransaction = onEndTransaction;
-    transactionParams.context = hService;
-
-    // Inicia la transaccio
-    //
-    if (eosI2CMasterStartTransaction(hService->hI2CMasterService, &transactionParams))
-        hService->isBusy = true;
-
-    return true;
+            return true;
+        }
+        
+    }
 }
 
 
@@ -197,12 +102,10 @@ bool axDisplayEndCommand(
  *       Afegeix un UINT8 a la comanda
  *
  *       Funcio:
- *           bool axDisplayAddUINT8(
- *               axDisplayServiceHandle hService,
- *               UINT8 data)
+ *           bool DisplayService::addUINT8(
+ *               uint8_t data)
  *
  *       Entrada:
- *           hService: El handler del display
  *           data    : Les dades a escriure
  *
  *       Retorn:
@@ -210,15 +113,14 @@ bool axDisplayEndCommand(
  *
  *************************************************************************/
 
-bool inline axDisplayAddUINT8(
-    axDisplayServiceHandle hService,
-    UINT8 data) {
+bool DisplayService::addUINT8(
+    uint8_t data) {
 
-    if (!hService->bufferError) {
+    if (!bufferError) {
         __addUINT8(hService, data);
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
@@ -227,12 +129,10 @@ bool inline axDisplayAddUINT8(
  *       Afegeix un UINT16 a la comanda
  *
  *       Funcio:
- *           bool axDisplayAddUINT16(
- *               axDisplayServiceHandle hService,
- *               UINT16 data)
+ *           bool DisplayService::AddUINT16(
+ *               uint16_t data)
  *
  *       Entrada:
- *           hService: El handler del display
  *           data    : Les dades a escriure
  *
  *       Retorn:
@@ -240,15 +140,14 @@ bool inline axDisplayAddUINT8(
  *
  *************************************************************************/
 
-bool inline axDisplayAddUINT16(
-    axDisplayServiceHandle hService,
-    UINT16 data) {
+bool DisplayService::addUINT16(
+    uint16_t data) {
 
-    if (!hService->bufferError) {
+    if (!bufferError) {
         __addUINT16(hService, data);
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
@@ -257,8 +156,7 @@ bool inline axDisplayAddUINT16(
  *       Afegeix una cadena a la comanda
  *
  *       Funcio:
- *           bool axDisplayAddString(
- *               axDisplayServiceHandle hService,
+ *           bool DisplayService::AddString(
  *               const char *data)
  *
  *       Entrada:
@@ -270,17 +168,16 @@ bool inline axDisplayAddUINT16(
  *
  *************************************************************************/
 
-bool axDisplayAddString(
-    axDisplayServiceHandle hService,
+bool DisplayService::addString(
     const char *data) {
 
-    if (!hService->bufferError) {
+    if (!bufferError) {
         char c;
         while ((c = *data++) != '\0')
-            hService->buffer[hService->bufferCount++] = c;
+            buffer[bufferCount++] = c;
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
@@ -289,13 +186,11 @@ bool axDisplayAddString(
  *       Afegeix una sequencia de bytes a la comanda
  *
  *       Funcio:
- *           bool axDisplayAddBytes(
- *               axDisplayServiceHandle hService,
- *               const BYTE *data,
+ *           bool DisplayService::addBytes(
+ *               const uint8_t *data,
  *               unsigned dataLen)
  *
  *       Entrada:
- *            hService: El handler del servei
  *            data    : Les dades a escriure
  *            dataLen : Longitut de les dades en bytes
  *
@@ -304,111 +199,104 @@ bool axDisplayAddString(
  *
  *************************************************************************/
 
-bool axDisplayAddBytes(
-    axDisplayServiceHandle hService,
-    const BYTE *data,
+bool DisplayService::addBytes(
+    const uint8_t *data,
     unsigned dataLen) {
 
-    if (!hService->bufferError) {
+    if (!bufferError) {
         while (dataLen--)
-            hService->buffer[hService->bufferCount++] = *data++;
+            buffer[bufferCount++] = *data++;
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
-bool axDisplayAddCommandClear(
-    axDisplayServiceHandle hService) {
+bool DisplayService::addCommandClear() {
 
-    if (!hService->bufferError) {
-        if (hService->bufferCount + sizeof(BYTE) < hService->bufferSize)
-            __addUINT8(hService, DSP_CMD_CLEAR);
+    if (!bufferError) {
+        if (bufferCount + sizeof(uint8_t) < bufferSize)
+            __addUINT8(DSP_CMD_CLEAR);
         else
-            hService->bufferError = true;
+            bufferError = true;
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
-bool axDisplayAddCommandRefresh(
-    axDisplayServiceHandle hService) {
+bool DisplayService::addCommandRefresh() {
 
-    if (!hService->bufferError) {
-        if (hService->bufferCount + sizeof(BYTE) < hService->bufferSize)
-            __addUINT8(hService, DSP_CMD_REFRESH);
+    if (!bufferError) {
+        if (bufferCount + sizeof(uint8_t) < bufferSize)
+            __addUINT8(DSP_CMD_REFRESH);
         else
-            hService->bufferError = true;
+            bufferError = true;
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
-bool axDisplayAddCommandSetColor(
-    axDisplayServiceHandle hService,
-    UINT8 fgColor,
-    UINT8 bkColor) {
+bool DisplayService::addCommandSetColor(
+    uint8_t fgColor,
+    uint8_t bkColor) {
 
-    if (!hService->bufferError) {
-        if (hService->bufferCount + (sizeof(BYTE) * 3) < hService->bufferSize) {
-            __addUINT8(hService, DSP_CMD_SETCOLOR);
-            __addUINT8(hService, fgColor);
-            __addUINT8(hService, bkColor);
+    if (!bufferError) {
+        if (bufferCount + (sizeof(uint8_t) * 3) < bufferSize) {
+            __addUINT8(DSP_CMD_SETCOLOR);
+            __addUINT8(fgColor);
+            __addUINT8(bkColor);
         }
         else
-            hService->bufferError = true;
+            bufferError = true;
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
-bool axDisplayAddCommandSetFont(
-    axDisplayServiceHandle hService,
-    UINT8 font) {
+bool DisplayService::addCommandSetFont(
+    uint8_t font) {
 
-    if (!hService->bufferError) {
-        if (hService->bufferCount + (sizeof(BYTE) * 2) < hService->bufferSize) {
-            __addUINT8(hService, DSP_CMD_SETFONT);
-            __addUINT8(hService, font);
+    if (!bufferError) {
+        if (bufferCount + (sizeof(uint8_t) * 2) < bufferSize) {
+            __addUINT8(DSP_CMD_SETFONT);
+            __addUINT8(font);
         }
         else
-            hService->bufferError = true;
+            bufferError = true;
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
-bool axDisplayAddCommandMoveTo(
-    axDisplayServiceHandle hService,
+bool DisplayService::addCommandMoveTo(
     int x,
     int y) {
 
-    if (!hService->bufferError) {
-        if (hService->bufferCount + sizeof(BYTE) * 5 < hService->bufferSize) {
-            __addUINT8(hService, DSP_CMD_MOVETO);
-            __addUINT16(hService, x);
-            __addUINT16(hService, y);
+    if (!bufferError) {
+        if (bufferCount + sizeof(uint8_t) * 5 < bufferSize) {
+            __addUINT8(DSP_CMD_MOVETO);
+            __addUINT16(x);
+            __addUINT16(y);
         }
         else
-            hService->bufferError = true;
+            bufferError = true;
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
-bool axDisplayAddCommandDrawLine(
-    axDisplayServiceHandle hService,
+bool DisplayService::addCommandDrawLine(
     int x1,
     int y1,
     int x2,
     int y2) {
 
-    if (!hService->bufferError) {
+    if (!bufferError) {
 
         dspDrawShapeMessage msg;
 
@@ -423,21 +311,20 @@ bool axDisplayAddCommandDrawLine(
         msg.x2 = x2;
         msg.y2 = y2;
 
-        axDisplayAddBytes(hService, (BYTE*) &msg, 12);//sizeof(msg));
+        addBytes((uint8_t*) &msg, 12);//sizeof(msg));
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
-bool axDisplayAddCommandDrawRectangle(
-    axDisplayServiceHandle hService,
+bool DisplayService::addCommandDrawRectangle(
     int x1,
     int y1,
     int x2,
     int y2) {
 
-    if (!hService->bufferError) {
+    if (!bufferError) {
 
         dspDrawShapeMessage msg;
 
@@ -452,49 +339,47 @@ bool axDisplayAddCommandDrawRectangle(
         msg.x2 = x2;
         msg.y2 = y2;
 
-        axDisplayAddBytes(hService, (BYTE*) &msg, 12);//sizeof(msg));
+        addBytes((uint8_t*) &msg, 12);//sizeof(msg));
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
-bool axDisplayAddCommandFillRectangle(
-    axDisplayServiceHandle hService,
+bool DisplayService::addCommandFillRectangle(
     int x1,
     int y1,
     int x2,
     int y2) {
 
-    if (!hService->bufferError) {
+    if (!bufferError) {
 
-       if (hService->bufferCount + sizeof(BYTE) * 12 < hService->bufferSize) {
-            __addUINT8(hService, DSP_CMD_DRAWSHAPE);
-            __addUINT8(hService, 0xFF);
-            __addUINT8(hService, 0xFF);
-            __addUINT8(hService, 0x11); //DRAWSHAPE_RECT | (0 << 4) | (1 << 5));
-            __addUINT16(hService, x1);
-            __addUINT16(hService, y1);
-            __addUINT16(hService, x2);
-            __addUINT16(hService, y2);
+       if (bufferCount + sizeof(uint8_t) * 12 < bufferSize) {
+            __addUINT8(DSP_CMD_DRAWSHAPE);
+            __addUINT8(0xFF);
+            __addUINT8(0xFF);
+            __addUINT8(0x11); //DRAWSHAPE_RECT | (0 << 4) | (1 << 5));
+            __addUINT16(x1);
+            __addUINT16(y1);
+            __addUINT16(x2);
+            __addUINT16(y2);
         }
         else
-            hService->bufferError = true;
+            bufferError = true;
     }
 
-    return hService->bufferError;
+    return bufferError;
 }
 
 
-bool axDisplayAddCommandDrawText(
-    axDisplayServiceHandle hService,
+bool DisplayService::addCommandDrawText(
     int x,
     int y,
     const char *text,
     unsigned offset,
     unsigned length) {
 
-    if (!hService->bufferError) {
+    if (!bufferError) {
 
         unsigned len;
         if (length == -1)
@@ -502,64 +387,18 @@ bool axDisplayAddCommandDrawText(
         else
             len = min(length, 256);
 
-        if (hService->bufferCount + sizeof(BYTE) * 8 + len < hService->bufferSize) {
-            __addUINT8(hService, DSP_CMD_DRAWTEXT);
-            __addUINT8(hService, 0xFF);
-            __addUINT8(hService, 0xFF);
-            __addUINT16(hService, x);
-            __addUINT16(hService, y);
-            __addUINT8(hService, len);
-            axDisplayAddBytes(hService, &text[offset], len);
+        if (bufferCount + sizeof(uint8_t) * 8 + len < bufferSize) {
+            __addUINT8(DSP_CMD_DRAWTEXT);
+            __addUINT8(0xFF);
+            __addUINT8(0xFF);
+            __addUINT16(x);
+            __addUINT16(y);
+            __addUINT8(len);
+            addBytes(&text[offset], len);
         }
         else
-            hService->bufferError = true;
+            bufferError = true;
     }
 
-    return hService->bufferError;
-}
-
-
-/*************************************************************************
- *
- *       Comprova si el display es ocupat
- *
- *       Funcio:
- *           bool axDisplayIsBusy(
- *               axDisplayServiceHandle hService)
- *
- *       Entrada:
- *           hService: El handler del display
- *
- *       Retorn:
- *         True si es ocupat, false en cas contrari
- *
- *************************************************************************/
-
-bool axDisplayIsBusy(
-    axDisplayServiceHandle hService) {
-
-    return hService->isBusy;
-}
-
-
-/*************************************************************************
- *
- *       Procesa l'event END_TRANSACTION
- *
- *       Funcio:
- *           void onEndTransaction(
- *               eosI2CTransactionHandle hTransaction,
- *               axDisplayServiceHandle hService)
- *
- *       Entrada:
- *           hTransaction: La transaccio que ha generat l'event
- *           hService    : El handler del display
- *
- *************************************************************************/
-
-static void onEndTransaction(
-    eosI2CTransactionHandle hTransaction) {
-
-    axDisplayServiceHandle hService = (axDisplayServiceHandle) eosI2CMasterGetTransactionContext(hTransaction);
-    hService->isBusy = false;
+    return bufferError;
 }
