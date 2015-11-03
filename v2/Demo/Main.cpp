@@ -8,11 +8,14 @@
 #include "Services/eosTimer.hpp"
 #include "Services/eosI2CMaster.hpp"
 #include "Services/Forms/eosForms.hpp"
+#include "Services/Forms/eosSelector.hpp"
 //#include "Services/Forms/eosFormsMenus.h"
 //#include "DisplayService.h"
 #include "fsmDefines.hpp"
 #include "fsmStates.hpp"
 #include "fsmMachine.hpp"
+#include "../../../MD-SEL01/SEL01Messages.h"
+#include "../../../MD-DSP04/DSP04Messages.h"
 
 
 //static char buffer[100];
@@ -25,6 +28,7 @@ class MyApplication: public eos::Application {
         eos::I2CMasterService *i2cMasterService;
         eos::TimerService *timerService;
         eos::FormsService *formsService;
+        eos::SelectorService *selectorService;
         eos::DigOutput *ledRED;
         eos::DigOutput *ledAMBER;
         eos::DigOutput *ledGREEN;
@@ -60,33 +64,11 @@ MyApplication::MyApplication() {
     setupDigInputService();
     setupTimerService();
     setupI2CMasterService();
-    setupStateMachineService();
+    //setupStateMachineService();
     setupFormsService();
 }
 
 
-/*static void task1(void *params) {
-
-    while (true) {
-        eosDigOutputPulse(hLedRED, 50);
-        eosTaskDelay(1000);
-    }
-}
-
-static void posEdgeFunction(
-    eosDigInputHandle hInput, 
-    void *context) {
-    
-    eosDigOutputToggle(hLedGREEN);        
-    
-    eosDisplayBeginCommand(hDisplayService);
-    eosDisplayAddCommandClear(hDisplayService);
-    eosDisplayAddCommandDrawText(hDisplayService, 0, 0, "Hello world", 0, -1);
-    eosDisplayAddCommandDrawLine(hDisplayService, 0, 10, 127, 10);
-    eosDisplayAddCommandRefresh(hDisplayService);
-    eosDisplayEndCommand(hDisplayService);
-}
-*/
 void MyApplication::setupDigInputService() {
 
     digInputService = new eos::DigInputService();
@@ -140,16 +122,9 @@ void MyApplication::setupStateMachineService() {
 
 void MyApplication::setupFormsService() {
     
-/*    eosDisplayServiceParams displayServiceParams;
-
-    memset(&displayServiceParams, 0, sizeof(displayServiceParams));
-    displayServiceParams.hI2CMasterService = hI2CMasterService;
-    displayServiceParams.i2cAddr = 0x62 >> 1;
-    hDisplayService = eosDisplayServiceInitialize(&displayServiceParams);
-   
-    extern uint8_t menuMnuMain[];
-  */  
-    formsService = new eos::FormsService();
+    selectorService = new eos::SelectorService(i2cMasterService, SEL_ADDRESS);
+    
+    //formsService = new eos::FormsService();
     
     /*menuParams.resource = menuMnuMain;
     menuForm = eosFormsCreateMenu(hFormsService, &menuParams);
@@ -163,11 +138,13 @@ void MyApplication::onSwRED(eos::DigInput *input){
         ledRED->pulse(1000);
 }
 
+
 void MyApplication::onSwAMBER(eos::DigInput *input){
     
     if (input->get())
         ledAMBER->pulse(1000);
 }
+
 
 void MyApplication::onSwGREEN(eos::DigInput *input){
     
@@ -175,8 +152,9 @@ void MyApplication::onSwGREEN(eos::DigInput *input){
         ledGREEN->pulse(1000);
 
     const char *buffer = "\x10\x30";   
-    i2cMasterService->startTransaction(0x62, (void*) buffer, 2, NULL, 0, 5000);
+    i2cMasterService->startTransaction(DSP_ADDRESS, (void*) buffer, 2, NULL, 0, 5000, nullptr);
 }
+
 
 void MyApplication::onTimeout(eos::Timer *timer) {
     

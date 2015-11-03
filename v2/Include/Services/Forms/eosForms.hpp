@@ -33,46 +33,42 @@
 #define MSG_NOTIFY           103       // Event de nofificacio d'un altre form
 
 
-typedef struct {
-    unsigned command;
-} MsgCommand;
-
-typedef struct {
-//    eosFormHandle hSender;
-    unsigned event;
-    void *params;
-} MsgNotify;
-
-typedef struct {
-    unsigned event;
-    int position;
-    uint8_t state;
-} MsgSelector;
-
-typedef struct {
-//    eosFormHandle hForm;
-    unsigned id;
-    union {
-        MsgCommand msgCommand;
-        MsgNotify msgNotify;
-        MsgSelector msgSelector;
-    };
-} eosFormsMessage;
-
-
 namespace eos {
     
     class Form;
+    
+    typedef struct {
+        unsigned command;
+    } MsgCommand;
+
+    typedef struct {
+        Form *sender;
+        unsigned event;
+        void *params;
+    } MsgNotify;
+
+    typedef struct {
+        unsigned event;
+        int position;
+        uint8_t state;
+    } MsgSelector;
+
+    typedef struct {
+        unsigned id;
+        union {
+            MsgCommand msgCommand;
+            MsgNotify msgNotify;
+            MsgSelector msgSelector;
+        };
+    } Message;
 
     typedef List<Form*> FormList;
     typedef ListIterator<Form*> FormListIterator;
     
-    typedef ICallbackP1<Form*> IFormEvent;
-    
+    typedef ICallbackP1<Form*> IFormEvent;    
     
     class FormsService: public IRunable {
         private:
-            typedef unsigned Message;
             typedef Queue<Message> MessageQueue;
             
         private:
@@ -103,7 +99,7 @@ namespace eos {
         public:
             Form(FormsService *service, Form *parent);
             void refresh();
-            void paint();
+            virtual void paint();
             void activate();
             Form *getParent() { return parent; }
             inline void setOnActivate(IFormEvent *event) { onActivate = event; }

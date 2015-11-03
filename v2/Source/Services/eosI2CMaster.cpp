@@ -53,15 +53,17 @@ I2CMasterService::I2CMasterService(
  *               unsigned txCount,
  *               void *rxBuffer,
  *               unsigned rxSize,
- *               unsigned timeout) 
+ *               unsignjed blockTime,
+ *               BinarySemaphore *notify) 
  *
  *       Entrada:
- *           addr    : Adressa I2C del desti
- *           txBuffer: Buffer de dades de transmisio
- *           txCount : Numero de bytes en el buffer de transmissio
- *           rxBuffer: Buffer de recepcio
- *           rxSize  : Tamany del buffer de recepcio
- *           timeout : Tamps maxim d'espera
+ *           addr     : Adressa I2C del desti
+ *           txBuffer : Buffer de dades de transmisio
+ *           txCount  : Numero de bytes en el buffer de transmissio
+ *           rxBuffer : Buffer de recepcio
+ *           rxSize   : Tamany del buffer de recepcio
+ *           blockTime: Temps maxim de bloqueig
+ *           notify   : Semafor per notificar el final de la transaccio
  * 
  *       Retorn:
  *           True si tot es correcte, false en cas contrari
@@ -74,32 +76,26 @@ bool I2CMasterService::startTransaction(
     unsigned txCount,
     void *rxBuffer,
     unsigned rxSize,
-    unsigned timeout) {
+    unsigned blockTime,
+    BinarySemaphore *notify) {
     
-    BinarySemaphore semaphore;
-
-    Transaction *transaction = nullptr;
     for (unsigned i = 0; i < sizeof(transactions) / sizeof(transactions[0]); i++) {
-        transaction = &transactions[i];
+        Transaction *transaction = &transactions[i];
         if (!transaction->inUse) {
+            transaction->inUse = true;
             transaction->addr = addr;
             transaction->txBuffer = (uint8_t*) txBuffer;
             transaction->txCount = txCount;
             transaction->rxBuffer = (uint8_t*) rxBuffer;
             transaction->rxSize = rxSize;
             transaction->rxCount = 0;
-            transaction->semaphore = &semaphore;
-            transaction->inUse = true;
-            break;
+            transaction->notify = notify;
+            queue.put(transaction, blockTime);
+            return true;
         }
     }
     
-    if (transaction == nullptr)
-        return false;
-    else {
-        queue.put(transaction, 5000);
-        return semaphore.take(timeout);
-    }
+    return false;
 }
 
 
@@ -145,7 +141,6 @@ void I2CMasterService::run() {
             }
             else {
             }
-            transaction->semaphore->give();
 
             // Retart entre transaccions
             //
@@ -153,6 +148,8 @@ void I2CMasterService::run() {
             
             // Finalitza el us de la transaccio
             //
+            if (transaction->notify != nullptr)
+                transaction->notify->give();
             transaction->inUse = false;
         }
     }

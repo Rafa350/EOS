@@ -60,6 +60,9 @@ void FormsService::run() {
     
     while (true) {
         
+        // Captura els events dels dispositius d'entrada
+        //
+        
         // Procesa els missatges en la cua
         //
         Message message;
@@ -72,8 +75,10 @@ void FormsService::run() {
         FormListIterator iterator(forms);
         while (!iterator.isEnd()) {
             Form *form = iterator.current();
-            if (form->paintPending)
-                form->paint();
+            if (form->paintPending) {
+                form->paintPending = false;
+                form->paint();                
+            }
         }
     }
 }
@@ -113,6 +118,19 @@ Form *FormsService::activate(
         form->onActivate->execute(inactiveForm);
 }
 
+
+/*************************************************************************
+ *
+ *       Envia un missatge a la cua
+ * 
+ *       Funcio:
+ *           void FormsService::sendMessage(
+ *               Message message) 
+ * 
+ *       Entrada:
+ *           message: El missatge a enviar
+ *
+ *************************************************************************/
 
 void FormsService::sendMessage(
     Message message) {
@@ -159,42 +177,19 @@ Form::Form(
 
 void Form::refresh() {
     
-    if (!paintPending) {
-        paintPending = true;   
-        //eosQueuePut(hForm->hService->hPaintQueue, &hForm, 0);
-    }
+    paintPending = true;   
 }
 
 
 /*************************************************************************
  *
- *       Envia un missatge de notificacio directament al form pare
- *
+ *       Dibuixa el formulari en pantalla
+ * 
  *       Funcio:
- *           void eosFormsSendNotify(
- *              eosFormHandle hSender,
- *              unsigned event,
- *              void *params)
- *
- *       Entrada:
- *           hSender: Handler del form origen del missatge
- *           event  : El codi de notificacio
- *           params : Parametres de la notificacio
+ *           void Form::paint() 
  *
  *************************************************************************/
 
-void eosFormsSendNotify(
-    eosFormHandle hSender,
-    unsigned event,
-    void *params) {
-
-    eosFormsMessage message;
-
-    message.id = MSG_NOTIFY;
-    message.hForm = eosFormsGetParent(hSender);
-    message.msgNotify.hSender = hSender;
-    message.msgNotify.event = event;
-    message.msgNotify.params = params;
-
-    eosFormsSendMessage(&message);
+void Form::paint() {
+    
 }
