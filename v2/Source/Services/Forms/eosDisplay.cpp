@@ -1,19 +1,9 @@
-#include "Services/eosDisplay.hpp"
+#include "Services/Forms/eosDisplay.hpp"
 #include "../../../MD-DSP04/DSP04Messages.h"
 #include "string.h"
 
 
 #define BUFFER_SIZE               1000      // Tamany del buffer
-
-
-#define min(a, b)    (a) < (b) ? a : b
-
-#define __addUINT8(data)                           \
-    buffer[bufferCount++] = (data)
-
-#define __addUINT16(data)                          \
-    buffer[bufferCount++] = (data) & 0x00FF;       \
-    buffer[bufferCount++] = ((data) & 0xFF00) >> 8
 
 
 using namespace eos;
@@ -38,10 +28,10 @@ DisplayService::DisplayService(
     I2CMasterService *i2cService,
     uint8_t addr) {
 
-    i2cService = i2cService;
-    addr = addr;
+    this->i2cService = i2cService;
+    this->addr = addr;
     bufferSize = 1000;
-    buffer = new uint8_t[](bufferSize);
+    buffer = new uint8_t[bufferSize]();
 }
 
 
@@ -50,14 +40,14 @@ DisplayService::DisplayService(
  *       Inicia l'escriptura d'una comanda pel display
  *
  *       Funcio:
- *           bool DisplayService::BeginCommand()
+ *           bool DisplayService::beginCommand()
  *
  *       Retorn:
  *           true si tot es correcte, false si el display es ocupat
  *
  *************************************************************************/
 
-bool DisplayService::BeginCommand() {
+bool DisplayService::beginCommand() {
 
     bufferCount = 0;
     bufferError = false;
@@ -70,14 +60,14 @@ bool DisplayService::BeginCommand() {
  *       Finalitza la escriptura d'una comanda del display
  *
  *       Funcio:
- *           bool DisplayService::EndCommand()
+ *           bool DisplayService::endCommand()
  *
  *       Retorn:
  *           true si l'operacio s'ha efectuat correctament
  * 
  *************************************************************************/
 
-bool DisplayService::EndCommand() {
+bool DisplayService::endCommand() {
     
     if (bufferError)
         return false;
@@ -87,12 +77,11 @@ bool DisplayService::EndCommand() {
             addr,
             buffer,
             bufferCount,
-            0,
+            100,
             nullptr)) {
 
             return true;
-        }
-        
+        }        
     }
 }
 
@@ -116,9 +105,8 @@ bool DisplayService::EndCommand() {
 bool DisplayService::addUINT8(
     uint8_t data) {
 
-    if (!bufferError) {
-        __addUINT8(hService, data);
-    }
+    if (!bufferError) 
+        fAddUINT8(data);    
 
     return bufferError;
 }
@@ -143,9 +131,8 @@ bool DisplayService::addUINT8(
 bool DisplayService::addUINT16(
     uint16_t data) {
 
-    if (!bufferError) {
-        __addUINT16(hService, data);
-    }
+    if (!bufferError) 
+        fAddUINT16(data);
 
     return bufferError;
 }
@@ -216,7 +203,7 @@ bool DisplayService::addCommandClear() {
 
     if (!bufferError) {
         if (bufferCount + sizeof(uint8_t) < bufferSize)
-            __addUINT8(DSP_CMD_CLEAR);
+            fAddUINT8(DSP_CMD_CLEAR);
         else
             bufferError = true;
     }
@@ -229,7 +216,7 @@ bool DisplayService::addCommandRefresh() {
 
     if (!bufferError) {
         if (bufferCount + sizeof(uint8_t) < bufferSize)
-            __addUINT8(DSP_CMD_REFRESH);
+            fAddUINT8(DSP_CMD_REFRESH);
         else
             bufferError = true;
     }
@@ -244,9 +231,9 @@ bool DisplayService::addCommandSetColor(
 
     if (!bufferError) {
         if (bufferCount + (sizeof(uint8_t) * 3) < bufferSize) {
-            __addUINT8(DSP_CMD_SETCOLOR);
-            __addUINT8(fgColor);
-            __addUINT8(bkColor);
+            fAddUINT8(DSP_CMD_SETCOLOR);
+            fAddUINT8(fgColor);
+            fAddUINT8(bkColor);
         }
         else
             bufferError = true;
@@ -261,8 +248,8 @@ bool DisplayService::addCommandSetFont(
 
     if (!bufferError) {
         if (bufferCount + (sizeof(uint8_t) * 2) < bufferSize) {
-            __addUINT8(DSP_CMD_SETFONT);
-            __addUINT8(font);
+            fAddUINT8(DSP_CMD_SETFONT);
+            fAddUINT8(font);
         }
         else
             bufferError = true;
@@ -278,9 +265,9 @@ bool DisplayService::addCommandMoveTo(
 
     if (!bufferError) {
         if (bufferCount + sizeof(uint8_t) * 5 < bufferSize) {
-            __addUINT8(DSP_CMD_MOVETO);
-            __addUINT16(x);
-            __addUINT16(y);
+            fAddUINT8(DSP_CMD_MOVETO);
+            fAddUINT16(x);
+            fAddUINT16(y);
         }
         else
             bufferError = true;
@@ -355,14 +342,14 @@ bool DisplayService::addCommandFillRectangle(
     if (!bufferError) {
 
        if (bufferCount + sizeof(uint8_t) * 12 < bufferSize) {
-            __addUINT8(DSP_CMD_DRAWSHAPE);
-            __addUINT8(0xFF);
-            __addUINT8(0xFF);
-            __addUINT8(0x11); //DRAWSHAPE_RECT | (0 << 4) | (1 << 5));
-            __addUINT16(x1);
-            __addUINT16(y1);
-            __addUINT16(x2);
-            __addUINT16(y2);
+            fAddUINT8(DSP_CMD_DRAWSHAPE);
+            fAddUINT8(0xFF);
+            fAddUINT8(0xFF);
+            fAddUINT8(0x11); //DRAWSHAPE_RECT | (0 << 4) | (1 << 5));
+            fAddUINT16(x1);
+            fAddUINT16(y1);
+            fAddUINT16(x2);
+            fAddUINT16(y2);
         }
         else
             bufferError = true;
@@ -388,13 +375,13 @@ bool DisplayService::addCommandDrawText(
             len = min(length, 256);
 
         if (bufferCount + sizeof(uint8_t) * 8 + len < bufferSize) {
-            __addUINT8(DSP_CMD_DRAWTEXT);
-            __addUINT8(0xFF);
-            __addUINT8(0xFF);
-            __addUINT16(x);
-            __addUINT16(y);
-            __addUINT8(len);
-            addBytes(&text[offset], len);
+            fAddUINT8(DSP_CMD_DRAWTEXT);
+            fAddUINT8(0xFF);
+            fAddUINT8(0xFF);
+            fAddUINT16(x);
+            fAddUINT16(y);
+            fAddUINT8(len);
+            addBytes((uint8_t*) &text[offset], len);
         }
         else
             bufferError = true;

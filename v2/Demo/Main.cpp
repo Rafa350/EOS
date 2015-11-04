@@ -9,16 +9,13 @@
 #include "Services/eosI2CMaster.hpp"
 #include "Services/Forms/eosForms.hpp"
 #include "Services/Forms/eosSelector.hpp"
+#include "Services/Forms/eosDisplay.hpp"
 //#include "Services/Forms/eosFormsMenus.h"
-//#include "DisplayService.h"
 #include "fsmDefines.hpp"
 #include "fsmStates.hpp"
 #include "fsmMachine.hpp"
 #include "../../../MD-SEL01/SEL01Messages.h"
 #include "../../../MD-DSP04/DSP04Messages.h"
-
-
-//static char buffer[100];
 
 
 class MyApplication: public eos::Application {
@@ -29,6 +26,7 @@ class MyApplication: public eos::Application {
         eos::TimerService *timerService;
         eos::FormsService *formsService;
         eos::SelectorService *selectorService;
+        eos::DisplayService *displayService;
         eos::DigOutput *ledRED;
         eos::DigOutput *ledAMBER;
         eos::DigOutput *ledGREEN;
@@ -58,6 +56,15 @@ class MyApplication: public eos::Application {
 };
 
 
+/*************************************************************************
+ *
+ *       Constructor
+ * 
+ *       Funcio:
+ *           MyApplication::MyApplication()
+ *
+ *************************************************************************/
+
 MyApplication::MyApplication() {
     
     setupDigOutputService();
@@ -68,6 +75,15 @@ MyApplication::MyApplication() {
     setupFormsService();
 }
 
+
+/*************************************************************************
+ *
+ *       Inicialitza el servei d'entrades digitals
+ *
+ *       Funcio:
+ *           void MyApplication::setupDigInputService() 
+ *
+ *************************************************************************/
 
 void MyApplication::setupDigInputService() {
 
@@ -83,6 +99,15 @@ void MyApplication::setupDigInputService() {
     swGREEN->setOnChange(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwGREEN));
 }
 
+
+/*************************************************************************
+ *
+ *       Inicialitza el servei de sortides digitals
+ *
+ *       Funcio:
+ *           void MyApplication::setupDigOutputService() 
+ *
+ *************************************************************************/
 
 void MyApplication::setupDigOutputService() {
 
@@ -123,6 +148,7 @@ void MyApplication::setupStateMachineService() {
 void MyApplication::setupFormsService() {
     
     selectorService = new eos::SelectorService(i2cMasterService, SEL_ADDRESS);
+    displayService = new eos::DisplayService(i2cMasterService, DSP_ADDRESS);
     
     //formsService = new eos::FormsService();
     
@@ -151,8 +177,10 @@ void MyApplication::onSwGREEN(eos::DigInput *input){
     if (input->get())
         ledGREEN->pulse(1000);
 
-    const char *buffer = "\x10\x30";   
-    i2cMasterService->startTransaction(DSP_ADDRESS, (void*) buffer, 2, NULL, 0, 5000, nullptr);
+    displayService->beginCommand();
+    displayService->addCommandClear();
+    displayService->addCommandRefresh();
+    displayService->endCommand();
 }
 
 
