@@ -7,7 +7,7 @@ namespace eos {
     template <typename elementType>
     class IList {
         public:
-            virtual void add(elementType &element) = 0;
+            virtual unsigned add(elementType &element) = 0;
             virtual void remove(unsigned index) = 0;
             virtual unsigned getCount() const = 0;
             virtual elementType &operator[](unsigned index) = 0;
@@ -15,44 +15,45 @@ namespace eos {
     
     class GenericList {
         private:
-            unsigned elementSize;
-            unsigned count;
             unsigned size;
-            void *data;
+            unsigned count;
+            unsigned capacity;
+            void *container;
         protected:
-            GenericList(unsigned elementSize);
+            GenericList(unsigned size, unsigned initialCapacity);
             ~GenericList();
-            void addElement(void *element);
+            unsigned addElement(void *element);
             void removeElement(unsigned index);
             unsigned getCount() const { return count; }
             void *getElement(unsigned index) const;
         private:
-            void resize(unsigned newSize);
+            void *getPtr(unsigned index) const;
+            void resize(unsigned newCapacity);
     };
     
     template <typename elementType>
-    class List: public GenericList, public IList<elementType> {
+    class List: private GenericList, public IList<elementType> {
         public:
             List() :
-                GenericList(sizeof(elementType)) {
+                GenericList(sizeof(elementType), 10) {
             }
             
-            void add(elementType &element) {
+            inline unsigned add(elementType &element) {
                 
-                addElement(&element);
+                return addElement(&element);
             }
             
-            void remove(unsigned index) {
+            inline void remove(unsigned index) {
                 
                 removeElement(index);
             }
             
-            unsigned getCount() const {
+            inline unsigned getCount() const {
                 
                 return GenericList::getCount();
             }
 
-            elementType &operator[](unsigned index) {
+            inline elementType &operator[](unsigned index) {
                 
                 return *((elementType*) getElement(index));
             }
@@ -64,17 +65,17 @@ namespace eos {
             unsigned index;
             unsigned endIndex;
             IList<elementType> &list;
+            
         public:
             ListIterator(IList<elementType> &_list):
-                list(_list) {
-                index = 0;
-                endIndex = _list.getCount();
-            }
-            
-            void reset() { index = 0; }
-            bool isEnd() const { return index >= endIndex; }
-            elementType &current() const { return list[index]; }
-            void operator++() { index++; }
+                list(_list),
+                index(0),
+                endIndex(_list.getCount()) {
+            }            
+            inline void reset() { index = 0; }
+            inline bool isEnd() const { return index >= endIndex; }
+            inline elementType &current() const { return list[index]; }
+            inline void operator++() { index++; }
     };
 }
 

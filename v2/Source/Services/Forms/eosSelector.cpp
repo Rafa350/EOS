@@ -24,12 +24,12 @@ const TaskPriority taskPriority = TaskPriority::normal;
  *************************************************************************/
 
 SelectorService::SelectorService(
-    I2CMasterService *i2cService,
-    uint8_t addr):
-    task(taskStackSize, taskPriority, this) {
-    
-    this->i2cService = i2cService;
-    this->addr = addr;
+    I2CMasterService *_i2cService,
+    uint8_t _addr):
+    task(taskStackSize, taskPriority, this),
+    i2cService(_i2cService),
+    addr(_addr),
+    onChange(nullptr) {
 }
 
 
@@ -67,6 +67,8 @@ void SelectorService::run() {
                 if ((state != newState) || (position != newPosition)) {
                     position = newPosition;
                     state = newState;
+                    if (onChange != nullptr)
+                        onChange->execute(position, state);
                 }
             }
         }

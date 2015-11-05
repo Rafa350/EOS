@@ -9,20 +9,20 @@
  *
  *       Funcio:
  *           eos::GenericQueue::GenericQueue(
- *               unsigned itemSize,
- *               unsigned maxItems)
+ *               unsigned size,
+ *               unsigned capacity)
  *
  *       Entrada:
- *           itemSize: Tamany de cada item
- *           maxItems: Numero maxim d'items en la cua
+ *           size    : Tamany de cada item
+ *           capacity: Numero maxim d'items en la cua
  *
  *************************************************************************/
 
 eos::GenericQueue::GenericQueue(
-    unsigned itemSize,
-    unsigned maxItems) {
+    unsigned size,
+    unsigned capacity) {
     
-    handle = xQueueCreate(maxItems, itemSize);
+    handle = xQueueCreate(capacity, size);
 }
 
 
@@ -62,11 +62,11 @@ void eos::GenericQueue::clear() {
  *
  *       Funcio:
  *           bool eos::GenericQueue::put(
- *               void* data,
+ *               void *element,
  *               unsigned blockTime)
  *
  *       Entrada:
- *           data     : Punter al buffer de l'element a afeigit
+ *           element  : Punter al element a afeigit
  *           blockTime: Temps maxim de bloqueig
  *
  *       Retorn:
@@ -75,10 +75,10 @@ void eos::GenericQueue::clear() {
  *************************************************************************/
 
 bool eos::GenericQueue::put(
-    void* data,
+    void *element,
     unsigned blockTime) {
     
-    return xQueueSendToBack(handle, data, blockTime) == pdPASS;
+    return xQueueSendToBack(handle, element, blockTime) == pdPASS;
 }
 
 
@@ -88,11 +88,11 @@ bool eos::GenericQueue::put(
  *
  *       Funcio:
  *           bool eos::GenericQueue::get(
- *               void* data,
+ *               void *element,
  *               unsigned blockTime)
  *
  *       Entrada:
- *           data     : Punter al buffer de l'element a exterure
+ *           element  : Punter al element a exterure
  *           blockTime: Temps maxim de bloqueig
  *
  *       Retorn:
@@ -101,18 +101,18 @@ bool eos::GenericQueue::put(
  *************************************************************************/
 
 bool eos::GenericQueue::get(
-    void *data,
+    void *element,
     unsigned blockTime) {
 
-    return xQueueReceive(handle, data, blockTime) == pdPASS;
+    return xQueueReceive(handle, element, blockTime) == pdPASS;
 }
 
 
-bool eos::GenericQueue::putISR(void *data) {
+bool eos::GenericQueue::putISR(void *element) {
     
 }
 
 
-bool eos::GenericQueue::getISR(void *data) {
+bool eos::GenericQueue::getISR(void *element) {
     
 }

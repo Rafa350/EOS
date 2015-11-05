@@ -11,62 +11,48 @@ namespace eos {
     class IStack {
         public:
             virtual const elementType &top() const = 0;
-            virtual void push(const elementType &element) = 0;
-            virtual const elementType &pop() = 0;
+            virtual void push(elementType &element) = 0;
+            virtual void pop() = 0;
+    };
+    
+    class GenericStack {
+        private:
+            unsigned capacity;
+            unsigned count;
+            unsigned size;
+            void *container;
+        public:
+            GenericStack(unsigned size, unsigned initialCapacity);
+            ~GenericStack();
+            void pushElement(void *element);
+            void popElement();
+            void *topElement() const;
+            inline unsigned getCount() const { return count; }
+        private:
+            void resize(unsigned newCapacity);
+            void *getPtr(unsigned index) const;
     };
     
     template <typename elementType>
-    class Stack: public IStack<elementType> {
-        private:
-            unsigned count;
-            unsigned size;
-            elementType *elementPtr;
-
+    class Stack: private GenericStack, public IStack<elementType> {
         public:
-            Stack() :
-                count(0),
-                size(0),
-                elementPtr(nullptr) {            
+            Stack(): 
+                GenericStack(sizeof(elementType), 10) {
             }
-                
-            ~Stack() {
-                
-                if (size > 0)
-                    delete[] elementPtr;
-            }
-            
-            void push(const elementType &element) {
-                
-                if (count == size) {
-                    size += 10;
-                    elementType *newElementPtr = new elementType[size];
-                    if (count > 0) {
-                        memcpy(newElementPtr, elementPtr, count);
-                        delete[] elementPtr;
-                    }
-                    
-                    elementPtr = newElementPtr;
-                }
-                
-                elementPtr[count++] = element;
-            }
-            
-            const elementType &pop() {
-                
-                return elementPtr[--count];
-            }
-            
-            const elementType &top() const {
-                
-                return elementPtr[count - 1];
-            }
+           
+            inline void push(elementType &element) {
 
-            void clear() {
-
-                if (size > 0)
-                    delete[] elementPtr;
-                count = 0;
-                size = 0;
+                pushElement(&element);
+            }            
+            
+            inline void pop() {
+                
+                popElement();
+            }            
+            
+            inline const elementType &top() const {
+                
+                return * ((elementType*) topElement());
             }
     };   
     

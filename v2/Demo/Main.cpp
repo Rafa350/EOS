@@ -53,6 +53,8 @@ class MyApplication: public eos::Application {
         void onSwGREEN(eos::DigInput *input);
         
         void onTimeout(eos::Timer *timer);
+        
+        void onSelector(uint16_t position, uint8_t status);
 };
 
 
@@ -148,6 +150,7 @@ void MyApplication::setupStateMachineService() {
 void MyApplication::setupFormsService() {
     
     selectorService = new eos::SelectorService(i2cMasterService, SEL_ADDRESS);
+    selectorService->setOnChange(EV_SelectorService_onChange(MyApplication, this, &MyApplication::onSelector));
     displayService = new eos::DisplayService(i2cMasterService, DSP_ADDRESS);
     
     //formsService = new eos::FormsService();
@@ -187,6 +190,11 @@ void MyApplication::onSwGREEN(eos::DigInput *input){
 void MyApplication::onTimeout(eos::Timer *timer) {
     
     ledRED->pulse(500);
+}
+
+
+void MyApplication::onSelector(uint16_t position, uint8_t status) {
+    
 }
 
 

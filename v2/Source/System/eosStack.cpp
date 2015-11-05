@@ -1,9 +1,10 @@
-#include "System/eosList.hpp"
-#include "System/eosMemory.hpp"
+#include "System/eosStack.hpp"
 #include "System/eosTask.hpp"
+#include "System/eosMemory.hpp"
 
 
 using namespace eos;
+
 
 const unsigned capacityDelta = 10;
 
@@ -11,24 +12,24 @@ const unsigned capacityDelta = 10;
 /*************************************************************************
  *
  *       Constructor
- *
+ * 
  *       Funcio:
- *           GenericList::GenericList(
+ *           GenericStack::GenericStack(
  *               unsigned size,
  *               unsigned initialCapacity) 
- * 
- *       Entrada:
- *           size           : Tamany en bytes de cada element
- *           initialCapacity: Capacitat inicial de la llista
  *
+ *       Entrada:
+ *           size           : Tamany de cada element
+ *           initialCapacity: Capacitat inicial
+ * 
  *************************************************************************/
 
-GenericList::GenericList(
+GenericStack::GenericStack(
     unsigned _size,
     unsigned initialCapacity):
-    size(_size),
-    count(0),
+    size(_size), 
     capacity(0),
+    count(0),
     container(nullptr) {
     
     resize(initialCapacity);
@@ -38,38 +39,22 @@ GenericList::GenericList(
 /*************************************************************************
  *
  *       Destructor
- * 
+ *
  *       Funcio:
- *           GenericList::~GenericList() 
+ *           GenericStack::~GenericStack()
  *
  *************************************************************************/
 
-GenericList::~GenericList() {
+GenericStack::~GenericStack() {
     
     if (container != nullptr)
         eosHeapFree(container);
 }
 
 
-/*************************************************************************
- *
- *       Afegeix un element a la llista
- * 
- *       Funcio:
- *           unsigned GenericList::addElement(
- *               void *element) 
- * 
- *       Entrada:
- *           element: Punter al element a afeigir
- * 
- *       Retorn:
- *           El index del element
- *
- *************************************************************************/
-
-unsigned GenericList::addElement(
+void GenericStack::pushElement(
     void *element) {
-    
+        
     Task::enterCriticalSection();
     
     if (count + 1 >= capacity)
@@ -80,61 +65,25 @@ unsigned GenericList::addElement(
     count += 1;
     
     Task::exitCriticalSection();
-    
-    return count - 1;
 }
 
 
-/*************************************************************************
- *
- *       Elimina un element de la llista
- * 
- *       Funcio:
- *           void GenericList::removeElement(
- *               unsigned index) 
- * 
- *       Entrada:
- *           index: Index del element a eliminar
- *
- *************************************************************************/
-
-void GenericList::removeElement(
-    unsigned index) {
+void GenericStack::popElement() {
     
     Task::enterCriticalSection();
-    
-    void *ptr = getPtr(index);
-    //memmmove(ptr, element, elementSize);
-    
+
+    if (count > 0) 
+        count -= 1;    
+
     Task::exitCriticalSection();
 }
 
 
-/*************************************************************************
- *
- *       Obte un element de la llista
- * 
- *       Funcio:
- *          void *GenericList::getElement(
- *              unsigned index) const 
- *
- *       Entrada:
- *           index: Index del element
- * 
- *       Retorn:
- *           Punter al element
- *
- *************************************************************************/
-
-void *GenericList::getElement(
-    unsigned index) const {
+void *GenericStack::topElement() const {
     
-    Task::enterCriticalSection();
-    void *p = index < count ? getPtr(index) : nullptr;
-    Task::exitCriticalSection();
-    
-    return p;
+    return count > 0 ? getPtr(count - 1) : nullptr;
 }
+
 
 
 /*************************************************************************
@@ -142,7 +91,7 @@ void *GenericList::getElement(
  *       Obte l'adressa del element especificat
  * 
  *       Funcio:
- *           void *GenericList::getPtr(
+ *           void *GenericStack::getPtr(
  *               unsigned index) const
  * 
  *       Entrada:
@@ -153,7 +102,7 @@ void *GenericList::getElement(
  *
  *************************************************************************/
 
-void *GenericList::getPtr(
+void *GenericStack::getPtr(
     unsigned index) const {
 
     return  (void*) ((unsigned) container + (index * size));    
@@ -165,15 +114,15 @@ void *GenericList::getPtr(
  *       Redimensiona el buffer de dades
  *
  *       Funcio:
- *           void GenericList::resize(
+ *           void GenericStack::resize(
  *               unsigned newCapacity) 
  *
  *       Entrada:
- *           newCapacity : Numero d'elements 
+ *           newCapacity : Nova capacitat de la pila
  *
  *************************************************************************/
 
-void GenericList::resize(
+void GenericStack::resize(
     unsigned newCapacity) {
     
     if (capacity < newCapacity) {
