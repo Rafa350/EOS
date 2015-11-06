@@ -7,6 +7,9 @@
 
 
 namespace eos {
+    
+    class DisplayService;
+    typedef DisplayService *DisplayServiceHandle;
 
     class DisplayService {
         private:

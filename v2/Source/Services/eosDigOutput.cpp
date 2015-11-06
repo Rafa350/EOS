@@ -32,7 +32,7 @@ DigOutputService::DigOutputService() :
  *
  *       Funcio:
  *           void DigOutputService::add(
- *               DigOutput* output) 
+ *               DigOutputHandle output) 
  * 
  *       Entrada:
  *           output: La sortida a afeigit
@@ -40,7 +40,7 @@ DigOutputService::DigOutputService() :
  *************************************************************************/
 
 void DigOutputService::add(
-    DigOutput* output) {
+    DigOutputHandle output) {
     
     outputs.add(output);
 }
@@ -66,7 +66,7 @@ void DigOutputService::run() {
         DigOutputListIterator iterator(outputs);
         while (!iterator.isEnd()) {
             
-            DigOutput *output = iterator.current();
+            DigOutputHandle output = iterator.current();
     
             unsigned t = output->timeout;
             if (t > 0) {
@@ -88,7 +88,7 @@ void DigOutputService::run() {
  *  
  *       Funcio:
  *           eos:DigOutput::DigOutputs(
- *               DigOutputService *service,
+ *               DigOutputServiceHandle service,
  *               unsigned pin,
  *               bool inverted)
  *
@@ -100,10 +100,11 @@ void DigOutputService::run() {
  *************************************************************************/
 
 DigOutput::DigOutput(
-    DigOutputService *service,
+    DigOutputServiceHandle service,
     uint8_t pin,
     bool inverted) {
 
+    this->service = service;
     this->pin = pin;
     this->inverted = inverted;
     this->timeout = 0;

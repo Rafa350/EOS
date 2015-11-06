@@ -10,30 +10,36 @@
 namespace eos {
     
     class DigOutput;
+    typedef DigOutput *DigOutputHandle;
     
-    typedef List<DigOutput*> DigOutputList;
-    typedef ListIterator<DigOutput*> DigOutputListIterator;
-
+    class DigOutputService;
+    typedef DigOutputService *DigOutputServiceHandle;
+    
     class DigOutputService: public IRunable {      
+        private:
+            typedef List<DigOutputHandle> DigOutputList;
+            typedef ListIterator<DigOutputHandle> DigOutputListIterator;
+            
         private:
             Task task;
             DigOutputList outputs;        
             
         public:
             DigOutputService();
-            void add(DigOutput *output);
+            void add(DigOutputHandle output);
         private:
             void run();
     };
     
     class DigOutput {        
         private:
+            DigOutputServiceHandle service;
             uint8_t pin;
             bool inverted;
             unsigned timeout;
         
         public:
-            DigOutput(DigOutputService *service, uint8_t pin, bool inverted);
+            DigOutput(DigOutputServiceHandle service, uint8_t pin, bool inverted);
             bool get() const;
             void set(bool state);
             void toggle();

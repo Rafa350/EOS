@@ -9,41 +9,48 @@
 
 
 #define EV_DigInput_onChange(cls, instance, method) \
-    new eos::CallbackP1<cls, eos::DigInput*>(instance, method)
+    new eos::CallbackP1<cls, eos::DigInputHandle>(instance, method)
 
 
 namespace eos {
     
     class DigInput;
+    typedef DigInput *DigInputHandle;
+    
+    class DigInputService;
+    typedef DigInputService *DigInputServiceHandle;
 
-    typedef List<DigInput*> DigInputList;
-    typedef ListIterator<DigInput*> DigInputListIterator;
-    typedef ICallbackP1<DigInput*> IDigInputEvent;
+    typedef ICallbackP1<DigInputHandle> IDigInputEvent;
     
     class DigInputService: public IRunable {        
+        private:
+            typedef List<DigInputHandle> DigInputList;
+            typedef ListIterator<DigInputHandle> DigInputListIterator;
+            
         private:
             Task task;
             DigInputList inputs;
             
         public:
             DigInputService();
-            void add(DigInput *input);
+            void add(DigInputHandle input);
         private:
             void run();           
     };
 
     class DigInput {
         private:
+            DigInputServiceHandle service;
             uint8_t pin;
             uint32_t pattern;
             bool inverted;
             bool state;
-            IDigInputEvent *onChange;
+            IDigInputEvent *evChange;
         
         public:
-            DigInput(DigInputService *service, uint8_t pin, bool inverted);
+            DigInput(DigInputServiceHandle service, uint8_t pin, bool inverted);
             inline bool get() const { return state; }
-            inline void setOnChange(IDigInputEvent *event) { onChange = event; }
+            inline void setChangeEvent(IDigInputEvent *event) { evChange = event; }
         private:
             void pinInitialize() const;
             bool pinGet() const;

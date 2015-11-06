@@ -6,13 +6,7 @@
 #include "System/eosTask.hpp"
 #include "System/eosList.hpp"
 #include "System/eosQueue.hpp"
-#include "System/eosCallbacks.hpp"
-
-
-#define EV_Form_onActivate(cls, instance, method) \
-    new eos::CallbackP1<cls, eos::Form*>(instance, method)
-#define EV_Form_onDeactivate(cls, instance, method) \
-    new eos::CallbackP1<cls, eos::Form*>(instance, method)
+#include "Services/Forms/eosDisplay.hpp"
 
 
 #define MSG_NULL               0
@@ -36,74 +30,79 @@
 namespace eos {
     
     class Form;
+    typedef Form *FormHandle;
     
-    typedef struct {
-        unsigned command;
-    } MsgCommand;
-
-    typedef struct {
-        Form *sender;
-        unsigned event;
-        void *params;
-    } MsgNotify;
-
-    typedef struct {
+    class FormsService;
+    typedef FormsService *FormsServiceHandle;
+    
+    struct MsgSelector {
         unsigned event;
         int position;
         uint8_t state;
-    } MsgSelector;
+    };
 
-    typedef struct {
+    struct MsgKeyboard {
+        unsigned event;
+    };
+
+    struct Message {
         unsigned id;
+        FormHandle target;
         union {
-            MsgCommand msgCommand;
-            MsgNotify msgNotify;
             MsgSelector msgSelector;
+            MsgKeyboard msgKeyboard;
         };
-    } Message;
-
-    typedef List<Form*> FormList;
-    typedef ListIterator<Form*> FormListIterator;
+    };
     
-    typedef ICallbackP1<Form*> IFormEvent;    
+    class MessageQueue {
+        private:
+            Queue<Message> queue;
+
+        public: 
+            MessageQueue();
+            void send(Message &message, unsigned blockTime);
+            bool receive(Message &message, unsigned blockTime);
+    };
     
     class FormsService: public IRunable {
         private:
-            typedef Queue<Message> MessageQueue;
+            typedef List<FormHandle> FormList;
+            typedef ListIterator<FormHandle> FormListIterator;
             
         private:
             Task task;
-            MessageQueue messageQueue;
+            MessageQueue *messageQueue;
+            DisplayServiceHandle displayService;
             FormList forms;
-            Form *activeForm;            
+            FormHandle activeForm;            
             
         public:
-            FormsService();
+            FormsService(MessageQueue *messageQueue, DisplayServiceHandle displayService);
             ~FormsService();
-            void add(Form *form);
-            Form *activate(Form *form);
-            Form *getActiveForm() { return activeForm; }
-            void sendMessage(Message message);
+            void add(FormHandle form);
+            FormHandle activate(FormHandle form);
+            FormHandle getActiveForm() { return activeForm; }
         private:
             void run();
     };
-    
+       
     class Form {
         private:
-            FormsService *service;
-            Form *parent;
+            FormsServiceHandle service;
+            FormHandle parent;
             bool paintPending;
-            IFormEvent *onActivate;
-            IFormEvent *onDeactivate;
             
         public:
-            Form(FormsService *service, Form *parent);
+            Form(FormsServiceHandle service, FormHandle parent);
+            virtual ~Form();
             void refresh();
-            virtual void paint();
-            void activate();
-            Form *getParent() { return parent; }
-            inline void setOnActivate(IFormEvent *event) { onActivate = event; }
-            inline void setOnDeactivate(IFormEvent *event) { onDeactivate = event; }
+            void activate() { service->activate(this); }
+            FormHandle getParent() { return parent; }
+        protected:
+            virtual void dispatchMessage(Message &message);
+            virtual void onActivate(FormHandle deactivateForm) {} 
+            virtual void onDeactivate(FormHandle activateForm) {}
+            virtual void onPaint(DisplayServiceHandle displayService);
             
         friend class FormsService;
     };

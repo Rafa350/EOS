@@ -10,7 +10,7 @@
 #include "Services/Forms/eosForms.hpp"
 #include "Services/Forms/eosSelector.hpp"
 #include "Services/Forms/eosDisplay.hpp"
-//#include "Services/Forms/eosFormsMenus.h"
+#include "Services/Forms/eosFormsMenus.hpp"
 #include "fsmDefines.hpp"
 #include "fsmStates.hpp"
 #include "fsmMachine.hpp"
@@ -20,23 +20,24 @@
 
 class MyApplication: public eos::Application {
     private:
-        eos::DigInputService *digInputService;
-        eos::DigOutputService *digOutputService;
+        eos::DigInputServiceHandle digInputService;
+        eos::DigOutputServiceHandle digOutputService;
         eos::I2CMasterService *i2cMasterService;
         eos::TimerService *timerService;
-        eos::FormsService *formsService;
-        eos::SelectorService *selectorService;
-        eos::DisplayService *displayService;
-        eos::DigOutput *ledRED;
-        eos::DigOutput *ledAMBER;
-        eos::DigOutput *ledGREEN;
-        eos::DigInput *swRED;
-        eos::DigInput *swAMBER;
-        eos::DigInput *swGREEN;
+        eos::FormsServiceHandle formsService;
+        eos::SelectorServiceHandle selectorService;
+        eos::DisplayServiceHandle displayService;
+        eos::DigOutputHandle ledRED;
+        eos::DigOutputHandle ledAMBER;
+        eos::DigOutputHandle ledGREEN;
+        eos::DigInputHandle swRED;
+        eos::DigInputHandle swAMBER;
+        eos::DigInputHandle swGREEN;
         eos::Timer *timer;        
         eos::StateMachineService *stateMachineService;
-        eos::Form *menuForm;
-        eos::Form *mainForm;
+        eos::MessageQueue *messageQueue;
+        eos::FormHandle menuForm;
+        eos::FormHandle mainForm;
 
     public :
         MyApplication();
@@ -92,13 +93,13 @@ void MyApplication::setupDigInputService() {
     digInputService = new eos::DigInputService();
 
     swRED = new eos::DigInput(digInputService, pinSW1, true);
-    swRED->setOnChange(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwRED));
+    swRED->setChangeEvent(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwRED));
    
     swAMBER = new eos::DigInput(digInputService, pinSW2, true);
-    swAMBER->setOnChange(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwAMBER));
+    swAMBER->setChangeEvent(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwAMBER));
     
     swGREEN = new eos::DigInput(digInputService, pinSW3, true);    
-    swGREEN->setOnChange(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwGREEN));
+    swGREEN->setChangeEvent(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwGREEN));
 }
 
 
@@ -149,15 +150,16 @@ void MyApplication::setupStateMachineService() {
 
 void MyApplication::setupFormsService() {
     
+    extern const uint8_t menuMnuMain[];
+    
     selectorService = new eos::SelectorService(i2cMasterService, SEL_ADDRESS);
-    selectorService->setOnChange(EV_SelectorService_onChange(MyApplication, this, &MyApplication::onSelector));
+    selectorService->setChangeEvent(EV_SelectorService_onChange(MyApplication, this, &MyApplication::onSelector));
     displayService = new eos::DisplayService(i2cMasterService, DSP_ADDRESS);
     
-    //formsService = new eos::FormsService();
-    
-    /*menuParams.resource = menuMnuMain;
-    menuForm = eosFormsCreateMenu(hFormsService, &menuParams);
-    formsService->activate(menuForm);*/
+    messageQueue = new eos::MessageQueue();
+    formsService = new eos::FormsService(messageQueue, displayService);
+    menuForm = new eos::MenuForm(formsService, nullptr, nullptr, (uint8_t*) menuMnuMain);
+    formsService->activate(menuForm);
 }
 
 
@@ -193,8 +195,18 @@ void MyApplication::onTimeout(eos::Timer *timer) {
 }
 
 
-void MyApplication::onSelector(uint16_t position, uint8_t status) {
+void MyApplication::onSelector(uint16_t position, uint8_t state) {
     
+    eos::Form *form = formsService->getActiveForm();
+    if (form != nullptr) {
+        eos::Message message;
+        message.id = MSG_SELECTOR;
+        message.target = form;
+        message.msgSelector.event = EV_SELECTOR_INC;
+        message.msgSelector.position = position;
+        message.msgSelector.state = state;
+        messageQueue->send(message, 100);
+    }
 }
 
 

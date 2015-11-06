@@ -10,5 +10,9 @@
 #include "eosConfig.h"
 
 
+#define eosMin(a, b)    (a) < (b) ? a : b
+#define eosMax(a, b)    (a) > (b) ? a : b
+
+
 #endif	
 

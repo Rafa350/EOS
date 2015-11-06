@@ -17,13 +17,22 @@ const TaskPriority taskPriority = TaskPriority::normal;
  *       Constructor
  *
  *       Funcio:
- *           bool FormsService::FormsService()
+ *           bool FormsService::FormsService(
+ *               MessageQueue *messageQueue,
+ *               DisplayServiceHandle displayService)
+ * 
+ *       Entrada:
+ *           messageQueue  : La cua de missatges
+ *           displayService: Servei de pantalla
  *
  *************************************************************************/
 
-FormsService::FormsService() :
+FormsService::FormsService(
+    MessageQueue *_messageQueue,
+    DisplayServiceHandle _displayService) :
     task(taskStackSize, taskPriority, this),
-    messageQueue(messageQueueSize) {
+    messageQueue(_messageQueue),
+    displayService(_displayService) {
 }
 
 
@@ -33,7 +42,7 @@ FormsService::FormsService() :
  * 
  *       Funcio:
  *           void FormsService::add(
- *               Form *form) 
+ *               FormHandle form) 
  * 
  *       Entrada:
  *           form: El form a afeigir
@@ -41,7 +50,7 @@ FormsService::FormsService() :
  *************************************************************************/
 
 void FormsService::add(
-    Form *form) {
+    FormHandle form) {
     
     forms.add(form);
 }
@@ -66,18 +75,17 @@ void FormsService::run() {
         // Procesa els missatges en la cua
         //
         Message message;
-        if (messageQueue.get(message, 1000)) {
-            
-        }
+        if (messageQueue->receive(message, 1000)) 
+            message.target->dispatchMessage(message);
         
         // Procesa el repintat
         //
         FormListIterator iterator(forms);
         while (!iterator.isEnd()) {
-            Form *form = iterator.current();
+            FormHandle form = iterator.current();
             if (form->paintPending) {
                 form->paintPending = false;
-                form->paint();                
+                form->onPaint(displayService);                
             }
         }
     }
@@ -89,8 +97,8 @@ void FormsService::run() {
  *       Canvia el formulari actiu
  *
  *       Funcio:
- *           Form *FormsService::activate(
- *               Form *form)
+ *           FormHandle FormsService::activate(
+ *               FormHandle form)
  *
  *       Entrada:
  *           form El formulari a activat. NULL si no es vol activar cap
@@ -104,38 +112,17 @@ void FormsService::run() {
  *
  *************************************************************************/
 
-Form *FormsService::activate(
-    Form *form) {
+FormHandle FormsService::activate(
+    FormHandle form) {
+
+    if (activeForm != nullptr)    
+        activeForm->onDeactivate(form);
     
-    Form *inactiveForm = activeForm;
-    
-    if ((inactiveForm != nullptr) && (inactiveForm->onDeactivate != nullptr))
-        inactiveForm->onDeactivate->execute(form);
-    
+    FormHandle oldActive = activeForm;
     activeForm = form;
 
-    if ((form != nullptr) && (form->onActivate != nullptr))
-        form->onActivate->execute(inactiveForm);
-}
-
-
-/*************************************************************************
- *
- *       Envia un missatge a la cua
- * 
- *       Funcio:
- *           void FormsService::sendMessage(
- *               Message message) 
- * 
- *       Entrada:
- *           message: El missatge a enviar
- *
- *************************************************************************/
-
-void FormsService::sendMessage(
-    Message message) {
-    
-    messageQueue.get(message, 1000);
+    if (activeForm != nullptr)    
+        activeForm->onDeactivate(oldActive);
 }
 
 
@@ -145,8 +132,8 @@ void FormsService::sendMessage(
  *
  *       Funcio:
  *           Form::Forms(
- *               FormsService *service,
- *               Form *parent)
+ *               FormsServiceHandle service,
+ *               FormHandle parent)
  *
  *       Entrada:
  *           service: El servei
@@ -155,14 +142,28 @@ void FormsService::sendMessage(
  *************************************************************************/
 
 Form::Form(
-    FormsService *service,
-    Form *parent) {
+    FormsServiceHandle service,
+    FormHandle parent) {
 
     service->add(this);
     
     this->service = service;
     this->parent = parent;
     paintPending = true;
+}
+
+
+/*************************************************************************
+ *
+ *       Destructor
+ *
+ *       Funcio:
+ *           Form::~Form() 
+ * 
+ *************************************************************************/
+
+Form::~Form() {
+    
 }
 
 
@@ -186,10 +187,47 @@ void Form::refresh() {
  *       Dibuixa el formulari en pantalla
  * 
  *       Funcio:
- *           void Form::paint() 
+ *           void Form::paint(
+ *               DisplayServiceHandle displayService) 
+ * 
+ *       Entrada:
+ *           displayService: Servei de pantalla
  *
  *************************************************************************/
 
-void Form::paint() {
+void Form::onPaint(
+    DisplayServiceHandle displayService) {
     
+}
+
+
+void Form::dispatchMessage(
+    Message &message) {
+    
+    switch (message.id) {
+        default:
+            break;
+    }
+}
+
+
+
+MessageQueue::MessageQueue():
+    queue(sizeof(Message)) {    
+}
+
+
+void MessageQueue::send(
+    Message &message,
+    unsigned blockTime) {
+    
+    queue.put(message, blockTime);
+}
+
+
+bool MessageQueue::receive(
+    Message &message, 
+    unsigned blockTime) {
+    
+    return queue.get(message, blockTime);
 }

@@ -35,7 +35,7 @@ DigInputService::DigInputService() :
  * 
  *       Funcio:
  *           void DigInputService::add(
- *              DigInput *input) 
+ *              DigInputHandle input) 
  * 
  *       Entrada:
  *           input: L'entrada a afeigir
@@ -43,7 +43,7 @@ DigInputService::DigInputService() :
  *************************************************************************/
 
 void DigInputService::add(
-    DigInput *input) {
+    DigInputHandle input) {
 
     inputs.add(input);
 }
@@ -69,7 +69,7 @@ void DigInputService::run() {
         DigInputListIterator iterator(inputs);
         while (!iterator.isEnd()) {
             
-            DigInput *input = iterator.current();
+            DigInputHandle input = iterator.current();
             bool changed = false;
             
             input->pattern <<= 1;
@@ -85,8 +85,8 @@ void DigInputService::run() {
                 input->state = false;
             }
             
-            if (changed && (input->onChange != nullptr)) 
-                input->onChange->execute(input);
+            if (changed && (input->evChange != nullptr)) 
+                input->evChange->execute(input);
             
             ++iterator;
         }
@@ -100,7 +100,7 @@ void DigInputService::run() {
  *
  *       Funcio:
  *           DigInput::DigInput(
- *               DigInputService *service,
+ *               DigInputServiceHandle service,
  *               uint8_t pin, 
  *               bool inverted)
  *
@@ -112,14 +112,15 @@ void DigInputService::run() {
  *************************************************************************/
 
 DigInput::DigInput(
-    DigInputService *service,
+    DigInputServiceHandle service,
     uint8_t pin, 
     bool inverted) {
     
+    this->service = service;
     this->pin = pin;
     this->inverted = inverted;
 
-    onChange = nullptr;
+    evChange = nullptr;
 
     pinInitialize();
     state = pinGet();

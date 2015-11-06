@@ -1,70 +1,45 @@
-#include "eos.h"
-
-#include "Services/Forms/eosFormsMenus.h"
-#include "DisplayService.h"
-
-
-#define MAX_LEVELS  10
-
-typedef struct {                       // Informacio d'un menu
-    unsigned offset;                   // -Offset al menu
-    unsigned numItems;                 // -Numero de items
-    unsigned firstItem;                // -Primer item a mostrar
-    unsigned currentItem;              // -Item actual
-} MenuInfo;
-
-typedef struct {                       // Dades privades
-    uint8_t *resource;                 // -Recurs del menu
-    unsigned level;                    // -Nivell de submenus
-    MenuInfo info[MAX_LEVELS];         // -Pila d'informacio del menu
-    unsigned showItems;                // -Numero d'items a mostrar
-} PrivateData;
+#include "eos.hpp"
+#include "Services/Forms/eosFormsMenus.hpp"
+#include "Services/Forms/eosDisplay.hpp"
 
 
-static void onCreate(eosFormHandle hForm, void *privateParams);
-static void onPaint(eosFormHandle hForm, eosDisplayServiceHandle hDisplay);
-static void onActivate(eosFormHandle hForm, eosFormHandle hFormDeactivated);
-
-static void onMessage(eosFormsMessage *message);
-static void onMsgSelectorInc(eosFormsMessage *message);
-static void onMsgSelectorDec(eosFormsMessage *message);
-static void onMsgSelectorClick(eosFormsMessage *message);
-static void notify(eosFormHandle hForm, unsigned event, void *params);
+using namespace eos;
 
 
 /*************************************************************************
  *
- *       Crea un form de menus
+ *       Constructor
  *
  *       Funcio:
- *           eosFormHandle eosFormsCreateMenu(
- *               eosFormsServiceHandle hService,
- *               eosMenuParams *params)
+ *           MenuForm::MenuForm
+ *               FormsServiceHandle service,
+ *               FormHandle parent,
+ *               IMenuOwner *owner,
+ *               uint8_t *esource)
  *
  *       Entrada:
- *           hService: Handler del servei
- *           params  : Parametres d'inicialitzacio
- *
- *       Retorn:
- *           El handler del form
+ *           service : El servei
+ *           parent  : El form pare
+ *           owner   : El propietari del menu
+ *           resource: El recurs del menu
  *
  *************************************************************************/
 
-eosFormHandle eosFormsCreateMenu(
-    eosFormsServiceHandle hService, 
-    eosMenuParams *params) {
-
-    eosFormParams formParams;
-    memset(&formParams, 0, sizeof(formParams));
-    formParams.hParent = params->hParent;
-    formParams.onCreate = onCreate;
-    formParams.onActivate = onActivate;
-    formParams.onMessage = onMessage;
-    formParams.onPaint = onPaint;
-    formParams.privateParams = params;
-    formParams.privateDataSize = sizeof(PrivateData);
+MenuForm::MenuForm(
+    FormsServiceHandle service, 
+    FormHandle parent,
+    IMenuOwner *_owner,
+    uint8_t *_resource):
+    Form(service, parent),
+    owner(_owner),
+    resource(_resource) {
     
-    return eosFormsCreateForm(hService, &formParams);
+    showItems = 5;
+    level = 0;
+    info[0].offset = 0;
+    info[0].numItems = resource[0];
+    info[0].firstItem = 0;
+    info[0].currentItem = 0;
 }
 
 
@@ -73,73 +48,58 @@ eosFormHandle eosFormsCreateMenu(
  *       Procesa els missatges que arribin al form
  *
  *       Funcio:
- *           void onMessage(
- *               eosFormsMessage *message)
+ *           void MenuForm::dispatchMessage(
+ *               Message &message)
  *
  *       Entrada:
- *           hService: El handler del sevei
  *           message : El missatge a procesar
  *
  **************************************************************************/
 
-static void onMessage(
-    eosFormsMessage *message) {
+void MenuForm::dispatchMessage(
+    Message &message) {
 
-    switch (message->id) {
+    switch (message.id) {
         case MSG_KEYBOARD:
+            switch (message.msgKeyboard.event) {
+                case EV_KEYBOARD_UP:
+                    prevItem();
+                    break;
+
+                case EV_KEYBOARD_DOWN:
+                    nextItem();
+                    break;
+
+                case EV_KEYBOARD_OK:
+                    selectItem();
+                    break;
+                    
+                case EV_KEYBOARD_LEFT:
+                    //backMenu();
+                    break;
+            }
             break;
 
         case MSG_SELECTOR:
-            switch (message->msgSelector.event) {
+            switch (message.msgSelector.event) {
                 case EV_SELECTOR_DEC:
-                    onMsgSelectorDec(message);
+                    prevItem();
                     break;
 
                 case EV_SELECTOR_INC:
-                    onMsgSelectorInc(message);
+                    nextItem();
                     break;
 
-                case EV_SELECTOR_CLICK: {
-                    onMsgSelectorClick(message);
+                case EV_SELECTOR_CLICK: 
+                    selectItem();
                     break;
-                }
             }
             break;
+            
+        default:
+            Form::dispatchMessage(message);
+            break;
     }
-}
-
-
-/*************************************************************************
- *
- *       Procesa el event onCreate
- *
- *       Funcio:
- *           void onCreate(
- *               eosFormHandle hForm,
- *               void *privateParams)
- *
- *       Entrada:
- *           hForm: Handler del form
- *           privateParams: Parametres de creacio del form
- *
- *************************************************************************/
-
-static void onCreate(
-    eosFormHandle hForm,
-    void *privateParams) {
-
-    eosMenuParams *params = (eosMenuParams*) privateParams;
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
-
-    // Inicialitza les dades privades
-    //
-    data->resource = params->resource;
-    data->showItems = 5;
-    data->level = 0;
-    data->info[0].offset = 0;
-    data->info[0].numItems = data->resource[0];
-    data->info[0].firstItem = 0;
-    data->info[0].currentItem = 0;
 }
 
 
@@ -148,21 +108,18 @@ static void onCreate(
  *       Procesa el event onActivate
  *
  *       Funcio:
- *           void onActivate(
- *               eosFormHandle hForm,
- *               eosFormHandle hFormDeactivated)
+ *           void Menuform::onActivate(
+ *               Form *deactivatedForm,
  *
  *       Entrada:
- *           hForm           : Handler del form
- *           hFormDeactivated: Handler del form desactivat
+ *           deactivatedForm: El form desactivat
  *
  *************************************************************************/
 
-static void onActivate(
-    eosFormHandle hForm,
-    eosFormHandle hFormDeactivated) {
+void MenuForm::onActivate(
+    Form *deactivateForm) {
 
-    eosFormsRefresh(hForm);
+    refresh();
 }
 
 
@@ -171,37 +128,32 @@ static void onActivate(
  *       Procesa el event ON_PAINT
  *
  *       Funcio:
- *           void onPaint(
- *               eosFormHandle hForm,
- *               eosDisplayServiceHandle hDisplay)
+ *           void MenuForm::onPaint(
+ *               DisplayServiceHandle displayService) 
  *
  *       Entrada:
- *           hForm   : Handle del form
- *           hDisplay: hANDLE DEL DISPLAY
+ *           displayService: Servei de pantalla
  *
  *************************************************************************/
 
-static void onPaint(
-    eosFormHandle hForm,
-    eosDisplayServiceHandle hDisplay) {
+void MenuForm::onPaint(
+    DisplayServiceHandle displayService) {
 
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
+    if (displayService->beginCommand()) {
 
-    if (eosDisplayBeginCommand(hDisplay)) {
-
-        uint8_t *resource = data->resource;
-        MenuInfo *info = &data->info[data->level];
+        uint8_t *resource = resource;
+        MenuInfo *info = &info[level];
 
         unsigned offset = info->offset;
         unsigned titleLen = resource[offset + 1];
-        char *title = &resource[offset + 2];
+        char *title = (char*) &resource[offset + 2];
 
-        eosDisplayAddCommandClear(hDisplay);
-        eosDisplayAddCommandDrawText(hDisplay, 0, 0, title, 0, titleLen);
-        eosDisplayAddCommandDrawLine(hDisplay, 0, 10, 127, 10);
+        displayService->addCommandClear();
+        displayService->addCommandDrawText(0, 0, title, 0, titleLen);
+        displayService->addCommandDrawLine(0, 10, 127, 10);
 
         unsigned i = info->firstItem;
-        unsigned j = min(info->numItems, data->showItems);
+        unsigned j = eosMin(info->numItems, showItems);
         unsigned k = 12;
         while (j--) {
 
@@ -209,13 +161,13 @@ static void onPaint(
             unsigned itemOffset = resource[itemMapOffset] + resource[itemMapOffset + 1] * 256;
 
             unsigned itemTitleLen = resource[itemOffset + 1];
-            char *itemTitle = &resource[itemOffset + 2];
+            char *itemTitle = (char*) &resource[itemOffset + 2];
 
             if (i == info->currentItem) {
-                eosDisplayAddCommandFillRectangle(hDisplay, 0, k, 127, k + 8);
-                eosDisplayAddCommandSetColor(hDisplay, 0, 1);
+                displayService->addCommandFillRectangle(0, k, 127, k + 8);
+                displayService->addCommandSetColor(0, 1);
             }
-            eosDisplayAddCommandDrawText(hDisplay, 10, k, itemTitle, 0, itemTitleLen);
+            displayService->addCommandDrawText(10, k, itemTitle, 0, itemTitleLen);
 
             /*
             eosMenuNotifyGetValue notifyParams;
@@ -225,14 +177,14 @@ static void onPaint(
             if (notifyParams.itemValue != NULL)
                 eosDisplayAddCommandDrawText(hDisplay, 60, k, notifyParams.itemValue, 0, -1);
             */
-            eosDisplayAddCommandSetColor(hDisplay, 1, 0);
+            displayService->addCommandSetColor(1, 0);
 
             i += 1;
             k += 10;
         }
 
-        eosDisplayAddCommandRefresh(hDisplay);
-        eosDisplayEndCommand(hDisplay);
+        displayService->addCommandRefresh();
+        displayService->endCommand();
     }
 }
 
@@ -242,26 +194,20 @@ static void onPaint(
  *       Mou el selector al primer item del menu
  *
  *       Funcio:
- *           void firstItem(
- *               eosFormHandle hForm)
- *
- *       Entrada:
- *           hForm: El handler del form
+ *           void MenuForm::firstItem()
  *
  *************************************************************************/
 
-/*static void firstItem(
-    eosFormHandle hForm) {
+void MenuForm::firstItem() {
 
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
-    MenuInfo *info = &data->info[data->level];
+    MenuInfo *info = &info[level];
 
     if (info->currentItem != 0) {
         info->currentItem = 0;
         info->firstItem = 0;
-        eosFormsRefresh(hForm);
+        refresh();
     }
-}*/
+}
 
 
 /*************************************************************************
@@ -269,168 +215,110 @@ static void onPaint(
  *       Mou el selector a l'ultim item del menu
  *
  *       Funcio:
- *           void lastItem(
- *               eosFormHandle hForm)
- *
- *       Entrada:
- *           hForm: Handler del form
+ *           void MenuForm::lastItem()
  *
  *************************************************************************/
 
-/*static void lastItem(
-    eosFormHandle hForm) {
+void MenuForm::lastItem() {
 
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
-    MenuInfo *info = &data->info[data->level];
+    MenuInfo *info = &info[level];
 
     if (info->currentItem <= info->numItems - 1) {
         info->currentItem = info->numItems - 1;
-        info->firstItem = info->numItems - data->showItems;
-        eosFormsRefresh(hForm);
+        info->firstItem = info->numItems - showItems;
+        refresh();
     }
 }
-*/
 
 
 /*************************************************************************
  *
- *       Procesa el missatge MSG_SELECTOR_INC
+ *       Mou el selector al seguent item del menu
  *
  *       Funcio:
- *           void onMsgSelectorInc
- *               eosFormsMessage *message)
- *
- *       Entrada:
- *           message: El missatge a procesar
+ *           void MenuForm::nextItem()
  *
  *************************************************************************/
 
-static void onMsgSelectorInc(
-    eosFormsMessage *message) {
-
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
-    MenuInfo *info = &data->info[data->level];
+void MenuForm::nextItem() {
+    
+    MenuInfo *info = &info[level];
 
     if (info->currentItem < info->numItems - 1) {
         info->currentItem++;
-        if (info->firstItem + data->showItems <= info->currentItem)
+        if (info->firstItem + showItems <= info->currentItem)
             info->firstItem++;
-        eosFormsRefresh(message->hForm);
+        refresh();
     }
 }
-
+ 
 
 /*************************************************************************
  *
- *       Procesa el missatge MSG_SELECTOR_DEC
+ *       Mou el selector a l'anterior item del menu
  *
  *       Funcio:
- *           void onMsgSelectorDec(
- *               eosFormsMessage *message)
- *
- *       Entrada:
- *           message: El missatge a procesar
+ *           void MenuForm::prevItem()
  *
  *************************************************************************/
 
-static void onMsgSelectorDec(
-    eosFormsMessage *message) {
+void MenuForm::prevItem() {
 
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
-    MenuInfo *info = &data->info[data->level];
+    MenuInfo *info = &info[level];
 
     if (info->currentItem > 0) {
         info->currentItem--;
         if (info->firstItem > info->currentItem)
             info->firstItem--;
-        eosFormsRefresh(message->hForm);
+        refresh();
     }
 }
 
 
 /*************************************************************************
  *
- *       Procesa el missatge MSG_SELECTOR_CLICK
+ *       Selecciona el item actual
  *
  *       Funcio:
- *           void onMsgSelectorClick(
- *               eosFormsMessage *message)
- *
- *       Entrada:
- *           message: El missatge a procsar
+ *           void MenuForm::selectItem()
  *
  *************************************************************************/
 
-static void onMsgSelectorClick(
-    eosFormsMessage *message) {
+void MenuForm::selectItem() {
+    
+    MenuInfo *info = &info[level];
 
-    eosFormHandle hForm = message->hForm;
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
-    uint8_t *resource = data->resource;
-
-    unsigned offset = data->info[data->level].offset;
-    unsigned currentItem = data->info[data->level].currentItem;
+    unsigned offset = info[level].offset;
+    unsigned currentItem = info[level].currentItem;
     unsigned itemMapOffset = offset + 2 + resource[offset + 1] + (currentItem * 2);
     unsigned itemOffset = resource[itemMapOffset] + resource[itemMapOffset + 1] * 256;
 
     switch (resource[itemOffset] & 0x03) {
         case 0: {
-            unsigned command = resource[itemOffset + 2 +  resource[itemOffset + 1]];
-            eosFormsSendCommand(hForm, command);
+            if (owner != nullptr) {
+                unsigned command = resource[itemOffset + 2 +  resource[itemOffset + 1]];
+                owner->onCommand(command);
+            }
             break;
         }
 
         case 0x01:
-            if (data->level < MAX_LEVELS) {
-                data->level++;
-                MenuInfo *info = &data->info[data->level];
+            if (level < MAX_LEVELS) {
+                level++;
+                MenuInfo *info = &info[level];
                 info->offset = itemOffset + 2 + resource[itemOffset + 1];
                 info->numItems = resource[info->offset];
                 info->firstItem = 0;
                 info->currentItem = 0;
-                eosFormsRefresh(hForm);
+                refresh();
             }
             break;
 
         case 0x02:
-            if (data->level > 0)  {
-                data->level--;
-                eosFormsRefresh(hForm);
+            if (level > 0)  {
+                level--;
+                refresh();
             }
             break;
     }
-}
-
-
-/*************************************************************************
- *
- *       Envia un missatge de notificacio al pare del form
- *
- *       Funcio:
- *           void notify(
- *               eosFormHandle hForm,
- *               unsigned event,
- *               void *parameters)
- *
- *       Entrada:
- *           hForm : El form que emiteix la notificacio
- *           event : El codi del event
- *           params: Parametres del event
- *
- *************************************************************************/
-
-static void notify(
-    eosFormHandle hForm,
-    unsigned event,
-    void *params) {
-
-    eosFormsMessage message;
-
-    message.id = MSG_NOTIFY;
-    message.hForm = eosFormsGetParent(hForm);
-    message.msgNotify.hSender = hForm;
-    message.msgNotify.event = event;
-    message.msgNotify.params = params;
-
-    eosFormsSendMessage(&message);
 }

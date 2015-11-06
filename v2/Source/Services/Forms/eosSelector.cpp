@@ -29,7 +29,7 @@ SelectorService::SelectorService(
     task(taskStackSize, taskPriority, this),
     i2cService(_i2cService),
     addr(_addr),
-    onChange(nullptr) {
+    evChange(nullptr) {
 }
 
 
@@ -67,8 +67,8 @@ void SelectorService::run() {
                 if ((state != newState) || (position != newPosition)) {
                     position = newPosition;
                     state = newState;
-                    if (onChange != nullptr)
-                        onChange->execute(position, state);
+                    if (evChange != nullptr)
+                        evChange->execute(position, state);
                 }
             }
         }

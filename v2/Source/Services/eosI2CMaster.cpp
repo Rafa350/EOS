@@ -5,9 +5,6 @@
 #include "HAL/halI2C.h"
 
 
-#define min(a, b)    (a) < (b) ? a : b
-
-
 using namespace eos;
 
 
@@ -315,7 +312,7 @@ void I2CMasterService::stateMachine() {
 
         case State::receiveLength: {
             uint8_t data = halI2CReceivedByteGet(moduleId);
-            maxIndex = min(transaction->rxSize, data);
+            maxIndex = eosMin(transaction->rxSize, data);
             check += data;
             halI2CReceivedByteAcknowledge(moduleId, true);
             waitingSlaveACK = true;
