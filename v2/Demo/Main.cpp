@@ -153,13 +153,14 @@ void MyApplication::setupFormsService() {
     extern const uint8_t menuMnuMain[];
     
     selectorService = new eos::SelectorService(i2cMasterService, SEL_ADDRESS);
-    selectorService->setChangeEvent(EV_SelectorService_onChange(MyApplication, this, &MyApplication::onSelector));
     displayService = new eos::DisplayService(i2cMasterService, DSP_ADDRESS);
     
     messageQueue = new eos::MessageQueue();
     formsService = new eos::FormsService(messageQueue, displayService);
-    menuForm = new eos::MenuForm(formsService, nullptr, nullptr, (uint8_t*) menuMnuMain);
-    formsService->activate(menuForm);
+    //menuForm = new eos::MenuForm(formsService, nullptr, nullptr, (uint8_t*) menuMnuMain);
+    //formsService->activate(menuForm);
+
+    //selectorService->setChangeEvent(EV_SelectorService_onChange(MyApplication, this, &MyApplication::onSelector));
 }
 
 
@@ -197,15 +198,17 @@ void MyApplication::onTimeout(eos::Timer *timer) {
 
 void MyApplication::onSelector(uint16_t position, uint8_t state) {
     
-    eos::Form *form = formsService->getActiveForm();
-    if (form != nullptr) {
-        eos::Message message;
-        message.id = MSG_SELECTOR;
-        message.target = form;
-        message.msgSelector.event = EV_SELECTOR_INC;
-        message.msgSelector.position = position;
-        message.msgSelector.state = state;
-        messageQueue->send(message, 100);
+    if (formsService != nullptr) {
+        eos::Form *form = formsService->getActiveForm();
+        if (form != nullptr) {
+            eos::Message message;
+            message.id = MSG_SELECTOR;
+            message.target = form;
+            message.msgSelector.event = EV_SELECTOR_INC;
+            message.msgSelector.position = position;
+            message.msgSelector.state = state;
+            messageQueue->send(message, 100);
+        }
     }
 }
 
