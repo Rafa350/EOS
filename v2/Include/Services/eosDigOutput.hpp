@@ -4,7 +4,9 @@
 
 #include "eos.hpp"
 #include "System/eosTask.hpp"
+#include "System/eosTimer.hpp"
 #include "System/eosList.hpp"
+#include "System/eosQueue.hpp"
 
 
 namespace eos {
@@ -15,43 +17,60 @@ namespace eos {
     class DigOutputService;
     typedef DigOutputService *DigOutputServiceHandle;
     
-    class DigOutputService: public IRunable {      
+    class DigOutputService: public IRunable {
         private:
+            enum class Action {
+                set,
+                clear,
+                toggle,
+                pulse,
+            };
+            struct Command {
+                Action action;
+                DigOutputHandle output;
+                unsigned delay;
+                unsigned time;
+            };
+            typedef Queue<Command> CommandQueue;
             typedef List<DigOutputHandle> DigOutputList;
             typedef ListIterator<DigOutputHandle> DigOutputListIterator;
             
         private:
             Task task;
-            DigOutputList outputs;        
+            DigOutputList outputs;     
+            CommandQueue commandQueue;
             
         public:
             DigOutputService();
             void add(DigOutputHandle output);
+            void outputSet(DigOutputHandle output, bool state);
+            void outputToggle(DigOutputHandle output);
+            void outputPulse(DigOutputHandle output, unsigned time);
         private:
             void run();
+            void onTimeout(Timer *timer);
+            void doClearAction(DigOutputHandle output);
+            void doSetAction(DigOutputHandle output);
+            void doToggleAction(DigOutputHandle output);
+            void doPulseAction(DigOutputHandle output, unsigned time);
     };
     
     class DigOutput {        
         private:
             DigOutputServiceHandle service;
+            TimerHandle timer;
             uint8_t pin;
             bool inverted;
-            unsigned timeout;
         
         public:
             DigOutput(DigOutputServiceHandle service, uint8_t pin, bool inverted);
             bool get() const;
-            void set(bool state);
-            void toggle();
-            void pulse(unsigned time);
+            inline void set(bool state) { service->outputSet(this, state); }
+            inline void toggle() { service->outputToggle(this); }
+            inline void pulse(unsigned time) { service->outputPulse(this, time); }
             void delayedSet(unsigned delay, bool state);
             void delayedToggle(unsigned delay);
             void delayedPulse(unsigned delay, unsigned time);
-        private:
-            void pinInitialize() const;
-            bool pinGet() const;
-            void pinSet(bool state) const;
-            void pinToggle() const;
             
         friend class DigOutputService;
     };

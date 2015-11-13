@@ -34,7 +34,6 @@
           <itemPath>../../Include/Services/eosAppLoop.hpp</itemPath>
           <itemPath>../../Include/Services/eosDigOutput.hpp</itemPath>
           <itemPath>../../Include/Services/eosDigInput.hpp</itemPath>
-          <itemPath>../../Include/Services/eosTimer.hpp</itemPath>
           <itemPath>../../Include/Services/eosI2CMaster.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="System" projectFiles="true">
@@ -47,6 +46,7 @@
           <itemPath>../../Include/System/eosStack.hpp</itemPath>
           <itemPath>../../Include/System/eosList.hpp</itemPath>
           <itemPath>../../Include/System/eosMemory.hpp</itemPath>
+          <itemPath>../../Include/System/eosTimer.hpp</itemPath>
         </logicalFolder>
         <itemPath>../eosConfig.h</itemPath>
         <itemPath>../../Include/eos.hpp</itemPath>
@@ -97,7 +97,6 @@
           <itemPath>../../Source/Services/eosAppLoop.cpp</itemPath>
           <itemPath>../../Source/Services/eosDigOutput.cpp</itemPath>
           <itemPath>../../Source/Services/eosDigInput.cpp</itemPath>
-          <itemPath>../../Source/Services/eosTimer.cpp</itemPath>
           <itemPath>../../Source/Services/eosI2CMaster.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
@@ -111,6 +110,7 @@
           <itemPath>../../Source/System/eosHeap.cpp</itemPath>
           <itemPath>../../Source/System/eosPool.cpp</itemPath>
           <itemPath>../../Source/System/eosStack.cpp</itemPath>
+          <itemPath>../../Source/System/eosTimer.cpp</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">

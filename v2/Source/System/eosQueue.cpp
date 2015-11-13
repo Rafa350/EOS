@@ -3,12 +3,15 @@
 #include "queue.h"
 
 
+using namespace eos;
+
+
 /*************************************************************************
  *
  *       Constructor
  *
  *       Funcio:
- *           eos::GenericQueue::GenericQueue(
+ *           GenericQueue::GenericQueue(
  *               unsigned size,
  *               unsigned capacity)
  *
@@ -18,7 +21,7 @@
  *
  *************************************************************************/
 
-eos::GenericQueue::GenericQueue(
+GenericQueue::GenericQueue(
     unsigned size,
     unsigned capacity) {
     
@@ -31,11 +34,11 @@ eos::GenericQueue::GenericQueue(
  *       Destructor
  * 
  *       Funcio:
- *           eos::GenericQueue::~GenericQueue() 
+ *           GenericQueue::~GenericQueue() 
  *
  *************************************************************************/
 
-eos::GenericQueue::~GenericQueue() {
+GenericQueue::~GenericQueue() {
     
     vQueueDelete(handle);
 }
@@ -46,11 +49,11 @@ eos::GenericQueue::~GenericQueue() {
  *       Buida el contingut d'una cua
  * 
  *       Funcio:
- *         void eos::GenericQueue::clear()
+ *         void GenericQueue::clear()
  *
  *************************************************************************/
 
-void eos::GenericQueue::clear() {
+void GenericQueue::clear() {
 
     xQueueReset(handle);
 }
@@ -61,7 +64,7 @@ void eos::GenericQueue::clear() {
  *       Afegeix un element en la cua
  *
  *       Funcio:
- *           bool eos::GenericQueue::put(
+ *           bool GenericQueue::put(
  *               void *element,
  *               unsigned blockTime)
  *
@@ -74,7 +77,7 @@ void eos::GenericQueue::clear() {
  *
  *************************************************************************/
 
-bool eos::GenericQueue::put(
+bool GenericQueue::put(
     void *element,
     unsigned blockTime) {
     
@@ -87,7 +90,7 @@ bool eos::GenericQueue::put(
  *       Extreu un element en la cua
  *
  *       Funcio:
- *           bool eos::GenericQueue::get(
+ *           bool GenericQueue::get(
  *               void *element,
  *               unsigned blockTime)
  *
@@ -100,7 +103,7 @@ bool eos::GenericQueue::put(
  *
  *************************************************************************/
 
-bool eos::GenericQueue::get(
+bool GenericQueue::get(
     void *element,
     unsigned blockTime) {
 
@@ -108,11 +111,11 @@ bool eos::GenericQueue::get(
 }
 
 
-bool eos::GenericQueue::putISR(void *element) {
+bool GenericQueue::putISR(void *element) {
     
 }
 
 
-bool eos::GenericQueue::getISR(void *element) {
+bool GenericQueue::getISR(void *element) {
     
 }

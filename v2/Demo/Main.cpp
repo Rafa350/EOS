@@ -1,11 +1,11 @@
 #include "eos.hpp"
+#include "System/eosTimer.hpp"
 #include "System/eosList.hpp"
 #include "System/eosCallbacks.hpp"
 #include "System/eosApplication.hpp"
 #include "Services/eosDigOutput.hpp"
 #include "Services/eosDigInput.hpp"
 #include "Services/Fsm/eosFSM.hpp"
-#include "Services/eosTimer.hpp"
 #include "Services/eosI2CMaster.hpp"
 #include "Services/Forms/eosForms.hpp"
 #include "Services/Forms/eosSelector.hpp"
@@ -23,7 +23,6 @@ class MyApplication: public eos::Application {
         eos::DigInputServiceHandle digInputService;
         eos::DigOutputServiceHandle digOutputService;
         eos::I2CMasterService *i2cMasterService;
-        eos::TimerService *timerService;
         eos::FormsServiceHandle formsService;
         eos::SelectorServiceHandle selectorService;
         eos::DisplayServiceHandle displayService;
@@ -134,9 +133,7 @@ void MyApplication::setupI2CMasterService() {
 
 void MyApplication::setupTimerService() {
     
-    timerService = new eos::TimerService();
-
-    timer = new eos::Timer(timerService, true);
+    timer = new eos::Timer();
     timer->setOnTimeout(EV_Timer_onTimeout(MyApplication, this, &MyApplication::onTimeout));
     timer->start(1000, 100);
 }
@@ -173,7 +170,7 @@ void MyApplication::onSwRED(eos::DigInput *input){
 
 void MyApplication::onSwAMBER(eos::DigInput *input){
     
-    if (input->get())
+    if (input->get()) 
         ledAMBER->pulse(1000);
 }
 
@@ -192,7 +189,7 @@ void MyApplication::onSwGREEN(eos::DigInput *input){
 
 void MyApplication::onTimeout(eos::Timer *timer) {
     
-    ledRED->pulse(500);
+    //ledRED->pulse(500);
 }
 
 

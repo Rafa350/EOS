@@ -3,6 +3,9 @@
 #include "task.h"
 
 
+static const char *defaultTaskName = "";
+
+
 /*************************************************************************
  *
  *       Constructor
@@ -29,7 +32,7 @@ eos::Task::Task(
     
     xTaskCreate(
         eos::Task::function, 
-        "", 
+        defaultTaskName, 
         stackSize, 
         this, 
         tskIDLE_PRIORITY + unsigned(priority), 

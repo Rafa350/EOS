@@ -9,19 +9,28 @@
         <state name="SW1">
             <enterAction>
             </enterAction>
-            <transition event="INP_SW1" next="SW2"/>
+            <transition event="INP_SW1" next="SW2">
+                <action>
+                </action>
+            </transaction>
         </state>
         
         <state name="SW2">
             <enterAction>
             </enterAction>
-            <transition event="INP_SW2" next="SW3"/>
+            <transition event="INP_SW2" next="SW3">
+                <action>
+                </action>
+            </transaction>
         </state>
         
         <state name="SW3">
             <enterAction>
             </enterAction>
-            <transition event="INP_SW3" next="SW1"/>
+            <transition event="INP_SW3" next="SW1">
+                <action>
+                </action>
+            </transaction>
         </state>
     </group>
 

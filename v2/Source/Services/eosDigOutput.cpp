@@ -1,14 +1,14 @@
 #include "Services/eosDigOutput.hpp"
 #include "System/eosTask.hpp"
 #include "HAL/halGPIO.h"
+#include "System/eosQueue.hpp"
 
 
 using namespace eos;
 
 
-#define TASK_PERIOD     10
-
 const unsigned taskStackSize = 512;
+const unsigned commandQueueSize = 10;
 const TaskPriority taskPriority = TaskPriority::normal;
 
 
@@ -22,7 +22,8 @@ const TaskPriority taskPriority = TaskPriority::normal;
  *************************************************************************/
 
 DigOutputService::DigOutputService() :
-    task(taskStackSize, taskPriority, this) {
+    task(taskStackSize, taskPriority, this),
+    commandQueue(commandQueueSize) {
 }
 
 
@@ -57,28 +58,208 @@ void DigOutputService::add(
 
 void DigOutputService::run() {
     
-    unsigned tc = Task::getTickCount();
+    Command command;
 
     while (true) {
-
-        Task::delayUntil(TASK_PERIOD, &tc);
-        
-        DigOutputListIterator iterator(outputs);
-        while (!iterator.isEnd()) {
-            
-            DigOutputHandle output = iterator.current();
-    
-            unsigned t = output->timeout;
-            if (t > 0) {
-                t -= 1;
-                if (t == 0)
-                    output->pinToggle();
-                output->timeout = t;
-            }       
-            
-            ++iterator;
+        while (commandQueue.get(command, (unsigned) -1)) {
+            switch (command.action) {
+                case Action::clear:
+                    doClearAction(command.output);
+                    break;
+                    
+                case Action::set:
+                    doSetAction(command.output);
+                    break;
+                    
+                case Action::toggle:
+                    doToggleAction(command.output);
+                    break;
+                    
+                case Action::pulse: 
+                    doPulseAction(command.output, command.time);
+                    break;
+            }
         }
-    }    
+    }
+}
+
+
+/*************************************************************************
+ *
+ *       Procesa l'accio 'clear'
+ * 
+ *       Funcio:
+ *           void DigOutputService::doClearAction(
+ *               DigOutputHandle output) 
+ * 
+ *       Entrada:
+ *           output: La sortida
+ *
+ *************************************************************************/
+
+void DigOutputService::doClearAction(
+    DigOutputHandle output) {
+
+    if (output->timer != nullptr) 
+        output->timer->stop(1000);
+    
+    halGPIOPinSetState(output->pin, output->inverted);    
+}
+
+
+/*************************************************************************
+ *
+ *       Procesa l'accio 'set'
+ * 
+ *       Funcio:
+ *           void DigOutputService::doSetAction(
+ *               DigOutputHandle output) 
+ * 
+ *       Entrada:
+ *           output: La sortida
+ *
+ *************************************************************************/
+
+void DigOutputService::doSetAction(DigOutputHandle output) {
+
+    if (output->timer != nullptr) 
+        output->timer->stop(1000);
+
+    halGPIOPinSetState(output->pin, !output->inverted);    
+}
+
+
+/*************************************************************************
+ *
+ *       Procesa l'accio 'toggle'
+ * 
+ *       Funcio:
+ *           void DigOutputService::doToggleAction(
+ *               DigOutputHandle output) 
+ * 
+ *       Entrada:
+ *           output: La sortida
+ *
+ *************************************************************************/
+
+void DigOutputService::doToggleAction(DigOutputHandle output) {
+
+    if (output->timer != nullptr) 
+        output->timer->stop(1000);
+
+    halGPIOPinToggleState(output->pin);    
+}
+
+
+/*************************************************************************
+ *
+ *       Procesa l'accio 'pulse'
+ * 
+ *       Funcio:
+ *           void DigOutputService::doPulseAction(
+ *               DigOutputHandle output,
+ *               unsigned time) 
+ * 
+ *       Entrada:
+ *           output: La sortida
+ *           time  : La durada del puls
+ *
+ *************************************************************************/
+
+void DigOutputService::doPulseAction(
+    DigOutputHandle output, 
+    unsigned time) {
+
+    if (output->timer == nullptr) {
+        output->timer = new Timer();
+        output->timer->setOnTimeout(EV_Timer_onTimeout(DigOutputService, this, &DigOutputService::onTimeout));
+        output->timer->setTag(output);
+    }
+    if (!output->timer->isActive())
+        halGPIOPinToggleState(output->pin);
+    output->timer->start(time, 0);   
+}
+
+
+void DigOutputService::onTimeout(Timer *timer) {
+    
+    DigOutputHandle output = (DigOutputHandle) timer->getTag();
+    halGPIOPinToggleState(output->pin);
+}
+
+/*************************************************************************
+ *
+ *       Assigna l'estat d'una sortida
+ *
+ *       Funcio:
+ *           void DigOutputService::outputSet(
+ *               DigOutputHandle output,
+ *               bool state)
+ *
+ *       Entrada:
+ *           output: La sortida
+ *           state : L'estat a signar
+ *
+ *************************************************************************/
+
+void DigOutputService::outputSet(
+    DigOutputHandle output,
+    bool state) {
+    
+    Command command;
+    command.action = state ? Action::set : Action::clear;
+    command.output = output;
+    commandQueue.put(command, 100);
+}
+
+
+/*************************************************************************
+ *
+ *       Inverteix l'estat d'una sortida
+ *
+ *       Funcio:
+ *           void DigOutputService::toggle(
+ *               DigOutput output)
+ * 
+ *       Entrada:
+ *           output: La sortida
+ *
+ *************************************************************************/
+
+void DigOutputService::outputToggle(
+    DigOutputHandle output) {
+
+    Command command;
+    command.action = Action::toggle;
+    command.output = output;
+    commandQueue.put(command, 100);
+}
+
+
+/*************************************************************************
+ *
+ *       Inverteix l'estat d'una sortida en un puls
+ *
+ *       Funcio:
+ *           void DigOutputService::pulse(
+ *               DigOutput output,
+ *               unsigned time)
+ * 
+ *       Entrada:
+ *           output: La sortida
+ *           time  : La durada del puls
+ *
+ *************************************************************************/
+
+void DigOutputService::outputPulse(
+    DigOutputHandle output,
+    unsigned time) {
+    
+    Command command;
+    command.action = Action::pulse;
+    command.output = output;
+    command.time = time;
+    commandQueue.put(command, 100);
 }
 
 
@@ -87,7 +268,7 @@ void DigOutputService::run() {
  *       Constructor      
  *  
  *       Funcio:
- *           eos:DigOutput::DigOutputs(
+ *           DigOutput::DigOutput(
  *               DigOutputServiceHandle service,
  *               unsigned pin,
  *               bool inverted)
@@ -107,9 +288,10 @@ DigOutput::DigOutput(
     this->service = service;
     this->pin = pin;
     this->inverted = inverted;
-    this->timeout = 0;
+    this->timer = nullptr;
 
-    pinInitialize();
+    halGPIOPinSetState(pin, inverted);
+    halGPIOPinSetModeOutput(pin, false);    
 
     service->add(this);
 }
@@ -129,110 +311,6 @@ DigOutput::DigOutput(
 
 bool DigOutput::get() const {
 
-    return pinGet();
-}
-
-
-/*************************************************************************
- *
- *       Assigna l'estat d'una sortida
- *
- *       Funcio:
- *           void DigOutput::set(
- *               bool state)
- *
- *       Entrada:
- *           state  : L'estat a signar
- *
- *************************************************************************/
-
-void DigOutput::set(
-    bool state) {
-
-    Task::enterCriticalSection();
-    
-    pinSet(state);
-    timeout = 0;
-    
-    Task::exitCriticalSection();
-}
-
-
-/*************************************************************************
- *
- *       Inverteix l'estat d'una sortida
- *
- *       Funcio:
- *           void DigOutput::toggle()
- *
- *************************************************************************/
-
-void DigOutput::toggle() {
-
-    Task::enterCriticalSection();
-    
-    pinToggle();
-    timeout = 0;
-    
-    Task::exitCriticalSection();
-}
-
-
-/*************************************************************************
- *
- *       Genera un puls d'inversio de l'estat d'una sortida. La resolucio
- *       es en multiples de TASK_PERIOD
- *
- *       Funcio:
- *           void DigOutput::pulse(
- *               unsigned time)
- *
- *       Entrada:
- *           time   : Duracio del puls
- * 
- *       Notes:
- *           Si encara esta en un puls, unicament l'allarga
- *
- *************************************************************************/
-
-void DigOutput::pulse(
-    unsigned time) {
-
-    if (time >= TASK_PERIOD) {
-
-        Task::enterCriticalSection();
-        
-        if (timeout == 0)
-            pinToggle();
-        timeout = time / TASK_PERIOD;
-        
-        Task::exitCriticalSection();
-    }
-}
-
-
-void DigOutput::pinInitialize() const {
-        
-    halGPIOPinSetState(pin, inverted ? true : false);
-    halGPIOPinSetModeOutput(pin, false);    
-}
-
-
-bool DigOutput::pinGet() const {
-    
-    bool p = halGPIOPinGetState(pin);
-    return inverted ? !p : p;
-}
-
-
-void DigOutput::pinSet(
-    bool state) const {
-    
-    halGPIOPinSetState(pin, state);
-}
-
-
-void DigOutput::pinToggle() const {
-
-    halGPIOPinToggleState(pin);
+    bool state = halGPIOPinGetState(pin);
+    return inverted ? !state : state;
 }

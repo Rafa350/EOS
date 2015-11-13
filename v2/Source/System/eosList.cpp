@@ -5,6 +5,7 @@
 
 using namespace eos;
 
+
 const unsigned capacityDelta = 10;
 
 

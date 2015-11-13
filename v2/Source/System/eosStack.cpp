@@ -52,6 +52,19 @@ GenericStack::~GenericStack() {
 }
 
 
+/*************************************************************************
+ *
+ *       Inserta un element en la pila
+ * 
+ *       Funcio:
+ *           void GenericStack::pushElement(
+ *               void *element) 
+ *
+ *       Entrada:
+ *           element: El element a insertar
+ * 
+ *************************************************************************/
+
 void GenericStack::pushElement(
     void *element) {
         
