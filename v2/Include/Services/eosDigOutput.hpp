@@ -48,7 +48,7 @@ namespace eos {
             void outputPulse(DigOutputHandle output, unsigned time);
         private:
             void run();
-            void onTimeout(Timer *timer);
+            void onTimeout(TimerHandle timer);
             void doClearAction(DigOutputHandle output);
             void doSetAction(DigOutputHandle output);
             void doToggleAction(DigOutputHandle output);

@@ -181,11 +181,26 @@ void DigOutputService::doPulseAction(
 }
 
 
-void DigOutputService::onTimeout(Timer *timer) {
+/*************************************************************************
+ *
+ *       Procesa el timeout del temporitzador pels pulsos
+ * 
+ *       Funcio:
+ *           void DigOutputService::onTimeout(
+ *               TimerHandle timer) 
+ *
+ *       Entrada:
+ *           timer: El temporitzador
+ *
+ *************************************************************************/
+
+void DigOutputService::onTimeout(
+    TimerHandle timer) {
     
     DigOutputHandle output = (DigOutputHandle) timer->getTag();
     halGPIOPinToggleState(output->pin);
 }
+
 
 /*************************************************************************
  *

@@ -32,7 +32,7 @@ class MyApplication: public eos::Application {
         eos::DigInputHandle swRED;
         eos::DigInputHandle swAMBER;
         eos::DigInputHandle swGREEN;
-        eos::Timer *timer;        
+        eos::TimerHandle timer;        
         eos::StateMachineService *stateMachineService;
         eos::MessageQueue *messageQueue;
         eos::FormHandle menuForm;
