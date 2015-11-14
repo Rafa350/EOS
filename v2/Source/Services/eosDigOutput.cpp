@@ -12,7 +12,7 @@ const unsigned commandQueueSize = 10;
 const TaskPriority taskPriority = TaskPriority::normal;
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
 
@@ -22,7 +22,7 @@ DigOutputService::DigOutputService() :
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Afegeig una sortida al servei.
 /// \param output: La sortida a afeigir.
 ///
@@ -34,7 +34,7 @@ void DigOutputService::add(
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Executa la tasca de control de servei.
 ///
 
@@ -66,22 +66,28 @@ void DigOutputService::run() {
 }
 
 
- ///
- /// \brief  Procesa l'accio 'clear'.
- /// \param  output: La sortida.
+/// ----------------------------------------------------------------------
+/// \brief  Procesa l'accio 'clear'.
+/// \param  output: La sortida.
 ///
  
 void DigOutputService::doClearAction(
     DigOutputHandle output) {
+    
+    Task::enterCriticalSection();
 
+    // Si estava en un puls, para el temporitzador
+    //
     if (output->timer != nullptr) 
         output->timer->stop(1000);
     
     halGPIOPinSetState(output->pin, output->inverted);    
+
+    Task::exitCriticalSection();
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Procesa l'accio 'set'.
 /// \param output: La sortida.
 ///
@@ -89,14 +95,20 @@ void DigOutputService::doClearAction(
 void DigOutputService::doSetAction(
     DigOutputHandle output) {
 
+    Task::enterCriticalSection();
+
+    // Si estava en un puls, para el temporitzador
+    //
     if (output->timer != nullptr) 
         output->timer->stop(1000);
 
     halGPIOPinSetState(output->pin, !output->inverted);    
+
+    Task::exitCriticalSection();
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Procesa l'accio 'toggle'.
 /// \param output: La sortida.
 ///
@@ -104,14 +116,20 @@ void DigOutputService::doSetAction(
 void DigOutputService::doToggleAction(
     DigOutputHandle output) {
 
+    Task::enterCriticalSection();
+
+    // Si estava en un puls, para el temporitzador
+    //
     if (output->timer != nullptr) 
         output->timer->stop(1000);
 
     halGPIOPinToggleState(output->pin);    
+
+    Task::exitCriticalSection();
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Procesa l'accio 'pulse'.
 /// \param output: La sortida.
 /// \param time: La durada del puls.
@@ -120,6 +138,8 @@ void DigOutputService::doToggleAction(
 void DigOutputService::doPulseAction(
     DigOutputHandle output, 
     unsigned time) {
+
+    Task::enterCriticalSection();
 
     // Si no te timer asociat, el crea de nou
     //
@@ -137,10 +157,12 @@ void DigOutputService::doPulseAction(
     // Inicia el timer
     //
     output->timer->start(time, 0);   
+
+    Task::exitCriticalSection();
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Procesa el timeout del temporitzador pels pulsos.
 /// \param timer: El temporitzador.
 ///
@@ -153,7 +175,7 @@ void DigOutputService::onTimeout(
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Assigna l'estat d'una sortida.
 /// \param output: La sortida.
 /// \param state: L'estat a asignar.
@@ -170,7 +192,7 @@ void DigOutputService::outputSet(
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Inverteix l'estat d'una sortida.
 /// \param output: La sortida.
 ///
@@ -185,7 +207,7 @@ void DigOutputService::outputToggle(
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Inverteix l'estat d'una sortida en un puls.
 /// \param output: La sortida.
 /// \param time: La durada del puls.
@@ -203,7 +225,7 @@ void DigOutputService::outputPulse(
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param service: El servei as que s'asignara la sortida.
 /// \param pin: Identificador del pin. (Depend de cada hardware en particular).
@@ -227,7 +249,7 @@ DigOutput::DigOutput(
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Destructor.
 ///
 
@@ -238,7 +260,7 @@ DigOutput::~DigOutput() {
 }
 
 
-///
+/// ----------------------------------------------------------------------
 /// \brief Obte actual l'estat d'una sortida.
 /// \return L'estat de la sortida.
 ///

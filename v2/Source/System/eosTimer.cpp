@@ -9,12 +9,21 @@ using namespace eos;
 static const char *defaultTimerName = "";
 
 
+/// ----------------------------------------------------------------------
+/// \brief Constructor
+/// \param autoreload: Indica si repeteix el cicle continuament
+///
+
 Timer::Timer(
     bool autoreload) {
     
     this->autoreload = autoreload;
     handler = nullptr;
 }
+
+/// ----------------------------------------------------------------------
+/// \brief Destructor
+///
 
 Timer::~Timer() {
     
@@ -26,6 +35,11 @@ Timer::~Timer() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Inicia el temporitzador.
+/// \param: timeout: Temps de cicle.
+/// \param blockTime: Temps maxim de bloqueix
+///
 void Timer::start(
     unsigned timeout,
     unsigned blockTime) {
@@ -39,6 +53,11 @@ void Timer::start(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Para el temporitzador.
+/// \param blockTime: Temps maxim de bloqueig
+///
+
 void Timer::stop(
     unsigned blockTime) {
     
@@ -47,11 +66,21 @@ void Timer::stop(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Comprova si el temporitzador esta actiu.
+/// \return True si esta actiu.
+///
+
 bool Timer::isActive() const {
     
     return handler == nullptr ? false : xTimerIsTimerActive(handler) != pdFALSE;
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief Crida a la funcio 'onTimeout' al final del cicle
+/// \param handler: El handler del temporitzador.
+///
 
 void Timer::timerCallback(
     void *handler) {

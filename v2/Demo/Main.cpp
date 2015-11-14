@@ -22,7 +22,7 @@ class MyApplication: public eos::Application {
     private:
         eos::DigInputServiceHandle digInputService;
         eos::DigOutputServiceHandle digOutputService;
-        eos::I2CMasterService *i2cMasterService;
+        eos::I2CMasterServiceHandle i2cMasterService;
         eos::FormsServiceHandle formsService;
         eos::SelectorServiceHandle selectorService;
         eos::DisplayServiceHandle displayService;
@@ -33,7 +33,7 @@ class MyApplication: public eos::Application {
         eos::DigInputHandle swAMBER;
         eos::DigInputHandle swGREEN;
         eos::TimerHandle timer;        
-        eos::StateMachineService *stateMachineService;
+        eos::StateMachineService* stateMachineService;
         eos::MessageQueue *messageQueue;
         eos::FormHandle menuForm;
         eos::FormHandle mainForm;
@@ -133,7 +133,7 @@ void MyApplication::setupI2CMasterService() {
 
 void MyApplication::setupTimerService() {
     
-    timer = new eos::Timer();
+    timer = new eos::Timer(true);
     timer->setOnTimeout(EV_Timer_onTimeout(MyApplication, this, &MyApplication::onTimeout));
     timer->start(1000, 100);
 }
@@ -189,7 +189,7 @@ void MyApplication::onSwGREEN(eos::DigInput *input){
 
 void MyApplication::onTimeout(eos::Timer *timer) {
     
-    //ledRED->pulse(500);
+    ledRED->pulse(100);
 }
 
 

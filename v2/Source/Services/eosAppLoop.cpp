@@ -3,28 +3,18 @@
 #include "Services/eosAppLoop.hpp"
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           eos::AppLoopService::AppLoopService()
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor.
+///
 
 eos::AppLoopService::AppLoopService():
     task(512, eos::TaskPriority::normal, this) {
 }
 
 
-/*************************************************************************
- *
- *       Procesa les tasques del servei
- *
- *       Funcio:
- *           void eos::AppLoopService::run()
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Procesa les tasques del servei.
+///
 
 void eos::AppLoopService::run() {
     

@@ -14,18 +14,10 @@ const unsigned queueMaxItems = 20;
 const unsigned baudRate = 100000;
 
 
-/*************************************************************************
- *
- *       Inicialitza el servei
- *
- *       Funcio:
- *           I2CMasterService::I2CMasterService(
- *              unsigned moduleId)
- *
- *       Entrada:
- *           moduleId: Identificador del modulI2C
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor
+/// \param moduleId: Identificador del modulI2C
+///
 
 I2CMasterService::I2CMasterService(
     unsigned moduleId) :
@@ -39,33 +31,17 @@ I2CMasterService::I2CMasterService(
 }
 
 
-/*************************************************************************
- *
- *       Inicia una transaccio
- *
- *       Funcio:
- *           bool I2CMasterService::startTransaction(
- *               uint8_t addr,
- *               void *txBuffer,
- *               unsigned txCount,
- *               void *rxBuffer,
- *               unsigned rxSize,
- *               unsignjed blockTime,
- *               BinarySemaphore *notify) 
- *
- *       Entrada:
- *           addr     : Adressa I2C del desti
- *           txBuffer : Buffer de dades de transmisio
- *           txCount  : Numero de bytes en el buffer de transmissio
- *           rxBuffer : Buffer de recepcio
- *           rxSize   : Tamany del buffer de recepcio
- *           blockTime: Temps maxim de bloqueig
- *           notify   : Semafor per notificar el final de la transaccio
- * 
- *       Retorn:
- *           True si tot es correcte, false en cas contrari
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Inicia una transaccio.
+/// \param addr: Adressa I2C del desti.
+/// \param txBuffer: Buffer de dades de transmisio.
+/// \param txCount: Numero de bytes en el buffer de transmissio.
+/// \param rxBuffer: Buffer de recepcio.
+/// \param rxSize: Tamany del buffer de recepcio.
+/// \param blockTime: Temps maxim de bloqueig.
+/// \param notify: Semafor per notificar el final de la transaccio.
+/// \return True si tot es correcte, false en cas contrari.
+///
 
 bool I2CMasterService::startTransaction(
     uint8_t addr,
@@ -96,14 +72,9 @@ bool I2CMasterService::startTransaction(
 }
 
 
-/*************************************************************************
- *
- *       Procesa les tasques del servei
- *
- *       Funcio:
- *           void I2CMasterService::run()
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Procesa les tasques del servei.
+///
 
 void I2CMasterService::run() {
 
@@ -115,7 +86,7 @@ void I2CMasterService::run() {
 
     while (true) {
            
-        while (queue.get(transaction, 0xFFFFFFFF)) {
+        while (queue.get(transaction, (unsigned) -1)) {
         
             // Espera a que el bus estigui lliure
             //
@@ -153,24 +124,15 @@ void I2CMasterService::run() {
 }
 
 
-/*************************************************************************
- *
- *       Procesa els events de la comunicacio I2C
- *
- *       Funcio:
- *           void I2CMasterService::interruptCallback(
- *              unsigned moduleId, 
- *              void* param)
- *
- *       Entrada:
- *           moduleId: Identificador del module I2C
- *           param   : Parametre. En aquest cas el servei
- *
- *       Notes:
- *           Transmissio/Recepcio en format de trama
- *           |LENGTH|DATA-1|DATA-2| . . . |DATA-n|CHECK|
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Procesa els events de la comunicacio I2C. S'executa en el
+///        contexte de la interrupcio I2C.
+/// \param moduleId: Identificador del module I2C
+/// \param param: Parametre. En aquest cas el servei.
+///
+/// Transmissio/Recepcio en format de trama
+/// |LENGTH|DATA-1|DATA-2| . . . |DATA-n|CHECK|
+///
 
 void I2CMasterService::interruptCallback(
     unsigned moduleId, 
@@ -181,14 +143,10 @@ void I2CMasterService::interruptCallback(
 }
 
 
-/*************************************************************************
- *
- *       Maquina d'estats per porocesar les comunicacions
- * 
- *       Funcio::
- *           void I2CMasterService::stateMachine() 
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Maquina d'estats per porocesar les comunicacions. S'executa en
+///        el contexte de la interrupcio I2C.
+///
 
 void I2CMasterService::stateMachine() {
     

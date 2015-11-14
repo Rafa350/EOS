@@ -10,6 +10,9 @@
 
 
 namespace eos {
+    
+    class I2CMasterService;
+    typedef I2CMasterService *I2CMasterServiceHandle;
        
     class I2CMasterService: IRunable {
         private:

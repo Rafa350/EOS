@@ -9,20 +9,11 @@ using namespace eos;
 const unsigned capacityDelta = 10;
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           GenericList::GenericList(
- *               unsigned size,
- *               unsigned initialCapacity) 
- * 
- *       Entrada:
- *           size           : Tamany en bytes de cada element
- *           initialCapacity: Capacitat inicial de la llista
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor.
+/// \param size: Tamany en bytes de cada element.
+/// \param initialCapacity: Capacitat inicial de la llista.
+///
 
 GenericList::GenericList(
     unsigned _size,
@@ -36,14 +27,9 @@ GenericList::GenericList(
 }
 
 
-/*************************************************************************
- *
- *       Destructor
- * 
- *       Funcio:
- *           GenericList::~GenericList() 
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Destructor
+///
 
 GenericList::~GenericList() {
     
@@ -52,21 +38,11 @@ GenericList::~GenericList() {
 }
 
 
-/*************************************************************************
- *
- *       Afegeix un element a la llista
- * 
- *       Funcio:
- *           unsigned GenericList::addElement(
- *               void *element) 
- * 
- *       Entrada:
- *           element: Punter al element a afeigir
- * 
- *       Retorn:
- *           El index del element
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Afegeix un element a la llista.
+/// \param element: Punter al element a afeigir.
+/// \return El index del element.
+///
 
 unsigned GenericList::addElement(
     void *element) {
@@ -86,18 +62,10 @@ unsigned GenericList::addElement(
 }
 
 
-/*************************************************************************
- *
- *       Elimina un element de la llista
- * 
- *       Funcio:
- *           void GenericList::removeElement(
- *               unsigned index) 
- * 
- *       Entrada:
- *           index: Index del element a eliminar
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Elimina un element de la llista.
+/// \param index: Index del element a eliminar.
+///
 
 void GenericList::removeElement(
     unsigned index) {
@@ -111,21 +79,11 @@ void GenericList::removeElement(
 }
 
 
-/*************************************************************************
- *
- *       Obte un element de la llista
- * 
- *       Funcio:
- *          void *GenericList::getElement(
- *              unsigned index) const 
- *
- *       Entrada:
- *           index: Index del element
- * 
- *       Retorn:
- *           Punter al element
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Obte el puneter al un element de la llista.
+/// \param index: Index del element:
+/// \return Punter al element.
+///
 
 void *GenericList::getElement(
     unsigned index) const {
@@ -138,21 +96,11 @@ void *GenericList::getElement(
 }
 
 
-/*************************************************************************
- *
- *       Obte l'adressa del element especificat
- * 
- *       Funcio:
- *           void *GenericList::getPtr(
- *               unsigned index) const
- * 
- *       Entrada:
- *           index: L'index del element
- * 
- *       Retorn:
- *           L'adresa del element
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Obte l'adressa del element especificat.
+/// \param index: L'index del element.
+/// \return L'adresa del element
+///
 
 void *GenericList::getPtr(
     unsigned index) const {
@@ -161,18 +109,10 @@ void *GenericList::getPtr(
 }
 
 
-/*************************************************************************
- *
- *       Redimensiona el buffer de dades
- *
- *       Funcio:
- *           void GenericList::resize(
- *               unsigned newCapacity) 
- *
- *       Entrada:
- *           newCapacity : Numero d'elements 
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Redimensiona el buffer de dades.
+/// \param newCapacity : Numero d'elements.
+///
 
 void GenericList::resize(
     unsigned newCapacity) {

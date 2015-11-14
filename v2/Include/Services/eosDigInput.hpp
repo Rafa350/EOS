@@ -52,7 +52,6 @@ namespace eos {
             inline bool get() const { return state; }
             inline void setChangeEvent(IDigInputEvent *event) { evChange = event; }
         private:
-            void pinInitialize() const;
             bool pinGet() const;
         
         friend class DigInputService;

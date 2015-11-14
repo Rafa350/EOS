@@ -15,32 +15,19 @@ const TaskPriority taskPriority = TaskPriority::normal;
 #define PATTERN_MASK     0x000000FF
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           DigInputService::DigInputService()
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor
+///
 
 DigInputService::DigInputService() :
     task(taskStackSize, taskPriority, this) {
 }
 
 
-/*************************************************************************
- *
- *       Afegeix una entrada
- * 
- *       Funcio:
- *           void DigInputService::add(
- *              DigInputHandle input) 
- * 
- *       Entrada:
- *           input: L'entrada a afeigir
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Afegeix una entrada
+/// \param input: L'entrada a afeigir
+///
 
 void DigInputService::add(
     DigInputHandle input) {
@@ -49,14 +36,9 @@ void DigInputService::add(
 }
 
 
-/*************************************************************************
- *
- *       Tasca de control del servei
- * 
- *       Funcio:
- *           void DigInputService::run() 
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Tasca de control del servei
+///
 
 void DigInputService::run() {
     
@@ -94,22 +76,12 @@ void DigInputService::run() {
 }
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           DigInput::DigInput(
- *               DigInputServiceHandle service,
- *               uint8_t pin, 
- *               bool inverted)
- *
- *       Entrada:
- *           service : El servei
- *           pin     : El numero de pin
- *           inverted: Indica si la senyal va invertida
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor.
+/// \param service: El servei.
+/// \param pin: El numero de pin.
+/// \param inverted: Indica si la senyal va invertida.
+///
 
 DigInput::DigInput(
     DigInputServiceHandle service,
@@ -122,7 +94,7 @@ DigInput::DigInput(
 
     evChange = nullptr;
 
-    pinInitialize();
+    halGPIOPinSetModeInput(pin);
     state = pinGet();
     pattern = state ? 0xFFFFFFFF : 0x00000000;
     
@@ -130,32 +102,10 @@ DigInput::DigInput(
 }
 
 
-/*************************************************************************
- *
- *       Inicialitza el port d'una entrada
- *
- *       Funcio:
- *           void DigInput::pinInitialize() const
- *
- *************************************************************************/
-
-void DigInput::pinInitialize() const {
-
-    halGPIOPinSetModeInput(pin);
-}
-
-
-/*************************************************************************
- *
- *       Lectura del port d'una entrada
- *
- *       Funcio:
- *           bool DigInput::pinGet() const
- * 
- *       Retorn:
- *           Valor lleigit del port
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Lectura del port d'una entrada.
+/// \return Valor lleigit del port.
+///
 
 bool DigInput::pinGet() const {
     
