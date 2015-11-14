@@ -12,14 +12,9 @@ const unsigned commandQueueSize = 10;
 const TaskPriority taskPriority = TaskPriority::normal;
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           DigOutputService::DigOutputService()
- *
- *************************************************************************/
+///
+/// \brief Constructor.
+///
 
 DigOutputService::DigOutputService() :
     task(taskStackSize, taskPriority, this),
@@ -27,18 +22,10 @@ DigOutputService::DigOutputService() :
 }
 
 
-/*************************************************************************
- *
- *       Afegeig una sortida al servei
- *
- *       Funcio:
- *           void DigOutputService::add(
- *               DigOutputHandle output) 
- * 
- *       Entrada:
- *           output: La sortida a afeigit
- *
- *************************************************************************/
+///
+/// \brief Afegeig una sortida al servei.
+/// \param output: La sortida a afeigir.
+///
 
 void DigOutputService::add(
     DigOutputHandle output) {
@@ -47,14 +34,9 @@ void DigOutputService::add(
 }
 
 
-/*************************************************************************
- *
- *       Executa la tasca de control de servei
- * 
- *       Funcio:
- *           void DigOutputService::run() 
- *
- *************************************************************************/
+///
+/// \brief Executa la tasca de control de servei.
+///
 
 void DigOutputService::run() {
     
@@ -84,19 +66,11 @@ void DigOutputService::run() {
 }
 
 
-/*************************************************************************
- *
- *       Procesa l'accio 'clear'
- * 
- *       Funcio:
- *           void DigOutputService::doClearAction(
- *               DigOutputHandle output) 
- * 
- *       Entrada:
- *           output: La sortida
- *
- *************************************************************************/
-
+ ///
+ /// \brief  Procesa l'accio 'clear'.
+ /// \param  output: La sortida.
+///
+ 
 void DigOutputService::doClearAction(
     DigOutputHandle output) {
 
@@ -107,20 +81,13 @@ void DigOutputService::doClearAction(
 }
 
 
-/*************************************************************************
- *
- *       Procesa l'accio 'set'
- * 
- *       Funcio:
- *           void DigOutputService::doSetAction(
- *               DigOutputHandle output) 
- * 
- *       Entrada:
- *           output: La sortida
- *
- *************************************************************************/
-
-void DigOutputService::doSetAction(DigOutputHandle output) {
+///
+/// \brief Procesa l'accio 'set'.
+/// \param output: La sortida.
+///
+ 
+void DigOutputService::doSetAction(
+    DigOutputHandle output) {
 
     if (output->timer != nullptr) 
         output->timer->stop(1000);
@@ -129,20 +96,13 @@ void DigOutputService::doSetAction(DigOutputHandle output) {
 }
 
 
-/*************************************************************************
- *
- *       Procesa l'accio 'toggle'
- * 
- *       Funcio:
- *           void DigOutputService::doToggleAction(
- *               DigOutputHandle output) 
- * 
- *       Entrada:
- *           output: La sortida
- *
- *************************************************************************/
+///
+/// \brief Procesa l'accio 'toggle'.
+/// \param output: La sortida.
+///
 
-void DigOutputService::doToggleAction(DigOutputHandle output) {
+void DigOutputService::doToggleAction(
+    DigOutputHandle output) {
 
     if (output->timer != nullptr) 
         output->timer->stop(1000);
@@ -151,48 +111,39 @@ void DigOutputService::doToggleAction(DigOutputHandle output) {
 }
 
 
-/*************************************************************************
- *
- *       Procesa l'accio 'pulse'
- * 
- *       Funcio:
- *           void DigOutputService::doPulseAction(
- *               DigOutputHandle output,
- *               unsigned time) 
- * 
- *       Entrada:
- *           output: La sortida
- *           time  : La durada del puls
- *
- *************************************************************************/
+///
+/// \brief Procesa l'accio 'pulse'.
+/// \param output: La sortida.
+/// \param time: La durada del puls.
+///
 
 void DigOutputService::doPulseAction(
     DigOutputHandle output, 
     unsigned time) {
 
+    // Si no te timer asociat, el crea de nou
+    //
     if (output->timer == nullptr) {
         output->timer = new Timer();
         output->timer->setOnTimeout(EV_Timer_onTimeout(DigOutputService, this, &DigOutputService::onTimeout));
         output->timer->setTag(output);
     }
+    
+    // Si el timer no es actiu, inverteix el pin
+    //
     if (!output->timer->isActive())
         halGPIOPinToggleState(output->pin);
+    
+    // Inicia el timer
+    //
     output->timer->start(time, 0);   
 }
 
 
-/*************************************************************************
- *
- *       Procesa el timeout del temporitzador pels pulsos
- * 
- *       Funcio:
- *           void DigOutputService::onTimeout(
- *               TimerHandle timer) 
- *
- *       Entrada:
- *           timer: El temporitzador
- *
- *************************************************************************/
+///
+/// \brief Procesa el timeout del temporitzador pels pulsos.
+/// \param timer: El temporitzador.
+///
 
 void DigOutputService::onTimeout(
     TimerHandle timer) {
@@ -202,20 +153,11 @@ void DigOutputService::onTimeout(
 }
 
 
-/*************************************************************************
- *
- *       Assigna l'estat d'una sortida
- *
- *       Funcio:
- *           void DigOutputService::outputSet(
- *               DigOutputHandle output,
- *               bool state)
- *
- *       Entrada:
- *           output: La sortida
- *           state : L'estat a signar
- *
- *************************************************************************/
+///
+/// \brief Assigna l'estat d'una sortida.
+/// \param output: La sortida.
+/// \param state: L'estat a asignar.
+///
 
 void DigOutputService::outputSet(
     DigOutputHandle output,
@@ -228,18 +170,10 @@ void DigOutputService::outputSet(
 }
 
 
-/*************************************************************************
- *
- *       Inverteix l'estat d'una sortida
- *
- *       Funcio:
- *           void DigOutputService::toggle(
- *               DigOutput output)
- * 
- *       Entrada:
- *           output: La sortida
- *
- *************************************************************************/
+///
+/// \brief Inverteix l'estat d'una sortida.
+/// \param output: La sortida.
+///
 
 void DigOutputService::outputToggle(
     DigOutputHandle output) {
@@ -251,20 +185,11 @@ void DigOutputService::outputToggle(
 }
 
 
-/*************************************************************************
- *
- *       Inverteix l'estat d'una sortida en un puls
- *
- *       Funcio:
- *           void DigOutputService::pulse(
- *               DigOutput output,
- *               unsigned time)
- * 
- *       Entrada:
- *           output: La sortida
- *           time  : La durada del puls
- *
- *************************************************************************/
+///
+/// \brief Inverteix l'estat d'una sortida en un puls.
+/// \param output: La sortida.
+/// \param time: La durada del puls.
+///
 
 void DigOutputService::outputPulse(
     DigOutputHandle output,
@@ -278,22 +203,12 @@ void DigOutputService::outputPulse(
 }
 
 
-/*************************************************************************
- *
- *       Constructor      
- *  
- *       Funcio:
- *           DigOutput::DigOutput(
- *               DigOutputServiceHandle service,
- *               unsigned pin,
- *               bool inverted)
- *
- *       Entrada:
- *           service : El servei
- *           pin     : Numero de pin hardware
- *           inverted: True si treballa amb logica negativa
- *
- *************************************************************************/
+///
+/// \brief Constructor.
+/// \param service: El servei as que s'asignara la sortida.
+/// \param pin: Identificador del pin. (Depend de cada hardware en particular).
+/// \param inverted: True si treballa amb logica negativa.
+///
 
 DigOutput::DigOutput(
     DigOutputServiceHandle service,
@@ -312,17 +227,21 @@ DigOutput::DigOutput(
 }
 
 
-/*************************************************************************
- *
- *       Obte l'estat d'una sortida
- *
- *       Funcio:
- *           bool DigOutput::get()
- *
- *       Retorn:
- *           L'estat de la sortida
- *
- *************************************************************************/
+///
+/// \brief Destructor.
+///
+
+DigOutput::~DigOutput() {
+    
+    if (timer != nullptr)
+        delete timer;
+}
+
+
+///
+/// \brief Obte actual l'estat d'una sortida.
+/// \return L'estat de la sortida.
+///
 
 bool DigOutput::get() const {
 

@@ -64,6 +64,7 @@ namespace eos {
         
         public:
             DigOutput(DigOutputServiceHandle service, uint8_t pin, bool inverted);
+            ~DigOutput();
             bool get() const;
             inline void set(bool state) { service->outputSet(this, state); }
             inline void toggle() { service->outputToggle(this); }
