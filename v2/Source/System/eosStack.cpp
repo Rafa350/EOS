@@ -9,20 +9,11 @@ using namespace eos;
 const unsigned capacityDelta = 10;
 
 
-/*************************************************************************
- *
- *       Constructor
- * 
- *       Funcio:
- *           GenericStack::GenericStack(
- *               unsigned size,
- *               unsigned initialCapacity) 
- *
- *       Entrada:
- *           size           : Tamany de cada element
- *           initialCapacity: Capacitat inicial
- * 
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor
+/// \param size: Tamany de cada element
+/// ºparam initialCapacity: Capacitat inicial
+///
 
 GenericStack::GenericStack(
     unsigned _size,
@@ -36,14 +27,9 @@ GenericStack::GenericStack(
 }
 
 
-/*************************************************************************
- *
- *       Destructor
- *
- *       Funcio:
- *           GenericStack::~GenericStack()
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Destructor
+///
 
 GenericStack::~GenericStack() {
     
@@ -52,18 +38,10 @@ GenericStack::~GenericStack() {
 }
 
 
-/*************************************************************************
- *
- *       Inserta un element en la pila
- * 
- *       Funcio:
- *           void GenericStack::pushElement(
- *               void *element) 
- *
- *       Entrada:
- *           element: El element a insertar
- * 
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Inserta un element en la pila.
+/// \param element: El element a insertar.
+///
 
 void GenericStack::pushElement(
     void *element) {
@@ -81,6 +59,9 @@ void GenericStack::pushElement(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Exteru el primer element de la pila
+///
 void GenericStack::popElement() {
     
     Task::enterCriticalSection();
@@ -92,28 +73,21 @@ void GenericStack::popElement() {
 }
 
 
+/// --------------------------------------------------------------------
+/// \brief Obte el punter al primer element de la pila
+/// \return El punter al element. nullptr si la pila es buida.
+///
 void *GenericStack::topElement() const {
     
     return count > 0 ? getPtr(count - 1) : nullptr;
 }
 
 
-
-/*************************************************************************
- *
- *       Obte l'adressa del element especificat
- * 
- *       Funcio:
- *           void *GenericStack::getPtr(
- *               unsigned index) const
- * 
- *       Entrada:
- *           index: L'index del element
- * 
- *       Retorn:
- *           L'adresa del element
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Obte l'adressa del element especificat.
+/// \param index: L'index del element.
+/// \return L'adresa del element.
+///
 
 void *GenericStack::getPtr(
     unsigned index) const {
@@ -122,18 +96,10 @@ void *GenericStack::getPtr(
 }
 
 
-/*************************************************************************
- *
- *       Redimensiona el buffer de dades
- *
- *       Funcio:
- *           void GenericStack::resize(
- *               unsigned newCapacity) 
- *
- *       Entrada:
- *           newCapacity : Nova capacitat de la pila
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Redimensiona el buffer de dades per encabir nous elements.
+/// \param newCapacity: Nova capacitat de la pila.
+///
 
 void GenericStack::resize(
     unsigned newCapacity) {

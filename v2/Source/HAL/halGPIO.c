@@ -27,6 +27,11 @@ PinInfo pinInfoTbl[NUM_PINS] = {
 };
 
 
+/// ----------------------------------------------------------------------
+/// \brief Configura un port com a sortida digital
+/// \param pin: Numero de pin
+/// \param openDrain: True si la sortida es tipos OC
+///
 void halGPIOPinSetModeOutput(
     uint8_t pin,
     bool openDrain) {
@@ -44,6 +49,10 @@ void halGPIOPinSetModeOutput(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Configura un port com a entrada digital
+/// \param pin: Numero de pin
+///
 void halGPIOPinSetModeInput(
     uint8_t pin) {
 
@@ -55,6 +64,9 @@ void halGPIOPinSetModeInput(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Obte l'estat d'un port digital
+///
 bool halGPIOPinGetState(
     uint8_t pin) {
 
@@ -63,6 +75,12 @@ bool halGPIOPinGetState(
 
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief Canvia l'estat d'un port de sortida digital
+/// \param pin: Numero de pin
+/// \param state: El nou estat
+///
 void halGPIOPinSetState(
     uint8_t pin, 
     bool state) {
@@ -75,6 +93,10 @@ void halGPIOPinSetState(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Inverteix l'estat d'un port de sortida digital
+/// \param pin: Numero de pin
+///
 void halGPIOPinToggleState(
     uint8_t pin) {
 

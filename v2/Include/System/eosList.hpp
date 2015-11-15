@@ -4,6 +4,9 @@
 
 namespace eos {
     
+    ///
+    /// \brief Interface generic per les llistes.
+    //
     template <typename elementType>
     class IList {
         public:
@@ -13,6 +16,9 @@ namespace eos {
             virtual elementType &operator[](unsigned index) = 0;
     };
     
+    ///
+    /// \brief Llista generica implementada com array de bytes.
+    //
     class GenericList {
         private:
             unsigned size;
@@ -31,6 +37,9 @@ namespace eos {
             void resize(unsigned newCapacity);
     };
     
+    ///
+    /// \brief Llista generica d'elements
+    ///
     template <typename elementType>
     class List: private GenericList, public IList<elementType> {
         public:
@@ -38,6 +47,10 @@ namespace eos {
                 GenericList(sizeof(elementType), 10) {
             }
             
+            ///
+            /// \brief Afegeix un element a la llista
+            /// \param element: Referencia al alement a afeigir
+            ///
             inline unsigned add(elementType &element) {
                 
                 return addElement(&element);
@@ -48,6 +61,10 @@ namespace eos {
                 removeElement(index);
             }
             
+            ///
+            /// \brief Obte el numero d'elements en la llista
+            /// \return El numero d'elements en la llista.
+            ///
             inline unsigned getCount() const {
                 
                 return GenericList::getCount();
@@ -59,6 +76,9 @@ namespace eos {
             }
     };
     
+    ///
+    /// \brief Iterator de llistes
+    ///
     template <typename elementType>
     class ListIterator {
         private:

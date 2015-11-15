@@ -17,6 +17,9 @@ namespace eos {
     class DigOutputService;
     typedef DigOutputService *DigOutputServiceHandle;
     
+    ///
+    /// \brief Clase que implemenmta el servei de gestio de sortides digitals.
+    ///
     class DigOutputService: public IRunable {
         private:
             enum class Action {
@@ -55,6 +58,9 @@ namespace eos {
             void doPulseAction(DigOutputHandle output, unsigned time);
     };
     
+    ///
+    /// \brief Clase que implementa una sortida digital.
+    ///
     class DigOutput {        
         private:
             DigOutputServiceHandle service;

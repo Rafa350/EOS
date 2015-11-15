@@ -188,7 +188,7 @@ void DigOutputService::outputSet(
     Command command;
     command.action = state ? Action::set : Action::clear;
     command.output = output;
-    commandQueue.put(command, 100);
+    commandQueue.put(command, (unsigned) -1);
 }
 
 
@@ -203,7 +203,7 @@ void DigOutputService::outputToggle(
     Command command;
     command.action = Action::toggle;
     command.output = output;
-    commandQueue.put(command, 100);
+    commandQueue.put(command, (unsigned) -1);
 }
 
 
@@ -221,7 +221,7 @@ void DigOutputService::outputPulse(
     command.action = Action::pulse;
     command.output = output;
     command.time = time;
-    commandQueue.put(command, 100);
+    commandQueue.put(command, (unsigned) -1);
 }
 
 
