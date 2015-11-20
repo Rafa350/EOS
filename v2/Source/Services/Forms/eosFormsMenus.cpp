@@ -6,24 +6,13 @@
 using namespace eos;
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           MenuForm::MenuForm
- *               FormsServiceHandle service,
- *               FormHandle parent,
- *               IMenuOwner *owner,
- *               uint8_t *esource)
- *
- *       Entrada:
- *           service : El servei
- *           parent  : El form pare
- *           owner   : El propietari del menu
- *           resource: El recurs del menu
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor
+/// \param service: El servei
+/// \param parent: El form pare
+/// \param owner: El propietari del menu
+/// \param resource: El recurs del menu
+///
 
 MenuForm::MenuForm(
     FormsServiceHandle service, 
@@ -109,7 +98,7 @@ void MenuForm::dispatchMessage(
  *
  *       Funcio:
  *           void Menuform::onActivate(
- *               Form *deactivatedForm,
+ *               FormHandle deactivatedForm,
  *
  *       Entrada:
  *           deactivatedForm: El form desactivat
@@ -117,7 +106,7 @@ void MenuForm::dispatchMessage(
  *************************************************************************/
 
 void MenuForm::onActivate(
-    Form *deactivateForm) {
+    FormHandle deactivateForm) {
 
     refresh();
 }
@@ -141,8 +130,7 @@ void MenuForm::onPaint(
 
     if (displayService->beginCommand()) {
 
-        uint8_t *resource = resource;
-        MenuInfo *info = &info[level];
+        MenuInfo *info = &this->info[level];
 
         unsigned offset = info->offset;
         unsigned titleLen = resource[offset + 1];
@@ -200,7 +188,7 @@ void MenuForm::onPaint(
 
 void MenuForm::firstItem() {
 
-    MenuInfo *info = &info[level];
+    MenuInfo *info = &this->info[level];
 
     if (info->currentItem != 0) {
         info->currentItem = 0;
@@ -221,7 +209,7 @@ void MenuForm::firstItem() {
 
 void MenuForm::lastItem() {
 
-    MenuInfo *info = &info[level];
+    MenuInfo *info = &this->info[level];
 
     if (info->currentItem <= info->numItems - 1) {
         info->currentItem = info->numItems - 1;
@@ -242,7 +230,7 @@ void MenuForm::lastItem() {
 
 void MenuForm::nextItem() {
     
-    MenuInfo *info = &info[level];
+    MenuInfo *info = &this->info[level];
 
     if (info->currentItem < info->numItems - 1) {
         info->currentItem++;
@@ -264,7 +252,7 @@ void MenuForm::nextItem() {
 
 void MenuForm::prevItem() {
 
-    MenuInfo *info = &info[level];
+    MenuInfo *info = &this->info[level];
 
     if (info->currentItem > 0) {
         info->currentItem--;
@@ -286,17 +274,17 @@ void MenuForm::prevItem() {
 
 void MenuForm::selectItem() {
     
-    MenuInfo *info = &info[level];
+    MenuInfo *info = &this->info[level];
 
-    unsigned offset = info[level].offset;
-    unsigned currentItem = info[level].currentItem;
+    unsigned offset = info->offset;
+    unsigned currentItem = info->currentItem;
     unsigned itemMapOffset = offset + 2 + resource[offset + 1] + (currentItem * 2);
     unsigned itemOffset = resource[itemMapOffset] + resource[itemMapOffset + 1] * 256;
 
     switch (resource[itemOffset] & 0x03) {
         case 0: {
             if (owner != nullptr) {
-                unsigned command = resource[itemOffset + 2 +  resource[itemOffset + 1]];
+                unsigned command = resource[itemOffset + 2 + resource[itemOffset + 1]];
                 owner->onCommand(command);
             }
             break;
@@ -305,7 +293,7 @@ void MenuForm::selectItem() {
         case 0x01:
             if (level < MAX_LEVELS) {
                 level++;
-                MenuInfo *info = &info[level];
+                MenuInfo *info = &this->info[level];
                 info->offset = itemOffset + 2 + resource[itemOffset + 1];
                 info->numItems = resource[info->offset];
                 info->firstItem = 0;

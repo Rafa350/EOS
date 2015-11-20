@@ -12,20 +12,11 @@ const unsigned taskStackSize = 512;
 const TaskPriority taskPriority = TaskPriority::normal;
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           bool FormsService::FormsService(
- *               MessageQueue *messageQueue,
- *               DisplayServiceHandle displayService)
- * 
- *       Entrada:
- *           messageQueue  : La cua de missatges
- *           displayService: Servei de pantalla
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor
+/// \param mssageQueue: La cua de missatges
+/// \param displayService: Servei de pantalla
+///
 
 FormsService::FormsService(
     MessageQueue *_messageQueue,
@@ -36,18 +27,10 @@ FormsService::FormsService(
 }
 
 
-/*************************************************************************
- *
- *       Afegeix un form al servei
- * 
- *       Funcio:
- *           void FormsService::add(
- *               FormHandle form) 
- * 
- *       Entrada:
- *           form: El form a afeigir
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Afegeix un form al servei
+/// \param form: El form a afeigir
+///
 
 void FormsService::add(
     FormHandle form) {
@@ -56,26 +39,18 @@ void FormsService::add(
 }
 
 
-/*************************************************************************
- *
- *       Tasca de control del servei
- * 
- *       Funcio:
- *           void FormsService::run() 
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Tasca de control del servei
+///
 
 void FormsService::run() {
     
     while (true) {
         
-        // Captura els events dels dispositius d'entrada
-        //
-        
         // Procesa els missatges en la cua
         //
         Message message;
-        if (messageQueue->receive(message, 1000)) 
+        if (messageQueue->receive(message, (unsigned) -1)) 
             message.target->dispatchMessage(message);
         
         // Procesa el repintat
@@ -87,30 +62,16 @@ void FormsService::run() {
                 form->paintPending = false;
                 form->onPaint(displayService);                
             }
+            ++iterator;
         }
     }
 }
 
 
-/*************************************************************************
- *
- *       Canvia el formulari actiu
- *
- *       Funcio:
- *           FormHandle FormsService::activate(
- *               FormHandle form)
- *
- *       Entrada:
- *           form El formulari a activat. NULL si no es vol activar cap
- * 
- *       Retorn:
- *           El form previament actiu
- * 
- *       Notes:
- *           Es genera un event onDeactivate en el form a desactivar i un
- *           event onActivate en el form a activar
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Canvia el formulari actiu
+/// \param form: El formulari a activat. nullptr si no es vol activar cap
+///
 
 FormHandle FormsService::activate(
     FormHandle form) {
@@ -122,59 +83,39 @@ FormHandle FormsService::activate(
     activeForm = form;
 
     if (activeForm != nullptr)    
-        activeForm->onDeactivate(oldActive);
+        activeForm->onActivate(oldActive);
 }
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           Form::Forms(
- *               FormsServiceHandle service,
- *               FormHandle parent)
- *
- *       Entrada:
- *           service: El servei
- *           parent : El form pare
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor
+/// \param service: El servei de gestio dels forms
+/// \param parent: El form pare
+///
 
 Form::Form(
-    FormsServiceHandle service,
-    FormHandle parent) {
+    FormsServiceHandle _service,
+    FormHandle _parent):
+    service(_service),
+    parent(_parent),
+    paintPending(true) {
 
     service->add(this);
-    
-    this->service = service;
-    this->parent = parent;
-    paintPending = true;
 }
 
 
-/*************************************************************************
- *
- *       Destructor
- *
- *       Funcio:
- *           Form::~Form() 
- * 
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Destructor
+///
 
 Form::~Form() {
     
 }
 
 
-/*************************************************************************
- *
- *       Refresca un formulari
- *
- *       Funcio:
- *           void Form::refresh()
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Refresca un formulari
+///
 
 void Form::refresh() {
     
@@ -182,24 +123,21 @@ void Form::refresh() {
 }
 
 
-/*************************************************************************
- *
- *       Dibuixa el formulari en pantalla
- * 
- *       Funcio:
- *           void Form::paint(
- *               DisplayServiceHandle displayService) 
- * 
- *       Entrada:
- *           displayService: Servei de pantalla
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa el formulari en pantalla
+/// \param displayService: Servei de pantalla
+///
 
 void Form::onPaint(
     DisplayServiceHandle displayService) {
     
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa un missatge 
+/// \param message: El missatge a procesar
+///
 
 void Form::dispatchMessage(
     Message &message) {

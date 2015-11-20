@@ -191,8 +191,12 @@ bool DisplayService::addBytes(
     unsigned dataLen) {
 
     if (!bufferError) {
-        while (dataLen--)
-            buffer[bufferCount++] = *data++;
+        if (bufferCount + dataLen < bufferSize) {
+            while (dataLen--)
+                fAddUINT8(*data++);
+        }
+        else
+            bufferError = true;
     }
 
     return bufferError;
@@ -284,21 +288,18 @@ bool DisplayService::addCommandDrawLine(
     int y2) {
 
     if (!bufferError) {
-
-        dspDrawShapeMessage msg;
-
-        msg.cmd = DSP_CMD_DRAWSHAPE;
-        msg.fillColor = 0xFF;
-        msg.frameColor = 0xFF;
-        msg.filled = false;
-        msg.framed = true;
-        msg.shape = DRAWSHAPE_LINE;
-        msg.x1 = x1;
-        msg.y1 = y1;
-        msg.x2 = x2;
-        msg.y2 = y2;
-
-        addBytes((uint8_t*) &msg, 12);//sizeof(msg));
+        if (bufferCount + sizeof(uint8_t) * 12 < bufferSize) {
+            fAddUINT8(DSP_CMD_DRAWSHAPE);
+            fAddUINT8(0xFF);
+            fAddUINT8(0xFF);
+            fAddUINT8(DRAWSHAPE_LINE);
+            fAddUINT16(x1);
+            fAddUINT16(y1);
+            fAddUINT16(x2);
+            fAddUINT16(y2);
+        }
+        else
+           bufferError = true;
     }
 
     return bufferError;
@@ -340,7 +341,6 @@ bool DisplayService::addCommandFillRectangle(
     int y2) {
 
     if (!bufferError) {
-
        if (bufferCount + sizeof(uint8_t) * 12 < bufferSize) {
             fAddUINT8(DSP_CMD_DRAWSHAPE);
             fAddUINT8(0xFF);

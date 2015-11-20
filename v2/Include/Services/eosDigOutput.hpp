@@ -46,9 +46,9 @@ namespace eos {
         public:
             DigOutputService();
             void add(DigOutputHandle output);
-            void outputSet(DigOutputHandle output, bool state);
-            void outputToggle(DigOutputHandle output);
-            void outputPulse(DigOutputHandle output, unsigned time);
+            void set(DigOutputHandle output, bool state);
+            void toggle(DigOutputHandle output);
+            void pulse(DigOutputHandle output, unsigned time);
         private:
             void run();
             void onTimeout(TimerHandle timer);
@@ -72,9 +72,9 @@ namespace eos {
             DigOutput(DigOutputServiceHandle service, uint8_t pin, bool inverted);
             ~DigOutput();
             bool get() const;
-            inline void set(bool state) { service->outputSet(this, state); }
-            inline void toggle() { service->outputToggle(this); }
-            inline void pulse(unsigned time) { service->outputPulse(this, time); }
+            inline void set(bool state) { service->set(this, state); }
+            inline void toggle() { service->toggle(this); }
+            inline void pulse(unsigned time) { service->pulse(this, time); }
             void delayedSet(unsigned delay, bool state);
             void delayedToggle(unsigned delay);
             void delayedPulse(unsigned delay, unsigned time);

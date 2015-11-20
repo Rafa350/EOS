@@ -16,6 +16,7 @@
 #include "fsmMachine.hpp"
 #include "../../../MD-SEL01/SEL01Messages.h"
 #include "../../../MD-DSP04/DSP04Messages.h"
+#include <stdlib.h>
 
 
 class MyApplication: public eos::Application {
@@ -54,7 +55,7 @@ class MyApplication: public eos::Application {
         
         void onTimeout(eos::Timer *timer);
         
-        void onSelector(uint16_t position, uint8_t status);
+        void onSelector(int16_t position, uint8_t status);
 };
 
 
@@ -154,10 +155,10 @@ void MyApplication::setupFormsService() {
     
     messageQueue = new eos::MessageQueue();
     formsService = new eos::FormsService(messageQueue, displayService);
-    //menuForm = new eos::MenuForm(formsService, nullptr, nullptr, (uint8_t*) menuMnuMain);
-    //formsService->activate(menuForm);
+    menuForm = new eos::MenuForm(formsService, nullptr, nullptr, (uint8_t*) menuMnuMain);
+    formsService->activate(menuForm);
 
-    //selectorService->setChangeEvent(EV_SelectorService_onChange(MyApplication, this, &MyApplication::onSelector));
+    selectorService->setChangeEvent(EV_SelectorService_onChange(MyApplication, this, &MyApplication::onSelector));
 }
 
 
@@ -193,18 +194,37 @@ void MyApplication::onTimeout(eos::Timer *timer) {
 }
 
 
-void MyApplication::onSelector(uint16_t position, uint8_t state) {
+void MyApplication::onSelector(int16_t position, uint8_t state) {
+    
+    static int16_t oldPosition = 0;
+    static uint8_t oldState = 0;
+    eos::Message message;
     
     if (formsService != nullptr) {
         eos::Form *form = formsService->getActiveForm();
         if (form != nullptr) {
-            eos::Message message;
-            message.id = MSG_SELECTOR;
-            message.target = form;
-            message.msgSelector.event = EV_SELECTOR_INC;
-            message.msgSelector.position = position;
-            message.msgSelector.state = state;
-            messageQueue->send(message, 100);
+            int16_t delta = position - oldPosition;
+            if (delta != 0) {
+                message.id = MSG_SELECTOR;
+                message.target = form;
+                message.msgSelector.event = delta < 0 ? EV_SELECTOR_DEC : EV_SELECTOR_INC;
+                message.msgSelector.position = abs(position);
+                message.msgSelector.state = state;
+                messageQueue->send(message, (unsigned) -1);
+                oldPosition = position;
+            }
+            
+            if (state != oldState) {            
+                if ((state & 0x0001) != 0) {
+                    message.id = MSG_SELECTOR;
+                    message.target = form;
+                    message.msgSelector.event = EV_SELECTOR_CLICK;
+                    message.msgSelector.position = position;
+                    message.msgSelector.state = state;
+                    messageQueue->send(message, (unsigned) -1);
+                }
+                oldState = state;
+            }
         }
     }
 }

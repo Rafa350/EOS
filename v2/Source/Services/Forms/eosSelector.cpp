@@ -29,7 +29,9 @@ SelectorService::SelectorService(
     task(taskStackSize, taskPriority, this),
     i2cService(_i2cService),
     addr(_addr),
-    evChange(nullptr) {
+    evChange(nullptr),
+    state(0),
+    position(0) {
 }
 
 
@@ -50,19 +52,19 @@ void SelectorService::run() {
 
     while (true) {
         
-        Task::delay(100);
+        Task::delay(25);
         
         if (i2cService->startTransaction(
             addr, 
             query, sizeof(query), 
             response, sizeof(response), 
-            1000,
+            (unsigned) -1,
             &endTransactionNotify)) {
             
-            if (endTransactionNotify.take(1000)) {
+            if (endTransactionNotify.take((unsigned) - 1)) {
             
-                uint8_t newState = response[0];
-                uint16_t newPosition = (uint16_t) ((response[3] << 8) | response[2]);
+                uint8_t newState = response[1];
+                int16_t newPosition = (int16_t) ((response[3] << 8) | response[2]);
 
                 if ((state != newState) || (position != newPosition)) {
                     position = newPosition;

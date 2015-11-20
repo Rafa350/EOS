@@ -9,7 +9,7 @@
 
 
 #define EV_SelectorService_onChange(cls, instance, method) \
-    new eos::CallbackP2<cls, uint16_t, uint8_t>(instance, method)
+    new eos::CallbackP2<cls, int16_t, uint8_t>(instance, method)
 
 
 namespace eos {
@@ -17,14 +17,14 @@ namespace eos {
     class SelectorService;
     typedef SelectorService *SelectorServiceHandle;
     
-    typedef ICallbackP2<uint16_t, uint8_t> ISelectorServiceEvent;
+    typedef ICallbackP2<int16_t, uint8_t> ISelectorServiceEvent;
 
     class SelectorService: public IRunable {        
         private:
             Task task;
             uint8_t addr;
             I2CMasterService *i2cService;
-            uint16_t position;
+            int16_t position;
             uint8_t state;
             ISelectorServiceEvent *evChange;
             

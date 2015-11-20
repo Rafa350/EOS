@@ -181,7 +181,7 @@ void DigOutputService::onTimeout(
 /// \param state: L'estat a asignar.
 ///
 
-void DigOutputService::outputSet(
+void DigOutputService::set(
     DigOutputHandle output,
     bool state) {
     
@@ -197,7 +197,7 @@ void DigOutputService::outputSet(
 /// \param output: La sortida.
 ///
 
-void DigOutputService::outputToggle(
+void DigOutputService::toggle(
     DigOutputHandle output) {
 
     Command command;
@@ -213,7 +213,7 @@ void DigOutputService::outputToggle(
 /// \param time: La durada del puls.
 ///
 
-void DigOutputService::outputPulse(
+void DigOutputService::pulse(
     DigOutputHandle output,
     unsigned time) {
     
