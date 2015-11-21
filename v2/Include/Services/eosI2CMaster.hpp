@@ -14,7 +14,7 @@ namespace eos {
     class I2CMasterService;
     typedef I2CMasterService *I2CMasterServiceHandle;
        
-    class I2CMasterService: IRunable {
+    class I2CMasterService: private IRunable {
         private:
             enum class State {          // Estat de la transaccio
                 idle,                   // -En espera de iniciar

@@ -9,22 +9,14 @@ const unsigned taskStackSize = 512;
 const TaskPriority taskPriority = TaskPriority::normal;
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           SelectorService::SelectorService(
- *               I2CMasterService *i2cService) 
- * 
- *       Entrada:
- *          i2cMasterService: El servei de comunicacions I2C
- *          addr            : Adressa I2C del selector
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor
+/// \param i2cMasterService: El servei de comunicacions I2C
+/// \param addr: Adressa I2C del selector
+///
 
 SelectorService::SelectorService(
-    I2CMasterService *_i2cService,
+    I2CMasterServiceHandle _i2cService,
     uint8_t _addr):
     task(taskStackSize, taskPriority, this),
     i2cService(_i2cService),
@@ -35,14 +27,9 @@ SelectorService::SelectorService(
 }
 
 
-/*************************************************************************
- *
- *       Procesa les tasques del servei
- *
- *       Funcio:
- *           void SelectorService::run() 
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Procesa les tasques del servei
+///
 
 void SelectorService::run() {
     

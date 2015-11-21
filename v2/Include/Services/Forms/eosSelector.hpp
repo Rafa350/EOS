@@ -19,17 +19,17 @@ namespace eos {
     
     typedef ICallbackP2<int16_t, uint8_t> ISelectorServiceEvent;
 
-    class SelectorService: public IRunable {        
+    class SelectorService: private IRunable {        
         private:
             Task task;
             uint8_t addr;
-            I2CMasterService *i2cService;
+            I2CMasterServiceHandle i2cService;
             int16_t position;
             uint8_t state;
             ISelectorServiceEvent *evChange;
             
         public:
-            SelectorService(I2CMasterService *i2cService, uint8_t addr);
+            SelectorService(I2CMasterServiceHandle i2cService, uint8_t addr);
             inline void setChangeEvent(ISelectorServiceEvent *event) { evChange = event; }
         private:
             void run();

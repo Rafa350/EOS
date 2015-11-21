@@ -3,35 +3,29 @@
 #include "task.h"
 
 
+using namespace eos;
+
+
 static const char *defaultTaskName = "";
 
 
-/*************************************************************************
- *
- *       Constructor
- * 
- *       Funcio:
- *           eos::Task::Task(
- *               unsigned stackSize, 
- *               eos::TaskPriority priority,
- *               eos::IRunable *runable) 
- * 
- *       Entrada:
- *           stackSize: Tamsny de la pila
- *           priority : Prioritat del proces
- *           runable  : Objecte que implementa IRunable
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Constructor. Crea un objecte Task que encapsula una tasca
+///        de FreeRTOS.
+/// \param stackSize: Tamany de la pila.
+/// \param priority: Prioritat del proces.
+/// \param runable: Objecte que implementa IRunable.
+///
 
-eos::Task::Task(
+Task::Task(
     unsigned stackSize, 
-    eos::TaskPriority priority,
-    eos::IRunable *runable) {
+    TaskPriority priority,
+    IRunable *runable) {
     
     this->runable = runable;
     
     xTaskCreate(
-        eos::Task::function, 
+        Task::function, 
         defaultTaskName, 
         stackSize, 
         this, 
@@ -40,37 +34,46 @@ eos::Task::Task(
 }
 
 
-/*************************************************************************
- *
- *       Destructor
- * 
- *       Funcio:
- *           eos::Task::~Task() 
- *
- *************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Destructor. Destrueix la tasca de FreeRTOS asociada.
+///
 
-eos::Task::~Task() {
+Task::~Task() {
     
     vTaskDelete(handle);
 }
 
 
-void eos::Task::function(
+/// ----------------------------------------------------------------------
+/// \brief Executa la funcio de la tasca.
+/// \param params: El handler de la tasca.
+///
+void Task::function(
     void *params) {
     
-    eos::Task *task = reinterpret_cast<eos::Task*>(params);
+    Task *task = reinterpret_cast<Task*>(params);
     while (true) 
         task->runable->run();
 }
 
 
-unsigned eos::Task::getTickCount() {
+/// ----------------------------------------------------------------------
+/// \brief Retorna el numero te ticks transcurreguts desde la 
+///        inicialitzacio del sistema.
+/// \return El numero de ticks.
+///
+unsigned Task::getTickCount() {
 
     return xTaskGetTickCount();   
 }
 
 
-void eos::Task::delay(
+/// ----------------------------------------------------------------------
+/// \brief Retarda la tasca actual un numero determinat de ticks.
+/// \param time: Enl numero de ticks a retardar.
+///
+
+void Task::delay(
     unsigned time) {
 
     if (time > 0)
@@ -78,7 +81,7 @@ void eos::Task::delay(
 }
 
 
-void eos::Task::delayUntil(
+void Task::delayUntil(
     unsigned time, 
     unsigned *lastTick) {
     
@@ -87,25 +90,31 @@ void eos::Task::delayUntil(
 }
 
 
-void eos::Task::enterCriticalSection() {
+/// ----------------------------------------------------------------------
+/// \brief Entra en una seccio critica
+///
+void Task::enterCriticalSection() {
 
     taskENTER_CRITICAL();
 }
 
 
-void eos::Task::exitCriticalSection() {
+/// ----------------------------------------------------------------------
+/// \brief Surt d'una seccio critica
+///
+void Task::exitCriticalSection() {
     
     taskEXIT_CRITICAL();
 }
 
 
-void eos::Task::suspendAllThreads() {
+void Task::suspendAllThreads() {
     
     vTaskSuspendAll();
 }
 
 
-void eos::Task::resumeAllThreads() {
+void Task::resumeAllThreads() {
 
     xTaskResumeAll();
 }

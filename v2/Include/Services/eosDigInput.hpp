@@ -22,7 +22,7 @@ namespace eos {
 
     typedef ICallbackP1<DigInputHandle> IDigInputEvent;
     
-    class DigInputService: public IRunable {        
+    class DigInputService: private IRunable {        
         private:
             typedef List<DigInputHandle> DigInputList;
             typedef ListIterator<DigInputHandle> DigInputListIterator;

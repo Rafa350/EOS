@@ -32,18 +32,10 @@ MenuForm::MenuForm(
 }
 
 
-/*************************************************************************
- *
- *       Procesa els missatges que arribin al form
- *
- *       Funcio:
- *           void MenuForm::dispatchMessage(
- *               Message &message)
- *
- *       Entrada:
- *           message : El missatge a procesar
- *
- **************************************************************************/
+/// ----------------------------------------------------------------------
+/// \brief Procesa els missatges que arribin al form
+/// \param message: El missatge a procesar
+///
 
 void MenuForm::dispatchMessage(
     Message &message) {

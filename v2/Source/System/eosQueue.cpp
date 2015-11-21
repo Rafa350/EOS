@@ -6,21 +6,11 @@
 using namespace eos;
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           GenericQueue::GenericQueue(
- *               unsigned size,
- *               unsigned capacity)
- *
- *       Entrada:
- *           size    : Tamany de cada item
- *           capacity: Numero maxim d'items en la cua
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Constructor.
+/// \param size: Tamany de cada item.
+/// \param capacity: Numero maxim d'items en la cua.
+///
 GenericQueue::GenericQueue(
     unsigned size,
     unsigned capacity) {
@@ -29,55 +19,31 @@ GenericQueue::GenericQueue(
 }
 
 
-/*************************************************************************
- *
- *       Destructor
- * 
- *       Funcio:
- *           GenericQueue::~GenericQueue() 
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Destructor
+///
 GenericQueue::~GenericQueue() {
     
     vQueueDelete(handle);
 }
 
 
-/*************************************************************************
- *
- *       Buida el contingut d'una cua
- * 
- *       Funcio:
- *         void GenericQueue::clear()
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Buida el contingut d'una cua.
+///
 void GenericQueue::clear() {
 
     xQueueReset(handle);
 }
 
 
-/*************************************************************************
- *
- *       Afegeix un element en la cua
- *
- *       Funcio:
- *           bool GenericQueue::put(
- *               void *element,
- *               unsigned blockTime)
- *
- *       Entrada:
- *           element  : Punter al element a afeigit
- *           blockTime: Temps maxim de bloqueig
- *
- *       Retorn:
- *           true si tot es correcte
- *
- *************************************************************************/
-
-bool GenericQueue::put(
+/// ----------------------------------------------------------------------
+/// \brief Afegeix un element en la cua.
+/// \param element: Punter al element a afeigir.
+/// \param blockTime: Temps maxim de bloqueig.
+/// \return True si tot es correcte
+///
+bool GenericQueue::genericPut(
     void *element,
     unsigned blockTime) {
     
@@ -85,25 +51,12 @@ bool GenericQueue::put(
 }
 
 
-/*************************************************************************
- *
- *       Extreu un element en la cua
- *
- *       Funcio:
- *           bool GenericQueue::get(
- *               void *element,
- *               unsigned blockTime)
- *
- *       Entrada:
- *           element  : Punter al element a exterure
- *           blockTime: Temps maxim de bloqueig
- *
- *       Retorn:
- *           True si tot es correcte
- *
- *************************************************************************/
-
-bool GenericQueue::get(
+/// ----------------------------------------------------------------------
+/// \brief Extreu un element en la cua.
+/// \param element: Punter al element a exterure.
+/// \param blockTime: Temps maxim de bloqueig
+///
+bool GenericQueue::genericGet(
     void *element,
     unsigned blockTime) {
 

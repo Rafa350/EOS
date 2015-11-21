@@ -7,7 +7,7 @@
 
 namespace eos {
     
-    class AppLoopService: public IRunable {
+    class AppLoopService: private IRunable {
 
         private:
             Task task;

@@ -43,7 +43,7 @@ GenericStack::~GenericStack() {
 /// \param element: El element a insertar.
 ///
 
-void GenericStack::pushElement(
+void GenericStack::genericPush(
     void *element) {
         
     Task::enterCriticalSection();
@@ -62,7 +62,7 @@ void GenericStack::pushElement(
 /// ----------------------------------------------------------------------
 /// \brief Exteru el primer element de la pila
 ///
-void GenericStack::popElement() {
+void GenericStack::genericPop() {
     
     Task::enterCriticalSection();
 
@@ -77,7 +77,7 @@ void GenericStack::popElement() {
 /// \brief Obte el punter al primer element de la pila
 /// \return El punter al element. nullptr si la pila es buida.
 ///
-void *GenericStack::topElement() const {
+void *GenericStack::genericTop() const {
     
     return count > 0 ? getPtr(count - 1) : nullptr;
 }

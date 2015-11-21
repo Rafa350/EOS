@@ -153,7 +153,7 @@ void MyApplication::setupFormsService() {
     selectorService = new eos::SelectorService(i2cMasterService, SEL_ADDRESS);
     displayService = new eos::DisplayService(i2cMasterService, DSP_ADDRESS);
     
-    messageQueue = new eos::MessageQueue();
+    messageQueue = new eos::MessageQueue(20);
     formsService = new eos::FormsService(messageQueue, displayService);
     menuForm = new eos::MenuForm(formsService, nullptr, nullptr, (uint8_t*) menuMnuMain);
     formsService->activate(menuForm);
@@ -210,7 +210,7 @@ void MyApplication::onSelector(int16_t position, uint8_t state) {
                 message.msgSelector.event = delta < 0 ? EV_SELECTOR_DEC : EV_SELECTOR_INC;
                 message.msgSelector.position = abs(position);
                 message.msgSelector.state = state;
-                messageQueue->send(message, (unsigned) -1);
+                messageQueue->put(message, (unsigned) -1);
                 oldPosition = position;
             }
             
@@ -221,7 +221,7 @@ void MyApplication::onSelector(int16_t position, uint8_t state) {
                     message.msgSelector.event = EV_SELECTOR_CLICK;
                     message.msgSelector.position = position;
                     message.msgSelector.state = state;
-                    messageQueue->send(message, (unsigned) -1);
+                    messageQueue->put(message, (unsigned) -1);
                 }
                 oldState = state;
             }

@@ -20,7 +20,7 @@ namespace eos {
     ///
     /// \brief Clase que implemenmta el servei de gestio de sortides digitals.
     ///
-    class DigOutputService: public IRunable {
+    class DigOutputService: private IRunable {
         private:
             enum class Action {
                 set,

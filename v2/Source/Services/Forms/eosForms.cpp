@@ -7,7 +7,6 @@
 using namespace eos;
 
 
-const unsigned messageQueueSize = 20;
 const unsigned taskStackSize = 512;
 const TaskPriority taskPriority = TaskPriority::normal;
 
@@ -50,7 +49,7 @@ void FormsService::run() {
         // Procesa els missatges en la cua
         //
         Message message;
-        if (messageQueue->receive(message, (unsigned) -1)) 
+        if (messageQueue->get(message, (unsigned) -1)) 
             message.target->dispatchMessage(message);
         
         // Procesa el repintat
@@ -146,26 +145,4 @@ void Form::dispatchMessage(
         default:
             break;
     }
-}
-
-
-
-MessageQueue::MessageQueue():
-    queue(sizeof(Message)) {    
-}
-
-
-void MessageQueue::send(
-    Message &message,
-    unsigned blockTime) {
-    
-    queue.put(message, blockTime);
-}
-
-
-bool MessageQueue::receive(
-    Message &message, 
-    unsigned blockTime) {
-    
-    return queue.get(message, blockTime);
 }

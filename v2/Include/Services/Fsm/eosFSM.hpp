@@ -69,7 +69,7 @@ namespace eos {
     class StateMachineService;
     typedef ICallbackP1<StateMachineService*> IStateMachineServiceEvent;
 
-    class StateMachineService: public IRunable {
+    class StateMachineService: private IRunable {
 
         private:
             typedef Queue<fsm::Event> EventQueue;

@@ -54,17 +54,9 @@ namespace eos {
         };
     };
     
-    class MessageQueue {
-        private:
-            Queue<Message> queue;
-
-        public: 
-            MessageQueue();
-            void send(Message &message, unsigned blockTime);
-            bool receive(Message &message, unsigned blockTime);
-    };
+    typedef Queue<Message> MessageQueue;
     
-    class FormsService: public IRunable {
+    class FormsService: private IRunable {
         private:
             typedef List<FormHandle> FormList;
             typedef ListIterator<FormHandle> FormListIterator;
