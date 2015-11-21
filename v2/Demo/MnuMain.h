@@ -3,10 +3,13 @@
  *       Archivo generado desde un archivo de recursos
  *       No modificar!
  *
- *       Fecha de generación  : 24/10/2015 12:25:00
+ *       Fecha de generación  : 21/11/2015 21:11:00
  *       Version del generador: 1.1.0.0
  *
  ************************************************************************/
+
+
+#include <stdint.h>
 
 
 #define CMD_SET_XJERK 100
@@ -19,30 +22,7 @@
 #define CMD_SET_YMAXSPEED 107
 #define CMD_SET_YNUMSTEPS 108
 #define CMD_SET_YNUMUNITS 109
-#define CMD_SET_ZJERK 110
-#define CMD_SET_ZMAXACCEL 111
-#define CMD_SET_ZMAXSPEED 112
-#define CMD_SET_ZNUMSTEPS 113
-#define CMD_SET_ZNUMUNITS 114
-#define CMD_CFG_PROGRAM 115
-#define CMD_PRINT_PRE_DELAY 116
-#define CMD_PRINT_POST_DELAY 117
-#define CMD_PRINT_WAIT_MODE 118
-#define CMD_PRINT_VACUUM_MODE 119
-#define CMD_PRINT_TIMEOUT 120
-#define CMD_UP_PRE_DELAY 121
-#define CMD_UP_POST_DELAY 122
-#define CMD_UP_TIMEOUT 123
-#define CMD_DOWN_PRE_DELAY 124
-#define CMD_DOWN_POST_DELAY 125
-#define CMD_APPLYTOUCH_TIMEOUT 126
-#define CMD_APPLYTRIGGER_PRE_DELAY 127
-#define CMD_APPLYTRIGGER_POST_DELAY 128
-#define CMD_APPLYTRIGGER_TOUCHRETURN 129
-#define CMD_CFG_TEST_ACTIVE 130
-#define CMD_CFG_TEST_INTERVAL 131
-#define CMD_RESET_DEFAULTS 132
-#define CMD_EXIT 133
+#define CMD_EXIT 110
 
 
 extern const uint8_t menuMnuMain[];

@@ -62,6 +62,8 @@ namespace eos {
             void nextItem();
             void prevItem();
             void selectItem();
+            void nextMenu();
+            void prevMenu();
     };
 
 }

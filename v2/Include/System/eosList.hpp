@@ -28,10 +28,10 @@ namespace eos {
             virtual ~GenericList();
         protected:
             GenericList(unsigned size, unsigned initialCapacity);
-            unsigned addElement(void *element);
-            void removeElement(unsigned index);
-            unsigned getCount() const { return count; }
-            void *getElement(unsigned index) const;
+            unsigned genericAdd(void *element);
+            void genericRemove(unsigned index);
+            unsigned genericGetCount() const { return count; }
+            void *genericGet(unsigned index) const;
         private:
             void *getPtr(unsigned index) const;
             void resize(unsigned newCapacity);
@@ -53,14 +53,14 @@ namespace eos {
             ///
             inline unsigned add(elementType &element) {
                 
-                return addElement(&element);
+                return genericAdd(&element);
             }
             
             /// \brief Elimina un element de la llista
             /// \param index: El index del element.
             inline void remove(unsigned index) {
                 
-                removeElement(index);
+                genericRemove(index);
             }
             
             /// \brief Obte el numero d'elements en la llista
@@ -68,7 +68,7 @@ namespace eos {
             ///
             inline unsigned getCount() const {
                 
-                return GenericList::getCount();
+                return genericGetCount();
             }
 
             /// \brief Obte un element de la llista.
@@ -77,7 +77,7 @@ namespace eos {
             ///
             inline elementType &operator[](unsigned index) {
                 
-                return *((elementType*) getElement(index));
+                return *((elementType*) genericGet(index));
             }
     };
     

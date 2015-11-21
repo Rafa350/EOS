@@ -64,11 +64,11 @@ bool GenericQueue::genericGet(
 }
 
 
-bool GenericQueue::putISR(void *element) {
+bool GenericQueue::genericPutISR(void *element) {
     
 }
 
 
-bool GenericQueue::getISR(void *element) {
+bool GenericQueue::genericGetISR(void *element) {
     
 }

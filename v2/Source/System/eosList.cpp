@@ -14,7 +14,6 @@ const unsigned capacityDelta = 10;
 /// \param size: Tamany en bytes de cada element.
 /// \param initialCapacity: Capacitat inicial de la llista.
 ///
-
 GenericList::GenericList(
     unsigned _size,
     unsigned initialCapacity):
@@ -30,7 +29,6 @@ GenericList::GenericList(
 /// ----------------------------------------------------------------------
 /// \brief Destructor
 ///
-
 GenericList::~GenericList() {
     
     if (container != nullptr)
@@ -43,8 +41,7 @@ GenericList::~GenericList() {
 /// \param element: Punter al element a afeigir.
 /// \return El index del element.
 ///
-
-unsigned GenericList::addElement(
+unsigned GenericList::genericAdd(
     void *element) {
     
     Task::enterCriticalSection();
@@ -66,8 +63,7 @@ unsigned GenericList::addElement(
 /// \brief Elimina un element de la llista.
 /// \param index: Index del element a eliminar.
 ///
-
-void GenericList::removeElement(
+void GenericList::genericRemove(
     unsigned index) {
     
     Task::enterCriticalSection();
@@ -84,12 +80,13 @@ void GenericList::removeElement(
 /// \param index: Index del element:
 /// \return Punter al element.
 ///
-
-void *GenericList::getElement(
+void *GenericList::genericGet(
     unsigned index) const {
     
     Task::enterCriticalSection();
+    
     void *p = index < count ? getPtr(index) : nullptr;
+    
     Task::exitCriticalSection();
     
     return p;
@@ -101,7 +98,6 @@ void *GenericList::getElement(
 /// \param index: L'index del element.
 /// \return L'adresa del element
 ///
-
 void *GenericList::getPtr(
     unsigned index) const {
 
@@ -113,7 +109,6 @@ void *GenericList::getPtr(
 /// \brief Redimensiona el buffer de dades.
 /// \param newCapacity : Numero d'elements.
 ///
-
 void GenericList::resize(
     unsigned newCapacity) {
     

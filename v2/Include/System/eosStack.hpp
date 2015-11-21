@@ -7,7 +7,7 @@
 
 namespace eos {
     
-    /// \brief Ingerface generic per les piles.
+    /// \brief Interface generic per les piles.
     //
     template <typename elementType>
     class IStack {
@@ -15,6 +15,7 @@ namespace eos {
             virtual const elementType &top() const = 0;
             virtual void push(elementType &element) = 0;
             virtual void pop() = 0;
+            virtual bool isEmpty() const = 0;
     };
     
     /// \brief Pila generica implementada com array de bytes.
@@ -27,12 +28,16 @@ namespace eos {
             void *container;
         public:
             virtual ~GenericStack();
-            inline unsigned getCount() const { return count; }
         protected:
             GenericStack(unsigned size, unsigned initialCapacity);
             void genericPush(void *element);
             void genericPop();
             void *genericTop() const;
+            
+            /// \brief Obte el nombre d'elements en la pila
+            /// \return El nombre d'elements.
+            ///
+            inline unsigned genericGetCount() const { return count; }
         private:
             void resize(unsigned newCapacity);
             void *getPtr(unsigned index) const;
@@ -43,6 +48,8 @@ namespace eos {
     template <typename elementType>
     class Stack: private GenericStack, public IStack<elementType> {
         public:
+            /// \brief Contructor.
+            ///
             Stack(): 
                 GenericStack(sizeof(elementType), 10) {
             }
@@ -68,6 +75,14 @@ namespace eos {
             inline const elementType &top() const {
                 
                 return * ((elementType*) genericTop());
+            }
+            
+            /// \brief: Indica si la pila es buida.
+            /// \return: True si es buida.
+            ///
+            inline bool isEmpty() const {
+                
+                return genericGetCount() == 0;
             }
     };   
     

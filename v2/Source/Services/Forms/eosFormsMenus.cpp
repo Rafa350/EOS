@@ -13,7 +13,6 @@ using namespace eos;
 /// \param owner: El propietari del menu
 /// \param resource: El recurs del menu
 ///
-
 MenuForm::MenuForm(
     FormsServiceHandle service, 
     FormHandle parent,
@@ -36,7 +35,6 @@ MenuForm::MenuForm(
 /// \brief Procesa els missatges que arribin al form
 /// \param message: El missatge a procesar
 ///
-
 void MenuForm::dispatchMessage(
     Message &message) {
 
@@ -56,7 +54,7 @@ void MenuForm::dispatchMessage(
                     break;
                     
                 case EV_KEYBOARD_LEFT:
-                    //backMenu();
+                    prevMenu();
                     break;
             }
             break;
@@ -84,19 +82,10 @@ void MenuForm::dispatchMessage(
 }
 
 
-/*************************************************************************
- *
- *       Procesa el event onActivate
- *
- *       Funcio:
- *           void Menuform::onActivate(
- *               FormHandle deactivatedForm,
- *
- *       Entrada:
- *           deactivatedForm: El form desactivat
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Procesa el event onActivate.
+/// \param deactivatedForm: El form desactivat
+///
 void MenuForm::onActivate(
     FormHandle deactivateForm) {
 
@@ -104,19 +93,10 @@ void MenuForm::onActivate(
 }
 
 
-/*************************************************************************
- *
- *       Procesa el event ON_PAINT
- *
- *       Funcio:
- *           void MenuForm::onPaint(
- *               DisplayServiceHandle displayService) 
- *
- *       Entrada:
- *           displayService: Servei de pantalla
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Procesa el event onPaint.
+/// \param displayService: Servei de pantalla.
+///
 void MenuForm::onPaint(
     DisplayServiceHandle displayService) {
 
@@ -169,15 +149,9 @@ void MenuForm::onPaint(
 }
 
 
-/*************************************************************************
- *
- *       Mou el selector al primer item del menu
- *
- *       Funcio:
- *           void MenuForm::firstItem()
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Mou el selector al primer item del menu.
+///
 void MenuForm::firstItem() {
 
     MenuInfo *info = &this->info[level];
@@ -190,15 +164,9 @@ void MenuForm::firstItem() {
 }
 
 
-/*************************************************************************
- *
- *       Mou el selector a l'ultim item del menu
- *
- *       Funcio:
- *           void MenuForm::lastItem()
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \bried Mou el selector a l'ultim item del menu.
+///
 void MenuForm::lastItem() {
 
     MenuInfo *info = &this->info[level];
@@ -211,15 +179,9 @@ void MenuForm::lastItem() {
 }
 
 
-/*************************************************************************
- *
- *       Mou el selector al seguent item del menu
- *
- *       Funcio:
- *           void MenuForm::nextItem()
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Mou el selector al seguent item del menu.
+///
 void MenuForm::nextItem() {
     
     MenuInfo *info = &this->info[level];
@@ -233,15 +195,9 @@ void MenuForm::nextItem() {
 }
  
 
-/*************************************************************************
- *
- *       Mou el selector a l'anterior item del menu
- *
- *       Funcio:
- *           void MenuForm::prevItem()
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Mou el selector a l'anterior item del menu.
+///
 void MenuForm::prevItem() {
 
     MenuInfo *info = &this->info[level];
@@ -255,15 +211,9 @@ void MenuForm::prevItem() {
 }
 
 
-/*************************************************************************
- *
- *       Selecciona el item actual
- *
- *       Funcio:
- *           void MenuForm::selectItem()
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Selecciona el item actual.
+///
 void MenuForm::selectItem() {
     
     MenuInfo *info = &this->info[level];
@@ -274,15 +224,15 @@ void MenuForm::selectItem() {
     unsigned itemOffset = resource[itemMapOffset] + resource[itemMapOffset + 1] * 256;
 
     switch (resource[itemOffset] & 0x03) {
-        case 0: {
+        case 0x00: // commandItem
             if (owner != nullptr) {
                 unsigned command = resource[itemOffset + 2 + resource[itemOffset + 1]];
                 owner->onCommand(command);
             }
             break;
-        }
 
-        case 0x01:
+        case 0x01: // menuItem
+            // nextMenu();
             if (level < MAX_LEVELS) {
                 level++;
                 MenuInfo *info = &this->info[level];
@@ -294,11 +244,28 @@ void MenuForm::selectItem() {
             }
             break;
 
-        case 0x02:
-            if (level > 0)  {
-                level--;
-                refresh();
-            }
+        case 0x02: // exitItem
+            prevMenu();
             break;
     }
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief Avança al seguent menu
+///
+void MenuForm::nextMenu() {
+
+    // TODO 
+}
+    
+/// ----------------------------------------------------------------------
+/// \brief Retorna al menu anterior
+///
+void MenuForm::prevMenu() {
+
+    if (level > 0)  {
+        level--;
+        refresh();
+    }   
+}    

@@ -20,8 +20,8 @@ namespace eos {
             GenericQueue(unsigned size, unsigned capacity);                   
             bool genericPut(void *element, unsigned blockTime);
             bool genericGet(void *element, unsigned blockTime);
-            bool putISR(void *element);
-            bool getISR(void *element);            
+            bool genericPutISR(void *element);
+            bool genericGetISR(void *element);            
     };
     
     template <typename elementType>
@@ -47,7 +47,7 @@ namespace eos {
                 return genericPut((void*) &element, blockTime);
             }
             
-            /// \br Extreu un element de la cua.
+            /// \brief Extreu un element de la cua.
             /// \param element: L'element a Exterure.
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.

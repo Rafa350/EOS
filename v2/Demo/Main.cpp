@@ -16,7 +16,6 @@
 #include "fsmMachine.hpp"
 #include "../../../MD-SEL01/SEL01Messages.h"
 #include "../../../MD-DSP04/DSP04Messages.h"
-#include <stdlib.h>
 
 
 class MyApplication: public eos::Application {
@@ -208,14 +207,14 @@ void MyApplication::onSelector(int16_t position, uint8_t state) {
                 message.id = MSG_SELECTOR;
                 message.target = form;
                 message.msgSelector.event = delta < 0 ? EV_SELECTOR_DEC : EV_SELECTOR_INC;
-                message.msgSelector.position = abs(position);
+                message.msgSelector.position = position;
                 message.msgSelector.state = state;
                 messageQueue->put(message, (unsigned) -1);
                 oldPosition = position;
             }
             
             if (state != oldState) {            
-                if ((state & 0x0001) != 0) {
+                if ((state & 0x01) != 0x00) {
                     message.id = MSG_SELECTOR;
                     message.target = form;
                     message.msgSelector.event = EV_SELECTOR_CLICK;
