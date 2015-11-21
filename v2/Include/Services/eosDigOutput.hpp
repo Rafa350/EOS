@@ -17,7 +17,6 @@ namespace eos {
     class DigOutputService;
     typedef DigOutputService *DigOutputServiceHandle;
     
-    ///
     /// \brief Clase que implemenmta el servei de gestio de sortides digitals.
     ///
     class DigOutputService: private IRunable {
@@ -58,7 +57,6 @@ namespace eos {
             void doPulseAction(DigOutputHandle output, unsigned time);
     };
     
-    ///
     /// \brief Clase que implementa una sortida digital.
     ///
     class DigOutput {        
@@ -72,8 +70,19 @@ namespace eos {
             DigOutput(DigOutputServiceHandle service, uint8_t pin, bool inverted);
             ~DigOutput();
             bool get() const;
+            
+            /// \brief Asigna l'estat de la sortida.
+            /// \param state: El nou estat
+            ///
             inline void set(bool state) { service->set(this, state); }
+            
+            /// \brief Inverteix l'estat de la sortida
+            ///
             inline void toggle() { service->toggle(this); }
+            
+            /// \brief Genera un puls (Inverteix l'estat momentaneament) en la sortida.
+            /// param time: Durecio del puls en ticks.
+            ///
             inline void pulse(unsigned time) { service->pulse(this, time); }
             void delayedSet(unsigned delay, bool state);
             void delayedToggle(unsigned delay);

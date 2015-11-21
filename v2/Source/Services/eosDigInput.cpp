@@ -18,7 +18,6 @@ const TaskPriority taskPriority = TaskPriority::normal;
 /// ----------------------------------------------------------------------
 /// \brief Constructor
 ///
-
 DigInputService::DigInputService() :
     task(taskStackSize, taskPriority, this) {
 }
@@ -28,7 +27,6 @@ DigInputService::DigInputService() :
 /// \brief Afegeix una entrada
 /// \param input: L'entrada a afeigir
 ///
-
 void DigInputService::add(
     DigInputHandle input) {
 
@@ -39,7 +37,6 @@ void DigInputService::add(
 /// ----------------------------------------------------------------------
 /// \brief Tasca de control del servei
 ///
-
 void DigInputService::run() {
     
     unsigned tc = Task::getTickCount();
@@ -82,7 +79,6 @@ void DigInputService::run() {
 /// \param pin: El numero de pin.
 /// \param inverted: Indica si la senyal va invertida.
 ///
-
 DigInput::DigInput(
     DigInputServiceHandle service,
     uint8_t pin, 
@@ -106,7 +102,6 @@ DigInput::DigInput(
 /// \brief Lectura del port d'una entrada.
 /// \return Valor lleigit del port.
 ///
-
 bool DigInput::pinGet() const {
     
     bool p = halGPIOPinGetState(pin);

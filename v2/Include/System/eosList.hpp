@@ -42,6 +42,8 @@ namespace eos {
     template <typename elementType>
     class List: private GenericList, public IList<elementType> {
         public:
+            /// \brief Contructor.
+            ///
             List() :
                 GenericList(sizeof(elementType), 10) {
             }
@@ -98,21 +100,31 @@ namespace eos {
                 endIndex(_list.getCount()) {
             }            
                 
+            /// \brief Reseteja el iterator per començar de nou.
+            ///
             inline void reset() { 
                 
                 index = 0; 
             }
             
+            /// \brief Compriva si el iterator ha arribat al final.
+            /// \return True si ha arribat al final.
+            ///
             inline bool isEnd() const { 
                 
                 return index >= endIndex; 
             }
             
+            /// \brief Obte el element actual.
+            /// \return L'element actual
+            ///
             inline elementType &current() const { 
                 
                 return list[index]; 
             }
             
+            /// \brief Pasa al seguent element a itarar.
+            ///
             inline void operator++() { 
                 
                 index++; 

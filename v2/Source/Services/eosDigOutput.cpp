@@ -15,7 +15,6 @@ const TaskPriority taskPriority = TaskPriority::normal;
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
-
 DigOutputService::DigOutputService() :
     task(taskStackSize, taskPriority, this),
     commandQueue(commandQueueSize) {
@@ -26,7 +25,6 @@ DigOutputService::DigOutputService() :
 /// \brief Afegeig una sortida al servei.
 /// \param output: La sortida a afeigir.
 ///
-
 void DigOutputService::add(
     DigOutputHandle output) {
     
@@ -37,7 +35,6 @@ void DigOutputService::add(
 /// ----------------------------------------------------------------------
 /// \brief Executa la tasca de control de servei.
 ///
-
 void DigOutputService::run() {
     
     Command command;
@@ -70,8 +67,7 @@ void DigOutputService::run() {
 /// \brief  Procesa l'accio 'clear'.
 /// \param  output: La sortida.
 ///
- 
-void DigOutputService::doClearAction(
+ void DigOutputService::doClearAction(
     DigOutputHandle output) {
     
     Task::enterCriticalSection();
@@ -91,8 +87,7 @@ void DigOutputService::doClearAction(
 /// \brief Procesa l'accio 'set'.
 /// \param output: La sortida.
 ///
- 
-void DigOutputService::doSetAction(
+ void DigOutputService::doSetAction(
     DigOutputHandle output) {
 
     Task::enterCriticalSection();
@@ -112,7 +107,6 @@ void DigOutputService::doSetAction(
 /// \brief Procesa l'accio 'toggle'.
 /// \param output: La sortida.
 ///
-
 void DigOutputService::doToggleAction(
     DigOutputHandle output) {
 
@@ -134,7 +128,6 @@ void DigOutputService::doToggleAction(
 /// \param output: La sortida.
 /// \param time: La durada del puls.
 ///
-
 void DigOutputService::doPulseAction(
     DigOutputHandle output, 
     unsigned time) {
@@ -166,7 +159,6 @@ void DigOutputService::doPulseAction(
 /// \brief Procesa el timeout del temporitzador pels pulsos.
 /// \param timer: El temporitzador.
 ///
-
 void DigOutputService::onTimeout(
     TimerHandle timer) {
     
@@ -180,15 +172,16 @@ void DigOutputService::onTimeout(
 /// \param output: La sortida.
 /// \param state: L'estat a asignar.
 ///
-
 void DigOutputService::set(
     DigOutputHandle output,
     bool state) {
     
-    Command command;
-    command.action = state ? Action::set : Action::clear;
-    command.output = output;
-    commandQueue.put(command, (unsigned) -1);
+    if (output->get() != state) {
+        Command command;
+        command.action = state ? Action::set : Action::clear;
+        command.output = output;
+        commandQueue.put(command, (unsigned) -1);
+    }
 }
 
 
@@ -196,7 +189,6 @@ void DigOutputService::set(
 /// \brief Inverteix l'estat d'una sortida.
 /// \param output: La sortida.
 ///
-
 void DigOutputService::toggle(
     DigOutputHandle output) {
 
@@ -212,7 +204,6 @@ void DigOutputService::toggle(
 /// \param output: La sortida.
 /// \param time: La durada del puls.
 ///
-
 void DigOutputService::pulse(
     DigOutputHandle output,
     unsigned time) {
@@ -231,7 +222,6 @@ void DigOutputService::pulse(
 /// \param pin: Identificador del pin. (Depend de cada hardware en particular).
 /// \param inverted: True si treballa amb logica negativa.
 ///
-
 DigOutput::DigOutput(
     DigOutputServiceHandle service,
     uint8_t pin,
@@ -252,7 +242,6 @@ DigOutput::DigOutput(
 /// ----------------------------------------------------------------------
 /// \brief Destructor.
 ///
-
 DigOutput::~DigOutput() {
     
     if (timer != nullptr)
@@ -264,7 +253,6 @@ DigOutput::~DigOutput() {
 /// \brief Obte actual l'estat d'una sortida.
 /// \return L'estat de la sortida.
 ///
-
 bool DigOutput::get() const {
 
     bool state = halGPIOPinGetState(pin);

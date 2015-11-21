@@ -18,7 +18,6 @@ const unsigned baudRate = 100000;
 /// \brief Constructor
 /// \param moduleId: Identificador del modulI2C
 ///
-
 I2CMasterService::I2CMasterService(
     unsigned moduleId) :
     task(taskStackSize, taskPriority, this),
@@ -42,7 +41,6 @@ I2CMasterService::I2CMasterService(
 /// \param notify: Semafor per notificar el final de la transaccio.
 /// \return True si tot es correcte, false en cas contrari.
 ///
-
 bool I2CMasterService::startTransaction(
     uint8_t addr,
     void *txBuffer,
@@ -75,7 +73,6 @@ bool I2CMasterService::startTransaction(
 /// ----------------------------------------------------------------------
 /// \brief Procesa les tasques del servei.
 ///
-
 void I2CMasterService::run() {
 
     halI2CMasterInitialize(
@@ -133,7 +130,6 @@ void I2CMasterService::run() {
 /// Transmissio/Recepcio en format de trama
 /// |LENGTH|DATA-1|DATA-2| . . . |DATA-n|CHECK|
 ///
-
 void I2CMasterService::interruptCallback(
     unsigned moduleId, 
     void* param) {
@@ -147,7 +143,6 @@ void I2CMasterService::interruptCallback(
 /// \brief Maquina d'estats per porocesar les comunicacions. S'executa en
 ///        el contexte de la interrupcio I2C.
 ///
-
 void I2CMasterService::stateMachine() {
     
     switch (state) {
