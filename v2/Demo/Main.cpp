@@ -9,8 +9,9 @@
 #include "Services/eosI2CMaster.hpp"
 #include "Services/Forms/eosForms.hpp"
 #include "Services/Forms/eosSelector.hpp"
-#include "Services/Forms/eosDisplay.hpp"
 #include "Services/Forms/eosFormsMenus.hpp"
+#include "Controllers/eosDisplay.hpp"
+#include "appMainForm.hpp"
 #include "fsmDefines.hpp"
 #include "fsmStates.hpp"
 #include "fsmMachine.hpp"
@@ -18,25 +19,28 @@
 #include "../../../MD-DSP04/DSP04Messages.h"
 
 
-class MyApplication: public eos::Application {
+using namespace eos;
+using namespace app;
+
+
+class MyApplication: public Application {
     private:
-        eos::DigInputServiceHandle digInputService;
-        eos::DigOutputServiceHandle digOutputService;
-        eos::I2CMasterServiceHandle i2cMasterService;
-        eos::FormsServiceHandle formsService;
-        eos::SelectorServiceHandle selectorService;
-        eos::DisplayServiceHandle displayService;
-        eos::DigOutputHandle ledRED;
-        eos::DigOutputHandle ledAMBER;
-        eos::DigOutputHandle ledGREEN;
-        eos::DigInputHandle swRED;
-        eos::DigInputHandle swAMBER;
-        eos::DigInputHandle swGREEN;
-        eos::TimerHandle timer;        
-        eos::StateMachineService* stateMachineService;
-        eos::MessageQueue *messageQueue;
-        eos::FormHandle menuForm;
-        eos::FormHandle mainForm;
+        DigInputServiceHandle digInputService;
+        DigOutputServiceHandle digOutputService;
+        I2CMasterServiceHandle i2cMasterService;
+        FormsServiceHandle formsService;
+        SelectorServiceHandle selectorService;
+        DigOutputHandle ledRED;
+        DigOutputHandle ledAMBER;
+        DigOutputHandle ledGREEN;
+        DigInputHandle swRED;
+        DigInputHandle swAMBER;
+        DigInputHandle swGREEN;
+        TimerHandle timer;        
+        StateMachineService* stateMachineService;
+        DisplayControllerHandle displayController;
+        MessageQueue *messageQueue;
+        FormHandle mainForm;
 
     public :
         MyApplication();
@@ -91,13 +95,13 @@ void MyApplication::setupDigInputService() {
 
     digInputService = new eos::DigInputService();
 
-    swRED = new eos::DigInput(digInputService, pinSW1, true);
+    swRED = new DigInput(digInputService, pinSW1, true);
     swRED->setChangeEvent<MyApplication>(this, &MyApplication::onSwRED);
    
-    swAMBER = new eos::DigInput(digInputService, pinSW2, true);
+    swAMBER = new DigInput(digInputService, pinSW2, true);
     swAMBER->setChangeEvent<MyApplication>(this, &MyApplication::onSwAMBER);
     
-    swGREEN = new eos::DigInput(digInputService, pinSW3, true);    
+    swGREEN = new DigInput(digInputService, pinSW3, true);    
     swGREEN->setChangeEvent<MyApplication>(this, &MyApplication::onSwGREEN);
 }
 
@@ -113,11 +117,11 @@ void MyApplication::setupDigInputService() {
 
 void MyApplication::setupDigOutputService() {
 
-    digOutputService = new eos::DigOutputService();
+    digOutputService = new DigOutputService();
    
-    ledRED = new eos::DigOutput(digOutputService, pinLED1, false);
-    ledAMBER = new eos::DigOutput(digOutputService, pinLED2, false);
-    ledGREEN = new eos::DigOutput(digOutputService, pinLED3, false);
+    ledRED = new DigOutput(digOutputService, pinLED1, false);
+    ledAMBER = new DigOutput(digOutputService, pinLED2, false);
+    ledGREEN = new DigOutput(digOutputService, pinLED3, false);
 
     ledRED->pulse(500);
     ledAMBER->pulse(1000);
@@ -127,13 +131,13 @@ void MyApplication::setupDigOutputService() {
 
 void MyApplication::setupI2CMasterService() {
 
-    i2cMasterService = new eos::I2CMasterService(1);
+    i2cMasterService = new I2CMasterService(1);
 }
 
 
 void MyApplication::setupTimerService() {
     
-    timer = new eos::Timer(true);
+    timer = new Timer(true);
     timer->setEvTimeout<MyApplication>(this, &MyApplication::onTimeout);
     timer->start(1000, 100);
 }
@@ -141,21 +145,18 @@ void MyApplication::setupTimerService() {
 
 void MyApplication::setupStateMachineService() {
     
-    stateMachineService = new eos::StateMachineService(nullptr);
+    stateMachineService = new StateMachineService(nullptr);
 }
 
 
 void MyApplication::setupFormsService() {
     
-    extern const uint8_t menuMnuMain[];
+    selectorService = new SelectorService(i2cMasterService, SEL_ADDRESS);
+    displayController = new DisplayController(i2cMasterService, DSP_ADDRESS);
     
-    selectorService = new eos::SelectorService(i2cMasterService, SEL_ADDRESS);
-    displayService = new eos::DisplayService(i2cMasterService, DSP_ADDRESS);
-    
-    messageQueue = new eos::MessageQueue(20);
-    formsService = new eos::FormsService(messageQueue, displayService);
-    menuForm = new eos::MenuForm(formsService, nullptr, (uint8_t*) menuMnuMain);
-    formsService->activate(menuForm);
+    messageQueue = new MessageQueue(20);
+    formsService = new FormsService(messageQueue, displayController);
+    mainForm = new MainForm(formsService);
 
     selectorService->setChangeEvent<MyApplication>(this, &MyApplication::onSelector);
 }
@@ -180,10 +181,10 @@ void MyApplication::onSwGREEN(eos::DigInputHandle input){
     if (input->get())
         ledGREEN->pulse(1000);
 
-    displayService->beginCommand();
-    displayService->addCommandClear();
-    displayService->addCommandRefresh();
-    displayService->endCommand();
+    displayController->beginCommand();
+    displayController->addCommandClear();
+    displayController->addCommandRefresh();
+    displayController->endCommand();
 }
 
 
@@ -197,10 +198,10 @@ void MyApplication::onSelector(int16_t position, uint8_t state) {
     
     static int16_t oldPosition = 0;
     static uint8_t oldState = 0;
-    eos::Message message;
+    Message message;
     
     if (formsService != nullptr) {
-        eos::Form *form = formsService->getActiveForm();
+        FormHandle form = formsService->getActiveForm();
         if (form != nullptr) {
             int16_t delta = position - oldPosition;
             if (delta != 0) {

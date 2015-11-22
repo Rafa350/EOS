@@ -1,5 +1,5 @@
 #include "Services/Forms/eosFormsIncDec.hpp"
-#include "Services/Forms/eosDisplay.hpp"
+#include "Controllers/eosDisplay.hpp"
 
 
 using namespace eos;
@@ -157,25 +157,25 @@ void IncDecForm::onActivate(
 
 /// ----------------------------------------------------------------------
 /// \brief Notifica que cal pintar la pantalla
-/// \param displayService: El handler del servei de display.
+/// \param displayController: El handler del controlador de pantalla.
 ///
 void IncDecForm::onPaint(
-    DisplayServiceHandle displayService) {
+    DisplayControllerHandle displayController) {
 
-    if (displayService->beginCommand()) {
+    if (displayController->beginCommand()) {
 
-        displayService->addCommandClear();
+        displayController->addCommandClear();
         if (title != nullptr)
-            displayService->addCommandDrawText(0, 0, title, 0, -1);
-        displayService->addCommandDrawLine(0, 10, 127, 10);
-        displayService->addCommandDrawLine(0, 53, 127, 53);
+            displayController->addCommandDrawText(0, 0, title, 0, -1);
+        displayController->addCommandDrawLine(0, 10, 127, 10);
+        displayController->addCommandDrawLine(0, 53, 127, 53);
 
         char text[40];
         sprintf(text, "%s%d%s", prefix, value, suffix);
 
-        displayService->addCommandDrawText(10, 30, text, 0, -1);
-        displayService->addCommandRefresh();
-        displayService->endCommand();
+        displayController->addCommandDrawText(10, 30, text, 0, -1);
+        displayController->addCommandRefresh();
+        displayController->endCommand();
     }
 }
 

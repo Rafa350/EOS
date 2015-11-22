@@ -6,7 +6,7 @@
 #include "System/eosTask.hpp"
 #include "System/eosList.hpp"
 #include "System/eosQueue.hpp"
-#include "Services/Forms/eosDisplay.hpp"
+#include "Controllers/eosDisplay.hpp"
 
 
 #define MSG_NULL               0
@@ -64,13 +64,13 @@ namespace eos {
         private:
             Task task;
             MessageQueue *messageQueue;
-            DisplayServiceHandle displayService;
+            DisplayControllerHandle displayController;
             FormList forms;
             FormHandle activeForm;     
             bool paintPending;
             
         public:
-            FormsService(MessageQueue *messageQueue, DisplayServiceHandle displayService);
+            FormsService(MessageQueue *messageQueue, DisplayControllerHandle displayController);
             ~FormsService();
             void add(FormHandle form);
             FormHandle activate(FormHandle form);
@@ -97,7 +97,7 @@ namespace eos {
             virtual void dispatchMessage(Message &message);
             virtual void onActivate(FormHandle deactivateForm) {} 
             virtual void onDeactivate(FormHandle activateForm) {}
-            virtual void onPaint(DisplayServiceHandle displayService) {}
+            virtual void onPaint(DisplayControllerHandle displayController) {}
             
         friend class FormsService;
     };

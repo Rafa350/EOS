@@ -8,10 +8,10 @@
 
 namespace eos {
     
-    class DisplayService;
-    typedef DisplayService *DisplayServiceHandle;
+    class DisplayController;
+    typedef DisplayController *DisplayControllerHandle;
 
-    class DisplayService {
+    class DisplayController {
         private:
             I2CMasterService *i2cService;
             uint8_t addr;
@@ -21,7 +21,7 @@ namespace eos {
             bool bufferError;
             
         public:
-            DisplayService(I2CMasterService *i2cService, uint8_t addr);
+            DisplayController(I2CMasterService *i2cService, uint8_t addr);
             bool beginCommand();
             bool endCommand();
             bool addUINT8(uint8_t data);

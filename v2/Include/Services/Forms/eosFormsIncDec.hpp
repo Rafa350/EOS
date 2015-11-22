@@ -59,7 +59,7 @@ namespace eos {
         private:
             void dispatchMessage(Message &message);
             void onActivate(FormHandle deactivateForm);
-            void onPaint(DisplayServiceHandle displayService);
+            void onPaint(DisplayControllerHandle displayController);
             void incValue();
             void decValue();
             void setValue();

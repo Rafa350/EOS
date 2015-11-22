@@ -1,4 +1,4 @@
-#include "Services/Forms/eosDisplay.hpp"
+#include "Controllers/eosDisplay.hpp"
 #include "../../../MD-DSP04/DSP04Messages.h"
 #include "string.h"
 
@@ -14,7 +14,7 @@ using namespace eos;
  *       Constructor
  *
  *       Funcio:
- *           DisplayService::DisplayService(
+ *           DisplayController::DisplayController(
  *               I2CMasterService *i2cService,
  *               uint8_t addr) 
  *
@@ -24,7 +24,7 @@ using namespace eos;
  *
  *************************************************************************/
 
-DisplayService::DisplayService(
+DisplayController::DisplayController(
     I2CMasterService *i2cService,
     uint8_t addr) {
 
@@ -40,14 +40,14 @@ DisplayService::DisplayService(
  *       Inicia l'escriptura d'una comanda pel display
  *
  *       Funcio:
- *           bool DisplayService::beginCommand()
+ *           bool DisplayController::beginCommand()
  *
  *       Retorn:
  *           true si tot es correcte, false si el display es ocupat
  *
  *************************************************************************/
 
-bool DisplayService::beginCommand() {
+bool DisplayController::beginCommand() {
 
     bufferCount = 0;
     bufferError = false;
@@ -60,14 +60,14 @@ bool DisplayService::beginCommand() {
  *       Finalitza la escriptura d'una comanda del display
  *
  *       Funcio:
- *           bool DisplayService::endCommand()
+ *           bool DisplayController::endCommand()
  *
  *       Retorn:
  *           true si l'operacio s'ha efectuat correctament
  * 
  *************************************************************************/
 
-bool DisplayService::endCommand() {
+bool DisplayController::endCommand() {
     
     if (bufferError)
         return false;
@@ -91,7 +91,7 @@ bool DisplayService::endCommand() {
  *       Afegeix un UINT8 a la comanda
  *
  *       Funcio:
- *           bool DisplayService::addUINT8(
+ *           bool DisplayController::addUINT8(
  *               uint8_t data)
  *
  *       Entrada:
@@ -102,7 +102,7 @@ bool DisplayService::endCommand() {
  *
  *************************************************************************/
 
-bool DisplayService::addUINT8(
+bool DisplayController::addUINT8(
     uint8_t data) {
 
     if (!bufferError) 
@@ -117,7 +117,7 @@ bool DisplayService::addUINT8(
  *       Afegeix un UINT16 a la comanda
  *
  *       Funcio:
- *           bool DisplayService::AddUINT16(
+ *           bool DisplayController::AddUINT16(
  *               uint16_t data)
  *
  *       Entrada:
@@ -128,7 +128,7 @@ bool DisplayService::addUINT8(
  *
  *************************************************************************/
 
-bool DisplayService::addUINT16(
+bool DisplayController::addUINT16(
     uint16_t data) {
 
     if (!bufferError) 
@@ -143,7 +143,7 @@ bool DisplayService::addUINT16(
  *       Afegeix una cadena a la comanda
  *
  *       Funcio:
- *           bool DisplayService::AddString(
+ *           bool DisplayController::AddString(
  *               const char *data)
  *
  *       Entrada:
@@ -155,7 +155,7 @@ bool DisplayService::addUINT16(
  *
  *************************************************************************/
 
-bool DisplayService::addString(
+bool DisplayController::addString(
     const char *data) {
 
     if (!bufferError) {
@@ -173,7 +173,7 @@ bool DisplayService::addString(
  *       Afegeix una sequencia de bytes a la comanda
  *
  *       Funcio:
- *           bool DisplayService::addBytes(
+ *           bool DisplayController::addBytes(
  *               const uint8_t *data,
  *               unsigned dataLen)
  *
@@ -186,7 +186,7 @@ bool DisplayService::addString(
  *
  *************************************************************************/
 
-bool DisplayService::addBytes(
+bool DisplayController::addBytes(
     const uint8_t *data,
     unsigned dataLen) {
 
@@ -203,7 +203,7 @@ bool DisplayService::addBytes(
 }
 
 
-bool DisplayService::addCommandClear() {
+bool DisplayController::addCommandClear() {
 
     if (!bufferError) {
         if (bufferCount + sizeof(uint8_t) < bufferSize)
@@ -216,7 +216,7 @@ bool DisplayService::addCommandClear() {
 }
 
 
-bool DisplayService::addCommandRefresh() {
+bool DisplayController::addCommandRefresh() {
 
     if (!bufferError) {
         if (bufferCount + sizeof(uint8_t) < bufferSize)
@@ -229,7 +229,7 @@ bool DisplayService::addCommandRefresh() {
 }
 
 
-bool DisplayService::addCommandSetColor(
+bool DisplayController::addCommandSetColor(
     uint8_t fgColor,
     uint8_t bkColor) {
 
@@ -247,7 +247,7 @@ bool DisplayService::addCommandSetColor(
 }
 
 
-bool DisplayService::addCommandSetFont(
+bool DisplayController::addCommandSetFont(
     uint8_t font) {
 
     if (!bufferError) {
@@ -263,7 +263,7 @@ bool DisplayService::addCommandSetFont(
 }
 
 
-bool DisplayService::addCommandMoveTo(
+bool DisplayController::addCommandMoveTo(
     int x,
     int y) {
 
@@ -281,7 +281,7 @@ bool DisplayService::addCommandMoveTo(
 }
 
 
-bool DisplayService::addCommandDrawLine(
+bool DisplayController::addCommandDrawLine(
     int x1,
     int y1,
     int x2,
@@ -306,7 +306,7 @@ bool DisplayService::addCommandDrawLine(
 }
 
 
-bool DisplayService::addCommandDrawRectangle(
+bool DisplayController::addCommandDrawRectangle(
     int x1,
     int y1,
     int x2,
@@ -334,7 +334,7 @@ bool DisplayService::addCommandDrawRectangle(
 }
 
 
-bool DisplayService::addCommandFillRectangle(
+bool DisplayController::addCommandFillRectangle(
     int x1,
     int y1,
     int x2,
@@ -359,7 +359,7 @@ bool DisplayService::addCommandFillRectangle(
 }
 
 
-bool DisplayService::addCommandDrawText(
+bool DisplayController::addCommandDrawText(
     int x,
     int y,
     const char *text,

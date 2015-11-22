@@ -3,7 +3,6 @@
 
 
 #include "eos.hpp"
-#include "Services/Forms/eosDisplay.hpp"
 #include "Services/Forms/eosForms.hpp"
 #include "System/eosCallbacks.hpp"
 
@@ -12,6 +11,9 @@
 
 
 namespace eos {
+    
+    class MenuForm;
+    typedef MenuForm *MenuFormHandle;
 
     class MenuForm: public Form {
         private:
@@ -43,7 +45,7 @@ namespace eos {
         private:
             void dispatchMessage(Message &message);
             void onActivate(FormHandle deactivatedForm);
-            void onPaint(DisplayServiceHandle displayService);        
+            void onPaint(DisplayControllerHandle displayController);        
             void firstItem();
             void lastItem();
             void nextItem();

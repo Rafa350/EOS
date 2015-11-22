@@ -1,6 +1,6 @@
 #include "eos.hpp"
 #include "Services/Forms/eosFormsMenus.hpp"
-#include "Services/Forms/eosDisplay.hpp"
+#include "Controllers/eosDisplay.hpp"
 
 
 using namespace eos;
@@ -103,12 +103,12 @@ void MenuForm::onActivate(
 
 /// ----------------------------------------------------------------------
 /// \brief Notifica que cal repintar la pantalla.
-/// \param displayService: Servei de pantalla.
+/// \param displayController: Controlador de pantalla.
 ///
 void MenuForm::onPaint(
-    DisplayServiceHandle displayService) {
+    DisplayControllerHandle displayController) {
 
-    if (displayService->beginCommand()) {
+    if (displayController->beginCommand()) {
 
         MenuInfo *info = &this->info[level];
 
@@ -116,9 +116,9 @@ void MenuForm::onPaint(
         unsigned titleLen = resource[offset + 1];
         char *title = (char*) &resource[offset + 2];
 
-        displayService->addCommandClear();
-        displayService->addCommandDrawText(0, 0, title, 0, titleLen);
-        displayService->addCommandDrawLine(0, 10, 127, 10);
+        displayController->addCommandClear();
+        displayController->addCommandDrawText(0, 0, title, 0, titleLen);
+        displayController->addCommandDrawLine(0, 10, 127, 10);
 
         unsigned i = info->firstItem;
         unsigned j = eosMin(info->numItems, showItems);
@@ -132,19 +132,19 @@ void MenuForm::onPaint(
             char *itemTitle = (char*) &resource[itemOffset + 2];
 
             if (i == info->currentItem) {
-                displayService->addCommandFillRectangle(0, k, 127, k + 8);
-                displayService->addCommandSetColor(0, 1);
+                displayController->addCommandFillRectangle(0, k, 127, k + 8);
+                displayController->addCommandSetColor(0, 1);
             }
             // TODO: event onItemDraw
-            displayService->addCommandDrawText(10, k, itemTitle, 0, itemTitleLen);
-            displayService->addCommandSetColor(1, 0);
+            displayController->addCommandDrawText(10, k, itemTitle, 0, itemTitleLen);
+            displayController->addCommandSetColor(1, 0);
 
             i += 1;
             k += 10;
         }
 
-        displayService->addCommandRefresh();
-        displayService->endCommand();
+        displayController->addCommandRefresh();
+        displayController->endCommand();
     }
 }
 

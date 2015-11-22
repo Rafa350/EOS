@@ -18,10 +18,10 @@ const TaskPriority taskPriority = TaskPriority::normal;
 ///
 FormsService::FormsService(
     MessageQueue *_messageQueue,
-    DisplayServiceHandle _displayService) :
+    DisplayControllerHandle _displayController) :
     task(taskStackSize, taskPriority, this),
     messageQueue(_messageQueue),
-    displayService(_displayService),
+    displayController(_displayController),
     paintPending(false) {
 }
 
@@ -58,7 +58,7 @@ void FormsService::run() {
                 FormHandle form = iterator.current();
                 if (form->paintPending) {
                     form->paintPending = false;
-                    form->onPaint(displayService);                
+                    form->onPaint(displayController);                
                 }
                 ++iterator;
             }
