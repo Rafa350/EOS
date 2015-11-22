@@ -27,6 +27,7 @@
             <itemPath>../../Include/Services/Forms/eosDisplay.hpp</itemPath>
             <itemPath>../../../../MD-DSP04/DSP04Messages.h</itemPath>
             <itemPath>../../Include/Services/Forms/eosFormsMenus.hpp</itemPath>
+            <itemPath>../../Include/Services/Forms/eosFormsIncDec.hpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
             <itemPath>../../Include/Services/Fsm/eosFSM.hpp</itemPath>
@@ -88,6 +89,7 @@
             <itemPath>../../Source/Services/Forms/eosSelector.cpp</itemPath>
             <itemPath>../../Source/Services/Forms/eosDisplay.cpp</itemPath>
             <itemPath>../../Source/Services/Forms/eosFormsMenus.cpp</itemPath>
+            <itemPath>../../Source/Services/Forms/eosFormsIncDec.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
             <itemPath>../../Source/Services/Fsm/eosStateMachine.cpp</itemPath>

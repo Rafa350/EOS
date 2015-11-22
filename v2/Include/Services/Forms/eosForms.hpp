@@ -66,7 +66,8 @@ namespace eos {
             MessageQueue *messageQueue;
             DisplayServiceHandle displayService;
             FormList forms;
-            FormHandle activeForm;            
+            FormHandle activeForm;     
+            bool paintPending;
             
         public:
             FormsService(MessageQueue *messageQueue, DisplayServiceHandle displayService);
@@ -76,6 +77,8 @@ namespace eos {
             FormHandle getActiveForm() { return activeForm; }
         private:
             void run();
+            
+        friend class Form;
     };
        
     class Form {
@@ -94,7 +97,7 @@ namespace eos {
             virtual void dispatchMessage(Message &message);
             virtual void onActivate(FormHandle deactivateForm) {} 
             virtual void onDeactivate(FormHandle activateForm) {}
-            virtual void onPaint(DisplayServiceHandle displayService);
+            virtual void onPaint(DisplayServiceHandle displayService) {}
             
         friend class FormsService;
     };

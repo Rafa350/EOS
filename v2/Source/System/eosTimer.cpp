@@ -13,22 +13,21 @@ static const char *defaultTimerName = "";
 /// \brief Constructor
 /// \param autoreload: Indica si repeteix el cicle continuament
 ///
-
 Timer::Timer(
-    bool autoreload) {
-    
-    this->autoreload = autoreload;
-    handler = nullptr;
+    bool _autoreload) :
+    autoreload(_autoreload),
+    handler(nullptr),
+    evTimeout(nullptr) {
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief Destructor
 ///
-
 Timer::~Timer() {
     
-    //if (onTimeout != nullptr)
-    //    delete onTimeout;
+    if (evTimeout != nullptr)
+        delete evTimeout;
     
     if (handler != nullptr)
         xTimerDelete(handler, 100);
@@ -57,7 +56,6 @@ void Timer::start(
 /// \brief Para el temporitzador.
 /// \param blockTime: Temps maxim de bloqueig
 ///
-
 void Timer::stop(
     unsigned blockTime) {
     
@@ -70,7 +68,6 @@ void Timer::stop(
 /// \brief Comprova si el temporitzador esta actiu.
 /// \return True si esta actiu.
 ///
-
 bool Timer::isActive() const {
     
     return handler == nullptr ? false : xTimerIsTimerActive(handler) != pdFALSE;
@@ -81,11 +78,10 @@ bool Timer::isActive() const {
 /// \brief Crida a la funcio 'onTimeout' al final del cicle
 /// \param handler: El handler del temporitzador.
 ///
-
 void Timer::timerCallback(
     void *handler) {
     
-    Timer *timer = (Timer*) pvTimerGetTimerID(handler);
-    if (timer->onTimeout != nullptr)
-        timer->onTimeout->execute(timer);
+    TimerHandle timer = (TimerHandle) pvTimerGetTimerID(handler);
+    if (timer->evTimeout != nullptr)
+        timer->evTimeout->execute(timer);
 }

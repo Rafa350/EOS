@@ -66,12 +66,16 @@ unsigned GenericList::genericAdd(
 void GenericList::genericRemove(
     unsigned index) {
     
-    Task::enterCriticalSection();
-    
-    void *ptr = getPtr(index);
-    //memmmove(ptr, element, elementSize);
-    
-    Task::exitCriticalSection();
+    if (index < count) {
+        
+        Task::enterCriticalSection();
+
+        void *ptr = getPtr(index);
+        memcpy(ptr, (const void*) ((char*) ptr + size), (count - index) * size);
+        count--;
+
+        Task::exitCriticalSection();
+    }
 }
 
 

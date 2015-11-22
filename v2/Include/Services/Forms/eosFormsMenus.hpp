@@ -5,38 +5,17 @@
 #include "eos.hpp"
 #include "Services/Forms/eosDisplay.hpp"
 #include "Services/Forms/eosForms.hpp"
+#include "System/eosCallbacks.hpp"
 
 
 #define MAX_LEVELS               10
 
-                                       // Notificacions MSG_NOTIFY
-#define EV_MENU_GETVALUE          1    // -Obte el valor del item
-#define EV_MENU_PAINT_BACKGROUND  2    // -Dibuixa el fons
-#define EV_MENU_PAINT_TITLE       3    // -Dibuixa el titol
-#define EV_MENU_PAINT_ITEM        4    // -Dibuixa un item
-
 
 namespace eos {
 
-    typedef struct {                       // Parametres de notificacio GETVALUE
-        unsigned command;
-        char *itemValue;
-    } eosMenuNotifyGetValue;
-
-    typedef struct {                       // Parametres de notificacio PAINT
-        char *title;                       // -Titol del menu/item
-        unsigned firstItem;                // -Numero del primer item que es dibuixa
-        unsigned numItem;                  // -Numero d'item
-        unsigned command;                  // -Comanda del item
-    } eosMenuNotifyPaint;
-    
-    class IMenuOwner {
-        public:
-            virtual void onCommand(uint8_t cmd) = 0;
-    };
-
     class MenuForm: public Form {
         private:
+            typedef ICallbackP1<unsigned> IMenuFormCommandEvent;
             struct MenuInfo {               // Informacio d'un menu
                 unsigned offset;            // -Offset al menu
                 unsigned numItems;          // -Numero de items
@@ -45,14 +24,22 @@ namespace eos {
             };
     
         private:
-            IMenuOwner *owner;
-            uint8_t *resource;
+            uint8_t *resource;              // -Punter al recurs
             unsigned level;                 // -Nivell de submenus
             MenuInfo info[MAX_LEVELS];      // -Pila d'informacio del menu
-            unsigned showItems;    
+            unsigned showItems;             // -Numero d'items a mostrar
+            IMenuFormCommandEvent *evCommand;
             
         public:
-            MenuForm(FormsServiceHandle service, FormHandle parent, IMenuOwner *owner, uint8_t *resource);
+            MenuForm(FormsServiceHandle service, FormHandle parent, uint8_t *resource);
+            ~MenuForm();
+            
+            template <class cls>
+            void setEvCommand(cls *instance, void (cls::*method)(unsigned)) { 
+                
+                evCommand = new CallbackP1<cls, unsigned>(instance, method); 
+            }
+            
         private:
             void dispatchMessage(Message &message);
             void onActivate(FormHandle deactivatedForm);

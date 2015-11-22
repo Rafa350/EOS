@@ -16,13 +16,13 @@ const TaskPriority taskPriority = TaskPriority::normal;
 /// \param mssageQueue: La cua de missatges
 /// \param displayService: Servei de pantalla
 ///
-
 FormsService::FormsService(
     MessageQueue *_messageQueue,
     DisplayServiceHandle _displayService) :
     task(taskStackSize, taskPriority, this),
     messageQueue(_messageQueue),
-    displayService(_displayService) {
+    displayService(_displayService),
+    paintPending(false) {
 }
 
 
@@ -30,7 +30,6 @@ FormsService::FormsService(
 /// \brief Afegeix un form al servei
 /// \param form: El form a afeigir
 ///
-
 void FormsService::add(
     FormHandle form) {
     
@@ -41,7 +40,6 @@ void FormsService::add(
 /// ----------------------------------------------------------------------
 /// \brief Tasca de control del servei
 ///
-
 void FormsService::run() {
     
     while (true) {
@@ -54,14 +52,17 @@ void FormsService::run() {
         
         // Procesa el repintat
         //
-        FormListIterator iterator(forms);
-        while (!iterator.isEnd()) {
-            FormHandle form = iterator.current();
-            if (form->paintPending) {
-                form->paintPending = false;
-                form->onPaint(displayService);                
+        if (paintPending) {
+            FormListIterator iterator(forms);
+            while (!iterator.isEnd()) {
+                FormHandle form = iterator.current();
+                if (form->paintPending) {
+                    form->paintPending = false;
+                    form->onPaint(displayService);                
+                }
+                ++iterator;
             }
-            ++iterator;
+            paintPending = false;
         }
     }
 }
@@ -71,7 +72,6 @@ void FormsService::run() {
 /// \brief Canvia el formulari actiu
 /// \param form: El formulari a activat. nullptr si no es vol activar cap
 ///
-
 FormHandle FormsService::activate(
     FormHandle form) {
 
@@ -91,7 +91,6 @@ FormHandle FormsService::activate(
 /// \param service: El servei de gestio dels forms
 /// \param parent: El form pare
 ///
-
 Form::Form(
     FormsServiceHandle _service,
     FormHandle _parent):
@@ -104,40 +103,27 @@ Form::Form(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor
+/// \brief Destructor.
 ///
-
 Form::~Form() {
     
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Refresca un formulari
+/// \brief Refresca un formulari.
 ///
-
 void Form::refresh() {
     
     paintPending = true;   
+    service->paintPending = true;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa el formulari en pantalla
-/// \param displayService: Servei de pantalla
+/// \brief Procesa un missatge .
+/// \param message: El missatge a procesar.
 ///
-
-void Form::onPaint(
-    DisplayServiceHandle displayService) {
-    
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa un missatge 
-/// \param message: El missatge a procesar
-///
-
 void Form::dispatchMessage(
     Message &message) {
     

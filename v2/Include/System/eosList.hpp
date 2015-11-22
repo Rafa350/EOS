@@ -19,10 +19,10 @@ namespace eos {
     //
     class GenericList {
         private:
-            unsigned size;
-            unsigned count;
-            unsigned capacity;
-            void *container;
+            unsigned size;             // Tamany del element
+            unsigned count;            // Numero d'elements en la llista
+            unsigned capacity;         // Capacitat de la llista en elements
+            void *container;           // Contenidor d'elements
     
         public:
             virtual ~GenericList();

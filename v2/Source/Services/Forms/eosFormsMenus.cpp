@@ -10,17 +10,15 @@ using namespace eos;
 /// \brief Constructor
 /// \param service: El servei
 /// \param parent: El form pare
-/// \param owner: El propietari del menu
 /// \param resource: El recurs del menu
 ///
 MenuForm::MenuForm(
     FormsServiceHandle service, 
     FormHandle parent,
-    IMenuOwner *_owner,
     uint8_t *_resource):
     Form(service, parent),
-    owner(_owner),
-    resource(_resource) {
+    resource(_resource),
+    evCommand(nullptr) {
     
     showItems = 5;
     level = 0;
@@ -28,6 +26,16 @@ MenuForm::MenuForm(
     info[0].numItems = resource[0];
     info[0].firstItem = 0;
     info[0].currentItem = 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Destructor.
+///
+MenuForm::~MenuForm() {
+    
+    if (evCommand != nullptr)
+        delete evCommand;
 }
 
 
@@ -83,8 +91,8 @@ void MenuForm::dispatchMessage(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa el event onActivate.
-/// \param deactivatedForm: El form desactivat
+/// \brief Notifica l'activacio del form.
+/// \param deactivatedForm: El form desactivat.
 ///
 void MenuForm::onActivate(
     FormHandle deactivateForm) {
@@ -94,7 +102,7 @@ void MenuForm::onActivate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa el event onPaint.
+/// \brief Notifica que cal repintar la pantalla.
 /// \param displayService: Servei de pantalla.
 ///
 void MenuForm::onPaint(
@@ -127,16 +135,8 @@ void MenuForm::onPaint(
                 displayService->addCommandFillRectangle(0, k, 127, k + 8);
                 displayService->addCommandSetColor(0, 1);
             }
+            // TODO: event onItemDraw
             displayService->addCommandDrawText(10, k, itemTitle, 0, itemTitleLen);
-
-            /*
-            eosMenuNotifyGetValue notifyParams;
-            notifyParams.command = resource[itemOffset + 2 + itemTitleLen];
-            notifyParams.itemValue = NULL;
-            notify(hForm, EV_MENU_GETVALUE, &notifyParams);
-            if (notifyParams.itemValue != NULL)
-                eosDisplayAddCommandDrawText(hDisplay, 60, k, notifyParams.itemValue, 0, -1);
-            */
             displayService->addCommandSetColor(1, 0);
 
             i += 1;
@@ -225,9 +225,9 @@ void MenuForm::selectItem() {
 
     switch (resource[itemOffset] & 0x03) {
         case 0x00: // commandItem
-            if (owner != nullptr) {
+            if (evCommand != nullptr) {
                 unsigned command = resource[itemOffset + 2 + resource[itemOffset + 1]];
-                owner->onCommand(command);
+                evCommand->execute(command);
             }
             break;
 
@@ -258,7 +258,8 @@ void MenuForm::nextMenu() {
 
     // TODO 
 }
-    
+  
+
 /// ----------------------------------------------------------------------
 /// \brief Retorna al menu anterior
 ///

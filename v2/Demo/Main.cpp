@@ -48,11 +48,11 @@ class MyApplication: public eos::Application {
         void setupFormsService();
         void setupStateMachineService();
         
-        void onSwRED(eos::DigInput *input);
-        void onSwAMBER(eos::DigInput *input);
-        void onSwGREEN(eos::DigInput *input);
+        void onSwRED(eos::DigInputHandle input);
+        void onSwAMBER(eos::DigInputHandle input);
+        void onSwGREEN(eos::DigInputHandle input);
         
-        void onTimeout(eos::Timer *timer);
+        void onTimeout(eos::TimerHandle timer);
         
         void onSelector(int16_t position, uint8_t status);
 };
@@ -92,13 +92,13 @@ void MyApplication::setupDigInputService() {
     digInputService = new eos::DigInputService();
 
     swRED = new eos::DigInput(digInputService, pinSW1, true);
-    swRED->setChangeEvent(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwRED));
+    swRED->setChangeEvent<MyApplication>(this, &MyApplication::onSwRED);
    
     swAMBER = new eos::DigInput(digInputService, pinSW2, true);
-    swAMBER->setChangeEvent(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwAMBER));
+    swAMBER->setChangeEvent<MyApplication>(this, &MyApplication::onSwAMBER);
     
     swGREEN = new eos::DigInput(digInputService, pinSW3, true);    
-    swGREEN->setChangeEvent(EV_DigInput_onChange(MyApplication, this, &MyApplication::onSwGREEN));
+    swGREEN->setChangeEvent<MyApplication>(this, &MyApplication::onSwGREEN);
 }
 
 
@@ -134,7 +134,7 @@ void MyApplication::setupI2CMasterService() {
 void MyApplication::setupTimerService() {
     
     timer = new eos::Timer(true);
-    timer->setOnTimeout(EV_Timer_onTimeout(MyApplication, this, &MyApplication::onTimeout));
+    timer->setEvTimeout<MyApplication>(this, &MyApplication::onTimeout);
     timer->start(1000, 100);
 }
 
@@ -154,28 +154,28 @@ void MyApplication::setupFormsService() {
     
     messageQueue = new eos::MessageQueue(20);
     formsService = new eos::FormsService(messageQueue, displayService);
-    menuForm = new eos::MenuForm(formsService, nullptr, nullptr, (uint8_t*) menuMnuMain);
+    menuForm = new eos::MenuForm(formsService, nullptr, (uint8_t*) menuMnuMain);
     formsService->activate(menuForm);
 
-    selectorService->setChangeEvent(EV_SelectorService_onChange(MyApplication, this, &MyApplication::onSelector));
+    selectorService->setChangeEvent<MyApplication>(this, &MyApplication::onSelector);
 }
 
 
-void MyApplication::onSwRED(eos::DigInput *input){
+void MyApplication::onSwRED(eos::DigInputHandle input){
 
     if (input->get())
         ledRED->pulse(1000);
 }
 
 
-void MyApplication::onSwAMBER(eos::DigInput *input){
+void MyApplication::onSwAMBER(eos::DigInputHandle input){
     
     if (input->get()) 
         ledAMBER->pulse(1000);
 }
 
 
-void MyApplication::onSwGREEN(eos::DigInput *input){
+void MyApplication::onSwGREEN(eos::DigInputHandle input){
     
     if (input->get())
         ledGREEN->pulse(1000);

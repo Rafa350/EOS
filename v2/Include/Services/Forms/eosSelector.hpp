@@ -8,18 +8,15 @@
 #include "System/eosCallbacks.hpp"
 
 
-#define EV_SelectorService_onChange(cls, instance, method) \
-    new eos::CallbackP2<cls, int16_t, uint8_t>(instance, method)
-
-
 namespace eos {
     
     class SelectorService;
     typedef SelectorService *SelectorServiceHandle;
     
-    typedef ICallbackP2<int16_t, uint8_t> ISelectorServiceEvent;
-
     class SelectorService: private IRunable {        
+        private:
+            typedef ICallbackP2<int16_t, uint8_t> ISelectorServiceEvent;
+            
         private:
             Task task;
             uint8_t addr;
@@ -30,7 +27,13 @@ namespace eos {
             
         public:
             SelectorService(I2CMasterServiceHandle i2cService, uint8_t addr);
-            inline void setChangeEvent(ISelectorServiceEvent *event) { evChange = event; }
+            ~SelectorService();
+            
+            template <class cls>
+            void setChangeEvent(cls *instance, void (cls::*method)(int16_t position, uint8_t state)) { 
+                
+                evChange = new CallbackP2<cls, int16_t, uint8_t>(instance, method); 
+            }
         private:
             void run();
     };

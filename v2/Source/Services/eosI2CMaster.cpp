@@ -19,12 +19,11 @@ const unsigned baudRate = 100000;
 /// \param moduleId: Identificador del modulI2C
 ///
 I2CMasterService::I2CMasterService(
-    unsigned moduleId) :
+    unsigned _moduleId) :
+    moduleId(_moduleId),
     task(taskStackSize, taskPriority, this),
     queue(queueMaxItems) {
 
-    this->moduleId = moduleId; 
-    
     for (unsigned i = 0; i < sizeof(transactions) / sizeof(transactions[0]); i++)
         transactions[i].inUse = false;
 }
@@ -50,7 +49,13 @@ bool I2CMasterService::startTransaction(
     unsigned blockTime,
     BinarySemaphore *notify) {
     
-    for (unsigned i = 0; i < sizeof(transactions) / sizeof(transactions[0]); i++) {
+    bool result = false;
+    
+    Task::enterCriticalSection();
+    
+    for (unsigned i = 0; 
+         (i < sizeof(transactions) / sizeof(transactions[0])) && !result; 
+         i++) {
         Transaction *transaction = &transactions[i];
         if (!transaction->inUse) {
             transaction->inUse = true;
@@ -62,11 +67,13 @@ bool I2CMasterService::startTransaction(
             transaction->rxCount = 0;
             transaction->notify = notify;
             queue.put(transaction, blockTime);
-            return true;
+            result = true;
         }
     }
     
-    return false;
+    Task::exitCriticalSection();
+    
+    return result;
 }
 
 
@@ -140,7 +147,7 @@ void I2CMasterService::interruptCallback(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Maquina d'estats per porocesar les comunicacions. S'executa en
+/// \brief Maquina d'estats per procesar les comunicacions. S'executa en
 ///        el contexte de la interrupcio I2C.
 ///
 void I2CMasterService::stateMachine() {

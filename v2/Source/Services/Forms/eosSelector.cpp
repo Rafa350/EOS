@@ -14,7 +14,6 @@ const TaskPriority taskPriority = TaskPriority::normal;
 /// \param i2cMasterService: El servei de comunicacions I2C
 /// \param addr: Adressa I2C del selector
 ///
-
 SelectorService::SelectorService(
     I2CMasterServiceHandle _i2cService,
     uint8_t _addr):
@@ -28,9 +27,18 @@ SelectorService::SelectorService(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Destructor.
+///
+SelectorService::~SelectorService() {
+    
+    if (evChange != nullptr)
+        delete evChange;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Procesa les tasques del servei
 ///
-
 void SelectorService::run() {
     
     static uint8_t query[1] = { SEL_CMD_GETSTATE };

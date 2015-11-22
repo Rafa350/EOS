@@ -1,49 +1,71 @@
-#ifndef __EOS_FORMINCDEC_H
-#define __EOS_FORMSINCDEC_H
+#ifndef __EOS_FORMINCDEC_HPP
+#define __EOS_FORMSINCDEC_HPP
 
 
-#ifndef __EOS_H
-#include "eos.h"
-#endif
-
-#ifndef __EOS_FORMS_H
-#include <Services/eosForms.h>
-#endif
-
-                                       // Notificacions MSG_NOTIFY
-#define EV_INCDEC_CHANGED         1    // -El valor ha canviat
-#define EV_INCDEC_END             2    // -Ha finalitzat l'edicio
+#include "eos.hpp"
+#include "Services/Forms/eosForms.hpp"
+#include "System/eosCallbacks.hpp"
 
 
-typedef struct {                       // Parametres de notificacion CHANGED
-    int value;
-} eosIncDecNotifyChanged;
+namespace eos {
+    
+    class IncDecForm;
+    typedef IncDecForm *IncDecFormHandle;
+    
+    class IncDecForm: public Form {
+        private:
+            typedef ICallbackP1<unsigned> IIncDecFormChangeEvent;
+            typedef ICallbackP1<unsigned> IIncDecFormSetEvent;
+            
+        private:
+            int value;
+            int minValue;
+            int maxValue;
+            int delta;
+            const char *title;
+            const char *prefix;
+            const char *suffix;
+            IIncDecFormChangeEvent *evChange;
+            IIncDecFormSetEvent *evSet;
+            
+        public:
+            IncDecForm(FormsServiceHandle service, FormHandle parent);
+            ~IncDecForm();
+            
+            template <class cls>
+            void setEvChange(cls *instance, void (cls::*method)(int)) { 
+                
+                evChange = new CallbackP1<cls, int>(instance, method);
+            }
+            
+            template <class cls>
+            void setEvSet(cls *instance, void (cls::*method)(int)) { 
+                
+                evSet = new CallbackP1<cls, int>(instance, method);
+            }
+            
+            void setMinValue(int minValue);
+            void setMaxValue(int maxValue);
+            void setValue(int value);
+            void setDelta(int delta);
+            void setTitle(const char *title);
+            void setPrefix(const char *prefix);
+            void setSuffix(const char *suffix);
+            
+            /// \brief Retorna el valor actual.
+            /// \return El valor actual.
+            ///
+            int getValue() const { return value; }
+        private:
+            void dispatchMessage(Message &message);
+            void onActivate(FormHandle deactivateForm);
+            void onPaint(DisplayServiceHandle displayService);
+            void incValue();
+            void decValue();
+            void setValue();
+    };
 
-typedef struct {                       // Parametres de notificacion END
-    int value;
-} eosIncDecNotifyEnd;
-
-typedef struct {                       // Parametres d'inicialitzacio
-    eosFormHandle hParent;             // -Form pare. Es el que reb les notificacions
-    char* title;                       // -Titol
-    int minValue;                      // -Valor minim
-    int maxValue;                      // -Valor maxim
-    int delta;                         // -Increment
-    int value;                         // -Valor inicial
-    char *prefix;                      // -Texte del prefix
-    char *suffix;                      // -Texte del sufix
-} eosIncDecParams;
-
-extern eosFormHandle eosFormsCreateIncDec(eosIncDecParams *params);
-
-extern void eosFormsIncDecSetMinValue(eosFormHandle hForm, int minValue);
-extern void eosFormsIncDecSetMaxValue(eosFormHandle hForm, int maxValue);
-extern void eosFormsIncDecSetValue(eosFormHandle hForm, int value);
-extern void eosFormsIncDecSetDelta(eosFormHandle hForm, int delta);
-extern void eosFormsIncDecSetTitle(eosFormHandle hForm, char *title);
-extern void eosFormsIncDecSetPrefix(eosFormHandle hForm, char *prefix);
-extern void eosFormsIncDecSetSuffix(eosFormHandle hForm, char *suffix);
-extern int  eosFormsIncDecGetValue(eosFormHandle hForm);
+}
 
 
 #endif

@@ -7,30 +7,37 @@
 #include "System/eosList.hpp"
 
 
-#define EV_Timer_onTimeout(cls, instance, method) \
-    new eos::CallbackP1<cls, eos::Timer*>(instance, method)
-
-
 namespace eos {
     
     class Timer;
     typedef Timer *TimerHandle;
 
-    typedef ICallbackP1<TimerHandle> ITimerEvent;
-    
     class Timer {
+        private:
+            typedef ICallbackP1<TimerHandle> ITimerEvent;
+            
         private:
             void *handler;     
             bool autoreload;
             void *tag;
-            ITimerEvent *onTimeout;
+            ITimerEvent *evTimeout;
             
         public:
             Timer(bool autoreload = false);
             ~Timer();
             void start(unsigned timeout, unsigned blockTime);
             void stop(unsigned blockTime);
-            inline void setOnTimeout(ITimerEvent *event) { onTimeout = event; }
+            
+            /// \brief Asigna el event onTimeout
+            /// \param instance: La instancia
+            /// \param method: El metode
+            ///
+            template <class cls>
+            void setEvTimeout(cls *instance, void (cls::*method)(TimerHandle timer)) { 
+                
+                evTimeout = new CallbackP1<cls, TimerHandle>(instance, method);
+            }
+            
             inline void setTag(void *tag) { this->tag = tag; }
             inline void *getTag() const { return tag; }
             bool isActive() const;

@@ -80,21 +80,29 @@ void DigInputService::run() {
 /// \param inverted: Indica si la senyal va invertida.
 ///
 DigInput::DigInput(
-    DigInputServiceHandle service,
-    uint8_t pin, 
-    bool inverted) {
+    DigInputServiceHandle _service,
+    uint8_t _pin, 
+    bool _inverted):
+    service(_service),
+    pin(_pin),
+    inverted(_inverted),
+    evChange(nullptr) {
     
-    this->service = service;
-    this->pin = pin;
-    this->inverted = inverted;
-
-    evChange = nullptr;
-
     halGPIOPinSetModeInput(pin);
     state = pinGet();
     pattern = state ? 0xFFFFFFFF : 0x00000000;
     
     service->add(this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Destructor.
+///
+DigInput::~DigInput() {
+    
+    if (evChange != nullptr)
+        delete evChange;
 }
 
 

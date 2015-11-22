@@ -138,7 +138,7 @@ void DigOutputService::doPulseAction(
     //
     if (output->timer == nullptr) {
         output->timer = new Timer();
-        output->timer->setOnTimeout(EV_Timer_onTimeout(DigOutputService, this, &DigOutputService::onTimeout));
+        output->timer->setEvTimeout<DigOutputService>(this, &DigOutputService::onTimeout);
         output->timer->setTag(output);
     }
     
@@ -223,14 +223,13 @@ void DigOutputService::pulse(
 /// \param inverted: True si treballa amb logica negativa.
 ///
 DigOutput::DigOutput(
-    DigOutputServiceHandle service,
-    uint8_t pin,
-    bool inverted) {
-
-    this->service = service;
-    this->pin = pin;
-    this->inverted = inverted;
-    this->timer = nullptr;
+    DigOutputServiceHandle _service,
+    uint8_t _pin,
+    bool _inverted):
+    service(_service),
+    pin(_pin),
+    inverted(_inverted),
+    timer(nullptr) {
 
     halGPIOPinSetState(pin, inverted);
     halGPIOPinSetModeOutput(pin, false);    
