@@ -16,7 +16,7 @@ const TaskPriority taskPriority = TaskPriority::normal;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor
+/// \brief Constructor.
 ///
 DigInputService::DigInputService() :
     task(taskStackSize, taskPriority, this) {
@@ -24,8 +24,8 @@ DigInputService::DigInputService() :
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix una entrada
-/// \param input: L'entrada a afeigir
+/// \brief Afegeix una entrada al servei.
+/// \param input: L'entrada a afeigir.
 ///
 void DigInputService::add(
     DigInputHandle input) {
@@ -35,7 +35,15 @@ void DigInputService::add(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Tasca de control del servei
+/// \brieg Elimina una entrada del servei.
+/// \param La entrada a eliminar.
+void DigInputService::remove(
+    DigInputHandle input) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Tasca de control del servei.
 ///
 void DigInputService::run() {
     
@@ -100,6 +108,8 @@ DigInput::DigInput(
 /// \brief Destructor.
 ///
 DigInput::~DigInput() {
+    
+    service->remove(this);
     
     if (evChange != nullptr)
         delete evChange;

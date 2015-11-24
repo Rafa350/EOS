@@ -30,6 +30,7 @@ namespace eos {
         public:
             DigInputService();
             void add(DigInputHandle input);
+            void remove(DigInputHandle input);
         private:
             void run();           
     };

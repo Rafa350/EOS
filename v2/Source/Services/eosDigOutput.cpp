@@ -33,6 +33,15 @@ void DigOutputService::add(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Elimina una sourtida del servei.
+/// \param output: La sortida a eliminar.
+///
+void DigOutputService::remove(
+    DigOutputHandle output) {
+    
+}
+
+/// ----------------------------------------------------------------------
 /// \brief Executa la tasca de control de servei.
 ///
 void DigOutputService::run() {
@@ -242,6 +251,8 @@ DigOutput::DigOutput(
 /// \brief Destructor.
 ///
 DigOutput::~DigOutput() {
+    
+    service->remove(this);
     
     if (timer != nullptr)
         delete timer;
