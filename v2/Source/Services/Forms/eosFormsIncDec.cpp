@@ -5,6 +5,9 @@
 using namespace eos;
 
 
+static const char *emptyString = "";
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param service: El servei de gestio de forms.
@@ -14,6 +17,8 @@ IncDecForm::IncDecForm(
     FormsServiceHandle service,
     FormHandle parent):
     Form(service, parent),
+    prefix(emptyString),
+    suffix(emptyString),
     evChange(nullptr),
     evSet(nullptr) {
 }
@@ -88,7 +93,7 @@ void IncDecForm::setDelta(
 void IncDecForm::setPrefix(
     const char *prefix) {
 
-    this->prefix = prefix ? prefix : "";
+    this->prefix = prefix ? prefix : emptyString;
     refresh();
 }
 
@@ -100,7 +105,7 @@ void IncDecForm::setPrefix(
 void IncDecForm::setSuffix(
     const char *suffix) {
 
-    this->suffix = suffix ? suffix : "";
+    this->suffix = suffix ? suffix : emptyString;
     refresh();
 }
 
@@ -112,7 +117,7 @@ void IncDecForm::setSuffix(
 void IncDecForm::setTitle(
     const char *title) {
 
-    this->title = title ? title : "";
+    this->title = title ? title : emptyString;
     refresh();
 }
 
@@ -185,7 +190,7 @@ void IncDecForm::onPaint(
 ///
 void IncDecForm::incValue() {
     
-    if (value + delta < maxValue) {
+    if (value + delta <= maxValue) {
         value += delta;
         if (evChange != nullptr)
             evChange->execute(value);
@@ -199,7 +204,7 @@ void IncDecForm::incValue() {
 ///
 void IncDecForm::decValue() {
 
-    if (value - delta > minValue) {
+    if (value - delta >= minValue) {
         value -= delta;
         if (evChange != nullptr)
             evChange->execute(value);

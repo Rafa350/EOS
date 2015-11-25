@@ -33,8 +33,34 @@ void MainForm::mainMenuFormEvCommandHandler(
     
     int a = 0;
     switch (command) {
+        case CMD_SET_XJERK:
+            doSetXJerk();
+            break;
+            
         case CMD_EXIT:
-            a++;
             break;
     }
+}
+
+void MainForm::doSetXJerk() {
+ 
+    IncDecFormHandle form = new IncDecForm(getService(), this);
+    form->setDelta(5);
+    form->setMinValue(100);
+    form->setMaxValue(200);
+    form->setValue(2400);
+    form->setTitle("X-Motor Jerk");
+    form->setEvSet<MainForm>(this, &MainForm::incDecEvSet);
+    form->activate();
+}
+
+
+void MainForm::incDecEvChange(int value) {
+    
+}
+
+
+void MainForm::incDecEvSet(int value) {
+    
+    mainMenuForm->activate();
 }

@@ -243,7 +243,8 @@ DigOutput::DigOutput(
     halGPIOPinSetState(pin, inverted);
     halGPIOPinSetModeOutput(pin, false);    
 
-    service->add(this);
+    if (service != nullptr)
+        service->add(this);
 }
 
 
@@ -252,7 +253,8 @@ DigOutput::DigOutput(
 ///
 DigOutput::~DigOutput() {
     
-    service->remove(this);
+    if (service != nullptr)
+        service->remove(this);
     
     if (timer != nullptr)
         delete timer;

@@ -45,7 +45,7 @@ namespace eos {
         public:
             DigOutputService();
             void add(DigOutputHandle output);
-            void remove(DigOutHandle output);
+            void remove(DigOutputHandle output);
             void set(DigOutputHandle output, bool state);
             void toggle(DigOutputHandle output);
             void pulse(DigOutputHandle output, unsigned time);

@@ -100,7 +100,8 @@ DigInput::DigInput(
     state = pinGet();
     pattern = state ? 0xFFFFFFFF : 0x00000000;
     
-    service->add(this);
+    if (service != nullptr)
+        service->add(this);
 }
 
 
@@ -109,7 +110,8 @@ DigInput::DigInput(
 ///
 DigInput::~DigInput() {
     
-    service->remove(this);
+    if (service != nullptr)
+        service->remove(this);
     
     if (evChange != nullptr)
         delete evChange;

@@ -21,8 +21,7 @@ FormsService::FormsService(
     DisplayControllerHandle _displayController) :
     task(taskStackSize, taskPriority, this),
     messageQueue(_messageQueue),
-    displayController(_displayController),
-    paintPending(false) {
+    displayController(_displayController) {
 }
 
 
@@ -34,6 +33,16 @@ void FormsService::add(
     FormHandle form) {
     
     forms.add(form);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Elimina un form del servei.
+/// \param form: El form a eliminar.
+///
+void FormsService::remove(
+    FormHandle form) {
+    
 }
 
 
@@ -50,20 +59,16 @@ void FormsService::run() {
         if (messageQueue->get(message, (unsigned) -1)) 
             message.target->dispatchMessage(message);
         
-        // Procesa el repintat
+        // Procesa el repintat. No mes es pinta el formulari actiu, ja
+        // que es pantalla complerta, no finestres
         //
-        if (paintPending) {
-            FormListIterator iterator(forms);
-            while (!iterator.isEnd()) {
-                FormHandle form = iterator.current();
-                if (form->paintPending) {
-                    form->paintPending = false;
-                    form->onPaint(displayController);                
-                }
-                ++iterator;
-            }
-            paintPending = false;
+        if ((activeForm != nullptr) && activeForm->paintPending) {
+            activeForm->paintPending = false;
+            activeForm->onPaint(displayController);
         }
+        
+        // Procesa l'eliminacio de forms pendents de destruccio
+        //
     }
 }
 
@@ -96,9 +101,11 @@ Form::Form(
     FormHandle _parent):
     service(_service),
     parent(_parent),
-    paintPending(true) {
+    paintPending(true),
+    destroyPending(false) {
 
-    service->add(this);
+    if (service != nullptr)
+        service->add(this);
 }
 
 
@@ -107,6 +114,17 @@ Form::Form(
 ///
 Form::~Form() {
     
+    if (service != nullptr)
+        service->remove(this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicia el proces de destruccio del form.
+///
+void Form::destroy() {
+    
+    destroyPending = true;
 }
 
 
@@ -116,7 +134,6 @@ Form::~Form() {
 void Form::refresh() {
     
     paintPending = true;   
-    service->paintPending = true;
 }
 
 

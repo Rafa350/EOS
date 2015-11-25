@@ -59,7 +59,6 @@ namespace eos {
     class FormsService: private IRunable {
         private:
             typedef List<FormHandle> FormList;
-            typedef ListIterator<FormHandle> FormListIterator;
             
         private:
             Task task;
@@ -67,14 +66,14 @@ namespace eos {
             DisplayControllerHandle displayController;
             FormList forms;
             FormHandle activeForm;     
-            bool paintPending;
             
         public:
             FormsService(MessageQueue *messageQueue, DisplayControllerHandle displayController);
             ~FormsService();
             void add(FormHandle form);
+            void remove(FormHandle form);
             FormHandle activate(FormHandle form);
-            FormHandle getActiveForm() { return activeForm; }
+            FormHandle getActiveForm() const { return activeForm; }
         private:
             void run();
             
@@ -86,13 +85,16 @@ namespace eos {
             FormsServiceHandle service;
             FormHandle parent;
             bool paintPending;
+            bool destroyPending;
             
         public:
             Form(FormsServiceHandle service, FormHandle parent);
             virtual ~Form();
+            void destroy();
             void refresh();
             void activate() { service->activate(this); }
-            FormHandle getParent() { return parent; }
+            FormHandle getParent() const { return parent; }
+            FormsServiceHandle getService() const { return service; }
         protected:
             virtual void dispatchMessage(Message &message);
             virtual void onActivate(FormHandle deactivateForm) {} 

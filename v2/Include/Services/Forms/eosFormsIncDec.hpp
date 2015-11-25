@@ -14,8 +14,8 @@ namespace eos {
     
     class IncDecForm: public Form {
         private:
-            typedef ICallbackP1<unsigned> IIncDecFormChangeEvent;
-            typedef ICallbackP1<unsigned> IIncDecFormSetEvent;
+            typedef ICallbackP1<int> IIncDecFormChangeEvent;
+            typedef ICallbackP1<int> IIncDecFormSetEvent;
             
         private:
             int value;
@@ -64,7 +64,6 @@ namespace eos {
             void decValue();
             void setValue();
     };
-
 }
 
 

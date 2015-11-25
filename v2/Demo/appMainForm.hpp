@@ -20,6 +20,9 @@ namespace app {
             
         private:
             void mainMenuFormEvCommandHandler(unsigned command);
+            void doSetXJerk();
+            void incDecEvChange(int value);
+            void incDecEvSet(int value);
     };
     
 }
