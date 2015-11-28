@@ -36,6 +36,9 @@ namespace eos {
             MenuForm(FormsServiceHandle service, FormHandle parent, uint8_t *resource);
             ~MenuForm();
             
+            /// \brief Asigna el event evCommand.
+            /// \param instance: La instancia on s'executa el metode.
+            /// \param methid: El metode a executar.
             template <class cls>
             void setEvCommand(cls *instance, void (cls::*method)(unsigned)) { 
                 

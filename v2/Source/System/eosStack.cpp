@@ -14,7 +14,6 @@ const unsigned capacityDelta = 10;
 /// \param size: Tamany de cada element
 /// ºparam initialCapacity: Capacitat inicial
 ///
-
 GenericStack::GenericStack(
     unsigned _size,
     unsigned initialCapacity):
@@ -30,7 +29,6 @@ GenericStack::GenericStack(
 /// ----------------------------------------------------------------------
 /// \brief Destructor
 ///
-
 GenericStack::~GenericStack() {
     
     if (container != nullptr)
@@ -42,7 +40,6 @@ GenericStack::~GenericStack() {
 /// \brief Inserta un element en la pila.
 /// \param element: El element a insertar.
 ///
-
 void GenericStack::genericPush(
     void *element) {
         
@@ -88,7 +85,6 @@ void *GenericStack::genericTop() const {
 /// \param index: L'index del element.
 /// \return L'adresa del element.
 ///
-
 void *GenericStack::getPtr(
     unsigned index) const {
 
@@ -100,7 +96,6 @@ void *GenericStack::getPtr(
 /// \brief Redimensiona el buffer de dades per encabir nous elements.
 /// \param newCapacity: Nova capacitat de la pila.
 ///
-
 void GenericStack::resize(
     unsigned newCapacity) {
     

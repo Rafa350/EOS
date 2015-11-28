@@ -86,6 +86,10 @@ namespace eos {
             FormHandle parent;
             bool paintPending;
             bool destroyPending;
+            //int left;
+            //int top;
+            //int width;
+            //int height;
             
         public:
             Form(FormsServiceHandle service, FormHandle parent);

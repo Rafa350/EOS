@@ -16,7 +16,6 @@ static const char *defaultTaskName = "";
 /// \param priority: Prioritat del proces.
 /// \param runable: Objecte que implementa IRunable.
 ///
-
 Task::Task(
     unsigned stackSize, 
     TaskPriority priority,
@@ -37,7 +36,6 @@ Task::Task(
 /// ----------------------------------------------------------------------
 /// \brief Destructor. Destrueix la tasca de FreeRTOS asociada.
 ///
-
 Task::~Task() {
     
     vTaskDelete(handle);
@@ -72,7 +70,6 @@ unsigned Task::getTickCount() {
 /// \brief Retarda la tasca actual un numero determinat de ticks.
 /// \param time: Enl numero de ticks a retardar.
 ///
-
 void Task::delay(
     unsigned time) {
 
@@ -108,12 +105,18 @@ void Task::exitCriticalSection() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Suspend tots els fils d'execucio. Imprideix el canvi de tasca
+///
 void Task::suspendAllThreads() {
     
     vTaskSuspendAll();
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Activa tots els fils d'execucio
+///
 void Task::resumeAllThreads() {
 
     xTaskResumeAll();
