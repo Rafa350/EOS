@@ -1,84 +1,71 @@
-#include "Services/eosFormsList.h"
-#include "DisplayService.h"
+#include "Services/Forms/eosFormsList.hpp"
 
 
-typedef struct {             // Dades privades
-    char *title;             // -Titol
-    char **items;            // -Llista d'items
-    unsigned numItems;       // -Nimbre d'items en la llista
-    unsigned selectedIndex;  // -Index de la seleccio actual
-} PrivateData;
+using namespace eos;
 
 
-static void onMessage(eosFormsMessage *message);
-static void onMsgActivate(eosFormsMessage *message);
-static void onMsgCreate(eosFormsMessage *message);
-static void onMsgSelectorInc(eosFormsMessage *message);
-static void onMsgSelectorDec(eosFormsMessage *message);
-static void onMsgSelectorClick(eosFormsMessage *message);
-static void onMsgPaint(eosFormsMessage *message);
-
-static void notify(eosFormHandle hForm, unsigned event);
-
-
-/*************************************************************************
- *
- *       Crea un form de seleccio per llista
- *
- *       Funcio:
- *           eosFormHandle eosFormsCreateList(
- *               eosIncDecParams *params)
- *
- *       Entrada:
- *           params: Parametres d'inicialitzacio
- *
- *       Retorn:
- *           El handler del form
- *
- *************************************************************************/
-
-eosFormHandle eosFormsCreateList(
-    eosListParams *params) {
-
-    eosFormParams formParams;
-    memset(&formParams, 0, sizeof(formParams));
-    formParams.hParent = params->hParent;
-    formParams.privateDataSize = sizeof(PrivateData);
-    formParams.privateParams = params;
-    formParams.onMessage = onMessage;
-
-    return eosFormsCreateForm(&formParams);
+/// ----------------------------------------------------------------------
+/// \brief Contructior.
+/// \param service: El servei de gestio de forms
+/// \prasm parent: El form pare
+///
+ListForm::ListForm(
+    FormsServiceHandle service, 
+    FormHandle parent):
+    Form(service, parent) {
 }
 
 
-static void onMessage(
-    eosFormsMessage *message) {
+/// ----------------------------------------------------------------------
+/// \brief Notifica l'activacio del form
+/// \param deactivateForm: El form que s'ha desactivat
+///
+void ListForm::onActivate(
+    FormHandle deactivateForm) {
 
-    switch (message->id) {
-        case MSG_CREATE:
-            onMsgCreate(message);
-            break;
+    refresh();
+}
 
-        case MSG_ACTIVATE:
-            onMsgActivate(message);
-            break;
 
-        case MSG_PAINT:
-            onMsgPaint(message);
-            break;
-        
+/// ----------------------------------------------------------------------
+/// \brief Notifica que cal pintar la pantalla
+/// \param displayController: El handler del controlador de pantalla.
+///
+void ListForm::onPaint(
+    DisplayControllerHandle displayController) {
+
+    displayController->addCommandClear();
+    if (title != NULL)
+        displayController->addCommandDrawText(0, 0, title, 0, -1);
+    displayController->addCommandDrawLine(0, 10, 127, 10);
+    displayController->addCommandDrawLine(0, 53, 127, 53);
+
+    if (currentItem != (unsigned) -1) {
+        const char *text = items[currentItem];
+        displayController->addCommandDrawText(10, 30, text, 0, -1);
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// Procesa els missatges que arribin al form.
+/// /param message: El missatge a procesar.
+///
+void ListForm::dispatchMessage(Message& message) {
+
+    switch (message.id) {
         case MSG_SELECTOR:
-            switch (message->msgSelector.event) {
+            switch (message.msgSelector.event) {
                 case EV_SELECTOR_CLICK:
-                    onMsgSelectorClick(message);
+                    selectItem();
                     break;
     
                 case EV_SELECTOR_INC:
-                    onMsgSelectorInc(message);
+                    nextItem();
                     break;
 
                 case EV_SELECTOR_DEC:
-                    onMsgSelectorDec(message);
+                    prevItem();
                     break;
             }
             break;
@@ -86,97 +73,32 @@ static void onMessage(
 }
 
 
-static void onMsgCreate(
-    eosFormsMessage *message) {
+/// ----------------------------------------------------------------------
+/// \brief Avança al seguent itrm
+///
+void ListForm::nextItem() {
 
-    eosListParams *params = (eosListParams*) message->msgCreate.privateParams;
-    PrivateData *data = (PrivateData*) message->msgCreate.privateData;
-
-    // Inicialitza les dades privades
-    //
-    data->title = params->title;
-    data->items = params->items;
-    data->numItems = params->numItems;
-    data->selectedIndex = 0;
-}
-
-
-static void onMsgActivate(
-    eosFormsMessage *message) {
-
-    eosFormsRefresh(message->hForm);
-}
-
-
-static void onMsgSelectorInc(
-    eosFormsMessage *message) {
-
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
-
-    if (data->selectedIndex < (data->numItems - 1)) {
-        data->selectedIndex++;
-        eosFormsRefresh(message->hForm);
-        notify(message->hForm, EV_LIST_CHANGED);
+    if (currentItem < numItems - 1) {
+        currentItem++;
+        refresh();
     }
 }
 
 
-static void onMsgSelectorDec(
-    eosFormsMessage *message) {
+/// ----------------------------------------------------------------------
+/// \brief Retrocedeix fins a l'anterior item
+///
+void ListForm::prevItem() {
 
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(message->hForm);
-
-    if (data->selectedIndex > 0) {
-        data->selectedIndex--;
-        eosFormsRefresh(message->hForm);
-        notify(message->hForm, EV_LIST_CHANGED);
+    if (currentItem > 0) {
+        currentItem--;
+        refresh();
     }
 }
 
 
-static void onMsgSelectorClick(
-    eosFormsMessage *message) {
-
-    notify(message->hForm, EV_LIST_END);
-}
-
-
-static void onMsgPaint(eosFormsMessage *message) {
-
-    eosFormHandle hForm = message->hForm;
-    axDisplayServiceHandle hDisplay = message->msgPaint.hDisplayService;
-    PrivateData *data = (PrivateData*) eosFormsGetPrivateData(hForm);
-
-    if (axDisplayBeginCommand(hDisplay)) {
-
-        axDisplayAddCommandClear(hDisplay);
-        if (data->title != NULL)
-            axDisplayAddCommandDrawText(hDisplay, 0, 0, data->title, 0, -1);
-        axDisplayAddCommandDrawLine(hDisplay, 0, 10, 127, 10);
-        axDisplayAddCommandDrawLine(hDisplay, 0, 53, 127, 53);
-
-        if (data->selectedIndex != -1) {
-            char *text = data->items[data->selectedIndex];
-            axDisplayAddCommandDrawText(hDisplay, 10, 30, text, 0, -1);
-        }
-        
-        axDisplayAddCommandRefresh(hDisplay);
-        axDisplayEndCommand(hDisplay);
-    }
-}
-
-
-static void notify(
-    eosFormHandle hForm,
-    unsigned event) {
-
-    eosFormsMessage message;
-
-    message.id = MSG_NOTIFY;
-    message.hForm = eosFormsGetParent(hForm);
-    message.msgNotify.hSender = hForm;
-    message.msgNotify.event = event;
-    message.msgNotify.params = NULL;
-
-    eosFormsSendMessage(&message);
+/// ----------------------------------------------------------------------
+/// \brief Selecciona el item actual
+///
+void ListForm::selectItem() {
 }

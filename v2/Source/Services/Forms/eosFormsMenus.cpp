@@ -108,43 +108,37 @@ void MenuForm::onActivate(
 void MenuForm::onPaint(
     DisplayControllerHandle displayController) {
 
-    if (displayController->beginCommand()) {
+    MenuInfo *info = &this->info[level];
 
-        MenuInfo *info = &this->info[level];
+    unsigned offset = info->offset;
+    unsigned titleLen = resource[offset + 1];
+    char *title = (char*) &resource[offset + 2];
 
-        unsigned offset = info->offset;
-        unsigned titleLen = resource[offset + 1];
-        char *title = (char*) &resource[offset + 2];
+    displayController->addCommandClear();
+    displayController->addCommandDrawText(0, 0, title, 0, titleLen);
+    displayController->addCommandDrawLine(0, 10, 127, 10);
 
-        displayController->addCommandClear();
-        displayController->addCommandDrawText(0, 0, title, 0, titleLen);
-        displayController->addCommandDrawLine(0, 10, 127, 10);
+    unsigned i = info->firstItem;
+    unsigned j = eosMin(info->numItems, showItems);
+    unsigned k = 12;
+    while (j--) {
 
-        unsigned i = info->firstItem;
-        unsigned j = eosMin(info->numItems, showItems);
-        unsigned k = 12;
-        while (j--) {
+        unsigned itemMapOffset = offset + 2 + titleLen + (i * 2);
+        unsigned itemOffset = resource[itemMapOffset] + resource[itemMapOffset + 1] * 256;
 
-            unsigned itemMapOffset = offset + 2 + titleLen + (i * 2);
-            unsigned itemOffset = resource[itemMapOffset] + resource[itemMapOffset + 1] * 256;
+        unsigned itemTitleLen = resource[itemOffset + 1];
+        char *itemTitle = (char*) &resource[itemOffset + 2];
 
-            unsigned itemTitleLen = resource[itemOffset + 1];
-            char *itemTitle = (char*) &resource[itemOffset + 2];
-
-            if (i == info->currentItem) {
-                displayController->addCommandFillRectangle(0, k, 127, k + 8);
-                displayController->addCommandSetColor(0, 1);
-            }
-            // TODO: event onItemDraw
-            displayController->addCommandDrawText(10, k, itemTitle, 0, itemTitleLen);
-            displayController->addCommandSetColor(1, 0);
-
-            i += 1;
-            k += 10;
+        if (i == info->currentItem) {
+            displayController->addCommandFillRectangle(0, k, 127, k + 8);
+            displayController->addCommandSetColor(0, 1);
         }
+        // TODO: event onItemDraw
+        displayController->addCommandDrawText(10, k, itemTitle, 0, itemTitleLen);
+        displayController->addCommandSetColor(1, 0);
 
-        displayController->addCommandRefresh();
-        displayController->endCommand();
+        i += 1;
+        k += 10;
     }
 }
 

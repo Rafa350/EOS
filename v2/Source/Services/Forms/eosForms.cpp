@@ -63,8 +63,11 @@ void FormsService::run() {
         // que es pantalla complerta, no finestres
         //
         if ((activeForm != nullptr) && activeForm->paintPending) {
+            displayController->beginCommand();
             activeForm->paintPending = false;
             activeForm->onPaint(displayController);
+            displayController->addCommandRefresh();
+            displayController->endCommand();
         }
         
         // Procesa l'eliminacio de forms pendents de destruccio
@@ -138,7 +141,7 @@ void Form::refresh() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa un missatge .
+/// \brief Procesa un missatge.
 /// \param message: El missatge a procesar.
 ///
 void Form::dispatchMessage(

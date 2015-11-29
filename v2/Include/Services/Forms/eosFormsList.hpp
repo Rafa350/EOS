@@ -15,10 +15,20 @@ namespace eos {
     class ListForm: public Form {
         private:
             const char *title;
+            const char **items;
+            unsigned currentItem;
+            unsigned numItems;
     
         public:
             ListForm(FormsServiceHandle service, FormHandle parent);
             ~ListForm();
+        private:
+            void dispatchMessage(Message &message);
+            void onActivate(FormHandle deactivateForm);
+            void onPaint(DisplayControllerHandle displayController);
+            void nextItem();
+            void prevItem();       
+            void selectItem();
     };    
 }
 

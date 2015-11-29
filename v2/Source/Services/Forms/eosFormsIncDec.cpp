@@ -167,21 +167,16 @@ void IncDecForm::onActivate(
 void IncDecForm::onPaint(
     DisplayControllerHandle displayController) {
 
-    if (displayController->beginCommand()) {
+    displayController->addCommandClear();
+    if (title != nullptr)
+        displayController->addCommandDrawText(0, 0, title, 0, -1);
+    displayController->addCommandDrawLine(0, 10, 127, 10);
+    displayController->addCommandDrawLine(0, 53, 127, 53);
 
-        displayController->addCommandClear();
-        if (title != nullptr)
-            displayController->addCommandDrawText(0, 0, title, 0, -1);
-        displayController->addCommandDrawLine(0, 10, 127, 10);
-        displayController->addCommandDrawLine(0, 53, 127, 53);
+    char text[40];
+    sprintf(text, "%s%d%s", prefix, value, suffix);
 
-        char text[40];
-        sprintf(text, "%s%d%s", prefix, value, suffix);
-
-        displayController->addCommandDrawText(10, 30, text, 0, -1);
-        displayController->addCommandRefresh();
-        displayController->endCommand();
-    }
+    displayController->addCommandDrawText(10, 30, text, 0, -1);
 }
 
 
