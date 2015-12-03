@@ -18,6 +18,7 @@ namespace eos {
     class MenuForm: public Form {
         private:
             typedef ICallbackP1<unsigned> IMenuFormCommandEvent;
+            typedef ICallbackP1<unsigned> IMenuFormFormatTextEvent;
             struct MenuInfo {               // Informacio d'un menu
                 unsigned offset;            // -Offset al menu
                 unsigned numItems;          // -Numero de items
@@ -31,6 +32,7 @@ namespace eos {
             MenuInfo info[MAX_LEVELS];      // -Pila d'informacio del menu
             unsigned showItems;             // -Numero d'items a mostrar
             IMenuFormCommandEvent *evCommand;
+            IMenuFormFormatTextEvent *evFormatText;
             
         public:
             MenuForm(FormsServiceHandle service, FormHandle parent, uint8_t *resource);
@@ -45,6 +47,15 @@ namespace eos {
                 evCommand = new CallbackP1<cls, unsigned>(instance, method); 
             }
             
+            /// \brief Asigna el event evFormatText.
+            /// \param instance: La instancia on s'executa el metode.
+            /// \param methid: El metode a executar.
+            template <class cls>
+            void setEvFormatText(cls *instance, void (cls::*method)(unsigned)) { 
+                
+                evFormatText = new CallbackP1<cls, unsigned>(instance, method); 
+            }
+
         private:
             void dispatchMessage(Message &message);
             void onActivate(FormHandle deactivatedForm);
