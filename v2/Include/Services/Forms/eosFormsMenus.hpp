@@ -56,10 +56,13 @@ namespace eos {
                 evFormatText = new CallbackP1<cls, unsigned>(instance, method); 
             }
 
-        private:
-            void dispatchMessage(Message &message);
+        protected:
             void onActivate(FormHandle deactivatedForm);
-            void onPaint(DisplayControllerHandle displayController);        
+            virtual void onCommand(unsigned command);
+            void onPaint(DisplayControllerHandle displayController);    
+            void onSelectorMove(int position, bool forward);
+            void onSelectorPress();
+        private:
             void firstItem();
             void lastItem();
             void nextItem();

@@ -14,13 +14,16 @@ namespace app {
     class MainForm: public Form {
         private:
             MenuFormHandle mainMenuForm;
+            FormHandle editForm;
+            unsigned currentCommand;
         public:
             MainForm(FormsServiceHandle service);
             ~MainForm();
             
         private:
             void mainMenuFormEvCommandHandler(unsigned command);
-            void doSetXJerk();
+            void startEdit();
+            void endEdit();
             void incDecEvChange(int value);
             void incDecEvSet(int value);
     };

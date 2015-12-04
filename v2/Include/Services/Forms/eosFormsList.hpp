@@ -22,10 +22,12 @@ namespace eos {
         public:
             ListForm(FormsServiceHandle service, FormHandle parent);
             ~ListForm();
-        private:
-            void dispatchMessage(Message &message);
+        protected:
             void onActivate(FormHandle deactivateForm);
             void onPaint(DisplayControllerHandle displayController);
+            void onSelectorMove(int position, bool forward);
+            void onSelectorPress();
+        private:
             void nextItem();
             void prevItem();       
             void selectItem();

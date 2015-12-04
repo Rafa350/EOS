@@ -43,6 +43,11 @@ namespace eos {
 
     struct MsgKeyboard {
         unsigned event;
+        unsigned keyCode;
+    };
+    
+    struct MsgTouchpad {
+        unsigned event;
     };
 
     struct Message {
@@ -51,6 +56,7 @@ namespace eos {
         union {
             MsgSelector msgSelector;
             MsgKeyboard msgKeyboard;
+            MsgTouchpad msgTouchpad;
         };
     };
     
@@ -104,6 +110,11 @@ namespace eos {
             virtual void onActivate(FormHandle deactivateForm) {} 
             virtual void onDeactivate(FormHandle activateForm) {}
             virtual void onPaint(DisplayControllerHandle displayController) {}
+            virtual void onSelectorMove(int position, bool forward);
+            virtual void onSelectorPress();
+            virtual void onSelectorRelease();
+            virtual void onKeyPress(unsigned keyCode);
+            virtual void onKeyRelease(unsigned keyCode);
             
         friend class FormsService;
     };

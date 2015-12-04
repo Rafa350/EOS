@@ -44,57 +44,6 @@ MenuForm::~MenuForm() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa els missatges que arribin al form
-/// \param message: El missatge a procesar
-///
-void MenuForm::dispatchMessage(
-    Message &message) {
-
-    switch (message.id) {
-        case MSG_KEYBOARD:
-            switch (message.msgKeyboard.event) {
-                case EV_KEYBOARD_UP:
-                    prevItem();
-                    break;
-
-                case EV_KEYBOARD_DOWN:
-                    nextItem();
-                    break;
-
-                case EV_KEYBOARD_OK:
-                    selectItem();
-                    break;
-                    
-                case EV_KEYBOARD_LEFT:
-                    prevMenu();
-                    break;
-            }
-            break;
-
-        case MSG_SELECTOR:
-            switch (message.msgSelector.event) {
-                case EV_SELECTOR_DEC:
-                    prevItem();
-                    break;
-
-                case EV_SELECTOR_INC:
-                    nextItem();
-                    break;
-
-                case EV_SELECTOR_CLICK: 
-                    selectItem();
-                    break;
-            }
-            break;
-            
-        default:
-            Form::dispatchMessage(message);
-            break;
-    }
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Notifica l'activacio del form.
 /// \param deactivatedForm: El form desactivat.
 ///
@@ -106,7 +55,7 @@ void MenuForm::onActivate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Notifica que cal repintar la pantalla.
+/// \brief Es crida quant cal repintar la pantalla.
 /// \param displayController: Controlador de pantalla.
 ///
 void MenuForm::onPaint(
@@ -147,6 +96,43 @@ void MenuForm::onPaint(
         i += 1;
         k += 10;
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant el selector es mou
+/// \param position: Posicio del selector
+/// \param forward: True si es un increment de posicio.
+///
+void MenuForm::onSelectorMove(
+    int position,
+    bool forward) {
+    
+    if (forward)
+        nextItem();
+    else
+        prevItem();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant es prem el boto del selector
+///
+void MenuForm::onSelectorPress() {
+    
+    selectItem();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant cal procesar una comanda
+/// \param command: El codi de la comanda
+///
+void MenuForm::onCommand(
+    unsigned command) {
+    
+    if (evCommand != nullptr)
+        evCommand->execute((command));
 }
 
 
@@ -225,10 +211,9 @@ void MenuForm::selectItem() {
     unsigned itemOffset = resource[itemMapOffset] + resource[itemMapOffset + 1] * 256;
 
     switch (resource[itemOffset] & 0x03) {
-        case 0x00: // commandItem
-            if (evCommand != nullptr) {
+        case 0x00: { // commandItem 
                 unsigned command = resource[itemOffset + 2 + resource[itemOffset + 1]];
-                evCommand->execute(command);
+                onCommand(command);
             }
             break;
 

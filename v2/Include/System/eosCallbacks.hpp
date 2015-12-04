@@ -84,6 +84,27 @@ namespace eos {
             }
     };
 
+    template <class Class, typename RType, typename P1Type, typename P2Type>
+    class CallbackP2R {
+        public:
+            typedef RType (Class::*Method)(P1Type, P2Type);
+
+        private:    
+            Class* instance;
+            Method method;
+
+        public:
+            CallbackP2R(Class *instance, Method method) {
+                
+                this->instance = instance;
+                this->method = method;
+            }
+
+            RType execute(P1Type p1, P2Type p2) {
+                
+                return (instance->*method)(p1, p2);
+            }
+    };
 }
 
 #endif

@@ -48,46 +48,27 @@ void ListForm::onPaint(
 
 
 /// ----------------------------------------------------------------------
-/// Procesa els missatges que arribin al form.
-/// /param message: El missatge a procesar.
+/// \brief Es crida quant el selector es mou.
+/// \param position: Posicio del selector
+/// \param forward: True si la posicio s'incrementa.
 ///
-void ListForm::dispatchMessage(Message& message) {
-
-    switch (message.id) {
-        case MSG_KEYBOARD:
-            switch (message.msgKeyboard.event) {
-                case EV_KEYBOARD_LEFT:
-                case EV_KEYBOARD_UP:
-                    prevItem();
-                    break;
-                    
-                case EV_KEYBOARD_RIGHT:
-                case EV_KEYBOARD_DOWN:
-                    nextItem();
-                    break;
-                    
-                case EV_KEYBOARD_OK:
-                    selectItem();
-                    break;
-            }
-            break;
-            
-        case MSG_SELECTOR:
-            switch (message.msgSelector.event) {
-                case EV_SELECTOR_CLICK:
-                    selectItem();
-                    break;
+void ListForm::onSelectorMove(
+    int position, 
+    bool forward) {
     
-                case EV_SELECTOR_INC:
-                    nextItem();
-                    break;
+    if (forward)
+        nextItem();
+    else
+        prevItem();
+}
+    
 
-                case EV_SELECTOR_DEC:
-                    prevItem();
-                    break;
-            }
-            break;
-    }
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant es prem el boto del selector
+///
+void ListForm::onSelectorPress() {
+    
+    selectItem();
 }
 
 

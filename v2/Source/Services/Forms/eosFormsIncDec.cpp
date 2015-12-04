@@ -123,51 +123,6 @@ void IncDecForm::setTitle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa els missatges que arribin al form
-/// \param message: El missatge a procesar
-///
-void IncDecForm::dispatchMessage(
-    Message &message) {
-
-    switch (message.id) {
-        case MSG_KEYBOARD:
-            switch (message.msgKeyboard.event) {
-                case EV_KEYBOARD_LEFT:
-                case EV_KEYBOARD_UP:
-                    decValue();
-                    break;
-                    
-                case EV_KEYBOARD_RIGHT:
-                case EV_KEYBOARD_DOWN:
-                    incValue();
-                    break;
-                    
-                case EV_KEYBOARD_OK:
-                    setValue();
-                    break;
-            }
-            break;
-            
-        case MSG_SELECTOR:
-            switch (message.msgSelector.event) {
-                case EV_SELECTOR_INC:
-                    incValue();
-                    break;
-
-                case EV_SELECTOR_DEC:
-                    decValue();
-                    break;
-
-                case EV_SELECTOR_CLICK:
-                    setValue();
-                    break;
-            }
-            break;
-    }
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Notifica l'activacio del form
 /// \param deactivateForm: El form que s'ha desactivat
 ///
@@ -195,6 +150,31 @@ void IncDecForm::onPaint(
     sprintf(text, "%s%d%s", prefix, value, suffix);
 
     displayController->addCommandDrawText(10, 30, text, 0, -1);
+}
+
+     
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant canvia la posicio del selector.
+/// \param position: Posicio del selector.
+/// \param forward: True si la posicio s'incrementa.
+///
+void IncDecForm::onSelectorMove(
+    int position, 
+    bool forward) {
+    
+    if (forward)
+        incValue();
+    else
+        decValue();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant es prem el boto del selector.
+//
+void IncDecForm::onSelectorPress() {
+    
+    setValue();
 }
 
 

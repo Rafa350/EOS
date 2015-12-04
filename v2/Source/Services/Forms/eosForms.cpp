@@ -148,7 +148,78 @@ void Form::dispatchMessage(
     Message &message) {
     
     switch (message.id) {
+        case MSG_SELECTOR:
+            switch (message.msgSelector.event) {
+                case EV_SELECTOR_INC:
+                    onSelectorMove(message.msgSelector.position, true);
+                    break;
+                    
+                case EV_SELECTOR_DEC:                    
+                    onSelectorMove(message.msgSelector.position, false);
+                    break;
+                    
+                case EV_SELECTOR_CLICK:
+                    if (message.msgSelector.state == 1)
+                        onSelectorPress();
+                    else
+                        onSelectorRelease();
+                    break;
+            }
+            break;
+            
+        case MSG_KEYBOARD:
+            onKeyPress(message.msgKeyboard.event);
+            break;
+
         default:
             break;
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant el selector es mou.
+/// \param position: Posicio del selector.
+/// \param forward: True quant s'incrementa la posicio.
+///
+void Form::onSelectorMove(
+    int position,
+    bool forward) {
+    
+}
+    
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant el boto del selector es prem.
+/// 
+void Form::onSelectorPress() {
+    
+}
+    
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant el boto del selector es deixa anar.
+///
+void Form::onSelectorRelease() {
+    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant es prem una tecla.
+/// \param keyCode: Codi de la tecla.
+///
+void Form::onKeyPress(
+    unsigned keyCode) {
+    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant es deina anar una tecla.
+/// \param keyCode: El codi de la tecla.
+///
+void Form::onKeyRelease(
+    unsigned keyCode) {
+    
 }
