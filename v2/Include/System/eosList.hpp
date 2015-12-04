@@ -32,6 +32,7 @@ namespace eos {
             void genericRemove(unsigned index);
             unsigned genericGetCount() const { return count; }
             void *genericGet(unsigned index) const;
+            unsigned genericIndexOf(void *element);
         private:
             void *getPtr(unsigned index) const;
             void resize(unsigned newCapacity);
@@ -61,6 +62,11 @@ namespace eos {
             inline void remove(unsigned index) {
                 
                 genericRemove(index);
+            }
+            
+            inline unsigned indexOf(elementType &element) {
+                
+                return genericIndexOf(&element);
             }
             
             /// \brief Obte el numero d'elements en la llista

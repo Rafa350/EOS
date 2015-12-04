@@ -54,6 +54,24 @@ void ListForm::onPaint(
 void ListForm::dispatchMessage(Message& message) {
 
     switch (message.id) {
+        case MSG_KEYBOARD:
+            switch (message.msgKeyboard.event) {
+                case EV_KEYBOARD_LEFT:
+                case EV_KEYBOARD_UP:
+                    prevItem();
+                    break;
+                    
+                case EV_KEYBOARD_RIGHT:
+                case EV_KEYBOARD_DOWN:
+                    nextItem();
+                    break;
+                    
+                case EV_KEYBOARD_OK:
+                    selectItem();
+                    break;
+            }
+            break;
+            
         case MSG_SELECTOR:
             switch (message.msgSelector.event) {
                 case EV_SELECTOR_CLICK:

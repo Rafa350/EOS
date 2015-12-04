@@ -80,7 +80,26 @@ void GenericList::genericRemove(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte el puneter al un element de la llista.
+/// \brief Retorna l'index d'un element. Si esta repetit retorna el 
+///        primer que trobi des del principi de la llista.
+/// \param element: L'element a buscar.
+/// \return El index del element. UINT32_MAX en cas que no el trobi.
+///
+unsigned GenericList::genericIndexOf(
+    void *element) {
+    
+    unsigned index = 0;
+    while (index < count) {
+        if (!memcmp(getPtr(index), element, size))
+            return index;
+    }
+    
+    return UINT32_MAX;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el punter a un element de la llista.
 /// \param index: Index del element:
 /// \return Punter al element.
 ///

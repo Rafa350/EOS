@@ -130,6 +130,24 @@ void IncDecForm::dispatchMessage(
     Message &message) {
 
     switch (message.id) {
+        case MSG_KEYBOARD:
+            switch (message.msgKeyboard.event) {
+                case EV_KEYBOARD_LEFT:
+                case EV_KEYBOARD_UP:
+                    decValue();
+                    break;
+                    
+                case EV_KEYBOARD_RIGHT:
+                case EV_KEYBOARD_DOWN:
+                    incValue();
+                    break;
+                    
+                case EV_KEYBOARD_OK:
+                    setValue();
+                    break;
+            }
+            break;
+            
         case MSG_SELECTOR:
             switch (message.msgSelector.event) {
                 case EV_SELECTOR_INC:

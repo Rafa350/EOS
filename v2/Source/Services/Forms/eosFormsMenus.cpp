@@ -18,7 +18,8 @@ MenuForm::MenuForm(
     uint8_t *_resource):
     Form(service, parent),
     resource(_resource),
-    evCommand(nullptr) {
+    evCommand(nullptr),
+    evFormatText(nullptr) {
     
     showItems = 5;
     level = 0;
@@ -36,6 +37,9 @@ MenuForm::~MenuForm() {
     
     if (evCommand != nullptr)
         delete evCommand;
+    
+    if (evFormatText != nullptr)
+        delete evFormatText;
 }
 
 
@@ -125,7 +129,7 @@ void MenuForm::onPaint(
 
         unsigned itemMapOffset = offset + 2 + titleLen + (i * 2);
         unsigned itemOffset = resource[itemMapOffset] + resource[itemMapOffset + 1] * 256;
-
+        unsigned command = resource[itemOffset + 2 + resource[itemOffset + 1]];
         unsigned itemTitleLen = resource[itemOffset + 1];
         char *itemTitle = (char*) &resource[itemOffset + 2];
 
@@ -133,7 +137,10 @@ void MenuForm::onPaint(
             displayController->addCommandFillRectangle(0, k, 127, k + 8);
             displayController->addCommandSetColor(0, 1);
         }
-        // TODO: event onItemDraw
+        
+        if (evFormatText != nullptr)
+            evFormatText->execute(command);
+        
         displayController->addCommandDrawText(10, k, itemTitle, 0, itemTitleLen);
         displayController->addCommandSetColor(1, 0);
 

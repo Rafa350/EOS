@@ -111,17 +111,23 @@
           <itemPath>../../Source/Services/eosI2CMaster.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
-          <itemPath>../../Source/System/eosInterrupt.c</itemPath>
+          <logicalFolder name="f2" displayName="Collections" projectFiles="true">
+            <itemPath>../../Source/System/Collections/eosList.cpp</itemPath>
+            <itemPath>../../Source/System/Collections/eosQueue.cpp</itemPath>
+            <itemPath>../../Source/System/Collections/eosStack.cpp</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f1" displayName="Core" projectFiles="true">
+            <itemPath>../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
+            <itemPath>../../Source/System/Core/eosHeap.cpp</itemPath>
+            <itemPath>../../Source/System/Core/eosInterrupt.c</itemPath>
+            <itemPath>../../Source/System/Core/eosPool.cpp</itemPath>
+            <itemPath>../../Source/System/Core/eosTask.cpp</itemPath>
+            <itemPath>../../Source/System/Core/eosSemaphore.cpp</itemPath>
+            <itemPath>../../Source/System/Core/eosTimer.cpp</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f3" displayName="Stream" projectFiles="true">
+          </logicalFolder>
           <itemPath>../../Source/System/eosApplication.cpp</itemPath>
-          <itemPath>../../Source/System/eosTask.cpp</itemPath>
-          <itemPath>../../Source/System/eosQueue.cpp</itemPath>
-          <itemPath>../../Source/System/eosSemaphore.cpp</itemPath>
-          <itemPath>../../Source/System/eosGlobalAlloc.cpp</itemPath>
-          <itemPath>../../Source/System/eosList.cpp</itemPath>
-          <itemPath>../../Source/System/eosHeap.cpp</itemPath>
-          <itemPath>../../Source/System/eosPool.cpp</itemPath>
-          <itemPath>../../Source/System/eosStack.cpp</itemPath>
-          <itemPath>../../Source/System/eosTimer.cpp</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">
