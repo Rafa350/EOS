@@ -2,11 +2,25 @@
 #define __EOS_FORMS_HPP
 
 
+#ifndef __EOS_HPP
 #include "eos.hpp"
-#include "System/eosTask.hpp"
-#include "System/eosList.hpp"
-#include "System/eosQueue.hpp"
+#endif
+
+#ifndef __EOS_TASK_HPP
+#include "System/Core/eosTask.hpp"
+#endif
+
+#ifndef __EOS_LIST_HPP
+#include "System/Collections/eosList.hpp"
+#endif
+
+#ifndef __EOS_QUEUE_HPP
+#include "System/Collections/eosQueue.hpp"
+#endif
+
+#ifndef __EOS_DISPLAY_HPP
 #include "Controllers/eosDisplay.hpp"
+#endif
 
 
 #define MSG_NULL               0
@@ -65,12 +79,14 @@ namespace eos {
     class FormsService: private IRunable {
         private:
             typedef List<FormHandle> FormList;
+            typedef ListIterator<FormHandle> FormListIterator;
             
         private:
             Task task;
             MessageQueue *messageQueue;
             DisplayControllerHandle displayController;
             FormList forms;
+            FormList destroyForms;
             FormHandle activeForm;     
             
         public:
@@ -78,6 +94,7 @@ namespace eos {
             ~FormsService();
             void add(FormHandle form);
             void remove(FormHandle form);
+            void destroy(FormHandle form);
             FormHandle activate(FormHandle form);
             FormHandle getActiveForm() const { return activeForm; }
         private:
@@ -91,7 +108,6 @@ namespace eos {
             FormsServiceHandle service;
             FormHandle parent;
             bool paintPending;
-            bool destroyPending;
             //int left;
             //int top;
             //int width;
@@ -99,13 +115,13 @@ namespace eos {
             
         public:
             Form(FormsServiceHandle service, FormHandle parent);
-            virtual ~Form();
-            void destroy();
+            void destroy() { service->destroy(this); }
             void refresh();
             void activate() { service->activate(this); }
             FormHandle getParent() const { return parent; }
             FormsServiceHandle getService() const { return service; }
         protected:
+            virtual ~Form();
             virtual void dispatchMessage(Message &message);
             virtual void onActivate(FormHandle deactivateForm) {} 
             virtual void onDeactivate(FormHandle activateForm) {}

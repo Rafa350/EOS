@@ -1,7 +1,7 @@
+#include "System/Core/eosTask.hpp"
+#include "System/Collections/eosQueue.hpp"
 #include "Services/eosDigOutput.hpp"
-#include "System/eosTask.hpp"
 #include "HAL/halGPIO.h"
-#include "System/eosQueue.hpp"
 
 
 using namespace eos;

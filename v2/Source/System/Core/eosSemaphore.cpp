@@ -1,4 +1,4 @@
-#include "System/eosSemaphore.hpp"
+#include "System/Core/eosSemaphore.hpp"
 #include "FreeRTos.h"
 #include "semphr.h"
 

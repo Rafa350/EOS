@@ -2,11 +2,25 @@
 #define	__EOS_DIGOUTPUT_HPP
 
 
+#ifndef __EOS_HPP
 #include "eos.hpp"
-#include "System/eosTask.hpp"
-#include "System/eosTimer.hpp"
-#include "System/eosList.hpp"
-#include "System/eosQueue.hpp"
+#endif
+
+#ifndef __EOS_TASK_HPP
+#include "System/Core/eosTask.hpp"
+#endif
+
+#ifndef __EOS_TIMER_HPP
+#include "System/Core/eosTimer.hpp"
+#endif
+
+#ifndef __EOS_LIST_HPP
+#include "System/Collections/eosList.hpp"
+#endif
+
+#ifndef __EOS_QUEUE_HPP
+#include "System/Collections/eosQueue.hpp"
+#endif
 
 
 namespace eos {

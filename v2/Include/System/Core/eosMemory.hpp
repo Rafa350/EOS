@@ -2,7 +2,9 @@
 #define __EOS_MEMORY_HPP
 
 
+#ifndef __EOS_HPP
 #include "eos.hpp"
+#endif
 
 
 // Gestio de memoria tipus 'Heap'

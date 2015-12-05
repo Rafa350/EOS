@@ -1,10 +1,14 @@
-#ifndef __EOS_TIMER_H
-#define	__EOS_TIMER_H
+#ifndef __EOS_TIMER_HPP
+#define	__EOS_TIMER_HPP
 
 
+#ifndef __EOS_HPP
 #include "eos.hpp"
-#include "System/eosCallbacks.hpp"
-#include "System/eosList.hpp"
+#endif
+
+#ifndef __EOS_CALLBACKS_HPP
+#include "System/Core/eosCallbacks.hpp"
+#endif
 
 
 namespace eos {

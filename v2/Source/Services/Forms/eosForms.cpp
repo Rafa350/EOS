@@ -1,7 +1,7 @@
 #include "eos.hpp"
+#include "System/Core/eosTask.hpp"
+#include "System/Collections/eosQueue.hpp"
 #include "Services/Forms/eosForms.hpp"
-#include "System/eosQueue.hpp"
-#include "System/eosTask.hpp"
 
 
 using namespace eos;
@@ -43,6 +43,14 @@ void FormsService::add(
 void FormsService::remove(
     FormHandle form) {
     
+    forms.remove(form);
+}
+
+
+void FormsService::destroy(
+    FormHandle form) {
+    
+    destroyForms.add(form);
 }
 
 
@@ -72,6 +80,14 @@ void FormsService::run() {
         
         // Procesa l'eliminacio de forms pendents de destruccio
         //
+        if (destroyForms.getCount() > 0) {
+            FormListIterator iterator(destroyForms);
+            while (!iterator.isEnd()) {
+                delete iterator.current();
+                ++iterator;
+            }
+            destroyForms.clear();
+        }
     }
 }
 
@@ -104,8 +120,7 @@ Form::Form(
     FormHandle _parent):
     service(_service),
     parent(_parent),
-    paintPending(true),
-    destroyPending(false) {
+    paintPending(true) {
 
     if (service != nullptr)
         service->add(this);
@@ -119,15 +134,6 @@ Form::~Form() {
     
     if (service != nullptr)
         service->remove(this);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Inicia el proces de destruccio del form.
-///
-void Form::destroy() {
-    
-    destroyPending = true;
 }
 
 

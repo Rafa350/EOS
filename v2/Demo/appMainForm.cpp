@@ -8,7 +8,9 @@
 using namespace eos;
 using namespace app;
 
+
 extern const uint8_t menuMnuMain[];
+
 
 struct IncDecInfo {
     const char *title;
@@ -20,6 +22,7 @@ struct IncDecInfo {
 struct ListInfo {
     const char *title;
 };
+
 
 const IncDecInfo infoXJerk =  { "X-Motor Jerk",   10, 2000,  5 };
 const IncDecInfo infoXAccel = { "X-Motor Accel",  10, 2000,  5 };
@@ -39,7 +42,7 @@ MainForm::MainForm(
 
 MainForm::~MainForm() {
     
-    delete mainMenuForm;
+    mainMenuForm->destroy();
 }
 
 
@@ -65,16 +68,17 @@ void MainForm::startEdit() {
     form->setMinValue(infoXJerk.minValue);
     form->setMaxValue(infoXJerk.maxValue);
     form->setValue(2400);
-    form->setTitle(infoXJerk.title);
+    form->setTitle(infoXJerk.title);    
     form->setEvSet<MainForm>(this, &MainForm::incDecEvSet);
     form->activate();
     
     editForm = form;
 }
 
+
 void MainForm::endEdit() {
 
-    delete editForm;
+    editForm->destroy();
 }
 
 
@@ -88,6 +92,7 @@ void MainForm::incDecEvChange(int value) {
 
 
 void MainForm::incDecEvSet(int value) {
-    
+
+    endEdit();    
     mainMenuForm->activate();
 }

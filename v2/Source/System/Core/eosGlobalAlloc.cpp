@@ -1,13 +1,23 @@
-#include "System/eosMemory.hpp"
+#include "System/Core/eosMemory.hpp"
 
 
-void *operator new(size_t size) {
+/// ----------------------------------------------------------------------
+/// \brief Operador global new.
+/// \param size: Tamany en bytes de la memoria a reservar.
+///
+void *operator new(
+    size_t size) {
     
     return eosHeapAlloc(nullptr, size);
 }
 
 
-void operator delete(void *ptr) {
+/// ----------------------------------------------------------------------
+/// \brier Operador delete global.
+/// \param ptr: Punter al bloc de memoria a alliberar.
+///
+void operator delete(
+    void *ptr) {
     
     eosHeapFree(ptr);
 }

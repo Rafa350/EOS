@@ -1,6 +1,6 @@
-#include "System/eosList.hpp"
-#include "System/eosMemory.hpp"
-#include "System/eosTask.hpp"
+#include "System/Core/eosMemory.hpp"
+#include "System/Core/eosTask.hpp"
+#include "System/Collections/eosList.hpp"
 
 
 using namespace eos;
@@ -21,6 +21,8 @@ GenericList::GenericList(
     count(0),
     capacity(0),
     container(nullptr) {
+    
+    eosAssert(_size > 0, 0, "[GenericList::ctor] size > 0");
     
     resize(initialCapacity);
 }
@@ -43,6 +45,8 @@ GenericList::~GenericList() {
 ///
 unsigned GenericList::genericAdd(
     void *element) {
+    
+    eosAssert(element != nullptr, 0, "[GenericList::genericAdd] element != null")
     
     Task::enterCriticalSection();
     
@@ -80,6 +84,19 @@ void GenericList::genericRemove(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Elimina tots els elements de la llista
+///
+void GenericList::genericClear() {
+   
+    if (container != nullptr) {
+        eosHeapFree(container);
+        count = 0;
+        capacity = 0;
+    }
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Retorna l'index d'un element. Si esta repetit retorna el 
 ///        primer que trobi des del principi de la llista.
 /// \param element: L'element a buscar.
@@ -87,6 +104,8 @@ void GenericList::genericRemove(
 ///
 unsigned GenericList::genericIndexOf(
     void *element) {
+    
+    eosAssert(element != nullptr, 0, "[GenericList::genericIndexOf] element != nullptr")
     
     unsigned index = 0;
     while (index < count) {
@@ -123,6 +142,8 @@ void *GenericList::genericGet(
 ///
 void *GenericList::getPtr(
     unsigned index) const {
+    
+    eosAssert(index < count, 0, "[GenericList::getPtr] index < count")
 
     return  (void*) ((unsigned) container + (index * size));    
 }
@@ -130,7 +151,7 @@ void *GenericList::getPtr(
 
 /// ----------------------------------------------------------------------
 /// \brief Redimensiona el buffer de dades.
-/// \param newCapacity : Numero d'elements.
+/// \param newCapacity: Numero d'elements.
 ///
 void GenericList::resize(
     unsigned newCapacity) {

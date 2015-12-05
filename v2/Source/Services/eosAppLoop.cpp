@@ -1,5 +1,5 @@
 #include "eos.hpp"
-#include "System/eosTask.hpp"
+#include "System/Core/eosTask.hpp"
 #include "Services/eosAppLoop.hpp"
 
 

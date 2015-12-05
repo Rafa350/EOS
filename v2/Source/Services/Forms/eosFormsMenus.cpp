@@ -78,7 +78,7 @@ void MenuForm::onPaint(
 
         unsigned itemMapOffset = offset + 2 + titleLen + (i * 2);
         unsigned itemOffset = resource[itemMapOffset] + resource[itemMapOffset + 1] * 256;
-        unsigned command = resource[itemOffset + 2 + resource[itemOffset + 1]];
+        unsigned itemId = resource[itemOffset + 2 + resource[itemOffset + 1]];
         unsigned itemTitleLen = resource[itemOffset + 1];
         char *itemTitle = (char*) &resource[itemOffset + 2];
 
@@ -87,8 +87,7 @@ void MenuForm::onPaint(
             displayController->addCommandSetColor(0, 1);
         }
         
-        if (evFormatText != nullptr)
-            evFormatText->execute(command);
+        onDrawItem(itemId);
         
         displayController->addCommandDrawText(10, k, itemTitle, 0, itemTitleLen);
         displayController->addCommandSetColor(1, 0);
@@ -125,14 +124,36 @@ void MenuForm::onSelectorPress() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant cal procesar una comanda
-/// \param command: El codi de la comanda
+/// \brief Es crida quant es clica el item.
+/// \param itemId: El identificador del item.
 ///
-void MenuForm::onCommand(
-    unsigned command) {
+void MenuForm::onClickItem(
+    unsigned itemId) {
     
     if (evCommand != nullptr)
-        evCommand->execute((command));
+        evCommand->execute(itemId);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant es selecciona el item.
+/// \param itemId: El identificador del item.
+///
+void MenuForm::onSelectItem(
+    unsigned itemId) {
+    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant cal dibuixae el item.
+/// \param itemId: El identificador del item
+///
+void MenuForm::onDrawItem(
+    unsigned itemId) {
+    
+    if (evFormatText != nullptr)
+        evFormatText->execute(itemId);
 }
 
 
@@ -212,8 +233,8 @@ void MenuForm::selectItem() {
 
     switch (resource[itemOffset] & 0x03) {
         case 0x00: { // commandItem 
-                unsigned command = resource[itemOffset + 2 + resource[itemOffset + 1]];
-                onCommand(command);
+                unsigned itemId = resource[itemOffset + 2 + resource[itemOffset + 1]];
+                onClickItem(itemId);
             }
             break;
 

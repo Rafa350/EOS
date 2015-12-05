@@ -1,5 +1,5 @@
+#include "System/Core/eosTask.hpp"
 #include "Services/eosDigInput.hpp"
-#include "System/eosTask.hpp"
 #include "HAL/halGPIO.h"
 
 

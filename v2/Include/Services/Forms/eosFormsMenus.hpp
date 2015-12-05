@@ -2,9 +2,17 @@
 #define __EOS_FORMSMENUS_HPP
 
 
+#ifndef __EOS_HPP
 #include "eos.hpp"
+#endif
+
+#ifndef __EOS_CALLBACKS_HPP
+#include "System/Core/eosCallbacks.hpp"
+#endif
+
+#ifndef __EOS_FORMS_HPP
 #include "Services/Forms/eosForms.hpp"
-#include "System/eosCallbacks.hpp"
+#endif
 
 
 #define MAX_LEVELS               10
@@ -36,7 +44,6 @@ namespace eos {
             
         public:
             MenuForm(FormsServiceHandle service, FormHandle parent, uint8_t *resource);
-            ~MenuForm();
             
             /// \brief Asigna el event evCommand.
             /// \param instance: La instancia on s'executa el metode.
@@ -57,8 +64,11 @@ namespace eos {
             }
 
         protected:
+            ~MenuForm();
             void onActivate(FormHandle deactivatedForm);
-            virtual void onCommand(unsigned command);
+            virtual void onSelectItem(unsigned itemId);
+            virtual void onClickItem(unsigned itemId);
+            virtual void onDrawItem(unsigned itemId);
             void onPaint(DisplayControllerHandle displayController);    
             void onSelectorMove(int position, bool forward);
             void onSelectorPress();

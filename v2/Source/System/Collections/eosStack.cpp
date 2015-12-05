@@ -1,6 +1,6 @@
-#include "System/eosStack.hpp"
-#include "System/eosTask.hpp"
-#include "System/eosMemory.hpp"
+#include "System/Core/eosTask.hpp"
+#include "System/Core/eosMemory.hpp"
+#include "System/Collections/eosStack.hpp"
 
 
 using namespace eos;

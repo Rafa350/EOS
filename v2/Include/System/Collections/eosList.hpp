@@ -2,6 +2,11 @@
 #define	__EOS_LIST_HPP
 
 
+#ifndef __EOS_HPP
+#include "eos.hpp"
+#endif
+
+
 namespace eos {
     
     /// \brief Interface generic per les llistes.
@@ -28,6 +33,7 @@ namespace eos {
             virtual ~GenericList();
         protected:
             GenericList(unsigned size, unsigned initialCapacity);
+            void genericClear();
             unsigned genericAdd(void *element);
             void genericRemove(unsigned index);
             unsigned genericGetCount() const { return count; }
@@ -64,6 +70,16 @@ namespace eos {
                 genericRemove(index);
             }
             
+            /// \brief Elimina tots els elements de la llista.
+            ///
+            inline void clear() {
+                
+                genericClear();
+            }
+            
+            /// \brief Obte l'index del element especificat.
+            /// \param element: El element.
+            ///
             inline unsigned indexOf(elementType &element) {
                 
                 return genericIndexOf(&element);
@@ -129,11 +145,18 @@ namespace eos {
                 return list[index]; 
             }
             
-            /// \brief Pasa al seguent element a itarar.
+            /// \brief Pasa al seguent element a iterar.
+            ///
+            inline void next() {
+                
+                index++;
+            }
+            
+            /// \brief Pasa al seguent element a iterar.
             ///
             inline void operator++() { 
                 
-                index++; 
+                next(); 
             }
     };
 }

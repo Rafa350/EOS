@@ -37,22 +37,30 @@
           <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
             <itemPath>../../Include/Services/Fsm/eosFSM.hpp</itemPath>
           </logicalFolder>
+          <logicalFolder name="f4" displayName="Tcp" projectFiles="true">
+          </logicalFolder>
+          <logicalFolder name="f3" displayName="Usb" projectFiles="true">
+          </logicalFolder>
           <itemPath>../../Include/Services/eosAppLoop.hpp</itemPath>
           <itemPath>../../Include/Services/eosDigOutput.hpp</itemPath>
           <itemPath>../../Include/Services/eosDigInput.hpp</itemPath>
           <itemPath>../../Include/Services/eosI2CMaster.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="System" projectFiles="true">
-          <itemPath>../../Include/System/eosInterrupts.h</itemPath>
+          <logicalFolder name="f1" displayName="Collections" projectFiles="true">
+            <itemPath>../../Include/System/Collections/eosList.hpp</itemPath>
+            <itemPath>../../Include/System/Collections/eosQueue.hpp</itemPath>
+            <itemPath>../../Include/System/Collections/eosStack.hpp</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f2" displayName="Core" projectFiles="true">
+            <itemPath>../../Include/System/Core/eosCallbacks.hpp</itemPath>
+            <itemPath>../../Include/System/Core/eosInterrupts.h</itemPath>
+            <itemPath>../../Include/System/Core/eosMemory.hpp</itemPath>
+            <itemPath>../../Include/System/Core/eosSemaphore.hpp</itemPath>
+            <itemPath>../../Include/System/Core/eosTask.hpp</itemPath>
+            <itemPath>../../Include/System/Core/eosTimer.hpp</itemPath>
+          </logicalFolder>
           <itemPath>../../Include/System/eosApplication.hpp</itemPath>
-          <itemPath>../../Include/System/eosTask.hpp</itemPath>
-          <itemPath>../../Include/System/eosQueue.hpp</itemPath>
-          <itemPath>../../Include/System/eosSemaphore.hpp</itemPath>
-          <itemPath>../../Include/System/eosCallbacks.hpp</itemPath>
-          <itemPath>../../Include/System/eosStack.hpp</itemPath>
-          <itemPath>../../Include/System/eosList.hpp</itemPath>
-          <itemPath>../../Include/System/eosMemory.hpp</itemPath>
-          <itemPath>../../Include/System/eosTimer.hpp</itemPath>
         </logicalFolder>
         <itemPath>../eosConfig.h</itemPath>
         <itemPath>../../Include/eos.hpp</itemPath>
@@ -105,6 +113,10 @@
             <itemPath>../../Source/Services/Fsm/eosState.cpp</itemPath>
             <itemPath>../../Source/Services/Fsm/eosFSM.cpp</itemPath>
           </logicalFolder>
+          <logicalFolder name="f4" displayName="Tcp" projectFiles="true">
+          </logicalFolder>
+          <logicalFolder name="f3" displayName="Usb" projectFiles="true">
+          </logicalFolder>
           <itemPath>../../Source/Services/eosAppLoop.cpp</itemPath>
           <itemPath>../../Source/Services/eosDigOutput.cpp</itemPath>
           <itemPath>../../Source/Services/eosDigInput.cpp</itemPath>
@@ -124,6 +136,7 @@
             <itemPath>../../Source/System/Core/eosTask.cpp</itemPath>
             <itemPath>../../Source/System/Core/eosSemaphore.cpp</itemPath>
             <itemPath>../../Source/System/Core/eosTimer.cpp</itemPath>
+            <itemPath>../../Source/System/Core/eosErrorHandler.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Stream" projectFiles="true">
           </logicalFolder>

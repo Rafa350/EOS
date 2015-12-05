@@ -1,10 +1,18 @@
-#ifndef __EOS_FORMINCDEC_HPP
+#ifndef __EOS_FORMSINCDEC_HPP
 #define __EOS_FORMSINCDEC_HPP
 
 
+#ifndef __EOS_HPP
 #include "eos.hpp"
+#endif
+
+#ifndef __EOS_CALLBACKS_HPP
+#include "System/Core/eosCallbacks.hpp"
+#endif
+
+#ifndef __EOS_FORMS_HPP
 #include "Services/Forms/eosForms.hpp"
-#include "System/eosCallbacks.hpp"
+#endif
 
 
 namespace eos {
@@ -30,7 +38,6 @@ namespace eos {
             
         public:
             IncDecForm(FormsServiceHandle service, FormHandle parent);
-            ~IncDecForm();
             
             template <class cls>
             void setEvChange(cls *instance, void (cls::*method)(int)) { 
@@ -57,6 +64,7 @@ namespace eos {
             ///
             int getValue() const { return value; }
         protected:
+            ~IncDecForm();            
             void onActivate(FormHandle deactivateForm);
             void onPaint(DisplayControllerHandle displayController);
             void onSelectorMove(int position, bool forward);
