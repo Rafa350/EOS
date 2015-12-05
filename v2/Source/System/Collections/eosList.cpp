@@ -16,8 +16,9 @@ const unsigned capacityDelta = 10;
 ///
 GenericList::GenericList(
     unsigned _size,
-    unsigned initialCapacity):
+    unsigned _initialCapacity):
     size(_size),
+    initialCapacity(_initialCapacity),
     count(0),
     capacity(0),
     container(nullptr) {
@@ -74,9 +75,11 @@ void GenericList::genericRemove(
         
         Task::enterCriticalSection();
 
-        void *ptr = getPtr(index);
-        memcpy(ptr, (const void*) ((char*) ptr + size), (count - index) * size);
-        count--;
+        if (index < count) {
+            void *ptr = getPtr(index);
+            memcpy(ptr, (const void*) ((char*) ptr + size), (count - index) * size);
+            count--;
+        }
 
         Task::exitCriticalSection();
     }
@@ -89,9 +92,17 @@ void GenericList::genericRemove(
 void GenericList::genericClear() {
    
     if (container != nullptr) {
-        eosHeapFree(container);
-        count = 0;
-        capacity = 0;
+
+        Task::enterCriticalSection();
+        
+        if (container != nullptr) {
+            eosHeapFree(container);
+            count = 0;
+            capacity = 0;
+            resize(initialCapacity);
+        }
+        
+        Task::exitCriticalSection();
     }
 }
 
@@ -107,13 +118,20 @@ unsigned GenericList::genericIndexOf(
     
     eosAssert(element != nullptr, 0, "[GenericList::genericIndexOf] element != nullptr")
     
-    unsigned index = 0;
-    while (index < count) {
-        if (!memcmp(getPtr(index), element, size))
-            return index;
+    bool result = UINT32_MAX;
+    
+    Task::enterCriticalSection();
+    
+    for (unsigned index = 0; index < count; index++) {
+        if (!memcmp(getPtr(index), element, size)) {
+            result = index;
+            break;
+        }
     }
     
-    return UINT32_MAX;
+    Task::exitCriticalSection();
+    
+    return result;
 }
 
 
@@ -124,6 +142,8 @@ unsigned GenericList::genericIndexOf(
 ///
 void *GenericList::genericGet(
     unsigned index) const {
+    
+    eosAssert(index < count, 0, "[Genericist::genericGet] index < count");
     
     Task::enterCriticalSection();
     
@@ -138,13 +158,11 @@ void *GenericList::genericGet(
 /// ----------------------------------------------------------------------
 /// \brief Obte l'adressa del element especificat.
 /// \param index: L'index del element.
-/// \return L'adresa del element
+/// \return L'adresa del element.
 ///
 void *GenericList::getPtr(
     unsigned index) const {
     
-    eosAssert(index < count, 0, "[GenericList::getPtr] index < count")
-
     return  (void*) ((unsigned) container + (index * size));    
 }
 

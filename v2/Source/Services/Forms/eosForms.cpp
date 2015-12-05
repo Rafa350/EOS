@@ -43,10 +43,14 @@ void FormsService::add(
 void FormsService::remove(
     FormHandle form) {
     
-    forms.remove(form);
+    forms.remove(forms.indexOf(form));
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Marca un form per la seva destruccio.
+/// \param form: El form a destruir.
+///
 void FormsService::destroy(
     FormHandle form) {
     
@@ -82,10 +86,17 @@ void FormsService::run() {
         //
         if (destroyForms.getCount() > 0) {
             FormListIterator iterator(destroyForms);
+            
             while (!iterator.isEnd()) {
-                delete iterator.current();
-                ++iterator;
+                forms.remove(forms.indexOf(iterator.current()));
+                iterator.next();
             }
+            
+            iterator.reset();
+            while (!iterator.isEnd()) {
+                iterator.next();
+            }
+            
             destroyForms.clear();
         }
     }

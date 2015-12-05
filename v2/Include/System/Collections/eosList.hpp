@@ -27,6 +27,7 @@ namespace eos {
             unsigned size;             // Tamany del element
             unsigned count;            // Numero d'elements en la llista
             unsigned capacity;         // Capacitat de la llista en elements
+            unsigned initialCapacity;  // Capacitat inicial de la llita
             void *container;           // Contenidor d'elements
     
         public:

@@ -1,7 +1,7 @@
+#include "System/Core/eosTask.hpp"
+#include "System/Core/eosSemaphore.hpp"
+#include "System/Collections/eosQueue.hpp"
 #include "Services/eosI2CMaster.hpp"
-#include "System/eosTask.hpp"
-#include "System/eosQueue.hpp"
-#include "System/eosSemaphore.hpp"
 #include "HAL/halI2C.h"
 
 
