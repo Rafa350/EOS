@@ -44,7 +44,7 @@ void GenericQueue::clear() {
 /// \return True si tot es correcte
 ///
 bool GenericQueue::genericPut(
-    void *element,
+    const void *element,
     unsigned blockTime) {
     
     return xQueueSendToBack(handle, element, blockTime) == pdPASS;

@@ -3,6 +3,8 @@
 
 #ifdef __DEBUG
 void eosErrorHandler(
+    const char *file,
+    unsigned line,
     unsigned errorCode, 
     const char *message) {
     

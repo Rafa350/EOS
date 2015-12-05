@@ -14,7 +14,7 @@ namespace eos {
     template <typename elementType>
     class IList {
         public:
-            virtual unsigned add(elementType &element) = 0;
+            virtual unsigned add(const elementType &element) = 0;
             virtual void remove(unsigned index) = 0;
             virtual unsigned getCount() const = 0;
             virtual elementType &operator[](unsigned index) = 0;
@@ -35,11 +35,11 @@ namespace eos {
         protected:
             GenericList(unsigned size, unsigned initialCapacity);
             void genericClear();
-            unsigned genericAdd(void *element);
+            unsigned genericAdd(const void *element);
             void genericRemove(unsigned index);
             unsigned genericGetCount() const { return count; }
             void *genericGet(unsigned index) const;
-            unsigned genericIndexOf(void *element);
+            unsigned genericIndexOf(const void *element);
         private:
             void *getPtr(unsigned index) const;
             void resize(unsigned newCapacity);
@@ -57,13 +57,13 @@ namespace eos {
             }
             
             /// \brief Afegeix un element a la llista
-            /// \param element: Referencia al alement a afeigir
+            /// \param element: Referencia al element a afeigir
             ///
-            inline unsigned add(elementType &element) {
+            inline unsigned add(const elementType &element) {
                 
                 return genericAdd(&element);
             }
-            
+
             /// \brief Elimina un element de la llista
             /// \param index: El index del element.
             inline void remove(unsigned index) {
@@ -81,7 +81,7 @@ namespace eos {
             /// \brief Obte l'index del element especificat.
             /// \param element: El element.
             ///
-            inline unsigned indexOf(elementType &element) {
+            inline unsigned indexOf(const elementType &element) {
                 
                 return genericIndexOf(&element);
             }

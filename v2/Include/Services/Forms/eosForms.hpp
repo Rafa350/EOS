@@ -37,8 +37,10 @@
 #define EV_KEYBOARD_RIGHT      4       // -Tecla RIGHT
 #define EV_KEYBOARD_OK         5       // -Tecla OK
 
-#define MSG_COMMAND          102       // Comanda
-#define MSG_NOTIFY           103       // Event de nofificacio d'un altre form
+#define MSG_TOUCHPAD         102
+
+#define MSG_COMMAND          110       // Comanda
+#define MSG_NOTIFY           111       // Event de nofificacio d'un altre form
 
 
 namespace eos {

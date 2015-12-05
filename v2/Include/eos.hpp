@@ -15,13 +15,13 @@
 
 #ifdef __DEBUG
 #define eosAssert(condition, errorCode, message) \
-    if (!(condition)) eosErrorHandler(errorCode, message);
+    if (!(condition)) eosErrorHandler(__FILE__, __LINE__, errorCode, message);
 #else
 #define eosAssert(condition, errorCode, message)
 #endif
 
 #ifdef __DEBUG
-extern void eosErrorHandler(unsigned errorCode, const char *message);
+extern void eosErrorHandler(const char *file, unsigned line, unsigned errorCode, const char *message);
 #endif
 
 

@@ -31,6 +31,7 @@ void DigInputService::add(
     DigInputHandle input) {
 
     inputs.add(input);
+    input->service = this;
 }
 
 
@@ -39,6 +40,9 @@ void DigInputService::add(
 /// \param La entrada a eliminar.
 void DigInputService::remove(
     DigInputHandle input) {
+    
+    input->service = nullptr;
+    inputs.remove(inputs.indexOf(input));
 }
 
 
@@ -91,7 +95,7 @@ DigInput::DigInput(
     DigInputServiceHandle _service,
     uint8_t _pin, 
     bool _inverted):
-    service(_service),
+    service(nullptr),
     pin(_pin),
     inverted(_inverted),
     evChange(nullptr) {
@@ -100,8 +104,8 @@ DigInput::DigInput(
     state = pinGet();
     pattern = state ? 0xFFFFFFFF : 0x00000000;
     
-    if (service != nullptr)
-        service->add(this);
+    if (_service != nullptr)
+        _service->add(this);
 }
 
 

@@ -33,6 +33,7 @@ void FormsService::add(
     FormHandle form) {
     
     forms.add(form);
+    form->service = this;
 }
 
 
@@ -43,6 +44,7 @@ void FormsService::add(
 void FormsService::remove(
     FormHandle form) {
     
+    form->service = nullptr;
     forms.remove(forms.indexOf(form));
 }
 
@@ -122,19 +124,19 @@ FormHandle FormsService::activate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor
-/// \param service: El servei de gestio dels forms
-/// \param parent: El form pare
+/// \brief Constructor.
+/// \param service: El servei de gestio dels forms.
+/// \param parent: El form pare.
 ///
 Form::Form(
     FormsServiceHandle _service,
     FormHandle _parent):
-    service(_service),
+    service(nullptr),
     parent(_parent),
     paintPending(true) {
 
-    if (service != nullptr)
-        service->add(this);
+    if (_service != nullptr)
+        _service->add(this);
 }
 
 

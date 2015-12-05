@@ -230,6 +230,36 @@ void MyApplication::onSelector(int16_t position, uint8_t state) {
 }
 
 
+void eosTest() {
+
+    unsigned count;
+    unsigned value;
+    List<unsigned> list;
+    
+    list.add(0);
+    list.add(1);
+    list.add(2);
+    
+    count = list.getCount();
+    value = list[0];
+    
+    list.remove(0);
+    
+    count = list.getCount();
+    value = list[0];
+
+    list.remove(0);
+    
+    count = list.getCount();
+    value = list[0];
+
+    list.remove(0);
+    
+    count = list.getCount();
+    value = list[0];
+}
+
+
 /*************************************************************************
  *
  *       Inicialitzacio de l'aplicacio d'usuari
@@ -240,6 +270,8 @@ void MyApplication::onSelector(int16_t position, uint8_t state) {
  *************************************************************************/
 
 int main(void) {
+    
+    //eosTest();
        
     MyApplication *app = new MyApplication();
     app->execute();

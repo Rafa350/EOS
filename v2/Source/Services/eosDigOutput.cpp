@@ -29,6 +29,7 @@ void DigOutputService::add(
     DigOutputHandle output) {
     
     outputs.add(output);
+    output->service = this;
 }
 
 
@@ -39,6 +40,8 @@ void DigOutputService::add(
 void DigOutputService::remove(
     DigOutputHandle output) {
     
+    output->service = nullptr;
+    outputs.remove(outputs.indexOf(output));
 }
 
 /// ----------------------------------------------------------------------
@@ -235,7 +238,7 @@ DigOutput::DigOutput(
     DigOutputServiceHandle _service,
     uint8_t _pin,
     bool _inverted):
-    service(_service),
+    service(nullptr),
     pin(_pin),
     inverted(_inverted),
     timer(nullptr) {
@@ -243,8 +246,8 @@ DigOutput::DigOutput(
     halGPIOPinSetState(pin, inverted);
     halGPIOPinSetModeOutput(pin, false);    
 
-    if (service != nullptr)
-        service->add(this);
+    if (_service != nullptr)
+        _service->add(this);
 }
 
 

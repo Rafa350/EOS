@@ -20,7 +20,7 @@ namespace eos {
             void clear();
         protected:
             GenericQueue(unsigned size, unsigned capacity);                   
-            bool genericPut(void *element, unsigned blockTime);
+            bool genericPut(const void *element, unsigned blockTime);
             bool genericGet(void *element, unsigned blockTime);
             bool genericPutISR(void *element);
             bool genericGetISR(void *element);            
@@ -44,7 +44,7 @@ namespace eos {
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.
             ///
-            inline bool put(elementType &element, unsigned blockTime) {
+            inline bool put(const elementType &element, unsigned blockTime) {
                 
                 return genericPut((void*) &element, blockTime);
             }
