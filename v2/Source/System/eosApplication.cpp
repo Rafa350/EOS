@@ -30,5 +30,8 @@ eos::Application::Application() {
 
 void eos::Application::execute() {
         
+    onInitialize();
+    onExecute();
     vTaskStartScheduler();
+    onTerminate();
 }

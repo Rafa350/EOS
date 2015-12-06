@@ -1,5 +1,5 @@
-#ifndef __EOS_FORMSINCDEC_HPP
-#define __EOS_FORMSINCDEC_HPP
+#ifndef __EOS_NUMERICEDITORFORM_HPP
+#define __EOS_NUMERICEDITORFORM_HPP
 
 
 #ifndef __EOS_HPP
@@ -17,10 +17,10 @@
 
 namespace eos {
     
-    class IncDecForm;
-    typedef IncDecForm *IncDecFormHandle;
+    class NumericEditorForm;
+    typedef NumericEditorForm *NumericEditorFormHandle;
     
-    class IncDecForm: public Form {
+    class NumericEditorForm: public Form {
         private:
             typedef ICallbackP1<int> IIncDecFormChangeEvent;
             typedef ICallbackP1<int> IIncDecFormSetEvent;
@@ -37,7 +37,7 @@ namespace eos {
             IIncDecFormSetEvent *evSet;
             
         public:
-            IncDecForm(FormsServiceHandle service, FormHandle parent);
+            NumericEditorForm(FormsServiceHandle service, FormHandle parent);
             
             template <class cls>
             void setEvChange(cls *instance, void (cls::*method)(int)) { 
@@ -64,10 +64,10 @@ namespace eos {
             ///
             int getValue() const { return value; }
         protected:
-            ~IncDecForm();            
+            ~NumericEditorForm();            
             void onActivate(FormHandle deactivateForm);
-            void onPaint(DisplayControllerHandle displayController);
-            void onSelectorMove(int position, bool forward);
+            void onPaint(FormsDisplayHandle display);
+            void onSelectorMove(int position, SelectorDirection direction);
             void onSelectorPress();
         private:
             void incValue();

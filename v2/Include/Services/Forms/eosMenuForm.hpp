@@ -1,5 +1,5 @@
-#ifndef __EOS_FORMSMENUS_HPP
-#define __EOS_FORMSMENUS_HPP
+#ifndef __EOS_MENUFORM_HPP
+#define __EOS_MENUFORM_HPP
 
 
 #ifndef __EOS_HPP
@@ -22,11 +22,12 @@ namespace eos {
     
     class MenuForm;
     typedef MenuForm *MenuFormHandle;
-
+    
     class MenuForm: public Form {
         private:
-            typedef ICallbackP1<unsigned> IMenuFormCommandEvent;
-            typedef ICallbackP1<unsigned> IMenuFormFormatTextEvent;
+            typedef ICallbackP2<MenuFormHandle, unsigned> ISelectItemEvent;
+            typedef ICallbackP2<MenuFormHandle, unsigned> IClickItemEvent;
+            typedef ICallbackP2<MenuFormHandle, unsigned> IDrawItemEvent;
             struct MenuInfo {               // Informacio d'un menu
                 unsigned offset;            // -Offset al menu
                 unsigned numItems;          // -Numero de items
@@ -39,28 +40,38 @@ namespace eos {
             unsigned level;                 // -Nivell de submenus
             MenuInfo info[MAX_LEVELS];      // -Pila d'informacio del menu
             unsigned showItems;             // -Numero d'items a mostrar
-            IMenuFormCommandEvent *evCommand;
-            IMenuFormFormatTextEvent *evFormatText;
+            ISelectItemEvent *evSelectItem;
+            IClickItemEvent *evClickItem;
+            IDrawItemEvent *evDrawItem;
             
         public:
             MenuForm(FormsServiceHandle service, FormHandle parent, uint8_t *resource);
             
-            /// \brief Asigna el event evCommand.
+            /// \brief Asigna el event evSelectItem.
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setEvCommand(cls *instance, void (cls::*method)(unsigned)) { 
+            void setSelectItemEvent(cls *instance, void (cls::*method)(MenuFormHandle, unsigned)) { 
                 
-                evCommand = new CallbackP1<cls, unsigned>(instance, method); 
+                evSelectItem = new CallbackP2<cls, MenuFormHandle, unsigned>(instance, method); 
+            }
+            
+            /// \brief Asigna el event evClickItem.
+            /// \param instance: La instancia on s'executa el metode.
+            /// \param methid: El metode a executar.
+            template <class cls>
+            void setClickItemEvent(cls *instance, void (cls::*method)(MenuFormHandle, unsigned)) {
+                
+                evClickItem = new CallbackP2<cls, MenuFormHandle, unsigned>(instance, method);
             }
             
             /// \brief Asigna el event evFormatText.
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setEvFormatText(cls *instance, void (cls::*method)(unsigned)) { 
+            void setDrawItemEvent(cls *instance, void (cls::*method)(MenuFormHandle, unsigned)) { 
                 
-                evFormatText = new CallbackP1<cls, unsigned>(instance, method); 
+                evDrawItem = new CallbackP2<cls, MenuFormHandle, unsigned>(instance, method); 
             }
 
         protected:
@@ -69,15 +80,15 @@ namespace eos {
             virtual void onSelectItem(unsigned itemId);
             virtual void onClickItem(unsigned itemId);
             virtual void onDrawItem(unsigned itemId);
-            void onPaint(DisplayControllerHandle displayController);    
-            void onSelectorMove(int position, bool forward);
+            void onPaint(FormsDisplayHandle display);    
+            void onSelectorMove(int position, SelectorDirection direction);
             void onSelectorPress();
         private:
             void firstItem();
             void lastItem();
             void nextItem();
             void prevItem();
-            void selectItem();
+            void clickItem();
             void nextMenu();
             void prevMenu();
     };

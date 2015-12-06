@@ -1,5 +1,4 @@
-#include "Services/Forms/eosFormsIncDec.hpp"
-#include "Controllers/eosDisplay.hpp"
+#include "Services/Forms/eosNumericEditorForm.hpp"
 
 
 using namespace eos;
@@ -13,7 +12,7 @@ static const char *emptyString = "";
 /// \param service: El servei de gestio de forms.
 /// \param parent: El form pare.
 ///
-IncDecForm::IncDecForm(
+NumericEditorForm::NumericEditorForm(
     FormsServiceHandle service,
     FormHandle parent):
     Form(service, parent),
@@ -27,7 +26,7 @@ IncDecForm::IncDecForm(
 /// ----------------------------------------------------------------------
 /// \brief Destructor.
 ///
-IncDecForm::~IncDecForm() {
+NumericEditorForm::~NumericEditorForm() {
     
     if (evChange != nullptr)
         delete evChange;
@@ -41,7 +40,7 @@ IncDecForm::~IncDecForm() {
 /// \brief Asigna el valor minim.
 /// \param minValue: El valor minim.
 ///
-void IncDecForm::setMinValue(
+void NumericEditorForm::setMinValue(
     int minValue) {
 
     this->minValue = minValue;
@@ -54,7 +53,7 @@ void IncDecForm::setMinValue(
 /// \brief Asigna el valor maxim.
 /// \param maxValue: El valor maxim.
 //
-void IncDecForm::setMaxValue(
+void NumericEditorForm::setMaxValue(
     int maxValue) {
 
     this->maxValue = maxValue;
@@ -67,7 +66,7 @@ void IncDecForm::setMaxValue(
 /// \brief Asigna el valor.
 /// \param value: El valor a asignar.
 ///
-void IncDecForm::setValue(
+void NumericEditorForm::setValue(
     int value) {
 
     this->value = eosMin(eosMax(value, minValue), maxValue);
@@ -79,7 +78,7 @@ void IncDecForm::setValue(
 /// \brief Asigna el increment.
 /// \param delte: El valor del increment.
 ///
-void IncDecForm::setDelta(
+void NumericEditorForm::setDelta(
     int delta) {
 
     this->delta = delta;
@@ -90,7 +89,7 @@ void IncDecForm::setDelta(
 /// \brief Asigna el prefix.
 /// \param prefix: El texte del prefix.
 ///
-void IncDecForm::setPrefix(
+void NumericEditorForm::setPrefix(
     const char *prefix) {
 
     this->prefix = prefix ? prefix : emptyString;
@@ -102,7 +101,7 @@ void IncDecForm::setPrefix(
 /// \brief Asigna el sufix.
 /// \param suffix: El texte del sufix.
 ///
-void IncDecForm::setSuffix(
+void NumericEditorForm::setSuffix(
     const char *suffix) {
 
     this->suffix = suffix ? suffix : emptyString;
@@ -114,7 +113,7 @@ void IncDecForm::setSuffix(
 /// \brief Asigna el titol.
 /// \param title: El texte del titol.
 ///
-void IncDecForm::setTitle(
+void NumericEditorForm::setTitle(
     const char *title) {
 
     this->title = title ? title : emptyString;
@@ -126,7 +125,7 @@ void IncDecForm::setTitle(
 /// \brief Notifica l'activacio del form
 /// \param deactivateForm: El form que s'ha desactivat
 ///
-void IncDecForm::onActivate(
+void NumericEditorForm::onActivate(
     FormHandle deactivateForm) {
 
     refresh();
@@ -137,51 +136,56 @@ void IncDecForm::onActivate(
 /// \brief Notifica que cal pintar la pantalla
 /// \param displayController: El handler del controlador de pantalla.
 ///
-void IncDecForm::onPaint(
-    DisplayControllerHandle displayController) {
+void NumericEditorForm::onPaint(
+    FormsDisplayHandle display) {
 
-    displayController->addCommandClear();
+    display->clear();
     if (title != nullptr)
-        displayController->addCommandDrawText(0, 0, title, 0, -1);
-    displayController->addCommandDrawLine(0, 10, 127, 10);
-    displayController->addCommandDrawLine(0, 53, 127, 53);
+        display->drawText(0, 0, title, 0, -1);
+    
+    display->drawLine(0, 10, 127, 10);
+    display->drawLine(0, 53, 127, 53);
 
     char text[40];
     sprintf(text, "%s%d%s", prefix, value, suffix);
 
-    displayController->addCommandDrawText(10, 30, text, 0, -1);
+    display->drawText(10, 30, text, 0, -1);
 }
 
      
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant canvia la posicio del selector.
 /// \param position: Posicio del selector.
-/// \param forward: True si la posicio s'incrementa.
+/// \param direction: Direccio del moviment.
 ///
-void IncDecForm::onSelectorMove(
+void NumericEditorForm::onSelectorMove(
     int position, 
-    bool forward) {
+    SelectorDirection direction) {
     
-    if (forward)
+    if (direction == SelectorDirection::forward)
         incValue();
     else
         decValue();
+    
+    Form::onSelectorMove(position, direction);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant es prem el boto del selector.
 //
-void IncDecForm::onSelectorPress() {
+void NumericEditorForm::onSelectorPress() {
     
     setValue();
+    
+    Form::onSelectorPress();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Incrementa el valor.
 ///
-void IncDecForm::incValue() {
+void NumericEditorForm::incValue() {
     
     if (value + delta <= maxValue) {
         value += delta;
@@ -195,7 +199,7 @@ void IncDecForm::incValue() {
 /// ----------------------------------------------------------------------
 /// \brief Decrementa el valor.
 ///
-void IncDecForm::decValue() {
+void NumericEditorForm::decValue() {
 
     if (value - delta >= minValue) {
         value -= delta;
@@ -209,7 +213,7 @@ void IncDecForm::decValue() {
 /// ----------------------------------------------------------------------
 /// \brief Asigna el valor.
 ///
-void IncDecForm::setValue() {
+void NumericEditorForm::setValue() {
     
     if (evSet != nullptr)
         evSet->execute(value);

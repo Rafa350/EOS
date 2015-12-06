@@ -1,6 +1,6 @@
 #include "eos.hpp"
-#include "Services/Forms/eosFormsMenus.hpp"
-#include "Services/Forms/eosFormsIncDec.hpp"
+#include "Services/Forms/eosMenuForm.hpp"
+#include "Services/Forms/eosNumericEditorForm.hpp"
 #include "appMainForm.hpp"
 #include "MnuMain.h"
 
@@ -33,23 +33,23 @@ MainForm::MainForm(
     FormsServiceHandle service):
     Form(service, nullptr) {
  
-    mainMenuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
-    mainMenuForm->setEvCommand<MainForm>(this, &MainForm::mainMenuFormEvCommandHandler);
-    
-    mainMenuForm->activate();
+    menuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
+    menuForm->setClickItemEvent<MainForm>(this, &MainForm::menuClickItemEventHandler);   
+    menuForm->activate();
 }
 
 
 MainForm::~MainForm() {
     
-    mainMenuForm->destroy();
+    menuForm->destroy();
 }
 
 
-void MainForm::mainMenuFormEvCommandHandler(
-    unsigned command) {
+void MainForm::menuClickItemEventHandler(
+    MenuFormHandle menuForm,
+    unsigned itemId) {
 
-    currentCommand = command;
+    currentCommand = itemId;
     
     switch (command) {
         case CMD_SET_XJERK:
@@ -63,7 +63,7 @@ void MainForm::mainMenuFormEvCommandHandler(
 
 void MainForm::startEdit() {
  
-    IncDecFormHandle form = new IncDecForm(getService(), this);
+    NumericEditorFormHandle form = new NumericEditorForm(getService(), this);
     form->setDelta(infoXJerk.delta);
     form->setMinValue(infoXJerk.minValue);
     form->setMaxValue(infoXJerk.maxValue);
@@ -72,13 +72,13 @@ void MainForm::startEdit() {
     form->setEvSet<MainForm>(this, &MainForm::incDecEvSet);
     form->activate();
     
-    editForm = form;
+    editorForm = form;
 }
 
 
 void MainForm::endEdit() {
 
-    editForm->destroy();
+    editorForm->destroy();
 }
 
 
@@ -94,5 +94,5 @@ void MainForm::incDecEvChange(int value) {
 void MainForm::incDecEvSet(int value) {
 
     endEdit();    
-    mainMenuForm->activate();
+    menuForm->activate();
 }

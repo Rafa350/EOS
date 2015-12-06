@@ -41,7 +41,9 @@ GenericStack::~GenericStack() {
 /// \param element: El element a insertar.
 ///
 void GenericStack::genericPush(
-    void *element) {
+    const void *element) {
+    
+    eosAssert(element != nullptr, 0, "[GenericStack::genericPush] element != nullptr");
         
     Task::enterCriticalSection();
     
@@ -60,6 +62,8 @@ void GenericStack::genericPush(
 /// \brief Exteru el primer element de la pila
 ///
 void GenericStack::genericPop() {
+    
+    eosAssert(count > 0, 0, "[GenericStack::genericPop] count > 0");
     
     Task::enterCriticalSection();
 
@@ -88,7 +92,7 @@ void *GenericStack::genericTop() const {
 void *GenericStack::getPtr(
     unsigned index) const {
 
-    return  (void*) ((unsigned) container + (index * size));    
+    return (void*) ((unsigned) container + (index * size));    
 }
 
 

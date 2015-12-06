@@ -15,7 +15,7 @@ namespace eos {
     class IStack {
         public:
             virtual const elementType &top() const = 0;
-            virtual void push(elementType &element) = 0;
+            virtual void push(const elementType &element) = 0;
             virtual void pop() = 0;
             virtual bool isEmpty() const = 0;
     };
@@ -32,7 +32,7 @@ namespace eos {
             virtual ~GenericStack();
         protected:
             GenericStack(unsigned size, unsigned initialCapacity);
-            void genericPush(void *element);
+            void genericPush(const void *element);
             void genericPop();
             void *genericTop() const;
             
@@ -59,7 +59,7 @@ namespace eos {
             /// \brief Afegeix un element a la pila.
             /// \param element: L'element a afeigir.
             ///
-            inline void push(elementType &element) {
+            inline void push(const elementType &element) {
 
                 genericPush(&element);
             }            

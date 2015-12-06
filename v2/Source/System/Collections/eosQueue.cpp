@@ -15,6 +15,8 @@ GenericQueue::GenericQueue(
     unsigned size,
     unsigned capacity) {
     
+    eosAssert(size != 0, 0, "[GenericQueue::ctor] size != 0");
+    
     handle = xQueueCreate(capacity, size);
 }
 
@@ -41,7 +43,7 @@ void GenericQueue::clear() {
 /// \brief Afegeix un element en la cua.
 /// \param element: Punter al element a afeigir.
 /// \param blockTime: Temps maxim de bloqueig.
-/// \return True si tot es correcte
+/// \return True si tot es correcte.
 ///
 bool GenericQueue::genericPut(
     const void *element,
@@ -54,7 +56,8 @@ bool GenericQueue::genericPut(
 /// ----------------------------------------------------------------------
 /// \brief Extreu un element en la cua.
 /// \param element: Punter al element a exterure.
-/// \param blockTime: Temps maxim de bloqueig
+/// \param blockTime: Temps maxim de bloqueig.
+/// \return True si tot es correcte. 
 ///
 bool GenericQueue::genericGet(
     void *element,

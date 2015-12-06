@@ -9,7 +9,7 @@
 #include "Services/eosI2CMaster.hpp"
 #include "Services/Forms/eosForms.hpp"
 #include "Services/Forms/eosSelector.hpp"
-#include "Services/Forms/eosFormsMenus.hpp"
+#include "Services/Forms/eosMenuForm.hpp"
 #include "Controllers/eosDisplay.hpp"
 #include "appMainForm.hpp"
 #include "fsmDefines.hpp"

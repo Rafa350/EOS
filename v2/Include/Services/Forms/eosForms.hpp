@@ -48,8 +48,16 @@ namespace eos {
     class Form;
     typedef Form *FormHandle;
     
+    class FormsDisplay;
+    typedef FormsDisplay *FormsDisplayHandle;
+    
     class FormsService;
     typedef FormsService *FormsServiceHandle;
+    
+    enum class SelectorDirection {
+        forward,
+        backward
+    };
     
     struct MsgSelector {
         unsigned event;
@@ -86,7 +94,7 @@ namespace eos {
         private:
             Task task;
             MessageQueue *messageQueue;
-            DisplayControllerHandle displayController;
+            FormsDisplayHandle display;
             FormList forms;
             FormList destroyForms;
             FormHandle activeForm;     
@@ -104,14 +112,34 @@ namespace eos {
             
         friend class Form;
     };
+    
+    class FormsDisplay {
+        private:
+            //int x;
+            //int y;
+            //int width;
+            //int height;
+            DisplayControllerHandle displayController;
+            
+        public:
+            FormsDisplay(DisplayControllerHandle displayController);
+            void beginDraw();
+            void endDraw();
+            void clear();
+            void setColor(unsigned color);
+            void drawLine(int x1, int y1, int x2, int y2);
+            void drawRectangle(int x, int y, int width, int height);
+            void drawText(int x, int y, const char *text, unsigned offset, unsigned length);
+            void fillRectangle(int x, int y, int width, int height);
+    };
        
     class Form {
         private:
             FormsServiceHandle service;
             FormHandle parent;
             bool paintPending;
-            //int left;
-            //int top;
+            //int x;
+            //int y;
             //int width;
             //int height;
             
@@ -127,8 +155,8 @@ namespace eos {
             virtual void dispatchMessage(Message &message);
             virtual void onActivate(FormHandle deactivateForm) {} 
             virtual void onDeactivate(FormHandle activateForm) {}
-            virtual void onPaint(DisplayControllerHandle displayController) {}
-            virtual void onSelectorMove(int position, bool forward);
+            virtual void onPaint(FormsDisplayHandle display) {}
+            virtual void onSelectorMove(int position, SelectorDirection direction);
             virtual void onSelectorPress();
             virtual void onSelectorRelease();
             virtual void onKeyPress(unsigned keyCode);

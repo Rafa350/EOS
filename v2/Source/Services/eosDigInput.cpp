@@ -58,7 +58,7 @@ void DigInputService::run() {
         Task::delayUntil(10, &tc);
         
         DigInputListIterator iterator(inputs);
-        while (!iterator.isEnd()) {
+        while (iterator.hasNext()) {
             
             DigInputHandle input = iterator.current();
             bool changed = false;
@@ -79,7 +79,7 @@ void DigInputService::run() {
             if (changed && (input->evChange != nullptr)) 
                 input->evChange->execute(input);
             
-            ++iterator;
+            iterator.next();
         }
     }    
 }

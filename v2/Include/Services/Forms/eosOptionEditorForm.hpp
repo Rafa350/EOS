@@ -1,5 +1,5 @@
-#ifndef __EOS_FORMSLIST_HPP
-#define __EOS_FORMSLIST_HPP
+#ifndef __EOS_OPTIONEDITORFORM_HPP
+#define __EOS_OPTIONEDITORFORM_HPP
 
 
 #ifndef __EOS_HPP
@@ -17,10 +17,10 @@
 
 namespace eos {
     
-    class ListForm;
-    typedef ListForm *ListFormhandle;
+    class OptionEditorForm;
+    typedef OptionEditorForm *OptionEditorFormHandle;
     
-    class ListForm: public Form {
+    class OptionEditorForm: public Form {
         private:
             const char *title;
             const char **items;
@@ -28,12 +28,12 @@ namespace eos {
             unsigned numItems;
     
         public:
-            ListForm(FormsServiceHandle service, FormHandle parent);
+            OptionEditorForm(FormsServiceHandle service, FormHandle parent);
         protected:
-            ~ListForm();
+            ~OptionEditorForm();
             void onActivate(FormHandle deactivateForm);
-            void onPaint(DisplayControllerHandle displayController);
-            void onSelectorMove(int position, bool forward);
+            void onPaint(FormsDisplayHandle display);
+            void onSelectorMove(int position, SelectorDirection direction);
             void onSelectorPress();
             void onDrawItem();
             void onSelectItem();

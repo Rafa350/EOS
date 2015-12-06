@@ -1,4 +1,4 @@
-#include "Services/Forms/eosFormsList.hpp"
+#include "Services/Forms/eosOptionEditorForm.hpp"
 
 
 using namespace eos;
@@ -9,7 +9,7 @@ using namespace eos;
 /// \param service: El servei de gestio de forms
 /// \prasm parent: El form pare
 ///
-ListForm::ListForm(
+OptionEditorForm::OptionEditorForm(
     FormsServiceHandle service, 
     FormHandle parent):
     Form(service, parent) {
@@ -20,7 +20,7 @@ ListForm::ListForm(
 /// \brief Notifica l'activacio del form
 /// \param deactivateForm: El form que s'ha desactivat
 ///
-void ListForm::onActivate(
+void OptionEditorForm::onActivate(
     FormHandle deactivateForm) {
 
     refresh();
@@ -31,18 +31,18 @@ void ListForm::onActivate(
 /// \brief Notifica que cal pintar la pantalla
 /// \param displayController: El handler del controlador de pantalla.
 ///
-void ListForm::onPaint(
-    DisplayControllerHandle displayController) {
+void OptionEditorForm::onPaint(
+    FormsDisplayHandle display) {
 
-    displayController->addCommandClear();
+    display->clear();
     if (title != NULL)
-        displayController->addCommandDrawText(0, 0, title, 0, -1);
-    displayController->addCommandDrawLine(0, 10, 127, 10);
-    displayController->addCommandDrawLine(0, 53, 127, 53);
+        display->drawText(0, 0, title, 0, -1);
+    display->drawLine(0, 10, 127, 10);
+    display->drawLine(0, 53, 127, 53);
 
     if (currentItem != (unsigned) -1) {
         const char *text = items[currentItem];
-        displayController->addCommandDrawText(10, 30, text, 0, -1);
+        display->drawText(10, 30, text, 0, -1);
     }
 }
 
@@ -50,13 +50,13 @@ void ListForm::onPaint(
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant el selector es mou.
 /// \param position: Posicio del selector
-/// \param forward: True si la posicio s'incrementa.
+/// \param direction Direccio del moviment.
 ///
-void ListForm::onSelectorMove(
+void OptionEditorForm::onSelectorMove(
     int position, 
-    bool forward) {
+    SelectorDirection direction) {
     
-    if (forward)
+    if (direction == SelectorDirection::forward)
         nextItem();
     else
         prevItem();
@@ -66,7 +66,7 @@ void ListForm::onSelectorMove(
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant es prem el boto del selector
 ///
-void ListForm::onSelectorPress() {
+void OptionEditorForm::onSelectorPress() {
     
     selectItem();
 }
@@ -75,7 +75,7 @@ void ListForm::onSelectorPress() {
 /// ----------------------------------------------------------------------
 /// \brief Avança al seguent itrm
 ///
-void ListForm::nextItem() {
+void OptionEditorForm::nextItem() {
 
     if (currentItem < numItems - 1) {
         currentItem++;
@@ -87,7 +87,7 @@ void ListForm::nextItem() {
 /// ----------------------------------------------------------------------
 /// \brief Retrocedeix fins a l'anterior item
 ///
-void ListForm::prevItem() {
+void OptionEditorForm::prevItem() {
 
     if (currentItem > 0) {
         currentItem--;
@@ -99,5 +99,5 @@ void ListForm::prevItem() {
 /// ----------------------------------------------------------------------
 /// \brief Selecciona el item actual
 ///
-void ListForm::selectItem() {
+void OptionEditorForm::selectItem() {
 }

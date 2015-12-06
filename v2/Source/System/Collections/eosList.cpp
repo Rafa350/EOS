@@ -32,7 +32,26 @@ GenericList::GenericList(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor
+/// \brief Constructor copia. Copia la llista no els elements que conte.
+/// \param list: La llista a copiar.
+///
+GenericList::GenericList(
+    const GenericList &list):
+    size(list.size),
+    initialCapacity(list.initialCapacity),
+    count(list.count), 
+    capacity(list.capacity) {    
+    
+    if (capacity > 0) {
+        container = eosHeapAlloc(nullptr, capacity * size);
+        if (count > 0)
+            memcpy(container, list.container, count * size);
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Destructor.
 ///
 GenericList::~GenericList() {
     
@@ -86,32 +105,29 @@ unsigned GenericList::genericAdd(
 void GenericList::genericRemove(
     unsigned index) {
     
+    eosAssert(index < count, 0, "[GenericList::genericRemove] index < count");
+    
+    // Entra en la seccio critica
+    //
+    Task::enterCriticalSection();
+
     // Comprova si l'index es dins del rang
     //
     if (index < count) {
-        
-        // Entra en la seccio critica
-        //
-        Task::enterCriticalSection();
 
-        // Comprova de nou, si l'index es dins del rang
+        // Elimina l'element del contenidor
         //
-        if (index < count) {
-            
-            // Elimina l'element del contenidor
-            //
-            void *ptr = getPtr(index);
-            memcpy(ptr, (const void*) ((char*) ptr + size), (count - index - 1) * size);
-            
-            // Decrementa el contador d'elements
-            //
-            count--;
-        }
+        void *ptr = getPtr(index);
+        memcpy(ptr, (const void*) ((char*) ptr + size), (count - index - 1) * size);
 
-        // Surt de la seccio critica
+        // Decrementa el contador d'elements
         //
-        Task::exitCriticalSection();
+        count--;
     }
+
+    // Surt de la seccio critica
+    //
+    Task::exitCriticalSection();
 }
 
 
@@ -220,7 +236,7 @@ void *GenericList::genericGet(
 void *GenericList::getPtr(
     unsigned index) const {
     
-    return  (void*) ((unsigned) container + (index * size));    
+    return (void*) ((unsigned) container + (index * size));    
 }
 
 

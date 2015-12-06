@@ -13,6 +13,10 @@ namespace eos {
         public:
             Application();
             void execute();
+        protected:
+            virtual void onExecute() { }
+            virtual void onInitialize() { }
+            virtual void onTerminate() { }
     };
 }
 

@@ -1,6 +1,5 @@
 #include "eos.hpp"
-#include "Services/Forms/eosFormsMenus.hpp"
-#include "Controllers/eosDisplay.hpp"
+#include "Services/Forms/eosMenuForm.hpp"
 
 
 using namespace eos;
@@ -18,8 +17,9 @@ MenuForm::MenuForm(
     uint8_t *_resource):
     Form(service, parent),
     resource(_resource),
-    evCommand(nullptr),
-    evFormatText(nullptr) {
+    evSelectItem(nullptr),
+    evClickItem(nullptr),
+    evDrawItem(nullptr) {
     
     showItems = 5;
     level = 0;
@@ -35,11 +35,14 @@ MenuForm::MenuForm(
 ///
 MenuForm::~MenuForm() {
     
-    if (evCommand != nullptr)
-        delete evCommand;
+    if (evSelectItem != nullptr)
+        delete evSelectItem;
     
-    if (evFormatText != nullptr)
-        delete evFormatText;
+    if (evClickItem != nullptr)
+        delete evClickItem;
+    
+    if (evDrawItem != nullptr)
+        delete evDrawItem;
 }
 
 
@@ -56,20 +59,20 @@ void MenuForm::onActivate(
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant cal repintar la pantalla.
-/// \param displayController: Controlador de pantalla.
+/// \param display: Controlador de pantalla.
 ///
 void MenuForm::onPaint(
-    DisplayControllerHandle displayController) {
-
+    FormsDisplayHandle display) {
+    
     MenuInfo *info = &this->info[level];
 
     unsigned offset = info->offset;
     unsigned titleLen = resource[offset + 1];
     char *title = (char*) &resource[offset + 2];
 
-    displayController->addCommandClear();
-    displayController->addCommandDrawText(0, 0, title, 0, titleLen);
-    displayController->addCommandDrawLine(0, 10, 127, 10);
+    display->clear();
+    display->drawText(0, 0, title, 0, titleLen);
+    display->drawLine(0, 10, 127, 10);
 
     unsigned i = info->firstItem;
     unsigned j = eosMin(info->numItems, showItems);
@@ -83,14 +86,14 @@ void MenuForm::onPaint(
         char *itemTitle = (char*) &resource[itemOffset + 2];
 
         if (i == info->currentItem) {
-            displayController->addCommandFillRectangle(0, k, 127, k + 8);
-            displayController->addCommandSetColor(0, 1);
+            display->fillRectangle(0, k, 127, 8);
+            display->setColor(0);
         }
         
         onDrawItem(itemId);
         
-        displayController->addCommandDrawText(10, k, itemTitle, 0, itemTitleLen);
-        displayController->addCommandSetColor(1, 0);
+        display->drawText(10, k, itemTitle, 0, itemTitleLen);
+        display->setColor(1);
 
         i += 1;
         k += 10;
@@ -101,16 +104,18 @@ void MenuForm::onPaint(
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant el selector es mou
 /// \param position: Posicio del selector
-/// \param forward: True si es un increment de posicio.
+/// \param direction: Direccio del moviment.
 ///
 void MenuForm::onSelectorMove(
     int position,
-    bool forward) {
+    SelectorDirection direction) {
     
-    if (forward)
+    if (direction == SelectorDirection::forward)
         nextItem();
     else
         prevItem();
+    
+    Form::onSelectorMove(position, direction);
 }
 
 
@@ -119,7 +124,9 @@ void MenuForm::onSelectorMove(
 ///
 void MenuForm::onSelectorPress() {
     
-    selectItem();
+    clickItem();
+    
+    Form::onSelectorPress();
 }
 
 
@@ -130,8 +137,8 @@ void MenuForm::onSelectorPress() {
 void MenuForm::onClickItem(
     unsigned itemId) {
     
-    if (evCommand != nullptr)
-        evCommand->execute(itemId);
+    if (evClickItem != nullptr)
+        evClickItem->execute(this, itemId);
 }
 
 
@@ -142,6 +149,8 @@ void MenuForm::onClickItem(
 void MenuForm::onSelectItem(
     unsigned itemId) {
     
+    if (evSelectItem != nullptr)
+        evSelectItem->execute(this, itemId);
 }
 
 
@@ -152,8 +161,8 @@ void MenuForm::onSelectItem(
 void MenuForm::onDrawItem(
     unsigned itemId) {
     
-    if (evFormatText != nullptr)
-        evFormatText->execute(itemId);
+    if (evDrawItem != nullptr)
+        evDrawItem->execute(this, itemId);
 }
 
 
@@ -168,6 +177,7 @@ void MenuForm::firstItem() {
         info->currentItem = 0;
         info->firstItem = 0;
         refresh();
+        //onSelectItem;
     }
 }
 
@@ -183,6 +193,7 @@ void MenuForm::lastItem() {
         info->currentItem = info->numItems - 1;
         info->firstItem = info->numItems - showItems;
         refresh();
+        //onSelectItem;
     }
 }
 
@@ -199,6 +210,7 @@ void MenuForm::nextItem() {
         if (info->firstItem + showItems <= info->currentItem)
             info->firstItem++;
         refresh();
+        //onSelectItem;
     }
 }
  
@@ -215,6 +227,7 @@ void MenuForm::prevItem() {
         if (info->firstItem > info->currentItem)
             info->firstItem--;
         refresh();
+        //onSelectItem;
     }
 }
 
@@ -222,7 +235,7 @@ void MenuForm::prevItem() {
 /// ----------------------------------------------------------------------
 /// \brief Selecciona el item actual.
 ///
-void MenuForm::selectItem() {
+void MenuForm::clickItem() {
     
     MenuInfo *info = &this->info[level];
 

@@ -4,7 +4,7 @@
 
 #include "eos.hpp"
 #include "Services/Forms/eosForms.hpp"
-#include "Services/Forms/eosFormsMenus.hpp"
+#include "Services/Forms/eosMenuForm.hpp"
 
 
 namespace app {
@@ -13,15 +13,15 @@ namespace app {
     
     class MainForm: public Form {
         private:
-            MenuFormHandle mainMenuForm;
-            FormHandle editForm;
+            MenuFormHandle menuForm;
+            FormHandle editorForm;
             unsigned currentCommand;
         public:
             MainForm(FormsServiceHandle service);
             ~MainForm();
             
         private:
-            void mainMenuFormEvCommandHandler(unsigned command);
+            void menuClickItemEventHandler(MenuFormHandle menuForm, unsigned itemId);
             void startEdit();
             void endEdit();
             void incDecEvChange(int value);

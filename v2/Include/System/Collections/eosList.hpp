@@ -17,10 +17,12 @@ namespace eos {
             virtual unsigned add(const elementType &element) = 0;
             virtual void remove(unsigned index) = 0;
             virtual unsigned getCount() const = 0;
+            virtual bool isEmpty() const = 0;
             virtual elementType &operator[](unsigned index) = 0;
     };
     
-    /// \brief Llista generica implementada com array de bytes.
+    /// \brief Llista generica implementada com array de bytes. Cal derivar-la
+    ///        per utilitzar-la. 
     //
     class GenericList {
         private:
@@ -34,6 +36,7 @@ namespace eos {
             virtual ~GenericList();
         protected:
             GenericList(unsigned size, unsigned initialCapacity);
+            GenericList(const GenericList &list);
             void genericClear();
             unsigned genericAdd(const void *element);
             void genericRemove(unsigned index);
@@ -45,7 +48,7 @@ namespace eos {
             void resize(unsigned newCapacity);
     };
     
-    /// \brief Llista d'elements
+    /// \brief Llista d'elements.
     ///
     template <typename elementType>
     class List: private GenericList, public IList<elementType> {
@@ -54,6 +57,12 @@ namespace eos {
             ///
             List() :
                 GenericList(sizeof(elementType), 10) {
+            }
+                
+            /// \brief Contructor copia.
+            ///
+            List(const GenericList &list) :
+                GenericList(list) {                
             }
             
             /// \brief Afegeix un element a la llista
@@ -93,6 +102,14 @@ namespace eos {
                 
                 return genericGetCount();
             }
+            
+            /// \brief Comprova si es buida.
+            /// \return True si la llista es buida.
+            ///
+            inline bool isEmpty() const {
+            
+                return genericGetCount() == 0;
+            }
 
             /// \brief Obte un element de la llista.
             /// \param index: Index del element.
@@ -110,7 +127,7 @@ namespace eos {
     class ListIterator {
         private:
             unsigned index;
-            unsigned endIndex;
+            unsigned count;
             IList<elementType> &list;
             
         public:
@@ -120,22 +137,37 @@ namespace eos {
             ListIterator(IList<elementType> &_list):
                 list(_list),
                 index(0),
-                endIndex(_list.getCount()) {
-            }            
+                count(_list.getCount()) {
+            }                                        
                 
-            /// \brief Reseteja el iterator per començar de nou.
+            /// \brief Pasa al primer element.
             ///
-            inline void reset() { 
+            inline void first() { 
                 
                 index = 0; 
             }
             
-            /// \brief Compriva si el iterator ha arribat al final.
-            /// \return True si ha arribat al final.
+            /// \brief Pasa al ultim element.
             ///
-            inline bool isEnd() const { 
+            inline void last() { 
                 
-                return index >= endIndex; 
+                index = count - 1; 
+            }
+            
+            /// \brief Comprova si hi ha un element posterior a l'actual.
+            /// \return Resultat de l'operacio.
+            ///
+            inline bool hasNext() const { 
+                
+                return index < count; 
+            }
+            
+            /// \brief Comprova si hi ha un element previ a l'actual
+            /// \return Resultat de l'operacio.
+            ///
+            inline bool hasPrev() const { 
+                
+                return index > 0; 
             }
             
             /// \brief Obte el element actual.
@@ -146,19 +178,22 @@ namespace eos {
                 return list[index]; 
             }
             
-            /// \brief Pasa al seguent element a iterar.
+            /// \brief Pasa al seguent element.
             ///
             inline void next() {
                 
                 index++;
             }
             
-            /// \brief Pasa al seguent element a iterar.
+            /// \brief Pasa a l'element anterior.
             ///
-            inline void operator++() { 
+            inline void prev() {
                 
-                next(); 
+                index--;
             }
+            
+        private:
+            ListIterator(const ListIterator &iterator);
     };
 }
 
