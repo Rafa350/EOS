@@ -65,7 +65,7 @@ namespace eos {
                 evClickItem = new CallbackP2<cls, MenuFormHandle, unsigned>(instance, method);
             }
             
-            /// \brief Asigna el event evFormatText.
+            /// \brief Asigna el event evDrawItem.
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>

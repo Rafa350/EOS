@@ -15,7 +15,8 @@ Form::Form(
     FormHandle _parent):
     service(nullptr),
     parent(_parent),
-    paintPending(true) {
+    paintPending(true),
+    evSelectorPress(nullptr) {
 
     if (_service != nullptr)
         _service->add(this);
@@ -29,6 +30,9 @@ Form::~Form() {
     
     if (service != nullptr)
         service->remove(this);
+    
+    if (evSelectorPress != nullptr)
+        delete evSelectorPress;
 }
 
 
@@ -95,6 +99,8 @@ void Form::onSelectorMove(
 /// 
 void Form::onSelectorPress() {
     
+    if (evSelectorPress != nullptr)
+        evSelectorPress->execute(this);
 }
     
 

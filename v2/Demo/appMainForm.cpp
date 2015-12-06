@@ -51,7 +51,7 @@ void MainForm::menuClickItemEventHandler(
 
     currentCommand = itemId;
     
-    switch (command) {
+    switch (itemId) {
         case CMD_SET_XJERK:
             startEdit();
             break;
@@ -61,6 +61,14 @@ void MainForm::menuClickItemEventHandler(
     }
 }
 
+void MainForm::editorSelectorPressEventHandler(
+    FormHandle form) {
+
+    endEdit();    
+    menuForm->activate();
+}
+
+
 void MainForm::startEdit() {
  
     NumericEditorFormHandle form = new NumericEditorForm(getService(), this);
@@ -69,30 +77,13 @@ void MainForm::startEdit() {
     form->setMaxValue(infoXJerk.maxValue);
     form->setValue(2400);
     form->setTitle(infoXJerk.title);    
-    form->setEvSet<MainForm>(this, &MainForm::incDecEvSet);
+    form->setSelectorPressEvent<MainForm>(this, &MainForm::editorSelectorPressEventHandler);
     form->activate();
     
     editorForm = form;
 }
 
-
 void MainForm::endEdit() {
 
     editorForm->destroy();
-}
-
-
-void MainForm::incDecEvChange(int value) {
-    
-    switch (currentCommand) {
-        case CMD_SET_XJERK:
-            break;
-    }
-}
-
-
-void MainForm::incDecEvSet(int value) {
-
-    endEdit();    
-    menuForm->activate();
 }

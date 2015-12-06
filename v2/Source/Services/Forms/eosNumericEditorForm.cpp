@@ -18,8 +18,7 @@ NumericEditorForm::NumericEditorForm(
     Form(service, parent),
     prefix(emptyString),
     suffix(emptyString),
-    evChange(nullptr),
-    evSet(nullptr) {
+    evChange(nullptr) {
 }
 
 
@@ -30,9 +29,6 @@ NumericEditorForm::~NumericEditorForm() {
     
     if (evChange != nullptr)
         delete evChange;
-    
-    if (evSet != nullptr)
-        delete evSet;
 }
 
 
@@ -44,8 +40,7 @@ void NumericEditorForm::setMinValue(
     int minValue) {
 
     this->minValue = minValue;
-    value = eosMax(value, minValue);
-    refresh();
+    setValue(eosMax(value, minValue));
 }
 
 
@@ -57,8 +52,7 @@ void NumericEditorForm::setMaxValue(
     int maxValue) {
 
     this->maxValue = maxValue;
-    value = eosMin(value, maxValue);
-    refresh();
+    setValue(eosMin(value, maxValue));
 }
 
 
@@ -69,8 +63,12 @@ void NumericEditorForm::setMaxValue(
 void NumericEditorForm::setValue(
     int value) {
 
-    this->value = eosMin(eosMax(value, minValue), maxValue);
-    refresh();
+    if (this->value != value) {
+        this->value = eosMin(eosMax(value, minValue), maxValue);
+        if (evChange != nullptr)
+            evChange->execute(this, value);
+        refresh();
+    }
 }
 
 
@@ -172,17 +170,6 @@ void NumericEditorForm::onSelectorMove(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant es prem el boto del selector.
-//
-void NumericEditorForm::onSelectorPress() {
-    
-    setValue();
-    
-    Form::onSelectorPress();
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Incrementa el valor.
 ///
 void NumericEditorForm::incValue() {
@@ -190,7 +177,7 @@ void NumericEditorForm::incValue() {
     if (value + delta <= maxValue) {
         value += delta;
         if (evChange != nullptr)
-            evChange->execute(value);
+            evChange->execute(this, value);
         refresh();
     }
 }
@@ -204,18 +191,7 @@ void NumericEditorForm::decValue() {
     if (value - delta >= minValue) {
         value -= delta;
         if (evChange != nullptr)
-            evChange->execute(value);
+            evChange->execute(this, value);
         refresh();
     }
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief Asigna el valor.
-///
-void NumericEditorForm::setValue() {
-    
-    if (evSet != nullptr)
-        evSet->execute(value);
-}
-

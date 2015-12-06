@@ -22,6 +22,7 @@ namespace app {
             
         private:
             void menuClickItemEventHandler(MenuFormHandle menuForm, unsigned itemId);
+            void editorSelectorPressEventHandler(FormHandle form);
             void startEdit();
             void endEdit();
             void incDecEvChange(int value);

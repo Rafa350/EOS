@@ -135,9 +135,12 @@ namespace eos {
        
     class Form {
         private:
+            typedef ICallbackP1<FormHandle> ISelectorPressEvent;
+        private:
             FormsServiceHandle service;
             FormHandle parent;
             bool paintPending;
+            ISelectorPressEvent *evSelectorPress;
             //int x;
             //int y;
             //int width;
@@ -150,6 +153,13 @@ namespace eos {
             void activate() { service->activate(this); }
             FormHandle getParent() const { return parent; }
             FormsServiceHandle getService() const { return service; }
+
+            template <class cls>
+            void setSelectorPressEvent(cls *instance, void (cls::*method)(FormHandle)) { 
+                
+                evSelectorPress = new CallbackP1<cls, FormHandle>(instance, method);
+            }
+            
         protected:
             virtual ~Form();
             virtual void dispatchMessage(Message &message);
