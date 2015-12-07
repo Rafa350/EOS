@@ -1,5 +1,5 @@
-#ifndef __EOS_SELECTOR_HPP
-#define __EOS_SELECTOR_HPP
+#ifndef __EOS_KEYBOARD_HPP
+#define __EOS_KEYBOARD_HPP
 
 
 #ifndef __EOS_HPP
@@ -21,34 +21,32 @@
 
 namespace eos {
     
-    class SelectorService;
-    typedef SelectorService *SelectorServiceHandle;
+    class KeyboardService;
+    typedef KeyboardService *KeyboardServiceHandle;
     
-    struct SelectorNotification {
-        int position;
+    struct KeyboardNotification {
         unsigned state;
     };
     
-    class SelectorService: private IRunable {        
+    class KeyboardService: private IRunable {        
         private:
-            typedef ICallbackP1<SelectorNotification&> ISelectorServiceEvent;
+            typedef ICallbackP1<KeyboardNotification&> IKeyboardServiceEvent;
             
         private:
             Task task;
             uint8_t addr;
             I2CMasterServiceHandle i2cService;
-            int position;
             unsigned state;
-            ISelectorServiceEvent *evNotify;
+            IKeyboardServiceEvent *evNotify;
             
         public:
-            SelectorService(I2CMasterServiceHandle i2cService, uint8_t addr);
-            ~SelectorService();
+            KeyboardService(I2CMasterServiceHandle i2cService, uint8_t addr);
+            ~KeyboardService();
             
             template <class cls>
-            void setNotifyEvent(cls *instance, void (cls::*method)(SelectorNotification&)) { 
+            void setNotifyEvent(cls *instance, void (cls::*method)(KeyboardNotification&)) { 
                 
-                evNotify = new CallbackP1<cls, SelectorNotification&>(instance, method); 
+                evNotify = new CallbackP1<cls, KeyboardNotification&>(instance, method); 
             }
         private:
             void run();

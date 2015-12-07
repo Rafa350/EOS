@@ -62,7 +62,7 @@ namespace eos {
     struct MsgSelector {
         unsigned event;
         int position;
-        uint8_t state;
+        unsigned state;
     };
 
     struct MsgKeyboard {
@@ -163,14 +163,14 @@ namespace eos {
         protected:
             virtual ~Form();
             virtual void dispatchMessage(Message &message);
-            virtual void onActivate(FormHandle deactivateForm) {} 
+            virtual void onActivate(FormHandle deactivateForm); 
             virtual void onDeactivate(FormHandle activateForm) {}
             virtual void onPaint(FormsDisplayHandle display) {}
             virtual void onSelectorMove(int position, SelectorDirection direction);
             virtual void onSelectorPress();
             virtual void onSelectorRelease();
-            virtual void onKeyPress(unsigned keyCode);
-            virtual void onKeyRelease(unsigned keyCode);
+            virtual void onKeyPress(unsigned key);
+            virtual void onKeyRelease(unsigned key);
             
         friend class FormsService;
     };

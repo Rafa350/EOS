@@ -31,7 +31,6 @@ namespace eos {
             OptionEditorForm(FormsServiceHandle service, FormHandle parent);
         protected:
             ~OptionEditorForm();
-            void onActivate(FormHandle deactivateForm);
             void onPaint(FormsDisplayHandle display);
             void onSelectorMove(int position, SelectorDirection direction);
             void onSelectorPress();

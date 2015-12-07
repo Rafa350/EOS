@@ -47,17 +47,6 @@ MenuForm::~MenuForm() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Notifica l'activacio del form.
-/// \param deactivatedForm: El form desactivat.
-///
-void MenuForm::onActivate(
-    FormHandle deactivateForm) {
-
-    refresh();
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Es crida quant cal repintar la pantalla.
 /// \param display: Controlador de pantalla.
 ///
@@ -120,13 +109,38 @@ void MenuForm::onSelectorMove(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant es prem el boto del selector
+/// \brief Es crida quant es prem el boto del selector.
 ///
 void MenuForm::onSelectorPress() {
     
     clickItem();
     
     Form::onSelectorPress();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \bried Es crida quant es prem una tecla.
+/// \param key: Codi de la tecla.
+///
+void MenuForm::onKeyPress(unsigned key) {
+    
+    switch (key) {
+        case EV_KEYBOARD_UP:
+            prevItem();
+            break;
+            
+        case EV_KEYBOARD_DOWN:
+            nextItem();
+            break;
+            
+        case EV_KEYBOARD_OK:
+        case EV_KEYBOARD_RIGHT:
+            clickItem();
+            break;
+    }
+    
+    Form::onKeyPress(key);
 }
 
 

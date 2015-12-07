@@ -83,6 +83,15 @@ void Form::dispatchMessage(
 
 
 /// ----------------------------------------------------------------------
+/// |brief Es crida quant s'activa el form
+///
+void Form::onActivate(FormHandle deactivateForm) {
+    
+    refresh();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Es crida quant el selector es mou.
 /// \param position: Posicio del selector.
 /// \param direction: Direccio del moviment.
@@ -117,7 +126,7 @@ void Form::onSelectorRelease() {
 /// \param keyCode: Codi de la tecla.
 ///
 void Form::onKeyPress(
-    unsigned keyCode) {
+    unsigned key) {
     
 }
 

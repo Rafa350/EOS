@@ -57,9 +57,9 @@ namespace eos {
             int getValue() const { return value; }
         protected:
             ~NumericEditorForm();            
-            void onActivate(FormHandle deactivateForm);
             void onPaint(FormsDisplayHandle display);
             void onSelectorMove(int position, SelectorDirection direction);
+            void onKeyPress(unsigned key);
         private:
             void incValue();
             void decValue();

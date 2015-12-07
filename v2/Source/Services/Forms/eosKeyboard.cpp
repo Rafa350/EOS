@@ -1,12 +1,12 @@
-#include "Services/Forms/eosSelector.hpp"
-#include "../../../MD-SEL01/SEL01Messages.h"
+#include "Services/Forms/eosKeyboard.hpp"
+#include "../../../MD-KBD01/KBD01Messages.h"
 
 
 using namespace eos;
 
 
 const unsigned taskStackSize = 512;
-const unsigned taskLoopDelay = 25;
+const unsigned taskLoopDelay = 50;
 const TaskPriority taskPriority = TaskPriority::normal;
 
 
@@ -15,22 +15,21 @@ const TaskPriority taskPriority = TaskPriority::normal;
 /// \param i2cMasterService: El servei de comunicacions I2C
 /// \param addr: Adressa I2C del selector
 ///
-SelectorService::SelectorService(
+KeyboardService::KeyboardService(
     I2CMasterServiceHandle _i2cService,
     uint8_t _addr):
     task(taskStackSize, taskPriority, this),
     i2cService(_i2cService),
     addr(_addr),
-    evNotify(nullptr),
     state(0),
-    position(0) {
+    evNotify(nullptr) {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Destructor.
 ///
-SelectorService::~SelectorService() {
+KeyboardService::~KeyboardService() {
     
     if (evNotify != nullptr)
         delete evNotify;
@@ -40,9 +39,9 @@ SelectorService::~SelectorService() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa les tasques del servei
 ///
-void SelectorService::run() {
+void KeyboardService::run() {
     
-    static uint8_t query[1] = { SEL_CMD_GETSTATE };
+    static uint8_t query[1] = { KBD_CMD_GETSTATUS };
     uint8_t response[10];
     BinarySemaphore endTransactionNotify;
 
@@ -59,15 +58,12 @@ void SelectorService::run() {
             
             if (endTransactionNotify.take((unsigned) - 1)) {
             
-                unsigned newState = response[1];
-                int newPosition = (int) ((response[3] << 8) | response[2]);
+                uint8_t newState = response[1];
 
-                if ((state != newState) || (position != newPosition)) {
-                    position = newPosition;
+                if (state != newState) {
                     state = newState;
                     if (evNotify != nullptr) {
-                        SelectorNotification notification;
-                        notification.position = position;
+                        KeyboardNotification notification;
                         notification.state = state;
                         evNotify->execute(notification);
                     }

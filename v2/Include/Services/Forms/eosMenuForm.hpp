@@ -76,13 +76,13 @@ namespace eos {
 
         protected:
             ~MenuForm();
-            void onActivate(FormHandle deactivatedForm);
             virtual void onSelectItem(unsigned itemId);
             virtual void onClickItem(unsigned itemId);
             virtual void onDrawItem(unsigned itemId);
             void onPaint(FormsDisplayHandle display);    
             void onSelectorMove(int position, SelectorDirection direction);
             void onSelectorPress();
+            void onKeyPress(unsigned key);
         private:
             void firstItem();
             void lastItem();

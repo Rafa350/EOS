@@ -33,6 +33,8 @@
             <itemPath>../../Include/Services/Forms/eosNumericEditorForm.hpp</itemPath>
             <itemPath>../../Include/Services/Forms/eosOptionEditorForm.hpp</itemPath>
             <itemPath>../../Include/Services/Forms/eosMenuForm.hpp</itemPath>
+            <itemPath>../../Include/Services/Forms/eosKeyboard.hpp</itemPath>
+            <itemPath>../../../../MD-KBD01/KBD01Messages.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
             <itemPath>../../Include/Services/Fsm/eosFSM.hpp</itemPath>
@@ -109,6 +111,7 @@
             <itemPath>../../Source/Services/Forms/eosNumericEditorForm.cpp</itemPath>
             <itemPath>../../Source/Services/Forms/eosOptionEditorForm.cpp</itemPath>
             <itemPath>../../Source/Services/Forms/eosMenuForm.cpp</itemPath>
+            <itemPath>../../Source/Services/Forms/eosKeyboard.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
             <itemPath>../../Source/Services/Fsm/eosStateMachine.cpp</itemPath>
@@ -194,6 +197,7 @@
     <Elem>../../../../MD-SEL01</Elem>
     <Elem>../../../../MD-DSP04</Elem>
     <Elem>../../Source/Controllers</Elem>
+    <Elem>../../../../MD-KBD01</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

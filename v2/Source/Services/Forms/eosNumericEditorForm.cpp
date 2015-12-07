@@ -120,17 +120,6 @@ void NumericEditorForm::setTitle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Notifica l'activacio del form
-/// \param deactivateForm: El form que s'ha desactivat
-///
-void NumericEditorForm::onActivate(
-    FormHandle deactivateForm) {
-
-    refresh();
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Notifica que cal pintar la pantalla
 /// \param displayController: El handler del controlador de pantalla.
 ///
@@ -166,6 +155,25 @@ void NumericEditorForm::onSelectorMove(
         decValue();
     
     Form::onSelectorMove(position, direction);
+}
+
+void NumericEditorForm::onKeyPress(
+    unsigned key) {
+    
+    switch (key) {
+        case EV_KEYBOARD_UP:
+            incValue();
+            break;
+        
+        case EV_KEYBOARD_DOWN:
+            decValue();
+            break;
+            
+        case EV_KEYBOARD_OK:
+            break;
+    }
+    
+    Form::onKeyPress(key);
 }
 
 

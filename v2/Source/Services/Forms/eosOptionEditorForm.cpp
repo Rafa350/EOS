@@ -17,17 +17,6 @@ OptionEditorForm::OptionEditorForm(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Notifica l'activacio del form
-/// \param deactivateForm: El form que s'ha desactivat
-///
-void OptionEditorForm::onActivate(
-    FormHandle deactivateForm) {
-
-    refresh();
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Notifica que cal pintar la pantalla
 /// \param displayController: El handler del controlador de pantalla.
 ///

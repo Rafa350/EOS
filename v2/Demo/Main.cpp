@@ -1,7 +1,6 @@
 #include "eos.hpp"
 #include "System/Core/eosTimer.hpp"
 #include "System/Core/eosCallbacks.hpp"
-//#include "System/Collections/eosList.hpp"
 #include "System/eosApplication.hpp"
 #include "Services/eosDigOutput.hpp"
 #include "Services/eosDigInput.hpp"
@@ -9,6 +8,7 @@
 #include "Services/eosI2CMaster.hpp"
 #include "Services/Forms/eosForms.hpp"
 #include "Services/Forms/eosSelector.hpp"
+#include "Services/Forms/eosKeyboard.hpp"
 #include "Services/Forms/eosMenuForm.hpp"
 #include "Controllers/eosDisplay.hpp"
 #include "appMainForm.hpp"
@@ -16,6 +16,7 @@
 #include "fsmStates.hpp"
 #include "fsmMachine.hpp"
 #include "../../../MD-SEL01/SEL01Messages.h"
+#include "../../../MD-KBD01/KBD01Messages.h"
 #include "../../../MD-DSP04/DSP04Messages.h"
 
 
@@ -30,6 +31,7 @@ class MyApplication: public Application {
         I2CMasterServiceHandle i2cMasterService;
         FormsServiceHandle formsService;
         SelectorServiceHandle selectorService;
+        KeyboardServiceHandle keyboardService;
         DigOutputHandle ledRED;
         DigOutputHandle ledAMBER;
         DigOutputHandle ledGREEN;
@@ -58,7 +60,8 @@ class MyApplication: public Application {
         
         void onTimeout(eos::TimerHandle timer);
         
-        void onSelector(int16_t position, uint8_t status);
+        void selectorNotifyEventHandler(SelectorNotification &notification);
+        void keyboardNotifyEventHandler(KeyboardNotification &notification);
 };
 
 
@@ -152,13 +155,15 @@ void MyApplication::setupStateMachineService() {
 void MyApplication::setupFormsService() {
     
     selectorService = new SelectorService(i2cMasterService, SEL_ADDRESS);
+    keyboardService = new KeyboardService(i2cMasterService, KBD_ADDRESS);
     displayController = new DisplayController(i2cMasterService, DSP_ADDRESS);
     
     messageQueue = new MessageQueue(20);
     formsService = new FormsService(messageQueue, displayController);
     mainForm = new MainForm(formsService);
 
-    selectorService->setChangeEvent<MyApplication>(this, &MyApplication::onSelector);
+    selectorService->setNotifyEvent<MyApplication>(this, &MyApplication::selectorNotifyEventHandler);
+    keyboardService->setNotifyEvent<MyApplication>(this, &MyApplication::keyboardNotifyEventHandler);
 }
 
 
@@ -194,36 +199,69 @@ void MyApplication::onTimeout(eos::Timer *timer) {
 }
 
 
-void MyApplication::onSelector(int16_t position, uint8_t state) {
+void MyApplication::keyboardNotifyEventHandler(
+    KeyboardNotification &notification) {
     
-    static int16_t oldPosition = 0;
     static uint8_t oldState = 0;
     Message message;
     
     if (formsService != nullptr) {
         FormHandle form = formsService->getActiveForm();
         if (form != nullptr) {
-            int16_t delta = position - oldPosition;
+            if (notification.state != oldState) {
+                if (notification.state != 0) {
+                    message.id = MSG_KEYBOARD;
+                    message.target = form;
+                    if (notification.state & 0x10)
+                        message.msgKeyboard.event = EV_KEYBOARD_UP;
+                    else if (notification.state & 0x02) 
+                        message.msgKeyboard.event = EV_KEYBOARD_RIGHT;
+                    else if (notification.state & 0x04)
+                        message.msgKeyboard.event = EV_KEYBOARD_DOWN;
+                    else if (notification.state & 0x08)
+                        message.msgKeyboard.event = EV_KEYBOARD_LEFT;
+                    else
+                        message.msgKeyboard.event = EV_KEYBOARD_OK;
+                    messageQueue->put(message, (unsigned) -1);
+                }
+                oldState = notification.state;
+            }
+        }
+    }
+}
+
+
+void MyApplication::selectorNotifyEventHandler(
+    SelectorNotification &notification) {
+    
+    static int oldPosition = 0;
+    static unsigned oldState = 0;
+    Message message;
+    
+    if (formsService != nullptr) {
+        FormHandle form = formsService->getActiveForm();
+        if (form != nullptr) {
+            int16_t delta = notification.position - oldPosition;
             if (delta != 0) {
                 message.id = MSG_SELECTOR;
                 message.target = form;
                 message.msgSelector.event = delta < 0 ? EV_SELECTOR_DEC : EV_SELECTOR_INC;
-                message.msgSelector.position = position;
-                message.msgSelector.state = state;
+                message.msgSelector.position = notification.position;
+                message.msgSelector.state = notification.state;
                 messageQueue->put(message, (unsigned) -1);
-                oldPosition = position;
+                oldPosition = notification.position;
             }
             
-            if (state != oldState) {            
-                if ((state & 0x01) != 0x00) {
+            if (notification.state != oldState) {            
+                if ((notification.state & 0x01) != 0x00) {
                     message.id = MSG_SELECTOR;
                     message.target = form;
                     message.msgSelector.event = EV_SELECTOR_CLICK;
-                    message.msgSelector.position = position;
-                    message.msgSelector.state = state;
+                    message.msgSelector.position = notification.position;
+                    message.msgSelector.state = notification.state;
                     messageQueue->put(message, (unsigned) -1);
                 }
-                oldState = state;
+                oldState = notification.state;
             }
         }
     }
