@@ -17,7 +17,7 @@ typedef struct {                       // Configuracio dels pins
 
 
 #define NUM_PINS   6
-PinInfo pinInfoTbl[NUM_PINS] = {
+static const PinInfo pinInfoTbl[NUM_PINS] = {
     { &TRISDCLR, &TRISDSET, &ODCDCLR, &ODCDSET, &PORTD, &LATDCLR, &LATDSET, &LATDINV, 1 << 0, -1 },
     { &TRISDCLR, &TRISDSET, &ODCDCLR, &ODCDSET, &PORTD, &LATDCLR, &LATDSET, &LATDINV, 1 << 1, -1 },
     { &TRISDCLR, &TRISDSET, &ODCDCLR, &ODCDSET, &PORTD, &LATDCLR, &LATDSET, &LATDINV, 1 << 2, -1 },
@@ -28,15 +28,15 @@ PinInfo pinInfoTbl[NUM_PINS] = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura un port com a sortida digital
-/// \param pin: Numero de pin
-/// \param openDrain: True si la sortida es tipos OC
+/// \brief Configura un port com a sortida digital.
+/// \param pin: Numero de pin.
+/// \param openDrain: True si la sortida es tipos OC.
 ///
 void halGPIOPinSetModeOutput(
     uint8_t pin,
     bool openDrain) {
    
-    PinInfo *p = &pinInfoTbl[pin];
+    const PinInfo *p = &pinInfoTbl[pin];
     *p->trisCLR = p->mask;
     
     if (openDrain)
@@ -50,13 +50,13 @@ void halGPIOPinSetModeOutput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura un port com a entrada digital
-/// \param pin: Numero de pin
+/// \brief Configura un port com a entrada digital.
+/// \param pin: Numero de pin.
 ///
 void halGPIOPinSetModeInput(
     uint8_t pin) {
 
-    PinInfo *p = &pinInfoTbl[pin];
+    const PinInfo *p = &pinInfoTbl[pin];
     *p->trisSET = p->mask;
 
     if (p->analog != -1)
@@ -65,27 +65,28 @@ void halGPIOPinSetModeInput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte l'estat d'un port digital
+/// \brief Obte l'estat d'un port digital.
+/// \param pin: Numero del pin.
 ///
 bool halGPIOPinGetState(
     uint8_t pin) {
 
-    PinInfo *p = &pinInfoTbl[pin];
+    const PinInfo *p = &pinInfoTbl[pin];
     return (*p->port & p->mask) != 0;
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Canvia l'estat d'un port de sortida digital
-/// \param pin: Numero de pin
-/// \param state: El nou estat
+/// \brief Canvia l'estat d'un port de sortida digital.
+/// \param pin: Numero de pin.
+/// \param state: El nou estat.
 ///
 void halGPIOPinSetState(
     uint8_t pin, 
     bool state) {
 
-    PinInfo *p = &pinInfoTbl[pin];
+    const PinInfo *p = &pinInfoTbl[pin];
     if (state)
         *p->latSET = p->mask;
     else
@@ -94,12 +95,12 @@ void halGPIOPinSetState(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inverteix l'estat d'un port de sortida digital
-/// \param pin: Numero de pin
+/// \brief Inverteix l'estat d'un port de sortida digital.
+/// \param pin: Numero de pin.
 ///
 void halGPIOPinToggleState(
     uint8_t pin) {
 
-    PinInfo *p = &pinInfoTbl[pin];
+    const PinInfo *p = &pinInfoTbl[pin];
     *p->latINV = p->mask;
 }

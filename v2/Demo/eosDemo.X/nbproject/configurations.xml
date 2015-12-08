@@ -152,19 +152,19 @@
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
           <logicalFolder name="f1" displayName="portable" projectFiles="true">
             <logicalFolder name="f1" displayName="MemMang" projectFiles="true">
-              <itemPath>C:/microchip/harmony/v1_05/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+              <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
             </logicalFolder>
             <logicalFolder name="f2" displayName="MPLAB" projectFiles="true">
               <logicalFolder name="f1" displayName="PIC32MX" projectFiles="true">
-                <itemPath>C:/microchip/harmony/v1_05/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-                <itemPath>C:/microchip/harmony/v1_05/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+                <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+                <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
               </logicalFolder>
             </logicalFolder>
           </logicalFolder>
-          <itemPath>C:/microchip/harmony/v1_05/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
-          <itemPath>C:/microchip/harmony/v1_05/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
-          <itemPath>C:/microchip/harmony/v1_05/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
-          <itemPath>C:/microchip/harmony/v1_05/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
+          <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="Harmony" projectFiles="true">
           <logicalFolder name="f1" displayName="system" projectFiles="true">
@@ -198,6 +198,7 @@
     <Elem>../../../../MD-DSP04</Elem>
     <Elem>../../Source/Controllers</Elem>
     <Elem>../../../../MD-KBD01</Elem>
+    <Elem>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -215,7 +216,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>C:/microchip/harmony/v1_05/bin/framework/peripheral/PIC32MX795F512L_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>c:/microchip/harmony/v1_06_01/bin/framework/peripheral/PIC32MX795F512L_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -243,7 +244,7 @@
         <property key="enable-unroll-loops" value="true"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="..\;..\..\Include;C:\microchip\harmony\v1_05\framework;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
@@ -268,9 +269,9 @@
         <property key="exclude-floating-point-library" value="true"/>
         <property key="expand-macros" value="false"/>
         <property key="extra-include-directories-for-assembler"
-                  value="..\;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="extra-include-directories-for-preprocessor"
-                  value="..\;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="false-conditionals" value="false"/>
         <property key="keep-locals" value="false"/>
         <property key="list-assembly" value="false"/>
@@ -279,7 +280,7 @@
         <property key="oXC32asm-list-to-file" value="false"/>
         <property key="omit-debug-dirs" value="false"/>
         <property key="omit-forms" value="false"/>
-        <property key="preprocessor-macros" value="HARDWARE_PIC32_PINGUINO_MICRO"/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_ESK"/>
         <property key="warning-level" value=""/>
       </C32-AS>
       <C32-LD>
@@ -324,7 +325,7 @@
         <property key="exceptions" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="..\;..\..\Include;C:\microchip\harmony\v1_05\framework;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
@@ -492,6 +493,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
+            <linkerLibFileItem>c:/microchip/harmony/v1_06_01/bin/framework/peripheral/PIC32MX795F512L_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -519,13 +521,13 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="..\;..\..\Include;C:\microchip\harmony\v1_05\framework;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="isolate-each-function" value="false"/>
+        <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
         <property key="optimization-level" value=""/>
-        <property key="place-data-into-section" value="false"/>
+        <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
         <property key="preprocessor-macros" value="HARDWARE_PIC32MX_USK"/>
@@ -538,6 +540,24 @@
       <C32-AR>
         <property key="additional-options-chop-files" value="false"/>
       </C32-AR>
+      <C32-AS>
+        <property key="assembler-symbols" value=""/>
+        <property key="enable-symbols" value="true"/>
+        <property key="exclude-floating-point-library" value="false"/>
+        <property key="expand-macros" value="false"/>
+        <property key="extra-include-directories-for-assembler" value=""/>
+        <property key="extra-include-directories-for-preprocessor" value=""/>
+        <property key="false-conditionals" value="false"/>
+        <property key="keep-locals" value="false"/>
+        <property key="list-assembly" value="false"/>
+        <property key="list-source" value="false"/>
+        <property key="list-symbols" value="false"/>
+        <property key="oXC32asm-list-to-file" value="false"/>
+        <property key="omit-debug-dirs" value="false"/>
+        <property key="omit-forms" value="false"/>
+        <property key="preprocessor-macros" value=""/>
+        <property key="warning-level" value=""/>
+      </C32-AS>
       <C32-LD>
         <property key="additional-options-use-response-files" value="false"/>
         <property key="enable-check-sections" value="false"/>
@@ -580,7 +600,7 @@
         <property key="exceptions" value="true"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="..\;..\..\Include;C:\microchip\harmony\v1_05\framework;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_05\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_006_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
@@ -691,7 +711,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>C:/microchip/harmony/v1_05/bin/framework/peripheral/PIC32MX795F512L_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>c:/microchip/harmony/v1_06_01/bin/framework/peripheral/PIC32MX795F512L_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
