@@ -1,14 +1,25 @@
-/* 
- * File:   eosString.hpp
- * Author: Rafael
- *
- * Created on 10 / de desembre / 2015, 23:04
- */
-
-#ifndef EOSSTRING_HPP
-#define	EOSSTRING_HPP
+#ifndef __EOS_STRING_HPP
+#define	__EOS_STRING_HPP
 
 
+namespace eos {
+    
+    class String {
+        private:
+            char *buffer;
+            unsigned length;
+        public:
+            String();
+            String(const char *text);
+            String(char ch, unsigned repeat);
+            String(const String &other);
+            ~String();
+    };
+    
+    class StringBuilder {
+        
+    };
+}
 
-#endif	/* EOSSTRING_HPP */
 
+#endif
