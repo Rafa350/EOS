@@ -61,6 +61,7 @@
             <itemPath>../../Include/System/Core/eosSemaphore.hpp</itemPath>
             <itemPath>../../Include/System/Core/eosTask.hpp</itemPath>
             <itemPath>../../Include/System/Core/eosTimer.hpp</itemPath>
+            <itemPath>../../Include/System/Core/eosString.hpp</itemPath>
           </logicalFolder>
           <itemPath>../../Include/System/eosApplication.hpp</itemPath>
         </logicalFolder>
@@ -142,6 +143,7 @@
             <itemPath>../../Source/System/Core/eosSemaphore.cpp</itemPath>
             <itemPath>../../Source/System/Core/eosTimer.cpp</itemPath>
             <itemPath>../../Source/System/Core/eosErrorHandler.cpp</itemPath>
+            <itemPath>../../Source/System/Core/eosString.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Stream" projectFiles="true">
           </logicalFolder>
