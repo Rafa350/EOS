@@ -9,7 +9,7 @@
 
 namespace eos {
     
-    /// \brief Cua generica basada en la cua de FreeRTOS
+    /// \brief Interface generic per les cues.
     ///
     class GenericQueue {
         private:

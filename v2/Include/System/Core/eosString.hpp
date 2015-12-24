@@ -4,9 +4,11 @@
 
 namespace eos {
     
+    /// \brief Implementacio de cadenes de texte.
+    ///
     class String {
         private:
-            char *buffer;
+            char *container;
             unsigned length;
         public:
             String();
@@ -14,10 +16,28 @@ namespace eos {
             String(char ch, unsigned repeat);
             String(const String &other);
             ~String();
+            
+            unsigned getLength() const { return length; }
+            
+            operator const char*() const { return container; }
+            char operator[](int index) const { return container[index]; }
     };
     
+    /// \brief Constructor de cadenes de texte.
+    ///
     class StringBuilder {
-        
+        private:
+            char *container;
+            unsigned length;
+            unsigned capacity;            
+        public:
+            StringBuilder();
+            ~StringBuilder();
+            void append(char);
+            void append(const char *s);
+            void append(const String &s);
+            
+            inline operator String() const { return new String(container); }
     };
 }
 

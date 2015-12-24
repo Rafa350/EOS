@@ -35,6 +35,7 @@ namespace eos {
             void genericPush(const void *element);
             void genericPop();
             void *genericTop() const;
+            void genericClear();
             
             /// \brief Obte el nombre d'elements en la pila
             /// \return El nombre d'elements.
