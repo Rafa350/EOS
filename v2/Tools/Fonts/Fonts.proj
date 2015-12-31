@@ -4,8 +4,8 @@
 
     <!-- Tasques externes -->
     <UsingTask 
-        TaskName="XCodeGeneratorTask" 
-        AssemblyFile="..\bin\XCodeGeneratorMsBuildTask.dll"/>
+        TaskName="FontGeneratorTask" 
+        AssemblyFile="..\bin\XFontGenerator.dll"/>
 
     <!-- Directoris del projecte -->
     <PropertyGroup>
@@ -38,13 +38,12 @@
     <Target 
         Name="Build"
         Inputs="@(SourceFiles)"
-        Outputs="@(SourceFiles->'$(DestinationDirectory)%(FileName).c')">
+        Outputs="@(SourceFiles->'$(DestinationDirectory)%(FileName).cpp')">
         <MakeDir
             Directories="$(DestinationDirectory)"
             Condition="!Exists('$(DestinationDirectory)')"/>
-        <XCodeGeneratorTask 
-            GeneratorName="MikroPicDesigns.XCodeGenerator.v1.Generators.FontGenerator,XFontGenerator.dll"
-            Parameters="use-proxy-variable"
+        <FontGeneratorTask 
+            Parameters="use-proxy-variable;output-extension=cpp"
             Source="@(SourceFiles)"
             OutputPath="$(DestinationDirectory)"/>
     </Target>
