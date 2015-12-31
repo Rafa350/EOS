@@ -1,0 +1,52 @@
+<Project 
+    xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+    DefaultTarget="Build">
+
+    <!-- Tasques externes -->
+    <UsingTask 
+        TaskName="XCodeGeneratorTask" 
+        AssemblyFile="..\bin\XCodeGeneratorMsBuildTask.dll"/>
+
+    <!-- Directoris del projecte -->
+    <PropertyGroup>
+        <SourceDirectory>.\</SourceDirectory>
+        <DestinationDirectory>Out\</DestinationDirectory>
+        <InstallDirectory>..\..\Source\Controllers\Display\Fonts\</InstallDirectory>
+    </PropertyGroup>
+    
+    <!-- Fitxers a procesar -->
+    <ItemGroup>
+        <SourceFiles Include="$(SourceDirectory)*.xfont"/>
+    </ItemGroup>
+    
+    <!-- Tasca de neteja de la capeta de sortida -->
+    <Target
+        Name="CleanUp">
+        <ItemGroup>
+            <DeleteFiles Include="$(DestinationDirectory)*.*"/>
+        </ItemGroup>
+        <Delete Files="@(DeleteFiles)"/>
+        <RemoveDir Directories="$(DestinationDirectory)"/>
+    </Target>
+    
+    <!-- Tasca d'installacio dels fonts -->
+    <Target
+        Name="Install">
+    </Target>
+
+    <!-- Tasca de compilacio dels fitxers -->
+    <Target 
+        Name="Build"
+        Inputs="@(SourceFiles)"
+        Outputs="@(SourceFiles->'$(DestinationDirectory)%(FileName).c')">
+        <MakeDir
+            Directories="$(DestinationDirectory)"
+            Condition="!Exists('$(DestinationDirectory)')"/>
+        <XCodeGeneratorTask 
+            GeneratorName="MikroPicDesigns.XCodeGenerator.v1.Generators.FontGenerator,XFontGenerator.dll"
+            Parameters="use-proxy-variable"
+            Source="@(SourceFiles)"
+            OutputPath="$(DestinationDirectory)"/>
+    </Target>
+    
+</Project>
