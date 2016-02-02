@@ -2,7 +2,7 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador global new.
+/// \brief Operador new global.
 /// \param size: Tamany en bytes de la memoria a reservar.
 ///
 void *operator new(
@@ -13,7 +13,7 @@ void *operator new(
 
 
 /// ----------------------------------------------------------------------
-/// \brier Operador delete global.
+/// \brief Operador delete global.
 /// \param ptr: Punter al bloc de memoria a alliberar.
 ///
 void operator delete(
