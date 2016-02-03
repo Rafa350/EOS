@@ -4,8 +4,8 @@
 
     <!-- Tasques externes -->
     <UsingTask 
-        TaskName="FontGeneratorTask" 
-        AssemblyFile="..\bin\XFontGenerator.dll"/>
+        TaskName="ResourceCompilerTask" 
+        AssemblyFile="..\bin\ResourceCompilerBuildTask.dll"/>
 
     <!-- Directoris del projecte -->
     <PropertyGroup>
@@ -42,7 +42,7 @@
         <MakeDir
             Directories="$(DestinationDirectory)"
             Condition="!Exists('$(DestinationDirectory)')"/>
-        <FontGeneratorTask 
+        <ResourceCompilerTask 
             Parameters="use-proxy-variable;output-extension=cpp"
             Source="@(SourceFiles)"
             OutputPath="$(DestinationDirectory)"/>
