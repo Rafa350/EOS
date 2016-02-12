@@ -1,6 +1,6 @@
 <Project 
     xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
-    DefaultTarget="Build">
+    DefaultTargets="CleanUp;Build;Install">
 
     <!-- Tasques externes -->
     <UsingTask 
@@ -32,6 +32,12 @@
     <!-- Tasca d'installacio dels fonts -->
     <Target
         Name="Install">
+        <ItemGroup>
+            <CopyFiles Include="$(DestinationDirectory)*.*"/>
+        </ItemGroup>
+        <Copy
+            SourceFiles="@(CopyFiles)"
+            DestinationFolder="$(InstallDirectory)"/>
     </Target>
 
     <!-- Tasca de compilacio dels fitxers -->
