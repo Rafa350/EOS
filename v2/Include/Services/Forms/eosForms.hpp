@@ -19,7 +19,7 @@
 #endif
 
 #ifndef __EOS_DISPLAY_HPP
-#include "Controllers/eosDisplay.hpp"
+#include "Controllers/eosDisplayController.hpp"
 #endif
 
 

@@ -1,4 +1,4 @@
-#include "Controllers/eosDisplay.hpp"
+#include "Controllers/eosDisplayController.hpp"
 #include "../../../MD-DSP04/DSP04Messages.h"
 #include "string.h"
 

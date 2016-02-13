@@ -10,7 +10,7 @@
 #include "Services/Forms/eosSelector.hpp"
 #include "Services/Forms/eosKeyboard.hpp"
 #include "Services/Forms/eosMenuForm.hpp"
-#include "Controllers/eosDisplay.hpp"
+#include "Controllers/eosDisplayController.hpp"
 #include "appMainForm.hpp"
 #include "fsmDefines.hpp"
 #include "fsmStates.hpp"
