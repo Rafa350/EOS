@@ -9,7 +9,7 @@ using namespace eos;
 ///
 String::String() {
     
-    buffer = nullptr;
+//    buffer = nullptr;
 }
 
 
@@ -23,7 +23,7 @@ String::String(const String& other) {
 
 
 /// ----------------------------------------------------------------------
-/// \bried Contructor.
+/// \brief Contructor.
 /// \param s: Texte de la cadena.
 ///
 String::String(const char *text) {

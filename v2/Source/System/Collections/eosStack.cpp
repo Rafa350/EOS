@@ -40,7 +40,7 @@ GenericStack::~GenericStack() {
 /// \brief Inserta un element en la pila.
 /// \param element: El element a insertar.
 ///
-void GenericStack::genericPush(
+void GenericStack::push(
     const void *element) {
     
     eosAssert(element != nullptr, 0, "[GenericStack::genericPush] element != nullptr");
@@ -61,7 +61,7 @@ void GenericStack::genericPush(
 /// ----------------------------------------------------------------------
 /// \brief Exteru el primer element de la pila
 ///
-void GenericStack::genericPop() {
+void GenericStack::pop() {
     
     eosAssert(count > 0, 0, "[GenericStack::genericPop] count > 0");
     
@@ -78,9 +78,20 @@ void GenericStack::genericPop() {
 /// \brief Obte el punter al primer element de la pila
 /// \return El punter al element. nullptr si la pila es buida.
 ///
-void *GenericStack::genericTop() const {
+void *GenericStack::top() const {
     
     return count > 0 ? getPtr(count - 1) : nullptr;
+}
+
+
+/// ---------------------------------------------------------------------
+/// \brief Obte el primer element de la pila.
+/// \param El punter al buffer on deixar l'element.
+///
+void GenericStack::top(const void *element) const {
+    
+    if (count > 0)
+        memcpy(top(), element, size);
 }
 
 

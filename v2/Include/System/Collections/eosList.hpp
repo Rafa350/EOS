@@ -9,54 +9,56 @@
 
 namespace eos {
     
-    /// \brief Interface generic per les llistes.
-    //
-    template <typename elementType>
-    class IList {
-        public:
-            virtual unsigned add(const elementType &element) = 0;
-            virtual void remove(unsigned index) = 0;
-            virtual unsigned getCount() const = 0;
-            virtual bool isEmpty() const = 0;
-            virtual elementType &operator[](unsigned index) = 0;
-    };
+    class GenericListImpl;
     
-    /// \brief Llista generica implementada com array de bytes. Cal derivar-la
-    ///        per utilitzar-la. 
+    /// \brief Llista generica implementada com array de bytes. 
     //
     class GenericList {
         private:
-            unsigned size;             // Tamany del element
-            unsigned count;            // Numero d'elements en la llista
-            unsigned capacity;         // Capacitat de la llista en elements
-            unsigned initialCapacity;  // Capacitat inicial de la llita
-            void *container;           // Contenidor d'elements
+            GenericListImpl *impl;
     
         public:
             virtual ~GenericList();
+            
         protected:
             GenericList(unsigned size, unsigned initialCapacity);
             GenericList(const GenericList &list);
-            void genericClear();
-            unsigned genericAdd(const void *element);
-            void genericRemove(unsigned index);
-            unsigned genericGetCount() const { return count; }
-            void *genericGet(unsigned index) const;
-            unsigned genericIndexOf(const void *element);
-        private:
-            void *getPtr(unsigned index) const;
-            void resize(unsigned newCapacity);
+            void clear();
+            void addFront(const void *element);
+            void addBack(const void *element);
+            void remove(unsigned index);
+            void remove(const void *element);
+            void removeFront();
+            void removeBack();
+            unsigned getCount() const;
+            void *get(unsigned index) const;
+            unsigned indexOf(const void *element);
+            bool isEmpty() const;
     };
+        
+    
+    /// \brief Interface generic per les llistes.
+    //
+    template <typename T>
+    class IList {
+        public:
+            virtual void add(const T &element) = 0;
+            virtual void remove(unsigned index) = 0;
+            virtual unsigned getCount() const = 0;
+            virtual bool isEmpty() const = 0;
+            virtual T &operator[](unsigned index) = 0;
+    };
+    
     
     /// \brief Llista d'elements.
     ///
-    template <typename elementType>
-    class List: private GenericList, public IList<elementType> {
+    template <typename T>
+    class List: private GenericList, public IList<T> {
         public:
             /// \brief Contructor.
             ///
             List() :
-                GenericList(sizeof(elementType), 10) {
+                GenericList(sizeof(T), 10) {
             }
                 
             /// \brief Contructor copia.
@@ -68,31 +70,31 @@ namespace eos {
             /// \brief Afegeix un element a la llista
             /// \param element: Referencia al element a afeigir
             ///
-            inline unsigned add(const elementType &element) {
+            inline void add(const T &element) {
                 
-                return genericAdd(&element);
+                GenericList::addBack(&element);
             }
 
             /// \brief Elimina un element de la llista
             /// \param index: El index del element.
             inline void remove(unsigned index) {
                 
-                genericRemove(index);
+                GenericList::remove(index);
             }
             
             /// \brief Elimina tots els elements de la llista.
             ///
             inline void clear() {
                 
-                genericClear();
+                GenericList::clear();
             }
             
             /// \brief Obte l'index del element especificat.
             /// \param element: El element.
             ///
-            inline unsigned indexOf(const elementType &element) {
+            inline unsigned indexOf(const T &element) {
                 
-                return genericIndexOf(&element);
+                return GenericList::indexOf(&element);
             }
             
             /// \brief Obte el numero d'elements en la llista
@@ -100,7 +102,7 @@ namespace eos {
             ///
             inline unsigned getCount() const {
                 
-                return genericGetCount();
+                return GenericList::getCount();
             }
             
             /// \brief Comprova si es buida.
@@ -108,33 +110,33 @@ namespace eos {
             ///
             inline bool isEmpty() const {
             
-                return genericGetCount() == 0;
+                return GenericList::getCount() == 0;
             }
 
             /// \brief Obte un element de la llista.
             /// \param index: Index del element.
             /// \return Referencia al element.
             ///
-            inline elementType &operator[](unsigned index) {
+            inline T &operator[](unsigned index) {
                 
-                return *((elementType*) genericGet(index));
+                return *((T*) GenericList::get(index));
             }
     };
     
     /// \brief Iterator de llistes
     ///
-    template <typename elementType>
+    template <typename T>
     class ListIterator {
         private:
             unsigned index;
             unsigned count;
-            IList<elementType> &list;
+            IList<T> &list;
             
         public:
             /// \brief: Contructor.
             /// \param: list: La llista a iterar.
             ///
-            ListIterator(IList<elementType> &_list):
+            ListIterator(IList<T> &_list):
                 list(_list),
                 index(0),
                 count(_list.getCount()) {
@@ -173,7 +175,7 @@ namespace eos {
             /// \brief Obte el element actual.
             /// \return L'element actual
             ///
-            inline elementType &current() const { 
+            inline T &current() const { 
                 
                 return list[index]; 
             }

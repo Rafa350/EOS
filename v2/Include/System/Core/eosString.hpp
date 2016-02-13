@@ -36,8 +36,6 @@ namespace eos {
             void append(char);
             void append(const char *s);
             void append(const String &s);
-            
-            inline operator String() const { return new String(container); }
     };
 }
 

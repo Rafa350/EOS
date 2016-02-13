@@ -26,17 +26,16 @@ namespace eos {
             bool genericGetISR(void *element);            
     };
     
-    template <typename elementType>
-
     /// \brief Cua personalitzaba amb plantilla.
     ///
+    template <typename T>
     class Queue: private GenericQueue {
         public:
             /// \brief Constructor.
             /// \param: capacity: Nombre d'elements que pot contindre la cua.
             ///
             inline Queue(unsigned capacity):
-                GenericQueue(sizeof(elementType), capacity) {
+                GenericQueue(sizeof(T), capacity) {
             }
                 
             /// \brief Afegeix un element en la cua.
@@ -44,7 +43,7 @@ namespace eos {
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.
             ///
-            inline bool put(const elementType &element, unsigned blockTime) {
+            inline bool put(const T &element, unsigned blockTime) {
                 
                 return genericPut((void*) &element, blockTime);
             }
@@ -54,7 +53,7 @@ namespace eos {
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.
             ///
-            inline bool get(elementType &element, unsigned blockTime) {
+            inline bool get(T &element, unsigned blockTime) {
                 
                 return genericGet((void*) &element, blockTime);
             }

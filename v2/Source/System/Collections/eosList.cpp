@@ -1,12 +1,17 @@
 #include "System/Core/eosMemory.hpp"
 #include "System/Core/eosTask.hpp"
 #include "System/Collections/eosList.hpp"
+#include "eosListImpl.hpp"
 
 
 using namespace eos;
 
 
-const unsigned capacityDelta = 10;
+#define __ASSERT(cond, code, message) \
+                             eosAssert(cone, code, message);
+
+#define __LOCK()             Task::enterCriticalSection()
+#define __UNLOCK()           Task::exitCriticalSection()
 
 
 /// ----------------------------------------------------------------------
@@ -15,19 +20,9 @@ const unsigned capacityDelta = 10;
 /// \param initialCapacity: Capacitat inicial en numero d'elements.
 ///
 GenericList::GenericList(
-    unsigned _size,
-    unsigned _initialCapacity):
-    size(_size),
-    initialCapacity(_initialCapacity),
-    count(0),
-    capacity(0),
-    container(nullptr) {
-    
-    eosAssert(_size > 0, 0, "[GenericList::ctor] size > 0");
-    
-    // Reserva memoria pel contenidor
-    //
-    resize(initialCapacity);
+    unsigned size,
+    unsigned initialCapacity):
+    impl(new GenericListImpl(size, initialCapacity)) {
 }
 
 
@@ -37,16 +32,7 @@ GenericList::GenericList(
 ///
 GenericList::GenericList(
     const GenericList &list):
-    size(list.size),
-    initialCapacity(list.initialCapacity),
-    count(list.count), 
-    capacity(list.capacity) {    
-    
-    if (capacity > 0) {
-        container = eosHeapAlloc(nullptr, capacity * size);
-        if (count > 0)
-            memcpy(container, list.container, count * size);
-    }
+    impl(new GenericListImpl(list.impl)) {
 }
 
 
@@ -55,46 +41,36 @@ GenericList::GenericList(
 ///
 GenericList::~GenericList() {
     
-    // Allivera la memoria del contenidor
-    //
-    if (container != nullptr)
-        eosHeapFree(container);
+    delete impl;
+}
+
+
+/// \brief Afegeix un element al principi de la llista
+/// \param element: Punter al element a afeigir.
+///
+void GenericList::addFront(
+    const void *element) {
+
+    __ASSERT(element != nullptr, 0, "[GenericList::genericAdd] element != null");
+
+    __LOCK();
+    impl->addFront(element);
+    __UNLOCK();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix un element a la llista.
+/// \brief Afegeix un element al final de la llista.
 /// \param element: Punter al element a afeigir.
-/// \return El index del element.
 ///
-unsigned GenericList::genericAdd(
+void GenericList::addBack(
     const void *element) {
     
-    eosAssert(element != nullptr, 0, "[GenericList::genericAdd] element != null");
+    __ASSERT(element != nullptr, 0, "[GenericList::genericAdd] element != null");
     
-    // Entra en la seccio critica
-    //
-    Task::enterCriticalSection();
-    
-    // Si no hi ha espai en el contenidor, el fa mes gran
-    //
-    if (count == capacity)
-        resize(capacity + capacityDelta);
-    
-    // Copia el element al contenidor
-    //
-    void *ptr = getPtr(count);
-    memcpy(ptr, element, size);
-    
-    // Incrementa el contador d'elements
-    //
-    count += 1;
-    
-    // Surt de la seccio critica
-    //
-    Task::exitCriticalSection();
-    
-    return count - 1;
+    __LOCK();
+    impl->addBack(element);
+    __UNLOCK();
 }
 
 
@@ -102,68 +78,25 @@ unsigned GenericList::genericAdd(
 /// \brief Elimina un element de la llista.
 /// \param index: Index del element a eliminar.
 ///
-void GenericList::genericRemove(
+void GenericList::remove(
     unsigned index) {
     
-    eosAssert(index < count, 0, "[GenericList::genericRemove] index < count");
+    __ASSERT(index < count, 0, "[GenericList::genericRemove] index < count");
     
-    // Entra en la seccio critica
-    //
-    Task::enterCriticalSection();
-
-    // Comprova si l'index es dins del rang
-    //
-    if (index < count) {
-
-        // Elimina l'element del contenidor
-        //
-        void *ptr = getPtr(index);
-        memcpy(ptr, (const void*) ((char*) ptr + size), (count - index - 1) * size);
-
-        // Decrementa el contador d'elements
-        //
-        count--;
-    }
-
-    // Surt de la seccio critica
-    //
-    Task::exitCriticalSection();
+    __LOCK();
+    impl->remove(index);
+    __UNLOCK();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Elimina tots els elements de la llista
 ///
-void GenericList::genericClear() {
+void GenericList::clear() {
    
-    // Comprovas si hi han elements en el contenidor
-    //
-    if (container != nullptr) {
-
-        // Entra en la seccio critica
-        //
-        Task::enterCriticalSection();
-        
-        // Comprova de nou, si hi han elements
-        //
-        if (container != nullptr) {
-            
-            // Allivera la memoria del contenidor
-            //
-            eosHeapFree(container);
-            container = nullptr;
-            count = 0;
-            capacity = 0;
-            
-            // Reserva memoria en el contenidor
-            //
-            resize(initialCapacity);
-        }
-        
-        // Surt de la seccio critica
-        //
-        Task::exitCriticalSection();
-    }
+    __LOCK();
+    impl->clear();
+    __UNLOCK();
 }
 
 
@@ -173,32 +106,18 @@ void GenericList::genericClear() {
 /// \param element: L'element a buscar.
 /// \return El index del element. UINT32_MAX en cas que no el trobi.
 ///
-unsigned GenericList::genericIndexOf(
+unsigned GenericList::indexOf(
     const void *element) {
     
-    eosAssert(element != nullptr, 0, "[GenericList::genericIndexOf] element != nullptr")
+    __ASSERT(element != nullptr, 0, "[GenericList::genericIndexOf] element != nullptr")
+
+    unsigned index;
+
+    __LOCK();
+    index = impl->indexOf(element);
+    __UNLOCK();
     
-    bool result = UINT32_MAX;
-    
-    // Entra en la seccio critica
-    //
-    Task::enterCriticalSection();
-  
-    // Obte l'index del element, recorrent el contenidor fins
-    // que el trobi
-    //
-    for (unsigned index = 0; index < count; index++) {
-        if (!memcmp(getPtr(index), element, size)) {
-            result = index;
-            break;
-        }
-    }
-    
-    // Surt de la seccio critica
-    //
-    Task::exitCriticalSection();
-    
-    return result;
+    return index;
 }
 
 
@@ -207,71 +126,35 @@ unsigned GenericList::genericIndexOf(
 /// \param index: Index del element:
 /// \return Punter al element.
 ///
-void *GenericList::genericGet(
+void *GenericList::get(
     unsigned index) const {
     
-    eosAssert(index < count, 0, "[Genericist::genericGet] index < count");
-    
-    // Entra en la seccio critica
-    //
-    Task::enterCriticalSection();
-    
-    // Calcula el punter al element
-    //
-    void *p = index < count ? getPtr(index) : nullptr;
-   
-    // Surt de la seccio critica
-    //
-    Task::exitCriticalSection();
+    __ASSERT(index < count, 0, "[Genericist::genericGet] index < count");
+
+    void *p;
+    __LOCK();
+    p = impl->getAt(index);
+    __UNLOCK();
     
     return p;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte l'adressa del element especificat.
-/// \param index: L'index del element.
-/// \return L'adresa del element.
+/// \brief Retorna el numero d'elements en la llista.
+/// \return El nombre d'elements.
 ///
-void *GenericList::getPtr(
-    unsigned index) const {
+unsigned GenericList::getCount() const {
     
-    return (void*) ((unsigned) container + (index * size));    
+    return impl->getCount();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Redimensiona el tamany del contenidor de dades.
-/// \param newCapacity: Numero d'elements.
+/// \bried Indica si la llista es buida.
+/// \return True si la llista es buida.
 ///
-void GenericList::resize(
-    unsigned newCapacity) {
+bool GenericList::isEmpty() const {
 
-    // Comprova si cal aumentar la capacitat. 
-    //    
-    if (capacity < newCapacity) {
-        
-        // Salva un punter al contenidor actual
-        //
-        void *ptr = container;
-        
-        // Reserva memoria per un nou contenidor
-        //
-        container = eosHeapAlloc(nullptr, newCapacity * size);
-        
-        // Comprova si hi havia un contenidor previ
-        //
-        if (ptr != nullptr) {
-            
-            // opia les dades de l'antic contenidor al nou
-            //
-            memcpy(container, ptr, count);
-            
-            // Allivera l'antic contenidor
-            //
-            eosHeapFree(ptr);
-        }
-                
-        capacity = newCapacity;
-    }
+    return impl->isEmpty();
 }
