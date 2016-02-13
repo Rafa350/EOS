@@ -1,5 +1,5 @@
-#ifndef __HAL_GPIO_H
-#define	__HAL_GPIO_H
+#ifndef __EOS_HAL_GPIO_H
+#define	__EOS_HAL_GPIO_H
 
 #ifdef	__cplusplus
 extern "C" {

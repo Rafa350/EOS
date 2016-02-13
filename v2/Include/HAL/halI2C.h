@@ -1,5 +1,5 @@
-#ifndef __HAL_I2C_H
-#define	__HAL_I2C_H
+#ifndef __EOS_HAL_I2C_H
+#define	__EOS_HAL_I2C_H
 
 #ifdef	__cplusplus
 extern "C" {

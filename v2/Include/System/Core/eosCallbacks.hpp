@@ -1,10 +1,8 @@
-#ifndef __EOS_CALLBACKS_HPP
-#define	__EOS_CALLBACKS_HPP
+#ifndef __EOS_SYSTEM_CORE_CALLBACKS_HPP
+#define	__EOS_SYSTEM_CORE_CALLBACKS_HPP
 
 
-#ifndef __EOS_HPP
 #include "eos.hpp"
-#endif
 
 
 namespace eos {

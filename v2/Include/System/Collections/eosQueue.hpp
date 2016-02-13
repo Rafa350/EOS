@@ -1,10 +1,8 @@
-#ifndef __EOS_QUEUE_HPP
-#define __EOS_QUEUE_HPP
+#ifndef __EOS_SYSTEM_COLLECTIONS_QUEUE_HPP
+#define __EOS_SYSTEM_COLLECTIONS_QUEUE_HPP
 
 
-#ifndef __EOS_HPP
 #include "eos.hpp"
-#endif
 
 
 namespace eos {

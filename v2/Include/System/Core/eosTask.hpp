@@ -1,10 +1,8 @@
-#ifndef __EOS_TASK_HPP
-#define	__EOS_TASK_HPP
+#ifndef __EOS_SYSTEM_CORE_TASK_HPP
+#define	__EOS_SYSTEM_CORE_TASK_HPP
 
 
-#ifndef __EOS_HPP
 #include "eos.hpp"
-#endif
 
 
 namespace eos {

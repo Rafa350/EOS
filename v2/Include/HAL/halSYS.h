@@ -1,5 +1,5 @@
-#ifndef __HAL_SYS_H
-#define	__HAL_SYS_H
+#ifndef __EOS_HAL_SYS_H
+#define	__EOS_HAL_SYS_H
 
 #ifdef	__cplusplus
 extern "C" {

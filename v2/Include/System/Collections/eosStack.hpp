@@ -1,10 +1,8 @@
-#ifndef __EOS_STACK_HPP
-#define	__EOS_STACK_HPP
+#ifndef __EOS_SYSTEM_COLLECTIONS_STACK_HPP
+#define	__EOS_SYSTEM_COLLECTIONS_STACK_HPP
 
 
-#ifndef __EOS_HPP
 #include "eos.hpp"
-#endif
 
 
 namespace eos {

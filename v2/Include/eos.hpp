@@ -2,10 +2,14 @@
 #define	__EOS_HPP
 
 
+#ifdef __XC
 #include <xc.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+#else
+#error "No se reconoce el compilador"
+#endif
 
 #include "eosConfig.h"
 
