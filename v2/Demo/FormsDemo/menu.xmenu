@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <menuResource resourceId="MnuMain">
+        <menu title="MENU">
+            <menuItem title="Configuration...">
+                <menu title="CONFIGURATION">
+                
+                    <!-- Opcions de configuracio dels eixos -->
+                    <menuItem title="Axis...">
+                        <menu title="AXIS">
+                        
+                            <!--Configuracio del eix X -->
+                            <menuItem title="X-Axis...">
+                                <menu title="X-AXIS">
+                                    <menuItem title="Motor...">
+                                        <menu title="X-AXIS MOTOR">
+                                            <menuItem title="Limits..">
+                                                <menu title="X-AXIS MOTOR LIMITS">
+                                                    <commandItem title="Jerk" displayFormat="" command="CMD_SET_XJERK" />
+                                                    <commandItem title="Accel" displayFormat="" command="CMD_SET_XMAXACCEL" />
+                                                    <commandItem title="Speed" displayFormat="" command="CMD_SET_XMAXSPEED" />
+                                                    <exitItem title="Back" />
+                                                </menu>
+                                            </menuItem>
+                                            <menuItem title="Scale...">
+                                                <menu title="X-AXIS MOTOR SCALE">
+                                                    <commandItem title="Steps" displayFormat="" command="CMD_SET_XNUMSTEPS" />
+                                                    <commandItem title="Units" displayFormat="" command="CMD_SET_XNUMUNITS" />
+                                                    <exitItem title="Back" />
+                                                </menu>
+                                            </menuItem>
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <exitItem title="Back" />
+                                </menu>
+                            </menuItem>
+
+                            <!--Configuracio del eix Y -->
+                            <menuItem title="Y-Axis...">
+                                <menu title="Y-AXIS">
+                                    <menuItem title="Motor...">
+                                        <menu title="Y-AXIS MOTOR">
+                                            <menuItem title="Limits..">
+                                                <menu title="Y-AXIS MOTOR LIMITS">
+                                                    <commandItem title="Jerk" displayFormat="" command="CMD_SET_YJERK" />
+                                                    <commandItem title="Accel" displayFormat="" command="CMD_SET_YMAXACCEL" />
+                                                    <commandItem title="Speed" displayFormat="" command="CMD_SET_YMAXSPEED" />
+                                                    <exitItem title="Back" />
+                                                </menu>
+                                            </menuItem>
+                                            <menuItem title="Scale...">
+                                                <menu title="Y-AXIS MOTOR SCALE">
+                                                    <commandItem title="Steps" displayFormat="" command="CMD_SET_YNUMSTEPS" />
+                                                    <commandItem title="Units" displayFormat="" command="CMD_SET_YNUMUNITS" />
+                                                    <exitItem title="Back" />
+                                                </menu>
+                                            </menuItem>
+                                            <exitItem title="Back" />
+                                        </menu>
+                                    </menuItem>
+                                    <exitItem title="Back" />
+                                </menu>
+                            </menuItem>
+
+                            <!--Configuracio del eix Z -->
+
+                            <exitItem title="Back" />
+                        </menu>
+                    </menuItem>
+                    <exitItem title="Back" />                    
+                </menu>
+            </menuItem>
+            <commandItem title="Exit" command="CMD_EXIT"/>
+        </menu>
+    </menuResource>
+</resources>
