@@ -11,7 +11,7 @@
  *
  ************************************************************************/
 
-#ifdef FONT_USE_Arial24pt
+//#ifdef FONT_USE_Arial24pt
 
 
 static const unsigned char font[] = {
@@ -106,10 +106,10 @@ static const unsigned char font[] = {
               0x7F, 0xF8, 0x3F, 0xF0, 0x0F, 0xC0, 
 };
 
-unsigned char *fontArial24pt = &font;
+const unsigned char *fontArial24pt = font;
 
 
-#endif
+//#endif
 
 
 /************************************************************************/

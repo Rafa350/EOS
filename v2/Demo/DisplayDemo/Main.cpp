@@ -15,8 +15,8 @@ class MyApplication: public Application {
     public :
         MyApplication();
 
-    private:
-        void setupDisplay();
+    protected:
+        void onInitialize();
 };
 
 
@@ -31,21 +31,31 @@ class MyApplication: public Application {
 
 MyApplication::MyApplication() {
     
-    setupDisplay();
 }
 
 
 /*************************************************************************
  *
- *       Inicialitza la pantalla
+ *       Inicialitza l'aplicacio
  *
  *       Funcio:
- *           void MyApplication::setupDisplay() 
+ *           void MyApplication::onInitialize() 
  *
  *************************************************************************/
 
-void MyApplication::setupDisplay() {
-}
+void MyApplication::onInitialize() {
+    
+    driver = new ILI9341_DisplayDriver();
+    driver->initialize();
+    driver->setOrientation(Orientation::rotate180);
+    
+    display = new Display(driver);
+ 
+    display->clear(0x00000000);
+    display->setColor(RGB(0, 255, 255));
+    for (int i = 0; i < 10; i++)
+        display->drawString(10, 10 + i * 30, "0123456789");
+ }
 
 
 /*************************************************************************
@@ -58,9 +68,16 @@ void MyApplication::setupDisplay() {
  *************************************************************************/
 
 int main(void) {
-       
+    
+    LATGbits.LATG6 = 0;
+    TRISGbits.TRISG6 = 0;
+    
+    LATDbits.LATD1 = 1;
+    TRISDbits.TRISD1 = 0;    
+    
     MyApplication *app = new MyApplication();
     app->execute();
+    delete app;
 
     return 0;
 }

@@ -18,62 +18,62 @@
         <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
           <logicalFolder name="f1" displayName="Display" projectFiles="true">
             <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
-              <itemPath>../../Include/Controllers/Display/Drivers/eosILI9341.hpp</itemPath>
+              <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341.hpp</itemPath>
             </logicalFolder>
-            <itemPath>../../Include/Controllers/Display/eosDisplay.hpp</itemPath>
-            <itemPath>../../Include/Controllers/Display/eosFont.hpp</itemPath>
+            <itemPath>../../../Include/Controllers/Display/eosDisplay.hpp</itemPath>
+            <itemPath>../../../Include/Controllers/Display/eosFont.hpp</itemPath>
           </logicalFolder>
-          <itemPath>../../Include/Controllers/eosStepMotor.hpp</itemPath>
-          <itemPath>../../Include/Controllers/eosDisplayController.hpp</itemPath>
+          <itemPath>../../../Include/Controllers/eosStepMotor.hpp</itemPath>
+          <itemPath>../../../Include/Controllers/eosDisplayController.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="HAL" projectFiles="true">
-          <itemPath>../../Include/HAL/halGPIO.h</itemPath>
-          <itemPath>../../Include/HAL/halSYS.h</itemPath>
-          <itemPath>../../Include/HAL/halI2C.h</itemPath>
+          <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
+          <itemPath>../../../Include/HAL/halI2C.h</itemPath>
+          <itemPath>../../../Include/HAL/halSYS.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="Services" projectFiles="true">
           <logicalFolder name="f2" displayName="Forms" projectFiles="true">
-            <itemPath>../../Include/Services/Forms/eosForms.hpp</itemPath>
-            <itemPath>../../Include/Services/Forms/eosSelector.hpp</itemPath>
-            <itemPath>../../../../MD-SEL01/SEL01Messages.h</itemPath>
-            <itemPath>../../../../MD-DSP04/DSP04Messages.h</itemPath>
-            <itemPath>../../Include/Services/Forms/eosNumericEditorForm.hpp</itemPath>
-            <itemPath>../../Include/Services/Forms/eosOptionEditorForm.hpp</itemPath>
-            <itemPath>../../Include/Services/Forms/eosMenuForm.hpp</itemPath>
-            <itemPath>../../Include/Services/Forms/eosKeyboard.hpp</itemPath>
-            <itemPath>../../../../MD-KBD01/KBD01Messages.h</itemPath>
+            <itemPath>../../../Include/Services/Forms/eosForms.hpp</itemPath>
+            <itemPath>../../../Include/Services/Forms/eosSelector.hpp</itemPath>
+            <itemPath>../../../../../MD-SEL01/SEL01Messages.h</itemPath>
+            <itemPath>../../../../../MD-DSP04/DSP04Messages.h</itemPath>
+            <itemPath>../../../Include/Services/Forms/eosNumericEditorForm.hpp</itemPath>
+            <itemPath>../../../Include/Services/Forms/eosOptionEditorForm.hpp</itemPath>
+            <itemPath>../../../Include/Services/Forms/eosMenuForm.hpp</itemPath>
+            <itemPath>../../../Include/Services/Forms/eosKeyboard.hpp</itemPath>
+            <itemPath>../../../../../MD-KBD01/KBD01Messages.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
-            <itemPath>../../Include/Services/Fsm/eosFSM.hpp</itemPath>
+            <itemPath>../../../Include/Services/Fsm/eosFSM.hpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="Tcp" projectFiles="true">
           </logicalFolder>
           <logicalFolder name="f3" displayName="Usb" projectFiles="true">
           </logicalFolder>
-          <itemPath>../../Include/Services/eosAppLoop.hpp</itemPath>
-          <itemPath>../../Include/Services/eosDigOutput.hpp</itemPath>
-          <itemPath>../../Include/Services/eosDigInput.hpp</itemPath>
-          <itemPath>../../Include/Services/eosI2CMaster.hpp</itemPath>
+          <itemPath>../../../Include/Services/eosAppLoop.hpp</itemPath>
+          <itemPath>../../../Include/Services/eosDigOutput.hpp</itemPath>
+          <itemPath>../../../Include/Services/eosDigInput.hpp</itemPath>
+          <itemPath>../../../Include/Services/eosI2CMaster.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="System" projectFiles="true">
           <logicalFolder name="f1" displayName="Collections" projectFiles="true">
-            <itemPath>../../Include/System/Collections/eosList.hpp</itemPath>
-            <itemPath>../../Include/System/Collections/eosQueue.hpp</itemPath>
-            <itemPath>../../Include/System/Collections/eosStack.hpp</itemPath>
+            <itemPath>../../../Include/System/Collections/eosList.hpp</itemPath>
+            <itemPath>../../../Include/System/Collections/eosQueue.hpp</itemPath>
+            <itemPath>../../../Include/System/Collections/eosStack.hpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Core" projectFiles="true">
-            <itemPath>../../Include/System/Core/eosCallbacks.hpp</itemPath>
-            <itemPath>../../Include/System/Core/eosInterrupts.h</itemPath>
-            <itemPath>../../Include/System/Core/eosMemory.hpp</itemPath>
-            <itemPath>../../Include/System/Core/eosSemaphore.hpp</itemPath>
-            <itemPath>../../Include/System/Core/eosTask.hpp</itemPath>
-            <itemPath>../../Include/System/Core/eosTimer.hpp</itemPath>
-            <itemPath>../../Include/System/Core/eosString.hpp</itemPath>
+            <itemPath>../../../Include/System/Core/eosCallbacks.hpp</itemPath>
+            <itemPath>../../../Include/System/Core/eosInterrupts.h</itemPath>
+            <itemPath>../../../Include/System/Core/eosMemory.hpp</itemPath>
+            <itemPath>../../../Include/System/Core/eosSemaphore.hpp</itemPath>
+            <itemPath>../../../Include/System/Core/eosTask.hpp</itemPath>
+            <itemPath>../../../Include/System/Core/eosTimer.hpp</itemPath>
+            <itemPath>../../../Include/System/Core/eosString.hpp</itemPath>
           </logicalFolder>
-          <itemPath>../../Include/System/eosApplication.hpp</itemPath>
+          <itemPath>../../../Include/System/eosApplication.hpp</itemPath>
         </logicalFolder>
         <itemPath>../eosConfig.h</itemPath>
-        <itemPath>../../Include/eos.hpp</itemPath>
+        <itemPath>../../../Include/eos.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Frameworks" projectFiles="true">
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
@@ -104,125 +104,125 @@
         <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
           <logicalFolder name="f1" displayName="Display" projectFiles="true">
             <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
-              <itemPath>../../Source/Controllers/Display/Drivers/eosILI9341.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Drivers/eosILI9341.cpp</itemPath>
             </logicalFolder>
             <logicalFolder name="Fonts" displayName="Fonts" projectFiles="true">
-              <itemPath>../../Source/Controllers/Display/Fonts/5x7lcd12pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/5x7practical12pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/Arial10pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/Arial12pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/Arial14pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/Arial18pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/Arial24pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/Arial8pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/ArialBold10pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/ArialBold12pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/ArialBold14pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/ArialBold18pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/ArialBold24pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/ArialBold8pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/CourierNew10pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/CourierNew7pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/CourierNew8pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/CourierNewBold10pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/CourierNewBold7pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/CourierNewBold8pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerif10pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerif12pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerif14pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerif18pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerif24pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerif7pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerif8pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold10pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold12pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold14pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold18pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold24pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold7pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold8pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/Tahoma10pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/Tahoma7pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/Tahoma8pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/TahomaBold10pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/TahomaBold7pt.cpp</itemPath>
-              <itemPath>../../Source/Controllers/Display/Fonts/TahomaBold8pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/5x7lcd12pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/5x7practical12pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/Arial10pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/Arial12pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/Arial14pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/Arial18pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/Arial24pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/Arial8pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold10pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold12pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold14pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold18pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold24pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold8pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNew10pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNew7pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNew8pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNewBold10pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNewBold7pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNewBold8pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif10pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif12pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif14pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif18pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif24pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif7pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif8pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold10pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold12pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold14pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold18pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold24pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold7pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold8pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/Tahoma10pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/Tahoma7pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/Tahoma8pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/TahomaBold10pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/TahomaBold7pt.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/Fonts/TahomaBold8pt.cpp</itemPath>
             </logicalFolder>
-            <itemPath>../../Source/Controllers/Display/eosDisplay.cpp</itemPath>
+            <itemPath>../../../Source/Controllers/Display/eosDisplay.cpp</itemPath>
           </logicalFolder>
-          <itemPath>../../Source/Controllers/eosDisplayController.cpp</itemPath>
+          <itemPath>../../../Source/Controllers/eosDisplayController.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="HAL" projectFiles="true">
-          <itemPath>../../Source/HAL/halGPIO.c</itemPath>
-          <itemPath>../../Source/HAL/halSYS.c</itemPath>
-          <itemPath>../../Source/HAL/halI2C.c</itemPath>
-          <itemPath>../../Source/HAL/halI2CInterruptWrapper.S</itemPath>
+          <itemPath>../../../Source/HAL/halGPIO.c</itemPath>
+          <itemPath>../../../Source/HAL/halSYS.c</itemPath>
+          <itemPath>../../../Source/HAL/halI2C.c</itemPath>
+          <itemPath>../../../Source/HAL/halI2CInterruptWrapper.S</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="Services" projectFiles="true">
           <logicalFolder name="f2" displayName="Forms" projectFiles="true">
-            <itemPath>../../Source/Services/Forms/eosSelector.cpp</itemPath>
-            <itemPath>../../Source/Services/Forms/eosFormsDisplay.cpp</itemPath>
-            <itemPath>../../Source/Services/Forms/eosForm.cpp</itemPath>
-            <itemPath>../../Source/Services/Forms/eosFormsService.cpp</itemPath>
-            <itemPath>../../Source/Services/Forms/eosNumericEditorForm.cpp</itemPath>
-            <itemPath>../../Source/Services/Forms/eosOptionEditorForm.cpp</itemPath>
-            <itemPath>../../Source/Services/Forms/eosMenuForm.cpp</itemPath>
-            <itemPath>../../Source/Services/Forms/eosKeyboard.cpp</itemPath>
+            <itemPath>../../../Source/Services/Forms/eosSelector.cpp</itemPath>
+            <itemPath>../../../Source/Services/Forms/eosFormsDisplay.cpp</itemPath>
+            <itemPath>../../../Source/Services/Forms/eosForm.cpp</itemPath>
+            <itemPath>../../../Source/Services/Forms/eosFormsService.cpp</itemPath>
+            <itemPath>../../../Source/Services/Forms/eosNumericEditorForm.cpp</itemPath>
+            <itemPath>../../../Source/Services/Forms/eosOptionEditorForm.cpp</itemPath>
+            <itemPath>../../../Source/Services/Forms/eosMenuForm.cpp</itemPath>
+            <itemPath>../../../Source/Services/Forms/eosKeyboard.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
-            <itemPath>../../Source/Services/Fsm/eosStateMachine.cpp</itemPath>
-            <itemPath>../../Source/Services/Fsm/eosState.cpp</itemPath>
-            <itemPath>../../Source/Services/Fsm/eosFSM.cpp</itemPath>
+            <itemPath>../../../Source/Services/Fsm/eosStateMachine.cpp</itemPath>
+            <itemPath>../../../Source/Services/Fsm/eosState.cpp</itemPath>
+            <itemPath>../../../Source/Services/Fsm/eosFSM.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="Tcp" projectFiles="true">
           </logicalFolder>
           <logicalFolder name="f3" displayName="Usb" projectFiles="true">
           </logicalFolder>
-          <itemPath>../../Source/Services/eosAppLoop.cpp</itemPath>
-          <itemPath>../../Source/Services/eosDigOutput.cpp</itemPath>
-          <itemPath>../../Source/Services/eosDigInput.cpp</itemPath>
-          <itemPath>../../Source/Services/eosI2CMaster.cpp</itemPath>
+          <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
+          <itemPath>../../../Source/Services/eosDigOutput.cpp</itemPath>
+          <itemPath>../../../Source/Services/eosDigInput.cpp</itemPath>
+          <itemPath>../../../Source/Services/eosI2CMaster.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
           <logicalFolder name="f2" displayName="Collections" projectFiles="true">
-            <itemPath>../../Source/System/Collections/eosList.cpp</itemPath>
-            <itemPath>../../Source/System/Collections/eosQueue.cpp</itemPath>
-            <itemPath>../../Source/System/Collections/eosStack.cpp</itemPath>
-            <itemPath>../../Source/System/Collections/eosListImpl.cpp</itemPath>
+            <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
+            <itemPath>../../../Source/System/Collections/eosQueue.cpp</itemPath>
+            <itemPath>../../../Source/System/Collections/eosStack.cpp</itemPath>
+            <itemPath>../../../Source/System/Collections/eosListImpl.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="Core" projectFiles="true">
-            <itemPath>../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
-            <itemPath>../../Source/System/Core/eosHeap.cpp</itemPath>
-            <itemPath>../../Source/System/Core/eosInterrupt.c</itemPath>
-            <itemPath>../../Source/System/Core/eosPool.cpp</itemPath>
-            <itemPath>../../Source/System/Core/eosTask.cpp</itemPath>
-            <itemPath>../../Source/System/Core/eosSemaphore.cpp</itemPath>
-            <itemPath>../../Source/System/Core/eosTimer.cpp</itemPath>
-            <itemPath>../../Source/System/Core/eosErrorHandler.cpp</itemPath>
-            <itemPath>../../Source/System/Core/eosString.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosHeap.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosInterrupt.c</itemPath>
+            <itemPath>../../../Source/System/Core/eosPool.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosSemaphore.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosString.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Stream" projectFiles="true">
           </logicalFolder>
-          <itemPath>../../Source/System/eosApplication.cpp</itemPath>
+          <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
           <logicalFolder name="f1" displayName="portable" projectFiles="true">
             <logicalFolder name="f1" displayName="MemMang" projectFiles="true">
-              <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+              <itemPath>c:/microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
             </logicalFolder>
             <logicalFolder name="f2" displayName="MPLAB" projectFiles="true">
               <logicalFolder name="f1" displayName="PIC32MX" projectFiles="true">
-                <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-                <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+                <itemPath>c:/microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+                <itemPath>c:/microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
               </logicalFolder>
             </logicalFolder>
           </logicalFolder>
-          <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
-          <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
-          <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
-          <itemPath>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
+          <itemPath>c:/microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
+          <itemPath>c:/microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>c:/microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>c:/microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="Harmony" projectFiles="true">
           <logicalFolder name="f1" displayName="system" projectFiles="true">
@@ -241,22 +241,17 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>..</Elem>
-    <Elem>../../Include</Elem>
-    <Elem>../../Source/Modules</Elem>
-    <Elem>../../Source/System</Elem>
-    <Elem>C:\microchip\harmony\v1_05\framework\system\devcon\src</Elem>
-    <Elem>C:\microchip\harmony\v1_05\framework\system\int\src</Elem>
-    <Elem>../../../../FreeRTOS/v8.2.2</Elem>
-    <Elem>../../../../../../../../../microchip/harmony/v1_05/third_party/rtos/FreeRTOS/Source</Elem>
-    <Elem>../../Source/Services</Elem>
-    <Elem>../../Source/HAL</Elem>
-    <Elem>../../../../../Projectes XSLT/StateMachine</Elem>
-    <Elem>../../../../MD-SEL01</Elem>
-    <Elem>../../../../MD-DSP04</Elem>
-    <Elem>../../Source/Controllers</Elem>
-    <Elem>../../../../MD-KBD01</Elem>
-    <Elem>../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source</Elem>
+    <Elem>../</Elem>
+    <Elem>../../../Include</Elem>
+    <Elem>../../../Source/Modules</Elem>
+    <Elem>../../../Source/System</Elem>
+    <Elem>../../../Source/Services</Elem>
+    <Elem>../../../Source/Controllers</Elem>
+    <Elem>../../../Source/HAL</Elem>
+    <Elem>c:/microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source</Elem>
+    <Elem>../../../../../MD-SEL01</Elem>
+    <Elem>../../../../../MD-DSP04</Elem>
+    <Elem>../../../../../MD-KBD01</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -302,7 +297,7 @@
         <property key="enable-unroll-loops" value="true"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="..\;..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;..\..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
@@ -383,7 +378,7 @@
         <property key="exceptions" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="..\;..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;..\..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
@@ -579,7 +574,7 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="..\;..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;..\..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
@@ -658,7 +653,7 @@
         <property key="exceptions" value="true"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="..\;..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_006_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\;..\..\..\Include;C:\microchip\harmony\v1_06_01\framework;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\Include;C:\microchip\harmony\v1_006_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>

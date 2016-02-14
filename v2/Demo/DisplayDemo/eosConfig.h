@@ -32,4 +32,11 @@
 #define eosOPTIONS_FORMS_MAX_QUEUE_SIZE         50    // Numero maxim de missatges en la cua
 
 
+// Opcions del display
+//
+#define FONT_USE_Arial10pt
+#define FONT_USE_Arial12pt
+#define FONT_USE_Arial24pt
+
+
 #endif
