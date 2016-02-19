@@ -3,11 +3,13 @@
 #include "Services/eosAppLoop.hpp"
 
 
+using namespace eos;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
-
-eos::AppLoopService::AppLoopService():
+AppLoopService::AppLoopService():
     task(512, eos::TaskPriority::normal, this) {
 }
 
@@ -15,10 +17,20 @@ eos::AppLoopService::AppLoopService():
 /// ----------------------------------------------------------------------
 /// \brief Procesa les tasques del servei.
 ///
-
-void eos::AppLoopService::run() {
+void AppLoopService::run() {
     
-/*    appSetup();
+    setup();
     while (true)
-        appLoop();*/
+        loop();
 }
+
+
+void AppLoopService::setup() {
+    
+}
+
+
+void AppLoopService::loop() {
+    
+}
+

@@ -1,5 +1,7 @@
 #include "eos.hpp"
 #include "System/eosApplication.hpp"
+#include "System/Core/eosTask.hpp"
+#include "Services/eosAppLoop.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
 
@@ -7,66 +9,70 @@
 using namespace eos;
 
 
-class MyApplication: public Application {
+class MyAppLoopService: public AppLoopService {
     private:
+        unsigned char r, g, b;
         Display *display;
         IDisplayDriver *driver;
-        
-    public :
-        MyApplication();
-
+    
     protected:
-        void onInitialize();
+        void setup();
+        void loop();
 };
 
 
-/*************************************************************************
- *
- *       Constructor
- * 
- *       Funcio:
- *           MyApplication::MyApplication()
- *
- *************************************************************************/
+class MyApplication: public Application {
+    private:
+        MyAppLoopService *service;
+        
+    public :
+        MyApplication();
+};
 
+
+///-----------------------------------------------------------------------
+/// \brief Contructor
+///
 MyApplication::MyApplication() {
     
+    service = new MyAppLoopService();
 }
 
 
-/*************************************************************************
- *
- *       Inicialitza l'aplicacio
- *
- *       Funcio:
- *           void MyApplication::onInitialize() 
- *
- *************************************************************************/
-
-void MyApplication::onInitialize() {
+///-----------------------------------------------------------------------
+/// \brief Process d'inicialitzacio. El istema el crida nomes un cop.
+///
+void MyAppLoopService::setup() {
     
     driver = new ILI9341_DisplayDriver();
     driver->initialize();
     driver->setOrientation(Orientation::rotate180);
     
     display = new Display(driver);
- 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Bucle d'execucio. El sistema el crida periodicament.
+///
+void MyAppLoopService::loop() {
+
     display->clear(0x00000000);
-    display->setColor(RGB(0, 255, 255));
-    for (int i = 0; i < 10; i++)
-        display->drawString(10, 10 + i * 30, "0123456789");
- }
+    for (int i = 0; i < 10; i++) {
+        display->setColor(RGB(r, g, b));
+        display->drawString(10, 30 + i * 30, "0123456789");
+        r += 131;
+        g += 97;
+        b += 39;
+    }
+
+    Task::delay(1000);
+}
 
 
-/*************************************************************************
- *
- *       Inicialitzacio de l'aplicacio d'usuari
- *
- *       Funcio:
- *           int main(void)
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Entrada al programa.
+///
 int main(void) {
     
     LATGbits.LATG6 = 0;
