@@ -40,7 +40,7 @@ MyApplication::MyApplication() {
 
 
 ///-----------------------------------------------------------------------
-/// \brief Process d'inicialitzacio. El istema el crida nomes un cop.
+/// \brief Process d'inicialitzacio. El sistema el crida nomes un cop.
 ///
 void MyAppLoopService::setup() {
     
@@ -49,6 +49,7 @@ void MyAppLoopService::setup() {
     driver->setOrientation(Orientation::rotate180);
     
     display = new Display(driver);
+    display->clear(0x00000000);
 }
 
 
@@ -57,7 +58,6 @@ void MyAppLoopService::setup() {
 ///
 void MyAppLoopService::loop() {
 
-    display->clear(0x00000000);
     for (int i = 0; i < 10; i++) {
         display->setColor(RGB(r, g, b));
         display->drawString(10, 30 + i * 30, "0123456789");
