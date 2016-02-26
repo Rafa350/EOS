@@ -16,12 +16,8 @@
       </logicalFolder>
       <logicalFolder name="f1" displayName="Eos" projectFiles="true">
         <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
-          <logicalFolder name="f1" displayName="Display" projectFiles="true">
-            <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
-              <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341.hpp</itemPath>
-            </logicalFolder>
-            <itemPath>../../../Include/Controllers/Display/eosDisplay.hpp</itemPath>
-            <itemPath>../../../Include/Controllers/Display/eosFont.hpp</itemPath>
+          <logicalFolder name="f1" displayName="MD-DSP04L" projectFiles="true">
+            <itemPath>../../../Include/Controllers/MD-DSP04L/eosDisplay.hpp</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/Controllers/eosStepMotor.hpp</itemPath>
           <itemPath>../../../Include/Controllers/eosDisplayController.hpp</itemPath>
@@ -102,55 +98,9 @@
       </logicalFolder>
       <logicalFolder name="f2" displayName="Eos" projectFiles="true">
         <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
-          <logicalFolder name="f1" displayName="Display" projectFiles="true">
-            <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
-              <itemPath>../../../Source/Controllers/Display/Drivers/eosILI9341.cpp</itemPath>
-            </logicalFolder>
-            <logicalFolder name="Fonts" displayName="Fonts" projectFiles="true">
-              <itemPath>../../../Source/Controllers/Display/Fonts/5x7lcd12pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/5x7practical12pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Arial10pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Arial12pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Arial14pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Arial18pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Arial24pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Arial8pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold10pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold12pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold14pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold18pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold24pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/ArialBold8pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNew10pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNew7pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNew8pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNewBold10pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNewBold7pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/CourierNewBold8pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif10pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif12pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif14pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif18pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif24pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif7pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerif8pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold10pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold12pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold14pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold18pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold24pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold7pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/MicrosoftSansSerifBold8pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Tahoma10pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Tahoma7pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Tahoma8pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/TahomaBold10pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/TahomaBold7pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/TahomaBold8pt.cpp</itemPath>
-            </logicalFolder>
-            <itemPath>../../../Source/Controllers/Display/eosDisplay.cpp</itemPath>
+          <logicalFolder name="f1" displayName="MD-DSP04L" projectFiles="true">
+            <itemPath>../../../Source/Controllers/MD-DSP04L/eosDisplay.cpp</itemPath>
           </logicalFolder>
-          <itemPath>../../../Source/Controllers/eosDisplayController.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="HAL" projectFiles="true">
           <itemPath>../../../Source/HAL/halGPIO.c</itemPath>

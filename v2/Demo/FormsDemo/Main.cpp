@@ -10,7 +10,7 @@
 #include "Services/Forms/eosSelector.hpp"
 #include "Services/Forms/eosKeyboard.hpp"
 #include "Services/Forms/eosMenuForm.hpp"
-#include "Controllers/eosDisplayController.hpp"
+#include "Controllers/MD-DSP04L/eosDisplay.hpp"
 #include "appMainForm.hpp"
 #include "fsmDefines.hpp"
 #include "fsmStates.hpp"
@@ -40,7 +40,7 @@ class MyApplication: public Application {
         DigInputHandle swGREEN;
         TimerHandle timer;        
         StateMachineService* stateMachineService;
-        DisplayControllerHandle displayController;
+        DisplayHandle display;
         MessageQueue *messageQueue;
         FormHandle mainForm;
 
@@ -156,10 +156,10 @@ void MyApplication::setupFormsService() {
     
     selectorService = new SelectorService(i2cMasterService, SEL_ADDRESS);
     keyboardService = new KeyboardService(i2cMasterService, KBD_ADDRESS);
-    displayController = new DisplayController(i2cMasterService, DSP_ADDRESS);
+    display = new Display(i2cMasterService, DSP_ADDRESS);
     
     messageQueue = new MessageQueue(20);
-    formsService = new FormsService(messageQueue, displayController);
+    formsService = new FormsService(messageQueue, display);
     mainForm = new MainForm(formsService);
 
     selectorService->setNotifyEvent<MyApplication>(this, &MyApplication::selectorNotifyEventHandler);
