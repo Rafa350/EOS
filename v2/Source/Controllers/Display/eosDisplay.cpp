@@ -286,6 +286,11 @@ void Display::fillCircle(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa un bitmap.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+///
 void Display::drawBitmap1BPP(
     int x, 
     int y, 

@@ -10,7 +10,7 @@ using namespace eos;
 /// \param displayController: Handler del controlador del display.
 ///
 FormsDisplay::FormsDisplay(
-    DisplayControllerHandle _displayController):
+    DisplayHandle _displayController):
     displayController(_displayController) {
     
 }
@@ -21,7 +21,6 @@ FormsDisplay::FormsDisplay(
 ///
 void FormsDisplay::beginDraw() {
 
-    displayController->beginCommand();    
 }
 
 
@@ -30,8 +29,6 @@ void FormsDisplay::beginDraw() {
 ///
 void FormsDisplay::endDraw() {
     
-    displayController->addCommandRefresh();
-    displayController->endCommand();
 }
 
 
@@ -42,22 +39,33 @@ void FormsDisplay::endDraw() {
 void FormsDisplay::setColor(
     unsigned color) {
     
-    displayController->addCommandSetColor(color, -1);
+    displayController->setColor(color);
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief Borra la pantalla.
+///
 void FormsDisplay::clear() {
     
-    displayController->addCommandClear();
+    displayController->clear(0);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una linia.
+/// \param x1: Coordinada x inicial.
+/// \param y1: Coordinada y inicial.
+/// \param x2: Coordinada x final.
+/// \param y2: Coordinada y final.
+///
 void FormsDisplay::drawLine(
     int x1, 
     int y1, 
     int x2, 
     int y2) {
     
-    displayController->addCommandDrawLine(x1, y1, x2, y2);
+    displayController->drawLine(x1, y1, x2, y2);
 }
 
 
@@ -67,7 +75,7 @@ void FormsDisplay::drawRectangle(
     int width, 
     int height) {
     
-    displayController->addCommandFillRectangle(x, y, x + width, y + height);
+    displayController->drawRectangle(x, y, x + width, y + height);
 }
 
 
@@ -78,12 +86,12 @@ void FormsDisplay::drawText(
     unsigned offset,
     unsigned length) {
     
-    displayController->addCommandDrawText(x, y, text, offset, length);    
+    displayController->drawString(x, y, text);    
 }
 
 
 void FormsDisplay::fillRectangle(int x, int y, int width, int height) {
     
-    displayController->addCommandFillRectangle(x, y, x + width, y + height);
+    displayController->fillRectangle(x, y, x + width, y + height);
 }
 

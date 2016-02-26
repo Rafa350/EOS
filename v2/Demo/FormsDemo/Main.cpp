@@ -186,10 +186,7 @@ void MyApplication::onSwGREEN(eos::DigInputHandle input){
     if (input->get())
         ledGREEN->pulse(1000);
 
-    displayController->beginCommand();
-    displayController->addCommandClear();
-    displayController->addCommandRefresh();
-    displayController->endCommand();
+    display->clear(0);
 }
 
 

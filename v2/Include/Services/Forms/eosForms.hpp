@@ -1,26 +1,12 @@
-#ifndef __EOS_FORMS_HPP
-#define __EOS_FORMS_HPP
+#ifndef __EOS_SERVICES_FORMS_FORMS_HPP
+#define __EOS_SERVICES_FORMS_FORMS_HPP
 
 
-#ifndef __EOS_HPP
 #include "eos.hpp"
-#endif
-
-#ifndef __EOS_TASK_HPP
 #include "System/Core/eosTask.hpp"
-#endif
-
-#ifndef __EOS_LIST_HPP
 #include "System/Collections/eosList.hpp"
-#endif
-
-#ifndef __EOS_QUEUE_HPP
 #include "System/Collections/eosQueue.hpp"
-#endif
-
-#ifndef __EOS_DISPLAY_HPP
 #include "Controllers/MD-DSP04L/eosDisplay.hpp"
-#endif
 
 
 #define MSG_NULL               0
@@ -100,7 +86,7 @@ namespace eos {
             FormHandle activeForm;     
             
         public:
-            FormsService(MessageQueue *messageQueue, DisplayControllerHandle displayController);
+            FormsService(MessageQueue *messageQueue, DisplayHandle displayController);
             ~FormsService();
             void add(FormHandle form);
             void remove(FormHandle form);
@@ -119,10 +105,10 @@ namespace eos {
             //int y;
             //int width;
             //int height;
-            DisplayControllerHandle displayController;
+            DisplayHandle displayController;
             
         public:
-            FormsDisplay(DisplayControllerHandle displayController);
+            FormsDisplay(DisplayHandle displayController);
             void beginDraw();
             void endDraw();
             void clear();

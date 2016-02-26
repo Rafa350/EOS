@@ -31,6 +31,8 @@ void Display::setColor(Color color) {
 
 
 //void Display::setFont(Font *font);
+
+
 int Display::getTextWidth(const char *text) {
     
 }
@@ -56,8 +58,15 @@ void Display::putTTY(const char *s, int length) {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Borra la pantalla.
+///
 void Display::clear(Color color) {
     
+    beginCommand();
+    addCommandClear();
+    addCommandRefresh();
+    endCommand();
 }
 
 
@@ -79,6 +88,7 @@ void Display::lineTo(
     
     beginCommand();
     addCommandDrawLine(curX, curY, x, y);
+    addCommandRefresh();
     endCommand();
     
     curX = x;
@@ -91,6 +101,13 @@ void Display::arcTo(int x, int y, int cx, int cy) {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una linia.
+/// \param x1: Coordinada x inicial.
+/// \param y1: Coordinada y inicial.
+/// \param x2: Coordinada x final.
+/// \param y2: Coordinada y final.
+///
 void Display::drawLine(
     int x1, 
     int y1, 
@@ -99,6 +116,7 @@ void Display::drawLine(
 
     beginCommand();
     addCommandDrawLine(x1, y1, x2, y2);
+    addCommandRefresh();
     endCommand();
 }
 
@@ -111,6 +129,7 @@ void Display::drawRectangle(
     
     beginCommand();
     addCommandDrawRectangle(x1, y1, x2, y2);
+    addCommandRefresh();
     endCommand();
 }
 
@@ -127,11 +146,23 @@ void Display::drawBitmap1BPP(int x, int y, const uint8_t *bitmap, int sx, int sy
 
 int Display::drawChar(int x, int y, char c) {
     
+    static char s[2] = { 0, 0 };
+    
+    s[1] = 0;
+    
+    beginCommand();
+    addCommandDrawText(x, y, s, 0, -1);
+    addCommandRefresh();
+    endCommand();
 }
 
 
 int Display::drawString(int x, int y, const char *s) {
     
+    beginCommand();
+    addCommandDrawText(x, y, s, 0, -1);    
+    addCommandRefresh();
+    endCommand();
 }
 
 
@@ -143,6 +174,7 @@ void Display::fillRectangle(
 
     beginCommand();
     addCommandFillRectangle(x1, y1, x2, y2);
+    addCommandRefresh();
     endCommand();    
 }
 

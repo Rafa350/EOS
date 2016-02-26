@@ -48,6 +48,7 @@ namespace eos {
             void fillRectangle(int x1, int y1, int x2, int y2);
             void fillCircle(int cx, int cy, int r);              
 
+        private:
             bool beginCommand();
             bool endCommand();
             bool addUINT8(uint8_t data);
@@ -63,6 +64,7 @@ namespace eos {
             bool addCommandDrawRectangle(int x1, int y1, int x2, int y2);
             bool addCommandFillRectangle(int x1, int y1, int x2, int y2);
             bool addCommandDrawText(int x, int y, const char *text, unsigned offset, unsigned length);
+            
         private:
             inline static int min(int a, int b) {
                 return a < b ? a : b; 

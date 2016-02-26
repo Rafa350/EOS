@@ -66,7 +66,7 @@ void MyAppLoopService::loop() {
         b += 39;
     }
 
-    Task::delay(1000);
+    Task::delay(250);
 }
 
 

@@ -18,9 +18,8 @@
         <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
           <logicalFolder name="f1" displayName="MD-DSP04L" projectFiles="true">
             <itemPath>../../../Include/Controllers/MD-DSP04L/eosDisplay.hpp</itemPath>
+            <itemPath>../../../../../MD-DSP04/DSP04Messages.h</itemPath>
           </logicalFolder>
-          <itemPath>../../../Include/Controllers/eosStepMotor.hpp</itemPath>
-          <itemPath>../../../Include/Controllers/eosDisplayController.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="HAL" projectFiles="true">
           <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
@@ -32,7 +31,6 @@
             <itemPath>../../../Include/Services/Forms/eosForms.hpp</itemPath>
             <itemPath>../../../Include/Services/Forms/eosSelector.hpp</itemPath>
             <itemPath>../../../../../MD-SEL01/SEL01Messages.h</itemPath>
-            <itemPath>../../../../../MD-DSP04/DSP04Messages.h</itemPath>
             <itemPath>../../../Include/Services/Forms/eosNumericEditorForm.hpp</itemPath>
             <itemPath>../../../Include/Services/Forms/eosOptionEditorForm.hpp</itemPath>
             <itemPath>../../../Include/Services/Forms/eosMenuForm.hpp</itemPath>

@@ -18,7 +18,7 @@ const TaskPriority taskPriority = TaskPriority::normal;
 ///
 FormsService::FormsService(
     MessageQueue *_messageQueue,
-    DisplayControllerHandle displayController) :
+    DisplayHandle displayController) :
     task(taskStackSize, taskPriority, this),
     messageQueue(_messageQueue),
     display(new FormsDisplay(displayController)) {
