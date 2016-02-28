@@ -217,7 +217,7 @@ void ILI9341_DisplayDriver::shutdown() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Selecciona l'oeirntacio de la pantalla.
+/// \brief Selecciona l'orientacio de la pantalla.
 /// \param orientation: Orientacio (0=0, 1=90, 2=180, 3=270)
 ///
 void ILI9341_DisplayDriver::setOrientation(

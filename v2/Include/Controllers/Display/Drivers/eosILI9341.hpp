@@ -12,6 +12,7 @@ namespace eos {
         private:
             int xScreenSize;
             int yScreenSize;
+            
         public:
             ILI9341_DisplayDriver();
             void initialize();

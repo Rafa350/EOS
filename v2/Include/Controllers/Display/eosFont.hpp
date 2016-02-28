@@ -26,7 +26,7 @@ namespace eos {
 
     class Font {
         private:
-            const uint8_t *font;
+            const uint8_t *fontResource;
             
         public:
             Font(const uint8_t *fontResource);
