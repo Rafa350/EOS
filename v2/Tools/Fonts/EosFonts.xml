@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document version="400" encodeStrings="false" useNames="true">
+    <data version="101">
+        <object name="root" type="project" id="0">
+            <value name="name">EOS Fonts</value>
+            <value name="description">Generacio de fonts per EOS</value>
+            <null name="notes" />
+            <object name="folders" type="folderList" id="1">
+                <value name="count">1</value>
+                <object name="Item0" type="folder" id="2">
+                    <value name="name">Fitxers de tipus de lletra</value>
+                    <null name="description" />
+                    <null name="notes" />
+                    <object name="folders" type="folderList" id="3">
+                        <value name="count">0</value>
+                    </object>
+                    <object name="files" type="fileList" id="4">
+                        <value name="count">1</value>
+                        <object name="Item0" type="file" id="5">
+                            <null name="FileName" />
+                            <null name="Description" />
+                            <null name="Notes" />
+                            <null name="Tool" />
+                        </object>
+                    </object>
+                </object>
+            </object>
+            <object name="tools" type="toolList" id="6">
+                <value name="count">0</value>
+            </object>
+        </object>
+    </data>
+</document>
