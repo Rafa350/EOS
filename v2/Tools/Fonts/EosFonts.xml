@@ -2,48 +2,67 @@
 <document version="400" encodeStrings="false" useNames="true">
     <data version="101">
         <object name="root" type="project" id="0">
-            <value name="name">EOS Fonts</value>
-            <value name="description">Generacio de fonts per EOS</value>
-            <null name="notes" />
-            <object name="folders" type="folderList" id="1">
+            <value name="Name">EOF Fonts</value>
+            <null name="Description" />
+            <null name="Notes" />
+            <object name="Folders" type="folderList" id="1">
                 <value name="count">1</value>
                 <object name="Item0" type="folder" id="2">
-                    <value name="name">Fitxers de tipus de lletra</value>
-                    <null name="description" />
-                    <null name="notes" />
-                    <object name="folders" type="folderList" id="3">
-                        <value name="count">0</value>
+                    <value name="Name">Font files</value>
+                    <value name="Description">Arxius de tipus de lletra</value>
+                    <null name="Notes" />
+                    <value name="Active">False</value>
+                    <object name="Folders" type="folderList" id="3">
+                        <value name="count">1</value>
+                        <object name="Item0" type="folder" id="4">
+                            <value name="Name">New Folder</value>
+                            <null name="Description" />
+                            <null name="Notes" />
+                            <value name="Active">False</value>
+                            <object name="Folders" type="folderList" id="5">
+                                <value name="count">0</value>
+                            </object>
+                            <object name="Files" type="fileList" id="6">
+                                <value name="count">0</value>
+                            </object>
+                        </object>
                     </object>
-                    <object name="files" type="fileList" id="4">
-                        <value name="count">4</value>
-                        <object name="Item0" type="file" id="5">
-                            <value name="FileName">C:\Users\Rafael\Documents\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\5x7lcd12pt.xfont</value>
-                            <null name="Description" />
-                            <null name="Notes" />
-                            <null name="Tool" />
-                        </object>
-                        <object name="Item1" type="file" id="6">
-                            <value name="FileName">C:\Users\Rafael\Documents\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\5x7practical12pt.xfont</value>
-                            <null name="Description" />
-                            <null name="Notes" />
-                            <null name="Tool" />
-                        </object>
-                        <object name="Item2" type="file" id="7">
-                            <value name="FileName">C:\Users\Rafael\Documents\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial8pt.xfont</value>
+                    <object name="Files" type="fileList" id="7">
+                        <value name="count">3</value>
+                        <object name="Item0" type="file" id="8">
+                            <value name="SourceFileName">C:\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial8pt.xfont</value>
+                            <null name="TargetFileName" />
                             <value name="Description">Arial 8pt</value>
                             <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
                             <null name="Tool" />
                         </object>
-                        <object name="Item3" type="file" id="8">
-                            <value name="FileName">C:\Users\Rafael\Documents\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial10pt.xfont</value>
+                        <object name="Item1" type="file" id="9">
+                            <value name="SourceFileName">C:\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial10pt.xfont</value>
+                            <null name="TargetFileName" />
                             <value name="Description">Arial 10pt</value>
                             <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                        </object>
+                        <object name="Item2" type="file" id="10">
+                            <value name="SourceFileName">C:\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial12pt.xfont</value>
+                            <null name="TargetFileName" />
+                            <value name="Description">Arial 12pt</value>
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
                             <null name="Tool" />
                         </object>
                     </object>
                 </object>
             </object>
-            <object name="tools" type="toolList" id="9">
+            <object name="Tools" type="toolList" id="11">
+                <value name="count">0</value>
+            </object>
+            <object name="Configurations" type="configurationList" id="12">
                 <value name="count">0</value>
             </object>
         </object>
