@@ -6,22 +6,10 @@ typedef struct __eosHeap {
 } eosHeap;
 
 
-/*************************************************************************
- *
- *       Crea un heap
- *
- *       Funcio:
- *           eosHeapHandle eosHeapCreate(
- *               unsigned size)
- *
- *       Entrada:
- *           size: Tamany del heap en bytes
- *
- *       Retorn:
- *           Handler del heap
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Crea un heap.
+/// \param size: Tamany del heap en bytes
+///
 eosHeapHandle eosHeapCreate(
     unsigned size) {
 
@@ -29,24 +17,11 @@ eosHeapHandle eosHeapCreate(
 }
 
 
-/*************************************************************************
- *
- *       Obte un bloc de memoria del heap
- *
- *       Funcio:
- *           void *eosHeapAlloc(
- *               eosHeapHandle hHeap,
- *               unsigned size)
- *
- *       Entrada:
- *           hHeap: Handler del heap. 
- *           size : Tamany del bloc de memoria
- *
- *       Retorn:
- *           Punter al bloc de memoria. NULL en cas d'error
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Obte un bloc de memoria del heap.
+/// \param hHeap: Handler del heap. 
+/// \param size : Tamany del bloc de memoria
+///
 void *eosHeapAlloc(
     eosHeapHandle hHeap,
     unsigned size) {
@@ -55,19 +30,10 @@ void *eosHeapAlloc(
 }
 
 
-/*************************************************************************
- *
- *       Allibera un bloc de memoria del heap
- *
- *       Funcio:
- *           void eosHeapFree(
- *               void *p)
- *
- *       Entrada:
- *           p: Punter al bloc de memoria
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Allibera un bloc de memoria del heap.
+/// \param p: Punter al bloc de memoria
+///
 void eosHeapFree(
     void *p) {
 
