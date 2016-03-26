@@ -50,6 +50,10 @@ void MyAppLoopService::setup() {
     
     display = new Display(driver);
     display->clear(0x00000000);
+    
+    r = 12;
+    g = 134;
+    b = 97;
 }
 
 
@@ -61,9 +65,9 @@ void MyAppLoopService::loop() {
     for (int i = 0; i < 10; i++) {
         display->setColor(RGB(r, g, b));
         display->drawString(10, 30 + i * 30, "0123456789");
-        r += 131;
-        g += 97;
-        b += 39;
+        r += 5;
+        g += 7;
+        b += 9;
     }
 
     Task::delay(250);

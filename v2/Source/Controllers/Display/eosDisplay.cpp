@@ -70,6 +70,14 @@ void Display::clear(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Refresca la pantalla.
+///
+void Display::refresh() {
+    
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Mou el cursor a posicio indicada.
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.

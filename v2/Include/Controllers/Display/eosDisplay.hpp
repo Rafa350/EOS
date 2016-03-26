@@ -57,6 +57,7 @@ namespace eos {
             void putTTY(const char *s);
             void putTTY(const char *s, int length);
             void clear(Color color);
+            void refresh();
             inline void home() { moveTo(0, 0); }
             void moveTo(int x, int y);
             void lineTo(int x, int y);
