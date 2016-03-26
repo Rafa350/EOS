@@ -31,7 +31,7 @@
                         <value name="count">3</value>
                         <object name="Item0" type="file" id="8">
                             <value name="SourceFileName">C:\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial8pt.xfont</value>
-                            <null name="TargetFileName" />
+                            <value name="TargetFileName">{ObjDir}Arial8pt.c</value>
                             <value name="Description">Arial 8pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
@@ -40,7 +40,7 @@
                         </object>
                         <object name="Item1" type="file" id="9">
                             <value name="SourceFileName">C:\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial10pt.xfont</value>
-                            <null name="TargetFileName" />
+                            <value name="TargetFileName">{ObjDir}Arial10pt.c</value>
                             <value name="Description">Arial 10pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
@@ -49,7 +49,7 @@
                         </object>
                         <object name="Item2" type="file" id="10">
                             <value name="SourceFileName">C:\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial12pt.xfont</value>
-                            <null name="TargetFileName" />
+                            <value name="TargetFileName">{ObjDir}Arial12pt.c</value>
                             <value name="Description">Arial 12pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
@@ -60,9 +60,27 @@
                 </object>
             </object>
             <object name="Tools" type="toolList" id="11">
-                <value name="count">0</value>
+                <value name="count">2</value>
+                <object name="Item0" type="tool" id="12">
+                    <value name="Name">C-Compiler</value>
+                    <value name="Description">Compilador C (Microchip XC32)</value>
+                    <null name="Notes" />
+                    <value name="Executable">xc32.exe</value>
+                    <value name="SourceExt">c</value>
+                    <value name="TargetExt">o</value>
+                    <null name="Options" />
+                </object>
+                <object name="Item1" type="tool" id="13">
+                    <value name="Name">Resource-Compiler</value>
+                    <value name="Description">Compilador de recursos</value>
+                    <null name="Notes" />
+                    <value name="Executable">..\Tools\bin\eosResourceCompiler.exe</value>
+                    <value name="SourceExt">xfont</value>
+                    <value name="TargetExt">c</value>
+                    <null name="Options" />
+                </object>
             </object>
-            <object name="Configurations" type="configurationList" id="12">
+            <object name="Configurations" type="configurationList" id="14">
                 <value name="count">0</value>
             </object>
         </object>

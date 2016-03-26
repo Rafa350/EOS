@@ -3,36 +3,29 @@
 #include "semphr.h"
 
 
-/*************************************************************************
- *
- *       Constructor
- *
- *       Funcio:
- *           eos::BinarySemaphore::BinarySemaphore()
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Contructor
+///
 eos::BinarySemaphore::BinarySemaphore() {
     
     handle = xSemaphoreCreateBinary();
 }
 
 
-/*************************************************************************
- *
- *       Destructor
- * 
- *       Funcio:
- *           eos::BinarySemaphore::~BinarySemaphore() 
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Destructor.
+///
 eos::BinarySemaphore::~BinarySemaphore() {
 
     vSemaphoreDelete(handle);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Espera que s'alliveri el semaforo.
+/// \param blockTime: Temps maxim de bloqueig.
+/// \return True si s'ha alliverat. False en cas contrari.
+///
 bool eos::BinarySemaphore::take(
     unsigned blockTime) {
     
@@ -40,12 +33,18 @@ bool eos::BinarySemaphore::take(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Allivera un semaforo.
+///
 bool eos::BinarySemaphore::give() {
     
     return xSemaphoreGive(handle);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Allivera un semaforo. Versio per cridar des d'una interrupcio.
+///
 void eos::BinarySemaphore::giveISR() {
     
     xSemaphoreGiveFromISR(handle, NULL);

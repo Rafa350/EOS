@@ -68,7 +68,7 @@ unsigned Task::getTickCount() {
 
 /// ----------------------------------------------------------------------
 /// \brief Retarda la tasca actual un numero determinat de ticks.
-/// \param time: Enl numero de ticks a retardar.
+/// \param time: El numero de ticks a retardar.
 ///
 void Task::delay(
     unsigned time) {
