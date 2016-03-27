@@ -69,6 +69,13 @@ void FormsDisplay::drawLine(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa un rectangle.
+/// \param x: Coordinada x de la posicio.
+/// \param y: Coordinada y de la posicio.
+/// \param width: Amplada.
+/// \param height: Alçada.
+///
 void FormsDisplay::drawRectangle(
     int x, 
     int y, 
@@ -79,6 +86,14 @@ void FormsDisplay::drawRectangle(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa un texte.
+/// \param x: Coordinada x de la posicio.
+/// \param y: Coordinada y de la posicio.
+/// \param text: Texte a dibuixar.
+/// \param offset: Posicio del primer caracter a dibuixar.
+/// \param length: Numero de caracters a dibuixar.
+///
 void FormsDisplay::drawText(
     int x, 
     int y, 
@@ -90,7 +105,18 @@ void FormsDisplay::drawText(
 }
 
 
-void FormsDisplay::fillRectangle(int x, int y, int width, int height) {
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa un rectangle ple.
+/// \param x: Coordinada x de la posicio.
+/// \param y: Coordinada y de la posicio.
+/// \param width: Amplada.
+/// \param height: Alçada.
+///
+void FormsDisplay::fillRectangle(
+    int x, 
+    int y, 
+    int width, 
+    int height) {
     
     displayController->fillRectangle(x, y, x + width, y + height);
 }

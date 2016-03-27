@@ -83,9 +83,11 @@ void Form::dispatchMessage(
 
 
 /// ----------------------------------------------------------------------
-/// |brief Es crida quant s'activa el form
+/// \brief Es crida quant s'activa el form
+/// \param deactivateForm: El form que s'ha desactivat.
 ///
-void Form::onActivate(FormHandle deactivateForm) {
+void Form::onActivate(
+    FormHandle deactivateForm) {
     
     refresh();
 }

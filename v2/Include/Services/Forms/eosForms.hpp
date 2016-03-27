@@ -86,7 +86,7 @@ namespace eos {
             FormHandle activeForm;     
             
         public:
-            FormsService(MessageQueue *messageQueue, DisplayHandle displayController);
+            FormsService(MessageQueue *messageQueue, FormsDisplayHandle display);
             ~FormsService();
             void add(FormHandle form);
             void remove(FormHandle form);
@@ -101,10 +101,6 @@ namespace eos {
     
     class FormsDisplay {
         private:
-            //int x;
-            //int y;
-            //int width;
-            //int height;
             DisplayHandle displayController;
             
         public:

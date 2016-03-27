@@ -14,14 +14,14 @@ const TaskPriority taskPriority = TaskPriority::normal;
 /// ----------------------------------------------------------------------
 /// \brief Constructor
 /// \param mssageQueue: La cua de missatges
-/// \param displayController: Controlador de pantalla
+/// \param display: Controlador de pantalla
 ///
 FormsService::FormsService(
     MessageQueue *_messageQueue,
-    DisplayHandle displayController) :
+    FormsDisplayHandle _display) :
     task(taskStackSize, taskPriority, this),
     messageQueue(_messageQueue),
-    display(new FormsDisplay(displayController)) {
+    display(_display) {
 }
 
 

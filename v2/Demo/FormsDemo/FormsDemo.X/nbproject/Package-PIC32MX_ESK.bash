@@ -10,9 +10,9 @@ CND_CONF=PIC32MX_ESK
 CND_DISTDIR=dist
 TMPDIR=build/${CND_CONF}/${IMAGE_TYPE}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/eosDemo.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
-OUTPUT_BASENAME=eosDemo.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
-PACKAGE_TOP_DIR=eosdemo.x/
+OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/FormsDemo.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+OUTPUT_BASENAME=FormsDemo.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+PACKAGE_TOP_DIR=formsdemo.x/
 
 # Functions
 function checkReturnCode
@@ -57,15 +57,15 @@ mkdir -p ${TMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory ${TMPDIR}/eosdemo.x/bin
+makeDirectory ${TMPDIR}/formsdemo.x/bin
 copyFileToTmpDir "${OUTPUT_PATH}" "${TMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
 
 
 # Generate tar file
 cd "${TOP}"
-rm -f ${CND_DISTDIR}/${CND_CONF}/package/eosdemo.x.tar
+rm -f ${CND_DISTDIR}/${CND_CONF}/package/formsdemo.x.tar
 cd ${TMPDIR}
-tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/eosdemo.x.tar *
+tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/formsdemo.x.tar *
 checkReturnCode
 
 # Cleanup
