@@ -6,24 +6,35 @@
 #include "System/Core/eosTask.hpp"
 #include "System/Collections/eosList.hpp"
 #include "System/Collections/eosQueue.hpp"
-#include "Controllers/MD-DSP04L/eosDisplay.hpp"
+#ifdef eosFormsService_UseSelector
+#include "Services/Forms/eosSelector.hpp"
+#endif
+#ifdef eosFormsService_UseKeyboard
+#include "Services/Forms/eosKeyboard.hpp"
+#endif
 
 
 #define MSG_NULL               0
 
+#ifdef eosFormsService_UseSelector
 #define MSG_SELECTOR         100       // Event del selector
 #define EV_SELECTOR_INC        1       // -Increment del selector
 #define EV_SELECTOR_DEC        2       // -Decrement del selector
 #define EV_SELECTOR_CLICK      3       // -Click del boto
+#endif
 
+#ifdef eosFormsService_UseKeyboard
 #define MSG_KEYBOARD         101       // Event del teclat
 #define EV_KEYBOARD_UP         1       // -Tecla UP
 #define EV_KEYBOARD_DOWN       2       // -Tecla DOWN
 #define EV_KEYBOARD_LEFT       3       // -Tecla LEFT
 #define EV_KEYBOARD_RIGHT      4       // -Tecla RIGHT
 #define EV_KEYBOARD_OK         5       // -Tecla OK
+#endif
 
-#define MSG_TOUCHPAD         102
+#ifdef eosFormsService_UseTouchpad
+#define MSG_TOUCHPAD         102       // Event del panell tactil
+#endif
 
 #define MSG_COMMAND          110       // Comanda
 #define MSG_NOTIFY           111       // Event de nofificacio d'un altre form
@@ -40,6 +51,8 @@ namespace eos {
     class FormsService;
     typedef FormsService *FormsServiceHandle;
     
+    class Display;
+    
     enum class SelectorDirection {
         forward,
         backward
@@ -51,22 +64,32 @@ namespace eos {
         unsigned state;
     };
 
+#ifdef eosFormsService_UseKeyboard    
     struct MsgKeyboard {
         unsigned event;
         unsigned keyCode;
     };
+#endif    
     
+#ifdef eosFormsService_UseTouchpad    
     struct MsgTouchpad {
         unsigned event;
     };
+#endif    
 
     struct Message {
         unsigned id;
         FormHandle target;
         union {
+#ifdef eosFormsService_UseSelector            
             MsgSelector msgSelector;
+#endif            
+#ifdef eosFormsService_UseKeyboard            
             MsgKeyboard msgKeyboard;
+#endif            
+#ifdef eosFormsService_UseTouchpad            
             MsgTouchpad msgTouchpad;
+#endif
         };
     };
     
@@ -101,10 +124,10 @@ namespace eos {
     
     class FormsDisplay {
         private:
-            DisplayHandle displayController;
+            Display *display;
             
         public:
-            FormsDisplay(DisplayHandle displayController);
+            FormsDisplay(Display *display);
             void beginDraw();
             void endDraw();
             void clear();
@@ -122,7 +145,9 @@ namespace eos {
             FormsServiceHandle service;
             FormHandle parent;
             bool paintPending;
+#ifdef eosFormsService_UseSelector            
             ISelectorPressEvent *evSelectorPress;
+#endif
             //int x;
             //int y;
             //int width;
@@ -136,11 +161,13 @@ namespace eos {
             FormHandle getParent() const { return parent; }
             FormsServiceHandle getService() const { return service; }
 
+#ifdef eosFormsService_UseSelector            
             template <class cls>
             void setSelectorPressEvent(cls *instance, void (cls::*method)(FormHandle)) { 
                 
                 evSelectorPress = new CallbackP1<cls, FormHandle>(instance, method);
             }
+#endif            
             
         protected:
             virtual ~Form();
@@ -148,11 +175,15 @@ namespace eos {
             virtual void onActivate(FormHandle deactivateForm); 
             virtual void onDeactivate(FormHandle activateForm) {}
             virtual void onPaint(FormsDisplayHandle display) {}
+#ifdef eosFormsService_UseSelector            
             virtual void onSelectorMove(int position, SelectorDirection direction);
             virtual void onSelectorPress();
             virtual void onSelectorRelease();
+#endif
+#ifdef eosFormsService_UseKeyboard
             virtual void onKeyPress(unsigned key);
             virtual void onKeyRelease(unsigned key);
+#endif            
             
         friend class FormsService;
     };

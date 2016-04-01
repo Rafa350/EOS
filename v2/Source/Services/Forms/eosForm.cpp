@@ -53,6 +53,8 @@ void Form::dispatchMessage(
     Message &message) {
     
     switch (message.id) {
+        
+#ifdef eosFormsService_UseSelector        
         case MSG_SELECTOR:
             switch (message.msgSelector.event) {
                 case EV_SELECTOR_INC:
@@ -71,10 +73,13 @@ void Form::dispatchMessage(
                     break;
             }
             break;
+#endif            
             
+#ifdef eosFormsService_UseKeyboard            
         case MSG_KEYBOARD:
             onKeyPress(message.msgKeyboard.event);
             break;
+#endif            
 
         default:
             break;
@@ -98,46 +103,56 @@ void Form::onActivate(
 /// \param position: Posicio del selector.
 /// \param direction: Direccio del moviment.
 ///
+#ifdef eosFormsService_UseSelector
 void Form::onSelectorMove(
     int position,
     SelectorDirection direction) {
     
 }
+#endif
     
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant el boto del selector es prem.
 /// 
+#ifdef eosFormsService_UseSelector
 void Form::onSelectorPress() {
     
     if (evSelectorPress != nullptr)
         evSelectorPress->execute(this);
 }
+#endif
     
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant el boto del selector es deixa anar.
 ///
+#ifdef eosFormsService_UseSelector
 void Form::onSelectorRelease() {
     
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant es prem una tecla.
 /// \param keyCode: Codi de la tecla.
 ///
+#ifdef eosFormsService_UseKeyboard
 void Form::onKeyPress(
     unsigned key) {
     
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant es deina anar una tecla.
 /// \param keyCode: El codi de la tecla.
 ///
+#ifdef eosFormsService_UseKeyboard
 void Form::onKeyRelease(
     unsigned keyCode) {
     
 }
+#endif

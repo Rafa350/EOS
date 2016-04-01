@@ -1,5 +1,6 @@
 #include "eos.hpp"
 #include "Services/Forms/eosForms.hpp"
+#include "Controllers/Display/eosDisplay.hpp"
 
 
 using namespace eos;
@@ -7,11 +8,11 @@ using namespace eos;
 
 /// ---------------------------------------------------------------------
 /// \brier Contructor.
-/// \param displayController: Handler del controlador del display.
+/// \param display: Handler del controlador del display.
 ///
 FormsDisplay::FormsDisplay(
-    DisplayHandle _displayController):
-    displayController(_displayController) {
+    Display *_display):
+    display(_display) {
     
 }
 
@@ -39,7 +40,7 @@ void FormsDisplay::endDraw() {
 void FormsDisplay::setColor(
     unsigned color) {
     
-    displayController->setColor(color);
+    display->setColor(color);
 }
 
 
@@ -48,7 +49,7 @@ void FormsDisplay::setColor(
 ///
 void FormsDisplay::clear() {
     
-    displayController->clear(0);
+    display->clear(0);
 }
 
 
@@ -65,7 +66,7 @@ void FormsDisplay::drawLine(
     int x2, 
     int y2) {
     
-    displayController->drawLine(x1, y1, x2, y2);
+    display->drawLine(x1, y1, x2, y2);
 }
 
 
@@ -82,7 +83,7 @@ void FormsDisplay::drawRectangle(
     int width, 
     int height) {
     
-    displayController->drawRectangle(x, y, x + width, y + height);
+    display->drawRectangle(x, y, x + width, y + height);
 }
 
 
@@ -101,7 +102,7 @@ void FormsDisplay::drawText(
     unsigned offset,
     unsigned length) {
     
-    displayController->drawString(x, y, text);    
+    display->drawString(x, y, text);    
 }
 
 
@@ -118,6 +119,6 @@ void FormsDisplay::fillRectangle(
     int width, 
     int height) {
     
-    displayController->fillRectangle(x, y, x + width, y + height);
+    display->fillRectangle(x, y, x + width, y + height);
 }
 
