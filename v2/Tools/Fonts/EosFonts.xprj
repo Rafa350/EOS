@@ -11,9 +11,9 @@
                     <value name="Name">Font files</value>
                     <value name="Description">Arxius de tipus de lletra</value>
                     <null name="Notes" />
-                    <value name="Active">False</value>
+                    <value name="Active">True</value>
                     <object name="Folders" type="folderList" id="3">
-                        <value name="count">1</value>
+                        <value name="count">2</value>
                         <object name="Item0" type="folder" id="4">
                             <value name="Name">New Folder</value>
                             <null name="Description" />
@@ -26,61 +26,108 @@
                                 <value name="count">0</value>
                             </object>
                         </object>
+                        <object name="Item1" type="folder" id="7">
+                            <value name="Name">New Folder</value>
+                            <null name="Description" />
+                            <null name="Notes" />
+                            <value name="Active">False</value>
+                            <object name="Folders" type="folderList" id="8">
+                                <value name="count">0</value>
+                            </object>
+                            <object name="Files" type="fileList" id="9">
+                                <value name="count">0</value>
+                            </object>
+                        </object>
                     </object>
-                    <object name="Files" type="fileList" id="7">
-                        <value name="count">3</value>
-                        <object name="Item0" type="file" id="8">
-                            <value name="SourceFileName">C:\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial8pt.xfont</value>
-                            <value name="TargetFileName">{ObjDir}Arial8pt.c</value>
+                    <object name="Files" type="fileList" id="10">
+                        <value name="count">6</value>
+                        <object name="Item0" type="file" id="11">
+                            <value name="SourceFileName">Arial8pt.xfont</value>
+                            <value name="TargetFileName">Out\Arial8pt.cpp</value>
                             <value name="Description">Arial 8pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
                             <value name="Action">Translate</value>
                             <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
                         </object>
-                        <object name="Item1" type="file" id="9">
-                            <value name="SourceFileName">C:\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial10pt.xfont</value>
-                            <value name="TargetFileName">{ObjDir}Arial10pt.c</value>
+                        <object name="Item1" type="file" id="12">
+                            <value name="SourceFileName">Arial10pt.xfont</value>
+                            <value name="TargetFileName">Out\Arial10pt.cpp</value>
                             <value name="Description">Arial 10pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
                             <value name="Action">Translate</value>
                             <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
                         </object>
-                        <object name="Item2" type="file" id="10">
-                            <value name="SourceFileName">C:\Projectes\Projectes MPLAB\EOS\v2\Tools\Fonts\Arial12pt.xfont</value>
-                            <value name="TargetFileName">{ObjDir}Arial12pt.c</value>
+                        <object name="Item2" type="file" id="13">
+                            <value name="SourceFileName">Arial12pt.xfont</value>
+                            <value name="TargetFileName">Out\Arial12pt.cpp</value>
                             <value name="Description">Arial 12pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
                             <value name="Action">Translate</value>
                             <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
+                        </object>
+                        <object name="Item3" type="file" id="14">
+                            <value name="SourceFileName">Arial24pt.xfont</value>
+                            <value name="TargetFileName">Out\Arial24pt.cpp</value>
+                            <value name="Description">Arial 24pt</value>
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
+                        </object>
+                        <object name="Item4" type="file" id="15">
+                            <value name="SourceFileName">Arial14pt.xfont</value>
+                            <value name="TargetFileName">Out\Arial14pt.cpp</value>
+                            <value name="Description">Arial 14pt</value>
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
+                        </object>
+                        <object name="Item5" type="file" id="16">
+                            <value name="SourceFileName">Arial18pt.xfont</value>
+                            <value name="TargetFileName">Out\Arial18pt.cpp</value>
+                            <value name="Description">Arial 18pt</value>
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
                         </object>
                     </object>
                 </object>
             </object>
-            <object name="Tools" type="toolList" id="11">
+            <object name="Tools" type="toolList" id="17">
                 <value name="count">2</value>
-                <object name="Item0" type="tool" id="12">
-                    <value name="Name">C-Compiler</value>
-                    <value name="Description">Compilador C (Microchip XC32)</value>
+                <object name="Item0" type="tool" id="18">
+                    <value name="Name">cpp_compiler</value>
+                    <value name="Description">Compilador CPP (Microchip XC32)</value>
                     <null name="Notes" />
-                    <value name="Executable">xc32.exe</value>
-                    <value name="SourceExt">c</value>
+                    <value name="Executable">C:\Program Files\Microchip\xc32\v1.40\bin\xc32-c++.exe</value>
+                    <value name="Command">{tool.executable} {tool.options} {file.options} {file.source}</value>
+                    <value name="SourceExt">cpp</value>
                     <value name="TargetExt">o</value>
                     <null name="Options" />
                 </object>
-                <object name="Item1" type="tool" id="13">
-                    <value name="Name">Resource-Compiler</value>
+                <object name="Item1" type="tool" id="19">
+                    <value name="Name">resource_compiler</value>
                     <value name="Description">Compilador de recursos</value>
                     <null name="Notes" />
-                    <value name="Executable">..\Tools\bin\eosResourceCompiler.exe</value>
+                    <value name="Executable">C:\Users\Rafael\Documents\Projectes\Projectes MPLAB\EOS\v2\Tools\Bin\EosResourceCompiler.exe</value>
+                    <value name="Command">$({tool.name}) $({tool.name}_options) {file.options} {file.source}</value>
                     <value name="SourceExt">xfont</value>
-                    <value name="TargetExt">c</value>
-                    <null name="Options" />
+                    <value name="TargetExt">cpp</value>
+                    <value name="Options">/P:use-proxy-variable /P:output-extension=cpp</value>
                 </object>
             </object>
-            <object name="Configurations" type="configurationList" id="14">
+            <object name="Configurations" type="configurationList" id="20">
                 <value name="count">0</value>
             </object>
         </object>
