@@ -2,8 +2,8 @@
 <document version="400" encodeStrings="false" useNames="true">
     <data version="101">
         <object name="root" type="project" id="0">
-            <value name="Name">EOF Fonts</value>
-            <null name="Description" />
+            <value name="Name">EOS v2.0 Fonts </value>
+            <value name="Description">Fitxers de fonts per EOS v2.0</value>
             <null name="Notes" />
             <object name="Folders" type="folderList" id="1">
                 <value name="count">1</value>
