@@ -1,4 +1,4 @@
-#include <xc_asm.h>
+#include "xc_asm.h" // Bug en xc v1.40
 #include <sys/asm.h>
 #include "ISR_Support.h"
 
@@ -47,7 +47,7 @@ isrTMR1Wrapper:
  *
  *************************************************************************/
 	
-#ifdef _TMR2	
+#ifdef _TMR2
 	.ent	isrTMR2Wrapper
 isrTMR2Wrapper:
 	portSAVE_CONTEXT
@@ -67,7 +67,7 @@ isrTMR2Wrapper:
  *
  *************************************************************************/
 	
-#ifdef _TMR3	
+#ifdef _TMR3
 	.ent	isrTMR3Wrapper
 isrTMR3Wrapper:
 	portSAVE_CONTEXT
