@@ -6,42 +6,42 @@
             <value name="Description">Fitxers de fonts per EOS v2.0</value>
             <null name="Notes" />
             <object name="Folders" type="folderList" id="1">
-                <value name="count">1</value>
-                <object name="Item0" type="folder" id="2">
+                <value name="$count">1</value>
+                <object name="$item0" type="folder" id="2">
                     <value name="Name">Font files</value>
                     <value name="Description">Arxius de tipus de lletra</value>
                     <null name="Notes" />
                     <value name="Active">True</value>
                     <object name="Folders" type="folderList" id="3">
-                        <value name="count">2</value>
-                        <object name="Item0" type="folder" id="4">
+                        <value name="$count">2</value>
+                        <object name="$item0" type="folder" id="4">
                             <value name="Name">New Folder</value>
                             <null name="Description" />
                             <null name="Notes" />
                             <value name="Active">False</value>
                             <object name="Folders" type="folderList" id="5">
-                                <value name="count">0</value>
+                                <value name="$count">0</value>
                             </object>
                             <object name="Files" type="fileList" id="6">
-                                <value name="count">0</value>
+                                <value name="$count">0</value>
                             </object>
                         </object>
-                        <object name="Item1" type="folder" id="7">
+                        <object name="$item1" type="folder" id="7">
                             <value name="Name">New Folder</value>
                             <null name="Description" />
                             <null name="Notes" />
                             <value name="Active">False</value>
                             <object name="Folders" type="folderList" id="8">
-                                <value name="count">0</value>
+                                <value name="$count">0</value>
                             </object>
                             <object name="Files" type="fileList" id="9">
-                                <value name="count">0</value>
+                                <value name="$count">0</value>
                             </object>
                         </object>
                     </object>
                     <object name="Files" type="fileList" id="10">
-                        <value name="count">9</value>
-                        <object name="Item0" type="file" id="11">
+                        <value name="$count">15</value>
+                        <object name="$item0" type="file" id="11">
                             <value name="SourceFileName">Arial8pt.xfont</value>
                             <value name="TargetFileName">Out\Arial8pt.cpp</value>
                             <value name="Description">Arial 8pt</value>
@@ -51,7 +51,7 @@
                             <null name="Tool" />
                             <value name="ToolOptions">/O:Out</value>
                         </object>
-                        <object name="Item1" type="file" id="12">
+                        <object name="$item1" type="file" id="12">
                             <value name="SourceFileName">Arial10pt.xfont</value>
                             <value name="TargetFileName">Out\Arial10pt.cpp</value>
                             <value name="Description">Arial 10pt</value>
@@ -61,7 +61,7 @@
                             <null name="Tool" />
                             <value name="ToolOptions">/O:Out</value>
                         </object>
-                        <object name="Item2" type="file" id="13">
+                        <object name="$item2" type="file" id="13">
                             <value name="SourceFileName">Arial12pt.xfont</value>
                             <value name="TargetFileName">Out\Arial12pt.cpp</value>
                             <value name="Description">Arial 12pt</value>
@@ -71,7 +71,7 @@
                             <null name="Tool" />
                             <value name="ToolOptions">/O:Out</value>
                         </object>
-                        <object name="Item3" type="file" id="14">
+                        <object name="$item3" type="file" id="14">
                             <value name="SourceFileName">Arial24pt.xfont</value>
                             <value name="TargetFileName">Out\Arial24pt.cpp</value>
                             <value name="Description">Arial 24pt</value>
@@ -81,7 +81,7 @@
                             <null name="Tool" />
                             <value name="ToolOptions">/O:Out</value>
                         </object>
-                        <object name="Item4" type="file" id="15">
+                        <object name="$item4" type="file" id="15">
                             <value name="SourceFileName">Arial14pt.xfont</value>
                             <value name="TargetFileName">Out\Arial14pt.cpp</value>
                             <value name="Description">Arial 14pt</value>
@@ -91,7 +91,7 @@
                             <null name="Tool" />
                             <value name="ToolOptions">/O:Out</value>
                         </object>
-                        <object name="Item5" type="file" id="16">
+                        <object name="$item5" type="file" id="16">
                             <value name="SourceFileName">Arial18pt.xfont</value>
                             <value name="TargetFileName">Out\Arial18pt.cpp</value>
                             <value name="Description">Arial 18pt</value>
@@ -101,7 +101,7 @@
                             <null name="Tool" />
                             <value name="ToolOptions">/O:Out</value>
                         </object>
-                        <object name="Item6" type="file" id="17">
+                        <object name="$item6" type="file" id="17">
                             <value name="SourceFileName">ArialBold8pt.xfont</value>
                             <value name="TargetFileName">Out\ArialBold8pt.cpp</value>
                             <value name="Description">Arial 8pt Bold</value>
@@ -111,7 +111,7 @@
                             <null name="Tool" />
                             <value name="ToolOptions">/O:Out</value>
                         </object>
-                        <object name="Item7" type="file" id="18">
+                        <object name="$item7" type="file" id="18">
                             <value name="SourceFileName">ArialBold10pt.xfont</value>
                             <value name="TargetFileName">Out\ArialBold10pt.cpp</value>
                             <value name="Description">Arial 10pt Bold</value>
@@ -121,7 +121,7 @@
                             <null name="Tool" />
                             <value name="ToolOptions">/O:Out</value>
                         </object>
-                        <object name="Item8" type="file" id="19">
+                        <object name="$item8" type="file" id="19">
                             <value name="SourceFileName">ArialBold12pt.xfont</value>
                             <value name="TargetFileName">Out\ArialBold12pt.cpp</value>
                             <value name="Description">Arial 12pt Bold</value>
@@ -131,12 +131,72 @@
                             <null name="Tool" />
                             <value name="ToolOptions">/O:Out</value>
                         </object>
+                        <object name="$item9" type="file" id="20">
+                            <value name="SourceFileName">CourierNew7pt.xfont</value>
+                            <value name="TargetFileName">Out\CourierNew7pt.cpp</value>
+                            <null name="Description" />
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
+                        </object>
+                        <object name="$item10" type="file" id="21">
+                            <value name="SourceFileName">CourierNew8pt.xfont</value>
+                            <value name="TargetFileName">Out\CourierNew8pt.cpp</value>
+                            <null name="Description" />
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
+                        </object>
+                        <object name="$item11" type="file" id="22">
+                            <value name="SourceFileName">CourierNew10pt.xfont</value>
+                            <value name="TargetFileName">Out\CourierNew10pt.cpp</value>
+                            <null name="Description" />
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
+                        </object>
+                        <object name="$item12" type="file" id="23">
+                            <value name="SourceFileName">CourierNewBold7pt.xfont</value>
+                            <value name="TargetFileName">Out\CourierNewBold7pt.cpp</value>
+                            <null name="Description" />
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
+                        </object>
+                        <object name="$item13" type="file" id="24">
+                            <value name="SourceFileName">CourierNewBold8pt.xfont</value>
+                            <value name="TargetFileName">Out\CourierNewBold8pt.cpp</value>
+                            <null name="Description" />
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
+                        </object>
+                        <object name="$item14" type="file" id="25">
+                            <value name="SourceFileName">CourierNewBold10pt.xfont</value>
+                            <value name="TargetFileName">Out\CourierNewBold10pt.cpp</value>
+                            <null name="Description" />
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
+                        </object>
                     </object>
                 </object>
             </object>
-            <object name="Tools" type="toolList" id="20">
-                <value name="count">2</value>
-                <object name="Item0" type="tool" id="21">
+            <object name="Tools" type="toolList" id="26">
+                <value name="$count">2</value>
+                <object name="$item0" type="tool" id="27">
                     <value name="Name">cpp_compiler</value>
                     <value name="Description">Compilador CPP (Microchip XC32)</value>
                     <null name="Notes" />
@@ -146,19 +206,19 @@
                     <value name="TargetExt">o</value>
                     <null name="Options" />
                 </object>
-                <object name="Item1" type="tool" id="22">
+                <object name="$item1" type="tool" id="28">
                     <value name="Name">resource_compiler</value>
                     <value name="Description">Compilador de recursos</value>
                     <null name="Notes" />
-                    <value name="Executable">C:\Users\Rafael\Documents\Projectes\Projectes MPLAB\EOS\v2\Tools\Bin\EosResourceCompiler.exe</value>
+                    <value name="Executable">C:\Users\Rafael\Documents\Projectes\MPLAB\EOS\v2\Tools\Bin\EosResourceCompiler.exe</value>
                     <value name="Command">$({tool.name}) $({tool.name}_options) {file.options} {file.source}</value>
                     <value name="SourceExt">xfont</value>
                     <value name="TargetExt">cpp</value>
                     <value name="Options">/P:use-proxy-variable /P:output-extension=cpp</value>
                 </object>
             </object>
-            <object name="Configurations" type="configurationList" id="23">
-                <value name="count">0</value>
+            <object name="Configurations" type="configurationList" id="29">
+                <value name="$count">0</value>
             </object>
         </object>
     </data>
