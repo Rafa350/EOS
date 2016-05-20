@@ -10,7 +10,7 @@ const unsigned capacityDelta = 10;
 
 
 #define __ASSERT(cond, code, message) \
-                             eosAssert(cone, code, message);
+                             eosAssert(cond, code, message);
 
 #define __ALLOC(s)           eosHeapAlloc(nullptr, size)
 #define __FREE(p)            eosHeapFree(p);

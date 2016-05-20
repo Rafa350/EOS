@@ -110,7 +110,7 @@ namespace eos {
             
         public:
             FormsService(MessageQueue *messageQueue, FormsDisplayHandle display);
-            ~FormsService();
+            virtual ~FormsService();
             void add(FormHandle form);
             void remove(FormHandle form);
             void destroy(FormHandle form);
