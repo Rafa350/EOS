@@ -13,10 +13,11 @@ using namespace eos;
 Form::Form(
     FormsServiceHandle _service,
     FormHandle _parent):
+#ifdef eosFormsService_UseSelector            
+    evSelectorPress(nullptr),
+#endif
     service(nullptr),
-    parent(_parent),
-    paintPending(true),
-    evSelectorPress(nullptr) {
+    parent(_parent) {
 
     if (_service != nullptr)
         _service->add(this);
@@ -31,17 +32,10 @@ Form::~Form() {
     if (service != nullptr)
         service->remove(this);
     
+#ifdef eosFormsService_UseSelector               
     if (evSelectorPress != nullptr)
         delete evSelectorPress;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Refresca un formulari.
-///
-void Form::refresh() {
-    
-    paintPending = true;   
+#endif    
 }
 
 
@@ -53,6 +47,14 @@ void Form::dispatchMessage(
     Message &message) {
     
     switch (message.id) {
+        
+        case MSG_PAINT: {
+            FormsDisplayHandle display = message.msgPaint.display;
+            display->beginDraw();
+            onPaint(display);
+            display->endDraw();
+            break;
+        }
         
 #ifdef eosFormsService_UseSelector        
         case MSG_SELECTOR:

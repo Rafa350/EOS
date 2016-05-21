@@ -6,11 +6,15 @@
 using namespace eos;
 
 
+const unsigned taskStackSize = 512;
+const TaskPriority taskPriority = TaskPriority::normal;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
 AppLoopService::AppLoopService():
-    task(512, eos::TaskPriority::normal, this) {
+    task(taskStackSize, taskPriority, this) {
 }
 
 
@@ -20,16 +24,24 @@ AppLoopService::AppLoopService():
 void AppLoopService::run() {
     
     setup();
-    while (true)
+    while (true) {
         loop();
+        Task::delay(100);
+    }
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Funcio d'inicialitzacio.
+///
 void AppLoopService::setup() {
     
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Funcio del bucle d'execucio.
+///
 void AppLoopService::loop() {
     
 }

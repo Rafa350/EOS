@@ -17,7 +17,7 @@ const TaskPriority taskPriority = TaskPriority::normal;
 /// \param display: Controlador de pantalla
 ///
 FormsService::FormsService(
-    MessageQueue *_messageQueue,
+    MessageQueueHandle _messageQueue,
     FormsDisplayHandle _display) :
     task(taskStackSize, taskPriority, this),
     messageQueue(_messageQueue),
@@ -80,17 +80,7 @@ void FormsService::run() {
         Message message;
         if (messageQueue->get(message, (unsigned) -1)) 
             message.target->dispatchMessage(message);
-        
-        // Procesa el repintat. No mes es pinta el formulari actiu, ja
-        // que es pantalla complerta, no finestres
-        //
-        if ((activeForm != nullptr) && activeForm->paintPending) {
-            activeForm->paintPending = false;            
-            display->beginDraw();
-            activeForm->onPaint(display);
-            display->endDraw();
-        }
-        
+                
         // Procesa l'eliminacio de forms pendents de destruccio
         //
         if (destroyForms.getCount() > 0) {
@@ -127,4 +117,21 @@ FormHandle FormsService::activate(
 
     if (activeForm != nullptr)    
         activeForm->onActivate(oldActive);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Refresca un formulari. Es genera un missatge MSG_PAINT.
+/// \param form: El formulari a refrescar
+///
+void FormsService::refresh(
+    FormHandle form) {
+    
+    Message msg;
+    
+    msg.id = MSG_PAINT;
+    msg.target = form;
+    msg.msgPaint.display = display;
+    
+    messageQueue->put(msg, (unsigned) -1);
 }

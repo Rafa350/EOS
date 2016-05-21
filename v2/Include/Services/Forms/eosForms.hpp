@@ -15,7 +15,8 @@
 #endif
 
 
-#define MSG_NULL               0
+#define MSG_NULL               0       // Event NULL
+#define MSG_PAINT              1       // Repintat del form
 
 #ifdef eosFormsService_UseSelector
 #define MSG_SELECTOR         100       // Event del selector
@@ -51,7 +52,12 @@ namespace eos {
     
     class FormsService;
     typedef FormsService *FormsServiceHandle;
-       
+    
+    struct MsgPaint {
+        FormsDisplayHandle display;
+    };
+    
+#ifdef eosFormsService_UseSelector
     enum class SelectorDirection {
         forward,
         backward
@@ -62,6 +68,7 @@ namespace eos {
         int position;
         unsigned state;
     };
+#endif    
 
 #ifdef eosFormsService_UseKeyboard    
     struct MsgKeyboard {
@@ -80,6 +87,7 @@ namespace eos {
         unsigned id;
         FormHandle target;
         union {
+            MsgPaint msgPaint;
 #ifdef eosFormsService_UseSelector            
             MsgSelector msgSelector;
 #endif            
@@ -114,6 +122,7 @@ namespace eos {
             void add(FormHandle form);
             void remove(FormHandle form);
             void destroy(FormHandle form);
+            void refresh(FormHandle form);
             FormHandle activate(FormHandle form);
             FormHandle getActiveForm() const { return activeForm; }
         private:
@@ -144,7 +153,6 @@ namespace eos {
         private:
             FormsServiceHandle service;
             FormHandle parent;
-            bool paintPending;
 #ifdef eosFormsService_UseSelector            
             ISelectorPressEvent *evSelectorPress;
 #endif
@@ -156,7 +164,7 @@ namespace eos {
         public:
             Form(FormsServiceHandle service, FormHandle parent);
             void destroy() { service->destroy(this); }
-            void refresh();
+            void refresh() { service->refresh(this); }
             void activate() { service->activate(this); }
             FormHandle getParent() const { return parent; }
             FormsServiceHandle getService() const { return service; }
