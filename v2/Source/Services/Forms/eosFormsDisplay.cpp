@@ -46,10 +46,12 @@ void FormsDisplay::setColor(
 
 /// ----------------------------------------------------------------------
 /// \brief Borra la pantalla.
+/// \param color: Color
 ///
-void FormsDisplay::clear() {
+void FormsDisplay::clear(
+    Color color) {
     
-    display->clear(0);
+    display->clear(color);
 }
 
 
@@ -102,7 +104,7 @@ void FormsDisplay::drawText(
     unsigned offset,
     unsigned length) {
     
-    display->drawString(x, y, text);    
+    display->drawString(x, y, text, offset, length);    
 }
 
 

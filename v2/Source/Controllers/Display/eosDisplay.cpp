@@ -354,11 +354,15 @@ int Display::drawChar(
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 /// \param s: La cadena a dibuixar.
+/// \param offset: El primer caracter a dibuixar
+/// \param length: Numero de caracters a dibuixar
 ///
 int Display::drawString(
     int x, 
     int y, 
-    const char *s) {
+    const char *s,
+    int offset,
+    int length) {
     
     char c;
     int sx = x;

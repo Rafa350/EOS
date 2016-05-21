@@ -8,6 +8,9 @@
 
 namespace eos {
     
+    /// \brief Clase que implementa el servei del bucle principal 
+    ///        de l'aplicacio.
+    ///
     class AppLoopService: private IRunable {
 
         private:

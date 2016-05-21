@@ -7,6 +7,9 @@
 
 namespace eos {
     
+    /// \brief Interficie que cal que implementin les clases que poden
+    ///        ser procesades dins d'una tasca.
+    ///
     class IRunable {
         public:
             virtual void run() = 0;
@@ -19,6 +22,8 @@ namespace eos {
         high = 3
     };
     
+    /// \brief Clase que implementa una tasca.
+    ///
     class Task {
         private:
             void *handle;

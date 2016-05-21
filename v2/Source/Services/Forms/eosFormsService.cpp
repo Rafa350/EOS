@@ -30,7 +30,6 @@ FormsService::FormsService(
 ///
 FormsService::~FormsService() {
     
-    delete display;
 }
 
 

@@ -6,6 +6,7 @@
 #include "System/Core/eosTask.hpp"
 #include "System/Collections/eosList.hpp"
 #include "System/Collections/eosQueue.hpp"
+#include "Controllers/Display/eosDisplay.hpp"
 #ifdef eosFormsService_UseSelector
 #include "Services/Forms/eosSelector.hpp"
 #endif
@@ -50,9 +51,7 @@ namespace eos {
     
     class FormsService;
     typedef FormsService *FormsServiceHandle;
-    
-    class Display;
-    
+       
     enum class SelectorDirection {
         forward,
         backward
@@ -94,6 +93,7 @@ namespace eos {
     };
     
     typedef Queue<Message> MessageQueue;
+    typedef MessageQueue *MessageQueueHandle;
     
     class FormsService: private IRunable {
         private:
@@ -102,14 +102,14 @@ namespace eos {
             
         private:
             Task task;
-            MessageQueue *messageQueue;
+            MessageQueueHandle messageQueue;
             FormsDisplayHandle display;
             FormList forms;
             FormList destroyForms;
             FormHandle activeForm;     
             
         public:
-            FormsService(MessageQueue *messageQueue, FormsDisplayHandle display);
+            FormsService(MessageQueueHandle messageQueue, FormsDisplayHandle display);
             virtual ~FormsService();
             void add(FormHandle form);
             void remove(FormHandle form);
@@ -130,8 +130,8 @@ namespace eos {
             FormsDisplay(Display *display);
             void beginDraw();
             void endDraw();
-            void clear();
-            void setColor(unsigned color);
+            void clear(Color color);
+            void setColor(Color color);
             void drawLine(int x1, int y1, int x2, int y2);
             void drawRectangle(int x, int y, int width, int height);
             void drawText(int x, int y, const char *text, unsigned offset, unsigned length);
