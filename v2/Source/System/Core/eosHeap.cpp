@@ -2,6 +2,11 @@
 #include "FreeRTOS.h"
 
 
+
+unsigned totalAlocations = 0;
+unsigned totalDeallocations = 0;
+
+
 typedef struct __eosHeap {   
 } eosHeap;
 
@@ -26,6 +31,8 @@ void *eosHeapAlloc(
     eosHeapHandle hHeap,
     unsigned size) {
     
+    totalAllocations++;
+    
     return pvPortMalloc(size);
 }
 
@@ -36,6 +43,8 @@ void *eosHeapAlloc(
 ///
 void eosHeapFree(
     void *p) {
+    
+    totalDeallocations++;
 
     vPortFree(p);
 }
