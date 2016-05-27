@@ -3,7 +3,7 @@
 
 
 
-unsigned totalAlocations = 0;
+unsigned totalAllocations = 0;
 unsigned totalDeallocations = 0;
 
 

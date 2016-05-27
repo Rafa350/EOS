@@ -26,7 +26,7 @@ void AppLoopService::run() {
     setup();
     while (true) {
         loop();
-        Task::delay(100);
+        //Task::delay(100); // TIME_SLICING 
     }
 }
 

@@ -28,7 +28,7 @@ Task::Task(
         defaultTaskName, 
         stackSize, 
         this, 
-        tskIDLE_PRIORITY + unsigned(priority), 
+        tskIDLE_PRIORITY + ((UBaseType_t) priority), 
         &handle);
 }
 

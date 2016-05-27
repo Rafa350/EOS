@@ -23,15 +23,34 @@ namespace eos {
             Method method;
 
         public:
+            CallbackP1() {
+                
+                instance = nullptr;
+                method = nullptr;
+            }
+            
             CallbackP1(Class *instance, Method method) {
                 
+                this->instance = instance;
+                this->method = method;
+            }
+            
+            CallbackP1(const CallbackP1 &other) {
+                
+                this->instance = other.instance;
+                this->method = other.method;
+            }
+            
+            void set(Class *instance, Method method) {
+
                 this->instance = instance;
                 this->method = method;
             }
 
             void execute(P1Type p1) {
                 
-                (instance->*method)(p1);
+                if ((instance != nullptr) && (method != nullptr))
+                    (instance->*method)(p1);
             }
     };    
 

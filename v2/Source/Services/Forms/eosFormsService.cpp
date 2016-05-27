@@ -80,7 +80,8 @@ void FormsService::run() {
         Message message;
         if (messageQueue->get(message, (unsigned) -1)) 
             message.target->dispatchMessage(message);
-                
+            
+        /*
         // Procesa l'eliminacio de forms pendents de destruccio
         //
         if (destroyForms.getCount() > 0) {
@@ -98,6 +99,7 @@ void FormsService::run() {
             
             destroyForms.clear();
         }
+        */
     }
 }
 
