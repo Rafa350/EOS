@@ -22,11 +22,24 @@ extern "C" {
 #define HAL_TMR_T4                  3
 #define HAL_TMR_T5                  4
     
+#define HAL_TMR_MODE16              0
+#define HAL_TMR_MODE32              1
+
+#define HAL_TMR_PS1                 0
+#define HAL_TMR_PS2                 1
+#define HAL_TMR_PS4                 2
+#define HAL_TMR_PS8                 3
+#define HAL_TMR_PS16                4
+#define HAL_TMR_PS32                5
+#define HAL_TMR_PS64                6
+
+    
     
 typedef void (*TMRInterruptCallback)(uint8_t timer, void *param);
 
 
-void halTMRInitializeTimer(uint8_t timer, TMRInterruptCallback callback, void *param);
+void halTMRInitializeTimer(uint8_t timer, uint8_t mode, uint8_t prescale, 
+        unsigned period, TMRInterruptCallback callback, void *param);
 void halTMRStartTimer(uint8_t timer);
 void halTMRStopTimer(uint8_t timer);
 

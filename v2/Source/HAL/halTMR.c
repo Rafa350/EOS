@@ -43,6 +43,16 @@ static const TimerInfo timerInfoTbl[NUM_TIMERS] = {
 #endif
 };
 
+static const prescaleTbl[8] = {
+    TMR_PRESCALE_VALUE_1,
+    TMR_PRESCALE_VALUE_2,
+    TMR_PRESCALE_VALUE_4,
+    TMR_PRESCALE_VALUE_8,
+    TMR_PRESCALE_VALUE_16,
+    TMR_PRESCALE_VALUE_32,
+    TMR_PRESCALE_VALUE_64
+};
+
 static const INT_PRIORITY_LEVEL intPriority = INT_PRIORITY_LEVEL2;
 static const INT_SUBPRIORITY_LEVEL intSubPriority = INT_SUBPRIORITY_LEVEL0;
 
@@ -69,11 +79,17 @@ extern void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza les interrupcions per un temporitzador.
 /// \param timer: El identificador del temporitzador.
+/// \param mode: Modus 16 o 32 bits
+/// \param prescale: Divisor d'entrada
+/// \param period: Periode
 /// \param callback: Funcio per procesar la interrupcio.
 /// \param param: Parametre de la funcio callback.
 ///
 void halTMRInitializeTimer(
     uint8_t timer, 
+    uint8_t mode,
+    uint8_t prescale,
+    unsigned period,
     TMRInterruptCallback callback, 
     void *param) {
     
@@ -81,10 +97,17 @@ void halTMRInitializeTimer(
     
     PLIB_TMR_Stop(ti->tmrId);
     PLIB_TMR_ClockSourceSelect(ti->tmrId, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
-    PLIB_TMR_PrescaleSelect(ti->tmrId, TMR_PRESCALE_VALUE_16);
-    PLIB_TMR_Mode16BitEnable(ti->tmrId);
-    PLIB_TMR_Counter16BitClear(ti->tmrId);
-    PLIB_TMR_Period16BitSet(ti->tmrId, 50);    
+    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[prescale]);
+    if (mode == HAL_TMR_MODE16) {
+        PLIB_TMR_Mode16BitEnable(ti->tmrId);
+        PLIB_TMR_Counter16BitClear(ti->tmrId);
+        PLIB_TMR_Period16BitSet(ti->tmrId, period);    
+    } 
+    else if (mode == HAL_TMR_MODE32) {
+        PLIB_TMR_Mode32BitEnable(ti->tmrId);
+        PLIB_TMR_Counter32BitClear(ti->tmrId);
+        PLIB_TMR_Period32BitSet(ti->tmrId, period);            
+    }
 
     callbacks[timer] = callback;
     if (callback != NULL) {
