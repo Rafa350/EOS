@@ -98,7 +98,7 @@ void halTMRInitializeTimer(
     
     PLIB_TMR_Stop(ti->tmrId);
     PLIB_TMR_ClockSourceSelect(ti->tmrId, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
-    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[prescale]);
+    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[prescale & 0x07]);
     if (mode == HAL_TMR_MODE16) {
         PLIB_TMR_Mode16BitEnable(ti->tmrId);
         PLIB_TMR_Counter16BitClear(ti->tmrId);
