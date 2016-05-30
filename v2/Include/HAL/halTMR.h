@@ -32,7 +32,7 @@ extern "C" {
 #define HAL_TMR_PS16                4
 #define HAL_TMR_PS32                5
 #define HAL_TMR_PS64                6
-
+#define HAL_TMR_PS256               7
     
     
 typedef void (*TMRInterruptCallback)(uint8_t timer, void *param);
