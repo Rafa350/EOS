@@ -2,8 +2,8 @@
 <document version="400" encodeStrings="false" useNames="true">
     <data version="101">
         <object name="root" type="project" id="0">
-            <value name="Name">EOS v2.0 Fonts </value>
-            <value name="Description">Fitxers de fonts per EOS v2.0</value>
+            <value name="Name">EOS v2.0 Fonts</value>
+            <value name="Description">Biblioteca de fonts per EOS v2.0</value>
             <null name="Notes" />
             <object name="Folders" type="folderList" id="1">
                 <value name="$count">1</value>
@@ -190,7 +190,7 @@
                     <value name="Command">$({tool.name}) $({tool.name}_options) {file.options} {file.source}</value>
                     <value name="SourceExt">xfont</value>
                     <value name="TargetExt">cpp</value>
-                    <value name="Options">/P:use-proxy-variable /P:output-extension=cpp</value>
+                    <value name="Options">/P:use-proxy-variable /P:output-extension=cpp /P:include-files=eosConfig.h</value>
                 </object>
             </object>
             <object name="Configurations" type="configurationList" id="23">

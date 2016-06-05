@@ -5,11 +5,12 @@
  *
  *       Fuente : MicrosoftSansSerif 24pt
  *
- *       Fecha de generacion  : 12/02/2016 20:42:51
- *       Nombre del generador : XFontGenerator
+ *       Fecha de generacion  : 05/06/2016 13:32:03
+ *       Nombre del generador : EosResourceCompiler
  *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
+
 
 #ifdef FONT_USE_MicrosoftSansSerif24pt
 
@@ -729,7 +730,7 @@ static const unsigned char font[] = {
               0x70, 0x00, 0xE0, 0x00, 0xFF, 0xFE, 0xFF, 0xFE, 
               };
 
-unsigned char *fontMicrosoftSansSerif24pt = &font;
+const unsigned char *fontMicrosoftSansSerif24pt = &font;
 
 
 #endif

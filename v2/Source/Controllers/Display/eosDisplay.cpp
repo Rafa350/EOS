@@ -5,8 +5,8 @@
 using namespace eos;
 
 
-extern const unsigned char *fontArial10pt;
-extern const unsigned char *fontArial12pt;
+extern const unsigned char *fontArial14pt;
+extern const unsigned char *fontArial18pt;
 extern const unsigned char *fontArial24pt;
 
 
@@ -21,7 +21,7 @@ Display::Display(
     xCursor(0),
     yCursor(0),
     ttyState(0),
-    font(new Font(fontArial24pt)) {
+    font(new Font(fontArial14pt)) {
 }
 
 
@@ -124,10 +124,10 @@ void Display::drawLine(
     int dx, dy, p, incE, incNE;
     
     if (x1 == x2)
-        driver->setVPixels(x1, y1, y2 - y1, color);
+        driver->setVPixels(x1, y1, y2 - y1 + 1, color);
 	
     else if (y1 == y2)
-        driver->setHPixels(x1, y1, x2 - x1, color);
+        driver->setHPixels(x1, y1, x2 - x1 + 1, color);
 	
     else {
 		
@@ -197,10 +197,10 @@ void Display::drawRectangle(
     int x2, 
     int y2) {
     
-    driver->setHPixels(x1, y1, x2 - x1, color);
-    driver->setHPixels(x1, y2, x2 - x1, color);
-    driver->setVPixels(x1, y1, y2 - y1, color);
-    driver->setVPixels(x2, y1, y2 - y1, color);
+    driver->setHPixels(x1, y1, x2 - x1 + 1, color);
+    driver->setHPixels(x1, y2, x2 - x1 + 1, color);
+    driver->setVPixels(x1, y1, y2 - y1 + 1, color);
+    driver->setVPixels(x2, y1, y2 - y1 + 1, color);
 }
 
 
@@ -259,7 +259,7 @@ void Display::fillRectangle(
     }
 
     while (x1 <= x2)
-        driver->setVPixels(x1++, y1, y2 - y1, color);
+        driver->setVPixels(x1++, y1, y2 - y1 + 1, color);
 }
 
 

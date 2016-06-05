@@ -5,11 +5,15 @@
  *
  *       Fuente : CourierNew Bold 10pt
  *
- *       Fecha de generacion  : 12/02/2016 20:42:51
- *       Nombre del generador : XFontGenerator
+ *       Fecha de generacion  : 05/06/2016 14:09:03
+ *       Nombre del generador : EosResourceCompiler
  *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
+
+
+#include "eosConfig.h"
+
 
 #ifdef FONT_USE_CourierNewBold10pt
 
@@ -315,10 +319,7 @@ static const unsigned char font[] = {
               /* 05F9 */    0xFC, 0x98, 0x30, 0x60, 0xC4, 0xFC, 
 };
 
-unsigned char *fontCourierNewBold10pt = &font;
+const unsigned char *fontCourierNewBold10pt = font;
 
 
 #endif
-
-
-/************************************************************************/

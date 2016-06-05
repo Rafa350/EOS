@@ -5,11 +5,12 @@
  *
  *       Fuente : MicrosoftSansSerif Bold 18pt
  *
- *       Fecha de generacion  : 12/02/2016 20:42:52
- *       Nombre del generador : XFontGenerator
+ *       Fecha de generacion  : 05/06/2016 13:32:03
+ *       Nombre del generador : EosResourceCompiler
  *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
+
 
 #ifdef FONT_USE_MicrosoftSansSerifBold18pt
 
@@ -578,7 +579,7 @@ static const unsigned char font[] = {
               0x70, 0x00, 0xE0, 0x00, 0xFF, 0xC0, 0xFF, 0xC0, 
               };
 
-unsigned char *fontMicrosoftSansSerifBold18pt = &font;
+const unsigned char *fontMicrosoftSansSerifBold18pt = &font;
 
 
 #endif

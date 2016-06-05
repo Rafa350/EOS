@@ -85,7 +85,7 @@ void FormsDisplay::drawRectangle(
     int width, 
     int height) {
     
-    display->drawRectangle(x, y, x + width, y + height);
+    display->drawRectangle(x, y, x + width - 1, y + height - 1);
 }
 
 

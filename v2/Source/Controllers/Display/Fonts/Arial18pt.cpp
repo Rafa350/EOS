@@ -5,11 +5,15 @@
  *
  *       Fuente : Arial 18pt
  *
- *       Fecha de generacion  : 12/02/2016 20:42:51
- *       Nombre del generador : XFontGenerator
+ *       Fecha de generacion  : 05/06/2016 14:08:59
+ *       Nombre del generador : EosResourceCompiler
  *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
+
+
+#include "eosConfig.h"
+
 
 #ifdef FONT_USE_Arial18pt
 
@@ -94,10 +98,7 @@ static const unsigned char font[] = {
               0x3E, 0x00, 
 };
 
-unsigned char *fontArial18pt = &font;
+const unsigned char *fontArial18pt = font;
 
 
 #endif
-
-
-/************************************************************************/

@@ -5,11 +5,12 @@
  *
  *       Fuente : Arial Bold 24pt
  *
- *       Fecha de generacion  : 12/02/2016 20:42:51
- *       Nombre del generador : XFontGenerator
+ *       Fecha de generacion  : 05/06/2016 13:32:03
+ *       Nombre del generador : EosResourceCompiler
  *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
+
 
 #ifdef FONT_USE_ArialBold24pt
 
@@ -106,7 +107,7 @@ static const unsigned char font[] = {
               0x7F, 0xF0, 0x3F, 0xE0, 0x0F, 0x80, 
 };
 
-unsigned char *fontArialBold24pt = &font;
+const unsigned char *fontArialBold24pt = &font;
 
 
 #endif

@@ -7,7 +7,7 @@ cpp_compiler_options=
 
 # resource_compiler: Compilador de recursos
 resource_compiler="C:\Users\Rafael\Documents\Projectes\MPLAB\EOS\v2\Tools\Bin\EosResourceCompiler.exe"
-resource_compiler_options=/P:use-proxy-variable /P:output-extension=cpp
+resource_compiler_options=/P:use-proxy-variable /P:output-extension=cpp /P:include-files=eosConfig.h
 
 
 # ---------------------------------------------------

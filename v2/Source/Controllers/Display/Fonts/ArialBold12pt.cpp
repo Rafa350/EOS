@@ -5,11 +5,15 @@
  *
  *       Fuente : Arial Bold 12pt
  *
- *       Fecha de generacion  : 12/02/2016 20:42:51
- *       Nombre del generador : XFontGenerator
+ *       Fecha de generacion  : 05/06/2016 14:09:01
+ *       Nombre del generador : EosResourceCompiler
  *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
+
+
+#include "eosConfig.h"
+
 
 #ifdef FONT_USE_ArialBold12pt
 
@@ -66,10 +70,7 @@ static const unsigned char font[] = {
               0x03, 0xC6, 0xFE, 0x7C, 
 };
 
-unsigned char *fontArialBold12pt = &font;
+const unsigned char *fontArialBold12pt = font;
 
 
 #endif
-
-
-/************************************************************************/

@@ -5,11 +5,12 @@
  *
  *       Fuente : MicrosoftSansSerif 10pt
  *
- *       Fecha de generacion  : 12/02/2016 20:42:51
- *       Nombre del generador : XFontGenerator
+ *       Fecha de generacion  : 05/06/2016 13:32:03
+ *       Nombre del generador : EosResourceCompiler
  *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
+
 
 #ifdef FONT_USE_MicrosoftSansSerif10pt
 
@@ -371,7 +372,7 @@ static const unsigned char font[] = {
 /* 06B5 */    0xF0, 0x10, 0x20, 0x40, 0x40, 0x80, 0xF0, 
 };
 
-unsigned char *fontMicrosoftSansSerif10pt = &font;
+const unsigned char *fontMicrosoftSansSerif10pt = &font;
 
 
 #endif

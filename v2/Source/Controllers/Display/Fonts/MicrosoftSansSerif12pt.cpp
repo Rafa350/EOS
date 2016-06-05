@@ -5,11 +5,12 @@
  *
  *       Fuente : MicrosoftSansSerif 12pt
  *
- *       Fecha de generacion  : 12/02/2016 20:42:51
- *       Nombre del generador : XFontGenerator
+ *       Fecha de generacion  : 05/06/2016 13:32:03
+ *       Nombre del generador : EosResourceCompiler
  *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
+
 
 #ifdef FONT_USE_MicrosoftSansSerif12pt
 
@@ -396,7 +397,7 @@ static const unsigned char font[] = {
               0xFC, 
 };
 
-unsigned char *fontMicrosoftSansSerif12pt = &font;
+const unsigned char *fontMicrosoftSansSerif12pt = &font;
 
 
 #endif

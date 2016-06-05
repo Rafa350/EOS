@@ -5,11 +5,15 @@
  *
  *       Fuente : CourierNew 8pt
  *
- *       Fecha de generacion  : 12/02/2016 20:42:51
- *       Nombre del generador : XFontGenerator
+ *       Fecha de generacion  : 05/06/2016 14:09:01
+ *       Nombre del generador : EosResourceCompiler
  *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
+
+
+#include "eosConfig.h"
+
 
 #ifdef FONT_USE_CourierNew8pt
 
@@ -299,10 +303,7 @@ static const unsigned char font[] = {
 /* 0567 */    0xF8, 0x90, 0x20, 0x48, 0xF8, 
 };
 
-unsigned char *fontCourierNew8pt = &font;
+const unsigned char *fontCourierNew8pt = font;
 
 
 #endif
-
-
-/************************************************************************/

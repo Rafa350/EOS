@@ -5,13 +5,17 @@
  *
  *       Fuente : Arial 24pt
  *
- *       Fecha de generacion  : 12/02/2016 20:42:51
- *       Nombre del generador : XFontGenerator
+ *       Fecha de generacion  : 05/06/2016 14:08:59
+ *       Nombre del generador : EosResourceCompiler
  *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
 
-//#ifdef FONT_USE_Arial24pt
+
+#include "eosConfig.h"
+
+
+#ifdef FONT_USE_Arial24pt
 
 
 static const unsigned char font[] = {
@@ -109,7 +113,4 @@ static const unsigned char font[] = {
 const unsigned char *fontArial24pt = font;
 
 
-//#endif
-
-
-/************************************************************************/
+#endif
