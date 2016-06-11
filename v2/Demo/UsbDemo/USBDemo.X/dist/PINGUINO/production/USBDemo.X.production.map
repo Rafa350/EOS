@@ -7,7 +7,7 @@ c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../
 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(new_op.o)
                               build/PINGUINO/production/_ext/1472/Main.o (operator new(unsigned long))
 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(pure.o)
-                              build/PINGUINO/production/_ext/863068963/eosAppLoop.o (__cxa_pure_virtual)
+                              build/PINGUINO/production/_ext/2012494728/eosUsbClient.o (__cxa_pure_virtual)
 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(bad_alloc.o)
                               c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(new_op.o) (vtable for std::bad_alloc)
 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_alloc.o)
@@ -179,6 +179,13 @@ c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../
 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
                               c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(vector0.o) (_DefaultInterrupt)
 
+Allocating common symbols
+Common symbol       size              file
+
+sysDevcon           0x4               build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+drvUSBModule        0x4               build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+usbDevObject0       0x4               build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+
 Microchip PIC32 Memory-Usage Report
 
 kseg0 Program-Memory Usage
@@ -269,9 +276,9 @@ section                    address  length [bytes]      (dec)  Description
 .text.prvTaskExitError  0x9d0066c0           0x74         116   
 .text._ZN10__cxxabiv111 0x9d006734           0x74         116   
 .text.main              0x9d0067a8           0x70         112   
-.text._ZN3eos14AppLoopS 0x9d006818           0x70         112   
-.rodata                 0x9d006888           0x70         112  Read-only const 
-.text._ZN3eos16UsbClien 0x9d0068f8           0x70         112   
+.text._ZN3eos16UsbClien 0x9d006818           0x70         112   
+.text._ZN3eos14AppLoopS 0x9d006888           0x70         112   
+.rodata                 0x9d0068f8           0x70         112  Read-only const 
 .text._ZL23__gxx_except 0x9d006968           0x70         112   
 .text.prvSampleTimeNow  0x9d0069d8           0x6c         108   
 .text.__cxa_free_except 0x9d006a44           0x6c         108   
@@ -309,9 +316,9 @@ section                    address  length [bytes]      (dec)  Description
 .vector_default         0x9d007580           0x48          72   
 .text._ZN16MyAppLoopSer 0x9d0075c8           0x44          68   
 .text.vAssertCalled     0x9d00760c           0x44          68   
-.text._ZN3eos11Applicat 0x9d007650           0x44          68   
-.text._ZN3eos4TaskD0Ev  0x9d007694           0x44          68   
-.text._ZN3eos4Task5dela 0x9d0076d8           0x44          68   
+.text._ZN3eos4TaskD0Ev  0x9d007650           0x44          68   
+.text._ZN3eos4Task5dela 0x9d007694           0x44          68   
+.text._ZN3eos11Applicat 0x9d0076d8           0x44          68   
 .text.prvTimerTask      0x9d00771c           0x44          68   
 .text.strcmp            0x9d007760           0x44          68   
 .text                   0x9d0077a4           0x44          68  App's exec code 
@@ -333,9 +340,9 @@ section                    address  length [bytes]      (dec)  Description
 .text.vPortClearInterru 0x9d007ad4           0x28          40   
 .text.PLIB_PCACHE_WaitS 0x9d007afc           0x28          40   
 .text._ZdlPv            0x9d007b24           0x28          40   
-.text._ZN3eos14AppLoopS 0x9d007b4c           0x24          36   
+.text._ZN3eos16UsbClien 0x9d007b4c           0x24          36   
 .text._ZN3eos14AppLoopS 0x9d007b70           0x24          36   
-.text._ZN3eos16UsbClien 0x9d007b94           0x24          36   
+.text._ZN3eos14AppLoopS 0x9d007b94           0x24          36   
 .text._ZNSt9bad_allocD2 0x9d007bb8           0x24          36   
 .text._ZNSt9exceptionD0 0x9d007bdc           0x24          36   
 .rodata                 0x9d007c00           0x24          36  Read-only const 
@@ -452,30 +459,30 @@ section                    address  length [bytes]      (dec)  Description
 .eh_frame               0xa0000004            0x4           4   
 .gcc_except_table       0xa0000008           0x30          48   
 .sdata                  0xa0000038            0xc          12  Small init data 
-.sbss                   0xa0000044           0x6c         108  Small uninit data 
-.bss                    0xa00000b0         0x4680       18048  Uninitialized data 
-.bss._ZL16emergency_buf 0xa0004730          0x800        2048   
-.bss                    0xa0004f30          0x28c         652  Uninitialized data 
-.data                   0xa00051bc            0xc          12  Initialized data 
-.bss._ZL10eh_globals.eh 0xa00051c8            0x8           8   
-.bss                    0xa00051d0            0x8           8  Uninitialized data 
-.bss._ZL14emergency_use 0xa00051d8            0x4           4   
-.data._ZN10__cxxabiv120 0xa00051dc            0x4           4   
-.bss.__new_handler.__ne 0xa00051e0            0x4           4   
-.data._ZN10__cxxabiv119 0xa00051e4            0x4           4   
-.data                   0xa00051e8            0x4           4  Initialized data 
-.bss                    0xa00051ec            0x8           8  Uninitialized data 
-         Total kseg1_data_mem used  :      0x51f4       20980  64.0% of 0x8000
+.sbss                   0xa0000044           0x78         120  Small uninit data 
+.bss                    0xa00000bc         0x4680       18048  Uninitialized data 
+.bss._ZL14emergency_use 0xa000473c            0x4           4   
+.bss._ZL16emergency_buf 0xa0004740          0x800        2048   
+.bss                    0xa0004f40          0x28c         652  Uninitialized data 
+.data                   0xa00051cc            0xc          12  Initialized data 
+.bss._ZL10eh_globals.eh 0xa00051d8            0x8           8   
+.bss                    0xa00051e0            0x8           8  Uninitialized data 
+.data._ZN10__cxxabiv120 0xa00051e8            0x4           4   
+.bss.__new_handler.__ne 0xa00051ec            0x4           4   
+.data._ZN10__cxxabiv119 0xa00051f0            0x4           4   
+.data                   0xa00051f4            0x4           4  Initialized data 
+.bss                    0xa00051f8            0x8           8  Uninitialized data 
+         Total kseg1_data_mem used  :      0x5200       20992  64.1% of 0x8000
         --------------------------------------------------------------------------
-            Total Data Memory used  :      0x51f4       20980  64.0% of 0x8000
+            Total Data Memory used  :      0x5200       20992  64.1% of 0x8000
         --------------------------------------------------------------------------
 
 
 Dynamic Data-Memory Reservation
 section                    address  length [bytes]      (dec)  Description
 -------                 ----------  -------------------------  -----------
-heap                    0xa00051f8          0x800        2048  Reserved for heap 
-stack                   0xa0005a10         0x25e0        9696  Reserved for stack 
+heap                    0xa0005208          0x800        2048  Reserved for heap 
+stack                   0xa0005a20         0x25d8        9688  Reserved for stack 
 
         --------------------------------------------------------------------------
 
@@ -502,16 +509,24 @@ Discarded input sections
  .data          0x00000000        0x0 build/PINGUINO/production/_ext/1472/Config.o
  .bss           0x00000000        0x0 build/PINGUINO/production/_ext/1472/Config.o
  .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/1472/Config.o
- .text          0x00000000        0x0 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .data          0x00000000        0x0 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .bss           0x00000000        0x0 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .gnu.linkonce.t._ZN3eos11Application9onExecuteEv
-                0x00000000       0x24 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .gnu.linkonce.t._ZN3eos11Application12onInitializeEv
-                0x00000000       0x24 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .gnu.linkonce.t._ZN3eos11Application11onTerminateEv
-                0x00000000       0x24 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .text          0x00000000        0x0 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .data          0x00000000        0x0 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .bss           0x00000000        0x0 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .text          0x00000000        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .data          0x00000000        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .bss           0x00000000        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .rodata        0x00000000        0x8 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .text          0x00000000        0x0 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .data          0x00000000        0x0 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .bss           0x00000000        0x0 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .gnu.linkonce.t._ZN3eos8IRunableC2Ev
+                0x00000000       0x34 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .gnu.linkonce.r._ZTVN3eos8IRunableE
+                0x00000000        0xc build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .rodata        0x00000000        0x8 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
  .text          0x00000000        0x0 build/PINGUINO/production/_ext/1935080774/eosTask.o
  .data          0x00000000        0x0 build/PINGUINO/production/_ext/1935080774/eosTask.o
  .bss           0x00000000        0x0 build/PINGUINO/production/_ext/1935080774/eosTask.o
@@ -528,11 +543,16 @@ Discarded input sections
                 0x00000000       0x30 build/PINGUINO/production/_ext/1935080774/eosTask.o
  .text._ZN3eos4Task16resumeAllThreadsEv
                 0x00000000       0x30 build/PINGUINO/production/_ext/1935080774/eosTask.o
- .text          0x00000000        0x0 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .data          0x00000000        0x0 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .bss           0x00000000        0x0 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .rodata        0x00000000        0x8 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .text          0x00000000        0x0 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .data          0x00000000        0x0 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .bss           0x00000000        0x0 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .gnu.linkonce.t._ZN3eos11Application9onExecuteEv
+                0x00000000       0x24 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .gnu.linkonce.t._ZN3eos11Application12onInitializeEv
+                0x00000000       0x24 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .gnu.linkonce.t._ZN3eos11Application11onTerminateEv
+                0x00000000       0x24 build/PINGUINO/production/_ext/1315484212/eosApplication.o
  .text          0x00000000        0x0 build/PINGUINO/production/_ext/2129976512/tasks.o
  .data          0x00000000        0x0 build/PINGUINO/production/_ext/2129976512/tasks.o
  .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/2129976512/tasks.o
@@ -650,19 +670,12 @@ Discarded input sections
  .data          0x00000000        0x0 build/PINGUINO/production/_ext/2129976512/list.o
  .bss           0x00000000        0x0 build/PINGUINO/production/_ext/2129976512/list.o
  .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/2129976512/list.o
- .text          0x00000000        0x0 build/PINGUINO/production/_ext/55825582/halSYS.o
- .data          0x00000000        0x0 build/PINGUINO/production/_ext/55825582/halSYS.o
- .bss           0x00000000        0x0 build/PINGUINO/production/_ext/55825582/halSYS.o
- .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/55825582/halSYS.o
- .text          0x00000000        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .data          0x00000000        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .bss           0x00000000        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .gnu.linkonce.t._ZN3eos8IRunableC2Ev
-                0x00000000       0x34 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .gnu.linkonce.r._ZTVN3eos8IRunableE
-                0x00000000        0xc build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .rodata        0x00000000        0x8 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .text          0x00000000        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+ .data          0x00000000        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+ .bss           0x00000000        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+ .reginfo       0x00000000       0x18 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+ .text.usbHarmonyTasks
+                0x00000000       0x48 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
  .text          0x00000000        0x0 ..\..\..\..\..\..\..\..\..\..\microchip\harmony\v1_07_01\bin\framework\peripheral\PIC32MX440F256H_peripherals.a(peripheral.o)
  .data          0x00000000        0x0 ..\..\..\..\..\..\..\..\..\..\microchip\harmony\v1_07_01\bin\framework\peripheral\PIC32MX440F256H_peripherals.a(peripheral.o)
  .bss           0x00000000        0x0 ..\..\..\..\..\..\..\..\..\..\microchip\harmony\v1_07_01\bin\framework\peripheral\PIC32MX440F256H_peripherals.a(peripheral.o)
@@ -6799,9 +6812,11 @@ LOAD c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/n
 LOAD build/PINGUINO/production/_ext/1472/Main.o
 LOAD build/PINGUINO/production/_ext/1472/rtos_hooks.o
 LOAD build/PINGUINO/production/_ext/1472/Config.o
-LOAD build/PINGUINO/production/_ext/1315484212/eosApplication.o
-LOAD build/PINGUINO/production/_ext/1935080774/eosTask.o
+LOAD build/PINGUINO/production/_ext/55825582/halSYS.o
+LOAD build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
 LOAD build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+LOAD build/PINGUINO/production/_ext/1935080774/eosTask.o
+LOAD build/PINGUINO/production/_ext/1315484212/eosApplication.o
 LOAD build/PINGUINO/production/_ext/2129976512/tasks.o
 LOAD build/PINGUINO/production/_ext/2129976512/queue.o
 LOAD build/PINGUINO/production/_ext/2129976512/timers.o
@@ -6809,8 +6824,7 @@ LOAD build/PINGUINO/production/_ext/1298945782/port.o
 LOAD build/PINGUINO/production/_ext/1298945782/port_asm.o
 LOAD build/PINGUINO/production/_ext/696550819/heap_4.o
 LOAD build/PINGUINO/production/_ext/2129976512/list.o
-LOAD build/PINGUINO/production/_ext/55825582/halSYS.o
-LOAD build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+LOAD build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
 LOAD ..\..\..\..\..\..\..\..\..\..\microchip\harmony\v1_07_01\bin\framework\peripheral\PIC32MX440F256H_peripherals.a
                 0x00000001                __MPLAB_BUILD = 0x1
                 0x00000800                _min_heap_size = 0x800
@@ -7247,7 +7261,7 @@ END GROUP
                 0x9d00006c       0x4c build/PINGUINO/production/_ext/1472/Main.o
                 0x9d00006c                MyAppLoopService::MyAppLoopService()
  .gnu.linkonce.t._ZN3eos8IRunableC2Ev
-                0x9d0000b8       0x34 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+                0x9d0000b8       0x34 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
                 0x9d0000b8                eos::IRunable::IRunable()
  *(.text.*personality*)
  .text.__gxx_personality_sj0
@@ -7328,21 +7342,21 @@ END GROUP
  .gnu.linkonce.r._ZTV13MyApplication
                 0x9d000688       0x14 build/PINGUINO/production/_ext/1472/Main.o
                 0x9d000688                vtable for MyApplication
- .gnu.linkonce.r._ZTVN3eos11ApplicationE
-                0x9d00069c       0x14 build/PINGUINO/production/_ext/1315484212/eosApplication.o
-                0x9d00069c                vtable for eos::Application
- .gnu.linkonce.r._ZTVN3eos4TaskE
-                0x9d0006b0       0x10 build/PINGUINO/production/_ext/1935080774/eosTask.o
-                0x9d0006b0                vtable for eos::Task
- .gnu.linkonce.r._ZTVN3eos14AppLoopServiceE
-                0x9d0006c0       0x14 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
-                0x9d0006c0                vtable for eos::AppLoopService
- .gnu.linkonce.r._ZTVN3eos8IRunableE
-                0x9d0006d4        0xc build/PINGUINO/production/_ext/863068963/eosAppLoop.o
-                0x9d0006d4                vtable for eos::IRunable
  .gnu.linkonce.r._ZTVN3eos16UsbClientServiceE
-                0x9d0006e0        0xc build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
-                0x9d0006e0                vtable for eos::UsbClientService
+                0x9d00069c        0xc build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+                0x9d00069c                vtable for eos::UsbClientService
+ .gnu.linkonce.r._ZTVN3eos8IRunableE
+                0x9d0006a8        0xc build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+                0x9d0006a8                vtable for eos::IRunable
+ .gnu.linkonce.r._ZTVN3eos14AppLoopServiceE
+                0x9d0006b4       0x14 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+                0x9d0006b4                vtable for eos::AppLoopService
+ .gnu.linkonce.r._ZTVN3eos4TaskE
+                0x9d0006c8       0x10 build/PINGUINO/production/_ext/1935080774/eosTask.o
+                0x9d0006c8                vtable for eos::Task
+ .gnu.linkonce.r._ZTVN3eos11ApplicationE
+                0x9d0006d8       0x14 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+                0x9d0006d8                vtable for eos::Application
  .gnu.linkonce.r._ZTVSt9bad_alloc._ZTVSt9bad_alloc
                 0x9d0006ec       0x14 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(bad_alloc.o)
                 0x9d0006ec                vtable for std::bad_alloc
@@ -7486,7 +7500,7 @@ END GROUP
                 0xa0000044                _data_end = .
                 0xa0000044                _bss_begin = .
 
-.sbss           0xa0000044       0x6c
+.sbss           0xa0000044       0x78
                 0xa0000044                _sbss_begin = .
  *(.dynsbss)
  *(.sbss .sbss.* .gnu.linkonce.sb.*)
@@ -7497,16 +7511,20 @@ END GROUP
                 0xa0000094                uxSavedTaskStackPointer
  .sbss          0xa0000098       0x18 build/PINGUINO/production/_ext/696550819/heap_4.o
  *(.scommon)
-                0xa00000b0                _sbss_end = .
-                0xa00000b0                . = ALIGN (0x4)
+ .scommon       0xa00000b0        0xc build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+                0xa00000b0                sysDevcon
+                0xa00000b4                drvUSBModule
+                0xa00000b8                usbDevObject0
+                0xa00000bc                _sbss_end = .
+                0xa00000bc                . = ALIGN (0x4)
 
-.bss            0xa00000b0        0x0
+.bss            0xa00000bc        0x0
  *(.dynbss)
  *(COMMON)
-                0xa00000b0                . = ALIGN ((. != 0x0)?0x4:0x1)
-                0xa00000b0                . = ALIGN (0x4)
-                0xa00000b0                _end = .
-                0xa00000b0                _bss_end = .
+                0xa00000bc                . = ALIGN ((. != 0x0)?0x4:0x1)
+                0xa00000bc                . = ALIGN (0x4)
+                0xa00000bc                _end = .
+                0xa00000bc                _bss_end = .
                 0x00008000                _bmxdudba_address = 0x8000
                 0x00008000                _bmxdupba_address = 0x8000
 
@@ -7527,65 +7545,66 @@ END GROUP
  *(.gptab.bss)
  *(.gptab.sbss)
 
-.mdebug.abi32   0xa00000b0        0x0
+.mdebug.abi32   0xa00000bc        0x0
  *(.mdebug.abi32)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float/crtbegin.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/1472/Main.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/1472/rtos_hooks.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/1472/Config.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/1935080774/eosTask.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/2129976512/tasks.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/2129976512/queue.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/2129976512/timers.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/1298945782/port.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/696550819/heap_4.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/2129976512/list.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/55825582/halSYS.o
- .mdebug.abi32  0xa00000b0        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .mdebug.abi32  0xa00000b0        0x0 ..\..\..\..\..\..\..\..\..\..\microchip\harmony\v1_07_01\bin\framework\peripheral\PIC32MX440F256H_peripherals.a(peripheral.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(del_op.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(new_op.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(pure.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(bad_alloc.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_alloc.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_exception.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_terminate.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_throw.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_unex_handler.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(new_handler.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(si_class_type_info.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(tinfo.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(class_type_info.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_catch.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_globals.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_personality.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_term_handler.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_call.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(errno.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
- .mdebug.abi32  0xa00000b0        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float/crtend.o
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float/crtbegin.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/1472/Main.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/1472/rtos_hooks.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/1472/Config.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/1935080774/eosTask.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/2129976512/tasks.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/2129976512/queue.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/2129976512/timers.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/1298945782/port.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/696550819/heap_4.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/2129976512/list.o
+ .mdebug.abi32  0xa00000bc        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+ .mdebug.abi32  0xa00000bc        0x0 ..\..\..\..\..\..\..\..\..\..\microchip\harmony\v1_07_01\bin\framework\peripheral\PIC32MX440F256H_peripherals.a(peripheral.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(del_op.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(new_op.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(pure.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(bad_alloc.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_alloc.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_exception.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_terminate.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_throw.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_unex_handler.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(new_handler.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(si_class_type_info.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(tinfo.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(class_type_info.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_catch.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_globals.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_personality.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_term_handler.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_call.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(errno.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
+ .mdebug.abi32  0xa00000bc        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float/crtend.o
 
 .mdebug.abiN32
  *(.mdebug.abiN32)
@@ -7633,17 +7652,18 @@ END GROUP
  .comment       0x00000000       0x3d build/PINGUINO/production/_ext/1472/Main.o
  .comment       0x00000000       0x3d build/PINGUINO/production/_ext/1472/rtos_hooks.o
  .comment       0x00000000       0x3d build/PINGUINO/production/_ext/1472/Config.o
- .comment       0x00000000       0x3d build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .comment       0x00000000       0x3d build/PINGUINO/production/_ext/1935080774/eosTask.o
+ .comment       0x00000000       0x3d build/PINGUINO/production/_ext/55825582/halSYS.o
+ .comment       0x00000000       0x3d build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
  .comment       0x00000000       0x3d build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .comment       0x00000000       0x3d build/PINGUINO/production/_ext/1935080774/eosTask.o
+ .comment       0x00000000       0x3d build/PINGUINO/production/_ext/1315484212/eosApplication.o
  .comment       0x00000000       0x3d build/PINGUINO/production/_ext/2129976512/tasks.o
  .comment       0x00000000       0x3d build/PINGUINO/production/_ext/2129976512/queue.o
  .comment       0x00000000       0x3d build/PINGUINO/production/_ext/2129976512/timers.o
  .comment       0x00000000       0x3d build/PINGUINO/production/_ext/1298945782/port.o
  .comment       0x00000000       0x3d build/PINGUINO/production/_ext/696550819/heap_4.o
  .comment       0x00000000       0x3d build/PINGUINO/production/_ext/2129976512/list.o
- .comment       0x00000000       0x3d build/PINGUINO/production/_ext/55825582/halSYS.o
- .comment       0x00000000       0x3d build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .comment       0x00000000       0x3d build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
  .comment       0x00000000       0x3d ..\..\..\..\..\..\..\..\..\..\microchip\harmony\v1_07_01\bin\framework\peripheral\PIC32MX440F256H_peripherals.a(peripheral.o)
  .comment       0x00000000       0x3d c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(del_op.o)
  .comment       0x00000000       0x3d c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(new_op.o)
@@ -7700,7 +7720,7 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x910
+.debug_aranges  0x00000000      0x930
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x58 build/PINGUINO/production/_ext/1472/Main.o
@@ -7709,246 +7729,253 @@ END GROUP
  .debug_aranges
                 0x00000098       0x18 build/PINGUINO/production/_ext/1472/Config.o
  .debug_aranges
-                0x000000b0       0x40 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+                0x000000b0       0x28 build/PINGUINO/production/_ext/55825582/halSYS.o
  .debug_aranges
-                0x000000f0       0x70 build/PINGUINO/production/_ext/1935080774/eosTask.o
+                0x000000d8       0x30 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
  .debug_aranges
-                0x00000160       0x40 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+                0x00000108       0x40 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
  .debug_aranges
-                0x000001a0      0x1b0 build/PINGUINO/production/_ext/2129976512/tasks.o
+                0x00000148       0x70 build/PINGUINO/production/_ext/1935080774/eosTask.o
  .debug_aranges
-                0x00000350       0xd8 build/PINGUINO/production/_ext/2129976512/queue.o
+                0x000001b8       0x40 build/PINGUINO/production/_ext/1315484212/eosApplication.o
  .debug_aranges
-                0x00000428       0xb8 build/PINGUINO/production/_ext/2129976512/timers.o
+                0x000001f8      0x1b0 build/PINGUINO/production/_ext/2129976512/tasks.o
  .debug_aranges
-                0x000004e0       0x58 build/PINGUINO/production/_ext/1298945782/port.o
+                0x000003a8       0xd8 build/PINGUINO/production/_ext/2129976512/queue.o
  .debug_aranges
-                0x00000538       0x20 build/PINGUINO/production/_ext/1298945782/port_asm.o
+                0x00000480       0xb8 build/PINGUINO/production/_ext/2129976512/timers.o
  .debug_aranges
-                0x00000558       0x50 build/PINGUINO/production/_ext/696550819/heap_4.o
+                0x00000538       0x58 build/PINGUINO/production/_ext/1298945782/port.o
  .debug_aranges
-                0x000005a8       0x40 build/PINGUINO/production/_ext/2129976512/list.o
+                0x00000590       0x20 build/PINGUINO/production/_ext/1298945782/port_asm.o
  .debug_aranges
-                0x000005e8       0x28 build/PINGUINO/production/_ext/55825582/halSYS.o
+                0x000005b0       0x50 build/PINGUINO/production/_ext/696550819/heap_4.o
  .debug_aranges
-                0x00000610       0x30 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+                0x00000600       0x40 build/PINGUINO/production/_ext/2129976512/list.o
  .debug_aranges
-                0x00000640       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
+                0x00000640       0x20 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
  .debug_aranges
-                0x00000660       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
+                0x00000660       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
  .debug_aranges
-                0x00000680       0x30 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
+                0x00000680       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
  .debug_aranges
-                0x000006b0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
+                0x000006a0       0x30 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
  .debug_aranges
-                0x000006d0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
+                0x000006d0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
  .debug_aranges
-                0x000006f0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
+                0x000006f0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
  .debug_aranges
-                0x00000710       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
+                0x00000710       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
  .debug_aranges
-                0x00000730       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
+                0x00000730       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
  .debug_aranges
-                0x00000750       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
+                0x00000750       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
  .debug_aranges
-                0x00000770       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
+                0x00000770       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
  .debug_aranges
-                0x00000790       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
+                0x00000790       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
  .debug_aranges
-                0x000007b0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
+                0x000007b0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
  .debug_aranges
-                0x000007d0       0x40 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
+                0x000007d0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
  .debug_aranges
-                0x00000810       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
+                0x000007f0       0x40 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
  .debug_aranges
-                0x00000830       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
+                0x00000830       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
  .debug_aranges
-                0x00000850       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
+                0x00000850       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
  .debug_aranges
-                0x00000870       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
+                0x00000870       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
  .debug_aranges
-                0x00000890       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
+                0x00000890       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
  .debug_aranges
-                0x000008b0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
+                0x000008b0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
  .debug_aranges
-                0x000008d0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
+                0x000008d0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
  .debug_aranges
-                0x000008f0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
+                0x000008f0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
+ .debug_aranges
+                0x00000910       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0xacd6
+.debug_info     0x00000000     0xbb2c
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0xa5a build/PINGUINO/production/_ext/1472/Main.o
  .debug_info    0x00000a5a      0x2eb build/PINGUINO/production/_ext/1472/rtos_hooks.o
  .debug_info    0x00000d45      0x39d build/PINGUINO/production/_ext/1472/Config.o
- .debug_info    0x000010e2      0x6a8 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .debug_info    0x0000178a      0x965 build/PINGUINO/production/_ext/1935080774/eosTask.o
- .debug_info    0x000020ef      0x7bd build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .debug_info    0x000028ac     0x1ed4 build/PINGUINO/production/_ext/2129976512/tasks.o
- .debug_info    0x00004780     0x10fd build/PINGUINO/production/_ext/2129976512/queue.o
- .debug_info    0x0000587d      0xe39 build/PINGUINO/production/_ext/2129976512/timers.o
- .debug_info    0x000066b6      0xd02 build/PINGUINO/production/_ext/1298945782/port.o
- .debug_info    0x000073b8       0xe3 build/PINGUINO/production/_ext/1298945782/port_asm.o
- .debug_info    0x0000749b      0x5b2 build/PINGUINO/production/_ext/696550819/heap_4.o
- .debug_info    0x00007a4d      0x4a0 build/PINGUINO/production/_ext/2129976512/list.o
- .debug_info    0x00007eed      0x609 build/PINGUINO/production/_ext/55825582/halSYS.o
- .debug_info    0x000084f6      0x6f5 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .debug_info    0x00008beb       0xa5 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
- .debug_info    0x00008c90       0xa1 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
- .debug_info    0x00008d31       0xd3 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
- .debug_info    0x00008e04       0xa3 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
- .debug_info    0x00008ea7       0xb3 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
- .debug_info    0x00008f5a       0xa7 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
- .debug_info    0x00009001       0xa7 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
- .debug_info    0x000090a8       0xa5 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
- .debug_info    0x0000914d       0xa7 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
- .debug_info    0x000091f4       0xa5 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
- .debug_info    0x00009299       0xa9 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
- .debug_info    0x00009342     0x1255 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
- .debug_info    0x0000a597      0x11a c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
- .debug_info    0x0000a6b1       0xe3 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_info    0x0000a794       0xbd c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
- .debug_info    0x0000a851       0xc5 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
- .debug_info    0x0000a916       0xae c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
- .debug_info    0x0000a9c4       0xac c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
- .debug_info    0x0000aa70       0xb0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
- .debug_info    0x0000ab20       0xdf c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
- .debug_info    0x0000abff       0xd7 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
+ .debug_info    0x000010e2      0x609 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .debug_info    0x000016eb      0x6f5 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .debug_info    0x00001de0      0x7bd build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .debug_info    0x0000259d      0x965 build/PINGUINO/production/_ext/1935080774/eosTask.o
+ .debug_info    0x00002f02      0x6a8 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .debug_info    0x000035aa     0x1ed4 build/PINGUINO/production/_ext/2129976512/tasks.o
+ .debug_info    0x0000547e     0x10fd build/PINGUINO/production/_ext/2129976512/queue.o
+ .debug_info    0x0000657b      0xe39 build/PINGUINO/production/_ext/2129976512/timers.o
+ .debug_info    0x000073b4      0xd02 build/PINGUINO/production/_ext/1298945782/port.o
+ .debug_info    0x000080b6       0xe3 build/PINGUINO/production/_ext/1298945782/port_asm.o
+ .debug_info    0x00008199      0x5b2 build/PINGUINO/production/_ext/696550819/heap_4.o
+ .debug_info    0x0000874b      0x4a0 build/PINGUINO/production/_ext/2129976512/list.o
+ .debug_info    0x00008beb      0xe56 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+ .debug_info    0x00009a41       0xa5 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
+ .debug_info    0x00009ae6       0xa1 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
+ .debug_info    0x00009b87       0xd3 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
+ .debug_info    0x00009c5a       0xa3 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
+ .debug_info    0x00009cfd       0xb3 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
+ .debug_info    0x00009db0       0xa7 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
+ .debug_info    0x00009e57       0xa7 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
+ .debug_info    0x00009efe       0xa5 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
+ .debug_info    0x00009fa3       0xa7 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
+ .debug_info    0x0000a04a       0xa5 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
+ .debug_info    0x0000a0ef       0xa9 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
+ .debug_info    0x0000a198     0x1255 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
+ .debug_info    0x0000b3ed      0x11a c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
+ .debug_info    0x0000b507       0xe3 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_info    0x0000b5ea       0xbd c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
+ .debug_info    0x0000b6a7       0xc5 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
+ .debug_info    0x0000b76c       0xae c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
+ .debug_info    0x0000b81a       0xac c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
+ .debug_info    0x0000b8c6       0xb0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
+ .debug_info    0x0000b976       0xdf c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
+ .debug_info    0x0000ba55       0xd7 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
 
-.debug_abbrev   0x00000000     0x1fb2
+.debug_abbrev   0x00000000     0x2053
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x2c3 build/PINGUINO/production/_ext/1472/Main.o
  .debug_abbrev  0x000002c3       0xce build/PINGUINO/production/_ext/1472/rtos_hooks.o
  .debug_abbrev  0x00000391       0xbe build/PINGUINO/production/_ext/1472/Config.o
- .debug_abbrev  0x0000044f      0x1fc build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .debug_abbrev  0x0000064b      0x278 build/PINGUINO/production/_ext/1935080774/eosTask.o
- .debug_abbrev  0x000008c3      0x27f build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .debug_abbrev  0x00000b42      0x256 build/PINGUINO/production/_ext/2129976512/tasks.o
- .debug_abbrev  0x00000d98      0x175 build/PINGUINO/production/_ext/2129976512/queue.o
- .debug_abbrev  0x00000f0d      0x1a2 build/PINGUINO/production/_ext/2129976512/timers.o
- .debug_abbrev  0x000010af      0x276 build/PINGUINO/production/_ext/1298945782/port.o
- .debug_abbrev  0x00001325       0x14 build/PINGUINO/production/_ext/1298945782/port_asm.o
- .debug_abbrev  0x00001339      0x158 build/PINGUINO/production/_ext/696550819/heap_4.o
- .debug_abbrev  0x00001491       0xe2 build/PINGUINO/production/_ext/2129976512/list.o
- .debug_abbrev  0x00001573       0xe6 build/PINGUINO/production/_ext/55825582/halSYS.o
- .debug_abbrev  0x00001659      0x24d build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .debug_abbrev  0x000018a6       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
- .debug_abbrev  0x000018ce       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
- .debug_abbrev  0x000018f6       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
- .debug_abbrev  0x0000191e       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
- .debug_abbrev  0x00001946       0x35 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
- .debug_abbrev  0x0000197b       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
- .debug_abbrev  0x000019a3       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
- .debug_abbrev  0x000019cb       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
- .debug_abbrev  0x000019f3       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
- .debug_abbrev  0x00001a1b       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
- .debug_abbrev  0x00001a43       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
- .debug_abbrev  0x00001a6b      0x3b3 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
- .debug_abbrev  0x00001e1e       0x54 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
- .debug_abbrev  0x00001e72       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_abbrev  0x00001e9a       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
- .debug_abbrev  0x00001ec2       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
- .debug_abbrev  0x00001eea       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
- .debug_abbrev  0x00001f12       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
- .debug_abbrev  0x00001f3a       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
- .debug_abbrev  0x00001f62       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
- .debug_abbrev  0x00001f8a       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
+ .debug_abbrev  0x0000044f       0xe6 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .debug_abbrev  0x00000535      0x24d build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .debug_abbrev  0x00000782      0x27f build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .debug_abbrev  0x00000a01      0x278 build/PINGUINO/production/_ext/1935080774/eosTask.o
+ .debug_abbrev  0x00000c79      0x1fc build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .debug_abbrev  0x00000e75      0x256 build/PINGUINO/production/_ext/2129976512/tasks.o
+ .debug_abbrev  0x000010cb      0x175 build/PINGUINO/production/_ext/2129976512/queue.o
+ .debug_abbrev  0x00001240      0x1a2 build/PINGUINO/production/_ext/2129976512/timers.o
+ .debug_abbrev  0x000013e2      0x276 build/PINGUINO/production/_ext/1298945782/port.o
+ .debug_abbrev  0x00001658       0x14 build/PINGUINO/production/_ext/1298945782/port_asm.o
+ .debug_abbrev  0x0000166c      0x158 build/PINGUINO/production/_ext/696550819/heap_4.o
+ .debug_abbrev  0x000017c4       0xe2 build/PINGUINO/production/_ext/2129976512/list.o
+ .debug_abbrev  0x000018a6       0xa1 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+ .debug_abbrev  0x00001947       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
+ .debug_abbrev  0x0000196f       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
+ .debug_abbrev  0x00001997       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
+ .debug_abbrev  0x000019bf       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
+ .debug_abbrev  0x000019e7       0x35 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
+ .debug_abbrev  0x00001a1c       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
+ .debug_abbrev  0x00001a44       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
+ .debug_abbrev  0x00001a6c       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
+ .debug_abbrev  0x00001a94       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
+ .debug_abbrev  0x00001abc       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
+ .debug_abbrev  0x00001ae4       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
+ .debug_abbrev  0x00001b0c      0x3b3 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
+ .debug_abbrev  0x00001ebf       0x54 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
+ .debug_abbrev  0x00001f13       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_abbrev  0x00001f3b       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
+ .debug_abbrev  0x00001f63       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
+ .debug_abbrev  0x00001f8b       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
+ .debug_abbrev  0x00001fb3       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
+ .debug_abbrev  0x00001fdb       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
+ .debug_abbrev  0x00002003       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
+ .debug_abbrev  0x0000202b       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
 
-.debug_line     0x00000000     0x35ef
+.debug_line     0x00000000     0x3811
  *(.debug_line)
  .debug_line    0x00000000      0x2a8 build/PINGUINO/production/_ext/1472/Main.o
  .debug_line    0x000002a8      0x169 build/PINGUINO/production/_ext/1472/rtos_hooks.o
  .debug_line    0x00000411       0xc5 build/PINGUINO/production/_ext/1472/Config.o
- .debug_line    0x000004d6      0x1cf build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .debug_line    0x000006a5      0x2e8 build/PINGUINO/production/_ext/1935080774/eosTask.o
- .debug_line    0x0000098d      0x224 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .debug_line    0x00000bb1      0x8e1 build/PINGUINO/production/_ext/2129976512/tasks.o
- .debug_line    0x00001492      0x55a build/PINGUINO/production/_ext/2129976512/queue.o
- .debug_line    0x000019ec      0x3e2 build/PINGUINO/production/_ext/2129976512/timers.o
- .debug_line    0x00001dce      0x233 build/PINGUINO/production/_ext/1298945782/port.o
- .debug_line    0x00002001      0x125 build/PINGUINO/production/_ext/1298945782/port_asm.o
- .debug_line    0x00002126      0x215 build/PINGUINO/production/_ext/696550819/heap_4.o
- .debug_line    0x0000233b      0x1d4 build/PINGUINO/production/_ext/2129976512/list.o
- .debug_line    0x0000250f      0x338 build/PINGUINO/production/_ext/55825582/halSYS.o
- .debug_line    0x00002847      0x204 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .debug_line    0x00002a4b       0x70 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
- .debug_line    0x00002abb       0x6e c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
- .debug_line    0x00002b29       0x6f c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
- .debug_line    0x00002b98       0x6f c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
- .debug_line    0x00002c07       0x71 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
- .debug_line    0x00002c78       0x71 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
- .debug_line    0x00002ce9       0x71 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
- .debug_line    0x00002d5a       0x70 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
- .debug_line    0x00002dca       0x71 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
- .debug_line    0x00002e3b       0x70 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
- .debug_line    0x00002eab       0x72 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
- .debug_line    0x00002f1d      0x221 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
- .debug_line    0x0000313e       0x78 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
- .debug_line    0x000031b6       0x97 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_line    0x0000324d       0x84 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
- .debug_line    0x000032d1       0x88 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
- .debug_line    0x00003359       0x79 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
- .debug_line    0x000033d2       0x78 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
- .debug_line    0x0000344a       0x7a c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
- .debug_line    0x000034c4        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(errno.o)
- .debug_line    0x000034c4       0x95 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
- .debug_line    0x00003559       0x96 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
+ .debug_line    0x000004d6      0x338 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .debug_line    0x0000080e      0x204 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .debug_line    0x00000a12      0x224 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .debug_line    0x00000c36      0x2e8 build/PINGUINO/production/_ext/1935080774/eosTask.o
+ .debug_line    0x00000f1e      0x1cf build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .debug_line    0x000010ed      0x8e1 build/PINGUINO/production/_ext/2129976512/tasks.o
+ .debug_line    0x000019ce      0x55a build/PINGUINO/production/_ext/2129976512/queue.o
+ .debug_line    0x00001f28      0x3e2 build/PINGUINO/production/_ext/2129976512/timers.o
+ .debug_line    0x0000230a      0x233 build/PINGUINO/production/_ext/1298945782/port.o
+ .debug_line    0x0000253d      0x125 build/PINGUINO/production/_ext/1298945782/port_asm.o
+ .debug_line    0x00002662      0x215 build/PINGUINO/production/_ext/696550819/heap_4.o
+ .debug_line    0x00002877      0x1d4 build/PINGUINO/production/_ext/2129976512/list.o
+ .debug_line    0x00002a4b      0x222 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+ .debug_line    0x00002c6d       0x70 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
+ .debug_line    0x00002cdd       0x6e c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
+ .debug_line    0x00002d4b       0x6f c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
+ .debug_line    0x00002dba       0x6f c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
+ .debug_line    0x00002e29       0x71 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
+ .debug_line    0x00002e9a       0x71 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
+ .debug_line    0x00002f0b       0x71 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
+ .debug_line    0x00002f7c       0x70 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
+ .debug_line    0x00002fec       0x71 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
+ .debug_line    0x0000305d       0x70 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
+ .debug_line    0x000030cd       0x72 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
+ .debug_line    0x0000313f      0x221 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
+ .debug_line    0x00003360       0x78 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
+ .debug_line    0x000033d8       0x97 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_line    0x0000346f       0x84 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
+ .debug_line    0x000034f3       0x88 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
+ .debug_line    0x0000357b       0x79 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
+ .debug_line    0x000035f4       0x78 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
+ .debug_line    0x0000366c       0x7a c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
+ .debug_line    0x000036e6        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(errno.o)
+ .debug_line    0x000036e6       0x95 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
+ .debug_line    0x0000377b       0x96 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
 
-.debug_frame    0x00000000     0x1514
+.debug_frame    0x00000000     0x153c
  *(.debug_frame)
  .debug_frame   0x00000000      0x108 build/PINGUINO/production/_ext/1472/Main.o
  .debug_frame   0x00000108       0x78 build/PINGUINO/production/_ext/1472/rtos_hooks.o
- .debug_frame   0x00000180       0xa4 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .debug_frame   0x00000224      0x16c build/PINGUINO/production/_ext/1935080774/eosTask.o
- .debug_frame   0x00000390       0xa0 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .debug_frame   0x00000430      0x4b8 build/PINGUINO/production/_ext/2129976512/tasks.o
- .debug_frame   0x000008e8      0x250 build/PINGUINO/production/_ext/2129976512/queue.o
- .debug_frame   0x00000b38      0x1f0 build/PINGUINO/production/_ext/2129976512/timers.o
- .debug_frame   0x00000d28       0xd0 build/PINGUINO/production/_ext/1298945782/port.o
- .debug_frame   0x00000df8       0xa0 build/PINGUINO/production/_ext/696550819/heap_4.o
- .debug_frame   0x00000e98       0x78 build/PINGUINO/production/_ext/2129976512/list.o
- .debug_frame   0x00000f10       0x40 build/PINGUINO/production/_ext/55825582/halSYS.o
- .debug_frame   0x00000f50       0x68 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .debug_frame   0x00000fb8       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
- .debug_frame   0x00000fe0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
- .debug_frame   0x00001000       0x68 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
- .debug_frame   0x00001068       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
- .debug_frame   0x00001088       0x30 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
- .debug_frame   0x000010b8       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
- .debug_frame   0x000010d8       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
- .debug_frame   0x000010f8       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
- .debug_frame   0x00001120       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
- .debug_frame   0x00001140       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
- .debug_frame   0x00001168       0x2c c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
- .debug_frame   0x00001194      0x1e4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
- .debug_frame   0x00001378       0x84 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
- .debug_frame   0x000013fc       0x2c c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_frame   0x00001428       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
- .debug_frame   0x00001448       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
- .debug_frame   0x00001468       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
- .debug_frame   0x00001488       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
- .debug_frame   0x000014a8       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
- .debug_frame   0x000014c8       0x2c c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
- .debug_frame   0x000014f4       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
+ .debug_frame   0x00000180       0x40 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .debug_frame   0x000001c0       0x68 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .debug_frame   0x00000228       0xa0 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .debug_frame   0x000002c8      0x16c build/PINGUINO/production/_ext/1935080774/eosTask.o
+ .debug_frame   0x00000434       0xa4 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .debug_frame   0x000004d8      0x4b8 build/PINGUINO/production/_ext/2129976512/tasks.o
+ .debug_frame   0x00000990      0x250 build/PINGUINO/production/_ext/2129976512/queue.o
+ .debug_frame   0x00000be0      0x1f0 build/PINGUINO/production/_ext/2129976512/timers.o
+ .debug_frame   0x00000dd0       0xd0 build/PINGUINO/production/_ext/1298945782/port.o
+ .debug_frame   0x00000ea0       0xa0 build/PINGUINO/production/_ext/696550819/heap_4.o
+ .debug_frame   0x00000f40       0x78 build/PINGUINO/production/_ext/2129976512/list.o
+ .debug_frame   0x00000fb8       0x28 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+ .debug_frame   0x00000fe0       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
+ .debug_frame   0x00001008       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
+ .debug_frame   0x00001028       0x68 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
+ .debug_frame   0x00001090       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
+ .debug_frame   0x000010b0       0x30 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
+ .debug_frame   0x000010e0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
+ .debug_frame   0x00001100       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
+ .debug_frame   0x00001120       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
+ .debug_frame   0x00001148       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
+ .debug_frame   0x00001168       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
+ .debug_frame   0x00001190       0x2c c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
+ .debug_frame   0x000011bc      0x1e4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
+ .debug_frame   0x000013a0       0x84 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
+ .debug_frame   0x00001424       0x2c c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_frame   0x00001450       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
+ .debug_frame   0x00001470       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
+ .debug_frame   0x00001490       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
+ .debug_frame   0x000014b0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
+ .debug_frame   0x000014d0       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
+ .debug_frame   0x000014f0       0x2c c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
+ .debug_frame   0x0000151c       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
 
 .debug_str      0x00000000      0x4d3
  *(.debug_str)
  .debug_str     0x00000000       0x43 build/PINGUINO/production/_ext/1472/Main.o
  .debug_str     0x00000043        0x9 build/PINGUINO/production/_ext/1472/rtos_hooks.o
  .debug_str     0x0000004c        0xa build/PINGUINO/production/_ext/1472/Config.o
- .debug_str     0x00000056       0x16 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .debug_str     0x0000006c        0xa build/PINGUINO/production/_ext/1935080774/eosTask.o
- .debug_str     0x00000076       0x22 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .debug_str     0x00000098      0x186 build/PINGUINO/production/_ext/2129976512/tasks.o
- .debug_str     0x0000021e      0x131 build/PINGUINO/production/_ext/2129976512/queue.o
- .debug_str     0x0000034f       0xd2 build/PINGUINO/production/_ext/2129976512/timers.o
- .debug_str     0x00000421       0x23 build/PINGUINO/production/_ext/1298945782/port.o
- .debug_str     0x00000444        0x0 build/PINGUINO/production/_ext/696550819/heap_4.o
- .debug_str     0x00000444       0x2b build/PINGUINO/production/_ext/2129976512/list.o
- .debug_str     0x0000046f        0x0 build/PINGUINO/production/_ext/55825582/halSYS.o
- .debug_str     0x0000046f       0x24 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .debug_str     0x00000056        0x0 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .debug_str     0x00000056       0x24 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .debug_str     0x0000007a       0x22 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .debug_str     0x0000009c        0xa build/PINGUINO/production/_ext/1935080774/eosTask.o
+ .debug_str     0x000000a6       0x16 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .debug_str     0x000000bc      0x186 build/PINGUINO/production/_ext/2129976512/tasks.o
+ .debug_str     0x00000242      0x131 build/PINGUINO/production/_ext/2129976512/queue.o
+ .debug_str     0x00000373       0xd2 build/PINGUINO/production/_ext/2129976512/timers.o
+ .debug_str     0x00000445       0x23 build/PINGUINO/production/_ext/1298945782/port.o
+ .debug_str     0x00000468        0x0 build/PINGUINO/production/_ext/696550819/heap_4.o
+ .debug_str     0x00000468       0x2b build/PINGUINO/production/_ext/2129976512/list.o
+ .debug_str     0x00000493        0x0 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
  .debug_str     0x00000493        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
  .debug_str     0x00000493        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
  .debug_str     0x00000493        0x0 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
@@ -7994,42 +8021,43 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000      0x740
+.debug_ranges   0x00000000      0x750
  *(.debug_ranges)
  .debug_ranges  0x00000000       0x48 build/PINGUINO/production/_ext/1472/Main.o
  .debug_ranges  0x00000048       0x30 build/PINGUINO/production/_ext/1472/rtos_hooks.o
- .debug_ranges  0x00000078       0x30 build/PINGUINO/production/_ext/1315484212/eosApplication.o
- .debug_ranges  0x000000a8       0x60 build/PINGUINO/production/_ext/1935080774/eosTask.o
- .debug_ranges  0x00000108       0x30 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
- .debug_ranges  0x00000138      0x1a0 build/PINGUINO/production/_ext/2129976512/tasks.o
- .debug_ranges  0x000002d8       0xc8 build/PINGUINO/production/_ext/2129976512/queue.o
- .debug_ranges  0x000003a0       0xa8 build/PINGUINO/production/_ext/2129976512/timers.o
- .debug_ranges  0x00000448       0x48 build/PINGUINO/production/_ext/1298945782/port.o
- .debug_ranges  0x00000490       0x40 build/PINGUINO/production/_ext/696550819/heap_4.o
- .debug_ranges  0x000004d0       0x30 build/PINGUINO/production/_ext/2129976512/list.o
- .debug_ranges  0x00000500       0x18 build/PINGUINO/production/_ext/55825582/halSYS.o
- .debug_ranges  0x00000518       0x20 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
- .debug_ranges  0x00000538       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
- .debug_ranges  0x00000548       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
- .debug_ranges  0x00000558       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
- .debug_ranges  0x00000578       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
- .debug_ranges  0x00000588       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
- .debug_ranges  0x00000598       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
- .debug_ranges  0x000005a8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
- .debug_ranges  0x000005b8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
- .debug_ranges  0x000005c8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
- .debug_ranges  0x000005d8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
- .debug_ranges  0x000005e8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
- .debug_ranges  0x000005f8       0x98 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
- .debug_ranges  0x00000690       0x30 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
- .debug_ranges  0x000006c0       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_ranges  0x000006d0       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
- .debug_ranges  0x000006e0       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
- .debug_ranges  0x000006f0       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
- .debug_ranges  0x00000700       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
- .debug_ranges  0x00000710       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
- .debug_ranges  0x00000720       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
- .debug_ranges  0x00000730       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
+ .debug_ranges  0x00000078       0x18 build/PINGUINO/production/_ext/55825582/halSYS.o
+ .debug_ranges  0x00000090       0x20 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+ .debug_ranges  0x000000b0       0x30 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+ .debug_ranges  0x000000e0       0x60 build/PINGUINO/production/_ext/1935080774/eosTask.o
+ .debug_ranges  0x00000140       0x30 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+ .debug_ranges  0x00000170      0x1a0 build/PINGUINO/production/_ext/2129976512/tasks.o
+ .debug_ranges  0x00000310       0xc8 build/PINGUINO/production/_ext/2129976512/queue.o
+ .debug_ranges  0x000003d8       0xa8 build/PINGUINO/production/_ext/2129976512/timers.o
+ .debug_ranges  0x00000480       0x48 build/PINGUINO/production/_ext/1298945782/port.o
+ .debug_ranges  0x000004c8       0x40 build/PINGUINO/production/_ext/696550819/heap_4.o
+ .debug_ranges  0x00000508       0x30 build/PINGUINO/production/_ext/2129976512/list.o
+ .debug_ranges  0x00000538       0x10 build/PINGUINO/production/_ext/2012494728/eosUsbHarmony.o
+ .debug_ranges  0x00000548       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abort.o)
+ .debug_ranges  0x00000558       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(abs.o)
+ .debug_ranges  0x00000568       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
+ .debug_ranges  0x00000588       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(free.o)
+ .debug_ranges  0x00000598       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
+ .debug_ranges  0x000005a8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memcpy.o)
+ .debug_ranges  0x000005b8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(memset.o)
+ .debug_ranges  0x000005c8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(raise.o)
+ .debug_ranges  0x000005d8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(strcmp.o)
+ .debug_ranges  0x000005e8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xexit.o)
+ .debug_ranges  0x000005f8       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(xgetmem.o)
+ .debug_ranges  0x00000608       0x98 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
+ .debug_ranges  0x000006a0       0x30 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
+ .debug_ranges  0x000006d0       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_ranges  0x000006e0       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-reset.o)
+ .debug_ranges  0x000006f0       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-on-bootstrap.o)
+ .debug_ranges  0x00000700       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(_exit.o)
+ .debug_ranges  0x00000710       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(kill.o)
+ .debug_ranges  0x00000720       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(getpid.o)
+ .debug_ranges  0x00000730       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(default-general-exception-handler.o)
+ .debug_ranges  0x00000740       0x10 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(defaultinterrupt.o)
 
 .gnu.attributes
                 0x00000000       0x10
@@ -8059,74 +8087,74 @@ LOAD data_init
 .reginfo        0x00000000       0x18
  .reginfo       0x00000000       0x18 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MX440F256H/cpprt0_mips32r2.o
 
-.stack          0xa0005a10      0x400
- .stack         0xa0005a10      0x400 stack
+.stack          0xa0005a20      0x400
+ .stack         0xa0005a20      0x400 stack
 
-.bss            0xa00000b0     0x4680
- .bss           0xa00000b0     0x3e80 build/PINGUINO/production/_ext/696550819/heap_4.o
- .bss           0xa0003f30      0x800 build/PINGUINO/production/_ext/1298945782/port.o
-                0xa0003f30                xISRStack
+.bss            0xa00000bc     0x4680
+ .bss           0xa00000bc     0x3e80 build/PINGUINO/production/_ext/696550819/heap_4.o
+ .bss           0xa0003f3c      0x800 build/PINGUINO/production/_ext/1298945782/port.o
+                0xa0003f3c                xISRStack
 
 .bss._ZL16emergency_buffer.emergency_buffer
-                0xa0004730      0x800
+                0xa0004740      0x800
  .bss._ZL16emergency_buffer.emergency_buffer
-                0xa0004730      0x800 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_alloc.o)
+                0xa0004740      0x800 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_alloc.o)
 
-.bss            0xa0004f30      0x28c
- .bss           0xa0004f30      0x144 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
-                0xa0005070                _Atcount0
- .bss           0xa0005074       0xdc build/PINGUINO/production/_ext/2129976512/tasks.o
- .bss           0xa0005150       0x28 build/PINGUINO/production/_ext/2129976512/timers.o
- .bss           0xa0005178       0x24 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
-                0xa0005178                _minbrk
-                0xa000517c                _maxbrk
- .bss           0xa000519c       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float/crtbegin.o
+.bss            0xa0004f40      0x28c
+ .bss           0xa0004f40      0x144 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
+                0xa0005080                _Atcount0
+ .bss           0xa0005084       0xdc build/PINGUINO/production/_ext/2129976512/tasks.o
+ .bss           0xa0005160       0x28 build/PINGUINO/production/_ext/2129976512/timers.o
+ .bss           0xa0005188       0x24 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(sbrk.o)
+                0xa0005188                _minbrk
+                0xa000518c                _maxbrk
+ .bss           0xa00051ac       0x20 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float/crtbegin.o
 
-.data           0xa00051bc        0xc
- .data          0xa00051bc        0xc c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
-                0xa00051c0                _Atfuns
-                0xa00051c4                _Atcount
+.data           0xa00051cc        0xc
+ .data          0xa00051cc        0xc c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(exit.o)
+                0xa00051d0                _Atfuns
+                0xa00051d4                _Atcount
 
 .bss._ZL10eh_globals.eh_globals
-                0xa00051c8        0x8
+                0xa00051d8        0x8
  .bss._ZL10eh_globals.eh_globals
-                0xa00051c8        0x8 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_globals.o)
+                0xa00051d8        0x8 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_globals.o)
 
-.bss            0xa00051d0        0x8
- .bss           0xa00051d0        0x8 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
-                0xa00051d0                _Aldata
+.bss            0xa00051e0        0x8
+ .bss           0xa00051e0        0x8 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
+                0xa00051e0                _Aldata
 
 .bss._ZL14emergency_used.emergency_used
-                0xa00051d8        0x4
+                0xa000473c        0x4
  .bss._ZL14emergency_used.emergency_used
-                0xa00051d8        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_alloc.o)
+                0xa000473c        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_alloc.o)
 
 .data._ZN10__cxxabiv120__unexpected_handlerE.__unexpected_handler
-                0xa00051dc        0x4
+                0xa00051e8        0x4
  .data._ZN10__cxxabiv120__unexpected_handlerE.__unexpected_handler
-                0xa00051dc        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_unex_handler.o)
-                0xa00051dc                __cxxabiv1::__unexpected_handler
+                0xa00051e8        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_unex_handler.o)
+                0xa00051e8                __cxxabiv1::__unexpected_handler
 
 .bss.__new_handler.__new_handler
-                0xa00051e0        0x4
+                0xa00051ec        0x4
  .bss.__new_handler.__new_handler
-                0xa00051e0        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(new_handler.o)
-                0xa00051e0                __new_handler
+                0xa00051ec        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(new_handler.o)
+                0xa00051ec                __new_handler
 
 .data._ZN10__cxxabiv119__terminate_handlerE.__terminate_handler
-                0xa00051e4        0x4
+                0xa00051f0        0x4
  .data._ZN10__cxxabiv119__terminate_handlerE.__terminate_handler
-                0xa00051e4        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_term_handler.o)
-                0xa00051e4                __cxxabiv1::__terminate_handler
+                0xa00051f0        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(eh_term_handler.o)
+                0xa00051f0                __cxxabiv1::__terminate_handler
 
-.data           0xa00051e8        0x4
- .data          0xa00051e8        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
-                0xa00051e8                _Size_block
+.data           0xa00051f4        0x4
+ .data          0xa00051f4        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libxcpp.a(malloc.o)
+                0xa00051f4                _Size_block
 
-.bss            0xa00051ec        0x8
- .bss           0xa00051ec        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
- .bss           0xa00051f0        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(errno.o)
-                0xa00051f0                errno
+.bss            0xa00051f8        0x8
+ .bss           0xa00051f8        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/no-float\libgcc.a(unwind-sjlj.o)
+ .bss           0xa00051fc        0x4 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libpic32.a(errno.o)
+                0xa00051fc                errno
 
 .tm_clone_table
                 0x00000000        0x0
@@ -8590,22 +8618,22 @@ LOAD data_init
  .text.main     0x9d0067a8       0x70 build/PINGUINO/production/_ext/1472/Main.o
                 0x9d0067a8                main
 
-.text._ZN3eos14AppLoopServiceC2Ev
-                0x9d006818       0x70
- .text._ZN3eos14AppLoopServiceC2Ev
-                0x9d006818       0x70 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
-                0x9d006818                eos::AppLoopService::AppLoopService()
-                0x9d006818                eos::AppLoopService::AppLoopService()
-
-.rodata         0x9d006888       0x70
- .rodata        0x9d006888       0x70 build/PINGUINO/production/_ext/696550819/heap_4.o
-
 .text._ZN3eos16UsbClientServiceC2Ev
-                0x9d0068f8       0x70
+                0x9d006818       0x70
  .text._ZN3eos16UsbClientServiceC2Ev
-                0x9d0068f8       0x70 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
-                0x9d0068f8                eos::UsbClientService::UsbClientService()
-                0x9d0068f8                eos::UsbClientService::UsbClientService()
+                0x9d006818       0x70 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+                0x9d006818                eos::UsbClientService::UsbClientService()
+                0x9d006818                eos::UsbClientService::UsbClientService()
+
+.text._ZN3eos14AppLoopServiceC2Ev
+                0x9d006888       0x70
+ .text._ZN3eos14AppLoopServiceC2Ev
+                0x9d006888       0x70 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+                0x9d006888                eos::AppLoopService::AppLoopService()
+                0x9d006888                eos::AppLoopService::AppLoopService()
+
+.rodata         0x9d0068f8       0x70
+ .rodata        0x9d0068f8       0x70 build/PINGUINO/production/_ext/696550819/heap_4.o
 
 .text._ZL23__gxx_exception_cleanup19_Unwind_Reason_CodeP17_Unwind_Exception
                 0x9d006968       0x70
@@ -8807,24 +8835,24 @@ LOAD data_init
                 0x9d00760c       0x44 build/PINGUINO/production/_ext/1472/rtos_hooks.o
                 0x9d00760c                vAssertCalled
 
-.text._ZN3eos11ApplicationC2Ev
-                0x9d007650       0x44
- .text._ZN3eos11ApplicationC2Ev
-                0x9d007650       0x44 build/PINGUINO/production/_ext/1315484212/eosApplication.o
-                0x9d007650                eos::Application::Application()
-                0x9d007650                eos::Application::Application()
-
 .text._ZN3eos4TaskD0Ev
-                0x9d007694       0x44
+                0x9d007650       0x44
  .text._ZN3eos4TaskD0Ev
-                0x9d007694       0x44 build/PINGUINO/production/_ext/1935080774/eosTask.o
-                0x9d007694                eos::Task::~Task()
+                0x9d007650       0x44 build/PINGUINO/production/_ext/1935080774/eosTask.o
+                0x9d007650                eos::Task::~Task()
 
 .text._ZN3eos4Task5delayEj
-                0x9d0076d8       0x44
+                0x9d007694       0x44
  .text._ZN3eos4Task5delayEj
-                0x9d0076d8       0x44 build/PINGUINO/production/_ext/1935080774/eosTask.o
-                0x9d0076d8                eos::Task::delay(unsigned int)
+                0x9d007694       0x44 build/PINGUINO/production/_ext/1935080774/eosTask.o
+                0x9d007694                eos::Task::delay(unsigned int)
+
+.text._ZN3eos11ApplicationC2Ev
+                0x9d0076d8       0x44
+ .text._ZN3eos11ApplicationC2Ev
+                0x9d0076d8       0x44 build/PINGUINO/production/_ext/1315484212/eosApplication.o
+                0x9d0076d8                eos::Application::Application()
+                0x9d0076d8                eos::Application::Application()
 
 .text.prvTimerTask
                 0x9d00771c       0x44
@@ -8937,23 +8965,23 @@ LOAD data_init
  .text._ZdlPv   0x9d007b24       0x28 c:/program files/microchip/xc32/v1.40/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/no-float\libsupc++.a(del_op.o)
                 0x9d007b24                operator delete(void*)
 
-.text._ZN3eos14AppLoopService5setupEv
+.text._ZN3eos16UsbClientService3runEv
                 0x9d007b4c       0x24
+ .text._ZN3eos16UsbClientService3runEv
+                0x9d007b4c       0x24 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
+                0x9d007b4c                eos::UsbClientService::run()
+
+.text._ZN3eos14AppLoopService5setupEv
+                0x9d007b70       0x24
  .text._ZN3eos14AppLoopService5setupEv
-                0x9d007b4c       0x24 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
-                0x9d007b4c                eos::AppLoopService::setup()
+                0x9d007b70       0x24 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+                0x9d007b70                eos::AppLoopService::setup()
 
 .text._ZN3eos14AppLoopService4loopEv
-                0x9d007b70       0x24
- .text._ZN3eos14AppLoopService4loopEv
-                0x9d007b70       0x24 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
-                0x9d007b70                eos::AppLoopService::loop()
-
-.text._ZN3eos16UsbClientService3runEv
                 0x9d007b94       0x24
- .text._ZN3eos16UsbClientService3runEv
-                0x9d007b94       0x24 build/PINGUINO/production/_ext/2012494728/eosUsbClient.o
-                0x9d007b94                eos::UsbClientService::run()
+ .text._ZN3eos14AppLoopService4loopEv
+                0x9d007b94       0x24 build/PINGUINO/production/_ext/863068963/eosAppLoop.o
+                0x9d007b94                eos::AppLoopService::loop()
 
 .text._ZNSt9bad_allocD2Ev
                 0x9d007bb8       0x24
