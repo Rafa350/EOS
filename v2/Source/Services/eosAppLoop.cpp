@@ -26,7 +26,10 @@ void AppLoopService::run() {
     setup();
     while (true) {
         loop();
-        //Task::delay(100); // TIME_SLICING 
+        
+#if configUSE_TIME_SLICING == 0
+        Task::delay(100); 
+#endif        
     }
 }
 

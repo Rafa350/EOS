@@ -9,20 +9,37 @@
 
 
 // -----------------------------------------------------------------------
-// CONFIGURACIO DE LA PLACA PIC32MX-ESK
+// LEDS
 // -----------------------------------------------------------------------
 
-// Configuracio dels leds indicadors
+// Control del pin LED1
+// Port RG6
 //
-#define pinLED1         0
-#define pinLED2         1
-#define pinLED3         2
+#define initLED1() LATGCLR  = 1 << 6; \
+                   TRISGCLR = 1 << 6;
+#define setLED1()  LATGSET  = 1 << 6;
+#define clrLED1()  LATGCLR  = 1 << 6;
+#define invLED1()  LATGINV  = 1 << 6;
 
-// Configuracio del switches
+// Control del pin LED2
+// Port RD1
 //
-#define pinSW1          3
-#define pinSW2          4
-#define pinSW3          5
+#define initLED2() LATDCLR  = 1 << 1; \
+                   TRISDCLR = 1 << 1;
+#define setLED2()  LATDSET  = 1 << 1;
+#define clrLED2()  LATDCLR  = 1 << 1;
+#define invLED2()  LATDINV  = 1 << 1;
+
+
+//------------------------------------------------------------------------
+// SWITCHES
+// -----------------------------------------------------------------------
+
+// Control del pin SW1
+// Port RD0
+//
+#define initSW1()  TRISDSET = 1 << 0;
+#define getSW1()   (PORTD & ~(1 << 0) != 0)
 
 
 // -----------------------------------------------------------------------

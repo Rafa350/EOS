@@ -2,6 +2,7 @@
 #include "System/eosApplication.hpp"
 #include "System/Core/eosTask.hpp"
 #include "Services/eosAppLoop.hpp"
+#include "Services/Usb/eosUsbClient.hpp"
 
 
 using namespace eos;
@@ -17,7 +18,8 @@ class MyAppLoopService: public AppLoopService {
 
 class MyApplication: public Application {
     private:
-        MyAppLoopService *service;
+        MyAppLoopService *appService;
+        UsbClientService *usbService;
         
     public :
         MyApplication();
@@ -29,7 +31,8 @@ class MyApplication: public Application {
 ///
 MyApplication::MyApplication() {
     
-    service = new MyAppLoopService();
+    appService = new MyAppLoopService();    
+    usbService = new UsbClientService();
 }
 
 
@@ -38,6 +41,8 @@ MyApplication::MyApplication() {
 ///
 void MyAppLoopService::setup() {
     
+    initLED1();
+    initLED2();
 }
 
 
@@ -45,6 +50,9 @@ void MyAppLoopService::setup() {
 /// \brief Bucle d'execucio. El sistema el crida periodicament.
 ///
 void MyAppLoopService::loop() {
+    
+    invLED1();
+    Task::delay(500);
 }
 
 
@@ -52,13 +60,7 @@ void MyAppLoopService::loop() {
 /// \brief Entrada al programa.
 ///
 int main(void) {
-    
-    LATGbits.LATG6 = 0;
-    TRISGbits.TRISG6 = 0;
-    
-    LATDbits.LATD1 = 1;
-    TRISDbits.TRISD1 = 0;    
-    
+   
     MyApplication *app = new MyApplication();
     app->execute();
     delete app;
