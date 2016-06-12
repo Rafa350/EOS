@@ -17,6 +17,11 @@
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <logicalFolder name="f1" displayName="Usb" projectFiles="true">
+              <logicalFolder name="f1" displayName="Microchip" projectFiles="true">
+                <itemPath>../../../Source/Services/Usb/Microchip/system_config.h</itemPath>
+                <itemPath>../../../Source/Services/Usb/Microchip/system_definitions.h</itemPath>
+                <itemPath>../../../Source/Services/Usb/Microchip/app.h</itemPath>
+              </logicalFolder>
               <itemPath>../../../Include/Services/Usb/eosUsbClient.hpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/Services/eosAppLoop.hpp</itemPath>
@@ -50,8 +55,12 @@
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <logicalFolder name="f1" displayName="Usb" projectFiles="true">
+              <logicalFolder name="f1" displayName="Microchip" projectFiles="true">
+                <itemPath>../../../Source/Services/Usb/Microchip/system_init.c</itemPath>
+                <itemPath>../../../Source/Services/Usb/Microchip/system_interrupt.c</itemPath>
+                <itemPath>../../../Source/Services/Usb/Microchip/app.c</itemPath>
+              </logicalFolder>
               <itemPath>../../../Source/Services/Usb/eosUsbClient.cpp</itemPath>
-              <itemPath>../../../Source/Services/Usb/eosUsbHarmony.c</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
           </logicalFolder>
@@ -71,6 +80,24 @@
           <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
           <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/list.c</itemPath>
         </logicalFolder>
+        <logicalFolder name="f3" displayName="Harmony" projectFiles="true">
+          <logicalFolder name="f2" displayName="Driver" projectFiles="true">
+            <logicalFolder name="f1" displayName="Usb" projectFiles="true">
+              <itemPath>../../../../../../../../../../microchip/harmony/v1_07_01/framework/driver/usb/usbfs/src/dynamic/drv_usbfs.c</itemPath>
+              <itemPath>../../../../../../../../../../microchip/harmony/v1_07_01/framework/driver/usb/usbfs/src/dynamic/drv_usbfs_device.c</itemPath>
+            </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="f1" displayName="System" projectFiles="true">
+            <logicalFolder name="f1" displayName="Int" projectFiles="true">
+              <itemPath>../../../../../../../../../../microchip/harmony/v1_07_01/framework/system/int/src/sys_int_pic32.c</itemPath>
+            </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="f3" displayName="Usb" projectFiles="true">
+            <itemPath>../../../../../../../../../../microchip/harmony/v1_07_01/framework/usb/src/dynamic/usb_device_cdc.c</itemPath>
+            <itemPath>../../../../../../../../../../microchip/harmony/v1_07_01/framework/usb/src/dynamic/usb_device.c</itemPath>
+            <itemPath>../../../../../../../../../../microchip/harmony/v1_07_01/framework/usb/src/dynamic/usb_device_cdc_acm.c</itemPath>
+          </logicalFolder>
+        </logicalFolder>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -86,6 +113,9 @@
     <Elem>../../../Source/Services</Elem>
     <Elem>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source</Elem>
     <Elem>../../../Source/HAL</Elem>
+    <Elem>../../../../../../../../../../microchip/harmony/v1_07_01/framework/driver/usb/usbfs/src/dynamic</Elem>
+    <Elem>../../../../../../../../../../microchip/harmony/v1_07_01/framework/system/int/src</Elem>
+    <Elem>../../../../../../../../../../microchip/harmony/v1_07_01/framework/usb/src/dynamic</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
