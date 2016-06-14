@@ -10,8 +10,8 @@ const unsigned taskStackSize = 512;
 const TaskPriority taskPriority = TaskPriority::normal;
 
 
-extern "C" void usbSetup();
-extern "C" void usbLoop();
+extern "C" void usbSetup(void);
+extern "C" void usbLoop(void);
 
 
 /// ----------------------------------------------------------------------
@@ -26,7 +26,7 @@ UsbClientService::UsbClientService() :
 /// \brief Procesa les tasques del servei
 ///
 void UsbClientService::run() {
-    
+       
     usbSetup();
     while (true)
         usbLoop();

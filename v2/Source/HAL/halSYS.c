@@ -58,15 +58,9 @@ static void __attribute__((nomips16)) PerformanceConfig(
 }
 
 
-/*************************************************************************
- *
- *       Inicialitza el sistema
- *
- *       Funcio:
- *           void halSYSInitialize() 
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza el sistema
+///
 void halSYSInitialize() {
     
     // Inicialitzacio del sistema

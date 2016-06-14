@@ -19,7 +19,7 @@ class MyAppLoopService: public AppLoopService {
 class MyApplication: public Application {
     private:
         MyAppLoopService *appService;
-        UsbClientService *usbService;
+        UsbClientServiceHandle usbService;
         
     public :
         MyApplication();
