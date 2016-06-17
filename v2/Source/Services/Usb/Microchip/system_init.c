@@ -1,6 +1,5 @@
 #include "system_config.h"
 #include "system_definitions.h"
-#include <sys/attribs.h>
 
 
 const USB_DEVICE_CDC_INIT cdcInit0 = {
@@ -194,87 +193,3 @@ const USB_DEVICE_MASTER_DESCRIPTOR usbMasterDescriptor = {
     NULL, 
     NULL
 };
-
-
-const USB_DEVICE_INIT usbDevInitData = {
-    /* System module initialization */
-    .moduleInit = {SYS_MODULE_POWER_RUN_FULL},
-    
-    /* Number of function drivers registered to this instance of the
-       USB device layer */
-    .registeredFuncCount = 1,
-    
-    /* Function driver table registered to this instance of the USB device layer*/
-    .registeredFunctions = (USB_DEVICE_FUNCTION_REGISTRATION_TABLE*)funcRegistrationTable,
-
-    /* Pointer to USB Descriptor structure */
-    .usbMasterDescriptor = (USB_DEVICE_MASTER_DESCRIPTOR*)&usbMasterDescriptor,
-
-    /* USB Device Speed */
-    .deviceSpeed = USB_SPEED_FULL,
-    
-    /* Index of the USB Driver to be used by this Device Layer Instance */
-    .driverIndex = DRV_USBFS_INDEX_0,
-
-    /* Pointer to the USB Driver Functions. */
-    .usbDriverInterface = DRV_USBFS_DEVICE_INTERFACE,
-};
-
-uint8_t __attribute__((aligned(512))) endPointTable[DRV_USBFS_ENDPOINTS_NUMBER * 32];
-
-const DRV_USBFS_INIT drvUSBInit = {
-    /* Assign the endpoint table */
-    .endpointTable= endPointTable,
-
-    /* Interrupt Source for USB module */
-    .interruptSource = INT_SOURCE_USB_1,
-    
-    /* System module initialization */
-    .moduleInit = {SYS_MODULE_POWER_RUN_FULL},
-    .operationMode = DRV_USBFS_OPMODE_DEVICE,
-    .operationSpeed = USB_SPEED_FULL,
-    
-    /* Stop in idle */
-    .stopInIdle = false,
-
-    /* Suspend in sleep */
-    .suspendInSleep = false,
-
-    /* Identifies peripheral (PLIB-level) ID */
-    .usbID = USB_ID_1
-};
-
-const SYS_DEVCON_INIT sysDevconInit = {
-    .moduleInit = {0},
-};
-
-
-SYS_MODULE_OBJ drvUSBObject;
-SYS_MODULE_OBJ usbDevObject0;
-
-
-void usbSetup() {
-
-    PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_USB1, INT_PRIORITY_LEVEL4);
-    PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_USB1, INT_SUBPRIORITY_LEVEL0);
-
-    drvUSBObject = DRV_USBFS_Initialize(DRV_USBFS_INDEX_0, (SYS_MODULE_INIT*) &drvUSBInit);
-    usbDevObject0 = USB_DEVICE_Initialize(USB_DEVICE_INDEX_0, (SYS_MODULE_INIT*) &usbDevInitData);
-       
-    APP_Initialize();
-}
-
-
-void usbLoop() {
-
-    DRV_USBFS_Tasks(drvUSBObject);
-    USB_DEVICE_Tasks(usbDevObject0);
-    
-    APP_Tasks();
-}
-
-	
-void __ISR(_USB_1_VECTOR, ipl4AUTO) _IntHandlerUSBInstance0(void) {
-    
-    DRV_USBFS_Tasks_ISR(drvUSBObject);
-}

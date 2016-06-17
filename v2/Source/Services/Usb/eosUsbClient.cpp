@@ -1,6 +1,7 @@
 #include "eos.hpp"
 #include "System/Core/eosTask.hpp"
 #include "Services/Usb/eosUsbClient.hpp"
+#include "HAL/halUSBDevice.h"
 
 
 using namespace eos;
@@ -10,14 +11,10 @@ const unsigned taskStackSize = 512;
 const TaskPriority taskPriority = TaskPriority::normal;
 
 
-extern "C" void usbSetup(void);
-extern "C" void usbLoop(void);
-
-
 /// ----------------------------------------------------------------------
 /// \brief Contructor
 ///
-UsbClientService::UsbClientService() :
+UsbClientService::UsbClientService():
     task(taskStackSize, taskPriority, this) {
 }
 
@@ -27,7 +24,20 @@ UsbClientService::UsbClientService() :
 ///
 void UsbClientService::run() {
        
-    usbSetup();
-    while (true)
-        usbLoop();
+    halUSBDeviceSetup();
+    
+    while (true) {
+        halUSBTask();
+        
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Contructor
+/// \param service: El servei al que pertany.
+///
+UsbDevice::UsbDevice(
+    UsbClientServiceHandle* service) {
+    
 }

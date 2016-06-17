@@ -31,7 +31,16 @@ namespace eos {
     class UsbDevice {
         public:
             UsbDevice(UsbClientServiceHandle *service);
-            ~UsbDevice();
+            virtual ~UsbDevice();
+            virtual void initialize() = 0;
+            virtual void process() = 0;
+    };
+    
+    class UsbDeviceCDC: public UsbDevice {
+        public:
+            UsbDeviceCDC(UsbClientServiceHandle *service);
+            void initialize();
+            void process();
     };
         
 }
