@@ -2,7 +2,7 @@
 #include "System/eosApplication.hpp"
 #include "System/Core/eosTask.hpp"
 #include "Services/eosAppLoop.hpp"
-#include "Services/Usb/eosUsbClient.hpp"
+#include "Services/Usb/eosUsbDevice.hpp"
 
 
 using namespace eos;
@@ -19,7 +19,8 @@ class MyAppLoopService: public AppLoopService {
 class MyApplication: public Application {
     private:
         MyAppLoopService *appService;
-        UsbClientServiceHandle usbService;
+        UsbDeviceServiceHandle usbService;
+        UsbDeviceHandle usbCDCDevice;
         
     public :
         MyApplication();
@@ -32,7 +33,9 @@ class MyApplication: public Application {
 MyApplication::MyApplication() {
     
     appService = new MyAppLoopService();    
-    usbService = new UsbClientService();
+
+    usbService = new UsbDeviceService();    
+    usbCDCDevice = new UsbDeviceCDC(usbService);
 }
 
 

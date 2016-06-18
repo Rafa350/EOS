@@ -8,7 +8,10 @@ extern "C" {
 
 
 void halUSBDeviceSetup(void);
-void halUSBTask(void);
+void halUSBDeviceTask(void);
+
+void halUSBDeviceCDCSetup(void);
+void halUSBDeviceCDCTask(void);
 
 
 #ifdef	__cplusplus

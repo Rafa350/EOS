@@ -43,7 +43,7 @@ void halUSBDeviceSetup(void) {
     usbDevInitData.usbDriverInterface = DRV_USBFS_DEVICE_INTERFACE;
     usbDevObject0 = USB_DEVICE_Initialize(USB_DEVICE_INDEX_0, (SYS_MODULE_INIT*) &usbDevInitData);
     
-    APP_Initialize();
+    //APP_Initialize();
 }
 
 
@@ -51,12 +51,12 @@ void halUSBDeviceSetup(void) {
 /// \brief Procesa les tasques del modul USB. Cal cridar-la 
 /// periodicament.
 //
-void halUSBTask(void) {
+void halUSBDeviceTask(void) {
 
     DRV_USBFS_Tasks(drvUSBObject);
     USB_DEVICE_Tasks(usbDevObject0);
     
-    APP_Tasks();
+    //APP_Tasks();
 }
 
 	
