@@ -1,4 +1,5 @@
 #include "Services/Usb/eosUsbDevice.hpp"
+#include "HAL/halUSBDevice.h"
 
 
 using namespace eos;
@@ -14,7 +15,6 @@ extern "C" void APP_Tasks(void);
 ///
 UsbDeviceCDC::UsbDeviceCDC(UsbDeviceServiceHandle service):
     UsbDevice(service) {
-    
 }
 
 
@@ -23,7 +23,7 @@ UsbDeviceCDC::UsbDeviceCDC(UsbDeviceServiceHandle service):
 ///
 void UsbDeviceCDC::initialize() {
     
-    APP_Initialize();
+    halUSBDeviceCDCSetup();
 }
 
 
@@ -31,6 +31,6 @@ void UsbDeviceCDC::initialize() {
 /// \brief Procesament de les tasques de control.
 ///
 void UsbDeviceCDC::process() {    
-    
-    APP_Tasks();
+
+    halUSBDeviceCDCTask();
 }
