@@ -1,5 +1,8 @@
 #include "system_config.h"
-#include "system_definitions.h"
+#include "usb/usb_device.h"
+#include "usb/usb_device_cdc.h"
+#include "stdint.h"
+#include "stdbool.h"
 
 
 const USB_DEVICE_CDC_INIT cdcInit0 = {
@@ -9,7 +12,7 @@ const USB_DEVICE_CDC_INIT cdcInit0 = {
 };
 
 
-const USB_DEVICE_FUNCTION_REGISTRATION_TABLE funcRegistrationTable[1] = {
+const USB_DEVICE_FUNCTION_REGISTRATION_TABLE functionRegistrationTable[1] = {
     /* Function 1 */
     { 
         .configurationValue = 1,    /* Configuration value */ 
@@ -17,8 +20,8 @@ const USB_DEVICE_FUNCTION_REGISTRATION_TABLE funcRegistrationTable[1] = {
         .speed = USB_SPEED_FULL,    /* Function Speed */ 
         .numberOfInterfaces = 2,    /* Number of interfaces */
         .funcDriverIndex = 0,  /* Index of CDC Function Driver */
-        .driver = (void*)USB_DEVICE_CDC_FUNCTION_DRIVER,    /* USB CDC function data exposed to device layer */
-        .funcDriverInit = (void*)&cdcInit0    /* Function driver init data */
+        .driver = (void*) USB_DEVICE_CDC_FUNCTION_DRIVER,    /* USB CDC function data exposed to device layer */
+        .funcDriverInit = (void*) &cdcInit0    /* Function driver init data */
     },
 };
 
@@ -41,13 +44,13 @@ const USB_DEVICE_DESCRIPTOR deviceDescriptor = {
 };
 
 
-const uint8_t fullSpeedConfigurationDescriptor[] = {
+const uint8_t configurationDescriptor0[] = {
     /* Configuration Descriptor */
 
     0x09,                                               // Size of this descriptor in bytes
     USB_DESCRIPTOR_CONFIGURATION,                       // Descriptor Type
-    67,0,                //(67 Bytes)Size of the Config descriptor.e
-    2,                                               // Number of interfaces in this cfg
+    67, 0,                                              //(67 Bytes)Size of the Config descriptor.e
+    2,                                                  // Number of interfaces in this cfg
     0x01,                                               // Index value of this configuration
     0x00,                                               // Configuration string index
     USB_ATTRIBUTE_DEFAULT | USB_ATTRIBUTE_SELF_POWERED, // Attributes
@@ -58,7 +61,7 @@ const uint8_t fullSpeedConfigurationDescriptor[] = {
 
     0x09,                                           // Size of this descriptor in bytes
     USB_DESCRIPTOR_INTERFACE,                       // Descriptor Type
-    0,                                           // Interface Number
+    0,                                              // Interface Number
     0x00,                                           // Alternate Setting Number
     0x01,                                           // Number of endpoints in this interface
     USB_CDC_COMMUNICATIONS_INTERFACE_CLASS_CODE,    // Class code
@@ -71,7 +74,7 @@ const uint8_t fullSpeedConfigurationDescriptor[] = {
     sizeof(USB_CDC_HEADER_FUNCTIONAL_DESCRIPTOR),               // Size of the descriptor
     USB_CDC_DESC_CS_INTERFACE,                                  // CS_INTERFACE
     USB_CDC_FUNCTIONAL_HEADER,                                  // Type of functional descriptor
-    0x20,0x01,                                                  // CDC spec version
+    0x20, 0x01,                                                 // CDC spec version
 
     sizeof(USB_CDC_ACM_FUNCTIONAL_DESCRIPTOR),                  // Size of the descriptor
     USB_CDC_DESC_CS_INTERFACE,                                  // CS_INTERFACE
@@ -92,48 +95,46 @@ const uint8_t fullSpeedConfigurationDescriptor[] = {
 
     /* Interrupt Endpoint (IN)Descriptor */
 
-    0x07,                           // Size of this descriptor
-    USB_DESCRIPTOR_ENDPOINT,        // Endpoint Descriptor
-    1| USB_EP_DIRECTION_IN,      // EndpointAddress ( EP1 IN INTERRUPT)
-    USB_TRANSFER_TYPE_INTERRUPT,    // Attributes type of EP (INTERRUPT)
-    0x10,0x00,                      // Max packet size of this EP
-    0x02,                           // Interval (in ms)
+    0x07,                                        // Size of this descriptor
+    USB_DESCRIPTOR_ENDPOINT,                     // Endpoint Descriptor
+    1 | USB_EP_DIRECTION_IN,                     // EndpointAddress ( EP1 IN INTERRUPT)
+    USB_TRANSFER_TYPE_INTERRUPT,                 // Attributes type of EP (INTERRUPT)
+    0x10, 0x00,                                  // Max packet size of this EP
+    0x02,                                        // Interval (in ms)
 
     /* Interface Descriptor */
 
-    0x09,                               // Size of this descriptor in bytes
-    USB_DESCRIPTOR_INTERFACE,           // INTERFACE descriptor type
-    1,      // Interface Number
-    0x00,                               // Alternate Setting Number
-    0x02,                               // Number of endpoints in this interface
-    USB_CDC_DATA_INTERFACE_CLASS_CODE,  // Class code
-    0x00,                               // Subclass code
-    USB_CDC_PROTOCOL_NO_CLASS_SPECIFIC, // Protocol code
-    0x00,                               // Interface string index
+    0x09,                                        // Size of this descriptor in bytes
+    USB_DESCRIPTOR_INTERFACE,                    // INTERFACE descriptor type
+    1,                                           // Interface Number
+    0x00,                                        // Alternate Setting Number
+    0x02,                                        // Number of endpoints in this interface
+    USB_CDC_DATA_INTERFACE_CLASS_CODE,           // Class code
+    0x00,                                        // Subclass code
+    USB_CDC_PROTOCOL_NO_CLASS_SPECIFIC,          // Protocol code
+    0x00,                                        // Interface string index
 
     /* Bulk Endpoint (OUT)Descriptor */
 
-    0x07,                       // Size of this descriptor
-    USB_DESCRIPTOR_ENDPOINT,    // Endpoint Descriptor
-    2|USB_EP_DIRECTION_OUT,     // EndpointAddress ( EP2 OUT)
-    USB_TRANSFER_TYPE_BULK,     // Attributes type of EP (BULK)
-    0x40,0x00,                  // Max packet size of this EP
-    0x00,                       // Interval (in ms)
+    0x07,                                        // Size of this descriptor
+    USB_DESCRIPTOR_ENDPOINT,                     // Endpoint Descriptor
+    2 | USB_EP_DIRECTION_OUT,                    // EndpointAddress ( EP2 OUT)
+    USB_TRANSFER_TYPE_BULK,                      // Attributes type of EP (BULK)
+    0x40, 0x00,                                  // Max packet size of this EP
+    0x00,                                        // Interval (in ms)
 
      /* Bulk Endpoint (IN)Descriptor */
 
-    0x07,                       // Size of this descriptor
-    USB_DESCRIPTOR_ENDPOINT,    // Endpoint Descriptor
-    2|USB_EP_DIRECTION_IN,      // EndpointAddress ( EP2 IN )
-    0x02,                       // Attributes type of EP (BULK)
-    0x40,0x00,                  // Max packet size of this EP
-    0x00,                       // Interval (in ms)
-
-
+    0x07,                                        // Size of this descriptor
+    USB_DESCRIPTOR_ENDPOINT,                     // Endpoint Descriptor
+    2 | USB_EP_DIRECTION_IN,                     // EndpointAddress ( EP2 IN )
+    0x02,                                        // Attributes type of EP (BULK)
+    0x40,0x00,                                   // Max packet size of this EP
+    0x00,                                        // Interval (in ms)
 };
 
-USB_DEVICE_CONFIGURATION_DESCRIPTORS_TABLE fullSpeedConfigDescSet[1] = {
-    fullSpeedConfigurationDescriptor
+USB_DEVICE_CONFIGURATION_DESCRIPTORS_TABLE configurationDescriptorTable[1] = {
+    configurationDescriptor0
 };
 
 
@@ -172,24 +173,25 @@ sd002 = {
 }; 
 
 
-USB_DEVICE_STRING_DESCRIPTORS_TABLE stringDescriptors[3] = {
+USB_DEVICE_STRING_DESCRIPTORS_TABLE stringDescriptorTable[3] = {
     (const uint8_t *const) &sd000,
     (const uint8_t *const) &sd001,
     (const uint8_t *const) &sd002
 };
 
+
 /*******************************************
  * USB Device Layer Master Descriptor Table 
  *******************************************/
 const USB_DEVICE_MASTER_DESCRIPTOR usbMasterDescriptor = {
-    &deviceDescriptor,          /* Full speed descriptor */
-    1,                          /* Total number of full speed configurations available */
-    fullSpeedConfigDescSet,     /* Pointer to array of full speed configurations descriptors*/
+    &deviceDescriptor,              /* Full speed descriptor */
+    1,                             /* Total number of full speed configurations available */
+    configurationDescriptorTable,  /* Pointer to array of full speed configurations descriptors*/
     NULL, 
     0, 
     NULL, 
     3,                          // Total number of string descriptors available.
-    stringDescriptors,          // Pointer to array of string descriptors.
+    stringDescriptorTable,      // Pointer to array of string descriptors.
     NULL, 
     NULL
 };

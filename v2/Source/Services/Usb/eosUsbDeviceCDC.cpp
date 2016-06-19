@@ -23,7 +23,7 @@ UsbDeviceCDC::UsbDeviceCDC(UsbDeviceServiceHandle service):
 ///
 void UsbDeviceCDC::initialize() {
     
-    halUSBDeviceCDCSetup();
+    halUSBDeviceCDCSetup(nullptr, nullptr);
 }
 
 
