@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Creado con FontPicGenerator -->
+<!-- Creado con EosFontGenerator -->
 <!-- No modificar -->
 <!-- Name:  Microsoft Sans Serif -->
 <!-- Size:  8pt -->
@@ -9,7 +9,7 @@
         <font name="MicrosoftSansSerif 8pt" height="13" ascent="11" descent="2" isBold="False" isItalic="False">
             <char code="0x20" left="0" top="0" width="0" height="0" advance="3" />
             <char code="0x21" left="1" top="9" width="1" height="9" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#</scanLine>
                     <scanLine>#</scanLine>
                     <scanLine>#</scanLine>
@@ -22,14 +22,14 @@
                 </bitmap>
             </char>
             <char code="0x22" left="1" top="9" width="4" height="3" advance="5">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#..#</scanLine>
                     <scanLine>#..#</scanLine>
                     <scanLine>#..#</scanLine>
                 </bitmap>
             </char>
             <char code="0x23" left="1" top="9" width="6" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.#..#.</scanLine>
                     <scanLine>.#..#.</scanLine>
                     <scanLine>######</scanLine>
@@ -42,7 +42,7 @@
                 </bitmap>
             </char>
             <char code="0x24" left="1" top="9" width="5" height="10" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>..#..</scanLine>
                     <scanLine>.###.</scanLine>
                     <scanLine>#.#.#</scanLine>
@@ -56,7 +56,7 @@
                 </bitmap>
             </char>
             <char code="0x25" left="1" top="9" width="7" height="9" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.##....</scanLine>
                     <scanLine>#..#..#</scanLine>
                     <scanLine>.##..#.</scanLine>
@@ -69,7 +69,7 @@
                 </bitmap>
             </char>
             <char code="0x26" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.#...</scanLine>
                     <scanLine>#.#..</scanLine>
                     <scanLine>#.#..</scanLine>
@@ -82,14 +82,14 @@
                 </bitmap>
             </char>
             <char code="0x27" left="1" top="9" width="1" height="3" advance="2">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#</scanLine>
                     <scanLine>#</scanLine>
                     <scanLine>#</scanLine>
                 </bitmap>
             </char>
             <char code="0x28" left="1" top="9" width="2" height="11" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.#</scanLine>
                     <scanLine>#.</scanLine>
                     <scanLine>#.</scanLine>
@@ -104,7 +104,7 @@
                 </bitmap>
             </char>
             <char code="0x29" left="1" top="9" width="2" height="11" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#.</scanLine>
                     <scanLine>.#</scanLine>
                     <scanLine>.#</scanLine>
@@ -119,14 +119,14 @@
                 </bitmap>
             </char>
             <char code="0x2A" left="1" top="9" width="3" height="3" advance="4">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#.#</scanLine>
                     <scanLine>.#.</scanLine>
                     <scanLine>#.#</scanLine>
                 </bitmap>
             </char>
             <char code="0x2B" left="1" top="6" width="5" height="5" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>..#..</scanLine>
                     <scanLine>..#..</scanLine>
                     <scanLine>#####</scanLine>
@@ -135,23 +135,23 @@
                 </bitmap>
             </char>
             <char code="0x2C" left="1" top="1" width="2" height="2" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.#</scanLine>
                     <scanLine>#.</scanLine>
                 </bitmap>
             </char>
             <char code="0x2D" left="1" top="4" width="2" height="1" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>##</scanLine>
                 </bitmap>
             </char>
             <char code="0x2E" left="1" top="1" width="1" height="1" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#</scanLine>
                 </bitmap>
             </char>
             <char code="0x2F" left="1" top="9" width="4" height="9" advance="5">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>...#</scanLine>
                     <scanLine>...#</scanLine>
                     <scanLine>...#</scanLine>
@@ -164,7 +164,7 @@
                 </bitmap>
             </char>
             <char code="0x30" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
@@ -177,7 +177,7 @@
                 </bitmap>
             </char>
             <char code="0x31" left="1" top="9" width="3" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>..#</scanLine>
                     <scanLine>###</scanLine>
                     <scanLine>..#</scanLine>
@@ -190,7 +190,7 @@
                 </bitmap>
             </char>
             <char code="0x32" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>....#</scanLine>
@@ -203,7 +203,7 @@
                 </bitmap>
             </char>
             <char code="0x33" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>....#</scanLine>
@@ -216,7 +216,7 @@
                 </bitmap>
             </char>
             <char code="0x34" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>...#.</scanLine>
                     <scanLine>..##.</scanLine>
                     <scanLine>..##.</scanLine>
@@ -229,7 +229,7 @@
                 </bitmap>
             </char>
             <char code="0x35" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#####</scanLine>
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
@@ -242,7 +242,7 @@
                 </bitmap>
             </char>
             <char code="0x36" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#....</scanLine>
@@ -255,7 +255,7 @@
                 </bitmap>
             </char>
             <char code="0x37" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#####</scanLine>
                     <scanLine>....#</scanLine>
                     <scanLine>...#.</scanLine>
@@ -268,7 +268,7 @@
                 </bitmap>
             </char>
             <char code="0x38" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
@@ -281,7 +281,7 @@
                 </bitmap>
             </char>
             <char code="0x39" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
@@ -294,7 +294,7 @@
                 </bitmap>
             </char>
             <char code="0x3A" left="1" top="6" width="1" height="6" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#</scanLine>
                     <scanLine>.</scanLine>
                     <scanLine>.</scanLine>
@@ -304,7 +304,7 @@
                 </bitmap>
             </char>
             <char code="0x3B" left="1" top="6" width="2" height="7" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.#</scanLine>
                     <scanLine>..</scanLine>
                     <scanLine>..</scanLine>
@@ -315,7 +315,7 @@
                 </bitmap>
             </char>
             <char code="0x3C" left="1" top="7" width="4" height="7" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>...#</scanLine>
                     <scanLine>..#.</scanLine>
                     <scanLine>.#..</scanLine>
@@ -326,14 +326,14 @@
                 </bitmap>
             </char>
             <char code="0x3D" left="1" top="5" width="5" height="3" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#####</scanLine>
                     <scanLine>.....</scanLine>
                     <scanLine>#####</scanLine>
                 </bitmap>
             </char>
             <char code="0x3E" left="1" top="7" width="4" height="7" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#...</scanLine>
                     <scanLine>.#..</scanLine>
                     <scanLine>..#.</scanLine>
@@ -344,7 +344,7 @@
                 </bitmap>
             </char>
             <char code="0x3F" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>....#</scanLine>
@@ -357,7 +357,7 @@
                 </bitmap>
             </char>
             <char code="0x40" left="1" top="9" width="10" height="10" advance="11">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>...####...</scanLine>
                     <scanLine>.##....##.</scanLine>
                     <scanLine>.#......#.</scanLine>
@@ -371,7 +371,7 @@
                 </bitmap>
             </char>
             <char code="0x41" left="0" top="9" width="7" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>...#...</scanLine>
                     <scanLine>...#...</scanLine>
                     <scanLine>..#.#..</scanLine>
@@ -384,7 +384,7 @@
                 </bitmap>
             </char>
             <char code="0x42" left="1" top="9" width="5" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>####.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
@@ -397,7 +397,7 @@
                 </bitmap>
             </char>
             <char code="0x43" left="1" top="9" width="6" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.####.</scanLine>
                     <scanLine>#....#</scanLine>
                     <scanLine>#.....</scanLine>
@@ -410,7 +410,7 @@
                 </bitmap>
             </char>
             <char code="0x44" left="1" top="9" width="6" height="9" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>####..</scanLine>
                     <scanLine>#...#.</scanLine>
                     <scanLine>#....#</scanLine>
@@ -423,7 +423,7 @@
                 </bitmap>
             </char>
             <char code="0x45" left="1" top="9" width="5" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#####</scanLine>
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
@@ -436,7 +436,7 @@
                 </bitmap>
             </char>
             <char code="0x46" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#####</scanLine>
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
@@ -449,7 +449,7 @@
                 </bitmap>
             </char>
             <char code="0x47" left="1" top="9" width="6" height="9" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.####.</scanLine>
                     <scanLine>#....#</scanLine>
                     <scanLine>#.....</scanLine>
@@ -462,7 +462,7 @@
                 </bitmap>
             </char>
             <char code="0x48" left="1" top="9" width="6" height="9" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#....#</scanLine>
                     <scanLine>#....#</scanLine>
                     <scanLine>#....#</scanLine>
@@ -475,7 +475,7 @@
                 </bitmap>
             </char>
             <char code="0x49" left="1" top="9" width="1" height="9" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#</scanLine>
                     <scanLine>#</scanLine>
                     <scanLine>#</scanLine>
@@ -488,7 +488,7 @@
                 </bitmap>
             </char>
             <char code="0x4A" left="0" top="9" width="4" height="9" advance="5">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>...#</scanLine>
                     <scanLine>...#</scanLine>
                     <scanLine>...#</scanLine>
@@ -501,7 +501,7 @@
                 </bitmap>
             </char>
             <char code="0x4B" left="1" top="9" width="6" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#...#.</scanLine>
                     <scanLine>#..#..</scanLine>
                     <scanLine>#.#...</scanLine>
@@ -514,7 +514,7 @@
                 </bitmap>
             </char>
             <char code="0x4C" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
@@ -527,7 +527,7 @@
                 </bitmap>
             </char>
             <char code="0x4D" left="1" top="9" width="7" height="9" advance="9">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#.....#</scanLine>
                     <scanLine>#.....#</scanLine>
                     <scanLine>##...##</scanLine>
@@ -540,7 +540,7 @@
                 </bitmap>
             </char>
             <char code="0x4E" left="1" top="9" width="6" height="9" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#....#</scanLine>
                     <scanLine>##...#</scanLine>
                     <scanLine>##...#</scanLine>
@@ -553,7 +553,7 @@
                 </bitmap>
             </char>
             <char code="0x4F" left="1" top="9" width="6" height="9" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.####.</scanLine>
                     <scanLine>#....#</scanLine>
                     <scanLine>#....#</scanLine>
@@ -566,7 +566,7 @@
                 </bitmap>
             </char>
             <char code="0x50" left="1" top="9" width="6" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#####.</scanLine>
                     <scanLine>#....#</scanLine>
                     <scanLine>#....#</scanLine>
@@ -579,7 +579,7 @@
                 </bitmap>
             </char>
             <char code="0x51" left="1" top="9" width="6" height="10" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.####.</scanLine>
                     <scanLine>#....#</scanLine>
                     <scanLine>#....#</scanLine>
@@ -593,7 +593,7 @@
                 </bitmap>
             </char>
             <char code="0x52" left="1" top="9" width="6" height="9" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#####.</scanLine>
                     <scanLine>#....#</scanLine>
                     <scanLine>#....#</scanLine>
@@ -606,7 +606,7 @@
                 </bitmap>
             </char>
             <char code="0x53" left="1" top="9" width="5" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#....</scanLine>
@@ -619,7 +619,7 @@
                 </bitmap>
             </char>
             <char code="0x54" left="1" top="9" width="5" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#####</scanLine>
                     <scanLine>..#..</scanLine>
                     <scanLine>..#..</scanLine>
@@ -632,7 +632,7 @@
                 </bitmap>
             </char>
             <char code="0x55" left="1" top="9" width="6" height="9" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#....#</scanLine>
                     <scanLine>#....#</scanLine>
                     <scanLine>#....#</scanLine>
@@ -645,7 +645,7 @@
                 </bitmap>
             </char>
             <char code="0x56" left="0" top="9" width="7" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#.....#</scanLine>
                     <scanLine>#.....#</scanLine>
                     <scanLine>.#...#.</scanLine>
@@ -658,7 +658,7 @@
                 </bitmap>
             </char>
             <char code="0x57" left="0" top="9" width="11" height="9" advance="11">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#.........#</scanLine>
                     <scanLine>#.........#</scanLine>
                     <scanLine>.#...#...#.</scanLine>
@@ -671,7 +671,7 @@
                 </bitmap>
             </char>
             <char code="0x58" left="0" top="9" width="7" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#.....#</scanLine>
                     <scanLine>#.....#</scanLine>
                     <scanLine>.#...#.</scanLine>
@@ -684,7 +684,7 @@
                 </bitmap>
             </char>
             <char code="0x59" left="0" top="9" width="7" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#.....#</scanLine>
                     <scanLine>#.....#</scanLine>
                     <scanLine>.#...#.</scanLine>
@@ -697,7 +697,7 @@
                 </bitmap>
             </char>
             <char code="0x5A" left="0" top="9" width="7" height="9" advance="7">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#######</scanLine>
                     <scanLine>......#</scanLine>
                     <scanLine>.....#.</scanLine>
@@ -710,7 +710,7 @@
                 </bitmap>
             </char>
             <char code="0x5B" left="1" top="9" width="2" height="11" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>##</scanLine>
                     <scanLine>#.</scanLine>
                     <scanLine>#.</scanLine>
@@ -725,7 +725,7 @@
                 </bitmap>
             </char>
             <char code="0x5C" left="1" top="9" width="4" height="9" advance="5">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#...</scanLine>
                     <scanLine>#...</scanLine>
                     <scanLine>#...</scanLine>
@@ -738,7 +738,7 @@
                 </bitmap>
             </char>
             <char code="0x5D" left="1" top="9" width="2" height="11" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>##</scanLine>
                     <scanLine>.#</scanLine>
                     <scanLine>.#</scanLine>
@@ -753,25 +753,25 @@
                 </bitmap>
             </char>
             <char code="0x5E" left="1" top="10" width="5" height="3" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>..#..</scanLine>
                     <scanLine>.#.#.</scanLine>
                     <scanLine>#...#</scanLine>
                 </bitmap>
             </char>
             <char code="0x5F" left="0" top="-1" width="6" height="1" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>######</scanLine>
                 </bitmap>
             </char>
             <char code="0x60" left="1" top="9" width="2" height="2" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#.</scanLine>
                     <scanLine>.#</scanLine>
                 </bitmap>
             </char>
             <char code="0x61" left="1" top="6" width="5" height="6" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>....#</scanLine>
                     <scanLine>.####</scanLine>
@@ -781,7 +781,7 @@
                 </bitmap>
             </char>
             <char code="0x62" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
@@ -794,7 +794,7 @@
                 </bitmap>
             </char>
             <char code="0x63" left="1" top="6" width="5" height="6" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#....</scanLine>
@@ -804,7 +804,7 @@
                 </bitmap>
             </char>
             <char code="0x64" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>....#</scanLine>
                     <scanLine>....#</scanLine>
                     <scanLine>....#</scanLine>
@@ -817,7 +817,7 @@
                 </bitmap>
             </char>
             <char code="0x65" left="1" top="6" width="5" height="6" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#####</scanLine>
@@ -827,7 +827,7 @@
                 </bitmap>
             </char>
             <char code="0x66" left="1" top="9" width="2" height="9" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.#</scanLine>
                     <scanLine>#.</scanLine>
                     <scanLine>#.</scanLine>
@@ -840,7 +840,7 @@
                 </bitmap>
             </char>
             <char code="0x67" left="1" top="6" width="5" height="8" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.####</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
@@ -852,7 +852,7 @@
                 </bitmap>
             </char>
             <char code="0x68" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
@@ -865,7 +865,7 @@
                 </bitmap>
             </char>
             <char code="0x69" left="1" top="9" width="1" height="9" advance="2">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#</scanLine>
                     <scanLine>.</scanLine>
                     <scanLine>.</scanLine>
@@ -878,7 +878,7 @@
                 </bitmap>
             </char>
             <char code="0x6A" left="1" top="9" width="1" height="11" advance="2">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#</scanLine>
                     <scanLine>.</scanLine>
                     <scanLine>.</scanLine>
@@ -893,7 +893,7 @@
                 </bitmap>
             </char>
             <char code="0x6B" left="1" top="9" width="5" height="9" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
                     <scanLine>#....</scanLine>
@@ -906,7 +906,7 @@
                 </bitmap>
             </char>
             <char code="0x6C" left="1" top="9" width="1" height="9" advance="2">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#</scanLine>
                     <scanLine>#</scanLine>
                     <scanLine>#</scanLine>
@@ -919,7 +919,7 @@
                 </bitmap>
             </char>
             <char code="0x6D" left="1" top="6" width="7" height="6" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>###.##.</scanLine>
                     <scanLine>#..#..#</scanLine>
                     <scanLine>#..#..#</scanLine>
@@ -929,7 +929,7 @@
                 </bitmap>
             </char>
             <char code="0x6E" left="1" top="6" width="5" height="6" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#.##.</scanLine>
                     <scanLine>##..#</scanLine>
                     <scanLine>#...#</scanLine>
@@ -939,7 +939,7 @@
                 </bitmap>
             </char>
             <char code="0x6F" left="1" top="6" width="5" height="6" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.###.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
@@ -949,7 +949,7 @@
                 </bitmap>
             </char>
             <char code="0x70" left="1" top="6" width="5" height="8" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>####.</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
@@ -961,7 +961,7 @@
                 </bitmap>
             </char>
             <char code="0x71" left="1" top="6" width="5" height="8" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.####</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
@@ -973,7 +973,7 @@
                 </bitmap>
             </char>
             <char code="0x72" left="1" top="6" width="2" height="6" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>##</scanLine>
                     <scanLine>#.</scanLine>
                     <scanLine>#.</scanLine>
@@ -983,7 +983,7 @@
                 </bitmap>
             </char>
             <char code="0x73" left="1" top="6" width="4" height="6" advance="5">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.##.</scanLine>
                     <scanLine>#..#</scanLine>
                     <scanLine>.#..</scanLine>
@@ -993,7 +993,7 @@
                 </bitmap>
             </char>
             <char code="0x74" left="1" top="8" width="2" height="8" advance="3">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#.</scanLine>
                     <scanLine>#.</scanLine>
                     <scanLine>##</scanLine>
@@ -1005,7 +1005,7 @@
                 </bitmap>
             </char>
             <char code="0x75" left="1" top="6" width="5" height="6" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
@@ -1015,7 +1015,7 @@
                 </bitmap>
             </char>
             <char code="0x76" left="1" top="6" width="5" height="6" advance="6">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#...#</scanLine>
                     <scanLine>#...#</scanLine>
                     <scanLine>.#.#.</scanLine>
@@ -1025,7 +1025,7 @@
                 </bitmap>
             </char>
             <char code="0x77" left="1" top="6" width="7" height="6" advance="8">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#..#..#</scanLine>
                     <scanLine>#..#..#</scanLine>
                     <scanLine>#.#.#.#</scanLine>
@@ -1035,7 +1035,7 @@
                 </bitmap>
             </char>
             <char code="0x78" left="1" top="6" width="4" height="6" advance="5">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>#..#</scanLine>
                     <scanLine>#..#</scanLine>
                     <scanLine>.##.</scanLine>
@@ -1045,7 +1045,7 @@
                 </bitmap>
             </char>
             <char code="0x79" left="0" top="6" width="5" height="8" advance="5">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>.#..#</scanLine>
                     <scanLine>.#..#</scanLine>
                     <scanLine>.#..#</scanLine>
@@ -1057,7 +1057,7 @@
                 </bitmap>
             </char>
             <char code="0x7A" left="1" top="6" width="4" height="6" advance="5">
-                <bitmap>
+                <bitmap bpp="1">
                     <scanLine>####</scanLine>
                     <scanLine>...#</scanLine>
                     <scanLine>..#.</scanLine>

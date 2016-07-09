@@ -66,6 +66,7 @@
                 <itemPath>../../../Source/Controllers/Display/Fonts/Arial10pt.cpp</itemPath>
                 <itemPath>../../../Source/Controllers/Display/Fonts/Arial12pt.cpp</itemPath>
                 <itemPath>../../../Source/Controllers/Display/Fonts/Arial24pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Arial14pt.cpp</itemPath>
               </logicalFolder>
               <itemPath>../../../Source/Controllers/Display/eosDisplay.cpp</itemPath>
               <itemPath>../../../Source/Controllers/Display/eosFont.cpp</itemPath>
@@ -93,16 +94,16 @@
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
           <logicalFolder name="f2" displayName="MemMgr" projectFiles="true">
-            <itemPath>../../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+            <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="PIC32MX" projectFiles="true">
-            <itemPath>../../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-            <itemPath>../../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+            <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+            <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
           </logicalFolder>
-          <itemPath>../../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
-          <itemPath>../../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
-          <itemPath>../../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
-          <itemPath>../../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/list.c</itemPath>
+          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/tasks.c</itemPath>
+          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/timers.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -120,6 +121,7 @@
     <Elem>../../../../../../../../../../microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source</Elem>
     <Elem>../../../Source/HAL</Elem>
     <Elem>../../../Source/Services</Elem>
+    <Elem>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -131,13 +133,13 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.40</languageToolchainVersion>
+        <languageToolchainVersion>1.42</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../microchip/harmony/v1_06_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -159,13 +161,13 @@
       </makeCustomizationType>
       <C32>
         <property key="additional-warnings" value="false"/>
+        <property key="addresss-attribute-use" value="false"/>
         <property key="enable-app-io" value="false"/>
         <property key="enable-omit-frame-pointer" value="true"/>
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="true"/>
         <property key="exclude-floating-point" value="true"/>
-        <property key="extra-include-directories"
-                  value="..\;..\..\..\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX;C:\microchip\harmony\v1_06_01\framework"/>
+        <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
@@ -177,6 +179,7 @@
         <property key="preprocessor-macros" value="HARDWARE_PINGUINO_MICRO"/>
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
+        <property key="toplevel-reordering" value=""/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
@@ -190,9 +193,10 @@
         <property key="exclude-floating-point-library" value="true"/>
         <property key="expand-macros" value="false"/>
         <property key="extra-include-directories-for-assembler" value=""/>
-        <property key="extra-include-directories-for-preprocessor"
-                  value="..\;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+        <property key="extra-include-directories-for-preprocessor" value=""/>
         <property key="false-conditionals" value="false"/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
         <property key="keep-locals" value="false"/>
         <property key="list-assembly" value="false"/>
         <property key="list-source" value="false"/>
@@ -205,6 +209,9 @@
       </C32-AS>
       <C32-LD>
         <property key="additional-options-use-response-files" value="false"/>
+        <property key="allocate-dinit" value="false"/>
+        <property key="code-dinit" value="false"/>
+        <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="true"/>
         <property key="exclude-floating-point-library" value="true"/>
         <property key="exclude-standard-libraries" value="false"/>
@@ -221,6 +228,8 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="heap-size" value="2048"/>
         <property key="input-libraries" value=""/>
+        <property key="kseg-length" value=""/>
+        <property key="kseg-origin" value=""/>
         <property key="linker-symbols" value=""/>
         <property key="map-file" value="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
         <property key="no-startup-files" value="false"/>
@@ -229,6 +238,8 @@
         <property key="preprocessor-macros" value=""/>
         <property key="remove-unused-sections" value="true"/>
         <property key="report-memory-usage" value="false"/>
+        <property key="serial-length" value=""/>
+        <property key="serial-origin" value=""/>
         <property key="stack-size" value="2048"/>
         <property key="symbol-stripping" value=""/>
         <property key="trace-symbols" value=""/>
@@ -236,6 +247,7 @@
       </C32-LD>
       <C32CPP>
         <property key="additional-warnings" value="false"/>
+        <property key="addresss-attribute-use" value="false"/>
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="false"/>
         <property key="enable-app-io" value="false"/>
@@ -244,8 +256,7 @@
         <property key="enable-unroll-loops" value="true"/>
         <property key="exceptions" value="false"/>
         <property key="exclude-floating-point" value="true"/>
-        <property key="extra-include-directories"
-                  value="..\;..\..\..\Include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\include;C:\microchip\harmony\v1_06_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+        <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
@@ -257,12 +268,14 @@
         <property key="preprocessor-macros" value="HARDWARE_PINGUINO_MICRO"/>
         <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
+        <property key="toplevel-reordering" value=""/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
       </C32CPP>
       <C32Global>
-        <property key="common-include-directories" value=""/>
+        <property key="common-include-directories"
+                  value="..\;..\..\..\Include;C:\microchip\Harmony\v1_07_01\framework;C:\microchip\FreeRTOS\FreeRTOSv9.0.0\FreeRTOS\Source\include;C:\microchip\FreeRTOS\FreeRTOSv9.0.0\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="false"/>
         <property key="relaxed-math" value="false"/>
@@ -303,7 +316,6 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -313,6 +325,11 @@
         <property key="memories.eeprom" value="true"/>
         <property key="memories.flashdata" value="true"/>
         <property key="memories.id" value="true"/>
+        <property key="memories.instruction.ram" value="true"/>
+        <property key="memories.instruction.ram.end"
+                  value="${memories.instruction.ram.end.value}"/>
+        <property key="memories.instruction.ram.start"
+                  value="${memories.instruction.ram.start.value}"/>
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.end" value="0x1d07ffff"/>
         <property key="memories.programmemory.partition2" value="true"/>

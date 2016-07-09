@@ -13,7 +13,7 @@ resource_compiler_options=/P:use-proxy-variable /P:output-extension=cpp /P:inclu
 # ---------------------------------------------------
 # Rules
 
-all: "Out\Arial8pt.cpp" "Out\Arial10pt.cpp" "Out\Arial12pt.cpp" "Out\Arial24pt.cpp" "Out\Arial14pt.cpp" "Out\Arial18pt.cpp" "Out\ArialBold8pt.cpp" "Out\ArialBold10pt.cpp" "Out\ArialBold12pt.cpp" "Out\CourierNew7pt.cpp" "Out\CourierNew8pt.cpp" "Out\CourierNew10pt.cpp" "Out\CourierNewBold7pt.cpp" "Out\CourierNewBold8pt.cpp" "Out\CourierNewBold10pt.cpp"
+all: "Out\Arial8pt.cpp" "Out\Arial10pt.cpp" "Out\Arial12pt.cpp" "Out\Arial24pt.cpp" "Out\Arial14pt.cpp" "Out\Arial18pt.cpp" "Out\ArialBold8pt.cpp" "Out\ArialBold10pt.cpp" "Out\ArialBold12pt.cpp" "Out\CourierNew7pt.cpp" "Out\CourierNew8pt.cpp" "Out\CourierNew10pt.cpp" "Out\CourierNewBold7pt.cpp" "Out\CourierNewBold8pt.cpp" "Out\CourierNewBold10pt.cpp" "Out\Consolas8pt.cpp" "Out/Consolas10pt.cpp" "Out/Consolas12pt.cpp"
 
 "Out\Arial8pt.cpp": "Arial8pt.xfont" "EosFonts.mak"
 	$(resource_compiler) $(resource_compiler_options) /O:Out Arial8pt.xfont
@@ -59,4 +59,13 @@ all: "Out\Arial8pt.cpp" "Out\Arial10pt.cpp" "Out\Arial12pt.cpp" "Out\Arial24pt.c
 
 "Out\CourierNewBold10pt.cpp": "CourierNewBold10pt.xfont" "EosFonts.mak"
 	$(resource_compiler) $(resource_compiler_options) /O:Out CourierNewBold10pt.xfont
+
+"Out\Consolas8pt.cpp": "Consolas8pt.xfont" "EosFonts.mak"
+	$(resource_compiler) $(resource_compiler_options) /O:Out Consolas8pt.xfont
+
+"Out/Consolas10pt.cpp": "Consolas10pt.xfont" "EosFonts.mak"
+	$(resource_compiler) $(resource_compiler_options) /O:Out Consolas10pt.xfont
+
+"Out/Consolas12pt.cpp": "C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Tools\Fonts\Consolas12pt.xfont" "EosFonts.mak"
+	$(resource_compiler) $(resource_compiler_options) /O:Out C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Tools\Fonts\Consolas12pt.xfont
 

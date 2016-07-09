@@ -64,13 +64,13 @@ void MyAppLoopService::loop() {
 
     for (int i = 0; i < 10; i++) {
         display->setColor(RGB(r, g, b));
-        display->drawString(10, 30 + i * 30, "0123456789");
+        display->drawString(10, 30 + i * 30, "0123456789", 0, -1);
         r += 5;
         g += 7;
         b += 9;
     }
 
-    Task::delay(250);
+    Task::delay(100);
 }
 
 
