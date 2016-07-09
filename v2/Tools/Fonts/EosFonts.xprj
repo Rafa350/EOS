@@ -188,7 +188,7 @@
                             <value name="ToolOptions">/O:Out</value>
                         </object>
                         <object name="$item17" type="file" id="22">
-                            <value name="SourceFileName">C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Tools\Fonts\Consolas12pt.xfont</value>
+                            <value name="SourceFileName">Consolas12pt.xfont</value>
                             <value name="TargetFileName">Out/Consolas12pt.cpp</value>
                             <value name="Description">Consolar 12pt</value>
                             <null name="Notes" />
