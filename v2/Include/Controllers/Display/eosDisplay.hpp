@@ -53,6 +53,8 @@ namespace eos {
             IDisplayDriver *getDriver() const { return driver; }
             int getTextWidth(const char *text);
             int getTextHeight(const char *text);
+            Font *getFont() const { return font; }
+            Color getColot() const { return color; }
             void putTTY(char ch);
             void putTTY(const char *s);
             void putTTY(const char *s, int length);

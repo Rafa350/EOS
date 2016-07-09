@@ -62,9 +62,10 @@ void MyAppLoopService::setup() {
 ///
 void MyAppLoopService::loop() {
 
+    int fontHeight = display->getTextHeight("M") + 2;
     for (int i = 0; i < 10; i++) {
         display->setColor(RGB(r, g, b));
-        display->drawString(10, 30 + i * 30, "0123456789", 0, -1);
+        display->drawString(10, 30 + i * fontHeight, "0123456789 ABCD abcd", 0, -1);
         r += 5;
         g += 7;
         b += 9;

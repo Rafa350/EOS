@@ -67,6 +67,10 @@
                 <itemPath>../../../Source/Controllers/Display/Fonts/Arial12pt.cpp</itemPath>
                 <itemPath>../../../Source/Controllers/Display/Fonts/Arial24pt.cpp</itemPath>
                 <itemPath>../../../Source/Controllers/Display/Fonts/Arial14pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas8pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas10pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas12pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas14pt.cpp</itemPath>
               </logicalFolder>
               <itemPath>../../../Source/Controllers/Display/eosDisplay.cpp</itemPath>
               <itemPath>../../../Source/Controllers/Display/eosFont.cpp</itemPath>
@@ -316,6 +320,7 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

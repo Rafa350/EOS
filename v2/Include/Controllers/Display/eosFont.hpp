@@ -7,6 +7,13 @@
 
 namespace eos {
     
+    enum class FontStyle {
+        Regular,
+        Bold,
+        Italic,
+        BoldItalic
+    };
+    
     struct FontInfo {             // Informacio del font
         int height;               // -Alçada
         int ascent;               // -Ascendent
@@ -29,6 +36,7 @@ namespace eos {
             const uint8_t *fontResource;
             
         public:
+            Font(const char *fontName, int height, FontStyle style);
             Font(const uint8_t *fontResource);
             void getFontInfo(FontInfo &fi) const;
             void getCharInfo(char ch, CharInfo &ci) const;

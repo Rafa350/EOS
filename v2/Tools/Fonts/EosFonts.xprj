@@ -16,7 +16,7 @@
                         <value name="$count">0</value>
                     </object>
                     <object name="Files" type="fileList" id="4">
-                        <value name="$count">18</value>
+                        <value name="$count">19</value>
                         <object name="$item0" type="file" id="5">
                             <value name="SourceFileName">Arial8pt.xfont</value>
                             <value name="TargetFileName">Out\Arial8pt.cpp</value>
@@ -190,7 +190,17 @@
                         <object name="$item17" type="file" id="22">
                             <value name="SourceFileName">Consolas12pt.xfont</value>
                             <value name="TargetFileName">Out/Consolas12pt.cpp</value>
-                            <value name="Description">Consolar 12pt</value>
+                            <value name="Description">Consolas 12pt</value>
+                            <null name="Notes" />
+                            <value name="Active">True</value>
+                            <value name="Action">Translate</value>
+                            <null name="Tool" />
+                            <value name="ToolOptions">/O:Out</value>
+                        </object>
+                        <object name="$item18" type="file" id="23">
+                            <value name="SourceFileName">Consolas14pt.xfont</value>
+                            <value name="TargetFileName">Out/Consolas14pt.cpp</value>
+                            <value name="Description">Consolas 14pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
                             <value name="Action">Translate</value>
@@ -200,9 +210,9 @@
                     </object>
                 </object>
             </object>
-            <object name="Tools" type="toolList" id="23">
+            <object name="Tools" type="toolList" id="24">
                 <value name="$count">2</value>
-                <object name="$item0" type="tool" id="24">
+                <object name="$item0" type="tool" id="25">
                     <value name="Name">cpp_compiler</value>
                     <value name="Description">Compilador CPP (Microchip XC32)</value>
                     <null name="Notes" />
@@ -212,7 +222,7 @@
                     <value name="TargetExt">o</value>
                     <null name="Options" />
                 </object>
-                <object name="$item1" type="tool" id="25">
+                <object name="$item1" type="tool" id="26">
                     <value name="Name">resource_compiler</value>
                     <value name="Description">Compilador de recursos</value>
                     <null name="Notes" />
@@ -223,7 +233,7 @@
                     <value name="Options">/P:use-proxy-variable /P:output-extension=cpp /P:include-files=eosConfig.h</value>
                 </object>
             </object>
-            <object name="Configurations" type="configurationList" id="26">
+            <object name="Configurations" type="configurationList" id="27">
                 <value name="$count">0</value>
             </object>
         </object>

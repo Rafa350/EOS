@@ -38,6 +38,10 @@
 #define FONT_USE_Arial12pt
 #define FONT_USE_Arial14pt
 #define FONT_USE_Arial24pt
+#define FONT_USE_Consolas8pt
+#define FONT_USE_Consolas10pt
+#define FONT_USE_Consolas12pt
+#define FONT_USE_Consolas14pt
 
 
 #endif

@@ -5,9 +5,7 @@
 using namespace eos;
 
 
-extern const unsigned char *fontArial14pt;
-extern const unsigned char *fontArial18pt;
-extern const unsigned char *fontArial24pt;
+extern const unsigned char *fontConsolas14pt;
 
 
 /// ----------------------------------------------------------------------
@@ -21,7 +19,9 @@ Display::Display(
     xCursor(0),
     yCursor(0),
     ttyState(0),
-    font(new Font(fontArial14pt)) {
+    font(nullptr) {
+    
+    setFont(new Font(fontConsolas14pt));
 }
 
 
@@ -323,11 +323,9 @@ int Display::drawChar(
     char c) {
 
     int cx, cy, cw, d;
-    FontInfo fi;
     CharInfo ci;
 
-    font->getFontInfo(fi);
-    if ((c >= fi.firstChar) && (c <= fi.lastChar)) {
+    if ((c >= fontInfo.firstChar) && (c <= fontInfo.lastChar)) {
         font->getCharInfo(c, ci);
         if (ci.bitmap != nullptr) {
             cw = (ci.width + 7) >> 3;
