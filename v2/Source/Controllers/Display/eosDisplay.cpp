@@ -36,23 +36,33 @@ Display::~Display() {
 /// ----------------------------------------------------------------------
 /// \brief Selecciona el color per dibuixar.
 /// \param color: El color a seleccionar.
+/// \return L'anterior color seleccionat.
 ///
-void Display::setColor(
+Color Display::setColor(
     Color _color) {
     
+    Color oldColor = color;
+    
     color = _color;
+    
+    return oldColor;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Selecciona el font per dibuixar caracters i cadenes de texte.
 /// \param font: El font a seleccionar.
+/// \return L'anterior font seleccionat.
 ///
-void Display::setFont(
+Font *Display::setFont(
     Font *_font) {
     
+    Font *oldFont = font;
+    
     font = _font;
-    font->getFontInfo(fontInfo);
+    font->getFontInfo(fi);
+    
+    return oldFont;
 }
 
 
@@ -322,18 +332,16 @@ int Display::drawChar(
     int y, 
     char c) {
 
-    int cx, cy, cw, d;
-    CharInfo ci;
-
-    if ((c >= fontInfo.firstChar) && (c <= fontInfo.lastChar)) {
+    if ((c >= fi.firstChar) && (c <= fi.lastChar)) {
+        CharInfo ci;
         font->getCharInfo(c, ci);
         if (ci.bitmap != nullptr) {
-            cw = (ci.width + 7) >> 3;
+            int cw = (ci.width + 7) >> 3;
             x += ci.left;
             y -= ci.top;
-            for (cy = 0; cy < ci.height; cy++) {
-                d = cy * cw;
-                for (cx = 0; cx < ci.width; cx++)
+            for (int cy = 0; cy < ci.height; cy++) {
+                int d = cy * cw;
+                for (int cx = 0; cx < ci.width; cx++)
                     if (ci.bitmap[d + (cx >> 3)] & (0x80 >> (cx & 7)))
                         driver->setPixel(x + cx, y + cy, color);
                 }
@@ -380,10 +388,10 @@ int Display::getTextWidth(
     const char *s) {
     
     char c;
-    CharInfo ci;
 
     int w = 0;
     while ((c = *s++) != '\0') {
+        CharInfo ci;
         font->getCharInfo(c, ci);
         w += ci.advance;
     }
@@ -400,7 +408,7 @@ int Display::getTextWidth(
 int Display::getTextHeight(
     const char *s) {
     
-    return fontInfo.height;
+    return fi.height;
 }
 
 
@@ -434,7 +442,7 @@ void Display::putTTY(
 
                 case '\n':
                     xCursor = 0;
-                    yCursor += fontInfo.height;
+                    yCursor += fi.height;
                     if (yCursor >= driver->getYSize())
                         yCursor = 0;
                     break;
@@ -444,7 +452,7 @@ void Display::putTTY(
                     font->getCharInfo(c, ci);
                     if ((xCursor + ci.advance) >= driver->getXSize()) {
                         xCursor = 0;
-                        yCursor += fontInfo.height;
+                        yCursor += fi.height;
                         if (yCursor >= driver->getXSize()) {
 
                             // TODO: fer scroll de pantalla linia a linia

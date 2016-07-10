@@ -11,6 +11,8 @@ extern const unsigned char *fontConsolas8pt;
 extern const unsigned char *fontConsolas10pt;
 extern const unsigned char *fontConsolas12pt;
 extern const unsigned char *fontConsolas14pt;
+extern const unsigned char *fontConsolas18pt;
+extern const unsigned char *fontConsolas24pt;
 
 
 typedef struct {
@@ -48,7 +50,15 @@ static FontTableEntry fontTable[] = {
 #endif    
 
 #ifdef FONT_USE_Consolas14pt    
-    { "Consolas", 14, FontStyle::Regular, fontConsolas12pt },
+    { "Consolas", 14, FontStyle::Regular, fontConsolas14pt },
+#endif    
+
+#ifdef FONT_USE_Consolas18pt    
+    { "Consolas", 18, FontStyle::Regular, fontConsolas18pt },
+#endif    
+
+#ifdef FONT_USE_Consolas24pt    
+    { "Consolas", 24, FontStyle::Regular, fontConsolas24pt },
 #endif    
 };
 
@@ -110,21 +120,15 @@ void Font::getCharInfo(
     char c, 
     CharInfo &ci) const {
 
-    unsigned offset;
+    unsigned offset = fontResource[6] + fontResource[7] * 256 + (c - fontResource[4]) * 2;
+    unsigned charInfoOffset = fontResource[offset] + fontResource[offset + 1] * 256;
+    unsigned charBitsOffset = fontResource[charInfoOffset + 5] + fontResource[charInfoOffset + 6] * 256;
 
-    offset = fontResource[6] + fontResource[7] * 256 + (c - fontResource[4]) * 2;
-    offset = fontResource[offset] + fontResource[offset + 1] * 256;
-
-    ci.width = fontResource[offset];
-    ci.height = fontResource[offset + 1];
-    ci.left = fontResource[offset + 2];
-    ci.top = fontResource[offset + 3];
-    ci.advance = fontResource[offset + 4];
-    
-    unsigned charBitsOffset = fontResource[offset + 5] + fontResource[offset + 6] * 256;
-    if (charBitsOffset == (unsigned) -1)
-        ci.bitmap = nullptr;
-    else
-        ci.bitmap = &fontResource[charBitsOffset];
+    ci.width = fontResource[charInfoOffset];
+    ci.height = fontResource[charInfoOffset + 1];
+    ci.left = fontResource[charInfoOffset + 2];
+    ci.top = fontResource[charInfoOffset + 3];
+    ci.advance = fontResource[charInfoOffset + 4];
+    ci.bitmap = (charBitsOffset == (unsigned) -1) ? nullptr : &fontResource[charBitsOffset];
 }
 

@@ -71,6 +71,8 @@
                 <itemPath>../../../Source/Controllers/Display/Fonts/Consolas10pt.cpp</itemPath>
                 <itemPath>../../../Source/Controllers/Display/Fonts/Consolas12pt.cpp</itemPath>
                 <itemPath>../../../Source/Controllers/Display/Fonts/Consolas14pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas18pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas24pt.cpp</itemPath>
               </logicalFolder>
               <itemPath>../../../Source/Controllers/Display/eosDisplay.cpp</itemPath>
               <itemPath>../../../Source/Controllers/Display/eosFont.cpp</itemPath>

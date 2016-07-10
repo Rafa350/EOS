@@ -40,7 +40,7 @@ namespace eos {
             IDisplayDriver *driver;
             Color color;
             Font *font;
-            FontInfo fontInfo;
+            FontInfo fi;
             int xCursor;
             int yCursor;
             int ttyState;
@@ -48,13 +48,13 @@ namespace eos {
         public:
             Display(IDisplayDriver *driver);
             ~Display();
-            void setColor(Color color);
-            void setFont(Font *font);
+            Color setColor(Color color);
+            Font *setFont(Font *font);
             IDisplayDriver *getDriver() const { return driver; }
             int getTextWidth(const char *text);
             int getTextHeight(const char *text);
             Font *getFont() const { return font; }
-            Color getColot() const { return color; }
+            Color getColor() const { return color; }
             void putTTY(char ch);
             void putTTY(const char *s);
             void putTTY(const char *s, int length);

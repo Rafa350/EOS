@@ -471,14 +471,14 @@ static void writePixel(
         ((color & 0x00FC0000) >> 5) |
         ((color & 0x0000FE00) >> 3) |
         (color & 0x000000FC);
-    uint8_t ch = c >> 8;
-    uint8_t cl = c & 0xFF;
+    uint8_t cH = c >> 8;
+    uint8_t cL = c & 0xFF;
     
     setRS();
     clrCS();
     while (count--) {
-        send(ch);
-        send(cl);
+        send(cH);
+        send(cL;
     }
     setCS();
 }

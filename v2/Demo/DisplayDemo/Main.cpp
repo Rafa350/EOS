@@ -62,6 +62,7 @@ void MyAppLoopService::setup() {
 ///
 void MyAppLoopService::loop() {
 
+    display->clear(0);
     int fontHeight = display->getTextHeight("M") + 2;
     for (int i = 0; i < 10; i++) {
         display->setColor(RGB(r, g, b));
@@ -70,8 +71,12 @@ void MyAppLoopService::loop() {
         g += 7;
         b += 9;
     }
-
-    Task::delay(100);
+    Task::delay(1000);
+    
+    display->clear(0);
+    for (int i = 0; i < 1000; i++)
+        display->putTTY('a');   
+    Task::delay(1000);
 }
 
 

@@ -42,6 +42,8 @@
 #define FONT_USE_Consolas10pt
 #define FONT_USE_Consolas12pt
 #define FONT_USE_Consolas14pt
+#define FONT_USE_Consolas18pt
+#define FONT_USE_Consolas24pt
 
 
 #endif

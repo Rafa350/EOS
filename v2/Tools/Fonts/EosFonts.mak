@@ -13,7 +13,7 @@ resource_compiler_options=/P:use-proxy-variable /P:output-extension=cpp /P:inclu
 # ---------------------------------------------------
 # Rules
 
-all: "Out\Arial8pt.cpp" "Out\Arial10pt.cpp" "Out\Arial12pt.cpp" "Out\Arial24pt.cpp" "Out\Arial14pt.cpp" "Out\Arial18pt.cpp" "Out\ArialBold8pt.cpp" "Out\ArialBold10pt.cpp" "Out\ArialBold12pt.cpp" "Out\CourierNew7pt.cpp" "Out\CourierNew8pt.cpp" "Out\CourierNew10pt.cpp" "Out\CourierNewBold7pt.cpp" "Out\CourierNewBold8pt.cpp" "Out\CourierNewBold10pt.cpp" "Out\Consolas8pt.cpp" "Out/Consolas10pt.cpp" "Out/Consolas12pt.cpp" "Out/Consolas14pt.cpp"
+all: "Out\Arial8pt.cpp" "Out\Arial10pt.cpp" "Out\Arial12pt.cpp" "Out\Arial24pt.cpp" "Out\Arial14pt.cpp" "Out\Arial18pt.cpp" "Out\ArialBold8pt.cpp" "Out\ArialBold10pt.cpp" "Out\ArialBold12pt.cpp" "Out\CourierNew7pt.cpp" "Out\CourierNew8pt.cpp" "Out\CourierNew10pt.cpp" "Out\CourierNewBold7pt.cpp" "Out\CourierNewBold8pt.cpp" "Out\CourierNewBold10pt.cpp" "Out\Consolas8pt.cpp" "Out/Consolas10pt.cpp" "Out/Consolas12pt.cpp" "Out/Consolas14pt.cpp" "Out/Consolas18pt.cpp" "Out/Consolas24pt.cpp"
 
 "Out\Arial8pt.cpp": "Arial8pt.xfont" "EosFonts.mak"
 	$(resource_compiler) $(resource_compiler_options) /O:Out Arial8pt.xfont
@@ -71,4 +71,10 @@ all: "Out\Arial8pt.cpp" "Out\Arial10pt.cpp" "Out\Arial12pt.cpp" "Out\Arial24pt.c
 
 "Out/Consolas14pt.cpp": "Consolas14pt.xfont" "EosFonts.mak"
 	$(resource_compiler) $(resource_compiler_options) /O:Out Consolas14pt.xfont
+
+"Out/Consolas18pt.cpp": "Consolas18pt.xfont" "EosFonts.mak"
+	$(resource_compiler) $(resource_compiler_options) /O:Out Consolas18pt.xfont
+
+"Out/Consolas24pt.cpp": "Consolas24pt.xfont" "EosFonts.mak"
+	$(resource_compiler) $(resource_compiler_options) /O:Out Consolas24pt.xfont
 
