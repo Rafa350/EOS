@@ -6,24 +6,7 @@
 #define MAX_COLUMNS          240
 #define MAX_ROWS             320
 
-// Tipus d'interficie
-//
-//#define IF_3WI
-//#define IF_3WII
-//#define IF_4WI
-#define IF_4WII
-//#define IF_8P
-//#define IF_9P
-//#define IF_16PI
-//#define IF_16PII
-//#define IF_18PI
-//#define IF_18PII
-
-// Format de pixels
-//
-#define PF_565
-//#define PF_666
-    
+   
 // Comandes del controlador
 //
 #define CMD_NOP                                            0x00
@@ -171,19 +154,19 @@ void ILI9341_DisplayDriver::initialize() {
     
     // Inicialitza els pins de control
     //
-    initCS();
-    initRS();
-    initCLK();
-    initSO();
-    initSI();
-    initRST();
+    ILI9341_initCS();
+    ILI9341_initRS();
+    ILI9341_initCLK();
+    ILI9341_initSO();
+    ILI9341_initSI();
+    ILI9341_initRST();
     
     // Reset del controlador
     //
     delay(5);
-    clrRST();
+    ILI9341_clrRST();
     delay(10);
-    setRST();
+    ILI9341_setRST();
     delay(120);
     
     // Sequencia d'inicialitzacio del controlador
@@ -420,12 +403,12 @@ static void send(uint8_t data) {
 
     uint8_t mask;
     for (mask = 0x80; mask; mask >>= 1) {
-        clrCLK();
+        ILI9341_clrCLK();
         if ((data & mask) != 0)
-            setSO();
+            ILI9341_setSO();
         else
-            clrSO();
-        setCLK();
+            ILI9341_clrSO();
+        ILI9341_setCLK();
     }    
 }
 
@@ -437,10 +420,10 @@ static void send(uint8_t data) {
 static void writeCommand(
     uint8_t command) {
     
-    clrRS();                 // RS = 0
-    clrCS();                 // CS = 0
+    ILI9341_clrRS();         // RS = 0
+    ILI9341_clrCS();         // CS = 0
     send(command);
-    setCS();                 // CS = 1
+    ILI9341_setCS();         // CS = 1
 }
 
 
@@ -451,10 +434,10 @@ static void writeCommand(
 static void writeData(
     uint8_t data) {
     
-    setRS();                 // RS = 1
-    clrCS();                 // CS = 0
+    ILI9341_setRS();         // RS = 1
+    ILI9341_clrCS();         // CS = 0
     send(data);
-    setCS();                 // CS = 1
+    ILI9341_setCS();         // CS = 1
 }
 
 
@@ -474,11 +457,11 @@ static void writePixel(
     uint8_t cH = c >> 8;
     uint8_t cL = c & 0xFF;
     
-    setRS();
-    clrCS();
+    ILI9341_setRS();
+    ILI9341_clrCS();
     while (count--) {
         send(cH);
-        send(cL;
+        send(cL);
     }
-    setCS();
+    ILI9341_setCS();
 }

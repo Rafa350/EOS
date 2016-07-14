@@ -29,47 +29,47 @@
 // CONFIGURACIO DE LA PANTALLA ILI9341
 // -----------------------------------------------------------------------
 
-#define TFT_DRV_COLORMODE_RGB16bit
-#define TFT_DRV_INTERFACE_4WIRE2
+#define ILI9341_COLORMODE_RGB16bit
+#define ILI9341_INTERFACE_4WIRE2
 
 // Control del pin CS (Chip select) RE1
 //
-#define initCS()  LATESET  = 1 << 1; \
-                  TRISECLR = 1 << 1
-#define setCS()   LATESET  = 1 << 1
-#define clrCS()   LATECLR  = 1 << 1
+#define ILI9341_initCS()  LATESET  = 1 << 1; \
+                          TRISECLR = 1 << 1
+#define ILI9341_setCS()   LATESET  = 1 << 1
+#define ILI9341_clrCS()   LATECLR  = 1 << 1
 
 // Control del pin RS (Register select) RE2
 //
-#define initRS()  LATECLR  = 1 << 2; \
-                  TRISECLR = 1 << 2
-#define setRS()   LATESET  = 1 << 2
-#define clrRS()   LATECLR  = 1 << 2
+#define ILI9341_initRS()  LATECLR  = 1 << 2; \
+                          TRISECLR = 1 << 2
+#define ILI9341_setRS()   LATESET  = 1 << 2
+#define ILI9341_clrRS()   LATECLR  = 1 << 2
 
 // Control del pin CLK (Serial clock) RE5
 //
-#define initCLK() LATESET  = 1 << 5; \
-                  TRISECLR = 1 << 5
-#define setCLK()  LATESET  = 1 << 5
-#define clrCLK()  LATECLR  = 1 << 5
+#define ILI9341_initCLK() LATESET  = 1 << 5; \
+                          TRISECLR = 1 << 5
+#define ILI9341_setCLK()  LATESET  = 1 << 5
+#define ILI9341_clrCLK()  LATECLR  = 1 << 5
 
 // Control del pin SO (Serial output) RE4
 //
-#define initSO()  TRISECLR = 1 << 4
-#define setSO()   LATESET  = 1 << 4
-#define clrSO()   LATECLR  = 1 << 4
+#define ILI9341_initSO()  TRISECLR = 1 << 4
+#define ILI9341_setSO()   LATESET  = 1 << 4
+#define ILI9341_clrSO()   LATECLR  = 1 << 4
 
 // Control del pin SI (Serial inpout) RE3
 //
-#define initSI()  TRISESET = 1 << 3
-#define getSI()   (PORTE & ~(1 << 3) != 0)
+#define ILI9341_initSI()  TRISESET = 1 << 3
+#define ILI9341_getSI()   (PORTE & ~(1 << 3) != 0)
 
 // Control del pin RST (Reset) RE0
 //
-#define initRST() LATECLR  = 1 << 0; \
-                  TRISECLR = 1 << 0
-#define setRST()  LATESET  = 1 << 0
-#define clrRST()  LATECLR  = 1 << 0
+#define ILI9341_initRST() LATECLR  = 1 << 0; \
+                          TRISECLR = 1 << 0
+#define ILI9341_setRST()  LATESET  = 1 << 0
+#define ILI9341_clrRST()  LATECLR  = 1 << 0
 
 
 #endif
