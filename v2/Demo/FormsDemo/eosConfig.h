@@ -28,8 +28,8 @@
 
 // Opcions de configuracio pel servei 'Forms'
 //
-#define eosOPTIONS_FORMS_MAX_INSTANCES           1    // Numero maxim d'instancies del servei
-#define eosOPTIONS_FORMS_MAX_QUEUE_SIZE         50    // Numero maxim de missatges en la cua
+#define eosFormsService_UseDisplay                       1
+#define eosFormsService_UseSelector                      1
 
 
 #endif

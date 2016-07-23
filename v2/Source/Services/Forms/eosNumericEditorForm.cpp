@@ -126,7 +126,7 @@ void NumericEditorForm::setTitle(
 void NumericEditorForm::onPaint(
     FormsDisplayHandle display) {
 
-    display->clear();
+    display->clear(0x00000000);
     if (title != nullptr)
         display->drawText(0, 0, title, 0, -1);
     
@@ -157,6 +157,8 @@ void NumericEditorForm::onSelectorMove(
     Form::onSelectorMove(position, direction);
 }
 
+
+#ifdef eosFormsService_UseKeyboard
 void NumericEditorForm::onKeyPress(
     unsigned key) {
     
@@ -175,6 +177,7 @@ void NumericEditorForm::onKeyPress(
     
     Form::onKeyPress(key);
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

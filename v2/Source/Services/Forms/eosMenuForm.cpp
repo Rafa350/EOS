@@ -59,7 +59,7 @@ void MenuForm::onPaint(
     unsigned titleLen = resource[offset + 1];
     char *title = (char*) &resource[offset + 2];
 
-    display->clear();
+    display->clear(0x00000000);
     display->drawText(0, 0, title, 0, titleLen);
     display->drawLine(0, 10, 127, 10);
 
@@ -95,6 +95,7 @@ void MenuForm::onPaint(
 /// \param position: Posicio del selector
 /// \param direction: Direccio del moviment.
 ///
+#ifdef eosFormsService_UseSelector
 void MenuForm::onSelectorMove(
     int position,
     SelectorDirection direction) {
@@ -106,23 +107,27 @@ void MenuForm::onSelectorMove(
     
     Form::onSelectorMove(position, direction);
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant es prem el boto del selector.
 ///
+#ifdef eosFormsService_UseSelector
 void MenuForm::onSelectorPress() {
     
     clickItem();
     
     Form::onSelectorPress();
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \bried Es crida quant es prem una tecla.
 /// \param key: Codi de la tecla.
 ///
+#ifdef eosFormsConfig_UseKeyboard
 void MenuForm::onKeyPress(unsigned key) {
     
     switch (key) {
@@ -142,6 +147,7 @@ void MenuForm::onKeyPress(unsigned key) {
     
     Form::onKeyPress(key);
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

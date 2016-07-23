@@ -23,7 +23,7 @@ OptionEditorForm::OptionEditorForm(
 void OptionEditorForm::onPaint(
     FormsDisplayHandle display) {
 
-    display->clear();
+    display->clear(0x00000000);
     if (title != NULL)
         display->drawText(0, 0, title, 0, -1);
     display->drawLine(0, 10, 127, 10);

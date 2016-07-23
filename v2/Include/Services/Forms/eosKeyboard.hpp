@@ -2,21 +2,10 @@
 #define __EOS_KEYBOARD_HPP
 
 
-#ifndef __EOS_HPP
 #include "eos.hpp"
-#endif
-
-#ifndef __EOS_TASK_HPP
 #include "System/Core/eosTask.hpp"
-#endif
-
-#ifndef __EOS_CALLBACKS_HPP
 #include "System/Core/eosCallbacks.hpp"
-#endif
-
-#ifndef __EOS_I2CMASTER_HPP
 #include "Services/eosI2CMaster.hpp"
-#endif
 
 
 namespace eos {

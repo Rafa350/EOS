@@ -2,17 +2,9 @@
 #define __EOS_MENUFORM_HPP
 
 
-#ifndef __EOS_HPP
 #include "eos.hpp"
-#endif
-
-#ifndef __EOS_CALLBACKS_HPP
 #include "System/Core/eosCallbacks.hpp"
-#endif
-
-#ifndef __EOS_FORMS_HPP
 #include "Services/Forms/eosForms.hpp"
-#endif
 
 
 #define MAX_LEVELS               10
@@ -80,9 +72,13 @@ namespace eos {
             virtual void onClickItem(unsigned itemId);
             virtual void onDrawItem(unsigned itemId);
             void onPaint(FormsDisplayHandle display);    
+#ifdef eosFormsService_UseSelector            
             void onSelectorMove(int position, SelectorDirection direction);
             void onSelectorPress();
+#endif
+#ifdef eosFormsService_UseKeyboard            
             void onKeyPress(unsigned key);
+#endif            
         private:
             void firstItem();
             void lastItem();
