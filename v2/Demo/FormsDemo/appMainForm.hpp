@@ -20,6 +20,9 @@ namespace app {
             MainForm(FormsServiceHandle service);
             ~MainForm();
             
+        protected:
+            void onPaint(FormsDisplayHandle display);
+    
         private:
             void menuClickItemEventHandler(MenuFormHandle menuForm, unsigned itemId);
             void editorSelectorPressEventHandler(FormHandle form);

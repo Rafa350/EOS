@@ -45,6 +45,15 @@ MainForm::~MainForm() {
 }
 
 
+void MainForm::onPaint(
+    FormsDisplayHandle display) {
+    
+    display->clear(0x00FF00FF);
+    display->setColor(0x0000FF00);
+    display->drawRectangle(10, 10, 200, 200);
+}
+
+
 void MainForm::menuClickItemEventHandler(
     MenuFormHandle menuForm,
     unsigned itemId) {
@@ -76,8 +85,10 @@ void MainForm::startEdit() {
     form->setMinValue(infoXJerk.minValue);
     form->setMaxValue(infoXJerk.maxValue);
     form->setValue(2400);
-    form->setTitle(infoXJerk.title);    
+    form->setTitle(infoXJerk.title);   
+#ifdef eosFormsService_UseSelector    
     form->setSelectorPressEvent<MainForm>(this, &MainForm::editorSelectorPressEventHandler);
+#endif    
     form->activate();
     
     editorForm = form;

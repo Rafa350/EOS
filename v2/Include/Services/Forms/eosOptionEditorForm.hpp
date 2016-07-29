@@ -32,8 +32,10 @@ namespace eos {
         protected:
             ~OptionEditorForm();
             void onPaint(FormsDisplayHandle display);
+#ifdef eosFormsService_UseSelector            
             void onSelectorMove(int position, SelectorDirection direction);
             void onSelectorPress();
+#endif            
             void onDrawItem();
             void onSelectItem();
             void onClickItem();

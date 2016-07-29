@@ -145,6 +145,7 @@ void NumericEditorForm::onPaint(
 /// \param position: Posicio del selector.
 /// \param direction: Direccio del moviment.
 ///
+#ifdef eosFormsService_UseSelector
 void NumericEditorForm::onSelectorMove(
     int position, 
     SelectorDirection direction) {
@@ -156,6 +157,7 @@ void NumericEditorForm::onSelectorMove(
     
     Form::onSelectorMove(position, direction);
 }
+#endif
 
 
 #ifdef eosFormsService_UseKeyboard

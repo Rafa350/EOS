@@ -41,6 +41,7 @@ void OptionEditorForm::onPaint(
 /// \param position: Posicio del selector
 /// \param direction Direccio del moviment.
 ///
+#ifdef eosFormsService_UseSelector
 void OptionEditorForm::onSelectorMove(
     int position, 
     SelectorDirection direction) {
@@ -50,15 +51,18 @@ void OptionEditorForm::onSelectorMove(
     else
         prevItem();
 }
+#endif
     
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant es prem el boto del selector
 ///
+#ifdef eosFormsService_UseSelector
 void OptionEditorForm::onSelectorPress() {
     
     selectItem();
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

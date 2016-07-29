@@ -2,17 +2,9 @@
 #define __EOS_NUMERICEDITORFORM_HPP
 
 
-#ifndef __EOS_HPP
 #include "eos.hpp"
-#endif
-
-#ifndef __EOS_CALLBACKS_HPP
 #include "System/Core/eosCallbacks.hpp"
-#endif
-
-#ifndef __EOS_FORMS_HPP
 #include "Services/Forms/eosForms.hpp"
-#endif
 
 
 namespace eos {
@@ -58,8 +50,12 @@ namespace eos {
         protected:
             ~NumericEditorForm();            
             void onPaint(FormsDisplayHandle display);
+#ifdef eosFormsService_UseSelector            
             void onSelectorMove(int position, SelectorDirection direction);
+#endif            
+#ifdef eosFormsService_UseKeyboard            
             void onKeyPress(unsigned key);
+#endif            
         private:
             void incValue();
             void decValue();

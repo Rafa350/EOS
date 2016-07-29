@@ -127,7 +127,7 @@ void MenuForm::onSelectorPress() {
 /// \bried Es crida quant es prem una tecla.
 /// \param key: Codi de la tecla.
 ///
-#ifdef eosFormsConfig_UseKeyboard
+#ifdef eosFormsService_UseKeyboard
 void MenuForm::onKeyPress(unsigned key) {
     
     switch (key) {

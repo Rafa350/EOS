@@ -8,10 +8,10 @@
 #include "System/Collections/eosQueue.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
 #ifdef eosFormsService_UseSelector
-#include "Services/Forms/eosSelector.hpp"
+#include "Services/eosSelector.hpp"
 #endif
 #ifdef eosFormsService_UseKeyboard
-#include "Services/Forms/eosKeyboard.hpp"
+#include "Services/eosKeyboard.hpp"
 #endif
 
 
