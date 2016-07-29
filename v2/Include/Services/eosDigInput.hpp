@@ -1,22 +1,11 @@
-#ifndef __EOS_DIGINPUT_HPP
-#define	__EOS_DIGINPUT_HPP
+#ifndef __EOS_SERVICES_DIGINPUT_HPP
+#define	__EOS_SERVICES_DIGINPUT_HPP
 
 
-#ifndef __EOS_HPP
 #include "eos.hpp"
-#endif
-
-#ifndef __EOS_TASK_HPP
 #include "System/Core/eosTask.hpp"
-#endif
-
-#ifndef __EOS_CALLBACKS_HPP
 #include "System/Core/eosCallbacks.hpp"
-#endif
-
-#ifndef __EOS_LIST_HPP
 #include "System/Collections/eosList.hpp"
-#endif
 
 
 namespace eos {

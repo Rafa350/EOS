@@ -1,26 +1,12 @@
-#ifndef __EOS_I2CMASTER_HPP
-#define __EOS_I2CMASTER_HPP
+#ifndef __EOS_SERVICES_I2CMASTER_HPP
+#define __EOS_SERVICES_I2CMASTER_HPP
 
 
-#ifndef __EOS_HPP
 #include "eos.hpp"
-#endif
-
-#ifndef __EOS_TASK_HPP
 #include "System/Core/eosTask.hpp"
-#endif
-
-#ifndef __EOS_SEMAPHORE_HPP
 #include "System/Core/eosSemaphore.hpp"
-#endif
-
-#ifndef __EOS_CALLBACKS_HPP
 #include "System/Core/eosCallbacks.hpp"
-#endif
-
-#ifndef __EOS_QUEUE_HPP
 #include "System/Collections/eosQueue.hpp"
-#endif
 
 
 namespace eos {

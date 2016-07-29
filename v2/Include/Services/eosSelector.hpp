@@ -1,5 +1,5 @@
-#ifndef __EOS_SELECTOR_HPP
-#define __EOS_SELECTOR_HPP
+#ifndef __EOS_SERVICES_SELECTOR_HPP
+#define __EOS_SERVICES_SELECTOR_HPP
 
 
 #include "eos.hpp"

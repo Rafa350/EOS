@@ -1,5 +1,5 @@
-#ifndef __EOS_KEYBOARD_HPP
-#define __EOS_KEYBOARD_HPP
+#ifndef __EOS_SERVICES_KEYBOARD_HPP
+#define __EOS_SERVICES_KEYBOARD_HPP
 
 
 #include "eos.hpp"

@@ -28,16 +28,16 @@
         <logicalFolder name="f2" displayName="Services" projectFiles="true">
           <logicalFolder name="f2" displayName="Forms" projectFiles="true">
             <itemPath>../../../Include/Services/Forms/eosForms.hpp</itemPath>
-            <itemPath>../../../Include/Services/Forms/eosSelector.hpp</itemPath>
             <itemPath>../../../../../MD-SEL01/SEL01Messages.h</itemPath>
             <itemPath>../../../Include/Services/Forms/eosNumericEditorForm.hpp</itemPath>
             <itemPath>../../../Include/Services/Forms/eosOptionEditorForm.hpp</itemPath>
             <itemPath>../../../Include/Services/Forms/eosMenuForm.hpp</itemPath>
-            <itemPath>../../../Include/Services/Forms/eosKeyboard.hpp</itemPath>
             <itemPath>../../../../../MD-KBD01/KBD01Messages.h</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/Services/eosAppLoop.hpp</itemPath>
           <itemPath>../../../Include/Services/eosI2CMaster.hpp</itemPath>
+          <itemPath>../../../Include/Services/eosKeyboard.hpp</itemPath>
+          <itemPath>../../../Include/Services/eosSelector.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="System" projectFiles="true">
           <logicalFolder name="f1" displayName="Collections" projectFiles="true">
@@ -107,17 +107,17 @@
         </logicalFolder>
         <logicalFolder name="f1" displayName="Services" projectFiles="true">
           <logicalFolder name="f2" displayName="Forms" projectFiles="true">
-            <itemPath>../../../Source/Services/Forms/eosSelector.cpp</itemPath>
             <itemPath>../../../Source/Services/Forms/eosFormsDisplay.cpp</itemPath>
             <itemPath>../../../Source/Services/Forms/eosForm.cpp</itemPath>
             <itemPath>../../../Source/Services/Forms/eosFormsService.cpp</itemPath>
             <itemPath>../../../Source/Services/Forms/eosNumericEditorForm.cpp</itemPath>
             <itemPath>../../../Source/Services/Forms/eosOptionEditorForm.cpp</itemPath>
             <itemPath>../../../Source/Services/Forms/eosMenuForm.cpp</itemPath>
-            <itemPath>../../../Source/Services/Forms/eosKeyboard.cpp</itemPath>
           </logicalFolder>
           <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
           <itemPath>../../../Source/Services/eosI2CMaster.cpp</itemPath>
+          <itemPath>../../../Source/Services/eosKeyboard.cpp</itemPath>
+          <itemPath>../../../Source/Services/eosSelector.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="System" projectFiles="true">
           <logicalFolder name="f2" displayName="Collections" projectFiles="true">

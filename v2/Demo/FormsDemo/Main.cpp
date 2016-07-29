@@ -4,10 +4,12 @@
 #include "Services/eosI2CMaster.hpp"
 #include "Services/Forms/eosForms.hpp"
 #ifdef eosFormsService_UseSelector
-#include "Services/Forms/eosSelector.hpp"
+#include "Services/eosSelector.hpp"
+#include "../../../MD-SEL01/SEL01Messages.h"
 #endif
 #ifdef eosFormsService_UseKeyboard
-#include "Services/Forms/eosKeyboard.hpp"
+#include "Services/eosKeyboard.hpp"
+#include "../../../MD-KBD01/KBD01Messages.h"
 #endif
 #include "Services/Forms/eosMenuForm.hpp"
 #ifdef eosFormsService_UseDisplay
@@ -15,8 +17,6 @@
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
 #endif
 #include "appMainForm.hpp"
-#include "../../../MD-SEL01/SEL01Messages.h"
-#include "../../../MD-KBD01/KBD01Messages.h"
 
 
 using namespace eos;
