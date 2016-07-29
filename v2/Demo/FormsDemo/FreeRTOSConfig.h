@@ -91,7 +91,7 @@
 #define configMINIMAL_STACK_SIZE                ( 512 )
 #define configISR_STACK_SIZE                    ( 512 )
 #ifndef configTOTAL_HEAP_SIZE
-#define configTOTAL_HEAP_SIZE                   ( ( size_t ) 32000 )
+#define configTOTAL_HEAP_SIZE                   ( ( size_t ) 16000 )
 #endif
 #define configMAX_TASK_NAME_LEN                 ( 16 )
 #define configUSE_16_BIT_TICKS                  0
@@ -102,7 +102,7 @@
 #define configUSE_TASK_NOTIFICATIONS            1
 #define configQUEUE_REGISTRY_SIZE               0
 #define configUSE_QUEUE_SETS                    0
-#define configUSE_TIME_SLICING                  0
+#define configUSE_TIME_SLICING                  1
 #define configUSE_NEWLIB_REENTRANT              0
 #define configENABLE_BACKWARD_COMPATIBILITY     0
 

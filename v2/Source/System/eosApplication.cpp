@@ -4,10 +4,13 @@
 #include "task.h"
 
 
+using namespace eos;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
-eos::Application::Application() {
+Application::Application() {
     
     halSYSInitialize();
 }
@@ -16,10 +19,9 @@ eos::Application::Application() {
 /// ----------------------------------------------------------------------
 /// \brief Executa l'aplicacio.
 ///
-void eos::Application::execute() {
+void Application::execute() {
         
     onInitialize();
-    onExecute();
     vTaskStartScheduler();
     onTerminate();
 }

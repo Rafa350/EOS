@@ -33,10 +33,9 @@ MainForm::MainForm(
     FormsServiceHandle service):
     Form(service, nullptr) {
  
-    menuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
-    menuForm->setClickItemEvent<MainForm>(this, &MainForm::menuClickItemEventHandler);   
-    menuForm->activate();
-}
+ //   menuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
+ //   menuForm->setClickItemEvent<MainForm>(this, &MainForm::menuClickItemEventHandler);   
+} 
 
 
 MainForm::~MainForm() {
@@ -48,9 +47,16 @@ MainForm::~MainForm() {
 void MainForm::onPaint(
     FormsDisplayHandle display) {
     
-    display->clear(0x00FF00FF);
-    display->setColor(0x0000FF00);
-    display->drawRectangle(10, 10, 200, 200);
+    display->clear(0x00000000);
+    
+    display->setColor(0x00FF0000);
+    display->fillRectangle(10, 10, 100, 100);
+
+    display->setColor(0x000FF00);
+    display->fillRectangle(30, 30, 130, 130);
+
+    display->setColor(0x000000FF);
+    display->fillRectangle(50, 50, 150, 150);
 }
 
 

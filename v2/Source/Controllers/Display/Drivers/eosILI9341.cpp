@@ -108,7 +108,7 @@ static void selectRegion(int x1, int y1, int x2, int y2);
 static void delay(unsigned ms);
 static void send(uint8_t data);
 static void writeCommand(uint8_t command);
-static void writeData(uint8_t data);
+static void writeParameter(uint8_t parameter);
 static void writePixel(Color color, unsigned count);
 
 
@@ -154,12 +154,19 @@ void ILI9341_DisplayDriver::initialize() {
     
     // Inicialitza els pins de control
     //
+    ILI9341_initRST();
     ILI9341_initCS();
     ILI9341_initRS();
+    
+    // Inicialitza els pins de comunicacio
+    //
+#if defined(ILI9341_INTERFACE_4WIRE2    )
     ILI9341_initCLK();
     ILI9341_initSO();
     ILI9341_initSI();
-    ILI9341_initRST();
+#else
+#error "No s'ha especificat el tipus de comunicacio amb el driver"  
+#endif    
     
     // Reset del controlador
     //
@@ -179,7 +186,7 @@ void ILI9341_DisplayDriver::initialize() {
     while ((c = *p++) != 0) {
         writeCommand(*p++);
         while (--c != 0)
-            writeData(*p++);
+            writeParameter(*p++);
     }
 
     writeCommand(CMD_SLEEP_OUT);
@@ -235,7 +242,7 @@ void ILI9341_DisplayDriver::setOrientation(
     }
 
     writeCommand(CMD_MEMORY_ACCESS_CONTROL);
-    writeData(data);    
+    writeParameter(data);    
 }
 
 
@@ -367,16 +374,16 @@ static void selectRegion(
     int y2) {    
     
     writeCommand(CMD_COLUMN_ADDRESS_SET);
-	writeData(x1 >> 8);
-	writeData(x1);
-	writeData(x2 >> 8);
-	writeData(x2);
+	writeParameter(x1 >> 8);
+	writeParameter(x1);
+	writeParameter(x2 >> 8);
+	writeParameter(x2);
     
 	writeCommand(CMD_PAGE_ADDRESS_SET);
-	writeData(y1 >> 8);
-	writeData(y1);
-	writeData(y2 >> 8);
-	writeData(y2);
+	writeParameter(y1 >> 8);
+	writeParameter(y1);
+	writeParameter(y2 >> 8);
+	writeParameter(y2);
 }
 
 
@@ -431,12 +438,12 @@ static void writeCommand(
 /// \brief Escriu un byte de parametre en el controlador.
 /// \param parameter: El parametre a escriure.
 ///
-static void writeData(
-    uint8_t data) {
+static void writeParameter(
+    uint8_t parameter) {
     
     ILI9341_setRS();         // RS = 1
     ILI9341_clrCS();         // CS = 0
-    send(data);
+    send(parameter);
     ILI9341_setCS();         // CS = 1
 }
 
@@ -446,16 +453,15 @@ static void writeData(
 /// \param data: El color a escriure.
 /// \param count: Numero de copies a escriure.
 ///
+///   RGB888      RRRRRRRR GGGGGGGG BBBBBBBB
+///   RGB565               RRRRRGGG GGGBBBBB
+///
 static void writePixel(
     Color color,
     unsigned count) {
 
-    unsigned c = 
-        ((color & 0x00FC0000) >> 5) |
-        ((color & 0x0000FE00) >> 3) |
-        (color & 0x000000FC);
-    uint8_t cH = c >> 8;
-    uint8_t cL = c & 0xFF;
+    uint8_t cH = ((color & 0x00F80000) >> 16) | ((color & 0x0000E000) >> 13);
+    uint8_t cL = ((color & 0x00001C00) >> 5) | ((color & 0x000000F8) >> 3);
     
     ILI9341_setRS();
     ILI9341_clrCS();

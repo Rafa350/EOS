@@ -9,13 +9,9 @@
 
 
 // -----------------------------------------------------------------------
-// CONFIGURACIO DE LA PANTALLA ILI9341
+// CONFIGURACIO DEL DRIVER DEL DISPLAY ILI9341
 // -----------------------------------------------------------------------
 
-// Opcions del driver
-//
-#define DISPLAY_DRV_COLORMODE_RGB16bit
-#define DISPLAY_DRV_INTERFACE_4WIRE2
 
 // Tipus de lletra  disponibles 
 //
@@ -25,6 +21,17 @@
 #define FONT_USE_Consolas14pt
 #define FONT_USE_Consolas18pt
 #define FONT_USE_Consolas24pt
+
+
+// Opcions del driver
+//
+#define ILI9341_COLORMODE_565
+//#define ILI9341_COLORMODE_666
+#define ILI9341_INTERFACE_4WIRE2
+//#define ILI9341_INTERFACE_P8
+//#define ILI9341_INTERFACE_P9
+//#define ILI9341_INTERFACE_P16
+//#define ILI9341_INTERFACE_P18
 
 
 // Control del pin CS (Chip select) RE1
@@ -48,13 +55,13 @@
 #define ILI9341_setCLK()  LATESET  = 1 << 5
 #define ILI9341_clrCLK()  LATECLR  = 1 << 5
 
-// Control del pin SO (Serial output) RE4
+// Control del pin SO (Serial data output) RE4
 //
 #define ILI9341_initSO()  TRISECLR = 1 << 4
 #define ILI9341_setSO()   LATESET  = 1 << 4
 #define ILI9341_clrSO()   LATECLR  = 1 << 4
 
-// Control del pin SI (Serial inpout) RE3
+// Control del pin SI (Serial data input) RE3
 //
 #define ILI9341_initSI()  TRISESET = 1 << 3
 #define ILI9341_getSI()   (PORTE & ~(1 << 3) != 0)

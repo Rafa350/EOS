@@ -21,5 +21,17 @@
 
 // Configuracio per la proteccio de memoria de codi i dades
 //
+#ifdef __DEBUG
 #pragma config CP       = OFF           // Proteccio de codi OFF
+#else
+#pragma config CP       = ON            // Proteccio de codi ON
+#endif
 
+// Configuracio del port de depuracio
+//
+#ifdef __DEBUG
+#pragma config DEBUG    = ON            // Permet depuracio
+#pragma config ICESEL   = ICS_PGx1      // Port de depuracio
+#else
+#pragma config DEBUG    = OFF           // Desactiva depuracio
+#endif

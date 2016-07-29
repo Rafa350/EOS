@@ -36,9 +36,9 @@ class MyApplication: public Application {
 
     public :
         MyApplication();
-    private:
-        void setupI2CMasterService();
-        void setupFormsService();
+        
+    protected:
+        void onInitialize();
                 
 #ifdef eosFormsService_UseSelector        
         void selectorNotifyEventHandler(SelectorNotification &notification);
@@ -53,33 +53,32 @@ class MyApplication: public Application {
 /// \brief Constructor
 ///
 MyApplication::MyApplication() {
-    
-    setupI2CMasterService();
-    setupFormsService();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el servei I2C Master
+/// \brief Inicialitza l'aplicacio.
 ///
-void MyApplication::setupI2CMasterService() {
-
-    i2cMasterService = new I2CMasterService(1);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Inicialitza el servei FORMS
-///
-void MyApplication::setupFormsService() {
+void MyApplication::onInitialize() {
     
+    // Inicialitza el servei de comunicacions del bus I2C
+    //
+    //i2cMasterService = new I2CMasterService(1);
+    
+    // Inicia el servei de control de selector
+    //
 #ifdef eosFormsService_UseSelector    
-    selectorService = new SelectorService(i2cMasterService, SEL_ADDRESS);
-#endif    
+    //selectorService = new SelectorService(i2cMasterService, SEL_ADDRESS);
+#endif
+
+    // Inicialitza el servei de control del teclat
+    //    
 #ifdef eosFormsService_UseKeyboard   
     keyboardService = new KeyboardService(i2cMasterService, KBD_ADDRESS);
 #endif    
-
+    
+    // Inicialitza el servei de gestio de la interficie d'usuari
+    //
     IDisplayDriver *driver = new ILI9341_DisplayDriver();
     driver->initialize();
     driver->setOrientation(Orientation::rotate180);
@@ -92,12 +91,13 @@ void MyApplication::setupFormsService() {
     messageQueue = new MessageQueue(20);
     formsService = new FormsService(messageQueue, formsDisplay);
     mainForm = new MainForm(formsService);
+    mainForm->activate();
 
 #ifdef eosFormsService_UseSelector    
-    selectorService->setNotifyEvent<MyApplication>(this, &MyApplication::selectorNotifyEventHandler);
+    //selectorService->setNotifyEvent<MyApplication>(this, &MyApplication::selectorNotifyEventHandler);
 #endif
 #ifdef eosFormsService_UseKeyboard   
-    keyboardService->setNotifyEvent<MyApplication>(this, &MyApplication::keyboardNotifyEventHandler);
+    //keyboardService->setNotifyEvent<MyApplication>(this, &MyApplication::keyboardNotifyEventHandler);
 #endif    
 }
 

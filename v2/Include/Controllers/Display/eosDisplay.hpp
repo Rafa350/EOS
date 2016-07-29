@@ -12,7 +12,7 @@
 
 namespace eos {
 
-    typedef unsigned Color;
+    typedef uint32_t Color;
     
     enum class Orientation {
         normal,
