@@ -23,10 +23,13 @@
 #define FONT_USE_Consolas24pt
 
 
-// Opcions del driver
+// Format de color dels pixels
 //
 #define ILI9341_COLORMODE_565
 //#define ILI9341_COLORMODE_666
+
+// Tipus d'interficie amb eñ controlador
+//
 #define ILI9341_INTERFACE_4WIRE2
 //#define ILI9341_INTERFACE_P8
 //#define ILI9341_INTERFACE_P9

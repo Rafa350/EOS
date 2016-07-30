@@ -24,6 +24,7 @@
         <logicalFolder name="f3" displayName="HAL" projectFiles="true">
           <itemPath>../../../Include/HAL/halI2C.h</itemPath>
           <itemPath>../../../Include/HAL/halSYS.h</itemPath>
+          <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="Services" projectFiles="true">
           <logicalFolder name="f2" displayName="Forms" projectFiles="true">
@@ -104,6 +105,7 @@
           <itemPath>../../../Source/HAL/halSYS.c</itemPath>
           <itemPath>../../../Source/HAL/halI2C.c</itemPath>
           <itemPath>../../../Source/HAL/halI2CInterruptWrapper.S</itemPath>
+          <itemPath>../../../Source/HAL/halGPIO.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="Services" projectFiles="true">
           <logicalFolder name="f2" displayName="Forms" projectFiles="true">
@@ -133,9 +135,9 @@
             <itemPath>../../../Source/System/Core/eosPool.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosSemaphore.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosString.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
           </logicalFolder>
           <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
         </logicalFolder>
@@ -204,7 +206,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX795F512L_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -491,7 +493,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX795F512L_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -727,7 +729,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX795F512L_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -754,18 +756,17 @@
         <property key="enable-omit-frame-pointer" value="true"/>
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="true"/>
-        <property key="exclude-floating-point" value="false"/>
+        <property key="exclude-floating-point" value="true"/>
         <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value="-O1"/>
+        <property key="optimization-level" value=""/>
         <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros"
-                  value="HARDWARE_PINGUINO;configTOTAL_HEAP_SIZE=8000"/>
+        <property key="preprocessor-macros" value="HARDWARE_PINGUINO"/>
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
@@ -793,7 +794,7 @@
         <property key="oXC32asm-list-to-file" value="false"/>
         <property key="omit-debug-dirs" value="false"/>
         <property key="omit-forms" value="false"/>
-        <property key="preprocessor-macros" value="HARDWARE_PIC32_PINGUINO_MICRO"/>
+        <property key="preprocessor-macros" value="HARDWARE_PINGUINO"/>
         <property key="warning-level" value=""/>
       </C32-AS>
       <C32-LD>
@@ -802,7 +803,7 @@
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
-        <property key="exclude-floating-point-library" value="false"/>
+        <property key="exclude-floating-point-library" value="true"/>
         <property key="exclude-standard-libraries" value="false"/>
         <property key="extra-lib-directories" value=""/>
         <property key="fill-flash-options-addr" value=""/>
@@ -838,24 +839,23 @@
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
         <property key="check-new" value="false"/>
-        <property key="eh-specs" value="true"/>
+        <property key="eh-specs" value="false"/>
         <property key="enable-app-io" value="false"/>
         <property key="enable-omit-frame-pointer" value="true"/>
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="true"/>
-        <property key="exceptions" value="true"/>
-        <property key="exclude-floating-point" value="false"/>
+        <property key="exceptions" value="false"/>
+        <property key="exclude-floating-point" value="true"/>
         <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="isolate-each-function" value="false"/>
+        <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
         <property key="optimization-level" value=""/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros"
-                  value="HARDWARE_PINGUINO;configTOTAL_HEAP_SIZE=8000"/>
+        <property key="preprocessor-macros" value="HARDWARE_PINGUINO"/>
         <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
@@ -986,6 +986,7 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

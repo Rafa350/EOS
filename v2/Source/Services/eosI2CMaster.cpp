@@ -22,7 +22,7 @@ I2CMasterService::I2CMasterService(
     unsigned _moduleId) :
     moduleId(_moduleId),
     task(taskStackSize, taskPriority, this),
-    queue(queueMaxItems) {
+    transactionQueue(queueMaxItems) {
 
     for (unsigned i = 0; i < sizeof(transactions) / sizeof(transactions[0]); i++)
         transactions[i].inUse = false;
@@ -66,7 +66,7 @@ bool I2CMasterService::startTransaction(
             transaction->rxSize = rxSize;
             transaction->rxCount = 0;
             transaction->notify = notify;
-            queue.put(transaction, blockTime);
+            transactionQueue.put(transaction, blockTime);
             result = true;
         }
     }
@@ -90,7 +90,7 @@ void I2CMasterService::run() {
 
     while (true) {
            
-        while (queue.get(transaction, (unsigned) -1)) {
+        if (transactionQueue.get(transaction, (unsigned) -1)) {
         
             // Espera a que el bus estigui lliure
             //

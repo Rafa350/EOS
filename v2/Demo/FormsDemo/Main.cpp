@@ -2,6 +2,7 @@
 #include "System/Core/eosCallbacks.hpp"
 #include "System/eosApplication.hpp"
 #include "Services/eosI2CMaster.hpp"
+#include "Services/eosDigOutput.hpp"
 #include "Services/Forms/eosForms.hpp"
 #include "Services/Forms/eosMenuForm.hpp"
 #ifdef eosFormsService_UseSelector
@@ -23,6 +24,7 @@ using namespace app;
 
 class MyApplication: public Application {
     private:
+        DigOutputServiceHandle digOutputService;
         I2CMasterServiceHandle i2cMasterService;
         FormsServiceHandle formsService;
 #ifdef eosFormsService_UseSelector
@@ -63,8 +65,8 @@ void MyApplication::onInitialize() {
     
     // Inicialitza el servei de comunicacions del bus I2C
     //
-    //i2cMasterService = new I2CMasterService(1);
-    
+    i2cMasterService = new I2CMasterService(1);
+   
     // Inicia el servei de control de selector
     //
 #ifdef eosFormsService_UseSelector    

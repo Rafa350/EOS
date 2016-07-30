@@ -49,10 +49,10 @@ void DigOutputService::remove(
 ///
 void DigOutputService::run() {
     
-    Command command;
-
     while (true) {
-        while (commandQueue.get(command, (unsigned) -1)) {
+        
+        Command command;
+        if (commandQueue.get(command, (unsigned) -1)) {
             switch (command.action) {
                 case Action::clear:
                     doClearAction(command.output);

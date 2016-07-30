@@ -8,9 +8,7 @@
 void *operator new(
     size_t size) {
     
-    void *ptr = eosHeapAlloc(nullptr, size);
-    
-    return ptr;
+    return eosHeapAlloc(nullptr, size);
 }
 
 

@@ -139,7 +139,11 @@ void ILI9341_DisplayDriver::initialize() {
         3, CMD_VCOM_CONTROL_1, 0x3D, 0x20, 
         2, CMD_VCOM_CONTROL_2, 0xAA,
         2, CMD_MEMORY_ACCESS_CONTROL, 0x08, 
+#if defined(ILI9341_COLORMODE_565)        
         2, CMD_PIXEL_FORMAT_SET, 0x55,
+#elif defined(ILI9341_COLORMODE_666)        
+        2, CMD_PIXEL_FORMAT_SET, 0x66,
+#endif        
         3, CMD_FRAME_RATE_CONTROL_1, 0x00, 0x13,
         3, CMD_DISPLAY_FUNCTION_CONTROL, 0x0A, 0xA2,
         3, CMD_INTERFACE_CONTROL, 0x01, 0x30, 
@@ -160,7 +164,7 @@ void ILI9341_DisplayDriver::initialize() {
     
     // Inicialitza els pins de comunicacio
     //
-#if defined(ILI9341_INTERFACE_4WIRE2    )
+#if defined(ILI9341_INTERFACE_4WIRE2)
     ILI9341_initCLK();
     ILI9341_initSO();
     ILI9341_initSI();
@@ -453,21 +457,42 @@ static void writeParameter(
 /// \param data: El color a escriure.
 /// \param count: Numero de copies a escriure.
 ///
-///   RGB888      RRRRRRRR GGGGGGGG BBBBBBBB
-///   RGB565               RRRRRGGG GGGBBBBB
-///
 static void writePixel(
     Color color,
     unsigned count) {
+    
+    
+#if defined(ILI9341_COLORMODE_565)    
 
-    uint8_t cH = ((color & 0x00F80000) >> 16) | ((color & 0x0000E000) >> 13);
-    uint8_t cL = ((color & 0x00001C00) >> 5) | ((color & 0x000000F8) >> 3);
+    uint8_t r = (color & 0x00FF0000) >> 19;
+    uint8_t g = (color & 0x0000FF00) >> 10;
+    uint8_t b = (color & 0x000000FF) >> 3;
+
+    uint8_t c0 = (r << 3) | ((g & 0x38) >> 3);
+    uint8_t c1 = ((g & 0x03) << 5)  | b;
     
     ILI9341_setRS();
     ILI9341_clrCS();
     while (count--) {
-        send(cH);
-        send(cL);
+        send(c0);
+        send(c1);
     }
     ILI9341_setCS();
+    
+#elif defined(ILI9341_COLORMODE_666)
+   
+    uint8_t r = (color & 0x00FC0000) >> 16;
+    uint8_t g = (color & 0x0000FC00) >> 8;
+    uint8_t b = color & 0x000000FC;
+    
+    ILI9341_setRS();
+    ILI9341_clrCS();
+    while (count--) {
+        send(r);
+        send(g);
+        send(b);
+    }
+    ILI9341_setCS();
+    
+#endif    
 }

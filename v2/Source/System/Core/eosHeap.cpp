@@ -5,6 +5,7 @@
 
 unsigned totalAllocations = 0;
 unsigned totalDeallocations = 0;
+unsigned totalBytesAllocated = 0;
 
 
 typedef struct __eosHeap {   
@@ -25,15 +26,20 @@ eosHeapHandle eosHeapCreate(
 /// ----------------------------------------------------------------------
 /// \brief Obte un bloc de memoria del heap.
 /// \param hHeap: Handler del heap. 
-/// \param size : Tamany del bloc de memoria
+/// \param size: Tamany del bloc de memoria
 ///
 void *eosHeapAlloc(
     eosHeapHandle hHeap,
     unsigned size) {
     
     totalAllocations++;
+    totalBytesAllocated += size;
     
-    return pvPortMalloc(size);
+    void *p = pvPortMalloc(size);
+    
+    eosAssert(p != nullptr, 0, "eosHeapAlloc: No memory.");
+    
+    return p;
 }
 
 

@@ -49,7 +49,7 @@ namespace eos {
         private:
             unsigned moduleId;
             Task task;
-            TransactionQueue queue;
+            TransactionQueue transactionQueue;
             Transaction *transaction;
             Transaction transactions[10];
             BinarySemaphore semaphore;
