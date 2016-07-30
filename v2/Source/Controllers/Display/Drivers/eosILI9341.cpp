@@ -469,7 +469,7 @@ static void writePixel(
     uint8_t b = (color & 0x000000FF) >> 3;
 
     uint8_t c0 = (r << 3) | ((g & 0x38) >> 3);
-    uint8_t c1 = ((g & 0x03) << 5)  | b;
+    uint8_t c1 = ((g & 0x03) << 5) | b;
     
     ILI9341_setRS();
     ILI9341_clrCS();
