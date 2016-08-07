@@ -2,7 +2,6 @@
 #include "System/Core/eosCallbacks.hpp"
 #include "System/eosApplication.hpp"
 #include "Services/eosI2CMaster.hpp"
-#include "Services/eosDigOutput.hpp"
 #include "Services/Forms/eosForms.hpp"
 #include "Services/Forms/eosMenuForm.hpp"
 #ifdef eosFormsService_UseSelector
@@ -24,7 +23,6 @@ using namespace app;
 
 class MyApplication: public Application {
     private:
-        DigOutputServiceHandle digOutputService;
         I2CMasterServiceHandle i2cMasterService;
         FormsServiceHandle formsService;
 #ifdef eosFormsService_UseSelector
@@ -65,12 +63,12 @@ void MyApplication::onInitialize() {
     
     // Inicialitza el servei de comunicacions del bus I2C
     //
-    i2cMasterService = new I2CMasterService(1);
+    i2cMasterService = new I2CMasterService(0);
    
     // Inicia el servei de control de selector
     //
 #ifdef eosFormsService_UseSelector    
-    //selectorService = new SelectorService(i2cMasterService, SEL_ADDRESS);
+    selectorService = new SelectorService(i2cMasterService, SEL_ADDRESS);
 #endif
 
     // Inicialitza el servei de control del teclat
@@ -86,7 +84,7 @@ void MyApplication::onInitialize() {
     driver->setOrientation(Orientation::rotate180);
     
     Display *display = new Display(driver);
-    display->clear(0x00000000);
+    display->clear(RGB(0, 0, 0));
     
     FormsDisplayHandle formsDisplay = new FormsDisplay(display);
     
@@ -96,7 +94,7 @@ void MyApplication::onInitialize() {
     mainForm->activate();
 
 #ifdef eosFormsService_UseSelector    
-    //selectorService->setNotifyEvent<MyApplication>(this, &MyApplication::selectorNotifyEventHandler);
+    selectorService->setNotifyEvent<MyApplication>(this, &MyApplication::selectorNotifyEventHandler);
 #endif
 #ifdef eosFormsService_UseKeyboard   
     //keyboardService->setNotifyEvent<MyApplication>(this, &MyApplication::keyboardNotifyEventHandler);
@@ -189,7 +187,7 @@ void MyApplication::selectorNotifyEventHandler(
 /// \brief Punt d'entrada a l'aplicacio.
 ///
 int main(void) {
-          
+    
     MyApplication *app = new MyApplication();
     app->execute();
 

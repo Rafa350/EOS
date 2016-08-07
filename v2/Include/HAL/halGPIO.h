@@ -1,6 +1,7 @@
 #ifndef __EOS_HAL_GPIO_H
 #define	__EOS_HAL_GPIO_H
 
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
@@ -50,8 +51,25 @@ extern "C" {
 #define HAL_GPIO_PIN38          37
 #define HAL_GPIO_PIN39          38
 #define HAL_GPIO_PIN40          39
+
     
-      
+typedef struct {                       // Configuracio dels pins
+    volatile uint32_t *trisCLR;        // -Adressa TRISxCLR
+    volatile uint32_t *trisSET;        // -Adressa TRISxSET
+    volatile uint32_t *odcCLR;         // -Addrese ODCxCLR
+    volatile uint32_t *odcSET;         // -Addresa ODCxSET
+    volatile uint32_t *port;           // -Addresa PORTx
+    volatile uint32_t *latCLR;         // -Adressa LATxCLR
+    volatile uint32_t *latSET;         // -Adressa LATxSET
+    volatile uint32_t *latINV;         // -Adressa LATxINV
+    uint32_t mask;                     // -Mascara del pin
+    int analog;                        // -Port analogic (-1 cap))
+} PinInfo;
+
+
+void halGPIOInitializeBoard();
+
+void halGPIOInitialize(const PinInfo *pinInfo, uint8_t numPins);
 void halGPIOPinSetModeOutput(uint8_t pin, bool openDrain);
 void halGPIOPinSetModeInput(uint8_t pin);
 bool halGPIOPinGetState(uint8_t pin);

@@ -35,7 +35,6 @@
             <itemPath>../../../Include/Services/Forms/eosMenuForm.hpp</itemPath>
             <itemPath>../../../../../MD-KBD01/KBD01Messages.h</itemPath>
           </logicalFolder>
-          <itemPath>../../../Include/Services/eosAppLoop.hpp</itemPath>
           <itemPath>../../../Include/Services/eosI2CMaster.hpp</itemPath>
           <itemPath>../../../Include/Services/eosKeyboard.hpp</itemPath>
           <itemPath>../../../Include/Services/eosSelector.hpp</itemPath>
@@ -105,7 +104,6 @@
           <itemPath>../../../Source/HAL/halSYS.c</itemPath>
           <itemPath>../../../Source/HAL/halI2C.c</itemPath>
           <itemPath>../../../Source/HAL/halI2CInterruptWrapper.S</itemPath>
-          <itemPath>../../../Source/HAL/halGPIO.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="Services" projectFiles="true">
           <logicalFolder name="f2" displayName="Forms" projectFiles="true">
@@ -116,7 +114,6 @@
             <itemPath>../../../Source/Services/Forms/eosOptionEditorForm.cpp</itemPath>
             <itemPath>../../../Source/Services/Forms/eosMenuForm.cpp</itemPath>
           </logicalFolder>
-          <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
           <itemPath>../../../Source/Services/eosI2CMaster.cpp</itemPath>
           <itemPath>../../../Source/Services/eosKeyboard.cpp</itemPath>
           <itemPath>../../../Source/Services/eosSelector.cpp</itemPath>
@@ -986,6 +983,7 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

@@ -69,7 +69,7 @@ namespace eos {
             void drawCircle(int cx, int cy, int r);
             void drawBitmap1BPP(int x, int y, const uint8_t *bitmap, int sx, int sy, Color color);
             int drawChar(int x, int y, char c);
-            int drawString(int x, int y, const char *s, int offset, int length);
+            int drawText(int x, int y, const char *s, int offset, int length);
             void fillRectangle(int x1, int y1, int x2, int y2);
             void fillCircle(int cx, int cy, int r);    
     };

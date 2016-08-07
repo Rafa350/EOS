@@ -47,11 +47,12 @@ MainForm::~MainForm() {
 void MainForm::onPaint(
     FormsDisplayHandle display) {
     
-    display->clear(0x0000003F);
+    display->clear(RGB(0, 0, 32));
     
-    display->setColor(0x000000FF);
+    display->setColor(RGB(0, 0, 128));
     display->drawRectangle(0, 0, 240, 320);
     display->drawLine(0, 20, 240, 20);
+    display->drawText(4, 16, "Forms Demo v1.0", 0, -1);
     
     display->setColor(RGB(255, 0, 0));
     display->fillRectangle(40, 40, 50, 50);

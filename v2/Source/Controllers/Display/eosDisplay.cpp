@@ -363,7 +363,7 @@ int Display::drawChar(
 /// \param offset: El primer caracter a dibuixar
 /// \param length: Numero de caracters a dibuixar
 ///
-int Display::drawString(
+int Display::drawText(
     int x, 
     int y, 
     const char *s,

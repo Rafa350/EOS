@@ -27,7 +27,7 @@ extern void __ISR(_I2C_5_VECTOR, IPL2SOFT) isrI2C5Wrapper(void);
 #endif
 
 
-static I2C_MODULE_ID getHarmonyID(unsigned moduleId) {
+static I2C_MODULE_ID getHarmonyID(uint8_t moduleId) {
     
     static I2C_MODULE_ID idTable[I2C_NUMBER_OF_MODULES] = {
         I2C_ID_1, 
@@ -49,7 +49,7 @@ static I2C_MODULE_ID getHarmonyID(unsigned moduleId) {
 }
 
 
-static unsigned getEosID(I2C_MODULE_ID id) {
+static uint8_t getEosID(I2C_MODULE_ID id) {
     
     switch (id) {
         default:
@@ -76,7 +76,7 @@ static unsigned getEosID(I2C_MODULE_ID id) {
 
 
 void halI2CMasterInitialize(
-    unsigned moduleId,
+    uint8_t moduleId,
     unsigned baudRate,
     I2CInterruptCallback callback,
     I2CInterruptParam param) {
@@ -145,67 +145,67 @@ void halI2CMasterInitialize(
 }
 
 
-void halI2CMasterStart(unsigned moduleId) {
+void halI2CMasterStart(uint8_t moduleId) {
 
     PLIB_I2C_MasterStart(getHarmonyID(moduleId));    
 }
 
 
-void halI2CMasterStop(unsigned moduleId) {
+void halI2CMasterStop(uint8_t moduleId) {
  
     PLIB_I2C_MasterStop(getHarmonyID(moduleId));
 }
 
 
-void halI2CMasterStartRepeat(unsigned moduleId) {
+void halI2CMasterStartRepeat(uint8_t moduleId) {
 
     PLIB_I2C_MasterStartRepeat(getHarmonyID(moduleId));
 }
 
 
-bool halI2CIsBusIdle(unsigned moduleId) {
+bool halI2CIsBusIdle(uint8_t moduleId) {
  
     return PLIB_I2C_BusIsIdle(getHarmonyID(moduleId));
 }
 
 
-bool halI2CArbitrationLossHasOccurred(unsigned moduleId) {
+bool halI2CArbitrationLossHasOccurred(uint8_t moduleId) {
 
     return PLIB_I2C_ArbitrationLossHasOccurred(getHarmonyID(moduleId));
 }
 
 
-void halI2CArbitrationLossClear(unsigned moduleId) {
+void halI2CArbitrationLossClear(uint8_t moduleId) {
 
     PLIB_I2C_ArbitrationLossClear(getHarmonyID(moduleId));
 }
 
 
-void halI2CTransmitterByteSend(unsigned moduleId, uint8_t data) {
+void halI2CTransmitterByteSend(uint8_t moduleId, uint8_t data) {
     
     PLIB_I2C_TransmitterByteSend(getHarmonyID(moduleId), data);
 }
 
 
-bool halI2CTransmitterByteWasAcknowledged(unsigned moduleId) {
+bool halI2CTransmitterByteWasAcknowledged(uint8_t moduleId) {
                     
     return PLIB_I2C_TransmitterByteWasAcknowledged(getHarmonyID(moduleId));
 }
 
 
-uint8_t halI2CReceivedByteGet(unsigned moduleId) {
+uint8_t halI2CReceivedByteGet(uint8_t moduleId) {
 
     return PLIB_I2C_ReceivedByteGet(getHarmonyID(moduleId));
 }
 
 
-void halI2CMasterReceiverClock1Byte(unsigned moduleId) {
+void halI2CMasterReceiverClock1Byte(uint8_t moduleId) {
  
     PLIB_I2C_MasterReceiverClock1Byte(getHarmonyID(moduleId));
 }
 
 
-void halI2CReceivedByteAcknowledge(unsigned moduleId, bool ack) {
+void halI2CReceivedByteAcknowledge(uint8_t moduleId, bool ack) {
  
     PLIB_I2C_ReceivedByteAcknowledge(getHarmonyID(moduleId), ack);
 }
@@ -227,7 +227,7 @@ void halI2CReceivedByteAcknowledge(unsigned moduleId, bool ack) {
 static void doCallback(
     I2C_MODULE_ID id) {
     
-    unsigned moduleId = getEosID(id);    
+    uint8_t moduleId = getEosID(id);    
     I2CInterruptCallback callback = callbacks[moduleId];
     if (callback != NULL)
         callback(moduleId, params[moduleId]);

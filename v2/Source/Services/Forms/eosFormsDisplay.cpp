@@ -104,7 +104,7 @@ void FormsDisplay::drawText(
     unsigned offset,
     unsigned length) {
     
-    display->drawString(x, y, text, offset, length);    
+    display->drawText(x, y, text, offset, length);    
 }
 
 

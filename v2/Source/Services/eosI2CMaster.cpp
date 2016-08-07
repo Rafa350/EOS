@@ -19,7 +19,7 @@ const unsigned baudRate = 100000;
 /// \param moduleId: Identificador del modulI2C
 ///
 I2CMasterService::I2CMasterService(
-    unsigned _moduleId) :
+    uint8_t _moduleId) :
     moduleId(_moduleId),
     task(taskStackSize, taskPriority, this),
     transactionQueue(queueMaxItems) {
@@ -138,7 +138,7 @@ void I2CMasterService::run() {
 /// |LENGTH|DATA-1|DATA-2| . . . |DATA-n|CHECK|
 ///
 void I2CMasterService::interruptCallback(
-    unsigned moduleId, 
+    uint8_t moduleId, 
     void* param) {
 
     I2CMasterService *service = (I2CMasterService*) param;
