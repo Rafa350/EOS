@@ -6,7 +6,7 @@
 #include "System/Core/eosTask.hpp"
 #include "System/Core/eosSemaphore.hpp"
 #include "System/Core/eosCallbacks.hpp"
-#include "System/Collections/eosQueue.hpp"
+#include "System/Core/eosQueue.hpp"
 
 
 namespace eos {

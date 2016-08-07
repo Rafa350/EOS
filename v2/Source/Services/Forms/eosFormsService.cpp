@@ -1,6 +1,6 @@
 #include "eos.hpp"
 #include "System/Core/eosTask.hpp"
-#include "System/Collections/eosQueue.hpp"
+#include "System/Core/eosQueue.hpp"
 #include "Services/Forms/eosForms.hpp"
 
 

@@ -3,6 +3,7 @@
 #include "Services/Forms/eosNumericEditorForm.hpp"
 #include "appMainForm.hpp"
 #include "MnuMain.h"
+#include <stdio.h>
 
 
 using namespace eos;
@@ -28,6 +29,8 @@ const IncDecInfo infoXJerk =  { "X-Motor Jerk",   10, 2000,  5 };
 const IncDecInfo infoXAccel = { "X-Motor Accel",  10, 2000,  5 };
 const IncDecInfo infoXSpeed = { "X-Motor Speed",  10, 2000,  5 };
 
+static int selectorPosition = 0;
+
 
 MainForm::MainForm(
     FormsServiceHandle service):
@@ -38,9 +41,26 @@ MainForm::MainForm(
 } 
 
 
+/// ----------------------------------------------------------------------
+/// \brief Destructor
+///
 MainForm::~MainForm() {
     
     menuForm->destroy();
+}
+
+
+void MainForm::onSelectorPress() {
+    
+}
+
+
+void MainForm::onSelectorMove(
+    int position, 
+    SelectorDirection direction) {
+    
+    selectorPosition = position;
+    refresh();
 }
 
 
@@ -71,6 +91,10 @@ void MainForm::onPaint(
 
     display->setColor(RGB(0, 0, 64));
     display->fillRectangle(80, 180, 50, 50);
+    
+    char strPosition[20];
+    sprintf(strPosition, "%i", selectorPosition);
+    display->drawText(4, 200, strPosition, 0, -1);
 }
 
 

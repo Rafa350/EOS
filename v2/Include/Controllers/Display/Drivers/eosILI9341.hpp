@@ -12,12 +12,17 @@ namespace eos {
         private:
             int xScreenSize;
             int yScreenSize;
+            int xClipPos;
+            int yClipPos;
+            int xClipSize;
+            int yClipSize;
             
         public:
             ILI9341_DisplayDriver();
             void initialize();
             void shutdown();
             void setOrientation(Orientation orientation);
+            void setClip(int xPos, int yPos, int xSize, int ySize);
             int getXSize() const { return xScreenSize; }
             int getYSize() const { return yScreenSize; }
             void clear(Color color);
@@ -25,6 +30,7 @@ namespace eos {
             void setHPixels(int xPos, int yPos, int size, Color color);
             void setVPixels(int xPos, int yPos, int size, Color color);
             void setPixels(int xPos, int yPos, int xSize, int ySize, Color color);
+            void setPixels(int xPos, int yPos, int xSize, int ySize, const Color *color);
     };
 }
 

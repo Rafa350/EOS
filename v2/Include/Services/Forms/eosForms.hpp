@@ -5,7 +5,7 @@
 #include "eos.hpp"
 #include "System/Core/eosTask.hpp"
 #include "System/Collections/eosList.hpp"
-#include "System/Collections/eosQueue.hpp"
+#include "System/Core/eosQueue.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
 #ifdef eosFormsService_UseSelector
 #include "Services/eosSelector.hpp"
@@ -123,6 +123,7 @@ namespace eos {
             void remove(FormHandle form);
             void destroy(FormHandle form);
             void refresh(FormHandle form);
+            void refresh(FormHandle form, int x, int y, int width, int height);
             FormHandle activate(FormHandle form);
             FormHandle getActiveForm() const { return activeForm; }
         private:
@@ -165,6 +166,7 @@ namespace eos {
             Form(FormsServiceHandle service, FormHandle parent);
             void destroy() { service->destroy(this); }
             void refresh() { service->refresh(this); }
+            void refresh(int x, int y, int width, int height) { service->refresh(this, x, y, width, height); }
             void activate() { service->activate(this); }
             FormHandle getParent() const { return parent; }
             FormsServiceHandle getService() const { return service; }

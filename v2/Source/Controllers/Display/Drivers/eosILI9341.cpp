@@ -119,6 +119,11 @@ ILI9341_DisplayDriver::ILI9341_DisplayDriver() {
 
     xScreenSize = MAX_COLUMNS;
     yScreenSize = MAX_ROWS;    
+    
+    xClipPos = 0;
+    yClipPos = 0;
+    xClipSize = xScreenSize;
+    yClipSize = yScreenSize;
 }
 
 
@@ -247,6 +252,26 @@ void ILI9341_DisplayDriver::setOrientation(
 
     writeCommand(CMD_MEMORY_ACCESS_CONTROL);
     writeParameter(data);    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \bried Selecciona la regio on dibuixar.
+/// \param xPos: Coordinada X esquerra.
+/// \param yPos: Coodinada Y superior.
+/// \param xSize: Coordinada X dreta.
+/// \param ySize: Coordinada Y inferior.
+///
+void ILI9341_DisplayDriver::setClip(
+    int xPos, 
+    int yPos, 
+    int xSize, 
+    int ySize) {
+    
+    xClipPos = xPos < 0 ? 0 : xPos;
+    yClipPos = yPos < 0 ? 0 : yPos;
+    xClipSize = xSize > xScreenSize ? xScreenSize : xSize;
+    yClipSize = ySize > yScreenSize ? yScreenSize : ySize;
 }
 
 

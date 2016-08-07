@@ -67,6 +67,23 @@ Font *Display::setFont(
 
 
 /// ----------------------------------------------------------------------
+/// \bried Selecciona la regio on dibuixar.
+/// \param x1: Coordinada X esquerra.
+/// \param y1: Coodinada Y superior.
+/// \param x2: Coordinada X dreta.
+/// \param y1: Coordinada Y inferior.
+///
+void Display::setClip(
+    int x1, 
+    int y1, 
+    int x2, 
+    int y2) {
+    
+    driver->setClip(x1, y1, x2, y2);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Borrat de la pantalla al color especificat.
 /// \param color: El color per realitzar el borrat.
 ///

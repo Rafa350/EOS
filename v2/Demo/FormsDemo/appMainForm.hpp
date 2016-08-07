@@ -22,6 +22,8 @@ namespace app {
             
         protected:
             void onPaint(FormsDisplayHandle display);
+            void onSelectorPress();
+            void onSelectorMove(int position, SelectorDirection direction);
     
         private:
             void menuClickItemEventHandler(MenuFormHandle menuForm, unsigned itemId);

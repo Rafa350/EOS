@@ -26,6 +26,7 @@ namespace eos {
             virtual void initialize() = 0;
             virtual void shutdown() = 0;
             virtual void setOrientation(Orientation orientation) = 0;
+            virtual void setClip(int xPos, int yPos, int xSize, int ySize) = 0;
             virtual int getXSize() const = 0;
             virtual int getYSize() const = 0;
             virtual void clear(Color color) = 0;
@@ -33,6 +34,7 @@ namespace eos {
             virtual void setHPixels(int xPos, int yPos, int size, Color color) = 0;
             virtual void setVPixels(int xPos, int yPos, int size, Color color) = 0;
             virtual void setPixels(int xPos, int yPos, int xSize, int ySize, Color color) = 0;
+            virtual void setPixels(int xPos, int yPos, int xSize, int ySize, const Color *color) = 0;
     };
     
     class Display {
@@ -48,6 +50,7 @@ namespace eos {
         public:
             Display(IDisplayDriver *driver);
             ~Display();
+            void setClip(int x1, int y1, int x2, int y2);
             Color setColor(Color color);
             Font *setFont(Font *font);
             IDisplayDriver *getDriver() const { return driver; }
