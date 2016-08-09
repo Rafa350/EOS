@@ -30,7 +30,7 @@ namespace eos {
             void setHPixels(int xPos, int yPos, int size, Color color);
             void setVPixels(int xPos, int yPos, int size, Color color);
             void setPixels(int xPos, int yPos, int xSize, int ySize, Color color);
-            void setPixels(int xPos, int yPos, int xSize, int ySize, const Color *color);
+            void setPixels(int xPos, int yPos, int xSize, int ySize, const Color *colors);
     };
 }
 

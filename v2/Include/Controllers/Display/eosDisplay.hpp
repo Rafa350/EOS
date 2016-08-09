@@ -34,7 +34,7 @@ namespace eos {
             virtual void setHPixels(int xPos, int yPos, int size, Color color) = 0;
             virtual void setVPixels(int xPos, int yPos, int size, Color color) = 0;
             virtual void setPixels(int xPos, int yPos, int xSize, int ySize, Color color) = 0;
-            virtual void setPixels(int xPos, int yPos, int xSize, int ySize, const Color *color) = 0;
+            virtual void setPixels(int xPos, int yPos, int xSize, int ySize, const Color *colors) = 0;
     };
     
     class Display {

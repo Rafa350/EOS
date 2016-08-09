@@ -1,6 +1,15 @@
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
 
 
+#if !defined(ILI9341_COLORMODE_565) && !defined(ILI9341_COLORMODE_666)
+#error "No se especifico ILI9342_COLORMODE_xxx"
+#endif
+
+#if !defined(ILI9341_INTERFACE_4WIRE2) && !defined(ILI9341_INTERFACE_P8)
+#error "No se especifico ILI9341_INTERFACE_xxx"
+#endif
+
+
 // Parametres de la pantalla
 //
 #define MAX_COLUMNS          240
@@ -104,6 +113,83 @@
 using namespace eos;
 
 
+#define __makePort2(base, port) base ## port
+#define __makePort3(base, port, suffix) base ## port ## suffix
+
+#define __setPin(base, port, pin) __makePort3(base, port, SET) = 1 << pin
+#define __clrPin(base, port, pin) __makePort3(base, port, CLR) = 1 << pin
+#define __invPin(base, port, pin) __makePort3(base, port, INV) = 1 << pin
+#define __getPin(base, port, pin) __makePort2(base, port) & ~(1 << pin) != 0)
+
+
+// Control del pin RST
+//
+#define initRST()  __clrPin(LAT, ILI9341_RSTPort, ILI9341_RSTPin); \
+                   __clrPin(TRIS, ILI9341_RSTPort, ILI9341_RSTPin)
+#define setRST()   __setPin(LAT, ILI9341_RSTPort, ILI9341_RSTPin)
+#define clrRST()   __clrPin(LAT, ILI9341_RSTPort, ILI9341_RSTPin)
+
+// Control del pin CS
+//
+#define initCS()   __setPin(LAT, ILI9341_CSPort, ILI9341_CSPin); \
+                   __clrPin(TRIS, ILI9341_CSPort, ILI9341_CSPin)
+#define setCS()    __setPin(LAT, ILI9341_CSPort, ILI9341_CSPin)
+#define clrCS()    __clrPin(LAT, ILI9341_CSPort, ILI9341_CSPin)
+
+// Control del pin RS
+//
+#define initRS()   __clrPin(LAT, ILI9341_RSPort, ILI9341_RSPin); \
+                   __clrPin(TRIS, ILI9341_RSPort, ILI9341_RSPin)
+#define setRS()    __setPin(LAT, ILI9341_RSPort, ILI9341_RSPin)
+#define clrRS()    __clrPin(LAT, ILI9341_RSPort, ILI9341_RSPin)
+
+// Control del pin CLK
+//
+#if defined(ILI9341_INTERFACE_4WIRE2)
+#define initCLK()  __clrPin(LAT, ILI9341_CLKPort, ILI9341_CLKPin); \
+                   __clrPin(TRIS, ILI9341_CLKPort, ILI9341_CLKPin)
+#define setCLK()   __setPin(LAT, ILI9341_CLKPort, ILI9341_CLKPin)
+#define clrCLK()   __clrPin(LAT, ILI9341_CLKPort, ILI9341_CLKPin)
+#endif
+
+// Control del pin SO
+//
+#if defined(ILI9341_INTERFACE_4WIRE2)
+#define initSO()   __clrPin(LAT, ILI9341_SOPort, ILI9341_SOPin); \
+                   __clrPin(TRIS, ILI9341_SOPort, ILI9341_SOPin)
+#define setSO()    __setPin(LAT, ILI9341_SOPort, ILI9341_SOPin)
+#define clrSO()    __clrPin(LAT, ILI9341_SOPort, ILI9341_SOPin)
+#endif
+
+// Control del pin SI
+//
+#if !defined(ILI9341_READONLY) && defined(ILI9341_INTERFACE_4WIRE2)
+#define initSI()   __setPin(TRIS, ILI9341_SIPort, ILI9341_SIPin)
+#define getSI()    __getPin(PORT, ILI9341_SIPort, ILI9341_SIPin)
+#endif
+
+// Control el pin WR
+//
+#if defined(ILI9341_INTERFACE_P8)
+#define initWR()
+#define setWR()
+#define clrWR()
+#endif
+
+// Control del pin RD
+//
+#if !defined(ILI9341_READONLY) && defined(ILI9341_INTERFACE_P8)
+#define initRD()
+#define setRD()
+#define clrRD()
+#endif
+
+// Control del port de dades
+//
+#if defined(ILI9341_INTERFACE_P8)
+#endif
+
+
 static void selectRegion(int x1, int y1, int x2, int y2);
 static void delay(unsigned ms);
 static void send(uint8_t data);
@@ -163,26 +249,26 @@ void ILI9341_DisplayDriver::initialize() {
     
     // Inicialitza els pins de control
     //
-    ILI9341_initRST();
-    ILI9341_initCS();
-    ILI9341_initRS();
-    
+    initRST();
+    initCS();
+    initRS();
+       
     // Inicialitza els pins de comunicacio
     //
 #if defined(ILI9341_INTERFACE_4WIRE2)
-    ILI9341_initCLK();
-    ILI9341_initSO();
-    ILI9341_initSI();
-#else
-#error "No s'ha especificat el tipus de comunicacio amb el driver"  
+    initCLK();
+    initSO();
+#if !defined(ILI9341_READONLY)    
+    initSI();
+#endif    
 #endif    
     
     // Reset del controlador
     //
     delay(5);
-    ILI9341_clrRST();
+    clrRST();
     delay(10);
-    ILI9341_setRST();
+    setRST();
     delay(120);
     
     // Sequencia d'inicialitzacio del controlador
@@ -249,6 +335,11 @@ void ILI9341_DisplayDriver::setOrientation(
             data = 0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_ON;
             break;
     }
+    
+    xClipPos = 0;
+    yClipPos = 0;
+    xClipSize = xScreenSize;
+    yClipSize = yScreenSize;   
 
     writeCommand(CMD_MEMORY_ACCESS_CONTROL);
     writeParameter(data);    
@@ -299,9 +390,13 @@ void ILI9341_DisplayDriver::setPixel(
     int yPos,
     Color color) {
     
-    if ((xPos >= 0) && (xPos < xScreenSize) && 
-        (yPos >= 0) && (yPos < yScreenSize)) {
-        
+    // Comprova si es visible
+    //
+    if ((xPos >= xClipPos) && (xPos < (xClipPos + xClipSize)) && 
+        (yPos >= yClipPos) && (yPos < (yClipPos + yClipSize))) {
+      
+        // Dibuixa el pixel
+        //
         selectRegion(xPos, yPos, xPos, yPos);
         writeCommand(CMD_MEMORY_WRITE);
         writePixel(color, 1);    
@@ -322,13 +417,19 @@ void ILI9341_DisplayDriver::setHPixels(
     int size,
     Color color) {
     
-    if ((yPos >= 0) && (yPos < yScreenSize)) {
+    // Comprova si es visible
+    //
+    if ((yPos >= yClipPos) && (yPos < (yClipPos + yClipSize))) {
+      
+        // Retalla els extrems
+        //
+        if (xPos < xClipPos)
+            xPos = xClipPos;
+        if (xPos + size >= xClipSize)
+            size = xClipSize - xPos;
         
-        if (xPos < 0)
-            xPos = 0;
-        if (xPos + size >= xScreenSize)
-            size = xScreenSize - xPos;
-        
+        // Dibuiza la linia
+        //
         selectRegion(xPos, yPos, xPos + size - 1, yPos);
         writeCommand(CMD_MEMORY_WRITE);
         writePixel(color, size);
@@ -349,13 +450,19 @@ void ILI9341_DisplayDriver::setVPixels(
     int size,
     Color color) {
     
-    if ((xPos >= 0) && (xPos < xScreenSize)) {
-       
-        if (yPos < 0)
-            yPos = 0;
-        if (yPos + size >= yScreenSize)
-            size = yScreenSize - yPos;
+    // Comprova si es visible
+    //
+    if ((xPos >= xClipPos) && (xPos < (xClipPos + xClipSize))) {
+      
+        // Retalla els extrems
+        //
+        if (yPos < yClipPos)
+            yPos = yClipPos;
+        if (yPos + size >= yClipSize)
+            size = yClipSize - yPos;
         
+        // Dibuixa la linia
+        //
         selectRegion(xPos, yPos, xPos, yPos + size - 1);
         writeCommand(CMD_MEMORY_WRITE);
         writePixel(color, size);
@@ -384,6 +491,32 @@ void ILI9341_DisplayDriver::setPixels(
         selectRegion(xPos, yPos, xPos + xSize - 1, yPos + ySize - 1);
         writeCommand(CMD_MEMORY_WRITE);
         writePixel(color, xSize * ySize);
+    }    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una regio rectangular de pixels.
+/// \param xPos: Posicio X.
+/// \param yPos: Posicio Y.
+/// \param xSize: Amplada de la regio.
+/// \param ySize: Alçada de la regio.
+/// \param colors: Color dels pixels.
+///
+void ILI9341_DisplayDriver::setPixels(
+    int xPos, 
+    int yPos, 
+    int xSize, 
+    int ySize, 
+    const Color* colors) {
+    
+    if ((xPos >= 0) && (xPos + xSize < xScreenSize) &&
+        (yPos >= 0) && (yPos + ySize < yScreenSize)) {
+     
+        selectRegion(xPos, yPos, xPos + xSize - 1, yPos + ySize - 1);
+        writeCommand(CMD_MEMORY_WRITE);
+        for (int i = xSize * ySize; i; i--)
+            writePixel(*colors++, 1);
     }    
 }
 
@@ -439,12 +572,12 @@ static void send(uint8_t data) {
 
     uint8_t mask;
     for (mask = 0x80; mask; mask >>= 1) {
-        ILI9341_clrCLK();
+        clrCLK();
         if ((data & mask) != 0)
-            ILI9341_setSO();
+            setSO();
         else
-            ILI9341_clrSO();
-        ILI9341_setCLK();
+            clrSO();
+        setCLK();
     }    
 }
 
@@ -456,10 +589,10 @@ static void send(uint8_t data) {
 static void writeCommand(
     uint8_t command) {
     
-    ILI9341_clrRS();         // RS = 0
-    ILI9341_clrCS();         // CS = 0
+    clrRS();            // RS = 0
+    clrCS();            // CS = 0
     send(command);
-    ILI9341_setCS();         // CS = 1
+    setCS();            // CS = 1
 }
 
 
@@ -470,10 +603,10 @@ static void writeCommand(
 static void writeParameter(
     uint8_t parameter) {
     
-    ILI9341_setRS();         // RS = 1
-    ILI9341_clrCS();         // CS = 0
+    setRS();            // RS = 1
+    clrCS();            // CS = 0
     send(parameter);
-    ILI9341_setCS();         // CS = 1
+    setCS();            // CS = 1
 }
 
 
@@ -496,13 +629,13 @@ static void writePixel(
     uint8_t c0 = (r << 3) | ((g & 0x38) >> 3);
     uint8_t c1 = ((g & 0x03) << 5) | b;
     
-    ILI9341_setRS();
-    ILI9341_clrCS();
+    setRS();
+    clrCS();
     while (count--) {
         send(c0);
         send(c1);
     }
-    ILI9341_setCS();
+    setCS();
     
 #elif defined(ILI9341_COLORMODE_666)
    
@@ -510,14 +643,14 @@ static void writePixel(
     uint8_t g = (color & 0x0000FC00) >> 8;
     uint8_t b = color & 0x000000FC;
     
-    ILI9341_setRS();
-    ILI9341_clrCS();
+    setRS();
+    clrCS();
     while (count--) {
         send(r);
         send(g);
         send(b);
     }
-    ILI9341_setCS();
+    setCS();
     
 #endif    
 }

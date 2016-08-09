@@ -28,53 +28,58 @@
 #define ILI9341_COLORMODE_565
 //#define ILI9341_COLORMODE_666
 
-// Tipus d'interficie amb eñ controlador
+// Tipus d'interficie amb el controlador
 //
+#define ILI9341_READONLY
 #define ILI9341_INTERFACE_4WIRE2
 //#define ILI9341_INTERFACE_P8
 //#define ILI9341_INTERFACE_P9
 //#define ILI9341_INTERFACE_P16
 //#define ILI9341_INTERFACE_P18
 
-
-// Control del pin CS (Chip select) RE1
+// Control del pin RST (Reset) RD11
 //
-#define ILI9341_initCS()  LATESET  = 1 << 1; \
-                          TRISECLR = 1 << 1
-#define ILI9341_setCS()   LATESET  = 1 << 1
-#define ILI9341_clrCS()   LATECLR  = 1 << 1
+#define ILI9341_RSTPort      D
+#define ILI9341_RSTPin      11
 
-// Control del pin RS (Register select) RE2
+// Control del pin CS (Chip select) RD8
 //
-#define ILI9341_initRS()  LATECLR  = 1 << 2; \
-                          TRISECLR = 1 << 2
-#define ILI9341_setRS()   LATESET  = 1 << 2
-#define ILI9341_clrRS()   LATECLR  = 1 << 2
+#define ILI9341_CSPort       D
+#define ILI9341_CSPin        8
 
-// Control del pin CLK (Serial clock) RE5
+// Control del pin RS (Register select) RD7
 //
-#define ILI9341_initCLK() LATESET  = 1 << 5; \
-                          TRISECLR = 1 << 5
-#define ILI9341_setCLK()  LATESET  = 1 << 5
-#define ILI9341_clrCLK()  LATECLR  = 1 << 5
+#define ILI9341_RSPort       D
+#define ILI9341_RSPin        7
 
-// Control del pin SO (Serial data output) RE4
+// Control del pin CLK (Serial clock) RC13
 //
-#define ILI9341_initSO()  TRISECLR = 1 << 4
-#define ILI9341_setSO()   LATESET  = 1 << 4
-#define ILI9341_clrSO()   LATECLR  = 1 << 4
+#define ILI9341_CLKPort      C
+#define ILI9341_CLKPin       13
+
+// Control del pin SO (Serial data output) RC14
+//
+#define ILI9341_SOPort       C
+#define ILI9341_SOPin        14
 
 // Control del pin SI (Serial data input) RE3
 //
-#define ILI9341_initSI()  TRISESET = 1 << 3
-#define ILI9341_getSI()   (PORTE & ~(1 << 3) != 0)
+#define ILI9341_SIPort       G
+#define ILI9341_SIPin        9
 
-// Control del pin RST (Reset) RE0
+// Control de pin WR (Write)
 //
-#define ILI9341_initRST() LATECLR  = 1 << 0; \
-                          TRISECLR = 1 << 0
-#define ILI9341_setRST()  LATESET  = 1 << 0
-#define ILI9341_clrRST()  LATECLR  = 1 << 0
+#define ILI9341_WRPort
+#define ILI9341_WRPin
+
+// Control del pin RD (Read)
+//
+#define ILI9341_RDPort
+#define ILI9341_RDPin
+
+// Control del port DATA (I/O paralel port)
+//
+#define ILI9341_DATAPort
 
 
 #endif
