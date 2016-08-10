@@ -121,6 +121,12 @@ using namespace eos;
 #define __invPin(base, port, pin) __makePort3(base, port, INV) = 1 << pin
 #define __getPin(base, port, pin) __makePort2(base, port) & ~(1 << pin) != 0)
 
+#define __setPort(base, port, mask) __makePort3(base, port, SET) = mask
+#define __clrPort(base, port, mask) __makePort3(base, port, CLR) = mask
+#define __invPort(base, port, mask) __makePort3(base, port, INV) = mask
+#define __wrPort(base, port, data) __makePort2(base, port) = data
+#define __rdPort(base, port) __makePort2(base, port)
+
 
 // Control del pin RST
 //
@@ -163,7 +169,7 @@ using namespace eos;
 
 // Control del pin SI
 //
-#if !defined(ILI9341_READONLY) && defined(ILI9341_INTERFACE_4WIRE2)
+#if defined(ILI9341_INTERFACE_4WIRE2) && !defined(ILI9341_READONLY)
 #define initSI()   __setPin(TRIS, ILI9341_SIPort, ILI9341_SIPin)
 #define getSI()    __getPin(PORT, ILI9341_SIPort, ILI9341_SIPin)
 #endif
@@ -171,22 +177,31 @@ using namespace eos;
 // Control el pin WR
 //
 #if defined(ILI9341_INTERFACE_P8)
-#define initWR()
-#define setWR()
-#define clrWR()
+#define initWR()   __setPin(LAT, ILI9341_WRPort, ILI9341_WRPin); \
+                   __clrPin(TRIS, ILI9341_WRPort, ILI9341_WRPin)
+#define setWR()    __setPin(LAT, ILI9341_WRPort, ILI9341_WRPin)
+#define clrWR()    __clrPin(LAT, ILI9341_WRPort, ILI9341_WRPin)
 #endif
 
 // Control del pin RD
 //
-#if !defined(ILI9341_READONLY) && defined(ILI9341_INTERFACE_P8)
-#define initRD()
-#define setRD()
-#define clrRD()
+#if defined(ILI9341_INTERFACE_P8) && !defined(ILI9341_READONLY)    
+#define initRD()   __setPin(LAT, ILI9341_RDPort, ILI9341_RDPin); \
+                   __clrPin(TRIS, ILI9341_RDPort, ILI9341_RDPin)
+#define setRD()    __setPin(LAT, ILI9341_RDPort, ILI9341_RDPin)
+#define clrRD()    __clrPin(LAT, ILI9341_RDPort, ILI9341_RDPin)
 #endif
 
-// Control del port de dades
+// Control del port DATA
 //
 #if defined(ILI9341_INTERFACE_P8)
+#define initDATA()   __setPort(TRIS, ILI9341_DATAPort, 0xFF)
+#define hizDATA()    __setPort(TRIS, ILI9341_DATAPort, 0xFF)
+#define wrDATA(data) __clrPort(TRIS, ILI9341_DATAPort, 0xFF); \
+                     __wrPort(LAT, ILI9341_DATAPort, data)
+#if !defined(ILI9341_INTERFACE_READONLY)
+#define rdDATA()     __rdPort(PORT, ILI9341_DATAPort)
+#endif
 #endif
 
 
@@ -253,15 +268,20 @@ void ILI9341_DisplayDriver::initialize() {
     initCS();
     initRS();
        
-    // Inicialitza els pins de comunicacio
-    //
 #if defined(ILI9341_INTERFACE_4WIRE2)
     initCLK();
     initSO();
 #if !defined(ILI9341_READONLY)    
     initSI();
 #endif    
+    
+#elif defined(ILI9341_INTERFACE_P8)    
+    initWR();
+#if !defined(ILI9341_READONLY)    
+    initRD();
 #endif    
+    initDATA();
+#endif
     
     // Reset del controlador
     //
@@ -570,6 +590,7 @@ static void delay(unsigned ms) {
 ///
 static void send(uint8_t data) {
 
+#if defined(ILI9341_INTERFACE_4WIRE2)    
     uint8_t mask;
     for (mask = 0x80; mask; mask >>= 1) {
         clrCLK();
@@ -579,6 +600,13 @@ static void send(uint8_t data) {
             clrSO();
         setCLK();
     }    
+
+#elif defined(ILI9341_INTERFACE_P8)
+    clrWR();
+    wrDATA(data);
+    setWR();
+    hizDATA();
+#endif
 }
 
 
@@ -617,8 +645,7 @@ static void writeParameter(
 ///
 static void writePixel(
     Color color,
-    unsigned count) {
-    
+    unsigned count) {    
     
 #if defined(ILI9341_COLORMODE_565)    
 
