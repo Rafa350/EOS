@@ -1,6 +1,7 @@
 #include "eos.hpp"
 #include "Services/Forms/eosMenuForm.hpp"
 #include "Services/Forms/eosNumericEditorForm.hpp"
+#include "Controllers/Display/eosDisplay.hpp"
 #include "appMainForm.hpp"
 #include "MnuMain.h"
 #include <stdio.h>
@@ -30,6 +31,7 @@ const IncDecInfo infoXAccel = { "X-Motor Accel",  10, 2000,  5 };
 const IncDecInfo infoXSpeed = { "X-Motor Speed",  10, 2000,  5 };
 
 static int selectorPosition = 0;
+static IDisplayDriver *driver = nullptr;
 
 
 MainForm::MainForm(
@@ -51,7 +53,9 @@ MainForm::~MainForm() {
 
 
 void MainForm::onSelectorPress() {
-    
+
+    if (driver != nullptr) 
+        driver->vScroll(10);
 }
 
 
@@ -66,7 +70,7 @@ void MainForm::onSelectorMove(
 
 void MainForm::onPaint(
     FormsDisplayHandle display) {
-    
+       
     display->clear(RGB(0, 0, 32));
     
     display->setColor(RGB(0, 0, 128));
@@ -95,6 +99,11 @@ void MainForm::onPaint(
     char strPosition[20];
     sprintf(strPosition, "%i", selectorPosition);
     display->drawText(4, 200, strPosition, 0, -1);
+    
+    if (driver == nullptr) {
+        Display *dp = display->getDisplay();
+        driver = dp->getDriver();
+    }
 }
 
 

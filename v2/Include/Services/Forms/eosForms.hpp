@@ -138,6 +138,7 @@ namespace eos {
             
         public:
             FormsDisplay(Display *display);
+            Display* getDisplay() const { return display; }
             void beginDraw();
             void endDraw();
             void clear(Color color);

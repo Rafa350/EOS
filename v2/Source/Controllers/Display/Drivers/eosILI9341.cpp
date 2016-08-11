@@ -204,13 +204,24 @@ using namespace eos;
 #endif
 #endif
 
+// Control de les interrupcions
+//
+#define enableInterrupts()   __builtin_enable_interrupts()
+#define disableInterrupts()  __builtin_disable_interrupts()
 
-static void selectRegion(int x1, int y1, int x2, int y2);
+
 static void delay(unsigned ms);
-static void send(uint8_t data);
+
+static void writeUINT8(uint8_t data);
+static uint8_t readUINT8();
+
 static void writeCommand(uint8_t command);
 static void writeParameter(uint8_t parameter);
 static void writePixel(Color color, unsigned count);
+static void writePixel(const Color *colors, unsigned count);
+static void readPixel(Color *colors, unsigned count);
+
+static void selectRegion(int x, int y, int width, int height);
 
 
 /// ----------------------------------------------------------------------
@@ -360,7 +371,7 @@ void ILI9341_DisplayDriver::setOrientation(
     yClipPos = 0;
     xClipSize = xScreenSize;
     yClipSize = yScreenSize;   
-
+    
     writeCommand(CMD_MEMORY_ACCESS_CONTROL);
     writeParameter(data);    
 }
@@ -393,7 +404,7 @@ void ILI9341_DisplayDriver::setClip(
 void ILI9341_DisplayDriver::clear(
     Color color) {
     
-    selectRegion(0, 0, xScreenSize - 1, yScreenSize - 1);
+    selectRegion(0, 0, xScreenSize, yScreenSize);
     writeCommand(CMD_MEMORY_WRITE);
     writePixel(color, xScreenSize * yScreenSize);
 }
@@ -417,7 +428,7 @@ void ILI9341_DisplayDriver::setPixel(
       
         // Dibuixa el pixel
         //
-        selectRegion(xPos, yPos, xPos, yPos);
+        selectRegion(xPos, yPos, 1, 1);
         writeCommand(CMD_MEMORY_WRITE);
         writePixel(color, 1);    
     }
@@ -450,7 +461,7 @@ void ILI9341_DisplayDriver::setHPixels(
         
         // Dibuiza la linia
         //
-        selectRegion(xPos, yPos, xPos + size - 1, yPos);
+        selectRegion(xPos, yPos, size, 1);
         writeCommand(CMD_MEMORY_WRITE);
         writePixel(color, size);
     }
@@ -483,7 +494,7 @@ void ILI9341_DisplayDriver::setVPixels(
         
         // Dibuixa la linia
         //
-        selectRegion(xPos, yPos, xPos, yPos + size - 1);
+        selectRegion(xPos, yPos, 1, size);
         writeCommand(CMD_MEMORY_WRITE);
         writePixel(color, size);
     }
@@ -508,7 +519,7 @@ void ILI9341_DisplayDriver::setPixels(
     if ((xPos >= 0) && (xPos + xSize < xScreenSize) &&
         (yPos >= 0) && (yPos + ySize < yScreenSize)) {
      
-        selectRegion(xPos, yPos, xPos + xSize - 1, yPos + ySize - 1);
+        selectRegion(xPos, yPos, xSize, ySize);
         writeCommand(CMD_MEMORY_WRITE);
         writePixel(color, xSize * ySize);
     }    
@@ -533,37 +544,91 @@ void ILI9341_DisplayDriver::setPixels(
     if ((xPos >= 0) && (xPos + xSize < xScreenSize) &&
         (yPos >= 0) && (yPos + ySize < yScreenSize)) {
      
-        selectRegion(xPos, yPos, xPos + xSize - 1, yPos + ySize - 1);
+        selectRegion(xPos, yPos, xSize, ySize);
         writeCommand(CMD_MEMORY_WRITE);
-        for (int i = xSize * ySize; i; i--)
-            writePixel(*colors++, 1);
+        writePixel(colors, xSize * ySize);
     }    
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Selecciona la finestra de treball per les transferencies de 
+/// \brief Llegeix una regio rectangular de pixels.
+/// \param xPos: Posicio X.
+/// \param yPos: Posicio Y.
+/// \param xSize: Amplada de la regio.
+/// \param ySize: Alçada de la regio.
+/// \params colors: Buffer on deixar els pixels.
+///
+void ILI9341_DisplayDriver::getPixels(
+    int xPos, 
+    int yPos, 
+    int xSize, 
+    int ySize, 
+    Color *colors) {
+    
+    selectRegion(xPos, yPos, xSize, ySize);
+    writeCommand(CMD_MEMORY_READ);
+    readPixel(colors, xSize * ySize);
+}
+
+/// ----------------------------------------------------------------------
+/// \brief Realitza un scroll vertical de la pantalla.
+/// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
+///
+void ILI9341_DisplayDriver::vScroll(
+    int delta) {
+    
+    static Color buffer[MAX_COLUMNS];
+    
+    for (int i = 80; i < 120; i++) {
+    
+        selectRegion(0, i, sizeof(buffer) / sizeof(buffer[0]), 1);
+        writeCommand(CMD_MEMORY_READ);
+        readPixel(buffer, sizeof(buffer) / sizeof(buffer[0]));
+        
+        selectRegion(0, i + 40, sizeof(buffer) / sizeof(buffer[0]), 1);
+        writeCommand(CMD_MEMORY_WRITE);
+        writePixel(buffer, sizeof(buffer) / sizeof(buffer[0]));
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Realitza un scroll horitzontal de la pantalla.
+/// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
+///
+void ILI9341_DisplayDriver::hScroll(
+    int delta) {
+   
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Selecciona la regio de treball per les transferencies de 
 ///        pixels.
-/// \param x1: Coordinada X origen.
-/// \param y1: Coordinada Y oriden.
-/// \param x2: Coordinada X final.
-/// \param y2: Coordinada Y final.
+/// \param x: Coordinada X origen.
+/// \param y: Coordinada Y oriden.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
 ///
 static void selectRegion(
-    int x1, 
-    int y1, 
-    int x2, 
-    int y2) {    
+    int x, 
+    int y, 
+    int width, 
+    int height) {   
+    
+    int x2 = x + width - 1;
+    int y2 = y + height - 1;
     
     writeCommand(CMD_COLUMN_ADDRESS_SET);
-	writeParameter(x1 >> 8);
-	writeParameter(x1);
+	writeParameter(x >> 8);
+	writeParameter(x);
 	writeParameter(x2 >> 8);
 	writeParameter(x2);
     
 	writeCommand(CMD_PAGE_ADDRESS_SET);
-	writeParameter(y1 >> 8);
-	writeParameter(y1);
+	writeParameter(y >> 8);
+	writeParameter(y);
 	writeParameter(y2 >> 8);
 	writeParameter(y2);
 }
@@ -588,7 +653,7 @@ static void delay(unsigned ms) {
 /// \brief Transmiteix dades al controlador.
 /// \param data: Les dades a transmetre.
 ///
-static void send(uint8_t data) {
+static void writeUINT8(uint8_t data) {
 
 #if defined(ILI9341_INTERFACE_4WIRE2)    
     uint8_t mask;
@@ -611,16 +676,36 @@ static void send(uint8_t data) {
 
 
 /// ----------------------------------------------------------------------
+/// \brief Reb dades del controlador.
+/// \return Les dades rebudes.
+///
+static uint8_t readUINT8() {
+    
+#if defined(ILI9341_INTERFACE_4WIRE2)    
+    
+    
+#elif defined(ILI9341_INTERFACE_P8)    
+    clrRD();
+    uint8_t data = rdDATA();
+    setRD();
+#endif
+    
+    return data;
+}
+
+/// ----------------------------------------------------------------------
 /// \brief Escriu un byte de comanda en el controlador.
 /// \param command: La comanda a escriure.
 ///
 static void writeCommand(
     uint8_t command) {
     
-    clrRS();            // RS = 0
-    clrCS();            // CS = 0
-    send(command);
-    setCS();            // CS = 1
+    disableInterrupts();     // Desactiva les interrupcions
+    clrRS();                 // RS = 0
+    clrCS();                 // CS = 0
+    writeUINT8(command);
+    setCS();                 // CS = 1
+    enableInterrupts();      // Activa les interrupcions
 }
 
 
@@ -631,53 +716,99 @@ static void writeCommand(
 static void writeParameter(
     uint8_t parameter) {
     
-    setRS();            // RS = 1
-    clrCS();            // CS = 0
-    send(parameter);
-    setCS();            // CS = 1
+    disableInterrupts();     // Desactiva les interrupcions
+    setRS();                 // RS = 1
+    clrCS();                 // CS = 0
+    writeUINT8(parameter);
+    setCS();                 // CS = 1
+    enableInterrupts();      // Activa les interrupcions
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu un color en el controlador.
-/// \param data: El color a escriure.
+/// \param data: El color.
 /// \param count: Numero de copies a escriure.
 ///
 static void writePixel(
     Color color,
     unsigned count) {    
     
+    disableInterrupts();
+    
 #if defined(ILI9341_COLORMODE_565)    
 
-    uint8_t r = (color & 0x00FF0000) >> 19;
-    uint8_t g = (color & 0x0000FF00) >> 10;
-    uint8_t b = (color & 0x000000FF) >> 3;
-
-    uint8_t c0 = (r << 3) | ((g & 0x38) >> 3);
-    uint8_t c1 = ((g & 0x03) << 5) | b;
+    uint8_t c1 = ((color & 0x00F80000) >> 16) | ((color & 0x0000E000) >> 13);
+    uint8_t c2 = ((color & 0x00001C00) << 3) | ((color &0x000000F8) >> 3);
     
-    setRS();
-    clrCS();
+    setRS();                 // RS = 1
+    clrCS();                 // CS = 0
     while (count--) {
-        send(c0);
-        send(c1);
+        writeUINT8(c1);
+        writeUINT8(c2);
     }
-    setCS();
+    setCS();                 // CS = 1
     
 #elif defined(ILI9341_COLORMODE_666)
-   
-    uint8_t r = (color & 0x00FC0000) >> 16;
-    uint8_t g = (color & 0x0000FC00) >> 8;
-    uint8_t b = color & 0x000000FC;
     
+    uint8_t c1 = (color & 0x00FC0000) >> 16;
+    uint8_t c2 = (color & 0x0000FC00) >> 8;
+    uint8_t c3 = color & 0x000000FC;
+   
     setRS();
     clrCS();
     while (count--) {
-        send(r);
-        send(g);
-        send(b);
+        writeUINT8(c1);
+        writeUINT8(c2);
+        writeUINT8(c3);
     }
     setCS();
     
 #endif    
+    
+    enableInterrupts();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Escriu una llista de colors en el controlador
+/// \param colors: Llista de colors.
+/// \param count: Numero d'elements en la llista.
+///
+static void writePixel(
+    const Color *colors, 
+    unsigned count) {
+    
+    while (count--)
+        writePixel(*colors++, 1);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Llegeix una sequencia de colors.
+/// \param colors: Llista de colors.
+/// \param count: Numero de colors a lleigir.
+///
+static void readPixel(
+    Color *colors, 
+    unsigned count) {
+ 
+    disableInterrupts();     // Desactiva les interrupcions
+    setRS();                 // RS = 1
+    clrCS();                 // CS = 0
+    readUINT8();             // Dummy read
+    while (count--) {
+        
+#if defined(ILI9341_COLORMODE_565)        
+        uint8_t c1 = readUINT8();
+        uint8_t c2 = readUINT8();
+        uint8_t c3 = readUINT8();
+         *colors++ = RGB(c1, c2, c3);
+        
+#elif defined(ILI9341_COLORMODE_666)        
+#endif        
+        
+    }
+    setCS();                 // CS = 1
+    enableInterrupts();      // Activa les interrupcions
 }
