@@ -580,15 +580,20 @@ void ILI9341_DisplayDriver::vScroll(
     
     static Color buffer[MAX_COLUMNS];
     
-    for (int i = 80; i < 120; i++) {
-    
-        selectRegion(0, i, sizeof(buffer) / sizeof(buffer[0]), 1);
-        writeCommand(CMD_MEMORY_READ);
-        readPixel(buffer, sizeof(buffer) / sizeof(buffer[0]));
+    if (delta > 0) {
+        for (int i = delta; i < yScreenSize; i++) {
+
+            selectRegion(0, i, sizeof(buffer) / sizeof(buffer[0]), 1);
+            writeCommand(CMD_MEMORY_READ);
+            readPixel(buffer, sizeof(buffer) / sizeof(buffer[0]));
+
+            selectRegion(0, i - delta, sizeof(buffer) / sizeof(buffer[0]), 1);
+            writeCommand(CMD_MEMORY_WRITE);
+            writePixel(buffer, sizeof(buffer) / sizeof(buffer[0]));
+        }
+    }
+    else if (delta < 0) {
         
-        selectRegion(0, i + 40, sizeof(buffer) / sizeof(buffer[0]), 1);
-        writeCommand(CMD_MEMORY_WRITE);
-        writePixel(buffer, sizeof(buffer) / sizeof(buffer[0]));
     }
 }
 
@@ -686,7 +691,7 @@ static uint8_t readUINT8() {
     
 #elif defined(ILI9341_INTERFACE_P8)    
     clrRD();
-    uint8_t data = rdDATA();
+    uint8_t data = rdDATA() & 0x000000FF;
     setRD();
 #endif
     
@@ -797,13 +802,15 @@ static void readPixel(
     setRS();                 // RS = 1
     clrCS();                 // CS = 0
     readUINT8();             // Dummy read
+    readUINT8();             // Dummy read
     while (count--) {
         
 #if defined(ILI9341_COLORMODE_565)        
-        uint8_t c1 = readUINT8();
-        uint8_t c2 = readUINT8();
-        uint8_t c3 = readUINT8();
-         *colors++ = RGB(c1, c2, c3);
+        uint8_t volatile c1 = readUINT8();
+        uint8_t volatile c2 = readUINT8();
+        uint8_t volatile c3 = readUINT8();
+        Color color = RGB(c1, c2, c3);
+        *colors++ = color;
         
 #elif defined(ILI9341_COLORMODE_666)        
 #endif        
