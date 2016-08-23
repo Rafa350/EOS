@@ -378,7 +378,9 @@ int Display::drawChar(
 /// \param y: Coordinada Y.
 /// \param s: La cadena a dibuixar.
 /// \param offset: El primer caracter a dibuixar
-/// \param length: Numero de caracters a dibuixar
+/// \param length: Numero de caracters a dibuixar. -1 si dibuixa fins al final
+///                de la cadena de texte.
+/// \return L'amplada de la cadena dibuixada en pixels.
 ///
 int Display::drawText(
     int x, 
@@ -387,10 +389,10 @@ int Display::drawText(
     int offset,
     int length) {
     
-    char c;
     int sx = x;
-    while ((c = *s++) != '\0')
-        x += drawChar(x, y, c);
+    
+    for (int i = offset, j = length; j && s[i]; i++, j--)
+        x += drawChar(x, y, s[i]);
 
     return x - sx;
 }

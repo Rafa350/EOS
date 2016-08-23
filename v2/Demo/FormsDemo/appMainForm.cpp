@@ -38,8 +38,8 @@ MainForm::MainForm(
     FormsServiceHandle service):
     Form(service, nullptr) {
  
-    //menuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
- //   menuForm->setClickItemEvent<MainForm>(this, &MainForm::menuClickItemEventHandler);   
+    menuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
+    //menuForm->setClickItemEvent<MainForm>(this, &MainForm::menuClickItemEventHandler);   
 } 
 
 
@@ -54,8 +54,13 @@ MainForm::~MainForm() {
 
 void MainForm::onSelectorPress() {
 
-    if (driver != nullptr) 
+    menuForm->activate();
+    /*
+    if (driver != nullptr) {
+        driver->setClip(40, 40, driver->getXSize() - 60, driver->getYSize() - 39);
         driver->vScroll(10);
+        driver->setClip(0, 0, driver->getXSize(), driver->getYSize());
+    }*/
 }
 
 
@@ -75,8 +80,11 @@ void MainForm::onPaint(
     
     display->setColor(RGB(0, 0, 128));
     display->drawRectangle(0, 0, 240, 320);
-    display->drawLine(0, 20, 240, 20);
+    display->drawLine(0, 20, 239, 20);
     display->drawText(4, 16, "Forms Demo v1.0", 0, -1);
+    
+    display->setColor(RGB(126, 128, 0));
+    display->drawRectangle(39, 39, 121, 221);
     
     display->setColor(RGB(255, 0, 0));
     display->fillRectangle(40, 40, 50, 50);

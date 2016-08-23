@@ -2,6 +2,15 @@
 #include "Services/Forms/eosMenuForm.hpp"
 
 
+#define Menu_BorderColor                    RGB(128, 0, 0)
+#define Menu_BackgroundColor                RGB(64, 0, 0)
+#define Menu_ItemNormalTextColor    
+#define Menu_ItemSelectedTextColor
+#define Menu_ItemDisabledTextColor
+#define Menu_ItemSelectedBorderColor
+#define Menu_ItemSelectedBackgroundColor
+
+
 using namespace eos;
 
 
@@ -58,14 +67,20 @@ void MenuForm::onPaint(
     unsigned offset = info->offset;
     unsigned titleLen = resource[offset + 1];
     char *title = (char*) &resource[offset + 2];
+    
+    int lineHeight = 20;
 
-    display->clear(0x00000000);
-    display->drawText(0, 0, title, 0, titleLen);
-    display->drawLine(0, 10, 127, 10);
+    display->clear(Menu_BackgroundColor);
+    
+    display->setColor(Menu_BorderColor);
+    display->drawRectangle(0, 0, 240, 320);
+    display->drawLine(0, 20, 239, 20);
+    
+    display->drawText(4, 16, title, 0, titleLen);
 
     unsigned i = info->firstItem;
     unsigned j = eosMin(info->numItems, showItems);
-    unsigned k = 12;
+    unsigned k = 25;
     while (j--) {
 
         unsigned itemMapOffset = offset + 2 + titleLen + (i * 2);
@@ -75,17 +90,17 @@ void MenuForm::onPaint(
         char *itemTitle = (char*) &resource[itemOffset + 2];
 
         if (i == info->currentItem) {
-            display->fillRectangle(0, k, 127, 8);
-            display->setColor(0);
+            display->drawRectangle(4, k, 232, lineHeight);
+            //display->setColor(RGB(0, 0, 0));
         }
         
         onDrawItem(itemId);
         
-        display->drawText(10, k, itemTitle, 0, itemTitleLen);
-        display->setColor(1);
+        display->drawText(4, k + 15, itemTitle, 0, itemTitleLen);
+        //display->setColor(RGB(128, 0, 0));
 
         i += 1;
-        k += 10;
+        k += lineHeight;
     }
 }
 

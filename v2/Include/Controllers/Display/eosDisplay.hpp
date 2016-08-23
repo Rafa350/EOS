@@ -27,6 +27,7 @@ namespace eos {
             virtual void shutdown() = 0;
             virtual void setOrientation(Orientation orientation) = 0;
             virtual void setClip(int xPos, int yPos, int xSize, int ySize) = 0;
+            virtual void resetClip() = 0;
             virtual int getXSize() const = 0;
             virtual int getYSize() const = 0;
             virtual void clear(Color color) = 0;

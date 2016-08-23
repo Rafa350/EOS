@@ -23,6 +23,7 @@ namespace eos {
             void shutdown();
             void setOrientation(Orientation orientation);
             void setClip(int xPos, int yPos, int xSize, int ySize);
+            void resetClip();
             int getXSize() const { return xScreenSize; }
             int getYSize() const { return yScreenSize; }
             void clear(Color color);

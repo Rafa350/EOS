@@ -366,11 +366,8 @@ void ILI9341_DisplayDriver::setOrientation(
             data = 0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_ON;
             break;
     }
-    
-    xClipPos = 0;
-    yClipPos = 0;
-    xClipSize = xScreenSize;
-    yClipSize = yScreenSize;   
+
+    resetClip();
     
     writeCommand(CMD_MEMORY_ACCESS_CONTROL);
     writeParameter(data);    
@@ -378,7 +375,7 @@ void ILI9341_DisplayDriver::setOrientation(
 
 
 /// ----------------------------------------------------------------------
-/// \bried Selecciona la regio on dibuixar.
+/// \bried Selecciona la regio de retall.
 /// \param xPos: Coordinada X esquerra.
 /// \param yPos: Coodinada Y superior.
 /// \param xSize: Coordinada X dreta.
@@ -394,6 +391,18 @@ void ILI9341_DisplayDriver::setClip(
     yClipPos = yPos < 0 ? 0 : yPos;
     xClipSize = xSize > xScreenSize ? xScreenSize : xSize;
     yClipSize = ySize > yScreenSize ? yScreenSize : ySize;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Reseteja la regio de retall.
+///
+void ILI9341_DisplayDriver::resetClip() {
+    
+    xClipPos = 0;
+    yClipPos = 0;
+    xClipSize = xScreenSize;
+    yClipSize = yScreenSize;   
 }
 
 
@@ -452,7 +461,7 @@ void ILI9341_DisplayDriver::setHPixels(
     //
     if ((yPos >= yClipPos) && (yPos < (yClipPos + yClipSize))) {
       
-        // Retalla els extrems
+        // Retalla els extrems de la linia
         //
         if (xPos < xClipPos)
             xPos = xClipPos;
@@ -485,7 +494,7 @@ void ILI9341_DisplayDriver::setVPixels(
     //
     if ((xPos >= xClipPos) && (xPos < (xClipPos + xClipSize))) {
       
-        // Retalla els extrems
+        // Retalla els extrems de la linia
         //
         if (yPos < yClipPos)
             yPos = yClipPos;
@@ -516,9 +525,20 @@ void ILI9341_DisplayDriver::setPixels(
     int ySize, 
     Color color) {
     
+    // Comprova si es visible
+    //
     if ((xPos >= 0) && (xPos + xSize < xScreenSize) &&
         (yPos >= 0) && (yPos + ySize < yScreenSize)) {
+  
+        // Retalla la regio
+        //
+        if (xPos < xClipPos)
+            xPos = xClipPos;
+        if (yPos < yClipPos)
+            yPos = yClipPos;
      
+        // Dibuixa la regio
+        //
         selectRegion(xPos, yPos, xSize, ySize);
         writeCommand(CMD_MEMORY_WRITE);
         writePixel(color, xSize * ySize);
@@ -580,20 +600,25 @@ void ILI9341_DisplayDriver::vScroll(
     
     static Color buffer[MAX_COLUMNS];
     
-    if (delta > 0) {
-        for (int i = delta; i < yScreenSize; i++) {
-
-            selectRegion(0, i, sizeof(buffer) / sizeof(buffer[0]), 1);
-            writeCommand(CMD_MEMORY_READ);
-            readPixel(buffer, sizeof(buffer) / sizeof(buffer[0]));
-
-            selectRegion(0, i - delta, sizeof(buffer) / sizeof(buffer[0]), 1);
-            writeCommand(CMD_MEMORY_WRITE);
-            writePixel(buffer, sizeof(buffer) / sizeof(buffer[0]));
-        }
-    }
-    else if (delta < 0) {
+    if ((delta != 0) && (xClipSize > 0) && (yClipSize > 0)) {
         
+        if (delta > 0) {
+
+            for (int i = yClipPos; i < yClipSize - yClipPos - delta; i++) {
+
+                selectRegion(xClipPos, i + delta, xClipSize, 1);
+                writeCommand(CMD_MEMORY_READ);
+                readPixel(buffer, xClipSize);
+
+                selectRegion(xClipPos, i, xClipSize, 1);
+                writeCommand(CMD_MEMORY_WRITE);
+                writePixel(buffer, xClipSize);
+            }
+        }
+        
+        else if (delta < 0) {
+
+        }
     }
 }
 
