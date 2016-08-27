@@ -155,7 +155,7 @@ void MyApplication::selectorNotifyEventHandler(
     if (formsService != nullptr) {
         FormHandle form = formsService->getActiveForm();
         if (form != nullptr) {
-            int16_t delta = notification.position - oldPosition;
+            int delta = notification.position - oldPosition;
             if (delta != 0) {
                 message.id = MSG_SELECTOR;
                 message.target = form;

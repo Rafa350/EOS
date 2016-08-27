@@ -32,6 +32,7 @@ namespace eos {
             unsigned level;                 // -Nivell de submenus
             MenuInfo info[MAX_LEVELS];      // -Pila d'informacio del menu
             unsigned showItems;             // -Numero d'items a mostrar
+            bool refreshBackground;         // -Indica si cal refrescar el fons
             ISelectItemEvent *evSelectItem;
             IClickItemEvent *evClickItem;
             IDrawItemEvent *evDrawItem;
@@ -85,8 +86,6 @@ namespace eos {
             void nextItem();
             void prevItem();
             void clickItem();
-            void nextMenu();
-            void prevMenu();
     };
 
 }

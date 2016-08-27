@@ -125,7 +125,7 @@ namespace eos {
             void refresh(FormHandle form);
             void refresh(FormHandle form, int x, int y, int width, int height);
             FormHandle activate(FormHandle form);
-            FormHandle getActiveForm() const { return activeForm; }
+            inline FormHandle getActiveForm() const { return activeForm; }
         private:
             void run();
             
@@ -158,10 +158,10 @@ namespace eos {
 #ifdef eosFormsService_UseSelector            
             ISelectorPressEvent *evSelectorPress;
 #endif
-            //int x;
-            //int y;
-            //int width;
-            //int height;
+            int x;
+            int y;
+            int width;
+            int height;
             
         public:
             Form(FormsServiceHandle service, FormHandle parent);
@@ -169,8 +169,10 @@ namespace eos {
             void refresh() { service->refresh(this); }
             void refresh(int x, int y, int width, int height) { service->refresh(this, x, y, width, height); }
             void activate() { service->activate(this); }
-            FormHandle getParent() const { return parent; }
-            FormsServiceHandle getService() const { return service; }
+            inline FormHandle getParent() const { return parent; }
+            inline FormsServiceHandle getService() const { return service; }
+            inline int getX() const { return x; }
+            inline int getY() const { return y; }
 
 #ifdef eosFormsService_UseSelector            
             template <class cls>

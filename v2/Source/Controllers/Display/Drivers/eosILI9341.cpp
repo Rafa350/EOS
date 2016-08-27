@@ -554,7 +554,7 @@ void ILI9341_DisplayDriver::setPixels(
 /// \param ySize: Alçada de la regio.
 /// \param colors: Color dels pixels.
 ///
-void ILI9341_DisplayDriver::setPixels(
+void ILI9341_DisplayDriver::writePixels(
     int xPos, 
     int yPos, 
     int xSize, 
@@ -579,16 +579,20 @@ void ILI9341_DisplayDriver::setPixels(
 /// \param ySize: Alçada de la regio.
 /// \params colors: Buffer on deixar els pixels.
 ///
-void ILI9341_DisplayDriver::getPixels(
+void ILI9341_DisplayDriver::readPixels(
     int xPos, 
     int yPos, 
     int xSize, 
     int ySize, 
     Color *colors) {
     
-    selectRegion(xPos, yPos, xSize, ySize);
-    writeCommand(CMD_MEMORY_READ);
-    readPixel(colors, xSize * ySize);
+    if ((xPos >= 0) && (xPos + xSize < xScreenSize) &&
+        (yPos >= 0) && (yPos + ySize < yScreenSize)) {
+    
+        selectRegion(xPos, yPos, xSize, ySize);
+        writeCommand(CMD_MEMORY_READ);
+        readPixel(colors, xSize * ySize);
+    }
 }
 
 /// ----------------------------------------------------------------------
@@ -768,8 +772,8 @@ static void writePixel(
     
 #if defined(ILI9341_COLORMODE_565)    
 
-    uint8_t c1 = ((color & 0x00F80000) >> 16) | ((color & 0x0000E000) >> 13);
-    uint8_t c2 = ((color & 0x00001C00) << 3) | ((color &0x000000F8) >> 3);
+    uint8_t c1 = (uint32_t)(((color & 0x00F80000) >> 16) | ((color & 0x0000E000) >> 13));
+    uint8_t c2 = (uint32_t)(((color & 0x00001C00) >> 5) | ((color &0x000000F8) >> 3));
     
     setRS();                 // RS = 1
     clrCS();                 // CS = 0
@@ -781,9 +785,9 @@ static void writePixel(
     
 #elif defined(ILI9341_COLORMODE_666)
     
-    uint8_t c1 = (color & 0x00FC0000) >> 16;
-    uint8_t c2 = (color & 0x0000FC00) >> 8;
-    uint8_t c3 = color & 0x000000FC;
+    uint8_t c1 = (uint32_t)(color & 0x00FC0000) >> 16;
+    uint8_t c2 = (uint32_t)(color & 0x0000FC00) >> 8;
+    uint8_t c3 = (uint32_t)color & 0x000000FC;
    
     setRS();
     clrCS();

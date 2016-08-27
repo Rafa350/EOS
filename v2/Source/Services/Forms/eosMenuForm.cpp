@@ -2,14 +2,15 @@
 #include "Services/Forms/eosMenuForm.hpp"
 
 
-#define Menu_BorderColor                    RGB(128, 0, 0)
-#define Menu_BackgroundColor                RGB(16, 0, 0)
-#define Menu_TitleTextColor                 RGB(128, 0, 0)
-#define Menu_ItemNormalTextColor            RGB(128, 0, 0)
-#define Menu_ItemSelectedTextColor          RGB(128, 0, 0)
-#define Menu_ItemDisabledTextColor          RGB(32, 0, 0)
-#define Menu_ItemSelectedBorderColor        RGB(64, 0, 0)
-#define Menu_ItemSelectedBackgroundColor    RGB(32, 0, 0)
+#define Menu_BorderColor                    RGB(0, 0, 128)
+#define Menu_BackgroundColor                RGB(0, 0, 16)
+#define Menu_TitleTextColor                 RGB(0, 0, 200)
+#define Menu_ItemNormalTextColor            COLOR_SkyBlue
+#define Menu_ItemSelectedTextColor          COLOR_SkyBlue
+#define Menu_ItemDisabledTextColor          RGB(126, 126, 126)
+#define Menu_ItemSelectedBorderColor        COLOR_SkyBlue
+#define Menu_ItemSelectedBackgroundColor    COLOR_DarkBlue
+#define Menu_ItemHeight                     20
 
 
 using namespace eos;
@@ -31,6 +32,7 @@ MenuForm::MenuForm(
     evClickItem(nullptr),
     evDrawItem(nullptr) {
     
+    refreshBackground = true;
     showItems = 5;
     level = 0;
     info[0].offset = 0;
@@ -58,28 +60,36 @@ MenuForm::~MenuForm() {
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant cal repintar la pantalla.
-/// \param display: Controlador de pantalla.
+/// \param display: El handler de visualitzacio.
 ///
 void MenuForm::onPaint(
     FormsDisplayHandle display) {
     
     MenuInfo *info = &this->info[level];
-
     unsigned offset = info->offset;
     unsigned titleLen = resource[offset + 1];
     char *title = (char*) &resource[offset + 2];
     
-    int lineHeight = 20;
+    if (refreshBackground) {
+        
+        // Dibuixa el fons
+        //
+        display->clear(Menu_BackgroundColor);
 
-    display->clear(Menu_BackgroundColor);
-    
-    display->setColor(Menu_BorderColor);
-    display->drawRectangle(0, 0, 240, 320);
-    display->drawLine(0, 20, 239, 20);
-    
-    display->setColor(Menu_TitleTextColor);
-    display->drawText(4, 16, title, 0, titleLen);
+        // Dibuixa el marc
+        //
+        display->setColor(Menu_BorderColor);
+        display->drawRectangle(0, 0, 240, 320);
+        display->drawLine(0, 20, 239, 20);
 
+        // Dibuixa el titol
+        //
+        display->setColor(Menu_TitleTextColor);
+        display->drawText(4, 16, title, 0, titleLen);    
+        
+        refreshBackground = false;
+    }
+    
     unsigned i = info->firstItem;
     unsigned j = eosMin(info->numItems, showItems);
     unsigned k = 25;
@@ -93,21 +103,22 @@ void MenuForm::onPaint(
 
         if (i == info->currentItem) {
             display->setColor(Menu_ItemSelectedBackgroundColor);
-            display->fillRectangle(4, k, 232, lineHeight);
+            display->fillRectangle(4, k, 232, Menu_ItemHeight);
             display->setColor(Menu_ItemSelectedBorderColor);
-            display->drawRectangle(4, k, 232, lineHeight);
-        }
-        
-        onDrawItem(itemId);
-        
-        if (i == info->currentItem)
+            display->drawRectangle(4, k, 232, Menu_ItemHeight);
             display->setColor(Menu_ItemSelectedTextColor);
-        else
+        }
+        else {
+            display->setColor(Menu_BackgroundColor);
+            display->fillRectangle(4, k, 232, Menu_ItemHeight);
             display->setColor(Menu_ItemNormalTextColor);
-        display->drawText(4, k + 15, itemTitle, 0, itemTitleLen);
+        }
 
+        onDrawItem(itemId);
+        display->drawText(4, k + 15, itemTitle, 0, itemTitleLen);
+        
         i += 1;
-        k += lineHeight;
+        k += Menu_ItemHeight;
     }
 }
 
@@ -294,7 +305,6 @@ void MenuForm::clickItem() {
             break;
 
         case 0x01: // menuItem
-            // nextMenu();
             if (level < MAX_LEVELS) {
                 level++;
                 MenuInfo *info = &this->info[level];
@@ -302,33 +312,17 @@ void MenuForm::clickItem() {
                 info->numItems = resource[info->offset];
                 info->firstItem = 0;
                 info->currentItem = 0;
+                refreshBackground = true;
                 refresh();
             }
             break;
 
         case 0x02: // exitItem
-            prevMenu();
+            if (level > 0)  {
+                level--;
+                refreshBackground = true;
+                refresh();
+            }   
             break;
     }
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief Avança al seguent menu
-///
-void MenuForm::nextMenu() {
-
-    // TODO 
-}
-  
-
-/// ----------------------------------------------------------------------
-/// \brief Retorna al menu anterior
-///
-void MenuForm::prevMenu() {
-
-    if (level > 0)  {
-        level--;
-        refresh();
-    }   
-}    

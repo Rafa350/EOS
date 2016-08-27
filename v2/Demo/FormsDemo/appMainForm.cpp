@@ -30,9 +30,6 @@ const IncDecInfo infoXJerk =  { "X-Motor Jerk",   10, 2000,  5 };
 const IncDecInfo infoXAccel = { "X-Motor Accel",  10, 2000,  5 };
 const IncDecInfo infoXSpeed = { "X-Motor Speed",  10, 2000,  5 };
 
-static int selectorPosition = 0;
-static IDisplayDriver *driver = nullptr;
-
 
 MainForm::MainForm(
     FormsServiceHandle service):
@@ -55,63 +52,37 @@ MainForm::~MainForm() {
 void MainForm::onSelectorPress() {
 
     menuForm->activate();
-    /*
-    if (driver != nullptr) {
-        driver->setClip(40, 40, driver->getXSize() - 60, driver->getYSize() - 39);
-        driver->vScroll(10);
-        driver->setClip(0, 0, driver->getXSize(), driver->getYSize());
-    }*/
 }
 
 
 void MainForm::onSelectorMove(
     int position, 
     SelectorDirection direction) {
-    
-    selectorPosition = position;
-    refresh();
 }
 
 
 void MainForm::onPaint(
     FormsDisplayHandle display) {
-       
+    
     display->clear(RGB(0, 0, 32));
     
     display->setColor(RGB(0, 0, 128));
     display->drawRectangle(0, 0, 240, 320);
     display->drawLine(0, 20, 239, 20);
-    display->drawText(4, 16, "Forms Demo v1.0", 0, -1);
+    display->drawText(4, 16, "EOS Forms Demo v1.0", 0, -1);
     
-    display->setColor(RGB(126, 128, 0));
-    display->drawRectangle(39, 39, 121, 221);
-    
-    display->setColor(RGB(255, 0, 0));
-    display->fillRectangle(40, 40, 50, 50);
-
-    display->setColor(RGB(0, 255, 0));
-    display->fillRectangle(60, 60, 50, 50);
-
-    display->setColor(RGB(0, 0, 255));
-    display->fillRectangle(80, 80, 50, 50);
-
-    display->setColor(RGB(64, 0, 0));
-    display->fillRectangle(40, 140, 50, 50);
-
-    display->setColor(RGB(0, 64, 0));
-    display->fillRectangle(60, 160, 50, 50);
-
-    display->setColor(RGB(0, 0, 64));
-    display->fillRectangle(80, 180, 50, 50);
-    
-    char strPosition[20];
-    sprintf(strPosition, "%i", selectorPosition);
-    display->drawText(4, 200, strPosition, 0, -1);
-    
-    if (driver == nullptr) {
-        Display *dp = display->getDisplay();
-        driver = dp->getDriver();
-    }
+    uint8_t k = 0;
+    for (int j = 0; j < 8; j++)
+        for (int i = 0; i < 8; i++) {
+        
+            int x = ((240 - (20 * 8)) / 2) + (20 * i);
+            int y = 20 + (((340 - 20) - 20 * 8) / 2) + (20 * j);
+            Color c = RGB(k, k, k);
+            display->setColor(c);
+            display->fillRectangle(x, y, 15, 15);
+            
+            k += 4;
+        }    
 }
 
 

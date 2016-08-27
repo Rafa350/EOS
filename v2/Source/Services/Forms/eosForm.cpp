@@ -17,7 +17,9 @@ Form::Form(
     evSelectorPress(nullptr),
 #endif
     service(nullptr),
-    parent(_parent) {
+    parent(_parent),
+    x(0),
+    y(0) {
 
     if (_service != nullptr)
         _service->add(this);

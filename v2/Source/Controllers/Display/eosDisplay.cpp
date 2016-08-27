@@ -213,7 +213,7 @@ void Display::drawLine(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un rectangle buit.
-/// \param x1: Coordinada x deo origen.
+/// \param x1: Coordinada x del origen.
 /// \param y1: Coordinada y del origen.
 /// \param x2: Coordinada x del final.
 /// \param y2: Coordinada y del final.
@@ -228,6 +228,30 @@ void Display::drawRectangle(
     driver->setHPixels(x1, y2, x2 - x1 + 1, color);
     driver->setVPixels(x1, y1, y2 - y1 + 1, color);
     driver->setVPixels(x2, y1, y2 - y1 + 1, color);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa un triangle buit.
+/// \param x1: Coordinada x del primer punt
+/// \param y1: Coordinada y del primer punt
+/// \param x2: Coordinada x del segon punt.
+/// \param y2: Coordinada y del segon punt.
+/// \param x3: Coordinada x del tercer punt.
+/// \param y3: Coordinada y del tercer punt.
+///
+void Display::drawTriangle(
+    int x1, 
+    int y1, 
+    int x2, 
+    int y2, 
+    int x3, 
+    int y3) {
+    
+    moveTo(x1, y1);
+    lineTo(x2, y2);
+    lineTo(x3, y3);
+    lineTo(x1, y1);
 }
 
 

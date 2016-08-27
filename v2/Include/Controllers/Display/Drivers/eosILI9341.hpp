@@ -31,8 +31,8 @@ namespace eos {
             void setHPixels(int xPos, int yPos, int size, Color color);
             void setVPixels(int xPos, int yPos, int size, Color color);
             void setPixels(int xPos, int yPos, int xSize, int ySize, Color color);
-            void setPixels(int xPos, int yPos, int xSize, int ySize, const Color *colors);
-            void getPixels(int xPos, int yPos, int xSize, int ySize, Color *colors);
+            void writePixels(int xPos, int yPos, int xSize, int ySize, const Color *colors);
+            void readPixels(int xPos, int yPos, int xSize, int ySize, Color *colors);
             void vScroll(int delta);
             void hScroll(int delta);            
     };
