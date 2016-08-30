@@ -5,16 +5,16 @@
 #error "No se especifico ILI9342_COLORMODE_xxx"
 #endif
 
-#if !defined(ILI9341_INTERFACE_4WIRE2) && !defined(ILI9341_INTERFACE_P8)
-#error "No se especifico ILI9341_INTERFACE_xxx"
-#endif
-
 
 // Parametres de la pantalla
 //
 #define MAX_COLUMNS          240
 #define MAX_ROWS             320
 
+// Adresses del controlador
+//
+#define ADDR_COMMAND           0
+#define ADDR_DATA              1
    
 // Comandes del controlador
 //
@@ -102,6 +102,8 @@
 #define CMD_ENABLE_3G                                      0xF2
 #define CMD_PUMP_RATIO_CONTROL                             0xF7
     
+// Parametres de la comanda MEMORY_ACCESS_CONTROL
+//
 #define MAC_MX_OFF    0b00000000
 #define MAC_MX_ON     0b10000000
 #define MAC_MY_OFF    0b00000000
@@ -113,121 +115,13 @@
 using namespace eos;
 
 
-#define __makePort2(base, port) base ## port
-#define __makePort3(base, port, suffix) base ## port ## suffix
-
-#define __setPin(base, port, pin) __makePort3(base, port, SET) = 1 << pin
-#define __clrPin(base, port, pin) __makePort3(base, port, CLR) = 1 << pin
-#define __invPin(base, port, pin) __makePort3(base, port, INV) = 1 << pin
-#define __getPin(base, port, pin) __makePort2(base, port) & ~(1 << pin) != 0)
-
-#define __setPort(base, port, mask) __makePort3(base, port, SET) = mask
-#define __clrPort(base, port, mask) __makePort3(base, port, CLR) = mask
-#define __invPort(base, port, mask) __makePort3(base, port, INV) = mask
-#define __wrPort(base, port, data) __makePort2(base, port) = data
-#define __rdPort(base, port) __makePort2(base, port)
-
-
-// Control del pin RST
-//
-#define initRST()  __clrPin(LAT, ILI9341_RSTPort, ILI9341_RSTPin); \
-                   __clrPin(TRIS, ILI9341_RSTPort, ILI9341_RSTPin)
-#define setRST()   __setPin(LAT, ILI9341_RSTPort, ILI9341_RSTPin)
-#define clrRST()   __clrPin(LAT, ILI9341_RSTPort, ILI9341_RSTPin)
-
-// Control del pin CS
-//
-#define initCS()   __setPin(LAT, ILI9341_CSPort, ILI9341_CSPin); \
-                   __clrPin(TRIS, ILI9341_CSPort, ILI9341_CSPin)
-#define setCS()    __setPin(LAT, ILI9341_CSPort, ILI9341_CSPin)
-#define clrCS()    __clrPin(LAT, ILI9341_CSPort, ILI9341_CSPin)
-
-// Control del pin RS
-//
-#define initRS()   __clrPin(LAT, ILI9341_RSPort, ILI9341_RSPin); \
-                   __clrPin(TRIS, ILI9341_RSPort, ILI9341_RSPin)
-#define setRS()    __setPin(LAT, ILI9341_RSPort, ILI9341_RSPin)
-#define clrRS()    __clrPin(LAT, ILI9341_RSPort, ILI9341_RSPin)
-
-// Control del pin CLK
-//
-#if defined(ILI9341_INTERFACE_4WIRE2)
-#define initCLK()  __clrPin(LAT, ILI9341_CLKPort, ILI9341_CLKPin); \
-                   __clrPin(TRIS, ILI9341_CLKPort, ILI9341_CLKPin)
-#define setCLK()   __setPin(LAT, ILI9341_CLKPort, ILI9341_CLKPin)
-#define clrCLK()   __clrPin(LAT, ILI9341_CLKPort, ILI9341_CLKPin)
-#endif
-
-// Control del pin SO
-//
-#if defined(ILI9341_INTERFACE_4WIRE2)
-#define initSO()   __clrPin(LAT, ILI9341_SOPort, ILI9341_SOPin); \
-                   __clrPin(TRIS, ILI9341_SOPort, ILI9341_SOPin)
-#define setSO()    __setPin(LAT, ILI9341_SOPort, ILI9341_SOPin)
-#define clrSO()    __clrPin(LAT, ILI9341_SOPort, ILI9341_SOPin)
-#endif
-
-// Control del pin SI
-//
-#if defined(ILI9341_INTERFACE_4WIRE2) && !defined(ILI9341_READONLY)
-#define initSI()   __setPin(TRIS, ILI9341_SIPort, ILI9341_SIPin)
-#define getSI()    __getPin(PORT, ILI9341_SIPort, ILI9341_SIPin)
-#endif
-
-// Control el pin WR
-//
-#if defined(ILI9341_INTERFACE_P8)
-#define initWR()   __setPin(LAT, ILI9341_WRPort, ILI9341_WRPin); \
-                   __clrPin(TRIS, ILI9341_WRPort, ILI9341_WRPin)
-#define setWR()    __setPin(LAT, ILI9341_WRPort, ILI9341_WRPin)
-#define clrWR()    __clrPin(LAT, ILI9341_WRPort, ILI9341_WRPin)
-#endif
-
-// Control del pin RD
-//
-#if defined(ILI9341_INTERFACE_P8) && !defined(ILI9341_READONLY)    
-#define initRD()   __setPin(LAT, ILI9341_RDPort, ILI9341_RDPin); \
-                   __clrPin(TRIS, ILI9341_RDPort, ILI9341_RDPin)
-#define setRD()    __setPin(LAT, ILI9341_RDPort, ILI9341_RDPin)
-#define clrRD()    __clrPin(LAT, ILI9341_RDPort, ILI9341_RDPin)
-#endif
-
-// Control del port DATA
-//
-#if defined(ILI9341_INTERFACE_P8)
-#define initDATA()   __setPort(TRIS, ILI9341_DATAPort, 0xFF)
-#define hizDATA()    __setPort(TRIS, ILI9341_DATAPort, 0xFF)
-#define wrDATA(data) __clrPort(TRIS, ILI9341_DATAPort, 0xFF); \
-                     __wrPort(LAT, ILI9341_DATAPort, data)
-#if !defined(ILI9341_INTERFACE_READONLY)
-#define rdDATA()     __rdPort(PORT, ILI9341_DATAPort)
-#endif
-#endif
-
-// Control de les interrupcions
-//
-#define enableInterrupts()   __builtin_enable_interrupts()
-#define disableInterrupts()  __builtin_disable_interrupts()
-
-
 static void delay(unsigned ms);
-
-static void writeUINT8(uint8_t data);
-static uint8_t readUINT8();
-
-static void writeCommand(uint8_t command);
-static void writeParameter(uint8_t parameter);
-static void writePixel(Color color, unsigned count);
-static void writePixel(const Color *colors, unsigned count);
-static void readPixel(Color *colors, unsigned count);
-
-static void selectRegion(int x, int y, int width, int height);
 
 
 /// ----------------------------------------------------------------------
 /// \brief Contructor.
 ///
-ILI9341_DisplayDriver::ILI9341_DisplayDriver() {
+ILI9341_Driver::ILI9341_Driver() {
 
     xScreenSize = MAX_COLUMNS;
     yScreenSize = MAX_ROWS;    
@@ -242,7 +136,7 @@ ILI9341_DisplayDriver::ILI9341_DisplayDriver() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza la pantalla.
 ///
-void ILI9341_DisplayDriver::initialize() {
+void ILI9341_Driver::initialize() {
 
     static const uint8_t initData[] = {
         4, CMD_POWER_CONTROL_B, 0x00, 0xC3, 0x30,        
@@ -255,7 +149,7 @@ void ILI9341_DisplayDriver::initialize() {
         2, CMD_POWER_CONTROL_2, 0x11, 
         3, CMD_VCOM_CONTROL_1, 0x3D, 0x20, 
         2, CMD_VCOM_CONTROL_2, 0xAA,
-        2, CMD_MEMORY_ACCESS_CONTROL, 0x08, 
+        2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF, 
 #if defined(ILI9341_COLORMODE_565)        
         2, CMD_PIXEL_FORMAT_SET, 0x55,
 #elif defined(ILI9341_COLORMODE_666)        
@@ -273,62 +167,47 @@ void ILI9341_DisplayDriver::initialize() {
         0
     };
     
-    // Inicialitza els pins de control
+    // inicialitza les comunicacions
     //
-    initRST();
-    initCS();
-    initRS();
-       
-#if defined(ILI9341_INTERFACE_4WIRE2)
-    initCLK();
-    initSO();
-#if !defined(ILI9341_READONLY)    
-    initSI();
-#endif    
-    
-#elif defined(ILI9341_INTERFACE_P8)    
-    initWR();
-#if !defined(ILI9341_READONLY)    
-    initRD();
-#endif    
-    initDATA();
-#endif
-    
-    // Reset del controlador
+    io.initialize();
+
+    // Reseteja el controlador
     //
-    delay(5);
-    clrRST();
-    delay(10);
-    setRST();
-    delay(120);
+    io.reset();
     
     // Sequencia d'inicialitzacio del controlador
     //
-    writeCommand(CMD_SLEEP_OUT);
+    io.begin();
+    io.write(ADDR_COMMAND, CMD_SLEEP_OUT);
     delay(120);
 
     uint8_t c;
     const uint8_t *p = initData;
     while ((c = *p++) != 0) {
-        writeCommand(*p++);
+        io.write(ADDR_COMMAND, *p++);
+        io.address(ADDR_DATA);
         while (--c != 0)
-            writeParameter(*p++);
+            io.write(*p++);
     }
 
-    writeCommand(CMD_SLEEP_OUT);
+    io.write(ADDR_COMMAND, CMD_SLEEP_OUT);
     delay(120);
 
-    writeCommand(CMD_DISPLAY_ON);
+    io.write(ADDR_COMMAND, CMD_DISPLAY_ON);
     delay(50);
+    
+    io.end();
 }
     
 
 /// ----------------------------------------------------------------------
 /// \brief Desativa la pantalla
 ///
-void ILI9341_DisplayDriver::shutdown() {
+void ILI9341_Driver::shutdown() {
     
-    writeCommand(CMD_DISPLAY_OFF);
+    io.begin();
+    io.write(ADDR_COMMAND, CMD_DISPLAY_OFF);
+    io.end();
 }
 
 
@@ -336,7 +215,7 @@ void ILI9341_DisplayDriver::shutdown() {
 /// \brief Selecciona l'orientacio de la pantalla.
 /// \param orientation: Orientacio (0=0, 1=90, 2=180, 3=270)
 ///
-void ILI9341_DisplayDriver::setOrientation(
+void ILI9341_Driver::setOrientation(
     Orientation orientation) {
     
     uint8_t data;
@@ -369,8 +248,10 @@ void ILI9341_DisplayDriver::setOrientation(
 
     resetClip();
     
-    writeCommand(CMD_MEMORY_ACCESS_CONTROL);
-    writeParameter(data);    
+    io.begin();
+    io.write(ADDR_COMMAND, CMD_MEMORY_ACCESS_CONTROL);
+    io.write(ADDR_DATA, data);    
+    io.end();
 }
 
 
@@ -381,7 +262,7 @@ void ILI9341_DisplayDriver::setOrientation(
 /// \param xSize: Coordinada X dreta.
 /// \param ySize: Coordinada Y inferior.
 ///
-void ILI9341_DisplayDriver::setClip(
+void ILI9341_Driver::setClip(
     int xPos, 
     int yPos, 
     int xSize, 
@@ -397,7 +278,7 @@ void ILI9341_DisplayDriver::setClip(
 /// ----------------------------------------------------------------------
 /// \brief Reseteja la regio de retall.
 ///
-void ILI9341_DisplayDriver::resetClip() {
+void ILI9341_Driver::resetClip() {
     
     xClipPos = 0;
     yClipPos = 0;
@@ -410,11 +291,11 @@ void ILI9341_DisplayDriver::resetClip() {
 /// \brief Borra la pantalla
 /// \param color: Color per borrar
 ///
-void ILI9341_DisplayDriver::clear(
+void ILI9341_Driver::clear(
     Color color) {
     
     selectRegion(0, 0, xScreenSize, yScreenSize);
-    writeCommand(CMD_MEMORY_WRITE);
+    startMemoryWrite();
     writePixel(color, xScreenSize * yScreenSize);
 }
 
@@ -425,7 +306,7 @@ void ILI9341_DisplayDriver::clear(
 /// \param yPos: Coordinada Y.
 /// \param color: Color del pixel.
 ///
-void ILI9341_DisplayDriver::setPixel(
+void ILI9341_Driver::setPixel(
     int xPos, 
     int yPos,
     Color color) {
@@ -438,7 +319,7 @@ void ILI9341_DisplayDriver::setPixel(
         // Dibuixa el pixel
         //
         selectRegion(xPos, yPos, 1, 1);
-        writeCommand(CMD_MEMORY_WRITE);
+        startMemoryWrite();
         writePixel(color, 1);    
     }
 }
@@ -451,7 +332,7 @@ void ILI9341_DisplayDriver::setPixel(
 /// \param size: Tamany de la serie.
 /// \param color: Color dels pixels.
 ///
-void ILI9341_DisplayDriver::setHPixels(
+void ILI9341_Driver::setHPixels(
     int xPos, 
     int yPos, 
     int size,
@@ -471,7 +352,7 @@ void ILI9341_DisplayDriver::setHPixels(
         // Dibuiza la linia
         //
         selectRegion(xPos, yPos, size, 1);
-        writeCommand(CMD_MEMORY_WRITE);
+        startMemoryWrite();
         writePixel(color, size);
     }
 }
@@ -484,7 +365,7 @@ void ILI9341_DisplayDriver::setHPixels(
 /// \param size: Tamany de la serie.
 /// \param color: Color dels pixels.
 ///
-void ILI9341_DisplayDriver::setVPixels(
+void ILI9341_Driver::setVPixels(
     int xPos, 
     int yPos, 
     int size,
@@ -504,7 +385,7 @@ void ILI9341_DisplayDriver::setVPixels(
         // Dibuixa la linia
         //
         selectRegion(xPos, yPos, 1, size);
-        writeCommand(CMD_MEMORY_WRITE);
+        startMemoryWrite();
         writePixel(color, size);
     }
 }
@@ -518,7 +399,7 @@ void ILI9341_DisplayDriver::setVPixels(
 /// \param ySize: Alçada de la regio.
 /// \param color: Color dels pixels.
 ///
-void ILI9341_DisplayDriver::setPixels(
+void ILI9341_Driver::setPixels(
     int xPos, 
     int yPos, 
     int xSize, 
@@ -540,7 +421,7 @@ void ILI9341_DisplayDriver::setPixels(
         // Dibuixa la regio
         //
         selectRegion(xPos, yPos, xSize, ySize);
-        writeCommand(CMD_MEMORY_WRITE);
+        startMemoryWrite();
         writePixel(color, xSize * ySize);
     }    
 }
@@ -554,7 +435,7 @@ void ILI9341_DisplayDriver::setPixels(
 /// \param ySize: Alçada de la regio.
 /// \param colors: Color dels pixels.
 ///
-void ILI9341_DisplayDriver::writePixels(
+void ILI9341_Driver::writePixels(
     int xPos, 
     int yPos, 
     int xSize, 
@@ -565,7 +446,7 @@ void ILI9341_DisplayDriver::writePixels(
         (yPos >= 0) && (yPos + ySize < yScreenSize)) {
      
         selectRegion(xPos, yPos, xSize, ySize);
-        writeCommand(CMD_MEMORY_WRITE);
+        startMemoryWrite();
         writePixel(colors, xSize * ySize);
     }    
 }
@@ -579,7 +460,7 @@ void ILI9341_DisplayDriver::writePixels(
 /// \param ySize: Alçada de la regio.
 /// \params colors: Buffer on deixar els pixels.
 ///
-void ILI9341_DisplayDriver::readPixels(
+void ILI9341_Driver::readPixels(
     int xPos, 
     int yPos, 
     int xSize, 
@@ -590,7 +471,7 @@ void ILI9341_DisplayDriver::readPixels(
         (yPos >= 0) && (yPos + ySize < yScreenSize)) {
     
         selectRegion(xPos, yPos, xSize, ySize);
-        writeCommand(CMD_MEMORY_READ);
+        startMemoryRead();
         readPixel(colors, xSize * ySize);
     }
 }
@@ -599,7 +480,7 @@ void ILI9341_DisplayDriver::readPixels(
 /// \brief Realitza un scroll vertical de la pantalla.
 /// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
 ///
-void ILI9341_DisplayDriver::vScroll(
+void ILI9341_Driver::vScroll(
     int delta) {
     
     static Color buffer[MAX_COLUMNS];
@@ -611,11 +492,11 @@ void ILI9341_DisplayDriver::vScroll(
             for (int i = yClipPos; i < yClipSize - yClipPos - delta; i++) {
 
                 selectRegion(xClipPos, i + delta, xClipSize, 1);
-                writeCommand(CMD_MEMORY_READ);
+                startMemoryRead();
                 readPixel(buffer, xClipSize);
 
                 selectRegion(xClipPos, i, xClipSize, 1);
-                writeCommand(CMD_MEMORY_WRITE);
+                startMemoryWrite();
                 writePixel(buffer, xClipSize);
             }
         }
@@ -631,7 +512,7 @@ void ILI9341_DisplayDriver::vScroll(
 /// \brief Realitza un scroll horitzontal de la pantalla.
 /// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
 ///
-void ILI9341_DisplayDriver::hScroll(
+void ILI9341_Driver::hScroll(
     int delta) {
    
 }
@@ -645,7 +526,7 @@ void ILI9341_DisplayDriver::hScroll(
 /// \param width: Amplada de la regio.
 /// \param height: Alçada de la regio.
 ///
-static void selectRegion(
+void ILI9341_Driver::selectRegion(
     int x, 
     int y, 
     int width, 
@@ -654,17 +535,45 @@ static void selectRegion(
     int x2 = x + width - 1;
     int y2 = y + height - 1;
     
-    writeCommand(CMD_COLUMN_ADDRESS_SET);
-	writeParameter(x >> 8);
-	writeParameter(x);
-	writeParameter(x2 >> 8);
-	writeParameter(x2);
+    io.begin();
     
-	writeCommand(CMD_PAGE_ADDRESS_SET);
-	writeParameter(y >> 8);
-	writeParameter(y);
-	writeParameter(y2 >> 8);
-	writeParameter(y2);
+    io.write(ADDR_COMMAND, CMD_COLUMN_ADDRESS_SET);
+    io.address(ADDR_DATA);
+	io.write(x >> 8);
+	io.write(x);
+	io.write(x2 >> 8);
+	io.write(x2);
+    
+	io.write(ADDR_COMMAND, CMD_PAGE_ADDRESS_SET);
+    io.address(ADDR_DATA);
+	io.write(y >> 8);
+	io.write(y);
+	io.write(y2 >> 8);
+	io.write(y2);
+    
+    io.end();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicia la escritura de memoria.
+///
+void ILI9341_Driver::startMemoryWrite() {
+    
+    io.begin();
+    io.write(ADDR_COMMAND, CMD_MEMORY_WRITE);
+    io.end();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicia la lectura de memoria.
+///
+void ILI9341_Driver::startMemoryRead() {
+    
+    io.begin();
+    io.write(ADDR_COMMAND, CMD_MEMORY_READ);
+    io.end();
 }
 
 
@@ -684,104 +593,26 @@ static void delay(unsigned ms) {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Transmiteix dades al controlador.
-/// \param data: Les dades a transmetre.
-///
-static void writeUINT8(uint8_t data) {
-
-#if defined(ILI9341_INTERFACE_4WIRE2)    
-    uint8_t mask;
-    for (mask = 0x80; mask; mask >>= 1) {
-        clrCLK();
-        if ((data & mask) != 0)
-            setSO();
-        else
-            clrSO();
-        setCLK();
-    }    
-
-#elif defined(ILI9341_INTERFACE_P8)
-    clrWR();
-    wrDATA(data);
-    setWR();
-    hizDATA();
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Reb dades del controlador.
-/// \return Les dades rebudes.
-///
-static uint8_t readUINT8() {
-    
-#if defined(ILI9341_INTERFACE_4WIRE2)    
-    
-    
-#elif defined(ILI9341_INTERFACE_P8)    
-    clrRD();
-    uint8_t data = rdDATA() & 0x000000FF;
-    setRD();
-#endif
-    
-    return data;
-}
-
-/// ----------------------------------------------------------------------
-/// \brief Escriu un byte de comanda en el controlador.
-/// \param command: La comanda a escriure.
-///
-static void writeCommand(
-    uint8_t command) {
-    
-    disableInterrupts();     // Desactiva les interrupcions
-    clrRS();                 // RS = 0
-    clrCS();                 // CS = 0
-    writeUINT8(command);
-    setCS();                 // CS = 1
-    enableInterrupts();      // Activa les interrupcions
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Escriu un byte de parametre en el controlador.
-/// \param parameter: El parametre a escriure.
-///
-static void writeParameter(
-    uint8_t parameter) {
-    
-    disableInterrupts();     // Desactiva les interrupcions
-    setRS();                 // RS = 1
-    clrCS();                 // CS = 0
-    writeUINT8(parameter);
-    setCS();                 // CS = 1
-    enableInterrupts();      // Activa les interrupcions
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Escriu un color en el controlador.
 /// \param data: El color.
 /// \param count: Numero de copies a escriure.
 ///
-static void writePixel(
+void ILI9341_Driver::writePixel(
     Color color,
     unsigned count) {    
-    
-    disableInterrupts();
     
 #if defined(ILI9341_COLORMODE_565)    
 
     uint8_t c1 = (uint32_t)(((color & 0x00F80000) >> 16) | ((color & 0x0000E000) >> 13));
     uint8_t c2 = (uint32_t)(((color & 0x00001C00) >> 5) | ((color &0x000000F8) >> 3));
     
-    setRS();                 // RS = 1
-    clrCS();                 // CS = 0
+    io.begin();
+    io.address(ADDR_DATA);
     while (count--) {
-        writeUINT8(c1);
-        writeUINT8(c2);
+        io.write(c1);
+        io.write(c2);
     }
-    setCS();                 // CS = 1
+    io.end();
     
 #elif defined(ILI9341_COLORMODE_666)
     
@@ -789,18 +620,16 @@ static void writePixel(
     uint8_t c2 = (uint32_t)(color & 0x0000FC00) >> 8;
     uint8_t c3 = (uint32_t)color & 0x000000FC;
    
+    io.begin();
     setRS();
-    clrCS();
     while (count--) {
         writeUINT8(c1);
         writeUINT8(c2);
         writeUINT8(c3);
     }
-    setCS();
+    io.end();
     
 #endif    
-    
-    enableInterrupts();
 }
 
 
@@ -809,7 +638,7 @@ static void writePixel(
 /// \param colors: Llista de colors.
 /// \param count: Numero d'elements en la llista.
 ///
-static void writePixel(
+void ILI9341_Driver::writePixel(
     const Color *colors, 
     unsigned count) {
     
@@ -823,21 +652,20 @@ static void writePixel(
 /// \param colors: Llista de colors.
 /// \param count: Numero de colors a lleigir.
 ///
-static void readPixel(
+void ILI9341_Driver::readPixel(
     Color *colors, 
     unsigned count) {
  
-    disableInterrupts();     // Desactiva les interrupcions
-    setRS();                 // RS = 1
-    clrCS();                 // CS = 0
-    readUINT8();             // Dummy read
-    readUINT8();             // Dummy read
+    io.begin();
+    io.address(ADDR_DATA);
+    io.read();               // Dummy read
+    io.read();               // Dummy read
     while (count--) {
         
 #if defined(ILI9341_COLORMODE_565)        
-        uint8_t volatile c1 = readUINT8();
-        uint8_t volatile c2 = readUINT8();
-        uint8_t volatile c3 = readUINT8();
+        uint8_t volatile c1 = io.read();
+        uint8_t volatile c2 = io.read();
+        uint8_t volatile c3 = io.read();
         Color color = RGB(c1, c2, c3);
         *colors++ = color;
         
@@ -845,6 +673,5 @@ static void readPixel(
 #endif        
         
     }
-    setCS();                 // CS = 1
-    enableInterrupts();      // Activa les interrupcions
+    io.end();
 }
