@@ -1,20 +1,38 @@
-#include "Screen/Gscr/GScr.h"
+#include "Controllers/Display/Drivers/eosST7565.hpp"
 
 
-/*************************************************************************
- *
- *       Escriu un byte de dades en el display
- *
- *       Funcio:
- *           void ST7565_WriteData(
- *               uint8_t data) 
- *
- *       Entrada:
- *           cmd: La comanda
- *
- *************************************************************************/
- 
-void ST7565_WriteData(
+ST7565_IO::ST7565_IO() {
+    
+}
+
+
+void ST7565_IO::initialize() {
+    
+} 
+
+
+void ST7565_IO::reset() {
+    
+}
+
+
+void ST7565_IO::begin() {
+    
+}
+
+
+void ST7565_IO::end() {
+    
+}
+
+
+void ST7565_IO::address(
+    uint8_t addr) {
+        
+}
+
+
+void ST7565_IO::write(
     uint8_t data) {
 
     GSCR_A0Hi();
@@ -24,30 +42,6 @@ void ST7565_WriteData(
 }
 
 
-/*************************************************************************
- *
- *       Escriu un byte de comanda en el display
- *
- *       Funcio:
- *           void ST7565_WriteCtrl(
- *               uint8_t cmd) 
- *
- *       Entrada:
- *           cmd: La comanda
- *
- *************************************************************************/
- 
-void ST7565_WriteCtrl(
-    uint8_t cmd) {
- 
-    GSCR_A0Lo();
-    GSCR_CSLo();
-    GSCR_WriteByte(cmd);
-    GSCR_CSHi();
-
-    // Retard per procesar la comanda
-    //
-    uint8_t i;
-    for (i = 0; i < 10; i++)
-        continue;
+uint8_t ST7565_IO::read() {
+    
 }
