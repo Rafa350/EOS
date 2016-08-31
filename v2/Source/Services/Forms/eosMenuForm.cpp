@@ -131,7 +131,7 @@ void MenuForm::onPaint(
 ///
 #ifdef eosFormsService_UseSelector
 void MenuForm::onSelectorMove(
-    int position,
+    int16_t position,
     SelectorDirection direction) {
     
     if (direction == SelectorDirection::forward)
@@ -162,7 +162,7 @@ void MenuForm::onSelectorPress() {
 /// \param key: Codi de la tecla.
 ///
 #ifdef eosFormsService_UseKeyboard
-void MenuForm::onKeyPress(unsigned key) {
+void MenuForm::onKeyPress(uint8_t key) {
     
     switch (key) {
         case EV_KEYBOARD_UP:
@@ -189,7 +189,7 @@ void MenuForm::onKeyPress(unsigned key) {
 /// \param itemId: El identificador del item.
 ///
 void MenuForm::onClickItem(
-    unsigned itemId) {
+    uint16_t itemId) {
     
     if (evClickItem != nullptr)
         evClickItem->execute(this, itemId);
@@ -201,7 +201,7 @@ void MenuForm::onClickItem(
 /// \param itemId: El identificador del item.
 ///
 void MenuForm::onSelectItem(
-    unsigned itemId) {
+    uint16_t itemId) {
     
     if (evSelectItem != nullptr)
         evSelectItem->execute(this, itemId);
@@ -213,7 +213,7 @@ void MenuForm::onSelectItem(
 /// \param itemId: El identificador del item
 ///
 void MenuForm::onDrawItem(
-    unsigned itemId) {
+    uint16_t itemId) {
     
     if (evDrawItem != nullptr)
         evDrawItem->execute(this, itemId);
@@ -300,7 +300,7 @@ void MenuForm::clickItem() {
 
     switch (resource[itemOffset] & 0x03) {
         case 0x00: { // commandItem 
-                unsigned itemId = resource[itemOffset + 2 + resource[itemOffset + 1]];
+                uint16_t itemId = resource[itemOffset + 2 + resource[itemOffset + 1]];
                 onClickItem(itemId);
             }
             break;

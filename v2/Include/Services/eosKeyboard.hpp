@@ -13,19 +13,17 @@ namespace eos {
     class KeyboardService;
     typedef KeyboardService *KeyboardServiceHandle;
     
-    struct KeyboardNotification {
-        unsigned state;
-    };
+    typedef uint8_t KeyboardState;
     
     class KeyboardService: private IRunable {        
         private:
-            typedef ICallbackP1<KeyboardNotification&> IKeyboardServiceEvent;
+            typedef ICallbackP1<KeyboardState> IKeyboardServiceEvent;
             
         private:
             Task task;
             uint8_t addr;
             I2CMasterServiceHandle i2cService;
-            unsigned state;
+            KeyboardState state;
             IKeyboardServiceEvent *evNotify;
             
         public:
@@ -33,9 +31,9 @@ namespace eos {
             ~KeyboardService();
             
             template <class cls>
-            void setNotifyEvent(cls *instance, void (cls::*method)(KeyboardNotification&)) { 
+            void setNotifyEvent(cls *instance, void (cls::*method)(KeyboardState)) { 
                 
-                evNotify = new CallbackP1<cls, KeyboardNotification&>(instance, method); 
+                evNotify = new CallbackP1<cls, KeyboardState>(instance, method); 
             }
         private:
             void run();

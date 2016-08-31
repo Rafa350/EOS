@@ -15,6 +15,7 @@ Form::Form(
     FormHandle _parent):
 #ifdef eosFormsService_UseSelector            
     evSelectorPress(nullptr),
+    evSelectorRelease(nullptr),
 #endif
     service(nullptr),
     parent(_parent),
@@ -37,6 +38,9 @@ Form::~Form() {
 #ifdef eosFormsService_UseSelector               
     if (evSelectorPress != nullptr)
         delete evSelectorPress;
+    
+    if (evSelectorRelease != nullptr)
+        delete evSelectorRelease;
 #endif    
 }
 
@@ -61,19 +65,20 @@ void Form::dispatchMessage(
 #ifdef eosFormsService_UseSelector        
         case MSG_SELECTOR:
             switch (message.msgSelector.event) {
-                case EV_SELECTOR_INC:
+                case SelectorEvent::inc:
                     onSelectorMove(message.msgSelector.position, SelectorDirection::forward);
                     break;
                     
-                case EV_SELECTOR_DEC:                    
+                case SelectorEvent::dec:                    
                     onSelectorMove(message.msgSelector.position, SelectorDirection::backward);
                     break;
                     
-                case EV_SELECTOR_CLICK:
-                    if (message.msgSelector.state == 1)
-                        onSelectorPress();
-                    else
-                        onSelectorRelease();
+                case SelectorEvent::press:
+                    onSelectorPress();
+                    break;
+                
+                case SelectorEvent::release:
+                    onSelectorRelease();
                     break;
             }
             break;
@@ -81,7 +86,15 @@ void Form::dispatchMessage(
             
 #ifdef eosFormsService_UseKeyboard            
         case MSG_KEYBOARD:
-            onKeyPress(message.msgKeyboard.event);
+            switch (message.msgKeyboard.event) {
+                case KeyboardEvent::press:
+                    onKeyPress(message.msgKeyboard.keyCode);
+                    break;
+                    
+                case KeyboardEvent::release:
+                    onKeyRelease(message.msgKeyboard.keyCode);
+                    break;
+            }
             break;
 #endif            
 
@@ -109,7 +122,7 @@ void Form::onActivate(
 ///
 #ifdef eosFormsService_UseSelector
 void Form::onSelectorMove(
-    int position,
+    SelectorPosition position,
     SelectorDirection direction) {
     
 }
@@ -134,6 +147,8 @@ void Form::onSelectorPress() {
 #ifdef eosFormsService_UseSelector
 void Form::onSelectorRelease() {
     
+    if (evSelectorRelease != nullptr)
+        evSelectorRelease->execute(this);
 }
 #endif
 
@@ -144,7 +159,7 @@ void Form::onSelectorRelease() {
 ///
 #ifdef eosFormsService_UseKeyboard
 void Form::onKeyPress(
-    unsigned key) {
+    KeyCode keyCode) {
     
 }
 #endif
@@ -156,7 +171,7 @@ void Form::onKeyPress(
 ///
 #ifdef eosFormsService_UseKeyboard
 void Form::onKeyRelease(
-    unsigned keyCode) {
+    KeyCode keyCode) {
     
 }
 #endif

@@ -17,9 +17,9 @@ namespace eos {
     
     class MenuForm: public Form {
         private:
-            typedef ICallbackP2<MenuFormHandle, unsigned> ISelectItemEvent;
-            typedef ICallbackP2<MenuFormHandle, unsigned> IClickItemEvent;
-            typedef ICallbackP2<MenuFormHandle, unsigned> IDrawItemEvent;
+            typedef ICallbackP2<MenuFormHandle, uint16_t> ISelectItemEvent;
+            typedef ICallbackP2<MenuFormHandle, uint16_t> IClickItemEvent;
+            typedef ICallbackP2<MenuFormHandle, uint16_t> IDrawItemEvent;
             struct MenuInfo {               // Informacio d'un menu
                 unsigned offset;            // -Offset al menu
                 unsigned numItems;          // -Numero de items
@@ -69,16 +69,16 @@ namespace eos {
 
         protected:
             ~MenuForm();
-            virtual void onSelectItem(unsigned itemId);
-            virtual void onClickItem(unsigned itemId);
-            virtual void onDrawItem(unsigned itemId);
+            virtual void onSelectItem(uint16_t itemId);
+            virtual void onClickItem(uint16_t itemId);
+            virtual void onDrawItem(uint16_t itemId);
             void onPaint(FormsDisplayHandle display);    
 #ifdef eosFormsService_UseSelector            
-            void onSelectorMove(int position, SelectorDirection direction);
+            void onSelectorMove(SelectorPosition position, SelectorDirection direction);
             void onSelectorPress();
 #endif
 #ifdef eosFormsService_UseKeyboard            
-            void onKeyPress(unsigned key);
+            void onKeyPress(KeyCode key);
 #endif            
         private:
             void firstItem();

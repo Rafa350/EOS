@@ -75,13 +75,13 @@ Font *Display::setFont(
 /// \param ySize: Coordinada Y inferior.
 ///
 void Display::setClip(
-    int xPos, 
-    int yPos, 
-    int xSize, 
-    int ySize) {
+    int16_t xPos, 
+    int16_t yPos, 
+    int16_t xSize, 
+    int16_t ySize) {
     
-    int xScreenSize = driver->getXSize();
-    int yScreenSize = driver->getYSize();
+    int16_t xScreenSize = driver->getXSize();
+    int16_t yScreenSize = driver->getYSize();
     
     xClipPos = xPos < 0 ? 0 : xPos;
     yClipPos = yPos < 0 ? 0 : yPos;
@@ -129,8 +129,8 @@ void Display::refresh() {
 /// \param y: Coordinada Y.
 ///
 void Display::moveTo(
-    int x, 
-    int y) {
+    int16_t x, 
+    int16_t y) {
     
     xCursor = x;
     yCursor = y;
@@ -144,8 +144,8 @@ void Display::moveTo(
 /// \param y: Coordinada Y.
 ///
 void Display::lineTo(
-    int x,
-    int y) {
+    int16_t x,
+    int16_t y) {
     
     drawLine(xCursor, yCursor, x, y);
     xCursor = x;
@@ -161,13 +161,13 @@ void Display::lineTo(
 /// \param y2: Coordinada y del final.
 ///
 void Display::drawLine(
-    int x1, 
-    int y1, 
-    int x2, 
-    int y2) {
+    int16_t x1, 
+    int16_t y1, 
+    int16_t x2, 
+    int16_t y2) {
    
-    int stepx, stepy;
-    int dx, dy, p, incE, incNE;
+    int16_t stepx, stepy;
+    int16_t dx, dy, p, incE, incNE;
     
     if (x1 == x2)
         driver->setVPixels(x1, y1, y2 - y1 + 1, color);
@@ -238,10 +238,10 @@ void Display::drawLine(
 /// \param y2: Coordinada y del final.
 ///
 void Display::drawRectangle(
-    int x1, 
-    int y1, 
-    int x2, 
-    int y2) {
+    int16_t x1, 
+    int16_t y1, 
+    int16_t x2, 
+    int16_t y2) {
     
     driver->setHPixels(x1, y1, x2 - x1 + 1, color);
     driver->setHPixels(x1, y2, x2 - x1 + 1, color);
@@ -260,12 +260,12 @@ void Display::drawRectangle(
 /// \param y3: Coordinada y del tercer punt.
 ///
 void Display::drawTriangle(
-    int x1, 
-    int y1, 
-    int x2, 
-    int y2, 
-    int x3, 
-    int y3) {
+    int16_t x1, 
+    int16_t y1, 
+    int16_t x2, 
+    int16_t y2, 
+    int16_t x3, 
+    int16_t y3) {
     
     moveTo(x1, y1);
     lineTo(x2, y2);
@@ -281,13 +281,13 @@ void Display::drawTriangle(
 /// \param r: Radi del cercle.
 ///
 void Display::drawCircle(
-    int cx, 
-    int cy, 
-    int r) {
+    int16_t cx, 
+    int16_t cy, 
+    int16_t r) {
 
-    int x = r;
-    int y = 0;
-    int d = 1 - x;  
+    int16_t x = r;
+    int16_t y = 0;
+    int16_t d = 1 - x;  
 
     while (y <= x) {
         driver->setPixel(cx + x, cy + y, color);
@@ -317,10 +317,10 @@ void Display::drawCircle(
 /// \param y2: Coordinada Y final.
 ///
 void Display::fillRectangle(
-    int x1, 
-    int y1, 
-    int x2, 
-    int y2) {
+    int16_t x1, 
+    int16_t y1, 
+    int16_t x2, 
+    int16_t y2) {
 
     if (x1 > x2) {
         int v = x1;
@@ -340,13 +340,13 @@ void Display::fillRectangle(
 /// \param r: Radi del cercle.
 ///
 void Display::fillCircle(
-    int cx, 
-    int cy, 
-    int r) {
+    int16_t cx, 
+    int16_t cy, 
+    int16_t r) {
 
-    int x = r;
-    int y = 0;
-    int d = 1 - x;  
+    int16_t x = r;
+    int16_t y = 0;
+    int16_t d = 1 - x;  
 
     while (y <= x) {
         driver->setVPixels(cx + x, cy - y, y + y + 1, color);
@@ -370,11 +370,11 @@ void Display::fillCircle(
 /// \param y: Coordinada Y.
 ///
 void Display::drawBitmap1BPP(
-    int x, 
-    int y, 
+    int16_t x, 
+    int16_t y, 
     const uint8_t *bitmap, 
-    int sx, 
-    int sy, 
+    int16_t sx, 
+    int16_t sy, 
     Color color) {
     
     
@@ -387,21 +387,21 @@ void Display::drawBitmap1BPP(
 /// \param y: La coordinada Y.
 /// \param c: El caracter a dibuixar.
 ///
-int Display::drawChar(
-    int x, 
-    int y, 
+int16_t Display::drawChar(
+    int16_t x, 
+    int16_t y, 
     char c) {
 
     if ((c >= fi.firstChar) && (c <= fi.lastChar)) {
         CharInfo ci;
         font->getCharInfo(c, ci);
         if (ci.bitmap != nullptr) {
-            int cw = (ci.width + 7) >> 3;
+            int16_t cw = (ci.width + 7) >> 3;
             x += ci.left;
             y -= ci.top;
-            for (int cy = 0; cy < ci.height; cy++) {
+            for (int16_t cy = 0; cy < ci.height; cy++) {
                 int d = cy * cw;
-                for (int cx = 0; cx < ci.width; cx++)
+                for (int16_t cx = 0; cx < ci.width; cx++)
                     if (ci.bitmap[d + (cx >> 3)] & (0x80 >> (cx & 7)))
                         driver->setPixel(x + cx, y + cy, color);
                 }
@@ -425,16 +425,16 @@ int Display::drawChar(
 ///                de la cadena de texte.
 /// \return L'amplada de la cadena dibuixada en pixels.
 ///
-int Display::drawText(
-    int x, 
-    int y, 
+int16_t Display::drawText(
+    int16_t x, 
+    int16_t y, 
     const char *s,
-    int offset,
-    int length) {
+    int16_t offset,
+    int16_t length) {
     
-    int sx = x;
+    int16_t sx = x;
     
-    for (int i = offset, j = length; j && s[i]; i++, j--)
+    for (int16_t i = offset, j = length; j && s[i]; i++, j--)
         x += drawChar(x, y, s[i]);
 
     return x - sx;
@@ -446,12 +446,12 @@ int Display::drawText(
 /// \param s: La cadena de texte.
 /// \return L'amplada de la cadena en pixels.
 ///
-int Display::getTextWidth(
+int16_t Display::getTextWidth(
     const char *s) {
     
     char c;
 
-    int w = 0;
+    int16_t w = 0;
     while ((c = *s++) != '\0') {
         CharInfo ci;
         font->getCharInfo(c, ci);
@@ -467,7 +467,7 @@ int Display::getTextWidth(
 /// \param s: La cadena de texte.
 /// \return L'alçada de la cadena.
 ///
-int Display::getTextHeight(
+int16_t Display::getTextHeight(
     const char *s) {
     
     return fi.height;
@@ -556,7 +556,7 @@ void Display::putTTY(
 ///
 void Display::putTTY(
     const char *s,
-    int length) {
+    int16_t length) {
     
     char c;
     while (((c = *s++) != '\0') && (length-- > 0))

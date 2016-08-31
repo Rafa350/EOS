@@ -59,18 +59,14 @@ void SelectorService::run() {
             
             if (endTransactionNotify.take((unsigned) - 1)) {
             
-                unsigned newState = response[1];
-                int newPosition = (int) ((response[3] << 8) | response[2]);
+                SelectorState newState = response[1];
+                SelectorPosition newPosition = (int16_t) ((response[3] << 8) | response[2]);
 
                 if ((state != newState) || (position != newPosition)) {
                     position = newPosition;
                     state = newState;
-                    if (evNotify != nullptr) {
-                        SelectorNotification notification;
-                        notification.position = position;
-                        notification.state = state;
-                        evNotify->execute(notification);
-                    }
+                    if (evNotify != nullptr)
+                        evNotify->execute(position, state);
                 }
             }
         }

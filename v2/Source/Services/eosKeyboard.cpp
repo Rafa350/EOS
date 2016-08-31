@@ -58,15 +58,12 @@ void KeyboardService::run() {
             
             if (endTransactionNotify.take((unsigned) - 1)) {
             
-                uint8_t newState = response[1];
+                KeyboardState newState = response[1];
 
                 if (state != newState) {
                     state = newState;
-                    if (evNotify != nullptr) {
-                        KeyboardNotification notification;
-                        notification.state = state;
-                        evNotify->execute(notification);
-                    }
+                    if (evNotify != nullptr) 
+                        evNotify->execute(state);
                 }
             }
         }

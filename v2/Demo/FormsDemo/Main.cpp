@@ -41,10 +41,10 @@ class MyApplication: public Application {
         void onInitialize();
                 
 #ifdef eosFormsService_UseSelector        
-        void selectorNotifyEventHandler(SelectorNotification &notification);
+        void selectorNotifyEventHandler(SelectorPosition position, SelectorState state);
 #endif
 #ifdef eosFormsService_UseKeyboard        
-        void keyboardNotifyEventHandler(KeyboardNotification &notification);
+        void keyboardNotifyEventHandler(KeyboardState state);
 #endif        
 };
 
@@ -108,31 +108,35 @@ void MyApplication::onInitialize() {
 ///
 #ifdef eosFormsService_UseKeyboard
 void MyApplication::keyboardNotifyEventHandler(
-    KeyboardNotification &notification) {
+    KeyboardState state) {
     
-    static uint8_t oldState = 0;
+    static KeyboardState oldState = 0;
     Message message;
     
     if (formsService != nullptr) {
         FormHandle form = formsService->getActiveForm();
         if (form != nullptr) {
-            if (notification.state != oldState) {
-                if (notification.state != 0) {
-                    message.id = MSG_KEYBOARD;
-                    message.target = form;
-                    if (notification.state & 0x10)
-                        message.msgKeyboard.event = EV_KEYBOARD_UP;
-                    else if (notification.state & 0x02) 
-                        message.msgKeyboard.event = EV_KEYBOARD_RIGHT;
-                    else if (notification.state & 0x04)
-                        message.msgKeyboard.event = EV_KEYBOARD_DOWN;
-                    else if (notification.state & 0x08)
-                        message.msgKeyboard.event = EV_KEYBOARD_LEFT;
+            if (state != oldState) {
+                message.id = MSG_KEYBOARD;
+                message.target = form;
+                if (state != 0) {
+                    message.msgKeyboard.event = KeyboardEvent::press;
+                    if (state & 0x10) 
+                        message.msgKeyboard.keyCode = EV_KEYBOARD_UP;
+                    else if (state & 0x02) 
+                        message.msgKeyboard.keyCode = EV_KEYBOARD_RIGHT;
+                    else if (state & 0x04)
+                        message.msgKeyboard.keyCode = EV_KEYBOARD_DOWN;
+                    else if (state & 0x08)
+                        message.msgKeyboard.keyCode = EV_KEYBOARD_LEFT;
                     else
-                        message.msgKeyboard.event = EV_KEYBOARD_OK;
-                    messageQueue->put(message, (unsigned) -1);
+                        message.msgKeyboard.keyCode = EV_KEYBOARD_OK;
                 }
-                oldState = notification.state;
+                else {
+                    message.msgKeyboard.event = KeyboardEvent::release;
+                }
+                messageQueue->put(message, (unsigned) -1);
+                oldState = state;
             }
         }
     }
@@ -146,36 +150,35 @@ void MyApplication::keyboardNotifyEventHandler(
 ///
 #ifdef eosFormsService_UseSelector    
 void MyApplication::selectorNotifyEventHandler(
-    SelectorNotification &notification) {
+    SelectorPosition position,
+    SelectorState state) {
     
-    static int oldPosition = 0;
-    static unsigned oldState = 0;
+    static SelectorPosition oldPosition = 0;
+    static SelectorState oldState = 0;
     Message message;
     
     if (formsService != nullptr) {
         FormHandle form = formsService->getActiveForm();
         if (form != nullptr) {
-            int delta = notification.position - oldPosition;
+            int delta = position - oldPosition;
             if (delta != 0) {
                 message.id = MSG_SELECTOR;
                 message.target = form;
-                message.msgSelector.event = delta < 0 ? EV_SELECTOR_DEC : EV_SELECTOR_INC;
-                message.msgSelector.position = notification.position;
-                message.msgSelector.state = notification.state;
+                message.msgSelector.event = delta < 0 ? SelectorEvent::dec : SelectorEvent::inc;
+                message.msgSelector.position = position;
+                message.msgSelector.state = state;
                 messageQueue->put(message, (unsigned) -1);
-                oldPosition = notification.position;
+                oldPosition = position;
             }
             
-            if (notification.state != oldState) {            
-                if ((notification.state & 0x01) != 0x00) {
-                    message.id = MSG_SELECTOR;
-                    message.target = form;
-                    message.msgSelector.event = EV_SELECTOR_CLICK;
-                    message.msgSelector.position = notification.position;
-                    message.msgSelector.state = notification.state;
-                    messageQueue->put(message, (unsigned) -1);
-                }
-                oldState = notification.state;
+            if (state != oldState) {            
+                message.id = MSG_SELECTOR;
+                message.target = form;
+                message.msgSelector.event = state == 1 ? SelectorEvent::press : SelectorEvent::release;
+                message.msgSelector.position = position;
+                message.msgSelector.state = state;
+                messageQueue->put(message, (unsigned) -1);
+                oldState = state;
             }
         }
     }

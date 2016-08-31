@@ -63,10 +63,10 @@ void FormsDisplay::clear(
 /// \param y2: Coordinada y final.
 ///
 void FormsDisplay::drawLine(
-    int x1, 
-    int y1, 
-    int x2, 
-    int y2) {
+    int16_t x1, 
+    int16_t y1, 
+    int16_t x2, 
+    int16_t y2) {
     
     display->drawLine(x1, y1, x2, y2);
 }
@@ -80,10 +80,10 @@ void FormsDisplay::drawLine(
 /// \param height: Alçada.
 ///
 void FormsDisplay::drawRectangle(
-    int x, 
-    int y, 
-    int width, 
-    int height) {
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height) {
     
     display->drawRectangle(x, y, x + width - 1, y + height - 1);
 }
@@ -98,11 +98,11 @@ void FormsDisplay::drawRectangle(
 /// \param length: Numero de caracters a dibuixar.
 ///
 void FormsDisplay::drawText(
-    int x, 
-    int y, 
+    int16_t x, 
+    int16_t y, 
     const char* text, 
-    unsigned offset,
-    unsigned length) {
+    int16_t offset,
+    int16_t length) {
     
     display->drawText(x, y, text, offset, length);    
 }
@@ -116,10 +116,10 @@ void FormsDisplay::drawText(
 /// \param height: Alçada.
 ///
 void FormsDisplay::fillRectangle(
-    int x, 
-    int y, 
-    int width, 
-    int height) {
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height) {
     
     display->fillRectangle(x, y, x + width, y + height);
 }

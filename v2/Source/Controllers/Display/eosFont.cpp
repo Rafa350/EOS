@@ -17,7 +17,7 @@ extern const unsigned char *fontConsolas24pt;
 
 typedef struct {
     const char *faceName;
-    int height;
+    int16_t height;
     FontStyle style;
     const unsigned char *resource;
 } FontTableEntry;
@@ -81,11 +81,11 @@ Font::Font(
 ///
 Font::Font(
     const char* fontName, 
-    int height, 
+    int16_t height, 
     FontStyle style):
     fontResource(nullptr) {
     
-    for(int i = 0; i < sizeof(fontTable) / sizeof(fontTable[0]); i++) {
+    for(int16_t i = 0; i < sizeof(fontTable) / sizeof(fontTable[0]); i++) {
         FontTableEntry *entry = &fontTable[i];
         if ((strcmp(fontName, entry->faceName) == 0) &&
             (height == entry->height)) {

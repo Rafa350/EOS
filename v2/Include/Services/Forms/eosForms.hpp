@@ -20,9 +20,6 @@
 
 #ifdef eosFormsService_UseSelector
 #define MSG_SELECTOR         100       // Event del selector
-#define EV_SELECTOR_INC        1       // -Increment del selector
-#define EV_SELECTOR_DEC        2       // -Decrement del selector
-#define EV_SELECTOR_CLICK      3       // -Click del boto
 #endif
 
 #ifdef eosFormsService_UseKeyboard
@@ -58,22 +55,38 @@ namespace eos {
     };
     
 #ifdef eosFormsService_UseSelector
-    enum class SelectorDirection {
+    
+    typedef enum class {
+        inc,
+        dec,
+        press,
+        release
+    } SelectorEvent;
+    
+    typedef enum class {
         forward,
         backward
-    };
+    } SelectorDirection;
     
     struct MsgSelector {
-        unsigned event;
-        int position;
-        unsigned state;
+        SelectorEvent event;
+        SelectorPosition position;
+        SelectorState state;
     };
 #endif    
 
 #ifdef eosFormsService_UseKeyboard    
+    
+    typedef uint8_t KeyCode;
+    
+    typedef enum class {
+        press,
+        release
+    } KeyboardEvent;
+    
     struct MsgKeyboard {
-        unsigned event;
-        unsigned keyCode;
+        KeyboardEvent event;
+        KeyCode keyCode;
     };
 #endif    
     
@@ -123,7 +136,7 @@ namespace eos {
             void remove(FormHandle form);
             void destroy(FormHandle form);
             void refresh(FormHandle form);
-            void refresh(FormHandle form, int x, int y, int width, int height);
+            void refresh(FormHandle form, int16_t x, int16_t y, int16_t width, int16_t height);
             FormHandle activate(FormHandle form);
             inline FormHandle getActiveForm() const { return activeForm; }
         private:
@@ -143,42 +156,50 @@ namespace eos {
             void endDraw();
             void clear(Color color);
             void setColor(Color color);
-            void drawLine(int x1, int y1, int x2, int y2);
-            void drawRectangle(int x, int y, int width, int height);
-            void drawText(int x, int y, const char *text, unsigned offset, unsigned length);
-            void fillRectangle(int x, int y, int width, int height);
+            void drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+            void drawRectangle(int16_t x, int16_t y, int16_t width, int16_t height);
+            void drawText(int16_t x, int16_t y, const char *text, int16_t offset, int16_t length);
+            void fillRectangle(int16_t x, int16_t y, int16_t width, int16_t height);
     };
        
     class Form {
         private:
             typedef ICallbackP1<FormHandle> ISelectorPressEvent;
+            typedef ICallbackP1<FormHandle> ISelectorReleaseEvent;
         private:
             FormsServiceHandle service;
             FormHandle parent;
 #ifdef eosFormsService_UseSelector            
             ISelectorPressEvent *evSelectorPress;
+            ISelectorReleaseEvent *evSelectorRelease;
 #endif
-            int x;
-            int y;
-            int width;
-            int height;
+            int16_t x;
+            int16_t y;
+            int16_t width;
+            int16_t height;
             
         public:
             Form(FormsServiceHandle service, FormHandle parent);
             void destroy() { service->destroy(this); }
             void refresh() { service->refresh(this); }
-            void refresh(int x, int y, int width, int height) { service->refresh(this, x, y, width, height); }
+            void refresh(int16_t x, int16_t y, int16_t width, int16_t height) { service->refresh(this, x, y, width, height); }
             void activate() { service->activate(this); }
             inline FormHandle getParent() const { return parent; }
             inline FormsServiceHandle getService() const { return service; }
-            inline int getX() const { return x; }
-            inline int getY() const { return y; }
+            inline int16_t getX() const { return x; }
+            inline int16_t getY() const { return y; }
 
 #ifdef eosFormsService_UseSelector            
             template <class cls>
             void setSelectorPressEvent(cls *instance, void (cls::*method)(FormHandle)) { 
                 
                 evSelectorPress = new CallbackP1<cls, FormHandle>(instance, method);
+            }
+            
+            template <class cls>
+            void setSelectorReleaseEvent(cls *instance, void (cls::*method)(FormHandle)) { 
+                
+                evSelectorRelease = new CallbackP1<cls, FormHandle>(instance, method);
             }
 #endif            
             
@@ -189,13 +210,13 @@ namespace eos {
             virtual void onDeactivate(FormHandle activateForm) {}
             virtual void onPaint(FormsDisplayHandle display) {}
 #ifdef eosFormsService_UseSelector            
-            virtual void onSelectorMove(int position, SelectorDirection direction);
+            virtual void onSelectorMove(SelectorPosition position, SelectorDirection direction);
             virtual void onSelectorPress();
             virtual void onSelectorRelease();
 #endif
 #ifdef eosFormsService_UseKeyboard
-            virtual void onKeyPress(unsigned key);
-            virtual void onKeyRelease(unsigned key);
+            virtual void onKeyPress(KeyCode keyCode);
+            virtual void onKeyRelease(KeyCode keyCode);
 #endif            
             
         friend class FormsService;

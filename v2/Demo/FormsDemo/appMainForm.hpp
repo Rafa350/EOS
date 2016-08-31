@@ -23,10 +23,10 @@ namespace app {
         protected:
             void onPaint(FormsDisplayHandle display);
             void onSelectorPress();
-            void onSelectorMove(int position, SelectorDirection direction);
+            void onSelectorMove(int16_t position, SelectorDirection direction);
     
         private:
-            void menuClickItemEventHandler(MenuFormHandle menuForm, unsigned itemId);
+            void menuClickItemEventHandler(MenuFormHandle menuForm, uint16_t itemId);
             void editorSelectorPressEventHandler(FormHandle form);
             void startEdit();
             void endEdit();

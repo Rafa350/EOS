@@ -56,7 +56,7 @@ void MainForm::onSelectorPress() {
 
 
 void MainForm::onSelectorMove(
-    int position, 
+    int16_t position, 
     SelectorDirection direction) {
 }
 
@@ -88,7 +88,7 @@ void MainForm::onPaint(
 
 void MainForm::menuClickItemEventHandler(
     MenuFormHandle menuForm,
-    unsigned itemId) {
+    uint16_t itemId) {
 
     currentCommand = itemId;
     

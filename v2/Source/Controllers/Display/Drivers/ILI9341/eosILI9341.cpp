@@ -268,8 +268,8 @@ void ILI9341_Driver::clear(
 /// \param color: Color del pixel.
 ///
 void ILI9341_Driver::setPixel(
-    int xPos, 
-    int yPos,
+    int16_t xPos, 
+    int16_t yPos,
     Color color) {
     
     // Comprova si es visible
@@ -294,9 +294,9 @@ void ILI9341_Driver::setPixel(
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setHPixels(
-    int xPos, 
-    int yPos, 
-    int size,
+    int16_t xPos, 
+    int16_t yPos, 
+    int16_t size,
     Color color) {
     
     // Comprova si es visible
@@ -327,9 +327,9 @@ void ILI9341_Driver::setHPixels(
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setVPixels(
-    int xPos, 
-    int yPos, 
-    int size,
+    int16_t xPos, 
+    int16_t yPos, 
+    int16_t size,
     Color color) {
     
     // Comprova si es visible
@@ -361,10 +361,10 @@ void ILI9341_Driver::setVPixels(
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setPixels(
-    int xPos, 
-    int yPos, 
-    int xSize, 
-    int ySize, 
+    int16_t xPos, 
+    int16_t yPos, 
+    int16_t xSize, 
+    int16_t ySize, 
     Color color) {
     
     // Comprova si es visible
@@ -397,10 +397,10 @@ void ILI9341_Driver::setPixels(
 /// \param colors: Color dels pixels.
 ///
 void ILI9341_Driver::writePixels(
-    int xPos, 
-    int yPos, 
-    int xSize, 
-    int ySize, 
+    int16_t xPos, 
+    int16_t yPos, 
+    int16_t xSize, 
+    int16_t ySize, 
     const Color* colors) {
     
     if ((xPos >= 0) && (xPos + xSize < xScreenSize) &&
@@ -422,10 +422,10 @@ void ILI9341_Driver::writePixels(
 /// \params colors: Buffer on deixar els pixels.
 ///
 void ILI9341_Driver::readPixels(
-    int xPos, 
-    int yPos, 
-    int xSize, 
-    int ySize, 
+    int16_t xPos, 
+    int16_t yPos, 
+    int16_t xSize, 
+    int16_t ySize, 
     Color *colors) {
     
     if ((xPos >= 0) && (xPos + xSize < xScreenSize) &&
@@ -442,27 +442,27 @@ void ILI9341_Driver::readPixels(
 /// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
 ///
 void ILI9341_Driver::vScroll(
-    int delta, 
-    int xPos, 
-    int yPos, 
-    int xSize, 
-    int ySize) {
+    int16_t delta, 
+    int16_t xPos, 
+    int16_t yPos, 
+    int16_t xSize, 
+    int16_t ySize) {
     
     static Color buffer[MAX_COLUMNS];
-/*    
-    if ((delta != 0) && (xClipSize > 0) && (yClipSize > 0)) {
+    
+    if ((delta != 0) && (xSize > 0) && (ySize > 0)) {
         
         if (delta > 0) {
 
-            for (int i = yClipPos; i < yClipSize - yClipPos - delta; i++) {
+            for (int i = yPos; i < ySize - yPos - delta; i++) {
 
-                selectRegion(xClipPos, i + delta, xClipSize, 1);
+                selectRegion(xPos, i + delta, xSize, 1);
                 startMemoryRead();
-                readPixel(buffer, xClipSize);
+                readPixel(buffer, xSize);
 
-                selectRegion(xClipPos, i, xClipSize, 1);
+                selectRegion(xPos, i, xSize, 1);
                 startMemoryWrite();
-                writePixel(buffer, xClipSize);
+                writePixel(buffer, xSize);
             }
         }
         
@@ -470,7 +470,6 @@ void ILI9341_Driver::vScroll(
 
         }
     }
- */
 }
 
 
@@ -479,11 +478,11 @@ void ILI9341_Driver::vScroll(
 /// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
 ///
 void ILI9341_Driver::hScroll(
-    int delta, 
-    int xPos, 
-    int yPos, 
-    int xSize, 
-    int ySize) {
+    int16_t delta, 
+    int16_t xPos, 
+    int16_t yPos, 
+    int16_t xSize, 
+    int16_t ySize) {
    
 }
 
@@ -497,13 +496,13 @@ void ILI9341_Driver::hScroll(
 /// \param height: Alçada de la regio.
 ///
 void ILI9341_Driver::selectRegion(
-    int x, 
-    int y, 
-    int width, 
-    int height) {   
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height) {   
     
-    int x2 = x + width - 1;
-    int y2 = y + height - 1;
+    int16_t x2 = x + width - 1;
+    int16_t y2 = y + height - 1;
     
     io.begin();
     
@@ -569,7 +568,7 @@ static void delay(unsigned ms) {
 ///
 void ILI9341_Driver::writePixel(
     Color color,
-    unsigned count) {    
+    int32_t count) {    
     
 #if defined(ILI9341_COLORMODE_565)    
 
@@ -610,7 +609,7 @@ void ILI9341_Driver::writePixel(
 ///
 void ILI9341_Driver::writePixel(
     const Color *colors, 
-    unsigned count) {
+    int32_t count) {
     
     while (count--)
         writePixel(*colors++, 1);
@@ -624,7 +623,7 @@ void ILI9341_Driver::writePixel(
 ///
 void ILI9341_Driver::readPixel(
     Color *colors, 
-    unsigned count) {
+    int32_t count) {
  
     io.begin();
     io.address(ADDR_DATA);

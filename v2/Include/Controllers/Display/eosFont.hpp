@@ -15,19 +15,19 @@ namespace eos {
     };
     
     struct FontInfo {             // Informacio del font
-        int height;               // -Alçada
-        int ascent;               // -Ascendent
-        int descent;              // -Descendent
+        int16_t height;           // -Alçada
+        int16_t ascent;           // -Ascendent
+        int16_t descent;          // -Descendent
         char firstChar;           // -Primer caracter definit en el font
         char lastChar;            // -Ultim caracter definit en el font
     };
 
     struct CharInfo {             // Informacio del caracter
-        int width;                // -Amplada del bitmap
-        int height;               // -Alçada del bitmap
-        int left;                 // -Offset horitzontal del bitmap
-        int top;                  // -Offset vertical del bitmap
-        int advance;              // -Offset fins al origen del seguent bitmap
+        int16_t width;            // -Amplada del bitmap
+        int16_t height;           // -Alçada del bitmap
+        int16_t left;             // -Offset horitzontal del bitmap
+        int16_t top;              // -Offset vertical del bitmap
+        int16_t advance;          // -Offset fins al origen del seguent bitmap
         const uint8_t *bitmap;    // -Punter al primer byte del caracter
     };
 
@@ -36,7 +36,7 @@ namespace eos {
             const uint8_t *fontResource;
             
         public:
-            Font(const char *fontName, int height, FontStyle style);
+            Font(const char *fontName, int16_t height, FontStyle style);
             Font(const uint8_t *fontResource);
             void getFontInfo(FontInfo &fi) const;
             void getCharInfo(char ch, CharInfo &ci) const;
