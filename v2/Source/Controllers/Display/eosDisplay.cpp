@@ -22,6 +22,7 @@ Display::Display(
     font(nullptr) {
     
     setFont(new Font(fontConsolas14pt));
+    resetClip();
 }
 
 
@@ -67,19 +68,37 @@ Font *Display::setFont(
 
 
 /// ----------------------------------------------------------------------
-/// \bried Selecciona la regio on dibuixar.
-/// \param x1: Coordinada X esquerra.
-/// \param y1: Coodinada Y superior.
-/// \param x2: Coordinada X dreta.
-/// \param y1: Coordinada Y inferior.
+/// \bried Selecciona la regio de retall.
+/// \param xPos: Coordinada X esquerra.
+/// \param yPos: Coodinada Y superior.
+/// \param xSize: Coordinada X dreta.
+/// \param ySize: Coordinada Y inferior.
 ///
 void Display::setClip(
-    int x1, 
-    int y1, 
-    int x2, 
-    int y2) {
+    int xPos, 
+    int yPos, 
+    int xSize, 
+    int ySize) {
     
-    driver->setClip(x1, y1, x2, y2);
+    int xScreenSize = driver->getXSize();
+    int yScreenSize = driver->getYSize();
+    
+    xClipPos = xPos < 0 ? 0 : xPos;
+    yClipPos = yPos < 0 ? 0 : yPos;
+    xClipSize = xSize > xScreenSize ? xScreenSize : xSize;
+    yClipSize = ySize > yScreenSize ? yScreenSize : ySize;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Reseteja la regio de retall.
+///
+void Display::resetClip() {
+    
+    xClipPos = 0;
+    yClipPos = 0;
+    xClipSize = driver->getXSize();
+    yClipSize = driver->getYSize();   
 }
 
 

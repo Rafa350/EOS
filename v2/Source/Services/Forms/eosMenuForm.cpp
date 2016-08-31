@@ -1,5 +1,6 @@
 #include "eos.hpp"
 #include "Services/Forms/eosMenuForm.hpp"
+#include "Controllers/Display/eosColors.hpp"
 
 
 #define Menu_BorderColor                    RGB(0, 0, 128)

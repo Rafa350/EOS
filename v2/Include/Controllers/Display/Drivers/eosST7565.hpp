@@ -1,5 +1,5 @@
-#ifndef __EOS_CONTROLLERS_DISPLAY_DRIVERS_ILI9341_HPP
-#define	__EOS_CONTROLLERS_DISPLAY_DRIVERS_ILI9341_HPP
+#ifndef __EOS_CONTROLLERS_DISPLAY_DRIVERS_ST7565_HPP
+#define	__EOS_CONTROLLERS_DISPLAY_DRIVERS_ST7565_HPP
 
 
 #include "eos.hpp"
@@ -8,7 +8,7 @@
 
 namespace eos {
     
-    class ILI9341_IO {
+    class ST7565_IO {
         public:
             ILI9341_IO();
             void initialize();
@@ -21,14 +21,14 @@ namespace eos {
             uint8_t read();
     };
     
-    class ILI9341_Driver: public IDisplayDriver {
+    class ST7565_Driver: public IDisplayDriver {
         private:
-            ILI9341_IO io;
+            ST7565_IO io;
             int xScreenSize;
             int yScreenSize;
             
         public:
-            ILI9341_Driver();
+            ST7565_Driver();
             void initialize();
             void shutdown();
             void setOrientation(Orientation orientation);
