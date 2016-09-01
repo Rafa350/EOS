@@ -97,7 +97,7 @@ void MyApplication::onInitialize() {
     selectorService->setNotifyEvent<MyApplication>(this, &MyApplication::selectorNotifyEventHandler);
 #endif
 #ifdef eosFormsService_UseKeyboard   
-    //keyboardService->setNotifyEvent<MyApplication>(this, &MyApplication::keyboardNotifyEventHandler);
+    keyboardService->setNotifyEvent<MyApplication>(this, &MyApplication::keyboardNotifyEventHandler);
 #endif    
 }
 
@@ -122,15 +122,15 @@ void MyApplication::keyboardNotifyEventHandler(
                 if (state != 0) {
                     message.msgKeyboard.event = KeyboardEvent::press;
                     if (state & 0x10) 
-                        message.msgKeyboard.keyCode = EV_KEYBOARD_UP;
+                        message.msgKeyboard.keyCode = KeyCode::up;
                     else if (state & 0x02) 
-                        message.msgKeyboard.keyCode = EV_KEYBOARD_RIGHT;
+                        message.msgKeyboard.keyCode = KeyCode::right;
                     else if (state & 0x04)
-                        message.msgKeyboard.keyCode = EV_KEYBOARD_DOWN;
+                        message.msgKeyboard.keyCode = KeyCode::down;
                     else if (state & 0x08)
-                        message.msgKeyboard.keyCode = EV_KEYBOARD_LEFT;
+                        message.msgKeyboard.keyCode = KeyCode::left;
                     else
-                        message.msgKeyboard.keyCode = EV_KEYBOARD_OK;
+                        message.msgKeyboard.keyCode = KeyCode::enter;
                 }
                 else {
                     message.msgKeyboard.event = KeyboardEvent::release;

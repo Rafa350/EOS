@@ -24,6 +24,7 @@ namespace app {
             void onPaint(FormsDisplayHandle display);
             void onSelectorPress();
             void onSelectorMove(int16_t position, SelectorDirection direction);
+            void onKeyPress(KeyCode keyCode);
     
         private:
             void menuClickItemEventHandler(MenuFormHandle menuForm, uint16_t itemId);

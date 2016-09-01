@@ -61,6 +61,14 @@ void MainForm::onSelectorMove(
 }
 
 
+void MainForm::onKeyPress(
+    KeyCode keyCode) {
+
+    if (keyCode == KeyCode::enter)
+        menuForm->activate();
+}
+
+
 void MainForm::onPaint(
     FormsDisplayHandle display) {
     

@@ -54,7 +54,7 @@ namespace eos {
             void onSelectorMove(int position, SelectorDirection direction);
 #endif            
 #ifdef eosFormsService_UseKeyboard            
-            void onKeyPress(unsigned key);
+            void onKeyPress(KeyCode keyCode);
 #endif            
         private:
             void incValue();

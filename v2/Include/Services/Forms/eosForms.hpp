@@ -24,11 +24,6 @@
 
 #ifdef eosFormsService_UseKeyboard
 #define MSG_KEYBOARD         101       // Event del teclat
-#define EV_KEYBOARD_UP         1       // -Tecla UP
-#define EV_KEYBOARD_DOWN       2       // -Tecla DOWN
-#define EV_KEYBOARD_LEFT       3       // -Tecla LEFT
-#define EV_KEYBOARD_RIGHT      4       // -Tecla RIGHT
-#define EV_KEYBOARD_OK         5       // -Tecla OK
 #endif
 
 #ifdef eosFormsService_UseTouchpad
@@ -77,7 +72,13 @@ namespace eos {
 
 #ifdef eosFormsService_UseKeyboard    
     
-    typedef uint8_t KeyCode;
+    typedef enum class {
+        up,
+        down,
+        left,
+        right,
+        enter
+    } KeyCode;
     
     typedef enum class {
         press,

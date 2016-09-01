@@ -162,24 +162,29 @@ void MenuForm::onSelectorPress() {
 /// \param key: Codi de la tecla.
 ///
 #ifdef eosFormsService_UseKeyboard
-void MenuForm::onKeyPress(uint8_t key) {
+void MenuForm::onKeyPress(
+    KeyCode keyCode) {
     
-    switch (key) {
-        case EV_KEYBOARD_UP:
+    switch (keyCode) {
+        case KeyCode::up:
             prevItem();
             break;
             
-        case EV_KEYBOARD_DOWN:
+        case KeyCode::down:
             nextItem();
             break;
             
-        case EV_KEYBOARD_OK:
-        case EV_KEYBOARD_RIGHT:
+        case KeyCode::left:
+            backItem();
+            break;
+            
+        case KeyCode::enter:
+        case KeyCode::right:
             clickItem();
             break;
     }
     
-    Form::onKeyPress(key);
+    Form::onKeyPress(keyCode);
 }
 #endif
 
@@ -267,7 +272,7 @@ void MenuForm::nextItem() {
         //onSelectItem;
     }
 }
- 
+
 
 /// ----------------------------------------------------------------------
 /// \brief Mou el selector a l'anterior item del menu.
@@ -285,6 +290,19 @@ void MenuForm::prevItem() {
     }
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brier Mou el selector al menu entrior. 
+///
+void MenuForm::backItem() {
+
+    if (level > 0)  {
+        level--;
+        refreshBackground = true;
+        refresh();
+    }   
+}
+ 
 
 /// ----------------------------------------------------------------------
 /// \brief Selecciona el item actual.
@@ -318,12 +336,8 @@ void MenuForm::clickItem() {
             }
             break;
 
-        case 0x02: // exitItem
-            if (level > 0)  {
-                level--;
-                refreshBackground = true;
-                refresh();
-            }   
+        case 0x02: // bakItem
+            backItem();
             break;
     }
 }

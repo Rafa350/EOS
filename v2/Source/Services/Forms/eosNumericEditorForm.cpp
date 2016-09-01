@@ -162,22 +162,22 @@ void NumericEditorForm::onSelectorMove(
 
 #ifdef eosFormsService_UseKeyboard
 void NumericEditorForm::onKeyPress(
-    unsigned key) {
+    KeyCode keyCode) {
     
-    switch (key) {
-        case EV_KEYBOARD_UP:
+    switch (keyCode) {
+        case KeyCode::up:
             incValue();
             break;
         
-        case EV_KEYBOARD_DOWN:
+        case KeyCode::down:
             decValue();
             break;
             
-        case EV_KEYBOARD_OK:
+        case KeyCode::enter:
             break;
     }
     
-    Form::onKeyPress(key);
+    Form::onKeyPress(keyCode);
 }
 #endif
 
