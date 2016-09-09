@@ -149,11 +149,16 @@ namespace eos {
     class FormsDisplay {
         private:
             Display *display;
+            uint8_t *buffer;
+            uint16_t bufferSize;
+            bool wrError;
+            uint16_t wrIdx;
+            uint16_t rdIdx;
             
         public:
             FormsDisplay(Display *display);
             Display* getDisplay() const { return display; }
-            void beginDraw();
+            void beginDraw(int16_t x, int16_t y, int16_t width, int16_t height);
             void endDraw();
             void clear(Color color);
             void setColor(Color color);
@@ -161,6 +166,19 @@ namespace eos {
             void drawRectangle(int16_t x, int16_t y, int16_t width, int16_t height);
             void drawText(int16_t x, int16_t y, const char *text, int16_t offset, int16_t length);
             void fillRectangle(int16_t x, int16_t y, int16_t width, int16_t height);
+            void render();
+            
+        private:
+            bool wrCheck(uint16_t size);
+            void wr8(uint8_t d);
+            void wr16(uint16_t d);
+            void wr32(uint32_t d);
+            void wrs(const char *s);
+            void wrEND();
+            uint8_t rd8();
+            uint16_t rd16();
+            uint32_t rd32();
+            const char *rds();
     };
        
     class Form {

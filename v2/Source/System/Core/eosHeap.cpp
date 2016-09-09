@@ -19,7 +19,7 @@ typedef struct __eosHeap {
 eosHeapHandle eosHeapCreate(
     unsigned size) {
 
-    return NULL;
+    return nullptr;
 }
 
 
