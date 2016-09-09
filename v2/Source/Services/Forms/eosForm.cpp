@@ -56,7 +56,7 @@ void Form::dispatchMessage(
         
         case MSG_PAINT: {
             FormsDisplayHandle display = message.msgPaint.display;
-            display->beginDraw();
+            display->beginDraw(x, y, width, height);
             onPaint(display);
             display->endDraw();
             break;

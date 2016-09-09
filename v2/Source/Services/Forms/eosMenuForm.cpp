@@ -3,9 +3,9 @@
 #include "Controllers/Display/eosColors.hpp"
 
 
-#define Menu_BorderColor                    RGB(0, 0, 128)
-#define Menu_BackgroundColor                RGB(0, 0, 16)
-#define Menu_TitleTextColor                 RGB(0, 0, 200)
+#define Menu_BorderColor                    RGB(128, 0, 0)
+#define Menu_BackgroundColor                RGB(16, 0, 0)
+#define Menu_TitleTextColor                 RGB(200, 0, 0)
 #define Menu_ItemNormalTextColor            COLOR_SkyBlue
 #define Menu_ItemSelectedTextColor          COLOR_SkyBlue
 #define Menu_ItemDisabledTextColor          RGB(126, 126, 126)
