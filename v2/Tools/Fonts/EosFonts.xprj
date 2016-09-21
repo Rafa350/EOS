@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <document version="400" encodeStrings="false" useNames="true">
-    <data version="101">
+    <data version="102">
         <object name="root" type="project" id="0">
             <value name="Name">EOS v2.0 Fonts</value>
             <value name="Description">Biblioteca de fonts per EOS v2.0</value>
@@ -12,6 +12,7 @@
                     <value name="Description">Arxius de tipus de lletra</value>
                     <null name="Notes" />
                     <value name="Active">True</value>
+                    <null name="Tool" />
                     <object name="Folders" type="folderList" id="3">
                         <value name="$count">0</value>
                     </object>
