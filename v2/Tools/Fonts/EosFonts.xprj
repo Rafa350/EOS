@@ -180,7 +180,7 @@
                         </object>
                         <object name="$item16" type="file" id="21">
                             <value name="SourceFileName">Consolas10pt.xfont</value>
-                            <value name="TargetFileName">Out/Consolas10pt.cpp</value>
+                            <value name="TargetFileName">Out\Consolas10pt.cpp</value>
                             <value name="Description">Consolas 10pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
@@ -190,7 +190,7 @@
                         </object>
                         <object name="$item17" type="file" id="22">
                             <value name="SourceFileName">Consolas12pt.xfont</value>
-                            <value name="TargetFileName">Out/Consolas12pt.cpp</value>
+                            <value name="TargetFileName">Out\Consolas12pt.cpp</value>
                             <value name="Description">Consolas 12pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
@@ -200,7 +200,7 @@
                         </object>
                         <object name="$item18" type="file" id="23">
                             <value name="SourceFileName">Consolas14pt.xfont</value>
-                            <value name="TargetFileName">Out/Consolas14pt.cpp</value>
+                            <value name="TargetFileName">Out\Consolas14pt.cpp</value>
                             <value name="Description">Consolas 14pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
@@ -210,7 +210,7 @@
                         </object>
                         <object name="$item19" type="file" id="24">
                             <value name="SourceFileName">Consolas18pt.xfont</value>
-                            <value name="TargetFileName">Out/Consolas18pt.cpp</value>
+                            <value name="TargetFileName">Out\Consolas18pt.cpp</value>
                             <value name="Description">Consolas 18pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
@@ -220,7 +220,7 @@
                         </object>
                         <object name="$item20" type="file" id="25">
                             <value name="SourceFileName">Consolas24pt.xfont</value>
-                            <value name="TargetFileName">Out/Consolas24pt.cpp</value>
+                            <value name="TargetFileName">Out\Consolas24pt.cpp</value>
                             <value name="Description">Consolas 24pt</value>
                             <null name="Notes" />
                             <value name="Active">True</value>
