@@ -44,6 +44,7 @@ void DigOutputService::remove(
     outputs.remove(outputs.indexOf(output));
 }
 
+
 /// ----------------------------------------------------------------------
 /// \brief Executa la tasca de control de servei.
 ///
