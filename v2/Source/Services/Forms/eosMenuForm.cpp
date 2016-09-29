@@ -336,7 +336,7 @@ void MenuForm::clickItem() {
             }
             break;
 
-        case 0x02: // bakItem
+        case 0x02: // backItem
             backItem();
             break;
     }
