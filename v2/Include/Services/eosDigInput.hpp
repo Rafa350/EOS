@@ -16,7 +16,7 @@ namespace eos {
     class DigInputService;
     typedef DigInputService *DigInputServiceHandle;
 
-    /// \brief Clase que implememta el servei de gestio d'entrades digitals
+    /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
     class DigInputService: private IRunable {        
         private:
@@ -31,6 +31,7 @@ namespace eos {
             DigInputService();
             void add(DigInputHandle input);
             void remove(DigInputHandle input);
+            
         private:
             void run();           
     };
@@ -71,7 +72,8 @@ namespace eos {
         private:
             bool pinGet() const;
         
-        friend class DigInputService;
+        friend void DigInputService::add(DigInputHandle input);
+        friend void DigInputService::remove(DigInputHandle input);
     };
 
 }

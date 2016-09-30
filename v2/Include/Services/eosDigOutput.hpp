@@ -49,6 +49,7 @@ namespace eos {
             void set(DigOutputHandle output, bool state);
             void toggle(DigOutputHandle output);
             void pulse(DigOutputHandle output, unsigned time);
+            
         private:
             void run();
             void onTimeout(TimerHandle timer);
@@ -89,7 +90,8 @@ namespace eos {
             void delayedToggle(unsigned delay);
             void delayedPulse(unsigned delay, unsigned time);
             
-        friend class DigOutputService;
+        friend void DigOutputService::add(DigOutputHandle output);
+        friend void DigOutputService::remove(DigOutputHandle output);
     };
 }
 
