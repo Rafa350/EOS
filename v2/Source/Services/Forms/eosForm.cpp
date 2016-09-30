@@ -11,8 +11,8 @@ using namespace eos;
 /// \param parent: El form pare.
 ///
 Form::Form(
-    FormsServiceHandle _service,
-    FormHandle _parent):
+    FormsService *_service,
+    Form *_parent):
 #ifdef eosFormsService_UseSelector            
     evSelectorPress(nullptr),
     evSelectorRelease(nullptr),
@@ -55,7 +55,7 @@ void Form::dispatchMessage(
     switch (message.id) {
         
         case MSG_PAINT: {
-            FormsDisplayHandle display = message.msgPaint.display;
+            FormsDisplay *display = message.msgPaint.display;
             display->beginDraw(x, y, width, height);
             onPaint(display);
             display->endDraw();
@@ -109,7 +109,7 @@ void Form::dispatchMessage(
 /// \param deactivateForm: El form que s'ha desactivat.
 ///
 void Form::onActivate(
-    FormHandle deactivateForm) {
+    Form *deactivateForm) {
     
     refresh();
 }

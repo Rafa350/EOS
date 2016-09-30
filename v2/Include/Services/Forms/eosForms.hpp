@@ -36,17 +36,14 @@
 
 namespace eos {
     
-    class Form;
-    typedef Form *FormHandle;
-    
+    class Application;
+    class Form;   
     class FormsDisplay;
-    typedef FormsDisplay *FormsDisplayHandle;
-    
     class FormsService;
-    typedef FormsService *FormsServiceHandle;
+
     
     struct MsgPaint {
-        FormsDisplayHandle display;
+        FormsDisplay *display;
     };
     
 #ifdef eosFormsService_UseSelector
@@ -99,7 +96,7 @@ namespace eos {
 
     struct Message {
         unsigned id;
-        FormHandle target;
+        Form *target;
         union {
             MsgPaint msgPaint;
 #ifdef eosFormsService_UseSelector            
@@ -117,29 +114,28 @@ namespace eos {
     typedef Queue<Message> MessageQueue;
     typedef MessageQueue *MessageQueueHandle;
     
-    class FormsService: private IRunable {
+    class FormsService: public Service {
         private:
-            typedef List<FormHandle> FormList;
-            typedef ListIterator<FormHandle> FormListIterator;
+            typedef List<Form*> FormList;
+            typedef ListIterator<Form*> FormListIterator;
             
         private:
-            Task task;
             MessageQueueHandle messageQueue;
-            FormsDisplayHandle display;
+            FormsDisplay *display;
             FormList forms;
             FormList destroyForms;
-            FormHandle activeForm;     
+            Form *activeForm;     
             
         public:
-            FormsService(MessageQueueHandle messageQueue, FormsDisplayHandle display);
+            FormsService(Application *application, MessageQueueHandle messageQueue, FormsDisplay *display);
             virtual ~FormsService();
-            void add(FormHandle form);
-            void remove(FormHandle form);
-            void destroy(FormHandle form);
-            void refresh(FormHandle form);
-            void refresh(FormHandle form, int16_t x, int16_t y, int16_t width, int16_t height);
-            FormHandle activate(FormHandle form);
-            inline FormHandle getActiveForm() const { return activeForm; }
+            void add(Form *form);
+            void remove(Form *form);
+            void destroy(Form *form);
+            void refresh(Form *form);
+            void refresh(Form *form, int16_t x, int16_t y, int16_t width, int16_t height);
+            Form *activate(Form *form);
+            inline Form *getActiveForm() const { return activeForm; }
         private:
             void run();
             
@@ -183,11 +179,11 @@ namespace eos {
        
     class Form {
         private:
-            typedef ICallbackP1<FormHandle> ISelectorPressEvent;
-            typedef ICallbackP1<FormHandle> ISelectorReleaseEvent;
+            typedef ICallbackP1<Form*> ISelectorPressEvent;
+            typedef ICallbackP1<Form*> ISelectorReleaseEvent;
         private:
-            FormsServiceHandle service;
-            FormHandle parent;
+            FormsService* service;
+            Form *parent;
 #ifdef eosFormsService_UseSelector            
             ISelectorPressEvent *evSelectorPress;
             ISelectorReleaseEvent *evSelectorRelease;
@@ -198,36 +194,36 @@ namespace eos {
             int16_t height;
             
         public:
-            Form(FormsServiceHandle service, FormHandle parent);
+            Form(FormsService *service, Form *parent);
             void destroy() { service->destroy(this); }
             void refresh() { service->refresh(this); }
             void refresh(int16_t x, int16_t y, int16_t width, int16_t height) { service->refresh(this, x, y, width, height); }
             void activate() { service->activate(this); }
-            inline FormHandle getParent() const { return parent; }
-            inline FormsServiceHandle getService() const { return service; }
+            inline Form *getParent() const { return parent; }
+            inline FormsService *getService() const { return service; }
             inline int16_t getX() const { return x; }
             inline int16_t getY() const { return y; }
 
 #ifdef eosFormsService_UseSelector            
             template <class cls>
-            void setSelectorPressEvent(cls *instance, void (cls::*method)(FormHandle)) { 
+            void setSelectorPressEvent(cls *instance, void (cls::*method)(Form*)) { 
                 
-                evSelectorPress = new CallbackP1<cls, FormHandle>(instance, method);
+                evSelectorPress = new CallbackP1<cls, Form*>(instance, method);
             }
             
             template <class cls>
-            void setSelectorReleaseEvent(cls *instance, void (cls::*method)(FormHandle)) { 
+            void setSelectorReleaseEvent(cls *instance, void (cls::*method)(Form*)) { 
                 
-                evSelectorRelease = new CallbackP1<cls, FormHandle>(instance, method);
+                evSelectorRelease = new CallbackP1<cls, Form*>(instance, method);
             }
 #endif            
             
         protected:
             virtual ~Form();
             virtual void dispatchMessage(Message &message);
-            virtual void onActivate(FormHandle deactivateForm); 
-            virtual void onDeactivate(FormHandle activateForm) {}
-            virtual void onPaint(FormsDisplayHandle display) {}
+            virtual void onActivate(Form *deactivateForm); 
+            virtual void onDeactivate(Form *activateForm) {}
+            virtual void onPaint(FormsDisplay *display) {}
 #ifdef eosFormsService_UseSelector            
             virtual void onSelectorMove(SelectorPosition position, SelectorDirection direction);
             virtual void onSelectorPress();
@@ -238,7 +234,7 @@ namespace eos {
             virtual void onKeyRelease(KeyCode keyCode);
 #endif            
             
-        friend class FormsService;
+        friend FormsService;
     };
 }
 

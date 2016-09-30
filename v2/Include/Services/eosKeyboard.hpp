@@ -3,31 +3,29 @@
 
 
 #include "eos.hpp"
-#include "System/Core/eosTask.hpp"
 #include "System/Core/eosCallbacks.hpp"
+#include "Services/eosService.hpp"
 #include "Services/eosI2CMaster.hpp"
 
 
 namespace eos {
     
-    class KeyboardService;
-    typedef KeyboardService *KeyboardServiceHandle;
-    
+    class Application;
+       
     typedef uint8_t KeyboardState;
     
-    class KeyboardService: private IRunable {        
+    class KeyboardService: public Service {        
         private:
             typedef ICallbackP1<KeyboardState> IKeyboardServiceEvent;
             
         private:
-            Task task;
             uint8_t addr;
             I2CMasterServiceHandle i2cService;
             KeyboardState state;
             IKeyboardServiceEvent *evNotify;
             
         public:
-            KeyboardService(I2CMasterServiceHandle i2cService, uint8_t addr);
+            KeyboardService(Application *application, I2CMasterServiceHandle i2cService, uint8_t addr);
             ~KeyboardService();
             
             template <class cls>
@@ -35,6 +33,7 @@ namespace eos {
                 
                 evNotify = new CallbackP1<cls, KeyboardState>(instance, method); 
             }
+            
         private:
             void run();
     };

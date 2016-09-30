@@ -45,7 +45,7 @@ eosPoolHandle eosPoolCreate(
     unsigned itemSize = (sizeof(ItemHeader) + elementSize + 7) & ~0x7;
 
     eosPoolHandle hPool = (eosPoolHandle) eosHeapAlloc(nullptr, sizeof(eosPool) + itemSize * maxElements);
-    if (hPool != NULL) {
+    if (hPool != nullptr) {
 
         hPool->itemSize = itemSize;
         hPool->maxItems = maxElements;

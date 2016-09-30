@@ -3,25 +3,23 @@
 
 
 #include "eos.hpp"
-#include "System/Core/eosTask.hpp"
 #include "System/Core/eosCallbacks.hpp"
+#include "Services/eosService.hpp"
 #include "Services/eosI2CMaster.hpp"
 
 
 namespace eos {
-    
-    class SelectorService;
-    typedef SelectorService *SelectorServiceHandle;
+       
+    class Application;
     
     typedef int16_t SelectorPosition;
     typedef uint8_t SelectorState;
     
-    class SelectorService: private IRunable {        
+    class SelectorService: public Service {        
         private:
             typedef ICallbackP2<SelectorPosition, SelectorState> ISelectorServiceEvent;
             
         private:
-            Task task;
             uint8_t addr;
             I2CMasterServiceHandle i2cService;
             SelectorPosition position;
@@ -29,7 +27,7 @@ namespace eos {
             ISelectorServiceEvent *evNotify;
             
         public:
-            SelectorService(I2CMasterServiceHandle i2cService, uint8_t addr);
+            SelectorService(Application *application, I2CMasterServiceHandle i2cService, uint8_t addr);
             ~SelectorService();
             
             template <class cls>

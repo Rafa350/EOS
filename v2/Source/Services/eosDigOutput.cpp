@@ -1,5 +1,5 @@
 #include "System/Core/eosTask.hpp"
-#include "System/Collections/eosQueue.hpp"
+#include "System/Core/eosQueue.hpp"
 #include "Services/eosDigOutput.hpp"
 #include "HAL/halGPIO.h"
 
@@ -28,8 +28,10 @@ DigOutputService::DigOutputService() :
 void DigOutputService::add(
     DigOutputHandle output) {
     
-    outputs.add(output);
-    output->service = this;
+    if (output != nullptr) {
+        outputs.add(output);
+        output->service = this;
+    }
 }
 
 
@@ -40,8 +42,10 @@ void DigOutputService::add(
 void DigOutputService::remove(
     DigOutputHandle output) {
     
-    output->service = nullptr;
-    outputs.remove(outputs.indexOf(output));
+    if (output->service == this) {
+        output->service = nullptr;
+        outputs.remove(outputs.indexOf(output));
+    }
 }
 
 

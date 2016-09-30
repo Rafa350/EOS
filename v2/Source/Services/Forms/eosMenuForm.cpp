@@ -24,8 +24,8 @@ using namespace eos;
 /// \param resource: El recurs del menu
 ///
 MenuForm::MenuForm(
-    FormsServiceHandle service, 
-    FormHandle parent,
+    FormsService *service, 
+    Form *parent,
     uint8_t *_resource):
     Form(service, parent),
     resource(_resource),
@@ -64,7 +64,7 @@ MenuForm::~MenuForm() {
 /// \param display: El handler de visualitzacio.
 ///
 void MenuForm::onPaint(
-    FormsDisplayHandle display) {
+    FormsDisplay *display) {
     
     MenuInfo *info = &this->info[level];
     unsigned offset = info->offset;

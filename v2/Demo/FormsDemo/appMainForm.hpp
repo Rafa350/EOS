@@ -13,22 +13,22 @@ namespace app {
     
     class MainForm: public Form {
         private:
-            MenuFormHandle menuForm;
-            FormHandle editorForm;
+            MenuForm *menuForm;
+            Form *editorForm;
             unsigned currentCommand;
         public:
-            MainForm(FormsServiceHandle service);
+            MainForm(FormsService *service);
             ~MainForm();
             
         protected:
-            void onPaint(FormsDisplayHandle display);
+            void onPaint(FormsDisplay *display);
             void onSelectorPress();
             void onSelectorMove(int16_t position, SelectorDirection direction);
             void onKeyPress(KeyCode keyCode);
     
         private:
-            void menuClickItemEventHandler(MenuFormHandle menuForm, uint16_t itemId);
-            void editorSelectorPressEventHandler(FormHandle form);
+            void menuClickItemEventHandler(MenuForm *menuForm, uint16_t itemId);
+            void editorSelectorPressEventHandler(Form *form);
             void startEdit();
             void endEdit();
             void incDecEvChange(int value);

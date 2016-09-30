@@ -10,8 +10,8 @@ using namespace eos;
 /// \prasm parent: El form pare
 ///
 OptionEditorForm::OptionEditorForm(
-    FormsServiceHandle service, 
-    FormHandle parent):
+    FormsService *service, 
+    Form *parent):
     Form(service, parent) {
 }
 
@@ -21,7 +21,7 @@ OptionEditorForm::OptionEditorForm(
 /// \param displayController: El handler del controlador de pantalla.
 ///
 void OptionEditorForm::onPaint(
-    FormsDisplayHandle display) {
+    FormsDisplay *display) {
 
     display->clear(0x00000000);
     if (title != NULL)

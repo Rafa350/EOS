@@ -17,9 +17,11 @@ const TaskPriority taskPriority = TaskPriority::normal;
 /// \param display: Controlador de pantalla
 ///
 FormsService::FormsService(
+Application *application,
     MessageQueueHandle _messageQueue,
-    FormsDisplayHandle _display) :
-    task(taskStackSize, taskPriority, this),
+    FormsDisplay *_display) :
+    
+    Service(application, "FormsService", taskStackSize, taskPriority),
     messageQueue(_messageQueue),
     display(_display) {
 }
@@ -38,7 +40,7 @@ FormsService::~FormsService() {
 /// \param form: El form a afeigir
 ///
 void FormsService::add(
-    FormHandle form) {
+    Form *form) {
     
     forms.add(form);
     form->service = this;
@@ -50,7 +52,7 @@ void FormsService::add(
 /// \param form: El form a eliminar.
 ///
 void FormsService::remove(
-    FormHandle form) {
+    Form *form) {
     
     form->service = nullptr;
     forms.remove(forms.indexOf(form));
@@ -62,7 +64,7 @@ void FormsService::remove(
 /// \param form: El form a destruir.
 ///
 void FormsService::destroy(
-    FormHandle form) {
+    Form *form) {
     
     destroyForms.add(form);
 }
@@ -108,13 +110,13 @@ void FormsService::run() {
 /// \brief Canvia el formulari actiu
 /// \param form: El formulari a activat. nullptr si no es vol activar cap
 ///
-FormHandle FormsService::activate(
-    FormHandle form) {
+Form *FormsService::activate(
+    Form *form) {
 
     if (activeForm != nullptr)    
         activeForm->onDeactivate(form);
     
-    FormHandle oldActive = activeForm;
+    Form *oldActive = activeForm;
     activeForm = form;
 
     if (activeForm != nullptr)    
@@ -127,7 +129,7 @@ FormHandle FormsService::activate(
 /// \param form: El formulari a refrescar
 ///
 void FormsService::refresh(
-    FormHandle form) {
+    Form *form) {
     
     Message msg;
     

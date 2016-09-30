@@ -8,13 +8,10 @@
 
 
 namespace eos {
-    
-    class NumericEditorForm;
-    typedef NumericEditorForm *NumericEditorFormHandle;
-    
+       
     class NumericEditorForm: public Form {
         private:
-            typedef ICallbackP2<NumericEditorFormHandle, int> IIncDecFormChangeEvent;
+            typedef ICallbackP2<NumericEditorForm*, int> IIncDecFormChangeEvent;
             
         private:
             int value;
@@ -27,12 +24,12 @@ namespace eos {
             IIncDecFormChangeEvent *evChange;
             
         public:
-            NumericEditorForm(FormsServiceHandle service, FormHandle parent);
+            NumericEditorForm(FormsService *service, Form *parent);
             
             template <class cls>
-            void setEvChange(cls *instance, void (cls::*method)(NumericEditorFormHandle, int)) { 
+            void setEvChange(cls *instance, void (cls::*method)(NumericEditorForm*, int)) { 
                 
-                evChange = new CallbackP2<cls, NumericEditorFormHandle, int>(instance, method);
+                evChange = new CallbackP2<cls, NumericEditorForm*, int>(instance, method);
             }
             
             void setMinValue(int minValue);
@@ -49,7 +46,7 @@ namespace eos {
             int getValue() const { return value; }
         protected:
             ~NumericEditorForm();            
-            void onPaint(FormsDisplayHandle display);
+            void onPaint(FormsDisplay *display);
 #ifdef eosFormsService_UseSelector            
             void onSelectorMove(int position, SelectorDirection direction);
 #endif            

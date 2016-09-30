@@ -5,8 +5,9 @@
 #include "eos.hpp"
 #include "System/Core/eosTask.hpp"
 #include "System/Core/eosTimer.hpp"
+#include "System/Core/eosQueue.hpp"
 #include "System/Collections/eosList.hpp"
-#include "System/Collections/eosQueue.hpp"
+
 
 
 namespace eos {
@@ -83,15 +84,14 @@ namespace eos {
             inline void toggle() { service->toggle(this); }
             
             /// \brief Genera un puls (Inverteix l'estat momentaneament) en la sortida.
-            /// param time: Durecio del puls en ticks.
+            /// param time: Direcio del puls en ticks.
             ///
             inline void pulse(unsigned time) { service->pulse(this, time); }
             void delayedSet(unsigned delay, bool state);
             void delayedToggle(unsigned delay);
             void delayedPulse(unsigned delay, unsigned time);
             
-        friend void DigOutputService::add(DigOutputHandle output);
-        friend void DigOutputService::remove(DigOutputHandle output);
+        friend DigOutputService;
     };
 }
 

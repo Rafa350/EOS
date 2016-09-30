@@ -32,7 +32,7 @@ const IncDecInfo infoXSpeed = { "X-Motor Speed",  10, 2000,  5 };
 
 
 MainForm::MainForm(
-    FormsServiceHandle service):
+    FormsService *service):
     Form(service, nullptr) {
  
     menuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
@@ -70,7 +70,7 @@ void MainForm::onKeyPress(
 
 
 void MainForm::onPaint(
-    FormsDisplayHandle display) {
+    FormsDisplay *display) {
     
     display->clear(RGB(0, 0, 32));
     
@@ -95,7 +95,7 @@ void MainForm::onPaint(
 
 
 void MainForm::menuClickItemEventHandler(
-    MenuFormHandle menuForm,
+    MenuForm *menuForm,
     uint16_t itemId) {
 
     currentCommand = itemId;
@@ -111,7 +111,7 @@ void MainForm::menuClickItemEventHandler(
 }
 
 void MainForm::editorSelectorPressEventHandler(
-    FormHandle form) {
+    Form *form) {
 
     endEdit();    
     menuForm->activate();
@@ -120,7 +120,7 @@ void MainForm::editorSelectorPressEventHandler(
 
 void MainForm::startEdit() {
  
-    NumericEditorFormHandle form = new NumericEditorForm(getService(), this);
+    NumericEditorForm *form = new NumericEditorForm(getService(), this);
     form->setDelta(infoXJerk.delta);
     form->setMinValue(infoXJerk.minValue);
     form->setMaxValue(infoXJerk.maxValue);

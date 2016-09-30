@@ -13,8 +13,8 @@ static const char *emptyString = "";
 /// \param parent: El form pare.
 ///
 NumericEditorForm::NumericEditorForm(
-    FormsServiceHandle service,
-    FormHandle parent):
+    FormsService *service,
+    Form *parent):
     Form(service, parent),
     prefix(emptyString),
     suffix(emptyString),
@@ -124,7 +124,7 @@ void NumericEditorForm::setTitle(
 /// \param displayController: El handler del controlador de pantalla.
 ///
 void NumericEditorForm::onPaint(
-    FormsDisplayHandle display) {
+    FormsDisplay *display) {
 
     display->clear(0x00000000);
     if (title != nullptr)

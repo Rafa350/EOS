@@ -16,9 +16,11 @@ const TaskPriority taskPriority = TaskPriority::normal;
 /// \param addr: Adressa I2C del selector
 ///
 SelectorService::SelectorService(
+    Application *application,
     I2CMasterServiceHandle _i2cService,
     uint8_t _addr):
-    task(taskStackSize, taskPriority, this),
+    
+    Service(application, "SelectorService", taskStackSize, taskPriority),
     i2cService(_i2cService),
     addr(_addr),
     evNotify(nullptr),

@@ -24,15 +24,15 @@ using namespace app;
 class MyApplication: public Application {
     private:
         I2CMasterServiceHandle i2cMasterService;
-        FormsServiceHandle formsService;
+        FormsService *formsService;
 #ifdef eosFormsService_UseSelector
-        SelectorServiceHandle selectorService;
+        SelectorService *selectorService;
 #endif
 #ifdef eosFormsService_UseKeyboard        
-        KeyboardServiceHandle keyboardService;
+        KeyboardService *keyboardService;
 #endif        
         MessageQueue *messageQueue;
-        FormHandle mainForm;
+        Form *mainForm;
 
     public :
         MyApplication();
@@ -68,13 +68,13 @@ void MyApplication::onInitialize() {
     // Inicia el servei de control de selector
     //
 #ifdef eosFormsService_UseSelector    
-    selectorService = new SelectorService(i2cMasterService, SEL_ADDRESS);
+    selectorService = new SelectorService(this, i2cMasterService, SEL_ADDRESS);
 #endif
 
     // Inicialitza el servei de control del teclat
     //    
 #ifdef eosFormsService_UseKeyboard   
-    keyboardService = new KeyboardService(i2cMasterService, KBD_ADDRESS);
+    keyboardService = new KeyboardService(this, i2cMasterService, KBD_ADDRESS);
 #endif    
     
     // Inicialitza el servei de gestio de la interficie d'usuari
@@ -86,10 +86,10 @@ void MyApplication::onInitialize() {
     Display *display = new Display(driver);
     display->clear(RGB(0, 0, 0));
     
-    FormsDisplayHandle formsDisplay = new FormsDisplay(display);
+    FormsDisplay *formsDisplay = new FormsDisplay(display);
     
     messageQueue = new MessageQueue(20);
-    formsService = new FormsService(messageQueue, formsDisplay);
+    formsService = new FormsService(this, messageQueue, formsDisplay);
     mainForm = new MainForm(formsService);
     mainForm->activate();
 
@@ -114,7 +114,7 @@ void MyApplication::keyboardNotifyEventHandler(
     Message message;
     
     if (formsService != nullptr) {
-        FormHandle form = formsService->getActiveForm();
+        Form *form = formsService->getActiveForm();
         if (form != nullptr) {
             if (state != oldState) {
                 message.id = MSG_KEYBOARD;
@@ -158,7 +158,7 @@ void MyApplication::selectorNotifyEventHandler(
     Message message;
     
     if (formsService != nullptr) {
-        FormHandle form = formsService->getActiveForm();
+        Form *form = formsService->getActiveForm();
         if (form != nullptr) {
             int delta = position - oldPosition;
             if (delta != 0) {

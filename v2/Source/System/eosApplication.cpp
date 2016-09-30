@@ -1,4 +1,5 @@
 #include "System/eosApplication.hpp"
+#include "Services/eosService.hpp"
 #include "HAL/halSYS.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -17,6 +18,16 @@ Application::Application() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief Destructor.
+///
+Application::~Application() {
+
+    while (services.getCount() > 0)
+        removeService(services[0]);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Executa l'aplicacio.
 ///
 void Application::execute() {
@@ -24,4 +35,40 @@ void Application::execute() {
     onInitialize();
     vTaskStartScheduler();
     onTerminate();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Afegeix un servei a l'aplicacio.
+/// \param service: El servei a afeigir.
+///
+void Application::addService(
+    Service *service) {
+    
+    eosAssert(
+        service != nullptr, 0, 
+        "[Application::addService] service != null");
+
+    if ((service != nullptr) && (service->application == nullptr)) {
+        service->application = this;
+        services.add(service);
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Elimina un servei de l'aplicacio
+/// \param service: El servei a eliminar.
+///
+void Application::removeService(
+    Service *service) {
+    
+    eosAssert(
+        service != nullptr, 0, 
+        "[Application::removeService] service != null");
+    
+    if ((service != nullptr) && (service->application == this)) {
+        services.remove(services.indexOf(service));
+        service->application = nullptr;
+    }
 }
