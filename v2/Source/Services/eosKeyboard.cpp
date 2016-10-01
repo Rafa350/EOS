@@ -5,22 +5,24 @@
 using namespace eos;
 
 
-const unsigned taskStackSize = 512;
-const unsigned taskLoopDelay = 50;
-const TaskPriority taskPriority = TaskPriority::normal;
+static const char *serviceName = "KeyboardService";
+static const unsigned taskStackSize = 512;
+static const unsigned taskLoopDelay = 50;
+static const TaskPriority taskPriority = TaskPriority::normal;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor
-/// \param i2cMasterService: El servei de comunicacions I2C
+/// \param application: Aplicacio a la que pertany.
+/// \param i2cService: El servei de comunicacions I2C
 /// \param addr: Adressa I2C del selector
 ///
 KeyboardService::KeyboardService(
     Application *application,
-    I2CMasterServiceHandle _i2cService,
+    I2CMasterService *_i2cService,
     uint8_t _addr):
     
-    Service(application, "KeyboardService", taskStackSize, taskPriority),
+    Service(application, serviceName, taskStackSize, taskPriority),
     i2cService(_i2cService),
     addr(_addr),
     state(0),
@@ -40,11 +42,16 @@ KeyboardService::~KeyboardService() {
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa les tasques del servei
+/// \param task: La tasca actual.
 ///
-void KeyboardService::run() {
+void KeyboardService::run(
+    Task *task) {
     
-    static uint8_t query[1] = { KBD_CMD_GETSTATUS };
-    uint8_t response[10];
+    KbdGetStatusMessage query;
+    query.cmd = KBD_CMD_GETSTATUS;
+    
+    KbdGetStatusResponse response;
+    
     BinarySemaphore endTransactionNotify;
 
     while (true) {
@@ -53,19 +60,22 @@ void KeyboardService::run() {
         
         if (i2cService->startTransaction(
             addr, 
-            query, sizeof(query), 
-            response, sizeof(response), 
-            (unsigned) -1,
+            &query, sizeof(query), 
+            &response, sizeof(response), 
+            (unsigned) -1, 
             &endTransactionNotify)) {
             
             if (endTransactionNotify.take((unsigned) - 1)) {
             
-                KeyboardState newState = response[1];
+                if (response.cmd == KBD_CMD_GETSTATUS) {
+                    
+                    KeyboardState newState = response.keyState;
 
-                if (state != newState) {
-                    state = newState;
-                    if (evNotify != nullptr) 
-                        evNotify->execute(state);
+                    if (state != newState) {
+                        state = newState;
+                        if (evNotify != nullptr) 
+                            evNotify->execute(state);
+                    }
                 }
             }
         }

@@ -8,10 +8,15 @@
 using namespace eos;
 
 
-const unsigned taskStackSize = 512;
-const TaskPriority taskPriority = TaskPriority::normal;
-const unsigned queueMaxItems = 20;
-const unsigned baudRate = 100000;
+static const char *serviceName = "I2CMasterService";
+static const unsigned taskStackSize = 512;
+static const TaskPriority taskPriority = TaskPriority::normal;
+static const unsigned baudRate = 100000;
+
+
+GenericMemoryPool I2CMasterService::transactionPool(
+    sizeof(I2CMasterService::Transaction), 
+    eosI2CMasterService_TransactionPoolSize);
 
 
 /// ----------------------------------------------------------------------
@@ -19,13 +24,13 @@ const unsigned baudRate = 100000;
 /// \param moduleId: Identificador del modulI2C
 ///
 I2CMasterService::I2CMasterService(
+Application *application,
     uint8_t _moduleId) :
+    
     moduleId(_moduleId),
-    task(taskStackSize, taskPriority, this),
-    transactionQueue(queueMaxItems) {
+    Service(application, serviceName, taskStackSize, taskPriority),
+    transactionQueue(eosI2CMasterService_TransactionQueueSize) {
 
-    for (unsigned i = 0; i < sizeof(transactions) / sizeof(transactions[0]); i++)
-        transactions[i].inUse = false;
 }
 
 
@@ -49,38 +54,36 @@ bool I2CMasterService::startTransaction(
     unsigned blockTime,
     BinarySemaphore *notify) {
     
-    bool result = false;
+    Transaction *transaction = new Transaction();
+    if (transaction != nullptr)  {
     
-    Task::enterCriticalSection();
-    
-    for (unsigned i = 0; 
-         (i < sizeof(transactions) / sizeof(transactions[0])) && !result; 
-         i++) {
-        Transaction *transaction = &transactions[i];
-        if (!transaction->inUse) {
-            transaction->inUse = true;
-            transaction->addr = addr;
-            transaction->txBuffer = (uint8_t*) txBuffer;
-            transaction->txCount = txCount;
-            transaction->rxBuffer = (uint8_t*) rxBuffer;
-            transaction->rxSize = rxSize;
-            transaction->rxCount = 0;
-            transaction->notify = notify;
-            transactionQueue.put(transaction, blockTime);
-            result = true;
+        transaction->addr = addr;
+        transaction->txBuffer = (uint8_t*) txBuffer;
+        transaction->txCount = txCount;
+        transaction->rxBuffer = (uint8_t*) rxBuffer;
+        transaction->rxSize = rxSize;
+        transaction->rxCount = 0;
+        transaction->notify = notify;
+
+        if (transactionQueue.put(transaction, blockTime)) 
+            return true;
+        
+        else {
+            delete transaction;
+            return false;
         }
     }
-    
-    Task::exitCriticalSection();
-    
-    return result;
+    else
+        return false;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa les tasques del servei.
+/// \param task: La tasca actual.
 ///
-void I2CMasterService::run() {
+void I2CMasterService::run(
+    Task *task) {
 
     halI2CMasterInitialize(
         moduleId, 
@@ -122,7 +125,7 @@ void I2CMasterService::run() {
             //
             if (transaction->notify != nullptr)
                 transaction->notify->give();
-            transaction->inUse = false;
+            delete transaction;
         }
     }
 }

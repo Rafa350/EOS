@@ -1,5 +1,5 @@
-#ifndef __EOS_SYSTEM_CORE_SEMAPHORE_HPP
-#define	__EOS_SYSTEM_CORE_SEMAPHORE_HPP
+#ifndef __EOS_SEMAPHORE_HPP
+#define	__EOS_SEMAPHORE_HPP
 
 
 #include "eos.hpp"

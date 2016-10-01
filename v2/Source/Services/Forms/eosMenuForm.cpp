@@ -27,6 +27,7 @@ MenuForm::MenuForm(
     FormsService *service, 
     Form *parent,
     uint8_t *_resource):
+    
     Form(service, parent),
     resource(_resource),
     evSelectItem(nullptr),

@@ -1,5 +1,5 @@
-#ifndef __EOS_SYSTEM_CORE_TIMER_HPP
-#define	__EOS_SYSTEM_CORE_TIMER_HPP
+#ifndef __EOS_TIMER_HPP
+#define	__EOS_TIMER_HPP
 
 
 #include "eos.hpp"
@@ -8,12 +8,9 @@
 
 namespace eos {
     
-    class Timer;
-    typedef Timer *TimerHandle;
-
     class Timer {
         private:
-            typedef ICallbackP1<TimerHandle> ITimerEvent;
+            typedef ICallbackP1<Timer*> ITimerEvent;
             
         private:
             void *handler;     
@@ -32,14 +29,14 @@ namespace eos {
             /// \param method: El metode
             ///
             template <class cls>
-            void setEvTimeout(cls *instance, void (cls::*method)(TimerHandle timer)) { 
-                
-                evTimeout = new CallbackP1<cls, TimerHandle>(instance, method);
+            void setEvTimeout(cls *instance, void (cls::*method)(Timer *timer)) {                 
+                evTimeout = new CallbackP1<cls, Timer*>(instance, method);
             }
             
             inline void setTag(void *tag) { this->tag = tag; }
             inline void *getTag() const { return tag; }
             bool isActive() const;
+            
         private:
             static void timerCallback(void *handler);
     };

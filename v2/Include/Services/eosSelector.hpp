@@ -1,5 +1,5 @@
-#ifndef __EOS_SERVICES_SELECTOR_HPP
-#define __EOS_SERVICES_SELECTOR_HPP
+#ifndef __EOS_SELECTOR_HPP
+#define __EOS_SELECTOR_HPP
 
 
 #include "eos.hpp"
@@ -21,13 +21,13 @@ namespace eos {
             
         private:
             uint8_t addr;
-            I2CMasterServiceHandle i2cService;
+            I2CMasterService *i2cService;
             SelectorPosition position;
             SelectorState state;
             ISelectorServiceEvent *evNotify;
             
         public:
-            SelectorService(Application *application, I2CMasterServiceHandle i2cService, uint8_t addr);
+            SelectorService(Application *application, I2CMasterService *i2cService, uint8_t addr);
             ~SelectorService();
             
             template <class cls>
@@ -36,7 +36,7 @@ namespace eos {
                 evNotify = new CallbackP2<cls, SelectorPosition, SelectorState>(instance, method); 
             }
         private:
-            void run();
+            void run(Task *task);
     };
 }
 

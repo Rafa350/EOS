@@ -1,5 +1,5 @@
-#ifndef __EOS_SYSTEM_CORE_QUEUE_HPP
-#define __EOS_SYSTEM_CORE_QUEUE_HPP
+#ifndef __EOS_QUEUE_HPP
+#define __EOS_QUEUE_HPP
 
 
 #include "eos.hpp"
@@ -41,8 +41,7 @@ namespace eos {
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.
             ///
-            inline bool put(const T &element, unsigned blockTime) {
-                
+            inline bool put(const T &element, unsigned blockTime) {                
                 return genericPut((void*) &element, blockTime);
             }
             
@@ -51,8 +50,7 @@ namespace eos {
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.
             ///
-            inline bool get(T &element, unsigned blockTime) {
-                
+            inline bool get(T &element, unsigned blockTime) {                
                 return genericGet((void*) &element, blockTime);
             }
     };

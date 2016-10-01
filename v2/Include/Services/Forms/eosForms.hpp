@@ -1,5 +1,5 @@
-#ifndef __EOS_SERVICES_FORMS_FORMS_HPP
-#define __EOS_SERVICES_FORMS_FORMS_HPP
+#ifndef __EOS_FORMS_HPP
+#define __EOS_FORMS_HPP
 
 
 #include "eos.hpp"
@@ -112,7 +112,6 @@ namespace eos {
     };
     
     typedef Queue<Message> MessageQueue;
-    typedef MessageQueue *MessageQueueHandle;
     
     class FormsService: public Service {
         private:
@@ -120,15 +119,15 @@ namespace eos {
             typedef ListIterator<Form*> FormListIterator;
             
         private:
-            MessageQueueHandle messageQueue;
+            MessageQueue *messageQueue;
             FormsDisplay *display;
             FormList forms;
             FormList destroyForms;
             Form *activeForm;     
             
         public:
-            FormsService(Application *application, MessageQueueHandle messageQueue, FormsDisplay *display);
-            virtual ~FormsService();
+            FormsService(Application *application, MessageQueue *messageQueue, FormsDisplay *display);
+            ~FormsService();
             void add(Form *form);
             void remove(Form *form);
             void destroy(Form *form);
@@ -137,7 +136,7 @@ namespace eos {
             Form *activate(Form *form);
             inline Form *getActiveForm() const { return activeForm; }
         private:
-            void run();
+            void run(Task *task);
             
         friend class Form;
     };
@@ -206,14 +205,12 @@ namespace eos {
 
 #ifdef eosFormsService_UseSelector            
             template <class cls>
-            void setSelectorPressEvent(cls *instance, void (cls::*method)(Form*)) { 
-                
+            void setSelectorPressEvent(cls *instance, void (cls::*method)(Form*)) {                 
                 evSelectorPress = new CallbackP1<cls, Form*>(instance, method);
             }
             
             template <class cls>
-            void setSelectorReleaseEvent(cls *instance, void (cls::*method)(Form*)) { 
-                
+            void setSelectorReleaseEvent(cls *instance, void (cls::*method)(Form*)) {                 
                 evSelectorRelease = new CallbackP1<cls, Form*>(instance, method);
             }
 #endif            

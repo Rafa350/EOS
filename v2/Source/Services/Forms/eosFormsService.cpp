@@ -7,8 +7,9 @@
 using namespace eos;
 
 
-const unsigned taskStackSize = 512;
-const TaskPriority taskPriority = TaskPriority::normal;
+static const char *serviceName = "FormsService";
+static const unsigned taskStackSize = 512;
+static const TaskPriority taskPriority = TaskPriority::normal;
 
 
 /// ----------------------------------------------------------------------
@@ -18,10 +19,10 @@ const TaskPriority taskPriority = TaskPriority::normal;
 ///
 FormsService::FormsService(
 Application *application,
-    MessageQueueHandle _messageQueue,
+    MessageQueue *_messageQueue,
     FormsDisplay *_display) :
     
-    Service(application, "FormsService", taskStackSize, taskPriority),
+    Service(application, serviceName, taskStackSize, taskPriority),
     messageQueue(_messageQueue),
     display(_display) {
 }
@@ -42,8 +43,10 @@ FormsService::~FormsService() {
 void FormsService::add(
     Form *form) {
     
-    forms.add(form);
-    form->service = this;
+    if ((form != nullptr) && (form->service == nullptr)) {
+        forms.add(form);
+        form->service = this;
+    }
 }
 
 
@@ -54,8 +57,10 @@ void FormsService::add(
 void FormsService::remove(
     Form *form) {
     
-    form->service = nullptr;
-    forms.remove(forms.indexOf(form));
+    if ((form != nullptr) && (form->service == this)) {
+        form->service = nullptr;
+        forms.remove(forms.indexOf(form));
+    }
 }
 
 
@@ -72,8 +77,10 @@ void FormsService::destroy(
 
 /// ----------------------------------------------------------------------
 /// \brief Tasca de control del servei
+/// \param task: La tasca actual.
 ///
-void FormsService::run() {
+void FormsService::run(
+    Task *task) {
     
     while (true) {
         
@@ -131,8 +138,7 @@ Form *FormsService::activate(
 void FormsService::refresh(
     Form *form) {
     
-    Message msg;
-    
+    Message msg;    
     msg.id = MSG_PAINT;
     msg.target = form;
     msg.msgPaint.display = display;

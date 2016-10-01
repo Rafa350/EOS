@@ -5,22 +5,24 @@
 using namespace eos;
 
 
-const unsigned taskStackSize = 512;
-const unsigned taskLoopDelay = 25;
-const TaskPriority taskPriority = TaskPriority::normal;
+static const char *serviceName = "SelectorService";
+static const unsigned taskStackSize = 512;
+static const unsigned taskLoopDelay = 25;
+static const TaskPriority taskPriority = TaskPriority::normal;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor
-/// \param i2cMasterService: El servei de comunicacions I2C
+/// \param application: Aplicacio a la que pertany.
+/// \param i2cService: El servei de comunicacions I2C
 /// \param addr: Adressa I2C del selector
 ///
 SelectorService::SelectorService(
     Application *application,
-    I2CMasterServiceHandle _i2cService,
+    I2CMasterService *_i2cService,
     uint8_t _addr):
     
-    Service(application, "SelectorService", taskStackSize, taskPriority),
+    Service(application, serviceName, taskStackSize, taskPriority),
     i2cService(_i2cService),
     addr(_addr),
     evNotify(nullptr),
@@ -41,8 +43,10 @@ SelectorService::~SelectorService() {
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa les tasques del servei
+/// \param task: La tasca actual.
 ///
-void SelectorService::run() {
+void SelectorService::run(
+    Task *task) {
     
     static uint8_t query[1] = { SEL_CMD_GETSTATE };
     uint8_t response[10];

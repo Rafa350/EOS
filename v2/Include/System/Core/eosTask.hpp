@@ -1,5 +1,5 @@
-#ifndef __EOS_SYSTEM_CORE_TASK_HPP
-#define	__EOS_SYSTEM_CORE_TASK_HPP
+#ifndef __EOS_TASK_HPP
+#define	__EOS_TASK_HPP
 
 
 #include "eos.hpp"
@@ -7,12 +7,15 @@
 
 namespace eos {
     
+    
+    class Task;
+    
     /// \brief Interficie que cal que implementin les clases que poden
     ///        ser procesades dins d'una tasca.
     ///
     class IRunable {
         public:
-            virtual void run() = 0;
+            virtual void run(Task *task) = 0;
     };
     
     enum class TaskPriority {
@@ -39,6 +42,7 @@ namespace eos {
             static void exitCriticalSection();
             static void suspendAllThreads();
             static void resumeAllThreads();
+            static bool notificationTake(unsigned blockTime);
         private:     
             static void function(void *params);
     };    

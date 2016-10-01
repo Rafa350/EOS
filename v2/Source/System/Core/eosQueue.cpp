@@ -19,7 +19,7 @@ GenericQueue::GenericQueue(
     eosAssert(capacity != 0, 0, "[GenericQueue::ctor] capacity != 0");
     
     handle = xQueueCreate(capacity, size);
-    eosAssert(handle != nullptr, 0, "[GenericQueue::ctor] handle != nullptr")
+    eosAssert(handle != nullptr, 0, "[GenericQueue::ctor] handle != nullptr");
 }
 
 
@@ -51,7 +51,7 @@ bool GenericQueue::genericPut(
     const void *element,
     unsigned blockTime) {
     
-    eosAssert(element != nullptr, 0, "[GenericQueue::genericPut] element != nullptr")
+    eosAssert(element != nullptr, 0, "[GenericQueue::genericPut] element != nullptr");
 
     return xQueueSendToBack(handle, element, blockTime) == pdPASS;
 }
@@ -67,7 +67,7 @@ bool GenericQueue::genericGet(
     void *element,
     unsigned blockTime) {
 
-    eosAssert(element != nullptr, 0, "[GenericQueue::genericGet] element != nullptr")
+    eosAssert(element != nullptr, 0, "[GenericQueue::genericGet] element != nullptr");
 
     return xQueueReceive(handle, element, blockTime) == pdPASS;
 }
@@ -76,11 +76,12 @@ bool GenericQueue::genericGet(
 bool GenericQueue::genericPutISR(
     void *element) {
     
+    eosAssert(element != nullptr, 0, "[GenericQueue::genericPutISR] element != nullptr");
 }
 
 
 bool GenericQueue::genericGetISR(
     void *element) {
     
-    eosAssert(element != nullptr, 0, "[GenericQueue::genericGetISR] element != nullptr")
+    eosAssert(element != nullptr, 0, "[GenericQueue::genericGetISR] element != nullptr");
 }

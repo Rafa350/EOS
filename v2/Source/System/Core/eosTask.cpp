@@ -51,7 +51,7 @@ void Task::function(
     
     Task *task = reinterpret_cast<Task*>(params);
     while (true) 
-        task->runable->run();
+        task->runable->run(task);
 }
 
 
@@ -84,6 +84,18 @@ void Task::delayUntil(
     
     if (time > 0)
         vTaskDelayUntil((TickType_t*) lastTick, (TickType_t) time);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Espeta una notificacio interna de la tasca.
+/// \param blockTime: Temps maxim de bloqueig.
+/// \return True si hi ha notificacio, false en cas contrari.
+///
+bool Task::notificationTake(
+    unsigned blockTime) {
+    
+    return ulTaskNotifyTake(pdTRUE, blockTime) != 0;
 }
 
 

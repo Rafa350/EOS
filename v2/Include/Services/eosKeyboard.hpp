@@ -1,5 +1,5 @@
-#ifndef __EOS_SERVICES_KEYBOARD_HPP
-#define __EOS_SERVICES_KEYBOARD_HPP
+#ifndef __EOS_KEYBOARD_HPP
+#define __EOS_KEYBOARD_HPP
 
 
 #include "eos.hpp"
@@ -20,12 +20,12 @@ namespace eos {
             
         private:
             uint8_t addr;
-            I2CMasterServiceHandle i2cService;
+            I2CMasterService *i2cService;
             KeyboardState state;
             IKeyboardServiceEvent *evNotify;
             
         public:
-            KeyboardService(Application *application, I2CMasterServiceHandle i2cService, uint8_t addr);
+            KeyboardService(Application *application, I2CMasterService *i2cService, uint8_t addr);
             ~KeyboardService();
             
             template <class cls>
@@ -35,7 +35,7 @@ namespace eos {
             }
             
         private:
-            void run();
+            void run(Task *task);
     };
 }
 

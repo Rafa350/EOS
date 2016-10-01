@@ -55,6 +55,7 @@
             <itemPath>../../../Include/System/Core/eosTimer.hpp</itemPath>
             <itemPath>../../../Include/System/Core/eosString.hpp</itemPath>
             <itemPath>../../../Include/System/Core/eosQueue.hpp</itemPath>
+            <itemPath>../../../Include/System/Core/eosMemoryPool.hpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Streams" projectFiles="true">
             <itemPath>../../../Include/System/Streams/eosStreams.hpp</itemPath>
@@ -144,6 +145,7 @@
             <itemPath>../../../Source/System/Core/eosString.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosMemoryPool.cpp</itemPath>
           </logicalFolder>
           <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
         </logicalFolder>
@@ -992,6 +994,7 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

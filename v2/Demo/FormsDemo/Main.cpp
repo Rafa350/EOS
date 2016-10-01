@@ -23,7 +23,7 @@ using namespace app;
 
 class MyApplication: public Application {
     private:
-        I2CMasterServiceHandle i2cMasterService;
+        I2CMasterService *i2cMasterService;
         FormsService *formsService;
 #ifdef eosFormsService_UseSelector
         SelectorService *selectorService;
@@ -63,7 +63,7 @@ void MyApplication::onInitialize() {
     
     // Inicialitza el servei de comunicacions del bus I2C
     //
-    i2cMasterService = new I2CMasterService(0);
+    i2cMasterService = new I2CMasterService(this, 0);
    
     // Inicia el servei de control de selector
     //

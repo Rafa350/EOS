@@ -3,18 +3,18 @@
 
 
 #include "eos.hpp"
-#include "System/Core/eosTask.hpp"
 #include "System/Core/eosSemaphore.hpp"
 #include "System/Core/eosCallbacks.hpp"
 #include "System/Core/eosQueue.hpp"
+#include "System/Core/eosMemoryPool.hpp"
+#include "Services/eosService.hpp"
 
 
 namespace eos {
     
-    class I2CMasterService;
-    typedef I2CMasterService *I2CMasterServiceHandle;
-       
-    class I2CMasterService: private IRunable {
+    class Application;
+          
+    class I2CMasterService: public Service {
         private:
             enum class State {          // Estat de la transaccio
                 idle,                   // -En espera de iniciar
@@ -34,7 +34,6 @@ namespace eos {
             };        
             
             struct Transaction {
-                bool inUse;
                 uint8_t addr;
                 uint8_t *txBuffer;
                 uint8_t *rxBuffer;
@@ -42,16 +41,18 @@ namespace eos {
                 unsigned rxCount;
                 unsigned rxSize;
                 BinarySemaphore *notify;
+                
+                inline void *operator new (size_t) { return transactionPool.allocate(); }
+                inline void operator delete(void *p) { transactionPool.deallocate(p); }
             };
 
             typedef Queue<Transaction*> TransactionQueue;
 
         private:
+            static GenericMemoryPool transactionPool;
             uint8_t moduleId;
-            Task task;
             TransactionQueue transactionQueue;
             Transaction *transaction;
-            Transaction transactions[10];
             BinarySemaphore semaphore;
             unsigned index;
             unsigned maxIndex;
@@ -62,7 +63,7 @@ namespace eos {
             State state;
             
         public:
-            I2CMasterService(uint8_t moduleId);
+            I2CMasterService(Application *application, uint8_t moduleId);
             inline bool startTransaction(uint8_t addr, void *txBuffer, unsigned txCount, 
                                          unsigned blockTime, BinarySemaphore *notify) {
                 return startTransaction(addr, txBuffer, txCount, nullptr, 0, blockTime, notify);
@@ -73,7 +74,7 @@ namespace eos {
         private:
             static void interruptCallback(uint8_t moduleId, void *param);
             void stateMachine();
-            void run();
+            void run(Task *task);
     };
 }
 
