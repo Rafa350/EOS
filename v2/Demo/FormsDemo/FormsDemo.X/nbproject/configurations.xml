@@ -138,7 +138,6 @@
             <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosHeap.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosInterrupt.c</itemPath>
-            <itemPath>../../../Source/System/Core/eosPool.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosSemaphore.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
