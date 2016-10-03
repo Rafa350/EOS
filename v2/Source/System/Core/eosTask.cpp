@@ -118,9 +118,18 @@ void Task::exitCriticalSection() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Suspend tots els fils d'execucio. Imprideix el canvi de tasca
+/// \brief Inicia tots els fils d'execucio.
 ///
-void Task::suspendAllThreads() {
+void Task::startAll() {
+    
+    vTaskStartScheduler();    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Suspend tots els fils d'execucio. Impedeix el canvi de tasca
+///
+void Task::suspendAll() {
     
     vTaskSuspendAll();
 }
@@ -129,7 +138,7 @@ void Task::suspendAllThreads() {
 /// ----------------------------------------------------------------------
 /// \brief Activa tots els fils d'execucio
 ///
-void Task::resumeAllThreads() {
+void Task::resumeAll() {
 
     xTaskResumeAll();
 }

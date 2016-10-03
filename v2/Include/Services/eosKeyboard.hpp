@@ -5,12 +5,12 @@
 #include "eos.hpp"
 #include "System/Core/eosCallbacks.hpp"
 #include "Services/eosService.hpp"
-#include "Services/eosI2CMaster.hpp"
 
 
 namespace eos {
     
     class Application;
+    class I2CMasterService;
        
     typedef uint8_t KeyboardState;
     
@@ -29,8 +29,7 @@ namespace eos {
             ~KeyboardService();
             
             template <class cls>
-            void setNotifyEvent(cls *instance, void (cls::*method)(KeyboardState)) { 
-                
+            void setNotifyEvent(cls *instance, void (cls::*method)(KeyboardState)) {                 
                 evNotify = new CallbackP1<cls, KeyboardState>(instance, method); 
             }
             

@@ -1,4 +1,5 @@
 #include "Services/eosSelector.hpp"
+#include "Services/eosI2CMaster.hpp"
 #include "../../../MD-SEL01/SEL01Messages.h"
 
 

@@ -27,8 +27,7 @@ namespace eos {
             NumericEditorForm(FormsService *service, Form *parent);
             
             template <class cls>
-            void setEvChange(cls *instance, void (cls::*method)(NumericEditorForm*, int)) { 
-                
+            void setEvChange(cls *instance, void (cls::*method)(NumericEditorForm*, int)) {                 
                 evChange = new CallbackP2<cls, NumericEditorForm*, int>(instance, method);
             }
             
@@ -43,7 +42,7 @@ namespace eos {
             /// \brief Retorna el valor actual.
             /// \return El valor actual.
             ///
-            int getValue() const { return value; }
+            inline int getValue() const { return value; }
         protected:
             ~NumericEditorForm();            
             void onPaint(FormsDisplay *display);

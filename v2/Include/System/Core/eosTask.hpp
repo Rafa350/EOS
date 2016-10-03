@@ -40,8 +40,9 @@ namespace eos {
             static unsigned getTickCount();
             static void enterCriticalSection();
             static void exitCriticalSection();
-            static void suspendAllThreads();
-            static void resumeAllThreads();
+            static void startAll();
+            static void suspendAll();
+            static void resumeAll();
             static bool notificationTake(unsigned blockTime);
         private:     
             static void function(void *params);

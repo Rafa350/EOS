@@ -23,30 +23,9 @@ namespace eos {
             Method method;
 
         public:
-            CallbackP1() {
-                
-                instance = nullptr;
-                method = nullptr;
+            CallbackP1(Class *_instance, Method _method): instance(_instance), method(_method) {
             }
             
-            CallbackP1(Class *instance, Method method) {
-                
-                this->instance = instance;
-                this->method = method;
-            }
-            
-            CallbackP1(const CallbackP1 &other) {
-                
-                this->instance = other.instance;
-                this->method = other.method;
-            }
-            
-            void set(Class *instance, Method method) {
-
-                this->instance = instance;
-                this->method = method;
-            }
-
             void execute(P1Type p1) {
                 
                 if ((instance != nullptr) && (method != nullptr))
@@ -71,10 +50,7 @@ namespace eos {
             Method method;
 
         public:
-            CallbackP2(Class *instance, Method method) {
-                
-                this->instance = instance;
-                this->method = method;
+            CallbackP2(Class *_instance, Method _method): instance(_instance), method(_method) {
             }
 
             void execute(P1Type p1, P2Type p2) {
@@ -94,10 +70,7 @@ namespace eos {
             Method method;
 
         public:
-            CallbackP1R(Class *instance, Method method) {
-                
-                this->instance = instance;
-                this->method = method;
+            CallbackP1R(Class *_instance, Method _method): instance(_instance), method(_method) {
             }
 
             RType execute(P1Type p1) {
@@ -116,10 +89,7 @@ namespace eos {
             Method method;
 
         public:
-            CallbackP2R(Class *instance, Method method) {
-                
-                this->instance = instance;
-                this->method = method;
+            CallbackP2R(Class *_instance, Method _method): instance(_instance), method(_method) {
             }
 
             RType execute(P1Type p1, P2Type p2) {

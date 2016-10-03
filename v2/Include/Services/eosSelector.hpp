@@ -5,12 +5,12 @@
 #include "eos.hpp"
 #include "System/Core/eosCallbacks.hpp"
 #include "Services/eosService.hpp"
-#include "Services/eosI2CMaster.hpp"
 
 
 namespace eos {
        
     class Application;
+    class I2CMasterService;
     
     typedef int16_t SelectorPosition;
     typedef uint8_t SelectorState;
@@ -31,10 +31,10 @@ namespace eos {
             ~SelectorService();
             
             template <class cls>
-            void setNotifyEvent(cls *instance, void (cls::*method)(SelectorPosition, SelectorState)) { 
-                
+            void setNotifyEvent(cls *instance, void (cls::*method)(SelectorPosition, SelectorState)) {                 
                 evNotify = new CallbackP2<cls, SelectorPosition, SelectorState>(instance, method); 
             }
+            
         private:
             void run(Task *task);
     };

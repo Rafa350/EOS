@@ -152,7 +152,7 @@ namespace eos {
             
         public:
             FormsDisplay(Display *display);
-            Display* getDisplay() const { return display; }
+            inline Display* getDisplay() const { return display; }
             void beginDraw(int16_t x, int16_t y, int16_t width, int16_t height);
             void endDraw();
             void clear(Color color);

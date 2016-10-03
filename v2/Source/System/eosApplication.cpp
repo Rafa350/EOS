@@ -1,8 +1,6 @@
 #include "System/eosApplication.hpp"
 #include "Services/eosService.hpp"
 #include "HAL/halSYS.h"
-#include "FreeRTOS.h"
-#include "task.h"
 
 
 using namespace eos;
@@ -33,7 +31,7 @@ Application::~Application() {
 void Application::execute() {
         
     onInitialize();
-    vTaskStartScheduler();
+    Task::startAll();
     onTerminate();
 }
 

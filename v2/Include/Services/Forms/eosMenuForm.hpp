@@ -41,8 +41,7 @@ namespace eos {
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setSelectItemEvent(cls *instance, void (cls::*method)(MenuForm*, unsigned)) { 
-                
+            void setSelectItemEvent(cls *instance, void (cls::*method)(MenuForm*, unsigned)) {                 
                 evSelectItem = new CallbackP2<cls, MenuForm*, unsigned>(instance, method); 
             }
             
@@ -50,8 +49,7 @@ namespace eos {
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setClickItemEvent(cls *instance, void (cls::*method)(MenuForm*, unsigned)) {
-                
+            void setClickItemEvent(cls *instance, void (cls::*method)(MenuForm*, unsigned)) {                
                 evClickItem = new CallbackP2<cls, MenuForm*, unsigned>(instance, method);
             }
             
@@ -59,8 +57,7 @@ namespace eos {
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setDrawItemEvent(cls *instance, void (cls::*method)(MenuForm*, unsigned)) { 
-                
+            void setDrawItemEvent(cls *instance, void (cls::*method)(MenuForm*, unsigned)) {                 
                 evDrawItem = new CallbackP2<cls, MenuForm*, unsigned>(instance, method); 
             }
 

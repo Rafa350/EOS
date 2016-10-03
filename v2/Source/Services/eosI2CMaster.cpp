@@ -24,7 +24,7 @@ GenericMemoryPool I2CMasterService::transactionPool(
 /// \param moduleId: Identificador del modulI2C
 ///
 I2CMasterService::I2CMasterService(
-Application *application,
+    Application *application,
     uint8_t _moduleId) :
     
     moduleId(_moduleId),
@@ -137,9 +137,6 @@ void I2CMasterService::run(
 /// \param moduleId: Identificador del module I2C
 /// \param param: Parametre. En aquest cas el servei.
 ///
-/// Transmissio/Recepcio en format de trama
-/// |LENGTH|DATA-1|DATA-2| . . . |DATA-n|CHECK|
-///
 void I2CMasterService::interruptCallback(
     uint8_t moduleId, 
     void* param) {
@@ -152,6 +149,9 @@ void I2CMasterService::interruptCallback(
 /// ----------------------------------------------------------------------
 /// \brief Maquina d'estats per procesar les comunicacions. S'executa en
 ///        el contexte de la interrupcio I2C.
+///
+/// Transmissio/Recepcio en format de trama
+/// |LENGTH|DATA-1|DATA-2| . . . |DATA-n|CHECK|
 ///
 void I2CMasterService::stateMachine() {
     
