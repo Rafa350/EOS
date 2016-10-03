@@ -1,5 +1,5 @@
-#ifndef __EOS_SYSTEM_CORE_CALLBACKS_HPP
-#define	__EOS_SYSTEM_CORE_CALLBACKS_HPP
+#ifndef __EOS_CALLBACKS_HPP
+#define	__EOS_CALLBACKS_HPP
 
 
 #include "eos.hpp"
@@ -26,9 +26,8 @@ namespace eos {
             CallbackP1(Class *_instance, Method _method): instance(_instance), method(_method) {
             }
             
-            void execute(P1Type p1) {
-                
-                if ((instance != nullptr) && (method != nullptr))
+            void execute(P1Type p1) {                
+//                if ((instance != nullptr) && (method != nullptr))
                     (instance->*method)(p1);
             }
     };    
@@ -53,15 +52,21 @@ namespace eos {
             CallbackP2(Class *_instance, Method _method): instance(_instance), method(_method) {
             }
 
-            void execute(P1Type p1, P2Type p2) {
-                
-                (instance->*method)(p1, p2);
+            void execute(P1Type p1, P2Type p2) {                
+//                if ((instance != nullptr) && (method != nullptr))
+                    (instance->*method)(p1, p2);
             }
     };
 
 
+    template <typename RType, typename P1Type>
+    class ICallbackP1R {
+        public:
+            virtual RType execute(P1Type p1) = 0;
+    };
+
     template <class Class, typename RType, typename P1Type>
-    class CallbackP1R {
+    class CallbackP1R: public ICallbackP1R<RType, P1Type> {
         public:
             typedef RType (Class::*Method)(P1Type);
 
@@ -74,13 +79,20 @@ namespace eos {
             }
 
             RType execute(P1Type p1) {
-                
-                return (instance->*method)(p1);
+//                if ((instance != nullptr) && (method != nullptr))                
+                    return (instance->*method)(p1);
             }
     };
 
+
+    template <typename RType, typename P1Type, typename P2Type>
+    class ICallbackP2R {
+        public:
+            virtual RType execute(P1Type p1, P2Type p2) = 0;
+    };
+
     template <class Class, typename RType, typename P1Type, typename P2Type>
-    class CallbackP2R {
+    class CallbackP2R: public ICallbackP2R<RType, P1Type, P2Type> {
         public:
             typedef RType (Class::*Method)(P1Type, P2Type);
 
@@ -93,8 +105,8 @@ namespace eos {
             }
 
             RType execute(P1Type p1, P2Type p2) {
-                
-                return (instance->*method)(p1, p2);
+//                if ((instance != nullptr) && (method != nullptr))
+                    return (instance->*method)(p1, p2);
             }
     };
 }

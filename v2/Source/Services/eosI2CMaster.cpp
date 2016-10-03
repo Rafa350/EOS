@@ -14,7 +14,7 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 static const unsigned baudRate = 100000;
 
 
-GenericMemoryPool I2CMasterService::transactionPool(
+GenericPoolAllocator I2CMasterService::transactionAllocator(
     sizeof(I2CMasterService::Transaction), 
     eosI2CMasterService_TransactionPoolSize);
 

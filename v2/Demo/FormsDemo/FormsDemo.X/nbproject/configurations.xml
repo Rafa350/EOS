@@ -49,13 +49,14 @@
           <logicalFolder name="f2" displayName="Core" projectFiles="true">
             <itemPath>../../../Include/System/Core/eosCallbacks.hpp</itemPath>
             <itemPath>../../../Include/System/Core/eosInterrupts.h</itemPath>
-            <itemPath>../../../Include/System/Core/eosMemory.hpp</itemPath>
             <itemPath>../../../Include/System/Core/eosSemaphore.hpp</itemPath>
             <itemPath>../../../Include/System/Core/eosTask.hpp</itemPath>
             <itemPath>../../../Include/System/Core/eosTimer.hpp</itemPath>
             <itemPath>../../../Include/System/Core/eosString.hpp</itemPath>
             <itemPath>../../../Include/System/Core/eosQueue.hpp</itemPath>
-            <itemPath>../../../Include/System/Core/eosMemoryPool.hpp</itemPath>
+            <itemPath>../../../Include/System/Core/eosAllocator.hpp</itemPath>
+            <itemPath>../../../Include/System/Core/eosHeapAllocator.hpp</itemPath>
+            <itemPath>../../../Include/System/Core/eosPoolAllocator.hpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Streams" projectFiles="true">
             <itemPath>../../../Include/System/Streams/eosStreams.hpp</itemPath>
@@ -136,7 +137,6 @@
           </logicalFolder>
           <logicalFolder name="f1" displayName="Core" projectFiles="true">
             <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosHeap.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosInterrupt.c</itemPath>
             <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosSemaphore.cpp</itemPath>
@@ -144,7 +144,8 @@
             <itemPath>../../../Source/System/Core/eosString.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
             <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosMemoryPool.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
+            <itemPath>../../../Source/System/Core/eosPoolAllocator.cpp</itemPath>
           </logicalFolder>
           <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
         </logicalFolder>

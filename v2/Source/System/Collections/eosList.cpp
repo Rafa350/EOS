@@ -1,4 +1,3 @@
-#include "System/Core/eosMemory.hpp"
 #include "System/Core/eosTask.hpp"
 #include "System/Collections/eosList.hpp"
 #include "eosListImpl.hpp"

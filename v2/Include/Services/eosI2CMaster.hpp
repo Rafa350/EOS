@@ -6,7 +6,7 @@
 #include "System/Core/eosSemaphore.hpp"
 #include "System/Core/eosCallbacks.hpp"
 #include "System/Core/eosQueue.hpp"
-#include "System/Core/eosMemoryPool.hpp"
+#include "System/Core/eosPoolAllocator.hpp"
 #include "Services/eosService.hpp"
 
 
@@ -42,14 +42,14 @@ namespace eos {
                 unsigned rxSize;
                 BinarySemaphore *notify;
                 
-                inline void *operator new (size_t) { return transactionPool.allocate(); }
-                inline void operator delete(void *p) { transactionPool.deallocate(p); }
+                inline void *operator new (size_t size) { return transactionAllocator.allocate(size); }
+                inline void operator delete(void *p) { transactionAllocator.deallocate(p); }
             };
 
             typedef Queue<Transaction*> TransactionQueue;
 
         private:
-            static GenericMemoryPool transactionPool;
+            static GenericPoolAllocator transactionAllocator;
             uint8_t moduleId;
             TransactionQueue transactionQueue;
             Transaction *transaction;

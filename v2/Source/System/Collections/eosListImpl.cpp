@@ -1,4 +1,3 @@
-#include "System/Core/eosMemory.hpp"
 #include "System/Collections/eosList.hpp"
 #include "eosListImpl.hpp"
 
@@ -12,8 +11,8 @@ const unsigned capacityDelta = 10;
 #define __ASSERT(cond, code, message) \
                              eosAssert(cond, code, message);
 
-#define __ALLOC(s)           eosHeapAlloc(nullptr, size)
-#define __FREE(p)            eosHeapFree(p);
+#define __ALLOC(s)           (void*) new uint8_t[s]
+#define __FREE(p)            delete [] (uint8_t*)p;
 
 
 /// ----------------------------------------------------------------------

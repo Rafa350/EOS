@@ -1,5 +1,4 @@
 #include "System/Core/eosTask.hpp"
-#include "System/Core/eosMemory.hpp"
 #include "System/Collections/eosStack.hpp"
 
 
@@ -7,6 +6,10 @@ using namespace eos;
 
 
 const unsigned capacityDelta = 10;
+
+
+#define __ALLOC(s)           (void*) new uint8_t[s]
+#define __FREE(p)            delete [] (uint8_t*)p;
 
 
 /// ----------------------------------------------------------------------
@@ -32,7 +35,7 @@ GenericStack::GenericStack(
 GenericStack::~GenericStack() {
     
     if (container != nullptr)
-        eosHeapFree(container);
+        __FREE(container);
 }
 
 
@@ -116,10 +119,10 @@ void GenericStack::resize(
     
     if (capacity < newCapacity) {
         void *ptr = container;
-        container = eosHeapAlloc(nullptr, newCapacity * size);
+        container = __ALLOC(newCapacity * size);
         if (ptr != nullptr) {
             memcpy(container, ptr, capacity);
-            eosHeapFree(ptr);
+            __FREE(ptr);
         }
         capacity = newCapacity;
     }

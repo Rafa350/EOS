@@ -1,4 +1,7 @@
-#include "System/Core/eosMemory.hpp"
+#include "System/Core/eosHeapAllocator.hpp"
+
+
+eos::HeapAllocator defaultAllocator;
 
 
 /// ----------------------------------------------------------------------
@@ -8,16 +11,16 @@
 void *operator new(
     size_t size) {
     
-    return eosHeapAlloc(nullptr, size);
+    return defaultAllocator.allocate(size);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Operador delete global.
-/// \param ptr: Punter al bloc de memoria a alliberar.
+/// \param p: Punter al bloc de memoria a alliberar.
 ///
 void operator delete(
-    void *ptr) {
+    void *p) {
     
-    eosHeapFree(ptr);
+    defaultAllocator.deallocate(p);
 }

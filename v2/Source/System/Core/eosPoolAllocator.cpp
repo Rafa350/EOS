@@ -3,8 +3,7 @@
 // Ben Kenwright - School of Computer Science - Newcastle University
 
 #include "System/Core/eosTask.hpp"
-#include "System/Core/eosMemoryPool.hpp"
-#include "System/core/eosMemory.hpp"
+#include "System/Core/eosPoolAllocator.hpp"
 
 
 #define __LOCK()             Task::enterCriticalSection()
@@ -19,7 +18,7 @@ using namespace eos;
 /// \param blockSize: Tamany de cada element en bytes.
 /// \param maxBlocks: Numero maxim d'elements.
 ///
-GenericMemoryPool::GenericMemoryPool(
+GenericPoolAllocator::GenericPoolAllocator(
     unsigned _blockSize, 
     unsigned _maxBlocks):
 
@@ -41,7 +40,7 @@ GenericMemoryPool::GenericMemoryPool(
 /// ----------------------------------------------------------------------
 /// \brief Destructor.
 ///
-GenericMemoryPool::~GenericMemoryPool() {
+GenericPoolAllocator::~GenericPoolAllocator() {
     
     delete[] startBlocks;
 }
@@ -49,30 +48,36 @@ GenericMemoryPool::~GenericMemoryPool() {
 
 /// ----------------------------------------------------------------------
 /// \brief Reserva un bloc de memoria.
+/// \param size: El tamany del bloc. Com el tamany es fixe, no s'utilitza.
 /// \return El punter al block.
 ///
-void *GenericMemoryPool::allocate() {
+void *GenericPoolAllocator::allocate(
+    size_t size) {
     
     void *ret = nullptr;
+    
+    if (size <= blockSize) {
 
-    __LOCK();
-    
-    if (initializedBlocks < maxBlocks) {
-        unsigned *p = (unsigned*) addrFromIndex(initializedBlocks);
-        initializedBlocks += 1;
-        *p = initializedBlocks;
+        __LOCK();
+
+        if (initializedBlocks < maxBlocks) {
+            unsigned *p = (unsigned*) addrFromIndex(initializedBlocks);
+            initializedBlocks += 1;
+            *p = initializedBlocks;
+        }
+
+        if (freeBlocks > 0) {
+            ret = (void*) nextBlock;
+            freeBlocks -= 1;
+            if (freeBlocks > 0) 
+                nextBlock = addrFromIndex(*((unsigned*) nextBlock) );
+            else 
+                nextBlock = nullptr;
+        }
+
+        __UNLOCK();
+        
     }
-    
-    if (freeBlocks > 0) {
-        ret = (void*) nextBlock;
-        freeBlocks -= 1;
-        if (freeBlocks > 0) 
-            nextBlock = addrFromIndex(*((unsigned*) nextBlock) );
-        else 
-            nextBlock = nullptr;
-    }
-    
-    __UNLOCK();
     
     return ret;
 }
@@ -82,7 +87,7 @@ void *GenericMemoryPool::allocate() {
 /// \brief Allivera el bloc de memoria.
 /// \param p: El puntern al bloc de memoria.
 ///
-void GenericMemoryPool::deallocate(
+void GenericPoolAllocator::deallocate(
     void *p) {
     
     __LOCK();
@@ -104,7 +109,7 @@ void GenericMemoryPool::deallocate(
 /// \param i: El index del bloc.
 /// \return L'adressa del bloc.
 ///
-uint8_t *GenericMemoryPool::addrFromIndex(
+uint8_t *GenericPoolAllocator::addrFromIndex(
     unsigned i) const {
     
     return startBlocks + (blockSize * i);
@@ -116,7 +121,7 @@ uint8_t *GenericMemoryPool::addrFromIndex(
 /// \param p: L'adressa del bloc.
 /// \return El index del bloc.
 ///
-unsigned GenericMemoryPool::indexFromAddr(
+unsigned GenericPoolAllocator::indexFromAddr(
     const uint8_t *p) const {
     
     return (p - startBlocks) / blockSize;
