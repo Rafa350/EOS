@@ -6,7 +6,7 @@
 using namespace eos;
 
 
-static const char *defaultTaskName = "";
+static const char *defaultName = "";
 
 
 /// ----------------------------------------------------------------------
@@ -14,18 +14,20 @@ static const char *defaultTaskName = "";
 ///        de FreeRTOS.
 /// \param stackSize: Tamany de la pila.
 /// \param priority: Prioritat del proces.
+/// \param name: Nom de la tasca.
 /// \param runable: Objecte que implementa IRunable.
 ///
 Task::Task(
     unsigned stackSize, 
     TaskPriority priority,
+    const char *name,
     IRunable *runable) {
     
     this->runable = runable;
     
     xTaskCreate(
         Task::function, 
-        defaultTaskName, 
+        name == nullptr ? defaultName : name, 
         stackSize, 
         this, 
         tskIDLE_PRIORITY + ((UBaseType_t) priority), 

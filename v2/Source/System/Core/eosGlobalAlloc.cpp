@@ -1,7 +1,7 @@
 #include "System/Core/eosHeapAllocator.hpp"
 
 
-eos::HeapAllocator defaultAllocator;
+static eos::HeapAllocator defaultAllocator;
 
 
 /// ----------------------------------------------------------------------

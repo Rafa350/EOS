@@ -33,7 +33,7 @@ namespace eos {
             IRunable *runable;
 
         public:
-            Task(unsigned stackSize, TaskPriority priority, IRunable *runable);
+            Task(unsigned stackSize, TaskPriority priority, const char *name, IRunable *runable);
             virtual ~Task();
             static void delay(unsigned time);
             static void delayUntil(unsigned time, unsigned *lastTick);

@@ -1,4 +1,3 @@
-#include "eos.hpp"
 #include "System/Core/eosHeapAllocator.hpp"
 #include "FreeRTOS.h"
 
@@ -16,7 +15,9 @@ void *HeapAllocator::allocate(
 
     void *p = pvPortMalloc(size);
     
-    eosAssert(p != nullptr, 0, "eosHeapAlloc: No hi ha memoria disponoble.");
+    eosAssert(
+        p != nullptr, 
+        0, "HeapAllocator::allocate: No hi ha memoria disponoble.");
     
     return p;
 }
@@ -29,7 +30,9 @@ void *HeapAllocator::allocate(
 void HeapAllocator::deallocate(
     void *p) {
     
-    eosAssert(p == nullptr, 0, "eosHeapAlloc: El parametre 'p' es nul.");
+    eosAssert(
+        p == nullptr, 
+        0, "HeapAllocator::deallocate: El parametre 'p' es nul.");
 
     vPortFree(p);    
 }

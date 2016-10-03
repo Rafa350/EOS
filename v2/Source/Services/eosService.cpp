@@ -17,7 +17,7 @@ Service::Service(
     
     application(nullptr),
     name(_name),
-    task(stackSize, priority, this) {
+    task(stackSize, priority, _name, this) {
 
     if (_application != nullptr)
         _application->addService(this);

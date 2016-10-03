@@ -2,8 +2,8 @@
 // Fast Efficient Fixed-Size Memory Pool: No Loops and No Overhead
 // Ben Kenwright - School of Computer Science - Newcastle University
 
-#include "System/Core/eosTask.hpp"
 #include "System/Core/eosPoolAllocator.hpp"
+#include "System/Core/eosTask.hpp"
 
 
 #define __LOCK()             Task::enterCriticalSection()
@@ -79,6 +79,11 @@ void *GenericPoolAllocator::allocate(
         
     }
     
+    eosAssert(
+        ret != nullptr, 
+        0, "PoolAllocator::allocate: No hi ha memoria disponoble.");
+    
+    
     return ret;
 }
 
@@ -89,7 +94,11 @@ void *GenericPoolAllocator::allocate(
 ///
 void GenericPoolAllocator::deallocate(
     void *p) {
-    
+        
+    eosAssert(
+        p == nullptr, 
+        0, "PoolAllocator::deallocate: El parametre 'p' es nul.");
+
     __LOCK();
     
     if (nextBlock != nullptr) 
