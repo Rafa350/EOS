@@ -1,27 +1,29 @@
-#include "eos.hpp"
-#include "System/Core/eosTask.hpp"
 #include "Services/eosAppLoop.hpp"
 
 
 using namespace eos;
 
 
-const unsigned taskStackSize = 512;
-const TaskPriority taskPriority = TaskPriority::normal;
+static const char *serviceName = "AppLoopService";
+static const unsigned stackSize = 512;
+static const TaskPriority priority = TaskPriority::normal;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
-AppLoopService::AppLoopService():
-    task(taskStackSize, taskPriority, this) {
+AppLoopService::AppLoopService(
+    Application *application):
+    
+    Service(application, serviceName, stackSize, priority) {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa les tasques del servei.
 ///
-void AppLoopService::run() {
+void AppLoopService::run(
+    Task *task) {
     
     setup();
     while (true) {

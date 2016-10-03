@@ -26,24 +26,5 @@
 #define eosI2CMasterService_TransactionTimeout        1000
 
 
-// Opcions de configuracio pel servei 'Forms'
-//
-#define eosOPTIONS_FORMS_MAX_INSTANCES           1    // Numero maxim d'instancies del servei
-#define eosOPTIONS_FORMS_MAX_QUEUE_SIZE         50    // Numero maxim de missatges en la cua
-
-
-// Opcions del display
-//
-#define FONT_USE_Arial10pt
-#define FONT_USE_Arial12pt
-#define FONT_USE_Arial14pt
-#define FONT_USE_Arial24pt
-#define FONT_USE_Consolas8pt
-#define FONT_USE_Consolas10pt
-#define FONT_USE_Consolas12pt
-#define FONT_USE_Consolas14pt
-#define FONT_USE_Consolas18pt
-#define FONT_USE_Consolas24pt
-
 
 #endif

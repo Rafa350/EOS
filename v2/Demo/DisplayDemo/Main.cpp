@@ -14,6 +14,10 @@ class MyAppLoopService: public AppLoopService {
         unsigned char r, g, b;
         Display *display;
         IDisplayDriver *driver;
+        
+    public:
+        MyAppLoopService(Application *application):
+            AppLoopService(application) {}
     
     protected:
         void setup();
@@ -35,7 +39,7 @@ class MyApplication: public Application {
 ///
 MyApplication::MyApplication() {
     
-    service = new MyAppLoopService();
+    service = new MyAppLoopService(this);
 }
 
 
@@ -44,7 +48,7 @@ MyApplication::MyApplication() {
 ///
 void MyAppLoopService::setup() {
     
-    driver = new ILI9341_DisplayDriver();
+    driver = new ILI9341_Driver();
     driver->initialize();
     driver->setOrientation(Orientation::rotate180);
     
@@ -66,7 +70,7 @@ void MyAppLoopService::loop() {
     int fontHeight = display->getTextHeight("M") + 2;
     for (int i = 0; i < 10; i++) {
         display->setColor(RGB(r, g, b));
-        display->drawString(10, 30 + i * fontHeight, "0123456789 ABCD abcd", 0, -1);
+        display-> drawText(10, 30 + i * fontHeight, "0123456789 ABCD abcd", 0, -1);
         r += 5;
         g += 7;
         b += 9;

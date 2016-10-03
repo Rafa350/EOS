@@ -3,28 +3,26 @@
 
 
 #include "eos.hpp"
-#include "System/Core/eosTask.hpp"
+#include "Services/eosService.hpp"
 
 
 namespace eos {
     
+    class Application;
+    
     /// \brief Clase que implementa el servei del bucle principal 
     ///        de l'aplicacio.
     ///
-    class AppLoopService: private IRunable {
-
-        private:
-            Task task;
-                
+    class AppLoopService: public Service {
         public:
-            AppLoopService();
+            AppLoopService(Application *application);
             
         protected:
             virtual void setup();
             virtual void loop();
             
         private:
-            void run();
+            void run(Task *task);
     };
 }
 
