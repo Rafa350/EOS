@@ -1,45 +1,43 @@
-#ifndef __EOS_SERVICES_USBDEVICE_HPP
-#define __EOS_SERVICES_USBDEVICE_HPP
+#ifndef __EOS_USBDEVICE_HPP
+#define __EOS_USBDEVICE_HPP
 
 
 #include "eos.hpp"
-#include "System/Core/eosTask.hpp"
+#include "Services/eosService.hpp"
 #include "System/Collections//eosList.hpp"
 
 
 namespace eos {
     
+    
+    class Task;
+    class Application;
     class UsbDevice;
-    typedef UsbDevice *UsbDeviceHandle;
     
-    class UsbDeviceService;
-    typedef UsbDeviceService *UsbDeviceServiceHandle;
-    
-    class UsbDeviceService: private IRunable {
+    class UsbDeviceService: public Service {
         private:
-            typedef List<UsbDeviceHandle> UsbDeviceList;
-            typedef ListIterator<UsbDeviceHandle> UsbDeviceListIterator;
+            typedef List<UsbDevice*> UsbDeviceList;
+            typedef ListIterator<UsbDevice*> UsbDeviceListIterator;
        
         private:
-            Task task;
             UsbDeviceList devices;
             
         public:
-            UsbDeviceService();
-            void add(UsbDeviceHandle device);
-            void remove(UsbDeviceHandle device);
+            UsbDeviceService(Application *application);
+            void add(UsbDevice *device);
+            void remove(UsbDevice *device);
             
         private:
-            void run();
+            void run(Task *task);
         
     };
     
     class UsbDevice {
         private:
-            UsbDeviceServiceHandle service;
+            UsbDeviceService *service;
             
         public:
-            UsbDevice(UsbDeviceServiceHandle service);
+            UsbDevice(UsbDeviceService *service);
             virtual ~UsbDevice();
             virtual void initialize() = 0;
             virtual void process() = 0;
@@ -49,7 +47,7 @@ namespace eos {
     
     class UsbDeviceCDC: public UsbDevice {
         public:
-            UsbDeviceCDC(UsbDeviceServiceHandle service);
+            UsbDeviceCDC(UsbDeviceService *service);
             void initialize();
             void process();
     };

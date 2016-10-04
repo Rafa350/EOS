@@ -1,3 +1,4 @@
+#include "eos.hpp"
 #include "Services/Usb/eosUsbDevice.hpp"
 #include "HAL/halUSBDevice.h"
 
@@ -13,7 +14,7 @@ extern "C" void APP_Tasks(void);
 /// \brief Contructor.
 /// \param service: El servei al que pertany.
 ///
-UsbDeviceCDC::UsbDeviceCDC(UsbDeviceServiceHandle service):
+UsbDeviceCDC::UsbDeviceCDC(UsbDeviceService *service):
     UsbDevice(service) {
 }
 

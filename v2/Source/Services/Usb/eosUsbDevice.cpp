@@ -7,22 +7,25 @@
 using namespace eos;
 
 
-const unsigned taskStackSize = 512;
-const TaskPriority taskPriority = TaskPriority::normal;
+static const char *serviceName = "UsbDeviceService";
+static const unsigned taskStackSize = 512;
+static const TaskPriority taskPriority = TaskPriority::normal;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Contructor
 ///
-UsbDeviceService::UsbDeviceService():
-    task(taskStackSize, taskPriority, this) {
+UsbDeviceService::UsbDeviceService(
+    Application *application):
+    Service(application, serviceName, taskStackSize, taskPriority) {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa les tasques del servei
 ///
-void UsbDeviceService::run() {
+void UsbDeviceService::run(
+    Task *task) {
     
     UsbDeviceListIterator iterator(devices);
 
@@ -45,7 +48,7 @@ void UsbDeviceService::run() {
 /// \param device: El dispositiu a afeigir
 ///
 void UsbDeviceService::add(
-    UsbDeviceHandle device) {
+    UsbDevice *device) {
 
     devices.add(device);
     device->service = this;
@@ -57,11 +60,10 @@ void UsbDeviceService::add(
 /// \param device: El dispositiu a eliminar,
 ///
 void UsbDeviceService::remove(
-    UsbDeviceHandle device) {
+    UsbDevice *device) {
 
     device->service = nullptr;
-    devices.remove(devices.indexOf(device));
-    
+    devices.remove(devices.indexOf(device));    
 }
 
 
@@ -70,7 +72,7 @@ void UsbDeviceService::remove(
 /// \param service: El servei al que pertany.
 ///
 UsbDevice::UsbDevice(
-    UsbDeviceServiceHandle _service):
+    UsbDeviceService *_service):
     service(nullptr) {
     
     if (_service != nullptr)

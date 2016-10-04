@@ -10,6 +10,9 @@ using namespace eos;
 
 class MyAppLoopService: public AppLoopService {
    
+    public:
+        MyAppLoopService(Application *application): AppLoopService(application) {}
+        
     protected:
         void setup();
         void loop();
@@ -19,8 +22,8 @@ class MyAppLoopService: public AppLoopService {
 class MyApplication: public Application {
     private:
         MyAppLoopService *appService;
-        UsbDeviceServiceHandle usbService;
-        UsbDeviceHandle usbCDCDevice;
+        UsbDeviceService *usbService;
+        UsbDevice *usbCDCDevice;
         
     public :
         MyApplication();
@@ -32,9 +35,9 @@ class MyApplication: public Application {
 ///
 MyApplication::MyApplication() {
     
-    appService = new MyAppLoopService();    
+    appService = new MyAppLoopService(this);    
 
-    usbService = new UsbDeviceService();    
+    usbService = new UsbDeviceService(this);    
     usbCDCDevice = new UsbDeviceCDC(usbService);
 }
 
