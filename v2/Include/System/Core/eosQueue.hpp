@@ -16,6 +16,7 @@ namespace eos {
         public:
             virtual ~GenericQueue();
             void clear();
+            
         protected:
             GenericQueue(unsigned size, unsigned capacity);                   
             bool genericPut(const void *element, unsigned blockTime);

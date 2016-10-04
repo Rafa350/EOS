@@ -1,3 +1,4 @@
+#include "eos.hpp"
 #include "System/Core/eosHeapAllocator.hpp"
 
 

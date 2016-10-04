@@ -2,6 +2,7 @@
 // Fast Efficient Fixed-Size Memory Pool: No Loops and No Overhead
 // Ben Kenwright - School of Computer Science - Newcastle University
 
+#include "eos.hpp"
 #include "System/Core/eosPoolAllocator.hpp"
 #include "System/Core/eosTask.hpp"
 
@@ -32,8 +33,7 @@ GenericPoolAllocator::GenericPoolAllocator(
     if (blockSize < sizeof(unsigned))
         blockSize = sizeof(unsigned);
         
-    startBlocks = new uint8_t[blockSize * maxBlocks];
-    nextBlock = startBlocks;
+    blocks = nextBlock = new uint8_t[blockSize * maxBlocks];
 }
 
 
@@ -42,7 +42,7 @@ GenericPoolAllocator::GenericPoolAllocator(
 ///
 GenericPoolAllocator::~GenericPoolAllocator() {
     
-    delete[] startBlocks;
+    delete[] blocks;
 }
 
 
@@ -121,7 +121,7 @@ void GenericPoolAllocator::deallocate(
 uint8_t *GenericPoolAllocator::addrFromIndex(
     unsigned i) const {
     
-    return startBlocks + (blockSize * i);
+    return blocks + (blockSize * i);
 }
 
 
@@ -133,5 +133,5 @@ uint8_t *GenericPoolAllocator::addrFromIndex(
 unsigned GenericPoolAllocator::indexFromAddr(
     const uint8_t *p) const {
     
-    return (p - startBlocks) / blockSize;
+    return (p - blocks) / blockSize;
 }

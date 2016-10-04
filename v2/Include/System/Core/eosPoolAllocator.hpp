@@ -2,6 +2,7 @@
 #define	__EOS_POOLALLOCATPR_HPP
 
 
+#include "eos.hpp"
 #include "System/Core/eosAllocator.hpp"
 
 
@@ -9,7 +10,7 @@ namespace eos {
        
     class GenericPoolAllocator: IAllocator {
         private:
-            uint8_t *startBlocks;
+            uint8_t *blocks;
             uint8_t *nextBlock;
             unsigned blockSize;
             unsigned maxBlocks;
@@ -17,7 +18,7 @@ namespace eos {
             unsigned initializedBlocks;
             
         public:
-            GenericPoolAllocator(unsigned blocktSize, unsigned maxBlocks);
+            GenericPoolAllocator(unsigned blockSize, unsigned maxBlocks);
             ~GenericPoolAllocator();
             
             void *allocate(size_t size);

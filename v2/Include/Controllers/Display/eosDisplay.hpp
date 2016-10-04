@@ -1,5 +1,5 @@
-#ifndef __EOS_CONTROLLERS_DISPLAY_DISPLAY_HPP
-#define	__EOS_CONTROLLERS_DISPLAY_DISPLAY_HPP
+#ifndef __EOS_DISPLAY_HPP
+#define	__EOS_DISPLAY_HPP
 
 
 #include "eos.hpp"

@@ -1,4 +1,6 @@
+#include "eos.hpp"
 #include "System/Core/eosHeapAllocator.hpp"
+
 #include "FreeRTOS.h"
 
 

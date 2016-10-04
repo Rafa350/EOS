@@ -1,5 +1,5 @@
-#ifndef __EOS_CONTROLLERS_DISPLAY_COLORS_HPP
-#define __EOS_CONTROLLERS_DISPLAY_COLORS_HPP
+#ifndef __EOS_COLORS_HPP
+#define __EOS_COLORS_HPP
 
 
 // Basic colors

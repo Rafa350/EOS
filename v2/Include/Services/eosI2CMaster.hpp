@@ -1,5 +1,5 @@
-#ifndef __EOS_SERVICES_I2CMASTER_HPP
-#define __EOS_SERVICES_I2CMASTER_HPP
+#ifndef __EOS_I2CMASTER_HPP
+#define __EOS_I2CMASTER_HPP
 
 
 #include "eos.hpp"

@@ -1,4 +1,6 @@
+#include "eos.hpp"
 #include "System/Core/eosTask.hpp"
+
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -80,6 +82,10 @@ void Task::delay(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Retarda la tasca actual un numero determinat de ticks.
+/// \param time: El numero de ticks a retardar.
+///
 void Task::delayUntil(
     unsigned time, 
     unsigned *lastTick) {
@@ -90,7 +96,7 @@ void Task::delayUntil(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Espeta una notificacio interna de la tasca.
+/// \brief Espera una notificacio interna de la tasca.
 /// \param blockTime: Temps maxim de bloqueig.
 /// \return True si hi ha notificacio, false en cas contrari.
 ///

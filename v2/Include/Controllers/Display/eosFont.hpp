@@ -1,5 +1,5 @@
-#ifndef __EOS_CONTROLLERS_DISPLAY_FONT_HPP
-#define __EOS_CONTROLLERS_DISPLAY_FONT_HPP
+#ifndef __EOS_FONT_HPP
+#define __EOS_FONT_HPP
 
 
 #include "eos.hpp"

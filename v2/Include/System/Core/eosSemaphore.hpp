@@ -10,7 +10,7 @@ namespace eos {
     class BinarySemaphore {
         private:
             void *handle;
-
+            
         public:
             BinarySemaphore();
             ~BinarySemaphore();

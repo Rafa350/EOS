@@ -3,7 +3,7 @@
 
 
 #include "eos.hpp"
-#include "eosAllocator.hpp"
+#include "System/Core/eosAllocator.hpp"
 
 
 namespace eos {

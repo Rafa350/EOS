@@ -1,4 +1,6 @@
+#include "eos.hpp"
 #include "System/Core/eosTimer.hpp"
+
 #include "FreeRTOS.h"
 #include "timers.h"
 
@@ -85,3 +87,4 @@ void Timer::timerCallback(
     if (timer->evTimeout != nullptr)
         timer->evTimeout->execute(timer);
 }
+
