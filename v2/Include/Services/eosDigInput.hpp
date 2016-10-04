@@ -1,49 +1,48 @@
-#ifndef __EOS_SERVICES_DIGINPUT_HPP
-#define	__EOS_SERVICES_DIGINPUT_HPP
+#ifndef __EOS_DIGINPUT_HPP
+#define	__EOS_DIGINPUT_HPP
 
 
 #include "eos.hpp"
-#include "System/Core/eosTask.hpp"
 #include "System/Core/eosCallbacks.hpp"
 #include "System/Collections/eosList.hpp"
+#include "Services/eosService.hpp"
 
 
 namespace eos {
     
-    class DigInput;
-    typedef DigInput *DigInputHandle;
     
-    class DigInputService;
-    typedef DigInputService *DigInputServiceHandle;
+    class Application;
+    class Task;
+    class DigInput;
+    
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
-    class DigInputService: private IRunable {        
+    class DigInputService: Public Service {        
         private:
-            typedef List<DigInputHandle> DigInputList;
-            typedef ListIterator<DigInputHandle> DigInputListIterator;
+            typedef List<DigInput*> DigInputList;
+            typedef ListIterator<DigInput*> DigInputListIterator;
             
         private:
-            Task task;
             DigInputList inputs;
             
         public:
-            DigInputService();
-            void add(DigInputHandle input);
-            void remove(DigInputHandle input);
+            DigInputService(Application *application);
+            void add(DigInput *input);
+            void remove(DigInput *input);
             
         private:
-            void run();           
+            void run(Task *task);           
     };
 
     /// \brief Clase que impementa una entrada digital
     ///
     class DigInput {
         private:
-            typedef ICallbackP1<DigInputHandle> IDigInputEvent;
+            typedef ICallbackP1<DigInput*> IDigInputEvent;
             
         private:
-            DigInputServiceHandle service;
+            DigInputService *service;
             uint8_t pin;
             uint32_t pattern;
             bool inverted;
@@ -51,7 +50,7 @@ namespace eos {
             IDigInputEvent *evChange;
         
         public:
-            DigInput(DigInputServiceHandle service, uint8_t pin, bool inverted);
+            DigInput(DigInputService *service, uint8_t pin, bool inverted);
             ~DigInput();
             
             /// \brief Obte l'estat actual de la entrada.
@@ -64,16 +63,15 @@ namespace eos {
             /// \param method: El metode
             ///
             template <class cls> 
-            void setChangeEvent(cls *instance, void (cls::*method)(DigInputHandle input)) {
-                
-                evChange = new CallbackP1<cls, DigInputHandle>(instance, method);
+            void setChangeEvent(cls *instance, void (cls::*method)(DigInput *input)) {                
+                evChange = new CallbackP1<cls, DigInput*>(instance, method);
             }
             
         private:
             bool pinGet() const;
         
-        friend void DigInputService::add(DigInputHandle input);
-        friend void DigInputService::remove(DigInputHandle input);
+        friend void DigInputService::add(DigInput *input);
+        friend void DigInputService::remove(DigInput *input);
     };
 
 }

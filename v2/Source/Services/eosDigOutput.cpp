@@ -1,4 +1,4 @@
-#include "System/Core/eosTask.hpp"
+#include "eos.hpp"
 #include "System/Core/eosQueue.hpp"
 #include "Services/eosDigOutput.hpp"
 #include "HAL/halGPIO.h"
@@ -7,16 +7,20 @@
 using namespace eos;
 
 
-const unsigned taskStackSize = 512;
-const unsigned commandQueueSize = 10;
-const TaskPriority taskPriority = TaskPriority::normal;
+static const char *serviceName = "DigOutputService";
+static const unsigned taskStackSize = 512;
+static const unsigned commandQueueSize = 10;
+static const TaskPriority taskPriority = TaskPriority::normal;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
+/// \param application: L'aplicacio a la que pertany.
 ///
-DigOutputService::DigOutputService() :
-    task(taskStackSize, taskPriority, this),
+DigOutputService::DigOutputService(
+    Application *application) :
+    
+    Service(application, serviceName, taskStackSize, taskPriority),
     commandQueue(commandQueueSize) {
 }
 
@@ -26,9 +30,9 @@ DigOutputService::DigOutputService() :
 /// \param output: La sortida a afeigir.
 ///
 void DigOutputService::add(
-    DigOutputHandle output) {
+    DigOutput *output) {
     
-    if (output != nullptr) {
+    if ((output != nullptr) && (output->service == nullptr)) {
         outputs.add(output);
         output->service = this;
     }
@@ -40,9 +44,9 @@ void DigOutputService::add(
 /// \param output: La sortida a eliminar.
 ///
 void DigOutputService::remove(
-    DigOutputHandle output) {
+    DigOutput *output) {
     
-    if (output->service == this) {
+    if ((output != nullptr) && (output->service == this)) {
         output->service = nullptr;
         outputs.remove(outputs.indexOf(output));
     }
@@ -51,8 +55,10 @@ void DigOutputService::remove(
 
 /// ----------------------------------------------------------------------
 /// \brief Executa la tasca de control de servei.
+/// \param task: La tasca que s'esta executant.
 ///
-void DigOutputService::run() {
+void DigOutputService::run(
+    Task *task) {
     
     while (true) {
         
@@ -85,7 +91,7 @@ void DigOutputService::run() {
 /// \param  output: La sortida.
 ///
  void DigOutputService::doClearAction(
-    DigOutputHandle output) {
+    DigOutput *output) {
     
     Task::enterCriticalSection();
 
@@ -105,7 +111,7 @@ void DigOutputService::run() {
 /// \param output: La sortida.
 ///
  void DigOutputService::doSetAction(
-    DigOutputHandle output) {
+    DigOutput *output) {
 
     Task::enterCriticalSection();
 
@@ -125,7 +131,7 @@ void DigOutputService::run() {
 /// \param output: La sortida.
 ///
 void DigOutputService::doToggleAction(
-    DigOutputHandle output) {
+    DigOutput *output) {
 
     Task::enterCriticalSection();
 
@@ -146,7 +152,7 @@ void DigOutputService::doToggleAction(
 /// \param time: La durada del puls.
 ///
 void DigOutputService::doPulseAction(
-    DigOutputHandle output, 
+    DigOutput *output, 
     unsigned time) {
 
     Task::enterCriticalSection();
@@ -177,9 +183,9 @@ void DigOutputService::doPulseAction(
 /// \param timer: El temporitzador.
 ///
 void DigOutputService::onTimeout(
-    TimerHandle timer) {
+    Timer *timer) {
     
-    DigOutputHandle output = (DigOutputHandle) timer->getTag();
+    DigOutput *output = (DigOutput*) timer->getTag();
     halGPIOPinToggleState(output->pin);
 }
 
@@ -190,7 +196,7 @@ void DigOutputService::onTimeout(
 /// \param state: L'estat a asignar.
 ///
 void DigOutputService::set(
-    DigOutputHandle output,
+    DigOutput *output,
     bool state) {
     
     if (output->get() != state) {
@@ -207,7 +213,7 @@ void DigOutputService::set(
 /// \param output: La sortida.
 ///
 void DigOutputService::toggle(
-    DigOutputHandle output) {
+    DigOutput *output) {
 
     Command command;
     command.action = Action::toggle;
@@ -222,7 +228,7 @@ void DigOutputService::toggle(
 /// \param time: La durada del puls.
 ///
 void DigOutputService::pulse(
-    DigOutputHandle output,
+    DigOutput *output,
     unsigned time) {
     
     Command command;
@@ -240,7 +246,7 @@ void DigOutputService::pulse(
 /// \param inverted: True si treballa amb logica negativa.
 ///
 DigOutput::DigOutput(
-    DigOutputServiceHandle _service,
+    DigOutputService *_service,
     uint8_t _pin,
     bool _inverted):
     service(nullptr),

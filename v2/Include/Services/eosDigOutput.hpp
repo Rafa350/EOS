@@ -1,26 +1,24 @@
-#ifndef __EOS_SERVICES_DIGOUTPUT_HPP
-#define	__EOS_SERVICES_DIGOUTPUT_HPP
+#ifndef __EOS_DIGOUTPUT_HPP
+#define	__EOS_DIGOUTPUT_HPP
 
 
 #include "eos.hpp"
-#include "System/Core/eosTask.hpp"
-#include "System/Core/eosTimer.hpp"
 #include "System/Core/eosQueue.hpp"
 #include "System/Collections/eosList.hpp"
+#include "Services/eosService.hpp"
 
 
 
 namespace eos {
-    
+
+    class Application;
+    class Task;
+    class Timer;
     class DigOutput;
-    typedef DigOutput *DigOutputHandle;
-    
-    class DigOutputService;
-    typedef DigOutputService *DigOutputServiceHandle;
     
     /// \brief Clase que implemenmta el servei de gestio de sortides digitals.
     ///
-    class DigOutputService: private IRunable {
+    class DigOutputService: public Service {
         private:
             enum class Action {
                 set,
@@ -30,47 +28,46 @@ namespace eos {
             };
             struct Command {
                 Action action;
-                DigOutputHandle output;
+                DigOutput *output;
                 unsigned delay;
                 unsigned time;
             };
             typedef Queue<Command> CommandQueue;
-            typedef List<DigOutputHandle> DigOutputList;
-            typedef ListIterator<DigOutputHandle> DigOutputListIterator;
+            typedef List<DigOutput*> DigOutputList;
+            typedef ListIterator<DigOutput*> DigOutputListIterator;
             
         private:
-            Task task;
             DigOutputList outputs;     
             CommandQueue commandQueue;
             
         public:
-            DigOutputService();
-            void add(DigOutputHandle output);
-            void remove(DigOutputHandle output);
-            void set(DigOutputHandle output, bool state);
-            void toggle(DigOutputHandle output);
-            void pulse(DigOutputHandle output, unsigned time);
+            DigOutputService(Application *application);
+            void add(DigOutput *output);
+            void remove(DigOutput *output);
+            void set(DigOutput *output, bool state);
+            void toggle(DigOutput *output);
+            void pulse(DigOutput *output, unsigned time);
             
         private:
-            void run();
+            void run(Task *task);
             void onTimeout(TimerHandle timer);
-            void doClearAction(DigOutputHandle output);
-            void doSetAction(DigOutputHandle output);
-            void doToggleAction(DigOutputHandle output);
-            void doPulseAction(DigOutputHandle output, unsigned time);
+            void doClearAction(DigOutput *output);
+            void doSetAction(DigOutput *output);
+            void doToggleAction(DigOutput *output);
+            void doPulseAction(DigOutput *output, unsigned time);
     };
     
     /// \brief Clase que implementa una sortida digital.
     ///
     class DigOutput {        
         private:
-            DigOutputServiceHandle service;
-            TimerHandle timer;
+            DigOutputService *service;
+            Timer *timer;
             uint8_t pin;
             bool inverted;
         
         public:
-            DigOutput(DigOutputServiceHandle service, uint8_t pin, bool inverted);
+            DigOutput(DigOutputService *service, uint8_t pin, bool inverted);
             ~DigOutput();
             bool get() const;
             

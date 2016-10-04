@@ -1,4 +1,4 @@
-#include "System/Core/eosTask.hpp"
+#include "eos.hpp"
 #include "Services/eosDigInput.hpp"
 #include "HAL/halGPIO.h"
 
@@ -6,8 +6,9 @@
 using namespace eos;
 
 
-const unsigned taskStackSize = 512;
-const TaskPriority taskPriority = TaskPriority::normal;
+static const char *serviceName = "DigInputService";
+static const unsigned taskStackSize = 512;
+static const TaskPriority taskPriority = TaskPriority::normal;
 
 
 #define PATTERN_ON       0x0000007F
@@ -17,9 +18,11 @@ const TaskPriority taskPriority = TaskPriority::normal;
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
+/// \param application: L'aplicacio a la que pertany
 ///
-DigInputService::DigInputService() :
-    task(taskStackSize, taskPriority, this) {
+DigInputService::DigInputService(
+    Application *application) :
+    Service(application, serviceName, taskStackSize, taskPriority) {
 }
 
 
@@ -28,10 +31,12 @@ DigInputService::DigInputService() :
 /// \param input: L'entrada a afeigir.
 ///
 void DigInputService::add(
-    DigInputHandle input) {
+    DigInput *input) {
 
-    inputs.add(input);
-    input->service = this;
+    if ((input != nullptr) && (input->service == nullptr)) {
+        inputs.add(input);
+        input->service = this;
+    }
 }
 
 
@@ -39,17 +44,21 @@ void DigInputService::add(
 /// \brieg Elimina una entrada del servei.
 /// \param La entrada a eliminar.
 void DigInputService::remove(
-    DigInputHandle input) {
+    DigInput *input) {
     
-    input->service = nullptr;
-    inputs.remove(inputs.indexOf(input));
+    if ((input != nullptr) && (input->service == this)) {
+        input->service = nullptr;
+        inputs.remove(inputs.indexOf(input));
+    }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Tasca de control del servei.
+/// \param task: La tasca que s'esta executant.
 ///
-void DigInputService::run() {
+void DigInputService::run(
+    Task *task) {
     
     unsigned tc = Task::getTickCount();
 
@@ -60,7 +69,7 @@ void DigInputService::run() {
         DigInputListIterator iterator(inputs);
         while (iterator.hasNext()) {
             
-            DigInputHandle input = iterator.current();
+            DigInput *input = iterator.current();
             bool changed = false;
             
             input->pattern <<= 1;
@@ -92,7 +101,7 @@ void DigInputService::run() {
 /// \param inverted: Indica si la senyal va invertida.
 ///
 DigInput::DigInput(
-    DigInputServiceHandle _service,
+    DigInputService *_service,
     uint8_t _pin, 
     bool _inverted):
     service(nullptr),
