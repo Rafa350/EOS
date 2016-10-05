@@ -123,8 +123,8 @@ static void delay(unsigned ms);
 ///
 ILI9341_Driver::ILI9341_Driver() {
 
-    xScreenSize = MAX_COLUMNS;
-    yScreenSize = MAX_ROWS;    
+    screenWidth = MAX_COLUMNS;
+    screenHeight = MAX_ROWS;    
 }
 
 
@@ -217,26 +217,26 @@ void ILI9341_Driver::setOrientation(
     
     switch (orientation) {
         case Orientation::normal:
-            xScreenSize = MAX_COLUMNS;
-            yScreenSize = MAX_ROWS;
+            screenWidth = MAX_COLUMNS;
+            screenHeight = MAX_ROWS;
             data = 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF;
             break;
             
         case Orientation::rotate90:
-            xScreenSize = MAX_ROWS;
-            yScreenSize = MAX_COLUMNS;
+            screenWidth = MAX_ROWS;
+            screenHeight = MAX_COLUMNS;
             data = 0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_OFF;
             break;
             
         case Orientation::rotate180:
-            xScreenSize = MAX_COLUMNS;
-            yScreenSize = MAX_ROWS;
+            screenWidth = MAX_COLUMNS;
+            screenHeight = MAX_ROWS;
             data = 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_ON;
             break;
             
         case Orientation::rotate270:            
-            xScreenSize = MAX_ROWS;
-            yScreenSize = MAX_COLUMNS;
+            screenWidth = MAX_ROWS;
+            screenHeight = MAX_COLUMNS;
             data = 0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_ON;
             break;
     }
@@ -255,31 +255,31 @@ void ILI9341_Driver::setOrientation(
 void ILI9341_Driver::clear(
     Color color) {
     
-    selectRegion(0, 0, xScreenSize, yScreenSize);
+    selectRegion(0, 0, screenWidth, screenHeight);
     startMemoryWrite();
-    writePixel(color, xScreenSize * yScreenSize);
+    writePixel(color, screenWidth * screenHeight);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un pixel.
-/// \param xPos: Coordinada X.
-/// \param yPos: Coordinada Y.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
 /// \param color: Color del pixel.
 ///
 void ILI9341_Driver::setPixel(
-    int16_t xPos, 
-    int16_t yPos,
+    int16_t x, 
+    int16_t y,
     Color color) {
     
     // Comprova si es visible
     //
-    if ((xPos >= 0) && (xPos < xScreenSize) && 
-        (yPos >= 0) && (yPos < yScreenSize)) {
+    if ((x >= 0) && (x < screenWidth) && 
+        (y >= 0) && (y < screenHeight)) {
       
         // Dibuixa el pixel
         //
-        selectRegion(xPos, yPos, 1, 1);
+        selectRegion(x, y, 1, 1);
         startMemoryWrite();
         writePixel(color, 1);    
     }
@@ -288,31 +288,31 @@ void ILI9341_Driver::setPixel(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa una linia de pixels horitzontals.
-/// \param xPos: Coordinada X.
-/// \param yPos: Colordinada Y.
+/// \param x: Coordinada X.
+/// \param y: Colordinada Y.
 /// \param size: Tamany de la serie.
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setHPixels(
-    int16_t xPos, 
-    int16_t yPos, 
+    int16_t x, 
+    int16_t y, 
     int16_t size,
     Color color) {
     
     // Comprova si es visible
     //
-    if ((yPos >= 0) && (yPos < yScreenSize)) {
+    if ((y >= 0) && (y < screenHeight)) {
       
         // Retalla els extrems de la linia
         //
-        if (xPos < 0)
-            xPos = 0;
-        if (xPos + size >= xScreenSize)
-            size = xScreenSize - xPos;
+        if (x < 0)
+            x = 0;
+        if (x + size >= screenWidth)
+            size = screenWidth - x;
         
         // Dibuiza la linia
         //
-        selectRegion(xPos, yPos, size, 1);
+        selectRegion(x, y, size, 1);
         startMemoryWrite();
         writePixel(color, size);
     }
@@ -321,31 +321,31 @@ void ILI9341_Driver::setHPixels(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa una linia de pixels en vertical.
-/// \param xPos: Coordinada X.
-/// \param yPos: Coordinada Y.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
 /// \param size: Tamany de la serie.
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setVPixels(
-    int16_t xPos, 
-    int16_t yPos, 
+    int16_t x, 
+    int16_t y, 
     int16_t size,
     Color color) {
     
     // Comprova si es visible
     //
-    if ((xPos >= 0) && (xPos < xScreenSize)) {
+    if ((x >= 0) && (x < screenWidth)) {
       
         // Retalla els extrems de la linia
         //
-        if (yPos < 0)
-            yPos = 0;
-        if (yPos + size >= yScreenSize)
-            size = yScreenSize - yPos;
+        if (y < 0)
+            y = 0;
+        if (y + size >= screenHeight)
+            size = screenHeight - y;
         
         // Dibuixa la linia
         //
-        selectRegion(xPos, yPos, 1, size);
+        selectRegion(x, y, 1, size);
         startMemoryWrite();
         writePixel(color, size);
     }
@@ -354,86 +354,86 @@ void ILI9341_Driver::setVPixels(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa una regio rectangular de pixels.
-/// \param xPos: Posicio X.
-/// \param yPos: Posicio Y.
-/// \param xSize: Amplada de la regio.
-/// \param ySize: Alçada de la regio.
+/// \param x: Posicio X.
+/// \param y: Posicio Y.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setPixels(
-    int16_t xPos, 
-    int16_t yPos, 
-    int16_t xSize, 
-    int16_t ySize, 
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height, 
     Color color) {
     
     // Comprova si es visible
     //
-    if ((xPos >= 0) && (xPos + xSize < xScreenSize) &&
-        (yPos >= 0) && (yPos + ySize < yScreenSize)) {
+    if ((x >= 0) && (x + width < screenWidth) &&
+        (y >= 0) && (y + height < screenHeight)) {
   
         // Retalla la regio
         //
-        if (xPos < 0)
-            xPos = 0;
-        if (yPos < 0)
-            yPos = 0;
+        if (x < 0)
+            x = 0;
+        if (y < 0)
+            y = 0;
      
         // Dibuixa la regio
         //
-        selectRegion(xPos, yPos, xSize, ySize);
+        selectRegion(x, y, width, height);
         startMemoryWrite();
-        writePixel(color, xSize * ySize);
+        writePixel(color, width * height);
     }    
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa una regio rectangular de pixels.
-/// \param xPos: Posicio X.
-/// \param yPos: Posicio Y.
-/// \param xSize: Amplada de la regio.
-/// \param ySize: Alçada de la regio.
+/// \param x: Posicio X.
+/// \param y: Posicio Y.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
 /// \param colors: Color dels pixels.
 ///
 void ILI9341_Driver::writePixels(
-    int16_t xPos, 
-    int16_t yPos, 
-    int16_t xSize, 
-    int16_t ySize, 
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height, 
     const Color* colors) {
     
-    if ((xPos >= 0) && (xPos + xSize < xScreenSize) &&
-        (yPos >= 0) && (yPos + ySize < yScreenSize)) {
+    if ((x >= 0) && (x + width < screenWidth) &&
+        (y >= 0) && (y + height < screenHeight)) {
      
-        selectRegion(xPos, yPos, xSize, ySize);
+        selectRegion(x, y, width, width);
         startMemoryWrite();
-        writePixel(colors, xSize * ySize);
+        writePixel(colors, width * height);
     }    
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Llegeix una regio rectangular de pixels.
-/// \param xPos: Posicio X.
-/// \param yPos: Posicio Y.
-/// \param xSize: Amplada de la regio.
-/// \param ySize: Alçada de la regio.
+/// \param x: Posicio X.
+/// \param y: Posicio Y.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
 /// \params colors: Buffer on deixar els pixels.
 ///
 void ILI9341_Driver::readPixels(
-    int16_t xPos, 
-    int16_t yPos, 
-    int16_t xSize, 
-    int16_t ySize, 
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height, 
     Color *colors) {
     
-    if ((xPos >= 0) && (xPos + xSize < xScreenSize) &&
-        (yPos >= 0) && (yPos + ySize < yScreenSize)) {
+    if ((x >= 0) && (x + width < screenWidth) &&
+        (y >= 0) && (y + height < screenHeight)) {
     
-        selectRegion(xPos, yPos, xSize, ySize);
+        selectRegion(x, y, width, height);
         startMemoryRead();
-        readPixel(colors, xSize * ySize);
+        readPixel(colors, width * height);
     }
 }
 
@@ -443,26 +443,26 @@ void ILI9341_Driver::readPixels(
 ///
 void ILI9341_Driver::vScroll(
     int16_t delta, 
-    int16_t xPos, 
-    int16_t yPos, 
-    int16_t xSize, 
-    int16_t ySize) {
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height) {
     
     static Color buffer[MAX_COLUMNS];
     
-    if ((delta != 0) && (xSize > 0) && (ySize > 0)) {
+    if ((delta != 0) && (width > 0) && (height > 0)) {
         
         if (delta > 0) {
 
-            for (int i = yPos; i < ySize - yPos - delta; i++) {
+            for (int i = y; i < height - y - delta; i++) {
 
-                selectRegion(xPos, i + delta, xSize, 1);
+                selectRegion(x, i + delta, width, 1);
                 startMemoryRead();
-                readPixel(buffer, xSize);
+                readPixel(buffer, width);
 
-                selectRegion(xPos, i, xSize, 1);
+                selectRegion(x, i, width, 1);
                 startMemoryWrite();
-                writePixel(buffer, xSize);
+                writePixel(buffer, width);
             }
         }
         
@@ -479,10 +479,10 @@ void ILI9341_Driver::vScroll(
 ///
 void ILI9341_Driver::hScroll(
     int16_t delta, 
-    int16_t xPos, 
-    int16_t yPos, 
-    int16_t xSize, 
-    int16_t ySize) {
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height) {
    
 }
 
@@ -550,7 +550,8 @@ void ILI9341_Driver::startMemoryRead() {
 /// \brief Retard.
 /// \params ms: Temps de retard en ms.
 ///
-static void delay(unsigned ms) {
+static void delay(
+    unsigned ms) {
     
 /*    unsigned startTime = ReadCT();
     while (((ReadCT() - startTime) * 1000) < ms)

@@ -14,11 +14,21 @@ namespace eos {
     
     typedef uint16_t ItemId;
     
+    struct DrawItemEventParams {
+        ItemId itemId;
+        const char *title;
+        FormsDisplay *display;
+        int16_t x;
+        int16_t y;
+        int16_t width;
+        int16_t height;
+    };
+    
     class MenuForm: public Form {
         private:
             typedef ICallbackP2<MenuForm*, ItemId> ISelectItemEvent;
             typedef ICallbackP2<MenuForm*, ItemId> IClickItemEvent;
-            typedef ICallbackP2<MenuForm*, ItemId> IDrawItemEvent;
+            typedef ICallbackP2<MenuForm*, DrawItemEventParams*> IDrawItemEvent;
             struct MenuInfo {               // Informacio d'un menu
                 unsigned offset;            // -Offset al menu
                 unsigned numItems;          // -Numero de items
@@ -59,15 +69,16 @@ namespace eos {
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setDrawItemEvent(cls *instance, void (cls::*method)(MenuForm*, ItemId)) {                 
-                evDrawItem = new CallbackP2<cls, MenuForm*, ItemId>(instance, method); 
+            void setDrawItemEvent(cls *instance, void (cls::*method)(MenuForm*, DrawItemEventParams*)) {                 
+                evDrawItem = new CallbackP2<cls, MenuForm*, DrawItemEventParams*>(instance, method); 
             }
 
         protected:
             ~MenuForm();
             virtual void onSelectItem(ItemId itemId);
             virtual void onClickItem(ItemId itemId);
-            virtual void onDrawItem(ItemId itemId);
+            virtual void onDrawItem(ItemId itemId, const char *title, 
+                FormsDisplay *display, int16_t x, int16_t y, int16_t w, int16_t h);
             void onPaint(FormsDisplay *display);    
 #ifdef eosFormsService_UseSelector            
             void onSelectorMove(SelectorPosition position, SelectorDirection direction);

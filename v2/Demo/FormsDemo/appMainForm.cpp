@@ -114,7 +114,7 @@ void MainForm::menuClickItemHandler(
 
 void MainForm::menuDrawItemHandler(
     MenuForm *menuForm,
-    ItemId itemId) {
+    DrawItemEventParams *params) {
     
 }
 

@@ -16,8 +16,8 @@ Display::Display(
     IDisplayDriver *_driver):
     driver(_driver),
     color(0),
-    xCursor(0),
-    yCursor(0),
+    cursorX(0),
+    cursorY(0),
     ttyState(0),
     font(nullptr) {
     
@@ -69,24 +69,24 @@ Font *Display::setFont(
 
 /// ----------------------------------------------------------------------
 /// \bried Selecciona la regio de retall.
-/// \param xPos: Coordinada X esquerra.
-/// \param yPos: Coodinada Y superior.
-/// \param xSize: Coordinada X dreta.
-/// \param ySize: Coordinada Y inferior.
+/// \param x1: Coordinada X esquerra.
+/// \param y1: Coodinada Y superior.
+/// \param x2: Coordinada X dreta.
+/// \param y2: Coordinada Y inferior.
 ///
 void Display::setClip(
-    int16_t xPos, 
-    int16_t yPos, 
-    int16_t xSize, 
-    int16_t ySize) {
+    int16_t x1, 
+    int16_t y1, 
+    int16_t x2, 
+    int16_t y2) {
     
-    int16_t xScreenSize = driver->getXSize();
-    int16_t yScreenSize = driver->getYSize();
+    int16_t screenWidth = driver->getWidth();
+    int16_t screenHeight = driver->getHeight();
     
-    xClipPos = xPos < 0 ? 0 : xPos;
-    yClipPos = yPos < 0 ? 0 : yPos;
-    xClipSize = xSize > xScreenSize ? xScreenSize : xSize;
-    yClipSize = ySize > yScreenSize ? yScreenSize : ySize;
+    clipX1 = x1 < 0 ? 0 : x1;
+    clipY1 = y1 < 0 ? 0 : y1;
+    clipX2 = x2 >= screenWidth ? screenWidth - 1 : x2;
+    clipY2 = y2 >= screenHeight ? screenHeight - 1 : y2;
 }
 
 
@@ -95,10 +95,10 @@ void Display::setClip(
 ///
 void Display::resetClip() {
     
-    xClipPos = 0;
-    yClipPos = 0;
-    xClipSize = driver->getXSize();
-    yClipSize = driver->getYSize();   
+    clipX1 = 0;
+    clipY1 = 0;
+    clipX2 = driver->getWidth() - 1;
+    clipY2 = driver->getHeight() - 1;   
 }
 
 
@@ -110,8 +110,8 @@ void Display::clear(
     Color color) {
 
     driver->clear(color);
-    xCursor = 0;
-    yCursor = 0;
+    cursorX = 0;
+    cursorY = 0;
 }
 
 
@@ -132,8 +132,8 @@ void Display::moveTo(
     int16_t x, 
     int16_t y) {
     
-    xCursor = x;
-    yCursor = y;
+    cursorX = x;
+    cursorY = y;
 }
 
 
@@ -147,9 +147,9 @@ void Display::lineTo(
     int16_t x,
     int16_t y) {
     
-    drawLine(xCursor, yCursor, x, y);
-    xCursor = x;
-    yCursor = y;
+    drawLine(cursorX, cursorY, x, y);
+    cursorX = x;
+    cursorY = y;
 }
 
 
@@ -494,34 +494,34 @@ void Display::putTTY(
             
                 case (char)0xFD:
                     home();
-                    xCursor = 0;
-                    yCursor = 0;
+                    cursorX = 0;
+                    cursorY = 0;
                     break;
 
                 case '\r':
-                    xCursor = 0;
+                    cursorX = 0;
                     break;
 
                 case '\n':
-                    xCursor = 0;
-                    yCursor += fi.height;
-                    if (yCursor >= driver->getYSize())
-                        yCursor = 0;
+                    cursorX = 0;
+                    cursorY += fi.height;
+                    if (cursorY >= driver->getHeight())
+                        cursorY = 0;
                     break;
             
                 default: {
                     CharInfo ci;
                     font->getCharInfo(c, ci);
-                    if ((xCursor + ci.advance) >= driver->getXSize()) {
-                        xCursor = 0;
-                        yCursor += fi.height;
-                        if (yCursor >= driver->getXSize()) {
+                    if ((cursorX + ci.advance) >= driver->getWidth()) {
+                        cursorX = 0;
+                        cursorY += fi.height;
+                        if (cursorY >= driver->getWidth()) {
 
                             // TODO: fer scroll de pantalla linia a linia
                             return;
                         }
                     }
-                    xCursor += drawChar(xCursor, yCursor, c);
+                    cursorX += drawChar(cursorX, cursorY, c);
                     break;
                 }
             }

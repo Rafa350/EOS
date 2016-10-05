@@ -117,7 +117,7 @@ void MenuForm::onPaint(
             display->setColor(Menu_ItemNormalTextColor);
         }
 
-        onDrawItem(itemId);
+        onDrawItem(itemId, itemTitle, display, 4, k + 15, 0, 0);
         display->drawText(4, k + 15, itemTitle, 0, itemTitleLen);
         
         i += 1;
@@ -220,10 +220,18 @@ void MenuForm::onSelectItem(
 /// \param itemId: El identificador del item
 ///
 void MenuForm::onDrawItem(
-    uint16_t itemId) {
+    ItemId itemId, 
+    const char *title, 
+    FormsDisplay *display, 
+    int16_t x, 
+    int16_t y, 
+    int16_t w, 
+    int16_t h) {
     
-    if (evDrawItem != nullptr)
-        evDrawItem->execute(this, itemId);
+    if (evDrawItem != nullptr) {
+        DrawItemEventParams params;
+        evDrawItem->execute(this, &params);
+    }
 }
 
 

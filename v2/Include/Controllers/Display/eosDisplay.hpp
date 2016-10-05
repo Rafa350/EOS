@@ -26,31 +26,31 @@ namespace eos {
             virtual void initialize() = 0;
             virtual void shutdown() = 0;
             virtual void setOrientation(Orientation orientation) = 0;
-            virtual int16_t getXSize() const = 0;
-            virtual int16_t getYSize() const = 0;
+            virtual int16_t getWidth() const = 0;
+            virtual int16_t getHeight() const = 0;
             virtual void clear(Color color) = 0;
-            virtual void setPixel(int16_t xPos, int16_t yPos, Color color) = 0;
-            virtual void setHPixels(int16_t xPos, int16_t yPos, int16_t size, Color color) = 0;
-            virtual void setVPixels(int16_t xPos, int16_t yPos, int16_t size, Color color) = 0;
-            virtual void setPixels(int16_t xPos, int16_t yPos, int16_t xSize, int16_t ySize, Color color) = 0;
-            virtual void writePixels(int16_t xPos, int16_t yPos, int16_t xSize, int16_t ySize, const Color *colors) = 0;
-            virtual void readPixels(int16_t xPos, int16_t yPos, int16_t xSize, int16_t ySize, Color *colors) = 0;
-            virtual void vScroll(int16_t delta, int16_t xPos, int16_t yPos, int16_t xSize, int16_t ySize) = 0;
-            virtual void hScroll(int16_t delta, int16_t xPos, int16_t yPos, int16_t xSize, int16_t ySize) = 0;
+            virtual void setPixel(int16_t x, int16_t y, Color color) = 0;
+            virtual void setHPixels(int16_t x, int16_t y, int16_t size, Color color) = 0;
+            virtual void setVPixels(int16_t x, int16_t y, int16_t size, Color color) = 0;
+            virtual void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color color) = 0;
+            virtual void writePixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors) = 0;
+            virtual void readPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color *colors) = 0;
+            virtual void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height) = 0;
+            virtual void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height) = 0;
     };
     
     class Display {
         private:
             IDisplayDriver *driver;
-            int16_t xClipPos;
-            int16_t yClipPos;
-            int16_t xClipSize;
-            int16_t yClipSize;
+            int16_t clipX1;
+            int16_t clipY1;
+            int16_t clipX2;
+            int16_t clipY2;
             Color color;
             Font *font;
             FontInfo fi;
-            int16_t xCursor;
-            int16_t yCursor;
+            int16_t cursorX;
+            int16_t cursorY;
             uint8_t ttyState;
             
         public:

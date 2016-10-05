@@ -29,7 +29,7 @@ namespace app {
     
         private:
             void menuClickItemHandler(MenuForm *menuForm, ItemId itemId);
-            void menuDrawItemHandler(MenuForm *menuForm, ItemId itemId);
+            void menuDrawItemHandler(MenuForm *menuForm, DrawItemEventParams *params);
             void editorSelectorPressHandler(Form *form);
             void startEdit();
             void endEdit();
