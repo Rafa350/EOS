@@ -29,7 +29,9 @@ namespace eos {
             ~KeyboardService();
             
             template <class cls>
-            void setNotifyEvent(cls *instance, void (cls::*method)(KeyboardState)) {                 
+            void setNotifyEventHandler(cls *instance, void (cls::*method)(KeyboardState)) {    
+                if (evNotify != nullptr)
+                    delete evNotify;
                 evNotify = new CallbackP1<cls, KeyboardState>(instance, method); 
             }
             

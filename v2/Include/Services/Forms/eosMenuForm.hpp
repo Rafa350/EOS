@@ -53,7 +53,9 @@ namespace eos {
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setSelectItemEvent(cls *instance, void (cls::*method)(MenuForm*, ItemId)) {                 
+            void setSelectItemEventHandler(cls *instance, void (cls::*method)(MenuForm*, ItemId)) {     
+                if (evSelectItem != nullptr)
+                    delete evSelectItem;
                 evSelectItem = new CallbackP2<cls, MenuForm*, ItemId>(instance, method); 
             }
             
@@ -61,7 +63,9 @@ namespace eos {
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setClickItemEvent(cls *instance, void (cls::*method)(MenuForm*, ItemId)) {                
+            void setClickItemEventHandler(cls *instance, void (cls::*method)(MenuForm*, ItemId)) {     
+                if (evClickItem != nullptr)
+                    delete evClickItem;
                 evClickItem = new CallbackP2<cls, MenuForm*, ItemId>(instance, method);
             }
             
@@ -69,7 +73,9 @@ namespace eos {
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setDrawItemEvent(cls *instance, void (cls::*method)(MenuForm*, DrawItemEventParams*)) {                 
+            void setDrawItemEventHandler(cls *instance, void (cls::*method)(MenuForm*, DrawItemEventParams*)) {    
+                if (evDrawItem != nullptr)
+                    delete evDrawItem;
                 evDrawItem = new CallbackP2<cls, MenuForm*, DrawItemEventParams*>(instance, method); 
             }
 
@@ -78,7 +84,7 @@ namespace eos {
             virtual void onSelectItem(ItemId itemId);
             virtual void onClickItem(ItemId itemId);
             virtual void onDrawItem(ItemId itemId, const char *title, 
-                FormsDisplay *display, int16_t x, int16_t y, int16_t w, int16_t h);
+                FormsDisplay *display, int16_t x, int16_t y, int16_t width, int16_t height);
             void onPaint(FormsDisplay *display);    
 #ifdef eosFormsService_UseSelector            
             void onSelectorMove(SelectorPosition position, SelectorDirection direction);

@@ -29,7 +29,9 @@ namespace eos {
             /// \param method: El metode
             ///
             template <class cls>
-            void setEvTimeout(cls *instance, void (cls::*method)(Timer *timer)) {                 
+            void setEvTimeout(cls *instance, void (cls::*method)(Timer *timer)) {   
+                if (evTimeout != nullptr)
+                    delete evTimeout;
                 evTimeout = new CallbackP1<cls, Timer*>(instance, method);
             }
             

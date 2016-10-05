@@ -36,8 +36,8 @@ MainForm::MainForm(
     Form(service, nullptr) {
  
     menuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
-    menuForm->setClickItemEvent<MainForm>(this, &MainForm::menuClickItemHandler);   
-    menuForm->setDrawItemEvent<MainForm>(this, &MainForm::menuDrawItemHandler);   
+    menuForm->setClickItemEventHandler<MainForm>(this, &MainForm::menuClickItemHandler);   
+    menuForm->setDrawItemEventHandler<MainForm>(this, &MainForm::menuDrawItemHandler);   
 } 
 
 

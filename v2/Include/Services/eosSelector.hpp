@@ -31,7 +31,9 @@ namespace eos {
             ~SelectorService();
             
             template <class cls>
-            void setNotifyEvent(cls *instance, void (cls::*method)(SelectorPosition, SelectorState)) {                 
+            void setNotifyEventHandler(cls *instance, void (cls::*method)(SelectorPosition, SelectorState)) {  
+                if (evNotify != nullptr)
+                    delete evNotify;
                 evNotify = new CallbackP2<cls, SelectorPosition, SelectorState>(instance, method); 
             }
             

@@ -60,7 +60,7 @@ namespace eos {
             void resetClip();
             Color setColor(Color color);
             Font *setFont(Font *font);
-            IDisplayDriver *getDriver() const { return driver; }
+            inline IDisplayDriver *getDriver() const { return driver; }
             int16_t getTextWidth(const char *text);
             int16_t getTextHeight(const char *text);
             inline Font *getFont() const { return font; }

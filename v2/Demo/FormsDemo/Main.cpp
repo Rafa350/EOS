@@ -94,10 +94,10 @@ void MyApplication::onInitialize() {
     mainForm->activate();
 
 #ifdef eosFormsService_UseSelector    
-    selectorService->setNotifyEvent<MyApplication>(this, &MyApplication::selectorNotifyEventHandler);
+    selectorService->setNotifyEventHandler<MyApplication>(this, &MyApplication::selectorNotifyEventHandler);
 #endif
 #ifdef eosFormsService_UseKeyboard   
-    keyboardService->setNotifyEvent<MyApplication>(this, &MyApplication::keyboardNotifyEventHandler);
+    keyboardService->setNotifyEventHandler<MyApplication>(this, &MyApplication::keyboardNotifyEventHandler);
 #endif    
 }
 
