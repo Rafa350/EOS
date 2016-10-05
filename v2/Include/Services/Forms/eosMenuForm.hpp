@@ -12,11 +12,13 @@
 
 namespace eos {
     
+    typedef uint16_t ItemId;
+    
     class MenuForm: public Form {
         private:
-            typedef ICallbackP2<MenuForm*, uint16_t> ISelectItemEvent;
-            typedef ICallbackP2<MenuForm*, uint16_t> IClickItemEvent;
-            typedef ICallbackP2<MenuForm*, uint16_t> IDrawItemEvent;
+            typedef ICallbackP2<MenuForm*, ItemId> ISelectItemEvent;
+            typedef ICallbackP2<MenuForm*, ItemId> IClickItemEvent;
+            typedef ICallbackP2<MenuForm*, ItemId> IDrawItemEvent;
             struct MenuInfo {               // Informacio d'un menu
                 unsigned offset;            // -Offset al menu
                 unsigned numItems;          // -Numero de items
@@ -41,31 +43,31 @@ namespace eos {
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setSelectItemEvent(cls *instance, void (cls::*method)(MenuForm*, unsigned)) {                 
-                evSelectItem = new CallbackP2<cls, MenuForm*, unsigned>(instance, method); 
+            void setSelectItemEvent(cls *instance, void (cls::*method)(MenuForm*, ItemId)) {                 
+                evSelectItem = new CallbackP2<cls, MenuForm*, ItemId>(instance, method); 
             }
             
             /// \brief Asigna el event evClickItem.
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setClickItemEvent(cls *instance, void (cls::*method)(MenuForm*, unsigned)) {                
-                evClickItem = new CallbackP2<cls, MenuForm*, unsigned>(instance, method);
+            void setClickItemEvent(cls *instance, void (cls::*method)(MenuForm*, ItemId)) {                
+                evClickItem = new CallbackP2<cls, MenuForm*, ItemId>(instance, method);
             }
             
             /// \brief Asigna el event evDrawItem.
             /// \param instance: La instancia on s'executa el metode.
             /// \param methid: El metode a executar.
             template <class cls>
-            void setDrawItemEvent(cls *instance, void (cls::*method)(MenuForm*, unsigned)) {                 
-                evDrawItem = new CallbackP2<cls, MenuForm*, unsigned>(instance, method); 
+            void setDrawItemEvent(cls *instance, void (cls::*method)(MenuForm*, ItemId)) {                 
+                evDrawItem = new CallbackP2<cls, MenuForm*, ItemId>(instance, method); 
             }
 
         protected:
             ~MenuForm();
-            virtual void onSelectItem(uint16_t itemId);
-            virtual void onClickItem(uint16_t itemId);
-            virtual void onDrawItem(uint16_t itemId);
+            virtual void onSelectItem(ItemId itemId);
+            virtual void onClickItem(ItemId itemId);
+            virtual void onDrawItem(ItemId itemId);
             void onPaint(FormsDisplay *display);    
 #ifdef eosFormsService_UseSelector            
             void onSelectorMove(SelectorPosition position, SelectorDirection direction);

@@ -16,6 +16,7 @@ namespace app {
             MenuForm *menuForm;
             Form *editorForm;
             unsigned currentCommand;
+            
         public:
             MainForm(FormsService *service);
             ~MainForm();
@@ -27,8 +28,9 @@ namespace app {
             void onKeyPress(KeyCode keyCode);
     
         private:
-            void menuClickItemEventHandler(MenuForm *menuForm, uint16_t itemId);
-            void editorSelectorPressEventHandler(Form *form);
+            void menuClickItemHandler(MenuForm *menuForm, ItemId itemId);
+            void menuDrawItemHandler(MenuForm *menuForm, ItemId itemId);
+            void editorSelectorPressHandler(Form *form);
             void startEdit();
             void endEdit();
             void incDecEvChange(int value);

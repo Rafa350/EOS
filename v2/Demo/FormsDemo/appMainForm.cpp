@@ -36,7 +36,8 @@ MainForm::MainForm(
     Form(service, nullptr) {
  
     menuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
-    //menuForm->setClickItemEvent<MainForm>(this, &MainForm::menuClickItemEventHandler);   
+    menuForm->setClickItemEvent<MainForm>(this, &MainForm::menuClickItemHandler);   
+    menuForm->setDrawItemEvent<MainForm>(this, &MainForm::menuDrawItemHandler);   
 } 
 
 
@@ -94,9 +95,9 @@ void MainForm::onPaint(
 }
 
 
-void MainForm::menuClickItemEventHandler(
+void MainForm::menuClickItemHandler(
     MenuForm *menuForm,
-    uint16_t itemId) {
+    ItemId itemId) {
 
     currentCommand = itemId;
     
@@ -110,7 +111,15 @@ void MainForm::menuClickItemEventHandler(
     }
 }
 
-void MainForm::editorSelectorPressEventHandler(
+
+void MainForm::menuDrawItemHandler(
+    MenuForm *menuForm,
+    ItemId itemId) {
+    
+}
+
+
+void MainForm::editorSelectorPressHandler(
     Form *form) {
 
     endEdit();    
@@ -127,7 +136,7 @@ void MainForm::startEdit() {
     form->setValue(2400);
     form->setTitle(infoXJerk.title);   
 #ifdef eosFormsService_UseSelector    
-    form->setSelectorPressEvent<MainForm>(this, &MainForm::editorSelectorPressEventHandler);
+    form->setSelectorPressEvent<MainForm>(this, &MainForm::editorSelectorPressHandler);
 #endif    
     form->activate();
     

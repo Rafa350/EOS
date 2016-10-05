@@ -99,9 +99,10 @@ void MenuForm::onPaint(
 
         unsigned itemMapOffset = offset + 2 + titleLen + (i * 2);
         unsigned itemOffset = resource[itemMapOffset] + resource[itemMapOffset + 1] * 256;
-        unsigned itemId = resource[itemOffset + 2 + resource[itemOffset + 1]];
+        
         unsigned itemTitleLen = resource[itemOffset + 1];
         char *itemTitle = (char*) &resource[itemOffset + 2];
+        unsigned itemId = resource[itemOffset + 2 + itemTitleLen];
 
         if (i == info->currentItem) {
             display->setColor(Menu_ItemSelectedBackgroundColor);

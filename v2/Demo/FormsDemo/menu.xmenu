@@ -16,16 +16,16 @@
                                         <menu title="X-AXIS MOTOR">
                                             <menuItem title="Limits..">
                                                 <menu title="X-AXIS MOTOR LIMITS">
-                                                    <commandItem title="Jerk" displayFormat="" command="CMD_SET_XJERK" />
-                                                    <commandItem title="Accel" displayFormat="" command="CMD_SET_XMAXACCEL" />
-                                                    <commandItem title="Speed" displayFormat="" command="CMD_SET_XMAXSPEED" />
+                                                    <commandItem title="Jerk" command="CMD_SET_XJERK" />
+                                                    <commandItem title="Accel" command="CMD_SET_XMAXACCEL" />
+                                                    <commandItem title="Speed" command="CMD_SET_XMAXSPEED" />
                                                     <exitItem title="Back" />
                                                 </menu>
                                             </menuItem>
                                             <menuItem title="Scale...">
                                                 <menu title="X-AXIS MOTOR SCALE">
-                                                    <commandItem title="Steps" displayFormat="" command="CMD_SET_XNUMSTEPS" />
-                                                    <commandItem title="Units" displayFormat="" command="CMD_SET_XNUMUNITS" />
+                                                    <commandItem title="Steps" command="CMD_SET_XNUMSTEPS" />
+                                                    <commandItem title="Units" command="CMD_SET_XNUMUNITS" />
                                                     <exitItem title="Back" />
                                                 </menu>
                                             </menuItem>
@@ -43,16 +43,16 @@
                                         <menu title="Y-AXIS MOTOR">
                                             <menuItem title="Limits..">
                                                 <menu title="Y-AXIS MOTOR LIMITS">
-                                                    <commandItem title="Jerk" displayFormat="" command="CMD_SET_YJERK" />
-                                                    <commandItem title="Accel" displayFormat="" command="CMD_SET_YMAXACCEL" />
-                                                    <commandItem title="Speed" displayFormat="" command="CMD_SET_YMAXSPEED" />
+                                                    <commandItem title="Jerk" command="CMD_SET_YJERK" />
+                                                    <commandItem title="Accel" command="CMD_SET_YMAXACCEL" />
+                                                    <commandItem title="Speed" command="CMD_SET_YMAXSPEED" />
                                                     <exitItem title="Back" />
                                                 </menu>
                                             </menuItem>
                                             <menuItem title="Scale...">
                                                 <menu title="Y-AXIS MOTOR SCALE">
-                                                    <commandItem title="Steps" displayFormat="" command="CMD_SET_YNUMSTEPS" />
-                                                    <commandItem title="Units" displayFormat="" command="CMD_SET_YNUMUNITS" />
+                                                    <commandItem title="Steps" command="CMD_SET_YNUMSTEPS" />
+                                                    <commandItem title="Units" command="CMD_SET_YNUMUNITS" />
                                                     <exitItem title="Back" />
                                                 </menu>
                                             </menuItem>
