@@ -18,7 +18,7 @@ namespace eos {
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
-    class DigInputService: Public Service {        
+    class DigInputService: public Service {        
         private:
             typedef List<DigInput*> DigInputList;
             typedef ListIterator<DigInput*> DigInputListIterator;
