@@ -85,7 +85,7 @@ Font::Font(
     FontStyle style):
     fontResource(nullptr) {
     
-    for(int16_t i = 0; i < sizeof(fontTable) / sizeof(fontTable[0]); i++) {
+    for (int16_t i = 0; i < sizeof(fontTable) / sizeof(fontTable[0]); i++) {
         FontTableEntry *entry = &fontTable[i];
         if ((strcmp(fontName, entry->faceName) == 0) &&
             (height == entry->height)) {

@@ -42,6 +42,8 @@ namespace eos {
     class Display {
         private:
             IDisplayDriver *driver;
+            int16_t screenWidth;
+            int16_t screenHeight;
             int16_t clipX1;
             int16_t clipY1;
             int16_t clipX2;
@@ -74,6 +76,7 @@ namespace eos {
             void moveTo(int16_t x, int16_t y);
             void lineTo(int16_t x, int16_t y);
             void arcTo(int16_t x, int16_t y, int16_t cx, int16_t cy);
+            void drawPoint(int16_t x, int16_t y);
             void drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
             void drawRectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
             void drawTriangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t x3, int16_t y3);
@@ -83,6 +86,13 @@ namespace eos {
             int16_t drawText(int16_t x, int16_t y, const char *s, int16_t offset, int16_t length);
             void fillRectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
             void fillCircle(int16_t cx, int16_t cy, int16_t r);    
+            
+        private:
+            bool clipArea(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2);
+            bool clipPoint(int16_t x, int16_t y);
+            bool clipLine(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2);
+            bool clipHLine(int16_t &x1, int16_t &x2, int16_t &y);
+            bool clipVLine(int16_t &x, int16_t &y1, int16_t &y2);
     };
 }
 

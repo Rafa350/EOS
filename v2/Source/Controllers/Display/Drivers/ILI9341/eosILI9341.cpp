@@ -272,22 +272,14 @@ void ILI9341_Driver::setPixel(
     int16_t y,
     Color color) {
     
-    // Comprova si es visible
-    //
-    if ((x >= 0) && (x < screenWidth) && 
-        (y >= 0) && (y < screenHeight)) {
-      
-        // Dibuixa el pixel
-        //
-        selectRegion(x, y, 1, 1);
-        startMemoryWrite();
-        writePixel(color, 1);    
-    }
+    selectRegion(x, y, 1, 1);
+    startMemoryWrite();
+    writePixel(color, 1);    
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia de pixels horitzontals.
+/// \brief Dibuixa una linia de pixels horitzontals. 
 /// \param x: Coordinada X.
 /// \param y: Colordinada Y.
 /// \param size: Tamany de la serie.
@@ -299,28 +291,14 @@ void ILI9341_Driver::setHPixels(
     int16_t size,
     Color color) {
     
-    // Comprova si es visible
-    //
-    if ((y >= 0) && (y < screenHeight)) {
-      
-        // Retalla els extrems de la linia
-        //
-        if (x < 0)
-            x = 0;
-        if (x + size >= screenWidth)
-            size = screenWidth - x;
-        
-        // Dibuiza la linia
-        //
-        selectRegion(x, y, size, 1);
-        startMemoryWrite();
-        writePixel(color, size);
-    }
+    selectRegion(x, y, size, 1);
+    startMemoryWrite();
+    writePixel(color, size);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia de pixels en vertical.
+/// \brief Dibuixa una linia de pixels en vertical. 
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 /// \param size: Tamany de la serie.
@@ -332,23 +310,9 @@ void ILI9341_Driver::setVPixels(
     int16_t size,
     Color color) {
     
-    // Comprova si es visible
-    //
-    if ((x >= 0) && (x < screenWidth)) {
-      
-        // Retalla els extrems de la linia
-        //
-        if (y < 0)
-            y = 0;
-        if (y + size >= screenHeight)
-            size = screenHeight - y;
-        
-        // Dibuixa la linia
-        //
-        selectRegion(x, y, 1, size);
-        startMemoryWrite();
-        writePixel(color, size);
-    }
+    selectRegion(x, y, 1, size);
+    startMemoryWrite();
+    writePixel(color, size);
 }
 
 
@@ -367,24 +331,9 @@ void ILI9341_Driver::setPixels(
     int16_t height, 
     Color color) {
     
-    // Comprova si es visible
-    //
-    if ((x >= 0) && (x + width < screenWidth) &&
-        (y >= 0) && (y + height < screenHeight)) {
-  
-        // Retalla la regio
-        //
-        if (x < 0)
-            x = 0;
-        if (y < 0)
-            y = 0;
-     
-        // Dibuixa la regio
-        //
-        selectRegion(x, y, width, height);
-        startMemoryWrite();
-        writePixel(color, width * height);
-    }    
+    selectRegion(x, y, width, height);
+    startMemoryWrite();
+    writePixel(color, width * height);
 }
 
 
@@ -403,18 +352,15 @@ void ILI9341_Driver::writePixels(
     int16_t height, 
     const Color* colors) {
     
-    if ((x >= 0) && (x + width < screenWidth) &&
-        (y >= 0) && (y + height < screenHeight)) {
-     
-        selectRegion(x, y, width, width);
-        startMemoryWrite();
-        writePixel(colors, width * height);
-    }    
+    selectRegion(x, y, width, width);
+    startMemoryWrite();
+    writePixel(colors, width * height);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Llegeix una regio rectangular de pixels.
+/// \brief Llegeix una regio rectangular de pixels. No hi ha cap tipus de 
+///        comprovacio de la validesa dels parametres.
 /// \param x: Posicio X.
 /// \param y: Posicio Y.
 /// \param width: Amplada de la regio.
@@ -428,18 +374,19 @@ void ILI9341_Driver::readPixels(
     int16_t height, 
     Color *colors) {
     
-    if ((x >= 0) && (x + width < screenWidth) &&
-        (y >= 0) && (y + height < screenHeight)) {
-    
-        selectRegion(x, y, width, height);
-        startMemoryRead();
-        readPixel(colors, width * height);
-    }
+    selectRegion(x, y, width, height);
+    startMemoryRead();
+    readPixel(colors, width * height);
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief Realitza un scroll vertical de la pantalla.
 /// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
+/// \param x: Posicio x de la regio.
+/// \param y: Posicio y de la regio.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
 ///
 void ILI9341_Driver::vScroll(
     int16_t delta, 
@@ -450,25 +397,22 @@ void ILI9341_Driver::vScroll(
     
     static Color buffer[MAX_COLUMNS];
     
-    if ((delta != 0) && (width > 0) && (height > 0)) {
-        
-        if (delta > 0) {
+    if (delta > 0) {
 
-            for (int i = y; i < height - y - delta; i++) {
+        for (int16_t i = y; i < height - y - delta; i++) {
 
-                selectRegion(x, i + delta, width, 1);
-                startMemoryRead();
-                readPixel(buffer, width);
+            selectRegion(x, i + delta, width, 1);
+            startMemoryRead();
+            readPixel(buffer, width);
 
-                selectRegion(x, i, width, 1);
-                startMemoryWrite();
-                writePixel(buffer, width);
-            }
+            selectRegion(x, i, width, 1);
+            startMemoryWrite();
+            writePixel(buffer, width);
         }
-        
-        else if (delta < 0) {
+    }
 
-        }
+    else if (delta < 0) {
+
     }
 }
 
@@ -476,6 +420,11 @@ void ILI9341_Driver::vScroll(
 /// ----------------------------------------------------------------------
 /// \brief Realitza un scroll horitzontal de la pantalla.
 /// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
+/// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
+/// \param x: Posicio x de la regio.
+/// \param y: Posicio y de la regio.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
 ///
 void ILI9341_Driver::hScroll(
     int16_t delta, 

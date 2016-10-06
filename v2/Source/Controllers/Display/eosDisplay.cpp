@@ -1,3 +1,4 @@
+#include "eos.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
 #include "Controllers/Display/eosFont.hpp"
 
@@ -8,6 +9,11 @@ using namespace eos;
 extern const unsigned char *fontConsolas14pt;
 
 
+inline void swap(int16_t &a, int16_t &b) {
+    int16_t t = a; a = b; b = t;
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param driver: Driver del display
@@ -16,6 +22,8 @@ Display::Display(
     IDisplayDriver *_driver):
     driver(_driver),
     color(0),
+    screenWidth(_driver->getWidth()),
+    screenHeight(_driver->getHeight()),
     cursorX(0),
     cursorY(0),
     ttyState(0),
@@ -80,8 +88,8 @@ void Display::setClip(
     int16_t x2, 
     int16_t y2) {
     
-    int16_t screenWidth = driver->getWidth();
-    int16_t screenHeight = driver->getHeight();
+    if (x1 > x2) swap(x1, x2);
+    if (y1 > y2) swap(y1, y2);
     
     clipX1 = x1 < 0 ? 0 : x1;
     clipY1 = y1 < 0 ? 0 : y1;
@@ -97,8 +105,8 @@ void Display::resetClip() {
     
     clipX1 = 0;
     clipY1 = 0;
-    clipX2 = driver->getWidth() - 1;
-    clipY2 = driver->getHeight() - 1;   
+    clipX2 = screenWidth - 1;
+    clipY2 = screenHeight - 1;   
 }
 
 
@@ -154,6 +162,20 @@ void Display::lineTo(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Dibuixa un pixel.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+///
+void Display::drawPoint(
+    int16_t x, 
+    int16_t y) {
+
+    if (clipPoint(x, y))
+        driver->setPixel(x, y, color);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Dibuixa una linia.
 /// \param x1: Coordinada x del origen.
 /// \param y1: Coordinada y del origen.
@@ -169,11 +191,19 @@ void Display::drawLine(
     int16_t stepx, stepy;
     int16_t dx, dy, p, incE, incNE;
     
-    if (x1 == x2)
-        driver->setVPixels(x1, y1, y2 - y1 + 1, color);
+    if (x1 == x2) {
+        if (clipVLine(x1, y1, y2)) {
+            if (y1 > y2) swap(y1, y2);
+            driver->setVPixels(x1, y1, y2 - y1 + 1, color);
+        }
+    }
 	
-    else if (y1 == y2)
-        driver->setHPixels(x1, y1, x2 - x1 + 1, color);
+    else if (y1 == y2) {
+        if (clipHLine(x1, x2, y1)) {
+            if (x1 > x2) swap(x1, x2);
+            driver->setHPixels(x1, y1, x2 - x1 + 1, color);
+        }
+    }
 	
     else {
 		
@@ -242,11 +272,11 @@ void Display::drawRectangle(
     int16_t y1, 
     int16_t x2, 
     int16_t y2) {
-    
-    driver->setHPixels(x1, y1, x2 - x1 + 1, color);
-    driver->setHPixels(x1, y2, x2 - x1 + 1, color);
-    driver->setVPixels(x1, y1, y2 - y1 + 1, color);
-    driver->setVPixels(x2, y1, y2 - y1 + 1, color);
+
+    drawLine(x1, y1, x2, y1);
+    drawLine(x1, y2, x2, y2);
+    drawLine(x1, y1, x1, y2);
+    drawLine(x2, y1, x2, y2);
 }
 
 
@@ -266,11 +296,10 @@ void Display::drawTriangle(
     int16_t y2, 
     int16_t x3, 
     int16_t y3) {
-    
-    moveTo(x1, y1);
-    lineTo(x2, y2);
-    lineTo(x3, y3);
-    lineTo(x1, y1);
+
+    drawLine(x1, y1, x2, y2);
+    drawLine(x2, y2, x3, y3);
+    drawLine(x3, y3, x1, y1);
 }
 
 
@@ -290,14 +319,14 @@ void Display::drawCircle(
     int16_t d = 1 - x;  
 
     while (y <= x) {
-        driver->setPixel(cx + x, cy + y, color);
-        driver->setPixel(cx - x, cy + y, color);
-        driver->setPixel(cx - x, cy - y, color);
-        driver->setPixel(cx + x, cy - y, color);
-        driver->setPixel(cx + y, cy + x, color);
-        driver->setPixel(cx - y, cy + x, color);
-        driver->setPixel(cx - y, cy - x, color);
-        driver->setPixel(cx + y, cy - x, color);
+        drawPoint(cx + x, cy + y);
+        drawPoint(cx - x, cy + y);
+        drawPoint(cx - x, cy - y);
+        drawPoint(cx + x, cy - y);
+        drawPoint(cx + y, cy + x);
+        drawPoint(cx - y, cy + x);
+        drawPoint(cx - y, cy - x);
+        drawPoint(cx + y, cy - x);
         y++;
         if (d <= 0)
             d += 2 * y + 1;
@@ -322,14 +351,12 @@ void Display::fillRectangle(
     int16_t x2, 
     int16_t y2) {
 
-    if (x1 > x2) {
-        int v = x1;
-        x1 = x2;
-        x2 = v;
+    if (clipArea(x1, y1, x2, y2)) {
+        if (x1 > x2) swap(x1, x2);
+        if (y1 > y2) swap(y1, y2);
+        while (x1 <= x2)
+            driver->setVPixels(x1++, y1, y2 - y1 + 1, color);
     }
-
-    while (x1 <= x2)
-        driver->setVPixels(x1++, y1, y2 - y1 + 1, color);
 }
 
 
@@ -403,7 +430,7 @@ int16_t Display::drawChar(
                 int d = cy * cw;
                 for (int16_t cx = 0; cx < ci.width; cx++)
                     if (ci.bitmap[d + (cx >> 3)] & (0x80 >> (cx & 7)))
-                        driver->setPixel(x + cx, y + cy, color);
+                        drawPoint(x + cx, y + cy);
                 }
         }
 
@@ -505,17 +532,17 @@ void Display::putTTY(
                 case '\n':
                     cursorX = 0;
                     cursorY += fi.height;
-                    if (cursorY >= driver->getHeight())
+                    if (cursorY >= screenHeight)
                         cursorY = 0;
                     break;
             
                 default: {
                     CharInfo ci;
                     font->getCharInfo(c, ci);
-                    if ((cursorX + ci.advance) >= driver->getWidth()) {
+                    if ((cursorX + ci.advance) >= screenWidth) {
                         cursorX = 0;
                         cursorY += fi.height;
-                        if (cursorY >= driver->getWidth()) {
+                        if (cursorY >= screenWidth) {
 
                             // TODO: fer scroll de pantalla linia a linia
                             return;
@@ -561,4 +588,86 @@ void Display::putTTY(
     char c;
     while (((c = *s++) != '\0') && (length-- > 0))
         putTTY(c);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Retalla un area.
+///
+bool Display::clipArea(
+    int16_t &x1, 
+    int16_t &y1, 
+    int16_t &x2, 
+    int16_t &y2) {
+    
+    if (x1 < clipX1) 
+        x1 = clipX1;
+    
+    if (y1 < clipY1) 
+        y1 = clipY1;
+    
+    if (x2 > clipX2) 
+        x2 = clipX1;
+    
+    if (y2 > clipY2) 
+        y2 = clipY2;
+    
+    return (x2 >= x1) && (y2 >= y1);
+}
+
+
+/// ------------------
+bool Display::clipPoint(
+    int16_t x, 
+    int16_t y) {
+    
+    return (x >= clipX1) && (x <= clipX2) && (y >= clipY1) && (y <= clipY2);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Retalla una linia horitzontal.
+/// \param x1: Coordinada x inicial.
+/// \param x2: Coordinada x final.
+/// \paeam y: Coordinada y.
+/// \return True si es pot dobuixar. False en cas contrari.
+///
+bool Display::clipHLine(
+    int16_t &x1, 
+    int16_t &x2, 
+    int16_t &y) {
+    
+    if ((y >= clipY1) && (y <= clipY2)) {
+        if (x1 < clipX1)
+            x1 = clipX1;
+        if (x2 > clipX2)
+            x2 = clipX2;
+        return true;
+    }
+    else 
+        return false;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Retalla una linia vertical.
+/// \param x: Coordinada x.
+/// \param y1: Coordinada y inicial.
+/// \paeam y2: Coordinada y final.
+/// \return True si es pot dobuixar. False en cas contrari.
+///
+bool Display::clipVLine(
+    int16_t &x, 
+    int16_t &y1, 
+    int16_t &y2) {
+
+    if ((x >= clipX1) && (x <= clipX2)) {
+        if (y1 < clipY1)
+            y1 = clipY1;
+        if (y2 > clipY2)
+            y2 = clipY2;
+        return true;
+    }
+    else 
+        return false;
 }
