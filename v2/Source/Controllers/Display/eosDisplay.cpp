@@ -607,7 +607,7 @@ bool Display::clipArea(
         y1 = clipY1;
     
     if (x2 > clipX2) 
-        x2 = clipX1;
+        x2 = clipX2;
     
     if (y2 > clipY2) 
         y2 = clipY2;
@@ -616,7 +616,11 @@ bool Display::clipArea(
 }
 
 
-/// ------------------
+/// ----------------------------------------------------------------------
+/// \brief Retalla un punt.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+///
 bool Display::clipPoint(
     int16_t x, 
     int16_t y) {
