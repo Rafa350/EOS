@@ -44,6 +44,7 @@ namespace eos {
             IDisplayDriver *driver;
             int16_t screenWidth;
             int16_t screenHeight;
+            bool clipEnabled;
             int16_t clipX1;
             int16_t clipY1;
             int16_t clipX2;
@@ -93,6 +94,7 @@ namespace eos {
             bool clipLine(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2);
             bool clipHLine(int16_t &x1, int16_t &x2, int16_t &y);
             bool clipVLine(int16_t &x, int16_t &y1, int16_t &y2);
+            uint8_t calcOutCode(int16_t x, int16_t y);
     };
 }
 

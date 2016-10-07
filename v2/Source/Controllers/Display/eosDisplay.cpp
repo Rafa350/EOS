@@ -8,8 +8,21 @@ using namespace eos;
 
 extern const unsigned char *fontConsolas14pt;
 
+const uint8_t inside = 0;
+const uint8_t left = 1;
+const uint8_t right = 2;
+const uint8_t bottom = 4;
+const uint8_t top = 8;
 
-inline void swap(int16_t &a, int16_t &b) {
+
+/// ----------------------------------------------------------------------
+/// \brief Intercamvia dues variables A i B.
+/// \param a: Variable A.
+/// \param b: Variable B.
+///
+inline void swap(
+    int16_t &a, 
+    int16_t &b) {
     int16_t t = a; a = b; b = t;
 }
 
@@ -26,11 +39,11 @@ Display::Display(
     screenHeight(_driver->getHeight()),
     cursorX(0),
     cursorY(0),
+    clipEnabled(false),
     ttyState(0),
     font(nullptr) {
     
     setFont(new Font(fontConsolas14pt));
-    resetClip();
 }
 
 
@@ -88,13 +101,17 @@ void Display::setClip(
     int16_t x2, 
     int16_t y2) {
     
-    if (x1 > x2) swap(x1, x2);
-    if (y1 > y2) swap(y1, y2);
+    if (x1 > x2) 
+        swap(x1, x2);
+    if (y1 > y2) 
+        swap(y1, y2);
     
     clipX1 = x1 < 0 ? 0 : x1;
     clipY1 = y1 < 0 ? 0 : y1;
     clipX2 = x2 >= screenWidth ? screenWidth - 1 : x2;
     clipY2 = y2 >= screenHeight ? screenHeight - 1 : y2;
+    
+    clipEnabled = true;
 }
 
 
@@ -103,10 +120,7 @@ void Display::setClip(
 ///
 void Display::resetClip() {
     
-    clipX1 = 0;
-    clipY1 = 0;
-    clipX2 = screenWidth - 1;
-    clipY2 = screenHeight - 1;   
+    clipEnabled = false;
 }
 
 
@@ -193,70 +207,75 @@ void Display::drawLine(
     
     if (x1 == x2) {
         if (clipVLine(x1, y1, y2)) {
-            if (y1 > y2) swap(y1, y2);
+            if (y1 > y2) 
+                swap(y1, y2);
             driver->setVPixels(x1, y1, y2 - y1 + 1, color);
         }
     }
 	
     else if (y1 == y2) {
         if (clipHLine(x1, x2, y1)) {
-            if (x1 > x2) swap(x1, x2);
+            if (x1 > x2) 
+                swap(x1, x2);
             driver->setHPixels(x1, y1, x2 - x1 + 1, color);
         }
     }
 	
     else {
+        
+        if (clipLine(x1, y1, x2, y2)) {
 		
-        dx = x2 - x1;
-        dy = y2 - y1;
- 
-      	if (dy < 0) {
-            dy = -dy;
-            stepy = -1;
-        }
-  	    else
-            stepy = 1;
+            dx = x2 - x1;
+            dy = y2 - y1;
 
-	    if (dx < 0)  {
-            dx = -dx;
-            stepx = -1;
-        }
-        else
-            stepx = 1;
-  	
-        driver->setPixel(x1, y1, color);
- 
-  	    if (dx > dy) {
-            p = dy + dy - dx;
-            incE = dy << 1;
-            incNE = (dy - dx) << 1;
-            while (x1 != x2) {
-      		    x1 += stepx;
-                if (p < 0)
-                    p += incE;
-                else {
-                    y1 += stepy;
-                    p += incNE;
-      		    }
-      		    driver->setPixel(x1, y1, color);
+            if (dy < 0) {
+                dy = -dy;
+                stepy = -1;
             }
-  	    }
-  	    else {
-            p = dx + dx - dy;
-            incE = dx << 1;
-            incNE = (dx - dy) << 1;
-            while (y1 != y2) {
-      		    y1 += stepy;
-      		    if (p < 0)
-                    p += incE;
-          	   	else {
+            else
+                stepy = 1;
+
+            if (dx < 0)  {
+                dx = -dx;
+                stepx = -1;
+            }
+            else
+                stepx = 1;
+
+            driver->setPixel(x1, y1, color);
+
+            if (dx > dy) {
+                p = dy + dy - dx;
+                incE = dy << 1;
+                incNE = (dy - dx) << 1;
+                while (x1 != x2) {
                     x1 += stepx;
-                    p += incNE;
-        		}
-        		driver->setPixel(x1, y1, color);
+                    if (p < 0)
+                        p += incE;
+                    else {
+                        y1 += stepy;
+                        p += incNE;
+                    }
+                    driver->setPixel(x1, y1, color);
+                }
             }
-   	    }
-    }    
+            else {
+                p = dx + dx - dy;
+                incE = dx << 1;
+                incNE = (dx - dy) << 1;
+                while (y1 != y2) {
+                    y1 += stepy;
+                    if (p < 0)
+                        p += incE;
+                    else {
+                        x1 += stepx;
+                        p += incNE;
+                    }
+                    driver->setPixel(x1, y1, color);
+                }
+            }
+        }    
+    }
 }
 
 
@@ -611,19 +630,19 @@ bool Display::clipArea(
     int16_t &x2, 
     int16_t &y2) {
     
-    if (x1 < clipX1) 
-        x1 = clipX1;
-    
-    if (y1 < clipY1) 
-        y1 = clipY1;
-    
-    if (x2 > clipX2) 
-        x2 = clipX2;
-    
-    if (y2 > clipY2) 
-        y2 = clipY2;
-    
-    return (x2 >= x1) && (y2 >= y1);
+    if (clipEnabled) {
+        if (x1 < clipX1) 
+            x1 = clipX1;
+        if (y1 < clipY1) 
+            y1 = clipY1;
+        if (x2 > clipX2) 
+            x2 = clipX2;
+        if (y2 > clipY2) 
+            y2 = clipY2;
+        return (x2 >= x1) && (y2 >= y1);
+    }
+    else
+        return true;
 }
 
 
@@ -631,12 +650,16 @@ bool Display::clipArea(
 /// \brief Retalla un punt.
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
+/// \return True si es visible.
 ///
 bool Display::clipPoint(
     int16_t x, 
     int16_t y) {
     
-    return (x >= clipX1) && (x <= clipX2) && (y >= clipY1) && (y <= clipY2);
+    if (clipEnabled)
+        return (x >= clipX1) && (x <= clipX2) && (y >= clipY1) && (y <= clipY2);
+    else
+        return true;
 }
 
 
@@ -645,22 +668,41 @@ bool Display::clipPoint(
 /// \param x1: Coordinada x inicial.
 /// \param x2: Coordinada x final.
 /// \paeam y: Coordinada y.
-/// \return True si es pot dobuixar. False en cas contrari.
+/// \return True si es visible
 ///
 bool Display::clipHLine(
     int16_t &x1, 
     int16_t &x2, 
     int16_t &y) {
     
-    if ((y >= clipY1) && (y <= clipY2)) {
-        if (x1 < clipX1)
-            x1 = clipX1;
-        if (x2 > clipX2)
-            x2 = clipX2;
-        return true;
+    if (clipEnabled) {
+        
+        uint8_t code1 = calcOutCode(x1, y);
+        uint8_t code2 = calcOutCode(x2, y);
+        
+        if (!(code1 | code2))
+            return true;
+        
+        else if (code1 & code2)
+            return false;
+        
+        else {
+            
+            if (x1 < clipX1)
+                x1 = clipX1;
+            else if (x1 > clipX2)
+                x1 = clipX2;
+            
+            if (x2 > clipX2)
+                x2 = clipX2;
+            else if (x2 < clipX1)
+                x2 = clipX1;
+            
+            return true;
+        }
     }
-    else 
-        return false;
+    else
+        return true;
 }
 
 
@@ -669,20 +711,137 @@ bool Display::clipHLine(
 /// \param x: Coordinada x.
 /// \param y1: Coordinada y inicial.
 /// \paeam y2: Coordinada y final.
-/// \return True si es pot dobuixar. False en cas contrari.
+/// \return True si es visible.
 ///
 bool Display::clipVLine(
     int16_t &x, 
     int16_t &y1, 
     int16_t &y2) {
 
-    if ((x >= clipX1) && (x <= clipX2)) {
-        if (y1 < clipY1)
-            y1 = clipY1;
-        if (y2 > clipY2)
-            y2 = clipY2;
-        return true;
+    if (clipEnabled) {
+        
+        uint8_t code1 = calcOutCode(x, y1);
+        uint8_t code2 = calcOutCode(x, y2);
+        
+        if (!(code1 | code2))
+            return true;
+        
+        else if (code1 & code2)
+            return false;
+        
+        else {
+            
+            if (y1 < clipY1)
+                y1 = clipY1;
+            else if (y1 > clipY2)
+                y1 = clipY2;
+            
+            if (y2 > clipY2)
+                y2 = clipY2;
+            else if (y2 < clipY1)
+                y2 = clipY1;
+            
+            return true;
+        }
     }
-    else 
-        return false;
+    else
+        return true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Retalla una linia arbitraria.
+/// \param x1: Coordinada X inicial.
+/// \param y1: Coordinada Y inicial.
+/// \param x2: Coordinada X final.
+/// \param y2: Coordinada Y final.
+/// \return True si es visible.
+///       
+bool Display::clipLine(
+    int16_t &x1,
+    int16_t &y1,
+    int16_t &x2,
+    int16_t &y2) {    
+    
+    if (clipEnabled) {
+
+        uint8_t code1 = calcOutCode(x1, y1);
+        uint8_t code2 = calcOutCode(x2, y2);
+
+        while (true) {
+
+            if (!(code1 | code2))
+                return true;
+
+            else if (code1 & code2)
+                return false;
+
+            else {
+                int x = 0;
+                int y = 0;
+                uint8_t code = (code1 != 0) ? code1 : code2;
+
+                // Calcula les interseccions
+                // x = x1 + (1 / slope) * (y - y1)
+                // y = y1 + slope * (x - x1)
+                //
+                if ((code & top) != 0) {
+                    x = x1 + (x2 - x1) * (clipY2 - y1) / (y2 - y1);
+                    y = clipY2;
+                }
+
+                else if ((code & bottom) != 0) {
+                    x = x1 + (x2 - x1) * (clipY1 - y1) / (y2 - y1);
+                    y = clipY1;
+                }
+
+                else if ((code & right) != 0) {
+                    y = y1 + (y2 - y1) * (clipX2 - x1) / (x2 - x1);
+                    x = clipX2;
+                }
+
+                else if ((code & left) != 0) {
+                    y = y1 + (y2 - y1) * (clipX1 - x1) / (x2 - x1);
+                    x = clipX1;
+                }
+
+                // NOTE:if you follow this algorithm exactly(at least for c#), then you will fall into an infinite loop
+                // in case a line crosses more than two segments. to avoid that problem, leave out the last else
+                // if(outcodeOut & LEFT) and just make it else *)
+
+                // Now we move outside point to intersection point to clip
+                // and get ready for next pass.
+                if (code == code1) {
+                    x1 = x;
+                    y1 = y;
+                    code1 = calcOutCode(x1, y2);
+                }
+                else {
+                    x2 = x;
+                    y2 = y;
+                    code2 = calcOutCode(x2, y2);
+                }
+            }
+        }
+    }
+    else
+        return true;
+}
+
+uint8_t Display::calcOutCode(
+    int16_t x, 
+    int16_t y) {
+    
+    uint8_t code = inside;   
+    
+    if (x < clipX1)
+        code |= left;
+    else if (x > clipX2)
+        code |= right;    
+    if (y < clipY1)
+        code |= bottom;
+    else if (y > clipY2)
+        code |= top;
+    
+    return code;
 }
