@@ -376,10 +376,18 @@ void Display::fillCircle(
     int16_t d = 1 - x;  
 
     while (y <= x) {
+        drawLine(cx - x, cy - y, cx + x, cy - y);
+        drawLine(cx - x, cy + y, cx + x, cy + y);
+        drawLine(cx - y, cy - x, cx + y, cy - x);
+        drawLine(cx - y, cy + x, cx + y, cy + x);
+        
+        /*
         driver->setVPixels(cx + x, cy - y, y + y + 1, color);
         driver->setVPixels(cx - x, cy - y, y + y + 1, color);
         driver->setVPixels(cx + y, cy - x, x + x + 1, color);
         driver->setVPixels(cx - y, cy - x, x + x + 1, color);
+        */
+        
         y++;
         if (d <= 0)
             d += 2 * y + 1;
@@ -395,13 +403,16 @@ void Display::fillCircle(
 /// \brief Dibuixa un bitmap.
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
+/// \param bitmap: El bitmap
+/// \param width: Amplada del bitmap.
+/// \param height: Alçada del bitmap.
 ///
 void Display::drawBitmap1BPP(
     int16_t x, 
     int16_t y, 
     const uint8_t *bitmap, 
-    int16_t sx, 
-    int16_t sy, 
+    int16_t width, 
+    int16_t height, 
     Color color) {
     
     

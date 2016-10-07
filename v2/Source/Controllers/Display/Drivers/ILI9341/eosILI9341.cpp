@@ -282,18 +282,18 @@ void ILI9341_Driver::setPixel(
 /// \brief Dibuixa una linia de pixels horitzontals. 
 /// \param x: Coordinada X.
 /// \param y: Colordinada Y.
-/// \param size: Tamany de la serie.
+/// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setHPixels(
     int16_t x, 
     int16_t y, 
-    int16_t size,
+    int16_t length,
     Color color) {
     
-    selectRegion(x, y, size, 1);
+    selectRegion(x, y, length, 1);
     startMemoryWrite();
-    writePixel(color, size);
+    writePixel(color, length);
 }
 
 
@@ -301,18 +301,18 @@ void ILI9341_Driver::setHPixels(
 /// \brief Dibuixa una linia de pixels en vertical. 
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
-/// \param size: Tamany de la serie.
+/// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setVPixels(
     int16_t x, 
     int16_t y, 
-    int16_t size,
+    int16_t length,
     Color color) {
     
-    selectRegion(x, y, 1, size);
+    selectRegion(x, y, 1, length);
     startMemoryWrite();
-    writePixel(color, size);
+    writePixel(color, length);
 }
 
 
