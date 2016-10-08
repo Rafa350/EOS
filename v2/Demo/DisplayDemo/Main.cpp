@@ -68,14 +68,16 @@ void MyAppLoopService::setup() {
 ///
 void MyAppLoopService::loop() {
     
-    // Random points
+    int seed = Task::getTickCount();
+    
+    // Points
     //
-    drawBackground("Random points");
+    drawBackground("Points");
     Task::delay(250);
 
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);   
     display->setClip(6, 26, screenWidth - 7, screenHeight - 7);    
-    srand(0);
+    srand(seed);
     for (int i = 0; i < 50000; i++) {
         int16_t x = rand() % screenWidth;
         int16_t y = rand() % screenHeight;
@@ -86,7 +88,7 @@ void MyAppLoopService::loop() {
     }
     Task::delay(250);
     
-    srand(0);
+    srand(seed);
     display->setColor(0);
     for (int i = 0; i < 50000; i++) {
         int16_t x = rand() % screenWidth;
@@ -95,10 +97,11 @@ void MyAppLoopService::loop() {
        
         display->drawPoint(x, y);        
     }
+    Task::delay(500);
     
-    // Random vertical lines
+    // Vertical lines
     //
-    drawBackground("Random vertical lines");
+    drawBackground("Vertical lines");
     Task::delay(250);
     
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);   
@@ -113,11 +116,11 @@ void MyAppLoopService::loop() {
         display->setColor(c);
         display->drawLine(x1, y1, x2, y2);
     }    
-    Task::delay(1500);
+    Task::delay(1000);
     
-    // Random horizontal lines
+    // Horizontal lines
     //
-    drawBackground("Random horizontal lines");
+    drawBackground("Horizontal lines");
     Task::delay(250);
     
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);
@@ -132,9 +135,9 @@ void MyAppLoopService::loop() {
         display->setColor(c);
         display->drawLine(x1, y1, x2, y2);
     }
-    Task::delay(1500);
+    Task::delay(1000);
     
-    // Random lines
+    // Lines
     //
     drawBackground("Random lines");
     Task::delay(250);
@@ -151,25 +154,81 @@ void MyAppLoopService::loop() {
         display->setColor(c);
         display->drawLine(x1, y1, x2, y2);
     }
-    Task::delay(1500);
+    Task::delay(500);
     
-    /*
-
-    display->clear(0);
-    int fontHeight = display->getTextHeight("M") + 2;
-    for (int i = 0; i < 10; i++) {
-        display->setColor(RGB(r, g, b));
-        display-> drawText(10, 30 + i * fontHeight, "0123456789 ABCD abcd", 0, -1);
-        r += 5;
-        g += 7;
-        b += 9;
+    // Rectangles
+    //
+    drawBackground("Rectangles");
+    Task::delay(250);
+    
+    display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);   
+    display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
+    for (int i = 0; i < 200; i++) {
+        int16_t x1 = rand() % screenWidth;
+        int16_t y1 = rand() % screenHeight;
+        int16_t x2 = rand() % screenWidth;
+        int16_t y2 = rand() % screenHeight;
+        Color c = rand() & 0x00FFFFFF;
+        
+        display->setColor(c);
+        display->drawRectangle(x1, y1, x2, y2);
     }
     Task::delay(1000);
     
-    display->clear(0);
-    for (int i = 0; i < 1000; i++)
-        display->putTTY('a');   
-    Task::delay(1000);*/
+    // Fillet rectangles
+    //
+    drawBackground("Filled rectangles");
+    Task::delay(250);
+    
+    display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);   
+    display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
+    for (int i = 0; i < 1000; i++) {
+        int16_t x1 = rand() % screenWidth;
+        int16_t y1 = rand() % screenHeight;
+        int16_t x2 = x1 + rand() % 100;
+        int16_t y2 = y1 + rand() % 100;
+        Color c = rand() & 0x00FFFFFF;
+        
+        display->setColor(c);
+        display->fillRectangle(x1, y1, x2, y2);
+    }
+    Task::delay(500);
+    
+    // Circles
+    //
+    drawBackground("Circles");
+    Task::delay(250);
+    
+    display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);   
+    display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
+    for (int i = 0; i < 200; i++) {
+        int16_t cx = rand() % screenWidth;
+        int16_t cy = rand() % screenHeight;
+        int16_t r = rand() % 150;
+        Color c = rand() & 0x00FFFFFF;
+        
+        display->setColor(c);
+        display->drawCircle(cx, cy, r);
+    }
+    Task::delay(1000);
+    
+    // Fillet circles
+    //
+    drawBackground("Filled circles");
+    Task::delay(250);
+    
+    display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);   
+    display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
+    for (int i = 0; i < 200; i++) {
+        int16_t cx = rand() % screenWidth;
+        int16_t cy = rand() % screenHeight;
+        int16_t r = rand() % 50;
+        Color c = rand() & 0x00FFFFFF;
+        
+        display->setColor(c);
+        display->fillCircle(cx, cy, r);
+    }
+    Task::delay(500);
 }
 
 

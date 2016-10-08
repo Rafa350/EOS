@@ -202,9 +202,6 @@ void Display::drawLine(
     int16_t x2, 
     int16_t y2) {
    
-    int16_t stepx, stepy;
-    int16_t dx, dy, p, incE, incNE;
-    
     if (x1 == x2) {
         if (clipVLine(x1, y1, y2)) {
             if (y1 > y2) 
@@ -225,6 +222,9 @@ void Display::drawLine(
         
         if (clipLine(x1, y1, x2, y2)) {
 		
+            int16_t stepx, stepy;
+            int16_t dx, dy, p, incE, incNE;
+            
             dx = x2 - x1;
             dy = y2 - y1;
 
@@ -371,8 +371,10 @@ void Display::fillRectangle(
     int16_t y2) {
 
     if (clipArea(x1, y1, x2, y2)) {
-        if (x1 > x2) swap(x1, x2);
-        if (y1 > y2) swap(y1, y2);
+        if (x1 > x2) 
+            swap(x1, x2);
+        if (y1 > y2) 
+            swap(y1, y2);
         while (x1 <= x2)
             driver->setVPixels(x1++, y1, y2 - y1 + 1, color);
     }
@@ -395,17 +397,11 @@ void Display::fillCircle(
     int16_t d = 1 - x;  
 
     while (y <= x) {
+        
         drawLine(cx - x, cy - y, cx + x, cy - y);
         drawLine(cx - x, cy + y, cx + x, cy + y);
         drawLine(cx - y, cy - x, cx + y, cy - x);
-        drawLine(cx - y, cy + x, cx + y, cy + x);
-        
-        /*
-        driver->setVPixels(cx + x, cy - y, y + y + 1, color);
-        driver->setVPixels(cx - x, cy - y, y + y + 1, color);
-        driver->setVPixels(cx + y, cy - x, x + x + 1, color);
-        driver->setVPixels(cx - y, cy - x, x + x + 1, color);
-        */
+        drawLine(cx - y, cy + x, cx + y, cy + x);     
         
         y++;
         if (d <= 0)
@@ -631,15 +627,40 @@ bool Display::clipArea(
     int16_t &y2) {
     
     if (clipEnabled) {
-        if (x1 < clipX1) 
-            x1 = clipX1;
-        if (y1 < clipY1) 
-            y1 = clipY1;
-        if (x2 > clipX2) 
-            x2 = clipX2;
-        if (y2 > clipY2) 
-            y2 = clipY2;
-        return (x2 >= x1) && (y2 >= y1);
+    
+        uint8_t code1 = calcOutCode(x1, y1);
+        uint8_t code2 = calcOutCode(x2, y2);
+        
+        if (!(code1 | code2))
+            return true;
+        
+        else if (code1 & code2)
+            return false;
+        
+        else {
+            
+            if (x1 < clipX1) 
+                x1 = clipX1;
+            else if (x1 > clipX2)
+                x1 = clipX2;
+            
+            if (y1 < clipY1) 
+                y1 = clipY1;
+            else if (y1 > clipY2)
+                y1 = clipY2;
+            
+            if (x2 > clipX2) 
+                x2 = clipX2;
+            else if (x2 < clipX1)
+                x2 = clipX1;
+            
+            if (y2 > clipY2) 
+                y2 = clipY2;
+            else if (y2 < clipY1)
+                y2 = clipY1;
+            
+            return true;
+        }
     }
     else
         return true;
