@@ -23,7 +23,10 @@ const uint8_t top = 8;
 inline void swap(
     int16_t &a, 
     int16_t &b) {
-    int16_t t = a; a = b; b = t;
+    
+    int16_t t = a; 
+    a = b; 
+    b = t;
 }
 
 
@@ -202,31 +205,32 @@ void Display::drawLine(
     int16_t x2, 
     int16_t y2) {
    
-    if (x1 == x2) {
-        if (clipVLine(x1, y1, y2)) {
-            if (y1 > y2) 
-                swap(y1, y2);
-            driver->setVPixels(x1, y1, y2 - y1 + 1, color);
-        }
+    // Calcula les deltas
+    //
+    int16_t dx = x2 - x1;
+    int16_t dy = y2 - y1;
+
+    // Es una linea horitzontal
+    //
+    if (dx == 0) {        
+        if (clipVLine(x1, y1, y2)) 
+            driver->setVPixels(x1, dy > 0 ? y1 : y2, (dy > 0 ? dy : -dy) + 1, color);
     }
 	
-    else if (y1 == y2) {
-        if (clipHLine(x1, x2, y1)) {
-            if (x1 > x2) 
-                swap(x1, x2);
-            driver->setHPixels(x1, y1, x2 - x1 + 1, color);
-        }
+    // Es una linia vertical
+    //
+    else if (dy == 0) {        
+        if (clipHLine(x1, x2, y1)) 
+            driver->setHPixels(dx > 0 ? x1 : x2, y1, (dx > 0 ? dx : -dx) + 1, color);
     }
 	
+    // No es ni horitzontal ni vertical
+    //
     else {
-        
         if (clipLine(x1, y1, x2, y2)) {
 		
             int16_t stepx, stepy;
-            int16_t dx, dy, p, incE, incNE;
-            
-            dx = x2 - x1;
-            dy = y2 - y1;
+            int16_t p, incE, incNE;
 
             if (dy < 0) {
                 dy = -dy;
@@ -375,8 +379,7 @@ void Display::fillRectangle(
             swap(x1, x2);
         if (y1 > y2) 
             swap(y1, y2);
-        while (x1 <= x2)
-            driver->setVPixels(x1++, y1, y2 - y1 + 1, color);
+        driver->setPixels(x1, y1, x2 - x1 + 1, y2 -y1 + 1, color);
     }
 }
 
@@ -849,6 +852,13 @@ bool Display::clipLine(
         return true;
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief Cancula el 'outcode' per l'algorisme de retall.
+/// \param x: Coordinada X del punt.
+/// \param y: Coordinada Y del punt.
+/// \return El 'outcode' calculat.
+///
 uint8_t Display::calcOutCode(
     int16_t x, 
     int16_t y) {
