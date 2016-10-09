@@ -522,8 +522,9 @@ void ILI9341_Driver::writePixel(
     
 #if defined(ILI9341_COLORMODE_565)    
 
-    uint8_t c1 = (uint32_t)(((color & 0x00F80000) >> 16) | ((color & 0x0000E000) >> 13));
-    uint8_t c2 = (uint32_t)(((color & 0x00001C00) >> 5) | ((color &0x000000F8) >> 3));
+    uint32_t c = color.c;
+    uint8_t c1 = (uint32_t)(((c & 0x00F80000) >> 16) | ((c & 0x0000E000) >> 13));
+    uint8_t c2 = (uint32_t)(((c & 0x00001C00) >> 5) | ((c &0x000000F8) >> 3));
     
     io.begin();
     io.address(ADDR_DATA);
@@ -535,9 +536,10 @@ void ILI9341_Driver::writePixel(
     
 #elif defined(ILI9341_COLORMODE_666)
     
-    uint8_t c1 = (uint32_t)(color & 0x00FC0000) >> 16;
-    uint8_t c2 = (uint32_t)(color & 0x0000FC00) >> 8;
-    uint8_t c3 = (uint32_t)color & 0x000000FC;
+    uint32_t c = color.c;
+    uint8_t c1 = (uint32_t)(c & 0x00FC0000) >> 16;
+    uint8_t c2 = (uint32_t)(c & 0x0000FC00) >> 8;
+    uint8_t c3 = (uint32_t)(c & 0x000000FC);
    
     io.begin();
     io.address(ADDR_DATA);
@@ -585,7 +587,7 @@ void ILI9341_Driver::readPixel(
         uint8_t volatile c1 = io.read();
         uint8_t volatile c2 = io.read();
         uint8_t volatile c3 = io.read();
-        Color color = RGB(c1, c2, c3);
+        Color color(1, c2, c3);
         *colors++ = color;
         
 #elif defined(ILI9341_COLORMODE_666)        

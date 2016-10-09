@@ -32,6 +32,9 @@ namespace eos {
             void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
             void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);   
             
+        private:
+            inline int offsetOf(int16_t x, int16_t y) { return x + (y * screenWidth); }
+            Color mixColors(Color color1, Color color2, uint8_t mix);
     };
 }
 

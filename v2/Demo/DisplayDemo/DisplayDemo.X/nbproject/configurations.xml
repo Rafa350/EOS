@@ -19,6 +19,7 @@
               </logicalFolder>
               <itemPath>../../../Include/Controllers/Display/eosDisplay.hpp</itemPath>
               <itemPath>../../../Include/Controllers/Display/eosFont.hpp</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosColor.hpp</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Hal" projectFiles="true">
@@ -68,6 +69,7 @@
                 <logicalFolder name="f2" displayName="VDC" projectFiles="true">
                   <itemPath>../../../Source/Controllers/Display/Drivers/VDC/eosVdc.cpp</itemPath>
                 </logicalFolder>
+                <itemPath>../../../Source/Controllers/Display/eosColor.cpp</itemPath>
               </logicalFolder>
               <logicalFolder name="f2" displayName="Fonts" projectFiles="true">
                 <itemPath>../../../Source/Controllers/Display/Fonts/Consolas8pt.cpp</itemPath>
@@ -326,6 +328,7 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

@@ -2,7 +2,6 @@
 #include "Controllers/Display/Drivers/eosVDC.hpp"
 
 
-
 using namespace eos;
 
 
@@ -17,8 +16,7 @@ VDC_Driver::VDC_Driver(
 
     screenWidth(_screenWidth),
     screenHeight(_screenHeight),
-    canvas(new Color[_screenHeight * _screenHeight]) {
-    
+    canvas(new Color[_screenHeight * _screenHeight]) {    
 }
 
 
@@ -32,8 +30,8 @@ VDC_Driver::~VDC_Driver() {
 
 
 void VDC_Driver::initialize() {
-
-    clear(RGB(0, 0, 0));
+    
+    clear(Color(0));
 }
 
 
@@ -47,4 +45,13 @@ void VDC_Driver::clear(
     
     for (int i = 0, ii = screenWidth * screenHeight; i < ii; i++)
         canvas[i] = color;
+}
+
+
+void VDC_Driver::setPixel(
+    int16_t x, 
+    int16_t y, 
+    Color color) {
+    
+    canvas[offsetOf(x, y)] = color;
 }

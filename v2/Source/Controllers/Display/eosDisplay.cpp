@@ -35,11 +35,12 @@ inline void swap(
 /// \param driver: Driver del display
 ///
 Display::Display(
-    IDisplayDriver *_driver):
-    driver(_driver),
+    IDisplayDriver *driver) :
+    
+    driver(driver),
     color(0),
-    screenWidth(_driver->getWidth()),
-    screenHeight(_driver->getHeight()),
+    screenWidth(driver->getWidth()),
+    screenHeight(driver->getHeight()),
     cursorX(0),
     cursorY(0),
     clipEnabled(false),
@@ -545,7 +546,7 @@ void Display::putTTY(
                     break;
 
                 case (char)0xFE:
-                    clear(0);
+                    clear(Color(0));
                     break;
             
                 case (char)0xFD:

@@ -56,7 +56,7 @@ void MyAppLoopService::setup() {
     driver->initialize();
     driver->setOrientation(Orientation::rotate180);
     display = new Display(driver);
-    display->clear(0x00000000);
+    display->clear(COLOR_Black);
     
     screenWidth = display->getDriver()->getWidth();
     screenHeight  = display->getDriver()->getHeight();    
@@ -90,16 +90,15 @@ void MyAppLoopService::loop() {
     for (int i = 0; i < 50000; i++) {
         int16_t x = rand() % screenWidth;
         int16_t y = rand() % screenHeight;
-        Color c = rand() & 0x00FFFFFF;
         
-        display->setColor(c);
+        display->setColor(rand() & 0x00FFFFFF);
         display->drawPoint(x, y);
     }
     pointsTicks = Task::getTickCount() - ticks;
     Task::delay(250);
     
     srand(seed);
-    display->setColor(0);
+    display->setColor(Color(0));
     for (int i = 0; i < 50000; i++) {
         int16_t x = rand() % screenWidth;
         int16_t y = rand() % screenHeight;
@@ -122,9 +121,8 @@ void MyAppLoopService::loop() {
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = x1; 
         int16_t y2 = rand() % screenHeight;
-        Color c = rand() & 0x00FFFFFF;
         
-        display->setColor(c);
+        display->setColor(rand() & 0x00FFFFFF);
         display->drawLine(x1, y1, x2, y2);
     }    
     verticalLinesTicks = Task::getTickCount() - ticks;
@@ -143,9 +141,8 @@ void MyAppLoopService::loop() {
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = rand() % screenWidth;
         int16_t y2 = y1;
-        Color c = rand() & 0x00FFFFFF;
         
-        display->setColor(c);
+        display->setColor(rand() & 0x00FFFFFF);
         display->drawLine(x1, y1, x2, y2);
     }
     horizontalLinesTicks = Task::getTickCount() - ticks;
@@ -164,9 +161,8 @@ void MyAppLoopService::loop() {
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = rand() % screenWidth;
         int16_t y2 = rand() % screenHeight;
-        Color c = rand() & 0x00FFFFFF;
         
-        display->setColor(c);
+        display->setColor( rand() & 0x00FFFFFF);
         display->drawLine(x1, y1, x2, y2);
     }
     linesTicks = Task::getTickCount() - ticks;
@@ -184,9 +180,8 @@ void MyAppLoopService::loop() {
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = rand() % screenWidth;
         int16_t y2 = rand() % screenHeight;
-        Color c = rand() & 0x00FFFFFF;
         
-        display->setColor(c);
+        display->setColor(rand() & 0x00FFFFFF);
         display->drawRectangle(x1, y1, x2, y2);
     }
     Task::delay(1000);
@@ -204,9 +199,8 @@ void MyAppLoopService::loop() {
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = x1 + rand() % 100;
         int16_t y2 = y1 + rand() % 100;
-        Color c = rand() & 0x00FFFFFF;
         
-        display->setColor(c);
+        display->setColor(rand() & 0x00FFFFFF);
         display->fillRectangle(x1, y1, x2, y2);
     }
     fillRectanglesTicks = Task::getTickCount() - ticks;
@@ -223,9 +217,8 @@ void MyAppLoopService::loop() {
         int16_t cx = rand() % screenWidth;
         int16_t cy = rand() % screenHeight;
         int16_t r = rand() % 150;
-        Color c = rand() & 0x00FFFFFF;
         
-        display->setColor(c);
+        display->setColor(rand() & 0x00FFFFFF);
         display->drawCircle(cx, cy, r);
     }
     Task::delay(1000);
@@ -241,9 +234,8 @@ void MyAppLoopService::loop() {
         int16_t cx = rand() % screenWidth;
         int16_t cy = rand() % screenHeight;
         int16_t r = rand() % 50;
-        Color c = rand() & 0x00FFFFFF;
         
-        display->setColor(c);
+        display->setColor(rand() & 0x00FFFFFF);
         display->fillCircle(cx, cy, r);
     }
     Task::delay(500);
