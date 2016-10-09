@@ -11,10 +11,11 @@
       </logicalFolder>
       <logicalFolder name="f3" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="Eos" projectFiles="true">
-          <logicalFolder name="f4" displayName="Controlers" projectFiles="true">
+          <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
                 <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341.hpp</itemPath>
+                <itemPath>../../../Include/Controllers/Display/Drivers/eosVdc.hpp</itemPath>
               </logicalFolder>
               <itemPath>../../../Include/Controllers/Display/eosDisplay.hpp</itemPath>
               <itemPath>../../../Include/Controllers/Display/eosFont.hpp</itemPath>
@@ -60,8 +61,13 @@
           <logicalFolder name="f1" displayName="Controllers" projectFiles="true">
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
-                <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</itemPath>
-                <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_p8.cpp</itemPath>
+                <logicalFolder name="f1" displayName="ILI9341" projectFiles="true">
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_p8.cpp</itemPath>
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</itemPath>
+                </logicalFolder>
+                <logicalFolder name="f2" displayName="VDC" projectFiles="true">
+                  <itemPath>../../../Source/Controllers/Display/Drivers/VDC/eosVdc.cpp</itemPath>
+                </logicalFolder>
               </logicalFolder>
               <logicalFolder name="f2" displayName="Fonts" projectFiles="true">
                 <itemPath>../../../Source/Controllers/Display/Fonts/Consolas8pt.cpp</itemPath>
