@@ -8,9 +8,11 @@
 
 namespace eos {
     
+    typedef Pixel565 VDC_Pixel;
+    
     class VDC_Driver: public IDisplayDriver {
         private:
-            Color *canvas;
+            VDC_Pixel *canvas;
             int16_t screenWidth;
             int16_t screenHeight;
             

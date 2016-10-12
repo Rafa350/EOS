@@ -21,6 +21,8 @@ namespace eos {
             uint8_t read();
     };
     
+    typedef Pixel565 ILI9341_Pixel;
+    
     class ILI9341_Driver: public IDisplayDriver {
         private:
             ILI9341_IO io;
