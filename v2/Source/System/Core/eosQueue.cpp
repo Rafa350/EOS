@@ -46,7 +46,7 @@ void GenericQueue::clear() {
 /// ----------------------------------------------------------------------
 /// \brief Afegeix un element en la cua.
 /// \param element: Punter al element a afeigir.
-/// \param blockTime: Temps maxim de bloqueig.
+/// \param blockTime: Temps maxim de bloqueig en milisegons.
 /// \return True si tot es correcte.
 ///
 bool GenericQueue::genericPut(
@@ -55,14 +55,14 @@ bool GenericQueue::genericPut(
     
     eosAssert(element != nullptr, 0, "[GenericQueue::genericPut] element != nullptr");
 
-    return xQueueSendToBack(handle, element, blockTime) == pdPASS;
+    return xQueueSendToBack(handle, element, blockTime / portTICK_PERIOD_MS) == pdPASS;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Extreu un element en la cua.
 /// \param element: Punter al element a extreure.
-/// \param blockTime: Temps maxim de bloqueig.
+/// \param blockTime: Temps maxim de bloqueig en milisegons.
 /// \return True si tot es correcte. 
 ///
 bool GenericQueue::genericGet(
@@ -71,7 +71,7 @@ bool GenericQueue::genericGet(
 
     eosAssert(element != nullptr, 0, "[GenericQueue::genericGet] element != nullptr");
 
-    return xQueueReceive(handle, element, blockTime) == pdPASS;
+    return xQueueReceive(handle, element, blockTime / portTICK_PERIOD_MS) == pdPASS;
 }
 
 

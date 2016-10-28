@@ -84,16 +84,16 @@
 #define configUSE_PREEMPTION                    1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 #define configUSE_TICKLESS_IDLE                 0
-#define configCPU_CLOCK_HZ                      ( 80000000UL )
-#define configPERIPHERAL_CLOCK_HZ               ( 80000000UL )
-#define configTICK_RATE_HZ                      ( ( TickType_t ) 1000 )
-#define configMAX_PRIORITIES                    ( 6UL )
-#define configMINIMAL_STACK_SIZE                ( 512 )
-#define configISR_STACK_SIZE                    ( 512 )
+#define configCPU_CLOCK_HZ                      (80000000UL)
+#define configPERIPHERAL_CLOCK_HZ               (80000000UL)
+#define configTICK_RATE_HZ                      ((TickType_t) 500)
+#define configMAX_PRIORITIES                    (6UL)
+#define configMINIMAL_STACK_SIZE                (512)
+#define configISR_STACK_SIZE                    (512)
 #ifndef configTOTAL_HEAP_SIZE
-#define configTOTAL_HEAP_SIZE                   ( ( size_t ) (1024 * 16) )
+#define configTOTAL_HEAP_SIZE                   ((size_t) (1024 * 20))
 #endif
-#define configMAX_TASK_NAME_LEN                 ( 16 )
+#define configMAX_TASK_NAME_LEN                 (16)
 #define configUSE_16_BIT_TICKS                  0
 #define configIDLE_SHOULD_YIELD                 1
 #define configUSE_MUTEXES                       1

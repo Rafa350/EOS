@@ -71,39 +71,39 @@ unsigned Task::getTickCount() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retarda la tasca actual un numero determinat de ticks.
-/// \param time: El numero de ticks a retardar.
+/// \brief Retarda la tasca actual un numero determinat de milisegons.
+/// \param time: El numero de milisegons a retardar.
 ///
 void Task::delay(
     unsigned time) {
 
     if (time > 0)
-        vTaskDelay((TickType_t) time);    
+        vTaskDelay((TickType_t) time / portTICK_PERIOD_MS);    
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retarda la tasca actual un numero determinat de ticks.
-/// \param time: El numero de ticks a retardar.
+/// \brief Retarda la tasca actual un numero determinat de milisegons.
+/// \param time: El numero de milisegons a retardar.
 ///
 void Task::delayUntil(
     unsigned time, 
     unsigned *lastTick) {
     
     if (time > 0)
-        vTaskDelayUntil((TickType_t*) lastTick, (TickType_t) time);
+        vTaskDelayUntil((TickType_t*) lastTick, (TickType_t) time / portTICK_PERIOD_MS);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Espera una notificacio interna de la tasca.
-/// \param blockTime: Temps maxim de bloqueig.
+/// \param blockTime: Temps maxim de bloqueig en milisegons.
 /// \return True si hi ha notificacio, false en cas contrari.
 ///
 bool Task::notificationTake(
     unsigned blockTime) {
     
-    return ulTaskNotifyTake(pdTRUE, blockTime) != 0;
+    return ulTaskNotifyTake(pdTRUE, blockTime / portTICK_PERIOD_MS) != 0;
 }
 
 

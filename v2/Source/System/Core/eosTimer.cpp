@@ -39,30 +39,30 @@ Timer::~Timer() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia el temporitzador.
 /// \param: timeout: Temps de cicle.
-/// \param blockTime: Temps maxim de bloqueix
+/// \param blockTime: Temps maxim de bloqueix en milisegons.
 ///
 void Timer::start(
     unsigned timeout,
     unsigned blockTime) {
 
     if (handler == nullptr) {
-        handler = xTimerCreate(defaultTimerName, timeout, autoreload, (void*) this, timerCallback);
-        xTimerStart(handler, blockTime);
+        handler = xTimerCreate(defaultTimerName, timeout / portTICK_PERIOD_MS, autoreload, (void*) this, timerCallback);
+        xTimerStart(handler, blockTime / portTICK_PERIOD_MS);
     }
     else 
-        xTimerChangePeriod(handler, timeout, blockTime);
+        xTimerChangePeriod(handler, timeout / portTICK_PERIOD_MS, blockTime / portTICK_PERIOD_MS);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Para el temporitzador.
-/// \param blockTime: Temps maxim de bloqueig
+/// \param blockTime: Temps maxim de bloqueig en milisegons.
 ///
 void Timer::stop(
     unsigned blockTime) {
     
     if (handler != nullptr)
-        xTimerStop(handler, blockTime);
+        xTimerStop(handler, blockTime / portTICK_PERIOD_MS);
 }
 
 

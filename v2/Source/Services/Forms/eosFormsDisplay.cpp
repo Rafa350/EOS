@@ -15,8 +15,6 @@ using namespace eos;
 #define CMD_SETCOLOR          6
 #define CMD_SETFONT           7
 
-static uint8_t __buffer[8192];
-
 
 /// ---------------------------------------------------------------------
 /// \brier Contructor.
@@ -26,9 +24,8 @@ FormsDisplay::FormsDisplay(
     Display *_display):
     display(_display) {
     
-    bufferSize = sizeof(__buffer);
-    buffer = __buffer;
-    //buffer = (uint8_t*) eosHeapAlloc(nullptr, bufferSize);
+    bufferSize = 1024;
+    buffer = new uint8_t[bufferSize];
     
     buffer[0] = CMD_END;     // Marca de final
     wrIdx = 0;               // Inicialitza el punter d'escriptura
@@ -62,7 +59,7 @@ void FormsDisplay::endDraw() {
 /// \param color: El color.
 ///
 void FormsDisplay::setColor(
-    unsigned color) {
+    Color color) {
     
     if (wrCheck(5)) {
         wr8(CMD_SETCOLOR);
