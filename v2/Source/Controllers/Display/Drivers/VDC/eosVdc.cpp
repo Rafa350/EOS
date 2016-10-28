@@ -29,12 +29,18 @@ VDC_Driver::~VDC_Driver() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza la pantalla.
+///
 void VDC_Driver::initialize() {
     
     clear(Color(0));
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Desactiva la pantalla.
+///
 void VDC_Driver::shutdown() {
     
 }
@@ -53,6 +59,12 @@ void VDC_Driver::clear(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa un pixel.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param color: Color del pixel.
+///
 void VDC_Driver::setPixel(
     int16_t x, 
     int16_t y, 
@@ -62,7 +74,13 @@ void VDC_Driver::setPixel(
 }
 
 
-
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una linia de pixels horitzontals. 
+/// \param x: Coordinada X.
+/// \param y: Colordinada Y.
+/// \param length: Longitut de la linia.
+/// \param color: Color dels pixels.
+///
 void VDC_Driver::setHPixels(
     int16_t x, 
     int16_t y, 
@@ -79,6 +97,13 @@ void VDC_Driver::setHPixels(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una linia de pixels en vertical. 
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param length: Longitut de la linia.
+/// \param color: Color dels pixels.
+///
 void VDC_Driver::setVPixels(
     int16_t x, 
     int16_t y, 
@@ -91,5 +116,79 @@ void VDC_Driver::setVPixels(
     while (size--) {
         canvas[offset] = pixel;
         offset += screenWidth;
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una regio rectangular de pixels.
+/// \param x: Posicio X.
+/// \param y: Posicio Y.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
+/// \param color: Color dels pixels.
+///
+void VDC_Driver::setPixels(
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height, 
+    Color color) {
+
+    while (height--)
+        setHPixels(x, y++, width, color);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una regio rectangular de pixels.
+/// \param x: Posicio X.
+/// \param y: Posicio Y.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
+/// \param colors: Color dels pixels.
+///
+void VDC_Driver::writePixels(
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height, 
+    const Color* colors) {
+
+    while (height--) {
+        while (width--) {
+            setPixel(x, y, *colors++);
+            x += 1;
+        }
+        y += 1;
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Llegeix una regio rectangular de pixels. No hi ha cap tipus de 
+///        comprovacio de la validesa dels parametres.
+/// \param x: Posicio X.
+/// \param y: Posicio Y.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
+/// \params colors: Buffer on deixar els pixels.
+///
+void VDC_Driver::readPixels(
+    int16_t x, 
+    int16_t y, 
+    int16_t width, 
+    int16_t height, 
+    Color *colors) {
+
+    while (height--) {
+        while (width--) {
+            VDC_Pixel *pixel = &canvas[offsetOf(x, y)];
+            colors->r = pixel->r << 3;
+            colors->g = pixel->g << 2;
+            colors->b = pixel->b << 3;
+            x += 1;
+        }
+        y += 1;
     }
 }

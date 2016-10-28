@@ -8,33 +8,7 @@
 
 
 namespace eos {
-    
-    union Pixel565 {
-        struct {
-            uint8_t r: 5;
-            uint8_t g: 6;
-            uint8_t b: 5;
-        };
-        uint8_t space[2]; // Força el tamany a 16 bits
         
-        Pixel565(): r(0), g(0), b(0) {}
-        Pixel565(uint8_t r, uint8_t g, uint8_t b): r(r), g(g), b(b) {}
-        Pixel565(Color color): r(color.r >> 3), g(color.g >> 2), b(color.b >> 3) {}
-    };
-    
-    union Pixel666 {
-        struct {
-            uint8_t r: 6;
-            uint8_t g: 6;
-            uint8_t b: 6;
-        };
-        uint8_t space[3]; // Força el tamany a 24 bits
-
-        Pixel666(): r(0), g(0), b(0) {}
-        Pixel666(uint8_t r, uint8_t g, uint8_t b): r(r), g(g), b(b) {}
-        Pixel666(Color color): r(color.r >> 2), g(color.g >> 2), b(color.b >> 2) {}
-    };
-   
     enum class Orientation {
         normal,
         rotate90,
