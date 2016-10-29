@@ -3,6 +3,11 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.632987581">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.632987581" moduleId="org.eclipse.cdt.core.settings" name="Debug">
+				<macros>
+					<stringMacro name="APP_PATH" type="VALUE_TEXT" value="C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DisplayDemo"/>
+					<stringMacro name="EOS_PATH" type="VALUE_TEXT" value="C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2"/>
+					<stringMacro name="FREERTOS_PATH" type="VALUE_TEXT" value=""/>
+				</macros>
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -32,6 +37,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/device}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/StdPeriph_Driver/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.493384355" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -42,6 +48,8 @@
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F429_439xx"/>
 								</option>
+								<option id="gnu.c.compiler.option.dialect.std.928139335" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.c11" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.include.files.750481461" name="Include files (-include)" superClass="gnu.c.compiler.option.include.files" useByScannerDiscovery="false" valueType="includeFiles"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.1040710310" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.667355069" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
 							</tool>
@@ -54,6 +62,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/device}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/StdPeriph_Driver/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.895970671" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -64,6 +73,8 @@
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F429_439xx"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.dialect.std.1263496298" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.include.files.40901897" name="Include files (-include)" superClass="gnu.cpp.compiler.option.include.files" useByScannerDiscovery="false" valueType="includeFiles"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp.387580041" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s.635021909" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s"/>
 							</tool>
@@ -113,6 +124,11 @@
 		</cconfiguration>
 		<cconfiguration id="fr.ac6.managedbuild.config.gnu.cross.exe.release.302089042">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.release.302089042" moduleId="org.eclipse.cdt.core.settings" name="Release">
+				<macros>
+					<stringMacro name="APP_PATH" type="VALUE_TEXT" value=""/>
+					<stringMacro name="EOS_PATH" type="VALUE_TEXT" value=""/>
+					<stringMacro name="FREERTOS_PATH" type="VALUE_TEXT" value=""/>
+				</macros>
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -142,6 +158,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/device}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/StdPeriph_Driver/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.422671232" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -163,6 +180,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/device}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/StdPeriph_Driver/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.2064974980" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -239,5 +257,13 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/DisplayDemo"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/DisplayDemo"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

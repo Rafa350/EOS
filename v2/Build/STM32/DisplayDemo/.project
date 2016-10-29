@@ -26,4 +26,31 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>fr.ac6.mcu.ide.core.MCUProjectNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/App/AppMain.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/AppMain.cpp</location>
+		</link>
+		<link>
+			<name>src/App/Main.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/Main.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Services/eosAppLoop.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/eosService.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Services/eosService.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosApplication.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/eosApplication.cpp</location>
+		</link>
+	</linkedResources>
 </projectDescription>
