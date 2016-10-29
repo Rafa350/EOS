@@ -21,6 +21,7 @@ GenericPoolAllocator I2CMasterService::transactionAllocator(
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor
+/// \param application: Aplicacio a la que pertany el servei.
 /// \param moduleId: Identificador del modulI2C
 ///
 I2CMasterService::I2CMasterService(
@@ -30,7 +31,6 @@ I2CMasterService::I2CMasterService(
     moduleId(_moduleId),
     Service(application, serviceName, taskStackSize, taskPriority),
     transactionQueue(eosI2CMasterService_TransactionQueueSize) {
-
 }
 
 
@@ -94,7 +94,7 @@ void I2CMasterService::run(
     while (true) {
            
         if (transactionQueue.get(transaction, (unsigned) -1)) {
-        
+            
             // Espera a que el bus estigui lliure
             //
             while (!halI2CIsBusIdle(moduleId)) 
@@ -121,10 +121,13 @@ void I2CMasterService::run(
             //
             Task::delay(eosI2CMasterService_EndTransactionDelay);
             
-            // Finalitza el us de la transaccio
+            // Notifica el final de la transaccio
             //
             if (transaction->notify != nullptr)
                 transaction->notify->give();
+            
+            // Destrueix la transaccio
+            //
             delete transaction;
         }
     }

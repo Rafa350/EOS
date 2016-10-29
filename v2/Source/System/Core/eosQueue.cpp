@@ -55,7 +55,8 @@ bool GenericQueue::genericPut(
     
     eosAssert(element != nullptr, 0, "[GenericQueue::genericPut] element != nullptr");
 
-    return xQueueSendToBack(handle, element, blockTime / portTICK_PERIOD_MS) == pdPASS;
+    TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    return xQueueSendToBack(handle, element,  ticks) == pdPASS;
 }
 
 
@@ -71,7 +72,8 @@ bool GenericQueue::genericGet(
 
     eosAssert(element != nullptr, 0, "[GenericQueue::genericGet] element != nullptr");
 
-    return xQueueReceive(handle, element, blockTime / portTICK_PERIOD_MS) == pdPASS;
+    TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    return xQueueReceive(handle, element, ticks) == pdPASS;
 }
 
 

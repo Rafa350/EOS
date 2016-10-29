@@ -78,20 +78,21 @@ void Task::delay(
     unsigned time) {
 
     if (time > 0)
-        vTaskDelay((TickType_t) time / portTICK_PERIOD_MS);    
+        vTaskDelay(time / portTICK_PERIOD_MS);    
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Retarda la tasca actual un numero determinat de milisegons.
 /// \param time: El numero de milisegons a retardar.
+/// \param lastTick: El valor de contador de ticks actualitzat.
 ///
 void Task::delayUntil(
     unsigned time, 
     unsigned *lastTick) {
     
-    if (time > 0)
-        vTaskDelayUntil((TickType_t*) lastTick, (TickType_t) time / portTICK_PERIOD_MS);
+    if (time > 0) 
+        vTaskDelayUntil((TickType_t*) lastTick, time / portTICK_PERIOD_MS);
 }
 
 
@@ -103,7 +104,8 @@ void Task::delayUntil(
 bool Task::notificationTake(
     unsigned blockTime) {
     
-    return ulTaskNotifyTake(pdTRUE, blockTime / portTICK_PERIOD_MS) != 0;
+    TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    return ulTaskNotifyTake(pdTRUE, ticks) != 0;
 }
 
 

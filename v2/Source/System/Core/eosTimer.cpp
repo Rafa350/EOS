@@ -83,7 +83,7 @@ bool Timer::isActive() const {
 void Timer::timerCallback(
     void *handler) {
     
-    Timer *timer = (Timer*) pvTimerGetTimerID(handler);
+    Timer *timer = reinterpret_cast<Timer*>(pvTimerGetTimerID(handler));
     if (timer->evTimeout != nullptr)
         timer->evTimeout->execute(timer);
 }

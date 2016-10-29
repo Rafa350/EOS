@@ -48,6 +48,7 @@ namespace eos {
             void onPaint(FormsDisplay *display);
 #ifdef eosFormsService_UseSelector            
             void onSelectorMove(int position, SelectorDirection direction);
+            void onSelectorPress();
 #endif            
 #ifdef eosFormsService_UseKeyboard            
             void onKeyPress(KeyCode keyCode);

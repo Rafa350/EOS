@@ -81,7 +81,7 @@ void *GenericPoolAllocator::allocate(
     
     eosAssert(
         ret != nullptr, 
-        0, "PoolAllocator::allocate: No hi ha memoria disponoble.");
+        0, "PoolAllocator::allocate: No hi ha memoria disponible.");
     
     
     return ret;
@@ -96,7 +96,7 @@ void GenericPoolAllocator::deallocate(
     void *p) {
         
     eosAssert(
-        p == nullptr, 
+        p != nullptr, 
         0, "PoolAllocator::deallocate: El parametre 'p' es nul.");
 
     __LOCK();

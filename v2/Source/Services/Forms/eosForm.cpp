@@ -13,6 +13,11 @@ using namespace eos;
 Form::Form(
     FormsService *_service,
     Form *_parent):
+
+#ifdef eosFormsService_UseKeyboard
+    evKeyboardPress(nullptr),
+    evKeyboardRelease(nullptr),
+#endif    
 #ifdef eosFormsService_UseSelector            
     evSelectorPress(nullptr),
     evSelectorRelease(nullptr),
@@ -34,6 +39,14 @@ Form::~Form() {
     
     if (service != nullptr)
         service->remove(this);
+    
+#ifdef eosFormsService_UseKeyboard
+    if (evKeyboardPress != nullptr)
+        delete evKeyboardPress;
+
+    if (evKeyboardRelease != nullptr)
+        delete evKeyboardRelease;
+#endif    
     
 #ifdef eosFormsService_UseSelector               
     if (evSelectorPress != nullptr)
@@ -161,6 +174,8 @@ void Form::onSelectorRelease() {
 void Form::onKeyPress(
     KeyCode keyCode) {
     
+    if (evKeyboardPress != nullptr)
+        evKeyboardPress->execute(this, keyCode);
 }
 #endif
 
@@ -173,5 +188,7 @@ void Form::onKeyPress(
 void Form::onKeyRelease(
     KeyCode keyCode) {
     
+    if (evKeyboardRelease != nullptr)
+        evKeyboardRelease->execute(this, keyCode);
 }
 #endif

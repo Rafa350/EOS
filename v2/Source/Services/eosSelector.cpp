@@ -49,8 +49,11 @@ SelectorService::~SelectorService() {
 void SelectorService::run(
     Task *task) {
     
-    static uint8_t query[1] = { SEL_CMD_GETSTATE };
-    uint8_t response[10];
+    SelGetStateMessage query;
+    query.cmd = SEL_CMD_GETSTATE;
+    
+    SelGetStateResponse response;
+    
     BinarySemaphore endTransactionNotify;
 
     while (true) {
@@ -59,21 +62,21 @@ void SelectorService::run(
         
         if (i2cService->startTransaction(
             addr, 
-            query, sizeof(query), 
-            response, sizeof(response), 
+            &query, sizeof(query), 
+            &response, sizeof(response), 
             (unsigned) -1,
             &endTransactionNotify)) {
             
             if (endTransactionNotify.take((unsigned) - 1)) {
-            
-                SelectorState newState = response[1];
-                SelectorPosition newPosition = (int16_t) ((response[3] << 8) | response[2]);
+                
+                if (response.cmd == SEL_CMD_GETSTATE) {
 
-                if ((state != newState) || (position != newPosition)) {
-                    position = newPosition;
-                    state = newState;
-                    if (evNotify != nullptr)
-                        evNotify->execute(position, state);
+                    if ((state != response.state) || (position != response.position)) {
+                        position = response.position;
+                        state = response.state;
+                        if (evNotify != nullptr)
+                            evNotify->execute(position, state);
+                    }
                 }
             }
         }

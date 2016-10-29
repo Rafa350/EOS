@@ -11,6 +11,10 @@
 eos::BinarySemaphore::BinarySemaphore() {
     
     handle = xSemaphoreCreateBinary();
+    
+    eosAssert(
+        handle != nullptr,
+        0, "[BinarySemaphore::ctor] handle != nullptr")
 }
 
 
@@ -31,7 +35,8 @@ eos::BinarySemaphore::~BinarySemaphore() {
 bool eos::BinarySemaphore::take(
     unsigned blockTime) {
     
-    return xSemaphoreTake(handle, blockTime / portTICK_PERIOD_MS);
+    TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    return xSemaphoreTake(handle, ticks);
 }
 
 

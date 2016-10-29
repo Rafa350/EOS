@@ -48,10 +48,10 @@ KeyboardService::~KeyboardService() {
 void KeyboardService::run(
     Task *task) {
     
-    KbdGetStatusMessage query;
-    query.cmd = KBD_CMD_GETSTATUS;
+    KbdGetStateMessage query;
+    query.cmd = KBD_CMD_GETSTATE;
     
-    KbdGetStatusResponse response;
+    KbdGetStateResponse response;
     
     BinarySemaphore endTransactionNotify;
 
@@ -66,14 +66,12 @@ void KeyboardService::run(
             (unsigned) -1, 
             &endTransactionNotify)) {
             
-            if (endTransactionNotify.take((unsigned) - 1)) {
+            if (endTransactionNotify.take((unsigned) -1)) {
             
-                if (response.cmd == KBD_CMD_GETSTATUS) {
+                if (response.cmd == KBD_CMD_GETSTATE) {
                     
-                    KeyboardState newState = response.keyState;
-
-                    if (state != newState) {
-                        state = newState;
+                    if (state != response.keyState) {
+                        state = response.keyState;
                         if (evNotify != nullptr) 
                             evNotify->execute(state);
                     }

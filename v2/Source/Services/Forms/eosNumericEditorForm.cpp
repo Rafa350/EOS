@@ -160,6 +160,21 @@ void NumericEditorForm::onSelectorMove(
 #endif
 
 
+/// ----------------------------------------------------------------------
+/// \brief Es crida quan es prem el boto del selector.
+///
+#ifdef eosFormsService_UseSelector
+void NumericEditorForm::onSelectorPress() {
+    
+    Form::onSelectorPress();
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant es prem una tecla.
+/// \param keyCode: Codi de la tecla.
+///
 #ifdef eosFormsService_UseKeyboard
 void NumericEditorForm::onKeyPress(
     KeyCode keyCode) {

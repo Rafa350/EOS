@@ -178,11 +178,21 @@ namespace eos {
        
     class Form {
         private:
+#ifdef eosFormsService_UseKeyboard
+            typedef ICallbackP2<Form*, KeyCode> IKeyboardPressEvent;
+            typedef ICallbackP2<Form*, KeyCode> IKeyboardReleaseEvent;
+#endif
+#ifdef eosFormsService_UseSelector            
             typedef ICallbackP1<Form*> ISelectorPressEvent;
             typedef ICallbackP1<Form*> ISelectorReleaseEvent;
+#endif            
         private:
             FormsService* service;
             Form *parent;
+#ifdef eosFormsService_UseKeyboard
+            IKeyboardPressEvent *evKeyboardPress;
+            IKeyboardReleaseEvent *evKeyboardRelease;
+#endif
 #ifdef eosFormsService_UseSelector            
             ISelectorPressEvent *evSelectorPress;
             ISelectorReleaseEvent *evSelectorRelease;
@@ -203,14 +213,33 @@ namespace eos {
             inline int16_t getX() const { return x; }
             inline int16_t getY() const { return y; }
 
+#ifdef eosFormsService_UseKeyboard
+            template <class cls>
+            void setKeyboardPressEvent(cls *instance, void (cls::*method)(Form*)) {                 
+                if (evKeyboardPress != nullptr)
+                    delete evKeyboardPress;
+                evKeyboardPress = new CallbackP2<cls, Form*, KeyCode>(instance, method);
+            }
+
+            template <class cls>
+            void setKeyboardReleaseEvent(cls *instance, void (cls::*method)(Form*)) {                 
+                if (evKeyboardRelease != nullptr)
+                    delete evKeyboardRelease;
+                evKeyboardRelease = new CallbackP2<cls, Form*, KeyCode>(instance, method);
+            }
+#endif            
 #ifdef eosFormsService_UseSelector            
             template <class cls>
             void setSelectorPressEvent(cls *instance, void (cls::*method)(Form*)) {                 
+                if (evSelectorPress != nullptr)
+                    delete evSelectorPress;
                 evSelectorPress = new CallbackP1<cls, Form*>(instance, method);
             }
             
             template <class cls>
             void setSelectorReleaseEvent(cls *instance, void (cls::*method)(Form*)) {                 
+                if (evSelectorRelease != nullptr)
+                    delete evSelectorRelease;
                 evSelectorRelease = new CallbackP1<cls, Form*>(instance, method);
             }
 #endif            

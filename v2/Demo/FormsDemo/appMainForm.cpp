@@ -62,12 +62,14 @@ void MainForm::onSelectorMove(
 }
 
 
+#ifdef eosFormsService_UseKeyboard   
 void MainForm::onKeyPress(
     KeyCode keyCode) {
 
     if (keyCode == KeyCode::enter)
         menuForm->activate();
 }
+#endif
 
 
 void MainForm::onPaint(

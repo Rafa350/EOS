@@ -25,8 +25,9 @@ namespace app {
             void onPaint(FormsDisplay *display);
             void onSelectorPress();
             void onSelectorMove(int16_t position, SelectorDirection direction);
+#ifdef eosFormsService_UseKeyboard   
             void onKeyPress(KeyCode keyCode);
-    
+#endif            
         private:
             void menuClickItemHandler(MenuForm *menuForm, ItemId itemId);
             void menuDrawItemHandler(MenuForm *menuForm, DrawItemEventParams *params);

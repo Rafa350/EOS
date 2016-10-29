@@ -33,7 +33,7 @@ void HeapAllocator::deallocate(
     void *p) {
     
     eosAssert(
-        p == nullptr, 
+        p != nullptr, 
         0, "HeapAllocator::deallocate: El parametre 'p' es nul.");
 
     vPortFree(p);    
