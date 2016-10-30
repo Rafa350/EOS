@@ -4,6 +4,8 @@
 #include "Services/eosAppLoop.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
+#include <stdlib.h>
+#include <stdio.h>
 
 
 using namespace eos;

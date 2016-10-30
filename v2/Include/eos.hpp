@@ -2,14 +2,17 @@
 #define	__EOS_HPP
 
 
-#ifdef __XC
+#if defined(__XC)
 #include <xc.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
+#elif defined(__GNUC__) && defined(STM32F4)
+#include "stm32f4xx.h"
 #else
 #error "No se reconoce el compilador"
 #endif
+
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 
 #include "eosConfig.h"
 

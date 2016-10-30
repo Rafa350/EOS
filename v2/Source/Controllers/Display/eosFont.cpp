@@ -1,4 +1,5 @@
 #include "Controllers/Display/eosFont.hpp"
+#include <string.h>
 
 
 using namespace eos;
@@ -69,6 +70,7 @@ static FontTableEntry fontTable[] = {
 ///
 Font::Font(
     const uint8_t *_fontResource):
+    
     fontResource(_fontResource) {
 }
 
@@ -85,7 +87,7 @@ Font::Font(
     FontStyle style):
     fontResource(nullptr) {
     
-    for (int16_t i = 0; i < sizeof(fontTable) / sizeof(fontTable[0]); i++) {
+    for (uint16_t i = 0; i < sizeof(fontTable) / sizeof(fontTable[0]); i++) {
         FontTableEntry *entry = &fontTable[i];
         if ((strcmp(fontName, entry->faceName) == 0) &&
             (height == entry->height)) {

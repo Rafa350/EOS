@@ -5,8 +5,10 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
+        <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+          <itemPath>../../../Demo/DisplayDemo/PIC32/FreeRTOSConfig.h</itemPath>
+        </logicalFolder>
         <itemPath>../../../Demo/DisplayDemo/eosConfig.h</itemPath>
-        <itemPath>../../../Demo/DisplayDemo/FreeRTOSConfig.h</itemPath>
         <itemPath>../../../Demo/DisplayDemo/HardwareProfile.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Framework" projectFiles="true">
@@ -87,7 +89,9 @@
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Hal" projectFiles="true">
-            <itemPath>../../../Source/HAL/halSYS.c</itemPath>
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
+            </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f4" displayName="Services" projectFiles="true">
             <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
@@ -109,16 +113,16 @@
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
           <logicalFolder name="f2" displayName="MemMgr" projectFiles="true">
-            <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+            <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MemMang/heap_4.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="PIC32MX" projectFiles="true">
-            <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-            <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+            <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+            <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
           </logicalFolder>
-          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/list.c</itemPath>
-          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/queue.c</itemPath>
-          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/tasks.c</itemPath>
-          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/list.c</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/queue.c</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/tasks.c</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/timers.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -130,6 +134,8 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>../../../Demo/DisplayDemo</Elem>
+    <Elem>../../../Source/HAL/PIC32</Elem>
+    <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -285,7 +291,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\DisplayDemo;..\..\..\Include;C:\microchip\Harmony\v1_07_01\framework;C:\microchip\FreeRTOS\FreeRTOSv9.0.0\FreeRTOS\Source\include;C:\microchip\FreeRTOS\FreeRTOSv9.0.0\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\DisplayDemo;..\..\..\Demo\DisplayDemo\PIC32;..\..\..\Include;C:\microchip\Harmony\v1_07_01\framework;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="false"/>
         <property key="relaxed-math" value="false"/>
@@ -336,28 +342,22 @@
         <property key="memories.flashdata" value="true"/>
         <property key="memories.id" value="true"/>
         <property key="memories.instruction.ram" value="true"/>
-        <property key="memories.instruction.ram.end"
-                  value="${memories.instruction.ram.end.value}"/>
-        <property key="memories.instruction.ram.start"
-                  value="${memories.instruction.ram.start.value}"/>
+        <property key="memories.instruction.ram.ranges"
+                  value="${memories.instruction.ram.ranges}"/>
         <property key="memories.programmemory" value="true"/>
-        <property key="memories.programmemory.end" value="0x1d07ffff"/>
-        <property key="memories.programmemory.partition2" value="true"/>
-        <property key="memories.programmemory.partition2.end"
-                  value="${memories.programmemory.partition2.end.value}"/>
-        <property key="memories.programmemory.partition2.start"
-                  value="${memories.programmemory.partition2.start.value}"/>
-        <property key="memories.programmemory.start" value="0x1d000000"/>
+        <property key="memories.programmemory.ranges" value="1d000000-1d07ffff"/>
         <property key="poweroptions.powerenable" value="false"/>
         <property key="programmertogo.imagename" value=""/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
         <property key="programoptions.pgmspeed" value="2"/>
         <property key="programoptions.preservedataflash" value="false"/>
+        <property key="programoptions.preservedataflash.ranges"
+                  value="${programoptions.preservedataflash.ranges}"/>
         <property key="programoptions.preserveeeprom" value="false"/>
+        <property key="programoptions.preserveeeprom.ranges" value=""/>
+        <property key="programoptions.preserveprogram.ranges" value=""/>
         <property key="programoptions.preserveprogramrange" value="false"/>
-        <property key="programoptions.preserveprogramrange.end" value="0x1d07ffff"/>
-        <property key="programoptions.preserveprogramrange.start" value="0x1d000000"/>
         <property key="programoptions.preserveuserid" value="false"/>
         <property key="programoptions.programcalmem" value="false"/>
         <property key="programoptions.programuserotp" value="false"/>

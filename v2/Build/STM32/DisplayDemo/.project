@@ -28,6 +28,51 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>inc/App</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/App</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/App/HardwareProfile.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/HardwareProfile.h</location>
+		</link>
+		<link>
+			<name>inc/App/STM32F429</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/App/eosConfig.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/eosConfig.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/FreeRTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/App/AppMain.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/AppMain.cpp</location>
@@ -36,6 +81,91 @@
 			<name>src/App/Main.c</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/Main.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F429/FreeRTOSConfig.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/FreeRTOSConfig.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eos.hpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eos.hpp</location>
+		</link>
+		<link>
+			<name>inc/Framework/FreeRTOS/list.h</name>
+			<type>1</type>
+			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/include/list.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/FreeRTOS/queue.h</name>
+			<type>1</type>
+			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/include/queue.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/FreeRTOS/task.h</name>
+			<type>1</type>
+			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/include/task.h</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/MemMgr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/Portable</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/list.c</name>
+			<type>1</type>
+			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/list.c</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/queue.c</name>
+			<type>1</type>
+			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/queue.c</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/tasks.c</name>
+			<type>1</type>
+			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/tasks.c</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/timers.c</name>
+			<type>1</type>
+			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/timers.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
@@ -48,9 +178,59 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Services/eosService.cpp</location>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Core</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/eosApplication.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/MemMgr/heap_4.c</name>
+			<type>1</type>
+			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MemMang/heap_4.c</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/Portable/port.c</name>
+			<type>1</type>
+			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/eosColor.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/eosColor.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/eosDisplay.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/eosDisplay.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/eosFont.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/eosFont.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosGlobalAlloc.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosGlobalAlloc.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosHeapAllocator.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosHeapAllocator.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosQueue.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosQueue.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosTask.cpp</location>
 		</link>
 	</linkedResources>
 </projectDescription>
