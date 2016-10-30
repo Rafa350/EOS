@@ -109,7 +109,7 @@ void Task::delayUntil(
 bool Task::notificationTake(
     unsigned blockTime) {
     
-    TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    TickType_t ticks = blockTime == ((unsigned) -1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
     return ulTaskNotifyTake(pdTRUE, ticks) != 0;
 }
 

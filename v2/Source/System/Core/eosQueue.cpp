@@ -83,7 +83,7 @@ bool GenericQueue::genericPutISR(
     eosArgumentIsNotNull("element", element);
     
     BaseType_t priority = pdFALSE;    
-    return xQueueSendFromISR(handle, element, &priority);
+    return xQueueSendFromISR(handle, element, &priority) == pdPASS;
 }
 
 
@@ -93,5 +93,5 @@ bool GenericQueue::genericGetISR(
     eosArgumentIsNotNull("element", element);
     
     BaseType_t priority = pdFALSE;    
-    return xQueueReceiveFromISR(handle, element, &priority);
+    return xQueueReceiveFromISR(handle, element, &priority) == pdPASS;
 }
