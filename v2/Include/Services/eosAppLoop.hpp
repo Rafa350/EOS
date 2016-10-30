@@ -1,8 +1,7 @@
-#ifndef __EOS_SERVICES_APPLOOP_HPP
-#define	__EOS_SERVICES_APPLOOP_HPP
+#ifndef __EOS_APPLOOP_HPP
+#define	__EOS_APPLOOP_HPP
 
 
-#include "eos.hpp"
 #include "Services/eosService.hpp"
 
 

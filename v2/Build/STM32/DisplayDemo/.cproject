@@ -37,10 +37,11 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/device}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/StdPeriph_Driver/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo"/>
+									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429"/>
 									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Library\FreeRTOSv9.0.0\FreeRTOS\Source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Library\FreeRTOSv9.0.0\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/include"/>
+									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/GCC/ARM_CM4F"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.493384355" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -65,10 +66,11 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/CMSIS/device}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_stdperiph_lib/StdPeriph_Driver/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo"/>
+									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429"/>
 									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Library\FreeRTOSv9.0.0\FreeRTOS\Source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Library\FreeRTOSv9.0.0\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/Include"/>
+									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/GCC/ARM_CM4F"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.895970671" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -168,6 +170,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Library\FreeRTOSv9.0.0\FreeRTOS\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\FreeRTOSv9.0.0\FreeRTOS\Source\portable&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DisplayDemo\STM32F429&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.422671232" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -193,6 +196,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Library\FreeRTOSv9.0.0\FreeRTOS\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\FreeRTOSv9.0.0\FreeRTOS\Source\portable&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DisplayDemo\STM32F429&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.2064974980" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>

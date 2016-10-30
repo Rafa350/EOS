@@ -1,4 +1,4 @@
-#include "eos.hpp"
+#include "eosAssert.hpp"
 #include "System/Core/eosTask.hpp"
 
 #include "FreeRTOS.h"
@@ -25,6 +25,8 @@ Task::Task(
     const char *name,
     IRunable *runable) {
     
+    eosArgumentIsNotNull("runnable", runnable);
+    
     this->runable = runable;
     
     xTaskCreate(
@@ -34,6 +36,7 @@ Task::Task(
         this, 
         tskIDLE_PRIORITY + ((UBaseType_t) priority), 
         &handle);
+    eosAssert(handle != nullptr, "handle == nullptr");
 }
 
 
@@ -90,6 +93,8 @@ void Task::delay(
 void Task::delayUntil(
     unsigned time, 
     unsigned *lastTick) {
+    
+    eosArgumentIsNotNull("lastTick", lastTick);
     
     if (time > 0) 
         vTaskDelayUntil((TickType_t*) lastTick, time / portTICK_PERIOD_MS);

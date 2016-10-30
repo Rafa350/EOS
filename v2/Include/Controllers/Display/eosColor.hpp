@@ -2,7 +2,7 @@
 #define __EOS_COLOR_HPP
 
 
-#include "eos.hpp"
+#include <stdint.h>
 
 
 #define ARGB(a, r, g, b)     ((((uint32_t)a) << 24) | (((uint32_t)r) << 16) | (((uint32_t)g) << 8) | ((uint32_t)b))

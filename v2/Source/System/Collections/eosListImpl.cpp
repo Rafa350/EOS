@@ -1,5 +1,9 @@
+#include "eosAssert.hpp"
 #include "System/Collections/eosList.hpp"
 #include "eosListImpl.hpp"
+
+#include <string.h>
+#include <stdint.h>
 
 
 using namespace eos;
@@ -8,11 +12,8 @@ using namespace eos;
 const unsigned capacityDelta = 10;
 
 
-#define __ASSERT(cond, code, message) \
-                             eosAssert(cond, code, message);
-
-#define __ALLOC(s)           (void*) new uint8_t[s]
-#define __FREE(p)            delete [] (uint8_t*)p;
+#define __ALLOC(s)           (void*) new char[s]
+#define __FREE(p)            delete [] (char*)p;
 
 
 /// ----------------------------------------------------------------------
@@ -29,7 +30,7 @@ GenericListImpl::GenericListImpl(
     capacity(0),
     container(nullptr) {
     
-    __ASSERT(_size > 0, 0, "[GenericList::ctor] size > 0");
+    eosArgumentIsNotZero("size", size);
     
     // Reserva memoria pel contenidor
     //

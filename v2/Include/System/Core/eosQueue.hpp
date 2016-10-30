@@ -2,9 +2,6 @@
 #define __EOS_QUEUE_HPP
 
 
-#include "eos.hpp"
-
-
 namespace eos {
     
     /// \brief Interface generic per les cues.

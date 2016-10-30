@@ -2,9 +2,10 @@
 #define	__EOS_DISPLAY_HPP
 
 
-#include "eos.hpp"
 #include "Controllers/Display/eosFont.hpp"
 #include "Controllers/Display/eosColor.hpp"
+
+#include <stdint.h>
 
 
 namespace eos {

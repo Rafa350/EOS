@@ -103,19 +103,29 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eos.hpp</location>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/eosAssert.hpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eosAssert.hpp</location>
+		</link>
+		<link>
 			<name>inc/Framework/FreeRTOS/list.h</name>
 			<type>1</type>
-			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/include/list.h</location>
+			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/include/list.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/queue.h</name>
 			<type>1</type>
-			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/include/queue.h</location>
+			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/include/queue.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/task.h</name>
 			<type>1</type>
-			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/include/task.h</location>
+			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/include/task.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/FreeRTOS/timers.h</name>
+			<type>1</type>
+			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/include/timers.h</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
@@ -145,22 +155,22 @@
 		<link>
 			<name>src/Framework/FreeRTOS/list.c</name>
 			<type>1</type>
-			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/list.c</location>
+			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/list.c</location>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/queue.c</name>
 			<type>1</type>
-			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/queue.c</location>
+			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/queue.c</location>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/tasks.c</location>
+			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/tasks.c</location>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/timers.c</name>
 			<type>1</type>
-			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/timers.c</location>
+			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/timers.c</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
@@ -190,12 +200,12 @@
 		<link>
 			<name>src/Framework/FreeRTOS/MemMgr/heap_4.c</name>
 			<type>1</type>
-			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MemMang/heap_4.c</location>
+			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/MemMang/heap_4.c</location>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/Portable/port.c</name>
 			<type>1</type>
-			<location>C:/Library/FreeRTOSv9.0.0/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</location>
+			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/GCC/ARM_CM4F/port.c</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/eosColor.cpp</name>

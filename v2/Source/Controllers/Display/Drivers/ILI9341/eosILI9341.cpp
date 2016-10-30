@@ -1,3 +1,4 @@
+#include "eos.hpp"
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
 
 

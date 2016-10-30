@@ -1,11 +1,11 @@
 #include "eos.hpp"
+#include <string.h>
 
 
-#ifdef __DEBUG
+#if defined(__DEBUG)
 void eosErrorHandler(
     const char *file,
     unsigned line,
-    unsigned errorCode, 
     const char *message) {
     
     char buffer[120];

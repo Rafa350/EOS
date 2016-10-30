@@ -1,3 +1,5 @@
+
+#include "eosAssert.hpp"
 #include "System/Core/eosTask.hpp"
 #include "System/Collections/eosList.hpp"
 #include "eosListImpl.hpp"
@@ -5,9 +7,6 @@
 
 using namespace eos;
 
-
-#define __ASSERT(cond, code, message) \
-                             eosAssert(cond, code, message);
 
 #define __LOCK()             Task::enterCriticalSection()
 #define __UNLOCK()           Task::exitCriticalSection()
@@ -50,7 +49,7 @@ GenericList::~GenericList() {
 void GenericList::addFront(
     const void *element) {
 
-    __ASSERT(element != nullptr, 0, "[GenericList::genericAdd] element != null");
+    eosArgumentIsNotNull("element", element);
 
     __LOCK();
     impl->addFront(element);
@@ -65,7 +64,7 @@ void GenericList::addFront(
 void GenericList::addBack(
     const void *element) {
     
-    __ASSERT(element != nullptr, 0, "[GenericList::genericAdd] element != null");
+    eosArgumentIsNotNull("element", element);
     
     __LOCK();
     impl->addBack(element);
@@ -79,8 +78,6 @@ void GenericList::addBack(
 ///
 void GenericList::remove(
     unsigned index) {
-    
-    __ASSERT(index < impl->getCount(), 0, "[GenericList::genericRemove] index < count");
     
     __LOCK();
     impl->remove(index);
@@ -108,7 +105,7 @@ void GenericList::clear() {
 unsigned GenericList::indexOf(
     const void *element) {
     
-    __ASSERT(element != nullptr, 0, "[GenericList::genericIndexOf] element != nullptr")
+    eosArgumentIsNotNull("element", element);
 
     unsigned index;
 
@@ -128,8 +125,6 @@ unsigned GenericList::indexOf(
 void *GenericList::get(
     unsigned index) const {
     
-    __ASSERT(index < impl->getCount(), 0, "[Genericist::genericGet] index < count");
-
     void *p;
     __LOCK();
     p = impl->getAt(index);

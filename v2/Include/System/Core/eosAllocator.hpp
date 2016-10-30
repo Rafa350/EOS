@@ -4,6 +4,8 @@
 
 #include "eos.hpp"
 
+#include <stddef.h>
+
 
 namespace eos {
     

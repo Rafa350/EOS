@@ -44,6 +44,7 @@
             <itemPath>../../../Include/System/eosApplication.hpp</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/eos.hpp</itemPath>
+          <itemPath>../../../Include/eosAssert.hpp</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -107,6 +108,7 @@
               <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
           </logicalFolder>
@@ -136,6 +138,8 @@
     <Elem>../../../Demo/DisplayDemo</Elem>
     <Elem>../../../Source/HAL/PIC32</Elem>
     <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
+    <Elem>../../../Source/System/Core</Elem>
+    <Elem>../../../Include</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -332,6 +336,7 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

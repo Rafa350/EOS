@@ -1,4 +1,3 @@
-#include "eos.hpp"
 #include "Controllers/Display/eosColor.hpp"
 
 

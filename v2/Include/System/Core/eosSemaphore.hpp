@@ -2,9 +2,6 @@
 #define	__EOS_SEMAPHORE_HPP
 
 
-#include "eos.hpp"
-
-
 namespace eos {
 
     class BinarySemaphore {

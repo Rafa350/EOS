@@ -1,3 +1,4 @@
+#include "eosAssert.hpp"
 #include "System/eosApplication.hpp"
 #include "Services/eosService.hpp"
 #include "HAL/halSYS.h"
@@ -43,9 +44,7 @@ void Application::execute() {
 void Application::addService(
     Service *service) {
     
-    eosAssert(
-        service != nullptr, 0, 
-        "[Application::addService] service != null");
+    eosArgumentIsNotNull("service", service);
 
     if ((service != nullptr) && (service->application == nullptr)) {
         service->application = this;
@@ -61,9 +60,7 @@ void Application::addService(
 void Application::removeService(
     Service *service) {
     
-    eosAssert(
-        service != nullptr, 0, 
-        "[Application::removeService] service != null");
+    eosArgumentIsNotNull("service", service);
     
     if ((service != nullptr) && (service->application == this)) {
         services.remove(services.indexOf(service));

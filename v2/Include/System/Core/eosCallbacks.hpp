@@ -2,9 +2,6 @@
 #define	__EOS_CALLBACKS_HPP
 
 
-#include "eos.hpp"
-
-
 namespace eos {
     
     template <typename P1Type>

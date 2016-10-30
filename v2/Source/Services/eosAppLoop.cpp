@@ -11,6 +11,7 @@ static const TaskPriority priority = TaskPriority::normal;
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
+/// \param application: Aplicacio a la que pertany el servei.
 ///
 AppLoopService::AppLoopService(
     Application *application):
@@ -21,6 +22,7 @@ AppLoopService::AppLoopService(
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa les tasques del servei.
+/// \param task: Punter a la tasca.
 ///
 void AppLoopService::run(
     Task *task) {

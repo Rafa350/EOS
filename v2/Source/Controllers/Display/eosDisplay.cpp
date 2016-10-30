@@ -1,4 +1,3 @@
-#include "eos.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
 #include "Controllers/Display/eosFont.hpp"
 

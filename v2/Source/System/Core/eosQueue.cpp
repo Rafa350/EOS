@@ -1,4 +1,4 @@
-#include "eos.hpp"
+#include "eosAssert.hpp"
 #include "System/Core/eosQueue.hpp"
 
 #include "FreeRTOS.h"
@@ -17,11 +17,11 @@ GenericQueue::GenericQueue(
     unsigned size,
     unsigned capacity) {
     
-    eosAssert(size != 0, 0, "[GenericQueue::ctor] size != 0");
-    eosAssert(capacity != 0, 0, "[GenericQueue::ctor] capacity != 0");
+    eosArgumentIsNotZero("size", size);
+    eosArgumentIsNotZero("capacity", capacity);
     
     handle = xQueueCreate(capacity, size);
-    eosAssert(handle != nullptr, 0, "[GenericQueue::ctor] handle != nullptr");
+    eosAssert(handle != nullptr, "handle == nullptr");
 }
 
 
@@ -53,9 +53,9 @@ bool GenericQueue::genericPut(
     const void *element,
     unsigned blockTime) {
     
-    eosAssert(element != nullptr, 0, "[GenericQueue::genericPut] element != nullptr");
+    eosArgumentIsNotNull("element", element);
 
-    TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    TickType_t ticks = blockTime == ((unsigned) -1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
     return xQueueSendToBack(handle, element,  ticks) == pdPASS;
 }
 
@@ -70,9 +70,9 @@ bool GenericQueue::genericGet(
     void *element,
     unsigned blockTime) {
 
-    eosAssert(element != nullptr, 0, "[GenericQueue::genericGet] element != nullptr");
+    eosArgumentIsNotNull("element", element);
 
-    TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    TickType_t ticks = blockTime == ((unsigned) -1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
     return xQueueReceive(handle, element, ticks) == pdPASS;
 }
 
@@ -80,12 +80,18 @@ bool GenericQueue::genericGet(
 bool GenericQueue::genericPutISR(
     void *element) {
     
-    eosAssert(element != nullptr, 0, "[GenericQueue::genericPutISR] element != nullptr");
+    eosArgumentIsNotNull("element", element);
+    
+    BaseType_t priority = pdFALSE;    
+    return xQueueSendFromISR(handle, element, &priority);
 }
 
 
 bool GenericQueue::genericGetISR(
     void *element) {
     
-    eosAssert(element != nullptr, 0, "[GenericQueue::genericGetISR] element != nullptr");
+    eosArgumentIsNotNull("element", element);
+    
+    BaseType_t priority = pdFALSE;    
+    return xQueueReceiveFromISR(handle, element, &priority);
 }

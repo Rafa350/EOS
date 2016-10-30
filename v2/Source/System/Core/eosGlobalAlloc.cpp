@@ -1,4 +1,4 @@
-#include "eos.hpp"
+#include "eosAssert.hpp"
 #include "System/Core/eosHeapAllocator.hpp"
 
 
@@ -12,6 +12,8 @@ static eos::HeapAllocator defaultAllocator;
 void *operator new(
     size_t size) {
     
+    eosArgumentIsNotZero("size", size);
+    
     return defaultAllocator.allocate(size);
 }
 
@@ -23,5 +25,7 @@ void *operator new(
 void operator delete(
     void *p) {
     
+    eosArgumentIsNotNull("p", p);
+
     defaultAllocator.deallocate(p);
 }

@@ -1,4 +1,4 @@
-#include "eos.hpp"
+#include "eosAssert.hpp"
 #include "System/Core/eosHeapAllocator.hpp"
 
 #include "FreeRTOS.h"
@@ -15,12 +15,10 @@ using namespace eos;
 void *HeapAllocator::allocate(
     size_t size) {
 
+    eosArgumentIsNotZero("size", size);
+    
     void *p = pvPortMalloc(size);
-    
-    eosAssert(
-        p != nullptr, 
-        0, "HeapAllocator::allocate: No hi ha memoria disponoble.");
-    
+       
     return p;
 }
 
@@ -32,9 +30,7 @@ void *HeapAllocator::allocate(
 void HeapAllocator::deallocate(
     void *p) {
     
-    eosAssert(
-        p != nullptr, 
-        0, "HeapAllocator::deallocate: El parametre 'p' es nul.");
+    eosArgumentIsNotNull("p", p);
 
     vPortFree(p);    
 }

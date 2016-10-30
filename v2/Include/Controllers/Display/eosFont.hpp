@@ -2,7 +2,7 @@
 #define __EOS_FONT_HPP
 
 
-#include "eos.hpp"
+#include <stdint.h>
 
 
 namespace eos {
