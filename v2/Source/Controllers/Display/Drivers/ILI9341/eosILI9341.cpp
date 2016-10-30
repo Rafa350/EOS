@@ -1,5 +1,6 @@
 #include "eos.hpp"
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
+#include "HAL/halDELAY.h"
 
 
 #if !defined(ILI9341_COLORMODE_565) && !defined(ILI9341_COLORMODE_666)
@@ -502,11 +503,7 @@ void ILI9341_Driver::startMemoryRead() {
 ///
 static void delay(
     unsigned ms) {
-    
-/*    unsigned startTime = ReadCT();
-    while (((ReadCT() - startTime) * 1000) < ms)
-        continue;
- */
+
     for (unsigned i = 0, ii = 10000 * ms; i < ii; i++)
         Nop();
 }

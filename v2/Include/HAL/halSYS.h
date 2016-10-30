@@ -8,7 +8,6 @@ extern "C" {
 
 void halSYSInitialize();
 
-
 #ifdef	__cplusplus
 }
 #endif

@@ -4,7 +4,7 @@
 /// \brief Retard en milisegons.
 /// \param time: Temps en milisegons.
 ///
-void halDelay(
+void halDELAY(
     unsigned time) {
     
 }
