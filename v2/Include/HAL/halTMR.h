@@ -6,7 +6,6 @@ extern "C" {
 #endif
 
 
-#include <stdbool.h>
 #include <stdint.h>
 
     
@@ -42,6 +41,8 @@ void halTMRInitializeTimer(uint8_t timer, uint8_t mode, uint8_t prescale,
         unsigned period, TMRInterruptCallback callback, void *param);
 void halTMRStartTimer(uint8_t timer);
 void halTMRStopTimer(uint8_t timer);
+
+void halTMRDelay(unsigned time);
 
 
 #ifdef	__cplusplus

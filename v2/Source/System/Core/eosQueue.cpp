@@ -21,7 +21,7 @@ GenericQueue::GenericQueue(
     eosArgumentIsNotZero("capacity", capacity);
     
     handle = xQueueCreate(capacity, size);
-    eosAssert(handle != nullptr, "handle == nullptr");
+    eosAssert(handle != nullptr);
 }
 
 

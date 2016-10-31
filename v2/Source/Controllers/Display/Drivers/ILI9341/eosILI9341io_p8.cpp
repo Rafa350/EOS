@@ -1,5 +1,6 @@
 #include "eos.hpp"
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
+#include "HAL/halTMR.h"
 
 
 #if !defined(ILI9341_INTERFACE_P8)
@@ -80,9 +81,6 @@
 using namespace eos;
 
 
-static void delay(unsigned ms);
-
-
 /// ----------------------------------------------------------------------
 /// \brief Contructor.
 ///
@@ -112,9 +110,9 @@ void ILI9341_IO::initialize() {
 ///
 void ILI9341_IO::reset() {
 
-    delay(10);
+    halTMRDelay(10);
     setRST();
-    delay(120);
+    halTMRDelay(120);
 }
 
 
@@ -179,20 +177,5 @@ uint8_t ILI9341_IO::read() {
     setRD();
     
     return data;    
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Retard.
-/// \params ms: Temps de retard en ms.
-///
-static void delay(unsigned ms) {
-    
-/*    unsigned startTime = ReadCT();
-    while (((ReadCT() - startTime) * 1000) < ms)
-        continue;
- */
-    for (unsigned i = 0, ii = 10000 * ms; i < ii; i++)
-        Nop();
 }
 

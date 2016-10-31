@@ -20,7 +20,6 @@ namespace eos {
             Method method;
 
         public:
-            CallbackP1(): instance(nullptr), method(nullptr) {}
             CallbackP1(Class *_instance, Method _method): instance(_instance), method(_method) {
             }
             
@@ -29,8 +28,7 @@ namespace eos {
                 this->method = method;
             }
             void execute(P1Type p1) {                
-//                if ((instance != nullptr) && (method != nullptr))
-                    (instance->*method)(p1);
+                (instance->*method)(p1);
             }
     };    
 
@@ -55,8 +53,7 @@ namespace eos {
             }
 
             void execute(P1Type p1, P2Type p2) {                
-//                if ((instance != nullptr) && (method != nullptr))
-                    (instance->*method)(p1, p2);
+                (instance->*method)(p1, p2);
             }
     };
 
@@ -81,8 +78,7 @@ namespace eos {
             }
 
             RType execute(P1Type p1) {
-//                if ((instance != nullptr) && (method != nullptr))                
-                    return (instance->*method)(p1);
+                return (instance->*method)(p1);
             }
     };
 
@@ -107,11 +103,11 @@ namespace eos {
             }
 
             RType execute(P1Type p1, P2Type p2) {
-//                if ((instance != nullptr) && (method != nullptr))
-                    return (instance->*method)(p1, p2);
+                return (instance->*method)(p1, p2);
             }
     };
 }
+
 
 #endif
 

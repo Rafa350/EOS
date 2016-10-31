@@ -1,6 +1,6 @@
 #include "eos.hpp"
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
-#include "HAL/halDELAY.h"
+#include "HAL/halTMR.h"
 
 
 #if !defined(ILI9341_COLORMODE_565) && !defined(ILI9341_COLORMODE_666)
@@ -117,9 +117,6 @@
 using namespace eos;
 
 
-static void delay(unsigned ms);
-
-
 /// ----------------------------------------------------------------------
 /// \brief Contructor.
 ///
@@ -176,7 +173,7 @@ void ILI9341_Driver::initialize() {
     //
     io.begin();
     io.write(ADDR_COMMAND, CMD_SLEEP_OUT);
-    delay(120);
+    halTMRDelay(120);
 
     uint8_t c;
     const uint8_t *p = initData;
@@ -188,10 +185,10 @@ void ILI9341_Driver::initialize() {
     }
 
     io.write(ADDR_COMMAND, CMD_SLEEP_OUT);
-    delay(120);
+    halTMRDelay(120);
 
     io.write(ADDR_COMMAND, CMD_DISPLAY_ON);
-    delay(50);
+    halTMRDelay(50);
     
     io.end();
 }
@@ -494,18 +491,6 @@ void ILI9341_Driver::startMemoryRead() {
     io.begin();
     io.write(ADDR_COMMAND, CMD_MEMORY_READ);
     io.end();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Retard.
-/// \params ms: Temps de retard en ms.
-///
-static void delay(
-    unsigned ms) {
-
-    for (unsigned i = 0, ii = 10000 * ms; i < ii; i++)
-        Nop();
 }
 
 

@@ -36,7 +36,7 @@ Task::Task(
         this, 
         tskIDLE_PRIORITY + ((UBaseType_t) priority), 
         &handle);
-    eosAssert(handle != nullptr, "handle == nullptr");
+    eosAssert(handle != nullptr);
 }
 
 

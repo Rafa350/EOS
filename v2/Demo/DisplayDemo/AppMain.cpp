@@ -77,7 +77,10 @@ void MyAppLoopService::loop() {
     int horizontalLinesTicks;
     int verticalLinesTicks;
     int linesTicks;
-    int fillRectanglesTicks;
+    int rectanglesTicks;
+    int filledRectanglesTicks;
+    int circlesTicks;
+    int filledCirclesTicks;
 
     int seed = 0; //Task::getTickCount();
 
@@ -119,7 +122,7 @@ void MyAppLoopService::loop() {
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);
     display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 300; i++) {
         int16_t x1 = rand() % screenWidth;
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = x1;
@@ -139,7 +142,7 @@ void MyAppLoopService::loop() {
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);
     display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 300; i++) {
         int16_t x1 = rand() % screenWidth;
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = rand() % screenWidth;
@@ -159,7 +162,7 @@ void MyAppLoopService::loop() {
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);
     display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 300; i++) {
         int16_t x1 = rand() % screenWidth;
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = rand() % screenWidth;
@@ -178,7 +181,8 @@ void MyAppLoopService::loop() {
 
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);
     display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
-    for (int i = 0; i < 200; i++) {
+    ticks = Task::getTickCount();
+    for (int i = 0; i < 300; i++) {
         int16_t x1 = rand() % screenWidth;
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = rand() % screenWidth;
@@ -187,6 +191,7 @@ void MyAppLoopService::loop() {
         display->setColor(rand() & 0x00FFFFFF);
         display->drawRectangle(x1, y1, x2, y2);
     }
+    rectanglesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
 
     // Filled rectangles
@@ -197,7 +202,7 @@ void MyAppLoopService::loop() {
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);
     display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 300; i++) {
         int16_t x1 = rand() % screenWidth;
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = x1 + rand() % 100;
@@ -206,7 +211,7 @@ void MyAppLoopService::loop() {
         display->setColor(rand() & 0x00FFFFFF);
         display->fillRectangle(x1, y1, x2, y2);
     }
-    fillRectanglesTicks = Task::getTickCount() - ticks;
+    filledRectanglesTicks = Task::getTickCount() - ticks;
     Task::delay(500);
 
     // Circles
@@ -216,7 +221,8 @@ void MyAppLoopService::loop() {
 
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);
     display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
-    for (int i = 0; i < 200; i++) {
+    ticks = Task::getTickCount();
+    for (int i = 0; i < 300; i++) {
         int16_t cx = rand() % screenWidth;
         int16_t cy = rand() % screenHeight;
         int16_t r = rand() % 150;
@@ -224,16 +230,18 @@ void MyAppLoopService::loop() {
         display->setColor(rand() & 0x00FFFFFF);
         display->drawCircle(cx, cy, r);
     }
+    circlesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
 
-    // Fillet circles
+    // Filled circles
     //
     drawBackground("Filled circles");
     Task::delay(250);
 
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);
     display->setClip(6, 26, screenWidth - 7, screenHeight - 7);
-    for (int i = 0; i < 200; i++) {
+    ticks = Task::getTickCount();
+    for (int i = 0; i < 300; i++) {
         int16_t cx = rand() % screenWidth;
         int16_t cy = rand() % screenHeight;
         int16_t r = rand() % 50;
@@ -241,6 +249,7 @@ void MyAppLoopService::loop() {
         display->setColor(rand() & 0x00FFFFFF);
         display->fillCircle(cx, cy, r);
     }
+    filledCirclesTicks = Task::getTickCount() - ticks;
     Task::delay(500);
 
     // Show results
@@ -249,16 +258,23 @@ void MyAppLoopService::loop() {
     Task::delay(250);
 
     char lineBuffer[30];
+    uint16_t y = 50;
     sprintf(lineBuffer, "Points        %d ms", pointsTicks);
-    display->drawText(10, 50, lineBuffer, 0, -1);
+    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "V. lines      %d ms", verticalLinesTicks);
-    display->drawText(10, 70, lineBuffer, 0, -1);
+    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "H. lines      %d ms", horizontalLinesTicks);
-    display->drawText(10, 90, lineBuffer, 0, -1);
+    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "Lines         %d ms", linesTicks);
-    display->drawText(10, 110, lineBuffer, 0, -1);
-    sprintf(lineBuffer, "F. rectangles %d ms", fillRectanglesTicks);
-    display->drawText(10, 130, lineBuffer, 0, -1);
+    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    sprintf(lineBuffer, "Rectangles    %d ms", rectanglesTicks);
+    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    sprintf(lineBuffer, "F. rectangles %d ms", filledRectanglesTicks);
+    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    sprintf(lineBuffer, "Circles       %d ms", circlesTicks);
+    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    sprintf(lineBuffer, "F. circles    %d ms", filledCirclesTicks);
+    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
 
     Task::delay(10000);
 }

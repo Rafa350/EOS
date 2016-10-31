@@ -214,14 +214,14 @@ void Display::drawLine(
     //
     if (dx == 0) {        
         if (clipVLine(x1, y1, y2)) 
-            driver->setVPixels(x1, dy > 0 ? y1 : y2, (dy > 0 ? dy : -dy) + 1, color);
+            driver->setVPixels(x1, dy > 0 ? y1 : y2, (dy > 0 ? y2 - y1 : y1 - y2) + 1, color);
     }
 	
     // Es una linia vertical
     //
     else if (dy == 0) {        
         if (clipHLine(x1, x2, y1)) 
-            driver->setHPixels(dx > 0 ? x1 : x2, y1, (dx > 0 ? dx : -dx) + 1, color);
+            driver->setHPixels(dx > 0 ? x1 : x2, y1, (dx > 0 ? x2 - x1 : x1 - x2) + 1, color);
     }
 	
     // No es ni horitzontal ni vertical

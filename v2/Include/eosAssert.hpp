@@ -17,7 +17,7 @@
 
 #define eosArgumentIsNotNull(name, variable)
 #define eosArgumentIsNotZero(name, variable)
-#define eosAssert(condition, message)
+#define eosAssert(condition)
 
 #endif
 

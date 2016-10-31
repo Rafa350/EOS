@@ -26,7 +26,7 @@
           </logicalFolder>
           <logicalFolder name="f2" displayName="Hal" projectFiles="true">
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
-            <itemPath>../../../Include/HAL/halDELAY.h</itemPath>
+            <itemPath>../../../Include/HAL/halTMR.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Services" projectFiles="true">
             <itemPath>../../../Include/Services/eosAppLoop.hpp</itemPath>
@@ -92,7 +92,8 @@
           <logicalFolder name="f3" displayName="Hal" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
-              <itemPath>../../../Source/HAL/PIC32/halDELAY.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halTMR.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halTMRInterruptWrapper.S</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f4" displayName="Services" projectFiles="true">

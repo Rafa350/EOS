@@ -18,6 +18,7 @@ void *HeapAllocator::allocate(
     eosArgumentIsNotZero("size", size);
     
     void *p = pvPortMalloc(size);
+    eosAssert(p != nullptr);
        
     return p;
 }
