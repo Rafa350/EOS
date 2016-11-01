@@ -12,12 +12,7 @@
 //
 #define MAX_COLUMNS          240
 #define MAX_ROWS             320
-
-// Adresses del controlador
-//
-#define ADDR_COMMAND           0
-#define ADDR_DATA              1
-   
+  
 // Comandes del controlador
 //
 #define CMD_NOP                                            0x00
@@ -172,22 +167,21 @@ void ILI9341_Driver::initialize() {
     // Sequencia d'inicialitzacio del controlador
     //
     io.begin();
-    io.write(ADDR_COMMAND, CMD_SLEEP_OUT);
+    io.wrCommand(CMD_SLEEP_OUT);
     halTMRDelay(120);
 
     uint8_t c;
     const uint8_t *p = initData;
     while ((c = *p++) != 0) {
-        io.write(ADDR_COMMAND, *p++);
-        io.address(ADDR_DATA);
+        io.wrCommand(*p++);
         while (--c != 0)
-            io.write(*p++);
+            io.wrData(*p++);
     }
 
-    io.write(ADDR_COMMAND, CMD_SLEEP_OUT);
+    io.wrCommand(CMD_SLEEP_OUT);
     halTMRDelay(120);
 
-    io.write(ADDR_COMMAND, CMD_DISPLAY_ON);
+    io.wrCommand(CMD_DISPLAY_ON);
     halTMRDelay(50);
     
     io.end();
@@ -200,7 +194,7 @@ void ILI9341_Driver::initialize() {
 void ILI9341_Driver::shutdown() {
     
     io.begin();
-    io.write(ADDR_COMMAND, CMD_DISPLAY_OFF);
+    io.wrCommand(CMD_DISPLAY_OFF);
     io.end();
 }
 
@@ -241,8 +235,8 @@ void ILI9341_Driver::setOrientation(
     }
 
     io.begin();
-    io.write(ADDR_COMMAND, CMD_MEMORY_ACCESS_CONTROL);
-    io.write(ADDR_DATA, data);    
+    io.wrCommand(CMD_MEMORY_ACCESS_CONTROL);
+    io.wrData(data);    
     io.end();
 }
 
@@ -454,19 +448,17 @@ void ILI9341_Driver::selectRegion(
     
     io.begin();
     
-    io.write(ADDR_COMMAND, CMD_COLUMN_ADDRESS_SET);
-    io.address(ADDR_DATA);
-	io.write(x >> 8);
-	io.write(x);
-	io.write(x2 >> 8);
-	io.write(x2);
+    io.wrCommand(CMD_COLUMN_ADDRESS_SET);
+	io.wrData(x >> 8);
+	io.wrData(x);
+	io.wrData(x2 >> 8);
+	io.wrData(x2);
     
-	io.write(ADDR_COMMAND, CMD_PAGE_ADDRESS_SET);
-    io.address(ADDR_DATA);
-	io.write(y >> 8);
-	io.write(y);
-	io.write(y2 >> 8);
-	io.write(y2);
+	io.wrCommand(CMD_PAGE_ADDRESS_SET);
+	io.wrData(y >> 8);
+	io.wrData(y);
+	io.wrData(y2 >> 8);
+	io.wrData(y2);
     
     io.end();
 }
@@ -478,7 +470,7 @@ void ILI9341_Driver::selectRegion(
 void ILI9341_Driver::startMemoryWrite() {
     
     io.begin();
-    io.write(ADDR_COMMAND, CMD_MEMORY_WRITE);
+    io.wrCommand(CMD_MEMORY_WRITE);
     io.end();
 }
 
@@ -489,7 +481,7 @@ void ILI9341_Driver::startMemoryWrite() {
 void ILI9341_Driver::startMemoryRead() {
     
     io.begin();
-    io.write(ADDR_COMMAND, CMD_MEMORY_READ);
+    io.wrCommand(CMD_MEMORY_READ);
     io.end();
 }
 
@@ -510,10 +502,9 @@ void ILI9341_Driver::writePixel(
     uint8_t c2 = (uint32_t)(((c & 0x00001C00) >> 5) | ((c &0x000000F8) >> 3));
     
     io.begin();
-    io.address(ADDR_DATA);
     while (count--) {
-        io.write(c1);
-        io.write(c2);
+        io.wrData(c1);        
+        io.wrData(c2);
     }
     io.end();
     
@@ -525,11 +516,10 @@ void ILI9341_Driver::writePixel(
     uint8_t c3 = (uint32_t)(c & 0x000000FC);
    
     io.begin();
-    io.address(ADDR_DATA);
     while (count--) {
-        io.write(c1);
-        io.write(c2);
-        io.write(c3);
+        io.wrData(c1);
+        io.wrData(c2);
+        io.wrData(c3);
     }
     io.end();
     
@@ -561,16 +551,15 @@ void ILI9341_Driver::readPixel(
     int32_t count) {
  
     io.begin();
-    io.address(ADDR_DATA);
-    io.read();               // Dummy read
-    io.read();               // Dummy read
+    io.rdData();               // Dummy read
+    io.rdData();               // Dummy read
     while (count--) {
         
 #if defined(ILI9341_COLORMODE_565)        
-        uint8_t volatile c1 = io.read();
-        uint8_t volatile c2 = io.read();
-        uint8_t volatile c3 = io.read();
-        Color color(1, c2, c3);
+        uint8_t volatile c1 = io.rdData();
+        uint8_t volatile c2 = io.rdData();
+        uint8_t volatile c3 = io.rdData();
+        Color color(c1, c2, c3);
         *colors++ = color;
         
 #elif defined(ILI9341_COLORMODE_666)        

@@ -1,5 +1,6 @@
 #include "Controllers/Display/eosDisplay.hpp"
 #include "Controllers/Display/eosFont.hpp"
+#include <stdint.h>
 
 
 using namespace eos;

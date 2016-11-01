@@ -67,6 +67,33 @@ typedef struct {                       // Configuracio dels pins
 } PinInfo;
 
 
+typedef void *GPIOPort;
+
+typedef uint8_t GPIOPin;
+
+typedef enum {
+    pinInput,
+    pinOutput,
+    pinOpenDrainOutput,
+    pinAnalogInput,
+    pinAnalogOutput
+} GPIOPinMode;
+
+typedef enum {
+    portInput,
+    portOutput
+} GPIOPortMode;
+
+
+extern GPIOPort gpioPortA;
+extern GPIOPort gpioPortB;
+extern GPIOPort gpioPortC;
+extern GPIOPort gpioPortD;
+extern GPIOPort gpioPortE;
+extern GPIOPort gpioPortF;
+extern GPIOPort gpioPortG;
+
+
 void halGPIOInitializeBoard();
 
 void halGPIOInitialize(const PinInfo *pinInfo, uint8_t numPins);
@@ -76,6 +103,22 @@ bool halGPIOPinGetState(uint8_t pin);
 void halGPIOPinSetState(uint8_t pin, bool state);
 void halGPIOPinToggleState(uint8_t pin);
 
+void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOPinMode mode);
+void halGPIOInitializePort(GPIOPort port, GPIOPortMode mode);
+
+bool halGPIOReadPin(GPIOPort port, GPIOPin pin);
+void halGPIOWritePin(GPIOPort port, GPIOPin pin, bool data);
+
+void halGPIOClearPin(GPIOPort port, GPIOPin pin);
+void halGPIOSetPin(GPIOPort port, GPIOPin pin);
+void halGPIOTogglePin(GPIOPort port, GPIOPin pin);
+
+unsigned halGPIOReadPort(GPIOPort port);
+void halGPIOWritePort(GPIOPort port, unsigned data);
+
+void halGPIOClearPort(GPIOPort port, unsigned mask);
+void halGPIOSetPort(GPIOPort port, unsigned mask);
+void halGPIOTogglePort(GPIOPort port, unsigned mask);
 
 #ifdef	__cplusplus
 }

@@ -106,7 +106,7 @@
 namespace eos {
       
     union Color {
-        struct {
+        struct __attribute__((packed)) {
             uint8_t a;
             uint8_t r;
             uint8_t g;
@@ -115,43 +115,22 @@ namespace eos {
         uint32_t c;
         
         inline Color(): c(0) {}
+        inline Color(const Color &other): c(other.c) {}
         inline Color(uint32_t c): c(c) {}
         inline Color(uint8_t r, uint8_t g, uint8_t b): a(0), r(r), g(g), b(b) {}
         inline Color(uint8_t a, uint8_t r, uint8_t g, uint8_t b): a(a), r(r), g(g), b(b) {}
         
         Color mix(Color c, uint8_t mix);
         
-        inline operator int32_t() { return c; }
-    };
-    
-    union Pixel565 {
-        struct {
-            uint8_t r: 5;
-            uint8_t g: 6;
-            uint8_t b: 5;
-        };
-        uint8_t space[2]; // Força el tamany a 16 bits
+        uint32_t to565() const;
+        uint32_t to666() const;
         
-        Pixel565(): r(0), g(0), b(0) {}
-        Pixel565(uint8_t r, uint8_t g, uint8_t b): r(r), g(g), b(b) {}
-        Pixel565(Color color): r(color.r >> 3), g(color.g >> 2), b(color.b >> 3) {}
+        static uint32_t to565(Color color) { return color.to565(); }
+        static uint32_t to666(Color color) { return color.to666(); }
+        static Color from565(uint32_t c);
+        static Color from666(uint32_t c);
         
-        inline operator Color() { return Color(r << 3, g << 2, b << 3); }        
-    };
-    
-    union Pixel666 {
-        struct {
-            uint8_t r: 6;
-            uint8_t g: 6;
-            uint8_t b: 6;
-        };
-        uint8_t space[3]; // Força el tamany a 24 bits
-
-        Pixel666(): r(0), g(0), b(0) {}
-        Pixel666(uint8_t r, uint8_t g, uint8_t b): r(r), g(g), b(b) {}
-        Pixel666(Color color): r(color.r >> 2), g(color.g >> 2), b(color.b >> 2) {}
-
-        inline operator Color() { return Color(r << 2, g << 2, b << 2); }
+        inline operator int32_t() const { return c; }
     };
     
 }

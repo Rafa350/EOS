@@ -16,13 +16,12 @@ namespace eos {
             void reset();
             void begin();
             void end();
-            void address(uint8_t addr);
-            void write(uint8_t ddata);
-            inline void write(uint8_t addr, uint8_t data) { address(addr); write(data); }
-            uint8_t read();
+            void wrCommand(uint8_t data);
+            void wrData(uint8_t data);
+#ifndef ILI9342_INTERFACE_WRITEONLY
+            uint8_t rdData();
+#endif            
     };
-    
-    typedef Pixel565 ILI9341_Pixel;
     
     class ILI9341_Driver: public IDisplayDriver {
         private:
