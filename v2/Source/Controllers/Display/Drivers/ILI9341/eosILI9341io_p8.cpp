@@ -3,6 +3,11 @@
 #include "Hal/halGPIO.h"
 #include "Hal/halTMR.h"
 
+#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO) || \
+    defined(ILI9341_INTERFACE_MODE_PIC32_PMP) 
+#include <xc.h>
+#endif
+
 
 #define __concat2(a, b)      a ## b
 #define __concat3(a, b, c)   a ## b ## c
@@ -10,133 +15,117 @@
 #define concat3(a, b, c)     __concat3(a, b, c)
 
 
-#if defined(ILI9341_INTERFACE_MODE_DIRECT)
-
-#define __setPin(base, port, pin) concat3(base, port, SET) = 1 << pin
-#define __clrPin(base, port, pin) concat3(base, port, CLR) = 1 << pin
-#define __invPin(base, port, pin) concat3(base, port, INV) = 1 << pin
-#define __getPin(base, port, pin) concat2(base, port) & ~(1 << pin) != 0)
-
-#define __setPort(base, port, mask) concat3(base, port, SET) = mask
-#define __clrPort(base, port, mask) concat3(base, port, CLR) = mask
-#define __invPort(base, port, mask) concat3(base, port, INV) = mask
-#define __wrPort(base, port, data) concat2(base, port) = data
-#define __rdPort(base, port) concat2(base, port)
+#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO)
 
 // Control del pin RST
 //
-#define initRST()  __clrPin(LAT, ILI9341_RSTPort, ILI9341_RSTPin); \
-                   __clrPin(TRIS, ILI9341_RSTPort, ILI9341_RSTPin)
-#define setRST()   __setPin(LAT, ILI9341_RSTPort, ILI9341_RSTPin)
-#define clrRST()   __clrPin(LAT, ILI9341_RSTPort, ILI9341_RSTPin)
+#define initRST()  concat3(LAT, ILI9341_RSTPort, CLR) = 1 << ILI9341_RSTPin; \
+                   concat3(TRIS, ILI9341_RSTPort, CLR) = 1 << ILI9341_RSTPin
+#define setRST()   concat3(LAT, ILI9341_RSTPort, SET) = 1 << ILI9341_RSTPin
+#define clrRST()   concat3(LAT, ILI9341_RSTPort, CLR) = 1 << ILI9341_RSTPin
 
 // Control del pin CS
 //
-#define initCS()   __setPin(LAT, ILI9341_CSPort, ILI9341_CSPin); \
-                   __clrPin(TRIS, ILI9341_CSPort, ILI9341_CSPin)
-#define setCS()    __setPin(LAT, ILI9341_CSPort, ILI9341_CSPin)
-#define clrCS()    __clrPin(LAT, ILI9341_CSPort, ILI9341_CSPin)
+#define initCS()   concat3(LAT, ILI9341_CSPort, SET) = 1 << ILI9341_CSPin; \
+                   concat3(TRIS, ILI9341_CSPort, CLR) = 1 << ILI9341_CSPin
+#define setCS()    concat3(LAT, ILI9341_CSPort, SET) = 1 << ILI9341_CSPin
+#define clrCS()    concat3(LAT, ILI9341_CSPort, CLR) = 1 << ILI9341_CSPin
 
 // Control del pin RS
 //
-#define initRS()   __clrPin(LAT, ILI9341_RSPort, ILI9341_RSPin); \
-                   __clrPin(TRIS, ILI9341_RSPort, ILI9341_RSPin)
-#define setRS()    __setPin(LAT, ILI9341_RSPort, ILI9341_RSPin)
-#define clrRS()    __clrPin(LAT, ILI9341_RSPort, ILI9341_RSPin)
+#define initRS()   concat3(LAT, ILI9341_RSPort, CLR) = 1 << ILI9341_RSPin; \
+                   concat3(TRIS, ILI9341_RSPort, CLR) = 1 << ILI9341_RSPin
+#define setRS()    concat3(LAT, ILI9341_RSPort, SET) = 1 << ILI9341_RSPin
+#define clrRS()    concat3(LAT, ILI9341_RSPort, CLR) = 1 << ILI9341_RSPin
 
 // Control el pin WR
 //
-#define initWR()   __setPin(LAT, ILI9341_WRPort, ILI9341_WRPin); \
-                   __clrPin(TRIS, ILI9341_WRPort, ILI9341_WRPin)
-#define setWR()    __setPin(LAT, ILI9341_WRPort, ILI9341_WRPin)
-#define clrWR()    __clrPin(LAT, ILI9341_WRPort, ILI9341_WRPin)
+#define initWR()   concat3(LAT, ILI9341_WRPort, SET) = 1 << ILI9341_WRPin; \
+                   concat3(TRIS, ILI9341_WRPort, CLR) = 1 << ILI9341_WRPin
+#define setWR()    concat3(LAT, ILI9341_WRPort, SET) = 1 << ILI9341_WRPin
+#define clrWR()    concat3(LAT, ILI9341_WRPort, CLR) = 1 << ILI9341_WRPin
 
 // Control del pin RD
 //
 #ifndef ILI9341_INTERFACE_WRITEONLY
-#define initRD()   __setPin(LAT, ILI9341_RDPort, ILI9341_RDPin); \
-                   __clrPin(TRIS, ILI9341_RDPort, ILI9341_RDPin)
-#define setRD()    __setPin(LAT, ILI9341_RDPort, ILI9341_RDPin)
-#define clrRD()    __clrPin(LAT, ILI9341_RDPort, ILI9341_RDPin)
+#define initRD()   concat3(LAT, ILI9341_RDPort, SET) = 1 << ILI9341_RDPin; \
+                   concat3(TRIS, ILI9341_RDPort, CLR) = 1 << ILI9341_RDPin
+#define setRD()    concat3(LAT, ILI9341_RDPort, SET) = 1 << ILI9341_RDPin
+#define clrRD()    concat3(LAT, ILI9341_RDPort, CLR) = 1 << ILI9341_RDPin
 #endif
 
 // Control del port DATA
 //
-#define initDATA()   __setPort(TRIS, ILI9341_DATAPort, 0xFF)
-#define hizDATA()    __setPort(TRIS, ILI9341_DATAPort, 0xFF)
-#define wrDATA(data) __clrPort(TRIS, ILI9341_DATAPort, 0xFF); \
-                     __wrPort(LAT, ILI9341_DATAPort, data)
+#define initDATA()   concat3(TRIS, ILI9341_DATAPort, SET) = 0x00FF
+#define hizDATA()    concat3(TRIS, ILI9341_DATAPort, SET) = 0x00FF
+#define wrDATA(data) concat3(TRIS, ILI9341_DATAPort, CLR) = 0x00FF; \
+                     concat2(LAT, ILI9341_DATAPort) =  data
 #ifndef ILI9341_INTERFACE_WRITEONLY
-#define rdDATA()     __rdPort(PORT, ILI9341_DATAPort)
+#define rdDATA()     concat2(PORT, ILI9341_DATAPort)
 #endif
 
-#elif defined(ILI9341_INTERFACE_MODE_HAL)
+#elif defined(ILI9341_INTERFACE_MODE_HAL_GPIO)
 
 // Control del pin RST
 //
-#define RSTPort    concat2(gpioPort, ILI9341_RSTPort)
-#define RSTPin     ILI9341_RSTPin
-
+#define RSTPort    concat2(GPIO_PORT_, ILI9341_RSTPort)
+#define RSTPin     concat2(GPIO_PIN_, ILI9341_RSTPin)
 #define initRST()  halGPIOClearPin(RSTPort, RSTPin); \
-                   halGPIOInitializePin(RSTPort, RSTPin, pinOutput)
+                   halGPIOInitializePin(RSTPort, RSTPin, GPIO_DIRECTION_OUTPUT)
 #define setRST()   halGPIOSetPin(RSTPort, RSTPin)
 #define clrRST()   halGPIOClearPin(RSTPort, RSTPin)
 
 // Control del pin CS
 //
-#define CSPort     concat2(gpioPort, ILI9341_CSPort)
-#define CSPin      ILI9341_CSPin
-
+#define CSPort     concat2(GPIO_PORT_, ILI9341_CSPort)
+#define CSPin      concat2(GPIO_PIN_, ILI9341_CSPin)
 #define initCS()   halGPIOSetPin(CSPort, CSPin); \
-                   halGPIOInitializePin(CSPort, CSPin, pinOutput)
+                   halGPIOInitializePin(CSPort, CSPin, GPIO_DIRECTION_OUTPUT)
 #define setCS()    halGPIOSetPin(CSPort, CSPin)
 #define clrCS()    halGPIOClearPin(CSPort, CSPin)
 
 // Control del pin RS
 //
-#define RSPort     concat2(gpioPort, ILI9341_RSPort)
-#define RSPin      ILI9341_RSPin
-
+#define RSPort     concat2(GPIO_PORT_, ILI9341_RSPort)
+#define RSPin      concat2(GPIO_PIN_, ILI9341_RSPin)
 #define initRS()   halGPIOClearPin(RSPort, RSPin); \
-                   halGPIOInitializePin(RSPort, RSPin, pinOutput)
+                   halGPIOInitializePin(RSPort, RSPin, GPIO_DIRECTION_OUTPUT)
 #define setRS()    halGPIOSetPin(RSPort, RSPin)
 #define clrRS()    halGPIOClearPin(RSPort, RSPin)
 
 // Control el pin WR
 //
-#define WRPort     concat2(gpioPort, ILI9341_WRPort)
-#define WRPin      ILI9341_WRPin
-
+#define WRPort     concat2(GPIO_PORT_, ILI9341_WRPort)
+#define WRPin      concat2(GPIO_PIN_, ILI9341_WRPin)
 #define initWR()   halGPIOSetPin(WRPort, WRPin); \
-                   halGPIOInitializePin(WRPort, WRPin, pinOutput)
+                   halGPIOInitializePin(WRPort, WRPin, GPIO_DIRECTION_OUTPUT)
 #define setWR()    halGPIOSetPin(WRPort, WRPin)
 #define clrWR()    halGPIOClearPin(WRPort, WRPin)
 
 // Control del pin RD
 //
 #ifndef ILI9341_INTERFACE_WRITEONLY
-#define RDPort     concat2(gpioPort, ILI9341_RDPort)
-#define RDPin      ILI9341_RDPin
-
+#define RDPort     concat2(GPIO_PORT_, ILI9341_RDPort)
+#define RDPin      concat2(GPIO_PIN_, ILI9341_RDPin)
 #define initRD()   halGPIOSetPin(RDPort, RDPin); \
-                   halGPIOInitializePin(RDPort, RDPin, pinOutput)
+                   halGPIOInitializePin(RDPort, RDPin, GPIO_DIRECTION_OUTPUT)
 #define setRD()    halGPIOSetPin(RDPort, RDPin)
 #define clrRD()    halGPIOClearPin(RDPort, RDPin)
 #endif
 
 // Control del port DATA
 //
-#define DATAPort     concat2(gpioPort, ILI9341_DATAPort)
-
-#define initDATA()   halGPIOInitializePort(DATAPort, portInput)
-#define hizDATA()    halGPIOInitializePort(DATAPort, portInput)
-#define wrDATA(data) halGPIOInitializePort(DATAPort, portOutput); \
+#define DATAPort     concat2(GPIO_PORT_, ILI9341_DATAPort)
+#define initDATA()   halGPIOInitializePort(DATAPort, GPIO_DIRECTION_INPUT, 0x00FF)
+#define hizDATA()    halGPIOInitializePort(DATAPort, GPIO_DIRECTION_INPUT, 0x00FF)
+#define wrDATA(data) halGPIOInitializePort(DATAPort, GPIO_DIRECTION_OUTPUT, 0x00FF); \
                      halGPIOWritePort(DATAPort, data)
 #ifndef ILI9341_INTERFACE_WRITEONLY
 #define rdDATA()     halGPIOReadPort(DATAPort)
 #endif
 
 #endif
+
 
 // Control de les interrupcions
 //

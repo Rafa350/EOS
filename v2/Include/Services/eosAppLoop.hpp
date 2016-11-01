@@ -2,6 +2,7 @@
 #define	__EOS_APPLOOP_HPP
 
 
+#include "eos.hpp"
 #include "Services/eosService.hpp"
 
 

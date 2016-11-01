@@ -2,7 +2,10 @@
 #define	__EOS_ASSERT_HPP
 
 
-#if defined(__DEBUG)
+#include "eos.hpp"
+
+
+#if defined(EOS_DEBUG)
 
 #define eosArgumentIsNotNull(name, variable) \
     if (variable == nullptr) eosErrorHandler(__FILE__, __LINE__, name)
@@ -22,7 +25,7 @@
 #endif
 
 
-#if defined(__DEBUG)
+#if defined(EOS_DEBUG)
 extern void eosErrorHandler(const char *file, unsigned line, const char *message);
 #endif
 

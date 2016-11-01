@@ -2,6 +2,7 @@
 #define	__EOS_ILI9341_HPP
 
 
+#include "eos.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
 
 #include <stdint.h>

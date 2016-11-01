@@ -1,5 +1,6 @@
 #include "eos.hpp"
 #include "HardwareProfile.h"
+#include <xc.h>
 
 
 // Configuracio del oscilador

@@ -2,123 +2,100 @@
 #define	__EOS_HAL_GPIO_H
 
 
+#include "eos.h"
+
+#if defined( EOS_PIC32MX) || defined(EOS_PIC32MZ)
+#include "xc.h"
+#include "peripheral/ports/plib_ports.h"
+#endif
+
+#include <stdint.h>
+
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
     
+
+#if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
     
-#include <stdbool.h>
-#include <stdint.h>
-   
+#ifdef PORTA
+#define GPIO_PORT_A     PORT_CHANNEL_A
+#endif    
     
-#define HAL_GPIO_PIN1            0
-#define HAL_GPIO_PIN2            1
-#define HAL_GPIO_PIN3            2
-#define HAL_GPIO_PIN4            3
-#define HAL_GPIO_PIN5            4
-#define HAL_GPIO_PIN6            5
-#define HAL_GPIO_PIN7            6
-#define HAL_GPIO_PIN8            7
-#define HAL_GPIO_PIN9            8
-#define HAL_GPIO_PIN10           9
-#define HAL_GPIO_PIN11          10
-#define HAL_GPIO_PIN12          11
-#define HAL_GPIO_PIN13          12
-#define HAL_GPIO_PIN14          13
-#define HAL_GPIO_PIN15          14
-#define HAL_GPIO_PIN16          15
-#define HAL_GPIO_PIN17          16
-#define HAL_GPIO_PIN18          17
-#define HAL_GPIO_PIN19          18
-#define HAL_GPIO_PIN20          19
-#define HAL_GPIO_PIN21          20
-#define HAL_GPIO_PIN22          21
-#define HAL_GPIO_PIN23          22
-#define HAL_GPIO_PIN24          23
-#define HAL_GPIO_PIN25          24
-#define HAL_GPIO_PIN26          25
-#define HAL_GPIO_PIN27          26
-#define HAL_GPIO_PIN28          27
-#define HAL_GPIO_PIN29          28
-#define HAL_GPIO_PIN30          29
-#define HAL_GPIO_PIN31          30
-#define HAL_GPIO_PIN32          31
-#define HAL_GPIO_PIN33          32
-#define HAL_GPIO_PIN34          33
-#define HAL_GPIO_PIN35          34
-#define HAL_GPIO_PIN36          35
-#define HAL_GPIO_PIN37          36
-#define HAL_GPIO_PIN38          37
-#define HAL_GPIO_PIN39          38
-#define HAL_GPIO_PIN40          39
+#ifdef PORTB
+#define GPIO_PORT_B     PORT_CHANNEL_B
+#endif
+
+#ifdef PORTC
+#define GPIO_PORT_C     PORT_CHANNEL_C
+#endif
+
+#ifdef PORTD
+#define GPIO_PORT_D     PORT_CHANNEL_D
+#endif
+
+#ifdef PORTE
+#define GPIO_PORT_E     PORT_CHANNEL_E
+#endif
+
+#ifdef PORTF
+#define GPIO_PORT_F     PORT_CHANNEL_F
+#endif
+    
+#ifdef PORTG
+#define GPIO_PORT_G     PORT_CHANNEL_G
+#endif
+    
+#define GPIO_PIN_0      PORTS_BIT_POS_0
+#define GPIO_PIN_1      PORTS_BIT_POS_1
+#define GPIO_PIN_2      PORTS_BIT_POS_2
+#define GPIO_PIN_3      PORTS_BIT_POS_3
+#define GPIO_PIN_4      PORTS_BIT_POS_4
+#define GPIO_PIN_5      PORTS_BIT_POS_5
+#define GPIO_PIN_6      PORTS_BIT_POS_6
+#define GPIO_PIN_7      PORTS_BIT_POS_7
+#define GPIO_PIN_8      PORTS_BIT_POS_8
+#define GPIO_PIN_9      PORTS_BIT_POS_9
+#define GPIO_PIN_10     PORTS_BIT_POS_10
+#define GPIO_PIN_11     PORTS_BIT_POS_11
+#define GPIO_PIN_12     PORTS_BIT_POS_12
+#define GPIO_PIN_13     PORTS_BIT_POS_13
+#define GPIO_PIN_14     PORTS_BIT_POS_14
+#define GPIO_PIN_15     PORTS_BIT_POS_15
+    
+#define GPIO_DIRECTION_INPUT      0
+#define GPIO_DIRECTION_OUTPUT     1
+    
+
+typedef PORTS_CHANNEL GPIOPort;
+typedef PORTS_BIT_POS GPIOPin;
+typedef uint8_t GPIODirection;
+
+
+#endif
 
     
-typedef struct {                       // Configuracio dels pins
-    volatile uint32_t *trisCLR;        // -Adressa TRISxCLR
-    volatile uint32_t *trisSET;        // -Adressa TRISxSET
-    volatile uint32_t *odcCLR;         // -Addrese ODCxCLR
-    volatile uint32_t *odcSET;         // -Addresa ODCxSET
-    volatile uint32_t *port;           // -Addresa PORTx
-    volatile uint32_t *latCLR;         // -Adressa LATxCLR
-    volatile uint32_t *latSET;         // -Adressa LATxSET
-    volatile uint32_t *latINV;         // -Adressa LATxINV
-    uint32_t mask;                     // -Mascara del pin
-    int analog;                        // -Port analogic (-1 cap))
-} PinInfo;
+#if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
+
+#define halGPIOSetPin(port, pin) PLIB_PORTS_PinSet(PORTS_ID_0, port, pin)
+#define halGPIOClearPin(port, pin) PLIB_PORTS_PinClear(PORTS_ID_0, port, pin)
+#define halGPIOTogglePin(port, pin) PLIB_PORTS_PinToggle(PORTS_ID_0, port, pin)
+#define halGPIOReadPin(port, pin) PLIB_PORTS_PinGet(PORTS_ID_0, port, pin)  
+#define halGPIOWritePin(port, pin, data) PLIB_PORTS_PinWrite(PORTS_ID_0, port, pin, data);
+    
+#define halGPIOSetPort(port, mask) PLIB_PORTS_Set(PORTS_ID_0, port, mask, mask)
+#define halGPIOClearPort(port, mask) PLIB_PORTS_Clear(PORTS_ID_0, port, mask)
+#define halGPIOTogglePort(port, mask) PLIB_PORTS_Toggle(PORTS_ID_0, port, mask)
+#define halGPIOWritePort(port, data) PLIB_PORTS_Write(PORTS_ID_0, port, data)
+#define halGPIOReadPort(port) PLIB_PORTS_Read(PORTS_ID_0, port)    
+
+#endif
 
 
-typedef void *GPIOPort;
+void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIODirection direction);
+void halGPIOInitializePort(GPIOPort port, GPIODirection direction, uint16_t mask);
 
-typedef uint8_t GPIOPin;
-
-typedef enum {
-    pinInput,
-    pinOutput,
-    pinOpenDrainOutput,
-    pinAnalogInput,
-    pinAnalogOutput
-} GPIOPinMode;
-
-typedef enum {
-    portInput,
-    portOutput
-} GPIOPortMode;
-
-
-extern GPIOPort gpioPortA;
-extern GPIOPort gpioPortB;
-extern GPIOPort gpioPortC;
-extern GPIOPort gpioPortD;
-extern GPIOPort gpioPortE;
-extern GPIOPort gpioPortF;
-extern GPIOPort gpioPortG;
-
-
-void halGPIOInitializeBoard();
-
-void halGPIOInitialize(const PinInfo *pinInfo, uint8_t numPins);
-void halGPIOPinSetModeOutput(uint8_t pin, bool openDrain);
-void halGPIOPinSetModeInput(uint8_t pin);
-bool halGPIOPinGetState(uint8_t pin);
-void halGPIOPinSetState(uint8_t pin, bool state);
-void halGPIOPinToggleState(uint8_t pin);
-
-void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOPinMode mode);
-void halGPIOInitializePort(GPIOPort port, GPIOPortMode mode);
-
-bool halGPIOReadPin(GPIOPort port, GPIOPin pin);
-void halGPIOWritePin(GPIOPort port, GPIOPin pin, bool data);
-
-void halGPIOClearPin(GPIOPort port, GPIOPin pin);
-void halGPIOSetPin(GPIOPort port, GPIOPin pin);
-void halGPIOTogglePin(GPIOPort port, GPIOPin pin);
-
-unsigned halGPIOReadPort(GPIOPort port);
-void halGPIOWritePort(GPIOPort port, unsigned data);
-
-void halGPIOClearPort(GPIOPort port, unsigned mask);
-void halGPIOSetPort(GPIOPort port, unsigned mask);
-void halGPIOTogglePort(GPIOPort port, unsigned mask);
 
 #ifdef	__cplusplus
 }

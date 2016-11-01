@@ -1,4 +1,4 @@
-#include "eos.hpp"
+#include "eosAssert.hpp"
 #include "System/Core/eosSemaphore.hpp"
 
 #include "FreeRTos.h"
@@ -11,10 +11,7 @@
 eos::BinarySemaphore::BinarySemaphore() {
     
     handle = xSemaphoreCreateBinary();
-    
-    eosAssert(
-        handle != nullptr,
-        0, "[BinarySemaphore::ctor] handle != nullptr")
+    eosAssert(handle != nullptr);
 }
 
 

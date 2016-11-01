@@ -1,6 +1,8 @@
-#include "xc.h"
 #include "hal/halTMR.h"
+
 #include "sys/attribs.h"
+
+#include "xc.h"
 #include "peripheral/int/plib_int.h"
 #include "peripheral/tmr/plib_tmr.h"
 

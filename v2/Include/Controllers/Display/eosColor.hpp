@@ -2,6 +2,8 @@
 #define __EOS_COLOR_HPP
 
 
+#include "eos.hpp"
+
 #include <stdint.h>
 
 

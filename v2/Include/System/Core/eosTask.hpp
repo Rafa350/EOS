@@ -2,6 +2,9 @@
 #define	__EOS_TASK_HPP
 
 
+#include "eos.hpp"
+
+
 namespace eos {
     
     

@@ -2,6 +2,7 @@
 #define	__EOS_SERVICE_HPP
 
 
+#include "eos.hpp"
 #include "System/eosApplication.hpp"
 #include "System/Core/eosTask.hpp"
 

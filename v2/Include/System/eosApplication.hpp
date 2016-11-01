@@ -2,6 +2,7 @@
 #define	__EOS_APPLICATION_HPP
 
 
+#include "eos.hpp"
 #include "System/Collections/eosList.hpp"
 
 

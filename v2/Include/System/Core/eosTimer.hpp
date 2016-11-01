@@ -2,6 +2,7 @@
 #define	__EOS_TIMER_HPP
 
 
+#include "eos.hpp"
 #include "System/Core/eosCallbacks.hpp"
 
 

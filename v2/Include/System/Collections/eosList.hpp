@@ -2,6 +2,9 @@
 #define	__EOS_LIST_HPP
 
 
+#include "eos.hpp"
+
+
 namespace eos {
     
     class GenericListImpl;
