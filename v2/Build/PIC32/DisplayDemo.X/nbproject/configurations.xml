@@ -162,7 +162,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../../../../../../../../Library/Microchip/Harmony/v1.9/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -300,7 +300,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\DisplayDemo;..\..\..\Demo\DisplayDemo\PIC32;..\..\..\Include;C:\microchip\Harmony\v1_07_01\framework;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\DisplayDemo;..\..\..\Demo\DisplayDemo\PIC32;..\..\..\Include;C:\Library\Microchip\Harmony\v1.9\framework;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="false"/>
         <property key="relaxed-math" value="false"/>
@@ -341,7 +341,6 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
