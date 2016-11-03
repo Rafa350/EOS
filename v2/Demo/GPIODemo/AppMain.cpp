@@ -1,4 +1,66 @@
+#include "System/eosApplication.hpp"
+#include "Services/eosAppLoop.hpp"
 #include "hal/halGPIO.h"
+
+
+using namespace eos;
+
+
+class MyAppLoopService: public AppLoopService {
+	public:
+		MyAppLoopService(Application *application):
+			AppLoopService(application) {}
+
+	protected:
+		void loop();
+		void setup();
+};
+
+
+class MyApplication: public Application {
+	private:
+		AppLoopService *loopService;
+
+	public:
+		MyApplication();
+};
+
+
+/// ----------------------------------------------------------------------
+/// \brief Contructor
+///
+MyApplication::MyApplication() {
+
+	loopService = new MyAppLoopService((Application*)this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitzacio.
+///
+void MyAppLoopService::setup() {
+
+	halGPIOInitializePin(LED1_PORT, LED1_PIN, GPIO_DIRECTION_OUTPUT);
+	halGPIOInitializePin(LED2_PORT, LED2_PIN, GPIO_DIRECTION_OUTPUT);
+
+	halGPIOClearPin(LED1_PORT, LED1_PIN);
+	halGPIOSetPin(LED2_PORT, LED2_PIN);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Bucle principal
+///
+void MyAppLoopService::loop() {
+
+	while (true) {
+
+		halGPIOTogglePin(LED1_PORT, LED1_PIN);
+		halGPIOTogglePin(LED2_PORT, LED2_PIN);
+
+		Task::delay(100);
+	}
+}
 
 
 /// ----------------------------------------------------------------------
@@ -6,18 +68,7 @@
 ///
 void AppMain() {
 
-	halGPIOInitializePin(GPIO_PORT_G, GPIO_PIN_13, GPIO_DIRECTION_OUTPUT);
-	halGPIOInitializePin(GPIO_PORT_G, GPIO_PIN_14, GPIO_DIRECTION_OUTPUT);
-
-	halGPIOClearPin(GPIO_PORT_G, GPIO_PIN_13);
-	halGPIOSetPin(GPIO_PORT_G, GPIO_PIN_14);
-
-	while (true) {
-
-		halGPIOTogglePin(GPIO_PORT_G, GPIO_PIN_13);
-		halGPIOTogglePin(GPIO_PORT_G, GPIO_PIN_14);
-
-		for (int i = 0; i < 100000; i++)
-			continue;
-	}
+	Application *app = new MyApplication();
+	app->execute();
+	delete app;
 }

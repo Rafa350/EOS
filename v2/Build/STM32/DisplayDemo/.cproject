@@ -113,9 +113,17 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.632987581.138625031" name="syscalls.c" rcbsApplicability="disable" resourcePath="src/syscalls.c" toolsToInvoke="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1281986761.1026698216">
+						<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1281986761.1026698216" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1281986761">
+							<option id="gnu.c.compiler.option.dialect.std.2029754784" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
+							<option id="gnu.c.compiler.option.dialect.flags.2031396281" name="Other dialect flags" superClass="gnu.c.compiler.option.dialect.flags" value="-std=gnu99" valueType="string"/>
+							<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.510382410" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
+							<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.218593434" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
+						</tool>
+					</fileInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="inc"/>
-						<entry excluding="syscalls.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup"/>
 					</sourceEntries>
 				</configuration>

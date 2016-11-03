@@ -20,21 +20,21 @@ static const char *defaultName = "";
 /// \param runable: Objecte que implementa IRunable.
 ///
 Task::Task(
-    unsigned stackSize, 
+    unsigned stackSize,
     TaskPriority priority,
     const char *name,
     IRunable *runable) {
-    
-    eosArgumentIsNotNull("runnable", runnable);
-    
+
+    eosArgumentIsNotNull("runable", runable);
+
     this->runable = runable;
-    
+
     xTaskCreate(
-        Task::function, 
-        name == nullptr ? defaultName : name, 
-        stackSize, 
-        this, 
-        tskIDLE_PRIORITY + ((UBaseType_t) priority), 
+        Task::function,
+        name == nullptr ? defaultName : name,
+        stackSize,
+        this,
+        tskIDLE_PRIORITY + ((UBaseType_t) priority),
         &handle);
     eosAssert(handle != nullptr);
 }
@@ -44,7 +44,7 @@ Task::Task(
 /// \brief Destructor. Destrueix la tasca de FreeRTOS asociada.
 ///
 Task::~Task() {
-    
+
     vTaskDelete(handle);
 }
 
@@ -55,21 +55,21 @@ Task::~Task() {
 ///
 void Task::function(
     void *params) {
-    
+
     Task *task = reinterpret_cast<Task*>(params);
-    while (true) 
+    while (true)
         task->runable->run(task);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retorna el numero te ticks transcurreguts desde la 
+/// \brief Retorna el numero te ticks transcurreguts desde la
 ///        inicialitzacio del sistema.
 /// \return El numero de ticks.
 ///
 unsigned Task::getTickCount() {
 
-    return xTaskGetTickCount();   
+    return xTaskGetTickCount();
 }
 
 
@@ -81,7 +81,7 @@ void Task::delay(
     unsigned time) {
 
     if (time > 0)
-        vTaskDelay(time / portTICK_PERIOD_MS);    
+        vTaskDelay(time / portTICK_PERIOD_MS);
 }
 
 
@@ -91,12 +91,12 @@ void Task::delay(
 /// \param lastTick: El valor de contador de ticks actualitzat.
 ///
 void Task::delayUntil(
-    unsigned time, 
+    unsigned time,
     unsigned *lastTick) {
-    
+
     eosArgumentIsNotNull("lastTick", lastTick);
-    
-    if (time > 0) 
+
+    if (time > 0)
         vTaskDelayUntil((TickType_t*) lastTick, time / portTICK_PERIOD_MS);
 }
 
@@ -108,7 +108,7 @@ void Task::delayUntil(
 ///
 bool Task::notificationTake(
     unsigned blockTime) {
-    
+
     TickType_t ticks = blockTime == ((unsigned) -1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
     return ulTaskNotifyTake(pdTRUE, ticks) != 0;
 }
@@ -127,7 +127,7 @@ void Task::enterCriticalSection() {
 /// \brief Surt d'una seccio critica
 ///
 void Task::exitCriticalSection() {
-    
+
     taskEXIT_CRITICAL();
 }
 
@@ -136,8 +136,8 @@ void Task::exitCriticalSection() {
 /// \brief Inicia tots els fils d'execucio.
 ///
 void Task::startAll() {
-    
-    vTaskStartScheduler();    
+
+    vTaskStartScheduler();
 }
 
 
@@ -145,7 +145,7 @@ void Task::startAll() {
 /// \brief Suspend tots els fils d'execucio. Impedeix el canvi de tasca
 ///
 void Task::suspendAll() {
-    
+
     vTaskSuspendAll();
 }
 

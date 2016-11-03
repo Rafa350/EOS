@@ -70,6 +70,9 @@ extern GPIO_TypeDef *gpioPortRegs[];
 #define halGPIOTogglePin(port, pin) \
 	gpioPortRegs[port]->ODR ^= 1 << (pin)
 
+#define halGPIOReadPin(port, pin) \
+	gpioPortRegs[port]->IDR & (1 << pin) != 0;
+
 
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options);
 void halGPIOInitializePort(GPIOPort port, GPIOOptions options, uint16_t mask);

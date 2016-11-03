@@ -1,7 +1,9 @@
 #include "hal/halGPIO.h"
 
+
 GPIO_TypeDef *gpioPortRegs[] = { GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF,
 		GPIOG, GPIOH, GPIOI, GPIOJ, GPIOK };
+
 
 /// ----------------------------------------------------------------------
 /// \brief Configura un pin.
@@ -25,6 +27,7 @@ void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options) {
 	else
 		p->OTYPER &= ~(1 << pin);
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief Configura un port.

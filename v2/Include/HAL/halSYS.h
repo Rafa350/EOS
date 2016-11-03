@@ -6,13 +6,15 @@
 extern "C" {
 #endif
 
+
 void halSYSInitialize();
+
 
 #ifdef	__cplusplus
 }
 #endif
 
 
-#endif	
+#endif
 
 

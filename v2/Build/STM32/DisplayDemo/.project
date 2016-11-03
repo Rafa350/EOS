@@ -78,9 +78,9 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/AppMain.cpp</location>
 		</link>
 		<link>
-			<name>src/App/Main.cpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/Main.cpp</location>
+			<name>src/App/STM32F429</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/App/rtos_hooks.c</name>
@@ -101,6 +101,11 @@
 			<name>inc/App/STM32F429/FreeRTOSConfig.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/FreeRTOSConfig.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/eos.hpp</name>
@@ -131,6 +136,11 @@
 			<name>inc/Framework/FreeRTOS/timers.h</name>
 			<type>1</type>
 			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/include/timers.h</location>
+		</link>
+		<link>
+			<name>src/App/STM32F429/Main.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/Main.cpp</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
@@ -181,6 +191,16 @@
 			<name>src/Framework/FreeRTOS/timers.c</name>
 			<type>1</type>
 			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/timers.c</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halGPIO_STM32F.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO_STM32F.h</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
@@ -256,6 +276,11 @@
 			<name>src/Framework/EOS/Controllers/Drivers/eosILI9341.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32F429/halGPIO.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F429/halGPIO.c</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F429/halSYS.c</name>

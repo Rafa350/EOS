@@ -8,4 +8,11 @@
 #define CLOCK_PERIPHERICAL_HZ      (CLOCK_SYSTEM_HZ / 1)
 
 
+#define LED1_PORT         GPIO_PORT_G
+#define LED1_PIN          GPIO_PIN_13
+
+#define LED2_PORT         GPIO_PORT_G
+#define LED2_PIN          GPIO_PIN_14
+
+
 #endif
