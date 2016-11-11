@@ -25,7 +25,7 @@ Task::Task(
     const char *name,
     IRunable *runable) {
 
-    eosArgumentIsNotNull("runable", runable);
+    eosArgumentIsNotNull(runable);
 
     this->runable = runable;
 
@@ -94,7 +94,7 @@ void Task::delayUntil(
     unsigned time,
     unsigned *lastTick) {
 
-    eosArgumentIsNotNull("lastTick", lastTick);
+    eosArgumentIsNotNull(lastTick);
 
     if (time > 0)
         vTaskDelayUntil((TickType_t*) lastTick, time / portTICK_PERIOD_MS);

@@ -11,9 +11,9 @@ static eos::HeapAllocator defaultAllocator;
 ///
 void *operator new(
     size_t size) {
-    
-    eosArgumentIsNotZero("size", size);
-    
+
+    eosArgumentIsNotZero(size);
+
     return defaultAllocator.allocate(size);
 }
 
@@ -24,8 +24,8 @@ void *operator new(
 ///
 void operator delete(
     void *p) {
-    
-    eosArgumentIsNotNull("p", p);
+
+    eosArgumentIsNotNull(p);
 
     defaultAllocator.deallocate(p);
 }

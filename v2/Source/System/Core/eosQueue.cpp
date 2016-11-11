@@ -17,8 +17,8 @@ GenericQueue::GenericQueue(
     unsigned size,
     unsigned capacity) {
     
-    eosArgumentIsNotZero("size", size);
-    eosArgumentIsNotZero("capacity", capacity);
+    eosArgumentIsNotZero(size);
+    eosArgumentIsNotZero(capacity);
     
     handle = xQueueCreate(capacity, size);
     eosAssert(handle != nullptr);
@@ -53,7 +53,7 @@ bool GenericQueue::genericPut(
     const void *element,
     unsigned blockTime) {
     
-    eosArgumentIsNotNull("element", element);
+    eosArgumentIsNotNull(element);
 
     TickType_t ticks = blockTime == ((unsigned) -1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
     return xQueueSendToBack(handle, element,  ticks) == pdPASS;
@@ -70,7 +70,7 @@ bool GenericQueue::genericGet(
     void *element,
     unsigned blockTime) {
 
-    eosArgumentIsNotNull("element", element);
+    eosArgumentIsNotNull(element);
 
     TickType_t ticks = blockTime == ((unsigned) -1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
     return xQueueReceive(handle, element, ticks) == pdPASS;
@@ -80,7 +80,7 @@ bool GenericQueue::genericGet(
 bool GenericQueue::genericPutISR(
     void *element) {
     
-    eosArgumentIsNotNull("element", element);
+    eosArgumentIsNotNull(element);
     
     BaseType_t priority = pdFALSE;    
     return xQueueSendFromISR(handle, element, &priority) == pdPASS;
@@ -90,7 +90,7 @@ bool GenericQueue::genericPutISR(
 bool GenericQueue::genericGetISR(
     void *element) {
     
-    eosArgumentIsNotNull("element", element);
+    eosArgumentIsNotNull(element);
     
     BaseType_t priority = pdFALSE;    
     return xQueueReceiveFromISR(handle, element, &priority) == pdPASS;

@@ -24,14 +24,15 @@ const unsigned capacityDelta = 10;
 GenericListImpl::GenericListImpl(
     unsigned _size,
     unsigned _initialCapacity):
+
     size(_size),
-    initialCapacity(_initialCapacity),
     count(0),
     capacity(0),
+    initialCapacity(_initialCapacity),
     container(nullptr) {
-    
-    eosArgumentIsNotZero("size", size);
-    
+
+    eosArgumentIsNotZero(size);
+
     // Reserva memoria pel contenidor
     //
     resize(initialCapacity);
@@ -44,11 +45,12 @@ GenericListImpl::GenericListImpl(
 ///
 GenericListImpl::GenericListImpl(
     const GenericListImpl *impl):
+
     size(impl->size),
-    initialCapacity(impl->capacity),
-    count(0), 
+    count(0),
     capacity(0),
-    container(nullptr) {    
+    initialCapacity(impl->capacity),
+    container(nullptr) {
 
     // Reserva memoria pel contenidor
     //
@@ -67,7 +69,7 @@ GenericListImpl::GenericListImpl(
 /// \brief Destructor.
 ///
 GenericListImpl::~GenericListImpl() {
-    
+
     // Allivera la memoria del contenidor
     //
     if (container != nullptr)
@@ -85,18 +87,18 @@ void GenericListImpl::addFront(
     //
     if (count == capacity)
         resize(capacity + capacityDelta);
-    
+
     void *ptr0 = getPtr(0);
     void *ptr1 = getPtr(1);
 
     // Fa espai al principi de la llista
     //
     memcpy(ptr1, ptr0, (count - 1) * size);
-    
+
     // Copia l'element al contenidor
     //
     memcpy(ptr0, element, size);
-    
+
     // Incrementa el contador d'elements
     //
     count += 1;
@@ -109,17 +111,17 @@ void GenericListImpl::addFront(
 ///
 void GenericListImpl::addBack(
     const void *element) {
-    
+
     // Si no hi ha espai en el contenidor, el fa mes gran
     //
     if (count == capacity)
         resize(capacity + capacityDelta);
-    
+
     // Copia el element al contenidor
     //
     void *ptr = getPtr(count);
     memcpy(ptr, element, size);
-    
+
     // Incrementa el contador d'elements
     //
     count += 1;
@@ -132,7 +134,7 @@ void GenericListImpl::addBack(
 ///
 void GenericListImpl::remove(
     unsigned index) {
-    
+
     // Comprova si l'index es dins del rang
     //
     if (index < count) {
@@ -153,7 +155,7 @@ void GenericListImpl::remove(
 /// \brief Elimina tots els elements de la llista
 ///
 void GenericListImpl::clear() {
-           
+
     // Comprova si hi han elements
     //
     if (container != nullptr) {
@@ -173,16 +175,16 @@ void GenericListImpl::clear() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retorna l'index d'un element. Si esta repetit retorna el 
+/// \brief Retorna l'index d'un element. Si esta repetit retorna el
 ///        primer que trobi des del principi de la llista.
 /// \param element: L'element a buscar.
 /// \return El index del element. UINT32_MAX en cas que no el trobi.
 ///
 unsigned GenericListImpl::indexOf(
     const void *element) {
-    
+
     bool result = UINT32_MAX;
-  
+
     // Obte l'index del element, recorrent el contenidor fins
     // que el trobi
     //
@@ -192,7 +194,7 @@ unsigned GenericListImpl::indexOf(
             break;
         }
     }
-    
+
     return result;
 }
 
@@ -204,7 +206,7 @@ unsigned GenericListImpl::indexOf(
 ///
 void *GenericListImpl::getAt(
     unsigned index) const {
-    
+
     return index < count ? getPtr(index) : nullptr;
 }
 
@@ -216,8 +218,8 @@ void *GenericListImpl::getAt(
 ///
 void *GenericListImpl::getPtr(
     unsigned index) const {
-    
-    return (void*) ((unsigned) container + (index * size));    
+
+    return (void*) ((unsigned) container + (index * size));
 }
 
 
@@ -228,31 +230,31 @@ void *GenericListImpl::getPtr(
 void GenericListImpl::resize(
     unsigned newCapacity) {
 
-    // Comprova si cal aumentar la capacitat. 
-    //    
+    // Comprova si cal aumentar la capacitat.
+    //
     if (capacity < newCapacity) {
-        
+
         // Salva un punter al contenidor actual
         //
         void *ptr = container;
-        
+
         // Reserva memoria per un nou contenidor
         //
         container = __ALLOC(newCapacity * size);
-        
+
         // Comprova si hi havia un contenidor previ
         //
         if (ptr != nullptr) {
-            
+
             // opia les dades de l'antic contenidor al nou
             //
             memcpy(container, ptr, count);
-            
+
             // Allivera l'antic contenidor
             //
             __FREE(ptr);
         }
-                
+
         capacity = newCapacity;
     }
 }

@@ -15,11 +15,11 @@ using namespace eos;
 void *HeapAllocator::allocate(
     size_t size) {
 
-    eosArgumentIsNotZero("size", size);
-    
+    eosArgumentIsNotZero(size);
+
     void *p = pvPortMalloc(size);
     eosAssert(p != nullptr);
-       
+
     return p;
 }
 
@@ -30,8 +30,8 @@ void *HeapAllocator::allocate(
 ///
 void HeapAllocator::deallocate(
     void *p) {
-    
-    eosArgumentIsNotNull("p", p);
 
-    vPortFree(p);    
+    eosArgumentIsNotNull(p);
+
+    vPortFree(p);
 }

@@ -3,6 +3,10 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.1438602316">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.1438602316" moduleId="org.eclipse.cdt.core.settings" name="Debug">
+				<macros>
+					<stringMacro name="FreeRTOSPath" type="VALUE_PATH_ANY" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source"/>
+					<stringMacro name="EOSPath" type="VALUE_PATH_ANY" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2"/>
+				</macros>
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -27,9 +31,9 @@
 								<option id="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level.111735345" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false"/>
 								<option id="gnu.c.compiler.option.debugging.level.1387886973" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1862191691" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo"/>
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo/STM32F429"/>
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/GPIODemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/GPIODemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Include&quot;"/>
 									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/Include"/>
 									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
@@ -52,9 +56,9 @@
 								<option id="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level.612983299" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.1334703327" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1536804606" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo"/>
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo/STM32F429"/>
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/GPIODemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/GPIODemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Include&quot;"/>
 									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/Include"/>
 									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
@@ -85,9 +89,9 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.1379487136" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver"/>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.2137624365" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.1737545652" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo"/>
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo/STM32F429"/>
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/GPIODemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/GPIODemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Include&quot;"/>
 									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/Include"/>
 									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
@@ -126,6 +130,10 @@
 		</cconfiguration>
 		<cconfiguration id="fr.ac6.managedbuild.config.gnu.cross.exe.release.449900107">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.release.449900107" moduleId="org.eclipse.cdt.core.settings" name="Release">
+				<macros>
+					<stringMacro name="FreeRTOSPath" type="VALUE_TEXT" value="ccc"/>
+					<stringMacro name="EOSPath" type="VALUE_TEXT" value="zz"/>
+				</macros>
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -150,9 +158,9 @@
 								<option id="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level.2014023777" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.1486498595" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1203085549" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo"/>
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo/STM32F429"/>
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include"/>
+									<listOptionValue builtIn="false" value="&quot;../${EOSPath}/Demo/GPIODemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../${EOSPath}/Demo/GPIODemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../${EOSPath}/Include&quot;"/>
 									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/Include"/>
 									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
@@ -173,9 +181,9 @@
 								<option id="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level.558858982" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.cpp.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.1106239700" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.332347162" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo"/>
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo/STM32F429"/>
-									<listOptionValue builtIn="false" value="C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include"/>
+									<listOptionValue builtIn="false" value="&quot;../${EOSPath}/Demo/GPIODemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../${EOSPath}/Demo/GPIODemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../${EOSPath}/Include&quot;"/>
 									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/Include"/>
 									<listOptionValue builtIn="false" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>

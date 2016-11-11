@@ -11,7 +11,7 @@ using namespace eos;
 /// \brief Constructor.
 ///
 Application::Application() {
-    
+
     halSYSInitialize();
 }
 
@@ -30,7 +30,7 @@ Application::~Application() {
 /// \brief Executa l'aplicacio.
 ///
 void Application::execute() {
-        
+
     onInitialize();
     Task::startAll();
     onTerminate();
@@ -43,8 +43,8 @@ void Application::execute() {
 ///
 void Application::addService(
     Service *service) {
-    
-    eosArgumentIsNotNull("service", service);
+
+    eosArgumentIsNotNull(service);
 
     if ((service != nullptr) && (service->application == nullptr)) {
         service->application = this;
@@ -59,9 +59,9 @@ void Application::addService(
 ///
 void Application::removeService(
     Service *service) {
-    
-    eosArgumentIsNotNull("service", service);
-    
+
+    eosArgumentIsNotNull(service);
+
     if ((service != nullptr) && (service->application == this)) {
         services.remove(services.indexOf(service));
         service->application = nullptr;

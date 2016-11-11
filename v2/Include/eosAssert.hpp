@@ -7,19 +7,19 @@
 
 #if defined(EOS_DEBUG)
 
-#define eosArgumentIsNotNull(name, variable) \
-    if (variable == nullptr) eosErrorHandler(__FILE__, __LINE__, name)
+#define eosArgumentIsNotNull(variable) \
+    if (variable == nullptr) eosErrorHandler(__FILE__, __LINE__, #variable)
 
-#define eosArgumentIsNotZero(name, variable) \
-    if (variable == 0) eosErrorHandler(__FILE__, __LINE__, name)
+#define eosArgumentIsNotZero(variable) \
+    if (variable == 0) eosErrorHandler(__FILE__, __LINE__, #variable)
 
 #define eosAssert(condition) \
     if (!(condition)) eosErrorHandler(__FILE__, __LINE__, #condition)
 
 #else
 
-#define eosArgumentIsNotNull(name, variable)
-#define eosArgumentIsNotZero(name, variable)
+#define eosArgumentIsNotNull(variable)
+#define eosArgumentIsNotZero(variable)
 #define eosAssert(condition)
 
 #endif
@@ -30,5 +30,5 @@ extern void eosErrorHandler(const char *file, unsigned line, const char *message
 #endif
 
 
-#endif	
+#endif
 

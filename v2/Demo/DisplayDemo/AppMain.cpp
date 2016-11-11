@@ -21,6 +21,8 @@ class MyAppLoopService: public AppLoopService {
 
     public:
         MyAppLoopService(Application *application):
+        	display(nullptr),
+			driver(nullptr),
             AppLoopService(application) {}
 
     protected:

@@ -61,6 +61,13 @@ extern GPIO_TypeDef *gpioPortRegs[];
 #define GPIO_PULLUPDN_UP          0b01000000
 #define GPIO_PULLUPDN_DOWN        0b10000000
 
+#define halGPIOInitializePinInput(port, pin) \
+	gpioPortRegs[port]->MODER &= ~(0b11 << (pin * 2))
+
+#define halGPIOInitializePinOutput(port, pin) \
+	gpioPortRegs[port]->MODER &= ~(0b11 << (pin * 2)); \
+	gpioPortRegs[port]->MODER |= 0b01 << (pin * 2)
+
 #define halGPIOSetPin(port, pin) \
 	gpioPortRegs[port]->BSRR = 1 << (pin)
 
@@ -74,8 +81,18 @@ extern GPIO_TypeDef *gpioPortRegs[];
 	gpioPortRegs[port]->IDR & (1 << pin) != 0;
 
 
+#define halGPIOWritePort(port, data) \
+    gpioPortRegs[port]->ODR = data
+
+#define halGPIOReadPort(port) \
+    gpioPortRegs[port]->IDR
+
+
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options);
 void halGPIOInitializePort(GPIOPort port, GPIOOptions options, uint16_t mask);
+
+void halGPIOInitializePortInput(GPIOPort port, uint16_t mask);
+void halGPIOInitializePortOutput(GPIOPort port, uint16_t mask);
 
 
 #ifdef	__cplusplus

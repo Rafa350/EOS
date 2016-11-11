@@ -3,9 +3,11 @@
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
 #include "Hal/halGPIO.h"
 #include "Hal/halTMR.h"
+#include "Hal/halINT.h"
+
 
 #if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO) || \
-    defined(ILI9341_INTERFACE_MODE_PIC32_PMP) 
+    defined(ILI9341_INTERFACE_MODE_PIC32_PMP)
 #include <xc.h>
 #endif
 
@@ -115,8 +117,8 @@
 #define wrDATA(data) halGPIOInitializePortOutput(DATAPort, 0x00FF); \
                      halGPIOWritePort(DATAPort, data)
 #ifndef ILI9341_INTERFACE_WRITEONLY
-#define rdDATA()     halGPIOInitializePortInput(DATAPort, 0x00FF); \
-                     halGPIOReadPort(DATAPort)
+#define rdDATA(data) halGPIOInitializePortInput(DATAPort, 0x00FF); \
+                     data = halGPIOReadPort(DATAPort)
 #endif
 
 #endif
@@ -124,8 +126,8 @@
 
 // Control de les interrupcions
 //
-#define enableInterrupts()   __builtin_enable_interrupts()
-#define disableInterrupts()  __builtin_disable_interrupts()
+#define enableInterrupts()   halINTEnableInterrupts()
+#define disableInterrupts()  halINTDisableInterrupts()
 
 
 using namespace eos;
@@ -135,7 +137,7 @@ using namespace eos;
 /// \brief Contructor.
 ///
 ILI9341_IO::ILI9341_IO() {
-    
+
 }
 
 
@@ -150,8 +152,8 @@ void ILI9341_IO::initialize() {
     initWR();
 #ifndef ILI9341_INTERFACE_WRITEONLY
     initRD();
-#endif    
-    initDATA();    
+#endif
+    initDATA();
 }
 
 
@@ -170,7 +172,7 @@ void ILI9341_IO::reset() {
 /// \brief Inicia una transferencia de dades amb el driver.
 ///
 void ILI9341_IO::begin() {
-    
+
     disableInterrupts();
     clrCS();
 }
@@ -180,7 +182,7 @@ void ILI9341_IO::begin() {
 /// \brief Finalitza una transferencia de dades amb el driver.
 ///
 void ILI9341_IO::end() {
-   
+
     setCS();
     enableInterrupts();
 }
@@ -193,7 +195,7 @@ void ILI9341_IO::end() {
 void ILI9341_IO::wrCommand(
     uint8_t data) {
 
-    clrRS();    
+    clrRS();
     clrWR();
     wrDATA(data);
     setWR();
@@ -207,7 +209,7 @@ void ILI9341_IO::wrCommand(
 void ILI9341_IO::wrData(
     uint8_t data) {
 
-    setRS();    
+    setRS();
     clrWR();
     wrDATA(data);
     setWR();
@@ -220,14 +222,14 @@ void ILI9341_IO::wrData(
 ///
 #ifndef ILI9342_INTERFACE_WRITEONLY
 uint8_t ILI9341_IO::rdData() {
-    
+
     uint8_t data;
-    
+
     setRS();
     clrRD();
-    data = rdDATA();
+    rdDATA(data);
     setRD();
-    
-    return data;    
+
+    return data;
 }
 #endif

@@ -20,6 +20,7 @@ using namespace eos;
 GenericList::GenericList(
     unsigned size,
     unsigned initialCapacity):
+
     impl(new GenericListImpl(size, initialCapacity)) {
 }
 
@@ -30,6 +31,7 @@ GenericList::GenericList(
 ///
 GenericList::GenericList(
     const GenericList &list):
+
     impl(new GenericListImpl(list.impl)) {
 }
 
@@ -38,7 +40,7 @@ GenericList::GenericList(
 /// \brief Destructor.
 ///
 GenericList::~GenericList() {
-    
+
     delete impl;
 }
 
@@ -49,7 +51,7 @@ GenericList::~GenericList() {
 void GenericList::addFront(
     const void *element) {
 
-    eosArgumentIsNotNull("element", element);
+    eosArgumentIsNotNull(element);
 
     __LOCK();
     impl->addFront(element);
@@ -63,9 +65,9 @@ void GenericList::addFront(
 ///
 void GenericList::addBack(
     const void *element) {
-    
-    eosArgumentIsNotNull("element", element);
-    
+
+    eosArgumentIsNotNull(element);
+
     __LOCK();
     impl->addBack(element);
     __UNLOCK();
@@ -78,7 +80,7 @@ void GenericList::addBack(
 ///
 void GenericList::remove(
     unsigned index) {
-    
+
     __LOCK();
     impl->remove(index);
     __UNLOCK();
@@ -89,7 +91,7 @@ void GenericList::remove(
 /// \brief Elimina tots els elements de la llista
 ///
 void GenericList::clear() {
-   
+
     __LOCK();
     impl->clear();
     __UNLOCK();
@@ -97,22 +99,22 @@ void GenericList::clear() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retorna l'index d'un element. Si esta repetit retorna el 
+/// \brief Retorna l'index d'un element. Si esta repetit retorna el
 ///        primer que trobi des del principi de la llista.
 /// \param element: L'element a buscar.
 /// \return El index del element. UINT32_MAX en cas que no el trobi.
 ///
 unsigned GenericList::indexOf(
     const void *element) {
-    
-    eosArgumentIsNotNull("element", element);
+
+    eosArgumentIsNotNull(element);
 
     unsigned index;
 
     __LOCK();
     index = impl->indexOf(element);
     __UNLOCK();
-    
+
     return index;
 }
 
@@ -124,12 +126,12 @@ unsigned GenericList::indexOf(
 ///
 void *GenericList::get(
     unsigned index) const {
-    
+
     void *p;
     __LOCK();
     p = impl->getAt(index);
     __UNLOCK();
-    
+
     return p;
 }
 
@@ -139,7 +141,7 @@ void *GenericList::get(
 /// \return El nombre d'elements.
 ///
 unsigned GenericList::getCount() const {
-    
+
     return impl->getCount();
 }
 

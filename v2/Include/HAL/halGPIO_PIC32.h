@@ -22,7 +22,7 @@ typedef struct {
 	uint32_t volatile *latINV;
 	uint32_t volatile *lat;
 	uint32_t volatile *port;
-}GPIOPortRegs;
+} GPIOPortRegs;
 
 typedef uint8_t GPIOPort;
 typedef uint8_t GPIOPin;

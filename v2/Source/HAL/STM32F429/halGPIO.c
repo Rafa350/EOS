@@ -11,7 +11,10 @@ GPIO_TypeDef *gpioPortRegs[] = { GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF,
 /// \param pin: Identificador del pin.
 /// \param direction: Direccio.
 ///
-void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options) {
+void halGPIOInitializePin(
+	GPIOPort port,
+	GPIOPin pin,
+	GPIOOptions options) {
 
 	RCC->AHB1ENR |= 1 << port;
 
@@ -35,7 +38,24 @@ void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options) {
 /// \param direction: Direccio.
 /// \param mask: Mascara.
 ///
-void halGPIOInitializePort(GPIOPort port, GPIOOptions options, uint16_t mask) {
+void halGPIOInitializePort(
+	GPIOPort port,
+	GPIOOptions options,
+	uint16_t mask) {
 
 	RCC->AHB1ENR |= 1 << port;
+}
+
+
+void halGPIOInitializePortInput(
+	GPIOPort port,
+	uint16_t mask) {
+
+}
+
+
+void halGPIOInitializePortOutput(
+	GPIOPort port,
+	uint16_t mask) {
+
 }

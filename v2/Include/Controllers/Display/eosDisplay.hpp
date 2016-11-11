@@ -10,14 +10,14 @@
 
 
 namespace eos {
-        
+
     enum class Orientation {
         normal,
         rotate90,
         rotate180,
         rotate270,
     };
-    
+
     class IDisplayDriver {
         public:
             virtual void initialize() = 0;
@@ -35,7 +35,7 @@ namespace eos {
             virtual void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height) = 0;
             virtual void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height) = 0;
     };
-    
+
     class Display {
         private:
             IDisplayDriver *driver;
@@ -52,7 +52,7 @@ namespace eos {
             int16_t cursorX;
             int16_t cursorY;
             uint8_t ttyState;
-            
+
         public:
             Display(IDisplayDriver *driver);
             ~Display();
@@ -83,8 +83,8 @@ namespace eos {
             int16_t drawChar(int16_t x, int16_t y, char c);
             int16_t drawText(int16_t x, int16_t y, const char *s, int16_t offset, int16_t length);
             void fillRectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-            void fillCircle(int16_t cx, int16_t cy, int16_t r);    
-            
+            void fillCircle(int16_t cx, int16_t cy, int16_t r);
+
         private:
             bool clipArea(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2);
             bool clipPoint(int16_t x, int16_t y);
@@ -93,7 +93,7 @@ namespace eos {
             bool clipVLine(int16_t &x, int16_t &y1, int16_t &y2);
             uint8_t calcOutCode(int16_t x, int16_t y);
     };
-    
+
 }
 
 
