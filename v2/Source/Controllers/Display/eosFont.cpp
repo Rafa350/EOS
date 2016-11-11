@@ -5,9 +5,15 @@
 using namespace eos;
 
 
+#ifdef FONT_USE_Arial14pt
 extern const unsigned char *fontArial14pt;
+#endif
+#ifdef FONT_USE_Arial18pt
 extern const unsigned char *fontArial18pt;
+#endif
+#ifdef FONT_USE_Arial24pt
 extern const unsigned char *fontArial24pt;
+#endif
 extern const unsigned char *fontConsolas8pt;
 extern const unsigned char *fontConsolas10pt;
 extern const unsigned char *fontConsolas12pt;
@@ -25,42 +31,42 @@ typedef struct {
 
 
 static FontTableEntry fontTable[] = {
-    
-#ifdef FONT_USE_Arial14pt    
+
+#ifdef FONT_USE_Arial14pt
     { "Arial", 14, FontStyle::Regular, fontArial14pt },
-#endif    
-    
-#ifdef FONT_USE_Arial18pt    
+#endif
+
+#ifdef FONT_USE_Arial18pt
     { "Arial", 18, FontStyle::Regular, fontArial18pt },
-#endif    
+#endif
 
-#ifdef FONT_USE_Arial24pt    
+#ifdef FONT_USE_Arial24pt
     { "Arial", 24, FontStyle::Regular, fontArial24pt },
-#endif    
+#endif
 
-#ifdef FONT_USE_Consolas8pt    
+#ifdef FONT_USE_Consolas8pt
     { "Consolas", 8, FontStyle::Regular, fontConsolas8pt },
-#endif    
+#endif
 
-#ifdef FONT_USE_Consolas10pt    
+#ifdef FONT_USE_Consolas10pt
     { "Consolas", 10, FontStyle::Regular, fontConsolas10pt },
-#endif    
+#endif
 
-#ifdef FONT_USE_Consolas12pt    
+#ifdef FONT_USE_Consolas12pt
     { "Consolas", 12, FontStyle::Regular, fontConsolas12pt },
-#endif    
+#endif
 
-#ifdef FONT_USE_Consolas14pt    
+#ifdef FONT_USE_Consolas14pt
     { "Consolas", 14, FontStyle::Regular, fontConsolas14pt },
-#endif    
+#endif
 
-#ifdef FONT_USE_Consolas18pt    
+#ifdef FONT_USE_Consolas18pt
     { "Consolas", 18, FontStyle::Regular, fontConsolas18pt },
-#endif    
+#endif
 
-#ifdef FONT_USE_Consolas24pt    
+#ifdef FONT_USE_Consolas24pt
     { "Consolas", 24, FontStyle::Regular, fontConsolas24pt },
-#endif    
+#endif
 };
 
 
@@ -70,7 +76,7 @@ static FontTableEntry fontTable[] = {
 ///
 Font::Font(
     const uint8_t *_fontResource):
-    
+
     fontResource(_fontResource) {
 }
 
@@ -82,11 +88,11 @@ Font::Font(
 /// \param style: Estil del font.
 ///
 Font::Font(
-    const char* fontName, 
-    int16_t height, 
+    const char* fontName,
+    int16_t height,
     FontStyle style):
     fontResource(nullptr) {
-    
+
     for (uint16_t i = 0; i < sizeof(fontTable) / sizeof(fontTable[0]); i++) {
         FontTableEntry *entry = &fontTable[i];
         if ((strcmp(fontName, entry->faceName) == 0) &&
@@ -94,7 +100,7 @@ Font::Font(
             fontResource = entry->resource;
             break;
         }
-    }    
+    }
 }
 
 
@@ -119,7 +125,7 @@ void Font::getFontInfo(
 /// \param ci: Destinacio de la informacio.
 ///
 void Font::getCharInfo(
-    char c, 
+    char c,
     CharInfo &ci) const {
 
     unsigned offset = fontResource[6] + fontResource[7] * 256 + (c - fontResource[4]) * 2;
