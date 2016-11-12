@@ -1,14 +1,19 @@
 #include "eos.hpp"
+
+
+#ifdef ILI9341_INTERFACE_TYPE_PARALEL_8BIT
+
 #include "eosMacros.h"
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
-#include "Hal/halGPIO.h"
 #include "Hal/halTMR.h"
 #include "Hal/halINT.h"
 
 
-#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO) || \
-    defined(ILI9341_INTERFACE_MODE_PIC32_PMP)
+#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO)
 #include <xc.h>
+#elif defined(ILI9341_INTERFACE_MODE_STM32_GPIO)
+#elif defined(ILI9341_INTERFACE_MODE_HAL_GPIO)
+#include "Hal/halGPIO.h"
 #endif
 
 
@@ -124,12 +129,6 @@
 #endif
 
 
-// Control de les interrupcions
-//
-#define enableInterrupts()   halINTEnableInterrupts()
-#define disableInterrupts()  halINTDisableInterrupts()
-
-
 using namespace eos;
 
 
@@ -164,7 +163,7 @@ void ILI9341_IO::reset() {
 
     halTMRDelay(10);
     setRST();
-    halTMRDelay(120);
+    halTNRDelay(120);
 }
 
 
@@ -173,7 +172,7 @@ void ILI9341_IO::reset() {
 ///
 void ILI9341_IO::begin() {
 
-    disableInterrupts();
+    halINTDisableInterrupts();
     clrCS();
 }
 
@@ -184,7 +183,7 @@ void ILI9341_IO::begin() {
 void ILI9341_IO::end() {
 
     setCS();
-    enableInterrupts();
+    halINTEnableInterrupts();
 }
 
 
@@ -232,4 +231,7 @@ uint8_t ILI9341_IO::rdData() {
 
     return data;
 }
+#endif
+
+
 #endif

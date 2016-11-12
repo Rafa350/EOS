@@ -9,7 +9,7 @@
 
 
 namespace eos {
-    
+
     class ILI9341_IO {
         public:
             ILI9341_IO();
@@ -19,17 +19,15 @@ namespace eos {
             void end();
             void wrCommand(uint8_t data);
             void wrData(uint8_t data);
-#ifndef ILI9342_INTERFACE_WRITEONLY
             uint8_t rdData();
-#endif            
     };
-    
+
     class ILI9341_Driver: public IDisplayDriver {
         private:
             ILI9341_IO io;
             int16_t screenWidth;
             int16_t screenHeight;
-            
+
         public:
             ILI9341_Driver();
             void initialize();
@@ -45,8 +43,8 @@ namespace eos {
             void writePixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors);
             void readPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color *colors);
             void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
-            void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);   
-            
+            void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
+
         private:
             void writePixel(Color color, int32_t count);
             void writePixel(const Color *colors, int32_t count);
@@ -59,5 +57,5 @@ namespace eos {
 
 
 
-#endif	
+#endif
 

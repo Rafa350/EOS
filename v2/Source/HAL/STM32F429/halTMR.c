@@ -6,6 +6,11 @@
 /// \param time: Temps en milisegons.
 ///
 void halTMRDelay(
-    unsigned time) {
+    uint32_t time) {
+
+	while (time--) {
+		for (int i = 10000; i; i--)
+			continue;
+	}
 
 }

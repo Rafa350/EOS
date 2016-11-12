@@ -12,7 +12,7 @@
 //
 #define MAX_COLUMNS          240
 #define MAX_ROWS             320
-  
+
 // Comandes del controlador
 //
 #define CMD_NOP                                            0x00
@@ -98,7 +98,7 @@
 #define CMD_POWER_ON_SEQUENCE_CONTROL                      0xED
 #define CMD_ENABLE_3G                                      0xF2
 #define CMD_PUMP_RATIO_CONTROL                             0xF7
-    
+
 // Parametres de la comanda MEMORY_ACCESS_CONTROL
 //
 #define MAC_MX_OFF    0b00000000
@@ -118,7 +118,7 @@ using namespace eos;
 ILI9341_Driver::ILI9341_Driver() {
 
     screenWidth = MAX_COLUMNS;
-    screenHeight = MAX_ROWS;    
+    screenHeight = MAX_ROWS;
 }
 
 
@@ -128,34 +128,34 @@ ILI9341_Driver::ILI9341_Driver() {
 void ILI9341_Driver::initialize() {
 
     static const uint8_t initData[] = {
-        4, CMD_POWER_CONTROL_B, 0x00, 0xC3, 0x30,        
-     	5, CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0X12, 0X81,         
-        4, CMD_DRIVER_TIMING_CONTROL_A, 0x85, 0x10, 0x79,        
-        6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,        
+        4, CMD_POWER_CONTROL_B, 0x00, 0xC3, 0x30,
+     	5, CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0X12, 0X81,
+        4, CMD_DRIVER_TIMING_CONTROL_A, 0x85, 0x10, 0x79,
+        6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,
         2, CMD_PUMP_RATIO_CONTROL, 0x20,
         3, CMD_DRIVER_TIMING_CONTROL_B, 0x00, 0x00,
-       	2, CMD_POWER_CONTROL_1, 0x22, 
-        2, CMD_POWER_CONTROL_2, 0x11, 
-        3, CMD_VCOM_CONTROL_1, 0x3D, 0x20, 
+       	2, CMD_POWER_CONTROL_1, 0x22,
+        2, CMD_POWER_CONTROL_2, 0x11,
+        3, CMD_VCOM_CONTROL_1, 0x3D, 0x20,
         2, CMD_VCOM_CONTROL_2, 0xAA,
-        2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF, 
-#if defined(ILI9341_COLORMODE_565)        
+        2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF,
+#if defined(ILI9341_COLORMODE_565)
         2, CMD_PIXEL_FORMAT_SET, 0x55,
-#elif defined(ILI9341_COLORMODE_666)        
+#elif defined(ILI9341_COLORMODE_666)
         2, CMD_PIXEL_FORMAT_SET, 0x66,
-#endif        
+#endif
         3, CMD_FRAME_RATE_CONTROL_1, 0x00, 0x13,
         3, CMD_DISPLAY_FUNCTION_CONTROL, 0x0A, 0xA2,
-        3, CMD_INTERFACE_CONTROL, 0x01, 0x30, 
-        2, CMD_ENABLE_3G, 0x00, 
+        3, CMD_INTERFACE_CONTROL, 0x01, 0x30,
+        2, CMD_ENABLE_3G, 0x00,
         2, CMD_GAMMA_SET, 0x01,
-        16, CMD_POSITIVE_GAMMA_CORRECTION, 0x0F, 0x3F, 0x2F, 0x0C, 0x10, 0x0A, 
+        16, CMD_POSITIVE_GAMMA_CORRECTION, 0x0F, 0x3F, 0x2F, 0x0C, 0x10, 0x0A,
             0x53, 0xD5, 0x40, 0x0A, 0x13, 0x03, 0x08, 0x03, 0x00,
-        16, CMD_NEGATIVE_GAMMA_CORRECTION, 0x00, 0x00, 0x10, 0x03, 0x0F, 0x05, 
+        16, CMD_NEGATIVE_GAMMA_CORRECTION, 0x00, 0x00, 0x10, 0x03, 0x0F, 0x05,
             0x2C, 0xA2, 0x3F, 0x05, 0x0E, 0x0C, 0x37, 0x3C, 0x0F,
         0
     };
-    
+
     // inicialitza les comunicacions
     //
     io.initialize();
@@ -163,7 +163,7 @@ void ILI9341_Driver::initialize() {
     // Reseteja el controlador
     //
     io.reset();
-    
+
     // Sequencia d'inicialitzacio del controlador
     //
     io.begin();
@@ -183,16 +183,16 @@ void ILI9341_Driver::initialize() {
 
     io.wrCommand(CMD_DISPLAY_ON);
     halTMRDelay(50);
-    
+
     io.end();
 }
-    
+
 
 /// ----------------------------------------------------------------------
 /// \brief Desativa la pantalla
 ///
 void ILI9341_Driver::shutdown() {
-    
+
     io.begin();
     io.wrCommand(CMD_DISPLAY_OFF);
     io.end();
@@ -205,29 +205,29 @@ void ILI9341_Driver::shutdown() {
 ///
 void ILI9341_Driver::setOrientation(
     Orientation orientation) {
-    
+
     uint8_t data;
-    
+
     switch (orientation) {
         case Orientation::normal:
             screenWidth = MAX_COLUMNS;
             screenHeight = MAX_ROWS;
             data = 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF;
             break;
-            
+
         case Orientation::rotate90:
             screenWidth = MAX_ROWS;
             screenHeight = MAX_COLUMNS;
             data = 0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_OFF;
             break;
-            
+
         case Orientation::rotate180:
             screenWidth = MAX_COLUMNS;
             screenHeight = MAX_ROWS;
             data = 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_ON;
             break;
-            
-        case Orientation::rotate270:            
+
+        case Orientation::rotate270:
             screenWidth = MAX_ROWS;
             screenHeight = MAX_COLUMNS;
             data = 0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_ON;
@@ -236,7 +236,7 @@ void ILI9341_Driver::setOrientation(
 
     io.begin();
     io.wrCommand(CMD_MEMORY_ACCESS_CONTROL);
-    io.wrData(data);    
+    io.wrData(data);
     io.end();
 }
 
@@ -247,7 +247,7 @@ void ILI9341_Driver::setOrientation(
 ///
 void ILI9341_Driver::clear(
     Color color) {
-    
+
     selectRegion(0, 0, screenWidth, screenHeight);
     startMemoryWrite();
     writePixel(color, screenWidth * screenHeight);
@@ -261,29 +261,29 @@ void ILI9341_Driver::clear(
 /// \param color: Color del pixel.
 ///
 void ILI9341_Driver::setPixel(
-    int16_t x, 
+    int16_t x,
     int16_t y,
     Color color) {
-    
+
     selectRegion(x, y, 1, 1);
     startMemoryWrite();
-    writePixel(color, 1);    
+    writePixel(color, 1);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia de pixels horitzontals. 
+/// \brief Dibuixa una linia de pixels horitzontals.
 /// \param x: Coordinada X.
 /// \param y: Colordinada Y.
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setHPixels(
-    int16_t x, 
-    int16_t y, 
+    int16_t x,
+    int16_t y,
     int16_t length,
     Color color) {
-    
+
     selectRegion(x, y, length, 1);
     startMemoryWrite();
     writePixel(color, length);
@@ -291,18 +291,18 @@ void ILI9341_Driver::setHPixels(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia de pixels en vertical. 
+/// \brief Dibuixa una linia de pixels en vertical.
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setVPixels(
-    int16_t x, 
-    int16_t y, 
+    int16_t x,
+    int16_t y,
     int16_t length,
     Color color) {
-    
+
     selectRegion(x, y, 1, length);
     startMemoryWrite();
     writePixel(color, length);
@@ -318,12 +318,12 @@ void ILI9341_Driver::setVPixels(
 /// \param color: Color dels pixels.
 ///
 void ILI9341_Driver::setPixels(
-    int16_t x, 
-    int16_t y, 
-    int16_t width, 
-    int16_t height, 
+    int16_t x,
+    int16_t y,
+    int16_t width,
+    int16_t height,
     Color color) {
-    
+
     selectRegion(x, y, width, height);
     startMemoryWrite();
     writePixel(color, width * height);
@@ -339,12 +339,12 @@ void ILI9341_Driver::setPixels(
 /// \param colors: Color dels pixels.
 ///
 void ILI9341_Driver::writePixels(
-    int16_t x, 
-    int16_t y, 
-    int16_t width, 
-    int16_t height, 
+    int16_t x,
+    int16_t y,
+    int16_t width,
+    int16_t height,
     const Color* colors) {
-    
+
     selectRegion(x, y, width, width);
     startMemoryWrite();
     writePixel(colors, width * height);
@@ -352,7 +352,7 @@ void ILI9341_Driver::writePixels(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Llegeix una regio rectangular de pixels. No hi ha cap tipus de 
+/// \brief Llegeix una regio rectangular de pixels. No hi ha cap tipus de
 ///        comprovacio de la validesa dels parametres.
 /// \param x: Posicio X.
 /// \param y: Posicio Y.
@@ -361,12 +361,12 @@ void ILI9341_Driver::writePixels(
 /// \params colors: Buffer on deixar els pixels.
 ///
 void ILI9341_Driver::readPixels(
-    int16_t x, 
-    int16_t y, 
-    int16_t width, 
-    int16_t height, 
+    int16_t x,
+    int16_t y,
+    int16_t width,
+    int16_t height,
     Color *colors) {
-    
+
     selectRegion(x, y, width, height);
     startMemoryRead();
     readPixel(colors, width * height);
@@ -382,14 +382,14 @@ void ILI9341_Driver::readPixels(
 /// \param height: Alçada de la regio.
 ///
 void ILI9341_Driver::vScroll(
-    int16_t delta, 
-    int16_t x, 
-    int16_t y, 
-    int16_t width, 
+    int16_t delta,
+    int16_t x,
+    int16_t y,
+    int16_t width,
     int16_t height) {
-    
+
     static Color buffer[MAX_COLUMNS];
-    
+
     if (delta > 0) {
 
         for (int16_t i = y; i < height - y - delta; i++) {
@@ -420,17 +420,17 @@ void ILI9341_Driver::vScroll(
 /// \param height: Alçada de la regio.
 ///
 void ILI9341_Driver::hScroll(
-    int16_t delta, 
-    int16_t x, 
-    int16_t y, 
-    int16_t width, 
+    int16_t delta,
+    int16_t x,
+    int16_t y,
+    int16_t width,
     int16_t height) {
-   
+
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Selecciona la regio de treball per les transferencies de 
+/// \brief Selecciona la regio de treball per les transferencies de
 ///        pixels.
 /// \param x: Coordinada X origen.
 /// \param y: Coordinada Y oriden.
@@ -438,28 +438,28 @@ void ILI9341_Driver::hScroll(
 /// \param height: Alçada de la regio.
 ///
 void ILI9341_Driver::selectRegion(
-    int16_t x, 
-    int16_t y, 
-    int16_t width, 
-    int16_t height) {   
-    
+    int16_t x,
+    int16_t y,
+    int16_t width,
+    int16_t height) {
+
     int16_t x2 = x + width - 1;
     int16_t y2 = y + height - 1;
-    
+
     io.begin();
-    
+
     io.wrCommand(CMD_COLUMN_ADDRESS_SET);
 	io.wrData(x >> 8);
 	io.wrData(x);
 	io.wrData(x2 >> 8);
 	io.wrData(x2);
-    
+
 	io.wrCommand(CMD_PAGE_ADDRESS_SET);
 	io.wrData(y >> 8);
 	io.wrData(y);
 	io.wrData(y2 >> 8);
 	io.wrData(y2);
-    
+
     io.end();
 }
 
@@ -468,7 +468,7 @@ void ILI9341_Driver::selectRegion(
 /// \brief Inicia la escritura de memoria.
 ///
 void ILI9341_Driver::startMemoryWrite() {
-    
+
     io.begin();
     io.wrCommand(CMD_MEMORY_WRITE);
     io.end();
@@ -479,7 +479,7 @@ void ILI9341_Driver::startMemoryWrite() {
 /// \brief Inicia la lectura de memoria.
 ///
 void ILI9341_Driver::startMemoryRead() {
-    
+
     io.begin();
     io.wrCommand(CMD_MEMORY_READ);
     io.end();
@@ -493,28 +493,28 @@ void ILI9341_Driver::startMemoryRead() {
 ///
 void ILI9341_Driver::writePixel(
     Color color,
-    int32_t count) {    
-    
-#if defined(ILI9341_COLORMODE_565)    
+    int32_t count) {
+
+#if defined(ILI9341_COLORMODE_565)
 
     uint32_t c = color.c;
     uint8_t c1 = (uint32_t)(((c & 0x00F80000) >> 16) | ((c & 0x0000E000) >> 13));
     uint8_t c2 = (uint32_t)(((c & 0x00001C00) >> 5) | ((c &0x000000F8) >> 3));
-    
+
     io.begin();
     while (count--) {
-        io.wrData(c1);        
+        io.wrData(c1);
         io.wrData(c2);
     }
     io.end();
-    
+
 #elif defined(ILI9341_COLORMODE_666)
-    
+
     uint32_t c = color.c;
     uint8_t c1 = (uint32_t)(c & 0x00FC0000) >> 16;
     uint8_t c2 = (uint32_t)(c & 0x0000FC00) >> 8;
     uint8_t c3 = (uint32_t)(c & 0x000000FC);
-   
+
     io.begin();
     while (count--) {
         io.wrData(c1);
@@ -522,8 +522,8 @@ void ILI9341_Driver::writePixel(
         io.wrData(c3);
     }
     io.end();
-    
-#endif    
+
+#endif
 }
 
 
@@ -533,9 +533,9 @@ void ILI9341_Driver::writePixel(
 /// \param count: Numero d'elements en la llista.
 ///
 void ILI9341_Driver::writePixel(
-    const Color *colors, 
+    const Color *colors,
     int32_t count) {
-    
+
     while (count--)
         writePixel(*colors++, 1);
 }
@@ -547,24 +547,24 @@ void ILI9341_Driver::writePixel(
 /// \param count: Numero de colors a lleigir.
 ///
 void ILI9341_Driver::readPixel(
-    Color *colors, 
+    Color *colors,
     int32_t count) {
- 
+
     io.begin();
     io.rdData();               // Dummy read
     io.rdData();               // Dummy read
     while (count--) {
-        
-#if defined(ILI9341_COLORMODE_565)        
+
+#if defined(ILI9341_COLORMODE_565)
         uint8_t volatile c1 = io.rdData();
         uint8_t volatile c2 = io.rdData();
         uint8_t volatile c3 = io.rdData();
         Color color(c1, c2, c3);
         *colors++ = color;
-        
-#elif defined(ILI9341_COLORMODE_666)        
-#endif        
-        
+
+#elif defined(ILI9341_COLORMODE_666)
+#endif
+
     }
     io.end();
 }
