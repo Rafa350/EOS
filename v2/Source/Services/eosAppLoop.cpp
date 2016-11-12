@@ -15,8 +15,21 @@ static const TaskPriority priority = TaskPriority::normal;
 ///
 AppLoopService::AppLoopService(
     Application *application):
-    
-    Service(application, serviceName, stackSize, priority) {
+
+    Service(application, serviceName, stackSize, priority),
+	initialized(false) {
+}
+
+
+/// ---------------------------------------------------------------------
+/// \brief Inicialitzacio.
+///
+void AppLoopService::initialize() {
+
+	if (!initialized) {
+		onSetup();
+		initialized = true;
+	}
 }
 
 
@@ -26,30 +39,31 @@ AppLoopService::AppLoopService(
 ///
 void AppLoopService::run(
     Task *task) {
-    
-    setup();
+
+	initialize();
+
     while (true) {
-        loop();
-        
+        onRun();
+
 #if configUSE_TIME_SLICING == 0
-        Task::delay(100); 
-#endif        
+        Task::delay(100);
+#endif
     }
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Funcio d'inicialitzacio.
+/// \brief Procesa la inicialitzacio.
 ///
-void AppLoopService::setup() {
-    
+void AppLoopService::onSetup() {
+
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Funcio del bucle d'execucio.
+/// \brief Procesa l'execucio. Es crida continuament.
 ///
-void AppLoopService::loop() {
-    
+void AppLoopService::onRun() {
+
 }
 

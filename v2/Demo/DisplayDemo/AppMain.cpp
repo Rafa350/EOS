@@ -4,6 +4,7 @@
 #include "Services/eosAppLoop.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
+#include "Hal/halGPIO.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,22 +13,31 @@
 using namespace eos;
 
 
-class MyAppLoopService: public AppLoopService {
+class LedLoopService: public AppLoopService {
+	public:
+    	LedLoopService(Application *application):
+        	AppLoopService(application) {}
+
+    protected:
+    	void onSetup();
+        void onRun();
+};
+
+
+class DisplayLoopService: public AppLoopService {
     private:
+		IDisplayDriver *driver;
         Display *display;
-        IDisplayDriver *driver;
         int16_t screenWidth;
         int16_t screenHeight;
 
     public:
-        MyAppLoopService(Application *application):
-        	display(nullptr),
-			driver(nullptr),
+        DisplayLoopService(Application *application):
             AppLoopService(application) {}
 
     protected:
-        void setup();
-        void loop();
+        void onSetup();
+        void onRun();
 
     private:
         void drawBackground(const char *title);
@@ -35,31 +45,74 @@ class MyAppLoopService: public AppLoopService {
 
 
 class MyApplication: public Application {
-    private:
-        MyAppLoopService *service;
+	private:
+		LedLoopService *ledService;
+		DisplayLoopService *displayService;
 
     public :
         MyApplication();
+
+    protected:
+        void onInitialize();
 };
 
 
 ///-----------------------------------------------------------------------
-/// \brief Contructor
+/// \brief Contructor.
 ///
 MyApplication::MyApplication() {
 
-    service = new MyAppLoopService(this);
+	ledService = new LedLoopService(this);
+    //displayService = new DisplayLoopService(this);
+}
+
+
+/// ---------------------------------------------------------------------
+/// \brief Processa la inicialitzacio de l'aplicacio
+///
+void MyApplication::onInitialize() {
+
+	ledService->initialize();
+	//displayService->initialize();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa la inicialitzacio de la tasca.
+///
+void LedLoopService::onSetup() {
+
+	halGPIOInitializePin(LEDS_LD1_PORT, LEDS_LD1_PIN, GPIO_DIRECTION_OUTPUT);
+	halGPIOInitializePin(LEDS_LD2_PORT, LEDS_LD2_PIN, GPIO_DIRECTION_OUTPUT);
+
+	halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+	halGPIOSetPin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+}
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa l'execucio de la tasca.
+///
+void LedLoopService::onRun() {
+
+	while (true) {
+
+		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+
+		Task::delay(100);
+	}
 }
 
 
 ///-----------------------------------------------------------------------
-/// \brief Process d'inicialitzacio. El sistema el crida nomes un cop.
+/// \brief Process la inicialitzacio de la tasca.
 ///
-void MyAppLoopService::setup() {
+void DisplayLoopService::onSetup() {
 
-    driver = new ILI9341_Driver();
+	driver = new ILI9341_Driver();
     driver->initialize();
     driver->setOrientation(Orientation::rotate180);
+
     display = new Display(driver);
     display->clear(COLOR_Black);
 
@@ -69,9 +122,9 @@ void MyAppLoopService::setup() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Bucle d'execucio. El sistema el crida periodicament.
+/// \brief Procesa l'execucio de la tasca.
 ///
-void MyAppLoopService::loop() {
+void DisplayLoopService::onRun() {
 
     int ticks;
 
@@ -282,7 +335,7 @@ void MyAppLoopService::loop() {
 }
 
 
-void MyAppLoopService::drawBackground(
+void DisplayLoopService::drawBackground(
     const char* title) {
 
     display->clear(0);
@@ -293,6 +346,7 @@ void MyAppLoopService::drawBackground(
     display->drawText(4, 16, title, 0, -1);
     display->drawRectangle(5, 25, screenWidth - 6, screenHeight - 6);
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief Entrada al programa.

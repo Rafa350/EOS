@@ -223,6 +223,11 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halTMR.h</location>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/eosAppLoop.hpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosAppLoop.hpp</location>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controller/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

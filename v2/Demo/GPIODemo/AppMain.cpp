@@ -6,21 +6,30 @@
 using namespace eos;
 
 
-class MyAppLoopService: public AppLoopService {
+class Led1LoopService: public AppLoopService {
 	public:
-		MyAppLoopService(Application *application):
+		Led1LoopService(Application *application):
 			AppLoopService(application) {}
 
 	protected:
-		void loop();
-		void setup();
+		void onRun();
+};
+
+
+class Led2LoopService: public AppLoopService {
+	public:
+		Led2LoopService(Application *application):
+			AppLoopService(application) {}
+
+	protected:
+		void onRun();
 };
 
 
 class MyApplication: public Application {
-	private:
-		AppLoopService *loopService;
-
+	protected:
+		void onInitialize();
+        
 	public:
 		MyApplication();
 };
@@ -31,34 +40,50 @@ class MyApplication: public Application {
 ///
 MyApplication::MyApplication() {
 
-	loopService = new MyAppLoopService((Application*)this);
+	new Led1LoopService((Application*)this);
+	new Led2LoopService((Application*)this);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitzacio.
+/// \brief Procesa la inicialitzacio de l'aplicacio.
 ///
-void MyAppLoopService::setup() {
+void MyApplication::onInitialize() {
 
-	halGPIOInitializePin(LED1_PORT, LED1_PIN, GPIO_DIRECTION_OUTPUT);
-	halGPIOInitializePin(LED2_PORT, LED2_PIN, GPIO_DIRECTION_OUTPUT);
+	halGPIOInitializePin(LEDS_LD1_PORT, LEDS_LD1_PIN, GPIO_DIRECTION_OUTPUT);
+	halGPIOInitializePin(LEDS_LD2_PORT, LEDS_LD2_PIN, GPIO_DIRECTION_OUTPUT);
 
-	halGPIOClearPin(LED1_PORT, LED1_PIN);
-	halGPIOSetPin(LED2_PORT, LED2_PIN);
+	halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+	halGPIOClearPin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+
+	Application::onInitialize();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Bucle principal
+/// \brief Bucle principal del proces
 ///
-void MyAppLoopService::loop() {
+void Led1LoopService::onRun() {
 
 	while (true) {
 
-		halGPIOTogglePin(LED1_PORT, LED1_PIN);
-		halGPIOTogglePin(LED2_PORT, LED2_PIN);
+		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 
 		Task::delay(100);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Bucle principal del proces
+///
+void Led2LoopService::onRun() {
+
+	while (true) {
+
+		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+
+		Task::delay(80);
 	}
 }
 

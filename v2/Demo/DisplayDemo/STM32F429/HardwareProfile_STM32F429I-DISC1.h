@@ -9,24 +9,18 @@
 
 
 // -----------------------------------------------------------------------
-// CONFIGURACIO DE LA PLACA PIC32MX-ESK
+// LEDS
 // -----------------------------------------------------------------------
 
-// Configuracio dels leds indicadors
-//
-#define pinLED1         0
-#define pinLED2         1
-#define pinLED3         2
+#define LEDS_LD1_PORT        GPIO_PORT_G
+#define LEDS_LD1_PIN         GPIO_PIN_13
 
-// Configuracio del switches
-//
-#define pinSW1          3
-#define pinSW2          4
-#define pinSW3          5
+#define LEDS_LD2_PORT        GPIO_PORT_G
+#define LEDS_LD2_PIN         GPIO_PIN_14
 
 
 // -----------------------------------------------------------------------
-// CONFIGURACIO DEL DRIVER DEL DISPLAY ILI9341
+// TFT ILI9341
 // -----------------------------------------------------------------------
 
 // Tipus de lletra disponibles
@@ -58,23 +52,23 @@
 
 // Control del pin CS (Chip select)
 //
-#define ILI9341_CSPort       C
-#define ILI9341_CSPin        2
+#define ILI9341_CS_PORT      GPIO_PORT_C
+#define ILI9341_CS_PIN       GPIO_PIN_2
 
 // Control del pin RS (Register select)
 //
-#define ILI9341_RSPort       D
-#define ILI9341_RSPin        13
+#define ILI9341_RS_PORT      GPIO_PORT_D
+#define ILI9341_RS_PIN       GPIO_PIN_13
 
 // Control del pin CLK (Serial clock)
 //
-#define ILI9341_CLKPort      F
-#define ILI9341_CLKPin       7
+#define ILI9341_CLK_PORT     GPIO_PORT_F
+#define ILI9341_CLK_PIN      GPIO_PIN_7
 
 // Control del pin SO (Serial data output to controller MOSI)
 //
-#define ILI9341_SOPort       F
-#define ILI9341_SOPin        9
+#define ILI9341_SO_PORT      GPIO_PORT_F
+#define ILI9341_SO_PIN       GPIO_PIN_9
 
 
 

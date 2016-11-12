@@ -67,3 +67,23 @@ void Application::removeService(
         service->application = nullptr;
     }
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa la initcialitzacio de l'aplicacio.
+///
+void Application::onInitialize() {
+
+	// if (initializeEvent != nullptr)
+	//     initializeEvent->execute(this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa la finalitzacio de l'aplicacio.
+///
+void Application::onTerminate() {
+
+	// if (terminateEvent != nullptr)
+	//     terminateEvent->execute(this);
+}
