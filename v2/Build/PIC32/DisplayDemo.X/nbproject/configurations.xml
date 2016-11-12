@@ -30,6 +30,8 @@
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO_PIC32.h</itemPath>
+            <itemPath>../../../Include/HAL/halINT.h</itemPath>
+            <itemPath>../../../Include/HAL/halINT_PIC32.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Services" projectFiles="true">
             <itemPath>../../../Include/Services/eosAppLoop.hpp</itemPath>
@@ -72,8 +74,8 @@
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
                 <logicalFolder name="f1" displayName="ILI9341" projectFiles="true">
-                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_p8.cpp</itemPath>
                   <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</itemPath>
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_paralel8.cpp</itemPath>
                 </logicalFolder>
                 <logicalFolder name="f2" displayName="VDC" projectFiles="true">
                   <itemPath>../../../Source/Controllers/Display/Drivers/VDC/eosVdc.cpp</itemPath>
@@ -146,6 +148,7 @@
     <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
     <Elem>../../../Source/System/Core</Elem>
     <Elem>../../../Include</Elem>
+    <Elem>../../../Source/Controllers/Display/Drivers/ILI9341</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

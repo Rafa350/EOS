@@ -70,12 +70,14 @@
 
 // Control del pin RST
 //
+#ifdef ILI9341_RSTPort
 #define RSTPort    concat2(GPIO_PORT_, ILI9341_RSTPort)
 #define RSTPin     concat2(GPIO_PIN_, ILI9341_RSTPin)
 #define initRST()  halGPIOClearPin(RSTPort, RSTPin); \
                    halGPIOInitializePinOutput(RSTPort, RSTPin)
 #define setRST()   halGPIOSetPin(RSTPort, RSTPin)
 #define clrRST()   halGPIOClearPin(RSTPort, RSTPin)
+#endif
 
 // Control del pin CS
 //
@@ -145,7 +147,9 @@ ILI9341_IO::ILI9341_IO() {
 ///
 void ILI9341_IO::initialize() {
 
+#ifdef ILI9341_RSTPort
     initRST();
+#endif
     initCS();
     initRS();
     initWR();
@@ -163,7 +167,7 @@ void ILI9341_IO::reset() {
 
     halTMRDelay(10);
     setRST();
-    halTNRDelay(120);
+    halTMRDelay(120);
 }
 
 
@@ -219,9 +223,12 @@ void ILI9341_IO::wrData(
 /// \brief Llegeix un byte en l'adressa seleccionada del driver.
 /// \return El byte lleigit.
 ///
-#ifndef ILI9342_INTERFACE_WRITEONLY
 uint8_t ILI9341_IO::rdData() {
 
+#ifdef ILI9342_INTERFACE_WRITEONLY
+    return 0;
+    
+#else
     uint8_t data;
 
     setRS();
@@ -230,8 +237,8 @@ uint8_t ILI9341_IO::rdData() {
     setRD();
 
     return data;
-}
 #endif
+}
 
 
 #endif
