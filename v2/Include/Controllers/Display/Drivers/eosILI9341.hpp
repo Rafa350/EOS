@@ -48,6 +48,7 @@ namespace eos {
         private:
             void writePixel(Color color, int32_t count);
             void writePixel(const Color *colors, int32_t count);
+            void writeProgram(const uint8_t *data);
             void readPixel(Color *colors, int32_t count);
             void selectRegion(int16_t x, int16_t y, int16_t width, int16_t height);
             void startMemoryWrite();

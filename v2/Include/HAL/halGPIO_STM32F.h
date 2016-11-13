@@ -62,9 +62,11 @@ extern GPIO_TypeDef *gpioPortRegs[];
 #define GPIO_PULLUPDN_DOWN        0b10000000
 
 #define halGPIOInitializePinInput(port, pin) \
+	RCC->AHB1ENR |= 1 << port; \
 	gpioPortRegs[port]->MODER &= ~(((uint32_t) 0b11) << (pin * 2))
 
 #define halGPIOInitializePinOutput(port, pin) \
+	RCC->AHB1ENR |= 1 << port; \
 	gpioPortRegs[port]->MODER &= ~(((uint32_t) 0b11) << (pin * 2)); \
 	gpioPortRegs[port]->MODER |= ((uint32_t) 0b01) << (pin * 2)
 

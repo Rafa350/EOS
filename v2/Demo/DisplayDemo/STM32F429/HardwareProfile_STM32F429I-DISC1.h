@@ -32,6 +32,7 @@
 #define FONT_USE_Consolas18pt
 #define FONT_USE_Consolas24pt
 
+#define DISPLAY_STM32F429I_DISC1
 
 #define ILI9341_COLORMODE_565
 //#define ILI9341_COLORMODE_666

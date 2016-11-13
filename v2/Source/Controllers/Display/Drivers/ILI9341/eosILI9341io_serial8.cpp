@@ -33,7 +33,7 @@
 //
 #ifdef ILI9341_RST_PORT
 #define initRST()  halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN); \
-                   halGPIOInitializePinOutput(ILI9341_RST_PORT, ILI9341_RST_PIN)
+                   halGPIOInitializePin(ILI9341_RST_PORT, ILI9341_RST_PIN, GPIO_DIRECTION_OUTPUT)
 #define setRST()   halGPIOSetPin(ILI9341_RST_PORT, ILI9341_RST_PIN)
 #define clrRST()   halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN)
 #endif
@@ -41,21 +41,21 @@
 // Control del pin CS
 //
 #define initCS()   halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN); \
-                   halGPIOInitializePinOutput(ILI9341_CS_PORT, ILI9341_CS_PIN)
+                   halGPIOInitializePin(ILI9341_CS_PORT, ILI9341_CS_PIN, GPIO_DIRECTION_OUTPUT)
 #define setCS()    halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
 #define clrCS()    halGPIOClearPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
 
 // Control del pin RS
 //
 #define initRS()   halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN); \
-                   halGPIOInitializePinOutput(ILI9341_RS_PORT, ILI9341_RS_PIN)
+                   halGPIOInitializePin(ILI9341_RS_PORT, ILI9341_RS_PIN, GPIO_DIRECTION_OUTPUT)
 #define setRS()    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
 #define clrRS()    halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
 
 // Control del pin CLK
 //
 #define initCLK()  halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN); \
-                   halGPIOInitializePinOutput(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
+                   halGPIOInitializePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, GPIO_DIRECTION_OUTPUT)
 #define setCLK()   halGPIOSetPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 #define clrCLK()   halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 
@@ -85,7 +85,7 @@ ILI9341_IO::ILI9341_IO() {
 ///
 void ILI9341_IO::initialize() {
 
-#ifdef ILI9341_RSTPort
+#ifdef ILI9341_RST_PORT
     initRST();
 #endif
     initCS();
@@ -103,7 +103,7 @@ void ILI9341_IO::initialize() {
 ///
 void ILI9341_IO::reset() {
 
-#ifdef ILI9341_RSTPort
+#ifdef ILI9341_RST_PORT
     halTMRDelay(10);
     setRST();
     halTMRDelay(120);
@@ -116,7 +116,7 @@ void ILI9341_IO::reset() {
 ///
 void ILI9341_IO::begin() {
 
-    halINTDisableInterrupts();
+	clrCS();
 }
 
 
@@ -125,7 +125,7 @@ void ILI9341_IO::begin() {
 ///
 void ILI9341_IO::end() {
 
-    halINTEnableInterrupts();
+    setCS();
 }
 
 
@@ -136,7 +136,8 @@ void ILI9341_IO::end() {
 void ILI9341_IO::wrCommand(
     uint8_t data) {
 
-	clrCS();
+    halINTDisableInterrupts();
+
     clrRS();
 
     uint8_t mask;
@@ -148,7 +149,8 @@ void ILI9341_IO::wrCommand(
             clrSO();
         setCLK();
     }
-    setCS();
+
+    halINTEnableInterrupts();
 }
 
 
@@ -159,7 +161,8 @@ void ILI9341_IO::wrCommand(
 void ILI9341_IO::wrData(
     uint8_t data) {
 
-	clrCS();
+    halINTDisableInterrupts();
+
     setRS();
 
     uint8_t mask;
@@ -171,7 +174,8 @@ void ILI9341_IO::wrData(
             clrSO();
         setCLK();
     }
-    setCS();
+
+    halINTEnableInterrupts();
 }
 
 /// ----------------------------------------------------------------------

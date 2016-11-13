@@ -31,6 +31,9 @@
 //        37     RS      CON1-2
 //        38     CS      CON1-14
 
+// Tipus de pantalla
+//
+#define DISPLAY_ER_TFT028_4
 
 // Tipus de lletra disponibles 
 //

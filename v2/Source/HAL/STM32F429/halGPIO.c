@@ -1,8 +1,19 @@
 #include "hal/halGPIO.h"
 
 
-GPIO_TypeDef *gpioPortRegs[] = { GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF,
-		GPIOG, GPIOH, GPIOI, GPIOJ, GPIOK };
+GPIO_TypeDef *gpioPortRegs[] = {
+    GPIOA,
+	GPIOB,
+	GPIOC,
+	GPIOD,
+	GPIOE,
+	GPIOF,
+	GPIOG,
+	GPIOH,
+	GPIOI,
+	GPIOJ,
+	GPIOK
+};
 
 
 /// ----------------------------------------------------------------------

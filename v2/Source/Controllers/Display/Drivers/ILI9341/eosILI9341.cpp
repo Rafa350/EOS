@@ -7,6 +7,11 @@
 #error "No se especifico ILI9342_COLORMODE_xxx"
 #endif
 
+#if !defined(DISPLAY_ER_TFT028_4) && \
+    !defined(STM32F429I_DISC1)
+#error "No se especifico DISPLAY_xxx"
+#endif
+
 
 // Parametres de la pantalla
 //
@@ -108,6 +113,11 @@
 #define MAC_MV_OFF    0b00000000
 #define MAC_MV_ON     0b00100000
 
+// Codis d'operacio
+//
+#define OP_END        0
+#define OP_DELAY      255
+
 
 using namespace eos;
 
@@ -127,11 +137,13 @@ ILI9341_Driver::ILI9341_Driver() {
 ///
 void ILI9341_Driver::initialize() {
 
-#if 1
+#if defined(DISPLAY_ER_TFT028_4)
     static const uint8_t initData[] = {
+        1, CMD_SLEEP_OUT,
+        OP_DELAY, 120,
+        6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,
         4, CMD_POWER_CONTROL_B, 0x00, 0xC3, 0x30,
      	5, CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0X12, 0x81,
-        4, CMD_DRIVER_TIMING_CONTROL_A, 0x85, 0x10, 0x79,
         6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,
         2, CMD_PUMP_RATIO_CONTROL, 0x20,
         3, CMD_DRIVER_TIMING_CONTROL_B, 0x00, 0x00,
@@ -154,33 +166,49 @@ void ILI9341_Driver::initialize() {
             0x53, 0xD5, 0x40, 0x0A, 0x13, 0x03, 0x08, 0x03, 0x00,
         16, CMD_NEGATIVE_GAMMA_CORRECTION, 0x00, 0x00, 0x10, 0x03, 0x0F, 0x05,
             0x2C, 0xA2, 0x3F, 0x05, 0x0E, 0x0C, 0x37, 0x3C, 0x0F,
-        0
+        1, CMD_SLEEP_OUT,
+        OP_DELAY, 120,
+        1, CMD_DISPLAY_ON,
+        OP_DELAY, 50,
+        OP_END
     };
-#endif
-#if 0
+
+#elif defined(STM32F429I_DISC1)
     static const uint8_t initData[] = {
-    	6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,
+        1, CMD_SOFTWARE_RESET,
+        OP_DELAY, 250,
+        OP_DELAY, 250,
+        1, CMD_SLEEP_OUT,
+        OP_DELAY, 120,
+    	6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02, //
     	4, CMD_POWER_CONTROL_B, 0x00, 0xC1, 0x30,
     	4, CMD_DRIVER_TIMING_CONTROL_A, 0x85, 0x00, 0x78,
-    	3, CMD_DRIVER_TIMING_CONTROL_B, 0x00, 0x00,
-		5, CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0x12, 0x81,
-		2, CMD_PUMP_RATIO_CONTROL, 0x20,
+    	3, CMD_DRIVER_TIMING_CONTROL_B, 0x00, 0x00, //
+		5, CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0x12, 0x81, //
+		2, CMD_PUMP_RATIO_CONTROL, 0x20, //
     	2, CMD_POWER_CONTROL_1, 0x23,
     	2, CMD_POWER_CONTROL_2, 0x10,
 		3, CMD_VCOM_CONTROL_1, 0x3E, 0x28,
 		2, CMD_VCOM_CONTROL_2, 0x86,
-    	2, CMD_MEMORY_ACCESS_CONTROL, 0x48,
+    	2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF,
+#if defined(ILI9341_COLORMODE_565)
     	2, CMD_PIXEL_FORMAT_SET, 0x55,
+#elif defined(ILI9341_COLORMODE_666)
+        2, CMD_PIXEL_FORMAT_SET, 0x66,
+#endif
     	3, CMD_FRAME_RATE_CONTROL_1, 0x00, 0x18,
 		4, CMD_DISPLAY_FUNCTION_CONTROL, 0x08, 0x82, 0x27,
     	2, CMD_ENABLE_3G, 0x00,
-    	5, CMD_COLUMN_ADDRESS_SET, 0x00, 0x00, 0x00, 0xEF,
-    	5, CMD_PAGE_ADDRESS_SET, 0x00, 0x00, 0x01, 0x3F,
     	2, CMD_GAMMA_SET, 0x01,
-    	16, CMD_POSITIVE_GAMMA_CORRECTION, 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E,
-		    0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00,
-    	16, CMD_NEGATIVE_GAMMA_CORRECTION, 0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31,
-		    0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F
+    	16, CMD_POSITIVE_GAMMA_CORRECTION, 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
+            0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00,
+    	16, CMD_NEGATIVE_GAMMA_CORRECTION, 0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
+            0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F,
+        1, CMD_SLEEP_OUT,
+        OP_DELAY, 120,
+        1, CMD_DISPLAY_ON,
+        OP_DELAY, 50,
+        OP_END
     };
 #endif
 
@@ -195,24 +223,7 @@ void ILI9341_Driver::initialize() {
     // Sequencia d'inicialitzacio del controlador
     //
     io.begin();
-
-    io.wrCommand(CMD_SLEEP_OUT);
-    halTMRDelay(120);
-
-    uint8_t c;
-    const uint8_t *p = initData;
-    while ((c = *p++) != 0) {
-        io.wrCommand(*p++);
-        while (--c != 0)
-            io.wrData(*p++);
-    }
-
-    io.wrCommand(CMD_SLEEP_OUT);
-    halTMRDelay(120);
-
-    io.wrCommand(CMD_DISPLAY_ON);
-    halTMRDelay(50);
-
+    writeProgram(initData);
     io.end();
 }
 
@@ -235,37 +246,53 @@ void ILI9341_Driver::shutdown() {
 void ILI9341_Driver::setOrientation(
     Orientation orientation) {
 
-    uint8_t data;
+#if defined(DISPLAY_ER_TFT028_4)
+    static const uint8_t orientationData[4][4] = {
+    		{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF, OP_END},
+			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_OFF, OP_END},
+			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_ON, OP_END},
+			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_ON, OP_END}
+    };
+
+#elif defined(STM32F429I_DISC1)
+    static const uint8_t orientationData[4][4] = {
+    		{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_ON, OP_END},
+			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_ON, OP_END},
+			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF, OP_END},
+			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_OFF, OP_END}
+    };
+#endif
+
+    const uint8_t *data;
 
     switch (orientation) {
         case Orientation::normal:
             screenWidth = MAX_COLUMNS;
             screenHeight = MAX_ROWS;
-            data = 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF;
-            break;
+            data = orientationData[0];
+           break;
 
         case Orientation::rotate90:
             screenWidth = MAX_ROWS;
             screenHeight = MAX_COLUMNS;
-            data = 0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_OFF;
+            data = orientationData[1];
             break;
 
         case Orientation::rotate180:
             screenWidth = MAX_COLUMNS;
             screenHeight = MAX_ROWS;
-            data = 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_ON;
+            data = orientationData[2];
             break;
 
         case Orientation::rotate270:
             screenWidth = MAX_ROWS;
             screenHeight = MAX_COLUMNS;
-            data = 0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_ON;
+            data = orientationData[3];
             break;
     }
 
     io.begin();
-    io.wrCommand(CMD_MEMORY_ACCESS_CONTROL);
-    io.wrData(data);
+    writeProgram(data);
     io.end();
 }
 
@@ -567,6 +594,31 @@ void ILI9341_Driver::writePixel(
 
     while (count--)
         writePixel(*colors++, 1);
+}
+
+
+/// ----------------------------------------------------------------------
+// \brief Envia una sequencia programada.
+// \param data: Programa a enviar
+//
+void ILI9341_Driver::writeProgram(
+	const uint8_t *data) {
+
+    uint8_t c;
+    const uint8_t *p = data;
+    while ((c = *p++) != OP_END) {
+        switch (c) {
+            case OP_DELAY:
+                halTMRDelay(*p++);
+                break;
+
+            default:
+                io.wrCommand(*p++);
+                while (--c != 0)
+                    io.wrData(*p++);
+                break;
+        }
+    }
 }
 
 
