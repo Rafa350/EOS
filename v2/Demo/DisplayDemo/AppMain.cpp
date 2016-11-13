@@ -63,7 +63,7 @@ class MyApplication: public Application {
 MyApplication::MyApplication() {
 
 	ledService = new LedLoopService(this);
-    //displayService = new DisplayLoopService(this);
+    displayService = new DisplayLoopService(this);
 }
 
 
@@ -73,7 +73,7 @@ MyApplication::MyApplication() {
 void MyApplication::onInitialize() {
 
 	ledService->initialize();
-	//displayService->initialize();
+	displayService->initialize();
 }
 
 
@@ -89,6 +89,7 @@ void LedLoopService::onSetup() {
 	halGPIOSetPin(LEDS_LD2_PORT, LEDS_LD2_PIN);
 }
 
+
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
@@ -99,7 +100,7 @@ void LedLoopService::onRun() {
 		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
 
-		Task::delay(100);
+		Task::delay(500);
 	}
 }
 
@@ -314,21 +315,21 @@ void DisplayLoopService::onRun() {
 
     char lineBuffer[30];
     uint16_t y = 50;
-    sprintf(lineBuffer, "Points        %d ms", pointsTicks);
+    sprintf(lineBuffer, "Points        %d ms", pointsTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "V. lines      %d ms", verticalLinesTicks);
+    sprintf(lineBuffer, "V. lines      %d ms", verticalLinesTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "H. lines      %d ms", horizontalLinesTicks);
+    sprintf(lineBuffer, "H. lines      %d ms", horizontalLinesTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "Lines         %d ms", linesTicks);
+    sprintf(lineBuffer, "Lines         %d ms", linesTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "Rectangles    %d ms", rectanglesTicks);
+    sprintf(lineBuffer, "Rectangles    %d ms", rectanglesTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "F. rectangles %d ms", filledRectanglesTicks);
+    sprintf(lineBuffer, "F. rectangles %d ms", filledRectanglesTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "Circles       %d ms", circlesTicks);
+    sprintf(lineBuffer, "Circles       %d ms", circlesTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "F. circles    %d ms", filledCirclesTicks);
+    sprintf(lineBuffer, "F. circles    %d ms", filledCirclesTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
 
     Task::delay(10000);

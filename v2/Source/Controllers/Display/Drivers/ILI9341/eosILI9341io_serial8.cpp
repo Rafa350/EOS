@@ -54,7 +54,7 @@
 
 // Control del pin CLK
 //
-#define initCLK()  halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_RS_PIN); \
+#define initCLK()  halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN); \
                    halGPIOInitializePinOutput(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 #define setCLK()   halGPIOSetPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 #define clrCLK()   halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
@@ -117,7 +117,6 @@ void ILI9341_IO::reset() {
 void ILI9341_IO::begin() {
 
     halINTDisableInterrupts();
-    clrCS();
 }
 
 
@@ -126,7 +125,6 @@ void ILI9341_IO::begin() {
 ///
 void ILI9341_IO::end() {
 
-    setCS();
     halINTEnableInterrupts();
 }
 
@@ -138,6 +136,7 @@ void ILI9341_IO::end() {
 void ILI9341_IO::wrCommand(
     uint8_t data) {
 
+	clrCS();
     clrRS();
 
     uint8_t mask;
@@ -149,6 +148,7 @@ void ILI9341_IO::wrCommand(
             clrSO();
         setCLK();
     }
+    setCS();
 }
 
 
@@ -159,6 +159,7 @@ void ILI9341_IO::wrCommand(
 void ILI9341_IO::wrData(
     uint8_t data) {
 
+	clrCS();
     setRS();
 
     uint8_t mask;
@@ -170,6 +171,7 @@ void ILI9341_IO::wrData(
             clrSO();
         setCLK();
     }
+    setCS();
 }
 
 /// ----------------------------------------------------------------------

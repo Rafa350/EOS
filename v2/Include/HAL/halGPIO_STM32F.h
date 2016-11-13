@@ -62,23 +62,23 @@ extern GPIO_TypeDef *gpioPortRegs[];
 #define GPIO_PULLUPDN_DOWN        0b10000000
 
 #define halGPIOInitializePinInput(port, pin) \
-	gpioPortRegs[port]->MODER &= ~(0b11 << (pin * 2))
+	gpioPortRegs[port]->MODER &= ~(((uint32_t) 0b11) << (pin * 2))
 
 #define halGPIOInitializePinOutput(port, pin) \
-	gpioPortRegs[port]->MODER &= ~(0b11 << (pin * 2)); \
-	gpioPortRegs[port]->MODER |= 0b01 << (pin * 2)
+	gpioPortRegs[port]->MODER &= ~(((uint32_t) 0b11) << (pin * 2)); \
+	gpioPortRegs[port]->MODER |= ((uint32_t) 0b01) << (pin * 2)
 
 #define halGPIOSetPin(port, pin) \
-	gpioPortRegs[port]->BSRR = 1 << (pin)
+	gpioPortRegs[port]->BSRR = ((uint32_t) 1) << (pin)
 
 #define halGPIOClearPin(port, pin) \
-	gpioPortRegs[port]->BSRR = 1 << ((pin) + 16)
+	gpioPortRegs[port]->BSRR = ((uint32_t) 1) << ((pin) + 16)
 
 #define halGPIOTogglePin(port, pin) \
-	gpioPortRegs[port]->ODR ^= 1 << (pin)
+	gpioPortRegs[port]->ODR ^= ((uint32_t) 1) << (pin)
 
 #define halGPIOReadPin(port, pin) \
-	gpioPortRegs[port]->IDR & (1 << pin) != 0;
+	gpioPortRegs[port]->IDR & (((uint32_t) 1) << pin) != 0;
 
 
 #define halGPIOWritePort(port, data) \

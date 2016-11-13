@@ -21,6 +21,22 @@ AppLoopService::AppLoopService(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Constructor.
+/// \param application: Aplicacio a la que pertany el servei.
+/// \param stackSize: Tamany de la pila
+/// \param priority: Prioritat
+///
+AppLoopService::AppLoopService(
+    Application *application, 
+    unsigned stackSize, 
+    TaskPriority priority):
+
+    Service(application, serviceName, stackSize, priority),
+	initialized(false) {
+}
+
+
 /// ---------------------------------------------------------------------
 /// \brief Inicialitzacio.
 ///

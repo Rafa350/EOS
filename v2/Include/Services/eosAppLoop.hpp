@@ -4,6 +4,7 @@
 
 #include "eos.hpp"
 #include "Services/eosService.hpp"
+#include "System/Core/eosTask.hpp"
 
 
 namespace eos {
@@ -19,6 +20,7 @@ namespace eos {
 
         public:
             AppLoopService(Application *application);
+            AppLoopService(Application *application, unsigned stackSize, TaskPriority prioirity);
             void initialize();
 
         protected:
