@@ -2,6 +2,8 @@
 #include "Services/Forms/eosForms.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
 
+#include <string.h>
+
 
 using namespace eos;
 
@@ -23,10 +25,10 @@ using namespace eos;
 FormsDisplay::FormsDisplay(
     Display *_display):
     display(_display) {
-    
+
     bufferSize = 1024;
     buffer = new uint8_t[bufferSize];
-    
+
     buffer[0] = CMD_END;     // Marca de final
     wrIdx = 0;               // Inicialitza el punter d'escriptura
     wrError = false;         // Borrel'indicador d'error
@@ -38,10 +40,10 @@ FormsDisplay::FormsDisplay(
 ///
 void FormsDisplay::beginDraw(
     int16_t x,
-    int16_t y, 
+    int16_t y,
     int16_t width,
     int16_t height) {
-    
+
 }
 
 
@@ -49,7 +51,7 @@ void FormsDisplay::beginDraw(
 /// \brief Finalitza el proces de dibuix de pantalla.
 ///
 void FormsDisplay::endDraw() {
-    
+
     render();
 }
 
@@ -60,7 +62,7 @@ void FormsDisplay::endDraw() {
 ///
 void FormsDisplay::setColor(
     Color color) {
-    
+
     if (wrCheck(5)) {
         wr8(CMD_SETCOLOR);
         wr32(color);
@@ -75,7 +77,7 @@ void FormsDisplay::setColor(
 ///
 void FormsDisplay::clear(
     Color color) {
-    
+
     if (wrCheck(5)) {
         wr8(CMD_CLEAR);
         wr32(color);
@@ -92,11 +94,11 @@ void FormsDisplay::clear(
 /// \param y2: Coordinada y final.
 ///
 void FormsDisplay::drawLine(
-    int16_t x1, 
-    int16_t y1, 
-    int16_t x2, 
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
     int16_t y2) {
-    
+
     if (wrCheck(9)) {
         wr8(CMD_DRAWLINE);
         wr16(x1);
@@ -116,11 +118,11 @@ void FormsDisplay::drawLine(
 /// \param height: Alçada.
 ///
 void FormsDisplay::drawRectangle(
-    int16_t x, 
-    int16_t y, 
-    int16_t width, 
+    int16_t x,
+    int16_t y,
+    int16_t width,
     int16_t height) {
-    
+
     if (wrCheck(9)) {
         wr8(CMD_DRAWRECTANGLE);
         wr16(x);
@@ -141,12 +143,12 @@ void FormsDisplay::drawRectangle(
 /// \param length: Numero de caracters a dibuixar.
 ///
 void FormsDisplay::drawText(
-    int16_t x, 
-    int16_t y, 
-    const char* text, 
+    int16_t x,
+    int16_t y,
+    const char* text,
     int16_t offset,
     int16_t length) {
-    
+
     if (wrCheck(11 + strlen(text))) {
         wr8(CMD_DRAWTEXT);
         wr16(x);
@@ -167,11 +169,11 @@ void FormsDisplay::drawText(
 /// \param height: Alçada.
 ///
 void FormsDisplay::fillRectangle(
-    int16_t x, 
-    int16_t y, 
-    int16_t width, 
+    int16_t x,
+    int16_t y,
+    int16_t width,
     int16_t height) {
-    
+
     if (wrCheck(9)) {
         wr8(CMD_FILLRECTANGLE);
         wr16(x);
@@ -195,15 +197,15 @@ void FormsDisplay::render() {
             case CMD_END:
                 done = true;
                 break;
-                
+
             case CMD_SETCOLOR:
                 display->setColor(rd32());
                 break;
-                
+
             case CMD_CLEAR:
                 display->clear(rd32());
                 break;
-                
+
             case CMD_DRAWLINE:
                 display->drawLine(rd16(), rd16(), rd16(), rd16());
                 break;
@@ -211,10 +213,10 @@ void FormsDisplay::render() {
             case CMD_DRAWRECTANGLE:
                 display->drawRectangle(rd16(), rd16(), rd16(), rd16());
                 break;
-                
+
             case CMD_DRAWTEXT:
                 display->drawText(rd16(), rd16(), rds(), rd16(), rd16());
-                break;                
+                break;
 
             case CMD_FILLRECTANGLE:
                 display->fillRectangle(rd16(), rd16(), rd16(), rd16());
@@ -234,7 +236,7 @@ void FormsDisplay::render() {
 ///
 void FormsDisplay::wr8(
     uint8_t d) {
-    
+
     buffer[wrIdx++] = d;
 }
 
@@ -245,7 +247,7 @@ void FormsDisplay::wr8(
 ///
 void FormsDisplay::wr16(
     uint16_t d) {
-    
+
     buffer[wrIdx++] = d >> 8;
     buffer[wrIdx++] = d;
 }
@@ -257,7 +259,7 @@ void FormsDisplay::wr16(
 ///
 void FormsDisplay::wr32(
     uint32_t d) {
-    
+
     buffer[wrIdx++] = d >> 24;
     buffer[wrIdx++] = d >> 16;
     buffer[wrIdx++] = d >> 8;
@@ -269,8 +271,8 @@ void FormsDisplay::wr32(
 /// \brief Escriu la marca de final.
 ///
 void FormsDisplay::wrEND() {
-    
-    buffer[wrIdx] = CMD_END;    
+
+    buffer[wrIdx] = CMD_END;
 }
 
 
@@ -280,7 +282,7 @@ void FormsDisplay::wrEND() {
 ///
 void FormsDisplay::wrs(
     const char *s) {
-    
+
     uint16_t l = strlen(s);
     wr16(l);
     while (l--)
@@ -303,7 +305,7 @@ uint8_t FormsDisplay::rd8() {
 /// \return El enter lleigit
 //
 uint16_t FormsDisplay::rd16() {
-    
+
     return (rd8() << 8) | rd8();
 }
 
@@ -313,7 +315,7 @@ uint16_t FormsDisplay::rd16() {
 /// \return El enter lleigit
 //
 uint32_t FormsDisplay::rd32() {
-    
+
     return (rd16() << 16) | rd16();
 }
 
@@ -323,12 +325,12 @@ uint32_t FormsDisplay::rd32() {
 /// \return El enter lleigit
 //
 const char *FormsDisplay::rds() {
-    
+
     uint16_t l = rd16();
-    
+
     const char *s = (const char*) &buffer[rdIdx];
     rdIdx += l;
-    
+
     return s;
 }
 
@@ -336,7 +338,7 @@ const char *FormsDisplay::rds() {
 bool FormsDisplay::wrCheck(
     uint16_t size) {
 
-    if (!wrError) 
+    if (!wrError)
         wrError = (wrIdx + size + 1) >= bufferSize;
     return !wrError;
 }

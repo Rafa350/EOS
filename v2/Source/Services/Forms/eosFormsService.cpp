@@ -21,7 +21,7 @@ FormsService::FormsService(
 Application *application,
     MessageQueue *_messageQueue,
     FormsDisplay *_display) :
-    
+
     Service(application, serviceName, taskStackSize, taskPriority),
     messageQueue(_messageQueue),
     display(_display) {
@@ -32,7 +32,7 @@ Application *application,
 /// \brief Desctructor.
 ///
 FormsService::~FormsService() {
-    
+
 }
 
 
@@ -42,7 +42,7 @@ FormsService::~FormsService() {
 ///
 void FormsService::add(
     Form *form) {
-    
+
     if ((form != nullptr) && (form->service == nullptr)) {
         forms.add(form);
         form->service = this;
@@ -56,7 +56,7 @@ void FormsService::add(
 ///
 void FormsService::remove(
     Form *form) {
-    
+
     if ((form != nullptr) && (form->service == this)) {
         form->service = nullptr;
         forms.remove(forms.indexOf(form));
@@ -70,7 +70,7 @@ void FormsService::remove(
 ///
 void FormsService::destroy(
     Form *form) {
-    
+
     destroyForms.add(form);
 }
 
@@ -81,31 +81,31 @@ void FormsService::destroy(
 ///
 void FormsService::run(
     Task *task) {
-    
+
     while (true) {
-        
+
         // Procesa els missatges en la cua
         //
         Message message;
-        if (messageQueue->get(message, (unsigned) -1)) 
+        if (messageQueue->get(message, (unsigned) -1))
             message.target->dispatchMessage(message);
-            
+
         /*
         // Procesa l'eliminacio de forms pendents de destruccio
         //
         if (destroyForms.getCount() > 0) {
             FormListIterator iterator(destroyForms);
-            
+
             while (iterator.hasNext()) {
                 forms.remove(forms.indexOf(iterator.current()));
                 iterator.next();
             }
-            
+
             iterator.first();
             while (iterator.hasNext()) {
                 iterator.next();
             }
-            
+
             destroyForms.clear();
         }
         */
@@ -116,18 +116,21 @@ void FormsService::run(
 /// ----------------------------------------------------------------------
 /// \brief Canvia el formulari actiu
 /// \param form: El formulari a activat. nullptr si no es vol activar cap
+/// \return El form previament actiu.
 ///
 Form *FormsService::activate(
     Form *form) {
 
-    if (activeForm != nullptr)    
+    if (activeForm != nullptr)
         activeForm->onDeactivate(form);
-    
+
     Form *oldActive = activeForm;
     activeForm = form;
 
-    if (activeForm != nullptr)    
+    if (activeForm != nullptr)
         activeForm->onActivate(oldActive);
+
+    return oldActive;
 }
 
 
@@ -137,11 +140,11 @@ Form *FormsService::activate(
 ///
 void FormsService::refresh(
     Form *form) {
-    
-    Message msg;    
+
+    Message msg;
     msg.id = MSG_PAINT;
     msg.target = form;
     msg.msgPaint.display = display;
-    
+
     messageQueue->put(msg, (unsigned) -1);
 }

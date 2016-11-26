@@ -1,7 +1,7 @@
 #include "eosAssert.hpp"
 #include "System/Core/eosSemaphore.hpp"
 
-#include "FreeRTos.h"
+#include "FreeRTOS.h"
 #include "semphr.h"
 
 
@@ -9,7 +9,7 @@
 /// \brief Contructor
 ///
 eos::BinarySemaphore::BinarySemaphore() {
-    
+
     handle = xSemaphoreCreateBinary();
     eosAssert(handle != nullptr);
 }
@@ -31,7 +31,7 @@ eos::BinarySemaphore::~BinarySemaphore() {
 ///
 bool eos::BinarySemaphore::take(
     unsigned blockTime) {
-    
+
     TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
     return xSemaphoreTake(handle, ticks);
 }
@@ -41,7 +41,7 @@ bool eos::BinarySemaphore::take(
 /// \brief Allivera un semaforo.
 ///
 bool eos::BinarySemaphore::give() {
-    
+
     return xSemaphoreGive(handle);
 }
 
@@ -50,6 +50,6 @@ bool eos::BinarySemaphore::give() {
 /// \brief Allivera un semaforo. Versio per cridar des d'una interrupcio.
 ///
 void eos::BinarySemaphore::giveISR() {
-    
+
     xSemaphoreGiveFromISR(handle, NULL);
 }

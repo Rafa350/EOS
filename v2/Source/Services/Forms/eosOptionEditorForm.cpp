@@ -24,7 +24,7 @@ void OptionEditorForm::onPaint(
     FormsDisplay *display) {
 
     display->clear(0x00000000);
-    if (title != NULL)
+    if (title != nullptr)
         display->drawText(0, 0, title, 0, -1);
     display->drawLine(0, 10, 127, 10);
     display->drawLine(0, 53, 127, 53);

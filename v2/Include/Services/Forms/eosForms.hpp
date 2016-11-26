@@ -35,96 +35,96 @@
 
 
 namespace eos {
-    
+
     class Application;
-    class Form;   
+    class Form;
     class FormsDisplay;
     class FormsService;
 
-    
+
     struct MsgPaint {
         FormsDisplay *display;
     };
-    
+
 #ifdef eosFormsService_UseSelector
-    
-    typedef enum class {
+
+    typedef enum class __SelectorEvent {
         inc,
         dec,
         press,
         release
     } SelectorEvent;
-    
-    typedef enum class {
+
+    typedef enum class __SelectorDirection {
         forward,
         backward
     } SelectorDirection;
-    
+
     struct MsgSelector {
         SelectorEvent event;
         SelectorPosition position;
         SelectorState state;
     };
-#endif    
+#endif
 
-#ifdef eosFormsService_UseKeyboard    
-    
-    typedef enum class {
+#ifdef eosFormsService_UseKeyboard
+
+    typedef enum class __KeyCode {
         up,
         down,
         left,
         right,
         enter
     } KeyCode;
-    
-    typedef enum class {
+
+    typedef enum class __KeyboardEvent {
         press,
         release
     } KeyboardEvent;
-    
+
     struct MsgKeyboard {
         KeyboardEvent event;
         KeyCode keyCode;
     };
-#endif    
-    
-#ifdef eosFormsService_UseTouchpad    
+#endif
+
+#ifdef eosFormsService_UseTouchpad
     struct MsgTouchpad {
         unsigned event;
     };
-#endif    
+#endif
 
     struct Message {
         unsigned id;
         Form *target;
         union {
             MsgPaint msgPaint;
-#ifdef eosFormsService_UseSelector            
+#ifdef eosFormsService_UseSelector
             MsgSelector msgSelector;
-#endif            
-#ifdef eosFormsService_UseKeyboard            
+#endif
+#ifdef eosFormsService_UseKeyboard
             MsgKeyboard msgKeyboard;
-#endif            
-#ifdef eosFormsService_UseTouchpad            
+#endif
+#ifdef eosFormsService_UseTouchpad
             MsgTouchpad msgTouchpad;
 #endif
         };
     };
-    
+
     typedef Queue<Message> MessageQueue;
-    
+
     class FormsService: public Service {
         private:
             typedef List<Form*> FormList;
             typedef ListIterator<Form*> FormListIterator;
-            
+
         private:
             MessageQueue *messageQueue;
             FormsDisplay *display;
             FormList forms;
             FormList destroyForms;
-            Form *activeForm;     
-            
+            Form *activeForm;
+
         public:
             FormsService(Application *application, MessageQueue *messageQueue, FormsDisplay *display);
             ~FormsService();
@@ -137,10 +137,10 @@ namespace eos {
             inline Form *getActiveForm() const { return activeForm; }
         private:
             void run(Task *task);
-            
+
         friend class Form;
     };
-    
+
     class FormsDisplay {
         private:
             Display *display;
@@ -149,7 +149,7 @@ namespace eos {
             bool wrError;
             uint16_t wrIdx;
             uint16_t rdIdx;
-            
+
         public:
             FormsDisplay(Display *display);
             inline Display* getDisplay() const { return display; }
@@ -162,7 +162,7 @@ namespace eos {
             void drawText(int16_t x, int16_t y, const char *text, int16_t offset, int16_t length);
             void fillRectangle(int16_t x, int16_t y, int16_t width, int16_t height);
             void render();
-            
+
         private:
             bool wrCheck(uint16_t size);
             void wr8(uint8_t d);
@@ -175,17 +175,17 @@ namespace eos {
             uint32_t rd32();
             const char *rds();
     };
-       
+
     class Form {
         private:
 #ifdef eosFormsService_UseKeyboard
             typedef ICallbackP2<Form*, KeyCode> IKeyboardPressEvent;
             typedef ICallbackP2<Form*, KeyCode> IKeyboardReleaseEvent;
 #endif
-#ifdef eosFormsService_UseSelector            
+#ifdef eosFormsService_UseSelector
             typedef ICallbackP1<Form*> ISelectorPressEvent;
             typedef ICallbackP1<Form*> ISelectorReleaseEvent;
-#endif            
+#endif
         private:
             FormsService* service;
             Form *parent;
@@ -193,7 +193,7 @@ namespace eos {
             IKeyboardPressEvent *evKeyboardPress;
             IKeyboardReleaseEvent *evKeyboardRelease;
 #endif
-#ifdef eosFormsService_UseSelector            
+#ifdef eosFormsService_UseSelector
             ISelectorPressEvent *evSelectorPress;
             ISelectorReleaseEvent *evSelectorRelease;
 #endif
@@ -201,7 +201,7 @@ namespace eos {
             int16_t y;
             int16_t width;
             int16_t height;
-            
+
         public:
             Form(FormsService *service, Form *parent);
             void destroy() { service->destroy(this); }
@@ -215,42 +215,42 @@ namespace eos {
 
 #ifdef eosFormsService_UseKeyboard
             template <class cls>
-            void setKeyboardPressEvent(cls *instance, void (cls::*method)(Form*)) {                 
+            void setKeyboardPressEvent(cls *instance, void (cls::*method)(Form*)) {
                 if (evKeyboardPress != nullptr)
                     delete evKeyboardPress;
                 evKeyboardPress = new CallbackP2<cls, Form*, KeyCode>(instance, method);
             }
 
             template <class cls>
-            void setKeyboardReleaseEvent(cls *instance, void (cls::*method)(Form*)) {                 
+            void setKeyboardReleaseEvent(cls *instance, void (cls::*method)(Form*)) {
                 if (evKeyboardRelease != nullptr)
                     delete evKeyboardRelease;
                 evKeyboardRelease = new CallbackP2<cls, Form*, KeyCode>(instance, method);
             }
-#endif            
-#ifdef eosFormsService_UseSelector            
+#endif
+#ifdef eosFormsService_UseSelector
             template <class cls>
-            void setSelectorPressEvent(cls *instance, void (cls::*method)(Form*)) {                 
+            void setSelectorPressEvent(cls *instance, void (cls::*method)(Form*)) {
                 if (evSelectorPress != nullptr)
                     delete evSelectorPress;
                 evSelectorPress = new CallbackP1<cls, Form*>(instance, method);
             }
-            
+
             template <class cls>
-            void setSelectorReleaseEvent(cls *instance, void (cls::*method)(Form*)) {                 
+            void setSelectorReleaseEvent(cls *instance, void (cls::*method)(Form*)) {
                 if (evSelectorRelease != nullptr)
                     delete evSelectorRelease;
                 evSelectorRelease = new CallbackP1<cls, Form*>(instance, method);
             }
-#endif            
-            
+#endif
+
         protected:
             virtual ~Form();
             virtual void dispatchMessage(Message &message);
-            virtual void onActivate(Form *deactivateForm); 
+            virtual void onActivate(Form *deactivateForm);
             virtual void onDeactivate(Form *activateForm) {}
             virtual void onPaint(FormsDisplay *display) {}
-#ifdef eosFormsService_UseSelector            
+#ifdef eosFormsService_UseSelector
             virtual void onSelectorMove(SelectorPosition position, SelectorDirection direction);
             virtual void onSelectorPress();
             virtual void onSelectorRelease();
@@ -258,8 +258,8 @@ namespace eos {
 #ifdef eosFormsService_UseKeyboard
             virtual void onKeyPress(KeyCode keyCode);
             virtual void onKeyRelease(KeyCode keyCode);
-#endif            
-            
+#endif
+
         friend FormsService;
     };
 }

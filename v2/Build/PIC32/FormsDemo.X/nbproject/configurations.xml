@@ -5,13 +5,14 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="f4" displayName="App" projectFiles="true">
+        <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+          <itemPath>../../../Demo/FormsDemo/PIC32/FreeRTOSConfig.h</itemPath>
+          <itemPath>../../../Demo/FormsDemo/PIC32/HardwareProfile.h</itemPath>
+          <itemPath>../../../Demo/FormsDemo/PIC32/HardwareProfile_Custom.h</itemPath>
+        </logicalFolder>
         <itemPath>../../../Demo/FormsDemo/appMainForm.hpp</itemPath>
         <itemPath>../../../Demo/FormsDemo/MnuMain.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f2" displayName="Config" projectFiles="true">
-        <itemPath>../../../Demo/FormsDemo/HardwareProfile.h</itemPath>
         <itemPath>../../../Demo/FormsDemo/eosConfig.h</itemPath>
-        <itemPath>../../../Demo/FormsDemo/FreeRTOSConfig.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Eos" projectFiles="true">
         <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
@@ -28,6 +29,7 @@
           <itemPath>../../../Include/HAL/halI2C.h</itemPath>
           <itemPath>../../../Include/HAL/halSYS.h</itemPath>
           <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
+          <itemPath>../../../Include/HAL/halGPIO_PIC32.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="Services" projectFiles="true">
           <logicalFolder name="f2" displayName="Forms" projectFiles="true">
@@ -65,7 +67,9 @@
           </logicalFolder>
           <itemPath>../../../Include/System/eosApplication.hpp</itemPath>
         </logicalFolder>
-        <itemPath>../../../Include/eos.hpp</itemPath>
+        <itemPath>../../../Include/eosMacros.h</itemPath>
+        <itemPath>../../../Include/eos.h</itemPath>
+        <itemPath>../../../Include/eosAssert.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Frameworks" projectFiles="true">
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
@@ -82,11 +86,13 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
+        <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+          <itemPath>../../../Demo/FormsDemo/PIC32/Main.cpp</itemPath>
+        </logicalFolder>
         <itemPath>../../../Demo/FormsDemo/appMainForm.cpp</itemPath>
-        <itemPath>../../../Demo/FormsDemo/Config.c</itemPath>
-        <itemPath>../../../Demo/FormsDemo/Main.cpp</itemPath>
         <itemPath>../../../Demo/FormsDemo/MnuMain.c</itemPath>
         <itemPath>../../../Demo/FormsDemo/rtos_hooks.c</itemPath>
+        <itemPath>../../../Demo/FormsDemo/AppMain.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Eos" projectFiles="true">
         <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
@@ -94,7 +100,7 @@
             <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
               <logicalFolder name="f1" displayName="ILI9341" projectFiles="true">
                 <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</itemPath>
-                <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_p8.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_paralel8.cpp</itemPath>
               </logicalFolder>
             </logicalFolder>
             <logicalFolder name="f2" displayName="Fonts" projectFiles="true">
@@ -111,9 +117,14 @@
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f3" displayName="HAL" projectFiles="true">
-          <itemPath>../../../Source/HAL/halSYS.c</itemPath>
-          <itemPath>../../../Source/HAL/halI2C.c</itemPath>
-          <itemPath>../../../Source/HAL/halI2CInterruptWrapper.S</itemPath>
+          <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+            <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
+            <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
+            <itemPath>../../../Source/HAL/PIC32/halTMR.c</itemPath>
+            <itemPath>../../../Source/HAL/PIC32/halTMRInterruptWrapper.S</itemPath>
+            <itemPath>../../../Source/HAL/PIC32/halI2C.c</itemPath>
+            <itemPath>../../../Source/HAL/PIC32/halI2CInterruptWrapper.S</itemPath>
+          </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f1" displayName="Services" projectFiles="true">
           <logicalFolder name="f2" displayName="Forms" projectFiles="true">
@@ -154,19 +165,19 @@
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
           <logicalFolder name="f1" displayName="portable" projectFiles="true">
             <logicalFolder name="f1" displayName="MemMang" projectFiles="true">
-              <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+              <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MemMang/heap_4.c</itemPath>
             </logicalFolder>
             <logicalFolder name="f2" displayName="MPLAB" projectFiles="true">
               <logicalFolder name="f1" displayName="PIC32MX" projectFiles="true">
-                <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-                <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+                <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+                <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
               </logicalFolder>
             </logicalFolder>
           </logicalFolder>
-          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/list.c</itemPath>
-          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/queue.c</itemPath>
-          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/tasks.c</itemPath>
-          <itemPath>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/list.c</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/queue.c</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/tasks.c</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/timers.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="Harmony" projectFiles="true">
           <logicalFolder name="f1" displayName="system" projectFiles="true">
@@ -198,6 +209,7 @@
     <Elem>../../../../../MD-KBD01</Elem>
     <Elem>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source</Elem>
     <Elem>../../../Demo/FormsDemo</Elem>
+    <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -215,7 +227,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../../../../../../../../Library/Microchip/Harmony/v1.9/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -504,7 +516,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../../../../../../../../Library/Microchip/Harmony/v1.9/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -735,7 +747,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../microchip/Harmony/v1_07_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../../../../../../../../Library/Microchip/Harmony/v1.9/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -873,7 +885,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\FormsDemo;..\..\..\Include;C:\microchip\Harmony\v1_07_01\framework;C:\microchip\FreeRTOS\FreeRTOSv9.0.0\FreeRTOS\Source\include;C:\microchip\FreeRTOS\FreeRTOSv9.0.0\FreeRTOS\Source\portable;C:\microchip\FreeRTOS\FreeRTOSv9.0.0\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\FormsDemo;..\..\..\Demo\FormsDemo\PIC32;..\..\..\Include;C:\Library\Microchip\Harmony\v1.9\framework;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="false"/>
         <property key="relaxed-math" value="false"/>

@@ -1,4 +1,5 @@
 #include "eos.hpp"
+#include "eosMacros.h"
 #include "Services/Forms/eosMenuForm.hpp"
 #include "Controllers/Display/eosColor.hpp"
 
@@ -93,7 +94,7 @@ void MenuForm::onPaint(
     }
     
     unsigned i = info->firstItem;
-    unsigned j = eosMin(info->numItems, showItems);
+    unsigned j = min(info->numItems, showItems);
     unsigned k = 25;
     while (j--) {
 

@@ -1,6 +1,7 @@
-int main(void) {
+extern void AppMain();
 
-	extern void AppMain();
+
+int main(void) {
 
 	AppMain();
 

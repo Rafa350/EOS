@@ -1,3 +1,4 @@
+#include "eosMacros.h"
 #include "System/Core/eosTask.hpp"
 #include "System/Core/eosSemaphore.hpp"
 #include "System/Core/eosQueue.hpp"
@@ -278,7 +279,7 @@ void I2CMasterService::stateMachine() {
 
         case State::receiveLength: {
             uint8_t data = halI2CReceivedByteGet(moduleId);
-            maxIndex = eosMin(transaction->rxSize, data);
+            maxIndex = min(transaction->rxSize, data);
             check += data;
             halI2CReceivedByteAcknowledge(moduleId, true);
             waitingSlaveACK = true;

@@ -3,6 +3,7 @@
 // Ben Kenwright - School of Computer Science - Newcastle University
 
 #include "eos.hpp"
+#include "eosAssert.hpp"
 #include "System/Core/eosPoolAllocator.hpp"
 #include "System/Core/eosTask.hpp"
 
@@ -79,9 +80,7 @@ void *GenericPoolAllocator::allocate(
         
     }
     
-    eosAssert(
-        ret != nullptr, 
-        0, "PoolAllocator::allocate: No hi ha memoria disponible.");
+    eosAssert(ret != nullptr);
     
     
     return ret;
@@ -95,9 +94,7 @@ void *GenericPoolAllocator::allocate(
 void GenericPoolAllocator::deallocate(
     void *p) {
         
-    eosAssert(
-        p != nullptr, 
-        0, "PoolAllocator::deallocate: El parametre 'p' es nul.");
+    eosAssert(p != nullptr);
 
     __LOCK();
     

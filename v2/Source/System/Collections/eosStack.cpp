@@ -1,5 +1,9 @@
+#include "eosAssert.hpp"
 #include "System/Core/eosTask.hpp"
 #include "System/Collections/eosStack.hpp"
+
+#include <stdint.h>
+#include <string.h>
 
 
 using namespace eos;
@@ -46,7 +50,7 @@ GenericStack::~GenericStack() {
 void GenericStack::push(
     const void *element) {
     
-    eosAssert(element != nullptr, 0, "[GenericStack::genericPush] element != nullptr");
+    eosAssert(element != nullptr);
         
     Task::enterCriticalSection();
     
@@ -66,7 +70,7 @@ void GenericStack::push(
 ///
 void GenericStack::pop() {
     
-    eosAssert(count > 0, 0, "[GenericStack::genericPop] count > 0");
+    eosAssert(count > 0);
     
     Task::enterCriticalSection();
 

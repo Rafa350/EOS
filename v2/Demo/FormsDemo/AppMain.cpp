@@ -28,24 +28,24 @@ class MyApplication: public Application {
 #ifdef eosFormsService_UseSelector
         SelectorService *selectorService;
 #endif
-#ifdef eosFormsService_UseKeyboard        
+#ifdef eosFormsService_UseKeyboard
         KeyboardService *keyboardService;
-#endif        
+#endif
         MessageQueue *messageQueue;
         Form *mainForm;
 
     public :
         MyApplication();
-        
+
     protected:
         void onInitialize();
-                
-#ifdef eosFormsService_UseSelector        
+
+#ifdef eosFormsService_UseSelector
         void selectorNotifyEventHandler(SelectorPosition position, SelectorState state);
 #endif
-#ifdef eosFormsService_UseKeyboard        
+#ifdef eosFormsService_UseKeyboard
         void keyboardNotifyEventHandler(KeyboardState state);
-#endif        
+#endif
 };
 
 
@@ -60,45 +60,45 @@ MyApplication::MyApplication() {
 /// \brief Inicialitza l'aplicacio.
 ///
 void MyApplication::onInitialize() {
-    
+
     // Inicialitza el servei de comunicacions del bus I2C
     //
     i2cMasterService = new I2CMasterService(this, 0);
-   
+
     // Inicia el servei de control de selector
     //
-#ifdef eosFormsService_UseSelector    
+#ifdef eosFormsService_UseSelector
     selectorService = new SelectorService(this, i2cMasterService, SEL_ADDRESS);
 #endif
 
     // Inicialitza el servei de control del teclat
-    //    
-#ifdef eosFormsService_UseKeyboard   
+    //
+#ifdef eosFormsService_UseKeyboard
     keyboardService = new KeyboardService(this, i2cMasterService, KBD_ADDRESS);
-#endif    
-    
+#endif
+
     // Inicialitza el servei de gestio de la interficie d'usuari
     //
     IDisplayDriver *driver = new ILI9341_Driver();
     driver->initialize();
     driver->setOrientation(Orientation::rotate180);
-    
+
     Display *display = new Display(driver);
     display->clear(RGB(0, 0, 0));
-    
+
     FormsDisplay *formsDisplay = new FormsDisplay(display);
-    
+
     messageQueue = new MessageQueue(20);
     formsService = new FormsService(this, messageQueue, formsDisplay);
     mainForm = new MainForm(formsService);
     mainForm->activate();
 
-#ifdef eosFormsService_UseSelector    
+#ifdef eosFormsService_UseSelector
     selectorService->setNotifyEventHandler<MyApplication>(this, &MyApplication::selectorNotifyEventHandler);
 #endif
-#ifdef eosFormsService_UseKeyboard   
+#ifdef eosFormsService_UseKeyboard
     keyboardService->setNotifyEventHandler<MyApplication>(this, &MyApplication::keyboardNotifyEventHandler);
-#endif    
+#endif
 }
 
 
@@ -109,10 +109,10 @@ void MyApplication::onInitialize() {
 #ifdef eosFormsService_UseKeyboard
 void MyApplication::keyboardNotifyEventHandler(
     KeyboardState state) {
-    
+
     static KeyboardState oldState = 0;
     Message message;
-    
+
     if (formsService != nullptr) {
         Form *form = formsService->getActiveForm();
         if (form != nullptr) {
@@ -121,9 +121,9 @@ void MyApplication::keyboardNotifyEventHandler(
                 message.target = form;
                 if (state != 0) {
                     message.msgKeyboard.event = KeyboardEvent::press;
-                    if (state & 0x10) 
+                    if (state & 0x10)
                         message.msgKeyboard.keyCode = KeyCode::up;
-                    else if (state & 0x02) 
+                    else if (state & 0x02)
                         message.msgKeyboard.keyCode = KeyCode::right;
                     else if (state & 0x04)
                         message.msgKeyboard.keyCode = KeyCode::down;
@@ -148,15 +148,15 @@ void MyApplication::keyboardNotifyEventHandler(
 /// \brief Procesa els events del teclat.
 /// \params notification: Parametres del event.
 ///
-#ifdef eosFormsService_UseSelector    
+#ifdef eosFormsService_UseSelector
 void MyApplication::selectorNotifyEventHandler(
     SelectorPosition position,
     SelectorState state) {
-    
+
     static SelectorPosition oldPosition = 0;
     static SelectorState oldState = 0;
     Message message;
-    
+
     if (formsService != nullptr) {
         Form *form = formsService->getActiveForm();
         if (form != nullptr) {
@@ -170,8 +170,8 @@ void MyApplication::selectorNotifyEventHandler(
                 messageQueue->put(message, (unsigned) -1);
                 oldPosition = position;
             }
-            
-            if (state != oldState) {            
+
+            if (state != oldState) {
                 message.id = MSG_SELECTOR;
                 message.target = form;
                 message.msgSelector.event = state == 1 ? SelectorEvent::press : SelectorEvent::release;
@@ -190,7 +190,7 @@ void MyApplication::selectorNotifyEventHandler(
 /// \brief Punt d'entrada a l'aplicacio.
 ///
 void AppMain() {
-    
+
     MyApplication *app = new MyApplication();
     app->execute();
     delete app;

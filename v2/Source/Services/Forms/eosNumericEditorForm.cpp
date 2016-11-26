@@ -1,4 +1,7 @@
+#include "eosmacros.h"
 #include "Services/Forms/eosNumericEditorForm.hpp"
+
+#include <stdio.h>
 
 
 using namespace eos;
@@ -40,7 +43,7 @@ void NumericEditorForm::setMinValue(
     int minValue) {
 
     this->minValue = minValue;
-    setValue(eosMax(value, minValue));
+    setValue(max(value, minValue));
 }
 
 
@@ -52,7 +55,7 @@ void NumericEditorForm::setMaxValue(
     int maxValue) {
 
     this->maxValue = maxValue;
-    setValue(eosMin(value, maxValue));
+    setValue(min(value, maxValue));
 }
 
 
@@ -64,7 +67,7 @@ void NumericEditorForm::setValue(
     int value) {
 
     if (this->value != value) {
-        this->value = eosMin(eosMax(value, minValue), maxValue);
+        this->value = min(max(value, minValue), maxValue);
         if (evChange != nullptr)
             evChange->execute(this, value);
         refresh();

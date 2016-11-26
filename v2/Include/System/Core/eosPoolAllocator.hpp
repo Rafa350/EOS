@@ -5,9 +5,11 @@
 #include "eos.hpp"
 #include "System/Core/eosAllocator.hpp"
 
+#include <stdint.h>
+
 
 namespace eos {
-       
+
     class GenericPoolAllocator: IAllocator {
         private:
             uint8_t *blocks;
@@ -16,23 +18,23 @@ namespace eos {
             unsigned maxBlocks;
             unsigned freeBlocks;
             unsigned initializedBlocks;
-            
+
         public:
             GenericPoolAllocator(unsigned blockSize, unsigned maxBlocks);
-            ~GenericPoolAllocator();
-            
+            virtual ~GenericPoolAllocator();
+
             void *allocate(size_t size);
             void deallocate(void *p);
-            
+
             inline unsigned getBlockSize() const { return blockSize; }
             inline unsigned getUsedBlocks() const { return maxBlocks - freeBlocks; }
             inline unsigned getFreeBlocks() const { return freeBlocks; }
-            
+
         private:
             uint8_t *addrFromIndex(unsigned i) const;
             unsigned indexFromAddr(const uint8_t *p) const;
     };
-    
+
     template <class T>
     class PoolAllocator: public GenericPoolAllocator {
         public:
@@ -42,6 +44,6 @@ namespace eos {
 }
 
 
-#endif	
+#endif
 
 
