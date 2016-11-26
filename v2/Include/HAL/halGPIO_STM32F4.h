@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_GPIO_STM32F_H
-#define	__EOS_HAL_GPIO_STM32F_H
+#ifndef __EOS_HAL_GPIO_STM32F4_H
+#define	__EOS_HAL_GPIO_STM32F4_H
 
 
 #include "stm32f4xx.h"
@@ -15,6 +15,11 @@ extern "C" {
 typedef uint8_t GPIOPort;
 typedef uint8_t GPIOPin;
 typedef uint8_t GPIOOptions;
+
+typedef struct {
+	GPIOPort port;
+	GPIOPin pin;
+} GPIOInitializeInfo;
 
 extern GPIO_TypeDef *gpioPortRegs[];
 
@@ -89,6 +94,8 @@ extern GPIO_TypeDef *gpioPortRegs[];
 #define halGPIOReadPort(port) \
     gpioPortRegs[port]->IDR
 
+
+void halGPIOInitialize(GPIOInitializeInfo *info);
 
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options);
 void halGPIOInitializePort(GPIOPort port, GPIOOptions options, uint16_t mask);

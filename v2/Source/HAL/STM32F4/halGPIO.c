@@ -16,6 +16,12 @@ GPIO_TypeDef *gpioPortRegs[] = {
 };
 
 
+void halGPIOInitialize(
+	GPIOInitializeInfo *info) {
+
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief Configura un pin.
 /// \param port: Identificador del port.
@@ -58,6 +64,11 @@ void halGPIOInitializePort(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Configura un port com a entrades.
+/// \param port: Identificador del port.
+/// \param mask: Mascarea de pins.
+///
 void halGPIOInitializePortInput(
 	GPIOPort port,
 	uint16_t mask) {
@@ -65,6 +76,11 @@ void halGPIOInitializePortInput(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Configura un port com a sortides.
+/// \param port: Identificador del port.
+/// \param mask: Mascarea de pins.
+///
 void halGPIOInitializePortOutput(
 	GPIOPort port,
 	uint16_t mask) {

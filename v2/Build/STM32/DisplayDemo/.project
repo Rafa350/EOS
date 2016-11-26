@@ -198,9 +198,9 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/halGPIO_STM32F.h</name>
+			<name>inc/Framework/EOS/HAL/halGPIO_STM32F4.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO_STM32F.h</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO_STM32F4.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halINT.h</name>
@@ -208,9 +208,9 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halINT.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/halINT_STM32F.h</name>
+			<name>inc/Framework/EOS/HAL/halINT_STM32F4.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halINT_STM32F.h</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halINT_STM32F4.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
@@ -233,7 +233,7 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32F429</name>
+			<name>src/Framework/EOS/HAL/STM32F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -308,19 +308,19 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/eosFont.cpp</location>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32F429/halGPIO.c</name>
+			<name>src/Framework/EOS/HAL/STM32F4/halGPIO.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F429/halGPIO.c</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halGPIO.c</location>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32F429/halSYS.c</name>
+			<name>src/Framework/EOS/HAL/STM32F4/halSYS.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F429/halSYS.c</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halSYS.c</location>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32F429/halTMR.c</name>
+			<name>src/Framework/EOS/HAL/STM32F4/halTMR.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F429/halTMR.c</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halTMR.c</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
@@ -358,19 +358,9 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosILI9341.hpp</location>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/eosILI9341.cpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</location>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/eosILI9341io_paralel8.cpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_paralel8.cpp</location>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/eosILI9341io_serial8.cpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_serial8.cpp</location>
+			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas10pt.cpp</name>
@@ -401,6 +391,21 @@
 			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas8pt.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Fonts/Consolas8pt.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341io_paralel8.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_paralel8.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341io_serial8.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_serial8.cpp</location>
 		</link>
 	</linkedResources>
 </projectDescription>

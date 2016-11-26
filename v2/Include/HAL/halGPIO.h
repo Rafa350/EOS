@@ -8,7 +8,7 @@
 	#include "hal/halGPIO_PIC32.h"
 
 #elif defined(EOS_STM32F4)
-	#include "hal/halGPIO_STM32F.h"
+	#include "hal/halGPIO_STM32F4.h"
 
 #endif
 
