@@ -37,12 +37,12 @@ void halGPIOInitializePin(
 
 	GPIO_TypeDef *p = gpioPortRegs[port];
 
-	if (options & GPIO_DIRECTION_OUTPUT) {
+	if (options & HAL_GPIO_DIRECTION_OUTPUT) {
 		p->MODER &= ~(0b11 << (pin * 2));
 		p->MODER |= 0b01 << (pin * 2);
 	}
 
-	if (options & GPIO_OPENDRAIN_ENABLED)
+	if (options & HAL_GPIO_OPENDRAIN_ENABLED)
 		p->OTYPER |= 1 << pin;
 	else
 		p->OTYPER &= ~(1 << pin);

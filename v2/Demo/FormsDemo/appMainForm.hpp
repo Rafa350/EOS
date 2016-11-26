@@ -8,26 +8,28 @@
 
 
 namespace app {
-    
+
     using namespace eos;
-    
+
     class MainForm: public Form {
         private:
             MenuForm *menuForm;
             Form *editorForm;
             unsigned currentCommand;
-            
+
         public:
             MainForm(FormsService *service);
             ~MainForm();
-            
+
         protected:
             void onPaint(FormsDisplay *display);
+#ifdef eosFormsService_UseSelector
             void onSelectorPress();
             void onSelectorMove(int16_t position, SelectorDirection direction);
-#ifdef eosFormsService_UseKeyboard   
+#endif
+#ifdef eosFormsService_UseKeyboard
             void onKeyPress(KeyCode keyCode);
-#endif            
+#endif
         private:
             void menuClickItemHandler(MenuForm *menuForm, ItemId itemId);
             void menuDrawItemHandler(MenuForm *menuForm, DrawItemEventParams *params);
@@ -37,7 +39,7 @@ namespace app {
             void incDecEvChange(int value);
             void incDecEvSet(int value);
     };
-    
+
 }
 
 

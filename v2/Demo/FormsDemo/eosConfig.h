@@ -20,17 +20,17 @@
 // Opcions de configuracio pel servei 'I2CMaster'
 //
 #define eosOPTIONS_UseI2CMasterService                   1
-#define eosI2CMasterService_MaxInstances                 2 
+#define eosI2CMasterService_MaxInstances                 2
 #define eosI2CMasterService_TransactionQueueSize         5
 #define eosI2CMasterService_TransactionPoolSize          eosI2CMasterService_MaxInstances *  eosI2CMasterService_TransactionQueueSize
-#define eosI2CMasterService_EndTransactionDelay         15 
+#define eosI2CMasterService_EndTransactionDelay         15
 #define eosI2CMasterService_TransactionTimeout        1000
 
 
 // Opcions de configuracio pel servei 'Forms'
 //
-#define eosFormsService_UseSelector                      1
-#define eosFormsService_UseKeyboard                      1
+//#define eosFormsService_UseSelector                      1
+//#define eosFormsService_UseKeyboard                      1
 
 
 #endif

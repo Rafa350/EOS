@@ -7,6 +7,7 @@
 #include "System/Collections/eosList.hpp"
 #include "System/Core/eosQueue.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
+#include "Services/eosService.hpp"
 #ifdef eosFormsService_UseSelector
 #include "Services/eosSelector.hpp"
 #endif

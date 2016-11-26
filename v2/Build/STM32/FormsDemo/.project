@@ -73,6 +73,11 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/FormsDemo/AppMain.cpp</location>
 		</link>
 		<link>
+			<name>src/App/MnuMain.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/FormsDemo/MnuMain.c</location>
+		</link>
+		<link>
 			<name>src/App/STM32F429</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -216,6 +221,16 @@
 			<name>inc/Framework/EOS/HAL/halGPIO_STM32F4.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO_STM32F4.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halSPI.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halSPI.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halSPI_STM32F4.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halSPI_STM32F4.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halTMR.h</name>

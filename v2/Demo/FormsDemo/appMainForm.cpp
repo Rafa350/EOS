@@ -34,35 +34,39 @@ const IncDecInfo infoXSpeed = { "X-Motor Speed",  10, 2000,  5 };
 MainForm::MainForm(
     FormsService *service):
     Form(service, nullptr) {
- 
+
     menuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
-    menuForm->setClickItemEventHandler<MainForm>(this, &MainForm::menuClickItemHandler);   
-    menuForm->setDrawItemEventHandler<MainForm>(this, &MainForm::menuDrawItemHandler);   
-} 
+    menuForm->setClickItemEventHandler<MainForm>(this, &MainForm::menuClickItemHandler);
+    menuForm->setDrawItemEventHandler<MainForm>(this, &MainForm::menuDrawItemHandler);
+}
 
 
 /// ----------------------------------------------------------------------
 /// \brief Destructor
 ///
 MainForm::~MainForm() {
-    
+
     menuForm->destroy();
 }
 
 
+#ifdef eosFormsService_UseSelector
 void MainForm::onSelectorPress() {
 
     menuForm->activate();
 }
+#endif
 
 
+#ifdef eosFormsService_UseSelector
 void MainForm::onSelectorMove(
-    int16_t position, 
+    int16_t position,
     SelectorDirection direction) {
 }
+#endif
 
 
-#ifdef eosFormsService_UseKeyboard   
+#ifdef eosFormsService_UseKeyboard
 void MainForm::onKeyPress(
     KeyCode keyCode) {
 
@@ -74,26 +78,26 @@ void MainForm::onKeyPress(
 
 void MainForm::onPaint(
     FormsDisplay *display) {
-    
+
     display->clear(RGB(0, 0, 32));
-    
+
     display->setColor(RGB(0, 0, 128));
     display->drawRectangle(0, 0, 240, 320);
     display->drawLine(0, 20, 239, 20);
     display->drawText(4, 16, "EOS Forms Demo v1.0", 0, -1);
-    
+
     uint8_t k = 0;
     for (int j = 0; j < 8; j++)
         for (int i = 0; i < 8; i++) {
-        
+
             int x = ((240 - (20 * 8)) / 2) + (20 * i);
             int y = 20 + (((340 - 20) - 20 * 8) / 2) + (20 * j);
             Color c = RGB(k, k, k);
             display->setColor(c);
             display->fillRectangle(x, y, 15, 15);
-            
+
             k += 4;
-        }    
+        }
 }
 
 
@@ -102,12 +106,12 @@ void MainForm::menuClickItemHandler(
     ItemId itemId) {
 
     currentCommand = itemId;
-    
+
     switch (itemId) {
         case CMD_SET_XJERK:
             startEdit();
             break;
-            
+
         case CMD_EXIT:
             break;
     }
@@ -117,31 +121,31 @@ void MainForm::menuClickItemHandler(
 void MainForm::menuDrawItemHandler(
     MenuForm *menuForm,
     DrawItemEventParams *params) {
-    
+
 }
 
 
 void MainForm::editorSelectorPressHandler(
     Form *form) {
 
-    endEdit();    
+    endEdit();
     menuForm->activate();
 }
 
 
 void MainForm::startEdit() {
- 
+
     NumericEditorForm *form = new NumericEditorForm(getService(), this);
     form->setDelta(infoXJerk.delta);
     form->setMinValue(infoXJerk.minValue);
     form->setMaxValue(infoXJerk.maxValue);
     form->setValue(2400);
-    form->setTitle(infoXJerk.title);   
-#ifdef eosFormsService_UseSelector    
+    form->setTitle(infoXJerk.title);
+#ifdef eosFormsService_UseSelector
     form->setSelectorPressEvent<MainForm>(this, &MainForm::editorSelectorPressHandler);
-#endif    
+#endif
     form->activate();
-    
+
     editorForm = form;
 }
 

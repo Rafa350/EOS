@@ -23,7 +23,9 @@ using namespace app;
 
 class MyApplication: public Application {
     private:
+#if defined(eosFormsService_UseSelector) || defined(eosFormsService_UseKeyboard)
         I2CMasterService *i2cMasterService;
+#endif
         FormsService *formsService;
 #ifdef eosFormsService_UseSelector
         SelectorService *selectorService;
@@ -63,7 +65,9 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el servei de comunicacions del bus I2C
     //
+#if defined(eosFormsService_UseSelector) || defined(eosFormsService_UseKeyboard)
     i2cMasterService = new I2CMasterService(this, 0);
+#endif
 
     // Inicia el servei de control de selector
     //

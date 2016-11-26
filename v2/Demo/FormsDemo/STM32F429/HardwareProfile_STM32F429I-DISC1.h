@@ -12,11 +12,11 @@
 // LEDS
 // -----------------------------------------------------------------------
 
-#define LEDS_LD1_PORT        GPIO_PORT_G
-#define LEDS_LD1_PIN         GPIO_PIN_13
+#define LEDS_LD1_PORT        HAL_GPIO_PORT_G
+#define LEDS_LD1_PIN         HAL_GPIO_PIN_13
 
-#define LEDS_LD2_PORT        GPIO_PORT_G
-#define LEDS_LD2_PIN         GPIO_PIN_14
+#define LEDS_LD2_PORT        HAL_GPIO_PORT_G
+#define LEDS_LD2_PIN         HAL_GPIO_PIN_14
 
 
 // -----------------------------------------------------------------------
@@ -53,23 +53,23 @@
 
 // Control del pin CS (Chip select)
 //
-#define ILI9341_CS_PORT      GPIO_PORT_C
-#define ILI9341_CS_PIN       GPIO_PIN_2
+#define ILI9341_CS_PORT      HAL_GPIO_PORT_C
+#define ILI9341_CS_PIN       HAL_GPIO_PIN_2
 
 // Control del pin RS (Register select)
 //
-#define ILI9341_RS_PORT      GPIO_PORT_D
-#define ILI9341_RS_PIN       GPIO_PIN_13
+#define ILI9341_RS_PORT      HAL_GPIO_PORT_D
+#define ILI9341_RS_PIN       HAL_GPIO_PIN_13
 
 // Control del pin CLK (Serial clock)
 //
-#define ILI9341_CLK_PORT     GPIO_PORT_F
-#define ILI9341_CLK_PIN      GPIO_PIN_7
+#define ILI9341_CLK_PORT     HAL_GPIO_PORT_F
+#define ILI9341_CLK_PIN      HAL_GPIO_PIN_7
 
 // Control del pin SO (Serial data output to controller MOSI)
 //
-#define ILI9341_SO_PORT      GPIO_PORT_F
-#define ILI9341_SO_PIN       GPIO_PIN_9
+#define ILI9341_SO_PORT      HAL_GPIO_PORT_F
+#define ILI9341_SO_PIN       HAL_GPIO_PIN_9
 
 
 
