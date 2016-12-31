@@ -184,7 +184,7 @@ void ILI9341_IO::wrData(
 ///
 uint8_t ILI9341_IO::rdData() {
 
-#ifdef ILI9341_INRERFACE_WRITEONLY
+#ifdef ILI9341_INTERFACE_WRITEONLY
 
 	return 0;
 
