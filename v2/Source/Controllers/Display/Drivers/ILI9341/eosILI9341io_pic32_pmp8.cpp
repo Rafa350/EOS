@@ -1,23 +1,13 @@
 #include "eos.hpp"
 
 
-#ifdef ILI9341_INTERFACE_TYPE_PIC32_PMP8
+#ifdef ILI9341_INTERFACE_TYPE_PIC32PMP_8BIT
 
 #include "eosMacros.h"
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
 #include "Hal/halTMR.h"
 #include "Hal/halINT.h"
 
-
-#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO)
-#include <xc.h>
-#elif defined(ILI9341_INTERFACE_MODE_STM32_GPIO)
-#elif defined(ILI9341_INTERFACE_MODE_HAL_GPIO)
-#include "Hal/halGPIO.h"
-#endif
-
-
-#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO)
 
 // Control del pin RST
 //
@@ -64,59 +54,6 @@
                      concat2(LAT, ILI9341_DATAPort) =  data
 #ifndef ILI9341_INTERFACE_WRITEONLY
 #define rdDATA()     concat2(PORT, ILI9341_DATAPort)
-#endif
-
-#elif defined(ILI9341_INTERFACE_MODE_HAL_GPIO)
-
-// Control del pin RST
-//
-#ifdef ILI9341_RST_PORT
-#define initRST()  halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN); \
-                   halGPIOInitializePinOutput(ILI9341_RST_PORT, ILI9341_RST_PIN)
-#define setRST()   halGPIOSetPin(ILI9341_RST_PORT, ILI9341_RST_PIN)
-#define clrRST()   halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN)
-#endif
-
-// Control del pin CS
-//
-#define initCS()   halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN); \
-                   halGPIOInitializePinOutput(ILI9341_CS_PORT, ILI9341_CS_PIN)
-#define setCS()    halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
-#define clrCS()    halGPIOClearPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
-
-// Control del pin RS
-//
-#define initRS()   halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN); \
-                   halGPIOInitializePinOutput(ILI9341_RS_PORT, ILI9341_RS_PIN)
-#define setRS()    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
-#define clrRS()    halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
-
-// Control el pin WR
-//
-#define initWR()   halGPIOSetPin(ILI9341_WR_PORT, ILI9341_WR_PIN); \
-                   halGPIOInitializePinOutput(ILI9341_WR_PORT, ILI9341_WR_PIN)
-#define setWR()    halGPIOSetPin(ILI9341_WR_PORT, ILI9341_WR_PIN)
-#define clrWR()    halGPIOClearPin(ILI9341_WR_PORT, ILI9341_WR_PIN)
-
-// Control del pin RD
-//
-#ifndef ILI9341_INTERFACE_WRITEONLY
-#define initRD()   halGPIOSetPin(ILI9341_RD_PORT, ILI9341_RD_PIN); \
-                   halGPIOInitializePinOutput(ILI9341_RD_PORT, ILI9341_RD_PIN)
-#define setRD()    halGPIOSetPin(ILI9341_RD_PORT, ILI9341_RD_PIN)
-#define clrRD()    halGPIOClearPin(ILI9341_RD_PORT, ILI9341_RD_PIN)
-#endif
-
-// Control del port DATA
-//
-#define initDATA()   halGPIOInitializePortInput(ILI9341_DATA_PORT, 0x00FF)
-#define wrDATA(data) halGPIOInitializePortOutput(ILI9341_DATA_PORT, 0x00FF); \
-                     halGPIOWritePort(ILI9341_DATA_PORT, data)
-#ifndef ILI9341_INTERFACE_WRITEONLY
-#define rdDATA(data) halGPIOInitializePortInput(ILI9341_DATA_PORT, 0x00FF); \
-                     data = halGPIOReadPort(ILI9341_DATA_PORT)
-#endif
-
 #endif
 
 
