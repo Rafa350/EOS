@@ -3,58 +3,12 @@
 
 #ifdef ILI9341_INTERFACE_TYPE_PIC32PMP_8BIT
 
-#include "eosMacros.h"
+extern "C" {
+#include "peripheral/pmp/plib_pmp.h"
+}
 #include "Controllers/Display/Drivers/eosILI9341.hpp"
+#include "Hal/halGPIO.h"
 #include "Hal/halTMR.h"
-#include "Hal/halINT.h"
-
-
-// Control del pin RST
-//
-#define initRST()  concat3(LAT, ILI9341_RSTPort, CLR) = 1 << ILI9341_RSTPin; \
-                   concat3(TRIS, ILI9341_RSTPort, CLR) = 1 << ILI9341_RSTPin
-#define setRST()   concat3(LAT, ILI9341_RSTPort, SET) = 1 << ILI9341_RSTPin
-#define clrRST()   concat3(LAT, ILI9341_RSTPort, CLR) = 1 << ILI9341_RSTPin
-
-// Control del pin CS
-//
-#define initCS()   concat3(LAT, ILI9341_CSPort, SET) = 1 << ILI9341_CSPin; \
-                   concat3(TRIS, ILI9341_CSPort, CLR) = 1 << ILI9341_CSPin
-#define setCS()    concat3(LAT, ILI9341_CSPort, SET) = 1 << ILI9341_CSPin
-#define clrCS()    concat3(LAT, ILI9341_CSPort, CLR) = 1 << ILI9341_CSPin
-
-// Control del pin RS
-//
-#define initRS()   concat3(LAT, ILI9341_RSPort, CLR) = 1 << ILI9341_RSPin; \
-                   concat3(TRIS, ILI9341_RSPort, CLR) = 1 << ILI9341_RSPin
-#define setRS()    concat3(LAT, ILI9341_RSPort, SET) = 1 << ILI9341_RSPin
-#define clrRS()    concat3(LAT, ILI9341_RSPort, CLR) = 1 << ILI9341_RSPin
-
-// Control el pin WR
-//
-#define initWR()   concat3(LAT, ILI9341_WRPort, SET) = 1 << ILI9341_WRPin; \
-                   concat3(TRIS, ILI9341_WRPort, CLR) = 1 << ILI9341_WRPin
-#define setWR()    concat3(LAT, ILI9341_WRPort, SET) = 1 << ILI9341_WRPin
-#define clrWR()    concat3(LAT, ILI9341_WRPort, CLR) = 1 << ILI9341_WRPin
-
-// Control del pin RD
-//
-#ifndef ILI9341_INTERFACE_WRITEONLY
-#define initRD()   concat3(LAT, ILI9341_RD_PORT, SET) = 1 << ILI9341_RD_PIN; \
-                   concat3(TRIS, ILI9341_RD_PORT, CLR) = 1 << ILI9341_RD_PIN
-#define setRD()    concat3(LAT, ILI9341_RD_PORT, SET) = 1 << ILI9341_RD_PIN
-#define clrRD()    concat3(LAT, ILI9341_RD_PORT, CLR) = 1 << ILI9341_RD_PIN
-#endif
-
-// Control del port DATA
-//
-#define initDATA()   concat3(TRIS, ILI9341_DATAPort, SET) = 0x00FF
-#define hizDATA()    concat3(TRIS, ILI9341_DATAPort, SET) = 0x00FF
-#define wrDATA(data) concat3(TRIS, ILI9341_DATAPort, CLR) = 0x00FF; \
-                     concat2(LAT, ILI9341_DATAPort) =  data
-#ifndef ILI9341_INTERFACE_WRITEONLY
-#define rdDATA()     concat2(PORT, ILI9341_DATAPort)
-#endif
 
 
 using namespace eos;
@@ -74,15 +28,53 @@ ILI9341_IO::ILI9341_IO() {
 void ILI9341_IO::initialize() {
 
 #ifdef ILI9341_RST_PORT
-    initRST();
+    halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN);
+    halGPIOInitializePinOutput(ILI9341_RST_PORT, ILI9341_RST_PIN);
 #endif
-    initCS();
-    initRS();
-    initWR();
-#ifndef ILI9341_INTERFACE_WRITEONLY
-    initRD();
-#endif
-    initDATA();
+    
+    // Configura basica del modul PMP
+    //
+    PLIB_PMP_OperationModeSelect(PMP_ID_0, PMP_MASTER_READ_WRITE_STROBES_INDEPENDENT);
+    PLIB_PMP_MultiplexModeSelect(PMP_ID_0, PMP_MUX_NONE);
+    PLIB_PMP_AddressIncrementModeSelect(PMP_ID_0, PMP_ADDRESS_INCREMENT_DECREMENT_DISABLE);
+    PLIB_PMP_StopInIdleEnable(PMP_ID_0);
+
+    // Configura el port de dades
+    //    
+    PLIB_PMP_DataSizeSelect(PMP_ID_0, PMP_DATA_SIZE_8_BITS);
+
+    // Configura el port d'adresses
+    //
+    PLIB_PMP_AddressPortEnable(PMP_ID_0, PMP_PMA0_PORT);
+    
+    // Configura el port CS
+    //
+    PLIB_PMP_ChipSelectFunctionSelect(PMP_ID_0, PMCS1_AS_ADDRESS_LINE_PMCS2_AS_CHIP_SELECT);
+    PLIB_PMP_ChipSelectXPolaritySelect(PMP_ID_0, PMP_CHIP_SELECT_ONE, PMP_POLARITY_ACTIVE_LOW);   
+    
+    // Configura el port WE
+    //
+    PLIB_PMP_WriteEnableStrobePortEnable(PMP_ID_0);
+    PLIB_PMP_WriteEnableStrobePolaritySelect(PMP_ID_0, PMP_POLARITY_ACTIVE_LOW);
+    
+    // Configura el port RD
+    //
+    PLIB_PMP_ReadWriteStrobePortEnable(PMP_ID_0);
+    PLIB_PMP_ReadWriteStrobePolaritySelect(PMP_ID_0, PMP_POLARITY_ACTIVE_LOW);
+
+    // Configura els wait states
+    //
+    PLIB_PMP_WaitStatesDataSetUpSelect(PMP_ID_0, PMP_DATA_WAIT_FOUR);
+    PLIB_PMP_WaitStatesStrobeSelect(PMP_ID_0, PMP_STROBE_WAIT_1);
+    PLIB_PMP_WaitStatesDataHoldSelect(PMP_ID_0, PMP_DATA_HOLD_1);
+
+    // Configura les interrupcions
+    //
+    PLIB_PMP_InterruptModeSelect(PMP_ID_0, PMP_INTERRUPT_NONE);
+    
+    // Activa el modul
+    //
+    PLIB_PMP_Enable(PMP_ID_0);
 }
 
 
@@ -92,7 +84,7 @@ void ILI9341_IO::initialize() {
 void ILI9341_IO::reset() {
 
     halTMRDelay(10);
-    setRST();
+    halGPIOSetPin(ILI9341_RST_PORT, ILI9341_RST_PIN);
     halTMRDelay(120);
 }
 
@@ -102,8 +94,6 @@ void ILI9341_IO::reset() {
 ///
 void ILI9341_IO::begin() {
 
-    halINTDisableInterrupts();
-    clrCS();
 }
 
 
@@ -112,8 +102,6 @@ void ILI9341_IO::begin() {
 ///
 void ILI9341_IO::end() {
 
-    setCS();
-    halINTEnableInterrupts();
 }
 
 
@@ -123,11 +111,13 @@ void ILI9341_IO::end() {
 ///
 void ILI9341_IO::wrCommand(
     uint8_t data) {
+    
+    PLIB_PMP_AddressSet(PMP_ID_0, 0);
 
-    clrRS();
-    clrWR();
-    wrDATA(data);
-    setWR();
+    while (PLIB_PMP_PortIsBusy(PMP_ID_0))
+        continue;
+
+    PLIB_PMP_MasterSend(PMP_ID_0, data);
 }
 
 
@@ -138,10 +128,12 @@ void ILI9341_IO::wrCommand(
 void ILI9341_IO::wrData(
     uint8_t data) {
 
-    setRS();
-    clrWR();
-    wrDATA(data);
-    setWR();
+    PLIB_PMP_AddressSet(PMP_ID_0, 1);
+
+    while (PLIB_PMP_PortIsBusy(PMP_ID_0))
+        continue;
+
+    PLIB_PMP_MasterSend(PMP_ID_0, data);
 }
 
 
@@ -155,14 +147,12 @@ uint8_t ILI9341_IO::rdData() {
     return 0;
     
 #else
-    uint8_t data;
+    PLIB_PMP_AddressSet(PMP_ID_0, 1);
 
-    setRS();
-    clrRD();
-    rdDATA(data);
-    setRD();
+    while (PLIB_PMP_PortIsBusy(PMP_ID_0))
+        continue;
 
-    return data;
+    return PLIB_PMP_MasterReceive(PMP_ID_0);
 #endif
 }
 

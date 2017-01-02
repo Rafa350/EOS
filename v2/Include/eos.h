@@ -6,7 +6,7 @@
 #if defined(__XC32)
 
 	// Declara la familia del procesador
-	#if defined( __PIC32MX)
+	#if defined(__PIC32MX)
 		#define EOS_PIC32MX
 	#elif defined(__PIC32MZ)
 		#define EOS_PIC32MZ

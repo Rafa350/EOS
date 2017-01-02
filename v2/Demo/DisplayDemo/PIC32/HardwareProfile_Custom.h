@@ -23,13 +23,14 @@
 // -----------------------------------------------------------------------
 
 
-//   ILI9341             PINGUINO
-//   -------             --------
-//        10     RST     CON1-13
-//        35     RD      CON1-1
-//        36     WR      CON1-15
-//        37     RS      CON1-2
-//        38     CS      CON1-14
+//   ILI9341             PINGUINO      GPIO     
+//   -------             --------      ----  
+//        10     RST     CON1-13       RD11
+//        35     RD      CON1-1        RC14     
+//        36     WR      CON1-15       RD7      
+//        37     RS      CON1-2        RC13     
+//        38     CS      CON1-14       RD8      
+//               DATA    CON1-3..10    RE0..7   
 
 // Tipus de pantalla
 //
@@ -48,8 +49,8 @@
 #define ILI9341_COLORMODE_565
 //#define ILI9341_COLORMODE_666
 
-#define ILI9341_INTERFACE_MODE_HAL_GPIO
-//#define ILI9341_INTERFACE_MODE_PIC32_GPIO
+//#define ILI9341_INTERFACE_MODE_HAL_GPIO
+#define ILI9341_INTERFACE_MODE_PIC32_GPIO
 //#define ILI9341_INTERFACE_MODE_PIC32_PMP
 //#define ILI9341_INTERFACE_MODE_STM32_GPIO
 
@@ -78,7 +79,7 @@
 // Control de pin WR (Write) D7 CON1-15
 //
 #define ILI9341_WR_PORT      GPIO_PORT_D
-#define ILI9341_WR_PIN      7
+#define ILI9341_WR_PIN       7
 
 // Control del pin RD (Read) CON1-1
 //
