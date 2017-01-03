@@ -20,43 +20,43 @@
 #if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO)
 
 #if defined(PORTA)
-#define GPIO_PORT_A     A
+#define HAL_GPIO_PORT_A      A
 #endif
 #if defined(PORTB)
-#define GPIO_PORT_B     B
+#define HAL_GPIO_PORT_B      B
 #endif
 #if defined(PORTC)
-#define GPIO_PORT_C     C
+#define HAL_GPIO_PORT_C      C
 #endif
 #if defined(PORTD)
-#define GPIO_PORT_D     D
+#define HAL_GPIO_PORT_D      D
 #endif
 #if defined(PORTE)
-#define GPIO_PORT_E     E
+#define HAL_GPIO_PORT_E      E
 #endif
 #if defined(PORTF)
-#define GPIO_PORT_F     F
+#define HAL_GPIO_PORT_F      F
 #endif
 #if defined(PORTG)
-#define GPIO_PORT_G     G
+#define HAL_GPIO_PORT_G      G
 #endif
 
-#define GPIO_PIN_0      0
-#define GPIO_PIN_1      1
-#define GPIO_PIN_2      2
-#define GPIO_PIN_3      3
-#define GPIO_PIN_4      4
-#define GPIO_PIN_5      5
-#define GPIO_PIN_6      6
-#define GPIO_PIN_7      7
-#define GPIO_PIN_8      8
-#define GPIO_PIN_9      9
-#define GPIO_PIN_10     10
-#define GPIO_PIN_11     11
-#define GPIO_PIN_12     12
-#define GPIO_PIN_13     13
-#define GPIO_PIN_14     14
-#define GPIO_PIN_15     15
+#define HAL_GPIO_PIN_0       0
+#define HAL_GPIO_PIN_1       1
+#define HAL_GPIO_PIN_2       2
+#define HAL_GPIO_PIN_3       3
+#define HAL_GPIO_PIN_4       4
+#define HAL_GPIO_PIN_5       5
+#define HAL_GPIO_PIN_6       6
+#define HAL_GPIO_PIN_7       7
+#define HAL_GPIO_PIN_8       8
+#define HAL_GPIO_PIN_9       9
+#define HAL_GPIO_PIN_10      10
+#define HAL_GPIO_PIN_11      11
+#define HAL_GPIO_PIN_12      12
+#define HAL_GPIO_PIN_13      13
+#define HAL_GPIO_PIN_14      14
+#define HAL_GPIO_PIN_15      15
 
 // Control del pin RST
 //

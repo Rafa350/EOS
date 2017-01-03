@@ -54,12 +54,12 @@ void halGPIOInitializePin(
     GPIOPin pin,
     GPIOOptions options) {
    
-    if (options & GPIO_DIRECTION_OUTPUT)
+    if (options & HAL_GPIO_DIRECTION_OUTPUT)
         *gpioPortRegs[port].trisCLR = 1 << pin;
     else 
         *gpioPortRegs[port].trisSET = 1 << pin;
     
-    if (options & GPIO_OPENDRAIN_ENABLED)
+    if (options & HAL_GPIO_OPENDRAIN_ENABLED)
         *gpioPortRegs[port].odcSET = 1 << pin;
     else
         *gpioPortRegs[port].odcCLR = 1 << pin;        
@@ -77,12 +77,12 @@ void halGPIOInitializePort(
     GPIOOptions options,
     uint16_t mask) {
 
-    if (options & GPIO_DIRECTION_OUTPUT)
+    if (options & HAL_GPIO_DIRECTION_OUTPUT)
         *gpioPortRegs[port].trisCLR = mask;
     else
         *gpioPortRegs[port].trisSET = mask;
 
-    if (options & GPIO_OPENDRAIN_ENABLED)
+    if (options & HAL_GPIO_OPENDRAIN_ENABLED)
         *gpioPortRegs[port].odcSET = mask;        
     else
         *gpioPortRegs[port].odcCLR = mask;             

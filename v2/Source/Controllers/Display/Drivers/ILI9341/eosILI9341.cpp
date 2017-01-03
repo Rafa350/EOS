@@ -270,7 +270,7 @@ void ILI9341_Driver::setOrientation(
             screenWidth = MAX_COLUMNS;
             screenHeight = MAX_ROWS;
             data = orientationData[0];
-           break;
+            break;
 
         case Orientation::rotate90:
             screenWidth = MAX_ROWS;
@@ -550,9 +550,9 @@ void ILI9341_Driver::startMemoryRead() {
 void ILI9341_Driver::writePixel(
     Color color,
     int32_t count) {
-    
+
 #if defined(ILI9341_COLORMODE_565)
-    
+
     uint16_t c = color.to565();
 
     io.begin();

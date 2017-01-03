@@ -106,7 +106,7 @@ void VDC_Driver::setVPixels(
     
     int16_t offset = offsetOf(x, y);
     while (size--) {
-        canvas.setColor(offset], color);
+        canvas.setColor(offset, color);
         offset += screenWidth;
     }
 }

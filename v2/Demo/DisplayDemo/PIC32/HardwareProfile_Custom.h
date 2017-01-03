@@ -11,11 +11,11 @@
 // LEDS
 // -----------------------------------------------------------------------
 
-#define LEDS_LD1_PORT        GPIO_PORT_G
-#define LEDS_LD1_PIN         GPIO_PIN_6
+#define LEDS_LD1_PORT        HAL_GPIO_PORT_G
+#define LEDS_LD1_PIN         HAL_GPIO_PIN_6
 
-#define LEDS_LD2_PORT        GPIO_PORT_D
-#define LEDS_LD2_PIN         GPIO_PIN_1
+#define LEDS_LD2_PORT        HAL_GPIO_PORT_D
+#define LEDS_LD2_PIN         HAL_GPIO_PIN_1
 
 
 // -----------------------------------------------------------------------
@@ -67,32 +67,32 @@
 
 // Control del pin RST (Reset) CON1-13
 //
-#define ILI9341_RST_PORT     GPIO_PORT_D
-#define ILI9341_RST_PIN      11
+#define ILI9341_RST_PORT     HAL_GPIO_PORT_D
+#define ILI9341_RST_PIN      HAL_GPIO_PIN_11
 
 // Control del pin CS (Chip select) CON1-14
 //
-#define ILI9341_CS_PORT      GPIO_PORT_D
-#define ILI9341_CS_PIN       8
+#define ILI9341_CS_PORT      HAL_GPIO_PORT_D
+#define ILI9341_CS_PIN       HAL_GPIO_PIN_8
 
 // Control del pin RS (Register select) CON1-2
 //
-#define ILI9341_RS_PORT      GPIO_PORT_C
-#define ILI9341_RS_PIN       13
+#define ILI9341_RS_PORT      HAL_GPIO_PORT_C
+#define ILI9341_RS_PIN       HAL_GPIO_PIN_13
 
 // Control de pin WR (Write) D7 CON1-15
 //
-#define ILI9341_WR_PORT      GPIO_PORT_D
-#define ILI9341_WR_PIN       7
+#define ILI9341_WR_PORT      HAL_GPIO_PORT_D
+#define ILI9341_WR_PIN       HAL_GPIO_PIN_7
 
 // Control del pin RD (Read) CON1-1
 //
-#define ILI9341_RD_PORT      GPIO_PORT_C
-#define ILI9341_RD_PIN       14
+#define ILI9341_RD_PORT      HAL_GPIO_PORT_C
+#define ILI9341_RD_PIN       HAL_GPIO_PIN_14
 
 // Control del port DATA (I/O paralel port) CON1-3..10
 //
-#define ILI9341_DATA_PORT    GPIO_PORT_E
+#define ILI9341_DATA_PORT    HAL_GPIO_PORT_E
 
 
 #endif

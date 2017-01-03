@@ -24,6 +24,7 @@ FormsService::FormsService(
 
     Service(application, serviceName, taskStackSize, taskPriority),
     messageQueue(_messageQueue),
+	activeForm(nullptr),
     display(_display) {
 }
 
