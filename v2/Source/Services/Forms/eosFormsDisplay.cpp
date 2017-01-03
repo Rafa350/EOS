@@ -7,6 +7,7 @@
 
 using namespace eos;
 
+#define DEF_BUFFERSIZE     1024
 
 #define CMD_END               0
 #define CMD_CLEAR             1
@@ -16,6 +17,7 @@ using namespace eos;
 #define CMD_FILLRECTANGLE     5
 #define CMD_SETCOLOR          6
 #define CMD_SETFONT           7
+#define CMD_SETTEXTALIGN      8
 
 
 /// ---------------------------------------------------------------------
@@ -26,12 +28,21 @@ FormsDisplay::FormsDisplay(
     Display *_display):
     display(_display) {
 
-    bufferSize = 1024;
+    bufferSize = DEF_BUFFERSIZE;
     buffer = new uint8_t[bufferSize];
 
     buffer[0] = CMD_END;     // Marca de final
     wrIdx = 0;               // Inicialitza el punter d'escriptura
     wrError = false;         // Borrel'indicador d'error
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Descructor.
+///
+FormsDisplay::~FormsDisplay() {
+
+    delete[] buffer;
 }
 
 
@@ -44,6 +55,16 @@ void FormsDisplay::beginDraw(
     int16_t width,
     int16_t height) {
 
+    IDisplayDriver *driver = display->getDriver();
+    if (width == -1)
+        width = driver->getWidth();
+    if (height == -1)
+        height = driver->getHeight();
+
+    display->setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::bottom);
+    display->setClip(x, y, x + width - 1, y + height - 1);
+    offsetX = x;
+    offsetY = y;
 }
 
 
@@ -53,6 +74,8 @@ void FormsDisplay::beginDraw(
 void FormsDisplay::endDraw() {
 
     render();
+    
+    display->resetClip();
 }
 
 
@@ -66,6 +89,24 @@ void FormsDisplay::setColor(
     if (wrCheck(5)) {
         wr8(CMD_SETCOLOR);
         wr32(color);
+        wrEND();
+    }
+}
+
+
+/// ---------------------------------------------------------------------_
+/// \brief Selecciona l'aliniacio del text.
+/// \param hAlign: Aliniacio horitzontal.
+/// \param vAlign: Aliniacio vertical.
+///
+void FormsDisplay::setTextAlign(
+    HorizontalTextAlign hAlign, 
+    VerticalTextAlign vAlign) {
+    
+    if (wrCheck(3)) {
+        wr8(CMD_SETTEXTALIGN);
+        wr8((int8_t) hAlign);
+        wr8((int8_t) vAlign);
         wrEND();
     }
 }
@@ -101,10 +142,10 @@ void FormsDisplay::drawLine(
 
     if (wrCheck(9)) {
         wr8(CMD_DRAWLINE);
-        wr16(x1);
-        wr16(y1);
-        wr16(x2);
-        wr16(y2);
+        wr16(offsetX + x1);
+        wr16(offsetY + y1);
+        wr16(offsetX + x2);
+        wr16(offsetY + y2);
         wrEND();
     }
 }
@@ -125,10 +166,10 @@ void FormsDisplay::drawRectangle(
 
     if (wrCheck(9)) {
         wr8(CMD_DRAWRECTANGLE);
-        wr16(x);
-        wr16(y);
-        wr16(x + width - 1);
-        wr16(y + height - 1);
+        wr16(offsetX + x);
+        wr16(offsetY + y);
+        wr16(offsetX + x + width - 1);
+        wr16(offsetY + y + height - 1);
         wrEND();
     }
 }
@@ -151,8 +192,8 @@ void FormsDisplay::drawText(
 
     if (wrCheck(11 + strlen(text))) {
         wr8(CMD_DRAWTEXT);
-        wr16(x);
-        wr16(y);
+        wr16(offsetX + x);
+        wr16(offsetY + y);
         wrs(text);
         wr16(offset);
         wr16(length);
@@ -176,10 +217,10 @@ void FormsDisplay::fillRectangle(
 
     if (wrCheck(9)) {
         wr8(CMD_FILLRECTANGLE);
-        wr16(x);
-        wr16(y);
-        wr16(x + width - 1);
-        wr16(y + height - 1);
+        wr16(offsetX + x);
+        wr16(offsetY + y);
+        wr16(offsetX + x + width - 1);
+        wr16(offsetY + y + height - 1);
         wrEND();
     }
 }
@@ -200,6 +241,10 @@ void FormsDisplay::render() {
 
             case CMD_SETCOLOR:
                 display->setColor(rd32());
+                break;
+
+            case CMD_SETTEXTALIGN:
+                display->setTextAlign((HorizontalTextAlign) rd8(), (VerticalTextAlign) rd8());
                 break;
 
             case CMD_CLEAR:

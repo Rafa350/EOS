@@ -19,6 +19,7 @@ namespace eos {
             void end();
             void wrCommand(uint8_t data);
             void wrData(uint8_t data);
+            void wrColor(Color color);
             uint8_t rdData();
     };
 

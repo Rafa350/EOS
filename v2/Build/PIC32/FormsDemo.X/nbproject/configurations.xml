@@ -39,6 +39,7 @@
             <itemPath>../../../Include/Services/Forms/eosOptionEditorForm.hpp</itemPath>
             <itemPath>../../../Include/Services/Forms/eosMenuForm.hpp</itemPath>
             <itemPath>../../../../../MD-KBD01/KBD01Messages.h</itemPath>
+            <itemPath>../../../Include/Services/Forms/eosLabelForm.hpp</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/Services/eosI2CMaster.hpp</itemPath>
           <itemPath>../../../Include/Services/eosKeyboard.hpp</itemPath>
@@ -134,6 +135,7 @@
             <itemPath>../../../Source/Services/Forms/eosNumericEditorForm.cpp</itemPath>
             <itemPath>../../../Source/Services/Forms/eosOptionEditorForm.cpp</itemPath>
             <itemPath>../../../Source/Services/Forms/eosMenuForm.cpp</itemPath>
+            <itemPath>../../../Source/Services/Forms/eosLabelForm.cpp</itemPath>
           </logicalFolder>
           <itemPath>../../../Source/Services/eosI2CMaster.cpp</itemPath>
           <itemPath>../../../Source/Services/eosKeyboard.cpp</itemPath>
@@ -1006,6 +1008,7 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

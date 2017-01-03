@@ -18,10 +18,15 @@ static const char *emptyString = "";
 NumericEditorForm::NumericEditorForm(
     FormsService *service,
     Form *parent):
+    
     Form(service, parent),
     prefix(emptyString),
     suffix(emptyString),
-    evChange(nullptr) {
+    evChange(nullptr),
+    borderWidth(1),
+    borderColor(COLOR_Blue), 
+    fgColor(COLOR_Yellow),
+    bkColor(COLOR_Black) {
 }
 
 
@@ -111,35 +116,26 @@ void NumericEditorForm::setSuffix(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el titol.
-/// \param title: El texte del titol.
-///
-void NumericEditorForm::setTitle(
-    const char *title) {
-
-    this->title = title ? title : emptyString;
-    refresh();
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Notifica que cal pintar la pantalla
 /// \param displayController: El handler del controlador de pantalla.
 ///
 void NumericEditorForm::onPaint(
     FormsDisplay *display) {
-
-    display->clear(0x00000000);
-    if (title != nullptr)
-        display->drawText(0, 0, title, 0, -1);
     
-    display->drawLine(0, 10, 127, 10);
-    display->drawLine(0, 53, 127, 53);
-
     char text[40];
     sprintf(text, "%s%d%s", prefix, value, suffix);
 
-    display->drawText(10, 30, text, 0, -1);
+    if (borderWidth) {
+        display->setColor(borderColor);
+        display->drawRectangle(0, 0, 100, 20);
+    }
+    
+    display->setColor(bkColor);
+    display->fillRectangle(1, 1, 98, 18);
+
+    display->setTextAlign(HorizontalTextAlign::right, VerticalTextAlign::bottom);
+    display->setColor(fgColor);
+    display->drawText(96, 16, text, 0, -1);
 }
 
      
@@ -183,10 +179,12 @@ void NumericEditorForm::onKeyPress(
     KeyCode keyCode) {
     
     switch (keyCode) {
+        case KeyCode::left:
         case KeyCode::up:
             incValue();
             break;
         
+        case KeyCode::right:
         case KeyCode::down:
             decValue();
             break;

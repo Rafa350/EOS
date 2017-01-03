@@ -5,15 +5,21 @@
 #include "eos.hpp"
 #include "Services/Forms/eosForms.hpp"
 #include "Services/Forms/eosMenuForm.hpp"
+#include "Services/Forms/eosLabelForm.hpp"
+#include "Services/Forms/eosNumericEditorForm.hpp"
 
 
 namespace app {
 
     using namespace eos;
-
+    
     class MainForm: public Form {
         private:
             MenuForm *menuForm;
+            LabelForm *label1;
+            LabelForm *label2;
+            NumericEditorForm *valueEditor1;
+            NumericEditorForm *valueEditor2;
             Form *editorForm;
             unsigned currentCommand;
 

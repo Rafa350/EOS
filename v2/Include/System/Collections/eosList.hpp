@@ -80,6 +80,13 @@ namespace eos {
                 GenericList::remove(index);
             }
             
+            /// \brief Elimina un element de la llista
+            /// \param index: El index del element.
+            inline void remove(const T &element) {
+                
+                GenericList::remove(indexOf(element));
+            }
+
             /// \brief Elimina tots els elements de la llista.
             ///
             inline void clear() {

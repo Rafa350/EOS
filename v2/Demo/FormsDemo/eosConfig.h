@@ -30,7 +30,7 @@
 // Opcions de configuracio pel servei 'Forms'
 //
 //#define eosFormsService_UseSelector                      1
-//#define eosFormsService_UseKeyboard                      1
+#define eosFormsService_UseKeyboard                      1
 
 
 #endif

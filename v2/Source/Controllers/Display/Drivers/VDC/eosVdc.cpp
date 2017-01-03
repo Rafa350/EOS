@@ -15,7 +15,7 @@ VDC_Driver::VDC_Driver(
 
     screenWidth(screenWidth),
     screenHeight(screenHeight),
-    canvas(new uint32_t[screenHeight * screenHeight]) {
+    canvas(screenHeight * screenHeight) {
 }
 
 
@@ -23,8 +23,6 @@ VDC_Driver::VDC_Driver(
 /// \brief Destructor.
 ///
 VDC_Driver::~VDC_Driver() {
-
-    delete[] canvas;    
 }
 
 
@@ -33,7 +31,7 @@ VDC_Driver::~VDC_Driver() {
 ///
 void VDC_Driver::initialize() {
     
-    clear(Color(0));
+    clear(COLOR_Black);
 }
 
 
@@ -52,9 +50,8 @@ void VDC_Driver::shutdown() {
 void VDC_Driver::clear(
     Color color){
     
-    uint32_t pixel(color);
     for (int i = 0, ii = screenWidth * screenHeight; i < ii; i++)
-        canvas[i] = pixel;
+        canvas.setColor(i, color);
 }
 
 
@@ -69,7 +66,7 @@ void VDC_Driver::setPixel(
     int16_t y, 
     Color color) {
     
-    canvas[offsetOf(x, y)] = color;
+    canvas.setColor(offsetOf(x, y), color);
 }
 
 
@@ -86,11 +83,9 @@ void VDC_Driver::setHPixels(
     int16_t size, 
     Color color) {
     
-    uint32_t pixel(color);
-    
     int16_t offset = offsetOf(x, y);
     while (size--) {
-        canvas[offset] = pixel;
+        canvas.setColor(offset, color);
         offset += 1;
     }
 }
@@ -109,11 +104,9 @@ void VDC_Driver::setVPixels(
     int16_t size, 
     Color color) {
     
-    uint32_t pixel(color);
-    
     int16_t offset = offsetOf(x, y);
     while (size--) {
-        canvas[offset] = pixel;
+        canvas.setColor(offset], color);
         offset += screenWidth;
     }
 }
@@ -182,10 +175,7 @@ void VDC_Driver::readPixels(
 
     while (height--) {
         while (width--) {
-            uint32_t *pixel = &canvas[offsetOf(x, y)];
-//            colors->r = pixel->r << 3;
-//            colors->g = pixel->g << 2;
-//            colors->b = pixel->b << 3;
+            *colors++ = canvas.getColor(offsetOf(x, y));
             x += 1;
         }
         y += 1;

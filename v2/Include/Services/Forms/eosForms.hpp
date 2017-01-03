@@ -145,19 +145,23 @@ namespace eos {
     class FormsDisplay {
         private:
             Display *display;
+            uint16_t offsetX;
+            uint16_t offsetY;
             uint8_t *buffer;
             uint16_t bufferSize;
             bool wrError;
             uint16_t wrIdx;
-            uint16_t rdIdx;
+            uint16_t rdIdx;            
 
         public:
             FormsDisplay(Display *display);
+            ~FormsDisplay();
             inline Display* getDisplay() const { return display; }
             void beginDraw(int16_t x, int16_t y, int16_t width, int16_t height);
             void endDraw();
             void clear(Color color);
             void setColor(Color color);
+            void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
             void drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
             void drawRectangle(int16_t x, int16_t y, int16_t width, int16_t height);
             void drawText(int16_t x, int16_t y, const char *text, int16_t offset, int16_t length);
@@ -179,6 +183,8 @@ namespace eos {
 
     class Form {
         private:
+            typedef List<Form*> ChildList;
+            typedef ListIterator<Form*> ChildListIterator;
 #ifdef eosFormsService_UseKeyboard
             typedef ICallbackP2<Form*, KeyCode> IKeyboardPressEvent;
             typedef ICallbackP2<Form*, KeyCode> IKeyboardReleaseEvent;
@@ -190,6 +196,7 @@ namespace eos {
         private:
             FormsService* service;
             Form *parent;
+            ChildList childs;
 #ifdef eosFormsService_UseKeyboard
             IKeyboardPressEvent *evKeyboardPress;
             IKeyboardReleaseEvent *evKeyboardRelease;
@@ -202,6 +209,7 @@ namespace eos {
             int16_t y;
             int16_t width;
             int16_t height;
+            bool visible;
 
         public:
             Form(FormsService *service, Form *parent);
@@ -209,10 +217,17 @@ namespace eos {
             void refresh() { service->refresh(this); }
             void refresh(int16_t x, int16_t y, int16_t width, int16_t height) { service->refresh(this, x, y, width, height); }
             void activate() { service->activate(this); }
+            void setPosition(int16_t x, int16_t y);
+            void setSize(int16_t width, int16_t height);
+            void setVisibility(bool visible);
             inline Form *getParent() const { return parent; }
             inline FormsService *getService() const { return service; }
             inline int16_t getX() const { return x; }
             inline int16_t getY() const { return y; }
+            inline int16_t getWidth() const { return width; }
+            inline int16_t getHeight() const { return height; }
+            bool getVisibility() const { return visible; }
+            bool isVisible() const;
 
 #ifdef eosFormsService_UseKeyboard
             template <class cls>
@@ -247,7 +262,7 @@ namespace eos {
 
         protected:
             virtual ~Form();
-            virtual void dispatchMessage(Message &message);
+            virtual void dispatchMessage(const Message &message);
             virtual void onActivate(Form *deactivateForm);
             virtual void onDeactivate(Form *activateForm) {}
             virtual void onPaint(FormsDisplay *display) {}
@@ -260,6 +275,11 @@ namespace eos {
             virtual void onKeyPress(KeyCode keyCode);
             virtual void onKeyRelease(KeyCode keyCode);
 #endif
+            
+        private:
+            inline void add(Form *form) { childs.add(form); }
+            inline void remove(Form *form) { childs.remove(form); }
+            void dispatchPaintMessage(const Message &message);
 
         friend FormsService;
     };

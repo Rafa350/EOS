@@ -18,7 +18,7 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 /// \param display: Controlador de pantalla
 ///
 FormsService::FormsService(
-Application *application,
+    Application *application,
     MessageQueue *_messageQueue,
     FormsDisplay *_display) :
 

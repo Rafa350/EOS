@@ -2,6 +2,9 @@
 #define	__EOS_DISPLAY_HPP
 
 
+#define DISPLAY_PIXFORMAT_565
+
+
 #include "eos.hpp"
 #include "Controllers/Display/eosFont.hpp"
 #include "Controllers/Display/eosColor.hpp"
@@ -11,13 +14,29 @@
 
 namespace eos {
 
+    /// \brief Orientacio de la pantalla.
     enum class Orientation {
         normal,
         rotate90,
         rotate180,
         rotate270,
     };
-
+    
+    /// \brief Aliniacio horitzontal del text.
+    enum class HorizontalTextAlign {
+        left,
+        center,
+        right
+    };
+    
+    /// \brief Aliniacio vertical del text.
+    enum class VerticalTextAlign {
+        top,
+        middle,
+        bottom
+    };
+    
+    /// \brief Interficie del driver del display.
     class IDisplayDriver {
         public:
             virtual void initialize() = 0;
@@ -36,6 +55,7 @@ namespace eos {
             virtual void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height) = 0;
     };
 
+    /// \brief Control del display.
     class Display {
         private:
             IDisplayDriver *driver;
@@ -49,6 +69,8 @@ namespace eos {
             Color color;
             Font *font;
             FontInfo fi;
+            HorizontalTextAlign hAlign;
+            VerticalTextAlign vAlign;
             int16_t cursorX;
             int16_t cursorY;
             uint8_t ttyState;
@@ -60,14 +82,14 @@ namespace eos {
             void resetClip();
             Color setColor(Color color);
             Font *setFont(Font *font);
+            void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
             inline IDisplayDriver *getDriver() const { return driver; }
-            int16_t getTextWidth(const char *text);
+            int16_t getTextWidth(const char *text, int16_t offset = 0, int16_t length = -1);
             int16_t getTextHeight(const char *text);
             inline Font *getFont() const { return font; }
             inline Color getColor() const { return color; }
             void putTTY(char ch);
-            void putTTY(const char *s);
-            void putTTY(const char *s, int16_t length);
+            void putTTY(const char *s, int16_t offset = 0, int16_t length = -1);
             void clear(Color color);
             void refresh();
             inline void home() { moveTo(0, 0); }
@@ -81,7 +103,7 @@ namespace eos {
             void drawCircle(int16_t cx, int16_t cy, int16_t r);
             void drawBitmap1BPP(int16_t x, int16_t y, const uint8_t *bitmap, int16_t width, int16_t height, Color color);
             int16_t drawChar(int16_t x, int16_t y, char c);
-            int16_t drawText(int16_t x, int16_t y, const char *s, int16_t offset, int16_t length);
+            int16_t drawText(int16_t x, int16_t y, const char *s, int16_t offset = 0, int16_t length = -1);
             void fillRectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
             void fillCircle(int16_t cx, int16_t cy, int16_t r);
 

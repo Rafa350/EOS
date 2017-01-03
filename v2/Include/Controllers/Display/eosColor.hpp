@@ -7,11 +7,17 @@
 #include <stdint.h>
 
 
-#define ARGB(a, r, g, b)     ((((uint32_t)a) << 24) | (((uint32_t)r) << 16) | (((uint32_t)g) << 8) | ((uint32_t)b))
+#if defined(DISPLAY_COLOR_ARGB) || defined(DISPLAY_COLOR_RGB)
+#define ARGB(a, r, g, b)     uint32_t(((uint32_t(a) << 24) | (uint32_t(r) << 16) | (uint32_t(g) << 8) | (uint32_t(b)))
+#elif defined(DISPLAY_COLOR_565)
+#define ARGB(a, r, g, b)     uint16_t((uint16_t(r & 0xF8) << 8) | (uint16_t(g & 0xFC) << 3) | (uint16_t(b & 0xF8) >> 3))
+#endif
+
 #define RGB(r, g, b)         ARGB(255, r, g, b)
 
 // Basic colors
 //
+#define COLOR_Transparent    ARGB(0, 0, 0, 0)
 #define COLOR_Black          RGB(0, 0, 0)
 #define COLOR_White          RGB(255, 255, 255)
 #define COLOR_Blue           RGB(0, 0, 255)
@@ -105,36 +111,138 @@
 #define COLOR_DarkSlateBlue  RGB(72, 61, 139)
 
 
+#define COLOR_PAL_Black      0
+#define COLOR_PAL_White      1
+#define COLOR_PAL_Blue       2
+#define COLOR_PAL_Cyan       3
+#define COLOR_PAL_Magenta    4
+#define COLOR_PAL_Silver     5
+#define COLOR_PAL_Gray       6
+#define COLOR_PAL_Maroon     7
+#define COLOR_PAL_Purple     8
+#define COLOR_PAL_Teal       9
+#define COLOR_PAL_Navy       10
+
+
 namespace eos {
-      
-    union Color {
-        struct __attribute__((packed)) {
-            uint8_t a;
-            uint8_t r;
-            uint8_t g;
-            uint8_t b;
-        };
-        uint32_t c;
+            
+    class Color {
+        private:
+#if defined(DISPLAY_COLOR_ARGB) | defined(DISPLAY_COLOR_RGB)
+            uint32_t c;
+#elif defined(DISPLAY_COLOR_565)            
+            uint16_t c;
+#elif defined(DISPLAY_COLOR_PAL)            
+            uint8_t c;
+#endif            
         
-        inline Color(): c(0) {}
-        inline Color(const Color &other): c(other.c) {}
-        inline Color(uint32_t c): c(c) {}
-        inline Color(uint8_t r, uint8_t g, uint8_t b): a(0), r(r), g(g), b(b) {}
-        inline Color(uint8_t a, uint8_t r, uint8_t g, uint8_t b): a(a), r(r), g(g), b(b) {}
-        
-        Color mix(Color c, uint8_t mix);
-        
-        uint32_t to565() const;
-        uint32_t to666() const;
-        
-        static uint32_t to565(Color color) { return color.to565(); }
-        static uint32_t to666(Color color) { return color.to666(); }
-        static Color from565(uint32_t c);
-        static Color from666(uint32_t c);
-        
-        inline operator int32_t() const { return c; }
+        public :
+            inline Color(): c(0) {}
+            inline Color(const Color &color): c(color.c) {}
+#if defined(DISPLAY_COLOR_ARGB)            
+            inline Color(uint32_t nc): c(nc) {}
+            inline Color(uint8_t r, uint8_t g, uint8_t b): c((r << 16) | (g << 8) | b) {}
+            inline Color(uint8_t a, uint8_t r, uint8_t g, uint8_t b): c((a << 24) | (r << 16) | (g << 8) | b) {}
+#elif defined(DISPLAY_COLOR_RGB)            
+            inline Color(uint32_t nc): c(nc) {}
+            inline Color(uint8_t r, uint8_t g, uint8_t b): c((255 < 24) | (r << 16) | (g << 8) | b) {}
+            inline Color(uint8_t a, uint8_t r, uint8_t g, uint8_t b): c((255 << 24) | (r << 16) | (g << 8) | b) {}
+#elif defined(DISPLAY_COLOR_565)            
+            inline Color(uint16_t nc): c(nc) {}
+            inline Color(uint8_t r, uint8_t g, uint8_t b): c((uint16_t(r & 0xF8) << 8) | (uint16_t(g & 0xFC) << 3) | (uint16_t(b & 0xF8) >> 3)) {}
+            inline Color(uint8_t a, uint8_t r, uint8_t g, uint8_t b): c((uint16_t(r & 0xF8) << 8) | (uint16_t(g & 0xFC) << 3) | (uint16_t(b & 0xF8) >> 3)) {}
+#endif            
+
+            Color mix(Color c, uint8_t mix);
+
+#if defined(DISPLAY_COLOR_ARGB)            
+            inline uint8_t getA() const { return c >> 24; }
+            inline uint8_t getR() const { return c >> 16; }
+            inline uint8_t getG() const { return c >> 8; }
+            inline uint8_t getB() const { return c; }
+#elif defined(DISPLAY_COLOR_RGB)            
+            inline uint8_t getA() const { return 255; }
+            inline uint8_t getR() const { return c >> 16; }
+            inline uint8_t getG() const { return c >> 8; }
+            inline uint8_t getB() const { return c; }
+#elif defined(DISPLAY_COLOR_565)            
+            inline uint8_t getA() const { return 255; }
+            inline uint8_t getR() const { return (c & 0xF800) >> 11; }
+            inline uint8_t getG() const { return (c & 0x07E0) >> 5; }
+            inline uint8_t getB() const { return c & 0x001F; }
+#elif defined(DISPLAY_COLOR_PALETTE)
+#endif            
+
+#if defined(DISPLAY_COLOR_ARGB)            
+            inline uint32_t toARGB() const { return c; }
+#else
+            uint32_t toARGB() const;
+#endif            
+            
+#if defined(DISPLAY_COLOR_RGB)            
+            inline uint32_t toRGB() const { return c; }
+#else
+            uint32_t toRGB() const;
+#endif            
+            
+#if defined(DISPLAY_COLOR_565)           
+            inline uint16_t to565() const { return c; };
+#else
+            uint16_t to565() const;
+#endif            
+            
+            inline void operator = (const Color &color) { c = color.c; }
+#if defined(DISPLAY_COLOR_ARGB) || defined(DISPLAY_COLOR_RGB)
+            inline void operator = (uint32_t nc) { c = nc; }
+#elif defined(DISPLAY_COLOR_565)            
+            inline void operator = (uint16_t nc) { c = nc; }
+#endif            
+            
+            inline bool operator == (const Color &color) { return c == color.c; }
+            inline bool operator != (const Color &color) { return c != color.c; }
+            
+#if defined(DISPLAY_COLOR_ARGB) || defined(DISPLAY_COLOR_RGB)
+            inline operator uint32_t() const { return c; }
+#elif defined(DISPLAY_COLOR_565)            
+            inline operator uint16_t() const { return c; }
+#endif
     };
     
+    
+    class ColorBuffer {
+        private:
+#if defined(DISPLAY_COLOR_ARGB) || defined(DISPLAY_COLOR_RGB)
+            uint32_t *buffer;
+#elif defined(DISPLAY_COLOR_565)            
+            uint16_t *buffer;            
+#endif            
+            
+        public:
+            ColorBuffer(int size);
+            ~ColorBuffer();
+            
+#if defined(DISPLAY_COLOR_ARGB) || defined(DISPLAY_COLOR_RGB)
+            void set(int offset, uint32_t nc);
+            uint32_t get(int offset);
+#elif defined(DISPLAY_COLOR_565)            
+            inline void set(int offset, uint16_t nc) { buffer[offset] = nc; }
+            inline uint16_t get(int offset) { return buffer[offset]; }
+#endif            
+            
+            inline void setColor(int offset, Color color) { buffer[offset] = color; }
+            inline Color getColor(int offset) const { return buffer[offset]; }
+    };
+    
+    
+    class ColorPalette {
+        private:
+            Color colorTable[256];
+            
+        public:
+            ColorPalette();
+            inline Color getColor(uint8_t index) { colorTable[index]; }
+            void setColor(uint8_t index, Color color);
+    };
 }
 
 

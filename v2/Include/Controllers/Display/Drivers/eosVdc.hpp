@@ -12,7 +12,7 @@ namespace eos {
     
     class VDC_Driver: public IDisplayDriver {
         private:
-            uint32_t *canvas;
+            ColorBuffer canvas;
             int16_t screenWidth;
             int16_t screenHeight;
             

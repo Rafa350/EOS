@@ -161,7 +161,7 @@ void DisplayLoopService::onRun() {
     Task::delay(250);
 
     srand(seed);
-    display->setColor(Color(0));
+    display->setColor(COLOR_Black);
     for (int i = 0; i < 50000; i++) {
         int16_t x = rand() % screenWidth;
         int16_t y = rand() % screenHeight;
@@ -225,7 +225,7 @@ void DisplayLoopService::onRun() {
         int16_t x2 = rand() % screenWidth;
         int16_t y2 = rand() % screenHeight;
 
-        display->setColor( rand() & 0x00FFFFFF);
+        display->setColor(rand() & 0x00FFFFFF);
         display->drawLine(x1, y1, x2, y2);
     }
     linesTicks = Task::getTickCount() - ticks;
@@ -340,9 +340,9 @@ void DisplayLoopService::onRun() {
 void DisplayLoopService::drawBackground(
     const char* title) {
 
-    display->clear(0);
+    display->clear(COLOR_Black);
     display->resetClip();
-    display->setColor(0x00FF0000);
+    display->setColor(COLOR_Red);
     display->drawRectangle(0, 0, screenWidth - 1, screenHeight - 1);
     display->drawLine(screenWidth - 1, 20, 0, 20);
     display->drawText(4, 16, title, 0, -1);

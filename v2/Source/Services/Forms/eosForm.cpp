@@ -25,10 +25,16 @@ Form::Form(
     service(nullptr),
     parent(_parent),
     x(0),
-    y(0) {
+    y(0),
+    width(-1),
+    height(-1),
+    visible(false) {
 
     if (_service != nullptr)
         _service->add(this);
+    
+    if (_parent != nullptr)
+        _parent->add(this);
 }
 
 
@@ -36,6 +42,9 @@ Form::Form(
 /// \brief Destructor.
 ///
 Form::~Form() {
+    
+    if (parent != nullptr)
+        parent->remove(this);
     
     if (service != nullptr)
         service->remove(this);
@@ -59,21 +68,78 @@ Form::~Form() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief Canvia la posicio del form.
+/// \param x: Posicio X.
+/// \param y: Posicio Y.
+///
+void Form::setPosition(
+    int16_t x, 
+    int16_t y) {
+    
+    this->x = x;
+    this->y = y;
+    refresh();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Canvia el tamany del form.
+/// \param width: Amplada del form.
+/// \param height: Alçada del form.
+///
+void Form::setSize(
+    int16_t width, 
+    int16_t height) {
+    
+    this->width = width;
+    this->height = height;
+    refresh();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Canvia la visibilitat del form.
+/// \param visible: True per fer visible el form, false en cas contrari.
+///
+void Form::setVisibility(
+    bool visible) {
+    
+    this->visible = visible;
+    refresh();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Comprova si el form es visible, explorant tota la cadena de
+///        contenidors.
+/// \return True si es visible.
+///
+bool Form::isVisible() const {
+    
+    const Form *form = this;
+    
+    while (form != nullptr) {
+        if (!form->visible)
+            return false;
+        form = form->parent;
+    }
+    
+    return true;
+}
+
+/// ----------------------------------------------------------------------
 /// \brief Procesa un missatge.
 /// \param message: El missatge a procesar.
 ///
 void Form::dispatchMessage(
-    Message &message) {
+    const Message &message) {
     
     switch (message.id) {
         
-        case MSG_PAINT: {
-            FormsDisplay *display = message.msgPaint.display;
-            display->beginDraw(x, y, width, height);
-            onPaint(display);
-            display->endDraw();
+        case MSG_PAINT:
+            if (isVisible())
+                dispatchPaintMessage(message);
             break;
-        }
         
 #ifdef eosFormsService_UseSelector        
         case MSG_SELECTOR:
@@ -113,6 +179,33 @@ void Form::dispatchMessage(
 
         default:
             break;
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa el missatge MSG_PAINT
+/// \param message: El missatge a procesar.
+///
+void Form::dispatchPaintMessage(
+    const Message& message) {
+
+    FormsDisplay *display = message.msgPaint.display;
+
+    // Primer es redibuixa el propi form
+    //
+    display->beginDraw(x, y, width, height);
+    onPaint(display);
+    display->endDraw();
+
+    // Despres es redibuixen el fills
+    //
+    ChildListIterator iterator(childs);
+    while (iterator.hasNext()) {
+        Form *child = iterator.current();
+        if (child->visible)
+            child->dispatchPaintMessage(message);
+        iterator.next();
     }
 }
 

@@ -39,14 +39,16 @@ Display::Display(
     IDisplayDriver *driver) :
     
     driver(driver),
-    color(0),
+    color(COLOR_Black),
     screenWidth(driver->getWidth()),
     screenHeight(driver->getHeight()),
     cursorX(0),
     cursorY(0),
     clipEnabled(false),
     ttyState(0),
-    font(nullptr) {
+    font(nullptr),
+    vAlign(VerticalTextAlign::bottom),
+    hAlign(HorizontalTextAlign::left) {
     
     setFont(new Font(fontConsolas14pt));
 }
@@ -73,6 +75,20 @@ Color Display::setColor(
     color = _color;
     
     return oldColor;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Selecciona l'aliniacio del texte.
+/// \param hAlign: Aliniacio horitzontal.
+/// \param vAlign: Aliniacio vertical.
+///
+void Display::setTextAlign(
+    HorizontalTextAlign hAlign, 
+    VerticalTextAlign vAlign) {
+    
+    this->hAlign = hAlign;
+    this->vAlign = vAlign;
 }
 
 
@@ -211,7 +227,7 @@ void Display::drawLine(
     //
     int16_t dx = x2 - x1;
     int16_t dy = y2 - y1;
-
+    
     // Es una linea horitzontal
     //
     if (dx == 0) {        
@@ -474,13 +490,13 @@ int16_t Display::drawChar(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una cadena de texte amb el font i el color actual.
+/// \brief Dibuixa un text amb el font i el color actual.
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
-/// \param s: La cadena a dibuixar.
-/// \param offset: El primer caracter a dibuixar
+/// \param s: El text a dibuixar.
+/// \param offset: El primer caracter del text
 /// \param length: Numero de caracters a dibuixar. -1 si dibuixa fins al final
-///                de la cadena de texte.
+///                del text.
 /// \return L'amplada de la cadena dibuixada en pixels.
 ///
 int16_t Display::drawText(
@@ -490,8 +506,16 @@ int16_t Display::drawText(
     int16_t offset,
     int16_t length) {
     
-    int16_t sx = x;
+    if (hAlign != HorizontalTextAlign::left) {
+        int16_t textWidth = getTextWidth(s, offset, length);
+        if (hAlign == HorizontalTextAlign::right)
+            x -= textWidth;
+        else
+            x -= textWidth / 2;
+    }
     
+    int16_t sx = x;
+
     for (int16_t i = offset, j = length; j && s[i]; i++, j--)
         x += drawChar(x, y, s[i]);
 
@@ -502,17 +526,20 @@ int16_t Display::drawText(
 /// ----------------------------------------------------------------------
 /// \brief Obte l'amplada d'una cadena de texte.
 /// \param s: La cadena de texte.
+/// \param offset: El primer caracter del text.
+/// \param length: Numero de caracters a mesurar. -1 si es la longitut 
+///                total del text.
 /// \return L'amplada de la cadena en pixels.
 ///
 int16_t Display::getTextWidth(
-    const char *s) {
+    const char *s,
+    int16_t offset,
+    int16_t length) {
     
-    char c;
-
     int16_t w = 0;
-    while ((c = *s++) != '\0') {
+    for (int16_t i = offset, j = length; j && s[i]; i++, j--) {
         CharInfo ci;
-        font->getCharInfo(c, ci);
+        font->getCharInfo(s[i], ci);
         w += ci.advance;
     }
 
@@ -547,7 +574,7 @@ void Display::putTTY(
                     break;
 
                 case (char)0xFE:
-                    clear(Color(0));
+                    clear(COLOR_Black);
                     break;
             
                 case (char)0xFD:
@@ -595,30 +622,18 @@ void Display::putTTY(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Escriu una cadena de texte en emulacio TTY.
-/// \param s: La cadena a escriure.
-///
-void Display::putTTY(
-    const char *s) {
-    
-    char c;
-    while ((c = *s++) != '\0')
-        putTTY(c);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Escriu una cadena de texte en emulacio TTY.
-/// \param s: La cadena a escriure.
-/// \param length: Numero de caracters a escriure com a maxim.
+/// \brief Escriu una text en emulacio TTY.
+/// \param s: El text a escriure.
+/// \param offset: El primer caracter a escriure.
+/// \param length: Numero de caracters a escriure. -1 si es tot el text.
 ///
 void Display::putTTY(
     const char *s,
+    int16_t offset,
     int16_t length) {
     
-    char c;
-    while (((c = *s++) != '\0') && (length-- > 0))
-        putTTY(c);
+    for (int16_t i = offset, j = length; j && s[i]; i++, j--)
+       putTTY(s[i]);
 }
 
 

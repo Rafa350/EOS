@@ -3,7 +3,7 @@
 
 
 #if defined(EOS_DEBUG)
-void eosErrorHandler(
+extern "C" void eosErrorHandler(
     const char *file,
     unsigned line,
     const char *message) {

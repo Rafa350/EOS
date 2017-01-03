@@ -1,6 +1,7 @@
 #include "eos.hpp"
 #include "Services/Forms/eosMenuForm.hpp"
 #include "Services/Forms/eosNumericEditorForm.hpp"
+#include "Services/Forms/eosLabelForm.hpp"
 #include "Controllers/Display/eosDisplay.hpp"
 #include "appMainForm.hpp"
 #include "MnuMain.h"
@@ -34,10 +35,25 @@ const IncDecInfo infoXSpeed = { "X-Motor Speed",  10, 2000,  5 };
 MainForm::MainForm(
     FormsService *service):
     Form(service, nullptr) {
+    
+    setVisibility(true);
 
     menuForm = new MenuForm(service, this, (uint8_t*) menuMnuMain);
     menuForm->setClickItemEventHandler<MainForm>(this, &MainForm::menuClickItemHandler);
     menuForm->setDrawItemEventHandler<MainForm>(this, &MainForm::menuDrawItemHandler);
+    menuForm->setVisibility(false);
+    
+    label1 = new LabelForm(service, this);
+    label1->setPosition(100, 100);
+    label1->setSize(100, 20);
+    label1->setTitle("Label 1");
+    label1->setVisibility(true);
+    
+    label2 = new LabelForm(service, this);
+    label2->setPosition(100, 130);
+    label2->setSize(100, 20);
+    label2->setTitle("Label 1");
+    label2->setVisibility(true);
 }
 
 
@@ -54,6 +70,7 @@ MainForm::~MainForm() {
 void MainForm::onSelectorPress() {
 
     menuForm->activate();
+    menuForm->setVisibility(true);
 }
 #endif
 
@@ -70,8 +87,10 @@ void MainForm::onSelectorMove(
 void MainForm::onKeyPress(
     KeyCode keyCode) {
 
-    if (keyCode == KeyCode::enter)
+    if (keyCode == KeyCode::enter) {
         menuForm->activate();
+        menuForm->setVisibility(true);
+    }
 }
 #endif
 
@@ -140,7 +159,6 @@ void MainForm::startEdit() {
     form->setMinValue(infoXJerk.minValue);
     form->setMaxValue(infoXJerk.maxValue);
     form->setValue(2400);
-    form->setTitle(infoXJerk.title);
 #ifdef eosFormsService_UseSelector
     form->setSelectorPressEvent<MainForm>(this, &MainForm::editorSelectorPressHandler);
 #endif

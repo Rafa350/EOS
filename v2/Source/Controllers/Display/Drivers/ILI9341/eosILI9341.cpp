@@ -550,17 +550,15 @@ void ILI9341_Driver::startMemoryRead() {
 void ILI9341_Driver::writePixel(
     Color color,
     int32_t count) {
-
+    
 #if defined(ILI9341_COLORMODE_565)
-
-    uint32_t c = color.c;
-    uint8_t c1 = (uint32_t)(((c & 0x00F80000) >> 16) | ((c & 0x0000E000) >> 13));
-    uint8_t c2 = (uint32_t)(((c & 0x00001C00) >> 5) | ((c &0x000000F8) >> 3));
+    
+    uint16_t c = color.to565();
 
     io.begin();
     while (count--) {
-        io.wrData(c1);
-        io.wrData(c2);
+        io.wrData(c >> 8);
+        io.wrData(c);
     }
     io.end();
 
@@ -636,7 +634,7 @@ void ILI9341_Driver::readPixel(
     io.rdData();               // Dummy read
     while (count--) {
 
-#if defined(ILI9341_COLORMODE_565)
+#if defined(xILI9341_COLORMODE_565)
         uint8_t volatile c1 = io.rdData();
         uint8_t volatile c2 = io.rdData();
         uint8_t volatile c3 = io.rdData();

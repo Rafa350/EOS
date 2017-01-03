@@ -35,6 +35,10 @@
 // Tipus de pantalla
 //
 #define DISPLAY_ER_TFT028_4
+//#define DISPLAY_COLOR_ARGB
+//#define DISPLAY_COLOR_RGB
+#define DISPLAY_COLOR_565
+//#define DISPLAY_COLOR_PALETTE
 
 // Tipus de lletra disponibles 
 //
