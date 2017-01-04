@@ -4,17 +4,27 @@
 using namespace eos;
 
 
+/// ----------------------------------------------------------------------
+/// \brief Mescla un color
+/// \param c: El color a mesclar.
+/// \param mix: Valor alpha de la mescla.
+/// \return El resultat de la mescla.
+///
 Color Color::mix(
     Color c, 
     uint8_t mix) {
     
     return Color(
-        (uint16_t)((uint16_t) getR() * mix + (c.getR() * (256 - mix))) >> 8,
-        (uint16_t)((uint16_t) getG() * mix + (c.getG() * (256 - mix))) >> 8,  
-        (uint16_t)((uint16_t) getB() * mix + (c.getB() * (256 - mix))) >> 8);
+        (uint16_t)((uint16_t) getR() * mix + (c.getR() * (255 - mix))) >> 8,
+        (uint16_t)((uint16_t) getG() * mix + (c.getG() * (255 - mix))) >> 8,  
+        (uint16_t)((uint16_t) getB() * mix + (c.getB() * (255 - mix))) >> 8);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Converteix un color a la seva representacio interna.
+/// \return El resultat de l'operacio.
+///
 #if !defined(DISPLAY_COLOR_565)
 uint16_t Color::to565() const {
 
@@ -65,4 +75,18 @@ ColorPalette::ColorPalette() {
     colorTable[COLOR_PAL_Purple] = Color(COLOR_Purple);
     colorTable[COLOR_PAL_Teal] = Color(COLOR_Teal);
     colorTable[COLOR_PAL_Navy] = Color(COLOR_Navy);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Assigna un color a la paleta.
+/// \param index: Index del color.
+/// \param color: El color a asignar.
+///
+void ColorPalette::setColor(
+    uint8_t index, 
+    Color color) {
+    
+    if (index >= 20 & index <= 255)
+        colorTable[index] = color;
 }
