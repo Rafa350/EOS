@@ -19,7 +19,6 @@ namespace eos {
             void end();
             void wrCommand(uint8_t data);
             void wrData(uint8_t data);
-            void wrColor(Color color);
             uint8_t rdData();
     };
 
@@ -47,16 +46,17 @@ namespace eos {
             void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
 
         private:
-            void writePixel(Color color, int32_t count);
-            void writePixel(const Color *colors, int32_t count);
-            void writeProgram(const uint8_t *data);
-            void readPixel(Color *colors, int32_t count);
-            void selectRegion(int16_t x, int16_t y, int16_t width, int16_t height);
-            void startMemoryWrite();
-            void startMemoryRead();
+            void ctrlInitialize();
+            void ctrlWriteProgram(const uint8_t *data);
+            void ctrlWritePixel(Color color, int32_t count);
+            void ctrlWritePixel(const Color *colors, int32_t count);
+            void ctrlReadPixel(Color *colors, int32_t count);
+            void ctrlDisplayOff();
+            void ctrlSelectRegion(int16_t x, int16_t y, int16_t width, int16_t height);
+            void ctrlStartMemoryWrite();
+            void ctrlStartMemoryRead();
     };
 }
-
 
 
 #endif

@@ -65,16 +65,11 @@ Display::~Display() {
 /// ----------------------------------------------------------------------
 /// \brief Selecciona el color per dibuixar.
 /// \param color: El color a seleccionar.
-/// \return L'anterior color seleccionat.
 ///
-Color Display::setColor(
-    Color _color) {
+void Display::setColor(
+    Color color) {
     
-    Color oldColor = color;
-    
-    color = _color;
-    
-    return oldColor;
+    this->color = color;
 }
 
 
@@ -97,15 +92,11 @@ void Display::setTextAlign(
 /// \param font: El font a seleccionar.
 /// \return L'anterior font seleccionat.
 ///
-Font *Display::setFont(
-    Font *_font) {
-    
-    Font *oldFont = font;
-    
-    font = _font;
-    font->getFontInfo(fi);
-    
-    return oldFont;
+void Display::setFont(
+    Font *font) {
+
+    this->font = font;
+    this->font->getFontInfo(fi);
 }
 
 

@@ -80,8 +80,8 @@ namespace eos {
             ~Display();
             void setClip(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
             void resetClip();
-            Color setColor(Color color);
-            Font *setFont(Font *font);
+            void setColor(Color color);
+            void setFont(Font *font);
             void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
             inline IDisplayDriver *getDriver() const { return driver; }
             int16_t getTextWidth(const char *text, int16_t offset = 0, int16_t length = -1);
