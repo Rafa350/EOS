@@ -96,7 +96,6 @@ void Display::setFont(
     Font *font) {
 
     this->font = font;
-    this->font->getFontInfo(fi);
 }
 
 
@@ -457,6 +456,8 @@ int16_t Display::drawChar(
     int16_t y, 
     char c) {
 
+    FontInfo fi;
+    font->getFontInfo(fi);
     if ((c >= fi.firstChar) && (c <= fi.lastChar)) {
         CharInfo ci;
         font->getCharInfo(c, ci);
@@ -528,11 +529,8 @@ int16_t Display::getTextWidth(
     int16_t length) {
     
     int16_t w = 0;
-    for (int16_t i = offset, j = length; j && s[i]; i++, j--) {
-        CharInfo ci;
-        font->getCharInfo(s[i], ci);
-        w += ci.advance;
-    }
+    for (int16_t i = offset, j = length; j && s[i]; i++, j--) 
+        w += font->getCharAdvance(s[i]);
 
     return w;
 }
@@ -546,7 +544,7 @@ int16_t Display::getTextWidth(
 int16_t Display::getTextHeight(
     const char *s) {
     
-    return fi.height;
+    return font->getFontHeight();
 }
 
 
@@ -580,7 +578,7 @@ void Display::putTTY(
 
                 case '\n':
                     cursorX = 0;
-                    cursorY += fi.height;
+                    cursorY += font->getFontHeight();
                     if (cursorY >= screenHeight)
                         cursorY = 0;
                     break;
@@ -590,7 +588,7 @@ void Display::putTTY(
                     font->getCharInfo(c, ci);
                     if ((cursorX + ci.advance) >= screenWidth) {
                         cursorX = 0;
-                        cursorY += fi.height;
+                        cursorY += font->getFontHeight();
                         if (cursorY >= screenWidth) {
 
                             // TODO: fer scroll de pantalla linia a linia

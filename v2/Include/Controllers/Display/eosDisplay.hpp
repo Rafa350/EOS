@@ -68,7 +68,6 @@ namespace eos {
             int16_t clipY2;
             Color color;
             Font *font;
-            FontInfo fi;
             HorizontalTextAlign hAlign;
             VerticalTextAlign vAlign;
             int16_t cursorX;

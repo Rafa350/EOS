@@ -35,13 +35,20 @@ namespace eos {
 
     class Font {
         private:
+            char chCache;
+            CharInfo ciCache;
             const uint8_t *fontResource;
             
         public:
             Font(const char *fontName, int16_t height, FontStyle style);
             Font(const uint8_t *fontResource);
             void getFontInfo(FontInfo &fi) const;
-            void getCharInfo(char ch, CharInfo &ci) const;
+            void getCharInfo(char ch, CharInfo &ci);
+            inline int16_t getFontHeight() const { return fontResource[1]; }
+            int16_t getCharAdvance(char ch);
+            
+        private:
+            void updateCache(char ch);
     };
 }
 
