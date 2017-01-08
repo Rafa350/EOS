@@ -1,8 +1,38 @@
 #include "eos.hpp"
+#include "Controllers/Display/eosColor.hpp"
 #include "Services/Forms/eosForms.hpp"
 
 
 using namespace eos;
+
+
+VisualScheme visualScheme = {
+    .labelNormalTextColor = COLOR_White,
+    .labelActiveTextColor = COLOR_Yellow,
+    .labelDisabledTextColor = COLOR_Gray,
+    .labelBorderColor = COLOR_White,
+    .labelBackgroundColor = COLOR_Black,
+    .labelBorderThickness = 1,
+
+    .editorNormalTextColor = COLOR_Yellow,
+    .editorActiveTextColor = COLOR_Yellow,
+    .editorDisabledTextColor = COLOR_Gray,
+    .editorBorderColor = COLOR_Yellow,
+    .editorBackgroundColor = COLOR_Black,
+    .editorBorderThickness = 1,
+            
+    .menuBorderColor = COLOR_Red,
+    .menuSelectedBorderColor = COLOR_Yellow,
+    .menuTitleTextColor = COLOR_Red,
+    .menuTitleBackgroundColor = COLOR_Orange,
+    .menuNormalTextColor = COLOR_Yellow,
+    .menuSelectedTextColor = COLOR_Yellow,
+    .menuDisabledTextColor = COLOR_Gray,
+    .menuBackgroundColor = COLOR_Black,
+    .menuSelectedBackgroundColor = COLOR_Blue,
+    .menuBorderThickness = 1,
+    .menuItemHeight = 20
+};
 
 
 /// ----------------------------------------------------------------------

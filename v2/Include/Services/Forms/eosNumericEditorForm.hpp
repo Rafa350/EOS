@@ -22,10 +22,6 @@ namespace eos {
             const char *prefix;
             const char *suffix;
             IIncDecFormChangeEvent *evChange;
-            int8_t borderWidth;
-            Color borderColor;
-            Color fgColor;
-            Color bkColor;
             
         public:
             NumericEditorForm(FormsService *service, Form *parent);

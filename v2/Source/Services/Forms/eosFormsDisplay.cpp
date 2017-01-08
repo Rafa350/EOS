@@ -157,20 +157,28 @@ void FormsDisplay::drawLine(
 /// \param y: Coordinada y de la posicio.
 /// \param width: Amplada.
 /// \param height: Alçada.
+/// \param thickness: Amplada de linia.
 ///
 void FormsDisplay::drawRectangle(
     int16_t x,
     int16_t y,
     int16_t width,
-    int16_t height) {
+    int16_t height,
+    int16_t thickness) {
 
-    if (wrCheck(9)) {
-        wr8(CMD_DRAWRECTANGLE);
-        wr16(offsetX + x);
-        wr16(offsetY + y);
-        wr16(offsetX + x + width - 1);
-        wr16(offsetY + y + height - 1);
-        wrEND();
+    while (thickness--) {
+        if (wrCheck(9)) {
+            wr8(CMD_DRAWRECTANGLE);
+            wr16(offsetX + x);
+            wr16(offsetY + y);
+            wr16(offsetX + x + width - 1);
+            wr16(offsetY + y + height - 1);
+            wrEND();
+        }
+        x += 1;
+        y += 1;
+        width -= 2;
+        height -= 2;
     }
 }
 

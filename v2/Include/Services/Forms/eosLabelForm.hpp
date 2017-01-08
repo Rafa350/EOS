@@ -12,16 +12,11 @@ namespace eos {
     class LabelForm: public Form {
         private:
             const char *title;
-            int8_t borderWidth;
-            Color borderColor;
-            Color fgColor;
-            Color bkColor;
             
         public:
             LabelForm(FormsService *service, Form *parent);
-            
+
             void setTitle(const char *title);
-            inline const char *getTitle() const { return title; }
 
         protected:
             void onPaint(FormsDisplay *display);

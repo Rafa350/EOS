@@ -8,6 +8,7 @@ using namespace eos;
 
 
 static const char *emptyString = "";
+extern VisualScheme visualScheme;
 
 
 /// ----------------------------------------------------------------------
@@ -22,11 +23,7 @@ NumericEditorForm::NumericEditorForm(
     Form(service, parent),
     prefix(emptyString),
     suffix(emptyString),
-    evChange(nullptr),
-    borderWidth(1),
-    borderColor(COLOR_Blue), 
-    fgColor(COLOR_Yellow),
-    bkColor(COLOR_Black) {
+    evChange(nullptr) {
 }
 
 
@@ -122,20 +119,24 @@ void NumericEditorForm::setSuffix(
 void NumericEditorForm::onPaint(
     FormsDisplay *display) {
     
+    int16_t width = getWidth();
+    int16_t height = getHeight();
+
     char text[40];
     sprintf(text, "%s%d%s", prefix, value, suffix);
 
-    if (borderWidth) {
-        display->setColor(borderColor);
+    if (visualScheme.editorBorderThickness) {
+        display->setColor(visualScheme.editorBorderColor);
         display->drawRectangle(0, 0, 100, 20);
     }
     
-    display->setColor(bkColor);
-    display->fillRectangle(1, 1, 98, 18);
+    display->setColor(visualScheme.editorBackgroundColor);
+    display->fillRectangle(visualScheme.editorBorderThickness, visualScheme.editorBorderThickness, 
+        width - (visualScheme.editorBorderThickness << 1), height - (visualScheme.editorBorderThickness << 1));
 
     display->setTextAlign(HorizontalTextAlign::right, VerticalTextAlign::bottom);
-    display->setColor(fgColor);
-    display->drawText(96, 16, text, 0, -1);
+    display->setColor(visualScheme.editorNormalTextColor);
+    display->drawText(width - 2, height - 2, text, 0, -1);
 }
 
      

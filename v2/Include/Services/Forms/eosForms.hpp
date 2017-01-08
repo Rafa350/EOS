@@ -111,6 +111,34 @@ namespace eos {
 #endif
         };
     };
+    
+    struct VisualScheme {
+        Color labelNormalTextColor;
+        Color labelActiveTextColor;
+        Color labelDisabledTextColor;
+        Color labelBorderColor;
+        Color labelBackgroundColor;
+        int16_t labelBorderThickness;
+        
+        Color editorNormalTextColor;
+        Color editorActiveTextColor;
+        Color editorDisabledTextColor;
+        Color editorBorderColor;
+        Color editorBackgroundColor;
+        int16_t editorBorderThickness;
+        
+        Color menuBorderColor;
+        Color menuSelectedBorderColor;
+        Color menuTitleTextColor;
+        Color menuTitleBackgroundColor;
+        Color menuNormalTextColor;
+        Color menuSelectedTextColor;
+        Color menuDisabledTextColor;
+        Color menuBackgroundColor;
+        Color menuSelectedBackgroundColor;
+        int16_t menuBorderThickness;
+        int16_t menuItemHeight;
+    };
 
     typedef Queue<Message> MessageQueue;
 
@@ -163,7 +191,7 @@ namespace eos {
             void setColor(Color color);
             void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
             void drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-            void drawRectangle(int16_t x, int16_t y, int16_t width, int16_t height);
+            void drawRectangle(int16_t x, int16_t y, int16_t width, int16_t height, int16_t thickness = 1);
             void drawText(int16_t x, int16_t y, const char *text, int16_t offset, int16_t length);
             void fillRectangle(int16_t x, int16_t y, int16_t width, int16_t height);
             void render();

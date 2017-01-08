@@ -8,6 +8,7 @@ using namespace eos;
 
 
 static const char *emptyString = "";
+extern VisualScheme visualScheme;
 
 
 /// ----------------------------------------------------------------------
@@ -20,11 +21,7 @@ LabelForm::LabelForm(
     Form *parent):
     
     Form(service, parent),
-    title(emptyString),
-    borderWidth(1),
-    borderColor(COLOR_Red), 
-    fgColor(COLOR_Yellow),
-    bkColor(COLOR_Transparent) {
+    title(emptyString) {
 }
 
 
@@ -51,12 +48,15 @@ void LabelForm::onPaint(
     int16_t width = getWidth();
     int16_t height = getHeight();
     
-    display->setColor(borderColor);
-    display->drawRectangle(0, 0, width, height);
+    if (visualScheme.labelBorderThickness > 0) {
+        display->setColor(visualScheme.labelBorderColor);
+        display->drawRectangle(0, 0, width, height, visualScheme.labelBorderThickness);
+    }
     
-    display->setColor(bkColor);
-    display->fillRectangle(1, 1, width - 2, height - 2);
+    display->setColor(visualScheme.labelBackgroundColor);
+    display->fillRectangle(visualScheme.labelBorderThickness, visualScheme.labelBorderThickness, 
+        width - (visualScheme.labelBorderThickness << 1), height - (visualScheme.labelBorderThickness << 1));
 
-    display->setColor(fgColor);
+    display->setColor(visualScheme.labelNormalTextColor);
     display->drawText(2, height - 3, title, 0, -1);
 }

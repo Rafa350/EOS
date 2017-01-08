@@ -4,18 +4,10 @@
 #include "Controllers/Display/eosColor.hpp"
 
 
-#define Menu_BorderColor                    RGB(128, 0, 0)
-#define Menu_BackgroundColor                RGB(16, 0, 0)
-#define Menu_TitleTextColor                 RGB(200, 0, 0)
-#define Menu_ItemNormalTextColor            COLOR_SkyBlue
-#define Menu_ItemSelectedTextColor          COLOR_SkyBlue
-#define Menu_ItemDisabledTextColor          RGB(126, 126, 126)
-#define Menu_ItemSelectedBorderColor        COLOR_SkyBlue
-#define Menu_ItemSelectedBackgroundColor    COLOR_DarkBlue
-#define Menu_ItemHeight                     20
-
-
 using namespace eos;
+
+
+extern VisualScheme visualScheme;
 
 
 /// ----------------------------------------------------------------------
@@ -77,17 +69,17 @@ void MenuForm::onPaint(
         
         // Dibuixa el fons
         //
-        display->clear(Menu_BackgroundColor);
+        display->clear(visualScheme.menuBackgroundColor);
 
         // Dibuixa el marc
         //
-        display->setColor(Menu_BorderColor);
+        display->setColor(visualScheme.menuBorderColor);
         display->drawRectangle(0, 0, 240, 320);
         display->drawLine(0, 20, 239, 20);
 
         // Dibuixa el titol
         //
-        display->setColor(Menu_TitleTextColor);
+        display->setColor(visualScheme.menuTitleTextColor);
         display->drawText(4, 16, title, 0, titleLen);    
         
         refreshBackground = false;
@@ -106,23 +98,23 @@ void MenuForm::onPaint(
         unsigned itemId = resource[itemOffset + 2 + itemTitleLen];
 
         if (i == info->currentItem) {
-            display->setColor(Menu_ItemSelectedBackgroundColor);
-            display->fillRectangle(4, k, 232, Menu_ItemHeight);
-            display->setColor(Menu_ItemSelectedBorderColor);
-            display->drawRectangle(4, k, 232, Menu_ItemHeight);
-            display->setColor(Menu_ItemSelectedTextColor);
+            display->setColor(visualScheme.menuSelectedBackgroundColor);
+            display->fillRectangle(4, k, 232, visualScheme.menuItemHeight);
+            display->setColor(visualScheme.menuSelectedBorderColor);
+            display->drawRectangle(4, k, 232, visualScheme.menuItemHeight);
+            display->setColor(visualScheme.menuSelectedTextColor);
         }
         else {
-            display->setColor(Menu_BackgroundColor);
-            display->fillRectangle(4, k, 232, Menu_ItemHeight);
-            display->setColor(Menu_ItemNormalTextColor);
+            display->setColor(visualScheme.menuBackgroundColor);
+            display->fillRectangle(4, k, 232, visualScheme.menuItemHeight);
+            display->setColor(visualScheme.menuNormalTextColor);
         }
 
         onDrawItem(itemId, itemTitle, display, 4, k + 15, 0, 0);
         display->drawText(4, k + 15, itemTitle, 0, itemTitleLen);
         
         i += 1;
-        k += Menu_ItemHeight;
+        k += visualScheme.menuItemHeight;
     }
 }
 
