@@ -4,19 +4,27 @@
 
 #include "eos.hpp"
 #include "Services/Forms/eosForms.hpp"
-#include "Controllers/Display/eosColor.hpp"
 
 
 namespace eos {
+    
+    typedef enum class __LabelAlign {
+        left,
+        right
+    } LabelAlign;
        
     class LabelForm: public Form {
         private:
             const char *title;
+            LabelAlign labelAlign;
             
         public:
             LabelForm(FormsService *service, Form *parent);
 
             void setTitle(const char *title);
+            void setLabelAlign(LabelAlign labelAlign);
+            inline const char* getTitle() const { return title; }
+            inline LabelAlign getLabelAlign() const { return labelAlign; }
 
         protected:
             void onPaint(FormsDisplay *display);
