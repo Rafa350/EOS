@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<!-- Maquina d'estats pel programa 0
+-->
+<machine name="program0" initialState="ArmUp:Start">
+
+    <initialAction>
+        doPistonUp();
+        doAirJetOff();
+        doAirAssistOff();
+        doVacuumOff();
+        doSignalErrorOff();
+        doSignalWorkingOff();
+    </initialAction>
+    
+    <transition event="EV_INP_PerimetralSecutity" next="Error:Start">
+        <action>
+            doPistonStop();
+            doAirJetOff();
+            doAirAssistOff();
+            doVacuumOff();
+        </action>
+    </transition>
+
+    <!-- Espera senyal de arrancada
+    -->
+    <group name="WaitTrigger">
+    
+        <state name="Start">
+            <transition event="INP_Trigger" next="Delay"/>
+        </state>
+        
+        <state name="Delay">
+            <enterAction>
+                timStart(TIM_T1, varGet(VAR_TriggerDelay));
+            </enterAction>
+            <transition event="EV_TIM_T1" next="PrintLabel:Start"/>
+        </state>
+        
+    </group>
+
+    <!-- Pujar el pisto
+     -->
+    <group name="ArmUp">
+     
+        <!-- Retard inicial de l'activitat
+        -->
+        <state name="Start">
+            <enterAction>
+                notify(SIG_ArmUpStartActivity);
+                timStart(TIM_T1, varGet(VAR_ArmUpPreDelay));
+            </enterAction>
+            <transition event="EV_TIM_T1" next="Move"/>
+        </state>
+
+        <!-- Realitza el moviment del pisto
+        -->
+        <state name="Move">
+            <enterAction>
+                doPistonUp();
+                timStart(TIM_T1, varGet(VAR_ArmUpTimeout));
+            </enterAction>
+            <transition event="EV_INP_PistonTop" next="End"/>
+            <transition event="EV_TIM_T1" next="Error:Start">
+                <activity>
+                    notify(SIG_ArmUpTimeout);                
+                </activity>
+            </transition>
+        </state>
+
+        <!-- Retart final de l'activitat
+        -->
+        <state name="End">
+            <enterAction>
+                timStart(TIM_T1, varGet(VAR_ArmUpPostDelay));
+            </enterAction>
+            <exitAction>
+                notify(SIG_ArmUpEndActivity);
+            </exitAction>
+            <transition event="EV_TIM_T1" next="WaitTrigger:Start"/>
+        </state>
+                
+    </group>
+        
+    <!-- Baixa el pisto aplicador
+    -->
+    <group name="ArmDown">
+    
+        <state name="Start">
+            <enterAction>
+                notify(SIG_ArmDownStartActivity);
+                timStart(TIM_T1, varGet(VAR_ArmDownPreDelay));
+            </enterAction>
+            <transition event="EV_TIM_T1" next="End"/>
+        </state>
+        
+        <state name="End">
+            <enterAction>
+                doPistonDown();
+                timStart(TIM_T1, varGet(VAR_ArmDownPostDelay));
+            </enterAction>
+            <transition event="EV_TIM_T1" next="ApplyByTouch:Start">
+                <activity>
+                    notify(SIG_ArmDownEndActivity);
+                </activity>
+            </transition>
+        </state>
+    
+    </group>
+    
+    <!-- Imprimeix una etiqueta
+    -->
+    <group name="PrintLabel">
+    
+        <state name="Start">
+            <enterAction>
+                timStart(TIM_T1, varGet(VAR_PrintLabelPreDelay));
+            </enterAction>
+            <transition event="EV_TIM_T1" next="Print"/>
+        </state>
+        
+        <state name="Print">
+            <enterAction>
+                if (inpGet(INP_PrinterError))
+                    fsmSetState(ST_ErrorStart);
+                else {
+                    timStart(TIM_T1, varGet(VAR_AirAssistDelay));
+                    timStart(TIM_T2, varGet(VAR_VacuumDelay));
+                    timStart(TIM_T3, varGet(VAR_PrintLabelTimeout));
+                    doPrintLabel();
+                }
+            </enterAction>
+            <transition event="EV_TIM_T1">
+                <action>
+                    doAirAssistOn();
+                </action>
+            </transition>
+            <transition event="EV_TIM_T2">
+                <action>
+                    doVacuumOn();
+                </action>
+            </transition>
+            <transition event="EV_TIM_T3" next="Error:Start">
+                <action>
+                    doAirAssistOff();
+                    doVacuumOff();
+                </action>
+            </transition>
+            <transition event="EV_INP_LabelReady" next="End">
+                <action>
+                    doAirAssistOff();
+                    doVacuumOn();
+                </action>
+            </transition>
+            <transition event="EV_INP_PrinterError" next="Error:Start">
+                <action>
+                    doAirAssistOff();
+                    doVacuumOff();
+                </action>
+            </transition>
+        </state>
+        
+        <state name="End">
+            <enterAction>
+                timStart(TIM_T1, varGet(VAR_PrintLabelPostDelay));
+            </enterAction>
+            <transition event="EV_TIM_T1" next="ArmDown:Start"/>
+        </state>
+        
+    </group>
+    
+    <!-- Aplica l'etiqueta per contacte
+    -->
+    <group name="ApplyByTouch">
+    
+        <state name="Start">
+            <enterAction>
+                timStart(TIM_T1, varGet(VAR_ApplyByContactPreDelay));
+            </enterAction>
+            <transition event="EV_TIM_T1" next="Apply"/>
+        </state>
+        
+        <state name="Apply">
+            <startAction>
+                timStart(TIM_T1, varGet(VAR_ApplyByContactTimeout));
+            </startAction>
+            <transition event="EV_TIM_T1" next="Error:Start">
+                <action>
+                    doVacuumOff();
+                </action>
+            </transition>
+            <transition event="EV_INP_PistonBottom" next="End">
+                <action>
+                    doSignalWorkingPulse();
+                    doVacuumOff();
+                    doAirJetPulse();
+                </action>
+            </transition>
+        </state>
+        
+        <state name="End">
+            <enterAction>
+                timStart(TIM_T1, varGet(VAR_ApplyByContactPostDelay));
+            </enterAction>
+            <transition event="EV_TIM_T1" next="ArmUp:Start"/>
+        </state>
+        
+    </group>   
+    
+    <!-- Gestiona els errors
+    -->
+    <group name="Error">
+    
+        <state name="Start">
+            <enterAction>
+                doSignalErrorOn();
+                doSignalWorkingOff();
+            </enterAction>
+            <transition event="EV_INP_Restart" next="WaitTrigger:Start">
+                <action>
+                    doSignalErrorOff();
+                    doPistonUp();
+                </action>
+            </transition>
+        </state>
+        
+    </group>
+    
+</machine>
