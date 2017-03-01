@@ -108,7 +108,7 @@ void MyApplication::onInitialize() {
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa els events del teclat.
-/// \param notification: Parametres del event.
+/// \param state: Estat del teclat.
 ///
 #ifdef eosFormsService_UseKeyboard
 void MyApplication::keyboardNotifyEventHandler(
@@ -149,8 +149,9 @@ void MyApplication::keyboardNotifyEventHandler(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa els events del teclat.
-/// \params notification: Parametres del event.
+/// \brief Procesa els events del selector.
+/// \param position: Posicio del selector.
+/// \param state: Estat del boto.
 ///
 #ifdef eosFormsService_UseSelector
 void MyApplication::selectorNotifyEventHandler(
