@@ -13,6 +13,11 @@
 namespace eos {
     
     class Application;
+    
+    enum class I2CProtocolType {        // Protocol de comunicacio
+        Raw,                            // -Modus I2C estandard
+        Packed                          // -Modus empaquetat (Longitut y verificacio))
+    };
           
     class I2CMasterService: public Service {
         private:
@@ -40,6 +45,7 @@ namespace eos {
                 unsigned txCount;
                 unsigned rxCount;
                 unsigned rxSize;
+                I2CProtocolType protocolType;
                 BinarySemaphore *notify;
                 
                 inline void *operator new (size_t size) { return transactionAllocator.allocate(size); }
