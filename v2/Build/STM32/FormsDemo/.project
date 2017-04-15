@@ -28,42 +28,12 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>inc/App</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/App</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/Framework</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/App/STM32F429</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/App/eosConfig.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/FormsDemo/eosConfig.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -101,61 +71,6 @@
 			<name>src/Framework/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/App/STM32F429/FreeRTOSConfig.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/FormsDemo/STM32F429/FreeRTOSConfig.h</location>
-		</link>
-		<link>
-			<name>inc/App/STM32F429/HardwareProfile.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/FormsDemo/STM32F429/HardwareProfile.h</location>
-		</link>
-		<link>
-			<name>inc/App/STM32F429/HardwareProfile_STM32F429I-DISC1.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/FormsDemo/STM32F429/HardwareProfile_STM32F429I-DISC1.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Services</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/eos.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eos.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/eosAssert.hpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eosAssert.hpp</location>
-		</link>
-		<link>
-			<name>inc/Framework/FreeRTOS/queue.h</name>
-			<type>1</type>
-			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/include/queue.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/FreeRTOS/semphr.h</name>
-			<type>1</type>
-			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/include/semphr.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/FreeRTOS/task.h</name>
-			<type>1</type>
-			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/include/task.h</location>
 		</link>
 		<link>
 			<name>src/App/STM32F429/Main.cpp</name>
@@ -213,51 +128,6 @@
 			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/timers.c</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halGPIO_STM32F4.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO_STM32F4.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halSPI.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halSPI.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halSPI_STM32F4.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halSPI_STM32F4.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halTMR.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halTMR.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Services/Forms</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Services/eosKeyboard.hpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosKeyboard.hpp</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Services/eosSelector.hpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosSelector.hpp</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/Core</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Controller/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -306,21 +176,6 @@
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/eosApplication.cpp</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Services/Forms/eosForms.hpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/Forms/eosForms.hpp</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/Core/eosCallbacks.hpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/System/Core/eosCallbacks.hpp</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/Core/eosPoolAllocator.hpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/System/Core/eosPoolAllocator.hpp</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Driver</name>

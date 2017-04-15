@@ -29,7 +29,7 @@ class Led2LoopService: public AppLoopService {
 class MyApplication: public Application {
 	protected:
 		void onInitialize();
-        
+
 	public:
 		MyApplication();
 };
@@ -50,8 +50,8 @@ MyApplication::MyApplication() {
 ///
 void MyApplication::onInitialize() {
 
-	halGPIOInitializePin(LEDS_LD1_PORT, LEDS_LD1_PIN, GPIO_DIRECTION_OUTPUT);
-	halGPIOInitializePin(LEDS_LD2_PORT, LEDS_LD2_PIN, GPIO_DIRECTION_OUTPUT);
+	halGPIOInitializePin(LEDS_LD1_PORT, LEDS_LD1_PIN, HAL_GPIO_DIRECTION_OUTPUT);
+	halGPIOInitializePin(LEDS_LD2_PORT, LEDS_LD2_PIN, HAL_GPIO_DIRECTION_OUTPUT);
 
 	halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 	halGPIOClearPin(LEDS_LD2_PORT, LEDS_LD2_PIN);

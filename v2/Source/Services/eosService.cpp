@@ -10,17 +10,17 @@ using namespace eos;
 /// \param name: Nom del servei.
 ///
 Service::Service(
-    Application *_application,
-    const char *_name,
+    Application *application,
+    const char *name,
     unsigned stackSize,
     TaskPriority priority):
-    
-    application(nullptr),
-    name(_name),
-    task(stackSize, priority, _name, this) {
 
-    if (_application != nullptr)
-        _application->addService(this);
+    application(nullptr),
+    name(name),
+    task(stackSize, priority, name, this) {
+
+    if (application != nullptr)
+        application->addService(this);
 }
 
 
@@ -28,7 +28,7 @@ Service::Service(
 /// \brief Destructor.
 ///
 Service::~Service() {
-     
+
     if (application != nullptr)
         application->removeService(this);
  }
