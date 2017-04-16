@@ -5,7 +5,7 @@
 
 GPIOPortRegs gpioPortRegs[] = {
 #if defined(PORTA)
-    { &TRISASET, &TRISACLR, &ODCASET, &ODCACLR, ,&LATASET, &LATACLR, &LATAINV, &LATA, &PORTA}, 
+    { &TRISASET, &TRISACLR, &ODCASET, &ODCACLR, &LATASET, &LATACLR, &LATAINV, &LATA, &PORTA}, 
 #else
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
 #endif    
