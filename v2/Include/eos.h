@@ -10,6 +10,8 @@
 		#define EOS_PIC32MX
 	#elif defined(__PIC32MZ)
 		#define EOS_PIC32MZ
+	#else
+		#error "No se reconoce el procesador"
 	#endif
 
 	// Declara el indicador de depuracio
@@ -23,6 +25,8 @@
 	// Declara la familia del procesador
 	#if defined(STM32F4)
 		#define EOS_STM32F4
+	#else
+		#error "No se reconoce el procesador"
 	#endif
 
 	// Declara el indicador de depuracio

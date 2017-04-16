@@ -16,9 +16,11 @@ static const char *defaultTimerName = "";
 /// \param autoreload: Indica si repeteix el cicle continuament
 ///
 Timer::Timer(
-    bool _autoreload) :
-    autoreload(_autoreload),
+    bool autoreload) :
+
     handler(nullptr),
+    autoreload(autoreload),
+	tag(nullptr),
     evTimeout(nullptr) {
 }
 
@@ -27,10 +29,10 @@ Timer::Timer(
 /// \brief Destructor
 ///
 Timer::~Timer() {
-    
+
     if (evTimeout != nullptr)
         delete evTimeout;
-    
+
     if (handler != nullptr)
         xTimerDelete(handler, 100);
 }
@@ -49,7 +51,7 @@ void Timer::start(
         handler = xTimerCreate(defaultTimerName, timeout / portTICK_PERIOD_MS, autoreload, (void*) this, timerCallback);
         xTimerStart(handler, blockTime / portTICK_PERIOD_MS);
     }
-    else 
+    else
         xTimerChangePeriod(handler, timeout / portTICK_PERIOD_MS, blockTime / portTICK_PERIOD_MS);
 }
 
@@ -60,7 +62,7 @@ void Timer::start(
 ///
 void Timer::stop(
     unsigned blockTime) {
-    
+
     if (handler != nullptr)
         xTimerStop(handler, blockTime / portTICK_PERIOD_MS);
 }
@@ -71,7 +73,7 @@ void Timer::stop(
 /// \return True si esta actiu.
 ///
 bool Timer::isActive() const {
-    
+
     return handler == nullptr ? false : xTimerIsTimerActive(handler) != pdFALSE;
 }
 
@@ -82,7 +84,7 @@ bool Timer::isActive() const {
 ///
 void Timer::timerCallback(
     void *handler) {
-    
+
     Timer *timer = reinterpret_cast<Timer*>(pvTimerGetTimerID(handler));
     if (timer->evTimeout != nullptr)
         timer->evTimeout->execute(timer);

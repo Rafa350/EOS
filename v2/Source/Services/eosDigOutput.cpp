@@ -1,5 +1,6 @@
 #include "eos.hpp"
 #include "System/Core/eosQueue.hpp"
+#include "System/Core/eosTimer.hpp"
 #include "Services/eosDigOutput.hpp"
 #include "HAL/halGPIO.h"
 
@@ -19,7 +20,7 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 ///
 DigOutputService::DigOutputService(
     Application *application) :
-    
+
     Service(application, serviceName, taskStackSize, taskPriority),
     commandQueue(commandQueueSize) {
 }
@@ -31,7 +32,7 @@ DigOutputService::DigOutputService(
 ///
 void DigOutputService::add(
     DigOutput *output) {
-    
+
     if ((output != nullptr) && (output->service == nullptr)) {
         outputs.add(output);
         output->service = this;
@@ -45,7 +46,7 @@ void DigOutputService::add(
 ///
 void DigOutputService::remove(
     DigOutput *output) {
-    
+
     if ((output != nullptr) && (output->service == this)) {
         output->service = nullptr;
         outputs.remove(outputs.indexOf(output));
@@ -59,25 +60,25 @@ void DigOutputService::remove(
 ///
 void DigOutputService::run(
     Task *task) {
-    
+
     while (true) {
-        
+
         Command command;
         if (commandQueue.get(command, (unsigned) -1)) {
             switch (command.action) {
                 case Action::clear:
                     doClearAction(command.output);
                     break;
-                    
+
                 case Action::set:
                     doSetAction(command.output);
                     break;
-                    
+
                 case Action::toggle:
                     doToggleAction(command.output);
                     break;
-                    
-                case Action::pulse: 
+
+                case Action::pulse:
                     doPulseAction(command.output, command.time);
                     break;
             }
@@ -92,15 +93,18 @@ void DigOutputService::run(
 ///
  void DigOutputService::doClearAction(
     DigOutput *output) {
-    
+
     Task::enterCriticalSection();
 
     // Si estava en un puls, para el temporitzador
     //
-    if (output->timer != nullptr) 
+    if (output->timer != nullptr)
         output->timer->stop(1000);
-    
-    halGPIOPinSetState(output->pin, output->inverted);    
+
+    if (output->inverted)
+    	halGPIOSetPin(output->port, output->pin);
+    else
+    	halGPIOClearPin(output->port, output->pin);
 
     Task::exitCriticalSection();
 }
@@ -117,10 +121,13 @@ void DigOutputService::run(
 
     // Si estava en un puls, para el temporitzador
     //
-    if (output->timer != nullptr) 
+    if (output->timer != nullptr)
         output->timer->stop(1000);
 
-    halGPIOPinSetState(output->pin, !output->inverted);    
+    if (output->inverted)
+    	halGPIOClearPin(output->port, output->pin);
+    else
+    	halGPIOSetPin(output->port, output->pin);
 
     Task::exitCriticalSection();
 }
@@ -137,10 +144,10 @@ void DigOutputService::doToggleAction(
 
     // Si estava en un puls, para el temporitzador
     //
-    if (output->timer != nullptr) 
+    if (output->timer != nullptr)
         output->timer->stop(1000);
 
-    halGPIOPinToggleState(output->pin);    
+    halGPIOTogglePin(output->port, output->pin);
 
     Task::exitCriticalSection();
 }
@@ -152,7 +159,7 @@ void DigOutputService::doToggleAction(
 /// \param time: La durada del puls.
 ///
 void DigOutputService::doPulseAction(
-    DigOutput *output, 
+    DigOutput *output,
     unsigned time) {
 
     Task::enterCriticalSection();
@@ -164,15 +171,15 @@ void DigOutputService::doPulseAction(
         output->timer->setEvTimeout<DigOutputService>(this, &DigOutputService::onTimeout);
         output->timer->setTag(output);
     }
-    
+
     // Si el timer no es actiu, inverteix el pin
     //
     if (!output->timer->isActive())
-        halGPIOPinToggleState(output->pin);
-    
+        halGPIOTogglePin(output->port, output->pin);
+
     // Inicia el timer
     //
-    output->timer->start(time, 0);   
+    output->timer->start(time, 0);
 
     Task::exitCriticalSection();
 }
@@ -184,9 +191,9 @@ void DigOutputService::doPulseAction(
 ///
 void DigOutputService::onTimeout(
     Timer *timer) {
-    
+
     DigOutput *output = (DigOutput*) timer->getTag();
-    halGPIOPinToggleState(output->pin);
+    halGPIOTogglePin(output->port, output->pin);
 }
 
 
@@ -198,7 +205,7 @@ void DigOutputService::onTimeout(
 void DigOutputService::set(
     DigOutput *output,
     bool state) {
-    
+
     if (output->get() != state) {
         Command command;
         command.action = state ? Action::set : Action::clear;
@@ -230,7 +237,7 @@ void DigOutputService::toggle(
 void DigOutputService::pulse(
     DigOutput *output,
     unsigned time) {
-    
+
     Command command;
     command.action = Action::pulse;
     command.output = output;
@@ -242,23 +249,26 @@ void DigOutputService::pulse(
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param service: El servei as que s'asignara la sortida.
-/// \param pin: Identificador del pin. (Depend de cada hardware en particular).
+/// \param port: Identificador del port.
+/// \param pin: Identificador del pin.
 /// \param inverted: True si treballa amb logica negativa.
 ///
 DigOutput::DigOutput(
-    DigOutputService *_service,
-    uint8_t _pin,
-    bool _inverted):
+    DigOutputService *service,
+	GPIOPort port,
+    GPIOPin pin,
+    bool inverted):
+
     service(nullptr),
-    pin(_pin),
-    inverted(_inverted),
-    timer(nullptr) {
+	timer(nullptr),
+	port(port),
+    pin(pin),
+    inverted(inverted) {
 
-    halGPIOPinSetState(pin, inverted);
-    halGPIOPinSetModeOutput(pin, false);    
+    halGPIOInitializePin(port, pin, HAL_GPIO_DIRECTION_OUTPUT);
 
-    if (_service != nullptr)
-        _service->add(this);
+    if (service != nullptr)
+        service->add(this);
 }
 
 
@@ -266,10 +276,10 @@ DigOutput::DigOutput(
 /// \brief Destructor.
 ///
 DigOutput::~DigOutput() {
-    
+
     if (service != nullptr)
         service->remove(this);
-    
+
     if (timer != nullptr)
         delete timer;
 }
@@ -281,6 +291,6 @@ DigOutput::~DigOutput() {
 ///
 bool DigOutput::get() const {
 
-    bool state = halGPIOPinGetState(pin);
+    bool state = halGPIOReadPin(port, pin);
     return inverted ? !state : state;
 }

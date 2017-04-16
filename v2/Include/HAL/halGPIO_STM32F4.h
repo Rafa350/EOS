@@ -85,7 +85,7 @@ extern GPIO_TypeDef *gpioPortRegs[];
 	gpioPortRegs[port]->ODR ^= ((uint32_t) 1) << (pin)
 
 #define halGPIOReadPin(port, pin) \
-	gpioPortRegs[port]->IDR & (((uint32_t) 1) << pin) != 0;
+	(gpioPortRegs[port]->IDR & (((uint32_t) 1) << pin)) != 0;
 
 
 #define halGPIOWritePort(port, data) \
