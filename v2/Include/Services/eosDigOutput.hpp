@@ -46,9 +46,11 @@ namespace eos {
             DigOutputService(Application *application);
             void add(DigOutput *output);
             void remove(DigOutput *output);
-            void set(DigOutput *output, bool state);
+            void set(DigOutput *output);
+            void clear(DigOutput *output);
             void toggle(DigOutput *output);
             void pulse(DigOutput *output, unsigned time);
+            void cicle(DigOutput *output, unsigned time1, unsigned time2);
 
         private:
             void run(Task *task);
@@ -67,27 +69,37 @@ namespace eos {
             Timer *timer;
             GPIOPort port;
             GPIOPin pin;
-            bool inverted;
 
         public:
-            DigOutput(DigOutputService *service, GPIOPort port, GPIOPin pin, bool inverted);
+            DigOutput(DigOutputService *service, GPIOPort port, GPIOPin pin);
             ~DigOutput();
             bool get() const;
 
-            /// \brief Asigna l'estat de la sortida.
-            /// \param state: El nou estat
+            /// \brief Asigna l'estat actiu a la sortida.
             ///
-            inline void set(bool state) { service->set(this, state); }
+            inline void set() { service->set(this); }
+
+            /// \brief Asigna l'estat inactiu a la sortida.
+            ///
+            inline void clear() { service->clear(this); }
 
             /// \brief Inverteix l'estat de la sortida
             ///
             inline void toggle() { service->toggle(this); }
 
             /// \brief Genera un puls (Inverteix l'estat momentaneament) en la sortida.
-            /// param time: Direcio del puls en ticks.
+            /// \param time: Duracio del puls en ticks.
             ///
             inline void pulse(unsigned time) { service->pulse(this, time); }
-            void delayedSet(unsigned delay, bool state);
+            
+            /// \brief Genera cicle continu (Inverteix l'estat ciclicament) en la sortida.
+            /// \param time1: Duracio del primer semicicle en ticks.
+            /// \param time2: Duracio del segon semicicle en ticks.
+            ///
+            inline void cicle(unsigned time1, unsigned time2) { service->cicle(this, time1, time2); }
+            
+            void delayedSet(unsigned delay);
+            void delayedClear(unsigned delay);
             void delayedToggle(unsigned delay);
             void delayedPulse(unsigned delay, unsigned time);
 

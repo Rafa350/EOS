@@ -19,7 +19,7 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 /// \param application: L'aplicacio a la que pertany.
 ///
 DigOutputService::DigOutputService(
-    Application *application) :
+    Application *application):
 
     Service(application, serviceName, taskStackSize, taskPriority),
     commandQueue(commandQueueSize) {
@@ -41,7 +41,7 @@ void DigOutputService::add(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Elimina una sourtida del servei.
+/// \brief Elimina una sortida del servei.
 /// \param output: La sortida a eliminar.
 ///
 void DigOutputService::remove(
@@ -101,10 +101,7 @@ void DigOutputService::run(
     if (output->timer != nullptr)
         output->timer->stop(1000);
 
-    if (output->inverted)
-    	halGPIOSetPin(output->port, output->pin);
-    else
-    	halGPIOClearPin(output->port, output->pin);
+    halGPIOClearPin(output->port, output->pin);
 
     Task::exitCriticalSection();
 }
@@ -124,10 +121,7 @@ void DigOutputService::run(
     if (output->timer != nullptr)
         output->timer->stop(1000);
 
-    if (output->inverted)
-    	halGPIOClearPin(output->port, output->pin);
-    else
-    	halGPIOSetPin(output->port, output->pin);
+    halGPIOSetPin(output->port, output->pin);
 
     Task::exitCriticalSection();
 }
@@ -198,17 +192,30 @@ void DigOutputService::onTimeout(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Assigna l'estat d'una sortida.
+/// \brief Assigna l'estat actiu a una sortida.
 /// \param output: La sortida.
-/// \param state: L'estat a asignar.
 ///
 void DigOutputService::set(
-    DigOutput *output,
-    bool state) {
+    DigOutput *output) {
 
-    if (output->get() != state) {
+    if (!output->get()) {
         Command command;
-        command.action = state ? Action::set : Action::clear;
+        command.action = Action::set;
+        command.output = output;
+        commandQueue.put(command, (unsigned) -1);
+    }
+}
+
+/// ----------------------------------------------------------------------
+/// \brief Assigna l'estat inactiu a una sortida.
+/// \param output: La sortida.
+///
+void DigOutputService::clear(
+    DigOutput *output) {
+
+    if (output->get()) {
+        Command command;
+        command.action = Action::clear;
         command.output = output;
         commandQueue.put(command, (unsigned) -1);
     }
@@ -256,16 +263,15 @@ void DigOutputService::pulse(
 DigOutput::DigOutput(
     DigOutputService *service,
 	GPIOPort port,
-    GPIOPin pin,
-    bool inverted):
+    GPIOPin pin):
 
     service(nullptr),
 	timer(nullptr),
 	port(port),
-    pin(pin),
-    inverted(inverted) {
+    pin(pin) {
 
     halGPIOInitializePin(port, pin, HAL_GPIO_DIRECTION_OUTPUT);
+    halGPIOClearPin(port, pin);
 
     if (service != nullptr)
         service->add(this);
@@ -291,6 +297,5 @@ DigOutput::~DigOutput() {
 ///
 bool DigOutput::get() const {
 
-    bool state = halGPIOReadPin(port, pin);
-    return inverted ? !state : state;
+    return halGPIOReadPin(port, pin);
 }

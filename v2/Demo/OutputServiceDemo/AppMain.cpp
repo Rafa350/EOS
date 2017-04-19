@@ -1,36 +1,32 @@
 #include "System/eosApplication.hpp"
 #include "Services/eosAppLoop.hpp"
+#include "Services/eosDigOutput.hpp"
 #include "hal/halGPIO.h"
 
 
 using namespace eos;
 
 
-class Led1LoopService: public AppLoopService {
+class LedLoopService: public AppLoopService {
+    private:
+        DigOutput *output1;
+        DigOutput *output2;
+        
 	public:
-		Led1LoopService(Application *application):
-			AppLoopService(application) {}
-
-	protected:
-		void onRun();
-};
-
-
-class Led2LoopService: public AppLoopService {
-	public:
-		Led2LoopService(Application *application):
-			AppLoopService(application) {}
-
-	protected:
+		LedLoopService(Application *application, DigOutput *output1, DigOutput *output2);
+	
+    protected:
 		void onRun();
 };
 
 
 class MyApplication: public Application {
-	protected:
-		void onInitialize();
-
-	public:
+    private:
+        DigOutputService *digOutputSrv;
+        DigOutput *digOutput1;
+        DigOutput *digOutput2;
+	
+    public:
 		MyApplication();
 };
 
@@ -39,51 +35,41 @@ class MyApplication: public Application {
 /// \brief Contructor
 ///
 MyApplication::MyApplication() {
+   
+    digOutputSrv = new DigOutputService(this);
+    digOutput1 = new DigOutput(digOutputSrv, LEDS_LD1_PORT, LEDS_LD1_PIN);
+    digOutput2 = new DigOutput(digOutputSrv, LEDS_LD2_PORT, LEDS_LD2_PIN);
+    
+    new LedLoopService(this, digOutput1, digOutput2);
+}
 
-	new Led1LoopService((Application*)this);
-	new Led2LoopService((Application*)this);
+
+/// ---------------------------------------------------------------------
+/// \brief Constructor.
+/// \param application: Aplicacio a la que pertany el servei.
+/// \param output: Sortida a controlar.
+///
+LedLoopService::LedLoopService(
+    Application* application, 
+    DigOutput* output1,
+    DigOutput *output2):
+
+    AppLoopService(application),
+    output1(output1),
+    output2(output2) {
+    
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la inicialitzacio de l'aplicacio.
+/// \brief Bucle principal del proces de control de la sortida.
 ///
-void MyApplication::onInitialize() {
-
-	halGPIOInitializePin(LEDS_LD1_PORT, LEDS_LD1_PIN, HAL_GPIO_DIRECTION_OUTPUT);
-	halGPIOInitializePin(LEDS_LD2_PORT, LEDS_LD2_PIN, HAL_GPIO_DIRECTION_OUTPUT);
-
-	halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
-	halGPIOClearPin(LEDS_LD2_PORT, LEDS_LD2_PIN);
-
-	Application::onInitialize();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Bucle principal del proces
-///
-void Led1LoopService::onRun() {
+void LedLoopService::onRun() {
 
 	while (true) {
-
-		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
-
-		Task::delay(100);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Bucle principal del proces
-///
-void Led2LoopService::onRun() {
-
-	while (true) {
-
-		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
-
-		Task::delay(80);
+        output1->toggle();
+        output2->pulse(500);
+		Task::delay(1000);
 	}
 }
 
