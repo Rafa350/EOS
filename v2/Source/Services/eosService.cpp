@@ -1,4 +1,4 @@
-#include "Services/eosService.hpp"
+#include "Services/eosService.h"
 
 
 using namespace eos;

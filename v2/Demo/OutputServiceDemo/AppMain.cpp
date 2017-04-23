@@ -1,6 +1,6 @@
-#include "System/eosApplication.hpp"
-#include "Services/eosAppLoop.hpp"
-#include "Services/eosDigOutput.hpp"
+#include "System/eosApplication.h"
+#include "Services/eosAppLoop.h"
+#include "Services/eosDigOutput.h"
 #include "hal/halGPIO.h"
 
 

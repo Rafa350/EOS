@@ -1,6 +1,6 @@
-#include "eosAssert.hpp"
-#include "System/Collections/eosList.hpp"
-#include "eosListImpl.hpp"
+#include "eosAssert.h"
+#include "System/Collections/eosList.h"
+#include "eosListImpl.h"
 
 #include <string.h>
 #include <stdint.h>

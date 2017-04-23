@@ -1,4 +1,4 @@
-#include "eos.hpp"
+#include "eos.h"
 #include <string.h>
 
 

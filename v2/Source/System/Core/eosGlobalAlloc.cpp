@@ -1,5 +1,5 @@
-#include "eosAssert.hpp"
-#include "System/Core/eosHeapAllocator.hpp"
+#include "eosAssert.h"
+#include "System/Core/eosHeapAllocator.h"
 
 
 static eos::HeapAllocator defaultAllocator;

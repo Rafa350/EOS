@@ -1,6 +1,6 @@
-#include "eosAssert.hpp"
-#include "System/eosApplication.hpp"
-#include "Services/eosService.hpp"
+#include "eosAssert.h"
+#include "System/eosApplication.h"
+#include "Services/eosService.h"
 #include "HAL/halSYS.h"
 
 

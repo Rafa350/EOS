@@ -1,5 +1,5 @@
-#include "eos.hpp"
-#include "System/Core/eosTimer.hpp"
+#include "eos.h"
+#include "System/Core/eosTimer.h"
 
 #include "FreeRTOS.h"
 #include "timers.h"

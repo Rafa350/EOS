@@ -4,6 +4,7 @@
 
 #include "eos.h"
 
+
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
 	#include "hal/halGPIO_PIC32.h"
 

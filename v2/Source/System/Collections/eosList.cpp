@@ -1,8 +1,8 @@
 
-#include "eosAssert.hpp"
-#include "System/Core/eosTask.hpp"
-#include "System/Collections/eosList.hpp"
-#include "eosListImpl.hpp"
+#include "eosAssert.h"
+#include "System/Core/eosTask.h"
+#include "System/Collections/eosList.h"
+#include "eosListImpl.h"
 
 
 using namespace eos;

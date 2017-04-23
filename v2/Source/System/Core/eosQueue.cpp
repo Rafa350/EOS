@@ -1,5 +1,5 @@
-#include "eosAssert.hpp"
-#include "System/Core/eosQueue.hpp"
+#include "eosAssert.h"
+#include "System/Core/eosQueue.h"
 
 #include "FreeRTOS.h"
 #include "queue.h"

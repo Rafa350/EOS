@@ -1,7 +1,7 @@
-#include "eos.hpp"
-#include "System/Core/eosQueue.hpp"
-#include "System/Core/eosTimer.hpp"
-#include "Services/eosDigOutput.hpp"
+#include "eos.h"
+#include "System/Core/eosQueue.h"
+#include "System/Core/eosTimer.h"
+#include "Services/eosDigOutput.h"
 #include "HAL/halGPIO.h"
 
 

@@ -19,8 +19,9 @@
             <itemPath>../../../Include/HAL/halGPIO_PIC32.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
-            <itemPath>../../../Include/Services/eosDigOutput.hpp</itemPath>
+            <itemPath>../../../Include/Services/eosDigOutput.h</itemPath>
           </logicalFolder>
+          <itemPath>../../../Include/eos.h</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -87,11 +88,10 @@
   <sourceRootList>
     <Elem>../../../Demo/OutputServiceDemo</Elem>
     <Elem>../../../Source/HAL/PIC32</Elem>
-    <Elem>../../../Include/HAL</Elem>
     <Elem>../../../Source/Services</Elem>
     <Elem>../../../Source/System</Elem>
     <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
-    <Elem>../../../Include/Services</Elem>
+    <Elem>../../../Include</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -103,7 +103,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.42</languageToolchainVersion>
+        <languageToolchainVersion>1.43</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
