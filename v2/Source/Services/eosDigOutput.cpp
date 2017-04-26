@@ -258,7 +258,6 @@ void DigOutputService::pulse(
 /// \param service: El servei as que s'asignara la sortida.
 /// \param port: Identificador del port.
 /// \param pin: Identificador del pin.
-/// \param inverted: True si treballa amb logica negativa.
 ///
 DigOutput::DigOutput(
     DigOutputService *service,

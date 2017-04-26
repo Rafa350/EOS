@@ -20,6 +20,7 @@
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <itemPath>../../../Include/Services/eosDigOutput.h</itemPath>
+            <itemPath>../../../Include/Services/eosDigInput.h</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
         </logicalFolder>
@@ -51,6 +52,7 @@
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
             <itemPath>../../../Source/Services/eosDigOutput.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosDigInput.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">

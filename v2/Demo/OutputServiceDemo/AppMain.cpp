@@ -1,6 +1,7 @@
 #include "System/eosApplication.h"
 #include "Services/eosAppLoop.h"
 #include "Services/eosDigOutput.h"
+#include "Services/eosDigInput.h"
 #include "hal/halGPIO.h"
 
 
@@ -22,12 +23,16 @@ class LedLoopService: public AppLoopService {
 
 class MyApplication: public Application {
     private:
+        DigInputService *digInputSvc;
         DigOutputService *digOutputSrv;
+        DigInput *digInput1;
         DigOutput *digOutput1;
         DigOutput *digOutput2;
+        DigOutput *digOutput3;
 	
     public:
 		MyApplication();
+        void digInput3_OnChange(DigInput *input);
 };
 
 
@@ -35,12 +40,28 @@ class MyApplication: public Application {
 /// \brief Contructor
 ///
 MyApplication::MyApplication() {
+    
+    digInputSvc = new DigInputService(this);
+    digInput1 = new DigInput(digInputSvc, SW_SW3_PORT, SW_SW3_PIN);
+    digInput1->setChangeEvent<MyApplication>(this, &MyApplication::digInput3_OnChange);
    
     digOutputSrv = new DigOutputService(this);
     digOutput1 = new DigOutput(digOutputSrv, LEDS_LD1_PORT, LEDS_LD1_PIN);
     digOutput2 = new DigOutput(digOutputSrv, LEDS_LD2_PORT, LEDS_LD2_PIN);
+    digOutput3 = new DigOutput(digOutputSrv, LEDS_LD3_PORT, LEDS_LD3_PIN);
     
     new LedLoopService(this, digOutput1, digOutput2);
+}
+
+
+/// --------------------------------------------------------------------
+/// \brief Procesa el event OnChange.
+/// \param input: La entrada que ha produit l'event.
+///
+void MyApplication::digInput3_OnChange(DigInput *input) {
+    
+    if (!input->get())
+        digOutput3->pulse(2000);
 }
 
 

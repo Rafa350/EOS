@@ -1,6 +1,5 @@
-#include "eos.hpp"
-#include "Services/eosDigInput.hpp"
-#include "HAL/halGPIO.h"
+#include "eos.h"
+#include "Services/eosDigInput.h"
 
 
 using namespace eos;
@@ -73,7 +72,7 @@ void DigInputService::run(
             bool changed = false;
             
             input->pattern <<= 1;
-            if (input->pinGet())
+            if (halGPIOReadPin(input->port, input->pin))
                 input->pattern |= 1;
 
             if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
@@ -101,20 +100,21 @@ void DigInputService::run(
 /// \param inverted: Indica si la senyal va invertida.
 ///
 DigInput::DigInput(
-    DigInputService *_service,
-    uint8_t _pin, 
-    bool _inverted):
+    DigInputService *service,
+    GPIOPort port,
+    GPIOPin pin):
+
     service(nullptr),
-    pin(_pin),
-    inverted(_inverted),
+    port(port),
+    pin(pin),
     evChange(nullptr) {
     
-    halGPIOPinSetModeInput(pin);
-    state = pinGet();
+    halGPIOInitializePinInput(port, pin);
+    state = halGPIOReadPin(port, pin);
     pattern = state ? 0xFFFFFFFF : 0x00000000;
     
-    if (_service != nullptr)
-        _service->add(this);
+    if (service != nullptr)
+        service->add(this);
 }
 
 
@@ -128,15 +128,4 @@ DigInput::~DigInput() {
     
     if (evChange != nullptr)
         delete evChange;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Lectura del port d'una entrada.
-/// \return Valor lleigit del port.
-///
-bool DigInput::pinGet() const {
-    
-    bool p = halGPIOPinGetState(pin);
-    return inverted ? !p : p;
 }

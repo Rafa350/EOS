@@ -1,11 +1,12 @@
-#ifndef __EOS_DIGINPUT_HPP
-#define	__EOS_DIGINPUT_HPP
+#ifndef __EOS_DIGINPUT_H
+#define	__EOS_DIGINPUT_H
 
 
-#include "eos.hpp"
-#include "System/Core/eosCallbacks.hpp"
-#include "System/Collections/eosList.hpp"
-#include "Services/eosService.hpp"
+#include "eos.h"
+#include "System/Core/eosCallbacks.h"
+#include "System/Collections/eosList.h"
+#include "Services/eosService.h"
+#include "HAL/halGPIO.h"
 
 
 namespace eos {
@@ -43,14 +44,14 @@ namespace eos {
             
         private:
             DigInputService *service;
-            uint8_t pin;
+            GPIOPort port;
+            GPIOPin pin;
             uint32_t pattern;
-            bool inverted;
             bool state;
             IDigInputEvent *evChange;
         
         public:
-            DigInput(DigInputService *service, uint8_t pin, bool inverted);
+            DigInput(DigInputService *service, GPIOPort port, GPIOPin pin);
             ~DigInput();
             
             /// \brief Obte l'estat actual de la entrada.
@@ -66,12 +67,8 @@ namespace eos {
             void setChangeEvent(cls *instance, void (cls::*method)(DigInput *input)) {                
                 evChange = new CallbackP1<cls, DigInput*>(instance, method);
             }
-            
-        private:
-            bool pinGet() const;
         
-        friend void DigInputService::add(DigInput *input);
-        friend void DigInputService::remove(DigInput *input);
+        friend DigInputService;
     };
 
 }

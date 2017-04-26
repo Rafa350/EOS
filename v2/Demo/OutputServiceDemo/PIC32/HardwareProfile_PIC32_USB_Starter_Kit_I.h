@@ -22,5 +22,17 @@
 #define LEDS_LD3_PIN         HAL_GPIO_PIN_2
 
 
+// -----------------------------------------------------------------------
+// SWITCH
+//
+#define SW_SW1_PORT          HAL_GPIO_PORT_D
+#define SW_SW1_PIN           HAL_GPIO_PIN_6
+
+#define SW_SW2_PORT          HAL_GPIO_PORT_D
+#define SW_SW2_PIN           HAL_GPIO_PIN_7
+
+#define SW_SW3_PORT          HAL_GPIO_PORT_D
+#define SW_SW3_PIN           HAL_GPIO_PIN_13
+
 
 #endif
