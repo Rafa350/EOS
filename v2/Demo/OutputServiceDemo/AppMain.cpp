@@ -24,8 +24,8 @@ class LedLoopService: public AppLoopService {
 class MyApplication: public Application {
     private:
         DigInputService *digInputSvc;
-        DigOutputService *digOutputSrv;
         DigInput *digInput1;
+        DigOutputService *digOutputSrv;
         DigOutput *digOutput1;
         DigOutput *digOutput2;
         DigOutput *digOutput3;
@@ -61,7 +61,7 @@ MyApplication::MyApplication() {
 void MyApplication::digInput3_OnChange(DigInput *input) {
     
     if (!input->get())
-        digOutput3->pulse(2000);
+        digOutput3->pulse(500);
 }
 
 

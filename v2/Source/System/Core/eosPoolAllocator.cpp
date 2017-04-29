@@ -2,10 +2,10 @@
 // Fast Efficient Fixed-Size Memory Pool: No Loops and No Overhead
 // Ben Kenwright - School of Computer Science - Newcastle University
 
-#include "eos.hpp"
-#include "eosAssert.hpp"
-#include "System/Core/eosPoolAllocator.hpp"
-#include "System/Core/eosTask.hpp"
+#include "eos.h"
+#include "eosAssert.h"
+#include "System/Core/eosPoolAllocator.h"
+#include "System/Core/eosTask.h"
 
 
 #define __LOCK()             Task::enterCriticalSection()

@@ -22,6 +22,8 @@
             <itemPath>../../../Include/Services/eosDigOutput.h</itemPath>
             <itemPath>../../../Include/Services/eosDigInput.h</itemPath>
           </logicalFolder>
+          <logicalFolder name="f3" displayName="System" projectFiles="true">
+          </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
         </logicalFolder>
       </logicalFolder>
