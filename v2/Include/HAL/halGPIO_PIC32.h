@@ -78,6 +78,7 @@ extern GPIOPortRegs gpioPortRegs[];
 #define HAL_GPIO_OPENDRAIN_DISABLED    0b00000000
 #define HAL_GPIO_OPENDRAIN_ENABLED     0b00000010
 
+
 #define halGPIOInitializePinInput(port, pin) \
     *gpioPortRegs[port].trisSET = 1 << (pin)
 

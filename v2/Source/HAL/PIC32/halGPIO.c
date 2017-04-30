@@ -1,5 +1,4 @@
 #include "hal/halGPIO.h"
-
 #include <xc.h>
 
 
@@ -42,7 +41,6 @@ GPIOPortRegs gpioPortRegs[] = {
 };
 
 
-
 /// ----------------------------------------------------------------------
 /// \brief Configura un pin.
 /// \param port: Identificador del port.
@@ -54,15 +52,17 @@ void halGPIOInitializePin(
     GPIOPin pin,
     GPIOOptions options) {
    
-    if (options & HAL_GPIO_DIRECTION_OUTPUT)
-        *gpioPortRegs[port].trisCLR = 1 << pin;
+    if (options & HAL_GPIO_DIRECTION_OUTPUT) {
+        *gpioPortRegs[port].trisCLR = 1 << pin; 
+     
+        if (options & HAL_GPIO_OPENDRAIN_ENABLED)
+            *gpioPortRegs[port].odcSET = 1 << pin;
+        else
+            *gpioPortRegs[port].odcCLR = 1 << pin;        
+    }  
+    
     else 
         *gpioPortRegs[port].trisSET = 1 << pin;
-    
-    if (options & HAL_GPIO_OPENDRAIN_ENABLED)
-        *gpioPortRegs[port].odcSET = 1 << pin;
-    else
-        *gpioPortRegs[port].odcCLR = 1 << pin;        
 }
 
 
@@ -77,13 +77,15 @@ void halGPIOInitializePort(
     GPIOOptions options,
     uint16_t mask) {
 
-    if (options & HAL_GPIO_DIRECTION_OUTPUT)
+    if (options & HAL_GPIO_DIRECTION_OUTPUT) {
         *gpioPortRegs[port].trisCLR = mask;
+
+        if (options & HAL_GPIO_OPENDRAIN_ENABLED)
+            *gpioPortRegs[port].odcSET = mask;        
+        else
+            *gpioPortRegs[port].odcCLR = mask;             
+    }
+    
     else
         *gpioPortRegs[port].trisSET = mask;
-
-    if (options & HAL_GPIO_OPENDRAIN_ENABLED)
-        *gpioPortRegs[port].odcSET = mask;        
-    else
-        *gpioPortRegs[port].odcCLR = mask;             
 }

@@ -7,6 +7,7 @@
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
 	#include "hal/halGPIO_PIC32.h"
+    #include "hal/halEINT_PIC32.h"
 
 #elif defined(EOS_STM32F4)
 	#include "hal/halGPIO_STM32F4.h"
