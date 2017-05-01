@@ -18,6 +18,9 @@
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO_PIC32.h</itemPath>
             <itemPath>../../../Include/HAL/halCN_PIC32.h</itemPath>
+            <itemPath>../../../Include/HAL/halINT.h</itemPath>
+            <itemPath>../../../Include/HAL/halINT_PIC32.h</itemPath>
+            <itemPath>../../../Include/HAL/halADC_PIC32.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <itemPath>../../../Include/Services/eosDigOutput.h</itemPath>

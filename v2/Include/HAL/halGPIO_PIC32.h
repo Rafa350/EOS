@@ -52,6 +52,7 @@ extern GPIOPortRegs gpioPortRegs[];
 #if defined(PORTG)
 #define HAL_GPIO_PORT_G      6
 #endif
+#define HAL_GPIO_PORT_NONE   255
 
 #define HAL_GPIO_PIN_0       0
 #define HAL_GPIO_PIN_1       1
@@ -69,6 +70,7 @@ extern GPIOPortRegs gpioPortRegs[];
 #define HAL_GPIO_PIN_13      13
 #define HAL_GPIO_PIN_14      14
 #define HAL_GPIO_PIN_15      15
+#define HAL_GPIO_PIN_NONE    255
 
 #define HAL_GPIO_DIRECTION_MASK        0b00000001
 #define HAL_GPIO_DIRECTION_INPUT       0b00000000
@@ -80,7 +82,7 @@ extern GPIOPortRegs gpioPortRegs[];
 
 
 #define halGPIOInitializePinInput(port, pin) \
-    *gpioPortRegs[port].trisSET = 1 << (pin)
+    *gpioPortRegs[port].trisSET = 1 << (pin) 
 
 #define halGPIOInitializePinOutput(port, pin) \
     *gpioPortRegs[port].trisCLR = 1 << (pin)

@@ -38,10 +38,25 @@ void ExtInterruptService::remove(
 }
 
 
-ExtInterrupt::ExtInterrupt(
-    ExtInterruptService *service):
+void ExtInterruptService::run(
+    Task* task) {
     
-    service(service) {
+    halCNEnable();
+    
+    while (true) {
+        
+    }
+}
+
+
+ExtInterrupt::ExtInterrupt(
+    ExtInterruptService *service,
+    CNPin pin):
+    
+    service(service),
+    pin(pin) {
+    
+    halCNInitialize(pin, HAL_CN_ENABLE_ON | HAL_CN_PULLUP_UP, interruptCallback, this);
     
     if (service != nullptr)
         service->add(this);   
@@ -50,6 +65,16 @@ ExtInterrupt::ExtInterrupt(
 
 ExtInterrupt::~ExtInterrupt() {
     
+    halCNInitialize(pin, HAL_CN_ENABLE_OFF | HAL_CN_PULLUP_OFF, nullptr, nullptr);
+
     if (service != nullptr)
         service->remove(this);
 }
+
+
+void ExtInterrupt::interruptCallback(
+    CNPin pin, 
+    void *param) {
+    
+}
+

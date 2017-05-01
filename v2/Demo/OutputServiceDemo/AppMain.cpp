@@ -2,6 +2,7 @@
 #include "Services/eosAppLoop.h"
 #include "Services/eosDigOutput.h"
 #include "Services/eosDigInput.h"
+#include "Services/eosExtInterrupt.h"
 #include "hal/halGPIO.h"
 
 
@@ -29,6 +30,8 @@ class MyApplication: public Application {
         DigOutput *digOutput1;
         DigOutput *digOutput2;
         DigOutput *digOutput3;
+        ExtInterruptService *extInterruptSvc;
+        ExtInterrupt *extInterrupt;
 	
     public:
 		MyApplication();
@@ -48,7 +51,10 @@ MyApplication::MyApplication() {
     digOutputSrv = new DigOutputService(this);
     digOutput1 = new DigOutput(digOutputSrv, LEDS_LD1_PORT, LEDS_LD1_PIN);
     digOutput2 = new DigOutput(digOutputSrv, LEDS_LD2_PORT, LEDS_LD2_PIN);
-    digOutput3 = new DigOutput(digOutputSrv, LEDS_LD3_PORT, LEDS_LD3_PIN);
+    //digOutput3 = new DigOutput(digOutputSrv, LEDS_LD3_PORT, LEDS_LD3_PIN);
+    
+    extInterruptSvc = new ExtInterruptService(this);
+    extInterrupt = new ExtInterrupt(extInterruptSvc, HAL_CN_PIN_19);
     
     new LedLoopService(this, digOutput1, digOutput2);
 }

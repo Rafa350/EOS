@@ -1,4 +1,5 @@
 #include "hal/halTMR.h"
+#include "hal/halINT_PIC32.h"
 
 #include "sys/attribs.h"
 
@@ -115,9 +116,16 @@ void halTMRInitializeTimer(
     callbacks[timer] = callback;
     if (callback != NULL) {
         params[timer] = param;
-        PLIB_INT_SourceEnable(INT_ID_0, ti->intSource);
+
+        halINTDisableInterrupts();
+        
         PLIB_INT_VectorPrioritySet(INT_ID_0, ti->intVector, intPriority);
         PLIB_INT_VectorSubPrioritySet(INT_ID_0, ti->intVector, intSubPriority);    
+
+        PLIB_INT_SourceFlagClear(INT_ID_0, ti->intSource);
+        PLIB_INT_SourceEnable(INT_ID_0, ti->intSource);
+        
+        halINTEnableInterrupts();
     }
 }
 

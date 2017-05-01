@@ -6,6 +6,7 @@
 #include "System/Core/eosCallbacks.h"
 #include "System/Collections/eosList.h"
 #include "Services/eosService.h"
+#include "HAL/halGPIO.h"
 
 
 namespace eos {
@@ -36,10 +37,14 @@ namespace eos {
     class ExtInterrupt {
         private:
             ExtInterruptService *service;
+            CNPin pin;
             
         public:
-            ExtInterrupt(ExtInterruptService *service);
+            ExtInterrupt(ExtInterruptService *service, CNPin pin);
             ~ExtInterrupt();
+
+        private:
+            static void interruptCallback(CNPin pin, void *param);
             
         friend ExtInterruptService;
     };
