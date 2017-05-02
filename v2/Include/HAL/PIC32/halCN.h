@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_CN_PIC32_H
-#define	__EOS_HAL_CN_PIC32_H
+#ifndef __EOS_HAL_PIC32_CN_H
+#define	__EOS_HAL_PIC32_CN_H
 
 
 #include <stdint.h>
@@ -58,5 +58,5 @@ extern void halCNDisable();
 #endif
 
 
-#endif	/* __EOS_HAL_CN_PIC32_H */
+#endif
 

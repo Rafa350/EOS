@@ -1,7 +1,7 @@
-#include "HAL/halCN_PIC32.h"
-#include "HAL/halGPIO_PIC32.h"
-#include "HAL/halADC_PIC32.h"
-#include "HAL/halINT_PIC32.h"
+#include "HAL/PIC32/halCN.h"
+#include "HAL/PIC32/halGPIO.h"
+#include "HAL/PIC32/halADC.h"
+#include "HAL/PIC32/halINT.h"
 
 #include <xc.h>
 #include <sys/attribs.h>

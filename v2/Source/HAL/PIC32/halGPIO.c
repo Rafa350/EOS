@@ -1,4 +1,4 @@
-#include "hal/halGPIO.h"
+#include "HAL/PIC32/halGPIO.h"
 #include <xc.h>
 
 

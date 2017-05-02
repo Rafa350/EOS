@@ -1,5 +1,5 @@
-#ifndef __EOS_HALADC_PIC32_H
-#define	__EOS_HALADC_PIC32_H
+#ifndef __EOS_HAL_PIC32_ADC_H
+#define	__EOS_HAL_PIC32_ADC_H
 
 
 #include <xc.h>
