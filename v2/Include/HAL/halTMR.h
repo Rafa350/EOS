@@ -34,13 +34,14 @@ extern "C" {
 #define HAL_TMR_PS256               7
 
 
+typedef uint8_t TMRTimer;
 typedef void (*TMRInterruptCallback)(uint8_t timer, void *param);
 
 
-void halTMRInitializeTimer(uint8_t timer, uint8_t mode, uint8_t prescale,
+void halTMRInitializeTimer(TMRTimer timer, uint8_t mode, uint8_t prescale,
         unsigned period, TMRInterruptCallback callback, void *param);
-void halTMRStartTimer(uint8_t timer);
-void halTMRStopTimer(uint8_t timer);
+void halTMRStartTimer(TMRTimer timer);
+void halTMRStopTimer(TMRTimer timer);
 
 void halTMRDelay(uint32_t time);
 
