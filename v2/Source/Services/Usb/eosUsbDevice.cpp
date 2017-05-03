@@ -72,11 +72,11 @@ void UsbDeviceService::remove(
 /// \param service: El servei al que pertany.
 ///
 UsbDevice::UsbDevice(
-    UsbDeviceService *_service):
+    UsbDeviceService *service):
     service(nullptr) {
     
-    if (_service != nullptr)
-        _service->add(this);    
+    if (service != nullptr)
+        service->add(this);    
 }
 
 

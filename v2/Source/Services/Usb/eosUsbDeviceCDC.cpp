@@ -15,6 +15,7 @@ extern "C" void APP_Tasks(void);
 /// \param service: El servei al que pertany.
 ///
 UsbDeviceCDC::UsbDeviceCDC(UsbDeviceService *service):
+
     UsbDevice(service) {
 }
 
