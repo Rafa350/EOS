@@ -6,11 +6,11 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-          <itemPath>../../../Demo/OutputServiceDemo/PIC32/HardwareProfile.h</itemPath>
-          <itemPath>../../../Demo/OutputServiceDemo/PIC32/FreeRTOSConfig.h</itemPath>
-          <itemPath>../../../Demo/OutputServiceDemo/PIC32/HardwareProfile_PIC32_USB_Starter_Kit_I.h</itemPath>
+          <itemPath>../../../Demo/DigIOServicesDemo/PIC32/FreeRTOSConfig.h</itemPath>
+          <itemPath>../../../Demo/DigIOServicesDemo/PIC32/HardwareProfile.h</itemPath>
+          <itemPath>../../../Demo/DigIOServicesDemo/PIC32/HardwareProfile_PIC32_USB_Starter_Kit_I.h</itemPath>
         </logicalFolder>
-        <itemPath>../../../Demo/OutputServiceDemo/eosConfig.h</itemPath>
+        <itemPath>../../../Demo/DigIOServicesDemo/eosConfig.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -44,10 +44,10 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-          <itemPath>../../../Demo/OutputServiceDemo/PIC32/Main.cpp</itemPath>
+          <itemPath>../../../Demo/DigIOServicesDemo/PIC32/Main.cpp</itemPath>
         </logicalFolder>
-        <itemPath>../../../Demo/OutputServiceDemo/AppMain.cpp</itemPath>
-        <itemPath>../../../Demo/OutputServiceDemo/rtos_hooks.c</itemPath>
+        <itemPath>../../../Demo/DigIOServicesDemo/AppMain.cpp</itemPath>
+        <itemPath>../../../Demo/DigIOServicesDemo/rtos_hooks.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -106,6 +106,7 @@
     <Elem>../../../Source/System</Elem>
     <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
     <Elem>../../../Include</Elem>
+    <Elem>../../../Demo/DigIOServicesDemo</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -261,7 +262,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\OutputServiceDemo;..\..\..\Demo\OutputServiceDemo\PIC32;..\..\..\Include;c:\Library\Microchip\Harmony\v1.9\framework;c:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;c:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\DigIOServicesDemo;..\..\..\Demo\DigIOServicesDemo\PIC32;..\..\..\Include;c:\Library\Microchip\Harmony\v1.9\framework;c:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;c:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="true"/>
         <property key="relaxed-math" value="false"/>

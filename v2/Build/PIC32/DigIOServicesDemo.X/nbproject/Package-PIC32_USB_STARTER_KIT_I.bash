@@ -10,9 +10,9 @@ CND_CONF=PIC32_USB_STARTER_KIT_I
 CND_DISTDIR=dist
 TMPDIR=build/${CND_CONF}/${IMAGE_TYPE}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/OutputServiceDemo.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
-OUTPUT_BASENAME=OutputServiceDemo.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
-PACKAGE_TOP_DIR=outputservicedemo.x/
+OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/DigIOServicesDemo.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+OUTPUT_BASENAME=DigIOServicesDemo.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+PACKAGE_TOP_DIR=digioservicesdemo.x/
 
 # Functions
 function checkReturnCode
@@ -57,15 +57,15 @@ mkdir -p ${TMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory ${TMPDIR}/outputservicedemo.x/bin
+makeDirectory ${TMPDIR}/digioservicesdemo.x/bin
 copyFileToTmpDir "${OUTPUT_PATH}" "${TMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
 
 
 # Generate tar file
 cd "${TOP}"
-rm -f ${CND_DISTDIR}/${CND_CONF}/package/outputservicedemo.x.tar
+rm -f ${CND_DISTDIR}/${CND_CONF}/package/digioservicesdemo.x.tar
 cd ${TMPDIR}
-tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/outputservicedemo.x.tar *
+tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/digioservicesdemo.x.tar *
 checkReturnCode
 
 # Cleanup
