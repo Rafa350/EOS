@@ -1,24 +1,24 @@
-#ifndef __EOS_VDC_HPP
-#define	__EOS_VDC_HPP
+#ifndef __EOS_VRAM_H
+#define	__EOS_VRAM_H
 
 
-#include "eos.hpp"
-#include "Controllers/Display/eosDisplay.hpp"
+#include "eos.h"
+#include "Controllers/Display/eosDisplay.h"
 
 #include <stdint.h>
 
 
 namespace eos {
     
-    class VDC_Driver: public IDisplayDriver {
+    class VRAM_Driver: public IDisplayDriver {
         private:
             ColorBuffer canvas;
             int16_t screenWidth;
             int16_t screenHeight;
             
         public:
-            VDC_Driver(int16_t screenWidth, int16_t screenHeight);
-            ~VDC_Driver();
+            VRAM_Driver(int16_t screenWidth, int16_t screenHeight);
+            ~VRAM_Driver();
             void initialize();
             void shutdown();
             void setOrientation(Orientation orientation);
