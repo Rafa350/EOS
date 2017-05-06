@@ -1,5 +1,5 @@
-#include "Controllers/Display/eosDisplay.hpp"
-#include "Controllers/Display/eosFont.hpp"
+#include "Controllers/Display/eosDisplay.h"
+#include "Controllers/Display/eosFont.h"
 
 #include <stdint.h>
 

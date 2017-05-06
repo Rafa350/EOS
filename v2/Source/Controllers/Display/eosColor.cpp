@@ -1,4 +1,4 @@
-#include "Controllers/Display/eosColor.hpp"
+#include "Controllers/Display/eosColor.h"
 
 
 using namespace eos;

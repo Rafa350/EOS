@@ -1,13 +1,13 @@
-#ifndef __EOS_I2CMASTER_HPP
-#define __EOS_I2CMASTER_HPP
+#ifndef __EOS_I2CMASTER_H
+#define __EOS_I2CMASTER_H
 
 
-#include "eos.hpp"
-#include "System/Core/eosSemaphore.hpp"
-#include "System/Core/eosCallbacks.hpp"
-#include "System/Core/eosQueue.hpp"
-#include "System/Core/eosPoolAllocator.hpp"
-#include "Services/eosService.hpp"
+#include "eos.h"
+#include "System/Core/eosSemaphore.h"
+#include "System/Core/eosCallbacks.h"
+#include "System/Core/eosQueue.h"
+#include "System/Core/eosPoolAllocator.h"
+#include "Services/eosService.h"
 
 
 namespace eos {

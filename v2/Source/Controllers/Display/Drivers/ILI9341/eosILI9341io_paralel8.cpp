@@ -1,10 +1,10 @@
-#include "eos.hpp"
+#include "eos.h"
 
 
 #ifdef ILI9341_INTERFACE_TYPE_PARALEL_8BIT
 
 #include "eosMacros.h"
-#include "Controllers/Display/Drivers/eosILI9341.hpp"
+#include "Controllers/Display/Drivers/eosILI9341.h"
 #include "Hal/halTMR.h"
 #include "Hal/halINT.h"
 

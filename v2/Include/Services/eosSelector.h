@@ -1,10 +1,10 @@
-#ifndef __EOS_SELECTOR_HPP
-#define __EOS_SELECTOR_HPP
+#ifndef __EOS_SELECTOR_H
+#define __EOS_SELECTOR_H
 
 
-#include "eos.hpp"
-#include "System/Core/eosCallbacks.hpp"
-#include "Services/eosService.hpp"
+#include "eos.h"
+#include "System/Core/eosCallbacks.h"
+#include "Services/eosService.h"
 
 #include <stdint.h>
 

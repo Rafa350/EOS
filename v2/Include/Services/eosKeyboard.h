@@ -1,10 +1,10 @@
-#ifndef __EOS_KEYBOARD_HPP
-#define __EOS_KEYBOARD_HPP
+#ifndef __EOS_KEYBOARD_H
+#define __EOS_KEYBOARD_H
 
 
-#include "eos.hpp"
-#include "System/Core/eosCallbacks.hpp"
-#include "Services/eosService.hpp"
+#include "eos.h"
+#include "System/Core/eosCallbacks.h"
+#include "Services/eosService.h"
 
 #include <stdint.h>
 

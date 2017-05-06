@@ -1,5 +1,5 @@
-#include "eos.hpp"
-#include "Controllers/Display/Drivers/eosILI9341.hpp"
+#include "eos.h"
+#include "Controllers/Display/Drivers/eosILI9341.h"
 #include "HAL/halTMR.h"
 
 

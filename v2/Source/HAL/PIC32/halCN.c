@@ -133,7 +133,6 @@ void halCNEnable(void) {
     
     // Llegeix l'estat dels ports
     //
-    portA = halGPIOReadPort(HAL_GPIO_PORT_A);
     portB = halGPIOReadPort(HAL_GPIO_PORT_B);
     portG = halGPIOReadPort(HAL_GPIO_PORT_C);
     portD = halGPIOReadPort(HAL_GPIO_PORT_D);
@@ -172,14 +171,14 @@ void isrCNHandler(void) {
         
         // Llegeix l'estat dels ports
         //
-        portA = halGPIOReadPort(HAL_GPIO_PORT_A);
-        portB = halGPIOReadPort(HAL_GPIO_PORT_B);
-        portG = halGPIOReadPort(HAL_GPIO_PORT_C);
-        portD = halGPIOReadPort(HAL_GPIO_PORT_D);
-        portE = halGPIOReadPort(HAL_GPIO_PORT_E);
-        portF = halGPIOReadPort(HAL_GPIO_PORT_F);
-        portG = halGPIOReadPort(HAL_GPIO_PORT_G);
-
+        uint32_t newPortA = halGPIOReadPort(HAL_GPIO_PORT_A);
+        uint32_t newPortB = halGPIOReadPort(HAL_GPIO_PORT_B);
+        uint32_t newPortG = halGPIOReadPort(HAL_GPIO_PORT_C);
+        uint32_t newPortD = halGPIOReadPort(HAL_GPIO_PORT_D);
+        uint32_t newPortE = halGPIOReadPort(HAL_GPIO_PORT_E);
+        uint32_t newPortF = halGPIOReadPort(HAL_GPIO_PORT_F);
+        uint32_t newPortG = halGPIOReadPort(HAL_GPIO_PORT_G);
+        
         unsigned i;
         for (i = 0; i < MAX_CNINPUTS; i++) {
 

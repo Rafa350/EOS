@@ -1,6 +1,6 @@
-#include "eosAssert.hpp"
-#include "System/Core/eosTask.hpp"
-#include "System/Collections/eosStack.hpp"
+#include "eosAssert.h"
+#include "System/Core/eosTask.h"
+#include "System/Collections/eosStack.h"
 
 #include <stdint.h>
 #include <string.h>

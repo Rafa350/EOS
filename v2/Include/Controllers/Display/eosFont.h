@@ -1,8 +1,8 @@
-#ifndef __EOS_FONT_HPP
-#define __EOS_FONT_HPP
+#ifndef __EOS_FONT_H
+#define __EOS_FONT_H
 
 
-#include "eos.hpp"
+#include "eos.h"
 
 #include <stdint.h>
 

@@ -1,5 +1,5 @@
 #include "eosmacros.h"
-#include "Services/Forms/eosNumericEditorForm.hpp"
+#include "Services/Forms/eosNumericEditorForm.h"
 
 #include <stdio.h>
 

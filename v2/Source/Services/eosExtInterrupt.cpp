@@ -9,11 +9,14 @@ static const unsigned taskStackSize = 512;
 static const TaskPriority taskPriority = TaskPriority::normal;
 
 
+/// ----------------------------------------------------------------------
+/// \brief Constructor.
+/// \param application: Aplicacio a la que pertany el servei.
+///
 ExtInterruptService::ExtInterruptService(
     Application *application):
         
-    Service(application, serviceName, taskStackSize, taskPriority) {
-    
+    Service(application, serviceName, taskStackSize, taskPriority) {    
 }
 
 

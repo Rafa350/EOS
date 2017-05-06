@@ -1,5 +1,5 @@
-#include "eosAssert.hpp"
-#include "System/Core/eosSemaphore.hpp"
+#include "eosAssert.h"
+#include "System/Core/eosSemaphore.h"
 
 #include "FreeRTOS.h"
 #include "semphr.h"

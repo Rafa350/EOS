@@ -1,20 +1,20 @@
-#include "eos.hpp"
-#include "System/Core/eosCallbacks.hpp"
-#include "System/eosApplication.hpp"
-#include "Services/eosI2CMaster.hpp"
-#include "Services/Forms/eosForms.hpp"
-#include "Services/Forms/eosMenuForm.hpp"
+#include "eos.h"
+#include "System/Core/eosCallbacks.h"
+#include "System/eosApplication.h"
+#include "Services/eosI2CMaster.h"
+#include "Services/Forms/eosForms.h"
+#include "Services/Forms/eosMenuForm.h"
 #ifdef eosFormsService_UseSelector
-#include "Services/eosSelector.hpp"
+#include "Services/eosSelector.h"
 #include "../../../MD-SEL01/SEL01Messages.h"
 #endif
 #ifdef eosFormsService_UseKeyboard
-#include "Services/eosKeyboard.hpp"
+#include "Services/eosKeyboard.h"
 #include "../../../MD-KBD01/KBD01Messages.h"
 #endif
-#include "Controllers/Display/eosDisplay.hpp"
-#include "Controllers/Display/Drivers/eosILI9341.hpp"
-#include "appMainForm.hpp"
+#include "Controllers/Display/eosDisplay.h"
+#include "Controllers/Display/Drivers/eosILI9341.h"
+#include "appMainForm.h"
 
 
 using namespace eos;

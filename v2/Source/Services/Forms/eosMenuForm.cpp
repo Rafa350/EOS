@@ -1,7 +1,7 @@
-#include "eos.hpp"
+#include "eos.h"
 #include "eosMacros.h"
-#include "Services/Forms/eosMenuForm.hpp"
-#include "Controllers/Display/eosColor.hpp"
+#include "Services/Forms/eosMenuForm.h"
+#include "Controllers/Display/eosColor.h"
 
 
 using namespace eos;

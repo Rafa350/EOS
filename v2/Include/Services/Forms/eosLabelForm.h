@@ -1,9 +1,9 @@
-#ifndef __EOS_LABELFORM_HPP
-#define __EOS_LABELFORM_HPP
+#ifndef __EOS_LABELFORM_H
+#define __EOS_LABELFORM_H
 
 
-#include "eos.hpp"
-#include "Services/Forms/eosForms.hpp"
+#include "eos.h"
+#include "Services/Forms/eosForms.h"
 
 
 namespace eos {

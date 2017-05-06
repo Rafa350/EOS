@@ -1,6 +1,6 @@
-#include "eos.hpp"
-#include "Controllers/Display/eosColor.hpp"
-#include "Services/Forms/eosForms.hpp"
+#include "eos.h"
+#include "Controllers/Display/eosColor.h"
+#include "Services/Forms/eosForms.h"
 
 
 using namespace eos;

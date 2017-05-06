@@ -1,8 +1,8 @@
-#ifndef __EOS_COLOR_HPP
-#define __EOS_COLOR_HPP
+#ifndef __EOS_COLOR_H
+#define __EOS_COLOR_H
 
 
-#include "eos.hpp"
+#include "eos.h"
 
 #include <stdint.h>
 

@@ -1,7 +1,7 @@
-#include "eos.hpp"
-#include "System/Core/eosTask.hpp"
-#include "System/Core/eosQueue.hpp"
-#include "Services/Forms/eosForms.hpp"
+#include "eos.h"
+#include "System/Core/eosTask.h"
+#include "System/Core/eosQueue.h"
+#include "Services/Forms/eosForms.h"
 
 
 using namespace eos;

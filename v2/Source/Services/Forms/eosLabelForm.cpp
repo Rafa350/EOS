@@ -1,5 +1,5 @@
 #include "eosmacros.h"
-#include "Services/Forms/eosLabelForm.hpp"
+#include "Services/Forms/eosLabelForm.h"
 
 #include <stdio.h>
 

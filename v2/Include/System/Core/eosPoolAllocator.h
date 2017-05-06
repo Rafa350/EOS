@@ -1,9 +1,9 @@
-#ifndef __EOS_POOLALLOCATOR_HPP
-#define	__EOS_POOLALLOCATPR_HPP
+#ifndef __EOS_POOLALLOCATOR_H
+#define	__EOS_POOLALLOCATPR_H
 
 
-#include "eos.hpp"
-#include "System/Core/eosAllocator.hpp"
+#include "eos.h"
+#include "System/Core/eosAllocator.h"
 
 #include <stdint.h>
 

@@ -1,8 +1,8 @@
-#ifndef __EOS_SEMAPHORE_HPP
-#define	__EOS_SEMAPHORE_HPP
+#ifndef __EOS_SEMAPHORE_H
+#define	__EOS_SEMAPHORE_H
 
 
-#include "eos.hpp"
+#include "eos.h"
 
 
 namespace eos {

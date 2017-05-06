@@ -1,5 +1,5 @@
-#include "Services/eosKeyboard.hpp"
-#include "Services/eosI2CMaster.hpp"
+#include "Services/eosKeyboard.h"
+#include "Services/eosI2CMaster.h"
 #include "../../../MD-KBD01/KBD01Messages.h"
 
 

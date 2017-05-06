@@ -1,5 +1,5 @@
-#include "hal/halTMR.h"
-#include "hal/halINT_PIC32.h"
+#include "HAL/halTMR.h"
+#include "HAL/PIC32/halINT.h"
 
 #include "sys/attribs.h"
 

@@ -1,18 +1,18 @@
-#ifndef __EOS_FORMS_HPP
-#define __EOS_FORMS_HPP
+#ifndef __EOS_FORMS_H
+#define __EOS_FORMS_H
 
 
-#include "eos.hpp"
-#include "System/Core/eosTask.hpp"
-#include "System/Collections/eosList.hpp"
-#include "System/Core/eosQueue.hpp"
-#include "Controllers/Display/eosDisplay.hpp"
-#include "Services/eosService.hpp"
+#include "eos.h"
+#include "System/Core/eosTask.h"
+#include "System/Collections/eosList.h"
+#include "System/Core/eosQueue.h"
+#include "Controllers/Display/eosDisplay.h"
+#include "Services/eosService.h"
 #ifdef eosFormsService_UseSelector
-#include "Services/eosSelector.hpp"
+#include "Services/eosSelector.h"
 #endif
 #ifdef eosFormsService_UseKeyboard
-#include "Services/eosKeyboard.hpp"
+#include "Services/eosKeyboard.h"
 #endif
 
 

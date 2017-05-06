@@ -1,10 +1,10 @@
-#ifndef __EOS_MENUFORM_HPP
-#define __EOS_MENUFORM_HPP
+#ifndef __EOS_MENUFORM_H
+#define __EOS_MENUFORM_H
 
 
-#include "eos.hpp"
-#include "System/Core/eosCallbacks.hpp"
-#include "Services/Forms/eosForms.hpp"
+#include "eos.h"
+#include "System/Core/eosCallbacks.h"
+#include "Services/Forms/eosForms.h"
 
 
 #define MAX_LEVELS               10

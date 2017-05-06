@@ -1,4 +1,4 @@
-#include "System/Core/eosString.hpp"
+#include "System/Core/eosString.h"
 
 
 using namespace eos;

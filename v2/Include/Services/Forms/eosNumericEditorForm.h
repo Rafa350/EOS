@@ -1,11 +1,11 @@
-#ifndef __EOS_NUMERICEDITORFORM_HPP
-#define __EOS_NUMERICEDITORFORM_HPP
+#ifndef __EOS_NUMERICEDITORFORM_H
+#define __EOS_NUMERICEDITORFORM_H
 
 
-#include "eos.hpp"
-#include "System/Core/eosCallbacks.hpp"
-#include "Services/Forms/eosForms.hpp"
-#include "Controllers/Display/eosColor.hpp"
+#include "eos.h"
+#include "System/Core/eosCallbacks.h"
+#include "Services/Forms/eosForms.h"
+#include "Controllers/Display/eosColor.h"
 
 
 namespace eos {

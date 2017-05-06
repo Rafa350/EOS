@@ -1,13 +1,13 @@
-#ifndef __EOS_DISPLAY_HPP
-#define	__EOS_DISPLAY_HPP
+#ifndef __EOS_DISPLAY_H
+#define	__EOS_DISPLAY_H
 
 
 #define DISPLAY_PIXFORMAT_565
 
 
-#include "eos.hpp"
-#include "Controllers/Display/eosFont.hpp"
-#include "Controllers/Display/eosColor.hpp"
+#include "eos.h"
+#include "Controllers/Display/eosFont.h"
+#include "Controllers/Display/eosColor.h"
 
 #include <stdint.h>
 

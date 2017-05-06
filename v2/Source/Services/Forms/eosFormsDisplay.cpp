@@ -1,6 +1,6 @@
-#include "eos.hpp"
-#include "Services/Forms/eosForms.hpp"
-#include "Controllers/Display/eosDisplay.hpp"
+#include "eos.h"
+#include "Services/Forms/eosForms.h"
+#include "Controllers/Display/eosDisplay.h"
 
 #include <string.h>
 

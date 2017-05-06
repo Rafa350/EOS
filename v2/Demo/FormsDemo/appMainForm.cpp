@@ -1,9 +1,9 @@
-#include "eos.hpp"
-#include "Services/Forms/eosMenuForm.hpp"
-#include "Services/Forms/eosNumericEditorForm.hpp"
-#include "Services/Forms/eosLabelForm.hpp"
-#include "Controllers/Display/eosDisplay.hpp"
-#include "appMainForm.hpp"
+#include "eos.h"
+#include "Services/Forms/eosMenuForm.h"
+#include "Services/Forms/eosNumericEditorForm.h"
+#include "Services/Forms/eosLabelForm.h"
+#include "Controllers/Display/eosDisplay.h"
+#include "appMainForm.h"
 #include "MnuMain.h"
 #include <stdio.h>
 

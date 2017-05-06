@@ -1,10 +1,10 @@
-#ifndef __EOS_OPTIONEDITORFORM_HPP
-#define __EOS_OPTIONEDITORFORM_HPP
+#ifndef __EOS_OPTIONEDITORFORM_H
+#define __EOS_OPTIONEDITORFORM_H
 
 
-#include "eos.hpp"
-#include "System/Core/eosCallbacks.hpp"
-#include "Services/Forms/eosForms.hpp"
+#include "eos.h"
+#include "System/Core/eosCallbacks.h"
+#include "Services/Forms/eosForms.h"
 
 
 namespace eos {

@@ -1,9 +1,9 @@
-#ifndef __EOS_ILI9341_HPP
-#define	__EOS_ILI9341_HPP
+#ifndef __EOS_ILI9341_H
+#define	__EOS_ILI9341_H
 
 
-#include "eos.hpp"
-#include "Controllers/Display/eosDisplay.hpp"
+#include "eos.h"
+#include "Controllers/Display/eosDisplay.h"
 
 #include <stdint.h>
 
