@@ -27,9 +27,9 @@ GenericPoolAllocator I2CMasterService::transactionAllocator(
 ///
 I2CMasterService::I2CMasterService(
     Application *application,
-    uint8_t _moduleId) :
+    uint8_t moduleId) :
     
-    moduleId(_moduleId),
+    moduleId(moduleId),
     Service(application, serviceName, taskStackSize, taskPriority),
     transactionQueue(eosI2CMasterService_TransactionQueueSize) {
 }

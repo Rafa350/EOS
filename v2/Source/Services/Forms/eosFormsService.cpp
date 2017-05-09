@@ -19,13 +19,13 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 ///
 FormsService::FormsService(
     Application *application,
-    MessageQueue *_messageQueue,
-    FormsDisplay *_display) :
+    MessageQueue *messageQueue,
+    FormsDisplay *display) :
 
     Service(application, serviceName, taskStackSize, taskPriority),
-    messageQueue(_messageQueue),
+    messageQueue(messageQueue),
 	activeForm(nullptr),
-    display(_display) {
+    display(display) {
 }
 
 

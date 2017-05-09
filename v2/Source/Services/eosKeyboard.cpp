@@ -20,12 +20,12 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 ///
 KeyboardService::KeyboardService(
     Application *application,
-    I2CMasterService *_i2cService,
-    uint8_t _addr):
+    I2CMasterService *i2cService,
+    uint8_t addr):
     
     Service(application, serviceName, taskStackSize, taskPriority),
     i2cService(_i2cService),
-    addr(_addr),
+    addr(addr),
     state(0),
     evNotify(nullptr) {
 }
