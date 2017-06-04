@@ -1,4 +1,4 @@
-#include "eos.hpp"
+#include "eos.h"
 
 
 #ifdef ILI9341_INTERFACE_TYPE_PIC32PMP_8BIT
@@ -6,7 +6,7 @@
 extern "C" {
 #include "peripheral/pmp/plib_pmp.h"
 }
-#include "Controllers/Display/Drivers/eosILI9341.hpp"
+#include "Controllers/Display/Drivers/eosILI9341.h"
 #include "Hal/halGPIO.h"
 #include "Hal/halTMR.h"
 

@@ -1,9 +1,9 @@
-#include "eos.hpp"
-#include "System/eosApplication.hpp"
-#include "System/Core/eosTask.hpp"
-#include "Services/eosAppLoop.hpp"
-#include "Controllers/Display/eosDisplay.hpp"
-#include "Controllers/Display/Drivers/eosILI9341.hpp"
+#include "eos.h"
+#include "System/eosApplication.h"
+#include "System/Core/eosTask.h"
+#include "Services/eosAppLoop.h"
+#include "Controllers/Display/eosDisplay.h"
+#include "Controllers/Display/Drivers/eosILI9341.h"
 #include "Hal/halGPIO.h"
 
 #include <stdlib.h>

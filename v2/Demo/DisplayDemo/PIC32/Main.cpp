@@ -1,4 +1,4 @@
-#include "eos.hpp"
+#include "eos.h"
 #include "HardwareProfile.h"
 #include <xc.h>
 

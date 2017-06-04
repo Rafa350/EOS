@@ -1,4 +1,4 @@
-#include "Controllers/Display/Drivers/eosVDC.h"
+#include "Controllers/Display/Drivers/eosVRAM.h"
 
 
 using namespace eos;
