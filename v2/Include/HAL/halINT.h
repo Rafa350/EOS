@@ -8,7 +8,7 @@
 	#include "HAL/PIC32/halINT.h"
 
 #elif defined(EOS_STM32F4)
-	#include "HAL/halINT_STM32F4.h"
+	#include "HAL/STM32/halINT.h"
 
 #endif
 

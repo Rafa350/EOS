@@ -128,9 +128,9 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eos.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/eosAssert.hpp</name>
+			<name>inc/Framework/EOS/eosAssert.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eosAssert.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eosAssert.h</location>
 		</link>
 		<link>
 			<name>src/App/STM32F429/Main.cpp</name>
@@ -193,24 +193,19 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/halGPIO_STM32F4.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO_STM32F4.h</location>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/halINT.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halINT.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halINT_STM32F4.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halINT_STM32F4.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
@@ -268,19 +263,34 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosColor.hpp</name>
+			<name>inc/Framework/EOS/Controllers/Display/eosColor.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosColor.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosColor.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosDisplay.hpp</name>
+			<name>inc/Framework/EOS/Controllers/Display/eosDisplay.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosDisplay.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosDisplay.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosFont.hpp</name>
+			<name>inc/Framework/EOS/Controllers/Display/eosFont.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosFont.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosFont.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halGPIO.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halINT.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halSPI.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halSPI.h</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers</name>
@@ -353,9 +363,9 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosTask.cpp</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341.hpp</name>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosILI9341.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosILI9341.h</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341</name>

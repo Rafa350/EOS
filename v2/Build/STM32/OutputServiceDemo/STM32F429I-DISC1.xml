@@ -5,6 +5,6 @@
     <mcuId>stm32f429zitx</mcuId>
     <dbgIF>JTAG</dbgIF>
     <dbgIF>SWD</dbgIF>
-    <dbgDEV>ST-LinkV2-1</dbgDEV>
+    <dbgDEV>ST-Link</dbgDEV>
   </board>
 </targetDefinitions>

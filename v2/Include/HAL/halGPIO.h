@@ -10,7 +10,7 @@
     #include "HAL/PIC32/halCN.h"
 
 #elif defined(EOS_STM32F4)
-	#include "hal/halGPIO_STM32F4.h"
+	#include "hal/STM32/halGPIO.h"
 
 #endif
 

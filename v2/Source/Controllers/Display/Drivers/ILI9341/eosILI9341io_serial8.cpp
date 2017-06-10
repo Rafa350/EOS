@@ -1,4 +1,4 @@
-#include "eos.hpp"
+#include "eos.h"
 
 
 #ifdef ILI9341_INTERFACE_TYPE_SERIAL_8BIT
@@ -9,7 +9,7 @@
 #error No se especifico ILI9341_INTERFACE_MODE_xxx adecuadamente.
 #endif
 
-#include "Controllers/Display/Drivers/eosILI9341.hpp"
+#include "Controllers/Display/Drivers/eosILI9341.h"
 #include "Hal/halTMR.h"
 #include "Hal/halINT.h"
 
