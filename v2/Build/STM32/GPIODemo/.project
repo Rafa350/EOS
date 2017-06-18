@@ -123,9 +123,9 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eos.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/eosAssert.hpp</name>
+			<name>inc/Framework/EOS/eosAssert.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eosAssert.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eosAssert.h</location>
 		</link>
 		<link>
 			<name>src/App/STM32F429/Main.cpp</name>
@@ -178,14 +178,14 @@
 			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/timers.c</location>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halGPIO_STM32F4.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO_STM32F4.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
@@ -193,19 +193,19 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halSYS.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosAppLoop.hpp</name>
+			<name>inc/Framework/EOS/Services/eosAppLoop.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosAppLoop.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosAppLoop.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosService.hpp</name>
+			<name>inc/Framework/EOS/Services/eosService.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosService.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosService.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/eosApplication.hpp</name>
+			<name>inc/Framework/EOS/System/eosApplication.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/System/eosApplication.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/System/eosApplication.h</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4</name>
@@ -236,6 +236,11 @@
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/eosApplication.cpp</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halGPIO.h</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halGPIO.c</name>

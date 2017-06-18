@@ -33,7 +33,7 @@
 //
 #ifdef ILI9341_RST_PORT
 #define initRST()  halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN); \
-                   halGPIOInitializePin(ILI9341_RST_PORT, ILI9341_RST_PIN, HAL_GPIO_DIRECTION_OUTPUT)
+                   halGPIOInitializePin(ILI9341_RST_PORT, ILI9341_RST_PIN, HAL_GPIO_MODE_OUTPUT)
 #define setRST()   halGPIOSetPin(ILI9341_RST_PORT, ILI9341_RST_PIN)
 #define clrRST()   halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN)
 #endif
@@ -41,30 +41,30 @@
 // Control del pin CS
 //
 #define initCS()   halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN); \
-                   halGPIOInitializePin(ILI9341_CS_PORT, ILI9341_CS_PIN, HAL_GPIO_DIRECTION_OUTPUT)
+                   halGPIOInitializePin(ILI9341_CS_PORT, ILI9341_CS_PIN, HAL_GPIO_MODE_OUTPUT)
 #define setCS()    halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
 #define clrCS()    halGPIOClearPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
 
 // Control del pin RS
 //
 #define initRS()   halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN); \
-                   halGPIOInitializePin(ILI9341_RS_PORT, ILI9341_RS_PIN, HAL_GPIO_DIRECTION_OUTPUT)
+                   halGPIOInitializePin(ILI9341_RS_PORT, ILI9341_RS_PIN, HAL_GPIO_MODE_OUTPUT)
 #define setRS()    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
 #define clrRS()    halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
 
 // Control del pin CLK
 //
 #define initCLK()  halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN); \
-                   halGPIOInitializePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_DIRECTION_OUTPUT)
+                   halGPIOInitializePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_MODE_OUTPUT)
 #define setCLK()   halGPIOSetPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 #define clrCLK()   halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 
 // Control del pin SO
 //
-#define initSO()   halGPIOClearPin(ILI9341_SO_PORT, ILI9341_SO_PIN); \
-                   halGPIOInitializePinOutput(ILI9341_SO_PORT, ILI9341_SO_PIN)
-#define setSO()    halGPIOSetPin(ILI9341_SO_PORT, ILI9341_SO_PIN)
-#define clrSO()    halGPIOClearPin(ILI9341_SO_PORT, ILI9341_SO_PIN)
+#define initSO()   halGPIOClearPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN); \
+                   halGPIOInitializePinOutput(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
+#define setSO()    halGPIOSetPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
+#define clrSO()    halGPIOClearPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
 
 #endif
 

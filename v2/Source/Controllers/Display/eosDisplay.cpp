@@ -17,7 +17,7 @@ const uint8_t top = 8;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Intercamvia dues variables A i B.
+/// \brief Intercambia dues variables A i B.
 /// \param a: Variable A.
 /// \param b: Variable B.
 ///
@@ -39,16 +39,20 @@ Display::Display(
     IDisplayDriver *driver) :
     
     driver(driver),
-    color(COLOR_Black),
     screenWidth(driver->getWidth()),
     screenHeight(driver->getHeight()),
+    clipEnabled(false),
+	clipX1(0),
+	clipY1(0),
+	clipX2(driver->getWidth() - 1),
+	clipY2(driver->getHeight() - 1),
+    color(COLOR_Black),
+    font(nullptr),
+    hAlign(HorizontalTextAlign::left),
+    vAlign(VerticalTextAlign::bottom),
     cursorX(0),
     cursorY(0),
-    clipEnabled(false),
-    ttyState(0),
-    font(nullptr),
-    vAlign(VerticalTextAlign::bottom),
-    hAlign(HorizontalTextAlign::left) {
+    ttyState(0) {
     
     setFont(new Font(fontConsolas14pt));
 }

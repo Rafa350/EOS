@@ -87,6 +87,6 @@ void ColorPalette::setColor(
     uint8_t index, 
     Color color) {
     
-    if (index >= 20 & index <= 255)
+    if ((index >= 20) & (index <= 255))
         colorTable[index] = color;
 }

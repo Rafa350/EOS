@@ -1,5 +1,5 @@
-#include "System/eosApplication.hpp"
-#include "Services/eosAppLoop.hpp"
+#include "System/eosApplication.h"
+#include "Services/eosAppLoop.h"
 #include "hal/halGPIO.h"
 
 
@@ -50,8 +50,8 @@ MyApplication::MyApplication() {
 ///
 void MyApplication::onInitialize() {
 
-	halGPIOInitializePin(LEDS_LD1_PORT, LEDS_LD1_PIN, HAL_GPIO_DIRECTION_OUTPUT);
-	halGPIOInitializePin(LEDS_LD2_PORT, LEDS_LD2_PIN, HAL_GPIO_DIRECTION_OUTPUT);
+	halGPIOInitializePin(LEDS_LD1_PORT, LEDS_LD1_PIN, HAL_GPIO_MODE_OUTPUT);
+	halGPIOInitializePin(LEDS_LD2_PORT, LEDS_LD2_PIN, HAL_GPIO_MODE_OUTPUT);
 
 	halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 	halGPIOClearPin(LEDS_LD2_PORT, LEDS_LD2_PIN);
@@ -69,7 +69,7 @@ void Led1LoopService::onRun() {
 
 		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 
-		Task::delay(100);
+		Task::delay(500);
 	}
 }
 
@@ -83,7 +83,7 @@ void Led2LoopService::onRun() {
 
 		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
 
-		Task::delay(80);
+		Task::delay(480);
 	}
 }
 

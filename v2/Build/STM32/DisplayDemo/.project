@@ -3,7 +3,7 @@
 	<name>DisplayDemo</name>
 	<comment></comment>
 	<projects>
-		<project>stm32f429i-disc1_hal_lib</project>
+		<project>stm32f429i-disc1_stdperiph_lib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -218,11 +218,6 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halTMR.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosAppLoop.hpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosAppLoop.hpp</location>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Controller/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -368,7 +363,17 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosILI9341.h</location>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341LTDC.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosILI9341LTDC.h</location>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341LDTC</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -416,6 +421,11 @@
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341io_serial8.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_serial8.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341LDTC/eosILI9341LTDC.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</location>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -39,6 +39,7 @@ namespace eos {
     /// \brief Interficie del driver del display.
     class IDisplayDriver {
         public:
+    		virtual ~IDisplayDriver() {}
             virtual void initialize() = 0;
             virtual void shutdown() = 0;
             virtual void setOrientation(Orientation orientation) = 0;
