@@ -1,6 +1,6 @@
 #include "eos.h"
 
-
+ 
 #ifdef ILI9341_INTERFACE_TYPE_SERIAL_8BIT
 
 #if !defined(ILI9341_INTERFACE_MODE_PIC32_GPIO) && \

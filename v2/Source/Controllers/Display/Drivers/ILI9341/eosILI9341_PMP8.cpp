@@ -1,6 +1,6 @@
 #include "eos.h"
 
-
+ 
 #if defined(ILI9341_INTERFACE_TYPE_PIC32PMP_8BIT) && defined(EOS_PIC32MX)
 
 extern "C" {
