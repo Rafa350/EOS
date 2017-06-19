@@ -14,10 +14,9 @@
 #include "Hal/halINT.h"
 
 
-#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO)
-
-#elif defined(ILI9341_INTERFACE_MODE_STM32_GPIO)
+#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO) && defined(EOS_PIC32MX)
 #include "xc.h"
+#elif defined(ILI9341_INTERFACE_MODE_STM32_GPIO) && defined(EOS_STM32F4)
 #elif defined(ILI9341_INTERFACE_MODE_HAL_GPIO)
 #include "Hal/halGPIO.h"
 #endif
@@ -59,12 +58,12 @@
 #define setCLK()   halGPIOSetPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 #define clrCLK()   halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 
-// Control del pin SO
+// Control del pin MOSI
 //
-#define initSO()   halGPIOClearPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN); \
+#define initMOSI() halGPIOClearPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN); \
                    halGPIOInitializePinOutput(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
-#define setSO()    halGPIOSetPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
-#define clrSO()    halGPIOClearPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
+#define setMOSI()  halGPIOSetPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
+#define clrMOSI()  halGPIOClearPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
 
 #endif
 
@@ -91,7 +90,7 @@ void ILI9341_IO::initialize() {
     initCS();
     initRS();
     initCLK();
-    initSO();
+    initMOSI();
 #ifndef ILI9341_INTERFACE_WRITEONLY
     initSI();
 #endif
@@ -144,9 +143,9 @@ void ILI9341_IO::wrCommand(
     for (mask = 0x80; mask; mask >>= 1) {
         clrCLK();
         if ((data & mask) != 0)
-            setSO();
+            setMOSI();
         else
-            clrSO();
+            clrMOSI();
         setCLK();
     }
 
@@ -169,9 +168,9 @@ void ILI9341_IO::wrData(
     for (mask = 0x80; mask; mask >>= 1) {
         clrCLK();
         if ((data & mask) != 0)
-            setSO();
+            setMOSI();
         else
-            clrSO();
+            clrMOSI();
         setCLK();
     }
 

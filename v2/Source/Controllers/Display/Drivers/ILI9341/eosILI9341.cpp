@@ -119,6 +119,17 @@
 #define OP_DELAY      255
 
 
+// Funcions de comunicacio amb el driver
+//
+#define ioInitialize()       io.initialize()
+#define ioReset()            io.reset()
+#define ioBegin()            io.begin()
+#define ioEnd()              io.end()
+#define ioWriteCommand(c)    io.wrCommand(c)
+#define ioWriteData(d)       io.wrData(d)
+#define ioReadData()         io.rdData()
+
+
 using namespace eos;
 
 
@@ -477,8 +488,8 @@ void ILI9341_Driver::hScroll(
 ///
 void ILI9341_Driver::ctrlInitialize() {
     
-    io.initialize();
-    io.reset();
+    ioInitialize();
+    ioReset();
 }
 
 
@@ -487,9 +498,9 @@ void ILI9341_Driver::ctrlInitialize() {
 ///
 void ILI9341_Driver::ctrlDisplayOff() {
 
-    io.begin();
-    io.wrCommand(CMD_DISPLAY_OFF);
-    io.end();   
+    ioBegin();
+    ioWriteCommand(CMD_DISPLAY_OFF);
+    ioEnd();   
 }
 
 
@@ -510,21 +521,21 @@ void ILI9341_Driver::ctrlSelectRegion(
     int16_t x2 = x + width - 1;
     int16_t y2 = y + height - 1;
 
-    io.begin();
+    ioBegin();
 
-    io.wrCommand(CMD_COLUMN_ADDRESS_SET);
-	io.wrData(x >> 8);
-	io.wrData(x);
-	io.wrData(x2 >> 8);
-	io.wrData(x2);
+    ioWriteCommand(CMD_COLUMN_ADDRESS_SET);
+	ioWriteData(x >> 8);
+	ioWriteData(x);
+	ioWriteData(x2 >> 8);
+	ioWriteData(x2);
 
-	io.wrCommand(CMD_PAGE_ADDRESS_SET);
-	io.wrData(y >> 8);
-	io.wrData(y);
-	io.wrData(y2 >> 8);
-	io.wrData(y2);
+	ioWriteCommand(CMD_PAGE_ADDRESS_SET);
+	ioWriteData(y >> 8);
+	ioWriteData(y);
+	ioWriteData(y2 >> 8);
+	ioWriteData(y2);
 
-    io.end();
+    ioEnd();
 }
 
 
@@ -533,9 +544,9 @@ void ILI9341_Driver::ctrlSelectRegion(
 ///
 void ILI9341_Driver::ctrlStartMemoryWrite() {
 
-    io.begin();
-    io.wrCommand(CMD_MEMORY_WRITE);
-    io.end();
+    ioBegin();
+    ioWriteCommand(CMD_MEMORY_WRITE);
+    ioEnd();
 }
 
 
@@ -544,9 +555,9 @@ void ILI9341_Driver::ctrlStartMemoryWrite() {
 ///
 void ILI9341_Driver::ctrlStartMemoryRead() {
 
-    io.begin();
-    io.wrCommand(CMD_MEMORY_READ);
-    io.end();
+    ioBegin();
+    ioWriteCommand(CMD_MEMORY_READ);
+    ioEnd();
 }
 
 
@@ -563,12 +574,12 @@ void ILI9341_Driver::ctrlWritePixel(
 
     uint16_t c = color.to565();
 
-    io.begin();
+    ioBegin();
     while (count--) {
-        io.wrData(c >> 8);
-        io.wrData(c);
+        ioWriteData(c >> 8);
+        ioWriteData(c);
     }
-    io.end();
+    ioEnd();
 
 #elif defined(ILI9341_COLORMODE_666)
 
@@ -577,13 +588,13 @@ void ILI9341_Driver::ctrlWritePixel(
     uint8_t c2 = (uint32_t)(c & 0x0000FC00) >> 8;
     uint8_t c3 = (uint32_t)(c & 0x000000FC);
 
-    io.begin();
+    ioBegin();
     while (count--) {
-        io.wrData(c1);
-        io.wrData(c2);
-        io.wrData(c3);
+        ioWriteData(c1);
+        ioWriteData(c2);
+        ioWriteData(c3);
     }
-    io.end();
+    ioEnd();
 
 #endif
 }
@@ -639,15 +650,15 @@ void ILI9341_Driver::ctrlReadPixel(
     Color *colors,
     int32_t count) {
 
-    io.begin();
-    io.rdData();               // Dummy read
-    io.rdData();               // Dummy read
+    ioBegin();
+    ioReadData();               // Dummy read
+    ioReadData();               // Dummy read
     while (count--) {
 
 #if defined(ILI9341_COLORMODE_565)
-        uint8_t volatile c1 = io.rdData();
-        uint8_t volatile c2 = io.rdData();
-        uint8_t volatile c3 = io.rdData();
+        uint8_t volatile c1 = ioReadData();
+        uint8_t volatile c2 = ioReadData();
+        uint8_t volatile c3 = ioReadData();
         Color color(c1, c2, c3);
         *colors++ = color;
 
@@ -655,5 +666,5 @@ void ILI9341_Driver::ctrlReadPixel(
 #endif
 
     }
-    io.end();
+    ioEnd();
 }

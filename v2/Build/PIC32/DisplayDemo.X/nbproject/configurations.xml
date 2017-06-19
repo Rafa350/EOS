@@ -17,39 +17,40 @@
           <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
-                <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341.hpp</itemPath>
-                <itemPath>../../../Include/Controllers/Display/Drivers/eosVdc.hpp</itemPath>
+                <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341.h</itemPath>
               </logicalFolder>
-              <itemPath>../../../Include/Controllers/Display/eosDisplay.hpp</itemPath>
-              <itemPath>../../../Include/Controllers/Display/eosFont.hpp</itemPath>
-              <itemPath>../../../Include/Controllers/Display/eosColor.hpp</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosColor.h</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosDisplay.h</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosFont.h</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Hal" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halINT.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halSPI.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
+            <itemPath>../../../Include/HAL/halSPI.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Services" projectFiles="true">
-            <itemPath>../../../Include/Services/eosAppLoop.hpp</itemPath>
-            <itemPath>../../../Include/Services/eosService.hpp</itemPath>
+            <itemPath>../../../Include/Services/eosAppLoop.h</itemPath>
+            <itemPath>../../../Include/Services/eosService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
-              <itemPath>../../../Include/System/Collections/eosList.hpp</itemPath>
+              <itemPath>../../../Include/System/Collections/eosList.h</itemPath>
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
-              <itemPath>../../../Include/System/Core/eosTask.hpp</itemPath>
-              <itemPath>../../../Include/System/Core/eosCallbacks.hpp</itemPath>
-              <itemPath>../../../Include/System/Core/eosSemaphore.hpp</itemPath>
-              <itemPath>../../../Include/System/Core/eosTimer.hpp</itemPath>
+              <itemPath>../../../Include/System/Core/eosCallbacks.h</itemPath>
+              <itemPath>../../../Include/System/Core/eosSemaphore.h</itemPath>
+              <itemPath>../../../Include/System/Core/eosTask.h</itemPath>
+              <itemPath>../../../Include/System/Core/eosTimer.h</itemPath>
             </logicalFolder>
-            <itemPath>../../../Include/System/eosApplication.hpp</itemPath>
+            <itemPath>../../../Include/System/eosApplication.h</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
           <itemPath>../../../Include/eosAssert.h</itemPath>
@@ -79,6 +80,7 @@
                   <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</itemPath>
                   <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_paralel8.cpp</itemPath>
                   <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_pic32_pmp8.cpp</itemPath>
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_serial8.cpp</itemPath>
                 </logicalFolder>
                 <logicalFolder name="f2" displayName="VRAM" projectFiles="true">
                   <itemPath>../../../Source/Controllers/Display/Drivers/VRAM/eosVRAM.cpp</itemPath>

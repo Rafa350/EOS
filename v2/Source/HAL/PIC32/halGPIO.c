@@ -52,7 +52,7 @@ void halGPIOInitializePin(
     GPIOPin pin,
     GPIOOptions options) {
    
-    if (options & HAL_GPIO_DIRECTION_OUTPUT) {
+    if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT) {
         *gpioPortRegs[port].trisCLR = 1 << pin; 
      
         if (options & HAL_GPIO_OPENDRAIN_ENABLED)
@@ -77,7 +77,7 @@ void halGPIOInitializePort(
     GPIOOptions options,
     uint16_t mask) {
 
-    if (options & HAL_GPIO_DIRECTION_OUTPUT) {
+    if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT) {
         *gpioPortRegs[port].trisCLR = mask;
 
         if (options & HAL_GPIO_OPENDRAIN_ENABLED)

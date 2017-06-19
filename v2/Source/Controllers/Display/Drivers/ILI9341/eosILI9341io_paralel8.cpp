@@ -9,15 +9,15 @@
 #include "Hal/halINT.h"
 
 
-#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO)
+#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO) && defined(EOS_PIC32MX)
 #include <xc.h>
-#elif defined(ILI9341_INTERFACE_MODE_STM32_GPIO)
+#elif defined(ILI9341_INTERFACE_MODE_STM32_GPIO) && defined(EOS_STM32F4)
 #elif defined(ILI9341_INTERFACE_MODE_HAL_GPIO)
 #include "Hal/halGPIO.h"
 #endif
 
 
-#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO)
+#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO) && defined(EOS_PIC32MX)
 
 #if defined(PORTA)
 #define HAL_GPIO_PORT_A      A
