@@ -163,17 +163,9 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor.
-///
-ILI9341_IO::ILI9341_IO() {
-
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Inicialitza les comunicacions.
 ///
-void ILI9341_IO::initialize() {
+void ioInitialize() {
 
 #ifdef ILI9341_RST_PORT
     initRST();
@@ -191,7 +183,7 @@ void ILI9341_IO::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief Reseteja el driver.
 ///
-void ILI9341_IO::reset() {
+void ioReset() {
 
     halTMRDelay(10);
     setRST();
@@ -202,7 +194,7 @@ void ILI9341_IO::reset() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia una transferencia de dades amb el driver.
 ///
-void ILI9341_IO::begin() {
+void ioBegin() {
 
     halINTDisableInterrupts();
     clrCS();
@@ -212,7 +204,7 @@ void ILI9341_IO::begin() {
 /// ----------------------------------------------------------------------
 /// \brief Finalitza una transferencia de dades amb el driver.
 ///
-void ILI9341_IO::end() {
+void ioEnd() {
 
     setCS();
     halINTEnableInterrupts();
@@ -221,28 +213,28 @@ void ILI9341_IO::end() {
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu un byte en el registre de comandes.
-/// \param data: El byte a escriure.
+/// \param d: El byte a escriure.
 ///
-void ILI9341_IO::wrCommand(
-    uint8_t data) {
+void ioWriteCommand(
+    uint8_t d) {
 
     clrRS();
     clrWR();
-    wrDATA(data);
+    wrDATA(d);
     setWR();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu un byte en el registre de dades.
-/// \param data: El byte a escriure.
+/// \param d: El byte a escriure.
 ///
-void ILI9341_IO::wrData(
-    uint8_t data) {
+void ioWriteData(
+    uint8_t d) {
 
     setRS();
     clrWR();
-    wrDATA(data);
+    wrDATA(d);
     setWR();
 }
 
@@ -251,7 +243,7 @@ void ILI9341_IO::wrData(
 /// \brief Llegeix un byte en l'adressa seleccionada del driver.
 /// \return El byte lleigit.
 ///
-uint8_t ILI9341_IO::rdData() {
+uint8_t ioReadData() {
 
 #ifdef ILI9342_INTERFACE_WRITEONLY
     return 0;

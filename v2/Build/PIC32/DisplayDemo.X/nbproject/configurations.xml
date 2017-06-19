@@ -78,9 +78,9 @@
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
                 <logicalFolder name="f1" displayName="ILI9341" projectFiles="true">
                   <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</itemPath>
-                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_paralel8.cpp</itemPath>
-                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_pic32_pmp8.cpp</itemPath>
-                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_serial8.cpp</itemPath>
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</itemPath>
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PMP8.cpp</itemPath>
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</itemPath>
                 </logicalFolder>
                 <logicalFolder name="f2" displayName="VRAM" projectFiles="true">
                   <itemPath>../../../Source/Controllers/Display/Drivers/VRAM/eosVRAM.cpp</itemPath>

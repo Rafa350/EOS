@@ -10,21 +10,8 @@
 
 namespace eos {
 
-    class ILI9341_IO {
-        public:
-            ILI9341_IO();
-            void initialize();
-            void reset();
-            void begin();
-            void end();
-            void wrCommand(uint8_t data);
-            void wrData(uint8_t data);
-            uint8_t rdData();
-    };
-
     class ILI9341_Driver: public IDisplayDriver {
         private:
-            ILI9341_IO io;
             int16_t screenWidth;
             int16_t screenHeight;
 

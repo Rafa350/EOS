@@ -121,13 +121,13 @@
 
 // Funcions de comunicacio amb el driver
 //
-#define ioInitialize()       io.initialize()
-#define ioReset()            io.reset()
-#define ioBegin()            io.begin()
-#define ioEnd()              io.end()
-#define ioWriteCommand(c)    io.wrCommand(c)
-#define ioWriteData(d)       io.wrData(d)
-#define ioReadData()         io.rdData()
+extern void ioInitialize();
+extern void ioReset();
+extern void ioBegin();
+extern void ioEnd();
+extern void ioWriteCommand(uint8_t d);
+extern void ioWriteData(uint8_t d);
+extern uint8_t ioReadData();
 
 
 using namespace eos;
@@ -621,7 +621,8 @@ void ILI9341_Driver::ctrlWritePixel(
 void ILI9341_Driver::ctrlWriteProgram(
 	const uint8_t *data) {
 
-    io.begin();
+    ioBegin();
+    
     uint8_t c;
     const uint8_t *p = data;
     while ((c = *p++) != OP_END) {
@@ -631,13 +632,13 @@ void ILI9341_Driver::ctrlWriteProgram(
                 break;
 
             default:
-                io.wrCommand(*p++);
+                ioWriteCommand(*p++);
                 while (--c != 0)
-                    io.wrData(*p++);
+                    ioWriteData(*p++);
                 break;
         }
     }
-    io.end();
+    ioEnd();
 }
 
 

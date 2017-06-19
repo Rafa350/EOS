@@ -72,17 +72,9 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor.
-///
-ILI9341_IO::ILI9341_IO() {
-
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Inicialitza les comunicacions.
 ///
-void ILI9341_IO::initialize() {
+void ioInitialize() {
 
 #ifdef ILI9341_RST_PORT
     initRST();
@@ -100,7 +92,7 @@ void ILI9341_IO::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief Reseteja el driver.
 ///
-void ILI9341_IO::reset() {
+void ioReset() {
 
 #ifdef ILI9341_RST_PORT
     halTMRDelay(10);
@@ -113,7 +105,7 @@ void ILI9341_IO::reset() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia una transferencia de dades amb el driver.
 ///
-void ILI9341_IO::begin() {
+void ioBegin() {
 
 	clrCS();
 }
@@ -122,7 +114,7 @@ void ILI9341_IO::begin() {
 /// ----------------------------------------------------------------------
 /// \brief Finalitza una transferencia de dades amb el driver.
 ///
-void ILI9341_IO::end() {
+void ioEnd() {
 
     setCS();
 }
@@ -130,10 +122,10 @@ void ILI9341_IO::end() {
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu un byte de comanda.
-/// \param data: El byte a escriure.
+/// \param d: El byte a escriure.
 ///
-void ILI9341_IO::wrCommand(
-    uint8_t data) {
+void ioWriteCommand(
+    uint8_t d) {
 
     halINTDisableInterrupts();
 
@@ -142,7 +134,7 @@ void ILI9341_IO::wrCommand(
     uint8_t mask;
     for (mask = 0x80; mask; mask >>= 1) {
         clrCLK();
-        if ((data & mask) != 0)
+        if ((d & mask) != 0)
             setMOSI();
         else
             clrMOSI();
@@ -155,10 +147,10 @@ void ILI9341_IO::wrCommand(
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu un byte de dades.
-/// \param data: El byte a escriure.
+/// \param d: El byte a escriure.
 ///
-void ILI9341_IO::wrData(
-    uint8_t data) {
+void ioWriteData(
+    uint8_t d) {
 
     halINTDisableInterrupts();
 
@@ -167,7 +159,7 @@ void ILI9341_IO::wrData(
     uint8_t mask;
     for (mask = 0x80; mask; mask >>= 1) {
         clrCLK();
-        if ((data & mask) != 0)
+        if ((d & mask) != 0)
             setMOSI();
         else
             clrMOSI();
@@ -181,7 +173,7 @@ void ILI9341_IO::wrData(
 /// \brief Llegeix un byte de dades.
 /// \return El byte lleigit.
 ///
-uint8_t ILI9341_IO::rdData() {
+uint8_t ioReadData() {
 
 #ifdef ILI9341_INTERFACE_WRITEONLY
 
