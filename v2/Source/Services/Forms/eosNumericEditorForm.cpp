@@ -142,20 +142,28 @@ void NumericEditorForm::onPaint(
      
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant canvia la posicio del selector.
-/// \param position: Posicio del selector.
-/// \param direction: Direccio del moviment.
+/// \param delta: Desplaçament.
 ///
 #ifdef eosFormsService_UseSelector
-void NumericEditorForm::onSelectorMove(
-    int position, 
-    SelectorDirection direction) {
+void NumericEditorForm::onSelectorInc(
+    uint16_t delta) {
     
-    if (direction == SelectorDirection::forward)
-        incValue();
-    else
-        decValue();
+    incValue();
+    Form::onSelectorInc(delta);
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant canvia la posicio del selector.
+/// \param delta: Desplaçament.
+///
+#ifdef eosFormsService_UseSelector
+void NumericEditorForm::onSelectorDec(
+    uint16_t delta) {
     
-    Form::onSelectorMove(position, direction);
+    decValue();
+    Form::onSelectorDec(delta);
 }
 #endif
 

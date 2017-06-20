@@ -76,9 +76,12 @@ void MainForm::onSelectorPress() {
 
 
 #ifdef eosFormsService_UseSelector
-void MainForm::onSelectorMove(
-    int16_t position,
-    SelectorDirection direction) {
+void MainForm::onSelectorInc(
+    uint16_t delta) {
+}
+
+void MainForm::onSelectorDec(
+    uint16_t delta) {
 }
 #endif
 

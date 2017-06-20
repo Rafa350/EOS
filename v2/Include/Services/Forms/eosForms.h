@@ -56,15 +56,9 @@ namespace eos {
         release
     } SelectorEvent;
 
-    typedef enum class __SelectorDirection {
-        forward,
-        backward
-    } SelectorDirection;
-
     struct MsgSelector {
         SelectorEvent event;
-        SelectorPosition position;
-        SelectorState state;
+        uint16_t delta;
     };
 #endif
 
@@ -295,7 +289,8 @@ namespace eos {
             virtual void onDeactivate(Form *activateForm) {}
             virtual void onPaint(FormsDisplay *display) {}
 #ifdef eosFormsService_UseSelector
-            virtual void onSelectorMove(SelectorPosition position, SelectorDirection direction);
+            virtual void onSelectorInc(uint16_t delta);
+            virtual void onSelectorDec(uint16_t delta);
             virtual void onSelectorPress();
             virtual void onSelectorRelease();
 #endif

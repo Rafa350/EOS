@@ -49,7 +49,8 @@ namespace eos {
             ~NumericEditorForm();            
             void onPaint(FormsDisplay *display);
 #ifdef eosFormsService_UseSelector            
-            void onSelectorMove(int position, SelectorDirection direction);
+            void onSelectorInc(uint16_t delta);
+            void onSelectorDec(uint16_t delta);
             void onSelectorPress();
 #endif            
 #ifdef eosFormsService_UseKeyboard            

@@ -24,7 +24,7 @@ KeyboardService::KeyboardService(
     uint8_t addr):
     
     Service(application, serviceName, taskStackSize, taskPriority),
-    i2cService(_i2cService),
+    i2cService(i2cService),
     addr(addr),
     state(0),
     evNotify(nullptr) {

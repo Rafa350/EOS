@@ -121,20 +121,28 @@ void MenuForm::onPaint(
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant el selector es mou
-/// \param position: Posicio del selector
-/// \param direction: Direccio del moviment.
+/// \param delta: Desplaçament.
 ///
 #ifdef eosFormsService_UseSelector
-void MenuForm::onSelectorMove(
-    int16_t position,
-    SelectorDirection direction) {
+void MenuForm::onSelectorInc(
+    uint16_t delta) {
     
-    if (direction == SelectorDirection::forward)
-        nextItem();
-    else
-        prevItem();
+    nextItem();
+    Form::onSelectorInc(delta);
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant el selector es mou
+/// \param delta: Desplaçament.
+///
+#ifdef eosFormsService_UseSelector
+void MenuForm::onSelectorDec(
+    uint16_t delta) {
     
-    Form::onSelectorMove(position, direction);
+    prevItem();
+    Form::onSelectorDec(delta);
 }
 #endif
 

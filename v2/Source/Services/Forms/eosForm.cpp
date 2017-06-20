@@ -175,11 +175,11 @@ void Form::dispatchMessage(
         case MSG_SELECTOR:
             switch (message.msgSelector.event) {
                 case SelectorEvent::inc:
-                    onSelectorMove(message.msgSelector.position, SelectorDirection::forward);
+                    onSelectorInc(message.msgSelector.delta);
                     break;
                     
                 case SelectorEvent::dec:                    
-                    onSelectorMove(message.msgSelector.position, SelectorDirection::backward);
+                    onSelectorDec(message.msgSelector.delta);
                     break;
                     
                 case SelectorEvent::press:
@@ -252,14 +252,23 @@ void Form::onActivate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant el selector es mou.
-/// \param position: Posicio del selector.
-/// \param direction: Direccio del moviment.
+/// \brief Es crida quant el selector es mou en devant.
+/// \param delta: Desplaçament desde l'ultima notificacio.
 ///
 #ifdef eosFormsService_UseSelector
-void Form::onSelectorMove(
-    SelectorPosition position,
-    SelectorDirection direction) {
+void Form::onSelectorInc(
+    uint16_t delta) {
+    
+}
+#endif
+    
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant el selector es en darrera.
+/// \param delta: Desplaçament desde l'ultima notificacio.
+///
+#ifdef eosFormsService_UseSelector
+void Form::onSelectorDec(
+    uint16_t delta) {
     
 }
 #endif

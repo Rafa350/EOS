@@ -170,8 +170,7 @@ void MyApplication::selectorNotifyEventHandler(
                 message.id = MSG_SELECTOR;
                 message.target = form;
                 message.msgSelector.event = delta < 0 ? SelectorEvent::dec : SelectorEvent::inc;
-                message.msgSelector.position = position;
-                message.msgSelector.state = state;
+                message.msgSelector.delta = delta < 0 ? -delta : delta;
                 messageQueue->put(message, (unsigned) -1);
                 oldPosition = position;
             }
@@ -180,8 +179,7 @@ void MyApplication::selectorNotifyEventHandler(
                 message.id = MSG_SELECTOR;
                 message.target = form;
                 message.msgSelector.event = state == 1 ? SelectorEvent::press : SelectorEvent::release;
-                message.msgSelector.position = position;
-                message.msgSelector.state = state;
+                message.msgSelector.delta = 0;
                 messageQueue->put(message, (unsigned) -1);
                 oldState = state;
             }

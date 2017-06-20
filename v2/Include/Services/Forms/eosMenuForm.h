@@ -87,7 +87,8 @@ namespace eos {
                 FormsDisplay *display, int16_t x, int16_t y, int16_t width, int16_t height);
             void onPaint(FormsDisplay *display);    
 #ifdef eosFormsService_UseSelector            
-            void onSelectorMove(SelectorPosition position, SelectorDirection direction);
+            void onSelectorInc(uint16_t delta);
+            void onSelectorDec(uint16_t delta);
             void onSelectorPress();
 #endif
 #ifdef eosFormsService_UseKeyboard            

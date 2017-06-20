@@ -38,21 +38,29 @@ void OptionEditorForm::onPaint(
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant el selector es mou.
-/// \param position: Posicio del selector
-/// \param direction Direccio del moviment.
+/// \param delta: Desplaçament
 ///
 #ifdef eosFormsService_UseSelector
-void OptionEditorForm::onSelectorMove(
-    int position, 
-    SelectorDirection direction) {
+void OptionEditorForm::onSelectorInc(
+    uint16_t delta) {
     
-    if (direction == SelectorDirection::forward)
-        nextItem();
-    else
-        prevItem();
+    nextItem();
 }
 #endif
     
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant el selector es mou.
+/// \param delta: Desplaçament.
+///
+#ifdef eosFormsService_UseSelector
+void OptionEditorForm::onSelectorDec(
+    uint16_t delta) {
+    
+    prevItem();
+}
+#endif
+
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida quant es prem el boto del selector

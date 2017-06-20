@@ -30,8 +30,9 @@ namespace app {
         protected:
             void onPaint(FormsDisplay *display);
 #ifdef eosFormsService_UseSelector
+            void onSelectorInc(uint16_t delta);
+            void onSelectorDec(uint16_t delta);
             void onSelectorPress();
-            void onSelectorMove(int16_t position, SelectorDirection direction);
 #endif
 #ifdef eosFormsService_UseKeyboard
             void onKeyPress(KeyCode keyCode);
