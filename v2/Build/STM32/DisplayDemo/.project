@@ -413,14 +413,14 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</location>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341io_paralel8.cpp</name>
+			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_paralel8.cpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</location>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341io_serial8.cpp</name>
+			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341io_serial8.cpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341LDTC/eosILI9341LTDC.cpp</name>
