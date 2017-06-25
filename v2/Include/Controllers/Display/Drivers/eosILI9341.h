@@ -42,6 +42,15 @@ namespace eos {
             void ctrlSelectRegion(int16_t x, int16_t y, int16_t width, int16_t height);
             void ctrlStartMemoryWrite();
             void ctrlStartMemoryRead();
+
+        private:
+            static void ioInitialize();
+            static void ioReset();
+            static void ioBegin();
+            static void ioEnd();
+            static void ioWriteCommand(uint8_t d);
+            static void ioWriteData(uint8_t d);
+            static uint8_t ioReadData();
     };
 }
 

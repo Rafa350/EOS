@@ -1,71 +1,64 @@
 #include "eos.h"
 
  
-#ifdef ILI9341_IO_TYPE_SIO
-
-#if !defined(ILI9341_IO_SUBTYPE_SIO_HAL) && \
-	!defined(ILI9341_IO_SUBTYPE_SIO_DIRECT)
-#error No se especifico ILI9341_IO_SUBTYPE_SIO_xxx.
-#endif
+#ifdef ILI9341_IO_TYPE_SPI
 
 #include "Controllers/Display/Drivers/eosILI9341.h"
-#include "Hal/halTMR.h"
-#include "Hal/halINT.h"
 
-#ifdef ILI9341_IO_SUBTYPE_SIO_HAL
-#include "Hal/halGPIO.h"
+#ifdef ILI9341_IO_SUBTYPE_SPI_HAL
+#include "hal/halSPI.h"
+#include "hal/halGPIO.h"
+#include "hal/halINT.h"
+#include "hal/halTMR.h"
 #endif
 
 
-// Control dels pins a traves del modul HAL GPIO
-//
-#if defined(ILI9341_IO_SUBTYPE_SIO_HAL)
+#if defined(ILI9341_IO_SUBTYPE_SPI_HAL)
 
 // Control del pin RST
 //
 #ifdef ILI9341_RST_PORT
 #define initRST()  halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN); \
-                   halGPIOInitializePin(ILI9341_RST_PORT, ILI9341_RST_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
+                   halGPIOInitializePin(ILI9341_RST_PORT, ILI9341_RST_PIN, HAL_GPIO_MODE_OUTPUT)
+
 #define setRST()   halGPIOSetPin(ILI9341_RST_PORT, ILI9341_RST_PIN)
+
 #define clrRST()   halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN)
 #endif
 
 // Control del pin CS
 //
 #define initCS()   halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN); \
-                   halGPIOInitializePin(ILI9341_CS_PORT, ILI9341_CS_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
+                   halGPIOInitializePin(ILI9341_CS_PORT, ILI9341_CS_PIN, HAL_GPIO_MODE_OUTPUT)
+
 #define setCS()    halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
+
 #define clrCS()    halGPIOClearPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
 
 // Control del pin RS
 //
 #define initRS()   halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN); \
-                   halGPIOInitializePin(ILI9341_RS_PORT, ILI9341_RS_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
+                   halGPIOInitializePin(ILI9341_RS_PORT, ILI9341_RS_PIN, HAL_GPIO_MODE_OUTPUT)
+
 #define setRS()    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
+
 #define clrRS()    halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
 
-// Control del pin CLK
-//
-#define initCLK()  halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN); \
-                   halGPIOInitializePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
-#define setCLK()   halGPIOSetPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
-#define clrCLK()   halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 
-// Control del pin MOSI
+// Control del modul SPI
 //
-#define initMOSI() halGPIOClearPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN); \
-                   halGPIOInitializePin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
-#define setMOSI()  halGPIOSetPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
-#define clrMOSI()  halGPIOClearPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
+#define initSPI()  halGPIOInitializePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_MODE_ALTERNATE | HAL_GPIO_SPEED_HIGH); \
+	               halGPIOInitializeAlternatePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, ILI9341_GPIO_AF); \
+                   halGPIOInitializePin(ILI9341_MISO_PORT, ILI9341_MISO_PIN, HAL_GPIO_MODE_ALTERNATE | HAL_GPIO_SPEED_HIGH); \
+	               halGPIOInitializeAlternatePin(ILI9341_MISO_PORT, ILI9341_MISO_PIN, ILI9341_GPIO_AF); \
+                   halGPIOInitializePin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, HAL_GPIO_MODE_ALTERNATE | HAL_GPIO_SPEED_HIGH); \
+	               halGPIOInitializeAlternatePin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, ILI9341_GPIO_AF); \
+				   halSPIInitialize(ILI9341_SPI_MODULE, HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB)
 
+#define sendSPI(d) halSPISend(ILI9341_SPI_MODULE, d)
 
-// Control dels pins de forma directa per PIC32MX
-//
-#elif defined(ILI9341_IO_SUBTYPE_SIO_DIRECT) && defined(EOS_PIC32MX)
+#define recvSPI()  halSPISend(ILI9341_SPI_MODULE, 0)
 
-// Control dels pins de forma directa per STM32F4
-//
-#elif defined(ILI9341_IO_SUBTYPE_SIO_DIRECT) && defined(EOS_STM32F4)
 
 #endif
 
@@ -83,10 +76,9 @@ void ILI9341_Driver::ioInitialize() {
 #endif
     initCS();
     initRS();
-    initCLK();
-    initMOSI();
+    initSPI();
 #ifndef ILI9341_INTERFACE_WRITEONLY
-    initSI();
+    initMISO();
 #endif
 }
 
@@ -132,16 +124,7 @@ void ILI9341_Driver::ioWriteCommand(
     halINTDisableInterrupts();
 
     clrRS();
-
-    uint8_t mask;
-    for (mask = 0x80; mask; mask >>= 1) {
-        clrCLK();
-        if ((d & mask) != 0)
-            setMOSI();
-        else
-            clrMOSI();
-        setCLK();
-    }
+    sendSPI(d);
 
     halINTEnableInterrupts();
 }
@@ -157,16 +140,7 @@ void ILI9341_Driver::ioWriteData(
     halINTDisableInterrupts();
 
     setRS();
-
-    uint8_t mask;
-    for (mask = 0x80; mask; mask >>= 1) {
-        clrCLK();
-        if ((d & mask) != 0)
-            setMOSI();
-        else
-            clrMOSI();
-        setCLK();
-    }
+    sendSPI(d);
 
     halINTEnableInterrupts();
 }
@@ -183,7 +157,7 @@ uint8_t ILI9341_Driver::ioReadData() {
 
 #else
 
-    uint8_t data = 0;
+    uint8_t data = recvSPI();
 
     return data;
 

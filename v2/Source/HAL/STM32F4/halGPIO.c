@@ -1,7 +1,7 @@
 #include "hal/halGPIO.h"
 
 
-GPIO_TypeDef *gpioPortRegs[] = {
+GPIO_TypeDef *gpioTbl[] = {
     GPIOA,
 	GPIOB,
 	GPIOC,
@@ -25,6 +25,12 @@ void halGPIOInitialize(
 	GPIOInitializeInfo *info,
 	uint8_t count) {
 
+	for (uint8_t i = 0; i < count; i++) {
+		GPIOInitializeInfo *p = &info[i];
+		halGPIOInitializePin(p->port, p->pin, p->options);
+		if ((p->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_ALTERNATE)
+			halGPIOInitializeAlternatePin(p->port, p->pin, p->alternate);
+	}
 }
 
 
@@ -41,57 +47,53 @@ void halGPIOInitializePin(
 
 	RCC->AHB1ENR |= 1 << port;
 
-	GPIO_TypeDef *p = gpioPortRegs[port];
+	GPIO_TypeDef *gpio = gpioTbl[port];
 
-	p->MODER &= ~(0b11 << (pin * 2));
+	gpio->MODER &= ~(0b11 << (pin * 2)); // Per defecte INPUT
 	switch (options & HAL_GPIO_MODE_MASK) {
-		case HAL_GPIO_MODE_INPUT:
-			p->MODER |= 0b00 << (pin * 2);
-			break;
-
 		case HAL_GPIO_MODE_OUTPUT:
-			p->MODER |= 0b01 << (pin * 2);
+			gpio->MODER |= 0b01 << (pin * 2);
 			break;
 
-		case HAL_GPIO_MODE_AF:
-			p->MODER |= 0b10 << (pin * 2);
+		case HAL_GPIO_MODE_ALTERNATE:
+			gpio->MODER |= 0b10 << (pin * 2);
 			break;
 
 		case HAL_GPIO_MODE_ANALOG:
-			p->MODER |= 0b11 << (pin * 2);
+			gpio->MODER |= 0b11 << (pin * 2);
 			break;
 	}
 
-	p->PUPDR &= ~(1 << (pin * 2));
+	gpio->PUPDR &= ~(0b11 << (pin * 2)); // Per defecte NONE
 	switch (options & HAL_GPIO_PULLUPDN_MASK) {
 		case HAL_GPIO_PULLUPDN_UP:
-			p->PUPDR |= 0b01 << (2 * pin);
+			gpio->PUPDR |= 0b01 << (2 * pin);
 			break;
 
 		case HAL_GPIO_PULLUPDN_DOWN:
-			p->PUPDR |= 0b10 << ( 2 * pin);
+			gpio->PUPDR |= 0b10 << ( 2 * pin);
 			break;
 	}
 
-	p->OSPEEDR &= ~(1 << (2 * pin));
+	gpio->OSPEEDR &= ~(0b11 << (2 * pin)); // Per defecte LOW
 	switch (options & HAL_GPIO_SPEED_MASK) {
 		case HAL_GPIO_SPEED_MEDIUM:
-			p->OSPEEDR |= 0b01 << (2 * pin);
-			break;
-
-		case HAL_GPIO_SPEED_FAST:
-			p->OSPEEDR |= 0b11 << (2 * pin);
+			gpio->OSPEEDR |= 0b01 << (2 * pin);
 			break;
 
 		case HAL_GPIO_SPEED_HIGH:
-			p->OSPEEDR |= 0b10 << (2 * pin);
+			gpio->OSPEEDR |= 0b10 << (2 * pin);
+			break;
+
+		case HAL_GPIO_SPEED_FAST:
+			gpio->OSPEEDR |= 0b11 << (2 * pin);
 			break;
 	}
 
 	if ((options & HAL_GPIO_OPENDRAIN_MASK) == HAL_GPIO_OPENDRAIN_ENABLED)
-		p->OTYPER |= 1 << pin;
+		gpio->OTYPER |= 1 << pin;
 	else
-		p->OTYPER &= ~(1 << pin);
+		gpio->OTYPER &= ~(1 << pin);
 }
 
 

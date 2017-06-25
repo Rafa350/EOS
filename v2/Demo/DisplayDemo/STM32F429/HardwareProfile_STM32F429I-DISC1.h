@@ -38,7 +38,7 @@
 #define ILI9341_COLORMODE_565
 //#define ILI9341_COLORMODE_666
 
-#define ILI9341_INTERFACE_MODE_HAL_GPIO
+//#define ILI9341_INTERFACE_MODE_HAL_GPIO
 //#define ILI9341_INTERFACE_MODE_PIC32_GPIO
 //#define ILI9341_INTERFACE_MODE_PIC32_PMP
 //#define ILI9341_INTERFACE_MODE_STM32_GPIO
@@ -50,6 +50,18 @@
 #define ILI9341_INTERFACE_TYPE_SERIAL_8BIT
 
 #define ILI9341_INTERFACE_WRITEONLY
+
+//#define ILI9341_IO_TYPE_PIO8
+//#define ILI9342_IO_SUBTYPE_PIO8_HAL
+//#define ILI9342_IO_SUBTYPE_PIO8_DIRECT
+
+#define ILI9341_IO_TYPE_SIO
+#define ILI9341_IO_SUBTYPE_SIO_HAL
+//#define ILI9341_IO_SUBTYPE_SIO_DIRECT
+
+//#define ILI9341_IO_TYPE_SPI
+//#define ILI9341_IO_SUBTYPE_SPI_HAL
+//define ILI9341_IO_SUBTYPE_SPI_DIRECT
 
 
 // Control del pin CS (Chip select)
@@ -67,10 +79,20 @@
 #define ILI9341_CLK_PORT     HAL_GPIO_PORT_F
 #define ILI9341_CLK_PIN      HAL_GPIO_PIN_7
 
-// Control del pin MOSI (Serial data output to controller)
+// Control del pin MOSI (CPU to Controller)
 //
 #define ILI9341_MOSI_PORT    HAL_GPIO_PORT_F
 #define ILI9341_MOSI_PIN     HAL_GPIO_PIN_9
+
+// Control del pin MISO (Controller to CPU)
+//
+#define ILI9341_MISO_PORT    HAL_GPIO_PORT_F
+#define ILI9341_MISO_PIN     HAL_GPIO_PIN_8
+
+// Modul SPI a utilitzar
+//
+#define ILI9341_SPI_MODULE   HAL_SPI_MODULE_5
+#define ILI9341_GPIO_AF      HAL_GPIO_AF_SPI5
 
 
 // -----------------------------------------------------------------------

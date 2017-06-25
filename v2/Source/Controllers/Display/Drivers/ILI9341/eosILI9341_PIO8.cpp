@@ -1,7 +1,7 @@
 #include "eos.h"
  
 
-#ifdef ILI9341_INTERFACE_TYPE_PARALEL_8BIT
+#ifdef ILI9341_IO_TYPE_PIO8
 
 #include "eosMacros.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"
@@ -165,7 +165,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza les comunicacions.
 ///
-void ioInitialize() {
+void ILI9341_Driver::ioInitialize() {
 
 #ifdef ILI9341_RST_PORT
     initRST();
@@ -183,7 +183,7 @@ void ioInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Reseteja el driver.
 ///
-void ioReset() {
+void ILI9341_Driver::ioReset() {
 
     halTMRDelay(10);
     setRST();
@@ -194,7 +194,7 @@ void ioReset() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia una transferencia de dades amb el driver.
 ///
-void ioBegin() {
+void ILI9341_Driver::ioBegin() {
 
     halINTDisableInterrupts();
     clrCS();
@@ -204,7 +204,7 @@ void ioBegin() {
 /// ----------------------------------------------------------------------
 /// \brief Finalitza una transferencia de dades amb el driver.
 ///
-void ioEnd() {
+void ILI9341_Driver::ioEnd() {
 
     setCS();
     halINTEnableInterrupts();
@@ -215,7 +215,7 @@ void ioEnd() {
 /// \brief Escriu un byte en el registre de comandes.
 /// \param d: El byte a escriure.
 ///
-void ioWriteCommand(
+void ILI9341_Driver::ioWriteCommand(
     uint8_t d) {
 
     clrRS();
@@ -229,7 +229,7 @@ void ioWriteCommand(
 /// \brief Escriu un byte en el registre de dades.
 /// \param d: El byte a escriure.
 ///
-void ioWriteData(
+void ILI9341_Driver::ioWriteData(
     uint8_t d) {
 
     setRS();
@@ -243,7 +243,7 @@ void ioWriteData(
 /// \brief Llegeix un byte en l'adressa seleccionada del driver.
 /// \return El byte lleigit.
 ///
-uint8_t ioReadData() {
+uint8_t ILI9341_Driver::ioReadData() {
 
 #ifdef ILI9342_INTERFACE_WRITEONLY
     return 0;

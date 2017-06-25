@@ -119,17 +119,6 @@
 #define OP_DELAY      255
 
 
-// Funcions de comunicacio amb el driver
-//
-extern void ioInitialize();
-extern void ioReset();
-extern void ioBegin();
-extern void ioEnd();
-extern void ioWriteCommand(uint8_t d);
-extern void ioWriteData(uint8_t d);
-extern uint8_t ioReadData();
-
-
 using namespace eos;
 
 
