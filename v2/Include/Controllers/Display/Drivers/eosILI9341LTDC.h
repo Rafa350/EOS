@@ -40,6 +40,12 @@ namespace eos {
             
         private:
             inline int offsetOf(int16_t x, int16_t y) { return x + (y * screenWidth); }
+
+        private:
+            static void ioBegin();
+            static void ioEnd();
+            static void ioWriteCommand(uint8_t d);
+            static void ioWriteData(uint8_t d);
     };
 }
 

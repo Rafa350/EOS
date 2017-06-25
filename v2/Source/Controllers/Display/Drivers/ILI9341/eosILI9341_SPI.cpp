@@ -48,11 +48,11 @@
 // Control del modul SPI
 //
 #define initSPI()  halGPIOInitializePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_MODE_ALTERNATE | HAL_GPIO_SPEED_HIGH); \
-	               halGPIOInitializeAlternatePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, ILI9341_GPIO_AF); \
+	               halGPIOInitializeAlternatePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, ILI9341_GPIO_AF_SPI); \
                    halGPIOInitializePin(ILI9341_MISO_PORT, ILI9341_MISO_PIN, HAL_GPIO_MODE_ALTERNATE | HAL_GPIO_SPEED_HIGH); \
-	               halGPIOInitializeAlternatePin(ILI9341_MISO_PORT, ILI9341_MISO_PIN, ILI9341_GPIO_AF); \
+	               halGPIOInitializeAlternatePin(ILI9341_MISO_PORT, ILI9341_MISO_PIN, ILI9341_GPIO_AF_SPI); \
                    halGPIOInitializePin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, HAL_GPIO_MODE_ALTERNATE | HAL_GPIO_SPEED_HIGH); \
-	               halGPIOInitializeAlternatePin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, ILI9341_GPIO_AF); \
+	               halGPIOInitializeAlternatePin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, ILI9341_GPIO_AF_SPI); \
 				   halSPIInitialize(ILI9341_SPI_MODULE, HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB)
 
 #define sendSPI(d) halSPISend(ILI9341_SPI_MODULE, d)
