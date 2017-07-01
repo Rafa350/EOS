@@ -1,6 +1,6 @@
 #include "eos.h"
 
- 
+
 #ifdef ILI9341_IO_TYPE_SPI
 
 #include "Controllers/Display/Drivers/eosILI9341.h"
@@ -47,12 +47,9 @@
 
 // Control del modul SPI
 //
-#define initSPI()  halGPIOInitializePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_MODE_ALTERNATE | HAL_GPIO_SPEED_HIGH); \
-	               halGPIOInitializeAlternatePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, ILI9341_GPIO_AF_SPI); \
-                   halGPIOInitializePin(ILI9341_MISO_PORT, ILI9341_MISO_PIN, HAL_GPIO_MODE_ALTERNATE | HAL_GPIO_SPEED_HIGH); \
-	               halGPIOInitializeAlternatePin(ILI9341_MISO_PORT, ILI9341_MISO_PIN, ILI9341_GPIO_AF_SPI); \
-                   halGPIOInitializePin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, HAL_GPIO_MODE_ALTERNATE | HAL_GPIO_SPEED_HIGH); \
-	               halGPIOInitializeAlternatePin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, ILI9341_GPIO_AF_SPI); \
+#define initSPI()  halGPIOInitializePinFunction(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_MODE_FUNCTION | HAL_GPIO_SPEED_HIGH, ILI9341_GPIO_AF_SPI); \
+                   halGPIOInitializePinFunction(ILI9341_MISO_PORT, ILI9341_MISO_PIN, HAL_GPIO_MODE_FUNCTION | HAL_GPIO_SPEED_HIGH, ILI9341_GPIO_AF_SPI); \
+                   halGPIOInitializePinFunction(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, HAL_GPIO_MODE_FUNCTION | HAL_GPIO_SPEED_HIGH, ILI9341_GPIO_AF_SPI); \
 				   halSPIInitialize(ILI9341_SPI_MODULE, HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB)
 
 #define sendSPI(d) halSPISend(ILI9341_SPI_MODULE, d)
@@ -69,7 +66,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza les comunicacions.
 ///
-void ILI9341_Driver::ioInitialize() {
+void ILI9341_Driver::lcdInitialize() {
 
 #ifdef ILI9341_RST_PORT
     initRST();
@@ -86,7 +83,7 @@ void ILI9341_Driver::ioInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Reseteja el driver.
 ///
-void ILI9341_Driver::ioReset() {
+void ILI9341_Driver::lcdReset() {
 
 #ifdef ILI9341_RST_PORT
     halTMRDelay(10);
@@ -99,7 +96,7 @@ void ILI9341_Driver::ioReset() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia una transferencia de dades amb el driver.
 ///
-void ILI9341_Driver::ioBegin() {
+void ILI9341_Driver::lcdOpen() {
 
 	clrCS();
 }
@@ -108,7 +105,7 @@ void ILI9341_Driver::ioBegin() {
 /// ----------------------------------------------------------------------
 /// \brief Finalitza una transferencia de dades amb el driver.
 ///
-void ILI9341_Driver::ioEnd() {
+void ILI9341_Driver::lcdClose() {
 
     setCS();
 }
@@ -118,7 +115,7 @@ void ILI9341_Driver::ioEnd() {
 /// \brief Escriu un byte de comanda.
 /// \param d: El byte a escriure.
 ///
-void ILI9341_Driver::ioWriteCommand(
+void ILI9341_Driver::lcdWriteCommand(
     uint8_t d) {
 
     halINTDisableInterrupts();
@@ -134,7 +131,7 @@ void ILI9341_Driver::ioWriteCommand(
 /// \brief Escriu un byte de dades.
 /// \param d: El byte a escriure.
 ///
-void ILI9341_Driver::ioWriteData(
+void ILI9341_Driver::lcdWriteData(
     uint8_t d) {
 
     halINTDisableInterrupts();
@@ -149,7 +146,7 @@ void ILI9341_Driver::ioWriteData(
 /// \brief Llegeix un byte de dades.
 /// \return El byte lleigit.
 ///
-uint8_t ILI9341_Driver::ioReadData() {
+uint8_t ILI9341_Driver::lcdReadData() {
 
 #ifdef ILI9341_INTERFACE_WRITEONLY
 

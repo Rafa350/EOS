@@ -476,9 +476,9 @@ void ILI9341_Driver::hScroll(
 /// \brief Inicialitza el controlador del display.
 ///
 void ILI9341_Driver::ctrlInitialize() {
-    
-    ioInitialize();
-    ioReset();
+
+    lcdInitialize();
+    lcdReset();
 }
 
 
@@ -487,9 +487,9 @@ void ILI9341_Driver::ctrlInitialize() {
 ///
 void ILI9341_Driver::ctrlDisplayOff() {
 
-    ioBegin();
-    ioWriteCommand(CMD_DISPLAY_OFF);
-    ioEnd();   
+    lcdOpen();
+    lcdWriteCommand(CMD_DISPLAY_OFF);
+    lcdClose();
 }
 
 
@@ -510,21 +510,21 @@ void ILI9341_Driver::ctrlSelectRegion(
     int16_t x2 = x + width - 1;
     int16_t y2 = y + height - 1;
 
-    ioBegin();
+    lcdOpen();
 
-    ioWriteCommand(CMD_COLUMN_ADDRESS_SET);
-	ioWriteData(x >> 8);
-	ioWriteData(x);
-	ioWriteData(x2 >> 8);
-	ioWriteData(x2);
+    lcdWriteCommand(CMD_COLUMN_ADDRESS_SET);
+	lcdWriteData(x >> 8);
+	lcdWriteData(x);
+	lcdWriteData(x2 >> 8);
+	lcdWriteData(x2);
 
-	ioWriteCommand(CMD_PAGE_ADDRESS_SET);
-	ioWriteData(y >> 8);
-	ioWriteData(y);
-	ioWriteData(y2 >> 8);
-	ioWriteData(y2);
+	lcdWriteCommand(CMD_PAGE_ADDRESS_SET);
+	lcdWriteData(y >> 8);
+	lcdWriteData(y);
+	lcdWriteData(y2 >> 8);
+	lcdWriteData(y2);
 
-    ioEnd();
+    lcdClose();
 }
 
 
@@ -533,9 +533,9 @@ void ILI9341_Driver::ctrlSelectRegion(
 ///
 void ILI9341_Driver::ctrlStartMemoryWrite() {
 
-    ioBegin();
-    ioWriteCommand(CMD_MEMORY_WRITE);
-    ioEnd();
+    lcdOpen();
+    lcdWriteCommand(CMD_MEMORY_WRITE);
+    lcdClose();
 }
 
 
@@ -544,9 +544,9 @@ void ILI9341_Driver::ctrlStartMemoryWrite() {
 ///
 void ILI9341_Driver::ctrlStartMemoryRead() {
 
-    ioBegin();
-    ioWriteCommand(CMD_MEMORY_READ);
-    ioEnd();
+    lcdOpen();
+    lcdWriteCommand(CMD_MEMORY_READ);
+    lcdClose();
 }
 
 
@@ -563,12 +563,12 @@ void ILI9341_Driver::ctrlWritePixel(
 
     uint16_t c = color.to565();
 
-    ioBegin();
+    lcdOpen();
     while (count--) {
-        ioWriteData(c >> 8);
-        ioWriteData(c);
+        lcdWriteData(c >> 8);
+        lcdWriteData(c);
     }
-    ioEnd();
+    lcdClose();
 
 #elif defined(ILI9341_COLORMODE_666)
 
@@ -577,13 +577,13 @@ void ILI9341_Driver::ctrlWritePixel(
     uint8_t c2 = (uint32_t)(c & 0x0000FC00) >> 8;
     uint8_t c3 = (uint32_t)(c & 0x000000FC);
 
-    ioBegin();
+    lcdOpen();
     while (count--) {
-        ioWriteData(c1);
-        ioWriteData(c2);
-        ioWriteData(c3);
+        lcdWriteData(c1);
+        lcdWriteData(c2);
+        lcdWriteData(c3);
     }
-    ioEnd();
+    lcdClose();
 
 #endif
 }
@@ -610,8 +610,8 @@ void ILI9341_Driver::ctrlWritePixel(
 void ILI9341_Driver::ctrlWriteProgram(
 	const uint8_t *data) {
 
-    ioBegin();
-    
+    lcdOpen();
+
     uint8_t c;
     const uint8_t *p = data;
     while ((c = *p++) != OP_END) {
@@ -621,13 +621,13 @@ void ILI9341_Driver::ctrlWriteProgram(
                 break;
 
             default:
-                ioWriteCommand(*p++);
+                lcdWriteCommand(*p++);
                 while (--c != 0)
-                    ioWriteData(*p++);
+                    lcdWriteData(*p++);
                 break;
         }
     }
-    ioEnd();
+    lcdClose();
 }
 
 
@@ -640,15 +640,15 @@ void ILI9341_Driver::ctrlReadPixel(
     Color *colors,
     int32_t count) {
 
-    ioBegin();
-    ioReadData();               // Dummy read
-    ioReadData();               // Dummy read
+    lcdOpen();
+    lcdReadData();               // Dummy read
+    lcdReadData();               // Dummy read
     while (count--) {
 
 #if defined(ILI9341_COLORMODE_565)
-        uint8_t volatile c1 = ioReadData();
-        uint8_t volatile c2 = ioReadData();
-        uint8_t volatile c3 = ioReadData();
+        uint8_t volatile c1 = lcdReadData();
+        uint8_t volatile c2 = lcdReadData();
+        uint8_t volatile c3 = lcdReadData();
         Color color(c1, c2, c3);
         *colors++ = color;
 
@@ -656,5 +656,5 @@ void ILI9341_Driver::ctrlReadPixel(
 #endif
 
     }
-    ioEnd();
+    lcdClose();
 }

@@ -133,6 +133,11 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eosAssert.h</location>
 		</link>
 		<link>
+			<name>src/App/STM32F429/Initialize_STM32F429I-DISC1.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/Initialize_STM32F429I-DISC1.cpp</location>
+		</link>
+		<link>
 			<name>src/App/STM32F429/Main.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/Main.cpp</location>

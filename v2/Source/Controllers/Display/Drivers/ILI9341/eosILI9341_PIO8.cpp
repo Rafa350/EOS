@@ -1,5 +1,5 @@
 #include "eos.h"
- 
+
 
 #ifdef ILI9341_IO_TYPE_PIO8
 
@@ -165,7 +165,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza les comunicacions.
 ///
-void ILI9341_Driver::ioInitialize() {
+void ILI9341_Driver::lcdInitialize() {
 
 #ifdef ILI9341_RST_PORT
     initRST();
@@ -183,7 +183,7 @@ void ILI9341_Driver::ioInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Reseteja el driver.
 ///
-void ILI9341_Driver::ioReset() {
+void ILI9341_Driver::lcdReset() {
 
     halTMRDelay(10);
     setRST();
@@ -194,7 +194,7 @@ void ILI9341_Driver::ioReset() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia una transferencia de dades amb el driver.
 ///
-void ILI9341_Driver::ioBegin() {
+void ILI9341_Driver::lcdOpen() {
 
     halINTDisableInterrupts();
     clrCS();
@@ -204,7 +204,7 @@ void ILI9341_Driver::ioBegin() {
 /// ----------------------------------------------------------------------
 /// \brief Finalitza una transferencia de dades amb el driver.
 ///
-void ILI9341_Driver::ioEnd() {
+void ILI9341_Driver::lcdClose() {
 
     setCS();
     halINTEnableInterrupts();
@@ -215,7 +215,7 @@ void ILI9341_Driver::ioEnd() {
 /// \brief Escriu un byte en el registre de comandes.
 /// \param d: El byte a escriure.
 ///
-void ILI9341_Driver::ioWriteCommand(
+void ILI9341_Driver::lcdWriteCommand(
     uint8_t d) {
 
     clrRS();
@@ -229,7 +229,7 @@ void ILI9341_Driver::ioWriteCommand(
 /// \brief Escriu un byte en el registre de dades.
 /// \param d: El byte a escriure.
 ///
-void ILI9341_Driver::ioWriteData(
+void ILI9341_Driver::lcdWriteData(
     uint8_t d) {
 
     setRS();
@@ -243,11 +243,11 @@ void ILI9341_Driver::ioWriteData(
 /// \brief Llegeix un byte en l'adressa seleccionada del driver.
 /// \return El byte lleigit.
 ///
-uint8_t ILI9341_Driver::ioReadData() {
+uint8_t ILI9341_Driver::lcdReadData() {
 
 #ifdef ILI9342_INTERFACE_WRITEONLY
     return 0;
-    
+
 #else
     uint8_t data;
 

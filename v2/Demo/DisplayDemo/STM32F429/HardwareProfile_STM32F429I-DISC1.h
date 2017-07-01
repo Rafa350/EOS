@@ -20,7 +20,7 @@
 
 
 // -----------------------------------------------------------------------
-// Controlador del display ILI9341
+// Control del display grafic
 // -----------------------------------------------------------------------
 
 // Tipus de lletra disponibles
@@ -32,8 +32,18 @@
 #define FONT_USE_Consolas18pt
 #define FONT_USE_Consolas24pt
 
+// Tipus de pantalla
+//
 #define DISPLAY_STM32F429I_DISC1
+
+// Tipus de codificacio de color
+//
 #define DISPLAY_COLOR_565
+
+
+// -----------------------------------------------------------------------
+// Controlador del display ILI9341
+// -----------------------------------------------------------------------
 
 #define ILI9341_COLORMODE_565
 //#define ILI9341_COLORMODE_666
@@ -90,140 +100,148 @@
 // Controlador de display ILI9341LTDC
 // -----------------------------------------------------------------------
 
+// Parametres del controlador
+//
+#define ILI9341LTDC_VRAM          0xD0000000
+
+#define ILI9341LTDC_COLORMODE_565
+//#define ILI9341LTDC_COLORMODE_666
+
+
 // Control del pin CS (Chip select)
 //
-#define ILI9341LTDC_CS_PORT      HAL_GPIO_PORT_C
-#define ILI9341LTDC_CS_PIN       HAL_GPIO_PIN_2
+#define ILI9341LTDC_CS_PORT       HAL_GPIO_PORT_C
+#define ILI9341LTDC_CS_PIN        HAL_GPIO_PIN_2
 
 // Control del pin RS (Register select)
 //
-#define ILI9341LTDC_RS_PORT      HAL_GPIO_PORT_D
-#define ILI9341LTDC_RS_PIN       HAL_GPIO_PIN_13
+#define ILI9341LTDC_RS_PORT       HAL_GPIO_PORT_D
+#define ILI9341LTDC_RS_PIN        HAL_GPIO_PIN_13
 
 // Control del pin CLK (Serial clock)
 //
-#define ILI9341LTDC_CLK_PORT     HAL_GPIO_PORT_F
-#define ILI9341LTDC_CLK_PIN      HAL_GPIO_PIN_7
+#define ILI9341LTDC_CLK_PORT      HAL_GPIO_PORT_F
+#define ILI9341LTDC_CLK_PIN       HAL_GPIO_PIN_7
 
 // Control del pin MOSI (CPU to controller)
 //
-#define ILI9341LTDC_MOSI_PORT    HAL_GPIO_PORT_F
-#define ILI9341LTDC_MOSI_PIN     HAL_GPIO_PIN_9
+#define ILI9341LTDC_MOSI_PORT     HAL_GPIO_PORT_F
+#define ILI9341LTDC_MOSI_PIN      HAL_GPIO_PIN_9
 
 // Control del pin MISO (Controller to CPU)
 //
-#define ILI9341LTDC_MISO_PORT    HAL_GPIO_PORT_F
-#define ILI9341LTDC_MISO_PIN     HAL_GPIO_PIN_8
+#define ILI9341LTDC_MISO_PORT     HAL_GPIO_PORT_F
+#define ILI9341LTDC_MISO_PIN      HAL_GPIO_PIN_8
 
 // Control del pin HSYNC (Horizontal sync)
 //
-#define ILI9341LTDC_HSYNC_PORT   HAL_GPIO_PORT_C
-#define ILI9341LTDC_HSYNC_PIN    HAL_GPIO_PIN_6
+#define ILI9341LTDC_HSYNC_PORT    HAL_GPIO_PORT_C
+#define ILI9341LTDC_HSYNC_PIN     HAL_GPIO_PIN_6
 
 // Control del pin VSYNC (Vertical sync)
 //
-#define ILI9341LTDC_VSYNC_PORT   HAL_GPIO_PORT_A
-#define ILI9341LTDC_VSYNC_PIN    HAL_GPIO_PIN_4
+#define ILI9341LTDC_VSYNC_PORT    HAL_GPIO_PORT_A
+#define ILI9341LTDC_VSYNC_PIN     HAL_GPIO_PIN_4
 
 // Control del pin DOTCLK (Dot clock)
 //
-#define ILI9341LTDC_DOTCLK_PORT  HAL_GPIO_PORT_G
-#define ILI9341LTDC_DOTCLK_PIN   HAL_GPIO_PIN_7
+#define ILI9341LTDC_DOTCLK_PORT   HAL_GPIO_PORT_G
+#define ILI9341LTDC_DOTCLK_PIN    HAL_GPIO_PIN_7
 
 // Control del pin R2
 //
-#define ILI9341LTDC_R2_PORT      HAL_GPIO_PORT_C
-#define ILI9341LTDC_R2_PIN       HAL_GPIO_PIN_10
+#define ILI9341LTDC_R2_PORT       HAL_GPIO_PORT_C
+#define ILI9341LTDC_R2_PIN        HAL_GPIO_PIN_10
 
 // Control del pin R3
 //
-#define ILI9341LTDC_R3_PORT      HAL_GPIO_PORT_B
-#define ILI9341LTDC_R3_PIN       HAL_GPIO_PIN_0
+#define ILI9341LTDC_R3_PORT       HAL_GPIO_PORT_B
+#define ILI9341LTDC_R3_PIN        HAL_GPIO_PIN_0
 
 // Control del pin R4
 //
-#define ILI9341LTDC_R4_PORT      HAL_GPIO_PORT_A
-#define ILI9341LTDC_R4_PIN       HAL_GPIO_PIN_11
+#define ILI9341LTDC_R4_PORT       HAL_GPIO_PORT_A
+#define ILI9341LTDC_R4_PIN        HAL_GPIO_PIN_11
 
 // Control del pin R5
 //
-#define ILI9341LTDC_R5_PORT      HAL_GPIO_PORT_A
-#define ILI9341LTDC_R5_PIN       HAL_GPIO_PIN_12
+#define ILI9341LTDC_R5_PORT       HAL_GPIO_PORT_A
+#define ILI9341LTDC_R5_PIN        HAL_GPIO_PIN_12
 
 // Control del pin R6
 //
-#define ILI9341LTDC_R6_PORT      HAL_GPIO_PORT_B
-#define ILI9341LTDC_R6_PIN       HAL_GPIO_PIN_1
+#define ILI9341LTDC_R6_PORT       HAL_GPIO_PORT_B
+#define ILI9341LTDC_R6_PIN        HAL_GPIO_PIN_1
 
 // Control del pin R7
 //
-#define ILI9341LTDC_R7_PORT      HAL_GPIO_PORT_G
-#define ILI9341LTDC_R7_PIN       HAL_GPIO_PIN_6
+#define ILI9341LTDC_R7_PORT       HAL_GPIO_PORT_G
+#define ILI9341LTDC_R7_PIN        HAL_GPIO_PIN_6
 
 // Control del pin G2
 //
-#define ILI9341LTDC_G2_PORT      HAL_GPIO_PORT_A
-#define ILI9341LTDC_G2_PIN       HAL_GPIO_PIN_6
+#define ILI9341LTDC_G2_PORT       HAL_GPIO_PORT_A
+#define ILI9341LTDC_G2_PIN        HAL_GPIO_PIN_6
 
 // Control del pin G3
 //
-#define ILI9341LTDC_G3_PORT      HAL_GPIO_PORT_G
-#define ILI9341LTDC_G3_PIN       HAL_GPIO_PIN_10
+#define ILI9341LTDC_G3_PORT       HAL_GPIO_PORT_G
+#define ILI9341LTDC_G3_PIN        HAL_GPIO_PIN_10
 
 // Control del pin G4
 //
-#define ILI9341LTDC_G4_PORT      HAL_GPIO_PORT_B
-#define ILI9341LTDC_G4_PIN       HAL_GPIO_PIN_10
+#define ILI9341LTDC_G4_PORT       HAL_GPIO_PORT_B
+#define ILI9341LTDC_G4_PIN        HAL_GPIO_PIN_10
 
 // Control del pin G5
 //
-#define ILI9341LTDC_G5_PORT      HAL_GPIO_PORT_B
-#define ILI9341LTDC_G5_PIN       HAL_GPIO_PIN_11
+#define ILI9341LTDC_G5_PORT       HAL_GPIO_PORT_B
+#define ILI9341LTDC_G5_PIN        HAL_GPIO_PIN_11
 
 // Control del pin G6
 //
-#define ILI9341LTDC_G6_PORT      HAL_GPIO_PORT_C
-#define ILI9341LTDC_G6_PIN       HAL_GPIO_PIN_7
+#define ILI9341LTDC_G6_PORT       HAL_GPIO_PORT_C
+#define ILI9341LTDC_G6_PIN        HAL_GPIO_PIN_7
 
 // Control del pin G7
 //
-#define ILI9341LTDC_G7_PORT      HAL_GPIO_PORT_D
-#define ILI9341LTDC_G7_PIN       HAL_GPIO_PIN_3
+#define ILI9341LTDC_G7_PORT       HAL_GPIO_PORT_D
+#define ILI9341LTDC_G7_PIN        HAL_GPIO_PIN_3
 
 // Control del pin B2
 //
-#define ILI9341LTDC_B2_PORT      HAL_GPIO_PORT_D
-#define ILI9341LTDC_B2_PIN       HAL_GPIO_PIN_6
+#define ILI9341LTDC_B2_PORT       HAL_GPIO_PORT_D
+#define ILI9341LTDC_B2_PIN        HAL_GPIO_PIN_6
 
 // Control del pin B3
 //
-#define ILI9341LTDC_B3_PORT      HAL_GPIO_PORT_G
-#define ILI9341LTDC_B3_PIN       HAL_GPIO_PIN_11
+#define ILI9341LTDC_B3_PORT       HAL_GPIO_PORT_G
+#define ILI9341LTDC_B3_PIN        HAL_GPIO_PIN_11
 
 // Control del pin B4
 //
-#define ILI9341LTDC_B4_PORT      HAL_GPIO_PORT_G
-#define ILI9341LTDC_B4_PIN       HAL_GPIO_PIN_12
+#define ILI9341LTDC_B4_PORT       HAL_GPIO_PORT_G
+#define ILI9341LTDC_B4_PIN        HAL_GPIO_PIN_12
 
 // Control del pin B5
 //
-#define ILI9341LTDC_B5_PORT      HAL_GPIO_PORT_A
-#define ILI9341LTDC_B5_PIN       HAL_GPIO_PIN_3
+#define ILI9341LTDC_B5_PORT       HAL_GPIO_PORT_A
+#define ILI9341LTDC_B5_PIN        HAL_GPIO_PIN_3
 
 // Control del pin B6
 //
-#define ILI9341LTDC_B6_PORT      HAL_GPIO_PORT_B
-#define ILI9341LTDC_B6_PIN       HAL_GPIO_PIN_8
+#define ILI9341LTDC_B6_PORT       HAL_GPIO_PORT_B
+#define ILI9341LTDC_B6_PIN        HAL_GPIO_PIN_8
 
 // Control del pin B7
 //
-#define ILI9341LTDC_B7_PORT      HAL_GPIO_PORT_B
-#define ILI9341LTDC_B7_PIN       HAL_GPIO_PIN_9
+#define ILI9341LTDC_B7_PORT       HAL_GPIO_PORT_B
+#define ILI9341LTDC_B7_PIN        HAL_GPIO_PIN_9
 
 // Control del modul SPI
 //
-#define ILI9341LTDC_SPI_MODULE   HAL_SPI_MODULE_5
-#define ILI9341LTDC_GPIO_AF_SPI  HAL_GPIO_AF_SPI5
+#define ILI9341LTDC_SPI_MODULE    HAL_SPI_MODULE_5
+#define ILI9341LTDC_GPIO_AF_SPI   HAL_GPIO_AF_SPI5
 
 
 #endif

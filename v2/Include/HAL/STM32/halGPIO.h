@@ -16,14 +16,21 @@ extern "C" {
 typedef uint8_t GPIOPort;
 typedef uint8_t GPIOPin;
 typedef uint8_t GPIOOptions;
-typedef uint8_t GPIOAlternate;
+typedef uint8_t GPIOFunction;
 
 typedef struct {
 	GPIOPort port;
 	GPIOPin pin;
 	GPIOOptions options;
-	GPIOAlternate alternate;
-} GPIOInitializeInfo;
+	GPIOFunction function;
+} GPIOInitializePinInfo;
+
+typedef struct {
+	GPIOPort port;
+	uint16_t mask;
+	GPIOOptions options;
+	GPIOFunction function;
+} GPIOInitializePortInfo;
 
 extern GPIO_TypeDef *gpioTbl[];
 
@@ -38,7 +45,7 @@ extern GPIO_TypeDef *gpioTbl[];
 #define HAL_GPIO_PORT_H      7
 #define HAL_GPIO_PORT_I      8
 #define HAL_GPIO_PORT_J      9
-#define HAL_GPIO_PORT_K     10
+#define HAL_GPIO_PORT_K      10
 
 #define HAL_GPIO_PIN_0       0
 #define HAL_GPIO_PIN_1       1
@@ -50,25 +57,43 @@ extern GPIO_TypeDef *gpioTbl[];
 #define HAL_GPIO_PIN_7       7
 #define HAL_GPIO_PIN_8       8
 #define HAL_GPIO_PIN_9       9
-#define HAL_GPIO_PIN_10     10
-#define HAL_GPIO_PIN_11     11
-#define HAL_GPIO_PIN_12     12
-#define HAL_GPIO_PIN_13     13
-#define HAL_GPIO_PIN_14     14
-#define HAL_GPIO_PIN_15     15
+#define HAL_GPIO_PIN_10      10
+#define HAL_GPIO_PIN_11      11
+#define HAL_GPIO_PIN_12      12
+#define HAL_GPIO_PIN_13      13
+#define HAL_GPIO_PIN_14      14
+#define HAL_GPIO_PIN_15      15
 
-#define HAL_GPIO_AF_LTDC    GPIO_AF_LTDC
-#define HAL_GPIO_AF_SPI1    GPIO_AF_SPI1
-#define HAL_GPIO_AF_SPI2    GPIO_AF_SPI2
-#define HAL_GPIO_AF_SPI3    GPIO_AF_SPI3
-#define HAL_GPIO_AF_SPI4    GPIO_AF_SPI4
-#define HAL_GPIO_AF_SPI5    GPIO_AF_SPI5
-#define HAL_GPIO_AF_SPI6    GPIO_AF_SPI6
+#define HAL_GPIO_POS_0       ((uint32_t) 1 << HAL_GPIO_PIN_0)
+#define HAL_GPIO_POS_1       ((uint32_t) 1 << HAL_GPIO_PIN_1)
+#define HAL_GPIO_POS_2       ((uint32_t) 1 << HAL_GPIO_PIN_2)
+#define HAL_GPIO_POS_3       ((uint32_t) 1 << HAL_GPIO_PIN_3)
+#define HAL_GPIO_POS_4       ((uint32_t) 1 << HAL_GPIO_PIN_4)
+#define HAL_GPIO_POS_5       ((uint32_t) 1 << HAL_GPIO_PIN_5)
+#define HAL_GPIO_POS_6       ((uint32_t) 1 << HAL_GPIO_PIN_6)
+#define HAL_GPIO_POS_7       ((uint32_t) 1 << HAL_GPIO_PIN_7)
+#define HAL_GPIO_POS_8       ((uint32_t) 1 << HAL_GPIO_PIN_8)
+#define HAL_GPIO_POS_9       ((uint32_t) 1 << HAL_GPIO_PIN_9)
+#define HAL_GPIO_POS_10      ((uint32_t) 1 << HAL_GPIO_PIN_10)
+#define HAL_GPIO_POS_11      ((uint32_t) 1 << HAL_GPIO_PIN_11)
+#define HAL_GPIO_POS_12      ((uint32_t) 1 << HAL_GPIO_PIN_12)
+#define HAL_GPIO_POS_13      ((uint32_t) 1 << HAL_GPIO_PIN_13)
+#define HAL_GPIO_POS_14      ((uint32_t) 1 << HAL_GPIO_PIN_14)
+#define HAL_GPIO_POS_15      ((uint32_t) 1 << HAL_GPIO_PIN_15)
+
+#define HAL_GPIO_AF_FMC      GPIO_AF_FMC
+#define HAL_GPIO_AF_LTDC     GPIO_AF_LTDC
+#define HAL_GPIO_AF_SPI1     GPIO_AF_SPI1
+#define HAL_GPIO_AF_SPI2     GPIO_AF_SPI2
+#define HAL_GPIO_AF_SPI3     GPIO_AF_SPI3
+#define HAL_GPIO_AF_SPI4     GPIO_AF_SPI4
+#define HAL_GPIO_AF_SPI5     GPIO_AF_SPI5
+#define HAL_GPIO_AF_SPI6     GPIO_AF_SPI6
 
 #define HAL_GPIO_MODE_MASK             0b00000011
 #define HAL_GPIO_MODE_INPUT            0b00000000
 #define HAL_GPIO_MODE_OUTPUT           0b00000001
-#define HAL_GPIO_MODE_ALTERNATE        0b00000010
+#define HAL_GPIO_MODE_FUNCTION         0b00000010
 #define HAL_GPIO_MODE_ANALOG           0b00000011
 
 #define HAL_GPIO_SPEED_MASK            0b00001100
@@ -81,23 +106,18 @@ extern GPIO_TypeDef *gpioTbl[];
 #define HAL_GPIO_OPENDRAIN_DISABLED    0b00000000
 #define HAL_GPIO_OPENDRAIN_ENABLED     0b00100000
 
-#define HAL_GPIO_PULLUPDN_MASK         0b11000000
-#define HAL_GPIO_PULLUPDN_NONE         0b00000000
-#define HAL_GPIO_PULLUPDN_UP           0b01000000
-#define HAL_GPIO_PULLUPDN_DOWN         0b10000000
+#define HAL_GPIO_PULL_MASK             0b11000000
+#define HAL_GPIO_PULL_NONE             0b00000000
+#define HAL_GPIO_PULL_UP               0b01000000
+#define HAL_GPIO_PULL_DOWN             0b10000000
+
 
 #define halGPIOInitializePinInput(port, pin) \
-	RCC->AHB1ENR |= 1 << port; \
-	gpioTbl[port]->MODER &= ~(((uint32_t) 0b11) << (pin * 2))
+	halGPIOInitialize(port, pin, HAL_GPIO_MODE_INPUT, 0);
 
 #define halGPIOInitializePinOutput(port, pin) \
-	RCC->AHB1ENR |= 1 << port; \
-	gpioTbl[port]->MODER &= ~(((uint32_t) 0b11) << (pin * 2)); \
-	gpioTbl[port]->MODER |= ((uint32_t) 0b01) << (pin * 2)
+	halGPIOInitialize(port, pin, HAL_GPIO_MODE_OUTPUT, 0);
 
-#define halGPIOInitializeAlternatePin(port, pin, alternate) \
-	gpioTbl[port]->AFR[pin >> 3] &= ~(0x0F << ((pin & 0x07) * 4)); \
-	gpioTbl[port]->AFR[pin >> 3] |= (alternate << ((pin & 0x07) * 4));
 
 #define halGPIOSetPin(port, pin) \
 	gpioTbl[port]->BSRRL = ((uint16_t) 1) << (pin)
@@ -119,13 +139,14 @@ extern GPIO_TypeDef *gpioTbl[];
     gpioTbl[port]->IDR
 
 
-void halGPIOInitialize(GPIOInitializeInfo *info, uint8_t count);
+void halGPIOInitializePins(GPIOInitializePinInfo *info, uint8_t count);
+void halGPIOInitializePin(GPIOInitializePinInfo *info);
 
-void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options);
-void halGPIOInitializePort(GPIOPort port, GPIOOptions options, uint16_t mask);
+void halGPIOInitializePorts(GPIOInitializePortInfo *info, uint8_t count);
+void halGPIOInitializePort(GPIOInitializePortInfo *info);
 
-void halGPIOInitializePortInput(GPIOPort port, uint16_t mask);
-void halGPIOInitializePortOutput(GPIOPort port, uint16_t mask);
+void halGPIOInitialize(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOFunction);
+
 
 #ifdef	__cplusplus
 }

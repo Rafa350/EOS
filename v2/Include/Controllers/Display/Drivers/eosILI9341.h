@@ -44,13 +44,13 @@ namespace eos {
             void ctrlStartMemoryRead();
 
         private:
-            static void ioInitialize();
-            static void ioReset();
-            static void ioBegin();
-            static void ioEnd();
-            static void ioWriteCommand(uint8_t d);
-            static void ioWriteData(uint8_t d);
-            static uint8_t ioReadData();
+            static void lcdInitialize();
+            static void lcdReset();
+            static void lcdOpen();
+            static void lcdClose();
+            static void lcdWriteCommand(uint8_t d);
+            static void lcdWriteData(uint8_t d);
+            static uint8_t lcdReadData();
     };
 }
 

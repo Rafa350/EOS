@@ -1,6 +1,6 @@
 #include "eos.h"
 
- 
+
 #ifdef ILI9341_IO_TYPE_SIO
 
 #if !defined(ILI9341_IO_SUBTYPE_SIO_HAL) && \
@@ -25,7 +25,7 @@
 //
 #ifdef ILI9341_RST_PORT
 #define initRST()  halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN); \
-                   halGPIOInitializePin(ILI9341_RST_PORT, ILI9341_RST_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
+                   halGPIOInitialize(ILI9341_RST_PORT, ILI9341_RST_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
 #define setRST()   halGPIOSetPin(ILI9341_RST_PORT, ILI9341_RST_PIN)
 #define clrRST()   halGPIOClearPin(ILI9341_RST_PORT, ILI9341_RST_PIN)
 #endif
@@ -33,28 +33,28 @@
 // Control del pin CS
 //
 #define initCS()   halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN); \
-                   halGPIOInitializePin(ILI9341_CS_PORT, ILI9341_CS_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
+                   halGPIOInitialize(ILI9341_CS_PORT, ILI9341_CS_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH, 0)
 #define setCS()    halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
 #define clrCS()    halGPIOClearPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
 
 // Control del pin RS
 //
 #define initRS()   halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN); \
-                   halGPIOInitializePin(ILI9341_RS_PORT, ILI9341_RS_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
+                   halGPIOInitialize(ILI9341_RS_PORT, ILI9341_RS_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH, 0)
 #define setRS()    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
 #define clrRS()    halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
 
 // Control del pin CLK
 //
 #define initCLK()  halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN); \
-                   halGPIOInitializePin(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
+                   halGPIOInitialize(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH, 0)
 #define setCLK()   halGPIOSetPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 #define clrCLK()   halGPIOClearPin(ILI9341_CLK_PORT, ILI9341_CLK_PIN)
 
 // Control del pin MOSI
 //
 #define initMOSI() halGPIOClearPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN); \
-                   halGPIOInitializePin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH)
+                   halGPIOInitialize(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_SPEED_HIGH, 0)
 #define setMOSI()  halGPIOSetPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
 #define clrMOSI()  halGPIOClearPin(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN)
 
@@ -76,7 +76,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza les comunicacions.
 ///
-void ILI9341_Driver::ioInitialize() {
+void ILI9341_Driver::lcdInitialize() {
 
 #ifdef ILI9341_RST_PORT
     initRST();
@@ -94,7 +94,7 @@ void ILI9341_Driver::ioInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Reseteja el driver.
 ///
-void ILI9341_Driver::ioReset() {
+void ILI9341_Driver::lcdReset() {
 
 #ifdef ILI9341_RST_PORT
     halTMRDelay(10);
@@ -107,7 +107,7 @@ void ILI9341_Driver::ioReset() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia una transferencia de dades amb el driver.
 ///
-void ILI9341_Driver::ioBegin() {
+void ILI9341_Driver::lcdOpen() {
 
 	clrCS();
 }
@@ -116,7 +116,7 @@ void ILI9341_Driver::ioBegin() {
 /// ----------------------------------------------------------------------
 /// \brief Finalitza una transferencia de dades amb el driver.
 ///
-void ILI9341_Driver::ioEnd() {
+void ILI9341_Driver::lcdClose() {
 
     setCS();
 }
@@ -126,7 +126,7 @@ void ILI9341_Driver::ioEnd() {
 /// \brief Escriu un byte de comanda.
 /// \param d: El byte a escriure.
 ///
-void ILI9341_Driver::ioWriteCommand(
+void ILI9341_Driver::lcdWriteCommand(
     uint8_t d) {
 
     halINTDisableInterrupts();
@@ -151,7 +151,7 @@ void ILI9341_Driver::ioWriteCommand(
 /// \brief Escriu un byte de dades.
 /// \param d: El byte a escriure.
 ///
-void ILI9341_Driver::ioWriteData(
+void ILI9341_Driver::lcdWriteData(
     uint8_t d) {
 
     halINTDisableInterrupts();
@@ -175,7 +175,7 @@ void ILI9341_Driver::ioWriteData(
 /// \brief Llegeix un byte de dades.
 /// \return El byte lleigit.
 ///
-uint8_t ILI9341_Driver::ioReadData() {
+uint8_t ILI9341_Driver::lcdReadData() {
 
 #ifdef ILI9341_INTERFACE_WRITEONLY
 
