@@ -1,7 +1,8 @@
 #include "eos.h"
 
  
-#if defined(ILI9341_INTERFACE_TYPE_PIC32PMP_8BIT) && defined(EOS_PIC32MX)
+#if defined(ILI9341_IO_TYPE_PMP8) && defined(EOS_PIC32MX)
+
 
 extern "C" {
 #include "peripheral/pmp/plib_pmp.h"

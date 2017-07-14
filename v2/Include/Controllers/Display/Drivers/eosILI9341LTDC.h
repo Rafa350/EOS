@@ -14,15 +14,15 @@
 
 
 namespace eos {
-    
+
     class ILI9341LTDC_Driver: public IDisplayDriver {
         private:
             int16_t screenWidth;
             int16_t screenHeight;
-            
+            int8_t *buffer;
+
         public:
             ILI9341LTDC_Driver();
-            ~ILI9341LTDC_Driver();
             void initialize();
             void shutdown();
             void setOrientation(Orientation orientation);
@@ -36,19 +36,24 @@ namespace eos {
             void writePixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors);
             void readPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color *colors);
             void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
-            void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);   
-            
+            void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
+
         private:
             inline int offsetOf(int16_t x, int16_t y) { return x + (y * screenWidth); }
 
         private:
-            static void ioBegin();
-            static void ioEnd();
-            static void ioWriteCommand(uint8_t d);
-            static void ioWriteData(uint8_t d);
+            static void ltdcInitialize();
+
+        private:
+            static void lcdInitialize();
+            static void lcdReset();
+            static void lcdOpen();
+            static void lcdClose();
+            static void lcdWriteCommand(uint8_t d);
+            static void lcdWriteData(uint8_t d);
     };
 }
 
 
 
-#endif	
+#endif

@@ -15,6 +15,12 @@ typedef uint8_t SPIModule;
 typedef uint8_t SPIOptions;
 typedef void (*SPIInterruptCallback)(SPIModule module, void *param);
 
+typedef struct {
+	SPIModule module;
+	SPIOptions options;
+	SPIInterruptCallback intCallback;
+} SPIInitializeInfo;
+
 
 #define HAL_SPI_MODULE_1	      0
 #define HAL_SPI_MODULE_2          1
@@ -58,6 +64,8 @@ typedef void (*SPIInterruptCallback)(SPIModule module, void *param);
 extern void halSPIInitialize(SPIModule module, SPIOptions options);
 extern uint8_t halSPISend(SPIModule module, uint8_t data);
 extern uint16_t halSPISend16(SPIModule module, uint16_t data);
+extern uint8_t halSPIReceive(SPIModule module);
+extern uint16_t halSPIReceive16(SPIModule module);
 
 
 #ifdef __cplusplus

@@ -4,6 +4,7 @@
 #include "Services/eosAppLoop.h"
 #include "Controllers/Display/eosDisplay.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"
+#include "Controllers/Display/Drivers/eosILI9341LTDC.h"
 #include "Hal/halGPIO.h"
 
 #include <stdlib.h>
@@ -112,14 +113,15 @@ void LedLoopService::onRun() {
 void DisplayLoopService::onSetup() {
 
 	driver = new ILI9341_Driver();
+	//driver = new ILI9341LTDC_Driver();
     driver->initialize();
     driver->setOrientation(Orientation::rotate180);
 
     display = new Display(driver);
     display->clear(COLOR_Black);
 
-    screenWidth = display->getDriver()->getWidth();
-    screenHeight  = display->getDriver()->getHeight();
+    screenWidth = driver->getWidth();
+    screenHeight  = driver->getHeight();
 }
 
 

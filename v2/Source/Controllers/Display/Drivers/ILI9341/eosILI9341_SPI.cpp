@@ -3,6 +3,11 @@
 
 #ifdef ILI9341_IO_TYPE_SPI
 
+#if !defined(ILI9341_IO_SUBTYPE_SPI_HAL) && \
+	!defined(ILI9341_IO_SUBTYPE_SPI_DIRECT)
+#error No se especifico ILI9341_IO_SUBTYPE_SIO_xxx.
+#endif
+
 #include "Controllers/Display/Drivers/eosILI9341.h"
 
 #ifdef ILI9341_IO_SUBTYPE_SPI_HAL

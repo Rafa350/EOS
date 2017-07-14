@@ -3,21 +3,27 @@
 
 #ifdef ILI9341_IO_TYPE_PIO8
 
+#if !defined(ILI9341_IO_SUBTYPE_PIO8_HAL) && \
+	!defined(ILI9341_IO_SUBTYPE_PIO8_DIRECT)
+#error No se especifico ILI9341_IO_SUBTYPE_PIO8_xxx.
+#endif
+
 #include "eosMacros.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #include "Hal/halTMR.h"
 #include "Hal/halINT.h"
 
 
-#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO) && defined(EOS_PIC32MX)
+#if defined(ILI9341_IO_SUBTYPE_PIO8_DIRECT) && defined(EOS_PIC32MX)
 #include <xc.h>
-#elif defined(ILI9341_INTERFACE_MODE_STM32_GPIO) && defined(EOS_STM32F4)
-#elif defined(ILI9341_INTERFACE_MODE_HAL_GPIO)
+#elif defined(ILI9341_IO_SUBTYPE_PIO8_DIRECT) && defined(EOS_STM32)
+#include <stm32f4xx.h>
+#elif defined(ILI9341_IO_SUBTYPE_PIO8_HAL) 
 #include "Hal/halGPIO.h"
 #endif
 
 
-#if defined(ILI9341_INTERFACE_MODE_PIC32_GPIO) && defined(EOS_PIC32MX)
+#if defined(ILI9341_IO_SUBTYPE_PIO8_DIRECT) && defined(EOS_PIC32MX)
 
 #if defined(PORTA)
 #define HAL_GPIO_PORT_A      A
@@ -105,7 +111,7 @@
 #define rdDATA(data) data = concat2(PORT, ILI9341_DATA_PORT)
 #endif
 
-#elif defined(ILI9341_INTERFACE_MODE_HAL_GPIO)
+#elif defined(ILI9341_IO_SUBTYPE_PIO8_HAL)
 
 // Control del pin RST
 //
