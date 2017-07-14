@@ -3,13 +3,10 @@
  *       Archivo generado desde un archivo de recursos
  *       No modificar!
  *
- *       Fecha de generación  : 21/11/2015 21:11:00
- *       Version del generador: 1.1.0.0
+ *       Fecha de generación  : 14/07/2017 22:29:41
+ *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
-
-
-#include <stdint.h>
 
 
 #define CMD_SET_XJERK 100
@@ -25,7 +22,7 @@
 #define CMD_EXIT 110
 
 
-extern const uint8_t menuMnuMain[];
+extern const unsigned char menuMnuMain[];
 
 
 /************************************************************************/

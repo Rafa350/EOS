@@ -1,9 +1,10 @@
 /*************************************************************************
  *
- *       Archivo generado con PicResourceCompiler
+ *       Archivo generado desde un archivo de recursos
  *       No modificar!
  *
- *       Date : 21/11/2015 21:11:00
+ *       Fecha de generación  : 14/07/2017 22:29:41
+ *       Version del generador: 1.0.0.0
  *
  ************************************************************************/
 
@@ -11,7 +12,7 @@
 #include "MnuMain.h"
 
 
-const uint8_t menuMnuMain[] = {
+const unsigned char menuMnuMain[] = {
 
               // MENUINFO
 /* 0000 */    0x02, 
