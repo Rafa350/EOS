@@ -1,5 +1,5 @@
-#ifndef __EOS_SERVICE_H
-#define	__EOS_SERVICE_H
+#ifndef __eosService__
+#define	__eosService__
 
 
 #include "eos.h"
@@ -28,4 +28,4 @@ namespace eos {
 }
 
 
-#endif	
+#endif	// __eosService__

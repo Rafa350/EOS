@@ -1,5 +1,5 @@
-#ifndef __EOS_DISPLAY_H
-#define	__EOS_DISPLAY_H
+#ifndef __eosDisplay__
+#define	__eosDisplay__
 
 
 #define DISPLAY_PIXFORMAT_565
@@ -21,21 +21,21 @@ namespace eos {
         rotate180,
         rotate270,
     };
-    
+
     /// \brief Aliniacio horitzontal del text.
     enum class HorizontalTextAlign {
         left,
         center,
         right
     };
-    
+
     /// \brief Aliniacio vertical del text.
     enum class VerticalTextAlign {
         top,
         middle,
         bottom
     };
-    
+
     /// \brief Interficie del driver del display.
     class IDisplayDriver {
         public:
@@ -45,11 +45,11 @@ namespace eos {
             virtual void setOrientation(Orientation orientation) = 0;
             virtual int16_t getWidth() const = 0;
             virtual int16_t getHeight() const = 0;
-            virtual void clear(Color color) = 0;
-            virtual void setPixel(int16_t x, int16_t y, Color color) = 0;
-            virtual void setHPixels(int16_t x, int16_t y, int16_t length, Color color) = 0;
-            virtual void setVPixels(int16_t x, int16_t y, int16_t length, Color color) = 0;
-            virtual void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color color) = 0;
+            virtual void clear(const Color &color) = 0;
+            virtual void setPixel(int16_t x, int16_t y, const Color &color) = 0;
+            virtual void setHPixels(int16_t x, int16_t y, int16_t length, const Color &color) = 0;
+            virtual void setVPixels(int16_t x, int16_t y, int16_t length, const Color &color) = 0;
+            virtual void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color &color) = 0;
             virtual void writePixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors) = 0;
             virtual void readPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color *colors) = 0;
             virtual void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height) = 0;
@@ -80,7 +80,7 @@ namespace eos {
             ~Display();
             void setClip(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
             void resetClip();
-            void setColor(Color color);
+            void setColor(const Color &color);
             void setFont(Font *font);
             void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
             inline IDisplayDriver *getDriver() const { return driver; }
@@ -90,7 +90,7 @@ namespace eos {
             inline Color getColor() const { return color; }
             void putTTY(char ch);
             void putTTY(const char *s, int16_t offset = 0, int16_t length = -1);
-            void clear(Color color);
+            void clear(const Color &color);
             void refresh();
             inline void home() { moveTo(0, 0); }
             void moveTo(int16_t x, int16_t y);
@@ -119,5 +119,5 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosDisplay__
 

@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_PIC32_INT_H
-#define __EOS_HAL_PIC32_INT_H
+#ifndef __PIC32_halINT__
+#define __PIC32_halINT__
 
 
 #include "xc.h"
@@ -12,5 +12,5 @@
 	__builtin_disable_interrupts()
 
 
-#endif
+#endif // __PIC32_halINT__
 

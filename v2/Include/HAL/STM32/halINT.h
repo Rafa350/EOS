@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_STM32_INT_H
-#define __EOS_HAL_STM32_INT_H
+#ifndef __STM32_halINT__
+#define __STM32_halINT__
 
 
 #include "stm32f4xx.h"
@@ -12,5 +12,5 @@
 	__disable_irq()
 
 
-#endif
+#endif // __STM32_halINT__
 

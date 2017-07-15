@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_PIC32_GPIO_H
-#define	__EOS_HAL_PIC32_GPIO_H
+#ifndef __PIC32_halGPIO__
+#define	__PIC32_halGPIO__
 
 
 #include <xc.h>
@@ -127,5 +127,5 @@ void halGPIOInitializePort(GPIOPort port, GPIOOptions options, uint16_t mask);
 #endif
 
 
-#endif
+#endif __PIC32_halGPIO__
 

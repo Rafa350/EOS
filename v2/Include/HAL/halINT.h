@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_INT_H
-#define __EOS_HAL_INT_H
+#ifndef __halINT__
+#define __halINT__
 
 
 #include "eos.h"
@@ -13,4 +13,4 @@
 #endif
 
 
-#endif
+#endif // __halINT__

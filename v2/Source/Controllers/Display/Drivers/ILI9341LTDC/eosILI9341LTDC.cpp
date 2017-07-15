@@ -4,6 +4,7 @@
 #include "hAL/halGPIO.h"
 #include "hAL/halSPI.h"
 
+#include <string.h>
 #include "stm32f4xx.h"
 #include "stm32f4xx_ltdc.h"
 #include "stm32f4xx_rcc.h"
@@ -90,6 +91,8 @@
 #define CMD_POWER_CONTROL_2                                0xC1
 #define CMD_VCOM_CONTROL_1                                 0xC5
 #define CMD_VCOM_CONTROL_2                                 0xC7
+#define CMD_POWER_CONTROL_A                                0xCB
+#define CMD_POWER_CONTROL_B                                0xCF
 #define CMD_NV_MEMORY_WRITE                                0xD0
 #define CMD_NV_MEMORY_PROTECTION_KEY                       0xD1
 #define CMD_NV_MEMORY_STATUS_READ                          0xD2
@@ -98,13 +101,11 @@
 #define CMD_NEGATIVE_GAMMA_CORRECTION                      0xE1
 #define CMD_DIGITAL_GAMMA_CONTROL_1                        0xE2
 #define CMD_DIGITAL_GAMMA_CONTROL_2                        0xE3
-#define CMD_INTERFACE_CONTROL                              0xF6
-#define CMD_POWER_CONTROL_A                                0xCB
-#define CMD_POWER_CONTROL_B                                0xCF
 #define CMD_DRIVER_TIMING_CONTROL_A                        0xE8
 #define CMD_DRIVER_TIMING_CONTROL_B                        0xEA
 #define CMD_POWER_ON_SEQUENCE_CONTROL                      0xED
 #define CMD_ENABLE_3G                                      0xF2
+#define CMD_INTERFACE_CONTROL                              0xF6
 #define CMD_PUMP_RATIO_CONTROL                             0xF7
 
 // Parametres de la comanda MEMORY_ACCESS_CONTROL
@@ -146,8 +147,6 @@ void ILI9341LTDC_Driver::initialize() {
         1, CMD_SOFTWARE_RESET,
         OP_DELAY, 250,
         OP_DELAY, 250,
-        1, CMD_SLEEP_OUT,
-        OP_DELAY, 120,
     	6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,
     	4, CMD_POWER_CONTROL_B, 0x00, 0xC1, 0x30,
     	4, CMD_DRIVER_TIMING_CONTROL_A, 0x85, 0x00, 0x78,
@@ -161,6 +160,7 @@ void ILI9341LTDC_Driver::initialize() {
     	2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF,
 		// Interface VSYNC/HSYNC/DOTCLK/DE/RGB666
 		2, CMD_RGB_INTERFACE_SIGNAL_CONTROL, 0xC2,
+		4, CMD_INTERFACE_CONTROL, 0x01, 0x00, 0x06,
 		// Format de video
 #if defined(ILI9341_COLORMODE_565)
     	2, CMD_PIXEL_FORMAT_SET, 0x55,
@@ -176,7 +176,7 @@ void ILI9341LTDC_Driver::initialize() {
     	16, CMD_NEGATIVE_GAMMA_CORRECTION, 0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
             0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F,
         1, CMD_SLEEP_OUT,
-        OP_DELAY, 120,
+        OP_DELAY, 150,
         1, CMD_DISPLAY_ON,
         OP_DELAY, 50,
         OP_END
@@ -185,7 +185,12 @@ void ILI9341LTDC_Driver::initialize() {
 #error "Display no soportado"
 #endif
 
+    // Inicialitza el controlador LTDC
+    //
     ltdcInitialize();
+
+    // Inicialitza el display TFT
+    //
 	lcdInitialize();
 	lcdReset();
 
@@ -214,10 +219,15 @@ void ILI9341LTDC_Driver::initialize() {
 ///
 void ILI9341LTDC_Driver::shutdown() {
 
+	lcdWriteCommand(CMD_DISPLAY_OFF);
 	LTDC_Cmd(DISABLE);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Selecciona la orientacio.
+/// \param orientation: L'orientacio a seleccionar.
+///
 void ILI9341LTDC_Driver::setOrientation(
 	Orientation orientation) {
 
@@ -229,8 +239,9 @@ void ILI9341LTDC_Driver::setOrientation(
 /// \param color: Color de borrat.
 ///
 void ILI9341LTDC_Driver::clear(
-	Color color) {
+	const Color &color) {
 
+    memset((void*) buffer, 0x55, FRAME_OFFSET);
 }
 
 
@@ -243,7 +254,7 @@ void ILI9341LTDC_Driver::clear(
 void ILI9341LTDC_Driver::setPixel(
 	int16_t x,
 	int16_t y,
-	Color color) {
+	const Color &color) {
 
 	*((uint32_t*)(buffer + (y * screenWidth + x) * 4)) = color.to565();
 }
@@ -260,10 +271,10 @@ void ILI9341LTDC_Driver::setHPixels(
 	int16_t x,
 	int16_t y,
 	int16_t size,
-	Color color) {
+	const Color &color) {
 
-	for (uint16_t i = 0; i < size; i++)
-		setPixel(x + i, y, color);
+	while (size--)
+		setPixel(x++, y, color);
 }
 
 
@@ -278,10 +289,10 @@ void ILI9341LTDC_Driver::setVPixels(
 	int16_t x,
 	int16_t y,
 	int16_t size,
-	Color color) {
+	const Color &color) {
 
-	for (uint16_t i = 0; i < size; i++)
-		setPixel(x, y + i, color);
+	while (size--)
+		setPixel(x, y++, color);
 }
 
 
@@ -298,7 +309,7 @@ void ILI9341LTDC_Driver::setPixels(
 	int16_t y,
 	int16_t width,
 	int16_t height,
-	Color color) {
+	const Color &color) {
 
 }
 
@@ -434,7 +445,7 @@ void ILI9341LTDC_Driver::lcdWriteData(
 void ILI9341LTDC_Driver::ltdcInitialize() {
 
 	static GPIOInitializePinInfo gpioInit[] = {
-	    { ILI9341LTDC_HSYNC_PORT,  ILI9341LTDC_HSYNC_PIN,  HAL_GPIO_MODE_FUNCTION, HAL_GPIO_AF_LTDC       },
+    	{ ILI9341LTDC_DE_PORT,     ILI9341LTDC_DE_PIN,     HAL_GPIO_MODE_FUNCTION, HAL_GPIO_AF_LTDC       },
 		{ ILI9341LTDC_HSYNC_PORT,  ILI9341LTDC_HSYNC_PIN,  HAL_GPIO_MODE_FUNCTION, HAL_GPIO_AF_LTDC       },
 		{ ILI9341LTDC_VSYNC_PORT,  ILI9341LTDC_VSYNC_PIN,  HAL_GPIO_MODE_FUNCTION, HAL_GPIO_AF_LTDC       },
 		{ ILI9341LTDC_DOTCLK_PORT, ILI9341LTDC_DOTCLK_PIN, HAL_GPIO_MODE_FUNCTION, HAL_GPIO_AF_LTDC       },
@@ -462,9 +473,13 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
 	//
 	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
 
-	// Inicialitza el modul LDTC
+	// Activa el modul LDTC
 	//
 	RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;
+
+	// Activa el modul DMA2D
+	//
+	RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN;
 
 	LTDC_InitTypeDef ltdcInit;
 	ltdcInit.LTDC_HSPolarity = LTDC_HSPolarity_AL;

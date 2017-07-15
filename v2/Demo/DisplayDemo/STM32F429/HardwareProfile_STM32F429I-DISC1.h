@@ -143,6 +143,11 @@
 #define ILI9341LTDC_VSYNC_PORT    HAL_GPIO_PORT_A
 #define ILI9341LTDC_VSYNC_PIN     HAL_GPIO_PIN_4
 
+// Control del pin DE (Display enable)
+//
+#define ILI9341LTDC_DE_PORT       HAL_GPIO_PORT_F
+#define ILI9341LTDC_DE_PIN        HAL_GPIO_PIN_10
+
 // Control del pin DOTCLK (Dot clock)
 //
 #define ILI9341LTDC_DOTCLK_PORT   HAL_GPIO_PORT_G

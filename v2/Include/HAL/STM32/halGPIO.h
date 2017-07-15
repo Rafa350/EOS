@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_STM32_GPIO_H
-#define	__EOS_HAL_STM32_GPIO_H
+#ifndef __STM32_halGPIO__
+#define	__STM32_halGPIO__
 
 
 #include "stm32f4xx.h"
@@ -153,5 +153,5 @@ void halGPIOInitialize(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOFunc
 #endif
 
 
-#endif
+#endif // __STM32_halGPIO__
 

@@ -178,14 +178,12 @@ void ILI9341_Driver::initialize() {
         1, CMD_SOFTWARE_RESET,
         OP_DELAY, 250,
         OP_DELAY, 250,
-        1, CMD_SLEEP_OUT,
-        OP_DELAY, 120,
-    	6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02, //
+    	6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,
     	4, CMD_POWER_CONTROL_B, 0x00, 0xC1, 0x30,
     	4, CMD_DRIVER_TIMING_CONTROL_A, 0x85, 0x00, 0x78,
-    	3, CMD_DRIVER_TIMING_CONTROL_B, 0x00, 0x00, //
-		5, CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0x12, 0x81, //
-		2, CMD_PUMP_RATIO_CONTROL, 0x20, //
+    	3, CMD_DRIVER_TIMING_CONTROL_B, 0x00, 0x00,
+		5, CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0x12, 0x81,
+		2, CMD_PUMP_RATIO_CONTROL, 0x20,
     	2, CMD_POWER_CONTROL_1, 0x23,
     	2, CMD_POWER_CONTROL_2, 0x10,
 		3, CMD_VCOM_CONTROL_1, 0x3E, 0x28,
@@ -205,7 +203,7 @@ void ILI9341_Driver::initialize() {
     	16, CMD_NEGATIVE_GAMMA_CORRECTION, 0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
             0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F,
         1, CMD_SLEEP_OUT,
-        OP_DELAY, 120,
+        OP_DELAY, 150,
         1, CMD_DISPLAY_ON,
         OP_DELAY, 50,
         OP_END
@@ -289,7 +287,7 @@ void ILI9341_Driver::setOrientation(
 /// \param color: Color per borrar
 ///
 void ILI9341_Driver::clear(
-    Color color) {
+    const Color &color) {
 
     ctrlSelectRegion(0, 0, screenWidth, screenHeight);
     ctrlStartMemoryWrite();
@@ -306,7 +304,7 @@ void ILI9341_Driver::clear(
 void ILI9341_Driver::setPixel(
     int16_t x,
     int16_t y,
-    Color color) {
+    const Color &color) {
 
     ctrlSelectRegion(x, y, 1, 1);
     ctrlStartMemoryWrite();
@@ -325,7 +323,7 @@ void ILI9341_Driver::setHPixels(
     int16_t x,
     int16_t y,
     int16_t length,
-    Color color) {
+    const Color &color) {
 
     ctrlSelectRegion(x, y, length, 1);
     ctrlStartMemoryWrite();
@@ -344,7 +342,7 @@ void ILI9341_Driver::setVPixels(
     int16_t x,
     int16_t y,
     int16_t length,
-    Color color) {
+    const Color &color) {
 
     ctrlSelectRegion(x, y, 1, length);
     ctrlStartMemoryWrite();
@@ -365,7 +363,7 @@ void ILI9341_Driver::setPixels(
     int16_t y,
     int16_t width,
     int16_t height,
-    Color color) {
+    const Color &color) {
 
     ctrlSelectRegion(x, y, width, height);
     ctrlStartMemoryWrite();
@@ -556,7 +554,7 @@ void ILI9341_Driver::ctrlStartMemoryRead() {
 /// \param count: Numero de copies a escriure.
 ///
 void ILI9341_Driver::ctrlWritePixel(
-    Color color,
+    const Color &color,
     int32_t count) {
 
 #if defined(ILI9341_COLORMODE_565)

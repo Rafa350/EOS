@@ -1,5 +1,5 @@
-#ifndef __EOS_H
-#define	__EOS_H
+#ifndef __eos__
+#define	__eos__
 
 
 // Compilador Microchip XC32
@@ -42,5 +42,5 @@
 #include "eosConfig.h"
 
 
-#endif
+#endif // __eos__
 

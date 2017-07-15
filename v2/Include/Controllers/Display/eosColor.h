@@ -1,5 +1,5 @@
-#ifndef __EOS_COLOR_H
-#define __EOS_COLOR_H
+#ifndef __eosColor__
+#define __eosColor__
 
 
 #include "eos.h"
@@ -246,4 +246,4 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosColor__

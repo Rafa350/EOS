@@ -1,5 +1,5 @@
-#ifndef __EOS_APPLOOP_H
-#define	__EOS_APPLOOP_H
+#ifndef __eosAppLoop__
+#define	__eosAppLoop__
 
 
 #include "eos.h"
@@ -32,5 +32,5 @@ namespace eos {
     };
 }
 
-#endif
+#endif // __eosAppLoop__
 

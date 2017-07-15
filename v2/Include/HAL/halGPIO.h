@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_GPIO_H
-#define	__EOS_HAL_GPIO_H
+#ifndef __halGPIO__
+#define	__halGPIO__
 
 
 #include "eos.h"
@@ -15,5 +15,5 @@
 #endif
 
 
-#endif
+#endif // __halGPIO__
 

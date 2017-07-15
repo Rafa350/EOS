@@ -1,5 +1,5 @@
-#ifndef __EOS_FONT_H
-#define __EOS_FONT_H
+#ifndef __eosFont__
+#define __eosFont__
 
 
 #include "eos.h"
@@ -53,5 +53,5 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosFont__
 

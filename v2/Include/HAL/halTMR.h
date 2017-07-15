@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_TMR_H
-#define __EOS_HAL_TMR_H
+#ifndef __halTMR__
+#define __halTMR__
 
 #ifdef	__cplusplus
 extern "C" {
@@ -50,4 +50,4 @@ void halTMRDelay(uint32_t time);
 }
 #endif
 
-#endif
+#endif // __halTMR__

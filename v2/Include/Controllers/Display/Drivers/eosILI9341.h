@@ -1,5 +1,5 @@
-#ifndef __EOS_ILI9341_H
-#define	__EOS_ILI9341_H
+#ifndef __eosILI9341__
+#define	__eosILI9341__
 
 
 #include "eos.h"
@@ -22,11 +22,11 @@ namespace eos {
             void setOrientation(Orientation orientation);
             int16_t getWidth() const { return screenWidth; }
             int16_t getHeight() const { return screenHeight; }
-            void clear(Color color);
-            void setPixel(int16_t x, int16_t y, Color color);
-            void setHPixels(int16_t x, int16_t y, int16_t size, Color color);
-            void setVPixels(int16_t x, int16_t y, int16_t size, Color color);
-            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color color);
+            void clear(const Color &color);
+            void setPixel(int16_t x, int16_t y, const Color &color);
+            void setHPixels(int16_t x, int16_t y, int16_t size, const Color &color);
+            void setVPixels(int16_t x, int16_t y, int16_t size, const Color &color);
+            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color &color);
             void writePixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors);
             void readPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color *colors);
             void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
@@ -35,7 +35,7 @@ namespace eos {
         private:
             void ctrlInitialize();
             void ctrlWriteProgram(const uint8_t *data);
-            void ctrlWritePixel(Color color, int32_t count);
+            void ctrlWritePixel(const Color &color, int32_t count);
             void ctrlWritePixel(const Color *colors, int32_t count);
             void ctrlReadPixel(Color *colors, int32_t count);
             void ctrlDisplayOff();
@@ -55,5 +55,5 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosILI9341__
 

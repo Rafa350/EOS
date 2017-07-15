@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_SYS_H
-#define	__EOS_HAL_SYS_H
+#ifndef __halSYS__
+#define	__halSYS__
 
 
 #ifdef	__cplusplus
@@ -15,6 +15,6 @@ void halSYSInitialize();
 #endif
 
 
-#endif
+#endif // __halSYS__
 
 

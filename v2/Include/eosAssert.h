@@ -1,5 +1,5 @@
-#ifndef __EOS_ASSERT_H
-#define	__EOS_ASSERT_H
+#ifndef __eosAssert__
+#define	__eosAssert__
 
 
 #if defined(EOS_DEBUG)
@@ -33,5 +33,5 @@ extern "C" {
 #endif
 
 
-#endif
+#endif // __eosAssert
 

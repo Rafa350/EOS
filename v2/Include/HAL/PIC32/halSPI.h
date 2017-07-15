@@ -1,6 +1,6 @@
-#ifndef __EOS_HAL_PIC32_SPI_H
-#define __EOS_HAL_PIC32_SPI_H
+#ifndef __PIC32_halSPI__
+#define __PIC32_halSPI__
 
 
-#endif
+#endif // __PIC32_halSPI__
 

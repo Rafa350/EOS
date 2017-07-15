@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_SPI_H
-#define __EOS_HAL_SPI_H
+#ifndef __halSPI__
+#define __halSPI__
 
 
 #include "eos.h"
@@ -15,4 +15,4 @@
 
 
 
-#endif
+#endif // __halSPI__

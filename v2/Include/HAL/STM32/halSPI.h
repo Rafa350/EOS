@@ -1,5 +1,5 @@
-#ifndef __EOS_HAL_STM32_SPI_H
-#define __EOS_HAL_STM32_SPI_H
+#ifndef __STM32_halSPI__
+#define __STM32_halSPI__
 
 
 #include "stm32f4xx.h"
@@ -73,4 +73,4 @@ extern uint16_t halSPIReceive16(SPIModule module);
 #endif
 
 
-#endif
+#endif // __STM32_halSPI__

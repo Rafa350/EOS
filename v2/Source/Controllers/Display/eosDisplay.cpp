@@ -22,11 +22,11 @@ const uint8_t top = 8;
 /// \param b: Variable B.
 ///
 inline void swap(
-    int16_t &a, 
+    int16_t &a,
     int16_t &b) {
-    
-    int16_t t = a; 
-    a = b; 
+
+    int16_t t = a;
+    a = b;
     b = t;
 }
 
@@ -37,7 +37,7 @@ inline void swap(
 ///
 Display::Display(
     IDisplayDriver *driver) :
-    
+
     driver(driver),
     screenWidth(driver->getWidth()),
     screenHeight(driver->getHeight()),
@@ -53,7 +53,7 @@ Display::Display(
     cursorX(0),
     cursorY(0),
     ttyState(0) {
-    
+
     setFont(new Font(fontConsolas14pt));
 }
 
@@ -62,7 +62,7 @@ Display::Display(
 /// \brief Destructor.
 ///
 Display::~Display() {
-    
+
 }
 
 
@@ -71,8 +71,8 @@ Display::~Display() {
 /// \param color: El color a seleccionar.
 ///
 void Display::setColor(
-    Color color) {
-    
+    const Color &color) {
+
     this->color = color;
 }
 
@@ -83,9 +83,9 @@ void Display::setColor(
 /// \param vAlign: Aliniacio vertical.
 ///
 void Display::setTextAlign(
-    HorizontalTextAlign hAlign, 
+    HorizontalTextAlign hAlign,
     VerticalTextAlign vAlign) {
-    
+
     this->hAlign = hAlign;
     this->vAlign = vAlign;
 }
@@ -111,21 +111,21 @@ void Display::setFont(
 /// \param y2: Coordinada Y inferior.
 ///
 void Display::setClip(
-    int16_t x1, 
-    int16_t y1, 
-    int16_t x2, 
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
     int16_t y2) {
-    
-    if (x1 > x2) 
+
+    if (x1 > x2)
         swap(x1, x2);
-    if (y1 > y2) 
+    if (y1 > y2)
         swap(y1, y2);
-    
+
     clipX1 = x1 < 0 ? 0 : x1;
     clipY1 = y1 < 0 ? 0 : y1;
     clipX2 = x2 >= screenWidth ? screenWidth - 1 : x2;
     clipY2 = y2 >= screenHeight ? screenHeight - 1 : y2;
-    
+
     clipEnabled = true;
 }
 
@@ -134,7 +134,7 @@ void Display::setClip(
 /// \brief Reseteja la regio de retall.
 ///
 void Display::resetClip() {
-    
+
     clipEnabled = false;
 }
 
@@ -144,7 +144,7 @@ void Display::resetClip() {
 /// \param color: El color per realitzar el borrat.
 ///
 void Display::clear(
-    Color color) {
+    const Color &color) {
 
     driver->clear(color);
     cursorX = 0;
@@ -156,7 +156,7 @@ void Display::clear(
 /// \brief Refresca la pantalla.
 ///
 void Display::refresh() {
-    
+
 }
 
 
@@ -166,9 +166,9 @@ void Display::refresh() {
 /// \param y: Coordinada Y.
 ///
 void Display::moveTo(
-    int16_t x, 
+    int16_t x,
     int16_t y) {
-    
+
     cursorX = x;
     cursorY = y;
 }
@@ -183,7 +183,7 @@ void Display::moveTo(
 void Display::lineTo(
     int16_t x,
     int16_t y) {
-    
+
     drawLine(cursorX, cursorY, x, y);
     cursorX = x;
     cursorY = y;
@@ -196,7 +196,7 @@ void Display::lineTo(
 /// \param y: Coordinada Y.
 ///
 void Display::drawPoint(
-    int16_t x, 
+    int16_t x,
     int16_t y) {
 
     if (clipPoint(x, y))
@@ -212,35 +212,35 @@ void Display::drawPoint(
 /// \param y2: Coordinada y del final.
 ///
 void Display::drawLine(
-    int16_t x1, 
-    int16_t y1, 
-    int16_t x2, 
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
     int16_t y2) {
-   
+
     // Calcula les deltas
     //
     int16_t dx = x2 - x1;
     int16_t dy = y2 - y1;
-    
+
     // Es una linea horitzontal
     //
-    if (dx == 0) {        
-        if (clipVLine(x1, y1, y2)) 
+    if (dx == 0) {
+        if (clipVLine(x1, y1, y2))
             driver->setVPixels(x1, dy > 0 ? y1 : y2, (dy > 0 ? y2 - y1 : y1 - y2) + 1, color);
     }
-	
+
     // Es una linia vertical
     //
-    else if (dy == 0) {        
-        if (clipHLine(x1, x2, y1)) 
+    else if (dy == 0) {
+        if (clipHLine(x1, x2, y1))
             driver->setHPixels(dx > 0 ? x1 : x2, y1, (dx > 0 ? x2 - x1 : x1 - x2) + 1, color);
     }
-	
+
     // No es ni horitzontal ni vertical
     //
     else {
         if (clipLine(x1, y1, x2, y2)) {
-		
+
             int16_t stepx, stepy;
             int16_t p, incE, incNE;
 
@@ -290,7 +290,7 @@ void Display::drawLine(
                     driver->setPixel(x1, y1, color);
                 }
             }
-        }    
+        }
     }
 }
 
@@ -303,9 +303,9 @@ void Display::drawLine(
 /// \param y2: Coordinada y del final.
 ///
 void Display::drawRectangle(
-    int16_t x1, 
-    int16_t y1, 
-    int16_t x2, 
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
     int16_t y2) {
 
     drawLine(x1, y1, x2, y1);
@@ -325,11 +325,11 @@ void Display::drawRectangle(
 /// \param y3: Coordinada y del tercer punt.
 ///
 void Display::drawTriangle(
-    int16_t x1, 
-    int16_t y1, 
-    int16_t x2, 
-    int16_t y2, 
-    int16_t x3, 
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
+    int16_t y2,
+    int16_t x3,
     int16_t y3) {
 
     drawLine(x1, y1, x2, y2);
@@ -345,13 +345,13 @@ void Display::drawTriangle(
 /// \param r: Radi del cercle.
 ///
 void Display::drawCircle(
-    int16_t cx, 
-    int16_t cy, 
+    int16_t cx,
+    int16_t cy,
     int16_t r) {
 
     int16_t x = r;
     int16_t y = 0;
-    int16_t d = 1 - x;  
+    int16_t d = 1 - x;
 
     while (y <= x) {
         drawPoint(cx + x, cy + y);
@@ -367,7 +367,7 @@ void Display::drawCircle(
             d += 2 * y + 1;
         else {
             x--;
-            d += 2 * (y - x) + 1;   
+            d += 2 * (y - x) + 1;
         }
     }
 }
@@ -381,15 +381,15 @@ void Display::drawCircle(
 /// \param y2: Coordinada Y final.
 ///
 void Display::fillRectangle(
-    int16_t x1, 
-    int16_t y1, 
-    int16_t x2, 
+    int16_t x1,
+    int16_t y1,
+    int16_t x2,
     int16_t y2) {
 
     if (clipArea(x1, y1, x2, y2)) {
-        if (x1 > x2) 
+        if (x1 > x2)
             swap(x1, x2);
-        if (y1 > y2) 
+        if (y1 > y2)
             swap(y1, y2);
         driver->setPixels(x1, y1, x2 - x1 + 1, y2 -y1 + 1, color);
     }
@@ -403,27 +403,27 @@ void Display::fillRectangle(
 /// \param r: Radi del cercle.
 ///
 void Display::fillCircle(
-    int16_t cx, 
-    int16_t cy, 
+    int16_t cx,
+    int16_t cy,
     int16_t r) {
 
     int16_t x = r;
     int16_t y = 0;
-    int16_t d = 1 - x;  
+    int16_t d = 1 - x;
 
     while (y <= x) {
-        
+
         drawLine(cx - x, cy - y, cx + x, cy - y);
         drawLine(cx - x, cy + y, cx + x, cy + y);
         drawLine(cx - y, cy - x, cx + y, cy - x);
-        drawLine(cx - y, cy + x, cx + y, cy + x);     
-        
+        drawLine(cx - y, cy + x, cx + y, cy + x);
+
         y++;
         if (d <= 0)
             d += 2 * y + 1;
         else {
             x--;
-            d += 2 * (y - x) + 1;   
+            d += 2 * (y - x) + 1;
         }
     }
 }
@@ -438,14 +438,14 @@ void Display::fillCircle(
 /// \param height: Alçada del bitmap.
 ///
 void Display::drawBitmap1BPP(
-    int16_t x, 
-    int16_t y, 
-    const uint8_t *bitmap, 
-    int16_t width, 
-    int16_t height, 
+    int16_t x,
+    int16_t y,
+    const uint8_t *bitmap,
+    int16_t width,
+    int16_t height,
     Color color) {
-    
-    
+
+
 }
 
 
@@ -456,8 +456,8 @@ void Display::drawBitmap1BPP(
 /// \param c: El caracter a dibuixar.
 ///
 int16_t Display::drawChar(
-    int16_t x, 
-    int16_t y, 
+    int16_t x,
+    int16_t y,
     char c) {
 
     FontInfo fi;
@@ -496,12 +496,12 @@ int16_t Display::drawChar(
 /// \return L'amplada de la cadena dibuixada en pixels.
 ///
 int16_t Display::drawText(
-    int16_t x, 
-    int16_t y, 
+    int16_t x,
+    int16_t y,
     const char *s,
     int16_t offset,
     int16_t length) {
-    
+
     if (hAlign != HorizontalTextAlign::left) {
         int16_t textWidth = getTextWidth(s, offset, length);
         if (hAlign == HorizontalTextAlign::right)
@@ -509,7 +509,7 @@ int16_t Display::drawText(
         else
             x -= textWidth / 2;
     }
-    
+
     int16_t sx = x;
 
     for (int16_t i = offset, j = length; j && s[i]; i++, j--)
@@ -523,7 +523,7 @@ int16_t Display::drawText(
 /// \brief Obte l'amplada d'una cadena de texte.
 /// \param s: La cadena de texte.
 /// \param offset: El primer caracter del text.
-/// \param length: Numero de caracters a mesurar. -1 si es la longitut 
+/// \param length: Numero de caracters a mesurar. -1 si es la longitut
 ///                total del text.
 /// \return L'amplada de la cadena en pixels.
 ///
@@ -531,9 +531,9 @@ int16_t Display::getTextWidth(
     const char *s,
     int16_t offset,
     int16_t length) {
-    
+
     int16_t w = 0;
-    for (int16_t i = offset, j = length; j && s[i]; i++, j--) 
+    for (int16_t i = offset, j = length; j && s[i]; i++, j--)
         w += font->getCharAdvance(s[i]);
 
     return w;
@@ -547,7 +547,7 @@ int16_t Display::getTextWidth(
 ///
 int16_t Display::getTextHeight(
     const char *s) {
-    
+
     return font->getFontHeight();
 }
 
@@ -569,7 +569,7 @@ void Display::putTTY(
                 case (char)0xFE:
                     clear(COLOR_Black);
                     break;
-            
+
                 case (char)0xFD:
                     home();
                     cursorX = 0;
@@ -586,7 +586,7 @@ void Display::putTTY(
                     if (cursorY >= screenHeight)
                         cursorY = 0;
                     break;
-            
+
                 default: {
                     CharInfo ci;
                     font->getCharInfo(c, ci);
@@ -610,8 +610,8 @@ void Display::putTTY(
 
         case 2:
             break;
-    }    
-}    
+    }
+}
 
 
 /// ----------------------------------------------------------------------
@@ -624,7 +624,7 @@ void Display::putTTY(
     const char *s,
     int16_t offset,
     int16_t length) {
-    
+
     for (int16_t i = offset, j = length; j && s[i]; i++, j--)
        putTTY(s[i]);
 }
@@ -634,44 +634,44 @@ void Display::putTTY(
 /// \brief Retalla un area.
 ///
 bool Display::clipArea(
-    int16_t &x1, 
-    int16_t &y1, 
-    int16_t &x2, 
+    int16_t &x1,
+    int16_t &y1,
+    int16_t &x2,
     int16_t &y2) {
-    
+
     if (clipEnabled) {
-    
+
         uint8_t code1 = calcOutCode(x1, y1);
         uint8_t code2 = calcOutCode(x2, y2);
-        
+
         if (!(code1 | code2))
             return true;
-        
+
         else if (code1 & code2)
             return false;
-        
+
         else {
-            
-            if (x1 < clipX1) 
+
+            if (x1 < clipX1)
                 x1 = clipX1;
             else if (x1 > clipX2)
                 x1 = clipX2;
-            
-            if (y1 < clipY1) 
+
+            if (y1 < clipY1)
                 y1 = clipY1;
             else if (y1 > clipY2)
                 y1 = clipY2;
-            
-            if (x2 > clipX2) 
+
+            if (x2 > clipX2)
                 x2 = clipX2;
             else if (x2 < clipX1)
                 x2 = clipX1;
-            
-            if (y2 > clipY2) 
+
+            if (y2 > clipY2)
                 y2 = clipY2;
             else if (y2 < clipY1)
                 y2 = clipY1;
-            
+
             return true;
         }
     }
@@ -687,9 +687,9 @@ bool Display::clipArea(
 /// \return True si es visible.
 ///
 bool Display::clipPoint(
-    int16_t x, 
+    int16_t x,
     int16_t y) {
-    
+
     if (clipEnabled)
         return (x >= clipX1) && (x <= clipX2) && (y >= clipY1) && (y <= clipY2);
     else
@@ -705,33 +705,33 @@ bool Display::clipPoint(
 /// \return True si es visible
 ///
 bool Display::clipHLine(
-    int16_t &x1, 
-    int16_t &x2, 
+    int16_t &x1,
+    int16_t &x2,
     int16_t &y) {
-    
+
     if (clipEnabled) {
-        
+
         uint8_t code1 = calcOutCode(x1, y);
         uint8_t code2 = calcOutCode(x2, y);
-        
+
         if (!(code1 | code2))
             return true;
-        
+
         else if (code1 & code2)
             return false;
-        
+
         else {
-            
+
             if (x1 < clipX1)
                 x1 = clipX1;
             else if (x1 > clipX2)
                 x1 = clipX2;
-            
+
             if (x2 > clipX2)
                 x2 = clipX2;
             else if (x2 < clipX1)
                 x2 = clipX1;
-            
+
             return true;
         }
     }
@@ -748,33 +748,33 @@ bool Display::clipHLine(
 /// \return True si es visible.
 ///
 bool Display::clipVLine(
-    int16_t &x, 
-    int16_t &y1, 
+    int16_t &x,
+    int16_t &y1,
     int16_t &y2) {
 
     if (clipEnabled) {
-        
+
         uint8_t code1 = calcOutCode(x, y1);
         uint8_t code2 = calcOutCode(x, y2);
-        
+
         if (!(code1 | code2))
             return true;
-        
+
         else if (code1 & code2)
             return false;
-        
+
         else {
-            
+
             if (y1 < clipY1)
                 y1 = clipY1;
             else if (y1 > clipY2)
                 y1 = clipY2;
-            
+
             if (y2 > clipY2)
                 y2 = clipY2;
             else if (y2 < clipY1)
                 y2 = clipY1;
-            
+
             return true;
         }
     }
@@ -790,13 +790,13 @@ bool Display::clipVLine(
 /// \param x2: Coordinada X final.
 /// \param y2: Coordinada Y final.
 /// \return True si es visible.
-///       
+///
 bool Display::clipLine(
     int16_t &x1,
     int16_t &y1,
     int16_t &x2,
-    int16_t &y2) {    
-    
+    int16_t &y2) {
+
     if (clipEnabled) {
 
         uint8_t code1 = calcOutCode(x1, y1);
@@ -870,19 +870,19 @@ bool Display::clipLine(
 /// \return El 'outcode' calculat.
 ///
 uint8_t Display::calcOutCode(
-    int16_t x, 
+    int16_t x,
     int16_t y) {
-    
-    uint8_t code = inside;   
-    
+
+    uint8_t code = inside;
+
     if (x < clipX1)
         code |= left;
     else if (x > clipX2)
-        code |= right;    
+        code |= right;
     if (y < clipY1)
         code |= bottom;
     else if (y > clipY2)
         code |= top;
-    
+
     return code;
 }
