@@ -2,6 +2,8 @@
 #define	__eosAppLoop__
 
 
+// EOS includes
+//
 #include "eos.h"
 #include "Services/eosService.h"
 #include "System/Core/eosTask.h"

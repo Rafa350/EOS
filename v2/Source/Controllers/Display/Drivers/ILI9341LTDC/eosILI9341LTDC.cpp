@@ -5,9 +5,9 @@
 #include "hAL/halSPI.h"
 
 #include <string.h>
-#include "stm32f4xx.h"
-#include "stm32f4xx_ltdc.h"
-#include "stm32f4xx_rcc.h"
+
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_ltdc.h"
 
 
 #if !defined(ILI9341LTDC_COLORMODE_565) && !defined(ILI9341LTDC_COLORMODE_666)

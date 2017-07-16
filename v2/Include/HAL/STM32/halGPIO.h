@@ -2,10 +2,15 @@
 #define	__STM32_halGPIO__
 
 
-#include "stm32f4xx.h"
-#include "stm32f4xx_gpio.h"
-
+// Standard includes
+//
 #include <stdint.h>
+
+
+// STM32 includes
+//
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_gpio.h"
 
 
 #ifdef	__cplusplus
@@ -32,7 +37,7 @@ typedef struct {
 	GPIOFunction function;
 } GPIOInitializePortInfo;
 
-extern GPIO_TypeDef *gpioTbl[];
+extern GPIO_TypeDef * const gpioTbl[];
 
 
 #define HAL_GPIO_PORT_A      0
@@ -81,6 +86,7 @@ extern GPIO_TypeDef *gpioTbl[];
 #define HAL_GPIO_POS_14      ((uint32_t) 1 << HAL_GPIO_PIN_14)
 #define HAL_GPIO_POS_15      ((uint32_t) 1 << HAL_GPIO_PIN_15)
 
+#define HAL_GPIO_AF_NONE     0
 #define HAL_GPIO_AF_FMC      GPIO_AF_FMC
 #define HAL_GPIO_AF_LTDC     GPIO_AF_LTDC
 #define HAL_GPIO_AF_SPI1     GPIO_AF_SPI1
@@ -99,8 +105,8 @@ extern GPIO_TypeDef *gpioTbl[];
 #define HAL_GPIO_SPEED_MASK            0b00001100
 #define HAL_GPIO_SPEED_LOW             0b00000000
 #define HAL_GPIO_SPEED_MEDIUM	       0b00000100
-#define HAL_GPIO_SPEED_FAST            0b00001000
-#define HAL_GPIO_SPEED_HIGH            0b00001100
+#define HAL_GPIO_SPEED_HIGH            0b00001000
+#define HAL_GPIO_SPEED_FAST            0b00001100
 
 #define HAL_GPIO_OPENDRAIN_MASK        0b00100000
 #define HAL_GPIO_OPENDRAIN_DISABLED    0b00000000
@@ -113,17 +119,17 @@ extern GPIO_TypeDef *gpioTbl[];
 
 
 #define halGPIOInitializePinInput(port, pin) \
-	halGPIOInitialize(port, pin, HAL_GPIO_MODE_INPUT, 0);
+	halGPIOInitialize(port, pin, HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
 
 #define halGPIOInitializePinOutput(port, pin) \
-	halGPIOInitialize(port, pin, HAL_GPIO_MODE_OUTPUT, 0);
+	halGPIOInitialize(port, pin, HAL_GPIO_MODE_OUTPUT, HAL_GPIO_AF_NONE);
 
 
 #define halGPIOSetPin(port, pin) \
-	gpioTbl[port]->BSRRL = ((uint16_t) 1) << (pin)
+	gpioTbl[port]->BSRR = ((uint32_t) 1) << (pin)
 
 #define halGPIOClearPin(port, pin) \
-	gpioTbl[port]->BSRRH = ((uint16_t) 1) << (pin)
+	gpioTbl[port]->BSRR = ((uint32_t) 1) << (pin + 16)
 
 #define halGPIOTogglePin(port, pin) \
 	gpioTbl[port]->ODR ^= ((uint32_t) 1) << (pin)

@@ -1,7 +1,7 @@
 #include "hal/halGPIO.h"
 
 
-GPIO_TypeDef *gpioTbl[] = {
+GPIO_TypeDef * const gpioTbl[] = {
     GPIOA,
 	GPIOB,
 	GPIOC,
@@ -55,7 +55,7 @@ void halGPIOInitialize(
 	GPIOFunction function) {
 
 	uint32_t temp;
-	GPIO_TypeDef *gpio = gpioTbl[port];
+	GPIO_TypeDef * const gpio = gpioTbl[port];
 
 	// Activa el rellotge del controlador GPIO
 	//

@@ -2,8 +2,15 @@
 #define __STM32_halSPI__
 
 
-#include "stm32f4xx.h"
-#include "stm32f4xx_spi.h"
+// Standard includes
+//
+#include <stdint.h>
+
+
+// STM32 includes
+//
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_spi.h"
 
 
 #ifdef	__cplusplus

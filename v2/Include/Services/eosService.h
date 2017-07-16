@@ -2,24 +2,34 @@
 #define	__eosService__
 
 
+// EOS includes
+//
 #include "eos.h"
 #include "System/eosApplication.h"
 #include "System/Core/eosTask.h"
 
 
 namespace eos {
-       
+
+	struct ServiceInit {
+		Application *application;
+		const char *name;
+		unsigned stackSize;
+		TaskPriority priority;
+	};
+
     class Service: private IRunable {
         private:
             Application *application;
             const char *name;
             Task task;
-        
+
         public :
+            Service(const ServiceInit *init);
             Service(Application *application, const char *name, unsigned stackSize, TaskPriority priority);
             virtual ~Service();
-            
-            inline const char *getName() const { return name; }   
+
+            inline const char *getName() const { return name; }
             inline Application *getApplication() const { return application; }
 
         friend void Application::addService(Service *service);

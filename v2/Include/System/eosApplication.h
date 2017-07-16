@@ -1,7 +1,9 @@
-#ifndef __EOS_APPLICATION_H
-#define	__EOS_APPLICATION_H
+#ifndef __eosApplication__
+#define	__eosApplication__
 
 
+// EOS includes
+//
 #include "eos.h"
 #include "System/Collections/eosList.h"
 
@@ -39,6 +41,7 @@ namespace eos {
 
 }
 
-#endif
+
+#endif // __eosApplication__
 
 

@@ -39,6 +39,8 @@
 #endif
 
 
+// EOS includes
+//
 #include "eosConfig.h"
 
 
