@@ -127,5 +127,4 @@ void halGPIOInitializePort(GPIOPort port, GPIOOptions options, uint16_t mask);
 #endif
 
 
-#endif __PIC32_halGPIO__
-
+#endif // __PIC32_halGPIO__

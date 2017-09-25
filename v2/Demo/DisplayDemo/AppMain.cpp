@@ -4,7 +4,9 @@
 #include "Services/eosAppLoop.h"
 #include "Controllers/Display/eosDisplay.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"
+#ifdef EOS_STM32F4
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
+#endif
 #include "Hal/halGPIO.h"
 
 #include <stdlib.h>

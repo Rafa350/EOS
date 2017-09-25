@@ -1,5 +1,6 @@
 #include "System/eosApplication.h"
 #include "Services/eosAppLoop.h"
+#include "hal/halSYS.h"
 #include "hal/halGPIO.h"
 
 
@@ -92,6 +93,8 @@ void Led2LoopService::onRun() {
 /// \brief Entrada a l'aplicacio
 ///
 void AppMain() {
+
+	halSYSInitialize();
 
 	Application *app = new MyApplication();
 	app->execute();

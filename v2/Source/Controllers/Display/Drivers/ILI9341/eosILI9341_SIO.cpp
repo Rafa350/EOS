@@ -66,7 +66,7 @@
 // Control dels pins de forma directa per STM32F4
 //
 #elif defined(ILI9341_IO_SUBTYPE_SIO_DIRECT) && defined(EOS_STM32F4)
-
+#error SIO_DIRECT no soportado en STM32
 #endif
 
 

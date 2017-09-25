@@ -34,7 +34,7 @@
 // Control del pin CS
 //
 #define initCS()   halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN); \
-                   halGPIOInitializePin(ILI9341_CS_PORT, ILI9341_CS_PIN, HAL_GPIO_MODE_OUTPUT)
+                   halGPIOInitialize(ILI9341_CS_PORT, ILI9341_CS_PIN, HAL_GPIO_MODE_OUTPUT, HAL_GPIO_AF_NONE)
 
 #define setCS()    halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN)
 
@@ -43,7 +43,7 @@
 // Control del pin RS
 //
 #define initRS()   halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN); \
-                   halGPIOInitializePin(ILI9341_RS_PORT, ILI9341_RS_PIN, HAL_GPIO_MODE_OUTPUT)
+                   halGPIOInitialize(ILI9341_RS_PORT, ILI9341_RS_PIN, HAL_GPIO_MODE_OUTPUT, HAL_GPIO_AF_NONE)
 
 #define setRS()    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN)
 
@@ -52,16 +52,17 @@
 
 // Control del modul SPI
 //
-#define initSPI()  halGPIOInitializePinFunction(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_MODE_FUNCTION | HAL_GPIO_SPEED_HIGH, ILI9341_GPIO_AF_SPI); \
-                   halGPIOInitializePinFunction(ILI9341_MISO_PORT, ILI9341_MISO_PIN, HAL_GPIO_MODE_FUNCTION | HAL_GPIO_SPEED_HIGH, ILI9341_GPIO_AF_SPI); \
-                   halGPIOInitializePinFunction(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, HAL_GPIO_MODE_FUNCTION | HAL_GPIO_SPEED_HIGH, ILI9341_GPIO_AF_SPI); \
+#define initSPI()  halGPIOInitialize(ILI9341_CLK_PORT, ILI9341_CLK_PIN, HAL_GPIO_MODE_FUNCTION | HAL_GPIO_SPEED_HIGH, ILI9341_CLK_AF); \
+                   halGPIOInitialize(ILI9341_MISO_PORT, ILI9341_MISO_PIN, HAL_GPIO_MODE_FUNCTION | HAL_GPIO_SPEED_HIGH, ILI9341_MISO_AF); \
+                   halGPIOInitialize(ILI9341_MOSI_PORT, ILI9341_MOSI_PIN, HAL_GPIO_MODE_FUNCTION | HAL_GPIO_SPEED_HIGH, ILI9341_MOSI_AF); \
 				   halSPIInitialize(ILI9341_SPI_MODULE, HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB)
 
 #define sendSPI(d) halSPISend(ILI9341_SPI_MODULE, d)
 
 #define recvSPI()  halSPISend(ILI9341_SPI_MODULE, 0)
 
-
+#elif defined(ILI9341_IO_SUBTYPE_SPI_DIRECT) && defined(EOS_STM32)
+#error SPI_DIRECT no soportado en STM32
 #endif
 
 
@@ -79,9 +80,6 @@ void ILI9341_Driver::lcdInitialize() {
     initCS();
     initRS();
     initSPI();
-#ifndef ILI9341_INTERFACE_WRITEONLY
-    initMISO();
-#endif
 }
 
 
@@ -123,11 +121,9 @@ void ILI9341_Driver::lcdClose() {
 void ILI9341_Driver::lcdWriteCommand(
     uint8_t d) {
 
-    halINTDisableInterrupts();
-
+	halINTDisableInterrupts();
     clrRS();
     sendSPI(d);
-
     halINTEnableInterrupts();
 }
 
@@ -139,11 +135,9 @@ void ILI9341_Driver::lcdWriteCommand(
 void ILI9341_Driver::lcdWriteData(
     uint8_t d) {
 
-    halINTDisableInterrupts();
-
+	halINTDisableInterrupts();
     setRS();
     sendSPI(d);
-
     halINTEnableInterrupts();
 }
 

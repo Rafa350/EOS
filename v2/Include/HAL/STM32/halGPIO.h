@@ -11,6 +11,7 @@
 //
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_gpio.h"
+#include "stm32f4xx_hal_gpio_ex.h"
 
 
 #ifdef	__cplusplus
@@ -87,14 +88,15 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_POS_15      ((uint32_t) 1 << HAL_GPIO_PIN_15)
 
 #define HAL_GPIO_AF_NONE     0
-#define HAL_GPIO_AF_FMC      GPIO_AF_FMC
-#define HAL_GPIO_AF_LTDC     GPIO_AF_LTDC
-#define HAL_GPIO_AF_SPI1     GPIO_AF_SPI1
-#define HAL_GPIO_AF_SPI2     GPIO_AF_SPI2
-#define HAL_GPIO_AF_SPI3     GPIO_AF_SPI3
-#define HAL_GPIO_AF_SPI4     GPIO_AF_SPI4
-#define HAL_GPIO_AF_SPI5     GPIO_AF_SPI5
-#define HAL_GPIO_AF_SPI6     GPIO_AF_SPI6
+#define HAL_GPIO_AF12_FMC    GPIO_AF12_FMC
+#define HAL_GPIO_AF9_LTDC    GPIO_AF9_LTDC
+#define HAL_GPIO_AF14_LTDC   GPIO_AF14_LTDC
+#define HAL_GPIO_AF5_SPI1    GPIO_AF5_SPI1
+#define HAL_GPIO_AF5_SPI2    GPIO_AF5_SPI2
+#define HAL_GPIO_AF5_SPI3    GPIO_AF5_SPI3
+#define HAL_GPIO_AF5_SPI4    GPIO_AF5_SPI4
+#define HAL_GPIO_AF5_SPI5    GPIO_AF5_SPI5
+#define HAL_GPIO_AF5_SPI6    GPIO_AF5_SPI6
 
 #define HAL_GPIO_MODE_MASK             0b00000011
 #define HAL_GPIO_MODE_INPUT            0b00000000

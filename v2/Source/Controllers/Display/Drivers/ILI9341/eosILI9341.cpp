@@ -250,35 +250,31 @@ void ILI9341_Driver::setOrientation(
     };
 #endif
 
-    const uint8_t *data;
-
     switch (orientation) {
         case Orientation::normal:
             screenWidth = MAX_COLUMNS;
             screenHeight = MAX_ROWS;
-            data = orientationData[0];
+            ctrlWriteProgram(orientationData[0]);
             break;
 
         case Orientation::rotate90:
             screenWidth = MAX_ROWS;
             screenHeight = MAX_COLUMNS;
-            data = orientationData[1];
+            ctrlWriteProgram(orientationData[1]);
             break;
 
         case Orientation::rotate180:
             screenWidth = MAX_COLUMNS;
             screenHeight = MAX_ROWS;
-            data = orientationData[2];
+            ctrlWriteProgram(orientationData[2]);
             break;
 
         case Orientation::rotate270:
             screenWidth = MAX_ROWS;
             screenHeight = MAX_COLUMNS;
-            data = orientationData[3];
+            ctrlWriteProgram(orientationData[3]);
             break;
     }
-
-    ctrlWriteProgram(data);
 }
 
 

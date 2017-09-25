@@ -131,7 +131,7 @@ void halGPIOInitialize(
 
 	// Selecciona la funcio alternativa
 	//
-	if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT) {
+	if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_FUNCTION) {
 		temp = gpio->AFR[pin >> 3];
 	    temp &= ~((uint32_t)0xFU << ((uint32_t)(pin & (uint32_t)0x07U) * 4U)) ;
 	    temp |= ((uint32_t)function << (((uint32_t)pin & (uint32_t)0x07U) * 4U));
