@@ -212,8 +212,8 @@ void ILI9341_Driver::initialize() {
 
     // Sequencia d'inicialitzacio del controlador
     //
-    ctrlInitialize();
-    ctrlWriteProgram(initData);
+    displayInit();
+    writeCommands(initData);
 }
 
 
@@ -222,7 +222,7 @@ void ILI9341_Driver::initialize() {
 ///
 void ILI9341_Driver::shutdown() {
 
-    ctrlDisplayOff();
+    displayOff();
 }
 
 
@@ -231,7 +231,7 @@ void ILI9341_Driver::shutdown() {
 /// \param orientation: Orientacio (0=0, 1=90, 2=180, 3=270)
 ///
 void ILI9341_Driver::setOrientation(
-    Orientation orientation) {
+    DisplayOrientation orientation) {
 
 #if defined(DISPLAY_ER_TFT028_4)
     static const uint8_t orientationData[4][4] = {
@@ -251,28 +251,28 @@ void ILI9341_Driver::setOrientation(
 #endif
 
     switch (orientation) {
-        case Orientation::normal:
+        case DisplayOrientation::normal:
             screenWidth = MAX_COLUMNS;
             screenHeight = MAX_ROWS;
-            ctrlWriteProgram(orientationData[0]);
+            writeCommands(orientationData[0]);
             break;
 
-        case Orientation::rotate90:
+        case DisplayOrientation::rotate90:
             screenWidth = MAX_ROWS;
             screenHeight = MAX_COLUMNS;
-            ctrlWriteProgram(orientationData[1]);
+            writeCommands(orientationData[1]);
             break;
 
-        case Orientation::rotate180:
+        case DisplayOrientation::rotate180:
             screenWidth = MAX_COLUMNS;
             screenHeight = MAX_ROWS;
-            ctrlWriteProgram(orientationData[2]);
+            writeCommands(orientationData[2]);
             break;
 
-        case Orientation::rotate270:
+        case DisplayOrientation::rotate270:
             screenWidth = MAX_ROWS;
             screenHeight = MAX_COLUMNS;
-            ctrlWriteProgram(orientationData[3]);
+            writeCommands(orientationData[3]);
             break;
     }
 }
@@ -285,8 +285,8 @@ void ILI9341_Driver::setOrientation(
 void ILI9341_Driver::clear(
     const Color &color) {
 
-    ctrlSelectRegion(0, 0, screenWidth, screenHeight);
-    ctrlStartMemoryWrite();
+    selectRegion(0, 0, screenWidth, screenHeight);
+    startWriteRegion();
     ctrlWritePixel(color, screenWidth * screenHeight);
 }
 
@@ -302,8 +302,8 @@ void ILI9341_Driver::setPixel(
     int16_t y,
     const Color &color) {
 
-    ctrlSelectRegion(x, y, 1, 1);
-    ctrlStartMemoryWrite();
+    selectRegion(x, y, 1, 1);
+    startWriteRegion();
     ctrlWritePixel(color, 1);
 }
 
@@ -321,8 +321,8 @@ void ILI9341_Driver::setHPixels(
     int16_t length,
     const Color &color) {
 
-    ctrlSelectRegion(x, y, length, 1);
-    ctrlStartMemoryWrite();
+    selectRegion(x, y, length, 1);
+    startWriteRegion();
     ctrlWritePixel(color, length);
 }
 
@@ -340,8 +340,8 @@ void ILI9341_Driver::setVPixels(
     int16_t length,
     const Color &color) {
 
-    ctrlSelectRegion(x, y, 1, length);
-    ctrlStartMemoryWrite();
+    selectRegion(x, y, 1, length);
+    startWriteRegion();
     ctrlWritePixel(color, length);
 }
 
@@ -361,8 +361,8 @@ void ILI9341_Driver::setPixels(
     int16_t height,
     const Color &color) {
 
-    ctrlSelectRegion(x, y, width, height);
-    ctrlStartMemoryWrite();
+    selectRegion(x, y, width, height);
+    startWriteRegion();
     ctrlWritePixel(color, width * height);
 }
 
@@ -382,8 +382,8 @@ void ILI9341_Driver::writePixels(
     int16_t height,
     const Color* colors) {
 
-    ctrlSelectRegion(x, y, width, width);
-    ctrlStartMemoryWrite();
+    selectRegion(x, y, width, width);
+    startWriteRegion();
     ctrlWritePixel(colors, width * height);
 }
 
@@ -404,8 +404,8 @@ void ILI9341_Driver::readPixels(
     int16_t height,
     Color *colors) {
 
-    ctrlSelectRegion(x, y, width, height);
-    ctrlStartMemoryRead();
+    selectRegion(x, y, width, height);
+    startReadRegion();
     ctrlReadPixel(colors, width * height);
 }
 
@@ -431,12 +431,12 @@ void ILI9341_Driver::vScroll(
 
         for (int16_t i = y; i < height - y - delta; i++) {
 
-            ctrlSelectRegion(x, i + delta, width, 1);
-            ctrlStartMemoryRead();
+            selectRegion(x, i + delta, width, 1);
+            startReadRegion();
             ctrlReadPixel(buffer, width);
 
-            ctrlSelectRegion(x, i, width, 1);
-            ctrlStartMemoryWrite();
+            selectRegion(x, i, width, 1);
+            startWriteRegion();
             ctrlWritePixel(buffer, width);
         }
     }
@@ -469,7 +469,7 @@ void ILI9341_Driver::hScroll(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el controlador del display.
 ///
-void ILI9341_Driver::ctrlInitialize() {
+void ILI9341_Driver::displayInit() {
 
     lcdInitialize();
     lcdReset();
@@ -479,7 +479,7 @@ void ILI9341_Driver::ctrlInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Apaga el display.
 ///
-void ILI9341_Driver::ctrlDisplayOff() {
+void ILI9341_Driver::displayOff() {
 
     lcdOpen();
     lcdWriteCommand(CMD_DISPLAY_OFF);
@@ -495,7 +495,7 @@ void ILI9341_Driver::ctrlDisplayOff() {
 /// \param width: Amplada de la regio.
 /// \param height: Alçada de la regio.
 ///
-void ILI9341_Driver::ctrlSelectRegion(
+void ILI9341_Driver::selectRegion(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -525,7 +525,7 @@ void ILI9341_Driver::ctrlSelectRegion(
 /// ----------------------------------------------------------------------
 /// \brief Inicia la escritura de memoria.
 ///
-void ILI9341_Driver::ctrlStartMemoryWrite() {
+void ILI9341_Driver::startWriteRegion() {
 
     lcdOpen();
     lcdWriteCommand(CMD_MEMORY_WRITE);
@@ -536,7 +536,7 @@ void ILI9341_Driver::ctrlStartMemoryWrite() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia la lectura de memoria.
 ///
-void ILI9341_Driver::ctrlStartMemoryRead() {
+void ILI9341_Driver::startReadRegion() {
 
     lcdOpen();
     lcdWriteCommand(CMD_MEMORY_READ);
@@ -601,7 +601,7 @@ void ILI9341_Driver::ctrlWritePixel(
 // \brief Envia una sequencia programada.
 // \param data: Programa a enviar
 //
-void ILI9341_Driver::ctrlWriteProgram(
+void ILI9341_Driver::writeCommands(
 	const uint8_t *data) {
 
     lcdOpen();

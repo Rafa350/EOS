@@ -22,6 +22,7 @@
               <itemPath>../../../Include/Controllers/Display/eosColor.h</itemPath>
               <itemPath>../../../Include/Controllers/Display/eosDisplay.h</itemPath>
               <itemPath>../../../Include/Controllers/Display/eosFont.h</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosDisplayDriver.h</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Hal" projectFiles="true">

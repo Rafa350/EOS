@@ -278,6 +278,11 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosDisplay.h</location>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosDisplayDriver.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosDisplayDriver.h</location>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosFont.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosFont.h</location>

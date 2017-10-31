@@ -3,7 +3,8 @@
 
 
 #include "eos.h"
-#include "Controllers/Display/eosDisplay.h"
+#include "Controllers/Display/eosColor.h"
+#include "Controllers/Display/eosDisplayDriver.h"
 
 #include <stdint.h>
 
@@ -19,7 +20,7 @@ namespace eos {
             ILI9341_Driver();
             void initialize();
             void shutdown();
-            void setOrientation(Orientation orientation);
+            void setOrientation(DisplayOrientation orientation);
             int16_t getWidth() const { return screenWidth; }
             int16_t getHeight() const { return screenHeight; }
             void clear(const Color &color);
@@ -33,15 +34,15 @@ namespace eos {
             void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
 
         private:
-            void ctrlInitialize();
-            void ctrlWriteProgram(const uint8_t *data);
+            void displayInit();
+            void displayOff();
+            void writeCommands(const uint8_t *data);
             void ctrlWritePixel(const Color &color, int32_t count);
             void ctrlWritePixel(const Color *colors, int32_t count);
             void ctrlReadPixel(Color *colors, int32_t count);
-            void ctrlDisplayOff();
-            void ctrlSelectRegion(int16_t x, int16_t y, int16_t width, int16_t height);
-            void ctrlStartMemoryWrite();
-            void ctrlStartMemoryRead();
+            void selectRegion(int16_t x, int16_t y, int16_t width, int16_t height);
+            void startWriteRegion();
+            void startReadRegion();
 
         private:
             static void lcdInitialize();

@@ -37,6 +37,10 @@ extern "C" {
 typedef uint8_t TMRTimer;
 typedef void (*TMRInterruptCallback)(uint8_t timer, void *param);
 
+typedef struct {
+	TMRTimer timer;
+} TMRInitializeInfo;
+
 
 void halTMRInitializeTimer(TMRTimer timer, uint8_t mode, uint8_t prescale,
         unsigned period, TMRInterruptCallback callback, void *param);

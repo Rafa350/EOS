@@ -117,7 +117,7 @@ void DisplayLoopService::onSetup() {
 	driver = new ILI9341_Driver();
 	//driver = new ILI9341LTDC_Driver();
     driver->initialize();
-    driver->setOrientation(Orientation::rotate180);
+    driver->setOrientation(DisplayOrientation::rotate180);
 
     display = new Display(driver);
     display->clear(COLOR_Black);

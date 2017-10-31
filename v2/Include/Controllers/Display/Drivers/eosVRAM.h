@@ -4,6 +4,7 @@
 
 #include "eos.h"
 #include "Controllers/Display/eosDisplay.h"
+#include "Controllers/Display/eosDisplayDriver.h"
 
 #include <stdint.h>
 
@@ -21,7 +22,7 @@ namespace eos {
             ~VRAM_Driver();
             void initialize();
             void shutdown();
-            void setOrientation(Orientation orientation);
+            void setOrientation(DisplayOrientation orientation);
             int16_t getWidth() const { return screenWidth; }
             int16_t getHeight() const { return screenHeight; }
             void clear(Color color);

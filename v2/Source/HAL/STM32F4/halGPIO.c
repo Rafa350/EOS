@@ -22,7 +22,7 @@ GPIO_TypeDef * const gpioTbl[] = {
 /// \param count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePins(
-	GPIOInitializePinInfo *info,
+	const GPIOInitializePinInfo *info,
 	uint8_t count) {
 
 	for (uint8_t i = 0; i < count; i++)
@@ -35,7 +35,7 @@ void halGPIOInitializePins(
 /// \param info: Informacio de configuracio.
 ///
 void halGPIOInitializePin(
-	GPIOInitializePinInfo *info) {
+	const GPIOInitializePinInfo *info) {
 
 	halGPIOInitialize(info->port, info->pin, info->options, info->function);
 }
@@ -146,7 +146,7 @@ void halGPIOInitialize(
 /// \param count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePorts(
-	GPIOInitializePortInfo *info,
+	const GPIOInitializePortInfo *info,
 	uint8_t count) {
 
 	for (uint8_t i = 0; i < count; i++)
@@ -159,7 +159,7 @@ void halGPIOInitializePorts(
 /// \param info: Informacio de configuracio.
 ///
 void halGPIOInitializePort(
-	GPIOInitializePortInfo *info) {
+	const GPIOInitializePortInfo *info) {
 
 	for (uint8_t pin = 0; pin < 16; pin++) {
 		if ((info->mask & (1 << pin)) != 0)

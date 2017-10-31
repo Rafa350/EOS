@@ -147,11 +147,11 @@ extern GPIO_TypeDef * const gpioTbl[];
     gpioTbl[port]->IDR
 
 
-void halGPIOInitializePins(GPIOInitializePinInfo *info, uint8_t count);
-void halGPIOInitializePin(GPIOInitializePinInfo *info);
+void halGPIOInitializePins(const GPIOInitializePinInfo *info, uint8_t count);
+void halGPIOInitializePin(const GPIOInitializePinInfo *info);
 
-void halGPIOInitializePorts(GPIOInitializePortInfo *info, uint8_t count);
-void halGPIOInitializePort(GPIOInitializePortInfo *info);
+void halGPIOInitializePorts(const GPIOInitializePortInfo *info, uint8_t count);
+void halGPIOInitializePort(const GPIOInitializePortInfo *info);
 
 void halGPIOInitialize(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOFunction);
 

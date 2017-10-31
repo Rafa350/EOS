@@ -1,4 +1,4 @@
-/*#include "eos.h"
+#include "eos.h"
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
 #include "HAL/halINT.h"
 #include "hAL/halTMR.h"
@@ -230,7 +230,7 @@ void ILI9341LTDC_Driver::shutdown() {
 /// \param orientation: L'orientacio a seleccionar.
 ///
 void ILI9341LTDC_Driver::setOrientation(
-	Orientation orientation) {
+	DisplayOrientation orientation) {
 
 }
 
@@ -445,7 +445,7 @@ void ILI9341LTDC_Driver::lcdWriteData(
 ///
 void ILI9341LTDC_Driver::ltdcInitialize() {
 
-	static GPIOInitializePinInfo gpioInit[] = {
+	static const GPIOInitializePinInfo gpioInit[] = {
     	{ ILI9341LTDC_DE_PORT,     ILI9341LTDC_DE_PIN,     HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_DE_AF    },
 		{ ILI9341LTDC_HSYNC_PORT,  ILI9341LTDC_HSYNC_PIN,  HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_HSYNC_AF },
 		{ ILI9341LTDC_VSYNC_PORT,  ILI9341LTDC_VSYNC_PIN,  HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_VSYNC_AF },
@@ -476,7 +476,7 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
 
 	// Inicialitza el modul LTDC
 	//
-	/ Configure PLLSAI prescalers for LCD
+	// Configure PLLSAI prescalers for LCD
 	// Enable Pixel Clock
 	// PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
 	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAI_N = 192 Mhz
@@ -540,4 +540,4 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
 	__HAL_LTDC_LAYER_ENABLE(&ltdcHandle, 0);
 	__HAL_LTDC_RELOAD_CONFIG(&ltdcHandle);
 }
-*/
+
