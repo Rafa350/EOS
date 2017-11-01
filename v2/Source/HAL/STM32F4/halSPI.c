@@ -1,7 +1,7 @@
 #include "hal/halSPI.h"
 
 
-static SPI_TypeDef * const spiTbl[] = {
+static SPI_TypeDef * const spiTbl[HAL_SPI_MAX_MODULES] = {
 	SPI1,
 	SPI2,
 	SPI3,
@@ -10,18 +10,20 @@ static SPI_TypeDef * const spiTbl[] = {
 	SPI6
 };
 
+static SPIInterruptFunction intFunctionTbl[HAL_SPI_MAX_MODULES];
+static SPIInterruptParams intParamsTbl[HAL_SPI_MAX_MODULES];
+
 
 /// ----------------------------------------------------------------------
 /// \brief Inicilitza wl modul SPI.
-/// \param module: El modul a inicilitzar.
-/// \param options: Opcions de configuracio.
+/// \param info: Informacio d'inicialitzacio.
 ///
 void halSPIInitialize(
-	SPIModule module,
-	SPIOptions options) {
+	const SPIInitializeInfo *info) {
 
-	// Activa el modul
-	switch (module) {
+	// Activa el clock del modul
+	//
+	switch (info->module) {
 		case HAL_SPI_MODULE_1:
 			__HAL_RCC_SPI1_CLK_ENABLE();
 			break;
@@ -47,16 +49,25 @@ void halSPIInitialize(
 			break;
 	}
 
+	// Inicialitza la funcio ISR
+	//
+	intFunctionTbl[info->module] = info->intFunction;
+	intParamsTbl[info->module] = info->intParams;
+
+	// Inicialitza el modul
+	//
 	SPI_HandleTypeDef spiHandle;
-	spiHandle.Instance = spiTbl[module];
+	spiHandle.Instance = spiTbl[info->module];
 	spiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
 	spiHandle.Init.Direction = SPI_DIRECTION_2LINES;
 	spiHandle.Init.NSS = SPI_NSS_SOFT;
-	spiHandle.Init.Mode = ((options & HAL_SPI_MS_MASK) == HAL_SPI_MS_MASTER) ? SPI_MODE_MASTER : SPI_MODE_SLAVE;
-	spiHandle.Init.DataSize = ((options & HAL_SPI_SIZE_MASK) == HAL_SPI_SIZE_8) ? SPI_DATASIZE_8BIT : SPI_DATASIZE_16BIT;
-	spiHandle.Init.CLKPolarity = ((options & HAL_SPI_CPOL_MASK) == HAL_SPI_CPOL_LOW) ? SPI_POLARITY_LOW : SPI_POLARITY_HIGH;
-	spiHandle.Init.CLKPhase = ((options & HAL_SPI_CPHA_MASK) == HAL_SPI_CPHA_EDGE1) ? SPI_PHASE_1EDGE : SPI_PHASE_2EDGE;
-	spiHandle.Init.FirstBit = ((options & HAL_SPI_FIRSTBIT_MASK) == HAL_SPI_FIRSTBIT_MSB) ? SPI_FIRSTBIT_MSB : SPI_FIRSTBIT_LSB;
+	spiHandle.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
+	spiHandle.Init.TIMode = SPI_TIMODE_DISABLED;
+	spiHandle.Init.Mode = ((info->options & HAL_SPI_MS_MASK) == HAL_SPI_MS_MASTER) ? SPI_MODE_MASTER : SPI_MODE_SLAVE;
+	spiHandle.Init.DataSize = ((info->options & HAL_SPI_SIZE_MASK) == HAL_SPI_SIZE_8) ? SPI_DATASIZE_8BIT : SPI_DATASIZE_16BIT;
+	spiHandle.Init.CLKPolarity = ((info->options & HAL_SPI_CPOL_MASK) == HAL_SPI_CPOL_LOW) ? SPI_POLARITY_LOW : SPI_POLARITY_HIGH;
+	spiHandle.Init.CLKPhase = ((info->options & HAL_SPI_CPHA_MASK) == HAL_SPI_CPHA_EDGE1) ? SPI_PHASE_1EDGE : SPI_PHASE_2EDGE;
+	spiHandle.Init.FirstBit = ((info->options & HAL_SPI_FIRSTBIT_MASK) == HAL_SPI_FIRSTBIT_MSB) ? SPI_FIRSTBIT_MSB : SPI_FIRSTBIT_LSB;
 
 	__HAL_SPI_DISABLE(&spiHandle);
 	HAL_SPI_Init(&spiHandle);
@@ -65,28 +76,32 @@ void halSPIInitialize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Transmet un valor de
+/// \brief Transmet un valor de 8 bits.
 /// \param module: Modul spi a utilitzar.
 /// \param data: El valor a transmetre
 /// \return El valor rebut.
 ///
-uint8_t halSPISend(
+uint8_t halSPITransmit(
 	SPIModule module,
 	uint8_t data) {
 
 	SPI_TypeDef * const spi = spiTbl[module];
 
 	// Wait for previous transmissions to complete if DMA TX enabled for SPI
+	//
 	while ((spi->SR & (SPI_SR_TXE | SPI_SR_RXNE)) == 0 || (spi->SR & SPI_SR_BSY))
 		continue;
 
 	// Fill output buffer with data
+	//
 	spi->DR = data;
 
 	// Wait for transmission to complete
-	 while ((spi->SR & (SPI_SR_TXE | SPI_SR_RXNE)) == 0 || (spi->SR & SPI_SR_BSY))
-		 continue;
+	//
+	while ((spi->SR & (SPI_SR_TXE | SPI_SR_RXNE)) == 0 || (spi->SR & SPI_SR_BSY))
+		continue;
 
 	// Return data from buffer
+	//
 	return spi->DR;
 }

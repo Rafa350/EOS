@@ -119,6 +119,10 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_PULL_UP               0b01000000
 #define HAL_GPIO_PULL_DOWN             0b10000000
 
+#define HAL_GPIO_INIT_MASK
+#define HAL_GPIO_INIT_CLR
+#define HAL_GPIO_INIT_SET
+
 
 #define halGPIOInitializePinInput(port, pin) \
 	halGPIOInitialize(port, pin, HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
@@ -153,7 +157,7 @@ void halGPIOInitializePin(const GPIOInitializePinInfo *info);
 void halGPIOInitializePorts(const GPIOInitializePortInfo *info, uint8_t count);
 void halGPIOInitializePort(const GPIOInitializePortInfo *info);
 
-void halGPIOInitialize(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOFunction);
+void halGPIOInitialize(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOFunction function);
 
 
 #ifdef	__cplusplus

@@ -41,6 +41,9 @@ namespace eos {
 
         private:
             inline int offsetOf(int16_t x, int16_t y) { return x + (y * screenWidth); }
+            void displayInit();
+            void displayOff();
+            void writeCommands(const uint8_t *dada);
 
         private:
             static void ltdcInitialize();

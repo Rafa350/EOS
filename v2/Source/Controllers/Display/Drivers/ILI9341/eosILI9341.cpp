@@ -210,7 +210,7 @@ void ILI9341_Driver::initialize() {
     };
 #endif
 
-    // Sequencia d'inicialitzacio del controlador
+    // Inicialitzacio del controlador
     //
     displayInit();
     writeCommands(initData);

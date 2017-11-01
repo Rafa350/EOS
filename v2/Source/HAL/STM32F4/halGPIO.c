@@ -31,51 +31,34 @@ void halGPIOInitializePins(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura un pin.
+/// \brief Configura un pin individual.
 /// \param info: Informacio de configuracio.
 ///
 void halGPIOInitializePin(
 	const GPIOInitializePinInfo *info) {
 
-	halGPIOInitialize(info->port, info->pin, info->options, info->function);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Configura un pin.
-/// \param port: Identificador del port.
-/// \param pin: Identificador del pin.
-/// \param options: Opcions.
-/// \param function: Funcio del pin.
-///
-void halGPIOInitialize(
-	GPIOPort port,
-	GPIOPin pin,
-	GPIOOptions options,
-	GPIOFunction function) {
-
 	uint32_t temp;
-	GPIO_TypeDef * const gpio = gpioTbl[port];
+	GPIO_TypeDef * const gpio = gpioTbl[info->port];
 
 	// Activa el rellotge del controlador GPIO
 	//
-	RCC->AHB1ENR |= 1 << port;
+	RCC->AHB1ENR |= 1 << info->port;
 
 	// Selecciona el modus (INPUT, OUTPUT, ANALOG, FUNCTION)
 	//
 	temp = gpio->MODER;
-	temp &= ~(0b11 << (pin * 2)); // Per defecte INPUT
-	switch (options & HAL_GPIO_MODE_MASK) {
+	temp &= ~(0b11 << (info->pin * 2)); // Per defecte INPUT
+	switch (info->options & HAL_GPIO_MODE_MASK) {
 		case HAL_GPIO_MODE_OUTPUT:
-			temp |= 0b01 << (pin * 2);
+			temp |= 0b01 << (info->pin * 2);
 			break;
 
 		case HAL_GPIO_MODE_FUNCTION:
-			temp |= 0b10 << (pin * 2);
+			temp |= 0b10 << (info->pin * 2);
 			break;
 
 		case HAL_GPIO_MODE_ANALOG:
-			temp |= 0b11 << (pin * 2);
+			temp |= 0b11 << (info->pin * 2);
 			break;
 	}
 	gpio->MODER = temp;
@@ -83,38 +66,38 @@ void halGPIOInitialize(
 	// Selecciona el PullUp (NONE, UP, DOWN)
 	//
 	temp = gpio->PUPDR;
-	temp &= ~(0b11 << (pin * 2)); // Per defecte NONE
-	switch (options & HAL_GPIO_PULL_MASK) {
+	temp &= ~(0b11 << (info->pin * 2)); // Per defecte NONE
+	switch (info->options & HAL_GPIO_PULL_MASK) {
 		case HAL_GPIO_PULL_UP:
-			temp |= 0b01 << (2 * pin);
+			temp |= 0b01 << (2 * info->pin);
 			break;
 
 		case HAL_GPIO_PULL_DOWN:
-			temp |= 0b10 << ( 2 * pin);
+			temp |= 0b10 << ( 2 * info->pin);
 			break;
 	}
 	gpio->PUPDR = temp;
 
 	// En cas que sigui MODE_OUTPUT o MODE_FUNCTION
 	//
-	if  (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT) ||
-		 ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_FUNCTION)) {
+	if  (((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT) ||
+		 ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_FUNCTION)) {
 
 		// Selecciona la velocitat (LOW, MEDIUM, HIGH, FAST)
 		//
 		temp = gpio->OSPEEDR;
-		temp &= ~(0b11 << (2 * pin)); // Per defecte LOW
-		switch (options & HAL_GPIO_SPEED_MASK) {
+		temp &= ~(0b11 << (2 * info->pin)); // Per defecte LOW
+		switch (info->options & HAL_GPIO_SPEED_MASK) {
 			case HAL_GPIO_SPEED_MEDIUM:
-				temp |= 0b01 << (2 * pin);
+				temp |= 0b01 << (2 * info->pin);
 				break;
 
 			case HAL_GPIO_SPEED_HIGH:
-				temp |= 0b10 << (2 * pin);
+				temp |= 0b10 << (2 * info->pin);
 				break;
 
 			case HAL_GPIO_SPEED_FAST:
-				temp |= 0b11 << (2 * pin);
+				temp |= 0b11 << (2 * info->pin);
 				break;
 		}
 		gpio->OSPEEDR = temp;
@@ -122,22 +105,23 @@ void halGPIOInitialize(
 		// Selecciona el tipus de sortida (PUSHPULL, OPENDRAIN)
 		//
 		temp = gpio->OTYPER;
-		if ((options & HAL_GPIO_OPENDRAIN_MASK) == HAL_GPIO_OPENDRAIN_ENABLED)
-			temp |= 1 << pin;
+		if ((info->options & HAL_GPIO_OPENDRAIN_MASK) == HAL_GPIO_OPENDRAIN_ENABLED)
+			temp |= 1 << info->pin;
 		else
-			temp &= ~(1 << pin);
+			temp &= ~(1 << info->pin);
 		gpio->OTYPER = temp;
 	}
 
 	// Selecciona la funcio alternativa
 	//
-	if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_FUNCTION) {
-		temp = gpio->AFR[pin >> 3];
-	    temp &= ~((uint32_t)0xFU << ((uint32_t)(pin & (uint32_t)0x07U) * 4U)) ;
-	    temp |= ((uint32_t)function << (((uint32_t)pin & (uint32_t)0x07U) * 4U));
-	    gpio->AFR[pin >> 3] = temp;
+	if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_FUNCTION) {
+		temp = gpio->AFR[info->pin >> 3];
+	    temp &= ~((uint32_t)0xFU << ((uint32_t)(info->pin & (uint32_t)0x07U) * 4U)) ;
+	    temp |= ((uint32_t)info->function << (((uint32_t)info->pin & (uint32_t)0x07U) * 4U));
+	    gpio->AFR[info->pin >> 3] = temp;
 	}
 }
+
 
 
 /// ----------------------------------------------------------------------
@@ -155,15 +139,22 @@ void halGPIOInitializePorts(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura un port.
+/// \brief Configura un port individual.
 /// \param info: Informacio de configuracio.
 ///
 void halGPIOInitializePort(
 	const GPIOInitializePortInfo *info) {
 
+	GPIOInitializePinInfo pinInfo;
+	pinInfo.port = info->port;
+	pinInfo.options = info->options;
+	pinInfo.function = info->function;
+
 	for (uint8_t pin = 0; pin < 16; pin++) {
-		if ((info->mask & (1 << pin)) != 0)
-			halGPIOInitialize(info->port, pin, info->options, info->function);
+		if ((info->mask & (1 << pin)) != 0) {
+			pinInfo.pin = pin;
+			halGPIOInitializePin(&pinInfo);
+		}
 	}
 }
 
@@ -177,9 +168,16 @@ void halGPIOInitializePortInput(
 	GPIOPort port,
 	uint16_t mask) {
 
+	GPIOInitializePinInfo info;
+	info.port = port;
+	info.options = HAL_GPIO_MODE_INPUT;
+	info.function = 0;
+
 	for (uint8_t pin = 0; pin < 16; pin++) {
-		if ((mask & (1 << pin)) != 0)
-			halGPIOInitialize(port, pin, HAL_GPIO_MODE_INPUT, 0);
+		if ((mask & (1 << pin)) != 0) {
+			info.pin = pin;
+			halGPIOInitializePin(&info);
+		}
 	}
 }
 
@@ -193,8 +191,38 @@ void halGPIOInitializePortOutput(
 	GPIOPort port,
 	uint16_t mask) {
 
+	GPIOInitializePinInfo info;
+	info.port = port;
+	info.options = HAL_GPIO_MODE_OUTPUT;
+	info.function = 0;
+
 	for (uint8_t pin = 0; pin < 16; pin++) {
-		if ((mask & (1 << pin)) != 0)
-			halGPIOInitialize(port, pin, HAL_GPIO_MODE_OUTPUT, 0);
+		if ((mask & (1 << pin)) != 0) {
+			info.pin = pin;
+			halGPIOInitializePin(&info);
+		}
 	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Configura un pin.
+/// \param port: Identificador del port.
+/// \param pin: Identificador del pin.
+/// \param options: Opcions.
+/// \param function: Funcio del pin.
+///
+void halGPIOInitialize(
+	GPIOPort port,
+	GPIOPin pin,
+	GPIOOptions options,
+	GPIOFunction function) {
+
+	GPIOInitializePinInfo init;
+	init.port = port;
+	init.pin = pin;
+	init.options = options;
+	init.function = function;
+
+	halGPIOInitializePin(&init);
 }

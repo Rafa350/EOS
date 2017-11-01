@@ -187,32 +187,10 @@ void ILI9341LTDC_Driver::initialize() {
 #error "Display no soportado"
 #endif
 
-    // Inicialitza el controlador LTDC
+    // Inicialitzacio del controlador
     //
-    ltdcInitialize();
-
-    // Inicialitza el display TFT
-    //
-	lcdInitialize();
-	lcdReset();
-
-    lcdOpen();
-    uint8_t c;
-    const uint8_t *p = lcdInit;
-    while ((c = *p++) != OP_END) {
-        switch (c) {
-            case OP_DELAY:
-                halTMRDelay(*p++);
-                break;
-
-            default:
-                lcdWriteCommand(*p++);
-                while (--c != 0)
-                    lcdWriteData(*p++);
-                break;
-        }
-    }
-    lcdClose();
+    displayInit();
+	writeCommands(lcdInit);
 }
 
 
@@ -221,7 +199,7 @@ void ILI9341LTDC_Driver::initialize() {
 ///
 void ILI9341LTDC_Driver::shutdown() {
 
-	lcdWriteCommand(CMD_DISPLAY_OFF);
+	displayOff();
 }
 
 
@@ -356,11 +334,59 @@ void ILI9341LTDC_Driver::hScroll(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Inicialitza el display.
+///
+void ILI9341LTDC_Driver::displayInit() {
+
+    ltdcInitialize();
+	lcdInitialize();
+	lcdReset();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Desactiva el display.
+///
+void ILI9341LTDC_Driver::displayOff() {
+
+	lcdWriteCommand(CMD_DISPLAY_OFF);
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Escriu una sequencia de comandes en el controlador.
+/// \param data: La sequencia de comandes.
+///
+void ILI9341LTDC_Driver::writeCommands(
+	const uint8_t *data) {
+    lcdOpen();
+
+    uint8_t c;
+    const uint8_t *p = data;
+    while ((c = *p++) != OP_END) {
+        switch (c) {
+            case OP_DELAY:
+                halTMRDelay(*p++);
+                break;
+
+            default:
+                lcdWriteCommand(*p++);
+                while (--c != 0)
+                    lcdWriteData(*p++);
+                break;
+        }
+    }
+    lcdClose();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Inicialitza les comunicacions amb el driver.
 ///
 void ILI9341LTDC_Driver::lcdInitialize() {
 
-	static GPIOInitializePinInfo gpioInit[] = {
+	static const GPIOInitializePinInfo gpioInit[] = {
 #ifdef ILI9341LTDC_RST_PIN
 		{ ILI9341LTDC_RST_PORT,    ILI9341LTDC_TSR_PIN,    HAL_GPIO_MODE_OUTPUT,   0                  },
 #endif
@@ -373,7 +399,6 @@ void ILI9341LTDC_Driver::lcdInitialize() {
 
 	// Inicialitza modul GPIO
 	//
-	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
 	halGPIOSetPin(ILI9341LTDC_CS_PORT, ILI9341LTDC_CS_PIN);
 #ifdef ILI9341LTDC_RST_PIN
 	halGPIOClearPin(ILI9341LTDC_RST_PORT, ILI9341LTDC_RST_PIN);
@@ -382,7 +407,10 @@ void ILI9341LTDC_Driver::lcdInitialize() {
 
 	// Inicialitza el modul SPI
 	//
-    halSPIInitialize(ILI9341LTDC_SPI_MODULE, HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB);
+	SPIInitializeInfo info;
+	info.module = ILI9341_SPI_MODULE;
+	info.options = HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB;
+	halSPIInitialize(&info);
 }
 
 
@@ -390,9 +418,10 @@ void ILI9341LTDC_Driver::lcdInitialize() {
 /// \brief Reseteja el driver.
 ///
 void ILI9341LTDC_Driver::lcdReset() {
+
 #ifdef ILI9341LTDC_RST_PORT
     halTMRDelay(10);
-    setRST();
+	halGPIOSetPin(ILI9341LTDC_RST_PORT, ILI9341LTDC_RST_PIN);
     halTMRDelay(120);
 #endif
 
@@ -403,7 +432,7 @@ void ILI9341LTDC_Driver::lcdReset() {
 ///
 void ILI9341LTDC_Driver::lcdOpen() {
 
-	halGPIOSetPin(ILI9341LTDC_CS_PORT, ILI9341LTDC_CS_PIN);
+	halGPIOClearPin(ILI9341LTDC_CS_PORT, ILI9341LTDC_CS_PIN);
 }
 
 
@@ -412,7 +441,7 @@ void ILI9341LTDC_Driver::lcdOpen() {
 ///
 void ILI9341LTDC_Driver::lcdClose() {
 
-	halGPIOClearPin(ILI9341LTDC_CS_PORT, ILI9341LTDC_CS_PIN);
+	halGPIOSetPin(ILI9341LTDC_CS_PORT, ILI9341LTDC_CS_PIN);
 }
 
 
@@ -424,7 +453,7 @@ void ILI9341LTDC_Driver::lcdWriteCommand(
 	uint8_t d) {
 
 	halGPIOClearPin(ILI9341LTDC_RS_PORT, ILI9341LTDC_RS_PIN);
-	halSPISend(ILI9341LTDC_SPI_MODULE, d);
+	halSPITransmit(ILI9341LTDC_SPI_MODULE, d);
 }
 
 
@@ -436,7 +465,7 @@ void ILI9341LTDC_Driver::lcdWriteData(
 	uint8_t d) {
 
 	halGPIOSetPin(ILI9341LTDC_RS_PORT, ILI9341LTDC_RS_PIN);
-	halSPISend(ILI9341LTDC_SPI_MODULE, d);
+	halSPITransmit(ILI9341LTDC_SPI_MODULE, d);
 }
 
 
