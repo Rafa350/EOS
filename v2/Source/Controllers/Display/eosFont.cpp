@@ -74,10 +74,10 @@ static FontTableEntry fontTable[] = {
 /// \param resourceId: Identificador del font.
 ///
 Font::Font(
-    const uint8_t *_fontResource):
+    const uint8_t *fontResource):
 
     chCache(-1),
-    fontResource(_fontResource) {
+    fontResource(fontResource) {
 }
 
 
@@ -91,7 +91,7 @@ Font::Font(
     const char* fontName,
     int16_t height,
     FontStyle style):
-    
+
     chCache(-1),
     fontResource(nullptr) {
 
@@ -155,9 +155,8 @@ int16_t Font::getCharAdvance(
 void Font::updateCache(
     char ch) {
 
-    if ((ch >= fontResource[4]) && (ch <= fontResource[5])) {
-    
-        if (chCache != ch) {
+    if (chCache != ch) {
+        if ((ch >= fontResource[4]) && (ch <= fontResource[5])) {
             unsigned offset = fontResource[6] + fontResource[7] * 256 + (ch - fontResource[4]) * 2;
             unsigned charInfoOffset = fontResource[offset] + fontResource[offset + 1] * 256;
             unsigned charBitsOffset = fontResource[charInfoOffset + 5] + fontResource[charInfoOffset + 6] * 256;

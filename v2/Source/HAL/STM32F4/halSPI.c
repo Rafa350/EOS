@@ -49,7 +49,7 @@ void halSPIInitialize(
 			break;
 	}
 
-	// Inicialitza la funcio ISR
+	// Inicialitza la funcio d'interrupcio
 	//
 	intFunctionTbl[info->module] = info->intFunction;
 	intParamsTbl[info->module] = info->intParams;
@@ -104,4 +104,70 @@ uint8_t halSPITransmit(
 	// Return data from buffer
 	//
 	return spi->DR;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Transmet un bloc de bytes.
+/// \param data: El bloc de dades.
+/// \param count: Numero de bytes a transmetre.
+///
+void halSPIFastTransmitBuffer(
+	SPIModule module,
+	const uint8_t *data,
+	uint16_t count) {
+
+	SPI_TypeDef * const spi = spiTbl[module];
+
+	while (count--) {
+
+		// Wait for previous transmissions to complete if DMA TX enabled for SPI
+		//
+		while ((spi->SR & (SPI_SR_TXE | SPI_SR_RXNE)) == 0 || (spi->SR & SPI_SR_BSY))
+			continue;
+
+		// Fill output buffer with data
+		//
+		spi->DR = *data++;
+	}
+
+	// Wait for transmission to complete
+	//
+	while ((spi->SR & (SPI_SR_TXE | SPI_SR_RXNE)) == 0 || (spi->SR & SPI_SR_BSY))
+		continue;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Transmet un valor de 8 bits. Nomes escriu, descarte la recepcio.
+/// \param module: Modul spi a utilitzar.
+/// \param data: El valor a transmetre
+///
+void halSPIFastTransmit(
+	SPIModule module,
+	uint8_t data) {
+
+	SPI_TypeDef * const spi = spiTbl[module];
+
+	// Wait for previous transmissions to complete if DMA TX enabled for SPI
+	//
+	while ((spi->SR & (SPI_SR_TXE | SPI_SR_RXNE)) == 0 || (spi->SR & SPI_SR_BSY))
+		continue;
+
+	// Fill output buffer with data
+	//
+	spi->DR = data;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Comprova si ha finalitzat la transmissio.
+/// \return True si ha finalitzat. False en cas contrari.
+///
+bool halSPIIsBusy(
+	SPIModule module) {
+
+	SPI_TypeDef * const spi = spiTbl[module];
+
+	return (spi->SR & (SPI_SR_TXE | SPI_SR_RXNE)) == 0 || (spi->SR & SPI_SR_BSY);
 }

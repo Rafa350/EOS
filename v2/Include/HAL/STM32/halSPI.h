@@ -5,6 +5,7 @@
 // Standard includes
 //
 #include <stdint.h>
+#include <stdbool.h>
 
 
 // STM32 includes
@@ -65,7 +66,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 #define HAL_SPI_MS_MASTER         0b00000000
 #define HAL_SPI_MS_SLAVE          0b00001000
 
-// Primer bit a transmetre o rebre
+// Primer bit a transmetre
 #define HAL_SPI_FIRSTBIT_MASK     0b00010000
 #define HAL_SPI_FIRSTBIT_MSB      0b00000000
 #define HAL_SPI_FIRSTBIT_LSB      0b00010000
@@ -73,7 +74,11 @@ typedef struct {                       // Parametres d'inicialitzacio
 
 extern void halSPIInitialize(const SPIInitializeInfo *info);
 extern uint8_t halSPITransmit(SPIModule module, uint8_t data);
+extern void halSPITransmitBuffer(SPIModule module, const uint8_t *outData, const uint8_t *inData, uint8_t length);
+extern void halSPIFastTransmitBuffer(SPIModule module, const uint8_t *data, uint16_t count);
 extern uint16_t halSPITransmit16(SPIModule module, uint16_t data);
+extern void halSPIFastTransmit(SPIModule module, uint8_t data);
+extern bool halSPIIsBusy(SPIModule module);
 
 
 #ifdef __cplusplus

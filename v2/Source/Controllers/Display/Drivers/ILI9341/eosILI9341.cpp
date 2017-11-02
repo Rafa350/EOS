@@ -287,7 +287,7 @@ void ILI9341_Driver::clear(
 
     selectRegion(0, 0, screenWidth, screenHeight);
     startWriteRegion();
-    ctrlWritePixel(color, screenWidth * screenHeight);
+    writeRegion(color, screenWidth * screenHeight);
 }
 
 
@@ -304,7 +304,7 @@ void ILI9341_Driver::setPixel(
 
     selectRegion(x, y, 1, 1);
     startWriteRegion();
-    ctrlWritePixel(color, 1);
+    writeRegion(color, 1);
 }
 
 
@@ -323,7 +323,7 @@ void ILI9341_Driver::setHPixels(
 
     selectRegion(x, y, length, 1);
     startWriteRegion();
-    ctrlWritePixel(color, length);
+    writeRegion(color, length);
 }
 
 
@@ -342,7 +342,7 @@ void ILI9341_Driver::setVPixels(
 
     selectRegion(x, y, 1, length);
     startWriteRegion();
-    ctrlWritePixel(color, length);
+    writeRegion(color, length);
 }
 
 
@@ -363,7 +363,7 @@ void ILI9341_Driver::setPixels(
 
     selectRegion(x, y, width, height);
     startWriteRegion();
-    ctrlWritePixel(color, width * height);
+    writeRegion(color, width * height);
 }
 
 
@@ -384,7 +384,7 @@ void ILI9341_Driver::writePixels(
 
     selectRegion(x, y, width, width);
     startWriteRegion();
-    ctrlWritePixel(colors, width * height);
+    writeRegion(colors, width * height);
 }
 
 
@@ -406,7 +406,7 @@ void ILI9341_Driver::readPixels(
 
     selectRegion(x, y, width, height);
     startReadRegion();
-    ctrlReadPixel(colors, width * height);
+    readRegion(colors, width * height);
 }
 
 
@@ -433,11 +433,11 @@ void ILI9341_Driver::vScroll(
 
             selectRegion(x, i + delta, width, 1);
             startReadRegion();
-            ctrlReadPixel(buffer, width);
+            readRegion(buffer, width);
 
             selectRegion(x, i, width, 1);
             startWriteRegion();
-            ctrlWritePixel(buffer, width);
+            writeRegion(buffer, width);
         }
     }
 
@@ -483,6 +483,35 @@ void ILI9341_Driver::displayOff() {
 
     lcdOpen();
     lcdWriteCommand(CMD_DISPLAY_OFF);
+    lcdClose();
+}
+
+
+/// ----------------------------------------------------------------------
+// \brief Envia una sequencia programada.
+// \param data: Programa a enviar
+//
+void ILI9341_Driver::writeCommands(
+	const uint8_t *data) {
+
+    lcdOpen();
+
+    uint8_t c;
+    const uint8_t *p = data;
+    while ((c = *p++) != OP_END) {
+        switch (c) {
+            case OP_DELAY:
+                halTMRDelay(*p++);
+                break;
+
+            default:
+                lcdWriteCommand(*p++);
+                while (--c != 0)
+                    lcdWriteData(*p++);
+                break;
+        }
+    }
+
     lcdClose();
 }
 
@@ -549,7 +578,7 @@ void ILI9341_Driver::startReadRegion() {
 /// \param data: El color.
 /// \param count: Numero de copies a escriure.
 ///
-void ILI9341_Driver::ctrlWritePixel(
+void ILI9341_Driver::writeRegion(
     const Color &color,
     int32_t count) {
 
@@ -588,41 +617,14 @@ void ILI9341_Driver::ctrlWritePixel(
 /// \param colors: Llista de colors.
 /// \param count: Numero d'elements en la llista.
 ///
-void ILI9341_Driver::ctrlWritePixel(
+void ILI9341_Driver::writeRegion(
     const Color *colors,
     int32_t count) {
 
     while (count--)
-        ctrlWritePixel(*colors++, 1);
+        writeRegion(*colors++, 1);
 }
 
-
-/// ----------------------------------------------------------------------
-// \brief Envia una sequencia programada.
-// \param data: Programa a enviar
-//
-void ILI9341_Driver::writeCommands(
-	const uint8_t *data) {
-
-    lcdOpen();
-
-    uint8_t c;
-    const uint8_t *p = data;
-    while ((c = *p++) != OP_END) {
-        switch (c) {
-            case OP_DELAY:
-                halTMRDelay(*p++);
-                break;
-
-            default:
-                lcdWriteCommand(*p++);
-                while (--c != 0)
-                    lcdWriteData(*p++);
-                break;
-        }
-    }
-    lcdClose();
-}
 
 
 /// ----------------------------------------------------------------------
@@ -630,7 +632,7 @@ void ILI9341_Driver::writeCommands(
 /// \param colors: Llista de colors.
 /// \param count: Numero de colors a lleigir.
 ///
-void ILI9341_Driver::ctrlReadPixel(
+void ILI9341_Driver::readRegion(
     Color *colors,
     int32_t count) {
 

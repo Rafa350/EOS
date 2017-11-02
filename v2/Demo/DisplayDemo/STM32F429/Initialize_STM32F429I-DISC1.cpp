@@ -147,7 +147,7 @@ static void InitializeSDRAM() {
 	// -------------------------------------------------------------------
 
 	__FMC_CLK_ENABLE();
-/*	__DMAx_CLK_ENABLE();
+	__DMAx_CLK_ENABLE();
 
 	// Configure common DMA parameters
 	dmaHandle.Init.Channel             = SDRAM_DMAx_CHANNEL;
@@ -177,7 +177,7 @@ static void InitializeSDRAM() {
 	// NVIC configuration for DMA transfer complete interrupt
 	HAL_NVIC_SetPriority(SDRAM_DMAx_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(SDRAM_DMAx_IRQn);
-*/
+
 	/* SDRAM controller initialization */
 	HAL_SDRAM_Init(&sdramHandle, &timing);
 
@@ -253,5 +253,5 @@ void InitializeHardware() {
 	halSYSInitialize();
 
 	InitializePins();
-	//InitializeSDRAM();
+	InitializeSDRAM();
 }

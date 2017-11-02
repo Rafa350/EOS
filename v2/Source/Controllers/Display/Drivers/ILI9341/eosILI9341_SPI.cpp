@@ -13,7 +13,6 @@
 #ifdef ILI9341_IO_SUBTYPE_SPI_HAL
 #include "hal/halSPI.h"
 #include "hal/halGPIO.h"
-#include "hal/halINT.h"
 #include "hal/halTMR.h"
 #endif
 
@@ -82,6 +81,9 @@ void ILI9341_Driver::lcdOpen() {
 ///
 void ILI9341_Driver::lcdClose() {
 
+    while (halSPIIsBusy(ILI9341_SPI_MODULE))
+    	continue;
+
     halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN);
 }
 
@@ -93,10 +95,8 @@ void ILI9341_Driver::lcdClose() {
 void ILI9341_Driver::lcdWriteCommand(
     uint8_t d) {
 
-	halINTDisableInterrupts();
     halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
-    halSPITransmit(ILI9341_SPI_MODULE, d);
-    halINTEnableInterrupts();
+    halSPIFastTransmit(ILI9341_SPI_MODULE, d);
 }
 
 
@@ -107,10 +107,8 @@ void ILI9341_Driver::lcdWriteCommand(
 void ILI9341_Driver::lcdWriteData(
     uint8_t d) {
 
-	halINTDisableInterrupts();
     halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
-    halSPITransmit(ILI9341_SPI_MODULE, d);
-    halINTEnableInterrupts();
+    halSPIFastTransmit(ILI9341_SPI_MODULE, d);
 }
 
 

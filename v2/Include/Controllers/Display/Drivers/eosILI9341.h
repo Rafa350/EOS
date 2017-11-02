@@ -37,9 +37,9 @@ namespace eos {
             void displayInit();
             void displayOff();
             void writeCommands(const uint8_t *data);
-            void ctrlWritePixel(const Color &color, int32_t count);
-            void ctrlWritePixel(const Color *colors, int32_t count);
-            void ctrlReadPixel(Color *colors, int32_t count);
+            void writeRegion(const Color &color, int32_t count);
+            void writeRegion(const Color *colors, int32_t count);
+            void readRegion(Color *colors, int32_t count);
             void selectRegion(int16_t x, int16_t y, int16_t width, int16_t height);
             void startWriteRegion();
             void startReadRegion();
