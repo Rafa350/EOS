@@ -1,7 +1,6 @@
-#include "eosAssert.h"
 #include "System/Core/eosHeapAllocator.h"
-
-#include "FreeRTOS.h"
+#include "eosAssert.h"
+#include "osal/osalMemory.h"
 
 
 using namespace eos;
@@ -17,7 +16,7 @@ void *HeapAllocator::allocate(
 
     eosArgumentIsNotZero(size);
 
-    void *p = pvPortMalloc(size);
+    void *p = osalMemAlloc(size);
     eosAssert(p != nullptr);
 
     return p;
@@ -33,5 +32,5 @@ void HeapAllocator::deallocate(
 
     eosArgumentIsNotNull(p);
 
-    vPortFree(p);
+    osalMemFree(p);
 }

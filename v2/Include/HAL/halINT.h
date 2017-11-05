@@ -2,7 +2,10 @@
 #define __halINT__
 
 
+// EOS includes
+//
 #include "eos.h"
+
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
 	#include "HAL/PIC32/halINT.h"

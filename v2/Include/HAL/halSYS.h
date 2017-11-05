@@ -2,6 +2,11 @@
 #define	__halSYS__
 
 
+// EOS includes
+//
+#include "eos.h"
+
+
 #ifdef	__cplusplus
 extern "C" {
 #endif

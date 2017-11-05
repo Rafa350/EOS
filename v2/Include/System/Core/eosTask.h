@@ -3,13 +3,14 @@
 
 
 #include "eos.h"
+#include "osal/osalThread.h"
 
 
 namespace eos {
-    
-    
+
+
     class Task;
-    
+
     /// \brief Interficie que cal que implementin les clases que poden
     ///        ser procesades dins d'una tasca.
     ///
@@ -17,19 +18,19 @@ namespace eos {
         public:
             virtual void run(Task *task) = 0;
     };
-    
+
     enum class TaskPriority {
-        idle = 0,
-        low = 1,
-        normal = 2,
-        high = 3
+        idle = OSAL_TASK_PRIORITY_IDLE,
+        low = OSAL_TASK_PRIORITY_LOW,
+        normal = OSAL_TASK_PRIORITY_NORMAL,
+        high = OSAL_TASK_PRIORITY_HIGH
     };
-    
+
     /// \brief Clase que implementa una tasca.
     ///
     class Task {
         private:
-            void *handle;
+            TaskHandler handle;
             IRunable *runable;
 
         public:
@@ -46,9 +47,9 @@ namespace eos {
             static bool notificationTake(unsigned blockTime);
             static bool notificationGive();
             static void notificationGiveISR();
-        private:     
+        private:
             static void function(void *params);
-    };    
+    };
 }
 
 

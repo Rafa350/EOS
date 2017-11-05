@@ -2,6 +2,8 @@
 #define __halSPI__
 
 
+// EOS includes
+//
 #include "eos.h"
 
 

@@ -113,6 +113,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/OSAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -154,6 +159,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -233,6 +243,16 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halTMR.h</location>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/OSAL/osalMemory.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/OSAL/osalMemory.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/OSAL/osalThread.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/OSAL/osalThread.h</location>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controller/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -241,6 +261,16 @@
 			<name>src/Framework/EOS/HAL/STM32F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/osalMemory.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/osalMemory.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/osalThread.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/osalThread.c</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>

@@ -1,5 +1,6 @@
-#include "eosAssert.h"
 #include "System/Core/eosTask.h"
+#include "eosAssert.h"
+#include "osal/osalThread.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -29,13 +30,14 @@ Task::Task(
 
     this->runable = runable;
 
-    xTaskCreate(
-        Task::function,
-        name == nullptr ? defaultName : name,
-        stackSize,
-        this,
-        tskIDLE_PRIORITY + ((UBaseType_t) priority),
-        &handle);
+    TaskInitializeInfo info;
+    info.name = NULL;
+    info.stackSize = stackSize;
+    info.options = OSAL_TASK_PRIORITY_NORMAL;
+    info.function = function;
+    info.params = this;
+    handle = osalTaskCreate(&info);
+
     eosAssert(handle != nullptr);
 }
 
@@ -45,7 +47,7 @@ Task::Task(
 ///
 Task::~Task() {
 
-    vTaskDelete(handle);
+	osalTaskDestroy(handle);
 }
 
 
@@ -69,7 +71,7 @@ void Task::function(
 ///
 unsigned Task::getTickCount() {
 
-    return xTaskGetTickCount();
+    return osalGetTickCount();
 }
 
 
@@ -80,8 +82,7 @@ unsigned Task::getTickCount() {
 void Task::delay(
     unsigned time) {
 
-    if (time > 0)
-        vTaskDelay(time / portTICK_PERIOD_MS);
+	osalDelay(time);
 }
 
 
@@ -119,7 +120,7 @@ bool Task::notificationTake(
 ///
 void Task::enterCriticalSection() {
 
-    taskENTER_CRITICAL();
+    osalEnterCritical();
 }
 
 
@@ -128,7 +129,7 @@ void Task::enterCriticalSection() {
 ///
 void Task::exitCriticalSection() {
 
-    taskEXIT_CRITICAL();
+    osalExitCritical();
 }
 
 
@@ -137,7 +138,7 @@ void Task::exitCriticalSection() {
 ///
 void Task::startAll() {
 
-    vTaskStartScheduler();
+    osalStartScheduler();
 }
 
 
@@ -146,7 +147,7 @@ void Task::startAll() {
 ///
 void Task::suspendAll() {
 
-    vTaskSuspendAll();
+    osalSuspendAll();
 }
 
 
@@ -155,5 +156,5 @@ void Task::suspendAll() {
 ///
 void Task::resumeAll() {
 
-    xTaskResumeAll();
+    osalResumeAll();
 }

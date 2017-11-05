@@ -5,7 +5,7 @@
 #if defined(EOS_DEBUG)
 
 #define eosArgumentIsNotNull(variable) \
-    if (variable == nullptr) eosErrorHandler(__FILE__, __LINE__, #variable)
+    if ((void*)variable == (void*)0) eosErrorHandler(__FILE__, __LINE__, #variable)
 
 #define eosArgumentIsNotZero(variable) \
     if (variable == 0) eosErrorHandler(__FILE__, __LINE__, #variable)
@@ -27,7 +27,7 @@
 extern "C" {
 #endif
     void eosErrorHandler(const char *file, unsigned line, const char *message);
-#ifdef __cplusplus    
+#ifdef __cplusplus
 }
 #endif
 #endif

@@ -1,12 +1,19 @@
 #ifndef __halTMR__
 #define __halTMR__
 
+
+// EOS includes
+//
+#include "eos.h"
+
+// Stdlib includes
+//
+#include "stdint.h"
+
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-
-#include <stdint.h>
 
 
 #define HAL_TMR_USE_T1_INTERRUPT    0

@@ -176,9 +176,7 @@ void halSPIInitialize(
 void halSPIShutdown(
 	uint8_t id) {
 
-	SPI_HandleTypeDef *handler = GetHandler(id);
-
-	DeinitializeModule(handler);
+	DeinitializeModule(GetHandler(id));
 	DisableClock(id);
 }
 
@@ -193,8 +191,6 @@ void halSPISendBuffer(
 	uint8_t *data,
 	uint16_t size) {
 
-	SPI_HandleTypeDef *handler = GetHandler(id);
-
-	HAL_SPI_Transmit(handler, data, size, 100);
+	HAL_SPI_Transmit(GetHandler(id), data, size, 100);
 }
 
