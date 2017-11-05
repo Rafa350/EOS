@@ -76,7 +76,7 @@ static DMA_HandleTypeDef dmaHandle;
 ///
 static void InitializePins() {
 
-	static GPIOInitializePortInfo gpioInitFMC[] = {
+	static const GPIOInitializePortInfo gpioInitFMC[] = {
 		{ HAL_GPIO_PORT_B,
 		  HAL_GPIO_POS_5 | HAL_GPIO_POS_6,
 		  HAL_GPIO_OPENDRAIN_DISABLED | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_HIGH | HAL_GPIO_MODE_FUNCTION, HAL_GPIO_AF12_FMC },
@@ -254,4 +254,18 @@ void InitializeHardware() {
 
 	InitializePins();
 	InitializeSDRAM();
+
+	/*
+	uint8_t *p = (uint8_t*) SDRAM_DEVICE_ADDR;
+	for (unsigned i = 0; i < SDRAM_DEVICE_SIZE; i++)
+		p[i] = i & 0xFF;
+    */
+	/*
+	for (unsigned i = 0; i < SDRAM_DEVICE_SIZE; i++) {
+		if (p[i] != (i & 0xFF)) {
+			while(1)
+				continue;
+		}
+	}
+	*/
 }

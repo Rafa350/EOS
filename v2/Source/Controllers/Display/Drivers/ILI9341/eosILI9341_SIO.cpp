@@ -127,7 +127,7 @@ void ILI9341_Driver::lcdClose() {
 /// \param d: El byte a escriure.
 ///
 void ILI9341_Driver::lcdWriteCommand(
-    uint8_t d) {
+    uint8_t cmd) {
 
     halINTDisableInterrupts();
 
@@ -136,7 +136,7 @@ void ILI9341_Driver::lcdWriteCommand(
     uint8_t mask;
     for (mask = 0x80; mask; mask >>= 1) {
         clrCLK();
-        if ((d & mask) != 0)
+        if ((cmd & mask) != 0)
             setMOSI();
         else
             clrMOSI();
@@ -152,7 +152,7 @@ void ILI9341_Driver::lcdWriteCommand(
 /// \param d: El byte a escriure.
 ///
 void ILI9341_Driver::lcdWriteData(
-    uint8_t d) {
+    uint8_t data) {
 
     halINTDisableInterrupts();
 
@@ -161,7 +161,7 @@ void ILI9341_Driver::lcdWriteData(
     uint8_t mask;
     for (mask = 0x80; mask; mask >>= 1) {
         clrCLK();
-        if ((d & mask) != 0)
+        if ((data & mask) != 0)
             setMOSI();
         else
             clrMOSI();

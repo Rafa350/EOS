@@ -243,7 +243,7 @@ void DisplayLoopService::onRun() {
     display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 300; i++) {
+    for (int i = 0; i < 200; i++) {
         int16_t x1 = rand() % screenWidth;
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = rand() % screenWidth;
@@ -263,7 +263,7 @@ void DisplayLoopService::onRun() {
     display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 300; i++) {
+    for (int i = 0; i < 200; i++) {
         int16_t x1 = rand() % screenWidth;
         int16_t y1 = rand() % screenHeight;
         int16_t x2 = x1 + rand() % 100;
@@ -283,7 +283,7 @@ void DisplayLoopService::onRun() {
     display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 300; i++) {
+    for (int i = 0; i < 200; i++) {
         int16_t cx = rand() % screenWidth;
         int16_t cy = rand() % screenHeight;
         int16_t r = rand() % 150;
@@ -302,7 +302,7 @@ void DisplayLoopService::onRun() {
     display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 300; i++) {
+    for (int i = 0; i < 200; i++) {
         int16_t cx = rand() % screenWidth;
         int16_t cy = rand() % screenHeight;
         int16_t r = rand() % 50;

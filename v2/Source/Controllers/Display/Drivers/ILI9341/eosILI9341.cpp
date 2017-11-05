@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"
+#include "Controllers/Display/Drivers/eosILI9341Defs.h"
 #include "HAL/halTMR.h"
 
 
@@ -18,100 +19,6 @@
 #define MAX_COLUMNS          240
 #define MAX_ROWS             320
 
-// Comandes del controlador
-//
-#define CMD_NOP                                            0x00
-#define CMD_SOFTWARE_RESET                                 0x01
-#define CMD_READ_DISPLAY_INFORMATION                       0x04
-#define CMD_READ_DISPLAY_STATUS                            0x09
-#define CMD_READ_DISPLAY_POWER_MODE                        0x0A
-#define CMD_READ_DISPLAY_MADCTL                            0x0B
-#define CMD_READ_DISPLAY_PIXEL_FORMAT                      0x0C
-#define CMD_READ_DISPLAY_IMAGE_FORMAT                      0x0D
-#define CMD_READ_DISPLAY_SINGLE_MODE                       0x0E
-#define CMD_READ_DISPLAY_SELF_DIAGNOSTIC_RESULT            0x0F
-#define CMD_ENTER_SLEEP_MODE                               0x10
-#define CMD_SLEEP_OUT                                      0x11
-#define CMD_PARTIAL_MODE_ON                                0x12
-#define CMD_NORMAL_DISPLAY_MODE_ON                         0x13
-#define CMD_DISPLAY_INVERSION_OFF                          0x20
-#define CMD_DISPLAY_INVERSION_ON                           0x21
-#define CMD_GAMMA_SET                                      0x26
-#define CMD_DISPLAY_OFF                                    0x28
-#define CMD_DISPLAY_ON                                     0x29
-#define CMD_COLUMN_ADDRESS_SET                             0x2A
-#define CMD_PAGE_ADDRESS_SET                               0x2B
-#define CMD_MEMORY_WRITE                                   0x2C
-#define CMD_COLOR_SET                                      0x2D
-#define CMD_MEMORY_READ                                    0x2E
-#define CMD_PARTIAL_AREA                                   0x30
-#define CMD_VERTICAL_SCROLLING_DEFINITION                  0x33
-#define CMD_TEARING_EFFECT_LINE_OFF                        0x34
-#define CMD_TEARING_EFFECT_LINE_ON                         0x35
-#define CMD_MEMORY_ACCESS_CONTROL                          0x36
-#define CMD_VERTICAL_SCROLLING_START_ADDRESS               0x37
-#define CMD_IDLE_MODE_OFF                                  0x38
-#define CMD_IDLE_MODE_ON                                   0x39
-#define CMD_PIXEL_FORMAT_SET                               0x3A
-#define CMD_WRITE_MEMORY_CONTINUE                          0x3C
-#define CMD_READ_MEMORY_CONTINUE                           0x3D
-#define CMD_SET_TEAR_SCANLINE                              0x44
-#define CMD_GET_SCANLINE                                   0x45
-#define CMD_WRITE_DISPLAY_BRIGNESS                         0x51
-#define CMD_READ_DISPLAY_BRIGNESS                          0x52
-#define CMD_WRITE_CTRL_DISPLAY                             0x53
-#define CMD_READ_CTRL_DISPLAY                              0x54
-#define CMD_WRITE_CONTENT_ADAPTIVE_BRIGNESS_CONTROL        0x55
-#define CMD_READ_CONTENT_ADAPTIVE_BRIGNESS_CONTROL         0x56
-#define CMD_WRITE_CABC_MINIMUM_BRIGNESS                    0x5E
-#define CMD_READ_CABC_MINIMUM_BRIGNESS                     0x5F
-#define CMD_READ_ID1                                       0xDA
-#define CMD_READ_ID2                                       0xDB
-#define CMD_READ_ID3                                       0xDC
-#define CMD_RGB_INTERFACE_SIGNAL_CONTROL                   0xB0
-#define CMD_FRAME_RATE_CONTROL_1                           0xB1
-#define CMD_FRAME_RATE_CONTROL_2                           0xB2
-#define CMD_FRAME_RATE_CONTROL_3                           0xB3
-#define CMD_DISPLAY_INVERSION_CONTROL                      0xB4
-#define CMD_BLANKING_PORCH_CONTROL                         0xB5
-#define CMD_DISPLAY_FUNCTION_CONTROL                       0xB6
-#define CMD_ENTRY_MODE_SET                                 0xB7
-#define CMD_BACKLIGHT_CONTROL_1                            0xB8
-#define CMD_BACKLIGHT_CONTROL_2                            0xB9
-#define CMD_BACKLIGHT_CONTROL_3                            0xBA
-#define CMD_BACKLIGHT_CONTROL_4                            0xBB
-#define CMD_BACKLIGHT_CONTROL_5                            0xBC
-#define CMD_BACKLIGHT_CONTROL_7                            0xBE
-#define CMD_BACKLIGHT_CONTROL_8                            0xBF
-#define CMD_POWER_CONTROL_1                                0xC0
-#define CMD_POWER_CONTROL_2                                0xC1
-#define CMD_VCOM_CONTROL_1                                 0xC5
-#define CMD_VCOM_CONTROL_2                                 0xC7
-#define CMD_NV_MEMORY_WRITE                                0xD0
-#define CMD_NV_MEMORY_PROTECTION_KEY                       0xD1
-#define CMD_NV_MEMORY_STATUS_READ                          0xD2
-#define CMD_READ_ID4                                       0xD3
-#define CMD_POSITIVE_GAMMA_CORRECTION                      0xE0
-#define CMD_NEGATIVE_GAMMA_CORRECTION                      0xE1
-#define CMD_DIGITAL_GAMMA_CONTROL_1                        0xE2
-#define CMD_DIGITAL_GAMMA_CONTROL_2                        0xE3
-#define CMD_INTERFACE_CONTROL                              0xF6
-#define CMD_POWER_CONTROL_A                                0xCB
-#define CMD_POWER_CONTROL_B                                0xCF
-#define CMD_DRIVER_TIMING_CONTROL_A                        0xE8
-#define CMD_DRIVER_TIMING_CONTROL_B                        0xEA
-#define CMD_POWER_ON_SEQUENCE_CONTROL                      0xED
-#define CMD_ENABLE_3G                                      0xF2
-#define CMD_PUMP_RATIO_CONTROL                             0xF7
-
-// Parametres de la comanda MEMORY_ACCESS_CONTROL
-//
-#define MAC_MX_OFF    0b00000000
-#define MAC_MX_ON     0b10000000
-#define MAC_MY_OFF    0b00000000
-#define MAC_MY_ON     0b01000000
-#define MAC_MV_OFF    0b00000000
-#define MAC_MV_ON     0b00100000
 
 // Codis d'operacio
 //
@@ -175,36 +82,36 @@ void ILI9341_Driver::initialize() {
 
 #elif defined(STM32F429I_DISC1)
     static const uint8_t initData[] = {
-        1, CMD_SOFTWARE_RESET,
+        __SOFTWARE_RESET,
         OP_DELAY, 250,
         OP_DELAY, 250,
-    	6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,
-    	4, CMD_POWER_CONTROL_B, 0x00, 0xC1, 0x30,
-    	4, CMD_DRIVER_TIMING_CONTROL_A, 0x85, 0x00, 0x78,
-    	3, CMD_DRIVER_TIMING_CONTROL_B, 0x00, 0x00,
-		5, CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0x12, 0x81,
-		2, CMD_PUMP_RATIO_CONTROL, 0x20,
-    	2, CMD_POWER_CONTROL_1, 0x23,
-    	2, CMD_POWER_CONTROL_2, 0x10,
-		3, CMD_VCOM_CONTROL_1, 0x3E, 0x28,
-		2, CMD_VCOM_CONTROL_2, 0x86,
-    	2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF,
+		__POWER_CONTROL_A(0x39, 0x2C, 0x00, 0x34, 0x62),
+    	__POWER_CONTROL_B(0x00, 0xC1, 0x30),
+    	__DRIVER_TIMING_CONTROL_A(0x85, 0x00, 0x78),
+    	__DRIVER_TIMING_CONTROL_B(0x00, 0x00),
+		__POWER_ON_SEQUENCE_CONTROL(0x64, 0x03, 0x12, 0x81),
+		__PUMP_RATIO_CONTROL(0x20),
+    	__POWER_CONTROL_1(0x23),
+    	__POWER_CONTROL_2(0x10),
+		__VCOM_CONTROL_1(0x3E, 0x28),
+		__VCOM_CONTROL_2(0x86),
+    	__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF),
 #if defined(ILI9341_COLORMODE_565)
-    	2, CMD_PIXEL_FORMAT_SET, 0x55,
+		__PIXEL_FORMAT_SET(0x55),
 #elif defined(ILI9341_COLORMODE_666)
-        2, CMD_PIXEL_FORMAT_SET, 0x66,
+        __PIXEL_FORMAT_SET(0x66),
 #endif
-    	3, CMD_FRAME_RATE_CONTROL_1, 0x00, 0x18,
-		4, CMD_DISPLAY_FUNCTION_CONTROL, 0x08, 0x82, 0x27,
-    	2, CMD_ENABLE_3G, 0x00,
-    	2, CMD_GAMMA_SET, 0x01,
-    	16, CMD_POSITIVE_GAMMA_CORRECTION, 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
-            0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00,
-    	16, CMD_NEGATIVE_GAMMA_CORRECTION, 0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
-            0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F,
-        1, CMD_SLEEP_OUT,
+		__FRAME_RATE_CONTROL_1(0x00, 0x18),
+		__DISPLAY_FUNCTION_CONTROL(0x08, 0x82, 0x27),
+		__ENABLE_3G(0x00),
+		__GAMMA_SET(0x01),
+    	__POSITIVE_GAMMA_CORRECTION( 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
+    			0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00),
+    	__NEGATIVE_GAMMA_CORRECTION(0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
+    			0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F),
+        __SLEEP_OUT,
         OP_DELAY, 150,
-        1, CMD_DISPLAY_ON,
+        __DISPLAY_ON,
         OP_DELAY, 50,
         OP_END
     };
@@ -235,18 +142,18 @@ void ILI9341_Driver::setOrientation(
 
 #if defined(DISPLAY_ER_TFT028_4)
     static const uint8_t orientationData[4][4] = {
-    		{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF, OP_END},
-			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_OFF, OP_END},
-			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_ON, OP_END},
-			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_ON, OP_END}
+   		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF), OP_END},
+		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_OFF), OP_END},
+		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_ON), OP_END},
+		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_ON), OP_END}
     };
 
 #elif defined(STM32F429I_DISC1)
     static const uint8_t orientationData[4][4] = {
-    		{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_ON, OP_END},
-			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_ON, OP_END},
-			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF, OP_END},
-			{2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_OFF, OP_END}
+   		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_ON), OP_END},
+		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_ON), OP_END},
+		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF), OP_END},
+		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_OFF), OP_END}
     };
 #endif
 
@@ -286,7 +193,6 @@ void ILI9341_Driver::clear(
     const Color &color) {
 
     selectRegion(0, 0, screenWidth, screenHeight);
-    startWriteRegion();
     writeRegion(color, screenWidth * screenHeight);
 }
 
@@ -303,8 +209,7 @@ void ILI9341_Driver::setPixel(
     const Color &color) {
 
     selectRegion(x, y, 1, 1);
-    startWriteRegion();
-    writeRegion(color, 1);
+    writeRegion(color);
 }
 
 
@@ -322,7 +227,6 @@ void ILI9341_Driver::setHPixels(
     const Color &color) {
 
     selectRegion(x, y, length, 1);
-    startWriteRegion();
     writeRegion(color, length);
 }
 
@@ -341,7 +245,6 @@ void ILI9341_Driver::setVPixels(
     const Color &color) {
 
     selectRegion(x, y, 1, length);
-    startWriteRegion();
     writeRegion(color, length);
 }
 
@@ -362,7 +265,6 @@ void ILI9341_Driver::setPixels(
     const Color &color) {
 
     selectRegion(x, y, width, height);
-    startWriteRegion();
     writeRegion(color, width * height);
 }
 
@@ -383,7 +285,6 @@ void ILI9341_Driver::writePixels(
     const Color* colors) {
 
     selectRegion(x, y, width, width);
-    startWriteRegion();
     writeRegion(colors, width * height);
 }
 
@@ -405,7 +306,6 @@ void ILI9341_Driver::readPixels(
     Color *colors) {
 
     selectRegion(x, y, width, height);
-    startReadRegion();
     readRegion(colors, width * height);
 }
 
@@ -432,11 +332,9 @@ void ILI9341_Driver::vScroll(
         for (int16_t i = y; i < height - y - delta; i++) {
 
             selectRegion(x, i + delta, width, 1);
-            startReadRegion();
             readRegion(buffer, width);
 
             selectRegion(x, i, width, 1);
-            startWriteRegion();
             writeRegion(buffer, width);
         }
     }
@@ -530,46 +428,67 @@ void ILI9341_Driver::selectRegion(
     int16_t width,
     int16_t height) {
 
+	uint8_t buffer[4];
+
     int16_t x2 = x + width - 1;
     int16_t y2 = y + height - 1;
 
     lcdOpen();
 
     lcdWriteCommand(CMD_COLUMN_ADDRESS_SET);
-	lcdWriteData(x >> 8);
-	lcdWriteData(x);
-	lcdWriteData(x2 >> 8);
-	lcdWriteData(x2);
+
+    buffer[0] = x >> 8;
+    buffer[1] = x;
+    buffer[2] = x2 >> 8;
+    buffer[3] = x2;
+	lcdWriteData(buffer, sizeof(buffer));
 
 	lcdWriteCommand(CMD_PAGE_ADDRESS_SET);
-	lcdWriteData(y >> 8);
-	lcdWriteData(y);
-	lcdWriteData(y2 >> 8);
-	lcdWriteData(y2);
+
+	buffer[0] = y >> 8;
+    buffer[1] = y;
+    buffer[2] = y2 >> 8;
+    buffer[3] = y2;
+	lcdWriteData(buffer, sizeof(buffer));
 
     lcdClose();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicia la escritura de memoria.
+/// \brief Escriu un color en la regio seleccionada. Cas particular d'una
+///		   regio de 1x1 pixel.
+/// \param data: El color.
 ///
-void ILI9341_Driver::startWriteRegion() {
+void ILI9341_Driver::writeRegion(
+	const Color &color) {
+
+#if defined(ILI9341_COLORMODE_565)
+
+    uint16_t c = color.to565();
+    uint8_t cc[sizeof(uint16_t)];
+ 	cc[0] = c >> 8;
+   	cc[1] = c;
 
     lcdOpen();
     lcdWriteCommand(CMD_MEMORY_WRITE);
+    lcdWriteData(cc, sizeof(cc));
     lcdClose();
-}
 
+#elif defined(ILI9341_COLORMODE_666)
 
-/// ----------------------------------------------------------------------
-/// \brief Inicia la lectura de memoria.
-///
-void ILI9341_Driver::startReadRegion() {
+    uint32_t c = color.c;
+    uint8_t cc[3];
+    cc[0] = (uint32_t)(c & 0x00FC0000) >> 16;
+    cc[1] = (uint32_t)(c & 0x0000FC00) >> 8;
+    cc[2] = (uint32_t)(c & 0x000000FC);
 
     lcdOpen();
-    lcdWriteCommand(CMD_MEMORY_READ);
+    lcdWriteCommand(CMD_MEMORY_WRITE);
+    lcdWriteData(cc, sizeof(cc));
     lcdClose();
+
+#endif
 }
 
 
@@ -584,28 +503,44 @@ void ILI9341_Driver::writeRegion(
 
 #if defined(ILI9341_COLORMODE_565)
 
+    static uint8_t cc[sizeof(uint16_t) * 240 / 4];
+    static uint16_t _c;
+    static int16_t _ccCapacity = 0;
+
     uint16_t c = color.to565();
+	int16_t ccCapacity = count < (int32_t)(sizeof(cc) / sizeof(cc[0])) ? count : (int32_t)(sizeof(cc) / sizeof(cc[0]));
+	if (c != _c || _ccCapacity < ccCapacity) {
+		for (int16_t i = 0; i < ccCapacity; i++) {
+			cc[i + i + 0] = c >> 8;
+			cc[i + i + 1] = c;
+		}
+		_c = c;
+		_ccCapacity = ccCapacity;
+	}
 
     lcdOpen();
-    while (count--) {
-        lcdWriteData(c >> 8);
-        lcdWriteData(c);
+    lcdWriteCommand(CMD_MEMORY_WRITE);
+    while (count) {
+    	int16_t  n = ccCapacity;
+    	if (count < n)
+    		n = count;
+        lcdWriteData(cc, (int16_t) sizeof(uint16_t) * n);
+        count -= n;
     }
     lcdClose();
 
 #elif defined(ILI9341_COLORMODE_666)
 
     uint32_t c = color.c;
-    uint8_t c1 = (uint32_t)(c & 0x00FC0000) >> 16;
-    uint8_t c2 = (uint32_t)(c & 0x0000FC00) >> 8;
-    uint8_t c3 = (uint32_t)(c & 0x000000FC);
+    uint8_t cc[3];
+    cc[0] = (uint32_t)(c & 0x00FC0000) >> 16;
+    cc[1] = (uint32_t)(c & 0x0000FC00) >> 8;
+    cc[2] = (uint32_t)(c & 0x000000FC);
 
     lcdOpen();
-    while (count--) {
-        lcdWriteData(c1);
-        lcdWriteData(c2);
-        lcdWriteData(c3);
-    }
+    lcdWriteCommand(CMD_MEMORY_WRITE);
+    while (count--)
+        lcdWriteData(cc, sizeof(cc));
     lcdClose();
 
 #endif
@@ -637,6 +572,7 @@ void ILI9341_Driver::readRegion(
     int32_t count) {
 
     lcdOpen();
+    lcdWriteCommand(CMD_MEMORY_READ);
     lcdReadData();               // Dummy read
     lcdReadData();               // Dummy read
     while (count--) {

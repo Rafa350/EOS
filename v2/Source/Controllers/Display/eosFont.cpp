@@ -29,7 +29,7 @@ typedef struct {
 } FontTableEntry;
 
 
-static FontTableEntry fontTable[] = {
+static const FontTableEntry fontTable[] = {
 
 #ifdef FONT_USE_Arial14pt
     { "Arial", 14, FontStyle::Regular, fontArial14pt },
@@ -96,7 +96,7 @@ Font::Font(
     fontResource(nullptr) {
 
     for (uint16_t i = 0; i < sizeof(fontTable) / sizeof(fontTable[0]); i++) {
-        FontTableEntry *entry = &fontTable[i];
+        const FontTableEntry *entry = &fontTable[i];
         if ((strcmp(fontName, entry->faceName) == 0) &&
             (height == entry->height)) {
             fontResource = entry->resource;

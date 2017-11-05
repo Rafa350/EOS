@@ -143,6 +143,11 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/Main.cpp</location>
 		</link>
 		<link>
+			<name>src/App/STM32F429/stm32f4xx_hal_timebase_tim.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/stm32f4xx_hal_timebase_tim.c</location>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controller</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -381,6 +386,11 @@
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosILI9341.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341Defs.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosILI9341Defs.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341LTDC.h</name>

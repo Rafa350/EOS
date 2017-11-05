@@ -1,4 +1,5 @@
 #include "hal/halTMR.h"
+#include "stm32f4xx_hal.h"
 
 
 /// ----------------------------------------------------------------------
@@ -8,9 +9,5 @@
 void halTMRDelay(
     uint32_t time) {
 
-	while (time--) {
-		for (int i = 1000; i; i--)
-			continue;
-	}
-
+	HAL_Delay(time);
 }

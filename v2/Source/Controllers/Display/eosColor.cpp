@@ -11,18 +11,18 @@ using namespace eos;
 /// \return El resultat de la mescla.
 ///
 Color Color::mix(
-    Color c, 
+    Color c,
     uint8_t mix) {
-    
+
     return Color(
         (uint16_t)((uint16_t) getR() * mix + (c.getR() * (255 - mix))) >> 8,
-        (uint16_t)((uint16_t) getG() * mix + (c.getG() * (255 - mix))) >> 8,  
+        (uint16_t)((uint16_t) getG() * mix + (c.getG() * (255 - mix))) >> 8,
         (uint16_t)((uint16_t) getB() * mix + (c.getB() * (255 - mix))) >> 8);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Converteix un color a la seva representacio interna.
+/// \brief Converteix un color a format RGB-565
 /// \return El resultat de l'operacio.
 ///
 #if !defined(DISPLAY_COLOR_565)
@@ -30,7 +30,23 @@ uint16_t Color::to565() const {
 
     return (((uint32_t)(((c & 0x00F80000) >> 16) | ((c & 0x0000E000) >> 13))) << 8) |
            (uint32_t)(((c & 0x00001C00) >> 5) | ((c &0x000000F8) >> 3));
-    
+
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Converteix un color a format ARGB-8888
+/// \return El resultat de l'operacio.
+///
+#if !defined(DISPLAY_COLORARGB)
+uint32_t Color::toARGB() const {
+
+	return
+		((uint32_t)getA()) << 24 |
+		((uint32_t)getR()) << 16 |
+		((uint32_t)getG()) << 8 |
+		(uint32_t)getB();
 }
 #endif
 
@@ -41,12 +57,12 @@ uint16_t Color::to565() const {
 ///
 ColorBuffer::ColorBuffer(
     int size) {
-    
+
 #if defined(DISPLAY_COLOR_ARGB) || defined(DISPLAY_COLOR_RGB)
     buffer = new uint32_t[size];
-#elif defined(DISPLAY_COLOR_565)            
-    buffer = new uint16_t[size];            
-#endif            
+#elif defined(DISPLAY_COLOR_565)
+    buffer = new uint16_t[size];
+#endif
 }
 
 
@@ -54,7 +70,7 @@ ColorBuffer::ColorBuffer(
 /// \brief Destructor.
 ///
 ColorBuffer::~ColorBuffer() {
-    
+
     delete buffer;
 }
 
@@ -63,7 +79,7 @@ ColorBuffer::~ColorBuffer() {
 /// \brief Constructor.
 ///
 ColorPalette::ColorPalette() {
-    
+
     colorTable[COLOR_PAL_Black] = Color(COLOR_Black);
     colorTable[COLOR_PAL_White] = Color(COLOR_White);
     colorTable[COLOR_PAL_Blue] = Color(COLOR_Blue);
@@ -84,9 +100,9 @@ ColorPalette::ColorPalette() {
 /// \param color: El color a asignar.
 ///
 void ColorPalette::setColor(
-    uint8_t index, 
+    uint8_t index,
     Color color) {
-    
+
     if ((index >= 20) & (index <= 255))
         colorTable[index] = color;
 }

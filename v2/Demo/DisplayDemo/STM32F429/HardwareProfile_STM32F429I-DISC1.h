@@ -100,7 +100,7 @@
 
 // Modul SPI a utilitzar
 //
-#define ILI9341_SPI_MODULE   HAL_SPI_MODULE_5
+#define ILI9341_SPI_ID       HAL_SPI_ID_5
 
 
 // -----------------------------------------------------------------------
@@ -109,7 +109,7 @@
 
 // Parametres del controlador
 //
-#define ILI9341LTDC_VRAM          0xD0000000
+#define ILI9341LTDC_VRAM          ((uint32_t)0xD0000000)
 
 #define ILI9341LTDC_COLORMODE_565
 //#define ILI9341LTDC_COLORMODE_666
@@ -277,7 +277,7 @@
 
 // Control del modul SPI
 //
-#define ILI9341LTDC_SPI_MODULE    HAL_SPI_MODULE_5
+#define ILI9341LTDC_SPI_ID        HAL_SPI_ID_5
 
 
 #endif

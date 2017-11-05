@@ -18,7 +18,7 @@
 #include <xc.h>
 #elif defined(ILI9341_IO_SUBTYPE_PIO8_DIRECT) && defined(EOS_STM32)
 #include <stm32f4xx.h>
-#elif defined(ILI9341_IO_SUBTYPE_PIO8_HAL) 
+#elif defined(ILI9341_IO_SUBTYPE_PIO8_HAL)
 #include "Hal/halGPIO.h"
 #endif
 
@@ -219,28 +219,28 @@ void ILI9341_Driver::lcdClose() {
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu un byte en el registre de comandes.
-/// \param d: El byte a escriure.
+/// \param cmd: El byte a escriure.
 ///
 void ILI9341_Driver::lcdWriteCommand(
-    uint8_t d) {
+    uint8_t cmd) {
 
     clrRS();
     clrWR();
-    wrDATA(d);
+    wrDATA(cmd);
     setWR();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu un byte en el registre de dades.
-/// \param d: El byte a escriure.
+/// \param data: El byte a escriure.
 ///
 void ILI9341_Driver::lcdWriteData(
-    uint8_t d) {
+    uint8_t data) {
 
     setRS();
     clrWR();
-    wrDATA(d);
+    wrDATA(data);
     setWR();
 }
 

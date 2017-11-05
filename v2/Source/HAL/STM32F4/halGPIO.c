@@ -51,6 +51,10 @@ void halGPIOInitializePin(
 	switch (info->options & HAL_GPIO_MODE_MASK) {
 		case HAL_GPIO_MODE_OUTPUT:
 			temp |= 0b01 << (info->pin * 2);
+			if ((info->options & HAL_GPIO_INIT_MASK) == HAL_GPIO_INIT_CLR)
+				halGPIOClearPin(info->port, info->pin);
+			else
+				halGPIOSetPin(info->port, info->pin);
 			break;
 
 		case HAL_GPIO_MODE_FUNCTION:
@@ -112,13 +116,22 @@ void halGPIOInitializePin(
 		gpio->OTYPER = temp;
 	}
 
-	// Selecciona la funcio alternativa
+	// Si es una funcio alternativa, la selecciona
 	//
 	if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_FUNCTION) {
 		temp = gpio->AFR[info->pin >> 3];
 	    temp &= ~((uint32_t)0xFU << ((uint32_t)(info->pin & (uint32_t)0x07U) * 4U)) ;
 	    temp |= ((uint32_t)info->function << (((uint32_t)info->pin & (uint32_t)0x07U) * 4U));
 	    gpio->AFR[info->pin >> 3] = temp;
+	}
+
+	// Si es una sortida digital, inicialitza el seu valor
+	//
+	if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT) {
+		if ((info->options & HAL_GPIO_INIT_MASK) == HAL_GPIO_INIT_CLR)
+			halGPIOClearPin(info->port, info->pin);
+		else
+			halGPIOSetPin(info->port, info->pin);
 	}
 }
 
@@ -165,7 +178,7 @@ void halGPIOInitializePort(
 /// \param mask: Mascara de pins.
 ///
 void halGPIOInitializePortInput(
-	GPIOPort port,
+	uint8_t port,
 	uint16_t mask) {
 
 	GPIOInitializePinInfo info;
@@ -188,7 +201,7 @@ void halGPIOInitializePortInput(
 /// \param mask: Mascara de pins.
 ///
 void halGPIOInitializePortOutput(
-	GPIOPort port,
+	uint8_t port,
 	uint16_t mask) {
 
 	GPIOInitializePinInfo info;
@@ -213,9 +226,9 @@ void halGPIOInitializePortOutput(
 /// \param function: Funcio del pin.
 ///
 void halGPIOInitialize(
-	GPIOPort port,
-	GPIOPin pin,
-	GPIOOptions options,
+	uint8_t port,
+	uint8_t pin,
+	uint32_t options,
 	GPIOFunction function) {
 
 	GPIOInitializePinInfo init;

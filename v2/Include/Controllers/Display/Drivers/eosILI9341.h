@@ -37,20 +37,20 @@ namespace eos {
             void displayInit();
             void displayOff();
             void writeCommands(const uint8_t *data);
+            void writeRegion(const Color &color);
             void writeRegion(const Color &color, int32_t count);
             void writeRegion(const Color *colors, int32_t count);
             void readRegion(Color *colors, int32_t count);
             void selectRegion(int16_t x, int16_t y, int16_t width, int16_t height);
-            void startWriteRegion();
-            void startReadRegion();
 
         private:
             static void lcdInitialize();
             static void lcdReset();
             static void lcdOpen();
             static void lcdClose();
-            static void lcdWriteCommand(uint8_t d);
-            static void lcdWriteData(uint8_t d);
+            static void lcdWriteCommand(uint8_t cmd);
+            static void lcdWriteData(uint8_t data);
+            static void lcdWriteData(uint8_t *data, int32_t size);
             static uint8_t lcdReadData();
     };
 }
