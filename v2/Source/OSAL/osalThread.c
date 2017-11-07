@@ -48,12 +48,18 @@ void osalTaskDestroy(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Entra en una seccio critica.
+///
 void osalEnterCritical() {
 
     taskENTER_CRITICAL();
 }
 
 
+/// ----------------------------------------------------------------------
+/// brief Surt d'una seccio critica.
+///
 void osalExitCritical() {
 
     taskEXIT_CRITICAL();

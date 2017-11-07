@@ -55,7 +55,7 @@
 		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/eosConfig.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/eosConfig.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS</name>
@@ -65,7 +65,7 @@
 		<link>
 			<name>src/App/AppMain.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/AppMain.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/AppMain.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F429</name>
@@ -75,7 +75,7 @@
 		<link>
 			<name>src/App/rtos_hooks.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/rtos_hooks.c</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/rtos_hooks.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS</name>
@@ -90,17 +90,17 @@
 		<link>
 			<name>inc/App/STM32F429/FreeRTOSConfig.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/FreeRTOSConfig.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/FreeRTOSConfig.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F429/HardwareProfile.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/HardwareProfile.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/HardwareProfile.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F429/HardwareProfile_STM32F429I-DISC1.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/HardwareProfile_STM32F429I-DISC1.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/HardwareProfile_STM32F429I-DISC1.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers</name>
@@ -130,27 +130,27 @@
 		<link>
 			<name>inc/Framework/EOS/eos.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eos.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/eos.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/eosAssert.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eosAssert.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/eosAssert.h</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F429/Initialize_STM32F429I-DISC1.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/Initialize_STM32F429I-DISC1.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/Initialize_STM32F429I-DISC1.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F429/Main.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/Main.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/Main.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F429/stm32f4xx_hal_timebase_tim.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/stm32f4xx_hal_timebase_tim.c</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/stm32f4xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller</name>
@@ -220,37 +220,42 @@
 		<link>
 			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halINT.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halINT.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/halINT.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSPI.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halSPI.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/halSPI.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halSYS.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/halSYS.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halTMR.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halTMR.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/halTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalMemory.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/OSAL/osalMemory.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/OSAL/osalMemory.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalThread.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/OSAL/osalThread.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/OSAL/osalThread.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/eosService.h</name>
+			<type>1</type>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Services/eosService.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display</name>
@@ -265,22 +270,22 @@
 		<link>
 			<name>src/Framework/EOS/OSAL/osalMemory.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/osalMemory.c</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/OSAL/osalMemory.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/osalThread.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/osalThread.c</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/OSAL/osalThread.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Services/eosAppLoop.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Services/eosAppLoop.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Services/eosService.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Services/eosService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections</name>
@@ -295,7 +300,7 @@
 		<link>
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/eosApplication.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/System/eosApplication.cpp</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
@@ -303,39 +308,44 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosAssert.h</name>
+			<type>1</type>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/eosAssert.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosColor.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosColor.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosColor.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosDisplay.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosDisplay.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosDisplay.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosDisplayDriver.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosDisplayDriver.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosFont.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/eosFont.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosFont.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halGPIO.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/STM32/halGPIO.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halINT.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/STM32/halINT.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halSPI.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halSPI.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/STM32/halSPI.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers</name>
@@ -350,67 +360,67 @@
 		<link>
 			<name>src/Framework/EOS/Controller/Display/eosColor.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/eosColor.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/eosColor.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/eosDisplay.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/eosDisplay.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/eosDisplay.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/eosFont.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/eosFont.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/eosFont.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halGPIO.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halGPIO.c</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32F4/halGPIO.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halSPI.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halSPI.c</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32F4/halSPI.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halSYS.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halSYS.c</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32F4/halSYS.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halTMR.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halTMR.c</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32F4/halTMR.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Collections/eosList.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/System/Collections/eosList.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosListImpl.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Collections/eosListImpl.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/System/Collections/eosListImpl.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosErrorHandler.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/System/Core/eosErrorHandler.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosGlobalAlloc.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosGlobalAlloc.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/System/Core/eosGlobalAlloc.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosHeapAllocator.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosHeapAllocator.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/System/Core/eosHeapAllocator.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosTask.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/System/Core/eosTask.cpp</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341.h</name>
@@ -420,12 +430,12 @@
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341Defs.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosILI9341Defs.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/Drivers/eosILI9341Defs.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341LTDC.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosILI9341LTDC.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/Drivers/eosILI9341LTDC.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341</name>
@@ -440,60 +450,64 @@
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas10pt.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Fonts/Consolas10pt.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas10pt.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas12pt.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Fonts/Consolas12pt.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas12pt.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas14pt.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Fonts/Consolas14pt.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas14pt.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas18pt.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Fonts/Consolas18pt.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas18pt.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas24pt.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Fonts/Consolas24pt.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas24pt.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas8pt.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Fonts/Consolas8pt.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas8pt.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341LDTC/eosILI9341LTDC.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
+		<variable>
+			<name>EOSPath</name>
+			<value>$%7BPROJECT_HOME%7D</value>
+		</variable>
 		<variable>
 			<name>PROJECT_HOME</name>
 			<value>$%7BPARENT-4-PROJECT_LOC%7D</value>
