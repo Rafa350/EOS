@@ -415,7 +415,7 @@
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosILI9341.h</location>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/Drivers/eosILI9341.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341Defs.h</name>
@@ -493,4 +493,10 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</location>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>PROJECT_HOME</name>
+			<value>$%7BPARENT-4-PROJECT_LOC%7D</value>
+		</variable>
+	</variableList>
 </projectDescription>
