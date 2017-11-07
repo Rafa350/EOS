@@ -5,7 +5,7 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.423783525" moduleId="org.eclipse.cdt.core.settings" name="Debug">
 				<macros>
 					<stringMacro name="FreeRTOSPath" type="VALUE_PATH_ANY" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source"/>
-					<stringMacro name="EOSPath" type="VALUE_PATH_ANY" value="C:/Projectes/MPLab/EOS/v2"/>
+					<stringMacro name="EOSPath" type="VALUE_PATH_ANY" value="C:\Users\Rafael\Documents\Projectes\MPLab\EOS/v2"/>
 				</macros>
 				<externalSettings/>
 				<extensions>
@@ -138,7 +138,7 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.release.826569912" moduleId="org.eclipse.cdt.core.settings" name="Release">
 				<macros>
 					<stringMacro name="FreeRTOSPath" type="VALUE_PATH_ANY" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source"/>
-					<stringMacro name="EOSPath" type="VALUE_PATH_ANY" value="C:/Projectes/MPLab/EOS/v2"/>
+					<stringMacro name="EOSPath" type="VALUE_PATH_ANY" value="C:\Users\Rafael\Documents\Projectes\MPLab\EOS/v2"/>
 				</macros>
 				<externalSettings/>
 				<extensions>

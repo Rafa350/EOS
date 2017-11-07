@@ -258,6 +258,11 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Services/eosService.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Core</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controller/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -346,6 +351,11 @@
 			<name>inc/Framework/EOS/HAL/STM32/halSPI.h</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/STM32/halSPI.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
+			<type>1</type>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/System/Core/eosTask.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers</name>

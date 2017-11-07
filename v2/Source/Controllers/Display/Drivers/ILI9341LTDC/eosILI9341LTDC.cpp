@@ -25,6 +25,13 @@
 #define FRAME_BUFFER		 ILI9341LTDC_VRAM
 #define FRAME_OFFSET		 (MAX_COLUMNS * MAX_ROWS * sizeof(uint16_t))
 
+#define  ILI9341_HSYNC            ((uint32_t)9)   // Horizontal synchronization
+#define  ILI9341_HBP              ((uint32_t)29)  // Horizontal back porch
+#define  ILI9341_HFP              ((uint32_t)2)   // Horizontal front porch
+#define  ILI9341_VSYNC            ((uint32_t)1)   // Vertical synchronization
+#define  ILI9341_VBP              ((uint32_t)3)   // Vertical back porch
+#define  ILI9341_VFP              ((uint32_t)2)   // Vertical front porch
+
 
 // Codis d'operacio
 //
@@ -53,41 +60,44 @@ void ILI9341LTDC_Driver::initialize() {
 
 #if defined(STM32F429I_DISC1)
     static uint8_t const lcdInit[] = {
-        1, CMD_SOFTWARE_RESET,
+        __SOFTWARE_RESET,
         OP_DELAY, 250,
         OP_DELAY, 250,
-    	6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,
-    	4, CMD_POWER_CONTROL_B, 0x00, 0xC1, 0x30,
-    	4, CMD_DRIVER_TIMING_CONTROL_A, 0x85, 0x00, 0x78,
-    	3, CMD_DRIVER_TIMING_CONTROL_B, 0x00, 0x00, //
-		5, CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0x12, 0x81,
-		2, CMD_PUMP_RATIO_CONTROL, 0x20, //
-    	2, CMD_POWER_CONTROL_1, 0x23,
-    	2, CMD_POWER_CONTROL_2, 0x10,
-		3, CMD_VCOM_CONTROL_1, 0x3E, 0x28,
-		2, CMD_VCOM_CONTROL_2, 0x86,
-    	2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF,
-		// Interface VSYNC/HSYNC/DOTCLK/DE/RGB666
-		2, CMD_RGB_INTERFACE_SIGNAL_CONTROL, 0xC2,
-		4, CMD_INTERFACE_CONTROL, 0x01, 0x00, 0x06,
-		// Format de video
+    	__POWER_CONTROL_B(0x00, 0xC1, 0x30),
+		__POWER_ON_SEQUENCE_CONTROL(0x64, 0x03, 0x12, 0x81),
+    	__DRIVER_TIMING_CONTROL_A(0x85, 0x00, 0x78),
+		__POWER_CONTROL_A(0x39, 0x2C, 0x00, 0x34, 0x02),
+		__PUMP_RATIO_CONTROL(0x20),
+    	__DRIVER_TIMING_CONTROL_B(0x00, 0x00),
+    	__FRAME_RATE_CONTROL_1(0x00, 0x18),
+    	__POWER_CONTROL_1(0x23),
+    	__POWER_CONTROL_2(0x10),
+		__VCOM_CONTROL_1(0x3E, 0x28),
+		__VCOM_CONTROL_2(0x86),
+		__MEMORY_ACCESS_CONTROL(0x08 | MAC_MX_ON | MAC_MY_ON),
+		__ENABLE_3G(0x00),
+		__RGB_INTERFACE_SIGNAL_CONTROL(0xC2),
+
 #if defined(ILI9341_COLORMODE_565)
-    	2, CMD_PIXEL_FORMAT_SET, 0x55,
+    	//__PIXEL_FORMAT_SET(0x55),
 #elif defined(ILI9341_COLORMODE_666)
-        2, CMD_PIXEL_FORMAT_SET, 0x66,
+        __PIXEL_FORMAT_SET(0x66),
 #endif
-    	3, CMD_FRAME_RATE_CONTROL_1, 0x00, 0x18,
-		4, CMD_DISPLAY_FUNCTION_CONTROL, 0x08, 0x82, 0x27,
-    	2, CMD_ENABLE_3G, 0x00,
-    	2, CMD_GAMMA_SET, 0x01,
-    	16, CMD_POSITIVE_GAMMA_CORRECTION, 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
-            0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00,
-    	16, CMD_NEGATIVE_GAMMA_CORRECTION, 0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
-            0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F,
-        1, CMD_SLEEP_OUT,
-        OP_DELAY, 150,
-        1, CMD_DISPLAY_ON,
-        OP_DELAY, 50,
+		__DISPLAY_FUNCTION_CONTROL(0x0A, 0xA7, 0x27, 0x04),
+		__COLUMN_ADDRESS_SET(0x00, 0x00, 0x00, 0xEF),
+		__PAGE_ADDRESS_SET(0x00, 0x00, 0x01, 0x3F),
+		__INTERFACE_CONTROL(0x01, 0x00, 0x06),
+		__MEMORY_WRITE,
+		OP_DELAY, 200,
+		__GAMMA_SET(0x01),
+		__POSITIVE_GAMMA_CORRECTION(0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
+            0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00),
+    	__NEGATIVE_GAMMA_CORRECTION(0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
+            0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F),
+        __SLEEP_OUT,
+        OP_DELAY, 200,
+        __DISPLAY_ON,
+		__MEMORY_WRITE,
         OP_END
     };
 #elif
@@ -386,6 +396,8 @@ void ILI9341LTDC_Driver::lcdWriteData(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el control de la memoria d'imatge
 ///
+LTDC_HandleTypeDef ltdcHandle;
+
 void ILI9341LTDC_Driver::ltdcInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
@@ -455,19 +467,18 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
     clkInit.PLLSAIDivR = RCC_PLLSAIDIVR_8;
     HAL_RCCEx_PeriphCLKConfig(&clkInit);
 
-	LTDC_HandleTypeDef ltdcHandle;
 	ltdcHandle.Instance = LTDC;
 	ltdcHandle.Init.HSPolarity = LTDC_HSPOLARITY_AL;
 	ltdcHandle.Init.VSPolarity = LTDC_VSPOLARITY_AL;
 	ltdcHandle.Init.DEPolarity = LTDC_DEPOLARITY_AL;
 	ltdcHandle.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
 	ltdcHandle.Init.Backcolor.Red = 0;
-	ltdcHandle.Init.Backcolor.Green = 128;
+	ltdcHandle.Init.Backcolor.Green = 0;
 	ltdcHandle.Init.Backcolor.Blue = 0;
-    ltdcHandle.Init.HorizontalSync = 9;
-    ltdcHandle.Init.VerticalSync = 1;
-    ltdcHandle.Init.AccumulatedHBP = 29;
-    ltdcHandle.Init.AccumulatedVBP = 3;
+    ltdcHandle.Init.HorizontalSync = ILI9341_HSYNC;
+    ltdcHandle.Init.VerticalSync = ILI9341_VSYNC;
+    ltdcHandle.Init.AccumulatedHBP = ILI9341_HBP;
+    ltdcHandle.Init.AccumulatedVBP = ILI9341_VBP;
     ltdcHandle.Init.AccumulatedActiveW = 269;
     ltdcHandle.Init.AccumulatedActiveH = 323;
     ltdcHandle.Init.TotalWidth = 279;
@@ -488,9 +499,9 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
 	cfgLayer.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
 	cfgLayer.Alpha = 255;
 	cfgLayer.Alpha0 = 0;
-	cfgLayer.Backcolor.Blue = 128;
+	cfgLayer.Backcolor.Blue = 0;
 	cfgLayer.Backcolor.Green = 0;
-	cfgLayer.Backcolor.Red = 128;
+	cfgLayer.Backcolor.Red = 0;
 	cfgLayer.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
 	cfgLayer.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
 	cfgLayer.ImageWidth = MAX_COLUMNS;
@@ -505,47 +516,13 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
 
 	__HAL_LTDC_LAYER_ENABLE(&ltdcHandle, 0);
 	__HAL_LTDC_RELOAD_CONFIG(&ltdcHandle);
+
+	  HAL_NVIC_SetPriority(LTDC_IRQn, 0xE, 0);
+	  HAL_NVIC_EnableIRQ(LTDC_IRQn);
 }
-/*
-void __init() {
 
-	static const uint8_t lcdInit[] = {
-		0xCA, 0xC3, 0x08, 0x50,
-		CMD_POWER_CONTROL_B, 0x00, 0xC1, 0x30,
-		CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0x12, 0x81,
-		CMD_DRIVER_TIMING_CONTROL_A, 0x85, 0x00, 0x78,
-		CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,
-		CMD_PUMP_RATIO_CONTROL, 0x20,
-		CMD_DRIVER_TIMING_CONTROL_B, 0x00, 0x00,
-		LCD_FRMCTR1, 0x00, 0x1B,
-		LCD_DFC, 0x0A, 0xA2,
-		LCD_POWER1, 0x10,
-		LCD_POWER2, 0x10,
-		LCD_VCOM1, 0x45, 0x15,
-		LCD_VCOM2, 0x90,
-		LCD_MAC, 0xC8,
-		LCD_3GAMMA_EN, 0x00,
-		LCD_RGB_INTERFACE, 0xC2,
-		LCD_DFC, 0x0A, 0xA7, 0x27, 0x04,
-		LCD_COLUMN_ADDR, 0x00, 0x00, 0x00, 0xEF,
-		LCD_PAGE_ADDR, 0x00, 0x00, 0x01, 0x3F,
-		LCD_INTERFACE, 0x01, 0x00, 0x06,
-		LCD_GRAM,
 
-	  LCD_Delay(200);
+void LTDC_IRQHandler(void) {
 
-	  LCD_GAMMA, 0x01,
-	  LCD_PGAMMA, 0x0F, 0x29, 0x24, 0x0C, 0x0E, 0x09, 0x4E, 0x78,
-	  	  	  	  0x3C, 0x09, 0x13, 0x05, 0x17, 0x11, 0x00,
-	  LCD_NGAMMA, 0x00, 0x16, 0x1B, 0x04, 0x11, 0x07, 0x31, 0x33,
-	              0x42, 0x05, 0x0C, 0x0A, 0x28, 0x2F, 0x0F,
-
-	  LCD_SLEEP_OUT,
-
-	  LCD_Delay(200);
-
-	  LCD_DISPLAY_ON,
-	  // GRAM start writing
-	  ili9341_WriteReg(LCD_GRAM);
+	HAL_LTDC_IRQHandler(&ltdcHandle);
 }
-*/

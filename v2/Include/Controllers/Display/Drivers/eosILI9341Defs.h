@@ -86,6 +86,7 @@
 #define CMD_DRIVER_TIMING_CONTROL_B                        0xEA
 #define CMD_POWER_ON_SEQUENCE_CONTROL                      0xED
 #define CMD_ENABLE_3G                                      0xF2
+#define CMD_INTERFACE_CONTROL                              0xF6
 #define CMD_PUMP_RATIO_CONTROL                             0xF7
 
 // Parametres de la comanda MEMORY_ACCESS_CONTROL
@@ -129,9 +130,15 @@
 #define __DISPLAY_ON \
 	1, CMD_DISPLAY_ON
 
-#define __COLUMN_ADDRESS_SET
-#define __PAGE_ADDRESS_SET
-#define __MEMORY_WRITE
+#define __COLUMN_ADDRESS_SET(p1, p2, p3, p4) \
+	5, CMD_COLUMN_ADDRESS_SET, p1, p2, p3, p4
+
+#define __PAGE_ADDRESS_SET(p1, p2, p3, p4) \
+	5, CMD_PAGE_ADDRESS_SET, p1, p2, p3, p4
+
+#define __MEMORY_WRITE \
+	1, CMD_MEMORY_WRITE
+
 #define __COLOR_SET
 #define __MEMORY_READ
 #define __PARTIAL_AREA
@@ -164,7 +171,9 @@
 #define __READ_ID1
 #define __READ_ID2
 #define __READ_ID3
-#define __RGB_INTERFACE_SIGNAL_CONTROL
+
+#define __RGB_INTERFACE_SIGNAL_CONTROL(p1) \
+	2, CMD_RGB_INTERFACE_SIGNAL_CONTROL, p1
 
 #define __FRAME_RATE_CONTROL_1(p1, p2) \
 	3, CMD_FRAME_RATE_CONTROL_1, p1, p2
@@ -174,8 +183,8 @@
 #define __DISPLAY_INVERSION_CONTROL
 #define __BLANKING_PORCH_CONTROL
 
-#define __DISPLAY_FUNCTION_CONTROL(p1, p2, p3) \
-	4, CMD_DISPLAY_FUNCTION_CONTROL, p1, p2, p3
+#define __DISPLAY_FUNCTION_CONTROL(p1, p2, p3, p4) \
+	5, CMD_DISPLAY_FUNCTION_CONTROL, p1, p2, p3, p4
 
 #define __ENTRY_MODE_SET
 #define __BACKLIGHT_CONTROL_1
@@ -211,7 +220,6 @@
 
 #define __DIGITAL_GAMMA_CONTROL_1
 #define __DIGITAL_GAMMA_CONTROL_2
-#define __INTERFACE_CONTROL
 
 #define __POWER_CONTROL_A(p1, p2, p3, p4, p5) \
 	6, CMD_POWER_CONTROL_A, p1, p2, p3, p4, p5
@@ -230,6 +238,9 @@
 
 #define __ENABLE_3G(p1) \
 	2, CMD_ENABLE_3G, p1
+
+#define __INTERFACE_CONTROL(p1, p2, p3) \
+	4, CMD_INTERFACE_CONTROL, p1, p2, p3
 
 #define __PUMP_RATIO_CONTROL(a) \
 	2, CMD_PUMP_RATIO_CONTROL, a

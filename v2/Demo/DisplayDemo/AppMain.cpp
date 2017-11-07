@@ -114,8 +114,8 @@ void LedLoopService::onRun() {
 ///
 void DisplayLoopService::onSetup() {
 
-	driver = new ILI9341_Driver();
-	//driver = new ILI9341LTDC_Driver();
+	//driver = new ILI9341_Driver();
+	driver = new ILI9341LTDC_Driver();
     driver->initialize();
     driver->setOrientation(DisplayOrientation::rotate180);
 
