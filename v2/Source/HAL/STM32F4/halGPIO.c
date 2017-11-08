@@ -1,4 +1,6 @@
 #include "hal/halGPIO.h"
+#include "stm32f4xx_hal_gpio.h"
+#include "stm32f4xx_hal_rcc.h"
 
 
 GPIO_TypeDef * const gpioTbl[] = {
@@ -14,6 +16,130 @@ GPIO_TypeDef * const gpioTbl[] = {
 	GPIOJ,
 	GPIOK
 };
+
+
+// Taula de conversio HAL_GPIO_MODE_xxxx
+//
+static const uint32_t modeTbl[] = {
+	GPIO_MODE_INPUT,
+	GPIO_MODE_OUTPUT_PP,
+	GPIO_MODE_OUTPUT_OD,
+	GPIO_MODE_AF_PP,
+	GPIO_MODE_AF_OD,
+	GPIO_MODE_ANALOG
+};
+
+// Taula de conversio HAL_GPIO_SPEED
+//
+static const uint32_t speedTbl[] = {
+	GPIO_SPEED_FREQ_LOW,
+	GPIO_SPEED_FREQ_MEDIUM,
+	GPIO_SPEED_FREQ_HIGH,
+	GPIO_SPEED_FREQ_VERY_HIGH
+};
+
+// Taula de conversio HAL_GPIO_PULL
+//
+static const uint32_t pupdTbl[] = {
+	GPIO_NOPULL,
+	GPIO_PULLUP,
+	GPIO_PULLDOWN
+};
+
+
+/// ----------------------------------------------------------------------
+/// \brief Activa el rellotge del port GPIO
+/// \param port: El identificador del port.
+///
+static void EnableClock(
+	uint8_t port) {
+
+	switch (port) {
+		case HAL_GPIO_PORT_A:
+			__HAL_RCC_GPIOA_CLK_ENABLE();
+			break;
+
+		case HAL_GPIO_PORT_B:
+			__HAL_RCC_GPIOB_CLK_ENABLE();
+			break;
+
+		case HAL_GPIO_PORT_C:
+			__HAL_RCC_GPIOC_CLK_ENABLE();
+			break;
+
+		case HAL_GPIO_PORT_D:
+			__HAL_RCC_GPIOD_CLK_ENABLE();
+			break;
+
+		case HAL_GPIO_PORT_E:
+			__HAL_RCC_GPIOE_CLK_ENABLE();
+			break;
+
+		case HAL_GPIO_PORT_F:
+			__HAL_RCC_GPIOF_CLK_ENABLE();
+			break;
+
+		case HAL_GPIO_PORT_G:
+			__HAL_RCC_GPIOG_CLK_ENABLE();
+			break;
+
+		case HAL_GPIO_PORT_H:
+			__HAL_RCC_GPIOH_CLK_ENABLE();
+			break;
+
+		case HAL_GPIO_PORT_I:
+			__HAL_RCC_GPIOI_CLK_ENABLE();
+			break;
+
+		case HAL_GPIO_PORT_J:
+			__HAL_RCC_GPIOJ_CLK_ENABLE();
+			break;
+
+		case HAL_GPIO_PORT_K:
+			__HAL_RCC_GPIOK_CLK_ENABLE();
+			break;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Configura els parametres d'inicialitzacio.
+/// \param info: Informacio d'inicialitzacio.
+/// \param init: Buffer on deixar els parametres d'inicialitzacio.
+/// \return Adressa del buffer.
+///
+static GPIO_InitTypeDef *PreparePinInit(
+	const GPIOInitializePinInfo *info,
+	GPIO_InitTypeDef *init) {
+
+	init->Pin = 1 << info->pin;
+	init->Mode = modeTbl[info->options & HAL_GPIO_MODE_MASK];
+	init->Speed = speedTbl[(info->options & HAL_GPIO_SPEED_MASK) >> 6];
+	init->Pull = pupdTbl[(info->options & HAL_GPIO_PULL_MASK) >> 9];
+	init->Alternate = (uint32_t) info->alt;
+
+	return init;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Configura els parametres d'inicialitzacio.
+/// \param info: Informacio d'inicialitzacio.
+/// \param init: Buffer on deixar els parametres d'inicialitzacio.
+/// \return Adressa del buffer.
+///
+static GPIO_InitTypeDef *PreparePortInit(
+	const GPIOInitializePortInfo *info,
+	GPIO_InitTypeDef *init) {
+
+	init->Pin = 1 << info->mask;
+	init->Mode = modeTbl[info->options & HAL_GPIO_MODE_MASK];
+	init->Speed = speedTbl[(info->options & HAL_GPIO_SPEED_MASK) >> 6];
+	init->Pull = pupdTbl[(info->options & HAL_GPIO_PULL_MASK) >> 9];
+	init->Alternate = (uint32_t) info->alt;
+
+	return init;
+}
 
 
 /// ----------------------------------------------------------------------
@@ -37,102 +163,11 @@ void halGPIOInitializePins(
 void halGPIOInitializePin(
 	const GPIOInitializePinInfo *info) {
 
-	uint32_t temp;
-	GPIO_TypeDef * const gpio = gpioTbl[info->port];
+	EnableClock(info->port);
 
-	// Activa el rellotge del controlador GPIO
-	//
-	RCC->AHB1ENR |= 1 << info->port;
-
-	// Selecciona el modus (INPUT, OUTPUT, ANALOG, FUNCTION)
-	//
-	temp = gpio->MODER;
-	temp &= ~(0b11 << (info->pin * 2)); // Per defecte INPUT
-	switch (info->options & HAL_GPIO_MODE_MASK) {
-		case HAL_GPIO_MODE_OUTPUT:
-			temp |= 0b01 << (info->pin * 2);
-			if ((info->options & HAL_GPIO_INIT_MASK) == HAL_GPIO_INIT_CLR)
-				halGPIOClearPin(info->port, info->pin);
-			else
-				halGPIOSetPin(info->port, info->pin);
-			break;
-
-		case HAL_GPIO_MODE_FUNCTION:
-			temp |= 0b10 << (info->pin * 2);
-			break;
-
-		case HAL_GPIO_MODE_ANALOG:
-			temp |= 0b11 << (info->pin * 2);
-			break;
-	}
-	gpio->MODER = temp;
-
-	// Selecciona el PullUp (NONE, UP, DOWN)
-	//
-	temp = gpio->PUPDR;
-	temp &= ~(0b11 << (info->pin * 2)); // Per defecte NONE
-	switch (info->options & HAL_GPIO_PULL_MASK) {
-		case HAL_GPIO_PULL_UP:
-			temp |= 0b01 << (2 * info->pin);
-			break;
-
-		case HAL_GPIO_PULL_DOWN:
-			temp |= 0b10 << ( 2 * info->pin);
-			break;
-	}
-	gpio->PUPDR = temp;
-
-	// En cas que sigui MODE_OUTPUT o MODE_FUNCTION
-	//
-	if  (((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT) ||
-		 ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_FUNCTION)) {
-
-		// Selecciona la velocitat (LOW, MEDIUM, HIGH, FAST)
-		//
-		temp = gpio->OSPEEDR;
-		temp &= ~(0b11 << (2 * info->pin)); // Per defecte LOW
-		switch (info->options & HAL_GPIO_SPEED_MASK) {
-			case HAL_GPIO_SPEED_MEDIUM:
-				temp |= 0b01 << (2 * info->pin);
-				break;
-
-			case HAL_GPIO_SPEED_HIGH:
-				temp |= 0b10 << (2 * info->pin);
-				break;
-
-			case HAL_GPIO_SPEED_FAST:
-				temp |= 0b11 << (2 * info->pin);
-				break;
-		}
-		gpio->OSPEEDR = temp;
-
-		// Selecciona el tipus de sortida (PUSHPULL, OPENDRAIN)
-		//
-		temp = gpio->OTYPER;
-		if ((info->options & HAL_GPIO_OPENDRAIN_MASK) == HAL_GPIO_OPENDRAIN_ENABLED)
-			temp |= 1 << info->pin;
-		else
-			temp &= ~(1 << info->pin);
-		gpio->OTYPER = temp;
-	}
-
-	// Si es una funcio alternativa, la selecciona
-	//
-	if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_FUNCTION) {
-		temp = gpio->AFR[info->pin >> 3];
-	    temp &= ~((uint32_t)0xFU << ((uint32_t)(info->pin & (uint32_t)0x07U) * 4U)) ;
-	    temp |= ((uint32_t)info->function << (((uint32_t)info->pin & (uint32_t)0x07U) * 4U));
-	    gpio->AFR[info->pin >> 3] = temp;
-	}
-
-	// Si es una sortida digital, inicialitza el seu valor
-	//
-	if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT) {
-		if ((info->options & HAL_GPIO_INIT_MASK) == HAL_GPIO_INIT_CLR)
-			halGPIOClearPin(info->port, info->pin);
-		else
-			halGPIOSetPin(info->port, info->pin);
-	}
+	GPIO_InitTypeDef gpioInit;
+	PreparePinInit(info, &gpioInit);
+	HAL_GPIO_Init(gpioTbl[info->port], &gpioInit);
 }
 
 
@@ -158,63 +193,11 @@ void halGPIOInitializePorts(
 void halGPIOInitializePort(
 	const GPIOInitializePortInfo *info) {
 
-	GPIOInitializePinInfo pinInfo;
-	pinInfo.port = info->port;
-	pinInfo.options = info->options;
-	pinInfo.function = info->function;
+	EnableClock(info->port);
 
-	for (uint8_t pin = 0; pin < 16; pin++) {
-		if ((info->mask & (1 << pin)) != 0) {
-			pinInfo.pin = pin;
-			halGPIOInitializePin(&pinInfo);
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Configura un port com a entrades.
-/// \param port: Identificador del port.
-/// \param mask: Mascara de pins.
-///
-void halGPIOInitializePortInput(
-	uint8_t port,
-	uint16_t mask) {
-
-	GPIOInitializePinInfo info;
-	info.port = port;
-	info.options = HAL_GPIO_MODE_INPUT;
-	info.function = 0;
-
-	for (uint8_t pin = 0; pin < 16; pin++) {
-		if ((mask & (1 << pin)) != 0) {
-			info.pin = pin;
-			halGPIOInitializePin(&info);
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Configura un port com a sortides.
-/// \param port: Identificador del port.
-/// \param mask: Mascara de pins.
-///
-void halGPIOInitializePortOutput(
-	uint8_t port,
-	uint16_t mask) {
-
-	GPIOInitializePinInfo info;
-	info.port = port;
-	info.options = HAL_GPIO_MODE_OUTPUT;
-	info.function = 0;
-
-	for (uint8_t pin = 0; pin < 16; pin++) {
-		if ((mask & (1 << pin)) != 0) {
-			info.pin = pin;
-			halGPIOInitializePin(&info);
-		}
-	}
+	GPIO_InitTypeDef init;
+	PreparePortInit(info, &init);
+	HAL_GPIO_Init(gpioTbl[info->port], &init);
 }
 
 
@@ -229,13 +212,13 @@ void halGPIOInitialize(
 	uint8_t port,
 	uint8_t pin,
 	uint32_t options,
-	GPIOFunction function) {
+	uint8_t alt) {
 
-	GPIOInitializePinInfo init;
-	init.port = port;
-	init.pin = pin;
-	init.options = options;
-	init.function = function;
+	GPIOInitializePinInfo info;
+	info.port = port;
+	info.pin = pin;
+	info.options = options;
+	info.alt = alt;
 
-	halGPIOInitializePin(&init);
+	halGPIOInitializePin(&info);
 }

@@ -21,16 +21,25 @@
 //
 #define MAX_COLUMNS          240
 #define MAX_ROWS             320
-#define MAX_LAYERS           2
-#define FRAME_BUFFER		 ILI9341LTDC_VRAM
-#define FRAME_OFFSET		 (MAX_COLUMNS * MAX_ROWS * sizeof(uint16_t))
 
-#define  ILI9341_HSYNC            ((uint32_t)9)   // Horizontal synchronization
-#define  ILI9341_HBP              ((uint32_t)29)  // Horizontal back porch
-#define  ILI9341_HFP              ((uint32_t)2)   // Horizontal front porch
-#define  ILI9341_VSYNC            ((uint32_t)1)   // Vertical synchronization
-#define  ILI9341_VBP              ((uint32_t)3)   // Vertical back porch
-#define  ILI9341_VFP              ((uint32_t)2)   // Vertical front porch
+// Parametres de la pagina de video
+//
+#define PIXEL_TYPE           uint16_t
+#define FRAME_WIDTH          ((int32_t)240)
+#define FRAME_HEIGHT         ((int32_t)160)
+#define FRAME_PAGES          ((int32_t)1)
+#define FRAME_SIZE           ((int32_t)(FRAME_WIDTH * FRAME_HEIGHT * FRAME_PAGES * sizeof(PIXEL_TYPE)))
+#define FRAME_BUFFER		 (uint32_t)(frame_buffer)
+//#define FRAME_BUFFER		 ILI9341LTDC_VRAM
+
+// Parametres del controlador de video
+//
+#define  ILI9341_HSYNC       ((uint32_t)9)  // Horizontal synchronization
+#define  ILI9341_HBP         ((uint32_t)29) // Horizontal back porch
+#define  ILI9341_HFP         ((uint32_t)2)  // Horizontal front porch
+#define  ILI9341_VSYNC       ((uint32_t)1)  // Vertical synchronization
+#define  ILI9341_VBP         ((uint32_t)3)  // Vertical back porch
+#define  ILI9341_VFP         ((uint32_t)2)  // Vertical front porch
 
 
 // Codis d'operacio
@@ -42,6 +51,9 @@
 using namespace eos;
 
 
+uint16_t frame_buffer[FRAME_SIZE];
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
@@ -49,7 +61,10 @@ ILI9341LTDC_Driver::ILI9341LTDC_Driver() {
 
     screenWidth = MAX_COLUMNS;
     screenHeight = MAX_ROWS;
-    buffer = (int8_t *) FRAME_BUFFER;
+
+    frameWidth = FRAME_WIDTH;
+	frameHeight = FRAME_HEIGHT;
+    frameBuffer = (int8_t *) FRAME_BUFFER;
 }
 
 
@@ -58,56 +73,7 @@ ILI9341LTDC_Driver::ILI9341LTDC_Driver() {
 ///
 void ILI9341LTDC_Driver::initialize() {
 
-#if defined(STM32F429I_DISC1)
-    static uint8_t const lcdInit[] = {
-        __SOFTWARE_RESET,
-        OP_DELAY, 250,
-        OP_DELAY, 250,
-    	__POWER_CONTROL_B(0x00, 0xC1, 0x30),
-		__POWER_ON_SEQUENCE_CONTROL(0x64, 0x03, 0x12, 0x81),
-    	__DRIVER_TIMING_CONTROL_A(0x85, 0x00, 0x78),
-		__POWER_CONTROL_A(0x39, 0x2C, 0x00, 0x34, 0x02),
-		__PUMP_RATIO_CONTROL(0x20),
-    	__DRIVER_TIMING_CONTROL_B(0x00, 0x00),
-    	__FRAME_RATE_CONTROL_1(0x00, 0x18),
-    	__POWER_CONTROL_1(0x23),
-    	__POWER_CONTROL_2(0x10),
-		__VCOM_CONTROL_1(0x3E, 0x28),
-		__VCOM_CONTROL_2(0x86),
-		__MEMORY_ACCESS_CONTROL(0x08 | MAC_MX_ON | MAC_MY_ON),
-		__ENABLE_3G(0x00),
-		__RGB_INTERFACE_SIGNAL_CONTROL(0xC2),
-
-#if defined(ILI9341_COLORMODE_565)
-    	//__PIXEL_FORMAT_SET(0x55),
-#elif defined(ILI9341_COLORMODE_666)
-        __PIXEL_FORMAT_SET(0x66),
-#endif
-		__DISPLAY_FUNCTION_CONTROL(0x0A, 0xA7, 0x27, 0x04),
-		__COLUMN_ADDRESS_SET(0x00, 0x00, 0x00, 0xEF),
-		__PAGE_ADDRESS_SET(0x00, 0x00, 0x01, 0x3F),
-		__INTERFACE_CONTROL(0x01, 0x00, 0x06),
-		__MEMORY_WRITE,
-		OP_DELAY, 200,
-		__GAMMA_SET(0x01),
-		__POSITIVE_GAMMA_CORRECTION(0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
-            0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00),
-    	__NEGATIVE_GAMMA_CORRECTION(0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
-            0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F),
-        __SLEEP_OUT,
-        OP_DELAY, 200,
-        __DISPLAY_ON,
-		__MEMORY_WRITE,
-        OP_END
-    };
-#elif
-#error "Display no soportado"
-#endif
-
-    // Inicialitzacio del controlador
-    //
     displayInit();
-	writeCommands(lcdInit);
 }
 
 
@@ -138,8 +104,8 @@ void ILI9341LTDC_Driver::clear(
 	const Color &color) {
 
 	uint16_t c = color.to565();
-	uint16_t *p = (uint16_t*) buffer;
-	for (int i = 0; i < screenWidth * screenHeight; i++)
+	PIXEL_TYPE *p = (PIXEL_TYPE*) frameBuffer;
+	for (int32_t i = FRAME_SIZE / sizeof(PIXEL_TYPE); i != 0; i--)
 		*p++ = c;
 }
 
@@ -155,7 +121,8 @@ void ILI9341LTDC_Driver::setPixel(
 	int16_t y,
 	const Color &color) {
 
-	*((uint16_t*)(buffer + (y * screenWidth + x) * sizeof(uint16_t))) = color.to565();
+	if (x >= 0 && x <= frameWidth && y >= 0 && y <= frameHeight)
+		*((PIXEL_TYPE*)(frameBuffer + (y * frameWidth + x) * sizeof(PIXEL_TYPE))) = color.to565();
 }
 
 
@@ -258,9 +225,52 @@ void ILI9341LTDC_Driver::hScroll(
 ///
 void ILI9341LTDC_Driver::displayInit() {
 
-    ltdcInitialize();
+#if defined(STM32F429I_DISC1)
+    static const uint8_t lcdInit[] = {
+        __SOFTWARE_RESET,
+        OP_DELAY, 250,
+        OP_DELAY, 250,
+		__PUMP_RATIO_CONTROL(0x20),
+		__POWER_CONTROL_A(0x39, 0x2C, 0x00, 0x34, 0x02),
+    	__POWER_CONTROL_B(0x00, 0xC1, 0x30),
+		__POWER_ON_SEQUENCE_CONTROL(0x64, 0x03, 0x12, 0x81),
+    	__POWER_CONTROL_1(0x23),
+    	__POWER_CONTROL_2(0x10),
+    	__FRAME_RATE_CONTROL_1(0x00, 0x18),
+    	__DRIVER_TIMING_CONTROL_A(0x85, 0x00, 0x78),
+    	__DRIVER_TIMING_CONTROL_B(0x00, 0x00),
+		__VCOM_CONTROL_1(0x3E, 0x28),
+		__VCOM_CONTROL_2(0x86),
+		__ENABLE_3G(0x00),
+		__MEMORY_ACCESS_CONTROL(0x08 | MAC_MX_ON | MAC_MY_ON),
+		__RGB_INTERFACE_SIGNAL_CONTROL(0xC2),
+		__DISPLAY_FUNCTION_CONTROL(0x0A, 0xA7, 0x27, 0x04),
+		__INTERFACE_CONTROL(0x01, 0x00, 0x06),
+		OP_DELAY, 200,
+		__GAMMA_SET(0x01),
+		__POSITIVE_GAMMA_CORRECTION(0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
+            0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00),
+    	__NEGATIVE_GAMMA_CORRECTION(0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
+            0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F),
+        __SLEEP_OUT,
+        OP_DELAY, 200,
+        __DISPLAY_ON,
+        OP_END
+    };
+
+#elif
+#error "Display no soportado"
+#endif
+
+    // Inicialitza la pantalla
+    //
 	lcdInitialize();
 	lcdReset();
+	writeCommands(lcdInit);
+
+	// Inicialitza el controlador de video
+	//
+	ltdcInitialize();
 }
 
 
@@ -312,15 +322,15 @@ void ILI9341LTDC_Driver::lcdInitialize() {
 			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0                  },
 #endif
 		{ ILI9341LTDC_CS_PORT,     ILI9341LTDC_CS_PIN,
-			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_SET, 0                  },
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, 0                  },
 		{ ILI9341LTDC_RS_PORT,     ILI9341LTDC_RS_PIN,
-			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0                  },
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0                  },
 		{ ILI9341LTDC_CLK_PORT,    ILI9341LTDC_CLK_PIN,
-			HAL_GPIO_MODE_FUNCTION,                   ILI9341LTDC_CLK_AF },
+			HAL_GPIO_MODE_ALT_PP,                   ILI9341LTDC_CLK_AF },
 		{ ILI9341LTDC_MISO_PORT,   ILI9341LTDC_MISO_PIN,
-			HAL_GPIO_MODE_FUNCTION,                   ILI9341LTDC_MISO_AF},
+			HAL_GPIO_MODE_ALT_PP,                   ILI9341LTDC_MISO_AF},
 		{ ILI9341LTDC_MOSI_PORT,   ILI9341LTDC_MOSI_PIN,
-			HAL_GPIO_MODE_FUNCTION,                   ILI9341LTDC_MOSI_AF}
+			HAL_GPIO_MODE_ALT_PP,                   ILI9341LTDC_MOSI_AF}
 	};
 
 	static const SPIInitializeInfo spiInit = {
@@ -402,56 +412,56 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
     	{ ILI9341LTDC_DE_PORT,     ILI9341LTDC_DE_PIN,
-    		HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_DE_AF    },
+    		HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_DE_AF    },
 		{ ILI9341LTDC_HSYNC_PORT,  ILI9341LTDC_HSYNC_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_HSYNC_AF },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_HSYNC_AF },
 		{ ILI9341LTDC_VSYNC_PORT,  ILI9341LTDC_VSYNC_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_VSYNC_AF },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_VSYNC_AF },
 		{ ILI9341LTDC_DOTCLK_PORT, ILI9341LTDC_DOTCLK_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_DOTCLK_AF},
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_DOTCLK_AF},
 		{ ILI9341LTDC_R2_PORT,     ILI9341LTDC_R2_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_R2_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R2_AF    },
 		{ ILI9341LTDC_R3_PORT,     ILI9341LTDC_R3_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_R3_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R3_AF    },
 		{ ILI9341LTDC_R4_PORT,     ILI9341LTDC_R4_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_R4_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R4_AF    },
 		{ ILI9341LTDC_R5_PORT,     ILI9341LTDC_R5_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_R5_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R5_AF    },
 		{ ILI9341LTDC_R6_PORT,     ILI9341LTDC_R6_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_R6_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R6_AF    },
 		{ ILI9341LTDC_R7_PORT,     ILI9341LTDC_R7_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_R7_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R7_AF    },
 		{ ILI9341LTDC_G2_PORT,     ILI9341LTDC_G2_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_G2_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G2_AF    },
 		{ ILI9341LTDC_G3_PORT,     ILI9341LTDC_G3_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_G3_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G3_AF    },
 		{ ILI9341LTDC_G4_PORT,     ILI9341LTDC_G4_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_G4_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G4_AF    },
 		{ ILI9341LTDC_G5_PORT,     ILI9341LTDC_G5_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_G5_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G5_AF    },
 		{ ILI9341LTDC_G6_PORT,     ILI9341LTDC_G6_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_G6_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G6_AF    },
 		{ ILI9341LTDC_G7_PORT,     ILI9341LTDC_G7_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_G7_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G7_AF    },
 		{ ILI9341LTDC_B2_PORT,     ILI9341LTDC_B2_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_B2_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B2_AF    },
 		{ ILI9341LTDC_B3_PORT,     ILI9341LTDC_B3_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_B3_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B3_AF    },
 		{ ILI9341LTDC_B4_PORT,     ILI9341LTDC_B4_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_B4_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B4_AF    },
 		{ ILI9341LTDC_B5_PORT,     ILI9341LTDC_B5_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_B5_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B5_AF    },
 		{ ILI9341LTDC_B6_PORT,     ILI9341LTDC_B6_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_B6_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B6_AF    },
 		{ ILI9341LTDC_B7_PORT,     ILI9341LTDC_B7_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_FUNCTION, ILI9341LTDC_B7_AF    },
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B7_AF    },
 	};
 
 	// Inicialitza el modul GPIO
 	//
 	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
 
-	// Inicialitza el modul LTDC
+	// Inicialitza rellotge del modul LTDC
 	//
 	// Configure PLLSAI prescalers for LCD
 	// Enable Pixel Clock
@@ -459,7 +469,7 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
 	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAI_N = 192 Mhz
 	// PLLLCDCLK = PLLSAI_VCO Output/PLLSAI_R = 192/4 = 96 Mhz
 	// LTDC clock frequency = PLLLCDCLK / RCC_PLLSAIDivR = 96/4 = 24 Mhz
-
+	//
 	RCC_PeriphCLKInitTypeDef clkInit;
     clkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
     clkInit.PLLSAI.PLLSAIN = 192;
@@ -467,6 +477,8 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
     clkInit.PLLSAIDivR = RCC_PLLSAIDIVR_8;
     HAL_RCCEx_PeriphCLKConfig(&clkInit);
 
+    // Inicialitza el modul LTDC
+    //
 	ltdcHandle.Instance = LTDC;
 	ltdcHandle.Init.HSPolarity = LTDC_HSPOLARITY_AL;
 	ltdcHandle.Init.VSPolarity = LTDC_VSPOLARITY_AL;
@@ -484,18 +496,11 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
     ltdcHandle.Init.TotalWidth = 279;
     ltdcHandle.Init.TotalHeigh = 327;
 
-    __LTDC_CLK_ENABLE();
-	//__DMA2D_CLK_ENABLE();
-
-	HAL_LTDC_Init(&ltdcHandle);
-
-	// Inicialitza les capes
-	//
 	LTDC_LayerCfgTypeDef cfgLayer;
 	cfgLayer.WindowX0 = 0;
-	cfgLayer.WindowX1 = MAX_COLUMNS;
+	cfgLayer.WindowX1 = FRAME_WIDTH;
 	cfgLayer.WindowY0 = 0;
-	cfgLayer.WindowY1 = MAX_ROWS;
+	cfgLayer.WindowY1 = FRAME_HEIGHT;
 	cfgLayer.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
 	cfgLayer.Alpha = 255;
 	cfgLayer.Alpha0 = 0;
@@ -504,21 +509,17 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
 	cfgLayer.Backcolor.Red = 0;
 	cfgLayer.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
 	cfgLayer.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
-	cfgLayer.ImageWidth = MAX_COLUMNS;
-	cfgLayer.ImageHeight = MAX_ROWS;
+	cfgLayer.ImageWidth = FRAME_WIDTH;
+	cfgLayer.ImageHeight = FRAME_HEIGHT;
 
-	for (int i = 0; i < MAX_LAYERS; i++) {
-		cfgLayer.FBStartAdress = FRAME_BUFFER + (FRAME_OFFSET * i);
+	__HAL_RCC_LTDC_CLK_ENABLE();
+	HAL_NVIC_SetPriority(LTDC_IRQn, 0xE, 0);
+	HAL_NVIC_EnableIRQ(LTDC_IRQn);
+	HAL_LTDC_Init(&ltdcHandle);
+	for (int i = 0; i < FRAME_PAGES; i++) {
+		cfgLayer.FBStartAdress = FRAME_BUFFER + (i * FRAME_SIZE);
 		HAL_LTDC_ConfigLayer(&ltdcHandle, &cfgLayer, i);
 	}
-
-	HAL_LTDC_EnableDither(&ltdcHandle);
-
-	__HAL_LTDC_LAYER_ENABLE(&ltdcHandle, 0);
-	__HAL_LTDC_RELOAD_CONFIG(&ltdcHandle);
-
-	  HAL_NVIC_SetPriority(LTDC_IRQn, 0xE, 0);
-	  HAL_NVIC_EnableIRQ(LTDC_IRQn);
 }
 
 

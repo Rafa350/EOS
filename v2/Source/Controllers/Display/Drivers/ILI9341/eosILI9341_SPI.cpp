@@ -28,18 +28,18 @@ void ILI9341_Driver::lcdInitialize() {
 	static const GPIOInitializePinInfo gpioInit[] = {
 #ifdef ILI9341_RST_PORT
 		{ILI9341_RST_PORT,  ILI9341_RST_PIN,
-			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0              },
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0              },
 #endif
 		{ILI9341_CS_PORT,   ILI9341_CS_PIN,
-			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_SET, 0              },
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, 0              },
 		{ILI9341_RS_PORT,   ILI9341_RS_PIN,
-			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0              },
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0              },
 		{ILI9341_CLK_PORT,  ILI9341_CLK_PIN,
-			HAL_GPIO_MODE_FUNCTION,                   ILI9341_CLK_AF },
+			HAL_GPIO_MODE_ALT_PP,                   ILI9341_CLK_AF },
 		{ILI9341_MISO_PORT, ILI9341_MISO_PIN,
-			HAL_GPIO_MODE_FUNCTION,                   ILI9341_MISO_AF},
+			HAL_GPIO_MODE_ALT_PP,                   ILI9341_MISO_AF},
 		{ILI9341_MOSI_PORT, ILI9341_MOSI_PIN,
-			HAL_GPIO_MODE_FUNCTION,                   ILI9341_MOSI_AF}
+			HAL_GPIO_MODE_ALT_PP,                   ILI9341_MOSI_AF}
 	};
 
 	static const SPIInitializeInfo spiInit = {

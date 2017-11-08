@@ -9,7 +9,7 @@
 #include <stdint.h>
 
 
-#ifndef EOS_STM32F4
+#if !defined(EOS_STM32F4) && !defined(EOS_STM32F7)
     #error CPU no soportada
 #endif
 
@@ -20,7 +20,9 @@ namespace eos {
         private:
             int16_t screenWidth;
             int16_t screenHeight;
-            int8_t *buffer;
+            int16_t frameWidth;
+            int16_t frameHeight;
+            int8_t *frameBuffer;
 
         public:
             ILI9341LTDC_Driver();
