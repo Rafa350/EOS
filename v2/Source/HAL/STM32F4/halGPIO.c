@@ -1,6 +1,5 @@
 #include "hal/halGPIO.h"
-#include "stm32f4xx_hal_gpio.h"
-#include "stm32f4xx_hal_rcc.h"
+#include "stm32f4xx_hal.h"
 
 
 GPIO_TypeDef * const gpioTbl[] = {

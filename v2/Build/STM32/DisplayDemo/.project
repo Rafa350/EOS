@@ -103,6 +103,11 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/HardwareProfile_STM32F429I-DISC1.h</locationURI>
 		</link>
 		<link>
+			<name>inc/App/STM32F429/stm32f429i_discovery_sdram.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/stm32f429i_discovery_sdram.h</location>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -146,6 +151,11 @@
 			<name>src/App/STM32F429/Main.cpp</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/Main.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F429/stm32f429i_discovery_sdram.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/stm32f429i_discovery_sdram.c</location>
 		</link>
 		<link>
 			<name>src/App/STM32F429/stm32f4xx_hal_timebase_tim.c</name>

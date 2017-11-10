@@ -16,8 +16,8 @@
 
 // Parametres de la pantalla
 //
-#define MAX_COLUMNS          240
-#define MAX_ROWS             320
+#define IMAGE_WIDTH          ((int32_t)ILI9341_SCREEN_WIDTH)
+#define IMAGE_HEIGHT         ((int32_t)ILI9341_SCREEN_HEIGHT)
 
 
 // Codis d'operacio
@@ -34,8 +34,8 @@ using namespace eos;
 ///
 ILI9341_Driver::ILI9341_Driver() {
 
-    screenWidth = MAX_COLUMNS;
-    screenHeight = MAX_ROWS;
+	screenWidth = IMAGE_WIDTH;
+	screenHeight = IMAGE_HEIGHT;
 }
 
 
@@ -46,8 +46,9 @@ void ILI9341_Driver::initialize() {
 
 #if defined(DISPLAY_ER_TFT028_4)
     static const uint8_t initData[] = {
-        1, CMD_SLEEP_OUT,
-        OP_DELAY, 120,
+        __SOFTWARE_RESET,
+        OP_DELAY, 250,
+        OP_DELAY, 250,
         6, CMD_POWER_CONTROL_A, 0x39, 0x2C, 0x00, 0x34, 0x02,
         4, CMD_POWER_CONTROL_B, 0x00, 0xC3, 0x30,
      	5, CMD_POWER_ON_SEQUENCE_CONTROL, 0x64, 0x03, 0X12, 0x81,
@@ -73,10 +74,6 @@ void ILI9341_Driver::initialize() {
             0x53, 0xD5, 0x40, 0x0A, 0x13, 0x03, 0x08, 0x03, 0x00,
         16, CMD_NEGATIVE_GAMMA_CORRECTION, 0x00, 0x00, 0x10, 0x03, 0x0F, 0x05,
             0x2C, 0xA2, 0x3F, 0x05, 0x0E, 0x0C, 0x37, 0x3C, 0x0F,
-        1, CMD_SLEEP_OUT,
-        OP_DELAY, 120,
-        1, CMD_DISPLAY_ON,
-        OP_DELAY, 50,
         OP_END
     };
 
@@ -109,10 +106,6 @@ void ILI9341_Driver::initialize() {
     			0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00),
     	__NEGATIVE_GAMMA_CORRECTION(0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
     			0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F),
-        __SLEEP_OUT,
-        OP_DELAY, 150,
-        __DISPLAY_ON,
-        OP_DELAY, 50,
         OP_END
     };
 #endif
@@ -121,6 +114,7 @@ void ILI9341_Driver::initialize() {
     //
     displayInit();
     writeCommands(initData);
+    displayOn();
 }
 
 
@@ -159,26 +153,26 @@ void ILI9341_Driver::setOrientation(
 
     switch (orientation) {
         case DisplayOrientation::normal:
-            screenWidth = MAX_COLUMNS;
-            screenHeight = MAX_ROWS;
+            screenWidth = IMAGE_WIDTH;
+            screenHeight = IMAGE_HEIGHT;
             writeCommands(orientationData[0]);
             break;
 
         case DisplayOrientation::rotate90:
-            screenWidth = MAX_ROWS;
-            screenHeight = MAX_COLUMNS;
+            screenWidth = IMAGE_HEIGHT;
+            screenHeight = IMAGE_WIDTH;
             writeCommands(orientationData[1]);
             break;
 
         case DisplayOrientation::rotate180:
-            screenWidth = MAX_COLUMNS;
-            screenHeight = MAX_ROWS;
+            screenWidth = IMAGE_WIDTH;
+            screenHeight = IMAGE_HEIGHT;
             writeCommands(orientationData[2]);
             break;
 
         case DisplayOrientation::rotate270:
-            screenWidth = MAX_ROWS;
-            screenHeight = MAX_COLUMNS;
+            screenWidth = IMAGE_HEIGHT;
+            screenHeight = IMAGE_WIDTH;
             writeCommands(orientationData[3]);
             break;
     }
@@ -325,7 +319,7 @@ void ILI9341_Driver::vScroll(
     int16_t width,
     int16_t height) {
 
-    static Color buffer[MAX_COLUMNS];
+    static Color buffer[IMAGE_WIDTH];
 
     if (delta > 0) {
 
@@ -375,13 +369,28 @@ void ILI9341_Driver::displayInit() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Apaga el display.
+/// \brief Activa el display
+///
+void ILI9341_Driver::displayOn() {
+
+	lcdOpen();
+	lcdWriteCommand(CMD_SLEEP_OUT);
+	halTMRDelay(120);
+	lcdWriteCommand(CMD_DISPLAY_ON);
+	lcdClose();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Desactiva el display.
 ///
 void ILI9341_Driver::displayOff() {
 
-    lcdOpen();
-    lcdWriteCommand(CMD_DISPLAY_OFF);
-    lcdClose();
+	lcdOpen();
+	lcdWriteCommand(CMD_DISPLAY_OFF);
+	lcdWriteCommand(CMD_ENTER_SLEEP_MODE);
+	halTMRDelay(120);
+	lcdClose();
 }
 
 
@@ -465,7 +474,7 @@ void ILI9341_Driver::writeRegion(
 
 #if defined(ILI9341_COLORMODE_565)
 
-    uint16_t c = color.to565();
+    uint16_t c = color.toRGB565();
     uint8_t cc[sizeof(uint16_t)];
  	cc[0] = c >> 8;
    	cc[1] = c;
@@ -507,7 +516,7 @@ void ILI9341_Driver::writeRegion(
     static uint16_t _c;
     static int16_t _ccCapacity = 0;
 
-    uint16_t c = color.to565();
+    uint16_t c = color.toRGB565();
 	int16_t ccCapacity = count < (int32_t)(sizeof(cc) / sizeof(cc[0])) ? count : (int32_t)(sizeof(cc) / sizeof(cc[0]));
 	if (c != _c || _ccCapacity < ccCapacity) {
 		for (int16_t i = 0; i < ccCapacity; i++) {

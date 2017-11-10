@@ -6,6 +6,8 @@
 #include "Controllers/Display/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
+#include "stm32f4xx_hal_ltdc.h"
+
 #include <stdint.h>
 
 
@@ -14,20 +16,26 @@
 #endif
 
 
+#define ILI9341LTDC_SCREEN_WIDTH       240  // Tamany fix del controlador
+#define ILI9341LTDC_SCREEN_HEIGHT      320  // Tamany fix del controlador
+
+
 namespace eos {
 
     class ILI9341LTDC_Driver: public IDisplayDriver {
         private:
-            int16_t screenWidth;
-            int16_t screenHeight;
-            int16_t frameWidth;
-            int16_t frameHeight;
-            int8_t *frameBuffer;
+    		LTDC_HandleTypeDef ltdcHandle;
+			int16_t screenWidth;
+			int16_t screenHeight;
+    		uint32_t curLayer;
+            uint8_t *image;
 
         public:
             ILI9341LTDC_Driver();
             void initialize();
             void shutdown();
+            void displayOn();
+            void displayOff();
             void setOrientation(DisplayOrientation orientation);
             int16_t getWidth() const { return screenWidth; }
             int16_t getHeight() const { return screenHeight; }
@@ -42,21 +50,21 @@ namespace eos {
             void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
 
         private:
-            inline int offsetOf(int16_t x, int16_t y) { return x + (y * screenWidth); }
             void displayInit();
-            void displayOff();
             void writeCommands(const uint8_t *dada);
 
         private:
-            static void ltdcInitialize();
+            void ltdcInitialize();
 
-        private:
-            static void lcdInitialize();
-            static void lcdReset();
-            static void lcdOpen();
-            static void lcdClose();
-            static void lcdWriteCommand(uint8_t d);
-            static void lcdWriteData(uint8_t d);
+            void dma2dInitialize();
+            void dma2dFill(const uint8_t *addr, int16_t width, int16_t height, const Color &color);
+
+            void lcdInitialize();
+            void lcdReset();
+            void lcdOpen();
+            void lcdClose();
+            void lcdWriteCommand(uint8_t d);
+            void lcdWriteData(uint8_t d);
     };
 }
 

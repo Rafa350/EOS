@@ -9,17 +9,23 @@
 #include <stdint.h>
 
 
+#define ILI9341_SCREEN_WIDTH      240       // Tamany fix del controlador
+#define ILI9341_SCREEN_HEIGHT     320       // Tamany fix del controlador
+
+
 namespace eos {
 
     class ILI9341_Driver: public IDisplayDriver {
-        private:
-            int16_t screenWidth;
-            int16_t screenHeight;
+    	private:
+    		int16_t screenWidth;
+    		int16_t screenHeight;
 
         public:
             ILI9341_Driver();
             void initialize();
             void shutdown();
+            void displayOn();
+            void displayOff();
             void setOrientation(DisplayOrientation orientation);
             int16_t getWidth() const { return screenWidth; }
             int16_t getHeight() const { return screenHeight; }
@@ -35,7 +41,6 @@ namespace eos {
 
         private:
             void displayInit();
-            void displayOff();
             void writeCommands(const uint8_t *data);
             void writeRegion(const Color &color);
             void writeRegion(const Color &color, int32_t count);

@@ -22,36 +22,6 @@ Color Color::mix(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Converteix un color a format RGB-565
-/// \return El resultat de l'operacio.
-///
-#if !defined(DISPLAY_COLOR_565)
-uint16_t Color::to565() const {
-
-    return (((uint32_t)(((c & 0x00F80000) >> 16) | ((c & 0x0000E000) >> 13))) << 8) |
-           (uint32_t)(((c & 0x00001C00) >> 5) | ((c &0x000000F8) >> 3));
-
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief Converteix un color a format ARGB-8888
-/// \return El resultat de l'operacio.
-///
-#if !defined(DISPLAY_COLORARGB)
-uint32_t Color::toARGB() const {
-
-	return
-		((uint32_t)getA()) << 24 |
-		((uint32_t)getR()) << 16 |
-		((uint32_t)getG()) << 8 |
-		(uint32_t)getB();
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
 /// \brief Contructor.
 /// \param size: Tamany del buffer.
 ///

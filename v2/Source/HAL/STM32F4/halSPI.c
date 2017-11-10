@@ -1,6 +1,5 @@
 #include "hal/halSPI.h"
-#include "stm32f4xx_hal_spi.h"
-#include "stm32f4xx_hal_rcc.h"
+#include "stm32f4xx_hal.h"
 
 
 static SPI_HandleTypeDef spiHandler[HAL_SPI_ID_MAX];

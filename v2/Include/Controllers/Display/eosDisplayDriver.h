@@ -24,6 +24,8 @@ namespace eos {
     		virtual ~IDisplayDriver() {}
             virtual void initialize() = 0;
             virtual void shutdown() = 0;
+            virtual void displayOn() = 0;
+            virtual void displayOff() = 0;
             virtual void setOrientation(DisplayOrientation orientation) = 0;
             virtual int16_t getWidth() const = 0;
             virtual int16_t getHeight() const = 0;
