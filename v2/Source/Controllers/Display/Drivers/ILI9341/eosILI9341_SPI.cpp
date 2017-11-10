@@ -3,18 +3,11 @@
 
 #ifdef ILI9341_IO_TYPE_SPI
 
-#if !defined(ILI9341_IO_SUBTYPE_SPI_HAL) && \
-	!defined(ILI9341_IO_SUBTYPE_SPI_DIRECT)
-#error No se especifico ILI9341_IO_SUBTYPE_SPI_xxx.
-#endif
 
 #include "Controllers/Display/Drivers/eosILI9341.h"
-
-#ifdef ILI9341_IO_SUBTYPE_SPI_HAL
 #include "hal/halSPI.h"
 #include "hal/halGPIO.h"
 #include "hal/halTMR.h"
-#endif
 
 
 using namespace eos;
@@ -36,8 +29,10 @@ void ILI9341_Driver::lcdInitialize() {
 			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0              },
 		{ILI9341_CLK_PORT,  ILI9341_CLK_PIN,
 			HAL_GPIO_MODE_ALT_PP,                   ILI9341_CLK_AF },
+#ifdef ILI9341_MISO_PORT
 		{ILI9341_MISO_PORT, ILI9341_MISO_PIN,
 			HAL_GPIO_MODE_ALT_PP,                   ILI9341_MISO_AF},
+#endif
 		{ILI9341_MOSI_PORT, ILI9341_MOSI_PIN,
 			HAL_GPIO_MODE_ALT_PP,                   ILI9341_MOSI_AF}
 	};
@@ -132,14 +127,13 @@ void ILI9341_Driver::lcdWriteData(
 ///
 uint8_t ILI9341_Driver::lcdReadData() {
 
-#ifdef ILI9341_INTERFACE_WRITEONLY
+#ifdef ILI9341_MISO_PORT
 
+	//return halSPIRead(ILI9341_SPI_MODULE);
 	return 0;
 
 #else
-
-	return halSPIReceive8Bit(ILI9341_SPI_MODULE);
-
+	return 0;
 #endif
 }
 

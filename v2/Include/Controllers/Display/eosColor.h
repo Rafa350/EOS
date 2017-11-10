@@ -155,7 +155,7 @@ namespace eos {
             inline operator uint32_t() const { return c; }
     };
 
-
+/*
     class ColorBuffer {
         private:
 #if defined(DISPLAY_COLOR_ARGB) || defined(DISPLAY_COLOR_RGB)
@@ -190,6 +190,7 @@ namespace eos {
             inline Color getColor(uint8_t index) { return colorTable[index]; }
             void setColor(uint8_t index, Color color);
     };
+    */
 }
 
 

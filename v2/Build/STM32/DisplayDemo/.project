@@ -503,16 +503,6 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</locationURI>

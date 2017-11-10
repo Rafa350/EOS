@@ -13,6 +13,7 @@
 #include "../../../MD-KBD01/KBD01Messages.h"
 #endif
 #include "Controllers/Display/eosDisplay.h"
+#include "Controllers/Display/eosColor.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #include "appMainForm.h"
 
@@ -88,7 +89,7 @@ void MyApplication::onInitialize() {
     driver->setOrientation(Orientation::rotate180);
 
     Display *display = new Display(driver);
-    display->clear(RGB(0, 0, 0));
+    display->clear(COLOR_Black);
 
     FormsDisplay *formsDisplay = new FormsDisplay(display);
 

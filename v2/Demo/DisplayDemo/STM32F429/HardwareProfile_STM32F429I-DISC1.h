@@ -47,28 +47,10 @@
 
 // Opcions de codificacio del color
 #define ILI9341_COLORMODE_565
-//#define ILI9341_COLORMODE_666
 
-#define ILI9341_INTERFACE_WRITEONLY
-
-// Opcions de comunicacio per port paralel per GPIO 8 bits
-//#define ILI9341_IO_TYPE_PIO8
-//#define ILI9342_IO_SUBTYPE_PIO8_HAL
-//#define ILI9342_IO_SUBTYPE_PIO8_DIRECT
-
-// Opcions de comunicacio port port paralel per PMP 8 bits (Unicament per PIC32)
-//#define ILI9341_IO_TYPE_PMP8
-
-// Opcions de comunicacio per port serie GPIO
-//#define ILI9341_IO_TYPE_SIO
-//#define ILI9341_IO_SUBTYPE_SIO_HAL
-//#define ILI9341_IO_SUBTYPE_SIO_DIRECT
-
-// Opcions de comunicacio per port serie SPI
+// Opcions de comunicacio amb el controlodor ILI9341
+//
 #define ILI9341_IO_TYPE_SPI
-#define ILI9341_IO_SUBTYPE_SPI_HAL
-//#define ILI9341_IO_SUBTYPE_SPI_DIRECT
-
 
 // Control del pin CS (Chip select)
 //
@@ -104,16 +86,16 @@
 
 
 // -----------------------------------------------------------------------
-// Controlador de display ILI9341LTDC (Unicament per STM32)
+// Controlador de display ILI9341LTDC
 // -----------------------------------------------------------------------
 
-// Parametres del controlador
+// Punter a la memoria de video
 //
 #define ILI9341LTDC_VRAM          ((uint32_t)0xD0000000)
 
+// Format de color del controlador
+//
 #define ILI9341LTDC_COLORMODE_565
-//#define ILI9341LTDC_COLORMODE_666
-
 
 // Control del pin CS (Chip select)
 //

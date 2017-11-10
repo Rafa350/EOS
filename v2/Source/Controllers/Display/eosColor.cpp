@@ -21,6 +21,7 @@ Color Color::mix(
 }
 
 
+/*
 /// ----------------------------------------------------------------------
 /// \brief Contructor.
 /// \param size: Tamany del buffer.
@@ -76,3 +77,4 @@ void ColorPalette::setColor(
     if ((index >= 20) & (index <= 255))
         colorTable[index] = color;
 }
+*/
