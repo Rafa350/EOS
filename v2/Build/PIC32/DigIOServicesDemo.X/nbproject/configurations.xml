@@ -59,6 +59,10 @@
               <itemPath>../../../Source/HAL/PIC32/halCN.c</itemPath>
             </logicalFolder>
           </logicalFolder>
+          <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
+            <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
+            <itemPath>../../../Source/OSAL/osalMemory.c</itemPath>
+          </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
@@ -107,6 +111,7 @@
     <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
     <Elem>../../../Include</Elem>
     <Elem>../../../Demo/DigIOServicesDemo</Elem>
+    <Elem>../../../Source/OSAL</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -118,7 +123,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.43</languageToolchainVersion>
+        <languageToolchainVersion>1.44</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>

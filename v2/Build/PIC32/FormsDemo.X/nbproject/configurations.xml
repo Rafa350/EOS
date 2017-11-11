@@ -14,67 +14,43 @@
         <itemPath>../../../Demo/FormsDemo/eosConfig.h</itemPath>
         <itemPath>../../../Demo/FormsDemo/appMainForm.h</itemPath>
       </logicalFolder>
-      <logicalFolder name="f1" displayName="Eos" projectFiles="true">
-        <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
-          <logicalFolder name="f1" displayName="Display" projectFiles="true">
-            <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
-              <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341.h</itemPath>
-            </logicalFolder>
-            <itemPath>../../../Include/Controllers/Display/eosColor.h</itemPath>
-            <itemPath>../../../Include/Controllers/Display/eosDisplay.h</itemPath>
-            <itemPath>../../../Include/Controllers/Display/eosFont.h</itemPath>
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="f3" displayName="HAL" projectFiles="true">
-          <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-            <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
-          </logicalFolder>
-          <itemPath>../../../Include/HAL/halI2C.h</itemPath>
-          <itemPath>../../../Include/HAL/halSYS.h</itemPath>
-          <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f2" displayName="Services" projectFiles="true">
-          <logicalFolder name="f2" displayName="Forms" projectFiles="true">
-            <itemPath>../../../../../MD-SEL01/SEL01Messages.h</itemPath>
-            <itemPath>../../../../../MD-KBD01/KBD01Messages.h</itemPath>
-            <itemPath>../../../Include/Services/Forms/eosForms.h</itemPath>
-            <itemPath>../../../Include/Services/Forms/eosLabelForm.h</itemPath>
-            <itemPath>../../../Include/Services/Forms/eosMenuForm.h</itemPath>
-            <itemPath>../../../Include/Services/Forms/eosNumericEditorForm.h</itemPath>
-            <itemPath>../../../Include/Services/Forms/eosOptionEditorForm.h</itemPath>
-          </logicalFolder>
-          <itemPath>../../../Include/Services/eosI2CMaster.h</itemPath>
-          <itemPath>../../../Include/Services/eosKeyboard.h</itemPath>
-          <itemPath>../../../Include/Services/eosSelector.h</itemPath>
-          <itemPath>../../../Include/Services/eosService.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f1" displayName="System" projectFiles="true">
-          <logicalFolder name="f1" displayName="Collections" projectFiles="true">
-            <itemPath>../../../Include/System/Collections/eosList.hpp</itemPath>
-            <itemPath>../../../Include/System/Collections/eosStack.hpp</itemPath>
-          </logicalFolder>
-          <logicalFolder name="f2" displayName="Core" projectFiles="true">
-            <itemPath>../../../Include/System/Core/eosCallbacks.hpp</itemPath>
-            <itemPath>../../../Include/System/Core/eosInterrupts.h</itemPath>
-            <itemPath>../../../Include/System/Core/eosSemaphore.hpp</itemPath>
-            <itemPath>../../../Include/System/Core/eosTask.hpp</itemPath>
-            <itemPath>../../../Include/System/Core/eosTimer.hpp</itemPath>
-            <itemPath>../../../Include/System/Core/eosString.hpp</itemPath>
-            <itemPath>../../../Include/System/Core/eosQueue.hpp</itemPath>
-            <itemPath>../../../Include/System/Core/eosAllocator.hpp</itemPath>
-            <itemPath>../../../Include/System/Core/eosHeapAllocator.hpp</itemPath>
-            <itemPath>../../../Include/System/Core/eosPoolAllocator.hpp</itemPath>
-          </logicalFolder>
-          <logicalFolder name="f3" displayName="Streams" projectFiles="true">
-            <itemPath>../../../Include/System/Streams/eosStreams.hpp</itemPath>
-          </logicalFolder>
-          <itemPath>../../../Include/System/eosApplication.hpp</itemPath>
-        </logicalFolder>
-        <itemPath>../../../Include/eosMacros.h</itemPath>
-        <itemPath>../../../Include/eos.h</itemPath>
-        <itemPath>../../../Include/eosAssert.h</itemPath>
-      </logicalFolder>
       <logicalFolder name="f3" displayName="Frameworks" projectFiles="true">
+        <logicalFolder name="f3" displayName="Eos" projectFiles="true">
+          <logicalFolder name="f2" displayName="Controllers" projectFiles="true">
+            <logicalFolder name="f1" displayName="Display" projectFiles="true">
+              <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
+                <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341.h</itemPath>
+                <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341Defs.h</itemPath>
+              </logicalFolder>
+              <itemPath>../../../Include/Controllers/Display/eosFont.h</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosDisplay.h</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosColor.h</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosDisplayDriver.h</itemPath>
+            </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="f1" displayName="Hal" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
+            </logicalFolder>
+            <itemPath>../../../Include/HAL/halSYS.h</itemPath>
+            <itemPath>../../../Include/HAL/halI2C.h</itemPath>
+            <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f5" displayName="Osal" projectFiles="true">
+            <itemPath>../../../Include/OSAL/osalThread.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalMemory.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f4" displayName="Services" projectFiles="true">
+          </logicalFolder>
+          <logicalFolder name="f3" displayName="System" projectFiles="true">
+            <logicalFolder name="f1" displayName="Core" projectFiles="true">
+            </logicalFolder>
+            <itemPath>../../../Include/System/eosApplication.h</itemPath>
+          </logicalFolder>
+          <itemPath>../../../Include/eos.h</itemPath>
+          <itemPath>../../../Include/eosAssert.h</itemPath>
+          <itemPath>../../../Include/eosMacros.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
         </logicalFolder>
         <logicalFolder name="f1" displayName="Harmony" projectFiles="true">
@@ -97,75 +73,79 @@
         <itemPath>../../../Demo/FormsDemo/rtos_hooks.c</itemPath>
         <itemPath>../../../Demo/FormsDemo/AppMain.cpp</itemPath>
       </logicalFolder>
-      <logicalFolder name="f2" displayName="Eos" projectFiles="true">
-        <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
-          <logicalFolder name="f1" displayName="Display" projectFiles="true">
-            <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
-              <logicalFolder name="f1" displayName="ILI9341" projectFiles="true">
-                <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</itemPath>
-                <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</itemPath>
+      <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">
+        <logicalFolder name="f3" displayName="Eos" projectFiles="true">
+          <logicalFolder name="f1" displayName="Controllers" projectFiles="true">
+            <logicalFolder name="f1" displayName="Display" projectFiles="true">
+              <logicalFolder name="f2" displayName="Drivers" projectFiles="true">
+                <logicalFolder name="f1" displayName="ILI9341" projectFiles="true">
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</itemPath>
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</itemPath>
+                </logicalFolder>
               </logicalFolder>
+              <logicalFolder name="f1" displayName="Fonts" projectFiles="true">
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas10pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas12pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas14pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas18pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas24pt.cpp</itemPath>
+                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas8pt.cpp</itemPath>
+              </logicalFolder>
+              <itemPath>../../../Source/Controllers/Display/eosFont.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/eosDisplay.cpp</itemPath>
+              <itemPath>../../../Source/Controllers/Display/eosColor.cpp</itemPath>
             </logicalFolder>
-            <logicalFolder name="f2" displayName="Fonts" projectFiles="true">
-              <itemPath>../../../Source/Controllers/Display/Fonts/Consolas8pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Consolas10pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Consolas12pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Consolas14pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Consolas18pt.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/Fonts/Consolas24pt.cpp</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f3" displayName="Hal" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halI2C.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halI2CInterruptWrapper.S</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halTMR.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halTMRInterruptWrapper.S</itemPath>
             </logicalFolder>
-            <itemPath>../../../Source/Controllers/Display/eosDisplay.cpp</itemPath>
-            <itemPath>../../../Source/Controllers/Display/eosFont.cpp</itemPath>
-            <itemPath>../../../Source/Controllers/Display/eosColor.cpp</itemPath>
           </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="f3" displayName="HAL" projectFiles="true">
-          <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-            <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
-            <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
-            <itemPath>../../../Source/HAL/PIC32/halTMR.c</itemPath>
-            <itemPath>../../../Source/HAL/PIC32/halTMRInterruptWrapper.S</itemPath>
-            <itemPath>../../../Source/HAL/PIC32/halI2C.c</itemPath>
-            <itemPath>../../../Source/HAL/PIC32/halI2CInterruptWrapper.S</itemPath>
+          <logicalFolder name="f4" displayName="Osal" projectFiles="true">
+            <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
+            <itemPath>../../../Source/OSAL/osalMemory.c</itemPath>
           </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="f1" displayName="Services" projectFiles="true">
-          <logicalFolder name="f2" displayName="Forms" projectFiles="true">
-            <itemPath>../../../Source/Services/Forms/eosFormsDisplay.cpp</itemPath>
-            <itemPath>../../../Source/Services/Forms/eosForm.cpp</itemPath>
-            <itemPath>../../../Source/Services/Forms/eosFormsService.cpp</itemPath>
-            <itemPath>../../../Source/Services/Forms/eosNumericEditorForm.cpp</itemPath>
-            <itemPath>../../../Source/Services/Forms/eosOptionEditorForm.cpp</itemPath>
-            <itemPath>../../../Source/Services/Forms/eosMenuForm.cpp</itemPath>
-            <itemPath>../../../Source/Services/Forms/eosLabelForm.cpp</itemPath>
+          <logicalFolder name="f5" displayName="Services" projectFiles="true">
+            <logicalFolder name="f1" displayName="Forms" projectFiles="true">
+              <itemPath>../../../Source/Services/Forms/eosForm.cpp</itemPath>
+              <itemPath>../../../Source/Services/Forms/eosFormsDisplay.cpp</itemPath>
+              <itemPath>../../../Source/Services/Forms/eosFormsService.cpp</itemPath>
+              <itemPath>../../../Source/Services/Forms/eosLabelForm.cpp</itemPath>
+              <itemPath>../../../Source/Services/Forms/eosMenuForm.cpp</itemPath>
+              <itemPath>../../../Source/Services/Forms/eosNumericEditorForm.cpp</itemPath>
+              <itemPath>../../../Source/Services/Forms/eosOptionEditorForm.cpp</itemPath>
+            </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="f2" displayName="System" projectFiles="true">
+            <logicalFolder name="f1" displayName="Collections" projectFiles="true">
+              <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
+              <itemPath>../../../Source/System/Collections/eosListImpl.cpp</itemPath>
+              <itemPath>../../../Source/System/Collections/eosStack.cpp</itemPath>
+            </logicalFolder>
+            <logicalFolder name="f2" displayName="Core" projectFiles="true">
+              <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosInterrupt.c</itemPath>
+              <itemPath>../../../Source/System/Core/eosPoolAllocator.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosSemaphore.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosString.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
+            </logicalFolder>
+            <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
           </logicalFolder>
           <itemPath>../../../Source/Services/eosI2CMaster.cpp</itemPath>
           <itemPath>../../../Source/Services/eosKeyboard.cpp</itemPath>
           <itemPath>../../../Source/Services/eosSelector.cpp</itemPath>
           <itemPath>../../../Source/Services/eosService.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="f2" displayName="System" projectFiles="true">
-          <logicalFolder name="f2" displayName="Collections" projectFiles="true">
-            <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
-            <itemPath>../../../Source/System/Collections/eosStack.cpp</itemPath>
-            <itemPath>../../../Source/System/Collections/eosListImpl.cpp</itemPath>
-          </logicalFolder>
-          <logicalFolder name="f1" displayName="Core" projectFiles="true">
-            <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosInterrupt.c</itemPath>
-            <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosSemaphore.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosString.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
-            <itemPath>../../../Source/System/Core/eosPoolAllocator.cpp</itemPath>
-          </logicalFolder>
-          <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
-        </logicalFolder>
-      </logicalFolder>
-      <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
           <logicalFolder name="f1" displayName="portable" projectFiles="true">
             <logicalFolder name="f1" displayName="MemMang" projectFiles="true">
@@ -214,6 +194,7 @@
     <Elem>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source</Elem>
     <Elem>../../../Demo/FormsDemo</Elem>
     <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
+    <Elem>../../../Source/OSAL</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -225,7 +206,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.43</languageToolchainVersion>
+        <languageToolchainVersion>1.44</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -514,7 +495,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.43</languageToolchainVersion>
+        <languageToolchainVersion>1.44</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -745,7 +726,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.43</languageToolchainVersion>
+        <languageToolchainVersion>1.44</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>

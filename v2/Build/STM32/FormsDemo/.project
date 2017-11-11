@@ -113,6 +113,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/App/STM32F429/Main.cpp</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/Demo/FormsDemo/STM32F429/Main.cpp</locationURI>
@@ -171,6 +176,11 @@
 			<name>inc/Framework/EOS/Controller/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO.h</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display</name>

@@ -18,6 +18,7 @@
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
                 <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341.h</itemPath>
+                <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341Defs.h</itemPath>
               </logicalFolder>
               <itemPath>../../../Include/Controllers/Display/eosColor.h</itemPath>
               <itemPath>../../../Include/Controllers/Display/eosDisplay.h</itemPath>
@@ -36,6 +37,10 @@
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
             <itemPath>../../../Include/HAL/halSPI.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f5" displayName="Osal" projectFiles="true">
+            <itemPath>../../../Include/OSAL/osalThread.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalMemory.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Services" projectFiles="true">
             <itemPath>../../../Include/Services/eosAppLoop.h</itemPath>
@@ -83,9 +88,6 @@
                   <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PMP8.cpp</itemPath>
                   <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</itemPath>
                 </logicalFolder>
-                <logicalFolder name="f2" displayName="VRAM" projectFiles="true">
-                  <itemPath>../../../Source/Controllers/Display/Drivers/VRAM/eosVRAM.cpp</itemPath>
-                </logicalFolder>
               </logicalFolder>
               <logicalFolder name="f2" displayName="Fonts" projectFiles="true">
                 <itemPath>../../../Source/Controllers/Display/Fonts/Consolas8pt.cpp</itemPath>
@@ -107,6 +109,10 @@
               <itemPath>../../../Source/HAL/PIC32/halTMRInterruptWrapper.S</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
             </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="f5" displayName="Osal" projectFiles="true">
+            <itemPath>../../../Source/OSAL/osalMemory.c</itemPath>
+            <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="Services" projectFiles="true">
             <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
@@ -156,6 +162,7 @@
     <Elem>../../../Include</Elem>
     <Elem>../../../Source/Controllers/Display/Drivers/ILI9341</Elem>
     <Elem>../../../Source/Controllers/Display/Drivers/VRAM</Elem>
+    <Elem>../../../Source/OSAL</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

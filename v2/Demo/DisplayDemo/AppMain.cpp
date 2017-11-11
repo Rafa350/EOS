@@ -3,9 +3,10 @@
 #include "System/Core/eosTask.h"
 #include "Services/eosAppLoop.h"
 #include "Controllers/Display/eosDisplay.h"
-#include "Controllers/Display/Drivers/eosILI9341.h"
 #ifdef EOS_STM32F4
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
+#else
+#include "Controllers/Display/Drivers/eosILI9341.h"
 #endif
 #include "Hal/halGPIO.h"
 
@@ -114,8 +115,11 @@ void LedLoopService::onRun() {
 ///
 void DisplayLoopService::onSetup() {
 
-	//driver = new ILI9341_Driver();
+#ifdef EOS_STM32F4
 	driver = new ILI9341LTDC_Driver();
+#else
+	driver = new ILI9341_Driver();
+#endif
     driver->initialize();
     driver->setOrientation(DisplayOrientation::rotate180);
 

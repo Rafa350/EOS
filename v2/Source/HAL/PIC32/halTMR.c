@@ -180,7 +180,7 @@ static void doCallback(
 void isrTMR1Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_1)) {
-        doCallback(HAL_TMR_T1);
+        doCallback(HAL_TMR_ID_1);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_1);
     }
 }
@@ -190,7 +190,7 @@ void isrTMR1Handler(void) {
 void isrTMR2Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_2)) {
-        doCallback(HAL_TMR_T2); 
+        doCallback(HAL_TMR_ID_2); 
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_2);
     }
 }
@@ -200,7 +200,7 @@ void isrTMR2Handler(void) {
 void isrTMR3Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_3)) {
-        doCallback(HAL_TMR_T3);
+        doCallback(HAL_TMR_ID_3);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_3);
     }
 }
@@ -210,7 +210,7 @@ void isrTMR3Handler(void) {
 void isrTMR4Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_4)) {
-        doCallback(HAL_TMR_T4);
+        doCallback(HAL_TMR_ID_4);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_4);
     }
 }
@@ -220,7 +220,7 @@ void isrTMR4Handler(void) {
 void isrTMR5Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_5)) {
-        doCallback(HAL_TMR_T5);
+        doCallback(HAL_TMR_ID_5);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_5);
     }
 }

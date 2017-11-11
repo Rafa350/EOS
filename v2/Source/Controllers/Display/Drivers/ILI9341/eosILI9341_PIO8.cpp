@@ -244,6 +244,20 @@ void ILI9341_Driver::lcdWriteData(
     setWR();
 }
 
+/// ----------------------------------------------------------------------
+/// \brief Escriu un byte en el registre de dades.
+/// \param data: El byte a escriure.
+///
+void ILI9341_Driver::lcdWriteData(
+    uint8_t *data, int32_t size) {
+
+    setRS();
+    while (size--) {
+        clrWR();
+        wrDATA(*data++);
+        setWR();
+    }
+}
 
 /// ----------------------------------------------------------------------
 /// \brief Llegeix un byte en l'adressa seleccionada del driver.

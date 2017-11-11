@@ -11,8 +11,8 @@
 
 typedef struct {
     ADCPin adcPin;
-    GPIOPort gpioPort;
-    GPIOPin gpioPin;
+    uint8_t gpioPort;
+    uint8_t gpioPin;
 } CNPortInfo;
 
 typedef struct {
@@ -173,7 +173,7 @@ void isrCNHandler(void) {
         //
         uint32_t newPortA = halGPIOReadPort(HAL_GPIO_PORT_A);
         uint32_t newPortB = halGPIOReadPort(HAL_GPIO_PORT_B);
-        uint32_t newPortG = halGPIOReadPort(HAL_GPIO_PORT_C);
+        uint32_t newPortC = halGPIOReadPort(HAL_GPIO_PORT_C);
         uint32_t newPortD = halGPIOReadPort(HAL_GPIO_PORT_D);
         uint32_t newPortE = halGPIOReadPort(HAL_GPIO_PORT_E);
         uint32_t newPortF = halGPIOReadPort(HAL_GPIO_PORT_F);

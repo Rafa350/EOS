@@ -18,9 +18,11 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param application: L'aplicacio a la que pertany
+/// \param info: Parametres d'inicialitzacio.
 ///
 DigInputService::DigInputService(
-    Application *application) :
+    Application *application,
+    const DigInputServiceInitializeInfo *info) :
     Service(application, serviceName, taskStackSize, taskPriority) {
 }
 
@@ -96,20 +98,23 @@ void DigInputService::run(
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param service: El servei.
-/// \param pin: El numero de pin.
-/// \param inverted: Indica si la senyal va invertida.
+/// \param info: Parametres d'inicialitzacio.
 ///
 DigInput::DigInput(
     DigInputService *service,
-    GPIOPort port,
-    GPIOPin pin):
+    const DigInputInitializeInfo *info):
 
     service(nullptr),
-    port(port),
-    pin(pin),
+    port(info->port),
+    pin(info->pin),
     evChange(nullptr) {
     
-    halGPIOInitializePinInput(port, pin);
+    GPIOInitializePinInfo pinInfo;
+    pinInfo.port = info->port;
+    pinInfo.pin = info->pin;
+    pinInfo.options = HAL_GPIO_MODE_INPUT;
+    halGPIOInitializePin(&pinInfo);
+    
     state = halGPIOReadPin(port, pin);
     pattern = state ? 0xFFFFFFFF : 0x00000000;
     

@@ -43,49 +43,72 @@ GPIOPortRegs gpioPortRegs[] = {
 
 /// ----------------------------------------------------------------------
 /// \brief Configura un pin.
-/// \param port: Identificador del port.
-/// \param pin: Identificador del pin.
-/// \param options: Opcions
+/// \param info: Parametres d'inicialitzacio.
 ///
 void halGPIOInitializePin(
-    GPIOPort port,
-    GPIOPin pin,
-    GPIOOptions options) {
+    const GPIOInitializePinInfo *info) {
    
-    if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT) {
-        *gpioPortRegs[port].trisCLR = 1 << pin; 
-     
-        if (options & HAL_GPIO_OPENDRAIN_ENABLED)
-            *gpioPortRegs[port].odcSET = 1 << pin;
+    uint16_t mask = 1 << info->pin;
+    
+    if (((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_PP) ||
+        ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)) {
+        
+        if ((info->options & HAL_GPIO_INIT_MASK) == HAL_GPIO_INIT_SET)
+            *gpioPortRegs[info->port].latSET = mask;
         else
-            *gpioPortRegs[port].odcCLR = 1 << pin;        
+            *gpioPortRegs[info->port].latCLR = mask;
+
+        *gpioPortRegs[info->port].trisCLR = mask; 
+     
+        if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)
+            *gpioPortRegs[info->port].odcSET = mask;
+        else
+            *gpioPortRegs[info->port].odcCLR = mask;        
     }  
     
-    else 
-        *gpioPortRegs[port].trisSET = 1 << pin;
+    else if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_INPUT) {
+       
+        *gpioPortRegs[info->port].trisSET = mask;
+    }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Configura un port.
-/// \param port: Identificador del port.
-/// \param options: Opcions
-/// \param mask: Mascara.
+/// \param port: Parametres d'inicialitzacio
 ///
 void halGPIOInitializePort(
-    GPIOPort port,
-    GPIOOptions options,
-    uint16_t mask) {
+    const GPIOInitializePortInfo *info) {
+        
+    if (((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_PP) ||
+        ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)) {
 
-    if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT) {
-        *gpioPortRegs[port].trisCLR = mask;
-
-        if (options & HAL_GPIO_OPENDRAIN_ENABLED)
-            *gpioPortRegs[port].odcSET = mask;        
+        if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD) 
+            *gpioPortRegs[info->port].odcSET = info->mask;        
         else
-            *gpioPortRegs[port].odcCLR = mask;             
+            *gpioPortRegs[info->port].odcCLR = info->mask;                     
+        
+        *gpioPortRegs[info->port].trisCLR = info->mask;
     }
     
-    else
-        *gpioPortRegs[port].trisSET = mask;
+    else if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_INPUT) {
+        
+        *gpioPortRegs[info->port].trisSET = info->mask;
+    }
+}
+
+
+void halGPIOInitialize(
+    uint8_t port, 
+    uint8_t pin, 
+    uint32_t options, 
+    uint8_t alt) {
+    
+    GPIOInitializePinInfo info;
+    info.port = port;
+    info.pin = pin;
+    info.options = options;
+    info.alt = alt;
+    
+    halGPIOInitializePin(&info);
 }

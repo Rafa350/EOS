@@ -44,18 +44,42 @@ class MyApplication: public Application {
 ///
 MyApplication::MyApplication() {
     
-    digInputSvc = new DigInputService(this);
-    digInput1 = new DigInput(digInputSvc, SW_SW3_PORT, SW_SW3_PIN);
+    // Prepara el servei d'entrades digitals
+    //
+    digInputSvc = new DigInputService(this, nullptr);
+    
+    DigInputInitializeInfo inputInfo;
+    
+    inputInfo.port = SW_SW3_PORT;
+    inputInfo.pin = SW_SW3_PIN;
+    digInput1 = new DigInput(digInputSvc, &inputInfo);
     digInput1->setChangeEvent<MyApplication>(this, &MyApplication::digInput3_OnChange);
-   
-    digOutputSrv = new DigOutputService(this);
-    digOutput1 = new DigOutput(digOutputSrv, LEDS_LD1_PORT, LEDS_LD1_PIN);
-    digOutput2 = new DigOutput(digOutputSrv, LEDS_LD2_PORT, LEDS_LD2_PIN);
-    //digOutput3 = new DigOutput(digOutputSrv, LEDS_LD3_PORT, LEDS_LD3_PIN);
+
+    // Prepara el servei de sortides digitals
+    //
+    digOutputSrv = new DigOutputService(this, nullptr);
+
+    DigOutputInitializeInfo outputInfo;
+    outputInfo.openDrain = false;
+    outputInfo.initState = false;
     
-    extInterruptSvc = new ExtInterruptService(this);
-    extInterrupt = new ExtInterrupt(extInterruptSvc, HAL_CN_PIN_19);
+    outputInfo.port = LEDS_LD1_PORT;
+    outputInfo.pin = LEDS_LD1_PIN;
+    digOutput1 = new DigOutput(digOutputSrv, &outputInfo);
     
+    outputInfo.port = LEDS_LD2_PORT;
+    outputInfo.pin = LEDS_LD2_PIN;
+    digOutput2 = new DigOutput(digOutputSrv, &outputInfo);
+    
+    outputInfo.port = LEDS_LD3_PORT;
+    outputInfo.pin = LEDS_LD3_PIN;
+    digOutput3 = new DigOutput(digOutputSrv, &outputInfo);
+    
+    //extInterruptSvc = new ExtInterruptService(this);
+    //extInterrupt = new ExtInterrupt(extInterruptSvc, HAL_CN_PIN_19);
+    
+    // Prepara el servei de l'aplicacio
+    //
     new LedLoopService(this, digOutput1, digOutput2);
 }
 
@@ -95,8 +119,8 @@ void LedLoopService::onRun() {
 
 	while (true) {
         output1->toggle();
-        output2->pulse(500);
-		Task::delay(1000);
+        output2->pulse(300);
+		Task::delay(500);
 	}
 }
 

@@ -12,11 +12,23 @@
 
 
 namespace eos {
-
+    
     class Application;
     class Task;
     class Timer;
+    class DigOuputService;
     class DigOutput;
+
+    typedef struct {
+        
+    } DigOutputServiceInitializeInfo;
+    
+    typedef struct {
+        uint8_t port;
+        uint8_t pin;
+        bool initState;
+        bool openDrain;
+    } DigOutputInitializeInfo ;
 
     /// \brief Clase que implemenmta el servei de gestio de sortides digitals.
     ///
@@ -43,7 +55,7 @@ namespace eos {
             CommandQueue commandQueue;
 
         public:
-            DigOutputService(Application *application);
+            DigOutputService(Application *application, const DigOutputServiceInitializeInfo *info);
             void add(DigOutput *output);
             void remove(DigOutput *output);
             void set(DigOutput *output);
@@ -67,11 +79,11 @@ namespace eos {
         private:
             DigOutputService *service;
             Timer *timer;
-            GPIOPort port;
-            GPIOPin pin;
+            uint8_t port;
+            uint8_t pin;
 
         public:
-            DigOutput(DigOutputService *service, GPIOPort port, GPIOPin pin);
+            DigOutput(DigOutputService *service, const DigOutputInitializeInfo *info);
             ~DigOutput();
             bool get() const;
 

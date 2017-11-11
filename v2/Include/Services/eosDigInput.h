@@ -15,7 +15,15 @@ namespace eos {
     class Application;
     class Task;
     class DigInput;
+
+    typedef struct {
+        
+    } DigInputServiceInitializeInfo;
     
+    typedef struct {
+        uint8_t port;
+        uint8_t pin;
+    } DigInputInitializeInfo;
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
@@ -28,7 +36,7 @@ namespace eos {
             DigInputList inputs;
             
         public:
-            DigInputService(Application *application);
+            DigInputService(Application *application, const DigInputServiceInitializeInfo *info);
             void add(DigInput *input);
             void remove(DigInput *input);
             
@@ -44,14 +52,14 @@ namespace eos {
             
         private:
             DigInputService *service;
-            GPIOPort port;
-            GPIOPin pin;
+            uint8_t port;
+            uint8_t pin;
             uint32_t pattern;
             bool state;
             IDigInputEvent *evChange;
         
         public:
-            DigInput(DigInputService *service, GPIOPort port, GPIOPin pin);
+            DigInput(DigInputService *service, const DigInputInitializeInfo *info);
             ~DigInput();
             
             /// \brief Obte l'estat actual de la entrada.

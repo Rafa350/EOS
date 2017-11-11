@@ -17,9 +17,11 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param application: L'aplicacio a la que pertany.
+/// \param info: Parametres d'inicialitzacio.
 ///
 DigOutputService::DigOutputService(
-    Application *application):
+    Application *application,
+    const DigOutputServiceInitializeInfo *info):
 
     Service(application, serviceName, taskStackSize, taskPriority),
     commandQueue(commandQueueSize) {
@@ -256,21 +258,24 @@ void DigOutputService::pulse(
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param service: El servei as que s'asignara la sortida.
-/// \param port: Identificador del port.
-/// \param pin: Identificador del pin.
+/// \param info: Parametres d'inicialitzacio.
 ///
 DigOutput::DigOutput(
     DigOutputService *service,
-	GPIOPort port,
-    GPIOPin pin):
+    const DigOutputInitializeInfo *info):
 
     service(nullptr),
 	timer(nullptr),
-	port(port),
-    pin(pin) {
+	port(info->port),
+    pin(info->pin) {
 
-    halGPIOInitializePin(port, pin, HAL_GPIO_DIRECTION_OUTPUT);
-    halGPIOClearPin(port, pin);
+    GPIOInitializePinInfo pinInfo;
+    pinInfo.port = info->port;
+    pinInfo.pin = info->pin;
+    pinInfo.options = 
+        (info->openDrain ? HAL_GPIO_MODE_OUTPUT_OD : HAL_GPIO_MODE_OUTPUT_PP) | 
+        (info->initState ? HAL_GPIO_INIT_SET : HAL_GPIO_INIT_CLR);
+    halGPIOInitializePin(&pinInfo);
 
     if (service != nullptr)
         service->add(this);

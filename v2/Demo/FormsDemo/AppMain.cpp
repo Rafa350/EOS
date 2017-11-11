@@ -86,7 +86,7 @@ void MyApplication::onInitialize() {
     //
     IDisplayDriver *driver = new ILI9341_Driver();
     driver->initialize();
-    driver->setOrientation(Orientation::rotate180);
+    driver->setOrientation(DisplayOrientation::rotate180);
 
     Display *display = new Display(driver);
     display->clear(COLOR_Black);
