@@ -395,22 +395,22 @@
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halGPIO.c</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32F4/halGPIO.c</locationURI>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32/halGPIO.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halSPI.c</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32F4/halSPI.c</locationURI>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32/halSPI.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halSYS.c</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32F4/halSYS.c</locationURI>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32/halSYS.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halTMR.c</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32F4/halTMR.c</locationURI>
+			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32/halTMR.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>

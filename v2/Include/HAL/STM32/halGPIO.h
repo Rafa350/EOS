@@ -8,7 +8,13 @@
 
 // STM32 includes
 //
+#if defined(STM32F4)
 #include "stm32f4xx_hal_gpio_ex.h"
+#elif defined(STM32F7)
+#include "stm32f7xx_hal_gpio_ex.h"
+#else
+#error Hardware no soportado
+#endif
 
 
 #ifdef	__cplusplus
