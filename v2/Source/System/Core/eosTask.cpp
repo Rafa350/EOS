@@ -9,8 +9,6 @@
 using namespace eos;
 
 
-static const char *defaultName = "";
-
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor. Crea un objecte Task que encapsula una tasca

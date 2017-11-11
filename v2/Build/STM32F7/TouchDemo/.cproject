@@ -41,7 +41,11 @@
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.1673202000" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo\STM32F746&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/device}&quot;"/>
@@ -68,6 +72,8 @@
 									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo\STM32F746&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/device}&quot;"/>
@@ -93,6 +99,10 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.915472089" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.1355981825" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo\STM32F746&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/device}&quot;"/>
@@ -155,7 +165,11 @@
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.392720021" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo\STM32F746&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/device}&quot;"/>
@@ -180,6 +194,8 @@
 									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo\STM32F746&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/device}&quot;"/>
@@ -205,6 +221,10 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.750110492" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.607317152" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${EOSPath}\Demo\TouchDemo\STM32F746&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f746g-disco_hal_lib/CMSIS/device}&quot;"/>

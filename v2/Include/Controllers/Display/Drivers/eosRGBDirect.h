@@ -10,11 +10,11 @@
 
 
 #ifndef RGBDIRECT_SCREEN_WIDTH
-#define RGBDIRECT_SCREEN_WIDTH      240       // Tamany fix del controlador
+#define RGBDIRECT_SCREEN_WIDTH      480       // Tamany fix del controlador
 #endif
 
 #ifndef RGBDIRECT_SCREEN_HEIGHT
-#define RGBDIRECT_SCREEN_HEIGHT     320       // Tamany fix del controlador
+#define RGBDIRECT_SCREEN_HEIGHT     272       // Tamany fix del controlador
 #endif
 
 

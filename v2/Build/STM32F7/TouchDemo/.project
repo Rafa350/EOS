@@ -124,6 +124,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -139,6 +144,16 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO.h</location>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/halSYS.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halSYS.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halTMR.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halTMR.h</location>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -147,6 +162,26 @@
 			<name>src/Framework/EOS/HAL/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/osalMemory.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/osalMemory.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/osalThread.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/osalThread.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosApplication.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/eosApplication.cpp</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
@@ -209,14 +244,29 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32/halGPIO.c</location>
 		</link>
 		<link>
+			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32/halSYS.c</location>
+		</link>
+		<link>
 			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32/halTMR.c</location>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosTask.cpp</location>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosRGBDirect.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Controllers/Display/Drivers/eosRGBDirect.h</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBDirect.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Controllers/Display/Drivers/RGBDirect/RGBDirect.cpp</location>
 		</link>
 	</linkedResources>
 </projectDescription>
