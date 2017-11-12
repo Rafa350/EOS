@@ -5,6 +5,7 @@ using namespace eos;
 
 
 RGBDirect_Driver::RGBDirect_Driver():
+
 	screenWidth(RGBDIRECT_SCREEN_WIDTH),
 	screenHeight(RGBDIRECT_SCREEN_HEIGHT) {
 
@@ -13,6 +14,8 @@ RGBDirect_Driver::RGBDirect_Driver():
 
 void RGBDirect_Driver::initialize() {
 
+	ltdcInitialize();
+	dma2dInitialize();
 }
 
 
@@ -115,5 +118,15 @@ void RGBDirect_Driver::hScroll(
 	int16_t y,
 	int16_t width,
 	int16_t height) {
+
+}
+
+
+void RGBDirect_Driver::ltdcInitialize() {
+
+}
+
+
+void RGBDirect_Driver::dma2dInitialize() {
 
 }

@@ -43,6 +43,10 @@ namespace eos {
             void readPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color *colors);
             void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
             void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
+
+        private:
+            void ltdcInitialize();
+            void dma2dInitialize();
     };
 }
 

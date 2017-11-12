@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "hal/halSYS.h"
-#include "stm32f429i_discovery_sdram.h"
+#include "stm32746g_discovery_sdram.h"
 
 
 /// ----------------------------------------------------------------------
