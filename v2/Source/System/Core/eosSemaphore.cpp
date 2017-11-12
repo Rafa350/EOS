@@ -32,7 +32,7 @@ eos::BinarySemaphore::~BinarySemaphore() {
 bool eos::BinarySemaphore::take(
     unsigned blockTime) {
 
-    TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    TickType_t ticks = blockTime == (unsigned)(-1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
     return xSemaphoreTake(handle, ticks);
 }
 

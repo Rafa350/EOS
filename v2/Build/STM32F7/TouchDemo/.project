@@ -59,7 +59,12 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/eosConfig.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/HAL</name>
+			<name>inc/Framework/Controllers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -104,14 +109,24 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F746/HardwareProfile_STM32F746G-DISC.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/HAL/STM32</name>
+			<name>inc/App/STM32F746/stm32746g_discovery.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F746/stm32746g_discovery.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F746/stm32746g_discovery_sdram.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F746/stm32746g_discovery_sdram.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/Controllers/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/HAL/halGPIO.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
+			<name>inc/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F746/Initialize_STM32F746G-DISC.cpp</name>
@@ -161,37 +176,67 @@
 		<link>
 			<name>src/Framework/FreeRTOS/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F7_V1.8.0/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/list.c</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F7_V1.8.0/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/portable/GCC/ARM_CM4F/port.c</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F7_V1.8.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/queue.c</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F7_V1.8.0/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/tasks.c</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F7_V1.8.0/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/timers.c</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F7_V1.8.0/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/HAL/STM32/halGPIO.h</name>
+			<name>inc/Framework/Controllers/Display/Drivers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/Controllers/Display/eosColor.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosColor.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/Controllers/Display/eosDisplay.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplay.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/Controllers/Display/eosDisplayDriver.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/Controllers/Display/eosFont.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFont.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
@@ -237,6 +282,16 @@
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/Controllers/Display/Drivers/eosRGBDirect.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosRGBDirect.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers</name>

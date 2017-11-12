@@ -1,5 +1,11 @@
-#ifndef __HARDWARE_PROFILE_SMT32F429_DISC1_H
-#define __HARDWARE_PROFILE_SMT32F429_DISC1_H
+#ifndef __HARDWARE_PROFILE_SMT32F429I_DISC1_H
+#define __HARDWARE_PROFILE_SMT32F429I_DISC1_H
+
+// ----------------------------------------------------------------------
+//
+//     Hardware: STM32F429I-DISC1
+//
+// ----------------------------------------------------------------------
 
 
 // Configuracio del sistema
@@ -9,7 +15,7 @@
 
 
 // -----------------------------------------------------------------------
-// Indicadors lED
+// Parametres de configuracio dels indicadors LED
 // -----------------------------------------------------------------------
 
 #define LEDS_LD1_PORT        HAL_GPIO_PORT_G
@@ -42,7 +48,7 @@
 
 
 // -----------------------------------------------------------------------
-// Controlador del display ILI9341
+// Parametres de configuracio controlador de display ILI9341
 // -----------------------------------------------------------------------
 
 // Opcions de codificacio del color
@@ -86,7 +92,7 @@
 
 
 // -----------------------------------------------------------------------
-// Controlador de display ILI9341LTDC
+// Parametres de configuracio del controlador de display ILI9341LTDC
 // -----------------------------------------------------------------------
 
 // Punter a la memoria de video

@@ -83,11 +83,18 @@ void MyApplication::onInitialize() {
 ///
 void LedLoopService::onSetup() {
 
+	// Inicialitza el LED 1
+	//
 	halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
-	halGPIOInitializePinOutput(LEDS_LD2_PORT, LEDS_LD2_PIN);
-
 	halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+
+#ifdef LEDS_LD2_PORT
+
+	// Inicialitza el LED 2
+	//
+	halGPIOInitializePinOutput(LEDS_LD2_PORT, LEDS_LD2_PIN);
 	halGPIOSetPin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+#endif
 }
 
 
@@ -99,7 +106,9 @@ void LedLoopService::onRun() {
 	while (true) {
 
 		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+#ifdef LEDS_LD2_PORT
 		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+#endif
 
 		Task::delay(500);
 	}
@@ -114,6 +123,7 @@ void DisplayLoopService::onSetup() {
 	driver = new RGBDirect_Driver();
     driver->initialize();
     driver->setOrientation(DisplayOrientation::rotate180);
+    driver->displayOn();
 
     display = new Display(driver);
     display->clear(COLOR_Black);

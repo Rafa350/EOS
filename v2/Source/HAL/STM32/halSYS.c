@@ -1,4 +1,5 @@
 #include "HAL/halSYS.h"
+#include "HAL/halGPIO.h"
 #if defined(STM32F4)
 #include "stm32f4xx_hal.h"
 #elif defined(STM32F7)
@@ -95,11 +96,23 @@ void SystemClock_Config() {
 
 	RCC_ClkInitTypeDef clkInit;
 	RCC_OscInitTypeDef oscInit;
-	HAL_StatusTypeDef ret = HAL_OK;
+	HAL_StatusTypeDef ret;
+
+	// Enable Power Control clock
+	//
+	__HAL_RCC_PWR_CLK_ENABLE();
+
+	// The voltage scaling allows optimizing the power consumption when the device is
+	// clocked below the maximum system frequency, to update the voltage scaling value
+	// regarding system frequency refer to product datasheet.
+	//
+	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
 
 	// Enable HSE Oscillator and activate PLL with HSE as source
 	oscInit.OscillatorType = RCC_OSCILLATORTYPE_HSE;
 	oscInit.HSEState = RCC_HSE_ON;
+	oscInit.HSIState = RCC_HSI_OFF;
 	oscInit.PLL.PLLState = RCC_PLL_ON;
 	oscInit.PLL.PLLSource = RCC_PLLSOURCE_HSE;
 	oscInit.PLL.PLLM = 25;
@@ -108,7 +121,9 @@ void SystemClock_Config() {
 	oscInit.PLL.PLLQ = 9;
 
 	ret = HAL_RCC_OscConfig(&oscInit);
-	if(ret != HAL_OK) {
+	if (ret != HAL_OK) {
+		halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
+		halGPIOSetPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 		while(1)
 			continue;
 	}
@@ -116,6 +131,8 @@ void SystemClock_Config() {
 	// Activate the OverDrive to reach the 216 MHz Frequency
 	ret = HAL_PWREx_EnableOverDrive();
 	if (ret != HAL_OK) {
+		halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
+		halGPIOSetPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 		while(1)
 			continue;
 	}
@@ -128,7 +145,9 @@ void SystemClock_Config() {
 	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
 
 	ret = HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_7);
-	if(ret != HAL_OK) {
+	if (ret != HAL_OK) {
+		halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
+		halGPIOSetPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 		while(1)
 			continue;
 	}
@@ -141,6 +160,11 @@ void SystemClock_Config() {
 ///
 void halSYSInitialize() {
 
+	// Inicialitza HAL
+	//
 	HAL_Init();
+
+	// Inicialitza el rellotge del sistema
+	//
 	SystemClock_Config();
 }

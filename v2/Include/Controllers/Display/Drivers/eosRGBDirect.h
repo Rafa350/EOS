@@ -24,6 +24,8 @@ namespace eos {
     	private:
     		int16_t screenWidth;
     		int16_t screenHeight;
+    		uint8_t curLayer;
+    		uint8_t *image;
 
         public:
             RGBDirect_Driver();
@@ -45,8 +47,10 @@ namespace eos {
             void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
 
         private:
+            void gpioInitialize();
             void ltdcInitialize();
             void dma2dInitialize();
+            void dma2dFill(const uint8_t *addr, int16_t width, int16_t height, const Color &color);
     };
 }
 
