@@ -11,7 +11,7 @@
 	#include "HAL/PIC32/halGPIO.h"
     #include "HAL/PIC32/halCN.h"
 
-#elif defined(EOS_STM32F4) || defined(STM32F7)
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
 	#include "hal/STM32/halGPIO.h"
 
 #endif

@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    Templates/system_stm32f7xx.c
+  * @file    Template/system_stm32f7xx.c
   * @author  MCD Application Team
   * @brief   CMSIS Cortex-M7 Device Peripheral Access Layer System Source File.
   *

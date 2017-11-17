@@ -1,8 +1,8 @@
 #include "HAL/halSYS.h"
 #include "HAL/halGPIO.h"
-#if defined(STM32F4)
+#if defined(EOS_STM32F4)
 #include "stm32f4xx_hal.h"
-#elif defined(STM32F7)
+#elif defined(EOS_STM32F7)
 #include "stm32f7xx_hal.h"
 #else
 #error hardware no soportado
@@ -28,7 +28,7 @@
 ///            Main regulator output voltage  = Scale1 mode
 ///            Flash Latency(WS)              = 5
 ///
-#ifdef STM32F4
+#ifdef xEOS_STM32F4
 static void SystemClock_Config() {
 
 	RCC_ClkInitTypeDef clkInit;
@@ -91,7 +91,7 @@ static void SystemClock_Config() {
 ///            Main regulator output voltage  = Scale1 mode
 ///            Flash Latency(WS)              = 7
 ///
-#ifdef STM32F7
+#ifdef EOS_STM32F7
 void SystemClock_Config() {
 
 	RCC_ClkInitTypeDef clkInit;
@@ -160,11 +160,5 @@ void SystemClock_Config() {
 ///
 void halSYSInitialize() {
 
-	// Inicialitza HAL
-	//
 	HAL_Init();
-
-	// Inicialitza el rellotge del sistema
-	//
-	SystemClock_Config();
 }

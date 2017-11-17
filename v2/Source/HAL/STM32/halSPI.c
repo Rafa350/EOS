@@ -1,5 +1,9 @@
 #include "hal/halSPI.h"
+#if defined(EOS_STM32F4)
 #include "stm32f4xx_hal.h"
+#elif defined(EOS_STM32F7)
+#include "stm32f7xx_hal.h"
+#endif
 
 
 static SPI_HandleTypeDef spiHandler[HAL_SPI_ID_MAX];

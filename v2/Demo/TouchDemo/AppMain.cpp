@@ -4,13 +4,18 @@
 #include "Services/eosAppLoop.h"
 #include "Controllers/Display/eosDisplay.h"
 #include "Controllers/Display/Drivers/eosRGBDirect.h"
-#include "Hal/halGPIO.h"
+#include "HAL/halSYS.h"
+#include "HAL/halGPIO.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 
 
 using namespace eos;
+
+extern "C" {
+	void AppMain();
+}
 
 
 class LedLoopService: public AppLoopService {
@@ -64,7 +69,7 @@ class MyApplication: public Application {
 MyApplication::MyApplication() {
 
 	ledService = new LedLoopService(this);
-    displayService = new DisplayLoopService(this);
+    //displayService = new DisplayLoopService(this);
 }
 
 
@@ -73,8 +78,10 @@ MyApplication::MyApplication() {
 ///
 void MyApplication::onInitialize() {
 
+	//halSysInitialize();
+
 	ledService->initialize();
-	displayService->initialize();
+	//displayService->initialize();
 }
 
 
@@ -85,8 +92,8 @@ void LedLoopService::onSetup() {
 
 	// Inicialitza el LED 1
 	//
-	halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
-	halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+	//halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
+	//halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 
 #ifdef LEDS_LD2_PORT
 
@@ -105,7 +112,7 @@ void LedLoopService::onRun() {
 
 	while (true) {
 
-		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+		//halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 #ifdef LEDS_LD2_PORT
 		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
 #endif

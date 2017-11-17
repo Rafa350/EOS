@@ -19,7 +19,7 @@
 		#define EOS_DEBUG
 	#endif
 
-// Compilador GNU/SMT32
+// Compilador GNU/STM32
 #elif defined(__GNUC__) && defined(STM32)
 
 	// Declara la familia del procesador

@@ -2,16 +2,20 @@
 #define	__STM32_halGPIO__
 
 
+// EOS includes
+//
+#include "eos.h"
+
 // Standard includes
 //
 #include <stdint.h>
 
 // STM32 includes
 //
-#if defined(STM32F4)
+#if defined(EOS_STM32F4)
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_gpio_ex.h"
-#elif defined(STM32F7)
+#elif defined(EOS_STM32F7)
 #include "stm32f7xx.h"
 #include "stm32f7xx_hal_gpio_ex.h"
 #else

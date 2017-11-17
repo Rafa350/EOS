@@ -16,6 +16,7 @@ namespace eos {
     ///
     class IRunable {
         public:
+    		virtual ~IRunable() {}
             virtual void run(Task *task) = 0;
     };
 

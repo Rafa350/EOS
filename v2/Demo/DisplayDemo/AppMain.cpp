@@ -151,7 +151,7 @@ void DisplayLoopService::onRun() {
 
     // Points
     //
-    drawBackground("Points");
+    drawBackground("50K Points");
     Task::delay(250);
 
     display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
@@ -177,7 +177,7 @@ void DisplayLoopService::onRun() {
 
         display->drawPoint(x, y);
     }
-    Task::delay(500);
+    //Task::delay(500);
 
     // Vertical lines
     //
@@ -237,7 +237,7 @@ void DisplayLoopService::onRun() {
         display->drawLine(x1, y1, x2, y2);
     }
     linesTicks = Task::getTickCount() - ticks;
-    Task::delay(500);
+    Task::delay(1000);
 
     // Rectangles
     //
@@ -277,7 +277,7 @@ void DisplayLoopService::onRun() {
         display->fillRectangle(x1, y1, x2, y2);
     }
     filledRectanglesTicks = Task::getTickCount() - ticks;
-    Task::delay(500);
+    Task::delay(1000);
 
     // Circles
     //
@@ -315,7 +315,7 @@ void DisplayLoopService::onRun() {
         display->fillCircle(cx, cy, r);
     }
     filledCirclesTicks = Task::getTickCount() - ticks;
-    Task::delay(500);
+    Task::delay(1000);
 
     // Show results
     //
@@ -324,7 +324,7 @@ void DisplayLoopService::onRun() {
 
     char lineBuffer[30];
     uint16_t y = 50;
-    sprintf(lineBuffer, "Points        %d ms", pointsTicks * 2);
+    sprintf(lineBuffer, "50K Points    %d ms", pointsTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "V. lines      %d ms", verticalLinesTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
@@ -341,7 +341,7 @@ void DisplayLoopService::onRun() {
     sprintf(lineBuffer, "F. circles    %d ms", filledCirclesTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
 
-    Task::delay(10000);
+    Task::delay(5000);
 }
 
 
