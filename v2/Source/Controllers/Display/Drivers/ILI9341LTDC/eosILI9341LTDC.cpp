@@ -52,6 +52,23 @@
 using namespace eos;
 
 
+static LTDC_HandleTypeDef ltdcHandle;
+
+IDisplayDriver *ILI9341LTDC_Driver::instance = nullptr;
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte una instancia unica del driver.
+/// \return La instancia del driver.
+///
+IDisplayDriver *ILI9341LTDC_Driver::getInstance() {
+
+	if (instance == nullptr)
+		instance = new ILI9341LTDC_Driver();
+	return instance;
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///

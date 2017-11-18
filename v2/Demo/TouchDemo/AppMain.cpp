@@ -121,7 +121,7 @@ void LedLoopService::onRun() {
 ///
 void DisplayLoopService::onSetup() {
 
-	driver = new RGBDirect_Driver();
+	driver = RGBDirect_Driver::getInstance();
     driver->initialize();
     driver->setOrientation(DisplayOrientation::rotate180);
     driver->displayOn();

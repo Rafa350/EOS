@@ -1,7 +1,6 @@
 #include "eosAssert.h"
 #include "System/eosApplication.h"
 #include "Services/eosService.h"
-#include "HAL/halSYS.h"
 
 
 using namespace eos;
@@ -11,8 +10,6 @@ using namespace eos;
 /// \brief Constructor.
 ///
 Application::Application() {
-
-    halSYSInitialize();
 }
 
 
@@ -46,10 +43,13 @@ void Application::addService(
 
     eosArgumentIsNotNull(service);
 
-    if ((service != nullptr) && (service->application == nullptr)) {
+    eosAssert(service != nullptr);
+    eosAssert(service->application == nullptr);
+
+    //if ((service != nullptr) && (service->application == nullptr)) {
         service->application = this;
         services.add(service);
-    }
+    //}
 }
 
 
@@ -62,10 +62,13 @@ void Application::removeService(
 
     eosArgumentIsNotNull(service);
 
-    if ((service != nullptr) && (service->application == this)) {
+    eosAssert(service != nullptr);
+    eosAssert(service->application == this);
+
+    //if ((service != nullptr) && (service->application == this)) {
         services.remove(services.indexOf(service));
         service->application = nullptr;
-    }
+    //}
 }
 
 

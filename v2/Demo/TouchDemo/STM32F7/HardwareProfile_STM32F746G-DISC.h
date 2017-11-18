@@ -127,9 +127,9 @@
 
 // Control del pin R5
 //
-#define ILI9341LTDC_R5_PORT       HAL_GPIO_PORT_J
-#define ILI9341LTDC_R5_PIN        HAL_GPIO_PIN_4
-#define ILI9341LTDC_R5_AF         HAL_GPIO_AF14_LTDC
+#define RGBDIRECT_R5_PORT         HAL_GPIO_PORT_J
+#define RGBDIRECT_R5_PIN          HAL_GPIO_PIN_4
+#define RGBDIRECT_R5_AF           HAL_GPIO_AF14_LTDC
 
 // Control del pin R6
 //

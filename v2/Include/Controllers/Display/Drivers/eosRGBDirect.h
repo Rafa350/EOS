@@ -22,13 +22,17 @@ namespace eos {
 
     class RGBDirect_Driver: public IDisplayDriver {
     	private:
+    		static IDisplayDriver *instance;
     		int16_t screenWidth;
     		int16_t screenHeight;
     		uint8_t curLayer;
     		uint8_t *image;
 
-        public:
+    	private:
             RGBDirect_Driver();
+
+        public:
+            static IDisplayDriver *getInstance();
             void initialize();
             void shutdown();
             void displayOn();

@@ -19,6 +19,9 @@ Service::Service(
     name(name),
     task(stackSize, priority, name, this) {
 
+    // Si s'indica l'aplicacio, s'afegeix a la llista de
+	// serveis d'aquesta.
+	//
     if (application != nullptr)
         application->addService(this);
 }
@@ -29,6 +32,9 @@ Service::Service(
 ///
 Service::~Service() {
 
+	// Al drestruir-se, s'elimina ell mateix de la llista de serveis
+	// de l'aplicacio.
+	//
     if (application != nullptr)
         application->removeService(this);
- }
+}

@@ -29,13 +29,29 @@
 using namespace eos;
 
 
+IDisplayDriver *ILI9341_Driver::instance = nullptr;
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte una instancia unica del driver.
+/// \return La instancia del driver.
+///
+IDisplayDriver *ILI9341_Driver::getInstance() {
+
+	if (instance == nullptr)
+		instance = new ILI9341_Driver();
+	return instance;
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief Contructor.
 ///
-ILI9341_Driver::ILI9341_Driver() {
+ILI9341_Driver::ILI9341_Driver():
 
-	screenWidth = IMAGE_WIDTH;
-	screenHeight = IMAGE_HEIGHT;
+	screenWidth(IMAGE_WIDTH),
+	screenHeight(IMAGE_HEIGHT) {
+
 }
 
 

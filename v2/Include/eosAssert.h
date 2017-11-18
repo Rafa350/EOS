@@ -2,6 +2,9 @@
 #define	__eosAssert__
 
 
+#include "eos.h"
+
+
 #if defined(EOS_DEBUG)
 
 #define eosArgumentIsNotNull(variable) \

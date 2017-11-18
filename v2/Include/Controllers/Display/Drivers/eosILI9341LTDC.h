@@ -6,13 +6,11 @@
 #include "Controllers/Display/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
-#include "stm32f4xx_hal_ltdc.h"
-
 #include <stdint.h>
 
 
 #if !defined(EOS_STM32F4) && !defined(EOS_STM32F7)
-    #error CPU no soportada
+    #error Hardware no soportado
 #endif
 
 
@@ -24,14 +22,14 @@ namespace eos {
 
     class ILI9341LTDC_Driver: public IDisplayDriver {
         private:
-    		LTDC_HandleTypeDef ltdcHandle;
+    		static IDisplayDriver *instance;
 			int16_t screenWidth;
 			int16_t screenHeight;
     		uint32_t curLayer;
             uint8_t *image;
 
         public:
-            ILI9341LTDC_Driver();
+            static IDisplayDriver *getInstance();;
             void initialize();
             void shutdown();
             void displayOn();
@@ -50,6 +48,7 @@ namespace eos {
             void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
 
         private:
+            ILI9341LTDC_Driver();
             void displayInit();
             void writeCommands(const uint8_t *dada);
 

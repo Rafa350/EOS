@@ -22,10 +22,21 @@
 //
 #if defined(RGBDIRECT_COLORMODE_565)
 #define PIXEL_TYPE           uint16_t
-#define PIXEL_FORMAT         LTDC_PIXEL_FORMAT_RGB565;
+#define PIXEL_VALUE(c)       c.toRGB565()
+#define LTDC_PIXEL_FORMAT    LTDC_PIXEL_FORMAT_RGB565
+#define DMA2D_INPUT          DMA2D_INPUT_RGB565
+#define DMA2D_OUTPUT         DMA2D_OUTPUT_RGB565
+
+#elif defined(RGBDIRECT_COLOTMODE_RGB888)
+#define PIXEL_TYPE           uint32_t
+#define PIXEL_VALUE(c)       c.toRGB888()
+#define LTDC_PIXEL_FORMAT    LTDC_PIXEL_FORMAT_RGB888
+#define DMA2D_INPUT          DMA2D_INPUT_RGB888
+#define DMA2D_OUTPUT         DMA2D_OUTPUT_RGB888
+
 #endif
 
-// Format de la imatge+
+// Format de la imatge
 //
 #define IMAGE_WIDTH          ((int32_t)RGBDIRECT_SCREEN_WIDTH)
 #define IMAGE_HEIGHT         ((int32_t)RGBDIRECT_SCREEN_HEIGHT)
@@ -37,6 +48,21 @@
 
 
 using namespace eos;
+
+
+IDisplayDriver *RGBDirect_Driver::instance = nullptr;
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte una instancia unica del driver.
+/// \return La instancia del driver.
+///
+IDisplayDriver *RGBDirect_Driver::getInstance() {
+
+	if (instance == nullptr)
+		instance = new RGBDirect_Driver();
+	return instance;
+}
 
 
 /// ----------------------------------------------------------------------
@@ -108,6 +134,10 @@ void RGBDirect_Driver::setOrientation(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Borra la pantalla.
+/// \param color: Color de borrat.
+///
 void RGBDirect_Driver::clear(
 	const Color &color) {
 
@@ -115,6 +145,12 @@ void RGBDirect_Driver::clear(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa un pixel.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param color: Color del pixel.
+///
 void RGBDirect_Driver::setPixel(
 	int16_t x,
 	int16_t y,
@@ -122,7 +158,7 @@ void RGBDirect_Driver::setPixel(
 
 	if ((x >= 0) && (x < IMAGE_WIDTH) && (y >= 0) && (y < IMAGE_HEIGHT)) {
 		uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
-		*((PIXEL_TYPE*)(image + offset + (curLayer * IMAGE_SIZE))) = color.toRGB565();
+		*((PIXEL_TYPE*)(image + offset + (curLayer * IMAGE_SIZE))) = PIXEL_VALUE(color);
 	}
 }
 
@@ -255,76 +291,44 @@ void RGBDirect_Driver::hScroll(
 ///
 void RGBDirect_Driver::gpioInitialize() {
 
-
 	static const GPIOInitializePinInfo gpioInit[] = {
 		{RGBDIRECT_LCDE_PORT, RGBDIRECT_LCDE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
-		{RGBDIRECT_BKE_PORT, RGBDIRECT_BKE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 }
+		{RGBDIRECT_BKE_PORT, RGBDIRECT_BKE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
+
+		{RGBDIRECT_HSYNC_PORT, RGBDIRECT_HSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_HSYNC_AF},
+		{RGBDIRECT_VSYNC_PORT, RGBDIRECT_VSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_VSYNC_AF},
+		{RGBDIRECT_DOTCLK_PORT, RGBDIRECT_DOTCLK_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_DOTCLK_AF},
+		{RGBDIRECT_DE_PORT, RGBDIRECT_DE_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_DE_AF},
+
+		{RGBDIRECT_R0_PORT, RGBDIRECT_R0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R0_AF},
+		{RGBDIRECT_R1_PORT, RGBDIRECT_R1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R1_AF},
+		{RGBDIRECT_R2_PORT, RGBDIRECT_R2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R2_AF},
+		{RGBDIRECT_R3_PORT, RGBDIRECT_R3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R3_AF},
+		{RGBDIRECT_R4_PORT, RGBDIRECT_R4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R4_AF},
+		{RGBDIRECT_R5_PORT, RGBDIRECT_R5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R5_AF},
+		{RGBDIRECT_R6_PORT, RGBDIRECT_R6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R6_AF},
+		{RGBDIRECT_R7_PORT, RGBDIRECT_R7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R7_AF},
+
+		{RGBDIRECT_G0_PORT, RGBDIRECT_G0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G0_AF},
+		{RGBDIRECT_G1_PORT, RGBDIRECT_G1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G1_AF},
+		{RGBDIRECT_G2_PORT, RGBDIRECT_G2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G2_AF},
+		{RGBDIRECT_G3_PORT, RGBDIRECT_G3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G3_AF},
+		{RGBDIRECT_G4_PORT, RGBDIRECT_G4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G4_AF},
+		{RGBDIRECT_G5_PORT, RGBDIRECT_G5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G5_AF},
+		{RGBDIRECT_G6_PORT, RGBDIRECT_G6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G6_AF},
+		{RGBDIRECT_G7_PORT, RGBDIRECT_G7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G7_AF},
+
+		{RGBDIRECT_B0_PORT, RGBDIRECT_B0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B0_AF},
+		{RGBDIRECT_B1_PORT, RGBDIRECT_B1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B1_AF},
+		{RGBDIRECT_B2_PORT, RGBDIRECT_B2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B2_AF},
+		{RGBDIRECT_B3_PORT, RGBDIRECT_B3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B3_AF},
+		{RGBDIRECT_B4_PORT, RGBDIRECT_B4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B4_AF},
+		{RGBDIRECT_B5_PORT, RGBDIRECT_B5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B5_AF},
+		{RGBDIRECT_B6_PORT, RGBDIRECT_B6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B6_AF},
+		{RGBDIRECT_B7_PORT, RGBDIRECT_B7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B7_AF}
 	};
 
 	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
-
-	  GPIO_InitTypeDef GPIO_Init_Structure;
-
-	  /* Enable GPIOs clock */
-	  __HAL_RCC_GPIOE_CLK_ENABLE();
-	  __HAL_RCC_GPIOG_CLK_ENABLE();
-	  __HAL_RCC_GPIOI_CLK_ENABLE();
-	  __HAL_RCC_GPIOJ_CLK_ENABLE();
-	  __HAL_RCC_GPIOK_CLK_ENABLE();
-
-	  /*** LTDC Pins configuration ***/
-	  /* GPIOE configuration */
-	  GPIO_Init_Structure.Pin       = GPIO_PIN_4;
-	  GPIO_Init_Structure.Mode      = GPIO_MODE_AF_PP;
-	  GPIO_Init_Structure.Pull      = GPIO_NOPULL;
-	  GPIO_Init_Structure.Speed     = GPIO_SPEED_FAST;
-	  GPIO_Init_Structure.Alternate = GPIO_AF14_LTDC;
-	  HAL_GPIO_Init(GPIOE, &GPIO_Init_Structure);
-
-	  /* GPIOG configuration */
-	  GPIO_Init_Structure.Pin       = GPIO_PIN_12;
-	  GPIO_Init_Structure.Mode      = GPIO_MODE_AF_PP;
-	  GPIO_Init_Structure.Alternate = GPIO_AF9_LTDC;
-	  HAL_GPIO_Init(GPIOG, &GPIO_Init_Structure);
-
-	  /* GPIOI LTDC alternate configuration */
-	  GPIO_Init_Structure.Pin       = GPIO_PIN_9 | GPIO_PIN_10 | \
-	                                  GPIO_PIN_14 | GPIO_PIN_15;
-	  GPIO_Init_Structure.Mode      = GPIO_MODE_AF_PP;
-	  GPIO_Init_Structure.Alternate = GPIO_AF14_LTDC;
-	  HAL_GPIO_Init(GPIOI, &GPIO_Init_Structure);
-
-	  /* GPIOJ configuration */
-	  GPIO_Init_Structure.Pin       = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | \
-	                                  GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | \
-	                                  GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | \
-	                                  GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
-	  GPIO_Init_Structure.Mode      = GPIO_MODE_AF_PP;
-	  GPIO_Init_Structure.Alternate = GPIO_AF14_LTDC;
-	  HAL_GPIO_Init(GPIOJ, &GPIO_Init_Structure);
-
-	  /* GPIOK configuration */
-	  GPIO_Init_Structure.Pin       = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 | \
-	                                  GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
-	  GPIO_Init_Structure.Mode      = GPIO_MODE_AF_PP;
-	  GPIO_Init_Structure.Alternate = GPIO_AF14_LTDC;
-	  HAL_GPIO_Init(GPIOK, &GPIO_Init_Structure);
-
-	  /* LCD_DISP GPIO configuration */
-	  GPIO_Init_Structure.Pin       = GPIO_PIN_12;     /* LCD_DISP pin has to be manually controlled */
-	  GPIO_Init_Structure.Mode      = GPIO_MODE_OUTPUT_PP;
-	  HAL_GPIO_Init(GPIOI, &GPIO_Init_Structure);
-
-	  /* LCD_BL_CTRL GPIO configuration */
-	  GPIO_Init_Structure.Pin       = GPIO_PIN_3;  /* LCD_BL_CTRL pin has to be manually controlled */
-	  GPIO_Init_Structure.Mode      = GPIO_MODE_OUTPUT_PP;
-	  HAL_GPIO_Init(GPIOK, &GPIO_Init_Structure);
-
-	  /* Assert display enable LCD_DISP pin */
-	  //HAL_GPIO_WritePin(LCD_DISP_GPIO_PORT, LCD_DISP_PIN, GPIO_PIN_SET);
-
-	  /* Assert backlight LCD_BL_CTRL pin */
-	  //HAL_GPIO_WritePin(LCD_BL_CTRL_GPIO_PORT, LCD_BL_CTRL_PIN, GPIO_PIN_SET);
 }
 
 
@@ -374,7 +378,7 @@ void RGBDirect_Driver::ltdcInitialize() {
 	layerCfg.WindowX1 = 480;
 	layerCfg.WindowY0 = 0;
 	layerCfg.WindowY1 = 272;
-	layerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
+	layerCfg.PixelFormat = LTDC_PIXEL_FORMAT;
 	layerCfg.FBStartAdress = RGBDIRECT_VRAM;
 	layerCfg.Alpha = 255;
 	layerCfg.Alpha0 = 0;
@@ -418,7 +422,7 @@ void RGBDirect_Driver::dma2dFill(
 
 	// Configure the DMA2D Mode, Color Mode and output offset
 	dma2dHandle.Init.Mode         = DMA2D_R2M;
-	dma2dHandle.Init.ColorMode    = DMA2D_OUTPUT_RGB565;
+	dma2dHandle.Init.ColorMode    = DMA2D_OUTPUT;
 	dma2dHandle.Init.OutputOffset = IMAGE_WIDTH - width;
 
 	// DMA2D Callbacks Configuration
@@ -428,7 +432,7 @@ void RGBDirect_Driver::dma2dFill(
 	// Foreground Configuration
 	dma2dHandle.LayerCfg[curLayer].AlphaMode = DMA2D_NO_MODIF_ALPHA;
 	dma2dHandle.LayerCfg[curLayer].InputAlpha = 0xFF;
-	dma2dHandle.LayerCfg[curLayer].InputColorMode = DMA2D_INPUT_RGB565;
+	dma2dHandle.LayerCfg[curLayer].InputColorMode = DMA2D_INPUT;
 	dma2dHandle.LayerCfg[curLayer].InputOffset = 0x0;
 
 	dma2dHandle.Instance = DMA2D;
