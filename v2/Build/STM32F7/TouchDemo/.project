@@ -25,6 +25,7 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>fr.ac6.mcu.ide.core.MCUProjectNature</nature>
 		<nature>fr.ac6.mcu.ide.core.MCUSingleCoreProjectNature</nature>
+		<nature>org.eclipse.cdt.core.ccnature</nature>
 	</natures>
 	<linkedResources>
 		<link>
@@ -73,7 +74,7 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/AppMain.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F</name>
+			<name>src/App/STM32F7</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -183,12 +184,17 @@
 			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F7_V1.8.0/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F/Main.c</name>
+			<name>src/App/STM32F7/Initialize_STM32F746G-DISC.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F7/Main.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F7/Initialize_STM32F746G-DISC.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F/stm32f7xx_hal_timebase_tim.c</name>
+			<name>src/App/STM32F7/Main.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F7/Main.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7/stm32f7xx_hal_timebase_tim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F7/stm32f7xx_hal_timebase_tim.c</locationURI>
 		</link>
@@ -446,6 +452,11 @@
 			<name>src/Framework/EOS/System/Collections/eosListImpl.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosListImpl.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosErrorHandler.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosGlobalAlloc.cpp</name>

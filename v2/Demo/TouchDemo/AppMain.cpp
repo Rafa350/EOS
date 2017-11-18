@@ -13,10 +13,6 @@
 
 using namespace eos;
 
-extern "C" {
-	void AppMain();
-}
-
 
 class LedLoopService: public AppLoopService {
 	public:
@@ -78,8 +74,6 @@ MyApplication::MyApplication() {
 ///
 void MyApplication::onInitialize() {
 
-	//halSysInitialize();
-
 	ledService->initialize();
 	//displayService->initialize();
 }
@@ -92,8 +86,8 @@ void LedLoopService::onSetup() {
 
 	// Inicialitza el LED 1
 	//
-	//halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
-	//halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+	halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
+	halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 
 #ifdef LEDS_LD2_PORT
 
@@ -112,7 +106,7 @@ void LedLoopService::onRun() {
 
 	while (true) {
 
-		//halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
 #ifdef LEDS_LD2_PORT
 		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
 #endif
@@ -206,7 +200,7 @@ void DisplayLoopService::onRun() {
         display->drawLine(x1, y1, x2, y2);
     }
     verticalLinesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    Task::delay(500);
 
     // Horizontal lines
     //
@@ -226,7 +220,7 @@ void DisplayLoopService::onRun() {
         display->drawLine(x1, y1, x2, y2);
     }
     horizontalLinesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    Task::delay(500);
 
     // Lines
     //
@@ -266,7 +260,7 @@ void DisplayLoopService::onRun() {
         display->drawRectangle(x1, y1, x2, y2);
     }
     rectanglesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    Task::delay(500);
 
     // Filled rectangles
     //
@@ -305,7 +299,7 @@ void DisplayLoopService::onRun() {
         display->drawCircle(cx, cy, r);
     }
     circlesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
+    Task::delay(500);
 
     // Filled circles
     //
