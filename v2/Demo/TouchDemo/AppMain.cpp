@@ -65,7 +65,7 @@ class MyApplication: public Application {
 MyApplication::MyApplication() {
 
 	ledService = new LedLoopService(this);
-    //displayService = new DisplayLoopService(this);
+    displayService = new DisplayLoopService(this);
 }
 
 
@@ -75,7 +75,7 @@ MyApplication::MyApplication() {
 void MyApplication::onInitialize() {
 
 	ledService->initialize();
-	//displayService->initialize();
+	displayService->initialize();
 }
 
 

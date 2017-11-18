@@ -2,16 +2,16 @@
 #include "HAL/halGPIO.h"
 
 
-#if !defined(STM32F4) && !defined(STM32F7)
+#if !defined(EOS_STM32F4) && !defined(EOS_STM32F7)
 #error Hardware no soportado
 #endif
 
 
-#if defined(STM32F4)
+#if defined(EOS_STM32F4)
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_ltdc.h"
 #include "stm32f4xx_hal_dma2d.h"
-#elif defined(STM32F7)
+#elif defined(EOS_STM32F7)
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_ltdc.h"
 #include "stm32f7xx_hal_dma2d.h"
@@ -120,27 +120,84 @@ void RGBDirect_Driver::setPixel(
 	int16_t y,
 	const Color &color) {
 
+	if ((x >= 0) && (x < IMAGE_WIDTH) && (y >= 0) && (y < IMAGE_HEIGHT)) {
+		uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
+		*((PIXEL_TYPE*)(image + offset + (curLayer * IMAGE_SIZE))) = color.toRGB565();
+	}
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una linia de pixels horitzontals.
+/// \param x: Coordinada X.
+/// \param y: Colordinada Y.
+/// \param length: Longitut de la linia.
+/// \param color: Color dels pixels.
+///
 void RGBDirect_Driver::setHPixels(
 	int16_t x,
 	int16_t y,
 	int16_t size,
 	const Color &color) {
 
+	if ((y >= 0) && (y < IMAGE_HEIGHT)) {
+
+		int16_t x2 = x + size - 1;
+		if (x < 0)
+			x = 0;
+		if (x2 >= IMAGE_WIDTH)
+			x2 = IMAGE_WIDTH - 1;
+		size = x2 - x + 1;
+
+		if (size > 0) {
+			uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
+			uint8_t *addr = (uint8_t*) (image + offset + (curLayer * IMAGE_SIZE));
+			dma2dFill(addr, size, 1, color);
+		}
+	}
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una linia de pixels en vertical.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param length: Longitut de la linia.
+/// \param color: Color dels pixels.
+///
 void RGBDirect_Driver::setVPixels(
 	int16_t x,
 	int16_t y,
 	int16_t size,
 	const Color &color) {
 
+	if ((x >= 0) && (x < IMAGE_WIDTH)) {
+
+		int16_t y2 = y + size - 1;
+		if (y < 0)
+			y = 0;
+		if (y2 >= IMAGE_HEIGHT)
+			y2 = IMAGE_HEIGHT - 1;
+		size = y2 - y + 1;
+
+		if (size > 0) {
+			uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
+			uint8_t *addr = (uint8_t*) (image + offset + (curLayer * IMAGE_SIZE));
+			dma2dFill(addr, 1, size, color);
+		}
+	}
+
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una regio rectangular de pixels.
+/// \param x: Posicio X.
+/// \param y: Posicio Y.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
+/// \param color: Color dels pixels.
+///
 void RGBDirect_Driver::setPixels(
 	int16_t x,
 	int16_t y,
@@ -148,6 +205,9 @@ void RGBDirect_Driver::setPixels(
 	int16_t height,
 	const Color &color) {
 
+	uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
+	uint8_t *addr = (uint8_t*) (image + offset + (curLayer * IMAGE_SIZE));
+    dma2dFill(addr, width, height, color);
 }
 
 
@@ -157,7 +217,6 @@ void RGBDirect_Driver::writePixels(
 	int16_t width,
 	int16_t height,
 	const Color *colors) {
-
 }
 
 
@@ -329,7 +388,7 @@ void RGBDirect_Driver::ltdcInitialize() {
 
 	__HAL_RCC_LTDC_CLK_ENABLE();
 	HAL_LTDC_Init(&ltdcHandler);
-	HAL_LTDC_ConfigLayer(&ltdcHandler, &layerCfg, 1);
+	HAL_LTDC_ConfigLayer(&ltdcHandler, &layerCfg, 0);
 }
 
 

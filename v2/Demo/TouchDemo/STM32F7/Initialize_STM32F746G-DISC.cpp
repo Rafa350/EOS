@@ -3,6 +3,7 @@
 #include "stm32f7xx_hal_rcc.h"
 #include "stm32f7xx_hal_flash_ex.h"
 #include "stm32746g_discovery.h"
+#include "stm32746g_discovery_sdram.h"
 
 
 static void CLKInitialize() {
@@ -35,8 +36,8 @@ static void CLKInitialize() {
 
 static void SDRAMInitialize() {
 
-	//BSP_SDRAM_Init();
-	//BSP_SDRAM_Initialization_sequence(REFRESH_COUNT);
+	BSP_SDRAM_Init();
+	BSP_SDRAM_Initialization_sequence(REFRESH_COUNT);
 }
 
 
