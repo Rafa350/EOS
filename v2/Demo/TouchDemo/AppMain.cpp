@@ -2,6 +2,8 @@
 #include "System/eosApplication.h"
 #include "System/Core/eosTask.h"
 #include "Services/eosAppLoop.h"
+#include "Controllers/TouchPad/eosTouchPad.h"
+#include "Controllers/TouchPad/Drivers/eosFT5336.h"
 #include "Controllers/Display/eosDisplay.h"
 #include "Controllers/Display/Drivers/eosRGBDirect.h"
 #include "HAL/halSYS.h"
@@ -27,7 +29,9 @@ class LedLoopService: public AppLoopService {
 
 class DisplayLoopService: public AppLoopService {
     private:
-		IDisplayDriver *driver;
+		ITouchPadDriver *touchDriver;
+        TouchPad *touch;
+		IDisplayDriver *displayDriver;
         Display *display;
         int16_t screenWidth;
         int16_t screenHeight;
@@ -121,16 +125,22 @@ void LedLoopService::onRun() {
 ///
 void DisplayLoopService::onSetup() {
 
-	driver = RGBDirect_Driver::getInstance();
-    driver->initialize();
-    driver->setOrientation(DisplayOrientation::rotate180);
-    driver->displayOn();
-
-    display = new Display(driver);
+	// Inicialitzacio del display
+	//
+	displayDriver = RGBDirect_Driver::getInstance();
+    displayDriver->initialize();
+    displayDriver->setOrientation(DisplayOrientation::rotate180);
+    displayDriver->displayOn();
+    display = new Display(displayDriver);
     display->clear(COLOR_Black);
 
-    screenWidth = driver->getWidth();
-    screenHeight  = driver->getHeight();
+    // Inicialitzacio del touch pad
+    //
+    touchDriver = FT5336_Driver::getInstance();
+    touch = new TouchPad(touchDriver);
+
+    screenWidth = displayDriver->getWidth();
+    screenHeight  = displayDriver->getHeight();
 }
 
 

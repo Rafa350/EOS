@@ -240,4 +240,15 @@
 #define RGBDIRECT_B7_AF           HAL_GPIO_AF14_LTDC
 
 
+// -----------------------------------------------------------------------
+// Controlador de touchpad FT5336
+// -----------------------------------------------------------------------
+
+#define FT5336_I2C_ADDR           0x70
+
+#define FT5336_PAD_WIDTH          480
+#define FT5336_PAD_HEIGHT         270
+
+
+
 #endif

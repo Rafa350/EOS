@@ -419,9 +419,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosMatrix2D.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/eosTouchPad.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPad.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/TouchPad/eosTouchPadDriver.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPadDriver.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
@@ -472,6 +482,11 @@
 			<name>src/Framework/EOS/Controllers/Display/eosFont.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFont.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/TouchPad/Drivers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/TouchPad/eosTouchPad.cpp</name>
@@ -544,6 +559,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosRGBDirect.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers/eosFT5336.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/Drivers/eosFT5336.h</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/eosRGBDirect.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGBDirect/eosRGBDirect.cpp</locationURI>
@@ -577,6 +597,11 @@
 			<name>src/Framework/EOS/Controllers/Display/Fonts/Consolas8pt.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Fonts/Consolas8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/TouchPad/Drivers/eosFT5336.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/Drivers/eosFT5336.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
