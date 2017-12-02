@@ -60,7 +60,7 @@ uint16_t FT5336_Driver::ReadID() {
 	// At maximum 4 attempts to read ID : exit at first finding of the searched device ID
 	for (nbReadAttempts = 0; ((nbReadAttempts < 3) && !(bFoundDevice)); nbReadAttempts++) {
 		/* Read register FT5336_CHIP_ID_REG as DeviceID detection */
-		ucReadId = ioRead(addr, FT5336_CHIP_ID_REG);
+		ucReadId = ioRead(FT5336_CHIP_ID_REG);
 
 		/* Found the searched device ID ? */
 		if(ucReadId == FT5336_ID_VALUE) {
@@ -78,11 +78,11 @@ uint16_t FT5336_Driver::ReadID() {
   * @param  DeviceAddr: Device address on communication Bus (I2C slave address).
   * @retval None.
   */
-void FT5336_Driver::TS_Start() {
+void FT5336_Driver::Start() {
 
 	// By default set FT5336 IC in Polling mode : no INT generation on FT5336 for new touch available
 	// Note TS_INT is active low
-	TS_DisableIT();
+	DisableIT();
 }
 
 
@@ -93,12 +93,12 @@ void FT5336_Driver::TS_Start() {
   * @param  DeviceAddr: Device address on communication Bus.
   * @retval : Number of active touches detected (can be 0, 1 or 2).
   */
-uint8_t FT5336_Driver::TS_DetectTouch() {
+uint8_t FT5336_Driver::DetectTouch() {
 
 	volatile uint8_t nbTouch = 0;
 
 	// Read register FT5336_TD_STAT_REG to check number of touches detection
-	nbTouch = ioRead(addr, FT5336_TD_STAT_REG);
+	nbTouch = ioRead(FT5336_TD_STAT_REG);
 	nbTouch &= FT5336_TD_STAT_MASK;
 
 	if (nbTouch > FT5336_MAX_DETECTABLE_TOUCH) {
@@ -125,7 +125,7 @@ uint8_t FT5336_Driver::TS_DetectTouch() {
   * @param  Y: Pointer to Y position value
   * @retval None.
   */
-void FT5336_Driver::TS_GetXY(uint16_t *X, uint16_t *Y) {
+void FT5336_Driver::GetXY(uint16_t *X, uint16_t *Y) {
 
 	volatile uint8_t ucReadData = 0;
 	static uint16_t coord;
@@ -212,22 +212,22 @@ void FT5336_Driver::TS_GetXY(uint16_t *X, uint16_t *Y) {
 		}
 
 		// Read low part of X position
-		ucReadData = ioRead(addr, regAddressXLow);
+		ucReadData = ioRead(regAddressXLow);
 		coord = (ucReadData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
 
 		// Read high part of X position
-		ucReadData = ioRead(addr, regAddressXHigh);
+		ucReadData = ioRead(regAddressXHigh);
 		coord |= ((ucReadData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
 		// Send back ready X position to caller
 		*X = coord;
 
 		// Read low part of Y position
-		ucReadData = ioRead(addr, regAddressYLow);
+		ucReadData = ioRead(regAddressYLow);
 		coord = (ucReadData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
 
 		// Read high part of Y position
-		ucReadData = ioRead(addr, regAddressYHigh);
+		ucReadData = ioRead(regAddressYHigh);
 		coord |= ((ucReadData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
 		// Send back ready Y position to caller
@@ -243,13 +243,13 @@ void FT5336_Driver::TS_GetXY(uint16_t *X, uint16_t *Y) {
   * @param  DeviceAddr: Device address on communication Bus (Slave I2C address of FT5336).
   * @retval None
   */
-void FT5336_Driver::TS_EnableIT() {
+void FT5336_Driver::EnableIT() {
 
 	uint8_t regValue = 0;
 	regValue = (FT5336_G_MODE_INTERRUPT_TRIGGER & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
 
 	/* Set interrupt trigger mode in FT5336_GMODE_REG */
-	ioWrite(addr, FT5336_GMODE_REG, regValue);
+	ioWrite(FT5336_GMODE_REG, regValue);
 }
 
 
@@ -259,13 +259,13 @@ void FT5336_Driver::TS_EnableIT() {
   * @param  DeviceAddr: Device address on communication Bus (Slave I2C address of FT5336).
   * @retval None
   */
-void FT5336_Driver::TS_DisableIT() {
+void FT5336_Driver::DisableIT() {
 
 	uint8_t regValue = 0;
 	regValue = (FT5336_G_MODE_INTERRUPT_POLLING & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
 
 	/* Set interrupt polling mode in FT5336_GMODE_REG */
-	ioWrite(addr, FT5336_GMODE_REG, regValue);
+	ioWrite(FT5336_GMODE_REG, regValue);
 }
 
 
@@ -277,7 +277,7 @@ void FT5336_Driver::TS_DisableIT() {
   * @param  DeviceAddr: Device address on communication Bus (I2C slave address of FT5336).
   * @retval TS interrupts status : always return 0 here
   */
-uint8_t FT5336_Driver::TS_ITStatus() {
+uint8_t FT5336_Driver::ITStatus() {
 
 	// Always return 0 as feature not applicable to FT5336
 	return 0;
@@ -290,7 +290,7 @@ uint8_t FT5336_Driver::TS_ITStatus() {
   * @param  DeviceAddr: Device address on communication Bus (I2C slave address of FT5336).
   * @retval None
   */
-void FT5336_Driver::ClearIT(uint16_t DeviceAddr)
+void FT5336_Driver::ClearIT()
 {
   /* Nothing to be done here for FT5336 */
 }
@@ -305,11 +305,11 @@ void FT5336_Driver::ClearIT(uint16_t DeviceAddr)
   * @param  pGestureId : Pointer to get last touch gesture Identification.
   * @retval None.
   */
-void FT5336_Driver::GetGestureID(uint16_t DeviceAddr, uint32_t * pGestureId)
+void FT5336_Driver::GetGestureID(uint32_t * pGestureId)
 {
   volatile uint8_t ucReadData = 0;
 
-  ucReadData = ioRead(DeviceAddr, FT5336_GEST_ID_REG);
+  ucReadData = ioRead(FT5336_GEST_ID_REG);
 
   * pGestureId = ucReadData;
 }
@@ -329,7 +329,7 @@ void FT5336_Driver::GetGestureID(uint16_t DeviceAddr, uint32_t * pGestureId)
 
   * @retval None.
   */
-void FT5336_Driver::TS_GetTouchInfo(
+void FT5336_Driver::GetTouchInfo(
 	uint32_t   touchIdx,
 	uint32_t * pWeight,
 	uint32_t * pArea,
@@ -408,15 +408,15 @@ void FT5336_Driver::TS_GetTouchInfo(
 		}
 
 		/* Read Event Id of touch index */
-		ucReadData = ioRead(addr, regAddressXHigh);
+		ucReadData = ioRead(regAddressXHigh);
 		* pEvent = (ucReadData & FT5336_TOUCH_EVT_FLAG_MASK) >> FT5336_TOUCH_EVT_FLAG_SHIFT;
 
 		/* Read weight of touch index */
-		ucReadData = ioRead(addr, regAddressPWeight);
+		ucReadData = ioRead(regAddressPWeight);
 		* pWeight = (ucReadData & FT5336_TOUCH_WEIGHT_MASK) >> FT5336_TOUCH_WEIGHT_SHIFT;
 
 		/* Read area of touch index */
-		ucReadData = ioRead(addr, regAddressPMisc);
+		ucReadData = ioRead(regAddressPMisc);
 		* pArea = (ucReadData & FT5336_TOUCH_AREA_MASK) >> FT5336_TOUCH_AREA_SHIFT;
 	}
 }
@@ -454,7 +454,9 @@ void FT5336_Driver::ioInit() {
 /// \param reg: Numero de registre.
 /// \param value: El valor a escriure.
 ///
-void FT5336_Driver::ioWrite(uint8_t addr, uint8_t reg, uint8_t value) {
+void FT5336_Driver::ioWrite(
+	uint8_t reg,
+	uint8_t value) {
 
 	halI2CWriteMultiple(FT5336_I2C_MODULE, addr, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT,(uint8_t*)&value, 1);
 }
@@ -467,7 +469,6 @@ void FT5336_Driver::ioWrite(uint8_t addr, uint8_t reg, uint8_t value) {
 /// \return El valor del registre.
 ///
 uint8_t FT5336_Driver::ioRead(
-	uint8_t addr,
 	uint8_t reg) {
 
 	uint8_t value = 0;

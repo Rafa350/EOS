@@ -70,7 +70,7 @@ static I2C_HandleTypeDef *PrepareHandler(
 
 	EnableClock(info->id);
 
-	static const I2C_TypeDef *instances[HAL_I2C_ID_MAX] = {
+	static I2C_TypeDef * const instances[HAL_I2C_ID_MAX] = {
 		I2C1,
 		I2C2,
 		I2C3,
@@ -87,9 +87,6 @@ static I2C_HandleTypeDef *PrepareHandler(
     handler->Init.OwnAddress2      = 0;
     handler->Init.GeneralCallMode  = I2C_GENERALCALL_DISABLE;
     handler->Init.NoStretchMode    = I2C_NOSTRETCH_DISABLE;
-
-    /* Init the I2C */
-    I2Cx_MspInit(handler);
 }
 
 

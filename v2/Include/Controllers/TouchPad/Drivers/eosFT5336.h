@@ -311,23 +311,23 @@ typedef struct
 			void queryState();
 
 			uint16_t ReadID();
-			void TS_Start();
-			uint8_t TS_DetectTouch();
-			void TS_GetXY(uint16_t *X, uint16_t *Y);
-			void TS_EnableIT();
-			void TS_DisableIT();
-			uint8_t TS_ITStatus();
-			void TS_ClearIT();
+			void Start();
+			uint8_t DetectTouch();
+			void GetXY(uint16_t *X, uint16_t *Y);
+			void EnableIT();
+			void DisableIT();
+			uint8_t ITStatus();
+			void ClearIT();
 
 #if (TS_MULTI_TOUCH_SUPPORTED == 1)
-			void TS_GetGestureID(uint32_t *pGestureId);
-			void TS_GetTouchInfo(uint32_t touchIdx, uint32_t *pWeight, uint32_t *pArea, uint32_t *pEvent);
+			void GetGestureID(uint32_t *pGestureId);
+			void GetTouchInfo(uint32_t touchIdx, uint32_t *pWeight, uint32_t *pArea, uint32_t *pEvent);
 #endif
 
 		private:
 			void ioInit();
-			uint8_t ioRead(uint8_t addr, uint8_t reg);
-			void ioWrite(uint8_t addr, uint8_t reg, uint8_t value);
+			uint8_t ioRead(uint8_t reg);
+			void ioWrite(uint8_t reg, uint8_t value);
 	};
 
 }
