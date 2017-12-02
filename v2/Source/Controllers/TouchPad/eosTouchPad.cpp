@@ -12,6 +12,8 @@ TouchPad::TouchPad(
 }
 
 
-void TouchPad::queryState(const TouchPadState &state) {
+void TouchPad::queryState(
+	const TouchPadState &state) {
 
+	driver->queryState();
 }

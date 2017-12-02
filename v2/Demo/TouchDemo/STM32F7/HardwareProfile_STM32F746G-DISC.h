@@ -249,6 +249,18 @@
 #define FT5336_PAD_WIDTH          480
 #define FT5336_PAD_HEIGHT         270
 
+// Control del pin SCL
+//
+#define FT5336_SCL_PORT           HAL_GPIO_PORT_H
+#define FT5336_SCL_PIN            HAL_GPIO_PIN_7
+#define FT5336_SCL_AF		      HAL_GPIO_AF4_I2C3
 
+// Control del pin SDA
+//
+#define FT5336_SDA_PORT           HAL_GPIO_PORT_H
+#define FT5336_SDA_PIN            HAL_GPIO_PIN_8
+#define FT5336_SDA_AF             HAL_GPIO_AF4_I2C3
+
+#define FT5336_I2C_MODULE         HAL_I2C_ID_3
 
 #endif

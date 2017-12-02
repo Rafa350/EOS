@@ -44,7 +44,7 @@ typedef struct {
 
 extern GPIO_TypeDef * const gpioTbl[];
 
-
+// Identificado del port
 #define HAL_GPIO_PORT_A      0
 #define HAL_GPIO_PORT_B      1
 #define HAL_GPIO_PORT_C      2
@@ -57,6 +57,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_PORT_J      9
 #define HAL_GPIO_PORT_K      10
 
+// Identificador del pin
 #define HAL_GPIO_PIN_0       0
 #define HAL_GPIO_PIN_1       1
 #define HAL_GPIO_PIN_2       2
@@ -74,6 +75,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_PIN_14      14
 #define HAL_GPIO_PIN_15      15
 
+// Mascara de posicio del pin
 #define HAL_GPIO_POS_0       ((uint32_t) 1 << HAL_GPIO_PIN_0)
 #define HAL_GPIO_POS_1       ((uint32_t) 1 << HAL_GPIO_PIN_1)
 #define HAL_GPIO_POS_2       ((uint32_t) 1 << HAL_GPIO_PIN_2)
@@ -91,10 +93,19 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_POS_14      ((uint32_t) 1 << HAL_GPIO_PIN_14)
 #define HAL_GPIO_POS_15      ((uint32_t) 1 << HAL_GPIO_PIN_15)
 
+// Funcio alternativa
+// Sende funcio
 #define HAL_GPIO_AF_NONE     0
-#define HAL_GPIO_AF12_FMC    GPIO_AF12_FMC
-#define HAL_GPIO_AF9_LTDC    GPIO_AF9_LTDC
-#define HAL_GPIO_AF14_LTDC   GPIO_AF14_LTDC
+
+// Funcio alternativa
+// Funcio AF4
+#define HAL_GPIO_AF4_I2C1    GPIO_AF4_I2C1
+#define HAL_GPIO_AF4_I2C2    GPIO_AF4_I2C2
+#define HAL_GPIO_AF4_I2C3    GPIO_AF4_I2C3
+#define HAL_GPIO_AF4_I2C4    GPIO_AF4_I2C4
+
+// Funcio alternativa
+// Funcio AF5
 #define HAL_GPIO_AF5_SPI1    GPIO_AF5_SPI1
 #define HAL_GPIO_AF5_SPI2    GPIO_AF5_SPI2
 #define HAL_GPIO_AF5_SPI3    GPIO_AF5_SPI3
@@ -102,9 +113,21 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_AF5_SPI5    GPIO_AF5_SPI5
 #define HAL_GPIO_AF5_SPI6    GPIO_AF5_SPI6
 
+// Funcio alternativa
+// Funcio AF9
+#define HAL_GPIO_AF9_LTDC    GPIO_AF9_LTDC
+
+// Funcio alternativa
+// Funcio AF12
+#define HAL_GPIO_AF12_FMC    GPIO_AF12_FMC
+
+// Funcio alternativa
+// Funcio AF14
+#define HAL_GPIO_AF14_LTDC   GPIO_AF14_LTDC
+
 // Tipus de port
 #define HAL_GPIO_MODE_OFFSET      0
-#define HAL_GPIO_MODE_MASK        0b1111
+#define HAL_GPIO_MODE_MASK        (0b1111 << HAL_GPIO_MODE_OFFSET)
 
 #define HAL_GPIO_MODE_INPUT       (0 << HAL_GPIO_MODE_OFFSET)   // -Entrada digital
 #define HAL_GPIO_MODE_OUTPUT_PP   (1 << HAL_GPIO_MODE_OFFSET)   // -Sortida push-pull
@@ -115,7 +138,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 
 // Velocitat de conmutacio
 #define HAL_GPIO_SPEED_OFFSET     4
-#define HAL_GPIO_SPEED_MASK       0b11
+#define HAL_GPIO_SPEED_MASK       (0b11 << HAL_GPIO_SPEED_OFFSET)
 
 #define HAL_GPIO_SPEED_LOW        (0 << HAL_GPIO_SPEED_OFFSET)
 #define HAL_GPIO_SPEED_MEDIUM	  (1 << HAL_GPIO_SPEED_OFFSET)
@@ -124,7 +147,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 
 // Resistencies pull-up
 #define HAL_GPIO_PULL_OFFSET      6
-#define HAL_GPIO_PULL_MASK        0b11
+#define HAL_GPIO_PULL_MASK        (0b11 << HAL_GPIO_PULL_OFFSET)
 
 #define HAL_GPIO_PULL_NONE        (0 << HAL_GPIO_PULL_OFFSET)
 #define HAL_GPIO_PULL_UP          (1 << HAL_GPIO_PULL_OFFSET)
@@ -132,7 +155,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 
 // Valor inicial de la sortida
 #define HAL_GPIO_INIT_OFFSET      8
-#define HAL_GPIO_INIT_MASK        0b11
+#define HAL_GPIO_INIT_MASK        (0b1 << HAL_GPIO_INIT_OFFSET)
 
 #define HAL_GPIO_INIT_CLR         (0 << HAL_GPIO_INIT_OFFSET)
 #define HAL_GPIO_INIT_SET         (1 << HAL_GPIO_INIT_OFFSET)

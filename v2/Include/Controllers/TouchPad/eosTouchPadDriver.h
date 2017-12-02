@@ -13,7 +13,8 @@ namespace eos {
 		public:
 			virtual ~ITouchPadDriver() {}
 			virtual int16_t getWidth() const = 0;
-			virtual int16_t getHeight() const = 0;;
+			virtual int16_t getHeight() const = 0;
+			virtual void queryState() = 0;
 	};
 }
 

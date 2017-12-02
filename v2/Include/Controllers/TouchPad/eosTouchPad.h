@@ -9,7 +9,7 @@
 namespace eos {
 
 	typedef struct {
-
+		uint8_t dummy;
 	} TouchPadState;
 
 	class TouchPad {

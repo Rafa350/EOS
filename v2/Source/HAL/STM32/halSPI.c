@@ -10,7 +10,7 @@ static SPI_HandleTypeDef spiHandler[HAL_SPI_ID_MAX];
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa el rellotge del modul SPI..
+/// \brief Activa el rellotge del modul SPI.
 /// \param id: identificador del modul.
 ///
 static void EnableClock(

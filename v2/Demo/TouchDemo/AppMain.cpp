@@ -355,6 +355,9 @@ void DisplayLoopService::onRun() {
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
 
     Task::delay(10000);
+
+    TouchPadState tps;
+    touch->queryState(tps);
 }
 
 

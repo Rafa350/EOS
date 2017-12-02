@@ -308,6 +308,7 @@ typedef struct
 			static ITouchPadDriver *getInstance();
 			int16_t getWidth() const { return padWidth; }
 			int16_t getHeight() const { return padHeight; }
+			void queryState();
 
 			uint16_t ReadID();
 			void TS_Start();
@@ -323,6 +324,10 @@ typedef struct
 			void TS_GetTouchInfo(uint32_t touchIdx, uint32_t *pWeight, uint32_t *pArea, uint32_t *pEvent);
 #endif
 
+		private:
+			void ioInit();
+			uint8_t ioRead(uint8_t addr, uint8_t reg);
+			void ioWrite(uint8_t addr, uint8_t reg, uint8_t value);
 	};
 
 }

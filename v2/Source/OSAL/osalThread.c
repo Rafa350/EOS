@@ -117,8 +117,18 @@ unsigned osalGetTickCount() {
 /// \brief Suspen l'execucio de la tasca actual, durant un periode de temps.
 /// \param time: Temps en ms.
 ///
-void osalDelay(unsigned time) {
+void osalDelay(
+	unsigned time) {
 
 	if (time > 0)
         vTaskDelay(time / portTICK_PERIOD_MS);
+}
+
+
+void osalDelayUntil(
+	unsigned time,
+	unsigned *lastTick) {
+
+    if (time > 0)
+        vTaskDelayUntil((TickType_t*) lastTick, time / portTICK_PERIOD_MS);
 }
