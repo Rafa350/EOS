@@ -33,21 +33,6 @@ namespace eos {
                                             }while(0)
 #endif /* FT5336_ENABLE_ASSERT == 1 */
 
-/** @typedef ft5336_handle_TypeDef
- *  ft5336 Handle definition.
- */
-typedef struct
-{
-  uint8_t i2cInitialized;
-
-  /* field holding the current number of simultaneous active touches */
-  uint8_t currActiveTouchNb;
-
-  /* field holding the touch index currently managed */
-  uint8_t currActiveTouchIdx;
-
-} ft5336_handle_TypeDef;
-
 
 // Adressa I2C
 #ifndef FT5336_I2C_ADDR
@@ -64,31 +49,31 @@ typedef struct
 #define FT5336_PAD_HEIGHT              272
 #endif
 
-  /* Possible values of driver functions return status */
+// Possible values of driver functions return status
 #define FT5336_STATUS_OK                    ((uint8_t)0x00)
 #define FT5336_STATUS_NOT_OK                ((uint8_t)0x01)
 
-  /* Possible values of global variable 'TS_I2C_Initialized' */
+// Possible values of global variable 'TS_I2C_Initialized'
 #define FT5336_I2C_NOT_INITIALIZED          ((uint8_t)0x00)
 #define FT5336_I2C_INITIALIZED              ((uint8_t)0x01)
 
-  /* Max detectable simultaneous touches */
+// Max detectable simultaneous touches
 #define FT5336_MAX_DETECTABLE_TOUCH         ((uint8_t)0x05)
 
-  /* Current mode register of the FT5336 (R/W) */
+// Current mode register of the FT5336 (R/W)
 #define FT5336_DEV_MODE_REG                 ((uint8_t)0x00)
 
-  /* Possible values of FT5336_DEV_MODE_REG */
+// Possible values of FT5336_DEV_MODE_REG
 #define FT5336_DEV_MODE_WORKING             ((uint8_t)0x00)
 #define FT5336_DEV_MODE_FACTORY             ((uint8_t)0x04)
 
 #define FT5336_DEV_MODE_MASK                ((uint8_t)0x07)
 #define FT5336_DEV_MODE_SHIFT               ((uint8_t)0x04)
 
-  /* Gesture ID register */
+// Gesture ID register
 #define FT5336_GEST_ID_REG                  ((uint8_t)0x01)
 
-  /* Possible values of FT5336_GEST_ID_REG */
+// Possible values of FT5336_GEST_ID_REG
 #define FT5336_GEST_ID_NO_GESTURE           ((uint8_t)0x00)
 #define FT5336_GEST_ID_MOVE_UP              ((uint8_t)0x10)
 #define FT5336_GEST_ID_MOVE_RIGHT           ((uint8_t)0x14)
@@ -101,14 +86,14 @@ typedef struct
 #define FT5336_GEST_ID_ZOOM_IN              ((uint8_t)0x40)
 #define FT5336_GEST_ID_ZOOM_OUT             ((uint8_t)0x49)
 
-  /* Touch Data Status register : gives number of active touch points (0..5) */
+// Touch Data Status register : gives number of active touch points (0..5)
 #define FT5336_TD_STAT_REG                  ((uint8_t)0x02)
 
-  /* Values related to FT5336_TD_STAT_REG */
+// Values related to FT5336_TD_STAT_REG
 #define FT5336_TD_STAT_MASK                 ((uint8_t)0x0F)
 #define FT5336_TD_STAT_SHIFT                ((uint8_t)0x00)
 
-  /* Values Pn_XH and Pn_YH related */
+// Values Pn_XH and Pn_YH related
 #define FT5336_TOUCH_EVT_FLAG_PRESS_DOWN    ((uint8_t)0x00)
 #define FT5336_TOUCH_EVT_FLAG_LIFT_UP       ((uint8_t)0x01)
 #define FT5336_TOUCH_EVT_FLAG_CONTACT       ((uint8_t)0x02)
@@ -120,7 +105,7 @@ typedef struct
 #define FT5336_TOUCH_POS_MSB_MASK           ((uint8_t)0x0F)
 #define FT5336_TOUCH_POS_MSB_SHIFT          ((uint8_t)0x00)
 
-  /* Values Pn_XL and Pn_YL related */
+// Values Pn_XL and Pn_YL related
 #define FT5336_TOUCH_POS_LSB_MASK           ((uint8_t)0xFF)
 #define FT5336_TOUCH_POS_LSB_SHIFT          ((uint8_t)0x00)
 
@@ -129,17 +114,17 @@ typedef struct
 #define FT5336_P1_YH_REG                    ((uint8_t)0x05)
 #define FT5336_P1_YL_REG                    ((uint8_t)0x06)
 
-/* Touch Pressure register value (R) */
+// Touch Pressure register value (R)
 #define FT5336_P1_WEIGHT_REG                ((uint8_t)0x07)
 
-/* Values Pn_WEIGHT related  */
+// Values Pn_WEIGHT related
 #define FT5336_TOUCH_WEIGHT_MASK            ((uint8_t)0xFF)
 #define FT5336_TOUCH_WEIGHT_SHIFT           ((uint8_t)0x00)
 
-/* Touch area register */
+// Touch area register
 #define FT5336_P1_MISC_REG                  ((uint8_t)0x08)
 
-/* Values related to FT5336_Pn_MISC_REG */
+// Values related to FT5336_Pn_MISC_REG
 #define FT5336_TOUCH_AREA_MASK              ((uint8_t)(0x04 << 4))
 #define FT5336_TOUCH_AREA_SHIFT             ((uint8_t)0x04)
 
@@ -206,93 +191,93 @@ typedef struct
 #define FT5336_P10_WEIGHT_REG               ((uint8_t)0x3D)
 #define FT5336_P10_MISC_REG                 ((uint8_t)0x3E)
 
-  /* Threshold for touch detection */
+// Threshold for touch detection
 #define FT5336_TH_GROUP_REG                 ((uint8_t)0x80)
 
-  /* Values FT5336_TH_GROUP_REG : threshold related  */
+// Values FT5336_TH_GROUP_REG : threshold related
 #define FT5336_THRESHOLD_MASK               ((uint8_t)0xFF)
 #define FT5336_THRESHOLD_SHIFT              ((uint8_t)0x00)
 
-  /* Filter function coefficients */
+// Filter function coefficients
 #define FT5336_TH_DIFF_REG                  ((uint8_t)0x85)
 
-  /* Control register */
+// Control register
 #define FT5336_CTRL_REG                     ((uint8_t)0x86)
 
-  /* Values related to FT5336_CTRL_REG */
+// Values related to FT5336_CTRL_REG
 
-  /* Will keep the Active mode when there is no touching */
+// Will keep the Active mode when there is no touching
 #define FT5336_CTRL_KEEP_ACTIVE_MODE        ((uint8_t)0x00)
 
-  /* Switching from Active mode to Monitor mode automatically when there is no touching */
+// Switching from Active mode to Monitor mode automatically when there is no touching
 #define FT5336_CTRL_KEEP_AUTO_SWITCH_MONITOR_MODE  ((uint8_t)0x01
 
-  /* The time period of switching from Active mode to Monitor mode when there is no touching */
+// The time period of switching from Active mode to Monitor mode when there is no touching
 #define FT5336_TIMEENTERMONITOR_REG         ((uint8_t)0x87)
 
-  /* Report rate in Active mode */
+// Report rate in Active mode
 #define FT5336_PERIODACTIVE_REG             ((uint8_t)0x88)
 
-  /* Report rate in Monitor mode */
+// Report rate in Monitor mode
 #define FT5336_PERIODMONITOR_REG            ((uint8_t)0x89)
 
-  /* The value of the minimum allowed angle while Rotating gesture mode */
+// The value of the minimum allowed angle while Rotating gesture mode
 #define FT5336_RADIAN_VALUE_REG             ((uint8_t)0x91)
 
-  /* Maximum offset while Moving Left and Moving Right gesture */
+// Maximum offset while Moving Left and Moving Right gesture
 #define FT5336_OFFSET_LEFT_RIGHT_REG        ((uint8_t)0x92)
 
-  /* Maximum offset while Moving Up and Moving Down gesture */
+// Maximum offset while Moving Up and Moving Down gesture
 #define FT5336_OFFSET_UP_DOWN_REG           ((uint8_t)0x93)
 
-  /* Minimum distance while Moving Left and Moving Right gesture */
+// Minimum distance while Moving Left and Moving Right gesture
 #define FT5336_DISTANCE_LEFT_RIGHT_REG      ((uint8_t)0x94)
 
-  /* Minimum distance while Moving Up and Moving Down gesture */
+// Minimum distance while Moving Up and Moving Down gesture
 #define FT5336_DISTANCE_UP_DOWN_REG         ((uint8_t)0x95)
 
-  /* Maximum distance while Zoom In and Zoom Out gesture */
+// Maximum distance while Zoom In and Zoom Out gesture
 #define FT5336_DISTANCE_ZOOM_REG            ((uint8_t)0x96)
 
-  /* High 8-bit of LIB Version info */
+// High 8-bit of LIB Version info
 #define FT5336_LIB_VER_H_REG                ((uint8_t)0xA1)
 
-  /* Low 8-bit of LIB Version info */
+// Low 8-bit of LIB Version info
 #define FT5336_LIB_VER_L_REG                ((uint8_t)0xA2)
 
-  /* Chip Selecting */
+// Chip Selecting
 #define FT5336_CIPHER_REG                   ((uint8_t)0xA3)
 
-  /* Interrupt mode register (used when in interrupt mode) */
+// Interrupt mode register (used when in interrupt mode)
 #define FT5336_GMODE_REG                    ((uint8_t)0xA4)
 
 #define FT5336_G_MODE_INTERRUPT_MASK        ((uint8_t)0x03)
 #define FT5336_G_MODE_INTERRUPT_SHIFT       ((uint8_t)0x00)
 
-  /* Possible values of FT5336_GMODE_REG */
+// Possible values of FT5336_GMODE_REG
 #define FT5336_G_MODE_INTERRUPT_POLLING     ((uint8_t)0x00)
 #define FT5336_G_MODE_INTERRUPT_TRIGGER     ((uint8_t)0x01)
 
-  /* Current power mode the FT5336 system is in (R) */
+// Current power mode the FT5336 system is in (R)
 #define FT5336_PWR_MODE_REG                 ((uint8_t)0xA5)
 
-  /* FT5336 firmware version */
+// FT5336 firmware version
 #define FT5336_FIRMID_REG                   ((uint8_t)0xA6)
 
-  /* FT5336 Chip identification register */
+// FT5336 Chip identification register
 #define FT5336_CHIP_ID_REG                  ((uint8_t)0xA8)
 
-  /*  Possible values of FT5336_CHIP_ID_REG */
+//  Possible values of FT5336_CHIP_ID_REG
 #define FT5336_ID_VALUE                     ((uint8_t)0x51)
 
-  /* Release code version */
+// Release code version
 #define FT5336_RELEASE_CODE_ID_REG          ((uint8_t)0xAF)
 
-  /* Current operating mode the FT5336 system is in (R) */
+// Current operating mode the FT5336 system is in (R)
 #define FT5336_STATE_REG                    ((uint8_t)0xBC)
 
 
-	class FT5336_Driver: ITouchPadDriver {
+	class FT5336_Driver: public ITouchPadDriver {
 		private:
 			static ITouchPadDriver *instance;
 			uint8_t addr;
@@ -303,17 +288,18 @@ typedef struct
 
 		private:
 			FT5336_Driver();
+			FT5336_Driver(const FT5336_Driver &other) = delete;
 
 		public:
 			static ITouchPadDriver *getInstance();
-			int16_t getWidth() const { return padWidth; }
-			int16_t getHeight() const { return padHeight; }
+			int16_t getWidth() { return padWidth; }
+			int16_t getHeight() { return padHeight; }
+			uint8_t getTouches();
+			void GetXY(uint16_t &X, uint16_t &Y);
 			void queryState();
 
 			uint16_t ReadID();
 			void Start();
-			uint8_t DetectTouch();
-			void GetXY(uint16_t *X, uint16_t *Y);
 			void EnableIT();
 			void DisableIT();
 			uint8_t ITStatus();

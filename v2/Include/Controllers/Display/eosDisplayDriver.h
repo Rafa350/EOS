@@ -27,8 +27,8 @@ namespace eos {
             virtual void displayOn() = 0;
             virtual void displayOff() = 0;
             virtual void setOrientation(DisplayOrientation orientation) = 0;
-            virtual int16_t getWidth() const = 0;
-            virtual int16_t getHeight() const = 0;
+            virtual int16_t getWidth() = 0;
+            virtual int16_t getHeight() = 0;
             virtual void clear(const Color &color) = 0;
             virtual void setPixel(int16_t x, int16_t y, const Color &color) = 0;
             virtual void setHPixels(int16_t x, int16_t y, int16_t length, const Color &color) = 0;

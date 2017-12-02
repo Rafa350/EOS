@@ -87,6 +87,8 @@ static I2C_HandleTypeDef *PrepareHandler(
     handler->Init.OwnAddress2      = 0;
     handler->Init.GeneralCallMode  = I2C_GENERALCALL_DISABLE;
     handler->Init.NoStretchMode    = I2C_NOSTRETCH_DISABLE;
+
+    return handler;
 }
 
 
@@ -98,6 +100,7 @@ static void InitializeModule(
 	I2C_HandleTypeDef *handler) {
 
 	HAL_I2C_Init(handler);
+	__HAL_I2C_ENABLE(handler);
 }
 
 
@@ -108,6 +111,7 @@ static void InitializeModule(
 static void DeinitializeModule(
 	I2C_HandleTypeDef *handler) {
 
+	__HAL_I2C_DISABLE(handler);
 	HAL_I2C_DeInit(handler);
 }
 
@@ -123,6 +127,13 @@ void halI2CInitialize(
 
 	I2C_HandleTypeDef *handler = PrepareHandler(info);
 	InitializeModule(handler);
+}
+
+
+void halI2CShutdown(
+	uint8_t id) {
+
+	DeinitializeModule(GetHandler(id));
 }
 
 
@@ -142,7 +153,7 @@ void halI2CReadMultiple(
 	// Check the communication status
 	if(status != HAL_OK) {
 		// I2C error occurred
-		I2Cx_Error(handler, addr);
+		//I2Cx_Error(handler, addr);
 	}
 }
 
@@ -163,6 +174,6 @@ void halI2CWriteMultiple(
 	// Check the communication status
 	if (status != HAL_OK) {
 		// Re-Initiaize the I2C Bus
-		I2Cx_Error(handler, addr);
+		//I2Cx_Error(handler, addr);
 	}
 }

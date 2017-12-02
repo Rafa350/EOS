@@ -29,19 +29,20 @@ FT5336_Driver::FT5336_Driver():
 
 	addr(FT5336_I2C_ADDR),
 	padWidth(FT5336_PAD_WIDTH),
-	padHeight(FT5336_PAD_HEIGHT) {
+	padHeight(FT5336_PAD_HEIGHT),
+	currActiveTouchNb(0) {
 
 	// Wait at least 200ms after power up before accessing registers
 	// Trsi timing (Time of starting to report point after resetting) from FT5336GQQ datasheet
 	//
-	halTMRDelay(200);
+	//halTMRDelay(200);
     ioInit();
 }
 
 
 void FT5336_Driver::queryState() {
 
-
+	ReadID();
 }
 
 
@@ -86,14 +87,11 @@ void FT5336_Driver::Start() {
 }
 
 
-/**
-  * @brief  Return if there is touches detected or not.
-  *         Try to detect new touches and forget the old ones (reset internal global
-  *         variables).
-  * @param  DeviceAddr: Device address on communication Bus.
-  * @retval : Number of active touches detected (can be 0, 1 or 2).
-  */
-uint8_t FT5336_Driver::DetectTouch() {
+/// ----------------------------------------------------------------------
+/// \brief Obte en numero de tocs des de l'ultima crida.
+/// \return El numero de tocs.
+///
+uint8_t FT5336_Driver::getTouches() {
 
 	volatile uint8_t nbTouch = 0;
 
@@ -116,16 +114,12 @@ uint8_t FT5336_Driver::DetectTouch() {
 }
 
 
-/**
-  * @brief  Get the touch screen X and Y positions values
-  *         Manage multi touch thanks to touch Index global
-  *         variable 'ft5336_handle.currActiveTouchIdx'.
-  * @param  DeviceAddr: Device address on communication Bus.
-  * @param  X: Pointer to X position value
-  * @param  Y: Pointer to Y position value
-  * @retval None.
-  */
-void FT5336_Driver::GetXY(uint16_t *X, uint16_t *Y) {
+/// ----------------------------------------------------------------------
+/// \brief Obte les coordinades del toc.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+///
+void FT5336_Driver::GetXY(uint16_t &x, uint16_t &y) {
 
 	volatile uint8_t ucReadData = 0;
 	static uint16_t coord;
@@ -205,10 +199,6 @@ void FT5336_Driver::GetXY(uint16_t *X, uint16_t *Y) {
 				regAddressYLow  = FT5336_P10_YL_REG;
 				regAddressYHigh = FT5336_P10_YH_REG;
 				break;
-
-			default :
-				break;
-
 		}
 
 		// Read low part of X position
@@ -220,7 +210,7 @@ void FT5336_Driver::GetXY(uint16_t *X, uint16_t *Y) {
 		coord |= ((ucReadData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
 		// Send back ready X position to caller
-		*X = coord;
+		x = coord;
 
 		// Read low part of Y position
 		ucReadData = ioRead(regAddressYLow);
@@ -231,7 +221,7 @@ void FT5336_Driver::GetXY(uint16_t *X, uint16_t *Y) {
 		coord |= ((ucReadData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
 		// Send back ready Y position to caller
-		*Y = coord;
+		y = coord;
 
 		currActiveTouchIdx++;
 	}
@@ -428,21 +418,14 @@ void FT5336_Driver::GetTouchInfo(
 ///
 void FT5336_Driver::ioInit() {
 
-	GPIOInitializePinInfo gpioInfo;
+	static const GPIOInitializePinInfo gpioInfo[2] = {
+		{FT5336_SCL_PORT, FT5336_SCL_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, FT5336_SCL_AF},
+		{FT5336_SDA_PORT, FT5336_SDA_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, FT5336_SCL_AF}
+	};
+
+	halGPIOInitializePins(gpioInfo, sizeof(gpioInfo) / sizeof(gpioInfo[0]));
+
 	I2CInitializeInfo i2cInfo;
-
-	gpioInfo.port = FT5336_SCL_PORT;
-	gpioInfo.pin = FT5336_SCL_PIN;
-	gpioInfo.options = HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE;
-	gpioInfo.alt = FT5336_SCL_AF;
-	halGPIOInitializePin(&gpioInfo);
-
-	gpioInfo.port = FT5336_SDA_PORT;
-	gpioInfo.pin = FT5336_SDA_PIN;
-	gpioInfo.options = HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE;
-	gpioInfo.alt = FT5336_SDA_AF;
-	halGPIOInitializePin(&gpioInfo);
-
 	i2cInfo.id = FT5336_I2C_MODULE;
 	halI2CInitialize(&i2cInfo);
 }

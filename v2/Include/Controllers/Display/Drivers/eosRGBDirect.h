@@ -38,8 +38,8 @@ namespace eos {
             void displayOn();
             void displayOff();
             void setOrientation(DisplayOrientation orientation);
-            int16_t getWidth() const { return screenWidth; }
-            int16_t getHeight() const { return screenHeight; }
+            int16_t getWidth() { return screenWidth; }
+            int16_t getHeight() { return screenHeight; }
             void clear(const Color &color);
             void setPixel(int16_t x, int16_t y, const Color &color);
             void setHPixels(int16_t x, int16_t y, int16_t size, const Color &color);

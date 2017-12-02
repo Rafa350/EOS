@@ -39,7 +39,9 @@ class DisplayLoopService: public AppLoopService {
 
     public:
         DisplayLoopService(Application *application):
-            AppLoopService(application) {}
+            AppLoopService(application),
+			display(nullptr),
+			touch(nullptr) {}
 
     protected:
         void onSetup();
@@ -47,6 +49,7 @@ class DisplayLoopService: public AppLoopService {
 
     private:
         void drawBackground(const char *title);
+        void pause(uint16_t x, uint16_t y, const char *msg, uint16_t time);
 };
 
 
@@ -121,7 +124,7 @@ void LedLoopService::onRun() {
 
 
 ///-----------------------------------------------------------------------
-/// \brief Process la inicialitzacio de la tasca.
+/// \brief Procesa la inicialitzacio de la tasca.
 ///
 void DisplayLoopService::onSetup() {
 
@@ -137,7 +140,7 @@ void DisplayLoopService::onSetup() {
     // Inicialitzacio del touch pad
     //
     touchDriver = FT5336_Driver::getInstance();
-    touch = new TouchPad(touchDriver);
+    //touch = new TouchPad(touchDriver);
 
     screenWidth = displayDriver->getWidth();
     screenHeight  = displayDriver->getHeight();
@@ -354,10 +357,25 @@ void DisplayLoopService::onRun() {
     sprintf(lineBuffer, "F. circles    %d ms", filledCirclesTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
 
-    Task::delay(10000);
+    pause(20, y + 10, "-Touch for continue...", 5000);
+}
 
-    TouchPadState tps;
-    touch->queryState(tps);
+
+void DisplayLoopService::pause(
+	uint16_t x,
+	uint16_t y,
+	const char *msg,
+	uint16_t time) {
+
+    if (touchDriver != nullptr) {
+    	display->setColor(COLOR_LightGreen);
+        display->drawText(x, y, "Touch for continue...", 0, -1);
+    	while (touchDriver->getTouches() == 0) {
+    		Task::delay(50);
+    	}
+    }
+    else
+    	Task::delay(time);
 }
 
 
