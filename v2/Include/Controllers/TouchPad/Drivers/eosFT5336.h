@@ -2,36 +2,15 @@
 #define __eosFT5336__
 
 
+// EOS includes
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 
+// Standard includes
 #include <stdint.h>
 
 
 namespace eos {
-
-
-/* Set Multi-touch as supported */
-#if !defined(TS_MONO_TOUCH_SUPPORTED)
-#define TS_MULTI_TOUCH_SUPPORTED        1
-#endif /* TS_MONO_TOUCH_SUPPORTED */
-
-
-#if defined(FT5336_ENABLE_ASSERT)
-/* Assert activated */
-#define FT5336_ASSERT(__condition__)      do { if(__condition__) \
-                                               {  \
-                                                 while(1);  \
-                                               } \
-                                          }while(0)
-#else
-/* Assert not activated : macro has no effect */
-#define FT5336_ASSERT(__condition__)    do { if(__condition__) \
-                                             {  \
-                                                ;  \
-                                             } \
-                                            }while(0)
-#endif /* FT5336_ENABLE_ASSERT == 1 */
 
 
 // Adressa I2C
@@ -39,12 +18,12 @@ namespace eos {
 #define FT5336_I2C_ADDR                0x70
 #endif
 
-// Amplada maxima del pad
+// Amplada del pad
 #ifndef FT5336_PAD_WIDTH
 #define FT5336_PAD_WIDTH               480
 #endif
 
-// Alçada maxima del pad
+// Alçada del pad
 #ifndef FT5336_PAD_HEIGHT
 #define FT5336_PAD_HEIGHT              272
 #endif
@@ -283,8 +262,7 @@ namespace eos {
 			uint8_t addr;
 			int16_t padWidth;
 			int16_t padHeight;
-			uint8_t currActiveTouchNb;
-			uint8_t currActiveTouchIdx;
+			TouchPadOrientation orientation;
 
 		private:
 			FT5336_Driver();
@@ -294,29 +272,18 @@ namespace eos {
 			static ITouchPadDriver *getInstance();
 			int16_t getWidth() { return padWidth; }
 			int16_t getHeight() { return padHeight; }
-			uint8_t getTouches();
-			void GetXY(uint16_t &X, uint16_t &Y);
-			void queryState();
-
-			uint16_t ReadID();
-			void Start();
-			void EnableIT();
-			void DisableIT();
-			uint8_t ITStatus();
-			void ClearIT();
-
-#if (TS_MULTI_TOUCH_SUPPORTED == 1)
-			void GetGestureID(uint32_t *pGestureId);
-			void GetTouchInfo(uint32_t touchIdx, uint32_t *pWeight, uint32_t *pArea, uint32_t *pEvent);
-#endif
+			bool getState(TouchPadState &state);
+			void setOrientation(TouchPadOrientation orientation);
+			void enableInt();
+			void disableInt();
+			void clearInt();
 
 		private:
 			void ioInit();
 			uint8_t ioRead(uint8_t reg);
 			void ioWrite(uint8_t reg, uint8_t value);
 	};
-
 }
 
 
-#endif // __eosFT5336
+#endif // __eosFT5336__

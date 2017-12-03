@@ -30,7 +30,7 @@ FT5336_Driver::FT5336_Driver():
 	addr(FT5336_I2C_ADDR),
 	padWidth(FT5336_PAD_WIDTH),
 	padHeight(FT5336_PAD_HEIGHT),
-	currActiveTouchNb(0) {
+	orientation(TouchPadOrientation::normal) {
 
 	// Wait at least 200ms after power up before accessing registers
 	// Trsi timing (Time of starting to report point after resetting) from FT5336GQQ datasheet
@@ -40,96 +40,55 @@ FT5336_Driver::FT5336_Driver():
 }
 
 
-void FT5336_Driver::queryState() {
+/// ----------------------------------------------------------------------
+/// \brief selecciona l'oeirntacio del touch pad
+/// \param orientation: La orientacio a seleccionar.
+///
+void FT5336_Driver::setOrientation(
+	TouchPadOrientation orientation) {
 
-	ReadID();
-}
+	this->orientation = orientation;
 
+	switch (orientation) {
+		case TouchPadOrientation::normal:
+		case TouchPadOrientation::rotate180:
+			padWidth = FT5336_PAD_WIDTH;
+			padHeight = FT5336_PAD_HEIGHT;
+			break;
 
-/**
-  * @brief  Read the ft5336 device ID, pre initialize I2C in case of need to be
-  *         able to read the FT5336 device ID, and verify this is a FT5336.
-  * @param  DeviceAddr: I2C FT5336 Slave address.
-  * @retval The Device ID (two bytes).
-  */
-uint16_t FT5336_Driver::ReadID() {
-
-	volatile uint8_t ucReadId = 0;
-	uint8_t nbReadAttempts = 0;
-	uint8_t bFoundDevice = 0; // Device not found by default
-
-	// At maximum 4 attempts to read ID : exit at first finding of the searched device ID
-	for (nbReadAttempts = 0; ((nbReadAttempts < 3) && !(bFoundDevice)); nbReadAttempts++) {
-		/* Read register FT5336_CHIP_ID_REG as DeviceID detection */
-		ucReadId = ioRead(FT5336_CHIP_ID_REG);
-
-		/* Found the searched device ID ? */
-		if(ucReadId == FT5336_ID_VALUE) {
-
-			// Set device as found */
-			bFoundDevice = 1;
-		}
+		case TouchPadOrientation::rotate90:
+		case TouchPadOrientation::rotate270:
+			padWidth = FT5336_PAD_HEIGHT;
+			padHeight = FT5336_PAD_WIDTH;
+			break;
 	}
-
-	return ucReadId;
-}
-
-/**
-  * @brief  Configures the touch Screen IC device to start detecting touches
-  * @param  DeviceAddr: Device address on communication Bus (I2C slave address).
-  * @retval None.
-  */
-void FT5336_Driver::Start() {
-
-	// By default set FT5336 IC in Polling mode : no INT generation on FT5336 for new touch available
-	// Note TS_INT is active low
-	DisableIT();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte en numero de tocs des de l'ultima crida.
-/// \return El numero de tocs.
+/// \brief Obte l'estat del touchpad.
+/// \param state: Buffer on deixar el resultat.
+/// \return True si s'ha detectat contacte.
 ///
-uint8_t FT5336_Driver::getTouches() {
+bool FT5336_Driver::getState(
+	TouchPadState &state) {
 
-	volatile uint8_t nbTouch = 0;
+	state.maxPoints = FT5336_MAX_DETECTABLE_TOUCH;
+	state.numPoints = ioRead(FT5336_TD_STAT_REG) & FT5336_TD_STAT_MASK;
+	if (state.numPoints > state.maxPoints)
+		state.numPoints = 0;
 
-	// Read register FT5336_TD_STAT_REG to check number of touches detection
-	nbTouch = ioRead(FT5336_TD_STAT_REG);
-	nbTouch &= FT5336_TD_STAT_MASK;
+	for (uint8_t c = 0; c < state.numPoints; c++) {
 
-	if (nbTouch > FT5336_MAX_DETECTABLE_TOUCH) {
-		// If invalid number of touch detected, set it to zero
-		nbTouch = 0;
-	}
+		volatile uint8_t ucReadData = 0;
+		uint8_t regAddressXLow = 0;
+		uint8_t regAddressXHigh = 0;
+		uint8_t regAddressYLow = 0;
+		uint8_t regAddressYHigh = 0;
+		int16_t tempX;
+		int16_t tempY;
 
-	// Update ft5336 driver internal global : current number of active touches
-	currActiveTouchNb = nbTouch;
-
-	// Reset current active touch index on which to work on
-	currActiveTouchIdx = 0;
-
-	return nbTouch;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte les coordinades del toc.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-///
-void FT5336_Driver::GetXY(uint16_t &x, uint16_t &y) {
-
-	volatile uint8_t ucReadData = 0;
-	static uint16_t coord;
-	uint8_t regAddressXLow = 0;
-	uint8_t regAddressXHigh = 0;
-	uint8_t regAddressYLow = 0;
-	uint8_t regAddressYHigh = 0;
-
-	if (currActiveTouchIdx < currActiveTouchNb) {
-		switch(currActiveTouchIdx) {
+		switch(c) {
 			case 0 :
 				regAddressXLow  = FT5336_P1_XL_REG;
 				regAddressXHigh = FT5336_P1_XH_REG;
@@ -201,216 +160,73 @@ void FT5336_Driver::GetXY(uint16_t &x, uint16_t &y) {
 				break;
 		}
 
-		// Read low part of X position
+		// Posicio X [7:0]
+		//
 		ucReadData = ioRead(regAddressXLow);
-		coord = (ucReadData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
+		tempX = (ucReadData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
 
-		// Read high part of X position
+		// Posicio X [11:8] i estat [15:12]
 		ucReadData = ioRead(regAddressXHigh);
-		coord |= ((ucReadData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
+		state.action[c] = (TouchPadAction) ((ucReadData & FT5336_TOUCH_EVT_FLAG_MASK) >> FT5336_TOUCH_EVT_FLAG_SHIFT);
+		tempX |= ((ucReadData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
-		// Send back ready X position to caller
-		x = coord;
-
-		// Read low part of Y position
+		// Posicio Y [7:0]
 		ucReadData = ioRead(regAddressYLow);
-		coord = (ucReadData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
+		tempY = (ucReadData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
 
-		// Read high part of Y position
+		// Posicio Y[11:8]
 		ucReadData = ioRead(regAddressYHigh);
-		coord |= ((ucReadData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
+		tempY |= ((ucReadData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
-		// Send back ready Y position to caller
-		y = coord;
-
-		currActiveTouchIdx++;
-	}
-}
-
-/**
-  * @brief  Configure the FT5336 device to generate IT on given INT pin
-  *         connected to MCU as EXTI.
-  * @param  DeviceAddr: Device address on communication Bus (Slave I2C address of FT5336).
-  * @retval None
-  */
-void FT5336_Driver::EnableIT() {
-
-	uint8_t regValue = 0;
-	regValue = (FT5336_G_MODE_INTERRUPT_TRIGGER & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
-
-	/* Set interrupt trigger mode in FT5336_GMODE_REG */
-	ioWrite(FT5336_GMODE_REG, regValue);
-}
-
-
-/**
-  * @brief  Configure the FT5336 device to stop generating IT on the given INT pin
-  *         connected to MCU as EXTI.
-  * @param  DeviceAddr: Device address on communication Bus (Slave I2C address of FT5336).
-  * @retval None
-  */
-void FT5336_Driver::DisableIT() {
-
-	uint8_t regValue = 0;
-	regValue = (FT5336_G_MODE_INTERRUPT_POLLING & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
-
-	/* Set interrupt polling mode in FT5336_GMODE_REG */
-	ioWrite(FT5336_GMODE_REG, regValue);
-}
-
-
-/**
-  * @brief  Get IT status from FT5336 interrupt status registers
-  *         Should be called Following an EXTI coming to the MCU to know the detailed
-  *         reason of the interrupt.
-  *         @note : This feature is not applicable to FT5336.
-  * @param  DeviceAddr: Device address on communication Bus (I2C slave address of FT5336).
-  * @retval TS interrupts status : always return 0 here
-  */
-uint8_t FT5336_Driver::ITStatus() {
-
-	// Always return 0 as feature not applicable to FT5336
-	return 0;
-}
-
-/**
-  * @brief  Clear IT status in FT5336 interrupt status clear registers
-  *         Should be called Following an EXTI coming to the MCU.
-  *         @note : This feature is not applicable to FT5336.
-  * @param  DeviceAddr: Device address on communication Bus (I2C slave address of FT5336).
-  * @retval None
-  */
-void FT5336_Driver::ClearIT()
-{
-  /* Nothing to be done here for FT5336 */
-}
-
-/**** NEW FEATURES enabled when Multi-touch support is enabled ****/
-
-#if (TS_MULTI_TOUCH_SUPPORTED == 1)
-
-/**
-  * @brief  Get the last touch gesture identification (zoom, move up/down...).
-  * @param  DeviceAddr: Device address on communication Bus (I2C slave address of FT5336).
-  * @param  pGestureId : Pointer to get last touch gesture Identification.
-  * @retval None.
-  */
-void FT5336_Driver::GetGestureID(uint32_t * pGestureId)
-{
-  volatile uint8_t ucReadData = 0;
-
-  ucReadData = ioRead(FT5336_GEST_ID_REG);
-
-  * pGestureId = ucReadData;
-}
-
-/**
-  * @brief  Get the touch detailed informations on touch number 'touchIdx' (0..1)
-  *         This touch detailed information contains :
-  *         - weight that was applied to this touch
-  *         - sub-area of the touch in the touch panel
-  *         - event of linked to the touch (press down, lift up, ...)
-  * @param  DeviceAddr: Device address on communication Bus (I2C slave address of FT5336).
-  * @param  touchIdx : Passed index of the touch (0..1) on which we want to get the
-  *                    detailed information.
-  * @param  pWeight : Pointer to to get the weight information of 'touchIdx'.
-  * @param  pArea   : Pointer to to get the sub-area information of 'touchIdx'.
-  * @param  pEvent  : Pointer to to get the event information of 'touchIdx'.
-
-  * @retval None.
-  */
-void FT5336_Driver::GetTouchInfo(
-	uint32_t   touchIdx,
-	uint32_t * pWeight,
-	uint32_t * pArea,
-	uint32_t * pEvent) {
-
-	volatile uint8_t ucReadData = 0;
-	uint8_t regAddressXHigh = 0;
-	uint8_t regAddressPWeight = 0;
-	uint8_t regAddressPMisc = 0;
-
-	if (touchIdx < currActiveTouchNb) {
-		switch (touchIdx) {
-			case 0 :
-				regAddressXHigh   = FT5336_P1_XH_REG;
-				regAddressPWeight = FT5336_P1_WEIGHT_REG;
-				regAddressPMisc   = FT5336_P1_MISC_REG;
+		switch (orientation) {
+			case TouchPadOrientation::normal:
+				state.x[c] = tempY;
+				state.y[c] = tempX;
 				break;
 
-			case 1 :
-				regAddressXHigh   = FT5336_P2_XH_REG;
-				regAddressPWeight = FT5336_P2_WEIGHT_REG;
-				regAddressPMisc   = FT5336_P2_MISC_REG;
+			case TouchPadOrientation::rotate90:
+				state.x[c] = tempX;
+				state.y[c] = tempY;
 				break;
 
-			case 2 :
-				regAddressXHigh   = FT5336_P3_XH_REG;
-				regAddressPWeight = FT5336_P3_WEIGHT_REG;
-				regAddressPMisc   = FT5336_P3_MISC_REG;
+			case TouchPadOrientation::rotate180:
+				state.x[c] = FT5336_PAD_HEIGHT - tempY;
+				state.y[c] = FT5336_PAD_WIDTH - tempX;
 				break;
 
-			case 3 :
-				regAddressXHigh   = FT5336_P4_XH_REG;
-				regAddressPWeight = FT5336_P4_WEIGHT_REG;
-				regAddressPMisc   = FT5336_P4_MISC_REG;
+			case TouchPadOrientation::rotate270:
+				state.x[c] = tempX;
+				state.y[c] = tempY;
 				break;
-
-			case 4 :
-				regAddressXHigh   = FT5336_P5_XH_REG;
-				regAddressPWeight = FT5336_P5_WEIGHT_REG;
-				regAddressPMisc   = FT5336_P5_MISC_REG;
-				break;
-
-			case 5 :
-				regAddressXHigh   = FT5336_P6_XH_REG;
-				regAddressPWeight = FT5336_P6_WEIGHT_REG;
-				regAddressPMisc   = FT5336_P6_MISC_REG;
-				break;
-
-			case 6 :
-				regAddressXHigh   = FT5336_P7_XH_REG;
-				regAddressPWeight = FT5336_P7_WEIGHT_REG;
-			  	regAddressPMisc   = FT5336_P7_MISC_REG;
-			  break;
-
-			case 7 :
-				regAddressXHigh   = FT5336_P8_XH_REG;
-				regAddressPWeight = FT5336_P8_WEIGHT_REG;
-				regAddressPMisc   = FT5336_P8_MISC_REG;
-				break;
-
-			case 8 :
-				regAddressXHigh   = FT5336_P9_XH_REG;
-				regAddressPWeight = FT5336_P9_WEIGHT_REG;
-				regAddressPMisc   = FT5336_P9_MISC_REG;
-				break;
-
-			case 9 :
-				regAddressXHigh   = FT5336_P10_XH_REG;
-				regAddressPWeight = FT5336_P10_WEIGHT_REG;
-				regAddressPMisc   = FT5336_P10_MISC_REG;
-				break;
-
-			default :
-				break;
-
 		}
-
-		/* Read Event Id of touch index */
-		ucReadData = ioRead(regAddressXHigh);
-		* pEvent = (ucReadData & FT5336_TOUCH_EVT_FLAG_MASK) >> FT5336_TOUCH_EVT_FLAG_SHIFT;
-
-		/* Read weight of touch index */
-		ucReadData = ioRead(regAddressPWeight);
-		* pWeight = (ucReadData & FT5336_TOUCH_WEIGHT_MASK) >> FT5336_TOUCH_WEIGHT_SHIFT;
-
-		/* Read area of touch index */
-		ucReadData = ioRead(regAddressPMisc);
-		* pArea = (ucReadData & FT5336_TOUCH_AREA_MASK) >> FT5336_TOUCH_AREA_SHIFT;
 	}
+
+	return state.numPoints != 0;
 }
-#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Activa la generacio d'interrupcions pel pin INT
+///
+void FT5336_Driver::enableInt() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Desactiva la generacio d'interrupcions pel pin INT
+///
+void FT5336_Driver::disableInt() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Borra la intrrupcio generada
+///
+void FT5336_Driver::clearInt() {
+
+}
 
 
 /// ----------------------------------------------------------------------
@@ -418,7 +234,10 @@ void FT5336_Driver::GetTouchInfo(
 ///
 void FT5336_Driver::ioInit() {
 
-	static const GPIOInitializePinInfo gpioInfo[2] = {
+	static const GPIOInitializePinInfo gpioInfo[] = {
+#ifdef FT5336_INT_PORT
+		{FT5336_INT_PORT, FT5336_INT_PIN, HAL_GPIO_MODE_IT_POS | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, 0},
+#endif
 		{FT5336_SCL_PORT, FT5336_SCL_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, FT5336_SCL_AF},
 		{FT5336_SDA_PORT, FT5336_SDA_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, FT5336_SCL_AF}
 	};
@@ -460,3 +279,4 @@ uint8_t FT5336_Driver::ioRead(
 
 	return value;
 }
+

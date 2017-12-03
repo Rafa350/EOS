@@ -323,11 +323,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosAssert.h</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/eosAssert.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosColor.h</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosColor.h</locationURI>

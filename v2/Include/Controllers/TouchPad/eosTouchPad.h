@@ -8,17 +8,13 @@
 
 namespace eos {
 
-	typedef struct {
-		uint8_t dummy;
-	} TouchPadState;
-
 	class TouchPad {
 		private:
 			ITouchPadDriver *driver;
 
 		public:
 			TouchPad(ITouchPadDriver *driver);
-			void queryState(const TouchPadState &state);
+			bool getState(TouchPadState &state);
 	};
 
 }

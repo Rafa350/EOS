@@ -261,6 +261,15 @@
 #define FT5336_SDA_PIN            HAL_GPIO_PIN_8
 #define FT5336_SDA_AF             HAL_GPIO_AF4_I2C3
 
+// Control del pin INT
+//
+//#define FT5336_INT_PORT           HAL_GPIO_PORT_I
+//#define FT5336_INT_PIN            HAL_GPIO_PIN_13
+
+// IRQ asignada al pin INT
+//#define FT5336_IRQ                EXTI15_10_IRQn
+
+// Modul I2C de comunicacions
 #define FT5336_I2C_MODULE         HAL_I2C_ID_3
 
 #endif

@@ -4,6 +4,10 @@
 using namespace eos;
 
 
+/// ----------------------------------------------------------------------
+/// \brief Constructor del objecte.
+/// \param driver: El driver del touchpad.
+///
 TouchPad::TouchPad(
 	ITouchPadDriver *driver):
 
@@ -12,8 +16,13 @@ TouchPad::TouchPad(
 }
 
 
-void TouchPad::queryState(
-	const TouchPadState &state) {
+/// ----------------------------------------------------------------------
+/// \brief Obte l'estat del touchpad.
+/// \param state: Buffer on deixar les dades.
+/// \return True si hi han dades.
+///
+bool TouchPad::getState(
+	TouchPadState &state) {
 
-	driver->queryState();
+	return driver->getState(state);
 }

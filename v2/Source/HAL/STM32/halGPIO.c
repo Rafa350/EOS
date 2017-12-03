@@ -32,7 +32,10 @@ static const uint32_t modeTbl[] = {
 	GPIO_MODE_OUTPUT_OD,
 	GPIO_MODE_AF_PP,
 	GPIO_MODE_AF_OD,
-	GPIO_MODE_ANALOG
+	GPIO_MODE_ANALOG,
+	GPIO_MODE_IT_RISING,
+	GPIO_MODE_IT_FALLING,
+	GPIO_MODE_IT_RISING_FALLING
 };
 
 // Taula de conversio HAL_GPIO_SPEED
@@ -175,7 +178,6 @@ void halGPIOInitializePin(
 	PreparePinInit(info, &gpioInit);
 	HAL_GPIO_Init(gpioTbl[info->port], &gpioInit);
 }
-
 
 
 /// ----------------------------------------------------------------------

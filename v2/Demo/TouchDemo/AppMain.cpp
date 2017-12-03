@@ -53,6 +53,7 @@ class DisplayLoopService: public AppLoopService {
     private:
         void drawBackground();
         void drawInfo();
+        void drawDot();
 };
 
 
@@ -146,7 +147,7 @@ void DisplayLoopService::onSetup() {
     // Inicialitzacio del touch pad
     //
     touchDriver = FT5336_Driver::getInstance();
-    //touch = new TouchPad(touchDriver);
+    touch = new TouchPad(touchDriver);
 
     screenWidth = displayDriver->getWidth();
     screenHeight  = displayDriver->getHeight();
@@ -158,10 +159,21 @@ void DisplayLoopService::onSetup() {
 ///
 void DisplayLoopService::onRun() {
 
+	TouchPadState tps;
+
+	x = 300;
+	y = screenHeight / 2;
+
     drawBackground();
     while (true) {
-        drawInfo();
-    	Task::delay(1000);
+    	if (touch->getState(tps)) {
+    		x = tps.x[0];
+    		y = tps.y[0];
+    		drawDot();
+    		drawInfo();
+    	}
+    	else
+    		Task::delay(250);
     }
 }
 
@@ -189,8 +201,18 @@ void DisplayLoopService::drawBackground() {
 	display->drawText(15, 120, "Size");
 	display->drawText(35, 140, "W:");
 	display->drawText(35, 160, "H:");
+
+	drawDot();
 }
 
+
+void DisplayLoopService::drawDot() {
+
+	display->setColor(COLOR_Red);
+	display->fillCircle(x, y, 30);
+	display->setColor(COLOR_Yellow);
+	display->fillCircle(x, y, 25);
+}
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa la informacio a mostrar.
