@@ -36,5 +36,5 @@ extern "C" {
 #endif
 
 
-#endif // __eosAssert
+#endif // __eosAssert__
 
