@@ -35,7 +35,10 @@ class DisplayLoopService: public AppLoopService {
         Display *display;
         int16_t screenWidth;
         int16_t screenHeight;
-        int loopCount;
+        int16_t x;
+        int16_t y;
+        int16_t w;
+        int16_t h;
 
     public:
         DisplayLoopService(Application *application):
@@ -48,8 +51,8 @@ class DisplayLoopService: public AppLoopService {
         void onRun();
 
     private:
-        void drawBackground(const char *title);
-        void pause(uint16_t x, uint16_t y, const char *msg, uint16_t time);
+        void drawBackground();
+        void drawInfo();
 };
 
 
@@ -64,6 +67,9 @@ class MyApplication: public Application {
     protected:
         void onInitialize();
 };
+
+
+static const char *title = "EOS v2.0: TouchPad Demo";
 
 
 ///-----------------------------------------------------------------------
@@ -152,243 +158,45 @@ void DisplayLoopService::onSetup() {
 ///
 void DisplayLoopService::onRun() {
 
-    int ticks;
-
-    int pointsTicks;
-    int horizontalLinesTicks;
-    int verticalLinesTicks;
-    int linesTicks;
-    int rectanglesTicks;
-    int filledRectanglesTicks;
-    int circlesTicks;
-    int filledCirclesTicks;
-
-    int seed = 0; //Task::getTickCount();
-
-    // Points
-    //
-    drawBackground("Points");
-    Task::delay(250);
-
-    display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
-    display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-    srand(seed);
-    ticks = Task::getTickCount();
-    for (int i = 0; i < 50000; i++) {
-        int16_t x = rand() % screenWidth;
-        int16_t y = rand() % screenHeight;
-
-        display->setColor(rand() & 0x00FFFFFF);
-        display->drawPoint(x, y);
+    drawBackground();
+    while (true) {
+        drawInfo();
+    	Task::delay(1000);
     }
-    pointsTicks = Task::getTickCount() - ticks;
-    Task::delay(250);
-
-    srand(seed);
-    display->setColor(COLOR_Black);
-    for (int i = 0; i < 50000; i++) {
-        int16_t x = rand() % screenWidth;
-        int16_t y = rand() % screenHeight;
-        rand();
-
-        display->drawPoint(x, y);
-    }
-    Task::delay(500);
-
-    // Vertical lines
-    //
-    drawBackground("Vertical lines");
-    Task::delay(250);
-
-    display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
-    display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-    ticks = Task::getTickCount();
-    for (int i = 0; i < 300; i++) {
-        int16_t x1 = rand() % screenWidth;
-        int16_t y1 = rand() % screenHeight;
-        int16_t x2 = x1;
-        int16_t y2 = rand() % screenHeight;
-
-        display->setColor(rand() & 0x00FFFFFF);
-        display->drawLine(x1, y1, x2, y2);
-    }
-    verticalLinesTicks = Task::getTickCount() - ticks;
-    Task::delay(500);
-
-    // Horizontal lines
-    //
-    drawBackground("Horizontal lines");
-    Task::delay(250);
-
-    display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
-    display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-    ticks = Task::getTickCount();
-    for (int i = 0; i < 300; i++) {
-        int16_t x1 = rand() % screenWidth;
-        int16_t y1 = rand() % screenHeight;
-        int16_t x2 = rand() % screenWidth;
-        int16_t y2 = y1;
-
-        display->setColor(rand() & 0x00FFFFFF);
-        display->drawLine(x1, y1, x2, y2);
-    }
-    horizontalLinesTicks = Task::getTickCount() - ticks;
-    Task::delay(500);
-
-    // Lines
-    //
-    drawBackground("Random lines");
-    Task::delay(250);
-
-    display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
-    display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-    ticks = Task::getTickCount();
-    for (int i = 0; i < 300; i++) {
-        int16_t x1 = rand() % screenWidth;
-        int16_t y1 = rand() % screenHeight;
-        int16_t x2 = rand() % screenWidth;
-        int16_t y2 = rand() % screenHeight;
-
-        display->setColor(rand() & 0x00FFFFFF);
-        display->drawLine(x1, y1, x2, y2);
-    }
-    linesTicks = Task::getTickCount() - ticks;
-    Task::delay(500);
-
-    // Rectangles
-    //
-    drawBackground("Rectangles");
-    Task::delay(250);
-
-    display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
-    display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-    ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
-        int16_t x1 = rand() % screenWidth;
-        int16_t y1 = rand() % screenHeight;
-        int16_t x2 = rand() % screenWidth;
-        int16_t y2 = rand() % screenHeight;
-
-        display->setColor(rand() & 0x00FFFFFF);
-        display->drawRectangle(x1, y1, x2, y2);
-    }
-    rectanglesTicks = Task::getTickCount() - ticks;
-    Task::delay(500);
-
-    // Filled rectangles
-    //
-    drawBackground("Filled rectangles");
-    Task::delay(250);
-
-    display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
-    display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-    ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
-        int16_t x1 = rand() % screenWidth;
-        int16_t y1 = rand() % screenHeight;
-        int16_t x2 = x1 + rand() % 100;
-        int16_t y2 = y1 + rand() % 100;
-
-        display->setColor(rand() & 0x00FFFFFF);
-        display->fillRectangle(x1, y1, x2, y2);
-    }
-    filledRectanglesTicks = Task::getTickCount() - ticks;
-    Task::delay(500);
-
-    // Circles
-    //
-    drawBackground("Circles");
-    Task::delay(250);
-
-    display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
-    display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-    ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
-        int16_t cx = rand() % screenWidth;
-        int16_t cy = rand() % screenHeight;
-        int16_t r = rand() % 150;
-
-        display->setColor(rand() & 0x00FFFFFF);
-        display->drawCircle(cx, cy, r);
-    }
-    circlesTicks = Task::getTickCount() - ticks;
-    Task::delay(500);
-
-    // Filled circles
-    //
-    drawBackground("Filled circles");
-    Task::delay(250);
-
-    display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
-    display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-    ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
-        int16_t cx = rand() % screenWidth;
-        int16_t cy = rand() % screenHeight;
-        int16_t r = rand() % 50;
-
-        display->setColor(rand() & 0x00FFFFFF);
-        display->fillCircle(cx, cy, r);
-    }
-    filledCirclesTicks = Task::getTickCount() - ticks;
-    Task::delay(500);
-
-    // Show results
-    //
-    drawBackground("Results");
-    Task::delay(250);
-
-    char lineBuffer[30];
-    uint16_t y = 50;
-    sprintf(lineBuffer, "Points        %d ms", pointsTicks * 2);
-    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "V. lines      %d ms", verticalLinesTicks * 2);
-    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "H. lines      %d ms", horizontalLinesTicks * 2);
-    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "Lines         %d ms", linesTicks * 2);
-    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "Rectangles    %d ms", rectanglesTicks * 2);
-    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "F. rectangles %d ms", filledRectanglesTicks * 2);
-    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "Circles       %d ms", circlesTicks * 2);
-    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "F. circles    %d ms", filledCirclesTicks * 2);
-    display->drawText(10, y, lineBuffer, 0, -1); y += 20;
-
-    pause(20, y + 10, "-Touch for continue...", 5000);
 }
 
 
-void DisplayLoopService::pause(
-	uint16_t x,
-	uint16_t y,
-	const char *msg,
-	uint16_t time) {
-
-    if (touchDriver != nullptr) {
-    	display->setColor(COLOR_LightGreen);
-        display->drawText(x, y, "Touch for continue...", 0, -1);
-    	while (touchDriver->getTouches() == 0) {
-    		Task::delay(50);
-    	}
-    }
-    else
-    	Task::delay(time);
-}
-
-
-void DisplayLoopService::drawBackground(
-    const char* title) {
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa el fons de pantalla.
+///
+void DisplayLoopService::drawBackground() {
 
     display->clear(COLOR_Black);
     display->resetClip();
     display->setColor(COLOR_Red);
+
     display->drawRectangle(0, 0, screenWidth - 1, screenHeight - 1);
     display->drawLine(screenWidth - 1, 20, 0, 20);
     display->drawText(4, 16, title, 0, -1);
-    display->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+
+    display->drawRectangle(7, 27, 130, screenHeight - 10);
+    display->drawRectangle(137, 27, screenWidth - 10, screenHeight - 10);
+
+    display->setColor(COLOR_Cyan);
+	display->drawText(15, 50, "Position");
+	display->drawText(35, 70, "X:");
+	display->drawText(35, 90, "Y:");
+	display->drawText(15, 120, "Size");
+	display->drawText(35, 140, "W:");
+	display->drawText(35, 160, "H:");
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa la informacio a mostrar.
+///
+void DisplayLoopService::drawInfo() {
+
 }
 
 
