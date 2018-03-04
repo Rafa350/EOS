@@ -391,7 +391,7 @@ void Display::fillRectangle(
             swap(x1, x2);
         if (y1 > y2)
             swap(y1, y2);
-        driver->setPixels(x1, y1, x2 - x1 + 1, y2 -y1 + 1, color);
+        driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
     }
 }
 

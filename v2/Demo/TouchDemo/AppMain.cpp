@@ -54,6 +54,7 @@ class DisplayLoopService: public AppLoopService {
         void drawBackground();
         void drawInfo();
         void drawDot();
+        void clearDot();
 };
 
 
@@ -167,10 +168,18 @@ void DisplayLoopService::onRun() {
     drawBackground();
     while (true) {
     	if (touch->getState(tps)) {
-    		x = tps.x[0];
-    		y = tps.y[0];
-    		drawDot();
-    		drawInfo();
+    		int16_t newX = tps.x[0];
+    		int16_t newY = tps.y[0];
+    		if ((x != newX) || (y != newY)) {
+
+    			clearDot();
+
+    			x = newX;
+    			y = newY;
+
+    			drawDot();
+    			drawInfo();
+    		}
     	}
     	else
     		Task::delay(250);
@@ -206,6 +215,9 @@ void DisplayLoopService::drawBackground() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa el punt
+///
 void DisplayLoopService::drawDot() {
 
 	display->setColor(COLOR_Red);
@@ -215,10 +227,33 @@ void DisplayLoopService::drawDot() {
 }
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa la informacio a mostrar.
+/// \brief Dibuixa la informacio de posicio i tamany
 ///
 void DisplayLoopService::drawInfo() {
 
+	static char buffer[20];
+
+	display->setColor(COLOR_Black);
+	display->fillRectangle(55, 55, 55 + 40, 55 + 15);
+	display->fillRectangle(55, 75, 55 + 40, 75 + 15);
+
+	display->setColor(COLOR_Yellow);
+
+	sprintf(buffer, "%d", x);
+	display->drawText(55, 70, buffer);
+
+	sprintf(buffer, "%d", y);
+	display->drawText(55, 90, buffer);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Borra el punt
+///
+void DisplayLoopService::clearDot() {
+
+	display->setColor(COLOR_Black);
+	display->fillRectangle(x - 32, y - 32, x + 32, y + 32);
 }
 
 
