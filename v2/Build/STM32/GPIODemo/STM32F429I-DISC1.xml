@@ -10,11 +10,11 @@
 ]>
 
 <targetDefinitions>
-  <board id="stm32f746g-disco">
-    <name>STM32F746G-DISCO</name>
+  <board id="stm32f429i-disc1">
+    <name>STM32F429I-DISC1</name>
     <dbgIF>SWD</dbgIF>
     <dbgIF>JTAG</dbgIF>
     <dbgDEV>ST-Link</dbgDEV>
-    <mcuId>stm32f746nghx</mcuId>
+    <mcuId>stm32f429zitx</mcuId>
   </board>
 </targetDefinitions>
