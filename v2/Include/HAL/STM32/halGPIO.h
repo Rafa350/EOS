@@ -17,6 +17,7 @@
 #include "stm32f4xx_hal_gpio_ex.h"
 #elif defined(EOS_STM32F7)
 #include "stm32f7xx.h"
+#include "stm32f7xx_hal_gpio.h"
 #include "stm32f7xx_hal_gpio_ex.h"
 #else
 #error Hardware no soportado

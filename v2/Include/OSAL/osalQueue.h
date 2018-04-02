@@ -18,13 +18,12 @@ extern "C" {
 #endif
 
 
+typedef void *QueueHandler;
+
 typedef struct {
     unsigned maxElements;
     unsigned elementSize;
 } QueueInitializeInfo;
-
-
-typedef void *QueueHandler;
 
 
 QueueHandler osalQueueCreate(const QueueInitializeInfo *info);

@@ -1,5 +1,5 @@
-#ifndef __EOS_TASK_H
-#define	__EOS_TASK_H
+#ifndef __eosTask__
+#define	__eosTask__
 
 
 #include "eos.h"
@@ -54,4 +54,4 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosTask__

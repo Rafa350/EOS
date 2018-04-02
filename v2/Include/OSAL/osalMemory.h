@@ -12,8 +12,8 @@ extern "C" {
 #endif
 
 
-void *osalMemAlloc(unsigned size);
-void osalMemFree(void *p);
+void *osalMemoryAlloc(unsigned size);
+void osalMemoryFree(void *p);
 
 
 #ifdef	__cplusplus

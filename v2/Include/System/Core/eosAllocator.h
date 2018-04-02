@@ -1,5 +1,5 @@
-#ifndef __EOS_ALLOCATOR_H
-#define	__EOS_ALLOCATOR_H
+#ifndef __eosAllocator__
+#define	__eosAllocator__
 
 
 #include "eos.h"
@@ -8,15 +8,16 @@
 
 
 namespace eos {
-    
+
     class IAllocator {
         public:
+    		virtual ~IAllocator() {}
             virtual void *allocate(size_t size) = 0;
             virtual void deallocate(void *p) = 0;
     };
-    
+
 }
 
 
-#endif
+#endif // __eosAllocator__
 

@@ -11,12 +11,12 @@
 
 namespace eos {
 
-	struct ServiceInit {
+	typedef struct {
 		Application *application;
 		const char *name;
 		unsigned stackSize;
 		TaskPriority priority;
-	};
+	} ServiceInitializeInfo;
 
     class Service: private IRunable {
         private:
@@ -25,7 +25,7 @@ namespace eos {
             Task task;
 
         public :
-            Service(const ServiceInit *init);
+            Service(const ServiceInitializeInfo *init);
             Service(Application *application, const char *name, unsigned stackSize, TaskPriority priority);
             virtual ~Service();
 

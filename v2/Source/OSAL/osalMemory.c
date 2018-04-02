@@ -7,7 +7,7 @@
 /// \param size: Tamany del bloc de memoria.
 /// \return Adressa del bloc, NULL en cas d'error.
 ///
-void *osalMemAlloc(
+void *osalMemoryAlloc(
 	unsigned size) {
 
     return pvPortMalloc(size);
@@ -18,7 +18,7 @@ void *osalMemAlloc(
 /// \brief Allivera un bloc de memoria.
 /// \param p: Adressa del bloc de memoria.
 ///
-void osalMemFree(
+void osalMemoryFree(
 	void *p) {
 
 	vPortFree(p);
