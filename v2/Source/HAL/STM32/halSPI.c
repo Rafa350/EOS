@@ -3,10 +3,12 @@
 #include "stm32f4xx_hal.h"
 #elif defined(EOS_STM32F7)
 #include "stm32f7xx_hal.h"
+#else
+#error Hardware no soportado
 #endif
 
 
-static SPI_HandleTypeDef spiHandler[HAL_SPI_ID_MAX];
+static SPI_HandleTypeDef handles[HAL_SPI_ID_MAX];
 
 
 /// ----------------------------------------------------------------------
@@ -84,10 +86,10 @@ static void DisableClock(
 /// \param id: identificador del modul.
 /// \return El handler del modul.
 ///
-static SPI_HandleTypeDef *GetHandler(
+static SPI_HandleTypeDef *GetHandle(
 	uint8_t id) {
 
-	return &spiHandler[id];
+	return &handles[id];
 }
 
 
@@ -96,10 +98,10 @@ static SPI_HandleTypeDef *GetHandler(
 /// \param info: Parametres de configuracio.
 /// \param handle: El handler a configurar.
 ///
-static SPI_HandleTypeDef *PrepareHandler(
+static SPI_HandleTypeDef *PrepareHandle(
 	const SPIInitializeInfo *info) {
 
-	static SPI_TypeDef * const spiTbl[HAL_SPI_ID_MAX] = {
+	static SPI_TypeDef * const instances[HAL_SPI_ID_MAX] = {
 		SPI1,
 		SPI2,
 		SPI3,
@@ -119,43 +121,43 @@ static SPI_HandleTypeDef *PrepareHandler(
 		SPI_BAUDRATEPRESCALER_256
 	};
 
-	SPI_HandleTypeDef *handler = GetHandler(info->id);
-	handler->Instance = spiTbl[info->id];
-	handler->Init.BaudRatePrescaler = baudRateTbl[info->clockDiv];
-	handler->Init.Direction = SPI_DIRECTION_2LINES;
-	handler->Init.NSS = SPI_NSS_SOFT;
-	handler->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
-	handler->Init.TIMode = SPI_TIMODE_DISABLED;
-	handler->Init.Mode = ((info->options & HAL_SPI_MS_MASK) == HAL_SPI_MS_MASTER) ? SPI_MODE_MASTER : SPI_MODE_SLAVE;
-	handler->Init.DataSize = ((info->options & HAL_SPI_SIZE_MASK) == HAL_SPI_SIZE_8) ? SPI_DATASIZE_8BIT : SPI_DATASIZE_16BIT;
-	handler->Init.CLKPolarity = ((info->options & HAL_SPI_CPOL_MASK) == HAL_SPI_CPOL_LOW) ? SPI_POLARITY_LOW : SPI_POLARITY_HIGH;
-	handler->Init.CLKPhase = ((info->options & HAL_SPI_CPHA_MASK) == HAL_SPI_CPHA_EDGE1) ? SPI_PHASE_1EDGE : SPI_PHASE_2EDGE;
-	handler->Init.FirstBit = ((info->options & HAL_SPI_FIRSTBIT_MASK) == HAL_SPI_FIRSTBIT_MSB) ? SPI_FIRSTBIT_MSB : SPI_FIRSTBIT_LSB;
+	SPI_HandleTypeDef *handle = GetHandle(info->id);
+	handle->Instance = instances[info->id];
+	handle->Init.BaudRatePrescaler = baudRateTbl[info->clockDiv];
+	handle->Init.Direction = SPI_DIRECTION_2LINES;
+	handle->Init.NSS = SPI_NSS_SOFT;
+	handle->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
+	handle->Init.TIMode = SPI_TIMODE_DISABLED;
+	handle->Init.Mode = ((info->options & HAL_SPI_MS_MASK) == HAL_SPI_MS_MASTER) ? SPI_MODE_MASTER : SPI_MODE_SLAVE;
+	handle->Init.DataSize = ((info->options & HAL_SPI_SIZE_MASK) == HAL_SPI_SIZE_8) ? SPI_DATASIZE_8BIT : SPI_DATASIZE_16BIT;
+	handle->Init.CLKPolarity = ((info->options & HAL_SPI_CPOL_MASK) == HAL_SPI_CPOL_LOW) ? SPI_POLARITY_LOW : SPI_POLARITY_HIGH;
+	handle->Init.CLKPhase = ((info->options & HAL_SPI_CPHA_MASK) == HAL_SPI_CPHA_EDGE1) ? SPI_PHASE_1EDGE : SPI_PHASE_2EDGE;
+	handle->Init.FirstBit = ((info->options & HAL_SPI_FIRSTBIT_MASK) == HAL_SPI_FIRSTBIT_MSB) ? SPI_FIRSTBIT_MSB : SPI_FIRSTBIT_LSB;
 
-	return handler;
+	return handle;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el modul SPI.
-/// \param handler: El handler del modul.
+/// \param handle: El handler del modul.
 ///
 static void InitializeModule(
-	SPI_HandleTypeDef *handler) {
+	SPI_HandleTypeDef *handle) {
 
-	HAL_SPI_Init(handler);
-	__HAL_SPI_ENABLE(handler);
+	HAL_SPI_Init(handle);
+	__HAL_SPI_ENABLE(handle);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brier Desinitialitza el modul SPI
-/// \param handler: El handler del modul.
+/// \param handle: El handler del modul.
 ///
 static void DeinitializeModule(
-	SPI_HandleTypeDef *handler) {
+	SPI_HandleTypeDef *handle) {
 
-	HAL_SPI_DeInit(handler);
+	HAL_SPI_DeInit(handle);
 }
 
 
@@ -168,8 +170,8 @@ void halSPIInitialize(
 
 	EnableClock(info->id);
 
-	SPI_HandleTypeDef *handler = PrepareHandler(info);
-    InitializeModule(handler);
+	SPI_HandleTypeDef *handle = PrepareHandle(info);
+    InitializeModule(handle);
 }
 
 
@@ -180,7 +182,7 @@ void halSPIInitialize(
 void halSPIShutdown(
 	uint8_t id) {
 
-	DeinitializeModule(GetHandler(id));
+	DeinitializeModule(GetHandle(id));
 	DisableClock(id);
 }
 
@@ -195,6 +197,6 @@ void halSPISendBuffer(
 	uint8_t *data,
 	uint16_t size) {
 
-	HAL_SPI_Transmit(GetHandler(id), data, size, 100);
+	HAL_SPI_Transmit(GetHandle(id), data, size, 100);
 }
 

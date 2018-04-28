@@ -4,7 +4,7 @@
 #include "task.h"
 
 
-static const char *defaultName = ""; // El nom de la tasca no pot der NULL en FreeRTOS
+static const char *defaultName = ""; // El nom de la tasca no pot ser NULL en FreeRTOS
 
 
 /// ----------------------------------------------------------------------

@@ -38,7 +38,10 @@ class DisplayLoopService: public AppLoopService {
 
     public:
         DisplayLoopService(Application *application):
-            AppLoopService(application) {}
+            AppLoopService(application),
+			display(nullptr),
+			driver(nullptr) {
+        }
 
     protected:
         void onSetup();

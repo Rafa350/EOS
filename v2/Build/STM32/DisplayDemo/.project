@@ -358,6 +358,11 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/STM32/halSPI.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halTMR.h</location>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/System/Core/eosTask.h</locationURI>

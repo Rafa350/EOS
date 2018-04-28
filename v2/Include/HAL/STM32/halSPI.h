@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 
-typedef void (*SPIInterruptCallback)(uint8_t module, void *params);
+typedef void (*SPIInterruptCallback)(uint8_t id, void *params);
 
 typedef struct {                       // Parametres d'inicialitzacio
 	uint8_t id;                        // -Modul a inicialitzar

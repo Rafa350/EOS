@@ -2,8 +2,7 @@
 #if defined(STM32F4)
 #include "stm32f4xx_hal.h"
 #elif defined(STM32F7)
-#include "stm32f7xx_hal_def.h"
-#include "stm32f7xx_hal_gpio.h"
+#include "stm32f7xx_hal.h"
 #else
 #error Hardware no soportado
 #endif

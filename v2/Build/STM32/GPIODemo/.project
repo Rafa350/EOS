@@ -108,6 +108,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/OSAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -128,12 +133,27 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eosAssert.h</location>
 		</link>
 		<link>
+			<name>src/App/STM32F429/Initialize_STM32F429I-DISC1.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo/STM32F429/Initialize_STM32F429I-DISC1.cpp</location>
+		</link>
+		<link>
 			<name>src/App/STM32F429/Main.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo/STM32F429/Main.cpp</location>
 		</link>
 		<link>
+			<name>src/App/STM32F429/stm32f4xx_hal_timebase_tim.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/GPIODemo/STM32F429/stm32f4xx_hal_timebase_tim.c</location>
+		</link>
+		<link>
 			<name>src/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -193,6 +213,21 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halSYS.h</location>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/halTMR.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halTMR.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/OSAL/osalMemory.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/OSAL/osalMemory.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/OSAL/osalThread.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/OSAL/osalThread.h</location>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/eosAppLoop.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosAppLoop.h</location>
@@ -208,9 +243,19 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/System/eosApplication.h</location>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32F4</name>
+			<name>src/Framework/EOS/HAL/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/osalMemory.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/osalMemory.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/osalThread.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/osalThread.c</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
@@ -243,14 +288,24 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halGPIO.h</location>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32F4/halGPIO.c</name>
+			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halGPIO.c</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halTMR.h</location>
 		</link>
 		<link>
-			<name>src/Framework/EOS/HAL/STM32F4/halSYS.c</name>
+			<name>src/Framework/EOS/HAL/STM32/halGPIO.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halSYS.c</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32/halGPIO.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32/halSYS.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32/halTMR.c</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
