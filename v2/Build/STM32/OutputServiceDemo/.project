@@ -55,7 +55,7 @@
 		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/OutputServiceDemo/eosConfig.h</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServicesDemo/eosConfig.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS</name>
@@ -70,7 +70,7 @@
 		<link>
 			<name>src/App/AppMain.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/OutputServiceDemo/AppMain.cpp</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServicesDemo/AppMain.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/SMT32F429</name>
@@ -80,7 +80,7 @@
 		<link>
 			<name>src/App/rtos_hooks.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/OutputServiceDemo/rtos_hooks.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServicesDemo/rtos_hooks.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS</name>
@@ -95,17 +95,17 @@
 		<link>
 			<name>inc/App/STM32F429/FreeRTOSConfig.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/OutputServiceDemo/STM32F429/FreeRTOSConfig.h</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DigIOServicesDemo/STM32F429/FreeRTOSConfig.h</location>
 		</link>
 		<link>
 			<name>inc/App/STM32F429/HardwareProfile.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/OutputServiceDemo/STM32F429/HardwareProfile.h</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DigIOServicesDemo/STM32F429/HardwareProfile.h</location>
 		</link>
 		<link>
 			<name>inc/App/STM32F429/HardwareProfile_STM32F429I-DISC1.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/OutputServiceDemo/STM32F429/HardwareProfile_STM32F429I-DISC1.h</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DigIOServicesDemo/STM32F429/HardwareProfile_STM32F429I-DISC1.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL</name>
@@ -128,17 +128,32 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eos.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/eosAssert.hpp</name>
+			<name>inc/Framework/EOS/eosAssert.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/eosAssert.hpp</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
+		</link>
+		<link>
+			<name>src/App/SMT32F429/Initialize_STM32F429I-DISC1.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServicesDemo/STM32F429/Initialize_STM32F429I-DISC1.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/SMT32F429/Main.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/OutputServiceDemo/STM32F429/Main.cpp</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServicesDemo/STM32F429/Main.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/SMT32F429/stm32f4xx_hal_timebase_tim.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServicesDemo/STM32F429/stm32f4xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -183,14 +198,14 @@
 			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/timers.c</location>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halGPIO_STM32F4.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halGPIO_STM32F4.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
@@ -198,19 +213,24 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/halSYS.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosAppLoop.hpp</name>
+			<name>inc/Framework/EOS/Services/eosAppLoop.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosAppLoop.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosAppLoop.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosDigOutput.hpp</name>
+			<name>inc/Framework/EOS/Services/eosDigInput.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosDigOutput.hpp</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosDigInput.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosService.hpp</name>
+			<name>inc/Framework/EOS/Services/eosDigOutput.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosService.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosDigOutput.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/eosService.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/eosService.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Collections</name>
@@ -223,9 +243,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/eosApplication.hpp</name>
+			<name>inc/Framework/EOS/System/eosApplication.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/System/eosApplication.hpp</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4</name>
@@ -233,9 +253,34 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/OSAL/osalMemory.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalMemory.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/osalQueue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalQueue.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/osalThread.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalThread.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/osalTimer.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalTimer.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/Services/eosAppLoop.cpp</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/eosDigInput.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosDigInput.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosDigOutput.cpp</name>
@@ -263,24 +308,29 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/eosApplication.cpp</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Collections/eosList.hpp</name>
+			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/System/Collections/eosList.hpp</location>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halGPIO.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Core/eosTimer.hpp</name>
+			<name>inc/Framework/EOS/System/Collections/eosList.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/System/Core/eosTimer.hpp</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosList.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Core/eosTimer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTimer.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halGPIO.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halGPIO.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halGPIO.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32F4/halSYS.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/HAL/STM32F4/halSYS.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>

@@ -181,7 +181,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 	gpioTbl[port]->ODR ^= ((uint32_t) 1) << (pin)
 
 #define halGPIOReadPin(port, pin) \
-	(gpioTbl[port]->IDR & (((uint32_t) 1) << pin)) != 0;
+	(gpioTbl[port]->IDR & (((uint32_t) 1) << pin)) != 0
 
 
 #define halGPIOWritePort(port, data) \

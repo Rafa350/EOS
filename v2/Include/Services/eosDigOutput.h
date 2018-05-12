@@ -12,7 +12,7 @@
 
 
 namespace eos {
-    
+
     class Application;
     class Task;
     class Timer;
@@ -20,9 +20,9 @@ namespace eos {
     class DigOutput;
 
     typedef struct {
-        
+
     } DigOutputServiceInitializeInfo;
-    
+
     typedef struct {
         uint8_t port;
         uint8_t pin;
@@ -39,12 +39,16 @@ namespace eos {
                 clear,
                 toggle,
                 pulse,
+				delayedSet,
+				delayedClear,
+				delayedToggle,
+				delayedPulse
             };
             struct Command {
                 Action action;
                 DigOutput *output;
                 unsigned delay;
-                unsigned time;
+                unsigned width;
             };
             typedef Queue<Command> CommandQueue;
             typedef List<DigOutput*> DigOutputList;
@@ -61,24 +65,37 @@ namespace eos {
             void set(DigOutput *output);
             void clear(DigOutput *output);
             void toggle(DigOutput *output);
-            void pulse(DigOutput *output, unsigned time);
-            void cicle(DigOutput *output, unsigned time1, unsigned time2);
+            void pulse(DigOutput *output, unsigned width);
+            void delayedPulse(DigOutput *output, unsigned delay, unsigned width);
+            void cicle(DigOutput *output, unsigned width1, unsigned width2);
 
         private:
             void run(Task *task);
             void onTimeout(Timer *timer);
-            void doClearAction(DigOutput *output);
-            void doSetAction(DigOutput *output);
-            void doToggleAction(DigOutput *output);
-            void doPulseAction(DigOutput *output, unsigned time);
+            void startTimer(DigOutput *output, unsigned time);
+            void stopTimer(DigOutput *output);
+            void doClearCommand(Command *command);
+            void doSetCommand(Command *command);
+            void doToggleCommand(Command *command);
+            void doPulseCommand(Command *command);
+            void doDelayedPulseCommand(Command *command);
     };
 
     /// \brief Clase que implementa una sortida digital.
     ///
     class DigOutput {
+    	private:
+    		enum class State {
+    			Done,
+				Delay,
+				Pulse
+    		};
+
         private:
             DigOutputService *service;
             Timer *timer;
+            unsigned time;
+            State state;
             uint8_t port;
             uint8_t pin;
 
@@ -100,20 +117,25 @@ namespace eos {
             inline void toggle() { service->toggle(this); }
 
             /// \brief Genera un puls (Inverteix l'estat momentaneament) en la sortida.
-            /// \param time: Duracio del puls en ticks.
+            /// \param width: Duracio del puls en ticks.
             ///
-            inline void pulse(unsigned time) { service->pulse(this, time); }
-            
+            inline void pulse(unsigned width) { service->pulse(this, width); }
+
             /// \brief Genera cicle continu (Inverteix l'estat ciclicament) en la sortida.
-            /// \param time1: Duracio del primer semicicle en ticks.
-            /// \param time2: Duracio del segon semicicle en ticks.
+            /// \param width1: Amplada del primer semicicle en ticks.
+            /// \param width2: Amplada del segon semicicle en ticks.
             ///
-            inline void cicle(unsigned time1, unsigned time2) { service->cicle(this, time1, time2); }
-            
+            inline void cicle(unsigned width1, unsigned width2) { service->cicle(this, width1, width2); }
+
             void delayedSet(unsigned delay);
             void delayedClear(unsigned delay);
             void delayedToggle(unsigned delay);
-            void delayedPulse(unsigned delay, unsigned time);
+
+            /// \brief Genera un puls retardat (Inverteix l'estat momentaneament) en la sortida.
+            /// \param delay: Retart en ticks
+            /// \param width: Amplada en ticks.
+            ///
+            inline void delayedPulse(unsigned delay, unsigned width) { service->delayedPulse(this, delay, width); }
 
         friend DigOutputService;
     };

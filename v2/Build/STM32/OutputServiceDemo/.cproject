@@ -30,11 +30,12 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/HAL_Driver/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo\STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServicesDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServicesDemo\STM32F429&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1537878159" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -55,11 +56,12 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/HAL_Driver/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo\STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServicesDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServicesDemo\STM32F429&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1292770222" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -95,8 +97,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo\STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServicesDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServicesDemo\STM32F429&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.358817475" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1598608307" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
@@ -160,8 +162,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo\STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServicesDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServicesDemo\STM32F429&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.563687534" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -184,8 +186,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo\STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServicesDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServicesDemo\STM32F429&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1257875869" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -220,11 +222,15 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\FreeRTOS\v8.2.3\Source\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServiceDemo\STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServicesDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\OutputServicesDemo\STM32F429&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1007435625" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.209640976" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
+							</tool>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release.313814863" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.746230403" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.16894337" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>

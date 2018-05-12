@@ -1,9 +1,9 @@
-#ifndef ___EOS_LISTIMPL_HPP
-#define ___EOS_LISTIMPL_HPP
+#ifndef ___eosListImpl__
+#define ___eosListImpl__
 
 
 namespace eos {
-    
+
     class GenericList;
 
     /// \brief Implementacio interna de la llista generica.
@@ -14,7 +14,7 @@ namespace eos {
             unsigned capacity;         // Capacitat de la llista en elements
             unsigned initialCapacity;  // Capacitat inicial de la llista
             void *container;           // Contenidor d'elements
-    
+
         public:
             GenericListImpl(unsigned size, unsigned initialCapacity);
             GenericListImpl(const GenericListImpl *impl);
@@ -38,4 +38,4 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosListImpl__

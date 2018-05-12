@@ -6,24 +6,12 @@
 	extern uint32_t SystemCoreClock;
 #endif
 
-/*-----------------------------------------------------------
- * Application specific definitions.
- *
- * These definitions should be adjusted for your particular hardware and
- * application requirements.
- *
- * THESE PARAMETERS ARE DESCRIBED WITHIN THE 'CONFIGURATION' SECTION OF THE
- * FreeRTOS API DOCUMENTATION AVAILABLE ON THE FreeRTOS.org WEB SITE.
- *
- * See http://www.freertos.org/a00110.html.
- *----------------------------------------------------------*/
-
 
 #define configUSE_PREEMPTION                    1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 #define configUSE_TICKLESS_IDLE                 0
 #define configCPU_CLOCK_HZ                      (SystemCoreClock)
-#define configTICK_RATE_HZ                      (( TickType_t ) 500)
+#define configTICK_RATE_HZ                      ((TickType_t) 500)
 #define configMAX_PRIORITIES                    (5UL)
 #define configMINIMAL_STACK_SIZE                (512)
 #define configISR_STACK_SIZE                    (512)
@@ -100,9 +88,10 @@ Only API functions that end in ...FromISR() can be used within interrupts. */
 #define INCLUDE_xEventGroupSetBitFromISR        0
 #define INCLUDE_xTimerPendFunctionCall          0
 
-#define vPortSVCHandler                         SVC_Handler
-#define xPortPendSVHandler                      PendSV_Handler
-#define xPortSysTickHandler                     SysTick_Handler
+#define vPortSVCHandler     SVC_Handler
+#define xPortPendSVHandler  PendSV_Handler
+#define xPortSysTickHandler SysTick_Handler
 
 
-#endif
+#endif /* FREERTOS_CONFIG_H */
+

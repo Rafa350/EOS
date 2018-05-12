@@ -31,10 +31,11 @@ typedef void *TaskHandler;
 
 // Prioritat de la tasca
 #define OSAL_TASK_PRIORITY_MASK        0x00000003
-#define OSAL_TASK_PRIORITY_IDLE	       0x00000000
-#define OSAL_TASK_PRIORITY_LOW	       0x00000001
-#define OSAL_TASK_PRIORITY_NORMAL      0x00000002
-#define OSAL_TASK_PRIORITY_HIGH        0x00000003
+#define OSAL_TASK_PRIORITY_POS         0
+#define OSAL_TASK_PRIORITY_IDLE	       ((uint32_t)0 << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_LOW	       ((uint32_t)1 << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_NORMAL      ((uint32_t)2 << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_HIGH        ((uint32_t)3 << OSAL_TASK_PRIORITY_POS)
 
 
 TaskHandler osalTaskCreate(const TaskInitializeInfo *info);
