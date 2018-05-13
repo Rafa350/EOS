@@ -21,7 +21,7 @@ namespace eos {
         public:
             Timer(bool autoreload = false);
             ~Timer();
-            void start(unsigned timeout, unsigned blockTime);
+            void start(unsigned time, unsigned blockTime);
             void stop(unsigned blockTime);
 
             /// \brief Asigna el event onTimeout

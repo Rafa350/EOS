@@ -1,14 +1,9 @@
 #include "eos.h"
 #include "System/Core/eosTimer.h"
-
-#include "FreeRTOS.h"
-#include "timers.h"
+#include "osal/osalTimer.h"
 
 
 using namespace eos;
-
-
-static const char *defaultTimerName = "";
 
 
 /// ----------------------------------------------------------------------
@@ -34,7 +29,7 @@ Timer::~Timer() {
         delete evTimeout;
 
     if (handler != nullptr)
-        xTimerDelete(handler, 100);
+        osalTimerDestroy(handler, 10);
 }
 
 
@@ -44,15 +39,19 @@ Timer::~Timer() {
 /// \param blockTime: Temps maxim de bloqueix en milisegons.
 ///
 void Timer::start(
-    unsigned timeout,
+    unsigned time,
     unsigned blockTime) {
 
     if (handler == nullptr) {
-        handler = xTimerCreate(defaultTimerName, timeout / portTICK_PERIOD_MS, autoreload, (void*) this, timerCallback);
-        xTimerStart(handler, blockTime / portTICK_PERIOD_MS);
+
+    	TimerInitializeInfo info;
+    	info.autoreload = autoreload;
+    	info.callback = timerCallback;
+    	info.context = this;
+    	osalTimerCreate(&info, &handler);
     }
-    else
-        xTimerChangePeriod(handler, timeout / portTICK_PERIOD_MS, blockTime / portTICK_PERIOD_MS);
+
+    osalTimerStart(handler, time, blockTime);
 }
 
 
@@ -64,7 +63,7 @@ void Timer::stop(
     unsigned blockTime) {
 
     if (handler != nullptr)
-        xTimerStop(handler, blockTime / portTICK_PERIOD_MS);
+    	osalTimerStop(handler, blockTime);
 }
 
 
@@ -74,7 +73,10 @@ void Timer::stop(
 ///
 bool Timer::isActive() const {
 
-    return handler == nullptr ? false : xTimerIsTimerActive(handler) != pdFALSE;
+    if (handler != nullptr)
+		return osalTimerIsActive(handler) == OSAL_STATUS_TRUE;
+    else
+    	return false;
 }
 
 
@@ -85,8 +87,10 @@ bool Timer::isActive() const {
 void Timer::timerCallback(
     void *handler) {
 
-    Timer *timer = reinterpret_cast<Timer*>(pvTimerGetTimerID(handler));
-    if (timer->evTimeout != nullptr)
-        timer->evTimeout->execute(timer);
+    Timer *timer;
+    if (osalTimerGetContext(handler, (void**) &timer) == OSAL_STATUS_OK) {
+    	if (timer->evTimeout != nullptr)
+    		timer->evTimeout->execute(timer);
+    }
 }
 

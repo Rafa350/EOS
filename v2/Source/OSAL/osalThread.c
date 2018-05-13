@@ -17,7 +17,7 @@ uint8_t osalTaskCreate(
 	const TaskInitializeInfo *info,
 	TaskHandler *handler) {
 
-#ifdef OSAL_CHACK_PARAMETERS
+#ifdef OSAL_CHECK_PARAMETERS
 	if (info == NULL)
 		return OSAL_STATUS_ERROR_PARAMETER;
 
@@ -48,7 +48,7 @@ uint8_t osalTaskCreate(
 uint8_t osalTaskDestroy(
 	TaskHandler handler) {
 
-#ifdef OSAL_CHACK_PARAMETERS
+#ifdef OSAL_CHECK_PARAMETERS
 	if (handler == NULL)
 		return OSAL_STATUS_ERROR_PARAMETER;
 #endif

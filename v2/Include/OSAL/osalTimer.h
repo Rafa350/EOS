@@ -26,7 +26,6 @@ typedef void *TimerHandler;
 typedef void (*TimerCallback)(TimerHandler handler);
 
 typedef struct {
-	unsigned period;
 	unsigned autoreload;
 	TimerCallback callback;
 	void *context;
@@ -36,8 +35,11 @@ typedef struct {
 uint8_t osalTimerCreate(const TimerInitializeInfo *info, TimerHandler *handler);
 uint8_t osalTimerDestroy(TimerHandler handler, unsigned blockTime);
 
-uint8_t osalTimerStart(TimerHandler handler, unsigned blockTime);
+uint8_t osalTimerStart(TimerHandler handler, unsigned time, unsigned blockTime);
 uint8_t osalTimerStop(TimerHandler handler, unsigned blockTime);
+
+uint8_t osalTimerIsActive(TimerHandler handler);
+uint8_t osalTimerGetContext(TimerHandler handler, void **context);
 
 
 #ifdef	__cplusplus
