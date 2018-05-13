@@ -5,21 +5,42 @@
 /// ----------------------------------------------------------------------
 /// \brief Obte un bloc de memoria.
 /// \param size: Tamany del bloc de memoria.
-/// \return Adressa del bloc, NULL en cas d'error.
+/// \param p: Adressa del bloc de memoria obtingut.
+/// \return Resultat de l'operacio.
 ///
-void *osalMemoryAlloc(
-	unsigned size) {
+uint8_t osalMemoryAlloc(
+	unsigned size,
+	void **p) {
 
-    return pvPortMalloc(size);
+#ifdef OSAL_CHECK_PARAMETERS
+	if (size == 0)
+		return OSAL_STATUS_ERROR_PARAMETER;
+	if (p == NULL)
+		return OSAL_STATUS_ERROR_PARAMETER;
+#endif
+
+    *p = pvPortMalloc(size);
+    if (*p == NULL)
+    	return OSAL_STATUS_ERROR_MEMORY;
+
+    return OSAL_STATUS_OK;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Allivera un bloc de memoria.
 /// \param p: Adressa del bloc de memoria.
+/// \return Resultat de l'operacio.
 ///
-void osalMemoryFree(
+uint8_t osalMemoryFree(
 	void *p) {
 
+#ifdef OSAL_CHECK_PARAMETERS
+	if (p == NULL)
+		return OSAL_STATUS_ERROR_PARAMETER;
+#endif
+
 	vPortFree(p);
+
+	return OSAL_STATUS_OK;
 }

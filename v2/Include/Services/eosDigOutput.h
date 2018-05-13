@@ -84,7 +84,7 @@ namespace eos {
     /// \brief Clase que implementa una sortida digital.
     ///
     class DigOutput {
-    	private:
+    	public:
     		enum class State {
     			Done,
 				Delay,
@@ -102,6 +102,8 @@ namespace eos {
         public:
             DigOutput(DigOutputService *service, const DigOutputInitializeInfo *info);
             ~DigOutput();
+
+            /// \brief Obte l'estat del port.
             bool get() const;
 
             /// \brief Asigna l'estat actiu a la sortida.
@@ -136,6 +138,8 @@ namespace eos {
             /// \param width: Amplada en ticks.
             ///
             inline void delayedPulse(unsigned delay, unsigned width) { service->delayedPulse(this, delay, width); }
+
+            State getState() const;
 
         friend DigOutputService;
     };

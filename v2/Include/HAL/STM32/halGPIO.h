@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "hal/hal.h"
 
 // Standard includes
 //

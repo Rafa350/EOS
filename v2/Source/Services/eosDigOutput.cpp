@@ -191,6 +191,11 @@ void DigOutputService::doDelayedPulseCommand(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Inicia el temporitzador.
+/// \param output: La sortida.
+/// \param time: El temps.
+///
 void DigOutputService::startTimer(
 	DigOutput *output,
 	unsigned time) {
@@ -204,18 +209,20 @@ void DigOutputService::startTimer(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Para el temporitzador.
+/// \param output: la sortida.
+///
 void DigOutputService::stopTimer(
 	DigOutput *output) {
 
-	if (output->timer != nullptr) {
-		delete output->timer;
-		output->timer = nullptr;
-	}
+	if (output->timer != nullptr)
+		output->timer->stop((unsigned) -1);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa el timeout del temporitzador pels pulsos.
+/// \brief Procesa el timeout del temporitzador.
 /// \param timer: El temporitzador.
 ///
 void DigOutputService::onTimeout(
@@ -372,4 +379,20 @@ DigOutput::~DigOutput() {
 bool DigOutput::get() const {
 
     return halGPIOReadPin(port, pin);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte l'estat del port.
+/// \return L'estat del port.
+///
+DigOutput::State DigOutput::getState() const {
+
+	State s;
+
+	Task::enterCriticalSection();
+	s = state;
+	Task::exitCriticalSection();
+
+	return s;
 }

@@ -10,14 +10,20 @@ static const char *defaultName = ""; // El nom de la tasca no pot ser NULL en Fr
 /// ----------------------------------------------------------------------
 /// \brief Crea una tasca.
 /// \param info: Parametres d'inicialitzacio.
-/// \return El handler de la tasca. NULL en cas d'error
+/// \param handler: El handler de la tasca.
+/// \return El resultat de l'operacio.
 ///
-TaskHandler osalTaskCreate(
-	const TaskInitializeInfo *info) {
+uint8_t osalTaskCreate(
+	const TaskInitializeInfo *info,
+	TaskHandler *handler) {
 
-	eosArgumentIsNotNull(info);
+#ifdef OSAL_CHACK_PARAMETERS
+	if (info == NULL)
+		return OSAL_STATUS_ERROR_PARAMETER;
 
-	TaskHandler handler;
+	if (handler == NULL)
+		return OSAL_STATUS_ERROR_PARAMETER;
+#endif
 
 	uint32_t priority = info->options & OSAL_TASK_PRIORITY_MASK;
 
@@ -27,11 +33,11 @@ TaskHandler osalTaskCreate(
         info->stackSize,
         info->params,
         tskIDLE_PRIORITY + ((UBaseType_t) priority),
-        &handler);
+        handler);
+    if (*handler == NULL)
+    	return OSAL_STATUS_ERROR_RESOURCE;
 
-    eosAssert(handler != NULL);
-
-    return handler;
+    return OSAL_STATUS_OK;
 }
 
 
@@ -39,12 +45,17 @@ TaskHandler osalTaskCreate(
 /// \brief Destrueix la tasca.
 /// \param handler: El handler de la tasca.
 ///
-void osalTaskDestroy(
+uint8_t osalTaskDestroy(
 	TaskHandler handler) {
 
-	eosArgumentIsNotNull(handler);
+#ifdef OSAL_CHACK_PARAMETERS
+	if (handler == NULL)
+		return OSAL_STATUS_ERROR_PARAMETER;
+#endif
 
 	vTaskDelete(handler);
+
+	return OSAL_STATUS_OK;
 }
 
 

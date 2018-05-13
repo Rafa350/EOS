@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "osal/osal.h"
 
 
 // Stdlib includes
@@ -38,8 +39,8 @@ typedef void *TaskHandler;
 #define OSAL_TASK_PRIORITY_HIGH        ((uint32_t)3 << OSAL_TASK_PRIORITY_POS)
 
 
-TaskHandler osalTaskCreate(const TaskInitializeInfo *info);
-void osalTaskDestroy(TaskHandler handler);
+uint8_t osalTaskCreate(const TaskInitializeInfo *info, TaskHandler *handler);
+uint8_t osalTaskDestroy(TaskHandler handler);
 
 void osalEnterCritical();
 void osalExitCritical();
