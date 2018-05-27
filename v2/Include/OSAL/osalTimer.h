@@ -20,8 +20,10 @@ extern "C" {
 #define OSAL_TIMER_BLOCK               ((unsigned) -1)
 #define OSAL_TIMER_NOBLOCK             ((unsigned) 0)
 
-#define OSAL_TIMER_AUTO_MASK 	       ((uint32_t)0x00000001)
-#define OSAL_TIMER_AUTO_POS            1
+#define OSAL_TIMER_AUTO_POS            0
+#define OSAL_TIMER_AUTO_BITS           0b1
+#define OSAL_TIMER_AUTO_MASK 	       (OSAL_TIMER_AUTO_BITS << OSAL_TIMER_AUTO_POS)
+    
 #define OSAL_TIMER_AUTO_OFF            ((uint32_t)0 << OSAL_TIMER_AUTO_POS)
 #define OSAL_TIMER_AUTO_ON             ((uint32_t)1 << OSAL_TIMER_AUTO_POS)
 

@@ -2,7 +2,8 @@
 #include "System/Core/eosQueue.h"
 #include "System/Core/eosTimer.h"
 #include "Services/eosDigOutput.h"
-#include "HAL/halGPIO.h"
+#include "hal/halGPIO.h"
+#include "osal/osalThread.h"
 
 
 using namespace eos;
@@ -105,7 +106,7 @@ void DigOutputService::run(
  void DigOutputService::doClearCommand(
     Command *command) {
 
-    Task::enterCriticalSection();
+    osalEnterCritical();
 
     if (command->output->state != DigOutput::State::Done)
     	stopTimer(command->output);
@@ -113,7 +114,7 @@ void DigOutputService::run(
     halGPIOClearPin(command->output->port, command->output->pin);
     command->output->state = DigOutput::State::Done;
 
-    Task::exitCriticalSection();
+    osalExitCritical();
 }
 
 
@@ -124,7 +125,7 @@ void DigOutputService::run(
  void DigOutputService::doSetCommand(
     Command *command) {
 
-	Task::enterCriticalSection();
+	osalEnterCritical();
 
     if (command->output->state != DigOutput::State::Done)
     	stopTimer(command->output);
@@ -132,7 +133,7 @@ void DigOutputService::run(
     halGPIOSetPin(command->output->port, command->output->pin);
     command->output->state = DigOutput::State::Done;
 
-    Task::exitCriticalSection();
+    osalExitCritical();
 }
 
 
@@ -143,7 +144,7 @@ void DigOutputService::run(
 void DigOutputService::doToggleCommand(
     Command *command) {
 
-    Task::enterCriticalSection();
+    osalEnterCritical();
 
     if (command->output->state != DigOutput::State::Done)
     	stopTimer(command->output);
@@ -151,7 +152,7 @@ void DigOutputService::doToggleCommand(
     halGPIOTogglePin(command->output->port, command->output->pin);
     command->output->state = DigOutput::State::Done;
 
-    Task::exitCriticalSection();
+    osalExitCritical();
 }
 
 

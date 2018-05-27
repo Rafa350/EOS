@@ -121,9 +121,9 @@ static GPIO_InitTypeDef *PreparePinInit(
 	GPIO_InitTypeDef *init) {
 
 	init->Pin = 1 << info->pin;
-	init->Mode = modeTbl[(info->options & HAL_GPIO_MODE_MASK) >> HAL_GPIO_MODE_OFFSET];
-	init->Speed = speedTbl[(info->options & HAL_GPIO_SPEED_MASK) >> HAL_GPIO_SPEED_OFFSET];
-	init->Pull = pupdTbl[(info->options & HAL_GPIO_PULL_MASK) >> HAL_GPIO_PULL_OFFSET];
+	init->Mode = modeTbl[(info->options & HAL_GPIO_MODE_MASK) >> HAL_GPIO_MODE_POS];
+	init->Speed = speedTbl[(info->options & HAL_GPIO_SPEED_MASK) >> HAL_GPIO_SPEED_POS];
+	init->Pull = pupdTbl[(info->options & HAL_GPIO_PULL_MASK) >> HAL_GPIO_PULL_POS];
 	init->Alternate = (uint32_t) info->alt;
 
 	return init;
@@ -141,9 +141,9 @@ static GPIO_InitTypeDef *PreparePortInit(
 	GPIO_InitTypeDef *init) {
 
 	init->Pin = 1 << info->mask;
-	init->Mode = modeTbl[(info->options & HAL_GPIO_MODE_MASK) >> HAL_GPIO_MODE_OFFSET];
-	init->Speed = speedTbl[(info->options & HAL_GPIO_SPEED_MASK) >> HAL_GPIO_SPEED_OFFSET];
-	init->Pull = pupdTbl[(info->options & HAL_GPIO_PULL_MASK) >> HAL_GPIO_PULL_OFFSET];
+	init->Mode = modeTbl[(info->options & HAL_GPIO_MODE_MASK) >> HAL_GPIO_MODE_POS];
+	init->Speed = speedTbl[(info->options & HAL_GPIO_SPEED_MASK) >> HAL_GPIO_SPEED_POS];
+	init->Pull = pupdTbl[(info->options & HAL_GPIO_PULL_MASK) >> HAL_GPIO_PULL_POS];
 	init->Alternate = (uint32_t) info->alt;
 
 	return init;

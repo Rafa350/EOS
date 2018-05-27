@@ -11,17 +11,22 @@ extern "C" {
 #endif
 
 
+typedef uint8_t GPIPort;
+typedef uint8_t GPIOPin;
+typedef uint16_t GPIOMask;
+typedef uint32_t GPIOOptions
+
 typedef struct {                  // Parametres d'inicialitzacio per pins
-	uint8_t port;                 // -Identificador del port
-	uint8_t pin;                  // -Identificador del pin
-	uint32_t options;             // -Opcions
+	GPIOPort port;                // -Identificador del port
+	GPIOPin pin;                  // -Identificador del pin
+	GPIOOptions options;          // -Opcions
 	uint8_t alt;                  // -Funcio alternativa
 } GPIOInitializePinInfo;
 
 typedef struct {                  // Parametres d'inicialitzacio d'un port
-	uint8_t port;                 // -Identificador del port
-	uint16_t mask;                // -Mascara de pins
-	uint32_t options;             // -Opcions
+	GPIOPort port;                // -Identificador del port
+	GPIOMask mask;                // -Mascara de pins
+	GPIOOptions options;          // -Opcions
 	uint8_t alt;                  // -Funcio alternativa
 } GPIOInitializePortInfo;
 
@@ -42,47 +47,47 @@ extern GPIOPortRegs gpioPortRegs[];
 
 // Identificador dels ports
 #if defined(PORTA)
-#define HAL_GPIO_PORT_A      0
+#define HAL_GPIO_PORT_A      ((GPIOPort) 0)
 #endif
 #if defined(PORTB)
-#define HAL_GPIO_PORT_B      1
+#define HAL_GPIO_PORT_B      ((GPIOPort) 1)
 #endif
 #if defined(PORTC)
-#define HAL_GPIO_PORT_C      2
+#define HAL_GPIO_PORT_C      ((GPIOPort) 2)
 #endif
 #if defined(PORTD)
-#define HAL_GPIO_PORT_D      3
+#define HAL_GPIO_PORT_D      ((GPIOPort) 3)
 #endif
 #if defined(PORTE)
-#define HAL_GPIO_PORT_E      4
+#define HAL_GPIO_PORT_E      ((GPIOPort) 4)
 #endif
 #if defined(PORTF)
-#define HAL_GPIO_PORT_F      5
+#define HAL_GPIO_PORT_F      ((GPIOPort) 5)
 #endif
 #if defined(PORTG)
-#define HAL_GPIO_PORT_G      6
+#define HAL_GPIO_PORT_G      ((GPIOPort) 6)
 #endif
-#define HAL_GPIO_PORT_NONE   255
+#define HAL_GPIO_PORT_NONE   ((GPIOPort) 255)
 
 
 // Identificador dels pins
-#define HAL_GPIO_PIN_0       0
-#define HAL_GPIO_PIN_1       1
-#define HAL_GPIO_PIN_2       2
-#define HAL_GPIO_PIN_3       3
-#define HAL_GPIO_PIN_4       4
-#define HAL_GPIO_PIN_5       5
-#define HAL_GPIO_PIN_6       6
-#define HAL_GPIO_PIN_7       7
-#define HAL_GPIO_PIN_8       8
-#define HAL_GPIO_PIN_9       9
-#define HAL_GPIO_PIN_10      10
-#define HAL_GPIO_PIN_11      11
-#define HAL_GPIO_PIN_12      12
-#define HAL_GPIO_PIN_13      13
-#define HAL_GPIO_PIN_14      14
-#define HAL_GPIO_PIN_15      15
-#define HAL_GPIO_PIN_NONE    255
+#define HAL_GPIO_PIN_0       ((GPIOPin) 0)
+#define HAL_GPIO_PIN_1       ((GPIOPin) 1)
+#define HAL_GPIO_PIN_2       ((GPIOPin) 2)
+#define HAL_GPIO_PIN_3       ((GPIOPin) 3)
+#define HAL_GPIO_PIN_4       ((GPIOPin) 4)
+#define HAL_GPIO_PIN_5       ((GPIOPin) 5)
+#define HAL_GPIO_PIN_6       ((GPIOPin) 6)
+#define HAL_GPIO_PIN_7       ((GPIOPin) 7)
+#define HAL_GPIO_PIN_8       ((GPIOPin) 8)
+#define HAL_GPIO_PIN_9       ((GPIOPin) 9)
+#define HAL_GPIO_PIN_10      ((GPIOPin) 10)
+#define HAL_GPIO_PIN_11      ((GPIOPin) 11)
+#define HAL_GPIO_PIN_12      ((GPIOPin) 12)
+#define HAL_GPIO_PIN_13      ((GPIOPin) 13)
+#define HAL_GPIO_PIN_14      ((GPIOPin) 14)
+#define HAL_GPIO_PIN_15      ((GPIOPin) 15)
+#define HAL_GPIO_PIN_NONE    ((GPIOPin) 255)
 
 
 // Mascara de posicio dels pins
@@ -106,7 +111,8 @@ extern GPIOPortRegs gpioPortRegs[];
 
 // Tipus de port
 #define HAL_GPIO_MODE_OFFSET      0
-#define HAL_GPIO_MODE_MASK        0b1111
+#define HAL_GPIO_MODE_BITS        0b1111
+#define HAL_GPIO_MODE_MASK        (HAL_GPIO_MODE_BITS << HAL_GPIO_MODE_POS)
 
 #define HAL_GPIO_MODE_INPUT       (0 << HAL_GPIO_MODE_OFFSET)   // -Entrada digital
 #define HAL_GPIO_MODE_OUTPUT_PP   (1 << HAL_GPIO_MODE_OFFSET)   // -Sortida push-pull
@@ -118,7 +124,8 @@ extern GPIOPortRegs gpioPortRegs[];
 
 // Velocitat de conmutacio
 #define HAL_GPIO_SPEED_OFFSET     4
-#define HAL_GPIO_SPEED_MASK       0b11
+#define HAL_GPIO_SPEED_BITS       0b11
+#define HAL_GPIO_SPEED_MASK       (HAL_GPIO_SPEED_BITS << HAL_GPIO_SPEED_POS)
 
 #define HAL_GPIO_SPEED_LOW        (0 << HAL_GPIO_SPEED_OFFSET)
 #define HAL_GPIO_SPEED_MEDIUM	  (1 << HAL_GPIO_SPEED_OFFSET)
@@ -127,7 +134,8 @@ extern GPIOPortRegs gpioPortRegs[];
 
 // Resistencies pull-up
 #define HAL_GPIO_PULL_OFFSET      6
-#define HAL_GPIO_PULL_MASK        0b11
+#define HAL_GPIO_PULL_BITS        0b11
+#define HAL_GPIO_PULL_MASK        (HAL_GPIO_PULL_BITS << HAL_GPIO_PULL_POS)
 
 #define HAL_GPIO_PULL_NONE        (0 << HAL_GPIO_PULL_OFFSET)
 #define HAL_GPIO_PULL_UP          (1 << HAL_GPIO_PULL_OFFSET)
@@ -135,7 +143,8 @@ extern GPIOPortRegs gpioPortRegs[];
 
 // Valor inicial de la sortida
 #define HAL_GPIO_INIT_OFFSET      8
-#define HAL_GPIO_INIT_MASK        0b11
+#define HAL_GPIO_INIT_BITS        0b11
+#define HAL_GPIO_INIT_MASK        (HAL_GPIO_INIT_BITS << HAL_GPIO_INIT_POS)
 
 #define HAL_GPIO_INIT_CLR         (0 << HAL_GPIO_INIT_OFFSET)
 #define HAL_GPIO_INIT_SET         (1 << HAL_GPIO_INIT_OFFSET)
@@ -172,13 +181,13 @@ extern GPIOPortRegs gpioPortRegs[];
     *gpioPortRegs[port].lat
 
 
-void halGPIOInitializePins(const GPIOInitializePinInfo *info, uint8_t count);
+void halGPIOInitializePins(const GPIOInitializePinInfo *info, unsigned count);
 void halGPIOInitializePin(const GPIOInitializePinInfo *info);
 
-void halGPIOInitializePorts(const GPIOInitializePortInfo *info, uint8_t count);
+void halGPIOInitializePorts(const GPIOInitializePortInfo *info, unsigned count);
 void halGPIOInitializePort(const GPIOInitializePortInfo *info);
 
-void halGPIOInitialize(uint8_t port, uint8_t pin, uint32_t options, uint8_t alt);
+void halGPIOInitialize(GPIOPort port, GPIOPin pin, uint32_t options, uint8_t alt);
 
 
 #ifdef	__cplusplus

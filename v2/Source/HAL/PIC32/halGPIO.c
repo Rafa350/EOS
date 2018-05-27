@@ -48,7 +48,7 @@ GPIOPortRegs gpioPortRegs[] = {
 void halGPIOInitializePin(
     const GPIOInitializePinInfo *info) {
    
-    uint16_t mask = 1 << info->pin;
+    uint32_t mask = 1 << info->pin;
     
     if (((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_PP) ||
         ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)) {
@@ -98,9 +98,16 @@ void halGPIOInitializePort(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza un pin.
+/// \param port: Identificador del port.
+/// \param pin: Identificador del pin.
+/// \param options: opcions de configuracio.
+/// \param alt: Funcio alternativa del pin.
+///
 void halGPIOInitialize(
-    uint8_t port, 
-    uint8_t pin, 
+    GPIOPort port, 
+    GPIOPin pin, 
     uint32_t options, 
     uint8_t alt) {
     

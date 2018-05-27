@@ -5,8 +5,10 @@
 #include "eos.h"
 #include "eosAssert.h"
 
+#include <stdint.h>
 
-#if defined (__GNUC__)
+
+#if defined (__GNUC__) && defined(STM32)
 	#define __ASM            __asm
   	#define __INLINE         inline
 	#define __STATIC_INLINE  static inline

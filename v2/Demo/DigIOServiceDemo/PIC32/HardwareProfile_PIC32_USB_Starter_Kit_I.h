@@ -1,5 +1,5 @@
-#ifndef __HARDWARE_PROFILE_PIC32_USB_STARTER_KIT_I_H
-#define __HARDWARE_PROFILE_PIC32_USB_STARTER_KIT_I_H
+#ifndef __hardwareProfile_PIC32_USB_STARTER_KIT_I__
+#define __hardwareProfile_PIC32_USB_STARTER_KIT_I__
 
 
 // -----------------------------------------------------------------------
@@ -35,4 +35,4 @@
 #define SW_SW3_PIN           HAL_GPIO_PIN_13
 
 
-#endif
+#endif // __hardwareProfile_PIC32_USB_STARTER_KIT_I__
