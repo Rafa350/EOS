@@ -3,6 +3,7 @@
 
 
 #include "eos.h"
+#include "osal/osalTimer.h"
 #include "System/Core/eosCallbacks.h"
 
 
@@ -13,7 +14,7 @@ namespace eos {
             typedef ICallbackP1<Timer*> ITimerEvent;
 
         private:
-            void *handler;
+            HTimer hTimer;
             bool autoreload;
             void *tag;
             ITimerEvent *evTimeout;
@@ -40,7 +41,7 @@ namespace eos {
             bool isActive() const;
 
         private:
-            static void timerCallback(void *handler);
+            static void timerCallback(HTimer hTimer);
     };
 }
 

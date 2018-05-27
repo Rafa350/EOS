@@ -1,5 +1,4 @@
 #include "eosAssert.h"
-#include "OSAL/osalQueue.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -21,9 +20,9 @@ GenericQueue::GenericQueue(
     QueueInitializeInfo info;
     info.maxElements = capacity;
     info.elementSize = size;
-    handle = osalQueueCreate(&info);
+    hQueue = osalQueueCreate(&info);
 
-    eosAssert(handle != nullptr);
+    eosAssert(hQueue != nullptr);
 }
 
 
@@ -32,7 +31,7 @@ GenericQueue::GenericQueue(
 ///
 GenericQueue::~GenericQueue() {
 
-    osalQueueDestroy(handle);
+    osalQueueDestroy(hQueue);
 }
 
 
@@ -41,7 +40,7 @@ GenericQueue::~GenericQueue() {
 ///
 void GenericQueue::clear() {
 
-    osalQueueClear(handle);
+    osalQueueClear(hQueue);
 }
 
 
@@ -55,7 +54,7 @@ bool GenericQueue::genericPut(
     const void *element,
     unsigned blockTime) {
 
-	return osalQueuePut(handle, element, blockTime);
+	return osalQueuePut(hQueue, element, blockTime);
 }
 
 
@@ -69,19 +68,19 @@ bool GenericQueue::genericGet(
     void *element,
     unsigned blockTime) {
 
-	return osalQueueGet(handle, element, blockTime);
+	return osalQueueGet(hQueue, element, blockTime);
 }
 
 
 bool GenericQueue::genericPutISR(
     void *element) {
 
-	return osalQueuePutISR(handle, element);
+	return osalQueuePutISR(hQueue, element);
 }
 
 
 bool GenericQueue::genericGetISR(
     void *element) {
 
-	return osalQueueGetISR(handle, element);
+	return osalQueueGetISR(hQueue, element);
 }

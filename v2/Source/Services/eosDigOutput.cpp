@@ -333,7 +333,7 @@ void DigOutputService::delayedPulse(
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
-/// \param service: El servei as que s'asignara la sortida.
+/// \param service: El servei al que s'asignara la sortida.
 /// \param info: Parametres d'inicialitzacio.
 ///
 DigOutput::DigOutput(
@@ -342,6 +342,7 @@ DigOutput::DigOutput(
 
     service(nullptr),
 	timer(nullptr),
+	time(0),
 	state(State::Done),
 	port(info->port),
     pin(info->pin) {

@@ -2,13 +2,17 @@
 #define __eosQueue__
 
 
+#include "eos.h"
+#include "osal/osalQueue.h"
+
+
 namespace eos {
 
     /// \brief Interface generic per les cues.
     ///
     class GenericQueue {
         private:
-            void *handle;
+            HQueue hQueue;
 
         public:
             virtual ~GenericQueue();

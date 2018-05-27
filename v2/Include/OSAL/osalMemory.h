@@ -8,18 +8,13 @@
 #include "osal/osal.h"
 
 
-// Stdlib includes
-//
-#include "stdint.h"
-
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
 
-uint8_t osalMemoryAlloc(unsigned size, void **p);
-uint8_t osalMemoryFree(void *p);
+void *osalMemoryAlloc(unsigned size);
+void osalMemoryFree(void *p);
 
 
 #ifdef	__cplusplus

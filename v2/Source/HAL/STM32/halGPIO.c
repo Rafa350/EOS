@@ -159,6 +159,9 @@ void halGPIOInitializePins(
 	const GPIOInitializePinInfo *info,
 	uint8_t count) {
 
+	eosArgumentIsNotNull(info);
+	eosArgumentIsNotZero(count);
+
 	for (uint8_t i = 0; i < count; i++)
 		halGPIOInitializePin(&info[i]);
 }
@@ -170,6 +173,8 @@ void halGPIOInitializePins(
 ///
 void halGPIOInitializePin(
 	const GPIOInitializePinInfo *info) {
+
+	eosArgumentIsNotNull(info);
 
 	EnableClock(info->port);
 
@@ -188,6 +193,9 @@ void halGPIOInitializePorts(
 	const GPIOInitializePortInfo *info,
 	uint8_t count) {
 
+	eosArgumentIsNotNull(info);
+	eosArgumentIsNotZero(count);
+
 	for (uint8_t i = 0; i < count; i++)
 		halGPIOInitializePort(&info[i]);
 }
@@ -199,6 +207,8 @@ void halGPIOInitializePorts(
 ///
 void halGPIOInitializePort(
 	const GPIOInitializePortInfo *info) {
+
+	eosArgumentIsNotNull(info);
 
 	EnableClock(info->port);
 

@@ -5,11 +5,10 @@
 // EOS includes
 //
 #include "eos.h"
-
+#include "osal/osal.h"
 
 // Stdlib includes
 //
-#include "stdint.h"
 #include "stdbool.h"
 
 
@@ -18,7 +17,7 @@ extern "C" {
 #endif
 
 
-typedef void *QueueHandler;
+typedef struct QUEUE *HQueue;
 
 typedef struct {
     unsigned maxElements;
@@ -26,15 +25,15 @@ typedef struct {
 } QueueInitializeInfo;
 
 
-QueueHandler osalQueueCreate(const QueueInitializeInfo *info);
-void osalQueueDestroy(QueueHandler queue);
+HQueue osalQueueCreate(const QueueInitializeInfo *info);
+void osalQueueDestroy(HQueue hQueue);
 
-void osalQueueClear(QueueHandler queue);
+void osalQueueClear(HQueue hQueue);
 
-bool osalQueuePut(QueueHandler queue, const void *element, unsigned blockTime);
-bool osalQueuePutISR(QueueHandler queue, const void *element);
-bool osalQueueGet(QueueHandler queue, void *element, unsigned blockTime);
-bool osalQueueGetISR(QueueHandler queue, void *element);
+bool osalQueuePut(HQueue hQueue, const void *element, unsigned waitTime);
+bool osalQueuePutISR(HQueue hQueue, const void *element);
+bool osalQueueGet(HQueue hQueue, void *element, unsigned waitTime);
+bool osalQueueGetISR(HQueue hQueue, void *element);
 
 
 #ifdef	__cplusplus

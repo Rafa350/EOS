@@ -16,8 +16,7 @@ void *HeapAllocator::allocate(
 
     eosArgumentIsNotZero(size);
 
-    void *p;
-    osalMemoryAlloc(size, &p);
+    void *p = osalMemoryAlloc(size);
     eosAssert(p != nullptr);
 
     return p;

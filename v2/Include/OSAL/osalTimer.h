@@ -9,7 +9,7 @@
 
 // Stdlib includes
 //
-#include "stdint.h"
+#include <stdbool.h>
 
 
 #ifdef	__cplusplus
@@ -17,29 +17,33 @@ extern "C" {
 #endif
 
 
-#define OSAL_TIMER_BLOCK     ((unsigned) -1)
-#define OSAL_TIMER_NOBLOCK   ((unsigned) 0)
+#define OSAL_TIMER_BLOCK               ((unsigned) -1)
+#define OSAL_TIMER_NOBLOCK             ((unsigned) 0)
 
+#define OSAL_TIMER_AUTO_MASK 	       ((uint32_t)0x00000001)
+#define OSAL_TIMER_AUTO_POS            1
+#define OSAL_TIMER_AUTO_OFF            ((uint32_t)0 << OSAL_TIMER_AUTO_POS)
+#define OSAL_TIMER_AUTO_ON             ((uint32_t)1 << OSAL_TIMER_AUTO_POS)
 
-typedef void *TimerHandler;
+typedef struct TIMER *HTimer;
 
-typedef void (*TimerCallback)(TimerHandler handler);
+typedef void (*TimerCallback)(HTimer hTimer);
 
 typedef struct {
-	unsigned autoreload;
+	uint32_t options;
 	TimerCallback callback;
 	void *context;
 } TimerInitializeInfo;
 
 
-uint8_t osalTimerCreate(const TimerInitializeInfo *info, TimerHandler *handler);
-uint8_t osalTimerDestroy(TimerHandler handler, unsigned blockTime);
+HTimer osalTimerCreate(const TimerInitializeInfo *info);
+bool osalTimerDestroy(HTimer hTimer, unsigned waitTime);
 
-uint8_t osalTimerStart(TimerHandler handler, unsigned time, unsigned blockTime);
-uint8_t osalTimerStop(TimerHandler handler, unsigned blockTime);
+bool osalTimerStart(HTimer hTimer, unsigned time, unsigned waitTime);
+bool osalTimerStop(HTimer hTimer, unsigned waitTime);
 
-uint8_t osalTimerIsActive(TimerHandler handler);
-uint8_t osalTimerGetContext(TimerHandler handler, void **context);
+bool osalTimerIsActive(HTimer hTimer);
+void *osalTimerGetContext(HTimer hTimer);
 
 
 #ifdef	__cplusplus

@@ -1,126 +1,188 @@
-#include "eos.h"
-#include "eosAssert.h"
-#include "OSAL/osalQueue.h"
-
+#include "osal/osalQueue.h"
+#include "osal/osalMemory.h"
 #include "FreeRTOS.h"
 #include "queue.h"
+
 
 
 /// ----------------------------------------------------------------------
 /// \brief Crea una cua.
 /// \param info: Parametres d'inicialitzacio.
-/// \return El handler de la cua.
+/// \result El handler de la cua. NULL en cas d'error.
 ///
-QueueHandler osalQueueCreate(
+HQueue osalQueueCreate(
 	const QueueInitializeInfo *info) {
 
-	eosArgumentIsNotNull(info);
+	// Comprova que els parametres siguin correctes
+	//
+	if (info == NULL)
+		return NULL;
 
-	void *handle = xQueueCreate(info->maxElements, info->elementSize);
+	// Crea la cua.
+	//
+	HQueue hQueue = xQueueCreate(info->maxElements, info->elementSize);
+	if (hQueue == NULL)
+		return NULL;
 
-    return handle;
+	// Tot correcte. Retorna el hansler.
+	//
+    return hQueue;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Destrueix una cua.
-/// \param queue: El handler de la cua.
+/// \param hQueue: El handler de la cua.
 ///
 void osalQueueDestroy(
-	QueueHandler queue) {
+	HQueue hQueue) {
 
-	eosArgumentIsNotNull(queue);
+	// Comprova que els parametres siguin corerectes.
+	//
+	if (hQueue == NULL)
+		return;
 
-	vQueueDelete(queue);
+	// Destrueix la cua.
+	//
+	vQueueDelete(hQueue);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Buida el contingut de la cua.
-/// \param queue: El handler de la cua.
+/// \param hQueue: El handler de la cua.
 ///
 void osalQueueClear(
-	QueueHandler queue) {
+	HQueue hQueue) {
 
-	eosArgumentIsNotNull(queue);
+	// Comprova que els parametres siguin corretes.
+	//
+	if (hQueue == NULL)
+		return;
 
-	xQueueReset(queue);
+	// Borra el contingut de las cua.
+	//
+	xQueueReset(hQueue);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix un element a la cua.
-/// \param queue: El handler de la cua.
+/// \param hQueue: El handler de la cua.
 /// \param element: El element a afeigir.
-/// \param blockTime: Temps maxim de bloqueig en ms.
-/// \return True si s'ha afeigit l'element a la cua. False en cas contrari.
+/// \param waitTime: Temps maxim de bloqueig en ms.
+/// \return True si tot es correcte.
 ///
 bool osalQueuePut(
-	QueueHandler queue,
+	HQueue hQueue,
 	const void *element,
-	unsigned blockTime) {
+	unsigned waitTime) {
 
-	eosArgumentIsNotNull(queue);
-	eosArgumentIsNotNull(element);
+	// Comprova que els parametres siguin correctes.
+	//
+	if (hQueue == NULL)
+		return false;
+	if (element == NULL)
+		return false;
 
-    TickType_t ticks = blockTime == ((unsigned) -1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-    return xQueueSendToBack(queue, element,  ticks) == pdPASS;
+	// Afegeix l'element a la cua
+	//
+    TickType_t ticks = waitTime == ((unsigned) -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    if (xQueueSendToBack(hQueue, element,  ticks) != pdPASS)
+    	return false;
+
+    // Tot correcte. Retorna true.
+    //
+    return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix un element a la cua. Aquesta versio es per ser cridada
 ///		   d'ins d'una interrupcio.
-/// \param queue: El handler de la cua.
+/// \param hQueue: El handler de la cua.
 /// \param element: El element a afeigir.
-/// \return True si s'ha afeigit l'element a la cua. False en cas contrari.
+/// \return True si tot es correcte
 ///
 bool osalQueuePutISR(
-	QueueHandler queue,
+	HQueue hQueue,
 	const void *element) {
 
-	eosArgumentIsNotNull(queue);
-    eosArgumentIsNotNull(element);
+	// Comprova que els parametres siguin correctes.
+	//
+	if (hQueue == NULL)
+		return false;
+	if (element == NULL)
+		return false;
 
+	// Afegeix l'elelemt.
+	//
     BaseType_t priority = pdFALSE;
-    return xQueueSendFromISR(queue, element, &priority) == pdPASS;
+    if (xQueueSendFromISR(hQueue, element, &priority) != pdPASS)
+    	return false;
+
+    // Tot correcte. Retorna true.
+    //
+    return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Obte un element de la cua.
-/// \param queue: handler de la cua.
+/// \param hQueue: handler de la cua.
 /// \param element: Buffer on deixar l'element.
-/// \param blockTime: Temps maxim de bloqueig en ms.
-/// \return True si s'ha obtingut l'element de la cua. False en cas contrari.
+/// \param waitTime: Temps maxim de bloqueig en ms.
+/// \return True si tot es correcte
 ///
 bool osalQueueGet(
-	QueueHandler queue,
+	HQueue hQueue,
 	void *element,
-	unsigned blockTime) {
+	unsigned waitTime) {
 
-	eosArgumentIsNotNull(queue);
-    eosArgumentIsNotNull(element);
+	// Comprova que els parametres siguin correctes.
+	//
+	if (hQueue == NULL)
+		return false;
+	if (element == NULL)
+		return false;
 
-    TickType_t ticks = blockTime == ((unsigned) -1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-    return xQueueReceive(queue, element, ticks) == pdPASS;
+	// Obte l'element de la cua.
+	//
+    TickType_t ticks = waitTime == ((unsigned) -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    if (xQueueReceive(hQueue, element, ticks) != pdPASS)
+    	return false;
+
+    // Tot correcte. Retorna true.
+    //
+    return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Obte un element de la cua. Aquesta versio es per ser cridada
 ///        d'ins d'una interrupcio.
-/// \param queue: handler de la cua.
+/// \param hQueue: handler de la cua.
 /// \param element: Buffer on deixar l'element.
-/// \return True si s'ha obtingut l'element de la cua. False en cas contrari.
+/// \return True si tot es correcte.
 ///
 bool osalQueueGetISR(
-	QueueHandler queue,
+	HQueue hQueue,
 	void *element) {
 
-	eosArgumentIsNotNull(queue);
-    eosArgumentIsNotNull(element);
+	// Comprova si els parametres son correctes.
+	//
+	if (hQueue == NULL)
+		return false;
+	if (element == NULL)
+		return false;
 
+	// Obte l'element de la cua.
+	//
     BaseType_t priority = pdFALSE;
-    return xQueueReceiveFromISR(queue, element, &priority) == pdPASS;
+    if (xQueueReceiveFromISR(hQueue, element, &priority) != pdPASS)
+		return false;
+
+    // Tot correcte. Retorna true.
+    //
+	return true;
 }

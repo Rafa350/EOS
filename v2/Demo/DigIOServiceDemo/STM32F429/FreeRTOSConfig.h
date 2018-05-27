@@ -54,6 +54,8 @@
 
 /* Misc */
 #define configUSE_APPLICATION_TASK_TAG          0
+#define configSUPPORT_DYNAMIC_ALLOCATION        1
+#define configSUPPORT_STATIC_ALLOCATION         0
 
 /* Prevent C specific syntax being included in assembly files. */
 #ifndef __LANGUAGE_ASSEMBLY

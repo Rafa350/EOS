@@ -4,12 +4,8 @@
 
 #include "eos.h"
 #include "eosAssert.h"
+#include "osal/osalThread.h"
 #include "System/Core/eosPoolAllocator.h"
-#include "System/Core/eosTask.h"
-
-
-#define __LOCK()             Task::enterCriticalSection()
-#define __UNLOCK()           Task::exitCriticalSection()
 
 
 using namespace eos;
@@ -21,19 +17,19 @@ using namespace eos;
 /// \param maxBlocks: Numero maxim d'elements.
 ///
 GenericPoolAllocator::GenericPoolAllocator(
-    unsigned _blockSize, 
+    unsigned _blockSize,
     unsigned _maxBlocks):
 
     blockSize(_blockSize),
     maxBlocks(_maxBlocks),
     freeBlocks(_maxBlocks),
     initializedBlocks(0) {
-    
+
     // Ajusta el tamany minim del block per poder guardar un 'unsigned'
     //
     if (blockSize < sizeof(unsigned))
         blockSize = sizeof(unsigned);
-        
+
     blocks = nextBlock = new uint8_t[blockSize * maxBlocks];
 }
 
@@ -42,7 +38,7 @@ GenericPoolAllocator::GenericPoolAllocator(
 /// \brief Destructor.
 ///
 GenericPoolAllocator::~GenericPoolAllocator() {
-    
+
     delete[] blocks;
 }
 
@@ -54,12 +50,12 @@ GenericPoolAllocator::~GenericPoolAllocator() {
 ///
 void *GenericPoolAllocator::allocate(
     size_t size) {
-    
+
     void *ret = nullptr;
-    
+
     if (size <= blockSize) {
 
-        __LOCK();
+        osalEnterCritical();
 
         if (initializedBlocks < maxBlocks) {
             unsigned *p = (unsigned*) addrFromIndex(initializedBlocks);
@@ -70,19 +66,19 @@ void *GenericPoolAllocator::allocate(
         if (freeBlocks > 0) {
             ret = (void*) nextBlock;
             freeBlocks -= 1;
-            if (freeBlocks > 0) 
+            if (freeBlocks > 0)
                 nextBlock = addrFromIndex(*((unsigned*) nextBlock) );
-            else 
+            else
                 nextBlock = nullptr;
         }
 
-        __UNLOCK();
-        
+        osalExitCritical();
+
     }
-    
+
     eosAssert(ret != nullptr);
-    
-    
+
+
     return ret;
 }
 
@@ -93,20 +89,20 @@ void *GenericPoolAllocator::allocate(
 ///
 void GenericPoolAllocator::deallocate(
     void *p) {
-        
+
     eosAssert(p != nullptr);
 
-    __LOCK();
-    
-    if (nextBlock != nullptr) 
-        *((unsigned*)p) = indexFromAddr(nextBlock);   
-    else 
+    osalEnterCritical();
+
+    if (nextBlock != nullptr)
+        *((unsigned*)p) = indexFromAddr(nextBlock);
+    else
         *((unsigned*)p) = maxBlocks;
-    
+
     nextBlock = (uint8_t*) p;
     freeBlocks += 1;
-    
-    __UNLOCK();
+
+    osalExitCritical();
 }
 
 
@@ -117,7 +113,7 @@ void GenericPoolAllocator::deallocate(
 ///
 uint8_t *GenericPoolAllocator::addrFromIndex(
     unsigned i) const {
-    
+
     return blocks + (blockSize * i);
 }
 
@@ -129,6 +125,6 @@ uint8_t *GenericPoolAllocator::addrFromIndex(
 ///
 unsigned GenericPoolAllocator::indexFromAddr(
     const uint8_t *p) const {
-    
+
     return (p - blocks) / blockSize;
 }

@@ -10,52 +10,49 @@ static const char *defaultName = ""; // El nom de la tasca no pot ser NULL en Fr
 /// ----------------------------------------------------------------------
 /// \brief Crea una tasca.
 /// \param info: Parametres d'inicialitzacio.
-/// \param handler: El handler de la tasca.
-/// \return El resultat de l'operacio.
+/// \return El handler de la tasca. NULL en cas d'error.
 ///
-uint8_t osalTaskCreate(
-	const TaskInitializeInfo *info,
-	TaskHandler *handler) {
+HTask osalTaskCreate(
+	const TaskInitializeInfo *info) {
 
-#ifdef OSAL_CHECK_PARAMETERS
+	// Comprova que els parametres siguin correctes.
+	//
 	if (info == NULL)
-		return OSAL_STATUS_ERROR_PARAMETER;
+		return NULL;
 
-	if (handler == NULL)
-		return OSAL_STATUS_ERROR_PARAMETER;
-#endif
-
-	uint32_t priority = info->options & OSAL_TASK_PRIORITY_MASK;
-
-    xTaskCreate(
+	// Crea la tasca.
+	//
+	HTask hTask;
+    if (xTaskCreate(
         info->function,
         info->name == NULL ? defaultName : info->name,
         info->stackSize,
         info->params,
-        tskIDLE_PRIORITY + ((UBaseType_t) priority),
-        handler);
-    if (*handler == NULL)
-    	return OSAL_STATUS_ERROR_RESOURCE;
+        tskIDLE_PRIORITY + ((UBaseType_t) (info->options & OSAL_TASK_PRIORITY_MASK)),
+        (TaskHandle_t*) &hTask) != pdPASS)
+		return NULL;
 
-    return OSAL_STATUS_OK;
+    // Tot correcte. Retorna el handler.
+    //
+    return hTask;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Destrueix la tasca.
-/// \param handler: El handler de la tasca.
+/// \param hTask: El handler de la tasca.
 ///
-uint8_t osalTaskDestroy(
-	TaskHandler handler) {
+void osalTaskDestroy(
+	HTask hTask) {
 
-#ifdef OSAL_CHECK_PARAMETERS
-	if (handler == NULL)
-		return OSAL_STATUS_ERROR_PARAMETER;
-#endif
+	// Comprova si els parametres son correctes.
+	//
+	if (hTask == NULL)
+		return;
 
-	vTaskDelete(handler);
-
-	return OSAL_STATUS_OK;
+	// Destrueix la tasca.
+	//
+	vTaskDelete(hTask);
 }
 
 
@@ -131,8 +128,7 @@ unsigned osalGetTickCount() {
 void osalDelay(
 	unsigned time) {
 
-	if (time > 0)
-        vTaskDelay(time / portTICK_PERIOD_MS);
+    vTaskDelay((time ? time : time + 1) / portTICK_PERIOD_MS);
 }
 
 

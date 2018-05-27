@@ -12,164 +12,166 @@ static int inISR() {
 /// ----------------------------------------------------------------------
 /// \brief Crea un temporitzador.
 /// \param info: Parametres d'inicialitzacio.
-/// \return El handler del temporitzador
+/// \return El handler del timer. NULL en cas d'error.
 ///
-uint8_t osalTimerCreate(
-	const TimerInitializeInfo *info,
-	TimerHandler *handler) {
+HTimer osalTimerCreate(
+	const TimerInitializeInfo *info) {
 
-#ifdef OSAL_CHECK_PARAMETERS
+	// Comprova que els parametres sigun correctes.
+	//
 	if (info == NULL)
-		return OSAL_STATUS_ERROR_PARAMETER;
-#endif
+		return NULL;
 
-    TimerHandler h = xTimerCreate(
+	// Crea el temporitzador
+	//
+    HTimer hTimer = xTimerCreate(
     	(const char*)"",
 		1,
-		info->autoreload ? pdTRUE : pdFALSE,
-		info->context,
-		info->callback);
-    if (h == NULL)
-    	return OSAL_STATUS_ERROR_RESOURCE;
-    xTimerStop(handler, 0);
+		(info->options & OSAL_TIMER_AUTO_MASK) == OSAL_TIMER_AUTO_ON ? pdTRUE : pdFALSE,
+		(void* const) info->context,
+		(void*)(void*) info->callback);
+    if (hTimer == NULL)
+    	return NULL;
 
-    *handler = h;
-    return OSAL_STATUS_OK;
+    // Para el temporitzador, per que FreeRTOS el crea un marxa.
+    //
+    xTimerStop(hTimer, 0);
+
+    // Tot correcte. Retorna el handler.
+    //
+    return hTimer;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Destrueix el temporitzador.
-/// \param timer: El handler del temporitzador.
-/// \param time: Els temps maxim de bloqueig.
-/// \return El resultat de l'operacio.
+/// \param hTimer: El handler del temporitzador.
+/// \param waitTime: Els temps maxim d'espera.
+/// \return True si tot es correcte. False en cas contrari.
+/// \remarks En cas d'error no s'allibera la memoria, ja que el temporitzador,
+/// pot estar pendent de destruccio.
 ///
-uint8_t osalTimerDestroy(
-	TimerHandler handler,
-	unsigned blockTime) {
+bool osalTimerDestroy(
+	HTimer hTimer,
+	unsigned waitTime) {
 
-#ifdef OSAL_CHECK_PARAMETERS
-	if (handler == NULL)
-		return OSAL_STATUS_ERROR_PARAMETER;
-#endif
+	// Comprova que els parametres siguin correctes.
+	//
+	if (hTimer == NULL)
+		return false;
 
-	if (xTimerDelete(handler, blockTime / portTICK_PERIOD_MS) != pdPASS)
-		return OSAL_STATUS_ERROR_TIMEOUT;
+	// Destrueix el temportizador.
+	//
+	if (xTimerDelete(hTimer, waitTime / portTICK_PERIOD_MS) != pdPASS)
+		return false;
 
-	return OSAL_STATUS_OK;
+	// Tot correcte. Retorna true.
+	//
+	return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Inicia el temporitzador.
-/// \param handler: El handler del temporitzador.
+/// \param hTimer: El handler del temporitzador.
 /// \param time: El temps del temporitzador. Si es zero, el temps es el
 ///              mateix que tenia en el cicle anterior.
-/// \param blockTime: El temps maxim de bloqueig.
-/// \return El resultat de l'operacio.
+/// \param waitTime: El temps maxim de bloqueig.
+/// \return True si tot es correcte. False en cas contrari.
 ///
-uint8_t osalTimerStart(
-	TimerHandler handler,
+bool osalTimerStart(
+	HTimer hTimer,
 	unsigned time,
-	unsigned blockTime) {
+	unsigned waitTime) {
 
-#ifdef OSAL_CHECK_PARAMETERS
-	if (handler == NULL)
-		return OSAL_STATUS_ERROR_PARAMETER;
-#endif
+	// Comprova que els parametres siguin correctes
+	//
+	if (hTimer == NULL)
+		return false;
 
 	// Comprova si es dins d'una interrupcio
 	//
 	if (inISR())  {
 
-		portBASE_TYPE task = pdFALSE;
+		bool result;
 
-		if (time == 0) {
-			if (xTimerStartFromISR(handler, &task) != pdPASS)
-				return OSAL_STATUS_ERROR_TIMEOUT;
-		}
-		else {
-			if (xTimerChangePeriodFromISR(handler, time / portTICK_PERIOD_MS, &task) != pdPASS)
-				return OSAL_STATUS_ERROR_TIMEOUT;
-		}
+		portBASE_TYPE task = pdFALSE;
+		if (time == 0)
+			result = xTimerStartFromISR(hTimer, &task) == pdPASS;
+		else
+			result = xTimerChangePeriodFromISR(hTimer, time / portTICK_PERIOD_MS, &task) == pdPASS;
 	    portEND_SWITCHING_ISR(task);
+
+	    return result;
 	}
 
 	else {
-		if (time == 0) {
-			if (xTimerStart(handler, blockTime / portTICK_PERIOD_MS) != pdPASS)
-				return OSAL_STATUS_ERROR_TIMEOUT;
-		}
-		else {
-			if (xTimerChangePeriod(handler, time / portTICK_PERIOD_MS, blockTime / portTICK_PERIOD_MS) != pdPASS)
-				return OSAL_STATUS_ERROR_TIMEOUT;
-		}
+		if (time == 0)
+			return xTimerStart(hTimer, waitTime / portTICK_PERIOD_MS) == pdPASS;
+		else
+			return xTimerChangePeriod(hTimer, time / portTICK_PERIOD_MS, waitTime / portTICK_PERIOD_MS) == pdPASS;
 	}
-
-	return OSAL_STATUS_OK;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Para el temporitzador.
-/// \param handler: El handler del temporitzador.
-/// \param blockTime: Temps maxim de bloqueig.
-/// \return El resultat de l'operacio.
+/// \param hTimer: El handler del temporitzador.
+/// \param waitTime: Temps maxim de bloqueig.
 ///
-uint8_t osalTimerStop(
-	TimerHandler handler,
-	unsigned blockTime) {
+bool osalTimerStop(
+	HTimer hTimer,
+	unsigned waitTime) {
 
-#ifdef OSAL_CHECK_PARAMETERS
-	if (handler == NULL)
-		return OSAL_STATUS_ERROR_PARAMETER;
-#endif
+	// Comprova que els parametres siguin correctes.
+	//
+	if (hTimer == NULL)
+		return false;
 
-	if (xTimerStop(handler, blockTime / portTICK_PERIOD_MS) != pdPASS)
-		return OSAL_STATUS_ERROR_TIMEOUT;
+	// Para el temporitzador.
+	//
+	if (xTimerStop(hTimer, waitTime / portTICK_PERIOD_MS) != pdPASS)
+		return false;
 
-	return OSAL_STATUS_OK;
+	// Tot correctre. Retorna true.
+	//
+	return true;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Comprova si el temporitzador es actiu.
-/// \param handler: El handler del temporitzador.
-/// \return OSAL_STATUS_TRUE si es actiu.
+/// \param hTimer: El handler del temporitzador.
+/// \return True si es actiu, false en cas contrari.
 ///
-uint8_t osalTimerIsActive(
-	TimerHandler handler) {
+bool osalTimerIsActive(
+	HTimer hTimer) {
 
-#ifdef OSAL_CHECK_PARAMETERS
-	if (handler == NULL)
-		return OSAL_STATUS_ERROR_PARAMETER;
-#endif
+	// Comprova wue els parametres siguin correctes.
+	//
+	if (hTimer == NULL)
+		return false;
 
-	if (xTimerIsTimerActive(handler) == pdTRUE)
-		return OSAL_STATUS_TRUE;
-	else
-		return OSAL_STATUS_FALSE;
+	// Comprova si esta actiu.
+	//
+	return xTimerIsTimerActive(hTimer) == pdTRUE;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Obte el context del temporitzador.
-/// \param handler: El handler del temporitzador.
-/// \param context: El context obtingut.
-/// \return El resultat de l'operacio.
+/// \param hTimer: El handler del temporitzador.
+/// \return El context. NULL en cas d'error.
 ///
-uint8_t osalTimerGetContext(
-	TimerHandler handler,
-	void **context) {
+void *osalTimerGetContext(
+	HTimer hTimer) {
 
-#ifdef OSAL_CHECK_PARAMETERS
-	if (handler == NULL)
-		return OSAL_STATUS_ERROR_PARAMETER;
-	if (context == NULL)
-		return OSAL_STATUS_ERROR_PARAMETER;
-#endif
+	// Comprova que els parametres s'guin correctes.
+	//
+	if (hTimer == NULL)
+		return NULL;
 
-	 *context = pvTimerGetTimerID(handler);
-
-	 return OSAL_STATUS_OK;
+	// Obte el context del temporitzador.
+	//
+	return pvTimerGetTimerID(hTimer);
 }

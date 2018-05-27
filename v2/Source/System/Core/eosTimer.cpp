@@ -13,7 +13,7 @@ using namespace eos;
 Timer::Timer(
     bool autoreload) :
 
-    handler(nullptr),
+    hTimer(nullptr),
     autoreload(autoreload),
 	tag(nullptr),
     evTimeout(nullptr) {
@@ -28,8 +28,8 @@ Timer::~Timer() {
     if (evTimeout != nullptr)
         delete evTimeout;
 
-    if (handler != nullptr)
-        osalTimerDestroy(handler, 10);
+    if (hTimer != nullptr)
+        osalTimerDestroy(hTimer, 10);
 }
 
 
@@ -42,16 +42,17 @@ void Timer::start(
     unsigned time,
     unsigned blockTime) {
 
-    if (handler == nullptr) {
+    if (hTimer == nullptr) {
 
     	TimerInitializeInfo info;
-    	info.autoreload = autoreload;
+    	info.options = 0;
+    	info.options |= autoreload ? OSAL_TIMER_AUTO_ON : OSAL_TIMER_AUTO_OFF;
     	info.callback = timerCallback;
     	info.context = this;
-    	osalTimerCreate(&info, &handler);
+    	hTimer = osalTimerCreate(&info);
     }
 
-    osalTimerStart(handler, time, blockTime);
+    osalTimerStart(hTimer, time, blockTime);
 }
 
 
@@ -62,8 +63,8 @@ void Timer::start(
 void Timer::stop(
     unsigned blockTime) {
 
-    if (handler != nullptr)
-    	osalTimerStop(handler, blockTime);
+    if (hTimer != nullptr)
+    	osalTimerStop(hTimer, blockTime);
 }
 
 
@@ -73,8 +74,8 @@ void Timer::stop(
 ///
 bool Timer::isActive() const {
 
-    if (handler != nullptr)
-		return osalTimerIsActive(handler) == OSAL_STATUS_TRUE;
+    if (hTimer != nullptr)
+		return osalTimerIsActive(hTimer);
     else
     	return false;
 }
@@ -85,12 +86,10 @@ bool Timer::isActive() const {
 /// \param handler: El handler del temporitzador.
 ///
 void Timer::timerCallback(
-    void *handler) {
+    HTimer hTimer) {
 
-    Timer *timer;
-    if (osalTimerGetContext(handler, (void**) &timer) == OSAL_STATUS_OK) {
-    	if (timer->evTimeout != nullptr)
-    		timer->evTimeout->execute(timer);
-    }
+    Timer *timer = (Timer*) osalTimerGetContext(hTimer);
+    if ((timer != nullptr) && (timer->evTimeout != nullptr))
+  		timer->evTimeout->execute(timer);
 }
 

@@ -31,7 +31,7 @@ namespace eos {
     ///
     class Task {
         private:
-            TaskHandler handle;
+            HTask hTask;
             IRunable *runable;
 
         public:

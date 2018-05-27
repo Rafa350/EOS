@@ -3,9 +3,7 @@
 
 
 #include "eos.h"
-
-
-#define HAL_STATUS_OK                  ((uint8_t) 0)
+#include "eosAssert.h"
 
 
 #endif // __hal__

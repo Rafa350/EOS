@@ -24,11 +24,11 @@ typedef struct {                       // Parametres d'inicialitzacio
 	const char *name;                  // -Nom
 	TaskFunction function;             // -Funcio a executar
 	void *params;                      // -Parametres de la funcio
-	uint16_t stackSize;                // -Tamany de la pila
-	uint32_t options;                  // -opcions
+	unsigned stackSize;                // -Tamany de la pila
+	uint32_t options;                  // -Opcions
 } TaskInitializeInfo;
 
-typedef void *TaskHandler;
+typedef struct TASK *HTask;
 
 // Prioritat de la tasca
 #define OSAL_TASK_PRIORITY_MASK        0x00000003
@@ -39,8 +39,8 @@ typedef void *TaskHandler;
 #define OSAL_TASK_PRIORITY_HIGH        ((uint32_t)3 << OSAL_TASK_PRIORITY_POS)
 
 
-uint8_t osalTaskCreate(const TaskInitializeInfo *info, TaskHandler *handler);
-uint8_t osalTaskDestroy(TaskHandler handler);
+HTask osalTaskCreate(const TaskInitializeInfo *info);
+void osalTaskDestroy(HTask hTask);
 
 void osalEnterCritical();
 void osalExitCritical();

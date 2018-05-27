@@ -34,9 +34,9 @@ Task::Task(
     info.options = OSAL_TASK_PRIORITY_NORMAL;
     info.function = function;
     info.params = this;
-    osalTaskCreate(&info, &handle);
+    hTask = osalTaskCreate(&info);
 
-    eosAssert(handle != nullptr);
+    eosAssert(hTask != nullptr);
 }
 
 
@@ -45,7 +45,7 @@ Task::Task(
 ///
 Task::~Task() {
 
-	osalTaskDestroy(handle);
+	osalTaskDestroy(hTask);
 }
 
 
