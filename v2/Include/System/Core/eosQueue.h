@@ -3,7 +3,7 @@
 
 
 #include "eos.h"
-#include "osal/osalQueue.h"
+#include "osal/osalMsgQueue.h"
 
 
 namespace eos {
@@ -12,7 +12,7 @@ namespace eos {
     ///
     class GenericQueue {
         private:
-            HQueue hQueue;
+            HMsgQueue hQueue;
 
         public:
             virtual ~GenericQueue();

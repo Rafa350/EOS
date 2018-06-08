@@ -1,4 +1,4 @@
-#include "osal/osalQueue.h"
+#include "osal/osalMsgQueue.h"
 #include "osal/osalMemory.h"
 #include "FreeRTOS.h"
 #include "queue.h"
@@ -10,8 +10,8 @@
 /// \param info: Parametres d'inicialitzacio.
 /// \result El handler de la cua. NULL en cas d'error.
 ///
-HQueue osalQueueCreate(
-	const QueueInitializeInfo *info) {
+HMsgQueue osalMsgQueueCreate(
+	const MsgQueueInitializeInfo *info) {
 
 	// Comprova que els parametres siguin correctes
 	//
@@ -20,67 +20,67 @@ HQueue osalQueueCreate(
 
 	// Crea la cua.
 	//
-	HQueue hQueue = xQueueCreate(info->maxElements, info->elementSize);
-	if (hQueue == NULL)
+	HMsgQueue hMsgQueue = xQueueCreate(info->maxElements, info->elementSize);
+	if (hMsgQueue == NULL)
 		return NULL;
 
 	// Tot correcte. Retorna el hansler.
 	//
-    return hQueue;
+    return hMsgQueue;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Destrueix una cua.
-/// \param hQueue: El handler de la cua.
+/// \param hMsgQueue: El handler de la cua.
 ///
-void osalQueueDestroy(
-	HQueue hQueue) {
+void osalMsgQueueDestroy(
+	HMsgQueue hMsgQueue) {
 
 	// Comprova que els parametres siguin corerectes.
 	//
-	if (hQueue == NULL)
+	if (hMsgQueue == NULL)
 		return;
 
 	// Destrueix la cua.
 	//
-	vQueueDelete(hQueue);
+	vQueueDelete(hMsgQueue);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Buida el contingut de la cua.
-/// \param hQueue: El handler de la cua.
+/// \param hMsgQueue: El handler de la cua.
 ///
-void osalQueueClear(
-	HQueue hQueue) {
+void osalMsgQueueClear(
+	HMsgQueue hMsgQueue) {
 
 	// Comprova que els parametres siguin corretes.
 	//
-	if (hQueue == NULL)
+	if (hMsgQueue == NULL)
 		return;
 
 	// Borra el contingut de las cua.
 	//
-	xQueueReset(hQueue);
+	xQueueReset(hMsgQueue);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix un element a la cua.
-/// \param hQueue: El handler de la cua.
+/// \param hMsgQueue: El handler de la cua.
 /// \param element: El element a afeigir.
 /// \param waitTime: Temps maxim de bloqueig en ms.
 /// \return True si tot es correcte.
 ///
-bool osalQueuePut(
-	HQueue hQueue,
+bool osalMsgQueuePut(
+	HMsgQueue hMsgQueue,
 	const void *element,
 	unsigned waitTime) {
 
 	// Comprova que els parametres siguin correctes.
 	//
-	if (hQueue == NULL)
+	if (hMsgQueue == NULL)
 		return false;
 	if (element == NULL)
 		return false;
@@ -88,7 +88,7 @@ bool osalQueuePut(
 	// Afegeix l'element a la cua
 	//
     TickType_t ticks = waitTime == ((unsigned) -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
-    if (xQueueSendToBack(hQueue, element,  ticks) != pdPASS)
+    if (xQueueSendToBack(hMsgQueue, element,  ticks) != pdPASS)
     	return false;
 
     // Tot correcte. Retorna true.
@@ -100,17 +100,17 @@ bool osalQueuePut(
 /// ----------------------------------------------------------------------
 /// \brief Afegeix un element a la cua. Aquesta versio es per ser cridada
 ///		   d'ins d'una interrupcio.
-/// \param hQueue: El handler de la cua.
+/// \param hMsgQueue: El handler de la cua.
 /// \param element: El element a afeigir.
 /// \return True si tot es correcte
 ///
 bool osalQueuePutISR(
-	HQueue hQueue,
+	HMsgQueue hMsgQueue,
 	const void *element) {
 
 	// Comprova que els parametres siguin correctes.
 	//
-	if (hQueue == NULL)
+	if (hMsgQueue == NULL)
 		return false;
 	if (element == NULL)
 		return false;
@@ -118,7 +118,7 @@ bool osalQueuePutISR(
 	// Afegeix l'elelemt.
 	//
     BaseType_t priority = pdFALSE;
-    if (xQueueSendFromISR(hQueue, element, &priority) != pdPASS)
+    if (xQueueSendFromISR(hMsgQueue, element, &priority) != pdPASS)
     	return false;
 
     // Tot correcte. Retorna true.
@@ -134,14 +134,14 @@ bool osalQueuePutISR(
 /// \param waitTime: Temps maxim de bloqueig en ms.
 /// \return True si tot es correcte
 ///
-bool osalQueueGet(
-	HQueue hQueue,
+bool osalMsgQueueGet(
+	HMsgQueue hMsgQueue,
 	void *element,
 	unsigned waitTime) {
 
 	// Comprova que els parametres siguin correctes.
 	//
-	if (hQueue == NULL)
+	if (hMsgQueue == NULL)
 		return false;
 	if (element == NULL)
 		return false;
@@ -149,7 +149,7 @@ bool osalQueueGet(
 	// Obte l'element de la cua.
 	//
     TickType_t ticks = waitTime == ((unsigned) -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
-    if (xQueueReceive(hQueue, element, ticks) != pdPASS)
+    if (xQueueReceive(hMsgQueue, element, ticks) != pdPASS)
     	return false;
 
     // Tot correcte. Retorna true.
@@ -166,12 +166,12 @@ bool osalQueueGet(
 /// \return True si tot es correcte.
 ///
 bool osalQueueGetISR(
-	HQueue hQueue,
+	HMsgQueue hMsgQueue,
 	void *element) {
 
 	// Comprova si els parametres son correctes.
 	//
-	if (hQueue == NULL)
+	if (hMsgQueue == NULL)
 		return false;
 	if (element == NULL)
 		return false;
@@ -179,7 +179,7 @@ bool osalQueueGetISR(
 	// Obte l'element de la cua.
 	//
     BaseType_t priority = pdFALSE;
-    if (xQueueReceiveFromISR(hQueue, element, &priority) != pdPASS)
+    if (xQueueReceiveFromISR(hMsgQueue, element, &priority) != pdPASS)
 		return false;
 
     // Tot correcte. Retorna true.

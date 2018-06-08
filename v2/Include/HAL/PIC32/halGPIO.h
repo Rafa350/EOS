@@ -11,10 +11,10 @@ extern "C" {
 #endif
 
 
-typedef uint8_t GPIPort;
+typedef uint8_t GPIOPort;
 typedef uint8_t GPIOPin;
 typedef uint16_t GPIOMask;
-typedef uint32_t GPIOOptions
+typedef uint32_t GPIOOptions;
 
 typedef struct {                  // Parametres d'inicialitzacio per pins
 	GPIOPort port;                // -Identificador del port
@@ -112,7 +112,7 @@ extern GPIOPortRegs gpioPortRegs[];
 // Tipus de port
 #define HAL_GPIO_MODE_OFFSET      0
 #define HAL_GPIO_MODE_BITS        0b1111
-#define HAL_GPIO_MODE_MASK        (HAL_GPIO_MODE_BITS << HAL_GPIO_MODE_POS)
+#define HAL_GPIO_MODE_MASK        (HAL_GPIO_MODE_BITS << HAL_GPIO_MODE_OFFSET)
 
 #define HAL_GPIO_MODE_INPUT       (0 << HAL_GPIO_MODE_OFFSET)   // -Entrada digital
 #define HAL_GPIO_MODE_OUTPUT_PP   (1 << HAL_GPIO_MODE_OFFSET)   // -Sortida push-pull
@@ -125,7 +125,7 @@ extern GPIOPortRegs gpioPortRegs[];
 // Velocitat de conmutacio
 #define HAL_GPIO_SPEED_OFFSET     4
 #define HAL_GPIO_SPEED_BITS       0b11
-#define HAL_GPIO_SPEED_MASK       (HAL_GPIO_SPEED_BITS << HAL_GPIO_SPEED_POS)
+#define HAL_GPIO_SPEED_MASK       (HAL_GPIO_SPEED_BITS << HAL_GPIO_SPEED_OFFSET)
 
 #define HAL_GPIO_SPEED_LOW        (0 << HAL_GPIO_SPEED_OFFSET)
 #define HAL_GPIO_SPEED_MEDIUM	  (1 << HAL_GPIO_SPEED_OFFSET)
@@ -135,7 +135,7 @@ extern GPIOPortRegs gpioPortRegs[];
 // Resistencies pull-up
 #define HAL_GPIO_PULL_OFFSET      6
 #define HAL_GPIO_PULL_BITS        0b11
-#define HAL_GPIO_PULL_MASK        (HAL_GPIO_PULL_BITS << HAL_GPIO_PULL_POS)
+#define HAL_GPIO_PULL_MASK        (HAL_GPIO_PULL_BITS << HAL_GPIO_PULL_OFFSET)
 
 #define HAL_GPIO_PULL_NONE        (0 << HAL_GPIO_PULL_OFFSET)
 #define HAL_GPIO_PULL_UP          (1 << HAL_GPIO_PULL_OFFSET)
@@ -144,7 +144,7 @@ extern GPIOPortRegs gpioPortRegs[];
 // Valor inicial de la sortida
 #define HAL_GPIO_INIT_OFFSET      8
 #define HAL_GPIO_INIT_BITS        0b11
-#define HAL_GPIO_INIT_MASK        (HAL_GPIO_INIT_BITS << HAL_GPIO_INIT_POS)
+#define HAL_GPIO_INIT_MASK        (HAL_GPIO_INIT_BITS << HAL_GPIO_INIT_OFFSET)
 
 #define HAL_GPIO_INIT_CLR         (0 << HAL_GPIO_INIT_OFFSET)
 #define HAL_GPIO_INIT_SET         (1 << HAL_GPIO_INIT_OFFSET)
