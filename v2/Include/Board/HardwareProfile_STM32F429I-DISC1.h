@@ -8,9 +8,6 @@
 #define CLOCK_PERIPHERICAL_HZ      (CLOCK_SYSTEM_HZ / 1)
 
 
-#define SW_SW1_PORT          HAL_GPIO_PORT_A
-#define SW_SW1_PIN           HAL_GPIO_PIN_0
-
 #define LEDS_LD1_PORT        HAL_GPIO_PORT_G
 #define LEDS_LD1_PIN         HAL_GPIO_PIN_13
 
