@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "hal/halSys.h"
 
 
 // Configuracio del oscilador
@@ -44,6 +45,12 @@ extern void AppMain();
 ///
 int main() {
     
+    // Inicialitza la cache, les interrupcions i el clock.
+    //
+    halSYSInitialize();
+    
+    // Crida a la funcio d'entrada a l'aplicacio d'usuari.
+    //
     AppMain();
 
     return 0;

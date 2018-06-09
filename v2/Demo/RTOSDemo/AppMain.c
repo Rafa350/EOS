@@ -11,7 +11,11 @@
 ///
 static void task1(void *parameter) {
     
-    osalDelay(250);
+    while (true) {
+        
+        osalDelay(250);
+        
+    }
 }
 
 
@@ -21,7 +25,11 @@ static void task1(void *parameter) {
 ///
 static void task2(void *parameter) {
     
-    osalDelay(350);
+    while (true) {
+    
+        osalDelay(350);
+        
+    }
 }
 
 

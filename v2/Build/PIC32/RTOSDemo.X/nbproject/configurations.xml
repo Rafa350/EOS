@@ -6,38 +6,28 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-          <itemPath>../../../Demo/DigIOServiceDemo/PIC32/FreeRTOSConfig.h</itemPath>
+          <itemPath>../../../Demo/RTOSDemo/PIC32/FreeRTOSConfig.h</itemPath>
         </logicalFolder>
-        <itemPath>../../../Demo/DigIOServiceDemo/eosConfig.h</itemPath>
+        <itemPath>../../../Demo/RTOSDemo/eosConfig.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
-          <logicalFolder name="f5" displayName="Board" projectFiles="true">
+          <logicalFolder name="f3" displayName="Board" projectFiles="true">
             <itemPath>../../../Include/Board/HardwareProfile.h</itemPath>
-            <itemPath>../../../Include/Board/HardwareProfile_PIC32_USB_STARTER_KIT_I.h</itemPath>
+            <itemPath>../../../Include/Board/HardwareProfile_PIC32_USB_Starter_Kit_I.h</itemPath>
           </logicalFolder>
-          <logicalFolder name="f1" displayName="HAL" projectFiles="true">
-            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-              <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
-            </logicalFolder>
-            <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
-            <itemPath>../../../Include/HAL/hal.h</itemPath>
+          <logicalFolder name="f2" displayName="HAL" projectFiles="true">
+            <itemPath>../../../Include/HAL/halSYS.h</itemPath>
           </logicalFolder>
-          <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
+          <logicalFolder name="f1" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalThread.h</itemPath>
             <itemPath>../../../Include/OSAL/osal.h</itemPath>
-            <itemPath>../../../Include/OSAL/osalMemory.h</itemPath>
-            <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
-            <itemPath>../../../Include/OSAL/osalMsgQueue.h</itemPath>
-          </logicalFolder>
-          <logicalFolder name="f2" displayName="Services" projectFiles="true">
-            <itemPath>../../../Include/Services/eosDigOutput.h</itemPath>
-            <itemPath>../../../Include/Services/eosDigInput.h</itemPath>
-            <itemPath>../../../Include/Services/eosExtInterrupt.h</itemPath>
-          </logicalFolder>
-          <logicalFolder name="f3" displayName="System" projectFiles="true">
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/include/FreeRTOS.h</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/include/task.h</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -48,57 +38,31 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <logicalFolder name="f1" displayName="App" projectFiles="true">
+      <logicalFolder name="f2" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-          <itemPath>../../../Demo/DigIOServiceDemo/PIC32/Main.cpp</itemPath>
+          <itemPath>../../../Demo/RTOSDemo/PIC32/Main.c</itemPath>
         </logicalFolder>
-        <itemPath>../../../Demo/DigIOServiceDemo/AppMain.cpp</itemPath>
-        <itemPath>../../../Demo/DigIOServiceDemo/rtos_hooks.c</itemPath>
+        <itemPath>../../../Demo/RTOSDemo/rtos_hooks.c</itemPath>
+        <itemPath>../../../Demo/RTOSDemo/AppMain.c</itemPath>
       </logicalFolder>
-      <logicalFolder name="f2" displayName="Framework" projectFiles="true">
+      <logicalFolder name="f1" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
-          <logicalFolder name="f1" displayName="HAL" projectFiles="true">
+          <logicalFolder name="f2" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-              <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
             </logicalFolder>
           </logicalFolder>
-          <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
+          <logicalFolder name="f1" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
-            <itemPath>../../../Source/OSAL/osalMemory.c</itemPath>
-            <itemPath>../../../Source/OSAL/osalTimer.c</itemPath>
-            <itemPath>../../../Source/OSAL/osalMsgQueue.c</itemPath>
-          </logicalFolder>
-          <logicalFolder name="f2" displayName="Services" projectFiles="true">
-            <itemPath>../../../Source/Services/eosService.cpp</itemPath>
-            <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
-            <itemPath>../../../Source/Services/eosDigOutput.cpp</itemPath>
-            <itemPath>../../../Source/Services/eosDigInput.cpp</itemPath>
-          </logicalFolder>
-          <logicalFolder name="f3" displayName="System" projectFiles="true">
-            <logicalFolder name="f2" displayName="Collections" projectFiles="true">
-              <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
-              <itemPath>../../../Source/System/Collections/eosListImpl.cpp</itemPath>
-            </logicalFolder>
-            <logicalFolder name="f1" displayName="Core" projectFiles="true">
-              <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
-              <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
-              <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
-              <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
-              <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
-              <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
-            </logicalFolder>
-            <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
           <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/tasks.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/queue.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/list.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/timers.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MemMang/heap_4.c</itemPath>
           <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
           <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MemMang/heap_4.c</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/list.c</itemPath>
+          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/queue.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -109,15 +73,11 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../Demo/OutputServiceDemo</Elem>
-    <Elem>../../../Source/HAL/PIC32</Elem>
-    <Elem>../../../Source/Services</Elem>
-    <Elem>../../../Source/System</Elem>
-    <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
+    <Elem>../../../Demo/RTOSDemo</Elem>
     <Elem>../../../Include</Elem>
-    <Elem>../../../Demo/DigIOServicesDemo</Elem>
     <Elem>../../../Source/OSAL</Elem>
-    <Elem>../../../Demo/DigIOServiceDemo</Elem>
+    <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
+    <Elem>../../../Source/HAL/PIC32</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -161,11 +121,12 @@
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
         <property key="enable-app-io" value="false"/>
-        <property key="enable-omit-frame-pointer" value="true"/>
+        <property key="enable-omit-frame-pointer" value="false"/>
         <property key="enable-symbols" value="true"/>
-        <property key="enable-unroll-loops" value="true"/>
+        <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="true"/>
-        <property key="extra-include-directories" value=""/>
+        <property key="extra-include-directories"
+                  value="..\..\..\Demo\RTOSDemo;..\..\..\Demo\RTOSDemo\PIC32;..\..\..\Include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX;C:\Library\Microchip\Harmony\v1.9\framework"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
@@ -192,7 +153,8 @@
         <property key="exclude-floating-point-library" value="true"/>
         <property key="expand-macros" value="false"/>
         <property key="extra-include-directories-for-assembler" value=""/>
-        <property key="extra-include-directories-for-preprocessor" value=""/>
+        <property key="extra-include-directories-for-preprocessor"
+                  value="C:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX;..\..\..\Demo\RTOSDemo\PIC32"/>
         <property key="false-conditionals" value="false"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
@@ -203,7 +165,7 @@
         <property key="oXC32asm-list-to-file" value="false"/>
         <property key="omit-debug-dirs" value="false"/>
         <property key="omit-forms" value="false"/>
-        <property key="preprocessor-macros" value="HARDWARE_PIC32_USB_STARTER_KIT_I"/>
+        <property key="preprocessor-macros" value=""/>
         <property key="warning-level" value=""/>
       </C32-AS>
       <C32-LD>
@@ -211,7 +173,7 @@
         <property key="allocate-dinit" value="false"/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
-        <property key="enable-check-sections" value="true"/>
+        <property key="enable-check-sections" value="false"/>
         <property key="exclude-floating-point-library" value="true"/>
         <property key="exclude-standard-libraries" value="false"/>
         <property key="extra-lib-directories" value=""/>
@@ -225,7 +187,7 @@
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="heap-size" value="2048"/>
+        <property key="heap-size" value=""/>
         <property key="input-libraries" value=""/>
         <property key="kseg-length" value=""/>
         <property key="kseg-origin" value=""/>
@@ -240,7 +202,7 @@
         <property key="report-memory-usage" value="false"/>
         <property key="serial-length" value=""/>
         <property key="serial-origin" value=""/>
-        <property key="stack-size" value="2048"/>
+        <property key="stack-size" value=""/>
         <property key="symbol-stripping" value=""/>
         <property key="trace-symbols" value=""/>
         <property key="warn-section-align" value="false"/>
@@ -251,22 +213,22 @@
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="true"/>
         <property key="enable-app-io" value="false"/>
-        <property key="enable-omit-frame-pointer" value="true"/>
+        <property key="enable-omit-frame-pointer" value="false"/>
         <property key="enable-symbols" value="true"/>
-        <property key="enable-unroll-loops" value="true"/>
-        <property key="exceptions" value="false"/>
-        <property key="exclude-floating-point" value="true"/>
+        <property key="enable-unroll-loops" value="false"/>
+        <property key="exceptions" value="true"/>
+        <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="isolate-each-function" value="true"/>
+        <property key="isolate-each-function" value="false"/>
         <property key="make-warnings-into-errors" value="false"/>
         <property key="optimization-level" value=""/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value="HARDWARE_PIC32_USB_STARTER_KIT_I"/>
-        <property key="rtti" value="false"/>
+        <property key="preprocessor-macros" value=""/>
+        <property key="rtti" value="true"/>
         <property key="strict-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
         <property key="unaligned-access" value=""/>
@@ -275,8 +237,7 @@
         <property key="use-indirect-calls" value="false"/>
       </C32CPP>
       <C32Global>
-        <property key="common-include-directories"
-                  value="..\..\..\Demo\DigIOServiceDemo;..\..\..\Demo\DigIOServiceDemo\PIC32;..\..\..\Include;c:\Library\Microchip\Harmony\v1.9\framework;c:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;c:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX"/>
+        <property key="common-include-directories" value=""/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="true"/>
         <property key="mdtcm" value=""/>

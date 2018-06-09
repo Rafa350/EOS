@@ -2,7 +2,7 @@
 #define __eosConfig__
 
 
-#include "HardwareProfile.h"
+#include "board/HardwareProfile.h"
 
 
 #endif // __eosConfig__
