@@ -99,14 +99,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/STM32F429/FreeRTOSConfig.h</locationURI>
 		</link>
 		<link>
-			<name>inc/App/STM32F429/HardwareProfile.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/STM32F429/HardwareProfile.h</locationURI>
-		</link>
-		<link>
-			<name>inc/App/STM32F429/HardwareProfile_STM32F429I-DISC1.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/STM32F429/HardwareProfile_STM32F429I-DISC1.h</locationURI>
+			<name>inc/Framework/EOS/Board</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL</name>
@@ -237,6 +232,16 @@
 			<name>src/Framework/FreeRTOS/timers.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Board/HardwareProfile.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/HardwareProfile.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Board/HardwareProfile_STM32F429I-DISC1.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/HardwareProfile_STM32F429I-DISC1.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32</name>

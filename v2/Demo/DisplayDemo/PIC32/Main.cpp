@@ -1,6 +1,5 @@
 #include "eos.h"
-#include "HardwareProfile.h"
-#include <xc.h>
+#include "hsl/halSYS.h"
 
 
 // Configuracio del oscilador
@@ -46,12 +45,13 @@ extern void AppMain();
 ///
 int main(void) {
     
-    LATGbits.LATG6 = 0;
-    TRISGbits.TRISG6 = 0;
+    //LATGbits.LATG6 = 0;
+    //TRISGbits.TRISG6 = 0;
     
-    LATDbits.LATD1 = 1;
-    TRISDbits.TRISD1 = 0;    
+    //LATDbits.LATD1 = 1;
+    //TRISDbits.TRISD1 = 0;    
 
+    halSYSInitialize();
     AppMain();
 
     return 0;

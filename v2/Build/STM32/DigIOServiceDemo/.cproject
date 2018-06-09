@@ -34,6 +34,7 @@
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="STM32F429xx"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
+									<listOptionValue builtIn="false" value="HARDWARE_STM32F429I_DISC1"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.88155522" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib}&quot;"/>
@@ -92,6 +93,7 @@
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="STM32F429xx"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
+									<listOptionValue builtIn="false" value="HARDWARE_STM32F429I_DISC1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.531406548" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib}&quot;"/>
@@ -251,6 +253,7 @@
 									<listOptionValue builtIn="false" value="STM32F429I_DISC1"/>
 									<listOptionValue builtIn="false" value="STM32F429xx"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
+									<listOptionValue builtIn="false" value="HARDWARE_STM32F429I_DISC1"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.796048831" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib}&quot;"/>
@@ -308,6 +311,7 @@
 									<listOptionValue builtIn="false" value="STM32F429I_DISC1"/>
 									<listOptionValue builtIn="false" value="STM32F429xx"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
+									<listOptionValue builtIn="false" value="HARDWARE_STM32F429I_DISC1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.973200579" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib}&quot;"/>
