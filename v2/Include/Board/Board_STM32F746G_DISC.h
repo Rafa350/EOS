@@ -1,5 +1,5 @@
-#ifndef __hardwareProfile_SMT32F746G_DISC__
-#define __hardwareProfile_SMT32F746G_DISC__
+#ifndef __board_SMT32F746G_DISC__
+#define __board_SMT32F746G_DISC__
 
 
 // Configuracio del sistema
@@ -12,8 +12,8 @@
 // Indicadors lED
 // -----------------------------------------------------------------------
 
-#define LEDS_LD1_PORT        HAL_GPIO_PORT_I
-#define LEDS_LD1_PIN         HAL_GPIO_PIN_1
+#define LED_LED1_PORT             HAL_GPIO_PORT_I
+#define LED_LED1_PIN              HAL_GPIO_PIN_1
 
 
 // -----------------------------------------------------------------------
@@ -272,5 +272,5 @@
 // Modul I2C de comunicacions
 #define FT5336_I2C_MODULE         HAL_I2C_ID_3
 
-#endif // __hardwareProfile_SMT32F746G_DISC__
+#endif // __board_SMT32F746G_DISC__
 

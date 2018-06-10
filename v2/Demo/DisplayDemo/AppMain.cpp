@@ -90,11 +90,11 @@ void MyApplication::onInitialize() {
 ///
 void LedLoopService::onSetup() {
 
-	halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
-	halGPIOInitializePinOutput(LEDS_LD2_PORT, LEDS_LD2_PIN);
+	halGPIOInitializePinOutput(LED_LED1_PORT, LED_LED1_PIN);
+	halGPIOInitializePinOutput(LED_LED2_PORT, LED_LED2_PIN);
 
-	halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
-	halGPIOSetPin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+	halGPIOClearPin(LED_LED1_PORT, LED_LED1_PIN);
+	halGPIOSetPin(LED_LED2_PORT, LED_LED2_PIN);
 }
 
 
@@ -105,8 +105,8 @@ void LedLoopService::onRun() {
 
 	while (true) {
 
-		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
-		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+		halGPIOTogglePin(LED_LED1_PORT, LED_LED1_PIN);
+		halGPIOTogglePin(LED_LED2_PORT, LED_LED2_PIN);
 
 		Task::delay(500);
 	}

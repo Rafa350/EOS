@@ -93,19 +93,14 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/FreeRTOSConfig.h</locationURI>
 		</link>
 		<link>
-			<name>inc/App/STM32F429/HardwareProfile.h</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/HardwareProfile.h</locationURI>
-		</link>
-		<link>
-			<name>inc/App/STM32F429/HardwareProfile_STM32F429I-DISC1.h</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/HardwareProfile_STM32F429I-DISC1.h</locationURI>
-		</link>
-		<link>
 			<name>inc/App/STM32F429/stm32f429i_discovery_sdram.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/stm32f429i_discovery_sdram.h</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Board</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers</name>
@@ -216,6 +211,16 @@
 			<name>src/Framework/FreeRTOS/timers.c</name>
 			<type>1</type>
 			<location>C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source/timers.c</location>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Board/board.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Board/board_PIC32_USB_STARTER_KIT_I.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board_PIC32_USB_STARTER_KIT_I.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display</name>
