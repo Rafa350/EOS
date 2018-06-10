@@ -91,22 +91,22 @@ extern GPIOPortRegs gpioPortRegs[];
 
 
 // Mascara de posicio dels pins
-#define HAL_GPIO_POS_0       ((uint32_t) 1 << HAL_GPIO_PIN_0)
-#define HAL_GPIO_POS_1       ((uint32_t) 1 << HAL_GPIO_PIN_1)
-#define HAL_GPIO_POS_2       ((uint32_t) 1 << HAL_GPIO_PIN_2)
-#define HAL_GPIO_POS_3       ((uint32_t) 1 << HAL_GPIO_PIN_3)
-#define HAL_GPIO_POS_4       ((uint32_t) 1 << HAL_GPIO_PIN_4)
-#define HAL_GPIO_POS_5       ((uint32_t) 1 << HAL_GPIO_PIN_5)
-#define HAL_GPIO_POS_6       ((uint32_t) 1 << HAL_GPIO_PIN_6)
-#define HAL_GPIO_POS_7       ((uint32_t) 1 << HAL_GPIO_PIN_7)
-#define HAL_GPIO_POS_8       ((uint32_t) 1 << HAL_GPIO_PIN_8)
-#define HAL_GPIO_POS_9       ((uint32_t) 1 << HAL_GPIO_PIN_9)
-#define HAL_GPIO_POS_10      ((uint32_t) 1 << HAL_GPIO_PIN_10)
-#define HAL_GPIO_POS_11      ((uint32_t) 1 << HAL_GPIO_PIN_11)
-#define HAL_GPIO_POS_12      ((uint32_t) 1 << HAL_GPIO_PIN_12)
-#define HAL_GPIO_POS_13      ((uint32_t) 1 << HAL_GPIO_PIN_13)
-#define HAL_GPIO_POS_14      ((uint32_t) 1 << HAL_GPIO_PIN_14)
-#define HAL_GPIO_POS_15      ((uint32_t) 1 << HAL_GPIO_PIN_15)
+#define HAL_GPIO_POS_0       ((GPIOMask) 1 << HAL_GPIO_PIN_0)
+#define HAL_GPIO_POS_1       ((GPIOMask) 1 << HAL_GPIO_PIN_1)
+#define HAL_GPIO_POS_2       ((GPIOMask) 1 << HAL_GPIO_PIN_2)
+#define HAL_GPIO_POS_3       ((GPIOMask) 1 << HAL_GPIO_PIN_3)
+#define HAL_GPIO_POS_4       ((GPIOMask) 1 << HAL_GPIO_PIN_4)
+#define HAL_GPIO_POS_5       ((GPIOMask) 1 << HAL_GPIO_PIN_5)
+#define HAL_GPIO_POS_6       ((GPIOMask) 1 << HAL_GPIO_PIN_6)
+#define HAL_GPIO_POS_7       ((GPIOMask) 1 << HAL_GPIO_PIN_7)
+#define HAL_GPIO_POS_8       ((GPIOMask) 1 << HAL_GPIO_PIN_8)
+#define HAL_GPIO_POS_9       ((GPIOMask) 1 << HAL_GPIO_PIN_9)
+#define HAL_GPIO_POS_10      ((GPIOMask) 1 << HAL_GPIO_PIN_10)
+#define HAL_GPIO_POS_11      ((GPIOMask) 1 << HAL_GPIO_PIN_11)
+#define HAL_GPIO_POS_12      ((GPIOMask) 1 << HAL_GPIO_PIN_12)
+#define HAL_GPIO_POS_13      ((GPIOMask) 1 << HAL_GPIO_PIN_13)
+#define HAL_GPIO_POS_14      ((GPIOMask) 1 << HAL_GPIO_PIN_14)
+#define HAL_GPIO_POS_15      ((GPIOMask) 1 << HAL_GPIO_PIN_15)
 
 
 // Tipus de port
@@ -148,6 +148,9 @@ extern GPIOPortRegs gpioPortRegs[];
 
 #define HAL_GPIO_INIT_CLR         (0 << HAL_GPIO_INIT_OFFSET)
 #define HAL_GPIO_INIT_SET         (1 << HAL_GPIO_INIT_OFFSET)
+
+// Funcio alternativa 
+#define HAL_GPIO_AF_NONE          0
 
 
 #define halGPIOInitializePinInput(port, pin) \

@@ -100,7 +100,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_POS_15      ((GPIOMask) 1 << 15)
 
 // Funcio alternativa
-// Sende funcio
+// Sends funcio
 #define HAL_GPIO_AF_NONE     0
 
 // Funcio alternativa

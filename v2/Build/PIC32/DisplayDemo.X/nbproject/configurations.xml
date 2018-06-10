@@ -7,13 +7,15 @@
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
           <itemPath>../../../Demo/DisplayDemo/PIC32/FreeRTOSConfig.h</itemPath>
-          <itemPath>../../../Demo/DisplayDemo/PIC32/HardwareProfile.h</itemPath>
-          <itemPath>../../../Demo/DisplayDemo/PIC32/HardwareProfile_Custom.h</itemPath>
+          <itemPath>../../../Demo/DisplayDemo/PIC32/board_Custom.h</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/DisplayDemo/eosConfig.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Framework" projectFiles="true">
-        <logicalFolder name="f1" displayName="Eos" projectFiles="true">
+        <logicalFolder name="f1" displayName="EOS" projectFiles="true">
+          <logicalFolder name="f6" displayName="Board" projectFiles="true">
+            <itemPath>../../../Include/Board/board.h</itemPath>
+          </logicalFolder>
           <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
@@ -209,7 +211,7 @@
         <property key="enable-omit-frame-pointer" value="true"/>
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="true"/>
-        <property key="exclude-floating-point" value="false"/>
+        <property key="exclude-floating-point" value="true"/>
         <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
@@ -219,10 +221,11 @@
         <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value="HARDWARE_PINGUINO_MICRO"/>
+        <property key="preprocessor-macros" value="HARDWARE_CUSTOM"/>
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
@@ -247,7 +250,7 @@
         <property key="oXC32asm-list-to-file" value="false"/>
         <property key="omit-debug-dirs" value="false"/>
         <property key="omit-forms" value="false"/>
-        <property key="preprocessor-macros" value="HARDWARE_PINGUINO_MICRO"/>
+        <property key="preprocessor-macros" value="HARDWARE_CUSTOM"/>
         <property key="warning-level" value=""/>
       </C32-AS>
       <C32-LD>
@@ -256,7 +259,7 @@
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="true"/>
-        <property key="exclude-floating-point-library" value="false"/>
+        <property key="exclude-floating-point-library" value="true"/>
         <property key="exclude-standard-libraries" value="false"/>
         <property key="extra-lib-directories" value=""/>
         <property key="fill-flash-options-addr" value=""/>
@@ -275,6 +278,7 @@
         <property key="kseg-origin" value=""/>
         <property key="linker-symbols" value=""/>
         <property key="map-file" value="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
+        <property key="no-device-startup-code" value="false"/>
         <property key="no-startup-files" value="false"/>
         <property key="oXC32ld-extra-opts" value=""/>
         <property key="optimization-level" value="-O1"/>
@@ -298,7 +302,7 @@
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="true"/>
         <property key="exceptions" value="false"/>
-        <property key="exclude-floating-point" value="false"/>
+        <property key="exclude-floating-point" value="true"/>
         <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
@@ -308,10 +312,11 @@
         <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value="HARDWARE_PINGUINO_MICRO"/>
+        <property key="preprocessor-macros" value="HARDWARE_CUSTOM"/>
         <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
@@ -321,6 +326,9 @@
                   value="..\..\..\Demo\DisplayDemo;..\..\..\Demo\DisplayDemo\PIC32;..\..\..\Include;C:\Library\Microchip\Harmony\v1.9\framework;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="false"/>
+        <property key="mdtcm" value=""/>
+        <property key="mitcm" value=""/>
+        <property key="mstacktcm" value="false"/>
         <property key="relaxed-math" value="false"/>
         <property key="save-temps" value="false"/>
         <property key="wpo-lto" value="false"/>
