@@ -1,5 +1,5 @@
-#ifndef __hardwareProfile_PIC32_USB_STARTER_KIT_I__
-#define __hardwareProfile_PIC32_USB_STARTER_KIT_I__
+#ifndef __board_PIC32_USB_STARTER_KIT_I__
+#define __board_PIC32_USB_STARTER_KIT_I__
 
 
 // -----------------------------------------------------------------------
@@ -12,18 +12,18 @@
 // -----------------------------------------------------------------------
 // LEDS
 //
-#define LEDS_LD1_PORT        HAL_GPIO_PORT_D
-#define LEDS_LD1_PIN         HAL_GPIO_PIN_0
+#define LED_LED1_PORT        HAL_GPIO_PORT_D
+#define LED_LED1_PIN         HAL_GPIO_PIN_0
 
-#define LEDS_LD2_PORT        HAL_GPIO_PORT_D
-#define LEDS_LD2_PIN         HAL_GPIO_PIN_1
+#define LED_LED2_PORT        HAL_GPIO_PORT_D
+#define LED_LED2_PIN         HAL_GPIO_PIN_1
 
-#define LEDS_LD3_PORT        HAL_GPIO_PORT_D
-#define LEDS_LD3_PIN         HAL_GPIO_PIN_2
+#define LED_LED3_PORT        HAL_GPIO_PORT_D
+#define LED_LED3_PIN         HAL_GPIO_PIN_2
 
 
 // -----------------------------------------------------------------------
-// SWITCH
+// SWITCHES
 //
 #define SW_SW1_PORT          HAL_GPIO_PORT_D
 #define SW_SW1_PIN           HAL_GPIO_PIN_6
@@ -35,4 +35,5 @@
 #define SW_SW3_PIN           HAL_GPIO_PIN_13
 
 
-#endif // __hardwareProfile_PIC32_USB_STARTER_KIT_I__
+#endif // __board_PIC32_USB_STARTER_KIT_I__
+
