@@ -3,8 +3,6 @@
 
 
 #include "eos.h"
-#include "eosAssert.h"
-
 #include <stdint.h>
 
 

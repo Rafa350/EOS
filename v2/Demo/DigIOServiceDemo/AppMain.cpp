@@ -2,7 +2,6 @@
 #include "Services/eosAppLoop.h"
 #include "Services/eosDigOutput.h"
 #include "Services/eosDigInput.h"
-//#include "Services/eosExtInterrupt.h"
 #include "hal/halGPIO.h"
 
 
@@ -32,8 +31,6 @@ class MyApplication: public Application {
         DigOutput *digOutput1;
         DigOutput *digOutput2;
         DigOutput *digOutput3;
-        //ExtInterruptService *extInterruptSvc;
-        //ExtInterrupt *extInterrupt;
 
     public:
         void digInput1_OnChange(DigInput *input);
@@ -85,26 +82,23 @@ void MyApplication::onInitialize() {
     outputInfo.openDrain = false;
     outputInfo.initState = false;
 
-#ifdef LEDS_LD1_PIN
-    outputInfo.port = LEDS_LD1_PORT;
-    outputInfo.pin = LEDS_LD1_PIN;
+#ifdef LED_LED1_PIN
+    outputInfo.port = LED_LED1_PORT;
+    outputInfo.pin = LED_LED1_PIN;
     digOutput1 = new DigOutput(digOutputSrv, &outputInfo);
 #endif
 
-#ifdef LEDS_LD2_PIN
-    outputInfo.port = LEDS_LD2_PORT;
-    outputInfo.pin = LEDS_LD2_PIN;
+#ifdef LED_LED2_PIN
+    outputInfo.port = LED_LED2_PORT;
+    outputInfo.pin = LED_LED2_PIN;
     digOutput2 = new DigOutput(digOutputSrv, &outputInfo);
 #endif
 
-#ifdef LEDS_LD3_PIN
-    outputInfo.port = LEDS_LD3_PORT;
-    outputInfo.pin = LEDS_LD3_PIN;
+#ifdef LED_LED3_PIN
+    outputInfo.port = LED_LED3_PORT;
+    outputInfo.pin = LED_LED3_PIN;
     digOutput3 = new DigOutput(digOutputSrv, &outputInfo);
 #endif
-
-    //extInterruptSvc = new ExtInterruptService(this);
-    //extInterrupt = new ExtInterrupt(extInterruptSvc, HAL_CN_PIN_19);
 
     // Prepara el servei de l'aplicacio
     //

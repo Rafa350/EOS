@@ -1,4 +1,4 @@
-#include "HAL/halSYS.h"
+#include "hal/halSYS.h"
 #if defined(EOS_STM32F4)
 #include "stm32f4xx_hal.h"
 #elif defined(EOS_STM32F7)
