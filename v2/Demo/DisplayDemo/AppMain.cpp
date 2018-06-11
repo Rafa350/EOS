@@ -90,8 +90,8 @@ void MyApplication::onInitialize() {
 ///
 void LedLoopService::onSetup() {
 
-	halGPIOInitializePinOutput(LED_LED1_PORT, LED_LED1_PIN);
-	halGPIOInitializePinOutput(LED_LED2_PORT, LED_LED2_PIN);
+	halGPIOModePinOutput(LED_LED1_PORT, LED_LED1_PIN);
+	halGPIOModePinOutput(LED_LED2_PORT, LED_LED2_PIN);
 
 	halGPIOClearPin(LED_LED1_PORT, LED_LED1_PIN);
 	halGPIOSetPin(LED_LED2_PORT, LED_LED2_PIN);

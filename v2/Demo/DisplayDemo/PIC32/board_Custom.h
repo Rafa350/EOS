@@ -82,8 +82,8 @@
 
 // Control del pin RD (Read) CON1-1
 //
-#define ILI9341_RD_PORT      HAL_GPIO_PORT_C
-#define ILI9341_RD_PIN       HAL_GPIO_PIN_14
+//#define ILI9341_RD_PORT      HAL_GPIO_PORT_C
+//#define ILI9341_RD_PIN       HAL_GPIO_PIN_14
 
 // Control del port DATA (I/O paralel port) CON1-3..10
 //

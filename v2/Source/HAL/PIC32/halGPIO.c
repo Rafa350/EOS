@@ -1,8 +1,8 @@
-#include "HAL/PIC32/halGPIO.h"
+#include "hal/PIC32/halGPIO.h"
 #include <xc.h>
 
 
-GPIOPortRegs gpioPortRegs[] = {
+const GPIOPortRegs gpioPortRegs[] = {
 #if defined(PORTA)
     { &TRISASET, &TRISACLR, &ODCASET, &ODCACLR, &LATASET, &LATACLR, &LATAINV, &LATA, &PORTA}, 
 #else
@@ -42,7 +42,21 @@ GPIOPortRegs gpioPortRegs[] = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura un pin.
+/// \brief Inicialitza una llista de pins.
+/// \param info: Parametres d'inicialitzacio.
+/// \param count: Numero de pins a inicialitzar;
+///
+void halGPIOInitializePins(
+    const GPIOInitializePinInfo *info, 
+    unsigned count) {
+    
+    for (unsigned i = 0; i < count; i++)
+        halGPIOInitializePin(&info[i]);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Initialitza un pin.
 /// \param info: Parametres d'inicialitzacio.
 ///
 void halGPIOInitializePin(
@@ -74,6 +88,20 @@ void halGPIOInitializePin(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Inicialitza una llista de ports.
+/// \param info: Parametres d'inicialitzacio.
+/// \param count: Numero de ports a inicialitzar.
+///
+void halGPIOInitializePorts(
+    const GPIOInitializePortInfo *info,
+    unsigned count) {
+    
+    for (unsigned i = 0; i < count; i++)
+        halGPIOInitializePort(&info[i]);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Configura un port.
 /// \param port: Parametres d'inicialitzacio
 ///
@@ -99,10 +127,10 @@ void halGPIOInitializePort(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza un pin.
+/// \brief Inicialitza un pin individual
 /// \param port: Identificador del port.
 /// \param pin: Identificador del pin.
-/// \param options: opcions de configuracio.
+/// \param options: Opcions de configuracio.
 /// \param alt: Funcio alternativa del pin.
 ///
 void halGPIOInitialize(

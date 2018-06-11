@@ -1,8 +1,8 @@
-#ifndef __EOS_CONFIG_H
-#define __EOS_CONFIG_H
+#ifndef __eosConfig__
+#define __eosConfig__
 
 
-#include "board/HardwareProfile.h"
+#include "board/board.h"
 
 
-#endif
+#endif // __eosConfig__

@@ -57,12 +57,12 @@
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/tasks.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MemMang/heap_4.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/list.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/queue.c</itemPath>
+          <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+          <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+          <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+          <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
+          <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -78,6 +78,7 @@
     <Elem>../../../Source/OSAL</Elem>
     <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
     <Elem>../../../Source/HAL/PIC32</Elem>
+    <Elem>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -95,7 +96,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../Library/Microchip/Harmony/v1.9/bin/framework/peripheral/PIC32MX460F512L_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../../../../../Library/Microchip/Harmony/v2_05_01/bin/framework/peripheral/PIC32MX460F512L_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -125,8 +126,7 @@
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="true"/>
-        <property key="extra-include-directories"
-                  value="..\..\..\Demo\RTOSDemo;..\..\..\Demo\RTOSDemo\PIC32;..\..\..\Include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX;C:\Library\Microchip\Harmony\v1.9\framework"/>
+        <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
@@ -143,6 +143,7 @@
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
+        <appendMe value="-std=gnu99"/>
       </C32>
       <C32-AR>
         <property key="additional-options-chop-files" value="false"/>
@@ -153,8 +154,7 @@
         <property key="exclude-floating-point-library" value="true"/>
         <property key="expand-macros" value="false"/>
         <property key="extra-include-directories-for-assembler" value=""/>
-        <property key="extra-include-directories-for-preprocessor"
-                  value="C:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX;..\..\..\Demo\RTOSDemo\PIC32"/>
+        <property key="extra-include-directories-for-preprocessor" value=""/>
         <property key="false-conditionals" value="false"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
@@ -211,24 +211,24 @@
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
         <property key="check-new" value="false"/>
-        <property key="eh-specs" value="true"/>
+        <property key="eh-specs" value="false"/>
         <property key="enable-app-io" value="false"/>
-        <property key="enable-omit-frame-pointer" value="false"/>
+        <property key="enable-omit-frame-pointer" value="true"/>
         <property key="enable-symbols" value="true"/>
-        <property key="enable-unroll-loops" value="false"/>
-        <property key="exceptions" value="true"/>
-        <property key="exclude-floating-point" value="false"/>
+        <property key="enable-unroll-loops" value="true"/>
+        <property key="exceptions" value="false"/>
+        <property key="exclude-floating-point" value="true"/>
         <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="isolate-each-function" value="false"/>
+        <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
         <property key="optimization-level" value=""/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
         <property key="preprocessor-macros" value=""/>
-        <property key="rtti" value="true"/>
+        <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
         <property key="unaligned-access" value=""/>
@@ -237,7 +237,8 @@
         <property key="use-indirect-calls" value="false"/>
       </C32CPP>
       <C32Global>
-        <property key="common-include-directories" value=""/>
+        <property key="common-include-directories"
+                  value="..\..\..\Demo\RTOSDemo;..\..\..\Demo\RTOSDemo\PIC32;..\..\..\Include;C:\Library\Microchip\Harmony\v2_05_01\framework;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\Include;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\Portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="true"/>
         <property key="mdtcm" value=""/>
