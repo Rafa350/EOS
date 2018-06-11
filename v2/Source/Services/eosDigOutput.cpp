@@ -163,7 +163,7 @@ void DigOutputService::doToggleCommand(
 void DigOutputService::doPulseCommand(
     Command *command) {
 
-    Task::enterCriticalSection();
+    osalEnterCritical();
 
     if (command->output->state == DigOutput::State::Done)
         halGPIOTogglePin(command->output->port, command->output->pin);
@@ -171,7 +171,7 @@ void DigOutputService::doPulseCommand(
     startTimer(command->output, command->width);
     command->output->state = DigOutput::State::Pulse;
 
-    Task::exitCriticalSection();
+    osalExitCritical();
 }
 
 
@@ -182,13 +182,13 @@ void DigOutputService::doPulseCommand(
 void DigOutputService::doDelayedPulseCommand(
 	Command *command) {
 
-    Task::enterCriticalSection();
+    osalEnterCritical();
 
     startTimer(command->output, command->delay);
     command->output->time = command->width;
     command->output->state = DigOutput::State::Delay;
 
-    Task::exitCriticalSection();
+    osalExitCritical();
 }
 
 
@@ -392,9 +392,9 @@ DigOutput::State DigOutput::getState() const {
 
 	State s;
 
-	Task::enterCriticalSection();
+	osalEnterCritical();
 	s = state;
-	Task::exitCriticalSection();
+	osalExitCritical();
 
 	return s;
 }

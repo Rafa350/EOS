@@ -137,16 +137,16 @@
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
           <logicalFolder name="f2" displayName="MemMgr" projectFiles="true">
-            <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+            <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="PIC32MX" projectFiles="true">
-            <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-            <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+            <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+            <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
           </logicalFolder>
-          <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
-          <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
-          <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
-          <itemPath>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -157,15 +157,17 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
+    <Elem>c:/Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
+    <Elem>c:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
     <Elem>../../../Demo/DisplayDemo</Elem>
     <Elem>../../../Source/HAL/PIC32</Elem>
-    <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
     <Elem>../../../Source/System/Core</Elem>
     <Elem>../../../Include</Elem>
     <Elem>../../../Source/Controllers/Display/Drivers/ILI9341</Elem>
     <Elem>../../../Source/Controllers/Display/Drivers/VRAM</Elem>
     <Elem>../../../Source/OSAL</Elem>
-    <Elem>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
+    <Elem>C:/Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
+    <Elem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -183,7 +185,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../Library/Microchip/Harmony/v2_05_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>C:/Library/Microchip/Harmony/v2_05_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
