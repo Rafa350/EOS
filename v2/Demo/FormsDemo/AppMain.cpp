@@ -84,7 +84,7 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el servei de gestio de la interficie d'usuari
     //
-    IDisplayDriver *driver = new ILI9341_Driver();
+    IDisplayDriver *driver = ILI9341_Driver::getInstance();
     driver->initialize();
     driver->setOrientation(DisplayOrientation::rotate180);
 

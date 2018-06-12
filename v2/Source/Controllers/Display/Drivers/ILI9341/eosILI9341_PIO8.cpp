@@ -129,7 +129,7 @@ uint8_t ILI9341_Driver::lcdReadData() {
     halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
     halGPIOClearPin(ILI9341_RD_PORT, ILI9341_RD_PIN);
     halGPIOModePortInput(ILI9341_DATA_PORT, 0x00FF);
-    data = halGPIOReadPort(ILI9341_DATA_PORT);
+    uint8_t data = halGPIOReadPort(ILI9341_DATA_PORT);
     halGPIOSetPin(ILI9341_RD_PORT, ILI9341_RD_PIN);
 
     return data;

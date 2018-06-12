@@ -7,15 +7,14 @@
       <logicalFolder name="f4" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
           <itemPath>../../../Demo/FormsDemo/PIC32/FreeRTOSConfig.h</itemPath>
-          <itemPath>../../../Demo/FormsDemo/PIC32/HardwareProfile.h</itemPath>
-          <itemPath>../../../Demo/FormsDemo/PIC32/HardwareProfile_Custom.h</itemPath>
+          <itemPath>../../../Demo/FormsDemo/PIC32/board_Custom.h</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/FormsDemo/MnuMain.h</itemPath>
         <itemPath>../../../Demo/FormsDemo/eosConfig.h</itemPath>
         <itemPath>../../../Demo/FormsDemo/appMainForm.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Frameworks" projectFiles="true">
-        <logicalFolder name="f3" displayName="Eos" projectFiles="true">
+        <logicalFolder name="f3" displayName="EOS" projectFiles="true">
           <logicalFolder name="f2" displayName="Controllers" projectFiles="true">
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
@@ -74,7 +73,7 @@
         <itemPath>../../../Demo/FormsDemo/AppMain.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f6" displayName="Frameworks" projectFiles="true">
-        <logicalFolder name="f3" displayName="Eos" projectFiles="true">
+        <logicalFolder name="f3" displayName="EOS" projectFiles="true">
           <logicalFolder name="f1" displayName="Controllers" projectFiles="true">
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f2" displayName="Drivers" projectFiles="true">
@@ -109,6 +108,7 @@
           <logicalFolder name="f4" displayName="Osal" projectFiles="true">
             <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
             <itemPath>../../../Source/OSAL/osalMemory.c</itemPath>
+            <itemPath>../../../Source/OSAL/osalMsgQueue.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="Services" projectFiles="true">
             <logicalFolder name="f1" displayName="Forms" projectFiles="true">
@@ -149,19 +149,19 @@
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
           <logicalFolder name="f1" displayName="portable" projectFiles="true">
             <logicalFolder name="f1" displayName="MemMang" projectFiles="true">
-              <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MemMang/heap_4.c</itemPath>
+              <itemPath>C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
             </logicalFolder>
             <logicalFolder name="f2" displayName="MPLAB" projectFiles="true">
               <logicalFolder name="f1" displayName="PIC32MX" projectFiles="true">
-                <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-                <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+                <itemPath>C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+                <itemPath>C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
               </logicalFolder>
             </logicalFolder>
           </logicalFolder>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/list.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/queue.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/tasks.c</itemPath>
-          <itemPath>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source/timers.c</itemPath>
+          <itemPath>C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS/Source/list.c</itemPath>
+          <itemPath>C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS/Source/tasks.c</itemPath>
+          <itemPath>C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS/Source/timers.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="Harmony" projectFiles="true">
           <logicalFolder name="f1" displayName="system" projectFiles="true">
@@ -187,13 +187,11 @@
     <Elem>../../../Source/Services</Elem>
     <Elem>../../../Source/Controllers</Elem>
     <Elem>../../../Source/HAL</Elem>
-    <Elem>c:/microchip/harmony/v1_06_01/third_party/rtos/FreeRTOS/Source</Elem>
+    <Elem>C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS/Source</Elem>
     <Elem>../../../../../MD-SEL01</Elem>
     <Elem>../../../../../MD-DSP04</Elem>
     <Elem>../../../../../MD-KBD01</Elem>
-    <Elem>../../../../../../../../../../microchip/FreeRTOS/FreeRTOSv9.0.0/FreeRTOS/Source</Elem>
     <Elem>../../../Demo/FormsDemo</Elem>
-    <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
     <Elem>../../../Source/OSAL</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
@@ -212,7 +210,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../Library/Microchip/Harmony/v1.9/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>C:\Library\Microchip\Harmony\v2_05_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -255,6 +253,7 @@
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
@@ -307,6 +306,7 @@
         <property key="kseg-origin" value=""/>
         <property key="linker-symbols" value=""/>
         <property key="map-file" value="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
+        <property key="no-device-startup-code" value="false"/>
         <property key="no-startup-files" value="false"/>
         <property key="oXC32ld-extra-opts" value=""/>
         <property key="optimization-level" value="-O1"/>
@@ -344,15 +344,19 @@
         <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\;..\..\..\Include;c:\microchip\FreeRTOS\FreeRTOSv9.0.0\FreeRTOS\Source\include;c:\microchip\FreeRTOS\FreeRTOSv9.0.0\FreeRTOS\Source\portable\MPLAB\PIC32MX;c:\microchip\Harmony\v1_07_01\framework"/>
+                  value="..\;..\..\..\Include;C:\Library\Microchip\Harmony\v2_05_01\Source\include;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="false"/>
+        <property key="mdtcm" value=""/>
+        <property key="mitcm" value=""/>
+        <property key="mstacktcm" value="false"/>
         <property key="relaxed-math" value="false"/>
         <property key="save-temps" value="false"/>
         <property key="wpo-lto" value="false"/>
@@ -501,7 +505,6 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../Library/Microchip/Harmony/v1.9/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -545,6 +548,7 @@
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
@@ -597,6 +601,7 @@
         <property key="kseg-origin" value=""/>
         <property key="linker-symbols" value=""/>
         <property key="map-file" value="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
+        <property key="no-device-startup-code" value="false"/>
         <property key="no-startup-files" value="false"/>
         <property key="oXC32ld-extra-opts" value=""/>
         <property key="optimization-level" value=""/>
@@ -635,6 +640,7 @@
         <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
@@ -643,6 +649,9 @@
         <property key="common-include-directories" value=""/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="false"/>
+        <property key="mdtcm" value=""/>
+        <property key="mitcm" value=""/>
+        <property key="mstacktcm" value="false"/>
         <property key="relaxed-math" value="false"/>
         <property key="save-temps" value="false"/>
         <property key="wpo-lto" value="false"/>
@@ -732,7 +741,6 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../../../../Library/Microchip/Harmony/v1.9/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -771,13 +779,15 @@
         <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value="HARDWARE_PINGUINO"/>
+        <property key="preprocessor-macros" value="HARDWARE_CUSTOM"/>
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
+        <appendMe value="-std=gnu99"/>
       </C32>
       <C32-AR>
         <property key="additional-options-chop-files" value="false"/>
@@ -799,7 +809,7 @@
         <property key="oXC32asm-list-to-file" value="false"/>
         <property key="omit-debug-dirs" value="false"/>
         <property key="omit-forms" value="false"/>
-        <property key="preprocessor-macros" value="HARDWARE_PINGUINO"/>
+        <property key="preprocessor-macros" value="HARDWARE_CUSTOM"/>
         <property key="warning-level" value=""/>
       </C32-AS>
       <C32-LD>
@@ -827,6 +837,7 @@
         <property key="kseg-origin" value=""/>
         <property key="linker-symbols" value=""/>
         <property key="map-file" value="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
+        <property key="no-device-startup-code" value="false"/>
         <property key="no-startup-files" value="false"/>
         <property key="oXC32ld-extra-opts" value=""/>
         <property key="optimization-level" value="-O1"/>
@@ -860,19 +871,23 @@
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value="HARDWARE_PINGUINO"/>
+        <property key="preprocessor-macros" value="HARDWARE_CUSTOM"/>
         <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\FormsDemo;..\..\..\Demo\FormsDemo\PIC32;..\..\..\Include;C:\Library\Microchip\Harmony\v1.9\framework;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\include;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable;C:\Library\Microchip\FreeRTOS\v9.0.0\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\FormsDemo;..\..\..\Demo\FormsDemo\PIC32;..\..\..\Include;C:\Library\Microchip\Harmony\v2_05_01\Framework;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\include;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\portable;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="false"/>
+        <property key="mdtcm" value=""/>
+        <property key="mitcm" value=""/>
+        <property key="mstacktcm" value="false"/>
         <property key="relaxed-math" value="false"/>
         <property key="save-temps" value="false"/>
         <property key="wpo-lto" value="false"/>
@@ -991,7 +1006,6 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

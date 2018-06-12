@@ -1,5 +1,4 @@
 #include "HAL/halI2C.h"
-#include "HardwareProfile.h"
 #include "sys/attribs.h"
 #include "peripheral/int/plib_int.h"
 #include "Peripheral/i2c/plib_i2c.h"

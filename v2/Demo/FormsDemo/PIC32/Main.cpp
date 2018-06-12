@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "HardwareProfile.h"
+#include "hal/halSYS.h"
 #include <xc.h>
 
 
@@ -46,12 +46,12 @@ extern void AppMain();
 ///
 int main(void) {
     
-    LATGbits.LATG6 = 0;
-    TRISGbits.TRISG6 = 0;
+    // Inicialitza al hardware
+    //
+    halSYSInitialize();
     
-    LATDbits.LATD1 = 1;
-    TRISDbits.TRISD1 = 0;    
-
+    // Inicia l'aplicacio d'usuari
+    //
     AppMain();
 
     return 0;
