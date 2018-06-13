@@ -76,7 +76,6 @@
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
           <itemPath>../../../Demo/DisplayDemo/PIC32/Main.cpp</itemPath>
         </logicalFolder>
-        <itemPath>../../../Demo/DisplayDemo/rtos_hooks.c</itemPath>
         <itemPath>../../../Demo/DisplayDemo/AppMain.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
@@ -113,6 +112,9 @@
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f5" displayName="Osal" projectFiles="true">
+            <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
+              <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
+            </logicalFolder>
             <itemPath>../../../Source/OSAL/osalMemory.c</itemPath>
             <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
           </logicalFolder>
@@ -157,8 +159,6 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>c:/Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
-    <Elem>c:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
     <Elem>../../../Demo/DisplayDemo</Elem>
     <Elem>../../../Source/HAL/PIC32</Elem>
     <Elem>../../../Source/System/Core</Elem>
@@ -166,7 +166,6 @@
     <Elem>../../../Source/Controllers/Display/Drivers/ILI9341</Elem>
     <Elem>../../../Source/Controllers/Display/Drivers/VRAM</Elem>
     <Elem>../../../Source/OSAL</Elem>
-    <Elem>C:/Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
     <Elem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>

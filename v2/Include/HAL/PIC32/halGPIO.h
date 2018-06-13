@@ -122,7 +122,6 @@ extern const GPIOPortRegs gpioPortRegs[];
 #define HAL_GPIO_MODE_ALT_OD      (4 << HAL_GPIO_MODE_OFFSET)   // -Sortida alternativa open-drain
 #define HAL_GPIO_MODE_ANALOG      (5 << HAL_GPIO_MODE_OFFSET)   // -Entrada/Sortida Analgica
 
-
 // Velocitat de conmutacio
 #define HAL_GPIO_SPEED_OFFSET     4
 #define HAL_GPIO_SPEED_BITS       0b11
@@ -147,11 +146,12 @@ extern const GPIOPortRegs gpioPortRegs[];
 #define HAL_GPIO_INIT_BITS        0b11
 #define HAL_GPIO_INIT_MASK        (HAL_GPIO_INIT_BITS << HAL_GPIO_INIT_OFFSET)
 
-#define HAL_GPIO_INIT_CLR         (0 << HAL_GPIO_INIT_OFFSET)
-#define HAL_GPIO_INIT_SET         (1 << HAL_GPIO_INIT_OFFSET)
+#define HAL_GPIO_INIT_NOCHANGE    (0 << HAL_GPIO_INIT_OFFSET)
+#define HAL_GPIO_INIT_CLR         (1 << HAL_GPIO_INIT_OFFSET)
+#define HAL_GPIO_INIT_SET         (2 << HAL_GPIO_INIT_OFFSET)
 
 // Funcio alternativa 
-#define HAL_GPIO_AF_NONE          ((GPIOAlt)0)
+#define HAL_GPIO_AF_NONE          ((GPIOAlt) 0)
 
 
 // Canvi d'entrada a sortida i viceversa
@@ -200,12 +200,10 @@ extern const GPIOPortRegs gpioPortRegs[];
 
 
 void halGPIOInitializePins(const GPIOInitializePinInfo *info, unsigned count);
-void halGPIOInitializePin(const GPIOInitializePinInfo *info);
+void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 
 void halGPIOInitializePorts(const GPIOInitializePortInfo *info, unsigned count);
-void halGPIOInitializePort(const GPIOInitializePortInfo *info);
-
-void halGPIOInitialize(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
+void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 
 
 #ifdef	__cplusplus

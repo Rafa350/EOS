@@ -39,7 +39,7 @@ void ILI9341_Driver::lcdInitialize() {
         {ILI9341_DATA_PORT, 0x00FF, HAL_GPIO_MODE_OUTPUT_PP, HAL_GPIO_AF_NONE};
        
     halGPIOInitializePins(initCtrlPins, sizeof(initCtrlPins) / sizeof(initCtrlPins[0]));
-    halGPIOInitializePort(&initDataPort);
+    halGPIOInitializePorts(&initDataPort, 1);
 }
 
 

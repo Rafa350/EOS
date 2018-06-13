@@ -12,11 +12,10 @@
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
-          <logicalFolder name="f3" displayName="Board" projectFiles="true">
-            <itemPath>../../../Include/Board/HardwareProfile.h</itemPath>
-            <itemPath>../../../Include/Board/HardwareProfile_PIC32_USB_Starter_Kit_I.h</itemPath>
-          </logicalFolder>
           <logicalFolder name="f2" displayName="HAL" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
+            </logicalFolder>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="OSAL" projectFiles="true">
@@ -26,8 +25,8 @@
           <itemPath>../../../Include/eos.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
-          <itemPath>C:/Library/Microchip/FreeRTOS/v9.0.0/Source/include/FreeRTOS.h</itemPath>
-          <itemPath>C:/Library/Microchip/FreeRTOS/v9.0.0/Source/include/task.h</itemPath>
+          <itemPath>C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS/Source/include/FreeRTOS.h</itemPath>
+          <itemPath>C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS/Source/include/task.h</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -42,7 +41,6 @@
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
           <itemPath>../../../Demo/RTOSDemo/PIC32/Main.c</itemPath>
         </logicalFolder>
-        <itemPath>../../../Demo/RTOSDemo/rtos_hooks.c</itemPath>
         <itemPath>../../../Demo/RTOSDemo/AppMain.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Framework" projectFiles="true">
@@ -50,10 +48,15 @@
           <logicalFolder name="f2" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f1" displayName="OSAL" projectFiles="true">
+            <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
+              <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
+            </logicalFolder>
             <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
+            <itemPath>../../../Source/OSAL/osalMsgQueue.c</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
@@ -76,7 +79,6 @@
     <Elem>../../../Demo/RTOSDemo</Elem>
     <Elem>../../../Include</Elem>
     <Elem>../../../Source/OSAL</Elem>
-    <Elem>C:/Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
     <Elem>../../../Source/HAL/PIC32</Elem>
     <Elem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
   </sourceRootList>
@@ -122,16 +124,16 @@
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
         <property key="enable-app-io" value="false"/>
-        <property key="enable-omit-frame-pointer" value="false"/>
+        <property key="enable-omit-frame-pointer" value="true"/>
         <property key="enable-symbols" value="true"/>
-        <property key="enable-unroll-loops" value="false"/>
+        <property key="enable-unroll-loops" value="true"/>
         <property key="exclude-floating-point" value="true"/>
         <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value=""/>
+        <property key="optimization-level" value="-O1"/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -223,7 +225,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value=""/>
+        <property key="optimization-level" value="-O1"/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>

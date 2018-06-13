@@ -53,7 +53,6 @@
           <itemPath>../../../Demo/DigIOServiceDemo/PIC32/Main.cpp</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/DigIOServiceDemo/AppMain.cpp</itemPath>
-        <itemPath>../../../Demo/DigIOServiceDemo/rtos_hooks.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -64,6 +63,9 @@
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
+            <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
+              <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
+            </logicalFolder>
             <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
             <itemPath>../../../Source/OSAL/osalMemory.c</itemPath>
             <itemPath>../../../Source/OSAL/osalTimer.c</itemPath>
@@ -113,13 +115,10 @@
     <Elem>../../../Source/HAL/PIC32</Elem>
     <Elem>../../../Source/Services</Elem>
     <Elem>../../../Source/System</Elem>
-    <Elem>../../../../../../../../../../Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
     <Elem>../../../Include</Elem>
     <Elem>../../../Demo/DigIOServicesDemo</Elem>
     <Elem>../../../Source/OSAL</Elem>
     <Elem>../../../Demo/DigIOServiceDemo</Elem>
-    <Elem>../../../../../../../Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
-    <Elem>C:/Library/Microchip/FreeRTOS/v9.0.0/Source</Elem>
     <Elem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
@@ -173,7 +172,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value=""/>
+        <property key="optimization-level" value="-O1"/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -253,7 +252,7 @@
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
         <property key="check-new" value="false"/>
-        <property key="eh-specs" value="true"/>
+        <property key="eh-specs" value="false"/>
         <property key="enable-app-io" value="false"/>
         <property key="enable-omit-frame-pointer" value="true"/>
         <property key="enable-symbols" value="true"/>
@@ -265,7 +264,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value=""/>
+        <property key="optimization-level" value="-O1"/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>

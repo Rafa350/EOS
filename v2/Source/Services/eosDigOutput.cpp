@@ -354,7 +354,7 @@ DigOutput::DigOutput(
     pinInfo.options =
         (info->openDrain ? HAL_GPIO_MODE_OUTPUT_OD : HAL_GPIO_MODE_OUTPUT_PP) |
         (info->initState ? HAL_GPIO_INIT_SET : HAL_GPIO_INIT_CLR);
-    halGPIOInitializePin(&pinInfo);
+    halGPIOInitializePins(&pinInfo, 1);
 
     if (service != nullptr)
         service->add(this);

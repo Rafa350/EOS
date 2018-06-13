@@ -50,40 +50,27 @@ void halGPIOInitializePins(
     const GPIOInitializePinInfo *info, 
     unsigned count) {
     
-    for (unsigned i = 0; i < count; i++)
-        halGPIOInitializePin(&info[i]);
+    for (unsigned i = 0; i < count; i++) {
+        const GPIOInitializePinInfo *p = &info[i];
+        halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
+    }
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Initialitza un pin.
-/// \param info: Parametres d'inicialitzacio.
+/// \brief Initialitza un pin individual.
+/// \param port: Identificador del port.
+/// \param pin: Identificador del pin.
+/// \param options: Opcions de configuracio.
+/// \param alt: Funcio alternativa del pin.
 ///
 void halGPIOInitializePin(
-    const GPIOInitializePinInfo *info) {
+    GPIOPort port, 
+    GPIOPin pin, 
+    GPIOOptions options, 
+    GPIOAlt alt) {
    
-    uint32_t mask = 1 << info->pin;
-    
-    if (((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_PP) ||
-        ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)) {
-        
-        if ((info->options & HAL_GPIO_INIT_MASK) == HAL_GPIO_INIT_SET)
-            *gpioPortRegs[info->port].latSET = mask;
-        else
-            *gpioPortRegs[info->port].latCLR = mask;
-
-        *gpioPortRegs[info->port].trisCLR = mask; 
-     
-        if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)
-            *gpioPortRegs[info->port].odcSET = mask;
-        else
-            *gpioPortRegs[info->port].odcCLR = mask;        
-    }  
-    
-    else if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_INPUT) {
-       
-        *gpioPortRegs[info->port].trisSET = mask;
-    }
+    halGPIOInitializePort(port, 1 << pin, options, alt);
 }
 
 
@@ -96,54 +83,57 @@ void halGPIOInitializePorts(
     const GPIOInitializePortInfo *info,
     unsigned count) {
     
-    for (unsigned i = 0; i < count; i++)
-        halGPIOInitializePort(&info[i]);
+    for (unsigned i = 0; i < count; i++) {
+        const GPIOInitializePortInfo *p = &info[i];
+        halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
+    }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Configura un port.
-/// \param port: Parametres d'inicialitzacio
+/// \param port: Identificador del port.
+/// \param mask: Mascara de pins.
+/// \param options: Opcions de configuracio.
+/// \param alt: Funcio alternativa dels pins.
 ///
 void halGPIOInitializePort(
-    const GPIOInitializePortInfo *info) {
+    GPIOPort port,
+    GPIOMask mask,
+    GPIOOptions options,
+    GPIOAlt alt) {
+    
+    if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_PP) ||
+        ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)) {
         
-    if (((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_PP) ||
-        ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)) {
+        // Selecciona el valor inicial del port
+        //
+        switch (options & HAL_GPIO_INIT_MASK) {
+            case HAL_GPIO_INIT_SET:
+                *gpioPortRegs[port].latSET = mask;
+                break;
+                
+            case HAL_GPIO_INIT_CLR:
+                *gpioPortRegs[port].latCLR = mask;
+                break;
+        }
 
-        if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD) 
-            *gpioPortRegs[info->port].odcSET = info->mask;        
+        // El configura com sortida
+        //
+        *gpioPortRegs[port].trisCLR = mask; 
+     
+        // Configura com OPEN-DRAIN o PUSH-PULL
+        //
+        if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)
+            *gpioPortRegs[port].odcSET = mask;
         else
-            *gpioPortRegs[info->port].odcCLR = info->mask;                     
-        
-        *gpioPortRegs[info->port].trisCLR = info->mask;
+            *gpioPortRegs[port].odcCLR = mask;        
+    }  
+    
+    else if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_INPUT) {
+       
+        // El configura com entrada
+        //
+        *gpioPortRegs[port].trisSET = mask;
     }
-    
-    else if ((info->options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_INPUT) {
-        
-        *gpioPortRegs[info->port].trisSET = info->mask;
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Inicialitza un pin individual
-/// \param port: Identificador del port.
-/// \param pin: Identificador del pin.
-/// \param options: Opcions de configuracio.
-/// \param alt: Funcio alternativa del pin.
-///
-void halGPIOInitialize(
-    GPIOPort port, 
-    GPIOPin pin, 
-    uint32_t options, 
-    uint8_t alt) {
-    
-    GPIOInitializePinInfo info;
-    info.port = port;
-    info.pin = pin;
-    info.options = options;
-    info.alt = alt;
-    
-    halGPIOInitializePin(&info);
 }

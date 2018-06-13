@@ -113,7 +113,7 @@ DigInput::DigInput(
     pinInfo.port = info->port;
     pinInfo.pin = info->pin;
     pinInfo.options = HAL_GPIO_MODE_INPUT;
-    halGPIOInitializePin(&pinInfo);
+    halGPIOInitializePins(&pinInfo, 1);
     
     state = halGPIOReadPin(port, pin);
     pattern = state ? 0xFFFFFFFF : 0x00000000;
