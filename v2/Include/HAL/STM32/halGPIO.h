@@ -124,12 +124,18 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_AF9_LTDC    GPIO_AF9_LTDC
 
 // Funcio alternativa
+// Funcio AF10
+#define HAL_GPIO_AF1O_OGT_FS GPIO_AF10_OTG_FS
+#define HAL_GPIO_AF1O_OGT_HS GPIO_AF10_OTG_HS
+
+// Funcio alternativa
 // Funcio AF12
 #define HAL_GPIO_AF12_FMC    GPIO_AF12_FMC
 
 // Funcio alternativa
 // Funcio AF14
 #define HAL_GPIO_AF14_LTDC   GPIO_AF14_LTDC
+
 
 // Tipus de port
 #define HAL_GPIO_MODE_POS         0
