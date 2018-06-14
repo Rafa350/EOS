@@ -18,14 +18,17 @@ static void task1(void *parameter) {
         LED_LED1_PIN, 
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 
         HAL_GPIO_AF_NONE);
-    
-    while (true) {       
-        halGPIOTogglePin(LED_LED1_PORT, LED_LED1_PIN);
+
+    bool state = false;
+    while (true) {     
+        halGPIOWritePin(LED_LED1_PORT, LED_LED1_PIN, state);
+        if (state) {
+            uint8_t data = 1;
+            osalMsgQueuePut(queue, &data, 0);
+        }
+        state = !state;
         
-        uint8_t data = 0;
-        osalMsgQueuePut(queue, &data, 0);
-        
-        osalDelay(250);
+        osalDelay(1000);
     }
 }
 
@@ -42,9 +45,18 @@ static void task2(void *parameter) {
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 
         HAL_GPIO_AF_NONE);
 
+    osalDelay(250);        
+
+    bool state = false;
     while (true) {    
-        halGPIOTogglePin(LED_LED2_PORT, LED_LED2_PIN);
-        osalDelay(350);        
+        halGPIOWritePin(LED_LED2_PORT, LED_LED2_PIN, state);
+        if (state) {
+            uint8_t data = 0;
+            osalMsgQueuePut(queue, &data, 0);
+        }
+        state = !state;
+
+        osalDelay(1000);        
     }
 }
 
@@ -64,8 +76,8 @@ static void task3(void *parameter) {
     while (true) {    
         
         uint8_t data;
-        if (osalMsgQueueGet(queue, &data, 0))
-            halGPIOTogglePin(LED_LED3_PORT, LED_LED3_PIN);
+        if (osalMsgQueueGet(queue, &data, (unsigned)(-1)))
+            halGPIOWritePin(LED_LED3_PORT, LED_LED3_PIN, data);
     }
 }
 

@@ -185,10 +185,12 @@ extern const GPIOPortRegs gpioPortRegs[];
     (*gpioPortRegs[portId].port & (1 << (pin))) != 0
 
 #define halGPIOWritePin(portId, pin, data) \
-    if (data) \
-        *gpioPortRegs[portId].latSET = 1 << (pin); \
-    else \
-        *gpioPortRegs[portId].latCLR = 1 << (pin)
+    if (1) { \
+        if (data) \
+            *gpioPortRegs[portId].latSET = 1 << (pin); \
+        else \
+            *gpioPortRegs[portId].latCLR = 1 << (pin); \
+    }
 
 // Lectura i escriptura del port
 //    

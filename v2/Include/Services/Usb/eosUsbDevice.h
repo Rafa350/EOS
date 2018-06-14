@@ -2,9 +2,9 @@
 #define __EOS_USBDEVICE_HPP
 
 
-#include "eos.hpp"
-#include "Services/eosService.hpp"
-#include "System/Collections//eosList.hpp"
+#include "eos.h"
+#include "Services/eosService.h"
+#include "System/Collections//eosList.h"
 
 
 namespace eos {

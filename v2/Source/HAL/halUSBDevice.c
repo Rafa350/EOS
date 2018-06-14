@@ -1,4 +1,4 @@
-#include "HardwareProfile.h"
+#include "eos.h"
 #include "peripheral/int/plib_int.h"
 #include "driver/usb/usbfs/drv_usbfs.h"
 #include "usb/usb_device.h"

@@ -1,6 +1,6 @@
-#include "eos.hpp"
-#include "System/Core/eosTask.hpp"
-#include "Services/Usb/eosUsbDevice.hpp"
+#include "eos.h"
+#include "System/Core/eosTask.h"
+#include "Services/Usb/eosUsbDevice.h"
 #include "HAL/halUSBDevice.h"
 
 

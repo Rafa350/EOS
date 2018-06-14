@@ -1,5 +1,5 @@
-#include "eos.hpp"
-#include "Services/Usb/eosUsbDevice.hpp"
+#include "eos.h"
+#include "Services/Usb/eosUsbDevice.h"
 #include "HAL/halUSBDevice.h"
 
 
