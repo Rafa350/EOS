@@ -1,29 +1,21 @@
-#ifndef __EOS_HAL_USBDEVICE_H
-#define	__EOS_HAL_USBDEVICE_H
+#ifndef __halUSBDevice__
+#define	__halUSBDevice__
 
 
-#include "stdint.h"
+// EOS includes
+//
+#include "eos.h"
+#include "hal/hal.h"
 
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
+	#include "HAL/PIC32/halUSBDevice.h"
 
-    
-typedef void (*UsbDeviceCallback)(uint8_t index, void *param);
-
-
-void halUSBDeviceSetup(void);
-void halUSBDeviceTask(void);
-
-void halUSBDeviceCDCSetup(UsbDeviceCallback callback, void *param);
-void halUSBDeviceCDCTask(void);
-
-
-#ifdef	__cplusplus
-}
-#endif
-
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
+	#include "hal/STM32/halUSBDevice.h"
 
 #endif
+
+
+#endif // __halUSBDevice__
 
