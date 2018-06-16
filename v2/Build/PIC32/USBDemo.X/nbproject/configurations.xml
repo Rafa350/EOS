@@ -17,8 +17,17 @@
             <itemPath>../../../Include/Board/Board_PIC32_USB_STARTER_KIT_I.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="HAL" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halUSB.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halUSBDevice.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halUSBDeviceCDC.h</itemPath>
+            </logicalFolder>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
             <itemPath>../../../Include/HAL/halUSBDevice.h</itemPath>
+            <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
+            <itemPath>../../../Include/HAL/halUSB.h</itemPath>
+            <itemPath>../../../Include/HAL/halUSBDeviceCDC.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <logicalFolder name="f1" displayName="Usb" projectFiles="true">
@@ -27,6 +36,8 @@
               </logicalFolder>
               <itemPath>../../../Include/Services/Usb/eosUsbDevice.h</itemPath>
             </logicalFolder>
+            <itemPath>../../../Include/Services/eosAppLoop.h</itemPath>
+            <itemPath>../../../Include/Services/eosService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
@@ -58,13 +69,15 @@
           <logicalFolder name="f3" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halUSBDevice.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halUSBDeviceCDC.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
             </logicalFolder>
-            <itemPath>../../../Source/HAL/halUSBDevice.c</itemPath>
-            <itemPath>../../../Source/HAL/halUSBDeviceCDC.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
               <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
+              <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
@@ -76,6 +89,7 @@
               <itemPath>../../../Source/Services/Usb/eosUsbDevice.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosService.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
@@ -85,6 +99,7 @@
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
           </logicalFolder>
@@ -104,6 +119,9 @@
               <itemPath>C:\Library\Microchip\Harmony\v2_05_01/framework/driver/usb/usbfs/src/dynamic/drv_usbfs.c</itemPath>
               <itemPath>C:\Library\Microchip\Harmony\v2_05_01/framework/driver/usb/usbfs/src/dynamic/drv_usbfs_device.c</itemPath>
             </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="f4" displayName="Osal" projectFiles="true">
+            <itemPath>../../../../../../../../../../Library/Microchip/Harmony/v2_05_01/framework/osal/src/osal_freertos.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="System" projectFiles="true">
             <logicalFolder name="f1" displayName="Int" projectFiles="true">
@@ -131,7 +149,8 @@
     <Elem>../../../Source/Services</Elem>
     <Elem>../../../Source/HAL</Elem>
     <Elem>../../../Demo/USBDemo</Elem>
-    <Elem>../../../Source/OSAL/FreeRTOS</Elem>
+    <Elem>../../../Source/OSAL</Elem>
+    <Elem>../../../../../../../../../../Library/Microchip/Harmony/v2_05_01/framework/osal/src</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -375,7 +394,7 @@
         <targetDevice>PIC32MX460F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PICkit3PlatformTool</platformTool>
+        <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>2.10</languageToolchainVersion>
         <platform>3</platform>
@@ -418,11 +437,12 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value="-O1"/>
+        <property key="optimization-level" value=""/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value="HARDWARE_PIC32_USB_STARTER_KIT_I"/>
+        <property key="preprocessor-macros"
+                  value="HARDWARE_PIC32_USB_STARTER_KIT_I;OSAL_USE_RTOS"/>
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
@@ -510,7 +530,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value="-O1"/>
+        <property key="optimization-level" value=""/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -604,6 +624,9 @@
         <property key="programoptions.uselvpprogramming" value="false"/>
         <property key="voltagevalue" value="3.25"/>
       </PICkit3PlatformTool>
+      <SKDEPIC32PlatformTool>
+        <property key="whatToProgram" value="all"/>
+      </SKDEPIC32PlatformTool>
     </conf>
   </confs>
 </configurationDescriptor>

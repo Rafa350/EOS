@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "hal/halGPIO.h"
 #include "System/eosApplication.h"
 #include "System/Core/eosTask.h"
 #include "Services/eosAppLoop.h"
@@ -15,8 +16,8 @@ class MyAppLoopService: public AppLoopService {
         MyAppLoopService(Application *application): AppLoopService(application) {}
         
     protected:
-        void setup();
-        void loop();
+        void onSetup();
+        void onLoop();
 };
 
 
@@ -37,28 +38,36 @@ class MyApplication: public Application {
 MyApplication::MyApplication() {
     
     appService = new MyAppLoopService(this);    
-
     usbService = new UsbDeviceService(this);    
     usbCDCDevice = new UsbDeviceCDC(usbService);
 }
 
 
 ///-----------------------------------------------------------------------
-/// \brief Process d'inicialitzacio. El sistema el crida nomes un cop.
+/// \brief Inicialitzacio.
 ///
-void MyAppLoopService::setup() {
+void MyAppLoopService::onSetup() {
     
-    initLED1();
-    initLED2();
+    halGPIOInitializePin(
+        LED_LED1_PORT, 
+        LED_LED1_PIN, 
+        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 
+        HAL_GPIO_AF_NONE);
+    
+    halGPIOInitializePin(
+        LED_LED2_PORT, 
+        LED_LED2_PIN, 
+        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 
+        HAL_GPIO_AF_NONE);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Bucle d'execucio. El sistema el crida periodicament.
+/// \brief Bucle d'execucio
 ///
-void MyAppLoopService::loop() {
-    
-    invLED1();
+void MyAppLoopService::onLoop() {
+
+    halGPIOTogglePin(LED_LED1_PORT, LED_LED1_PIN);
     Task::delay(500);
 }
 

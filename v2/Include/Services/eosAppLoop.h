@@ -23,14 +23,10 @@ namespace eos {
         public:
             AppLoopService(Application *application);
             AppLoopService(Application *application, unsigned stackSize, TaskPriority prioirity);
-            void initialize();
 
         protected:
-            virtual void onSetup();
-            virtual void onRun();
-
-        private:
-            void run(Task *task);
+            void onSetup();
+            void onLoop();
     };
 }
 

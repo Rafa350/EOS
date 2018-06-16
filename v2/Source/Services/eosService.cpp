@@ -38,3 +38,32 @@ Service::~Service() {
     if (application != nullptr)
         application->removeService(this);
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief Funcio d'execucio de la tasca.
+/// \param task: La tasca.
+///
+void Service::run(
+    Task *task) {
+   
+    onSetup();
+    while (true)
+        onLoop();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitzacio per defecte.
+///
+void Service::onSetup() {
+    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Bucle d'execucio per defecte.
+//
+void Service::onLoop() {
+    
+}

@@ -26,10 +26,10 @@ namespace eos {
             UsbDeviceService(Application *application);
             void add(UsbDevice *device);
             void remove(UsbDevice *device);
-            
-        private:
-            void run(Task *task);
-        
+
+        protected:
+            void onSetup();
+            void onLoop();       
     };
     
     class UsbDevice {

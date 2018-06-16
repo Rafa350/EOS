@@ -68,9 +68,11 @@ namespace eos {
             void pulse(DigOutput *output, unsigned width);
             void delayedPulse(DigOutput *output, unsigned delay, unsigned width);
             void cicle(DigOutput *output, unsigned width1, unsigned width2);
+            
+        protected:
+            void onLoop();
 
         private:
-            void run(Task *task);
             void onTimeout(Timer *timer);
             void startTimer(DigOutput *output, unsigned time);
             void stopTimer(DigOutput *output);

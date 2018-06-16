@@ -1,4 +1,4 @@
-#include "HAL/halUSBDevice.h"
+#include "HAL/halUSBDeviceCDC.h"
 #include "usb/usb_device_cdc.h"
 #include "stdint.h"
 #include "stdbool.h"
@@ -6,6 +6,8 @@
 
 #define COM1 USB_DEVICE_CDC_INDEX_0
 #define COM2 USB_DEVICE_CDC_INDEX_1
+
+#define APP_READ_BUFFER_SIZE 1024
 
 
 typedef enum {
@@ -58,10 +60,10 @@ typedef struct {
 } Data;
 
 
-static uint8_t APP_MAKE_BUFFER_DMA_READY readBuffer[APP_READ_BUFFER_SIZE];
-static uint8_t APP_MAKE_BUFFER_DMA_READY writeBuffer[APP_READ_BUFFER_SIZE];
+static uint8_t /*APP_MAKE_BUFFER_DMA_READY*/ readBuffer[APP_READ_BUFFER_SIZE];
+static uint8_t /*APP_MAKE_BUFFER_DMA_READY*/ writeBuffer[APP_READ_BUFFER_SIZE];
 static Data appData;
-static UsbDeviceCallback callback;
+static USBDeviceCallback callback;
 static void *param;
 
 
@@ -242,15 +244,13 @@ static bool APP_StateReset(void) {
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza un dispositiu CDC.
-/// \param callback: Funcio callback.
-/// \param param: Parametres de la funcio callback.
+/// \param info: Parametres de configuracio.
 ///
-void halUSBDeviceCDCSetup(
-    UsbDeviceCallback _callback, 
-    void *_param) {
+void halUSBDeviceCDCInitialize(
+    const USBDeviceCDCInitializeInfo *info) {
     
-    callback = _callback;
-    param =_param = param;
+    callback = info->callback;
+    param = info->param;
     
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
@@ -285,7 +285,7 @@ void halUSBDeviceCDCSetup(
 /// ----------------------------------------------------------------------
 /// \brief Tasca de control del dispositiu CDC.
 ///
-void halUSBDeviceCDCTask(void) {
+void halUSBDeviceCDCTask() {
     
     // Update the application state machine based
     // on the current state 

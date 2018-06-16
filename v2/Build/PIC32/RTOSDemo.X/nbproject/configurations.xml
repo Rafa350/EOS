@@ -12,6 +12,10 @@
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
+          <logicalFolder name="f3" displayName="Board" projectFiles="true">
+            <itemPath>../../../Include/Board/board.h</itemPath>
+            <itemPath>../../../Include/Board/board_PIC32_USB_STARTER_KIT_I.h</itemPath>
+          </logicalFolder>
           <logicalFolder name="f2" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>

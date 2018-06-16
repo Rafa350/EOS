@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "hal/halUSBDevice.h"
 #include "peripheral/int/plib_int.h"
 #include "driver/usb/usbfs/drv_usbfs.h"
 #include "usb/usb_device.h"
@@ -8,6 +9,9 @@
 static SYS_MODULE_OBJ drvUSBObject;
 static SYS_MODULE_OBJ usbDevObject0;
 static uint8_t __attribute__((aligned(512))) endPointTable[DRV_USBFS_ENDPOINTS_NUMBER * 32];
+
+extern const USB_DEVICE_FUNCTION_REGISTRATION_TABLE functionRegistrationTable[];
+extern const USB_DEVICE_MASTER_DESCRIPTOR usbMasterDescriptor;
 
 static const DRV_USBFS_INIT usbInitData = {
     .endpointTable = endPointTable,
@@ -31,14 +35,12 @@ static const USB_DEVICE_INIT usbDevInitData = {
 };
 
 
-extern const USB_DEVICE_FUNCTION_REGISTRATION_TABLE functionRegistrationTable[];
-extern const USB_DEVICE_MASTER_DESCRIPTOR usbMasterDescriptor;
-
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el modul USB en modus dispositiu.
 ///
-void halUSBDeviceSetup(void) {
+void halUSBDeviceInitialize(
+    const USBDeviceInitializeInfo *info) {
 
     PLIB_INT_VectorPrioritySet(INT_ID_0, INT_VECTOR_USB1, INT_PRIORITY_LEVEL4);
     PLIB_INT_VectorSubPrioritySet(INT_ID_0, INT_VECTOR_USB1, INT_SUBPRIORITY_LEVEL0);
@@ -52,7 +54,7 @@ void halUSBDeviceSetup(void) {
 /// \brief Procesa les tasques del modul USB. Cal cridar-la 
 /// periodicament.
 //
-void halUSBDeviceTask(void) {
+void halUSBDeviceTask() {
 
     DRV_USBFS_Tasks(drvUSBObject);
     USB_DEVICE_Tasks(usbDevObject0);

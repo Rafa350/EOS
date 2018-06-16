@@ -1,13 +1,9 @@
 #include "eos.h"
 #include "Services/Usb/eosUsbDevice.h"
-#include "HAL/halUSBDevice.h"
+#include "HAL/halUSBDeviceCDC.h"
 
 
 using namespace eos;
-
-
-extern "C" void APP_Initialize(void);
-extern "C" void APP_Tasks(void);
 
 
 /// ----------------------------------------------------------------------
@@ -25,7 +21,11 @@ UsbDeviceCDC::UsbDeviceCDC(UsbDeviceService *service):
 ///
 void UsbDeviceCDC::initialize() {
     
-    halUSBDeviceCDCSetup(nullptr, nullptr);
+    USBDeviceCDCInitializeInfo info;
+    
+    info.callback = nullptr;
+    info.param = nullptr;    
+    halUSBDeviceCDCInitialize(&info);
 }
 
 

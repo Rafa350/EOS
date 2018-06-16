@@ -40,46 +40,12 @@ AppLoopService::AppLoopService(
 /// ---------------------------------------------------------------------
 /// \brief Inicialitzacio.
 ///
-void AppLoopService::initialize() {
-
-	if (!initialized) {
-		onSetup();
-		initialized = true;
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa les tasques del servei.
-/// \param task: Punter a la tasca.
-///
-void AppLoopService::run(
-    Task *task) {
-
-	initialize();
-
-    while (true) {
-        onRun();
-
-#if configUSE_TIME_SLICING == 0
-        Task::delay(100);
-#endif
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa la inicialitzacio.
-///
 void AppLoopService::onSetup() {
-
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa l'execucio. Es crida continuament.
+/// \brief Bucle d'execucio.
 ///
-void AppLoopService::onRun() {
-
+void AppLoopService::onLoop() {
 }
-

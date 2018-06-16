@@ -58,42 +58,37 @@ void DigOutputService::remove(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Executa la tasca de control de servei.
-/// \param task: La tasca que s'esta executant.
+/// \brief Bucle d'execucio.
 ///
-void DigOutputService::run(
-    Task *task) {
+void DigOutputService::onLoop(){
 
-    while (true) {
+    Command command;
+    if (commandQueue.get(command, (unsigned) -1)) {
+        switch (command.action) {
+            case Action::clear:
+                doClearCommand(&command);
+                break;
 
-        Command command;
-        if (commandQueue.get(command, (unsigned) -1)) {
-            switch (command.action) {
-                case Action::clear:
-                    doClearCommand(&command);
-                    break;
+            case Action::set:
+                doSetCommand(&command);
+                break;
 
-                case Action::set:
-                    doSetCommand(&command);
-                    break;
+            case Action::toggle:
+                doToggleCommand(&command);
+                break;
 
-                case Action::toggle:
-                    doToggleCommand(&command);
-                    break;
+            case Action::pulse:
+                doPulseCommand(&command);
+                break;
 
-                case Action::pulse:
-                    doPulseCommand(&command);
-                    break;
+            case Action::delayedClear:
+            case Action::delayedSet:
+            case Action::delayedToggle:
+                break;
 
-                case Action::delayedClear:
-                case Action::delayedSet:
-                case Action::delayedToggle:
-                	break;
-
-                case Action::delayedPulse:
-                    doDelayedPulseCommand(&command);
-                    break;
-            }
+            case Action::delayedPulse:
+                doDelayedPulseCommand(&command);
+                break;
         }
     }
 }

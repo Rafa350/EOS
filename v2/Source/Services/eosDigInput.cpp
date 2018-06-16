@@ -44,6 +44,7 @@ void DigInputService::add(
 /// ----------------------------------------------------------------------
 /// \brieg Elimina una entrada del servei.
 /// \param La entrada a eliminar.
+///
 void DigInputService::remove(
     DigInput *input) {
     
@@ -55,43 +56,45 @@ void DigInputService::remove(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Tasca de control del servei.
-/// \param task: La tasca que s'esta executant.
+/// \brief Inicialitzacio.
 ///
-void DigInputService::run(
-    Task *task) {
+void DigInputService::onSetup() {
     
-    unsigned tc = Task::getTickCount();
+    tc = Task::getTickCount();
+}
 
-    while (true) {
-        
-        Task::delayUntil(10, &tc);
-        
-        DigInputListIterator iterator(inputs);
-        while (iterator.hasNext()) {
-            
-            DigInput *input = iterator.current();
-            bool changed = false;
-            
-            input->pattern <<= 1;
-            if (halGPIOReadPin(input->port, input->pin))
-                input->pattern |= 1;
 
-            if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
-                changed = true;
-                input->state = true;
-            }
-            else if ((input->pattern & PATTERN_MASK) == PATTERN_OFF) {
-                changed = true;
-                input->state = false;
-            }
-            
-            if (changed && (input->evChange != nullptr)) 
-                input->evChange->execute(input);
-            
-            iterator.next();
+/// ----------------------------------------------------------------------
+/// \brief Bucle d'execucio.
+///
+void DigInputService::onLoop() {
+    
+    Task::delayUntil(10, &tc);
+
+    DigInputListIterator iterator(inputs);
+    while (iterator.hasNext()) {
+
+        DigInput *input = iterator.current();
+        bool changed = false;
+
+        input->pattern <<= 1;
+        if (halGPIOReadPin(input->port, input->pin))
+            input->pattern |= 1;
+
+        if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
+            changed = true;
+            input->state = true;
         }
-    }    
+        else if ((input->pattern & PATTERN_MASK) == PATTERN_OFF) {
+            changed = true;
+            input->state = false;
+        }
+
+        if (changed && (input->evChange != nullptr)) 
+            input->evChange->execute(input);
+
+        iterator.next();
+    }
 }
 
 

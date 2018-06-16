@@ -17,7 +17,7 @@ class LedLoopService: public AppLoopService {
 		LedLoopService(Application *application, DigOutput *output1, DigOutput *output2);
 
     protected:
-		void onRun();
+		void onLoop();
 };
 
 
@@ -152,9 +152,9 @@ LedLoopService::LedLoopService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Bucle principal del proces de control de la sortida.
+/// \brief Bucle d'execucio.
 ///
-void LedLoopService::onRun() {
+void LedLoopService::onLoop() {
 
 	while (true) {
         output1->pulse(500);

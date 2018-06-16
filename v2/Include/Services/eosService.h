@@ -23,6 +23,13 @@ namespace eos {
             Application *application;
             const char *name;
             Task task;
+            
+        private :
+            void run(Task *task);
+            
+        protected:
+            virtual void onSetup();
+            virtual void onLoop();
 
         public :
             Service(const ServiceInitializeInfo *init);

@@ -33,15 +33,17 @@ namespace eos {
             typedef ListIterator<DigInput*> DigInputListIterator;
 
         private:
+            unsigned tc;
             DigInputList inputs;
+            
+        protected:
+            void onSetup();
+            void onLoop();
 
         public:
             DigInputService(Application *application, const DigInputServiceInitializeInfo *info);
             void add(DigInput *input);
             void remove(DigInput *input);
-
-        private:
-            void run(Task *task);
     };
 
     /// \brief Clase que impementa una entrada digital

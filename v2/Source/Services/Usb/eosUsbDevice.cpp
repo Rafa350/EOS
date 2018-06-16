@@ -21,25 +21,33 @@ UsbDeviceService::UsbDeviceService(
 }
 
 
+
 /// ----------------------------------------------------------------------
-/// \brief Procesa les tasques del servei
+/// \brief Inicialitzacio.
 ///
-void UsbDeviceService::run(
-    Task *task) {
+void UsbDeviceService::onSetup() {
     
+    USBDeviceInitializeInfo info;
+    
+    info.id = HAL_USB_PORT_0;
+    halUSBDeviceInitialize(&info);
+
     UsbDeviceListIterator iterator(devices);
-
-    halUSBDeviceSetup();
-
     for (iterator.first(); iterator.hasNext(); iterator.next())
         iterator.current()->initialize();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Bucle d'execucio.
+///
+void UsbDeviceService::onLoop() {
+       
+    halUSBDeviceTask();
     
-    while (true) {
-        halUSBDeviceTask();
-        
-        for (iterator.first(); iterator.hasNext(); iterator.next())
-            iterator.current()->process();
-    }
+    UsbDeviceListIterator iterator(devices);
+    for (iterator.first(); iterator.hasNext(); iterator.next())
+        iterator.current()->process();
 }
 
 
