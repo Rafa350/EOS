@@ -17,9 +17,6 @@ namespace eos {
     ///        de l'aplicacio.
     ///
     class AppLoopService: public Service {
-    	private:
-    		bool initialized;
-
         public:
             AppLoopService(Application *application);
             AppLoopService(Application *application, unsigned stackSize, TaskPriority prioirity);
