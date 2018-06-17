@@ -79,11 +79,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/App/rtos_hooks.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/rtos_hooks.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -329,6 +324,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/OSAL/osalMemory.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalMemory.c</locationURI>
@@ -422,6 +422,11 @@
 			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>

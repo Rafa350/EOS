@@ -16,8 +16,7 @@ static const TaskPriority priority = TaskPriority::normal;
 AppLoopService::AppLoopService(
     Application *application):
 
-    Service(application, serviceName, stackSize, priority),
-	initialized(false) {
+    Service(application, serviceName, stackSize, priority) {
 }
 
 
@@ -28,12 +27,11 @@ AppLoopService::AppLoopService(
 /// \param priority: Prioritat
 ///
 AppLoopService::AppLoopService(
-    Application *application, 
-    unsigned stackSize, 
+    Application *application,
+    unsigned stackSize,
     TaskPriority priority):
 
-    Service(application, serviceName, stackSize, priority),
-	initialized(false) {
+    Service(application, serviceName, stackSize, priority) {
 }
 
 

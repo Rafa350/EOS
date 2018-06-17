@@ -73,11 +73,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/App/rtos_hooks.c</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/rtos_hooks.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -268,6 +263,11 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/OSAL/osalThread.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/eosAppLoop.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoop.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/eosService.h</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Services/eosService.h</locationURI>
@@ -284,6 +284,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -416,6 +421,11 @@
 			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/HAL/STM32/halTMR.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>

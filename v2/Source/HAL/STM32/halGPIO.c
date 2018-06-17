@@ -142,7 +142,7 @@ static GPIO_InitTypeDef *PreparePortInit(
 	const GPIOInitializePortInfo *info,
 	GPIO_InitTypeDef *init) {
 
-	init->Pin = 1 << info->mask;
+	init->Pin = info->mask;
 	init->Mode = modeTbl[(info->options & HAL_GPIO_MODE_MASK) >> HAL_GPIO_MODE_POS];
 	init->Speed = speedTbl[(info->options & HAL_GPIO_SPEED_MASK) >> HAL_GPIO_SPEED_POS];
 	init->Pull = pupdTbl[(info->options & HAL_GPIO_PULL_MASK) >> HAL_GPIO_PULL_POS];
@@ -164,25 +164,16 @@ void halGPIOInitializePins(
 	eosArgumentIsNotNull(info);
 	eosArgumentIsNotZero(count);
 
-	for (uint8_t i = 0; i < count; i++)
-		halGPIOInitializePin(&info[i]);
-}
+	for (uint8_t i = 0; i < count; i++) {
 
+		const GPIOInitializePinInfo *pInfo = &info[i];
 
-/// ----------------------------------------------------------------------
-/// \brief Configura un pin individual.
-/// \param info: Informacio de configuracio.
-///
-void halGPIOInitializePin(
-	const GPIOInitializePinInfo *info) {
+		EnableClock(pInfo->port);
 
-	eosArgumentIsNotNull(info);
-
-	EnableClock(info->port);
-
-	GPIO_InitTypeDef gpioInit;
-	PreparePinInit(info, &gpioInit);
-	HAL_GPIO_Init(gpioTbl[info->port], &gpioInit);
+		GPIO_InitTypeDef gpioInit;
+		PreparePinInit(pInfo, &gpioInit);
+		HAL_GPIO_Init(gpioTbl[pInfo->port], &gpioInit);
+	}
 }
 
 
@@ -198,25 +189,16 @@ void halGPIOInitializePorts(
 	eosArgumentIsNotNull(info);
 	eosArgumentIsNotZero(count);
 
-	for (uint8_t i = 0; i < count; i++)
-		halGPIOInitializePort(&info[i]);
-}
+	for (uint8_t i = 0; i < count; i++) {
 
+		const GPIOInitializePortInfo *pInfo = &info[i];
 
-/// ----------------------------------------------------------------------
-/// \brief Configura un port individual.
-/// \param info: Informacio de configuracio.
-///
-void halGPIOInitializePort(
-	const GPIOInitializePortInfo *info) {
+		EnableClock(pInfo->port);
 
-	eosArgumentIsNotNull(info);
-
-	EnableClock(info->port);
-
-	GPIO_InitTypeDef init;
-	PreparePortInit(info, &init);
-	HAL_GPIO_Init(gpioTbl[info->port], &init);
+		GPIO_InitTypeDef init;
+		PreparePortInit(pInfo, &init);
+		HAL_GPIO_Init(gpioTbl[pInfo->port], &init);
+	}
 }
 
 
@@ -227,7 +209,7 @@ void halGPIOInitializePort(
 /// \param options: Opcions.
 /// \param function: Funcio del pin.
 ///
-void halGPIOInitialize(
+void halGPIOInitializePin(
 	uint8_t port,
 	uint8_t pin,
 	uint32_t options,
@@ -239,5 +221,5 @@ void halGPIOInitialize(
 	info.options = options;
 	info.alt = alt;
 
-	halGPIOInitializePin(&info);
+	halGPIOInitializePins(&info, 1);
 }

@@ -24,7 +24,7 @@ class LedLoopService: public AppLoopService {
 
     protected:
     	void onSetup();
-        void onRun();
+        void onLoop();
 };
 
 
@@ -45,7 +45,7 @@ class DisplayLoopService: public AppLoopService {
 
     protected:
         void onSetup();
-        void onRun();
+        void onLoop();
 
     private:
         void drawBackground(const char *title);
@@ -59,9 +59,6 @@ class MyApplication: public Application {
 
     public :
         MyApplication();
-
-    protected:
-        void onInitialize();
 };
 
 
@@ -75,33 +72,29 @@ MyApplication::MyApplication() {
 }
 
 
-/// ---------------------------------------------------------------------
-/// \brief Processa la inicialitzacio de l'aplicacio
-///
-void MyApplication::onInitialize() {
-
-	ledService->initialize();
-	displayService->initialize();
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief Procesa la inicialitzacio de la tasca.
 ///
 void LedLoopService::onSetup() {
 
-	halGPIOModePinOutput(LED_LED1_PORT, LED_LED1_PIN);
-	halGPIOModePinOutput(LED_LED2_PORT, LED_LED2_PIN);
+	halGPIOInitializePin(
+		LED_LED1_PORT,
+		LED_LED1_PIN,
+		HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR,
+		HAL_GPIO_AF_NONE);
 
-	halGPIOClearPin(LED_LED1_PORT, LED_LED1_PIN);
-	halGPIOSetPin(LED_LED2_PORT, LED_LED2_PIN);
+	halGPIOInitializePin(
+		LED_LED2_PORT,
+		LED_LED2_PIN,
+		HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET,
+		HAL_GPIO_AF_NONE);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
-void LedLoopService::onRun() {
+void LedLoopService::onLoop() {
 
 	while (true) {
 
@@ -137,7 +130,7 @@ void DisplayLoopService::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
-void DisplayLoopService::onRun() {
+void DisplayLoopService::onLoop() {
 
     int ticks;
 
