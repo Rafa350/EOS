@@ -2,8 +2,8 @@
 #include "hal/halGPIO.h"
 
 
-#define USB_USE_FS
-//#define USB_USE_HS
+//#define USB_USE_FS
+#define USB_USE_HS
 //#define USB_USE_HS_PHY
 
 
@@ -32,26 +32,26 @@ static void InitializeClock() {
 void halUSBInitialize(
     const USBInitializeInfp *info) {
     
-    GPIOInitializePortInfo portInfo;
+    static const GPIOInitializePinInfo usb1Info[] = {
+        { USB_USB1_DP_PORT,     USB_USB1_DP_PIN, 
+            HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPED_HIGH, USB_USB1_DP_AF },
+        { USB_USB1_DM_PORT,     USB_USB1_DM_PIN, 
+            HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPED_HIGH, USB_USB1_DM_AF },
+        { USB_USB1_ID_PORT,     USB_USB1_ID_PIN, 
+            HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPED_HIGH, USB_USB1_ID_AF },
+        { USB_USB1_VBUS_PORT,   USB_USB1_VBUS_PIN, 
+            HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPED_HIGH, USB_USB1_VBUS_AF },
+        { USB_USB1_VBUSEN_PORT, USB_USB1_VBUSEN_PIN, 
+            HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPED_HIGH, USB_USB1_VBUSEN_AF },
+    };
     
-    switch (info->id) {
+    switch (info->port) {
         
 #ifdef USB_USE_FS        
-        case HAL_USB_PORT_FS:
+        case HAL_USB_PORT_0:
         
-            // Configura els pins DM, DP i VBUS
-            portInfo.Port = HAL_GPIO_PORT_A;
-            portInfo.Mask = HAL_GPIO_POS_9 | HAL_GPIO_POS_11 | HAL_GPIO_POS_12;
-            portInfo.Options = HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_HIGH;
-            portInfo.Alt = HAL_GPIO_AF10_OGT_FS;
-            halGPIOInitializePorts(&portInfo, 1);
-
-            // Configura el pin ID
-            portInfo.Port = HAL_GPIO_PORT_A;
-            portInfo.Mask = HAL_GPIO_POS_10;
-            portInfo.Options = HAL_GPIO_MODE_ALT_OD | HAL_GPIO_PULL_UP | HAL_GPIO_SPEED_HIGH;
-            portInfo.Alt = HAL_GPIO_AF10_OGT_FS;
-            halGPIOInitializePorts(&portInfo, 1);
+            // Configura els pins
+            //halGPIOInitializePins(usb0Info, sizeof(usb0Info) / sizeof(usb0Info[0]));
 
             // Activa el CLK del modul
             __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
@@ -63,14 +63,10 @@ void halUSBInitialize(
 #endif            
     
 #if defined(USB_USE_HS) || defined(USB_USE_HS_PHY)
-        case HAL_USB_PORT_HS:
+        case HAL_USB_PORT_1:
 
-            // Configura els pins DB, DP, VBUS i ID
-            portInfo.Port = HAL_GPIO_PORT_B;
-            portInfo.Mask = HAL_GPIO_POS_12 | HAL_GPIO_POS_13 | HAL_GPIO_POS_14 | HAL_GPIO_POS_15;
-            portInfo.Options = HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_HIGH;
-            portInfo.Alt = HAL_GPIO_AF10_OGT_HS;
-            halGPIOInitializePorts(&portInfo, 1);
+            // Configura els pins
+            halGPIOInitializePins(usb1Info, sizeof(usb1Info) / sizeof(usb1Info[0]));
 
             // Activa el CLK del modul
             __HAL_RCC_USB_OTG_HS_CLK_ENABLE();

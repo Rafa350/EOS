@@ -18,15 +18,15 @@ extern "C" {
 #endif
 
 
-typedef uint8_t USBId;
+typedef uint8_t USBPort;
 
 typedef struct {
-    USBId id;
+    USBPort port;
 } USBInitializeInfo;
 
 
-#define HAL_USB_PORT_0            ((USBId) 0)
-#define HAL_USB_PORT_1            ((USBId) 1)
+#define HAL_USB_PORT_0            ((USBPort) 0)
+#define HAL_USB_PORT_1            ((USBPort) 1)
 
 #define HAL_USB_PORT_FS           HAL_USB_PORT_0
 #define HAL_USB_PORT_HS           HAL_USB_PORT_1
