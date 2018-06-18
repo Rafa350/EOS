@@ -15,7 +15,7 @@ extern "C" {
 
 
 typedef struct {
-    USBId id;
+    USBPort id;
 } USBDeviceInitializeInfo;
 
 

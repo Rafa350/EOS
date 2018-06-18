@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 
-typedef uint8_t USBId;
+typedef uint8_t USBPort;
 
 
 #define HAL_USB_PORT_0            ((USBId) 0)
