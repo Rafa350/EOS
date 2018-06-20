@@ -76,8 +76,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo\STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.1624423286" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.267680408" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
@@ -135,8 +135,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo\STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp.1035456352" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s.1909533654" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s"/>
@@ -156,7 +156,7 @@
 							</tool>
 							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.679265776" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver"/>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.419180680" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler">
-								<option id="gnu.both.asm.option.include.paths.179831839" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+								<option id="gnu.both.asm.option.include.paths.179831839" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/device}&quot;"/>
@@ -196,8 +196,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo\STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.573915581" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1732751629" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
@@ -295,8 +295,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo\STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.1499130928" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.563119599" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
@@ -353,8 +353,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo\STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp.1875898107" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s.2119107259" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s"/>
@@ -414,8 +414,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\MPLab\EOS\v2\Demo\DigIOServiceDemo\STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F4_V1.19.0\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.492286569" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.350160444" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>

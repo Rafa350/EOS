@@ -131,37 +131,37 @@
 		<link>
 			<name>inc/Framework/FreeRTOS/FreeRTOS.h</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/list.h</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/include/list.h</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/include/list.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/portable.h</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/portmacro.h</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/queue.h</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/task.h</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/include/task.h</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/include/task.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/timers.h</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h</location>
 		</link>
 		<link>
 			<name>src/App/STM32F429/Initialize_STM32F429I-DISC1.cpp</name>
@@ -201,32 +201,32 @@
 		<link>
 			<name>src/Framework/FreeRTOS/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</location>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/list.c</location>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</location>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/queue.c</location>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</location>
 		</link>
 		<link>
 			<name>src/Framework/FreeRTOS/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F4_V1.19.0/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
+			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/timers.c</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board/Board.h</name>
@@ -329,26 +329,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/OSAL/osalMemory.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalMemory.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/OSAL/osalMsgQueue.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalMsgQueue.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/OSAL/osalThread.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalThread.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/OSAL/osalTimer.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalTimer.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoop.cpp</locationURI>
@@ -424,6 +404,26 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMemory.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/FreeRTOS/osalMemory.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMsgQueue.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/FreeRTOS/osalMsgQueue.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalThread.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/FreeRTOS/osalThread.c</location>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTimer.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/FreeRTOS/osalTimer.c</location>
+		</link>
+		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
@@ -474,4 +474,10 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTimer.cpp</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>ROOT</name>
+			<value></value>
+		</variable>
+	</variableList>
 </projectDescription>

@@ -14,7 +14,7 @@ class Led1LoopService: public AppLoopService {
 
 	protected:
 		void onSetup();
-		void onRun();
+		void onLoop();
 };
 
 
@@ -25,7 +25,7 @@ class Led2LoopService: public AppLoopService {
 
 	protected:
 		void onSetup();
-		void onRun();
+		void onLoop();
 };
 
 
@@ -33,9 +33,6 @@ class MyApplication: public Application {
 	private:
 		Led1LoopService *led1Service;
 		Led2LoopService *led2Service;
-
-	protected:
-		void onInitialize();
 
 	public:
 		MyApplication();
@@ -52,33 +49,23 @@ MyApplication::MyApplication() {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief Procesa la inicialitzacio de l'aplicacio.
-///
-void MyApplication::onInitialize() {
-
-	led1Service->initialize();
-	led2Service->initialize();
-}
-
-
 /// ---------------------------------------------------------------------
 ///\bried Inicialitzacio del proces Led1
 ///
 void Led1LoopService::onSetup() {
 
-	halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
-	halGPIOSetPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+	halGPIOInitializePinOutput(LED_LED1_PORT, LED_LED1_PIN);
+	halGPIOSetPin(LED_LED1_PORT, LED_LED1_PIN);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Bucle del proces Led1
 ///
-void Led1LoopService::onRun() {
+void Led1LoopService::onLoop() {
 
 	while (true) {
-		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+		halGPIOTogglePin(LED_LED1_PORT, LED_LED1_PIN);
 		Task::delay(500);
 	}
 }
@@ -89,17 +76,17 @@ void Led1LoopService::onRun() {
 ///
 void Led2LoopService::onSetup() {
 
-	halGPIOInitializePinOutput(LEDS_LD2_PORT, LEDS_LD2_PIN);
-	halGPIOSetPin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+	halGPIOInitializePinOutput(LED_LED2_PORT, LED_LED2_PIN);
+	halGPIOSetPin(LED_LED2_PORT, LED_LED2_PIN);
 }
 
 /// ----------------------------------------------------------------------
 /// \brief Bucle del proces Led2
 ///
-void Led2LoopService::onRun() {
+void Led2LoopService::onLoop() {
 
 	while (true) {
-		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+		halGPIOTogglePin(LED_LED2_PORT, LED_LED2_PIN);
 		Task::delay(480);
 	}
 }
