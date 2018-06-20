@@ -68,11 +68,12 @@
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
               <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalMemory.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalMsgQueue.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalSemaphore.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalThread.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalTimer.c</itemPath>
             </logicalFolder>
-            <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
-            <itemPath>../../../Source/OSAL/osalMemory.c</itemPath>
-            <itemPath>../../../Source/OSAL/osalTimer.c</itemPath>
-            <itemPath>../../../Source/OSAL/osalMsgQueue.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>

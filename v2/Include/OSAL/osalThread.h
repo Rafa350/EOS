@@ -18,6 +18,7 @@ extern "C" {
 #endif
 
 
+typedef uint32_t TaskOptions;
 typedef void (*TaskFunction)(void *params);
 
 typedef struct {                       // Parametres d'inicialitzacio
@@ -25,18 +26,19 @@ typedef struct {                       // Parametres d'inicialitzacio
 	TaskFunction function;             // -Funcio a executar
 	void *params;                      // -Parametres de la funcio
 	unsigned stackSize;                // -Tamany de la pila
-	uint32_t options;                  // -Opcions
+	TaskOptions options;               // -Opcions
 } TaskInitializeInfo;
 
 typedef struct TASK *HTask;
 
 // Prioritat de la tasca
-#define OSAL_TASK_PRIORITY_OFFSET      0
-#define OSAL_TASK_PRIORITY_MASK        ((uint32_t)0b11 << OSAL_TASK_PRIORITY_OFFSET)
-#define OSAL_TASK_PRIORITY_IDLE	       ((uint32_t)0 << OSAL_TASK_PRIORITY_OFFSET)
-#define OSAL_TASK_PRIORITY_LOW	       ((uint32_t)1 << OSAL_TASK_PRIORITY_OFFSET)
-#define OSAL_TASK_PRIORITY_NORMAL      ((uint32_t)2 << OSAL_TASK_PRIORITY_OFFSET)
-#define OSAL_TASK_PRIORITY_HIGH        ((uint32_t)3 << OSAL_TASK_PRIORITY_OFFSET)
+#define OSAL_TASK_PRIORITY_POS         0
+#define OSAL_TASK_PRIORITY_MASK        ((TaskOptions)0b11 << OSAL_TASK_PRIORITY_POS)
+
+#define OSAL_TASK_PRIORITY_IDLE	       ((TaskOptions)0 << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_LOW	       ((TaskOptions)1 << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_NORMAL      ((TaskOptions)2 << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_HIGH        ((TaskOptions)3 << OSAL_TASK_PRIORITY_POS)
 
 
 HTask osalTaskCreate(const TaskInitializeInfo *info);

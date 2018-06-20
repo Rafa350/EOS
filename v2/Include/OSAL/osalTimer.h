@@ -17,6 +17,17 @@ extern "C" {
 #endif
 
 
+    typedef struct TIMER *HTimer;
+
+typedef uint32_t TimerOptions;
+typedef void (*TimerCallback)(HTimer hTimer);
+
+typedef struct {
+	TimerOptions options;
+	TimerCallback callback;
+	void *context;
+} TimerInitializeInfo;
+
 #define OSAL_TIMER_BLOCK               ((unsigned) -1)
 #define OSAL_TIMER_NOBLOCK             ((unsigned) 0)
 
@@ -24,18 +35,8 @@ extern "C" {
 #define OSAL_TIMER_AUTO_BITS           0b1
 #define OSAL_TIMER_AUTO_MASK 	       (OSAL_TIMER_AUTO_BITS << OSAL_TIMER_AUTO_POS)
     
-#define OSAL_TIMER_AUTO_OFF            ((uint32_t)0 << OSAL_TIMER_AUTO_POS)
-#define OSAL_TIMER_AUTO_ON             ((uint32_t)1 << OSAL_TIMER_AUTO_POS)
-
-typedef struct TIMER *HTimer;
-
-typedef void (*TimerCallback)(HTimer hTimer);
-
-typedef struct {
-	uint32_t options;
-	TimerCallback callback;
-	void *context;
-} TimerInitializeInfo;
+#define OSAL_TIMER_AUTO_OFF            ((TimerOptions)0 << OSAL_TIMER_AUTO_POS)
+#define OSAL_TIMER_AUTO_ON             ((TimerOptions)1 << OSAL_TIMER_AUTO_POS)
 
 
 HTimer osalTimerCreate(const TimerInitializeInfo *info);
