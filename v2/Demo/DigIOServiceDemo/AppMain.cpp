@@ -116,6 +116,7 @@ void MyApplication::digInput1_OnChange(DigInput *input) {
         digOutput1->pulse(500);
 }
 
+
 /// --------------------------------------------------------------------
 /// \brief Procesa el event OnChange.
 /// \param input: La entrada que ha produit l'event.
@@ -125,6 +126,8 @@ void MyApplication::digInput2_OnChange(DigInput *input) {
     if (!input->get())
         digOutput2->pulse(500);
 }
+
+
 /// --------------------------------------------------------------------
 /// \brief Procesa el event OnChange.
 /// \param input: La entrada que ha produit l'event.
@@ -134,6 +137,7 @@ void MyApplication::digInput3_OnChange(DigInput *input) {
     if (!input->get())
         digOutput3->pulse(500);
 }
+
 
 /// ---------------------------------------------------------------------
 /// \brief Constructor.

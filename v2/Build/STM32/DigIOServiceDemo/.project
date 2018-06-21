@@ -131,7 +131,7 @@
 		<link>
 			<name>inc/Framework/FreeRTOS/FreeRTOS.h</name>
 			<type>1</type>
-			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h</location>
+			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/list.h</name>
@@ -406,22 +406,22 @@
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMemory.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/FreeRTOS/osalMemory.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMemory.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMsgQueue.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/FreeRTOS/osalMsgQueue.c</location>
+			<location>C:/Projectes/MPLAB/EOS/v2/Source/OSAL/FreeRTOS/osalMsgQueue.c</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalThread.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/FreeRTOS/osalThread.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalThread.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTimer.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/OSAL/FreeRTOS/osalTimer.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTimer.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>

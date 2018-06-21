@@ -133,9 +133,9 @@ namespace eos {
     template <typename T>
     class ListIterator {
         private:
+            IList<T> &list;
             unsigned index;
             unsigned count;
-            IList<T> &list;
             
         public:
             /// \brief: Contructor.
