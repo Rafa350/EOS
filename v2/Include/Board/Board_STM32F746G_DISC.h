@@ -273,4 +273,3 @@
 #define FT5336_I2C_MODULE         HAL_I2C_ID_3
 
 #endif // __board_SMT32F746G_DISC__
-

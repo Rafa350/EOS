@@ -36,4 +36,3 @@
 
 
 #endif // __board_PIC32_USB_STARTER_KIT_I__
-
