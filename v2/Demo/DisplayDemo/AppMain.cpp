@@ -39,8 +39,8 @@ class DisplayLoopService: public AppLoopService {
     public:
         DisplayLoopService(Application *application):
             AppLoopService(application),
-			display(nullptr),
-			driver(nullptr) {
+			driver(nullptr),
+			display(nullptr) {
         }
 
     protected:

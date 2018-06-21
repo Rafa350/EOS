@@ -411,7 +411,7 @@
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMsgQueue.c</name>
 			<type>1</type>
-			<location>C:/Projectes/MPLAB/EOS/v2/Source/OSAL/FreeRTOS/osalMsgQueue.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMsgQueue.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalThread.c</name>

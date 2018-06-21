@@ -3,10 +3,6 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.423783525">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.423783525" moduleId="org.eclipse.cdt.core.settings" name="Debug">
-				<macros>
-					<stringMacro name="FreeRTOSPath" type="VALUE_PATH_ANY" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source"/>
-					<stringMacro name="EOSPath" type="VALUE_PATH_ANY" value="C:\Users\Rafael\Documents\Projectes\MPLab\EOS/v2"/>
-				</macros>
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -31,15 +27,15 @@
 								<option id="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level.427704087" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.c.optimization.level.debug" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.229389369" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1929211454" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo/STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/device}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/HAL_Driver/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.923864785" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -59,15 +55,15 @@
 								<option id="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level.223767817" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.cpp.optimization.level.debug" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.1879526958" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1458549385" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo/STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/device}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/HAL_Driver/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1888119308" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -99,12 +95,12 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.1550377916" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver"/>
 							<tool command="as" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GASErrorParser" id="fr.ac6.managedbuild.tool.gnu.cross.assembler.206312387" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.1989270275" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo/STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.331921847" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.889642721" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
@@ -166,15 +162,15 @@
 								<option id="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level.716582846" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.2123022742" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.54227145" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo/STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/device}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/HAL_Driver/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.74815007" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -193,15 +189,15 @@
 								<option id="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level.1471720413" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.cpp.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.886283921" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.186722617" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo/STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/CMSIS/device}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/HAL_Driver/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.2013543592" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -232,17 +228,24 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.3636361" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver"/>
 							<tool errorParsers="org.eclipse.cdt.core.GASErrorParser" id="fr.ac6.managedbuild.tool.gnu.cross.assembler.1546001645" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.2104652553" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Demo/DisplayDemo/STM32F429&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${EOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FreeRTOSPath}/portable/GCC/ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.638393489" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.614204865" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
 							</tool>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release.928751656" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release">
+								<option id="gnu.both.asm.option.include.paths.670260917" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.167994587" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.31923424" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
 							</tool>

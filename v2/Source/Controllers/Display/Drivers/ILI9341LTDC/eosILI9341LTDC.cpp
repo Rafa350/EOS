@@ -309,7 +309,6 @@ void ILI9341LTDC_Driver::displayInit() {
 
 	// Inicialitza el controlador de video, dma, etc
 	//
-	gpioInitialize();
 	ltdcInitialize();
 	dma2dInitialize();
 }
@@ -466,7 +465,7 @@ void ILI9341LTDC_Driver::lcdWriteData(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el controlador de video
 ///
-void ILI9341LTDC_Driver::gpioInitialize() {
+void ILI9341LTDC_Driver::ltdcInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
     	{ ILI9341LTDC_DE_PORT,     ILI9341LTDC_DE_PIN,
@@ -518,13 +517,6 @@ void ILI9341LTDC_Driver::gpioInitialize() {
 	// Inicialitza el modul GPIO
 	//
 	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Inicialitza el controlador de video
-///
-void ILI9341LTDC_Driver::ltdcInitialize() {
 
 	// Inicialitza rellotge del modul LTDC
 	//

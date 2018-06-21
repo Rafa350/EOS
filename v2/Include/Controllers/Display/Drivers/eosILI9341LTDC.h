@@ -53,7 +53,6 @@ namespace eos {
             void writeCommands(const uint8_t *dada);
 
         private:
-            void gpioInitialize();
             void ltdcInitialize();
             void dma2dInitialize();
             void dma2dFill(const uint8_t *addr, int16_t width, int16_t height, const Color &color);
