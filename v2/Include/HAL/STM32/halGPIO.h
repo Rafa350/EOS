@@ -100,18 +100,18 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_POS_15      ((GPIOMask) 1 << 15)
 
 // Funcio alternativa
-// Sends funcio
+// Sense funcio asignada
 #define HAL_GPIO_AF_NONE     0
 
 // Funcio alternativa
-// Funcio AF4
+// Funcio I2Cx
 #define HAL_GPIO_AF4_I2C1    GPIO_AF4_I2C1
 #define HAL_GPIO_AF4_I2C2    GPIO_AF4_I2C2
 #define HAL_GPIO_AF4_I2C3    GPIO_AF4_I2C3
 #define HAL_GPIO_AF4_I2C4    GPIO_AF4_I2C4
 
 // Funcio alternativa
-// Funcio AF5
+// Funcio SPIx
 #define HAL_GPIO_AF5_SPI1    GPIO_AF5_SPI1
 #define HAL_GPIO_AF5_SPI2    GPIO_AF5_SPI2
 #define HAL_GPIO_AF5_SPI3    GPIO_AF5_SPI3
@@ -120,21 +120,19 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_AF5_SPI6    GPIO_AF5_SPI6
 
 // Funcio alternativa
-// Funcio AF9
+// Funcio LTDC 
 #define HAL_GPIO_AF9_LTDC    GPIO_AF9_LTDC
-
-// Funcio alternativa
-// Funcio AF10
-#define HAL_GPIO_AF1O_OGT_FS GPIO_AF10_OTG_FS
-#define HAL_GPIO_AF1O_OGT_HS GPIO_AF10_OTG_HS
-
-// Funcio alternativa
-// Funcio AF12
-#define HAL_GPIO_AF12_FMC    GPIO_AF12_FMC
-
-// Funcio alternativa
-// Funcio AF14
 #define HAL_GPIO_AF14_LTDC   GPIO_AF14_LTDC
+
+// Funcio alternativa
+// Funcio OGTx
+#define HAL_GPIO_AF10_OGT1_FS  GPIO_AF10_OTG_FS
+#define HAL_GPIO_AF10_OGT2_HS  GPIO_AF10_OGT_HS
+#define HAL_GPIO_AF12_OGT2_FS  GPIO_AF12_OTG_HS_FS
+
+// Funcio alternativa
+// Funcio FMC
+#define HAL_GPIO_AF12_FMC    GPIO_AF12_FMC
 
 
 // Tipus de port
