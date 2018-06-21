@@ -11,8 +11,11 @@
 #elif defined(HARDWARE_STM32F429I_DISC1)
     #include "board/Board_STM32F429I_DISC1.h"
 
-#elif defined(HARDWARE_STM32F746G_DISC)
-    #include "board/Board_STM32F746G_DISC.h"
+#elif defined(HARDWARE_STM32F746G_DISCO)
+    #include "board/Board_STM32F746G_DISCO.h"
+
+#elif defined(HARDWARE_STM32F769I_DISCO)
+    #include "board/Board_STM32F769I_DISCO.h"
 
 #else
     #error "No se definio HARDWARE_XXXX"

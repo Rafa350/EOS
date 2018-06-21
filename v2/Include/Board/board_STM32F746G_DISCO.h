@@ -1,5 +1,5 @@
-#ifndef __board_SMT32F746G_DISC__
-#define __board_SMT32F746G_DISC__
+#ifndef __board_SMT32F746G_DISCO__
+#define __board_SMT32F746G_DISCO__
 
 
 // Configuracio del sistema
@@ -272,4 +272,4 @@
 // Modul I2C de comunicacions
 #define FT5336_I2C_MODULE         HAL_I2C_ID_3
 
-#endif // __board_SMT32F746G_DISC__
+#endif // __board_SMT32F746G_DISCO__
