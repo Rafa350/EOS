@@ -17,7 +17,8 @@
 extern "C" {
 #endif
 
-
+    
+typedef struct TASK *HTask;
 typedef uint32_t TaskOptions;
 typedef void (*TaskFunction)(void *params);
 
@@ -29,7 +30,6 @@ typedef struct {                       // Parametres d'inicialitzacio
 	TaskOptions options;               // -Opcions
 } TaskInitializeInfo;
 
-typedef struct TASK *HTask;
 
 // Prioritat de la tasca
 #define OSAL_TASK_PRIORITY_POS         0

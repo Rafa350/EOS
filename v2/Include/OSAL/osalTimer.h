@@ -17,8 +17,7 @@ extern "C" {
 #endif
 
 
-    typedef struct TIMER *HTimer;
-
+typedef struct TIMER *HTimer;
 typedef uint32_t TimerOptions;
 typedef void (*TimerCallback)(HTimer hTimer);
 

@@ -24,8 +24,8 @@ namespace eos {
     } DigOutputServiceInitializeInfo;
 
     typedef struct {
-        uint8_t port;
-        uint8_t pin;
+        GPIOPort port;
+        GPIOPin pin;
         bool initState;
         bool openDrain;
     } DigOutputInitializeInfo ;
