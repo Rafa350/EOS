@@ -3,7 +3,7 @@
 
 
 #include "eos.h"
-#include "osal/osalThread.h"
+#include "osal/osalTask.h"
 
 
 namespace eos {
@@ -33,12 +33,14 @@ namespace eos {
         private:
             HTask hTask;
             IRunable *runable;
+            unsigned weakTime;
 
         public:
             Task(unsigned stackSize, TaskPriority priority, const char *name, IRunable *runable);
             virtual ~Task();
+
             static void delay(unsigned time);
-            static void delayUntil(unsigned time, unsigned *lastTick);
+            static void delay(unsigned time, unsigned &weakTime);
             static unsigned getTickCount();
             static void enterCriticalSection();
             static void exitCriticalSection();

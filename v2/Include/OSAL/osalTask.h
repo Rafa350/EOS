@@ -1,5 +1,5 @@
-#ifndef __osalThread__
-#define __osalThread__
+#ifndef __osalTask__
+#define __osalTask__
 
 
 // EOS includes
@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-    
+
 typedef struct TASK *HTask;
 typedef uint32_t TaskOptions;
 typedef void (*TaskFunction)(void *params);
@@ -62,4 +62,4 @@ void osalDelayUntil(unsigned time, unsigned *lastTick);
 #endif
 
 
-#endif
+#endif // __oisalTask__

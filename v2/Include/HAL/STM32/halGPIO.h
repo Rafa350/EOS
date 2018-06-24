@@ -120,7 +120,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_AF5_SPI6    GPIO_AF5_SPI6
 
 // Funcio alternativa
-// Funcio LTDC 
+// Funcio LTDC
 #define HAL_GPIO_AF9_LTDC    GPIO_AF9_LTDC
 #define HAL_GPIO_AF14_LTDC   GPIO_AF14_LTDC
 
@@ -205,8 +205,8 @@ extern GPIO_TypeDef * const gpioTbl[];
     gpioTbl[port]->IDR
 
 
-void halGPIOInitializePins(const GPIOInitializePinInfo *info, uint8_t count);
-void halGPIOInitializePorts(const GPIOInitializePortInfo *info, uint8_t count);
+void halGPIOInitializePins(const GPIOInitializePinInfo *pInfo, uint8_t count);
+void halGPIOInitializePorts(const GPIOInitializePortInfo *pInfo, uint8_t count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, uint8_t alt);
 
 

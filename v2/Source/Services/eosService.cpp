@@ -46,7 +46,7 @@ Service::~Service() {
 ///
 void Service::run(
     Task *task) {
-   
+
     onSetup();
     while (true)
         onLoop();
@@ -57,7 +57,7 @@ void Service::run(
 /// \brief Inicialitzacio per defecte.
 ///
 void Service::onSetup() {
-    
+
 }
 
 
@@ -65,5 +65,13 @@ void Service::onSetup() {
 /// \brief Bucle d'execucio per defecte.
 //
 void Service::onLoop() {
-    
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa la interrupcio tick.
+///
+void Service::onTick() {
+
 }

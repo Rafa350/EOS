@@ -47,7 +47,7 @@ void DigInputService::add(
 ///
 void DigInputService::remove(
     DigInput *input) {
-    
+
     if ((input != nullptr) && (input->service == this)) {
         input->service = nullptr;
         inputs.remove(inputs.indexOf(input));
@@ -59,8 +59,8 @@ void DigInputService::remove(
 /// \brief Inicialitzacio.
 ///
 void DigInputService::onSetup() {
-    
-    tc = Task::getTickCount();
+
+    weakTime = Task::getTickCount();
 }
 
 
@@ -68,8 +68,8 @@ void DigInputService::onSetup() {
 /// \brief Bucle d'execucio.
 ///
 void DigInputService::onLoop() {
-    
-    Task::delayUntil(10, &tc);
+
+    Task::delay(10, weakTime);
 
     DigInputListIterator iterator(inputs);
     while (iterator.hasNext()) {
@@ -90,7 +90,7 @@ void DigInputService::onLoop() {
             input->state = false;
         }
 
-        if (changed && (input->evChange != nullptr)) 
+        if (changed && (input->evChange != nullptr))
             input->evChange->execute(input);
 
         iterator.next();
@@ -111,16 +111,16 @@ DigInput::DigInput(
     port(info->port),
     pin(info->pin),
     evChange(nullptr) {
-    
+
     GPIOInitializePinInfo pinInfo;
     pinInfo.port = info->port;
     pinInfo.pin = info->pin;
     pinInfo.options = HAL_GPIO_MODE_INPUT;
     halGPIOInitializePins(&pinInfo, 1);
-    
+
     state = halGPIOReadPin(port, pin);
     pattern = state ? 0xFFFFFFFF : 0x00000000;
-    
+
     if (service != nullptr)
         service->add(this);
 }
@@ -130,10 +130,10 @@ DigInput::DigInput(
 /// \brief Destructor.
 ///
 DigInput::~DigInput() {
-    
+
     if (service != nullptr)
         service->remove(this);
-    
+
     if (evChange != nullptr)
         delete evChange;
 }

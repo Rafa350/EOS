@@ -4,7 +4,7 @@
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "osal/osalThread.h"
+#include "osal/osalTask.h"
 #include "System/Core/eosPoolAllocator.h"
 
 

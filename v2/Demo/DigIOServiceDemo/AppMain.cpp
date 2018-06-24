@@ -3,6 +3,7 @@
 #include "Services/eosDigOutput.h"
 #include "Services/eosDigInput.h"
 #include "hal/halGPIO.h"
+#include "hal/halTMR.h"
 
 
 using namespace eos;

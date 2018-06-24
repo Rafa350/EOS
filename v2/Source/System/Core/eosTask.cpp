@@ -1,6 +1,6 @@
 #include "System/Core/eosTask.h"
 #include "eosAssert.h"
-#include "osal/osalThread.h"
+#include "osal/osalTask.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -57,6 +57,7 @@ void Task::function(
     void *params) {
 
     Task *task = reinterpret_cast<Task*>(params);
+    task->weakTime = osalGetTickCount();
     while (true)
         task->runable->run(task);
 }
@@ -87,13 +88,13 @@ void Task::delay(
 /// ----------------------------------------------------------------------
 /// \brief Retarda la tasca actual un numero determinat de milisegons.
 /// \param time: El numero de milisegons a retardar.
-/// \param lastTick: El valor de contador de ticks actualitzat.
+/// \param weakTime: El valor de contador de ticks actualitzat.
 ///
-void Task::delayUntil(
+void Task::delay(
     unsigned time,
-    unsigned *lastTick) {
+    unsigned &weakTime) {
 
-	osalDelayUntil(time, lastTick);
+	osalDelayUntil(time, &weakTime);
 }
 
 

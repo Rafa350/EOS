@@ -259,6 +259,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSYS.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/halTMR.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halTMR.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/OSAL/osal.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osal.h</locationURI>
@@ -274,9 +279,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalMsgQueue.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/OSAL/osalThread.h</name>
+			<name>inc/Framework/EOS/OSAL/osalTask.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalThread.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTask.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalTimer.h</name>
@@ -369,6 +374,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Collections/eosList.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosList.h</locationURI>
@@ -404,6 +414,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMemory.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMemory.c</locationURI>
@@ -414,9 +429,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMsgQueue.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS/osalThread.c</name>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTask.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalThread.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTask.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTimer.c</name>

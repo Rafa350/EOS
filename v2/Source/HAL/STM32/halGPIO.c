@@ -114,19 +114,19 @@ static void EnableClock(
 
 /// ----------------------------------------------------------------------
 /// \brief Configura els parametres d'inicialitzacio.
-/// \param info: Informacio d'inicialitzacio.
+/// \param pInfo: Informacio d'inicialitzacio.
 /// \param init: Buffer on deixar els parametres d'inicialitzacio.
 /// \return Adressa del buffer.
 ///
 static GPIO_InitTypeDef *PreparePinInit(
-	const GPIOInitializePinInfo *info,
+	const GPIOInitializePinInfo *pInfo,
 	GPIO_InitTypeDef *init) {
 
-	init->Pin = 1 << info->pin;
-	init->Mode = modeTbl[(info->options & HAL_GPIO_MODE_MASK) >> HAL_GPIO_MODE_POS];
-	init->Speed = speedTbl[(info->options & HAL_GPIO_SPEED_MASK) >> HAL_GPIO_SPEED_POS];
-	init->Pull = pupdTbl[(info->options & HAL_GPIO_PULL_MASK) >> HAL_GPIO_PULL_POS];
-	init->Alternate = (uint32_t) info->alt;
+	init->Pin = 1 << pInfo->pin;
+	init->Mode = modeTbl[(pInfo->options & HAL_GPIO_MODE_MASK) >> HAL_GPIO_MODE_POS];
+	init->Speed = speedTbl[(pInfo->options & HAL_GPIO_SPEED_MASK) >> HAL_GPIO_SPEED_POS];
+	init->Pull = pupdTbl[(pInfo->options & HAL_GPIO_PULL_MASK) >> HAL_GPIO_PULL_POS];
+	init->Alternate = (uint32_t) pInfo->alt;
 
 	return init;
 }
@@ -134,19 +134,19 @@ static GPIO_InitTypeDef *PreparePinInit(
 
 /// ----------------------------------------------------------------------
 /// \brief Configura els parametres d'inicialitzacio.
-/// \param info: Informacio d'inicialitzacio.
+/// \param pInfo: Informacio d'inicialitzacio.
 /// \param init: Buffer on deixar els parametres d'inicialitzacio.
 /// \return Adressa del buffer.
 ///
 static GPIO_InitTypeDef *PreparePortInit(
-	const GPIOInitializePortInfo *info,
+	const GPIOInitializePortInfo *pInfo,
 	GPIO_InitTypeDef *init) {
 
-	init->Pin = info->mask;
-	init->Mode = modeTbl[(info->options & HAL_GPIO_MODE_MASK) >> HAL_GPIO_MODE_POS];
-	init->Speed = speedTbl[(info->options & HAL_GPIO_SPEED_MASK) >> HAL_GPIO_SPEED_POS];
-	init->Pull = pupdTbl[(info->options & HAL_GPIO_PULL_MASK) >> HAL_GPIO_PULL_POS];
-	init->Alternate = (uint32_t) info->alt;
+	init->Pin = pInfo->mask;
+	init->Mode = modeTbl[(pInfo->options & HAL_GPIO_MODE_MASK) >> HAL_GPIO_MODE_POS];
+	init->Speed = speedTbl[(pInfo->options & HAL_GPIO_SPEED_MASK) >> HAL_GPIO_SPEED_POS];
+	init->Pull = pupdTbl[(pInfo->options & HAL_GPIO_PULL_MASK) >> HAL_GPIO_PULL_POS];
+	init->Alternate = (uint32_t) pInfo->alt;
 
 	return init;
 }
@@ -154,50 +154,50 @@ static GPIO_InitTypeDef *PreparePortInit(
 
 /// ----------------------------------------------------------------------
 /// \brief Configura una llista de pins.
-/// \param info: Llista d'informacio de configuracio.
+/// \param pInfo: Llista d'informacio de configuracio.
 /// \param count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePins(
-	const GPIOInitializePinInfo *info,
+	const GPIOInitializePinInfo *pInfo,
 	uint8_t count) {
 
-	eosArgumentIsNotNull(info);
+	eosArgumentIsNotNull(pInfo);
 	eosArgumentIsNotZero(count);
 
 	for (uint8_t i = 0; i < count; i++) {
 
-		const GPIOInitializePinInfo *pInfo = &info[i];
+		const GPIOInitializePinInfo *p = &pInfo[i];
 
-		EnableClock(pInfo->port);
+		EnableClock(p->port);
 
 		GPIO_InitTypeDef gpioInit;
-		PreparePinInit(pInfo, &gpioInit);
-		HAL_GPIO_Init(gpioTbl[pInfo->port], &gpioInit);
+		PreparePinInit(p, &gpioInit);
+		HAL_GPIO_Init(gpioTbl[p->port], &gpioInit);
 	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Configura una llista de ports.
-/// \param info: Llista d'informacio de confiuguracio.
+/// \param pInfo: Llista d'informacio de confiuguracio.
 /// \param count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePorts(
-	const GPIOInitializePortInfo *info,
+	const GPIOInitializePortInfo *pInfo,
 	uint8_t count) {
 
-	eosArgumentIsNotNull(info);
+	eosArgumentIsNotNull(pInfo);
 	eosArgumentIsNotZero(count);
 
 	for (uint8_t i = 0; i < count; i++) {
 
-		const GPIOInitializePortInfo *pInfo = &info[i];
+		const GPIOInitializePortInfo *p = &pInfo[i];
 
-		EnableClock(pInfo->port);
+		EnableClock(p->port);
 
 		GPIO_InitTypeDef init;
-		PreparePortInit(pInfo, &init);
-		HAL_GPIO_Init(gpioTbl[pInfo->port], &init);
+		PreparePortInit(p, &init);
+		HAL_GPIO_Init(gpioTbl[p->port], &init);
 	}
 }
 

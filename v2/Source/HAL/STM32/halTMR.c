@@ -1,14 +1,20 @@
 #include "hal/halTMR.h"
 #if defined(STM32F4)
-#include "stm32f4xx_hal.h"
+	#include "stm32f4xx_hal.h"
 #elif defined(STM32F7)
-#include "stm32f7xx_hal.h"
+	#include "stm32f7xx_hal.h"
 #else
-#error Hardware no soportado
+	#error Hardware no soportado
 #endif
 
 
-static TIM_HandleTypeDef handles[HAL_TMR_ID_MAX];
+typedef struct {
+	TIM_HandleTypeDef handle;
+	TMRInterruptCallback pIrqCall;
+	void *pIrqParams;
+} TimerInfo;
+
+static TimerInfo timerInfoTbl[HAL_TMR_TIMER_MAX];
 
 
 /// ----------------------------------------------------------------------
@@ -16,62 +22,64 @@ static TIM_HandleTypeDef handles[HAL_TMR_ID_MAX];
 /// \param timer: Identificador del temporitzador.
 ///
 static void EnableTimerClock(
-	uint8_t timer) {
+	TMRTimer timer) {
 
 	switch (timer) {
-		case HAL_TMR_ID_1:
+		case HAL_TMR_TIMER_1:
 			__HAL_RCC_TIM1_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_2:
+		case HAL_TMR_TIMER_2:
 			__HAL_RCC_TIM2_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_3:
+		case HAL_TMR_TIMER_3:
 			__HAL_RCC_TIM3_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_4:
+		case HAL_TMR_TIMER_4:
 			__HAL_RCC_TIM4_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_5:
+		case HAL_TMR_TIMER_5:
 			__HAL_RCC_TIM5_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_6:
+#ifdef HAL_TMR_TIMER_6
+		case HAL_TMR_TIMER_6:
 			__HAL_RCC_TIM6_CLK_ENABLE();
 			break;
+#endif
 
-		case HAL_TMR_ID_7:
+		case HAL_TMR_TIMER_7:
 			__HAL_RCC_TIM7_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_8:
+		case HAL_TMR_TIMER_8:
 			__HAL_RCC_TIM8_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_9:
+		case HAL_TMR_TIMER_9:
 			__HAL_RCC_TIM9_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_10:
+		case HAL_TMR_TIMER_10:
 			__HAL_RCC_TIM10_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_11:
+		case HAL_TMR_TIMER_11:
 			__HAL_RCC_TIM11_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_12:
+		case HAL_TMR_TIMER_12:
 			__HAL_RCC_TIM12_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_13:
+		case HAL_TMR_TIMER_13:
 			__HAL_RCC_TIM13_CLK_ENABLE();
 			break;
 
-		case HAL_TMR_ID_14:
+		case HAL_TMR_TIMER_14:
 			__HAL_RCC_TIM14_CLK_ENABLE();
 			break;
 	}
@@ -83,70 +91,78 @@ static void EnableTimerClock(
 /// \param timer: Identificador del temporitzador.
 ///
 static void DisableTimerClock(
-	uint8_t timer) {
+	TMRTimer timer) {
 
 	switch (timer) {
-		case HAL_TMR_ID_1:
+		case HAL_TMR_TIMER_1:
 			__HAL_RCC_TIM1_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_2:
+		case HAL_TMR_TIMER_2:
 			__HAL_RCC_TIM2_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_3:
+		case HAL_TMR_TIMER_3:
 			__HAL_RCC_TIM3_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_4:
+		case HAL_TMR_TIMER_4:
 			__HAL_RCC_TIM4_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_5:
+		case HAL_TMR_TIMER_5:
 			__HAL_RCC_TIM5_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_6:
+#ifdef HAL_TMR_TIMER_6
+		case HAL_TMR_TIMER_6:
 			__HAL_RCC_TIM6_CLK_DISABLE();
 			break;
+#endif
 
-		case HAL_TMR_ID_7:
+		case HAL_TMR_TIMER_7:
 			__HAL_RCC_TIM7_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_8:
+		case HAL_TMR_TIMER_8:
 			__HAL_RCC_TIM8_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_9:
+		case HAL_TMR_TIMER_9:
 			__HAL_RCC_TIM9_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_10:
+		case HAL_TMR_TIMER_10:
 			__HAL_RCC_TIM10_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_11:
+		case HAL_TMR_TIMER_11:
 			__HAL_RCC_TIM11_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_12:
+		case HAL_TMR_TIMER_12:
 			__HAL_RCC_TIM12_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_13:
+		case HAL_TMR_TIMER_13:
 			__HAL_RCC_TIM13_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_ID_14:
+		case HAL_TMR_TIMER_14:
 			__HAL_RCC_TIM14_CLK_DISABLE();
 			break;
 	}
 }
 
 
-static TIM_HandleTypeDef *PrepareTimerHandle(
-	const TMRInitializeInfo *info) {
+/// ----------------------------------------------------------------------
+/// \brief Prepara el handle per inicialitzar.
+/// \brief pHandle: El handle a inicialitzar.
+/// \param pInfo: Parametres d'inicialitzacio.
+///
+static void PrepareTimerHandle(
+	TIM_HandleTypeDef *pHandle,
+	const TMRInitializeInfo *pInfo) {
 
 	static TIM_TypeDef * const instances[] = {
 		TIM1,
@@ -165,33 +181,52 @@ static TIM_HandleTypeDef *PrepareTimerHandle(
 		TIM14
 	};
 
-	TIM_HandleTypeDef *handle = &handles[info->id];
+	static const uint32_t clockDivision[] = {
+        TIM_CLOCKDIVISION_DIV1,
+        TIM_CLOCKDIVISION_DIV2,
+        TIM_CLOCKDIVISION_DIV4
+	};
 
-	handle->Instance = instances[info->id];
-	handle->Init.ClockDivision = 1;
-
-	return handle;
-}
-
-
-static TIM_HandleTypeDef *GetTimerHandle(
-	uint8_t id) {
-
-	return &handles[id];
+	pHandle->Instance = instances[pInfo->timer];
+	pHandle->Init.CounterMode = TIM_COUNTERMODE_UP;
+	pHandle->Init.ClockDivision = clockDivision[(pInfo->options & HAL_TMR_CLKDIV_MASK) >> HAL_TMR_CLKDIV_POS];
+	pHandle->Init.Prescaler = pInfo->prescaler;
+	pHandle->Init.Period = pInfo->period;
+	pHandle->Init.RepetitionCounter = 0;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza un temporitzador
-/// \param info: Parametres d'inicialitzacio.
+/// \param pInfo: Parametres d'inicialitzacio.
 ///
 void halTMRInitialize(
-	const TMRInitializeInfo *info) {
+	const TMRInitializeInfo *pInfo) {
 
-	EnableTimerClock(info->id);
+	TMRTimer timer = pInfo->timer;
+	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
 
-	TIM_HandleTypeDef *handle = PrepareTimerHandle(info);
-	HAL_TIM_Base_Init(handle);
+	EnableTimerClock(timer);
+
+	PrepareTimerHandle(&pTimerInfo->handle, pInfo);
+	HAL_TIM_Base_Init(&pTimerInfo->handle);
+
+	if ((pInfo->options & HAL_TMR_INTERRUPT_MASK) == HAL_TMR_INTERRUPT_ENABLE) {
+
+		static const IRQn_Type irq[] = {
+			0,
+		    TIM2_IRQn,
+			TIM3_IRQn
+		};
+
+		pTimerInfo->pIrqCall = pInfo->pIrqCall;
+		pTimerInfo->pIrqParams = pInfo->pIrqParams;
+
+		HAL_NVIC_SetPriority(irq[timer], pInfo->irqPriority, pInfo->irqSubPriority);
+		HAL_NVIC_EnableIRQ(irq[timer]);
+	}
+	else
+		pTimerInfo->pIrqCall = NULL;
 }
 
 
@@ -200,17 +235,43 @@ void halTMRInitialize(
 /// \param id: Identificador del temporitzador.
 ///
 void halTMRShutdown(
-	uint8_t id) {
+	TMRTimer timer) {
 
-	DisableTimerClock(id);
+	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
+
+	HAL_TIM_Base_DeInit(&pTimerInfo->handle);
+
+	DisableTimerClock(timer);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Posa en marxa el temporitzador i comença a contar.
+/// \param timer: El identificador del temporitzador.
+///
 void halTMRStartTimer(
-	uint8_t id) {
+	TMRTimer timer) {
 
-	TIM_HandleTypeDef *handle = GetTimerHandle(id);
-	HAL_TIM_Base_Start(handle);
+	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
+
+	if (pTimerInfo->pIrqCall != NULL)
+		__HAL_TIM_ENABLE_IT(&pTimerInfo->handle, TIM_IT_UPDATE);
+	__HAL_TIM_ENABLE(&pTimerInfo->handle);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Para el temporitzador.
+/// \param timer: El identificador del temporitzador.
+///
+void halTMRStopTimer(
+	TMRTimer timer) {
+
+	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
+
+	if (pTimerInfo->pIrqCall != NULL)
+		__HAL_TIM_DISABLE_IT(&pTimerInfo->handle, TIM_IT_UPDATE);
+	__HAL_TIM_DISABLE(&pTimerInfo->handle);
 }
 
 
@@ -223,3 +284,47 @@ void halTMRDelay(
 
 	HAL_Delay(time);
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief Handler de la interrupcio.
+/// \param timer: Identificador del temporitzador.
+///
+static void IRQHandler(
+	TMRTimer timer) {
+
+	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
+
+	if(__HAL_TIM_GET_FLAG(&pTimerInfo->handle, TIM_FLAG_UPDATE) != RESET) {
+	    if(__HAL_TIM_GET_IT_SOURCE(&pTimerInfo->handle, TIM_IT_UPDATE) != RESET) {
+
+	    	__HAL_TIM_CLEAR_IT(&pTimerInfo->handle, TIM_IT_UPDATE);
+
+	      if (pTimerInfo->pIrqCall != NULL)
+	    	  pTimerInfo->pIrqCall(timer, pTimerInfo->pIrqParams);
+	    }
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Handler de la interrupcio.
+///
+#ifdef HAL_TMR_TIMER_2
+void TIM2_IRQHandler() {
+
+	IRQHandler(HAL_TMR_TIMER_2);
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Handler de la interrupcio.
+///
+#ifdef HAL_TMR_TIMER_3
+void TIM3_IRQHandler() {
+
+	IRQHandler(HAL_TMR_TIMER_3);
+}
+#endif
+

@@ -33,9 +33,9 @@ namespace eos {
             typedef ListIterator<DigInput*> DigInputListIterator;
 
         private:
-            unsigned tc;
+            unsigned weakTime;
             DigInputList inputs;
-            
+
         protected:
             void onSetup();
             void onLoop();

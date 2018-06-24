@@ -3,10 +3,77 @@
 #include "System/Core/eosTimer.h"
 #include "Services/eosDigOutput.h"
 #include "hal/halGPIO.h"
-#include "osal/osalThread.h"
+#include "osal/osalTask.h"
 
 
 using namespace eos;
+
+
+class DigOutputService::Implementation {
+	private:
+		enum class Action {
+			set,
+			clear,
+			toggle,
+			pulse,
+			delayedSet,
+			delayedClear,
+			delayedToggle,
+			delayedPulse
+		};
+		struct Command {
+			Action action;
+			DigOutput::Implementation *outputImpl;
+			uint16_t delay;
+			uint16_t width;
+		};
+
+	private:
+		Queue<Command> commandQueue;
+
+	public:
+		Implementation();
+		~Implementation();
+
+		void processCommands();
+		void clear(DigOutput *output);
+		void set(DigOutput *output);
+		void toggle(DigOutput *output);
+		void pulse(DigOutput *output, uint16_t width);
+		void delayedPulse(DigOutput *output, uint16_t delay, uint16_t width);
+};
+
+
+class DigOutput::Implementation {
+	private:
+		enum class State {
+			Done,
+			Delay,
+			Pulse
+		};
+
+	private:
+	    GPIOPort port;
+		GPIOPin pin;
+		State state;
+		Timer *timer;
+		uint16_t time;
+
+	public:
+		Implementation(const DigOutputInitializeInfo *info);
+		~Implementation();
+
+		void set();
+		void clear();
+		void toggle();
+		void pulse(uint16_t width);
+		void delayedPulse(uint16_t delay, uint16_t width);
+		bool get() const;
+
+		void startTimer(uint16_t time);
+		void stopTimer();
+		void onTimeout(Timer *timer);
+};
 
 
 static const char *serviceName = "DigOutputService";
@@ -25,7 +92,16 @@ DigOutputService::DigOutputService(
     const DigOutputServiceInitializeInfo *info):
 
     Service(application, serviceName, taskStackSize, taskPriority),
-    commandQueue(commandQueueSize) {
+	pImpl(new DigOutputService::Implementation()) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Destructor de l'objecte.
+///
+DigOutputService::~DigOutputService() {
+
+	delete pImpl;
 }
 
 
@@ -60,188 +136,9 @@ void DigOutputService::remove(
 /// ----------------------------------------------------------------------
 /// \brief Bucle d'execucio.
 ///
-void DigOutputService::onLoop(){
+void DigOutputService::onLoop() {
 
-    Command command;
-    if (commandQueue.get(command, (unsigned) -1)) {
-        switch (command.action) {
-            case Action::clear:
-                doClearCommand(&command);
-                break;
-
-            case Action::set:
-                doSetCommand(&command);
-                break;
-
-            case Action::toggle:
-                doToggleCommand(&command);
-                break;
-
-            case Action::pulse:
-                doPulseCommand(&command);
-                break;
-
-            case Action::delayedClear:
-            case Action::delayedSet:
-            case Action::delayedToggle:
-                break;
-
-            case Action::delayedPulse:
-                doDelayedPulseCommand(&command);
-                break;
-        }
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief  Procesa la comanda 'clear'.
-/// \param  Command: La comanda a procesar
-///
- void DigOutputService::doClearCommand(
-    Command *command) {
-
-    osalEnterCritical();
-
-    if (command->output->state != DigOutput::State::Done)
-    	stopTimer(command->output);
-
-    halGPIOClearPin(command->output->port, command->output->pin);
-    command->output->state = DigOutput::State::Done;
-
-    osalExitCritical();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa la comanda 'set'.
-/// \param command: La comanda a procesar.
-///
- void DigOutputService::doSetCommand(
-    Command *command) {
-
-	osalEnterCritical();
-
-    if (command->output->state != DigOutput::State::Done)
-    	stopTimer(command->output);
-
-    halGPIOSetPin(command->output->port, command->output->pin);
-    command->output->state = DigOutput::State::Done;
-
-    osalExitCritical();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa la comanda 'toggle'.
-/// \param command: La comanda a procesar.
-///
-void DigOutputService::doToggleCommand(
-    Command *command) {
-
-    osalEnterCritical();
-
-    if (command->output->state != DigOutput::State::Done)
-    	stopTimer(command->output);
-
-    halGPIOTogglePin(command->output->port, command->output->pin);
-    command->output->state = DigOutput::State::Done;
-
-    osalExitCritical();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa la comanda 'pulse'.
-/// \param command: La comanda a procesar.
-///
-void DigOutputService::doPulseCommand(
-    Command *command) {
-
-    osalEnterCritical();
-
-    if (command->output->state == DigOutput::State::Done)
-        halGPIOTogglePin(command->output->port, command->output->pin);
-
-    startTimer(command->output, command->width);
-    command->output->state = DigOutput::State::Pulse;
-
-    osalExitCritical();
-}
-
-
-/// ----------------------------------------------------------------------ç
-/// \brief Procesa la comanda 'delayedPulse'
-/// \param command: La comanda a procesar.
-///
-void DigOutputService::doDelayedPulseCommand(
-	Command *command) {
-
-    osalEnterCritical();
-
-    startTimer(command->output, command->delay);
-    command->output->time = command->width;
-    command->output->state = DigOutput::State::Delay;
-
-    osalExitCritical();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Inicia el temporitzador.
-/// \param output: La sortida.
-/// \param time: El temps.
-///
-void DigOutputService::startTimer(
-	DigOutput *output,
-	unsigned time) {
-
-	if (output->timer == nullptr) {
-		output->timer = new Timer();
-		output->timer->setEvTimeout<DigOutputService>(this, &DigOutputService::onTimeout);
-		output->timer->setTag(output);
-	}
-	output->timer->start(time, 0);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Para el temporitzador.
-/// \param output: la sortida.
-///
-void DigOutputService::stopTimer(
-	DigOutput *output) {
-
-	if (output->timer != nullptr)
-		output->timer->stop((unsigned) -1);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa el timeout del temporitzador.
-/// \param timer: El temporitzador.
-///
-void DigOutputService::onTimeout(
-    Timer *timer) {
-
-    DigOutput *output = (DigOutput*) timer->getTag();
-
-    switch (output->state) {
-    	case DigOutput::State::Done:
-    		break;
-
-    	case DigOutput::State::Pulse:
-    	    halGPIOTogglePin(output->port, output->pin);
-    	    stopTimer(output);
-    		output->state = DigOutput::State::Done;
-    		break;
-
-    	case DigOutput::State::Delay:
-    	    halGPIOTogglePin(output->port, output->pin);
-    	    startTimer(output, output->time);
-    		output->state = DigOutput::State::Pulse;
-    		break;
-    }
+	pImpl->processCommands();
 }
 
 
@@ -252,13 +149,9 @@ void DigOutputService::onTimeout(
 void DigOutputService::set(
     DigOutput *output) {
 
-    if (!output->get()) {
-        Command command;
-        command.action = Action::set;
-        command.output = output;
-        commandQueue.put(command, (unsigned) -1);
-    }
+	pImpl->set(output);
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief Assigna l'estat inactiu a una sortida.
@@ -267,12 +160,7 @@ void DigOutputService::set(
 void DigOutputService::clear(
     DigOutput *output) {
 
-    if (output->get()) {
-        Command command;
-        command.action = Action::clear;
-        command.output = output;
-        commandQueue.put(command, (unsigned) -1);
-    }
+	pImpl->clear(output);
 }
 
 
@@ -283,10 +171,7 @@ void DigOutputService::clear(
 void DigOutputService::toggle(
     DigOutput *output) {
 
-    Command command;
-    command.action = Action::toggle;
-    command.output = output;
-    commandQueue.put(command, (unsigned) -1);
+	pImpl->toggle(output);
 }
 
 
@@ -299,11 +184,7 @@ void DigOutputService::pulse(
     DigOutput *output,
     unsigned width) {
 
-    Command command;
-    command.action = Action::pulse;
-    command.output = output;
-    command.width = width;
-    commandQueue.put(command, (unsigned) -1);
+	pImpl->pulse(output, width);
 }
 
 
@@ -318,12 +199,7 @@ void DigOutputService::delayedPulse(
 	unsigned delay,
 	unsigned width) {
 
-    Command command;
-    command.action = Action::delayedPulse;
-    command.output = output;
-    command.delay = delay;
-    command.width = width;
-    commandQueue.put(command, (unsigned) -1);
+	pImpl->delayedPulse(output, delay, width);
 }
 
 
@@ -337,19 +213,7 @@ DigOutput::DigOutput(
     const DigOutputInitializeInfo *info):
 
     service(nullptr),
-	timer(nullptr),
-	time(0),
-	state(State::Done),
-	port(info->port),
-    pin(info->pin) {
-
-    GPIOInitializePinInfo pinInfo;
-    pinInfo.port = info->port;
-    pinInfo.pin = info->pin;
-    pinInfo.options =
-        (info->openDrain ? HAL_GPIO_MODE_OUTPUT_OD : HAL_GPIO_MODE_OUTPUT_PP) |
-        (info->initState ? HAL_GPIO_INIT_SET : HAL_GPIO_INIT_CLR);
-    halGPIOInitializePins(&pinInfo, 1);
+	pImpl(new Implementation(info)) {
 
     if (service != nullptr)
         service->add(this);
@@ -364,8 +228,7 @@ DigOutput::~DigOutput() {
     if (service != nullptr)
         service->remove(this);
 
-    if (timer != nullptr)
-        delete timer;
+    delete pImpl;
 }
 
 
@@ -375,21 +238,331 @@ DigOutput::~DigOutput() {
 ///
 bool DigOutput::get() const {
 
-    return halGPIOReadPin(port, pin);
+    return pImpl->get();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte l'estat del port.
-/// \return L'estat del port.
+/// \brief Constructor de l'objecte.
 ///
-DigOutput::State DigOutput::getState() const {
+DigOutputService::Implementation::Implementation():
+	commandQueue(commandQueueSize) {
+}
 
-	State s;
+
+/// ----------------------------------------------------------------------
+/// \brief Destructor de l'objecte.
+///
+DigOutputService::Implementation::~Implementation() {
+}
+
+
+/// -----------------------------------------------------------------
+/// \brief Procesa les comandes que hi han a la cua.
+///
+void DigOutputService::Implementation::processCommands() {
+
+    Command command;
+
+    while (commandQueue.get(command, (unsigned) -1)) {
+        switch (command.action) {
+            case Action::clear:
+            	command.outputImpl->clear();
+                break;
+
+            case Action::set:
+            	command.outputImpl->set();
+                break;
+
+            case Action::toggle:
+            	command.outputImpl->toggle();
+                break;
+
+            case Action::pulse:
+            	command.outputImpl->pulse(command.width);
+                break;
+
+            case Action::delayedClear:
+            case Action::delayedSet:
+            case Action::delayedToggle:
+                break;
+
+            case Action::delayedPulse:
+            	command.outputImpl->delayedPulse(command.delay, command.width);
+                break;
+        }
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Envia una comanda CLEAR al servei.
+/// \param output: La sortida.
+///
+void DigOutputService::Implementation::clear(
+	DigOutput *output) {
+
+	if (output->get()) {
+        Command command;
+        command.action = Action::clear;
+        command.outputImpl = output->getImpl();
+        commandQueue.put(command, (unsigned) -1);
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Envia una comanda SET al servei.
+/// \param output: La sortida.
+///
+void DigOutputService::Implementation::set(
+	DigOutput *output) {
+
+	if (!output->get()) {
+        Command command;
+        command.action = Action::clear;
+        command.outputImpl = output->getImpl();
+        commandQueue.put(command, (unsigned) -1);
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Envia una comanda TOGGLE al servei.
+/// \param output: La sortida.
+///
+void DigOutputService::Implementation::toggle(
+	DigOutput *output) {
+
+	Command command;
+    command.action = Action::toggle;
+    command.outputImpl = output->getImpl();
+    commandQueue.put(command, (unsigned) -1);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Envia una comanda PULSE al servei.
+/// \param output: La sortida.
+/// \param width: L'amplada del puls.
+///
+void DigOutputService::Implementation::pulse(
+	DigOutput *output,
+	uint16_t width) {
+
+	Command command;
+    command.action = Action::pulse;
+    command.outputImpl = output->getImpl();
+    command.width = width;
+    commandQueue.put(command, (unsigned) -1);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Envia una comanda DELAYED PULSE al servei.
+/// \param output: La sortida.
+/// \param delay: El retart fins l'inici del puls.
+/// \param width: L'amplada del puls.
+///
+void DigOutputService::Implementation::delayedPulse(
+	DigOutput *output,
+	uint16_t delay,
+	uint16_t width) {
+
+	Command command;
+    command.action = Action::delayedPulse;
+    command.outputImpl = output->getImpl();
+    command.delay = delay;
+    command.width = width;
+    commandQueue.put(command, (unsigned) -1);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza l'objecte.
+/// \param info: Parametres d'inicialitzacio.
+///
+DigOutput::Implementation::Implementation(
+	const DigOutputInitializeInfo *info):
+
+	port(info->port),
+	pin(info->pin),
+	state(State::Done),
+	timer(nullptr) {
+
+    GPIOInitializePinInfo pinInfo;
+    pinInfo.port = port;
+    pinInfo.pin = pin;
+    pinInfo.options =
+        (info->openDrain ? HAL_GPIO_MODE_OUTPUT_OD : HAL_GPIO_MODE_OUTPUT_PP) |
+        (info->initState ? HAL_GPIO_INIT_SET : HAL_GPIO_INIT_CLR);
+    halGPIOInitializePins(&pinInfo, 1);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Destructor.
+///
+DigOutput::Implementation::~Implementation() {
+
+	if (timer != nullptr)
+		delete timer;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el valor de la sortida.
+/// \return El valor obtingut.
+///
+bool DigOutput::Implementation::get() const {
+
+	return halGPIOReadPin(port, pin);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna una sortida al valor actiu.
+///
+void DigOutput::Implementation::set() {
 
 	osalEnterCritical();
-	s = state;
-	osalExitCritical();
 
-	return s;
+	if (state != State::Done)
+    	stopTimer();
+
+    halGPIOSetPin(port, pin);
+    state = State::Done;
+
+    osalExitCritical();
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna una sortida al valor no actiu.
+///
+void DigOutput::Implementation::clear() {
+
+	osalEnterCritical();
+
+	if (state != State::Done)
+    	stopTimer();
+
+    halGPIOClearPin(port, pin);
+    state = State::Done;
+
+    osalExitCritical();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inverteix una sortida.
+///
+void DigOutput::Implementation::toggle() {
+
+	osalEnterCritical();
+
+	if (state != State::Done)
+    	stopTimer();
+
+    halGPIOTogglePin(port, pin);
+    state = State::Done;
+
+    osalExitCritical();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Genera un puls. Inverteix la sortida durant el temps especificad,
+///        despres retorna al seu valor original.
+/// \param width: Amplada del puls.
+///
+void DigOutput::Implementation::pulse(
+	uint16_t width) {
+
+	osalEnterCritical();
+
+	if (state == State::Done)
+        halGPIOTogglePin(port, pin);
+
+    startTimer(width);
+    state = State::Pulse;
+
+    osalExitCritical();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Genera un puls retardat. Inverteix la sortida durant el temps
+///        especificad, despres retorna al seu valor original.
+/// \param delay: Retard fins l'inici del puls.
+/// \param width: Amplada del puls.
+///
+void DigOutput::Implementation::delayedPulse(
+	uint16_t delay,
+	uint16_t width) {
+
+	osalEnterCritical();
+
+	startTimer(delay);
+    time = width;
+    state = State::Delay;
+
+    osalExitCritical();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Posa en marxa el temporitzador.
+/// \param time: El temps.
+///
+void DigOutput::Implementation::startTimer(
+	uint16_t time) {
+
+	if (timer == nullptr) {
+		timer = new Timer();
+		timer->setEvTimeout<Implementation>(this, &Implementation::onTimeout);
+		timer->setTag(this);
+	}
+	timer->start(time, 0);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Para el tempositzador.
+///
+void DigOutput::Implementation::stopTimer() {
+
+	if (timer != nullptr)
+		timer->stop((unsigned) -1);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Motifica l'event timeout del temporitzador.
+/// \param timer: El temporitzador que genera l'event.
+///
+void DigOutput::Implementation::onTimeout(
+	Timer *timer) {
+
+    osalEnterCritical();
+
+    switch (state) {
+    	case State::Done:
+    		break;
+
+    	case State::Pulse:
+    	    halGPIOTogglePin(port, pin);
+    	    stopTimer();
+    		state = State::Done;
+    		break;
+
+    	case State::Delay:
+    	    halGPIOTogglePin(port, pin);
+    	    startTimer(time);
+    		state = State::Pulse;
+    		break;
+    }
+
+    osalExitCritical();
+}
+

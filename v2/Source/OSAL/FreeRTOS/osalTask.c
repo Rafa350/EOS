@@ -1,4 +1,4 @@
-#include "osal/osalThread.h"
+#include "osal/osalTask.h"
 #include "eosAssert.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -40,18 +40,11 @@ HTask osalTaskCreate(
 
 /// ----------------------------------------------------------------------
 /// \brief Destrueix la tasca.
-/// \param hTask: El handler de la tasca.
+/// \param hTask: El handler de la tasca. NULL si es la tasca actual.
 ///
 void osalTaskDestroy(
 	HTask hTask) {
 
-	// Comprova si els parametres son correctes.
-	//
-	if (hTask == NULL)
-		return;
-
-	// Destrueix la tasca.
-	//
 	vTaskDelete(hTask);
 }
 
