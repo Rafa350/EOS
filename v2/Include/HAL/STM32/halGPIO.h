@@ -33,12 +33,13 @@ typedef uint8_t GPIOPort;
 typedef uint8_t GPIOPin;
 typedef uint16_t GPIOMask;
 typedef uint32_t GPIOOptions;
+typedef uint8_t GPIOAlt;
 
 typedef struct {
 	GPIOPort port;
 	GPIOPin pin;
 	GPIOOptions options;
-	uint8_t alt;
+	GPIOAlt alt;
 } GPIOInitializePinInfo;
 
 typedef struct {
@@ -211,7 +212,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 
 void halGPIOInitializePins(const GPIOInitializePinInfo *pInfo, uint8_t count);
 void halGPIOInitializePorts(const GPIOInitializePortInfo *pInfo, uint8_t count);
-void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, uint8_t alt);
+void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 
 
 #ifdef	__cplusplus

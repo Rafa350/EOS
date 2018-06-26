@@ -210,10 +210,10 @@ void halGPIOInitializePorts(
 /// \param function: Funcio del pin.
 ///
 void halGPIOInitializePin(
-	uint8_t port,
-	uint8_t pin,
-	uint32_t options,
-	uint8_t alt) {
+	GPIOPort port,
+	GPIOPin pin,
+	GPIOOptions options,
+	GPIOAlt alt) {
 
 	GPIOInitializePinInfo info;
 	info.port = port;
