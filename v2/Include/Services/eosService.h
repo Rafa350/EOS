@@ -25,12 +25,15 @@ namespace eos {
             Task task;
 
         private :
+            Service(const Service &service) = delete;
+            Service& operator=(const Service&) = delete;           
             void run(Task *pTask);
 
         protected:
+            inline Application *getApplication() const { return pApplication; }
             inline Task *getTask() { return &task; }
-            virtual void onSetup();
-            virtual void onLoop();
+            virtual void onInitialize();
+            virtual void onTask();
             virtual void onTick();
 
         public :
@@ -39,7 +42,6 @@ namespace eos {
             virtual ~Service();
 
             inline const char *getName() const { return name; }
-            inline Application *getApplication() const { return pApplication; }
 
         friend Application;
     };

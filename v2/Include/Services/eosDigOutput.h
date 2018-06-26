@@ -42,11 +42,11 @@ namespace eos {
             
         private:
             static void timerInterrupt(TMRTimer timer, void *pParams);
-            void onTimeOut();
+            void timeOut();
             
         protected:
-            void onSetup();
-            void onLoop();
+            void onInitialize();
+            void onTask();
 
         public:
             DigOutputService(Application *pApplication, const DigOutputServiceInitializeInfo *pInfo);
@@ -76,8 +76,8 @@ namespace eos {
             unsigned widthCnt;
             
         private:
-            void onSetup();
-            void onTimeOut();
+            void initialize();
+            void timeOut();
 
         public:
             DigOutput(DigOutputService *pService, const DigOutputInitializeInfo *pInfo);

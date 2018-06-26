@@ -54,7 +54,7 @@ void DigInputService::remove(
 
     eosArgumentIsNotNull(pInput);
 
-    eosAssert(pInput != null);
+    eosAssert(pInput != nullptr);
     eosAssert(pInput->pService == this);
 
     pInput->pService = nullptr;
@@ -65,14 +65,14 @@ void DigInputService::remove(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitzacio del servei.
 ///
-void DigInputService::onSetup() {
+void DigInputService::onInitialize() {
     
 }
 
 /// ----------------------------------------------------------------------
 /// \brief Bucle d'execucio.
 ///
-void DigInputService::onLoop() {
+void DigInputService::onTask() {
 
     weakTime = Task::getTickCount();
     
@@ -120,7 +120,7 @@ DigInput::DigInput(
     pService(nullptr),
     evChange(nullptr) {
        
-    eosArgumentIsNotNull(pIInfo);
+    eosArgumentIsNotNull(pInfo);
     
     port = pInfo->port;
     pin = pInfo->pin;

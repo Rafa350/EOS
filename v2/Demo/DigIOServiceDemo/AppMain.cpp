@@ -10,12 +10,8 @@ using namespace eos;
 
 
 class LedLoopService: public AppLoopService {
-    private:
-        DigOutput *output1;
-        DigOutput *output2;
-
 	public:
-		LedLoopService(Application *application, DigOutput *output1, DigOutput *output2);
+		LedLoopService(Application *application);
 
     protected:
 		void onLoop();
@@ -24,19 +20,23 @@ class LedLoopService: public AppLoopService {
 
 class MyApplication: public Application {
     private:
-        DigInputService *digInputSvc;
-        DigInput *digInput1;
-        DigInput *digInput2;
-        DigInput *digInput3;
         DigOutputService *digOutputSrv;
         DigOutput *digOutput1;
         DigOutput *digOutput2;
         DigOutput *digOutput3;
+        DigInputService *digInputSvc;
+        DigInput *digInput1;
+        DigInput *digInput2;
+        DigInput *digInput3;
 
     public:
         void digInput1_OnChange(DigInput *input);
         void digInput2_OnChange(DigInput *input);
         void digInput3_OnChange(DigInput *input);
+        
+        DigOutput *getLed1() const { return digOutput1; }
+        DigOutput *getLed2() const { return digOutput2; }
+        DigOutput *getLed3() const { return digOutput3; }
 
     protected:
         void onInitialize();
@@ -100,10 +100,10 @@ void MyApplication::onInitialize() {
     outputInfo.pin = LED_LED3_PIN;
     digOutput3 = new DigOutput(digOutputSrv, &outputInfo);
 #endif
-
-    // Prepara el servei de l'aplicacio
+    
+    // Prepara el servei de l'aplicacio principal
     //
-    new LedLoopService(this, digOutput1, digOutput2);
+    new LedLoopService(this);
 }
 
 
@@ -113,8 +113,6 @@ void MyApplication::onInitialize() {
 ///
 void MyApplication::digInput1_OnChange(DigInput *input) {
 
-    if (!input->get())
-        digOutput1->pulse(500);
 }
 
 
@@ -124,8 +122,6 @@ void MyApplication::digInput1_OnChange(DigInput *input) {
 ///
 void MyApplication::digInput2_OnChange(DigInput *input) {
 
-    if (!input->get())
-        digOutput2->pulse(500);
 }
 
 
@@ -135,37 +131,29 @@ void MyApplication::digInput2_OnChange(DigInput *input) {
 ///
 void MyApplication::digInput3_OnChange(DigInput *input) {
 
-    if (!input->get())
-        digOutput3->pulse(500);
 }
 
 
 /// ---------------------------------------------------------------------
 /// \brief Constructor.
 /// \param application: Aplicacio a la que pertany el servei.
-/// \param output: Sortida a controlar.
 ///
 LedLoopService::LedLoopService(
-    Application* application,
-    DigOutput* output1,
-    DigOutput *output2):
+    Application* application):
 
-    AppLoopService(application),
-    output1(output1),
-    output2(output2) {
+    AppLoopService(application) {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Bucle d'execucio.
+/// \brief Bucle d'execucio de la tasca del servei.
 ///
 void LedLoopService::onLoop() {
 
-	while (true) {
-        output1->pulse(500);
-        output2->delayedPulse(125, 250);
-		Task::delay(1000);
-	}
+    MyApplication *pApp = (MyApplication*) getApplication();
+    pApp->getLed1()->pulse(500);
+    pApp->getLed2()->delayedPulse(125, 250);
+    Task::delay(1000);
 }
 
 
@@ -175,6 +163,6 @@ void LedLoopService::onLoop() {
 void AppMain() {
 
 	Application *app = new MyApplication();
-	app->execute();
+	app->run();
 	delete app;
 }

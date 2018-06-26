@@ -36,9 +36,28 @@ AppLoopService::AppLoopService(
 
 
 /// ---------------------------------------------------------------------
-/// \brief Inicialitzacio.
+/// \brief Inicialitzacio abans del planificador.
+///
+void AppLoopService::onInitialize() {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Bucle d'execucio.
+///
+void AppLoopService::onTask() {
+    
+    onSetup();
+    while (true)
+        onLoop();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitzacio d'ins de la tasca planificada.
 ///
 void AppLoopService::onSetup() {
+    
 }
 
 
@@ -46,4 +65,5 @@ void AppLoopService::onSetup() {
 /// \brief Bucle d'execucio.
 ///
 void AppLoopService::onLoop() {
+    
 }

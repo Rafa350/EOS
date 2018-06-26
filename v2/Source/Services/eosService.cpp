@@ -50,22 +50,22 @@ void Service::run(
     Task *pTask) {
 
     while (true)
-        onLoop();
+        onTask();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa la inicialitzacio del servei.
 ///
-void Service::onSetup() {
+void Service::onInitialize() {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Bucle d'execucio per defecte.
+/// \brief Procesa les tasques del servei.
 //
-void Service::onLoop() {
+void Service::onTask() {
 
 }
 

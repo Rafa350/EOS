@@ -37,8 +37,8 @@ namespace eos {
             DigInputList inputs;
 
         protected:
-            void onSetup();
-            void onLoop();
+            void onInitialize();
+            void onTask();
 
         public:
             DigInputService(Application *pApplication, const DigInputServiceInitializeInfo *pInfo);

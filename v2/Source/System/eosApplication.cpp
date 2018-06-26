@@ -27,7 +27,7 @@ Application::~Application() {
 /// ----------------------------------------------------------------------
 /// \brief Executa l'aplicacio.
 ///
-void Application::execute() {
+void Application::run() {
 
     // Notifica la inicialitzacio de l'aplicacio.
     //
@@ -37,7 +37,7 @@ void Application::execute() {
     //
     ServiceListIterator iterator(services);
     while (iterator.hasNext()) {
-        iterator.current()->onSetup();
+        iterator.current()->onInitialize();
         iterator.next();
     }
     

@@ -20,23 +20,23 @@ namespace eos {
         private:
             ServiceList services;
 
-        public:
-            Application();
-            virtual ~Application();
-
-            void execute();
-
-            void addService(Service *pService);
-            void removeService(Service *pService);
-            Service *getService(const char *name);
+        private:
+            Application(const Application&) = delete;
+            Application& operator=(const Application&) = delete;
 
         protected:
             virtual void onInitialize();
             virtual void onTerminate();
 
-        private:
-            Application(const Application&) = delete;
-            Application& operator=(const Application&) = delete;
+        public:
+            Application();
+            virtual ~Application();
+
+            void run();
+
+            void addService(Service *pService);
+            void removeService(Service *pService);
+            Service *getService(const char *name);
     };
 
 }

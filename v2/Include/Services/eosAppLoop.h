@@ -17,13 +17,15 @@ namespace eos {
     ///        de l'aplicacio.
     ///
     class AppLoopService: public Service {
+        protected:
+            void onInitialize();
+            void onTask();
+            virtual void onSetup();
+            virtual void onLoop();
+
         public:
             AppLoopService(Application *pApplication);
             AppLoopService(Application *pApplication, unsigned stackSize, TaskPriority prioirity);
-
-        protected:
-            void onSetup();
-            void onLoop();
     };
 }
 

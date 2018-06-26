@@ -78,7 +78,7 @@ void DigOutputService::remove(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el servei.
 ///
-void DigOutputService::onSetup() {
+void DigOutputService::onInitialize() {
     
 /*	TMRInitializeInfo tmrInfo;
 	tmrInfo.timer = pInfo->timer;
@@ -88,7 +88,7 @@ void DigOutputService::onSetup() {
 
     OutputListIterator iterator(outputs);
     while (iterator.hasNext()) {
-        iterator.current()->onSetup();
+        iterator.current()->initialize();
         iterator.next();
     }
 }
@@ -97,9 +97,9 @@ void DigOutputService::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief Bucle de proces del servei.
 ///
-void DigOutputService::onLoop() {
+void DigOutputService::onTask() {
     
-    onTimeOut();
+    timeOut();
     Task::delay(10);
 }
 
@@ -107,11 +107,11 @@ void DigOutputService::onLoop() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa el timeout del temporitzador.
 ///
-void DigOutputService::onTimeOut() {
+void DigOutputService::timeOut() {
 
     OutputListIterator iterator(outputs);
     while (iterator.hasNext()) {
-        iterator.current()->onTimeOut();
+        iterator.current()->timeOut();
         iterator.next();
     }
 }
@@ -127,7 +127,7 @@ void DigOutputService::timerInterrupt(
     eosAssert(pParam != nullptr);
     
 	DigOutputService *pService = reinterpret_cast<DigOutputService*>(pParam);
-	pService->onTimeOut();
+	pService->timeOut();
 }
 
 
@@ -169,7 +169,7 @@ DigOutput::~DigOutput() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitzacio de la sortida.
 ///
-void DigOutput::onSetup() {
+void DigOutput::initialize() {
 
     halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);    
 }
@@ -178,7 +178,7 @@ void DigOutput::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa la interrupcio del temporitzador.
 ///
-void DigOutput::onTimeOut() {
+void DigOutput::timeOut() {
 
 	switch (state) {
 		case State::Idle:
