@@ -108,6 +108,9 @@ extern const GPIOPortRegs gpioPortRegs[];
 #define HAL_GPIO_POS_13      ((GPIOMask) 1 << HAL_GPIO_PIN_13)
 #define HAL_GPIO_POS_14      ((GPIOMask) 1 << HAL_GPIO_PIN_14)
 #define HAL_GPIO_POS_15      ((GPIOMask) 1 << HAL_GPIO_PIN_15)
+#define HAL_GPIO_POS_LO      ((GPIOMask) 0x00FF)
+#define HAL_GPIO_POS_HI      ((GPIOMask) 0xFF00)
+#define HAL_GPIO_POS_ALL     ((GPIOMask) 0xFFFF)
 
 
 // Tipus de port

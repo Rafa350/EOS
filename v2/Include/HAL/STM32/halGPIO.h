@@ -80,6 +80,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_PIN_13      ((GPIOPin) 13)
 #define HAL_GPIO_PIN_14      ((GPIOPin) 14)
 #define HAL_GPIO_PIN_15      ((GPIOPin) 15)
+#define HAL_GPIO_PIN_NONE    ((GPIOPin) 255)
 
 // Mascara de posicio del pin
 #define HAL_GPIO_POS_0       ((GPIOMask) 1 << 0)
@@ -98,6 +99,9 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_POS_13      ((GPIOMask) 1 << 13)
 #define HAL_GPIO_POS_14      ((GPIOMask) 1 << 14)
 #define HAL_GPIO_POS_15      ((GPIOMask) 1 << 15)
+#define HAL_GPIO_POS_LO      ((GPIOMask) 0x00FF)
+#define HAL_GPIO_POS_HI      ((GPIOMask) 0xFF00)
+#define HAL_GPIO_POS_ALL     ((GPIOMask) 0xFFFF)
 
 // Funcio alternativa
 // Sense funcio asignada

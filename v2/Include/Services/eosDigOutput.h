@@ -33,35 +33,57 @@ namespace eos {
     ///
     class DigOutputService: public Service {
         private:
-    	    class Implementation;
-
+            typedef List<DigOutput*> OutputList;
+            typedef ListIterator<DigOutput*> OutputListIterator;
+            
         private:
-            Implementation *pImpl;
+            OutputList outputs;
+            TMRTimer timer;
+            
+        private:
+            static void timerInterrupt(TMRTimer timer, void *pParams);
+            void onTimeOut();
+            
+        protected:
+            void onSetup();
+            void onLoop();
 
         public:
-            DigOutputService(Application *application, const DigOutputServiceInitializeInfo *pInfo);
+            DigOutputService(Application *pApplication, const DigOutputServiceInitializeInfo *pInfo);
             ~DigOutputService();
 
-            void add(DigOutput *output);
-            void remove(DigOutput *output);
+            void add(DigOutput *pOutput);
+            void remove(DigOutput *pOutput);
     };
 
     /// \brief Clase que implementa una sortida digital.
     ///
     class DigOutput {
-    	private:
-    		class Implementation;
+        private:
+            enum class State {
+                Idle,
+                DelayedPulse,
+                Pulse
+            };
 
         private:
-            DigOutputService *service;
-            Implementation *pImpl;
+            DigOutputService *pService;
+            GPIOPort port;
+            GPIOPin pin;
+            GPIOOptions options;
+            State state;
+            unsigned delayCnt;
+            unsigned widthCnt;
+            
+        private:
+            void onSetup();
+            void onTimeOut();
 
         public:
-            DigOutput(DigOutputService *service, const DigOutputInitializeInfo *pInfo);
+            DigOutput(DigOutputService *pService, const DigOutputInitializeInfo *pInfo);
             ~DigOutput();
 
-            DigOutputService *getService() const { return service; }
-            Implementation *getImpl() const { return pImpl; }
+            DigOutputService *getService() const { return pService; }
 
             bool get() const;
             void set();
@@ -72,7 +94,9 @@ namespace eos {
             void delayedSet(unsigned delay);
             void delayedClear(unsigned delay);
             void delayedToggle(unsigned delay);
-            inline void delayedPulse(unsigned delay, unsigned width);
+            void delayedPulse(unsigned delay, unsigned width);
+            
+        friend DigOutputService;
     };
 }
 

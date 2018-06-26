@@ -15,6 +15,11 @@
 extern "C" {
 #endif
 
+    
+typedef uint8_t TMRTimer;
+typedef uint32_t TMROptions;
+typedef void (*TMRInterruptCallback)(TMRTimer timer, void *params);
+
 
 #define HAL_TMR_USE_T1_INTERRUPT    0
 #define HAL_TMR_USE_T2_INTERRUPT    1
@@ -22,41 +27,51 @@ extern "C" {
 #define HAL_TMR_USE_T4_INTERRUPT    1
 #define HAL_TMR_USE_T5_INTERRUPT    1
 
-#define HAL_TMR_ID_1                0
-#define HAL_TMR_ID_2                1
-#define HAL_TMR_ID_3                2
-#define HAL_TMR_ID_4                3
-#define HAL_TMR_ID_5                4
-#define HAL_TMR_ID_MAX              5
+#define HAL_TMR_TIMER_1           ((TMRTimer) 0)
+#define HAL_TMR_TIMER_2           ((TMRTimer) 1)
+#define HAL_TMR_TIMER_3           ((TMRTimer) 2)
+#define HAL_TMR_TIMER_4           ((TMRTimer) 3)
+#define HAL_TMR_TIMER_5           ((TMRTimer) 4)
+#define HAL_TMR_TIMER_MAX         5
 
-#define HAL_TMR_MODE16              0
-#define HAL_TMR_MODE32              1
+// Modus 16 o 32 bits
+#define HAL_TMR_MODE_POS          0
+#define HAL_TMR_MODE_BITS         0b1
+#define HAL_TMR_MODE_MASK         (HAL_TMR_MODE_BITS << HAL_TMR_MODE_POS)
 
-#define HAL_TMR_PS_1                0
-#define HAL_TMR_PS_2                1
-#define HAL_TMR_PS_4                2
-#define HAL_TMR_PS_8                3
-#define HAL_TMR_PS_16               4
-#define HAL_TMR_PS_32               5
-#define HAL_TMR_PS_64               6
-#define HAL_TMR_PS_256              7
+#define HAL_TMR_MODE_16           (0 << HAL_TMR_MODE_POS)
+#define HAL_TMR_MODE_32           (1 << HAL_TMR_MODE_POS)
 
+// Clock divider (Prescaler PIC32)
+#define HAL_TMR_CLKDIV_POS        1
+#define HAL_TMR_CLKDIV_BITS       0b111
+#define HAL_TMR_CLKDIV_MASK       (HAL_TMR_CLKDIV_BITS << HAL_TMR_CLKDIV_POS)
 
-typedef void (*TMRInterruptCallback)(uint8_t tmrId, void *params);
+#define HAL_TMR_CLKDIV_1          (0 << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_2          (1 << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_4          (2 << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_8          (3 << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_16         (4 << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_32         (5 << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_64         (6 << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_256        (7 << HAL_TMR_CLKDIV_POS)
+
 
 typedef struct {
-	uint8_t id;
-	uint32_t options;
-	TMRInterruptCallback intFunction;
-	void *intParams;
+	TMRTimer timer;
+    //uint32_t prescaler; NO en PIC32
+    uint32_t period;
+	TMROptions options;
+	TMRInterruptCallback pIrqCall;
+	void *pIrqParams;
 } TMRInitializeInfo;
 
 
-void halTMRInitialize(const TMRInitializeInfo *info);
-void halTMRShutdown(uint8_t id);
+void halTMRInitialize(const TMRInitializeInfo *pInfo);
+void halTMRShutdown(TMRTimer timer);
 
-void halTMRStartTimer(uint8_t id);
-void halTMRStopTimer(uint8_t id);
+void halTMRStartTimer(TMRTimer timer);
+void halTMRStopTimer(TMRTimer timer);
 
 void halTMRDelay(uint32_t time);
 

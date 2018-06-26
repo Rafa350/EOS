@@ -117,6 +117,14 @@ namespace eos {
             
                 return GenericList::getCount() == 0;
             }
+            
+            /// \brief Obte el primer element de la llista
+            /// \return El primer element
+            ///
+            inline T &getTop() const {
+                
+                return *((T*) GenericList::get(0));
+            }
 
             /// \brief Obte un element de la llista.
             /// \param index: Index del element.

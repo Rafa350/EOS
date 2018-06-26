@@ -82,40 +82,30 @@ extern void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza les interrupcions per un temporitzador.
-/// \param timer: El identificador del temporitzador.
-/// \param mode: Modus 16 o 32 bits
-/// \param prescale: Divisor d'entrada
-/// \param period: Periode
-/// \param callback: Funcio per procesar la interrupcio.
-/// \param param: Parametre de la funcio callback.
+/// \param pInfo: Parametres d'inicialitzacio.
 ///
-void halTMRInitializeTimer(
-    uint8_t timer, 
-    uint8_t mode,
-    uint8_t prescale,
-    unsigned period,
-    TMRInterruptCallback callback, 
-    void *param) {
+void halTMRInitialize(
+const TMRInitializeInfo *pInfo
     
-    const TimerInfo *ti = &timerInfoTbl[timer];
+    const TimerInfo *ti = &timerInfoTbl[pInfo->timer];
     
     PLIB_TMR_Stop(ti->tmrId);
     PLIB_TMR_ClockSourceSelect(ti->tmrId, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
-    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[prescale & 0x07]);
-    if (mode == HAL_TMR_MODE16) {
+    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[(pInfo->options & HAL_TMD_CLKDIV_MASK) >> HAL_TMR_CLKDIV_POS]);
+    if ((pInfo->options & HAL_TMR_MODE_MASK) == HAL_TMR_MODE_16) {
         PLIB_TMR_Mode16BitEnable(ti->tmrId);
         PLIB_TMR_Counter16BitClear(ti->tmrId);
-        PLIB_TMR_Period16BitSet(ti->tmrId, period);    
+        PLIB_TMR_Period16BitSet(ti->tmrId, pInfo->period);    
     } 
     else if (mode == HAL_TMR_MODE32) {
         PLIB_TMR_Mode32BitEnable(ti->tmrId);
         PLIB_TMR_Counter32BitClear(ti->tmrId);
-        PLIB_TMR_Period32BitSet(ti->tmrId, period);            
+        PLIB_TMR_Period32BitSet(ti->tmrId, pInfo->period);            
     }
 
-    callbacks[timer] = callback;
+    callbacks[timer] = pInfo->pIrqCall;
     if (callback != NULL) {
-        params[timer] = param;
+        params[timer] = pInfo->pIrqParams;
 
         halINTDisableInterrupts();
         
