@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Services/eosDigOutput.h"
 #include "hal/halGPIO.h"
 #include "hal/halTMR.h"
@@ -26,8 +27,7 @@ DigOutputService::DigOutputService(
     Application *pApplication,
     const DigOutputServiceInitializeInfo *pInfo):
 
-    Service(pApplication, serviceName, taskStackSize, taskPriority),
-	timer(pInfo->timer) {
+    Service(pApplication, serviceName, taskStackSize, taskPriority) {
 }
 
 
@@ -48,6 +48,11 @@ DigOutputService::~DigOutputService() {
 void DigOutputService::add(
     DigOutput *pOutput) {
 
+    eosArgumentIsNotNull(pOutput);
+
+    eosAssert(pOutput != nullptr);
+    eosAssert(pOutput->pService == nullptr);
+
     outputs.add(pOutput);
     pOutput->pService = this;
 }
@@ -59,6 +64,11 @@ void DigOutputService::add(
 ///
 void DigOutputService::remove(
     DigOutput *pOutput) {
+
+    eosArgumentIsNotNull(pOutput);
+
+    eosAssert(pOutput != nullptr);
+    eosAssert(pOutput->pService == this);
 
     pOutput->pService = nullptr;
 	outputs.remove(pOutput);
@@ -114,6 +124,8 @@ void DigOutputService::timerInterrupt(
 	TMRTimer timer,
 	void *pParam) {
 
+    eosAssert(pParam != nullptr);
+    
 	DigOutputService *pService = reinterpret_cast<DigOutputService*>(pParam);
 	pService->onTimeOut();
 }
@@ -130,6 +142,8 @@ DigOutput::DigOutput(
 
     pService(nullptr),
     state(State::Idle) {
+
+    eosArgumentIsNotNull(pInfo);
 
     if (pService != nullptr)
         pService->add(this);
@@ -257,7 +271,7 @@ void DigOutput::pulse(
 	if (state == State::Idle)
         halGPIOTogglePin(port, pin);
 
-	widthCnt = width;
+	widthCnt = width / 10;
     state = State::Pulse;
 
     unlockSection();
@@ -275,8 +289,8 @@ void DigOutput::delayedPulse(
 
 	lockSection();
 
-	delayCnt = delay;
-    widthCnt = width;
+	delayCnt = delay / 10;
+    widthCnt = width / 10;
     state = State::DelayedPulse;
 
     unlockSection();

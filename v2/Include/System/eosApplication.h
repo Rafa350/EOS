@@ -26,8 +26,8 @@ namespace eos {
 
             void execute();
 
-            void addService(Service *service);
-            void removeService(Service *service);
+            void addService(Service *pService);
+            void removeService(Service *pService);
             Service *getService(const char *name);
 
         protected:

@@ -1,5 +1,5 @@
-#include "HAL/halTMR.h"
-#include "HAL/PIC32/halINT.h"
+#include "hal/halTMR.h"
+#include "hal/PIC32/halINT.h"
 
 #include "sys/attribs.h"
 
@@ -85,27 +85,27 @@ extern void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
 /// \param pInfo: Parametres d'inicialitzacio.
 ///
 void halTMRInitialize(
-const TMRInitializeInfo *pInfo
+    const TMRInitializeInfo *pInfo) {
     
     const TimerInfo *ti = &timerInfoTbl[pInfo->timer];
     
     PLIB_TMR_Stop(ti->tmrId);
     PLIB_TMR_ClockSourceSelect(ti->tmrId, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
-    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[(pInfo->options & HAL_TMD_CLKDIV_MASK) >> HAL_TMR_CLKDIV_POS]);
+    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[(pInfo->options & HAL_TMR_CLKDIV_MASK) >> HAL_TMR_CLKDIV_POS]);
     if ((pInfo->options & HAL_TMR_MODE_MASK) == HAL_TMR_MODE_16) {
         PLIB_TMR_Mode16BitEnable(ti->tmrId);
         PLIB_TMR_Counter16BitClear(ti->tmrId);
         PLIB_TMR_Period16BitSet(ti->tmrId, pInfo->period);    
     } 
-    else if (mode == HAL_TMR_MODE32) {
+    else if ((pInfo->options & HAL_TMR_MODE_MASK) == HAL_TMR_MODE_32) {
         PLIB_TMR_Mode32BitEnable(ti->tmrId);
         PLIB_TMR_Counter32BitClear(ti->tmrId);
         PLIB_TMR_Period32BitSet(ti->tmrId, pInfo->period);            
     }
 
-    callbacks[timer] = pInfo->pIrqCall;
-    if (callback != NULL) {
-        params[timer] = pInfo->pIrqParams;
+    callbacks[pInfo->timer] = pInfo->pIrqCall;
+    if (pInfo->pIrqCall != NULL) {
+        params[pInfo->timer] = pInfo->pIrqParams;
 
         halINTDisableInterrupts();
         
@@ -170,7 +170,7 @@ static void doCallback(
 void isrTMR1Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_1)) {
-        doCallback(HAL_TMR_ID_1);
+        doCallback(HAL_TMR_TIMER_1);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_1);
     }
 }
@@ -180,7 +180,7 @@ void isrTMR1Handler(void) {
 void isrTMR2Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_2)) {
-        doCallback(HAL_TMR_ID_2); 
+        doCallback(HAL_TMR_TIMER_2); 
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_2);
     }
 }
@@ -190,7 +190,7 @@ void isrTMR2Handler(void) {
 void isrTMR3Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_3)) {
-        doCallback(HAL_TMR_ID_3);
+        doCallback(HAL_TMR_TIMER_3);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_3);
     }
 }
@@ -200,7 +200,7 @@ void isrTMR3Handler(void) {
 void isrTMR4Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_4)) {
-        doCallback(HAL_TMR_ID_4);
+        doCallback(HAL_TMR_TIMER_4);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_4);
     }
 }
@@ -210,7 +210,7 @@ void isrTMR4Handler(void) {
 void isrTMR5Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_5)) {
-        doCallback(HAL_TMR_ID_5);
+        doCallback(HAL_TMR_TIMER_5);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_5);
     }
 }

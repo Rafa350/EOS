@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Services/eosDigInput.h"
 
 
@@ -17,83 +18,92 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
-/// \param application: L'aplicacio a la que pertany
-/// \param info: Parametres d'inicialitzacio.
+/// \param pApplication: L'aplicacio a la que pertany
+/// \param pInfo: Parametres d'inicialitzacio.
 ///
 DigInputService::DigInputService(
-    Application *application,
-    const DigInputServiceInitializeInfo *info) :
-    Service(application, serviceName, taskStackSize, taskPriority) {
+    Application *pApplication,
+    const DigInputServiceInitializeInfo *pInfo) :
+    Service(pApplication, serviceName, taskStackSize, taskPriority) {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix una entrada al servei.
-/// \param input: L'entrada a afeigir.
+/// \param pInput: L'entrada a afeigir.
 ///
 void DigInputService::add(
-    DigInput *input) {
+    DigInput *pInput) {
+    
+    eosArgumentIsNotNull(pInput);
+    
+    eosAssert(pInput != nullptr);
+    eosAssert(pInput->pService == nullptr);
 
-    if ((input != nullptr) && (input->service == nullptr)) {
-        inputs.add(input);
-        input->service = this;
-    }
+    inputs.add(pInput);
+    pInput->pService = this;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brieg Elimina una entrada del servei.
-/// \param La entrada a eliminar.
+/// \param pInput:La entrada a eliminar.
 ///
 void DigInputService::remove(
-    DigInput *input) {
+    DigInput *pInput) {
 
-    if ((input != nullptr) && (input->service == this)) {
-        input->service = nullptr;
-        inputs.remove(inputs.indexOf(input));
-    }
+    eosArgumentIsNotNull(pInput);
+
+    eosAssert(pInput != null);
+    eosAssert(pInput->pService == this);
+
+    pInput->pService = nullptr;
+    inputs.remove(inputs.indexOf(pInput));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitzacio.
+/// \brief Inicialitzacio del servei.
 ///
 void DigInputService::onSetup() {
-
-    weakTime = Task::getTickCount();
+    
 }
-
 
 /// ----------------------------------------------------------------------
 /// \brief Bucle d'execucio.
 ///
 void DigInputService::onLoop() {
 
-    Task::delay(10, weakTime);
+    weakTime = Task::getTickCount();
+    
+    while (true) {
+        
+        Task::delay(10, weakTime);
 
-    DigInputListIterator iterator(inputs);
-    while (iterator.hasNext()) {
+        DigInputListIterator iterator(inputs);
+        while (iterator.hasNext()) {
 
-        DigInput *input = iterator.current();
-        bool changed = false;
+            DigInput *input = iterator.current();
+            bool changed = false;
 
-        input->pattern <<= 1;
-        if (halGPIOReadPin(input->port, input->pin))
-            input->pattern |= 1;
+            input->pattern <<= 1;
+            if (halGPIOReadPin(input->port, input->pin))
+                input->pattern |= 1;
 
-        if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
-            changed = true;
-            input->state = true;
+            if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
+                changed = true;
+                input->state = true;
+            }
+            else if ((input->pattern & PATTERN_MASK) == PATTERN_OFF) {
+                changed = true;
+                input->state = false;
+            }
+
+            if (changed && (input->evChange != nullptr))
+                input->evChange->execute(input);
+
+            iterator.next();
         }
-        else if ((input->pattern & PATTERN_MASK) == PATTERN_OFF) {
-            changed = true;
-            input->state = false;
-        }
-
-        if (changed && (input->evChange != nullptr))
-            input->evChange->execute(input);
-
-        iterator.next();
     }
 }
 
@@ -104,25 +114,25 @@ void DigInputService::onLoop() {
 /// \param info: Parametres d'inicialitzacio.
 ///
 DigInput::DigInput(
-    DigInputService *service,
-    const DigInputInitializeInfo *info):
+    DigInputService *pService,
+    const DigInputInitializeInfo *pInfo):
 
-    service(nullptr),
-    port(info->port),
-    pin(info->pin),
+    pService(nullptr),
     evChange(nullptr) {
+       
+    eosArgumentIsNotNull(pIInfo);
+    
+    port = pInfo->port;
+    pin = pInfo->pin;
 
-    GPIOInitializePinInfo pinInfo;
-    pinInfo.port = info->port;
-    pinInfo.pin = info->pin;
-    pinInfo.options = HAL_GPIO_MODE_INPUT;
-    halGPIOInitializePins(&pinInfo, 1);
+    GPIOOptions options = HAL_GPIO_MODE_INPUT;
+    halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
 
     state = halGPIOReadPin(port, pin);
     pattern = state ? 0xFFFFFFFF : 0x00000000;
 
-    if (service != nullptr)
-        service->add(this);
+    if (pService != nullptr)
+        pService->add(this);
 }
 
 
@@ -131,8 +141,8 @@ DigInput::DigInput(
 ///
 DigInput::~DigInput() {
 
-    if (service != nullptr)
-        service->remove(this);
+    if (pService != nullptr)
+        pService->remove(this);
 
     if (evChange != nullptr)
         delete evChange;

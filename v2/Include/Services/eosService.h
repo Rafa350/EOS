@@ -12,7 +12,7 @@
 namespace eos {
 
 	typedef struct {
-		Application *application;
+		Application *pApplication;
 		const char *name;
 		unsigned stackSize;
 		TaskPriority priority;
@@ -20,12 +20,12 @@ namespace eos {
 
     class Service: private IRunable {
         private:
-            Application *application;
+            Application *pApplication;
             const char *name;
             Task task;
 
         private :
-            void run(Task *task);
+            void run(Task *pTask);
 
         protected:
             inline Task *getTask() { return &task; }
@@ -34,15 +34,14 @@ namespace eos {
             virtual void onTick();
 
         public :
-            Service(const ServiceInitializeInfo *init);
-            Service(Application *application, const char *name, unsigned stackSize, TaskPriority priority);
+            Service(const ServiceInitializeInfo *pInit);
+            Service(Application *pApplication, const char *name, unsigned stackSize, TaskPriority priority);
             virtual ~Service();
 
             inline const char *getName() const { return name; }
-            inline Application *getApplication() const { return application; }
+            inline Application *getApplication() const { return pApplication; }
 
-        friend void Application::addService(Service *service);
-        friend void Application::removeService(Service *service);
+        friend Application;
     };
 }
 

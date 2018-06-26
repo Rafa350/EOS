@@ -1,3 +1,5 @@
+#include "eos.h"
+#include "eosAssert.h"
 #include "Services/eosService.h"
 
 
@@ -10,20 +12,20 @@ using namespace eos;
 /// \param name: Nom del servei.
 ///
 Service::Service(
-    Application *application,
+    Application *pApplication,
     const char *name,
     unsigned stackSize,
     TaskPriority priority):
 
-    application(nullptr),
+    pApplication(nullptr),
     name(name),
     task(stackSize, priority, name, this) {
 
     // Si s'indica l'aplicacio, s'afegeix a la llista de
 	// serveis d'aquesta.
 	//
-    if (application != nullptr)
-        application->addService(this);
+    if (pApplication != nullptr)
+        pApplication->addService(this);
 }
 
 
@@ -35,26 +37,25 @@ Service::~Service() {
 	// Al drestruir-se, s'elimina ell mateix de la llista de serveis
 	// de l'aplicacio.
 	//
-    if (application != nullptr)
-        application->removeService(this);
+    if (pApplication != nullptr)
+        pApplication->removeService(this);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Funcio d'execucio de la tasca.
-/// \param task: La tasca.
+/// \param pTask: La tasca.
 ///
 void Service::run(
-    Task *task) {
+    Task *pTask) {
 
-    onSetup();
     while (true)
         onLoop();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitzacio per defecte.
+/// \brief Procesa la inicialitzacio del servei.
 ///
 void Service::onSetup() {
 

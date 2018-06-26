@@ -43,15 +43,15 @@ const GPIOPortRegs gpioPortRegs[] = {
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza una llista de pins.
-/// \param info: Parametres d'inicialitzacio.
+/// \param pInfo: Parametres d'inicialitzacio.
 /// \param count: Numero de pins a inicialitzar;
 ///
 void halGPIOInitializePins(
-    const GPIOInitializePinInfo *info, 
+    const GPIOInitializePinInfo *pInfo, 
     uint8_t count) {
     
     for (unsigned i = 0; i < count; i++) {
-        const GPIOInitializePinInfo *p = &info[i];
+        const GPIOInitializePinInfo *p = &pInfo[i];
         halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
     }
 }
@@ -76,15 +76,15 @@ void halGPIOInitializePin(
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza una llista de ports.
-/// \param info: Parametres d'inicialitzacio.
+/// \param pInfo: Parametres d'inicialitzacio.
 /// \param count: Numero de ports a inicialitzar.
 ///
 void halGPIOInitializePorts(
-    const GPIOInitializePortInfo *info,
+    const GPIOInitializePortInfo *pInfo,
     uint8_t count) {
     
     for (unsigned i = 0; i < count; i++) {
-        const GPIOInitializePortInfo *p = &info[i];
+        const GPIOInitializePortInfo *p = &pInfo[i];
         halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
     }
 }

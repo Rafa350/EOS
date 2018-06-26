@@ -46,6 +46,7 @@
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
+          <itemPath>../../../Include/eosAssert.h</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>

@@ -18,8 +18,8 @@ namespace eos {
     ///
     class AppLoopService: public Service {
         public:
-            AppLoopService(Application *application);
-            AppLoopService(Application *application, unsigned stackSize, TaskPriority prioirity);
+            AppLoopService(Application *pApplication);
+            AppLoopService(Application *pApplication, unsigned stackSize, TaskPriority prioirity);
 
         protected:
             void onSetup();

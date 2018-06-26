@@ -44,6 +44,7 @@ namespace eos {
             virtual void remove(unsigned index) = 0;
             virtual unsigned getCount() const = 0;
             virtual bool isEmpty() const = 0;
+            virtual T &getTop() const = 0;
             virtual T &operator[](unsigned index) = 0;
     };
     

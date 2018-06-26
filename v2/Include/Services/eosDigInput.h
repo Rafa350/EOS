@@ -21,8 +21,8 @@ namespace eos {
     } DigInputServiceInitializeInfo;
 
     typedef struct {
-        uint8_t port;
-        uint8_t pin;
+        GPIOPort port;
+        GPIOPin pin;
     } DigInputInitializeInfo;
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
@@ -41,9 +41,9 @@ namespace eos {
             void onLoop();
 
         public:
-            DigInputService(Application *application, const DigInputServiceInitializeInfo *info);
-            void add(DigInput *input);
-            void remove(DigInput *input);
+            DigInputService(Application *pApplication, const DigInputServiceInitializeInfo *pInfo);
+            void add(DigInput *pInput);
+            void remove(DigInput *pInput);
     };
 
     /// \brief Clase que impementa una entrada digital
@@ -53,15 +53,15 @@ namespace eos {
             typedef ICallbackP1<DigInput*> IDigInputEvent;
 
         private:
-            DigInputService *service;
-            uint8_t port;
-            uint8_t pin;
+            DigInputService *pService;
+            GPIOPort port;
+            GPIOPin pin;
             uint32_t pattern;
             bool state;
             IDigInputEvent *evChange;
 
         public:
-            DigInput(DigInputService *service, const DigInputInitializeInfo *info);
+            DigInput(DigInputService *pService, const DigInputInitializeInfo *pInfo);
             ~DigInput();
 
             /// \brief Obte l'estat actual de la entrada.

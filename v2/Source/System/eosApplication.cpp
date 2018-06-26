@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "eosAssert.h"
 #include "System/eosApplication.h"
 #include "Services/eosService.h"
@@ -14,12 +15,12 @@ Application::Application() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor.
+/// \brief Destructor. Si conte serveis, els elimina de la llista.
 ///
 Application::~Application() {
 
     while (services.getCount() > 0)
-        removeService(services[0]);
+        removeService(services.getTop());
 }
 
 
@@ -28,52 +29,64 @@ Application::~Application() {
 ///
 void Application::execute() {
 
+    // Notifica la inicialitzacio de l'aplicacio.
+    //
     onInitialize();
+    
+    // Notifica la inicialitxzacio de tots els serveis.
+    //
+    ServiceListIterator iterator(services);
+    while (iterator.hasNext()) {
+        iterator.current()->onSetup();
+        iterator.next();
+    }
+    
+    // Activa el planificador.
+    //
     Task::startAll();
+    
+    // Notifica el final de l'aplicacio.
+    //
     onTerminate();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix un servei a l'aplicacio.
-/// \param service: El servei a afeigir.
+/// \param pService: El servei a afeigir.
 ///
 void Application::addService(
-    Service *service) {
+    Service *pService) {
 
-    eosArgumentIsNotNull(service);
+    eosArgumentIsNotNull(pService);
 
-    eosAssert(service != nullptr);
-    eosAssert(service->application == nullptr);
+    eosAssert(pService != nullptr);
+    eosAssert(pService->pApplication == nullptr);
 
-    //if ((service != nullptr) && (service->application == nullptr)) {
-        service->application = this;
-        services.add(service);
-    //}
+    pService->pApplication = this;
+    services.add(pService);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Elimina un servei de l'aplicacio
-/// \param service: El servei a eliminar.
+/// \param pService: El servei a eliminar.
 ///
 void Application::removeService(
-    Service *service) {
+    Service *pService) {
 
-    eosArgumentIsNotNull(service);
+    eosArgumentIsNotNull(pService);
 
-    eosAssert(service != nullptr);
-    eosAssert(service->application == this);
+    eosAssert(pService != nullptr);
+    eosAssert(pService->pApplication == this);
 
-    //if ((service != nullptr) && (service->application == this)) {
-        services.remove(services.indexOf(service));
-        service->application = nullptr;
-    //}
+    services.remove(services.indexOf(pService));
+    pService->pApplication = nullptr;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la initcialitzacio de l'aplicacio.
+/// \brief Notificacio de la initcialitzacio de l'aplicacio.
 ///
 void Application::onInitialize() {
 
@@ -83,7 +96,7 @@ void Application::onInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la finalitzacio de l'aplicacio.
+/// \brief Notifica la finalitzacio de l'aplicacio.
 ///
 void Application::onTerminate() {
 
