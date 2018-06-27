@@ -77,7 +77,9 @@ void MyApplication::onInitialize() {
 
     // Prepara el servei de sortides digitals
     //
-    digOutputSrv = new DigOutputService(this, nullptr);
+    DigOutputServiceInitializeInfo outputSrvInfo;
+    outputSrvInfo.timer = HAL_TMR_TIMER_2;
+    digOutputSrv = new DigOutputService(this, &outputSrvInfo);
 
     DigOutputInitializeInfo outputInfo;
     outputInfo.openDrain = false;

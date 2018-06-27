@@ -1,4 +1,4 @@
-#include "hal/halTMR.h"
+#include "hal/PIC32/halTMR.h"
 #include "hal/PIC32/halINT.h"
 
 #include "sys/attribs.h"
@@ -12,7 +12,6 @@ typedef struct {
     TMR_MODULE_ID tmrId;
     INT_SOURCE intSource;
     INT_VECTOR intVector;
-    unsigned intCoreVector;
 } TimerInfo;
 
 
@@ -30,19 +29,19 @@ typedef struct {
 
 static const TimerInfo timerInfoTbl[NUM_TIMERS] = {
 #ifdef _TMR1    
-    { TMR_ID_1, INT_SOURCE_TIMER_1, INT_VECTOR_T1, _TIMER_1_VECTOR },
+    { TMR_ID_1, INT_SOURCE_TIMER_1, INT_VECTOR_T1 },
 #endif    
 #ifdef _TMR2    
-    { TMR_ID_2, INT_SOURCE_TIMER_2, INT_VECTOR_T2, _TIMER_2_VECTOR },
+    { TMR_ID_2, INT_SOURCE_TIMER_2, INT_VECTOR_T2 },
 #endif
 #ifdef _TMR3    
-    { TMR_ID_3, INT_SOURCE_TIMER_3, INT_VECTOR_T3, _TIMER_3_VECTOR },
+    { TMR_ID_3, INT_SOURCE_TIMER_3, INT_VECTOR_T3 },
 #endif
 #ifdef _TMR4    
-    { TMR_ID_4, INT_SOURCE_TIMER_4, INT_VECTOR_T4, _TIMER_4_VECTOR },
+    { TMR_ID_4, INT_SOURCE_TIMER_4, INT_VECTOR_T4 },
 #endif
 #ifdef _TMR5    
-    { TMR_ID_5, INT_SOURCE_TIMER_5, INT_VECTOR_T5, _TIMER_5_VECTOR },
+    { TMR_ID_5, INT_SOURCE_TIMER_5, INT_VECTOR_T5 },
 #endif
 };
 
@@ -66,22 +65,22 @@ static void *params[NUM_TIMERS];
 #if defined(_TMR1) && (HAL_TMR_USE_T1_INTERRUPT == 1)
 extern void __ISR(_TIMER_1_VECTOR, IPL2SOFT) isrTMR1Wrapper(void);
 #endif
-#if defined(_TMR2) && (HAL_TMR_USE_T2_INTERRUPT == 1)
+#if defined(_TMR2) && defined(HAL_TMR_USE_T2_INTERRUPT)
 extern void __ISR(_TIMER_2_VECTOR, IPL2SOFT) isrTMR2Wrapper(void);
 #endif
-#if defined(_TMR3) && (HAL_TMR_USE_T3_INTERRUPT == 1)
+#if defined(_TMR3) && defined(HAL_TMR_USE_T3_INTERRUPT)
 extern void __ISR(_TIMER_3_VECTOR, IPL2SOFT) isrTMR3Wrapper(void);
 #endif
-#if defined(_TMR4) && (HAL_TMR_USE_T4_INTERRUPT == 1)
+#if defined(_TMR4) && defined(HAL_TMR_USE_T4_INTERRUPT)
 extern void __ISR(_TIMER_4_VECTOR, IPL2SOFT) isrTMR4Wrapper(void);
 #endif
-#if defined(_TMR5) && (HAL_TMR_USE_T5_INTERRUPT == 1)
+#if defined(_TMR5) && defined(HAL_TMR_USE_T5_INTERRUPT)
 extern void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
 #endif
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza les interrupcions per un temporitzador.
+/// \brief Inicialitza el temporitzador.
 /// \param pInfo: Parametres d'inicialitzacio.
 ///
 void halTMRInitialize(
@@ -103,20 +102,24 @@ void halTMRInitialize(
         PLIB_TMR_Period32BitSet(ti->tmrId, pInfo->period);            
     }
 
-    callbacks[pInfo->timer] = pInfo->pIrqCall;
-    if (pInfo->pIrqCall != NULL) {
+    if (((pInfo->options & HAL_TMR_INTERRUPT_MASK) == HAL_TMR_INTERRUPT_ENABLE) &&
+        (pInfo->pIrqCall != NULL)) {
+        
+        callbacks[pInfo->timer] = pInfo->pIrqCall;
         params[pInfo->timer] = pInfo->pIrqParams;
 
         halINTDisableInterrupts();
-        
+
         PLIB_INT_VectorPrioritySet(INT_ID_0, ti->intVector, intPriority);
         PLIB_INT_VectorSubPrioritySet(INT_ID_0, ti->intVector, intSubPriority);    
 
         PLIB_INT_SourceFlagClear(INT_ID_0, ti->intSource);
         PLIB_INT_SourceEnable(INT_ID_0, ti->intSource);
-        
+
         halINTEnableInterrupts();
     }
+    else
+        callbacks[pInfo->timer] = NULL;
 }
 
 
@@ -125,7 +128,7 @@ void halTMRInitialize(
 /// \param timer: El identificador del temporitzador.
 ///
 void halTMRStartTimer(
-    uint8_t timer) {
+    TMRTimer timer) {
     
     const TimerInfo *ti = &timerInfoTbl[timer];
     PLIB_TMR_Start(ti->tmrId);    
@@ -137,7 +140,7 @@ void halTMRStartTimer(
 /// \param timer: El identificador del temporitzador.
 ///
 void halTMRStopTimer(
-    uint8_t timer) {
+    TMRTimer timer) {
     
     const TimerInfo *ti = &timerInfoTbl[timer];
     PLIB_TMR_Stop(ti->tmrId);    
@@ -149,7 +152,7 @@ void halTMRStopTimer(
 /// \param timer: El identificador del temporitzador.
 ///
 static void doCallback(
-    uint8_t timer) {
+    TMRTimer timer) {
     
     TMRInterruptCallback callback = callbacks[timer];
     if (callback != NULL)

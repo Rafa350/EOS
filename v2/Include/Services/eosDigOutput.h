@@ -29,15 +29,15 @@ namespace eos {
         bool openDrain;
     } DigOutputInitializeInfo ;
 
-    /// \brief Clase que implemenmta el servei de gestio de sortides digitals.
+    /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///
     class DigOutputService: public Service {
         private:
-            typedef List<DigOutput*> OutputList;
-            typedef ListIterator<DigOutput*> OutputListIterator;
+            typedef List<DigOutput*> DigOutputList;
+            typedef ListIterator<DigOutput*> DigOutputListIterator;
             
         private:
-            OutputList outputs;
+            DigOutputList outputs;
             TMRTimer timer;
             
         private:

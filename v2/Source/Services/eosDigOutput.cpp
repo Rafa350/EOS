@@ -28,6 +28,8 @@ DigOutputService::DigOutputService(
     const DigOutputServiceInitializeInfo *pInfo):
 
     Service(pApplication, serviceName, taskStackSize, taskPriority) {
+    
+    timer = pInfo->timer;
 }
 
 
@@ -36,8 +38,8 @@ DigOutputService::DigOutputService(
 ///
 DigOutputService::~DigOutputService() {
 
-    while (outputs.getCount() > 0)
-        remove(outputs.getTop());
+    while (!outputs.isEmpty())
+        outputs.remove(outputs.getFront());
 }
 
 
@@ -70,8 +72,8 @@ void DigOutputService::remove(
     eosAssert(pOutput != nullptr);
     eosAssert(pOutput->pService == this);
 
+    outputs.remove(pOutput);
     pOutput->pService = nullptr;
-	outputs.remove(pOutput);
 }
 
 
@@ -80,17 +82,17 @@ void DigOutputService::remove(
 ///
 void DigOutputService::onInitialize() {
     
-/*	TMRInitializeInfo tmrInfo;
-	tmrInfo.timer = pInfo->timer;
+	TMRInitializeInfo tmrInfo;
+	tmrInfo.timer = timer;
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
+    tmrInfo.period = (40000000L / 64L / 1000L) - 1;
 	tmrInfo.pIrqCall = timerInterrupt;
 	tmrInfo.pIrqParams = this;
-	halTMRInitialize(&tmrInfo);*/
+	halTMRInitialize(&tmrInfo);
+    halTMRStartTimer(timer);
 
-    OutputListIterator iterator(outputs);
-    while (iterator.hasNext()) {
-        iterator.current()->initialize();
-        iterator.next();
-    }
+    for (DigOutputListIterator it(outputs); it.hasNext(); it.next())
+        it.current()->initialize();
 }
 
 
@@ -98,9 +100,7 @@ void DigOutputService::onInitialize() {
 /// \brief Bucle de proces del servei.
 ///
 void DigOutputService::onTask() {
-    
-    timeOut();
-    Task::delay(10);
+
 }
 
 
@@ -109,11 +109,8 @@ void DigOutputService::onTask() {
 ///
 void DigOutputService::timeOut() {
 
-    OutputListIterator iterator(outputs);
-    while (iterator.hasNext()) {
-        iterator.current()->timeOut();
-        iterator.next();
-    }
+    for (DigOutputListIterator it(outputs); it.hasNext(); it.next())
+        it.current()->timeOut();
 }
 
 
@@ -271,7 +268,7 @@ void DigOutput::pulse(
 	if (state == State::Idle)
         halGPIOTogglePin(port, pin);
 
-	widthCnt = width / 10;
+	widthCnt = width;
     state = State::Pulse;
 
     unlockSection();
@@ -289,8 +286,8 @@ void DigOutput::delayedPulse(
 
 	lockSection();
 
-	delayCnt = delay / 10;
-    widthCnt = width / 10;
+	delayCnt = delay;
+    widthCnt = width;
     state = State::DelayedPulse;
 
     unlockSection();

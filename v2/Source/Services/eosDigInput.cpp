@@ -24,6 +24,7 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 DigInputService::DigInputService(
     Application *pApplication,
     const DigInputServiceInitializeInfo *pInfo) :
+    
     Service(pApplication, serviceName, taskStackSize, taskPriority) {
 }
 
@@ -58,7 +59,7 @@ void DigInputService::remove(
     eosAssert(pInput->pService == this);
 
     pInput->pService = nullptr;
-    inputs.remove(inputs.indexOf(pInput));
+    inputs.remove(pInput);
 }
 
 

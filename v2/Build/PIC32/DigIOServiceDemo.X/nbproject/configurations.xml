@@ -42,6 +42,7 @@
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f1" displayName="Collections" projectFiles="true">
               <itemPath>../../../Include/System/Collections/eosList.h</itemPath>
+              <itemPath>../../../Include/System/Collections/eosPtrList.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
           </logicalFolder>

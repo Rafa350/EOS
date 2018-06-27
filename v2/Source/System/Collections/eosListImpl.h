@@ -15,6 +15,10 @@ namespace eos {
             unsigned initialCapacity;  // Capacitat inicial de la llista
             void *container;           // Contenidor d'elements
 
+        private:
+            void *getPtr(unsigned index) const;
+            void resize(unsigned newCapacity);
+
         public:
             GenericListImpl(unsigned size, unsigned initialCapacity);
             GenericListImpl(const GenericListImpl *impl);
@@ -22,7 +26,7 @@ namespace eos {
             void clear();
             void addFront(const void *element);
             void addBack(const void *element);
-            void remove(unsigned index);
+            void removeAt(unsigned index);
             void remove(const void *element);
             void removeFront();
             void removeBack();
@@ -30,9 +34,6 @@ namespace eos {
             void *getAt(unsigned index) const;
             unsigned indexOf(const void *element);
             inline bool isEmpty() const { return count == 0; }
-        private:
-            void *getPtr(unsigned index) const;
-            void resize(unsigned newCapacity);
     };
 
 }

@@ -132,7 +132,7 @@ void GenericListImpl::addBack(
 /// \brief Elimina un element de la llista.
 /// \param index: Index del element a eliminar.
 ///
-void GenericListImpl::remove(
+void GenericListImpl::removeAt(
     unsigned index) {
 
     // Comprova si l'index es dins del rang

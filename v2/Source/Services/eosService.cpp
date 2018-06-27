@@ -49,6 +49,8 @@ Service::~Service() {
 void Service::run(
     Task *pTask) {
 
+    // Crida continuament a onTask
+    //
     while (true)
         onTask();
 }

@@ -19,8 +19,8 @@ Application::Application() {
 ///
 Application::~Application() {
 
-    while (services.getCount() > 0)
-        removeService(services.getTop());
+    while (!services.isEmpty())
+        removeService(services.getFront());
 }
 
 
@@ -33,13 +33,10 @@ void Application::run() {
     //
     onInitialize();
     
-    // Notifica la inicialitxzacio de tots els serveis.
+    // Notifica la inicialitzacio de tots els serveis.
     //
-    ServiceListIterator iterator(services);
-    while (iterator.hasNext()) {
-        iterator.current()->onInitialize();
-        iterator.next();
-    }
+    for (ServiceListIterator it(services); it.hasNext(); it.next())
+        it.current()->onInitialize();
     
     // Activa el planificador.
     //
@@ -80,7 +77,7 @@ void Application::removeService(
     eosAssert(pService != nullptr);
     eosAssert(pService->pApplication == this);
 
-    services.remove(services.indexOf(pService));
+    services.remove(pService);
     pService->pApplication = nullptr;
 }
 

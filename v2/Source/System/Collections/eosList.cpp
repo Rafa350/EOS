@@ -8,10 +8,6 @@
 using namespace eos;
 
 
-#define __LOCK()             Task::enterCriticalSection()
-#define __UNLOCK()           Task::exitCriticalSection()
-
-
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param size: Tamany en bytes de cada element.
@@ -53,9 +49,7 @@ void GenericList::addFront(
 
     eosArgumentIsNotNull(element);
 
-    __LOCK();
     impl->addFront(element);
-    __UNLOCK();
 }
 
 
@@ -68,9 +62,7 @@ void GenericList::addBack(
 
     eosArgumentIsNotNull(element);
 
-    __LOCK();
     impl->addBack(element);
-    __UNLOCK();
 }
 
 
@@ -78,12 +70,10 @@ void GenericList::addBack(
 /// \brief Elimina un element de la llista.
 /// \param index: Index del element a eliminar.
 ///
-void GenericList::remove(
+void GenericList::removeAt(
     unsigned index) {
 
-    __LOCK();
-    impl->remove(index);
-    __UNLOCK();
+    impl->removeAt(index);
 }
 
 
@@ -92,9 +82,7 @@ void GenericList::remove(
 ///
 void GenericList::clear() {
 
-    __LOCK();
     impl->clear();
-    __UNLOCK();
 }
 
 
@@ -111,9 +99,7 @@ unsigned GenericList::indexOf(
 
     unsigned index;
 
-    __LOCK();
     index = impl->indexOf(element);
-    __UNLOCK();
 
     return index;
 }
@@ -128,9 +114,7 @@ void *GenericList::get(
     unsigned index) const {
 
     void *p;
-    __LOCK();
     p = impl->getAt(index);
-    __UNLOCK();
 
     return p;
 }

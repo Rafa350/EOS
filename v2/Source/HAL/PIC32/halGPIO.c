@@ -50,7 +50,7 @@ void halGPIOInitializePins(
     const GPIOInitializePinInfo *pInfo, 
     uint8_t count) {
     
-    for (unsigned i = 0; i < count; i++) {
+    for (uint8_t i = 0; i < count; i++) {
         const GPIOInitializePinInfo *p = &pInfo[i];
         halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
     }
@@ -83,7 +83,7 @@ void halGPIOInitializePorts(
     const GPIOInitializePortInfo *pInfo,
     uint8_t count) {
     
-    for (unsigned i = 0; i < count; i++) {
+    for (uint8_t i = 0; i < count; i++) {
         const GPIOInitializePortInfo *p = &pInfo[i];
         halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
     }

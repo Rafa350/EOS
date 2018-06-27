@@ -1,5 +1,5 @@
-#ifndef __EOS_LIST_H
-#define	__EOS_LIST_H
+#ifndef __eosList__
+#define	__eosList__
 
 
 #include "eos.h"
@@ -24,8 +24,8 @@ namespace eos {
             void clear();
             void addFront(const void *element);
             void addBack(const void *element);
-            void remove(unsigned index);
             void remove(const void *element);
+            void removeAt(unsigned index);
             void removeFront();
             void removeBack();
             unsigned getCount() const;
@@ -41,10 +41,10 @@ namespace eos {
     class IList {
         public:
             virtual void add(const T &element) = 0;
-            virtual void remove(unsigned index) = 0;
+            virtual void removeAt(unsigned index) = 0;
             virtual unsigned getCount() const = 0;
             virtual bool isEmpty() const = 0;
-            virtual T &getTop() const = 0;
+            virtual T &getFront() const = 0;
             virtual T &operator[](unsigned index) = 0;
     };
     
@@ -76,16 +76,16 @@ namespace eos {
 
             /// \brief Elimina un element de la llista
             /// \param index: El index del element.
-            inline void remove(unsigned index) {
+            inline void removeAt(unsigned index) {
                 
-                GenericList::remove(index);
+                GenericList::removeAt(index);
             }
             
             /// \brief Elimina un element de la llista
             /// \param index: El index del element.
             inline void remove(const T &element) {
                 
-                GenericList::remove(indexOf(element));
+                GenericList::removeAt(indexOf(element));
             }
 
             /// \brief Elimina tots els elements de la llista.
@@ -122,7 +122,7 @@ namespace eos {
             /// \brief Obte el primer element de la llista
             /// \return El primer element
             ///
-            inline T &getTop() const {
+            inline T &getFront() const {
                 
                 return *((T*) GenericList::get(0));
             }
@@ -213,5 +213,5 @@ namespace eos {
     };
 }
 
-#endif
+#endif // __eosList__
 

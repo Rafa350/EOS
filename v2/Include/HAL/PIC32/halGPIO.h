@@ -115,7 +115,7 @@ extern const GPIOPortRegs gpioPortRegs[];
 
 // Tipus de port
 #define HAL_GPIO_MODE_POS         0
-#define HAL_GPIO_MODE_BITS        0b1111
+#define HAL_GPIO_MODE_BITS        0b111
 #define HAL_GPIO_MODE_MASK        (HAL_GPIO_MODE_BITS << HAL_GPIO_MODE_POS)
 
 #define HAL_GPIO_MODE_INPUT       (0 << HAL_GPIO_MODE_POS) // -Entrada digital
@@ -126,7 +126,7 @@ extern const GPIOPortRegs gpioPortRegs[];
 #define HAL_GPIO_MODE_ANALOG      (5 << HAL_GPIO_MODE_POS) // -Entrada/Sortida Analgica
 
 // Velocitat de conmutacio
-#define HAL_GPIO_SPEED_POS        4
+#define HAL_GPIO_SPEED_POS        3
 #define HAL_GPIO_SPEED_BITS       0b11
 #define HAL_GPIO_SPEED_MASK       (HAL_GPIO_SPEED_BITS << HAL_GPIO_SPEED_POS)
 
@@ -136,7 +136,7 @@ extern const GPIOPortRegs gpioPortRegs[];
 #define HAL_GPIO_SPEED_FAST       (3 << HAL_GPIO_SPEED_POS)
 
 // Resistencies pull-up
-#define HAL_GPIO_PULL_POS         6
+#define HAL_GPIO_PULL_POS         5
 #define HAL_GPIO_PULL_BITS        0b11
 #define HAL_GPIO_PULL_MASK        (HAL_GPIO_PULL_BITS << HAL_GPIO_PULL_POS)
 
@@ -145,7 +145,7 @@ extern const GPIOPortRegs gpioPortRegs[];
 #define HAL_GPIO_PULL_DOWN        (2 << HAL_GPIO_PULL_POS)
 
 // Valor inicial de la sortida
-#define HAL_GPIO_INIT_POS         8
+#define HAL_GPIO_INIT_POS         7
 #define HAL_GPIO_INIT_BITS        0b11
 #define HAL_GPIO_INIT_MASK        (HAL_GPIO_INIT_BITS << HAL_GPIO_INIT_POS)
 
