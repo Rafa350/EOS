@@ -7,13 +7,19 @@
 
 namespace eos {
     
-    class GenericListImpl;
-    
     /// \brief Llista generica implementada com array de bytes. 
     //
     class GenericList {
         private:
-            GenericListImpl *impl;
+            unsigned size;             // Tamany del element
+            unsigned count;            // Numero d'elements en la llista
+            unsigned capacity;         // Capacitat de la llista en elements
+            unsigned initialCapacity;  // Capacitat inicial de la llista
+            void *container;           // Contenidor d'elements
+
+        private:
+            void *getPtr(unsigned index) const;
+            void resize(unsigned newCapacity);
     
         public:
             virtual ~GenericList();
@@ -28,31 +34,17 @@ namespace eos {
             void removeAt(unsigned index);
             void removeFront();
             void removeBack();
-            unsigned getCount() const;
+            inline unsigned getCount() const { return count; }
             void *get(unsigned index) const;
             unsigned indexOf(const void *element);
-            bool isEmpty() const;
+            bool isEmpty() const { return count > 0; }
     };
         
-    
-    /// \brief Interface generic per les llistes.
-    //
-    template <typename T>
-    class IList {
-        public:
-            virtual void add(const T &element) = 0;
-            virtual void removeAt(unsigned index) = 0;
-            virtual unsigned getCount() const = 0;
-            virtual bool isEmpty() const = 0;
-            virtual T &getFront() const = 0;
-            virtual T &operator[](unsigned index) = 0;
-    };
-    
     
     /// \brief Llista d'elements.
     ///
     template <typename T>
-    class List: private GenericList, public IList<T> {
+    class List: private GenericList {
         public:
             /// \brief Contructor.
             ///
@@ -142,7 +134,7 @@ namespace eos {
     template <typename T>
     class ListIterator {
         private:
-            IList<T> &list;
+            List<T> &list;
             unsigned index;
             unsigned count;
             
@@ -150,7 +142,7 @@ namespace eos {
             /// \brief: Contructor.
             /// \param: list: La llista a iterar.
             ///
-            ListIterator(IList<T> &_list):
+            ListIterator(List<T> &_list):
                 list(_list),
                 index(0),
                 count(_list.getCount()) {

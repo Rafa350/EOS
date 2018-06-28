@@ -42,7 +42,6 @@
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f1" displayName="Collections" projectFiles="true">
               <itemPath>../../../Include/System/Collections/eosList.h</itemPath>
-              <itemPath>../../../Include/System/Collections/eosPtrList.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
           </logicalFolder>
@@ -93,7 +92,6 @@
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
               <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
-              <itemPath>../../../Source/System/Collections/eosListImpl.cpp</itemPath>
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>

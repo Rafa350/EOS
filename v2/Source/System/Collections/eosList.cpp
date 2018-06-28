@@ -1,11 +1,19 @@
-
 #include "eosAssert.h"
-#include "System/Core/eosTask.h"
 #include "System/Collections/eosList.h"
-#include "eosListImpl.h"
+
+
+#include <string.h>
+#include <stdint.h>
 
 
 using namespace eos;
+
+
+const unsigned capacityDelta = 10;
+
+
+#define __ALLOC(s)           (void*) new char[s]
+#define __FREE(p)            delete [] (char*)p;
 
 
 /// ----------------------------------------------------------------------
@@ -14,10 +22,20 @@ using namespace eos;
 /// \param initialCapacity: Capacitat inicial en numero d'elements.
 ///
 GenericList::GenericList(
-    unsigned size,
-    unsigned initialCapacity):
+    unsigned _size,
+    unsigned _initialCapacity):
 
-    impl(new GenericListImpl(size, initialCapacity)) {
+    size(_size),
+    count(0),
+    capacity(0),
+    initialCapacity(_initialCapacity),
+    container(nullptr) {
+
+    eosArgumentIsNotZero(size);
+
+    // Reserva memoria pel contenidor
+    //
+    resize(initialCapacity);
 }
 
 
@@ -26,9 +44,24 @@ GenericList::GenericList(
 /// \param list: La llista a copiar.
 ///
 GenericList::GenericList(
-    const GenericList &list):
+    const GenericList &other):
 
-    impl(new GenericListImpl(list.impl)) {
+    size(other.size),
+    count(0),
+    capacity(0),
+    initialCapacity(other.capacity),
+    container(nullptr) {
+
+    // Reserva memoria pel contenidor
+    //
+    resize(initialCapacity);
+
+    // Copia el contingut de la llista
+    //
+    if (other.count > 0) {
+        memcpy(container, other.container, other.count * size);
+        count = other.count;
+    }
 }
 
 
@@ -37,7 +70,10 @@ GenericList::GenericList(
 ///
 GenericList::~GenericList() {
 
-    delete impl;
+    // Allivera la memoria del contenidor
+    //
+    if (container != nullptr)
+        __FREE(container);
 }
 
 
@@ -47,9 +83,25 @@ GenericList::~GenericList() {
 void GenericList::addFront(
     const void *element) {
 
-    eosArgumentIsNotNull(element);
+    // Si no hi ha espai en el contenidor, el fa mes gran
+    //
+    if (count == capacity)
+        resize(capacity + capacityDelta);
 
-    impl->addFront(element);
+    void *ptr0 = getPtr(0);
+    void *ptr1 = getPtr(1);
+
+    // Fa espai al principi de la llista
+    //
+    memcpy(ptr1, ptr0, (count - 1) * size);
+
+    // Copia l'element al contenidor
+    //
+    memcpy(ptr0, element, size);
+
+    // Incrementa el contador d'elements
+    //
+    count += 1;
 }
 
 
@@ -60,9 +112,19 @@ void GenericList::addFront(
 void GenericList::addBack(
     const void *element) {
 
-    eosArgumentIsNotNull(element);
+    // Si no hi ha espai en el contenidor, el fa mes gran
+    //
+    if (count == capacity)
+        resize(capacity + capacityDelta);
 
-    impl->addBack(element);
+    // Copia el element al contenidor
+    //
+    void *ptr = getPtr(count);
+    memcpy(ptr, element, size);
+
+    // Incrementa el contador d'elements
+    //
+    count += 1;
 }
 
 
@@ -73,7 +135,19 @@ void GenericList::addBack(
 void GenericList::removeAt(
     unsigned index) {
 
-    impl->removeAt(index);
+    // Comprova si l'index es dins del rang
+    //
+    if (index < count) {
+
+        // Elimina l'element del contenidor
+        //
+        void *ptr = getPtr(index);
+        memcpy(ptr, (const void*) ((char*) ptr + size), (count - index - 1) * size);
+
+        // Decrementa el contador d'elements
+        //
+        count--;
+    }
 }
 
 
@@ -82,7 +156,21 @@ void GenericList::removeAt(
 ///
 void GenericList::clear() {
 
-    impl->clear();
+    // Comprova si hi han elements
+    //
+    if (container != nullptr) {
+
+        // Allivera la memoria del contenidor
+        //
+        __FREE(container);
+        container = nullptr;
+        count = 0;
+        capacity = 0;
+
+        // Reserva memoria en el contenidor
+        //
+        resize(initialCapacity);
+    }
 }
 
 
@@ -95,13 +183,19 @@ void GenericList::clear() {
 unsigned GenericList::indexOf(
     const void *element) {
 
-    eosArgumentIsNotNull(element);
+    bool result = UINT32_MAX;
 
-    unsigned index;
+    // Obte l'index del element, recorrent el contenidor fins
+    // que el trobi
+    //
+    for (unsigned index = 0; index < count; index++) {
+        if (!memcmp(getPtr(index), element, size)) {
+            result = index;
+            break;
+        }
+    }
 
-    index = impl->indexOf(element);
-
-    return index;
+    return result;
 }
 
 
@@ -113,28 +207,54 @@ unsigned GenericList::indexOf(
 void *GenericList::get(
     unsigned index) const {
 
-    void *p;
-    p = impl->getAt(index);
-
-    return p;
+    return index < count ? getPtr(index) : nullptr;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retorna el numero d'elements en la llista.
-/// \return El nombre d'elements.
+/// \brief Obte l'adressa del element especificat.
+/// \param index: L'index del element.
+/// \return L'adresa del element.
 ///
-unsigned GenericList::getCount() const {
+void *GenericList::getPtr(
+    unsigned index) const {
 
-    return impl->getCount();
+    return (void*) ((unsigned) container + (index * size));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \bried Indica si la llista es buida.
-/// \return True si la llista es buida.
+/// \brief Redimensiona el tamany del contenidor de dades.
+/// \param newCapacity: Numero d'elements.
 ///
-bool GenericList::isEmpty() const {
+void GenericList::resize(
+    unsigned newCapacity) {
 
-    return impl->isEmpty();
+    // Comprova si cal aumentar la capacitat.
+    //
+    if (capacity < newCapacity) {
+
+        // Salva un punter al contenidor actual
+        //
+        void *ptr = container;
+
+        // Reserva memoria per un nou contenidor
+        //
+        container = __ALLOC(newCapacity * size);
+
+        // Comprova si hi havia un contenidor previ
+        //
+        if (ptr != nullptr) {
+
+            // opia les dades de l'antic contenidor al nou
+            //
+            memcpy(container, ptr, count);
+
+            // Allivera l'antic contenidor
+            //
+            __FREE(ptr);
+        }
+
+        capacity = newCapacity;
+    }
 }
