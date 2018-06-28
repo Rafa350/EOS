@@ -14,8 +14,6 @@
 namespace eos {
 
     class Application;
-    class Task;
-    class DigOuputService;
     class DigOutput;
 
     typedef struct {

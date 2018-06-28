@@ -68,7 +68,10 @@ void DigInputService::remove(
 ///
 void DigInputService::onInitialize() {
     
+    for (DigInputListIterator it(inputs); it.hasNext(); it.next())
+        it.current()->initialize();
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief Bucle d'execucio.
@@ -81,29 +84,26 @@ void DigInputService::onTask() {
         
         Task::delay(10, weakTime);
 
-        DigInputListIterator iterator(inputs);
-        while (iterator.hasNext()) {
+        for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
 
-            DigInput *input = iterator.current();
+            DigInput *pInput = it.current();
             bool changed = false;
 
-            input->pattern <<= 1;
-            if (halGPIOReadPin(input->port, input->pin))
-                input->pattern |= 1;
+            pInput->pattern <<= 1;
+            if (halGPIOReadPin(pInput->port, pInput->pin))
+                pInput->pattern |= 1;
 
-            if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
+            if ((pInput->pattern & PATTERN_MASK) == PATTERN_ON) {
                 changed = true;
-                input->state = true;
+                pInput->state = true;
             }
-            else if ((input->pattern & PATTERN_MASK) == PATTERN_OFF) {
+            else if ((pInput->pattern & PATTERN_MASK) == PATTERN_OFF) {
                 changed = true;
-                input->state = false;
+                pInput->state = false;
             }
 
-            if (changed && (input->evChange != nullptr))
-                input->evChange->execute(input);
-
-            iterator.next();
+            if (changed && (pInput->evChange != nullptr))
+                pInput->evChange->execute(pInput);
         }
     }
 }
@@ -111,8 +111,8 @@ void DigInputService::onTask() {
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
-/// \param service: El servei.
-/// \param info: Parametres d'inicialitzacio.
+/// \param pService: El servei.
+/// \param pInfo: Parametres d'inicialitzacio.
 ///
 DigInput::DigInput(
     DigInputService *pService,
@@ -125,12 +125,6 @@ DigInput::DigInput(
     
     port = pInfo->port;
     pin = pInfo->pin;
-
-    GPIOOptions options = HAL_GPIO_MODE_INPUT;
-    halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
-
-    state = halGPIOReadPin(port, pin);
-    pattern = state ? 0xFFFFFFFF : 0x00000000;
 
     if (pService != nullptr)
         pService->add(this);
@@ -147,4 +141,17 @@ DigInput::~DigInput() {
 
     if (evChange != nullptr)
         delete evChange;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza la entrada.
+///
+void DigInput::initialize() {
+    
+    GPIOOptions options = HAL_GPIO_MODE_INPUT;
+    halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
+
+    state = halGPIOReadPin(port, pin);
+    pattern = state ? 0xFFFFFFFF : 0x00000000;
 }

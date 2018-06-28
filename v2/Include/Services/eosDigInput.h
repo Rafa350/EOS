@@ -13,7 +13,6 @@ namespace eos {
 
 
     class Application;
-    class Task;
     class DigInput;
 
     typedef struct {
@@ -59,6 +58,9 @@ namespace eos {
             uint32_t pattern;
             bool state;
             IDigInputEvent *evChange;
+            
+        private:
+            void initialize();
 
         public:
             DigInput(DigInputService *pService, const DigInputInitializeInfo *pInfo);
