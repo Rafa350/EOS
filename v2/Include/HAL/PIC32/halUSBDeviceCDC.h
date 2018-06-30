@@ -15,15 +15,15 @@ extern "C" {
 #endif
     
 
-typedef void (*USBDeviceCallback)(uint8_t index, void *param);
+typedef void (*USBDeviceCallback)(USBPort port, void *pParam);
 
 typedef struct {
-    USBDeviceCallback callback;
-    void *param;
+    USBDeviceCallback pCallback;
+    void *pParam;
 } USBDeviceCDCInitializeInfo;
 
 
-void halUSBDeviceCDCInitialize(const USBDeviceCDCInitializeInfo *info);
+void halUSBDeviceCDCInitialize(const USBDeviceCDCInitializeInfo *pInfo);
 void halUSBDeviceCDCTask();
 
 

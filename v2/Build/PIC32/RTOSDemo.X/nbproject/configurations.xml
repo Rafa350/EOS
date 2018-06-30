@@ -23,8 +23,8 @@
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="OSAL" projectFiles="true">
-            <itemPath>../../../Include/OSAL/osalThread.h</itemPath>
             <itemPath>../../../Include/OSAL/osal.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
         </logicalFolder>
@@ -59,7 +59,8 @@
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
               <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalMsgQueue.c</itemPath>
-              <itemPath>../../../Source/OSAL/FreeRTOS/osalThread.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalMemory.c</itemPath>
             </logicalFolder>
           </logicalFolder>
         </logicalFolder>

@@ -338,11 +338,6 @@
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Collections/eosList.cpp</location>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/Collections/eosListImpl.cpp</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Collections/eosListImpl.cpp</location>
-		</link>
-		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Source/System/Core/eosErrorHandler.cpp</location>

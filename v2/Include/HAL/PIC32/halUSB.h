@@ -21,8 +21,8 @@ extern "C" {
 typedef uint8_t USBPort;
 
 
-#define HAL_USB_PORT_0            ((USBId) 0)
-#define HAL_USB_PORT_1            ((USBId) 1)
+#define HAL_USB_PORT_0            ((USBPort) 0)
+#define HAL_USB_PORT_1            ((USBPort) 1)
 
 
 #ifdef __cplusplus

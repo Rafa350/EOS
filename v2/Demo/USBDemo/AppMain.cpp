@@ -78,6 +78,6 @@ void MyAppLoopService::onLoop() {
 void AppMain() {
    
     MyApplication *app = new MyApplication();
-    app->execute();
+    app->run();
     delete app;
 }

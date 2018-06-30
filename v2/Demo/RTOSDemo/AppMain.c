@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "hal/halGPIO.h"
-#include "osal/osalThread.h"
+#include "osal/osalTask.h"
 #include "osal/osalMsgQueue.h"
 
 

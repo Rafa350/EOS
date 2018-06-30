@@ -19,7 +19,7 @@ typedef struct {
 } USBDeviceInitializeInfo;
 
 
-void halUSBDeviceInitialize(const USBDeviceInitializeInfo *info);
+void halUSBDeviceInitialize(const USBDeviceInitializeInfo *pInfo);
 void halUSBDeviceTask();
 
 

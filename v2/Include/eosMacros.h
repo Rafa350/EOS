@@ -1,5 +1,5 @@
-#ifndef __EOS_MACROS_H
-#define __EOS_MACROS_H
+#ifndef __eosMacros__
+#define __eosMacros__
 
 
 #define __concat2(a, b)      a ## b

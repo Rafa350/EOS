@@ -170,16 +170,16 @@ void halGPIOInitializePins(
 
 		EnableClock(p->port);
 
-		GPIO_InitTypeDef gpioInit;
-		PreparePinInit(p, &gpioInit);
-		HAL_GPIO_Init(gpioTbl[p->port], &gpioInit);
+		GPIO_InitTypeDef init;
+		PreparePinInit(p, &init);
+		HAL_GPIO_Init(gpioTbl[p->port], &init);
 	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Configura una llista de ports.
-/// \param pInfo: Llista d'informacio de confiuguracio.
+/// \param pInfo: Llista d'informacio de configuracio.
 /// \param count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePorts(
@@ -223,3 +223,49 @@ void halGPIOInitializePin(
 
 	halGPIOInitializePins(&info, 1);
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief Posa un pin al estat inactiu.
+/// \param port: El identificador del port.
+/// \param pin: El identificador del pin.
+///
+#if 0
+void halGPIOClearPin(
+	GPIOPort port,
+	GPIOPin pin) {
+
+	gpioTbl[port]->BSRR = ((uint32_t) 1) << (pin + 16);
+
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Posa un pin al estat actiu.
+/// \param port: El identificador del port.
+/// \param pin: El identificador del pin.
+///
+#if 0
+void halGPIOSetPin(
+	GPIOPort port,
+	GPIOPin pin) {
+
+	gpioTbl[port]->BSRR = ((uint32_t) 1) << (pin);
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inverteix l'estat del pin.
+/// \param port: El identificador del port.
+/// \param pin: El identificador del pin.
+///
+#if 0
+void halGPIOTogglePin(
+	GPIOPort port,
+	GPIOPin pin) {
+
+	gpioTbl[port]->ODR ^= ((uint32_t) 1) << (pin);
+}
+#endif

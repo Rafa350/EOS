@@ -29,6 +29,10 @@
             <itemPath>../../../Include/HAL/halUSB.h</itemPath>
             <itemPath>../../../Include/HAL/halUSBDeviceCDC.h</itemPath>
           </logicalFolder>
+          <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
+            <itemPath>../../../Include/OSAL/osalMemory.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
+          </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <logicalFolder name="f1" displayName="Usb" projectFiles="true">
               <logicalFolder name="f1" displayName="Microchip" projectFiles="true">
@@ -41,10 +45,12 @@
           </logicalFolder>
           <logicalFolder name="f1" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
+              <itemPath>../../../Include/System/Collections/eosList.h</itemPath>
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Include/System/Core/eosTask.h</itemPath>
             </logicalFolder>
+            <itemPath>../../../Include/System/eosApplication.h</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
         </logicalFolder>
@@ -77,7 +83,8 @@
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
               <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
-              <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalMemory.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
@@ -94,7 +101,6 @@
           <logicalFolder name="f1" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
               <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
-              <itemPath>../../../Source/System/Collections/eosListImpl.cpp</itemPath>
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>

@@ -360,6 +360,6 @@ void DisplayLoopService::drawBackground(
 void AppMain() {
 
     MyApplication *app = new MyApplication();
-    app->execute();
+    app->run();
     delete app;
 }

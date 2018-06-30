@@ -384,11 +384,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosList.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Collections/eosListImpl.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosListImpl.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/System/Core/eosQueue.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosQueue.h</locationURI>
@@ -447,11 +442,6 @@
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosList.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Collections/eosListImpl.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosListImpl.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>

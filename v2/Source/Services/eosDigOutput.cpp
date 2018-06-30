@@ -28,8 +28,9 @@ DigOutputService::DigOutputService(
     const DigOutputServiceInitializeInfo *pInfo):
 
     Service(pApplication, serviceName, taskStackSize, taskPriority) {
-    
-    timer = pInfo->timer;
+
+    //timer = pInfo->timer;
+	timer = HAL_TMR_TIMER_2;
 }
 
 
@@ -81,11 +82,21 @@ void DigOutputService::remove(
 /// \brief Inicialitza el servei.
 ///
 void DigOutputService::onInitialize() {
-    
+
 	TMRInitializeInfo tmrInfo;
 	tmrInfo.timer = timer;
+#if defined(EOS_PIC32MX)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.period = (40000000L / 64L / 1000L) - 1;
+#elif defined(EOS_STM32F4)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
+    tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
+    tmrInfo.period = 1000 - 1; // 1ms
+	tmrInfo.irqPriority = 1;
+	tmrInfo.irqSubPriority = 0;
+#else
+#error CPU no soportada
+#endif
 	tmrInfo.pIrqCall = timerInterrupt;
 	tmrInfo.pIrqParams = this;
 	halTMRInitialize(&tmrInfo);
@@ -122,7 +133,7 @@ void DigOutputService::timerInterrupt(
 	void *pParam) {
 
     eosAssert(pParam != nullptr);
-    
+
 	DigOutputService *pService = reinterpret_cast<DigOutputService*>(pParam);
 	pService->timeOut();
 }
@@ -147,7 +158,7 @@ DigOutput::DigOutput(
 
     port = pInfo->port;
     pin = pInfo->pin;
-    options = 
+    options =
         (pInfo->openDrain ? HAL_GPIO_MODE_OUTPUT_OD : HAL_GPIO_MODE_OUTPUT_PP) |
         (pInfo->initState ? HAL_GPIO_INIT_SET : HAL_GPIO_INIT_CLR);
 }
@@ -168,7 +179,7 @@ DigOutput::~DigOutput() {
 ///
 void DigOutput::initialize() {
 
-    halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);    
+    halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
 }
 
 
