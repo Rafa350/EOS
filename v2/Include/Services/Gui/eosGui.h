@@ -80,8 +80,7 @@ namespace eos {
 
 	class GuiService: public Service {
 		public:
-			GuiService(Application *application, const GuiServiceInitializeInfo *info = nullptr);
-			void initialize();
+			GuiService(Application *application, const GuiServiceInitializeInfo *pInfo);
 
 		private:
 			void run(Task *task);
