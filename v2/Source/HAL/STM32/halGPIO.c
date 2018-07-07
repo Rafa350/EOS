@@ -62,7 +62,7 @@ static const uint32_t pupdTbl[] = {
 /// \param port: El identificador del port.
 ///
 static void EnableClock(
-	uint8_t port) {
+	GPIOPort port) {
 
 	switch (port) {
 		case HAL_GPIO_PORT_A:
@@ -70,7 +70,7 @@ static void EnableClock(
 			break;
 
 		case HAL_GPIO_PORT_B:
-			__HAL_RCC_GPIOB_CLK_ENABLE();
+			 __HAL_RCC_GPIOB_CLK_ENABLE();
 			break;
 
 		case HAL_GPIO_PORT_C:

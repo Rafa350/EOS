@@ -85,7 +85,7 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.1722388535" name="MCU GCC Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker"/>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.2000567405" name="MCU G++ Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.paths.106678476" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f429i-disc1_hal_lib/Debug}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.1789526255" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="stm32f429i-disc1_hal_lib"/>
@@ -138,7 +138,7 @@
 				<externalSettings containerId="stm32f429i-disc1_hal_lib;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/stm32f429i-disc1_hal_lib"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/stm32f429i-disc1_hal_lib/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/stm32f429i-disc1_hal_lib/Debug"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="stm32f429i-disc1_hal_lib" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

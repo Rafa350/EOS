@@ -49,7 +49,9 @@ typedef struct {
 	uint8_t alt;
 } GPIOInitializePortInfo;
 
+
 extern GPIO_TypeDef * const gpioTbl[];
+
 
 // Identificado del port
 #define HAL_GPIO_PORT_A      ((GPIOPort) 0)
@@ -209,7 +211,6 @@ extern GPIO_TypeDef * const gpioTbl[];
 
 #define halGPIOReadPort(port) \
     gpioTbl[port]->IDR
-
 
 void halGPIOInitializePins(const GPIOInitializePinInfo *pInfo, uint8_t count);
 void halGPIOInitializePorts(const GPIOInitializePortInfo *pInfo, uint8_t count);
