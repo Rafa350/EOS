@@ -2,10 +2,6 @@
 #define __eosFatFS__
 
 
-#include "ff.h"
-#include "ff_gen_drv.h"
-
-
 namespace eos {
 
 	typedef void *FileHandle;

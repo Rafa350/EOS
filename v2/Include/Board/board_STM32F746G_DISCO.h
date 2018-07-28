@@ -247,6 +247,16 @@
 #define SD_PRESENT_PORT            HAL_GPIO_PORT_C
 #define SD_PRESENT_PIN             HAL_GPIO_PIN_13
 
+#define SD_DMA_RX_CHANNEL          DMA_CHANNEL_4
+#define SD_DMA_RX_STREAM           DMA2_Stream3
+#define SD_DMA_RX_IRQ              DMA2_Stream3_IRQn
+
+#define SD_DMA_TX_CHANNEL          DMA_CHANNEL_4
+#define SD_DMA_TX_STREAM           DMA2_Stream6
+#define SD_DMA_TX_IRQ              DMA2_Stream6_IRQn
+
+#define SD_MODULE                  SDMMC1
+
 
 // -----------------------------------------------------------------------
 // Controlador de touchpad FT5336

@@ -108,38 +108,42 @@ extern GPIO_TypeDef * const gpioTbl[];
 
 // Funcio alternativa
 // Sense funcio asignada
-#define HAL_GPIO_AF_NONE     0
+#define HAL_GPIO_AF_NONE          0
 
 // Funcio alternativa
 // Funcio I2Cx
-#define HAL_GPIO_AF4_I2C1    GPIO_AF4_I2C1
-#define HAL_GPIO_AF4_I2C2    GPIO_AF4_I2C2
-#define HAL_GPIO_AF4_I2C3    GPIO_AF4_I2C3
-#define HAL_GPIO_AF4_I2C4    GPIO_AF4_I2C4
+#define HAL_GPIO_AF4_I2C1         GPIO_AF4_I2C1
+#define HAL_GPIO_AF4_I2C2         GPIO_AF4_I2C2
+#define HAL_GPIO_AF4_I2C3         GPIO_AF4_I2C3
+#define HAL_GPIO_AF4_I2C4         GPIO_AF4_I2C4
 
 // Funcio alternativa
 // Funcio SPIx
-#define HAL_GPIO_AF5_SPI1    GPIO_AF5_SPI1
-#define HAL_GPIO_AF5_SPI2    GPIO_AF5_SPI2
-#define HAL_GPIO_AF5_SPI3    GPIO_AF5_SPI3
-#define HAL_GPIO_AF5_SPI4    GPIO_AF5_SPI4
-#define HAL_GPIO_AF5_SPI5    GPIO_AF5_SPI5
-#define HAL_GPIO_AF5_SPI6    GPIO_AF5_SPI6
+#define HAL_GPIO_AF5_SPI1         GPIO_AF5_SPI1
+#define HAL_GPIO_AF5_SPI2         GPIO_AF5_SPI2
+#define HAL_GPIO_AF5_SPI3         GPIO_AF5_SPI3
+#define HAL_GPIO_AF5_SPI4         GPIO_AF5_SPI4
+#define HAL_GPIO_AF5_SPI5         GPIO_AF5_SPI5
+#define HAL_GPIO_AF5_SPI6         GPIO_AF5_SPI6
 
 // Funcio alternativa
 // Funcio LTDC
-#define HAL_GPIO_AF9_LTDC    GPIO_AF9_LTDC
-#define HAL_GPIO_AF14_LTDC   GPIO_AF14_LTDC
+#define HAL_GPIO_AF9_LTDC         GPIO_AF9_LTDC
+#define HAL_GPIO_AF14_LTDC        GPIO_AF14_LTDC
 
 // Funcio alternativa
 // Funcio OGTx
-#define HAL_GPIO_AF10_OGT1_FS  GPIO_AF10_OTG_FS
-#define HAL_GPIO_AF10_OGT2_HS  GPIO_AF10_OGT_HS
-#define HAL_GPIO_AF12_OGT2_FS  GPIO_AF12_OTG_HS_FS
+#define HAL_GPIO_AF10_OGT1_FS     GPIO_AF10_OTG_FS
+#define HAL_GPIO_AF10_OGT2_HS     GPIO_AF10_OGT_HS
+#define HAL_GPIO_AF12_OGT2_FS     GPIO_AF12_OTG_HS_FS
 
 // Funcio alternativa
 // Funcio FMC
-#define HAL_GPIO_AF12_FMC    GPIO_AF12_FMC
+#define HAL_GPIO_AF12_FMC         GPIO_AF12_FMC
+
+// Funcio alternativa
+// Funcio SDMMC
+#define HAL_GPIO_AF12_SDMMC1      GPIO_AF12_SDMMC1
 
 
 // Tipus de port
@@ -196,14 +200,14 @@ extern GPIO_TypeDef * const gpioTbl[];
 	gpioTbl[port]->BSRR = ((uint32_t) 1) << (pin)
 
 #define halGPIOClearPin(port, pin) \
-	gpioTbl[port]->BSRR = ((uint32_t) 1) << (pin + 16)
+	gpioTbl[port]->BSRR = ((uint32_t) 1) << ((pin) + 16)
 
 #define halGPIOTogglePin(port, pin) \
 	gpioTbl[port]->ODR ^= ((uint32_t) 1) << (pin)
 #endif
 
 #define halGPIOReadPin(port, pin) \
-	(gpioTbl[port]->IDR & (((uint32_t) 1) << pin)) != 0
+	((gpioTbl[port]->IDR & (((uint32_t) 1) << (pin))) != 0)
 
 
 #define halGPIOWritePort(port, data) \

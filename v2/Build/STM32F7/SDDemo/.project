@@ -58,11 +58,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/SDDemo/ffconf.h</locationURI>
 		</link>
 		<link>
-			<name>inc/App/sd_diskio.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/SDDemo/sd_diskio.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -76,11 +71,6 @@
 			<name>src/App/STM32F7</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/App/sd_diskio.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/SDDemo/sd_diskio.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS</name>
@@ -128,6 +118,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Board/board.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board.h</locationURI>
@@ -168,6 +163,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Core</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Fat/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -181,6 +181,11 @@
 			<name>inc/Framework/EOS/Controllers/Fat/eosFatFS.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Fat/eosFatFS.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Fat/eosFileSystemDriver.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Fat/eosFileSystemDriver.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Fat/ff.h</name>
@@ -228,9 +233,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Fat/ff_gen_drv.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/HAL/STM32/halGPIO.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halGPIO.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosErrorHandler.cpp</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Fat/Drivers/SDIO</name>
@@ -251,6 +266,26 @@
 			<name>src/Framework/EOS/Controllers/Fat/Option/unicode.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Fat/Option/unicode.c</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Fat/Drivers/SDIO/eosFileSystemSDIODriver.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Fat/Drivers/SDIO/eosFileSystemSDIODriver.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Fat/Drivers/SDIO/sd_diskio.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Fat/Drivers/SDIO/sd_diskio.h</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Fat/Drivers/SDIO/eosFileSystemSDIODriver.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Fat/Drivers/SDIO/eosFileSystemSDIODriver.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Fat/Drivers/SDIO/sd_diskio.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Fat/Drivers/SDIO/sd_diskio.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

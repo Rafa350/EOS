@@ -22,6 +22,7 @@ namespace eos {
     class IDisplayDriver {
         public:
     		virtual ~IDisplayDriver() {}
+            
             virtual void initialize() = 0;
             virtual void shutdown() = 0;
             virtual void displayOn() = 0;
