@@ -20,7 +20,7 @@
 
 namespace eos {
 
-    class ILI9341LTDC_Driver: public IDisplayDriver {
+    class ILI9341LTDCDriver: public IDisplayDriver {
         private:
     		static IDisplayDriver *instance;
 			int16_t screenWidth;
@@ -48,7 +48,7 @@ namespace eos {
             void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
 
         private:
-            ILI9341LTDC_Driver();
+            ILI9341LTDCDriver();
             void displayInit();
             void writeCommands(const uint8_t *dada);
 

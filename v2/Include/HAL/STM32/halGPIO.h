@@ -46,7 +46,7 @@ typedef struct {
 	GPIOPort port;
 	GPIOMask mask;
 	GPIOOptions options;
-	uint8_t alt;
+	GPIOAlt alt;
 } GPIOInitializePortInfo;
 
 
@@ -108,7 +108,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 
 // Funcio alternativa
 // Sense funcio asignada
-#define HAL_GPIO_AF_NONE          0
+#define HAL_GPIO_AF_NONE          ((GPIOAlt) 0)
 
 // Funcio alternativa
 // Funcio I2Cx
@@ -147,46 +147,46 @@ extern GPIO_TypeDef * const gpioTbl[];
 
 
 // Tipus de port
-#define HAL_GPIO_MODE_POS         0
-#define HAL_GPIO_MODE_BITS        0b1111
+#define HAL_GPIO_MODE_POS         0u
+#define HAL_GPIO_MODE_BITS        0b1111u
 #define HAL_GPIO_MODE_MASK        (HAL_GPIO_MODE_BITS << HAL_GPIO_MODE_POS)
 
-#define HAL_GPIO_MODE_INPUT       (0 << HAL_GPIO_MODE_POS) // -Entrada digital
-#define HAL_GPIO_MODE_OUTPUT_PP   (1 << HAL_GPIO_MODE_POS) // -Sortida push-pull
-#define HAL_GPIO_MODE_OUTPUT_OD   (2 << HAL_GPIO_MODE_POS) // -Sortida open-drain
-#define HAL_GPIO_MODE_ALT_PP      (3 << HAL_GPIO_MODE_POS) // -Sortida alternativa push-pull
-#define HAL_GPIO_MODE_ALT_OD      (4 << HAL_GPIO_MODE_POS) // -Sortida alternativa open-drain
-#define HAL_GPIO_MODE_ANALOG      (5 << HAL_GPIO_MODE_POS) // -Entrada/Sortida Analgica
-#define HAL_GPIO_MODE_IT_POS      (6 << HAL_GPIO_MODE_POS) // -Interrupcio canvi a positiu
-#define HAL_GPIO_MODE_IT_NEG	  (7 << HAL_GPIO_MODE_POS) // -Interrupcio canvi a negatiu
-#define HAL_GPIO_MODE_IT_CHG      (8 << HAL_GPIO_MODE_POS) // -Interrupcio canvi
+#define HAL_GPIO_MODE_INPUT       (0u << HAL_GPIO_MODE_POS) // -Entrada digital
+#define HAL_GPIO_MODE_OUTPUT_PP   (1u << HAL_GPIO_MODE_POS) // -Sortida push-pull
+#define HAL_GPIO_MODE_OUTPUT_OD   (2u << HAL_GPIO_MODE_POS) // -Sortida open-drain
+#define HAL_GPIO_MODE_ALT_PP      (3u << HAL_GPIO_MODE_POS) // -Sortida alternativa push-pull
+#define HAL_GPIO_MODE_ALT_OD      (4u << HAL_GPIO_MODE_POS) // -Sortida alternativa open-drain
+#define HAL_GPIO_MODE_ANALOG      (5u << HAL_GPIO_MODE_POS) // -Entrada/Sortida Analgica
+#define HAL_GPIO_MODE_IT_POS      (6u << HAL_GPIO_MODE_POS) // -Interrupcio canvi a positiu
+#define HAL_GPIO_MODE_IT_NEG	  (7u << HAL_GPIO_MODE_POS) // -Interrupcio canvi a negatiu
+#define HAL_GPIO_MODE_IT_CHG      (8u << HAL_GPIO_MODE_POS) // -Interrupcio canvi
 
 // Velocitat de conmutacio
-#define HAL_GPIO_SPEED_POS        4
-#define HAL_GPIO_SPEED_BITS       0b11
+#define HAL_GPIO_SPEED_POS        4u
+#define HAL_GPIO_SPEED_BITS       0b11u
 #define HAL_GPIO_SPEED_MASK       (HAL_GPIO_SPEED_BITS << HAL_GPIO_SPEED_POS)
 
-#define HAL_GPIO_SPEED_LOW        (0 << HAL_GPIO_SPEED_POS)
-#define HAL_GPIO_SPEED_MEDIUM	  (1 << HAL_GPIO_SPEED_POS)
-#define HAL_GPIO_SPEED_HIGH       (2 << HAL_GPIO_SPEED_POS)
-#define HAL_GPIO_SPEED_FAST       (3 << HAL_GPIO_SPEED_POS)
+#define HAL_GPIO_SPEED_LOW        (0u << HAL_GPIO_SPEED_POS)
+#define HAL_GPIO_SPEED_MEDIUM	  (1u << HAL_GPIO_SPEED_POS)
+#define HAL_GPIO_SPEED_HIGH       (2u << HAL_GPIO_SPEED_POS)
+#define HAL_GPIO_SPEED_FAST       (3u << HAL_GPIO_SPEED_POS)
 
 // Resistencies pull-up
-#define HAL_GPIO_PULL_POS         6
-#define HAL_GPIO_PULL_BITS        0b11
+#define HAL_GPIO_PULL_POS         6u
+#define HAL_GPIO_PULL_BITS        0b11u
 #define HAL_GPIO_PULL_MASK        (HAL_GPIO_PULL_BITS << HAL_GPIO_PULL_POS)
 
-#define HAL_GPIO_PULL_NONE        (0 << HAL_GPIO_PULL_POS)
-#define HAL_GPIO_PULL_UP          (1 << HAL_GPIO_PULL_POS)
-#define HAL_GPIO_PULL_DOWN        (2 << HAL_GPIO_PULL_POS)
+#define HAL_GPIO_PULL_NONE        (0u << HAL_GPIO_PULL_POS)
+#define HAL_GPIO_PULL_UP          (1u << HAL_GPIO_PULL_POS)
+#define HAL_GPIO_PULL_DOWN        (2u << HAL_GPIO_PULL_POS)
 
 // Valor inicial de la sortida
-#define HAL_GPIO_INIT_POS         8
-#define HAL_GPIO_INIT_BITS        0b1
+#define HAL_GPIO_INIT_POS         8u
+#define HAL_GPIO_INIT_BITS        0b1u
 #define HAL_GPIO_INIT_MASK        (HAL_GPIO_INIT_BITS << HAL_GPIO_INIT_POS)
 
-#define HAL_GPIO_INIT_CLR         (0 << HAL_GPIO_INIT_POS)
-#define HAL_GPIO_INIT_SET         (1 << HAL_GPIO_INIT_POS)
+#define HAL_GPIO_INIT_CLR         (0u << HAL_GPIO_INIT_POS)
+#define HAL_GPIO_INIT_SET         (1u << HAL_GPIO_INIT_POS)
 
 
 #define halGPIOInitializePinInput(port, pin) \

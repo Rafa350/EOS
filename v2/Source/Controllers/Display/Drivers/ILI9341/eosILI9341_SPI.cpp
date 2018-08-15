@@ -16,7 +16,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza les comunicacions.
 ///
-void ILI9341_Driver::lcdInitialize() {
+void ILI9341Driver::lcdInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
 #ifdef ILI9341_RST_PORT
@@ -55,7 +55,7 @@ void ILI9341_Driver::lcdInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Reseteja el driver.
 ///
-void ILI9341_Driver::lcdReset() {
+void ILI9341Driver::lcdReset() {
 
 #ifdef ILI9341_RST_PORT
     halTMRDelay(10);
@@ -68,7 +68,7 @@ void ILI9341_Driver::lcdReset() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia una transferencia de dades amb el driver.
 ///
-void ILI9341_Driver::lcdOpen() {
+void ILI9341Driver::lcdOpen() {
 
     halGPIOClearPin(ILI9341_CS_PORT, ILI9341_CS_PIN);
 }
@@ -77,7 +77,7 @@ void ILI9341_Driver::lcdOpen() {
 /// ----------------------------------------------------------------------
 /// \brief Finalitza una transferencia de dades amb el driver.
 ///
-void ILI9341_Driver::lcdClose() {
+void ILI9341Driver::lcdClose() {
 
     halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN);
 }
@@ -87,7 +87,7 @@ void ILI9341_Driver::lcdClose() {
 /// \brief Escriu un byte de comanda.
 /// \param cmd: El byte a escriure.
 ///
-void ILI9341_Driver::lcdWriteCommand(
+void ILI9341Driver::lcdWriteCommand(
     uint8_t cmd) {
 
     halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
@@ -99,7 +99,7 @@ void ILI9341_Driver::lcdWriteCommand(
 /// \brief Escriu un byte de dades.
 /// \param data: El byte a escriure.
 ///
-void ILI9341_Driver::lcdWriteData(
+void ILI9341Driver::lcdWriteData(
     uint8_t data) {
 
     halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
@@ -112,7 +112,7 @@ void ILI9341_Driver::lcdWriteData(
 /// \param d: Buffer de dades.
 /// \param length: Numero de bytestes en la cadena.
 ///
-void ILI9341_Driver::lcdWriteData(
+void ILI9341Driver::lcdWriteData(
 	uint8_t *data,
 	int32_t size) {
 
@@ -125,7 +125,7 @@ void ILI9341_Driver::lcdWriteData(
 /// \brief Llegeix un byte de dades.
 /// \return El byte lleigit.
 ///
-uint8_t ILI9341_Driver::lcdReadData() {
+uint8_t ILI9341Driver::lcdReadData() {
 
 #ifdef ILI9341_MISO_PORT
 

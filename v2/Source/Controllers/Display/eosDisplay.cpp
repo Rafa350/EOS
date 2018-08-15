@@ -9,11 +9,11 @@ using namespace eos;
 
 extern const unsigned char *fontConsolas14pt;
 
-const uint8_t inside = 0;
-const uint8_t left = 1;
-const uint8_t right = 2;
-const uint8_t bottom = 4;
-const uint8_t top = 8;
+#define INSIDE     ((uint8_t) 0x00)
+#define LEFT       ((uint8_t) 0x01)
+#define RIGHT      ((uint8_t) 0x02)
+#define BOTTOM     ((uint8_t) 0x04)
+#define TOP        ((uint8_t) 0x08)
 
 
 /// ----------------------------------------------------------------------
@@ -819,22 +819,22 @@ bool Display::clipLine(
                 // x = x1 + (1 / slope) * (y - y1)
                 // y = y1 + slope * (x - x1)
                 //
-                if ((code & top) != 0) {
+                if ((code & TOP) != 0) {
                     x = x1 + (x2 - x1) * (clipY2 - y1) / (y2 - y1);
                     y = clipY2;
                 }
 
-                else if ((code & bottom) != 0) {
+                else if ((code & BOTTOM) != 0) {
                     x = x1 + (x2 - x1) * (clipY1 - y1) / (y2 - y1);
                     y = clipY1;
                 }
 
-                else if ((code & right) != 0) {
+                else if ((code & RIGHT) != 0) {
                     y = y1 + (y2 - y1) * (clipX2 - x1) / (x2 - x1);
                     x = clipX2;
                 }
 
-                else if ((code & left) != 0) {
+                else if ((code & LEFT) != 0) {
                     y = y1 + (y2 - y1) * (clipX1 - x1) / (x2 - x1);
                     x = clipX1;
                 }
@@ -864,7 +864,7 @@ bool Display::clipLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Cancula el 'outcode' per l'algorisme de retall.
+/// \brief Calcula el 'outcode' per l'algorisme de retall.
 /// \param x: Coordinada X del punt.
 /// \param y: Coordinada Y del punt.
 /// \return El 'outcode' calculat.
@@ -873,16 +873,16 @@ uint8_t Display::calcOutCode(
     int16_t x,
     int16_t y) {
 
-    uint8_t code = inside;
+    uint8_t code = INSIDE;
 
     if (x < clipX1)
-        code |= left;
+        code |= LEFT;
     else if (x > clipX2)
-        code |= right;
+        code |= RIGHT;
     if (y < clipY1)
-        code |= bottom;
+        code |= BOTTOM;
     else if (y > clipY2)
-        code |= top;
+        code |= TOP;
 
     return code;
 }

@@ -32,7 +32,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 
 
 // Prioritat de la tasca
-#define OSAL_TASK_PRIORITY_POS         0
+#define OSAL_TASK_PRIORITY_POS         0u
 #define OSAL_TASK_PRIORITY_MASK        ((TaskOptions)0b11 << OSAL_TASK_PRIORITY_POS)
 
 #define OSAL_TASK_PRIORITY_IDLE	       ((TaskOptions)0 << OSAL_TASK_PRIORITY_POS)

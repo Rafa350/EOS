@@ -54,17 +54,17 @@ using namespace eos;
 
 static LTDC_HandleTypeDef ltdcHandle;
 
-IDisplayDriver *ILI9341LTDC_Driver::instance = nullptr;
+IDisplayDriver *ILI9341LTDCDriver::instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Obte una instancia unica del driver.
 /// \return La instancia del driver.
 ///
-IDisplayDriver *ILI9341LTDC_Driver::getInstance() {
+IDisplayDriver *ILI9341LTDCDriver::getInstance() {
 
 	if (instance == nullptr)
-		instance = new ILI9341LTDC_Driver();
+		instance = new ILI9341LTDCDriver();
 	return instance;
 }
 
@@ -72,7 +72,7 @@ IDisplayDriver *ILI9341LTDC_Driver::getInstance() {
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
-ILI9341LTDC_Driver::ILI9341LTDC_Driver() {
+ILI9341LTDCDriver::ILI9341LTDCDriver() {
 
 	screenWidth = IMAGE_WIDTH;
 	screenHeight = IMAGE_HEIGHT;
@@ -84,7 +84,7 @@ ILI9341LTDC_Driver::ILI9341LTDC_Driver() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitzacio.
 ///
-void ILI9341LTDC_Driver::initialize() {
+void ILI9341LTDCDriver::initialize() {
 
     displayInit();
     displayOn();
@@ -94,7 +94,7 @@ void ILI9341LTDC_Driver::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief Desactiva el modul.
 ///
-void ILI9341LTDC_Driver::shutdown() {
+void ILI9341LTDCDriver::shutdown() {
 
 	displayOff();
 }
@@ -104,7 +104,7 @@ void ILI9341LTDC_Driver::shutdown() {
 /// \brief Selecciona la orientacio.
 /// \param orientation: L'orientacio a seleccionar.
 ///
-void ILI9341LTDC_Driver::setOrientation(
+void ILI9341LTDCDriver::setOrientation(
 	DisplayOrientation orientation) {
 
 }
@@ -114,7 +114,7 @@ void ILI9341LTDC_Driver::setOrientation(
 /// \brief Borra la pantalla.
 /// \param color: Color de borrat.
 ///
-void ILI9341LTDC_Driver::clear(
+void ILI9341LTDCDriver::clear(
 	const Color &color) {
 
 	dma2dFill(image, IMAGE_WIDTH, IMAGE_HEIGHT, color);
@@ -127,7 +127,7 @@ void ILI9341LTDC_Driver::clear(
 /// \param y: Coordinada Y.
 /// \param color: Color del pixel.
 ///
-void ILI9341LTDC_Driver::setPixel(
+void ILI9341LTDCDriver::setPixel(
 	int16_t x,
 	int16_t y,
 	const Color &color) {
@@ -146,7 +146,7 @@ void ILI9341LTDC_Driver::setPixel(
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
-void ILI9341LTDC_Driver::setHPixels(
+void ILI9341LTDCDriver::setHPixels(
 	int16_t x,
 	int16_t y,
 	int16_t size,
@@ -177,7 +177,7 @@ void ILI9341LTDC_Driver::setHPixels(
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
-void ILI9341LTDC_Driver::setVPixels(
+void ILI9341LTDCDriver::setVPixels(
 	int16_t x,
 	int16_t y,
 	int16_t size,
@@ -209,7 +209,7 @@ void ILI9341LTDC_Driver::setVPixels(
 /// \param height: Alçada de la regio.
 /// \param color: Color dels pixels.
 ///
-void ILI9341LTDC_Driver::setPixels(
+void ILI9341LTDCDriver::setPixels(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -222,7 +222,7 @@ void ILI9341LTDC_Driver::setPixels(
 }
 
 
-void ILI9341LTDC_Driver::writePixels(
+void ILI9341LTDCDriver::writePixels(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -232,7 +232,7 @@ void ILI9341LTDC_Driver::writePixels(
 }
 
 
-void ILI9341LTDC_Driver::readPixels(
+void ILI9341LTDCDriver::readPixels(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -242,7 +242,7 @@ void ILI9341LTDC_Driver::readPixels(
 }
 
 
-void ILI9341LTDC_Driver::vScroll(
+void ILI9341LTDCDriver::vScroll(
 	int16_t delta,
 	int16_t x,
 	int16_t y,
@@ -252,7 +252,7 @@ void ILI9341LTDC_Driver::vScroll(
 }
 
 
-void ILI9341LTDC_Driver::hScroll(
+void ILI9341LTDCDriver::hScroll(
 	int16_t delta,
 	int16_t x,
 	int16_t y,
@@ -265,7 +265,7 @@ void ILI9341LTDC_Driver::hScroll(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el display.
 ///
-void ILI9341LTDC_Driver::displayInit() {
+void ILI9341LTDCDriver::displayInit() {
 
 #if defined(STM32F429I_DISC1)
     static const uint8_t lcdInit[] = {
@@ -317,7 +317,7 @@ void ILI9341LTDC_Driver::displayInit() {
 /// ----------------------------------------------------------------------
 /// \brief Activa el display
 ///
-void ILI9341LTDC_Driver::displayOn() {
+void ILI9341LTDCDriver::displayOn() {
 
 	lcdOpen();
 	lcdWriteCommand(CMD_SLEEP_OUT);
@@ -330,7 +330,7 @@ void ILI9341LTDC_Driver::displayOn() {
 /// ----------------------------------------------------------------------
 /// \brief Desactiva el display.
 ///
-void ILI9341LTDC_Driver::displayOff() {
+void ILI9341LTDCDriver::displayOff() {
 
 	lcdOpen();
 	lcdWriteCommand(CMD_DISPLAY_OFF);
@@ -344,7 +344,7 @@ void ILI9341LTDC_Driver::displayOff() {
 /// \brief Escriu una sequencia de comandes en el controlador.
 /// \param data: La sequencia de comandes.
 ///
-void ILI9341LTDC_Driver::writeCommands(
+void ILI9341LTDCDriver::writeCommands(
 	const uint8_t *data) {
 
     lcdOpen();
@@ -371,7 +371,7 @@ void ILI9341LTDC_Driver::writeCommands(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza les comunicacions amb el driver.
 ///
-void ILI9341LTDC_Driver::lcdInitialize() {
+void ILI9341LTDCDriver::lcdInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
 #ifdef ILI9341LTDC_RST_PIN
@@ -410,7 +410,7 @@ void ILI9341LTDC_Driver::lcdInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Reseteja el driver.
 ///
-void ILI9341LTDC_Driver::lcdReset() {
+void ILI9341LTDCDriver::lcdReset() {
 
 #ifdef ILI9341LTDC_RST_PORT
     halTMRDelay(10);
@@ -423,7 +423,7 @@ void ILI9341LTDC_Driver::lcdReset() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia la comunicacio amb el controlador.
 ///
-void ILI9341LTDC_Driver::lcdOpen() {
+void ILI9341LTDCDriver::lcdOpen() {
 
 	halGPIOClearPin(ILI9341LTDC_CS_PORT, ILI9341LTDC_CS_PIN);
 }
@@ -432,7 +432,7 @@ void ILI9341LTDC_Driver::lcdOpen() {
 /// ----------------------------------------------------------------------
 /// \brief Finalitza la comunicacio amb el controlador.
 ///
-void ILI9341LTDC_Driver::lcdClose() {
+void ILI9341LTDCDriver::lcdClose() {
 
     halGPIOSetPin(ILI9341LTDC_CS_PORT, ILI9341LTDC_CS_PIN);
 }
@@ -442,7 +442,7 @@ void ILI9341LTDC_Driver::lcdClose() {
 /// \brief Escriu un byte de comanda en el controlador
 /// \param data: El byte de comanda.
 ///
-void ILI9341LTDC_Driver::lcdWriteCommand(
+void ILI9341LTDCDriver::lcdWriteCommand(
 	uint8_t d) {
 
 	halGPIOClearPin(ILI9341LTDC_RS_PORT, ILI9341LTDC_RS_PIN);
@@ -454,7 +454,7 @@ void ILI9341LTDC_Driver::lcdWriteCommand(
 /// \brief Escriu un byte de dades en el controlador
 /// \param data: El byte de dades.
 ///
-void ILI9341LTDC_Driver::lcdWriteData(
+void ILI9341LTDCDriver::lcdWriteData(
 	uint8_t d) {
 
 	halGPIOSetPin(ILI9341LTDC_RS_PORT, ILI9341LTDC_RS_PIN);
@@ -465,7 +465,7 @@ void ILI9341LTDC_Driver::lcdWriteData(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el controlador de video
 ///
-void ILI9341LTDC_Driver::ltdcInitialize() {
+void ILI9341LTDCDriver::ltdcInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
     	{ ILI9341LTDC_DE_PORT,     ILI9341LTDC_DE_PIN,
@@ -583,7 +583,7 @@ void ILI9341LTDC_Driver::ltdcInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el controlador DMA
 ///
-void ILI9341LTDC_Driver::dma2dInitialize() {
+void ILI9341LTDCDriver::dma2dInitialize() {
 
 	__HAL_RCC_DMA2D_CLK_ENABLE();
 }
@@ -596,7 +596,7 @@ void ILI9341LTDC_Driver::dma2dInitialize() {
 /// \param height: Alçada del bloc.
 /// \param color: El color per omplir.
 ///
-void ILI9341LTDC_Driver::dma2dFill(
+void ILI9341LTDCDriver::dma2dFill(
 	const uint8_t *addr,
 	int16_t width,
 	int16_t height,

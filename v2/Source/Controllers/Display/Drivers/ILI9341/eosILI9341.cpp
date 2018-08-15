@@ -29,17 +29,17 @@
 using namespace eos;
 
 
-IDisplayDriver *ILI9341_Driver::instance = nullptr;
+IDisplayDriver *ILI9341Driver::instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Obte una instancia unica del driver.
 /// \return La instancia del driver.
 ///
-IDisplayDriver *ILI9341_Driver::getInstance() {
+IDisplayDriver *ILI9341Driver::getInstance() {
 
 	if (instance == nullptr)
-		instance = new ILI9341_Driver();
+		instance = new ILI9341Driver();
 	return instance;
 }
 
@@ -47,7 +47,7 @@ IDisplayDriver *ILI9341_Driver::getInstance() {
 /// ----------------------------------------------------------------------
 /// \brief Contructor.
 ///
-ILI9341_Driver::ILI9341_Driver():
+ILI9341Driver::ILI9341Driver():
 
 	screenWidth(IMAGE_WIDTH),
 	screenHeight(IMAGE_HEIGHT) {
@@ -58,7 +58,7 @@ ILI9341_Driver::ILI9341_Driver():
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza la pantalla.
 ///
-void ILI9341_Driver::initialize() {
+void ILI9341Driver::initialize() {
 
 #if defined(DISPLAY_ER_TFT028_4)
     static const uint8_t initData[] = {
@@ -137,7 +137,7 @@ void ILI9341_Driver::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief Desativa la pantalla
 ///
-void ILI9341_Driver::shutdown() {
+void ILI9341Driver::shutdown() {
 
     displayOff();
 }
@@ -147,7 +147,7 @@ void ILI9341_Driver::shutdown() {
 /// \brief Selecciona l'orientacio de la pantalla.
 /// \param orientation: Orientacio (0=0, 1=90, 2=180, 3=270)
 ///
-void ILI9341_Driver::setOrientation(
+void ILI9341Driver::setOrientation(
     DisplayOrientation orientation) {
 
 #if defined(DISPLAY_ER_TFT028_4)
@@ -199,7 +199,7 @@ void ILI9341_Driver::setOrientation(
 /// \brief Borra la pantalla
 /// \param color: Color per borrar
 ///
-void ILI9341_Driver::clear(
+void ILI9341Driver::clear(
     const Color &color) {
 
     selectRegion(0, 0, screenWidth, screenHeight);
@@ -213,7 +213,7 @@ void ILI9341_Driver::clear(
 /// \param y: Coordinada Y.
 /// \param color: Color del pixel.
 ///
-void ILI9341_Driver::setPixel(
+void ILI9341Driver::setPixel(
     int16_t x,
     int16_t y,
     const Color &color) {
@@ -230,7 +230,7 @@ void ILI9341_Driver::setPixel(
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
-void ILI9341_Driver::setHPixels(
+void ILI9341Driver::setHPixels(
     int16_t x,
     int16_t y,
     int16_t length,
@@ -248,7 +248,7 @@ void ILI9341_Driver::setHPixels(
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
-void ILI9341_Driver::setVPixels(
+void ILI9341Driver::setVPixels(
     int16_t x,
     int16_t y,
     int16_t length,
@@ -267,7 +267,7 @@ void ILI9341_Driver::setVPixels(
 /// \param height: Alçada de la regio.
 /// \param color: Color dels pixels.
 ///
-void ILI9341_Driver::setPixels(
+void ILI9341Driver::setPixels(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -287,7 +287,7 @@ void ILI9341_Driver::setPixels(
 /// \param height: Alçada de la regio.
 /// \param colors: Color dels pixels.
 ///
-void ILI9341_Driver::writePixels(
+void ILI9341Driver::writePixels(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -308,7 +308,7 @@ void ILI9341_Driver::writePixels(
 /// \param height: Alçada de la regio.
 /// \params colors: Buffer on deixar els pixels.
 ///
-void ILI9341_Driver::readPixels(
+void ILI9341Driver::readPixels(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -328,7 +328,7 @@ void ILI9341_Driver::readPixels(
 /// \param width: Amplada de la regio.
 /// \param height: Alçada de la regio.
 ///
-void ILI9341_Driver::vScroll(
+void ILI9341Driver::vScroll(
     int16_t delta,
     int16_t x,
     int16_t y,
@@ -364,7 +364,7 @@ void ILI9341_Driver::vScroll(
 /// \param width: Amplada de la regio.
 /// \param height: Alçada de la regio.
 ///
-void ILI9341_Driver::hScroll(
+void ILI9341Driver::hScroll(
     int16_t delta,
     int16_t x,
     int16_t y,
@@ -377,7 +377,7 @@ void ILI9341_Driver::hScroll(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el controlador del display.
 ///
-void ILI9341_Driver::displayInit() {
+void ILI9341Driver::displayInit() {
 
     lcdInitialize();
     lcdReset();
@@ -387,7 +387,7 @@ void ILI9341_Driver::displayInit() {
 /// ----------------------------------------------------------------------
 /// \brief Activa el display
 ///
-void ILI9341_Driver::displayOn() {
+void ILI9341Driver::displayOn() {
 
 	lcdOpen();
 	lcdWriteCommand(CMD_SLEEP_OUT);
@@ -400,7 +400,7 @@ void ILI9341_Driver::displayOn() {
 /// ----------------------------------------------------------------------
 /// \brief Desactiva el display.
 ///
-void ILI9341_Driver::displayOff() {
+void ILI9341Driver::displayOff() {
 
 	lcdOpen();
 	lcdWriteCommand(CMD_DISPLAY_OFF);
@@ -414,7 +414,7 @@ void ILI9341_Driver::displayOff() {
 // \brief Envia una sequencia programada.
 // \param data: Programa a enviar
 //
-void ILI9341_Driver::writeCommands(
+void ILI9341Driver::writeCommands(
 	const uint8_t *data) {
 
     lcdOpen();
@@ -447,7 +447,7 @@ void ILI9341_Driver::writeCommands(
 /// \param width: Amplada de la regio.
 /// \param height: Alçada de la regio.
 ///
-void ILI9341_Driver::selectRegion(
+void ILI9341Driver::selectRegion(
     int16_t x,
     int16_t y,
     int16_t width,
@@ -485,7 +485,7 @@ void ILI9341_Driver::selectRegion(
 ///		   regio de 1x1 pixel.
 /// \param data: El color.
 ///
-void ILI9341_Driver::writeRegion(
+void ILI9341Driver::writeRegion(
 	const Color &color) {
 
 #if defined(ILI9341_COLORMODE_565)
@@ -522,7 +522,7 @@ void ILI9341_Driver::writeRegion(
 /// \param data: El color.
 /// \param count: Numero de copies a escriure.
 ///
-void ILI9341_Driver::writeRegion(
+void ILI9341Driver::writeRegion(
     const Color &color,
     int32_t count) {
 
@@ -577,7 +577,7 @@ void ILI9341_Driver::writeRegion(
 /// \param colors: Llista de colors.
 /// \param count: Numero d'elements en la llista.
 ///
-void ILI9341_Driver::writeRegion(
+void ILI9341Driver::writeRegion(
     const Color *colors,
     int32_t count) {
 
@@ -592,7 +592,7 @@ void ILI9341_Driver::writeRegion(
 /// \param colors: Llista de colors.
 /// \param count: Numero de colors a lleigir.
 ///
-void ILI9341_Driver::readRegion(
+void ILI9341Driver::readRegion(
     Color *colors,
     int32_t count) {
 

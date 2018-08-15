@@ -15,7 +15,7 @@
 
 namespace eos {
 
-    class ILI9341_Driver: public IDisplayDriver {
+    class ILI9341Driver: public IDisplayDriver {
     	private:
     		static IDisplayDriver *instance;
     		int16_t screenWidth;
@@ -41,7 +41,7 @@ namespace eos {
             void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
 
         private:
-            ILI9341_Driver();
+            ILI9341Driver();
             void displayInit();
             void writeCommands(const uint8_t *data);
             void writeRegion(const Color &color);
