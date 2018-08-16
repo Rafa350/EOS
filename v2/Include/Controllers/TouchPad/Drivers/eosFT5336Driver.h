@@ -1,5 +1,5 @@
-#ifndef __eosFT5336__
-#define __eosFT5336__
+#ifndef __eosFT5336Driver__
+#define __eosFT5336Driver__
 
 
 // EOS includes
@@ -256,7 +256,7 @@ namespace eos {
 #define FT5336_STATE_REG                    ((uint8_t)0xBC)
 
 
-	class FT5336_Driver: public ITouchPadDriver {
+	class FT5336Driver: public ITouchPadDriver {
 		private:
 			static ITouchPadDriver *instance;
 			uint8_t addr;
@@ -265,11 +265,12 @@ namespace eos {
 			TouchPadOrientation orientation;
 
 		private:
-			FT5336_Driver();
-			FT5336_Driver(const FT5336_Driver &other) = delete;
+			FT5336Driver();
+			FT5336Driver(const FT5336Driver &other) = delete;
 
 		public:
 			static ITouchPadDriver *getInstance();
+
 			int16_t getWidth() { return padWidth; }
 			int16_t getHeight() { return padHeight; }
 			bool getState(TouchPadState &state);
@@ -286,4 +287,4 @@ namespace eos {
 }
 
 
-#endif // __eosFT5336__
+#endif // __eosFT5336Driver__

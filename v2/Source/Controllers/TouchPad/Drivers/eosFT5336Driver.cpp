@@ -7,17 +7,17 @@
 using namespace eos;
 
 
-ITouchPadDriver *FT5336_Driver::instance = nullptr;
+ITouchPadDriver *FT5336Driver::instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Obte una instancia unica del driver.
 /// \return La instancia del driver.
 ///
-ITouchPadDriver *FT5336_Driver::getInstance() {
+ITouchPadDriver *FT5336Driver::getInstance() {
 
 	if (instance == nullptr)
-		instance = new FT5336_Driver();
+		instance = new FT5336Driver();
 	return instance;
 }
 
@@ -25,7 +25,7 @@ ITouchPadDriver *FT5336_Driver::getInstance() {
 /// ----------------------------------------------------------------------
 /// \brief Contructor.
 ///
-FT5336_Driver::FT5336_Driver():
+FT5336Driver::FT5336Driver():
 
 	addr(FT5336_I2C_ADDR),
 	padWidth(FT5336_PAD_WIDTH),
@@ -44,7 +44,7 @@ FT5336_Driver::FT5336_Driver():
 /// \brief selecciona l'oeirntacio del touch pad
 /// \param orientation: La orientacio a seleccionar.
 ///
-void FT5336_Driver::setOrientation(
+void FT5336Driver::setOrientation(
 	TouchPadOrientation orientation) {
 
 	this->orientation = orientation;
@@ -70,7 +70,7 @@ void FT5336_Driver::setOrientation(
 /// \param state: Buffer on deixar el resultat.
 /// \return True si s'ha detectat contacte.
 ///
-bool FT5336_Driver::getState(
+bool FT5336Driver::getState(
 	TouchPadState &state) {
 
 	state.maxPoints = FT5336_MAX_DETECTABLE_TOUCH;
@@ -208,7 +208,7 @@ bool FT5336_Driver::getState(
 /// ----------------------------------------------------------------------
 /// \brief Activa la generacio d'interrupcions pel pin INT
 ///
-void FT5336_Driver::enableInt() {
+void FT5336Driver::enableInt() {
 
 }
 
@@ -216,7 +216,7 @@ void FT5336_Driver::enableInt() {
 /// ----------------------------------------------------------------------
 /// \brief Desactiva la generacio d'interrupcions pel pin INT
 ///
-void FT5336_Driver::disableInt() {
+void FT5336Driver::disableInt() {
 
 }
 
@@ -224,7 +224,7 @@ void FT5336_Driver::disableInt() {
 /// ----------------------------------------------------------------------
 /// \brief Borra la intrrupcio generada
 ///
-void FT5336_Driver::clearInt() {
+void FT5336Driver::clearInt() {
 
 }
 
@@ -232,7 +232,7 @@ void FT5336_Driver::clearInt() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza la comunicacio amb el driver.
 ///
-void FT5336_Driver::ioInit() {
+void FT5336Driver::ioInit() {
 
 	static const GPIOInitializePinInfo gpioInfo[] = {
 #ifdef FT5336_INT_PORT
@@ -256,7 +256,7 @@ void FT5336_Driver::ioInit() {
 /// \param reg: Numero de registre.
 /// \param value: El valor a escriure.
 ///
-void FT5336_Driver::ioWrite(
+void FT5336Driver::ioWrite(
 	uint8_t reg,
 	uint8_t value) {
 
@@ -270,7 +270,7 @@ void FT5336_Driver::ioWrite(
 /// \param reg: Numero del registre.
 /// \return El valor del registre.
 ///
-uint8_t FT5336_Driver::ioRead(
+uint8_t FT5336Driver::ioRead(
 	uint8_t reg) {
 
 	uint8_t value = 0;

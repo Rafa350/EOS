@@ -22,11 +22,6 @@ GuiService::GuiService(
 }
 
 
-void GuiService::initialize() {
-
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief Tasca de control del servei.
 /// \param task: La tasca que s'esta executant.

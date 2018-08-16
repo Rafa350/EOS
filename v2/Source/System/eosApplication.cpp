@@ -32,16 +32,16 @@ void Application::run() {
     // Notifica la inicialitzacio de l'aplicacio.
     //
     onInitialize();
-    
+
     // Notifica la inicialitzacio de tots els serveis.
     //
     for (ServiceListIterator it(services); it.hasNext(); it.next())
-        it.current()->onInitialize();
-    
+        it.current()->initialize();
+
     // Activa el planificador.
     //
     Task::startAll();
-    
+
     // Notifica el final de l'aplicacio.
     //
     onTerminate();

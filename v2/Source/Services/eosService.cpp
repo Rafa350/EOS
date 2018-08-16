@@ -43,6 +43,15 @@ Service::~Service() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief Iniialitzacio del servei, abans de l'inici de la tasca.
+///
+void Service::initialize() {
+
+	onInitialize();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Funcio d'execucio de la tasca.
 /// \param pTask: La tasca.
 ///

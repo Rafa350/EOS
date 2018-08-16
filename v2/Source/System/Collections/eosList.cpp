@@ -22,13 +22,13 @@ const unsigned capacityDelta = 10;
 /// \param initialCapacity: Capacitat inicial en numero d'elements.
 ///
 GenericList::GenericList(
-    unsigned _size,
-    unsigned _initialCapacity):
+    unsigned size,
+    unsigned initialCapacity):
 
-    size(_size),
+    size(size),
     count(0),
     capacity(0),
-    initialCapacity(_initialCapacity),
+    initialCapacity(initialCapacity),
     container(nullptr) {
 
     eosArgumentIsNotZero(size);

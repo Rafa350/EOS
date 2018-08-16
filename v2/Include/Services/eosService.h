@@ -26,7 +26,7 @@ namespace eos {
 
         private :
             Service(const Service &service) = delete;
-            Service& operator=(const Service&) = delete;           
+            Service& operator=(const Service&) = delete;
             void run(Task *pTask);
 
         protected:
@@ -41,9 +41,12 @@ namespace eos {
             Service(Application *pApplication, const char *name, unsigned stackSize, TaskPriority priority);
             virtual ~Service();
 
+            void initialize();
+
             inline const char *getName() const { return name; }
 
-        friend Application;
+        friend void Application::addService(Service *pService);
+        friend void Application::removeService(Service *pService);
     };
 }
 

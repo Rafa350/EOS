@@ -36,7 +36,7 @@ namespace eos {
 
             void addService(Service *pService);
             void removeService(Service *pService);
-            Service *getService(const char *name);
+            Service *getService(const char *name) const;
     };
 
 }

@@ -4,7 +4,7 @@
 #include "Services/Gui/eosGui.h"
 #include "Services/Gui/eosGuiTouchPad.h"
 #include "Controllers/TouchPad/eosTouchPad.h"
-#include "Controllers/TouchPad/Drivers/eosFT5336.h"
+#include "Controllers/TouchPad/Drivers/eosFT5336Driver.h"
 #include "HAL/halSYS.h"
 #include "HAL/halGPIO.h"
 
@@ -61,7 +61,6 @@ void MyApplication::onInitialize() {
 
 	guiService->initialize();
 	guiTouchPadService->initialize();
-	ledService->initialize();
 }
 
 
@@ -108,6 +107,6 @@ void LedLoopService::onRun() {
 void AppMain() {
 
     MyApplication *app = new MyApplication();
-    app->execute();
+    app->run();
     delete app;
 }
