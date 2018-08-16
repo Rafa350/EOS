@@ -20,7 +20,7 @@
 
 namespace eos {
 
-    class RGBDirect_Driver: public IDisplayDriver {
+    class RGBDirectDriver: public IDisplayDriver {
     	private:
     		static IDisplayDriver *instance;
     		int16_t screenWidth;
@@ -29,7 +29,7 @@ namespace eos {
     		uint8_t *image;
 
     	private:
-            RGBDirect_Driver();
+            RGBDirectDriver();
 
         public:
             static IDisplayDriver *getInstance();

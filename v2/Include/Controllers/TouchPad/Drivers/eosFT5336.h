@@ -1,5 +1,5 @@
-#ifndef __eosFT5336Driver__
-#define __eosFT5336Driver__
+#ifndef __eosFT5336__
+#define __eosFT5336__
 
 
 // EOS includes

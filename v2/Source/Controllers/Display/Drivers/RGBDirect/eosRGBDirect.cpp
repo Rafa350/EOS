@@ -50,17 +50,17 @@
 using namespace eos;
 
 
-IDisplayDriver *RGBDirect_Driver::instance = nullptr;
+IDisplayDriver *RGBDirectDriver::instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Obte una instancia unica del driver.
 /// \return La instancia del driver.
 ///
-IDisplayDriver *RGBDirect_Driver::getInstance() {
+IDisplayDriver *RGBDirectDriver::getInstance() {
 
 	if (instance == nullptr)
-		instance = new RGBDirect_Driver();
+		instance = new RGBDirectDriver();
 	return instance;
 }
 
@@ -68,7 +68,7 @@ IDisplayDriver *RGBDirect_Driver::getInstance() {
 /// ----------------------------------------------------------------------
 /// \brief Contructor
 ///
-RGBDirect_Driver::RGBDirect_Driver():
+RGBDirectDriver::RGBDirectDriver():
 
 	screenWidth(RGBDIRECT_SCREEN_WIDTH),
 	screenHeight(RGBDIRECT_SCREEN_HEIGHT),
@@ -81,7 +81,7 @@ RGBDirect_Driver::RGBDirect_Driver():
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el driver.
 ///
-void RGBDirect_Driver::initialize() {
+void RGBDirectDriver::initialize() {
 
 	gpioInitialize();
 	ltdcInitialize();
@@ -92,7 +92,7 @@ void RGBDirect_Driver::initialize() {
 /// ---------------------------------------------------------------------
 /// \brief Finalitza el driver.
 ///
-void RGBDirect_Driver::shutdown() {
+void RGBDirectDriver::shutdown() {
 
 	displayOff();
 }
@@ -101,7 +101,7 @@ void RGBDirect_Driver::shutdown() {
 /// ----------------------------------------------------------------------
 /// \brief Activa el display.
 ///
-void RGBDirect_Driver::displayOn() {
+void RGBDirectDriver::displayOn() {
 
 	// Activa el display
 	//
@@ -116,7 +116,7 @@ void RGBDirect_Driver::displayOn() {
 /// ----------------------------------------------------------------------
 /// \brief Desactiva el display.
 ///
-void RGBDirect_Driver::displayOff() {
+void RGBDirectDriver::displayOff() {
 
 	// Desactiva el display
 	//
@@ -128,7 +128,7 @@ void RGBDirect_Driver::displayOff() {
 }
 
 
-void RGBDirect_Driver::setOrientation(
+void RGBDirectDriver::setOrientation(
 	DisplayOrientation orientation) {
 
 }
@@ -138,7 +138,7 @@ void RGBDirect_Driver::setOrientation(
 /// \brief Borra la pantalla.
 /// \param color: Color de borrat.
 ///
-void RGBDirect_Driver::clear(
+void RGBDirectDriver::clear(
 	const Color &color) {
 
 	dma2dFill(image, IMAGE_WIDTH, IMAGE_HEIGHT, color);
@@ -151,7 +151,7 @@ void RGBDirect_Driver::clear(
 /// \param y: Coordinada Y.
 /// \param color: Color del pixel.
 ///
-void RGBDirect_Driver::setPixel(
+void RGBDirectDriver::setPixel(
 	int16_t x,
 	int16_t y,
 	const Color &color) {
@@ -170,7 +170,7 @@ void RGBDirect_Driver::setPixel(
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
-void RGBDirect_Driver::setHPixels(
+void RGBDirectDriver::setHPixels(
 	int16_t x,
 	int16_t y,
 	int16_t size,
@@ -201,7 +201,7 @@ void RGBDirect_Driver::setHPixels(
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
-void RGBDirect_Driver::setVPixels(
+void RGBDirectDriver::setVPixels(
 	int16_t x,
 	int16_t y,
 	int16_t size,
@@ -234,7 +234,7 @@ void RGBDirect_Driver::setVPixels(
 /// \param height: Alçada de la regio.
 /// \param color: Color dels pixels.
 ///
-void RGBDirect_Driver::setPixels(
+void RGBDirectDriver::setPixels(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -247,7 +247,7 @@ void RGBDirect_Driver::setPixels(
 }
 
 
-void RGBDirect_Driver::writePixels(
+void RGBDirectDriver::writePixels(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -256,7 +256,7 @@ void RGBDirect_Driver::writePixels(
 }
 
 
-void RGBDirect_Driver::readPixels(
+void RGBDirectDriver::readPixels(
 	int16_t x,
 	int16_t y,
 	int16_t width,
@@ -266,7 +266,7 @@ void RGBDirect_Driver::readPixels(
 }
 
 
-void RGBDirect_Driver::vScroll(
+void RGBDirectDriver::vScroll(
 	int16_t delta,
 	int16_t x,
 	int16_t y,
@@ -276,7 +276,7 @@ void RGBDirect_Driver::vScroll(
 }
 
 
-void RGBDirect_Driver::hScroll(
+void RGBDirectDriver::hScroll(
 	int16_t delta,
 	int16_t x,
 	int16_t y,
@@ -289,7 +289,7 @@ void RGBDirect_Driver::hScroll(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el modul GPIO.
 ///
-void RGBDirect_Driver::gpioInitialize() {
+void RGBDirectDriver::gpioInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
 		{RGBDIRECT_LCDE_PORT, RGBDIRECT_LCDE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
@@ -335,7 +335,7 @@ void RGBDirect_Driver::gpioInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el modul LTDC.
 ///
-void RGBDirect_Driver::ltdcInitialize() {
+void RGBDirectDriver::ltdcInitialize() {
 
 	static LTDC_HandleTypeDef ltdcHandler;
 	LTDC_LayerCfgTypeDef layerCfg;
@@ -399,7 +399,7 @@ void RGBDirect_Driver::ltdcInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el modul DMA2D.
 ///
-void RGBDirect_Driver::dma2dInitialize() {
+void RGBDirectDriver::dma2dInitialize() {
 
 	__HAL_RCC_DMA2D_CLK_ENABLE();
 }
@@ -412,7 +412,7 @@ void RGBDirect_Driver::dma2dInitialize() {
 /// \param height: Alçada del bloc.
 /// \param color: El color per omplir.
 ///
-void RGBDirect_Driver::dma2dFill(
+void RGBDirectDriver::dma2dFill(
 	const uint8_t *addr,
 	int16_t width,
 	int16_t height,

@@ -386,22 +386,22 @@
 		<link>
 			<name>src/Framework/EOS/OSAL/osalMemory.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalMemory.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMemory.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/OSAL/osalQueue.c</name>
+			<name>src/Framework/EOS/OSAL/osalTask.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalQueue.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTask.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/OSAL/osalSemaphore.c</name>
+			<name>src/Framework/EOS/OSAL/osalTimer.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalSemaphore.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTimer.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/OSAL/osalThread.c</name>
+			<name>src/Framework/EOS/OSAL/rtos_hooks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/osalThread.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
@@ -562,11 +562,6 @@
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosList.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Collections/eosListImpl.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosListImpl.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>

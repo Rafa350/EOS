@@ -23,7 +23,7 @@ class LedLoopService: public AppLoopService {
 
     protected:
     	void onSetup();
-        void onRun();
+        void onLoop();
 };
 
 
@@ -48,7 +48,7 @@ class DisplayLoopService: public AppLoopService {
 
     protected:
         void onSetup();
-        void onRun();
+        void onLoop();
 
     private:
         void drawBackground();
@@ -88,9 +88,6 @@ MyApplication::MyApplication() {
 /// \brief Processa la inicialitzacio de l'aplicacio
 ///
 void MyApplication::onInitialize() {
-
-	ledService->initialize();
-	displayService->initialize();
 }
 
 
@@ -117,7 +114,7 @@ void LedLoopService::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
-void LedLoopService::onRun() {
+void LedLoopService::onLoop() {
 
 	while (true) {
 
@@ -138,7 +135,7 @@ void DisplayLoopService::onSetup() {
 
 	// Inicialitzacio del display
 	//
-	displayDriver = RGBDirect_Driver::getInstance();
+	displayDriver = RGBDirectDriver::getInstance();
     displayDriver->initialize();
     displayDriver->setOrientation(DisplayOrientation::rotate180);
     displayDriver->displayOn();
@@ -147,7 +144,7 @@ void DisplayLoopService::onSetup() {
 
     // Inicialitzacio del touch pad
     //
-    touchDriver = FT5336_Driver::getInstance();
+    touchDriver = FT5336Driver::getInstance();
     touch = new TouchPad(touchDriver);
 
     screenWidth = displayDriver->getWidth();
@@ -158,7 +155,7 @@ void DisplayLoopService::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
-void DisplayLoopService::onRun() {
+void DisplayLoopService::onLoop() {
 
 	TouchPadState tps;
 
@@ -263,6 +260,6 @@ void DisplayLoopService::clearDot() {
 void AppMain() {
 
     MyApplication *app = new MyApplication();
-    app->execute();
+    app->run();
     delete app;
 }

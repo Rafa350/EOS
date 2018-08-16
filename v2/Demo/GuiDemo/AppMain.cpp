@@ -4,7 +4,7 @@
 #include "Services/Gui/eosGui.h"
 #include "Services/Gui/eosGuiTouchPad.h"
 #include "Controllers/TouchPad/eosTouchPad.h"
-#include "Controllers/TouchPad/Drivers/eosFT5336Driver.h"
+#include "Controllers/TouchPad/Drivers/eosFT5336.h"
 #include "HAL/halSYS.h"
 #include "HAL/halGPIO.h"
 
@@ -22,7 +22,7 @@ class LedLoopService: public AppLoopService {
 
     protected:
     	void onSetup();
-        void onRun();
+        void onLoop();
 };
 
 
@@ -48,7 +48,7 @@ static const char *title = "EOS v2.0: Gui+TouchPad Demo";
 ///
 MyApplication::MyApplication() {
 
-	guiService = new GuiService(this);
+	guiService = new GuiService(this, nullptr);
 	guiTouchPadService = new GuiTouchPadService(this);
 	ledService = new LedLoopService(this);
 }
@@ -59,8 +59,6 @@ MyApplication::MyApplication() {
 ///
 void MyApplication::onInitialize() {
 
-	guiService->initialize();
-	guiTouchPadService->initialize();
 }
 
 
@@ -87,7 +85,7 @@ void LedLoopService::onSetup() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa l'execucio de la tasca.
 ///
-void LedLoopService::onRun() {
+void LedLoopService::onLoop() {
 
 	while (true) {
 

@@ -23,12 +23,15 @@ GuiService::GuiService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Tasca de control del servei.
-/// \param task: La tasca que s'esta executant.
+/// \brief Inicialitzacio del servei.
 ///
-void GuiService::run(Task *task) {
+void GuiService::onInitialize() {
 
-	while (true) {
+}
 
-	}
+/// ----------------------------------------------------------------------
+/// \brief Procesa la tasca del servei
+///
+void GuiService::onTask() {
+
 }

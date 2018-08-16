@@ -82,8 +82,9 @@ namespace eos {
 		public:
 			GuiService(Application *application, const GuiServiceInitializeInfo *pInfo);
 
-		private:
-			void run(Task *task);
+		protected:
+			void onInitialize();
+			void onTask();
 	};
 }
 
