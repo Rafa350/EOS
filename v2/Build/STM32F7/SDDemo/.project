@@ -93,6 +93,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/OSAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/eos.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/eos.h</locationURI>
@@ -114,6 +124,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -153,6 +168,21 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSYS.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/OSAL/osalMemory.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalMemory.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Core</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/IO</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Fat</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -163,7 +193,17 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/OSAL/osalMemory.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/StdLib/osalMemory.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/Core</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/IO</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -208,6 +248,31 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Core/eosString.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosString.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/IO/eosDirectory.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/IO/eosDirectory.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/IO/eosFile.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/IO/eosFile.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/IO/eosFileStream.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/IO/eosFileStream.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/IO/eosStream.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/IO/eosStream.h</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Fat/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -246,6 +311,31 @@
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosErrorHandler.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosString.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosString.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/IO/eosDirectory.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/IO/eosDirectory.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/IO/eosFile.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/IO/eosFile.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/IO/eosFileStream.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/IO/eosFileStream.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/IO/eosStream.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/IO/eosStream.cpp</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Fat/Drivers/SDIO</name>

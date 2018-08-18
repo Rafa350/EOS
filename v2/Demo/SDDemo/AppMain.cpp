@@ -1,11 +1,7 @@
 #include "eos.h"
 #include "System/eosApplication.h"
-#include "System/Core/eosTask.h"
-#include "Services/eosAppLoop.h"
-#include "Controllers/Fat/eosFatFS.h"
+#include "System/IO/eosFileStream.h"
 #include "Controllers/Fat/Drivers/sdio/sd_diskio.h"
-#include "HAL/halSYS.h"
-#include "HAL/halGPIO.h"
 
 
 #include <stdlib.h>
@@ -28,7 +24,42 @@ static void Error_Handler(FRESULT err) {
 }
 
 
-static void SDTest() {
+static void SDTest1() {
+
+	FRESULT fr;                                      /* FatFs function common result code */
+
+	/*##-1- Link the micro SD disk I/O driver ##################################*/
+	if (FATFS_LinkDriver(&SD_Driver, SDPath) == 0) {
+
+		/*##-2- Register the file system object to the FatFs module ##############*/
+		fr = f_mount(&SDFatFs, (TCHAR const*)SDPath, 0);
+		if (fr != FR_OK)  {
+			/* FatFs Initialization Error */
+			Error_Handler(fr);
+		}
+		else {
+			/*##-3- Create a FAT file system (format) on the logical drive #########*/
+			/* WARNING: Formatting the uSD card will delete all content on the device */
+			fr = f_mkfs((TCHAR const*)SDPath, FM_ANY, 0, workBuffer, sizeof(workBuffer));
+			if (fr != FR_OK) {
+				/* FatFs Format Error */
+				Error_Handler(fr);
+			}
+			else {
+				String fileName("STM32.TXT");
+				Stream *f = new FileStream(fileName, FileMode::create, FileAccess::write);
+
+				delete f;
+			}
+		}
+	}
+
+	/*##-11- Unlink the micro SD disk I/O driver ###############################*/
+	FATFS_UnLinkDriver(SDPath);
+}
+
+
+static void SDTest2() {
 
 	FRESULT res, fr;                                      /* FatFs function common result code */
 	uint32_t byteswritten, bytesread;                     /* File write/read counts */
@@ -39,7 +70,7 @@ static void SDTest() {
 	if (FATFS_LinkDriver(&SD_Driver, SDPath) == 0) {
 
 		/*##-2- Register the file system object to the FatFs module ##############*/
-		fr = f_mount(&SDFatFs, (TCHAR const*)SDPath, 0);
+		fr = f_mount(&SDFatFs, (TCHAR const*)SDPath, 1);
 		if (fr != FR_OK)  {
 			/* FatFs Initialization Error */
 			Error_Handler(fr);
@@ -115,7 +146,8 @@ static void SDTest() {
 ///
 void AppMain() {
 
-	SDTest();
+	SDTest1();
+//	SDTest2();
 
 	while (true)
 		continue;

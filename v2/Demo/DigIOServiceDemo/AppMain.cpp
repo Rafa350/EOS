@@ -21,22 +21,46 @@ class LedLoopService: public AppLoopService {
 class MyApplication: public Application {
     private:
         DigOutputService *digOutputSrv;
+#ifdef LED_LED1_PIN        
         DigOutput *digOutput1;
+#endif        
+#ifdef LED_LED2_PIN        
         DigOutput *digOutput2;
+#endif        
+#ifdef LED_LED3_PIN        
         DigOutput *digOutput3;
+#endif        
         DigInputService *digInputSvc;
+#ifdef SW_SW1_PIN
         DigInput *digInput1;
+#endif        
+#ifdef SW_SW2_PIN
         DigInput *digInput2;
+#endif        
+#ifdef SW_SW3_PIN
         DigInput *digInput3;
+#endif        
 
     public:
+#ifdef SW_SW1_PIN
         void digInput1_OnChange(DigInput *input);
+#endif        
+#ifdef SW_SW2_PIN
         void digInput2_OnChange(DigInput *input);
+#endif        
+#ifdef SW_SW3_PIN
         void digInput3_OnChange(DigInput *input);
+#endif        
         
+#ifdef LED_LED1_PIN        
         DigOutput *getLed1() const { return digOutput1; }
+#endif        
+#ifdef LED_LED2_PIN        
         DigOutput *getLed2() const { return digOutput2; }
+#endif        
+#ifdef LED_LED3_PIN        
         DigOutput *getLed3() const { return digOutput3; }
+#endif        
 
     protected:
         void onInitialize();
