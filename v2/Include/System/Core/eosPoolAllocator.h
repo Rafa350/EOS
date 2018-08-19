@@ -1,16 +1,17 @@
-#ifndef __EOS_POOLALLOCATOR_H
-#define	__EOS_POOLALLOCATPR_H
+#ifndef __eosPoolAllocator__
+#define	__eosPoolAllocator__
 
 
 #include "eos.h"
 #include "System/Core/eosAllocator.h"
 
+#include <stddef.h>
 #include <stdint.h>
 
 
 namespace eos {
 
-    class GenericPoolAllocator: IAllocator {
+    class GenericPoolAllocator: public IAllocator {
         private:
             uint8_t *blocks;
             uint8_t *nextBlock;
@@ -38,12 +39,19 @@ namespace eos {
     template <class T>
     class PoolAllocator: public GenericPoolAllocator {
         public:
-            inline PoolAllocator(unsigned maxBlocks): GenericPoolAllocator(sizeof(T), maxBlocks) {}
-            inline T *allocate(size_t size) { return (T*) GenericPoolAllocator::allocate(size); }
+            PoolAllocator(unsigned maxBlocks):
+            	GenericPoolAllocator(sizeof(T), maxBlocks) {
+            }
+            T *allocate(size_t size) {
+            	return (T*) GenericPoolAllocator::allocate(size);
+            }
+            void deallocate(T *p) {
+            	GenericPoolAllocator::deallocate(p);
+            }
     };
 }
 
 
-#endif
+#endif // __eosPoolAllocator__
 
 

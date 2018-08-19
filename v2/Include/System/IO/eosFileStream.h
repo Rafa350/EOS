@@ -7,13 +7,17 @@
 #include "System/IO/eosFile.h"
 #include "System/IO/eosStream.h"
 
+#include <stddef.h>
+
 
 namespace eos {
 
     class FileStream: public Stream {
     	private:
-			uint8_t fileId;
+    		void *hFile;
     	public:
+            static void *operator new(size_t size);
+            static void operator delete(void *p);
 			FileStream();
     		FileStream(const String &fileName, FileMode mode, FileAccess access);
     		~FileStream();
@@ -21,7 +25,7 @@ namespace eos {
     		bool close();
     		uint32_t write(void *data, uint32_t size);
     		uint32_t read(void *data, uint32_t size);
-    		inline bool isOpen() const { return fileId != 0xFF; }
+    		inline bool isOpen() const { return hFile != nullptr; }
     };
 
 }

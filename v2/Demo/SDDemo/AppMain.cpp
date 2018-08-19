@@ -32,7 +32,7 @@ static void SDTest1() {
 	if (FATFS_LinkDriver(&SD_Driver, SDPath) == 0) {
 
 		/*##-2- Register the file system object to the FatFs module ##############*/
-		fr = f_mount(&SDFatFs, (TCHAR const*)SDPath, 0);
+		fr = f_mount(&SDFatFs, (TCHAR const*)SDPath, 1);
 		if (fr != FR_OK)  {
 			/* FatFs Initialization Error */
 			Error_Handler(fr);
