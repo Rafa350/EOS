@@ -44,7 +44,7 @@
 #define IMAGE_SIZE           ((int32_t)(RGBDIRECT_SCREEN_WIDTH * RGBDIRECT_SCREEN_HEIGHT * IMAGE_PAGES * sizeof(PIXEL_TYPE)))
 #define IMAGE_BUFFER		 RGBDIRECT_VRAM
 
-#define  FREQUENCY_DIVIDER    5
+#define FREQUENCY_DIVIDER    5
 
 
 using namespace eos;

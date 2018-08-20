@@ -2,9 +2,8 @@
 #define __osalMemory__
 
 
-// EOS includes
+// EOS/OSAL includes
 //
-#include "eos.h"
 #include "osal/osal.h"
 
 

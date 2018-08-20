@@ -2,13 +2,9 @@
 #define __STM32_halTMR__
 
 
-// EOS includes
+// EOS/HAL includes
 //
-#include "eos.h"
-
-// Stdlib includes
-//
-#include "stdint.h"
+#include "hal/hal.h"
 
 
 #ifdef	__cplusplus

@@ -2,13 +2,9 @@
 #define	__STM32_halI2C__
 
 
-// EOS includes
+// EOS/HAL includes
 //
-#include "eos.h"
-
-// Standard includes
-//
-#include <stdint.h>
+#include "hal/hal.h"
 
 
 #ifdef	__cplusplus

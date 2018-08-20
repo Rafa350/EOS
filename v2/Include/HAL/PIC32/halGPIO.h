@@ -2,8 +2,9 @@
 #define	__PIC32_halGPIO__
 
 
-#include <xc.h>
-#include <stdint.h>
+// EOS/HAL includes
+//
+#include "hal/hal.h"
 
 
 #ifdef	__cplusplus

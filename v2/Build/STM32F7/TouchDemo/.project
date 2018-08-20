@@ -89,16 +89,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/App/STM32F7/HardwareProfile.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F7/HardwareProfile.h</locationURI>
-		</link>
-		<link>
-			<name>inc/App/STM32F7/HardwareProfile_STM32F746G-DISC.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F7/HardwareProfile_STM32F746G-DISC.h</locationURI>
-		</link>
-		<link>
 			<name>inc/App/STM32F7/stm32746g_discovery.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F7/stm32746g_discovery.h</locationURI>
@@ -112,6 +102,11 @@
 			<name>inc/App/STM32F7/stm32746g_discovery_ts.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/STM32F7/stm32746g_discovery_ts.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Board</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers</name>
@@ -147,6 +142,11 @@
 			<name>inc/Framework/EOS/eosAssert.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/eosInclude.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosInclude.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/FreeRTOS/FreeRTOS.h</name>
@@ -292,6 +292,16 @@
 			<name>src/Framework/FreeRTOS/timers.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/AC6/STM32Cube_FW_F7_V1.8.0/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Board/board.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Board/board_STM32F746G_DISCO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board_STM32F746G_DISCO.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display</name>

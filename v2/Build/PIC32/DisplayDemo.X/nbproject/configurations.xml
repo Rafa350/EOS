@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="62">
+<configurationDescriptor version="65">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
@@ -41,8 +41,8 @@
             <itemPath>../../../Include/HAL/halSPI.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="Osal" projectFiles="true">
-            <itemPath>../../../Include/OSAL/osalThread.h</itemPath>
             <itemPath>../../../Include/OSAL/osalMemory.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Services" projectFiles="true">
             <itemPath>../../../Include/Services/eosAppLoop.h</itemPath>
@@ -114,9 +114,9 @@
           <logicalFolder name="f5" displayName="Osal" projectFiles="true">
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
               <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalMemory.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
             </logicalFolder>
-            <itemPath>../../../Source/OSAL/osalMemory.c</itemPath>
-            <itemPath>../../../Source/OSAL/osalThread.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="Services" projectFiles="true">
             <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
@@ -125,7 +125,6 @@
           <logicalFolder name="f2" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
               <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
-              <itemPath>../../../Source/System/Collections/eosListImpl.cpp</itemPath>
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
@@ -178,9 +177,12 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.44</languageToolchainVersion>
+        <languageToolchainVersion>2.10</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
+      <packs>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.23"/>
+      </packs>
       <compileType>
         <linkerTool>
           <linkerLibItems>

@@ -21,46 +21,46 @@ class LedLoopService: public AppLoopService {
 class MyApplication: public Application {
     private:
         DigOutputService *digOutputSrv;
-#ifdef LED_LED1_PIN        
+#ifdef LED_LED1_PIN
         DigOutput *digOutput1;
-#endif        
-#ifdef LED_LED2_PIN        
+#endif
+#ifdef LED_LED2_PIN
         DigOutput *digOutput2;
-#endif        
-#ifdef LED_LED3_PIN        
+#endif
+#ifdef LED_LED3_PIN
         DigOutput *digOutput3;
-#endif        
+#endif
         DigInputService *digInputSvc;
 #ifdef SW_SW1_PIN
         DigInput *digInput1;
-#endif        
+#endif
 #ifdef SW_SW2_PIN
         DigInput *digInput2;
-#endif        
+#endif
 #ifdef SW_SW3_PIN
         DigInput *digInput3;
-#endif        
+#endif
 
     public:
 #ifdef SW_SW1_PIN
         void digInput1_OnChange(DigInput *input);
-#endif        
+#endif
 #ifdef SW_SW2_PIN
         void digInput2_OnChange(DigInput *input);
-#endif        
+#endif
 #ifdef SW_SW3_PIN
         void digInput3_OnChange(DigInput *input);
-#endif        
-        
-#ifdef LED_LED1_PIN        
+#endif
+
+#ifdef LED_LED1_PIN
         DigOutput *getLed1() const { return digOutput1; }
-#endif        
-#ifdef LED_LED2_PIN        
+#endif
+#ifdef LED_LED2_PIN
         DigOutput *getLed2() const { return digOutput2; }
-#endif        
-#ifdef LED_LED3_PIN        
+#endif
+#ifdef LED_LED3_PIN
         DigOutput *getLed3() const { return digOutput3; }
-#endif        
+#endif
 
     protected:
         void onInitialize();
@@ -126,7 +126,7 @@ void MyApplication::onInitialize() {
     outputInfo.pin = LED_LED3_PIN;
     digOutput3 = new DigOutput(digOutputSrv, &outputInfo);
 #endif
-    
+
     // Prepara el servei de l'aplicacio principal
     //
     new LedLoopService(this);
@@ -137,29 +137,35 @@ void MyApplication::onInitialize() {
 /// \brief Procesa el event OnChange.
 /// \param input: La entrada que ha produit l'event.
 ///
+#ifdef SW_SW1_PIN
 void MyApplication::digInput1_OnChange(DigInput *input) {
 
 }
+#endif
 
 
 /// --------------------------------------------------------------------
 /// \brief Procesa el event OnChange.
 /// \param input: La entrada que ha produit l'event.
 ///
+#ifdef SW_SW2_PIN
 void MyApplication::digInput2_OnChange(DigInput *input) {
 
 }
+#endif
 
 
 /// --------------------------------------------------------------------
 /// \brief Procesa el event OnChange.
 /// \param input: La entrada que ha produit l'event.
 ///
+#ifdef SW_SW3_PIN
 void MyApplication::digInput3_OnChange(DigInput *input) {
 
     if (!input->get())
         getLed3()->pulse(500);
 }
+#endif
 
 
 /// ---------------------------------------------------------------------

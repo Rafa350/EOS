@@ -114,7 +114,7 @@ void DisplayLoopService::onSetup() {
 #ifdef EOS_STM32F4
 	driver = ILI9341LTDCDriver::getInstance();
 #else
-	driver = ILI9341_Driver::getInstance();
+	driver = ILI9341Driver::getInstance();
 #endif
     driver->initialize();
     driver->setOrientation(DisplayOrientation::rotate180);

@@ -2,7 +2,7 @@
 #define __eosConfig__
 
 
-#include "HardwareProfile.h"
+#include "board/board.h"
 
 
 // Opcions de configuracio pel servei 'DigInput'

@@ -1,13 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "hal/halGPIO.h"
-#if defined(STM32F4)
-#include "stm32f4xx.h"
-#elif defined(STM32F7)
-#include "stm32f7xx.h"
-#else
-#error Hardware no soportado
-#endif
 
 
 GPIO_TypeDef * const gpioTbl[] = {

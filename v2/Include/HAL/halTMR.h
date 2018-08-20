@@ -2,9 +2,9 @@
 #define	__halTMR__
 
 
-// EOS includes
+// EOS/HAL includes
 //
-#include "eos.h"
+#include "hal/hal.h"
 
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)

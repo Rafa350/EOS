@@ -47,6 +47,7 @@
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
           <itemPath>../../../Include/eosAssert.h</itemPath>
+          <itemPath>../../../Include/eosInclude.h</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -146,7 +147,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC32MX_DFP" vendor="Microchip" version="0.1.20"/>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.23"/>
       </packs>
       <compileType>
         <linkerTool>
@@ -225,6 +226,7 @@
       </C32-AS>
       <C32-LD>
         <property key="additional-options-use-response-files" value="false"/>
+        <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>

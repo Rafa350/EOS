@@ -2,6 +2,8 @@
 #define __hal__
 
 
+// EOS includes
+//
 #include "eos.h"
 
 

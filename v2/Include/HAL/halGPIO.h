@@ -2,9 +2,8 @@
 #define	__halGPIO__
 
 
-// EOS includes
+// EOS/HAL includes
 //
-#include "eos.h"
 #include "hal/hal.h"
 
 

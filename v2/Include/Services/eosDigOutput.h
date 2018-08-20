@@ -8,8 +8,6 @@
 #include "HAL/halGPIO.h"
 #include "hal/halTMR.h"
 
-#include <stdint.h>
-
 
 namespace eos {
 

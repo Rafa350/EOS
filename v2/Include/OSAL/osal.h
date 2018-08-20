@@ -3,7 +3,6 @@
 
 
 #include "eos.h"
-#include <stdint.h>
 
 
 #if defined (__GNUC__) && defined(STM32)

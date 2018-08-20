@@ -2,22 +2,16 @@
 #define	__STM32_halGPIO__
 
 
-// EOS includes
+// EOS/HAL includes
 //
-#include "eos.h"
 #include "hal/hal.h"
 
-// Standard includes
-//
-#include <stdint.h>
 
 // STM32 includes
 //
 #if defined(EOS_STM32F4)
-#include "stm32f4xx.h"
 #include "stm32f4xx_hal_gpio_ex.h"
 #elif defined(EOS_STM32F7)
-#include "stm32f7xx.h"
 #include "stm32f7xx_hal_gpio_ex.h"
 #else
 #error Hardware no soportado

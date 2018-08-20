@@ -2,14 +2,9 @@
 #define __osalTimer__
 
 
-// EOS includes
+// EOS/OSAL includes
 //
-#include "eos.h"
 #include "osal/osal.h"
-
-// Stdlib includes
-//
-#include <stdbool.h>
 
 
 #ifdef	__cplusplus
