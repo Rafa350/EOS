@@ -1,5 +1,6 @@
-#include "System/Core/eosTask.h"
+#include "eos.h"
 #include "eosAssert.h"
+#include "System/Core/eosTask.h"
 #include "osal/osalTask.h"
 
 #include "FreeRTOS.h"

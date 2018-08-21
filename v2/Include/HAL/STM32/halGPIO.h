@@ -2,20 +2,25 @@
 #define	__STM32_halGPIO__
 
 
-// EOS/HAL includes
+// EOS includes
 //
-#include "hal/hal.h"
-
+#include "eos.h"
 
 // STM32 includes
 //
 #if defined(EOS_STM32F4)
+#include "stm32f4xx.h"
 #include "stm32f4xx_hal_gpio_ex.h"
 #elif defined(EOS_STM32F7)
+#include "stm32f7xx.h"
 #include "stm32f7xx_hal_gpio_ex.h"
 #else
 #error Hardware no soportado
 #endif
+
+// Standard includes
+//
+#include "stdint.h"
 
 
 #ifdef	__cplusplus
@@ -210,8 +215,8 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define halGPIOReadPort(port) \
     gpioTbl[port]->IDR
 
-void halGPIOInitializePins(const GPIOInitializePinInfo *pInfo, uint8_t count);
-void halGPIOInitializePorts(const GPIOInitializePortInfo *pInfo, uint8_t count);
+void halGPIOInitializePins(const GPIOInitializePinInfo *pInfo, uint_fast8_t count);
+void halGPIOInitializePorts(const GPIOInitializePortInfo *pInfo, uint_fast8_t count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 
 #if 0

@@ -2,9 +2,17 @@
 #define	__PIC32_halGPIO__
 
 
-// EOS/HAL includes
+// EOS includes
 //
-#include "hal/hal.h"
+#include "eos.h"
+
+// Standard includes
+//
+#include "stdint.h"
+
+// PIC32 includes
+//
+#include "xc.h"
 
 
 #ifdef	__cplusplus
@@ -205,10 +213,10 @@ extern const GPIOPortRegs gpioPortRegs[];
     *gpioPortRegs[portId].port
 
 
-void halGPIOInitializePins(const GPIOInitializePinInfo *info, uint8_t count);
+void halGPIOInitializePins(const GPIOInitializePinInfo *info, uint_fast8_t count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 
-void halGPIOInitializePorts(const GPIOInitializePortInfo *info, uint8_t count);
+void halGPIOInitializePorts(const GPIOInitializePortInfo *info, uint_fast8_t count);
 void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 
 

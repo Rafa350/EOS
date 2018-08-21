@@ -5,12 +5,16 @@
 #define DISPLAY_PIXFORMAT_565
 
 
+// EOS includes
+//
 #include "eos.h"
 #include "Controllers/Display/eosFont.h"
 #include "Controllers/Display/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
-#include <stdint.h>
+// Standard includes
+//
+#include "stdint.h"
 
 
 namespace eos {
@@ -33,60 +37,60 @@ namespace eos {
     class Display {
         private:
             IDisplayDriver *driver;
-            int16_t screenWidth;
-            int16_t screenHeight;
+            int screenWidth;
+            int screenHeight;
             bool clipEnabled;
-            int16_t clipX1;
-            int16_t clipY1;
-            int16_t clipX2;
-            int16_t clipY2;
+            int clipX1;
+            int clipY1;
+            int clipX2;
+            int clipY2;
             Color color;
             Font *font;
             HorizontalTextAlign hAlign;
             VerticalTextAlign vAlign;
-            int16_t cursorX;
-            int16_t cursorY;
-            uint8_t ttyState;
+            int cursorX;
+            int cursorY;
+            unsigned ttyState;
 
         public:
             Display(IDisplayDriver *driver);
             ~Display();
-            void setClip(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+            void setClip(int x1, int y1, int x2, int y2);
             void resetClip();
             void setColor(const Color &color);
             void setFont(Font *font);
             void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
             inline IDisplayDriver *getDriver() const { return driver; }
-            int16_t getTextWidth(const char *text, int16_t offset = 0, int16_t length = -1);
-            int16_t getTextHeight(const char *text);
+            int getTextWidth(const char *text, int offset = 0, int length = -1);
+            int getTextHeight(const char *text);
             inline Font *getFont() const { return font; }
             inline Color getColor() const { return color; }
             void putTTY(char ch);
-            void putTTY(const char *s, int16_t offset = 0, int16_t length = -1);
+            void putTTY(const char *s, int offset = 0, int length = -1);
             void clear(const Color &color);
             void refresh();
             inline void home() { moveTo(0, 0); }
-            void moveTo(int16_t x, int16_t y);
-            void lineTo(int16_t x, int16_t y);
-            void arcTo(int16_t x, int16_t y, int16_t cx, int16_t cy);
-            void drawPoint(int16_t x, int16_t y);
-            void drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-            void drawRectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-            void drawTriangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t x3, int16_t y3);
-            void drawCircle(int16_t cx, int16_t cy, int16_t r);
-            void drawBitmap1BPP(int16_t x, int16_t y, const uint8_t *bitmap, int16_t width, int16_t height, Color color);
-            int16_t drawChar(int16_t x, int16_t y, char c);
-            int16_t drawText(int16_t x, int16_t y, const char *s, int16_t offset = 0, int16_t length = -1);
-            void fillRectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-            void fillCircle(int16_t cx, int16_t cy, int16_t r);
+            void moveTo(int x, int y);
+            void lineTo(int x, int y);
+            void arcTo(int x, int y, int cx, int cy);
+            void drawPoint(int x, int y);
+            void drawLine(int x1, int y1, int x2, int y2);
+            void drawRectangle(int x1, int y1, int x2, int y2);
+            void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
+            void drawCircle(int cx, int cy, int r);
+            void drawBitmap1BPP(int x, int y, const uint8_t *bitmap, int width, int height, Color color);
+            int drawChar(int x, int y, char c);
+            int drawText(int x, int y, const char *s, int offset = 0, int length = -1);
+            void fillRectangle(int x1, int y1, int x2, int y2);
+            void fillCircle(int cx, int cy, int r);
 
         private:
-            bool clipArea(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2);
-            bool clipPoint(int16_t x, int16_t y);
-            bool clipLine(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2);
-            bool clipHLine(int16_t &x1, int16_t &x2, int16_t &y);
-            bool clipVLine(int16_t &x, int16_t &y1, int16_t &y2);
-            uint8_t calcOutCode(int16_t x, int16_t y);
+            bool clipArea(int &x1, int &y1, int &x2, int &y2);
+            bool clipPoint(int x, int y);
+            bool clipLine(int &x1, int &y1, int &x2, int &y2);
+            bool clipHLine(int &x1, int &x2, int &y);
+            bool clipVLine(int &x, int &y1, int &y2);
+            unsigned calcOutCode(int x, int y);
     };
 
 }

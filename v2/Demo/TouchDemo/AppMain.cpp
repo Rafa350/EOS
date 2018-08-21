@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "System/eosApplication.h"
 #include "System/Core/eosTask.h"
 #include "Services/eosAppLoop.h"
@@ -98,15 +99,15 @@ void LedLoopService::onSetup() {
 
 	// Inicialitza el LED 1
 	//
-	halGPIOInitializePinOutput(LEDS_LD1_PORT, LEDS_LD1_PIN);
-	halGPIOClearPin(LEDS_LD1_PORT, LEDS_LD1_PIN);
+	halGPIOInitializePinOutput(LED_LED1_PORT, LED_LED1_PIN);
+	halGPIOClearPin(LED_LED1_PORT, LED_LED1_PIN);
 
-#ifdef LEDS_LD2_PORT
+#ifdef LED_LED2_PORT
 
 	// Inicialitza el LED 2
 	//
-	halGPIOInitializePinOutput(LEDS_LD2_PORT, LEDS_LD2_PIN);
-	halGPIOSetPin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+	halGPIOInitializePinOutput(LED_LED2_PORT, LED_LED2_PIN);
+	halGPIOSetPin(LED_LED2_PORT, LED_LED2_PIN);
 #endif
 }
 
@@ -118,9 +119,9 @@ void LedLoopService::onLoop() {
 
 	while (true) {
 
-		halGPIOTogglePin(LEDS_LD1_PORT, LEDS_LD1_PIN);
-#ifdef LEDS_LD2_PORT
-		halGPIOTogglePin(LEDS_LD2_PORT, LEDS_LD2_PIN);
+		halGPIOTogglePin(LED_LED1_PORT, LED_LED1_PIN);
+#ifdef LED_LED2_PORT
+		halGPIOTogglePin(LED_LED2_PORT, LED_LED2_PIN);
 #endif
 
 		Task::delay(500);

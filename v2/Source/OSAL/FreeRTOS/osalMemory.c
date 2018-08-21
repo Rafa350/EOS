@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "osal/osalMemory.h"
 #include "FreeRTOS.h"
 
@@ -8,7 +9,7 @@
 /// \return Adressa del bloc de memoria obtingut. NULL en cas d'error.
 ///
 void *osalMemoryAlloc(
-	unsigned size) {
+	size_t size) {
 
 	// Comprova si els parametres son correctes.
 	//

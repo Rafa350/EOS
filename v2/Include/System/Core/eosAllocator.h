@@ -2,9 +2,13 @@
 #define	__eosAllocator__
 
 
+// EOS includes
+//
 #include "eos.h"
 
-#include <stddef.h>
+// Standard includes
+//
+#include "stddef.h"
 
 
 namespace eos {

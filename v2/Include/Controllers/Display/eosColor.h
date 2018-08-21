@@ -2,12 +2,16 @@
 #define __eosColor__
 
 
+// EOS includes
+//
 #include "eos.h"
 
-#include <stdint.h>
+// Standard includes
+//
+#include "stdint.h"
 
 
-#define ARGB(a, r, g, b)     uint32_t(((uint32_t(a) << 24) | (uint32_t(r) << 16) | (uint32_t(g) << 8) | (uint32_t(b))))
+#define ARGB(a, r, g, b)     uint32_t(((uint32_t(a) << 24u) | (uint32_t(r) << 16u) | (uint32_t(g) << 8u) | (uint32_t(b))))
 #define RGB(r, g, b)         ARGB(255, r, g, b)
 
 // Basic colors
@@ -129,23 +133,23 @@ namespace eos {
             inline Color(): c(0) {}
             inline Color(const Color &color): c(color.c) {}
             inline Color(uint32_t nc): c(nc) {}
-            inline Color(uint8_t r, uint8_t g, uint8_t b): c((r << 16) | (g << 8) | b) {}
-            inline Color(uint8_t a, uint8_t r, uint8_t g, uint8_t b): c((a << 24) | (r << 16) | (g << 8) | b) {}
+            inline Color(uint8_t r, uint8_t g, uint8_t b): c((r << 16u) | (g << 8u) | b) {}
+            inline Color(uint8_t a, uint8_t r, uint8_t g, uint8_t b): c((a << 24u) | (r << 16u) | (g << 8u) | b) {}
 
             Color mix(Color c, uint8_t mix);
 
-            inline uint8_t getA() const { return c >> 24; }
-            inline uint8_t getR() const { return c >> 16; }
-            inline uint8_t getG() const { return c >> 8; }
+            inline uint8_t getA() const { return c >> 24u; }
+            inline uint8_t getR() const { return c >> 16u; }
+            inline uint8_t getG() const { return c >> 8u; }
             inline uint8_t getB() const { return c; }
 
             static inline Color fromARGB8888(uint32_t c) { return Color(c); }
-            static inline Color fromRGB888(uint32_t c) { return Color(c | 0xFF000000); }
-            static inline Color fromRGB565(uint16_t c) { return Color((c & 0xF800) >> 11, (c & 0x03F0) >> 5, c & 0x001F); }
+            static inline Color fromRGB888(uint32_t c) { return Color(c | 0xFF000000u); }
+            static inline Color fromRGB565(uint16_t c) { return Color((c & 0xF800u) >> 11u, (c & 0x03F0u) >> 5u, c & 0x001Fu); }
 
             inline uint32_t toARGB8888() const { return c; }
-            inline uint32_t toRGB888() const { return c | 0xFF000000; }
-            inline uint16_t toRGB565() const { return ((c & 0x00F80000) >> 8) | ((c & 0x0000FC00) >> 5) | ((c & 0x000000F8) >> 3); };
+            inline uint32_t toRGB888() const { return c | 0xFF000000u; }
+            inline uint16_t toRGB565() const { return ((c & 0x00F80000u) >> 8u) | ((c & 0x0000FC00u) >> 5u) | ((c & 0x000000F8u) >> 3u); };
 
             inline void operator = (const Color &color) { c = color.c; }
 

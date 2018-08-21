@@ -2,6 +2,8 @@
 #define	__eosTimer__
 
 
+// EOS includes
+//
 #include "eos.h"
 #include "osal/osalTimer.h"
 #include "System/Core/eosCallbacks.h"

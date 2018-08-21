@@ -2,9 +2,13 @@
 #define __osalMemory__
 
 
-// EOS/OSAL includes
+// EOS includes
 //
-#include "osal/osal.h"
+#include "eos.h"
+
+// Standard includes
+//
+#include "stddef.h"
 
 
 #ifdef	__cplusplus
@@ -12,7 +16,7 @@ extern "C" {
 #endif
 
 
-void *osalMemoryAlloc(unsigned size);
+void *osalMemoryAlloc(size_t size);
 void osalMemoryFree(void *p);
 
 

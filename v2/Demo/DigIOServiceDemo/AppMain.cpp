@@ -163,7 +163,7 @@ void MyApplication::digInput2_OnChange(DigInput *input) {
 void MyApplication::digInput3_OnChange(DigInput *input) {
 
     if (!input->get())
-        getLed3()->pulse(500);
+        getLed3()->pulse(1500);
 }
 #endif
 

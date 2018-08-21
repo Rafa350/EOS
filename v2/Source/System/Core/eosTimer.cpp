@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "System/Core/eosTimer.h"
 #include "osal/osalTimer.h"
 

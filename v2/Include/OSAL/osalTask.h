@@ -2,9 +2,13 @@
 #define __osalTask__
 
 
-// EOS/OSAL includes
+// EOS includes
 //
-#include "osal/osal.h"
+#include "eos.h"
+
+// Standard includes
+//
+#include "stdint.h"
 
 
 #ifdef	__cplusplus

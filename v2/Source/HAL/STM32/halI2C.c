@@ -1,7 +1,11 @@
+#include "eos.h"
+#include "eosAssert.h"
 #include "hal/halI2C.h"
 #if defined(STM32F4)
+#include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
 #elif defined(STM32F7)
+#include "stm32f7xx.h"
 #include "stm32f7xx_hal_i2c.h"
 #else
 #error Hardware no soportado

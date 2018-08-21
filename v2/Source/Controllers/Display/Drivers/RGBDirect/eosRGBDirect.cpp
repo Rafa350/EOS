@@ -1,5 +1,8 @@
+#include "eos.h"
+#include "eosAssert.h"
 #include "Controllers/Display/Drivers/eosRGBDirect.h"
 #include "HAL/halGPIO.h"
+#include "stdint.h"
 
 
 #if !defined(EOS_STM32F4) && !defined(EOS_STM32F7)
@@ -71,7 +74,8 @@ IDisplayDriver *RGBDirectDriver::getInstance() {
 RGBDirectDriver::RGBDirectDriver():
 
 	screenWidth(RGBDIRECT_SCREEN_WIDTH),
-	screenHeight(RGBDIRECT_SCREEN_HEIGHT),
+    screenHeight(RGBDIRECT_SCREEN_HEIGHT),
+	orientation(DisplayOrientation::normal),
 	curLayer(0),
 	image((uint8_t*)IMAGE_BUFFER) {
 
@@ -128,9 +132,27 @@ void RGBDirectDriver::displayOff() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Selecciona l'orientacio de la pantalla.
+/// \param orientation: L'orientacio.
+///
 void RGBDirectDriver::setOrientation(
 	DisplayOrientation orientation) {
 
+	this->orientation = orientation;
+	switch (orientation) {
+		case DisplayOrientation::normal:
+			break;
+
+		case DisplayOrientation::rotate90:
+			break;
+
+		case DisplayOrientation::rotate180:
+			break;
+
+		case DisplayOrientation::rotate270:
+			break;
+	}
 }
 
 
@@ -152,13 +174,17 @@ void RGBDirectDriver::clear(
 /// \param color: Color del pixel.
 ///
 void RGBDirectDriver::setPixel(
-	int16_t x,
-	int16_t y,
+	int x,
+	int y,
 	const Color &color) {
 
-	if ((x >= 0) && (x < IMAGE_WIDTH) && (y >= 0) && (y < IMAGE_HEIGHT)) {
-		uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
-		*((PIXEL_TYPE*)(image + offset + (curLayer * IMAGE_SIZE))) = PIXEL_VALUE(color);
+	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight)) {
+
+		unsigned offset =
+			(curLayer * IMAGE_SIZE) +
+			((y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE));
+
+		*((PIXEL_TYPE*)(image + offset)) = PIXEL_VALUE(color);
 	}
 }
 
@@ -171,23 +197,27 @@ void RGBDirectDriver::setPixel(
 /// \param color: Color dels pixels.
 ///
 void RGBDirectDriver::setHPixels(
-	int16_t x,
-	int16_t y,
-	int16_t size,
+	int x,
+	int y,
+	int size,
 	const Color &color) {
 
-	if ((y >= 0) && (y < IMAGE_HEIGHT)) {
+	if ((y >= 0) && (y < screenHeight)) {
 
-		int16_t x2 = x + size - 1;
+		int x2 = x + size - 1;
 		if (x < 0)
 			x = 0;
-		if (x2 >= IMAGE_WIDTH)
-			x2 = IMAGE_WIDTH - 1;
+		if (x2 >= screenWidth)
+			x2 = screenWidth - 1;
 		size = x2 - x + 1;
 
 		if (size > 0) {
-			uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
-			uint8_t *addr = (uint8_t*) (image + offset + (curLayer * IMAGE_SIZE));
+
+			unsigned offset =
+				(curLayer * IMAGE_SIZE) +
+				((y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE));
+
+			uint8_t *addr = (uint8_t*) (image + offset);
 			dma2dFill(addr, size, 1, color);
 		}
 	}
@@ -202,23 +232,27 @@ void RGBDirectDriver::setHPixels(
 /// \param color: Color dels pixels.
 ///
 void RGBDirectDriver::setVPixels(
-	int16_t x,
-	int16_t y,
-	int16_t size,
+	int x,
+	int y,
+	int size,
 	const Color &color) {
 
-	if ((x >= 0) && (x < IMAGE_WIDTH)) {
+	if ((x >= 0) && (x < screenWidth)) {
 
-		int16_t y2 = y + size - 1;
+		int y2 = y + size - 1;
 		if (y < 0)
 			y = 0;
-		if (y2 >= IMAGE_HEIGHT)
-			y2 = IMAGE_HEIGHT - 1;
+		if (y2 >= screenHeight)
+			y2 = screenHeight - 1;
 		size = y2 - y + 1;
 
 		if (size > 0) {
-			uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
-			uint8_t *addr = (uint8_t*) (image + offset + (curLayer * IMAGE_SIZE));
+
+			unsigned offset =
+				(curLayer * IMAGE_SIZE) +
+				((y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE));
+
+			uint8_t *addr = (uint8_t *) (image + offset);
 			dma2dFill(addr, 1, size, color);
 		}
 	}
@@ -235,53 +269,56 @@ void RGBDirectDriver::setVPixels(
 /// \param color: Color dels pixels.
 ///
 void RGBDirectDriver::setPixels(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height,
+	int x,
+	int y,
+	int width,
+	int height,
 	const Color &color) {
 
-	uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
-	uint8_t *addr = (uint8_t*) (image + offset + (curLayer * IMAGE_SIZE));
+	unsigned offset =
+		(curLayer * IMAGE_SIZE) +
+		((y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE));
+
+	uint8_t *addr = (uint8_t*) (image + offset);
     dma2dFill(addr, width, height, color);
 }
 
 
 void RGBDirectDriver::writePixels(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height,
+	int x,
+	int y,
+	int width,
+	int height,
 	const Color *colors) {
 }
 
 
 void RGBDirectDriver::readPixels(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height,
+	int x,
+	int y,
+	int width,
+	int height,
 	Color *colors) {
 
 }
 
 
 void RGBDirectDriver::vScroll(
-	int16_t delta,
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height) {
+	int delta,
+	int x,
+	int y,
+	int width,
+	int height) {
 
 }
 
 
 void RGBDirectDriver::hScroll(
-	int16_t delta,
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height) {
+	int delta,
+	int x,
+	int y,
+	int width,
+	int height) {
 
 }
 
@@ -375,9 +412,9 @@ void RGBDirectDriver::ltdcInitialize() {
     // Configura la pagina
 	//
 	layerCfg.WindowX0 = 0;
-	layerCfg.WindowX1 = 480;
+	layerCfg.WindowX1 = RGBDIRECT_SCREEN_WIDTH;
 	layerCfg.WindowY0 = 0;
-	layerCfg.WindowY1 = 272;
+	layerCfg.WindowY1 = RGBDIRECT_SCREEN_HEIGHT;
 	layerCfg.PixelFormat = LTDC_PIXEL_FORMAT;
 	layerCfg.FBStartAdress = RGBDIRECT_VRAM;
 	layerCfg.Alpha = 255;
@@ -413,23 +450,26 @@ void RGBDirectDriver::dma2dInitialize() {
 /// \param color: El color per omplir.
 ///
 void RGBDirectDriver::dma2dFill(
-	const uint8_t *addr,
-	int16_t width,
-	int16_t height,
+	const unsigned char *addr,
+	int width,
+	int height,
 	const Color &color) {
 
 	DMA2D_HandleTypeDef dma2dHandle;
 
 	// Configure the DMA2D Mode, Color Mode and output offset
+	//
 	dma2dHandle.Init.Mode         = DMA2D_R2M;
 	dma2dHandle.Init.ColorMode    = DMA2D_OUTPUT;
 	dma2dHandle.Init.OutputOffset = IMAGE_WIDTH - width;
 
 	// DMA2D Callbacks Configuration
+	//
 	dma2dHandle.XferCpltCallback  = NULL;
 	dma2dHandle.XferErrorCallback = NULL;
 
 	// Foreground Configuration
+	//
 	dma2dHandle.LayerCfg[curLayer].AlphaMode = DMA2D_NO_MODIF_ALPHA;
 	dma2dHandle.LayerCfg[curLayer].InputAlpha = 0xFF;
 	dma2dHandle.LayerCfg[curLayer].InputColorMode = DMA2D_INPUT;
@@ -438,8 +478,8 @@ void RGBDirectDriver::dma2dFill(
 	dma2dHandle.Instance = DMA2D;
 
 	HAL_DMA2D_Init(&dma2dHandle);
-	HAL_DMA2D_ConfigLayer(&dma2dHandle, 0);
 
+	HAL_DMA2D_ConfigLayer(&dma2dHandle, curLayer);
 	HAL_DMA2D_Start(&dma2dHandle, color.toARGB8888(), (uint32_t) addr, width, height);
 	HAL_DMA2D_PollForTransfer(&dma2dHandle, 20);
 }

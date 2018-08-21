@@ -44,7 +44,6 @@
 // EOS includes
 //
 #include "eosConfig.h"
-#include "eosInclude.h"
 
 
 #endif // __eos__

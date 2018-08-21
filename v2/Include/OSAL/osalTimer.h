@@ -2,9 +2,14 @@
 #define __osalTimer__
 
 
-// EOS/OSAL includes
+// EOS includes
 //
-#include "osal/osal.h"
+#include "eos.h"
+
+// Standard includes
+//
+#include "stdint.h"
+#include "stdbool.h"
 
 
 #ifdef	__cplusplus
@@ -28,7 +33,7 @@ typedef struct {
 #define OSAL_TIMER_AUTO_POS            0
 #define OSAL_TIMER_AUTO_BITS           0b1
 #define OSAL_TIMER_AUTO_MASK 	       (OSAL_TIMER_AUTO_BITS << OSAL_TIMER_AUTO_POS)
-    
+
 #define OSAL_TIMER_AUTO_OFF            ((TimerOptions)0 << OSAL_TIMER_AUTO_POS)
 #define OSAL_TIMER_AUTO_ON             ((TimerOptions)1 << OSAL_TIMER_AUTO_POS)
 

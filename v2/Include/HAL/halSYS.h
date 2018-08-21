@@ -2,9 +2,9 @@
 #define	__halSYS__
 
 
-// EOS/HAL includes
+// EOS includes
 //
-#include "hal/hal.h"
+#include "eos.h"
 
 
 #ifdef	__cplusplus

@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "hal/PIC32/halTMR.h"
 #include "hal/PIC32/halINT.h"
 

@@ -1,3 +1,5 @@
+#include "eos.h"
+#include "eosAssert.h"
 #include "hal/halSYS.h"
 #if defined(EOS_STM32F4)
 #include "stm32f4xx_hal.h"

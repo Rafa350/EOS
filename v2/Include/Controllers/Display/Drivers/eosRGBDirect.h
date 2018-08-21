@@ -2,9 +2,15 @@
 #define	__eosRGBDirect__
 
 
+// EOS includes
+//
 #include "eos.h"
 #include "Controllers/Display/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
+
+// Standard includes
+//
+#include "stdint.h"
 
 
 #ifndef RGBDIRECT_SCREEN_WIDTH
@@ -21,9 +27,10 @@ namespace eos {
     class RGBDirectDriver: public IDisplayDriver {
     	private:
     		static IDisplayDriver *instance;
-    		int16_t screenWidth;
-    		int16_t screenHeight;
-    		uint8_t curLayer;
+    		int screenWidth;
+    		int screenHeight;
+    		DisplayOrientation orientation;
+    		unsigned curLayer;
     		uint8_t *image;
 
     	private:
@@ -36,23 +43,23 @@ namespace eos {
             void displayOn();
             void displayOff();
             void setOrientation(DisplayOrientation orientation);
-            int16_t getWidth() { return screenWidth; }
-            int16_t getHeight() { return screenHeight; }
+            int getWidth() { return screenWidth; }
+            int getHeight() { return screenHeight; }
             void clear(const Color &color);
-            void setPixel(int16_t x, int16_t y, const Color &color);
-            void setHPixels(int16_t x, int16_t y, int16_t size, const Color &color);
-            void setVPixels(int16_t x, int16_t y, int16_t size, const Color &color);
-            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color &color);
-            void writePixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors);
-            void readPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color *colors);
-            void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
-            void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
+            void setPixel(int x, int y, const Color &color);
+            void setHPixels(int x, int y, int size, const Color &color);
+            void setVPixels(int x, int y, int size, const Color &color);
+            void setPixels(int x, int y, int width, int height, const Color &color);
+            void writePixels(int x, int y, int width, int height, const Color *colors);
+            void readPixels(int x, int y, int width, int height, Color *colors);
+            void vScroll(int delta, int x, int y, int width, int height);
+            void hScroll(int delta, int x, int y, int width, int height);
 
         private:
             void gpioInitialize();
             void ltdcInitialize();
             void dma2dInitialize();
-            void dma2dFill(const uint8_t *addr, int16_t width, int16_t height, const Color &color);
+            void dma2dFill(const uint8_t *addr, int width, int height, const Color &color);
     };
 }
 

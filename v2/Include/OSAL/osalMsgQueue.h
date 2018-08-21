@@ -2,9 +2,13 @@
 #define __osalMsqQueue__
 
 
-// EOS/OSAL includes
+// EOS includes
 //
-#include "osal/osal.h"
+#include "eos.h"
+
+// Standard includes
+//
+#include "stdbool.h"
 
 
 #ifdef	__cplusplus

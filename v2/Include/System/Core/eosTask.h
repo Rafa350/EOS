@@ -2,12 +2,13 @@
 #define	__eosTask__
 
 
+// EOS includes
+//
 #include "eos.h"
 #include "osal/osalTask.h"
 
 
 namespace eos {
-
 
     class Task;
 

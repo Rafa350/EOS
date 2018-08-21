@@ -2,9 +2,13 @@
 #define __PIC32_halTMR__
 
 
-// EOS/HAL includes
+// EOS includes
 //
-#include "hal/hal.h"
+#include "eos.h"
+
+// Standard includes
+//
+#include "stdint.h"
 
 
 #ifdef	__cplusplus

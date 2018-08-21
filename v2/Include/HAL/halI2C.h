@@ -4,7 +4,7 @@
 
 // EOS/HAL includes
 //
-#include "hal/hal.h"
+#include "eos.h"
 
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)

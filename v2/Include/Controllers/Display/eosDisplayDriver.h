@@ -2,10 +2,10 @@
 #define __eosDisplayDriver__
 
 
+// EOS includes
+//
 #include "eos.h"
 #include "Controllers/Display/eosColor.h"
-
-#include <stdint.h>
 
 
 namespace eos {
@@ -22,23 +22,23 @@ namespace eos {
     class IDisplayDriver {
         public:
     		virtual ~IDisplayDriver() {}
-            
+
             virtual void initialize() = 0;
             virtual void shutdown() = 0;
             virtual void displayOn() = 0;
             virtual void displayOff() = 0;
             virtual void setOrientation(DisplayOrientation orientation) = 0;
-            virtual int16_t getWidth() = 0;
-            virtual int16_t getHeight() = 0;
+            virtual int getWidth() = 0;
+            virtual int getHeight() = 0;
             virtual void clear(const Color &color) = 0;
-            virtual void setPixel(int16_t x, int16_t y, const Color &color) = 0;
-            virtual void setHPixels(int16_t x, int16_t y, int16_t length, const Color &color) = 0;
-            virtual void setVPixels(int16_t x, int16_t y, int16_t length, const Color &color) = 0;
-            virtual void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color &color) = 0;
-            virtual void writePixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors) = 0;
-            virtual void readPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color *colors) = 0;
-            virtual void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height) = 0;
-            virtual void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height) = 0;
+            virtual void setPixel(int x, int y, const Color &color) = 0;
+            virtual void setHPixels(int x, int y, int length, const Color &color) = 0;
+            virtual void setVPixels(int x, int y, int length, const Color &color) = 0;
+            virtual void setPixels(int x, int y, int width, int height, const Color &color) = 0;
+            virtual void writePixels(int x, int y, int width, int height, const Color *colors) = 0;
+            virtual void readPixels(int x, int y, int width, int height, Color *colors) = 0;
+            virtual void vScroll(int delta, int x, int y, int width, int height) = 0;
+            virtual void hScroll(int delta, int x, int y, int width, int height) = 0;
     };
 
 }

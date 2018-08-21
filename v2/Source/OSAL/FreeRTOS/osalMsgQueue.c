@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "osal/osalMsgQueue.h"
 #include "osal/osalMemory.h"
 #include "FreeRTOS.h"

@@ -2,20 +2,24 @@
 #define __eosFont__
 
 
+// EOS includes
+//
 #include "eos.h"
 
-#include <stdint.h>
+// Standard includes
+//
+#include "stdint.h"
 
 
 namespace eos {
-    
+
     enum class FontStyle {
         Regular,
         Bold,
         Italic,
         BoldItalic
     };
-    
+
     struct FontInfo {             // Informacio del font
         int16_t height;           // -Alçada
         int16_t ascent;           // -Ascendent
@@ -38,15 +42,15 @@ namespace eos {
             char chCache;
             CharInfo ciCache;
             const uint8_t *fontResource;
-            
+
         public:
-            Font(const char *fontName, int16_t height, FontStyle style);
-            Font(const uint8_t *fontResource);
+            Font(const char *fontName, int height, FontStyle style);
+            Font(const unsigned char *fontResource);
             void getFontInfo(FontInfo &fi) const;
             void getCharInfo(char ch, CharInfo &ci);
-            inline int16_t getFontHeight() const { return fontResource[1]; }
-            int16_t getCharAdvance(char ch);
-            
+            inline int getFontHeight() const { return fontResource[1]; }
+            int getCharAdvance(char ch);
+
         private:
             void updateCache(char ch);
     };

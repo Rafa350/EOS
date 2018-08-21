@@ -89,7 +89,7 @@ Font::Font(
 ///
 Font::Font(
     const char* fontName,
-    int16_t height,
+    int height,
     FontStyle style):
 
     chCache(-1),
@@ -140,7 +140,7 @@ void Font::getCharInfo(
 /// \param ch: El caracter.
 /// \return L'avanç del caracter.
 ///
-int16_t Font::getCharAdvance(
+int Font::getCharAdvance(
     char ch) {
 
     updateCache(ch);
@@ -157,16 +157,16 @@ void Font::updateCache(
 
     if (chCache != ch) {
         if ((ch >= fontResource[4]) && (ch <= fontResource[5])) {
-            unsigned offset = fontResource[6] + fontResource[7] * 256 + (ch - fontResource[4]) * 2;
-            unsigned charInfoOffset = fontResource[offset] + fontResource[offset + 1] * 256;
-            unsigned charBitsOffset = fontResource[charInfoOffset + 5] + fontResource[charInfoOffset + 6] * 256;
+            unsigned offset = fontResource[6] + fontResource[7] * 256u + (ch - fontResource[4]) * 2u;
+            unsigned charInfoOffset = fontResource[offset] + fontResource[offset + 1] * 256u;
+            unsigned charBitsOffset = fontResource[charInfoOffset + 5u] + fontResource[charInfoOffset + 6u] * 256u;
             chCache = ch;
 
             ciCache.width = fontResource[charInfoOffset];
-            ciCache.height = fontResource[charInfoOffset + 1];
-            ciCache.left = fontResource[charInfoOffset + 2];
-            ciCache.top = fontResource[charInfoOffset + 3];
-            ciCache.advance = fontResource[charInfoOffset + 4];
+            ciCache.height = fontResource[charInfoOffset + 1u];
+            ciCache.left = fontResource[charInfoOffset + 2u];
+            ciCache.top = fontResource[charInfoOffset + 3u];
+            ciCache.advance = fontResource[charInfoOffset + 4u];
             ciCache.bitmap = (charBitsOffset == (unsigned) -1) ? nullptr : &fontResource[charBitsOffset];
         }
     }

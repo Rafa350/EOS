@@ -191,12 +191,12 @@ static void SetupPin(
 ///
 void halGPIOInitializePins(
 	const GPIOInitializePinInfo *pInfo,
-	uint8_t count) {
+	uint_fast8_t count) {
 
 	eosArgumentIsNotNull(pInfo);
 	eosArgumentIsNotZero(count);
 
-	for (uint8_t i = 0; i < count; i++) {
+	for (uint_fast8_t i = 0; i < count; i++) {
 
 		const GPIOInitializePinInfo *p = &pInfo[i];
 
@@ -213,17 +213,17 @@ void halGPIOInitializePins(
 ///
 void halGPIOInitializePorts(
 	const GPIOInitializePortInfo *pInfo,
-	uint8_t count) {
+	uint_fast8_t count) {
 
 	eosArgumentIsNotNull(pInfo);
 	eosArgumentIsNotZero(count);
 
-	for (uint8_t i = 0; i < count; i++) {
+	for (uint_fast8_t i = 0; i < count; i++) {
 
 		const GPIOInitializePortInfo *p = &pInfo[i];
 
 		EnableClock(p->port);
-		for (uint8_t pin = 0; pin < 15; pin++)
+		for (uint_fast8_t pin = 0; pin < 15; pin++)
 			if (p->mask & (1u << pin))
 				SetupPin(p->port, pin, p->options, p->alt);
 	}

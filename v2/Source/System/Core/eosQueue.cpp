@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "eosAssert.h"
 #include "System/Core/eosQueue.h"
 
