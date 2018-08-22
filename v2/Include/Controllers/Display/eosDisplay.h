@@ -8,7 +8,6 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Controllers/Display/eosFont.h"
 #include "Controllers/Display/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
@@ -18,6 +17,9 @@
 
 
 namespace eos {
+
+	class Bitmap;
+	class Font;
 
     /// \brief Aliniacio horitzontal del text.
     enum class HorizontalTextAlign {
@@ -78,7 +80,7 @@ namespace eos {
             void drawRectangle(int x1, int y1, int x2, int y2);
             void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
             void drawCircle(int cx, int cy, int r);
-            void drawBitmap1BPP(int x, int y, const uint8_t *bitmap, int width, int height, Color color);
+            void drawBitmap(int x, int y, const Bitmap *bitmap);
             int drawChar(int x, int y, char c);
             int drawText(int x, int y, const char *s, int offset = 0, int length = -1);
             void fillRectangle(int x1, int y1, int x2, int y2);

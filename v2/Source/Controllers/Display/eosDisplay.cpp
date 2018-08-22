@@ -2,6 +2,7 @@
 #include "eosAssert.h"
 #include "Controllers/Display/eosDisplay.h"
 #include "Controllers/Display/eosFont.h"
+#include "Controllers/Display/eosBitmap.h"
 
 #include <stdint.h>
 
@@ -436,17 +437,11 @@ void Display::fillCircle(
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 /// \param bitmap: El bitmap
-/// \param width: Amplada del bitmap.
-/// \param height: Alçada del bitmap.
 ///
-void Display::drawBitmap1BPP(
+void Display::drawBitmap(
     int x,
     int y,
-    const uint8_t *bitmap,
-    int width,
-    int height,
-    Color color) {
-
+    const Bitmap *bitmap) {
 
 }
 
