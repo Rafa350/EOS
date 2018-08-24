@@ -443,6 +443,7 @@ void Display::drawBitmap(
     int y,
     const Bitmap *bitmap) {
 
+	driver->writePixels(x, y, bitmap->getWidth(), bitmap->getHeight(), bitmap->getPixels());
 }
 
 

@@ -13,39 +13,26 @@
 #if defined(EOS_STM32F4)
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_ltdc.h"
-#include "stm32f4xx_hal_dma2d.h"
 #elif defined(EOS_STM32F7)
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_ltdc.h"
-#include "stm32f7xx_hal_dma2d.h"
 #endif
 
 
 // Format de pixel
 //
-#if defined(RGBDIRECT_COLORMODE_565)
+#if defined(DISPLAY_COLOR_RGB565)
 #define PIXEL_TYPE           uint16_t
 #define PIXEL_VALUE(c)       c.toRGB565()
 #define LTDC_PIXEL_FORMAT    LTDC_PIXEL_FORMAT_RGB565
-#define DMA2D_INPUT          DMA2D_INPUT_RGB565
-#define DMA2D_OUTPUT         DMA2D_OUTPUT_RGB565
-
-#elif defined(RGBDIRECT_COLOTMODE_RGB888)
+#elif defined(DISPLAY_COLOR_RGB888)
 #define PIXEL_TYPE           uint32_t
 #define PIXEL_VALUE(c)       c.toRGB888()
 #define LTDC_PIXEL_FORMAT    LTDC_PIXEL_FORMAT_RGB888
-#define DMA2D_INPUT          DMA2D_INPUT_RGB888
-#define DMA2D_OUTPUT         DMA2D_OUTPUT_RGB888
-
+#else
+#error No se definio DISPLAY_COLOR_xxxx
 #endif
-
-// Format de la imatge
-//
-#define IMAGE_WIDTH          ((int32_t)RGBDIRECT_SCREEN_WIDTH)
-#define IMAGE_HEIGHT         ((int32_t)RGBDIRECT_SCREEN_HEIGHT)
-#define IMAGE_PAGES          ((int32_t)1)
-#define IMAGE_SIZE           ((int32_t)(RGBDIRECT_SCREEN_WIDTH * RGBDIRECT_SCREEN_HEIGHT * IMAGE_PAGES * sizeof(PIXEL_TYPE)))
-#define IMAGE_BUFFER		 RGBDIRECT_VRAM
+#define PIXEL_SIZE           ((int) sizeof(PIXEL_TYPE))
 
 #define FREQUENCY_DIVIDER    5
 
@@ -54,6 +41,8 @@ using namespace eos;
 
 
 IDisplayDriver *RGBDirectDriver::instance = nullptr;
+
+static LTDC_HandleTypeDef ltdcHandler;
 
 
 /// ----------------------------------------------------------------------
@@ -73,11 +62,8 @@ IDisplayDriver *RGBDirectDriver::getInstance() {
 ///
 RGBDirectDriver::RGBDirectDriver():
 
-	screenWidth(RGBDIRECT_SCREEN_WIDTH),
-    screenHeight(RGBDIRECT_SCREEN_HEIGHT),
 	orientation(DisplayOrientation::normal),
-	curLayer(0),
-	image((uint8_t*)IMAGE_BUFFER) {
+	vRamAddr(DISPLAY_VRAM_ADDR) {
 
 }
 
@@ -109,11 +95,11 @@ void RGBDirectDriver::displayOn() {
 
 	// Activa el display
 	//
-	halGPIOSetPin(RGBDIRECT_LCDE_PORT, RGBDIRECT_LCDE_PIN);
+	halGPIOSetPin(DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN);
 
 	// Activa el backlight
 	//
-	halGPIOSetPin(RGBDIRECT_BKE_PORT, RGBDIRECT_BKE_PIN);
+	halGPIOSetPin(DISPLAY_BKE_PORT, DISPLAY_BKE_PIN);
 }
 
 
@@ -124,11 +110,11 @@ void RGBDirectDriver::displayOff() {
 
 	// Desactiva el display
 	//
-	halGPIOClearPin(RGBDIRECT_LCDE_PORT, RGBDIRECT_LCDE_PIN);
+	halGPIOClearPin(DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN);
 
 	// Desactiva el backlight
 	//
-	halGPIOClearPin(RGBDIRECT_BKE_PORT, RGBDIRECT_BKE_PIN);
+	halGPIOClearPin(DISPLAY_BKE_PORT, DISPLAY_BKE_PIN);
 }
 
 
@@ -163,7 +149,7 @@ void RGBDirectDriver::setOrientation(
 void RGBDirectDriver::clear(
 	const Color &color) {
 
-	dma2dFill(image, IMAGE_WIDTH, IMAGE_HEIGHT, color);
+	dma2dFill(0, 0, DISPLAY_SCREEN_WIDTH, DISPLAY_SCREEN_HEIGHT, color);
 }
 
 
@@ -178,13 +164,10 @@ void RGBDirectDriver::setPixel(
 	int y,
 	const Color &color) {
 
-	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight)) {
+	if ((x >= 0) && (x < DISPLAY_SCREEN_WIDTH) && (y >= 0) && (y < DISPLAY_SCREEN_HEIGHT)) {
 
-		unsigned offset =
-			(curLayer * IMAGE_SIZE) +
-			((y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE));
-
-		*((PIXEL_TYPE*)(image + offset)) = PIXEL_VALUE(color);
+		int addr = vRamAddr + (y * DISPLAY_SCREEN_WIDTH + x) * PIXEL_SIZE;
+		*((PIXEL_TYPE*)addr) = PIXEL_VALUE(color);
 	}
 }
 
@@ -202,24 +185,17 @@ void RGBDirectDriver::setHPixels(
 	int size,
 	const Color &color) {
 
-	if ((y >= 0) && (y < screenHeight)) {
+	if ((y >= 0) && (y < DISPLAY_SCREEN_HEIGHT)) {
 
 		int x2 = x + size - 1;
 		if (x < 0)
 			x = 0;
-		if (x2 >= screenWidth)
-			x2 = screenWidth - 1;
+		if (x2 >= DISPLAY_SCREEN_WIDTH)
+			x2 = DISPLAY_SCREEN_WIDTH - 1;
 		size = x2 - x + 1;
 
-		if (size > 0) {
-
-			unsigned offset =
-				(curLayer * IMAGE_SIZE) +
-				((y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE));
-
-			uint8_t *addr = (uint8_t*) (image + offset);
-			dma2dFill(addr, size, 1, color);
-		}
+		if (size > 0)
+			dma2dFill(x, y, size, 1, color);
 	}
 }
 
@@ -237,24 +213,17 @@ void RGBDirectDriver::setVPixels(
 	int size,
 	const Color &color) {
 
-	if ((x >= 0) && (x < screenWidth)) {
+	if ((x >= 0) && (x < DISPLAY_SCREEN_WIDTH)) {
 
 		int y2 = y + size - 1;
 		if (y < 0)
 			y = 0;
-		if (y2 >= screenHeight)
-			y2 = screenHeight - 1;
+		if (y2 >= DISPLAY_SCREEN_HEIGHT)
+			y2 = DISPLAY_SCREEN_HEIGHT - 1;
 		size = y2 - y + 1;
 
-		if (size > 0) {
-
-			unsigned offset =
-				(curLayer * IMAGE_SIZE) +
-				((y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE));
-
-			uint8_t *addr = (uint8_t *) (image + offset);
-			dma2dFill(addr, 1, size, color);
-		}
+		if (size > 0)
+			dma2dFill(x, y, 1, size, color);
 	}
 
 }
@@ -275,12 +244,7 @@ void RGBDirectDriver::setPixels(
 	int height,
 	const Color &color) {
 
-	unsigned offset =
-		(curLayer * IMAGE_SIZE) +
-		((y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE));
-
-	uint8_t *addr = (uint8_t*) (image + offset);
-    dma2dFill(addr, width, height, color);
+    dma2dFill(x, y, width, height, color);
 }
 
 
@@ -290,6 +254,8 @@ void RGBDirectDriver::writePixels(
 	int width,
 	int height,
 	const Color *colors) {
+
+	dma2dCopy(x, y, width, height, colors);
 }
 
 
@@ -329,40 +295,40 @@ void RGBDirectDriver::hScroll(
 void RGBDirectDriver::gpioInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
-		{RGBDIRECT_LCDE_PORT, RGBDIRECT_LCDE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
-		{RGBDIRECT_BKE_PORT, RGBDIRECT_BKE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
+		{DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
+		{DISPLAY_BKE_PORT, DISPLAY_BKE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
 
-		{RGBDIRECT_HSYNC_PORT, RGBDIRECT_HSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_HSYNC_AF},
-		{RGBDIRECT_VSYNC_PORT, RGBDIRECT_VSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_VSYNC_AF},
-		{RGBDIRECT_DOTCLK_PORT, RGBDIRECT_DOTCLK_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_DOTCLK_AF},
-		{RGBDIRECT_DE_PORT, RGBDIRECT_DE_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_DE_AF},
+		{DISPLAY_HSYNC_PORT, DISPLAY_HSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_HSYNC_AF},
+		{DISPLAY_VSYNC_PORT, DISPLAY_VSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_VSYNC_AF},
+		{DISPLAY_DOTCLK_PORT, DISPLAY_DOTCLK_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_DOTCLK_AF},
+		{DISPLAY_DE_PORT, DISPLAY_DE_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_DE_AF},
 
-		{RGBDIRECT_R0_PORT, RGBDIRECT_R0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R0_AF},
-		{RGBDIRECT_R1_PORT, RGBDIRECT_R1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R1_AF},
-		{RGBDIRECT_R2_PORT, RGBDIRECT_R2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R2_AF},
-		{RGBDIRECT_R3_PORT, RGBDIRECT_R3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R3_AF},
-		{RGBDIRECT_R4_PORT, RGBDIRECT_R4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R4_AF},
-		{RGBDIRECT_R5_PORT, RGBDIRECT_R5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R5_AF},
-		{RGBDIRECT_R6_PORT, RGBDIRECT_R6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R6_AF},
-		{RGBDIRECT_R7_PORT, RGBDIRECT_R7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_R7_AF},
+		{DISPLAY_R0_PORT, DISPLAY_R0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R0_AF},
+		{DISPLAY_R1_PORT, DISPLAY_R1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R1_AF},
+		{DISPLAY_R2_PORT, DISPLAY_R2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R2_AF},
+		{DISPLAY_R3_PORT, DISPLAY_R3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R3_AF},
+		{DISPLAY_R4_PORT, DISPLAY_R4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R4_AF},
+		{DISPLAY_R5_PORT, DISPLAY_R5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R5_AF},
+		{DISPLAY_R6_PORT, DISPLAY_R6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R6_AF},
+		{DISPLAY_R7_PORT, DISPLAY_R7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R7_AF},
 
-		{RGBDIRECT_G0_PORT, RGBDIRECT_G0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G0_AF},
-		{RGBDIRECT_G1_PORT, RGBDIRECT_G1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G1_AF},
-		{RGBDIRECT_G2_PORT, RGBDIRECT_G2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G2_AF},
-		{RGBDIRECT_G3_PORT, RGBDIRECT_G3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G3_AF},
-		{RGBDIRECT_G4_PORT, RGBDIRECT_G4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G4_AF},
-		{RGBDIRECT_G5_PORT, RGBDIRECT_G5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G5_AF},
-		{RGBDIRECT_G6_PORT, RGBDIRECT_G6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G6_AF},
-		{RGBDIRECT_G7_PORT, RGBDIRECT_G7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_G7_AF},
+		{DISPLAY_G0_PORT, DISPLAY_G0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G0_AF},
+		{DISPLAY_G1_PORT, DISPLAY_G1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G1_AF},
+		{DISPLAY_G2_PORT, DISPLAY_G2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G2_AF},
+		{DISPLAY_G3_PORT, DISPLAY_G3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G3_AF},
+		{DISPLAY_G4_PORT, DISPLAY_G4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G4_AF},
+		{DISPLAY_G5_PORT, DISPLAY_G5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G5_AF},
+		{DISPLAY_G6_PORT, DISPLAY_G6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G6_AF},
+		{DISPLAY_G7_PORT, DISPLAY_G7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G7_AF},
 
-		{RGBDIRECT_B0_PORT, RGBDIRECT_B0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B0_AF},
-		{RGBDIRECT_B1_PORT, RGBDIRECT_B1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B1_AF},
-		{RGBDIRECT_B2_PORT, RGBDIRECT_B2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B2_AF},
-		{RGBDIRECT_B3_PORT, RGBDIRECT_B3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B3_AF},
-		{RGBDIRECT_B4_PORT, RGBDIRECT_B4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B4_AF},
-		{RGBDIRECT_B5_PORT, RGBDIRECT_B5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B5_AF},
-		{RGBDIRECT_B6_PORT, RGBDIRECT_B6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B6_AF},
-		{RGBDIRECT_B7_PORT, RGBDIRECT_B7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, RGBDIRECT_B7_AF}
+		{DISPLAY_B0_PORT, DISPLAY_B0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B0_AF},
+		{DISPLAY_B1_PORT, DISPLAY_B1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B1_AF},
+		{DISPLAY_B2_PORT, DISPLAY_B2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B2_AF},
+		{DISPLAY_B3_PORT, DISPLAY_B3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B3_AF},
+		{DISPLAY_B4_PORT, DISPLAY_B4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B4_AF},
+		{DISPLAY_B5_PORT, DISPLAY_B5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B5_AF},
+		{DISPLAY_B6_PORT, DISPLAY_B6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B6_AF},
+		{DISPLAY_B7_PORT, DISPLAY_B7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B7_AF}
 	};
 
 	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
@@ -374,16 +340,13 @@ void RGBDirectDriver::gpioInitialize() {
 ///
 void RGBDirectDriver::ltdcInitialize() {
 
-	static LTDC_HandleTypeDef ltdcHandler;
-	LTDC_LayerCfgTypeDef layerCfg;
-	RCC_PeriphCLKInitTypeDef clkInit;
-
 	// Configura el rellotge
 	// PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
 	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 192 Mhz
 	// PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 192/5 = 38.4 Mhz
 	// LTDC clock frequency = PLLLCDCLK / LTDC_PLLSAI_DIVR_4 = 38.4/4 = 9.6Mhz
 	//
+	RCC_PeriphCLKInitTypeDef clkInit;
 	clkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
 	clkInit.PLLSAI.PLLSAIN = 192;
 	clkInit.PLLSAI.PLLSAIR = FREQUENCY_DIVIDER;
@@ -396,27 +359,31 @@ void RGBDirectDriver::ltdcInitialize() {
 	ltdcHandler.Init.VSPolarity = LTDC_VSPOLARITY_AL;
 	ltdcHandler.Init.DEPolarity = LTDC_DEPOLARITY_AL;
 	ltdcHandler.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
-	ltdcHandler.Init.HorizontalSync = RGBDIRECT_HSYNC - 1;
-	ltdcHandler.Init.VerticalSync = RGBDIRECT_VSYNC - 1;
-	ltdcHandler.Init.AccumulatedHBP = RGBDIRECT_HSYNC + RGBDIRECT_HBP - 1;
-	ltdcHandler.Init.AccumulatedVBP = RGBDIRECT_VSYNC + RGBDIRECT_VBP - 1;
-	ltdcHandler.Init.AccumulatedActiveH = RGBDIRECT_SCREEN_HEIGHT + RGBDIRECT_VSYNC + RGBDIRECT_VBP - 1;
-	ltdcHandler.Init.AccumulatedActiveW = RGBDIRECT_SCREEN_WIDTH + RGBDIRECT_HSYNC + RGBDIRECT_HBP - 1;
-	ltdcHandler.Init.TotalHeigh = RGBDIRECT_SCREEN_HEIGHT + RGBDIRECT_VSYNC + RGBDIRECT_VBP + RGBDIRECT_VFP - 1;
-	ltdcHandler.Init.TotalWidth = RGBDIRECT_SCREEN_WIDTH + RGBDIRECT_HSYNC + RGBDIRECT_HBP + RGBDIRECT_HFP - 1;
+	ltdcHandler.Init.HorizontalSync = DISPLAY_HSYNC - 1;
+	ltdcHandler.Init.VerticalSync = DISPLAY_VSYNC - 1;
+	ltdcHandler.Init.AccumulatedHBP = DISPLAY_HSYNC + DISPLAY_HBP - 1;
+	ltdcHandler.Init.AccumulatedVBP = DISPLAY_VSYNC + DISPLAY_VBP - 1;
+	ltdcHandler.Init.AccumulatedActiveH = DISPLAY_SCREEN_HEIGHT + DISPLAY_VSYNC + DISPLAY_VBP - 1;
+	ltdcHandler.Init.AccumulatedActiveW = DISPLAY_SCREEN_WIDTH + DISPLAY_HSYNC + DISPLAY_HBP - 1;
+	ltdcHandler.Init.TotalHeigh = DISPLAY_SCREEN_HEIGHT + DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_VFP - 1;
+	ltdcHandler.Init.TotalWidth = DISPLAY_SCREEN_WIDTH + DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_HFP - 1;
 	ltdcHandler.Init.Backcolor.Blue = 0;
 	ltdcHandler.Init.Backcolor.Green = 0;
 	ltdcHandler.Init.Backcolor.Red = 0;
 	ltdcHandler.Instance = LTDC;
 
-    // Configura la pagina
+	__HAL_RCC_LTDC_CLK_ENABLE();
+	HAL_LTDC_Init(&ltdcHandler);
+
+    // Configura les pagines
 	//
+	LTDC_LayerCfgTypeDef layerCfg;
 	layerCfg.WindowX0 = 0;
-	layerCfg.WindowX1 = RGBDIRECT_SCREEN_WIDTH;
+	layerCfg.WindowX1 = DISPLAY_SCREEN_WIDTH;
 	layerCfg.WindowY0 = 0;
-	layerCfg.WindowY1 = RGBDIRECT_SCREEN_HEIGHT;
+	layerCfg.WindowY1 = DISPLAY_SCREEN_HEIGHT;
 	layerCfg.PixelFormat = LTDC_PIXEL_FORMAT;
-	layerCfg.FBStartAdress = RGBDIRECT_VRAM;
+	layerCfg.FBStartAdress = vRamAddr;
 	layerCfg.Alpha = 255;
 	layerCfg.Alpha0 = 0;
 	layerCfg.Backcolor.Blue = 0;
@@ -424,12 +391,13 @@ void RGBDirectDriver::ltdcInitialize() {
 	layerCfg.Backcolor.Red = 0;
 	layerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
 	layerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;
-	layerCfg.ImageWidth  = RGBDIRECT_SCREEN_WIDTH;
-	layerCfg.ImageHeight = RGBDIRECT_SCREEN_HEIGHT;
+	layerCfg.ImageWidth  = DISPLAY_SCREEN_WIDTH;
+	layerCfg.ImageHeight = DISPLAY_SCREEN_HEIGHT;
 
-	__HAL_RCC_LTDC_CLK_ENABLE();
-	HAL_LTDC_Init(&ltdcHandler);
-	HAL_LTDC_ConfigLayer(&ltdcHandler, &layerCfg, 0);
+	for (uint_fast8_t pageNum = 0; pageNum < 1; pageNum++) {
+		layerCfg.FBStartAdress = vRamAddr;
+		HAL_LTDC_ConfigLayer(&ltdcHandler, &layerCfg, pageNum);
+	}
 }
 
 
@@ -438,49 +406,124 @@ void RGBDirectDriver::ltdcInitialize() {
 ///
 void RGBDirectDriver::dma2dInitialize() {
 
-	__HAL_RCC_DMA2D_CLK_ENABLE();
+    RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Ompla un area de memoria amb un color.
-/// \param addr: Direccio de memoria.
+/// \param x: Coordinada x.
+/// \param y: Coordinada y.
 /// \param width: Amplada del bloc.
 /// \param height: Alçada del bloc.
 /// \param color: El color per omplir.
 ///
 void RGBDirectDriver::dma2dFill(
-	const unsigned char *addr,
+	int x,
+	int y,
 	int width,
 	int height,
 	const Color &color) {
 
-	DMA2D_HandleTypeDef dma2dHandle;
-
-	// Configure the DMA2D Mode, Color Mode and output offset
+	// Calcula l'adresa inicial
 	//
-	dma2dHandle.Init.Mode         = DMA2D_R2M;
-	dma2dHandle.Init.ColorMode    = DMA2D_OUTPUT;
-	dma2dHandle.Init.OutputOffset = IMAGE_WIDTH - width;
+	int addr = vRamAddr + (y * DISPLAY_SCREEN_WIDTH + x) * PIXEL_SIZE;
 
-	// DMA2D Callbacks Configuration
+	// Inicialitza el controlador DMA2D
 	//
-	dma2dHandle.XferCpltCallback  = NULL;
-	dma2dHandle.XferErrorCallback = NULL;
+	DMA2D->CR = 0b11 << DMA2D_CR_MODE_Pos;            // Modus de transferencia R2M
+#if defined(DISPLAY_COLOR_RGB565)
+	DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;     // Format de color RGB565
+	DMA2D->OCOLR = color.toRGB565();                  // Color en format RGB565
+#elif defined(DISPLAY_COLOR_RGB888)
+	DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;     // Format de color RGB888
+	DMA2D->OCOLR = color.toRGB888();                  // Color en format RGB888
+#else
+#error No se especifico DISPLAY_COLOR_xxxx
+#endif
+	DMA2D->OMAR = addr;                               // Adressa del primer pixel
+	DMA2D->OOR = DISPLAY_SCREEN_WIDTH - width;        // Offset entre linies
+	DMA2D->NLR =
+		(width << DMA2D_NLR_PL_Pos) |                 // Amplada
+		(height << DMA2D_NLR_NL_Pos);                 // Alçada
 
-	// Foreground Configuration
+	// Inicia la transferencia
 	//
-	dma2dHandle.LayerCfg[curLayer].AlphaMode = DMA2D_NO_MODIF_ALPHA;
-	dma2dHandle.LayerCfg[curLayer].InputAlpha = 0xFF;
-	dma2dHandle.LayerCfg[curLayer].InputColorMode = DMA2D_INPUT;
-	dma2dHandle.LayerCfg[curLayer].InputOffset = 0x0;
+	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;             // Inicia la transferencia
 
-	dma2dHandle.Instance = DMA2D;
+	// Espera que acabi
+	//
+	dma2dWaitFinish();
+}
 
-	HAL_DMA2D_Init(&dma2dHandle);
 
-	HAL_DMA2D_ConfigLayer(&dma2dHandle, curLayer);
-	HAL_DMA2D_Start(&dma2dHandle, color.toARGB8888(), (uint32_t) addr, width, height);
-	HAL_DMA2D_PollForTransfer(&dma2dHandle, 20);
+/// ----------------------------------------------------------------------
+/// \brief Copia un bitmap.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param width: Amplada.
+/// \param height: Alçada.
+/// \param colors: Llista de colors a copiar (Amplada * Alçada).
+///
+void RGBDirectDriver::dma2dCopy(
+	int x,
+	int y,
+	int width,
+	int height,
+	const Color *colors) {
+
+	// Calcula l'adresa inicial
+	//
+	int addr = vRamAddr + (y * DISPLAY_SCREEN_WIDTH + x) * PIXEL_SIZE;
+
+	// Inicialitza el controlador DMA2D
+	//
+	DMA2D->CR = 0b01 << DMA2D_CR_MODE_Pos;            // Modus de transferencia M2M/PFC
+#if defined(DISPLAY_COLOR_RGB565)
+	DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;     // Format desti RGB565
+#elif defined(DISPLAY_COLOR_RGB888)
+	DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;     // Format desti RGB888
+#else
+#error No se especifico DISPLAY_COLOR_xxxx
+#endif
+	DMA2D->FGPFCCR = 0b0000 << DMA2D_FGPFCCR_CM_Pos;  // Format origen ARGB8888
+	DMA2D->FGMAR = (uint32_t)colors;                  // Adressa origen
+	DMA2D->OMAR = addr;                               // Adressa desti
+	DMA2D->FGOR = 0;                                  // Offset origen
+	DMA2D->OOR = DISPLAY_SCREEN_WIDTH - width;        // Offset desti
+	DMA2D->NLR =
+		(width << DMA2D_NLR_PL_Pos) |                 // Amplada
+		(height << DMA2D_NLR_NL_Pos);                 // Alçada
+
+	// Inicia la transferencia
+	//
+	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;             // Inicia la transferencia
+
+	/// Espera que acabi
+	///
+	dma2dWaitFinish();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Espera que acabi la transaccio.
+///
+void RGBDirectDriver::dma2dWaitFinish() {
+
+	// Espera que acabi
+	//
+	while ((DMA2D->ISR & DMA2D_ISR_TCIF_Msk) == 0) {
+
+		// Si troba errors, finalitza
+		//
+		volatile uint32_t isr = DMA2D->ISR;
+		if (((isr & DMA2D_ISR_CEIF_Msk) != 0) | ((isr & DMA2D_ISR_TEIF_Msk) != 0)) {
+			DMA2D->IFCR |=
+					1 << DMA2D_IFCR_CCEIF_Pos |
+					1 << DMA2D_IFCR_CTEIF_Pos;
+			return;
+		}
+	}
+	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
 }
 

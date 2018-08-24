@@ -6,6 +6,7 @@
 #include "Controllers/TouchPad/eosTouchPad.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
 #include "Controllers/Display/eosDisplay.h"
+#include "Controllers/Display/eosBitmap.h"
 #include "Controllers/Display/Drivers/eosRGBDirect.h"
 #include "HAL/halSYS.h"
 #include "HAL/halGPIO.h"
@@ -30,10 +31,11 @@ class LedLoopService: public AppLoopService {
 
 class DisplayLoopService: public AppLoopService {
     private:
-		ITouchPadDriver *touchDriver;
-        TouchPad *touch;
+        Bitmap *bitmap;
 		IDisplayDriver *displayDriver;
         Display *display;
+		ITouchPadDriver *touchDriver;
+        TouchPad *touch;
         int16_t screenWidth;
         int16_t screenHeight;
         int16_t x;
@@ -44,6 +46,7 @@ class DisplayLoopService: public AppLoopService {
     public:
         DisplayLoopService(Application *application):
             AppLoopService(application),
+			bitmap(nullptr),
 			display(nullptr),
 			touch(nullptr) {}
 
@@ -143,6 +146,8 @@ void DisplayLoopService::onSetup() {
     display = new Display(displayDriver);
     display->clear(COLOR_Black);
 
+    bitmap = new Bitmap(30, 30, COLOR_Blue);
+
     // Inicialitzacio del touch pad
     //
     touchDriver = FT5336Driver::getInstance();
@@ -222,6 +227,8 @@ void DisplayLoopService::drawDot() {
 	display->fillCircle(x, y, 30);
 	display->setColor(COLOR_Yellow);
 	display->fillCircle(x, y, 25);
+
+	display->drawBitmap(x, y, bitmap);
 }
 
 /// ----------------------------------------------------------------------

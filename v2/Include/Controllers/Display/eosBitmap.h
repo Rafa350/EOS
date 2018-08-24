@@ -14,13 +14,21 @@ namespace eos {
 		private:
 			int width;
 			int height;
+			bool allocated;
 			Color *pixels;
+
 		public:
 			Bitmap(int width, int height);
+			Bitmap(int width, int height, const Color &color);
 			Bitmap(int width, int height, Color *pixels);
 			~Bitmap();
+
 			void setPixel(int x, int y, Color color);
 			Color getPixel(int x, int y);
+
+			int getWidth() const { return width; }
+			int getHeight() const { return height; }
+			Color *getPixels() const { return pixels; }
 	};
 }
 

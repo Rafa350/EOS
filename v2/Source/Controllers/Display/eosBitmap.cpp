@@ -18,9 +18,36 @@ Bitmap::Bitmap(
 
 	width(width),
 	height(height),
+	allocated(true),
 	pixels(nullptr) {
 
-	pixels = (Color*) osalMemoryAlloc(width * height * sizeof(Color));
+	int numPixels = width * height;
+	pixels = (Color*) osalMemoryAlloc(numPixels * sizeof(Color));
+	for (int i = 0; i < numPixels; i++)
+		pixels[i] = Color(COLOR_Transparent);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Constructor de l'objecte.
+/// \param width: Amplada en pixels.
+/// \param height: Alçada en pixels.
+/// \param color: Color inicial
+///
+Bitmap::Bitmap(
+	int width,
+	int height,
+	const Color &color):
+
+	width(width),
+	height(height),
+	allocated(true),
+	pixels(nullptr) {
+
+	int numPixels = width * height;
+	pixels = (Color*) osalMemoryAlloc(numPixels * sizeof(Color));
+	for (int i = 0; i < numPixels; i++)
+		pixels[i] = color;
 }
 
 
@@ -37,6 +64,7 @@ Bitmap::Bitmap(
 
 	width(width),
 	height(height),
+	allocated(false),
 	pixels(pixels) {
 }
 
@@ -46,6 +74,6 @@ Bitmap::Bitmap(
 ///
 Bitmap::~Bitmap() {
 
-	if (pixels != nullptr)
+	if (allocated & (pixels != nullptr))
 		osalMemoryFree(pixels);
 }

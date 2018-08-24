@@ -13,12 +13,12 @@
 #include "stdint.h"
 
 
-#ifndef RGBDIRECT_SCREEN_WIDTH
-#define RGBDIRECT_SCREEN_WIDTH      480       // Tamany fix del controlador
+#ifndef DISPLAY_SCREEN_WIDTH
+#define DISPLAY_SCREEN_WIDTH      480       // Tamany fix del controlador
 #endif
 
-#ifndef RGBDIRECT_SCREEN_HEIGHT
-#define RGBDIRECT_SCREEN_HEIGHT     272       // Tamany fix del controlador
+#ifndef DISPLAY_SCREEN_HEIGHT
+#define DISPLAY_SCREEN_HEIGHT     272       // Tamany fix del controlador
 #endif
 
 
@@ -27,11 +27,8 @@ namespace eos {
     class RGBDirectDriver: public IDisplayDriver {
     	private:
     		static IDisplayDriver *instance;
-    		int screenWidth;
-    		int screenHeight;
     		DisplayOrientation orientation;
-    		unsigned curLayer;
-    		uint8_t *image;
+    		int vRamAddr;
 
     	private:
             RGBDirectDriver();
@@ -43,8 +40,8 @@ namespace eos {
             void displayOn();
             void displayOff();
             void setOrientation(DisplayOrientation orientation);
-            int getWidth() { return screenWidth; }
-            int getHeight() { return screenHeight; }
+            int getWidth() { return DISPLAY_SCREEN_WIDTH; }
+            int getHeight() { return DISPLAY_SCREEN_HEIGHT; }
             void clear(const Color &color);
             void setPixel(int x, int y, const Color &color);
             void setHPixels(int x, int y, int size, const Color &color);
@@ -59,7 +56,9 @@ namespace eos {
             void gpioInitialize();
             void ltdcInitialize();
             void dma2dInitialize();
-            void dma2dFill(const uint8_t *addr, int width, int height, const Color &color);
+            void dma2dFill(int x, int y, int width, int height, const Color &color);
+            void dma2dCopy(int x, int y, int width, int height, const Color *colors);
+            void dma2dWaitFinish();
     };
 }
 
