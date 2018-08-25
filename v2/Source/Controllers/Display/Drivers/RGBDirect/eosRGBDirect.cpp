@@ -253,9 +253,10 @@ void RGBDirectDriver::writePixels(
 	int y,
 	int width,
 	int height,
-	const Color *colors) {
+	const uint8_t *pixels,
+	PixelFormat format) {
 
-	dma2dCopy(x, y, width, height, colors);
+	dma2dCopy(x, y, width, height, pixels, format);
 }
 
 
@@ -264,7 +265,8 @@ void RGBDirectDriver::readPixels(
 	int y,
 	int width,
 	int height,
-	Color *colors) {
+	uint8_t *pixels,
+	PixelFormat format) {
 
 }
 
@@ -463,14 +465,16 @@ void RGBDirectDriver::dma2dFill(
 /// \param y: Coordinada Y.
 /// \param width: Amplada.
 /// \param height: Alçada.
-/// \param colors: Llista de colors a copiar (Amplada * Alçada).
+/// \param pixels: Llista de pixels.
+/// \param format: Format dels pixels.
 ///
 void RGBDirectDriver::dma2dCopy(
 	int x,
 	int y,
 	int width,
 	int height,
-	const Color *colors) {
+	const uint8_t *pixels,
+	PixelFormat format) {
 
 	// Calcula l'adresa inicial
 	//
@@ -486,8 +490,21 @@ void RGBDirectDriver::dma2dCopy(
 #else
 #error No se especifico DISPLAY_COLOR_xxxx
 #endif
-	DMA2D->FGPFCCR = 0b0000 << DMA2D_FGPFCCR_CM_Pos;  // Format origen ARGB8888
-	DMA2D->FGMAR = (uint32_t)colors;                  // Adressa origen
+	switch (format) {                                 // Format origen
+		case PixelFormat::rgb888:
+			DMA2D->FGPFCCR = 0b0001 << DMA2D_FGPFCCR_CM_Pos;
+			break;
+
+		case PixelFormat::rgb565:
+			DMA2D->FGPFCCR = 0b0010 << DMA2D_FGPFCCR_CM_Pos;
+			break;
+
+		default:
+		case PixelFormat::argb8888:
+			DMA2D->FGPFCCR = 0b0000 << DMA2D_FGPFCCR_CM_Pos;
+			break;
+	}
+	DMA2D->FGMAR = (uint32_t) pixels;                 // Adressa origen
 	DMA2D->OMAR = addr;                               // Adressa desti
 	DMA2D->FGOR = 0;                                  // Offset origen
 	DMA2D->OOR = DISPLAY_SCREEN_WIDTH - width;        // Offset desti

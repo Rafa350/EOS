@@ -364,6 +364,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/eosApplication.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
@@ -409,6 +414,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Graphics</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
@@ -419,34 +429,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosBitmap.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosBitmap.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosColor.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosColor.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosDisplay.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplay.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosDisplayDriver.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosFont.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFont.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosMatrix2D.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosMatrix2D.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers</name>
@@ -499,34 +484,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTimer.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosBitmap.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosBitmap.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosColor.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosDisplay.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosDisplay.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosFont.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosFont.h</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Fonts</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosBitmap.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosBitmap.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosColor.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColor.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosDisplay.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosDisplay.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosFont.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFont.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/TouchPad/Drivers</name>
@@ -619,6 +599,31 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTimer.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosBitmap.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosBitmap.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosColor.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosColor.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosDisplay.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosDisplay.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosFont.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosFont.cpp</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosRGBDirect.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosRGBDirect.h</locationURI>
@@ -634,39 +639,39 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGBDirect/eosRGBDirect.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Fonts/Consolas10pt.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Fonts/Consolas10pt.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Fonts/Consolas12pt.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Fonts/Consolas12pt.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Fonts/Consolas14pt.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Fonts/Consolas14pt.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Fonts/Consolas18pt.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Fonts/Consolas18pt.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Fonts/Consolas24pt.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Fonts/Consolas24pt.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Fonts/Consolas8pt.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Fonts/Consolas8pt.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Controllers/TouchPad/Drivers/eosFT5336.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/Drivers/eosFT5336.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas12pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas12pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas14pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas14pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas18pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas18pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas24pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas24pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas8pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas8pt.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

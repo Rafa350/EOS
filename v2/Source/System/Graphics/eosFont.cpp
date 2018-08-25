@@ -1,4 +1,7 @@
-#include "Controllers/Display/eosFont.h"
+#include "eos.h"
+#include "eosAssert.h"
+#include "System/Graphics/eosFont.h"
+
 #include <string.h>
 
 

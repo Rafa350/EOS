@@ -125,6 +125,14 @@
 
 namespace eos {
 
+	/// \brief Format de pixels
+	enum class PixelFormat {
+		argb8888,
+		rgb888,
+		rgb565
+	};
+
+	/// \brief Clase que representa un color
     class Color {
         private:
             uint32_t c;

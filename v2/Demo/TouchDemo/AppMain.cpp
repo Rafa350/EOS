@@ -2,11 +2,11 @@
 #include "eosAssert.h"
 #include "System/eosApplication.h"
 #include "System/Core/eosTask.h"
+#include "System/Graphics/eosDisplay.h"
+#include "System/Graphics/eosBitmap.h"
 #include "Services/eosAppLoop.h"
 #include "Controllers/TouchPad/eosTouchPad.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
-#include "Controllers/Display/eosDisplay.h"
-#include "Controllers/Display/eosBitmap.h"
 #include "Controllers/Display/Drivers/eosRGBDirect.h"
 #include "HAL/halSYS.h"
 #include "HAL/halGPIO.h"
@@ -146,7 +146,7 @@ void DisplayLoopService::onSetup() {
     display = new Display(displayDriver);
     display->clear(COLOR_Black);
 
-    bitmap = new Bitmap(30, 30, COLOR_Blue);
+    bitmap = new Bitmap(30, 30, PixelFormat::rgb565, Color(COLOR_Blue));
 
     // Inicialitzacio del touch pad
     //

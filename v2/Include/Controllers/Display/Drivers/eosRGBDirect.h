@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Controllers/Display/eosColor.h"
+#include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
 // Standard includes
@@ -47,8 +47,8 @@ namespace eos {
             void setHPixels(int x, int y, int size, const Color &color);
             void setVPixels(int x, int y, int size, const Color &color);
             void setPixels(int x, int y, int width, int height, const Color &color);
-            void writePixels(int x, int y, int width, int height, const Color *colors);
-            void readPixels(int x, int y, int width, int height, Color *colors);
+            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format);
+            void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format);
             void vScroll(int delta, int x, int y, int width, int height);
             void hScroll(int delta, int x, int y, int width, int height);
 
@@ -57,7 +57,7 @@ namespace eos {
             void ltdcInitialize();
             void dma2dInitialize();
             void dma2dFill(int x, int y, int width, int height, const Color &color);
-            void dma2dCopy(int x, int y, int width, int height, const Color *colors);
+            void dma2dCopy(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format);
             void dma2dWaitFinish();
     };
 }

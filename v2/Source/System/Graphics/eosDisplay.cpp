@@ -1,8 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Controllers/Display/eosDisplay.h"
-#include "Controllers/Display/eosFont.h"
-#include "Controllers/Display/eosBitmap.h"
+#include "System/Graphics/eosDisplay.h"
+#include "System/Graphics/eosFont.h"
+#include "System/Graphics/eosBitmap.h"
+#include "Controllers/Display/eosDisplayDriver.h"
 
 #include <stdint.h>
 
@@ -443,7 +444,7 @@ void Display::drawBitmap(
     int y,
     const Bitmap *bitmap) {
 
-	driver->writePixels(x, y, bitmap->getWidth(), bitmap->getHeight(), bitmap->getPixels());
+	driver->writePixels(x, y, bitmap->getWidth(), bitmap->getHeight(), bitmap->getPixels(), bitmap->getFormat());
 }
 
 

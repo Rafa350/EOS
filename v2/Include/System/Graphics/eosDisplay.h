@@ -2,14 +2,10 @@
 #define	__eosDisplay__
 
 
-#define DISPLAY_PIXFORMAT_565
-
-
 // EOS includes
 //
 #include "eos.h"
-#include "Controllers/Display/eosColor.h"
-#include "Controllers/Display/eosDisplayDriver.h"
+#include "System/Graphics/eosColor.h"
 
 // Standard includes
 //
@@ -18,6 +14,7 @@
 
 namespace eos {
 
+	class IDisplayDriver;
 	class Bitmap;
 	class Font;
 
