@@ -3,10 +3,10 @@
 
 
 #include "eos.h"
-#include "Controllers/Display/eosColor.h"
+#include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
-#include <stdint.h>
+#include "stdint.h"
 
 
 #if !defined(EOS_STM32F4) && !defined(EOS_STM32F7)
@@ -14,8 +14,12 @@
 #endif
 
 
-#define ILI9341LTDC_SCREEN_WIDTH       240  // Tamany fix del controlador
-#define ILI9341LTDC_SCREEN_HEIGHT      320  // Tamany fix del controlador
+#ifndef DISPLAY_SCREEN_WIDTH
+#define DISPLAY_SCREEN_WIDTH      240  // Tamany fix del controlador
+#endif
+#ifndef DISPLAY_SCREEN_HEIGHT
+#define DISPLAY_SCREEN_HEIGHT     320  // Tamany fix del controlador
+#endif
 
 
 namespace eos {
@@ -23,10 +27,10 @@ namespace eos {
     class ILI9341LTDCDriver: public IDisplayDriver {
         private:
     		static IDisplayDriver *instance;
-			int16_t screenWidth;
-			int16_t screenHeight;
+    		int screenWidth;
+    		int screenHeight;
     		uint32_t curLayer;
-            uint8_t *image;
+            int vRamAddr;
 
         public:
             static IDisplayDriver *getInstance();;
@@ -35,17 +39,17 @@ namespace eos {
             void displayOn();
             void displayOff();
             void setOrientation(DisplayOrientation orientation);
-            int16_t getWidth() { return screenWidth; }
-            int16_t getHeight() { return screenHeight; }
+            int getWidth() { return screenWidth; }
+            int getHeight() { return screenHeight; }
             void clear(const Color &color);
-            void setPixel(int16_t x, int16_t y, const Color &color);
-            void setHPixels(int16_t x, int16_t y, int16_t size, const Color &color);
-            void setVPixels(int16_t x, int16_t y, int16_t size, const Color &color);
-            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color &color);
-            void writePixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors);
-            void readPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color *colors);
-            void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
-            void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
+            void setPixel(int x, int y, const Color &color);
+            void setHPixels(int x, int y, int size, const Color &color);
+            void setVPixels(int x, int y, int size, const Color &color);
+            void setPixels(int x, int y, int width, int height, const Color &color);
+            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format);
+            void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format);
+            void vScroll(int delta, int x, int y, int width, int height);
+            void hScroll(int delta, int x, int y, int width, int height);
 
         private:
             ILI9341LTDCDriver();
@@ -55,7 +59,8 @@ namespace eos {
         private:
             void ltdcInitialize();
             void dma2dInitialize();
-            void dma2dFill(const uint8_t *addr, int16_t width, int16_t height, const Color &color);
+            void dma2dFill(int x, int y, int width, int height, const Color &color);
+            void dma2dWaitFinish();
             void lcdInitialize();
             void lcdReset();
             void lcdOpen();

@@ -98,17 +98,19 @@
 //
 #define DISPLAY_STM32F429I_DISC1
 
+// Tamany de la pantalla
+//
+#define DISPLAY_SCREEN_WIDTH      240  // Amplada en pixels
+#define DISPLAY_SCREEN_HEIGHT     320  // Alçada en pixels
+
 // Tipus de codificacio de color
 //
-#define DISPLAY_COLOR_565
+#define DISPLAY_COLOR_RGB565           // Format RGB565
 
 
 // -----------------------------------------------------------------------
 // Parametres de configuracio controlador de display ILI9341
 // -----------------------------------------------------------------------
-
-// Opcions de codificacio del color
-#define ILI9341_COLORMODE_565
 
 // Opcions de comunicacio amb el controlodor ILI9341
 //
@@ -153,11 +155,15 @@
 
 // Punter a la memoria de video
 //
-#define ILI9341LTDC_VRAM          ((uint32_t)0xD0000000)
+#define DISPLAY_VRAM              ((uint32_t)0xD0000000)
 
-// Format de color del controlador
-//
-#define ILI9341LTDC_COLORMODE_565
+#define DISPLAY_HSYNC             9    // Horizontal synchronization
+#define DISPLAY_HBP               29   // Horizontal back porch
+#define DISPLAY_HFP               2    // Horizontal front porch
+#define DISPLAY_VSYNC             1    // Vertical synchronization
+#define DISPLAY_VBP               3    // Vertical back porch
+#define DISPLAY_VFP               2    // Vertical front porch
+
 
 // Control del pin CS (Chip select)
 //

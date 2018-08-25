@@ -1,8 +1,8 @@
 #include "eos.h"
 #include "System/eosApplication.h"
 #include "System/Core/eosTask.h"
+#include "System/Graphics/eosDisplay.h"
 #include "Services/eosAppLoop.h"
-#include "Controllers/Display/eosDisplay.h"
 #ifdef EOS_STM32F4
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
 #else
@@ -155,8 +155,8 @@ void DisplayLoopService::onLoop() {
     srand(seed);
     ticks = Task::getTickCount();
     for (int i = 0; i < 50000; i++) {
-        int16_t x = rand() % screenWidth;
-        int16_t y = rand() % screenHeight;
+        int x = rand() % screenWidth;
+        int y = rand() % screenHeight;
 
         display->setColor(rand() & 0x00FFFFFF);
         display->drawPoint(x, y);
@@ -167,8 +167,8 @@ void DisplayLoopService::onLoop() {
     srand(seed);
     display->setColor(COLOR_Black);
     for (int i = 0; i < 50000; i++) {
-        int16_t x = rand() % screenWidth;
-        int16_t y = rand() % screenHeight;
+        int x = rand() % screenWidth;
+        int y = rand() % screenHeight;
         rand();
 
         display->drawPoint(x, y);
@@ -184,10 +184,10 @@ void DisplayLoopService::onLoop() {
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 300; i++) {
-        int16_t x1 = rand() % screenWidth;
-        int16_t y1 = rand() % screenHeight;
-        int16_t x2 = x1;
-        int16_t y2 = rand() % screenHeight;
+        int x1 = rand() % screenWidth;
+        int y1 = rand() % screenHeight;
+        int x2 = x1;
+        int y2 = rand() % screenHeight;
 
         display->setColor(rand() & 0x00FFFFFF);
         display->drawLine(x1, y1, x2, y2);
@@ -204,10 +204,10 @@ void DisplayLoopService::onLoop() {
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 300; i++) {
-        int16_t x1 = rand() % screenWidth;
-        int16_t y1 = rand() % screenHeight;
-        int16_t x2 = rand() % screenWidth;
-        int16_t y2 = y1;
+        int x1 = rand() % screenWidth;
+        int y1 = rand() % screenHeight;
+        int x2 = rand() % screenWidth;
+        int y2 = y1;
 
         display->setColor(rand() & 0x00FFFFFF);
         display->drawLine(x1, y1, x2, y2);
@@ -224,10 +224,10 @@ void DisplayLoopService::onLoop() {
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 300; i++) {
-        int16_t x1 = rand() % screenWidth;
-        int16_t y1 = rand() % screenHeight;
-        int16_t x2 = rand() % screenWidth;
-        int16_t y2 = rand() % screenHeight;
+        int x1 = rand() % screenWidth;
+        int y1 = rand() % screenHeight;
+        int x2 = rand() % screenWidth;
+        int y2 = rand() % screenHeight;
 
         display->setColor(rand() & 0x00FFFFFF);
         display->drawLine(x1, y1, x2, y2);
@@ -244,10 +244,10 @@ void DisplayLoopService::onLoop() {
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 200; i++) {
-        int16_t x1 = rand() % screenWidth;
-        int16_t y1 = rand() % screenHeight;
-        int16_t x2 = rand() % screenWidth;
-        int16_t y2 = rand() % screenHeight;
+        int x1 = rand() % screenWidth;
+        int y1 = rand() % screenHeight;
+        int x2 = rand() % screenWidth;
+        int y2 = rand() % screenHeight;
 
         display->setColor(rand() & 0x00FFFFFF);
         display->drawRectangle(x1, y1, x2, y2);
@@ -264,10 +264,10 @@ void DisplayLoopService::onLoop() {
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 200; i++) {
-        int16_t x1 = rand() % screenWidth;
-        int16_t y1 = rand() % screenHeight;
-        int16_t x2 = x1 + rand() % 100;
-        int16_t y2 = y1 + rand() % 100;
+        int x1 = rand() % screenWidth;
+        int y1 = rand() % screenHeight;
+        int x2 = x1 + rand() % 100;
+        int y2 = y1 + rand() % 100;
 
         display->setColor(rand() & 0x00FFFFFF);
         display->fillRectangle(x1, y1, x2, y2);
@@ -284,9 +284,9 @@ void DisplayLoopService::onLoop() {
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 200; i++) {
-        int16_t cx = rand() % screenWidth;
-        int16_t cy = rand() % screenHeight;
-        int16_t r = rand() % 150;
+        int cx = rand() % screenWidth;
+        int cy = rand() % screenHeight;
+        int r = rand() % 150;
 
         display->setColor(rand() & 0x00FFFFFF);
         display->drawCircle(cx, cy, r);
@@ -303,9 +303,9 @@ void DisplayLoopService::onLoop() {
     display->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 200; i++) {
-        int16_t cx = rand() % screenWidth;
-        int16_t cy = rand() % screenHeight;
-        int16_t r = rand() % 50;
+        int cx = rand() % screenWidth;
+        int cy = rand() % screenHeight;
+        int r = rand() % 50;
 
         display->setColor(rand() & 0x00FFFFFF);
         display->fillCircle(cx, cy, r);
@@ -319,7 +319,7 @@ void DisplayLoopService::onLoop() {
     Task::delay(250);
 
     char lineBuffer[30];
-    uint16_t y = 50;
+    int y = 50;
     sprintf(lineBuffer, "50K Points    %d ms", pointsTicks * 2);
     display->drawText(10, y, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "V. lines      %d ms", verticalLinesTicks * 2);

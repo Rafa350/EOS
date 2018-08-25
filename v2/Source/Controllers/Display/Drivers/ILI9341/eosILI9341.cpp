@@ -1,23 +1,14 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #include "Controllers/Display/Drivers/eosILI9341Defs.h"
 #include "HAL/halTMR.h"
 
 
-#if !defined(ILI9341_COLORMODE_565) && !defined(ILI9341_COLORMODE_666)
-#error "No se especifico ILI9342_COLORMODE_xxx"
-#endif
-
 #if !defined(DISPLAY_ER_TFT028_4) && \
     !defined(STM32F429I_DISC1)
 #error "No se especifico DISPLAY_xxx"
 #endif
-
-
-// Parametres de la pantalla
-//
-#define IMAGE_WIDTH          ((int32_t)ILI9341_SCREEN_WIDTH)
-#define IMAGE_HEIGHT         ((int32_t)ILI9341_SCREEN_HEIGHT)
 
 
 // Codis d'operacio
@@ -49,9 +40,8 @@ IDisplayDriver *ILI9341Driver::getInstance() {
 ///
 ILI9341Driver::ILI9341Driver():
 
-	screenWidth(IMAGE_WIDTH),
-	screenHeight(IMAGE_HEIGHT) {
-
+	screenWidth(DISPLAY_SCREEN_WIDTH),
+	screenHeight(DISPLAY_SCREEN_WIDTH) {
 }
 
 
@@ -169,26 +159,26 @@ void ILI9341Driver::setOrientation(
 
     switch (orientation) {
         case DisplayOrientation::normal:
-            screenWidth = IMAGE_WIDTH;
-            screenHeight = IMAGE_HEIGHT;
+            screenWidth = DISPLAY_SCREEN_WIDTH;
+            screenHeight = DISPLAY_SCREEN_HEIGHT;
             writeCommands(orientationData[0]);
             break;
 
         case DisplayOrientation::rotate90:
-            screenWidth = IMAGE_HEIGHT;
-            screenHeight = IMAGE_WIDTH;
+            screenWidth = DISPLAY_SCREEN_HEIGHT;
+            screenHeight = DISPLAY_SCREEN_WIDTH;
             writeCommands(orientationData[1]);
             break;
 
         case DisplayOrientation::rotate180:
-            screenWidth = IMAGE_WIDTH;
-            screenHeight = IMAGE_HEIGHT;
+            screenWidth = DISPLAY_SCREEN_WIDTH;
+            screenHeight = DISPLAY_SCREEN_HEIGHT;
             writeCommands(orientationData[2]);
             break;
 
         case DisplayOrientation::rotate270:
-            screenWidth = IMAGE_HEIGHT;
-            screenHeight = IMAGE_WIDTH;
+            screenWidth = DISPLAY_SCREEN_HEIGHT;
+            screenHeight = DISPLAY_SCREEN_WIDTH;
             writeCommands(orientationData[3]);
             break;
     }
@@ -214,8 +204,8 @@ void ILI9341Driver::clear(
 /// \param color: Color del pixel.
 ///
 void ILI9341Driver::setPixel(
-    int16_t x,
-    int16_t y,
+    int x,
+    int y,
     const Color &color) {
 
     selectRegion(x, y, 1, 1);
@@ -231,9 +221,9 @@ void ILI9341Driver::setPixel(
 /// \param color: Color dels pixels.
 ///
 void ILI9341Driver::setHPixels(
-    int16_t x,
-    int16_t y,
-    int16_t length,
+    int x,
+    int y,
+    int length,
     const Color &color) {
 
     selectRegion(x, y, length, 1);
@@ -249,9 +239,9 @@ void ILI9341Driver::setHPixels(
 /// \param color: Color dels pixels.
 ///
 void ILI9341Driver::setVPixels(
-    int16_t x,
-    int16_t y,
-    int16_t length,
+    int x,
+    int y,
+    int length,
     const Color &color) {
 
     selectRegion(x, y, 1, length);
@@ -268,10 +258,10 @@ void ILI9341Driver::setVPixels(
 /// \param color: Color dels pixels.
 ///
 void ILI9341Driver::setPixels(
-    int16_t x,
-    int16_t y,
-    int16_t width,
-    int16_t height,
+    int x,
+    int y,
+    int width,
+    int height,
     const Color &color) {
 
     selectRegion(x, y, width, height);
@@ -288,14 +278,15 @@ void ILI9341Driver::setPixels(
 /// \param colors: Color dels pixels.
 ///
 void ILI9341Driver::writePixels(
-    int16_t x,
-    int16_t y,
-    int16_t width,
-    int16_t height,
-    const Color* colors) {
+    int x,
+    int y,
+    int width,
+    int height,
+    const uint8_t *pixels,
+	PixelFormat format) {
 
-    selectRegion(x, y, width, width);
-    writeRegion(colors, width * height);
+    //selectRegion(x, y, width, width);
+    //writeRegion(colors, width * height);
 }
 
 
@@ -309,14 +300,15 @@ void ILI9341Driver::writePixels(
 /// \params colors: Buffer on deixar els pixels.
 ///
 void ILI9341Driver::readPixels(
-    int16_t x,
-    int16_t y,
-    int16_t width,
-    int16_t height,
-    Color *colors) {
+    int x,
+    int y,
+    int width,
+    int height,
+    uint8_t *pixels,
+	PixelFormat format) {
 
-    selectRegion(x, y, width, height);
-    readRegion(colors, width * height);
+    //selectRegion(x, y, width, height);
+    //readRegion(colors, width * height);
 }
 
 
@@ -329,17 +321,17 @@ void ILI9341Driver::readPixels(
 /// \param height: Alçada de la regio.
 ///
 void ILI9341Driver::vScroll(
-    int16_t delta,
-    int16_t x,
-    int16_t y,
-    int16_t width,
-    int16_t height) {
+    int delta,
+    int x,
+    int y,
+    int width,
+    int height) {
 
-    static Color buffer[IMAGE_WIDTH];
+    static Color buffer[DISPLAY_SCREEN_WIDTH];
 
     if (delta > 0) {
 
-        for (int16_t i = y; i < height - y - delta; i++) {
+        for (int i = y; i < height - y - delta; i++) {
 
             selectRegion(x, i + delta, width, 1);
             readRegion(buffer, width);
@@ -365,11 +357,11 @@ void ILI9341Driver::vScroll(
 /// \param height: Alçada de la regio.
 ///
 void ILI9341Driver::hScroll(
-    int16_t delta,
-    int16_t x,
-    int16_t y,
-    int16_t width,
-    int16_t height) {
+    int delta,
+    int x,
+    int y,
+    int width,
+    int height) {
 
 }
 
@@ -448,15 +440,15 @@ void ILI9341Driver::writeCommands(
 /// \param height: Alçada de la regio.
 ///
 void ILI9341Driver::selectRegion(
-    int16_t x,
-    int16_t y,
-    int16_t width,
-    int16_t height) {
+    int x,
+    int y,
+    int width,
+    int height) {
 
 	uint8_t buffer[4];
 
-    int16_t x2 = x + width - 1;
-    int16_t y2 = y + height - 1;
+    int x2 = x + width - 1;
+    int y2 = y + height - 1;
 
     lcdOpen();
 
@@ -524,7 +516,7 @@ void ILI9341Driver::writeRegion(
 ///
 void ILI9341Driver::writeRegion(
     const Color &color,
-    int32_t count) {
+    int count) {
 
 #if defined(ILI9341_COLORMODE_565)
 
@@ -579,7 +571,7 @@ void ILI9341Driver::writeRegion(
 ///
 void ILI9341Driver::writeRegion(
     const Color *colors,
-    int32_t count) {
+    int count) {
 
     while (count--)
         writeRegion(*colors++, 1);
@@ -594,7 +586,7 @@ void ILI9341Driver::writeRegion(
 ///
 void ILI9341Driver::readRegion(
     Color *colors,
-    int32_t count) {
+    int count) {
 
     lcdOpen();
     lcdWriteCommand(CMD_MEMORY_READ);

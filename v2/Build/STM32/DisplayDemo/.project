@@ -218,14 +218,14 @@
 			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/timers.c</location>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Board/Board_STM32F429I_DISC1.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/Board_STM32F429I_DISC1.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Board/board.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Board/board_PIC32_USB_STARTER_KIT_I.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board_PIC32_USB_STARTER_KIT_I.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display</name>
@@ -288,6 +288,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controller/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -323,6 +328,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Graphics</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/System/eosApplication.cpp</locationURI>
@@ -333,24 +343,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosColor.h</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosColor.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosDisplay.h</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosDisplay.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosDisplayDriver.h</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosFont.h</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosFont.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
@@ -378,29 +373,24 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/System/Core/eosTask.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosColor.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosDisplay.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosDisplay.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosFont.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosFont.h</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controller/Display/Fonts</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controller/Display/eosColor.cpp</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/eosColor.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controller/Display/eosDisplay.cpp</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/eosDisplay.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controller/Display/eosFont.cpp</name>
-			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/eosFont.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32/halGPIO.c</name>
@@ -463,6 +453,31 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/System/Core/eosTask.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosBitmap.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosBitmap.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosColor.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosColor.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosDisplay.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosDisplay.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosFont.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosFont.cpp</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341.h</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/Drivers/eosILI9341.h</locationURI>
@@ -488,34 +503,34 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas10pt.cpp</name>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas10pt.cpp</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas10pt.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas10pt.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas12pt.cpp</name>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas12pt.cpp</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas12pt.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas12pt.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas14pt.cpp</name>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas14pt.cpp</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas14pt.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas14pt.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas18pt.cpp</name>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas18pt.cpp</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas18pt.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas18pt.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas24pt.cpp</name>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas24pt.cpp</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas24pt.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas24pt.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Fonts/Consolas8pt.cpp</name>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas8pt.cpp</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Fonts/Consolas8pt.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas8pt.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341.cpp</name>

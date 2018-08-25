@@ -6,41 +6,22 @@
 #include "hAL/halGPIO.h"
 #include "hAL/halSPI.h"
 
-#include <string.h>
+#include "string.h"
 
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_ltdc.h"
-#include "stm32f4xx_hal_dma2d.h"
-
-
-#if !defined(ILI9341LTDC_COLORMODE_565) && !defined(ILI9341LTDC_COLORMODE_666)
-#error "No se especifico ILI9342_COLORMODE_xxx"
-#endif
 
 
 // Format de pixel
 //
-#if defined(ILI9341LTDC_COLORMODE_565)
+#if defined(DISPLAY_COLOR_RGB565)
 #define PIXEL_TYPE           uint16_t
+#define PIXEL_VALUE(c)       c.toRGB565()
 #define PIXEL_FORMAT         LTDC_PIXEL_FORMAT_RGB565;
+#else
+#error No se especifico DISPLAY_COLOR_xxxx
 #endif
-
-// Format de la imatge+
-//
-#define IMAGE_WIDTH          ((int32_t)ILI9341LTDC_SCREEN_WIDTH)
-#define IMAGE_HEIGHT         ((int32_t)ILI9341LTDC_SCREEN_HEIGHT)
-#define IMAGE_PAGES          ((int32_t)1)
-#define IMAGE_SIZE           ((int32_t)(IMAGE_WIDTH * IMAGE_HEIGHT * IMAGE_PAGES * sizeof(PIXEL_TYPE)))
-#define IMAGE_BUFFER		 ILI9341LTDC_VRAM
-
-// Parametres del controlador de video
-//
-#define ILI9341_HSYNC        ((uint32_t)9)  // Horizontal synchronization
-#define ILI9341_HBP          ((uint32_t)29) // Horizontal back porch
-#define ILI9341_HFP          ((uint32_t)2)  // Horizontal front porch
-#define ILI9341_VSYNC        ((uint32_t)1)  // Vertical synchronization
-#define ILI9341_VBP          ((uint32_t)3)  // Vertical back porch
-#define ILI9341_VFP          ((uint32_t)2)  // Vertical front porch
+#define PIXEL_SIZE           ((int) sizeof(PIXEL_TYPE))
 
 
 // Codis d'operacio
@@ -72,12 +53,13 @@ IDisplayDriver *ILI9341LTDCDriver::getInstance() {
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
-ILI9341LTDCDriver::ILI9341LTDCDriver() {
+ILI9341LTDCDriver::ILI9341LTDCDriver():
 
-	screenWidth = IMAGE_WIDTH;
-	screenHeight = IMAGE_HEIGHT;
+	screenWidth(DISPLAY_SCREEN_WIDTH),
+	screenHeight(DISPLAY_SCREEN_HEIGHT) {
+
 	curLayer = 0;
-    image = (uint8_t *) IMAGE_BUFFER;
+    vRamAddr = DISPLAY_VRAM;
 }
 
 
@@ -117,7 +99,7 @@ void ILI9341LTDCDriver::setOrientation(
 void ILI9341LTDCDriver::clear(
 	const Color &color) {
 
-	dma2dFill(image, IMAGE_WIDTH, IMAGE_HEIGHT, color);
+	dma2dFill(0, 0, DISPLAY_SCREEN_WIDTH, DISPLAY_SCREEN_HEIGHT, color);
 }
 
 
@@ -128,13 +110,14 @@ void ILI9341LTDCDriver::clear(
 /// \param color: Color del pixel.
 ///
 void ILI9341LTDCDriver::setPixel(
-	int16_t x,
-	int16_t y,
+	int x,
+	int y,
 	const Color &color) {
 
-	if ((x >= 0) && (x < IMAGE_WIDTH) && (y >= 0) && (y < IMAGE_HEIGHT)) {
-		uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
-		*((PIXEL_TYPE*)(image + offset + (curLayer * IMAGE_SIZE))) = color.toRGB565();
+	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight)) {
+
+		int addr = vRamAddr + (((y * DISPLAY_SCREEN_WIDTH) + x) * PIXEL_SIZE);
+		*((PIXEL_TYPE*)addr) = PIXEL_VALUE(color);
 	}
 }
 
@@ -147,25 +130,22 @@ void ILI9341LTDCDriver::setPixel(
 /// \param color: Color dels pixels.
 ///
 void ILI9341LTDCDriver::setHPixels(
-	int16_t x,
-	int16_t y,
-	int16_t size,
+	int x,
+	int y,
+	int size,
 	const Color &color) {
 
-	if ((y >= 0) && (y < IMAGE_HEIGHT)) {
+	if ((y >= 0) && (y < screenHeight)) {
 
 		int16_t x2 = x + size - 1;
 		if (x < 0)
 			x = 0;
-		if (x2 >= IMAGE_WIDTH)
-			x2 = IMAGE_WIDTH - 1;
+		if (x2 >= screenWidth)
+			x2 = screenWidth - 1;
 		size = x2 - x + 1;
 
-		if (size > 0) {
-			uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
-			uint8_t *addr = (uint8_t*) (image + offset + (curLayer * IMAGE_SIZE));
-			dma2dFill(addr, size, 1, color);
-		}
+		if (size > 0)
+			dma2dFill(x, y, size, 1, color);
 	}
 }
 
@@ -178,25 +158,22 @@ void ILI9341LTDCDriver::setHPixels(
 /// \param color: Color dels pixels.
 ///
 void ILI9341LTDCDriver::setVPixels(
-	int16_t x,
-	int16_t y,
-	int16_t size,
+	int x,
+	int y,
+	int size,
 	const Color &color) {
 
-	if ((x >= 0) && (x < IMAGE_WIDTH)) {
+	if ((x >= 0) && (x < screenWidth)) {
 
 		int16_t y2 = y + size - 1;
 		if (y < 0)
 			y = 0;
-		if (y2 >= IMAGE_HEIGHT)
-			y2 = IMAGE_HEIGHT - 1;
+		if (y2 >= screenHeight)
+			y2 = screenHeight - 1;
 		size = y2 - y + 1;
 
-		if (size > 0) {
-			uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
-			uint8_t *addr = (uint8_t*) (image + offset + (curLayer * IMAGE_SIZE));
-			dma2dFill(addr, 1, size, color);
-		}
+		if (size > 0)
+			dma2dFill(x, y, 1, size, color);
 	}
 }
 
@@ -210,54 +187,54 @@ void ILI9341LTDCDriver::setVPixels(
 /// \param color: Color dels pixels.
 ///
 void ILI9341LTDCDriver::setPixels(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height,
+	int x,
+	int y,
+	int width,
+	int height,
 	const Color &color) {
 
-	uint32_t offset = (y * IMAGE_WIDTH + x) * sizeof(PIXEL_TYPE);
-	uint8_t *addr = (uint8_t*) (image + offset + (curLayer * IMAGE_SIZE));
-    dma2dFill(addr, width, height, color);
+    dma2dFill(x, y, width, height, color);
 }
 
 
 void ILI9341LTDCDriver::writePixels(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height,
-	const Color *colors) {
+	int x,
+	int y,
+	int width,
+	int height,
+	const uint8_t *pixels,
+	PixelFormat format) {
 
 }
 
 
 void ILI9341LTDCDriver::readPixels(
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height,
-	Color *colors) {
+	int x,
+	int y,
+	int width,
+	int height,
+	uint8_t *pixels,
+	PixelFormat format) {
 
 }
 
 
 void ILI9341LTDCDriver::vScroll(
-	int16_t delta,
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height) {
+	int delta,
+	int x,
+	int y,
+	int width,
+	int height) {
 
 }
 
 
 void ILI9341LTDCDriver::hScroll(
-	int16_t delta,
-	int16_t x,
-	int16_t y,
-	int16_t width,
-	int16_t height) {
+	int delta,
+	int x,
+	int y,
+	int width,
+	int height) {
 
 }
 
@@ -544,10 +521,10 @@ void ILI9341LTDCDriver::ltdcInitialize() {
 	ltdcHandle.Init.Backcolor.Red = 0;
 	ltdcHandle.Init.Backcolor.Green = 0;
 	ltdcHandle.Init.Backcolor.Blue = 0;
-    ltdcHandle.Init.HorizontalSync = ILI9341_HSYNC;
-    ltdcHandle.Init.VerticalSync = ILI9341_VSYNC;
-    ltdcHandle.Init.AccumulatedHBP = ILI9341_HBP;
-    ltdcHandle.Init.AccumulatedVBP = ILI9341_VBP;
+    ltdcHandle.Init.HorizontalSync = DISPLAY_HSYNC;
+    ltdcHandle.Init.VerticalSync = DISPLAY_VSYNC;
+    ltdcHandle.Init.AccumulatedHBP = DISPLAY_HBP;
+    ltdcHandle.Init.AccumulatedVBP = DISPLAY_VBP;
     ltdcHandle.Init.AccumulatedActiveW = 269;
     ltdcHandle.Init.AccumulatedActiveH = 323;
     ltdcHandle.Init.TotalWidth = 279;
@@ -555,9 +532,9 @@ void ILI9341LTDCDriver::ltdcInitialize() {
 
 	LTDC_LayerCfgTypeDef cfgLayer;
 	cfgLayer.WindowX0 = 0;
-	cfgLayer.WindowX1 = IMAGE_WIDTH;
+	cfgLayer.WindowX1 = DISPLAY_SCREEN_WIDTH;
 	cfgLayer.WindowY0 = 0;
-	cfgLayer.WindowY1 = IMAGE_HEIGHT;
+	cfgLayer.WindowY1 = DISPLAY_SCREEN_HEIGHT;
 	cfgLayer.PixelFormat = PIXEL_FORMAT;
 	cfgLayer.Alpha = 255;
 	cfgLayer.Alpha0 = 0;
@@ -566,15 +543,15 @@ void ILI9341LTDCDriver::ltdcInitialize() {
 	cfgLayer.Backcolor.Red = 0;
 	cfgLayer.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
 	cfgLayer.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
-	cfgLayer.ImageWidth = IMAGE_WIDTH;
-	cfgLayer.ImageHeight = IMAGE_HEIGHT;
+	cfgLayer.ImageWidth = DISPLAY_SCREEN_WIDTH;
+	cfgLayer.ImageHeight = DISPLAY_SCREEN_HEIGHT;
 
 	__HAL_RCC_LTDC_CLK_ENABLE();
 	HAL_NVIC_SetPriority(LTDC_IRQn, 0xE, 0);
 	HAL_NVIC_EnableIRQ(LTDC_IRQn);
 	HAL_LTDC_Init(&ltdcHandle);
-	for (int32_t layer = 0; layer < IMAGE_PAGES; layer++) {
-		cfgLayer.FBStartAdress = (uint32_t)image + (layer * IMAGE_SIZE);
+	for (int32_t layer = 0; layer < 1; layer++) {
+		cfgLayer.FBStartAdress = vRamAddr;
 		HAL_LTDC_ConfigLayer(&ltdcHandle, &cfgLayer, layer);
 	}
 }
@@ -585,46 +562,76 @@ void ILI9341LTDCDriver::ltdcInitialize() {
 ///
 void ILI9341LTDCDriver::dma2dInitialize() {
 
-	__HAL_RCC_DMA2D_CLK_ENABLE();
+    RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Ompla un area de memoria amb un color.
-/// \param addr: Direccio de memoria.
+/// \param x: Coordinada x.
+/// \param y: Coordinada y.
 /// \param width: Amplada del bloc.
 /// \param height: Alçada del bloc.
 /// \param color: El color per omplir.
 ///
 void ILI9341LTDCDriver::dma2dFill(
-	const uint8_t *addr,
-	int16_t width,
-	int16_t height,
+	int x,
+	int y,
+	int width,
+	int height,
 	const Color &color) {
 
-	DMA2D_HandleTypeDef dma2dHandle;
+	// Calcula l'adresa inicial
+	//
+	int addr = vRamAddr + (y * DISPLAY_SCREEN_WIDTH + x) * PIXEL_SIZE;
 
-	// Configure the DMA2D Mode, Color Mode and output offset
-	dma2dHandle.Init.Mode         = DMA2D_R2M;
-	dma2dHandle.Init.ColorMode    = DMA2D_OUTPUT_RGB565;
-	dma2dHandle.Init.OutputOffset = IMAGE_WIDTH - width;
+	// Inicialitza el controlador DMA2D
+	//
+	DMA2D->CR = 0b11 << DMA2D_CR_MODE_Pos;            // Modus de transferencia R2M
+#if defined(DISPLAY_COLOR_RGB565)
+	DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;     // Format de color RGB565
+	DMA2D->OCOLR = color.toRGB565();                  // Color en format RGB565
+#elif defined(DISPLAY_COLOR_RGB888)
+	DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;     // Format de color RGB888
+	DMA2D->OCOLR = color.toRGB888();                  // Color en format RGB888
+#else
+#error No se especifico DISPLAY_COLOR_xxxx
+#endif
+	DMA2D->OMAR = addr;                               // Adressa del primer pixel
+	DMA2D->OOR = DISPLAY_SCREEN_WIDTH - width;        // Offset entre linies
+	DMA2D->NLR =
+		(width << DMA2D_NLR_PL_Pos) |                 // Amplada
+		(height << DMA2D_NLR_NL_Pos);                 // Alçada
 
-	// DMA2D Callbacks Configuration
-	dma2dHandle.XferCpltCallback  = NULL;
-	dma2dHandle.XferErrorCallback = NULL;
+	// Inicia la transferencia
+	//
+	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;             // Inicia la transferencia
 
-	// Foreground Configuration
-	dma2dHandle.LayerCfg[curLayer].AlphaMode = DMA2D_NO_MODIF_ALPHA;
-	dma2dHandle.LayerCfg[curLayer].InputAlpha = 0xFF;
-	dma2dHandle.LayerCfg[curLayer].InputColorMode = DMA2D_INPUT_RGB565;
-	dma2dHandle.LayerCfg[curLayer].InputOffset = 0x0;
+	// Espera que acabi
+	//
+	dma2dWaitFinish();
+}
 
-	dma2dHandle.Instance = DMA2D;
 
-	HAL_DMA2D_Init(&dma2dHandle);
-	HAL_DMA2D_ConfigLayer(&dma2dHandle, 0);
+/// ----------------------------------------------------------------------
+/// \brief Espera que acabi la transaccio.
+///
+void ILI9341LTDCDriver::dma2dWaitFinish() {
 
-	HAL_DMA2D_Start(&dma2dHandle, color.toARGB8888(), (uint32_t) addr, width, height);
-	HAL_DMA2D_PollForTransfer(&dma2dHandle, 20);
+	// Espera que acabi
+	//
+	while ((DMA2D->ISR & DMA2D_ISR_TCIF_Msk) == 0) {
+
+		// Si troba errors, finalitza
+		//
+		volatile uint32_t isr = DMA2D->ISR;
+		if (((isr & DMA2D_ISR_CEIF_Msk) != 0) | ((isr & DMA2D_ISR_TEIF_Msk) != 0)) {
+			DMA2D->IFCR |=
+					1 << DMA2D_IFCR_CCEIF_Pos |
+					1 << DMA2D_IFCR_CTEIF_Pos;
+			return;
+		}
+	}
+	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
 }
 

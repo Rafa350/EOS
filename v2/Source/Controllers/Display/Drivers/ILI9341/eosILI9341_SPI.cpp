@@ -114,7 +114,7 @@ void ILI9341Driver::lcdWriteData(
 ///
 void ILI9341Driver::lcdWriteData(
 	uint8_t *data,
-	int32_t size) {
+	int size) {
 
     halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
     halSPISendBuffer(ILI9341_SPI_ID, data, size);
