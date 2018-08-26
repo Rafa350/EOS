@@ -46,6 +46,29 @@ static LTDC_HandleTypeDef ltdcHandler;
 
 
 /// ----------------------------------------------------------------------
+/// \brief Obte el valor minim
+/// \param a: Primer valor
+/// \param b: Segin valor
+/// \return El minim dels valors a i b.
+///
+static inline int min(int a, int b) {
+
+	return a < b ? a : b;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el valor absolut.
+/// \param a: El valor
+/// \return El seu valor absolut.
+///
+static inline int abs(int a) {
+
+	return a < 0 ? -a : a;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Obte una instancia unica del driver.
 /// \return La instancia del driver.
 ///
@@ -62,6 +85,12 @@ IDisplayDriver *RGBDirectDriver::getInstance() {
 ///
 RGBDirectDriver::RGBDirectDriver():
 
+	screenWidth(DISPLAY_SCREEN_WIDTH),
+	screenHeight(DISPLAY_SCREEN_HEIGHT),
+	sin(0),
+	cos(1),
+	dx(0),
+	dy(0),
 	orientation(DisplayOrientation::normal),
 	vRamAddr(DISPLAY_VRAM_ADDR) {
 
@@ -128,15 +157,39 @@ void RGBDirectDriver::setOrientation(
 	this->orientation = orientation;
 	switch (orientation) {
 		case DisplayOrientation::normal:
+			screenWidth = DISPLAY_SCREEN_WIDTH;
+			screenHeight = DISPLAY_SCREEN_HEIGHT;
+			sin = 0;
+			cos = 1;
+			dx = 0;
+			dy = 0;
 			break;
 
 		case DisplayOrientation::rotate90:
+			screenWidth = DISPLAY_SCREEN_HEIGHT;
+			screenHeight = DISPLAY_SCREEN_WIDTH;
+			sin = 1;
+			cos = 0;
+			dx = DISPLAY_SCREEN_WIDTH - 1;
+			dy = 0;
 			break;
 
 		case DisplayOrientation::rotate180:
+			screenWidth = DISPLAY_SCREEN_WIDTH;
+			screenHeight = DISPLAY_SCREEN_HEIGHT;
+			sin = 0;
+			cos = -1;
+			dx = DISPLAY_SCREEN_WIDTH - 1;
+			dy = DISPLAY_SCREEN_HEIGHT - 1;
 			break;
 
 		case DisplayOrientation::rotate270:
+			screenWidth = DISPLAY_SCREEN_HEIGHT;
+			screenHeight = DISPLAY_SCREEN_WIDTH;
+			sin = -1;
+			cos = 0;
+			dx = 0;
+			dy = DISPLAY_SCREEN_HEIGHT - 1;
 			break;
 	}
 }
@@ -164,9 +217,16 @@ void RGBDirectDriver::setPixel(
 	int y,
 	const Color &color) {
 
-	if ((x >= 0) && (x < DISPLAY_SCREEN_WIDTH) && (y >= 0) && (y < DISPLAY_SCREEN_HEIGHT)) {
+	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight)) {
 
-		int addr = vRamAddr + (y * DISPLAY_SCREEN_WIDTH + x) * PIXEL_SIZE;
+		// Rotacio
+		//
+		int xx = dx + (x * cos) - (y * sin);
+		int yy = dy + (x * sin) + (y * cos);
+
+		// Dibuixa el pixel
+		//
+		int addr = vRamAddr + (((yy * DISPLAY_SCREEN_WIDTH) + xx) * PIXEL_SIZE);
 		*((PIXEL_TYPE*)addr) = PIXEL_VALUE(color);
 	}
 }
@@ -185,18 +245,7 @@ void RGBDirectDriver::setHPixels(
 	int size,
 	const Color &color) {
 
-	if ((y >= 0) && (y < DISPLAY_SCREEN_HEIGHT)) {
-
-		int x2 = x + size - 1;
-		if (x < 0)
-			x = 0;
-		if (x2 >= DISPLAY_SCREEN_WIDTH)
-			x2 = DISPLAY_SCREEN_WIDTH - 1;
-		size = x2 - x + 1;
-
-		if (size > 0)
-			dma2dFill(x, y, size, 1, color);
-	}
+	setPixels(x, y, size, 1, color);
 }
 
 
@@ -213,19 +262,7 @@ void RGBDirectDriver::setVPixels(
 	int size,
 	const Color &color) {
 
-	if ((x >= 0) && (x < DISPLAY_SCREEN_WIDTH)) {
-
-		int y2 = y + size - 1;
-		if (y < 0)
-			y = 0;
-		if (y2 >= DISPLAY_SCREEN_HEIGHT)
-			y2 = DISPLAY_SCREEN_HEIGHT - 1;
-		size = y2 - y + 1;
-
-		if (size > 0)
-			dma2dFill(x, y, 1, size, color);
-	}
-
+	setPixels(x, y, 1, size, color);
 }
 
 
@@ -244,7 +281,35 @@ void RGBDirectDriver::setPixels(
 	int height,
 	const Color &color) {
 
-    dma2dFill(x, y, width, height, color);
+	// El tamany ha de ser mes gran que zero per dibuixar un rectangle
+	//
+	if ((x >= 0) && (x + width <= screenWidth) &&
+		(y >= 0) && (y + height <= screenHeight) &&
+		(width > 0) && (height > 0)) {
+
+		// Si es del tamany d'un pixel, utilitza la funcio setPixel
+		//
+		if ((width == 1) && (height == 1))
+			setPixel(x, y, color);
+
+		else {
+
+			int x2 = x + width - 1;
+			int y2 = y + height - 1;
+
+			int xx1 = dx + (x * cos) - (y * sin);
+			int xx2 = dx + (x2 * cos) - (y2 * sin);
+			int yy1 = dy + (x * sin) + (y * cos);
+			int yy2 = dy + (x2 * sin) + (y2 * cos);
+
+			int xx = min(xx1, xx2);
+			int yy = min(yy1, yy2);
+			int ww = abs(xx2 - xx1) + 1;
+			int hh = abs(yy2 - yy1) + 1;
+
+			dma2dFill(xx, yy, ww, hh, color);
+		}
+	}
 }
 
 

@@ -12,7 +12,8 @@ namespace eos {
 
 	/// \brief Orientacio de la pantalla.
 	enum class DisplayOrientation {
-		normal,
+		normal = 0,
+	    rotate0 = normal,
 		rotate90,
 		rotate180,
 		rotate270,

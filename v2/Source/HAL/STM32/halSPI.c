@@ -110,7 +110,7 @@ static SPI_HandleTypeDef *PrepareHandle(
 		SPI6
 	};
 
-	static const uint32_t const baudRateTbl[] = {
+	static uint32_t const baudRateTbl[] = {
 		SPI_BAUDRATEPRESCALER_2,
 		SPI_BAUDRATEPRESCALER_4,
 		SPI_BAUDRATEPRESCALER_8,

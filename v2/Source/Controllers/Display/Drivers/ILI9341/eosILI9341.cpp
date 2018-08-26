@@ -41,7 +41,7 @@ IDisplayDriver *ILI9341Driver::getInstance() {
 ILI9341Driver::ILI9341Driver():
 
 	screenWidth(DISPLAY_SCREEN_WIDTH),
-	screenHeight(DISPLAY_SCREEN_WIDTH) {
+	screenHeight(DISPLAY_SCREEN_HEIGHT) {
 }
 
 
@@ -66,9 +66,9 @@ void ILI9341Driver::initialize() {
         3, CMD_VCOM_CONTROL_1, 0x3D, 0x20,
         2, CMD_VCOM_CONTROL_2, 0xAA,
         2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF,
-#if defined(ILI9341_COLORMODE_565)
+#if defined(DISPLAY_COLOR_RGB565)
         2, CMD_PIXEL_FORMAT_SET, 0x55,
-#elif defined(ILI9341_COLORMODE_666)
+#elif defined(DISPLAY_COLOR_RGB666)
         2, CMD_PIXEL_FORMAT_SET, 0x66,
 #endif
         3, CMD_FRAME_RATE_CONTROL_1, 0x00, 0x13,
@@ -99,9 +99,9 @@ void ILI9341Driver::initialize() {
 		__VCOM_CONTROL_1(0x3E, 0x28),
 		__VCOM_CONTROL_2(0x86),
     	__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF),
-#if defined(ILI9341_COLORMODE_565)
+#if defined(DISPLAY_COLOR_RGB565)
 		__PIXEL_FORMAT_SET(0x55),
-#elif defined(ILI9341_COLORMODE_666)
+#elif defined(DISPLAY_COLOR_RGB666)
         __PIXEL_FORMAT_SET(0x66),
 #endif
 		__FRAME_RATE_CONTROL_1(0x00, 0x18),
@@ -151,9 +151,9 @@ void ILI9341Driver::setOrientation(
 #elif defined(STM32F429I_DISC1)
     static const uint8_t orientationData[4][4] = {
    		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_ON), OP_END},
-		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_ON), OP_END},
+		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_OFF), OP_END},
 		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF), OP_END},
-		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_ON | MAC_MX_OFF | MAC_MY_OFF), OP_END}
+		{__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_ON | MAC_MX_ON | MAC_MY_ON), OP_END}
     };
 #endif
 
@@ -480,7 +480,7 @@ void ILI9341Driver::selectRegion(
 void ILI9341Driver::writeRegion(
 	const Color &color) {
 
-#if defined(ILI9341_COLORMODE_565)
+#if defined(DISPLAY_COLOR_RGB565)
 
     uint16_t c = color.toRGB565();
     uint8_t cc[sizeof(uint16_t)];
@@ -492,7 +492,7 @@ void ILI9341Driver::writeRegion(
     lcdWriteData(cc, sizeof(cc));
     lcdClose();
 
-#elif defined(ILI9341_COLORMODE_666)
+#elif defined(DISPLAY_COLOR_RGB666)
 
     uint32_t c = color.c;
     uint8_t cc[3];
@@ -518,7 +518,7 @@ void ILI9341Driver::writeRegion(
     const Color &color,
     int count) {
 
-#if defined(ILI9341_COLORMODE_565)
+#if defined(DISPLAY_COLOR_RGB565)
 
     static uint8_t cc[sizeof(uint16_t) * 240 / 4];
     static uint16_t _c;
@@ -546,7 +546,7 @@ void ILI9341Driver::writeRegion(
     }
     lcdClose();
 
-#elif defined(ILI9341_COLORMODE_666)
+#elif defined(DISPLAY_COLOR_RGB666)
 
     uint32_t c = color.c;
     uint8_t cc[3];
@@ -578,7 +578,6 @@ void ILI9341Driver::writeRegion(
 }
 
 
-
 /// ----------------------------------------------------------------------
 /// \brief Llegeix una sequencia de colors.
 /// \param colors: Llista de colors.
@@ -594,14 +593,14 @@ void ILI9341Driver::readRegion(
     lcdReadData();               // Dummy read
     while (count--) {
 
-#if defined(ILI9341_COLORMODE_565)
+#if defined(DISPLAY_COLOR_RGB565)
         uint8_t volatile c1 = lcdReadData();
         uint8_t volatile c2 = lcdReadData();
         uint8_t volatile c3 = lcdReadData();
         Color color(c1, c2, c3);
         *colors++ = color;
 
-#elif defined(ILI9341_COLORMODE_666)
+#elif defined(DISPLAY_COLOR_RGB666)
 #endif
 
     }

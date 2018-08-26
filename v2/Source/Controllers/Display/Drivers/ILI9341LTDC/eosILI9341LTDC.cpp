@@ -30,6 +30,29 @@
 #define OP_DELAY      255
 
 
+/// ----------------------------------------------------------------------
+/// \brief Obte el valor minim
+/// \param a: Primer valor
+/// \param b: Segin valor
+/// \return El minim dels valors a i b.
+///
+static inline int min(int a, int b) {
+
+	return a < b ? a : b;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el valor absolut.
+/// \param a: El valor
+/// \return El seu valor absolut.
+///
+static inline int abs(int a) {
+
+	return a < 0 ? -a : a;
+}
+
+
 using namespace eos;
 
 
@@ -56,7 +79,11 @@ IDisplayDriver *ILI9341LTDCDriver::getInstance() {
 ILI9341LTDCDriver::ILI9341LTDCDriver():
 
 	screenWidth(DISPLAY_SCREEN_WIDTH),
-	screenHeight(DISPLAY_SCREEN_HEIGHT) {
+	screenHeight(DISPLAY_SCREEN_HEIGHT),
+	sin(0),
+	cos(1),
+	dx(0),
+	dy(0) {
 
 	curLayer = 0;
     vRamAddr = DISPLAY_VRAM;
@@ -89,6 +116,43 @@ void ILI9341LTDCDriver::shutdown() {
 void ILI9341LTDCDriver::setOrientation(
 	DisplayOrientation orientation) {
 
+	switch (orientation) {
+		case DisplayOrientation::normal:
+			screenWidth = DISPLAY_SCREEN_WIDTH;
+			screenHeight = DISPLAY_SCREEN_HEIGHT;
+			sin = 0;
+			cos = 1;
+			dx = 0;
+			dy = 0;
+			break;
+
+		case DisplayOrientation::rotate90:
+			screenWidth = DISPLAY_SCREEN_HEIGHT;
+			screenHeight = DISPLAY_SCREEN_WIDTH;
+			sin = 1;
+			cos = 0;
+			dx = DISPLAY_SCREEN_WIDTH - 1;
+			dy = 0;
+			break;
+
+		case DisplayOrientation::rotate180:
+			screenWidth = DISPLAY_SCREEN_WIDTH;
+			screenHeight = DISPLAY_SCREEN_HEIGHT;
+			sin = 0;
+			cos = -1;
+			dx = DISPLAY_SCREEN_WIDTH - 1;
+			dy = DISPLAY_SCREEN_HEIGHT - 1;
+			break;
+
+		case DisplayOrientation::rotate270:
+			screenWidth = DISPLAY_SCREEN_HEIGHT;
+			screenHeight = DISPLAY_SCREEN_WIDTH;
+			sin = -1;
+			cos = 0;
+			dx = 0;
+			dy = DISPLAY_SCREEN_HEIGHT - 1;
+			break;
+	}
 }
 
 
@@ -108,15 +172,25 @@ void ILI9341LTDCDriver::clear(
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 /// \param color: Color del pixel.
+/// \remarks Si esta fora de limits no dibuixa res.
 ///
 void ILI9341LTDCDriver::setPixel(
 	int x,
 	int y,
 	const Color &color) {
 
+	// Comprova que estigui d'ins de l'area de visualitzacio
+	//
 	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight)) {
 
-		int addr = vRamAddr + (((y * DISPLAY_SCREEN_WIDTH) + x) * PIXEL_SIZE);
+		// Rotacio
+		//
+		int xx = dx + (x * cos) - (y * sin);
+		int yy = dy + (x * sin) + (y * cos);
+
+		// Dibuixa el pixel
+		//
+		int addr = vRamAddr + (((yy * DISPLAY_SCREEN_WIDTH) + xx) * PIXEL_SIZE);
 		*((PIXEL_TYPE*)addr) = PIXEL_VALUE(color);
 	}
 }
@@ -128,6 +202,7 @@ void ILI9341LTDCDriver::setPixel(
 /// \param y: Colordinada Y.
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
+/// \remarks Si esta fora de limits no dibuixa res.
 ///
 void ILI9341LTDCDriver::setHPixels(
 	int x,
@@ -135,18 +210,7 @@ void ILI9341LTDCDriver::setHPixels(
 	int size,
 	const Color &color) {
 
-	if ((y >= 0) && (y < screenHeight)) {
-
-		int16_t x2 = x + size - 1;
-		if (x < 0)
-			x = 0;
-		if (x2 >= screenWidth)
-			x2 = screenWidth - 1;
-		size = x2 - x + 1;
-
-		if (size > 0)
-			dma2dFill(x, y, size, 1, color);
-	}
+	setPixels(x, y, size, 1, color);
 }
 
 
@@ -156,6 +220,7 @@ void ILI9341LTDCDriver::setHPixels(
 /// \param y: Coordinada Y.
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
+/// \remarks Si esta fora de limits no dibuixa res.
 ///
 void ILI9341LTDCDriver::setVPixels(
 	int x,
@@ -163,18 +228,7 @@ void ILI9341LTDCDriver::setVPixels(
 	int size,
 	const Color &color) {
 
-	if ((x >= 0) && (x < screenWidth)) {
-
-		int16_t y2 = y + size - 1;
-		if (y < 0)
-			y = 0;
-		if (y2 >= screenHeight)
-			y2 = screenHeight - 1;
-		size = y2 - y + 1;
-
-		if (size > 0)
-			dma2dFill(x, y, 1, size, color);
-	}
+	setPixels(x, y, 1, size, color);
 }
 
 
@@ -193,7 +247,35 @@ void ILI9341LTDCDriver::setPixels(
 	int height,
 	const Color &color) {
 
-    dma2dFill(x, y, width, height, color);
+	// El tamany ha de ser mes gran que zero per dibuixar un rectangle
+	//
+	if ((x >= 0) && (x + width <= screenWidth) &&
+		(y >= 0) && (y + height <= screenHeight) &&
+		(width > 0) && (height > 0)) {
+
+		// Si es del tamany d'un pixel, utilitza la funcio setPixel
+		//
+		if ((width == 1) && (height == 1))
+			setPixel(x, y, color);
+
+		else {
+
+			int x2 = x + width - 1;
+			int y2 = y + height - 1;
+
+			int xx1 = dx + (x * cos) - (y * sin);
+			int xx2 = dx + (x2 * cos) - (y2 * sin);
+			int yy1 = dy + (x * sin) + (y * cos);
+			int yy2 = dy + (x2 * sin) + (y2 * cos);
+
+			int xx = min(xx1, xx2);
+			int yy = min(yy1, yy2);
+			int ww = abs(xx2 - xx1) + 1;
+			int hh = abs(yy2 - yy1) + 1;
+
+			dma2dFill(xx, yy, ww, hh, color);
+		}
+	}
 }
 
 
@@ -351,22 +433,22 @@ void ILI9341LTDCDriver::writeCommands(
 void ILI9341LTDCDriver::lcdInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
-#ifdef ILI9341LTDC_RST_PIN
-		{ ILI9341LTDC_RST_PORT,    ILI9341LTDC_RST_PIN,
-			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0                  },
+#ifdef DISPLAY_RST_PIN
+		{ DISPLAY_RST_PORT,    DISPLAY_RST_PIN,
+			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0            },
 #endif
-		{ ILI9341LTDC_CS_PORT,     ILI9341LTDC_CS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, 0                  },
-		{ ILI9341LTDC_RS_PORT,     ILI9341LTDC_RS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0                  },
-		{ ILI9341LTDC_CLK_PORT,    ILI9341LTDC_CLK_PIN,
-			HAL_GPIO_MODE_ALT_PP,                   ILI9341LTDC_CLK_AF },
-#ifdef ILI9341LTDC_MISO_PORT
-		{ ILI9341LTDC_MISO_PORT,   ILI9341LTDC_MISO_PIN,
-			HAL_GPIO_MODE_ALT_PP,                   ILI9341LTDC_MISO_AF},
+		{ DISPLAY_CS_PORT,     DISPLAY_CS_PIN,
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, 0         },
+		{ DISPLAY_RS_PORT,     DISPLAY_RS_PIN,
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0         },
+		{ DISPLAY_CLK_PORT,    DISPLAY_CLK_PIN,
+			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_CLK_AF },
+#ifdef DISPLAY_MISO_PORT
+		{ DISPLAY_MISO_PORT,   DISPLAY_MISO_PIN,
+			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_MISO_AF},
 #endif
-		{ ILI9341LTDC_MOSI_PORT,   ILI9341LTDC_MOSI_PIN,
-			HAL_GPIO_MODE_ALT_PP,                   ILI9341LTDC_MOSI_AF}
+		{ DISPLAY_MOSI_PORT,   DISPLAY_MOSI_PIN,
+			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_MOSI_AF}
 	};
 
 	static const SPIInitializeInfo spiInit = {
@@ -389,9 +471,9 @@ void ILI9341LTDCDriver::lcdInitialize() {
 ///
 void ILI9341LTDCDriver::lcdReset() {
 
-#ifdef ILI9341LTDC_RST_PORT
+#ifdef DISPLAY_RST_PORT
     halTMRDelay(10);
-	halGPIOSetPin(ILI9341LTDC_RST_PORT, ILI9341LTDC_RST_PIN);
+	halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
     halTMRDelay(120);
 #endif
 
@@ -402,7 +484,7 @@ void ILI9341LTDCDriver::lcdReset() {
 ///
 void ILI9341LTDCDriver::lcdOpen() {
 
-	halGPIOClearPin(ILI9341LTDC_CS_PORT, ILI9341LTDC_CS_PIN);
+	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
 
@@ -411,7 +493,7 @@ void ILI9341LTDCDriver::lcdOpen() {
 ///
 void ILI9341LTDCDriver::lcdClose() {
 
-    halGPIOSetPin(ILI9341LTDC_CS_PORT, ILI9341LTDC_CS_PIN);
+    halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
 
@@ -422,8 +504,8 @@ void ILI9341LTDCDriver::lcdClose() {
 void ILI9341LTDCDriver::lcdWriteCommand(
 	uint8_t d) {
 
-	halGPIOClearPin(ILI9341LTDC_RS_PORT, ILI9341LTDC_RS_PIN);
-	halSPISendBuffer(ILI9341LTDC_SPI_ID, &d, sizeof(d));
+	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+	halSPISendBuffer(DISPLAY_SPI_ID, &d, sizeof(d));
 }
 
 
@@ -434,8 +516,8 @@ void ILI9341LTDCDriver::lcdWriteCommand(
 void ILI9341LTDCDriver::lcdWriteData(
 	uint8_t d) {
 
-	halGPIOSetPin(ILI9341LTDC_RS_PORT, ILI9341LTDC_RS_PIN);
-	halSPISendBuffer(ILI9341LTDC_SPI_ID, &d, sizeof(d));
+	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+	halSPISendBuffer(DISPLAY_SPI_ID, &d, sizeof(d));
 }
 
 
@@ -445,50 +527,50 @@ void ILI9341LTDCDriver::lcdWriteData(
 void ILI9341LTDCDriver::ltdcInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
-    	{ ILI9341LTDC_DE_PORT,     ILI9341LTDC_DE_PIN,
-    		HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_DE_AF    },
-		{ ILI9341LTDC_HSYNC_PORT,  ILI9341LTDC_HSYNC_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_HSYNC_AF },
-		{ ILI9341LTDC_VSYNC_PORT,  ILI9341LTDC_VSYNC_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_VSYNC_AF },
-		{ ILI9341LTDC_DOTCLK_PORT, ILI9341LTDC_DOTCLK_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_DOTCLK_AF},
-		{ ILI9341LTDC_R2_PORT,     ILI9341LTDC_R2_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R2_AF    },
-		{ ILI9341LTDC_R3_PORT,     ILI9341LTDC_R3_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R3_AF    },
-		{ ILI9341LTDC_R4_PORT,     ILI9341LTDC_R4_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R4_AF    },
-		{ ILI9341LTDC_R5_PORT,     ILI9341LTDC_R5_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R5_AF    },
-		{ ILI9341LTDC_R6_PORT,     ILI9341LTDC_R6_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R6_AF    },
-		{ ILI9341LTDC_R7_PORT,     ILI9341LTDC_R7_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_R7_AF    },
-		{ ILI9341LTDC_G2_PORT,     ILI9341LTDC_G2_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G2_AF    },
-		{ ILI9341LTDC_G3_PORT,     ILI9341LTDC_G3_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G3_AF    },
-		{ ILI9341LTDC_G4_PORT,     ILI9341LTDC_G4_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G4_AF    },
-		{ ILI9341LTDC_G5_PORT,     ILI9341LTDC_G5_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G5_AF    },
-		{ ILI9341LTDC_G6_PORT,     ILI9341LTDC_G6_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G6_AF    },
-		{ ILI9341LTDC_G7_PORT,     ILI9341LTDC_G7_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_G7_AF    },
-		{ ILI9341LTDC_B2_PORT,     ILI9341LTDC_B2_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B2_AF    },
-		{ ILI9341LTDC_B3_PORT,     ILI9341LTDC_B3_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B3_AF    },
-		{ ILI9341LTDC_B4_PORT,     ILI9341LTDC_B4_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B4_AF    },
-		{ ILI9341LTDC_B5_PORT,     ILI9341LTDC_B5_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B5_AF    },
-		{ ILI9341LTDC_B6_PORT,     ILI9341LTDC_B6_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B6_AF    },
-		{ ILI9341LTDC_B7_PORT,     ILI9341LTDC_B7_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, ILI9341LTDC_B7_AF    },
+    	{ DISPLAY_DE_PORT,     DISPLAY_DE_PIN,
+    		HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_DE_AF    },
+		{ DISPLAY_HSYNC_PORT,  DISPLAY_HSYNC_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_HSYNC_AF },
+		{ DISPLAY_VSYNC_PORT,  DISPLAY_VSYNC_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_VSYNC_AF },
+		{ DISPLAY_DOTCLK_PORT, DISPLAY_DOTCLK_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_DOTCLK_AF},
+		{ DISPLAY_R2_PORT,     DISPLAY_R2_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R2_AF    },
+		{ DISPLAY_R3_PORT,     DISPLAY_R3_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R3_AF    },
+		{ DISPLAY_R4_PORT,     DISPLAY_R4_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R4_AF    },
+		{ DISPLAY_R5_PORT,     DISPLAY_R5_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R5_AF    },
+		{ DISPLAY_R6_PORT,     DISPLAY_R6_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R6_AF    },
+		{ DISPLAY_R7_PORT,     DISPLAY_R7_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R7_AF    },
+		{ DISPLAY_G2_PORT,     DISPLAY_G2_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G2_AF    },
+		{ DISPLAY_G3_PORT,     DISPLAY_G3_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G3_AF    },
+		{ DISPLAY_G4_PORT,     DISPLAY_G4_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G4_AF    },
+		{ DISPLAY_G5_PORT,     DISPLAY_G5_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G5_AF    },
+		{ DISPLAY_G6_PORT,     DISPLAY_G6_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G6_AF    },
+		{ DISPLAY_G7_PORT,     DISPLAY_G7_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G7_AF    },
+		{ DISPLAY_B2_PORT,     DISPLAY_B2_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B2_AF    },
+		{ DISPLAY_B3_PORT,     DISPLAY_B3_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B3_AF    },
+		{ DISPLAY_B4_PORT,     DISPLAY_B4_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B4_AF    },
+		{ DISPLAY_B5_PORT,     DISPLAY_B5_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B5_AF    },
+		{ DISPLAY_B6_PORT,     DISPLAY_B6_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B6_AF    },
+		{ DISPLAY_B7_PORT,     DISPLAY_B7_PIN,
+			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B7_AF    },
 	};
 
 	// Inicialitza el modul GPIO
@@ -618,7 +700,7 @@ void ILI9341LTDCDriver::dma2dFill(
 ///
 void ILI9341LTDCDriver::dma2dWaitFinish() {
 
-	// Espera que acabi
+	// Espera que acabi la transferencia
 	//
 	while ((DMA2D->ISR & DMA2D_ISR_TCIF_Msk) == 0) {
 
@@ -634,4 +716,3 @@ void ILI9341LTDCDriver::dma2dWaitFinish() {
 	}
 	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
 }
-

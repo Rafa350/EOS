@@ -29,6 +29,10 @@ namespace eos {
     		static IDisplayDriver *instance;
     		int screenWidth;
     		int screenHeight;
+    		int sin;
+    		int cos;
+    		int dx;
+    		int dy;
     		uint32_t curLayer;
             int vRamAddr;
 

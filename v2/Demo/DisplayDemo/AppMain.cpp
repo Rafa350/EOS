@@ -3,7 +3,7 @@
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosDisplay.h"
 #include "Services/eosAppLoop.h"
-#ifdef EOS_STM32F4
+#if defined(xEOS_STM32F4) || defined(EOS_STM32F7)
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
 #else
 #include "Controllers/Display/Drivers/eosILI9341.h"
@@ -32,8 +32,9 @@ class DisplayLoopService: public AppLoopService {
     private:
 		IDisplayDriver *driver;
         Display *display;
-        int16_t screenWidth;
-        int16_t screenHeight;
+        int screenWidth;
+        int screenHeight;
+        int orientation;
         int loopCount;
 
     public:
@@ -111,19 +112,17 @@ void LedLoopService::onLoop() {
 ///
 void DisplayLoopService::onSetup() {
 
-#ifdef EOS_STM32F4
+#if defined(xEOS_STM32F4) || defined(EOS_STM32F7)
 	driver = ILI9341LTDCDriver::getInstance();
 #else
 	driver = ILI9341Driver::getInstance();
 #endif
     driver->initialize();
-    driver->setOrientation(DisplayOrientation::rotate180);
 
     display = new Display(driver);
     display->clear(COLOR_Black);
 
-    screenWidth = driver->getWidth();
-    screenHeight  = driver->getHeight();
+    orientation = 0;
 }
 
 
@@ -144,6 +143,13 @@ void DisplayLoopService::onLoop() {
     int filledCirclesTicks;
 
     int seed = 0; //Task::getTickCount();
+
+    display->setOrientation(DisplayOrientation(orientation++));
+    if (orientation == 4)
+    	orientation = 0;
+
+    screenWidth = display->getWidth();
+    screenHeight  = display->getHeight();
 
     // Points
     //

@@ -25,7 +25,7 @@ extern const unsigned char *fontConsolas14pt;
 /// \param a: Variable A.
 /// \param b: Variable B.
 ///
-inline void swap(
+static inline void swap(
     int &a,
     int &b) {
 
@@ -43,8 +43,6 @@ Display::Display(
     IDisplayDriver *driver) :
 
     driver(driver),
-    screenWidth(driver->getWidth()),
-    screenHeight(driver->getHeight()),
     clipEnabled(false),
 	clipX1(0),
 	clipY1(0),
@@ -107,6 +105,19 @@ void Display::setFont(
 }
 
 
+/// ---------------------------------------------------------------------
+/// \brief Canvia l'orientacio del display
+/// \param orientation: L'orientacio a seleccionar.
+/// \remarks Al canviar l'orientacio, es reseteja l'area de retall.
+///
+void Display::setOrientation(
+	DisplayOrientation orientation) {
+
+	driver->setOrientation(orientation);
+	resetClip();
+}
+
+
 /// ----------------------------------------------------------------------
 /// \bried Selecciona la regio de retall.
 /// \param x1: Coordinada X esquerra.
@@ -124,6 +135,9 @@ void Display::setClip(
         swap(x1, x2);
     if (y1 > y2)
         swap(y1, y2);
+
+    int screenWidth = driver->getWidth();
+    int screenHeight = driver->getHeight();
 
     clipX1 = x1 < 0 ? 0 : x1;
     clipY1 = y1 < 0 ? 0 : y1;
@@ -557,6 +571,10 @@ int Display::getTextHeight(
 ///
 void Display::putTTY(
     char c) {
+
+	// TODO: Utilitzar clip
+    int screenWidth = driver->getWidth();
+    int screenHeight = driver->getHeight();
 
     switch (ttyState) {
         case 0:

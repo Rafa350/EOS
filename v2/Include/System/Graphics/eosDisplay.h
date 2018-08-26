@@ -6,15 +6,11 @@
 //
 #include "eos.h"
 #include "System/Graphics/eosColor.h"
-
-// Standard includes
-//
-#include "stdint.h"
+#include "Controllers/Display/eosDisplayDriver.h"
 
 
 namespace eos {
 
-	class IDisplayDriver;
 	class Bitmap;
 	class Font;
 
@@ -36,8 +32,6 @@ namespace eos {
     class Display {
         private:
             IDisplayDriver *driver;
-            int screenWidth;
-            int screenHeight;
             bool clipEnabled;
             int clipX1;
             int clipY1;
@@ -58,12 +52,15 @@ namespace eos {
             void resetClip();
             void setColor(const Color &color);
             void setFont(Font *font);
+            void setOrientation(DisplayOrientation orientation);
             void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
             inline IDisplayDriver *getDriver() const { return driver; }
             int getTextWidth(const char *text, int offset = 0, int length = -1);
             int getTextHeight(const char *text);
             inline Font *getFont() const { return font; }
             inline Color getColor() const { return color; }
+            inline int getWidth() const { return driver->getWidth(); }
+            inline int getHeight() const { return driver->getHeight(); }
             void putTTY(char ch);
             void putTTY(const char *s, int offset = 0, int length = -1);
             void clear(const Color &color);

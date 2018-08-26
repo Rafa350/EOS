@@ -27,6 +27,12 @@ namespace eos {
     class RGBDirectDriver: public IDisplayDriver {
     	private:
     		static IDisplayDriver *instance;
+    		int screenWidth;
+    		int screenHeight;
+    		int sin;
+    		int cos;
+    		int dx;
+    		int dy;
     		DisplayOrientation orientation;
     		int vRamAddr;
 
@@ -40,8 +46,8 @@ namespace eos {
             void displayOn();
             void displayOff();
             void setOrientation(DisplayOrientation orientation);
-            int getWidth() { return DISPLAY_SCREEN_WIDTH; }
-            int getHeight() { return DISPLAY_SCREEN_HEIGHT; }
+            int getWidth() { return screenWidth; }
+            int getHeight() { return screenHeight; }
             void clear(const Color &color);
             void setPixel(int x, int y, const Color &color);
             void setHPixels(int x, int y, int size, const Color &color);

@@ -141,7 +141,6 @@ void DisplayLoopService::onSetup() {
 	//
 	displayDriver = RGBDirectDriver::getInstance();
     displayDriver->initialize();
-    displayDriver->setOrientation(DisplayOrientation::rotate180);
     displayDriver->displayOn();
     display = new Display(displayDriver);
     display->clear(COLOR_Black);
@@ -153,8 +152,9 @@ void DisplayLoopService::onSetup() {
     touchDriver = FT5336Driver::getInstance();
     touch = new TouchPad(touchDriver);
 
-    screenWidth = displayDriver->getWidth();
-    screenHeight  = displayDriver->getHeight();
+    display->setOrientation(DisplayOrientation::normal);
+    screenWidth = display->getWidth();
+    screenHeight  = display->getHeight();
 }
 
 
