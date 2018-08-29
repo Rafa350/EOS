@@ -9,19 +9,16 @@
 #include "string.h"
 
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_ltdc.h"
 
 
 // Format de pixel
 //
 #if defined(DISPLAY_COLOR_RGB565)
-#define PIXEL_TYPE           uint16_t
 #define PIXEL_VALUE(c)       c.toRGB565()
-#define PIXEL_FORMAT         LTDC_PIXEL_FORMAT_RGB565;
+#define PIXEL_LxPFCR_PF      2
 #else
 #error No se especifico DISPLAY_COLOR_xxxx
 #endif
-#define PIXEL_SIZE           ((int) sizeof(PIXEL_TYPE))
 
 
 // Codis d'operacio
@@ -56,8 +53,6 @@ static inline int abs(int a) {
 using namespace eos;
 
 
-static LTDC_HandleTypeDef ltdcHandle;
-
 IDisplayDriver *ILI9341LTDCDriver::instance = nullptr;
 
 
@@ -85,7 +80,6 @@ ILI9341LTDCDriver::ILI9341LTDCDriver():
 	dx(0),
 	dy(0) {
 
-	curLayer = 0;
     vRamAddr = DISPLAY_VRAM;
 }
 
@@ -526,7 +520,9 @@ void ILI9341LTDCDriver::lcdWriteData(
 ///
 void ILI9341LTDCDriver::ltdcInitialize() {
 
-	static const GPIOInitializePinInfo gpioInit[] = {
+    uint32_t tmp;
+
+    static const GPIOInitializePinInfo gpioInit[] = {
     	{ DISPLAY_DE_PORT,     DISPLAY_DE_PIN,
     		HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_DE_AF    },
 		{ DISPLAY_HSYNC_PORT,  DISPLAY_HSYNC_PIN,
@@ -578,13 +574,12 @@ void ILI9341LTDCDriver::ltdcInitialize() {
 	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
 
 	// Inicialitza rellotge del modul LTDC
-	//
-	// Configure PLLSAI prescalers for LCD
-	// Enable Pixel Clock
-	// PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
-	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAI_N = 192 Mhz
-	// PLLLCDCLK = PLLSAI_VCO Output/PLLSAI_R = 192/4 = 96 Mhz
-	// LTDC clock frequency = PLLLCDCLK / RCC_PLLSAIDivR = 96/4 = 24 Mhz
+	// -Configure PLLSAI prescalers for LCD
+	// -Enable Pixel Clock
+	// -PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
+	// -PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAI_N = 192 Mhz
+	// -PLLLCDCLK = PLLSAI_VCO Output/PLLSAI_R = 192/4 = 96 Mhz
+	// -LTDC clock frequency = PLLLCDCLK / RCC_PLLSAIDivR = 96/4 = 24 Mhz
 	//
 	RCC_PeriphCLKInitTypeDef clkInit;
     clkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
@@ -595,47 +590,139 @@ void ILI9341LTDCDriver::ltdcInitialize() {
 
     // Inicialitza el modul LTDC
     //
-	ltdcHandle.Instance = LTDC;
-	ltdcHandle.Init.HSPolarity = LTDC_HSPOLARITY_AL;
-	ltdcHandle.Init.VSPolarity = LTDC_VSPOLARITY_AL;
-	ltdcHandle.Init.DEPolarity = LTDC_DEPOLARITY_AL;
-	ltdcHandle.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
-	ltdcHandle.Init.Backcolor.Red = 0;
-	ltdcHandle.Init.Backcolor.Green = 0;
-	ltdcHandle.Init.Backcolor.Blue = 0;
-    ltdcHandle.Init.HorizontalSync = DISPLAY_HSYNC;
-    ltdcHandle.Init.VerticalSync = DISPLAY_VSYNC;
-    ltdcHandle.Init.AccumulatedHBP = DISPLAY_HBP;
-    ltdcHandle.Init.AccumulatedVBP = DISPLAY_VBP;
-    ltdcHandle.Init.AccumulatedActiveW = 269;
-    ltdcHandle.Init.AccumulatedActiveH = 323;
-    ltdcHandle.Init.TotalWidth = 279;
-    ltdcHandle.Init.TotalHeigh = 327;
+    RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;
 
-	LTDC_LayerCfgTypeDef cfgLayer;
-	cfgLayer.WindowX0 = 0;
-	cfgLayer.WindowX1 = DISPLAY_SCREEN_WIDTH;
-	cfgLayer.WindowY0 = 0;
-	cfgLayer.WindowY1 = DISPLAY_SCREEN_HEIGHT;
-	cfgLayer.PixelFormat = PIXEL_FORMAT;
-	cfgLayer.Alpha = 255;
-	cfgLayer.Alpha0 = 0;
-	cfgLayer.Backcolor.Blue = 0;
-	cfgLayer.Backcolor.Green = 0;
-	cfgLayer.Backcolor.Red = 0;
-	cfgLayer.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
-	cfgLayer.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
-	cfgLayer.ImageWidth = DISPLAY_SCREEN_WIDTH;
-	cfgLayer.ImageHeight = DISPLAY_SCREEN_HEIGHT;
+    // Configure el registre GCR (General Configuration Register)
+    // -Polaritat HSYNC, VSYNC, DE i PC
+    //
+    tmp = LTDC->GCR;
+    tmp &= ~(LTDC_GCR_HSPOL | LTDC_GCR_VSPOL | LTDC_GCR_DEPOL | LTDC_GCR_PCPOL);
+    tmp |= DISPLAY_HSPOL << LTDC_GCR_HSPOL_Pos;
+    tmp |= DISPLAY_VSPOL << LTDC_GCR_VSPOL_Pos;
+    tmp |= DISPLAY_DEPOL << LTDC_GCR_DEPOL_Pos;
+    tmp |= DISPLAY_PCPOL << LTDC_GCR_PCPOL_Pos;
+    LTDC->GCR = tmp;
 
-	__HAL_RCC_LTDC_CLK_ENABLE();
-	HAL_NVIC_SetPriority(LTDC_IRQn, 0xE, 0);
-	HAL_NVIC_EnableIRQ(LTDC_IRQn);
-	HAL_LTDC_Init(&ltdcHandle);
-	for (int32_t layer = 0; layer < 1; layer++) {
-		cfgLayer.FBStartAdress = vRamAddr;
-		HAL_LTDC_ConfigLayer(&ltdcHandle, &cfgLayer, layer);
-	}
+    // Configura el registre SSCR (Sinchronization Size Configuration Register)
+    //
+    tmp = LTDC->SSCR;
+    tmp &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
+    tmp |= (DISPLAY_HSYNC - 1) << LTDC_SSCR_HSW_Pos;
+    tmp |= (DISPLAY_VSYNC - 1) << LTDC_SSCR_VSH_Pos;
+    LTDC->SSCR = tmp;
+
+    // Configura el registre BPCR (Back Porch Configuration Register)
+    //
+    tmp = LTDC->BPCR;
+    tmp &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
+    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP - 1) << LTDC_BPCR_AHBP_Pos;
+    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP - 1) << LTDC_BPCR_AVBP_Pos;
+    LTDC->BPCR = tmp;
+
+    // Configura el registre AWCR (Active Width Configuration Register)
+    // -AAH = HSYNC + HBP + WIDTH - 1
+    // -AAW = VSYNC + VBP + HEIGHT - 1
+    //
+    tmp = LTDC->AWCR;
+    tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
+    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_SCREEN_WIDTH - 1) << LTDC_AWCR_AAW_Pos;
+    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_SCREEN_HEIGHT - 1) << LTDC_AWCR_AAH_Pos;
+    LTDC->AWCR = tmp;
+
+    // Configura el registre TWCR (Total Width Configuration Register)
+    // -TOTALW = HSYNC + HBP + WIDTH + HFP - 1
+    // -TOTALH = VSYNC + VBP + HEIGHT + VFP - 1
+    //
+    tmp = LTDC->TWCR;
+    tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
+    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_SCREEN_WIDTH + DISPLAY_HFP - 1) << LTDC_TWCR_TOTALW_Pos;
+    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_SCREEN_HEIGHT + DISPLAY_VFP - 1) << LTDC_TWCR_TOTALH_Pos;
+    LTDC->TWCR = tmp;
+
+    // Configura el registre BCCR (Back Color Configuration Register)
+    //
+    tmp = LTDC->BCCR;
+    tmp &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
+    tmp |= 0 << LTDC_BCCR_BCRED_Pos;
+    tmp |= 0 << LTDC_BCCR_BCGREEN_Pos;
+    tmp |= 0 << LTDC_BCCR_BCBLUE_Pos;
+    LTDC->BCCR = tmp;
+
+    // Configura la Layer-1 WHPCR (Window Horizontal Position Configuration Register)
+    // -Tamany horitzontal de la finestra
+    //
+    tmp = LTDC_Layer1->WHPCR;
+    tmp &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
+    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1u) + 1u) << LTDC_LxWHPCR_WHSTPOS_Pos;
+    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1u) + DISPLAY_SCREEN_WIDTH) << LTDC_LxWHPCR_WHSPPOS_Pos;
+    LTDC_Layer1->WHPCR = tmp;
+
+    // Configura L1_WHPCR (Window Vertical Position Configuration Register)
+    // -Tamany vertical de la finestra
+    //
+    tmp = LTDC_Layer1->WVPCR;
+    tmp &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
+    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1u) + 1u) << LTDC_LxWVPCR_WVSTPOS_Pos;
+    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1u) + DISPLAY_SCREEN_HEIGHT) << LTDC_LxWVPCR_WVSPPOS_Pos;
+    LTDC_Layer1->WVPCR = tmp;
+
+    // Configura L1_DCCR (Default Color Configuration Register)
+    // -Color per defecte ARGB(255, 0, 0, 0)
+    //
+    LTDC_Layer1->DCCR = 0xFF000000;
+
+    // Configura L1_PFCR (Pixel Format Configuration Register)
+    //
+    tmp = LTDC_Layer1->PFCR;
+    tmp &= ~(LTDC_LxPFCR_PF);
+    tmp |= PIXEL_LxPFCR_PF << LTDC_LxPFCR_PF_Pos;
+    LTDC_Layer1->PFCR = tmp;
+
+    // Configura L1_CACR (Constant Alpha Configuration Register)
+    //
+    tmp = LTDC_Layer1->CACR;
+    tmp &= ~(LTDC_LxCACR_CONSTA);
+    tmp |= 255u;
+    LTDC_Layer1->CACR;
+
+    // Configura L1_BFCR
+    // -Specifies the blending factors
+    //
+    tmp = LTDC_Layer1->BFCR;
+    tmp &= ~(LTDC_LxBFCR_BF2 | LTDC_LxBFCR_BF1);
+    tmp |= 6 << LTDC_LxBFCR_BF1_Pos;
+    tmp |= 7 << LTDC_LxBFCR_BF2_Pos;
+    LTDC_Layer1->BFCR = tmp;
+
+    // Configura L1_CFBAR (Color Frame Buffer Address Register)
+    // -Adressa del buffer de video
+    //
+    LTDC_Layer1->CFBAR = vRamAddr;
+
+    // Configura L1_CFBLR (Color Frame Buffer Length Register)
+    // -Longitut de la linia en bytes. Ideal que sigui multiple de 64
+    //
+    tmp = LTDC_Layer1->CFBLR;
+    tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
+    tmp |= (DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) << LTDC_LxCFBLR_CFBP_Pos;
+    tmp |= (DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 3u;
+    LTDC_Layer1->CFBLR = tmp;
+
+    // Configura L1_CFBLNR (Color Frame Buffer Line Number Register)
+    //
+    tmp = LTDC_Layer1->CFBLNR;
+    tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
+    tmp |= DISPLAY_SCREEN_HEIGHT;
+    LTDC_Layer1->CFBLNR = tmp;
+
+    // Activa la capa
+    //
+    LTDC_Layer1->CR |= (uint32_t) LTDC_LxCR_LEN;
+    LTDC->SRCR |= LTDC_SRCR_IMR;
+
+    // Activa el controlador
+    //
+    LTDC->GCR |= LTDC_GCR_LTDCEN;
 }
 
 
@@ -707,7 +794,7 @@ void ILI9341LTDCDriver::dma2dWaitFinish() {
 		// Si troba errors, finalitza
 		//
 		volatile uint32_t isr = DMA2D->ISR;
-		if (((isr & DMA2D_ISR_CEIF_Msk) != 0) | ((isr & DMA2D_ISR_TEIF_Msk) != 0)) {
+		if (((isr & DMA2D_ISR_CEIF_Msk) != 0) || ((isr & DMA2D_ISR_TEIF_Msk) != 0)) {
 			DMA2D->IFCR |=
 					1 << DMA2D_IFCR_CCEIF_Pos |
 					1 << DMA2D_IFCR_CTEIF_Pos;

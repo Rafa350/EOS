@@ -3,7 +3,7 @@
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosDisplay.h"
 #include "Services/eosAppLoop.h"
-#if defined(xEOS_STM32F4) || defined(EOS_STM32F7)
+#if defined(EOS_STM32F4) || defined(EOS_STM32F7)
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
 #else
 #include "Controllers/Display/Drivers/eosILI9341.h"
@@ -112,7 +112,7 @@ void LedLoopService::onLoop() {
 ///
 void DisplayLoopService::onSetup() {
 
-#if defined(xEOS_STM32F4) || defined(EOS_STM32F7)
+#if defined(EOS_STM32F4) || defined(EOS_STM32F7)
 	driver = ILI9341LTDCDriver::getInstance();
 #else
 	driver = ILI9341Driver::getInstance();

@@ -13,6 +13,10 @@
     #error Hardware no soportado
 #endif
 
+#if !defined(DISPLAY_COLOR_RGB565) && !defined(DISPLAY_COLOR_RGB888)
+	#error Formato de color no soportado
+#endif
+
 
 #ifndef DISPLAY_SCREEN_WIDTH
 #define DISPLAY_SCREEN_WIDTH      240  // Tamany fix del controlador
@@ -20,6 +24,16 @@
 #ifndef DISPLAY_SCREEN_HEIGHT
 #define DISPLAY_SCREEN_HEIGHT     320  // Tamany fix del controlador
 #endif
+
+
+#if defined(DISPLAY_COLOR_RGB565)
+#define PIXEL_TYPE                int16_t
+#elif defined(DISPLAY_COLOR_RGB888)
+#define PIXEL_TYPE                int32_t
+#endif
+#define PIXEL_SIZE                ((int)sizeof(PIXEL_TYPE))
+#define LINE_SIZE                 (DISPLAY_SCREEN_WIDTH * PIXEL_SIZE)
+#define FRAME_SIZE                (LINE_SIZE * DISPLAY_SCREEN_HEIGHT)
 
 
 namespace eos {
@@ -33,7 +47,6 @@ namespace eos {
     		int cos;
     		int dx;
     		int dy;
-    		uint32_t curLayer;
             int vRamAddr;
 
         public:

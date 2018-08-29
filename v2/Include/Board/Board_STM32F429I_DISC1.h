@@ -153,17 +153,26 @@
 // Parametres de configuracio del controlador de display ILI9341LTDC
 // -----------------------------------------------------------------------
 
-// Punter a la memoria de video
+// Adressa del buffer de video
 //
-#define DISPLAY_VRAM              ((uint32_t)0xD0000000)
+#define DISPLAY_VRAM              0xD0000000u
 
-#define DISPLAY_HSYNC             9    // Horizontal synchronization
-#define DISPLAY_HBP               29   // Horizontal back porch
-#define DISPLAY_HFP               2    // Horizontal front porch
-#define DISPLAY_VSYNC             1    // Vertical synchronization
-#define DISPLAY_VBP               3    // Vertical back porch
-#define DISPLAY_VFP               2    // Vertical front porch
+// Parametres fisics de la pantalla
+//
+#define DISPLAY_HSYNC             9    // Horizontal sync
+#define DISPLAY_HBP              29    // Horizontal back Porch
+#define DISPLAY_HFP               2    // Horizontal front Porch
+#define DISPLAY_VSYNC             1    // Vertical sync
+#define DISPLAY_VBP               3    // Vertical back Porch
+#define DISPLAY_VFP               2    // Vertical front Porch
 
+#define DISPLAY_AAW             269    // Acumulate Active Width
+#define DISPLAY_AAH             323    // Acumulate Active Height
+
+#define DISPLAY_HSPOL             0    // HSync active (0=LOW, 1=HIGHT)
+#define DISPLAY_VSPOL             0    // VSync active (0=LOW, 1=HIGHT)
+#define DISPLAY_DEPOL             0    // DE active (0=LOW, 1=HIGHT)
+#define DISPLAY_PCPOL             0    // PC active (0=LOW, 1=HIGHT)
 
 // Control del pin CS (Chip select)
 //
