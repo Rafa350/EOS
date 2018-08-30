@@ -33,9 +33,11 @@
 /// \param b: Segin valor
 /// \return El minim dels valors a i b.
 ///
-static inline int min(int a, int b) {
+static inline int min(
+	int a,
+	int b) {
 
-	return a < b ? a : b;
+	return a <= b ? a : b;
 }
 
 
@@ -44,9 +46,26 @@ static inline int min(int a, int b) {
 /// \param a: El valor
 /// \return El seu valor absolut.
 ///
-static inline int abs(int a) {
+static inline int abs(
+	int a) {
 
 	return a < 0 ? -a : a;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte l'adressa del pixel en la coordinada especificada.
+/// \param base: Adressa base.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \return L'adressa del pixel.
+///
+static inline int addressAt(
+	int base,
+	int x,
+	int y) {
+
+	return base + (((y * LINE_WIDTH) + x) * PIXEL_SIZE);
 }
 
 
@@ -80,7 +99,7 @@ ILI9341LTDCDriver::ILI9341LTDCDriver():
 	dx(0),
 	dy(0) {
 
-    vRamAddr = DISPLAY_VRAM;
+    frameAddr = DISPLAY_VRAM;
 }
 
 
@@ -184,8 +203,7 @@ void ILI9341LTDCDriver::setPixel(
 
 		// Dibuixa el pixel
 		//
-		int addr = vRamAddr + (((yy * DISPLAY_SCREEN_WIDTH) + xx) * PIXEL_SIZE);
-		*((PIXEL_TYPE*)addr) = PIXEL_VALUE(color);
+		*((PIXEL_TYPE*) addressAt(frameAddr, xx, yy)) = PIXEL_VALUE(color);
 	}
 }
 
@@ -645,7 +663,7 @@ void ILI9341LTDCDriver::ltdcInitialize() {
     tmp &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
     tmp |= 0 << LTDC_BCCR_BCRED_Pos;
     tmp |= 0 << LTDC_BCCR_BCGREEN_Pos;
-    tmp |= 0 << LTDC_BCCR_BCBLUE_Pos;
+    tmp |= 255 << LTDC_BCCR_BCBLUE_Pos;
     LTDC->BCCR = tmp;
 
     // Configura la Layer-1 WHPCR (Window Horizontal Position Configuration Register)
@@ -653,8 +671,8 @@ void ILI9341LTDCDriver::ltdcInitialize() {
     //
     tmp = LTDC_Layer1->WHPCR;
     tmp &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
-    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1u) + 1u) << LTDC_LxWHPCR_WHSTPOS_Pos;
-    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1u) + DISPLAY_SCREEN_WIDTH) << LTDC_LxWHPCR_WHSPPOS_Pos;
+    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + 1) << LTDC_LxWHPCR_WHSTPOS_Pos;
+    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + DISPLAY_SCREEN_WIDTH) << LTDC_LxWHPCR_WHSPPOS_Pos;
     LTDC_Layer1->WHPCR = tmp;
 
     // Configura L1_WHPCR (Window Vertical Position Configuration Register)
@@ -662,14 +680,14 @@ void ILI9341LTDCDriver::ltdcInitialize() {
     //
     tmp = LTDC_Layer1->WVPCR;
     tmp &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
-    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1u) + 1u) << LTDC_LxWVPCR_WVSTPOS_Pos;
-    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1u) + DISPLAY_SCREEN_HEIGHT) << LTDC_LxWVPCR_WVSPPOS_Pos;
+    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + 1) << LTDC_LxWVPCR_WVSTPOS_Pos;
+    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + DISPLAY_SCREEN_HEIGHT) << LTDC_LxWVPCR_WVSPPOS_Pos;
     LTDC_Layer1->WVPCR = tmp;
 
     // Configura L1_DCCR (Default Color Configuration Register)
     // -Color per defecte ARGB(255, 0, 0, 0)
     //
-    LTDC_Layer1->DCCR = 0xFF000000;
+    LTDC_Layer1->DCCR = 0xFF0000FF;
 
     // Configura L1_PFCR (Pixel Format Configuration Register)
     //
@@ -697,15 +715,15 @@ void ILI9341LTDCDriver::ltdcInitialize() {
     // Configura L1_CFBAR (Color Frame Buffer Address Register)
     // -Adressa del buffer de video
     //
-    LTDC_Layer1->CFBAR = vRamAddr;
+    LTDC_Layer1->CFBAR = frameAddr;
 
     // Configura L1_CFBLR (Color Frame Buffer Length Register)
-    // -Longitut de la linia en bytes. Ideal que sigui multiple de 64
+    // -Longitut de la linia en bytes.
     //
     tmp = LTDC_Layer1->CFBLR;
     tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
-    tmp |= (DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= (DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 3u;
+    tmp |= LINE_SIZE << LTDC_LxCFBLR_CFBP_Pos;
+    tmp |= ((DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
     LTDC_Layer1->CFBLR = tmp;
 
     // Configura L1_CFBLNR (Color Frame Buffer Line Number Register)
@@ -752,7 +770,7 @@ void ILI9341LTDCDriver::dma2dFill(
 
 	// Calcula l'adresa inicial
 	//
-	int addr = vRamAddr + (y * DISPLAY_SCREEN_WIDTH + x) * PIXEL_SIZE;
+	int addr = addressAt(frameAddr, x, y);
 
 	// Inicialitza el controlador DMA2D
 	//
@@ -767,7 +785,7 @@ void ILI9341LTDCDriver::dma2dFill(
 #error No se especifico DISPLAY_COLOR_xxxx
 #endif
 	DMA2D->OMAR = addr;                               // Adressa del primer pixel
-	DMA2D->OOR = DISPLAY_SCREEN_WIDTH - width;        // Offset entre linies
+	DMA2D->OOR = LINE_WIDTH - width;                  // Offset entre linies
 	DMA2D->NLR =
 		(width << DMA2D_NLR_PL_Pos) |                 // Amplada
 		(height << DMA2D_NLR_NL_Pos);                 // Alçada

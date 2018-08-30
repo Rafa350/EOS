@@ -155,7 +155,7 @@
 
 // Adressa del buffer de video
 //
-#define DISPLAY_VRAM              0xD0000000u
+#define DISPLAY_VRAM              0xD0000000
 
 // Parametres fisics de la pantalla
 //
@@ -165,10 +165,6 @@
 #define DISPLAY_VSYNC             1    // Vertical sync
 #define DISPLAY_VBP               3    // Vertical back Porch
 #define DISPLAY_VFP               2    // Vertical front Porch
-
-#define DISPLAY_AAW             269    // Acumulate Active Width
-#define DISPLAY_AAH             323    // Acumulate Active Height
-
 #define DISPLAY_HSPOL             0    // HSync active (0=LOW, 1=HIGHT)
 #define DISPLAY_VSPOL             0    // VSync active (0=LOW, 1=HIGHT)
 #define DISPLAY_DEPOL             0    // DE active (0=LOW, 1=HIGHT)
