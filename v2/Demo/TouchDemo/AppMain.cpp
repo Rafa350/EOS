@@ -228,7 +228,10 @@ void DisplayLoopService::drawDot() {
 	display->setColor(COLOR_Yellow);
 	display->fillCircle(x, y, 25);
 
-	display->drawBitmap(x, y, bitmap);
+	display->drawBitmap(
+		x - bitmap->getWidth() / 2,
+		y - bitmap->getHeight() / 2,
+		bitmap);
 }
 
 /// ----------------------------------------------------------------------

@@ -22,6 +22,17 @@
 #endif
 
 
+#if defined(DISPLAY_COLOR_RGB565)
+#define PIXEL_TYPE                int16_t
+#elif defined(DISPLAY_COLOR_RGB888)
+#define PIXEL_TYPE                int32_t
+#endif
+#define PIXEL_SIZE                sizeof(PIXEL_TYPE)
+#define LINE_SIZE                 (((DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
+#define LINE_WIDTH                (LINE_SIZE / PIXEL_SIZE)
+#define FRAME_SIZE                (LINE_SIZE * DISPLAY_SCREEN_HEIGHT)
+
+
 namespace eos {
 
     class RGBDirectDriver: public IDisplayDriver {
@@ -34,7 +45,7 @@ namespace eos {
     		int dx;
     		int dy;
     		DisplayOrientation orientation;
-    		int vRamAddr;
+    		int frameAddr;
 
     	private:
             RGBDirectDriver();
@@ -53,7 +64,7 @@ namespace eos {
             void setHPixels(int x, int y, int size, const Color &color);
             void setVPixels(int x, int y, int size, const Color &color);
             void setPixels(int x, int y, int width, int height, const Color &color);
-            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format);
+            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch);
             void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format);
             void vScroll(int delta, int x, int y, int width, int height);
             void hScroll(int delta, int x, int y, int width, int height);

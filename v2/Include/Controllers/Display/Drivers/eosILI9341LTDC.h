@@ -32,7 +32,6 @@
 #define PIXEL_TYPE                int32_t
 #endif
 #define PIXEL_SIZE                sizeof(PIXEL_TYPE)
-//#define LINE_SIZE                 (DISPLAY_SCREEN_WIDTH * PIXEL_SIZE)
 #define LINE_SIZE                 (((DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
 #define LINE_WIDTH                (LINE_SIZE / PIXEL_SIZE)
 #define FRAME_SIZE                (LINE_SIZE * DISPLAY_SCREEN_HEIGHT)

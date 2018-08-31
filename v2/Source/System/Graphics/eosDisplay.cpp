@@ -43,7 +43,6 @@ Display::Display(
     IDisplayDriver *driver) :
 
     driver(driver),
-    clipEnabled(false),
 	clipX1(0),
 	clipY1(0),
 	clipX2(driver->getWidth() - 1),
@@ -143,8 +142,6 @@ void Display::setClip(
     clipY1 = y1 < 0 ? 0 : y1;
     clipX2 = x2 >= screenWidth ? screenWidth - 1 : x2;
     clipY2 = y2 >= screenHeight ? screenHeight - 1 : y2;
-
-    clipEnabled = true;
 }
 
 
@@ -153,7 +150,10 @@ void Display::setClip(
 ///
 void Display::resetClip() {
 
-    clipEnabled = false;
+	clipX1 = 0;
+	clipY1 = 0;
+	clipX2 = driver->getWidth() - 1;
+	clipY2 = driver->getHeight() - 1;
 }
 
 
@@ -448,7 +448,7 @@ void Display::fillCircle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un bitmap.
+/// \brief Dibuixa un bitmap complert.
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 /// \param bitmap: El bitmap
@@ -458,7 +458,49 @@ void Display::drawBitmap(
     int y,
     const Bitmap *bitmap) {
 
-	driver->writePixels(x, y, bitmap->getWidth(), bitmap->getHeight(), bitmap->getPixels(), bitmap->getFormat());
+	drawBitmap(x, y, bitmap, 0, 0, bitmap->getWidth() - 1, bitmap->getHeight() - 1);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa un bitmap parcial, definint una finestra dins del bitmap
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param bitmap: El bitmap
+/// \param x1: Coordinada x de la cantonada superior esquerra de la finestra
+/// \param y1: Coordinada y de la cantonada superior esquerra de la finestra
+/// \param x2: Coordinada x de la cantonada inferior dreta de la finestra
+/// \param y2: Coordinada y de la cantonada inferior dreta de la finestra
+///
+void Display::drawBitmap(
+	int x,
+	int y,
+	const Bitmap *bitmap,
+	int x1,
+	int y1,
+	int x2,
+	int y2) {
+
+	int xx1 = x;
+	int yy1 = y;
+	int xx2 = x + x2 - x1 + 1;
+	int yy2 = y + y2 - y1 + 1;
+
+	if (clipArea(xx1, yy1, xx2, yy2)) {
+
+		if (xx1 > xx2)
+            swap(xx1, xx2);
+        if (yy1 > yy2)
+            swap(yy1, yy2);
+
+        driver->writePixels(
+			xx1, yy1,
+			xx2 - xx1 + 1, yy2 - yy1 + 1,
+			bitmap->getPixels(),
+			bitmap->getFormat(),
+			0, 0,
+			bitmap->getWidth());
+	}
 }
 
 
@@ -656,44 +698,39 @@ bool Display::clipArea(
     int &x2,
     int &y2) {
 
-    if (clipEnabled) {
+	unsigned code1 = calcOutCode(x1, y1);
+	unsigned code2 = calcOutCode(x2, y2);
 
-        unsigned code1 = calcOutCode(x1, y1);
-        unsigned code2 = calcOutCode(x2, y2);
+	if (!(code1 | code2))
+		return true;
 
-        if (!(code1 | code2))
-            return true;
+	else if (code1 & code2)
+		return false;
 
-        else if (code1 & code2)
-            return false;
+	else {
 
-        else {
+		if (x1 < clipX1)
+			x1 = clipX1;
+		else if (x1 > clipX2)
+			x1 = clipX2;
 
-            if (x1 < clipX1)
-                x1 = clipX1;
-            else if (x1 > clipX2)
-                x1 = clipX2;
+		if (y1 < clipY1)
+			y1 = clipY1;
+		else if (y1 > clipY2)
+			y1 = clipY2;
 
-            if (y1 < clipY1)
-                y1 = clipY1;
-            else if (y1 > clipY2)
-                y1 = clipY2;
+		if (x2 > clipX2)
+			x2 = clipX2;
+		else if (x2 < clipX1)
+			x2 = clipX1;
 
-            if (x2 > clipX2)
-                x2 = clipX2;
-            else if (x2 < clipX1)
-                x2 = clipX1;
+		if (y2 > clipY2)
+			y2 = clipY2;
+		else if (y2 < clipY1)
+			y2 = clipY1;
 
-            if (y2 > clipY2)
-                y2 = clipY2;
-            else if (y2 < clipY1)
-                y2 = clipY1;
-
-            return true;
-        }
-    }
-    else
-        return true;
+		return true;
+	}
 }
 
 
@@ -707,10 +744,7 @@ bool Display::clipPoint(
     int x,
     int y) {
 
-    if (clipEnabled)
-        return (x >= clipX1) && (x <= clipX2) && (y >= clipY1) && (y <= clipY2);
-    else
-        return true;
+    return (x >= clipX1) && (x <= clipX2) && (y >= clipY1) && (y <= clipY2);
 }
 
 
@@ -726,34 +760,29 @@ bool Display::clipHLine(
     int &x2,
     int &y) {
 
-    if (clipEnabled) {
+	unsigned code1 = calcOutCode(x1, y);
+	unsigned code2 = calcOutCode(x2, y);
 
-        unsigned code1 = calcOutCode(x1, y);
-        unsigned code2 = calcOutCode(x2, y);
+	if (!(code1 | code2))
+		return true;
 
-        if (!(code1 | code2))
-            return true;
+	else if (code1 & code2)
+		return false;
 
-        else if (code1 & code2)
-            return false;
+	else {
 
-        else {
+		if (x1 < clipX1)
+			x1 = clipX1;
+		else if (x1 > clipX2)
+			x1 = clipX2;
 
-            if (x1 < clipX1)
-                x1 = clipX1;
-            else if (x1 > clipX2)
-                x1 = clipX2;
+		if (x2 > clipX2)
+			x2 = clipX2;
+		else if (x2 < clipX1)
+			x2 = clipX1;
 
-            if (x2 > clipX2)
-                x2 = clipX2;
-            else if (x2 < clipX1)
-                x2 = clipX1;
-
-            return true;
-        }
-    }
-    else
-        return true;
+		return true;
+	}
 }
 
 
@@ -769,34 +798,29 @@ bool Display::clipVLine(
     int &y1,
     int &y2) {
 
-    if (clipEnabled) {
+	unsigned code1 = calcOutCode(x, y1);
+	unsigned code2 = calcOutCode(x, y2);
 
-        unsigned code1 = calcOutCode(x, y1);
-        unsigned code2 = calcOutCode(x, y2);
+	if (!(code1 | code2))
+		return true;
 
-        if (!(code1 | code2))
-            return true;
+	else if (code1 & code2)
+		return false;
 
-        else if (code1 & code2)
-            return false;
+	else {
 
-        else {
+		if (y1 < clipY1)
+			y1 = clipY1;
+		else if (y1 > clipY2)
+			y1 = clipY2;
 
-            if (y1 < clipY1)
-                y1 = clipY1;
-            else if (y1 > clipY2)
-                y1 = clipY2;
+		if (y2 > clipY2)
+			y2 = clipY2;
+		else if (y2 < clipY1)
+			y2 = clipY1;
 
-            if (y2 > clipY2)
-                y2 = clipY2;
-            else if (y2 < clipY1)
-                y2 = clipY1;
-
-            return true;
-        }
-    }
-    else
-        return true;
+		return true;
+	}
 }
 
 
@@ -814,69 +838,64 @@ bool Display::clipLine(
     int &x2,
     int &y2) {
 
-    if (clipEnabled) {
+	unsigned code1 = calcOutCode(x1, y1);
+	unsigned code2 = calcOutCode(x2, y2);
 
-        unsigned code1 = calcOutCode(x1, y1);
-        unsigned code2 = calcOutCode(x2, y2);
+	while (true) {
 
-        while (true) {
+		if (!(code1 | code2))
+			return true;
 
-            if (!(code1 | code2))
-                return true;
+		else if (code1 & code2)
+			return false;
 
-            else if (code1 & code2)
-                return false;
+		else {
+			int x = 0;
+			int y = 0;
+			unsigned code = (code1 != 0) ? code1 : code2;
 
-            else {
-                int x = 0;
-                int y = 0;
-                unsigned code = (code1 != 0) ? code1 : code2;
+			// Calcula les interseccions
+			// x = x1 + (1 / slope) * (y - y1)
+			// y = y1 + slope * (x - x1)
+			//
+			if ((code & TOP) != 0) {
+				x = x1 + (x2 - x1) * (clipY2 - y1) / (y2 - y1);
+				y = clipY2;
+			}
 
-                // Calcula les interseccions
-                // x = x1 + (1 / slope) * (y - y1)
-                // y = y1 + slope * (x - x1)
-                //
-                if ((code & TOP) != 0) {
-                    x = x1 + (x2 - x1) * (clipY2 - y1) / (y2 - y1);
-                    y = clipY2;
-                }
+			else if ((code & BOTTOM) != 0) {
+				x = x1 + (x2 - x1) * (clipY1 - y1) / (y2 - y1);
+				y = clipY1;
+			}
 
-                else if ((code & BOTTOM) != 0) {
-                    x = x1 + (x2 - x1) * (clipY1 - y1) / (y2 - y1);
-                    y = clipY1;
-                }
+			else if ((code & RIGHT) != 0) {
+				y = y1 + (y2 - y1) * (clipX2 - x1) / (x2 - x1);
+				x = clipX2;
+			}
 
-                else if ((code & RIGHT) != 0) {
-                    y = y1 + (y2 - y1) * (clipX2 - x1) / (x2 - x1);
-                    x = clipX2;
-                }
+			else if ((code & LEFT) != 0) {
+				y = y1 + (y2 - y1) * (clipX1 - x1) / (x2 - x1);
+				x = clipX1;
+			}
 
-                else if ((code & LEFT) != 0) {
-                    y = y1 + (y2 - y1) * (clipX1 - x1) / (x2 - x1);
-                    x = clipX1;
-                }
+			// NOTE:if you follow this algorithm exactly(at least for c#), then you will fall into an infinite loop
+			// in case a line crosses more than two segments. to avoid that problem, leave out the last else
+			// if(outcodeOut & LEFT) and just make it else *)
 
-                // NOTE:if you follow this algorithm exactly(at least for c#), then you will fall into an infinite loop
-                // in case a line crosses more than two segments. to avoid that problem, leave out the last else
-                // if(outcodeOut & LEFT) and just make it else *)
-
-                // Now we move outside point to intersection point to clip
-                // and get ready for next pass.
-                if (code == code1) {
-                    x1 = x;
-                    y1 = y;
-                    code1 = calcOutCode(x1, y2);
-                }
-                else {
-                    x2 = x;
-                    y2 = y;
-                    code2 = calcOutCode(x2, y2);
-                }
-            }
-        }
-    }
-    else
-        return true;
+			// Now we move outside point to intersection point to clip
+			// and get ready for next pass.
+			if (code == code1) {
+				x1 = x;
+				y1 = y;
+				code1 = calcOutCode(x1, y2);
+			}
+			else {
+				x2 = x;
+				y2 = y;
+				code2 = calcOutCode(x2, y2);
+			}
+		}
+	}
 }
 
 

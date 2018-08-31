@@ -31,17 +31,21 @@
 
 // Adressa de la memoria de video
 //
-#define DISPLAY_VRAM_ADDR         ((uint32_t)0xC0000000)
+#define DISPLAY_VRAM_ADDR         0xC0000000
 
 
 // Parametres de temporitzacio i sincronitzacio
 //
-#define  DISPLAY_HSYNC            41   // Horizontal synchronization
-#define  DISPLAY_HBP              13   // Horizontal back porch
-#define  DISPLAY_HFP              32   // Horizontal front porch
-#define  DISPLAY_VSYNC            10   // Vertical synchronization
-#define  DISPLAY_VBP              2    // Vertical back porch
-#define  DISPLAY_VFP              2    // Vertical front porch
+#define DISPLAY_HSYNC            41    // Horizontal synchronization
+#define DISPLAY_HBP              13    // Horizontal back porch
+#define DISPLAY_HFP              32    // Horizontal front porch
+#define DISPLAY_VSYNC            10    // Vertical synchronization
+#define DISPLAY_VBP               2    // Vertical back porch
+#define DISPLAY_VFP               2    // Vertical front porch
+#define DISPLAY_HSPOL             0    // HSync active (0=LOW, 1=HIGHT)
+#define DISPLAY_VSPOL             0    // VSync active (0=LOW, 1=HIGHT)
+#define DISPLAY_DEPOL             0    // DE active (0=LOW, 1=HIGHT)
+#define DISPLAY_PCPOL             0    // PC active (0=LOW, 1=HIGHT)
 
 // Tipus de lletra disponibles
 //

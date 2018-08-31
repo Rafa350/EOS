@@ -32,7 +32,6 @@ namespace eos {
     class Display {
         private:
             IDisplayDriver *driver;
-            bool clipEnabled;
             int clipX1;
             int clipY1;
             int clipX2;
@@ -75,6 +74,7 @@ namespace eos {
             void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
             void drawCircle(int cx, int cy, int r);
             void drawBitmap(int x, int y, const Bitmap *bitmap);
+            void drawBitmap(int x, int y, const Bitmap *bitmap, int x1, int y1, int x2, int y2);
             int drawChar(int x, int y, char c);
             int drawText(int x, int y, const char *s, int offset = 0, int length = -1);
             void fillRectangle(int x1, int y1, int x2, int y2);

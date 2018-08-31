@@ -15,7 +15,6 @@
 //
 #if defined(DISPLAY_COLOR_RGB565)
 #define PIXEL_VALUE(c)       c.toRGB565()
-#define PIXEL_LxPFCR_PF      2
 #else
 #error No se especifico DISPLAY_COLOR_xxxx
 #endif
@@ -693,7 +692,13 @@ void ILI9341LTDCDriver::ltdcInitialize() {
     //
     tmp = LTDC_Layer1->PFCR;
     tmp &= ~(LTDC_LxPFCR_PF);
-    tmp |= PIXEL_LxPFCR_PF << LTDC_LxPFCR_PF_Pos;
+#if defined(DISPLAY_COLOR_RGB565)
+    tmp |= 0b010 << LTDC_LxPFCR_PF_Pos;
+#elif defined(DISPLAY_COLOR_RGB888)
+    tmp |= 0b001 << LTDC_LxPFCR_PF_Pos;
+#else
+#error No se especifico DISPLAY_COLOR_xxxx
+#endif
     LTDC_Layer1->PFCR = tmp;
 
     // Configura L1_CACR (Constant Alpha Configuration Register)
