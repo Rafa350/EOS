@@ -7,6 +7,11 @@
 #include "eos.h"
 #include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
+#if defined(EOS_STM32F7)
+#include "stm32f7xx.h"
+#else
+#error Hardware no soportado
+#endif
 
 // Standard includes
 //
@@ -45,7 +50,8 @@ namespace eos {
     		int dx;
     		int dy;
     		DisplayOrientation orientation;
-    		int frameAddr;
+    		int layer1Addr;
+    		int layer2Addr;
 
     	private:
             RGBDirectDriver();
@@ -72,6 +78,8 @@ namespace eos {
         private:
             void gpioInitialize();
             void ltdcInitialize();
+            void ltdcInitializeLayer(LTDC_Layer_TypeDef* layer, int frameAddr);
+            void ltdcActivateLayer(LTDC_Layer_TypeDef *layer, bool activate);
             void dma2dInitialize();
             void dma2dFill(int x, int y, int width, int height, const Color &color);
             void dma2dCopy(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format);

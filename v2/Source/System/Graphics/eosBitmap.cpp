@@ -33,12 +33,12 @@ Bitmap::Bitmap(
 	//
 	int pixelSize;
 	switch (format) {
-		case PixelFormat::rgb888:
 		case PixelFormat::rgb565:
 			pixelSize = sizeof(uint16_t);
 			break;
 
 		default:
+		case PixelFormat::rgb888:
 		case PixelFormat::argb8888:
 			pixelSize = sizeof(uint32_t);
 			break;
@@ -50,27 +50,21 @@ Bitmap::Bitmap(
 
 	// Crea el contingut del bitmap
 	//
-	switch(format) {
-		case PixelFormat::rgb888: {
-			uint16_t c = color.toRGB888();
+	switch (format) {
+		case PixelFormat::rgb888:
 			for (int i = 0; i < numPixels; i++)
-				((uint16_t*)pixels)[i] = c;
-		}
+				((uint32_t*)pixels)[i] = color.toRGB888();
 		break;
 
-		case PixelFormat::rgb565: {
-			uint16_t c = color.toRGB565();
+		case PixelFormat::rgb565:
 			for (int i = 0; i < numPixels; i++)
-				((uint16_t*)pixels)[i] = c;
-		}
+				((uint16_t*)pixels)[i] = color.toRGB565();
 		break;
 
 		default:
-		case PixelFormat::argb8888: {
-			uint32_t c = color.toARGB8888();
+		case PixelFormat::argb8888:
 			for (int i = 0; i < numPixels; i++)
-				((uint32_t*)pixels)[i] = c;
-		}
+				((uint32_t*)pixels)[i] = color.toARGB8888();
 		break;
 	}
 }

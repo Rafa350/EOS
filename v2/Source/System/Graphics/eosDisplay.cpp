@@ -483,8 +483,8 @@ void Display::drawBitmap(
 
 	int xx1 = x;
 	int yy1 = y;
-	int xx2 = x + x2 - x1 + 1;
-	int yy2 = y + y2 - y1 + 1;
+	int xx2 = x + x2 - x1;
+	int yy2 = y + y2 - y1;
 
 	if (clipArea(xx1, yy1, xx2, yy2)) {
 

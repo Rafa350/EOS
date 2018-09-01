@@ -223,6 +223,8 @@ void DisplayLoopService::drawBackground() {
 ///
 void DisplayLoopService::drawDot() {
 
+    display->setClip(138, 28, screenWidth - 11, screenHeight - 11);
+
 	display->setColor(COLOR_Red);
 	display->fillCircle(x, y, 30);
 	display->setColor(COLOR_Yellow);
@@ -232,7 +234,24 @@ void DisplayLoopService::drawDot() {
 		x - bitmap->getWidth() / 2,
 		y - bitmap->getHeight() / 2,
 		bitmap);
+
+	display->resetClip();
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief Borra el punt
+///
+void DisplayLoopService::clearDot() {
+
+    display->setClip(138, 28, screenWidth - 11, screenHeight - 11);
+
+    display->setColor(COLOR_Black);
+	display->fillRectangle(x - 32, y - 32, x + 32, y + 32);
+
+	display->resetClip();
+}
+
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa la informacio de posicio i tamany
@@ -252,16 +271,6 @@ void DisplayLoopService::drawInfo() {
 
 	sprintf(buffer, "%d", y);
 	display->drawText(55, 90, buffer);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Borra el punt
-///
-void DisplayLoopService::clearDot() {
-
-	display->setColor(COLOR_Black);
-	display->fillRectangle(x - 32, y - 32, x + 32, y + 32);
 }
 
 
