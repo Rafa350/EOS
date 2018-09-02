@@ -28,7 +28,7 @@ namespace eos {
         bottom
     };
 
-    /// \brief Control del display.
+    /// \brief Superficie de dibuix.
     class Display {
         private:
             IDisplayDriver *driver;

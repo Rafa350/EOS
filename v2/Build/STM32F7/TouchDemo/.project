@@ -74,6 +74,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/AppMain.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/App/BmpMain.c</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/TouchDemo/BmpMain.c</location>
+		</link>
+		<link>
 			<name>src/App/STM32F7</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

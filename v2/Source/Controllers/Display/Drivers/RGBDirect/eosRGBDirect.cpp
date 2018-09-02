@@ -322,6 +322,18 @@ void RGBDirectDriver::setPixels(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Escriu pixels en la pantalla.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param width: Amplada.
+/// \param height: Alçada.
+/// \param pixels: Els pixels a copiar.
+/// \param format: Format dels pixels.
+/// \param dx: Offset X dins del bitmap.
+/// \param dy: offset Y dins del vitmap.
+/// \param pitch: Aplada de linia del bitmap.
+///
 void RGBDirectDriver::writePixels(
 	int x,
 	int y,
@@ -333,7 +345,14 @@ void RGBDirectDriver::writePixels(
 	int dy,
 	int pitch) {
 
-	dma2dCopy(x, y, width, height, pixels, format);
+	// El tamany ha de ser mes gran que zero per dibuixar un rectangle
+	//
+	if ((x >= 0) && (x + width <= screenWidth) &&
+		(y >= 0) && (y + height <= screenHeight) &&
+		(width > 0) && (height > 0)) {
+
+		dma2dCopy(x, y, width, height, pixels, format, 0, 0, pitch);
+	}
 }
 
 
@@ -343,7 +362,10 @@ void RGBDirectDriver::readPixels(
 	int width,
 	int height,
 	uint8_t *pixels,
-	PixelFormat format) {
+	PixelFormat format,
+	int dc,
+	int dy,
+	int pitch) {
 
 }
 
@@ -661,13 +683,16 @@ void RGBDirectDriver::dma2dFill(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Copia un bitmap.
+/// \brief Copia un bitmap de la memoria a la pantalla.
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 /// \param width: Amplada.
 /// \param height: Alçada.
 /// \param pixels: Llista de pixels.
 /// \param format: Format dels pixels.
+/// \param dx: Offset X dins del bitmap.
+/// \param dy: offset Y dins del vitmap.
+/// \param pitch: Aplada de linia del bitmap.
 ///
 void RGBDirectDriver::dma2dCopy(
 	int x,
@@ -675,23 +700,35 @@ void RGBDirectDriver::dma2dCopy(
 	int width,
 	int height,
 	const uint8_t *pixels,
-	PixelFormat format) {
-
-	// Calcula l'adresa inicial
-	//
-	int addr = addressAt(layer1Addr, x, y);
+	PixelFormat format,
+	int dx,
+	int dy,
+	int pitch) {
 
 	// Inicialitza el controlador DMA2D
+	// -Modus de transferencia M2M/PFC
 	//
-	DMA2D->CR = 0b01 << DMA2D_CR_MODE_Pos;            // Modus de transferencia M2M/PFC
+	DMA2D->CR = 0b01 << DMA2D_CR_MODE_Pos;
+
+	// Format de color de desti
+	//
 #if defined(DISPLAY_COLOR_RGB565)
-	DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;     // Format desti RGB565
+	DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;
 #elif defined(DISPLAY_COLOR_RGB888)
-	DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;     // Format desti RGB888
+	DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;
 #else
 #error No se especifico DISPLAY_COLOR_xxxx
 #endif
-	switch (format) {                                 // Format origen
+
+	// Adressa i pitch de desti
+	//
+	int dstAddr = addressAt(layer1Addr, x, y);
+	DMA2D->OMAR = dstAddr;
+	DMA2D->OOR = LINE_WIDTH - width;
+
+	// Format de color d'origen
+	//
+	switch (format) {
 		case PixelFormat::rgb888:
 			DMA2D->FGPFCCR = 0b0001 << DMA2D_FGPFCCR_CM_Pos;
 			break;
@@ -705,17 +742,34 @@ void RGBDirectDriver::dma2dCopy(
 			DMA2D->FGPFCCR = 0b0000 << DMA2D_FGPFCCR_CM_Pos;
 			break;
 	}
-	DMA2D->FGMAR = (uint32_t) pixels;                 // Adressa origen
-	DMA2D->OMAR = addr;                               // Adressa desti
-	DMA2D->FGOR = 0;                                  // Offset origen
-	DMA2D->OOR = LINE_WIDTH - width;                  // Offset desti
+
+	// Adressa i pitch d'origen
+	//
+	int orgAddr = (dy * pitch) + dx;
+	switch (format) {
+		default:
+		case PixelFormat::rgb888:
+		case PixelFormat::argb8888:
+			orgAddr *= sizeof(uint32_t);
+			break;
+
+		case PixelFormat::rgb565:
+			orgAddr *= sizeof(uint16_t);
+			break;
+	}
+	orgAddr += (int) pixels;
+	DMA2D->FGMAR = orgAddr;
+	DMA2D->FGOR = pitch - width;
+
+	// Tamany de la finestra
+	//
 	DMA2D->NLR =
-		(width << DMA2D_NLR_PL_Pos) |                 // Amplada
-		(height << DMA2D_NLR_NL_Pos);                 // Alçada
+		(width << DMA2D_NLR_PL_Pos) |
+		(height << DMA2D_NLR_NL_Pos);
 
 	// Inicia la transferencia
 	//
-	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;             // Inicia la transferencia
+	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;
 
 	/// Espera que acabi
 	///

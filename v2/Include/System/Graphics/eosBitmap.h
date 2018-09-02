@@ -20,11 +20,13 @@ namespace eos {
 			int height;
 			PixelFormat format;
 			bool allocated;
+			bool readonly;
 			uint8_t *pixels;
 
 		public:
 			Bitmap(int width, int height, PixelFormat format, const Color &color);
 			Bitmap(int width, int height, PixelFormat format, uint8_t *pixels);
+			Bitmap(int width, int height, PixelFormat format, const uint8_t *pixels);
 			~Bitmap();
 
 			void setPixel(int x, int y, Color color);

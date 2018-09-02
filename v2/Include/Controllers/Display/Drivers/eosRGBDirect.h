@@ -71,7 +71,7 @@ namespace eos {
             void setVPixels(int x, int y, int size, const Color &color);
             void setPixels(int x, int y, int width, int height, const Color &color);
             void writePixels(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch);
-            void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format);
+            void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch);
             void vScroll(int delta, int x, int y, int width, int height);
             void hScroll(int delta, int x, int y, int width, int height);
 
@@ -82,7 +82,7 @@ namespace eos {
             void ltdcActivateLayer(LTDC_Layer_TypeDef *layer, bool activate);
             void dma2dInitialize();
             void dma2dFill(int x, int y, int width, int height, const Color &color);
-            void dma2dCopy(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format);
+            void dma2dCopy(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch);
             void dma2dWaitFinish();
     };
 }

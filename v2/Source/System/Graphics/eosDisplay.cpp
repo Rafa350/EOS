@@ -493,12 +493,15 @@ void Display::drawBitmap(
         if (yy1 > yy2)
             swap(yy1, yy2);
 
+        int w = xx2 - xx1 + 1;
+        int h = yy2 - yy1 + 1;
+
         driver->writePixels(
 			xx1, yy1,
-			xx2 - xx1 + 1, yy2 - yy1 + 1,
+			w, h,
 			bitmap->getPixels(),
 			bitmap->getFormat(),
-			0, 0,
+			0, yy1 - y,
 			bitmap->getWidth());
 	}
 }

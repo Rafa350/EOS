@@ -78,6 +78,19 @@ class MyApplication: public Application {
 static const char *title = "EOS v2.0: TouchPad Demo";
 
 
+static Bitmap *createBitmap() {
+
+	extern const unsigned char bitmapBmpMain[];
+
+	const uint8_t *data = bitmapBmpMain;
+
+	int width = (int) ((data[0] << 16) | data[1]);
+	int height = (int) ((data[2] << 16) | data[3]);
+	//int flags = (int) ((data[4] << 16) | data[5]);
+
+	return new Bitmap(width, height, PixelFormat::rgb565, &data[6]);
+}
+
 ///-----------------------------------------------------------------------
 /// \brief Contructor.
 ///
@@ -145,7 +158,8 @@ void DisplayLoopService::onSetup() {
     display = new Display(displayDriver);
     display->clear(COLOR_Black);
 
-    bitmap = new Bitmap(30, 30, PixelFormat::rgb565, Color(COLOR_Blue));
+    //bitmap = new Bitmap(30, 30, PixelFormat::rgb565, Color(COLOR_Blue));
+    bitmap = createBitmap();
 
     // Inicialitzacio del touch pad
     //
