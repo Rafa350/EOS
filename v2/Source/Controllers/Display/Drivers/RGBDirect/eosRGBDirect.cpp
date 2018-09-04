@@ -1,11 +1,12 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "System/eosMath.h"
 #include "Controllers/Display/Drivers/eosRGBDirect.h"
 #include "HAL/halGPIO.h"
 #include "stdint.h"
 
 
-#if !defined(EOS_STM32F4) && !defined(EOS_STM32F7)
+#if !((defined(LTDC) && (defined(EOS_STM32F4) || defined(EOS_STM32F7))))
 #error Hardware no soportado
 #endif
 
@@ -27,31 +28,6 @@
 #error No se definio DISPLAY_COLOR_xxxx
 #endif
 
-
-/// ----------------------------------------------------------------------
-/// \brief Obte el valor minim
-/// \param a: Primer valor
-/// \param b: Segin valor
-/// \return El minim dels valors a i b.
-///
-static inline int min(
-	int a,
-	int b) {
-
-	return a <= b ? a : b;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte el valor absolut.
-/// \param a: El valor
-/// \return El seu valor absolut.
-///
-static inline int abs(
-	int a) {
-
-	return a < 0 ? -a : a;
-}
 
 
 /// ----------------------------------------------------------------------
@@ -227,6 +203,8 @@ void RGBDirectDriver::setPixel(
 	int y,
 	const Color &color) {
 
+	// Comprova si es dins dels limits
+	//
 	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight)) {
 
 		// Rotacio
@@ -290,7 +268,7 @@ void RGBDirectDriver::setPixels(
 	int height,
 	const Color &color) {
 
-	// El tamany ha de ser mes gran que zero per dibuixar un rectangle
+	// Comprova si es dins dels limits
 	//
 	if ((x >= 0) && (x + width <= screenWidth) &&
 		(y >= 0) && (y + height <= screenHeight) &&
@@ -311,10 +289,10 @@ void RGBDirectDriver::setPixels(
 			int yy1 = dy + (x * sin) + (y * cos);
 			int yy2 = dy + (x2 * sin) + (y2 * cos);
 
-			int xx = min(xx1, xx2);
-			int yy = min(yy1, yy2);
-			int ww = abs(xx2 - xx1) + 1;
-			int hh = abs(yy2 - yy1) + 1;
+			int xx = Math::min(xx1, xx2);
+			int yy = Math::min(yy1, yy2);
+			int ww = Math::abs(xx2 - xx1) + 1;
+			int hh = Math::abs(yy2 - yy1) + 1;
 
 			dma2dFill(xx, yy, ww, hh, color);
 		}
@@ -345,13 +323,13 @@ void RGBDirectDriver::writePixels(
 	int dy,
 	int pitch) {
 
-	// El tamany ha de ser mes gran que zero per dibuixar un rectangle
+	// Comprova si es dins dels limits
 	//
 	if ((x >= 0) && (x + width <= screenWidth) &&
 		(y >= 0) && (y + height <= screenHeight) &&
 		(width > 0) && (height > 0)) {
 
-		dma2dCopy(x, y, width, height, pixels, format, 0, 0, pitch);
+		dma2dCopy(x, y, width, height, pixels, format, dx, dy, pitch);
 	}
 }
 
@@ -543,7 +521,7 @@ void RGBDirectDriver::ltdcInitializeLayer(
     tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + DISPLAY_SCREEN_WIDTH) << LTDC_LxWHPCR_WHSPPOS_Pos;
     layer->WHPCR = tmp;
 
-    // Configura L1_WHPCR (Window Vertical Position Configuration Register)
+    // Configura Lx_WHPCR (Window Vertical Position Configuration Register)
     // -Tamany vertical de la finestra
     //
     tmp = layer->WVPCR;
@@ -552,12 +530,12 @@ void RGBDirectDriver::ltdcInitializeLayer(
     tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + DISPLAY_SCREEN_HEIGHT) << LTDC_LxWVPCR_WVSPPOS_Pos;
     layer->WVPCR = tmp;
 
-    // Configura L1_DCCR (Default Color Configuration Register)
+    // Configura Lx_DCCR (Default Color Configuration Register)
     // -Color per defecte ARGB(255, 0, 0, 0)
     //
     layer->DCCR = 0xFF0000FF;
 
-    // Configura L1_PFCR (Pixel Format Configuration Register)
+    // Configura Lx_PFCR (Pixel Format Configuration Register)
     //
     tmp = layer->PFCR;
     tmp &= ~(LTDC_LxPFCR_PF);
@@ -570,14 +548,14 @@ void RGBDirectDriver::ltdcInitializeLayer(
 #endif
     layer->PFCR = tmp;
 
-    // Configura L1_CACR (Constant Alpha Configuration Register)
+    // Configura Lx_CACR (Constant Alpha Configuration Register)
     //
     tmp = layer->CACR;
     tmp &= ~(LTDC_LxCACR_CONSTA);
     tmp |= 255u;
     layer->CACR;
 
-    // Configura L1_BFCR
+    // Configura Lx_BFCR
     // -Specifies the blending factors
     //
     tmp = layer->BFCR;
@@ -586,12 +564,12 @@ void RGBDirectDriver::ltdcInitializeLayer(
     tmp |= 7 << LTDC_LxBFCR_BF2_Pos;
     layer->BFCR = tmp;
 
-    // Configura L1_CFBAR (Color Frame Buffer Address Register)
+    // Configura Lx_CFBAR (Color Frame Buffer Address Register)
     // -Adressa del buffer de video
     //
     layer->CFBAR = frameAddr;
 
-    // Configura L1_CFBLR (Color Frame Buffer Length Register)
+    // Configura Lx_CFBLR (Color Frame Buffer Length Register)
     // -Longitut de la linia en bytes.
     //
     tmp = layer->CFBLR;
@@ -600,7 +578,7 @@ void RGBDirectDriver::ltdcInitializeLayer(
     tmp |= ((DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
     layer->CFBLR = tmp;
 
-    // Configura L1_CFBLNR (Color Frame Buffer Line Number Register)
+    // Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
     //
     tmp = layer->CFBLNR;
     tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);

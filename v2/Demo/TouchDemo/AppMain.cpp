@@ -84,9 +84,9 @@ static Bitmap *createBitmap() {
 
 	const uint8_t *data = bitmapBmpMain;
 
-	int width = (int) ((data[0] << 16) | data[1]);
-	int height = (int) ((data[2] << 16) | data[3]);
-	//int flags = (int) ((data[4] << 16) | data[5]);
+	int width = (int) (data[0] | (data[1] << 8));
+	int height = (int) (data[2] | (data[3] << 8));
+	//int flags = (int) (data[4] | (data[5] << 8));
 
 	return new Bitmap(width, height, PixelFormat::rgb565, &data[6]);
 }

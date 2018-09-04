@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
 #include "HAL/halTMR.h"
 #include "hal/halI2C.h"

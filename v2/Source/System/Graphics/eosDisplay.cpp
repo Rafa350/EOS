@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "System/eosMath.h"
 #include "System/Graphics/eosDisplay.h"
 #include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosBitmap.h"
@@ -18,21 +19,6 @@ extern const unsigned char *fontConsolas14pt;
 #define RIGHT      0x0002u
 #define BOTTOM     0x0004u
 #define TOP        0x0008u
-
-
-/// ----------------------------------------------------------------------
-/// \brief Intercambia dues variables A i B.
-/// \param a: Variable A.
-/// \param b: Variable B.
-///
-static inline void swap(
-    int &a,
-    int &b) {
-
-    int t = a;
-    a = b;
-    b = t;
-}
 
 
 /// ----------------------------------------------------------------------
@@ -131,9 +117,9 @@ void Display::setClip(
     int y2) {
 
     if (x1 > x2)
-        swap(x1, x2);
+        Math::swap(x1, x2);
     if (y1 > y2)
-        swap(y1, y2);
+        Math::swap(y1, y2);
 
     int screenWidth = driver->getWidth();
     int screenHeight = driver->getHeight();
@@ -358,34 +344,34 @@ void Display::drawTriangle(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un cercle buit.
-/// \param cx: Coordinada X del centre.
-/// \param cy: Coordinada Y del centre.
+/// \param x: Coordinada X del centre.
+/// \param y: Coordinada Y del centre.
 /// \param r: Radi del cercle.
 ///
 void Display::drawCircle(
-    int cx,
-    int cy,
+    int x,
+    int y,
     int r) {
 
-    int x = r;
-    int y = 0;
-    int d = 1 - x;
+    int xx = r;
+    int yy = 0;
+    int d = 1 - xx;
 
-    while (y <= x) {
-        drawPoint(cx + x, cy + y);
-        drawPoint(cx - x, cy + y);
-        drawPoint(cx - x, cy - y);
-        drawPoint(cx + x, cy - y);
-        drawPoint(cx + y, cy + x);
-        drawPoint(cx - y, cy + x);
-        drawPoint(cx - y, cy - x);
-        drawPoint(cx + y, cy - x);
-        y++;
+    while (yy <= xx) {
+        drawPoint(x + xx, y + yy);
+        drawPoint(x - xx, y + yy);
+        drawPoint(x - xx, y - yy);
+        drawPoint(x + xx, y - yy);
+        drawPoint(x + yy, y + xx);
+        drawPoint(x - yy, y + xx);
+        drawPoint(x - yy, y - xx);
+        drawPoint(x + yy, y - xx);
+        yy++;
         if (d <= 0)
-            d += 2 * y + 1;
+            d += 2 * yy + 1;
         else {
-            x--;
-            d += 2 * (y - x) + 1;
+            xx--;
+            d += 2 * (yy - xx) + 1;
         }
     }
 }
@@ -405,10 +391,12 @@ void Display::fillRectangle(
     int y2) {
 
     if (clipArea(x1, y1, x2, y2)) {
+
         if (x1 > x2)
-            swap(x1, x2);
+            Math::swap(x1, x2);
         if (y1 > y2)
-            swap(y1, y2);
+            Math::swap(y1, y2);
+
         driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
     }
 }
@@ -458,50 +446,27 @@ void Display::drawBitmap(
     int y,
     const Bitmap *bitmap) {
 
-	drawBitmap(x, y, bitmap, 0, 0, bitmap->getWidth() - 1, bitmap->getHeight() - 1);
-}
+	int x1 = x;
+	int y1 = y;
+	int x2 = x + bitmap->getWidth() - 1;
+	int y2 = y + bitmap->getHeight() - 1;
 
+	if (clipArea(x1, y1, x2, y2)) {
 
-/// ----------------------------------------------------------------------
-/// \brief Dibuixa un bitmap parcial, definint una finestra dins del bitmap
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param bitmap: El bitmap
-/// \param x1: Coordinada x de la cantonada superior esquerra de la finestra
-/// \param y1: Coordinada y de la cantonada superior esquerra de la finestra
-/// \param x2: Coordinada x de la cantonada inferior dreta de la finestra
-/// \param y2: Coordinada y de la cantonada inferior dreta de la finestra
-///
-void Display::drawBitmap(
-	int x,
-	int y,
-	const Bitmap *bitmap,
-	int x1,
-	int y1,
-	int x2,
-	int y2) {
+		if (x1 > x2)
+            Math::swap(x1, x2);
+        if (y1 > y2)
+            Math::swap(y1, y2);
 
-	int xx1 = x;
-	int yy1 = y;
-	int xx2 = x + x2 - x1;
-	int yy2 = y + y2 - y1;
-
-	if (clipArea(xx1, yy1, xx2, yy2)) {
-
-		if (xx1 > xx2)
-            swap(xx1, xx2);
-        if (yy1 > yy2)
-            swap(yy1, yy2);
-
-        int w = xx2 - xx1 + 1;
-        int h = yy2 - yy1 + 1;
+        int w = x2 - x1 + 1;
+        int h = y2 - y1 + 1;
 
         driver->writePixels(
-			xx1, yy1,
+			x1, y1,
 			w, h,
 			bitmap->getPixels(),
 			bitmap->getFormat(),
-			0, yy1 - y,
+			x1 - x, y1 - y,
 			bitmap->getWidth());
 	}
 }
