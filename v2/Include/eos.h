@@ -5,7 +5,7 @@
 // Compilador Microchip XC32
 #if defined(__XC32)
 
-	// Declara la familia del procesador
+	// Declara la plataforma
 	#if defined(__PIC32MX)
 		#define EOS_PIC32MX
 	#elif defined(__PIC32MZ)
@@ -22,7 +22,7 @@
 // Compilador GNU/STM32
 #elif defined(__GNUC__) && defined(STM32)
 
-	// Declara la familia del procesador
+	// Declara la plataforma
 	#if defined(STM32F4)
 		#define EOS_STM32F4
 	#elif defined(STM32F7)
@@ -31,6 +31,17 @@
 		#error "No se reconoce el procesador"
 	#endif
 
+	// Declara el indicador de depuracio
+	#if defined(DEBUG)
+		#define EOS_DEBUG
+	#endif
+    
+// Compilador GNU/MINGW
+#elif defined(__GNUC__) && (defined(__MINGW32__) || defined(__MINGW64__))
+
+    // Declara la plataforma
+    #define EOS_WINDOWS
+    
 	// Declara el indicador de depuracio
 	#if defined(DEBUG)
 		#define EOS_DEBUG
