@@ -69,8 +69,8 @@ IDisplayDriver *RGBDirectDriver::getInstance() {
 ///
 RGBDirectDriver::RGBDirectDriver():
 
-	screenWidth(DISPLAY_SCREEN_WIDTH),
-	screenHeight(DISPLAY_SCREEN_HEIGHT),
+	screenWidth(DISPLAY_IMAGE_WIDTH),
+	screenHeight(DISPLAY_IMAGE_HEIGHT),
 	sin(0),
 	cos(1),
 	dx(0),
@@ -143,8 +143,8 @@ void RGBDirectDriver::setOrientation(
 	this->orientation = orientation;
 	switch (orientation) {
 		case DisplayOrientation::normal:
-			screenWidth = DISPLAY_SCREEN_WIDTH;
-			screenHeight = DISPLAY_SCREEN_HEIGHT;
+			screenWidth = DISPLAY_IMAGE_WIDTH;
+			screenHeight = DISPLAY_IMAGE_HEIGHT;
 			sin = 0;
 			cos = 1;
 			dx = 0;
@@ -152,30 +152,30 @@ void RGBDirectDriver::setOrientation(
 			break;
 
 		case DisplayOrientation::rotate90:
-			screenWidth = DISPLAY_SCREEN_HEIGHT;
-			screenHeight = DISPLAY_SCREEN_WIDTH;
+			screenWidth = DISPLAY_IMAGE_HEIGHT;
+			screenHeight = DISPLAY_IMAGE_WIDTH;
 			sin = 1;
 			cos = 0;
-			dx = DISPLAY_SCREEN_WIDTH - 1;
+			dx = DISPLAY_IMAGE_WIDTH - 1;
 			dy = 0;
 			break;
 
 		case DisplayOrientation::rotate180:
-			screenWidth = DISPLAY_SCREEN_WIDTH;
-			screenHeight = DISPLAY_SCREEN_HEIGHT;
+			screenWidth = DISPLAY_IMAGE_WIDTH;
+			screenHeight = DISPLAY_IMAGE_HEIGHT;
 			sin = 0;
 			cos = -1;
-			dx = DISPLAY_SCREEN_WIDTH - 1;
-			dy = DISPLAY_SCREEN_HEIGHT - 1;
+			dx = DISPLAY_IMAGE_WIDTH - 1;
+			dy = DISPLAY_IMAGE_HEIGHT - 1;
 			break;
 
 		case DisplayOrientation::rotate270:
-			screenWidth = DISPLAY_SCREEN_HEIGHT;
-			screenHeight = DISPLAY_SCREEN_WIDTH;
+			screenWidth = DISPLAY_IMAGE_HEIGHT;
+			screenHeight = DISPLAY_IMAGE_WIDTH;
 			sin = -1;
 			cos = 0;
 			dx = 0;
-			dy = DISPLAY_SCREEN_HEIGHT - 1;
+			dy = DISPLAY_IMAGE_HEIGHT - 1;
 			break;
 	}
 }
@@ -188,7 +188,7 @@ void RGBDirectDriver::setOrientation(
 void RGBDirectDriver::clear(
 	const Color &color) {
 
-	dma2dFill(0, 0, DISPLAY_SCREEN_WIDTH, DISPLAY_SCREEN_HEIGHT, color);
+	dma2dFill(0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT, color);
 }
 
 
@@ -430,7 +430,7 @@ void RGBDirectDriver::ltdcInitialize() {
 	RCC_PeriphCLKInitTypeDef clkInit;
 	clkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
 	clkInit.PLLSAI.PLLSAIN = 192;
-	clkInit.PLLSAI.PLLSAIR = 5;
+	clkInit.PLLSAI.PLLSAIR = DISPLAY_FDIV;
 	clkInit.PLLSAIDivR = RCC_PLLSAIDIVR_4;
 	HAL_RCCEx_PeriphCLKConfig(&clkInit);
 
@@ -471,8 +471,8 @@ void RGBDirectDriver::ltdcInitialize() {
     //
     tmp = LTDC->AWCR;
     tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
-    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_SCREEN_WIDTH - 1) << LTDC_AWCR_AAW_Pos;
-    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_SCREEN_HEIGHT - 1) << LTDC_AWCR_AAH_Pos;
+    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_IMAGE_WIDTH - 1) << LTDC_AWCR_AAW_Pos;
+    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_IMAGE_HEIGHT - 1) << LTDC_AWCR_AAH_Pos;
     LTDC->AWCR = tmp;
 
     // Configura el registre TWCR (Total Width Configuration Register)
@@ -481,8 +481,8 @@ void RGBDirectDriver::ltdcInitialize() {
     //
     tmp = LTDC->TWCR;
     tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
-    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_SCREEN_WIDTH + DISPLAY_HFP - 1) << LTDC_TWCR_TOTALW_Pos;
-    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_SCREEN_HEIGHT + DISPLAY_VFP - 1) << LTDC_TWCR_TOTALH_Pos;
+    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_IMAGE_WIDTH + DISPLAY_HFP - 1) << LTDC_TWCR_TOTALW_Pos;
+    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_IMAGE_HEIGHT + DISPLAY_VFP - 1) << LTDC_TWCR_TOTALH_Pos;
     LTDC->TWCR = tmp;
 
     // Configura el registre BCCR (Back Color Configuration Register)
@@ -518,7 +518,7 @@ void RGBDirectDriver::ltdcInitializeLayer(
     tmp = layer->WHPCR;
     tmp &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
     tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + 1) << LTDC_LxWHPCR_WHSTPOS_Pos;
-    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + DISPLAY_SCREEN_WIDTH) << LTDC_LxWHPCR_WHSPPOS_Pos;
+    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + DISPLAY_IMAGE_WIDTH) << LTDC_LxWHPCR_WHSPPOS_Pos;
     layer->WHPCR = tmp;
 
     // Configura Lx_WHPCR (Window Vertical Position Configuration Register)
@@ -527,7 +527,7 @@ void RGBDirectDriver::ltdcInitializeLayer(
     tmp = layer->WVPCR;
     tmp &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
     tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + 1) << LTDC_LxWVPCR_WVSTPOS_Pos;
-    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + DISPLAY_SCREEN_HEIGHT) << LTDC_LxWVPCR_WVSPPOS_Pos;
+    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + DISPLAY_IMAGE_HEIGHT) << LTDC_LxWVPCR_WVSPPOS_Pos;
     layer->WVPCR = tmp;
 
     // Configura Lx_DCCR (Default Color Configuration Register)
@@ -575,14 +575,14 @@ void RGBDirectDriver::ltdcInitializeLayer(
     tmp = layer->CFBLR;
     tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
     tmp |= LINE_SIZE << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= ((DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
+    tmp |= ((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
     layer->CFBLR = tmp;
 
     // Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
     //
     tmp = layer->CFBLNR;
     tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
-    tmp |= DISPLAY_SCREEN_HEIGHT;
+    tmp |= DISPLAY_IMAGE_HEIGHT;
     layer->CFBLNR = tmp;
 }
 

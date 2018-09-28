@@ -18,12 +18,12 @@
 #include "stdint.h"
 
 
-#ifndef DISPLAY_SCREEN_WIDTH
-#define DISPLAY_SCREEN_WIDTH      480       // Tamany fix del controlador
+#ifndef DISPLAY_IMAGE_WIDTH
+#define DISPLAY_UMAGE_WIDTH       480       // Tamany fix del controlador
 #endif
 
-#ifndef DISPLAY_SCREEN_HEIGHT
-#define DISPLAY_SCREEN_HEIGHT     272       // Tamany fix del controlador
+#ifndef DISPLAY_IMAGE_HEIGHT
+#define DISPLAY_IMAGE_HEIGHT      272       // Tamany fix del controlador
 #endif
 
 
@@ -33,9 +33,9 @@
 #define PIXEL_TYPE                int32_t
 #endif
 #define PIXEL_SIZE                sizeof(PIXEL_TYPE)
-#define LINE_SIZE                 (((DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
+#define LINE_SIZE                 (((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
 #define LINE_WIDTH                (LINE_SIZE / PIXEL_SIZE)
-#define FRAME_SIZE                (LINE_SIZE * DISPLAY_SCREEN_HEIGHT)
+#define FRAME_SIZE                (LINE_SIZE * DISPLAY_IMAGE_HEIGHT)
 
 
 namespace eos {

@@ -144,6 +144,9 @@ extern GPIO_TypeDef * const gpioTbl[];
 // Funcio SDMMC
 #define HAL_GPIO_AF12_SDMMC1      GPIO_AF12_SDMMC1
 
+// Funcio alternativa
+// Funcio DCMI
+#define HAL_GPIO_AF13_DCMI        GPIO_AF13_DCMI
 
 // Tipus de port
 #define HAL_GPIO_MODE_POS         0u

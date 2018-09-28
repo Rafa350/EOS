@@ -9,10 +9,6 @@
 #include "stdint.h"
 
 
-#if !defined(EOS_STM32F4) && !defined(EOS_STM32F7)
-    #error Hardware no soportado
-#endif
-
 #if !defined(DISPLAY_COLOR_RGB565) && !defined(DISPLAY_COLOR_RGB888)
 	#error Formato de color no soportado
 #endif
