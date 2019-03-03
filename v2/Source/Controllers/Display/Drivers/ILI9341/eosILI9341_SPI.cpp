@@ -1,8 +1,5 @@
 #include "eos.h"
-
-
-#ifdef ILI9341_IO_TYPE_SPI
-
+#ifdef USE_DISPLAY_ILI9341_SPI
 
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #include "hal/halSPI.h"
@@ -20,25 +17,25 @@ void ILI9341Driver::lcdInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
 #ifdef ILI9341_RST_PORT
-		{ILI9341_RST_PORT,  ILI9341_RST_PIN,
+		{DISPLAY_RST_PORT,  DISPLAY_RST_PIN,
 			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0              },
 #endif
-		{ILI9341_CS_PORT,   ILI9341_CS_PIN,
+		{DISPLAY_CS_PORT,   DISPLAY_CS_PIN,
 			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, 0              },
-		{ILI9341_RS_PORT,   ILI9341_RS_PIN,
+		{DISPLAY_RS_PORT,   DISPLAY_RS_PIN,
 			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0              },
-		{ILI9341_CLK_PORT,  ILI9341_CLK_PIN,
-			HAL_GPIO_MODE_ALT_PP,                   ILI9341_CLK_AF },
+		{DISPLAY_CLK_PORT,  DISPLAY_CLK_PIN,
+			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_CLK_AF },
 #ifdef ILI9341_MISO_PORT
-		{ILI9341_MISO_PORT, ILI9341_MISO_PIN,
-			HAL_GPIO_MODE_ALT_PP,                   ILI9341_MISO_AF},
+		{DISPLAY_MISO_PORT, DISPLAY_MISO_PIN,
+			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_MISO_AF},
 #endif
-		{ILI9341_MOSI_PORT, ILI9341_MOSI_PIN,
-			HAL_GPIO_MODE_ALT_PP,                   ILI9341_MOSI_AF}
+		{DISPLAY_MOSI_PORT, DISPLAY_MOSI_PIN,
+			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_MOSI_AF}
 	};
 
 	static const SPIInitializeInfo spiInit = {
-		ILI9341_SPI_ID,
+		DISPLAY_SPI_ID,
 			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB, HAL_SPI_CLOCKDIV_4, 0, 0
 	};
 
@@ -70,7 +67,7 @@ void ILI9341Driver::lcdReset() {
 ///
 void ILI9341Driver::lcdOpen() {
 
-    halGPIOClearPin(ILI9341_CS_PORT, ILI9341_CS_PIN);
+    halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
 
@@ -79,7 +76,7 @@ void ILI9341Driver::lcdOpen() {
 ///
 void ILI9341Driver::lcdClose() {
 
-    halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN);
+    halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
 
@@ -90,8 +87,8 @@ void ILI9341Driver::lcdClose() {
 void ILI9341Driver::lcdWriteCommand(
     uint8_t cmd) {
 
-    halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
-    halSPISendBuffer(ILI9341_SPI_ID, &cmd, sizeof(cmd));
+    halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+    halSPISendBuffer(DISPLAY_SPI_ID, &cmd, sizeof(cmd));
 }
 
 
@@ -102,8 +99,8 @@ void ILI9341Driver::lcdWriteCommand(
 void ILI9341Driver::lcdWriteData(
     uint8_t data) {
 
-    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
-    halSPISendBuffer(ILI9341_SPI_ID, &data, sizeof(data));
+    halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+    halSPISendBuffer(DISPLAY_SPI_ID, &data, sizeof(data));
 }
 
 
@@ -116,8 +113,8 @@ void ILI9341Driver::lcdWriteData(
 	uint8_t *data,
 	int size) {
 
-    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
-    halSPISendBuffer(ILI9341_SPI_ID, data, size);
+    halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+    halSPISendBuffer(DISPLAY_SPI_ID, data, size);
 }
 
 
@@ -138,5 +135,4 @@ uint8_t ILI9341Driver::lcdReadData() {
 }
 
 
-#endif
-
+#endif // USE_DISPLAY_ILI9341_SPI

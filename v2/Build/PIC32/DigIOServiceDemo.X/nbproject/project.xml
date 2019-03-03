@@ -12,6 +12,26 @@
             <asminc-extensions/>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>../../../Demo/OutputServiceDemo</sourceRootElem>
+                <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Source/Services</sourceRootElem>
+                <sourceRootElem>../../../Source/System</sourceRootElem>
+                <sourceRootElem>../../../Include</sourceRootElem>
+                <sourceRootElem>../../../Demo/DigIOServicesDemo</sourceRootElem>
+                <sourceRootElem>../../../Source/OSAL</sourceRootElem>
+                <sourceRootElem>../../../Demo/DigIOServiceDemo</sourceRootElem>
+                <sourceRootElem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>PIC32_USB_STARTER_KIT_I</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
         </data>
     </configuration>
 </project>

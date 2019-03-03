@@ -1,4 +1,6 @@
 #include "eos.h"
+#ifdef USE_TOUCHPAD_FT5336
+
 #include "Controllers/TouchPad/eosTouchPad.h"
 
 
@@ -27,3 +29,6 @@ bool TouchPad::getState(
 
 	return driver->getState(state);
 }
+
+
+#endif // USE_TOUCHPAD_FT5336

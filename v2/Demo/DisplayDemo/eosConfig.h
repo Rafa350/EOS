@@ -2,6 +2,12 @@
 #define __eosConfig__
 
 
+#define USE_LED_LED1
+#define USE_LED_LED2
+//#define USE_DISPLAY_ILI9341_SPI
+#define USE_DISPLAY_ILI9341_LTDC
+
+
 #include "board/board.h"
 
 

@@ -33,18 +33,37 @@ void Application::run() {
     //
     onInitialize();
 
-    // Notifica la inicialitzacio de tots els serveis.
+    // Inicialitzacio tots els serveis.
     //
     for (ServiceListIterator it(services); it.hasNext(); it.next())
         it.current()->initialize();
 
-    // Activa el planificador.
+    /// Notifica l'execucio de l'aplicacio
+    //
+    onRun();
+
+    // Activa el planificador. Aqui comencen a executarse els
+    // serveis planificats
     //
     Task::startAll();
 
     // Notifica el final de l'aplicacio.
     //
     onTerminate();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa la senyal tick del sistema
+///
+void Application::tick() {
+
+	onTick();
+
+	// Notifica la senyal tick a tots els serveis.
+    //
+    for (ServiceListIterator it(services); it.hasNext(); it.next())
+        it.current()->tick();
 }
 
 
@@ -93,10 +112,26 @@ void Application::onInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Notifica la finalitzacio de l'aplicacio.
+/// \brief Notificacio la finalitzacio de l'aplicacio.
 ///
 void Application::onTerminate() {
 
 	// if (terminateEvent != nullptr)
 	//     terminateEvent->execute(this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Notificacio del senyal tick
+///
+void Application::onTick() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Notificacio de l'execucio de l'aplicacio.
+///
+void Application::onRun() {
+
 }

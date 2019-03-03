@@ -19,7 +19,7 @@
 
 
 #ifndef DISPLAY_IMAGE_WIDTH
-#define DISPLAY_UMAGE_WIDTH       480       // Tamany fix del controlador
+#define DISPLAY_IMAGE_WIDTH       480       // Tamany fix del controlador
 #endif
 
 #ifndef DISPLAY_IMAGE_HEIGHT
@@ -87,6 +87,4 @@ namespace eos {
     };
 }
 
-
 #endif // __eosRGBDirect__
-

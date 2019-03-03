@@ -27,12 +27,15 @@ namespace eos {
         protected:
             virtual void onInitialize();
             virtual void onTerminate();
+            virtual void onRun();
+            virtual void onTick();
 
         public:
             Application();
             virtual ~Application();
 
             void run();
+            void tick();
 
             void addService(Service *pService);
             void removeService(Service *pService);

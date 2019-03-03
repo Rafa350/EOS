@@ -1,4 +1,6 @@
 #include "eos.h"
+#ifdef USE_DISPLAY_RGB
+
 #include "eosAssert.h"
 #include "System/eosMath.h"
 #include "Controllers/Display/Drivers/eosRGBDirect.h"
@@ -777,3 +779,5 @@ void RGBDirectDriver::dma2dWaitFinish() {
 	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
 }
 
+
+#endif // USE_DISPLAY_RGB

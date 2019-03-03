@@ -3,10 +3,12 @@
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosDisplay.h"
 #include "Services/eosAppLoop.h"
-#if defined(EOS_STM32F4) || defined(EOS_STM32F7)
+#if defined(USE_DISPLAY_ILI9341_LTDC)
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
-#else
+#elif defined(USE_DISPLAY_ILI9341_SPI)
 #include "Controllers/Display/Drivers/eosILI9341.h"
+#else
+#error No se especifico USE_DISPLAY_XXXX
 #endif
 #include "Hal/halGPIO.h"
 
@@ -112,10 +114,12 @@ void LedLoopService::onLoop() {
 ///
 void DisplayLoopService::onSetup() {
 
-#if defined(EOS_STM32F4) || defined(EOS_STM32F7)
+#if defined(USE_DISPLAY_ILI9341_LTDC)
 	driver = ILI9341LTDCDriver::getInstance();
-#else
+#elif defined(USE_DISPLAY_ILI9341_SPI)
 	driver = ILI9341Driver::getInstance();
+#else
+	#error No se especifico USE_DISPLAY_XXXX
 #endif
     driver->initialize();
 

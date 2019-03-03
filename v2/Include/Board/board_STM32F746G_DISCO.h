@@ -12,13 +12,19 @@
 // Indicadors LED
 // -----------------------------------------------------------------------
 
+#ifdef USE_LED_LED1
+
 #define LED_LED1_PORT             HAL_GPIO_PORT_I
 #define LED_LED1_PIN              HAL_GPIO_PIN_1
+
+#endif // USE_LED_LED1
 
 
 // -----------------------------------------------------------------------
 // Display grafic RK043FN48H
 // -----------------------------------------------------------------------
+
+#ifdef USE_DISPLAY_RGB
 
 // Tamany de la pantalla
 //
@@ -235,6 +241,8 @@
 #define DISPLAY_B7_PIN            HAL_GPIO_PIN_7
 #define DISPLAY_B7_AF             HAL_GPIO_AF14_LTDC
 
+#endif // USE_DISPLAY_RGB
+
 
 // -----------------------------------------------------------------------
 // Controlador camara DCIM OV9655
@@ -316,6 +324,8 @@
 // Controlador de touchpad FT5336
 // -----------------------------------------------------------------------
 
+#ifdef USE_TOUCHPAD_FT5336
+
 #define FT5336_I2C_ADDR           0x70
 
 #define FT5336_PAD_WIDTH          480
@@ -343,5 +353,8 @@
 
 // Modul I2C de comunicacions
 #define FT5336_I2C_MODULE         HAL_I2C_ID_3
+
+#endif // USE_TOUCHPAD_FT5336
+
 
 #endif // __board_SMT32F746G_DISCO__

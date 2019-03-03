@@ -149,7 +149,9 @@ DigOutput::DigOutput(
     const DigOutputInitializeInfo *pInfo):
 
     pService(nullptr),
-    state(State::Idle) {
+    state(State::Idle),
+	delayCnt(0),
+	widthCnt(0) {
 
     eosArgumentIsNotNull(pInfo);
 

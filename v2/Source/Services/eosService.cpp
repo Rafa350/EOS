@@ -43,11 +43,20 @@ Service::~Service() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Iniialitzacio del servei, abans de l'inici de la tasca.
+/// \brief Proces d'inicialitzacio del servei, abans de l'inici de la tasca.
 ///
 void Service::initialize() {
 
 	onInitialize();
+}
+
+
+/// ---------------------------------------------------------------------
+/// \brief Proces de la senyal tick del sistema.
+///
+void Service::tick() {
+
+	onTick();
 }
 
 
@@ -82,7 +91,7 @@ void Service::onTask() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la interrupcio tick.
+/// \brief Procesa la senyal tick del sistema.
 ///
 void Service::onTick() {
 

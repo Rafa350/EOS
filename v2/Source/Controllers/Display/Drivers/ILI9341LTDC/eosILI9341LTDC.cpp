@@ -1,4 +1,6 @@
 #include "eos.h"
+#ifdef USE_DISPLAY_ILI9341_LTDC
+
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
 #include "Controllers/Display/Drivers/eosILI9341Defs.h"
 #include "HAL/halINT.h"
@@ -296,7 +298,10 @@ void ILI9341LTDCDriver::writePixels(
 	int width,
 	int height,
 	const uint8_t *pixels,
-	PixelFormat format) {
+	PixelFormat format,
+	int dx,
+	int dy,
+	int pitch) {
 
 }
 
@@ -307,7 +312,10 @@ void ILI9341LTDCDriver::readPixels(
 	int width,
 	int height,
 	uint8_t *pixels,
-	PixelFormat format) {
+	PixelFormat format,
+	int dx,
+	int dy,
+	int pitch) {
 
 }
 
@@ -463,7 +471,7 @@ void ILI9341LTDCDriver::lcdInitialize() {
 	};
 
 	static const SPIInitializeInfo spiInit = {
-		ILI9341_SPI_ID,
+		DISPLAY_SPI_ID,
 			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB, HAL_SPI_CLOCKDIV_16, 0, 0
 	};
 
@@ -826,3 +834,6 @@ void ILI9341LTDCDriver::dma2dWaitFinish() {
 	}
 	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
 }
+
+
+#endif // USE_DISPLAY_ILI9341_LTDC

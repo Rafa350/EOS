@@ -1,4 +1,6 @@
 #include "eos.h"
+#ifdef USE_TOUCHPAD_FT5336
+
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
 #include "HAL/halTMR.h"
 #include "hal/halI2C.h"
@@ -280,4 +282,6 @@ uint8_t FT5336Driver::ioRead(
 
 	return value;
 }
+
+#endif // USE_TOUCHPAD_FT5336
 

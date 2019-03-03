@@ -1,4 +1,6 @@
 #include "eos.h"
+#if USE_DISPLAY_ILI9341_SPI
+
 #include "eosAssert.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #include "Controllers/Display/Drivers/eosILI9341Defs.h"
@@ -283,7 +285,10 @@ void ILI9341Driver::writePixels(
     int width,
     int height,
     const uint8_t *pixels,
-	PixelFormat format) {
+	PixelFormat format,
+	int dx,
+	int xy,
+	int pitch) {
 
     //selectRegion(x, y, width, width);
     //writeRegion(colors, width * height);
@@ -305,7 +310,10 @@ void ILI9341Driver::readPixels(
     int width,
     int height,
     uint8_t *pixels,
-	PixelFormat format) {
+	PixelFormat format,
+	int dx,
+	int dy,
+	int pitch) {
 
     //selectRegion(x, y, width, height);
     //readRegion(colors, width * height);
@@ -606,3 +614,5 @@ void ILI9341Driver::readRegion(
     }
     lcdClose();
 }
+
+#endif // USE_DISPLAY_ILI9341_SPI

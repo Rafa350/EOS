@@ -92,7 +92,6 @@ void osalStopScheduler() {
 void osalSuspendAll() {
 
     vTaskSuspendAll();
-
 }
 
 

@@ -42,6 +42,7 @@ namespace eos {
             virtual ~Service();
 
             void initialize();
+            void tick();
 
             inline const char *getName() const { return name; }
 

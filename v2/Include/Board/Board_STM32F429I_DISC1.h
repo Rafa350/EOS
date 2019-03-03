@@ -4,7 +4,7 @@
 
 // ----------------------------------------------------------------------
 //
-//     Hardware: STM32F429I-DISC1
+// Hardware: STM32F429I-DISC1
 //
 // ----------------------------------------------------------------------
 
@@ -19,11 +19,15 @@
 // Indicadors LED
 // -----------------------------------------------------------------------
 
+#ifdef USE_LED_LED1
 #define LED_LED1_PORT             HAL_GPIO_PORT_G
 #define LED_LED1_PIN              HAL_GPIO_PIN_13
+#endif
 
+#ifdef USE_LED_LED2
 #define LED_LED2_PORT             HAL_GPIO_PORT_G
 #define LED_LED2_PIN              HAL_GPIO_PIN_14
+#endif
 
 
 // -----------------------------------------------------------------------
@@ -112,46 +116,48 @@
 // Parametres de configuracio controlador de display ILI9341
 // -----------------------------------------------------------------------
 
-// Opcions de comunicacio amb el controlodor ILI9341
-//
-#define ILI9341_IO_TYPE_SPI
+#ifdef USE_DISPLAY_ILI9341_SPI
 
 // Control del pin CS (Chip select)
 //
-#define ILI9341_CS_PORT      HAL_GPIO_PORT_C
-#define ILI9341_CS_PIN       HAL_GPIO_PIN_2
+#define DISPLAY_CS_PORT      HAL_GPIO_PORT_C
+#define DISPLAY_CS_PIN       HAL_GPIO_PIN_2
 
 // Control del pin RS (Register select)
 //
-#define ILI9341_RS_PORT      HAL_GPIO_PORT_D
-#define ILI9341_RS_PIN       HAL_GPIO_PIN_13
+#define DISPLAY_RS_PORT      HAL_GPIO_PORT_D
+#define DISPLAY_RS_PIN       HAL_GPIO_PIN_13
 
 // Control del pin CLK (Serial clock)
 //
-#define ILI9341_CLK_PORT     HAL_GPIO_PORT_F
-#define ILI9341_CLK_PIN      HAL_GPIO_PIN_7
-#define ILI9341_CLK_AF       HAL_GPIO_AF5_SPI5
+#define DISPLAY_CLK_PORT     HAL_GPIO_PORT_F
+#define DISPLAY_CLK_PIN      HAL_GPIO_PIN_7
+#define DISPLAY_CLK_AF       HAL_GPIO_AF5_SPI5
 
 // Control del pin MOSI (CPU to Controller)
 //
-#define ILI9341_MOSI_PORT    HAL_GPIO_PORT_F
-#define ILI9341_MOSI_PIN     HAL_GPIO_PIN_9
-#define ILI9341_MOSI_AF      HAL_GPIO_AF5_SPI5
+#define DISPLAY_MOSI_PORT    HAL_GPIO_PORT_F
+#define DISPLAY_MOSI_PIN     HAL_GPIO_PIN_9
+#define DISPLAY_MOSI_AF      HAL_GPIO_AF5_SPI5
 
 // Control del pin MISO (Controller to CPU)
 //
-#define ILI9341_MISO_PORT    HAL_GPIO_PORT_F
-#define ILI9341_MISO_PIN     HAL_GPIO_PIN_8
-#define ILI9341_MISO_AF      HAL_GPIO_AF5_SPI5
+#define DISPLAY_MISO_PORT    HAL_GPIO_PORT_F
+#define DISPLAY_MISO_PIN     HAL_GPIO_PIN_8
+#define DISPLAY_MISO_AF      HAL_GPIO_AF5_SPI5
 
 // Modul SPI a utilitzar
 //
-#define ILI9341_SPI_ID       HAL_SPI_ID_5
+#define DISPLAY_SPI_ID       HAL_SPI_ID_5
+
+#endif
 
 
 // -----------------------------------------------------------------------
 // Parametres de configuracio del controlador de display ILI9341LTDC
 // -----------------------------------------------------------------------
+
+#ifdef USE_DISPLAY_ILI9341_LTDC
 
 // Adressa del buffer de video
 //
@@ -333,6 +339,8 @@
 // Control del modul SPI
 //
 #define DISPLAY_SPI_ID       HAL_SPI_ID_5
+
+#endif
 
 
 #endif // __board_SMT32F429I_DISC1__
