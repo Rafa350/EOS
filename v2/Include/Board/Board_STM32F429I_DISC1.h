@@ -116,7 +116,7 @@
 // Parametres de configuracio controlador de display ILI9341
 // -----------------------------------------------------------------------
 
-#ifdef USE_DISPLAY_ILI9341_SPI
+#ifdef USE_DISPLAY_ILI9341
 
 // Control del pin CS (Chip select)
 //
@@ -157,7 +157,7 @@
 // Parametres de configuracio del controlador de display ILI9341LTDC
 // -----------------------------------------------------------------------
 
-#ifdef USE_DISPLAY_ILI9341_LTDC
+#ifdef USE_DISPLAY_ILI9341LTDC
 
 // Adressa del buffer de video
 //

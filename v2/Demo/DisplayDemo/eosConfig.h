@@ -4,8 +4,8 @@
 
 #define USE_LED_LED1
 #define USE_LED_LED2
-//#define USE_DISPLAY_ILI9341_SPI
-#define USE_DISPLAY_ILI9341_LTDC
+//#define USE_DISPLAY_ILI9341
+#define USE_DISPLAY_ILI9341LTDC
 
 
 #include "board/board.h"

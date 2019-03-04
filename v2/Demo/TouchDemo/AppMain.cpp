@@ -7,7 +7,7 @@
 #include "Services/eosAppLoop.h"
 #include "Controllers/TouchPad/eosTouchPad.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
-#include "Controllers/Display/Drivers/eosRGBDirect.h"
+#include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "HAL/halSYS.h"
 #include "HAL/halGPIO.h"
 

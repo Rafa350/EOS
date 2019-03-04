@@ -24,7 +24,7 @@
 // Display grafic RK043FN48H
 // -----------------------------------------------------------------------
 
-#ifdef USE_DISPLAY_RGB
+#ifdef USE_DISPLAY_RGBLTDC
 
 // Tamany de la pantalla
 //
@@ -326,33 +326,33 @@
 
 #ifdef USE_TOUCHPAD_FT5336
 
-#define FT5336_I2C_ADDR           0x70
+#define TOUCHPAD_I2C_ADDR           0x70
 
-#define FT5336_PAD_WIDTH          480
-#define FT5336_PAD_HEIGHT         270
+#define TOUCHPAD_PAD_WIDTH          480
+#define TOUCHPAD_PAD_HEIGHT         270
 
 // Control del pin SCL
 //
-#define FT5336_SCL_PORT           HAL_GPIO_PORT_H
-#define FT5336_SCL_PIN            HAL_GPIO_PIN_7
-#define FT5336_SCL_AF		      HAL_GPIO_AF4_I2C3
+#define TOUCHPAD_SCL_PORT           HAL_GPIO_PORT_H
+#define TOUCHPAD_SCL_PIN            HAL_GPIO_PIN_7
+#define TOUCHPAD_SCL_AF		      HAL_GPIO_AF4_I2C3
 
 // Control del pin SDA
 //
-#define FT5336_SDA_PORT           HAL_GPIO_PORT_H
-#define FT5336_SDA_PIN            HAL_GPIO_PIN_8
-#define FT5336_SDA_AF             HAL_GPIO_AF4_I2C3
+#define TOUCHPAD_SDA_PORT           HAL_GPIO_PORT_H
+#define TOUCHPAD_SDA_PIN            HAL_GPIO_PIN_8
+#define TOUCHPAD_SDA_AF             HAL_GPIO_AF4_I2C3
 
 // Control del pin INT
 //
-//#define FT5336_INT_PORT           HAL_GPIO_PORT_I
-//#define FT5336_INT_PIN            HAL_GPIO_PIN_13
+//#define TOUCHPAD_INT_PORT           HAL_GPIO_PORT_I
+//#define TOUCHPAD_INT_PIN            HAL_GPIO_PIN_13
 
 // IRQ asignada al pin INT
-//#define FT5336_IRQ                EXTI15_10_IRQn
+//#define TOUCHPAD_IRQ                EXTI15_10_IRQn
 
 // Modul I2C de comunicacions
-#define FT5336_I2C_MODULE         HAL_I2C_ID_3
+#define TOUCHPAD_I2C_MODULE         HAL_I2C_ID_3
 
 #endif // USE_TOUCHPAD_FT5336
 

@@ -1,5 +1,5 @@
 #include "eos.h"
-#if USE_DISPLAY_ILI9341_SPI
+#if defined(USE_DISPLAY_ILI9341)
 
 #include "eosAssert.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"

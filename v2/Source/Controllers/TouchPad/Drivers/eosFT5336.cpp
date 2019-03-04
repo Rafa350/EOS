@@ -30,9 +30,9 @@ ITouchPadDriver *FT5336Driver::getInstance() {
 ///
 FT5336Driver::FT5336Driver():
 
-	addr(FT5336_I2C_ADDR),
-	padWidth(FT5336_PAD_WIDTH),
-	padHeight(FT5336_PAD_HEIGHT),
+	addr(TOUCHPAD_I2C_ADDR),
+	padWidth(TOUCHPAD_PAD_WIDTH),
+	padHeight(TOUCHPAD_PAD_HEIGHT),
 	orientation(TouchPadOrientation::normal) {
 
 	// Wait at least 200ms after power up before accessing registers
@@ -55,14 +55,14 @@ void FT5336Driver::setOrientation(
 	switch (orientation) {
 		case TouchPadOrientation::normal:
 		case TouchPadOrientation::rotate180:
-			padWidth = FT5336_PAD_WIDTH;
-			padHeight = FT5336_PAD_HEIGHT;
+			padWidth = TOUCHPAD_PAD_WIDTH;
+			padHeight = TOUCHPAD_PAD_HEIGHT;
 			break;
 
 		case TouchPadOrientation::rotate90:
 		case TouchPadOrientation::rotate270:
-			padWidth = FT5336_PAD_HEIGHT;
-			padHeight = FT5336_PAD_WIDTH;
+			padWidth = TOUCHPAD_PAD_HEIGHT;
+			padHeight = TOUCHPAD_PAD_WIDTH;
 			break;
 	}
 }
@@ -193,8 +193,8 @@ bool FT5336Driver::getState(
 				break;
 
 			case TouchPadOrientation::rotate180:
-				state.x[c] = FT5336_PAD_HEIGHT - tempY;
-				state.y[c] = FT5336_PAD_WIDTH - tempX;
+				state.x[c] = TOUCHPAD_PAD_HEIGHT - tempY;
+				state.y[c] = TOUCHPAD_PAD_WIDTH - tempX;
 				break;
 
 			case TouchPadOrientation::rotate270:
@@ -239,16 +239,16 @@ void FT5336Driver::ioInit() {
 
 	static const GPIOInitializePinInfo gpioInfo[] = {
 #ifdef FT5336_INT_PORT
-		{FT5336_INT_PORT, FT5336_INT_PIN, HAL_GPIO_MODE_IT_POS | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, 0},
+		{TOUCHPAD_INT_PORT, TOUCHPAD_INT_PIN, HAL_GPIO_MODE_IT_POS | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, 0},
 #endif
-		{FT5336_SCL_PORT, FT5336_SCL_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, FT5336_SCL_AF},
-		{FT5336_SDA_PORT, FT5336_SDA_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, FT5336_SCL_AF}
+		{TOUCHPAD_SCL_PORT, TOUCHPAD_SCL_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, TOUCHPAD_SCL_AF},
+		{TOUCHPAD_SDA_PORT, TOUCHPAD_SDA_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, TOUCHPAD_SCL_AF}
 	};
 
 	halGPIOInitializePins(gpioInfo, sizeof(gpioInfo) / sizeof(gpioInfo[0]));
 
 	I2CInitializeInfo i2cInfo;
-	i2cInfo.id = FT5336_I2C_MODULE;
+	i2cInfo.id = TOUCHPAD_I2C_MODULE;
 	halI2CInitialize(&i2cInfo);
 }
 
@@ -263,7 +263,7 @@ void FT5336Driver::ioWrite(
 	uint8_t reg,
 	uint8_t value) {
 
-	halI2CWriteMultiple(FT5336_I2C_MODULE, addr, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT,(uint8_t*)&value, 1);
+	halI2CWriteMultiple(TOUCHPAD_I2C_MODULE, addr, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT,(uint8_t*)&value, 1);
 }
 
 
@@ -278,7 +278,7 @@ uint8_t FT5336Driver::ioRead(
 
 	uint8_t value = 0;
 
-	halI2CReadMultiple(FT5336_I2C_MODULE, addr, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&value, 1);
+	halI2CReadMultiple(TOUCHPAD_I2C_MODULE, addr, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&value, 1);
 
 	return value;
 }

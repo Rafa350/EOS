@@ -41,9 +41,12 @@ typedef struct {                       // Parametres d'inicialitzacio
 #define HAL_SPI_CPOL_LOW          (1u << HAL_SPI_CPOL_POS)
 
 // Fase del rellotge
-#define HAL_SPI_CPHA_MASK         0x00000002u
-#define HAL_SPI_CPHA_EDGE1        0x00000000u
-#define HAL_SPI_CPHA_EDGE2        0x00000002u
+#define HAL_SPI_CPHA_POS          1u
+#define HAL_SPI_CPHA_BITS         0b1u
+#define HAL_SPI_CPHA_MASK         (HAL_SPI_CPHA_BITS << HAL_SPI_CPHA_POS)
+
+#define HAL_SPI_CPHA_EDGE1        (0u << HAL_SPI_CPHA_POS)
+#define HAL_SPI_CPHA_EDGE2        (1u << HAL_SPI_CPHA_POS)
 
 // Modus: Combinat de CPOL i CPHA
 #define HAL_SPI_MODE_MASK         (HAL_SPI_CPOL_MASK | HAL_SPI_CPHA_MASK)
@@ -99,7 +102,7 @@ bool halSPIIsBusy(uint8_t id);
 
 void halSPISendBuffer(uint8_t id, uint8_t *data, uint16_t size);
 void halSPIReceiveBuffer(uint8_t id, uint8_t *data, uint16_t size);
-void halSPITransmitBuffer(uint8_t id, uint8_t *txDatar, uint8_t *rxDatar, uint16_t size);
+void halSPITransmitBuffer(uint8_t id, uint8_t *txData, uint8_t *rxData, uint16_t size);
 
 
 #ifdef __cplusplus

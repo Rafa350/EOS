@@ -1,5 +1,5 @@
 #include "eos.h"
-#ifdef USE_DISPLAY_ILI9341_SPI
+#if defined(USE_DISPLAY_ILI9341)
 
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #include "hal/halSPI.h"
@@ -16,7 +16,7 @@ using namespace eos;
 void ILI9341Driver::lcdInitialize() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
-#ifdef ILI9341_RST_PORT
+#ifdef DISPLAY_RST_PORT
 		{DISPLAY_RST_PORT,  DISPLAY_RST_PIN,
 			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0              },
 #endif
@@ -26,7 +26,7 @@ void ILI9341Driver::lcdInitialize() {
 			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0              },
 		{DISPLAY_CLK_PORT,  DISPLAY_CLK_PIN,
 			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_CLK_AF },
-#ifdef ILI9341_MISO_PORT
+#ifdef DISPLAY_MISO_PORT
 		{DISPLAY_MISO_PORT, DISPLAY_MISO_PIN,
 			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_MISO_AF},
 #endif
@@ -54,9 +54,9 @@ void ILI9341Driver::lcdInitialize() {
 ///
 void ILI9341Driver::lcdReset() {
 
-#ifdef ILI9341_RST_PORT
+#ifdef DISPLAY_RST_PORT
     halTMRDelay(10);
-    halGPIOSetPin(ILI9341_RST_PORT, ILI9341_RST_PIN);
+    halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
     halTMRDelay(120);
 #endif
 }
@@ -124,9 +124,9 @@ void ILI9341Driver::lcdWriteData(
 ///
 uint8_t ILI9341Driver::lcdReadData() {
 
-#ifdef ILI9341_MISO_PORT
+#ifdef DISPLAY_MISO_PORT
 
-	//return halSPIRead(ILI9341_SPI_MODULE);
+	//return halSPIRead(DISPLAY_SPI_MODULE);
 	return 0;
 
 #else
@@ -135,4 +135,4 @@ uint8_t ILI9341Driver::lcdReadData() {
 }
 
 
-#endif // USE_DISPLAY_ILI9341_SPI
+#endif // USE_DISPLAY_ILI9341

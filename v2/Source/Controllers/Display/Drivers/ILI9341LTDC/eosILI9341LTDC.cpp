@@ -1,5 +1,5 @@
 #include "eos.h"
-#ifdef USE_DISPLAY_ILI9341_LTDC
+#if defined(USE_DISPLAY_ILI9341LTDC)
 
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
 #include "Controllers/Display/Drivers/eosILI9341Defs.h"

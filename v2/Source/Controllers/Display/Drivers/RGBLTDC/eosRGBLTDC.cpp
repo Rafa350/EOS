@@ -1,9 +1,9 @@
 #include "eos.h"
-#ifdef USE_DISPLAY_RGB
+#ifdef USE_DISPLAY_RGBLTDC
 
 #include "eosAssert.h"
 #include "System/eosMath.h"
-#include "Controllers/Display/Drivers/eosRGBDirect.h"
+#include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "HAL/halGPIO.h"
 #include "stdint.h"
 

@@ -9,8 +9,8 @@
 #include <stdint.h>
 
 
-#ifndef EOS_TOUCHPAD_MAX_POINTS
-#define EOS_TOUCHPAD_MAX_POINTS  5
+#ifndef TOUCHPAD_MAX_POINTS
+#define TOUCHPAD_MAX_POINTS  5
 #endif
 
 
@@ -35,9 +35,9 @@ namespace eos {
 	typedef struct {
 		uint8_t numPoints;
 		uint8_t maxPoints;
-		TouchPadAction action[EOS_TOUCHPAD_MAX_POINTS];
-		int16_t x[EOS_TOUCHPAD_MAX_POINTS];
-		int16_t y[EOS_TOUCHPAD_MAX_POINTS];
+		TouchPadAction action[TOUCHPAD_MAX_POINTS];
+		int16_t x[TOUCHPAD_MAX_POINTS];
+		int16_t y[TOUCHPAD_MAX_POINTS];
 	} TouchPadState;
 
 	class ITouchPadDriver {

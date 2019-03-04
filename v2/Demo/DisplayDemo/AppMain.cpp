@@ -3,9 +3,9 @@
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosDisplay.h"
 #include "Services/eosAppLoop.h"
-#if defined(USE_DISPLAY_ILI9341_LTDC)
+#if defined(USE_DISPLAY_ILI9341LTDC)
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
-#elif defined(USE_DISPLAY_ILI9341_SPI)
+#elif defined(USE_DISPLAY_ILI9341)
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #else
 #error No se especifico USE_DISPLAY_XXXX
@@ -114,9 +114,9 @@ void LedLoopService::onLoop() {
 ///
 void DisplayLoopService::onSetup() {
 
-#if defined(USE_DISPLAY_ILI9341_LTDC)
+#if defined(USE_DISPLAY_ILI9341LTDC)
 	driver = ILI9341LTDCDriver::getInstance();
-#elif defined(USE_DISPLAY_ILI9341_SPI)
+#elif defined(USE_DISPLAY_ILI9341)
 	driver = ILI9341Driver::getInstance();
 #else
 	#error No se especifico USE_DISPLAY_XXXX

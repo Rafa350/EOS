@@ -3,7 +3,7 @@
 
 
 #define USE_LED_LED1
-#define USE_DISPLAY_RGB
+#define USE_DISPLAY_RGBLTDC
 #define USE_TOUCHPAD_FT5336
 
 #include "board/board.h"
