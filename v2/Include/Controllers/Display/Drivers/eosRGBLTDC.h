@@ -1,5 +1,5 @@
-#ifndef __eosRGBDirect__
-#define	__eosRGBDirect__
+#ifndef __eosRGBLTDC__
+#define	__eosRGBLTDC__
 
 
 // EOS includes

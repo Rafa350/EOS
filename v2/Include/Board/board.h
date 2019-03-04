@@ -6,7 +6,7 @@
     #include "board_Custom.h"
 
 #elif defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
-    #include "board/board_PIC32_USB_STARTER_Kit_I.h"
+    #include "board/board_PIC32_USB_STARTER_KIT_I.h"
 
 #elif defined(HARDWARE_STM32F429I_DISC1)
     #include "board/board_STM32F429I_DISC1.h"
