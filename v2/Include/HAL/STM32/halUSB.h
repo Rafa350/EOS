@@ -32,7 +32,12 @@ typedef struct {
 #define HAL_USB_PORT_HS           HAL_USB_PORT_1
 
 
-bool halUSBInitialize(const USBInitializeInfo *info);
+void halUSBInitialize(void);
+
+bool halUSBHostInitialize(const USBInitializeInfo *info);
+void halUSBHostStart(USBPort port);
+void halUSBHostStop(USBPort port);
+void halUSBHostProcess(void);
 
 
 #ifdef __cplusplus
