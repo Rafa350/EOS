@@ -2,6 +2,7 @@
 #define __eosTouchPad__
 
 
+// EOS includes
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 

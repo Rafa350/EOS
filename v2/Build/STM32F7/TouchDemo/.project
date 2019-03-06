@@ -76,7 +76,7 @@
 		<link>
 			<name>src/App/BmpMain.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/TouchDemo/BmpMain.c</location>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Demo/TouchDemo/BmpMain.c</location>
 		</link>
 		<link>
 			<name>src/App/STM32F7</name>
@@ -344,14 +344,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalMemory.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/OSAL/osalMsgQueue.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalMsgQueue.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/OSAL/osalSemaphore.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalSemaphore.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/OSAL/osalTask.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/OSAL/osalTask.h</location>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/OSAL/osalTimer.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTimer.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/eosAppLoop.h</name>
@@ -362,6 +377,11 @@
 			<name>inc/Framework/EOS/Services/eosService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosService.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Collections</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core</name>
@@ -400,6 +420,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -474,6 +499,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/eosGuiTouchPad.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGuiTouchPad.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Collections/eosList.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosList.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Core/eosAllocator.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosAllocator.h</locationURI>
@@ -482,6 +517,11 @@
 			<name>inc/Framework/EOS/System/Core/eosHeapAllocator.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosHeapAllocator.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Core/eosQueue.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosQueue.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
@@ -554,6 +594,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMemory.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMsgQueue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMsgQueue.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTask.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTask.c</locationURI>
@@ -567,6 +612,11 @@
 			<name>src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/eosGuiTouchPad.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiTouchPad.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>

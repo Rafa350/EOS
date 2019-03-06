@@ -5,7 +5,7 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.806668609" moduleId="org.eclipse.cdt.core.settings" name="Debug">
 				<macros>
 					<stringMacro name="FreeRTOSPath" type="VALUE_PATH_ANY" value="C:\Users\Rafael\Documents\Projectes\AC6\STM32Cube_FW_F7_V1.8.0\Middlewares\Third_Party\FreeRTOS\Source"/>
-					<stringMacro name="EOSPath" type="VALUE_PATH_ANY" value="C:\Users\Rafael\Documents\Projectes\MPLab\EOS/v2"/>
+					<stringMacro name="EOSPath" type="VALUE_PATH_ANY" value="C:\Users\Rafael\Documents\Projectes\Embedded\EOS/v2"/>
 				</macros>
 				<externalSettings/>
 				<extensions>
@@ -203,6 +203,9 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.806668609.1624463825" name="BmpMain.c" rcbsApplicability="disable" resourcePath="src/App/BmpMain.c" toolsToInvoke="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.855980398.410512888">
+						<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.855980398.410512888" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.855980398"/>
+					</fileInfo>
 					<fileInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.806668609.803114720" name="syscalls.c" rcbsApplicability="disable" resourcePath="src/syscalls.c" toolsToInvoke="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.855980398.2027032076">
 						<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.855980398.2027032076" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.855980398">
 							<option id="gnu.c.compiler.option.dialect.std.740489671" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>

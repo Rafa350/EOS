@@ -4,7 +4,9 @@
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosDisplay.h"
 #include "System/Graphics/eosBitmap.h"
+#include "System/Core/eosQueue.h"
 #include "Services/eosAppLoop.h"
+#include "Services/Gui/eosGuiTouchPad.h"
 #include "Controllers/TouchPad/eosTouchPad.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
@@ -17,6 +19,10 @@
 
 using namespace eos;
 
+typedef struct {
+} TouchPadMessage;
+
+typedef Queue<TouchPadMessage> TouchPadQueue;
 
 class LedLoopService: public AppLoopService {
 	public:
@@ -66,9 +72,15 @@ class MyApplication: public Application {
 	private:
 		LedLoopService *ledService;
 		DisplayLoopService *displayService;
+		GuiTouchPadService *touchPadService;
+
+		TouchPadQueue *touchPadQueue;
 
     public :
         MyApplication();
+
+    private:
+        void touchPad_Notify(TouchPadEventArgs *e);
 
     protected:
         void onInitialize();
@@ -97,7 +109,21 @@ static Bitmap *createBitmap() {
 MyApplication::MyApplication() {
 
 	ledService = new LedLoopService(this);
-    displayService = new DisplayLoopService(this);
+
+	displayService = new DisplayLoopService(this);
+
+    touchPadService = new GuiTouchPadService(this);
+
+    touchPadService->setNotifyEvent<MyApplication>(this, &MyApplication::touchPad_Notify);
+    touchPadQueue = new Queue<TouchPadMessage>(10);
+}
+
+
+void MyApplication::touchPad_Notify(TouchPadEventArgs *e) {
+
+	TouchPadMessage message;
+
+	touchPadQueue->put(message, 1000);
 }
 
 
@@ -163,8 +189,8 @@ void DisplayLoopService::onSetup() {
 
     // Inicialitzacio del touch pad
     //
-    touchDriver = FT5336Driver::getInstance();
-    touch = new TouchPad(touchDriver);
+    //touchDriver = FT5336Driver::getInstance();
+    //touch = new TouchPad(touchDriver);
 
     display->setOrientation(DisplayOrientation::normal);
     screenWidth = display->getWidth();
@@ -184,7 +210,7 @@ void DisplayLoopService::onLoop() {
 
     drawBackground();
     while (true) {
-    	if (touch->getState(tps)) {
+    	/*if (touch->getState(tps)) {
     		int16_t newX = tps.x[0];
     		int16_t newY = tps.y[0];
     		if ((x != newX) || (y != newY)) {
@@ -198,8 +224,8 @@ void DisplayLoopService::onLoop() {
     			drawInfo();
     		}
     	}
-    	else
-    		Task::delay(250);
+    	else*/
+    		Task::delay(100);
     }
 }
 

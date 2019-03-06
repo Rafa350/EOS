@@ -43,6 +43,20 @@ Service::~Service() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief Funcio d'execucio de la tasca.
+/// \param pTask: La tasca.
+///
+void Service::run(
+    Task *pTask) {
+
+    // Crida continuament a onTask
+    //
+    while (true)
+        onTask();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Proces d'inicialitzacio del servei, abans de l'inici de la tasca.
 ///
 void Service::initialize() {
@@ -57,20 +71,6 @@ void Service::initialize() {
 void Service::tick() {
 
 	onTick();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Funcio d'execucio de la tasca.
-/// \param pTask: La tasca.
-///
-void Service::run(
-    Task *pTask) {
-
-    // Crida continuament a onTask
-    //
-    while (true)
-        onTask();
 }
 
 

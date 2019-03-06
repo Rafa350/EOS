@@ -326,6 +326,8 @@
 
 #ifdef USE_TOUCHPAD_FT5336
 
+#define TOUCHPAD_MAX_POINTS         5
+
 #define TOUCHPAD_I2C_ADDR           0x70
 
 #define TOUCHPAD_PAD_WIDTH          480
