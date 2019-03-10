@@ -1,2 +1,5 @@
 temp
 *.html
+*.o
+*.elf
+*.chm
