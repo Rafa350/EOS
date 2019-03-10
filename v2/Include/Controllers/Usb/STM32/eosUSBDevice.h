@@ -1,12 +1,10 @@
-#ifndef __STM32_halUSBDevice__
-#define __STM32_halUSBDevice__
+#ifndef __STM32_eosUSBDevice__
+#define __STM32_eosUSBDevice__
 
 
 // EOS includes
 //
 #include "eos.h"
-#include "hal/hal.h"
-#include "hal/halUSB.h"
 
 
 #ifdef __cplusplus

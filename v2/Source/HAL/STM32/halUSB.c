@@ -1,5 +1,5 @@
-#include "hal/halUSB.h"
-#include "hal/halGPIO.h"
+#include "HAL/halUSB.h"
+#include "HAL/halGPIO.h"
 
 
 #if defined(USE_USB_USB0) && defined(USB_USB0_HOST)

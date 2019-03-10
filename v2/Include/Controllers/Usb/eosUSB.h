@@ -1,21 +1,20 @@
-#ifndef __halUSB__
-#define	__halUSB__
+#ifndef __eosUSB__
+#define	__eosUSB__
 
 
 // EOS includes
 //
 #include "eos.h"
-#include "hal/hal.h"
 
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
-	#include "HAL/PIC32/halUSB.h"
+	#include "Controllers/Usb/PIC32/eosUSB.h"
 
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-	#include "HAL/STM32/halUSB.h"
+	#include "Controllers/Usb/STM32/eosUSB.h"
 
 #endif
 
 
-#endif // __halUSB__
+#endif // __eosUSB__
 

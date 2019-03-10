@@ -184,9 +184,9 @@ LedLoopService::LedLoopService(
 ///
 void LedLoopService::onLoop() {
 
-    MyApplication *pApp = (MyApplication*) getApplication();
-    pApp->getLed1()->pulse(500);
-    pApp->getLed2()->delayedPulse(125, 250);
+    MyApplication *app = (MyApplication*) getApplication();
+    app->getLed1()->pulse(500);
+    app->getLed2()->delayedPulse(125, 250);
     Task::delay(1000);
 }
 

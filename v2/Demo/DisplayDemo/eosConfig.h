@@ -2,8 +2,8 @@
 #define __eosConfig__
 
 
-#define USE_LED_LED1
-#define USE_LED_LED2
+#define USE_LEDS_LED1
+#define USE_LEDS_LED2
 //#define USE_DISPLAY_ILI9341
 #define USE_DISPLAY_ILI9341LTDC
 

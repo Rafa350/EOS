@@ -19,12 +19,12 @@
 // Indicadors LED
 // -----------------------------------------------------------------------
 
-#ifdef USE_LED_LED1
+#ifdef USE_LEDS_LED1
 #define LED_LED1_PORT             HAL_GPIO_PORT_G
 #define LED_LED1_PIN              HAL_GPIO_PIN_13
 #endif
 
-#ifdef USE_LED_LED2
+#ifdef USE_LEDS_LED2
 #define LED_LED2_PORT             HAL_GPIO_PORT_G
 #define LED_LED2_PIN              HAL_GPIO_PIN_14
 #endif
@@ -35,8 +35,10 @@
 // Switches
 // -----------------------------------------------------------------------
 
+#ifdef USE_SWITCHES_SW1
 #define SW_SW1_PORT               HAL_GPIO_PORT_A
 #define SW_SW1_PIN                HAL_GPIO_PIN_0
+#endif
 
 
 // -----------------------------------------------------------------------

@@ -1,13 +1,11 @@
-#ifndef __STM32_halUSBDeviceCDC__
-#define __STM32_halUSBDeviceCDC__
+#ifndef __STM32_eosUSBDeviceCDC__
+#define __STM32_eosUSBDeviceCDC__
 
 
 // EOS includes
 //
 #include "eos.h"
 #include "hal/hal.h"
-#include "hal/halUSB.h"
-#include "hal/halUSBDevice.h"
 
 
 #ifdef __cplusplus
@@ -28,4 +26,4 @@ void halUSBDeviceCDCInitialize(USBPort port, const USBDeviceCDCInitializeInfo *i
 #endif
 
 
-#endif // __STM32_halUSBDeviceCDC__
+#endif // __STM32_eosUSBDeviceCDC__
