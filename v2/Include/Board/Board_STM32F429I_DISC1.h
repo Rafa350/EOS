@@ -45,7 +45,7 @@
 // USB FS (OTG1)
 // -----------------------------------------------------------------------
 
-#ifdef USE_USB_USB0
+#if defined(USE_USB_DEVICE0) || defined(USE_USB_HOST0)
 #define USB_USB0_DP_PORT          HAL_GPIO_PORT_A
 #define USB_USB0_DP_PIN           HAL_GPIO_PIN_12
 #define USB_USB0_DP_AF            HAL_GPIO_AF10_OGT1_FS
@@ -59,15 +59,23 @@
 #define USB_USB0_ID_AF            HAL_GPIO_AF10_OGT1_FS
 #endif
 
+#define USB_USB0_VBUS_PORT        HAL_GPIO_PORT_A
+#define USB_USB0_VBUS_PIN         HAL_GPIO_PIN_9
+#define USB_USB0_VBUS_AF          HAL_GPIO_AF10_OGT1_FS
+
+//#define USB_USB0_VBUSEN_PORT      HAL_GPIO_PORT_C
+//#define USB_USB0_VBUSEN_PIN       HAL_GPIO_PIN_0
+//#define USB_USB0_VBUSEN_AF        HAL_GPIO_AF_NONE
+
 
 // -----------------------------------------------------------------------
 // USB HS (OTG2 Full speed mode)
 // -----------------------------------------------------------------------
 
-#ifdef USE_USB_USB1
+#if defined(USE_USB_DEVICE1) || defined(USE_USB_HOST1)
 #define USB_USB1_DP_PORT          HAL_GPIO_PORT_B
 #define USB_USB1_DP_PIN           HAL_GPIO_PIN_15
-#define USB_USB1_DP_AF            HAL_GPIO_AF12_OGT2_FS
+#define USB_USB1_DP_AF            HAL_GPIO_AF12_OGT2_HS
 
 #define USB_USB1_DM_PORT          HAL_GPIO_PORT_B
 #define USB_USB1_DM_PIN           HAL_GPIO_PIN_14

@@ -5,25 +5,19 @@
 // EOS includes
 //
 #include "eos.h"
-#include "hal/hal.h"
+#include "Controllers/Usb/eosUSBDevice.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace eos {
 
+	class UsbDeviceCDC: public UsbDevice {
+		public:
+			UsbDeviceCDC(USBPort port);
 
-typedef struct {
-    
-} USBDeviceInitializeCDCInfo;
+			void process();
+	};
 
-
-void halUSBDeviceCDCInitialize(USBPort port, const USBDeviceCDCInitializeInfo *info);
-
-
-#ifdef __cplusplus
 }
-#endif
 
 
 #endif // __STM32_eosUSBDeviceCDC__

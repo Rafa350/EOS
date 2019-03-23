@@ -9,11 +9,15 @@
 
 
 namespace eos {
-    
-    class UsbBase {
+
+#ifndef USB_NVIC_PRIORITY
+	#define USB_NVIC_PRIORITY  1
+#endif
+
+	class UsbBase {
         protected:
             void initializePort(USBPort port);
-    }
+    };
 
 }
 

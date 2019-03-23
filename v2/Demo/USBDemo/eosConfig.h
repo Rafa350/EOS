@@ -5,6 +5,9 @@
 #define USE_LEDS_LED1
 #define USE_LEDS_LED2
 
+#define USE_USB_DEVICE0
+
+
 #include "board/board.h"
 
 

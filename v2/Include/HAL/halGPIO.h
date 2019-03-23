@@ -8,11 +8,11 @@
 
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
-	#include "hal/PIC32/halGPIO.h"
-    #include "hal/PIC32/halCN.h"
+	#include "HAL/PIC32/halGPIO.h"
+    #include "HAL/PIC32/halCN.h"
 
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-	#include "hal/STM32/halGPIO.h"
+	#include "HAL/STM32/halGPIO.h"
 
 #endif
 

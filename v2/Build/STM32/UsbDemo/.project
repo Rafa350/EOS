@@ -83,6 +83,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -108,6 +118,26 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/USBDemo/STM32F4/Main.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Controllers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Board/Board_STM32F429I_DISC1.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/Board_STM32F429I_DISC1.h</locationURI>
@@ -118,14 +148,154 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Usb</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halUSB.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halUSB.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/eosAppLoop.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoop.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Core</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/eosApplication.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Usb</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoop.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Usb/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Usb/eosUSB.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Usb/eosUSB.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Usb/eosUSBDevice.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Usb/eosUSBDevice.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Usb/eosUSBDeviceCDC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Usb/eosUSBDeviceCDC.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halUSB.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halUSB.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Usb/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32/halGPIO.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halGPIO.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosGlobalAlloc.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosGlobalAlloc.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosHeapAllocator.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosHeapAllocator.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTask.cpp</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Usb/STM32/eosUSB.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Usb/STM32/eosUSB.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Usb/STM32/eosUSBDevice.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Usb/STM32/eosUSBDevice.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Usb/STM32/eosUSBDeviceCDC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Usb/STM32/eosUSBDeviceCDC.h</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Usb/STM32/eosUSB.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Usb/STM32/eosUSB.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Usb/STM32/eosUSBDevice.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Usb/STM32/eosUSBDevice.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Usb/STM32/eosUSBDeviceCDC.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Usb/STM32/eosUSBDeviceCDC.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
