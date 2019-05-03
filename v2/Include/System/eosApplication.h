@@ -27,7 +27,6 @@ namespace eos {
         protected:
             virtual void onInitialize();
             virtual void onTerminate();
-            virtual void onRun();
             virtual void onTick();
 
         public:

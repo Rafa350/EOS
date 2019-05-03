@@ -104,14 +104,14 @@ UsbDeviceCDC::UsbDeviceCDC(
 
 	UsbDevice(port) {
 
-	USBD_Init(hUsbDevices[port], &VCP_Desc, USB_ID_FS);
+	USBD_Init(hUsbDevices[port], &VCP_Desc, HAL_USB_PORT_FS);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief procesa les accions del port USB
 ///
-void UsbDeviceCDC::process() {
+void UsbDeviceCDC::onProcess() {
 
 }
 

@@ -99,6 +99,7 @@ void UsbService::onSetup() {
 ///
 void UsbService::onLoop() {
 
+	usbDevice->process();
 }
 
 

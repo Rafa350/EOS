@@ -4,10 +4,17 @@
 
 #define USE_LEDS_LED1
 #define USE_LEDS_LED2
-#define USE_LEDS_LED3
+#if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
+	#define USE_LEDS_LED3
+#endif
+
 #define USE_SWITCHES_SW1
+#if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
 #define USE_SWITCHES_SW2
+#endif
+#if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
 #define USE_SWITCHES_SW3
+#endif
 
 
 #include "board/board.h"

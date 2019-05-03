@@ -16,7 +16,8 @@ static const TaskPriority priority = TaskPriority::normal;
 AppLoopService::AppLoopService(
     Application *pApplication):
 
-    Service(pApplication, serviceName, stackSize, priority) {
+    Service(pApplication, serviceName, stackSize, priority),
+	initialized(false) {
 }
 
 
@@ -31,14 +32,16 @@ AppLoopService::AppLoopService(
     unsigned stackSize,
     TaskPriority priority):
 
-    Service(pApplication, serviceName, stackSize, priority) {
+    Service(pApplication, serviceName, stackSize, priority),
+	initialized(false) {
 }
 
 
 /// ---------------------------------------------------------------------
-/// \brief Inicialitzacio abans del planificador.
+/// \brief Inicialitzacio del servei abans del planificador.
 ///
 void AppLoopService::onInitialize() {
+
 }
 
 
@@ -46,24 +49,27 @@ void AppLoopService::onInitialize() {
 /// \brief Bucle d'execucio.
 ///
 void AppLoopService::onTask() {
-    
-    onSetup();
-    while (true)
-        onLoop();
+
+	if (!initialized) {
+		onSetup();
+		initialized = true;
+	}
+    onLoop();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitzacio d'ins de la tasca planificada.
+/// \brief Executa les operacions inicials del servei. S'executa
+///        nomes un cop.
 ///
 void AppLoopService::onSetup() {
-    
+
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Bucle d'execucio.
+/// \brief Executa les operacions del servei. S'executa continuament.
 ///
 void AppLoopService::onLoop() {
-    
+
 }

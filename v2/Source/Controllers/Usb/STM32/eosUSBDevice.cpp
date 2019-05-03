@@ -47,6 +47,7 @@ UsbDevice::UsbDevice(
 void UsbDevice::start() {
 
 	USBD_Start(hUsbDevices[port]);
+	onStart();
 }
 
 
@@ -55,6 +56,7 @@ void UsbDevice::start() {
 ///
 void UsbDevice::stop() {
 
+	onStop();
 	USBD_Stop(hUsbDevices[port]);
 }
 
@@ -63,5 +65,27 @@ void UsbDevice::stop() {
 /// \brief procesa les accions del port USB
 ///
 void UsbDevice::process() {
+
+	onProcess();
+}
+
+
+/// ----------------------------------------------------------------------
+///
+void UsbDevice::onStart() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+///
+void UsbDevice::onStop() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+///
+void UsbDevice::onProcess() {
 
 }

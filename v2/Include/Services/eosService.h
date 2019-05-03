@@ -22,16 +22,16 @@ namespace eos {
         private:
             Application *pApplication;
             const char *name;
-            Task task;
+            Task thread;
 
         private :
             Service(const Service &service) = delete;
             Service& operator=(const Service&) = delete;
-            void run(Task *pTask);
+            void run(Task *pThread);
 
         protected:
             inline Application *getApplication() const { return pApplication; }
-            inline Task *getTask() { return &task; }
+            inline Task *getThread() { return &thread; }
             virtual void onInitialize();
             virtual void onTask();
             virtual void onTick();
@@ -43,6 +43,7 @@ namespace eos {
 
             void initialize();
             void tick();
+            void task();
 
             inline const char *getName() const { return name; }
 

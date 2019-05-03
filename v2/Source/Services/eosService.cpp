@@ -19,7 +19,7 @@ Service::Service(
 
     pApplication(nullptr),
     name(name),
-    task(stackSize, priority, name, this) {
+    thread(stackSize, priority, name, this) {
 
     // Si s'indica l'aplicacio, s'afegeix a la llista de
 	// serveis d'aquesta.
@@ -47,17 +47,15 @@ Service::~Service() {
 /// \param pTask: La tasca.
 ///
 void Service::run(
-    Task *pTask) {
+    Task *pThread) {
 
-    // Crida continuament a onTask
-    //
     while (true)
-        onTask();
+        task();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Proces d'inicialitzacio del servei, abans de l'inici de la tasca.
+/// \brief Configura el servei, abans de l'inici del planificador.
 ///
 void Service::initialize() {
 
@@ -66,7 +64,7 @@ void Service::initialize() {
 
 
 /// ---------------------------------------------------------------------
-/// \brief Proces de la senyal tick del sistema.
+/// \brief Executa les operacions de la interrupcio tick.
 ///
 void Service::tick() {
 
@@ -75,7 +73,16 @@ void Service::tick() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la inicialitzacio del servei.
+/// \brief Executa les operacions del servei.
+///
+void Service::task() {
+
+	onTask();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa la inicialitzacio.
 ///
 void Service::onInitialize() {
 
@@ -83,16 +90,16 @@ void Service::onInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa les tasques del servei.
-//
-void Service::onTask() {
+/// \brief Procesa les operacions de la interrupcio tick.
+///
+void Service::onTick() {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la senyal tick del sistema.
-///
-void Service::onTick() {
+/// \brief Procesa les operacions del servei.
+//
+void Service::onTask() {
 
 }

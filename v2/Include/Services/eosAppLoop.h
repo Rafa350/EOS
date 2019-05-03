@@ -17,6 +17,9 @@ namespace eos {
     ///        de l'aplicacio.
     ///
     class AppLoopService: public Service {
+    	private:
+    		bool initialized;
+
         protected:
             void onInitialize();
             void onTask();

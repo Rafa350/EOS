@@ -38,14 +38,17 @@ void Application::run() {
     for (ServiceListIterator it(services); it.hasNext(); it.next())
         it.current()->initialize();
 
-    /// Notifica l'execucio de l'aplicacio
-    //
-    onRun();
-
     // Activa el planificador. Aqui comencen a executarse els
     // serveis planificats
     //
+#if  1 //def USE_SCHEDULER
     Task::startAll();
+#else
+    while (true) {
+    	for (ServiceListIterator it(services); it.hasNext(); it.next())
+    		it.current()->task();
+    }
+#endif
 
     // Notifica el final de l'aplicacio.
     //
@@ -128,10 +131,3 @@ void Application::onTick() {
 
 }
 
-
-/// ----------------------------------------------------------------------
-/// \brief Notificacio de l'execucio de l'aplicacio.
-///
-void Application::onRun() {
-
-}

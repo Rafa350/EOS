@@ -11,10 +11,11 @@
 namespace eos {
 
 	class UsbDeviceCDC: public UsbDevice {
+		protected:
+			void onProcess();
+
 		public:
 			UsbDeviceCDC(USBPort port);
-
-			void process();
 	};
 
 }

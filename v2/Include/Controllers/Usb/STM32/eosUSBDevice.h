@@ -17,13 +17,16 @@ namespace eos {
 
 		protected:
 			USBPort getPort() const { return port; }
+			virtual void onStart();
+			virtual void onStop();
+			virtual void onProcess();
 
 		public:
 			UsbDevice(USBPort port);
 
 			void start();
 			void stop();
-			virtual void process();
+			void process();
 	};
 }
 
