@@ -5,12 +5,11 @@
 // EOS includes
 //
 #include "eos.h"
-#include "hal/hal.h"
+
 
 // Standard includes
 //
 #include <stdint.h>
-#include <stdbool.h>
 
 
 #ifdef __cplusplus
@@ -22,7 +21,6 @@ typedef uint8_t USBPort;
 
 
 #define HAL_USB_PORT_0            ((USBPort) 0)
-#define HAL_USB_PORT_1            ((USBPort) 1)
 
 
 #ifdef __cplusplus

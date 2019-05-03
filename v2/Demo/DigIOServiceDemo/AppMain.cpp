@@ -21,13 +21,13 @@ class LedLoopService: public AppLoopService {
 class MyApplication: public Application {
     private:
         DigOutputService *digOutputSrv;
-#ifdef LED_LED1_PIN
+#ifdef USE_LEDS_LED1
         DigOutput *digOutput1;
 #endif
-#ifdef LED_LED2_PIN
+#ifdef USE_LEDS_LED2
         DigOutput *digOutput2;
 #endif
-#ifdef LED_LED3_PIN
+#ifdef USE_LEDS_LED3
         DigOutput *digOutput3;
 #endif
         DigInputService *digInputSvc;
@@ -52,13 +52,13 @@ class MyApplication: public Application {
         void digInput3_OnChange(DigInput *input);
 #endif
 
-#ifdef LED_LED1_PIN
+#ifdef USE_LEDS_LED1
         DigOutput *getLed1() const { return digOutput1; }
 #endif
-#ifdef LED_LED2_PIN
+#ifdef USE_LEDS_LED2
         DigOutput *getLed2() const { return digOutput2; }
 #endif
-#ifdef LED_LED3_PIN
+#ifdef USE_LEDS_LED3
         DigOutput *getLed3() const { return digOutput3; }
 #endif
 
@@ -109,19 +109,19 @@ void MyApplication::onInitialize() {
     outputInfo.openDrain = false;
     outputInfo.initState = false;
 
-#ifdef LED_LED1_PIN
+#ifdef USE_LEDS_LED1
     outputInfo.port = LED_LED1_PORT;
     outputInfo.pin = LED_LED1_PIN;
     digOutput1 = new DigOutput(digOutputSrv, &outputInfo);
 #endif
 
-#ifdef LED_LED2_PIN
+#ifdef USE_LEDS_LED2
     outputInfo.port = LED_LED2_PORT;
     outputInfo.pin = LED_LED2_PIN;
     digOutput2 = new DigOutput(digOutputSrv, &outputInfo);
 #endif
 
-#ifdef LED_LED3_PIN
+#ifdef USE_LEDS_LED3
     outputInfo.port = LED_LED3_PORT;
     outputInfo.pin = LED_LED3_PIN;
     digOutput3 = new DigOutput(digOutputSrv, &outputInfo);
@@ -185,8 +185,19 @@ LedLoopService::LedLoopService(
 void LedLoopService::onLoop() {
 
     MyApplication *app = (MyApplication*) getApplication();
+    
+#ifdef USE_LEDS_LED1    
     app->getLed1()->pulse(500);
+#endif    
+    
+#ifdef USE_LEDS_LED2    
     app->getLed2()->delayedPulse(125, 250);
+#endif    
+    
+#ifdef USE_LEDS_LED3    
+    app->getLed3()->toggle();
+#endif    
+    
     Task::delay(1000);
 }
 
