@@ -2,10 +2,10 @@
 #define	__eos__
 
 
-// Compilador Microchip XC32
+// Microchip XC32 compiler definitions
 #if defined(__XC32)
 
-	// Declara la plataforma
+	// Platform definitions
 	#if defined(__PIC32MX)
 		#define EOS_PIC32MX
 	#elif defined(__PIC32MZ)
@@ -14,15 +14,15 @@
 		#error "No se reconoce el procesador"
 	#endif
 
-	// Declara el indicador de depuracio
+	// Debugger definitions
 	#if defined(__DEBUG)
 		#define EOS_DEBUG
 	#endif
 
-// Compilador GNU/STM32
+// GNU/STM32 compiler definitions
 #elif defined(__GNUC__) && defined(STM32)
 
-	// Declara la plataforma
+	// Platform definitions
 	#if defined(STM32F4)
 		#define EOS_STM32F4
 	#elif defined(STM32F7)
@@ -31,24 +31,44 @@
 		#error "No se reconoce el procesador"
 	#endif
 
-	// Declara el indicador de depuracio
+	// Debugger definitions
 	#if defined(DEBUG)
 		#define EOS_DEBUG
 	#endif
-    
-// Compilador GNU/MINGW
+
+// GNU/MINGW compiler definitions
 #elif defined(__GNUC__) && (defined(__MINGW32__) || defined(__MINGW64__))
 
-    // Declara la plataforma
+    // Platform definitions
     #define EOS_WINDOWS
-    
-	// Declara el indicador de depuracio
+
+	// Debugger definitions
 	#if defined(DEBUG)
 		#define EOS_DEBUG
 	#endif
 
 #else
 	#error "No se reconoce el compilador"
+#endif
+
+
+// Standard includes
+//
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+
+// Platform includes
+//
+#if defined(EOS_PIC32MX)
+	#include "xc.h"
+#elif defined(EOS_PIC32MZ)
+	#include "xc.h"
+#elif defined(EOS_STM32F4)
+	#include "stm32f4xx.h"
+#elif defined(EOS_STM32F7)
+	#include "stm32f7xx.h"
 #endif
 
 

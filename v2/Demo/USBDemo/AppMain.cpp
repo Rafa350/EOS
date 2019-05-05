@@ -5,6 +5,7 @@
 #include "Services/eosAppLoop.h"
 #include "Controllers/Usb/eosUsb.h"
 #include "Controllers/Usb/eosUsbDevice.h"
+#include "Controllers/Usb/eosUsbDeviceCDC.h"
 
 
 using namespace eos;

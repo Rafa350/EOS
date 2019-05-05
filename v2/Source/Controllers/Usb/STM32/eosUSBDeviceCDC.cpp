@@ -1,9 +1,8 @@
 #include "eos.h"
 #include "Controllers/Usb/eosUSBDeviceCDC.h"
-#include "usbd_def.h"
-#include "usbd_core.h"
+#include "Controllers/Usb/STM32/usbd.h"
 #include "usbd_cdc.h"
-#include "usbd_cdc_if_template.h"
+
 
 using namespace eos;
 
@@ -37,6 +36,10 @@ static uint8_t *USBD_VCP_InterfaceStrDescriptor(USBD_SpeedTypeDef speed, uint16_
 #ifdef USB_SUPPORT_USER_STRING_DESC
 static uint8_t *USBD_VCP_USRStringDesc (USBD_SpeedTypeDef speed, uint8_t idx, uint16_t *length);
 #endif
+
+static void Get_SerialNum();
+static void IntToUnicode(uint32_t value, uint8_t *pbuf, uint8_t len);
+
 
 static USBD_DescriptorsTypeDef VCP_Desc = {
 	USBD_VCP_DeviceDescriptor,
@@ -103,8 +106,19 @@ UsbDeviceCDC::UsbDeviceCDC(
 	USBPort port):
 
 	UsbDevice(port) {
+}
 
-	USBD_Init(hUsbDevices[port], &VCP_Desc, HAL_USB_PORT_FS);
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa la inicialitzacio del dispositiu.
+///
+void UsbDeviceCDC::onInitialize() {
+
+	UsbDevice::onInitialize();
+
+	USBPort port = getPort();
+	USBD_HandleTypeDef *handle = hUsbDevices[port];
+	USBD_Init(handle, &VCP_Desc, port);
 }
 
 
@@ -236,3 +250,42 @@ uint8_t *USBD_VCP_InterfaceStrDescriptor(
 
 	return USBD_StrDesc;
 }
+
+
+static void Get_SerialNum() {
+
+	uint32_t deviceserial0, deviceserial1, deviceserial2;
+
+	deviceserial0 = *(uint32_t*)DEVICE_ID1;
+	deviceserial1 = *(uint32_t*)DEVICE_ID2;
+	deviceserial2 = *(uint32_t*)DEVICE_ID3;
+
+	deviceserial0 += deviceserial2;
+
+	if (deviceserial0 != 0) {
+		IntToUnicode (deviceserial0, &USBD_StringSerial[2] ,8);
+		IntToUnicode (deviceserial1, &USBD_StringSerial[18] ,4);
+	}
+}
+
+
+static void IntToUnicode(
+	uint32_t value,
+	uint8_t *pbuf ,
+	uint8_t len) {
+
+	uint8_t idx = 0;
+
+	for (idx = 0; idx < len; idx++) {
+		if (((value >> 28)) < 0xA) {
+			pbuf[2 * idx] = (value >> 28) + '0';
+		} else {
+			pbuf[2 * idx] = (value >> 28) + 'A' - 10;
+		}
+
+		value = value << 4;
+
+		pbuf[ 2* idx + 1] = 0;
+	}
+}
+

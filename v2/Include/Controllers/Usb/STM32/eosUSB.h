@@ -15,8 +15,19 @@ namespace eos {
 #endif
 
 	class UsbBase {
-        protected:
-            void initializePort(USBPort port);
+		private:
+			USBPort port;
+
+		protected:
+			virtual void onInitialize();
+
+        public:
+            UsbBase(USBPort port);
+            virtual ~UsbBase() {}
+
+            USBPort getPort() const { return port; }
+
+            void initialize();
     };
 
 }

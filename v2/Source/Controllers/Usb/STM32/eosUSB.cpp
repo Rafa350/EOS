@@ -1,12 +1,9 @@
 #include "eos.h"
 #include "Controllers/Usb/eosUSB.h"
+#include "Controllers/Usb/STM32/usbd.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halUSB.h"
-#if defined(EOS_STM32F4)
-#include "stm32f4xx_hal.h"
-#elif defined(STM32F7)
-#include "stm32f7xx_hal.h"
-#endif
+
 
 
 using namespace eos;
@@ -27,11 +24,30 @@ extern PCD_HandleTypeDef hpcd_HS;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el port USB
-/// \param port: Identificador del port.
+/// \brief Contructor de l'objecte.
+/// \param port: Identificador del port USB
 ///
-void UsbBase::initializePort(
-	USBPort port) {
+UsbBase::UsbBase(
+	USBPort port):
+
+	port(port) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza el port USB
+///
+void UsbBase::initialize() {
+
+	onInitialize();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza els pins, les interrupcions, etc.
+///
+void UsbBase::onInitialize() {
 
 #if defined(USE_USB_DEVICE0) || defined(USE_USB_HOST0)
 	static GPIOInitializePinInfo fsInitInfo[] = {

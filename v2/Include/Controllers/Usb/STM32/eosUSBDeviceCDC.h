@@ -12,10 +12,12 @@ namespace eos {
 
 	class UsbDeviceCDC: public UsbDevice {
 		protected:
+			void onInitialize();
 			void onProcess();
 
 		public:
 			UsbDeviceCDC(USBPort port);
+			virtual ~UsbDeviceCDC() {}
 	};
 
 }

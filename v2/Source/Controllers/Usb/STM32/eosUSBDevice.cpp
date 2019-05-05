@@ -1,7 +1,6 @@
 #include "eos.h"
 #include "Controllers/Usb/eosUSBDevice.h"
-#include "usbd_def.h"
-#include "usbd_core.h"
+#include "Controllers/Usb/STM32/usbd.h"
 
 
 using namespace eos;
@@ -35,9 +34,18 @@ USBD_HandleTypeDef *hUsbDevices[2] = {
 UsbDevice::UsbDevice(
 	USBPort port):
 
-	port(port) {
+	UsbBase(port) {
+}
 
-	initializePort(port);
+
+/// ----------------------------------------------------------------------
+/// \brief Comprova si esta preparat.
+/// \return True si esta preparat, false en cas conmtrari.
+
+bool UsbDevice::isReady() const {
+
+	USBD_HandleTypeDef *handle = hUsbDevices[getPort()];
+	return handle->dev_state == USBD_STATE_CONFIGURED;
 }
 
 
@@ -46,7 +54,6 @@ UsbDevice::UsbDevice(
 ///
 void UsbDevice::start() {
 
-	USBD_Start(hUsbDevices[port]);
 	onStart();
 }
 
@@ -57,7 +64,6 @@ void UsbDevice::start() {
 void UsbDevice::stop() {
 
 	onStop();
-	USBD_Stop(hUsbDevices[port]);
 }
 
 
@@ -71,20 +77,27 @@ void UsbDevice::process() {
 
 
 /// ----------------------------------------------------------------------
+/// \bried Activa el port USB.
 ///
 void UsbDevice::onStart() {
 
+	USBD_HandleTypeDef *handle = hUsbDevices[getPort()];
+	USBD_Start(handle);
 }
 
 
 /// ----------------------------------------------------------------------
-///
+/// \brief Desactiva el port USB.
+
 void UsbDevice::onStop() {
 
+	USBD_HandleTypeDef *handle = hUsbDevices[getPort()];
+	USBD_Stop(handle);
 }
 
 
 /// ----------------------------------------------------------------------
+/// \brief Procesa les accions del port USB.
 ///
 void UsbDevice::onProcess() {
 
