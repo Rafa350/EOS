@@ -14,10 +14,12 @@ namespace eos {
 
     class Application {
         private:
+            class Impl;
             typedef List<Service*> ServiceList;
             typedef ListIterator<Service*> ServiceListIterator;
 
         private:
+            Impl *pImpl;
             ServiceList services;
 
         private:
@@ -39,8 +41,7 @@ namespace eos {
             void addService(Service *pService);
             void removeService(Service *pService);
             Service *getService(const char *name) const;
-    };
-
+    };        
 }
 
 
