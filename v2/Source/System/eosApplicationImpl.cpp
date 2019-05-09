@@ -1,30 +1,11 @@
 #include "eos.h"
+#include "eosAssert.h"
+#include "System/eosApplicationImpl.h"
 #include "Services/eosService.h"
 
 
 using namespace eos;
 
-
-class Application::Impl {
-
-    private:
-        typedef List<Service*> ServiceList;
-        typedef ListIterator<Service*> ServiceListIterator;
-
-    private:
-        ServiceList services;
-
-    public:
-        Impl();
-
-        void initializeServices();
-        void runServices();
-
-        void addService(Service *pService);       
-        void removeService(Service *pService);
-        void removeServices();    
-};   
-    
     
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
@@ -40,7 +21,13 @@ Application::Impl::Impl() {
 ///
 void Application::Impl::addService(
     Service *pService) {    
+    
+    // Precondicions
+    //
+    eosAssert(pService != nullptr);
 
+    // Afegeix l'objecte a la llista
+    //
     services.add(pService);
 }
 
@@ -52,6 +39,12 @@ void Application::Impl::addService(
 void Application::Impl::removeService(
     Service *pService) {    
 
+    // Precondicions
+    //
+    eosAssert(pService != nullptr);
+
+    // Elimina l'objecte de la llista
+    //
     services.remove(pService);
 }
 
@@ -61,6 +54,8 @@ void Application::Impl::removeService(
 ///
 void Application::Impl::removeServices() {
 
+    // Elimina el primer element de la llista mentre no estigui buida.
+    //
     while (!services.isEmpty())
         removeService(services.getFront());
 }
@@ -71,6 +66,8 @@ void Application::Impl::removeServices() {
 ///
 void Application::Impl::initializeServices() {
 
+    // Inicialitza els serveis de la llista, un a un.
+    //
     for (ServiceListIterator it(services); it.hasNext(); it.next())
         it.current()->initialize();
 }
@@ -85,7 +82,11 @@ void Application::Impl::runServices() {
     Task::startAll();
     
 #else
-    while (true) {
+    bool done = false;
+    while (!done) {
+        
+        // Executa la tasca de cada servei, un a un
+        //
     	for (ServiceListIterator it(services); it.hasNext(); it.next())
     		it.current()->task();
     }

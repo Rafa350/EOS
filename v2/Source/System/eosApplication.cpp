@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosApplication.h"
+#include "System/eosApplicationImpl.h"
 #include "Services/eosService.h"
 
 
@@ -10,7 +11,13 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
-Application::Application() {
+Application::Application():
+
+    pImpl(new Impl()) {
+
+    // Precondicions
+    //
+    eosAssert(pImpl == nullptr);
 }
 
 
@@ -18,9 +25,16 @@ Application::Application() {
 /// \brief Destructor. Si conte serveis, els elimina de la llista.
 ///
 Application::~Application() {
+    
+    // Precondicions
+    //
+    eosAssert(pImpl != nullptr);
 
-    while (!services.isEmpty())
-        removeService(services.getFront());
+    // Elimina tots els serveis
+    //
+    pImpl->removeServices();
+    
+    delete pImpl;
 }
 
 
@@ -29,26 +43,21 @@ Application::~Application() {
 ///
 void Application::run() {
 
+    // Precondicions
+    //
+    eosAssert(pImpl != nullptr);
+
     // Notifica la inicialitzacio de l'aplicacio.
     //
     onInitialize();
 
     // Inicialitzacio tots els serveis.
     //
-    for (ServiceListIterator it(services); it.hasNext(); it.next())
-        it.current()->initialize();
-
-    // Activa el planificador. Aqui comencen a executarse els
-    // serveis planificats
+    pImpl->initializeServices();
+    
+    // Executa els serveis fins que acavi l'aplicacio.
     //
-#if  1 //def USE_SCHEDULER
-    Task::startAll();
-#else
-    while (true) {
-    	for (ServiceListIterator it(services); it.hasNext(); it.next())
-    		it.current()->task();
-    }
-#endif
+    pImpl->runServices();
 
     // Notifica el final de l'aplicacio.
     //
@@ -65,8 +74,8 @@ void Application::tick() {
 
 	// Notifica la senyal tick a tots els serveis.
     //
-    for (ServiceListIterator it(services); it.hasNext(); it.next())
-        it.current()->tick();
+    //for (ServiceListIterator it(services); it.hasNext(); it.next())
+//        it.current()->tick();
 }
 
 
@@ -77,13 +86,15 @@ void Application::tick() {
 void Application::addService(
     Service *pService) {
 
-    eosArgumentIsNotNull(pService);
-
+    // Precondicions
+    //
+    eosAssert(pImpl != nullptr);
     eosAssert(pService != nullptr);
-    eosAssert(pService->pApplication == nullptr);
 
+    /// Afegeix el servei
+    //
+    pImpl->addService(pService);
     pService->pApplication = this;
-    services.add(pService);
 }
 
 
@@ -94,13 +105,15 @@ void Application::addService(
 void Application::removeService(
     Service *pService) {
 
-    eosArgumentIsNotNull(pService);
-
+    // Precondicions
+    //
+    eosAssert(pImpl != nullptr);
     eosAssert(pService != nullptr);
-    eosAssert(pService->pApplication == this);
 
-    services.remove(pService);
+    // Elimina el servei
+    //
     pService->pApplication = nullptr;
+    pImpl->removeService(pService);
 }
 
 

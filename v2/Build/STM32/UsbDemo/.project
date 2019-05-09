@@ -378,6 +378,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Usb/STM32/usbd.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Usb/STM32/usbd_cdc_interface.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Usb/STM32/usbd_cdc_interface.h</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Usb/STM32/eosUSB.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Usb/STM32/eosUSB.cpp</locationURI>
@@ -391,6 +396,11 @@
 			<name>src/Framework/EOS/Controllers/Usb/STM32/eosUSBDeviceCDC.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Usb/STM32/eosUSBDeviceCDC.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Usb/STM32/usbd_cdc_interface.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Usb/STM32/usbd_cdc_interface.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Usb/STM32/usbd_conf.c</name>

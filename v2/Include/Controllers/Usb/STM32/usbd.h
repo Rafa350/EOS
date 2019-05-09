@@ -1,5 +1,5 @@
-#ifndef USBD_H
-#define USBD_H
+#ifndef __USBD_H
+#define __USBD_H
 
 
 #include "usbd_conf.h"
@@ -7,4 +7,4 @@
 #include "usbd_core.h"
 
 
-#endif // USBD_H
+#endif // __USBD_H

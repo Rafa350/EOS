@@ -92,6 +92,7 @@ void LedService::onLoop() {
 void UsbService::onSetup() {
 
 	usbDevice = new UsbDeviceCDC(HAL_USB_PORT_0);
+	usbDevice->initialize();
 }
 
 

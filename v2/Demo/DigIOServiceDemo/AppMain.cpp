@@ -9,15 +9,6 @@
 using namespace eos;
 
 
-class LedLoopService: public AppLoopService {
-	public:
-		LedLoopService(Application *application);
-
-    protected:
-		void onLoop();
-};
-
-
 class MyApplication: public Application {
     private:
         DigOutputService *digOutputSrv;
@@ -65,6 +56,16 @@ class MyApplication: public Application {
     protected:
         void onInitialize();
 };
+
+
+class LedLoopService: public AppLoopService {
+	public:
+		LedLoopService(Application *application);
+
+    protected:
+		void onLoop();
+};
+
 
 
 /// ---------------------------------------------------------------------------

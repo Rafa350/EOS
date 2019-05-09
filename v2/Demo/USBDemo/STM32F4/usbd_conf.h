@@ -1,5 +1,5 @@
-#ifndef USBD_CONF_H
-#define USBD_CONF_H
+#ifndef __USBD_CONF_H
+#define __USBD_CONF_H
 
 
 // EOS includes
@@ -18,14 +18,23 @@
 #endif
 
 
-#define USBD_MAX_STR_DESC_SIZ 0x100
-
+// Memory options
+//
 #define USBD_malloc		osalMemoryAlloc
 #define USBD_free		osalMemoryFree
 #define USBD_memset		memset
 #define USBD_memcpy		memcpy
 
+// General options
+//
+#define USBD_MAX_NUM_INTERFACES               1
+#define USBD_MAX_NUM_CONFIGURATION            1
+#define USBD_MAX_STR_DESC_SIZ                 0x100
+#define USBD_SUPPORT_USER_STRING              0
+#define USBD_SELF_POWERED                     1
+#define USBD_DEBUG_LEVEL                      0
 
-#endif // USBD_CONF
+
+#endif // __USBD_CONF_H
 
 

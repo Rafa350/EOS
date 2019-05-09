@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "Controllers/Usb/eosUSBDeviceCDC.h"
 #include "Controllers/Usb/STM32/usbd.h"
+#include "Controllers/Usb/STM32/usbd_cdc_interface.h"
 #include "usbd_cdc.h"
 
 
@@ -118,8 +119,10 @@ void UsbDeviceCDC::onInitialize() {
 
 	USBPort port = getPort();
 	USBD_HandleTypeDef *handle = hUsbDevices[port];
+
 	USBD_Init(handle, &VCP_Desc, port);
-}
+	USBD_RegisterClass(handle, USBD_CDC_CLASS);
+	USBD_CDC_RegisterInterface(handle, &USBD_CDC_fops);}
 
 
 /// ----------------------------------------------------------------------

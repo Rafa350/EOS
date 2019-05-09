@@ -46,6 +46,7 @@
               <itemPath>../../../Include/System/Core/eosAllocator.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
+            <itemPath>../../../Source/System/eosApplicationImpl.h</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
           <itemPath>../../../Include/eosAssert.h</itemPath>
@@ -297,7 +298,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\DigIOServiceDemo;..\..\..\Demo\DigIOServiceDemo\PIC32;..\..\..\Include;C:\Library\Microchip\Harmony\v2_05_01\framework;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\include;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\DigIOServiceDemo;..\..\..\Demo\DigIOServiceDemo\PIC32;..\..\..\Include;..\..\..\Source;C:\Library\Microchip\Harmony\v2_05_01\framework;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\include;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="true"/>
         <property key="mdtcm" value=""/>
