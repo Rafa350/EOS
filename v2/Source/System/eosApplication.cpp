@@ -1,7 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosApplication.h"
-#include "System/eosApplicationImpl.h"
 #include "Services/eosService.h"
 
 
@@ -11,13 +10,8 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
-Application::Application():
+Application::Application() {
 
-    pImpl(new Impl()) {
-
-    // Precondicions
-    //
-    eosAssert(pImpl == nullptr);
 }
 
 
@@ -25,16 +19,10 @@ Application::Application():
 /// \brief Destructor. Si conte serveis, els elimina de la llista.
 ///
 Application::~Application() {
-    
-    // Precondicions
-    //
-    eosAssert(pImpl != nullptr);
 
     // Elimina tots els serveis
     //
-    pImpl->removeServices();
-    
-    delete pImpl;
+    removeServices();
 }
 
 
@@ -53,11 +41,11 @@ void Application::run() {
 
     // Inicialitzacio tots els serveis.
     //
-    pImpl->initializeServices();
+    initializeServices();
     
     // Executa els serveis fins que acavi l'aplicacio.
     //
-    pImpl->runServices();
+    runServices();
 
     // Notifica el final de l'aplicacio.
     //
@@ -74,8 +62,41 @@ void Application::tick() {
 
 	// Notifica la senyal tick a tots els serveis.
     //
-    //for (ServiceListIterator it(services); it.hasNext(); it.next())
-//        it.current()->tick();
+    for (ServiceListIterator it(services); it.hasNext(); it.next())
+        it.current()->tick();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza els serveis.
+///
+void Application::initializeServices() {
+
+    // Inicialitza els serveis de la llista, un a un.
+    //
+    for (ServiceListIterator it(services); it.hasNext(); it.next())
+        it.current()->initialize();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa les tasques del servei.
+///
+void Application::runServices() {
+
+#if  1 //def USE_SCHEDULER
+    Task::startAll();
+    
+#else
+    bool done = false;
+    while (!done) {
+        
+        // Executa la tasca de cada servei, un a un
+        //
+    	for (ServiceListIterator it(services); it.hasNext(); it.next())
+    		it.current()->task();
+    }
+#endif
 }
 
 
@@ -93,7 +114,7 @@ void Application::addService(
 
     /// Afegeix el servei
     //
-    pImpl->addService(pService);
+    services.add(pService);
     pService->pApplication = this;
 }
 
@@ -113,7 +134,17 @@ void Application::removeService(
     // Elimina el servei
     //
     pService->pApplication = nullptr;
-    pImpl->removeService(pService);
+    services.remove(pService);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Elimina tots els serveis de l'aplicacio.
+///
+void Application::removeServices() {
+    
+    while (!services.isEmpty())
+        services.removeAt(0);
 }
 
 

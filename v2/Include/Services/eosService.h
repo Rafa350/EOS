@@ -27,6 +27,7 @@ namespace eos {
         private :
             Service(const Service &service) = delete;
             Service& operator=(const Service&) = delete;
+            
             void run(Task *pThread);
 
         protected:

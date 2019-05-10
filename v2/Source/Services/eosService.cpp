@@ -34,7 +34,7 @@ Service::Service(
 ///
 Service::~Service() {
 
-	// Al drestruir-se, s'elimina ell mateix de la llista de serveis
+	// Al destruir-se, s'elimina ell mateix de la llista de serveis
 	// de l'aplicacio.
 	//
     if (pApplication != nullptr)

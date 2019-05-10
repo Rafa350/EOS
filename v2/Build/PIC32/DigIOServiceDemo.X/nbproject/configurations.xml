@@ -46,7 +46,6 @@
               <itemPath>../../../Include/System/Core/eosAllocator.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
-            <itemPath>../../../Source/System/eosApplicationImpl.h</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
           <itemPath>../../../Include/eosAssert.h</itemPath>
@@ -105,7 +104,6 @@
               <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
-            <itemPath>../../../Source/System/eosApplicationImpl.cpp</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">

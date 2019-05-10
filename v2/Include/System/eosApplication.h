@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "System/Collections/eosList.h"
 
 
 namespace eos {
@@ -13,14 +14,15 @@ namespace eos {
 
     class Application {
         private:
-            class Impl;
+            typedef List<Service*> ServiceList;
+            typedef ListIterator<Service*> ServiceListIterator;
 
         private:
-            Impl *pImpl;
+            ServiceList services;
 
         private:
-            Application(const Application&) = delete;
-            Application& operator=(const Application&) = delete;
+            void initializeServices();
+            void runServices();
 
         protected:
             virtual void onInitialize();
@@ -29,6 +31,7 @@ namespace eos {
             
         public:
             Application();
+            Application(const Application&) = delete;
             virtual ~Application();
             
             void run();
@@ -36,7 +39,10 @@ namespace eos {
             
             void addService(Service *pService);
             void removeService(Service *pService);
+            void removeServices();
             Service *getService(const char *name) const;
+
+            Application& operator=(const Application&) = delete;
     };        
 }
 

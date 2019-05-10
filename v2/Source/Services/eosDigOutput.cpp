@@ -51,8 +51,8 @@ DigOutputService::~DigOutputService() {
 void DigOutputService::add(
     DigOutput *pOutput) {
 
-    eosArgumentIsNotNull(pOutput);
-
+    // Precondicions
+    //
     eosAssert(pOutput != nullptr);
     eosAssert(pOutput->pService == nullptr);
 
@@ -68,8 +68,8 @@ void DigOutputService::add(
 void DigOutputService::remove(
     DigOutput *pOutput) {
 
-    eosArgumentIsNotNull(pOutput);
-
+    // Precondicions
+    //
     eosAssert(pOutput != nullptr);
     eosAssert(pOutput->pService == this);
 
@@ -132,6 +132,8 @@ void DigOutputService::timerInterrupt(
 	TMRTimer timer,
 	void *pParam) {
 
+    // Precondicions
+    //
     eosAssert(pParam != nullptr);
 
 	DigOutputService *pService = reinterpret_cast<DigOutputService*>(pParam);
@@ -153,7 +155,9 @@ DigOutput::DigOutput(
 	delayCnt(0),
 	widthCnt(0) {
 
-    eosArgumentIsNotNull(pInfo);
+    // Precondicions
+    //
+    eosAssert(pInfo != nullptr);
 
     if (pService != nullptr)
         pService->add(this);
