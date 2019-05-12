@@ -33,11 +33,11 @@ DigInputService::DigInputService(
 /// \brief Afegeix una entrada al servei.
 /// \param pInput: L'entrada a afeigir.
 ///
-void DigInputService::add(
+void DigInputService::addInput(
     DigInput *pInput) {
-    
-    eosArgumentIsNotNull(pInput);
-    
+
+    // Prerequisits
+    //
     eosAssert(pInput != nullptr);
     eosAssert(pInput->pService == nullptr);
 
@@ -50,16 +50,26 @@ void DigInputService::add(
 /// \brieg Elimina una entrada del servei.
 /// \param pInput:La entrada a eliminar.
 ///
-void DigInputService::remove(
+void DigInputService::removeInput(
     DigInput *pInput) {
 
-    eosArgumentIsNotNull(pInput);
-
+    // Precondicions
+    //
     eosAssert(pInput != nullptr);
     eosAssert(pInput->pService == this);
 
     pInput->pService = nullptr;
     inputs.remove(pInput);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Elimina totes les entrades del servei.
+///
+void DigInputService::removeInputs() {
+    
+    while (!inputs.isEmpty())
+        inputs.remove(inputs.getFront());
 }
 
 
@@ -121,13 +131,15 @@ DigInput::DigInput(
     pService(nullptr),
     evChange(nullptr) {
        
-    eosArgumentIsNotNull(pInfo);
+    // Prerequisits
+    //
+    eosAssert(pInfo != nullptr);
     
     port = pInfo->port;
     pin = pInfo->pin;
 
     if (pService != nullptr)
-        pService->add(this);
+        pService->addInput(this);
 }
 
 
@@ -137,7 +149,7 @@ DigInput::DigInput(
 DigInput::~DigInput() {
 
     if (pService != nullptr)
-        pService->remove(this);
+        pService->removeInput(this);
 
     if (evChange != nullptr)
         delete evChange;

@@ -9,18 +9,12 @@
 // STM32 includes
 //
 #if defined(EOS_STM32F4)
-#include "stm32f4xx.h"
 #include "stm32f4xx_hal_gpio_ex.h"
 #elif defined(EOS_STM32F7)
-#include "stm32f7xx.h"
 #include "stm32f7xx_hal_gpio_ex.h"
 #else
 #error Hardware no soportado
 #endif
-
-// Standard includes
-//
-#include "stdint.h"
 
 
 #ifdef	__cplusplus

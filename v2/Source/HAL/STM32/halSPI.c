@@ -1,3 +1,5 @@
+#include "eos.h"
+#include "eosAssert.h"
 #include "hal/halSPI.h"
 #if defined(EOS_STM32F4)
 #include "stm32f4xx_hal.h"
@@ -101,6 +103,10 @@ static SPI_HandleTypeDef *GetHandle(
 static SPI_HandleTypeDef *PrepareHandle(
 	const SPIInitializeInfo *info) {
 
+	// Precondicions
+	//
+	eosAssert(info != NULL);
+
 	static SPI_TypeDef * const instances[HAL_SPI_ID_MAX] = {
 		SPI1,
 		SPI2,
@@ -121,6 +127,8 @@ static SPI_HandleTypeDef *PrepareHandle(
 		SPI_BAUDRATEPRESCALER_256
 	};
 
+	// Configura el modul
+	//
 	SPI_HandleTypeDef *handle = GetHandle(info->id);
 	handle->Instance = instances[info->id];
 	handle->Init.BaudRatePrescaler = baudRateTbl[info->clockDiv];
@@ -145,31 +153,51 @@ static SPI_HandleTypeDef *PrepareHandle(
 static void InitializeModule(
 	SPI_HandleTypeDef *handle) {
 
+	// Precondicions
+	//
+	eosAssert(handle != NULL);
+
+	// Inicialitza el modul
+	//
 	HAL_SPI_Init(handle);
 	__HAL_SPI_ENABLE(handle);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brier Desinitialitza el modul SPI
+/// \brier Desinicialitza el modul SPI
 /// \param handle: El handler del modul.
 ///
 static void DeinitializeModule(
 	SPI_HandleTypeDef *handle) {
 
+	// Precondicions
+	//
+	eosAssert(handle != NULL);
+
+	// Desinitcialitza el modul
+	//
 	HAL_SPI_DeInit(handle);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicilitza wl modul SPI.
+/// \brief Inicilitza el modul SPI.
 /// \param info: Parametres d'inicialitzacio.
 ///
 void halSPIInitialize(
 	const SPIInitializeInfo *info) {
 
+	// Precondicions
+	//
+	eosAssert(info != NULL);
+
+	// Activa el rellotge
+	//
 	EnableClock(info->id);
 
+	// Inicialitza el modul
+	//
 	SPI_HandleTypeDef *handle = PrepareHandle(info);
     InitializeModule(handle);
 }
@@ -182,6 +210,8 @@ void halSPIInitialize(
 void halSPIShutdown(
 	uint8_t id) {
 
+	// Desinicialitza el modul
+	//
 	DeinitializeModule(GetHandle(id));
 	DisableClock(id);
 }
@@ -197,6 +227,12 @@ void halSPISendBuffer(
 	uint8_t *data,
 	uint16_t size) {
 
+	// Precondicions
+	//
+	eosAssert(data != NULL);
+	eosAssert(size != 0);
+
+	// Transfereix el bloc de dades
+	//
 	HAL_SPI_Transmit(GetHandle(id), data, size, 100);
 }
-

@@ -7,16 +7,12 @@
 #include "eos.h"
 #include "System/Core/eosAllocator.h"
 
-// Standard includes
-//
-#include "stddef.h"
-
 
 namespace eos {
 
     class HeapAllocator: public IAllocator {
         public:
-            void *allocate(size_t size);
+            void *allocate(unsigned size);
             void deallocate(void *p);
     };
 }

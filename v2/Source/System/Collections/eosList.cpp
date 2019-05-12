@@ -181,7 +181,7 @@ void GenericList::clear() {
 /// \return El index del element. UINT32_MAX en cas que no el trobi.
 ///
 unsigned GenericList::indexOf(
-    const void *element) {
+    const void *element) const {
 
     bool result = UINT32_MAX;
 

@@ -41,8 +41,9 @@ namespace eos {
 
         public:
             DigInputService(Application *pApplication, const DigInputServiceInitializeInfo *pInfo);
-            void add(DigInput *pInput);
-            void remove(DigInput *pInput);
+            void addInput(DigInput *pInput);
+            void removeInput(DigInput *pInput);
+            void removeInputs();
     };
 
     /// \brief Clase que impementa una entrada digital

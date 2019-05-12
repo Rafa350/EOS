@@ -37,7 +37,7 @@ HTimer osalTimerCreate(
     if (hTimer == NULL)
     	return NULL;
 
-    // Para el temporitzador, per que FreeRTOS el crea un marxa.
+    // Para el temporitzador, per que FreeRTOS el crea en marxa.
     //
     xTimerStop(hTimer, 0);
 

@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 
-void *osalMemoryAlloc(size_t size);
+void *osalMemoryAlloc(unsigned size);
 void osalMemoryFree(void *p);
 
 

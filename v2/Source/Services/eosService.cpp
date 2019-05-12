@@ -6,6 +6,9 @@
 using namespace eos;
 
 
+int Service::idCount = 0;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor
 /// \param application: Aplicacio al que pertany.
@@ -17,6 +20,7 @@ Service::Service(
     unsigned stackSize,
     TaskPriority priority):
 
+    id(idCount++),
     pApplication(nullptr),
     name(name),
     thread(stackSize, priority, name, this) {

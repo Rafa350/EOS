@@ -163,7 +163,7 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/stm32f4xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller</name>
+			<name>src/Framework/EOS/Controllers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -233,6 +233,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/GPIO</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -298,7 +303,7 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display</name>
+			<name>src/Framework/EOS/Controllers/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -353,6 +358,11 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/GPIO/eosGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/GPIO/eosGPIO.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/STM32/halGPIO.h</locationURI>
@@ -370,7 +380,7 @@
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/HAL/STM32/halTMR.h</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
@@ -393,7 +403,7 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosFont.h</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers</name>
+			<name>src/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -498,12 +508,12 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/Drivers/eosILI9341LTDC.h</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341</name>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341LDTC</name>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341LDTC</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -538,17 +548,17 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas8pt.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controller/Display/Drivers/ILI9341LDTC/eosILI9341LTDC.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341LDTC/eosILI9341LTDC.cpp</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</locationURI>
 		</link>

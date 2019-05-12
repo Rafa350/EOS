@@ -6,14 +6,6 @@
 //
 #include "eos.h"
 
-// Standard includes
-//
-#include "stdint.h"
-
-// PIC32 includes
-//
-#include "xc.h"
-
 
 #ifdef	__cplusplus
 extern "C" {

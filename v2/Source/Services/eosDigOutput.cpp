@@ -39,8 +39,7 @@ DigOutputService::DigOutputService(
 ///
 DigOutputService::~DigOutputService() {
 
-    while (!outputs.isEmpty())
-        outputs.remove(outputs.getFront());
+    removeOutputs();
 }
 
 
@@ -48,7 +47,7 @@ DigOutputService::~DigOutputService() {
 /// \brief Afegeig una sortida al servei.
 /// \param pOutput: La sortida a afeigir.
 ///
-void DigOutputService::add(
+void DigOutputService::addOutput(
     DigOutput *pOutput) {
 
     // Precondicions
@@ -65,7 +64,7 @@ void DigOutputService::add(
 /// \brief Elimina una sortida del servei.
 /// \param output: La sortida a eliminar.
 ///
-void DigOutputService::remove(
+void DigOutputService::removeOutput(
     DigOutput *pOutput) {
 
     // Precondicions
@@ -79,10 +78,22 @@ void DigOutputService::remove(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Elimina totes les sortides del servei.
+///
+void DigOutputService::removeOutputs() {
+    
+    while (!outputs.isEmpty())
+        outputs.remove(outputs.getFront());
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Inicialitza el servei.
 ///
 void DigOutputService::onInitialize() {
 
+    // Configura el temporitzador
+    //
 	TMRInitializeInfo tmrInfo;
 	tmrInfo.timer = timer;
 #if defined(EOS_PIC32MX)
@@ -100,10 +111,17 @@ void DigOutputService::onInitialize() {
 	tmrInfo.pIrqCall = timerInterrupt;
 	tmrInfo.pIrqParams = this;
 	halTMRInitialize(&tmrInfo);
-    halTMRStartTimer(timer);
 
+    // Inicialitza les sortides
+    //
     for (DigOutputListIterator it(outputs); it.hasNext(); it.next())
         it.current()->initialize();
+
+    // Inicia el temporitzador
+    //
+    halTMRStartTimer(timer);
+    
+    Service::onInitialize();
 }
 
 
@@ -137,6 +155,7 @@ void DigOutputService::timerInterrupt(
     eosAssert(pParam != nullptr);
 
 	DigOutputService *pService = reinterpret_cast<DigOutputService*>(pParam);
+    eosAssert(pService != nullptr);
 	pService->timeOut();
 }
 
@@ -160,7 +179,7 @@ DigOutput::DigOutput(
     eosAssert(pInfo != nullptr);
 
     if (pService != nullptr)
-        pService->add(this);
+        pService->addOutput(this);
 
     port = pInfo->port;
     pin = pInfo->pin;
@@ -176,7 +195,7 @@ DigOutput::DigOutput(
 DigOutput::~DigOutput() {
 
     if (pService != nullptr)
-        pService->remove(this);
+        pService->removeOutput(this);
 }
 
 

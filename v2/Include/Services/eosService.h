@@ -20,6 +20,8 @@ namespace eos {
 
     class Service: private IRunable {
         private:
+            static int idCount;
+            int id;
             Application *pApplication;
             const char *name;
             Task thread;
@@ -46,8 +48,8 @@ namespace eos {
             void tick();
             void task();
 
-            inline const char *getName() const { return name; }
-
+            inline int getId() const { return id; }
+            
         friend void Application::addService(Service *pService);
         friend void Application::removeService(Service *pService);
     };

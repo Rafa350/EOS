@@ -36,7 +36,7 @@ namespace eos {
             void removeBack();
             inline unsigned getCount() const { return count; }
             void *get(unsigned index) const;
-            unsigned indexOf(const void *element);
+            unsigned indexOf(const void *element) const;
             bool isEmpty() const { return count > 0; }
     };
         
@@ -90,7 +90,7 @@ namespace eos {
             /// \brief Obte l'index del element especificat.
             /// \param element: El element.
             ///
-            inline unsigned indexOf(const T &element) {
+            inline unsigned indexOf(const T &element) const {
                 
                 return GenericList::indexOf(&element);
             }
@@ -201,7 +201,7 @@ namespace eos {
             }
             
         private:
-            ListIterator(const ListIterator &iterator);
+            ListIterator(const ListIterator &iterator) = delete;
     };
 }
 

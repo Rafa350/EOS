@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "osal/osalMemory.h"
 #include "FreeRTOS.h"
 
@@ -9,12 +10,11 @@
 /// \return Adressa del bloc de memoria obtingut. NULL en cas d'error.
 ///
 void *osalMemoryAlloc(
-	size_t size) {
+	unsigned size) {
 
-	// Comprova si els parametres son correctes.
-	//
-	if (size == 0)
-		return NULL;
+    // Prerequisits
+    //
+    eosAssert(size != 0);
 
 	// Obte el bloc de memoria
 	//
@@ -29,10 +29,11 @@ void *osalMemoryAlloc(
 void osalMemoryFree(
 	void *p) {
 
-	// Comprova si els parametres son correctes.
-	//
-	if (p == NULL)
-		return;
+    // Prerequisits
+    //
+    eosAssert(p!= NULL);
 
+    // Allivera el bloc de memoria
+    //
 	vPortFree(p);
 }

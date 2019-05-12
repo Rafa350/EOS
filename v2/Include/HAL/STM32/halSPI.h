@@ -2,10 +2,9 @@
 #define __STM32_halSPI__
 
 
-// Standard includes
+// EOS includes
 //
-#include <stdint.h>
-#include <stdbool.h>
+#include "eos.h"
 
 
 #ifdef	__cplusplus

@@ -10,7 +10,8 @@
 #else
 #error No se especifico USE_DISPLAY_XXXX
 #endif
-#include "Hal/halGPIO.h"
+#include "Controllers/GPIO/eosGPIO.h"
+
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,9 +21,12 @@ using namespace eos;
 
 
 class LedLoopService: public AppLoopService {
+	private:
+		GPIOOutputPin<LED_LED1_PORT, LED_LED1_PIN> led1;
+		GPIOOutputPin<LED_LED2_PORT, LED_LED2_PIN> led2;
+
 	public:
-    	LedLoopService(Application *application):
-        	AppLoopService(application) {}
+    	LedLoopService(Application *application);
 
     protected:
     	void onSetup();
@@ -76,21 +80,22 @@ MyApplication::MyApplication() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief Contructor del objecte.
+///
+LedLoopService::LedLoopService(
+	Application *pApplication) :
+
+	AppLoopService(pApplication) {
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Procesa la inicialitzacio de la tasca.
 ///
 void LedLoopService::onSetup() {
 
-	halGPIOInitializePin(
-		LED_LED1_PORT,
-		LED_LED1_PIN,
-		HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR,
-		HAL_GPIO_AF_NONE);
-
-	halGPIOInitializePin(
-		LED_LED2_PORT,
-		LED_LED2_PIN,
-		HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET,
-		HAL_GPIO_AF_NONE);
+	led1.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
+	led2.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET);
 }
 
 
@@ -101,8 +106,8 @@ void LedLoopService::onLoop() {
 
 	while (true) {
 
-		halGPIOTogglePin(LED_LED1_PORT, LED_LED1_PIN);
-		halGPIOTogglePin(LED_LED2_PORT, LED_LED2_PIN);
+		led1.toggle();
+		led2.toggle();
 
 		Task::delay(500);
 	}

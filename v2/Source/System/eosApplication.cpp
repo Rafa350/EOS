@@ -31,10 +31,6 @@ Application::~Application() {
 ///
 void Application::run() {
 
-    // Precondicions
-    //
-    eosAssert(pImpl != nullptr);
-
     // Notifica la inicialitzacio de l'aplicacio.
     //
     onInitialize();
@@ -42,7 +38,7 @@ void Application::run() {
     // Inicialitzacio tots els serveis.
     //
     initializeServices();
-    
+
     // Executa els serveis fins que acavi l'aplicacio.
     //
     runServices();
@@ -86,11 +82,11 @@ void Application::runServices() {
 
 #if  1 //def USE_SCHEDULER
     Task::startAll();
-    
+
 #else
     bool done = false;
     while (!done) {
-        
+
         // Executa la tasca de cada servei, un a un
         //
     	for (ServiceListIterator it(services); it.hasNext(); it.next())
@@ -109,7 +105,6 @@ void Application::addService(
 
     // Precondicions
     //
-    eosAssert(pImpl != nullptr);
     eosAssert(pService != nullptr);
 
     /// Afegeix el servei
@@ -128,7 +123,6 @@ void Application::removeService(
 
     // Precondicions
     //
-    eosAssert(pImpl != nullptr);
     eosAssert(pService != nullptr);
 
     // Elimina el servei
@@ -142,9 +136,27 @@ void Application::removeService(
 /// \brief Elimina tots els serveis de l'aplicacio.
 ///
 void Application::removeServices() {
-    
+
     while (!services.isEmpty())
-        services.removeAt(0);
+        services.remove(services.getFront());
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el servei especificat.
+/// \param id: El identificador del servei.
+/// \return El servei, null si no el troba.
+///
+Service *Application::getService(
+    int id ) {
+
+  	for (ServiceListIterator it(services); it.hasNext(); it.next()) {
+   		Service *pService = it.current();
+        if (pService->getId() == id)
+            return pService;
+    }
+
+    return nullptr;
 }
 
 

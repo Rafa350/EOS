@@ -13,10 +13,14 @@ using namespace eos;
 /// \return Punter al bloc de memoria. nullptr en cas d'error.
 ///
 void *HeapAllocator::allocate(
-    size_t size) {
+    unsigned size) {
 
-    eosArgumentIsNotZero(size);
+    // Precondicions
+    //
+    eosAssert(size != 0);
 
+    // Obte el bloc de memoria
+    //
     void *p = osalMemoryAlloc(size);
     eosAssert(p != nullptr);
 
@@ -31,7 +35,11 @@ void *HeapAllocator::allocate(
 void HeapAllocator::deallocate(
     void *p) {
 
-    eosArgumentIsNotNull(p);
+    // Precondicions
+    //
+    eosAssert(p != nullptr);
 
+    // Allivera el bloc de memoria
+    //
     osalMemoryFree(p);
 }

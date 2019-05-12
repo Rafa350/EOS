@@ -15,14 +15,17 @@ GenericQueue::GenericQueue(
     unsigned size,
     unsigned capacity) {
 
-    eosArgumentIsNotZero(size);
-    eosArgumentIsNotZero(capacity);
+    // Precondicions
+    //
+    eosAssert(size != 0);
+    eosAssert(capacity != 0);
 
+    // Crea la cua
+    //
     MsgQueueInitializeInfo info;
     info.maxElements = capacity;
     info.elementSize = size;
     hQueue = osalMsgQueueCreate(&info);
-
     eosAssert(hQueue != nullptr);
 }
 

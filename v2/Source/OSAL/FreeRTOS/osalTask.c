@@ -15,11 +15,10 @@ static const char *defaultName = ""; // El nom de la tasca no pot ser NULL en Fr
 ///
 HTask osalTaskCreate(
 	const TaskInitializeInfo *info) {
-
-	// Comprova que els parametres siguin correctes.
-	//
-	if (info == NULL)
-		return NULL;
+    
+    // Prerequisits
+    //
+    eosAssert(info != NULL);
 
 	// Crea la tasca.
 	//

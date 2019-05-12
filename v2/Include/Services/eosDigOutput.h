@@ -48,8 +48,9 @@ namespace eos {
             DigOutputService(Application *pApplication, const DigOutputServiceInitializeInfo *pInfo);
             ~DigOutputService();
 
-            void add(DigOutput *pOutput);
-            void remove(DigOutput *pOutput);
+            void addOutput(DigOutput *pOutput);
+            void removeOutput(DigOutput *pOutput);
+            void removeOutputs();
     };
 
     /// \brief Clase que implementa una sortida digital.

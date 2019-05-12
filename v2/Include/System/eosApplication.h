@@ -40,7 +40,7 @@ namespace eos {
             void addService(Service *pService);
             void removeService(Service *pService);
             void removeServices();
-            Service *getService(const char *name) const;
+            Service *getService(int id);
 
             Application& operator=(const Application&) = delete;
     };        

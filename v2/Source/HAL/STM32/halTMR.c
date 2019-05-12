@@ -32,7 +32,8 @@ static void EnableTimerClock(
 			break;
 
 		case HAL_TMR_TIMER_2:
-			__HAL_RCC_TIM2_CLK_ENABLE();
+			//__HAL_RCC_TIM2_CLK_ENABLE();
+			RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 			break;
 
 		case HAL_TMR_TIMER_3:
@@ -101,7 +102,8 @@ static void DisableTimerClock(
 			break;
 
 		case HAL_TMR_TIMER_2:
-			__HAL_RCC_TIM2_CLK_DISABLE();
+			//__HAL_RCC_TIM2_CLK_DISABLE();
+			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM2EN);
 			break;
 
 		case HAL_TMR_TIMER_3:
@@ -204,6 +206,10 @@ static void PrepareTimerHandle(
 ///
 void halTMRInitialize(
 	const TMRInitializeInfo *pInfo) {
+
+	// Precondicions
+	//
+	eosAssert(pInfo != NULL);
 
 	TMRTimer timer = pInfo->timer;
 	TimerInfo *pTimerInfo = &timerInfoTbl[timer];

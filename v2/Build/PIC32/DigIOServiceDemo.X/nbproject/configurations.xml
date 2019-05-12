@@ -27,7 +27,6 @@
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalMemory.h</itemPath>
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
-            <itemPath>../../../Include/OSAL/osalMsgQueue.h</itemPath>
             <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
@@ -79,8 +78,6 @@
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
               <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalMemory.c</itemPath>
-              <itemPath>../../../Source/OSAL/FreeRTOS/osalMsgQueue.c</itemPath>
-              <itemPath>../../../Source/OSAL/FreeRTOS/osalSemaphore.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalTimer.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
             </logicalFolder>
@@ -97,7 +94,6 @@
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
-              <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
