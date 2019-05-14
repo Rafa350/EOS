@@ -227,7 +227,7 @@ void halGPIOInitializePorts(
 		const GPIOInitializePortInfo *p = &pInfo[i];
 
 		EnableClock(p->port);
-		for (uint_fast8_t pin = 0; pin < 15; pin++)
+		for (uint_fast8_t pin = 0; pin < 16; pin++)
 			if (p->mask & (1u << pin))
 				SetupPin(p->port, pin, p->options, p->alt);
 	}

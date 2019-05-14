@@ -1,5 +1,5 @@
-#ifndef __eosGPIO__
-#define __eosGPIO__
+#ifndef __eosGPIODriver__
+#define __eosGPIODriver__
 
 
 // EOS includes
@@ -11,7 +11,7 @@
 namespace eos {
 
 	template <GPIOPort port, GPIOPin pin>
-    class GPIOOutputPin {
+    class GPIOPinDriver {
     	public:
     		inline static void initialize(GPIOOptions options) {
     			halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
@@ -29,14 +29,28 @@ namespace eos {
     			halGPIOTogglePin(port, pin);
     		}
 
-    		//void write(bool v);
-
     		inline static bool read() {
     			return halGPIOReadPin(port, pin);
     		}
     };
+
+	template <GPIOPort port, GPIOMask mask>
+	class GPIOPortDriver {
+		public:
+			inline static void initialize(GPIOOptions options) {
+				halGPIOInitializePort(port, mask, options, HAL_GPIO_AF_NONE);
+			}
+
+			inline static uint32_t read() {
+    			return halGPIOReadPort(port);
+    		}
+
+			inline static void write(uint32_t data) {
+    			halGPIOWritePort(port, data);
+    		}
+	};
 }
 
 
 
-#endif // __eosGPIO__
+#endif // __eosGPIODriver__

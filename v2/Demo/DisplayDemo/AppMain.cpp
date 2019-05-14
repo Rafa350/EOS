@@ -10,7 +10,7 @@
 #else
 #error No se especifico USE_DISPLAY_XXXX
 #endif
-#include "Controllers/GPIO/eosGPIO.h"
+#include "Controllers/GPIO/eosGPIODriver.h"
 
 
 #include <stdlib.h>
@@ -22,8 +22,8 @@ using namespace eos;
 
 class LedLoopService: public AppLoopService {
 	private:
-		GPIOOutputPin<LED_LED1_PORT, LED_LED1_PIN> led1;
-		GPIOOutputPin<LED_LED2_PORT, LED_LED2_PIN> led2;
+		GPIOPinDriver<LED_LED1_PORT, LED_LED1_PIN> led1;
+		GPIOPinDriver<LED_LED2_PORT, LED_LED2_PIN> led2;
 
 	public:
     	LedLoopService(Application *application);

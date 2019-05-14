@@ -28,6 +28,10 @@ DigOutputService::DigOutputService(
     const DigOutputServiceInitializeInfo *pInfo):
 
     Service(pApplication, serviceName, taskStackSize, taskPriority) {
+    
+    // Precondicions
+    //
+    eosAssert(pInfo != nullptr);
 
     //timer = pInfo->timer;
 	timer = HAL_TMR_TIMER_2;
@@ -39,6 +43,8 @@ DigOutputService::DigOutputService(
 ///
 DigOutputService::~DigOutputService() {
 
+    // Elimina totes les sortides
+    //
     removeOutputs();
 }
 

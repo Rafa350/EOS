@@ -215,6 +215,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 void halGPIOInitializePins(const GPIOInitializePinInfo *pInfo, uint_fast8_t count);
 void halGPIOInitializePorts(const GPIOInitializePortInfo *pInfo, uint_fast8_t count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
+void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 
 #if 0
 void halGPIOClearPin(GPIOPort port, GPIOPin pin);
