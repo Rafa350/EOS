@@ -29,10 +29,11 @@ namespace eos {
         volatile uint32_t ODCINV;
     } GPIO_TypeDef;
 
-	template <uint32_t tris>
+	template <uint32_t base>
     class GPIOPortAdapter {
         private:
-            const uint32_t addr = &tris;
+            const GPIO_TypeDef *addr = (GPIO_TypeDef*) &base;
+            
     	public:
     		static void initialize(uint32_t mask, GPIOOptions options) {
                 
@@ -43,62 +44,102 @@ namespace eos {
                     //
                     switch (options & HAL_GPIO_INIT_MASK) {
                         case HAL_GPIO_INIT_SET:
-                            ((GPIO_TypeDef*)(&tris))->LATSET = mask;
+                            addr->LATSET = mask;
                             break;
 
                         case HAL_GPIO_INIT_CLR:
-                            ((GPIO_TypeDef*)(&tris))->LATCLR = mask;
+                            addr->LATCLR = mask;
                             break;
                     }
 
                     // El configura com sortida
                     //
-                    ((GPIO_TypeDef*)(&tris))->TRISCLR = mask; 
+                    addr->TRISCLR = mask; 
 
                     // Configura com OPEN-DRAIN o PUSH-PULL
                     //
                     if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)
-                        ((GPIO_TypeDef*)(&tris))->ODCSET = mask;
+                        addr->ODCSET = mask;
                     else
-                        ((GPIO_TypeDef*)(&tris))->ODCCLR = mask;        
+                        addr->ODCCLR = mask;        
                 }  
 
                 else if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_INPUT) {
 
                     // El configura com entrada
                     //
-                    ((GPIO_TypeDef*)(&tris))->TRISSET = mask;
+                    addr->TRISSET = mask;
                 }
     		}
 
     		inline static void set(uint32_t mask) {
-    			((GPIO_TypeDef*)(&tris))->LATSET = mask;
+    			addr->LATSET = mask;
     		}
 
     		inline static void clear(uint32_t mask) {
-    			((GPIO_TypeDef*)(&tris))->LATCLR = mask;
+    			addr->LATCLR = mask;
     		}
 
     		inline static void toggle(uint32_t mask) {
-    			((GPIO_TypeDef*)(&tris))->LATINV = mask;
+    			addr->LATINV = mask;
     		}
             
             inline static void write(uint32_t value) {
-    			((GPIO_TypeDef*)(&tris))->PORT = value;
+    			addr->PORT = value;
             }
 
     		inline static uint32_t read() {
-    			return ((GPIO_TypeDef*)(&tris))->PORT;
+    			return addr->PORT;
     		}
+            
+            inline static operator = (uint32_t value) {
+                
+            }
     };
     
-    typedef GPIOPortAdapter<TRISA> PortA;
-    typedef GPIOPortAdapter<TRISB> PortB;
-    typedef GPIOPortAdapter<TRISC> PortC;
-    typedef GPIOPortAdapter<TRISD> PortD;
-    typedef GPIOPortAdapter<TRISE> PortE;
-    typedef GPIOPortAdapter<TRISF> PortF;
-    typedef GPIOPortAdapter<TRISG> PortG;
+    template <uint32_t base, uint8_t pin>
+    class GPIOPinAdapter {
+        private:
+            const GPIO_TypeDef *addr = (GPIO_TypeDef*) &base;
+              
+        public:
+            inline static void set() {
+    			addr->LATSET = 1 << pin;                
+            }
+
+            inline static void clear() {
+    			addr->LATCLR = 1 << pin;                
+            }
+
+            inline static void toggle() {
+    			addr->LATINV = 1 << pin;                
+            }
+    };
+    
+    typedef GPIOPortAdapter<TRISA> PA;
+    typedef GPIOPortAdapter<TRISB> PB;
+    typedef GPIOPortAdapter<TRISC> PC;
+    typedef GPIOPortAdapter<TRISD> PD;
+    typedef GPIOPortAdapter<TRISE> PE;
+    typedef GPIOPortAdapter<TRISF> PF;
+    typedef GPIOPortAdapter<TRISG> PG;
+    
+    typedef GPIOPinAdapter<TRISA, 0> PA0;
+    typedef GPIOPinAdapter<TRISA, 1> PA1;
+    typedef GPIOPinAdapter<TRISA, 2> PA2;
+    typedef GPIOPinAdapter<TRISA, 3> PA3;
+    typedef GPIOPinAdapter<TRISA, 4> PA4;
+    typedef GPIOPinAdapter<TRISA, 5> PA5;
+    typedef GPIOPinAdapter<TRISA, 6> PA6;
+    typedef GPIOPinAdapter<TRISA, 7> PA7;
+    typedef GPIOPinAdapter<TRISA, 8> PA8;
+    typedef GPIOPinAdapter<TRISA, 9> PA9;
+    typedef GPIOPinAdapter<TRISA, 10> PA10;
+    typedef GPIOPinAdapter<TRISA, 11> PA11;
+    typedef GPIOPinAdapter<TRISA, 12> PA12;
+    typedef GPIOPinAdapter<TRISA, 13> PA13;
+    typedef GPIOPinAdapter<TRISA, 14> PA14;
+    typedef GPIOPinAdapter<TRISA, 15> PA15;
 
 }
 
