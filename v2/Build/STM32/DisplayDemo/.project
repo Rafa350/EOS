@@ -234,34 +234,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/FreeRTOS/heap_4.c</name>
-			<type>1</type>
-			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</location>
+			<name>src/Framework/FreeRTOS/STM32F4</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/FreeRTOS/list.c</name>
-			<type>1</type>
-			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/list.c</location>
-		</link>
-		<link>
-			<name>src/Framework/FreeRTOS/port.c</name>
-			<type>1</type>
-			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</location>
-		</link>
-		<link>
-			<name>src/Framework/FreeRTOS/queue.c</name>
-			<type>1</type>
-			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/queue.c</location>
-		</link>
-		<link>
-			<name>src/Framework/FreeRTOS/tasks.c</name>
-			<type>1</type>
-			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</location>
-		</link>
-		<link>
-			<name>src/Framework/FreeRTOS/timers.c</name>
-			<type>1</type>
-			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/timers.c</location>
+			<name>src/Framework/FreeRTOS/STM32F7</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board/Board_STM32F429I_DISC1.h</name>
@@ -280,11 +260,6 @@
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/GPIO</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -399,6 +374,66 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Source/System/eosApplication.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/FreeRTOS/STM32F4/heap_4.c</name>
+			<type>1</type>
+			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F4/list.c</name>
+			<type>1</type>
+			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/list.c</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F4/port.c</name>
+			<type>1</type>
+			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F4/queue.c</name>
+			<type>1</type>
+			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/queue.c</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F4/tasks.c</name>
+			<type>1</type>
+			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F4/timers.c</name>
+			<type>1</type>
+			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/timers.c</location>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F7/heap_4.c</name>
+			<type>1</type>
+			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube_FW_F7/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F7/list.c</name>
+			<type>1</type>
+			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube_FW_F7/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F7/port.c</name>
+			<type>1</type>
+			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube_FW_F7/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F7/queue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube_FW_F7/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F7/tasks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube_FW_F7/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/FreeRTOS/STM32F7/timers.c</name>
+			<type>1</type>
+			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube_FW_F7/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -409,14 +444,14 @@
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/GPIO/eosGPIODriver.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/GPIO/eosGPIODriver.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
 			<type>1</type>
 			<locationURI>$%7BPROJECT_HOME%7D/v2/Include/HAL/STM32/halGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halGPIOTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>

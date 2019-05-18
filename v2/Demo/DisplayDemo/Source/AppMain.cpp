@@ -3,14 +3,14 @@
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosDisplay.h"
 #include "Services/eosAppLoop.h"
-#if defined(USE_DISPLAY_ILI9341LTDC)
+#if defined(EXISTS_DISPLAY_ILI9341LTDC)
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
-#elif defined(USE_DISPLAY_ILI9341)
+#elif defined(EXISTS_DISPLAY_ILI9341)
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #else
 #error No se especifico USE_DISPLAY_XXXX
 #endif
-#include "Controllers/GPIO/eosGPIODriver.h"
+#include "HAL/halGPIO.h"
 
 
 #include <stdlib.h>
@@ -22,8 +22,12 @@ using namespace eos;
 
 class LedLoopService: public AppLoopService {
 	private:
+#ifdef EXIST_LEDS_LED1
 		GPIOPinDriver<LED_LED1_PORT, LED_LED1_PIN> led1;
+#endif
+#ifdef EXIST_LEDS_LED2
 		GPIOPinDriver<LED_LED2_PORT, LED_LED2_PIN> led2;
+#endif
 
 	public:
     	LedLoopService(Application *application);
@@ -94,8 +98,12 @@ LedLoopService::LedLoopService(
 ///
 void LedLoopService::onSetup() {
 
+#ifdef EXIST_LEDS_LED1
 	led1.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
+#endif
+#ifdef EXIST_LEDS_LED2
 	led2.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET);
+#endif
 }
 
 
@@ -106,8 +114,12 @@ void LedLoopService::onLoop() {
 
 	while (true) {
 
+#ifdef EXIST_LEDS_LED1
 		led1.toggle();
+#endif
+#ifdef EXIST_LEDS_LED2
 		led2.toggle();
+#endif
 
 		Task::delay(500);
 	}

@@ -136,7 +136,7 @@
 // -----------------------------------------------------------------------
 
 #ifdef USE_DISPLAY_ILI9341
-#define ESIST_DISPLAY_ILI9341
+#define EXIST_DISPLAY_ILI9341
 
 // Control del pin CS (Chip select)
 //

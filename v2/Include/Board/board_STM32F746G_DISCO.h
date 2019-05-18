@@ -12,8 +12,8 @@
 // Indicadors LED
 // -----------------------------------------------------------------------
 
-#ifdef USE_LED_LED1
-#define EXIST_LED_LED1
+#ifdef USE_LEDS_LED1
+#define EXIST_LEDS_LED1
 
 #define LED_LED1_PORT             HAL_GPIO_PORT_I
 #define LED_LED1_PIN              HAL_GPIO_PIN_1

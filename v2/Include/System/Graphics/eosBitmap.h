@@ -7,10 +7,6 @@
 #include "eos.h"
 #include "System/Graphics/eosColor.h"
 
-// Standard includes
-//
-#include "stdint.h"
-
 
 namespace eos {
 
