@@ -22,24 +22,24 @@ class MyApplication: public Application {
         DigOutput *digOutput3;
 #endif
         DigInputService *digInputSvc;
-#ifdef SW_SW1_PIN
+#ifdef USE_SWITCHES_SW1
         DigInput *digInput1;
 #endif
-#ifdef SW_SW2_PIN
+#ifdef USE_SWITCHES_SW2
         DigInput *digInput2;
 #endif
-#ifdef SW_SW3_PIN
+#ifdef USE_SWITCHES_SW3
         DigInput *digInput3;
 #endif
 
     public:
-#ifdef SW_SW1_PIN
+#ifdef USE_SWITCHES_SW1
         void digInput1_OnChange(DigInput *input);
 #endif
-#ifdef SW_SW2_PIN
+#ifdef USE_SWITCHES_SW2
         void digInput2_OnChange(DigInput *input);
 #endif
-#ifdef SW_SW3_PIN
+#ifdef USE_SWITCHES_SW3
         void digInput3_OnChange(DigInput *input);
 #endif
 
@@ -59,11 +59,11 @@ class MyApplication: public Application {
 
 
 class LedLoopService: public AppLoopService {
-	public:
-		LedLoopService(Application *application);
-
     protected:
 		void onLoop();
+
+    public:
+		LedLoopService(Application *application);
 };
 
 
@@ -79,21 +79,21 @@ void MyApplication::onInitialize() {
 
 	DigInputInitializeInfo inputInfo;
 
-#ifdef SW_SW1_PIN
+#ifdef USE_SWITCHES_SW1
     inputInfo.port = SW_SW1_PORT;
     inputInfo.pin = SW_SW1_PIN;
     digInput1 = new DigInput(digInputSvc, &inputInfo);
     digInput1->setChangeEvent<MyApplication>(this, &MyApplication::digInput1_OnChange);
 #endif
 
-#ifdef SW_SW2_PIN
+#ifdef USE_SWITCHES_SW2
     inputInfo.port = SW_SW2_PORT;
     inputInfo.pin = SW_SW2_PIN;
     digInput2 = new DigInput(digInputSvc, &inputInfo);
     digInput2->setChangeEvent<MyApplication>(this, &MyApplication::digInput2_OnChange);
 #endif
 
-#ifdef SW_SW3_PIN
+#ifdef USE_SWITCHES_SW3
     inputInfo.port = SW_SW3_PORT;
     inputInfo.pin = SW_SW3_PIN;
     digInput3 = new DigInput(digInputSvc, &inputInfo);
@@ -138,9 +138,13 @@ void MyApplication::onInitialize() {
 /// \brief Procesa el event OnChange.
 /// \param input: La entrada que ha produit l'event.
 ///
-#ifdef SW_SW1_PIN
+#ifdef USE_SWITCHES_SW1
 void MyApplication::digInput1_OnChange(DigInput *input) {
 
+#ifdef USE_LEDS_LED3
+    if (!input->get()) 
+        getLed3()->pulse(500);
+#endif    
 }
 #endif
 
@@ -149,9 +153,13 @@ void MyApplication::digInput1_OnChange(DigInput *input) {
 /// \brief Procesa el event OnChange.
 /// \param input: La entrada que ha produit l'event.
 ///
-#ifdef SW_SW2_PIN
+#ifdef USE_SWITCHES_SW2
 void MyApplication::digInput2_OnChange(DigInput *input) {
 
+#ifdef USE_LEDS_LED3
+    if (!input->get()) 
+        getLed3()->pulse(1000);
+#endif    
 }
 #endif
 
@@ -160,11 +168,13 @@ void MyApplication::digInput2_OnChange(DigInput *input) {
 /// \brief Procesa el event OnChange.
 /// \param input: La entrada que ha produit l'event.
 ///
-#ifdef SW_SW3_PIN
+#ifdef USE_SWITCHES_SW3
 void MyApplication::digInput3_OnChange(DigInput *input) {
 
-    if (!input->get())
+#ifdef USE_LEDS_LED3
+    if (!input->get()) 
         getLed3()->pulse(1500);
+#endif    
 }
 #endif
 
@@ -194,11 +204,7 @@ void LedLoopService::onLoop() {
 #ifdef USE_LEDS_LED2    
     app->getLed2()->delayedPulse(125, 250);
 #endif    
-    
-#ifdef USE_LEDS_LED3    
-    app->getLed3()->toggle();
-#endif    
-    
+       
     Task::delay(1000);
 }
 

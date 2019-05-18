@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "hal/PIC32/halGPIO.h"
-#include <xc.h>
 
 
 const GPIOPortRegs gpioPortRegs[] = {

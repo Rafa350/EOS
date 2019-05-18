@@ -77,5 +77,11 @@
 #include "eosConfig.h"
 
 
+// Entrada a l'aplicacio
+//
+void AppMain();
+void AppInitialize();
+
+
 #endif // __eos__
 
