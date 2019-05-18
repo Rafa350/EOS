@@ -49,14 +49,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/App/STM32F429</name>
+			<name>inc/App/STM32F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/eosConfig.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Include/eosConfig.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS</name>
@@ -71,10 +71,10 @@
 		<link>
 			<name>src/App/AppMain.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/AppMain.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/AppMain.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F429</name>
+			<name>src/App/STM32F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -89,9 +89,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/App/STM32F429/FreeRTOSConfig.h</name>
+			<name>inc/App/STM32F4/FreeRTOSConfig.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/STM32F429/FreeRTOSConfig.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Include/STM32F4/FreeRTOSConfig.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board</name>
@@ -164,19 +164,19 @@
 			<location>c:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h</location>
 		</link>
 		<link>
-			<name>src/App/STM32F429/Initialize_STM32F429I-DISC1.cpp</name>
+			<name>src/App/STM32F4/AppInitialize.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/STM32F429/Initialize_STM32F429I-DISC1.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/STM32F4/AppInitialize.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F429/Main.cpp</name>
+			<name>src/App/STM32F4/Main.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/STM32F429/Main.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/STM32F4/Main.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F429/stm32f4xx_hal_timebase_tim.c</name>
+			<name>src/App/STM32F4/stm32f4xx_hal_timebase_tim.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Demo/DigIOServiceDemo/STM32F429/stm32f4xx_hal_timebase_tim.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/STM32F4/stm32f4xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL</name>
@@ -367,6 +367,11 @@
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halGPIOTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>

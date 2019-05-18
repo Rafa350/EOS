@@ -2,7 +2,7 @@
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.423783525">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.423783525" moduleId="org.eclipse.cdt.core.settings" name="Debug">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.423783525" moduleId="org.eclipse.cdt.core.settings" name="Debug_STM32F429I-DISC1">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -14,7 +14,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.423783525" name="Debug" parent="fr.ac6.managedbuild.config.gnu.cross.exe.debug" postannouncebuildStep="Generating binary and Printing size information:" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.423783525" name="Debug_STM32F429I-DISC1" parent="fr.ac6.managedbuild.config.gnu.cross.exe.debug" postannouncebuildStep="Generating binary and Printing size information:" postbuildStep="" preannouncebuildStep="" prebuildStep="">
 					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.423783525." name="/" resourcePath="">
 						<toolChain errorParsers="" id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug.933541298" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug">
 							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1371328080" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" useByScannerDiscovery="false" value="STM32F429ZITx" valueType="string"/>
@@ -34,8 +34,8 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include/STM32F4&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.923864785" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -62,8 +62,8 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include/STM32F4&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1888119308" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -99,8 +99,8 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include/STM32F4&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.331921847" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.889642721" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
@@ -133,7 +133,7 @@
 			</storageModule>
 		</cconfiguration>
 		<cconfiguration id="fr.ac6.managedbuild.config.gnu.cross.exe.release.826569912">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.release.826569912" moduleId="org.eclipse.cdt.core.settings" name="Release">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="fr.ac6.managedbuild.config.gnu.cross.exe.release.826569912" moduleId="org.eclipse.cdt.core.settings" name="Release_STM32F429I-DISC1">
 				<macros>
 					<stringMacro name="FreeRTOSPath" type="VALUE_PATH_ANY" value="C:/Library/STMicroelectronics/FreeRTOS/v8.2.3/Source"/>
 					<stringMacro name="EOSPath" type="VALUE_PATH_ANY" value="C:\Users\Rafael\Documents\Projectes\MPLab\EOS/v2"/>
@@ -149,7 +149,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="fr.ac6.managedbuild.config.gnu.cross.exe.release.826569912" name="Release" parent="fr.ac6.managedbuild.config.gnu.cross.exe.release" postannouncebuildStep="Generating binary and Printing size information:" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="fr.ac6.managedbuild.config.gnu.cross.exe.release.826569912" name="Release_STM32F429I-DISC1" parent="fr.ac6.managedbuild.config.gnu.cross.exe.release" postannouncebuildStep="Generating binary and Printing size information:" postbuildStep="" preannouncebuildStep="" prebuildStep="">
 					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.release.826569912." name="/" resourcePath="">
 						<toolChain errorParsers="" id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.release.456370103" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.release">
 							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1878259408" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" value="STM32F429ZITx" valueType="string"/>
@@ -169,8 +169,8 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include/STM32F4&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.74815007" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -196,8 +196,8 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include/STM32F4&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.2013543592" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F429ZITx"/>
@@ -232,8 +232,8 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include/STM32F4&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.638393489" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.614204865" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
@@ -243,8 +243,8 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Library\STMicroelectronics\STM32Cube_FW_F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/STM32F429&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Demo/DisplayDemo/Include/STM32F4&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.167994587" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.31923424" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
@@ -303,6 +303,12 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug - STM32F429I-DISC1">
+			<resource resourceType="PROJECT" workspacePath="/DisplayDemo"/>
+		</configuration>
+		<configuration configurationName="Release - STM32F429I-DISC1">
+			<resource resourceType="PROJECT" workspacePath="/DisplayDemo"/>
+		</configuration>
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/DisplayDemo"/>
 		</configuration>

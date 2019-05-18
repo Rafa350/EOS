@@ -1,9 +1,13 @@
-extern void AppMain();
-extern void InitializeHardware();
+#include "eos.h"
 
 
 int main(void) {
 
-	InitializeHardware();
+	// Inicialitza l'aplicacio.
+	//
+	AppInitialize();
+
+	// Entrada a l'aplicacio d'usuari.
+	//
 	AppMain();
 }

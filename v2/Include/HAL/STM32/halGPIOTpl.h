@@ -9,7 +9,7 @@
 
 
 namespace eos {
-
+/*
 	template <GPIO_TypeDef gpio>
     class GPIOPortAdapter {
     	public:
@@ -27,7 +27,7 @@ namespace eos {
     		inline static void toggle(uint32_t mask) {
     			(uint32_t*)(lat + 8) = mask;
     		}
-            
+
             inline static void write(uint32_t value) {
                 (uint32_t*)(port) = value;
             }
@@ -36,13 +36,13 @@ namespace eos {
     			return (uint32_t*)(port);
     		}
     };
-    
+
     typedef GPIOPortAdapter<GPIOA> PortA;
     typedef GPIOPortAdapter<GPIOB> PortB;
     typedef GPIOPortAdapter<GPIOC> PortC;
     typedef GPIOPortAdapter<GPIOD> PortD;
     typedef GPIOPortAdapter<GPIOE> PortE;
-
+*/
 }
 
 

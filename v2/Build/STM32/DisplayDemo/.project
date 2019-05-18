@@ -48,14 +48,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/App/STM32F429</name>
+			<name>inc/App/STM32F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/eosConfig.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/eosConfig.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS</name>
@@ -70,10 +70,10 @@
 		<link>
 			<name>src/App/AppMain.cpp</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/AppMain.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/AppMain.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F429</name>
+			<name>src/App/STM32F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -88,14 +88,19 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/App/STM32F429/FreeRTOSConfig.h</name>
+			<name>inc/App/STM32F4/FreeRTOSConfig.h</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/FreeRTOSConfig.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/FreeRTOSConfig.h</locationURI>
 		</link>
 		<link>
-			<name>inc/App/STM32F429/stm32f429i_discovery_sdram.h</name>
+			<name>inc/App/STM32F4/stm32f429i_discovery.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Demo/DisplayDemo/STM32F429/stm32f429i_discovery_sdram.h</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/stm32f429i_discovery.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F4/stm32f429i_discovery_sdram.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/stm32f429i_discovery_sdram.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board</name>
@@ -143,24 +148,24 @@
 			<location>C:/Library/STMicroelectronics/STM32Cube_FW_F4/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h</location>
 		</link>
 		<link>
-			<name>src/App/STM32F429/Initialize_STM32F429I-DISC1.cpp</name>
+			<name>src/App/STM32F4/AppInitialize.cpp</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/Initialize_STM32F429I-DISC1.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/AppInitialize.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F429/Main.cpp</name>
+			<name>src/App/STM32F4/Main.cpp</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/Main.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/Main.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F429/stm32f429i_discovery_sdram.c</name>
+			<name>src/App/STM32F4/stm32f429i_discovery_sdram.c</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Demo/DisplayDemo/STM32F429/stm32f429i_discovery_sdram.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f429i_discovery_sdram.c</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F429/stm32f4xx_hal_timebase_tim.c</name>
+			<name>src/App/STM32F4/stm32f4xx_hal_timebase_tim.c</name>
 			<type>1</type>
-			<locationURI>$%7BPROJECT_HOME%7D/v2/Demo/DisplayDemo/STM32F429/stm32f4xx_hal_timebase_tim.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f4xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
