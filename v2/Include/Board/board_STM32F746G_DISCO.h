@@ -13,6 +13,7 @@
 // -----------------------------------------------------------------------
 
 #ifdef USE_LED_LED1
+#define EXIST_LED_LED1
 
 #define LED_LED1_PORT             HAL_GPIO_PORT_I
 #define LED_LED1_PIN              HAL_GPIO_PIN_1
@@ -24,7 +25,8 @@
 // Display grafic RK043FN48H
 // -----------------------------------------------------------------------
 
-#ifdef USE_DISPLAY_RGBLTDC
+#ifdef USE_DISPLAY
+#define EXIST_DISPLAY
 
 // Tamany de la pantalla
 //
@@ -241,7 +243,7 @@
 #define DISPLAY_B7_PIN            HAL_GPIO_PIN_7
 #define DISPLAY_B7_AF             HAL_GPIO_AF14_LTDC
 
-#endif // USE_DISPLAY_RGB
+#endif // USE_DISPLAY
 
 
 // -----------------------------------------------------------------------

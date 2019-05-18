@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>stm32f429i-disc1_hal_lib</project>
+		<project>stm32f746g-disco_hal_lib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -53,6 +54,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/App/STM32F7</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/eosConfig.h</locationURI>
@@ -74,6 +80,11 @@
 		</link>
 		<link>
 			<name>src/App/STM32F4</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -101,6 +112,21 @@
 			<name>inc/App/STM32F4/stm32f429i_discovery_sdram.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/stm32f429i_discovery_sdram.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F7/FreeRTOSConfig.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F7/FreeRTOSConfig.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F7/stm32746g_discovery.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F7/stm32746g_discovery.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F7/stm32746g_discovery_sdram.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F7/stm32746g_discovery_sdram.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board</name>
@@ -168,6 +194,21 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f4xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
+			<name>src/App/STM32F7/AppInitialize.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/AppInitialize.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7/stm32746g_discovery_sdram.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/stm32746g_discovery_sdram.c</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7/stm32f7xx_hal_timebase_tim.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/stm32f7xx_hal_timebase_tim.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -231,6 +272,11 @@
 			<name>inc/Framework/EOS/Board/board.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Board/board_STM32F746G_DISCO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board_STM32F746G_DISCO.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display</name>

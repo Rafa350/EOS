@@ -20,11 +20,13 @@
 // -----------------------------------------------------------------------
 
 #ifdef USE_LEDS_LED1
+#define EXIST_LEDS_LED1
 #define LED_LED1_PORT             HAL_GPIO_PORT_G
 #define LED_LED1_PIN              HAL_GPIO_PIN_13
 #endif
 
 #ifdef USE_LEDS_LED2
+#define EXIST_LEDS_LED2
 #define LED_LED2_PORT             HAL_GPIO_PORT_G
 #define LED_LED2_PIN              HAL_GPIO_PIN_14
 #endif
@@ -35,6 +37,7 @@
 // -----------------------------------------------------------------------
 
 #ifdef USE_SWITCHES_SW1
+#define EXIST_SWITCHES_SW1
 #define SW_SW1_PORT               HAL_GPIO_PORT_A
 #define SW_SW1_PIN                HAL_GPIO_PIN_0
 #endif
@@ -98,6 +101,13 @@
 // Display grafic
 // -----------------------------------------------------------------------
 
+#if defined(USE_DISPLAY)
+#define EXIST_DISPLAY
+
+//#define USE_DISPLAY_ILI9341
+#define USE_DISPLAY_ILI9341LTDC
+
+
 // Tipus de lletra disponibles
 //
 #define FONT_USE_Consolas8pt
@@ -126,6 +136,7 @@
 // -----------------------------------------------------------------------
 
 #ifdef USE_DISPLAY_ILI9341
+#define ESIST_DISPLAY_ILI9341
 
 // Control del pin CS (Chip select)
 //
@@ -167,6 +178,7 @@
 // -----------------------------------------------------------------------
 
 #ifdef USE_DISPLAY_ILI9341LTDC
+#define EXIST_DISPLAY_ILI9341LTDC
 
 // Adressa del buffer de video
 //
@@ -348,6 +360,8 @@
 // Control del modul SPI
 //
 #define DISPLAY_SPI_ID       HAL_SPI_ID_5
+
+#endif
 
 #endif
 
