@@ -1,5 +1,6 @@
 #include "eos.h"
-#ifdef USE_DISPLAY_RGBLTDC
+
+#ifdef DISPLAY_DRV_RGBLTDC
 
 #include "eosAssert.h"
 #include "System/eosMath.h"

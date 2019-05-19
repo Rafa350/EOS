@@ -22,7 +22,7 @@
 
 
 // -----------------------------------------------------------------------
-// Display grafic RK043FN48H
+// Display grafic
 // -----------------------------------------------------------------------
 
 #ifdef USE_DISPLAY
@@ -40,6 +40,10 @@
 // Adressa de la memoria de video
 //
 #define DISPLAY_VRAM_ADDR         0xC0000000
+
+// Controlador
+//
+#define DISPLAY_DRV_RGBLTDC            // RK043FN48H
 
 
 // Parametres de temporitzacio i sincronitzacio

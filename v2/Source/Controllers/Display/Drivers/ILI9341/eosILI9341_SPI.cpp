@@ -1,5 +1,6 @@
 #include "eos.h"
-#if defined(USE_DISPLAY_ILI9341)
+
+#ifdef DISPLAY_DRV_ILI9341
 
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #include "hal/halSPI.h"

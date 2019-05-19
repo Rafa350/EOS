@@ -44,7 +44,7 @@ static void SDRAMInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el hardware del sistema.
 ///
-void InitializeHardware() {
+void AppInitialize() {
 
     SCB_EnableICache();
     SCB_EnableDCache();

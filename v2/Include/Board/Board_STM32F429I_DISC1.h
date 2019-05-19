@@ -23,13 +23,13 @@
 #define EXIST_LEDS_LED1
 #define LED_LED1_PORT             HAL_GPIO_PORT_G
 #define LED_LED1_PIN              HAL_GPIO_PIN_13
-#endif
+#endif // USE_LEDS_LED1
 
 #ifdef USE_LEDS_LED2
 #define EXIST_LEDS_LED2
 #define LED_LED2_PORT             HAL_GPIO_PORT_G
 #define LED_LED2_PIN              HAL_GPIO_PIN_14
-#endif
+#endif // USE_LEDS_LED2
 
 
 // -----------------------------------------------------------------------
@@ -40,7 +40,7 @@
 #define EXIST_SWITCHES_SW1
 #define SW_SW1_PORT               HAL_GPIO_PORT_A
 #define SW_SW1_PIN                HAL_GPIO_PIN_0
-#endif
+#endif // USE_SWITCHES_SW1
 
 
 // -----------------------------------------------------------------------
@@ -59,7 +59,6 @@
 #define USB_USB0_ID_PORT          HAL_GPIO_PORT_A
 #define USB_USB0_ID_PIN           HAL_GPIO_PIN_10
 #define USB_USB0_ID_AF            HAL_GPIO_AF10_OGT1_FS
-#endif
 
 #define USB_USB0_VBUS_PORT        HAL_GPIO_PORT_A
 #define USB_USB0_VBUS_PIN         HAL_GPIO_PIN_9
@@ -68,6 +67,7 @@
 //#define USB_USB0_VBUSEN_PORT      HAL_GPIO_PORT_C
 //#define USB_USB0_VBUSEN_PIN       HAL_GPIO_PIN_0
 //#define USB_USB0_VBUSEN_AF        HAL_GPIO_AF_NONE
+#endif // USE_USB_DEVICE0 || USE_USB_HOST0
 
 
 // -----------------------------------------------------------------------
@@ -94,7 +94,7 @@
 #define USB_USB1_VBUSEN_PORT      HAL_GPIO_PORT_C
 #define USB_USB1_VBUSEN_PIN       HAL_GPIO_PIN_4
 #define USB_USB1_VBUSEN_AF        HAL_GPIO_AF12_OGT2_FS
-#endif
+#endif // USE_USB_DEVICE1 || USE_USB_HOST1
 
 
 // -----------------------------------------------------------------------
@@ -103,9 +103,6 @@
 
 #if defined(USE_DISPLAY)
 #define EXIST_DISPLAY
-
-//#define USE_DISPLAY_ILI9341
-#define USE_DISPLAY_ILI9341LTDC
 
 
 // Tipus de lletra disponibles
@@ -121,22 +118,22 @@
 //
 #define DISPLAY_STM32F429I_DISC1
 
-// Tamany de la pantalla
+// Parametres de la imatge
 //
 #define DISPLAY_SCREEN_WIDTH      240  // Amplada en pixels
 #define DISPLAY_SCREEN_HEIGHT     320  // Alçada en pixels
+#define DISPLAY_COLOR_RGB565           // Format de color RGB565
 
-// Tipus de codificacio de color
+// Parametres del controlador
 //
-#define DISPLAY_COLOR_RGB565           // Format RGB565
+#define DISPLAY_DRV_ILI9341LTDC        // Driver
 
 
 // -----------------------------------------------------------------------
 // Parametres de configuracio controlador de display ILI9341
 // -----------------------------------------------------------------------
 
-#ifdef USE_DISPLAY_ILI9341
-#define EXIST_DISPLAY_ILI9341
+#ifdef DISPLAY_DRV_ILI9341
 
 // Control del pin CS (Chip select)
 //
@@ -170,15 +167,14 @@
 //
 #define DISPLAY_SPI_ID       HAL_SPI_ID_5
 
-#endif
+#endif // DISPLAY_DRV_ILI9341
 
 
 // -----------------------------------------------------------------------
 // Parametres de configuracio del controlador de display ILI9341LTDC
 // -----------------------------------------------------------------------
 
-#ifdef USE_DISPLAY_ILI9341LTDC
-#define EXIST_DISPLAY_ILI9341LTDC
+#ifdef DISPLAY_DRV_ILI9341LTDC
 
 // Adressa del buffer de video
 //
@@ -361,9 +357,9 @@
 //
 #define DISPLAY_SPI_ID       HAL_SPI_ID_5
 
-#endif
+#endif // DISPLAY_DRV_ILI9341LTDC
 
-#endif
+#endif // USE_DISPLAY
 
 
 #endif // __board_SMT32F429I_DISC1__

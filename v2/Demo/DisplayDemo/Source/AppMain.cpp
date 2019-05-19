@@ -3,12 +3,14 @@
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosDisplay.h"
 #include "Services/eosAppLoop.h"
-#if defined(EXISTS_DISPLAY_ILI9341LTDC)
+#if defined(DISPLAY_DRV_ILI9341LTDC)
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
-#elif defined(EXISTS_DISPLAY_ILI9341)
+#elif defined(_DISPLAY_DRV_ILI9341)
 #include "Controllers/Display/Drivers/eosILI9341.h"
+#elif defined(DISPLAY_DRV_RGBLTDC)
+#include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #else
-#error No se especifico USE_DISPLAY_XXXX
+#error No se especifico DISPLAY_DRV_XXXX
 #endif
 #include "HAL/halGPIO.h"
 
@@ -23,10 +25,10 @@ using namespace eos;
 class LedLoopService: public AppLoopService {
 	private:
 #ifdef EXIST_LEDS_LED1
-		GPIOPinDriver<LED_LED1_PORT, LED_LED1_PIN> led1;
+		GPIOPinAdapter<LED_LED1_PORT, LED_LED1_PIN> led1;
 #endif
 #ifdef EXIST_LEDS_LED2
-		GPIOPinDriver<LED_LED2_PORT, LED_LED2_PIN> led2;
+		GPIOPinAdapter<LED_LED2_PORT, LED_LED2_PIN> led2;
 #endif
 
 	public:
@@ -131,12 +133,14 @@ void LedLoopService::onLoop() {
 ///
 void DisplayLoopService::onSetup() {
 
-#if defined(USE_DISPLAY_ILI9341LTDC)
+#if defined(DISPLAY_DRV_ILI9341LTDC)
 	driver = ILI9341LTDCDriver::getInstance();
-#elif defined(USE_DISPLAY_ILI9341)
+#elif defined(DISPLAY_DRV_ILI9341)
 	driver = ILI9341Driver::getInstance();
+#elif defined(DISPLAY_DRV_RGBLTDC)
+	driver = RGBDirectDriver::getInstance();
 #else
-	#error No se especifico USE_DISPLAY_XXXX
+	#error No se especifico DISPLAY_DRV_XXXX
 #endif
     driver->initialize();
 
