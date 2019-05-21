@@ -2,8 +2,8 @@
 #define __eosConfig__
 
 
-#define USE_LED_LED1
-#define USE_DISPLAY_RGBLTDC
+#define USE_LEDS_LED1
+#define USE_DISPLAY
 #define USE_TOUCHPAD_FT5336
 
 #include "board/board.h"

@@ -141,10 +141,10 @@ void LedLoopService::onSetup() {
 
 	// Inicialitza el LED 1
 	//
-	halGPIOInitializePinOutput(LED_LED1_PORT, LED_LED1_PIN);
+	halGPIOInitializePin(LED_LED1_PORT, LED_LED1_PIN, HAL_GPIO_MODE_OUTPUT_PP, HAL_GPIO_AF_NONE);
 	halGPIOClearPin(LED_LED1_PORT, LED_LED1_PIN);
 
-#ifdef LED_LED2_PORT
+#ifdef EXIST_LEDS_LED2
 
 	// Inicialitza el LED 2
 	//
@@ -162,7 +162,7 @@ void LedLoopService::onLoop() {
 	while (true) {
 
 		halGPIOTogglePin(LED_LED1_PORT, LED_LED1_PIN);
-#ifdef LED_LED2_PORT
+#ifdef EXIST_LEDS_LED2
 		halGPIOTogglePin(LED_LED2_PORT, LED_LED2_PIN);
 #endif
 
@@ -189,8 +189,8 @@ void DisplayLoopService::onSetup() {
 
     // Inicialitzacio del touch pad
     //
-    //touchDriver = FT5336Driver::getInstance();
-    //touch = new TouchPad(touchDriver);
+    touchDriver = FT5336Driver::getInstance();
+    touch = new TouchPad(touchDriver);
 
     display->setOrientation(DisplayOrientation::normal);
     screenWidth = display->getWidth();
@@ -210,7 +210,7 @@ void DisplayLoopService::onLoop() {
 
     drawBackground();
     while (true) {
-    	/*if (touch->getState(tps)) {
+    	if (touch->getState(tps)) {
     		int16_t newX = tps.x[0];
     		int16_t newY = tps.y[0];
     		if ((x != newX) || (y != newY)) {
@@ -224,7 +224,7 @@ void DisplayLoopService::onLoop() {
     			drawInfo();
     		}
     	}
-    	else*/
+    	else
     		Task::delay(100);
     }
 }
