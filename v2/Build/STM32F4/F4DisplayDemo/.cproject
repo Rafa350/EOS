@@ -35,47 +35,22 @@
 									<listOptionValue builtIn="false" value="STM32F429xx"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="USE_RTOS_SYSTICK"/>
+									<listOptionValue builtIn="false" value="HARDWARE_STM32F429I_DISC1"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.605674657" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ili9325&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/s25fl512s&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/cs43l22&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ili9341&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ampire480272&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/n25q512a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/s5k5cag&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/mfxstm32l152&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/device&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/n25q128a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ts3510&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/st7735&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/HAL_Driver/Inc/Legacy&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lis302dl&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/otm8009a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/stmpe1600&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/Common&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ov2640&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/l3gd20&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/HAL_Driver/Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/stmpe811&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lis3dsh&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/wm8994&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Fonts&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/n25q256a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ls016b8uy&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ft6x06&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/exc7200&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/st7789h2&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Log&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/Third_Party/FreeRTOS/Source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ampire640480&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lsm303dlhc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/core&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/STM32F429I-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/core}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App/STM32F4}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/Framework/EOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="../../Library/system/Inc"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/core"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/device"/>
+									<listOptionValue builtIn="false" value="../../Library/HAL_Driver/Inc"/>
+									<listOptionValue builtIn="false" value="../../../../Demo/DisplayDemo/Include"/>
 								</option>
+								<option id="gnu.c.compiler.option.dialect.std.618267481" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.c11" valueType="enumerated"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.165182345" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.1091015124" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
 							</tool>
@@ -91,47 +66,22 @@
 									<listOptionValue builtIn="false" value="STM32F429xx"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="USE_RTOS_SYSTICK"/>
+									<listOptionValue builtIn="false" value="HARDWARE_STM32F429I_DISC1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.1519454832" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ili9325&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/s25fl512s&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/cs43l22&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ili9341&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ampire480272&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/n25q512a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/s5k5cag&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/mfxstm32l152&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/device&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/n25q128a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ts3510&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/st7735&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/HAL_Driver/Inc/Legacy&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lis302dl&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/otm8009a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/stmpe1600&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/Common&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ov2640&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/l3gd20&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/HAL_Driver/Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/stmpe811&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lis3dsh&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/wm8994&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Fonts&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/n25q256a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ls016b8uy&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ft6x06&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/exc7200&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/st7789h2&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Log&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/Third_Party/FreeRTOS/Source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ampire640480&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lsm303dlhc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/core&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/STM32F429I-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/core}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App/STM32F4}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/Framework/EOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="../../Library/system/Inc"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/core"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/device"/>
+									<listOptionValue builtIn="false" value="../../Library/HAL_Driver/Inc"/>
+									<listOptionValue builtIn="false" value="../../../../Demo/DisplayDemo/Include"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.dialect.std.688278026" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp.2142656397" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s.266908442" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s"/>
 							</tool>
@@ -144,45 +94,18 @@
 							</tool>
 							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.211869821" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver"/>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.736473141" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler">
-								<option id="gnu.both.asm.option.include.paths.1775675508" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ili9325&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/s25fl512s&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/cs43l22&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ili9341&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ampire480272&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/n25q512a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/s5k5cag&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/mfxstm32l152&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/device&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/n25q128a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ts3510&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/st7735&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/HAL_Driver/Inc/Legacy&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lis302dl&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/otm8009a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/stmpe1600&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/Common&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ov2640&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/l3gd20&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/HAL_Driver/Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/stmpe811&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lis3dsh&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/wm8994&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Fonts&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/n25q256a&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ls016b8uy&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ft6x06&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/exc7200&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/st7789h2&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Log&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/Third_Party/FreeRTOS/Source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ampire640480&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lsm303dlhc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/core&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/STM32F429I-Discovery&quot;"/>
+								<option id="gnu.both.asm.option.include.paths.1775675508" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/core}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App/STM32F4}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/Framework/EOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="../../Library/system/Inc"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/core"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/device"/>
+									<listOptionValue builtIn="false" value="../../Library/HAL_Driver/Inc"/>
+									<listOptionValue builtIn="false" value="../../../../Demo/DisplayDemo/Include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1352357080" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1968691837" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
@@ -190,11 +113,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Src/stm32f4xx_hal_timebase_tim_template.c|Src/stm32f4xx_hal_timebase_rtc_wakeup_template.c|Src/stm32f4xx_hal_timebase_rtc_alarm_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="HAL_Driver"/>
-						<entry excluding="Third_Party/FreeRTOS/Source/portable/MemMang/heap_1.c|Third_Party/FreeRTOS/Source/portable/MemMang/heap_2.c|Third_Party/FreeRTOS/Source/portable/MemMang/heap_3.c|Third_Party/FreeRTOS/Source/portable/MemMang/heap_5.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
-						<entry excluding="Fonts" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Utilities"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -233,6 +152,7 @@
 									<listOptionValue builtIn="false" value="STM32F429xx"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="USE_RTOS_SYSTICK"/>
+									<listOptionValue builtIn="false" value="HARDWARE_STM32F429I_DISC1"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.329946391" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ili9325&quot;"/>
@@ -273,6 +193,18 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lsm303dlhc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/core&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/STM32F429I-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/core}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App/STM32F4}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/Framework/EOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../..\..\Library\system\Inc&quot;"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/Device"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/core"/>
+									<listOptionValue builtIn="false" value="../../Library/HAL_Driver/Inc"/>
+									<listOptionValue builtIn="false" value="../../../../Demo/DisplayDemo/Include"/>
 								</option>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.145068821" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.1192832334" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
@@ -288,6 +220,7 @@
 									<listOptionValue builtIn="false" value="STM32F429xx"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="USE_RTOS_SYSTICK"/>
+									<listOptionValue builtIn="false" value="HARDWARE_STM32F429I_DISC1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.932864344" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/ili9325&quot;"/>
@@ -328,6 +261,18 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lsm303dlhc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/core&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/STM32F429I-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/core}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App/STM32F4}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/Framework/EOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../..\..\Library\system\Inc&quot;"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/Device"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/core"/>
+									<listOptionValue builtIn="false" value="../../Library/HAL_Driver/Inc"/>
+									<listOptionValue builtIn="false" value="../../../../Demo/DisplayDemo/Include"/>
 								</option>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp.811896776" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s.1602372680" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s"/>
@@ -380,6 +325,18 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/Components/lsm303dlhc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/core&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/STM32F429I-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/core}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/Library/CMSIS/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/App/STM32F4}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/F4DisplayDemo/inc/Framework/EOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../..\..\Library\system\Inc&quot;"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/Device"/>
+									<listOptionValue builtIn="false" value="../../Library/CMSIS/core"/>
+									<listOptionValue builtIn="false" value="../../Library/HAL_Driver/Inc"/>
+									<listOptionValue builtIn="false" value="../../../../Demo/DisplayDemo/Include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.323259903" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.2115052922" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
@@ -387,11 +344,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Src/stm32f4xx_hal_timebase_tim_template.c|Src/stm32f4xx_hal_timebase_rtc_wakeup_template.c|Src/stm32f4xx_hal_timebase_rtc_alarm_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="HAL_Driver"/>
-						<entry excluding="Third_Party/FreeRTOS/Source/portable/MemMang/heap_1.c|Third_Party/FreeRTOS/Source/portable/MemMang/heap_2.c|Third_Party/FreeRTOS/Source/portable/MemMang/heap_3.c|Third_Party/FreeRTOS/Source/portable/MemMang/heap_5.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
-						<entry excluding="Fonts" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Utilities"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
