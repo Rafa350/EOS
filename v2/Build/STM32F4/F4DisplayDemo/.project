@@ -33,6 +33,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Library/FreeRTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Library/HAL_Driver</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -78,6 +83,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Library/FreeRTOS/Source</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Library/HAL_Driver/Inc</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -91,11 +101,6 @@
 			<name>Library/startup/startup_stm32f429xx.s</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/startup/startup_stm32f429xx.s</locationURI>
-		</link>
-		<link>
-			<name>Library/system/Inc</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Library/system/Src</name>
@@ -118,17 +123,17 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/FreeRTOS</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/App/AppMain.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/AppMain.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F4</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -238,119 +243,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/tz_context.h</locationURI>
 		</link>
 		<link>
-			<name>Library/CMSIS/device/stm32f401xc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f401xc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f401xe.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f401xe.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f405xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f405xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f407xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f407xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f410cx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f410cx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f410rx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f410rx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f410tx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f410tx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f411xe.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f411xe.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f412cx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f412cx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f412rx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f412rx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f412vx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f412vx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f412zx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f412zx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f413xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f413xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f415xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f415xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f417xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f417xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f423xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f423xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f427xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f427xx.h</locationURI>
-		</link>
-		<link>
 			<name>Library/CMSIS/device/stm32f429xx.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f429xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f437xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f437xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f439xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f439xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f446xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f446xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f469xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f469xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f479xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f479xx.h</locationURI>
 		</link>
 		<link>
 			<name>Library/CMSIS/device/stm32f4xx.h</name>
@@ -361,6 +256,36 @@
 			<name>Library/CMSIS/device/system_stm32f4xx.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/system_stm32f4xx.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/list.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/queue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/tasks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/timers.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Inc/Legacy</name>
@@ -1048,11 +973,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_mmc.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_msp_template.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_msp_template.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_nand.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_nand.c</locationURI>
@@ -1171,21 +1091,6 @@
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_tim_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_tim_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_alarm_template.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_alarm_template.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_wakeup_template.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_wakeup_template.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_timebase_tim_template.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_timebase_tim_template.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_uart.c</name>
@@ -1308,16 +1213,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_ll_utils.c</locationURI>
 		</link>
 		<link>
-			<name>Library/system/Inc/stm32f4xx_it.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Inc/stm32f4xx_it.h</locationURI>
-		</link>
-		<link>
-			<name>Library/system/Src/stm32f4xx_it.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Src/stm32f4xx_it.c</locationURI>
-		</link>
-		<link>
 			<name>Library/system/Src/syscalls.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Src/syscalls.c</locationURI>
@@ -1378,6 +1273,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/eos.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/eosAssert.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
+		</link>
+		<link>
 			<name>src/App/STM32F4/AppInitialize.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/AppInitialize.cpp</locationURI>
@@ -1396,6 +1296,91 @@
 			<name>src/App/STM32F4/stm32f4xx_hal_timebase_tim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f4xx_hal_timebase_tim.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/FreeRTOS.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/StackMacros.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/StackMacros.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/list.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/list.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/portable.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/projdefs.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/queue.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/semphr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/stack_macros.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/stack_macros.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/task.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/task.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/timers.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/GCC</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/MemMang</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Inc/Legacy/stm32_hal_legacy.h</name>
@@ -1436,6 +1421,11 @@
 			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halSPI.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSPI.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
@@ -1508,6 +1498,61 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Controllers/Display</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoop.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/eosService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosService.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Collections</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM4F</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/MemMang/heap_4.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -1528,11 +1573,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halI2C.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2C.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
@@ -1546,11 +1586,6 @@
 			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halUSB.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halUSB.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Collections/eosList.h</name>
@@ -1633,6 +1668,146 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosMatrix2D.h</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32/halGPIO.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halGPIO.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32/halSPI.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSPI.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32/halSYS.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMemory.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMemory.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMsgQueue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMsgQueue.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalSemaphore.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalSemaphore.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTask.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTask.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTimer.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTimer.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosList.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosErrorHandler.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosGlobalAlloc.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosGlobalAlloc.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosHeapAllocator.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosHeapAllocator.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosPoolAllocator.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosPoolAllocator.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosQueue.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosQueue.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosSemaphore.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosSemaphore.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosString.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosString.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTask.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosTimer.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTimer.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosBitmap.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosBitmap.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosColor.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosColor.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosDisplay.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosDisplay.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosFont.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosFont.cpp</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341Defs.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosILI9341Defs.h</locationURI>
@@ -1641,6 +1816,276 @@
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341LTDC.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosILI9341LTDC.h</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/5x7lcd12pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/5x7lcd12pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/5x7practical12pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/5x7practical12pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Arial10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Arial10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Arial12pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Arial12pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Arial14pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Arial14pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Arial18pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Arial18pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Arial24pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Arial24pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Arial8pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Arial8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/ArialBold10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/ArialBold10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/ArialBold12pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/ArialBold12pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/ArialBold14pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/ArialBold14pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/ArialBold18pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/ArialBold18pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/ArialBold24pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/ArialBold24pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/ArialBold8pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/ArialBold8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas12pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas12pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas14pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas14pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas18pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas18pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas24pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas24pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas8pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/CourierNew10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/CourierNew10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/CourierNew7pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/CourierNew7pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/CourierNew8pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/CourierNew8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/CourierNewBold10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/CourierNewBold10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/CourierNewBold7pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/CourierNewBold7pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/CourierNewBold8pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/CourierNewBold8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerif10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerif10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerif12pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerif12pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerif14pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerif14pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerif18pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerif18pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerif24pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerif24pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerif7pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerif7pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerif8pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerif8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerifBold10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerifBold10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerifBold12pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerifBold12pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerifBold14pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerifBold14pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerifBold18pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerifBold18pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerifBold24pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerifBold24pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerifBold7pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerifBold7pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/MicrosoftSansSerifBold8pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/MicrosoftSansSerifBold8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Tahoma10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Tahoma10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Tahoma7pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Tahoma7pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Tahoma8pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Tahoma8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/TahomaBold10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/TahomaBold10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/TahomaBold7pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/TahomaBold7pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/TahomaBold8pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/TahomaBold8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_PMP8.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PMP8.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

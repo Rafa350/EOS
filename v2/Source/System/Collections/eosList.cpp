@@ -31,7 +31,7 @@ GenericList::GenericList(
     initialCapacity(initialCapacity),
     container(nullptr) {
 
-    eosArgumentIsNotZero(size);
+    eosCheckIsZero(size);
 
     // Reserva memoria pel contenidor
     //

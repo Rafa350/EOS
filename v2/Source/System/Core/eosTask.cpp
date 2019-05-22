@@ -25,7 +25,7 @@ Task::Task(
     const char *name,
     IRunable *runable) {
 
-    eosArgumentIsNotNull(runable);
+    eosCheckIsNull(runable);
 
     this->runable = runable;
 

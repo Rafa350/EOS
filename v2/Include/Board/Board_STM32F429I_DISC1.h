@@ -130,7 +130,7 @@
 
 
 // -----------------------------------------------------------------------
-// Parametres de configuracio controlador de display ILI9341
+// Display grafic ILI9341
 // -----------------------------------------------------------------------
 
 #ifdef DISPLAY_DRV_ILI9341
@@ -171,27 +171,27 @@
 
 
 // -----------------------------------------------------------------------
-// Parametres de configuracio del controlador de display ILI9341LTDC
+// Display grafic ILI9341LTDC
 // -----------------------------------------------------------------------
 
 #ifdef DISPLAY_DRV_ILI9341LTDC
 
 // Adressa del buffer de video
 //
-#define DISPLAY_VRAM              0xD0000000
+#define DISPLAY_VRAM         0xD0000000
 
 // Parametres fisics de la pantalla
 //
-#define DISPLAY_HSYNC             9    // Horizontal sync
-#define DISPLAY_HBP              29    // Horizontal back Porch
-#define DISPLAY_HFP               2    // Horizontal front Porch
-#define DISPLAY_VSYNC             1    // Vertical sync
-#define DISPLAY_VBP               3    // Vertical back Porch
-#define DISPLAY_VFP               2    // Vertical front Porch
-#define DISPLAY_HSPOL             0    // HSync active (0=LOW, 1=HIGHT)
-#define DISPLAY_VSPOL             0    // VSync active (0=LOW, 1=HIGHT)
-#define DISPLAY_DEPOL             0    // DE active (0=LOW, 1=HIGHT)
-#define DISPLAY_PCPOL             0    // PC active (0=LOW, 1=HIGHT)
+#define DISPLAY_HSYNC        9    // Horizontal sync
+#define DISPLAY_HBP          29   // Horizontal back Porch
+#define DISPLAY_HFP          2    // Horizontal front Porch
+#define DISPLAY_VSYNC        1    // Vertical sync
+#define DISPLAY_VBP          3    // Vertical back Porch
+#define DISPLAY_VFP          2    // Vertical front Porch
+#define DISPLAY_HSPOL        0    // HSync active (0=LOW, 1=HIGHT)
+#define DISPLAY_VSPOL        0    // VSync active (0=LOW, 1=HIGHT)
+#define DISPLAY_DEPOL        0    // DE active (0=LOW, 1=HIGHT)
+#define DISPLAY_PCPOL        0    // PC active (0=LOW, 1=HIGHT)
 
 // Control del pin CS (Chip select)
 //
