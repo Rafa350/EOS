@@ -6,8 +6,6 @@
 #include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
-#include "stdint.h"
-
 
 #if !defined(DISPLAY_COLOR_RGB565) && !defined(DISPLAY_COLOR_RGB888)
 	#error Formato de color no soportado

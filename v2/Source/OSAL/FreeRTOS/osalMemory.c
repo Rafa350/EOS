@@ -14,11 +14,14 @@ void *osalMemoryAlloc(
 
     // Prerequisits
     //
-    eosAssert(size != 0);
+    eosAssert(size > 0);
 
 	// Obte el bloc de memoria
 	//
-    return pvPortMalloc(size);
+    void *p = pvPortMalloc(size);
+    eosAssert(p != NULL);
+
+    return p;
 }
 
 
@@ -31,7 +34,7 @@ void osalMemoryFree(
 
     // Prerequisits
     //
-    eosAssert(p!= NULL);
+    eosAssert(p != NULL);
 
     // Allivera el bloc de memoria
     //

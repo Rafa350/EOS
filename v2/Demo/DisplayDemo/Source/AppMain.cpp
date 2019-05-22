@@ -390,7 +390,7 @@ void DisplayLoopService::drawBackground(
 ///
 void AppMain() {
 
-    MyApplication *app = new MyApplication();
+	 MyApplication *app = new MyApplication();
     app->run();
     delete app;
 }

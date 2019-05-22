@@ -6,7 +6,6 @@
 #include "System/eosMath.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "HAL/halGPIO.h"
-#include "stdint.h"
 
 
 #if !((defined(LTDC) && (defined(EOS_STM32F4) || defined(EOS_STM32F7))))

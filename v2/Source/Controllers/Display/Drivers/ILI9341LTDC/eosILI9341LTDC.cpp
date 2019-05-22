@@ -9,10 +9,6 @@
 #include "hAL/halGPIO.h"
 #include "hAL/halSPI.h"
 
-#include "string.h"
-
-#include "stm32f4xx_hal.h"
-
 
 // Format de pixel
 //
