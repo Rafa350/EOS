@@ -883,16 +883,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_hcd.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_i2c.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_i2c.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_iwdg.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_iwdg.c</locationURI>
@@ -966,16 +956,6 @@
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_rng.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_rng.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_rtc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_rtc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_rtc_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f4xx_hal_rtc_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_sai.c</name>
