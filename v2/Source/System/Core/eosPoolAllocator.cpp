@@ -4,7 +4,7 @@
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "osal/osalTask.h"
+#include "osal/osalKernel.h"
 #include "System/Core/eosPoolAllocator.h"
 
 
@@ -50,6 +50,8 @@ GenericPoolAllocator::~GenericPoolAllocator() {
 ///
 void *GenericPoolAllocator::allocate(
     size_t size) {
+
+	eosAssert(size > 0);
 
     void *ret = nullptr;
 

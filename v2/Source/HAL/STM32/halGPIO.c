@@ -193,8 +193,6 @@ void halGPIOInitializePins(
 	const GPIOInitializePinInfo *pInfo,
 	uint_fast8_t count) {
 
-	// Precondicions
-	//
 	eosAssert(pInfo != NULL);
 	eosAssert(count != 0);
 
@@ -217,8 +215,6 @@ void halGPIOInitializePorts(
 	const GPIOInitializePortInfo *pInfo,
 	uint_fast8_t count) {
 
-	// Precondicions
-	//
 	eosAssert(pInfo != NULL);
 	eosAssert(count != 0);
 

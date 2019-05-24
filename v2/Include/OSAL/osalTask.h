@@ -37,18 +37,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 
 HTask osalTaskCreate(const TaskInitializeInfo *info);
 void osalTaskDestroy(HTask hTask);
-
-void osalEnterCritical();
-void osalExitCritical();
-
-void osalStartScheduler();
-void osalStopScheduler();
-
-void osalSuspendAll();
-void osalResumeAll();
-unsigned osalGetTickCount();
-void osalDelay(unsigned time);
-void osalDelayUntil(unsigned time, unsigned *lastTick);
+void osalTaskYield();
 
 
 #ifdef	__cplusplus

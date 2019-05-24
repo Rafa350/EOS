@@ -31,10 +31,8 @@ GenericList::GenericList(
     initialCapacity(initialCapacity),
     container(nullptr) {
 
-    eosCheckIsZero(size);
+    eosAssert(size > 0);
 
-    // Reserva memoria pel contenidor
-    //
     resize(initialCapacity);
 }
 

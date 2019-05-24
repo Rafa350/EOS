@@ -1,3 +1,5 @@
+#include "eos.h"
+#include "eosAssert.h"
 #include "osal/osalTimer.h"
 #include "FreeRTOS.h"
 #include "timers.h"
@@ -21,10 +23,7 @@ static int inISR() {
 HTimer osalTimerCreate(
 	const TimerInitializeInfo *info) {
 
-	// Comprova que els parametres sigun correctes.
-	//
-	if (info == NULL)
-		return NULL;
+	eosAssert(info != NULL);
 
 	// Crea el temporitzador
 	//
@@ -59,19 +58,9 @@ bool osalTimerDestroy(
 	HTimer hTimer,
 	unsigned waitTime) {
 
-	// Comprova que els parametres siguin correctes.
-	//
-	if (hTimer == NULL)
-		return false;
+	eosAssert(hTimer != NULL);
 
-	// Destrueix el temportizador.
-	//
-	if (xTimerDelete(hTimer, waitTime / portTICK_PERIOD_MS) != pdPASS)
-		return false;
-
-	// Tot correcte. Retorna true.
-	//
-	return true;
+	return xTimerDelete(hTimer, waitTime / portTICK_PERIOD_MS) == pdPASS;
 }
 
 
@@ -88,10 +77,7 @@ bool osalTimerStart(
 	unsigned time,
 	unsigned waitTime) {
 
-	// Comprova que els parametres siguin correctes
-	//
-	if (hTimer == NULL)
-		return false;
+	eosAssert(hTimer != NULL);
 
 	// Comprova si es dins d'una interrupcio
 	//
@@ -127,19 +113,9 @@ bool osalTimerStop(
 	HTimer hTimer,
 	unsigned waitTime) {
 
-	// Comprova que els parametres siguin correctes.
-	//
-	if (hTimer == NULL)
-		return false;
+	eosAssert(hTimer != NULL);
 
-	// Para el temporitzador.
-	//
-	if (xTimerStop(hTimer, waitTime / portTICK_PERIOD_MS) != pdPASS)
-		return false;
-
-	// Tot correctre. Retorna true.
-	//
-	return true;
+	return xTimerStop(hTimer, waitTime / portTICK_PERIOD_MS) == pdPASS;
 }
 
 
@@ -151,13 +127,8 @@ bool osalTimerStop(
 bool osalTimerIsActive(
 	HTimer hTimer) {
 
-	// Comprova wue els parametres siguin correctes.
-	//
-	if (hTimer == NULL)
-		return false;
+	eosAssert(hTimer != NULL);
 
-	// Comprova si esta actiu.
-	//
 	return xTimerIsTimerActive(hTimer) == pdTRUE;
 }
 
@@ -170,12 +141,7 @@ bool osalTimerIsActive(
 void *osalTimerGetContext(
 	HTimer hTimer) {
 
-	// Comprova que els parametres s'guin correctes.
-	//
-	if (hTimer == NULL)
-		return NULL;
+	eosAssert(hTimer != NULL);
 
-	// Obte el context del temporitzador.
-	//
 	return pvTimerGetTimerID(hTimer);
 }

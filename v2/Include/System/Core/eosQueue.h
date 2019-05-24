@@ -3,7 +3,7 @@
 
 
 #include "eos.h"
-#include "osal/osalMsgQueue.h"
+#include "osal/osalQueue.h"
 
 
 namespace eos {
@@ -12,7 +12,7 @@ namespace eos {
     ///
     class GenericQueue {
         private:
-            HMsgQueue hQueue;
+            HQueue hQueue;
 
         public:
             virtual ~GenericQueue();
@@ -26,7 +26,7 @@ namespace eos {
             bool genericGetISR(void *element);
     };
 
-    /// \brief Cua personalitzaba amb plantilla.
+    /// \brief Cua personalitzada amb plantilla.
     ///
     template <typename T>
     class Queue: private GenericQueue {

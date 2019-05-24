@@ -143,6 +143,7 @@ void DisplayLoopService::onSetup() {
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif
     driver->initialize();
+    driver->displayOn();
 
     display = new Display(driver);
     display->clear(COLOR_Black);
@@ -390,7 +391,7 @@ void DisplayLoopService::drawBackground(
 ///
 void AppMain() {
 
-	 MyApplication *app = new MyApplication();
+	MyApplication *app = new MyApplication();
     app->run();
     delete app;
 }

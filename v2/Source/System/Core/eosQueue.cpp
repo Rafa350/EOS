@@ -15,17 +15,13 @@ GenericQueue::GenericQueue(
     unsigned size,
     unsigned capacity) {
 
-    // Precondicions
-    //
     eosAssert(size != 0);
     eosAssert(capacity != 0);
 
-    // Crea la cua
-    //
-    MsgQueueInitializeInfo info;
+    QueueInitializeInfo info;
     info.maxElements = capacity;
     info.elementSize = size;
-    hQueue = osalMsgQueueCreate(&info);
+    hQueue = osalQueueCreate(&info);
     eosAssert(hQueue != nullptr);
 }
 
@@ -35,7 +31,7 @@ GenericQueue::GenericQueue(
 ///
 GenericQueue::~GenericQueue() {
 
-    osalMsgQueueDestroy(hQueue);
+    osalQueueDestroy(hQueue);
 }
 
 
@@ -44,8 +40,9 @@ GenericQueue::~GenericQueue() {
 ///
 void GenericQueue::clear() {
 
-    osalMsgQueueClear(hQueue);
+    osalQueueClear(hQueue);
 }
+
 
 
 /// ----------------------------------------------------------------------
@@ -58,7 +55,7 @@ bool GenericQueue::genericPut(
     const void *element,
     unsigned blockTime) {
 
-	return osalMsgQueuePut(hQueue, element, blockTime);
+	return osalQueuePut(hQueue, element, blockTime);
 }
 
 
@@ -72,19 +69,19 @@ bool GenericQueue::genericGet(
     void *element,
     unsigned blockTime) {
 
-	return osalMsgQueueGet(hQueue, element, blockTime);
+	return osalQueueGet(hQueue, element, blockTime);
 }
 
 
 bool GenericQueue::genericPutISR(
     void *element) {
 
-	return osalMsgQueuePutISR(hQueue, element);
+	return osalQueuePutISR(hQueue, element);
 }
 
 
 bool GenericQueue::genericGetISR(
     void *element) {
 
-	return osalMsgQueueGetISR(hQueue, element);
+	return osalQueueGetISR(hQueue, element);
 }

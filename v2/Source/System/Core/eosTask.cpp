@@ -1,7 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/Core/eosTask.h"
-#include "osal/osalTask.h"
+#include "OSAL/osalTask.h"
+#include "OSAL/osalKernel.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -25,7 +26,7 @@ Task::Task(
     const char *name,
     IRunable *runable) {
 
-    eosCheckIsNull(runable);
+    eosAssert(runable != nullptr);
 
     this->runable = runable;
 

@@ -28,22 +28,22 @@ namespace eos {
             virtual void onInitialize();
             virtual void onTerminate();
             virtual void onTick();
-            
+
         public:
             Application();
             Application(const Application&) = delete;
             virtual ~Application();
-            
+
             void run();
             void tick();
-            
+
             void addService(Service *pService);
             void removeService(Service *pService);
             void removeServices();
             Service *getService(int id);
 
             Application& operator=(const Application&) = delete;
-    };        
+    };
 }
 
 
