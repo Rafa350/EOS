@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 
-typedef void *SemaphoreHandler;
+typedef void *HSemaphore;
 
 
 #ifdef	__cplusplus

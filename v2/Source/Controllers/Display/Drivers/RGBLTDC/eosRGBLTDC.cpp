@@ -136,43 +136,45 @@ void RGBDirectDriver::displayOff() {
 void RGBDirectDriver::setOrientation(
 	DisplayOrientation orientation) {
 
-	this->orientation = orientation;
-	switch (orientation) {
-		case DisplayOrientation::normal:
-			screenWidth = DISPLAY_IMAGE_WIDTH;
-			screenHeight = DISPLAY_IMAGE_HEIGHT;
-			sin = 0;
-			cos = 1;
-			dx = 0;
-			dy = 0;
-			break;
+	if (this->orientation != orientation) {
+		this->orientation = orientation;
+		switch (orientation) {
+			case DisplayOrientation::normal:
+				screenWidth = DISPLAY_IMAGE_WIDTH;
+				screenHeight = DISPLAY_IMAGE_HEIGHT;
+				sin = 0;
+				cos = 1;
+				dx = 0;
+				dy = 0;
+				break;
 
-		case DisplayOrientation::rotate90:
-			screenWidth = DISPLAY_IMAGE_HEIGHT;
-			screenHeight = DISPLAY_IMAGE_WIDTH;
-			sin = 1;
-			cos = 0;
-			dx = DISPLAY_IMAGE_WIDTH - 1;
-			dy = 0;
-			break;
+			case DisplayOrientation::rotate90:
+				screenWidth = DISPLAY_IMAGE_HEIGHT;
+				screenHeight = DISPLAY_IMAGE_WIDTH;
+				sin = 1;
+				cos = 0;
+				dx = DISPLAY_IMAGE_WIDTH - 1;
+				dy = 0;
+				break;
 
-		case DisplayOrientation::rotate180:
-			screenWidth = DISPLAY_IMAGE_WIDTH;
-			screenHeight = DISPLAY_IMAGE_HEIGHT;
-			sin = 0;
-			cos = -1;
-			dx = DISPLAY_IMAGE_WIDTH - 1;
-			dy = DISPLAY_IMAGE_HEIGHT - 1;
-			break;
+			case DisplayOrientation::rotate180:
+				screenWidth = DISPLAY_IMAGE_WIDTH;
+				screenHeight = DISPLAY_IMAGE_HEIGHT;
+				sin = 0;
+				cos = -1;
+				dx = DISPLAY_IMAGE_WIDTH - 1;
+				dy = DISPLAY_IMAGE_HEIGHT - 1;
+				break;
 
-		case DisplayOrientation::rotate270:
-			screenWidth = DISPLAY_IMAGE_HEIGHT;
-			screenHeight = DISPLAY_IMAGE_WIDTH;
-			sin = -1;
-			cos = 0;
-			dx = 0;
-			dy = DISPLAY_IMAGE_HEIGHT - 1;
-			break;
+			case DisplayOrientation::rotate270:
+				screenWidth = DISPLAY_IMAGE_HEIGHT;
+				screenHeight = DISPLAY_IMAGE_WIDTH;
+				sin = -1;
+				cos = 0;
+				dx = 0;
+				dy = DISPLAY_IMAGE_HEIGHT - 1;
+				break;
+		}
 	}
 }
 

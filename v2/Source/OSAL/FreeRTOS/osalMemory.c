@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "osal/osalMemory.h"
+#include "OSAL/osalMemory.h"
 #include "FreeRTOS.h"
 
 

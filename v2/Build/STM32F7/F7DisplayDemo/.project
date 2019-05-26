@@ -123,6 +123,21 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/App/appApplication.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appApplication.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/appDisplayService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appDisplayService.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/appLedService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appLedService.h</locationURI>
+		</link>
+		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/eosConfig.h</locationURI>
@@ -143,14 +158,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
 		</link>
 		<link>
-			<name>src/App/AppMain.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/AppMain.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/App/STM32F7</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/App/appApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/appDisplayService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appDisplayService.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/appLedService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appLedService.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/appMain.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appMain.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS</name>
@@ -898,26 +928,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_cortex.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_crc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_crc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_crc_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_crc_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_dcmi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_dcmi.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_dcmi_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_dcmi_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_dfsdm.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_dfsdm.c</locationURI>
@@ -943,39 +953,14 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_dsi.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_eth.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_eth.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_exti.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_exti.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_flash.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_flash.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_flash_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_flash_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_gpio.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_gpio.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_hash.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_hash.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_hash_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_hash_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_hcd.c</name>
@@ -993,24 +978,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_i2c_ex.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_i2s.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_i2s.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_irda.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_irda.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_iwdg.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_iwdg.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_jpeg.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_jpeg.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_lptim.c</name>
@@ -1018,24 +988,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_lptim.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_ltdc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_ltdc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_ltdc_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_ltdc_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_mdios.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_mdios.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_mmc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_mmc.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_nand.c</name>
@@ -1046,31 +1001,6 @@
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_nor.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_nor.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_pcd.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_pcd.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_pcd_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_pcd_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_pwr.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_pwr.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_pwr_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_pwr_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_qspi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_qspi.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_rcc.c</name>
@@ -1108,11 +1038,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_sdram.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_smbus.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_smbus.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_spdifrx.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_spdifrx.c</locationURI>
@@ -1141,21 +1066,6 @@
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_tim_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_tim_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_uart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_uart.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_uart_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_uart_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_usart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_usart.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_wwdg.c</name>
@@ -1308,14 +1218,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F7/AppInitialize.cpp</name>
+			<name>src/App/STM32F7/appInitialize.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/AppInitialize.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/appInitialize.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F7/Main.cpp</name>
+			<name>src/App/STM32F7/main.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/Main.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/main.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F7/stm32f746g_discovery.c</name>

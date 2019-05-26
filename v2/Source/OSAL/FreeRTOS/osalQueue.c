@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "osal/osalQueue.h"
-#include "osal/osalMemory.h"
+#include "OSAL/osalQueue.h"
+#include "OSAL/osalMemory.h"
 #include "FreeRTOS.h"
 #include "queue.h"
 
