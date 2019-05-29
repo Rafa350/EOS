@@ -5,6 +5,8 @@
 #include "task.h"
 
 
+extern void xPortSysTickHandler(void);
+
 
 /// ----------------------------------------------------------------------
 /// \brief Entra en una seccio critica.
@@ -93,7 +95,7 @@ unsigned osalGetTickCount() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa el tick del sistema.
 ///
-void osalSystickHandler() {
+void osalSysTickHandler() {
 
 #if (INCLUDE_xTaskGetSchedulerState  == 1)
 	if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {

@@ -30,21 +30,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Library</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/startup</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/system</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>inc/App</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -61,16 +46,6 @@
 		</link>
 		<link>
 			<name>src/Framework</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/startup/startup_stm32f746xx.S</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/startup/startup_stm32f746xx.S</locationURI>
-		</link>
-		<link>
-			<name>Library/system/Src</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -103,16 +78,6 @@
 			<name>src/Framework/EOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/system/Src/syscalls.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Src/syscalls.c</locationURI>
-		</link>
-		<link>
-			<name>Library/system/Src/system_stm32f7xx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Src/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F7/FreeRTOSConfig.h</name>
@@ -157,12 +122,12 @@
 		<link>
 			<name>inc/Framework/EOS/eos.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/eos.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eos.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/eosAssert.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/eosAssert.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F7/appInitialize.cpp</name>
@@ -173,6 +138,11 @@
 			<name>src/App/STM32F7/main.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/STM32F7/main.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7/startup_stm32f746xx.S</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/startup/startup_stm32f746xx.S</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F7/stm32f746g_discovery.c</name>
@@ -193,6 +163,16 @@
 			<name>src/App/STM32F7/stm32f7xx_it.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/STM32F7/stm32f7xx_it.c</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7/syscalls.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Src/syscalls.c</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7/system_stm32f7xx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Src/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
@@ -253,6 +233,11 @@
 			<name>inc/Framework/EOS/HAL/halTMR.h</name>
 			<type>1</type>
 			<locationURI>copy_PARENT/Include/HAL/halTMR.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/OSAL/osalKernel.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalKernel.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalMemory.h</name>
@@ -338,11 +323,6 @@
 			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoop.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Services/eosI2CMaster.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosI2CMaster.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>

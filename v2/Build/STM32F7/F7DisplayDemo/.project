@@ -373,16 +373,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/system_stm32f7xx.h</locationURI>
 		</link>
 		<link>
-			<name>Library/FreeRTOS/Source/croutine.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/croutine.c</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/event_groups.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c</locationURI>
-		</link>
-		<link>
 			<name>Library/FreeRTOS/Source/include</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

@@ -24,7 +24,7 @@ unsigned osalGetTickCount();
 void osalDelay(unsigned time);
 void osalDelayUntil(unsigned time, unsigned *lastTick);
 
-void osalSystickHandler();
+void osalSysTickHandler();
 
 
 #ifdef	__cplusplus
