@@ -33,6 +33,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Library/FreeRTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Library/HAL_Driver</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -68,6 +73,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Library/FreeRTOS/Source</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Library/HAL_Driver/Inc</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -93,6 +103,21 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/App/appApplication.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appApplication.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/appDisplayService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appDisplayService.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/appLedService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appLedService.h</locationURI>
+		</link>
+		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/eosConfig.h</locationURI>
@@ -113,9 +138,59 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/App/appApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/appDisplayService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appDisplayService.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/appLedService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appLedService.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/CMSIS_RTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/list.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/queue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/tasks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/timers.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Inc/Legacy</name>
@@ -613,21 +688,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_adc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_adc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_adc_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_adc_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_can.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_can.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_cec.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_cec.c</locationURI>
@@ -636,41 +696,6 @@
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_cortex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_cortex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_crc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_crc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_cryp.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_cryp.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_cryp_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_cryp_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_dac.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_dac.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_dac_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_dac_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_dcmi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_dcmi.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_dcmi_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_dcmi_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_dfsdm.c</name>
@@ -691,46 +716,6 @@
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_dma_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_dma_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_dsi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_dsi.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_eth.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_eth.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_exti.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_exti.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_flash.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_flash.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_flash_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_flash_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_fmpi2c.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_fmpi2c.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_fmpi2c_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_fmpi2c_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_gpio.c</name>
@@ -763,74 +748,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_i2s.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_i2s.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_i2s_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_i2s_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_irda.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_irda.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_iwdg.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_iwdg.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_lptim.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_lptim.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_ltdc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_ltdc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_ltdc_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_ltdc_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_mmc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_mmc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_msp_template.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_msp_template.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_nand.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_nand.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_nor.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_nor.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_pccard.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_pccard.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_pcd.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_pcd.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_pwr.c</name>
@@ -858,31 +778,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c</locationURI>
 		</link>
 		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_rng.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_rng.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_rtc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_rtc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_rtc_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_rtc_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_sai.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_sai.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_sai_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_sai_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_sd.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_sd.c</locationURI>
@@ -891,21 +786,6 @@
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_sdram.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_sdram.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_smartcard.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_smartcard.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_smbus.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_smbus.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_spdifrx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_spdifrx.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_spi.c</name>
@@ -926,36 +806,6 @@
 			<name>Library/HAL_Driver/Src/stm32f4xx_hal_tim_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_tim_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_alarm_template.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_alarm_template.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_wakeup_template.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_wakeup_template.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_timebase_tim_template.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_timebase_tim_template.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_uart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_uart.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_usart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_usart.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f4xx_hal_wwdg.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Src/stm32f4xx_hal_wwdg.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f4xx_ll_adc.c</name>
@@ -1173,6 +1023,116 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Library/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/FreeRTOS.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/StackMacros.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/StackMacros.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/croutine.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/croutine.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/deprecated_definitions.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/event_groups.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/list.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/list.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/message_buffer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/message_buffer.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/mpu_prototypes.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/mpu_prototypes.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/mpu_wrappers.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/portable.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/projdefs.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/queue.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/semphr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/stack_macros.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/stack_macros.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/stdint.readme</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/stdint.readme</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/stream_buffer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/stream_buffer.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/task.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/task.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/include/timers.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/GCC</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/MemMang</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Library/HAL_Driver/Inc/Legacy/stm32_hal_legacy.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL_Driver/Inc/Legacy/stm32_hal_legacy.h</locationURI>
@@ -1333,6 +1293,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
 		</link>
 		<link>
+			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM4F</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/MemMang/heap_4.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -1473,14 +1443,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalKernel.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalKernel.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMemory.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMemory.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMsgQueue.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMsgQueue.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalSemaphore.c</name>
@@ -1576,6 +1546,16 @@
 			<name>src/Framework/EOS/System/Graphics/eosFont.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosFont.cpp</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</locationURI>
+		</link>
+		<link>
+			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341Defs.h</name>
