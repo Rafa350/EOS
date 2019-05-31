@@ -21,7 +21,7 @@ static TimerInfo timerInfoTbl[HAL_TMR_TIMER_MAX];
 
 /// ----------------------------------------------------------------------
 /// \brief Activa el rellotge del temporitzador
-/// \param timer: Identificador del temporitzador.
+/// \param[in] timer: Identificador del temporitzador.
 ///
 static void EnableTimerClock(
 	TMRTimer timer) {

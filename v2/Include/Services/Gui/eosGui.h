@@ -83,8 +83,8 @@ namespace eos {
 			GuiService(Application *application, const GuiServiceInitializeInfo *pInfo);
 
 		protected:
-			void onInitialize();
-			void onTask();
+			void onInitialize() override;
+			void onTask() override;
 	};
 }
 

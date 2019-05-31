@@ -4,7 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>STM32Cube_FW_F7_V1.8.0</project>
-		<project>stm32f746g-disco_hal_lib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -30,6 +29,31 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>Library</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/startup</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/system</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/App</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -50,9 +74,39 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Library/HAL_Driver/Src</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/startup/startup_stm32f746xx.S</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/startup/startup_stm32f746xx.S</locationURI>
+		</link>
+		<link>
+			<name>Library/system/Src</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/App/STM32F7</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/App/appApplication.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Include/appApplication.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/appLedService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Include/appLedService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/eosConfig.h</name>
@@ -70,6 +124,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/App/appApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/appApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/appLedService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/appLedService.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/App/appMain.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/appMain.cpp</locationURI>
@@ -78,6 +142,76 @@
 			<name>src/Framework/EOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver/Src/stm32f7xx_hal.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL_Driver/Src/stm32f7xx_hal.c</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver/Src/stm32f7xx_hal_cortex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL_Driver/Src/stm32f7xx_hal_cortex.c</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver/Src/stm32f7xx_hal_dma.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL_Driver/Src/stm32f7xx_hal_dma.c</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver/Src/stm32f7xx_hal_gpio.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL_Driver/Src/stm32f7xx_hal_gpio.c</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver/Src/stm32f7xx_hal_rcc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL_Driver/Src/stm32f7xx_hal_rcc.c</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver/Src/stm32f7xx_hal_rcc_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL_Driver/Src/stm32f7xx_hal_rcc_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver/Src/stm32f7xx_hal_sdram.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL_Driver/Src/stm32f7xx_hal_sdram.c</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver/Src/stm32f7xx_hal_tim.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL_Driver/Src/stm32f7xx_hal_tim.c</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver/Src/stm32f7xx_hal_tim_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL_Driver/Src/stm32f7xx_hal_tim_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Library/HAL_Driver/Src/stm32f7xx_ll_fmc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL_Driver/Src/stm32f7xx_ll_fmc.c</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/system/Src/stm32f7xx_it.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/stm32f7xx_it.c</locationURI>
+		</link>
+		<link>
+			<name>Library/system/Src/syscalls.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/syscalls.c</locationURI>
+		</link>
+		<link>
+			<name>Library/system/Src/system_stm32f7xx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F7/FreeRTOSConfig.h</name>
@@ -140,11 +274,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/STM32F7/main.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F7/startup_stm32f746xx.S</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/startup/startup_stm32f746xx.S</locationURI>
-		</link>
-		<link>
 			<name>src/App/STM32F7/stm32f746g_discovery.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/STM32F7/stm32f746g_discovery.c</locationURI>
@@ -158,21 +287,6 @@
 			<name>src/App/STM32F7/stm32f7xx_hal_timebase_tim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/STM32F7/stm32f7xx_hal_timebase_tim.c</locationURI>
-		</link>
-		<link>
-			<name>src/App/STM32F7/stm32f7xx_it.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/STM32F7/stm32f7xx_it.c</locationURI>
-		</link>
-		<link>
-			<name>src/App/STM32F7/syscalls.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Src/syscalls.c</locationURI>
-		</link>
-		<link>
-			<name>src/App/STM32F7/system_stm32f7xx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Src/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
@@ -200,6 +314,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -217,22 +336,12 @@
 		<link>
 			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/HAL/halGPIO.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halI2C.h</name>
-			<type>1</type>
-			<locationURI>copy_PARENT/Include/HAL/halI2C.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/HAL/halSYS.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halTMR.h</name>
-			<type>1</type>
-			<locationURI>copy_PARENT/Include/HAL/halTMR.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSYS.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalKernel.h</name>
@@ -242,27 +351,27 @@
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalMemory.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/OSAL/osalMemory.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalMemory.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalQueue.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/OSAL/osalQueue.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalQueue.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalSemaphore.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/OSAL/osalSemaphore.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalSemaphore.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/OSAL/osalThread.h</name>
+			<name>inc/Framework/EOS/OSAL/osalTask.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/OSAL/osalThread.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTask.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalTimer.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/OSAL/osalTimer.h</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTimer.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui</name>
@@ -272,12 +381,12 @@
 		<link>
 			<name>inc/Framework/EOS/Services/eosAppLoop.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/Services/eosAppLoop.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoop.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/eosService.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/Services/eosService.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Collections</name>
@@ -290,9 +399,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/eosApplication.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/System/eosApplication.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
@@ -350,34 +464,49 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
 		</link>
 		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/include</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/list.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/portable</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/queue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/timers.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosColor.h</name>
-			<type>1</type>
-			<locationURI>copy_PARENT/Include/Controllers/Display/eosColor.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosDisplay.h</name>
-			<type>1</type>
-			<locationURI>copy_PARENT/Include/Controllers/Display/eosDisplay.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosDisplayDriver.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosFont.h</name>
-			<type>1</type>
-			<locationURI>copy_PARENT/Include/Controllers/Display/eosFont.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosMatrix2D.h</name>
-			<type>1</type>
-			<locationURI>copy_PARENT/Include/Controllers/Display/eosMatrix2D.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers</name>
@@ -387,62 +516,87 @@
 		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/eosTouchPad.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/Controllers/TouchPad/eosTouchPad.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPad.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/eosTouchPadDriver.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/Controllers/TouchPad/eosTouchPadDriver.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPadDriver.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/HAL/STM32/halGPIO.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halI2C.h</name>
+			<name>inc/Framework/EOS/HAL/STM32/halGPIOTpl.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/HAL/STM32/halI2C.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosGui.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/Gui/eosGui.h</location>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Services/Gui/eosGuiTouchPad.h</name>
-			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/Services/Gui/eosGuiTouchPad.h</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGui.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Collections/eosList.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/System/Collections/eosList.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosList.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosAllocator.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/System/Core/eosAllocator.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosAllocator.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosHeapAllocator.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/System/Core/eosHeapAllocator.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosHeapAllocator.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosQueue.h</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/MPLab/EOS/v2/Include/System/Core/eosQueue.h</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosQueue.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Core/eosSemaphore.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosSemaphore.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/System/Core/eosTask.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosTimer.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/System/Core/eosTimer.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTimer.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosBitmap.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosBitmap.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosColor.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosDisplay.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosDisplay.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosFont.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosFont.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers</name>
@@ -605,14 +759,74 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosFont.cpp</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosRGBDirect.h</name>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/Controllers/Display/Drivers/eosRGBDirect.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/include/list.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/include/list.h</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/include/task.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/include/task.h</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosRGBLTDC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosRGBLTDC.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers/eosFT5336.h</name>
 			<type>1</type>
-			<locationURI>copy_PARENT/Include/Controllers/TouchPad/Drivers/eosFT5336.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/Drivers/eosFT5336.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC</name>
@@ -655,9 +869,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas8pt.cpp</locationURI>
 		</link>
 		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDC.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDC.cpp</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/port.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/port.c</locationURI>
+		</link>
+		<link>
+			<name>Library/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/portmacro.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/portmacro.h</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>

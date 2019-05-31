@@ -8,7 +8,7 @@
 
 /// ----------------------------------------------------------------------
 /// \brief Crea una tasca.
-/// \param info: Parametres d'inicialitzacio.
+/// \param[in] info: Parametres d'inicialitzacio.
 /// \return El handler de la tasca. NULL en cas d'error.
 ///
 HTask osalTaskCreate(
@@ -34,7 +34,7 @@ HTask osalTaskCreate(
 
 /// ----------------------------------------------------------------------
 /// \brief Destrueix la tasca.
-/// \param hTask: El handler de la tasca. NULL si es la tasca actual.
+/// \param[in] hTask: El handler de la tasca. NULL si es la tasca actual.
 ///
 void osalTaskDestroy(
 	HTask hTask) {

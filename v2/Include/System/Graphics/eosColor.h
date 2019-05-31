@@ -6,10 +6,6 @@
 //
 #include "eos.h"
 
-// Standard includes
-//
-#include "stdint.h"
-
 
 #define ARGB(a, r, g, b)     uint32_t(((uint32_t(a) << 24u) | (uint32_t(r) << 16u) | (uint32_t(g) << 8u) | (uint32_t(b))))
 #define RGB(r, g, b)         ARGB(255, r, g, b)

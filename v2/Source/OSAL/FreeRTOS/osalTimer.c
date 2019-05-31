@@ -17,7 +17,7 @@ static int inISR() {
 
 /// ----------------------------------------------------------------------
 /// \brief Crea un temporitzador.
-/// \param info: Parametres d'inicialitzacio.
+/// \param[in] info: Parametres d'inicialitzacio.
 /// \return El handler del timer. NULL en cas d'error.
 ///
 HTimer osalTimerCreate(
@@ -48,8 +48,8 @@ HTimer osalTimerCreate(
 
 /// ----------------------------------------------------------------------
 /// \brief Destrueix el temporitzador.
-/// \param hTimer: El handler del temporitzador.
-/// \param waitTime: Els temps maxim d'espera.
+/// \param[in] hTimer: El handler del temporitzador.
+/// \param[in] waitTime: Els temps maxim d'espera.
 /// \return True si tot es correcte. False en cas contrari.
 /// \remarks En cas d'error no s'allibera la memoria, ja que el temporitzador,
 /// pot estar pendent de destruccio.
@@ -66,10 +66,10 @@ bool osalTimerDestroy(
 
 /// ----------------------------------------------------------------------
 /// \brief Inicia el temporitzador.
-/// \param hTimer: El handler del temporitzador.
-/// \param time: El temps del temporitzador. Si es zero, el temps es el
+/// \param[in] hTimer: El handler del temporitzador.
+/// \param[in] time: El temps del temporitzador. Si es zero, el temps es el
 ///              mateix que tenia en el cicle anterior.
-/// \param waitTime: El temps maxim de bloqueig.
+/// \param[in] waitTime: El temps maxim de bloqueig.
 /// \return True si tot es correcte. False en cas contrari.
 ///
 bool osalTimerStart(

@@ -21,8 +21,8 @@ namespace eos {
     		bool initialized;
 
         protected:
-            void onInitialize();
-            void onTask();
+            void onInitialize() override;
+            void onTask() override;
             virtual void onSetup();
             virtual void onLoop();
 

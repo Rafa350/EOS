@@ -64,7 +64,7 @@ void osalResumeAll() {
 
 /// ----------------------------------------------------------------------
 /// \brief Suspen l'execucio de la tasca actual, durant un periode de temps.
-/// \param time: Temps en ms.
+/// \param[in] time: Temps en ms.
 ///
 void osalDelay(
 	unsigned time) {
