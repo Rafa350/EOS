@@ -4,7 +4,7 @@
 
 namespace eos {
 
-    class ButtonBase {
+    class ButtonBase: public Control {
     };
     
     class PushButton: public ButtonBase {

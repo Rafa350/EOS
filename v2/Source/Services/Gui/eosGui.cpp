@@ -26,7 +26,8 @@ GuiService::GuiService(
 	Application *application,
 	const GuiServiceInitializeInfo *info):
 
-	Service(application, serviceName, stackSize, priority) {
+	Service(application, serviceName, stackSize, priority),
+	screen(nullptr) {
 
 }
 

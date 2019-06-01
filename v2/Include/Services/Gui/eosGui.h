@@ -13,6 +13,7 @@
 namespace eos {
 
 	class Application;
+	class Screen;
 
 #ifdef eosFormsService_UseSelector
 
@@ -79,6 +80,9 @@ namespace eos {
 	} GuiServiceInitializeInfo;
 
 	class GuiService: public Service {
+		private:
+			Screen *screen;
+
 		public:
 			GuiService(Application *application, const GuiServiceInitializeInfo *pInfo);
 

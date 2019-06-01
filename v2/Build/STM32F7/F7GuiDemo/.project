@@ -544,6 +544,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGui.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/eosGuiVisuals.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGuiVisuals.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Collections/eosList.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosList.h</locationURI>
@@ -682,6 +687,11 @@
 			<name>src/Framework/EOS/Services/Gui/eosGuiTouchPad.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiTouchPad.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/eosGuiVisuals.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiVisuals.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
