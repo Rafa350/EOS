@@ -26,9 +26,9 @@
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
-            <itemPath>../../../Include/OSAL/osalMemory.h</itemPath>
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
             <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalHeap.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <itemPath>../../../Include/Services/eosDigOutput.h</itemPath>
@@ -79,9 +79,10 @@
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
               <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
-              <itemPath>../../../Source/OSAL/FreeRTOS/osalMemory.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalTimer.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalKernel.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalHeap.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
@@ -105,13 +106,13 @@
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -130,7 +131,7 @@
     <Elem>../../../Demo/DigIOServicesDemo</Elem>
     <Elem>../../../Source/OSAL</Elem>
     <Elem>../../../Demo/DigIOServiceDemo</Elem>
-    <Elem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
+    <Elem>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -151,7 +152,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>../../../../../../../Library/Microchip/Harmony/v2_06/bin/framework/peripheral/PIC32MX460F512L_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>C:/Library/Microchip/Harmony/v2/bin/framework/peripheral/PIC32MX460F512L_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -294,7 +295,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\DigIOServiceDemo\Include;..\..\..\Demo\DigIOServiceDemo\Include\PIC32;..\..\..\Include;..\..\..\Source;C:\Library\Microchip\Harmony\v2_06\framework;C:\Library\Microchip\Harmony\v2_06\third_party\rtos\FreeRTOS\Source\include;C:\Library\Microchip\Harmony\v2_06\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\DigIOServiceDemo\Include;..\..\..\Demo\DigIOServiceDemo\Include\PIC32;..\..\..\Include;..\..\..\Source;C:\Library\Microchip\Harmony\v2\framework;C:\Library\Microchip\Harmony\v2\third_party\rtos\FreeRTOS\Source\include;C:\Library\Microchip\Harmony\v2\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="true"/>
         <property key="mdtcm" value=""/>

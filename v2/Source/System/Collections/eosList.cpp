@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "OSAL/osalMemory.h"
 #include "System/Collections/eosList.h"
 
 
@@ -16,7 +15,7 @@ const unsigned capacityDelta = 10;
 
 #define __ALLOC(s)                   (void*) new char[s]
 #define __FREE(p)                    delete [] (char*)p;
-#define __COPY(dst, src, size)       osalMemoryCopy(dst, src, size)
+#define __COPY(dst, src, size)       memcpy(dst, src, size)
 
 
 /// ----------------------------------------------------------------------

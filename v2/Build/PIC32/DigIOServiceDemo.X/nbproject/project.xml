@@ -21,7 +21,7 @@
                 <sourceRootElem>../../../Demo/DigIOServicesDemo</sourceRootElem>
                 <sourceRootElem>../../../Source/OSAL</sourceRootElem>
                 <sourceRootElem>../../../Demo/DigIOServiceDemo</sourceRootElem>
-                <sourceRootElem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</sourceRootElem>
+                <sourceRootElem>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
