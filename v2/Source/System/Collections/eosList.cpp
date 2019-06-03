@@ -1,4 +1,6 @@
+#include "eos.h"
 #include "eosAssert.h"
+#include "OSAL/osalMemory.h"
 #include "System/Collections/eosList.h"
 
 
@@ -12,8 +14,9 @@ using namespace eos;
 const unsigned capacityDelta = 10;
 
 
-#define __ALLOC(s)           (void*) new char[s]
-#define __FREE(p)            delete [] (char*)p;
+#define __ALLOC(s)                   (void*) new char[s]
+#define __FREE(p)                    delete [] (char*)p;
+#define __COPY(dst, src, size)       osalMemoryCopy(dst, src, size)
 
 
 /// ----------------------------------------------------------------------
@@ -57,7 +60,7 @@ GenericList::GenericList(
     // Copia el contingut de la llista
     //
     if (other.count > 0) {
-        memcpy(container, other.container, other.count * size);
+        __COPY(container, other.container, other.count * size);
         count = other.count;
     }
 }
@@ -91,11 +94,11 @@ void GenericList::addFront(
 
     // Fa espai al principi de la llista
     //
-    memcpy(ptr1, ptr0, (count - 1) * size);
+    __COPY(ptr1, ptr0, (count - 1) * size);
 
     // Copia l'element al contenidor
     //
-    memcpy(ptr0, element, size);
+    __COPY(ptr0, element, size);
 
     // Incrementa el contador d'elements
     //
@@ -118,7 +121,7 @@ void GenericList::addBack(
     // Copia el element al contenidor
     //
     void *ptr = getPtr(count);
-    memcpy(ptr, element, size);
+    __COPY(ptr, element, size);
 
     // Incrementa el contador d'elements
     //
@@ -140,7 +143,7 @@ void GenericList::removeAt(
         // Elimina l'element del contenidor
         //
         void *ptr = getPtr(index);
-        memcpy(ptr, (const void*) ((char*) ptr + size), (count - index - 1) * size);
+        __COPY(ptr, (const void*) ((char*) ptr + size), (count - index - 1) * size);
 
         // Decrementa el contador d'elements
         //
@@ -246,7 +249,7 @@ void GenericList::resize(
 
             // opia les dades de l'antic contenidor al nou
             //
-            memcpy(container, ptr, count);
+            __COPY(container, ptr, count);
 
             // Allivera l'antic contenidor
             //

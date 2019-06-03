@@ -14,6 +14,7 @@ extern "C" {
 
 void *osalMemoryAlloc(unsigned size);
 void osalMemoryFree(void *p);
+void osalMemoryCopy(void *pDst, const void *pSrc, unsigned size);
 
 
 #ifdef	__cplusplus

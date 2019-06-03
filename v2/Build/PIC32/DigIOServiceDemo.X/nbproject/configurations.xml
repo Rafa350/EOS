@@ -151,7 +151,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>C:/Library/Microchip/Harmony/v2_05_01/bin/framework/peripheral/PIC32MX460F512L_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../../../../../Library/Microchip/Harmony/v2_06/bin/framework/peripheral/PIC32MX460F512L_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -294,7 +294,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\DigIOServiceDemo\Include;..\..\..\Demo\DigIOServiceDemo\Include\PIC32;..\..\..\Include;..\..\..\Source;C:\Library\Microchip\Harmony\v2_05_01\framework;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\include;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\DigIOServiceDemo\Include;..\..\..\Demo\DigIOServiceDemo\Include\PIC32;..\..\..\Include;..\..\..\Source;C:\Library\Microchip\Harmony\v2_06\framework;C:\Library\Microchip\Harmony\v2_06\third_party\rtos\FreeRTOS\Source\include;C:\Library\Microchip\Harmony\v2_06\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="true"/>
         <property key="mdtcm" value=""/>

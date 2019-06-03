@@ -3,7 +3,7 @@
 #include "Services/eosDigOutput.h"
 #include "hal/halGPIO.h"
 #include "hal/halTMR.h"
-#include "osal/osalTask.h"
+#include "osal/osalKernel.h"
 
 
 using namespace eos;

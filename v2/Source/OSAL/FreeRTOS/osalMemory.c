@@ -2,6 +2,7 @@
 #include "eosAssert.h"
 #include "OSAL/osalMemory.h"
 #include "FreeRTOS.h"
+#include "string.h"
 
 
 /// ----------------------------------------------------------------------
@@ -31,4 +32,20 @@ void osalMemoryFree(
     eosAssert(p != NULL);
 
 	vPortFree(p);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Copia un bloc de memoria.
+/// \param[in] pDst: Adressa del desti.
+/// \param[in] pSrc: Adressa de l'origen.
+/// \param[in] size: Tamany del bloc en bytes.
+///
+void osalMemoryCopy(
+    void *pDst, 
+    const void *pSrc, 
+    unsigned size) {
+
+    memcpy(pDst, pSrc, size);
+    
 }
