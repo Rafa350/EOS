@@ -1,1 +1,6 @@
 STM32Cube_FW_F4
+HAL_Source
+CMSIS_CORE_Include
+CMSIS_DEVICE_Include
+CMSIS_DEVICE_Source
+HAL_Include

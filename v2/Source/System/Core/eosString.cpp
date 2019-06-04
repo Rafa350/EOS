@@ -1,5 +1,5 @@
 #include "System/Core/eosString.h"
-#include "OSAL/osalMemory.h"
+#include "OSAL/osalHeap.h"
 
 #include <string.h>
 
