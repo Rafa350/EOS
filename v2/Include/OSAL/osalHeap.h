@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 
-typedef struct HEAP *HHeap;
+typedef struct OSAL_HEAP_DATA *HHeap;
 
 HHeap osalHeapCreate();
 void *osalHeapAlloc(HHeap hHeap, unsigned blockSize);

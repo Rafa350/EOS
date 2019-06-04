@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 
-typedef struct TASK *HTask;
+typedef struct OSAL_TASK_DATA *HTask;
 typedef uint32_t TaskOptions;
 typedef void (*TaskFunction)(void *params);
 
