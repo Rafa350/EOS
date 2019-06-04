@@ -106,13 +106,13 @@
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
-          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -132,6 +132,7 @@
     <Elem>../../../Source/OSAL</Elem>
     <Elem>../../../Demo/DigIOServiceDemo</Elem>
     <Elem>C:/Library/Microchip/Harmony/v2/third_party/rtos/FreeRTOS/Source</Elem>
+    <Elem>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -152,7 +153,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>C:/Library/Microchip/Harmony/v2/bin/framework/peripheral/PIC32MX460F512L_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../Library/PIC32/Harmony/bin/framework/peripheral/PIC32MX460F512L_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -295,7 +296,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\DigIOServiceDemo\Include;..\..\..\Demo\DigIOServiceDemo\Include\PIC32;..\..\..\Include;..\..\..\Source;C:\Library\Microchip\Harmony\v2\framework;C:\Library\Microchip\Harmony\v2\third_party\rtos\FreeRTOS\Source\include;C:\Library\Microchip\Harmony\v2\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\DigIOServiceDemo\Include;..\..\..\Demo\DigIOServiceDemo\Include\PIC32;..\..\..\Include;..\..\..\Source;..\..\..\Library\PIC32\Harmony\framework;..\..\..\Library\PIC32\Harmony\third_party\rtos\FreeRTOS\Source\include;..\..\..\Library\PIC32\Harmony\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="true"/>
         <property key="mdtcm" value=""/>

@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/Collections/eosList.h"
+#include "OSAL/osalHeap.h"
 
 
 #include <string.h>
@@ -13,9 +14,28 @@ using namespace eos;
 const unsigned capacityDelta = 10;
 
 
-#define __ALLOC(s)                   (void*) new char[s]
-#define __FREE(p)                    delete [] (char*)p;
-#define __COPY(dst, src, size)       memcpy(dst, src, size)
+
+/// ----------------------------------------------------------------------
+/// \brief Reserva un bloc de memoria.
+/// \param[in] blockSize: Tamany del bloc en bytes.
+/// \return L'adressa del bloc de memoria.
+///
+static void *memAlloc(
+    unsigned blockSize) {
+    
+    return osalHeapAlloc(NULL, blockSize);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Allivera un bloc de memoria.
+/// \param[in] pBlock: Adressa del bloc de memoria.
+///
+static void memFree(
+    void *pBlock) {
+    
+    osalHeapFree(NULL, pBlock);
+}
 
 
 /// ----------------------------------------------------------------------
@@ -59,7 +79,7 @@ GenericList::GenericList(
     // Copia el contingut de la llista
     //
     if (other.count > 0) {
-        __COPY(container, other.container, other.count * size);
+        memcpy(container, other.container, other.count * size);
         count = other.count;
     }
 }
@@ -73,7 +93,7 @@ GenericList::~GenericList() {
     // Allivera la memoria del contenidor
     //
     if (container != nullptr)
-        __FREE(container);
+        memFree(container);
 }
 
 
@@ -93,11 +113,11 @@ void GenericList::addFront(
 
     // Fa espai al principi de la llista
     //
-    __COPY(ptr1, ptr0, (count - 1) * size);
+    memcpy(ptr1, ptr0, (count - 1) * size);
 
     // Copia l'element al contenidor
     //
-    __COPY(ptr0, element, size);
+    memcpy(ptr0, element, size);
 
     // Incrementa el contador d'elements
     //
@@ -120,7 +140,7 @@ void GenericList::addBack(
     // Copia el element al contenidor
     //
     void *ptr = getPtr(count);
-    __COPY(ptr, element, size);
+    memcpy(ptr, element, size);
 
     // Incrementa el contador d'elements
     //
@@ -142,7 +162,7 @@ void GenericList::removeAt(
         // Elimina l'element del contenidor
         //
         void *ptr = getPtr(index);
-        __COPY(ptr, (const void*) ((char*) ptr + size), (count - index - 1) * size);
+        memcpy(ptr, (const void*) ((char*) ptr + size), (count - index - 1) * size);
 
         // Decrementa el contador d'elements
         //
@@ -162,7 +182,7 @@ void GenericList::clear() {
 
         // Allivera la memoria del contenidor
         //
-        __FREE(container);
+        memFree(container);
         container = nullptr;
         count = 0;
         capacity = 0;
@@ -240,7 +260,7 @@ void GenericList::resize(
 
         // Reserva memoria per un nou contenidor
         //
-        container = __ALLOC(newCapacity * size);
+        container = memAlloc(newCapacity * size);
 
         // Comprova si hi havia un contenidor previ
         //
@@ -248,11 +268,11 @@ void GenericList::resize(
 
             // opia les dades de l'antic contenidor al nou
             //
-            __COPY(container, ptr, count);
+            memcpy(container, ptr, count);
 
             // Allivera l'antic contenidor
             //
-            __FREE(ptr);
+            memFree(ptr);
         }
 
         capacity = newCapacity;
