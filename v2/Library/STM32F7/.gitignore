@@ -1,1 +1,10 @@
-STM32Cube_FW_F7
+FreeRTOS
+HAL
+LibJPEG
+LwIP
+USBDevice
+USBHost
+Audio
+CMSIS_CORE
+CMSIS_DEVICE
+FatFs
