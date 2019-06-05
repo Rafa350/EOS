@@ -41,13 +41,13 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\DisplayDemo\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\DisplayDemo\Include\STM32F4&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_CORE\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_DEVICE\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\system\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_CORE_Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_DEVICE_Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\HAL_Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.dialect.std.618267481" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.165182345" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
@@ -71,13 +71,13 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\DisplayDemo\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\DisplayDemo\Include\STM32F4&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_CORE\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_DEVICE\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\system\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_CORE_Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_DEVICE_Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\HAL_Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.688278026" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp.2142656397" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp"/>
@@ -93,9 +93,9 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.211869821" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver"/>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.736473141" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.1775675508" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1352357080" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1968691837" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
@@ -152,13 +152,13 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\DisplayDemo\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\DisplayDemo\Include\STM32F4&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_CORE\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_DEVICE\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\system\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_CORE_Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_DEVICE_Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\HAL_Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.dialect.std.345096998" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.145068821" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
@@ -181,13 +181,13 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\DisplayDemo\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\DisplayDemo\Include\STM32F4&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_CORE\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_DEVICE\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\system\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_CORE_Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\CMSIS_DEVICE_Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\HAL_Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.840860949" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp.811896776" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp"/>
@@ -203,9 +203,9 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.712090583" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver"/>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release.862381722" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release">
 								<option id="gnu.both.asm.option.include.paths.1919453053" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.323259903" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.2115052922" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
