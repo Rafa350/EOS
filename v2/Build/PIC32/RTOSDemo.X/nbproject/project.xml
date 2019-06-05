@@ -12,6 +12,22 @@
             <asminc-extensions/>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>../../../Demo/RTOSDemo</sourceRootElem>
+                <sourceRootElem>../../../Include</sourceRootElem>
+                <sourceRootElem>../../../Source/OSAL</sourceRootElem>
+                <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Library/PIC32/FreeRTOS/Source</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>PIC32_USB_STARTER_KIT_I</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
         </data>
     </configuration>
 </project>

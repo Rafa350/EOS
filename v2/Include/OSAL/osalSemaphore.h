@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 
-typedef void *HSemaphore;
+typedef struct OSAL_SEMAPHORE_DATA *HSemaphore;
 
 
 #ifdef	__cplusplus

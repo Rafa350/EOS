@@ -32,7 +32,7 @@ HTimer osalTimerCreate(
 		1,
 		(info->options & OSAL_TIMER_AUTO_MASK) == OSAL_TIMER_AUTO_ON ? pdTRUE : pdFALSE,
 		(void* const) info->context,
-		(void*)(void*) info->callback);
+		(void*) info->callback);
     if (hTimer == NULL)
     	return NULL;
 

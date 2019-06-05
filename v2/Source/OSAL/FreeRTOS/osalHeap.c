@@ -4,6 +4,9 @@
 #include "FreeRTOS.h"
 
 
+static HHeap defaultHeap = NULL;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Crea un heap.
 /// \return El handler del heap.

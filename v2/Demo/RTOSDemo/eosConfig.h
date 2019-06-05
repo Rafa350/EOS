@@ -2,7 +2,12 @@
 #define __eosConfig__
 
 
-#include "board/board.h"
+#define USE_LEDS_LED1
+#define USE_LEDS_LED2
+#define USE_LEDS_LED3
+
+
+#include "Board/board.h"
 
 
 #endif // __eosConfig__

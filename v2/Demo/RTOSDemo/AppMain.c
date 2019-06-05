@@ -1,10 +1,11 @@
 #include "eos.h"
-#include "hal/halGPIO.h"
-#include "osal/osalTask.h"
-#include "osal/osalMsgQueue.h"
+#include "HAL/halGPIO.h"
+#include "OSAL/osalTask.h"
+#include "OSAL/osalKernel.h"
+#include "OSAL/osalQueue.h"
 
 
-static HMsgQueue queue;
+static HQueue queue;
 
 
 /// ----------------------------------------------------------------------
@@ -24,7 +25,7 @@ static void task1(void *parameter) {
         halGPIOWritePin(LED_LED1_PORT, LED_LED1_PIN, state);
         if (state) {
             uint8_t data = 1;
-            osalMsgQueuePut(queue, &data, 0);
+            osalQueuePut(queue, &data, 0);
         }
         state = !state;
         
@@ -45,14 +46,14 @@ static void task2(void *parameter) {
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 
         HAL_GPIO_AF_NONE);
 
-    osalDelay(250);        
+    osalDelay(500);        
 
     bool state = false;
     while (true) {    
         halGPIOWritePin(LED_LED2_PORT, LED_LED2_PIN, state);
         if (state) {
             uint8_t data = 0;
-            osalMsgQueuePut(queue, &data, 0);
+            osalQueuePut(queue, &data, 0);
         }
         state = !state;
 
@@ -76,7 +77,7 @@ static void task3(void *parameter) {
     while (true) {    
         
         uint8_t data;
-        if (osalMsgQueueGet(queue, &data, (unsigned)(-1)))
+        if (osalQueueGet(queue, &data, (unsigned)(-1)))
             halGPIOWritePin(LED_LED3_PORT, LED_LED3_PIN, data);
     }
 }
@@ -88,13 +89,13 @@ static void task3(void *parameter) {
 void AppMain() {
     
     TaskInitializeInfo taskInfo;    
-    MsgQueueInitializeInfo queueInfo;
+    QueueInitializeInfo queueInfo;
     
     // Inicialitza la cua de missatges
     //
     queueInfo.elementSize = sizeof(uint8_t);
     queueInfo.maxElements = 10;
-    queue = osalMsgQueueCreate(&queueInfo);
+    queue = osalQueueCreate(&queueInfo);
 
     // Inicialitza els parametres comuns
     //
