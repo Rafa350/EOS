@@ -24,11 +24,12 @@ Task::Task(
     unsigned stackSize,
     TaskPriority priority,
     const char *name,
-    IRunable *runable) {
+    IRunable *runable):
+
+    runable(runable),
+	weakTime(0) {
 
     eosAssert(runable != nullptr);
-
-    this->runable = runable;
 
     TaskInitializeInfo info;
     info.name = NULL;
@@ -57,6 +58,8 @@ Task::~Task() {
 ///
 void Task::function(
     void *params) {
+
+	eosAssert(params != nullptr);
 
     Task *task = reinterpret_cast<Task*>(params);
     task->weakTime = osalGetTickCount();

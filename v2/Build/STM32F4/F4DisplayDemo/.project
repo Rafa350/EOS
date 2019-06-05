@@ -128,11 +128,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/App/AppMain.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/AppMain.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/App/STM32F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -151,6 +146,11 @@
 			<name>src/App/appLedService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appLedService.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/appMain.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appMain.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS</name>
@@ -378,11 +378,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</locationURI>
 		</link>
 		<link>
-			<name>Library/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h</locationURI>
-		</link>
-		<link>
 			<name>Library/FreeRTOS/Source/portable/GCC</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -441,11 +436,6 @@
 			<name>inc/Framework/EOS/OSAL/osalKernel.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalKernel.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/OSAL/osalSemaphore.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalSemaphore.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalTask.h</name>
@@ -678,11 +668,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalKernel.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS/osalSemaphore.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalSemaphore.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTask.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTask.c</locationURI>
@@ -756,11 +741,6 @@
 			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341Defs.h</name>

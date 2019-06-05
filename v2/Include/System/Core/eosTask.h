@@ -36,6 +36,9 @@ namespace eos {
             IRunable *runable;
             unsigned weakTime;
 
+        private:
+            static void function(void *params);
+
         public:
             Task(unsigned stackSize, TaskPriority priority, const char *name, IRunable *runable);
             virtual ~Task();
@@ -51,8 +54,6 @@ namespace eos {
             static bool notificationTake(unsigned blockTime);
             static bool notificationGive();
             static void notificationGiveISR();
-        private:
-            static void function(void *params);
     };
 }
 
