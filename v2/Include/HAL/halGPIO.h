@@ -19,6 +19,9 @@
     #ifdef __cplusplus  
         #include "HAL/STM32/halGPIOTpl.h"
     #endif
+    
+#elif defined(EOS_MSP432)    
+    #include "HAL/MSP432/halGPIO.h"
 
 #endif
 

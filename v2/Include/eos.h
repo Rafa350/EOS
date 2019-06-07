@@ -36,6 +36,17 @@
 		#define EOS_DEBUG
 	#endif
 
+// GNU/MSP432 compiler definitions
+#elif defined(__GNUC__) && defined(MSP432)
+
+    // Platform definitions
+    #define EOS_MSP432
+
+	// Debugger definitions
+	#if defined(DEBUG)
+		#define EOS_DEBUG
+	#endif
+
 // GNU/MINGW compiler definitions
 #elif defined(__GNUC__) && (defined(__MINGW32__) || defined(__MINGW64__))
 
@@ -69,6 +80,8 @@
 	#include "stm32f4xx.h"
 #elif defined(EOS_STM32F7)
 	#include "stm32f7xx.h"
+#elif defined(EOS_MSP432)    
+    #include "msp.h"
 #endif
 
 
