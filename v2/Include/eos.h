@@ -11,7 +11,7 @@
 	#elif defined(__PIC32MZ)
 		#define EOS_PIC32MZ
 	#else
-		#error "No se reconoce el procesador"
+		#error "Unknown processor"
 	#endif
 
 	// Debugger definitions
@@ -28,7 +28,7 @@
 	#elif defined(STM32F7)
 		#define EOS_STM32F7
 	#else
-		#error "No se reconoce el procesador"
+		#error "Unknown processor"
 	#endif
 
 	// Debugger definitions
@@ -59,7 +59,7 @@
 	#endif
 
 #else
-	#error "No se reconoce el compilador"
+	#error "Unknown compiler"
 #endif
 
 
