@@ -4,7 +4,7 @@
 #include "FreeRTOS.h"
 
 
-static HHeap defaultHeap = NULL;
+//static HHeap defaultHeap = NULL;
 
 
 /// ----------------------------------------------------------------------
@@ -12,7 +12,7 @@ static HHeap defaultHeap = NULL;
 /// \return El handler del heap.
 ///
 HHeap osalHeapCreate() {
-    
+
     return NULL;
 }
 

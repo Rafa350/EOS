@@ -75,8 +75,22 @@ void eos::removeVisual(
 Visual::Visual():
 	parent(nullptr),
 	nextSibling(nullptr),
-	prevSibling(nullptr) {
+	prevSibling(nullptr),
+	needRender(true) {
+}
 
+
+/// ----------------------------------------------------------------------
+/// \brief Renderitza el visual.
+/// \param[in] display: El display on dibuixar.
+///
+void Visual::render(
+	Display *display) {
+
+	if (needRender) {
+		onRender(display);
+		needRender = false;
+	}
 }
 
 
@@ -121,14 +135,39 @@ void VisualContainer::removeVisual(
 }
 
 
-void VisualContainer::render() {
+/// ----------------------------------------------------------------------
+/// \brief Renderitza el visual i els seus fills.
+/// \param[in] display: El display on dibuixar.
+///
+void VisualContainer::render(
+	Display *display) {
 
-	renderChilds();
+	Visual::render(display);
+	for (Visual *visual = getFirstChild(); visual != nullptr; visual = visual->getNextSibling())
+		visual->render(display);
 }
 
 
-void VisualContainer::renderChilds() {
+/// ----------------------------------------------------------------------
+/// \brief Asigna el color de fons de la pantalla.
+/// \param[in] color: El color.
+///
+void Screen::setColor(
+	const Color &color) {
 
-	for (Visual *visual = getFirstChild(); visual != nullptr; visual = visual->getNextSibling())
-		visual->render();
+	if (this->color != color) {
+		this->color = color;
+		needRender = true;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Renderitza el visual.
+/// \param[in] display: El display on dibuixar.
+///
+void Screen::onRender(
+	Display *display) {
+
+	display->clear(color);
 }

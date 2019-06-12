@@ -88,11 +88,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/startup/startup_stm32f429xx.s</locationURI>
 		</link>
 		<link>
-			<name>Library/system/Inc</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Library/system/Src</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -258,11 +253,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/HAL/Src/stm32f4xx_ll_rcc.c</locationURI>
 		</link>
 		<link>
-			<name>Library/system/Inc/stm32f4xx_hal_conf.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/system/Inc/stm32f4xx_hal_conf.h</locationURI>
-		</link>
-		<link>
 			<name>Library/system/Src/syscalls.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/system/Src/syscalls.c</locationURI>
@@ -286,6 +276,11 @@
 			<name>inc/App/STM32F4/stm32f429i_discovery_sdram.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/stm32f429i_discovery_sdram.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F4/stm32f4xx_hal_conf.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/stm32f4xx_hal_conf.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board</name>

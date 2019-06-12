@@ -10,6 +10,7 @@
 namespace eos {
 
 	class Color;
+	class Display;
 	class Visual;
 	class VisualContainer;
 
@@ -21,16 +22,22 @@ namespace eos {
     		Visual *parent;
     		Visual *nextSibling;
     		Visual *prevSibling;
+    		bool needRender;
+
+    	protected:
+    		virtual void onRender(Display *display) = 0;
 
         public:
     		Visual();
     		virtual ~Visual() {}
 
-            virtual void render() = 0;
-
             inline Visual *getParent() const { return parent; }
             inline Visual *getNextSibling() const { return nextSibling; }
             inline Visual *getPrevSibling() const { return prevSibling; }
+
+            inline bool getNeedRender() const { return needRender; }
+
+            virtual void render(Display *display);
 
             friend void addVisual(VisualContainer *container, Visual *visual);
             friend void removeVisual(VisualContainer *container, Visual *visual);
@@ -52,18 +59,19 @@ namespace eos {
             inline Visual *getLastChild() const { return lastChild; }
             inline unsigned getNumChilds() const { return numChilds; }
 
-            void render() override;
-            void renderChilds();
+            void render(Display *display) override;
 
             friend void addVisual(VisualContainer *container, Visual *visual);
             friend void removeVisual(VisualContainer *container, Visual *visual);
     };
 
     class Screen: public VisualContainer {
+    	private:
+    		Color color;
         public:
             void setColor(const Color &color);
 
-            void render() override;
+            void onRender(Display *display) override;
     };
 
     class Control: public VisualContainer {

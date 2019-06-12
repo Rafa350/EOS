@@ -33,11 +33,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Library/CMSIS</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Library/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -78,22 +73,7 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Library/CMSIS/core</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Library/FreeRTOS/Source</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -105,12 +85,7 @@
 		<link>
 			<name>Library/startup/startup_stm32f746xx.S</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/startup/startup_stm32f746xx.S</locationURI>
-		</link>
-		<link>
-			<name>Library/system/Inc</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/startup/startup_stm32f746xx.S</locationURI>
 		</link>
 		<link>
 			<name>Library/system/Src</name>
@@ -188,199 +163,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Library/CMSIS/core/cmsis_armcc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/cmsis_armcc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/cmsis_armclang.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/cmsis_armclang.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/cmsis_compiler.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/cmsis_compiler.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/cmsis_gcc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/cmsis_gcc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/cmsis_iccarm.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/cmsis_iccarm.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/cmsis_version.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/cmsis_version.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_armv8mbl.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_armv8mbl.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_armv8mml.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_armv8mml.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_cm0.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_cm0.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_cm0plus.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_cm0plus.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_cm1.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_cm1.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_cm23.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_cm23.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_cm3.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_cm3.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_cm33.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_cm33.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_cm4.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_cm4.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_cm7.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_cm7.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_sc000.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_sc000.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/core_sc300.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/core_sc300.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/mpu_armv7.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/mpu_armv7.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/mpu_armv8.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/mpu_armv8.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/core/tz_context.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/core/tz_context.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f722xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f722xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f723xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f723xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f730xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f730xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f732xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f732xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f733xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f733xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f745xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f745xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f746xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f746xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f750xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f750xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f756xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f756xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f765xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f765xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f767xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f767xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f769xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f769xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f777xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f777xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f779xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f779xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/stm32f7xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/stm32f7xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/CMSIS/device/system_stm32f7xx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/CMSIS/device/system_stm32f7xx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Library/FreeRTOS/Source/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/list.c</locationURI>
 		</link>
 		<link>
 			<name>Library/FreeRTOS/Source/portable</name>
@@ -390,787 +175,82 @@
 		<link>
 			<name>Library/FreeRTOS/Source/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/queue.c</locationURI>
 		</link>
 		<link>
 			<name>Library/FreeRTOS/Source/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/tasks.c</locationURI>
 		</link>
 		<link>
 			<name>Library/FreeRTOS/Source/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/Legacy</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32_assert_template.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32_assert_template.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_adc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_adc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_adc_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_adc_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_can.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_can.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_cec.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_cec.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_conf.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_conf.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_cortex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_cortex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_crc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_crc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_crc_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_crc_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_cryp.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_cryp.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_cryp_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_cryp_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_dac.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_dac.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_dac_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_dac_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_dcmi.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_dcmi.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_dcmi_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_dcmi_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_def.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_def.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_dfsdm.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_dfsdm.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_dma.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_dma.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_dma2d.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_dma2d.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_dma_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_dma_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_dsi.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_dsi.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_eth.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_eth.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_exti.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_exti.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_flash.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_flash.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_flash_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_flash_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_gpio.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_gpio.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_gpio_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_gpio_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_hash.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_hash.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_hash_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_hash_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_hcd.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_hcd.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_i2c.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_i2c.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_i2c_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_i2c_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_i2s.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_i2s.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_irda.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_irda.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_irda_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_irda_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_iwdg.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_iwdg.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_jpeg.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_jpeg.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_lptim.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_lptim.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_ltdc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_ltdc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_ltdc_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_ltdc_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_mdios.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_mdios.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_mmc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_mmc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_nand.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_nand.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_nor.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_nor.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_pcd.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_pcd.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_pcd_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_pcd_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_pwr.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_pwr.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_pwr_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_pwr_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_qspi.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_qspi.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_rcc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_rcc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_rcc_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_rcc_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_rng.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_rng.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_rtc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_rtc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_rtc_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_rtc_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_sai.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_sai.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_sai_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_sai_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_sd.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_sd.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_sdram.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_sdram.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_smartcard.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_smartcard.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_smartcard_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_smartcard_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_smbus.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_smbus.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_spdifrx.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_spdifrx.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_spi.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_spi.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_spi_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_spi_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_sram.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_sram.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_tim.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_tim.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_uart.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_uart.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_usart.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_usart.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_usart_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_usart_ex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_hal_wwdg.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_hal_wwdg.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_adc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_adc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_bus.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_bus.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_cortex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_cortex.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_crc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_crc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_dac.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_dac.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_dma.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_dma.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_dma2d.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_dma2d.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_exti.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_exti.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_fmc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_fmc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_gpio.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_gpio.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_i2c.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_i2c.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_iwdg.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_iwdg.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_lptim.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_lptim.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_pwr.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_pwr.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_rcc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_rcc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_rng.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_rng.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_rtc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_rtc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_sdmmc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_sdmmc.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_spi.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_spi.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_system.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_system.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_tim.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_tim.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_usart.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_usart.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_usb.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_usb.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_utils.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_utils.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/stm32f7xx_ll_wwdg.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/stm32f7xx_ll_wwdg.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/Legacy</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/timers.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_cec.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_cec.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_cortex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_cortex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_dfsdm.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_dfsdm.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_cortex.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_dma.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_dma.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_dma2d.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_dma2d.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_dma_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_dma_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_dsi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_dsi.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_exti.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_exti.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_dma.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_gpio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_gpio.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_hcd.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_hcd.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_i2c.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_i2c.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_i2c_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_i2c_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_iwdg.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_iwdg.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_lptim.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_lptim.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_mdios.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_mdios.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_nand.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_nand.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_nor.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_nor.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_gpio.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_rcc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_rcc.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_rcc.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_rcc_ex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_rcc_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_rng.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_rng.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_sai.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_sai.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_sai_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_sai_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_sd.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_sd.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_rcc_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_sdram.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_sdram.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_spdifrx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_spdifrx.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_spi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_spi.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_spi_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_spi_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_sram.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_sram.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_sdram.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_tim.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_tim.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_tim.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_hal_tim_ex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_tim_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_hal_wwdg.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_hal_wwdg.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_adc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_adc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_crc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_crc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_dac.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_dac.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_dma.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_dma.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_dma2d.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_dma2d.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_exti.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_exti.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_tim_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_ll_fmc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_fmc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_gpio.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_gpio.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_i2c.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_i2c.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_lptim.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_lptim.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_pwr.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_pwr.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_ll_fmc.c</locationURI>
 		</link>
 		<link>
 			<name>Library/HAL_Driver/Src/stm32f7xx_ll_rcc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_rcc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_rng.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_rng.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_rtc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_rtc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_sdmmc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_sdmmc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_spi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_spi.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_tim.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_tim.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_usart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_usart.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_usb.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_usb.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/stm32f7xx_ll_utils.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/stm32f7xx_ll_utils.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_ll_rcc.c</locationURI>
 		</link>
 		<link>
 			<name>Library/system/Src/syscalls.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Src/syscalls.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/syscalls.c</locationURI>
 		</link>
 		<link>
 			<name>Library/system/Src/system_stm32f7xx.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/system/Src/system_stm32f7xx.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F7/FreeRTOSConfig.h</name>
@@ -1186,6 +266,11 @@
 			<name>inc/App/STM32F7/stm32746g_discovery_sdram.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F7/stm32746g_discovery_sdram.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/STM32F7/stm32f7xx_hal_conf.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F7/stm32f7xx_hal_conf.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board</name>
@@ -1263,96 +348,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Library/FreeRTOS/Source/include/FreeRTOS.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/StackMacros.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/StackMacros.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/croutine.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/croutine.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/deprecated_definitions.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/event_groups.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/list.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/list.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/message_buffer.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/message_buffer.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/mpu_prototypes.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/mpu_prototypes.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/mpu_wrappers.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/portable.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/projdefs.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/queue.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/semphr.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/stack_macros.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/stack_macros.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/stdint.readme</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/stdint.readme</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/stream_buffer.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/stream_buffer.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/task.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/task.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/include/timers.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h</locationURI>
-		</link>
-		<link>
 			<name>Library/FreeRTOS/Source/portable/GCC</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -1361,21 +356,6 @@
 			<name>Library/FreeRTOS/Source/portable/MemMang</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/Legacy/stm32_hal_legacy.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/Legacy/stm32_hal_legacy.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Inc/Legacy/stm32f7xx_hal_can_legacy.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Inc/Legacy/stm32f7xx_hal_can_legacy.h</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL_Driver/Src/Legacy/stm32f7xx_hal_can.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/HAL_Driver/Src/Legacy/stm32f7xx_hal_can.c</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board/board.h</name>
@@ -1423,24 +403,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halTMR.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/OSAL/osalHeap.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalHeap.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/OSAL/osalKernel.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalKernel.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/OSAL/osalMemory.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalMemory.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/OSAL/osalQueue.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalQueue.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/OSAL/osalSemaphore.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalSemaphore.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalTask.h</name>
@@ -1535,7 +510,7 @@
 		<link>
 			<name>Library/FreeRTOS/Source/portable/MemMang/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
@@ -1683,24 +658,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalHeap.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalKernel.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalKernel.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS/osalMemory.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMemory.c</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalQueue.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalQueue.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/OSAL/FreeRTOS/osalSemaphore.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalSemaphore.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalTask.c</name>
@@ -1790,12 +760,7 @@
 		<link>
 			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM7/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/port.c</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM7/portmacro.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Library/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/portmacro.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC</name>

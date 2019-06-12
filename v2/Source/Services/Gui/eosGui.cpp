@@ -4,6 +4,7 @@
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "System/Graphics/eosDisplay.h"
 #include "Services/Gui/eosGui.h"
+#include "Services/Gui/eosGuiVisuals.h"
 
 
 using namespace eos;
@@ -50,7 +51,10 @@ void GuiService::onInitialize() {
 	displayDriver->displayOn();
 
 	display = new Display(displayDriver);
-	display->clear(COLOR_Blue);
+	display->clear(COLOR_Black);
+
+	screen = new Screen();
+	screen->setColor(COLOR_Blue);
 }
 
 
@@ -59,4 +63,5 @@ void GuiService::onInitialize() {
 ///
 void GuiService::onTask() {
 
+	screen->render(display);
 }
