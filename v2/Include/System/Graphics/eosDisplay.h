@@ -70,6 +70,8 @@ namespace eos {
             void arcTo(int x, int y, int cx, int cy);
             void drawPoint(int x, int y);
             void drawLine(int x1, int y1, int x2, int y2);
+            void drawHLine(int x1, int x2, int y);
+            void drawVLine(int x, int y1, int y2);
             void drawRectangle(int x1, int y1, int x2, int y2);
             void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
             void drawCircle(int x, int y, int r);

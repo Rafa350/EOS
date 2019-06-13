@@ -6,8 +6,6 @@
 #include "System/Graphics/eosBitmap.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
-#include <stdint.h>
-
 
 using namespace eos;
 
@@ -181,8 +179,8 @@ void Display::moveTo(
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa una linia desde la posicio del cursor a la posicio
 ///        indicada.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
+/// \param[in] x: Coordinada X.
+/// \param[in] y: Coordinada Y.
 ///
 void Display::lineTo(
     int x,
@@ -210,10 +208,10 @@ void Display::drawPoint(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa una linia.
-/// \param x1: Coordinada x del origen.
-/// \param y1: Coordinada y del origen.
-/// \param x2: Coordinada x del final.
-/// \param y2: Coordinada y del final.
+/// \param[in] x1: Coordinada x del origen.
+/// \param[in] y1: Coordinada y del origen.
+/// \param[in] x2: Coordinada x del final.
+/// \param[in] y2: Coordinada y del final.
 ///
 void Display::drawLine(
     int x1,
@@ -221,23 +219,22 @@ void Display::drawLine(
     int x2,
     int y2) {
 
-    // Calcula les deltas
+    // Es una linea vertical
     //
-    int dx = x2 - x1;
-    int dy = y2 - y1;
-
-    // Es una linea horitzontal
-    //
-    if (dx == 0) {
-        if (clipVLine(x1, y1, y2))
-            driver->setVPixels(x1, dy > 0 ? y1 : y2, (dy > 0 ? y2 - y1 : y1 - y2) + 1, color);
+    if (x1 == x2) {
+        if (clipVLine(x1, y1, y2)) {
+            int dy = y2 - y1;
+            driver->setVPixels(x1, dy > 0 ? y1 : y2, (dy > 0 ? dy : -dy) + 1, color);
+        }
     }
 
-    // Es una linia vertical
+    // Es una linia horitzontal
     //
-    else if (dy == 0) {
-        if (clipHLine(x1, x2, y1))
-            driver->setHPixels(dx > 0 ? x1 : x2, y1, (dx > 0 ? x2 - x1 : x1 - x2) + 1, color);
+    else if (y1 == y2) {
+        if (clipHLine(x1, x2, y1)) {
+            int dx = x2 - x1;
+            driver->setHPixels(dx > 0 ? x1 : x2, y1, (dx > 0 ? dx : -dx) + 1, color);
+        }
     }
 
     // No es ni horitzontal ni vertical
@@ -247,6 +244,9 @@ void Display::drawLine(
 
             int stepx, stepy;
             int p, incE, incNE;
+
+            int dx = x2 - x1;
+            int dy = y2 - y1;
 
             if (dy < 0) {
                 dy = -dy;
@@ -300,11 +300,41 @@ void Display::drawLine(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Dibuixa una linia horitzontal.
+/// \param[in] x1: Coordinada X del origen.
+/// \param[in] x2: Coordinada X del final.
+/// \param[in] y: Coordinada Y
+///
+void Display::drawHLine(int x1, int x2, int y) {
+
+	if (clipHLine(x1, x2, y)) {
+		int dx = x2 - x1;
+        driver->setHPixels(dx > 0 ? x1 : x2, y, (dx > 0 ? dx  : -dx) + 1, color);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa una linia vertical.
+/// \param[in] x: Coordinada X.
+/// \param[in] y1: Coordinada Y del origen.
+/// \param[in] y2: Coordinada Y del final.
+///
+void Display::drawVLine(int x, int y1, int y2) {
+
+	if (clipVLine(x, y1, y2)) {
+		int dy = y2 - y1;
+        driver->setVPixels(x, dy > 0 ? y1 : y2, (dy > 0 ? dy : -dy) + 1, color);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Dibuixa un rectangle buit.
-/// \param x1: Coordinada x del origen.
-/// \param y1: Coordinada y del origen.
-/// \param x2: Coordinada x del final.
-/// \param y2: Coordinada y del final.
+/// \param[in] x1: Coordinada x del origen.
+/// \param[in] y1: Coordinada y del origen.
+/// \param[in] x2: Coordinada x del final.
+/// \param[in] y2: Coordinada y del final.
 ///
 void Display::drawRectangle(
     int x1,
@@ -312,21 +342,21 @@ void Display::drawRectangle(
     int x2,
     int y2) {
 
-    drawLine(x1, y1, x2, y1);
-    drawLine(x1, y2, x2, y2);
-    drawLine(x1, y1, x1, y2);
-    drawLine(x2, y1, x2, y2);
+	drawHLine(x1, x2, y1);
+	drawHLine(x1, x2, y2);
+	drawVLine(x1, y1, y2);
+	drawVLine(x2, y1, y2);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un triangle buit.
-/// \param x1: Coordinada x del primer punt
-/// \param y1: Coordinada y del primer punt
-/// \param x2: Coordinada x del segon punt.
-/// \param y2: Coordinada y del segon punt.
-/// \param x3: Coordinada x del tercer punt.
-/// \param y3: Coordinada y del tercer punt.
+/// \param[in] x1: Coordinada x del primer punt
+/// \param[in] y1: Coordinada y del primer punt
+/// \param[in] x2: Coordinada x del segon punt.
+/// \param[in] y2: Coordinada y del segon punt.
+/// \param[in] x3: Coordinada x del tercer punt.
+/// \param[in] y3: Coordinada y del tercer punt.
 ///
 void Display::drawTriangle(
     int x1,
@@ -344,9 +374,9 @@ void Display::drawTriangle(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un cercle buit.
-/// \param x: Coordinada X del centre.
-/// \param y: Coordinada Y del centre.
-/// \param r: Radi del cercle.
+/// \param[in] x: Coordinada X del centre.
+/// \param[in] y: Coordinada Y del centre.
+/// \param[in] r: Radi del cercle.
 ///
 void Display::drawCircle(
     int x,
@@ -379,10 +409,10 @@ void Display::drawCircle(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un rectangle omplert.
-/// \param x1: Coordinada X inicial.
-/// \param y1: Coordinada Y inicial
-/// \param x2: Coordinada X final.
-/// \param y2: Coordinada Y final.
+/// \param[in] x1: Coordinada X inicial.
+/// \param[in] y1: Coordinada Y inicial
+/// \param[in] x2: Coordinada X final.
+/// \param[in] y2: Coordinada Y final.
 ///
 void Display::fillRectangle(
     int x1,
@@ -404,9 +434,9 @@ void Display::fillRectangle(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un cercle omplert.
-/// \param cx: Coordinada X del centre.
-/// \param cy: Coordinada Y del centre.
-/// \param r: Radi del cercle.
+/// \param[in] cx: Coordinada X del centre.
+/// \param[in] cy: Coordinada Y del centre.
+/// \param[in] r: Radi del cercle.
 ///
 void Display::fillCircle(
     int cx,
@@ -419,10 +449,10 @@ void Display::fillCircle(
 
     while (y <= x) {
 
-        drawLine(cx - x, cy - y, cx + x, cy - y);
-        drawLine(cx - x, cy + y, cx + x, cy + y);
-        drawLine(cx - y, cy - x, cx + y, cy - x);
-        drawLine(cx - y, cy + x, cx + y, cy + x);
+        drawHLine(cx - x, cx + x, cy - y);
+        drawHLine(cx - x, cx + x, cy + y);
+        drawHLine(cx - y, cx + y, cy - x);
+        drawHLine(cx - y, cx + y, cy + x);
 
         y++;
         if (d <= 0)
@@ -437,9 +467,9 @@ void Display::fillCircle(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un bitmap complert.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param bitmap: El bitmap
+/// \param[in] x: Coordinada X.
+/// \param[in] y: Coordinada Y.
+/// \param[in] bitmap: El bitmap
 ///
 void Display::drawBitmap(
     int x,
@@ -474,9 +504,9 @@ void Display::drawBitmap(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un caracter amb el font i el color actual.
-/// \param x: La coordinada X.
-/// \param y: La coordinada Y.
-/// \param c: El caracter a dibuixar.
+/// \param[in] x: La coordinada X.
+/// \param[in] y: La coordinada Y.
+/// \param[in] c: El caracter a dibuixar.
 ///
 int Display::drawChar(
     int x,
@@ -510,11 +540,11 @@ int Display::drawChar(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un text amb el font i el color actual.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param s: El text a dibuixar.
-/// \param offset: El primer caracter del text
-/// \param length: Numero de caracters a dibuixar. -1 si dibuixa fins al final
+/// \param[in] x: Coordinada X.
+/// \param[in] y: Coordinada Y.
+/// \param[in] s: El text a dibuixar.
+/// \param[in] offset: El primer caracter del text
+/// \param[in] length: Numero de caracters a dibuixar. -1 si dibuixa fins al final
 ///                del text.
 /// \return L'amplada de la cadena dibuixada en pixels.
 ///
@@ -544,9 +574,9 @@ int Display::drawText(
 
 /// ----------------------------------------------------------------------
 /// \brief Obte l'amplada d'una cadena de texte.
-/// \param s: La cadena de texte.
-/// \param offset: El primer caracter del text.
-/// \param length: Numero de caracters a mesurar. -1 si es la longitut
+/// \param[in] s: La cadena de texte.
+/// \param[in] offset: El primer caracter del text.
+/// \param[in] length: Numero de caracters a mesurar. -1 si es la longitut
 ///                total del text.
 /// \return L'amplada de la cadena en pixels.
 ///
@@ -565,7 +595,7 @@ int Display::getTextWidth(
 
 /// ----------------------------------------------------------------------
 /// \brief Obte l'alçada d'una cadena de texte.
-/// \param s: La cadena de texte.
+/// \param[in] s: La cadena de texte.
 /// \return L'alçada de la cadena.
 ///
 int Display::getTextHeight(
@@ -577,7 +607,7 @@ int Display::getTextHeight(
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu un caracter en emulacio TTY.
-/// \param c: El caracter a escriure.
+/// \param[in] c: El caracter a escriure.
 ///
 void Display::putTTY(
     char c) {
@@ -643,9 +673,9 @@ void Display::putTTY(
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu una text en emulacio TTY.
-/// \param s: El text a escriure.
-/// \param offset: El primer caracter a escriure.
-/// \param length: Numero de caracters a escriure. -1 si es tot el text.
+/// \param[in] s: El text a escriure.
+/// \param[in] offset: El primer caracter a escriure.
+/// \param[in] length: Numero de caracters a escriure. -1 si es tot el text.
 ///
 void Display::putTTY(
     const char *s,
@@ -704,8 +734,8 @@ bool Display::clipArea(
 
 /// ----------------------------------------------------------------------
 /// \brief Retalla un punt.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
+/// \param[in] x: Coordinada X.
+/// \param[in] y: Coordinada Y.
 /// \return True si es visible.
 ///
 bool Display::clipPoint(
@@ -720,7 +750,7 @@ bool Display::clipPoint(
 /// \brief Retalla una linia horitzontal.
 /// \param x1: Coordinada x inicial.
 /// \param x2: Coordinada x final.
-/// \paeam y: Coordinada y.
+/// \param y: Coordinada y.
 /// \return True si es visible
 ///
 bool Display::clipHLine(
