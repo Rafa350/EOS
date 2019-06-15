@@ -51,7 +51,7 @@ namespace eos {
     		int dy;
     		DisplayOrientation orientation;
     		int layer1Addr;
-    		int layer2Addr;
+    		//int layer2Addr;
 
     	private:
             RGBDirectDriver();
@@ -78,7 +78,8 @@ namespace eos {
         private:
             void gpioInitialize();
             void ltdcInitialize();
-            void ltdcInitializeLayer(LTDC_Layer_TypeDef* layer, int frameAddr);
+            void ltdcInitializeLayer(LTDC_Layer_TypeDef* layer);
+            void ltdcSetFrameAddress(LTDC_Layer_TypeDef *layer, int frameAddr);
             void ltdcActivateLayer(LTDC_Layer_TypeDef *layer, bool activate);
             void dma2dInitialize();
             void dma2dFill(int x, int y, int width, int height, const Color &color);

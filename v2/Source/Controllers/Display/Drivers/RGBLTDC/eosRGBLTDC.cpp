@@ -83,8 +83,10 @@ void RGBDirectDriver::initialize() {
 
 	gpioInitialize();
 	ltdcInitialize();
-	ltdcInitializeLayer(LTDC_Layer1, layer1Addr);
+	ltdcInitializeLayer(LTDC_Layer1);
+	ltdcSetFrameAddress(LTDC_Layer1, layer1Addr);
 	//ltdcInitializeLayer(LTDC_Layer2, layer2Addr);
+	//ltdcSetFrameAddress(LTDC_layer2, layer2Addr);
 	ltdcActivateLayer(LTDC_Layer1, true);
 	dma2dInitialize();
 }
@@ -212,7 +214,8 @@ void RGBDirectDriver::setPixel(
 
 		// Dibuixa el pixel
 		//
-		*((PIXEL_TYPE*) addressAt(layer1Addr, xx, yy)) = PIXEL_VALUE(color);
+		PIXEL_TYPE *p = (PIXEL_TYPE*) addressAt(layer1Addr, xx, yy);
+		*p = PIXEL_VALUE(color);
 	}
 }
 
@@ -269,15 +272,16 @@ void RGBDirectDriver::setPixels(
 	// Comprova si es dins dels limits
 	//
 	if ((x >= 0) && (x + width <= screenWidth) &&
-		(y >= 0) && (y + height <= screenHeight) &&
-		(width > 0) && (height > 0)) {
+		(y >= 0) && (y + height <= screenHeight)) {
 
 		// Si es del tamany d'un pixel, utilitza la funcio setPixel
 		//
 		if ((width == 1) && (height == 1))
 			setPixel(x, y, color);
 
-		else {
+		// En cas contrari utilitza el modul DMA2D
+		//
+		else if ((width > 0) && (height > 0)) {
 
 			int x2 = x + width - 1;
 			int y2 = y + height - 1;
@@ -432,7 +436,7 @@ void RGBDirectDriver::ltdcInitialize() {
 	clkInit.PLLSAIDivR = RCC_PLLSAIDIVR_4;
 	HAL_RCCEx_PeriphCLKConfig(&clkInit);
 
-    // Inicialitza el modul LTDC
+    // Activa el modul LTDC
     //
     RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;
 
@@ -492,7 +496,7 @@ void RGBDirectDriver::ltdcInitialize() {
     tmp |= 255 << LTDC_BCCR_BCBLUE_Pos;
     LTDC->BCCR = tmp;
 
-    // Activa el controlador
+    // Activa el modul LDTC
     //
     LTDC->GCR |= LTDC_GCR_LTDCEN;
 }
@@ -501,12 +505,10 @@ void RGBDirectDriver::ltdcInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza la capa especificada.
 /// \param: layer: Bloc de registres de la capa.
-/// \param frameAddr: Adressa de la memoria de video.
 /// \remarks La capa s'inicialitza desactivada.
 ///
 void RGBDirectDriver::ltdcInitializeLayer(
-	LTDC_Layer_TypeDef *layer,
-	int frameAddr) {
+	LTDC_Layer_TypeDef *layer) {
 
 	uint32_t tmp;
 
@@ -562,11 +564,6 @@ void RGBDirectDriver::ltdcInitializeLayer(
     tmp |= 7 << LTDC_LxBFCR_BF2_Pos;
     layer->BFCR = tmp;
 
-    // Configura Lx_CFBAR (Color Frame Buffer Address Register)
-    // -Adressa del buffer de video
-    //
-    layer->CFBAR = frameAddr;
-
     // Configura Lx_CFBLR (Color Frame Buffer Length Register)
     // -Longitut de la linia en bytes.
     //
@@ -603,10 +600,27 @@ void RGBDirectDriver::ltdcActivateLayer(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Asigna l'adressa de memoria de la pagina.
+/// \param[in] frameAddr: L'adressa del buffer de memoria.
+///
+void RGBDirectDriver::ltdcSetFrameAddress(
+	LTDC_Layer_TypeDef *layer,
+	int frameAddr) {
+
+    // Configura Lx_CFBAR (Color Frame Buffer Address Register)
+    // -Adressa del buffer de video
+    //
+    layer->CFBAR = frameAddr;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Inicialitza el modul DMA2D.
 ///
 void RGBDirectDriver::dma2dInitialize() {
 
+	// Activa el modul DMA2D
+	//
     RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN;
 }
 
@@ -668,7 +682,7 @@ void RGBDirectDriver::dma2dFill(
 /// \param format: Format dels pixels.
 /// \param dx: Offset X dins del bitmap.
 /// \param dy: offset Y dins del vitmap.
-/// \param pitch: Aplada de linia del bitmap.
+/// \param pitch: Amplada de linia del bitmap.
 ///
 void RGBDirectDriver::dma2dCopy(
 	int x,
@@ -765,15 +779,29 @@ void RGBDirectDriver::dma2dWaitFinish() {
 		// Si troba errors, finalitza
 		//
 		volatile uint32_t isr = DMA2D->ISR;
-		if (((isr & DMA2D_ISR_CEIF_Msk) != 0) | ((isr & DMA2D_ISR_TEIF_Msk) != 0)) {
-			DMA2D->IFCR |=
-					1 << DMA2D_IFCR_CCEIF_Pos |
-					1 << DMA2D_IFCR_CTEIF_Pos;
+		if (((isr & DMA2D_ISR_CEIF_Msk) != 0) ||
+			((isr & DMA2D_ISR_TEIF_Msk) != 0) ||
+			((isr & DMA2D_ISR_CAEIF_Msk) != 0)) {
+
+			// Borra els flags d'error
+			//
+			uint32_t tmp = DMA2D->IFCR;
+			tmp |= (1 << DMA2D_IFCR_CCEIF_Pos);
+			tmp |= (1 << DMA2D_IFCR_CTEIF_Pos);
+			tmp |= (1 << DMA2D_IFCR_CAECIF_Pos);
+			DMA2D->IFCR = tmp;
+
+			// Retorna
+			//
 			return;
 		}
 	}
+
+	// Borra el flag de transferencia complerta
+	//
 	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
 }
 
 
 #endif // USE_DISPLAY_RGB
+

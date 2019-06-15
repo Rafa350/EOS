@@ -300,7 +300,7 @@
 		<link>
 			<name>src/App/STM32F7/main.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/main.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/StartUp/STM32F7/main.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F7/stm32f746g_discovery.c</name>
@@ -511,11 +511,6 @@
 			<name>Library/FreeRTOS/Source/portable/MemMang/heap_4.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halDMA2D.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
@@ -811,6 +806,11 @@
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDC.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDC.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDCint.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDCint.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
