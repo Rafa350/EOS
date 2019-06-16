@@ -2,10 +2,14 @@
 
 #ifdef DISPLAY_DRV_RGBLTDC
 
+// Utilitza una sola capa (LTDC_Layer1). Pot treballar en modus simple
+// o doble buffer.
+
 #include "eosAssert.h"
 #include "System/eosMath.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "HAL/halGPIO.h"
+#include "HAL/STM32/halDMA2D.h"
 
 
 #if !((defined(LTDC) && (defined(EOS_STM32F4) || defined(EOS_STM32F7))))
@@ -18,8 +22,10 @@
 //
 #if defined(DISPLAY_COLOR_RGB565)
 #define PIXEL_VALUE(c)       c.toRGB565()
+#define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB565
 #elif defined(DISPLAY_COLOR_RGB888)
 #define PIXEL_VALUE(c)       c.toRGB888()
+#define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB888
 #else
 #error No se definio DISPLAY_COLOR_xxxx
 #endif
@@ -38,7 +44,7 @@ static inline int addressAt(
 	int x,
 	int y) {
 
-	return base + (((y * LINE_WIDTH) + x) * PIXEL_SIZE);
+	return base + (((y * LINE_WIDTH) + x) * sizeof(pixel_t));
 }
 
 
@@ -72,7 +78,8 @@ RGBDirectDriver::RGBDirectDriver():
 	dx(0),
 	dy(0),
 	orientation(DisplayOrientation::normal),
-	layer1Addr(DISPLAY_VRAM_ADDR) {
+	page1Addr(PAGE1_ADDR),
+	page2Addr(PAGE2_ADDR) {
 }
 
 
@@ -82,13 +89,11 @@ RGBDirectDriver::RGBDirectDriver():
 void RGBDirectDriver::initialize() {
 
 	gpioInitialize();
+
 	ltdcInitialize();
-	ltdcInitializeLayer(LTDC_Layer1);
-	ltdcSetFrameAddress(LTDC_Layer1, layer1Addr);
-	//ltdcInitializeLayer(LTDC_Layer2, layer2Addr);
-	//ltdcSetFrameAddress(LTDC_layer2, layer2Addr);
-	ltdcActivateLayer(LTDC_Layer1, true);
-	dma2dInitialize();
+	ltdcSetFrameAddress(page1Addr);
+
+	halDMA2DInitialize();
 }
 
 
@@ -106,7 +111,11 @@ void RGBDirectDriver::shutdown() {
 ///
 void RGBDirectDriver::displayOn() {
 
-	// Activa el display
+    // Activa el modul LDTC
+    //
+    LTDC->GCR |= LTDC_GCR_LTDCEN;
+
+    // Activa el display
 	//
 	halGPIOSetPin(DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN);
 
@@ -128,6 +137,10 @@ void RGBDirectDriver::displayOff() {
 	// Desactiva el backlight
 	//
 	halGPIOClearPin(DISPLAY_BKE_PORT, DISPLAY_BKE_PIN);
+
+	// Desactiva el modul LDTC
+    //
+    LTDC->GCR &= ~LTDC_GCR_LTDCEN;
 }
 
 
@@ -188,7 +201,7 @@ void RGBDirectDriver::setOrientation(
 void RGBDirectDriver::clear(
 	const Color &color) {
 
-	dma2dFill(0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT, color);
+	fill(0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT, color);
 }
 
 
@@ -214,7 +227,7 @@ void RGBDirectDriver::setPixel(
 
 		// Dibuixa el pixel
 		//
-		PIXEL_TYPE *p = (PIXEL_TYPE*) addressAt(layer1Addr, xx, yy);
+		pixel_t *p = (pixel_t*) addressAt(page1Addr, xx, yy);
 		*p = PIXEL_VALUE(color);
 	}
 }
@@ -296,7 +309,7 @@ void RGBDirectDriver::setPixels(
 			int ww = Math::abs(xx2 - xx1) + 1;
 			int hh = Math::abs(yy2 - yy1) + 1;
 
-			dma2dFill(xx, yy, ww, hh, color);
+			fill(xx, yy, ww, hh, color);
 		}
 	}
 }
@@ -331,7 +344,7 @@ void RGBDirectDriver::writePixels(
 		(y >= 0) && (y + height <= screenHeight) &&
 		(width > 0) && (height > 0)) {
 
-		dma2dCopy(x, y, width, height, pixels, format, dx, dy, pitch);
+		copy(x, y, width, height, pixels, format, dx, dy, pitch);
 	}
 }
 
@@ -418,6 +431,8 @@ void RGBDirectDriver::gpioInitialize() {
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el modul LTDC.
+/// \remarks Prepara la capa Layer1, pero no s'activara fins que s'asigni
+/// una adressa per buffer de video.
 ///
 void RGBDirectDriver::ltdcInitialize() {
 
@@ -496,48 +511,32 @@ void RGBDirectDriver::ltdcInitialize() {
     tmp |= 255 << LTDC_BCCR_BCBLUE_Pos;
     LTDC->BCCR = tmp;
 
-    // Activa el modul LDTC
-    //
-    LTDC->GCR |= LTDC_GCR_LTDCEN;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Inicialitza la capa especificada.
-/// \param: layer: Bloc de registres de la capa.
-/// \remarks La capa s'inicialitza desactivada.
-///
-void RGBDirectDriver::ltdcInitializeLayer(
-	LTDC_Layer_TypeDef *layer) {
-
-	uint32_t tmp;
-
-    // Configura la Layer-1 WHPCR (Window Horizontal Position Configuration Register)
+    // Configura Lx_WHPCR (Window Horizontal Position Configuration Register)
     // -Tamany horitzontal de la finestra
     //
-    tmp = layer->WHPCR;
+    tmp = LTDC_Layer1->WHPCR;
     tmp &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
     tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + 1) << LTDC_LxWHPCR_WHSTPOS_Pos;
     tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + DISPLAY_IMAGE_WIDTH) << LTDC_LxWHPCR_WHSPPOS_Pos;
-    layer->WHPCR = tmp;
+    LTDC_Layer1->WHPCR = tmp;
 
     // Configura Lx_WHPCR (Window Vertical Position Configuration Register)
     // -Tamany vertical de la finestra
     //
-    tmp = layer->WVPCR;
+    tmp = LTDC_Layer1->WVPCR;
     tmp &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
     tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + 1) << LTDC_LxWVPCR_WVSTPOS_Pos;
     tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + DISPLAY_IMAGE_HEIGHT) << LTDC_LxWVPCR_WVSPPOS_Pos;
-    layer->WVPCR = tmp;
+    LTDC_Layer1->WVPCR = tmp;
 
     // Configura Lx_DCCR (Default Color Configuration Register)
     // -Color per defecte ARGB(255, 0, 0, 0)
     //
-    layer->DCCR = 0xFF0000FF;
+    LTDC_Layer1->DCCR = 0xFF0000FF;
 
     // Configura Lx_PFCR (Pixel Format Configuration Register)
     //
-    tmp = layer->PFCR;
+    tmp = LTDC_Layer1->PFCR;
     tmp &= ~(LTDC_LxPFCR_PF);
 #if defined(DISPLAY_COLOR_RGB565)
     tmp |= 0b010 << LTDC_LxPFCR_PF_Pos;
@@ -546,82 +545,75 @@ void RGBDirectDriver::ltdcInitializeLayer(
 #else
 #error No se especifico DISPLAY_COLOR_xxxx
 #endif
-    layer->PFCR = tmp;
+    LTDC_Layer1->PFCR = tmp;
 
     // Configura Lx_CACR (Constant Alpha Configuration Register)
     //
-    tmp = layer->CACR;
+    tmp = LTDC_Layer1->CACR;
     tmp &= ~(LTDC_LxCACR_CONSTA);
     tmp |= 255u;
-    layer->CACR;
+    LTDC_Layer1->CACR;
 
     // Configura Lx_BFCR
     // -Specifies the blending factors
     //
-    tmp = layer->BFCR;
+    tmp = LTDC_Layer1->BFCR;
     tmp &= ~(LTDC_LxBFCR_BF2 | LTDC_LxBFCR_BF1);
     tmp |= 6 << LTDC_LxBFCR_BF1_Pos;
     tmp |= 7 << LTDC_LxBFCR_BF2_Pos;
-    layer->BFCR = tmp;
+    LTDC_Layer1->BFCR = tmp;
 
     // Configura Lx_CFBLR (Color Frame Buffer Length Register)
     // -Longitut de la linia en bytes.
     //
-    tmp = layer->CFBLR;
+    tmp = LTDC_Layer1->CFBLR;
     tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
     tmp |= LINE_SIZE << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= ((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
-    layer->CFBLR = tmp;
+    tmp |= ((DISPLAY_IMAGE_WIDTH * sizeof(pixel_t)) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
+    LTDC_Layer1->CFBLR = tmp;
 
     // Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
     //
-    tmp = layer->CFBLNR;
+    tmp = LTDC_Layer1->CFBLNR;
     tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
     tmp |= DISPLAY_IMAGE_HEIGHT;
-    layer->CFBLNR = tmp;
-}
+    LTDC_Layer1->CFBLNR = tmp;
 
-
-/// ----------------------------------------------------------------------
-/// \brief Activa una capa.
-/// \param layer: Bloc de registres de la capa.
-/// \param active: True per activar, false per desactivar.
-///
-void RGBDirectDriver::ltdcActivateLayer(
-	LTDC_Layer_TypeDef *layer,
-	bool activate) {
-
-	if (activate)
-		layer->CR |= (uint32_t) LTDC_LxCR_LEN;
-	else
-		layer->CR &= (uint32_t) ~(LTDC_LxCR_LEN);
-    LTDC->SRCR |= LTDC_SRCR_IMR;
+    // Actualitza els parametres de la capa inmediatament
+    //
+	LTDC->SRCR |= LTDC_SRCR_IMR;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna l'adressa de memoria de la pagina.
 /// \param[in] frameAddr: L'adressa del buffer de memoria.
+/// \remarks Un cop asignada l'adressa, la capa s'activa i es visible. Si l'adressa
+///          es 0, es desactiva.
 ///
 void RGBDirectDriver::ltdcSetFrameAddress(
-	LTDC_Layer_TypeDef *layer,
 	int frameAddr) {
 
-    // Configura Lx_CFBAR (Color Frame Buffer Address Register)
-    // -Adressa del buffer de video
-    //
-    layer->CFBAR = frameAddr;
-}
+	if (frameAddr == 0)
+	    LTDC_Layer1->CR &= (uint32_t) ~LTDC_LxCR_LEN;
+	else {
+		LTDC_Layer1->CFBAR = frameAddr;
+		LTDC_Layer1->CR |= (uint32_t) LTDC_LxCR_LEN;
+	}
 
-
-/// ----------------------------------------------------------------------
-/// \brief Inicialitza el modul DMA2D.
-///
-void RGBDirectDriver::dma2dInitialize() {
-
-	// Activa el modul DMA2D
+	// Si el LTDC esta inactiu, fa l'actualitzacio inmediata
 	//
-    RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN;
+    if ((LTDC->GCR & LTDC_GCR_LTDCEN) == 0)
+    	LTDC->SRCR |=  LTDC_SRCR_IMR;
+
+    // En cas contrari, fa l'actualitzacio durant la sincronitzacio
+    // vertical, i espera que finalitzi.
+    //
+    else {
+    	LTDC->SRCR |=  LTDC_SRCR_VBR;
+		while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
+			continue;
+    }
 }
 
 
@@ -633,42 +625,20 @@ void RGBDirectDriver::dma2dInitialize() {
 /// \param height: Alçada del bloc.
 /// \param color: El color per omplir.
 ///
-void RGBDirectDriver::dma2dFill(
+void RGBDirectDriver::fill(
 	int x,
 	int y,
 	int width,
 	int height,
 	const Color &color) {
 
-	// Calcula l'adresa inicial
-	//
-	int addr = addressAt(layer1Addr, x, y);
+	int addr = addressAt(page1Addr, x, y);
+	int pitch = LINE_WIDTH - width;
+    DMA2DOptions options = HAL_DMA2D_DFMT_DEFAULT;
+    int c = PIXEL_VALUE(color);
 
-	// Inicialitza el controlador DMA2D
-	//
-	DMA2D->CR = 0b11 << DMA2D_CR_MODE_Pos;            // Modus de transferencia R2M
-#if defined(DISPLAY_COLOR_RGB565)
-	DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;     // Format de color RGB565
-	DMA2D->OCOLR = color.toRGB565();                  // Color en format RGB565
-#elif defined(DISPLAY_COLOR_RGB888)
-	DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;     // Format de color RGB888
-	DMA2D->OCOLR = color.toRGB888();                  // Color en format RGB888
-#else
-#error No se especifico DISPLAY_COLOR_xxxx
-#endif
-	DMA2D->OMAR = addr;                               // Adressa del primer pixel
-	DMA2D->OOR = LINE_WIDTH - width;                  // Offset entre linies
-	DMA2D->NLR =
-		(width << DMA2D_NLR_PL_Pos) |                 // Amplada
-		(height << DMA2D_NLR_NL_Pos);                 // Alçada
-
-	// Inicia la transferencia
-	//
-	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;             // Inicia la transferencia
-
-	// Espera que acabi
-	//
-	dma2dWaitFinish();
+	halDMA2DFill(addr, width, height, pitch, options, c);
+	halDMA2DWaitForFinish();
 }
 
 
@@ -684,7 +654,7 @@ void RGBDirectDriver::dma2dFill(
 /// \param dy: offset Y dins del vitmap.
 /// \param pitch: Amplada de linia del bitmap.
 ///
-void RGBDirectDriver::dma2dCopy(
+void RGBDirectDriver::copy(
 	int x,
 	int y,
 	int width,
@@ -712,7 +682,7 @@ void RGBDirectDriver::dma2dCopy(
 
 	// Adressa i pitch de desti
 	//
-	int dstAddr = addressAt(layer1Addr, x, y);
+	int dstAddr = addressAt(page1Addr, x, y);
 	DMA2D->OMAR = dstAddr;
 	DMA2D->OOR = LINE_WIDTH - width;
 
@@ -763,45 +733,9 @@ void RGBDirectDriver::dma2dCopy(
 
 	/// Espera que acabi
 	///
-	dma2dWaitFinish();
+	halDMA2DWaitForFinish();
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief Espera que acabi la transaccio.
-///
-void RGBDirectDriver::dma2dWaitFinish() {
-
-	// Espera que acabi
-	//
-	while ((DMA2D->ISR & DMA2D_ISR_TCIF_Msk) == 0) {
-
-		// Si troba errors, finalitza
-		//
-		volatile uint32_t isr = DMA2D->ISR;
-		if (((isr & DMA2D_ISR_CEIF_Msk) != 0) ||
-			((isr & DMA2D_ISR_TEIF_Msk) != 0) ||
-			((isr & DMA2D_ISR_CAEIF_Msk) != 0)) {
-
-			// Borra els flags d'error
-			//
-			uint32_t tmp = DMA2D->IFCR;
-			tmp |= (1 << DMA2D_IFCR_CCEIF_Pos);
-			tmp |= (1 << DMA2D_IFCR_CTEIF_Pos);
-			tmp |= (1 << DMA2D_IFCR_CAECIF_Pos);
-			DMA2D->IFCR = tmp;
-
-			// Retorna
-			//
-			return;
-		}
-	}
-
-	// Borra el flag de transferencia complerta
-	//
-	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
-}
-
-
-#endif // USE_DISPLAY_RGB
+#endif // DISPLAY_DRV_RGBLTDC
 

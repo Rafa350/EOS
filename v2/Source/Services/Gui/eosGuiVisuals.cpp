@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/Gui/eosGuiVisuals.h"
+#include "System/Graphics/eosDisplay.h"
 
 
 using namespace eos;
@@ -81,6 +82,14 @@ Visual::Visual():
 
 
 /// ----------------------------------------------------------------------
+/// \brief Destructor del objecte.
+///
+Visual::~Visual() {
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Renderitza el visual.
 /// \param[in] display: El display on dibuixar.
 ///
@@ -101,6 +110,14 @@ VisualContainer::VisualContainer():
 	firstChild(nullptr),
 	lastChild(nullptr),
 	numChilds(0) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Destructor del objecte
+///
+VisualContainer::~VisualContainer() {
 
 }
 
@@ -157,7 +174,7 @@ void Screen::setColor(
 
 	if (this->color != color) {
 		this->color = color;
-		needRender = true;
+		//needRender = true;
 	}
 }
 

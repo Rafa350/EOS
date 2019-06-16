@@ -5,11 +5,11 @@
 // EOS includes
 //
 #include "eos.h"
+#include "System/Graphics/eosColor.h"
 
 
 namespace eos {
 
-	class Color;
 	class Display;
 	class Visual;
 	class VisualContainer;
@@ -29,7 +29,7 @@ namespace eos {
 
         public:
     		Visual();
-    		virtual ~Visual() {}
+    		virtual ~Visual();
 
             inline Visual *getParent() const { return parent; }
             inline Visual *getNextSibling() const { return nextSibling; }

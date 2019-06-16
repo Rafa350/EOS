@@ -278,6 +278,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -366,6 +371,11 @@
 			<name>inc/Framework/EOS/Board/board_STM32F746G_DISCO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board_STM32F746G_DISCO.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32</name>
@@ -513,6 +523,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halDMA2D.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
@@ -631,6 +651,11 @@
 			<name>src/Framework/EOS/Controllers/TouchPad/eosTouchPad.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/eosTouchPad.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32/halDMA2D.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halDMA2D.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32/halGPIO.c</name>
@@ -761,6 +786,11 @@
 			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM7/port.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosRGBLTDC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosRGBLTDC.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC</name>

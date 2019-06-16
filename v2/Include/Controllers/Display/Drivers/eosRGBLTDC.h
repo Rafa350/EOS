@@ -28,14 +28,16 @@
 
 
 #if defined(DISPLAY_COLOR_RGB565)
-#define PIXEL_TYPE                int16_t
+typedef int16_t pixel_t;
 #elif defined(DISPLAY_COLOR_RGB888)
-#define PIXEL_TYPE                int32_t
+typedef int32_t pixel_t
 #endif
-#define PIXEL_SIZE                sizeof(PIXEL_TYPE)
-#define LINE_SIZE                 (((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
-#define LINE_WIDTH                (LINE_SIZE / PIXEL_SIZE)
+#define LINE_SIZE                 (((DISPLAY_IMAGE_WIDTH * sizeof(pixel_t)) + 63) & 0xFFFFFFC0)
+#define LINE_WIDTH                (LINE_SIZE / sizeof(pixel_t))
 #define FRAME_SIZE                (LINE_SIZE * DISPLAY_IMAGE_HEIGHT)
+
+#define PAGE1_ADDR                DISPLAY_VRAM_ADDR
+#define PAGE2_ADDR                DISPLAY_VRAM_ADDR + FRAME_SIZE
 
 
 namespace eos {
@@ -50,8 +52,8 @@ namespace eos {
     		int dx;
     		int dy;
     		DisplayOrientation orientation;
-    		int layer1Addr;
-    		//int layer2Addr;
+    		int page1Addr;
+    		int page2Addr;
 
     	private:
             RGBDirectDriver();
@@ -78,13 +80,9 @@ namespace eos {
         private:
             void gpioInitialize();
             void ltdcInitialize();
-            void ltdcInitializeLayer(LTDC_Layer_TypeDef* layer);
-            void ltdcSetFrameAddress(LTDC_Layer_TypeDef *layer, int frameAddr);
-            void ltdcActivateLayer(LTDC_Layer_TypeDef *layer, bool activate);
-            void dma2dInitialize();
-            void dma2dFill(int x, int y, int width, int height, const Color &color);
-            void dma2dCopy(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch);
-            void dma2dWaitFinish();
+            void ltdcSetFrameAddress(int frameAddr);
+            void fill(int x, int y, int width, int height, const Color &color);
+            void copy(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch);
     };
 }
 
