@@ -8,11 +8,11 @@ int main() {
 
 	// Inicialitzacio del hardware
 	//
-	AppInitialize();
+	appInitialize();
 
 	// Inicia l'aplicacio EOS
 	//
-	AppMain();
+	appMain();
 
 	return 0;
 }

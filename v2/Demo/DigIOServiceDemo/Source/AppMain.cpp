@@ -212,7 +212,7 @@ void LedLoopService::onLoop() {
 /// ----------------------------------------------------------------------
 /// \brief Entrada a l'aplicacio
 ///
-void AppMain() {
+void appMain() {
 
 	Application *app = new MyApplication();
 	app->run();

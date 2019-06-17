@@ -220,9 +220,6 @@ void DigOutput::initialize() {
 void DigOutput::timeOut() {
 
 	switch (state) {
-		case State::Idle:
-			break;
-
 		case State::Pulse:
 			if (widthCnt > 0) {
 				widthCnt--;
@@ -242,6 +239,9 @@ void DigOutput::timeOut() {
 				}
 			}
 			break;
+            
+        default:
+            break;
 	}
 }
 

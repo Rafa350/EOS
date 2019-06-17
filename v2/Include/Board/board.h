@@ -18,7 +18,7 @@
     #include "Board/board_STM32F769I_DISCO.h"
 
 #else
-    #error "No se definio HARDWARE_XXXX"
+    #error "Undefined HARDWARE_XXXX"
 
 #endif
 

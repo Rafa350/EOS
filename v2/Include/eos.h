@@ -92,8 +92,8 @@
 
 // Entrada a l'aplicacio
 //
-void AppMain();
-void AppInitialize();
+void appMain();
+void appInitialize();
 
 
 #endif // __eos__

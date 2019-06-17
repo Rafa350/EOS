@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "hal/halSYS.h"
 
 
 // Comprova si son valids els parametres de compilacio
@@ -44,8 +43,6 @@
 #endif
 
 
-extern void AppMain();
-
 
 /// ----------------------------------------------------------------------
 /// \brief Entrada al programa.
@@ -54,11 +51,11 @@ int main(void) {
     
     // Inicialitza el cache, les interrupcions i el clock.
     //
-    halSYSInitialize();
+    appInitialize();
     
     // Crida a la funcio d'entrada de l'aplicacio d'usuari.
     //
-    AppMain();
+    appMain();
 
     return 0;
 }

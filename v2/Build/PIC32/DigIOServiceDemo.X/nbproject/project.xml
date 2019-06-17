@@ -22,6 +22,7 @@
                 <sourceRootElem>../../../Source/OSAL</sourceRootElem>
                 <sourceRootElem>../../../Demo/DigIOServiceDemo</sourceRootElem>
                 <sourceRootElem>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source</sourceRootElem>
+                <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

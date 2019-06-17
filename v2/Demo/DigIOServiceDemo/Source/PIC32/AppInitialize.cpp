@@ -5,7 +5,7 @@
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza l'aplicacio
 ///
-void AppInitialize() {
+void appInitialize() {
     
     halSYSInitialize();
 }
