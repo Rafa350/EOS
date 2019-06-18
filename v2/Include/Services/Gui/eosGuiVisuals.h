@@ -14,82 +14,84 @@ namespace eos {
 	class Visual;
 	class VisualContainer;
 
-	void addVisual(VisualContainer *container, Visual *visual);
-	void removeVisual(VisualContainer *container, Visual *visual);
-
     class Visual {
     	private:
     		Visual *parent;
+    		Visual *firstChild;
+    		Visual *lastChild;
     		Visual *nextSibling;
     		Visual *prevSibling;
+    		unsigned numChilds;
     		bool needRender;
 
     	protected:
     		virtual void onRender(Display *display) = 0;
+    		void invalidate();
 
         public:
     		Visual();
     		virtual ~Visual();
 
+            void addVisual(Visual *visual);
+            void removeVisual(Visual *visual);
+
             inline Visual *getParent() const { return parent; }
+            inline Visual *getFirstChild() const { return firstChild; }
+            inline Visual *getLastChild() const { return lastChild; }
+            inline unsigned getNumChilds() const { return numChilds; }
             inline Visual *getNextSibling() const { return nextSibling; }
             inline Visual *getPrevSibling() const { return prevSibling; }
 
             inline bool getNeedRender() const { return needRender; }
 
-            virtual void render(Display *display);
-
-            friend void addVisual(VisualContainer *container, Visual *visual);
-            friend void removeVisual(VisualContainer *container, Visual *visual);
+            void render(Display *display);
     };
 
-    class VisualContainer: public Visual {
-    	private:
-    		Visual *firstChild;
-    		Visual *lastChild;
-    		unsigned numChilds;
-
-        public:
-    		VisualContainer();
-    		~VisualContainer();
-
-            void addVisual(Visual *visual);
-            void removeVisual(Visual *visual);
-            inline Visual *getFirstChild() const { return firstChild; }
-            inline Visual *getLastChild() const { return lastChild; }
-            inline unsigned getNumChilds() const { return numChilds; }
-
-            void render(Display *display) override;
-
-            friend void addVisual(VisualContainer *container, Visual *visual);
-            friend void removeVisual(VisualContainer *container, Visual *visual);
-    };
-
-    class Screen: public VisualContainer {
+    class Screen: public Visual {
     	private:
     		Color color;
-        public:
+
+    	protected:
+            void onRender(Display *display) override;
+
+    	public:
             void setColor(const Color &color);
 
-            void onRender(Display *display) override;
+            inline Color getColor() const { return color; }
     };
 
-    class Control: public VisualContainer {
+    class Window: public Visual {
     	private:
     		int x;
     		int y;
     		int width;
     		int height;
-        public:
+
+    	public:
             void setPosition(int x, int y);
             void setSize(int width, int height);
+
+            inline int getX() const { return x; }
+            inline int getY() const { return y; }
+            inline int getWidth() const { return width; }
+            inline int getHeight() const { return height; }
     };
 
-    class Window: public Control {
+    class Widget: public Window {
+    	private:
+    		Color backgroundColor;
+    		Color borderColor;
+    		int borderThickness;
+
+    	protected:
+    		void onRender(Display *display) override;
+
         public:
             void setBackgroundColor(const Color &color);
             void setBorderColor(const Color &color);
             void setBorderThickness(int thickness);
+
+            inline Color getBorderColor() const { return borderColor; }
     };
 
 }

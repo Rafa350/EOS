@@ -55,6 +55,12 @@ void GuiService::onInitialize() {
 
 	screen = new Screen();
 	screen->setColor(COLOR_Blue);
+
+	Widget *v = new Widget();
+	v->setPosition(10, 10);
+	v->setSize(100, 100);
+	v->setBorderColor(COLOR_Red);
+	screen->addVisual(v);
 }
 
 

@@ -8,75 +8,15 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix un visual a un contenidor de visuals.
-/// \param[in] container: L'objecte contenidor de visuals.
-/// \param[in] visual: L'objecte visual a afeigir.
-/// \remarks No fa cap comprovacio previa. Es suposa que els
-///          parametres son correctes i tant el contenidor com
-///          el visual estan en un estat coherent.
-///
-void eos::addVisual(
-	VisualContainer *container,
-	Visual *visual) {
-
-	// Cas que sigui el primer visual que s'afegeix;
-	//
-	if (container->numChilds == 0) {
-		visual->parent = container;
-		container->firstChild = visual;
-		container->lastChild = visual;
-	}
-
-	// Cas que hi hagin mes visuals en el contenidor
-	//
-	else {
-		visual->parent = container;
-		visual->prevSibling = container->lastChild;
-		container->lastChild->nextSibling = visual;
-		container->lastChild = visual;
-	}
-
-	container->numChilds++;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Elimina un visual del contenidos de visuals.
-/// \param[in] container: L'objecte contenidor de visuals.
-/// \param[in] visual: L'objecte visual a eliminar.
-/// \remarks No fa cap comprovacio previa. Es suposa que els
-///          parametres son correctes i tant el contenidor com
-///          el visual estan en un estat coherent.
-///
-void eos::removeVisual(
-	VisualContainer *container,
-	Visual *visual) {
-
-	if (visual->prevSibling == nullptr)
-		container->firstChild = visual->nextSibling;
-	else
-		visual->prevSibling->nextSibling = visual->nextSibling;
-
-	if (visual->nextSibling == nullptr)
-		container->lastChild = visual->prevSibling;
-	else
-		visual->nextSibling->prevSibling = visual->prevSibling;
-
-	visual->parent = nullptr;
-	visual->nextSibling = nullptr;
-	visual->prevSibling = nullptr;
-
-	container->numChilds--;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Constructor de l'objecte.
 ///
 Visual::Visual():
 	parent(nullptr),
+	firstChild(nullptr),
+	lastChild(nullptr),
 	nextSibling(nullptr),
 	prevSibling(nullptr),
+	numChilds(0),
 	needRender(true) {
 }
 
@@ -86,6 +26,17 @@ Visual::Visual():
 ///
 Visual::~Visual() {
 
+	if (parent != nullptr)
+		parent->removeVisual(this);
+
+	while (firstChild != nullptr)
+		delete firstChild;
+}
+
+
+void Visual::invalidate() {
+
+	needRender = true;
 }
 
 
@@ -97,28 +48,13 @@ void Visual::render(
 	Display *display) {
 
 	if (needRender) {
-		onRender(display);
 		needRender = false;
+
+		onRender(display);
+
+		for (Visual *visual = getFirstChild(); visual != nullptr; visual = visual->getNextSibling())
+			visual->render(display);
 	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte.
-///
-VisualContainer::VisualContainer():
-	firstChild(nullptr),
-	lastChild(nullptr),
-	numChilds(0) {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Destructor del objecte
-///
-VisualContainer::~VisualContainer() {
-
 }
 
 
@@ -126,13 +62,28 @@ VisualContainer::~VisualContainer() {
 /// \brief Afegeix un visual.
 /// \param[in] visual: L'objecte Visual a afeigir.
 ///
-void VisualContainer::addVisual(
+void Visual::addVisual(
 	Visual *visual) {
 
 	eosAssert(visual != nullptr);
 	eosAssert(visual->getParent() == nullptr);
 
-	eos::addVisual(this, visual);
+	// Cas que sigui el primer visual que s'afegeix;
+	//
+	if (numChilds == 0) {
+		firstChild = visual;
+		lastChild = visual;
+	}
+
+	// Cas que hi hagin mes visuals en el contenidor
+	//
+	else {
+		visual->prevSibling = lastChild;
+		lastChild->nextSibling = visual;
+		lastChild = visual;
+	}
+	visual->parent = this;
+	numChilds++;
 }
 
 
@@ -140,7 +91,7 @@ void VisualContainer::addVisual(
 /// \brief Elimina un visual.
 /// \param[in] visual: L'objecte Visual a eliminar.
 ///
-void VisualContainer::removeVisual(
+void Visual::removeVisual(
 	Visual *visual) {
 
 	eosAssert(visual != nullptr);
@@ -148,20 +99,21 @@ void VisualContainer::removeVisual(
 	eosAssert(firstChild != nullptr);
 	eosAssert(numChilds > 0);
 
-	eos::removeVisual(this, visual);
-}
+	if (visual->prevSibling == nullptr)
+		firstChild = visual->nextSibling;
+	else
+		visual->prevSibling->nextSibling = visual->nextSibling;
 
+	if (visual->nextSibling == nullptr)
+		lastChild = visual->prevSibling;
+	else
+		visual->nextSibling->prevSibling = visual->prevSibling;
 
-/// ----------------------------------------------------------------------
-/// \brief Renderitza el visual i els seus fills.
-/// \param[in] display: El display on dibuixar.
-///
-void VisualContainer::render(
-	Display *display) {
+	visual->parent = nullptr;
+	visual->nextSibling = nullptr;
+	visual->prevSibling = nullptr;
 
-	Visual::render(display);
-	for (Visual *visual = getFirstChild(); visual != nullptr; visual = visual->getNextSibling())
-		visual->render(display);
+	numChilds--;
 }
 
 
@@ -174,7 +126,7 @@ void Screen::setColor(
 
 	if (this->color != color) {
 		this->color = color;
-		//needRender = true;
+		invalidate();
 	}
 }
 
@@ -187,4 +139,42 @@ void Screen::onRender(
 	Display *display) {
 
 	display->clear(color);
+}
+
+
+void Window::setPosition(
+	int x,
+	int y) {
+
+	if ((this->x != x) || (this->y != y)) {
+		this->x = x;
+		this->y = y;
+		invalidate();
+	}
+}
+
+
+void Window::setSize(
+	int width,
+	int height) {
+
+    if ((this->width != width) || (this->height != height)) {
+    	this->width = width;
+    	this->height = height;
+    	invalidate();
+    }
+}
+
+
+void Widget::setBorderColor(
+	const Color &color) {
+
+	borderColor = color;
+}
+
+void Widget::onRender(
+	Display *display) {
+
+	display->setColor(borderColor);
+	display->drawRectangle(getX(), getY(), getWidth(), getHeight());
 }

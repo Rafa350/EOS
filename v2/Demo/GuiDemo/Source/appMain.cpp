@@ -9,7 +9,7 @@ using namespace app;
 /// ----------------------------------------------------------------------
 /// \brief Entrada al programa.
 ///
-void AppMain() {
+void appMain() {
 
     MyApplication *app = new MyApplication();
     app->run();
