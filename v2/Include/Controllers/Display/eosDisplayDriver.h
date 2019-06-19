@@ -29,8 +29,8 @@ namespace eos {
             virtual void displayOn() = 0;
             virtual void displayOff() = 0;
             virtual void setOrientation(DisplayOrientation orientation) = 0;
-            virtual int getWidth() = 0;
-            virtual int getHeight() = 0;
+            virtual int getWidth() const = 0;
+            virtual int getHeight() const = 0;
             virtual void clear(const Color &color) = 0;
             virtual void setPixel(int x, int y, const Color &color) = 0;
             virtual void setHPixels(int x, int y, int length, const Color &color) = 0;
@@ -40,6 +40,7 @@ namespace eos {
             virtual void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch) = 0;
             virtual void vScroll(int delta, int x, int y, int width, int height) = 0;
             virtual void hScroll(int delta, int x, int y, int width, int height) = 0;
+            virtual void refresh() = 0;
     };
 
 }

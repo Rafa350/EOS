@@ -36,6 +36,8 @@ Visual::~Visual() {
 
 void Visual::invalidate() {
 
+	if (parent != nullptr)
+		parent->needRender = true;
 	needRender = true;
 }
 
@@ -49,12 +51,11 @@ void Visual::render(
 
 	if (needRender) {
 		needRender = false;
-
 		onRender(display);
-
-		for (Visual *visual = getFirstChild(); visual != nullptr; visual = visual->getNextSibling())
-			visual->render(display);
 	}
+
+	for (Visual *visual = getFirstChild(); visual != nullptr; visual = visual->getNextSibling())
+		visual->render(display);
 }
 
 
@@ -172,9 +173,14 @@ void Widget::setBorderColor(
 	borderColor = color;
 }
 
+
 void Widget::onRender(
 	Display *display) {
 
 	display->setColor(borderColor);
-	display->drawRectangle(getX(), getY(), getWidth(), getHeight());
+	display->drawRectangle(
+		getX(),
+		getY(),
+		getX() + getWidth(),
+		getY() + getHeight());
 }

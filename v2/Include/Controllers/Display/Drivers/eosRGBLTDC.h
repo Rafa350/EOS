@@ -32,12 +32,13 @@ typedef int16_t pixel_t;
 #elif defined(DISPLAY_COLOR_RGB888)
 typedef int32_t pixel_t
 #endif
-#define LINE_SIZE                 (((DISPLAY_IMAGE_WIDTH * sizeof(pixel_t)) + 63) & 0xFFFFFFC0)
-#define LINE_WIDTH                (LINE_SIZE / sizeof(pixel_t))
+#define PIXEL_SIZE                sizeof(pixel_t)
+#define LINE_SIZE                 (((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
+#define LINE_WIDTH                (LINE_SIZE / PIXEL_SIZE)
 #define FRAME_SIZE                (LINE_SIZE * DISPLAY_IMAGE_HEIGHT)
 
-#define PAGE1_ADDR                DISPLAY_VRAM_ADDR
-#define PAGE2_ADDR                DISPLAY_VRAM_ADDR + FRAME_SIZE
+#define FRAME1_ADDR                DISPLAY_VRAM_ADDR
+#define FRAME2_ADDR                DISPLAY_VRAM_ADDR + FRAME_SIZE
 
 
 namespace eos {
@@ -52,8 +53,8 @@ namespace eos {
     		int dx;
     		int dy;
     		DisplayOrientation orientation;
-    		int page1Addr;
-    		int page2Addr;
+    		int frontFrameAddr;
+    		int backFrameAddr;
 
     	private:
             RGBDirectDriver();
@@ -65,8 +66,8 @@ namespace eos {
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() override { return screenWidth; }
-            int getHeight() override { return screenHeight; }
+            int getWidth() const override { return screenWidth; }
+            int getHeight() const override { return screenHeight; }
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
             void setHPixels(int x, int y, int size, const Color &color) override;
@@ -76,6 +77,7 @@ namespace eos {
             void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch) override;
             void vScroll(int delta, int x, int y, int width, int height) override;
             void hScroll(int delta, int x, int y, int width, int height) override;
+            void refresh() override;
 
         private:
             void gpioInitialize();

@@ -18,6 +18,8 @@ static const TaskPriority priority = TaskPriority::normal;
 static IDisplayDriver *displayDriver;
 static Display *display;
 
+Widget *v;
+int x, y;
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor
@@ -56,8 +58,10 @@ void GuiService::onInitialize() {
 	screen = new Screen();
 	screen->setColor(COLOR_Blue);
 
-	Widget *v = new Widget();
-	v->setPosition(10, 10);
+	x = 0;
+	y = 0;
+	v = new Widget();
+	v->setPosition(x, y);
 	v->setSize(100, 100);
 	v->setBorderColor(COLOR_Red);
 	screen->addVisual(v);
@@ -69,5 +73,14 @@ void GuiService::onInitialize() {
 ///
 void GuiService::onTask() {
 
+	if (x++ > 200)
+		x = 0;
+	if (y++ > 100)
+		y = 0;
+	v->setPosition(x, y);
+
 	screen->render(display);
+	//displayDriver->refresh();
+
+	Task::delay(50);
 }

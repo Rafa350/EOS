@@ -44,7 +44,7 @@ static inline int addressAt(
 	int x,
 	int y) {
 
-	return base + (((y * LINE_WIDTH) + x) * sizeof(pixel_t));
+	return base + (((y * LINE_WIDTH) + x) * PIXEL_SIZE);
 }
 
 
@@ -78,8 +78,8 @@ RGBDirectDriver::RGBDirectDriver():
 	dx(0),
 	dy(0),
 	orientation(DisplayOrientation::normal),
-	page1Addr(PAGE1_ADDR),
-	page2Addr(PAGE2_ADDR) {
+	frontFrameAddr(FRAME1_ADDR),
+	backFrameAddr(FRAME1_ADDR) {
 }
 
 
@@ -91,7 +91,7 @@ void RGBDirectDriver::initialize() {
 	gpioInitialize();
 
 	ltdcInitialize();
-	ltdcSetFrameAddress(page1Addr);
+	ltdcSetFrameAddress(frontFrameAddr);
 
 	halDMA2DInitialize();
 }
@@ -227,7 +227,7 @@ void RGBDirectDriver::setPixel(
 
 		// Dibuixa el pixel
 		//
-		pixel_t *p = (pixel_t*) addressAt(page1Addr, xx, yy);
+		pixel_t *p = (pixel_t*) addressAt(backFrameAddr, xx, yy);
 		*p = PIXEL_VALUE(color);
 	}
 }
@@ -380,6 +380,24 @@ void RGBDirectDriver::hScroll(
 	int width,
 	int height) {
 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Refresca la pantalla.
+/// \remarks Si es treballa en doble buffer, intercanvia els frames.
+///
+void RGBDirectDriver::refresh() {
+
+	// Intercanvia els buffers
+	//
+	int tmp = backFrameAddr;
+	backFrameAddr = frontFrameAddr;
+	frontFrameAddr = tmp;
+
+	// Asigna l'adresa de la capa
+	//
+	ltdcSetFrameAddress(frontFrameAddr);
 }
 
 
@@ -569,7 +587,7 @@ void RGBDirectDriver::ltdcInitialize() {
     tmp = LTDC_Layer1->CFBLR;
     tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
     tmp |= LINE_SIZE << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= ((DISPLAY_IMAGE_WIDTH * sizeof(pixel_t)) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
+    tmp |= ((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
     LTDC_Layer1->CFBLR = tmp;
 
     // Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
@@ -632,7 +650,7 @@ void RGBDirectDriver::fill(
 	int height,
 	const Color &color) {
 
-	int addr = addressAt(page1Addr, x, y);
+	int addr = addressAt(backFrameAddr, x, y);
 	int pitch = LINE_WIDTH - width;
     DMA2DOptions options = HAL_DMA2D_DFMT_DEFAULT;
     int c = PIXEL_VALUE(color);
@@ -682,7 +700,7 @@ void RGBDirectDriver::copy(
 
 	// Adressa i pitch de desti
 	//
-	int dstAddr = addressAt(page1Addr, x, y);
+	int dstAddr = addressAt(backFrameAddr, x, y);
 	DMA2D->OMAR = dstAddr;
 	DMA2D->OOR = LINE_WIDTH - width;
 
