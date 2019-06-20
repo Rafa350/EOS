@@ -79,7 +79,7 @@ RGBDirectDriver::RGBDirectDriver():
 	dy(0),
 	orientation(DisplayOrientation::normal),
 	frontFrameAddr(FRAME1_ADDR),
-	backFrameAddr(FRAME1_ADDR) {
+	backFrameAddr(FRAME2_ADDR) {
 }
 
 

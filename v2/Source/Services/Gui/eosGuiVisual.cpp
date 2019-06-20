@@ -34,6 +34,9 @@ Visual::~Visual() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Marca el visual per ser rendiratzat.
+///
 void Visual::invalidate() {
 
 	if (parent != nullptr)
@@ -49,13 +52,20 @@ void Visual::invalidate() {
 void Visual::render(
 	Display *display) {
 
+	// Si cal renderitzxar, ho fa.
+	//
 	if (needRender) {
 		needRender = false;
 		onRender(display);
 	}
 
-	for (Visual *visual = getFirstChild(); visual != nullptr; visual = visual->getNextSibling())
+	// Continua amb els visuals fills.
+	//
+	Visual *visual = getFirstChild();
+	while (visual != nullptr) {
 		visual->render(display);
+		visual = visual->getNextSibling();
+	}
 }
 
 
@@ -115,72 +125,4 @@ void Visual::removeVisual(
 	visual->prevSibling = nullptr;
 
 	numChilds--;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Asigna el color de fons de la pantalla.
-/// \param[in] color: El color.
-///
-void Screen::setColor(
-	const Color &color) {
-
-	if (this->color != color) {
-		this->color = color;
-		invalidate();
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Renderitza el visual.
-/// \param[in] display: El display on dibuixar.
-///
-void Screen::onRender(
-	Display *display) {
-
-	display->clear(color);
-}
-
-
-void Window::setPosition(
-	int x,
-	int y) {
-
-	if ((this->x != x) || (this->y != y)) {
-		this->x = x;
-		this->y = y;
-		invalidate();
-	}
-}
-
-
-void Window::setSize(
-	int width,
-	int height) {
-
-    if ((this->width != width) || (this->height != height)) {
-    	this->width = width;
-    	this->height = height;
-    	invalidate();
-    }
-}
-
-
-void Widget::setBorderColor(
-	const Color &color) {
-
-	borderColor = color;
-}
-
-
-void Widget::onRender(
-	Display *display) {
-
-	display->setColor(borderColor);
-	display->drawRectangle(
-		getX(),
-		getY(),
-		getX() + getWidth(),
-		getY() + getHeight());
 }

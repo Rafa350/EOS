@@ -62,7 +62,7 @@ void GuiService::onInitialize() {
 	y = 0;
 	v = new Widget();
 	v->setPosition(x, y);
-	v->setSize(100, 100);
+	v->setSize(25, 25);
 	v->setBorderColor(COLOR_Red);
 	screen->addVisual(v);
 }
@@ -73,14 +73,14 @@ void GuiService::onInitialize() {
 ///
 void GuiService::onTask() {
 
-	if (x++ > 200)
+	if (x++ > (display->getWidth() - v->getWidth()))
 		x = 0;
-	if (y++ > 100)
+	if (y++ > (display->getHeight() - v->getHeight()))
 		y = 0;
 	v->setPosition(x, y);
 
 	screen->render(display);
-	//displayDriver->refresh();
+	displayDriver->refresh();
 
-	Task::delay(50);
+	Task::delay(25);
 }

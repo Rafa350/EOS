@@ -674,14 +674,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGui.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Services/Gui/eosGuiScreen.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiScreen.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Services/Gui/eosGuiTouchPad.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiTouchPad.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/Gui/eosGuiVisuals.cpp</name>
+			<name>src/Framework/EOS/Services/Gui/eosGuiVisual.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiVisuals.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiVisual.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/eosGuiWidget.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiWidget.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/eosGuiWindow.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiWindow.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
