@@ -48,7 +48,7 @@ static void CLKInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el hardware del sistema.
 ///
-void AppInitialize() {
+void appInitialize() {
 
 	halSYSInitialize();
 	CLKInitialize();
