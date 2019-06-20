@@ -376,6 +376,14 @@ void ILI9341Driver::hScroll(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Refresca la imatge de la pantalla.
+///
+void ILI9341Driver::refresh() {
+    
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Inicialitza el controlador del display.
 ///
 void ILI9341Driver::displayInit() {

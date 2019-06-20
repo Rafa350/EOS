@@ -98,7 +98,7 @@ namespace eos {
     class GPIOPinAdapter {
         private:
             inline static GPIO_TypeDef *getAddr() {           
-                return nullptr;
+                return NULL;
             }
             
             inline static uint32_t getMask() {
@@ -138,6 +138,7 @@ namespace eos {
     //typedef GPIOPortAdapter<&TRISF> PF;
     //typedef GPIOPortAdapter<&TRISG> PG;
     
+#ifdef HAL_GPIO_PORT_A    
     typedef GPIOPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_0> PA0;
     typedef GPIOPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_1> PA1;
     typedef GPIOPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_2> PA2;
@@ -154,7 +155,8 @@ namespace eos {
     typedef GPIOPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_13> PA13;
     typedef GPIOPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_14> PA14;
     typedef GPIOPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_15> PA15;
-
+#endif
+    
     typedef GPIOPinAdapter<HAL_GPIO_PORT_B, HAL_GPIO_PIN_0> PB0;
     typedef GPIOPinAdapter<HAL_GPIO_PORT_B, HAL_GPIO_PIN_1> PB1;
     typedef GPIOPinAdapter<HAL_GPIO_PORT_B, HAL_GPIO_PIN_2> PB2;

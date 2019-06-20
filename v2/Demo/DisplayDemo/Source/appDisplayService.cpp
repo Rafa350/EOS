@@ -3,7 +3,7 @@
 #include "System/Graphics/eosDisplay.h"
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
-#elif defined(_DISPLAY_DRV_ILI9341)
+#elif defined(DISPLAY_DRV_ILI9341)
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #elif defined(DISPLAY_DRV_RGBLTDC)
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"

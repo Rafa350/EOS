@@ -6,10 +6,10 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-          <itemPath>../../../Demo/DisplayDemo/PIC32/FreeRTOSConfig.h</itemPath>
-          <itemPath>../../../Demo/DisplayDemo/PIC32/board_Custom.h</itemPath>
+          <itemPath>../../../Demo/DisplayDemo/Include/PIC32/board_Custom.h</itemPath>
+          <itemPath>../../../Demo/DisplayDemo/Include/PIC32/FreeRTOSConfig.h</itemPath>
         </logicalFolder>
-        <itemPath>../../../Demo/DisplayDemo/eosConfig.h</itemPath>
+        <itemPath>../../../Demo/DisplayDemo/Include/eosConfig.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -22,9 +22,6 @@
                 <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341.h</itemPath>
                 <itemPath>../../../Include/Controllers/Display/Drivers/eosILI9341Defs.h</itemPath>
               </logicalFolder>
-              <itemPath>../../../Include/Controllers/Display/eosColor.h</itemPath>
-              <itemPath>../../../Include/Controllers/Display/eosDisplay.h</itemPath>
-              <itemPath>../../../Include/Controllers/Display/eosFont.h</itemPath>
               <itemPath>../../../Include/Controllers/Display/eosDisplayDriver.h</itemPath>
             </logicalFolder>
           </logicalFolder>
@@ -33,6 +30,7 @@
               <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halINT.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halSPI.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halGPIOTpl.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
@@ -41,8 +39,8 @@
             <itemPath>../../../Include/HAL/halSPI.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="Osal" projectFiles="true">
-            <itemPath>../../../Include/OSAL/osalMemory.h</itemPath>
             <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalHeap.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Services" projectFiles="true">
             <itemPath>../../../Include/Services/eosAppLoop.h</itemPath>
@@ -57,6 +55,11 @@
               <itemPath>../../../Include/System/Core/eosSemaphore.h</itemPath>
               <itemPath>../../../Include/System/Core/eosTask.h</itemPath>
               <itemPath>../../../Include/System/Core/eosTimer.h</itemPath>
+            </logicalFolder>
+            <logicalFolder name="f3" displayName="Graphics" projectFiles="true">
+              <itemPath>../../../Include/System/Graphics/eosColor.h</itemPath>
+              <itemPath>../../../Include/System/Graphics/eosDisplay.h</itemPath>
+              <itemPath>../../../Include/System/Graphics/eosFont.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
           </logicalFolder>
@@ -74,9 +77,12 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-          <itemPath>../../../Demo/DisplayDemo/PIC32/Main.cpp</itemPath>
+          <itemPath>../../../Demo/DisplayDemo/Source/PIC32/appInitialize.cpp</itemPath>
         </logicalFolder>
-        <itemPath>../../../Demo/DisplayDemo/AppMain.cpp</itemPath>
+        <itemPath>../../../Demo/DisplayDemo/Source/appMain.cpp</itemPath>
+        <itemPath>../../../Demo/DisplayDemo/Source/appApplication.cpp</itemPath>
+        <itemPath>../../../Demo/DisplayDemo/Source/appLedService.cpp</itemPath>
+        <itemPath>../../../Demo/DisplayDemo/Source/appDisplayService.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="Eos" projectFiles="true">
@@ -90,17 +96,6 @@
                   <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</itemPath>
                 </logicalFolder>
               </logicalFolder>
-              <logicalFolder name="f2" displayName="Fonts" projectFiles="true">
-                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas8pt.cpp</itemPath>
-                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas10pt.cpp</itemPath>
-                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas12pt.cpp</itemPath>
-                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas14pt.cpp</itemPath>
-                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas18pt.cpp</itemPath>
-                <itemPath>../../../Source/Controllers/Display/Fonts/Consolas24pt.cpp</itemPath>
-              </logicalFolder>
-              <itemPath>../../../Source/Controllers/Display/eosDisplay.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/eosFont.cpp</itemPath>
-              <itemPath>../../../Source/Controllers/Display/eosColor.cpp</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Hal" projectFiles="true">
@@ -114,13 +109,17 @@
           <logicalFolder name="f5" displayName="Osal" projectFiles="true">
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
               <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
-              <itemPath>../../../Source/OSAL/FreeRTOS/osalMemory.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalHeap.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalKernel.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f4" displayName="Services" projectFiles="true">
             <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f6" displayName="StartUp" projectFiles="true">
+            <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
@@ -133,21 +132,34 @@
               <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
             </logicalFolder>
+            <logicalFolder name="f3" displayName="Graphics" projectFiles="true">
+              <logicalFolder name="f1" displayName="Fonts" projectFiles="true">
+                <itemPath>../../../Source/System/Graphics/Fonts/Consolas8pt.cpp</itemPath>
+                <itemPath>../../../Source/System/Graphics/Fonts/Consolas10pt.cpp</itemPath>
+                <itemPath>../../../Source/System/Graphics/Fonts/Consolas12pt.cpp</itemPath>
+                <itemPath>../../../Source/System/Graphics/Fonts/Consolas14pt.cpp</itemPath>
+                <itemPath>../../../Source/System/Graphics/Fonts/Consolas18pt.cpp</itemPath>
+                <itemPath>../../../Source/System/Graphics/Fonts/Consolas24pt.cpp</itemPath>
+              </logicalFolder>
+              <itemPath>../../../Source/System/Graphics/eosColor.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosDisplay.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosFont.cpp</itemPath>
+            </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
           <logicalFolder name="f2" displayName="MemMgr" projectFiles="true">
-            <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+            <itemPath>../../../Library/PIC32/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="PIC32MX" projectFiles="true">
-            <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
-            <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+            <itemPath>../../../Library/PIC32/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+            <itemPath>../../../Library/PIC32/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
           </logicalFolder>
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
-          <itemPath>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/tasks.c</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/timers.c</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/list.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -166,6 +178,9 @@
     <Elem>../../../Source/Controllers/Display/Drivers/VRAM</Elem>
     <Elem>../../../Source/OSAL</Elem>
     <Elem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
+    <Elem>../../../Source/StartUp/PIC32</Elem>
+    <Elem>../../../Source/System/Graphics</Elem>
+    <Elem>../../../Library/PIC32/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -181,12 +196,12 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.23"/>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.28"/>
       </packs>
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>C:/Library/Microchip/Harmony/v2_05_01/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
+            <linkerLibFileItem>../../../Library/PIC32/Harmony/bin/framework/peripheral/PIC32MX440F256H_peripherals.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -260,6 +275,7 @@
       </C32-AS>
       <C32-LD>
         <property key="additional-options-use-response-files" value="false"/>
+        <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
@@ -328,7 +344,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\DisplayDemo;..\..\..\Demo\DisplayDemo\PIC32;..\..\..\Include;C:\Library\Microchip\Harmony\v2_05_01\framework;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\include;C:\Library\Microchip\Harmony\v2_05_01\third_party\rtos\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\DisplayDemo\Include;..\..\..\Demo\DisplayDemo\Include\PIC32;..\..\..\Include;..\..\..\Library\PIC32\Harmony\framework;..\..\..\Library\PIC32\FreeRTOS\Source\include;..\..\..\Library\PIC32\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="false"/>
         <property key="mdtcm" value=""/>
@@ -372,6 +388,7 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
+        <property key="debugoptions.useswbreakpoints" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

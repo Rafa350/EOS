@@ -12,6 +12,28 @@
             <asminc-extensions/>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>../../../Demo/DisplayDemo</sourceRootElem>
+                <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Source/System/Core</sourceRootElem>
+                <sourceRootElem>../../../Include</sourceRootElem>
+                <sourceRootElem>../../../Source/Controllers/Display/Drivers/ILI9341</sourceRootElem>
+                <sourceRootElem>../../../Source/Controllers/Display/Drivers/VRAM</sourceRootElem>
+                <sourceRootElem>../../../Source/OSAL</sourceRootElem>
+                <sourceRootElem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</sourceRootElem>
+                <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Source/System/Graphics</sourceRootElem>
+                <sourceRootElem>../../../Library/PIC32/FreeRTOS/Source</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>PINGUINO</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
         </data>
     </configuration>
 </project>

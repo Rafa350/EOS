@@ -1,7 +1,7 @@
 #include "eos.h"
 
 
-#ifdef ILI9341_IO_TYPE_PIO8
+#ifdef DISPLAY_IO_TYPE_PIO8
 
 
 #include "Controllers/Display/Drivers/eosILI9341.h"
@@ -19,24 +19,24 @@ using namespace eos;
 void ILI9341Driver::lcdInitialize() {
     
     static const GPIOInitializePinInfo initCtrlPins[] = {
-#ifdef ILI9341_RST_PORT        
-        {ILI9341_RST_PORT, ILI9341_RST_PIN, 
+#ifdef DISPLAY_RST_PORT        
+        {DISPLAY_RST_PORT, DISPLAY_RST_PIN, 
             HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE},
 #endif        
-        {ILI9341_CS_PORT,  ILI9341_CS_PIN,  
+        {DISPLAY_CS_PORT,  DISPLAY_CS_PIN,  
             HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, HAL_GPIO_AF_NONE},
-        {ILI9341_RS_PORT,  ILI9341_RS_PIN,  
+        {DISPLAY_RS_PORT,  DISPLAY_RS_PIN,  
             HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE},
-#ifdef ILI9341_RD_PORT
-        {ILI9341_RD_PORT,  ILI9341_RD_PIN,  
+#ifdef DISPLAY_RD_PORT
+        {DISPLAY_RD_PORT,  DISPLAY_RD_PIN,  
             HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, HAL_GPIO_AF_NONE},
 #endif            
-        {ILI9341_WR_PORT,  ILI9341_WR_PIN,  
+        {DISPLAY_WR_PORT,  DISPLAY_WR_PIN,  
             HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, HAL_GPIO_AF_NONE}
     };
 
     static const GPIOInitializePortInfo initDataPort = 
-        {ILI9341_DATA_PORT, 0x00FF, HAL_GPIO_MODE_OUTPUT_PP, HAL_GPIO_AF_NONE};
+        {DISPLAY_DATA_PORT, 0x00FF, HAL_GPIO_MODE_OUTPUT_PP, HAL_GPIO_AF_NONE};
        
     halGPIOInitializePins(initCtrlPins, sizeof(initCtrlPins) / sizeof(initCtrlPins[0]));
     halGPIOInitializePorts(&initDataPort, 1);
@@ -49,7 +49,7 @@ void ILI9341Driver::lcdInitialize() {
 void ILI9341Driver::lcdReset() {
 
     halTMRDelay(10);
-    halGPIOSetPin(ILI9341_RST_PORT, ILI9341_RST_PIN);
+    halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
     halTMRDelay(120);
 }
 
@@ -60,7 +60,7 @@ void ILI9341Driver::lcdReset() {
 void ILI9341Driver::lcdOpen() {
 
     halINTDisableInterrupts();
-    halGPIOClearPin(ILI9341_CS_PORT, ILI9341_CS_PIN);
+    halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
 
@@ -69,7 +69,7 @@ void ILI9341Driver::lcdOpen() {
 ///
 void ILI9341Driver::lcdClose() {
 
-    halGPIOSetPin(ILI9341_CS_PORT, ILI9341_CS_PIN);
+    halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
     halINTEnableInterrupts();
 }
 
@@ -81,11 +81,11 @@ void ILI9341Driver::lcdClose() {
 void ILI9341Driver::lcdWriteCommand(
     uint8_t cmd) {
 
-    halGPIOClearPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
-    halGPIOClearPin(ILI9341_WR_PORT, ILI9341_WR_PIN);
-    halGPIOModePortOutput(ILI9341_DATA_PORT, 0x00FF);
-    halGPIOWritePort(ILI9341_DATA_PORT, cmd);
-    halGPIOSetPin(ILI9341_WR_PORT, ILI9341_WR_PIN);
+    halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+    halGPIOClearPin(DISPLAY_WR_PORT, DISPLAY_WR_PIN);
+    halGPIOModePortOutput(DISPLAY_DATA_PORT, 0x00FF);
+    halGPIOWritePort(DISPLAY_DATA_PORT, cmd);
+    halGPIOSetPin(DISPLAY_WR_PORT, DISPLAY_WR_PIN);
 }
 
 
@@ -96,11 +96,11 @@ void ILI9341Driver::lcdWriteCommand(
 void ILI9341Driver::lcdWriteData(
     uint8_t data) {
 
-    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
-    halGPIOClearPin(ILI9341_WR_PORT, ILI9341_WR_PIN);
-    halGPIOModePortOutput(ILI9341_DATA_PORT, 0x00FF);
-    halGPIOWritePort(ILI9341_DATA_PORT, data);
-    halGPIOSetPin(ILI9341_WR_PORT, ILI9341_WR_PIN);
+    halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+    halGPIOClearPin(DISPLAY_WR_PORT, DISPLAY_WR_PIN);
+    halGPIOModePortOutput(DISPLAY_DATA_PORT, 0x00FF);
+    halGPIOWritePort(DISPLAY_DATA_PORT, data);
+    halGPIOSetPin(DISPLAY_WR_PORT, DISPLAY_WR_PIN);
 }
 
 /// ----------------------------------------------------------------------
@@ -110,12 +110,12 @@ void ILI9341Driver::lcdWriteData(
 void ILI9341Driver::lcdWriteData(
     uint8_t *data, int32_t size) {
 
-    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
-    halGPIOModePortOutput(ILI9341_DATA_PORT, 0x00FF);
+    halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+    halGPIOModePortOutput(DISPLAY_DATA_PORT, 0x00FF);
     while (size--) {
-        halGPIOClearPin(ILI9341_WR_PORT, ILI9341_WR_PIN);
-        halGPIOWritePort(ILI9341_DATA_PORT, *data++);
-        halGPIOSetPin(ILI9341_WR_PORT, ILI9341_WR_PIN);
+        halGPIOClearPin(DISPLAY_WR_PORT, DISPLAY_WR_PIN);
+        halGPIOWritePort(DISPLAY_DATA_PORT, *data++);
+        halGPIOSetPin(DISPLAY_WR_PORT, DISPLAY_WR_PIN);
     }
 }
 
@@ -125,12 +125,12 @@ void ILI9341Driver::lcdWriteData(
 ///
 uint8_t ILI9341Driver::lcdReadData() {
 
-#ifdef ILI9341_RD_PORT
-    halGPIOSetPin(ILI9341_RS_PORT, ILI9341_RS_PIN);
-    halGPIOClearPin(ILI9341_RD_PORT, ILI9341_RD_PIN);
-    halGPIOModePortInput(ILI9341_DATA_PORT, 0x00FF);
-    uint8_t data = halGPIOReadPort(ILI9341_DATA_PORT);
-    halGPIOSetPin(ILI9341_RD_PORT, ILI9341_RD_PIN);
+#ifdef DISPLAY_RD_PORT
+    halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+    halGPIOClearPin(DISPLAY_RD_PORT, DISPLAY_RD_PIN);
+    halGPIOModePortInput(DISPLAY_DATA_PORT, 0x00FF);
+    uint8_t data = halGPIOReadPort(DISPLAY_DATA_PORT);
+    halGPIOSetPin(DISPLAY_RD_PORT, DISPLAY_RD_PIN);
 
     return data;
 #else

@@ -101,7 +101,7 @@
 // Display grafic
 // -----------------------------------------------------------------------
 
-#if defined(USE_DISPLAY)
+#ifdef USE_DISPLAY
 #define EXIST_DISPLAY
 
 
