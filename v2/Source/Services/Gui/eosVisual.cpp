@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Services/Gui/eosGuiVisuals.h"
+#include "Services/Gui/eosVisual.h"
 #include "System/Graphics/eosDisplay.h"
 
 
@@ -52,19 +52,22 @@ void Visual::invalidate() {
 void Visual::render(
 	Display *display) {
 
-	// Si cal renderitzxar, ho fa.
-	//
-	if (needRender) {
-		needRender = false;
-		onRender(display);
-	}
+	if (visible) {
 
-	// Continua amb els visuals fills.
-	//
-	Visual *visual = getFirstChild();
-	while (visual != nullptr) {
-		visual->render(display);
-		visual = visual->getNextSibling();
+		// Si cal renderitzxar, ho fa.
+		//
+		if (needRender) {
+			needRender = false;
+			onRender(display);
+		}
+
+		// Continua amb els visuals fills.
+		//
+		Visual *visual = getFirstChild();
+		while (visual != nullptr) {
+			visual->render(display);
+			visual = visual->getNextSibling();
+		}
 	}
 }
 
@@ -125,4 +128,18 @@ void Visual::removeVisual(
 	visual->prevSibling = nullptr;
 
 	numChilds--;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Canvia l'estat de visibilitat.
+/// \param[in] visible: True per fer el visual visible.
+///
+void Visual::setVisible(
+	bool visible) {
+
+	if (this->visible != visible) {
+		this->visible = visible;
+		invalidate();
+	}
 }

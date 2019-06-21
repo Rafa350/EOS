@@ -4,7 +4,10 @@
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "System/Graphics/eosDisplay.h"
 #include "Services/Gui/eosGui.h"
-#include "Services/Gui/eosGuiVisuals.h"
+#include "Services/Gui/eosVisual.h"
+#include "Services/Gui/eosScreen.h"
+#include "Services/Gui/eosWindow.h"
+#include "Services/Gui/eosWidged.h"
 
 
 using namespace eos;

@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Services/Gui/eosGuiVisuals.h"
+#include "Services/Gui/eosWindow.h"
 #include "System/Graphics/eosDisplay.h"
 
 
