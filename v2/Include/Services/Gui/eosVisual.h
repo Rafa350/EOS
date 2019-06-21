@@ -24,7 +24,6 @@ namespace eos {
 
     	protected:
     		virtual void onRender(Display *display) = 0;
-    		void invalidate();
 
         public:
     		Visual();
@@ -46,6 +45,7 @@ namespace eos {
             void setVisible(bool visible);
 
             void render(Display *display);
+    		void invalidate();
     };
 
 }

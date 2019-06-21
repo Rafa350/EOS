@@ -30,6 +30,12 @@
 #error No se definio DISPLAY_COLOR_xxxx
 #endif
 
+#define FRAME1_ADDR          DISPLAY_VRAM_ADDR
+#ifdef DISPLAY_DOUBLE_BUFFER
+#define FRAME2_ADDR          DISPLAY_VRAM_ADDR + FRAME_SIZE
+#else
+#define FRAME2_ADDR          DISPLAY_VRAM_ADDR
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -94,6 +100,16 @@ void RGBDirectDriver::initialize() {
 	ltdcSetFrameAddress(frontFrameAddr);
 
 	halDMA2DInitialize();
+
+	halDMA2DFill(FRAME1_ADDR, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT,
+		LINE_WIDTH - DISPLAY_IMAGE_WIDTH, HAL_DMA2D_DFMT_DEFAULT, 0x0000);
+	halDMA2DWaitForFinish();
+
+#ifdef DISPLAY_DOUBLE_BUFFER
+	halDMA2DFill(FRAME2_ADDR, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT,
+		LINE_WIDTH - DISPLAY_IMAGE_WIDTH, HAL_DMA2D_DFMT_DEFAULT, 0x0000);
+	halDMA2DWaitForFinish();
+#endif
 }
 
 
@@ -388,16 +404,16 @@ void RGBDirectDriver::hScroll(
 /// \remarks Si es treballa en doble buffer, intercanvia els frames.
 ///
 void RGBDirectDriver::refresh() {
+#ifdef DISPLAY_DOUBLE_BUFFER
 
 	// Intercanvia els buffers
 	//
-	int tmp = backFrameAddr;
-	backFrameAddr = frontFrameAddr;
-	frontFrameAddr = tmp;
+	Math::swap(frontFrameAddr, backFrameAddr);
 
 	// Asigna l'adresa de la capa
 	//
 	ltdcSetFrameAddress(frontFrameAddr);
+#endif
 }
 
 

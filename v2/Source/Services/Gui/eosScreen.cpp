@@ -15,7 +15,9 @@ void Screen::setColor(
 	const Color &color) {
 
 	if (this->color != color) {
+
 		this->color = color;
+
 		invalidate();
 	}
 }

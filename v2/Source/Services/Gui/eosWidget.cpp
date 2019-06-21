@@ -14,10 +14,17 @@ using namespace eos;
 void Widget::setBorderColor(
 	const Color &color) {
 
-	borderColor = color;
+	if (borderColor != color) {
+		borderColor = color;
+		invalidate();
+	}
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Renderitzat per defecte del widget.
+/// \param[in]: El display.
+///
 void Widget::onRender(
 	Display *display) {
 
@@ -25,6 +32,6 @@ void Widget::onRender(
 	display->fillRectangle(
 		getX(),
 		getY(),
-		getX() + getWidth(),
-		getY() + getHeight());
+		getX() + getWidth() - 1,
+		getY() + getHeight() - 1);
 }

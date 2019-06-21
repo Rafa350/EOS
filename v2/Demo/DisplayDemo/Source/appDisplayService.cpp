@@ -48,7 +48,6 @@ void DisplayService::onSetup() {
     driver->displayOn();
 
     display = new eos::Display(driver);
-    display->clear(COLOR_Black);
 
     orientation = 0;
 }
@@ -278,8 +277,8 @@ void DisplayService::onLoop() {
 void DisplayService::drawBackground(
     const char* title) {
 
-    display->clear(COLOR_Black);
     display->resetClip();
+    display->clear(COLOR_Black);
     display->setColor(COLOR_Red);
     display->drawRectangle(0, 0, screenWidth - 1, screenHeight - 1);
     display->drawLine(screenWidth - 1, 20, 0, 20);

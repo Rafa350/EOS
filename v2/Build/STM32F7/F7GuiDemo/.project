@@ -838,11 +838,6 @@
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDC.cpp</locationURI>
 		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDCint.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDCint.c</locationURI>
-		</link>
 	</linkedResources>
 	<variableList>
 		<variable>

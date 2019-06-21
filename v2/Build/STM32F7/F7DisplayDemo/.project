@@ -528,6 +528,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosDisplayDriver.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halDMA2D.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D.h</locationURI>

@@ -6,8 +6,9 @@
 #define USE_LEDS_LED2
 #define USE_DISPLAY
 
+#define DISPLAY_DOUBLE_BUFFER
 
 #include "board/board.h"
 
 
-#endif
+#endif // __eosConfig__

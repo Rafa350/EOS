@@ -56,7 +56,6 @@ void GuiService::onInitialize() {
 	displayDriver->displayOn();
 
 	display = new Display(displayDriver);
-	display->clear(COLOR_Black);
 
 	screen = new Screen();
 	screen->setColor(COLOR_Blue);
@@ -65,7 +64,7 @@ void GuiService::onInitialize() {
 	y = 0;
 	v = new Widget();
 	v->setPosition(x, y);
-	v->setSize(25, 25);
+	v->setSize(30, 30);
 	v->setBorderColor(COLOR_Red);
 	screen->addVisual(v);
 }

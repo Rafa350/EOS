@@ -17,9 +17,15 @@ void Window::setPosition(
 	int y) {
 
 	if ((this->x != x) || (this->y != y)) {
+
 		this->x = x;
 		this->y = y;
-		invalidate();
+
+		Visual *parent = getParent();
+		if (parent)
+			parent->invalidate();
+		else
+			invalidate();
 	}
 }
 
@@ -34,8 +40,14 @@ void Window::setSize(
 	int height) {
 
     if ((this->width != width) || (this->height != height)) {
+
     	this->width = width;
     	this->height = height;
-    	invalidate();
+
+    	Visual *parent = getParent();
+		if (parent)
+			parent->invalidate();
+		else
+			invalidate();
     }
 }

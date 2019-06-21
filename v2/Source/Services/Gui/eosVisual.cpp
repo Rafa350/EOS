@@ -17,7 +17,8 @@ Visual::Visual():
 	nextSibling(nullptr),
 	prevSibling(nullptr),
 	numChilds(0),
-	needRender(true) {
+	needRender(true),
+	visible(true) {
 }
 
 
@@ -35,13 +36,17 @@ Visual::~Visual() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Marca el visual per ser rendiratzat.
+/// \brief Marca el visual per ser renderizat.
 ///
 void Visual::invalidate() {
 
-	if (parent != nullptr)
-		parent->needRender = true;
 	needRender = true;
+
+	Visual *visual = getFirstChild();
+	while (visual != nullptr) {
+		visual->invalidate();
+		visual = visual->getNextSibling();
+	}
 }
 
 
@@ -139,7 +144,9 @@ void Visual::setVisible(
 	bool visible) {
 
 	if (this->visible != visible) {
+
 		this->visible = visible;
+
 		invalidate();
 	}
 }

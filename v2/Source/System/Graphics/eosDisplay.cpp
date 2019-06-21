@@ -19,6 +19,9 @@ extern const unsigned char *fontConsolas14pt;
 #define TOP        0x0008u
 
 
+static inline void normalize(int &x1, int &y1, int &x2, int &y2);
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param driver: Driver del display
@@ -114,10 +117,7 @@ void Display::setClip(
     int x2,
     int y2) {
 
-    if (x1 > x2)
-        Math::swap(x1, x2);
-    if (y1 > y2)
-        Math::swap(y1, y2);
+	normalize(x1, y1, x2, y2);
 
     int screenWidth = driver->getWidth();
     int screenHeight = driver->getHeight();
@@ -148,7 +148,14 @@ void Display::resetClip() {
 void Display::clear(
     const Color &color) {
 
-    driver->clear(color);
+	int x1 = 0;
+	int y1 = 0;
+	int x2 = driver->getWidth() - 1;
+	int y2 = driver->getHeight() - 1;
+
+    if (clipArea(x1, y1, x2, y2))
+        driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
+
     cursorX = 0;
     cursorY = 0;
 }
@@ -159,6 +166,7 @@ void Display::clear(
 ///
 void Display::refresh() {
 
+	driver->refresh();
 }
 
 
@@ -420,15 +428,10 @@ void Display::fillRectangle(
     int x2,
     int y2) {
 
-    if (clipArea(x1, y1, x2, y2)) {
+	normalize(x1, y1, x2, y2);
 
-        if (x1 > x2)
-            Math::swap(x1, x2);
-        if (y1 > y2)
-            Math::swap(y1, y2);
-
-        driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
-    }
+    if (clipArea(x1, y1, x2, y2))
+         driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
 }
 
 
@@ -483,21 +486,17 @@ void Display::drawBitmap(
 
 	if (clipArea(x1, y1, x2, y2)) {
 
-		if (x1 > x2)
-            Math::swap(x1, x2);
-        if (y1 > y2)
-            Math::swap(y1, y2);
-
         int w = x2 - x1 + 1;
         int h = y2 - y1 + 1;
 
-        driver->writePixels(
-			x1, y1,
-			w, h,
-			bitmap->getPixels(),
-			bitmap->getFormat(),
-			x1 - x, y1 - y,
-			bitmap->getWidth());
+        if ((w > 0) && (h > 0))
+			driver->writePixels(
+				x1, y1,
+				w, h,
+				bitmap->getPixels(),
+				bitmap->getFormat(),
+				x1 - x, y1 - y,
+				bitmap->getWidth());
 	}
 }
 
@@ -699,12 +698,18 @@ bool Display::clipArea(
 	unsigned code1 = calcOutCode(x1, y1);
 	unsigned code2 = calcOutCode(x2, y2);
 
+	// Comprova si es dins
+	//
 	if (!(code1 | code2))
 		return true;
 
+	// Comprova si es fora
+	//
 	else if (code1 & code2)
 		return false;
 
+	// Ni a dins ni a fora
+	//
 	else {
 
 		if (x1 < clipX1)
@@ -920,3 +925,24 @@ unsigned Display::calcOutCode(
 
     return code;
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief Normalitza les coordinades d'un rectangle.
+/// \param x1: Coordinada X esquerra.
+/// \param y1: Coordinada Y superior.
+/// \param x2: Coordinada X dreta.
+/// \param y2: Coordinada Y inferior.
+///
+static inline void normalize(
+	int &x1,
+	int &y1,
+	int &x2,
+	int &y2) {
+
+    if (x1 > x2)
+        Math::swap(x1, x2);
+    if (y1 > y2)
+        Math::swap(y1, y2);
+}
+

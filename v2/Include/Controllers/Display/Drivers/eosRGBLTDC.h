@@ -28,7 +28,7 @@
 
 
 #if defined(DISPLAY_COLOR_RGB565)
-typedef int16_t pixel_t;
+typedef int16_t pixel_t;                    // Tipus per un pixel
 #elif defined(DISPLAY_COLOR_RGB888)
 typedef int32_t pixel_t
 #endif
@@ -36,10 +36,6 @@ typedef int32_t pixel_t
 #define LINE_SIZE                 (((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
 #define LINE_WIDTH                (LINE_SIZE / PIXEL_SIZE)
 #define FRAME_SIZE                (LINE_SIZE * DISPLAY_IMAGE_HEIGHT)
-
-#define FRAME1_ADDR                DISPLAY_VRAM_ADDR
-#define FRAME2_ADDR                DISPLAY_VRAM_ADDR + FRAME_SIZE
-
 
 namespace eos {
 
