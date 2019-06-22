@@ -11,8 +11,8 @@
 
 // Configuracio del sistema
 //
-#define CLOCK_SYSTEM_HZ           80000000
-#define CLOCK_PERIPHERICAL_HZ     (CLOCK_SYSTEM_HZ / 1)
+//#define CLOCK_SYSTEM_HZ           80000000
+//#define CLOCK_PERIPHERICAL_HZ     (CLOCK_SYSTEM_HZ / 1)
 
 
 // -----------------------------------------------------------------------
@@ -178,7 +178,7 @@
 
 // Adressa del buffer de video
 //
-#define DISPLAY_VRAM         0xD0000000
+#define DISPLAY_VRAM_ADDR    0xD0000000
 
 // Parametres fisics de la pantalla
 //

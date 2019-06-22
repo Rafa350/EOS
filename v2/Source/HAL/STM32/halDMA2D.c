@@ -22,7 +22,7 @@ void halDMA2DInitialize(void) {
 /// \param[in] options: Opcions
 /// \param[in] color: Color per omplir.
 ///
-void halDMA2DFill(
+void halDMA2DStartFill(
 	int addr,
 	int width,
 	int height,
@@ -72,7 +72,7 @@ void halDMA2DFill(
 /// \param[in] options: Opcions.
 /// \param[in] srcAddr: Adressa del primer pixel del origen.
 ///
-void halDMA2DCopy(
+void halDMA2DStartCopy(
 	int addr,
 	int width,
 	int height,

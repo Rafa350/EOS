@@ -101,12 +101,12 @@ void RGBDirectDriver::initialize() {
 
 	halDMA2DInitialize();
 
-	halDMA2DFill(FRAME1_ADDR, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT,
+	halDMA2DStartFill(FRAME1_ADDR, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT,
 		LINE_WIDTH - DISPLAY_IMAGE_WIDTH, HAL_DMA2D_DFMT_DEFAULT, 0x0000);
 	halDMA2DWaitForFinish();
 
 #ifdef DISPLAY_DOUBLE_BUFFER
-	halDMA2DFill(FRAME2_ADDR, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT,
+	halDMA2DStartFill(FRAME2_ADDR, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT,
 		LINE_WIDTH - DISPLAY_IMAGE_WIDTH, HAL_DMA2D_DFMT_DEFAULT, 0x0000);
 	halDMA2DWaitForFinish();
 #endif
@@ -671,7 +671,7 @@ void RGBDirectDriver::fill(
     DMA2DOptions options = HAL_DMA2D_DFMT_DEFAULT;
     int c = PIXEL_VALUE(color);
 
-	halDMA2DFill(addr, width, height, pitch, options, c);
+	halDMA2DStartFill(addr, width, height, pitch, options, c);
 	halDMA2DWaitForFinish();
 }
 

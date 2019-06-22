@@ -7,13 +7,16 @@
 #include "HAL/halINT.h"
 #include "hAL/halTMR.h"
 #include "hAL/halGPIO.h"
-#include "hAL/halSPI.h"
+#include "HAL/halSPI.h"
+#include "HAL/STM32/halDMA2D.h"
+#include "System/eosMath.h"
 
 
 // Format de pixel
 //
 #if defined(DISPLAY_COLOR_RGB565)
-#define PIXEL_VALUE(c)       c.toRGB565()
+#define PIXEL_VALUE(c)            c.toRGB565()
+#define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB565
 #else
 #error No se especifico DISPLAY_COLOR_xxxx
 #endif
@@ -23,32 +26,6 @@
 //
 #define OP_END        0
 #define OP_DELAY      255
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte el valor minim
-/// \param a: Primer valor
-/// \param b: Segin valor
-/// \return El minim dels valors a i b.
-///
-static inline int min(
-	int a,
-	int b) {
-
-	return a <= b ? a : b;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte el valor absolut.
-/// \param a: El valor
-/// \return El seu valor absolut.
-///
-static inline int abs(
-	int a) {
-
-	return a < 0 ? -a : a;
-}
 
 
 /// ----------------------------------------------------------------------
@@ -95,9 +72,8 @@ ILI9341LTDCDriver::ILI9341LTDCDriver():
 	sin(0),
 	cos(1),
 	dx(0),
-	dy(0) {
-
-    frameAddr = DISPLAY_VRAM;
+	dy(0),
+	frameAddr(DISPLAY_VRAM_ADDR) {
 }
 
 
@@ -174,7 +150,7 @@ void ILI9341LTDCDriver::setOrientation(
 void ILI9341LTDCDriver::clear(
 	const Color &color) {
 
-	dma2dFill(0, 0, DISPLAY_SCREEN_WIDTH, DISPLAY_SCREEN_HEIGHT, color);
+	fill(0, 0, DISPLAY_SCREEN_WIDTH, DISPLAY_SCREEN_HEIGHT, color);
 }
 
 
@@ -201,7 +177,7 @@ void ILI9341LTDCDriver::setPixel(
 
 		// Dibuixa el pixel
 		//
-		*((PIXEL_TYPE*) addressAt(frameAddr, xx, yy)) = PIXEL_VALUE(color);
+		*((pixel_t*) addressAt(frameAddr, xx, yy)) = PIXEL_VALUE(color);
 	}
 }
 
@@ -278,12 +254,12 @@ void ILI9341LTDCDriver::setPixels(
 			int yy1 = dy + (x * sin) + (y * cos);
 			int yy2 = dy + (x2 * sin) + (y2 * cos);
 
-			int xx = min(xx1, xx2);
-			int yy = min(yy1, yy2);
-			int ww = abs(xx2 - xx1) + 1;
-			int hh = abs(yy2 - yy1) + 1;
+			int xx = Math::min(xx1, xx2);
+			int yy = Math::min(yy1, yy2);
+			int ww = Math::abs(xx2 - xx1) + 1;
+			int hh = Math::abs(yy2 - yy1) + 1;
 
-			dma2dFill(xx, yy, ww, hh, color);
+			fill(xx, yy, ww, hh, color);
 		}
 	}
 }
@@ -333,6 +309,11 @@ void ILI9341LTDCDriver::hScroll(
 	int y,
 	int width,
 	int height) {
+
+}
+
+
+void ILI9341LTDCDriver::refresh() {
 
 }
 
@@ -771,42 +752,20 @@ void ILI9341LTDCDriver::dma2dInitialize() {
 /// \param height: Alçada del bloc.
 /// \param color: El color per omplir.
 ///
-void ILI9341LTDCDriver::dma2dFill(
+void ILI9341LTDCDriver::fill(
 	int x,
 	int y,
 	int width,
 	int height,
 	const Color &color) {
 
-	// Calcula l'adresa inicial
-	//
 	int addr = addressAt(frameAddr, x, y);
+	int pitch = LINE_WIDTH - width;
+    DMA2DOptions options = HAL_DMA2D_DFMT_DEFAULT;
+    int c = PIXEL_VALUE(color);
 
-	// Inicialitza el controlador DMA2D
-	//
-	DMA2D->CR = 0b11 << DMA2D_CR_MODE_Pos;            // Modus de transferencia R2M
-#if defined(DISPLAY_COLOR_RGB565)
-	DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;     // Format de color RGB565
-	DMA2D->OCOLR = color.toRGB565();                  // Color en format RGB565
-#elif defined(DISPLAY_COLOR_RGB888)
-	DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;     // Format de color RGB888
-	DMA2D->OCOLR = color.toRGB888();                  // Color en format RGB888
-#else
-#error No se especifico DISPLAY_COLOR_xxxx
-#endif
-	DMA2D->OMAR = addr;                               // Adressa del primer pixel
-	DMA2D->OOR = LINE_WIDTH - width;                  // Offset entre linies
-	DMA2D->NLR =
-		(width << DMA2D_NLR_PL_Pos) |                 // Amplada
-		(height << DMA2D_NLR_NL_Pos);                 // Alçada
-
-	// Inicia la transferencia
-	//
-	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;             // Inicia la transferencia
-
-	// Espera que acabi
-	//
-	dma2dWaitFinish();
+	halDMA2DStartFill(addr, width, height, pitch, options, c);
+	halDMA2DWaitForFinish();
 }
 
 

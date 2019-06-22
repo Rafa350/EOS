@@ -21,11 +21,11 @@
 
 
 #if defined(DISPLAY_COLOR_RGB565)
-#define PIXEL_TYPE                int16_t
+typedef int16_t pixel_t;
 #elif defined(DISPLAY_COLOR_RGB888)
-#define PIXEL_TYPE                int32_t
+typedef int32_t pixel_t;
 #endif
-#define PIXEL_SIZE                sizeof(PIXEL_TYPE)
+#define PIXEL_SIZE                sizeof(pixel_t)
 #define LINE_SIZE                 (((DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
 #define LINE_WIDTH                (LINE_SIZE / PIXEL_SIZE)
 #define FRAME_SIZE                (LINE_SIZE * DISPLAY_SCREEN_HEIGHT)
@@ -46,22 +46,23 @@ namespace eos {
 
         public:
             static IDisplayDriver *getInstance();;
-            void initialize();
-            void shutdown();
-            void displayOn();
-            void displayOff();
-            void setOrientation(DisplayOrientation orientation);
-            int getWidth() { return screenWidth; }
-            int getHeight() { return screenHeight; }
-            void clear(const Color &color);
-            void setPixel(int x, int y, const Color &color);
-            void setHPixels(int x, int y, int size, const Color &color);
-            void setVPixels(int x, int y, int size, const Color &color);
-            void setPixels(int x, int y, int width, int height, const Color &color);
-            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch);
-            void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch);
-            void vScroll(int delta, int x, int y, int width, int height);
-            void hScroll(int delta, int x, int y, int width, int height);
+            void initialize() override;
+            void shutdown() override;
+            void displayOn() override;
+            void displayOff() override;
+            void setOrientation(DisplayOrientation orientation) override;
+            int getWidth() const override { return screenWidth; }
+            int getHeight() const override { return screenHeight; }
+            void clear(const Color &color) override;
+            void setPixel(int x, int y, const Color &color) override;
+            void setHPixels(int x, int y, int size, const Color &color) override;
+            void setVPixels(int x, int y, int size, const Color &color) override;
+            void setPixels(int x, int y, int width, int height, const Color &color) override;
+            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch) override;
+            void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch) override;
+            void vScroll(int delta, int x, int y, int width, int height) override;
+            void hScroll(int delta, int x, int y, int width, int height) override;
+            void refresh() override;
 
         private:
             ILI9341LTDCDriver();
@@ -71,7 +72,7 @@ namespace eos {
         private:
             void ltdcInitialize();
             void dma2dInitialize();
-            void dma2dFill(int x, int y, int width, int height, const Color &color);
+            void fill(int x, int y, int width, int height, const Color &color);
             void dma2dWaitFinish();
             void lcdInitialize();
             void lcdReset();

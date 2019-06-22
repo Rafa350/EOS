@@ -64,7 +64,7 @@ static void SDRAMInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el hardware del sistema.
 ///
-void AppInitialize() {
+void appInitialize() {
 
 	halSYSInitialize();
 	CLKInitialize();
