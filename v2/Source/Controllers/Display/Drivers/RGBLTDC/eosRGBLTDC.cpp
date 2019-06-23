@@ -2,6 +2,11 @@
 
 #ifdef DISPLAY_DRV_RGBLTDC
 
+#if !((defined(LTDC) && (defined(EOS_STM32F4) || defined(EOS_STM32F7))))
+#error Hardware no soportado
+#endif
+
+
 // Utilitza una sola capa (LTDC_Layer1). Pot treballar en modus simple
 // o doble buffer.
 
@@ -9,13 +14,8 @@
 #include "System/eosMath.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "HAL/halGPIO.h"
+#include "HAL/STM32/halLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
-
-
-#if !((defined(LTDC) && (defined(EOS_STM32F4) || defined(EOS_STM32F7))))
-#error Hardware no soportado
-#endif
-
 
 
 // Format de pixel
@@ -23,9 +23,11 @@
 #if defined(DISPLAY_COLOR_RGB565)
 #define PIXEL_VALUE(c)       c.toRGB565()
 #define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB565
+#define LTDC_LxPFCR_PF_DEFAULT    0b010
 #elif defined(DISPLAY_COLOR_RGB888)
 #define PIXEL_VALUE(c)       c.toRGB888()
 #define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB888
+#define LTDC_LxPFCR_PF_DEFAULT    0b001
 #else
 #error No se definio DISPLAY_COLOR_xxxx
 #endif
@@ -94,17 +96,21 @@ RGBDirectDriver::RGBDirectDriver():
 ///
 void RGBDirectDriver::initialize() {
 
+	// Inicialitza els pins
+	//
 	gpioInitialize();
 
+	// Inicialitza el controlador LTDC
+	//
 	ltdcInitialize();
-	ltdcSetFrameAddress(frontFrameAddr);
+	halLTDCSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
 
+	// Borra els buffers a color negre
+	//
 	halDMA2DInitialize();
-
 	halDMA2DStartFill(FRAME1_ADDR, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT,
 		LINE_WIDTH - DISPLAY_IMAGE_WIDTH, HAL_DMA2D_DFMT_DEFAULT, 0x0000);
 	halDMA2DWaitForFinish();
-
 #ifdef DISPLAY_DOUBLE_BUFFER
 	halDMA2DStartFill(FRAME2_ADDR, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT,
 		LINE_WIDTH - DISPLAY_IMAGE_WIDTH, HAL_DMA2D_DFMT_DEFAULT, 0x0000);
@@ -412,7 +418,7 @@ void RGBDirectDriver::refresh() {
 
 	// Asigna l'adresa de la capa
 	//
-	ltdcSetFrameAddress(frontFrameAddr);
+	halLTDCSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
 #endif
 }
 
@@ -572,13 +578,7 @@ void RGBDirectDriver::ltdcInitialize() {
     //
     tmp = LTDC_Layer1->PFCR;
     tmp &= ~(LTDC_LxPFCR_PF);
-#if defined(DISPLAY_COLOR_RGB565)
-    tmp |= 0b010 << LTDC_LxPFCR_PF_Pos;
-#elif defined(DISPLAY_COLOR_RGB888)
-    tmp |= 0b001 << LTDC_LxPFCR_PF_Pos;
-#else
-#error No se especifico DISPLAY_COLOR_xxxx
-#endif
+    tmp |= LTDC_LxPFCR_PF_DEFAULT << LTDC_LxPFCR_PF_Pos;
     LTDC_Layer1->PFCR = tmp;
 
     // Configura Lx_CACR (Constant Alpha Configuration Register)

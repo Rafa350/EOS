@@ -190,3 +190,10 @@ bool halDMA2DWaitForFinish(void) {
 	return true;
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa les interrupcions
+///
+void DMA2D_IRQHandler() {
+
+}

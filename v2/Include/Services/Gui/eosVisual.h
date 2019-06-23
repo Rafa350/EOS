@@ -9,7 +9,7 @@
 
 namespace eos {
 
-	class Display;
+	class Graphics;
 
     class Visual {
     	private:
@@ -23,7 +23,7 @@ namespace eos {
     		bool visible;
 
     	protected:
-    		virtual void onRender(Display *display) = 0;
+    		virtual void onRender(Graphics *graphics) = 0;
 
         public:
     		Visual();
@@ -44,7 +44,7 @@ namespace eos {
 
             void setVisible(bool visible);
 
-            void render(Display *display);
+            void render(Graphics *graphics);
     		void invalidate();
     };
 

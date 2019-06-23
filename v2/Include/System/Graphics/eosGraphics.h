@@ -1,5 +1,5 @@
-#ifndef __eosDisplay__
-#define	__eosDisplay__
+#ifndef __eosGraphics__
+#define	__eosGraphics__
 
 
 // EOS includes
@@ -29,7 +29,7 @@ namespace eos {
     };
 
     /// \brief Superficie de dibuix.
-    class Display {
+    class Graphics {
         private:
             IDisplayDriver *driver;
             int clipX1;
@@ -45,8 +45,8 @@ namespace eos {
             unsigned ttyState;
 
         public:
-            Display(IDisplayDriver *driver);
-            ~Display();
+            Graphics(IDisplayDriver *driver);
+            ~Graphics();
             void setClip(int x1, int y1, int x2, int y2);
             void resetClip();
             void setColor(const Color &color);
@@ -74,7 +74,7 @@ namespace eos {
             void drawVLine(int x, int y1, int y2);
             void drawRectangle(int x1, int y1, int x2, int y2);
             void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
-            void drawCircle(int x, int y, int r);
+            void drawCircle(int cx, int cy, int r);
             void drawBitmap(int x, int y, const Bitmap *bitmap);
             int drawChar(int x, int y, char c);
             int drawText(int x, int y, const char *s, int offset = 0, int length = -1);
@@ -93,5 +93,5 @@ namespace eos {
 }
 
 
-#endif // __eosDisplay__
+#endif // __eosGraphics__
 

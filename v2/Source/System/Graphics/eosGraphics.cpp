@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosMath.h"
-#include "System/Graphics/eosDisplay.h"
+#include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosBitmap.h"
 #include "Controllers/Display/eosDisplayDriver.h"
@@ -26,7 +26,7 @@ static inline void normalize(int &x1, int &y1, int &x2, int &y2);
 /// \brief Constructor.
 /// \param driver: Driver del display
 ///
-Display::Display(
+Graphics::Graphics(
     IDisplayDriver *driver) :
 
     driver(driver),
@@ -49,7 +49,7 @@ Display::Display(
 /// ---------------------------------------------------------------------
 /// \brief Destructor.
 ///
-Display::~Display() {
+Graphics::~Graphics() {
 
 }
 
@@ -58,7 +58,7 @@ Display::~Display() {
 /// \brief Selecciona el color per dibuixar.
 /// \param color: El color a seleccionar.
 ///
-void Display::setColor(
+void Graphics::setColor(
     const Color &color) {
 
     this->color = color;
@@ -70,7 +70,7 @@ void Display::setColor(
 /// \param hAlign: Aliniacio horitzontal.
 /// \param vAlign: Aliniacio vertical.
 ///
-void Display::setTextAlign(
+void Graphics::setTextAlign(
     HorizontalTextAlign hAlign,
     VerticalTextAlign vAlign) {
 
@@ -84,7 +84,7 @@ void Display::setTextAlign(
 /// \param font: El font a seleccionar.
 /// \return L'anterior font seleccionat.
 ///
-void Display::setFont(
+void Graphics::setFont(
     Font *font) {
 
     this->font = font;
@@ -96,7 +96,7 @@ void Display::setFont(
 /// \param orientation: L'orientacio a seleccionar.
 /// \remarks Al canviar l'orientacio, es reseteja l'area de retall.
 ///
-void Display::setOrientation(
+void Graphics::setOrientation(
 	DisplayOrientation orientation) {
 
 	driver->setOrientation(orientation);
@@ -111,7 +111,7 @@ void Display::setOrientation(
 /// \param x2: Coordinada X dreta.
 /// \param y2: Coordinada Y inferior.
 ///
-void Display::setClip(
+void Graphics::setClip(
     int x1,
     int y1,
     int x2,
@@ -132,7 +132,7 @@ void Display::setClip(
 /// ----------------------------------------------------------------------
 /// \brief Reseteja la regio de retall.
 ///
-void Display::resetClip() {
+void Graphics::resetClip() {
 
 	clipX1 = 0;
 	clipY1 = 0;
@@ -145,7 +145,7 @@ void Display::resetClip() {
 /// \brief Borrat de la pantalla al color especificat.
 /// \param color: El color per realitzar el borrat.
 ///
-void Display::clear(
+void Graphics::clear(
     const Color &color) {
 
 	int x1 = 0;
@@ -164,7 +164,7 @@ void Display::clear(
 /// ----------------------------------------------------------------------
 /// \brief Refresca la pantalla.
 ///
-void Display::refresh() {
+void Graphics::refresh() {
 
 	driver->refresh();
 }
@@ -175,7 +175,7 @@ void Display::refresh() {
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 ///
-void Display::moveTo(
+void Graphics::moveTo(
     int x,
     int y) {
 
@@ -190,11 +190,12 @@ void Display::moveTo(
 /// \param[in] x: Coordinada X.
 /// \param[in] y: Coordinada Y.
 ///
-void Display::lineTo(
+void Graphics::lineTo(
     int x,
     int y) {
 
     drawLine(cursorX, cursorY, x, y);
+
     cursorX = x;
     cursorY = y;
 }
@@ -205,7 +206,7 @@ void Display::lineTo(
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 ///
-void Display::drawPoint(
+void Graphics::drawPoint(
     int x,
     int y) {
 
@@ -221,7 +222,7 @@ void Display::drawPoint(
 /// \param[in] x2: Coordinada x del final.
 /// \param[in] y2: Coordinada y del final.
 ///
-void Display::drawLine(
+void Graphics::drawLine(
     int x1,
     int y1,
     int x2,
@@ -313,7 +314,7 @@ void Display::drawLine(
 /// \param[in] x2: Coordinada X del final.
 /// \param[in] y: Coordinada Y
 ///
-void Display::drawHLine(int x1, int x2, int y) {
+void Graphics::drawHLine(int x1, int x2, int y) {
 
 	if (clipHLine(x1, x2, y)) {
 		int dx = x2 - x1;
@@ -328,7 +329,7 @@ void Display::drawHLine(int x1, int x2, int y) {
 /// \param[in] y1: Coordinada Y del origen.
 /// \param[in] y2: Coordinada Y del final.
 ///
-void Display::drawVLine(int x, int y1, int y2) {
+void Graphics::drawVLine(int x, int y1, int y2) {
 
 	if (clipVLine(x, y1, y2)) {
 		int dy = y2 - y1;
@@ -344,7 +345,7 @@ void Display::drawVLine(int x, int y1, int y2) {
 /// \param[in] x2: Coordinada x del final.
 /// \param[in] y2: Coordinada y del final.
 ///
-void Display::drawRectangle(
+void Graphics::drawRectangle(
     int x1,
     int y1,
     int x2,
@@ -366,7 +367,7 @@ void Display::drawRectangle(
 /// \param[in] x3: Coordinada x del tercer punt.
 /// \param[in] y3: Coordinada y del tercer punt.
 ///
-void Display::drawTriangle(
+void Graphics::drawTriangle(
     int x1,
     int y1,
     int x2,
@@ -374,7 +375,7 @@ void Display::drawTriangle(
     int x3,
     int y3) {
 
-    drawLine(x1, y1, x2, y2);
+	drawLine(x1, y1, x2, y2);
     drawLine(x2, y2, x3, y3);
     drawLine(x3, y3, x1, y1);
 }
@@ -382,34 +383,34 @@ void Display::drawTriangle(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un cercle buit.
-/// \param[in] x: Coordinada X del centre.
-/// \param[in] y: Coordinada Y del centre.
+/// \param[in] cx: Coordinada X del centre.
+/// \param[in] cy: Coordinada Y del centre.
 /// \param[in] r: Radi del cercle.
 ///
-void Display::drawCircle(
-    int x,
-    int y,
+void Graphics::drawCircle(
+    int cx,
+    int cy,
     int r) {
 
-    int xx = r;
-    int yy = 0;
-    int d = 1 - xx;
+	int x = r;
+    int y = 0;
+    int d = 1 - x;
 
-    while (yy <= xx) {
-        drawPoint(x + xx, y + yy);
-        drawPoint(x - xx, y + yy);
-        drawPoint(x - xx, y - yy);
-        drawPoint(x + xx, y - yy);
-        drawPoint(x + yy, y + xx);
-        drawPoint(x - yy, y + xx);
-        drawPoint(x - yy, y - xx);
-        drawPoint(x + yy, y - xx);
-        yy++;
+    while (y <= x) {
+        drawPoint(cx + x, cy + y);
+        drawPoint(cx - x, cy + y);
+        drawPoint(cx - x, cy - y);
+        drawPoint(cx + x, cy - y);
+        drawPoint(cx + y, cy + x);
+        drawPoint(cx - y, cy + x);
+        drawPoint(cx - y, cy - x);
+        drawPoint(cx + y, cy - x);
+        y++;
         if (d <= 0)
-            d += 2 * yy + 1;
+            d += 2 * y + 1;
         else {
-            xx--;
-            d += 2 * (yy - xx) + 1;
+            x--;
+            d += 2 * (y - x) + 1;
         }
     }
 }
@@ -422,7 +423,7 @@ void Display::drawCircle(
 /// \param[in] x2: Coordinada X final.
 /// \param[in] y2: Coordinada Y final.
 ///
-void Display::fillRectangle(
+void Graphics::fillRectangle(
     int x1,
     int y1,
     int x2,
@@ -441,12 +442,12 @@ void Display::fillRectangle(
 /// \param[in] cy: Coordinada Y del centre.
 /// \param[in] r: Radi del cercle.
 ///
-void Display::fillCircle(
+void Graphics::fillCircle(
     int cx,
     int cy,
     int r) {
 
-    int x = r;
+	int x = r;
     int y = 0;
     int d = 1 - x;
 
@@ -474,7 +475,7 @@ void Display::fillCircle(
 /// \param[in] y: Coordinada Y.
 /// \param[in] bitmap: El bitmap
 ///
-void Display::drawBitmap(
+void Graphics::drawBitmap(
     int x,
     int y,
     const Bitmap *bitmap) {
@@ -507,7 +508,7 @@ void Display::drawBitmap(
 /// \param[in] y: La coordinada Y.
 /// \param[in] c: El caracter a dibuixar.
 ///
-int Display::drawChar(
+int Graphics::drawChar(
     int x,
     int y,
     char c) {
@@ -547,7 +548,7 @@ int Display::drawChar(
 ///                del text.
 /// \return L'amplada de la cadena dibuixada en pixels.
 ///
-int Display::drawText(
+int Graphics::drawText(
     int x,
     int y,
     const char *s,
@@ -579,7 +580,7 @@ int Display::drawText(
 ///                total del text.
 /// \return L'amplada de la cadena en pixels.
 ///
-int Display::getTextWidth(
+int Graphics::getTextWidth(
     const char *s,
     int offset,
     int length) {
@@ -597,7 +598,7 @@ int Display::getTextWidth(
 /// \param[in] s: La cadena de texte.
 /// \return L'alçada de la cadena.
 ///
-int Display::getTextHeight(
+int Graphics::getTextHeight(
     const char *s) {
 
     return font->getFontHeight();
@@ -608,7 +609,7 @@ int Display::getTextHeight(
 /// \brief Escriu un caracter en emulacio TTY.
 /// \param[in] c: El caracter a escriure.
 ///
-void Display::putTTY(
+void Graphics::putTTY(
     char c) {
 
 	// TODO: Utilitzar clip
@@ -676,7 +677,7 @@ void Display::putTTY(
 /// \param[in] offset: El primer caracter a escriure.
 /// \param[in] length: Numero de caracters a escriure. -1 si es tot el text.
 ///
-void Display::putTTY(
+void Graphics::putTTY(
     const char *s,
     int offset,
     int length) {
@@ -689,7 +690,7 @@ void Display::putTTY(
 /// ----------------------------------------------------------------------
 /// \brief Retalla un area.
 ///
-bool Display::clipArea(
+bool Graphics::clipArea(
     int &x1,
     int &y1,
     int &x2,
@@ -743,7 +744,7 @@ bool Display::clipArea(
 /// \param[in] y: Coordinada Y.
 /// \return True si es visible.
 ///
-bool Display::clipPoint(
+bool Graphics::clipPoint(
     int x,
     int y) {
 
@@ -758,7 +759,7 @@ bool Display::clipPoint(
 /// \param y: Coordinada y.
 /// \return True si es visible
 ///
-bool Display::clipHLine(
+bool Graphics::clipHLine(
     int &x1,
     int &x2,
     int &y) {
@@ -796,7 +797,7 @@ bool Display::clipHLine(
 /// \paeam y2: Coordinada y final.
 /// \return True si es visible.
 ///
-bool Display::clipVLine(
+bool Graphics::clipVLine(
     int &x,
     int &y1,
     int &y2) {
@@ -835,7 +836,7 @@ bool Display::clipVLine(
 /// \param y2: Coordinada Y final.
 /// \return True si es visible.
 ///
-bool Display::clipLine(
+bool Graphics::clipLine(
     int &x1,
     int &y1,
     int &x2,
@@ -908,7 +909,7 @@ bool Display::clipLine(
 /// \param y: Coordinada Y del punt.
 /// \return El 'outcode' calculat.
 ///
-unsigned Display::calcOutCode(
+unsigned Graphics::calcOutCode(
     int x,
     int y) {
 

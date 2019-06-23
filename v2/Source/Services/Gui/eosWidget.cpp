@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/Gui/eosWidged.h"
-#include "System/Graphics/eosDisplay.h"
+#include "System/Graphics/eosGraphics.h"
 
 
 using namespace eos;
@@ -23,13 +23,13 @@ void Widget::setBorderColor(
 
 /// ----------------------------------------------------------------------
 /// \brief Renderitzat per defecte del widget.
-/// \param[in]: El display.
+/// \param[in] graphics: El display.
 ///
 void Widget::onRender(
-	Display *display) {
+	Graphics *graphics) {
 
-	display->setColor(borderColor);
-	display->fillRectangle(
+	graphics->setColor(borderColor);
+	graphics->fillRectangle(
 		getX(),
 		getY(),
 		getX() + getWidth() - 1,

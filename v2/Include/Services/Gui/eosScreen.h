@@ -11,14 +11,14 @@
 
 namespace eos {
 
-    class Display;
+    class Graphics;
 
     class Screen: public Visual {
     	private:
     		Color color;
 
     	protected:
-            void onRender(Display *display) override;
+            void onRender(Graphics *graphics) override;
 
     	public:
             void setColor(const Color &color);

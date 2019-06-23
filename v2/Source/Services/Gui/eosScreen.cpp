@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/Gui/eosScreen.h"
-#include "System/Graphics/eosDisplay.h"
+#include "System/Graphics/eosGraphics.h"
 
 
 using namespace eos;
@@ -25,10 +25,10 @@ void Screen::setColor(
 
 /// ----------------------------------------------------------------------
 /// \brief Renderitza el visual.
-/// \param[in] display: El display on dibuixar.
+/// \param[in] graphics: El display on dibuixar.
 ///
 void Screen::onRender(
-	Display *display) {
+	Graphics *graphics) {
 
-	display->clear(color);
+	graphics->clear(color);
 }

@@ -519,6 +519,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halLTDC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halLTDC.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
@@ -527,6 +532,11 @@
 			<name>inc/Framework/EOS/Services/Gui/eosGui.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGui.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/eosRenderContext.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosRenderContext.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosScreen.h</name>
@@ -594,14 +604,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Graphics/eosDisplay.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosDisplay.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosFont.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosFont.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosGraphics.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosGraphics.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers</name>
@@ -632,6 +642,11 @@
 			<name>src/Framework/EOS/HAL/STM32/halI2C.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halI2C.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32/halLTDC.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halLTDC.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32/halSPI.c</name>
@@ -692,6 +707,11 @@
 			<name>src/Framework/EOS/Services/Gui/eosGuiTouchPad.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiTouchPad.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/eosRenderContext.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosRenderContext.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/eosScreen.cpp</name>
@@ -774,14 +794,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosColor.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/Graphics/eosDisplay.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosDisplay.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/System/Graphics/eosFont.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosFont.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosGraphics.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics.cpp</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosRGBLTDC.h</name>

@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/Gui/eosVisual.h"
-#include "System/Graphics/eosDisplay.h"
+#include "System/Graphics/eosGraphics.h"
 
 
 using namespace eos;
@@ -52,10 +52,10 @@ void Visual::invalidate() {
 
 /// ----------------------------------------------------------------------
 /// \brief Renderitza el visual.
-/// \param[in] display: El display on dibuixar.
+/// \param[in] graphics: El display on dibuixar.
 ///
 void Visual::render(
-	Display *display) {
+	Graphics *graphics) {
 
 	if (visible) {
 
@@ -63,14 +63,14 @@ void Visual::render(
 		//
 		if (needRender) {
 			needRender = false;
-			onRender(display);
+			onRender(graphics);
 		}
 
 		// Continua amb els visuals fills.
 		//
 		Visual *visual = getFirstChild();
 		while (visual != nullptr) {
-			visual->render(display);
+			visual->render(graphics);
 			visual = visual->getNextSibling();
 		}
 	}
@@ -147,6 +147,9 @@ void Visual::setVisible(
 
 		this->visible = visible;
 
-		invalidate();
+		if (!visible && (parent != nullptr))
+			parent->invalidate();
+		else
+			invalidate();
 	}
 }

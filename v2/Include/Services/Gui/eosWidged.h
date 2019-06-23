@@ -11,7 +11,7 @@
 
 namespace eos {
 
-    class Display;
+    class Graphics;
 
     class Widget: public Window {
     	private:
@@ -20,7 +20,7 @@ namespace eos {
     		int borderThickness;
 
     	protected:
-    		void onRender(Display *display) override;
+    		void onRender(Graphics *graphics) override;
 
         public:
             void setBackgroundColor(const Color &color);
