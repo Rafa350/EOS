@@ -11,16 +11,18 @@
 
 namespace eos {
 
-    class Graphics;
+    class RenderContext;
 
     class Screen: public Visual {
     	private:
     		Color color;
 
     	protected:
-            void onRender(Graphics *graphics) override;
+            void onRender(RenderContext *context) override;
 
     	public:
+            Screen();
+
             void setColor(const Color &color);
 
             inline Color getColor() const { return color; }
@@ -29,4 +31,4 @@ namespace eos {
 }
 
 
-#endif // __eosVisual__
+#endif // __eosScreen__

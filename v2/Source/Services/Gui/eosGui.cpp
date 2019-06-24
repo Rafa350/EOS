@@ -6,7 +6,7 @@
 #include "Services/Gui/eosGui.h"
 #include "Services/Gui/eosVisual.h"
 #include "Services/Gui/eosScreen.h"
-#include "Services/Gui/eosWindow.h"
+#include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/eosWidged.h"
 
 
@@ -20,9 +20,11 @@ static const TaskPriority priority = TaskPriority::normal;
 
 static IDisplayDriver *displayDriver;
 static Graphics *graphics;
+static RenderContext *context;
 
 Widget *v1, *v2, *v3;
 int x, y, dx, dy;
+
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor
@@ -56,6 +58,8 @@ void GuiService::onInitialize() {
 	displayDriver->displayOn();
 
 	graphics = new Graphics(displayDriver);
+
+	context = new RenderContext(graphics);
 
 	screen = new Screen();
 	screen->setColor(COLOR_Blue);
@@ -103,7 +107,7 @@ void GuiService::onTask() {
 	y += dy;
 	v1->setPosition(x, y);
 
-	screen->render(graphics);
+	screen->render(context);
 	displayDriver->refresh();
 
 	Task::delay(25);

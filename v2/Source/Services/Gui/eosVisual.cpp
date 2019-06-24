@@ -52,10 +52,10 @@ void Visual::invalidate() {
 
 /// ----------------------------------------------------------------------
 /// \brief Renderitza el visual.
-/// \param[in] graphics: El display on dibuixar.
+/// \param[in] context: El context de renderitzat.
 ///
 void Visual::render(
-	Graphics *graphics) {
+	RenderContext *context) {
 
 	if (visible) {
 
@@ -63,14 +63,14 @@ void Visual::render(
 		//
 		if (needRender) {
 			needRender = false;
-			onRender(graphics);
+			onRender(context);
 		}
 
 		// Continua amb els visuals fills.
 		//
 		Visual *visual = getFirstChild();
 		while (visual != nullptr) {
-			visual->render(graphics);
+			visual->render(context);
 			visual = visual->getNextSibling();
 		}
 	}
@@ -153,3 +153,97 @@ void Visual::setVisible(
 			invalidate();
 	}
 }
+
+/// ----------------------------------------------------------------------
+/// \brief Obte la coordinada X absoluta de la posicio.
+/// \return La coordinada X.
+///
+int Visual::getAbsoluteX() const {
+
+	int x = 0;
+
+	for (const Visual *v = this; v != nullptr; v = v->parent)
+		x += v->x;
+
+	return x;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte la coordinada Y absoluta de la posicio.
+/// \return La coordinada Y.
+///
+int Visual::getAbsoluteY() const {
+
+	int y = 0;
+
+	for (const Visual *v = this; v != nullptr; v = v->parent)
+		y += v->y;
+
+	return y;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte la posicio absoluta.
+/// \param[out] x: La coordinada X de la posicio.
+/// \param[out] y: La coordinada Y de la posicio.
+///
+void Visual::getAbsolutePosition(
+	int &x,
+	int &y) const {
+
+	x = 0;
+	y = 0;
+	for (const Visual *v = this; v != nullptr; v = v->parent) {
+		x += v->x;
+		y += v->y;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna la posicio.
+/// \param[in] x: Coordinada X de la posicio.
+/// \param[in] y: Coordinada Y de la posicio.
+///
+void Visual::setPosition(
+	int x,
+	int y) {
+
+	if ((this->x != x) || (this->y != y)) {
+
+		this->x = x;
+		this->y = y;
+
+		Visual *parent = getParent();
+		if (parent)
+			parent->invalidate();
+		else
+			invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna el tamany.
+/// \param[in] width: Amplada.
+/// \param[in] height: Alçada.
+///
+void Visual::setSize(
+	int width,
+	int height) {
+
+    if ((this->width != width) || (this->height != height)) {
+
+    	this->width = width;
+    	this->height = height;
+
+    	Visual *parent = getParent();
+		if (parent)
+			parent->invalidate();
+		else
+			invalidate();
+    }
+}
+

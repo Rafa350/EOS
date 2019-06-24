@@ -116,14 +116,13 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 300; i++) {
-        int x1 = rand() % screenWidth;
+    for (int i = 0; i < 500; i++) {
+        int x = rand() % screenWidth;
         int y1 = rand() % screenHeight;
-        int x2 = x1;
         int y2 = rand() % screenHeight;
 
         graphics->setColor(rand() & 0x00FFFFFF);
-        graphics->drawLine(x1, y1, x2, y2);
+        graphics->drawVLine(x, y1, y2);
     }
     verticalLinesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -136,14 +135,13 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 300; i++) {
+    for (int i = 0; i < 500; i++) {
         int x1 = rand() % screenWidth;
-        int y1 = rand() % screenHeight;
         int x2 = rand() % screenWidth;
-        int y2 = y1;
+        int y = rand() % screenHeight;
 
         graphics->setColor(rand() & 0x00FFFFFF);
-        graphics->drawLine(x1, y1, x2, y2);
+        graphics->drawHLine(x1, x2, y);
     }
     horizontalLinesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -156,7 +154,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 300; i++) {
+    for (int i = 0; i < 500; i++) {
         int x1 = rand() % screenWidth;
         int y1 = rand() % screenHeight;
         int x2 = rand() % screenWidth;
@@ -176,7 +174,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 250; i++) {
         int x1 = rand() % screenWidth;
         int y1 = rand() % screenHeight;
         int x2 = rand() % screenWidth;
@@ -196,7 +194,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 250; i++) {
         int x1 = rand() % screenWidth;
         int y1 = rand() % screenHeight;
         int x2 = x1 + rand() % 100;
@@ -216,7 +214,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 250; i++) {
         int cx = rand() % screenWidth;
         int cy = rand() % screenHeight;
         int r = rand() % 150;
@@ -235,7 +233,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 250; i++) {
         int cx = rand() % screenWidth;
         int cy = rand() % screenHeight;
         int r = rand() % 50;

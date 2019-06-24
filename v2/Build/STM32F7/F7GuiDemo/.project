@@ -554,11 +554,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosWidged.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/Gui/eosWindow.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosWindow.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/System/Collections/eosList.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosList.h</locationURI>
@@ -727,11 +722,6 @@
 			<name>src/Framework/EOS/Services/Gui/eosWidget.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosWidget.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Services/Gui/eosWindow.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosWindow.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>

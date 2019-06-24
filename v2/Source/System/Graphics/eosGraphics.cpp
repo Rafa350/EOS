@@ -232,8 +232,9 @@ void Graphics::drawLine(
     //
     if (x1 == x2) {
         if (clipVLine(x1, y1, y2)) {
-            int dy = y2 - y1;
-            driver->setVPixels(x1, dy > 0 ? y1 : y2, (dy > 0 ? dy : -dy) + 1, color);
+        	if (y1 > y2)
+        		Math::swap(y1, y2);
+            driver->setVPixels(x1, y1, y2 - y1 + 1, color);
         }
     }
 
@@ -241,8 +242,9 @@ void Graphics::drawLine(
     //
     else if (y1 == y2) {
         if (clipHLine(x1, x2, y1)) {
-            int dx = x2 - x1;
-            driver->setHPixels(dx > 0 ? x1 : x2, y1, (dx > 0 ? dx : -dx) + 1, color);
+        	if (x1 > x2)
+        		Math::swap(x1, x2);
+            driver->setHPixels(x1, y1, x2 - x1 + 1, color);
         }
     }
 
@@ -317,8 +319,9 @@ void Graphics::drawLine(
 void Graphics::drawHLine(int x1, int x2, int y) {
 
 	if (clipHLine(x1, x2, y)) {
-		int dx = x2 - x1;
-        driver->setHPixels(dx > 0 ? x1 : x2, y, (dx > 0 ? dx  : -dx) + 1, color);
+		if (x1 > x2)
+			Math::swap(x1, x2);
+        driver->setHPixels(x1, y, x2 - x1 + 1, color);
 	}
 }
 
@@ -332,8 +335,9 @@ void Graphics::drawHLine(int x1, int x2, int y) {
 void Graphics::drawVLine(int x, int y1, int y2) {
 
 	if (clipVLine(x, y1, y2)) {
-		int dy = y2 - y1;
-        driver->setVPixels(x, dy > 0 ? y1 : y2, (dy > 0 ? dy : -dy) + 1, color);
+		if (y1 > y2)
+			Math::swap(y1, y2);
+        driver->setVPixels(x, y1, y2 - y1 + 1, color);
 	}
 }
 

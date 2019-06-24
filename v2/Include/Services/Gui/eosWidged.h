@@ -5,22 +5,22 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Services/Gui/eosWindow.h"
+#include "Services/Gui/eosVisual.h"
 #include "System/Graphics/eosColor.h"
 
 
 namespace eos {
 
-    class Graphics;
+    class RenderContext;
 
-    class Widget: public Window {
+    class Widget: public Visual {
     	private:
     		Color backgroundColor;
     		Color borderColor;
     		int borderThickness;
 
     	protected:
-    		void onRender(Graphics *graphics) override;
+    		void onRender(RenderContext *context) override;
 
         public:
             void setBackgroundColor(const Color &color);
@@ -28,6 +28,7 @@ namespace eos {
             void setBorderThickness(int thickness);
 
             inline Color getBorderColor() const { return borderColor; }
+            inline Color getBackgroundColor() const { return backgroundColor; }
     };
 
 }

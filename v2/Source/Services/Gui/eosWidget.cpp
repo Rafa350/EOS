@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/eosWidged.h"
 #include "System/Graphics/eosGraphics.h"
 
@@ -26,12 +27,9 @@ void Widget::setBorderColor(
 /// \param[in] graphics: El display.
 ///
 void Widget::onRender(
-	Graphics *graphics) {
+	RenderContext *context) {
 
-	graphics->setColor(borderColor);
-	graphics->fillRectangle(
-		getX(),
-		getY(),
-		getX() + getWidth() - 1,
-		getY() + getHeight() - 1);
+	context->beginRender(this);
+	context->fillRectangle(0, 0, getWidth(), getHeight(), borderColor);
+	context->endRender();
 }
