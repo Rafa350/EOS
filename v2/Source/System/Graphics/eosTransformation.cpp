@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "System/Graphics/eosTransformation.h"
+#include "string.h"
 
 
 using namespace eos;
@@ -152,16 +153,28 @@ void Transformation::initialize(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Copia una matriu en un altre.
+/// \param dst: Destinacio de la copia.
+/// \param src: Origen de la copia.
+///
 void Transformation::copy(
 	Matrix &dst,
 	const Matrix &src) {
 
-	for (int r = 0; r < 3; r++)
+    memcpy(&dst, &src, sizeof(Matrix));
+	/*for (int r = 0; r < 3; r++)
 		for (int c = 0; c < 3; c++)
-			dst[r][c] = src[r][c];
+			dst[r][c] = src[r][c];*/
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Multiplica dues matrius.
+/// \param dst: Destinacio del resultat.
+/// \param src1: Primera matriu a multiplicat.
+/// \param src2: Segona matriu a multiplicar.
+///
 void Transformation::multiply(
 	Matrix &dst,
 	const Matrix &src1,

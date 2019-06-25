@@ -45,7 +45,7 @@ Bitmap::Bitmap(
 			break;
 	}
 
-	// Reserva memorial pel bitmap
+	// Reserva memoria pel bitmap
 	//
 	pixels = (uint8_t*) osalHeapAlloc(NULL, numPixels * pixelSize);
 

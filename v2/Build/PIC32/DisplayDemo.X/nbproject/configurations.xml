@@ -25,7 +25,7 @@
               <itemPath>../../../Include/Controllers/Display/eosDisplayDriver.h</itemPath>
             </logicalFolder>
           </logicalFolder>
-          <logicalFolder name="f2" displayName="Hal" projectFiles="true">
+          <logicalFolder name="f2" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halINT.h</itemPath>
@@ -38,7 +38,7 @@
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
             <itemPath>../../../Include/HAL/halSPI.h</itemPath>
           </logicalFolder>
-          <logicalFolder name="f5" displayName="Osal" projectFiles="true">
+          <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
             <itemPath>../../../Include/OSAL/osalHeap.h</itemPath>
           </logicalFolder>
@@ -58,8 +58,8 @@
             </logicalFolder>
             <logicalFolder name="f3" displayName="Graphics" projectFiles="true">
               <itemPath>../../../Include/System/Graphics/eosColor.h</itemPath>
-              <itemPath>../../../Include/System/Graphics/eosDisplay.h</itemPath>
               <itemPath>../../../Include/System/Graphics/eosFont.h</itemPath>
+              <itemPath>../../../Include/System/Graphics/eosGraphics.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
           </logicalFolder>
@@ -85,7 +85,7 @@
         <itemPath>../../../Demo/DisplayDemo/Source/appDisplayService.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
-        <logicalFolder name="f1" displayName="Eos" projectFiles="true">
+        <logicalFolder name="f1" displayName="EOS" projectFiles="true">
           <logicalFolder name="f1" displayName="Controllers" projectFiles="true">
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
@@ -98,7 +98,7 @@
               </logicalFolder>
             </logicalFolder>
           </logicalFolder>
-          <logicalFolder name="f3" displayName="Hal" projectFiles="true">
+          <logicalFolder name="f3" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halTMR.c</itemPath>
@@ -106,7 +106,7 @@
               <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
             </logicalFolder>
           </logicalFolder>
-          <logicalFolder name="f5" displayName="Osal" projectFiles="true">
+          <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
               <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
@@ -142,8 +142,8 @@
                 <itemPath>../../../Source/System/Graphics/Fonts/Consolas24pt.cpp</itemPath>
               </logicalFolder>
               <itemPath>../../../Source/System/Graphics/eosColor.cpp</itemPath>
-              <itemPath>../../../Source/System/Graphics/eosDisplay.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosFont.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
           </logicalFolder>
@@ -177,7 +177,6 @@
     <Elem>../../../Source/Controllers/Display/Drivers/ILI9341</Elem>
     <Elem>../../../Source/Controllers/Display/Drivers/VRAM</Elem>
     <Elem>../../../Source/OSAL</Elem>
-    <Elem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</Elem>
     <Elem>../../../Source/StartUp/PIC32</Elem>
     <Elem>../../../Source/System/Graphics</Elem>
     <Elem>../../../Library/PIC32/FreeRTOS/Source</Elem>

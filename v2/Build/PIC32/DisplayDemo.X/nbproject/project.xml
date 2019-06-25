@@ -20,7 +20,6 @@
                 <sourceRootElem>../../../Source/Controllers/Display/Drivers/ILI9341</sourceRootElem>
                 <sourceRootElem>../../../Source/Controllers/Display/Drivers/VRAM</sourceRootElem>
                 <sourceRootElem>../../../Source/OSAL</sourceRootElem>
-                <sourceRootElem>C:/Library/Microchip/Harmony/v2_05_01/third_party/rtos/FreeRTOS/Source</sourceRootElem>
                 <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Source/System/Graphics</sourceRootElem>
                 <sourceRootElem>../../../Library/PIC32/FreeRTOS/Source</sourceRootElem>

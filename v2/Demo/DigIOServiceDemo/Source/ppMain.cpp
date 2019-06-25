@@ -67,7 +67,6 @@ class LedLoopService: public AppLoopService {
 };
 
 
-
 /// ---------------------------------------------------------------------------
 /// \brief Inicialitza l'aplicacio.
 ///

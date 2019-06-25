@@ -19,9 +19,6 @@ extern const unsigned char *fontConsolas14pt;
 #define TOP        0x0008u
 
 
-static inline void normalize(int &x1, int &y1, int &x2, int &y2);
-
-
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param driver: Driver del display
@@ -117,7 +114,10 @@ void Graphics::setClip(
     int x2,
     int y2) {
 
-	normalize(x1, y1, x2, y2);
+    if (x1 > x2)
+        Math::swap(x1, x2);
+    if (y1 > y2)
+        Math::swap(y1, y2);    
 
     int screenWidth = driver->getWidth();
     int screenHeight = driver->getHeight();
@@ -433,7 +433,10 @@ void Graphics::fillRectangle(
     int x2,
     int y2) {
 
-	normalize(x1, y1, x2, y2);
+    if (x1 > x2)
+        Math::swap(x1, x2);
+    if (y1 > y2)
+        Math::swap(y1, y2);
 
     if (clipArea(x1, y1, x2, y2))
          driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
@@ -930,24 +933,3 @@ unsigned Graphics::calcOutCode(
 
     return code;
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief Normalitza les coordinades d'un rectangle.
-/// \param x1: Coordinada X esquerra.
-/// \param y1: Coordinada Y superior.
-/// \param x2: Coordinada X dreta.
-/// \param y2: Coordinada Y inferior.
-///
-static inline void normalize(
-	int &x1,
-	int &y1,
-	int &x2,
-	int &y2) {
-
-    if (x1 > x2)
-        Math::swap(x1, x2);
-    if (y1 > y2)
-        Math::swap(y1, y2);
-}
-
