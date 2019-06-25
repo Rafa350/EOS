@@ -100,14 +100,17 @@ void RGBDirectDriver::initialize() {
 	//
 	gpioInitialize();
 
-	// Inicialitza el controlador LTDC
+	// Inicialitza el dispositiu LTDC
 	//
 	ltdcInitialize();
 	halLTDCSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
 
+    // Inicialitza el dispositiu DMA2D
+    //
+	halDMA2DInitialize();
+
 	// Borra els buffers a color negre
 	//
-	halDMA2DInitialize();
 	halDMA2DStartFill(FRAME1_ADDR, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT,
 		LINE_WIDTH - DISPLAY_IMAGE_WIDTH, HAL_DMA2D_DFMT_DEFAULT, 0x0000);
 	halDMA2DWaitForFinish();
@@ -616,38 +619,6 @@ void RGBDirectDriver::ltdcInitialize() {
     // Actualitza els parametres de la capa inmediatament
     //
 	LTDC->SRCR |= LTDC_SRCR_IMR;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Asigna l'adressa de memoria de la pagina.
-/// \param[in] frameAddr: L'adressa del buffer de memoria.
-/// \remarks Un cop asignada l'adressa, la capa s'activa i es visible. Si l'adressa
-///          es 0, es desactiva.
-///
-void RGBDirectDriver::ltdcSetFrameAddress(
-	int frameAddr) {
-
-	if (frameAddr == 0)
-	    LTDC_Layer1->CR &= (uint32_t) ~LTDC_LxCR_LEN;
-	else {
-		LTDC_Layer1->CFBAR = frameAddr;
-		LTDC_Layer1->CR |= (uint32_t) LTDC_LxCR_LEN;
-	}
-
-	// Si el LTDC esta inactiu, fa l'actualitzacio inmediata
-	//
-    if ((LTDC->GCR & LTDC_GCR_LTDCEN) == 0)
-    	LTDC->SRCR |=  LTDC_SRCR_IMR;
-
-    // En cas contrari, fa l'actualitzacio durant la sincronitzacio
-    // vertical, i espera que finalitzi.
-    //
-    else {
-    	LTDC->SRCR |=  LTDC_SRCR_VBR;
-		while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
-			continue;
-    }
 }
 
 

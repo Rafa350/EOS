@@ -78,7 +78,6 @@ namespace eos {
         private:
             void gpioInitialize();
             void ltdcInitialize();
-            void ltdcSetFrameAddress(int frameAddr);
             void fill(int x, int y, int width, int height, const Color &color);
             void copy(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch);
     };
