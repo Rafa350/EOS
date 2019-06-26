@@ -7,6 +7,13 @@
 
 namespace eos {
 
+	enum class RotateTransformationAngle {
+		r0,
+		r90,
+		r180,
+		r270
+	};
+
 	class Transformation {
 		private:
 			typedef int Matrix[3][3];
@@ -15,8 +22,7 @@ namespace eos {
 			Matrix m;
 
 		private:
-			static void initialize(Matrix &dst);
-			static void copy(Matrix &dst, const Matrix &src);
+			Transformation(const Matrix &m);
 			static void multiply(Matrix &dst, const Matrix &src1, const Matrix &src2);
 
 		public:
@@ -26,13 +32,14 @@ namespace eos {
 			void translate(int tx, int ty);
 			void scale(int sx, int sy);
 			void scale(int sx, int sy, int ox, int oy);
-			void rotate(int r);
-			void rotate(int r, int ox, int oy);
+			void rotate(RotateTransformationAngle r);
+			void rotate(RotateTransformationAngle r, int ox, int oy);
 			void combine(const Transformation &t);
 			void apply(int &x, int &y);
             
             Transformation& operator = (const Transformation &t);
-            Transformation& operator & ()
+            Transformation operator * (const Transformation &t);
+            Transformation& operator *= (const Transformation &t);
             
             int getM11() const { return m[0][0]; }
             int getM12() const { return m[0][1]; }

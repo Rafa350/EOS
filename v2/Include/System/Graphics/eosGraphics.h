@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 #include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosTransformation.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
 
@@ -43,6 +44,7 @@ namespace eos {
             int cursorX;
             int cursorY;
             unsigned ttyState;
+            Transformation t;
 
         public:
             Graphics(IDisplayDriver *driver);
@@ -51,6 +53,7 @@ namespace eos {
             void resetClip();
             void setColor(const Color &color);
             void setFont(Font *font);
+            void setTransformation(const Transformation &t);
             void setOrientation(DisplayOrientation orientation);
             void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
             inline IDisplayDriver *getDriver() const { return driver; }

@@ -80,3 +80,27 @@ void RenderContext::fillRectangle(
 		offsetY + y + height - 1);
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief Dibuixa un rectangle ple.
+/// \param[in] x: Coordinada X de la posicio.
+/// \param[in] y: Coordinada Y de la posicio.
+/// \param[in] width: Amplada.
+/// \param[in] height: Alçada.
+/// \param[in] color: Color.
+///
+void RenderContext::drawRectangle(
+	int x,
+	int y,
+	int width,
+	int height,
+	const Color &color) {
+
+	graphics->setColor(color);
+	graphics->drawRectangle(
+		offsetX + x,
+		offsetY + y,
+		offsetX + x + width - 1,
+		offsetY + y + height - 1);
+}
+

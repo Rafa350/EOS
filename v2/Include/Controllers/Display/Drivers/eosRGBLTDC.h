@@ -13,10 +13,6 @@
 #error Hardware no soportado
 #endif
 
-// Standard includes
-//
-#include "stdint.h"
-
 
 #ifndef DISPLAY_IMAGE_WIDTH
 #define DISPLAY_IMAGE_WIDTH       480       // Tamany fix del controlador
@@ -27,19 +23,20 @@
 #endif
 
 
-#if defined(DISPLAY_COLOR_RGB565)
-typedef int16_t pixel_t;                    // Tipus per un pixel
-#elif defined(DISPLAY_COLOR_RGB888)
-typedef int32_t pixel_t
-#endif
-#define PIXEL_SIZE                sizeof(pixel_t)
-#define LINE_SIZE                 (((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
-#define LINE_WIDTH                (LINE_SIZE / PIXEL_SIZE)
-#define FRAME_SIZE                (LINE_SIZE * DISPLAY_IMAGE_HEIGHT)
-
 namespace eos {
 
-    class RGBDirectDriver: public IDisplayDriver {
+
+#if defined(DISPLAY_COLOR_RGB565)
+	typedef int16_t pixel_t;                    // Tipus per un pixel
+#elif defined(DISPLAY_COLOR_RGB888)
+	typedef int32_t pixel_t
+#endif
+#define LINE_SIZE                 (((DISPLAY_IMAGE_WIDTH * sizeof(pixel_t)) + 63) & 0xFFFFFFC0)
+#define LINE_WIDTH                (LINE_SIZE / sizeof(pixel_t))
+#define FRAME_SIZE                (LINE_SIZE * DISPLAY_IMAGE_HEIGHT)
+
+
+	class RGBDirectDriver: public IDisplayDriver {
     	private:
     		static IDisplayDriver *instance;
     		int screenWidth;

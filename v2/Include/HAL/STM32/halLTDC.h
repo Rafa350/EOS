@@ -14,7 +14,12 @@ extern "C" {
 #define HAL_LTDC_LAYER_1     1
 
 
+void halLDTCInitialize();
+
 void halLTDCSetFrameAddress(int layerNum, int frameAddr);
+
+#define halLTDCEnable()      LTDC->GCR |= LTDC_GCR_LTDCEN
+#define halLTDCDisable()     LTDC->GCR &= ~LTDC_GCR_LTDCEN
 
 
 #ifdef	__cplusplus

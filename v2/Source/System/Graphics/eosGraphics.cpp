@@ -142,6 +142,17 @@ void Graphics::resetClip() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief Asigna la transformacio.
+/// \param[in] t: La transformacio.
+///
+void Graphics::setTransformation(
+	const Transformation &t) {
+
+	this->t = t;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Borrat de la pantalla al color especificat.
 /// \param color: El color per realitzar el borrat.
 ///

@@ -23,6 +23,7 @@ namespace eos {
 			void endRender();
 
 			void fillRectangle(int x, int y, int width, int height, const Color &color);
+			void drawRectangle(int x, int y, int width, int height, const Color &color);
 	};
 }
 

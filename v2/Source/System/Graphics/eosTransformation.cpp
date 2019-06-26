@@ -11,7 +11,17 @@ using namespace eos;
 ///
 Transformation::Transformation() {
 
-	initialize(m);
+	m[0][0] = 1;
+	m[0][1] = 0;
+	m[0][2] = 0;
+
+	m[1][0] = 0;
+	m[1][1] = 1;
+	m[1][2] = 0;
+
+	m[2][0] = 0;
+	m[2][1] = 0;
+	m[2][2] = 1;
 }
 
 
@@ -22,12 +32,12 @@ Transformation::Transformation() {
 Transformation::Transformation(
     const Transformation &t) {
    
-    copy(m, t.m);
+    memcpy(m, t.m, sizeof(Matrix));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor. Crea la matriu per components.
+/// \brief Constructor. Creacio a partir dels seus components.
 /// \param[in] m11: Component m11.
 /// \param[in] m12: Component m12.
 /// \param[in] m21: Component m21.
@@ -43,17 +53,28 @@ Transformation::Transformation(
     int tx, 
     int ty) {
         
-	dst[0][0] = m11;
-	dst[0][1] = m12;
-	dst[0][2] = 0;
+	m[0][0] = m11;
+	m[0][1] = m12;
+	m[0][2] = 0;
 
-	dst[1][0] = m21;
-	dst[1][1] = m22;
-	dst[1][2] = 0;
+	m[1][0] = m21;
+	m[1][1] = m22;
+	m[1][2] = 0;
 
-	dst[2][0] = tx;
-	dst[2][1] = ty;
-	dst[2][2] = 1;
+	m[2][0] = tx;
+	m[2][1] = ty;
+	m[2][2] = 1;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Contructor. Creacio a partir d'una matriu.
+/// \param[in] m: Matriu inicial.
+///
+Transformation::Transformation(
+	const Matrix &m) {
+
+	memcpy(this->m, m, sizeof(Matrix));
 }
 
 
@@ -81,7 +102,7 @@ void Transformation::translate(
 	tm[2][2] = 1;
 
 	multiply(rm, tm, m);
-	copy(m, rm);
+	memcpy(m, rm, sizeof(Matrix));
 }
 
 
@@ -109,7 +130,7 @@ void Transformation::scale(
 	sm[2][2] = 1;
 
 	multiply(rm, sm, m);
-	copy(m, rm);
+	memcpy(m, rm, sizeof(Matrix));
 }
 
 
@@ -141,7 +162,21 @@ void Transformation::scale(
 	sm[2][2] = 1;
 
 	multiply(rm, sm, m);
-	copy(m, rm);
+	memcpy(m, rm, sizeof(Matrix));
+}
+
+
+void Transformation::rotate(
+	RotateTransformationAngle r) {
+
+}
+
+
+void Transformation::rotate(
+	RotateTransformationAngle r,
+	int ox,
+	int oy) {
+
 }
 
 
@@ -155,7 +190,7 @@ void Transformation::combine(
 	Matrix rm;
 
 	multiply(rm, t.m, m);
-	copy(m, rm);
+	memcpy(m, rm, sizeof(Matrix));
 }
 
 
@@ -175,70 +210,64 @@ void Transformation::apply(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza una matriu a matriu identitat.
-/// \param dst: La matriu a inicialitzar.
+/// \brief Operador '*'.
+/// \param[in] t: La transformacio a asignar.
 ///
-void Transformation::initialize(
-	Matrix &dst) {
+Transformation & Transformation::operator = (
+    const Transformation &t) {
 
-	dst[0][0] = 1;
-	dst[0][1] = 0;
-	dst[0][2] = 0;
-
-	dst[1][0] = 0;
-	dst[1][1] = 1;
-	dst[1][2] = 0;
-
-	dst[2][0] = 0;
-	dst[2][1] = 0;
-	dst[2][2] = 1;
+	memcpy(m, t.m, sizeof(Matrix));
+    return *this;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Copia una matriu en un altre.
-/// \param dst: Destinacio de la copia.
-/// \param src: Origen de la copia.
+/// \brief Operador '*'.
+/// \param[in] t: La transformacio per multiplicar.
 ///
-void Transformation::copy(
-	Matrix &dst,
-	const Matrix &src) {
+Transformation Transformation::operator *(
+	const Transformation &t) {
 
-    memcpy(&dst, &src, sizeof(Matrix));
-	/*for (int r = 0; r < 3; r++)
-		for (int c = 0; c < 3; c++)
-			dst[r][c] = src[r][c];*/
+	Matrix rm;
+
+	multiply(rm, t.m, m);
+	return Transformation(rm);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Operador '*='.
+/// \param[in] t: La transformacio per multiplicar.
+///
+Transformation& Transformation::operator *=(
+	const Transformation &t) {
+
+	Matrix rm;
+
+	multiply(rm, t.m, m);
+	memcpy(m, rm, sizeof(Matrix));
+
+	return *this;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Multiplica dues matrius.
 /// \param dst: Destinacio del resultat.
-/// \param src1: Primera matriu a multiplicat.
-/// \param src2: Segona matriu a multiplicar.
+/// \param m1: Primera matriu a multiplicat.
+/// \param m2: Segona matriu a multiplicar.
+/// \param rm: Matriu resultat de l'operacio.
 ///
 void Transformation::multiply(
-	Matrix &dst,
-	const Matrix &src1,
-	const Matrix &src2) {
+	Matrix &rm,
+	const Matrix &m1,
+	const Matrix &m2) {
 
 	for (int r = 0; r < 3; r++)
 		for (int c = 0; c < 3; c++) {
 			int sum = 0;
 			for (int z = 0; z < 3; z++)
-				sum += src1[r][z] * src2[z][c];
-			dst[r][c] = sum;
+				sum += m1[r][z] * m2[z][c];
+			rm[r][c] = sum;
 	    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Operador d'asignacio.
-/// \param[in] t: La transformacio a asignar.
-///
-Transformation & Transformation::operator = (
-    const Transformation &t) {
-    
-    copy(m, t.m);    
-    return *this;
 }

@@ -18,14 +18,12 @@
 #include "HAL/STM32/halDMA2D.h"
 
 
-// Format de pixel
+// Parametres depenents del format de pixel
 //
 #if defined(DISPLAY_COLOR_RGB565)
-#define PIXEL_VALUE(c)       c.toRGB565()
 #define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB565
 #define LTDC_LxPFCR_PF_DEFAULT    0b010
 #elif defined(DISPLAY_COLOR_RGB888)
-#define PIXEL_VALUE(c)       c.toRGB888()
 #define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB888
 #define LTDC_LxPFCR_PF_DEFAULT    0b001
 #else
@@ -40,6 +38,9 @@
 #endif
 
 
+using namespace eos;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Obte l'adressa del pixel en la coordinada especificada.
 /// \param base: Adressa base.
@@ -52,11 +53,24 @@ static inline int addressAt(
 	int x,
 	int y) {
 
-	return base + (((y * LINE_WIDTH) + x) * PIXEL_SIZE);
+	return base + (((y * LINE_WIDTH) + x) * sizeof(pixel_t));
 }
 
 
-using namespace eos;
+/// ----------------------------------------------------------------------
+/// \brief Converteix un color a format de pixel.
+/// \param[in] color: El color a convertir.
+/// \return El color en format de piuxel.
+///
+static inline pixel_t toPixel(
+	const Color &color) {
+
+#if defined(DISPLAY_COLOR_RGB565)
+	return (pixel_t) color.toRGB565();
+#elif defined(DISPLAY_COLOR_RGB888)
+	return (pixel_t) color.toRGB888();
+#endif
+}
 
 
 IDisplayDriver *RGBDirectDriver::instance = nullptr;
@@ -138,7 +152,7 @@ void RGBDirectDriver::displayOn() {
 
     // Activa el modul LDTC
     //
-    LTDC->GCR |= LTDC_GCR_LTDCEN;
+	halLTDCEnable();
 
     // Activa el display
 	//
@@ -165,7 +179,7 @@ void RGBDirectDriver::displayOff() {
 
 	// Desactiva el modul LDTC
     //
-    LTDC->GCR &= ~LTDC_GCR_LTDCEN;
+	halLTDCDisable();
 }
 
 
@@ -220,7 +234,7 @@ void RGBDirectDriver::setOrientation(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Borra la pantalla.
+/// \brief Borra la imatge.
 /// \param color: Color de borrat.
 ///
 void RGBDirectDriver::clear(
@@ -253,7 +267,7 @@ void RGBDirectDriver::setPixel(
 		// Dibuixa el pixel
 		//
 		pixel_t *p = (pixel_t*) addressAt(backFrameAddr, xx, yy);
-		*p = PIXEL_VALUE(color);
+		*p = toPixel(color);
 	}
 }
 
@@ -341,16 +355,16 @@ void RGBDirectDriver::setPixels(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Escriu pixels en la pantalla.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param width: Amplada.
-/// \param height: Alçada.
-/// \param pixels: Els pixels a copiar.
-/// \param format: Format dels pixels.
-/// \param dx: Offset X dins del bitmap.
-/// \param dy: offset Y dins del vitmap.
-/// \param pitch: Aplada de linia del bitmap.
+/// \brief Escriu una regio rectangular de pixels.
+/// \param[in] x: Coordinada X.
+/// \param[in] y: Coordinada Y.
+/// \param[in] width: Amplada.
+/// \param[in] height: Alçada.
+/// \param[in] pixels: Els pixels a copiar.
+/// \param[in] format: Format dels pixels.
+/// \param[in] dx: Offset X dins del bitmap.
+/// \param[in] dy: offset Y dins del vitmap.
+/// \param[in] pitch: Aplada de linia del bitmap.
 ///
 void RGBDirectDriver::writePixels(
 	int x,
@@ -374,6 +388,15 @@ void RGBDirectDriver::writePixels(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Llegeix una regio rectangular de pixels.
+/// \param[in] x: Coordinada X.
+/// \param[in] y: Coordinada Y.
+/// \param[in] width: Amplada de la regio.
+/// \param[in] height: Alçada de la regio.
+/// \param[in] pixels: Buffer de pixels.
+/// \param[in] format: Format de pixels.
+///
 void RGBDirectDriver::readPixels(
 	int x,
 	int y,
@@ -388,6 +411,9 @@ void RGBDirectDriver::readPixels(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Realitza un scroll vertical
+///
 void RGBDirectDriver::vScroll(
 	int delta,
 	int x,
@@ -398,6 +424,9 @@ void RGBDirectDriver::vScroll(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Realitza un scroll horitzontal.
+///
 void RGBDirectDriver::hScroll(
 	int delta,
 	int x,
@@ -606,7 +635,7 @@ void RGBDirectDriver::ltdcInitialize() {
     tmp = LTDC_Layer1->CFBLR;
     tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
     tmp |= LINE_SIZE << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= ((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
+    tmp |= ((DISPLAY_IMAGE_WIDTH * sizeof(pixel_t)) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
     LTDC_Layer1->CFBLR = tmp;
 
     // Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
@@ -640,9 +669,8 @@ void RGBDirectDriver::fill(
 	int addr = addressAt(backFrameAddr, x, y);
 	int pitch = LINE_WIDTH - width;
     DMA2DOptions options = HAL_DMA2D_DFMT_DEFAULT;
-    int c = PIXEL_VALUE(color);
 
-	halDMA2DStartFill(addr, width, height, pitch, options, c);
+	halDMA2DStartFill(addr, width, height, pitch, options, toPixel(color));
 	halDMA2DWaitForFinish();
 }
 
@@ -740,7 +768,6 @@ void RGBDirectDriver::copy(
 	///
 	halDMA2DWaitForFinish();
 }
-
 
 #endif // DISPLAY_DRV_RGBLTDC
 

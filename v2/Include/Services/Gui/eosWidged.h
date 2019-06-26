@@ -29,6 +29,7 @@ namespace eos {
 
             inline Color getBorderColor() const { return borderColor; }
             inline Color getBackgroundColor() const { return backgroundColor; }
+            inline int getBorderThickness() const { return borderThickness; }
     };
 
 }

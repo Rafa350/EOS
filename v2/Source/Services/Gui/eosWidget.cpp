@@ -23,6 +23,34 @@ void Widget::setBorderColor(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Asigna l'amplada del marc.
+/// \param[in] thickness: Amplada del marc.
+///
+void Widget::setBorderThickness(
+	int thickness) {
+
+	if (borderThickness != thickness) {
+		borderThickness = thickness;
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna el color del fons.
+/// \param[in] color: El color.
+///
+void Widget::setBackgroundColor(
+	const Color &color) {
+
+	if (backgroundColor != color) {
+		backgroundColor = color;
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Renderitzat per defecte del widget.
 /// \param[in] graphics: El display.
 ///
@@ -30,6 +58,7 @@ void Widget::onRender(
 	RenderContext *context) {
 
 	context->beginRender(this);
-	context->fillRectangle(0, 0, getWidth(), getHeight(), borderColor);
+	context->fillRectangle(0, 0, getWidth(), getHeight(), backgroundColor);
+	context->drawRectangle(0, 0, getWidth(), getHeight(), borderColor);
 	context->endRender();
 }
