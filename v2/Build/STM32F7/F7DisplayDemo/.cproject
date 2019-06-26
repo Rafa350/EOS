@@ -107,6 +107,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Library/HAL_Driver/Src"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Library/startup"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Library/system/Src"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -206,6 +207,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Library/HAL_Driver/Src"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Library/startup"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Library/system/Src"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

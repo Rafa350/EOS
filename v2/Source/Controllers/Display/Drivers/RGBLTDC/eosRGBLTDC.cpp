@@ -240,7 +240,7 @@ void RGBDirectDriver::setOrientation(
 void RGBDirectDriver::clear(
 	const Color &color) {
 
-	fill(0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT, color);
+	fill(0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT, toPixel(color));
 }
 
 
@@ -255,20 +255,8 @@ void RGBDirectDriver::setPixel(
 	int y,
 	const Color &color) {
 
-	// Comprova si es dins dels limits
-	//
-	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight)) {
-
-		// Rotacio
-		//
-		int xx = dx + (x * cos) - (y * sin);
-		int yy = dy + (x * sin) + (y * cos);
-
-		// Dibuixa el pixel
-		//
-		pixel_t *p = (pixel_t*) addressAt(backFrameAddr, xx, yy);
-		*p = toPixel(color);
-	}
+	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight))
+		put(x, y, toPixel(color));
 }
 
 
@@ -321,35 +309,39 @@ void RGBDirectDriver::setPixels(
 	int height,
 	const Color &color) {
 
-	// Comprova si es dins dels limits
+	int x1 = x;
+	int y1 = y;
+	int x2 = x + width - 1;
+	int y2 = y + height - 1;
+
+	// Retalla al tamany de pantalla
 	//
-	if ((x >= 0) && (x + width <= screenWidth) &&
-		(y >= 0) && (y + height <= screenHeight)) {
+	x1 = Math::max(x1, 0);
+	y1 = Math::max(y1, 0);
+	x2 = Math::min(x2, screenWidth - 1);
+	y2 = Math::min(y2, screenHeight - 1);
 
-		// Si es del tamany d'un pixel, utilitza la funcio setPixel
-		//
-		if ((width == 1) && (height == 1))
-			setPixel(x, y, color);
+	// Cas que nomes sigui un pixel
+	//
+	if ((x1 == x2) && (y1 == y2))
+		put(x1, y1, toPixel(color));
 
-		// En cas contrari utilitza el modul DMA2D
-		//
-		else if ((width > 0) && (height > 0)) {
+	// Cas que hagi una regio rectangular per dibuixar
+	//
+	else if ((x1 <= x2) && (y1 <= y2)) {
 
-			int x2 = x + width - 1;
-			int y2 = y + height - 1;
+		// TODO posar la rotacio dins de fill
+		int xx1 = dx + (x1 * cos) - (y1 * sin);
+		int xx2 = dx + (x2 * cos) - (y2 * sin);
+		int yy1 = dy + (x1 * sin) + (y1 * cos);
+		int yy2 = dy + (x2 * sin) + (y2 * cos);
 
-			int xx1 = dx + (x * cos) - (y * sin);
-			int xx2 = dx + (x2 * cos) - (y2 * sin);
-			int yy1 = dy + (x * sin) + (y * cos);
-			int yy2 = dy + (x2 * sin) + (y2 * cos);
-
-			int xx = Math::min(xx1, xx2);
-			int yy = Math::min(yy1, yy2);
-			int ww = Math::abs(xx2 - xx1) + 1;
-			int hh = Math::abs(yy2 - yy1) + 1;
-
-			fill(xx, yy, ww, hh, color);
-		}
+		fill(
+			Math::min(xx1, xx2),
+			Math::min(yy1, yy2),
+			Math::abs(xx2 - xx1) + 1,
+			Math::abs(yy2 - yy1) + 1,
+			toPixel(color));
 	}
 }
 
@@ -652,25 +644,71 @@ void RGBDirectDriver::ltdcInitialize() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief Aigna un color a un pixel.
+/// \param[in] x: Coordinada X del pixel.
+/// \param[in] y: Coordinada Y del pixel.
+/// \param[in] c: Color del pixel;
+
+void RGBDirectDriver::put(
+	int x,
+	int y,
+	pixel_t c) {
+
+	// Rotacio
+	//
+#if 0
+	int xx = dx + (x * cos) - (y * sin);
+	int yy = dy + (x * sin) + (y * cos);
+#else
+	int xx = x;
+	int yy = y;
+	switch (orientation) {
+		case DisplayOrientation::normal:
+			break;
+
+		case DisplayOrientation::rotate90:
+			xx = (DISPLAY_IMAGE_WIDTH - 1) - y;
+			yy = x;
+			break;
+
+		case DisplayOrientation::rotate180:
+			xx = (DISPLAY_IMAGE_WIDTH - 1) - x;
+			yy = (DISPLAY_IMAGE_HEIGHT - 1) - y;
+			break;
+
+		case DisplayOrientation::rotate270:
+			xx = y;
+			yy = (DISPLAY_IMAGE_HEIGHT - 1) - x;
+			break;
+	}
+#endif
+	// Dibuixa el pixel
+	//
+	pixel_t *p = (pixel_t*) addressAt(backFrameAddr, xx, yy);
+	*p = c;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Ompla un area de memoria amb un color.
 /// \param x: Coordinada x.
 /// \param y: Coordinada y.
 /// \param width: Amplada del bloc.
 /// \param height: Alçada del bloc.
-/// \param color: El color per omplir.
+/// \param c: El color per omplir.
 ///
 void RGBDirectDriver::fill(
 	int x,
 	int y,
 	int width,
 	int height,
-	const Color &color) {
+	pixel_t c) {
 
 	int addr = addressAt(backFrameAddr, x, y);
 	int pitch = LINE_WIDTH - width;
     DMA2DOptions options = HAL_DMA2D_DFMT_DEFAULT;
 
-	halDMA2DStartFill(addr, width, height, pitch, options, toPixel(color));
+	halDMA2DStartFill(addr, width, height, pitch, options, c);
 	halDMA2DWaitForFinish();
 }
 
