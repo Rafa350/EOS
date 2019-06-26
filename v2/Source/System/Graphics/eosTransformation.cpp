@@ -16,11 +16,53 @@ Transformation::Transformation() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief Constructor copia.
+/// \param[in] t: La transformacio a copiar.
+///
+Transformation::Transformation(
+    const Transformation &t) {
+   
+    copy(m, t.m);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Constructor. Crea la matriu per components.
+/// \param[in] m11: Component m11.
+/// \param[in] m12: Component m12.
+/// \param[in] m21: Component m21.
+/// \param[in] m22: Component m22.
+/// \param[in] tx: Component tx.
+/// \param[in] ty: Component ty.
+///
+Transformation::Transformation(
+    int m11, 
+    int m12, 
+    int m21, 
+    int m22, 
+    int tx, 
+    int ty) {
+        
+	dst[0][0] = m11;
+	dst[0][1] = m12;
+	dst[0][2] = 0;
+
+	dst[1][0] = m21;
+	dst[1][1] = m22;
+	dst[1][2] = 0;
+
+	dst[2][0] = tx;
+	dst[2][1] = ty;
+	dst[2][2] = 1;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Afegeix una translacio a la matriu.
 /// \param[in] tx: Component X de la translacio.
 /// \param[in] ty: Component Y de la translacio.
 ///
-void Transformation::setTranslation(
+void Transformation::translate(
 	int tx,
 	int ty) {
 
@@ -48,7 +90,7 @@ void Transformation::setTranslation(
 /// \param[in] sx: Escalat en el eix X.
 /// \param[in] sy: Escalat en el eix Y.
 ///
-void Transformation::setScale(
+void Transformation::scale(
 	int sx,
 	int sy) {
 
@@ -78,7 +120,7 @@ void Transformation::setScale(
 /// \param[in] ox: Coordinada X de l'origen del escalat.
 /// \param[in] oy: Coordinada Y de l'origen del escalat.
 ///
-void Transformation::setScale(
+void Transformation::scale(
 	int sx,
 	int sy,
 	int ox,
@@ -187,4 +229,16 @@ void Transformation::multiply(
 				sum += src1[r][z] * src2[z][c];
 			dst[r][c] = sum;
 	    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Operador d'asignacio.
+/// \param[in] t: La transformacio a asignar.
+///
+Transformation & Transformation::operator = (
+    const Transformation &t) {
+    
+    copy(m, t.m);    
+    return *this;
 }
