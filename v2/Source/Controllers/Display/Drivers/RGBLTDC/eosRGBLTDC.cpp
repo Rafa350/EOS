@@ -48,7 +48,7 @@ using namespace eos;
 /// \param y: Coordinada Y.
 /// \return L'adressa del pixel.
 ///
-static inline int addressAt(
+static inline int addressOf(
 	int base,
 	int x,
 	int y) {
@@ -255,8 +255,10 @@ void RGBDirectDriver::setPixel(
 	int y,
 	const Color &color) {
 
-	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight))
+	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight)) {
+		rotate(x, y);
 		put(x, y, toPixel(color));
+	}
 }
 
 
@@ -323,25 +325,16 @@ void RGBDirectDriver::setPixels(
 
 	// Cas que nomes sigui un pixel
 	//
-	if ((x1 == x2) && (y1 == y2))
+	if ((x1 == x2) && (y1 == y2)) {
+		rotate(x1, y1);
 		put(x1, y1, toPixel(color));
+	}
 
 	// Cas que hagi una regio rectangular per dibuixar
 	//
 	else if ((x1 <= x2) && (y1 <= y2)) {
-
-		// TODO posar la rotacio dins de fill
-		int xx1 = dx + (x1 * cos) - (y1 * sin);
-		int xx2 = dx + (x2 * cos) - (y2 * sin);
-		int yy1 = dy + (x1 * sin) + (y1 * cos);
-		int yy2 = dy + (x2 * sin) + (y2 * cos);
-
-		fill(
-			Math::min(xx1, xx2),
-			Math::min(yy1, yy2),
-			Math::abs(xx2 - xx1) + 1,
-			Math::abs(yy2 - yy1) + 1,
-			toPixel(color));
+		rotate(x1, y1, x2, y2);
+		fill(x1, y1, x2 - x1 + 1, y2 - y1 + 1, toPixel(color));
 	}
 }
 
@@ -644,24 +637,20 @@ void RGBDirectDriver::ltdcInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Aigna un color a un pixel.
-/// \param[in] x: Coordinada X del pixel.
-/// \param[in] y: Coordinada Y del pixel.
-/// \param[in] c: Color del pixel;
+/// \brief Rota les coordinades d'un punt.
+/// \param x: Coordinada X del punt.
+/// \param y: Coordinada Y del punt.
+///
+void RGBDirectDriver::rotate(
+	int &x,
+	int &y) {
 
-void RGBDirectDriver::put(
-	int x,
-	int y,
-	pixel_t c) {
-
-	// Rotacio
-	//
-#if 0
-	int xx = dx + (x * cos) - (y * sin);
-	int yy = dy + (x * sin) + (y * cos);
-#else
 	int xx = x;
 	int yy = y;
+
+	// Realitza la rotacio. D'aquesta manera es mes rapida que
+	// fer dues multiplicacione fent servir la formula.
+	//
 	switch (orientation) {
 		case DisplayOrientation::normal:
 			break;
@@ -681,21 +670,93 @@ void RGBDirectDriver::put(
 			yy = (DISPLAY_IMAGE_HEIGHT - 1) - x;
 			break;
 	}
-#endif
-	// Dibuixa el pixel
+
+	x = xx;
+	y = yy;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Rota les coordinades d'un rectangle.
+/// \param x1: Coordinada X esquerra.
+/// \param y1: Coordinada Y superior.
+/// \param x2: Coordinada X dreta.
+/// \param y2: Coordinada Y inferior.
+/// \remarks Les coordinades son retornades en forma normalitzada.
+///
+void RGBDirectDriver::rotate(
+	int &x1,
+	int &y1,
+	int &x2,
+	int &y2) {
+
+	int xx1 = x1;
+	int yy1 = y1;
+	int xx2 = x2;
+	int yy2 = y2;
+
+	// Realitza la rotacio. D'aquesta manera es mes rapida que
+	// fer dues multiplicacione fent servir la formula.
 	//
-	pixel_t *p = (pixel_t*) addressAt(backFrameAddr, xx, yy);
-	*p = c;
+	switch (orientation) {
+		case DisplayOrientation::normal:
+			break;
+
+		case DisplayOrientation::rotate90:
+			xx1 = (DISPLAY_IMAGE_WIDTH - 1) - y1;
+			yy1 = x1;
+			xx2 = (DISPLAY_IMAGE_WIDTH - 1) - y2;
+			yy2 = x2;
+			break;
+
+		case DisplayOrientation::rotate180:
+			xx1 = (DISPLAY_IMAGE_WIDTH - 1) - x1;
+			yy1 = (DISPLAY_IMAGE_HEIGHT - 1) - y1;
+			xx2 = (DISPLAY_IMAGE_WIDTH - 1) - x2;
+			yy2 = (DISPLAY_IMAGE_HEIGHT - 1) - y2;
+			break;
+
+		case DisplayOrientation::rotate270:
+			xx1 = y1;
+			yy1 = (DISPLAY_IMAGE_HEIGHT - 1) - x1;
+			xx2 = y2;
+			yy2 = (DISPLAY_IMAGE_HEIGHT - 1) - x2;
+			break;
+	}
+
+	// Normalitza el resultat
+	//
+	x1 = Math::min(xx1, xx2);
+	y1 = Math::min(yy1, yy2);
+	x2 = Math::max(xx1, xx2);
+	y2 = Math::max(yy1, yy2);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Aigna un color a un pixel.
+/// \param[in] x: Coordinada X del pixel.
+/// \param[in] y: Coordinada Y del pixel.
+/// \param[in] c: Color en format de pixel fisic;
+/// \remarks No es fa cap tipus de verificacio dels parametres.
+///
+void RGBDirectDriver::put(
+	int x,
+	int y,
+	pixel_t c) {
+
+	*((pixel_t*) addressOf(backFrameAddr, x, y)) = c;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Ompla un area de memoria amb un color.
-/// \param x: Coordinada x.
-/// \param y: Coordinada y.
-/// \param width: Amplada del bloc.
-/// \param height: Alçada del bloc.
-/// \param c: El color per omplir.
+/// \param[in] x: Coordinada x.
+/// \param[in[ y: Coordinada y.
+/// \param[in] width: Amplada del bloc.
+/// \param[in] height: Alçada del bloc.
+/// \param[in] c: Color en format de pixel fisic.
+/// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
 void RGBDirectDriver::fill(
 	int x,
@@ -704,11 +765,13 @@ void RGBDirectDriver::fill(
 	int height,
 	pixel_t c) {
 
-	int addr = addressAt(backFrameAddr, x, y);
-	int pitch = LINE_WIDTH - width;
-    DMA2DOptions options = HAL_DMA2D_DFMT_DEFAULT;
-
-	halDMA2DStartFill(addr, width, height, pitch, options, c);
+	halDMA2DStartFill(
+		addressOf(backFrameAddr, x, y),
+		width,
+		height,
+		LINE_WIDTH - width,
+		HAL_DMA2D_DFMT_DEFAULT,
+		c);
 	halDMA2DWaitForFinish();
 }
 
@@ -753,7 +816,7 @@ void RGBDirectDriver::copy(
 
 	// Adressa i pitch de desti
 	//
-	int dstAddr = addressAt(backFrameAddr, x, y);
+	int dstAddr = addressOf(backFrameAddr, x, y);
 	DMA2D->OMAR = dstAddr;
 	DMA2D->OOR = LINE_WIDTH - width;
 

@@ -75,6 +75,8 @@ namespace eos {
         private:
             void gpioInitialize();
             void ltdcInitialize();
+            void rotate(int &x, int &y);
+            void rotate(int &x1, int &y1, int &x2, int &y2);
             void put(int x, int y, pixel_t c);
             void fill(int x, int y, int width, int height, pixel_t c);
             void copy(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch);
