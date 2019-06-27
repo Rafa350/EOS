@@ -13,7 +13,7 @@
 #include "eosAssert.h"
 #include "System/eosMath.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
-#include "HAL/halGPIO.h"
+#include "HAL/STM32/halGPIO.h"
 #include "HAL/STM32/halLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
 
@@ -59,7 +59,7 @@ static inline int addressOf(
 
 /// ----------------------------------------------------------------------
 /// \brief Converteix un color a format de pixel.
-/// \param[in] color: El color a convertir.
+/// \param color: El color a convertir.
 /// \return El color en format de piuxel.
 ///
 static inline pixel_t toPixel(
@@ -95,10 +95,6 @@ RGBDirectDriver::RGBDirectDriver():
 
 	screenWidth(DISPLAY_IMAGE_WIDTH),
 	screenHeight(DISPLAY_IMAGE_HEIGHT),
-	sin(0),
-	cos(1),
-	dx(0),
-	dy(0),
 	orientation(DisplayOrientation::normal),
 	frontFrameAddr(FRAME1_ADDR),
 	backFrameAddr(FRAME2_ADDR) {
@@ -194,39 +190,15 @@ void RGBDirectDriver::setOrientation(
 		this->orientation = orientation;
 		switch (orientation) {
 			case DisplayOrientation::normal:
-				screenWidth = DISPLAY_IMAGE_WIDTH;
-				screenHeight = DISPLAY_IMAGE_HEIGHT;
-				sin = 0;
-				cos = 1;
-				dx = 0;
-				dy = 0;
-				break;
-
-			case DisplayOrientation::rotate90:
-				screenWidth = DISPLAY_IMAGE_HEIGHT;
-				screenHeight = DISPLAY_IMAGE_WIDTH;
-				sin = 1;
-				cos = 0;
-				dx = DISPLAY_IMAGE_WIDTH - 1;
-				dy = 0;
-				break;
-
 			case DisplayOrientation::rotate180:
 				screenWidth = DISPLAY_IMAGE_WIDTH;
 				screenHeight = DISPLAY_IMAGE_HEIGHT;
-				sin = 0;
-				cos = -1;
-				dx = DISPLAY_IMAGE_WIDTH - 1;
-				dy = DISPLAY_IMAGE_HEIGHT - 1;
 				break;
 
+			case DisplayOrientation::rotate90:
 			case DisplayOrientation::rotate270:
 				screenWidth = DISPLAY_IMAGE_HEIGHT;
 				screenHeight = DISPLAY_IMAGE_WIDTH;
-				sin = -1;
-				cos = 0;
-				dx = 0;
-				dy = DISPLAY_IMAGE_HEIGHT - 1;
 				break;
 		}
 	}
@@ -341,15 +313,15 @@ void RGBDirectDriver::setPixels(
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu una regio rectangular de pixels.
-/// \param[in] x: Coordinada X.
-/// \param[in] y: Coordinada Y.
-/// \param[in] width: Amplada.
-/// \param[in] height: Alçada.
-/// \param[in] pixels: Els pixels a copiar.
-/// \param[in] format: Format dels pixels.
-/// \param[in] dx: Offset X dins del bitmap.
-/// \param[in] dy: offset Y dins del vitmap.
-/// \param[in] pitch: Aplada de linia del bitmap.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param width: Amplada.
+/// \param height: Alçada.
+/// \param pixels: Els pixels a copiar.
+/// \param format: Format dels pixels.
+/// \param dx: Offset X dins del bitmap.
+/// \param dy: offset Y dins del vitmap.
+/// \param pitch: Aplada de linia del bitmap.
 ///
 void RGBDirectDriver::writePixels(
 	int x,
@@ -375,12 +347,12 @@ void RGBDirectDriver::writePixels(
 
 /// ----------------------------------------------------------------------
 /// \brief Llegeix una regio rectangular de pixels.
-/// \param[in] x: Coordinada X.
-/// \param[in] y: Coordinada Y.
-/// \param[in] width: Amplada de la regio.
-/// \param[in] height: Alçada de la regio.
-/// \param[in] pixels: Buffer de pixels.
-/// \param[in] format: Format de pixels.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
+/// \param pixels: Buffer de pixels.
+/// \param format: Format de pixels.
 ///
 void RGBDirectDriver::readPixels(
 	int x,
@@ -735,9 +707,9 @@ void RGBDirectDriver::rotate(
 
 /// ----------------------------------------------------------------------
 /// \brief Aigna un color a un pixel.
-/// \param[in] x: Coordinada X del pixel.
-/// \param[in] y: Coordinada Y del pixel.
-/// \param[in] c: Color en format de pixel fisic;
+/// \param x: Coordinada X del pixel.
+/// \param y: Coordinada Y del pixel.
+/// \param c: Color en format de pixel fisic;
 /// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
 void RGBDirectDriver::put(
@@ -751,11 +723,11 @@ void RGBDirectDriver::put(
 
 /// ----------------------------------------------------------------------
 /// \brief Ompla un area de memoria amb un color.
-/// \param[in] x: Coordinada x.
-/// \param[in[ y: Coordinada y.
-/// \param[in] width: Amplada del bloc.
-/// \param[in] height: Alçada del bloc.
-/// \param[in] c: Color en format de pixel fisic.
+/// \param x: Coordinada x.
+/// \param y: Coordinada y.
+/// \param width: Amplada del bloc.
+/// \param height: Alçada del bloc.
+/// \param c: Color en format de pixel fisic.
 /// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
 void RGBDirectDriver::fill(
