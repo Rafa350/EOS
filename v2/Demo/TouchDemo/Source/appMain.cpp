@@ -2,7 +2,7 @@
 #include "eosAssert.h"
 #include "System/eosApplication.h"
 #include "System/Core/eosTask.h"
-#include "System/Graphics/eosDisplay.h"
+#include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosBitmap.h"
 #include "System/Core/eosQueue.h"
 #include "Services/eosAppLoop.h"
@@ -39,7 +39,7 @@ class DisplayLoopService: public AppLoopService {
     private:
         Bitmap *bitmap;
 		IDisplayDriver *displayDriver;
-        Display *display;
+        Graphics *display;
 		ITouchPadDriver *touchDriver;
         TouchPad *touch;
         int16_t screenWidth;
@@ -181,7 +181,7 @@ void DisplayLoopService::onSetup() {
 	displayDriver = RGBDirectDriver::getInstance();
     displayDriver->initialize();
     displayDriver->displayOn();
-    display = new Display(displayDriver);
+    display = new Graphics(displayDriver);
     display->clear(COLOR_Black);
 
     //bitmap = new Bitmap(30, 30, PixelFormat::rgb565, Color(COLOR_Blue));
