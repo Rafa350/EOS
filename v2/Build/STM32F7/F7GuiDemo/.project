@@ -34,6 +34,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Library/BSP</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Library/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -72,6 +77,16 @@
 			<name>src/Framework</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Library/BSP/stm32746g_discovery.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery.c</locationURI>
+		</link>
+		<link>
+			<name>Library/BSP/stm32746g_discovery_sdram.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c</locationURI>
 		</link>
 		<link>
 			<name>Library/FreeRTOS/heap_4.c</name>
@@ -231,12 +246,12 @@
 		<link>
 			<name>inc/App/STM32F7/stm32746g_discovery.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Include/STM32F7/stm32746g_discovery.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F7/stm32746g_discovery_sdram.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Include/STM32F7/stm32746g_discovery_sdram.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board</name>
@@ -282,16 +297,6 @@
 			<name>src/App/STM32F7/appInitialize.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/STM32F7/appInitialize.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/App/STM32F7/stm32f746g_discovery.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/STM32F7/stm32f746g_discovery.c</locationURI>
-		</link>
-		<link>
-			<name>src/App/STM32F7/stm32f746g_discovery_sdram.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/STM32F7/stm32f746g_discovery_sdram.c</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F7/stm32f7xx_hal_timebase_tim.c</name>
@@ -612,6 +617,11 @@
 			<name>inc/Framework/EOS/System/Graphics/eosColor.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosConsole.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosConsole.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosFont.h</name>

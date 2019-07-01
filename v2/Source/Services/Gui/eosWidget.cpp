@@ -57,8 +57,18 @@ void Widget::setBackgroundColor(
 void Widget::onRender(
 	RenderContext *context) {
 
-	context->beginRender(this);
-	context->fillRectangle(0, 0, getWidth(), getHeight(), backgroundColor);
-	context->drawRectangle(0, 0, getWidth(), getHeight(), borderColor);
+	Graphics *g = context->beginRender(this);
+
+	int x1 = 0;
+	int y1 = 0;
+	int x2 = getWidth() - 1;
+	int y2 = getHeight() - 1;
+
+	g->setColor(backgroundColor);
+	g->fillRectangle(x1, y1, x2, y2);
+
+	g->setColor(borderColor);
+	g->drawRectangle(x1, y1, x2, y2);
+
 	context->endRender();
 }

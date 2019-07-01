@@ -14,16 +14,11 @@ namespace eos {
 	class RenderContext {
 		private:
 			Graphics *graphics;
-			int offsetX;
-			int offsetY;
 
 		public:
 			RenderContext(Graphics *graphics);
-			void beginRender(Visual *visual);
+			Graphics *beginRender(Visual *visual);
 			void endRender();
-
-			void fillRectangle(int x, int y, int width, int height, const Color &color);
-			void drawRectangle(int x, int y, int width, int height, const Color &color);
 	};
 }
 

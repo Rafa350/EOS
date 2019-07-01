@@ -29,6 +29,7 @@ namespace eos {
 			Transformation();
             Transformation(const Transformation &t);
             Transformation(int m11, int m12, int m21, int m22, int tx, int ty);
+            void identity();
 			void translate(int tx, int ty);
 			void scale(int sx, int sy);
 			void scale(int sx, int sy, int ox, int oy);
@@ -36,11 +37,11 @@ namespace eos {
 			void rotate(RotateTransformationAngle r, int ox, int oy);
 			void combine(const Transformation &t);
 			void apply(int &x, int &y);
-            
+
             Transformation& operator = (const Transformation &t);
             Transformation operator * (const Transformation &t);
             Transformation& operator *= (const Transformation &t);
-            
+
             int getM11() const { return m[0][0]; }
             int getM12() const { return m[0][1]; }
             int getM21() const { return m[1][0]; }

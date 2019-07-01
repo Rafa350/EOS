@@ -41,9 +41,6 @@ namespace eos {
             Font *font;
             HorizontalTextAlign hAlign;
             VerticalTextAlign vAlign;
-            int cursorX;
-            int cursorY;
-            unsigned ttyState;
             Transformation t;
 
         public:
@@ -54,6 +51,8 @@ namespace eos {
             void setColor(const Color &color);
             void setFont(Font *font);
             void setTransformation(const Transformation &t);
+            inline Transformation getTransformation() const { return t; }
+            void resetTransformation();
             void setOrientation(DisplayOrientation orientation);
             void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
             inline IDisplayDriver *getDriver() const { return driver; }
@@ -63,14 +62,8 @@ namespace eos {
             inline Color getColor() const { return color; }
             inline int getWidth() const { return driver->getWidth(); }
             inline int getHeight() const { return driver->getHeight(); }
-            void putTTY(char ch);
-            void putTTY(const char *s, int offset = 0, int length = -1);
             void clear(const Color &color);
             void refresh();
-            inline void home() { moveTo(0, 0); }
-            void moveTo(int x, int y);
-            void lineTo(int x, int y);
-            void arcTo(int x, int y, int cx, int cy);
             void drawPoint(int x, int y);
             void drawLine(int x1, int y1, int x2, int y2);
             void drawHLine(int x1, int x2, int y);

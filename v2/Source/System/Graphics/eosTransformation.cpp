@@ -11,17 +11,7 @@ using namespace eos;
 ///
 Transformation::Transformation() {
 
-	m[0][0] = 1;
-	m[0][1] = 0;
-	m[0][2] = 0;
-
-	m[1][0] = 0;
-	m[1][1] = 1;
-	m[1][2] = 0;
-
-	m[2][0] = 0;
-	m[2][1] = 0;
-	m[2][2] = 1;
+	identity();
 }
 
 
@@ -31,7 +21,7 @@ Transformation::Transformation() {
 ///
 Transformation::Transformation(
     const Transformation &t) {
-   
+
     memcpy(m, t.m, sizeof(Matrix));
 }
 
@@ -46,13 +36,13 @@ Transformation::Transformation(
 /// \param[in] ty: Component ty.
 ///
 Transformation::Transformation(
-    int m11, 
-    int m12, 
-    int m21, 
-    int m22, 
-    int tx, 
+    int m11,
+    int m12,
+    int m21,
+    int m22,
+    int tx,
     int ty) {
-        
+
 	m[0][0] = m11;
 	m[0][1] = m12;
 	m[0][2] = 0;
@@ -75,6 +65,25 @@ Transformation::Transformation(
 	const Matrix &m) {
 
 	memcpy(this->m, m, sizeof(Matrix));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza la transformacio amb la nmatriu identitat.
+///
+void Transformation::identity() {
+
+	m[0][0] = 1;
+	m[0][1] = 0;
+	m[0][2] = 0;
+
+	m[1][0] = 0;
+	m[1][1] = 1;
+	m[1][2] = 0;
+
+	m[2][0] = 0;
+	m[2][1] = 0;
+	m[2][2] = 1;
 }
 
 

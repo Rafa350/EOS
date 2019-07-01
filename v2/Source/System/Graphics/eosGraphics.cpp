@@ -34,10 +34,7 @@ Graphics::Graphics(
     color(COLOR_Black),
     font(nullptr),
     hAlign(HorizontalTextAlign::left),
-    vAlign(VerticalTextAlign::bottom),
-    cursorX(0),
-    cursorY(0),
-    ttyState(0) {
+    vAlign(VerticalTextAlign::bottom) {
 
     setFont(new Font(fontConsolas14pt));
 }
@@ -114,10 +111,13 @@ void Graphics::setClip(
     int x2,
     int y2) {
 
+	t.apply(x1, y1);
+	t.apply(x2, y2);
+
     if (x1 > x2)
         Math::swap(x1, x2);
     if (y1 > y2)
-        Math::swap(y1, y2);    
+        Math::swap(y1, y2);
 
     int screenWidth = driver->getWidth();
     int screenHeight = driver->getHeight();
@@ -130,7 +130,7 @@ void Graphics::setClip(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Reseteja la regio de retall.
+/// \brief Reseteja la regio de retall. Retalla a pantalla complerta.
 ///
 void Graphics::resetClip() {
 
@@ -143,12 +143,21 @@ void Graphics::resetClip() {
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna la transformacio.
-/// \param[in] t: La transformacio.
+/// \param t: La transformacio.
 ///
 void Graphics::setTransformation(
 	const Transformation &t) {
 
 	this->t = t;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Reseteja la transformacio. Transformacio identitat.
+///
+void Graphics::resetTransformation() {
+
+	t.identity();
 }
 
 
@@ -166,9 +175,6 @@ void Graphics::clear(
 
     if (clipArea(x1, y1, x2, y2))
         driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
-
-    cursorX = 0;
-    cursorY = 0;
 }
 
 
@@ -182,37 +188,6 @@ void Graphics::refresh() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Mou el cursor a posicio indicada.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-///
-void Graphics::moveTo(
-    int x,
-    int y) {
-
-    cursorX = x;
-    cursorY = y;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia desde la posicio del cursor a la posicio
-///        indicada.
-/// \param[in] x: Coordinada X.
-/// \param[in] y: Coordinada Y.
-///
-void Graphics::lineTo(
-    int x,
-    int y) {
-
-    drawLine(cursorX, cursorY, x, y);
-
-    cursorX = x;
-    cursorY = y;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Dibuixa un pixel.
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
@@ -221,6 +196,8 @@ void Graphics::drawPoint(
     int x,
     int y) {
 
+	t.apply(x, y);
+
     if (clipPoint(x, y))
         driver->setPixel(x, y, color);
 }
@@ -228,16 +205,19 @@ void Graphics::drawPoint(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa una linia.
-/// \param[in] x1: Coordinada x del origen.
-/// \param[in] y1: Coordinada y del origen.
-/// \param[in] x2: Coordinada x del final.
-/// \param[in] y2: Coordinada y del final.
+/// \param x1: Coordinada x del origen.
+/// \param y1: Coordinada y del origen.
+/// \param x2: Coordinada x del final.
+/// \param y2: Coordinada y del final.
 ///
 void Graphics::drawLine(
     int x1,
     int y1,
     int x2,
     int y2) {
+
+	t.apply(x1, y1);
+	t.apply(x2, y2);
 
     // Es una linea vertical
     //
@@ -323,11 +303,15 @@ void Graphics::drawLine(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa una linia horitzontal.
-/// \param[in] x1: Coordinada X del origen.
-/// \param[in] x2: Coordinada X del final.
-/// \param[in] y: Coordinada Y
+/// \param x1: Coordinada X del origen.
+/// \param x2: Coordinada X del final.
+/// \param y: Coordinada Y
 ///
 void Graphics::drawHLine(int x1, int x2, int y) {
+
+	int y2 = y;
+	t.apply(x1, y);
+	t.apply(x2, y2);
 
 	if (clipHLine(x1, x2, y)) {
 		if (x1 > x2)
@@ -339,11 +323,15 @@ void Graphics::drawHLine(int x1, int x2, int y) {
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa una linia vertical.
-/// \param[in] x: Coordinada X.
-/// \param[in] y1: Coordinada Y del origen.
-/// \param[in] y2: Coordinada Y del final.
+/// \param x: Coordinada X.
+/// \param y1: Coordinada Y del origen.
+/// \param y2: Coordinada Y del final.
 ///
 void Graphics::drawVLine(int x, int y1, int y2) {
+
+	int x2 = x;
+	t.apply(x, y1);
+	t.apply(x2, y2);
 
 	if (clipVLine(x, y1, y2)) {
 		if (y1 > y2)
@@ -355,10 +343,10 @@ void Graphics::drawVLine(int x, int y1, int y2) {
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un rectangle buit.
-/// \param[in] x1: Coordinada x del origen.
-/// \param[in] y1: Coordinada y del origen.
-/// \param[in] x2: Coordinada x del final.
-/// \param[in] y2: Coordinada y del final.
+/// \param x1: Coordinada x del origen.
+/// \param y1: Coordinada y del origen.
+/// \param x2: Coordinada x del final.
+/// \param y2: Coordinada y del final.
 ///
 void Graphics::drawRectangle(
     int x1,
@@ -366,21 +354,31 @@ void Graphics::drawRectangle(
     int x2,
     int y2) {
 
-	drawHLine(x1, x2, y1);
-	drawHLine(x1, x2, y2);
-	drawVLine(x1, y1, y2);
-	drawVLine(x2, y1, y2);
+	t.apply(x1, y1);
+	t.apply(x2, y2);
+
+    if (x1 > x2)
+        Math::swap(x1, x2);
+    if (y1 > y2)
+        Math::swap(y1, y2);
+
+    if (clipArea(x1, y1, x2, y2)) {
+    	driver->setHPixels(x1, y1, x2 - x1 + 1, color);
+    	driver->setHPixels(x1, y2, x2 - x1 + 1, color);
+    	driver->setVPixels(x1, y1, y2 - y1 + 1, color);
+    	driver->setVPixels(x2, y1, y2 - y1 + 1, color);
+    }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un triangle buit.
-/// \param[in] x1: Coordinada x del primer punt
-/// \param[in] y1: Coordinada y del primer punt
-/// \param[in] x2: Coordinada x del segon punt.
-/// \param[in] y2: Coordinada y del segon punt.
-/// \param[in] x3: Coordinada x del tercer punt.
-/// \param[in] y3: Coordinada y del tercer punt.
+/// \param x1: Coordinada x del primer punt
+/// \param y1: Coordinada y del primer punt
+/// \param x2: Coordinada x del segon punt.
+/// \param y2: Coordinada y del segon punt.
+/// \param x3: Coordinada x del tercer punt.
+/// \param y3: Coordinada y del tercer punt.
 ///
 void Graphics::drawTriangle(
     int x1,
@@ -398,9 +396,9 @@ void Graphics::drawTriangle(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un cercle buit.
-/// \param[in] cx: Coordinada X del centre.
-/// \param[in] cy: Coordinada Y del centre.
-/// \param[in] r: Radi del cercle.
+/// \param cx: Coordinada X del centre.
+/// \param cy: Coordinada Y del centre.
+/// \param r: Radi del cercle.
 ///
 void Graphics::drawCircle(
     int cx,
@@ -433,16 +431,19 @@ void Graphics::drawCircle(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un rectangle omplert.
-/// \param[in] x1: Coordinada X inicial.
-/// \param[in] y1: Coordinada Y inicial
-/// \param[in] x2: Coordinada X final.
-/// \param[in] y2: Coordinada Y final.
+/// \param x1: Coordinada X inicial.
+/// \param y1: Coordinada Y inicial
+/// \param x2: Coordinada X final.
+/// \param y2: Coordinada Y final.
 ///
 void Graphics::fillRectangle(
     int x1,
     int y1,
     int x2,
     int y2) {
+
+	t.apply(x1, y1);
+	t.apply(x2, y2);
 
     if (x1 > x2)
         Math::swap(x1, x2);
@@ -456,14 +457,16 @@ void Graphics::fillRectangle(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un cercle omplert.
-/// \param[in] cx: Coordinada X del centre.
-/// \param[in] cy: Coordinada Y del centre.
-/// \param[in] r: Radi del cercle.
+/// \param cx: Coordinada X del centre.
+/// \param cy: Coordinada Y del centre.
+/// \param r: Radi del cercle.
 ///
 void Graphics::fillCircle(
     int cx,
     int cy,
     int r) {
+
+	t.apply(cx, cy);
 
 	int x = r;
     int y = 0;
@@ -489,9 +492,9 @@ void Graphics::fillCircle(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un bitmap complert.
-/// \param[in] x: Coordinada X.
-/// \param[in] y: Coordinada Y.
-/// \param[in] bitmap: El bitmap
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param bitmap: El bitmap
 ///
 void Graphics::drawBitmap(
     int x,
@@ -522,14 +525,16 @@ void Graphics::drawBitmap(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un caracter amb el font i el color actual.
-/// \param[in] x: La coordinada X.
-/// \param[in] y: La coordinada Y.
-/// \param[in] c: El caracter a dibuixar.
+/// \param x: La coordinada X.
+/// \param y: La coordinada Y.
+/// \param c: El caracter a dibuixar.
 ///
 int Graphics::drawChar(
     int x,
     int y,
     char c) {
+
+	t.apply(x, y);
 
     FontInfo fi;
     font->getFontInfo(fi);
@@ -558,11 +563,11 @@ int Graphics::drawChar(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un text amb el font i el color actual.
-/// \param[in] x: Coordinada X.
-/// \param[in] y: Coordinada Y.
-/// \param[in] s: El text a dibuixar.
-/// \param[in] offset: El primer caracter del text
-/// \param[in] length: Numero de caracters a dibuixar. -1 si dibuixa fins al final
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
+/// \param s: El text a dibuixar.
+/// \param offset: El primer caracter del text
+/// \param length: Numero de caracters a dibuixar. -1 si dibuixa fins al final
 ///                del text.
 /// \return L'amplada de la cadena dibuixada en pixels.
 ///
@@ -592,9 +597,9 @@ int Graphics::drawText(
 
 /// ----------------------------------------------------------------------
 /// \brief Obte l'amplada d'una cadena de texte.
-/// \param[in] s: La cadena de texte.
-/// \param[in] offset: El primer caracter del text.
-/// \param[in] length: Numero de caracters a mesurar. -1 si es la longitut
+/// \param s: La cadena de texte.
+/// \param offset: El primer caracter del text.
+/// \param length: Numero de caracters a mesurar. -1 si es la longitut
 ///                total del text.
 /// \return L'amplada de la cadena en pixels.
 ///
@@ -620,88 +625,6 @@ int Graphics::getTextHeight(
     const char *s) {
 
     return font->getFontHeight();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Escriu un caracter en emulacio TTY.
-/// \param[in] c: El caracter a escriure.
-///
-void Graphics::putTTY(
-    char c) {
-
-	// TODO: Utilitzar clip
-    int screenWidth = driver->getWidth();
-    int screenHeight = driver->getHeight();
-
-    switch (ttyState) {
-        case 0:
-            switch (c) {
-                case (char)0xFF:
-                    ttyState = 1;
-                    break;
-
-                case (char)0xFE:
-                    clear(COLOR_Black);
-                    break;
-
-                case (char)0xFD:
-                    home();
-                    cursorX = 0;
-                    cursorY = 0;
-                    break;
-
-                case '\r':
-                    cursorX = 0;
-                    break;
-
-                case '\n':
-                    cursorX = 0;
-                    cursorY += font->getFontHeight();
-                    if (cursorY >= screenHeight)
-                        cursorY = 0;
-                    break;
-
-                default: {
-                    CharInfo ci;
-                    font->getCharInfo(c, ci);
-                    if ((cursorX + ci.advance) >= screenWidth) {
-                        cursorX = 0;
-                        cursorY += font->getFontHeight();
-                        if (cursorY >= screenWidth) {
-
-                            // TODO: fer scroll de pantalla linia a linia
-                            return;
-                        }
-                    }
-                    cursorX += drawChar(cursorX, cursorY, c);
-                    break;
-                }
-            }
-            break;
-
-        case 1:
-            break;
-
-        case 2:
-            break;
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Escriu una text en emulacio TTY.
-/// \param[in] s: El text a escriure.
-/// \param[in] offset: El primer caracter a escriure.
-/// \param[in] length: Numero de caracters a escriure. -1 si es tot el text.
-///
-void Graphics::putTTY(
-    const char *s,
-    int offset,
-    int length) {
-
-    for (int i = offset, j = length; j && s[i]; i++, j--)
-       putTTY(s[i]);
 }
 
 
@@ -758,8 +681,8 @@ bool Graphics::clipArea(
 
 /// ----------------------------------------------------------------------
 /// \brief Retalla un punt.
-/// \param[in] x: Coordinada X.
-/// \param[in] y: Coordinada Y.
+/// \param x: Coordinada X.
+/// \param y: Coordinada Y.
 /// \return True si es visible.
 ///
 bool Graphics::clipPoint(
