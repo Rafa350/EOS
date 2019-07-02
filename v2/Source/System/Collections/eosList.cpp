@@ -1,41 +1,14 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Collections/eosList.h"
 #include "OSAL/osalHeap.h"
-
-
+#include "System/Collections/eosList.h"
 #include <string.h>
-#include <stdint.h>
 
 
 using namespace eos;
 
 
 const unsigned capacityDelta = 10;
-
-
-
-/// ----------------------------------------------------------------------
-/// \brief Reserva un bloc de memoria.
-/// \param[in] blockSize: Tamany del bloc en bytes.
-/// \return L'adressa del bloc de memoria.
-///
-static void *memAlloc(
-    unsigned blockSize) {
-    
-    return osalHeapAlloc(NULL, blockSize);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Allivera un bloc de memoria.
-/// \param[in] pBlock: Adressa del bloc de memoria.
-///
-static void memFree(
-    void *pBlock) {
-    
-    osalHeapFree(NULL, pBlock);
-}
 
 
 /// ----------------------------------------------------------------------
@@ -93,7 +66,7 @@ GenericList::~GenericList() {
     // Allivera la memoria del contenidor
     //
     if (container != nullptr)
-        memFree(container);
+        osalHeapFree(NULL, container);
 }
 
 
@@ -182,7 +155,7 @@ void GenericList::clear() {
 
         // Allivera la memoria del contenidor
         //
-        memFree(container);
+        osalHeapFree(NULL, container);
         container = nullptr;
         count = 0;
         capacity = 0;
@@ -260,7 +233,7 @@ void GenericList::resize(
 
         // Reserva memoria per un nou contenidor
         //
-        container = memAlloc(newCapacity * size);
+        container = osalHeapAlloc(NULL, newCapacity * size);
 
         // Comprova si hi havia un contenidor previ
         //
@@ -272,7 +245,7 @@ void GenericList::resize(
 
             // Allivera l'antic contenidor
             //
-            memFree(ptr);
+            osalHeapFree(NULL, ptr);
         }
 
         capacity = newCapacity;

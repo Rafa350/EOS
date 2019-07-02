@@ -1,8 +1,8 @@
+#include "eos.h"
 #include "eosAssert.h"
-#include "System/Core/eosTask.h"
+#include "OSAL/osalHeap.h"
+#include "OSAL/osalKernel.h"
 #include "System/Collections/eosStack.h"
-
-#include <stdint.h>
 #include <string.h>
 
 
@@ -12,19 +12,16 @@ using namespace eos;
 const unsigned capacityDelta = 10;
 
 
-#define __ALLOC(s)           (void*) new uint8_t[s]
-#define __FREE(p)            delete [] (uint8_t*)p;
-
-
 /// ----------------------------------------------------------------------
 /// \brief Constructor
 /// \param size: Tamany de cada element
-/// ºparam initialCapacity: Capacitat inicial
+/// \param initialCapacity: Capacitat inicial
 ///
 GenericStack::GenericStack(
-    unsigned _size,
+    unsigned size,
     unsigned initialCapacity):
-    size(_size), 
+
+    size(size),
     capacity(0),
     count(0),
     container(nullptr) {
@@ -39,7 +36,7 @@ GenericStack::GenericStack(
 GenericStack::~GenericStack() {
     
     if (container != nullptr)
-        __FREE(container);
+        osalHeapFree(NULL, container);
 }
 
 
@@ -52,7 +49,7 @@ void GenericStack::push(
     
     eosAssert(element != nullptr);
         
-    Task::enterCriticalSection();
+    osalEnterCritical();
     
     if (count + 1 >= capacity)
         resize(capacity + capacityDelta);
@@ -61,7 +58,7 @@ void GenericStack::push(
     memcpy(ptr, element, size);
     count += 1;
     
-    Task::exitCriticalSection();
+    osalExitCritical();
 }
 
 
@@ -72,12 +69,12 @@ void GenericStack::pop() {
     
     eosAssert(count > 0);
     
-    Task::enterCriticalSection();
+    osalEnterCritical();
 
     if (count > 0) 
         count -= 1;    
 
-    Task::exitCriticalSection();
+    osalExitCritical();
 }
 
 
@@ -123,10 +120,10 @@ void GenericStack::resize(
     
     if (capacity < newCapacity) {
         void *ptr = container;
-        container = __ALLOC(newCapacity * size);
+        container = osalHeapAlloc(NULL, newCapacity * size);
         if (ptr != nullptr) {
             memcpy(container, ptr, capacity);
-            __FREE(ptr);
+            osalHeapFree(NULL, ptr);
         }
         capacity = newCapacity;
     }

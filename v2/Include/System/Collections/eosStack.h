@@ -1,5 +1,5 @@
-#ifndef __EOS_SYSTEM_COLLECTIONS_STACK_H
-#define	__EOS_SYSTEM_COLLECTIONS_STACK_H
+#ifndef __eosStack__
+#define	__eosStack__
 
 
 #include "eos.h"
@@ -31,7 +31,7 @@ namespace eos {
             /// \return El nombre d'elements.
             inline unsigned getCount() const { return count; }
 
-            /// \brief COmprova si la pila es buida.
+            /// \brief Comprova si la pila es buida.
             /// \return True si es buida.
             inline bool isEmpty() const { return count == 0; }
             
@@ -99,8 +99,6 @@ namespace eos {
 }
 
 
-
-
-#endif
+#endif // __eosStack__
 
 

@@ -18,7 +18,11 @@ Visual::Visual():
 	prevSibling(nullptr),
 	numChilds(0),
 	needRender(true),
-	visible(true) {
+	visible(true),
+	x(0),
+	y(0),
+	width(0),
+	height(0) {
 }
 
 
@@ -144,9 +148,7 @@ void Visual::setVisible(
 	bool visible) {
 
 	if (this->visible != visible) {
-
 		this->visible = visible;
-
 		if (!visible && (parent != nullptr))
 			parent->invalidate();
 		else
@@ -212,10 +214,8 @@ void Visual::setPosition(
 	int y) {
 
 	if ((this->x != x) || (this->y != y)) {
-
 		this->x = x;
 		this->y = y;
-
 		Visual *parent = getParent();
 		if (parent)
 			parent->invalidate();
@@ -235,10 +235,8 @@ void Visual::setSize(
 	int height) {
 
     if ((this->width != width) || (this->height != height)) {
-
     	this->width = width;
     	this->height = height;
-
     	Visual *parent = getParent();
 		if (parent)
 			parent->invalidate();
@@ -246,4 +244,3 @@ void Visual::setSize(
 			invalidate();
     }
 }
-

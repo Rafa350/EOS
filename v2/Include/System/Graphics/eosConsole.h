@@ -12,10 +12,13 @@ namespace eos {
 	class Console {
 		private:
 			Graphics *graphics;
-			int width;
-			int height;
+			int rows;
+			int cols;
 			int row;
 			int col;
+
+		public:
+			Console(Graphics *graphics, int cols, int rows);
 	};
 }
 
