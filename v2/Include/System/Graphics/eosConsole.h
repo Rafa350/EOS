@@ -12,13 +12,18 @@ namespace eos {
 	class Console {
 		private:
 			Graphics *graphics;
-			int rows;
-			int cols;
-			int row;
-			int col;
+			unsigned rows;
+			unsigned columns;
+			unsigned row;
+			unsigned column;
 
 		public:
-			Console(Graphics *graphics, int cols, int rows);
+			Console(Graphics *graphics, unsigned columnss, unsigned rows);
+			void home();
+			void moveTo(unsigned column, unsigned row);
+
+			inline unsigned getColumn() const { return column; }
+			inline unsigned getRow() const { return row; }
 	};
 }
 

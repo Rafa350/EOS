@@ -40,11 +40,21 @@ namespace eos {
             bool isEmpty() const { return count > 0; }
     };
         
+    /// \brief Interface generaic per les llistes
+    ///
+    template <typename T>
+    class IList {
+    	public:
+    		virtual ~IList() {}
+    		virtual void add(const T &element) = 0;
+    		virtual unsigned getCount() const = 0;
+    		virtual bool isEmpty() const = 0;
+    };
     
     /// \brief Llista d'elements.
     ///
     template <typename T>
-    class List: private GenericList {
+    class List: private GenericList, public IList<T> {
         public:
             /// \brief Contructor.
             ///
@@ -61,7 +71,7 @@ namespace eos {
             /// \brief Afegeix un element a la llista
             /// \param element: Referencia al element a afeigir
             ///
-            inline void add(const T &element) {
+            inline void add(const T &element) override {
                 
                 GenericList::addBack(&element);
             }
@@ -98,7 +108,7 @@ namespace eos {
             /// \brief Obte el numero d'elements en la llista
             /// \return El numero d'elements en la llista.
             ///
-            inline unsigned getCount() const {
+            inline unsigned getCount() const override {
                 
                 return GenericList::getCount();
             }
@@ -106,7 +116,7 @@ namespace eos {
             /// \brief Comprova si es buida.
             /// \return True si la llista es buida.
             ///
-            inline bool isEmpty() const {
+            inline bool isEmpty() const override {
             
                 return GenericList::getCount() == 0;
             }

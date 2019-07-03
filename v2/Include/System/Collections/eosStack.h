@@ -46,6 +46,7 @@ namespace eos {
     template <typename T>
     class IStack {
         public:
+    		virtual ~IStack() {}
             virtual const T &top() const = 0;
             virtual void push(const T &element) = 0;
             virtual void pop() = 0;
@@ -67,14 +68,14 @@ namespace eos {
             /// \brief Afegeix un element a la pila.
             /// \param element: L'element a afeigir.
             ///
-            inline void push(const T &element) {
+            inline void push(const T &element) override {
 
                 GenericStack::push(&element);
             }            
 
             /// \brief Elimina el primer element de la pila.
             ///            
-            inline void pop() {
+            inline void pop() override {
                 
                 GenericStack::pop();
             }
@@ -82,7 +83,7 @@ namespace eos {
             /// \brief: Obte el primer element de la lila.
             /// \return: El primer element.
             ///
-            inline const T &top() const {
+            inline const T &top() const override {
                 
                 return * ((T*) GenericStack::top());
             }
@@ -90,7 +91,7 @@ namespace eos {
             /// \brief: Indica si la pila es buida.
             /// \return: True si es buida.
             ///
-            inline bool isEmpty() const {
+            inline bool isEmpty() const override {
                 
                 return GenericStack::isEmpty();
             }

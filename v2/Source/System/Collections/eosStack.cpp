@@ -21,9 +21,9 @@ GenericStack::GenericStack(
     unsigned size,
     unsigned initialCapacity):
 
-    size(size),
     capacity(0),
     count(0),
+    size(size),
     container(nullptr) {
     
     resize(initialCapacity);

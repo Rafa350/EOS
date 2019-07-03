@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "System/Collections/eosStack.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosTransformation.h"
 #include "Controllers/Display/eosDisplayDriver.h"
@@ -31,6 +32,17 @@ namespace eos {
 
     /// \brief Superficie de dibuix.
     class Graphics {
+    	private:
+    		class State {
+    			public:
+					int clipX1;
+					int clipY1;
+					int clipX2;
+					int clipY2;
+					Transformation t;
+    		};
+    		typedef Stack<State> StateStack;
+
         private:
             IDisplayDriver *driver;
             int clipX1;
