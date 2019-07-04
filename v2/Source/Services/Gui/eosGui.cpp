@@ -93,12 +93,12 @@ void GuiService::onInitialize() {
 ///
 void GuiService::onTask() {
 
-	if (x > (graphics->getWidth() - v1->getWidth()))
+	if (x > (graphics->getWidth() - v1->getWidth() / 2))
 		dx = -1;
 	else if (x <= 0)
 		dx = 1;
 
-	if (y > (graphics->getHeight() - v1->getHeight()))
+	if (y > (graphics->getHeight() - v1->getHeight() / 2))
 		dy = -1;
 	else if (y <= 0)
 		dy = 1;

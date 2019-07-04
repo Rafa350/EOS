@@ -354,20 +354,10 @@ void Graphics::drawRectangle(
     int x2,
     int y2) {
 
-	t.apply(x1, y1);
-	t.apply(x2, y2);
-
-    if (x1 > x2)
-        Math::swap(x1, x2);
-    if (y1 > y2)
-        Math::swap(y1, y2);
-
-    if (clipArea(x1, y1, x2, y2)) {
-    	driver->setHPixels(x1, y1, x2 - x1 + 1, color);
-    	driver->setHPixels(x1, y2, x2 - x1 + 1, color);
-    	driver->setVPixels(x1, y1, y2 - y1 + 1, color);
-    	driver->setVPixels(x2, y1, y2 - y1 + 1, color);
-    }
+   	drawHLine(x1, x2, y1);
+   	drawHLine(x1, x2, y2);
+   	drawVLine(x1, y1, y2);
+   	drawVLine(x2, y1, y2);
 }
 
 
@@ -533,8 +523,6 @@ int Graphics::drawChar(
     int x,
     int y,
     char c) {
-
-	t.apply(x, y);
 
     FontInfo fi;
     font->getFontInfo(fi);
