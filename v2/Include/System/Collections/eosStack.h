@@ -17,6 +17,7 @@ namespace eos {
             virtual void push(const T &element) = 0;
             virtual void pop() = 0;
             virtual bool isEmpty() const = 0;
+            virtual bool isFull() const = 0;
             virtual void clear() = 0;
     };
 
@@ -40,14 +41,16 @@ namespace eos {
             ///
             inline void push(const T &element) override {
 
-            	container[++top] = element;
+            	if (!isFull())
+            		container[++top] = element;
             }
 
             /// \brief Elimina el primer element de la pila.
             ///
             inline void pop() override {
 
-            	top--;
+            	if (!isEmpty())
+            		top--;
             }
 
             /// \brief: Obte el primer element de la pila.
@@ -71,6 +74,14 @@ namespace eos {
             inline bool isEmpty() const override {
 
                 return top == -1;
+            }
+
+            /// \brief: Indica si la pila es plena.
+            /// \return: True si es plena.
+            ///
+            inline bool isFull() const override {
+
+            	return top == SIZE - 1;
             }
     };
 

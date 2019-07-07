@@ -210,7 +210,7 @@ void Transformation::combine(
 ///
 void Transformation::apply(
 	int &x,
-	int &y) {
+	int &y) const {
 
 	int xx = x;
 	x = xx * m[0][0] + y * m[1][0] + m[2][0];

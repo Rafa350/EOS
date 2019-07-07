@@ -34,13 +34,20 @@ Graphics *RenderContext::beginRender(
 	eosAssert(visual != nullptr);
 	eosAssert(graphics != nullptr);
 
+	// Obte la posicio absoluta del widged.
+	//
 	int x, y;
 	visual->getAbsolutePosition(x, y);
 
+	// Aplica una translacio per situar l'origen de coordinades, al origen
+	// del widged
+	//
 	Transformation t;
 	t.translate(x, y);
 	graphics->setTransformation(t);
 
+	// Asigna l'area de retall, a l'area del widged.
+	//
 	graphics->setClip(0, 0, visual->getWidth() - 1, visual->getHeight() - 1);
 
 	return graphics;
@@ -52,6 +59,4 @@ Graphics *RenderContext::beginRender(
 ///
 void RenderContext::endRender() {
 
-	graphics->resetClip();
-	graphics->resetTransformation();
 }

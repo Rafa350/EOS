@@ -36,7 +36,7 @@ namespace eos {
 			void rotate(RotateTransformationAngle r);
 			void rotate(RotateTransformationAngle r, int ox, int oy);
 			void combine(const Transformation &t);
-			void apply(int &x, int &y);
+			void apply(int &x, int &y) const;
 
             Transformation& operator = (const Transformation &t);
             Transformation operator * (const Transformation &t);

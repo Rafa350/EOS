@@ -8,19 +8,26 @@ namespace eos {
         public:
 
     		template <typename T>
-            static T inline min(T a, T b) {
+            static inline T min(T a, T b) {
                 return a < b ? a : b;
             }
 
     		template <typename T>
-            static T inline max(T a, T b) {
+            static inline T max(T a, T b) {
                 return a > b ? a : b;
             }
 
     		template <typename T>
-            static T inline abs(T a) {
+            static inline T abs(T a) {
                 return a < 0 ? -a : a;
             }
+
+    		static inline int32_t abs(int32_t val) {
+    		    uint32_t temp = val >> 31;
+    		    val ^= temp;
+    		    val += temp & 1;
+    		    return val;
+    		}
 
             /// \brief Intercambia dues variables A i B.
             /// \param a: Variable A.
