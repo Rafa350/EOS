@@ -12,12 +12,6 @@ using namespace eos;
 
 extern const unsigned char *fontConsolas14pt;
 
-#define INSIDE     0x0000u
-#define LEFT       0x0001u
-#define RIGHT      0x0002u
-#define BOTTOM     0x0004u
-#define TOP        0x0008u
-
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
@@ -124,8 +118,8 @@ void Graphics::resetClip() {
 
 	state.clipX1 = 0;
 	state.clipY1 = 0;
-	state.clipX2 = INT32_MAX;
-	state.clipY2 = INT32_MAX;
+	state.clipX2 = driver->getWidth() - 1;
+	state.clipY2 = driver->getHeight() - 1;
 }
 
 
@@ -210,6 +204,8 @@ void Graphics::drawPoint(
     int x,
     int y) const {
 
+	// Transforma les coordinades
+	//
 	state.ct.apply(x, y);
 
     if (clipPoint(x, y))
@@ -631,6 +627,11 @@ int Graphics::getTextHeight(
 
 /// ----------------------------------------------------------------------
 /// \brief Retalla un area.
+/// \param x1: Coordinada X esquerra.
+/// \param y1: Coordinada Y superior.
+/// \param x2: Coordinada X dreta.
+/// \param y2: Coordinada Y inferior.
+/// \return True si es visible.
 ///
 bool Graphics::clipArea(
     int &x1,
@@ -638,45 +639,12 @@ bool Graphics::clipArea(
     int &x2,
     int &y2) const {
 
-    unsigned code1 = calcOutCode(x1, y1);
-	unsigned code2 = calcOutCode(x2, y2);
+	x1 = Math::max(x1, state.clipX1);
+	y1 = Math::max(y1, state.clipY1);
+	x2 = Math::min(x2, state.clipX2);
+	y2 = Math::min(y2, state.clipY2);
 
-	// Comprova si es dins
-	//
-	if (!(code1 | code2))
-		return true;
-
-	// Comprova si es fora
-	//
-	else if (code1 & code2)
-		return false;
-
-	// Ni a dins ni a fora
-	//
-	else {
-
-	    if (x1 < state.clipX1)
-			x1 = state.clipX1;
-		else if (x1 > state.clipX2)
-			x1 = state.clipX2;
-
-		if (y1 < state.clipY1)
-			y1 = state.clipY1;
-		else if (y1 > state.clipY2)
-			y1 = state.clipY2;
-
-		if (x2 > state.clipX2)
-			x2 = state.clipX2;
-		else if (x2 < state.clipX1)
-			x2 = state.clipX1;
-
-		if (y2 > state.clipY2)
-			y2 = state.clipY2;
-		else if (y2 < state.clipY1)
-			y2 = state.clipY1;
-
-		return true;
-	}
+	return (x1 <= x2) && (y1 <= y2);
 }
 
 
@@ -708,121 +676,14 @@ bool Graphics::clipHLine(
 	int &x2,
 	int y) const {
 
-	if ((y >= state.clipY1) && (y <= state.clipY2)) {
-
-		x1 = Math::max(state.clipX1, x1);
-		x2 = Math::min(x2, state.clipX2);
-
-		return x1 < x2;
-	}
-	else
+	if ((y < state.clipY1) || (y > state.clipY2))
 		return false;
+
+	x1 = Math::max(state.clipX1, x1);
+	x2 = Math::min(x2, state.clipX2);
+
+	return x1 <= x2;
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief Retalla una linia arbitraria.
-/// \param x1: Coordinada X inicial.
-/// \param y1: Coordinada Y inicial.
-/// \param x2: Coordinada X final.
-/// \param y2: Coordinada Y final.
-/// \return True si es visible.
-///
-#if 0
-bool Graphics::clipLine(
-    int &x1,
-    int &y1,
-    int &x2,
-    int &y2) const {
-
-    unsigned code1 = calcOutCode(x1, y1);
-	unsigned code2 = calcOutCode(x2, y2);
-
-	while (true) {
-
-		if (!(code1 | code2))
-			return true;
-
-		else if (code1 & code2)
-			return false;
-
-		else {
-
-		    int x = 0;
-			int y = 0;
-			unsigned code = (code1 != 0) ? code1 : code2;
-
-			// Calcula les interseccions
-			// x = x1 + (1 / slope) * (y - y1)
-			// y = y1 + slope * (x - x1)
-			//
-			if ((code & TOP) != 0) {
-				x = x1 + (x2 - x1) * (state.clipY2 - y1) / (y2 - y1);
-				y = state.clipY2;
-			}
-
-			else if ((code & BOTTOM) != 0) {
-				x = x1 + (x2 - x1) * (state.clipY1 - y1) / (y2 - y1);
-				y = state.clipY1;
-			}
-
-			else if ((code & RIGHT) != 0) {
-				y = y1 + (y2 - y1) * (state.clipX2 - x1) / (x2 - x1);
-				x = state.clipX2;
-			}
-
-			else if ((code & LEFT) != 0) {
-				y = y1 + (y2 - y1) * (state.clipX1 - x1) / (x2 - x1);
-				x = state.clipX1;
-			}
-
-			// NOTE:if you follow this algorithm exactly(at least for c#), then you will fall into an infinite loop
-			// in case a line crosses more than two segments. to avoid that problem, leave out the last else
-			// if(outcodeOut & LEFT) and just make it else *)
-
-			// Now we move outside point to intersection point to clip
-			// and get ready for next pass.
-			if (code == code1) {
-				x1 = x;
-				y1 = y;
-				code1 = calcOutCode(x1, y2);
-			}
-			else {
-				x2 = x;
-				y2 = y;
-				code2 = calcOutCode(x2, y2);
-			}
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Calcula el 'outcode' d'un punt per l'algorisme de retall.
-/// \param x: Coordinada X del punt.
-/// \param y: Coordinada Y del punt.
-/// \return El 'outcode' calculat.
-///
-unsigned Graphics::calcOutCode(
-	int x,
-	int y) const {
-
-	int code = INSIDE;
-
-	if (x < state.clipX1)
-        code |= LEFT;
-    else if (x > state.clipX2)
-        code |= RIGHT;
-
-	if (y < state.clipY1)
-        code |= BOTTOM;
-    else if (y > state.clipY2)
-        code |= TOP;
-
-    return code;
-}
-
-#else 
 
 
 /// ----------------------------------------------------------------------
@@ -834,47 +695,46 @@ unsigned Graphics::calcOutCode(
 /// \return True si es visible.
 ///
 bool Graphics::clipLine(
-    int &x1, 
-    int &y1, 
-    int &x2, 
+    int &x1,
+    int &y1,
+    int &x2,
     int &y2) const {
 
-    bool clipTest(int p, int q, int &t1, int &t2);
-    
     if (((x1 < state.clipX1) && (x2 < state.clipX1)) ||
         ((x1 > state.clipX2) && (x2 > state.clipX2)) ||
         ((y1 < state.clipY1) && (y2 < state.clipY1)) ||
         ((y1 > state.clipY2) && (y2 > state.clipY2)))
         return false;
-        
+
     int t1 = 0;
-    int t2 = 1 << 10;
-    
-    int dx = x2 - x1;    
+    int t2 = 1 << 16;
+
+    int dx = x2 - x1;
     if (!clipTest(-dx, x1 - state.clipX1, t1, t2))
-        return false;    
+        return false;
     if (!clipTest(dx, state.clipX2 - x1, t1, t2))
         return false;
-    
+
     int dy = y2 - y1;
-    if (!clipTest(-dy, y1 - state.clipY2, t1, t2))
+    if (!clipTest(-dy, y1 - state.clipY1, t1, t2))
         return false;
-    if (!clipTest(dy, state.clipY1 - y1, t1, t2))
+    if (!clipTest(dy, state.clipY2 - y1, t1, t2))
         return false;
-    
-    if (t2 < (1 << 10)) {
-        x2 = x1 + ((t2 * dx) >> 10);
-        y2 = y1 + ((t2 * dy) >> 10);
+
+    if (t2 < (1 << 16)) {
+        x2 = x1 + ((t2 * dx) >> 16);
+        y2 = y1 + ((t2 * dy) >> 16);
     }
     if (t1 > 0) {
-        x1 = x1 + ((t1 * dx) >> 10);
-        y1 = y1 + ((t1 * dy) >> 10);
+        x1 = x1 + ((t1 * dx) >> 16);
+        y1 = y1 + ((t1 * dy) >> 16);
     }
-    
+
     return true;
 }
 
-static inline bool clipTest(
+
+bool Graphics::clipTest(
     int p,
     int q,
     int &t1,
@@ -884,7 +744,7 @@ static inline bool clipTest(
 
     if (p < 0) {
         if (q < 0) {
-            r = (q << 10) / p;
+            r = (q << 16) / p;
             if (r > t2)
                 return false;
             else if (r > t1)
@@ -894,7 +754,7 @@ static inline bool clipTest(
 
     else if (p > 0) {
         if (q < p) {
-            r = (q << 10) / p;
+            r = (q << 16) / p;
             if (r < t1)
                 return false;
             else if (r < t2)
@@ -908,6 +768,3 @@ static inline bool clipTest(
 
     return true;
 }
-
-
-#endif

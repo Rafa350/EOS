@@ -88,7 +88,7 @@ namespace eos {
             bool clipPoint(int x, int y) const;
             bool clipHLine(int &x1, int &x2, int y) const;
             bool clipLine(int &x1, int &y1, int &x2, int &y2) const;
-            unsigned calcOutCode(int x, int y) const;
+            static bool clipTest(int p, int q, int &t1, int &t2);
     };
 
 }
