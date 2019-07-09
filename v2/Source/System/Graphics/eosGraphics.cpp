@@ -295,7 +295,7 @@ void Graphics::drawLine(
                 }
             }
 
-            else {
+            else if (dx < dy) {
                 p = dx + dx - dy;
                 incE = dx << 1;
                 incNE = (dx - dy) << 1;
@@ -307,6 +307,16 @@ void Graphics::drawLine(
                         x1 += stepx;
                         p += incNE;
                     }
+                    driver->setPixel(x1, y1, color);
+                }
+            }
+
+            // Es una linia diagonal
+            //
+            else {
+                while (y1 != y2) {
+                    y1 += stepy;
+                    x1 += stepx;
                     driver->setPixel(x1, y1, color);
                 }
             }
@@ -718,6 +728,7 @@ bool Graphics::clipHLine(
 /// \param y2: Coordinada Y final.
 /// \return True si es visible.
 ///
+#if 0
 bool Graphics::clipLine(
     int &x1,
     int &y1,
@@ -810,3 +821,93 @@ unsigned Graphics::calcOutCode(
 
     return code;
 }
+
+#else 
+
+
+/// ----------------------------------------------------------------------
+/// \brief Retalla una linia arbitraria. Amb l'algorisme Liang-Barsky.
+/// \param x1: Coordinada X inicial.
+/// \param y1: Coordinada Y inicial.
+/// \param x2: Coordinada X final.
+/// \param y2: Coordinada Y final.
+/// \return True si es visible.
+///
+bool Graphics::clipLine(
+    int &x1, 
+    int &y1, 
+    int &x2, 
+    int &y2) const {
+
+    bool clipTest(int p, int q, int &t1, int &t2);
+    
+    if (((x1 < state.clipX1) && (x2 < state.clipX1)) ||
+        ((x1 > state.clipX2) && (x2 > state.clipX2)) ||
+        ((y1 < state.clipY1) && (y2 < state.clipY1)) ||
+        ((y1 > state.clipY2) && (y2 > state.clipY2)))
+        return false;
+        
+    int t1 = 0;
+    int t2 = 1 << 10;
+    
+    int dx = x2 - x1;    
+    if (!clipTest(-dx, x1 - state.clipX1, t1, t2))
+        return false;    
+    if (!clipTest(dx, state.clipX2 - x1, t1, t2))
+        return false;
+    
+    int dy = y2 - y1;
+    if (!clipTest(-dy, y1 - state.clipY2, t1, t2))
+        return false;
+    if (!clipTest(dy, state.clipY1 - y1, t1, t2))
+        return false;
+    
+    if (t2 < (1 << 10)) {
+        x2 = x1 + ((t2 * dx) >> 10);
+        y2 = y1 + ((t2 * dy) >> 10);
+    }
+    if (t1 > 0) {
+        x1 = x1 + ((t1 * dx) >> 10);
+        y1 = y1 + ((t1 * dy) >> 10);
+    }
+    
+    return true;
+}
+
+static inline bool clipTest(
+    int p,
+    int q,
+    int &t1,
+    int &t2) {
+
+    int r;
+
+    if (p < 0) {
+        if (q < 0) {
+            r = (q << 10) / p;
+            if (r > t2)
+                return false;
+            else if (r > t1)
+                t1 = r;
+        }
+    }
+
+    else if (p > 0) {
+        if (q < p) {
+            r = (q << 10) / p;
+            if (r < t1)
+                return false;
+            else if (r < t2)
+                t2 = r;
+        }
+    }
+
+    else
+        if (q < 0)
+            return false;
+
+    return true;
+}
+
+
+#endif
