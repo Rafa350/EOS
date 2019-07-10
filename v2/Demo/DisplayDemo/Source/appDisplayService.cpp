@@ -26,6 +26,7 @@ using namespace app;
 DisplayService::DisplayService(
 	Application *application):
 
+	orientation(0),
 	AppLoopService(application) {
 }
 
@@ -48,8 +49,6 @@ void DisplayService::onSetup() {
     driver->displayOn();
 
     graphics = new eos::Graphics(driver);
-
-    orientation = 0;
 }
 
 

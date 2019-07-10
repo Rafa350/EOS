@@ -34,6 +34,8 @@ namespace eos {
     class Graphics {
     	private:
     		struct State {
+                HorizontalTextAlign hAlign;
+                VerticalTextAlign vAlign;
     			int clipX1;
     			int clipY1;
     			int clipX2;
@@ -46,8 +48,6 @@ namespace eos {
             IDisplayDriver *driver;
             Color color;
             Font *font;
-            HorizontalTextAlign hAlign;
-            VerticalTextAlign vAlign;
             StateStack stack;
             State state;
 
@@ -77,11 +77,13 @@ namespace eos {
             void drawRectangle(int x1, int y1, int x2, int y2) const;
             void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3) const;
             void drawCircle(int cx, int cy, int r) const;
+            void drawEllipse(int x1, int y1, int x2, int y2) const;
             void drawBitmap(int x, int y, const Bitmap *bitmap) const;
             int drawChar(int x, int y, char c) const;
             int drawText(int x, int y, const char *s, int offset = 0, int length = -1) const;
             void fillRectangle(int x1, int y1, int x2, int y2) const;
             void fillCircle(int cx, int cy, int r) const;
+            void fillEllipse(int x1, int y1, int x2, int y2) const;
 
         private:
             bool clipArea(int &x1, int &y1, int &x2, int &y2) const;

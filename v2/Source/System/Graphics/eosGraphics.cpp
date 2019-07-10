@@ -22,13 +22,12 @@ Graphics::Graphics(
 
     driver(driver),
     color(COLOR_Black),
-    font(nullptr),
-    hAlign(HorizontalTextAlign::left),
-    vAlign(VerticalTextAlign::bottom) {
+    font(nullptr) {
 
 	resetClip();
 	resetTransformation();
 	setFont(new Font(fontConsolas14pt));
+    setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::bottom);
 }
 
 
@@ -60,8 +59,8 @@ void Graphics::setTextAlign(
     HorizontalTextAlign hAlign,
     VerticalTextAlign vAlign) {
 
-    this->hAlign = hAlign;
-    this->vAlign = vAlign;
+    state.hAlign = hAlign;
+    state.vAlign = vAlign;
 }
 
 
@@ -90,7 +89,7 @@ void Graphics::setClip(
     int x2,
     int y2) {
 
-	// Transforma les coordinades
+	// Transforma a coordinades fisiques
 	//
 	state.ct.apply(x1, y1);
 	state.ct.apply(x2, y2);
@@ -197,14 +196,14 @@ void Graphics::refresh() const {
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un pixel.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
+/// \param x: Coordinada X del punt.
+/// \param y: Coordinada Y del punt.
 ///
 void Graphics::drawPoint(
     int x,
     int y) const {
 
-	// Transforma les coordinades
+	// Transforma a coordinades fisiques
 	//
 	state.ct.apply(x, y);
 
@@ -215,10 +214,10 @@ void Graphics::drawPoint(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa una linia.
-/// \param x1: Coordinada x del origen.
-/// \param y1: Coordinada y del origen.
-/// \param x2: Coordinada x del final.
-/// \param y2: Coordinada y del final.
+/// \param x1: Coordinada x del primer punt.
+/// \param y1: Coordinada y del primer punt.
+/// \param x2: Coordinada x del segon punt.
+/// \param y2: Coordinada y del segon punt.
 ///
 void Graphics::drawLine(
     int x1,
@@ -226,7 +225,7 @@ void Graphics::drawLine(
     int x2,
     int y2) const {
 
-	// Transforma les coordinades
+	// Transforma a coordinades fisiques
 	//
 	state.ct.apply(x1, y1);
 	state.ct.apply(x2, y2);
@@ -275,6 +274,8 @@ void Graphics::drawLine(
 
             driver->setPixel(x1, y1, color);
 
+            // Es mes gran el deplaçament X que el Y
+            //
             if (dx > dy) {
                 p = dy + dy - dx;
                 incE = dy << 1;
@@ -291,6 +292,8 @@ void Graphics::drawLine(
                 }
             }
 
+            // Es mes gran el deplaçament Y que el X
+            //
             else if (dx < dy) {
                 p = dx + dx - dy;
                 incE = dx << 1;
@@ -323,10 +326,10 @@ void Graphics::drawLine(
 
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un rectangle buit.
-/// \param x1: Coordinada x del origen.
-/// \param y1: Coordinada y del origen.
-/// \param x2: Coordinada x del final.
-/// \param y2: Coordinada y del final.
+/// \param x1: Coordinada x del primer punt.
+/// \param y1: Coordinada y del primer punt.
+/// \param x2: Coordinada x del segon punt.
+/// \param y2: Coordinada y del segon punt.
 ///
 void Graphics::drawRectangle(
     int x1,
@@ -334,6 +337,8 @@ void Graphics::drawRectangle(
     int x2,
     int y2) const {
 
+	// Dibuixa el perfil com quatre linies independents
+	//
    	drawLine(x1, y1, x2, y1);
    	drawLine(x1, y2, x2, y2);
    	drawLine(x1, y1, x1, y2);
@@ -358,6 +363,8 @@ void Graphics::drawTriangle(
     int x3,
     int y3) const {
 
+	// Dibuixa el triangle com tres linies independents
+	//
 	drawLine(x1, y1, x2, y2);
     drawLine(x2, y2, x3, y3);
     drawLine(x3, y3, x1, y1);
@@ -375,19 +382,56 @@ void Graphics::drawCircle(
     int cy,
     int r) const {
 
+	state.ct.apply(cx, cy);
+
 	int x = r;
     int y = 0;
     int d = 1 - x;
 
     while (y <= x) {
-        drawPoint(cx + x, cy + y);
-        drawPoint(cx - x, cy + y);
-        drawPoint(cx - x, cy - y);
-        drawPoint(cx + x, cy - y);
-        drawPoint(cx + y, cy + x);
-        drawPoint(cx - y, cy + x);
-        drawPoint(cx - y, cy - x);
-        drawPoint(cx + y, cy - x);
+
+    	int xx, yy;
+
+    	xx = cx + x;
+    	yy = cy + y;
+    	if (clipPoint(xx, yy))
+    		driver->setPixel(cx + x, cy + y, color);
+
+    	xx = cx - x;
+    	yy = cy + y;
+    	if (clipPoint(xx, yy))
+    		driver->setPixel(cx - x, cy + y, color);
+
+    	xx = cx - x;
+    	yy = cy - y;
+    	if (clipPoint(xx, yy))
+    		driver->setPixel(cx - x, cy - y, color);
+
+    	xx = cx + x;
+    	yy = cy - y;
+    	if (clipPoint(xx, yy))
+    		driver->setPixel(cx + x, cy - y, color);
+
+    	xx = cx + y;
+    	yy = cy + x;
+    	if (clipPoint(xx, yy))
+    		driver->setPixel(cx + y, cy + x, color);
+
+    	xx = cx - y;
+    	yy = cy + x;
+    	if (clipPoint(xx, yy))
+    		driver->setPixel(cx - y, cy + x, color);
+
+    	xx = cx - y;
+    	yy = cy - x;
+    	if (clipPoint(xx, yy))
+    		driver->setPixel(cx - y, cy - x, color);
+
+    	xx = cx + y;
+    	yy = cy - x;
+    	if (clipPoint(xx, yy))
+    		driver->setPixel(cx + y, cy - x, color);
+
         y++;
         if (d <= 0)
             d += 2 * y + 1;
@@ -400,11 +444,79 @@ void Graphics::drawCircle(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Dibuixa una el·lipse buida inscrita en un rectangle.
+/// \param x1: Coordinada X del primer punt.
+/// \param y1: Coordinada Y del primer punt.
+/// \param x2: Coordinada X del segon punt.
+/// \param y2: Coordinada Y del segon punt.
+///
+void Graphics::drawEllipse(
+	int x1,
+	int y1,
+	int x2,
+	int y2) const {
+
+	// Transforma a coordinades fisiques
+	//
+	state.ct.apply(x1, y1);
+	state.ct.apply(x2, y2);
+
+	// Obte el centre i els radis
+	//
+	int cx = (x1 + x2) >> 1;
+	int cy = (y1 + y2) >> 1;
+	int rx = (x2 - x1) >> 1;
+	int ry = (y2 - y1) >> 1;
+
+	int x = 0;
+	int y = -ry;
+	int err = 2 - (2 * rx);
+
+	int k = (rx << 16) / ry;
+
+	do {
+		int xx, yy;
+		int m = (x / k) >> 16;
+
+		xx = cx - m;
+		yy = cy + y;
+		if (clipPoint(xx, yy))
+			driver->setPixel(xx, yy, color);
+
+	    xx = cx + m;
+	    yy = cy + y;
+		if (clipPoint(xx, yy))
+			driver->setPixel(xx, yy, color);
+
+		xx = cx + m;
+		yy = cy - y;
+		if (clipPoint(xx, yy))
+			driver->setPixel(xx, yy, color);
+
+		xx = cx - m;
+		yy = cy - y;
+		if (clipPoint(xx, yy))
+			driver->setPixel(xx, yy, color);
+
+		int e2 = err;
+		if (e2 <= x) {
+			err += (++x * 2) + 1;
+			if ((-y == x) && (e2 <= y))
+				e2 = 0;
+		}
+		if (e2 > y)
+			err += (++y) * 2 + 1;
+
+	} while (y <= 0);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Dibuixa un rectangle omplert.
-/// \param x1: Coordinada X inicial.
-/// \param y1: Coordinada Y inicial
-/// \param x2: Coordinada X final.
-/// \param y2: Coordinada Y final.
+/// \param x1: Coordinada X del primer punt.
+/// \param y1: Coordinada Y del primer punt.
+/// \param x2: Coordinada X del segon punt.
+/// \param y2: Coordinada Y del segon punt.
 ///
 void Graphics::fillRectangle(
     int x1,
@@ -442,6 +554,8 @@ void Graphics::fillCircle(
     int cy,
     int r) const {
 
+	// TODO: Que pasa amb les rotacions i l'escalat amb el radi?
+
 	state.ct.apply(cx, cy);
 
 	int x = r;
@@ -450,33 +564,31 @@ void Graphics::fillCircle(
 
     while (y <= x) {
 
-    	int x1;
-    	int x2;
-    	int y1;
+    	int xx1, xx2, yy;
 
-    	x1 = cx - x;
-    	y1 = cy - y;
-    	x2 = cx + x;
-    	if (clipHLine(x1, x2, y1))
-    		driver->setPixels(x1, y1, x2 - x1 + 1, 1, color);
+    	xx1 = cx - x;
+    	xx2 = cx + x;
+    	yy = cy - y;
+    	if (clipHLine(xx1, xx2, yy))
+    		driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
 
-        x1 = cx - x;
-        y1 = cy + y;
-    	x2 = cx + x;
-    	if (clipHLine(x1, x2, y1))
-    		driver->setPixels(x1, y1, x2 - x1 + 1, 1, color);
+        xx1 = cx - x;
+    	xx2 = cx + x;
+        yy = cy + y;
+    	if (clipHLine(xx1, xx2, yy))
+    		driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
 
-        x1 = cx - y;
-        y1 = cy - x;
-    	x2 = cx + y;
-    	if (clipHLine(x1, x2, y1))
-    		driver->setPixels(x1, y1, x2 - x1 + 1, 1, color);
+        xx1 = cx - y;
+    	xx2 = cx + y;
+        yy = cy - x;
+    	if (clipHLine(xx1, xx2, yy))
+    		driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
 
-        x1 = cx - y;
-        y1 = cy + x;
-    	x2 = cx + y;
-    	if (clipHLine(x1, x2, y1))
-    		driver->setPixels(x1, y1, x2 - x1 + 1, 1, color);
+        xx1 = cx - y;
+    	xx2 = cx + y;
+        yy = cy + x;
+    	if (clipHLine(xx1, xx2, yy))
+    		driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
 
         y++;
         if (d <= 0)
@@ -575,9 +687,9 @@ int Graphics::drawText(
     int offset,
     int length) const {
 
-    if (hAlign != HorizontalTextAlign::left) {
+    if (state.hAlign != HorizontalTextAlign::left) {
         int textWidth = getTextWidth(s, offset, length);
-        if (hAlign == HorizontalTextAlign::right)
+        if (state.hAlign == HorizontalTextAlign::right)
             x -= textWidth;
         else
             x -= textWidth / 2;
@@ -627,10 +739,10 @@ int Graphics::getTextHeight(
 
 /// ----------------------------------------------------------------------
 /// \brief Retalla un area.
-/// \param x1: Coordinada X esquerra.
-/// \param y1: Coordinada Y superior.
-/// \param x2: Coordinada X dreta.
-/// \param y2: Coordinada Y inferior.
+/// \param x1: Coordinada X del primer punt.
+/// \param y1: Coordinada Y del primer punt.
+/// \param x2: Coordinada X del segon punt.
+/// \param y2: Coordinada Y del segon punt.
 /// \return True si es visible.
 ///
 bool Graphics::clipArea(
@@ -650,8 +762,8 @@ bool Graphics::clipArea(
 
 /// ----------------------------------------------------------------------
 /// \brief Retalla un punt.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
+/// \param x: Coordinada X del punt.
+/// \param y: Coordinada Y del punt.
 /// \return True si es visible.
 ///
 bool Graphics::clipPoint(
@@ -666,9 +778,9 @@ bool Graphics::clipPoint(
 
 /// ----------------------------------------------------------------------
 /// \brief Retalla una linia horitzontal.
-/// \param x1: Coordinada X dreta.
-/// \param x2: Coordinada X esquerra.
-/// \param y: Coordinada Y.
+/// \param x1: Coordinada X del primer punt.
+/// \param x2: Coordinada X del segon punt.
+/// \param y: Coordinada Y comu ambdos punts.
 /// \return True si es visible.
 ///
 bool Graphics::clipHLine(
@@ -688,10 +800,10 @@ bool Graphics::clipHLine(
 
 /// ----------------------------------------------------------------------
 /// \brief Retalla una linia arbitraria. Amb l'algorisme Liang-Barsky.
-/// \param x1: Coordinada X inicial.
-/// \param y1: Coordinada Y inicial.
-/// \param x2: Coordinada X final.
-/// \param y2: Coordinada Y final.
+/// \param x1: Coordinada X del primer punt.
+/// \param y1: Coordinada Y del primer punt.
+/// \param x2: Coordinada X del segon punt.
+/// \param y2: Coordinada Y del segon punt.
 /// \return True si es visible.
 ///
 bool Graphics::clipLine(
