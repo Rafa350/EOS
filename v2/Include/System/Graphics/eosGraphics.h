@@ -86,10 +86,10 @@ namespace eos {
             void fillEllipse(int x1, int y1, int x2, int y2) const;
 
         private:
-            bool clipArea(int &x1, int &y1, int &x2, int &y2) const;
             bool clipPoint(int x, int y) const;
             bool clipHLine(int &x1, int &x2, int y) const;
             bool clipLine(int &x1, int &y1, int &x2, int &y2) const;
+            bool clipArea(int &x1, int &y1, int &x2, int &y2) const;
             static bool clipTest(int p, int q, int &t1, int &t2);
     };
 

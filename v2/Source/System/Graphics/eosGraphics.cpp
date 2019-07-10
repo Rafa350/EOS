@@ -738,29 +738,6 @@ int Graphics::getTextHeight(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retalla un area.
-/// \param x1: Coordinada X del primer punt.
-/// \param y1: Coordinada Y del primer punt.
-/// \param x2: Coordinada X del segon punt.
-/// \param y2: Coordinada Y del segon punt.
-/// \return True si es visible.
-///
-bool Graphics::clipArea(
-    int &x1,
-    int &y1,
-    int &x2,
-    int &y2) const {
-
-	x1 = Math::max(x1, state.clipX1);
-	y1 = Math::max(y1, state.clipY1);
-	x2 = Math::min(x2, state.clipX2);
-	y2 = Math::min(y2, state.clipY2);
-
-	return (x1 <= x2) && (y1 <= y2);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Retalla un punt.
 /// \param x: Coordinada X del punt.
 /// \param y: Coordinada Y del punt.
@@ -846,6 +823,14 @@ bool Graphics::clipLine(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Realitza el calcul de visibilitat per la funcio 'clipLine'
+/// \param p: Coordinada X o Y del punt inicial.
+/// \param q: Coordinada X o Y del puint final.
+/// \param t1: Correccio del punt inicial.
+/// \param t2: Correccio del punt final.
+/// \return: True si es visible, false en cas contrari.
+///
 bool Graphics::clipTest(
     int p,
     int q,
@@ -879,4 +864,27 @@ bool Graphics::clipTest(
             return false;
 
     return true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Retalla un area.
+/// \param x1: Coordinada X del primer punt.
+/// \param y1: Coordinada Y del primer punt.
+/// \param x2: Coordinada X del segon punt.
+/// \param y2: Coordinada Y del segon punt.
+/// \return True si es visible.
+///
+bool Graphics::clipArea(
+    int &x1,
+    int &y1,
+    int &x2,
+    int &y2) const {
+
+	x1 = Math::max(x1, state.clipX1);
+	y1 = Math::max(y1, state.clipY1);
+	x2 = Math::min(x2, state.clipX2);
+	y2 = Math::min(y2, state.clipY2);
+
+	return (x1 <= x2) && (y1 <= y2);
 }
