@@ -26,8 +26,8 @@ using namespace app;
 DisplayService::DisplayService(
 	Application *application):
 
-	orientation(0),
-	AppLoopService(application) {
+	AppLoopService(application),
+	orientation(0) {
 }
 
 
@@ -67,6 +67,7 @@ void DisplayService::onLoop() {
     int filledRectanglesTicks;
     int circlesTicks;
     int filledCirclesTicks;
+    int ellipsesTicks;
 
     int seed = 0; //Task::getTickCount();
 
@@ -245,6 +246,26 @@ void DisplayService::onLoop() {
     filledCirclesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
 
+    // Ellipses
+    //
+    drawBackground("Ellipses");
+    Task::delay(250);
+
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
+    ticks = Task::getTickCount();
+    for (int i = 0; i < 250; i++) {
+        int x1 = rand() % screenWidth;
+        int y1 = rand() % screenHeight;
+        int x2 = rand() % screenWidth;
+        int y2 = rand() % screenHeight;
+
+        graphics->setColor(rand() & 0x00FFFFFF);
+        graphics->drawEllipse(x1, y1, x2, y2);
+    }
+    ellipsesTicks = Task::getTickCount() - ticks;
+    Task::delay(1000);
+
     // Show results
     //
     drawBackground("Results");
@@ -267,6 +288,8 @@ void DisplayService::onLoop() {
     sprintf(lineBuffer, "Circles       %d ms", circlesTicks * 2);
     graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "F. circles    %d ms", filledCirclesTicks * 2);
+    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    sprintf(lineBuffer, "Ellipses      %d ms", ellipsesTicks * 2);
     graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
 
     Task::delay(5000);

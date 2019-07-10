@@ -252,40 +252,40 @@ void Graphics::drawLine(
 		//
 		else {
 
-            int stepx, stepy;
+            int stepX, stepY;
             int p, incE, incNE;
 
-            int dx = x2 - x1;
-            int dy = y2 - y1;
+            int deltaX = x2 - x1;
+            int deltaY = y2 - y1;
 
-            if (dy < 0) {
-                dy = -dy;
-                stepy = -1;
+            if (deltaY < 0) {
+                deltaY = -deltaY;
+                stepY = -1;
             }
             else
-                stepy = 1;
+                stepY = 1;
 
-            if (dx < 0)  {
-                dx = -dx;
-                stepx = -1;
+            if (deltaX < 0)  {
+                deltaX = -deltaX;
+                stepX = -1;
             }
             else
-                stepx = 1;
+                stepX = 1;
 
             driver->setPixel(x1, y1, color);
 
             // Es mes gran el deplaçament X que el Y
             //
-            if (dx > dy) {
-                p = dy + dy - dx;
-                incE = dy << 1;
-                incNE = (dy - dx) << 1;
+            if (deltaX > deltaY) {
+                p = deltaY + deltaY - deltaX;
+                incE = deltaY << 1;
+                incNE = (deltaY - deltaX) << 1;
                 while (x1 != x2) {
-                    x1 += stepx;
+                    x1 += stepX;
                     if (p < 0)
                         p += incE;
                     else {
-                        y1 += stepy;
+                        y1 += stepY;
                         p += incNE;
                     }
                     driver->setPixel(x1, y1, color);
@@ -294,16 +294,16 @@ void Graphics::drawLine(
 
             // Es mes gran el deplaçament Y que el X
             //
-            else if (dx < dy) {
-                p = dx + dx - dy;
-                incE = dx << 1;
-                incNE = (dx - dy) << 1;
+            else if (deltaX < deltaY) {
+                p = deltaX + deltaX - deltaY;
+                incE = deltaX << 1;
+                incNE = (deltaX - deltaY) << 1;
                 while (y1 != y2) {
-                    y1 += stepy;
+                    y1 += stepY;
                     if (p < 0)
                         p += incE;
                     else {
-                        x1 += stepx;
+                        x1 += stepX;
                         p += incNE;
                     }
                     driver->setPixel(x1, y1, color);
@@ -314,8 +314,8 @@ void Graphics::drawLine(
             //
             else {
                 while (y1 != y2) {
-                    y1 += stepy;
-                    x1 += stepx;
+                    y1 += stepY;
+                    x1 += stepX;
                     driver->setPixel(x1, y1, color);
                 }
             }
@@ -456,6 +456,13 @@ void Graphics::drawEllipse(
 	int x2,
 	int y2) const {
 
+	// Normalitza les coordinades
+	//
+	if (x1 > x2)
+		Math::swap(x1, x2);
+	if (y1 > y2)
+		Math::swap(y1, y2);
+
 	// Transforma a coordinades fisiques
 	//
 	state.ct.apply(x1, y1);
@@ -463,51 +470,111 @@ void Graphics::drawEllipse(
 
 	// Obte el centre i els radis
 	//
-	int cx = (x1 + x2) >> 1;
-	int cy = (y1 + y2) >> 1;
-	int rx = (x2 - x1) >> 1;
-	int ry = (y2 - y1) >> 1;
+	int cx = (x1 + x2) / 2;
+	int cy = (y1 + y2) / 2;
+	int rx = (x2 - x1) / 2;
+	int ry = (y2 - y1) / 2;
 
-	int x = 0;
-	int y = -ry;
-	int err = 2 - (2 * rx);
+	// Precalcula els factors constants
+	//
+	int aa = 2 * rx * rx;
+	int bb = 2 * ry * ry;
 
-	int k = (rx << 16) / ry;
+	int x, y, error;
+	int changeX, changeY;
+	int stoppingX, stoppingY;
 
-	do {
+	// Genera el primer grup de punts
+	//
+	x = rx;
+	y = 0;
+	changeX = ry * ry * (1 - (rx * 2));
+	changeY = rx * rx;
+	error = 0;
+	stoppingX = bb * rx;
+	stoppingY = 0;
+
+	while (stoppingX >= stoppingY) {
+
 		int xx, yy;
-		int m = (x / k) >> 16;
 
-		xx = cx - m;
+		xx = cx + x;
 		yy = cy + y;
 		if (clipPoint(xx, yy))
 			driver->setPixel(xx, yy, color);
 
-	    xx = cx + m;
+	    xx = cx - x;
 	    yy = cy + y;
 		if (clipPoint(xx, yy))
 			driver->setPixel(xx, yy, color);
 
-		xx = cx + m;
+		xx = cx - x;
 		yy = cy - y;
 		if (clipPoint(xx, yy))
 			driver->setPixel(xx, yy, color);
 
-		xx = cx - m;
+		xx = cx + x;
 		yy = cy - y;
 		if (clipPoint(xx, yy))
 			driver->setPixel(xx, yy, color);
 
-		int e2 = err;
-		if (e2 <= x) {
-			err += (++x * 2) + 1;
-			if ((-y == x) && (e2 <= y))
-				e2 = 0;
+		y += 1;
+		stoppingY += aa;
+		error += changeY;
+		changeY += aa;
+	    if ((2 * error + changeX) > 0 ) {
+	    	x -= 1;
+	    	stoppingX -= bb;
+	    	error += changeX;
+	    	changeX += bb;
+	    }
+	}
+
+	// Genera el segon grup de punts
+	//
+	x = 0;
+	y = ry;
+	changeX = ry * ry;
+	changeY = rx * rx * (1 - (2 * ry));
+	error = 0;
+	stoppingX = 0;
+	stoppingY = aa * ry;
+
+	while (stoppingX <= stoppingY) {
+
+		int xx, yy;
+
+		xx = cx + x;
+		yy = cy + y;
+		if (clipPoint(xx, yy))
+			driver->setPixel(xx, yy, color);
+
+	    xx = cx - x;
+	    yy = cy + y;
+		if (clipPoint(xx, yy))
+			driver->setPixel(xx, yy, color);
+
+		xx = cx - x;
+		yy = cy - y;
+		if (clipPoint(xx, yy))
+			driver->setPixel(xx, yy, color);
+
+		xx = cx + x;
+		yy = cy - y;
+		if (clipPoint(xx, yy))
+			driver->setPixel(xx, yy, color);
+
+		x += 1;
+		stoppingX += bb;
+		error += changeX;
+		changeX += bb;
+		if ((2 * error + changeY) > 0) {
+			y -= 1;
+			stoppingY -= aa;
+			error += changeY;
+			changeY += aa;
 		}
-		if (e2 > y)
-			err += (++y) * 2 + 1;
-
-	} while (y <= 0);
+	}
 }
 
 
@@ -524,17 +591,17 @@ void Graphics::fillRectangle(
     int x2,
     int y2) const {
 
-	// Transforma les coordinades
-	//
-	state.ct.apply(x1, y1);
-	state.ct.apply(x2, y2);
-
-	// Normalitza els punts.
+	// Normalitza les coordinades.
 	//
     if (x1 > x2)
         Math::swap(x1, x2);
     if (y1 > y2)
         Math::swap(y1, y2);
+
+    // Transforma a coordinades fisiques.
+	//
+	state.ct.apply(x1, y1);
+	state.ct.apply(x2, y2);
 
     // Dibuixa el rectangle si es visible
     //
