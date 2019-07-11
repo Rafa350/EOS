@@ -1,5 +1,5 @@
-#ifndef __eosScreen__
-#define __eosScreen__
+#ifndef __eosLabel__
+#define __eosLabel__
 
 
 // EOS includes
@@ -13,24 +13,23 @@ namespace eos {
 
     class RenderContext;
 
-    class Screen: public Visual {
+    class Label: public Visual {
     	private:
     		Color color;
+    		char *text;
 
     	protected:
-            void onRender(RenderContext *context) override;
+    		void onRender(RenderContext *context) override;
 
-    	public:
-            Screen();
-
-            inline void addChild(Visual *visual) { addVisual(visual); }
-
+        public:
             void setColor(const Color &color);
+            void setText(const char *text);
 
             inline Color getColor() const { return color; }
+            inline char* getText() const { return text; }
     };
 
 }
 
 
-#endif // __eosScreen__
+#endif // __eosLabel__

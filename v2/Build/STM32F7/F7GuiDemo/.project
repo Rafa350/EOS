@@ -544,9 +544,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/eosBorder.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosBorder.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosGui.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGui.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/eosLabel.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosLabel.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosRenderContext.h</name>
@@ -632,6 +642,16 @@
 			<name>inc/Framework/EOS/System/Graphics/eosGraphics.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosGraphics.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosPoint.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosPoint.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosRect.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosRect.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosTransformation.h</name>
@@ -722,6 +742,11 @@
 			<name>src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/eosBorder.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosBorder.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/eosGui.cpp</name>

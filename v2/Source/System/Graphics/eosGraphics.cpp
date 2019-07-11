@@ -279,7 +279,7 @@ void Graphics::drawLine(
             if (deltaX > deltaY) {
                 p = deltaY + deltaY - deltaX;
                 incE = deltaY << 1;
-                incNE = (deltaY - deltaX) << 1;
+                incNE = (deltaY - deltaX) * 2;
                 while (x1 != x2) {
                     x1 += stepX;
                     if (p < 0)
@@ -297,7 +297,7 @@ void Graphics::drawLine(
             else if (deltaX < deltaY) {
                 p = deltaX + deltaX - deltaY;
                 incE = deltaX << 1;
-                incNE = (deltaX - deltaY) << 1;
+                incNE = (deltaX - deltaY) * 2;
                 while (y1 != y2) {
                     y1 += stepY;
                     if (p < 0)
@@ -832,9 +832,13 @@ bool Graphics::clipHLine(
 	int &x2,
 	int y) const {
 
+	// Descarta si es fora de l'area de visualitzacio
+	//
 	if ((y < state.clipY1) || (y > state.clipY2))
 		return false;
 
+	// Ajusta els punts d'interseccio
+	//
 	x1 = Math::max(state.clipX1, x1);
 	x2 = Math::min(x2, state.clipX2);
 
@@ -856,6 +860,8 @@ bool Graphics::clipLine(
     int &x2,
     int &y2) const {
 
+	// La descarta si es fora de l'area de visualitzacio
+	//
     if (((x1 < state.clipX1) && (x2 < state.clipX1)) ||
         ((x1 > state.clipX2) && (x2 > state.clipX2)) ||
         ((y1 < state.clipY1) && (y2 < state.clipY1)) ||
@@ -877,10 +883,15 @@ bool Graphics::clipLine(
     if (!clipTest(dy, state.clipY2 - y1, t1, t2))
         return false;
 
+    // Ajusta el punt d'interseccio x2, y2
+    //
     if (t2 < (1 << 16)) {
         x2 = x1 + ((t2 * dx) >> 16);
         y2 = y1 + ((t2 * dy) >> 16);
     }
+
+    // Ajusta el punt d'interseccio x1, y1
+    //
     if (t1 > 0) {
         x1 = x1 + ((t1 * dx) >> 16);
         y1 = y1 + ((t1 * dy) >> 16);

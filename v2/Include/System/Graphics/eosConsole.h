@@ -12,18 +12,24 @@ namespace eos {
 	class Console {
 		private:
 			Graphics *graphics;
-			unsigned rows;
-			unsigned columns;
-			unsigned row;
-			unsigned column;
+			int x;
+			int y;
+			int width;
+			int height;
+			int cx;
+			int cy;
+			int state;
 
 		public:
-			Console(Graphics *graphics, unsigned columnss, unsigned rows);
+			Console(Graphics *graphics, int x, int y, int width, int height);
+			void clear();
 			void home();
-			void moveTo(unsigned column, unsigned row);
+			void moveTo(int x, int y);
+			void put(char ch);
+			void put(const char *s, int offset, int length);
 
-			inline unsigned getColumn() const { return column; }
-			inline unsigned getRow() const { return row; }
+			inline int getX() const { return x; }
+			inline int getY() const { return y; }
 	};
 }
 

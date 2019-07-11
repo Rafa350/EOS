@@ -17,7 +17,7 @@ Transformation::Transformation() {
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor copia.
-/// \param[in] t: La transformacio a copiar.
+/// \param t: La transformacio a copiar.
 ///
 Transformation::Transformation(
     const Transformation &t) {
@@ -28,12 +28,12 @@ Transformation::Transformation(
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor. Creacio a partir dels seus components.
-/// \param[in] m11: Component m11.
-/// \param[in] m12: Component m12.
-/// \param[in] m21: Component m21.
-/// \param[in] m22: Component m22.
-/// \param[in] tx: Component tx.
-/// \param[in] ty: Component ty.
+/// \param m11: Component m11.
+/// \param m12: Component m12.
+/// \param m21: Component m21.
+/// \param m22: Component m22.
+/// \param tx: Component tx.
+/// \param ty: Component ty.
 ///
 Transformation::Transformation(
     int m11,
@@ -59,7 +59,7 @@ Transformation::Transformation(
 
 /// ----------------------------------------------------------------------
 /// \brief Contructor. Creacio a partir d'una matriu.
-/// \param[in] m: Matriu inicial.
+/// \param m: Matriu inicial.
 ///
 Transformation::Transformation(
 	const Matrix &m) {
@@ -89,8 +89,8 @@ void Transformation::identity() {
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix una translacio a la matriu.
-/// \param[in] tx: Component X de la translacio.
-/// \param[in] ty: Component Y de la translacio.
+/// \param tx: Component X de la translacio.
+/// \param ty: Component Y de la translacio.
 ///
 void Transformation::translate(
 	int tx,
@@ -117,8 +117,8 @@ void Transformation::translate(
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix una escalat a la matriu.
-/// \param[in] sx: Escalat en el eix X.
-/// \param[in] sy: Escalat en el eix Y.
+/// \param sx: Escalat en el eix X.
+/// \param sy: Escalat en el eix Y.
 ///
 void Transformation::scale(
 	int sx,
@@ -145,10 +145,10 @@ void Transformation::scale(
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix un escalat respecte a un punt.
-/// \param[in] sx: Escalat en el eix X.
-/// \param[in] sy: Escalat en el eix Y.
-/// \param[in] ox: Coordinada X de l'origen del escalat.
-/// \param[in] oy: Coordinada Y de l'origen del escalat.
+/// \param sx: Escalat en el eix X.
+/// \param sy: Escalat en el eix Y.
+/// \param ox: Coordinada X de l'origen del escalat.
+/// \param oy: Coordinada Y de l'origen del escalat.
 ///
 void Transformation::scale(
 	int sx,
@@ -191,7 +191,7 @@ void Transformation::rotate(
 
 /// ----------------------------------------------------------------------
 /// \bried Combina amb un altre matriu.
-/// \param[in] t: La transformacio per combinar.
+/// \param t: La transformacio per combinar.
 ///
 void Transformation::combine(
 	const Transformation &t) {
@@ -220,9 +220,9 @@ void Transformation::apply(
 
 /// ----------------------------------------------------------------------
 /// \brief Operador '*'.
-/// \param[in] t: La transformacio a asignar.
+/// \param t: La transformacio a asignar.
 ///
-Transformation & Transformation::operator = (
+Transformation& Transformation::operator = (
     const Transformation &t) {
 
 	memcpy(m, t.m, sizeof(Matrix));
@@ -232,7 +232,7 @@ Transformation & Transformation::operator = (
 
 /// ----------------------------------------------------------------------
 /// \brief Operador '*'.
-/// \param[in] t: La transformacio per multiplicar.
+/// \param t: La transformacio per multiplicar.
 ///
 Transformation Transformation::operator *(
 	const Transformation &t) {
@@ -246,7 +246,7 @@ Transformation Transformation::operator *(
 
 /// ----------------------------------------------------------------------
 /// \brief Operador '*='.
-/// \param[in] t: La transformacio per multiplicar.
+/// \param t: La transformacio per multiplicar.
 ///
 Transformation& Transformation::operator *=(
 	const Transformation &t) {
