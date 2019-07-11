@@ -65,9 +65,8 @@ void DisplayService::onLoop() {
     int linesTicks;
     int rectanglesTicks;
     int filledRectanglesTicks;
-    int circlesTicks;
-    int filledCirclesTicks;
     int ellipsesTicks;
+    int filledEllipsesTicks;
 
     int seed = 0; //Task::getTickCount();
 
@@ -108,7 +107,7 @@ void DisplayService::onLoop() {
         graphics->drawPoint(x, y);
     }
 
-    //Task::delay(500);
+    Task::delay(250);
 
     // Vertical lines
     //
@@ -118,7 +117,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 250; i++) {
         int x = rand() % screenWidth;
         int y1 = rand() % screenHeight;
         int y2 = rand() % screenHeight;
@@ -137,7 +136,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 250; i++) {
         int x1 = rand() % screenWidth;
         int x2 = rand() % screenWidth;
         int y = rand() % screenHeight;
@@ -156,7 +155,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 250; i++) {
         int x1 = rand() % screenWidth;
         int y1 = rand() % screenHeight;
         int x2 = rand() % screenWidth;
@@ -176,7 +175,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 250; i++) {
+    for (int i = 0; i < 200; i++) {
         int x1 = rand() % screenWidth;
         int y1 = rand() % screenHeight;
         int x2 = rand() % screenWidth;
@@ -196,7 +195,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 250; i++) {
+    for (int i = 0; i < 200; i++) {
         int x1 = rand() % screenWidth;
         int y1 = rand() % screenHeight;
         int x2 = x1 + rand() % 100;
@@ -210,60 +209,52 @@ void DisplayService::onLoop() {
 
     // Circles
     //
-    drawBackground("Circles");
-    Task::delay(250);
-
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
-    graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-    ticks = Task::getTickCount();
-    for (int i = 0; i < 250; i++) {
-        int cx = rand() % screenWidth;
-        int cy = rand() % screenHeight;
-        int r = rand() % 150;
-
-        graphics->setColor(rand() & 0x00FFFFFF);
-        graphics->drawCircle(cx, cy, r);
-    }
-    circlesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
-
-    // Filled circles
-    //
-    drawBackground("Filled circles");
-    Task::delay(250);
-
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
-    graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-    ticks = Task::getTickCount();
-    for (int i = 0; i < 250; i++) {
-        int cx = rand() % screenWidth;
-        int cy = rand() % screenHeight;
-        int r = rand() % 50;
-
-        graphics->setColor(rand() & 0x00FFFFFF);
-        graphics->fillCircle(cx, cy, r);
-    }
-    filledCirclesTicks = Task::getTickCount() - ticks;
-    Task::delay(1000);
-
-    // Ellipses
-    //
     drawBackground("Ellipses");
     Task::delay(250);
 
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 250; i++) {
-        int x1 = rand() % screenWidth;
-        int y1 = rand() % screenHeight;
-        int x2 = rand() % screenWidth;
-        int y2 = rand() % screenHeight;
+    for (int i = 0; i < 200; i++) {
+        int cx = rand() % screenWidth;
+        int cy = rand() % screenHeight;
+        int r = rand() % 150;
 
         graphics->setColor(rand() & 0x00FFFFFF);
-        graphics->drawEllipse(x1, y1, x2, y2);
+
+        if (r > 1) {
+#if 1
+        	graphics->drawEllipse(cx - r, cy - r, cx + r, cy + r);
+#else
+            graphics->drawCircle(cx, cy, r);
+#endif
+        }
     }
     ellipsesTicks = Task::getTickCount() - ticks;
+    Task::delay(1000);
+
+    // Filled circles
+    //
+    drawBackground("Filled ellipses");
+    Task::delay(250);
+
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
+    ticks = Task::getTickCount();
+    for (int i = 0; i < 200; i++) {
+        int cx = rand() % screenWidth;
+        int cy = rand() % screenHeight;
+        int r = rand() % 50;
+
+        graphics->setColor(rand() & 0x00FFFFFF);
+        if (r > 1)
+#if 1
+        	graphics->fillEllipse(cx - r, cy - r, cx + r, cy + r);
+#else
+        	graphics->fillCircle(cx, cy, r);
+#endif
+    }
+    filledEllipsesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
 
     // Show results
@@ -285,11 +276,9 @@ void DisplayService::onLoop() {
     graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "F. rectangles %d ms", filledRectanglesTicks * 2);
     graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "Circles       %d ms", circlesTicks * 2);
-    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
-    sprintf(lineBuffer, "F. circles    %d ms", filledCirclesTicks * 2);
-    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "Ellipses      %d ms", ellipsesTicks * 2);
+    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    sprintf(lineBuffer, "F. ellipses   %d ms", filledEllipsesTicks * 2);
     graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
 
     Task::delay(5000);

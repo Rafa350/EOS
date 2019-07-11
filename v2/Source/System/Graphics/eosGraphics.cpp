@@ -372,78 +372,6 @@ void Graphics::drawTriangle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un cercle buit.
-/// \param cx: Coordinada X del centre.
-/// \param cy: Coordinada Y del centre.
-/// \param r: Radi del cercle.
-///
-void Graphics::drawCircle(
-    int cx,
-    int cy,
-    int r) const {
-
-	state.ct.apply(cx, cy);
-
-	int x = r;
-    int y = 0;
-    int d = 1 - x;
-
-    while (y <= x) {
-
-    	int xx, yy;
-
-    	xx = cx + x;
-    	yy = cy + y;
-    	if (clipPoint(xx, yy))
-    		driver->setPixel(cx + x, cy + y, color);
-
-    	xx = cx - x;
-    	yy = cy + y;
-    	if (clipPoint(xx, yy))
-    		driver->setPixel(cx - x, cy + y, color);
-
-    	xx = cx - x;
-    	yy = cy - y;
-    	if (clipPoint(xx, yy))
-    		driver->setPixel(cx - x, cy - y, color);
-
-    	xx = cx + x;
-    	yy = cy - y;
-    	if (clipPoint(xx, yy))
-    		driver->setPixel(cx + x, cy - y, color);
-
-    	xx = cx + y;
-    	yy = cy + x;
-    	if (clipPoint(xx, yy))
-    		driver->setPixel(cx + y, cy + x, color);
-
-    	xx = cx - y;
-    	yy = cy + x;
-    	if (clipPoint(xx, yy))
-    		driver->setPixel(cx - y, cy + x, color);
-
-    	xx = cx - y;
-    	yy = cy - x;
-    	if (clipPoint(xx, yy))
-    		driver->setPixel(cx - y, cy - x, color);
-
-    	xx = cx + y;
-    	yy = cy - x;
-    	if (clipPoint(xx, yy))
-    		driver->setPixel(cx + y, cy - x, color);
-
-        y++;
-        if (d <= 0)
-            d += 2 * y + 1;
-        else {
-            x--;
-            d += 2 * (y - x) + 1;
-        }
-    }
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Dibuixa una el·lipse buida inscrita en un rectangle.
 /// \param x1: Coordinada X del primer punt.
 /// \param y1: Coordinada Y del primer punt.
@@ -456,17 +384,17 @@ void Graphics::drawEllipse(
 	int x2,
 	int y2) const {
 
+	// Transforma a coordinades fisiques
+	//
+	state.ct.apply(x1, y1);
+	state.ct.apply(x2, y2);
+
 	// Normalitza les coordinades
 	//
 	if (x1 > x2)
 		Math::swap(x1, x2);
 	if (y1 > y2)
 		Math::swap(y1, y2);
-
-	// Transforma a coordinades fisiques
-	//
-	state.ct.apply(x1, y1);
-	state.ct.apply(x2, y2);
 
 	// Obte el centre i els radis
 	//
@@ -591,17 +519,17 @@ void Graphics::fillRectangle(
     int x2,
     int y2) const {
 
+    // Transforma a coordinades fisiques.
+	//
+	state.ct.apply(x1, y1);
+	state.ct.apply(x2, y2);
+
 	// Normalitza les coordinades.
 	//
     if (x1 > x2)
         Math::swap(x1, x2);
     if (y1 > y2)
         Math::swap(y1, y2);
-
-    // Transforma a coordinades fisiques.
-	//
-	state.ct.apply(x1, y1);
-	state.ct.apply(x2, y2);
 
     // Dibuixa el rectangle si es visible
     //
@@ -611,60 +539,121 @@ void Graphics::fillRectangle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un cercle omplert.
-/// \param cx: Coordinada X del centre.
-/// \param cy: Coordinada Y del centre.
-/// \param r: Radi del cercle.
+/// \brief Dibuixa una el·lipse plena inscrita en un rectangle.
+/// \param x1: Coordinada X del primer punt.
+/// \param y1: Coordinada Y del primer punt.
+/// \param x2: Coordinada X del segon punt.
+/// \param y2: Coordinada Y del segon punt.
 ///
-void Graphics::fillCircle(
-    int cx,
-    int cy,
-    int r) const {
+void Graphics::fillEllipse(
+	int x1,
+	int y1,
+	int x2,
+	int y2) const {
 
-	// TODO: Que pasa amb les rotacions i l'escalat amb el radi?
+	// Transforma a coordinades fisiques
+	//
+	state.ct.apply(x1, y1);
+	state.ct.apply(x2, y2);
 
-	state.ct.apply(cx, cy);
+	// Normalitza les coordinades
+	//
+	if (x1 > x2)
+		Math::swap(x1, x2);
+	if (y1 > y2)
+		Math::swap(y1, y2);
 
-	int x = r;
-    int y = 0;
-    int d = 1 - x;
+	// Obte el centre i els radis
+	//
+	int cx = (x1 + x2) / 2;
+	int cy = (y1 + y2) / 2;
+	int rx = (x2 - x1) / 2;
+	int ry = (y2 - y1) / 2;
 
-    while (y <= x) {
+	// Precalcula els factors constants
+	//
+	int aa = 2 * rx * rx;
+	int bb = 2 * ry * ry;
 
-    	int xx1, xx2, yy;
+	int x, y, error;
+	int changeX, changeY;
+	int stoppingX, stoppingY;
 
-    	xx1 = cx - x;
-    	xx2 = cx + x;
-    	yy = cy - y;
-    	if (clipHLine(xx1, xx2, yy))
-    		driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+	// Genera el primer grup de punts
+	//
+	x = rx;
+	y = 0;
+	changeX = ry * ry * (1 - (rx * 2));
+	changeY = rx * rx;
+	error = 0;
+	stoppingX = bb * rx;
+	stoppingY = 0;
 
-        xx1 = cx - x;
-    	xx2 = cx + x;
-        yy = cy + y;
-    	if (clipHLine(xx1, xx2, yy))
-    		driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+	while (stoppingX >= stoppingY) {
 
-        xx1 = cx - y;
-    	xx2 = cx + y;
-        yy = cy - x;
-    	if (clipHLine(xx1, xx2, yy))
-    		driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+		int xx1, xx2, yy;
 
-        xx1 = cx - y;
-    	xx2 = cx + y;
-        yy = cy + x;
-    	if (clipHLine(xx1, xx2, yy))
-    		driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+		xx1 = cx - x;
+	    xx2 = cx + x;
+		yy = cy + y;
+		if (clipHLine(xx1, xx2, yy))
+			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
 
-        y++;
-        if (d <= 0)
-            d += 2 * y + 1;
-        else {
-            x--;
-            d += 2 * (y - x) + 1;
-        }
-    }
+		xx1 = cx - x;
+		xx2 = cx + x;
+		yy = cy - y;
+		if (clipHLine(xx1, xx2, yy))
+			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+
+		y += 1;
+		stoppingY += aa;
+		error += changeY;
+		changeY += aa;
+	    if ((2 * error + changeX) > 0 ) {
+	    	x -= 1;
+	    	stoppingX -= bb;
+	    	error += changeX;
+	    	changeX += bb;
+	    }
+	}
+
+	// Genera el segon grup de punts
+	//
+	x = 0;
+	y = ry;
+	changeX = ry * ry;
+	changeY = rx * rx * (1 - (2 * ry));
+	error = 0;
+	stoppingX = 0;
+	stoppingY = aa * ry;
+
+	while (stoppingX <= stoppingY) {
+
+		int xx1, xx2, yy;
+
+		xx1 = cx - x;
+	    xx2 = cx + x;
+		yy = cy + y;
+		if (clipHLine(xx1, xx2, yy))
+			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+
+		xx1 = cx - x;
+		xx2 = cx + x;
+		yy = cy - y;
+		if (clipHLine(xx1, xx2, yy))
+			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+
+		x += 1;
+		stoppingX += bb;
+		error += changeX;
+		changeX += bb;
+		if ((2 * error + changeY) > 0) {
+			y -= 1;
+			stoppingY -= aa;
+			error += changeY;
+			changeY += aa;
+		}
+	}
 }
 
 
@@ -837,6 +826,11 @@ bool Graphics::clipHLine(
 	if ((y < state.clipY1) || (y > state.clipY2))
 		return false;
 
+	// Normalitza les coordinades
+	//
+	if (x1 > x2)
+		Math::swap(x1, x2);
+
 	// Ajusta els punts d'interseccio
 	//
 	x1 = Math::max(state.clipX1, x1);
@@ -959,6 +953,15 @@ bool Graphics::clipArea(
     int &x2,
     int &y2) const {
 
+	// Normalitza les coordinades
+	//
+	if (x1 > x2)
+		Math::swap(x1, x2);
+	if (y1 > y2)
+		Math::swap(y1, y2);
+
+	// Calcula la interseccio
+	//
 	x1 = Math::max(x1, state.clipX1);
 	y1 = Math::max(y1, state.clipY1);
 	x2 = Math::min(x2, state.clipX2);
