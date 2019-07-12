@@ -2,19 +2,6 @@
 #define __board_SMT32F429I_DISC1__
 
 
-// ----------------------------------------------------------------------
-//
-// Hardware: STM32F429I-DISC1
-//
-// ----------------------------------------------------------------------
-
-
-// Configuracio del sistema
-//
-//#define CLOCK_SYSTEM_HZ           80000000
-//#define CLOCK_PERIPHERICAL_HZ     (CLOCK_SYSTEM_HZ / 1)
-
-
 // -----------------------------------------------------------------------
 // Indicadors LED
 // -----------------------------------------------------------------------
@@ -126,7 +113,8 @@
 
 // Parametres del controlador
 //
-#define DISPLAY_DRV_ILI9341LTDC        // Driver
+#define DISPLAY_DRV_ILI9341LTDC        // Driver ILI9341-RGB
+//#define DISPLAY_DRV_ILI9341            // Driver ILI9341
 
 
 // -----------------------------------------------------------------------
