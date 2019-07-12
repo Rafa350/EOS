@@ -715,7 +715,7 @@ int Graphics::drawChar(
                 for (int cx = 0; cx < ci.width; cx++)
                     if (ci.bitmap[d + (cx / 8)] & (((uint8_t)0x80) >> (cx % 8)))
                         drawPoint(x + cx, y + cy);
-                }
+            }
         }
 
         return ci.advance;

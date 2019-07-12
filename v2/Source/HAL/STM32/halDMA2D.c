@@ -15,12 +15,12 @@ void halDMA2DInitialize(void) {
 
 /// ----------------------------------------------------------------------
 /// \brief Ompla una regio amb un color.
-/// \param[in] addr: Adressa del primer pixel del desti.
-/// \param[in] width: Amplada de la regio.
-/// \param[in] height: Alçáda de la regio.
-/// \param[in] pitch: Offset entre linies.
-/// \param[in] options: Opcions
-/// \param[in] color: Color per omplir.
+/// \param addr: Adressa del primer pixel del desti.
+/// \param width: Amplada de la regio.
+/// \param height: Alçáda de la regio.
+/// \param pitch: Offset entre linies.
+/// \param options: Opcions
+/// \param color: Color per omplir.
 ///
 void halDMA2DStartFill(
 	int addr,
@@ -65,12 +65,12 @@ void halDMA2DStartFill(
 
 /// ----------------------------------------------------------------------
 /// \brief Copia una regio.
-/// \param[in] addr: Adresa del primer pixel del desti.
-/// \param[in] width: Amplada de la regio.
-/// \param[in] height: Alçada de la regio.
-/// \param[in] pitch: Offset entre linies.
-/// \param[in] options: Opcions.
-/// \param[in] srcAddr: Adressa del primer pixel del origen.
+/// \param addr: Adresa del primer pixel del desti.
+/// \param width: Amplada de la regio.
+/// \param height: Alçada de la regio.
+/// \param pitch: Offset entre linies.
+/// \param options: Opcions.
+/// \param srcAddr: Adressa del primer pixel del origen.
 ///
 void halDMA2DStartCopy(
 	int addr,
