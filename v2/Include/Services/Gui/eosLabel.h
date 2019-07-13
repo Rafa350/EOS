@@ -16,17 +16,19 @@ namespace eos {
     class Label: public Visual {
     	private:
     		Color color;
-    		char *text;
+    		const char *text;
 
     	protected:
     		void onRender(RenderContext *context) override;
 
         public:
+    		Label();
+
             void setColor(const Color &color);
             void setText(const char *text);
 
             inline Color getColor() const { return color; }
-            inline char* getText() const { return text; }
+            inline const char* getText() const { return text; }
     };
 
 }

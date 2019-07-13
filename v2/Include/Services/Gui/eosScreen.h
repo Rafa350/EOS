@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Services/Gui/eosVisual.h"
+#include "Services/Gui/eosPanel.h"
 #include "System/Graphics/eosColor.h"
 
 
@@ -13,7 +13,7 @@ namespace eos {
 
     class RenderContext;
 
-    class Screen: public Visual {
+    class Screen: public Panel {
     	private:
     		Color color;
 
@@ -23,10 +23,7 @@ namespace eos {
     	public:
             Screen();
 
-            inline void addChild(Visual *visual) { addVisual(visual); }
-
             void setColor(const Color &color);
-
             inline Color getColor() const { return color; }
     };
 

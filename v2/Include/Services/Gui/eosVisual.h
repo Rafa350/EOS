@@ -29,12 +29,12 @@ namespace eos {
     	protected:
     		virtual void onRender(RenderContext *context) = 0;
 
+    		void addVisual(Visual *visual);
+            void removeVisual(Visual *visual);
+
         public:
     		Visual();
     		virtual ~Visual();
-
-            void addVisual(Visual *visual);
-            void removeVisual(Visual *visual);
 
             inline Visual *getParent() const { return parent; }
             inline Visual *getFirstChild() const { return firstChild; }
