@@ -77,22 +77,18 @@ void Graphics::setFont(
 
 
 /// ----------------------------------------------------------------------
-/// \bried Selecciona la regio de retall.
+/// \brief Selecciona la regio de retall.
 /// \param x1: Coordinada X esquerra.
 /// \param y1: Coodinada Y superior.
 /// \param x2: Coordinada X dreta.
 /// \param y2: Coordinada Y inferior.
+/// \remarks Utilitza les coordinades fisiques.
 ///
 void Graphics::setClip(
     int x1,
     int y1,
     int x2,
     int y2) {
-
-	// Transforma a coordinades fisiques
-	//
-	state.ct.apply(x1, y1);
-	state.ct.apply(x2, y2);
 
 	// Normalitzacio de coordinades
 	//

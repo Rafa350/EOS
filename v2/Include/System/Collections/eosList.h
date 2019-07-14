@@ -6,8 +6,8 @@
 
 
 namespace eos {
-    
-    /// \brief Llista generica implementada com array de bytes. 
+
+    /// \brief Llista generica implementada com array de bytes.
     //
     class GenericList {
         private:
@@ -20,10 +20,10 @@ namespace eos {
         private:
             void *getPtr(unsigned index) const;
             void resize(unsigned newCapacity);
-    
+
         public:
             virtual ~GenericList();
-            
+
         protected:
             GenericList(unsigned size, unsigned initialCapacity);
             GenericList(const GenericList &list);
@@ -39,7 +39,7 @@ namespace eos {
             unsigned indexOf(const void *element) const;
             bool isEmpty() const { return count > 0; }
     };
-        
+
     /// \brief Interface generaic per les llistes
     ///
     template <typename T>
@@ -50,7 +50,7 @@ namespace eos {
     		virtual unsigned getCount() const = 0;
     		virtual bool isEmpty() const = 0;
     };
-    
+
     /// \brief Llista d'elements.
     ///
     template <typename T>
@@ -61,71 +61,71 @@ namespace eos {
             List() :
                 GenericList(sizeof(T), 10) {
             }
-                
+
             /// \brief Contructor copia.
             ///
             List(const GenericList &list) :
-                GenericList(list) {                
+                GenericList(list) {
             }
-            
+
             /// \brief Afegeix un element a la llista
             /// \param element: Referencia al element a afeigir
             ///
             inline void add(const T &element) override {
-                
+
                 GenericList::addBack(&element);
             }
 
             /// \brief Elimina un element de la llista
             /// \param index: El index del element.
             inline void removeAt(unsigned index) {
-                
+
                 GenericList::removeAt(index);
             }
-            
+
             /// \brief Elimina un element de la llista
-            /// \param index: El index del element.
+            /// \param element: L'element a eliminar.
             inline void remove(const T &element) {
-                
+
                 GenericList::removeAt(indexOf(element));
             }
 
             /// \brief Elimina tots els elements de la llista.
             ///
             inline void clear() {
-                
+
                 GenericList::clear();
             }
-            
+
             /// \brief Obte l'index del element especificat.
             /// \param element: El element.
             ///
             inline unsigned indexOf(const T &element) const {
-                
+
                 return GenericList::indexOf(&element);
             }
-            
+
             /// \brief Obte el numero d'elements en la llista
             /// \return El numero d'elements en la llista.
             ///
             inline unsigned getCount() const override {
-                
+
                 return GenericList::getCount();
             }
-            
+
             /// \brief Comprova si es buida.
             /// \return True si la llista es buida.
             ///
             inline bool isEmpty() const override {
-            
+
                 return GenericList::getCount() == 0;
             }
-            
+
             /// \brief Obte el primer element de la llista
             /// \return El primer element
             ///
             inline T &getFront() const {
-                
+
                 return *((T*) GenericList::get(0));
             }
 
@@ -134,11 +134,11 @@ namespace eos {
             /// \return Referencia al element.
             ///
             inline T &operator[](unsigned index) {
-                
+
                 return *((T*) GenericList::get(index));
             }
     };
-    
+
     /// \brief Iterator de llistes
     ///
     template <typename T>
@@ -147,7 +147,7 @@ namespace eos {
             List<T> &list;
             unsigned index;
             unsigned count;
-            
+
         public:
             /// \brief: Contructor.
             /// \param: list: La llista a iterar.
@@ -156,60 +156,60 @@ namespace eos {
                 list(_list),
                 index(0),
                 count(_list.getCount()) {
-            }                                        
-                
+            }
+
             /// \brief Pasa al primer element.
             ///
-            inline void first() { 
-                
-                index = 0; 
+            inline void first() {
+
+                index = 0;
             }
-            
+
             /// \brief Pasa al ultim element.
             ///
-            inline void last() { 
-                
-                index = count - 1; 
+            inline void last() {
+
+                index = count - 1;
             }
-            
+
             /// \brief Comprova si hi ha un element posterior a l'actual.
             /// \return Resultat de l'operacio.
             ///
-            inline bool hasNext() const { 
-                
-                return index < count; 
+            inline bool hasNext() const {
+
+                return index < count;
             }
-            
+
             /// \brief Comprova si hi ha un element previ a l'actual
             /// \return Resultat de l'operacio.
             ///
-            inline bool hasPrev() const { 
-                
-                return index > 0; 
+            inline bool hasPrev() const {
+
+                return index > 0;
             }
-            
+
             /// \brief Obte el element actual.
             /// \return L'element actual
             ///
-            inline T &current() const { 
-                
-                return list[index]; 
+            inline T &current() const {
+
+                return list[index];
             }
-            
+
             /// \brief Pasa al seguent element.
             ///
             inline void next() {
-                
+
                 index++;
             }
-            
+
             /// \brief Pasa a l'element anterior.
             ///
             inline void prev() {
-                
+
                 index--;
             }
-            
+
         private:
             ListIterator(const ListIterator &iterator) = delete;
     };

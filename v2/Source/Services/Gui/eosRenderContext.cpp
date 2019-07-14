@@ -4,6 +4,9 @@
 #include "Services/Gui/eosVisual.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosGraphics.h"
+#include "System/Graphics/eosPoint.h"
+#include "System/Graphics/eosRect.h"
+#include "System/Graphics/eosSize.h"
 #include "System/Graphics/eosTransformation.h"
 
 
@@ -34,21 +37,16 @@ Graphics *RenderContext::beginRender(
 	eosAssert(visual != nullptr);
 	eosAssert(graphics != nullptr);
 
-	// Obte la posicio absoluta del widged.
+	// Selecciona el rectangle de retall
 	//
-	int x, y;
-	visual->getAbsolutePosition(x, y);
+	graphics->setClip(getClip(visual));
 
 	// Aplica una translacio per situar l'origen de coordinades, al origen
 	// del widged
 	//
 	Transformation t;
-	t.translate(x, y);
+	t.translate(getPosition(visual));
 	graphics->setTransformation(t);
-
-	// Asigna l'area de retall, a l'area del widged.
-	//
-	graphics->setClip(0, 0, visual->getWidth() - 1, visual->getHeight() - 1);
 
 	return graphics;
 }
@@ -59,4 +57,42 @@ Graphics *RenderContext::beginRender(
 ///
 void RenderContext::endRender() {
 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief La posicio d'un element visual.
+/// \param visual: L'element visual.
+/// \return La posicio.
+///
+Point RenderContext::getPosition(
+	Visual *visual) const {
+
+	eosAssert(visual != nullptr);
+
+	Point p;
+	for (Visual *v = visual; v != nullptr; v = v->getParent())
+		p = p.offset(v->getPosition());
+
+	return p;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el rectangle de retall d'un element visual.
+/// \param visual: L'element visual.
+/// \return El rectangle de retall.
+///
+Rect RenderContext::getClip(
+	Visual *visual) const {
+
+	eosAssert(visual != nullptr);
+
+	Rect clip(0, 0, INT32_MAX, INT32_MAX);
+	for (Visual *v = visual; v != nullptr; v = v->getParent()) {
+		Rect r(getPosition(v), v->getSize());
+		clip = clip.intersect(r);
+	}
+
+	return clip;
 }

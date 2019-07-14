@@ -19,10 +19,8 @@ Visual::Visual():
 	numChilds(0),
 	needRender(true),
 	visible(true),
-	x(0),
-	y(0),
-	width(0),
-	height(0) {
+	position(0, 0),
+	size(0, 0) {
 }
 
 
@@ -56,7 +54,7 @@ void Visual::invalidate() {
 
 /// ----------------------------------------------------------------------
 /// \brief Renderitza el visual.
-/// \param[in] context: El context de renderitzat.
+/// \param context: El context de renderitzat.
 ///
 void Visual::render(
 	RenderContext *context) {
@@ -83,7 +81,7 @@ void Visual::render(
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix un visual.
-/// \param[in] visual: L'objecte Visual a afeigir.
+/// \param visual: L'objecte Visual a afeigir.
 ///
 void Visual::addVisual(
 	Visual *visual) {
@@ -112,7 +110,7 @@ void Visual::addVisual(
 
 /// ----------------------------------------------------------------------
 /// \brief Elimina un visual.
-/// \param[in] visual: L'objecte Visual a eliminar.
+/// \param visual: L'objecte Visual a eliminar.
 ///
 void Visual::removeVisual(
 	Visual *visual) {
@@ -142,7 +140,7 @@ void Visual::removeVisual(
 
 /// ----------------------------------------------------------------------
 /// \brief Canvia l'estat de visibilitat.
-/// \param[in] visible: True per fer el visual visible.
+/// \param visible: True per fer el visual visible.
 ///
 void Visual::setVisible(
 	bool visible) {
@@ -156,66 +154,16 @@ void Visual::setVisible(
 	}
 }
 
-/// ----------------------------------------------------------------------
-/// \brief Obte la coordinada X absoluta de la posicio.
-/// \return La coordinada X.
-///
-int Visual::getAbsoluteX() const {
-
-	int x = 0;
-
-	for (const Visual *v = this; v != nullptr; v = v->parent)
-		x += v->x;
-
-	return x;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte la coordinada Y absoluta de la posicio.
-/// \return La coordinada Y.
-///
-int Visual::getAbsoluteY() const {
-
-	int y = 0;
-
-	for (const Visual *v = this; v != nullptr; v = v->parent)
-		y += v->y;
-
-	return y;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte la posicio absoluta.
-/// \param[out] x: La coordinada X de la posicio.
-/// \param[out] y: La coordinada Y de la posicio.
-///
-void Visual::getAbsolutePosition(
-	int &x,
-	int &y) const {
-
-	x = 0;
-	y = 0;
-	for (const Visual *v = this; v != nullptr; v = v->parent) {
-		x += v->x;
-		y += v->y;
-	}
-}
-
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna la posicio.
-/// \param[in] x: Coordinada X de la posicio.
-/// \param[in] y: Coordinada Y de la posicio.
+/// \param p: Coordinades de la posicio.
 ///
 void Visual::setPosition(
-	int x,
-	int y) {
+	const Point &p) {
 
-	if ((this->x != x) || (this->y != y)) {
-		this->x = x;
-		this->y = y;
+	if (position != p) {
+		position = p;
 		Visual *parent = getParent();
 		if (parent)
 			parent->invalidate();
@@ -227,16 +175,14 @@ void Visual::setPosition(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna el tamany.
-/// \param[in] width: Amplada.
-/// \param[in] height: Alçada.
+/// \param width: Amplada.
+/// \param height: Alçada.
 ///
 void Visual::setSize(
-	int width,
-	int height) {
+	const Size &s) {
 
-    if ((this->width != width) || (this->height != height)) {
-    	this->width = width;
-    	this->height = height;
+    if (size != s) {
+    	size = s;
     	Visual *parent = getParent();
 		if (parent)
 			parent->invalidate();

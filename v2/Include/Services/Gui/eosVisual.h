@@ -5,6 +5,9 @@
 // EOS includes
 //
 #include "eos.h"
+#include "System/Graphics/eosPoint.h"
+#include "System/Graphics/eosRect.h"
+#include "System/graphics/eosSize.h"
 
 
 namespace eos {
@@ -21,10 +24,8 @@ namespace eos {
     		unsigned numChilds;
     		bool needRender;
     		bool visible;
-    		int x;
-    		int y;
-    		int width;
-    		int height;
+    		Point position;
+			Size size;
 
     	protected:
     		virtual void onRender(RenderContext *context) = 0;
@@ -47,17 +48,12 @@ namespace eos {
             inline bool isVisible() const { return visible; }
             void setVisible(bool visible);
 
-            void setPosition(int x, int y);
-            void setSize(int width, int height);
-            inline int getX() const { return x; }
-            inline int getY() const { return y; }
-            inline void getPosition(int &x, int &y) const { x = this->x; y = this->y; }
-			int getAbsoluteX() const;
-			int getAbsoluteY() const;
-			void getAbsolutePosition(int &x, int &y) const;
-            inline int getWidth() const { return width; }
-            inline int getHeight() const { return height; }
-            inline void getSize(int &width, int &height) const { width = this->width; height = this->height; }
+            void setPosition(const Point &p);
+            void setSize(const Size &s);
+
+            inline const Point& getPosition() const { return position; }
+            inline const Size& getSize() const { return size; }
+            inline Rect getRect() const { return Rect(0, 0, size.getWidth(), size.getHeight()); }
 
             void render(RenderContext *context);
     		void invalidate();

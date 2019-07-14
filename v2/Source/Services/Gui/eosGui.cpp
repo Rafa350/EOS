@@ -9,7 +9,6 @@
 #include "Services/Gui/eosSimplePanel.h"
 #include "Services/Gui/eosScreen.h"
 #include "Services/Gui/eosRenderContext.h"
-#include "Services/Gui/eosWidged.h"
 
 
 using namespace eos;
@@ -71,22 +70,22 @@ void GuiService::onInitialize() {
 	y = 0;
 
 	panel = new SimplePanel();
-	panel->setPosition(x, y);
-	panel->setSize(50, 30);
+	panel->setPosition(Point(x, y));
+	panel->setSize(Size(50, 30));
 
 	border1 = new Border();
-	border1->setPosition(0, 0);
-	border1->setSize(50, 30);
+	border1->setPosition(Point(0, 0));
+	border1->setSize(Size(50, 40));
 	border1->setBorderColor(COLOR_Red);
 
 	border2 = new Border();
-	border2->setPosition(10, 10);
-	border2->setSize(10, 10);
+	border2->setPosition(Point(10, 10));
+	border2->setSize(Size(10, 50));
 	border2->setBorderColor(COLOR_Green);
 
 	border3 = new Border();
-	border3->setPosition(30, 10);
-	border3->setSize(10, 10);
+	border3->setPosition(Point(30, 10));
+	border3->setSize(Size(10, 60));
 	border3->setBorderColor(COLOR_Yellow);
 
 	screen->addChild(panel);
@@ -101,19 +100,21 @@ void GuiService::onInitialize() {
 ///
 void GuiService::onTask() {
 
-	if (x > (graphics->getWidth() - panel->getWidth() / 2))
+	Size panelSize(panel->getSize());
+
+	if (x > (graphics->getWidth() - panelSize.getWidth() / 2))
 		dx = -1;
 	else if (x <= 0)
 		dx = 1;
 
-	if (y > (graphics->getHeight() - panel->getHeight() / 2))
+	if (y > (graphics->getHeight() - panelSize.getHeight() / 2))
 		dy = -1;
 	else if (y <= 0)
 		dy = 1;
 
 	x += dx;
 	y += dy;
-	panel->setPosition(x, y);
+	panel->setPosition(Point(x, y));
 
 	screen->render(context);
 	displayDriver->refresh();

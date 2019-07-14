@@ -3,6 +3,7 @@
 
 
 #include "eos.h"
+#include "System/Graphics/eosPoint.h"
 
 
 namespace eos {
@@ -31,23 +32,27 @@ namespace eos {
             Transformation(int m11, int m12, int m21, int m22, int tx, int ty);
             void identity();
 			void translate(int tx, int ty);
-			void scale(int sx, int sy);
+			inline void translate(const Point &t) { translate(t.getX(), t.getY()); }
 			void scale(int sx, int sy, int ox, int oy);
-			void rotate(RotateTransformationAngle r);
+			inline void scale(int sx, int sy) { scale(sx, sy, 0, 0); }
+			inline void scale(int sx, int sy, const Point &o) { scale(sx, sy, o.getX(), o.getY()); }
 			void rotate(RotateTransformationAngle r, int ox, int oy);
+			inline void rotate(RotateTransformationAngle r) { rotate(r, 0, 0); }
+			inline void rotate(RotateTransformationAngle r, const Point &o) { rotate(r, o.getX(), o.getY()); }
 			void combine(const Transformation &t);
 			void apply(int &x, int &y) const;
+			Point apply(const Point &p) const;
 
             Transformation& operator = (const Transformation &t);
-            Transformation operator * (const Transformation &t);
+            Transformation operator * (const Transformation &t) const;
             Transformation& operator *= (const Transformation &t);
 
-            int getM11() const { return m[0][0]; }
-            int getM12() const { return m[0][1]; }
-            int getM21() const { return m[1][0]; }
-            int getM22() const { return m[1][1]; }
-            int getTx() const { return m[2][0]; }
-            int getTy() const { return m[2][1]; }
+            inline int getM11() const { return m[0][0]; }
+            inline int getM12() const { return m[0][1]; }
+            inline int getM21() const { return m[1][0]; }
+            inline int getM22() const { return m[1][1]; }
+            inline int getTx() const { return m[2][0]; }
+            inline int getTy() const { return m[2][1]; }
 	};
 }
 

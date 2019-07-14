@@ -116,34 +116,6 @@ void Transformation::translate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix una escalat a la matriu.
-/// \param sx: Escalat en el eix X.
-/// \param sy: Escalat en el eix Y.
-///
-void Transformation::scale(
-	int sx,
-	int sy) {
-
-	Matrix sm, rm;
-
-	sm[0][0] = sx;
-	sm[0][1] = 0;
-	sm[0][2] = 0;
-
-	sm[1][0] = 0;
-	sm[1][1] = sy;
-	sm[1][2] = 0;
-
-	sm[2][0] = 0;
-	sm[2][1] = 0;
-	sm[2][2] = 1;
-
-	multiply(rm, sm, m);
-	memcpy(m, rm, sizeof(Matrix));
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Afegeix un escalat respecte a un punt.
 /// \param sx: Escalat en el eix X.
 /// \param sy: Escalat en el eix Y.
@@ -166,18 +138,18 @@ void Transformation::scale(
 	sm[1][1] = sy;
 	sm[1][2] = 0;
 
-	sm[2][0] = (1 - sx) + ox;
-	sm[2][1] = (1 - sy) + oy;
+	if (ox == 0) // Optimitza el cas ox == 0
+		sm[2][0] = 0;
+	else
+		sm[2][0] = (1 - sx) * ox;
+	if (oy == 0) // Optimitza el cas yo == 0
+		sm[2][1] = 0;
+	else
+		sm[2][1] = (1 - sy) * oy;
 	sm[2][2] = 1;
 
 	multiply(rm, sm, m);
 	memcpy(m, rm, sizeof(Matrix));
-}
-
-
-void Transformation::rotate(
-	RotateTransformationAngle r) {
-
 }
 
 
@@ -235,7 +207,7 @@ Transformation& Transformation::operator = (
 /// \param t: La transformacio per multiplicar.
 ///
 Transformation Transformation::operator *(
-	const Transformation &t) {
+	const Transformation &t) const {
 
 	Matrix rm;
 

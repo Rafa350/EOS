@@ -3,6 +3,8 @@
 
 
 #include "eos.h"
+#include "System/Graphics/eosPoint.h"
+#include "System/graphics/eosRect.h"
 
 
 namespace eos {
@@ -14,6 +16,10 @@ namespace eos {
 	class RenderContext {
 		private:
 			Graphics *graphics;
+
+		private:
+			Point getPosition(Visual *visual) const;
+			Rect getClip(Visual *visual) const;
 
 		public:
 			RenderContext(Graphics *graphics);

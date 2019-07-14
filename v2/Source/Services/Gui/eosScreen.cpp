@@ -13,8 +13,8 @@ using namespace eos;
 ///
 Screen::Screen() {
 
-	setPosition(0, 0);
-	setSize(DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT);
+	setPosition(Point(0, 0));
+	setSize(Size(DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT));
 }
 
 
@@ -41,13 +41,10 @@ void Screen::onRender(
 
 	Graphics *g = context->beginRender(this);
 
-	int x1 = 0;
-	int y1 = 0;
-	int x2 = getWidth() - 1;
-	int y2 = getHeight() - 1;
+	Rect r = getRect();
 
 	g->setColor(color);
-	g->fillRectangle(x1, y1, x2, y2);
+	g->fillRectangle(r);
 
 	context->endRender();
 }

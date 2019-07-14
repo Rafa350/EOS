@@ -17,12 +17,12 @@ using namespace eos;
 /// \param maxBlocks: Numero maxim d'elements.
 ///
 GenericPoolAllocator::GenericPoolAllocator(
-    unsigned _blockSize,
-    unsigned _maxBlocks):
+    unsigned blockSize,
+    unsigned maxBlocks):
 
-    blockSize(_blockSize),
-    maxBlocks(_maxBlocks),
-    freeBlocks(_maxBlocks),
+    blockSize(blockSize),
+    maxBlocks(maxBlocks),
+    freeBlocks(maxBlocks),
     initializedBlocks(0) {
 
     // Ajusta el tamany minim del block per poder guardar un 'unsigned'
