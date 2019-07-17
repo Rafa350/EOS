@@ -61,7 +61,6 @@ namespace eos {
             inline int getWidth() const { return driver->getWidth(); }
             inline int getHeight() const { return driver->getHeight(); }
             void clear(const Color &color) const;
-            void refresh() const;
 
             void setColor(const Color &color);
             inline Color getColor() const { return color; }
