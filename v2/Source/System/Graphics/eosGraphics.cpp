@@ -14,8 +14,8 @@ extern const unsigned char *fontConsolas14pt;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param driver: Driver del display
+/// \brief    Constructor.
+/// \param    driver: Driver del display
 ///
 Graphics::Graphics(
     IDisplayDriver *driver) :
@@ -32,7 +32,7 @@ Graphics::Graphics(
 
 
 /// ---------------------------------------------------------------------
-/// \brief Destructor.
+/// \brief    Destructor.
 ///
 Graphics::~Graphics() {
 
@@ -40,8 +40,8 @@ Graphics::~Graphics() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Selecciona el color per dibuixar.
-/// \param color: El color a seleccionar.
+/// \brief    Selecciona el color per dibuixar.
+/// \param    color: El color a seleccionar.
 ///
 void Graphics::setColor(
     const Color &color) {
@@ -51,9 +51,9 @@ void Graphics::setColor(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Selecciona l'aliniacio del texte.
-/// \param hAlign: Aliniacio horitzontal.
-/// \param vAlign: Aliniacio vertical.
+/// \brief    Selecciona l'aliniacio del texte.
+/// \param    hAlign: Aliniacio horitzontal.
+/// \param    vAlign: Aliniacio vertical.
 ///
 void Graphics::setTextAlign(
     HorizontalTextAlign hAlign,
@@ -65,9 +65,9 @@ void Graphics::setTextAlign(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Selecciona el font per dibuixar caracters i cadenes de texte.
-/// \param font: El font a seleccionar.
-/// \return L'anterior font seleccionat.
+/// \brief    Selecciona el font per dibuixar caracters i cadenes de texte.
+/// \param    font: El font a seleccionar.
+/// \return   L'anterior font seleccionat.
 ///
 void Graphics::setFont(
     Font *font) {
@@ -77,12 +77,12 @@ void Graphics::setFont(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Selecciona la regio de retall.
-/// \param x1: Coordinada X esquerra.
-/// \param y1: Coodinada Y superior.
-/// \param x2: Coordinada X dreta.
-/// \param y2: Coordinada Y inferior.
-/// \remarks Utilitza les coordinades fisiques.
+/// \brief    Selecciona la regio de retall.
+/// \param    x1: Coordinada X esquerra.
+/// \param    y1: Coodinada Y superior.
+/// \param    x2: Coordinada X dreta.
+/// \param    y2: Coordinada Y inferior.
+/// \remarks  Utilitza les coordinades fisiques.
 ///
 void Graphics::setClip(
     int x1,
@@ -107,7 +107,7 @@ void Graphics::setClip(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Elimina l'area de retall.
+/// \brief    Elimina l'area de retall.
 ///
 void Graphics::resetClip() {
 
@@ -119,9 +119,9 @@ void Graphics::resetClip() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna la transformacio.
-/// \param t: La transformacio.
-/// \param combine: True si cal combinar la transformacio amb l'actual.
+/// \brief    Asigna la transformacio.
+/// \param    t: La transformacio.
+/// \param    combine: True si cal combinar la transformacio amb l'actual.
 ///
 void Graphics::setTransformation(
 	const Transformation &t,
@@ -134,7 +134,7 @@ void Graphics::setTransformation(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza la transformacio.
+/// \brief    Inicialitza la transformacio.
 ///
 void Graphics::resetTransformation() {
 
@@ -143,7 +143,7 @@ void Graphics::resetTransformation() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Salva l'estat.
+/// \brief    Salva l'estat.
 ///
 void Graphics::push() {
 
@@ -153,7 +153,7 @@ void Graphics::push() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Recupera l'estat.
+/// \brief    Recupera l'estat.
 ///
 void Graphics::pop() {
 
@@ -165,8 +165,8 @@ void Graphics::pop() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Borrat de la pantalla al color especificat.
-/// \param color: El color per realitzar el borrat.
+/// \brief    Borrat de la pantalla al color especificat.
+/// \param    color: El color per realitzar el borrat.
 ///
 void Graphics::clear(
     const Color &color) const {
@@ -182,18 +182,9 @@ void Graphics::clear(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Refresca la pantalla.
-///
-void Graphics::refresh() const {
-
-	driver->refresh();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Dibuixa un pixel.
-/// \param x: Coordinada X del punt.
-/// \param y: Coordinada Y del punt.
+/// \brief    Dibuixa un pixel.
+/// \param    x: Coordinada X del punt.
+/// \param    y: Coordinada Y del punt.
 ///
 void Graphics::drawPoint(
     int x,
@@ -209,11 +200,11 @@ void Graphics::drawPoint(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia.
-/// \param x1: Coordinada x del primer punt.
-/// \param y1: Coordinada y del primer punt.
-/// \param x2: Coordinada x del segon punt.
-/// \param y2: Coordinada y del segon punt.
+/// \brief    Dibuixa una linia.
+/// \param    x1: Coordinada x del primer punt.
+/// \param    y1: Coordinada y del primer punt.
+/// \param    x2: Coordinada x del segon punt.
+/// \param    y2: Coordinada y del segon punt.
 ///
 void Graphics::drawLine(
     int x1,
@@ -321,11 +312,11 @@ void Graphics::drawLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un rectangle buit.
-/// \param x1: Coordinada x del primer punt.
-/// \param y1: Coordinada y del primer punt.
-/// \param x2: Coordinada x del segon punt.
-/// \param y2: Coordinada y del segon punt.
+/// \brief    Dibuixa un rectangle buit.
+/// \param    x1: Coordinada x del primer punt.
+/// \param    y1: Coordinada y del primer punt.
+/// \param    x2: Coordinada x del segon punt.
+/// \param    y2: Coordinada y del segon punt.
 ///
 void Graphics::drawRectangle(
     int x1,
@@ -343,13 +334,13 @@ void Graphics::drawRectangle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un triangle buit.
-/// \param x1: Coordinada x del primer punt
-/// \param y1: Coordinada y del primer punt
-/// \param x2: Coordinada x del segon punt.
-/// \param y2: Coordinada y del segon punt.
-/// \param x3: Coordinada x del tercer punt.
-/// \param y3: Coordinada y del tercer punt.
+/// \brief    Dibuixa un triangle buit.
+/// \param    x1: Coordinada x del primer punt
+/// \param    y1: Coordinada y del primer punt
+/// \param    x2: Coordinada x del segon punt.
+/// \param    y2: Coordinada y del segon punt.
+/// \param    x3: Coordinada x del tercer punt.
+/// \param    y3: Coordinada y del tercer punt.
 ///
 void Graphics::drawTriangle(
     int x1,
@@ -368,11 +359,11 @@ void Graphics::drawTriangle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una el·lipse buida inscrita en un rectangle.
-/// \param x1: Coordinada X del primer punt.
-/// \param y1: Coordinada Y del primer punt.
-/// \param x2: Coordinada X del segon punt.
-/// \param y2: Coordinada Y del segon punt.
+/// \brief    Dibuixa una el·lipse buida inscrita en un rectangle.
+/// \param    x1: Coordinada X del primer punt.
+/// \param    y1: Coordinada Y del primer punt.
+/// \param    x2: Coordinada X del segon punt.
+/// \param    y2: Coordinada Y del segon punt.
 ///
 void Graphics::drawEllipse(
 	int x1,
@@ -503,11 +494,11 @@ void Graphics::drawEllipse(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un rectangle omplert.
-/// \param x1: Coordinada X del primer punt.
-/// \param y1: Coordinada Y del primer punt.
-/// \param x2: Coordinada X del segon punt.
-/// \param y2: Coordinada Y del segon punt.
+/// \brief    Dibuixa un rectangle omplert.
+/// \param    x1: Coordinada X del primer punt.
+/// \param    y1: Coordinada Y del primer punt.
+/// \param    x2: Coordinada X del segon punt.
+/// \param    y2: Coordinada Y del segon punt.
 ///
 void Graphics::fillRectangle(
     int x1,
@@ -535,11 +526,11 @@ void Graphics::fillRectangle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una el·lipse plena inscrita en un rectangle.
-/// \param x1: Coordinada X del primer punt.
-/// \param y1: Coordinada Y del primer punt.
-/// \param x2: Coordinada X del segon punt.
-/// \param y2: Coordinada Y del segon punt.
+/// \brief    Dibuixa una el·lipse plena inscrita en un rectangle.
+/// \param    x1: Coordinada X del primer punt.
+/// \param    y1: Coordinada Y del primer punt.
+/// \param    x2: Coordinada X del segon punt.
+/// \param    y2: Coordinada Y del segon punt.
 ///
 void Graphics::fillEllipse(
 	int x1,
@@ -654,10 +645,10 @@ void Graphics::fillEllipse(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un bitmap complert.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param bitmap: El bitmap
+/// \brief    Dibuixa un bitmap complert.
+/// \param    x: Coordinada X.
+/// \param    y: Coordinada Y.
+/// \param    bitmap: El bitmap
 ///
 void Graphics::drawBitmap(
     int x,
@@ -687,10 +678,10 @@ void Graphics::drawBitmap(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un caracter amb el font i el color actual.
-/// \param x: La coordinada X.
-/// \param y: La coordinada Y.
-/// \param c: El caracter a dibuixar.
+/// \brief    Dibuixa un caracter amb el font i el color actual.
+/// \param    x: La coordinada X.
+/// \param    y: La coordinada Y.
+/// \param    c: El caracter a dibuixar.
 ///
 int Graphics::drawChar(
     int x,
@@ -723,14 +714,14 @@ int Graphics::drawChar(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un text amb el font i el color actual.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param s: El text a dibuixar.
-/// \param offset: El primer caracter del text
-/// \param length: Numero de caracters a dibuixar. -1 si dibuixa fins al final
-///                del text.
-/// \return L'amplada de la cadena dibuixada en pixels.
+/// \brief    Dibuixa un text amb el font i el color actual.
+/// \param    x: Coordinada X.
+/// \param    y: Coordinada Y.
+/// \param    s: El text a dibuixar.
+/// \param    offset: El primer caracter del text
+/// \param    length: Numero de caracters a dibuixar. -1 si dibuixa fins al final
+///           del text.
+/// \return   L'amplada de la cadena dibuixada en pixels.
 ///
 int Graphics::drawText(
     int x,
@@ -757,12 +748,12 @@ int Graphics::drawText(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte l'amplada d'una cadena de texte.
-/// \param s: La cadena de texte.
-/// \param offset: El primer caracter del text.
-/// \param length: Numero de caracters a mesurar. -1 si es la longitut
-///                total del text.
-/// \return L'amplada de la cadena en pixels.
+/// \brief    Obte l'amplada d'una cadena de texte.
+/// \param    s: La cadena de texte.
+/// \param    offset: El primer caracter del text.
+/// \param    length: Numero de caracters a mesurar. -1 si es la longitut
+///           total del text.
+/// \return    L'amplada de la cadena en pixels.
 ///
 int Graphics::getTextWidth(
     const char *s,
@@ -778,9 +769,9 @@ int Graphics::getTextWidth(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte l'alçada d'una cadena de texte.
-/// \param[in] s: La cadena de texte.
-/// \return L'alçada de la cadena.
+/// \brief    Obte l'alçada d'una cadena de texte.
+/// \param    s: La cadena de texte.
+/// \return   L'alçada de la cadena.
 ///
 int Graphics::getTextHeight(
     const char *s) const {
@@ -790,10 +781,10 @@ int Graphics::getTextHeight(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retalla un punt.
-/// \param x: Coordinada X del punt.
-/// \param y: Coordinada Y del punt.
-/// \return True si es visible.
+/// \brief    Retalla un punt.
+/// \param    x: Coordinada X del punt.
+/// \param    y: Coordinada Y del punt.
+/// \return    True si es visible.
 ///
 bool Graphics::clipPoint(
     int x,
@@ -806,11 +797,11 @@ bool Graphics::clipPoint(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retalla una linia horitzontal.
-/// \param x1: Coordinada X del primer punt.
-/// \param x2: Coordinada X del segon punt.
-/// \param y: Coordinada Y comu ambdos punts.
-/// \return True si es visible.
+/// \brief    Retalla una linia horitzontal.
+/// \param    x1: Coordinada X del primer punt.
+/// \param    x2: Coordinada X del segon punt.
+/// \param    y: Coordinada Y comu ambdos punts.
+/// \return   True si es visible.
 ///
 bool Graphics::clipHLine(
 	int &x1,
@@ -837,12 +828,12 @@ bool Graphics::clipHLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retalla una linia arbitraria. Amb l'algorisme Liang-Barsky.
-/// \param x1: Coordinada X del primer punt.
-/// \param y1: Coordinada Y del primer punt.
-/// \param x2: Coordinada X del segon punt.
-/// \param y2: Coordinada Y del segon punt.
-/// \return True si es visible.
+/// \brief    Retalla una linia arbitraria. Amb l'algorisme Liang-Barsky.
+/// \param    x1: Coordinada X del primer punt.
+/// \param    y1: Coordinada Y del primer punt.
+/// \param    x2: Coordinada X del segon punt.
+/// \param    y2: Coordinada Y del segon punt.
+/// \return   True si es visible.
 ///
 bool Graphics::clipLine(
     int &x1,
@@ -892,12 +883,12 @@ bool Graphics::clipLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Realitza el calcul de visibilitat per la funcio 'clipLine'
-/// \param p: Coordinada X o Y del punt inicial.
-/// \param q: Coordinada X o Y del puint final.
-/// \param t1: Correccio del punt inicial.
-/// \param t2: Correccio del punt final.
-/// \return: True si es visible, false en cas contrari.
+/// \brief    Realitza el calcul de visibilitat per la funcio 'clipLine'
+/// \param    p: Coordinada X o Y del punt inicial.
+/// \param    q: Coordinada X o Y del puint final.
+/// \param    t1: Correccio del punt inicial.
+/// \param    t2: Correccio del punt final.
+/// \return:  True si es visible, false en cas contrari.
 ///
 bool Graphics::clipTest(
     int p,
@@ -936,12 +927,12 @@ bool Graphics::clipTest(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retalla un area.
-/// \param x1: Coordinada X del primer punt.
-/// \param y1: Coordinada Y del primer punt.
-/// \param x2: Coordinada X del segon punt.
-/// \param y2: Coordinada Y del segon punt.
-/// \return True si es visible.
+/// \brief    Retalla un area.
+/// \param    x1: Coordinada X del primer punt.
+/// \param    y1: Coordinada Y del primer punt.
+/// \param    x2: Coordinada X del segon punt.
+/// \param    y2: Coordinada Y del segon punt.
+/// \return   True si es visible.
 ///
 bool Graphics::clipArea(
     int &x1,

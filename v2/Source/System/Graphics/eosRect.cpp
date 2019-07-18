@@ -8,7 +8,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte.
+/// \brief    Constructor de l'objecte. Crea un rectangle buit
 ///
 Rect::Rect():
 	x(0),
@@ -19,11 +19,11 @@ Rect::Rect():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param width: Amplada.
-/// \param height: Alçada.
+/// \brief    Constructor de l'objecte.
+/// \param    x: Coordinada X.
+/// \param    y: Coordinada Y.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
 ///
 Rect::Rect(
 	int x,
@@ -42,9 +42,9 @@ Rect::Rect(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte.
-/// \param p: Posicio.
-/// \param s: Tamany.
+/// \brief    Constructor de l'objecte.
+/// \param    p: Posicio.
+/// \param    s: Tamany.
 ///
 Rect::Rect(
 	const Point &p,
@@ -58,9 +58,11 @@ Rect::Rect(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor del objecte.
-/// \param p1: Primer punt.
-/// \param p2: Segon punt.
+/// \brief    Constructor del objecte.
+/// \param    p1: Primer punt.
+/// \param    p2: Segon punt.
+/// \remarks  El rectangle creat, SEMPRE estata normalitzat, independentment
+///           dels punt inicials
 ///
 Rect::Rect(
 	const Point &p1,
@@ -77,8 +79,8 @@ Rect::Rect(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor copia.
-/// \param r: L'objecte a copiar.
+/// \brief    Constructor copia.
+/// \param    r: L'objecte a copiar.
 ///
 Rect::Rect(
 	const Rect &r):
@@ -91,9 +93,10 @@ Rect::Rect(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte un rectangle que es la interseccio d'aquest amb un altre.
-/// \param r: Rectangle per realitzar la interseccio.
-/// \return El resultat de la interseccio.
+/// \brief    Obte un rectangle que es la interseccio d'aquest amb un altre.
+/// \param    r: Rectangle per realitzar la interseccio.
+/// \return   El resultat de la interseccio.
+/// \remarks  El resultat SEMPRE sera un rectangle normalitzat.
 ///
 Rect Rect::intersect(
 	const Rect &r) const {
@@ -109,7 +112,7 @@ Rect Rect::intersect(
 		Math::swap(y1, y2);
 
 	if ((x2 < x1) || (y2 < y1))
-		return Rect(); // Rectangle buit
+		return Rect(x1, y1, 0, 0); // Rectangle buit
 	else
 		return Rect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 }
@@ -125,6 +128,10 @@ bool Rect::contains(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Indica si es rectangle es buit.
+/// \return   True si es buit.
+///
 bool Rect::isEmpty() const {
 
 	return (width == 0) && (height == 0);

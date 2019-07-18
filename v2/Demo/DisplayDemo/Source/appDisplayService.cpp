@@ -222,13 +222,8 @@ void DisplayService::onLoop() {
 
         graphics->setColor(rand() & 0x00FFFFFF);
 
-        if (r > 1) {
-#if 1
-        	graphics->drawEllipse(cx - r, cy - r, cx + r, cy + r);
-#else
-            graphics->drawCircle(cx, cy, r);
-#endif
-        }
+        if (r > 1) 
+            graphics->drawEllipse(cx - r, cy - r, cx + r, cy + r);
     }
     ellipsesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -248,11 +243,7 @@ void DisplayService::onLoop() {
 
         graphics->setColor(rand() & 0x00FFFFFF);
         if (r > 1)
-#if 1
         	graphics->fillEllipse(cx - r, cy - r, cx + r, cy + r);
-#else
-        	graphics->fillCircle(cx, cy, r);
-#endif
     }
     filledEllipsesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
