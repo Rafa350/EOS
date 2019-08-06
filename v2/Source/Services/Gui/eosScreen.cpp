@@ -9,7 +9,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor de l'objecte.
+/// \brief Constructor de l'objecte.
 ///
 Screen::Screen() {
 
@@ -19,7 +19,7 @@ Screen::Screen() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el color.
+/// \brief Assigna el color.
 /// \param color: El color.
 ///
 void Screen::setColor(

@@ -639,11 +639,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosConsole.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Graphics/eosDisplaySurface.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosDisplaySurface.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosFont.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosFont.h</locationURI>

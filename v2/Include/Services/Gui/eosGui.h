@@ -85,6 +85,7 @@ namespace eos {
 
 		public:
 			GuiService(Application *application, const GuiServiceInitializeInfo *pInfo);
+			inline Screen* getScreen() const { return screen; }
 
 		protected:
 			void onInitialize() override;

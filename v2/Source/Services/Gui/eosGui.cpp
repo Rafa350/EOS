@@ -5,6 +5,7 @@
 #include "System/Graphics/eosGraphics.h"
 #include "Services/Gui/eosGui.h"
 #include "Services/Gui/eosBorder.h"
+#include "Services/Gui/eosLabel.h"
 #include "Services/Gui/eosVisual.h"
 #include "Services/Gui/eosSimplePanel.h"
 #include "Services/Gui/eosScreen.h"
@@ -24,7 +25,6 @@ static Graphics *graphics;
 static RenderContext *context;
 
 Panel *panel;
-Border *border1, *border2, *border3;
 int x, y, dx, dy;
 
 
@@ -37,7 +37,7 @@ GuiService::GuiService(
 	const GuiServiceInitializeInfo *info):
 
 	Service(application, serviceName, stackSize, priority),
-	screen(nullptr) {
+	screen(new Screen()) {
 
 }
 
@@ -63,7 +63,6 @@ void GuiService::onInitialize() {
 
 	context = new RenderContext(graphics);
 
-	screen = new Screen();
 	screen->setColor(COLOR_Blue);
 
 	x = 0;
@@ -71,27 +70,33 @@ void GuiService::onInitialize() {
 
 	panel = new SimplePanel();
 	panel->setPosition(Point(x, y));
-	panel->setSize(Size(50, 30));
+	panel->setSize(Size(150, 30));
 
-	border1 = new Border();
+	Border *border1 = new Border();
 	border1->setPosition(Point(0, 0));
-	border1->setSize(Size(50, 40));
+	border1->setSize(Size(150, 30));
 	border1->setBorderColor(COLOR_Red);
 
-	border2 = new Border();
+	Border *border2 = new Border();
 	border2->setPosition(Point(10, 10));
-	border2->setSize(Size(10, 50));
+	border2->setSize(Size(10, 10));
 	border2->setBorderColor(COLOR_Green);
 
-	border3 = new Border();
+	Border* border3 = new Border();
 	border3->setPosition(Point(30, 10));
-	border3->setSize(Size(10, 60));
+	border3->setSize(Size(10, 10));
 	border3->setBorderColor(COLOR_Yellow);
+
+	Label *label = new Label();
+	label->setPosition(Point(50, 5));
+	label->setSize(Size(100, 20));
+	label->setText("Hola");
 
 	screen->addChild(panel);
 	panel->addChild(border1);
 	panel->addChild(border2);
 	panel->addChild(border3);
+	panel->addChild(label);
 }
 
 
