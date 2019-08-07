@@ -105,7 +105,7 @@ void DigOutputService::onInitialize() {
 #if defined(EOS_PIC32MX)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.period = (40000000L / 64L / 1000L) - 1;
-#elif defined(EOS_STM32F4)
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
     tmrInfo.period = 1000 - 1; // 1ms

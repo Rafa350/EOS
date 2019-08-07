@@ -3,6 +3,7 @@
 	<name>F7TouchDemo</name>
 	<comment></comment>
 	<projects>
+		<project>stm32f746g-disco_hal_lib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -28,36 +29,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Library</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/BSP</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/startup</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/system</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>inc/App</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -74,36 +45,6 @@
 		</link>
 		<link>
 			<name>src/Framework</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/BSP/Components</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/BSP/STM32746G-Discovery</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL/Src</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/startup/startup_stm32f746xx.S</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/startup/startup_stm32f746xx.S</locationURI>
-		</link>
-		<link>
-			<name>Library/system/Src</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -143,74 +84,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Library/BSP/Components/ft5336</name>
+			<name>src/Framework/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/BSP/STM32746G-Discovery/stm32746g_discovery.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery.c</locationURI>
-		</link>
-		<link>
-			<name>Library/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c</locationURI>
-		</link>
-		<link>
-			<name>Library/BSP/STM32746G-Discovery/stm32746g_discovery_ts.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery_ts.c</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/list.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/list.c</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/portable</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/queue.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/queue.c</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/tasks.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/tasks.c</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/timers.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/timers.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL/Src/stm32f7xx_hal.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL/Src/stm32f7xx_hal_cortex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_cortex.c</locationURI>
-		</link>
-		<link>
-			<name>Library/HAL/Src/stm32f7xx_ll_fmc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_ll_fmc.c</locationURI>
-		</link>
-		<link>
-			<name>Library/system/Src/syscalls.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/syscalls.c</locationURI>
-		</link>
-		<link>
-			<name>Library/system/Src/system_stm32f7xx.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F7/FreeRTOSConfig.h</name>
@@ -278,11 +154,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/eosAssert.h</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F7/Initialize_STM32F746G-DISC.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Source/STM32F7/Initialize_STM32F746G-DISC.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/App/STM32F7/appInitialize.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Source/STM32F7/appInitialize.cpp</locationURI>
@@ -291,6 +162,11 @@
 			<name>src/App/STM32F7/stm32f7xx_hal_timebase_tim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Source/STM32F7/stm32f7xx_hal_timebase_tim.c</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7/stm32f7xx_it.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Source/STM32F7/stm32f7xx_it.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
@@ -323,22 +199,27 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Library/BSP/Components/ft5336/ft5336.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/Components/ft5336/ft5336.c</locationURI>
-		</link>
-		<link>
-			<name>Library/BSP/Components/ft5336/ft5336.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/Components/ft5336/ft5336.h</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/portable/GCC</name>
+			<name>src/Framework/STM32/BSP</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Library/FreeRTOS/Source/portable/MemMang</name>
+			<name>src/Framework/STM32/FreeRTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/Startup</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/System</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -488,6 +369,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Services/Gui</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoop.cpp</locationURI>
@@ -503,9 +389,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosService.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/StartUp/STM32F7</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<name>src/Framework/EOS/StartUp/main.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/StartUp/STM32F7/main.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections</name>
@@ -528,14 +414,119 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
 		</link>
 		<link>
-			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM7</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<name>src/Framework/STM32/BSP/stm32746g_discovery.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery.c</locationURI>
 		</link>
 		<link>
-			<name>Library/FreeRTOS/Source/portable/MemMang/heap_4.c</name>
+			<name>src/Framework/STM32/BSP/stm32746g_discovery_sdram.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/FreeRTOS/heap_4.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/FreeRTOS/list.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/list.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/FreeRTOS/port.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/FreeRTOS/queue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/queue.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/FreeRTOS/tasks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/tasks.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/FreeRTOS/timers.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/timers.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_cortex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_cortex.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_dma.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_dma.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_gpio.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_gpio.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_i2c.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_i2c.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_rcc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_rcc.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_rcc_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_rcc_ex.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_sdram.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_sdram.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_tim.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_tim.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_tim_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_tim_ex.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_ll_fmc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_ll_fmc.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_ll_rcc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_ll_rcc.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/Startup/startup_stm32f746xx.s</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/gcc/startup_stm32f746xx.s</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/System/syscalls.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/syscalls.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/System/system_stm32f7xx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/system_stm32f7xx.c</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
@@ -763,9 +754,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/StartUp/STM32F7/main.cpp</name>
+			<name>src/Framework/EOS/Services/Gui/eosGuiTouchPad.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/StartUp/STM32F7/main.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiTouchPad.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
@@ -836,11 +827,6 @@
 			<name>src/Framework/EOS/System/Graphics/eosTransformation.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosTransformation.cpp</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/Device</name>
@@ -921,11 +907,6 @@
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas8pt.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas8pt.cpp</locationURI>
-		</link>
-		<link>
-			<name>Library/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/Device/ILI9341.h</name>

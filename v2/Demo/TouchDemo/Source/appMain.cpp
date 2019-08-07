@@ -180,7 +180,9 @@ void DisplayLoopService::onSetup() {
 	//
 	displayDriver = RGBDirectDriver::getInstance();
     displayDriver->initialize();
+    displayDriver->setOrientation(DisplayOrientation::normal);
     displayDriver->displayOn();
+
     display = new Graphics(displayDriver);
     display->clear(COLOR_Black);
 
@@ -192,7 +194,6 @@ void DisplayLoopService::onSetup() {
     touchDriver = FT5336Driver::getInstance();
     touch = new TouchPad(touchDriver);
 
-    display->setOrientation(DisplayOrientation::normal);
     screenWidth = display->getWidth();
     screenHeight  = display->getHeight();
 }
@@ -265,10 +266,12 @@ void DisplayLoopService::drawDot() {
 
     display->setClip(138, 28, screenWidth - 11, screenHeight - 11);
 
+    int r1 = 30;
+    int r2 = 25;
 	display->setColor(COLOR_Red);
-	display->fillCircle(x, y, 30);
+	display->fillEllipse(x - r1, y - r1, x + r1, y + r1);
 	display->setColor(COLOR_Yellow);
-	display->fillCircle(x, y, 25);
+	display->fillEllipse(x - r2, y - r2, x + r2, y + r2);
 
 	display->drawBitmap(
 		x - bitmap->getWidth() / 2,
@@ -317,7 +320,7 @@ void DisplayLoopService::drawInfo() {
 /// ----------------------------------------------------------------------
 /// \brief Entrada al programa.
 ///
-void AppMain() {
+void appMain() {
 
     MyApplication *app = new MyApplication();
     app->run();
