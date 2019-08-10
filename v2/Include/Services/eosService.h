@@ -11,18 +11,18 @@
 
 namespace eos {
 
-	typedef struct {
-		Application *pApplication;
+	struct ServiceInitInfo {
+		Application *application;
 		const char *name;
 		unsigned stackSize;
 		TaskPriority priority;
-	} ServiceInitializeInfo;
+	};
 
     class Service: private IRunable {
         private:
             static int idCount;
             int id;
-            Application *pApplication;
+            Application *application;
             const char *name;
             Task thread;
 
@@ -33,15 +33,15 @@ namespace eos {
             void run(Task *pThread);
 
         protected:
-            inline Application *getApplication() const { return pApplication; }
+            inline Application *getApplication() const { return application; }
             inline Task *getThread() { return &thread; }
             virtual void onInitialize();
             virtual void onTask();
             virtual void onTick();
 
         public :
-            Service(const ServiceInitializeInfo *pInit);
-            Service(Application *pApplication, const char *name, unsigned stackSize, TaskPriority priority);
+            Service(const ServiceInitInfo *init);
+            Service(Application *application, const char *name, unsigned stackSize, TaskPriority priority);
             virtual ~Service();
 
             void initialize();
@@ -50,8 +50,8 @@ namespace eos {
 
             inline int getId() const { return id; }
             
-        friend void Application::addService(Service *pService);
-        friend void Application::removeService(Service *pService);
+        friend void Application::addService(Service *service);
+        friend void Application::removeService(Service *service);
     };
 }
 

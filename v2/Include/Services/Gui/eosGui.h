@@ -7,89 +7,45 @@
 #include "eos.h"
 #include "Services/eosService.h"
 #include "System/Core/eosTask.h"
-#include "System/Core/eosQueue.h"
 
 
 namespace eos {
 
-	class Application;
 	class Screen;
-
-#ifdef eosFormsService_UseSelector
-
-    enum class SelectorEvent {
-        inc,
-        dec,
-        press,
-        release
-    };
-
-    typedef struct {
-        SelectorEvent event;
-        uint16_t delta;
-    } MsgSelector;
+	class GuiMessageQueue;
+#ifdef OPT_GUI_TouchPad
+	class GuiTouchPadService;
+	struct TouchPadEventArgs;
+#endif
+#ifdef OPT_GUI_Keyboard
+	class GuiKeyboardService;
+#endif
+#ifdef OPT_GUI_Selector
+	class GuiSelectorService;
 #endif
 
-#ifdef eosFormsService_UseKeyboard
 
-    enum class KeyCode {
-        up,
-        down,
-        left,
-        right,
-        enter
-    };
-
-    enum class KeyboardEvent {
-        press,
-        release
-    };
-
-    typedef struct {
-        KeyboardEvent event;
-        KeyCode keyCode;
-    } MsgKeyboard;
-#endif
-
-#ifdef eosFormsService_UseTouchpad
-    typedef struct {
-        unsigned event;
-    } MsgTouchpad;
-#endif
-
-    typedef struct {
-        unsigned id;
-        //Form *target;
-        union {
-            //MsgPaint msgPaint;
-#ifdef eosFormsService_UseSelector
-            MsgSelector msgSelector;
-#endif
-#ifdef eosFormsService_UseKeyboard
-            MsgKeyboard msgKeyboard;
-#endif
-#ifdef eosFormsService_UseTouchpad
-            MsgTouchpad msgTouchpad;
-#endif
-        };
-    } Message;
-
-    typedef Queue<Message> MessageQueue;
-
-	typedef struct {
-	} GuiServiceInitializeInfo;
+	struct GuiServiceInitInfo {
+	};
 
 	class GuiService: public Service {
 		private:
 			Screen *screen;
+			GuiMessageQueue *msgQueue;
+#ifdef OPT_GUI_TouchPad
+			GuiTouchPadService *touchPadService;
+#endif
 
 		public:
-			GuiService(Application *application, const GuiServiceInitializeInfo *pInfo);
+			GuiService(Application *application, const GuiServiceInitInfo *info);
 			inline Screen* getScreen() const { return screen; }
 
 		protected:
 			void onInitialize() override;
 			void onTask() override;
+
+		private:
+			void touchPadServiceNotify(TouchPadEventArgs *args);
 	};
 }
 

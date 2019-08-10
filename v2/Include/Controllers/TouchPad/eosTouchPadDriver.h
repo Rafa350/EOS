@@ -44,6 +44,8 @@ namespace eos {
 		public:
 			virtual ~ITouchPadDriver() {}
 
+			virtual void initialize() = 0;
+			virtual void shutdown() = 0;
 			virtual int16_t getWidth() = 0;
 			virtual int16_t getHeight() = 0;
 			virtual void setOrientation(TouchPadOrientation orientation) = 0;

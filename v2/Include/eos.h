@@ -90,6 +90,16 @@
 #include "eosConfig.h"
 
 
+// Declaracions previes
+//
+#ifdef __cplusplus
+namespace eos {
+	class Application;
+	class Service;
+}
+#endif
+
+
 // Entrada a l'aplicacio
 //
 void appMain();

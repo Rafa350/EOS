@@ -54,6 +54,21 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/App/appApplication.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Include/appApplication.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/appDisplayService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Include/appDisplayService.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/appLedService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Include/appLedService.h</locationURI>
+		</link>
+		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Include/eosConfig.h</locationURI>
@@ -72,6 +87,21 @@
 			<name>src/App/STM32F7</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/App/appApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Source/appApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/appDisplayService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Source/appDisplayService.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/App/appLedService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/TouchDemo/Source/appLedService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/appMain.cpp</name>

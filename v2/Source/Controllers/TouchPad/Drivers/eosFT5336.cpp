@@ -1,10 +1,11 @@
 #include "eos.h"
-#ifdef USE_TOUCHPAD_FT5336
+#if defined(USE_TOUCHPAD) && defined(TOUCHPAD_DRV_FT5336)
 
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
 #include "HAL/halTMR.h"
 #include "hal/halI2C.h"
 #include "hal/halGPIO.h"
+#include "System/eosMath.h"
 
 
 using namespace eos;
@@ -34,12 +35,27 @@ FT5336Driver::FT5336Driver():
 	padWidth(TOUCHPAD_PAD_WIDTH),
 	padHeight(TOUCHPAD_PAD_HEIGHT),
 	orientation(TouchPadOrientation::normal) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza el driver.
+///
+void FT5336Driver::initialize() {
 
 	// Wait at least 200ms after power up before accessing registers
 	// Trsi timing (Time of starting to report point after resetting) from FT5336GQQ datasheet
 	//
 	//halTMRDelay(200);
     ioInit();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Finalitza el driver.
+///
+void FT5336Driver::shutdown() {
+
 }
 
 
@@ -81,9 +97,9 @@ bool FT5336Driver::getState(
 	if (state.numPoints > state.maxPoints)
 		state.numPoints = 0;
 
-	for (uint8_t c = 0; c < state.numPoints; c++) {
+	for (uint8_t c = 0; c < Math::min((uint8_t) TOUCHPAD_MAX_POINTS, state.numPoints); c++) {
 
-		volatile uint8_t ucReadData = 0;
+		volatile uint8_t readData = 0;
 		uint8_t regAddressXLow = 0;
 		uint8_t regAddressXHigh = 0;
 		uint8_t regAddressYLow = 0;
@@ -165,21 +181,21 @@ bool FT5336Driver::getState(
 
 		// Posicio X [7:0]
 		//
-		ucReadData = ioRead(regAddressXLow);
-		tempX = (ucReadData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
+		readData = ioRead(regAddressXLow);
+		tempX = (readData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
 
 		// Posicio X [11:8] i estat [15:12]
-		ucReadData = ioRead(regAddressXHigh);
-		state.action[c] = (TouchPadAction) ((ucReadData & FT5336_TOUCH_EVT_FLAG_MASK) >> FT5336_TOUCH_EVT_FLAG_SHIFT);
-		tempX |= ((ucReadData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
+		readData = ioRead(regAddressXHigh);
+		state.action[c] = (TouchPadAction) ((readData & FT5336_TOUCH_EVT_FLAG_MASK) >> FT5336_TOUCH_EVT_FLAG_SHIFT);
+		tempX |= ((readData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
 		// Posicio Y [7:0]
-		ucReadData = ioRead(regAddressYLow);
-		tempY = (ucReadData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
+		readData = ioRead(regAddressYLow);
+		tempY = (readData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
 
 		// Posicio Y[11:8]
-		ucReadData = ioRead(regAddressYHigh);
-		tempY |= ((ucReadData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
+		readData = ioRead(regAddressYHigh);
+		tempY |= ((readData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
 		switch (orientation) {
 			case TouchPadOrientation::normal:
@@ -283,5 +299,5 @@ uint8_t FT5336Driver::ioRead(
 	return value;
 }
 
-#endif // USE_TOUCHPAD_FT5336
+#endif // USE_TOUCHPAD && TOUCHPAD_DRV_FT5336
 

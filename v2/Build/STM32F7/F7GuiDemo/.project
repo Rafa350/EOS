@@ -449,6 +449,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_gpio.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_i2c.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_i2c.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/STM32/HAL/stm32f7xx_hal_rcc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_rcc.c</locationURI>
@@ -552,6 +557,16 @@
 			<name>inc/Framework/EOS/Services/Gui/eosGui.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGui.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/eosGuiMessageQueue.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGuiMessageQueue.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/eosGuiTouchPad.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGuiTouchPad.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosLabel.h</name>
@@ -762,6 +777,11 @@
 			<name>src/Framework/EOS/Services/Gui/eosGui.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGui.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/eosGuiMessageQueue.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiMessageQueue.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/eosGuiTouchPad.cpp</name>

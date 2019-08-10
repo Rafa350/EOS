@@ -1,5 +1,5 @@
 #include "eos.h"
-#ifdef USE_TOUCHPAD_FT5336
+#ifdef USE_TOUCHPAD
 
 #include "Controllers/TouchPad/eosTouchPad.h"
 
@@ -31,4 +31,4 @@ bool TouchPad::getState(
 }
 
 
-#endif // USE_TOUCHPAD_FT5336
+#endif // USE_TOUCHPAD

@@ -11,28 +11,28 @@ static const TaskPriority priority = TaskPriority::normal;
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
-/// \param pApplication: Aplicacio a la que pertany el servei.
+/// \param application: Aplicacio a la que pertany el servei.
 ///
 AppLoopService::AppLoopService(
-    Application *pApplication):
+    Application *application):
 
-    Service(pApplication, serviceName, stackSize, priority),
+    Service(application, serviceName, stackSize, priority),
 	initialized(false) {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
-/// \param pApplication: Aplicacio a la que pertany el servei.
+/// \param application: Aplicacio a la que pertany el servei.
 /// \param stackSize: Tamany de la pila
 /// \param priority: Prioritat
 ///
 AppLoopService::AppLoopService(
-    Application *pApplication,
+    Application *application,
     unsigned stackSize,
     TaskPriority priority):
 
-    Service(pApplication, serviceName, stackSize, priority),
+    Service(application, serviceName, stackSize, priority),
 	initialized(false) {
 }
 

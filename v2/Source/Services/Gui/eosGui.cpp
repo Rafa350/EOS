@@ -10,14 +10,24 @@
 #include "Services/Gui/eosSimplePanel.h"
 #include "Services/Gui/eosScreen.h"
 #include "Services/Gui/eosRenderContext.h"
+#include "Services/Gui/eosGuiMessageQueue.h"
+#ifdef OPT_GUI_TouchPad
+#include "Services/Gui/eosGuiTouchPad.h"
+#endif
+#ifdef OPT_GUI_Selector
+#include "Services/Gui/eosGuiSelector.h"
+#endif
+#ifdef OPT_GUI_Keyboard
+#include "Services/Gui/eosGuiKeyboard.h"
+#endif
 
 
 using namespace eos;
 
 
 static const char *serviceName = "GuiService";
-static const unsigned stackSize = 512;
-static const TaskPriority priority = TaskPriority::normal;
+static const unsigned stackSize = OPT_GUI_ServiceStack;
+static const TaskPriority priority = OPT_GUI_ServicePriority;
 
 
 static IDisplayDriver *displayDriver;
@@ -34,11 +44,19 @@ int x, y, dx, dy;
 ///
 GuiService::GuiService(
 	Application *application,
-	const GuiServiceInitializeInfo *info):
+	const GuiServiceInitInfo *info):
 
 	Service(application, serviceName, stackSize, priority),
 	screen(new Screen()) {
 
+#ifdef OPT_GUI_TouchPad
+	touchPadService = new GuiTouchPadService(application);
+	touchPadService->setNotifyEvent<GuiService>(this, &GuiService::touchPadServiceNotify);
+#endif
+#ifdef OPT_GUI_Selector
+#endif
+#ifdef OPT_GUI_Keyboard
+#endif
 }
 
 
@@ -124,5 +142,17 @@ void GuiService::onTask() {
 	screen->render(context);
 	displayDriver->refresh();
 
-	Task::delay(25);
+	Task::delay(20);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa les notificacions del touchpad.
+/// \param args: Arguments del event.
+///
+void GuiService::touchPadServiceNotify(
+	TouchPadEventArgs *args) {
+
+	dx = -dx;
+	dy = -dy;
 }

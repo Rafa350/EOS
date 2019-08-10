@@ -6,9 +6,6 @@
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 
-// Standard includes
-#include <stdint.h>
-
 
 namespace eos {
 
@@ -270,6 +267,9 @@ namespace eos {
 
 		public:
 			static ITouchPadDriver *getInstance();
+
+			void initialize();
+			void shutdown();
 
 			int16_t getWidth() { return padWidth; }
 			int16_t getHeight() { return padHeight; }

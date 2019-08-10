@@ -11,8 +11,6 @@
 
 namespace eos {
 
-    class Application;
-
     /// \brief Clase que implementa el servei del bucle principal
     ///        de l'aplicacio.
     ///
@@ -27,8 +25,8 @@ namespace eos {
             virtual void onLoop();
 
         public:
-            AppLoopService(Application *pApplication);
-            AppLoopService(Application *pApplication, unsigned stackSize, TaskPriority prioirity);
+            AppLoopService(Application *application);
+            AppLoopService(Application *application, unsigned stackSize, TaskPriority prioirity);
     };
 }
 

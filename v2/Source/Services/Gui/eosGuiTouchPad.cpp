@@ -1,12 +1,14 @@
+#include "eos.h"
 #include "Services/Gui/eosGuiTouchPad.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
 
 
 using namespace eos;
 
+
 static const char *serviceName = "GuiTouchPadService";
-static const unsigned stackSize = 512;
-static const TaskPriority priority = TaskPriority::normal;
+static const unsigned stackSize = OPT_GUI_TouchPadServiceStack;
+static const TaskPriority priority = OPT_GUI_TouchPadServicePriority;
 
 
 /// ----------------------------------------------------------------------
@@ -17,6 +19,8 @@ GuiTouchPadService::GuiTouchPadService(
 	Application *application):
 
 	Service(application, serviceName, stackSize, priority),
+	touchDriver(nullptr),
+	touch(nullptr),
 	evNotify(nullptr) {
 }
 
@@ -39,6 +43,8 @@ void GuiTouchPadService::onInitialize() {
     // Inicialitzacio del touch pad
     //
     touchDriver = FT5336Driver::getInstance();
+    touchDriver->initialize();
+
     touch = new TouchPad(touchDriver);
 }
 
@@ -63,5 +69,5 @@ void GuiTouchPadService::onTask() {
 		}
 	}
 
-	Task::delay(250);
+	Task::delay(200);
 }

@@ -15,21 +15,21 @@ int Service::idCount = 0;
 /// \param name: Nom del servei.
 ///
 Service::Service(
-    Application *pApplication,
+    Application *application,
     const char *name,
     unsigned stackSize,
     TaskPriority priority):
 
     id(idCount++),
-    pApplication(nullptr),
+    application(nullptr),
     name(name),
     thread(stackSize, priority, name, this) {
 
     // Si s'indica l'aplicacio, s'afegeix a la llista de
 	// serveis d'aquesta.
 	//
-    if (pApplication != nullptr)
-        pApplication->addService(this);
+    if (application != nullptr)
+        application->addService(this);
 }
 
 
@@ -41,8 +41,8 @@ Service::~Service() {
 	// Al destruir-se, s'elimina ell mateix de la llista de serveis
 	// de l'aplicacio.
 	//
-    if (pApplication != nullptr)
-        pApplication->removeService(this);
+    if (application != nullptr)
+        application->removeService(this);
 }
 
 

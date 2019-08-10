@@ -1,6 +1,6 @@
 #include "eos.h"
 
-#ifdef DISPLAY_DRV_RGBLTDC
+#if defined(USE_DISPLAY) && defined(DISPLAY_DRV_RGBLTDC)
 
 #if !((defined(LTDC) && (defined(EOS_STM32F4) || defined(EOS_STM32F7))))
 #error Hardware no soportado
@@ -842,5 +842,5 @@ void RGBDirectDriver::copy(
 	halDMA2DWaitForFinish();
 }
 
-#endif // DISPLAY_DRV_RGBLTDC
+#endif // USE_DISPLAY && DISPLAY_DRV_RGBLTDC
 

@@ -9,7 +9,7 @@
 
 
 // -----------------------------------------------------------------------
-// Indicadors LED
+// Leds
 // -----------------------------------------------------------------------
 
 #ifdef USE_LEDS_LED1
@@ -22,7 +22,7 @@
 
 
 // -----------------------------------------------------------------------
-// Display grafic
+// Display
 // -----------------------------------------------------------------------
 
 #ifdef USE_DISPLAY
@@ -251,7 +251,7 @@
 
 
 // -----------------------------------------------------------------------
-// Controlador camara DCIM OV9655
+// Camara DCIM OV9655
 // -----------------------------------------------------------------------
 
 // Tamany de la imatge
@@ -327,10 +327,13 @@
 
 
 // -----------------------------------------------------------------------
-// Controlador de touchpad FT5336
+// Touchpad
 // -----------------------------------------------------------------------
 
-#ifdef USE_TOUCHPAD_FT5336
+#ifdef USE_TOUCHPAD
+#define EXIST_TOUCHPAD
+
+#define TOUCHPAD_DRV_FT5336
 
 #define TOUCHPAD_MAX_POINTS         5
 
@@ -343,7 +346,7 @@
 //
 #define TOUCHPAD_SCL_PORT           HAL_GPIO_PORT_H
 #define TOUCHPAD_SCL_PIN            HAL_GPIO_PIN_7
-#define TOUCHPAD_SCL_AF		      HAL_GPIO_AF4_I2C3
+#define TOUCHPAD_SCL_AF		        HAL_GPIO_AF4_I2C3
 
 // Control del pin SDA
 //
@@ -362,7 +365,7 @@
 // Modul I2C de comunicacions
 #define TOUCHPAD_I2C_MODULE         HAL_I2C_ID_3
 
-#endif // USE_TOUCHPAD_FT5336
+#endif // USE_TOUCHPAD
 
 
 #endif // __board_SMT32F746G_DISCO__

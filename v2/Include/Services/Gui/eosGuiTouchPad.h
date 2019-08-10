@@ -11,18 +11,15 @@
 #include "Controllers/TouchPad/eosTouchPad.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 
-// Standard includes
-#include <stdint.h>
-
 
 namespace eos {
 
 	class Application;
 
-	typedef struct {
+	struct TouchPadEventArgs {
 		int16_t x[TOUCHPAD_MAX_POINTS];
 		int16_t y[TOUCHPAD_MAX_POINTS];
-	} TouchPadEventArgs;
+	};
 
 	class GuiTouchPadService: public Service {
 		private:
