@@ -19,7 +19,7 @@ GPIO_TypeDef * const gpioTbl[] = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa el rellotge del port GPIO
+/// \brief Activa el port GPIO
 /// \param port: El identificador del port.
 ///
 static void EnableClock(
@@ -89,7 +89,7 @@ static void SetupPin(
 	uint32_t temp;
 	GPIO_TypeDef *gpio = gpioTbl[port];
 
-	// Configura el registre AFR
+	// Configura el registre AFR (Alternate Funcion Register)
 	//
 	if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_ALT_PP) ||
 		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_ALT_OD)) {
@@ -99,28 +99,38 @@ static void SetupPin(
         gpio->AFR[pin >> 3u] = temp;
 	}
 
-	// Configura el registre MODER
+	// Configura el registre MODER (Mode Register)
 	//
 	temp = gpio->MODER;
 	temp &= ~(0b11u << (pin * 2u));
 	switch (options & HAL_GPIO_MODE_MASK) {
+		// Sortida digital
 		case HAL_GPIO_MODE_OUTPUT_PP:
 		case HAL_GPIO_MODE_OUTPUT_OD:
 			temp |= 0b01u << (pin * 2u);
 			break;
 
+		// Funcio alternativa
 		case HAL_GPIO_MODE_ALT_PP:
 		case HAL_GPIO_MODE_ALT_OD:
 			temp |= 0b10u << (pin * 2u);
 			break;
 
+		// Entrada analogica
 		case HAL_GPIO_MODE_ANALOG:
 			temp |= 0b11u << (pin * 2u);
+			break;
+
+		// Entrada digital
+		case HAL_GPIO_MODE_INPUT:
+		case HAL_GPIO_MODE_IT_POS:
+		case HAL_GPIO_MODE_IT_NEG:
+		case HAL_GPIO_MODE_IT_CHG:
 			break;
 	}
 	gpio->MODER = temp;
 
-	// Configura el registre OSPEEDR
+	// Configura el registre OSPEEDR (Output Speed Register)
 	//
 	if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_PP) ||
 		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD) ||
@@ -145,7 +155,7 @@ static void SetupPin(
 		gpio->OSPEEDR = temp;
 	}
 
-	// Configura el registre OTYPER
+	// Configura el registre OTYPER (Output Type Register)
 	//
 	temp = gpio->OTYPER;
 	temp &= ~(1u << pin);
@@ -154,7 +164,7 @@ static void SetupPin(
 		temp |= 1u << pin;
 	gpio->OTYPER = temp;
 
-	// Configura el registre PUPDR
+	// Configura el registre PUPDR (PullUp PullDown Register)
 	//
 	temp = gpio->PUPDR;
 	temp &= ~(0b11u << (pin * 2u));
@@ -168,6 +178,45 @@ static void SetupPin(
 			break;
 	}
 	gpio->PUPDR = temp;
+
+	// Configura el cas d'entrades d'interrupcio externa
+	//
+	if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_POS) ||
+		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_NEG) ||
+		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_CHG)) {
+
+		// Activa el modul SYSCFG
+		//
+		RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+
+		// TODO Configurar SYSGEN
+
+		// Configura el registre IMR (Interrupt Mask Register);
+		//
+		temp = EXTI->IMR;
+		temp |= 1 << pin;
+		EXTI->IMR = temp;
+
+		// Configura el registre RTSR (Rising Trigger Selection Register)
+		//
+		temp = EXTI->RTSR;
+		temp &= ~(1 << pin);
+		if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_POS) ||
+			((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_CHG))
+			temp |= 1 << pin;
+		EXTI->RTSR = temp;
+
+		// Configura el registre FTSR (Falling Trigger Selection Register)
+		//
+		temp = EXTI->FTSR;
+		temp &= ~(1 << pin);
+		if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_NEG) ||
+			((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_CHG))
+			temp |= 1 << pin;
+		EXTI->FTSR = temp;
+
+		// TODO Activar interrupcions
+	}
 
 	// Configura el valor pin de sortida
 	//
@@ -292,3 +341,5 @@ void halGPIOTogglePin(
 	gpioTbl[port]->ODR ^= 1u << pin;
 }
 #endif
+
+

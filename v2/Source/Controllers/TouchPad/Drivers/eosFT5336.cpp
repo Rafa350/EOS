@@ -97,7 +97,8 @@ bool FT5336Driver::getState(
 	if (state.numPoints > state.maxPoints)
 		state.numPoints = 0;
 
-	for (uint8_t c = 0; c < Math::min((uint8_t) TOUCHPAD_MAX_POINTS, state.numPoints); c++) {
+	uint8_t cMax = Math::min((uint8_t) TOUCHPAD_MAX_POINTS, state.numPoints);
+	for (uint8_t c = 0; c < cMax; c++) {
 
 		volatile uint8_t readData = 0;
 		uint8_t regAddressXLow = 0;
@@ -255,13 +256,15 @@ void FT5336Driver::ioInit() {
 
 	static const GPIOInitializePinInfo gpioInfo[] = {
 #ifdef TOUCHPAD_INT_PORT
-		{TOUCHPAD_INT_PORT, TOUCHPAD_INT_PIN, HAL_GPIO_MODE_IT_POS | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, 0},
+		{TOUCHPAD_INT_PORT, TOUCHPAD_INT_PIN, HAL_GPIO_MODE_IT_NEG | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_UP, 0},
 #endif
 		{TOUCHPAD_SCL_PORT, TOUCHPAD_SCL_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, TOUCHPAD_SCL_AF},
 		{TOUCHPAD_SDA_PORT, TOUCHPAD_SDA_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, TOUCHPAD_SCL_AF}
 	};
-
 	halGPIOInitializePins(gpioInfo, sizeof(gpioInfo) / sizeof(gpioInfo[0]));
+
+#ifdef TOUCHPAD_INT_PORT
+#endif
 
 	I2CInitializeInfo i2cInfo;
 	i2cInfo.id = TOUCHPAD_I2C_MODULE;
@@ -299,5 +302,6 @@ uint8_t FT5336Driver::ioRead(
 	return value;
 }
 
-#endif // USE_TOUCHPAD && TOUCHPAD_DRV_FT5336
+
+#endif // defined(USE_TOUCHPAD) && defined(TOUCHPAD_DRV_FT5336)
 
