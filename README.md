@@ -12,3 +12,12 @@ Features:
     I2C comunication queue service.
 -Multiple examples.
 
+EOS (Root folder)
++---- v1 (Older version)
++---- v2 (Current version)
+	  +---- Include (Include files)
+	  +---- Source (Source files)
+	  +---- Library (Thirt party software and libraries)
+	  +---- Demo (Demos)
+	  +---- Build (Projects and builds for demos)
+	  +---- Tools (EOS developement tools)
