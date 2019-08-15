@@ -6,19 +6,16 @@
 //
 #include "eos.h"
 #include "System/Core/eosCallbacks.h"
-#include "System/Core/eosTask.h"
 #include "Services/eosService.h"
-#include "Controllers/TouchPad/eosTouchPad.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 
 
 namespace eos {
 
-	class Application;
-
 	struct TouchPadEventArgs {
-		int16_t x[TOUCHPAD_MAX_POINTS];
-		int16_t y[TOUCHPAD_MAX_POINTS];
+		bool isPressed;
+		int x;
+		int y;
 	};
 
 	class GuiTouchPadService: public Service {
@@ -27,7 +24,6 @@ namespace eos {
 
 		private:
     		ITouchPadDriver *touchDriver;
-            TouchPad *touch;
         	TouchPadEvent *evNotify;
 
 		public:

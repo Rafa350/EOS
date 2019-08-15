@@ -32,6 +32,8 @@
 
 #define OPT_GUI_ServicePriority                  TaskPriority::normal
 #define OPT_GUI_ServiceStack                     512
+#define OPT_GUI_MessageQueueSize                 10
+#define OPT_GUI_MessageQueueBlockTime            ((unsigned)-1)
 
 
 #include "board/board.h"

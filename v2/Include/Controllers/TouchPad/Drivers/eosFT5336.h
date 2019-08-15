@@ -7,9 +7,6 @@
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 
 
-namespace eos {
-
-
 // Adressa I2C
 #ifndef FT5336_I2C_ADDR
 #define FT5336_I2C_ADDR                0x70
@@ -24,14 +21,6 @@ namespace eos {
 #ifndef FT5336_PAD_HEIGHT
 #define FT5336_PAD_HEIGHT              272
 #endif
-
-// Possible values of driver functions return status
-#define FT5336_STATUS_OK                    ((uint8_t)0x00)
-#define FT5336_STATUS_NOT_OK                ((uint8_t)0x01)
-
-// Possible values of global variable 'TS_I2C_Initialized'
-#define FT5336_I2C_NOT_INITIALIZED          ((uint8_t)0x00)
-#define FT5336_I2C_INITIALIZED              ((uint8_t)0x01)
 
 // Max detectable simultaneous touches
 #define FT5336_MAX_DETECTABLE_TOUCH         ((uint8_t)0x05)
@@ -253,12 +242,14 @@ namespace eos {
 #define FT5336_STATE_REG                    ((uint8_t)0xBC)
 
 
+namespace eos {
+
 	class FT5336Driver: public ITouchPadDriver {
 		private:
 			static ITouchPadDriver *instance;
 			uint8_t addr;
-			int16_t padWidth;
-			int16_t padHeight;
+			int padWidth;
+			int padHeight;
 			TouchPadOrientation orientation;
 
 		private:
@@ -271,8 +262,9 @@ namespace eos {
 			void initialize();
 			void shutdown();
 
-			int16_t getWidth() { return padWidth; }
-			int16_t getHeight() { return padHeight; }
+			int getWidth() const { return padWidth; }
+			int getHeight() const { return padHeight; }
+			int getTouchCount();
 			bool getState(TouchPadState &state);
 			void setOrientation(TouchPadOrientation orientation);
 			void enableInt();

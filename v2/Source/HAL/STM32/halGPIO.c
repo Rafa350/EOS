@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "hal/halGPIO.h"
+#include "hal/STM32/halGPIO.h"
 
 
 GPIO_TypeDef * const gpioTbl[] = {

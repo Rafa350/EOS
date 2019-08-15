@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "Services/Gui/eosGuiTouchPad.h"
+#include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
 
 
@@ -20,7 +21,6 @@ GuiTouchPadService::GuiTouchPadService(
 
 	Service(application, serviceName, stackSize, priority),
 	touchDriver(nullptr),
-	touch(nullptr),
 	evNotify(nullptr) {
 }
 
@@ -44,8 +44,6 @@ void GuiTouchPadService::onInitialize() {
     //
     touchDriver = FT5336Driver::getInstance();
     touchDriver->initialize();
-
-    touch = new TouchPad(touchDriver);
 }
 
 
@@ -54,20 +52,35 @@ void GuiTouchPadService::onInitialize() {
 ///
 void GuiTouchPadService::onTask() {
 
-	TouchPadState tpState;
+	if (evNotify != nullptr) {
 
-	if (touch->getState(tpState)) {
-		if (evNotify != nullptr) {
+		static int oldTouchCount = 0;
+
+		int touchCount = touchDriver->getTouchCount();
+		if (touchCount != oldTouchCount) {
+			oldTouchCount = touchCount;
 
 			TouchPadEventArgs a;
-			for (int i = 0; i < TOUCHPAD_MAX_POINTS; i++) {
-				a.x[i] = tpState.x[i];
-				a.y[i] = tpState.y[i];
+
+			if (touchCount == 0)
+				a.isPressed = false;
+
+			else {
+				TouchPadState state;
+				if (touchDriver->getState(state)) {
+
+					a.isPressed =
+						(state.action[0] == TouchPadAction::press) ||
+						(state.action[0] == TouchPadAction::contact);
+					a.x = state.x[0];
+					a.y = state.y[0];
+					evNotify->execute(&a);
+				}
 			}
 
 			evNotify->execute(&a);
 		}
 	}
 
-	Task::delay(200);
+	Task::delay(50);
 }

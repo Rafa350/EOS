@@ -3,6 +3,7 @@
 
 
 #include "eos.h"
+#include "System/Core/eosQueue.h"
 
 
 namespace eos {
@@ -47,8 +48,16 @@ namespace eos {
 
 #ifdef OPT_GUI_TouchPad
 
+    enum class TouchPadEvent {
+    	press,
+		release,
+		move
+    };
+
     struct MsgTouchPad {
-        unsigned event;
+        TouchPadEvent event;
+        int x;
+        int y;
     };
 
 #endif
@@ -69,7 +78,12 @@ namespace eos {
     };
 
     class GuiMessageQueue {
-
+    	private:
+    		Queue<Message> queue;
+    	public:
+    		GuiMessageQueue();
+    		void send(const Message &msg);
+    		bool receive(Message &msg);
     };
 
 }

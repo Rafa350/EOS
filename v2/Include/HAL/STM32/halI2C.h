@@ -6,10 +6,6 @@
 //
 #include "eos.h"
 
-// Standard includes
-//
-#include "stdint.h"
-
 
 #ifdef	__cplusplus
 extern "C" {

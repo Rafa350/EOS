@@ -514,11 +514,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/TouchPad/eosTouchPad.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPad.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/eosTouchPadDriver.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/eosTouchPadDriver.h</locationURI>
@@ -692,11 +687,6 @@
 			<name>src/Framework/EOS/Controllers/TouchPad/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/TouchPad/eosTouchPad.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/eosTouchPad.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32/halDMA2D.c</name>

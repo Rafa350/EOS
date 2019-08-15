@@ -85,6 +85,19 @@ void FT5336Driver::setOrientation(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Comprova si hi ha accio.
+/// \return True si hi ha accio en el touchpad.
+///
+int FT5336Driver::getTouchCount() {
+
+	int8_t numPoints = ioRead(FT5336_TD_STAT_REG) & FT5336_TD_STAT_MASK;
+    if (numPoints > FT5336_MAX_DETECTABLE_TOUCH)
+    	numPoints = 0;
+    return numPoints;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Obte l'estat del touchpad.
 /// \param state: Buffer on deixar el resultat.
 /// \return True si s'ha detectat contacte.
@@ -186,18 +199,23 @@ bool FT5336Driver::getState(
 		tempX = (readData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
 
 		// Posicio X [11:8] i estat [15:12]
+		//
 		readData = ioRead(regAddressXHigh);
 		state.action[c] = (TouchPadAction) ((readData & FT5336_TOUCH_EVT_FLAG_MASK) >> FT5336_TOUCH_EVT_FLAG_SHIFT);
 		tempX |= ((readData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
-		// Posicio Y [7:0]
+		// Posicio YLow [7:0]
+		//
 		readData = ioRead(regAddressYLow);
 		tempY = (readData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
 
-		// Posicio Y[11:8]
+		// Posicio YHigh [11:8]
+		//
 		readData = ioRead(regAddressYHigh);
 		tempY |= ((readData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
+		// Ajusta les coordinades a la orientacio
+		//
 		switch (orientation) {
 			case TouchPadOrientation::normal:
 				state.x[c] = tempY;
@@ -210,8 +228,8 @@ bool FT5336Driver::getState(
 				break;
 
 			case TouchPadOrientation::rotate180:
-				state.x[c] = TOUCHPAD_PAD_HEIGHT - tempY;
-				state.y[c] = TOUCHPAD_PAD_WIDTH - tempX;
+				state.x[c] = TOUCHPAD_PAD_WIDTH - tempX;
+				state.y[c] = TOUCHPAD_PAD_HEIGHT - tempY;
 				break;
 
 			case TouchPadOrientation::rotate270:
@@ -230,6 +248,12 @@ bool FT5336Driver::getState(
 ///
 void FT5336Driver::enableInt() {
 
+   uint8_t regValue = 0;
+   regValue = (FT5336_G_MODE_INTERRUPT_TRIGGER & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
+
+   // Set interrupt trigger mode in FT5336_GMODE_REG
+   //
+   ioWrite(FT5336_GMODE_REG, regValue);
 }
 
 
@@ -238,6 +262,12 @@ void FT5336Driver::enableInt() {
 ///
 void FT5336Driver::disableInt() {
 
+	  uint8_t regValue = 0;
+	  regValue = (FT5336_G_MODE_INTERRUPT_POLLING & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
+
+	  // Set interrupt polling mode in FT5336_GMODE_REG
+	  //
+	  ioWrite(FT5336_GMODE_REG, regValue);
 }
 
 

@@ -6,13 +6,13 @@
 //
 #include "eos.h"
 #include "Services/eosService.h"
+#include <Services/Gui/eosGuiMessageQueue.h>
 #include "System/Core/eosTask.h"
 
 
 namespace eos {
 
 	class Screen;
-	class GuiMessageQueue;
 #ifdef OPT_GUI_TouchPad
 	class GuiTouchPadService;
 	struct TouchPadEventArgs;
@@ -31,9 +31,12 @@ namespace eos {
 	class GuiService: public Service {
 		private:
 			Screen *screen;
-			GuiMessageQueue *msgQueue;
+			GuiMessageQueue msgQueue;
 #ifdef OPT_GUI_TouchPad
 			GuiTouchPadService *touchPadService;
+			bool touchPadPressed;
+			int touchPadX;
+			int touchPadY;
 #endif
 
 		public:

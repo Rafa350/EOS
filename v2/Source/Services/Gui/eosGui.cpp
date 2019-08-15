@@ -4,13 +4,13 @@
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "System/Graphics/eosGraphics.h"
 #include "Services/Gui/eosGui.h"
+#include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosBorder.h"
 #include "Services/Gui/eosLabel.h"
 #include "Services/Gui/eosVisual.h"
 #include "Services/Gui/eosSimplePanel.h"
 #include "Services/Gui/eosScreen.h"
 #include "Services/Gui/eosRenderContext.h"
-#include "Services/Gui/eosGuiMessageQueue.h"
 #ifdef OPT_GUI_TouchPad
 #include "Services/Gui/eosGuiTouchPad.h"
 #endif
@@ -47,7 +47,10 @@ GuiService::GuiService(
 	const GuiServiceInitInfo *info):
 
 	Service(application, serviceName, stackSize, priority),
-	screen(new Screen()) {
+	screen(new Screen()),
+	touchPadPressed(false),
+	touchPadX(-1),
+	touchPadY(-1) {
 
 #ifdef OPT_GUI_TouchPad
 	touchPadService = new GuiTouchPadService(application);
@@ -153,6 +156,11 @@ void GuiService::onTask() {
 void GuiService::touchPadServiceNotify(
 	TouchPadEventArgs *args) {
 
-	dx = -dx;
-	dy = -dy;
+	if (touchPadPressed != args->isPressed) {
+		touchPadPressed = args->isPressed;
+		if (touchPadPressed) {
+			dx = -dx;
+			dy = -dy;
+		}
+	}
 }
