@@ -10,7 +10,7 @@ namespace eos {
 
 #ifdef OPT_GUI_Selector
 
-    enum class SelectorEvent {
+    enum class MsgSelectorEvent {
         inc,
         dec,
         press,
@@ -18,7 +18,7 @@ namespace eos {
     };
 
     struct MsgSelector {
-        SelectorEvent event;
+        MsgSelectorEvent event;
         uint16_t delta;
     };
 
@@ -34,13 +34,13 @@ namespace eos {
         enter
     };
 
-    enum class KeyboardEvent {
+    enum class MsgKeyboardEvent {
         press,
         release
     };
 
     struct MsgKeyboard {
-        KeyboardEvent event;
+        MsgKeyboardEvent event;
         KeyCode keyCode;
     };
 
@@ -48,14 +48,14 @@ namespace eos {
 
 #ifdef OPT_GUI_TouchPad
 
-    enum class TouchPadEvent {
+    enum class MsgTouchPadEvent: uint8_t {
     	press,
 		release,
 		move
     };
 
     struct MsgTouchPad {
-        TouchPadEvent event;
+        MsgTouchPadEvent event;
         int x;
         int y;
     };

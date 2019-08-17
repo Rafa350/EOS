@@ -254,6 +254,9 @@
 // Camara DCIM OV9655
 // -----------------------------------------------------------------------
 
+#ifdef USE_CAMERA
+#define EXIST_CAMERA
+
 // Tamany de la imatge
 //
 #define CAMERA_IMAGE_WIDTH        0  // Seleccionable per software
@@ -261,7 +264,7 @@
 
 // Format de la imatge
 //
-#define CAMERA_FORMAT        RGB565
+#define CAMERA_FORMAT             RGB565
 
 #define CAMERA_PIXCK_PORT         HAL_GPIO_PORT_A
 #define CAMERA_PIXCK_PIN          HAL_GPIO_PIN_6
@@ -307,10 +310,15 @@
 #define CAMERA_D7_PIN             HAL_GPIO_PIN_6
 #define CAMERA_D7_AF              HAL_GPIO_AF13_DCMI
 
+#endif // USE_CAMERA
+
 
 // -----------------------------------------------------------------------
-// Controlador SD-IO
+// Controlador SD
 // -----------------------------------------------------------------------
+
+#ifdef USE_SD
+#define EXIST_SD
 
 #define SD_PRESENT_PORT           HAL_GPIO_PORT_C
 #define SD_PRESENT_PIN            HAL_GPIO_PIN_13
@@ -324,6 +332,8 @@
 #define SD_DMA_TX_IRQ             DMA2_Stream6_IRQn
 
 #define SD_MODULE                 SDMMC1
+
+#endif // USE_SD
 
 
 // -----------------------------------------------------------------------

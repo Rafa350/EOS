@@ -8,20 +8,21 @@ using namespace eos;
 
 
 static const char *serviceName = "GuiTouchPadService";
-static const unsigned stackSize = OPT_GUI_TouchPadServiceStack;
-static const TaskPriority priority = OPT_GUI_TouchPadServicePriority;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contrustor de l'objecte.
+/// \brief Contructor de l'objecte.
 /// \param application: Aplicacio on afeigir el servei.
 ///
 GuiTouchPadService::GuiTouchPadService(
 	Application *application):
 
-	Service(application, serviceName, stackSize, priority),
+	Service(application, serviceName, OPT_GUI_TouchPadServiceStack, OPT_GUI_TouchPadServicePriority),
 	touchDriver(nullptr),
-	evNotify(nullptr) {
+	evNotify(nullptr),
+	oldX(-1),
+	oldY(-1),
+	oldPressed(false) {
 }
 
 
@@ -54,31 +55,64 @@ void GuiTouchPadService::onTask() {
 
 	if (evNotify != nullptr) {
 
-		static int oldTouchCount = 0;
+		bool pressed;
+		int x;
+		int y;
 
-		int touchCount = touchDriver->getTouchCount();
-		if (touchCount != oldTouchCount) {
-			oldTouchCount = touchCount;
+		// Detecta variacions del estat del touchpad
+		//
+		pressed = false;
+		x = -1;
+		y = -1;
+		if (touchDriver->getTouchCount()) {
 
-			TouchPadEventArgs a;
+			// Obte l'estat
+			//
+			TouchPadState state;
+			touchDriver->getState(state);
 
-			if (touchCount == 0)
-				a.isPressed = false;
+			if (state.numPoints == 1) {
 
-			else {
-				TouchPadState state;
-				if (touchDriver->getState(state)) {
+				// Obte el indicador de contacte
+				//
+				pressed =
+					(state.action[0] == TouchPadAction::press) ||
+					(state.action[0] == TouchPadAction::contact);
 
-					a.isPressed =
-						(state.action[0] == TouchPadAction::press) ||
-						(state.action[0] == TouchPadAction::contact);
-					a.x = state.x[0];
-					a.y = state.y[0];
-					evNotify->execute(&a);
+				// Obte la pocicio del contacte
+				//
+				if (pressed) {
+					x = state.x[0];
+					y = state.y[0];
 				}
 			}
+		}
 
-			evNotify->execute(&a);
+		// Detecta canvis de contacte.
+		//
+		if (oldPressed != pressed) {
+			oldPressed = pressed;
+
+			TouchPadEventArgs args = {
+				.event = pressed ? TouchPadEventType::press : TouchPadEventType::release,
+				.x = x,
+				.y = y
+			};
+			evNotify->execute(&args);
+		}
+
+		// Detecta canvis de posicio
+		//
+		else if (pressed && ((oldX != x) || (oldY != y))) {
+			oldX = x;
+			oldY = y;
+
+			TouchPadEventArgs args = {
+				.event = TouchPadEventType::move,
+				.x = x,
+				.y = y
+			};
+			evNotify->execute(&args);
 		}
 	}
 

@@ -22,16 +22,12 @@
 //
 #ifdef USE_TOUCHPAD
 #define OPT_GUI_TouchPad
-#define OPT_GUI_TouchPadServicePriority          TaskPriority::normal
-#define OPT_GUI_TouchPadServiceStack             512
 #endif
 
 //#define OPT_GUI_Keyboard
 
 //#define OPT_GUI_Selector
 
-#define OPT_GUI_ServicePriority                  TaskPriority::normal
-#define OPT_GUI_ServiceStack                     512
 #define OPT_GUI_MessageQueueSize                 10
 #define OPT_GUI_MessageQueueBlockTime            ((unsigned)-1)
 

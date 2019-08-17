@@ -218,23 +218,23 @@ bool FT5336Driver::getState(
 		//
 		switch (orientation) {
 			case TouchPadOrientation::normal:
+				state.x[c] = tempX;
+				state.y[c] = tempY;
+				break;
+
+			case TouchPadOrientation::rotate90:
 				state.x[c] = tempY;
 				state.y[c] = tempX;
 				break;
 
-			case TouchPadOrientation::rotate90:
-				state.x[c] = tempX;
-				state.y[c] = tempY;
-				break;
-
 			case TouchPadOrientation::rotate180:
-				state.x[c] = TOUCHPAD_PAD_WIDTH - tempX;
-				state.y[c] = TOUCHPAD_PAD_HEIGHT - tempY;
+				state.x[c] = padWidth - tempX;
+				state.y[c] = padHeight - tempY;
 				break;
 
 			case TouchPadOrientation::rotate270:
-				state.x[c] = tempX;
-				state.y[c] = tempY;
+				state.x[c] = tempY;
+				state.y[c] = tempX;
 				break;
 		}
 	}

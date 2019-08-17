@@ -10,6 +10,14 @@
 #include "System/Core/eosTask.h"
 
 
+#ifndef OPT_GUI_ServicePriority
+#define OPT_GUI_ServicePriority        TaskPriority::normal
+#endif
+#ifndef OPT_GUI_ServiceStack
+#define OPT_GUI_ServiceStack           512
+#endif
+
+
 namespace eos {
 
 	class Screen;

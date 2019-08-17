@@ -10,10 +10,24 @@
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 
 
+#ifndef OPT_GUI_TouchPadServicePrority
+#define OPT_GUI_TouchPadServicePriority     TaskPriority::normal
+#endif
+#ifndef OPT_GUI_TouchPadServiceStack
+#define OPT_GUI_TouchPadServiceStack        512
+#endif
+
+
 namespace eos {
 
+	enum class TouchPadEventType {
+		press,
+		release,
+		move
+	};
+
 	struct TouchPadEventArgs {
-		bool isPressed;
+		TouchPadEventType event;
 		int x;
 		int y;
 	};
@@ -25,6 +39,9 @@ namespace eos {
 		private:
     		ITouchPadDriver *touchDriver;
         	TouchPadEvent *evNotify;
+        	int oldX;
+        	int oldY;
+        	int oldPressed;
 
 		public:
 			GuiTouchPadService(Application *application);

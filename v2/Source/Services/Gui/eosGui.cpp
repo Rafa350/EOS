@@ -26,9 +26,6 @@ using namespace eos;
 
 
 static const char *serviceName = "GuiService";
-static const unsigned stackSize = OPT_GUI_ServiceStack;
-static const TaskPriority priority = OPT_GUI_ServicePriority;
-
 
 static IDisplayDriver *displayDriver;
 static Graphics *graphics;
@@ -46,15 +43,15 @@ GuiService::GuiService(
 	Application *application,
 	const GuiServiceInitInfo *info):
 
-	Service(application, serviceName, stackSize, priority),
-	screen(new Screen()),
-	touchPadPressed(false),
-	touchPadX(-1),
-	touchPadY(-1) {
+	Service(application, serviceName, OPT_GUI_ServiceStack, OPT_GUI_ServicePriority),
+	screen(new Screen()) {
 
 #ifdef OPT_GUI_TouchPad
 	touchPadService = new GuiTouchPadService(application);
 	touchPadService->setNotifyEvent<GuiService>(this, &GuiService::touchPadServiceNotify);
+	touchPadPressed = false;
+	touchPadX = -1;
+	touchPadY = -1;
 #endif
 #ifdef OPT_GUI_Selector
 #endif
@@ -122,7 +119,7 @@ void GuiService::onInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la tasca del servei
+/// \brief Procesa la tasca del servei.
 ///
 void GuiService::onTask() {
 
@@ -150,17 +147,25 @@ void GuiService::onTask() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa les notificacions del touchpad.
+/// \brief Procesa les notificacions del touchpad. S'executa en el
+///        contexte del que crida a aquest metode.
 /// \param args: Arguments del event.
 ///
 void GuiService::touchPadServiceNotify(
 	TouchPadEventArgs *args) {
 
-	if (touchPadPressed != args->isPressed) {
-		touchPadPressed = args->isPressed;
-		if (touchPadPressed) {
-			dx = -dx;
+	switch (args->event) {
+		case TouchPadEventType::press:
 			dy = -dy;
-		}
+			break;
+
+		case TouchPadEventType::release:
+			dx = -dx;
+			break;
+
+		case TouchPadEventType::move:
+			dx = 4;
+			dy = 4;
+			break;
 	}
 }
