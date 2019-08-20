@@ -60,7 +60,7 @@ static inline int addressOf(
 /// ----------------------------------------------------------------------
 /// \brief Converteix un color a format de pixel.
 /// \param color: El color a convertir.
-/// \return El color en format de piuxel.
+/// \return El color en format de pixel.
 ///
 static inline pixel_t toPixel(
 	const Color &color) {
@@ -89,7 +89,7 @@ IDisplayDriver *RGBDirectDriver::getInstance() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor
+/// \brief Constructor
 ///
 RGBDirectDriver::RGBDirectDriver():
 
@@ -273,7 +273,7 @@ void RGBDirectDriver::setVPixels(
 /// \param x: Posicio X.
 /// \param y: Posicio Y.
 /// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
+/// \param height: Alï¿½ada de la regio.
 /// \param color: Color dels pixels.
 ///
 void RGBDirectDriver::setPixels(
@@ -316,7 +316,7 @@ void RGBDirectDriver::setPixels(
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 /// \param width: Amplada.
-/// \param height: Alçada.
+/// \param height: Alï¿½ada.
 /// \param pixels: Els pixels a copiar.
 /// \param format: Format dels pixels.
 /// \param dx: Offset X dins del bitmap.
@@ -350,7 +350,7 @@ void RGBDirectDriver::writePixels(
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 /// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
+/// \param height: Alï¿½ada de la regio.
 /// \param pixels: Buffer de pixels.
 /// \param format: Format de pixels.
 ///
@@ -726,7 +726,7 @@ void RGBDirectDriver::put(
 /// \param x: Coordinada x.
 /// \param y: Coordinada y.
 /// \param width: Amplada del bloc.
-/// \param height: Alçada del bloc.
+/// \param height: Alï¿½ada del bloc.
 /// \param c: Color en format de pixel fisic.
 /// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
@@ -753,7 +753,7 @@ void RGBDirectDriver::fill(
 /// \param x: Coordinada X.
 /// \param y: Coordinada Y.
 /// \param width: Amplada.
-/// \param height: Alçada.
+/// \param height: Alï¿½ada.
 /// \param pixels: Llista de pixels.
 /// \param format: Format dels pixels.
 /// \param dx: Offset X dins del bitmap.

@@ -19,12 +19,13 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>com.st.stm32cube.ide.mcu.MCUProjectNature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUSingleCpuProjectNature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
-		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
-		<nature>fr.ac6.mcu.ide.core.MCUProjectNature</nature>
-		<nature>fr.ac6.mcu.ide.core.MCUSingleCoreProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUSW4STM32ConvertedProjectNature</nature>
 	</natures>
 	<linkedResources>
 		<link>
@@ -453,6 +454,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_rcc_ex.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/STM32/HAL/stm32f7xx_hal_rng.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_rng.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/STM32/HAL/stm32f7xx_hal_sdram.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_sdram.c</locationURI>
@@ -526,6 +532,11 @@
 			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halRNG.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halRNG.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halSPI.h</name>
@@ -623,11 +634,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/TouchPad/eosTouchPad.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/eosTouchPad.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/HAL/STM32/halDMA2D.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halDMA2D.c</locationURI>
@@ -646,6 +652,11 @@
 			<name>src/Framework/EOS/HAL/STM32/halLTDC.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halLTDC.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL/STM32/halRNG.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halRNG.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32/halSPI.c</name>

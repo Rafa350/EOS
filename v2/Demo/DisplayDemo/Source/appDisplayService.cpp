@@ -10,13 +10,24 @@
 #else
 #error No se especifico DISPLAY_DRV_XXXX
 #endif
+#include "HAl/STM32/halRNG.h"
 #include "appDisplayService.h"
-#include "stdlib.h"
 #include "stdio.h"
 
 
 using namespace eos;
 using namespace app;
+
+
+void srand(unsigned r) {
+
+}
+
+
+unsigned rand() {
+
+	return halRNGGetRandomNumber();
+}
 
 
 /// ----------------------------------------------------------------------
@@ -35,6 +46,10 @@ DisplayService::DisplayService(
 /// \brief Process la inicialitzacio de la tasca.
 ///
 void DisplayService::onSetup() {
+
+	// Inicialitza el generador de nombres aleatoris.
+	//
+	halRNGInitialize();
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 	driver = ILI9341LTDCDriver::getInstance();
@@ -68,14 +83,14 @@ void DisplayService::onLoop() {
     int ellipsesTicks;
     int filledEllipsesTicks;
 
-    int seed = 0; //Task::getTickCount();
+    int seed = Task::getTickCount();
 
     driver->setOrientation(DisplayOrientation(orientation++));
     if (orientation == 4)
     	orientation = 0;
 
     screenWidth = graphics->getWidth();
-    screenHeight  = graphics->getHeight();
+    screenHeight = graphics->getHeight();
 
     // Points
     //

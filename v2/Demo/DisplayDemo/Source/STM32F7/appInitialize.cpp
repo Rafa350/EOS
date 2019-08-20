@@ -1,6 +1,7 @@
 #include "hal/halSYS.h"
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_rcc.h"
+#include "stm32f7xx_hal_rng.h"
 #include "stm32f7xx_hal_flash_ex.h"
 #include "stm32746g_discovery.h"
 #include "stm32746g_discovery_sdram.h"
