@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Services/Gui/eosPanel.h"
+#include "Services/Gui/Visuals/eosPanel.h"
 #include "System/Graphics/eosColor.h"
 
 

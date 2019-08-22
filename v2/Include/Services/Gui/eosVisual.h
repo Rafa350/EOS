@@ -7,12 +7,13 @@
 #include "eos.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
-#include "System/graphics/eosSize.h"
+#include "System/Graphics/eosSize.h"
 
 
 namespace eos {
 
 	class RenderContext;
+	class Message;
 
     class Visual {
     	private:
@@ -29,6 +30,7 @@ namespace eos {
 
     	protected:
     		virtual void onRender(RenderContext *context) = 0;
+    		virtual void onDispatch(const Message &msg);
 
     		void addVisual(Visual *visual);
             void removeVisual(Visual *visual);
@@ -55,6 +57,7 @@ namespace eos {
             inline const Size& getSize() const { return size; }
             inline Rect getRect() const { return Rect(0, 0, size.getWidth(), size.getHeight()); }
 
+            void dispatch(const Message &msg);
             void render(RenderContext *context);
     		void invalidate();
     };

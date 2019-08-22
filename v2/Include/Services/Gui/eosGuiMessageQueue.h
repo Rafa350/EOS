@@ -62,17 +62,24 @@ namespace eos {
 
 #endif
 
+    enum class MsgId: uint8_t {
+    	null,
+    	touchPad,
+		selector,
+		keyboard
+    };
+
     struct Message {
-        unsigned id;
+        MsgId msgId;
         union {
 #ifdef OPT_GUI_Selector
-            MsgSelector msgSelector;
+            MsgSelector selector;
 #endif
 #ifdef OPT_GUI_Keyboard
-            MsgKeyboard msgKeyboard;
+            MsgKeyboard keyboard;
 #endif
 #ifdef OPT_GUI_TouchPad
-            MsgTouchPad msgTouchpad;
+            MsgTouchPad touchPad;
 #endif
         };
     };

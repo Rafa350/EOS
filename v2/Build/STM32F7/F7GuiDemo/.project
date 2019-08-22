@@ -260,6 +260,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/halINT.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halINT.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSYS.h</locationURI>
@@ -535,6 +540,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halLTDC.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halLTDC.h</locationURI>
@@ -545,9 +555,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/Gui/eosBorder.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosBorder.h</locationURI>
+			<name>inc/Framework/EOS/Services/Gui/Visuals</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosGui.h</name>
@@ -565,29 +575,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGuiTouchPad.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/Gui/eosLabel.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosLabel.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Services/Gui/eosPanel.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosPanel.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosRenderContext.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosRenderContext.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Services/Gui/eosScreen.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosScreen.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Services/Gui/eosSimplePanel.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosSimplePanel.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosVisual.h</name>
@@ -760,9 +750,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/Gui/eosBorder.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosBorder.cpp</locationURI>
+			<name>src/Framework/EOS/Services/Gui/Visuals</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/eosGui.cpp</name>
@@ -780,24 +770,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiTouchPad.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/Gui/eosLabel.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosLabel.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Services/Gui/eosRenderContext.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosRenderContext.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Services/Gui/eosScreen.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosScreen.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Services/Gui/eosSimplePanel.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosSimplePanel.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/eosVisual.cpp</name>
@@ -910,6 +885,31 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/Drivers/eosFT5336.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosBorder.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosBorder.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosLabel.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosLabel.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosPanel.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosPanel.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosScreen.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosScreen.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosSimplePanel.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosSimplePanel.h</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -918,6 +918,26 @@
 			<name>src/Framework/EOS/Controllers/TouchPad/Drivers/eosFT5336.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/TouchPad/Drivers/eosFT5336.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosBorder.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosBorder.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosLabel.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosLabel.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosScreen.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosScreen.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosSimplePanel.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosSimplePanel.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas10pt.cpp</name>

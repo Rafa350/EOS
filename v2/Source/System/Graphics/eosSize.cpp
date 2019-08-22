@@ -7,7 +7,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor del objecte. Crea un objecte buit.
+/// \brief Constructor del objecte. Crea un objecte buit.
 ///
 Size::Size():
 
@@ -17,9 +17,9 @@ Size::Size():
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor del objecte.
-/// \param    width: L'amplada.
-/// \param    height: L'alçada.
+/// \brief Constructor del objecte.
+/// \param width: L'amplada.
+/// \param height: L'alï¿½ada.
 ///
 Size::Size(
 	int width,
@@ -34,8 +34,8 @@ Size::Size(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor copia.
-/// \param    s: L'objecte a copiar.
+/// \brief Constructor copia.
+/// \param s: L'objecte a copiar.
 ///
 Size::Size(
 	const Size &s):
@@ -46,10 +46,10 @@ Size::Size(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Retorna un objecte engrandit.
-/// \param    dw: Increment del tamany en amplada.
-/// \param    dw: increment de tamany en alçada.
-/// \return   El nou objecte.
+/// \brief Retorna un objecte engrandit.
+/// \param dw: Increment del tamany en amplada.
+/// \param dw: increment de tamany en alï¿½ada.
+/// \return El nou objecte.
 ///
 Size Size::inflate(
 	int dw,
@@ -63,8 +63,8 @@ Size Size::inflate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Comprova si el tamany es zero.
-/// \return   True si es zero.
+/// \brief Comprova si el tamany es zero.
+/// \return True si es zero.
 ///
 bool Size::isEmpty() const {
 
@@ -73,9 +73,9 @@ bool Size::isEmpty() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Operador ==
-/// \param    s: Objecte a comparar.
-/// \return   True si son iguals.
+/// \brief Operador ==
+/// \param s: Objecte a comparar.
+/// \return True si son iguals.
 ///
 bool Size::operator==(
 	const Size &s) const {
@@ -85,9 +85,9 @@ bool Size::operator==(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Operador !=
-/// \param    s: Objecte a comparar.
-/// \return   True si son diferents.
+/// \brief Operador !=
+/// \param s: Objecte a comparar.
+/// \return True si son diferents.
 ///
 bool Size::operator!=(
 	const Size &s) const {

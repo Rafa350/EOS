@@ -19,14 +19,22 @@ using namespace eos;
 using namespace app;
 
 
-void srand(unsigned r) {
 
+static uint32_t rnd = 0L;
+
+void srand(uint32_t r) {
+
+	rnd = r;
 }
 
 
-unsigned rand() {
+uint32_t rand() {
 
-	return halRNGGetRandomNumber();
+	const uint32_t a = 1664525;
+	const uint32_t c = 1013904223;
+
+	rnd = ((a * rnd) + c);
+	return rnd;
 }
 
 
@@ -83,7 +91,7 @@ void DisplayService::onLoop() {
     int ellipsesTicks;
     int filledEllipsesTicks;
 
-    int seed = Task::getTickCount();
+    int seed = 7; //Task::getTickCount();
 
     driver->setOrientation(DisplayOrientation(orientation++));
     if (orientation == 4)

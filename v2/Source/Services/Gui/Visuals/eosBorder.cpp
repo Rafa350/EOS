@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/Gui/eosRenderContext.h"
-#include "Services/Gui/eosBorder.h"
+#include "Services/Gui/Visuals/eosBorder.h"
 #include "System/Graphics/eosGraphics.h"
 
 

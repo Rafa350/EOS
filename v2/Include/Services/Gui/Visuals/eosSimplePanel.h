@@ -3,7 +3,7 @@
 
 
 #include "eos.h"
-#include "Services/Gui/eosPanel.h"
+#include "Services/Gui/Visuals/eosPanel.h"
 
 
 namespace eos {

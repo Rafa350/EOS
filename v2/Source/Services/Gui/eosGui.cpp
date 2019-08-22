@@ -5,11 +5,11 @@
 #include "System/Graphics/eosGraphics.h"
 #include "Services/Gui/eosGui.h"
 #include "Services/Gui/eosGuiMessageQueue.h"
-#include "Services/Gui/eosBorder.h"
-#include "Services/Gui/eosLabel.h"
 #include "Services/Gui/eosVisual.h"
-#include "Services/Gui/eosSimplePanel.h"
-#include "Services/Gui/eosScreen.h"
+#include "Services/Gui/Visuals/eosBorder.h"
+#include "Services/Gui/Visuals/eosLabel.h"
+#include "Services/Gui/Visuals/eosSimplePanel.h"
+#include "Services/Gui/Visuals/eosScreen.h"
 #include "Services/Gui/eosRenderContext.h"
 #ifdef OPT_GUI_TouchPad
 #include "Services/Gui/eosGuiTouchPad.h"
@@ -20,6 +20,7 @@
 #ifdef OPT_GUI_Keyboard
 #include "Services/Gui/eosGuiKeyboard.h"
 #endif
+#include "HAL/halINT.h"
 
 
 using namespace eos;
@@ -123,6 +124,24 @@ void GuiService::onInitialize() {
 ///
 void GuiService::onTask() {
 
+	Message msg;
+	if (msgQueue.receive(msg)) {
+
+		switch (msg.msgId) {
+			case MsgId::keyboard:
+				break;
+
+			case MsgId::selector:
+				break;
+
+			case MsgId::touchPad:
+				break;
+
+			default:
+				break;
+		}
+	}
+
 	Size panelSize(panel->getSize());
 
 	if (x > (graphics->getWidth() - panelSize.getWidth() / 2))
@@ -151,21 +170,35 @@ void GuiService::onTask() {
 ///        contexte del que crida a aquest metode.
 /// \param args: Arguments del event.
 ///
+#ifdef OPT_GUI_TouchPad
 void GuiService::touchPadServiceNotify(
 	TouchPadEventArgs *args) {
 
+	Message msg;
+	msg.msgId = MsgId::touchPad;
+
 	switch (args->event) {
 		case TouchPadEventType::press:
+			msg.touchPad.event = MsgTouchPadEvent::press;
+			msg.touchPad.x = args->x;
+			msg.touchPad.y = args->y;
 			dy = -dy;
 			break;
 
 		case TouchPadEventType::release:
+			msg.touchPad.event = MsgTouchPadEvent::release;
 			dx = -dx;
 			break;
 
 		case TouchPadEventType::move:
+			msg.touchPad.event = MsgTouchPadEvent::move;
+			msg.touchPad.x = args->x;
+			msg.touchPad.y = args->y;
 			dx = 4;
 			dy = 4;
 			break;
 	}
+
+	msgQueue.send(msg);
 }
+#endif

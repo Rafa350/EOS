@@ -80,6 +80,17 @@ void Visual::render(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Despatcha un missatge.
+/// \param msg: El missatge a despatchar.
+///
+void Visual::dispatch(
+	const Message &msg) {
+
+	onDispatch(msg);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Afegeix un visual.
 /// \param visual: L'objecte Visual a afeigir.
 ///
@@ -176,7 +187,7 @@ void Visual::setPosition(
 /// ----------------------------------------------------------------------
 /// \brief Asigna el tamany.
 /// \param width: Amplada.
-/// \param height: Alçada.
+/// \param height: Alï¿½ada.
 ///
 void Visual::setSize(
 	const Size &s) {
@@ -189,4 +200,14 @@ void Visual::setSize(
 		else
 			invalidate();
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Despatch del missatge per defecte.
+/// \param msg: El missatge a despatxar.
+///
+void Visual::onDispatch(
+	const Message &msg) {
+
 }

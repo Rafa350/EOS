@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Services/Gui/eosSimplePanel.h"
+#include "Services/Gui/Visuals/eosSimplePanel.h"
 
 
 using namespace eos;

@@ -17,8 +17,6 @@ namespace eos {
             virtual void setPixels(int x, int y int width, int height, const Color &color) = 0;
             virtual void writePixels(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch) = 0;
             virtual void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch) = 0;
-            virtual void vScroll(int x, int y, int width, int height, int delta) = 0;
-            virtual void hScroll(int x, int y, int width, int height, int delta) = 0;
     }
     
 }

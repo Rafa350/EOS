@@ -1,6 +1,6 @@
 #include "eos.h"
-#include "Services/Gui/eosLabel.h"
 #include "Services/Gui/eosRenderContext.h"
+#include "Services/Gui/Visuals/eosLabel.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosGraphics.h"
 
