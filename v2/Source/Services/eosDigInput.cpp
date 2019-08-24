@@ -6,11 +6,13 @@
 using namespace eos;
 
 
-static const char *serviceName = "DigInputService";
-static const unsigned taskStackSize = 512;
-static const TaskPriority taskPriority = TaskPriority::normal;
-
-static DigInputServiceConfiguration defaultConfiguration;
+static DigInputServiceConfiguration defaultConfiguration = {
+    .serviceConfiguration = {
+        .serviceName = "DigInputService",
+        .stackSize = 512,
+        .priority = TaskPriority::normal
+    }
+};
 
 
 #define PATTERN_ON       0x0000007F
@@ -39,7 +41,7 @@ DigInputService::DigInputService(
     Application *pApplication,
     const DigInputServiceConfiguration &configuration) :
     
-    Service(pApplication, serviceName, taskStackSize, taskPriority) {
+    Service(pApplication, configuration.serviceConfiguration) {
 }
 
 

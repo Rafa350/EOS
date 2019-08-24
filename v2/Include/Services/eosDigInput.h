@@ -11,11 +11,10 @@
 
 namespace eos {
 
-    class Application;
     class DigInput;
 
     struct DigInputServiceConfiguration {
-
+        ServiceConfiguration serviceConfiguration;
     };
 
     struct DigInputConfiguration {

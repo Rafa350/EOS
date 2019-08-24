@@ -14,7 +14,8 @@ namespace eos {
     class Application;
     class DigOutput;
 
-    struct  DigOutputServiceConfiguration {
+    struct  DigOutputServiceConfiguration {      
+        ServiceConfiguration serviceConfiguration;
     	TMRTimer timer;
     };
 

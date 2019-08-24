@@ -9,9 +9,13 @@
 using namespace eos;
 
 
-static const char *serviceName = "DigOutputService";
-static const unsigned taskStackSize = 512;
-static const TaskPriority taskPriority = TaskPriority::normal;
+static DigOutputServiceConfiguration defaultConfiguration = {
+    .serviceConfiguration = {
+        .serviceName = "DigOutputService",
+        .stackSize = 512,
+        .priority = TaskPriority::normal
+    }
+};
 
 
 #define lockSection()    osalEnterCritical()
@@ -20,14 +24,26 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
-/// \param pApplication: L'aplicacio a la que pertany.
+/// \param pApplication: L'aplicacio on afeigir el servei.
+///
+DigOutputService::DigOutputService(
+    Application *pApplication):
+    
+    DigOutputService(pApplication, defaultConfiguration) {
+    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Constructor.
+/// \param pApplication: L'aplicacio on afeigir el servei..
 /// \param configuration: Parametres de configuracio.
 ///
 DigOutputService::DigOutputService(
     Application *pApplication,
     const DigOutputServiceConfiguration &configuration):
 
-    Service(pApplication, serviceName, taskStackSize, taskPriority) {
+    Service(pApplication, configuration.serviceConfiguration) {
 
     //timer = pInfo->timer;
 	timer = HAL_TMR_TIMER_2;
