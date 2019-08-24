@@ -10,7 +10,7 @@ namespace eos {
 
 	class SimplePanel: public Panel {
 		protected:
-			void onRender(RenderContext *context) override;
+			void onRender(RenderContext &context) override;
 	};
 }
 

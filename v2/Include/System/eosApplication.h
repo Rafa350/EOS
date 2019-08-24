@@ -12,6 +12,8 @@ namespace eos {
 
     class Service;
 
+    /// \brief Clase que representa l'aplicacio.
+    ///
     class Application {
         private:
             typedef List<Service*> ServiceList;
@@ -31,7 +33,6 @@ namespace eos {
 
         public:
             Application();
-            Application(const Application&) = delete;
             virtual ~Application();
 
             void run();
@@ -41,7 +42,9 @@ namespace eos {
             void removeService(Service *pService);
             void removeServices();
             Service *getService(int id);
+            Service *getService(const char *serviceName);
 
+            Application(const Application&) = delete;
             Application& operator=(const Application&) = delete;
     };
 }

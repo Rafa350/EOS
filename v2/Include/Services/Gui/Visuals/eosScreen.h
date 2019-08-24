@@ -18,7 +18,8 @@ namespace eos {
     		Color color;
 
     	protected:
-            void onRender(RenderContext *context) override;
+            void onRender(RenderContext &context) override;
+            void onDispatch(const Message &msg) override;
 
     	public:
             Screen();

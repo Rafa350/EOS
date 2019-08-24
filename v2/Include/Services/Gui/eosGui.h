@@ -22,6 +22,7 @@ namespace eos {
 
 	class Screen;
 	class Visual;
+	class Point;
 #ifdef OPT_GUI_TouchPad
 	class GuiTouchPadService;
 	struct TouchPadEventArgs;
@@ -59,6 +60,7 @@ namespace eos {
 			GuiService(Application *application, const GuiServiceConfiguration &configuration);
 			inline Screen* getRootVisual() const { return screen; }
 			inline Visual* getActiveVisual() const { return active; }
+			Visual *getVisualAt(const Point &position) const;
 			void setActiveVisual(Visual *visual);
 
 		protected:

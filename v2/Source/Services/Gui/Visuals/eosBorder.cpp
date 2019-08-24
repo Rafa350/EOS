@@ -101,20 +101,20 @@ void Border::setBackgroundColor(
 
 /// ----------------------------------------------------------------------
 /// \brief Renderitza la imatge..
-/// \param graphics: L'bjecte 'Graphics' per dibuixar.
+/// \param context: El context de representacio.
 ///
 void Border::onRender(
-	RenderContext *context) {
+	RenderContext &context) {
 
-	Graphics *g = context->beginRender(this);
+	Graphics &g = context.beginRender(this);
 
 	Rect r(getRect());
 
-	g->setColor(backgroundColor);
-	g->fillRectangle(r);
+	g.setColor(backgroundColor);
+	g.fillRectangle(r);
 
-	g->setColor(borderColor);
-	g->drawRectangle(r);
+	g.setColor(borderColor);
+	g.drawRectangle(r);
 
-	context->endRender();
+	context.endRender();
 }

@@ -83,15 +83,15 @@ void Label::setText(
 /// \param context: Context de renderitzat.
 ///
 void Label::onRender(
-	RenderContext *context) {
+	RenderContext &context) {
 
-	Graphics *graphics = context->beginRender(this);
+	Graphics &g = context.beginRender(this);
 
 	const Size &s = getSize();
 
-	graphics->setColor(color);
-	graphics->setTextAlign(horizontalTextAlign, verticalTextAlign);
-	graphics->drawText(s.getWidth() / 2, s.getHeight() / 2, text, 0, -1);
+	g.setColor(color);
+	g.setTextAlign(horizontalTextAlign, verticalTextAlign);
+	g.drawText(s.getWidth() / 2, s.getHeight() / 2, text, 0, -1);
 
-	context->endRender();
+	context.endRender();
 }

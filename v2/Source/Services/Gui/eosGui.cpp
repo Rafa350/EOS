@@ -3,6 +3,7 @@
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "System/Graphics/eosGraphics.h"
+#include "System/Graphics/eosPoint.h"
 #include "Services/Gui/eosGui.h"
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosVisual.h"
@@ -45,7 +46,7 @@ int x, y, dx, dy;
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
-/// \param pApplication: Aplicacio a la que pertany.
+/// \param pApplication: Aplicacio on afeigir el servei.
 ///
 GuiService::GuiService(Application *pApplication) :
 	GuiService(pApplication, defaultConfiguration) {
@@ -55,7 +56,7 @@ GuiService::GuiService(Application *pApplication) :
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor
-/// \param pApplication: Aplicacio a la que pertany.
+/// \param pApplication: Aplicacio on afeigir el servei.
 /// \param configuration: Parametres de configuracio
 ///
 GuiService::GuiService(
@@ -108,6 +109,20 @@ void GuiService::setActiveVisual(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Obte el visual en la posicio indicada.
+/// \param position: Posicio a verificar.
+///
+Visual *GuiService::getVisualAt(
+	const Point &position) const {
+
+	if (screen != nullptr)
+		return screen->getVisualAt(position);
+	else
+		return nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Inicialitzacio del servei.
 ///
 void GuiService::onInitialize() {
@@ -126,9 +141,10 @@ void GuiService::onInitialize() {
 
 	graphics = new Graphics(displayDriver);
 
-	context = new RenderContext(graphics);
+	context = new RenderContext(*graphics);
 
 	screen->setColor(COLOR_Blue);
+	setActiveVisual(screen);
 
 	x = 0;
 	y = 0;
@@ -170,44 +186,23 @@ void GuiService::onInitialize() {
 ///
 void GuiService::onTask() {
 
+	// Refresca la pantalla si cal
+	//
+	if (screen->getNeedRender()) {
+		screen->render(*context);
+		displayDriver->refresh();
+	}
+
+	// Espera que arrivin missatges.
+	//
 	Message msg;
 	if (msgQueue.receive(msg)) {
 
-		switch (msg.msgId) {
-			case MsgId::keyboard:
-				break;
-
-			case MsgId::selector:
-				break;
-
-			case MsgId::touchPad:
-				break;
-
-			default:
-				break;
-		}
+		// Procesa el missatge
+		//
+		if (msg.target != nullptr)
+			msg.target->dispatch(msg);
 	}
-
-	Size panelSize(panel->getSize());
-
-	if (x > (graphics->getWidth() - panelSize.getWidth() / 2))
-		dx = -1;
-	else if (x <= 0)
-		dx = 1;
-
-	if (y > (graphics->getHeight() - panelSize.getHeight() / 2))
-		dy = -1;
-	else if (y <= 0)
-		dy = 1;
-
-	x += dx;
-	y += dy;
-	panel->setPosition(Point(x, y));
-
-	screen->render(context);
-	displayDriver->refresh();
-
-	Task::delay(20);
 }
 
 
@@ -229,22 +224,22 @@ void GuiService::touchPadServiceNotify(
 			msg.touchPad.event = MsgTouchPadEvent::press;
 			msg.touchPad.x = args.x;
 			msg.touchPad.y = args.y;
-			dy = -dy;
 			break;
 
 		case TouchPadEventType::release:
 			msg.touchPad.event = MsgTouchPadEvent::release;
-			dx = -dx;
 			break;
 
 		case TouchPadEventType::move:
 			msg.touchPad.event = MsgTouchPadEvent::move;
 			msg.touchPad.x = args.x;
 			msg.touchPad.y = args.y;
-			dx = 4;
-			dy = 4;
 			break;
 	}
+
+	halINTDisableInterrupts();
+	getVisualAt(Point(args.x, args.y));
+	halINTEnableInterrupts();
 
 	msgQueue.send(msg);
 }

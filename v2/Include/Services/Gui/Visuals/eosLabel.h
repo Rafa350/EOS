@@ -22,7 +22,7 @@ namespace eos {
     		const char *text;
 
     	protected:
-    		void onRender(RenderContext *context) override;
+    		void onRender(RenderContext &context) override;
 
         public:
     		Label();

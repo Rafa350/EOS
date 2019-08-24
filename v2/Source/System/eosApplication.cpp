@@ -20,9 +20,13 @@ Application::Application() {
 ///
 Application::~Application() {
 
-    // Elimina tots els serveis
-    //
-    removeServices();
+    while (!services.isEmpty()) {
+
+    	Service *pService = services.getFront();
+    	services.remove(pService);
+
+    	delete pService;
+    }
 }
 
 
@@ -106,6 +110,7 @@ void Application::addService(
     // Precondicions
     //
     eosAssert(pService != nullptr);
+    eosAssert(pService->pApplication == nullptr);
 
     /// Afegeix el servei
     //
@@ -124,6 +129,7 @@ void Application::removeService(
     // Precondicions
     //
     eosAssert(pService != nullptr);
+    eosAssert(pService->pApplication == this);
 
     // Elimina el servei
     //
@@ -138,7 +144,7 @@ void Application::removeService(
 void Application::removeServices() {
 
     while (!services.isEmpty())
-        services.remove(services.getFront());
+        removeService(services.getFront());
 }
 
 

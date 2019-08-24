@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/Gui/eosRenderContext.h"
+#include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/Visuals/eosScreen.h"
 #include "System/Graphics/eosGraphics.h"
 
@@ -37,14 +38,33 @@ void Screen::setColor(
 /// \param context: El context de renderitzat.
 ///
 void Screen::onRender(
-	RenderContext *context) {
+	RenderContext &context) {
 
-	Graphics *g = context->beginRender(this);
+	Graphics &g = context.beginRender(this);
 
 	Rect r = getRect();
 
-	g->setColor(color);
-	g->fillRectangle(r);
+	g.setColor(color);
+	g.fillRectangle(r);
 
-	context->endRender();
+	context.endRender();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Despatxa els missatges.
+/// \param msg: El missatge a despatxar.
+///
+void Screen::onDispatch(
+	const Message &msg) {
+
+	switch (msg.msgId) {
+		case MsgId::touchPad:
+			setColor(COLOR_Red);
+			break;
+
+		default:
+			Panel::onDispatch(msg);
+			break;
+	}
 }

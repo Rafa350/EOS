@@ -22,7 +22,7 @@ namespace eos {
     		Visual *content;
 
     	protected:
-    		void onRender(RenderContext *context) override;
+    		void onRender(RenderContext &context) override;
 
         public:
     		Border();

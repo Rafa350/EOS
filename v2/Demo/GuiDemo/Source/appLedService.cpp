@@ -1,6 +1,6 @@
 #include "eos.h"
-#include "System/Core/eosTask.h"
 #include "HAL/halGPIO.h"
+#include "System/Core/eosTask.h"
 #include "appLedService.h"
 
 

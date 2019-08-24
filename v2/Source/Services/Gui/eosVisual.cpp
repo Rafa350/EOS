@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosVisual.h"
 #include "System/Graphics/eosGraphics.h"
 
@@ -11,12 +12,7 @@ using namespace eos;
 /// \brief Constructor de l'objecte.
 ///
 Visual::Visual():
-	parent(nullptr),
-	firstChild(nullptr),
-	lastChild(nullptr),
-	nextSibling(nullptr),
-	prevSibling(nullptr),
-	numChilds(0),
+	pParent(nullptr),
 	needRender(true),
 	visible(true),
 	position(0, 0),
@@ -29,11 +25,16 @@ Visual::Visual():
 ///
 Visual::~Visual() {
 
-	if (parent != nullptr)
-		parent->removeVisual(this);
+	if (pParent != nullptr)
+		pParent->removeVisual(this);
 
-	while (firstChild != nullptr)
-		delete firstChild;
+	while (!visuals.isEmpty()) {
+
+		Visual *pVisual = visuals.getFront();
+		visuals.remove(pVisual);
+
+		delete pVisual;
+	}
 }
 
 
@@ -42,12 +43,15 @@ Visual::~Visual() {
 ///
 void Visual::invalidate() {
 
+	// Invalida this
+	//
 	needRender = true;
 
-	Visual *visual = getFirstChild();
-	while (visual != nullptr) {
-		visual->invalidate();
-		visual = visual->getNextSibling();
+	// Invalida tots els descendents recursivament
+	//
+	for (VisualListIterator it(visuals); it.hasNext(); it.next()) {
+		Visual *pVisual = it.current();
+		pVisual->invalidate();
 	}
 }
 
@@ -57,7 +61,7 @@ void Visual::invalidate() {
 /// \param context: El context de renderitzat.
 ///
 void Visual::render(
-	RenderContext *context) {
+	RenderContext &context) {
 
 	if (visible) {
 
@@ -70,10 +74,9 @@ void Visual::render(
 
 		// Continua amb els visuals fills.
 		//
-		Visual *visual = getFirstChild();
-		while (visual != nullptr) {
-			visual->render(context);
-			visual = visual->getNextSibling();
+		for (VisualListIterator it(visuals); it.hasNext(); it.next()) {
+			Visual *pVisual = it.current();
+			pVisual->render(context);
 		}
 	}
 }
@@ -92,60 +95,84 @@ void Visual::dispatch(
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix un visual.
-/// \param visual: L'objecte Visual a afeigir.
+/// \param pVisual: L'objecte Visual a afeigir.
 ///
 void Visual::addVisual(
-	Visual *visual) {
+	Visual *pVisual) {
 
-	eosAssert(visual != nullptr);
-	eosAssert(visual->getParent() == nullptr);
+	eosAssert(pVisual != nullptr);
+	eosAssert(pVisual->pParent == nullptr);
 
-	// Cas que sigui el primer visual que s'afegeix;
-	//
-	if (numChilds == 0) {
-		firstChild = visual;
-		lastChild = visual;
-	}
-
-	// Cas que hi hagin mes visuals en el contenidor
-	//
-	else {
-		visual->prevSibling = lastChild;
-		lastChild->nextSibling = visual;
-		lastChild = visual;
-	}
-	visual->parent = this;
-	numChilds++;
+	visuals.add(pVisual);
+	pVisual->pParent = this;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Elimina un visual.
-/// \param visual: L'objecte Visual a eliminar.
+/// \param pVisual: L'objecte Visual a eliminar.
 ///
 void Visual::removeVisual(
-	Visual *visual) {
+	Visual *pVisual) {
 
-	eosAssert(visual != nullptr);
-	eosAssert(visual->getParent() != nullptr);
-	eosAssert(firstChild != nullptr);
-	eosAssert(numChilds > 0);
+	eosAssert(pVisual != nullptr);
+	eosAssert(pVisual->pParent != nullptr);
 
-	if (visual->prevSibling == nullptr)
-		firstChild = visual->nextSibling;
+	pVisual->pParent = nullptr;
+	visuals.remove(pVisual);
+}
+
+
+/// --------------------------------------------------------------------
+/// \brief Elimina els visuals de la llista.
+///
+void Visual::removeVisuals() {
+
+	while (!visuals.isEmpty())
+        removeVisual(visuals.getFront());
+}
+
+
+/// ---------------------------------------------------------------------
+/// \brief Obte el visual en la posicio indicada.
+/// \param p: La posicio.
+/// \return El visual, o null si no el troba.
+///
+Visual *Visual::getVisualAt(
+	const Point &p) {
+
+	Rect r(getAbsolutePosition(), size);
+	if (r.contains(p)) {
+
+		for (VisualListIterator it(visuals); it.hasNext(); it.next()) {
+			Visual *pVisual = it.current();
+			if (pVisual != nullptr)
+				return pVisual;
+		}
+
+		return this;
+	}
+
 	else
-		visual->prevSibling->nextSibling = visual->nextSibling;
+		return nullptr;
+}
 
-	if (visual->nextSibling == nullptr)
-		lastChild = visual->prevSibling;
-	else
-		visual->nextSibling->prevSibling = visual->prevSibling;
 
-	visual->parent = nullptr;
-	visual->nextSibling = nullptr;
-	visual->prevSibling = nullptr;
+/// ----------------------------------------------------------------------
+/// \brief Obte la posicio absoluta del visual.
+/// \return La posicio absoluta.
+///
+Point Visual::getAbsolutePosition() const {
 
-	numChilds--;
+	int x = position.getX();
+	int y = position.getY();
+
+	for (Visual *pVisual = pParent; pVisual != nullptr; pVisual = pVisual->pParent) {
+		x += pVisual->position.getX();
+		y += pVisual->position.getY();
+	}
+
+	return Point(x, y);
 }
 
 
@@ -158,8 +185,8 @@ void Visual::setVisible(
 
 	if (this->visible != visible) {
 		this->visible = visible;
-		if (!visible && (parent != nullptr))
-			parent->invalidate();
+		if (!visible && (pParent != nullptr))
+			pParent->invalidate();
 		else
 			invalidate();
 	}
@@ -175,9 +202,8 @@ void Visual::setPosition(
 
 	if (position != p) {
 		position = p;
-		Visual *parent = getParent();
-		if (parent)
-			parent->invalidate();
+		if (pParent != nullptr)
+			pParent->invalidate();
 		else
 			invalidate();
 	}
@@ -194,9 +220,8 @@ void Visual::setSize(
 
     if (size != s) {
     	size = s;
-    	Visual *parent = getParent();
-		if (parent)
-			parent->invalidate();
+		if (pParent != nullptr)
+			pParent->invalidate();
 		else
 			invalidate();
     }
@@ -210,4 +235,39 @@ void Visual::setSize(
 void Visual::onDispatch(
 	const Message &msg) {
 
+	switch (msg.msgId) {
+		case MsgId::activate:
+			onActivate(msg);
+			break;
+
+		case MsgId::deactivate:
+			onDeactivate(msg);
+			break;
+
+		default:
+			break;
+	}
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Despatxa el missagte 'activate'
+/// \param msg: El missatge.
+///
+void Visual::onActivate(
+	const Message &msg) {
+
+	invalidate();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Despatxa el missagte 'deactivate'
+/// \param msg: El missatge.
+///
+void Visual::onDeactivate(
+	const Message &msg) {
+
+	invalidate();
 }

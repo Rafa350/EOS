@@ -15,15 +15,15 @@ namespace eos {
 
 	class RenderContext {
 		private:
-			Graphics *graphics;
+			Graphics &graphics;
 
 		private:
 			Point getPosition(Visual *visual) const;
 			Rect getClip(Visual *visual) const;
 
 		public:
-			RenderContext(Graphics *graphics);
-			Graphics *beginRender(Visual *visual);
+			RenderContext(Graphics &graphics);
+			Graphics &beginRender(Visual *visual);
 			void endRender();
 	};
 }

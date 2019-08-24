@@ -6,6 +6,6 @@ using namespace eos;
 
 
 void SimplePanel::onRender(
-	RenderContext *context) {
+	RenderContext &context) {
 
 }

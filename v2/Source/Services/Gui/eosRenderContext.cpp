@@ -18,11 +18,9 @@ using namespace eos;
 /// \param graphics: L'objecte 'Graphics' per dibuixar.
 //
 RenderContext::RenderContext(
-	Graphics *graphics):
+	Graphics &graphics):
 
 	graphics(graphics) {
-
-	eosAssert(graphics != nullptr);
 }
 
 
@@ -31,22 +29,21 @@ RenderContext::RenderContext(
 /// \param visual: El visual a renderitzar.
 /// \return L'objecte 'Graphics' per dibuixar.
 ///
-Graphics *RenderContext::beginRender(
+Graphics &RenderContext::beginRender(
 	Visual *visual) {
 
 	eosAssert(visual != nullptr);
-	eosAssert(graphics != nullptr);
 
 	// Selecciona el rectangle de retall
 	//
-	graphics->setClip(getClip(visual));
+	graphics.setClip(getClip(visual));
 
 	// Aplica una translacio per situar l'origen de coordinades, al origen
 	// del widged
 	//
 	Transformation t;
 	t.translate(getPosition(visual));
-	graphics->setTransformation(t);
+	graphics.setTransformation(t);
 
 	return graphics;
 }

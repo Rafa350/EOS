@@ -9,12 +9,6 @@
 #include "HAL/halGPIO.h"
 
 
-namespace eos {
-
-	class Application;
-}
-
-
 namespace app {
 
 	class LedService: public eos::AppLoopService {
@@ -27,7 +21,7 @@ namespace app {
 #endif
 
 		public:
-			LedService(eos::Application *application);
+			LedService(eos::Application *pApplication);
 
 		protected:
 			void onSetup();
