@@ -16,5 +16,5 @@ MyApplication::MyApplication():
 	Application() {
 
 	ledService = new LedService(this);
-	guiService = new GuiService(this, nullptr);
+	guiService = new GuiService(this);
 }

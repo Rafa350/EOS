@@ -14,20 +14,20 @@ namespace eos {
     class Application;
     class DigOutput;
 
-    typedef struct {
+    struct  DigOutputServiceConfiguration {
     	TMRTimer timer;
-    } DigOutputServiceInitializeInfo;
+    };
 
-    typedef struct {
+    struct DigOutputConfiguration {
         GPIOPort port;
         GPIOPin pin;
         bool initState;
         bool openDrain;
-    } DigOutputInitializeInfo ;
+    };
 
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///
-    class DigOutputService: public Service {
+    class DigOutputService final: public Service {
         private:
             typedef List<DigOutput*> DigOutputList;
             typedef ListIterator<DigOutput*> DigOutputListIterator;
@@ -45,7 +45,8 @@ namespace eos {
             void onTask();
 
         public:
-            DigOutputService(Application *pApplication, const DigOutputServiceInitializeInfo *pInfo);
+            DigOutputService(Application *pApplication);
+            DigOutputService(Application *pApplication, const DigOutputServiceConfiguration &configuration);
             ~DigOutputService();
 
             void addOutput(DigOutput *pOutput);
@@ -55,7 +56,7 @@ namespace eos {
 
     /// \brief Clase que implementa una sortida digital.
     ///
-    class DigOutput {
+    class DigOutput final {
         private:
             enum class State {
                 Idle,
@@ -77,7 +78,7 @@ namespace eos {
             void timeOut();
 
         public:
-            DigOutput(DigOutputService *pService, const DigOutputInitializeInfo *pInfo);
+            DigOutput(DigOutputService *pService, const DigOutputConfiguration &configuration);
             ~DigOutput();
 
             DigOutputService *getService() const { return pService; }

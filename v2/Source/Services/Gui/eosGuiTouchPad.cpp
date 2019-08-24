@@ -7,17 +7,37 @@
 using namespace eos;
 
 
-static const char *serviceName = "GuiTouchPadService";
+static GuiTouchPadServiceConfiguration defaultConfiguration = {
+	.serviceConfiguration = {
+		.serviceName = "GuiTouchPadService",
+		.stackSize = OPT_GUI_TouchPadServiceStack,
+		.priority = OPT_GUI_TouchPadServicePriority
+	}
+};
+
+
+/// ----------------------------------------------------------------------
+/// \brief Constructor de l'objecte.
+/// \param pApplication: Aplicacio on afeigir el servei.
+///
+GuiTouchPadService::GuiTouchPadService(
+	Application *pApplication) :
+
+	GuiTouchPadService(pApplication, defaultConfiguration) {
+
+}
 
 
 /// ----------------------------------------------------------------------
 /// \brief Contructor de l'objecte.
-/// \param application: Aplicacio on afeigir el servei.
+/// \param pApplication: Aplicacio on afeigir el servei
+/// \param configuration: Parametres de configuracio.
 ///
 GuiTouchPadService::GuiTouchPadService(
-	Application *application):
+	Application *pApplication,
+	const GuiTouchPadServiceConfiguration &configuration):
 
-	Service(application, serviceName, OPT_GUI_TouchPadServiceStack, OPT_GUI_TouchPadServicePriority),
+	Service(pApplication, configuration.serviceConfiguration),
 	touchDriver(nullptr),
 	evNotify(nullptr),
 	oldX(-1),
@@ -98,7 +118,7 @@ void GuiTouchPadService::onTask() {
 				.x = x,
 				.y = y
 			};
-			evNotify->execute(&args);
+			evNotify->execute(args);
 		}
 
 		// Detecta canvis de posicio
@@ -112,7 +132,7 @@ void GuiTouchPadService::onTask() {
 				.x = x,
 				.y = y
 			};
-			evNotify->execute(&args);
+			evNotify->execute(args);
 		}
 	}
 

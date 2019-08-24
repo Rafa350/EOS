@@ -26,7 +26,14 @@
 using namespace eos;
 
 
-static const char *serviceName = "GuiService";
+static GuiServiceConfiguration defaultConfiguration = {
+	.serviceConfiguration = {
+		.serviceName = "GuiService",
+		.stackSize = OPT_GUI_ServiceStack,
+		.priority = OPT_GUI_ServicePriority
+	}
+};
+
 
 static IDisplayDriver *displayDriver;
 static Graphics *graphics;
@@ -37,15 +44,27 @@ int x, y, dx, dy;
 
 
 /// ----------------------------------------------------------------------
+/// \brief Constructor.
+/// \param pApplication: Aplicacio a la que pertany.
+///
+GuiService::GuiService(Application *pApplication) :
+	GuiService(pApplication, defaultConfiguration) {
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Constructor
-/// \param info: Parametres d'inicialitzacio
+/// \param pApplication: Aplicacio a la que pertany.
+/// \param configuration: Parametres de configuracio
 ///
 GuiService::GuiService(
 	Application *application,
-	const GuiServiceInitInfo *info):
+	const GuiServiceConfiguration &configuration):
 
-	Service(application, serviceName, OPT_GUI_ServiceStack, OPT_GUI_ServicePriority),
-	screen(new Screen()) {
+	Service(application, configuration.serviceConfiguration),
+	screen(new Screen()),
+	active(nullptr) {
 
 #ifdef OPT_GUI_TouchPad
 	touchPadService = new GuiTouchPadService(application);
@@ -58,6 +77,33 @@ GuiService::GuiService(
 #endif
 #ifdef OPT_GUI_Keyboard
 #endif
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna el visual actiu.
+/// \param visual: El nou visual a activar.
+///
+void GuiService::setActiveVisual(
+	Visual *visual) {
+
+	if (active != nullptr) {
+		Message msg = {
+			.msgId = MsgId::deactivate,
+			.target = active
+		};
+		active->dispatch(msg);
+	}
+
+	active = visual;
+
+	if (active != nullptr) {
+		Message msg = {
+			.msgId = MsgId::activate,
+			.target = active
+		};
+		active->dispatch(msg);
+	}
 }
 
 
@@ -172,16 +218,17 @@ void GuiService::onTask() {
 ///
 #ifdef OPT_GUI_TouchPad
 void GuiService::touchPadServiceNotify(
-	TouchPadEventArgs *args) {
+	const TouchPadEventArgs &args) {
 
 	Message msg;
 	msg.msgId = MsgId::touchPad;
+	msg.target = getActiveVisual();
 
-	switch (args->event) {
+	switch (args.event) {
 		case TouchPadEventType::press:
 			msg.touchPad.event = MsgTouchPadEvent::press;
-			msg.touchPad.x = args->x;
-			msg.touchPad.y = args->y;
+			msg.touchPad.x = args.x;
+			msg.touchPad.y = args.y;
 			dy = -dy;
 			break;
 
@@ -192,8 +239,8 @@ void GuiService::touchPadServiceNotify(
 
 		case TouchPadEventType::move:
 			msg.touchPad.event = MsgTouchPadEvent::move;
-			msg.touchPad.x = args->x;
-			msg.touchPad.y = args->y;
+			msg.touchPad.x = args.x;
+			msg.touchPad.y = args.y;
 			dx = 4;
 			dy = 4;
 			break;

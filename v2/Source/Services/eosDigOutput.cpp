@@ -21,17 +21,13 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param pApplication: L'aplicacio a la que pertany.
-/// \param pInfo: Parametres d'inicialitzacio.
+/// \param configuration: Parametres de configuracio.
 ///
 DigOutputService::DigOutputService(
     Application *pApplication,
-    const DigOutputServiceInitializeInfo *pInfo):
+    const DigOutputServiceConfiguration &configuration):
 
     Service(pApplication, serviceName, taskStackSize, taskPriority) {
-    
-    // Precondicions
-    //
-    eosAssert(pInfo != nullptr);
 
     //timer = pInfo->timer;
 	timer = HAL_TMR_TIMER_2;
@@ -169,29 +165,25 @@ void DigOutputService::timerInterrupt(
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param service: El servei al que s'asignara la sortida.
-/// \param info: Parametres d'inicialitzacio.
+/// \param configuration: Parametres de configuracio.
 ///
 DigOutput::DigOutput(
     DigOutputService *pService,
-    const DigOutputInitializeInfo *pInfo):
+    const DigOutputConfiguration &configuration):
 
     pService(nullptr),
     state(State::Idle),
 	delayCnt(0),
 	widthCnt(0) {
 
-    // Precondicions
-    //
-    eosAssert(pInfo != nullptr);
-
     if (pService != nullptr)
         pService->addOutput(this);
 
-    port = pInfo->port;
-    pin = pInfo->pin;
+    port = configuration.port;
+    pin = configuration.pin;
     options =
-        (pInfo->openDrain ? HAL_GPIO_MODE_OUTPUT_OD : HAL_GPIO_MODE_OUTPUT_PP) |
-        (pInfo->initState ? HAL_GPIO_INIT_SET : HAL_GPIO_INIT_CLR);
+        (configuration.openDrain ? HAL_GPIO_MODE_OUTPUT_OD : HAL_GPIO_MODE_OUTPUT_PP) |
+        (configuration.initState ? HAL_GPIO_INIT_SET : HAL_GPIO_INIT_CLR);
 }
 
 

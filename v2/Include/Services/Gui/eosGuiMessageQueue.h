@@ -66,11 +66,16 @@ namespace eos {
     	null,
     	touchPad,
 		selector,
-		keyboard
+		keyboard,
+		activate,
+		deactivate
     };
+
+    class Visual;
 
     struct Message {
         MsgId msgId;
+        Visual *target;
         union {
 #ifdef OPT_GUI_Selector
             MsgSelector selector;

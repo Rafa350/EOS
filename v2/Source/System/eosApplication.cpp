@@ -98,19 +98,19 @@ void Application::runServices() {
 
 /// ----------------------------------------------------------------------
 /// \brief Afegeix un servei a l'aplicacio.
-/// \param service: El servei a afeigir.
+/// \param pService: El servei a afeigir.
 ///
 void Application::addService(
-    Service *service) {
+    Service *pService) {
 
     // Precondicions
     //
-    eosAssert(service != nullptr);
+    eosAssert(pService != nullptr);
 
     /// Afegeix el servei
     //
-    services.add(service);
-    service->application = this;
+    services.add(pService);
+    pService->pApplication = this;
 }
 
 
@@ -119,16 +119,16 @@ void Application::addService(
 /// \param pService: El servei a eliminar.
 ///
 void Application::removeService(
-    Service *service) {
+    Service *pService) {
 
     // Precondicions
     //
-    eosAssert(service != nullptr);
+    eosAssert(pService != nullptr);
 
     // Elimina el servei
     //
-    service->application = nullptr;
-    services.remove(service);
+    pService->pApplication = nullptr;
+    services.remove(pService);
 }
 
 

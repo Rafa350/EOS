@@ -32,9 +32,13 @@ namespace eos {
 		int y;
 	};
 
-	class GuiTouchPadService: public Service {
+	struct GuiTouchPadServiceConfiguration {
+		ServiceConfiguration serviceConfiguration;
+	};
+
+	class GuiTouchPadService final: public Service {
 		private:
-        	typedef ICallbackP1<TouchPadEventArgs*> TouchPadEvent;
+        	typedef ICallbackP1<const TouchPadEventArgs&> TouchPadEvent;
 
 		private:
     		ITouchPadDriver *touchDriver;
@@ -45,11 +49,12 @@ namespace eos {
 
 		public:
 			GuiTouchPadService(Application *application);
+			GuiTouchPadService(Application *pApplication, const GuiTouchPadServiceConfiguration &configuration);
 			~GuiTouchPadService();
 
 			template <class cls>
-            void setNotifyEvent(cls *instance, void (cls::*method)(TouchPadEventArgs *args)) {
-                evNotify = new CallbackP1<cls, TouchPadEventArgs*>(instance, method);
+            void setNotifyEvent(cls *instance, void (cls::*method)(const TouchPadEventArgs &args)) {
+                evNotify = new CallbackP1<cls, const TouchPadEventArgs&>(instance, method);
             }
 
 		protected:

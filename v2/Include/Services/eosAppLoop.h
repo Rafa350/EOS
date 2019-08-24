@@ -11,6 +11,10 @@
 
 namespace eos {
 
+	struct AppLoopServiceConfiguration {
+		ServiceConfiguration serviceConfiguration;
+	};
+
     /// \brief Clase que implementa el servei del bucle principal
     ///        de l'aplicacio.
     ///
@@ -25,8 +29,8 @@ namespace eos {
             virtual void onLoop();
 
         public:
-            AppLoopService(Application *application);
-            AppLoopService(Application *application, unsigned stackSize, TaskPriority prioirity);
+            AppLoopService(Application *pApplication);
+            AppLoopService(Application *pApplication, const AppLoopServiceConfiguration &configuration);
     };
 }
 

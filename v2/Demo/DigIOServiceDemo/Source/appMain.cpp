@@ -74,57 +74,57 @@ void MyApplication::onInitialize() {
 
     // Prepara el servei d'entrades digitals
 	//
-    digInputSvc = new DigInputService(this, nullptr);
+    digInputSvc = new DigInputService(this);
 
-	DigInputInitializeInfo inputInfo;
+	DigInputConfiguration inputConfiguration;
 
 #ifdef EXIST_SWITCHES_SW1
-    inputInfo.port = SW_SW1_PORT;
-    inputInfo.pin = SW_SW1_PIN;
-    digInput1 = new DigInput(digInputSvc, &inputInfo);
+    inputConfiguration.port = SW_SW1_PORT;
+    inputConfiguration.pin = SW_SW1_PIN;
+    digInput1 = new DigInput(digInputSvc, inputConfiguration);
     digInput1->setChangeEvent<MyApplication>(this, &MyApplication::digInput1_OnChange);
 #endif
 
 #ifdef EXIST_SWITCHES_SW2
-    inputInfo.port = SW_SW2_PORT;
-    inputInfo.pin = SW_SW2_PIN;
-    digInput2 = new DigInput(digInputSvc, &inputInfo);
+    inputConfiguration.port = SW_SW2_PORT;
+    inputConfiguration.pin = SW_SW2_PIN;
+    digInput2 = new DigInput(digInputSvc, inputConfiguration);
     digInput2->setChangeEvent<MyApplication>(this, &MyApplication::digInput2_OnChange);
 #endif
 
 #ifdef EXIST_SWITCHES_SW3
-    inputInfo.port = SW_SW3_PORT;
-    inputInfo.pin = SW_SW3_PIN;
-    digInput3 = new DigInput(digInputSvc, &inputInfo);
+    inputConfiguration.port = SW_SW3_PORT;
+    inputConfiguration.pin = SW_SW3_PIN;
+    digInput3 = new DigInput(digInputSvc, inputConfiguration);
     digInput3->setChangeEvent<MyApplication>(this, &MyApplication::digInput3_OnChange);
 #endif
 
     // Prepara el servei de sortides digitals
     //
-    DigOutputServiceInitializeInfo outputSrvInfo;
-    outputSrvInfo.timer = HAL_TMR_TIMER_2;
-    digOutputSrv = new DigOutputService(this, &outputSrvInfo);
+    DigOutputServiceConfiguration outputSrvConfiguration;
+    outputSrvConfiguration.timer = HAL_TMR_TIMER_2;
+    digOutputSrv = new DigOutputService(this, outputSrvConfiguration);
 
-    DigOutputInitializeInfo outputInfo;
-    outputInfo.openDrain = false;
-    outputInfo.initState = false;
+    DigOutputConfiguration outputConfiguration;
+    outputConfiguration.openDrain = false;
+    outputConfiguration.initState = false;
 
 #ifdef EXIST_LEDS_LED1
-    outputInfo.port = LED_LED1_PORT;
-    outputInfo.pin = LED_LED1_PIN;
-    digOutput1 = new DigOutput(digOutputSrv, &outputInfo);
+    outputConfiguration.port = LED_LED1_PORT;
+    outputConfiguration.pin = LED_LED1_PIN;
+    digOutput1 = new DigOutput(digOutputSrv, outputConfiguration);
 #endif
 
 #ifdef EXIST_LEDS_LED2
-    outputInfo.port = LED_LED2_PORT;
-    outputInfo.pin = LED_LED2_PIN;
-    digOutput2 = new DigOutput(digOutputSrv, &outputInfo);
+    outputConfiguration.port = LED_LED2_PORT;
+    outputConfiguration.pin = LED_LED2_PIN;
+    digOutput2 = new DigOutput(digOutputSrv, outputConfiguration);
 #endif
 
 #ifdef EXIST_LEDS_LED3
-    outputInfo.port = LED_LED3_PORT;
-    outputInfo.pin = LED_LED3_PIN;
-    digOutput3 = new DigOutput(digOutputSrv, &outputInfo);
+    outputConfiguration.port = LED_LED3_PORT;
+    outputConfiguration.pin = LED_LED3_PIN;
+    digOutput3 = new DigOutput(digOutputSrv, outputConfiguration);
 #endif
 
     // Prepara el servei de l'aplicacio principal

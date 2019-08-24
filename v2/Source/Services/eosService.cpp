@@ -11,25 +11,23 @@ int Service::idCount = 0;
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor
-/// \param application: Aplicacio al que pertany.
-/// \param name: Nom del servei.
+/// \param pApplication: Aplicacio al que pertany.
+/// \param configuration: Parametres de configuracio.
 ///
 Service::Service(
-    Application *application,
-    const char *name,
-    unsigned stackSize,
-    TaskPriority priority):
+	Application *pApplication,
+	const ServiceConfiguration &configuration) :
 
     id(idCount++),
-    application(nullptr),
-    name(name),
-    thread(stackSize, priority, name, this) {
+    pApplication(nullptr),
+    name(configuration.serviceName),
+    thread(configuration.stackSize, configuration.priority, configuration.serviceName, this) {
 
     // Si s'indica l'aplicacio, s'afegeix a la llista de
 	// serveis d'aquesta.
 	//
-    if (application != nullptr)
-        application->addService(this);
+    if (pApplication != nullptr)
+        pApplication->addService(this);
 }
 
 
@@ -41,8 +39,8 @@ Service::~Service() {
 	// Al destruir-se, s'elimina ell mateix de la llista de serveis
 	// de l'aplicacio.
 	//
-    if (application != nullptr)
-        application->removeService(this);
+    if (pApplication != nullptr)
+        pApplication->removeService(this);
 }
 
 

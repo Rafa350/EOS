@@ -21,6 +21,7 @@
 namespace eos {
 
 	class Screen;
+	class Visual;
 #ifdef OPT_GUI_TouchPad
 	class GuiTouchPadService;
 	struct TouchPadEventArgs;
@@ -33,13 +34,19 @@ namespace eos {
 #endif
 
 
-	struct GuiServiceInitInfo {
+	struct GuiServiceConfiguration {
+		ServiceConfiguration serviceConfiguration;
 	};
 
-	class GuiService: public Service {
+	class GuiService final: public Service {
 		private:
 			Screen *screen;
+			Visual *active;
 			GuiMessageQueue msgQueue;
+#ifdef OPT_GUI_Keyboard
+#endif
+#ifdef OPT_GUI_Selector
+#endif
 #ifdef OPT_GUI_TouchPad
 			GuiTouchPadService *touchPadService;
 			bool touchPadPressed;
@@ -48,15 +55,20 @@ namespace eos {
 #endif
 
 		public:
-			GuiService(Application *application, const GuiServiceInitInfo *info);
-			inline Screen* getScreen() const { return screen; }
+			GuiService(Application *application);
+			GuiService(Application *application, const GuiServiceConfiguration &configuration);
+			inline Screen* getRootVisual() const { return screen; }
+			inline Visual* getActiveVisual() const { return active; }
+			void setActiveVisual(Visual *visual);
 
 		protected:
 			void onInitialize() override;
 			void onTask() override;
 
 		private:
-			void touchPadServiceNotify(TouchPadEventArgs *args);
+#ifdef OPT_GUI_TouchPad
+			void touchPadServiceNotify(const TouchPadEventArgs &args);
+#endif
 	};
 }
 

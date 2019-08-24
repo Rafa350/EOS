@@ -13,7 +13,7 @@ namespace eos {
 
     class RenderContext;
 
-    class Screen: public Panel {
+    class Screen final: public Panel {
     	private:
     		Color color;
 

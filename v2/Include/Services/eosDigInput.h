@@ -11,22 +11,21 @@
 
 namespace eos {
 
-
     class Application;
     class DigInput;
 
-    typedef struct {
+    struct DigInputServiceConfiguration {
 
-    } DigInputServiceInitializeInfo;
+    };
 
-    typedef struct {
+    struct DigInputConfiguration {
         GPIOPort port;
         GPIOPin pin;
-    } DigInputInitializeInfo;
+    };
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
-    class DigInputService: public Service {
+    class DigInputService final: public Service {
         private:
             typedef List<DigInput*> DigInputList;
             typedef ListIterator<DigInput*> DigInputListIterator;
@@ -40,7 +39,8 @@ namespace eos {
             void onTask();
 
         public:
-            DigInputService(Application *pApplication, const DigInputServiceInitializeInfo *pInfo);
+            DigInputService(Application *pApplication);
+            DigInputService(Application *pApplication, const DigInputServiceConfiguration &configuration);
             void addInput(DigInput *pInput);
             void removeInput(DigInput *pInput);
             void removeInputs();
@@ -48,7 +48,7 @@ namespace eos {
 
     /// \brief Clase que impementa una entrada digital
     ///
-    class DigInput {
+    class DigInput final {
         private:
             typedef ICallbackP1<DigInput*> IDigInputEvent;
 
@@ -64,7 +64,7 @@ namespace eos {
             void initialize();
 
         public:
-            DigInput(DigInputService *pService, const DigInputInitializeInfo *pInfo);
+            DigInput(DigInputService *pService, const DigInputConfiguration &configuration);
             ~DigInput();
 
             /// \brief Obte l'estat actual de la entrada.

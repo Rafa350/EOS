@@ -10,6 +10,8 @@ static const char *serviceName = "DigInputService";
 static const unsigned taskStackSize = 512;
 static const TaskPriority taskPriority = TaskPriority::normal;
 
+static DigInputServiceConfiguration defaultConfiguration;
+
 
 #define PATTERN_ON       0x0000007F
 #define PATTERN_OFF      0x00000080
@@ -18,12 +20,24 @@ static const TaskPriority taskPriority = TaskPriority::normal;
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
+/// \param pApplication: L'aplicacio al que pertany.
+///
+DigInputService::DigInputService(
+    Application *pApplication) :
+    
+    DigInputService(pApplication, defaultConfiguration) {
+    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Constructor.
 /// \param pApplication: L'aplicacio a la que pertany
-/// \param pInfo: Parametres d'inicialitzacio.
+/// \param configuration: Parametres de configuracio.
 ///
 DigInputService::DigInputService(
     Application *pApplication,
-    const DigInputServiceInitializeInfo *pInfo) :
+    const DigInputServiceConfiguration &configuration) :
     
     Service(pApplication, serviceName, taskStackSize, taskPriority) {
 }
@@ -122,21 +136,17 @@ void DigInputService::onTask() {
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param pService: El servei.
-/// \param pInfo: Parametres d'inicialitzacio.
+/// \param configuracion: Parametres de configuracio.
 ///
 DigInput::DigInput(
     DigInputService *pService,
-    const DigInputInitializeInfo *pInfo):
+    const DigInputConfiguration &configuration):
 
     pService(nullptr),
     evChange(nullptr) {
        
-    // Prerequisits
-    //
-    eosAssert(pInfo != nullptr);
-    
-    port = pInfo->port;
-    pin = pInfo->pin;
+    port = configuration.port;
+    pin = configuration.pin;
 
     if (pService != nullptr)
         pService->addInput(this);

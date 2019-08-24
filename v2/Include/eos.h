@@ -85,6 +85,13 @@
 #endif
 
 
+// Compiler patchs
+//
+#ifdef __XC32
+    #define final
+#endif
+
+
 // EOS includes
 //
 #include "eosConfig.h"

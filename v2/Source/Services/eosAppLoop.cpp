@@ -4,35 +4,37 @@
 using namespace eos;
 
 
-static const char *serviceName = "AppLoopService";
-static const unsigned stackSize = 512;
-static const TaskPriority priority = TaskPriority::normal;
+static AppLoopServiceConfiguration defaultConfiguration = {
+	.serviceConfiguration = {
+		.serviceName = "AppLoopService",
+		.stackSize = 512,
+		.priority = TaskPriority::normal
+	}
+};
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param application: Aplicacio a la que pertany el servei.
+/// \brief Constructor de l'objecte.
+/// \param pApplication: Aplicacio on afeigir el servei.
 ///
 AppLoopService::AppLoopService(
-    Application *application):
+	Application *pApplication):
 
-    Service(application, serviceName, stackSize, priority),
-	initialized(false) {
+	AppLoopService(pApplication, defaultConfiguration) {
+
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
-/// \param application: Aplicacio a la que pertany el servei.
-/// \param stackSize: Tamany de la pila
-/// \param priority: Prioritat
+/// \param application: Aplicacio on afeigir el servei.
+/// \param configuration: Parametres de configuracio.
 ///
 AppLoopService::AppLoopService(
-    Application *application,
-    unsigned stackSize,
-    TaskPriority priority):
+    Application *pApplication,
+	const AppLoopServiceConfiguration &configuration):
 
-    Service(application, serviceName, stackSize, priority),
+    Service(pApplication, configuration.serviceConfiguration),
 	initialized(false) {
 }
 
