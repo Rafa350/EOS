@@ -75,8 +75,8 @@ void Visual::render(
 		// Continua amb els visuals fills.
 		//
 		for (VisualListIterator it(visuals); it.hasNext(); it.next()) {
-			Visual *pVisual = it.current();
-			pVisual->render(context);
+			Visual *pChild = it.current();
+			pChild->render(context);
 		}
 	}
 }
@@ -145,7 +145,7 @@ Visual *Visual::getVisualAt(
 	if (r.contains(p)) {
 
 		for (VisualListIterator it(visuals); it.hasNext(); it.next()) {
-			Visual *pVisual = it.current();
+			Visual *pVisual = it.current()->getVisualAt(p);
 			if (pVisual != nullptr)
 				return pVisual;
 		}

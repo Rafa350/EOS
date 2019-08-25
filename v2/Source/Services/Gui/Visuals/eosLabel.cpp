@@ -1,8 +1,10 @@
 #include "eos.h"
+#include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/Visuals/eosLabel.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosGraphics.h"
+#include "string.h"
 
 
 using namespace eos;
@@ -14,6 +16,7 @@ using namespace eos;
 Label::Label():
 
 	color(COLOR_White),
+	backgroundColor(COLOR_Transparent),
 	horizontalTextAlign(HorizontalTextAlign::center),
 	verticalTextAlign(VerticalTextAlign::middle),
 	text(0) {
@@ -71,7 +74,7 @@ void Label::setVerticalTextAlign(
 void Label::setText(
 	const char *text) {
 
-	if (this->text != text) {
+	if (strcmp(this->text, text) != 0) {
 		this->text = text;
 		invalidate();
 	}
@@ -89,9 +92,27 @@ void Label::onRender(
 
 	const Size &s = getSize();
 
+	g.setColor(backgroundColor);
+	g.fillRectangle(getRect());
+
 	g.setColor(color);
 	g.setTextAlign(horizontalTextAlign, verticalTextAlign);
 	g.drawText(s.getWidth() / 2, s.getHeight() / 2, text, 0, -1);
 
 	context.endRender();
+}
+
+
+void Label::onDispatch(
+	const Message &msg) {
+
+	switch (msg.msgId) {
+		case MsgId::touchPadEvent:
+			setText("caca");
+			break;
+
+		default:
+			Visual::onDispatch(msg);
+			break;
+	}
 }

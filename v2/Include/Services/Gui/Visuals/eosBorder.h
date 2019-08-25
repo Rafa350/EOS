@@ -19,7 +19,7 @@ namespace eos {
     		Color borderColor;
     		int borderThickness;
     		int borderRadius;
-    		Visual *content;
+    		Visual *pContent;
 
     	protected:
     		void onRender(RenderContext &context) override;
@@ -31,13 +31,13 @@ namespace eos {
             void setBorderColor(const Color &color);
             void setBorderThickness(int thickness);
             void setBorderRadius(int radius);
-            void setContent(Visual *content);
+            void setContent(Visual *pVisual);
 
             inline Color getBorderColor() const { return borderColor; }
             inline Color getBackgroundColor() const { return backgroundColor; }
             inline int getBorderThickness() const { return borderThickness; }
             inline int getBorderRadius() const { return borderRadius; }
-            inline Visual* getContent() const { return content; }
+            inline Visual* getContent() const { return pContent; }
     };
 
 }

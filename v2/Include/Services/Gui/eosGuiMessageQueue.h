@@ -64,9 +64,9 @@ namespace eos {
 
     enum class MsgId: uint8_t {
     	null,
-    	touchPad,
-		selector,
-		keyboard,
+    	touchPadEvent,
+		selectorEvent,
+		keyboardEvent,
 		activate,
 		deactivate
     };

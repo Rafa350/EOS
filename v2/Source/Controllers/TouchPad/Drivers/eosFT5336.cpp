@@ -233,8 +233,8 @@ bool FT5336Driver::getState(
 				break;
 
 			case TouchPadOrientation::rotate270:
-				state.x[c] = tempY;
-				state.y[c] = tempX;
+				state.x[c] = padWidth - tempY;
+				state.y[c] = padHeight - tempX;
 				break;
 		}
 	}

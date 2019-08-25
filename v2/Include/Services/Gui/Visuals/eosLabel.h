@@ -13,16 +13,19 @@
 namespace eos {
 
     class RenderContext;
+    class Message;
 
     class Label: public Visual {
     	private:
     		Color color;
+    		Color backgroundColor;
     		HorizontalTextAlign horizontalTextAlign;
     		VerticalTextAlign verticalTextAlign;
     		const char *text;
 
     	protected:
     		void onRender(RenderContext &context) override;
+    		void onDispatch(const Message &msg) override;
 
         public:
     		Label();

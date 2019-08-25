@@ -31,7 +31,7 @@
 // Tamany de la pantalla
 //
 #define DISPLAY_IMAGE_WIDTH       480  // Amplada en pixels
-#define DISPLAY_IMAGE_HEIGHT      272  // Alçada en pixels
+#define DISPLAY_IMAGE_HEIGHT      272  // AlÃ§ada en pixels
 
 // Tipus de codificacio de color
 //
@@ -350,7 +350,7 @@
 #define TOUCHPAD_I2C_ADDR           0x70
 
 #define TOUCHPAD_PAD_WIDTH          480
-#define TOUCHPAD_PAD_HEIGHT         270
+#define TOUCHPAD_PAD_HEIGHT         272
 
 // Control del pin SCL
 //

@@ -65,6 +65,7 @@ void GuiTouchPadService::onInitialize() {
     //
     touchDriver = FT5336Driver::getInstance();
     touchDriver->initialize();
+    touchDriver->setOrientation(TouchPadOrientation::rotate90);
 }
 
 

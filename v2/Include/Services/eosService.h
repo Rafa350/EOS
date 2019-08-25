@@ -44,6 +44,7 @@ namespace eos {
             void task();
 
             inline int getId() const { return id; }
+            inline const char *getName() const { return name; }
             
         friend void Application::addService(Service *pService);
         friend void Application::removeService(Service *pService);

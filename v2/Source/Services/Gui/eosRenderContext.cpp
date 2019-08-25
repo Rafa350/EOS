@@ -26,23 +26,23 @@ RenderContext::RenderContext(
 
 /// ----------------------------------------------------------------------
 /// \brief Inicia el renderitzat.
-/// \param visual: El visual a renderitzar.
+/// \param pVisual: El visual a renderitzar.
 /// \return L'objecte 'Graphics' per dibuixar.
 ///
 Graphics &RenderContext::beginRender(
-	Visual *visual) {
+	Visual *pVisual) {
 
-	eosAssert(visual != nullptr);
+	eosAssert(pVisual != nullptr);
 
 	// Selecciona el rectangle de retall
 	//
-	graphics.setClip(getClip(visual));
+	graphics.setClip(getClip(pVisual));
 
 	// Aplica una translacio per situar l'origen de coordinades, al origen
 	// del widged
 	//
 	Transformation t;
-	t.translate(getPosition(visual));
+	t.translate(pVisual->getAbsolutePosition());
 	graphics.setTransformation(t);
 
 	return graphics;
@@ -58,36 +58,18 @@ void RenderContext::endRender() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief La posicio d'un element visual.
-/// \param visual: L'element visual.
-/// \return La posicio.
-///
-Point RenderContext::getPosition(
-	Visual *visual) const {
-
-	eosAssert(visual != nullptr);
-
-	Point p;
-	for (Visual *v = visual; v != nullptr; v = v->getParent())
-		p = p.offset(v->getPosition());
-
-	return p;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Obte el rectangle de retall d'un element visual.
 /// \param visual: L'element visual.
 /// \return El rectangle de retall.
 ///
 Rect RenderContext::getClip(
-	Visual *visual) const {
+	Visual *pVisual) const {
 
-	eosAssert(visual != nullptr);
+	eosAssert(pVisual != nullptr);
 
 	Rect clip(0, 0, INT32_MAX, INT32_MAX);
-	for (Visual *v = visual; v != nullptr; v = v->getParent()) {
-		Rect r(getPosition(v), v->getSize());
+	for (Visual *v = pVisual; v != nullptr; v = v->getParent()) {
+		Rect r(v->getAbsolutePosition(), v->getSize());
 		clip = clip.intersect(r);
 	}
 

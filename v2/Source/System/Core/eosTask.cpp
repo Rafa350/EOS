@@ -32,7 +32,7 @@ Task::Task(
     eosAssert(runable != nullptr);
 
     TaskInitializeInfo info;
-    info.name = NULL;
+    info.name = name;
     info.stackSize = stackSize;
     info.options = OSAL_TASK_PRIORITY_NORMAL;
     info.function = function;

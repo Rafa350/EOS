@@ -59,6 +59,7 @@ namespace eos {
             Point getAbsolutePosition() const;
             inline const Size& getSize() const { return size; }
             inline Rect getRect() const { return Rect(Point(0, 0), size); }
+            inline Rect getAbsoluteRect() const { return Rect(getAbsolutePosition(), size); }
 
             void dispatch(const Message &msg);
             void render(RenderContext &context);

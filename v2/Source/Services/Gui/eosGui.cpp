@@ -151,30 +151,30 @@ void GuiService::onInitialize() {
 
 	panel = new SimplePanel();
 	panel->setPosition(Point(x, y));
-	panel->setSize(Size(150, 30));
+	panel->setSize(Size(150, 60));
 
 	Border *border1 = new Border();
 	border1->setPosition(Point(0, 0));
-	border1->setSize(Size(150, 30));
+	border1->setSize(Size(150, 60));
 	border1->setBorderColor(COLOR_Red);
 
 	Border *border2 = new Border();
 	border2->setPosition(Point(10, 10));
-	border2->setSize(Size(10, 10));
-	border2->setBorderColor(COLOR_Green);
+	border2->setSize(Size(10, 40));
+	border2->setBorderColor(COLOR_Lime);
 
 	Border* border3 = new Border();
 	border3->setPosition(Point(30, 10));
-	border3->setSize(Size(10, 10));
-	border3->setBorderColor(COLOR_Yellow);
+	border3->setSize(Size(10, 40));
+	border3->setBorderColor(COLOR_Blue);
 
 	Label *label = new Label();
 	label->setPosition(Point(50, 5));
-	label->setSize(Size(100, 20));
+	label->setSize(Size(100, 40));
 	label->setText("Hola");
 
-	screen->addChild(panel);
-	panel->addChild(border1);
+	screen->addChild(border1);
+	border1->setContent(panel);
 	panel->addChild(border2);
 	panel->addChild(border3);
 	panel->addChild(label);
@@ -216,8 +216,8 @@ void GuiService::touchPadServiceNotify(
 	const TouchPadEventArgs &args) {
 
 	Message msg;
-	msg.msgId = MsgId::touchPad;
-	msg.target = getActiveVisual();
+	msg.msgId = MsgId::touchPadEvent;
+	msg.target = getVisualAt(Point(args.x, args.y));
 
 	switch (args.event) {
 		case TouchPadEventType::press:
@@ -237,10 +237,13 @@ void GuiService::touchPadServiceNotify(
 			break;
 	}
 
-	halINTDisableInterrupts();
-	getVisualAt(Point(args.x, args.y));
-	halINTEnableInterrupts();
-
 	msgQueue.send(msg);
 }
+#endif
+
+
+#ifdef OPT_GUI_Keyboard
+#endif
+
+#ifdef OPT_GUI_Selector
 #endif

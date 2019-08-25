@@ -12,31 +12,31 @@ using namespace eos;
 /// \brief Constructor del objecte.
 ///
 Border::Border():
-	backgroundColor(),
+	backgroundColor(COLOR_Transparent),
 	borderColor(),
 	borderThickness(1),
 	borderRadius(0),
-	content(nullptr) {
+	pContent(nullptr) {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Assigna el contingut.
-/// \param visual: El contingut.
+/// \param pVisual: El contingut.
 ///
 void Border::setContent(
-	Visual *visual) {
+	Visual *pVisual) {
 
-	if (content != visual) {
+	if (pContent != pVisual) {
 
-		if (content != nullptr)
-			removeVisual(content);
+		if (pContent != nullptr)
+			removeVisual(pContent);
 
-		content = visual;
+		pContent = pVisual;
 
-		if (content != nullptr)
-			addVisual(content);
+		if (pContent != nullptr)
+			addVisual(pContent);
 
 		invalidate();
 	}

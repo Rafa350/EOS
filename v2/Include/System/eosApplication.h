@@ -35,14 +35,16 @@ namespace eos {
             Application();
             virtual ~Application();
 
+            static Application *getApplication();
+
             void run();
             void tick();
 
             void addService(Service *pService);
             void removeService(Service *pService);
             void removeServices();
-            Service *getService(int id);
-            Service *getService(const char *serviceName);
+            Service *getService(int id) const;
+            Service *getService(const char *serviceName) const;
 
             Application(const Application&) = delete;
             Application& operator=(const Application&) = delete;

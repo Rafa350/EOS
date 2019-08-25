@@ -1,10 +1,13 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/eosApplication.h"
 #include "Services/eosService.h"
+#include "System/eosApplication.h"
+#include "string.h"
 
 
 using namespace eos;
+
+static Application *pApplication = nullptr;
 
 
 /// ----------------------------------------------------------------------
@@ -12,6 +15,9 @@ using namespace eos;
 ///
 Application::Application() {
 
+	eosAssert(pApplication == nullptr);
+
+    pApplication = this;
 }
 
 
@@ -27,6 +33,16 @@ Application::~Application() {
 
     	delete pService;
     }
+}
+
+
+/// ---------------------------------------------------------------------
+/// \brief Obte la instancia de l'aplicacio.
+/// \return L'aplicacio.
+///
+Application *Application::getApplication() {
+
+	return pApplication;
 }
 
 
@@ -154,11 +170,29 @@ void Application::removeServices() {
 /// \return El servei, null si no el troba.
 ///
 Service *Application::getService(
-    int id ) {
+    int id) const {
 
   	for (ServiceListIterator it(services); it.hasNext(); it.next()) {
    		Service *pService = it.current();
         if (pService->getId() == id)
+            return pService;
+    }
+
+    return nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el servei especificat.
+/// \param name: El nom del servei.
+/// \return El servei, null si no el troba.
+///
+Service *Application::getService(
+    const char *name) const {
+
+  	for (ServiceListIterator it(services); it.hasNext(); it.next()) {
+   		Service *pService = it.current();
+        if (strcmp(pService->getName(), name))
             return pService;
     }
 

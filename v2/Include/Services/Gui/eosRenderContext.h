@@ -18,12 +18,11 @@ namespace eos {
 			Graphics &graphics;
 
 		private:
-			Point getPosition(Visual *visual) const;
-			Rect getClip(Visual *visual) const;
+			Rect getClip(Visual *pVisual) const;
 
 		public:
 			RenderContext(Graphics &graphics);
-			Graphics &beginRender(Visual *visual);
+			Graphics &beginRender(Visual *pVisual);
 			void endRender();
 	};
 }

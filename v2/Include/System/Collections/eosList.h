@@ -133,7 +133,7 @@ namespace eos {
             /// \param index: Index del element.
             /// \return Referencia al element.
             ///
-            inline T &operator[](unsigned index) {
+            inline T &operator[](unsigned index) const {
 
                 return *((T*) GenericList::get(index));
             }
@@ -144,7 +144,7 @@ namespace eos {
     template <typename T>
     class ListIterator {
         private:
-            List<T> &list;
+            const List<T> &list;
             unsigned index;
             unsigned count;
 
@@ -152,7 +152,7 @@ namespace eos {
             /// \brief: Contructor.
             /// \param: list: La llista a iterar.
             ///
-            ListIterator(List<T> &_list):
+            ListIterator(const List<T> &_list):
                 list(_list),
                 index(0),
                 count(_list.getCount()) {

@@ -10,7 +10,7 @@ namespace eos {
 
 	class Panel: public Visual {
 		public:
-			inline void addChild(Visual *visual) { addVisual(visual); }
+			inline void addChild(Visual *pVisual) { addVisual(pVisual); }
 	};
 }
 
