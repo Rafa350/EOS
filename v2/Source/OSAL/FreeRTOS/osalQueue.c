@@ -40,7 +40,7 @@ void osalQueueDestroy(
 /// \brief Buida el contingut de la cua.
 /// \param hQueue: El handler de la cua.
 ///
-void osalMsgQueueClear(
+void osalQueueClear(
 	HQueue hQueue) {
 
 	eosAssert(hQueue != NULL);
