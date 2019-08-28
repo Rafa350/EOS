@@ -3,7 +3,6 @@
 	<name>F7GuiDemo</name>
 	<comment></comment>
 	<projects>
-		<project>STM32Cube_FW_F7_V1.8.0</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

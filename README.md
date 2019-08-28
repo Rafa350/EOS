@@ -1,6 +1,6 @@
-### EOS (Embedded Operating System)
+# EOS (Embedded Operating System)
 
-# Features:
+## Features:
 * Verified targets STM32F4xx, STM32F7xx, PIC32MX.
 * FreeRTOS scheduler.
 * Based on services.
@@ -13,7 +13,7 @@
 * Multiple examples.
 
 
-# Folder structure 
+## Folder structure 
 * EOS (Root folder)
   * v1 (Older version)
   * v2 (Current version)

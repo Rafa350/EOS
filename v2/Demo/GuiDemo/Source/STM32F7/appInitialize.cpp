@@ -1,3 +1,5 @@
+#include "eos.h"
+#include "eosAssert.h"
 #include "hal/halSYS.h"
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_rcc.h"

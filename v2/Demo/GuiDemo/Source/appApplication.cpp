@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Services/Gui/eosGui.h"
 #include "appApplication.h"
 #include "appLedService.h"

@@ -12,6 +12,9 @@ extern "C" void eosErrorHandler(
 
     strncpy(buffer, message, sizeof(buffer));
 
+    for (char *p = buffer; *p != '\0'; p++)
+      	ITM_SendChar(*p);
+
     while (true)
         continue;
 }
