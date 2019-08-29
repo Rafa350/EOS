@@ -153,9 +153,6 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_MODE_ALT_PP      (3u << HAL_GPIO_MODE_POS) // -Sortida alternativa push-pull
 #define HAL_GPIO_MODE_ALT_OD      (4u << HAL_GPIO_MODE_POS) // -Sortida alternativa open-drain
 #define HAL_GPIO_MODE_ANALOG      (5u << HAL_GPIO_MODE_POS) // -Entrada/Sortida Analogica
-#define HAL_GPIO_MODE_IT_POS      (6u << HAL_GPIO_MODE_POS) // -Interrupcio canvi a positiu
-#define HAL_GPIO_MODE_IT_NEG	  (7u << HAL_GPIO_MODE_POS) // -Interrupcio canvi a negatiu
-#define HAL_GPIO_MODE_IT_CHG      (8u << HAL_GPIO_MODE_POS) // -Interrupcio canvi
 
 // Velocitat de conmutacio
 #define HAL_GPIO_SPEED_POS        4u

@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "hal/STM32/halGPIO.h"
+#include "HAL/STM32/halGPIO.h"
 
 
 GPIO_TypeDef * const gpioTbl[] = {
@@ -123,9 +123,6 @@ static void SetupPin(
 
 		// Entrada digital
 		case HAL_GPIO_MODE_INPUT:
-		case HAL_GPIO_MODE_IT_POS:
-		case HAL_GPIO_MODE_IT_NEG:
-		case HAL_GPIO_MODE_IT_CHG:
 			break;
 	}
 	gpio->MODER = temp;
@@ -178,45 +175,6 @@ static void SetupPin(
 			break;
 	}
 	gpio->PUPDR = temp;
-
-	// Configura el cas d'entrades d'interrupcio externa
-	//
-	if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_POS) ||
-		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_NEG) ||
-		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_CHG)) {
-
-		// Activa el modul SYSCFG
-		//
-		RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
-
-		// TODO Configurar SYSGEN
-
-		// Configura el registre IMR (Interrupt Mask Register);
-		//
-		temp = EXTI->IMR;
-		temp |= 1 << pin;
-		EXTI->IMR = temp;
-
-		// Configura el registre RTSR (Rising Trigger Selection Register)
-		//
-		temp = EXTI->RTSR;
-		temp &= ~(1 << pin);
-		if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_POS) ||
-			((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_CHG))
-			temp |= 1 << pin;
-		EXTI->RTSR = temp;
-
-		// Configura el registre FTSR (Falling Trigger Selection Register)
-		//
-		temp = EXTI->FTSR;
-		temp &= ~(1 << pin);
-		if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_NEG) ||
-			((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_IT_CHG))
-			temp |= 1 << pin;
-		EXTI->FTSR = temp;
-
-		// TODO Activar interrupcions
-	}
 
 	// Configura el valor pin de sortida
 	//
@@ -341,5 +299,3 @@ void halGPIOTogglePin(
 	gpioTbl[port]->ODR ^= 1u << pin;
 }
 #endif
-
-

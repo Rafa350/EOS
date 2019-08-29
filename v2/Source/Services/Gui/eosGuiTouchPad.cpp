@@ -142,5 +142,5 @@ void GuiTouchPadService::onTask() {
 		oldY = y;
 	}
 
-	Task::delay(50);
+	Task::delay(10);
 }
