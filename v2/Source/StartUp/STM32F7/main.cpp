@@ -13,7 +13,9 @@ int main() {
     // Enable Debug
 	//
 #ifdef EOS_DEBUG
-	Debug::initialize();
+	//Debug::initialize();
+	//while (true)
+	//	Debug::print("Hola");
 #endif
 
 	// Inicialitzacio del hardware

@@ -1,4 +1,8 @@
 #include "eos.h"
+
+#ifdef EOS_DEBUG
+
+
 #include "System/eosDebug.h"
 
 
@@ -13,9 +17,11 @@ void Debug::initialize() {
 }
 
 
-
 void Debug::print(const char *msg) {
 
-	//for (char *p = msg; *p != '\0'; p++)
-    //  	ITM_SendChar(*p);
+	for (const char *p = msg; *p != '\0'; p++)
+      	ITM_SendChar(*p);
 }
+
+
+#endif
