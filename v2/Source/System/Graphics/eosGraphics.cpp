@@ -261,7 +261,7 @@ void Graphics::drawLine(
 
             driver->setPixel(x1, y1, color);
 
-            // Es mes gran el deplaçament X que el Y
+            // Es mes gran el deplaï¿½ament X que el Y
             //
             if (deltaX > deltaY) {
                 p = deltaY + deltaY - deltaX;
@@ -279,7 +279,7 @@ void Graphics::drawLine(
                 }
             }
 
-            // Es mes gran el deplaçament Y que el X
+            // Es mes gran el deplaï¿½ament Y que el X
             //
             else if (deltaX < deltaY) {
                 p = deltaX + deltaX - deltaY;
@@ -359,7 +359,7 @@ void Graphics::drawTriangle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Dibuixa una el·lipse buida inscrita en un rectangle.
+/// \brief    Dibuixa una elï¿½lipse buida inscrita en un rectangle.
 /// \param    x1: Coordinada X del primer punt.
 /// \param    y1: Coordinada Y del primer punt.
 /// \param    x2: Coordinada X del segon punt.
@@ -526,7 +526,7 @@ void Graphics::fillRectangle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Dibuixa una el·lipse plena inscrita en un rectangle.
+/// \brief    Dibuixa una elï¿½lipse plena inscrita en un rectangle.
 /// \param    x1: Coordinada X del primer punt.
 /// \param    y1: Coordinada Y del primer punt.
 /// \param    x2: Coordinada X del segon punt.
@@ -769,9 +769,9 @@ int Graphics::getTextWidth(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte l'alçada d'una cadena de texte.
+/// \brief    Obte l'alï¿½ada d'una cadena de texte.
 /// \param    s: La cadena de texte.
-/// \return   L'alçada de la cadena.
+/// \return   L'alï¿½ada de la cadena.
 ///
 int Graphics::getTextHeight(
     const char *s) const {

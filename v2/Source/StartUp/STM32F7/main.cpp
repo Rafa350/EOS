@@ -1,5 +1,8 @@
 #include "eos.h"
-#include "eosAssert.h"
+#include "System/eosDebug.h"
+
+
+using namespace eos;
 
 
 /// ----------------------------------------------------------------------
@@ -7,15 +10,11 @@
 ///
 int main() {
 
-    // Enable ITM
+    // Enable Debug
 	//
-#ifdef xEOS_DEBUG
-	ITM->LAR = 0xC5ACCE55;
-    ITM->TCR |= 1 << ITM_TCR_ITMENA_Pos;
-    ITM->TER = 1U;
-    eosAssert(false);
+#ifdef EOS_DEBUG
+	Debug::initialize();
 #endif
-
 
 	// Inicialitzacio del hardware
 	//

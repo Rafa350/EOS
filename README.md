@@ -19,7 +19,7 @@
   * v2 (Current version)
     * Include (Include files)
 	* Source (Source files)
-	* Library (Thirt party software and libraries)
+	* Library (Thirt parts software and libraries)
 	* Demo (Demos)
 	* Build (Projects and builds for demos)
 	* Tools (EOS developement tools)

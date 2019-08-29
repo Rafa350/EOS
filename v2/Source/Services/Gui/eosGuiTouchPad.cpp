@@ -106,13 +106,16 @@ void GuiTouchPadService::onTask() {
 					x = state.x[0];
 					y = state.y[0];
 				}
+				else {
+					x = oldX;
+					y = oldY;
+				}
 			}
 		}
 
 		// Detecta canvis de contacte.
 		//
 		if (oldPressed != pressed) {
-			oldPressed = pressed;
 
 			TouchPadEventArgs args = {
 				.event = pressed ? TouchPadEventType::press : TouchPadEventType::release,
@@ -125,8 +128,6 @@ void GuiTouchPadService::onTask() {
 		// Detecta canvis de posicio
 		//
 		else if (pressed && ((oldX != x) || (oldY != y))) {
-			oldX = x;
-			oldY = y;
 
 			TouchPadEventArgs args = {
 				.event = TouchPadEventType::move,
@@ -135,6 +136,10 @@ void GuiTouchPadService::onTask() {
 			};
 			evNotify->execute(args);
 		}
+
+		oldPressed = pressed;
+		oldX = x;
+		oldY = y;
 	}
 
 	Task::delay(50);

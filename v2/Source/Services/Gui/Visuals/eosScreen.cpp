@@ -60,11 +60,18 @@ void Screen::onDispatch(
 
 	switch (msg.msgId) {
 		case MsgId::touchPadEvent:
-			if (msg.touchPad.event == MsgTouchPadEvent::press) {
-				if (color == Color(COLOR_Red))
-					setColor(COLOR_Blue);
-				else
+			switch (msg.touchPad.event) {
+				case MsgTouchPadEvent::press:
 					setColor(COLOR_Red);
+					break;
+
+				case MsgTouchPadEvent::move:
+					break;
+
+				default:
+				case MsgTouchPadEvent::release:
+					setColor(COLOR_Blue);
+					break;
 			}
 			break;
 

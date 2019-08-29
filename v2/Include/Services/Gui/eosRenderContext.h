@@ -3,8 +3,7 @@
 
 
 #include "eos.h"
-#include "System/Graphics/eosPoint.h"
-#include "System/graphics/eosRect.h"
+#include "System/Graphics/eosRect.h"
 
 
 namespace eos {

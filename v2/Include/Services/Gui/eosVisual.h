@@ -25,7 +25,7 @@ namespace eos {
 
     	private:
     		Visual *pParent;
-    		VisualList visuals;
+    		VisualList childs;
     		bool needRender;
     		bool visible;
     		Point position;
@@ -48,8 +48,8 @@ namespace eos {
             inline Visual *getParent() const { return pParent; }
             Visual *getVisualAt(const Point &p);
 
-            inline bool getNeedRender() const { return needRender; }
-            inline bool isVisible() const { return visible; }
+            bool isRenderizable();
+            inline bool isVisible() const;
             void setVisible(bool visible);
 
             void setPosition(const Point &p);
@@ -59,10 +59,9 @@ namespace eos {
             Point getAbsolutePosition() const;
             inline const Size& getSize() const { return size; }
             inline Rect getRect() const { return Rect(Point(0, 0), size); }
-            inline Rect getAbsoluteRect() const { return Rect(getAbsolutePosition(), size); }
 
             void dispatch(const Message &msg);
-            void render(RenderContext &context);
+            bool render(RenderContext &context);
     		void invalidate();
     };
 

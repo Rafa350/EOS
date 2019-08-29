@@ -188,10 +188,9 @@ void GuiService::onTask() {
 
 	// Refresca la pantalla si cal
 	//
-	if (screen->getNeedRender()) {
-		screen->render(*context);
-		displayDriver->refresh();
-	}
+	if (screen->isRenderizable())
+		if (screen->render(*context))
+			displayDriver->refresh();
 
 	// Espera que arrivin missatges.
 	//

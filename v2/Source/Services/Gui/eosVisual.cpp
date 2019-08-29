@@ -13,7 +13,7 @@ using namespace eos;
 ///
 Visual::Visual():
 	pParent(nullptr),
-	needRender(true),
+	needRender(false),
 	visible(true),
 	position(0, 0),
 	size(0, 0) {
@@ -28,12 +28,12 @@ Visual::~Visual() {
 	if (pParent != nullptr)
 		pParent->removeVisual(this);
 
-	while (!visuals.isEmpty()) {
+	while (!childs.isEmpty()) {
 
-		Visual *pVisual = visuals.getFront();
-		visuals.remove(pVisual);
+		Visual *pChild = childs.getFront();
+		childs.remove(pChild);
 
-		delete pVisual;
+		delete pChild;
 	}
 }
 
@@ -43,42 +43,70 @@ Visual::~Visual() {
 ///
 void Visual::invalidate() {
 
-	// Invalida this
-	//
 	needRender = true;
+}
 
-	// Invalida tots els descendents recursivament
-	//
-	for (VisualListIterator it(visuals); it.hasNext(); it.next()) {
-		Visual *pVisual = it.current();
-		pVisual->invalidate();
+
+/// ----------------------------------------------------------------------
+/// \brief Comprova si cal renderitzar el visual o algun dels seus fills.
+/// \return True si cal renderitzar.
+///
+bool Visual::isRenderizable() {
+
+	if (needRender)
+		return true;
+
+	else {
+		for (VisualListIterator it(childs); it.hasNext(); it.next()) {
+			if (it.current()->isRenderizable())
+				return true;
+		}
+		return false;
 	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Comprova si el visual es visible.
+/// \return True si es visible.
+///
+bool Visual::isVisible() const {
+
+	if (visible) {
+		if (pParent != nullptr)
+			return pParent->isVisible();
+		else
+			return true;
+	}
+	else
+		return false;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Renderitza el visual.
 /// \param context: El context de renderitzat.
+/// \return True s'ha redibuixat el visual.
 ///
-void Visual::render(
+bool Visual::render(
 	RenderContext &context) {
 
-	if (visible) {
+	bool renderized = false;
+	needRender = false;
 
-		// Si cal renderitzxar, ho fa.
-		//
-		if (needRender) {
-			needRender = false;
-			onRender(context);
-		}
+	if (isVisible())
+		onRender(context);
+	renderized = true;
 
-		// Continua amb els visuals fills.
-		//
-		for (VisualListIterator it(visuals); it.hasNext(); it.next()) {
-			Visual *pChild = it.current();
-			pChild->render(context);
-		}
+	// Continua amb els fills.
+	//
+	for (VisualListIterator it(childs); it.hasNext(); it.next()) {
+		Visual *pChild = it.current();
+		if (pChild->render(context))
+			renderized = true;
 	}
+
+	return renderized;
 }
 
 
@@ -103,7 +131,7 @@ void Visual::addVisual(
 	eosAssert(pVisual != nullptr);
 	eosAssert(pVisual->pParent == nullptr);
 
-	visuals.add(pVisual);
+	childs.add(pVisual);
 	pVisual->pParent = this;
 }
 
@@ -119,7 +147,7 @@ void Visual::removeVisual(
 	eosAssert(pVisual->pParent != nullptr);
 
 	pVisual->pParent = nullptr;
-	visuals.remove(pVisual);
+	childs.remove(pVisual);
 }
 
 
@@ -128,8 +156,8 @@ void Visual::removeVisual(
 ///
 void Visual::removeVisuals() {
 
-	while (!visuals.isEmpty())
-        removeVisual(visuals.getFront());
+	while (!childs.isEmpty())
+        removeVisual(childs.getFront());
 }
 
 
@@ -144,10 +172,10 @@ Visual *Visual::getVisualAt(
 	Rect r(getAbsolutePosition(), size);
 	if (r.contains(p)) {
 
-		for (VisualListIterator it(visuals); it.hasNext(); it.next()) {
-			Visual *pVisual = it.current()->getVisualAt(p);
-			if (pVisual != nullptr)
-				return pVisual;
+		for (VisualListIterator it(childs); it.hasNext(); it.next()) {
+			Visual *pChild = it.current()->getVisualAt(p);
+			if (pChild != nullptr)
+				return pChild;
 		}
 
 		return this;
@@ -185,10 +213,7 @@ void Visual::setVisible(
 
 	if (this->visible != visible) {
 		this->visible = visible;
-		if (!visible && (pParent != nullptr))
-			pParent->invalidate();
-		else
-			invalidate();
+		invalidate();
 	}
 }
 
@@ -202,10 +227,7 @@ void Visual::setPosition(
 
 	if (position != p) {
 		position = p;
-		if (pParent != nullptr)
-			pParent->invalidate();
-		else
-			invalidate();
+		invalidate();
 	}
 }
 
@@ -220,10 +242,7 @@ void Visual::setSize(
 
     if (size != s) {
     	size = s;
-		if (pParent != nullptr)
-			pParent->invalidate();
-		else
-			invalidate();
+		invalidate();
     }
 }
 
