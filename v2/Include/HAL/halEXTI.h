@@ -12,6 +12,7 @@
 
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
 	#include "HAL/STM32/halEXTI.h"
+#endif
     
 
 #endif // __halEXTI__

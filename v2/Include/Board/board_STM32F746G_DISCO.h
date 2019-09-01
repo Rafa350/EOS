@@ -369,8 +369,9 @@
 #define TOUCHPAD_INT_PORT           HAL_GPIO_PORT_I
 #define TOUCHPAD_INT_PIN            HAL_GPIO_PIN_13
 
-// IRQ asignada al pin INT
-#define TOUCHPAD_IRQ                EXTI15_10_IRQn
+// IRQ/LINE asignada al pin INT
+#define TOUCHPAD_INT_IRQ            EXTI15_10_IRQn
+#define TOUCHPAD_EXTI_LINE          HAL_EXTI_LINE_13
 
 // Modul I2C de comunicacions
 #define TOUCHPAD_I2C_MODULE         HAL_I2C_ID_3

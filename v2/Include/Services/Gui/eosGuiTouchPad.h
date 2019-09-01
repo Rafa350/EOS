@@ -5,9 +5,10 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/Core/eosCallbacks.h"
-#include "Services/eosService.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
+#include "HAL/halEXTI.h"
+#include "Services/eosService.h"
+#include "System/Core/eosCallbacks.h"
 
 
 #ifndef OPT_GUI_TouchPadServicePrority
@@ -60,6 +61,10 @@ namespace eos {
 		protected:
 			void onInitialize();
 			void onTask();
+
+		private:
+			void interruptHandler();
+			static void interruptHandler(EXTILine line, void *pParam);
 	};
 }
 

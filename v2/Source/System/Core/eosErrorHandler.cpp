@@ -11,7 +11,7 @@ extern "C" void eosErrorHandler(
     unsigned line,
     const char *message) {
 
-    Debug::print(message);
+    //Debug::print(message);
 
     while (true)
         continue;

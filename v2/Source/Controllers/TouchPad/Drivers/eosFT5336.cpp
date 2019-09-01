@@ -5,6 +5,9 @@
 #include "HAL/halTMR.h"
 #include "hal/halI2C.h"
 #include "hal/halGPIO.h"
+#ifdef TOUCHPAD_INT_PORT
+#include "hal/halEXTI.h"
+#endif
 #include "System/eosMath.h"
 
 
@@ -298,11 +301,19 @@ void FT5336Driver::ioInit() {
 		{TOUCHPAD_SCL_PORT, TOUCHPAD_SCL_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, TOUCHPAD_SCL_AF},
 		{TOUCHPAD_SDA_PORT, TOUCHPAD_SDA_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, TOUCHPAD_SCL_AF}
 	};
+
+#ifdef TOUCHPAD_INT_PORT
+	static const EXTIInitializePinInfo extiInfo[] = {
+		{TOUCHPAD_INT_PORT, TOUCHPAD_INT_PIN, TOUCHPAD_EXTI_LINE, HAL_EXTI_MODE_INT | HAL_EXTI_TRIGGER_FALLING}
+	};
+#endif
+
 	halGPIOInitializePins(gpioInfo, sizeof(gpioInfo) / sizeof(gpioInfo[0]));
 
 #ifdef TOUCHPAD_INT_PORT
-	  //HAL_NVIC_SetPriority((IRQn_Type)(TOUCHPAD_INT_EXTI_IRQn), 0x0F, 0x00);
-	  //HAL_NVIC_EnableIRQ((IRQn_Type)(TOUCHPAD_INT_EXTI_IRQn));
+	halEXTIInitializePins(extiInfo, sizeof(extiInfo) / sizeof(extiInfo[0]));
+	HAL_NVIC_SetPriority((IRQn_Type)(TOUCHPAD_INT_IRQ), 0x0F, 0x00);
+	HAL_NVIC_EnableIRQ((IRQn_Type)(TOUCHPAD_INT_IRQ));
 #endif
 
 	I2CInitializeInfo i2cInfo;

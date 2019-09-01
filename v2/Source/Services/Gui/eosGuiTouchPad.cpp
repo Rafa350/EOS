@@ -1,7 +1,8 @@
 #include "eos.h"
-#include "Services/Gui/eosGuiTouchPad.h"
+#include "HAL/halEXTI.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
+#include "Services/Gui/eosGuiTouchPad.h"
 
 
 using namespace eos;
@@ -66,6 +67,8 @@ void GuiTouchPadService::onInitialize() {
     touchDriver = FT5336Driver::getInstance();
     touchDriver->initialize();
     touchDriver->setOrientation(TouchPadOrientation::rotate90);
+
+    halEXTISetCallbackFunction(TOUCHPAD_EXTI_LINE, interruptHandler, this);
 }
 
 
@@ -143,4 +146,23 @@ void GuiTouchPadService::onTask() {
 	}
 
 	Task::delay(10);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa la interrupcio. Desbloqueja el process.
+///
+void GuiTouchPadService::interruptHandler() {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Despatxa la interrupcio a la funcio membre.
+///
+void GuiTouchPadService::interruptHandler(
+	EXTILine line,
+	void *pParam) {
+
+	((GuiTouchPadService*)pParam)->interruptHandler();
 }
