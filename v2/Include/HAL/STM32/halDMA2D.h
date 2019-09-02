@@ -9,6 +9,7 @@
 extern "C" {
 #endif
 
+
 // Format de color de la destinacio
 #define HAL_DMA2D_DFMT_POS        0u
 #define HAL_DMA2D_DFMT_BITS       0b111u

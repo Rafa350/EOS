@@ -14,6 +14,11 @@ extern "C" {
 #define HAL_LTDC_LAYER_1     1
 
 
+typedef struct {
+
+} LTDCConfigurationInfo;
+
+
 void halLDTCInitialize();
 
 void halLTDCSetFrameAddress(int layerNum, int frameAddr);

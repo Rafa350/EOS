@@ -25,7 +25,6 @@ GuiTouchPadService::GuiTouchPadService(
 	Application *pApplication) :
 
 	GuiTouchPadService(pApplication, defaultConfiguration) {
-
 }
 
 
@@ -44,6 +43,8 @@ GuiTouchPadService::GuiTouchPadService(
 	oldX(-1),
 	oldY(-1),
 	oldPressed(false) {
+
+	hLock = osalSemaphoreCreate();
 }
 
 
@@ -79,73 +80,74 @@ void GuiTouchPadService::onTask() {
 
 	if (evNotify != nullptr) {
 
-		bool pressed;
-		int x;
-		int y;
+		if (osalSemaphoreWait(hLock, (unsigned) -1)) {
 
-		// Detecta variacions del estat del touchpad
-		//
-		pressed = false;
-		x = -1;
-		y = -1;
-		if (touchDriver->getTouchCount()) {
+			bool pressed;
+			int x;
+			int y;
 
-			// Obte l'estat
+			// Detecta variacions del estat del touchpad
 			//
-			TouchPadState state;
-			touchDriver->getState(state);
+			pressed = false;
+			x = -1;
+			y = -1;
+			if (touchDriver->getTouchCount()) {
 
-			if (state.numPoints == 1) {
-
-				// Obte el indicador de contacte
+				// Obte l'estat
 				//
-				pressed =
-					(state.action[0] == TouchPadAction::press) ||
-					(state.action[0] == TouchPadAction::contact);
+				TouchPadState state;
+				touchDriver->getState(state);
 
-				// Obte la pocicio del contacte
-				//
-				if (pressed) {
-					x = state.x[0];
-					y = state.y[0];
-				}
-				else {
-					x = oldX;
-					y = oldY;
+				if (state.numPoints == 1) {
+
+					// Obte el indicador de contacte
+					//
+					pressed =
+						(state.action[0] == TouchPadAction::press) ||
+						(state.action[0] == TouchPadAction::contact);
+
+					// Obte la pocicio del contacte
+					//
+					if (pressed) {
+						x = state.x[0];
+						y = state.y[0];
+					}
+					else {
+						x = oldX;
+						y = oldY;
+					}
 				}
 			}
+
+			// Detecta canvis de contacte.
+			//
+			if (oldPressed != pressed) {
+
+				TouchPadEventArgs args = {
+					.event = pressed ? TouchPadEventType::press : TouchPadEventType::release,
+					.x = x,
+					.y = y
+				};
+				evNotify->execute(args);
+			}
+
+			// Detecta canvis de posicio
+			//
+			else if (pressed && ((oldX != x) || (oldY != y))) {
+
+				TouchPadEventArgs args = {
+					.event = TouchPadEventType::move,
+					.x = x,
+					.y = y
+				};
+				evNotify->execute(args);
+			}
+
+			oldPressed = pressed;
+			oldX = x;
+			oldY = y;
 		}
-
-		// Detecta canvis de contacte.
-		//
-		if (oldPressed != pressed) {
-
-			TouchPadEventArgs args = {
-				.event = pressed ? TouchPadEventType::press : TouchPadEventType::release,
-				.x = x,
-				.y = y
-			};
-			evNotify->execute(args);
-		}
-
-		// Detecta canvis de posicio
-		//
-		else if (pressed && ((oldX != x) || (oldY != y))) {
-
-			TouchPadEventArgs args = {
-				.event = TouchPadEventType::move,
-				.x = x,
-				.y = y
-			};
-			evNotify->execute(args);
-		}
-
-		oldPressed = pressed;
-		oldX = x;
-		oldY = y;
 	}
-
-	Task::delay(10);
 }
 
 
@@ -154,6 +156,7 @@ void GuiTouchPadService::onTask() {
 ///
 void GuiTouchPadService::interruptHandler() {
 
+	osalSemaphoreReleaseISR(hLock);
 }
 
 
