@@ -9,7 +9,6 @@
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
 	#include "HAL/PIC32/halGPIO.h"
-    #include "HAL/PIC32/halCN.h"
     #ifdef __cplusplus  
         #include "HAL/PIC32/halGPIOTpl.h"
     #endif

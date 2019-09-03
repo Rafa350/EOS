@@ -1,6 +1,6 @@
 #include "eos.h"
-#include "hal/PIC32/halTMR.h"
-#include "hal/PIC32/halINT.h"
+#include "HAL/PIC32/halTMR.h"
+#include "HAL/PIC32/halINT.h"
 
 #include "sys/attribs.h"
 

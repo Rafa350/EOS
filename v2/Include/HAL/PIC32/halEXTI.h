@@ -8,49 +8,63 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-    
-    
-#define HAL_CN_PIN_0         0
-#define HAL_CN_PIN_1         1
-#define HAL_CN_PIN_2         2
-#define HAL_CN_PIN_3         3
-#define HAL_CN_PIN_4         4
-#define HAL_CN_PIN_5         5
-#define HAL_CN_PIN_6         6
-#define HAL_CN_PIN_7         7
-#define HAL_CN_PIN_8         8
-#define HAL_CN_PIN_9         9
-#define HAL_CN_PIN_10        10
-#define HAL_CN_PIN_11        11
-#define HAL_CN_PIN_12        12
-#define HAL_CN_PIN_13        13
-#define HAL_CN_PIN_14        14
-#define HAL_CN_PIN_15        15
-#define HAL_CN_PIN_16        16
-#define HAL_CN_PIN_17        17
-#define HAL_CN_PIN_18        18
-#define HAL_CN_PIN_19        19
-#define HAL_CN_PIN_20        20
-#define HAL_CN_PIN_21        21
-    
-#define HAL_CN_ENABLE_MASK   0b0000001
-#define HAL_CN_ENABLE_ON     0b0000001
-#define HAL_CN_ENABLE_OFF    0b0000000
-    
-#define HAL_CN_PULLUP_MASK   0b0000110    
-#define HAL_CN_PULLUP_OFF    0b0000000
-#define HAL_CN_PULLUP_UP     0b0000010
-#define HAL_CN_PULLUP_DN     0b0000100
-
-    
-typedef uint8_t CNPin;     
-typedef uint8_t CNOptions;    
-typedef void (*CNInterruptCallback)(CNPin pin, void *param);
 
 
-extern void halCNInitialize(CNPin pin, CNOptions options, CNInterruptCallback callback, void *param);
-extern void halCNEnable();
-extern void halCNDisable();
+typedef uint8_t EXTILine;
+typedef uint32_t EXTIOptions;
+
+typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
+
+typedef struct {
+    EXTILine line;
+    EXTIOptions options;
+} EXTIInitializePinInfo;
+
+
+
+// Identificador de les linies
+#define HAL_EXTI_LINE_0           ((EXTILine) 0)
+#define HAL_EXTI_LINE_1           ((EXTILine) 1)
+#define HAL_EXTI_LINE_2           ((EXTILine) 2)
+#define HAL_EXTI_LINE_3           ((EXTILine) 3)
+#define HAL_EXTI_LINE_4           ((EXTILine) 4)
+
+// Identificador de les linies alternatiu (Depenent de la CPU)
+#define HAL_EXTI_LINE_PA0         HAL_EXTI_LINE_0
+    
+
+// Mode de treball
+#define HAL_EXTI_MODE_POS         0u
+#define HAL_EXTI_MODE_BITS        0b11u
+#define HAL_EXTI_MODE_MASK        (HAL_EXTI_MODE_BITS << HAL_EXTI_MODE_POS)
+
+#define HAL_EXTI_MODE_NONE        (0b00u << HAL_EXTI_MODE_POS)
+#define HAL_EXTI_MODE_INT         (0b01u << HAL_EXTI_MODE_POS)
+#define HAL_EXTI_MODE_EVENT       (0b10u << HAL_EXTI_MODE_POS)
+
+// Disparador
+#define HAL_EXTI_TRIGGER_POS      2u
+#define HAL_EXTI_TRIGGER_BITS     0b11u
+#define HAL_EXTI_TRIGGER_MASK     (HAL_EXTI_TRIGGER_BITS << HAL_EXTI_TRIGGER_POS)
+
+#define HAL_EXTI_TRIGGER_NONE     (0b00u << HAL_EXTI_TRIGGER_POS)
+#define HAL_EXTI_TRIGGER_RISING   (0b01u << HAL_EXTI_TRIGGER_POS)
+#define HAL_EXTI_TRIGGER_FALLING  (0b10u << HAL_EXTI_TRIGGER_POS)
+#define HAL_EXTI_TRIGGER_CHANGING (0b11u << HAL_EXTI_TRIGGER_POS)
+
+// Pull up/down
+#define HAL_EXTI_PUPD_POS         4u
+#define HAL_EXTI_PUPD_BITS        0b11u
+#define HAL_EXTI_PUPD_MASK        (HAL_EXTI_PUPD_BITS << HAL_EXTI_PUPD_POS)
+
+#define HAL_EXTI_PUPD_NONE        (0b00u << HAL_EXTI_PUPD_POS)
+#define HAL_EXTI_PUPD_UP          (0b01u << HAL_EXTI_PUPD_POS)
+#define HAL_EXTI_PUPD_DOWN        (0b10u << HAL_EXTI_PUPD_POS)
+
+       
+void halEXTIInitializePins(const EXTIInitializePinInfo *pInfo, unsigned count);
+void halEXTISetCallbackFunction(EXTILine line, EXTICallbackFunction function, void *pParam);
+
 
 
 #ifdef	__cplusplus

@@ -3,14 +3,12 @@
 
 
 #include "eos.h"
+#include "hal/STM32/halGPIO.h"
 
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-
-#include "hal/STM32/halGPIO.h"
 
 
 typedef uint32_t EXTIOptions;

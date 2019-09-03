@@ -21,9 +21,11 @@
               <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halTMR.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halGPIOTpl.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halEXTI.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
+            <itemPath>../../../Include/HAL/halEXTI.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
@@ -74,6 +76,8 @@
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halTMR.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halTMRInterruptWrapper.S</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halEXTI.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halEXTIInterruptWrapper.S</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
@@ -144,7 +148,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.20</languageToolchainVersion>
+        <languageToolchainVersion>2.10</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
