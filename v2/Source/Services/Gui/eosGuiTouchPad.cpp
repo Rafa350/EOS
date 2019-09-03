@@ -43,8 +43,6 @@ GuiTouchPadService::GuiTouchPadService(
 	oldX(-1),
 	oldY(-1),
 	oldPressed(false) {
-
-	hLock = osalSemaphoreCreate();
 }
 
 
@@ -80,7 +78,7 @@ void GuiTouchPadService::onTask() {
 
 	if (evNotify != nullptr) {
 
-		if (osalSemaphoreWait(hLock, (unsigned) -1)) {
+		if (lock.wait((unsigned) -1)) {
 
 			bool pressed;
 			int x;
@@ -156,7 +154,7 @@ void GuiTouchPadService::onTask() {
 ///
 void GuiTouchPadService::interruptHandler() {
 
-	osalSemaphoreReleaseISR(hLock);
+	lock.releaseISR();
 }
 
 

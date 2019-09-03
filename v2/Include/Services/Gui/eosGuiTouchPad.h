@@ -7,9 +7,9 @@
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "HAL/halEXTI.h"
-#include "OSAL/osalSemaphore.h"
 #include "Services/eosService.h"
 #include "System/Core/eosCallbacks.h"
+#include "System/Core/eosSemaphore.h"
 
 
 #ifndef OPT_GUI_TouchPadServicePrority
@@ -45,7 +45,7 @@ namespace eos {
 		private:
     		ITouchPadDriver *touchDriver;
         	TouchPadEvent *evNotify;
-        	HSemaphore hLock;
+        	BinarySemaphore lock;
         	int oldX;
         	int oldY;
         	int oldPressed;

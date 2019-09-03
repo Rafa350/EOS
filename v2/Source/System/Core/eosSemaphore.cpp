@@ -1,26 +1,27 @@
+#include "eos.h"
 #include "eosAssert.h"
 #include "System/Core/eosSemaphore.h"
 
-#include "FreeRTOS.h"
-#include "semphr.h"
+
+using namespace eos;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Contructor
 ///
-eos::BinarySemaphore::BinarySemaphore() {
+BinarySemaphore::BinarySemaphore() {
 
-    handle = xSemaphoreCreateBinary();
-    eosAssert(handle != nullptr);
+    hSemaphore = osalSemaphoreCreate();
+    eosAssert(hSemaphore != nullptr);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Destructor.
 ///
-eos::BinarySemaphore::~BinarySemaphore() {
+BinarySemaphore::~BinarySemaphore() {
 
-    vSemaphoreDelete(handle);
+    osalSemaphoreDestroy(hSemaphore);
 }
 
 
@@ -29,27 +30,26 @@ eos::BinarySemaphore::~BinarySemaphore() {
 /// \param blockTime: Temps maxim de bloqueig en milisegons.
 /// \return True si s'ha alliverat. False en cas contrari.
 ///
-bool eos::BinarySemaphore::take(
+bool BinarySemaphore::wait(
     unsigned blockTime) {
 
-    TickType_t ticks = blockTime == (unsigned)(-1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-    return xSemaphoreTake(handle, ticks);
+    return osalSemaphoreWait(hSemaphore, blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Allivera un semaforo.
 ///
-bool eos::BinarySemaphore::give() {
+void BinarySemaphore::release() {
 
-    return xSemaphoreGive(handle);
+    osalSemaphoreRelease(hSemaphore);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Allivera un semaforo. Versio per cridar des d'una interrupcio.
 ///
-void eos::BinarySemaphore::giveISR() {
+void BinarySemaphore::releaseISR() {
 
-    xSemaphoreGiveFromISR(handle, NULL);
+    osalSemaphoreReleaseISR(hSemaphore);
 }

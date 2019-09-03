@@ -3,7 +3,7 @@
 
 
 #include "eos.h"
-#include "osal/osalQueue.h"
+#include "OSAL/osalQueue.h"
 
 
 namespace eos {

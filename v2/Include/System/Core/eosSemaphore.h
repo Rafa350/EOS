@@ -1,25 +1,25 @@
-#ifndef __EOS_SEMAPHORE_H
-#define	__EOS_SEMAPHORE_H
+#ifndef __eosSemaphore__
+#define	__eosSemaphore__
 
 
 #include "eos.h"
+#include "OSAL/osalSemaphore.h"
 
 
 namespace eos {
 
     class BinarySemaphore {
         private:
-            void *handle;
+            HSemaphore hSemaphore;
             
         public:
             BinarySemaphore();
             ~BinarySemaphore();
-            bool take(unsigned blockTime);
-            bool give();
-            void giveISR();
+            bool wait(unsigned blockTime);
+            void release();
+            void releaseISR();
     };
 }
 
 
-#endif
-
+#endif // __eosSemaphore__
