@@ -23,9 +23,10 @@ typedef struct {
 typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
 
 
-#define HAL_EXTI_LINE_0           ((EXTILine) 0)
-#define HAL_EXTI_LINE_1           ((EXTILine) 1)
-#define HAL_EXTI_LINE_2           ((EXTILine) 2)
+// Linies configurables
+#define HAL_EXTI_LINE_0           ((EXTILine) 0)      // Px0
+#define HAL_EXTI_LINE_1           ((EXTILine) 1)      // Px1
+#define HAL_EXTI_LINE_2           ((EXTILine) 2)      // Px3
 #define HAL_EXTI_LINE_3           ((EXTILine) 3)
 #define HAL_EXTI_LINE_4           ((EXTILine) 4)
 #define HAL_EXTI_LINE_5           ((EXTILine) 5)
@@ -38,16 +39,18 @@ typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
 #define HAL_EXTI_LINE_12          ((EXTILine) 12)
 #define HAL_EXTI_LINE_13          ((EXTILine) 13)
 #define HAL_EXTI_LINE_14          ((EXTILine) 14)
-#define HAL_EXTI_LINE_15          ((EXTILine) 15)
-#define HAL_EXTI_LINE_16          ((EXTILine) 16)
-#define HAL_EXTI_LINE_17          ((EXTILine) 17)
-#define HAL_EXTI_LINE_18          ((EXTILine) 18)
-#define HAL_EXTI_LINE_19          ((EXTILine) 19)
-#define HAL_EXTI_LINE_20          ((EXTILine) 20)
-#define HAL_EXTI_LINE_21          ((EXTILine) 21)
-#define HAL_EXTI_LINE_22          ((EXTILine) 22)
-#define HAL_EXTI_LINE_23          ((EXTILine) 23)
-#define HAL_EXTI_LINE_24          ((EXTILine) 25)
+#define HAL_EXTI_LINE_15          ((EXTILine) 15)     // Px15
+
+// Linies fixes
+#define HAL_EXTI_LINE_16          ((EXTILine) 16)     // PVD output
+#define HAL_EXTI_LINE_17          ((EXTILine) 17)     // RTC alarm event
+#define HAL_EXTI_LINE_18          ((EXTILine) 18)     // USB OTG FS
+#define HAL_EXTI_LINE_19          ((EXTILine) 19)     // Ethernet wakeup
+#define HAL_EXTI_LINE_20          ((EXTILine) 20)     // USB OTG HS
+#define HAL_EXTI_LINE_21          ((EXTILine) 21)     // RTC tamper and timestamp events
+#define HAL_EXTI_LINE_22          ((EXTILine) 22)     // RTC wakeup event
+#define HAL_EXTI_LINE_23          ((EXTILine) 23)     // LPTIM1 asynchronous event
+#define HAL_EXTI_LINE_24          ((EXTILine) 24)     // MDIO slave asynchronous interrupt
 
 
 // Mode de treball

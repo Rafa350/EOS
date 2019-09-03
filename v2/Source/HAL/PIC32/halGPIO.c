@@ -48,9 +48,9 @@ const GPIOPortRegs gpioPortRegs[] = {
 ///
 void halGPIOInitializePins(
     const GPIOInitializePinInfo *pInfo, 
-    uint_fast8_t count) {
+    unsigned count) {
     
-    for (uint_fast8_t i = 0; i < count; i++) {
+    for (unsigned i = 0; i < count; i++) {
         const GPIOInitializePinInfo *p = &pInfo[i];
         halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
     }
@@ -81,9 +81,9 @@ void halGPIOInitializePin(
 ///
 void halGPIOInitializePorts(
     const GPIOInitializePortInfo *pInfo,
-    uint_fast8_t count) {
+    unsigned count) {
     
-    for (uint_fast8_t i = 0; i < count; i++) {
+    for (unsigned i = 0; i < count; i++) {
         const GPIOInitializePortInfo *p = &pInfo[i];
         halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
     }

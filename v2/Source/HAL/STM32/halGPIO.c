@@ -17,12 +17,14 @@ GPIO_TypeDef * const gpioTbl[] = {
 	GPIOK
 };
 
+static uint32_t enabledPorts = 0; // Indicador dels ports actius
+
 
 /// ----------------------------------------------------------------------
 /// \brief Activa el port GPIO
 /// \param port: El identificador del port.
 ///
-static void EnableClock(
+static void enablePort(
 	GPIOPort port) {
 
 	switch (port) {
@@ -70,6 +72,20 @@ static void EnableClock(
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
 			break;
 	}
+
+	enabledPorts |= 1 << port;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Comprova si el port GPIO esta activat.
+/// \param port: El identificador del port.
+/// \return True si esta activat.
+///
+static inline bool isEnabledPort(
+	GPIOPort port) {
+
+	return (enabledPorts & (1 << port)) != 0;
 }
 
 
@@ -80,7 +96,7 @@ static void EnableClock(
 /// \param options: Les opcions de configuracio.
 /// \param alt: La funcio alternativa.
 ///
-static void SetupPin(
+static void setupPin(
 	GPIOPort port,
 	GPIOPin pin,
 	GPIOOptions options,
@@ -193,22 +209,24 @@ static void SetupPin(
 
 /// ----------------------------------------------------------------------
 /// \brief Configura una llista de pins.
-/// \param pInfo: Llista d'informacio de configuracio.
+/// \param pInfo: Llista d'elements de configuracio.
 /// \param count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePins(
 	const GPIOInitializePinInfo *pInfo,
-	uint_fast8_t count) {
+	unsigned count) {
 
 	eosAssert(pInfo != NULL);
 	eosAssert(count != 0);
 
-	for (uint_fast8_t i = 0; i < count; i++) {
+	for (unsigned i = 0; i < count; i++) {
 
 		const GPIOInitializePinInfo *p = &pInfo[i];
 
-		EnableClock(p->port);
-		SetupPin(p->port, p->pin, p->options, p->alt);
+		if (!isEnabledPort(p->port))
+			enablePort(p->port);
+
+		setupPin(p->port, p->pin, p->options, p->alt);
 	}
 }
 
@@ -220,19 +238,21 @@ void halGPIOInitializePins(
 ///
 void halGPIOInitializePorts(
 	const GPIOInitializePortInfo *pInfo,
-	uint_fast8_t count) {
+	unsigned count) {
 
 	eosAssert(pInfo != NULL);
 	eosAssert(count != 0);
 
-	for (uint_fast8_t i = 0; i < count; i++) {
+	for (unsigned i = 0; i < count; i++) {
 
 		const GPIOInitializePortInfo *p = &pInfo[i];
 
-		EnableClock(p->port);
-		for (uint_fast8_t pin = 0; pin < 16; pin++)
+		if (!isEnabledPort(p->port))
+			enablePort(p->port);
+
+		for (unsigned pin = 0; pin < 16; pin++)
 			if (p->mask & (1u << pin))
-				SetupPin(p->port, pin, p->options, p->alt);
+				setupPin(p->port, pin, p->options, p->alt);
 	}
 }
 
@@ -250,8 +270,10 @@ void halGPIOInitializePin(
 	GPIOOptions options,
 	GPIOAlt alt) {
 
-	EnableClock(port);
-	SetupPin(port, pin, options, alt);
+	if (!isEnabledPort(port))
+		enablePort(port);
+
+	setupPin(port, pin, options, alt);
 }
 
 
@@ -261,7 +283,7 @@ void halGPIOInitializePin(
 /// \param pin: El identificador del pin.
 ///
 #if 0
-void halGPIOClearPin(
+inline void halGPIOClearPin(
 	GPIOPort port,
 	GPIOPin pin) {
 
@@ -277,7 +299,7 @@ void halGPIOClearPin(
 /// \param pin: El identificador del pin.
 ///
 #if 0
-void halGPIOSetPin(
+inline void halGPIOSetPin(
 	GPIOPort port,
 	GPIOPin pin) {
 
@@ -292,7 +314,7 @@ void halGPIOSetPin(
 /// \param pin: El identificador del pin.
 ///
 #if 0
-void halGPIOTogglePin(
+inline void halGPIOTogglePin(
 	GPIOPort port,
 	GPIOPin pin) {
 

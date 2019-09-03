@@ -205,10 +205,10 @@ extern const GPIOPortRegs gpioPortRegs[];
     *gpioPortRegs[portId].port
 
 
-void halGPIOInitializePins(const GPIOInitializePinInfo *info, uint_fast8_t count);
+void halGPIOInitializePins(const GPIOInitializePinInfo *info, unsigned count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 
-void halGPIOInitializePorts(const GPIOInitializePortInfo *info, uint_fast8_t count);
+void halGPIOInitializePorts(const GPIOInitializePortInfo *info, unsigned count);
 void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 
 

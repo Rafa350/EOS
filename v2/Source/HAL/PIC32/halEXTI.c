@@ -18,25 +18,61 @@ static void SetupLine(
     EXTILine line,
 	EXTIOptions options) {
     
-  
-    
+    // Activa pullup
+    //
+    if ((options & HAL_EXTI_PULL_MASK) == HAL_EXTI_PULL_UP)
+        CNPUESET = 1 << line;
+    else
+        CNPUECLR = 1 << line;    
+
+    // Activa la interrupcio en la linia
+    //
+    if ((options & HAL_EXTI_ENABLE_MASK) == HAL_EXTI_ENABLE_YES)
+        CNENSET = 1 << line;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza els pins d'entrada d'interrupcio.
-/// \param pInfo: Llista d'elements deconfiguracio.
-/// \param count: Numero d'elements de la llista.
+/// \param pInfo: Llista linies a configurar.
+/// \param count: Numero de linies en la llista.
 ///
-void halEXTIInitializePins(
-    const EXTIInitializePinInfo *pInfo, 
+void halEXTIInitializeLines(
+    const EXTIInitializeLineInfo *pInfo, 
     unsigned count) {
     
-    for (uint_fast8_t i; i < count; i++) {
-
-		const EXTIInitializePinInfo *p = &pInfo[i];              
-		SetupLine(p->, p->options);
+    // Activa el modul
+    //
+    CNCON.ON = 1;
+    
+    // Configura cada linia
+    //
+    for (unsigned i; i < count; i++) {
+		const EXTIInitializeLineInfo *p = &pInfo[i];              
+		SetupLine(p->line, p->options);
     }    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Autoritza la generacio d'interrupcions en aquesta linia.
+/// \param line: La linia.
+///
+void halEXTIEnableLine(
+    EXTILine line) {
+    
+    CNENSET = 1 << line;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Desactiva la generacio d'interrupcions en aquesta linia.
+/// \param line: La linia.
+///
+void halEXTIDisableLine(
+    EXTILine line) {
+    
+    CNENCLR = 1 << line;
 }
 
 

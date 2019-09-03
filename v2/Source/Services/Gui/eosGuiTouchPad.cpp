@@ -80,70 +80,62 @@ void GuiTouchPadService::onTask() {
 
 		if (lock.wait((unsigned) -1)) {
 
-			bool pressed;
-			int x;
-			int y;
-
 			// Detecta variacions del estat del touchpad
 			//
-			pressed = false;
-			x = -1;
-			y = -1;
-			if (touchDriver->getTouchCount()) {
+			bool pressed = false;
+			int x = -1;
+			int y = -1;
+			while (touchDriver->getTouchCount()) {
 
 				// Obte l'estat
 				//
 				TouchPadState state;
 				touchDriver->getState(state);
-
 				if (state.numPoints == 1) {
-
-					// Obte el indicador de contacte
-					//
-					pressed =
-						(state.action[0] == TouchPadAction::press) ||
-						(state.action[0] == TouchPadAction::contact);
-
-					// Obte la pocicio del contacte
-					//
-					if (pressed) {
-						x = state.x[0];
-						y = state.y[0];
-					}
-					else {
-						x = oldX;
-						y = oldY;
-					}
+					pressed = true;
+					x = state.x[0];
+					y = state.y[0];
 				}
+
+				// Detecta canvis de contacte.
+				//
+				if (!oldPressed && pressed) {
+
+					TouchPadEventArgs args = {
+						.event = TouchPadEventType::press,
+						.x = x,
+						.y = y
+					};
+					evNotify->execute(args);
+				}
+
+				// Detecta canvis de posicio
+				//
+				else if (pressed && ((oldX != x) || (oldY != y))) {
+
+					TouchPadEventArgs args = {
+						.event = TouchPadEventType::move,
+						.x = x,
+						.y = y
+					};
+					evNotify->execute(args);
+				}
+
+				oldPressed = pressed;
+				oldX = x;
+				oldY = y;
 			}
 
-			// Detecta canvis de contacte.
-			//
-			if (oldPressed != pressed) {
-
+			if (oldPressed) {
 				TouchPadEventArgs args = {
-					.event = pressed ? TouchPadEventType::press : TouchPadEventType::release,
+					.event = TouchPadEventType::release,
 					.x = x,
 					.y = y
 				};
 				evNotify->execute(args);
+
+				oldPressed = false;
 			}
-
-			// Detecta canvis de posicio
-			//
-			else if (pressed && ((oldX != x) || (oldY != y))) {
-
-				TouchPadEventArgs args = {
-					.event = TouchPadEventType::move,
-					.x = x,
-					.y = y
-				};
-				evNotify->execute(args);
-			}
-
-			oldPressed = pressed;
-			oldX = x;
-			oldY = y;
 		}
 	}
 }

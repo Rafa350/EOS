@@ -16,7 +16,7 @@ typedef uint32_t EXTIOptions;
 typedef struct {
     EXTILine line;
     EXTIOptions options;
-} EXTIInitializePinInfo;
+} EXTIInitializeLineInfo;
 
 typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
 
@@ -38,42 +38,48 @@ typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
 #define HAL_EXTI_LINE_13          ((EXTILine) 13)
 #define HAL_EXTI_LINE_14          ((EXTILine) 14)
 #define HAL_EXTI_LINE_15          ((EXTILine) 15)
-
-
-// Identificador de les linies alternatiu (Depenent de la CPU)
-#define HAL_EXTI_LINE_PA0         HAL_EXTI_LINE_0
-    
+  
 
 // Mode de treball
 #define HAL_EXTI_MODE_POS         0u
 #define HAL_EXTI_MODE_BITS        0b11u
 #define HAL_EXTI_MODE_MASK        (HAL_EXTI_MODE_BITS << HAL_EXTI_MODE_POS)
 
-#define HAL_EXTI_MODE_NONE        (0b00u << HAL_EXTI_MODE_POS)
-#define HAL_EXTI_MODE_INT         (0b01u << HAL_EXTI_MODE_POS)
-#define HAL_EXTI_MODE_EVENT       (0b10u << HAL_EXTI_MODE_POS)
+#define HAL_EXTI_MODE_NONE        (0u << HAL_EXTI_MODE_POS)
+#define HAL_EXTI_MODE_INT         (1u << HAL_EXTI_MODE_POS)
+#define HAL_EXTI_MODE_EVENT       (2u << HAL_EXTI_MODE_POS)
 
 // Disparador
 #define HAL_EXTI_TRIGGER_POS      2u
 #define HAL_EXTI_TRIGGER_BITS     0b11u
 #define HAL_EXTI_TRIGGER_MASK     (HAL_EXTI_TRIGGER_BITS << HAL_EXTI_TRIGGER_POS)
 
-#define HAL_EXTI_TRIGGER_NONE     (0b00u << HAL_EXTI_TRIGGER_POS)
-#define HAL_EXTI_TRIGGER_RISING   (0b01u << HAL_EXTI_TRIGGER_POS)
-#define HAL_EXTI_TRIGGER_FALLING  (0b10u << HAL_EXTI_TRIGGER_POS)
-#define HAL_EXTI_TRIGGER_CHANGING (0b11u << HAL_EXTI_TRIGGER_POS)
+#define HAL_EXTI_TRIGGER_NONE     (0u << HAL_EXTI_TRIGGER_POS)
+#define HAL_EXTI_TRIGGER_RISING   (1u << HAL_EXTI_TRIGGER_POS)
+#define HAL_EXTI_TRIGGER_FALLING  (2u << HAL_EXTI_TRIGGER_POS)
+#define HAL_EXTI_TRIGGER_CHANGING (3u << HAL_EXTI_TRIGGER_POS)
 
 // Pull up/down
-#define HAL_EXTI_PUPD_POS         4u
-#define HAL_EXTI_PUPD_BITS        0b11u
-#define HAL_EXTI_PUPD_MASK        (HAL_EXTI_PUPD_BITS << HAL_EXTI_PUPD_POS)
+#define HAL_EXTI_PULL_POS         4u
+#define HAL_EXTI_PULL_BITS        0b1u
+#define HAL_EXTI_PULL_MASK        (HAL_EXTI_PULL_BITS << HAL_EXTI_PULL_POS)
 
-#define HAL_EXTI_PUPD_NONE        (0b00u << HAL_EXTI_PUPD_POS)
-#define HAL_EXTI_PUPD_UP          (0b01u << HAL_EXTI_PUPD_POS)
-#define HAL_EXTI_PUPD_DOWN        (0b10u << HAL_EXTI_PUPD_POS)
+#define HAL_EXTI_PULL_NONE        (0u << HAL_EXTI_PULL_POS)
+#define HAL_EXTI_PULL_UP          (1u << HAL_EXTI_PULL_POS)
+
+// Activar
+#define HAL_EXTI_ENABLE_POS       5u
+#define HAL_EXTI_ENABLE_BITS      0b1u
+#define HAL_EXTI_ENABLE_MASK      (HAL_EXTI_ENABLE_BITS << HAL_EXTI_ENABLE_POS)
+
+#define HAL_EXTI_ENABLE_NO        (0u << HAL_EXTI_ENABLE_POS)
+#define HAL_EXTI_ENABLE_YES       (1u << HAL_EXTI_ENABLE_POS)
 
        
-void halEXTIInitializePins(const EXTIInitializePinInfo *pInfo, unsigned count);
+void halEXTIInitializeLines(const EXTIInitializeLineInfo *pInfo, unsigned count);
+void halEXTIDisable();
+void halEXTIEnableLine(EXTILine line);
+void halEXTIDisableLine(EXTILine line);
 void halEXTISetCallbackFunction(EXTILine line, EXTICallbackFunction function, void *pParam);
 
 
