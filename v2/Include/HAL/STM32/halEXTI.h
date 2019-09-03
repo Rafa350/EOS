@@ -17,9 +17,10 @@ typedef uint8_t EXTILine;
 typedef struct {
     GPIOPort port;
     GPIOPin pin;
-    EXTILine line;                // El parametre es irrellevant. Les interrupcions son fixes en STM32
     EXTIOptions options;
 } EXTIInitializePinInfo;
+
+typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
 
 
 #define HAL_EXTI_LINE_0           ((EXTILine) 0)
@@ -38,6 +39,15 @@ typedef struct {
 #define HAL_EXTI_LINE_13          ((EXTILine) 13)
 #define HAL_EXTI_LINE_14          ((EXTILine) 14)
 #define HAL_EXTI_LINE_15          ((EXTILine) 15)
+#define HAL_EXTI_LINE_16          ((EXTILine) 16)
+#define HAL_EXTI_LINE_17          ((EXTILine) 17)
+#define HAL_EXTI_LINE_18          ((EXTILine) 18)
+#define HAL_EXTI_LINE_19          ((EXTILine) 19)
+#define HAL_EXTI_LINE_20          ((EXTILine) 20)
+#define HAL_EXTI_LINE_21          ((EXTILine) 21)
+#define HAL_EXTI_LINE_22          ((EXTILine) 22)
+#define HAL_EXTI_LINE_23          ((EXTILine) 23)
+#define HAL_EXTI_LINE_24          ((EXTILine) 25)
 
 
 // Mode de treball
@@ -59,8 +69,6 @@ typedef struct {
 #define HAL_EXTI_TRIGGER_FALLING  (0b10u << HAL_EXTI_TRIGGER_POS)
 #define HAL_EXTI_TRIGGER_CHANGING (0b11u << HAL_EXTI_TRIGGER_POS)
 
-
-typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
 
 void halEXTIInitializePins(const EXTIInitializePinInfo *pInfo, unsigned count);
 void halEXTISetCallbackFunction(EXTILine line, EXTICallbackFunction function, void *pParam);
