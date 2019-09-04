@@ -3,6 +3,13 @@
 ## Features:
 * Verified targets STM32F4xx, STM32F7xx, PIC32MX.
 * FreeRTOS scheduler.
+* Graphic module.
+  * Fonts (Conversion tool from TrueType/OpenType).
+  * RGB888, RGB565 color scheme.
+  * Basic primitives line, circle, rectangle, ellipse, etc.
+  * Single and double buffer.
+  * Use hardware acceleration where available (STM32/DMA2D)
+  * Drivers for LCD, TFT, OLED, etc.
 * Based on services.
   * Digital inputs service.
   * Digital outputs service.
@@ -19,7 +26,7 @@
   * v2 (Current version)
     * Include (Include files)
 	* Source (Source files)
-	* Library (Thirt parts software and libraries)
+	* Library (STM32F4, STM32F4, PIC32 libraries)
 	* Demo (Demos)
 	* Build (Projects and builds for demos)
 	* Tools (EOS developement tools)
