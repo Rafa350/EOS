@@ -43,7 +43,7 @@ void halEXTIInitializeLines(
     
     // Activa el modul
     //
-    CNCON.ON = 1;
+    CNCONbits.ON = 1;
     
     // Configura cada linia
     //
