@@ -264,6 +264,8 @@ void Visual::onDispatch(
 			break;
 
 		default:
+			if (pParent != nullptr)
+				pParent->onDispatch(msg);
 			break;
 	}
 

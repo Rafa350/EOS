@@ -23,25 +23,25 @@ typedef struct {
 typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
 
 
-// Linies configurables
+// Linies configurables asignades a PINs GPIO
 #define HAL_EXTI_LINE_0           ((EXTILine) 0)      // Px0
 #define HAL_EXTI_LINE_1           ((EXTILine) 1)      // Px1
-#define HAL_EXTI_LINE_2           ((EXTILine) 2)      // Px3
-#define HAL_EXTI_LINE_3           ((EXTILine) 3)
-#define HAL_EXTI_LINE_4           ((EXTILine) 4)
-#define HAL_EXTI_LINE_5           ((EXTILine) 5)
-#define HAL_EXTI_LINE_6           ((EXTILine) 6)
-#define HAL_EXTI_LINE_7           ((EXTILine) 7)
-#define HAL_EXTI_LINE_8           ((EXTILine) 8)
-#define HAL_EXTI_LINE_9           ((EXTILine) 9)
-#define HAL_EXTI_LINE_10          ((EXTILine) 10)
-#define HAL_EXTI_LINE_11          ((EXTILine) 11)
-#define HAL_EXTI_LINE_12          ((EXTILine) 12)
-#define HAL_EXTI_LINE_13          ((EXTILine) 13)
-#define HAL_EXTI_LINE_14          ((EXTILine) 14)
+#define HAL_EXTI_LINE_2           ((EXTILine) 2)      // Px2
+#define HAL_EXTI_LINE_3           ((EXTILine) 3)      // Px3
+#define HAL_EXTI_LINE_4           ((EXTILine) 4)      // Px4
+#define HAL_EXTI_LINE_5           ((EXTILine) 5)      // Px5
+#define HAL_EXTI_LINE_6           ((EXTILine) 6)      // Px6
+#define HAL_EXTI_LINE_7           ((EXTILine) 7)      // Px7
+#define HAL_EXTI_LINE_8           ((EXTILine) 8)      // Px8
+#define HAL_EXTI_LINE_9           ((EXTILine) 9)      // Px9
+#define HAL_EXTI_LINE_10          ((EXTILine) 10)     // Px10
+#define HAL_EXTI_LINE_11          ((EXTILine) 11)     // Px11
+#define HAL_EXTI_LINE_12          ((EXTILine) 12)     // Px12
+#define HAL_EXTI_LINE_13          ((EXTILine) 13)     // Px13
+#define HAL_EXTI_LINE_14          ((EXTILine) 14)     // Px14
 #define HAL_EXTI_LINE_15          ((EXTILine) 15)     // Px15
 
-// Linies fixes
+// Linies fixes asignades a moduls interns
 #define HAL_EXTI_LINE_16          ((EXTILine) 16)     // PVD output
 #define HAL_EXTI_LINE_17          ((EXTILine) 17)     // RTC alarm event
 #define HAL_EXTI_LINE_18          ((EXTILine) 18)     // USB OTG FS
@@ -74,6 +74,8 @@ typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
 
 
 void halEXTIInitializePins(const EXTIInitializePinInfo *pInfo, unsigned count);
+void halEXTIEnableLine(EXTILine line);
+void halEXTIDisableLine(EXTILine line);
 void halEXTISetCallbackFunction(EXTILine line, EXTICallbackFunction function, void *pParam);
 
 

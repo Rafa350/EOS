@@ -28,15 +28,6 @@ static CallbackInfo callback[16] = {
 };
 
 
-/// ---------------------------------------------------------------------
-/// \brief Activa el modul
-///
-static void enableModule() {
-
-	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza un pin per que generi interrupcions
 /// \param port: El port.
@@ -53,7 +44,7 @@ static void setupPin(
 
 	uint32_t temp;
 
-	// Configura el registre EXTICR
+	// Configura el registre EXTICR per mepejar la linia amb el pin GPIO
 	//
     temp = SYSCFG->EXTICR[pin >> 2];
     temp &= ~(((uint32_t)0x0F) << (4 * (pin & 0x03)));
@@ -106,8 +97,12 @@ void halEXTIInitializePins(
 	eosAssert(pInfo != NULL);
 	eosAssert(count > 0);
 
-	enableModule();
+	// Activa el modul EXTI
+	//
+	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 
+	// Inicialitza els elements de la llista
+	//
 	for (unsigned i = 0; i < count; i++) {
 		const EXTIInitializePinInfo *p = &pInfo[i];
 		setupPin(p->port, p->pin, p->options);
