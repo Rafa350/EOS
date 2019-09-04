@@ -1,9 +1,11 @@
-#include "System/eosApplication.h"
+#include "eos.h"
+#include "HAL/halGPIO.h"
+#include "HAL/halTMR.h"
+#include "HAL/halEXTI.h"
 #include "Services/eosAppLoop.h"
 #include "Services/eosDigOutput.h"
 #include "Services/eosDigInput.h"
-#include "hal/halGPIO.h"
-#include "hal/halTMR.h"
+#include "System/eosApplication.h"
 
 
 using namespace eos;
@@ -65,6 +67,16 @@ class LedLoopService: public AppLoopService {
     public:
 		LedLoopService(Application *application);
 };
+
+
+static void initEXTI() {
+    
+    EXTIInitializeLineInfo extiConfiguration;
+    extiConfiguration.line = HAL_EXTI_LINE_19;
+    extiConfiguration.options = HAL_EXTI_TRIGGER_FALLING | HAL_EXTI_ENABLE_YES;
+    halEXTIInitializeLines(&extiConfiguration, 1);
+    uint32_t dummy = halGPIOReadPort(HAL_GPIO_PORT_D);
+}
 
 
 /// ---------------------------------------------------------------------------
@@ -130,6 +142,10 @@ void MyApplication::onInitialize() {
     // Prepara el servei de l'aplicacio principal
     //
     new LedLoopService(this);
+    
+    // Prepara la linia d'interrupcio pel boto SW3 (RD13/CN19)
+    //
+    //initEXTI();
 }
 
 

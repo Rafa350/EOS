@@ -2,7 +2,7 @@
 #define __PIC32_halINT__
 
 
-#include "xc.h"
+#include "eos.h"
 
 
 #define halINTEnableInterrupts() \

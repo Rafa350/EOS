@@ -31,7 +31,7 @@ static CallbackInfo callback[16] = {
 /// ---------------------------------------------------------------------
 /// \brief Activa el modul
 ///
-static void EnableClock() {
+static void enableModule() {
 
 	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 }
@@ -43,7 +43,7 @@ static void EnableClock() {
 /// \param pin: El pin.
 /// \param options: Opcions de configuracio.
 ///
-static void SetupPin(
+static void setupPin(
 	GPIOPort port,
 	GPIOPin pin,
 	EXTIOptions options) {
@@ -106,13 +106,11 @@ void halEXTIInitializePins(
 	eosAssert(pInfo != NULL);
 	eosAssert(count > 0);
 
-	EnableClock();
+	enableModule();
 
-	for (uint_fast8_t i = 0; i < count; i++) {
-
+	for (unsigned i = 0; i < count; i++) {
 		const EXTIInitializePinInfo *p = &pInfo[i];
-
-		SetupPin(p->port, p->pin, p->options);
+		setupPin(p->port, p->pin, p->options);
 	}
 }
 

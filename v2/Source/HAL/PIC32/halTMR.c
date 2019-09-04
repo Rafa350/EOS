@@ -1,7 +1,6 @@
 #include "eos.h"
 #include "HAL/PIC32/halTMR.h"
 #include "HAL/PIC32/halINT.h"
-
 #include "sys/attribs.h"
 
 #include "peripheral/int/plib_int.h"
