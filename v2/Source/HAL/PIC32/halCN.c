@@ -4,7 +4,6 @@
 #include "HAL/PIC32/halINT.h"
 #include "sys/attribs.h"
 
-#include "peripheral/int/plib_int.h"
 
 typedef struct {
     CNCallbackFunction function;
@@ -90,11 +89,10 @@ void halCNInitializeLines(
     
     // Activa les interrupcions
     //
+    IPC6bits.CNIP = 2; // Interrupt Priority = 2;
+    IPC6bits.CNIS = 0; // Interrupt Subpriority = 0;
     IFS1bits.CNIF = 0; // Interrupt Flag = 0
     IEC1bits.CNIE = 1; // Interrupt Enable = 1
-    
-    PLIB_INT_VectorPrioritySet(INT_ID_0, _CHANGE_NOTICE_VECTOR, INT_PRIORITY_LEVEL2);
-    PLIB_INT_VectorSubPrioritySet(INT_ID_0, _CHANGE_NOTICE_VECTOR, INT_SUBPRIORITY_LEVEL0);    
 }
 
 
@@ -147,6 +145,14 @@ void halCNSetCallbackFunction(
 void isrCNHandler(void) {
     
     if (IFS1bits.CNIF) {    
+        
+        uint32_t newA = PORTA;
+        uint32_t newB = PORTB;
+        uint32_t newC = PORTC;
+        uint32_t newD = PORTD;
+        uint32_t newE = PORTE;
+        uint32_t newF = PORTF;
+        uint32_t newG = PORTG;
     
         // Obte la linia que ha generat la interrupcio
         //

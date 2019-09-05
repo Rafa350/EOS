@@ -13,12 +13,12 @@ extern "C" {
 typedef uint8_t CNLine;
 typedef uint32_t CNOptions;
 
+typedef void (*CNCallbackFunction)(CNLine line, void *pParam);
+
 typedef struct {
     CNLine line;
     CNOptions options;
 } CNInitializeLineInfo;
-
-typedef void (*CNCallbackFunction)(CNLine line, void *pParam);
 
 
 // Identificador de les linies
@@ -58,7 +58,7 @@ typedef void (*CNCallbackFunction)(CNLine line, void *pParam);
 #define HAL_CN_TRIGGER_FALLING    (2u << HAL_CN_TRIGGER_POS)
 #define HAL_CN_TRIGGER_CHANGING   (3u << HAL_CN_TRIGGER_POS)
 
-// Pull up/down
+// Pull up
 #define HAL_CN_PULL_POS           2u
 #define HAL_CN_PULL_BITS          0b1u
 #define HAL_CN_PULL_MASK          (HAL_CN_PULL_BITS << HAL_CN_PULL_POS)
