@@ -1,17 +1,17 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HAL/PIC32/halEXTI.h"
+#include "HAL/PIC32/halCN.h"
 #include "HAL/PIC32/halINT.h"
 #include "sys/attribs.h"
 
 #include "peripheral/int/plib_int.h"
 
 typedef struct {
-    EXTICallbackFunction function;
+    CNCallbackFunction function;
     void *pParam;
 } CallbackInfo;
 
-static CallbackInfo callback[HAL_EXTI_LINE_COUNT] = {
+static CallbackInfo callback[HAL_CN_LINE_COUNT] = {
     { NULL, NULL },
     { NULL, NULL },
     { NULL, NULL },
@@ -46,21 +46,21 @@ extern void __ISR(_CHANGE_NOTICE_VECTOR, IPL2SOFT) isrCNWrapper(void);
 /// \param options: Opcions.
 ///
 static void setupLine(
-    EXTILine line,
-	EXTIOptions options) {
+    CNLine line,
+	CNOptions options) {
     
-    eosAssert((line >= 0) && (line <= HAL_EXTI_LINE_COUNT));
+    eosAssert((line >= 0) && (line <= HAL_CN_LINE_COUNT));
     
     // Activa pullup
     //
-    if ((options & HAL_EXTI_PULL_MASK) == HAL_EXTI_PULL_UP)
+    if ((options & HAL_CN_PULL_MASK) == HAL_CN_PULL_UP)
         CNPUESET = 1 << line; // PullUp Enable = 1
     else
         CNPUECLR = 1 << line; // PullUp Enable = 0;
 
     // Activa la linia individual
     //
-    if ((options & HAL_EXTI_ENABLE_MASK) == HAL_EXTI_ENABLE_YES)
+    if ((options & HAL_CN_ENABLE_MASK) == HAL_CN_ENABLE_YES)
         CNENSET = 1 << line; // Enable = 1;
 }
 
@@ -70,8 +70,8 @@ static void setupLine(
 /// \param pInfo: Llista linies a configurar.
 /// \param count: Numero de linies en la llista.
 ///
-void halEXTIInitializeLines(
-    const EXTIInitializeLineInfo *pInfo, 
+void halCNInitializeLines(
+    const CNInitializeLineInfo *pInfo, 
     unsigned count) {
     
 	eosAssert(pInfo != NULL);
@@ -84,7 +84,7 @@ void halEXTIInitializeLines(
     // Configura cada linia
     //
     for (unsigned i = 0; i < count; i++) {
-		const EXTIInitializeLineInfo *p = &pInfo[i];              
+		const CNInitializeLineInfo *p = &pInfo[i];              
 		setupLine(p->line, p->options);
     }    
     
@@ -102,10 +102,10 @@ void halEXTIInitializeLines(
 /// \brief Autoritza la generacio d'interrupcions en aquesta linia.
 /// \param line: La linia.
 ///
-void halEXTIEnableLine(
-    EXTILine line) {
+void halCNEnableLine(
+    CNLine line) {
     
-    eosAssert((line >= 0) && (line <= HAL_EXTI_LINE_COUNT));
+    eosAssert((line >= 0) && (line <= HAL_CN_LINE_COUNT));
 
     CNENSET = 1 << line; // Enable = 1
 }
@@ -115,10 +115,10 @@ void halEXTIEnableLine(
 /// \brief Desactiva la generacio d'interrupcions en aquesta linia.
 /// \param line: La linia.
 ///
-void halEXTIDisableLine(
-    EXTILine line) {
+void halCNDisableLine(
+    CNLine line) {
     
-    eosAssert((line >= 0) && (line <= HAL_EXTI_LINE_COUNT));
+    eosAssert((line >= 0) && (line <= HAL_CN_LINE_COUNT));
 
     CNENCLR = 1 << line; // Enable = 0;
 }
@@ -126,15 +126,15 @@ void halEXTIDisableLine(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna la funcio callback per gestionar les interrupcions
-/// \param line: Linea EXTI a configurar.
+/// \param line: Linea CN a configurar.
 /// \param function: La funcio.
 ///
-void halEXTISetCallbackFunction(
-    EXTILine line, 
-    EXTICallbackFunction function, 
+void halCNSetCallbackFunction(
+    CNLine line, 
+    CNCallbackFunction function, 
     void *pParam) {
 
-	eosAssert((line >= HAL_EXTI_LINE_0) && (line <= HAL_EXTI_LINE_15));
+	eosAssert((line >= HAL_CN_LINE_0) && (line <= HAL_CN_LINE_15));
 
 	callback[line].function = function;
 	callback[line].pParam = pParam;   
@@ -150,7 +150,7 @@ void isrCNHandler(void) {
     
         // Obte la linia que ha generat la interrupcio
         //
-        EXTILine line = 0;
+        CNLine line = 0;
     
         // Crida a la funcio callback
         //

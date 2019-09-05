@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
-#include "HAL/halEXTI.h"
+#include "HAL/PIC32/halCN.h"
 #include "Services/eosAppLoop.h"
 #include "Services/eosDigOutput.h"
 #include "Services/eosDigInput.h"
@@ -69,12 +69,12 @@ class LedLoopService: public AppLoopService {
 };
 
 
-static void initEXTI() {
+static void initCN() {
     
-    EXTIInitializeLineInfo extiConfiguration;
-    extiConfiguration.line = HAL_EXTI_LINE_19;
-    extiConfiguration.options = HAL_EXTI_TRIGGER_FALLING | HAL_EXTI_ENABLE_YES;
-    halEXTIInitializeLines(&extiConfiguration, 1);
+    CNInitializeLineInfo extiConfiguration;
+    extiConfiguration.line = HAL_CN_LINE_19;
+    extiConfiguration.options = HAL_CN_TRIGGER_FALLING | HAL_CN_ENABLE_YES;
+    halCNInitializeLines(&extiConfiguration, 1);
     uint32_t dummy = halGPIOReadPort(HAL_GPIO_PORT_D);
 }
 
@@ -145,7 +145,7 @@ void MyApplication::onInitialize() {
     
     // Prepara la linia d'interrupcio pel boto SW3 (RD13/CN19)
     //
-    //initEXTI();
+    //initCN();
 }
 
 
