@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "HAL/halEXTI.h"
+#include "HAL/STM32/halEXTI.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
 #include "Services/Gui/eosGuiTouchPad.h"

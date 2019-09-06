@@ -1,27 +1,29 @@
-#ifndef __eosGuiButtons__
-#define __eosGuiButtons__
+#ifndef __eosButtons__
+#define __eosButtons__
+
+
+#include "eos.h"
 
 
 namespace eos {
 
-    class ButtonBase: public Control {
+	struct Message;
+	class RenderContext;
+
+    class ButtonBase: public Visual {
     };
     
     class PushButton: public ButtonBase {
     
         protected:
-            void onTouch();
-            void onRender();
+        	void onRender(const RenderContext &context);
+            void onTouchPadEvent(const Message &msg);
     };
     
     class ToggleButton: public Buttonbase {
-
-        protected:
-            void onTouch();
-            void onRender();
     };
 
 }
 
 
-#endif // __eosGuiButtons__
+#endif // __eosButtons__

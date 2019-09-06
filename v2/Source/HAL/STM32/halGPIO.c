@@ -24,7 +24,7 @@ static uint32_t enabledPorts = 0; // Indicador dels ports actius
 /// \brief Activa el port GPIO
 /// \param port: El identificador del port.
 ///
-static void enablePort(
+static void enableGPIO(
 	GPIOPort port) {
 
 	switch (port) {
@@ -82,7 +82,7 @@ static void enablePort(
 /// \param port: El identificador del port.
 /// \return True si esta activat.
 ///
-static inline bool isEnabledPort(
+static inline bool isEnabledGPIO(
 	GPIOPort port) {
 
 	return (enabledPorts & (1 << port)) != 0;
@@ -223,8 +223,8 @@ void halGPIOInitializePins(
 
 		const GPIOInitializePinInfo *p = &pInfo[i];
 
-		if (!isEnabledPort(p->port))
-			enablePort(p->port);
+		if (!isEnabledGPIO(p->port))
+			enableGPIO(p->port);
 
 		setupPin(p->port, p->pin, p->options, p->alt);
 	}
@@ -247,8 +247,8 @@ void halGPIOInitializePorts(
 
 		const GPIOInitializePortInfo *p = &pInfo[i];
 
-		if (!isEnabledPort(p->port))
-			enablePort(p->port);
+		if (!isEnabledGPIO(p->port))
+			enableGPIO(p->port);
 
 		for (unsigned pin = 0; pin < 16; pin++)
 			if (p->mask & (1u << pin))
@@ -270,8 +270,8 @@ void halGPIOInitializePin(
 	GPIOOptions options,
 	GPIOAlt alt) {
 
-	if (!isEnabledPort(port))
-		enablePort(port);
+	if (!isEnabledGPIO(port))
+		enableGPIO(port);
 
 	setupPin(port, pin, options, alt);
 }

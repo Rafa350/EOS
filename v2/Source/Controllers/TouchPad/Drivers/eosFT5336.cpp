@@ -6,7 +6,8 @@
 #include "hal/halI2C.h"
 #include "hal/halGPIO.h"
 #ifdef TOUCHPAD_INT_PORT
-#include "hal/halEXTI.h"
+#include "HAL/STM32/halEXTI.h"
+#include "HAL/STM32/halINT.h"
 #endif
 #include "System/eosMath.h"
 
@@ -312,8 +313,8 @@ void FT5336Driver::ioInit() {
 
 #ifdef TOUCHPAD_INT_PORT
 	halEXTIInitializePins(extiInfo, sizeof(extiInfo) / sizeof(extiInfo[0]));
-	HAL_NVIC_SetPriority((IRQn_Type)(TOUCHPAD_INT_IRQ), 0x0F, 0x00);
-	HAL_NVIC_EnableIRQ((IRQn_Type)(TOUCHPAD_INT_IRQ));
+	halINTSetPriority(TOUCHPAD_INT_IRQ, 0x0F, 0x00);
+	halINTEnableIRQ(TOUCHPAD_INT_IRQ);
 #endif
 
 	I2CInitializeInfo i2cInfo;

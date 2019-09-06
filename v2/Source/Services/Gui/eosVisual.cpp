@@ -263,7 +263,14 @@ void Visual::onDispatch(
 			onDeactivate(msg);
 			break;
 
+#ifdef OPT_GUI_TouchPad
+		case MsgId::touchPadEvent:
+			onTouchPadEvent(msg);
+			break;
+#endif
+
 		default:
+			// Si no el procesa, pasa al pare.
 			if (pParent != nullptr)
 				pParent->onDispatch(msg);
 			break;
@@ -292,3 +299,15 @@ void Visual::onDeactivate(
 
 	invalidate();
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief Procesa el missatge 'touchPadEvent'
+/// \param msg: El missatge.
+///
+#ifdef OPT_GUI_TouchPad
+void Visual::onTouchPadEvent(
+	const Message &msg) {
+
+}
+#endif

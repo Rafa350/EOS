@@ -14,13 +14,22 @@ extern "C" {
 typedef uint32_t EXTIOptions;
 typedef uint8_t EXTILine;
 
+typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
+
+typedef struct {
+	uint32_t irqPriority;
+	uint32_t irqSubPriority;
+	EXTICallbackFunction function;
+	void *pParam;
+} EXTIInitializeInfo;
+
 typedef struct {
     GPIOPort port;
     GPIOPin pin;
     EXTIOptions options;
+    EXTICallbackFunction function;
+    void *pParam;
 } EXTIInitializePinInfo;
-
-typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
 
 
 // Linies configurables asignades a PINs GPIO
@@ -73,6 +82,7 @@ typedef void (*EXTICallbackFunction)(EXTILine line, void *pParam);
 #define HAL_EXTI_TRIGGER_CHANGING (0b11u << HAL_EXTI_TRIGGER_POS)
 
 
+void halEXTIInitialize(const EXTIInitializeInfo *pInfo);
 void halEXTIInitializePins(const EXTIInitializePinInfo *pInfo, unsigned count);
 void halEXTIEnableLine(EXTILine line);
 void halEXTIDisableLine(EXTILine line);

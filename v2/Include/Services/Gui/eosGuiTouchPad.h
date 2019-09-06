@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
-#include "HAL/halEXTI.h"
+#include "HAL/STM32/halEXTI.h"
 #include "Services/eosService.h"
 #include "System/Core/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"

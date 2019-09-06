@@ -36,6 +36,9 @@ namespace eos {
     		virtual void onDispatch(const Message &msg);
     		virtual void onActivate(const Message &msg);
     		virtual void onDeactivate(const Message &msg);
+#ifdef OPT_GUI_TouchPad
+    		virtual void onTouchPadEvent(const Message &msg);
+#endif
 
     		void addVisual(Visual *pVisual);
             void removeVisual(Visual *pVisual);

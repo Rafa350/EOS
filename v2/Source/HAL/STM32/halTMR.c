@@ -1,13 +1,10 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "hal/halTMR.h"
-#if defined(STM32F4)
-	#include "stm32f4xx_hal.h"
-#elif defined(STM32F7)
-	#include "stm32f7xx_hal.h"
-#else
-	#error Hardware no soportado
-#endif
+#include "HAL/STM32/halTMR.h"
+#include "HAL/STM32/halINT.h"
+
+// TODO
+// Eliminar les referencies a la llibreria HAL
 
 
 typedef struct {
@@ -23,7 +20,7 @@ static TimerInfo timerInfoTbl[HAL_TMR_TIMER_MAX];
 /// \brief Activa el rellotge del temporitzador
 /// \param[in] timer: Identificador del temporitzador.
 ///
-static void EnableTimerClock(
+static void enableTMR(
 	TMRTimer timer) {
 
 	switch (timer) {
@@ -93,7 +90,7 @@ static void EnableTimerClock(
 /// \brief Desactiva el rellotge del temporitzador
 /// \param timer: Identificador del temporitzador.
 ///
-static void DisableTimerClock(
+static void disableTMR(
 	TMRTimer timer) {
 
 	switch (timer) {
@@ -164,7 +161,7 @@ static void DisableTimerClock(
 /// \brief pHandle: El handle a inicialitzar.
 /// \param pInfo: Parametres d'inicialitzacio.
 ///
-static void PrepareTimerHandle(
+static void prepareTimerHandle(
 	TIM_HandleTypeDef *pHandle,
 	const TMRInitializeInfo *pInfo) {
 
@@ -214,9 +211,9 @@ void halTMRInitialize(
 	TMRTimer timer = pInfo->timer;
 	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
 
-	EnableTimerClock(timer);
+	enableTMR(timer);
 
-	PrepareTimerHandle(&pTimerInfo->handle, pInfo);
+	prepareTimerHandle(&pTimerInfo->handle, pInfo);
 	HAL_TIM_Base_Init(&pTimerInfo->handle);
 
 	if ((pInfo->options & HAL_TMR_INTERRUPT_MASK) == HAL_TMR_INTERRUPT_ENABLE) {
@@ -230,8 +227,8 @@ void halTMRInitialize(
 		pTimerInfo->pIrqCall = pInfo->pIrqCall;
 		pTimerInfo->pIrqParams = pInfo->pIrqParams;
 
-		HAL_NVIC_SetPriority(irq[timer], pInfo->irqPriority, pInfo->irqSubPriority);
-		HAL_NVIC_EnableIRQ(irq[timer]);
+		halINTSetPriority(irq[timer], pInfo->irqPriority, pInfo->irqSubPriority);
+		halINTEnableIRQ(irq[timer]);
 	}
 	else
 		pTimerInfo->pIrqCall = NULL;
@@ -249,12 +246,12 @@ void halTMRShutdown(
 
 	HAL_TIM_Base_DeInit(&pTimerInfo->handle);
 
-	DisableTimerClock(timer);
+	disableTMR(timer);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Posa en marxa el temporitzador i comença a contar.
+/// \brief Posa en marxa el temporitzador i comenï¿½a a contar.
 /// \param timer: El identificador del temporitzador.
 ///
 void halTMRStartTimer(

@@ -27,6 +27,11 @@ static CallbackInfo callback[16] = {
 	{ NULL, NULL}
 };
 
+static CallbackInfo globalCallback = {
+	NULL, NULL
+};
+
+
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza un pin per que generi interrupcions
@@ -133,6 +138,9 @@ void halEXTISetCallbackFunction(
 ///
 static inline void IRQHandler(
 	EXTILine line) {
+
+	if (globalCallback.function != NULL)
+		globalCallback.function(line, globalCallback.pParam);
 
 	if (callback[line].function != NULL)
 		callback[line].function(line, callback[line].pParam);
