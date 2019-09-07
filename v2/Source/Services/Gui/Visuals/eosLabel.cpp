@@ -26,13 +26,13 @@ Label::Label():
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna el color del text.
-/// \param color: El color.
+/// \param newColor: El color.
 ///
 void Label::setColor(
-	const Color &color) {
+	const Color &newColor) {
 
-	if (this->color != color) {
-		this->color = color;
+	if (color != newColor) {
+		color = newColor;
 		invalidate();
 	}
 }
@@ -40,13 +40,13 @@ void Label::setColor(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna l'aliniacio horitzontal del text.
-/// \param align: L'aliniacio.
+/// \param newAlign: L'aliniacio.
 ///
 void Label::setHorizontalTextAlign(
-	HorizontalTextAlign align) {
+	HorizontalTextAlign newAlign) {
 
-	if (horizontalTextAlign != align) {
-		horizontalTextAlign = align;
+	if (horizontalTextAlign != newAlign) {
+		horizontalTextAlign = newAlign;
 		invalidate();
 	}
 }
@@ -54,13 +54,13 @@ void Label::setHorizontalTextAlign(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna l'aliniacio vertical del text.
-/// \param color: L'aliniacio.
+/// \param newAlign: L'aliniacio.
 ///
 void Label::setVerticalTextAlign(
-	VerticalTextAlign align) {
+	VerticalTextAlign newAlign) {
 
-	if (verticalTextAlign != align) {
-		verticalTextAlign = align;
+	if (verticalTextAlign != newAlign) {
+		verticalTextAlign = newAlign;
 		invalidate();
 	}
 }
@@ -69,13 +69,13 @@ void Label::setVerticalTextAlign(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna el text.
-/// \param text: El text.
+/// \param newText: El text.
 ///
 void Label::setText(
-	const char *text) {
+	const char *newText) {
 
-	if (strcmp(this->text, text) != 0) {
-		this->text = text;
+	if (strcmp(text, newText) != 0) {
+		text = newText;
 		invalidate();
 	}
 }

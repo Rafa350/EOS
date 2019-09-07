@@ -8,8 +8,9 @@
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosVisual.h"
 #include "Services/Gui/Visuals/eosBorder.h"
+#include "Services/Gui/Visuals/eosButtons.h"
 #include "Services/Gui/Visuals/eosLabel.h"
-#include "Services/Gui/Visuals/eosSimplePanel.h"
+#include "Services/Gui/Visuals/eosPanel.h"
 #include "Services/Gui/Visuals/eosScreen.h"
 #include "Services/Gui/eosRenderContext.h"
 #ifdef OPT_GUI_TouchPad
@@ -149,7 +150,7 @@ void GuiService::onInitialize() {
 	x = 0;
 	y = 0;
 
-	panel = new SimplePanel();
+	panel = new Panel();
 	panel->setPosition(Point(x, y));
 	panel->setSize(Size(150, 60));
 
@@ -173,11 +174,17 @@ void GuiService::onInitialize() {
 	label->setSize(Size(100, 40));
 	label->setText("Hola");
 
+	PushButton *button = new PushButton();
+	button->setPosition(Point(100, 100));
+	button->setSize(Size(120, 40));
+
 	screen->addChild(border1);
 	border1->setContent(panel);
 	panel->addChild(border2);
 	panel->addChild(border3);
 	panel->addChild(label);
+
+	screen->addChild(button);
 }
 
 

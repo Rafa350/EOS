@@ -24,7 +24,7 @@ namespace eos {
     	public:
             Screen();
 
-            void setColor(const Color &color);
+            void setColor(const Color &newColor);
             inline Color getColor() const { return color; }
     };
 

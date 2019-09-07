@@ -23,17 +23,17 @@ Border::Border():
 
 /// ----------------------------------------------------------------------
 /// \brief Assigna el contingut.
-/// \param pVisual: El contingut.
+/// \param pNewContent: El contingut.
 ///
 void Border::setContent(
-	Visual *pVisual) {
+	Visual *pNewContent) {
 
-	if (pContent != pVisual) {
+	if (pContent != pNewContent) {
 
 		if (pContent != nullptr)
 			removeVisual(pContent);
 
-		pContent = pVisual;
+		pContent = pNewContent;
 
 		if (pContent != nullptr)
 			addVisual(pContent);
@@ -45,13 +45,13 @@ void Border::setContent(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna el color del perfil.
-/// \param color: El color.
+/// \param newColor: El color.
 ///
 void Border::setBorderColor(
-	const Color &color) {
+	const Color &newColor) {
 
-	if (borderColor != color) {
-		borderColor = color;
+	if (borderColor != newColor) {
+		borderColor = newColor;
 		invalidate();
 	}
 }
@@ -59,13 +59,13 @@ void Border::setBorderColor(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna l'amplada del perfil.
-/// \param thickness: Amplada del perfil.
+/// \param newThickness: Amplada del perfil.
 ///
 void Border::setBorderThickness(
-	int thickness) {
+	int newThickness) {
 
-	if (borderThickness != thickness) {
-		borderThickness = thickness;
+	if (borderThickness != newThickness) {
+		borderThickness = newThickness;
 		invalidate();
 	}
 }
@@ -73,13 +73,13 @@ void Border::setBorderThickness(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna el radi de curvatura del perfil.
-/// \param radius: Radi de curvatura.
+/// \param newRadius: Radi de curvatura.
 ///
 void Border::setBorderRadius(
-	int radius) {
+	int newRadius) {
 
-	if (borderRadius != radius) {
-		borderRadius = radius;
+	if (borderRadius != newRadius) {
+		borderRadius = newRadius;
 		invalidate();
 	}
 }
@@ -87,13 +87,13 @@ void Border::setBorderRadius(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna el color del fons.
-/// \param color: El color.
+/// \param newColor: El color.
 ///
 void Border::setBackgroundColor(
-	const Color &color) {
+	const Color &newColor) {
 
-	if (backgroundColor != color) {
-		backgroundColor = color;
+	if (backgroundColor != newColor) {
+		backgroundColor = newColor;
 		invalidate();
 	}
 }

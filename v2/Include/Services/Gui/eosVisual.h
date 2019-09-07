@@ -34,8 +34,8 @@ namespace eos {
     	protected:
     		virtual void onRender(RenderContext &context) = 0;
     		virtual void onDispatch(const Message &msg);
-    		virtual void onActivate(const Message &msg);
-    		virtual void onDeactivate(const Message &msg);
+    		virtual void onActivate();
+    		virtual void onDeactivate();
 #ifdef OPT_GUI_TouchPad
     		virtual void onTouchPadEvent(const Message &msg);
 #endif

@@ -256,11 +256,11 @@ void Visual::onDispatch(
 
 	switch (msg.msgId) {
 		case MsgId::activate:
-			onActivate(msg);
+			onActivate();
 			break;
 
 		case MsgId::deactivate:
-			onDeactivate(msg);
+			onDeactivate();
 			break;
 
 #ifdef OPT_GUI_TouchPad
@@ -280,22 +280,19 @@ void Visual::onDispatch(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Despatxa el missagte 'activate'
+/// \brief Es crida al activar el visual.
 /// \param msg: El missatge.
 ///
-void Visual::onActivate(
-	const Message &msg) {
+void Visual::onActivate() {
 
 	invalidate();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Despatxa el missagte 'deactivate'
-/// \param msg: El missatge.
+/// \brief Es crida al desactivar el visual.
 ///
-void Visual::onDeactivate(
-	const Message &msg) {
+void Visual::onDeactivate() {
 
 	invalidate();
 }
@@ -303,7 +300,6 @@ void Visual::onDeactivate(
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa el missatge 'touchPadEvent'
-/// \param msg: El missatge.
 ///
 #ifdef OPT_GUI_TouchPad
 void Visual::onTouchPadEvent(

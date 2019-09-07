@@ -3,6 +3,7 @@
 
 
 #include "eos.h"
+#include "Services/Gui/Visuals/eosButtonBase.h"
 
 
 namespace eos {
@@ -10,17 +11,40 @@ namespace eos {
 	struct Message;
 	class RenderContext;
 
-    class ButtonBase: public Visual {
+    enum class PushButtonState {
+    	normal,
+		pushed,
+		disabled
     };
     
     class PushButton: public ButtonBase {
+
+    	private:
+    		PushButtonState state;
     
         protected:
-        	void onRender(const RenderContext &context);
-            void onTouchPadEvent(const Message &msg);
+        	void onRender(RenderContext &context) override;
+            void onPress() override;
+            void onRelease() override;
+
+            void setState(PushButtonState newState);
+
+        public:
+            PushButton();
     };
     
-    class ToggleButton: public Buttonbase {
+
+    enum class CheckButtonState {
+    	unchecked,
+		checked,
+		null
+    };
+
+    class CheckButton: public ButtonBase {
+
+    	private:
+    		CheckButtonState state;
+
     };
 
 }

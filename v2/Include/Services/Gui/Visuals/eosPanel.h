@@ -8,7 +8,12 @@
 
 namespace eos {
 
+	class RenderContext;
+
 	class Panel: public Visual {
+		protected:
+			void onRender(RenderContext &context) override;
+
 		public:
 			inline void addChild(Visual *pVisual) { addVisual(pVisual); }
 	};

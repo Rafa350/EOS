@@ -30,10 +30,10 @@ namespace eos {
         public:
     		Label();
 
-            void setColor(const Color &color);
-            void setText(const char *text);
-            void setHorizontalTextAlign(HorizontalTextAlign align);
-            void setVerticalTextAlign(VerticalTextAlign align);
+            void setColor(const Color &newColor);
+            void setText(const char *newText);
+            void setHorizontalTextAlign(HorizontalTextAlign newAlign);
+            void setVerticalTextAlign(VerticalTextAlign newAlign);
 
             inline Color getColor() const { return color; }
             inline const char* getText() const { return text; }

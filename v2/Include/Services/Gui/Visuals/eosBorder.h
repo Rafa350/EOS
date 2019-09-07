@@ -27,11 +27,11 @@ namespace eos {
         public:
     		Border();
 
-            void setBackgroundColor(const Color &color);
-            void setBorderColor(const Color &color);
-            void setBorderThickness(int thickness);
-            void setBorderRadius(int radius);
-            void setContent(Visual *pVisual);
+            void setBackgroundColor(const Color &newColor);
+            void setBorderColor(const Color &newColor);
+            void setBorderThickness(int newThickness);
+            void setBorderRadius(int newRadius);
+            void setContent(Visual *pNewContent);
 
             inline Color getBorderColor() const { return borderColor; }
             inline Color getBackgroundColor() const { return backgroundColor; }

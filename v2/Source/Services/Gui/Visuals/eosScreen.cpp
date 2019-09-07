@@ -21,13 +21,13 @@ Screen::Screen() {
 
 /// ----------------------------------------------------------------------
 /// \brief Assigna el color.
-/// \param color: El color.
+/// \param newColor: El color.
 ///
 void Screen::setColor(
-	const Color &color) {
+	const Color &newColor) {
 
-	if (this->color != color) {
-		this->color = color;
+	if (color != newColor) {
+		color = newColor;
 		invalidate();
 	}
 }
