@@ -1,5 +1,5 @@
-#ifndef __eosButtons__
-#define __eosButtons__
+#ifndef __eosPushButton__
+#define __eosPushButton__
 
 
 #include "eos.h"
@@ -33,21 +33,7 @@ namespace eos {
             PushButton();
     };
     
-
-    enum class CheckButtonState {
-    	unchecked,
-		checked,
-		null
-    };
-
-    class CheckButton: public ButtonBase {
-
-    	private:
-    		CheckButtonState state;
-
-    };
-
 }
 
 
-#endif // __eosButtons__
+#endif // __eosPushButton__

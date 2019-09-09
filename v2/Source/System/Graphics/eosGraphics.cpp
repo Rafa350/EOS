@@ -176,7 +176,7 @@ void Graphics::clear(
 	int x2 = driver->getWidth() - 1;
 	int y2 = driver->getHeight() - 1;
 
-    if (clipArea(x1, y1, x2, y2))
+    if (clipRectangle(x1, y1, x2, y2))
         driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
 }
 
@@ -200,451 +200,6 @@ void Graphics::drawPoint(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Dibuixa una linia.
-/// \param    x1: Coordinada x del primer punt.
-/// \param    y1: Coordinada y del primer punt.
-/// \param    x2: Coordinada x del segon punt.
-/// \param    y2: Coordinada y del segon punt.
-///
-void Graphics::drawLine(
-    int x1,
-    int y1,
-    int x2,
-    int y2) const {
-
-	// Transforma a coordinades fisiques
-	//
-	state.ct.apply(x1, y1);
-	state.ct.apply(x2, y2);
-
-    if (clipLine(x1, y1, x2, y2)) {
-
-    	// Es una linea vertical
-		//
-		if (x1 == x2) {
-			if (y1 > y2)
-				Math::swap(y1, y2);
-			driver->setVPixels(x1, y1, y2 - y1 + 1, color);
-		}
-
-		// Es una linia horitzontal
-		//
-		else if (y1 == y2) {
-			if (x1 > x2)
-				Math::swap(x1, x2);
-			driver->setHPixels(x1, y1, x2 - x1 + 1, color);
-		}
-
-		// No es ni horitzontal ni vertical
-		//
-		else {
-
-            int stepX, stepY;
-            int p, incE, incNE;
-
-            int deltaX = x2 - x1;
-            int deltaY = y2 - y1;
-
-            if (deltaY < 0) {
-                deltaY = -deltaY;
-                stepY = -1;
-            }
-            else
-                stepY = 1;
-
-            if (deltaX < 0)  {
-                deltaX = -deltaX;
-                stepX = -1;
-            }
-            else
-                stepX = 1;
-
-            driver->setPixel(x1, y1, color);
-
-            // Es mes gran el depla�ament X que el Y
-            //
-            if (deltaX > deltaY) {
-                p = deltaY + deltaY - deltaX;
-                incE = deltaY << 1;
-                incNE = (deltaY - deltaX) * 2;
-                while (x1 != x2) {
-                    x1 += stepX;
-                    if (p < 0)
-                        p += incE;
-                    else {
-                        y1 += stepY;
-                        p += incNE;
-                    }
-                    driver->setPixel(x1, y1, color);
-                }
-            }
-
-            // Es mes gran el depla�ament Y que el X
-            //
-            else if (deltaX < deltaY) {
-                p = deltaX + deltaX - deltaY;
-                incE = deltaX << 1;
-                incNE = (deltaX - deltaY) * 2;
-                while (y1 != y2) {
-                    y1 += stepY;
-                    if (p < 0)
-                        p += incE;
-                    else {
-                        x1 += stepX;
-                        p += incNE;
-                    }
-                    driver->setPixel(x1, y1, color);
-                }
-            }
-
-            // Es una linia diagonal
-            //
-            else {
-                while (y1 != y2) {
-                    y1 += stepY;
-                    x1 += stepX;
-                    driver->setPixel(x1, y1, color);
-                }
-            }
-        }
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa un rectangle buit.
-/// \param    x1: Coordinada x del primer punt.
-/// \param    y1: Coordinada y del primer punt.
-/// \param    x2: Coordinada x del segon punt.
-/// \param    y2: Coordinada y del segon punt.
-///
-void Graphics::drawRectangle(
-    int x1,
-    int y1,
-    int x2,
-    int y2) const {
-
-	// Dibuixa el perfil com quatre linies independents
-	//
-   	drawLine(x1, y1, x2, y1);
-   	drawLine(x1, y2, x2, y2);
-   	drawLine(x1, y1, x1, y2);
-   	drawLine(x2, y1, x2, y2);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa un triangle buit.
-/// \param    x1: Coordinada x del primer punt
-/// \param    y1: Coordinada y del primer punt
-/// \param    x2: Coordinada x del segon punt.
-/// \param    y2: Coordinada y del segon punt.
-/// \param    x3: Coordinada x del tercer punt.
-/// \param    y3: Coordinada y del tercer punt.
-///
-void Graphics::drawTriangle(
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    int x3,
-    int y3) const {
-
-	// Dibuixa el triangle com tres linies independents
-	//
-	drawLine(x1, y1, x2, y2);
-    drawLine(x2, y2, x3, y3);
-    drawLine(x3, y3, x1, y1);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa una el�lipse buida inscrita en un rectangle.
-/// \param    x1: Coordinada X del primer punt.
-/// \param    y1: Coordinada Y del primer punt.
-/// \param    x2: Coordinada X del segon punt.
-/// \param    y2: Coordinada Y del segon punt.
-///
-void Graphics::drawEllipse(
-	int x1,
-	int y1,
-	int x2,
-	int y2) const {
-
-	// Transforma a coordinades fisiques
-	//
-	state.ct.apply(x1, y1);
-	state.ct.apply(x2, y2);
-
-	// Normalitza les coordinades
-	//
-	if (x1 > x2)
-		Math::swap(x1, x2);
-	if (y1 > y2)
-		Math::swap(y1, y2);
-
-	// Obte el centre i els radis
-	//
-	int cx = (x1 + x2) / 2;
-	int cy = (y1 + y2) / 2;
-	int rx = (x2 - x1) / 2;
-	int ry = (y2 - y1) / 2;
-
-	// Precalcula els factors constants
-	//
-	int aa = 2 * rx * rx;
-	int bb = 2 * ry * ry;
-
-	int x, y, error;
-	int changeX, changeY;
-	int stoppingX, stoppingY;
-
-	// Genera el primer grup de punts
-	//
-	x = rx;
-	y = 0;
-	changeX = ry * ry * (1 - (rx * 2));
-	changeY = rx * rx;
-	error = 0;
-	stoppingX = bb * rx;
-	stoppingY = 0;
-
-	while (stoppingX >= stoppingY) {
-
-		int xx, yy;
-
-		xx = cx + x;
-		yy = cy + y;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
-
-	    xx = cx - x;
-	    yy = cy + y;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
-
-		xx = cx - x;
-		yy = cy - y;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
-
-		xx = cx + x;
-		yy = cy - y;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
-
-		y += 1;
-		stoppingY += aa;
-		error += changeY;
-		changeY += aa;
-	    if ((2 * error + changeX) > 0 ) {
-	    	x -= 1;
-	    	stoppingX -= bb;
-	    	error += changeX;
-	    	changeX += bb;
-	    }
-	}
-
-	// Genera el segon grup de punts
-	//
-	x = 0;
-	y = ry;
-	changeX = ry * ry;
-	changeY = rx * rx * (1 - (2 * ry));
-	error = 0;
-	stoppingX = 0;
-	stoppingY = aa * ry;
-
-	while (stoppingX <= stoppingY) {
-
-		int xx, yy;
-
-		xx = cx + x;
-		yy = cy + y;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
-
-	    xx = cx - x;
-	    yy = cy + y;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
-
-		xx = cx - x;
-		yy = cy - y;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
-
-		xx = cx + x;
-		yy = cy - y;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
-
-		x += 1;
-		stoppingX += bb;
-		error += changeX;
-		changeX += bb;
-		if ((2 * error + changeY) > 0) {
-			y -= 1;
-			stoppingY -= aa;
-			error += changeY;
-			changeY += aa;
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa un rectangle omplert.
-/// \param    x1: Coordinada X del primer punt.
-/// \param    y1: Coordinada Y del primer punt.
-/// \param    x2: Coordinada X del segon punt.
-/// \param    y2: Coordinada Y del segon punt.
-///
-void Graphics::fillRectangle(
-    int x1,
-    int y1,
-    int x2,
-    int y2) const {
-
-    // Transforma a coordinades fisiques.
-	//
-	state.ct.apply(x1, y1);
-	state.ct.apply(x2, y2);
-
-	// Normalitza les coordinades.
-	//
-    if (x1 > x2)
-        Math::swap(x1, x2);
-    if (y1 > y2)
-        Math::swap(y1, y2);
-
-    // Dibuixa el rectangle si es visible
-    //
-    if (clipArea(x1, y1, x2, y2))
-         driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Dibuixa una el�lipse plena inscrita en un rectangle.
-/// \param    x1: Coordinada X del primer punt.
-/// \param    y1: Coordinada Y del primer punt.
-/// \param    x2: Coordinada X del segon punt.
-/// \param    y2: Coordinada Y del segon punt.
-///
-void Graphics::fillEllipse(
-	int x1,
-	int y1,
-	int x2,
-	int y2) const {
-
-	// Transforma a coordinades fisiques
-	//
-	state.ct.apply(x1, y1);
-	state.ct.apply(x2, y2);
-
-	// Normalitza les coordinades
-	//
-	if (x1 > x2)
-		Math::swap(x1, x2);
-	if (y1 > y2)
-		Math::swap(y1, y2);
-
-	// Obte el centre i els radis
-	//
-	int cx = (x1 + x2) / 2;
-	int cy = (y1 + y2) / 2;
-	int rx = (x2 - x1) / 2;
-	int ry = (y2 - y1) / 2;
-
-	// Precalcula els factors constants
-	//
-	int aa = 2 * rx * rx;
-	int bb = 2 * ry * ry;
-
-	int x, y, error;
-	int changeX, changeY;
-	int stoppingX, stoppingY;
-
-	// Genera el primer grup de punts
-	//
-	x = rx;
-	y = 0;
-	changeX = ry * ry * (1 - (rx * 2));
-	changeY = rx * rx;
-	error = 0;
-	stoppingX = bb * rx;
-	stoppingY = 0;
-
-	while (stoppingX >= stoppingY) {
-
-		int xx1, xx2, yy;
-
-		xx1 = cx - x;
-	    xx2 = cx + x;
-		yy = cy + y;
-		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
-
-		xx1 = cx - x;
-		xx2 = cx + x;
-		yy = cy - y;
-		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
-
-		y += 1;
-		stoppingY += aa;
-		error += changeY;
-		changeY += aa;
-	    if ((2 * error + changeX) > 0 ) {
-	    	x -= 1;
-	    	stoppingX -= bb;
-	    	error += changeX;
-	    	changeX += bb;
-	    }
-	}
-
-	// Genera el segon grup de punts
-	//
-	x = 0;
-	y = ry;
-	changeX = ry * ry;
-	changeY = rx * rx * (1 - (2 * ry));
-	error = 0;
-	stoppingX = 0;
-	stoppingY = aa * ry;
-
-	while (stoppingX <= stoppingY) {
-
-		int xx1, xx2, yy;
-
-		xx1 = cx - x;
-	    xx2 = cx + x;
-		yy = cy + y;
-		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
-
-		xx1 = cx - x;
-		xx2 = cx + x;
-		yy = cy - y;
-		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
-
-		x += 1;
-		stoppingX += bb;
-		error += changeX;
-		changeX += bb;
-		if ((2 * error + changeY) > 0) {
-			y -= 1;
-			stoppingY -= aa;
-			error += changeY;
-			changeY += aa;
-		}
-	}
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Dibuixa un bitmap complert.
 /// \param    x: Coordinada X.
 /// \param    y: Coordinada Y.
@@ -660,7 +215,7 @@ void Graphics::drawBitmap(
 	int x2 = x + bitmap->getWidth() - 1;
 	int y2 = y + bitmap->getHeight() - 1;
 
-	if (clipArea(x1, y1, x2, y2)) {
+	if (clipRectangle(x1, y1, x2, y2)) {
 
         int w = x2 - x1 + 1;
         int h = y2 - y1 + 1;
@@ -828,6 +383,37 @@ bool Graphics::clipHLine(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Retalla una linia vertical.
+/// \param    x: Coordinada X comu ambdos punts.
+/// \param    y1: Coordinada Y del primer punt.
+/// \param    y2: Coordinada Y del segon punt.
+/// \return   True si es visible.
+///
+bool Graphics::clipVLine(
+	int x,
+	int &y1,
+	int &y2) const {
+
+	// Descarta si es fora de l'area de visualitzacio
+	//
+	if ((x < state.clipX1) || (x > state.clipX2))
+		return false;
+
+	// Normalitza les coordinades
+	//
+	if (y1 > y2)
+		Math::swap(y1, y2);
+
+	// Ajusta els punts d'interseccio
+	//
+	y1 = Math::max(state.clipX1, y1);
+	y2 = Math::min(y2, state.clipY2);
+
+	return y1 <= y2;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Retalla una linia arbitraria. Amb l'algorisme Liang-Barsky.
 /// \param    x1: Coordinada X del primer punt.
 /// \param    y1: Coordinada Y del primer punt.
@@ -934,7 +520,7 @@ bool Graphics::clipTest(
 /// \param    y2: Coordinada Y del segon punt.
 /// \return   True si es visible.
 ///
-bool Graphics::clipArea(
+bool Graphics::clipRectangle(
     int &x1,
     int &y1,
     int &x2,

@@ -4,6 +4,7 @@
 
 #include "eos.h"
 #include "Services/Gui/eosVisual.h"
+#include "System/Graphics/eosColor.h"
 
 
 namespace eos {
@@ -11,11 +12,20 @@ namespace eos {
 	class RenderContext;
 
 	class Panel: public Visual {
+		private:
+			Color color;
+
 		protected:
+			virtual void initializePanel();
 			void onRender(RenderContext &context) override;
 
 		public:
+			Panel();
+
 			inline void addChild(Visual *pVisual) { addVisual(pVisual); }
+
+			void setColor(const Color &newColor);
+			inline Color getColor() const { return color; }
 	};
 }
 

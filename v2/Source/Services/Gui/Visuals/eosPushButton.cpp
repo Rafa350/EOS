@@ -2,7 +2,7 @@
 #include "eosAssert.h"
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosRenderContext.h"
-#include "Services/Gui/Visuals/eosButtons.h"
+#include "Services/Gui/Visuals/eosPushButton.h"
 #include "System/Graphics/eosGraphics.h"
 
 
@@ -42,13 +42,13 @@ void PushButton::onRender(
 	Graphics &g = context.beginRender(this);
 
 	const Size &s = getSize();
-	Color c1(COLOR_Red);
+	Color c1(0xFF7FC146);
 	Color c2(COLOR_Green);
 
 	g.setColor(state == PushButtonState::normal ? c1 : c2);
-	g.fillRectangle(getRect());
+	g.drawRoundedRectangle(getRect(), 10, 10);
 
-	g.setColor(state == PushButtonState::normal ? c2 : c1);
+	g.setColor(COLOR_White);
 	g.setTextAlign(HorizontalTextAlign::center, VerticalTextAlign::middle);
 	g.drawText(s.getWidth() / 2, s.getHeight() / 2, "Boton", 0, -1);
 

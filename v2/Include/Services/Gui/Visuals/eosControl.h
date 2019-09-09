@@ -9,6 +9,8 @@
 namespace eos {
 
 	class Control: public Visual {
+		protected:
+			virtual void initializeControl();
 	};
 }
 

@@ -8,10 +8,11 @@
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosVisual.h"
 #include "Services/Gui/Visuals/eosBorder.h"
-#include "Services/Gui/Visuals/eosButtons.h"
+#include "Services/Gui/Visuals/eosPushButton.h"
 #include "Services/Gui/Visuals/eosLabel.h"
 #include "Services/Gui/Visuals/eosPanel.h"
 #include "Services/Gui/Visuals/eosScreen.h"
+#include "Services/Gui/Visuals/eosVirtualKbd.h"
 #include "Services/Gui/eosRenderContext.h"
 #ifdef OPT_GUI_TouchPad
 #include "Services/Gui/eosGuiTouchPad.h"
@@ -144,20 +145,21 @@ void GuiService::onInitialize() {
 
 	context = new RenderContext(*graphics);
 
-	screen->setColor(COLOR_Blue);
+	screen->setColor(0xFF202020);
 	setActiveVisual(screen);
 
 	x = 0;
 	y = 0;
 
-	panel = new Panel();
-	panel->setPosition(Point(x, y));
-	panel->setSize(Size(150, 60));
-
 	Border *border1 = new Border();
 	border1->setPosition(Point(0, 0));
 	border1->setSize(Size(150, 60));
 	border1->setBorderColor(COLOR_Red);
+
+	panel = new Panel();
+	panel->setColor(COLOR_Yellow);
+	panel->setPosition(Point(2, 2));
+	panel->setSize(Size(146, 56));
 
 	Border *border2 = new Border();
 	border2->setPosition(Point(10, 10));
@@ -185,6 +187,11 @@ void GuiService::onInitialize() {
 	panel->addChild(label);
 
 	screen->addChild(button);
+
+	VirtualKeyboard *kbd = new VirtualKeyboard();
+	kbd->setPosition(Point(250, 20));
+	kbd->setSize(Size(120, 200));
+	screen->addChild(kbd);
 }
 
 
