@@ -20,7 +20,7 @@ using namespace app;
 
 
 
-static uint32_t rnd = 0L;
+static uint64_t rnd = 0L;
 
 void srand(uint32_t r) {
 
@@ -30,11 +30,11 @@ void srand(uint32_t r) {
 
 uint32_t rand() {
 
-	const uint32_t a = 1664525;
-	const uint32_t c = 1013904223;
+	const uint64_t a = 1664523;
+	const uint64_t c = 1013904223;
 
-	rnd = ((a * rnd) + c);
-	return rnd;
+	rnd = (a * (rnd >> 3)) + c;
+	return (uint32_t) rnd;
 }
 
 
@@ -146,7 +146,7 @@ void DisplayService::onLoop() {
         int y2 = rand() % screenHeight;
 
         graphics->setColor(rand() & 0x00FFFFFF);
-        graphics->drawLine(x, y1, x, y2);
+        graphics->drawVLine(x, y1, y2);
     }
     verticalLinesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -165,7 +165,7 @@ void DisplayService::onLoop() {
         int y = rand() % screenHeight;
 
         graphics->setColor(rand() & 0x00FFFFFF);
-        graphics->drawLine(x1, y, x2, y);
+        graphics->drawHLine(x1, x2, y);
     }
     horizontalLinesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);

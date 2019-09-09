@@ -21,7 +21,11 @@ Screen::Screen() {
 void Screen::onRender(RenderContext &context) {
 
 	Graphics &g = context.beginRender(this);
+	g.setColor(COLOR_Yellow);
+	g.drawRectangle(10, 135, 110, 237);
+	g.setColor(COLOR_Gray);
+	g.fillRoundedRectangle(10, 135, 110, 237, 25, 25);
 	g.setColor(COLOR_Red);
-	g.drawRoundedRectangle(10, 135, 110, 235, 25, 25);
+	g.drawRoundedRectangle(10, 135, 110, 237, 25, 25);
 	context.endRender();
 }

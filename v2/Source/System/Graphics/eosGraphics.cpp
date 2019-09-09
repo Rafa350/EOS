@@ -406,7 +406,7 @@ bool Graphics::clipVLine(
 
 	// Ajusta els punts d'interseccio
 	//
-	y1 = Math::max(state.clipX1, y1);
+	y1 = Math::max(state.clipY1, y1);
 	y2 = Math::min(y2, state.clipY2);
 
 	return y1 <= y2;

@@ -36,23 +36,21 @@ void Graphics::drawRoundedRectangle(
 	if (y1 > y2)
 		Math::swap(y1, y2);
 
-	// Obte el centre
-	//
-	int cx = (x1 + x2) / 2;
-	int cy = (y1 + y2) / 2;
-
 	// Precalcula els factors constants
 	//
 	int aa = 2 * rx * rx;
 	int bb = 2 * ry * ry;
-	int sx = (x2 - x1 - rx - rx) / 2;
-	int sy = (y2 - y1 - ry - ry) / 2;
+	int xc1 = x1 + rx;
+	int xc2 = x2 - rx;
+	int yc1 = y1 + ry;
+	int yc2 = y2 - ry;
 
 	int x, y, error;
 	int changeX, changeY;
 	int stoppingX, stoppingY;
+	int xx1, xx2, yy1, yy2;
 
-	// Genera el primer grup de punts
+	// Dibuixa el primer grup de punts
 	//
 	x = rx;
 	y = 0;
@@ -64,27 +62,25 @@ void Graphics::drawRoundedRectangle(
 
 	while (stoppingX >= stoppingY) {
 
-		int xx, yy;
+		xx1 = xc1 - x;
+		yy1 = yc1 - y;
+		if (clipPoint(xx1, yy1))
+			driver->setPixel(xx1, yy1, color);
 
-		xx = cx + x + sx;
-		yy = cy + y + sy;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+	    xx1 = xc2 + x;
+	    yy1 = yc1 - y;
+		if (clipPoint(xx1, yy1))
+			driver->setPixel(xx1, yy1, color);
 
-	    xx = cx - x - sx;
-	    yy = cy + y + sy;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+		xx1 = xc1 - x;
+		yy1 = yc2 + y;
+		if (clipPoint(xx1, yy1))
+			driver->setPixel(xx1, yy1, color);
 
-		xx = cx - x - sx;
-		yy = cy - y - sy;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
-
-		xx = cx + x + sx;
-		yy = cy - y - sy;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+		xx1 = xc2 + x;
+		yy1 = yc2 + y;
+		if (clipPoint(xx1, yy1))
+			driver->setPixel(xx1, yy1, color);
 
 		y += 1;
 		stoppingY += aa;
@@ -98,7 +94,7 @@ void Graphics::drawRoundedRectangle(
 	    }
 	}
 
-	// Genera el segon grup de punts
+	// Dibuixa el segon grup de punts
 	//
 	x = 0;
 	y = ry;
@@ -110,27 +106,25 @@ void Graphics::drawRoundedRectangle(
 
 	while (stoppingX <= stoppingY) {
 
-		int xx, yy;
+		xx1 = xc1 - x;
+		yy1 = yc1 - y;
+		if (clipPoint(xx1, yy1))
+			driver->setPixel(xx1, yy1, color);
 
-		xx = cx + x + sx;
-		yy = cy + y + sy;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+	    xx1 = xc2 + x;
+	    yy1 = yc1 - y;
+		if (clipPoint(xx1, yy1))
+			driver->setPixel(xx1, yy1, color);
 
-	    xx = cx - x - sx;
-	    yy = cy + y + sy;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+		xx1 = xc1 - x;
+		yy1 = yc2 + y;
+		if (clipPoint(xx1, yy1))
+			driver->setPixel(xx1, yy1, color);
 
-		xx = cx - x - sx;
-		yy = cy - y - sy;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
-
-		xx = cx + x + sx;
-		yy = cy - y - sy;
-		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+		xx1 = xc2 + x;
+		yy1 = yc2 + y;
+		if (clipPoint(xx1, yy1))
+			driver->setPixel(xx1, yy1, color);
 
 		x += 1;
 		stoppingX += bb;
@@ -144,29 +138,32 @@ void Graphics::drawRoundedRectangle(
 		}
 	}
 
-	// Genera les linies d'unio dels quadrants
+	// Dibuixa les linies d'unio dels quadrants
 	//
-	int xx1, yy1, xx2, yy2;
+	xx1 = x1;
+	yy1 = yc1;
+	yy2 = yc2;
+	if (clipVLine(xx1, yy1, yy2))
+		driver->setVPixels(xx1, yy1, yc2 - yc1 + 1, color);
 
-	xx1 = x1 + rx + 1;
-	xx2 = x2 - rx - 1;
-	if (clipHLine(xx1, xx2, y1))
-		driver->setHPixels(xx1, y1, xx2 - xx1 + 1, color);
+	xx1 = x2;
+	yy1 = yc1;
+	yy2 = yc2;
+	if (clipVLine(xx1, yy1, yy2))
+		driver->setVPixels(xx1, yy1, yc2 - yc1 + 1, color);
 
-	xx1 = x1 + rx + 1;
-	xx2 = x2 - rx - 1;
-	if (clipHLine(xx1, xx2, y2))
-		driver->setHPixels(xx1, y2, xx2 - xx1 + 1, color);
+	xx1 = xc1;
+	xx2 = xc2;
+	yy1 = y1;
+	if (clipHLine(xx1, xx2, yy1))
+		driver->setHPixels(xx1, yy1, xc2 - xc1 + 1, color);
 
-	yy1 = y1 + ry + 1;
-	yy2 = y2 - ry - 1;
-	if (clipVLine(x1, yy1, yy2))
-		driver->setVPixels(x1, yy1, yy2 - yy1 + 1, color);
+	xx1 = xc1;
+	xx2 = xc2;
+	yy1 = y2;
+	if (clipHLine(xx1, xx2, yy1))
+		driver->setHPixels(xx1, yy1, xc2 - xc1 + 1, color);
 
-	yy1 = y1 + ry + 1;
-	yy2 = y2 - ry - 1;
-	if (clipVLine(x2, yy1, yy2))
-		driver->setVPixels(x2, yy1, yy2 - yy1 + 1, color);
 }
 
 
@@ -199,23 +196,21 @@ void Graphics::fillRoundedRectangle(
 	if (y1 > y2)
 		Math::swap(y1, y2);
 
-	// Obte el centre
-	//
-	int cx = (x1 + x2) / 2;
-	int cy = (y1 + y2) / 2;
-
 	// Precalcula els factors constants
 	//
 	int aa = 2 * rx * rx;
 	int bb = 2 * ry * ry;
-	int sx = (x2 - x1 - rx - rx) / 2;
-	int sy = (y2 - y1 - ry - ry) / 2;
+	int xc1 = x1 + rx;
+	int xc2 = x2 - rx;
+	int yc1 = y1 + ry;
+	int yc2 = y2 - ry;
 
 	int x, y, error;
 	int changeX, changeY;
 	int stoppingX, stoppingY;
+	int xx1, yy1, xx2, yy2;
 
-	// Genera el primer grup de linies
+	// Dibuixa el primer grup de linies
 	//
 	x = rx;
 	y = 0;
@@ -227,19 +222,17 @@ void Graphics::fillRoundedRectangle(
 
 	while (stoppingX >= stoppingY) {
 
-		int xx1, xx2, yy;
+		xx1 = xc1 - x;
+	    xx2 = xc2 + x;
+		yy1 = yc1 - y;
+		if (clipHLine(xx1, xx2, yy1))
+			driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, color);
 
-		xx1 = cx - x - sx;
-	    xx2 = cx + x + sx;
-		yy = cy + y + sy;
-		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
-
-		xx1 = cx - x - sx;
-		xx2 = cx + x + sx;
-		yy = cy - y - sy;
-		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+		xx1 = xc1 - x;
+		xx2 = xc2 + x;
+		yy1 = yc2 + y;
+		if (clipHLine(xx1, xx2, yy1))
+			driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, color);
 
 		y += 1;
 		stoppingY += aa;
@@ -253,7 +246,7 @@ void Graphics::fillRoundedRectangle(
 	    }
 	}
 
-	// Genera el segon grup de linies
+	// Dibuixa el segon grup de linies
 	//
 	x = 0;
 	y = ry;
@@ -265,19 +258,17 @@ void Graphics::fillRoundedRectangle(
 
 	while (stoppingX <= stoppingY) {
 
-		int xx1, xx2, yy;
+		xx1 = xc1 - x;
+	    xx2 = xc2 + x;
+		yy1 = yc1 - y;
+		if (clipHLine(xx1, xx2, yy1))
+			driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, color);
 
-		xx1 = cx - x - sx;
-	    xx2 = cx + x + sx;
-		yy = cy + y + sy;
-		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
-
-		xx1 = cx - x - sx;
-		xx2 = cx + x + sx;
-		yy = cy - y - sy;
-		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+		xx1 = xc1 - x;
+		xx2 = xc2 + x;
+		yy1 = yc2 + y;
+		if (clipHLine(xx1, xx2, yy1))
+			driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, color);
 
 		x += 1;
 		stoppingX += bb;
@@ -290,4 +281,13 @@ void Graphics::fillRoundedRectangle(
 			changeY += aa;
 		}
 	}
+
+	// Dibuixa el rectangle central
+	//
+	xx1 = x1;
+	yy1 = yc1;
+	xx2 = x2;
+	yy2 = yc2;
+	if (clipRectangle(xx1, yy1, xx2, yy2))
+		driver->setPixels(xx1, yy1, xx2 - xx1, yy2 - yy1, color);
 }
