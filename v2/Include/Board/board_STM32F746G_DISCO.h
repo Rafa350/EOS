@@ -68,6 +68,8 @@
 #define FONT_USE_Consolas14pt
 #define FONT_USE_Consolas18pt
 #define FONT_USE_Consolas24pt
+#define FONT_USE_Tahoma10pt
+#define FONT_USE_Tahoma12pt
 
 // Control del pin DISPLAY_ENABLE
 //

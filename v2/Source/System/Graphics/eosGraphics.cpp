@@ -11,6 +11,8 @@ using namespace eos;
 
 
 extern const unsigned char *fontConsolas14pt;
+extern const unsigned char *fontTahoma10pt;
+extern const unsigned char *fontTahoma12pt;
 
 
 /// ----------------------------------------------------------------------
@@ -26,7 +28,7 @@ Graphics::Graphics(
 
 	resetClip();
 	resetTransformation();
-	setFont(new Font(fontConsolas14pt));
+	setFont(new Font(fontTahoma12pt));
     setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::bottom);
 }
 

@@ -43,23 +43,64 @@ void CheckButton::onRender(
 
 	Graphics &g = context.beginRender(this);
 
+	// Dibuixa el fons del boto
+	//
 	g.setColor(Color::fromRGB888(0x3A3A3A));
 	g.fillRoundedRectangle(getRect(), r, r);
 
+	// Dibuixa el fons del indicador
+	//
+	if (state == CheckButtonState::checkedPressed ||
+		state == CheckButtonState::uncheckedPressed) {
+		g.setColor(COLOR_DarkSlateGray);
+		g.fillRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
+	}
+
+	// Dibuixa el indicador
+	//
+	if (state ==  CheckButtonState::unchecked ||
+		state == CheckButtonState::uncheckedPressed) {
+		g.setColor(COLOR_LightSeaGreen);
+		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
+	}
+	else if (state == CheckButtonState::checked ||
+		     state == CheckButtonState::checkedPressed) {
+		g.setColor(COLOR_LightSeaGreen);
+		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
+		g.fillRoundedRectangle(Point(10, 10), Size(10, 10), r/2, r/2);
+	}
+
+	context.endRender();
+}
+
+
+void CheckButton::onClick() {
+
 	switch (state) {
 		case CheckButtonState::unchecked:
-			g.setColor(COLOR_DarkSlateGray);
-			g.fillRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
-			g.setColor(COLOR_LightSeaGreen);
-			g.drawRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
+		case CheckButtonState::uncheckedPressed:
+			setState(CheckButtonState::checked);
 			break;
 
 		case CheckButtonState::checked:
+		case CheckButtonState::checkedPressed:
+			setState(CheckButtonState::unchecked);
 			break;
 
 		default:
 			break;
 	}
-
-	context.endRender();
 }
+
+
+void CheckButton::onPress() {
+
+	setState(state == CheckButtonState::checked ? CheckButtonState::checkedPressed : CheckButtonState::uncheckedPressed);
+}
+
+
+void CheckButton::onRelease() {
+
+	setState(state == CheckButtonState::checkedPressed ? CheckButtonState::checked : CheckButtonState::unchecked);
+}
+

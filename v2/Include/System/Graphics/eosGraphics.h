@@ -90,7 +90,8 @@ namespace eos {
             void drawVLine(int x, int y1, int y2) const;
 
             void drawRectangle(int x1, int y1, int x2, int y2) const;
-            inline void drawRectangle(const Point &p1, const Point &p2) const { drawRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY());}
+            inline void drawRectangle(const Point &p1, const Point &p2) const { drawRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY()); }
+            inline void drawRectangle(const Point &p, const Size &s) const { drawRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1); }
             inline void drawRectangle(const Rect &r) const { drawRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
 
             void drawRoundedRectangle(int x1, int y1, int x2, int y2, int rx, int ry) const;
@@ -112,6 +113,8 @@ namespace eos {
             int drawText(int x, int y, const char *s, int offset = 0, int length = -1) const;
 
             void fillRectangle(int x1, int y1, int x2, int y2) const;
+            inline void fillRectangle(const Point &p1, const Point &p2) const { fillRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY()); }
+            inline void fillRectangle(const Point &p, const Size &s) const { fillRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1); }
             inline void fillRectangle(const Rect &r) const { fillRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
 
             void fillRoundedRectangle(int x1, int y1, int x2, int y2, int rx, int ry) const;

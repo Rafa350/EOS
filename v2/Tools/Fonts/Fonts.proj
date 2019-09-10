@@ -11,7 +11,7 @@
     <PropertyGroup>
         <SourceDirectory>.\</SourceDirectory>
         <DestinationDirectory>Out\</DestinationDirectory>
-        <InstallDirectory>..\..\Source\Controllers\Display\Fonts\</InstallDirectory>
+        <InstallDirectory>..\..\Source\System\Graphics\Fonts\</InstallDirectory>
     </PropertyGroup>
     
     <!-- Fitxers a procesar -->
@@ -49,7 +49,7 @@
             Directories="$(DestinationDirectory)"
             Condition="!Exists('$(DestinationDirectory)')"/>
         <ResourceCompilerTask 
-            Parameters="use-proxy-variable;output-extension=cpp"
+            Parameters="use-proxy-variable;output-extension=cpp;include-files=eos.h"
             Source="@(SourceFiles)"
             OutputPath="$(DestinationDirectory)"/>
     </Target>

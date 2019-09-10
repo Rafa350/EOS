@@ -14,7 +14,8 @@ namespace eos {
     enum class CheckButtonState {
     	unchecked,
 		checked,
-		null
+		uncheckedPressed,
+		checkedPressed
     };
 
     class CheckButton: public ButtonBase {
@@ -24,10 +25,18 @@ namespace eos {
 
     	protected:
     		void onRender(RenderContext &context) override;
+    		void onClick() override;
+    		void onPress() override;
+    		void onRelease() override;
+
+    		void setState(CheckButtonState newState);
 
     	public:
     		CheckButton();
-    		void setState(CheckButtonState newState);
+
+    		inline void check() { setState(CheckButtonState::checked); }
+    		inline void uncheck() { setState(CheckButtonState::unchecked); }
+    		inline bool isChecked() const { return state == CheckButtonState::checked; }
 
     };
 
