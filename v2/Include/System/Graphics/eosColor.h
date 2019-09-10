@@ -83,6 +83,19 @@
 
 // HTML cyan colors
 //
+#define COLOR_LightCyan           RGB(224, 255, 255)
+#define COLOR_Aqua                RGB(0, 255, 255)
+#define COLOR_Aquamarine          RGB(127, 255, 212)
+#define COLOR_MediumAquamarine    RGB(102, 205, 170)
+#define COLOR_PaleTurquoise       RGB(175, 238, 238)
+#define COLOR_Turquoise           RGB(64, 224, 208)
+#define COLOR_MediumTurquoise     RGB(72, 209, 204)
+#define COLOR_DarkTurquoise       RGB(0, 206, 209)
+#define COLOR_LightSeaGreen       RGB(32, 178, 170)
+#define COLOR_CadetBlue           RGB(95, 158, 160)
+#define COLOR_DarkCyan			  RGB(0, 139, 139)
+#define COLOR_Teal                RGB(0, 128, 128)
+
 
 // HTML blue colors
 //
@@ -106,6 +119,14 @@
 #define COLOR_DarkSlateBlue       RGB(72, 61, 139)
 
 
+// HTML gray colors
+//
+#define COLOR_DarkGray            RGB(169, 169, 169)
+#define COLOR_LightSlateGray      RGB(119, 136, 153)
+#define COLOR_SlateGray           RGB(112, 128, 144)
+#define COLOR_DarkSlateGray       RGB(47, 79, 79)
+
+
 #define COLOR_PAL_Black           0
 #define COLOR_PAL_White           1
 #define COLOR_PAL_Blue            2
@@ -117,6 +138,27 @@
 #define COLOR_PAL_Purple          8
 #define COLOR_PAL_Teal            9
 #define COLOR_PAL_Navy            10
+
+
+// Format ARGB8888
+#define COLOR_ARGB8888_MASK_A     0xFF000000u
+#define COLOR_ARGB8888_MASK_R     0x00FF0000u
+#define COLOR_ARGB8888_MASK_G     0x0000FF00u
+#define COLOR_ARGB8888_MASK_B     0x000000FFu
+
+#define COLOR_ARGB8888_SHIFT_A    24u
+#define COLOR_ARGB8888_SHIFT_R    16u
+#define COLOR_ARGB8888_SHIFT_G    8u
+#define COLOR_ARGB8888_SHIFT_B    0u
+
+// Format RGB565
+#define COLOR_RGB565_MASK_R       0x0000F800u
+#define COLOR_RGB565_MASK_G       0x000003E0u
+#define COLOR_RGB565_MASK_B       0x0000001Fu
+
+#define COLOR_RGB656_SHIFT_R      11u
+#define COLOR_RGB656_SHIFT_G      5u
+#define COLOR_RGB656_SHIFT_B      0u
 
 
 namespace eos {
@@ -149,7 +191,7 @@ namespace eos {
 
             static inline Color fromARGB8888(uint32_t c) { return Color(c); }
             static inline Color fromRGB888(uint32_t c) { return Color(c | 0xFF000000u); }
-            static inline Color fromRGB565(uint16_t c) { return Color((c & 0xF800u) >> 11u, (c & 0x03F0u) >> 5u, c & 0x001Fu); }
+            static inline Color fromRGB565(uint16_t c) { return Color((c & 0xF800u) >> 11u, (c & 0x03E0u) >> 5u, c & 0x001Fu); }
 
             inline uint32_t toARGB8888() const { return c; }
             inline uint32_t toRGB888() const { return c | 0xFF000000u; }

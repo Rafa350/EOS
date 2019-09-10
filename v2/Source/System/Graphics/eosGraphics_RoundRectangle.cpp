@@ -289,5 +289,5 @@ void Graphics::fillRoundedRectangle(
 	xx2 = x2;
 	yy2 = yc2;
 	if (clipRectangle(xx1, yy1, xx2, yy2))
-		driver->setPixels(xx1, yy1, xx2 - xx1, yy2 - yy1, color);
+		driver->setPixels(xx1, yy1, xx2 - xx1 + 1, yy2 - yy1 + 1, color);
 }

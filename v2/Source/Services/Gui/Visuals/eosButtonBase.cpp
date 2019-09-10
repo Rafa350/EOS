@@ -26,10 +26,14 @@ void ButtonBase::onTouchPadEvent(
 	switch(msg.touchPad.event) {
 		case MsgTouchPadEvent::press:
 			onPress();
-			onClick();
 			break;
 
 		case MsgTouchPadEvent::release:
+		    onRelease();
+			onClick();
+		    break;
+
+		case MsgTouchPadEvent::leave:
 			onRelease();
 			break;
 

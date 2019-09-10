@@ -8,6 +8,7 @@
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosVisual.h"
 #include "Services/Gui/Visuals/eosBorder.h"
+#include "Services/Gui/Visuals/eosCheckButton.h"
 #include "Services/Gui/Visuals/eosPushButton.h"
 #include "Services/Gui/Visuals/eosLabel.h"
 #include "Services/Gui/Visuals/eosPanel.h"
@@ -72,9 +73,7 @@ GuiService::GuiService(
 #ifdef OPT_GUI_TouchPad
 	touchPadService = new GuiTouchPadService(application);
 	touchPadService->setNotifyEvent<GuiService>(this, &GuiService::touchPadServiceNotify);
-	touchPadPressed = false;
-	touchPadX = -1;
-	touchPadY = -1;
+	touchPadTarget = nullptr;
 #endif
 #ifdef OPT_GUI_Selector
 #endif
@@ -176,9 +175,13 @@ void GuiService::onInitialize() {
 	label->setSize(Size(100, 40));
 	label->setText("Hola");
 
-	PushButton *button = new PushButton();
-	button->setPosition(Point(100, 100));
-	button->setSize(Size(120, 40));
+	PushButton *pushButton = new PushButton();
+	pushButton->setPosition(Point(100, 100));
+	pushButton->setSize(Size(120, 40));
+
+	CheckButton *checkButton = new CheckButton();
+	checkButton->setPosition(Point(100, 150));
+	checkButton->setSize(Size(120, 30));
 
 	screen->addChild(border1);
 	border1->setContent(panel);
@@ -186,7 +189,8 @@ void GuiService::onInitialize() {
 	panel->addChild(border3);
 	panel->addChild(label);
 
-	screen->addChild(button);
+	screen->addChild(pushButton);
+	screen->addChild(checkButton);
 
 	VirtualKeyboard *kbd = new VirtualKeyboard();
 	kbd->setPosition(Point(250, 20));
@@ -230,8 +234,35 @@ void GuiService::touchPadServiceNotify(
 
 	Message msg;
 	msg.msgId = MsgId::touchPadEvent;
-	msg.target = getVisualAt(Point(args.x, args.y));
 
+	// Obte el target.
+	//
+	Visual *target = getVisualAt(Point(args.x, args.y));
+
+	// Comprova si ha canviat el target.
+	//
+	if (touchPadTarget != target) {
+
+		// Si cal, notifica la sortida d'un visual.
+		//
+		if (touchPadTarget != nullptr) {
+            msg.target = touchPadTarget;
+            msg.touchPad.event = MsgTouchPadEvent::leave;
+            msgQueue.send(msg);
+		}
+
+		touchPadTarget = target;
+
+		// Si cal, notifica la entrada en un visual.
+		//
+		if (touchPadTarget != nullptr) {
+            msg.target = touchPadTarget;
+            msg.touchPad.event = MsgTouchPadEvent::enter;
+            msgQueue.send(msg);
+		}
+	}
+
+	msg.target = target;
 	switch (args.event) {
 		case TouchPadEventType::press:
 			msg.touchPad.event = MsgTouchPadEvent::press;
@@ -249,7 +280,6 @@ void GuiService::touchPadServiceNotify(
 			msg.touchPad.y = args.y;
 			break;
 	}
-
 	msgQueue.send(msg);
 }
 #endif

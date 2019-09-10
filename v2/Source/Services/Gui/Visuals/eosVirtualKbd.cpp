@@ -20,16 +20,16 @@ struct KeyInfo {
 };
 
 static const KeyInfo calculatorKeys[] = {
-	{  5,  5, 25, 25, "1" },
-	{ 35,  5, 25, 25, "2" },
-	{ 65,  5, 25, 25, "3" },
-	{  5, 35, 25, 25, "4" },
-	{ 35, 35, 25, 25, "5" },
-	{ 65, 35, 25, 25, "6" },
-	{  5, 65, 25, 25, "7" },
-	{ 35, 65, 25, 25, "8" },
-	{ 65, 65, 25, 25, "9" },
-	{  5, 95, 25, 90, "0" }
+	{   5,   5,  35,  35, "1" },
+	{  45,   5,  35,  35, "2" },
+	{  85,   5,  35,  35, "3" },
+	{   5,  45,  35,  35, "4" },
+	{  45,  45,  35,  35, "5" },
+	{  85,  45,  35,  35, "6" },
+	{   5,  85,  35,  35, "7" },
+	{  45,  85,  35,  35, "8" },
+	{  85,  85,  35,  35, "9" },
+	{   5, 125, 115,  35, "0" }
 };
 
 
@@ -42,7 +42,7 @@ VirtualKeyboard::VirtualKeyboard() {
 void VirtualKeyboard::initializePanel() {
 
 	setColor(Color::fromRGB888(0xFF3A3A3A));
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < 10; i++) {
 		const KeyInfo *p = &calculatorKeys[i];
 		PushButton *button = new PushButton();
 		button->setPosition(Point(p->x, p->y));

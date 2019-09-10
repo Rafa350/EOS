@@ -15,8 +15,6 @@ namespace eos {
     class Screen final: public Panel {
     	public:
             Screen();
-
-            void onRender(RenderContext &context) override;
     };
 
 }

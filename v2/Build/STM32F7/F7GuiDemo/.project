@@ -1014,6 +1014,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosButtonBase.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosCheckButton.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosCheckButton.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosContentControl.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosContentControl.cpp</locationURI>

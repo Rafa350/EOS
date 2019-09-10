@@ -22,6 +22,13 @@ namespace eos {
     	private:
     		CheckButtonState state;
 
+    	protected:
+    		void onRender(RenderContext &context) override;
+
+    	public:
+    		CheckButton();
+    		void setState(CheckButtonState newState);
+
     };
 
 }

@@ -51,7 +51,9 @@ namespace eos {
     enum class MsgTouchPadEvent: uint8_t {
     	press,
 		release,
-		move
+		move,
+		enter,
+		leave
     };
 
     struct MsgTouchPad {

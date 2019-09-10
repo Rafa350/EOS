@@ -94,6 +94,8 @@ namespace eos {
             inline void drawRectangle(const Rect &r) const { drawRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
 
             void drawRoundedRectangle(int x1, int y1, int x2, int y2, int rx, int ry) const;
+            inline void drawRoundedRectangle(const Point &p1, const Point &p2, int rx, int ry) const { drawRoundedRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), rx, ry);}
+            inline void drawRoundedRectangle(const Point &p, const Size &s, int rx, int ry) const { drawRoundedRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1, rx, ry);}
             inline void drawRoundedRectangle(const Rect &r, int rx, int ry) const { drawRoundedRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), rx, ry); }
 
             void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3) const;
@@ -113,7 +115,9 @@ namespace eos {
             inline void fillRectangle(const Rect &r) const { fillRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
 
             void fillRoundedRectangle(int x1, int y1, int x2, int y2, int rx, int ry) const;
-            inline void fillRoundedRectangle(const Rect &r, int rx, int ry) const { drawRoundedRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), rx, ry); }
+            inline void fillRoundedRectangle(const Point &p1, const Point &p2, int rx, int ry) const { fillRoundedRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), rx, ry);}
+            inline void fillRoundedRectangle(const Point &p, const Size &s, int rx, int ry) const { fillRoundedRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1, rx, ry);}
+            inline void fillRoundedRectangle(const Rect &r, int rx, int ry) const { fillRoundedRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), rx, ry); }
 
             void fillCircle(int x, int y, int r) const;
             inline void fillCircle(const Point &p, int r) const { fillCircle(p.getX(), p.getY(), r); }

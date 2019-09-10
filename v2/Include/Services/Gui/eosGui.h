@@ -50,9 +50,7 @@ namespace eos {
 #endif
 #ifdef OPT_GUI_TouchPad
 			GuiTouchPadService *touchPadService;
-			bool touchPadPressed;
-			int touchPadX;
-			int touchPadY;
+			Visual *touchPadTarget;
 #endif
 
 		public:
