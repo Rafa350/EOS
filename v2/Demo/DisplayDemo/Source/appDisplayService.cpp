@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "System/Core/eosTask.h"
+#include "System/graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
@@ -19,6 +20,12 @@ using namespace eos;
 using namespace app;
 
 
+#define TEST_POINTS
+#define TEST_LINES
+#define TEST_RECTANGLES
+#define TEST_ELLIPSES
+#define TEST_OPACITY
+#define SHOW_RESULTS
 
 static uint64_t rnd = 0L;
 
@@ -33,7 +40,7 @@ uint32_t rand() {
 	const uint64_t a = 1664523;
 	const uint64_t c = 1013904223;
 
-	rnd = (a * (rnd >> 3)) + c;
+	rnd = (a * (rnd >> 11)) + c;
 	return (uint32_t) rnd;
 }
 
@@ -82,16 +89,16 @@ void DisplayService::onLoop() {
 
     int ticks;
 
-    int pointsTicks;
-    int horizontalLinesTicks;
-    int verticalLinesTicks;
-    int linesTicks;
-    int rectanglesTicks;
-    int filledRectanglesTicks;
-    int ellipsesTicks;
-    int filledEllipsesTicks;
+    int pointsTicks = 0;
+    int horizontalLinesTicks = 0;
+    int verticalLinesTicks = 0;
+    int linesTicks = 0;
+    int rectanglesTicks = 0;
+    int filledRectanglesTicks = 0;
+    int ellipsesTicks = 0;
+    int filledEllipsesTicks = 0;
 
-    int seed = 7; //Task::getTickCount();
+    int seed = 537; //Task::getTickCount();
 
     driver->setOrientation(DisplayOrientation(orientation++));
     if (orientation == 4)
@@ -100,8 +107,12 @@ void DisplayService::onLoop() {
     screenWidth = graphics->getWidth();
     screenHeight = graphics->getHeight();
 
+
+    testOpacity();
+
     // Points
     //
+#ifdef TEST_POINTS
     drawBackground("50K Points");
     Task::delay(250);
 
@@ -114,7 +125,7 @@ void DisplayService::onLoop() {
         int x = rand() % screenWidth;
         int y = rand() % screenHeight;
 
-        graphics->setColor(rand() & 0x00FFFFFF);
+        graphics->setColor(rand() | 0xFF000000);
         graphics->drawPoint(x, y);
     }
     pointsTicks = Task::getTickCount() - ticks;
@@ -125,15 +136,16 @@ void DisplayService::onLoop() {
     for (int i = 0; i < 50000; i++) {
         int x = rand() % screenWidth;
         int y = rand() % screenHeight;
-        rand();
 
         graphics->drawPoint(x, y);
     }
 
     Task::delay(250);
+#endif
 
     // Vertical lines
     //
+#ifdef TEST_LINES
     drawBackground("Vertical lines");
     Task::delay(250);
 
@@ -145,7 +157,7 @@ void DisplayService::onLoop() {
         int y1 = rand() % screenHeight;
         int y2 = rand() % screenHeight;
 
-        graphics->setColor(rand() & 0x00FFFFFF);
+        graphics->setColor(rand() | 0xFF000000);
         graphics->drawVLine(x, y1, y2);
     }
     verticalLinesTicks = Task::getTickCount() - ticks;
@@ -164,7 +176,7 @@ void DisplayService::onLoop() {
         int x2 = rand() % screenWidth;
         int y = rand() % screenHeight;
 
-        graphics->setColor(rand() & 0x00FFFFFF);
+        graphics->setColor(rand() | 0xFF000000);
         graphics->drawHLine(x1, x2, y);
     }
     horizontalLinesTicks = Task::getTickCount() - ticks;
@@ -184,14 +196,17 @@ void DisplayService::onLoop() {
         int x2 = rand() % screenWidth;
         int y2 = rand() % screenHeight;
 
-        graphics->setColor(rand() & 0x00FFFFFF);
+        graphics->setColor(rand() | 0xFF000000);
         graphics->drawLine(x1, y1, x2, y2);
     }
     linesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
+#endif
+
 
     // Rectangles
     //
+#ifdef TEST_RECTANGLES
     drawBackground("Rectangles");
     Task::delay(250);
 
@@ -201,10 +216,10 @@ void DisplayService::onLoop() {
     for (int i = 0; i < 200; i++) {
         int x1 = rand() % screenWidth;
         int y1 = rand() % screenHeight;
-        int x2 = rand() % screenWidth;
-        int y2 = rand() % screenHeight;
+        int x2 = x1 + rand() % 150;
+        int y2 = y1 + rand() % 150;
 
-        graphics->setColor(rand() & 0x00FFFFFF);
+        graphics->setColor(rand() | 0xFF000000);
         graphics->drawRectangle(x1, y1, x2, y2);
     }
     rectanglesTicks = Task::getTickCount() - ticks;
@@ -221,17 +236,19 @@ void DisplayService::onLoop() {
     for (int i = 0; i < 200; i++) {
         int x1 = rand() % screenWidth;
         int y1 = rand() % screenHeight;
-        int x2 = x1 + rand() % 100;
-        int y2 = y1 + rand() % 100;
+        int x2 = x1 + rand() % 150;
+        int y2 = y1 + rand() % 150;
 
-        graphics->setColor(rand() & 0x00FFFFFF);
+        graphics->setColor(rand() | 0xFF000000);
         graphics->fillRectangle(x1, y1, x2, y2);
     }
     filledRectanglesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
+#endif
 
-    // Circles
+    // El·lipses
     //
+#ifdef TEST_ELLIPSES
     drawBackground("Ellipses");
     Task::delay(250);
 
@@ -241,12 +258,10 @@ void DisplayService::onLoop() {
     for (int i = 0; i < 200; i++) {
         int cx = rand() % screenWidth;
         int cy = rand() % screenHeight;
-        int r = rand() % 150;
+        int r = (rand() % 60) + 3;
 
-        graphics->setColor(rand() & 0x00FFFFFF);
-
-        if (r > 1) 
-            graphics->drawEllipse(cx - r, cy - r, cx + r, cy + r);
+        graphics->setColor(rand() | 0xFF000000);
+        graphics->drawEllipse(cx - r, cy - r, cx + r, cy + r);
     }
     ellipsesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -262,14 +277,15 @@ void DisplayService::onLoop() {
     for (int i = 0; i < 200; i++) {
         int cx = rand() % screenWidth;
         int cy = rand() % screenHeight;
-        int r = rand() % 50;
+        int r = (rand() % 60) + 3;
 
-        graphics->setColor(rand() & 0x00FFFFFF);
-        if (r > 1)
-        	graphics->fillEllipse(cx - r, cy - r, cx + r, cy + r);
+        graphics->setColor(rand() | 0xFF000000);
+       	graphics->fillEllipse(cx - r, cy - r, cx + r, cy + r);
     }
     filledEllipsesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
+#endif
+
 
     // Show results
     //
@@ -278,6 +294,8 @@ void DisplayService::onLoop() {
 
     char lineBuffer[30];
     int y = 50;
+
+    graphics->setColor(COLOR_Yellow);
     sprintf(lineBuffer, "50K Points    %d ms", pointsTicks * 2);
     graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "V. lines      %d ms", verticalLinesTicks * 2);
@@ -309,4 +327,28 @@ void DisplayService::drawBackground(
     graphics->drawLine(screenWidth - 1, 20, 0, 20);
     graphics->drawText(4, 16, title, 0, -1);
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief test d'opacitat.
+///
+void DisplayService::testOpacity() {
+
+	const int w = 75;
+
+	drawBackground("Opacity");
+
+	graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
+
+	graphics->setColor(Color(128, 255, 0, 0));
+	graphics->fillRectangle(Point(40, 40), Size(w, w));
+
+	graphics->setColor(Color(128, 0, 255, 0));
+	graphics->fillRectangle(Point(80, 80), Size(w, w));
+
+	graphics->setColor(Color(128, 0, 0, 255));
+	graphics->fillRectangle(Point(120, 120), Size(w, w));
+
+	Task::delay(5000);
 }

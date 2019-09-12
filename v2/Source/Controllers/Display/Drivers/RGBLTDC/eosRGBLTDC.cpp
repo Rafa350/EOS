@@ -36,6 +36,11 @@
 #else
 #define FRAME2_ADDR          DISPLAY_VRAM_ADDR
 #endif
+#define LINEBUF_ADDR         DISPLAY_FRAME2_ADDR + LINE_SIZE
+
+#define LINE_SIZE            (((DISPLAY_IMAGE_WIDTH * sizeof(PIXEL_TYPE)) + 63) & 0xFFFFFFC0)
+#define LINE_WIDTH           (LINE_SIZE / sizeof(PIXEL_TYPE))
+#define FRAME_SIZE           (LINE_SIZE * DISPLAY_IMAGE_HEIGHT)
 
 
 using namespace eos;
@@ -53,25 +58,28 @@ static inline int addressOf(
 	int x,
 	int y) {
 
-	return base + (((y * LINE_WIDTH) + x) * sizeof(pixel_t));
+	return base + (((y * LINE_WIDTH) + x) * sizeof(PIXEL_TYPE));
 }
 
-
-/// ----------------------------------------------------------------------
-/// \brief Converteix un color a format de pixel.
-/// \param color: El color a convertir.
-/// \return El color en format de pixel.
-///
-static inline pixel_t toPixel(
+/*
+static PIXEL_TYPE toPixel(
 	const Color &color) {
 
-#if defined(DISPLAY_COLOR_RGB565)
-	return (pixel_t) color.toRGB565();
-#elif defined(DISPLAY_COLOR_RGB888)
-	return (pixel_t) color.toRGB888();
-#endif
+	return color.toRGB565();
 }
 
+static PIXEL_TYPE blend(
+	PIXEL_TYPE a,
+	PIXEL_TYPE b,
+	uint8_t o) {
+
+	uint32 rb = color1 & 0xff00ff;
+	uint32 g  = color1 & 0x00ff00;
+	rb += ((color2 & 0xff00ff) - rb) * alpha >> 8;
+	g  += ((color2 & 0x00ff00) -  g) * alpha >> 8;
+	return (rb & 0xff00ff) | (g & 0xff00);
+}
+*/
 
 IDisplayDriver *RGBDirectDriver::instance = nullptr;
 
@@ -212,7 +220,7 @@ void RGBDirectDriver::setOrientation(
 void RGBDirectDriver::clear(
 	const Color &color) {
 
-	fill(0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT, toPixel(color));
+	fill(0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT, color);
 }
 
 
@@ -229,7 +237,7 @@ void RGBDirectDriver::setPixel(
 
 	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight)) {
 		rotate(x, y);
-		put(x, y, toPixel(color));
+		put(x, y, color);
 	}
 }
 
@@ -299,14 +307,14 @@ void RGBDirectDriver::setPixels(
 	//
 	if ((x1 == x2) && (y1 == y2)) {
 		rotate(x1, y1);
-		put(x1, y1, toPixel(color));
+		put(x1, y1, color);
 	}
 
 	// Cas que hagi una regio rectangular per dibuixar
 	//
 	else if ((x1 <= x2) && (y1 <= y2)) {
 		rotate(x1, y1, x2, y2);
-		fill(x1, y1, x2 - x1 + 1, y2 - y1 + 1, toPixel(color));
+		fill(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
 	}
 }
 
@@ -592,7 +600,7 @@ void RGBDirectDriver::ltdcInitialize() {
     tmp = LTDC_Layer1->CFBLR;
     tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
     tmp |= LINE_SIZE << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= ((DISPLAY_IMAGE_WIDTH * sizeof(pixel_t)) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
+    tmp |= ((DISPLAY_IMAGE_WIDTH * sizeof(PIXEL_TYPE)) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
     LTDC_Layer1->CFBLR = tmp;
 
     // Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
@@ -709,15 +717,29 @@ void RGBDirectDriver::rotate(
 /// \brief Aigna un color a un pixel.
 /// \param x: Coordinada X del pixel.
 /// \param y: Coordinada Y del pixel.
-/// \param c: Color en format de pixel fisic;
+/// \param color: Color en format de pixel fisic;
 /// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
 void RGBDirectDriver::put(
 	int x,
 	int y,
-	pixel_t c) {
+	const Color &color) {
 
-	*((pixel_t*) addressOf(backFrameAddr, x, y)) = c;
+	if (!color.isTransparent()) {
+
+		PIXEL_TYPE *pPixelAddress = (PIXEL_TYPE*) addressOf(backFrameAddr, x, y);
+
+		Pixel pixelColor;
+		if (color.isOpaque())
+			pixelColor = Pixel(color);
+
+		else {
+		    pixelColor = Pixel(*pPixelAddress);
+	        pixelColor.combine(Pixel(color), color.getOpacity());
+		}
+
+		*pPixelAddress = pixelColor;
+	}
 }
 
 
@@ -726,8 +748,8 @@ void RGBDirectDriver::put(
 /// \param x: Coordinada x.
 /// \param y: Coordinada y.
 /// \param width: Amplada del bloc.
-/// \param height: Al�ada del bloc.
-/// \param c: Color en format de pixel fisic.
+/// \param height: Alçada del bloc.
+/// \param color: Color.
 /// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
 void RGBDirectDriver::fill(
@@ -735,16 +757,22 @@ void RGBDirectDriver::fill(
 	int y,
 	int width,
 	int height,
-	pixel_t c) {
+	const Color &color) {
 
-	halDMA2DStartFill(
-		addressOf(backFrameAddr, x, y),
-		width,
-		height,
-		LINE_WIDTH - width,
-		HAL_DMA2D_DFMT_DEFAULT,
-		c);
-	halDMA2DWaitForFinish();
+	if (color.isOpaque()) {
+		halDMA2DStartFill(
+			addressOf(backFrameAddr, x, y),
+			width,
+			height,
+			LINE_WIDTH - width,
+			HAL_DMA2D_DFMT_DEFAULT,
+			Pixel(color));
+		halDMA2DWaitForFinish();
+	}
+	else
+		for (int yy = 0; yy < height; yy++)
+			for (int xx = 0; xx < width; xx++)
+				put(x + xx, y + yy, color);
 }
 
 

@@ -6,23 +6,6 @@
 using namespace eos;
 
 
-/// ----------------------------------------------------------------------
-/// \brief Mescla un color
-/// \param c: El color a mesclar.
-/// \param mix: Valor alpha de la mescla.
-/// \return El resultat de la mescla.
-///
-Color Color::mix(
-    Color c,
-    uint8_t mix) {
-
-    return Color(
-        (uint16_t)((uint16_t) getR() * mix + (c.getR() * (255 - mix))) >> 8,
-        (uint16_t)((uint16_t) getG() * mix + (c.getG() * (255 - mix))) >> 8,
-        (uint16_t)((uint16_t) getB() * mix + (c.getB() * (255 - mix))) >> 8);
-}
-
-
 /*
 /// ----------------------------------------------------------------------
 /// \brief Contructor.

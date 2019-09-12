@@ -609,6 +609,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosColorDefinitions.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColorDefinitions.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosFont.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosFont.h</locationURI>
@@ -789,6 +794,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Rectangle.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Graphics/eosPoint.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosPoint.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosSize.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosSize.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/Graphics/eosTransformation.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosTransformation.cpp</locationURI>
@@ -837,6 +852,11 @@
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas8pt.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Tahoma12pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Tahoma12pt.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDC.cpp</name>

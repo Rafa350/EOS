@@ -36,6 +36,7 @@ namespace app {
 
 	    private:
 	        void drawBackground(const char *title);
+	        void testOpacity();
 	};
 
 
