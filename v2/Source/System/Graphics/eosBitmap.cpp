@@ -10,13 +10,13 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Constructor de l'objecte.
 /// \param width: Amplada en pixels.
-/// \param height: Alçada en pixels.
+/// \param height: AlÃ§ada en pixels.
 /// \param color: Color inicial
 ///
 Bitmap::Bitmap(
 	int width,
 	int height,
-	PixelFormat format,
+	ColorFormat format,
 	const Color &color):
 
 	width(width),
@@ -34,13 +34,13 @@ Bitmap::Bitmap(
 	//
 	int pixelSize;
 	switch (format) {
-		case PixelFormat::rgb565:
+		case ColorFormat::rgb565:
 			pixelSize = sizeof(uint16_t);
 			break;
 
 		default:
-		case PixelFormat::rgb888:
-		case PixelFormat::argb8888:
+		case ColorFormat::rgb888:
+		case ColorFormat::argb8888:
 			pixelSize = sizeof(uint32_t);
 			break;
 	}
@@ -52,18 +52,18 @@ Bitmap::Bitmap(
 	// Crea el contingut del bitmap
 	//
 	switch (format) {
-		case PixelFormat::rgb888:
+		case ColorFormat::rgb888:
 			for (int i = 0; i < numPixels; i++)
 				((uint32_t*)pixels)[i] = color.toRGB888();
 		break;
 
-		case PixelFormat::rgb565:
+		case ColorFormat::rgb565:
 			for (int i = 0; i < numPixels; i++)
 				((uint16_t*)pixels)[i] = color.toRGB565();
 		break;
 
 		default:
-		case PixelFormat::argb8888:
+		case ColorFormat::argb8888:
 			for (int i = 0; i < numPixels; i++)
 				((uint32_t*)pixels)[i] = color.toARGB8888();
 		break;
@@ -74,14 +74,14 @@ Bitmap::Bitmap(
 /// ----------------------------------------------------------------------
 /// \brief Constructor de l'objecte.
 /// \param width: Amplada en pixels.
-/// \param height: Alçada en pixels.
+/// \param height: Alï¿½ada en pixels.
 /// \param format: Format de pixels
 /// \param pixels: Llista de pixels
 ///
 Bitmap::Bitmap(
 	int width,
 	int height,
-	PixelFormat format,
+	ColorFormat format,
 	uint8_t *pixels):
 
 	width(width),
@@ -96,14 +96,14 @@ Bitmap::Bitmap(
 /// ----------------------------------------------------------------------
 /// \brief Constructor de l'objecte bitmap no modificable.
 /// \param width: Amplada en pixels.
-/// \param height: Alçada en pixels.
+/// \param height: Alï¿½ada en pixels.
 /// \param format: Format de pixels
 /// \param pixels: Llista de pixels nomes de lectura.
 ///
 Bitmap::Bitmap(
 	int width,
 	int height,
-	PixelFormat format,
+	ColorFormat format,
 	const uint8_t *pixels):
 
 	width(width),
@@ -120,6 +120,6 @@ Bitmap::Bitmap(
 ///
 Bitmap::~Bitmap() {
 
-	if (allocated & (pixels != nullptr))
+	if (allocated && (pixels != nullptr))
 		osalHeapFree(NULL, pixels);
 }

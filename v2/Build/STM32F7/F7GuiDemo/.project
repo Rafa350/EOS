@@ -964,6 +964,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosControl.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosImage.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosImage.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosItemsControl.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosItemsControl.h</locationURI>
@@ -1027,6 +1032,11 @@
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosControl.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosControl.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosImage.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosImage.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosLabel.cpp</name>

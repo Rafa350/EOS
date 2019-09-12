@@ -17,7 +17,7 @@ void halDMA2DInitialize(void) {
 /// \brief Ompla una regio amb un color.
 /// \param addr: Adressa del primer pixel del desti.
 /// \param width: Amplada de la regio.
-/// \param height: Alçáda de la regio.
+/// \param height: AlÃ§ada de la regio.
 /// \param pitch: Offset entre linies.
 /// \param options: Opcions
 /// \param color: Color per omplir.
@@ -67,7 +67,7 @@ void halDMA2DStartFill(
 /// \brief Copia una regio.
 /// \param addr: Adresa del primer pixel del desti.
 /// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
+/// \param height: Alï¿½ada de la regio.
 /// \param pitch: Offset entre linies.
 /// \param options: Opcions.
 /// \param srcAddr: Adressa del primer pixel del origen.

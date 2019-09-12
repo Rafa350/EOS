@@ -53,33 +53,54 @@ using namespace eos;
 /// \param y: Coordinada Y.
 /// \return L'adressa del pixel.
 ///
-static inline int addressOf(
+static inline pixel_t *addressOf(
 	int base,
 	int x,
 	int y) {
 
-	return base + (((y * LINE_WIDTH) + x) * sizeof(PIXEL_TYPE));
+	return (pixel_t*) (base + (((y * LINE_WIDTH) + x) * sizeof(pixel_t)));
 }
 
-/*
-static PIXEL_TYPE toPixel(
+
+/// ----------------------------------------------------------------------
+/// \brief Converteix un color a format pixel.
+/// \param color: El color a convertir.
+/// \return El valor del pixel.
+///
+static inline pixel_t toPixel(
 	const Color &color) {
 
-	return color.toRGB565();
+	return (pixel_t) color.toRGB565();
 }
 
-static PIXEL_TYPE blend(
-	PIXEL_TYPE a,
-	PIXEL_TYPE b,
+
+/// ----------------------------------------------------------------------
+/// \brief Compbina dos pixels.
+/// \param b: Pixel del fons.
+/// \param f: Pixel del primer pla.
+/// \param o: Opacitat.
+/// \return El valor del pixel combinat.
+///
+static inline pixel_t combinePixel(
+	pixel_t b,
+	pixel_t f,
 	uint8_t o) {
 
-	uint32 rb = color1 & 0xff00ff;
-	uint32 g  = color1 & 0x00ff00;
-	rb += ((color2 & 0xff00ff) - rb) * alpha >> 8;
-	g  += ((color2 & 0x00ff00) -  g) * alpha >> 8;
-	return (rb & 0xff00ff) | (g & 0xff00);
+	uint8_t br = (b & PIXEL_MASK_R) >> PIXEL_SHIFT_R;
+	uint8_t bg = (b & PIXEL_MASK_G) >> PIXEL_SHIFT_G;
+	uint8_t bb = (b & PIXEL_MASK_B) >> PIXEL_SHIFT_B;
+
+	uint8_t fr = (f & PIXEL_MASK_R) >> PIXEL_SHIFT_R;
+	uint8_t fg = (f & PIXEL_MASK_G) >> PIXEL_SHIFT_G;
+	uint8_t fb = (f & PIXEL_MASK_B) >> PIXEL_SHIFT_B;
+
+	return (pixel_t)
+		((((fr * o) + (br * (255u - o))) >> 8) << PIXEL_SHIFT_R) |
+		((((fg * o) + (bg * (255u - o))) >> 8) << PIXEL_SHIFT_G) |
+		((((fb * o) + (bb * (255u - o))) >> 8) << PIXEL_SHIFT_B);
+
 }
-*/
+
 
 IDisplayDriver *RGBDirectDriver::instance = nullptr;
 
@@ -337,7 +358,7 @@ void RGBDirectDriver::writePixels(
 	int width,
 	int height,
 	const uint8_t *pixels,
-	PixelFormat format,
+	ColorFormat format,
 	int dx,
 	int dy,
 	int pitch) {
@@ -368,7 +389,7 @@ void RGBDirectDriver::readPixels(
 	int width,
 	int height,
 	uint8_t *pixels,
-	PixelFormat format,
+	ColorFormat format,
 	int dc,
 	int dy,
 	int pitch) {
@@ -727,18 +748,12 @@ void RGBDirectDriver::put(
 
 	if (!color.isTransparent()) {
 
-		PIXEL_TYPE *pPixelAddress = (PIXEL_TYPE*) addressOf(backFrameAddr, x, y);
+		pixel_t *pPixelAddr = addressOf(backFrameAddr, x, y);
 
-		Pixel pixelColor;
 		if (color.isOpaque())
-			pixelColor = Pixel(color);
-
-		else {
-		    pixelColor = Pixel(*pPixelAddress);
-	        pixelColor.combine(Pixel(color), color.getOpacity());
-		}
-
-		*pPixelAddress = pixelColor;
+			*pPixelAddr = toPixel(color);
+		else
+			*pPixelAddr = combinePixel(*pPixelAddr, toPixel(color), color.getOpacity());
 	}
 }
 
@@ -761,12 +776,12 @@ void RGBDirectDriver::fill(
 
 	if (color.isOpaque()) {
 		halDMA2DStartFill(
-			addressOf(backFrameAddr, x, y),
+			(uint32_t) addressOf(backFrameAddr, x, y),
 			width,
 			height,
 			LINE_WIDTH - width,
 			HAL_DMA2D_DFMT_DEFAULT,
-			Pixel(color));
+			toPixel(color));
 		halDMA2DWaitForFinish();
 	}
 	else
@@ -794,7 +809,7 @@ void RGBDirectDriver::copy(
 	int width,
 	int height,
 	const uint8_t *pixels,
-	PixelFormat format,
+	ColorFormat format,
 	int dx,
 	int dy,
 	int pitch) {
@@ -816,23 +831,23 @@ void RGBDirectDriver::copy(
 
 	// Adressa i pitch de desti
 	//
-	int dstAddr = addressOf(backFrameAddr, x, y);
+	uint32_t dstAddr = (uint32_t) addressOf(backFrameAddr, x, y);
 	DMA2D->OMAR = dstAddr;
 	DMA2D->OOR = LINE_WIDTH - width;
 
 	// Format de color d'origen
 	//
 	switch (format) {
-		case PixelFormat::rgb888:
+		case ColorFormat::rgb888:
 			DMA2D->FGPFCCR = 0b0001 << DMA2D_FGPFCCR_CM_Pos;
 			break;
 
-		case PixelFormat::rgb565:
+		case ColorFormat::rgb565:
 			DMA2D->FGPFCCR = 0b0010 << DMA2D_FGPFCCR_CM_Pos;
 			break;
 
 		default:
-		case PixelFormat::argb8888:
+		case ColorFormat::argb8888:
 			DMA2D->FGPFCCR = 0b0000 << DMA2D_FGPFCCR_CM_Pos;
 			break;
 	}
@@ -842,12 +857,12 @@ void RGBDirectDriver::copy(
 	int orgAddr = (dy * pitch) + dx;
 	switch (format) {
 		default:
-		case PixelFormat::rgb888:
-		case PixelFormat::argb8888:
+		case ColorFormat::rgb888:
+		case ColorFormat::argb8888:
 			orgAddr *= sizeof(uint32_t);
 			break;
 
-		case PixelFormat::rgb565:
+		case ColorFormat::rgb565:
 			orgAddr *= sizeof(uint16_t);
 			break;
 	}

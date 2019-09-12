@@ -14,15 +14,15 @@ namespace eos {
 		private:
 			int width;
 			int height;
-			PixelFormat format;
+			ColorFormat format;
 			bool allocated;
 			bool readonly;
 			uint8_t *pixels;
 
 		public:
-			Bitmap(int width, int height, PixelFormat format, const Color &color);
-			Bitmap(int width, int height, PixelFormat format, uint8_t *pixels);
-			Bitmap(int width, int height, PixelFormat format, const uint8_t *pixels);
+			Bitmap(int width, int height, ColorFormat format, const Color &color);
+			Bitmap(int width, int height, ColorFormat format, uint8_t *pixels);
+			Bitmap(int width, int height, ColorFormat format, const uint8_t *pixels);
 			~Bitmap();
 
 			void setPixel(int x, int y, Color color);
@@ -31,7 +31,7 @@ namespace eos {
 			inline int getWidth() const { return width; }
 			inline int getHeight() const { return height; }
 			inline uint8_t *getPixels() const { return pixels; }
-			inline PixelFormat getFormat() const { return format; }
+			inline ColorFormat getFormat() const { return format; }
 	};
 }
 

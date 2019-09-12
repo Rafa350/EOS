@@ -37,7 +37,6 @@ namespace eos {
     		inline void check() { setState(CheckButtonState::checked); }
     		inline void uncheck() { setState(CheckButtonState::unchecked); }
     		inline bool isChecked() const { return state == CheckButtonState::checked; }
-
     };
 
 }
