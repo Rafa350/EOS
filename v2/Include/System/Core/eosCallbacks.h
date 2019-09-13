@@ -1,5 +1,5 @@
-#ifndef __EOS_CALLBACKS_H
-#define	__EOS_CALLBACKS_H
+#ifndef __eosCallbacks__
+#define	__eosCallbacks__
 
 
 #include "eos.h"
@@ -12,7 +12,8 @@ namespace eos {
         public:
     		virtual ~ICallbackP1() {
     		}
-            virtual void execute(P1Type p1) = 0;
+
+    		virtual void execute(P1Type p1) const = 0;
     };
 
     template <class Class, typename P1Type>
@@ -25,15 +26,12 @@ namespace eos {
             Method method;
 
         public:
-            CallbackP1(Class *_instance, Method _method): instance(_instance), method(_method) {
+            CallbackP1(Class *instance, Method method): instance(instance), method(method) {
             }
 
-            void set(Class *instance, Method method) {
-                this->instance = instance;
-                this->method = method;
-            }
-            void execute(P1Type p1) {
-                (instance->*method)(p1);
+            void execute(P1Type p1) const override {
+            	if ((instance != nullptr) && (method != nullptr))
+            		(instance->*method)(p1);
             }
     };
 
@@ -43,7 +41,8 @@ namespace eos {
         public:
     		virtual ~ICallbackP2() {
     		}
-            virtual void execute(P1Type p1, P2Type p2) = 0;
+
+    		virtual void execute(P1Type p1, P2Type p2) const = 0;
     };
 
     template <class Class, typename P1Type, typename P2Type>
@@ -56,11 +55,12 @@ namespace eos {
             Method method;
 
         public:
-            CallbackP2(Class *_instance, Method _method): instance(_instance), method(_method) {
+            CallbackP2(Class *instance, Method method): instance(instance), method(method) {
             }
 
-            void execute(P1Type p1, P2Type p2) {
-                (instance->*method)(p1, p2);
+            void execute(P1Type p1, P2Type p2) const override {
+            	if ((instance != nullptr) && (method != nullptr))
+            		(instance->*method)(p1, p2);
             }
     };
 
@@ -70,7 +70,8 @@ namespace eos {
         public:
     		virtual ~ICallbackP1R() {
     		}
-            virtual RType execute(P1Type p1) = 0;
+
+            virtual RType execute(P1Type p1) const = 0;
     };
 
     template <class Class, typename RType, typename P1Type>
@@ -83,11 +84,14 @@ namespace eos {
             Method method;
 
         public:
-            CallbackP1R(Class *_instance, Method _method): instance(_instance), method(_method) {
+            CallbackP1R(Class *instance, Method method): instance(instance), method(method) {
             }
 
-            RType execute(P1Type p1) {
-                return (instance->*method)(p1);
+            RType execute(P1Type p1) const override {
+            	if ((instance != nullptr) && (method != nullptr))
+            		return (instance->*method)(p1);
+            	else
+            		return RType();
             }
     };
 
@@ -97,7 +101,7 @@ namespace eos {
         public:
     		virtual ~ICallbackP2R() {
 			}
-            virtual RType execute(P1Type p1, P2Type p2) = 0;
+            virtual RType execute(P1Type p1, P2Type p2) const = 0;
     };
 
     template <class Class, typename RType, typename P1Type, typename P2Type>
@@ -110,15 +114,18 @@ namespace eos {
             Method method;
 
         public:
-            CallbackP2R(Class *_instance, Method _method): instance(_instance), method(_method) {
+            CallbackP2R(Class *instance, Method method): instance(instance), method(method) {
             }
 
-            RType execute(P1Type p1, P2Type p2) {
-                return (instance->*method)(p1, p2);
+            RType execute(P1Type p1, P2Type p2) const override {
+            	if ((instance != nullptr) && (method != nullptr))
+            		return (instance->*method)(p1, p2);
+            	return
+            		RType();
             }
     };
 }
 
 
-#endif
+#endif // __eosCallbacks__
 

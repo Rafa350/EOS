@@ -40,11 +40,11 @@ namespace eos {
 
 	class GuiTouchPadService final: public Service {
 		private:
-        	typedef ICallbackP1<const TouchPadEventArgs&> TouchPadEvent;
+        	typedef ICallbackP1<const TouchPadEventArgs&> IEventCallback;
 
 		private:
     		ITouchPadDriver *touchDriver;
-        	TouchPadEvent *evNotify;
+        	IEventCallback *pEventCallback;
         	BinarySemaphore lock;
         	int oldX;
         	int oldY;
@@ -56,8 +56,8 @@ namespace eos {
 			~GuiTouchPadService();
 
 			template <class cls>
-            void setNotifyEvent(cls *instance, void (cls::*method)(const TouchPadEventArgs &args)) {
-                evNotify = new CallbackP1<cls, const TouchPadEventArgs&>(instance, method);
+			void setEventCallback(CallbackP1<cls, const TouchPadEventArgs&> *pCallBack) {
+				pEventCallback = pCallBack;
             }
 
 		protected:

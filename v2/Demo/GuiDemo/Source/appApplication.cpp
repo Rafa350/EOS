@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Services/Gui/eosGui.h"
+#include "Services/Gui/eosGuiService.h"
 #include "appApplication.h"
 #include "appLedService.h"
 

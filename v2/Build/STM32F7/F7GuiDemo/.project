@@ -309,9 +309,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosAppLoop.h</name>
+			<name>inc/Framework/EOS/Services/eosAppLoopService.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoop.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoopService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/eosService.h</name>
@@ -369,9 +369,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
+			<name>src/Framework/EOS/Services/eosAppLoopService.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoop.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>
@@ -579,24 +579,24 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/Gui/eosGui.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGui.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosGuiMessageQueue.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGuiMessageQueue.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/Gui/eosGuiTouchPad.h</name>
+			<name>inc/Framework/EOS/Services/Gui/eosGuiService.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGuiTouchPad.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGuiService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosRenderContext.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosRenderContext.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/eosTouchPadService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosTouchPadService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosVisual.h</name>
@@ -617,6 +617,11 @@
 			<name>inc/Framework/EOS/System/Core/eosAllocator.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosAllocator.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Core/eosCallbacks.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosCallbacks.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosHeapAllocator.h</name>
@@ -784,24 +789,24 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/Gui/eosGui.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGui.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Services/Gui/eosGuiMessageQueue.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiMessageQueue.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/Gui/eosGuiTouchPad.cpp</name>
+			<name>src/Framework/EOS/Services/Gui/eosGuiService.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiTouchPad.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/eosRenderContext.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosRenderContext.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/eosTouchPadService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosTouchPadService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/eosVisual.cpp</name>

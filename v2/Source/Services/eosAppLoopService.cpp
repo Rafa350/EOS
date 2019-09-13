@@ -1,4 +1,4 @@
-#include "Services/eosAppLoop.h"
+#include "Services/eosAppLoopService.h"
 
 
 using namespace eos;

@@ -2,7 +2,7 @@
 #include "HAL/STM32/halEXTI.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
-#include "Services/Gui/eosGuiTouchPad.h"
+#include "Services/Gui/eosTouchPadService.h"
 
 
 using namespace eos;
@@ -39,7 +39,7 @@ GuiTouchPadService::GuiTouchPadService(
 
 	Service(pApplication, configuration.serviceConfiguration),
 	touchDriver(nullptr),
-	evNotify(nullptr),
+	pEventCallback(nullptr),
 	oldX(-1),
 	oldY(-1),
 	oldPressed(false) {
@@ -51,8 +51,6 @@ GuiTouchPadService::GuiTouchPadService(
 ///
 GuiTouchPadService::~GuiTouchPadService() {
 
-	if (evNotify != nullptr)
-		delete evNotify;
 }
 
 
@@ -76,7 +74,7 @@ void GuiTouchPadService::onInitialize() {
 ///
 void GuiTouchPadService::onTask() {
 
-	if (evNotify != nullptr) {
+	if (pEventCallback != nullptr) {
 
 		if (lock.wait((unsigned) -1)) {
 
@@ -106,7 +104,7 @@ void GuiTouchPadService::onTask() {
 						.x = x,
 						.y = y
 					};
-					evNotify->execute(args);
+				pEventCallback->execute(args);
 				}
 
 				// Detecta canvis de posicio
@@ -118,7 +116,7 @@ void GuiTouchPadService::onTask() {
 						.x = x,
 						.y = y
 					};
-					evNotify->execute(args);
+					pEventCallback->execute(args);
 				}
 
 				oldPressed = pressed;
@@ -132,7 +130,7 @@ void GuiTouchPadService::onTask() {
 					.x = x,
 					.y = y
 				};
-				evNotify->execute(args);
+				pEventCallback->execute(args);
 
 				oldPressed = false;
 			}

@@ -7,7 +7,7 @@
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPoint.h"
-#include "Services/Gui/eosGui.h"
+#include "Services/Gui/eosGuiService.h"
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosVisual.h"
 #include "Services/Gui/Visuals/eosBorder.h"
@@ -20,13 +20,13 @@
 #include "Services/Gui/Visuals/eosVirtualKbd.h"
 #include "Services/Gui/eosRenderContext.h"
 #ifdef OPT_GUI_TouchPad
-#include "Services/Gui/eosGuiTouchPad.h"
+#include "Services/Gui/eosTouchPadService.h"
 #endif
 #ifdef OPT_GUI_Selector
-#include "Services/Gui/eosGuiSelector.h"
+#include "Services/Gui/eosSelectorService.h"
 #endif
 #ifdef OPT_GUI_Keyboard
-#include "Services/Gui/eosGuiKeyboard.h"
+#include "Services/Gui/eosKeyboardService.h"
 #endif
 #include "HAL/halINT.h"
 
@@ -46,6 +46,7 @@ static GuiServiceConfiguration defaultConfiguration = {
 static IDisplayDriver *displayDriver;
 static Graphics *graphics;
 static RenderContext *context;
+
 
 Panel *panel;
 int x, y, dx, dy;
@@ -85,11 +86,12 @@ GuiService::GuiService(
 
 	Service(application, configuration.serviceConfiguration),
 	screen(new Screen()),
-	active(nullptr) {
+	active(nullptr),
+	touchPadEventCallback(this, &GuiService::touchPadEventHandler) {
 
 #ifdef OPT_GUI_TouchPad
 	touchPadService = new GuiTouchPadService(application);
-	touchPadService->setNotifyEvent<GuiService>(this, &GuiService::touchPadServiceNotify);
+	touchPadService->setEventCallback(&touchPadEventCallback);
 	touchPadTarget = nullptr;
 #endif
 #ifdef OPT_GUI_Selector
@@ -241,7 +243,7 @@ void GuiService::onTask() {
 /// \param args: Arguments del event.
 ///
 #ifdef OPT_GUI_TouchPad
-void GuiService::touchPadServiceNotify(
+void GuiService::touchPadEventHandler(
 	const TouchPadEventArgs &args) {
 
 	Message msg;

@@ -4,6 +4,7 @@
 
 #include "eos.h"
 #include "Services/Gui/Visuals/eosContentControl.h"
+#include "System/Core/eosCallbacks.h"
 
 
 namespace eos {
@@ -12,7 +13,11 @@ namespace eos {
 
     class ButtonBase: public ContentControl {
     	private:
+			typedef ICallbackP1<Visual*> IClickCallback;
+
+    	private:
 			bool pressed;
+			IClickCallback *pClickCallback;
 
     	protected:
 #ifdef OPT_GUI_TouchPad
@@ -24,14 +29,18 @@ namespace eos {
 			virtual void onPress();
 			virtual void onRelease();
 
-			bool isPressed() const { return pressed; }
+			inline bool isPressed() const { return pressed; }
 
     	public:
 			ButtonBase();
 
 			void click();
-    };
 
+			template <class cls>
+			inline void setClickCallback(CallbackP1<cls, Visual*> *pCallBack) {
+				pClickCallback = pCallBack;
+            }
+    };
 
 }
 

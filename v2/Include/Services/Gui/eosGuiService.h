@@ -7,6 +7,7 @@
 #include "eos.h"
 #include "Services/eosService.h"
 #include <Services/Gui/eosGuiMessageQueue.h>
+#include "System/Core/eosCallbacks.h"
 #include "System/Core/eosTask.h"
 
 
@@ -41,6 +42,9 @@ namespace eos {
 
 	class GuiService final: public Service {
 		private:
+			typedef CallbackP1<GuiService, const TouchPadEventArgs&> TouchPadEventCallback;
+
+		private:
 			Screen *screen;
 			Visual *active;
 			GuiMessageQueue msgQueue;
@@ -49,6 +53,7 @@ namespace eos {
 #ifdef OPT_GUI_Selector
 #endif
 #ifdef OPT_GUI_TouchPad
+			TouchPadEventCallback touchPadEventCallback;
 			GuiTouchPadService *touchPadService;
 			Visual *touchPadTarget;
 #endif
@@ -67,7 +72,7 @@ namespace eos {
 
 		private:
 #ifdef OPT_GUI_TouchPad
-			void touchPadServiceNotify(const TouchPadEventArgs &args);
+			void touchPadEventHandler(const TouchPadEventArgs &args);
 #endif
 	};
 }
