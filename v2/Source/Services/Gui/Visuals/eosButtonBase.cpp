@@ -1,13 +1,21 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/Visuals/eosButtonBase.h"
 
 
 using namespace eos;
 
 
-/// ---------------------------------------------------------------------
+/// ----------------------------------------------------------------------
+/// \brief Constructor
+///
+ButtonBase::ButtonBase():
+	pressed(false) {
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Genera una pulsacio del boto.
 ///
 void ButtonBase::click() {
@@ -17,34 +25,57 @@ void ButtonBase::click() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief procesa el missatge 'touchPadEvent'.
-/// \param msg: El missatge a procesar.
+/// \brief Es crida quant es presiona el touchpad.
+/// \param position: Posicio del toc.
 ///
-void ButtonBase::onTouchPadEvent(
-	const Message &msg) {
+#ifdef OPT_GUI_TouchPad
+void ButtonBase::onTouchPadPress(
+	const Point &position) {
 
-	switch(msg.touchPad.event) {
-		case MsgTouchPadEvent::press:
-			onPress();
-			break;
+	onPress();
 
-		case MsgTouchPadEvent::release:
-		    onRelease();
-			onClick();
-		    break;
+	pressed = true;
 
-		case MsgTouchPadEvent::leave:
-			onRelease();
-			break;
-
-		default:
-			break;
-	}
+	Visual::onTouchPadPress(position);
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quantt es prem el boto.
+/// \brief Es crida quant es deixa de presionar el pad.
+///
+#ifdef OPT_GUI_TouchPad
+void ButtonBase::onTouchPadRelease() {
+
+	onRelease();
+
+	if (pressed)
+		onClick();
+
+	pressed = false;
+
+	Visual::onTouchPadRelease();
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant el pad ja no actua en el visual.
+///
+#ifdef OPT_GUI_TouchPad
+void ButtonBase::onTouchPadLeave() {
+
+	onRelease();
+
+	pressed = false;
+
+	Visual::onTouchPadLeave();
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant es prem el boto i es deixa anar.
 ///
 void ButtonBase::onClick() {
 

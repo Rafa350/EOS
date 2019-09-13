@@ -1,12 +1,17 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/Visuals/eosCheckButton.h"
+#include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 
 
 using namespace eos;
+
+
+// TODO: Millorar la maquina d'estats del boto per evitar release
+// abans que push.
 
 
 /// ----------------------------------------------------------------------
@@ -23,10 +28,10 @@ CheckButton::CheckButton():
 /// \param newState: El nou estat.
 ///
 void CheckButton::setState(
-	CheckButtonState newState) {
+	CheckButtonState state) {
 
-	if (state != newState) {
-		state = newState;
+	if (this->state != state) {
+		this->state = state;
 		invalidate();
 	}
 }
@@ -50,21 +55,18 @@ void CheckButton::onRender(
 
 	// Dibuixa el fons del indicador
 	//
-	if (state == CheckButtonState::checkedPressed ||
-		state == CheckButtonState::uncheckedPressed) {
+	if (isPressed()) {
 		g.setColor(COLOR_DarkSlateGray);
 		g.fillRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
 	}
 
 	// Dibuixa el indicador
 	//
-	if (state ==  CheckButtonState::unchecked ||
-		state == CheckButtonState::uncheckedPressed) {
+	if (state ==  CheckButtonState::unchecked) {
 		g.setColor(COLOR_LightSeaGreen);
 		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
 	}
-	else if (state == CheckButtonState::checked ||
-		     state == CheckButtonState::checkedPressed) {
+	else if (state == CheckButtonState::checked) {
 		g.setColor(COLOR_LightSeaGreen);
 		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
 		g.fillRoundedRectangle(Point(10, 10), Size(10, 10), r/2, r/2);
@@ -74,33 +76,24 @@ void CheckButton::onRender(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Es crida quant es fal click en el boto.
+///
 void CheckButton::onClick() {
 
 	switch (state) {
 		case CheckButtonState::unchecked:
-		case CheckButtonState::uncheckedPressed:
 			setState(CheckButtonState::checked);
 			break;
 
 		case CheckButtonState::checked:
-		case CheckButtonState::checkedPressed:
 			setState(CheckButtonState::unchecked);
 			break;
 
 		default:
 			break;
 	}
-}
 
-
-void CheckButton::onPress() {
-
-	setState(state == CheckButtonState::checked ? CheckButtonState::checkedPressed : CheckButtonState::uncheckedPressed);
-}
-
-
-void CheckButton::onRelease() {
-
-	setState(state == CheckButtonState::checkedPressed ? CheckButtonState::checked : CheckButtonState::unchecked);
+	ButtonBase::onClick();
 }
 

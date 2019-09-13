@@ -17,7 +17,7 @@ namespace eos {
 
     class Label: public Visual {
     	private:
-    		Color color;
+    		Color textColor;
     		Color backgroundColor;
     		HorizontalTextAlign horizontalTextAlign;
     		VerticalTextAlign verticalTextAlign;
@@ -25,17 +25,18 @@ namespace eos {
 
     	protected:
     		void onRender(RenderContext &context) override;
-    		void onDispatch(const Message &msg) override;
 
         public:
     		Label();
 
-            void setColor(const Color &newColor);
-            void setText(const char *newText);
-            void setHorizontalTextAlign(HorizontalTextAlign newAlign);
-            void setVerticalTextAlign(VerticalTextAlign newAlign);
+            void setTextColor(const Color &color);
+            void setBackgroundColor(const Color &color);
+            void setText(const char *text);
+            void setHorizontalTextAlign(HorizontalTextAlign align);
+            void setVerticalTextAlign(VerticalTextAlign align);
 
-            inline Color getColor() const { return color; }
+            inline Color getTextColor() const { return textColor; }
+            inline Color getBackgroundColor() const { return backgroundColor; }
             inline const char* getText() const { return text; }
     };
 

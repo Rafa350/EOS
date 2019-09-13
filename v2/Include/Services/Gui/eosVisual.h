@@ -34,10 +34,15 @@ namespace eos {
     	protected:
     		virtual void onRender(RenderContext &context) = 0;
     		virtual void onDispatch(const Message &msg);
-    		virtual void onActivate();
-    		virtual void onDeactivate();
+    		virtual void onActivate(Visual *pVisual);
+    		virtual void onDeactivate(Visual *pVisual);
 #ifdef OPT_GUI_TouchPad
-    		virtual void onTouchPadEvent(const Message &msg);
+    		virtual void onDispatchTouchPadEvent(const Message &msg);
+    		virtual void onTouchPadEnter();
+    		virtual void onTouchPadLeave();
+    		virtual void onTouchPadPress(const Point &position);
+    		virtual void onTouchPadRelease();
+    		virtual void onTouchPadMove(const Point &position);
 #endif
 
     		void addVisual(Visual *pVisual);
@@ -55,8 +60,8 @@ namespace eos {
             inline bool isVisible() const;
             void setVisible(bool visible);
 
-            void setPosition(const Point &p);
-            void setSize(const Size &s);
+            void setPosition(const Point &position);
+            void setSize(const Size &size);
 
             inline const Point& getPosition() const { return position; }
             Point getAbsolutePosition() const;

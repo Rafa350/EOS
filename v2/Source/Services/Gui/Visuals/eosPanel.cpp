@@ -2,6 +2,8 @@
 #include "eosAssert.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/Visuals/eosPanel.h"
+#include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 
 
@@ -17,20 +19,15 @@ Panel::Panel() :
 }
 
 
-void Panel::initializePanel() {
-
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief Assigna el color.
-/// \param newColor: El color.
+/// \param color: El color.
 ///
 void Panel::setColor(
-	const Color &newColor) {
+	const Color &color) {
 
-	if (color != newColor) {
-		color = newColor;
+	if (this->color != color) {
+		this->color = color;
 		invalidate();
 	}
 }

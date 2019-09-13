@@ -9,12 +9,19 @@
 using namespace eos;
 
 
+/// ----------------------------------------------------------------------
+/// \brief Constructor de la imatge.
+///
 Image::Image() :
 	pBitmap(nullptr) {
 
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Asigna un bitmap a la imatge.
+/// \param newBitmap: El nou bitmap.
+///
 void Image::setBitmap(
 	Bitmap *newBitmap) {
 
@@ -25,7 +32,18 @@ void Image::setBitmap(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Renderitza la imatge.
+/// \param context: El context de renderitzat.
+///
 void Image::onRender(
 	RenderContext &context) {
 
+	Graphics &g = context.beginRender(this);
+
+	g.drawBitmap(
+		getPosition(),
+		pBitmap);
+
+	context.endRender();
 }

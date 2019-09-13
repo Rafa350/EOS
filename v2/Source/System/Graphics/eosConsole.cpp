@@ -1,4 +1,6 @@
 #include "eos.h"
+#include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosConsole.h"
 #include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosGraphics.h"
@@ -11,7 +13,7 @@ using namespace eos;
 /// \brief Constructor de l'objecte.
 /// \param graphics: Objecte 'Graphics' per dibuixar.
 /// \param columns: Numero de columnes.
-/// \param rows: Numero de fil·leres.
+/// \param rows: Numero de filï¿½leres.
 ///
 Console::Console(
 	Graphics *graphics,

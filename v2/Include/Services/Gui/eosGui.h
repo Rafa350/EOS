@@ -59,7 +59,7 @@ namespace eos {
 			inline Screen* getRootVisual() const { return screen; }
 			inline Visual* getActiveVisual() const { return active; }
 			Visual *getVisualAt(const Point &position) const;
-			void setActiveVisual(Visual *visual);
+			void setActiveVisual(Visual *pVisual);
 
 		protected:
 			void onInitialize() override;

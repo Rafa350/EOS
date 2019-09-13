@@ -2,6 +2,9 @@
 #include "eosAssert.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
+#include "System/Graphics/eosBitmap.h"
+#include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPoint.h"
 #include "Services/Gui/eosGui.h"
@@ -9,6 +12,7 @@
 #include "Services/Gui/eosVisual.h"
 #include "Services/Gui/Visuals/eosBorder.h"
 #include "Services/Gui/Visuals/eosCheckButton.h"
+#include "Services/Gui/Visuals/eosImage.h"
 #include "Services/Gui/Visuals/eosPushButton.h"
 #include "Services/Gui/Visuals/eosLabel.h"
 #include "Services/Gui/Visuals/eosPanel.h"
@@ -45,6 +49,19 @@ static RenderContext *context;
 
 Panel *panel;
 int x, y, dx, dy;
+
+static Bitmap *createBitmap() {
+
+	extern const unsigned char bitmapBmpMain[];
+
+	const uint8_t *data = bitmapBmpMain;
+
+	int width = (int) (data[0] | (data[1] << 8));
+	int height = (int) (data[2] | (data[3] << 8));
+	//int flags = (int) (data[4] | (data[5] << 8));
+
+	return new Bitmap(width, height, ColorFormat::rgb565, &data[6]);
+}
 
 
 /// ----------------------------------------------------------------------
@@ -84,28 +101,18 @@ GuiService::GuiService(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna el visual actiu.
-/// \param visual: El nou visual a activar.
+/// \param pVisual: El nou visual a activar.
 ///
 void GuiService::setActiveVisual(
-	Visual *visual) {
+	Visual *pVisual) {
 
-	if (active != nullptr) {
-		Message msg = {
-			.msgId = MsgId::deactivate,
-			.target = active
-		};
-		active->dispatch(msg);
-	}
+	/*if (active != nullptr)
+		active->onDeactivate(pVisual);
 
-	active = visual;
-
-	if (active != nullptr) {
-		Message msg = {
-			.msgId = MsgId::activate,
-			.target = active
-		};
-		active->dispatch(msg);
-	}
+	if (pVisual != nullptr)
+		pVisual->onActivate(active);
+*/
+	active = pVisual;
 }
 
 
@@ -156,7 +163,6 @@ void GuiService::onInitialize() {
 	border1->setBorderColor(COLOR_Red);
 
 	panel = new Panel();
-	panel->setColor(COLOR_Yellow);
 	panel->setPosition(Point(2, 2));
 	panel->setSize(Size(146, 56));
 
@@ -183,6 +189,11 @@ void GuiService::onInitialize() {
 	checkButton->setPosition(Point(100, 150));
 	checkButton->setSize(Size(120, 30));
 
+	Image *image = new Image();
+	image->setPosition(Point(150, 150));
+	image->setSize(Size(60, 60));
+	image->setBitmap(createBitmap());
+
 	screen->addChild(border1);
 	border1->setContent(panel);
 	panel->addChild(border2);
@@ -191,6 +202,7 @@ void GuiService::onInitialize() {
 
 	screen->addChild(pushButton);
 	screen->addChild(checkButton);
+	screen->addChild(image);
 
 	VirtualKeyboard *kbd = new VirtualKeyboard();
 	kbd->setPosition(Point(250, 20));

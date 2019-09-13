@@ -11,11 +11,11 @@
 // o doble buffer.
 
 #include "eosAssert.h"
-#include "System/eosMath.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "HAL/STM32/halGPIO.h"
 #include "HAL/STM32/halLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
+#include "System/eosMath.h"
 
 
 // Parametres depenents del format de pixel
@@ -98,7 +98,6 @@ static inline pixel_t combinePixel(
 		((((fr * o) + (br * (255u - o))) >> 8) << PIXEL_SHIFT_R) |
 		((((fg * o) + (bg * (255u - o))) >> 8) << PIXEL_SHIFT_G) |
 		((((fb * o) + (bb * (255u - o))) >> 8) << PIXEL_SHIFT_B);
-
 }
 
 

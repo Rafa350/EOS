@@ -27,7 +27,7 @@ namespace eos {
             void onPress() override;
             void onRelease() override;
 
-            void setState(PushButtonState newState);
+            void setState(PushButtonState state);
 
         public:
             PushButton();

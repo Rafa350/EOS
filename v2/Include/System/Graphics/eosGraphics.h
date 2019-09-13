@@ -108,7 +108,9 @@ namespace eos {
             void drawEllipse(int x1, int y1, int x2, int y2) const;
             inline void drawEllipse(const Rect &r) const { drawEllipse(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
 
-            void drawBitmap(int x, int y, const Bitmap *bitmap) const;
+            void drawBitmap(int x, int y, const Bitmap *pBitmap) const;
+            inline void drawBitmap(const Point &p, const Bitmap *pBitmap) const { drawBitmap(p.getX(), p.getY(), pBitmap); }
+
             int drawChar(int x, int y, char c) const;
             int drawText(int x, int y, const char *s, int offset = 0, int length = -1) const;
 

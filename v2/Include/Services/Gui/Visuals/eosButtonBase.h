@@ -11,15 +11,25 @@ namespace eos {
 	struct Message;
 
     class ButtonBase: public ContentControl {
+    	private:
+			bool pressed;
+
     	protected:
+#ifdef OPT_GUI_TouchPad
+		    void onTouchPadPress(const Point &position) override;
+		    void onTouchPadRelease() override;
+		    void onTouchPadLeave() override;
+#endif
 			virtual void onClick();
 			virtual void onPress();
 			virtual void onRelease();
 
-    	public:
-			void onTouchPadEvent(const Message &msg) override;
-			void click();
+			bool isPressed() const { return pressed; }
 
+    	public:
+			ButtonBase();
+
+			void click();
     };
 
 

@@ -3,6 +3,7 @@
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/Visuals/eosLabel.h"
 #include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "string.h"
 
@@ -15,7 +16,7 @@ using namespace eos;
 ///
 Label::Label():
 
-	color(COLOR_White),
+	textColor(COLOR_White),
 	backgroundColor(COLOR_Transparent),
 	horizontalTextAlign(HorizontalTextAlign::center),
 	verticalTextAlign(VerticalTextAlign::middle),
@@ -26,13 +27,27 @@ Label::Label():
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna el color del text.
-/// \param newColor: El color.
+/// \param color: El color.
 ///
-void Label::setColor(
-	const Color &newColor) {
+void Label::setTextColor(
+	const Color &color) {
 
-	if (color != newColor) {
-		color = newColor;
+	if (textColor != color) {
+		textColor = color;
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna el color del fons.
+/// \param color: El color.
+///
+void Label::setBackgroundColor(
+	const Color &color) {
+
+	if (backgroundColor != color) {
+		backgroundColor = color;
 		invalidate();
 	}
 }
@@ -40,13 +55,13 @@ void Label::setColor(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna l'aliniacio horitzontal del text.
-/// \param newAlign: L'aliniacio.
+/// \param align: L'aliniacio.
 ///
 void Label::setHorizontalTextAlign(
-	HorizontalTextAlign newAlign) {
+	HorizontalTextAlign align) {
 
-	if (horizontalTextAlign != newAlign) {
-		horizontalTextAlign = newAlign;
+	if (horizontalTextAlign != align) {
+		horizontalTextAlign = align;
 		invalidate();
 	}
 }
@@ -54,28 +69,27 @@ void Label::setHorizontalTextAlign(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna l'aliniacio vertical del text.
-/// \param newAlign: L'aliniacio.
+/// \param align: L'aliniacio.
 ///
 void Label::setVerticalTextAlign(
-	VerticalTextAlign newAlign) {
+	VerticalTextAlign align) {
 
-	if (verticalTextAlign != newAlign) {
-		verticalTextAlign = newAlign;
+	if (verticalTextAlign != align) {
+		verticalTextAlign = align;
 		invalidate();
 	}
 }
 
 
-
 /// ----------------------------------------------------------------------
 /// \brief Asigna el text.
-/// \param newText: El text.
+/// \param text: El text.
 ///
 void Label::setText(
-	const char *newText) {
+	const char *text) {
 
-	if (strcmp(text, newText) != 0) {
-		text = newText;
+	if (strcmp(this->text, text) != 0) {
+		this->text = text;
 		invalidate();
 	}
 }
@@ -95,24 +109,9 @@ void Label::onRender(
 	g.setColor(backgroundColor);
 	g.fillRectangle(getRect());
 
-	g.setColor(color);
+	g.setColor(textColor);
 	g.setTextAlign(horizontalTextAlign, verticalTextAlign);
 	g.drawText(s.getWidth() / 2, s.getHeight() / 2, text, 0, -1);
 
 	context.endRender();
-}
-
-
-void Label::onDispatch(
-	const Message &msg) {
-
-	switch (msg.msgId) {
-		case MsgId::touchPadEvent:
-			setText("caca");
-			break;
-
-		default:
-			Visual::onDispatch(msg);
-			break;
-	}
 }

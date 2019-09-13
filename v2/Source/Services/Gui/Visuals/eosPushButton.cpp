@@ -1,8 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/Visuals/eosPushButton.h"
+#include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 
 
@@ -20,13 +21,13 @@ PushButton::PushButton():
 
 /// ----------------------------------------------------------------------
 /// \brief Canvia l'estat del boto.
-/// \param newState: El nou estat.
+/// \param state: El nou estat.
 ///
 void PushButton::setState(
-	PushButtonState newState) {
+	PushButtonState state) {
 
-	if (state != newState) {
-		state = newState;
+	if (this->state != state) {
+		this->state = state;
 		invalidate();
 	}
 }

@@ -211,12 +211,12 @@ void Graphics::drawPoint(
 void Graphics::drawBitmap(
     int x,
     int y,
-    const Bitmap *bitmap) const {
+    const Bitmap *pBitmap) const {
 
 	int x1 = x;
 	int y1 = y;
-	int x2 = x + bitmap->getWidth() - 1;
-	int y2 = y + bitmap->getHeight() - 1;
+	int x2 = x + pBitmap->getWidth() - 1;
+	int y2 = y + pBitmap->getHeight() - 1;
 
 	if (clipRectangle(x1, y1, x2, y2)) {
 
@@ -227,10 +227,10 @@ void Graphics::drawBitmap(
 			driver->writePixels(
 				x1, y1,
 				w, h,
-				bitmap->getPixels(),
-				bitmap->getFormat(),
+				pBitmap->getPixels(),
+				pBitmap->getFormat(),
 				x1 - x, y1 - y,
-				bitmap->getWidth());
+				pBitmap->getWidth());
 	}
 }
 

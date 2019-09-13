@@ -163,17 +163,17 @@ void Visual::removeVisuals() {
 
 /// ---------------------------------------------------------------------
 /// \brief Obte el visual en la posicio indicada.
-/// \param p: La posicio.
+/// \param position: La posicio.
 /// \return El visual, o null si no el troba.
 ///
 Visual *Visual::getVisualAt(
-	const Point &p) {
+	const Point &position) {
 
 	Rect r(getAbsolutePosition(), size);
-	if (r.contains(p)) {
+	if (r.contains(position)) {
 
 		for (VisualListIterator it(childs); it.hasNext(); it.next()) {
-			Visual *pChild = it.current()->getVisualAt(p);
+			Visual *pChild = it.current()->getVisualAt(position);
 			if (pChild != nullptr)
 				return pChild;
 		}
@@ -220,13 +220,13 @@ void Visual::setVisible(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna la posicio.
-/// \param p: Coordinades de la posicio.
+/// \param position: La nova posicio.
 ///
 void Visual::setPosition(
-	const Point &p) {
+	const Point &position) {
 
-	if (position != p) {
-		position = p;
+	if (this->position != position) {
+		this->position = position;
 		invalidate();
 	}
 }
@@ -234,38 +234,29 @@ void Visual::setPosition(
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna el tamany.
-/// \param width: Amplada.
-/// \param height: Al�ada.
+/// \param size: El nou tamany.
 ///
 void Visual::setSize(
-	const Size &s) {
+	const Size &size) {
 
-    if (size != s) {
-    	size = s;
+    if (this->size != size) {
+    	this->size = size;
 		invalidate();
     }
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Despatch del missatge per defecte.
+/// \brief Es crida quent hi ha que despatxar un missatge..
 /// \param msg: El missatge a despatxar.
 ///
 void Visual::onDispatch(
 	const Message &msg) {
 
 	switch (msg.msgId) {
-		case MsgId::activate:
-			onActivate();
-			break;
-
-		case MsgId::deactivate:
-			onDeactivate();
-			break;
-
 #ifdef OPT_GUI_TouchPad
 		case MsgId::touchPadEvent:
-			onTouchPadEvent(msg);
+			onDispatchTouchPadEvent(msg);
 			break;
 #endif
 
@@ -281,9 +272,10 @@ void Visual::onDispatch(
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida al activar el visual.
-/// \param msg: El missatge.
+/// \param pVisual: El visual desactivat al activar aquest.
 ///
-void Visual::onActivate() {
+void Visual::onActivate(
+	Visual *pVisual) {
 
 	invalidate();
 }
@@ -291,8 +283,10 @@ void Visual::onActivate() {
 
 /// ----------------------------------------------------------------------
 /// \brief Es crida al desactivar el visual.
+/// \param pVisual: El visual activat al desactivar aquest.
 ///
-void Visual::onDeactivate() {
+void Visual::onDeactivate(
+	Visual *pVisual) {
 
 	invalidate();
 }
@@ -302,8 +296,70 @@ void Visual::onDeactivate() {
 /// \brief Procesa el missatge 'touchPadEvent'
 ///
 #ifdef OPT_GUI_TouchPad
-void Visual::onTouchPadEvent(
+void Visual::onDispatchTouchPadEvent(
 	const Message &msg) {
+
+	switch (msg.touchPad.event) {
+		case MsgTouchPadEvent::enter:
+			onTouchPadEnter();
+			break;
+
+		case MsgTouchPadEvent::leave:
+			onTouchPadLeave();
+			break;
+
+		case MsgTouchPadEvent::move:
+			onTouchPadMove(Point(msg.touchPad.x, msg.touchPad.y));
+			break;
+
+		case MsgTouchPadEvent::press:
+			onTouchPadPress(Point(msg.touchPad.x, msg.touchPad.y));
+			break;
+
+		case MsgTouchPadEvent::release:
+			onTouchPadRelease();
+			break;
+
+		default:
+			break;
+	}
+
+}
+#endif
+
+
+#ifdef OPT_GUI_TouchPad
+void Visual::onTouchPadEnter() {
+
+}
+#endif
+
+
+#ifdef OPT_GUI_TouchPad
+void Visual::onTouchPadLeave() {
+
+}
+#endif
+
+
+#ifdef OPT_GUI_TouchPad
+void Visual::onTouchPadPress(
+	const Point &position) {
+
+}
+#endif
+
+
+#ifdef OPT_GUI_TouchPad
+void Visual::onTouchPadRelease() {
+
+}
+#endif
+
+
+#ifdef OPT_GUI_TouchPad
+void Visual::onTouchPadMove(
+	const Point &position) {
 
 }
 #endif

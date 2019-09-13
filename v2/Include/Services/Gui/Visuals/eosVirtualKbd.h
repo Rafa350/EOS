@@ -12,7 +12,7 @@ namespace eos {
 
 	class VirtualKeyboard: public Panel {
 		protected:
-			void initializePanel() override;
+			void initializePanel();
 
 		public:
 			VirtualKeyboard();

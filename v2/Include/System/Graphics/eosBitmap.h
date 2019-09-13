@@ -25,7 +25,7 @@ namespace eos {
 			Bitmap(int width, int height, ColorFormat format, const uint8_t *pixels);
 			~Bitmap();
 
-			void setPixel(int x, int y, Color color);
+			void setPixel(int x, int y, const Color &color);
 			Color getPixel(int x, int y);
 
 			inline int getWidth() const { return width; }

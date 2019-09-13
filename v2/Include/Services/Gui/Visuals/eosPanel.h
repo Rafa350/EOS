@@ -16,7 +16,6 @@ namespace eos {
 			Color color;
 
 		protected:
-			virtual void initializePanel();
 			void onRender(RenderContext &context) override;
 
 		public:
@@ -24,7 +23,7 @@ namespace eos {
 
 			inline void addChild(Visual *pVisual) { addVisual(pVisual); }
 
-			void setColor(const Color &newColor);
+			void setColor(const Color &color);
 			inline Color getColor() const { return color; }
 	};
 }

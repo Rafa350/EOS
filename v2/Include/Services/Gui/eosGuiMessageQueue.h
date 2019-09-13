@@ -68,9 +68,7 @@ namespace eos {
     	null,
     	touchPadEvent,
 		selectorEvent,
-		keyboardEvent,
-		activate,
-		deactivate
+		keyboardEvent
     };
 
     class Visual;

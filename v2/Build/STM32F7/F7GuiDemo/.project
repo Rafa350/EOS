@@ -94,6 +94,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/appMain.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/App/bitmap1.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/GuiDemo/Source/bitmap1.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
