@@ -21,16 +21,20 @@ namespace eos {
     		Color backgroundColor;
     		HorizontalTextAlign horizontalTextAlign;
     		VerticalTextAlign verticalTextAlign;
+    		Font *textFont;
     		const char *text;
 
     	protected:
     		void onRender(RenderContext &context) override;
+
+    		const Size& getDesiredSize() const override;
 
         public:
     		Label();
 
             void setTextColor(const Color &color);
             void setBackgroundColor(const Color &color);
+            void setTextFont(Font *font);
             void setText(const char *text);
             void setHorizontalTextAlign(HorizontalTextAlign align);
             void setVerticalTextAlign(VerticalTextAlign align);
@@ -38,6 +42,8 @@ namespace eos {
             inline Color getTextColor() const { return textColor; }
             inline Color getBackgroundColor() const { return backgroundColor; }
             inline const char* getText() const { return text; }
+
+            void measure(const Size &availableSize) override;
     };
 
 }

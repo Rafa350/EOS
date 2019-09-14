@@ -12,13 +12,12 @@ namespace eos {
 
     class Service;
 
+    typedef List<Service*> ServiceList;
+    typedef ListIterator<Service*> ServiceListIterator;
+
     /// \brief Clase que representa l'aplicacio.
     ///
     class Application {
-        private:
-            typedef List<Service*> ServiceList;
-            typedef ListIterator<Service*> ServiceListIterator;
-
         private:
             ServiceList services;
 
@@ -45,6 +44,7 @@ namespace eos {
             void removeServices();
             Service *getService(int id) const;
             Service *getService(const char *serviceName) const;
+            inline const ServiceList& getServices() const { return services; }
 
             Application(const Application&) = delete;
             Application& operator=(const Application&) = delete;

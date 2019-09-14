@@ -20,8 +20,29 @@ Label::Label():
 	backgroundColor(COLOR_Transparent),
 	horizontalTextAlign(HorizontalTextAlign::center),
 	verticalTextAlign(VerticalTextAlign::middle),
+	textFont(nullptr),
 	text(0) {
 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Calcula la mida desitjada del visual.
+/// \param availableSize: Tamany disponible.
+///
+void Label::measure(
+	const Size &availableSize) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el resultat del method 'measure'.
+/// \return El tamany calculat.
+///
+const Size& Label::getDesiredSize() const {
+
+	return getSize();
 }
 
 
@@ -34,6 +55,20 @@ void Label::setTextColor(
 
 	if (textColor != color) {
 		textColor = color;
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna al font del text.
+/// \param font: El font.
+///
+void Label::setTextFont(
+	Font *textFont) {
+
+	if (this->textFont != textFont) {
+		this->textFont = textFont;
 		invalidate();
 	}
 }
@@ -111,6 +146,8 @@ void Label::onRender(
 
 	g.setColor(textColor);
 	g.setTextAlign(horizontalTextAlign, verticalTextAlign);
+	if (textFont != nullptr)
+		g.setFont(textFont);
 	g.drawText(s.getWidth() / 2, s.getHeight() / 2, text, 0, -1);
 
 	context.endRender();

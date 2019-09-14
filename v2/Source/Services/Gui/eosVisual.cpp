@@ -14,7 +14,7 @@ using namespace eos;
 Visual::Visual():
 	pParent(nullptr),
 	needRender(false),
-	visible(true),
+	visibility(Visibility::visible),
 	position(0, 0),
 	size(0, 0) {
 }
@@ -72,7 +72,7 @@ bool Visual::isRenderizable() {
 ///
 bool Visual::isVisible() const {
 
-	if (visible) {
+	if (visibility == Visibility::visible) {
 		if (pParent != nullptr)
 			return pParent->isVisible();
 		else
@@ -151,7 +151,7 @@ void Visual::removeVisual(
 }
 
 
-/// --------------------------------------------------------------------
+/// ----------------------------------------------------------------------
 /// \brief Elimina els visuals de la llista.
 ///
 void Visual::removeVisuals() {
@@ -161,7 +161,27 @@ void Visual::removeVisuals() {
 }
 
 
-/// ---------------------------------------------------------------------
+/// ----------------------------------------------------------------------
+/// \brief Calcula la mida del visual. Primer par del layout.
+/// \param availableSize: Indica el tamany disponible.
+///
+void Visual::measure(
+	const Size &availableSize) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el resultat del method 'measure'.
+/// \return El tamany calculat.
+///
+const Size& Visual::getDesiredSize() const {
+
+	return size;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Obte el visual en la posicio indicada.
 /// \param position: La posicio.
 /// \return El visual, o null si no el troba.
@@ -208,11 +228,11 @@ Point Visual::getAbsolutePosition() const {
 /// \brief Canvia l'estat de visibilitat.
 /// \param visible: True per fer el visual visible.
 ///
-void Visual::setVisible(
-	bool visible) {
+void Visual::setVisibility(
+	Visibility visibility) {
 
-	if (this->visible != visible) {
-		this->visible = visible;
+	if (this->visibility != visibility) {
+		this->visibility = visibility;
 		invalidate();
 	}
 }
