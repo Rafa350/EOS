@@ -23,7 +23,7 @@ namespace eos {
 	};
 
 	enum class Orientation {
-		horizopntal,
+		horitzontal,
 		vertical,
 	};
 
@@ -41,25 +41,6 @@ namespace eos {
 		bottom
 	};
 
-	class Thickness {
-		private:
-			int left;
-			int top;
-			int right;
-			int bottom;
-
-		public:
-			Thickness(int thickness): left(thickness), top(thickness), right(thickness), bottom(thickness) {}
-			Thickness(int hThickness, int vThickness): left(hThickness), top(vThickness), right(hThickness), bottom(vThickness) {}
-			Thickness(int left, int top, int right, int bottom): left(left), top(top), right(right), bottom(bottom) {}
-			Thickness(const Thickness &t): left(t.left), top(t.top), right(t.right), bottom(t.bottom) {}
-
-			inline int getLeft() const { return left; }
-			inline int getTop() const { return top; }
-			inline int getRifht() const { return right; }
-			inline int getBottom() const { return bottom; }
-	};
-
 	class Visual;
     typedef List<Visual*> VisualList;
     //typedef ReadOnlyList<Visual*> ReadOnlyVisualList;
@@ -75,6 +56,7 @@ namespace eos {
     		Visibility visibility;
     		Point position;
 			Size size;
+			Size desiredSize;
 
     	protected:
     		virtual void onRender(RenderContext &context) = 0;
@@ -89,7 +71,7 @@ namespace eos {
     		virtual void onTouchPadRelease();
     		virtual void onTouchPadMove(const Point &position);
 #endif
-            virtual const Size& getDesiredSize() const;
+            virtual Size measureCore(const Size &availableSize) const;
 
             void addVisual(Visual *pVisual);
             void removeVisual(Visual *pVisual);
@@ -104,7 +86,7 @@ namespace eos {
             Visual *getVisualAt(const Point &p);
 
             bool isRenderizable();
-            inline bool isVisible() const;
+            bool isVisible() const;
             void setVisibility(Visibility visibility);
             Visibility getVisibility() const { return visibility; }
 
@@ -116,7 +98,8 @@ namespace eos {
             inline const Size& getSize() const { return size; }
             inline Rect getRect() const { return Rect(Point(0, 0), size); }
 
-            virtual void measure(const Size &availableSize);
+            void measure(const Size &availableSize);
+            const Size& getDesiredSize() const { return desiredSize; }
 
             void dispatch(const Message &msg);
             bool render(RenderContext &context);

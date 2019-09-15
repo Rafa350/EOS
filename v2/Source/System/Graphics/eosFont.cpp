@@ -1,8 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "System/Core/eosString.h"
 #include "System/Graphics/eosFont.h"
-
-#include <string.h>
 
 
 using namespace eos;
@@ -87,11 +86,11 @@ Font::Font(
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param fontName: Nom del font.
-/// \param height: Alçada del font.
+/// \param height: Alï¿½ada del font.
 /// \param style: Estil del font.
 ///
 Font::Font(
-    const char* fontName,
+    const String &fontName,
     int height,
     FontStyle style):
 
@@ -100,7 +99,7 @@ Font::Font(
 
     for (uint16_t i = 0; i < sizeof(fontTable) / sizeof(fontTable[0]); i++) {
         const FontTableEntry *entry = &fontTable[i];
-        if ((strcmp(fontName, entry->faceName) == 0) &&
+        if ((fontName.compare(entry->faceName) == 0) &&
             (height == entry->height)) {
             fontResource = entry->resource;
             break;
@@ -139,9 +138,9 @@ void Font::getCharInfo(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte l'avanç deun caracter.
+/// \brief Obte l'avanï¿½ deun caracter.
 /// \param ch: El caracter.
-/// \return L'avanç del caracter.
+/// \return L'avanï¿½ del caracter.
 ///
 int Font::getCharAdvance(
     char ch) {

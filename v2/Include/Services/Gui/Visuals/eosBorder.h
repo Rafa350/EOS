@@ -5,38 +5,40 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Services/Gui/eosVisual.h"
+#include "Services/Gui/Visuals/eosDecorator.h"
 #include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosThickness.h"
 
 
 namespace eos {
 
     class RenderContext;
 
-    class Border: public Visual {
+    class Border: public Decorator {
     	private:
     		Color backgroundColor;
-    		Color borderColor;
-    		int borderThickness;
-    		int borderRadius;
+    		Color color;
+    		Thickness thickness;
+    		int radius;
     		Visual *pContent;
 
     	protected:
     		void onRender(RenderContext &context) override;
+			Size measureCore(const Size &availableSize) const override;
 
         public:
     		Border();
 
             void setBackgroundColor(const Color &newColor);
-            void setBorderColor(const Color &newColor);
-            void setBorderThickness(int newThickness);
-            void setBorderRadius(int newRadius);
+            void setColor(const Color &newColor);
+            void setThickness(int newThickness);
+            void setRadius(int newRadius);
             void setContent(Visual *pNewContent);
 
-            inline Color getBorderColor() const { return borderColor; }
+            inline Color getColor() const { return color; }
             inline Color getBackgroundColor() const { return backgroundColor; }
-            inline int getBorderThickness() const { return borderThickness; }
-            inline int getBorderRadius() const { return borderRadius; }
+            inline const Thickness& getThickness() const { return thickness; }
+            inline int getRadius() const { return radius; }
             inline Visual* getContent() const { return pContent; }
     };
 

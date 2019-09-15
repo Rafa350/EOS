@@ -161,23 +161,21 @@ void Visual::removeVisuals() {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief Calcula la mida del visual. Primer par del layout.
-/// \param availableSize: Indica el tamany disponible.
-///
 void Visual::measure(
 	const Size &availableSize) {
 
+	measureCore(availableSize);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte el resultat del method 'measure'.
-/// \return El tamany calculat.
+/// \brief Calcula la mida del visual. Primer par del layout.
+/// \param availableSize: Indica el tamany disponible.
 ///
-const Size& Visual::getDesiredSize() const {
+Size Visual::measureCore(
+	const Size &availableSize) const {
 
-	return size;
+	return Size(0, 0);
 }
 
 

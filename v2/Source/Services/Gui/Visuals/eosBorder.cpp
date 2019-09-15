@@ -15,11 +15,24 @@ using namespace eos;
 ///
 Border::Border():
 	backgroundColor(COLOR_Transparent),
-	borderColor(),
-	borderThickness(1),
-	borderRadius(0),
+	color(),
+	thickness(1),
+	radius(0),
 	pContent(nullptr) {
 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Calcula les mesures del control
+/// \param availableSize: Tamany disponible.
+///
+Size Border::measureCore(
+	const Size &availableSize) const{
+
+	Size size = availableSize;
+
+	return availableSize;
 }
 
 
@@ -49,11 +62,11 @@ void Border::setContent(
 /// \brief Asigna el color del perfil.
 /// \param newColor: El color.
 ///
-void Border::setBorderColor(
+void Border::setColor(
 	const Color &newColor) {
 
-	if (borderColor != newColor) {
-		borderColor = newColor;
+	if (this->color != newColor) {
+		this->color = newColor;
 		invalidate();
 	}
 }
@@ -63,11 +76,11 @@ void Border::setBorderColor(
 /// \brief Asigna l'amplada del perfil.
 /// \param newThickness: Amplada del perfil.
 ///
-void Border::setBorderThickness(
+void Border::setThickness(
 	int newThickness) {
 
-	if (borderThickness != newThickness) {
-		borderThickness = newThickness;
+	if (this->thickness != newThickness) {
+		this->thickness = newThickness;
 		invalidate();
 	}
 }
@@ -77,11 +90,11 @@ void Border::setBorderThickness(
 /// \brief Asigna el radi de curvatura del perfil.
 /// \param newRadius: Radi de curvatura.
 ///
-void Border::setBorderRadius(
+void Border::setRadius(
 	int newRadius) {
 
-	if (borderRadius != newRadius) {
-		borderRadius = newRadius;
+	if (this->radius != newRadius) {
+		this->radius = newRadius;
 		invalidate();
 	}
 }
@@ -115,7 +128,7 @@ void Border::onRender(
 	g.setColor(backgroundColor);
 	g.fillRectangle(r);
 
-	g.setColor(borderColor);
+	g.setColor(color);
 	g.drawRectangle(r);
 
 	context.endRender();

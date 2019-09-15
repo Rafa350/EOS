@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/Gui/Visuals/eosStackPanel.h"
+#include "System/eosMath.h"
 
 
 using namespace eos;
@@ -10,14 +11,17 @@ using namespace eos;
 /// \brief Constructor del objecte.
 ///
 StackPanel::StackPanel():
-	orientation(Orientation::vertical),
-	desiredSize(0, 0) {
+	orientation(Orientation::vertical) {
 
 }
 
 
-void StackPanel::measure(
-	const Size &availableSize) {
+/// ----------------------------------------------------------------------
+/// \brief Calcula les mesures del control
+/// \param availableSize: Tamany disponible.
+///
+Size StackPanel::measureCore(
+	const Size &availableSize) const {
 
 	int width = 0;
 	int height = 0;
@@ -26,13 +30,25 @@ void StackPanel::measure(
 		eosAssert(pChild != nullptr);
 		if (pChild->isVisible()) {
 
+			pChild->measure(availableSize);
+			const Size& childSize = pChild->getDesiredSize();
+
+			if (orientation == Orientation::horitzontal)
+				height = Math::max(height, childSize.getHeight());
+			else
+				width = Math::max(width, childSize.getWidth());
+
 		}
 	}
 
-	desiredSize = Size(width, height);
+	return Size(width, height);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Asigna l'orientacio del panell.
+/// \param orientation: El valor de la propietat.
+///
 void StackPanel::setOrientation(
 	Orientation orientation) {
 
@@ -41,4 +57,3 @@ void StackPanel::setOrientation(
 		invalidate();
 	}
 }
-

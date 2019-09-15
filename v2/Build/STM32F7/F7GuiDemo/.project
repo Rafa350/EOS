@@ -639,6 +639,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosSemaphore.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Core/eosString.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosString.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
@@ -687,6 +692,11 @@
 			<name>inc/Framework/EOS/System/Graphics/eosSize.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosSize.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosThickness.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosThickness.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosTransformation.h</name>
@@ -849,6 +859,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosSemaphore.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Core/eosString.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosString.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTask.cpp</locationURI>
@@ -934,6 +949,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosSize.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Graphics/eosThickness.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosThickness.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/Graphics/eosTransformation.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosTransformation.cpp</locationURI>
@@ -972,6 +992,11 @@
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosControl.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosControl.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosDecorator.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosDecorator.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosImage.h</name>

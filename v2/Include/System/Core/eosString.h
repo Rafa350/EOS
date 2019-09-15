@@ -1,5 +1,5 @@
-#ifndef __EOS_STRING_HPP
-#define	__EOS_STRING_HPP
+#ifndef __eosString__
+#define	__eosString__
 
 
 namespace eos {
@@ -8,19 +8,35 @@ namespace eos {
     ///
     class String {
         private:
+        	unsigned length;
+        	unsigned containerSize;
             char *container;
-            unsigned length;
+
+        private:
+            void alloc(const char *text);
+
         public:
             String();
             String(const char *text);
-            String(char ch, unsigned repeat);
             String(const String &other);
+            String(const String &other, unsigned index, unsigned length);
             ~String();
             
-            unsigned getLength() const { return length; }
+            inline unsigned getLength() const { return length; }
+            inline bool isEmpty() const { return length == 0; }
             
-            operator const char*() const { return container; }
-            char operator[](int index) const { return container[index]; }
+            int compare(const String& other) const;
+            int compare(const char *text) const;
+
+            String& operator = (const char *text);
+            String& operator = (const String &other);
+
+            bool operator ==(const String &other) const;
+            inline bool operator !=(const String &other) const { return !operator ==(other); }
+
+            inline operator const char*() const { return container; }
+            inline char& operator[](int index) { return container[index]; }
+            inline const char& operator[](int index) const { return container[index]; }
     };
     
     /// \brief Constructor de cadenes de texte.
@@ -40,4 +56,4 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosString__

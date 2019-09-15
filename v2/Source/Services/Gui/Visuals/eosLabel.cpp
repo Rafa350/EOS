@@ -5,7 +5,6 @@
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
-#include "string.h"
 
 
 using namespace eos;
@@ -21,7 +20,7 @@ Label::Label():
 	horizontalTextAlign(HorizontalTextAlign::center),
 	verticalTextAlign(VerticalTextAlign::middle),
 	textFont(nullptr),
-	text(0) {
+	text() {
 
 }
 
@@ -30,19 +29,10 @@ Label::Label():
 /// \brief Calcula la mida desitjada del visual.
 /// \param availableSize: Tamany disponible.
 ///
-void Label::measure(
-	const Size &availableSize) {
+Size Label::measureCore(
+	const Size &availableSize) const {
 
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte el resultat del method 'measure'.
-/// \return El tamany calculat.
-///
-const Size& Label::getDesiredSize() const {
-
-	return getSize();
+	return Size(0, 0);
 }
 
 
@@ -121,9 +111,9 @@ void Label::setVerticalTextAlign(
 /// \param text: El text.
 ///
 void Label::setText(
-	const char *text) {
+	const String &text) {
 
-	if (strcmp(this->text, text) != 0) {
+	if (this->text != text) {
 		this->text = text;
 		invalidate();
 	}

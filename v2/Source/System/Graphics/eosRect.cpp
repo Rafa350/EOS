@@ -70,8 +70,8 @@ Rect::Rect(
 
 	x(Math::min(p1.getX(), p2.getX())),
 	y(Math::min(p1.getY(), p2.getY())),
-	width(Math::abs(p2.getX() - p1.getX() + 1)),
-	height(Math::abs(p2.getY() - p1.getY() + 1)) {
+	width(Math::abs(p2.getX() - p1.getX()) + 1),
+	height(Math::abs(p2.getY() - p1.getY()) + 1) {
 
 	eosAssert(width >= 0);
 	eosAssert(height >= 0);
@@ -89,6 +89,38 @@ Rect::Rect(
 	y(r.y),
 	width(r.width),
 	height(r.height) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Infla un rectangle.
+/// \param t: Gruixos per inflar.
+/// \return El resultat.
+///
+Rect Rect::inflate(
+	const Thickness &t) const {
+
+	return Rect(
+		x - t.getLeft(),
+		y - t.getTop(),
+		width + t.getLeft() + t.getRight(),
+		height + t.getTop() + t.getBottom());
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Desinfla un rectangle.
+/// \param t: Gruixos per desinflar.
+/// \return El resultat.
+///
+Rect Rect::deflate(
+	const Thickness &t) const {
+
+	return Rect(
+		x + t.getLeft(),
+		y + t.getTop(),
+		width - t.getLeft() - t.getRight(),
+		height - t.getTop() - t.getBottom());
 }
 
 

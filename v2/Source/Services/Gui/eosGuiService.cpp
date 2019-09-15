@@ -162,7 +162,7 @@ void GuiService::onInitialize() {
 	Border *border1 = new Border();
 	border1->setPosition(Point(0, 0));
 	border1->setSize(Size(150, 60));
-	border1->setBorderColor(COLOR_Red);
+	border1->setColor(COLOR_Red);
 
 	panel = new Panel();
 	panel->setPosition(Point(2, 2));
@@ -171,12 +171,12 @@ void GuiService::onInitialize() {
 	Border *border2 = new Border();
 	border2->setPosition(Point(10, 10));
 	border2->setSize(Size(10, 40));
-	border2->setBorderColor(COLOR_Lime);
+	border2->setColor(COLOR_Lime);
 
 	Border* border3 = new Border();
 	border3->setPosition(Point(30, 10));
 	border3->setSize(Size(10, 40));
-	border3->setBorderColor(COLOR_Blue);
+	border3->setColor(COLOR_Blue);
 
 	Label *label = new Label();
 	label->setPosition(Point(50, 5));

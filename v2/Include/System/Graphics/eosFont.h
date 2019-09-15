@@ -33,6 +33,8 @@ namespace eos {
         const uint8_t *bitmap;    // -Punter al primer byte del caracter
     };
 
+    class String;
+
     class Font {
         private:
             char chCache;
@@ -40,7 +42,7 @@ namespace eos {
             const uint8_t *fontResource;
 
         public:
-            Font(const char *fontName, int height, FontStyle style);
+            Font(const String &fontName, int height, FontStyle style);
             Font(const unsigned char *fontResource);
             void getFontInfo(FontInfo &fi) const;
             void getCharInfo(char ch, CharInfo &ci);

@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 #include "Services/Gui/eosVisual.h"
+#include "System/Core/eosString.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosGraphics.h"
 
@@ -22,12 +23,12 @@ namespace eos {
     		HorizontalTextAlign horizontalTextAlign;
     		VerticalTextAlign verticalTextAlign;
     		Font *textFont;
-    		const char *text;
+    		String text;
 
     	protected:
     		void onRender(RenderContext &context) override;
 
-    		const Size& getDesiredSize() const override;
+    		Size measureCore(const Size &availableSize) const override;
 
         public:
     		Label();
@@ -35,15 +36,13 @@ namespace eos {
             void setTextColor(const Color &color);
             void setBackgroundColor(const Color &color);
             void setTextFont(Font *font);
-            void setText(const char *text);
+            void setText(const String &text);
             void setHorizontalTextAlign(HorizontalTextAlign align);
             void setVerticalTextAlign(VerticalTextAlign align);
 
             inline Color getTextColor() const { return textColor; }
             inline Color getBackgroundColor() const { return backgroundColor; }
-            inline const char* getText() const { return text; }
-
-            void measure(const Size &availableSize) override;
+            inline const String& getText() const { return text; }
     };
 
 }

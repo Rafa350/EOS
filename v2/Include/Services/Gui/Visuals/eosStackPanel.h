@@ -13,17 +13,15 @@ namespace eos {
 	class StackPanel: public Panel {
 		private:
 			Orientation orientation;
-			Size desiredSize;
+
+		protected:
+			Size measureCore(const Size &availableSize) const override;
 
 		public:
 			StackPanel();
 
 			void setOrientation(Orientation orientation);
 			Orientation getOrientation() const { return orientation; }
-
-
-			void measure(const Size &availableSize) override;
-
 	};
 }
 
