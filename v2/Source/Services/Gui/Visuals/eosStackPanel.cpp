@@ -19,29 +19,36 @@ StackPanel::StackPanel():
 /// ----------------------------------------------------------------------
 /// \brief Calcula les mesures del control
 /// \param availableSize: Tamany disponible.
+/// \return El tamany requerit.
 ///
 Size StackPanel::measureCore(
 	const Size &availableSize) const {
 
-	int width = 0;
-	int height = 0;
+	int contentWidth = 0;
+	int contentHeight = 0;
 	for (ListIterator<Visual*> it(getChilds()); it.hasNext(); it.next()) {
 		Visual *pChild = it.current();
 		eosAssert(pChild != nullptr);
 		if (pChild->isVisible()) {
 
-			pChild->measure(availableSize);
+			Size childAvailableSize = availableSize;
+			pChild->measure(childAvailableSize);
 			const Size& childSize = pChild->getDesiredSize();
 
-			if (orientation == Orientation::horitzontal)
-				height = Math::max(height, childSize.getHeight());
-			else
-				width = Math::max(width, childSize.getWidth());
+			if (orientation == Orientation::horitzontal) {
+				contentWidth += childSize.getWidth();
+				contentHeight = Math::max(contentHeight, childSize.getHeight());
+			}
+			else {
+				contentWidth = Math::max(contentWidth, childSize.getWidth());
+				contentHeight += childSize.getHeight();
+			}
 
 		}
 	}
 
-	return Size(width, height);
+	const Size& size = getSize();
+	return Size(Math::max(size.getWidth(), contentWidth), Math::max(size.getHeight(), contentHeight));
 }
 
 

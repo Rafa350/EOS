@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosMath.h"
+#include "System/Core/eosString.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosFont.h"
@@ -275,7 +276,7 @@ int Graphics::drawChar(
 /// \brief    Dibuixa un text amb el font i el color actual.
 /// \param    x: Coordinada X.
 /// \param    y: Coordinada Y.
-/// \param    s: El text a dibuixar.
+/// \param    text: El text a dibuixar.
 /// \param    offset: El primer caracter del text
 /// \param    length: Numero de caracters a dibuixar. -1 si dibuixa fins al final
 ///           del text.
@@ -284,12 +285,12 @@ int Graphics::drawChar(
 int Graphics::drawText(
     int x,
     int y,
-    const char *s,
+    const String &text,
     int offset,
     int length) const {
 
     if (state.hAlign != HorizontalTextAlign::left) {
-        int textWidth = getTextWidth(s, offset, length);
+        int textWidth = getTextWidth(text, offset, length);
         if (state.hAlign == HorizontalTextAlign::right)
             x -= textWidth;
         else
@@ -298,8 +299,8 @@ int Graphics::drawText(
 
     int sx = x;
 
-    for (int i = offset, j = length; j && s[i]; i++, j--)
-        x += drawChar(x, y, s[i]);
+    for (int i = offset, j = length; j && text[i]; i++, j--)
+        x += drawChar(x, y, text[i]);
 
     return x - sx;
 }
@@ -314,13 +315,13 @@ int Graphics::drawText(
 /// \return    L'amplada de la cadena en pixels.
 ///
 int Graphics::getTextWidth(
-    const char *s,
+    const String &text,
     int offset,
     int length) const {
 
     int w = 0;
-    for (int i = offset, j = length; j && s[i]; i++, j--)
-        w += font->getCharAdvance(s[i]);
+    for (int i = offset, j = length; j && text[i]; i++, j--)
+        w += font->getCharAdvance(text[i]);
 
     return w;
 }
@@ -328,11 +329,11 @@ int Graphics::getTextWidth(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte l'al�ada d'una cadena de texte.
-/// \param    s: La cadena de texte.
+/// \param    text: La cadena de texte.
 /// \return   L'al�ada de la cadena.
 ///
 int Graphics::getTextHeight(
-    const char *s) const {
+    const String &text) const {
 
     return font->getFontHeight();
 }

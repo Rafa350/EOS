@@ -2,6 +2,7 @@
 #include "eosAssert.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
+#include "System/Core/eosString.h"
 #include "System/Graphics/eosBitmap.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"

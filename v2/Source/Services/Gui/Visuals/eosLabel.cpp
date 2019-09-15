@@ -2,8 +2,10 @@
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/Visuals/eosLabel.h"
+#include "System/Core/eosString.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
+#include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosGraphics.h"
 
 
@@ -32,7 +34,17 @@ Label::Label():
 Size Label::measureCore(
 	const Size &availableSize) const {
 
-	return Size(0, 0);
+	if ((textFont != nullptr) && !text.isEmpty()) {
+		int width = 0;
+		for (int i = 0; text[i]; i++)
+			width += textFont->getCharAdvance(text[i]);
+
+		int height = textFont->getFontHeight();
+
+		return Size(width, height);
+	}
+	else
+		return Size(0, 0);
 }
 
 

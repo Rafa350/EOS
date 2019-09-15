@@ -17,6 +17,7 @@ namespace eos {
 
 	class Bitmap;
 	class Font;
+	class String;
 
     /// \brief Aliniacio horitzontal del text.
     enum class HorizontalTextAlign {
@@ -78,8 +79,8 @@ namespace eos {
             void pop();
 
             void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
-            int getTextWidth(const char *text, int offset = 0, int length = -1) const;
-            int getTextHeight(const char *text) const;
+            int getTextWidth(const String &text, int offset = 0, int length = -1) const;
+            int getTextHeight(const String &text) const;
 
             void drawPoint(int x, int y) const;
             inline void drawPoint(const Point &p) const { drawPoint(p.getX(), p.getY()); }
@@ -112,7 +113,7 @@ namespace eos {
             inline void drawBitmap(const Point &p, const Bitmap *pBitmap) const { drawBitmap(p.getX(), p.getY(), pBitmap); }
 
             int drawChar(int x, int y, char c) const;
-            int drawText(int x, int y, const char *s, int offset = 0, int length = -1) const;
+            int drawText(int x, int y, const String &text, int offset = 0, int length = -1) const;
 
             void fillRectangle(int x1, int y1, int x2, int y2) const;
             inline void fillRectangle(const Point &p1, const Point &p2) const { fillRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY()); }
