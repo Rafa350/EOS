@@ -43,8 +43,8 @@
             <itemPath>../../../Include/OSAL/osalHeap.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="Services" projectFiles="true">
-            <itemPath>../../../Include/Services/eosAppLoop.h</itemPath>
             <itemPath>../../../Include/Services/eosService.h</itemPath>
+            <itemPath>../../../Include/Services/eosAppLoopService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
@@ -115,8 +115,8 @@
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f4" displayName="Services" projectFiles="true">
-            <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosAppLoopService.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f6" displayName="StartUp" projectFiles="true">
             <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>
@@ -131,6 +131,7 @@
               <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosString.cpp</itemPath>
             </logicalFolder>
             <logicalFolder name="f3" displayName="Graphics" projectFiles="true">
               <logicalFolder name="f1" displayName="Fonts" projectFiles="true">
@@ -140,10 +141,19 @@
                 <itemPath>../../../Source/System/Graphics/Fonts/Consolas14pt.cpp</itemPath>
                 <itemPath>../../../Source/System/Graphics/Fonts/Consolas18pt.cpp</itemPath>
                 <itemPath>../../../Source/System/Graphics/Fonts/Consolas24pt.cpp</itemPath>
+                <itemPath>../../../Source/System/Graphics/Fonts/Tahoma12pt.cpp</itemPath>
               </logicalFolder>
               <itemPath>../../../Source/System/Graphics/eosColor.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosFont.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosGraphics.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Circle.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Rectangle.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Line.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosPoint.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosRect.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosSize.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Ellipse.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosTransformation.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
           </logicalFolder>
@@ -180,6 +190,7 @@
     <Elem>../../../Source/StartUp/PIC32</Elem>
     <Elem>../../../Source/System/Graphics</Elem>
     <Elem>../../../Library/PIC32/FreeRTOS/Source</Elem>
+    <Elem>../../../Source/Services</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -191,7 +202,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.10</languageToolchainVersion>
+        <languageToolchainVersion>2.30</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -311,6 +322,7 @@
         <property key="symbol-stripping" value=""/>
         <property key="trace-symbols" value=""/>
         <property key="warn-section-align" value="false"/>
+        <appendMe value="--allow-multiple-definition"/>
       </C32-LD>
       <C32CPP>
         <property key="additional-warnings" value="false"/>

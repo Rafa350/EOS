@@ -286,7 +286,7 @@ void ILI9341Driver::writePixels(
     int width,
     int height,
     const uint8_t *pixels,
-	PixelFormat format,
+	ColorFormat format,
 	int dx,
 	int xy,
 	int pitch) {
@@ -311,7 +311,7 @@ void ILI9341Driver::readPixels(
     int width,
     int height,
     uint8_t *pixels,
-	PixelFormat format,
+	ColorFormat format,
 	int dx,
 	int dy,
 	int pitch) {

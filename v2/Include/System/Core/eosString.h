@@ -18,21 +18,21 @@ namespace eos {
         public:
             String();
             String(const char *text);
-            String(const String &other);
-            String(const String &other, unsigned index, unsigned length);
+            String(const String &text);
+            String(const String &text, unsigned index, unsigned length);
             ~String();
             
             inline unsigned getLength() const { return length; }
             inline bool isEmpty() const { return length == 0; }
             
-            int compare(const String& other) const;
+            int compare(const String& text) const;
             int compare(const char *text) const;
 
             String& operator = (const char *text);
-            String& operator = (const String &other);
+            String& operator = (const String &text);
 
-            bool operator ==(const String &other) const;
-            inline bool operator !=(const String &other) const { return !operator ==(other); }
+            bool operator ==(const String &text) const;
+            inline bool operator !=(const String &text) const { return !operator ==(text); }
 
             inline operator const char*() const { return container; }
             inline char& operator[](int index) { return container[index]; }

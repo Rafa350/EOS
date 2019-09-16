@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Services/eosAppLoop.h"
+#include "Services/eosAppLoopService.h"
 #include "HAL/halGPIO.h"
 
 

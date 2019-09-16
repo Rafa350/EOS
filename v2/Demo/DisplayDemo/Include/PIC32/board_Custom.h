@@ -65,6 +65,7 @@
 #define FONT_USE_Consolas14pt
 #define FONT_USE_Consolas18pt
 #define FONT_USE_Consolas24pt
+#define FONT_USE_Tahoma12pt
 
 // Tipus d'interficie amb el controlador
 //

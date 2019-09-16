@@ -23,6 +23,7 @@
                 <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Source/System/Graphics</sourceRootElem>
                 <sourceRootElem>../../../Library/PIC32/FreeRTOS/Source</sourceRootElem>
+                <sourceRootElem>../../../Source/Services</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

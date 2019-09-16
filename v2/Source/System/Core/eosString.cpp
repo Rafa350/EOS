@@ -20,16 +20,16 @@ String::String():
 
 /// ----------------------------------------------------------------------
 /// \brief Contructor copia de l'objecte.
-/// \param other: La string a copiar.
+/// \param text: L'objecte a copiar.
 ///
 String::String(
-	const String& other):
+	const String& text):
 
 	length(0),
 	containerSize(0),
 	container(nullptr) {
 
-	alloc(other.container);
+	alloc(text.container);
 }
 
 
@@ -57,6 +57,10 @@ String::~String() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Operador d'asignacio.
+/// \param text: El text a asignar.
+///
 String& String::operator = (
 	const char *text) {
 
@@ -65,28 +69,36 @@ String& String::operator = (
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Operador d'asignacio.
+/// \param other: El text a asignar.
+///
 String& String::operator = (
-	const String &other) {
+	const String &text) {
 
-	alloc(other.container);
+	alloc(text.container);
 	return *this;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Operator ==
+/// \param text: El text amb que comparar.
+///
 bool String::operator ==(
-	const String &other) const {
+	const String &text) const {
 
-	if (length != other.length)
+	if (length != text.length)
 		return false;
 	else
-		return strcmp(container, other.container) == 0;
+		return compare(text) == 0;
 }
 
 
 int String::compare(
-	const String &other) const {
+	const String &text) const {
 
-	return strcmp(container, other.container);
+	return strcmp(container, text.container);
 }
 
 

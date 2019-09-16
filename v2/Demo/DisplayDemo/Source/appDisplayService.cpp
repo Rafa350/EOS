@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "System/Core/eosString.h"
 #include "System/Core/eosTask.h"
 #include "System/graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
@@ -27,6 +28,7 @@ using namespace app;
 #define TEST_OPACITY
 #define SHOW_RESULTS
 
+#if defined(EOS_STM32F7) || defined(EOS_STM32F4)
 static uint64_t rnd = 0L;
 
 void srand(uint32_t r) {
@@ -43,6 +45,7 @@ uint32_t rand() {
 	rnd = (a * (rnd >> 11)) + c;
 	return (uint32_t) rnd;
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -64,7 +67,9 @@ void DisplayService::onSetup() {
 
 	// Inicialitza el generador de nombres aleatoris.
 	//
+#if defined(EOS_STM32F7) || defined(EOS_STM32F4)
 	halRNGInitialize();
+#endif    
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 	driver = ILI9341LTDCDriver::getInstance();
