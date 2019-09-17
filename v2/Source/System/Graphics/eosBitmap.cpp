@@ -123,3 +123,26 @@ Bitmap::~Bitmap() {
 	if (allocated && (pixels != nullptr))
 		osalHeapFree(NULL, pixels);
 }
+
+
+int Bitmap::getBytesPerPixel() const {
+
+	switch (format) {
+		default:
+		case ColorFormat::rgb888:
+		case ColorFormat::argb8888:
+			return sizeof(uint32_t);
+
+		case ColorFormat::rgb565:
+			return sizeof(uint16_t);
+	}
+}
+
+
+int Bitmap::getBytesPerLine() const {
+
+	int bpp = getBytesPerPixel();
+
+	return ((width * bpp) + 3) & ~0b11;
+}
+

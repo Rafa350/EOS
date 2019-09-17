@@ -15,28 +15,28 @@ void halDMA2DInitialize(void) {
 
 /// ----------------------------------------------------------------------
 /// \brief Ompla una regio amb un color.
-/// \param addr: Adressa del primer pixel del desti.
+/// \param dstAddr: Adressa del primer pixel del desti.
 /// \param width: Amplada de la regio.
 /// \param height: Alçada de la regio.
-/// \param pitch: Offset entre linies.
+/// \param dstPitch: Amplada de linia.
 /// \param options: Opcions
 /// \param color: Color per omplir.
 ///
 void halDMA2DStartFill(
-	int addr,
+	int dstAddr,
 	int width,
 	int height,
-	int pitch,
+	int dstPitch,
 	DMA2DOptions options,
 	uint32_t color) {
 
-	// Tipus de transferencia R2M
+	// Selecciona el tipus de transferencia com a R2M
 	//
 	DMA2D->CR = 0b11 << DMA2D_CR_MODE_Pos;
 
-	// Format de color del desti
+	// Selecciona el color i el format de color del desti.
 	//
-	switch (options & HAL_DMA2D_DFMT_MASK) {
+	switch (options & HAL_DMA2D_DFMT_mask) {
 		case HAL_DMA2D_DFMT_RGB565: // RGB565
 			DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;
 			break;
@@ -48,12 +48,12 @@ void halDMA2DStartFill(
 	}
 	DMA2D->OCOLR = color;
 
-	// Adressa i pitch del desti
+	// Selecciona l'adressa i el pitch del desti
 	//
-	DMA2D->OMAR = addr;
-	DMA2D->OOR = pitch;
+	DMA2D->OMAR = dstAddr;
+	DMA2D->OOR = dstPitch;
 
-	// Tamany de la finestra
+	// Selecciona el tamany de la finestra
 	//
 	DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);
 
@@ -65,31 +65,30 @@ void halDMA2DStartFill(
 
 /// ----------------------------------------------------------------------
 /// \brief Copia una regio.
-/// \param addr: Adresa del primer pixel del desti.
+/// \param dstAddr: Adresa del primer pixel del desti.
 /// \param width: Amplada de la regio.
-/// \param height: Al�ada de la regio.
-/// \param pitch: Offset entre linies.
+/// \param height: Alçada de la regio.
+/// \param dstPitch: Offset fins a la seguent linia.
 /// \param options: Opcions.
 /// \param srcAddr: Adressa del primer pixel del origen.
+/// \param srcPitch: offset fins a la seguent linia.
 ///
 void halDMA2DStartCopy(
-	int addr,
+	int dstAddr,
 	int width,
 	int height,
-	int pitch,
+	int dstPitch,
 	DMA2DOptions options,
 	int srcAddr,
-	int dx,
-	int dy,
-	int sPitch) {
+	int srcPitch) {
 
-	// Tipus de transferencia M2M/PFC
+	// Selecciona el tipus de transferencia com a M2M/PFC
 	//
 	DMA2D->CR = 0b01 << DMA2D_CR_MODE_Pos;
 
-	// Format del color del origen
+	// Selecciona el format del color del origen
 	//
-	switch (options & HAL_DMA2D_SFMT_MASK) {
+	switch (options & HAL_DMA2D_SFMT_mask) {
 		case HAL_DMA2D_SFMT_RGB888:
 			DMA2D->FGPFCCR = 0b0001 << DMA2D_FGPFCCR_CM_Pos;
 			break;
@@ -104,9 +103,9 @@ void halDMA2DStartCopy(
 			break;
 	}
 
-	// Format de color del desti
+	// Selecciona el format de color del desti
 	//
-	switch (options & HAL_DMA2D_DFMT_MASK) {
+	switch (options & HAL_DMA2D_DFMT_mask) {
 		case HAL_DMA2D_DFMT_RGB565:
 			DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;
 			break;
@@ -117,30 +116,17 @@ void halDMA2DStartCopy(
 			break;
 	}
 
-	// Adressa i pitch del origen
+	// Selecciona l'adressa i el pitch del origen
 	//
-	int orgAddr = (dy * sPitch) + dx;
-	switch (options & HAL_DMA2D_SFMT_MASK) {
-		default:
-		case HAL_DMA2D_SFMT_RGB888:
-		case HAL_DMA2D_SFMT_ARGB8888:
-			orgAddr *= sizeof(uint32_t);
-			break;
+	DMA2D->FGMAR = srcAddr;
+	DMA2D->FGOR = srcPitch;
 
-		case HAL_DMA2D_SFMT_RGB565:
-			orgAddr *= sizeof(uint16_t);
-			break;
-	}
-	orgAddr += srcAddr;
-	DMA2D->FGMAR = orgAddr;
-	DMA2D->FGOR = sPitch - width;
-
-	// Adressa i pitch del desti
+	// Selecciona l'adressa i el pitch del desti.
 	//
-	DMA2D->OMAR = addr;
-	DMA2D->OOR = pitch;
+	DMA2D->OMAR = dstAddr;
+	DMA2D->OOR = dstPitch;
 
-	// Tamany de la finestra
+	// Selecciona el tamany de la finestra
 	//
 	DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);
 

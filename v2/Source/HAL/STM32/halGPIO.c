@@ -107,8 +107,8 @@ static void setupPin(
 
 	// Configura el registre AFR (Alternate Funcion Register)
 	//
-	if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_ALT_PP) ||
-		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_ALT_OD)) {
+	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
+		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
         temp = gpio->AFR[pin >> 3u];
         temp &= ~(0xFU << ((uint32_t)(pin & 0x07U) * 4u)) ;
         temp |= ((uint32_t)(alt) << (((uint32_t)pin & 0x07u) * 4u));
@@ -119,7 +119,7 @@ static void setupPin(
 	//
 	temp = gpio->MODER;
 	temp &= ~(0b11u << (pin * 2u));
-	switch (options & HAL_GPIO_MODE_MASK) {
+	switch (options & HAL_GPIO_MODE_mask) {
 		// Sortida digital
 		case HAL_GPIO_MODE_OUTPUT_PP:
 		case HAL_GPIO_MODE_OUTPUT_OD:
@@ -145,14 +145,14 @@ static void setupPin(
 
 	// Configura el registre OSPEEDR (Output Speed Register)
 	//
-	if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_PP) ||
-		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD) ||
-		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_ALT_PP) ||
-		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_ALT_OD)) {
+	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
+		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD) ||
+		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
+		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
 
 		temp = gpio->OSPEEDR;
 		temp &= ~(0b11u << (pin * 2u));
-		switch (options & HAL_GPIO_SPEED_MASK) {
+		switch (options & HAL_GPIO_SPEED_mask) {
 			case HAL_GPIO_SPEED_MEDIUM:
 				temp |= 0b01u < (pin * 2u);
 				break;
@@ -172,8 +172,8 @@ static void setupPin(
 	//
 	temp = gpio->OTYPER;
 	temp &= ~(1u << pin);
-	if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD) ||
-        ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_ALT_OD))
+	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD) ||
+        ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD))
 		temp |= 1u << pin;
 	gpio->OTYPER = temp;
 
@@ -181,7 +181,7 @@ static void setupPin(
 	//
 	temp = gpio->PUPDR;
 	temp &= ~(0b11u << (pin * 2u));
-	switch (options & HAL_GPIO_PULL_MASK) {
+	switch (options & HAL_GPIO_PULL_mask) {
 		case HAL_GPIO_PULL_UP:
 			temp |= 0b01u << (pin * 2u);
 			break;
@@ -194,11 +194,11 @@ static void setupPin(
 
 	// Configura el valor pin de sortida
 	//
-	if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_PP) ||
-		((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)) {
+	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
+		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {
 
 		temp = gpio->BSRR;
-		if ((options & HAL_GPIO_INIT_MASK) == HAL_GPIO_INIT_SET)
+		if ((options & HAL_GPIO_INIT_mask) == HAL_GPIO_INIT_SET)
 			temp |= 1u << pin;
 		else
 			temp |= 1u << (pin + 16u);

@@ -32,6 +32,8 @@ namespace eos {
 			inline int getHeight() const { return height; }
 			inline uint8_t *getPixels() const { return pixels; }
 			inline ColorFormat getFormat() const { return format; }
+			int getBytesPerPixel() const;
+			int getBytesPerLine() const;
 	};
 }
 

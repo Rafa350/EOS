@@ -70,7 +70,11 @@ static inline pixel_t *addressOf(
 static inline pixel_t toPixel(
 	const Color &color) {
 
+#if defined(DISPLAY_COLOR_RGB565)
 	return (pixel_t) color.toRGB565();
+#elif defined(DISPLAY_COLOR_ARGB8888)
+	return (pixel_t) color.toRGB888();
+#endif
 }
 
 
@@ -301,7 +305,7 @@ void RGBDirectDriver::setVPixels(
 /// \param x: Posicio X.
 /// \param y: Posicio Y.
 /// \param width: Amplada de la regio.
-/// \param height: Al�ada de la regio.
+/// \param height: Alçada de la regio.
 /// \param color: Color dels pixels.
 ///
 void RGBDirectDriver::setPixels(
@@ -341,10 +345,10 @@ void RGBDirectDriver::setPixels(
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu una regio rectangular de pixels.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param width: Amplada.
-/// \param height: Al�ada.
+/// \param x: Coordinada X de la posicio.
+/// \param y: Coordinada Y de la posicio.
+/// \param width: Amplada de la regio
+/// \param height: Alçada de la regio
 /// \param pixels: Els pixels a copiar.
 /// \param format: Format dels pixels.
 /// \param dx: Offset X dins del bitmap.
@@ -758,7 +762,7 @@ void RGBDirectDriver::put(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Ompla un area de memoria amb un color.
+/// \brief Ompla amb un color, una regio de la pantalla.
 /// \param x: Coordinada x.
 /// \param y: Coordinada y.
 /// \param width: Amplada del bloc.
@@ -791,16 +795,16 @@ void RGBDirectDriver::fill(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Copia un bitmap de la memoria a la pantalla.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
+/// \brief Copia un bitmap a una regio de la pantalla.
+/// \param x: Coordinada X de la posicio.
+/// \param y: Coordinada Y de la posicio.
 /// \param width: Amplada.
-/// \param height: Al�ada.
+/// \param height: Alçada.
 /// \param pixels: Llista de pixels.
 /// \param format: Format dels pixels.
 /// \param dx: Offset X dins del bitmap.
 /// \param dy: offset Y dins del vitmap.
-/// \param pitch: Amplada de linia del bitmap.
+/// \param pitch: Offset a la seguent linia del bitmap. 0 si son consecutives.
 ///
 void RGBDirectDriver::copy(
 	int x,
@@ -813,74 +817,26 @@ void RGBDirectDriver::copy(
 	int dy,
 	int pitch) {
 
-	// Inicialitza el controlador DMA2D
-	// -Modus de transferencia M2M/PFC
-	//
-	DMA2D->CR = 0b01 << DMA2D_CR_MODE_Pos;
-
-	// Format de color de desti
-	//
-#if defined(DISPLAY_COLOR_RGB565)
-	DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;
-#elif defined(DISPLAY_COLOR_RGB888)
-	DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;
-#else
-#error No se especifico DISPLAY_COLOR_xxxx
-#endif
-
-	// Adressa i pitch de desti
-	//
-	uint32_t dstAddr = (uint32_t) addressOf(backFrameAddr, x, y);
-	DMA2D->OMAR = dstAddr;
-	DMA2D->OOR = LINE_WIDTH - width;
-
-	// Format de color d'origen
-	//
+	DMA2DOptions options = HAL_DMA2D_DFMT_DEFAULT;
 	switch (format) {
-		case ColorFormat::rgb888:
-			DMA2D->FGPFCCR = 0b0001 << DMA2D_FGPFCCR_CM_Pos;
-			break;
-
-		case ColorFormat::rgb565:
-			DMA2D->FGPFCCR = 0b0010 << DMA2D_FGPFCCR_CM_Pos;
-			break;
-
 		default:
+		case ColorFormat::rgb565:
+			options |= HAL_DMA2D_SFMT_RGB565;
+			break;
+
 		case ColorFormat::argb8888:
-			DMA2D->FGPFCCR = 0b0000 << DMA2D_FGPFCCR_CM_Pos;
+			options |= HAL_DMA2D_SFMT_ARGB8888;
 			break;
 	}
 
-	// Adressa i pitch d'origen
-	//
-	int orgAddr = (dy * pitch) + dx;
-	switch (format) {
-		default:
-		case ColorFormat::rgb888:
-		case ColorFormat::argb8888:
-			orgAddr *= sizeof(uint32_t);
-			break;
-
-		case ColorFormat::rgb565:
-			orgAddr *= sizeof(uint16_t);
-			break;
-	}
-	orgAddr += (int) pixels;
-	DMA2D->FGMAR = orgAddr;
-	DMA2D->FGOR = pitch - width;
-
-	// Tamany de la finestra
-	//
-	DMA2D->NLR =
-		(width << DMA2D_NLR_PL_Pos) |
-		(height << DMA2D_NLR_NL_Pos);
-
-	// Inicia la transferencia
-	//
-	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;
-
-	/// Espera que acabi
-	///
+	halDMA2DStartCopy(
+		(uint32_t) addressOf(backFrameAddr, x, y),
+		width,
+		height,
+		LINE_WIDTH - width,
+		options,
+		((uint32_t) pixels) + (((dy * height) + dx) * sizeof(uint16_t)),
+	    pitch);
 	halDMA2DWaitForFinish();
 }
 
