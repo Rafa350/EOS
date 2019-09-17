@@ -7,6 +7,9 @@
 using namespace eos;
 
 
+// TODO: Utilitzar acces directe al driver, igual que el·lipse
+
+
 /// ----------------------------------------------------------------------
 /// \brief Dibuixa un cercle buit.
 /// \param x: Coordinada X del centre.

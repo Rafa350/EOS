@@ -115,44 +115,44 @@ extern const GPIOPortRegs gpioPortRegs[];
 
 
 // Tipus de port
-#define HAL_GPIO_MODE_POS         0u
-#define HAL_GPIO_MODE_BITS        0b111u
-#define HAL_GPIO_MODE_MASK        (HAL_GPIO_MODE_BITS << HAL_GPIO_MODE_POS)
+#define HAL_GPIO_MODE_pos         0u
+#define HAL_GPIO_MODE_bits        0b111u
+#define HAL_GPIO_MODE_mask        (HAL_GPIO_MODE_bits << HAL_GPIO_MODE_pos)
 
-#define HAL_GPIO_MODE_INPUT       (0u << HAL_GPIO_MODE_POS) // -Entrada digital
-#define HAL_GPIO_MODE_OUTPUT_PP   (1u << HAL_GPIO_MODE_POS) // -Sortida push-pull
-#define HAL_GPIO_MODE_OUTPUT_OD   (2u << HAL_GPIO_MODE_POS) // -Sortida open-drain
-#define HAL_GPIO_MODE_ALT_PP      (3u << HAL_GPIO_MODE_POS) // -Sortida alternativa push-pull
-#define HAL_GPIO_MODE_ALT_OD      (4u << HAL_GPIO_MODE_POS) // -Sortida alternativa open-drain
-#define HAL_GPIO_MODE_ANALOG      (5u << HAL_GPIO_MODE_POS) // -Entrada/Sortida Analgica
+#define HAL_GPIO_MODE_INPUT       (0u << HAL_GPIO_MODE_pos) // -Entrada digital
+#define HAL_GPIO_MODE_OUTPUT_PP   (1u << HAL_GPIO_MODE_pos) // -Sortida push-pull
+#define HAL_GPIO_MODE_OUTPUT_OD   (2u << HAL_GPIO_MODE_pos) // -Sortida open-drain
+#define HAL_GPIO_MODE_ALT_PP      (3u << HAL_GPIO_MODE_pos) // -Sortida alternativa push-pull
+#define HAL_GPIO_MODE_ALT_OD      (4u << HAL_GPIO_MODE_pos) // -Sortida alternativa open-drain
+#define HAL_GPIO_MODE_ANALOG      (5u << HAL_GPIO_MODE_pos) // -Entrada/Sortida Analgica
 
 // Velocitat de conmutacio
-#define HAL_GPIO_SPEED_POS        3u
-#define HAL_GPIO_SPEED_BITS       0b11u
-#define HAL_GPIO_SPEED_MASK       (HAL_GPIO_SPEED_BITS << HAL_GPIO_SPEED_POS)
+#define HAL_GPIO_SPEED_pos        3u
+#define HAL_GPIO_SPEED_bits       0b11u
+#define HAL_GPIO_SPEED_mask       (HAL_GPIO_SPEED_bits << HAL_GPIO_SPEED_pos)
 
-#define HAL_GPIO_SPEED_LOW        (0u << HAL_GPIO_SPEED_POS)
-#define HAL_GPIO_SPEED_MEDIUM	  (1u << HAL_GPIO_SPEED_POS)
-#define HAL_GPIO_SPEED_HIGH       (2u << HAL_GPIO_SPEED_POS)
-#define HAL_GPIO_SPEED_FAST       (3u << HAL_GPIO_SPEED_POS)
+#define HAL_GPIO_SPEED_LOW        (0u << HAL_GPIO_SPEED_pos)
+#define HAL_GPIO_SPEED_MEDIUM	  (1u << HAL_GPIO_SPEED_pos)
+#define HAL_GPIO_SPEED_HIGH       (2u << HAL_GPIO_SPEED_pos)
+#define HAL_GPIO_SPEED_FAST       (3u << HAL_GPIO_SPEED_pos)
 
 // Resistencies pull-up
-#define HAL_GPIO_PULL_POS         5u
-#define HAL_GPIO_PULL_BITS        0b11u
-#define HAL_GPIO_PULL_MASK        (HAL_GPIO_PULL_BITS << HAL_GPIO_PULL_POS)
+#define HAL_GPIO_PULL_pos         5u
+#define HAL_GPIO_PULL_bits        0b11u
+#define HAL_GPIO_PULL_mask        (HAL_GPIO_PULL_bits << HAL_GPIO_PULL_pos)
 
-#define HAL_GPIO_PULL_NONE        (0u << HAL_GPIO_PULL_POS)
-#define HAL_GPIO_PULL_UP          (1u << HAL_GPIO_PULL_POS)
-#define HAL_GPIO_PULL_DOWN        (2u << HAL_GPIO_PULL_POS)
+#define HAL_GPIO_PULL_NONE        (0u << HAL_GPIO_PULL_pos)
+#define HAL_GPIO_PULL_UP          (1u << HAL_GPIO_PULL_pos)
+#define HAL_GPIO_PULL_DOWN        (2u << HAL_GPIO_PULL_pos)
 
 // Valor inicial de la sortida
-#define HAL_GPIO_INIT_POS         7u
-#define HAL_GPIO_INIT_BITS        0b11u
-#define HAL_GPIO_INIT_MASK        (HAL_GPIO_INIT_BITS << HAL_GPIO_INIT_POS)
+#define HAL_GPIO_INIT_pos         7u
+#define HAL_GPIO_INIT_bits        0b11u
+#define HAL_GPIO_INIT_mask        (HAL_GPIO_INIT_bits << HAL_GPIO_INIT_pos)
 
-#define HAL_GPIO_INIT_NOCHANGE    (0u << HAL_GPIO_INIT_POS)
-#define HAL_GPIO_INIT_CLR         (1u << HAL_GPIO_INIT_POS)
-#define HAL_GPIO_INIT_SET         (2u << HAL_GPIO_INIT_POS)
+#define HAL_GPIO_INIT_NOCHANGE    (0u << HAL_GPIO_INIT_pos)
+#define HAL_GPIO_INIT_CLR         (1u << HAL_GPIO_INIT_pos)
+#define HAL_GPIO_INIT_SET         (2u << HAL_GPIO_INIT_pos)
 
 // Funcio alternativa 
 #define HAL_GPIO_AF_NONE          ((GPIOAlt) 0)

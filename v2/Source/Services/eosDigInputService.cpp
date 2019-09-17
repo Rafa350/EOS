@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Services/eosDigInput.h"
+#include "Services/eosDigInputService.h"
 
 
 using namespace eos;

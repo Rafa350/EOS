@@ -32,10 +32,10 @@
             <itemPath>../../../Include/OSAL/osalHeap.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
-            <itemPath>../../../Include/Services/eosDigOutput.h</itemPath>
-            <itemPath>../../../Include/Services/eosDigInput.h</itemPath>
             <itemPath>../../../Include/Services/eosService.h</itemPath>
-            <itemPath>../../../Include/Services/eosAppLoop.h</itemPath>
+            <itemPath>../../../Include/Services/eosAppLoopService.h</itemPath>
+            <itemPath>../../../Include/Services/eosDigInputService.h</itemPath>
+            <itemPath>../../../Include/Services/eosDigOutputService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f1" displayName="Collections" projectFiles="true">
@@ -89,9 +89,9 @@
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>
-            <itemPath>../../../Source/Services/eosAppLoop.cpp</itemPath>
-            <itemPath>../../../Source/Services/eosDigOutput.cpp</itemPath>
-            <itemPath>../../../Source/Services/eosDigInput.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosAppLoopService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosDigInputService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosDigOutputService.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">

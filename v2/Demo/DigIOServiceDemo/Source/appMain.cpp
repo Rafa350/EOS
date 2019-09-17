@@ -2,9 +2,9 @@
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
 #include "HAL/PIC32/halCN.h"
-#include "Services/eosAppLoop.h"
-#include "Services/eosDigOutput.h"
-#include "Services/eosDigInput.h"
+#include "Services/eosAppLoopService.h"
+#include "Services/eosDigOutputService.h"
+#include "Services/eosDigInputService.h"
 #include "System/eosApplication.h"
 
 
