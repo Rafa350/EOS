@@ -64,9 +64,10 @@ namespace eos {
 
 	/// \brief Format de color
 	enum class ColorFormat: uint8_t {
-		argb8888,
-		rgb888,
-		rgb565
+		argb8888,  // ARGB 8 bit channel
+		rgb888,    // RGB 8 bit channel
+		rgb565,    // RGB 5 bits Red & Blue channels, 6 bit Green channel
+        l8         // Luminance 8 bit or CLUT[256] index
 	};
 
 	/// \brief Clase que representa un color.
@@ -107,31 +108,6 @@ namespace eos {
             inline operator color_t() const { return c; }
     };
 
-/*
-    class ColorBuffer {
-        private:
-#if defined(DISPLAY_COLOR_ARGB) || defined(DISPLAY_COLOR_RGB)
-            uint32_t *buffer;
-#elif defined(DISPLAY_COLOR_565)
-            uint16_t *buffer;
-#endif
-
-        public:
-            ColorBuffer(int size);
-            ~ColorBuffer();
-
-#if defined(DISPLAY_COLOR_ARGB) || defined(DISPLAY_COLOR_RGB)
-            void set(int offset, uint32_t nc);
-            uint32_t get(int offset);
-#elif defined(DISPLAY_COLOR_565)
-            inline void set(int offset, uint16_t nc) { buffer[offset] = nc; }
-            inline uint16_t get(int offset) { return buffer[offset]; }
-#endif
-
-            inline void setColor(int offset, Color color) { buffer[offset] = color; }
-            inline Color getColor(int offset) const { return buffer[offset]; }
-    };
-
 
     class ColorPalette {
         private:
@@ -139,10 +115,11 @@ namespace eos {
 
         public:
             ColorPalette();
-            inline Color getColor(uint8_t index) { return colorTable[index]; }
-            void setColor(uint8_t index, Color color);
+            inline const Color& getColor(uint8_t index) const { return colorTable[index]; }
+            inline const Color* getTable() const { return colorTable; }
+            void setColor(uint8_t index, const Color &color);
     };
-    */
+    
 }
 
 

@@ -103,12 +103,12 @@ void halGPIOInitializePort(
     GPIOOptions options,
     GPIOAlt alt) {
     
-    if (((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_PP) ||
-        ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)) {
+    if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
+        ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {
         
         // Selecciona el valor inicial del port
         //
-        switch (options & HAL_GPIO_INIT_MASK) {
+        switch (options & HAL_GPIO_INIT_mask) {
             case HAL_GPIO_INIT_SET:
                 *gpioPortRegs[port].latSET = mask;
                 break;
@@ -124,13 +124,13 @@ void halGPIOInitializePort(
      
         // Configura com OPEN-DRAIN o PUSH-PULL
         //
-        if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_OUTPUT_OD)
+        if ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)
             *gpioPortRegs[port].odcSET = mask;
         else
             *gpioPortRegs[port].odcCLR = mask;        
     }  
     
-    else if ((options & HAL_GPIO_MODE_MASK) == HAL_GPIO_MODE_INPUT) {
+    else if ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_INPUT) {
        
         // El configura com entrada
         //
