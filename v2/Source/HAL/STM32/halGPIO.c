@@ -17,14 +17,14 @@ GPIO_TypeDef * const gpioTbl[] = {
 	GPIOK
 };
 
-static uint32_t enabledPorts = 0; // Indicador dels ports actius
+static uint32_t enabledClocks = 0; // Indicador dels ports actius
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa el port GPIO
+/// \brief Activa el clock del port GPIO
 /// \param port: El identificador del port.
 ///
-static void enableGPIO(
+static void enableClock(
 	GPIOPort port) {
 
 	switch (port) {
@@ -73,19 +73,19 @@ static void enableGPIO(
 			break;
 	}
 
-	enabledPorts |= 1 << port;
+	enabledClocks |= 1 << port;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Comprova si el port GPIO esta activat.
+/// \brief Comprova si el clock del port GPIO esta activat.
 /// \param port: El identificador del port.
 /// \return True si esta activat.
 ///
-static inline bool isEnabledGPIO(
+static inline bool isClockEnabled(
 	GPIOPort port) {
 
-	return (enabledPorts & (1 << port)) != 0;
+	return (enabledClocks & (1 << port)) != 0;
 }
 
 
@@ -223,8 +223,8 @@ void halGPIOInitializePins(
 
 		const GPIOInitializePinInfo *p = &pInfo[i];
 
-		if (!isEnabledGPIO(p->port))
-			enableGPIO(p->port);
+		if (!isCkockEnabled(p->port))
+			enableClock(p->port);
 
 		setupPin(p->port, p->pin, p->options, p->alt);
 	}
@@ -247,8 +247,8 @@ void halGPIOInitializePorts(
 
 		const GPIOInitializePortInfo *p = &pInfo[i];
 
-		if (!isEnabledGPIO(p->port))
-			enableGPIO(p->port);
+		if (!isClockEnabled(p->port))
+			enableClock(p->port);
 
 		for (unsigned pin = 0; pin < 16; pin++)
 			if (p->mask & (1u << pin))
@@ -270,8 +270,8 @@ void halGPIOInitializePin(
 	GPIOOptions options,
 	GPIOAlt alt) {
 
-	if (!isEnabledGPIO(port))
-		enableGPIO(port);
+	if (!isClockEnabled(port))
+		enableClock(port);
 
 	setupPin(port, pin, options, alt);
 }

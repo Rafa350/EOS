@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "hal/halSPI.h"
+#include "hal/STM32/halSPI.h"
 #if defined(EOS_STM32F4)
 #include "stm32f4xx_hal.h"
 #elif defined(EOS_STM32F7)
@@ -11,13 +11,14 @@
 
 
 static SPI_HandleTypeDef handles[HAL_SPI_ID_MAX];
+static uint32_t enabledClocks = 0;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Activa el rellotge del modul SPI.
 /// \param id: identificador del modul.
 ///
-static void EnableClock(
+static void enableClock(
 	uint8_t id) {
 
 	switch (id) {
@@ -45,6 +46,8 @@ static void EnableClock(
 			__HAL_RCC_SPI6_CLK_ENABLE();
 			break;
 	}
+    
+    enabledClocks |= 1 << id;
 }
 
 
@@ -52,7 +55,7 @@ static void EnableClock(
 /// \brief Desactiva el rellotge del modul SPI.
 /// \param id: Identificador del modul.
 ///
-static void DisableClock(
+static void disableClock(
 	uint8_t id) {
 
 	switch (id) {
@@ -88,7 +91,7 @@ static void DisableClock(
 /// \param id: identificador del modul.
 /// \return El handler del modul.
 ///
-static SPI_HandleTypeDef *GetHandle(
+static SPI_HandleTypeDef *getHandle(
 	uint8_t id) {
 
 	return &handles[id];
@@ -97,11 +100,11 @@ static SPI_HandleTypeDef *GetHandle(
 
 /// ----------------------------------------------------------------------
 /// \brief Configura els parametres d'inicialitzacio del handler.
-/// \param info: Parametres de configuracio.
+/// \param pInfo: Parametres de configuracio.
 /// \param handle: El handler a configurar.
 ///
-static SPI_HandleTypeDef *PrepareHandle(
-	const SPIInitializeInfo *info) {
+static SPI_HandleTypeDef *prepareHandle(
+	const SPIInitializeInfo *pInfo) {
 
 	// Precondicions
 	//
@@ -129,18 +132,18 @@ static SPI_HandleTypeDef *PrepareHandle(
 
 	// Configura el modul
 	//
-	SPI_HandleTypeDef *handle = GetHandle(info->id);
+	SPI_HandleTypeDef *handle = getHandle(pInfo->id);
 	handle->Instance = instances[info->id];
-	handle->Init.BaudRatePrescaler = baudRateTbl[info->clockDiv];
+	handle->Init.BaudRatePrescaler = baudRateTbl[pInfo->clockDiv];
 	handle->Init.Direction = SPI_DIRECTION_2LINES;
 	handle->Init.NSS = SPI_NSS_SOFT;
 	handle->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
 	handle->Init.TIMode = SPI_TIMODE_DISABLED;
-	handle->Init.Mode = ((info->options & HAL_SPI_MS_MASK) == HAL_SPI_MS_MASTER) ? SPI_MODE_MASTER : SPI_MODE_SLAVE;
-	handle->Init.DataSize = ((info->options & HAL_SPI_SIZE_MASK) == HAL_SPI_SIZE_8) ? SPI_DATASIZE_8BIT : SPI_DATASIZE_16BIT;
-	handle->Init.CLKPolarity = ((info->options & HAL_SPI_CPOL_MASK) == HAL_SPI_CPOL_LOW) ? SPI_POLARITY_LOW : SPI_POLARITY_HIGH;
-	handle->Init.CLKPhase = ((info->options & HAL_SPI_CPHA_MASK) == HAL_SPI_CPHA_EDGE1) ? SPI_PHASE_1EDGE : SPI_PHASE_2EDGE;
-	handle->Init.FirstBit = ((info->options & HAL_SPI_FIRSTBIT_MASK) == HAL_SPI_FIRSTBIT_MSB) ? SPI_FIRSTBIT_MSB : SPI_FIRSTBIT_LSB;
+	handle->Init.Mode = ((pInfo->options & HAL_SPI_MS_mask) == HAL_SPI_MS_MASTER) ? SPI_MODE_MASTER : SPI_MODE_SLAVE;
+	handle->Init.DataSize = ((pInfo->options & HAL_SPI_SIZE_mask) == HAL_SPI_SIZE_8) ? SPI_DATASIZE_8BIT : SPI_DATASIZE_16BIT;
+	handle->Init.CLKPolarity = ((pInfo->options & HAL_SPI_CPOL_mask) == HAL_SPI_CPOL_LOW) ? SPI_POLARITY_LOW : SPI_POLARITY_HIGH;
+	handle->Init.CLKPhase = ((pInfo->options & HAL_SPI_CPHA_mask) == HAL_SPI_CPHA_EDGE1) ? SPI_PHASE_1EDGE : SPI_PHASE_2EDGE;
+	handle->Init.FirstBit = ((pInfo->options & HAL_SPI_FIRSTBIT_mask) == HAL_SPI_FIRSTBIT_MSB) ? SPI_FIRSTBIT_MSB : SPI_FIRSTBIT_LSB;
 
 	return handle;
 }
@@ -150,7 +153,7 @@ static SPI_HandleTypeDef *PrepareHandle(
 /// \brief Inicialitza el modul SPI.
 /// \param handle: El handler del modul.
 ///
-static void InitializeModule(
+static void initializeModule(
 	SPI_HandleTypeDef *handle) {
 
 	// Precondicions
@@ -168,7 +171,7 @@ static void InitializeModule(
 /// \brier Desinicialitza el modul SPI
 /// \param handle: El handler del modul.
 ///
-static void DeinitializeModule(
+static void deinitializeModule(
 	SPI_HandleTypeDef *handle) {
 
 	// Precondicions
@@ -183,10 +186,10 @@ static void DeinitializeModule(
 
 /// ----------------------------------------------------------------------
 /// \brief Inicilitza el modul SPI.
-/// \param info: Parametres d'inicialitzacio.
+/// \param pInfo: Parametres d'inicialitzacio.
 ///
 void halSPIInitialize(
-	const SPIInitializeInfo *info) {
+	const SPIInitializeInfo *pInfo) {
 
 	// Precondicions
 	//
@@ -194,12 +197,12 @@ void halSPIInitialize(
 
 	// Activa el rellotge
 	//
-	EnableClock(info->id);
+	enableClock(info->id);
 
 	// Inicialitza el modul
 	//
-	SPI_HandleTypeDef *handle = PrepareHandle(info);
-    InitializeModule(handle);
+	SPI_HandleTypeDef *handle = prepareHandle(pInfo);
+    initializeModule(handle);
 }
 
 
@@ -212,8 +215,8 @@ void halSPIShutdown(
 
 	// Desinicialitza el modul
 	//
-	DeinitializeModule(GetHandle(id));
-	DisableClock(id);
+	deinitializeModule(getHandle(id));
+	disableClock(id);
 }
 
 
@@ -234,5 +237,5 @@ void halSPISendBuffer(
 
 	// Transfereix el bloc de dades
 	//
-	HAL_SPI_Transmit(GetHandle(id), data, size, 100);
+	HAL_SPI_Transmit(getHandle(id), data, size, 100);
 }

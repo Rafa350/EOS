@@ -34,29 +34,29 @@ typedef uint32_t TMROptions;
 #define HAL_TMR_TIMER_MAX         13
 
 // Modus 16 o 32 bits
-#define HAL_TMR_MODE_POS          0u
-#define HAL_TMR_MODE_BITS         0b1u
-#define HAL_TMR_MODE_MASK         (HAL_TMR_MODE_BITS << HAL_TMR_MODE_POS)
+#define HAL_TMR_MODE_pos          0u
+#define HAL_TMR_MODE_bits         0b1u
+#define HAL_TMR_MODE_mask         (HAL_TMR_MODE_bits << HAL_TMR_MODE_pos)
 
-#define HAL_TMR_MODE_16           (0u << HAL_TMR_MODE_POS)
-#define HAL_TMR_MODE_32           (1u << HAL_TMR_MODE_POS)
+#define HAL_TMR_MODE_16           (0u << HAL_TMR_MODE_pos)
+#define HAL_TMR_MODE_32           (1u << HAL_TMR_MODE_pos)
 
 // Clock divider
-#define HAL_TMR_CLKDIV_POS        1u
-#define HAL_TMR_CLKDIV_BITS       0b11u
-#define HAL_TMR_CLKDIV_MASK       (HAL_TMR_CLKDIV_BITS << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_pos        1u
+#define HAL_TMR_CLKDIV_bits       0b11u
+#define HAL_TMR_CLKDIV_mask       (HAL_TMR_CLKDIV_bits << HAL_TMR_CLKDIV_pos)
 
-#define HAL_TMR_CLKDIV_1          (0u << HAL_TMR_CLKDIV_POS)
-#define HAL_TMR_CLKDIV_2          (1u << HAL_TMR_CLKDIV_POS)
-#define HAL_TMR_CLKDIV_4          (2u << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_1          (0u << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_2          (1u << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_4          (2u << HAL_TMR_CLKDIV_pos)
 
 // Enable interrupt
-#define HAL_TMR_INTERRUPT_POS     3u
-#define HAL_TMR_INTERRUPT_BITS    0b1u
-#define HAL_TMR_INTERRUPT_MASK    (HAL_TMR_INTERRUPT_BITS << HAL_TMR_INTERRUPT_POS)
+#define HAL_TMR_INTERRUPT_pos     3u
+#define HAL_TMR_INTERRUPT_bits    0b1u
+#define HAL_TMR_INTERRUPT_mask    (HAL_TMR_INTERRUPT_bits << HAL_TMR_INTERRUPT_pos)
 
-#define HAL_TMR_INTERRUPT_DISABLE (0u << HAL_TMR_INTERRUPT_POS)
-#define HAL_TMR_INTERRUPT_ENABLE  (1u << HAL_TMR_INTERRUPT_POS)
+#define HAL_TMR_INTERRUPT_DISABLE (0u << HAL_TMR_INTERRUPT_pos)
+#define HAL_TMR_INTERRUPT_ENABLE  (1u << HAL_TMR_INTERRUPT_pos)
 
 
 

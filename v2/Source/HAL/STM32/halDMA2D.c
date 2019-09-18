@@ -14,11 +14,11 @@ void halDMA2DInitialize(void) {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Ompla una regio amb un color.
-/// \param dstAddr: Adressa del primer pixel del desti.
+/// \brief Ompla una regio amb un color solid.
+/// \param dstAddr: Adressa del primer pixel de la regio.
 /// \param width: Amplada de la regio.
 /// \param height: Alçada de la regio.
-/// \param dstPitch: Amplada de linia.
+/// \param dstPitch: Offset per avançar a la seguent linia de la regio.
 /// \param options: Opcions
 /// \param color: Color per omplir.
 ///
@@ -32,18 +32,18 @@ void halDMA2DStartFill(
 
 	// Selecciona el tipus de transferencia com a R2M
 	//
-	DMA2D->CR = 0b11 << DMA2D_CR_MODE_Pos;
+	DMA2D->CR = 0b11 << DMA2D_CR_MODE_pos;
 
 	// Selecciona el color i el format de color del desti.
 	//
 	switch (options & HAL_DMA2D_DFMT_mask) {
 		case HAL_DMA2D_DFMT_RGB565: // RGB565
-			DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;
+			DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_pos;
 			break;
 
 		default:
 		case HAL_DMA2D_DFMT_RGB888: // RGB888
-			DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;
+			DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_pos;
 			break;
 	}
 	DMA2D->OCOLR = color;
@@ -55,7 +55,7 @@ void halDMA2DStartFill(
 
 	// Selecciona el tamany de la finestra
 	//
-	DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);
+	DMA2D->NLR = (width << DMA2D_NLR_PL_pos) | (height << DMA2D_NLR_NL_pos);
 
 	// Inicia la transferencia
 	//
@@ -64,14 +64,14 @@ void halDMA2DStartFill(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Copia una regio.
-/// \param dstAddr: Adresa del primer pixel del desti.
+/// \brief Copia un mapa de bits a una regio.
+/// \param dstAddr: Adresa del primer pixel de la regio.
 /// \param width: Amplada de la regio.
 /// \param height: Alçada de la regio.
-/// \param dstPitch: Offset fins a la seguent linia.
+/// \param dstPitch: Offset per avançar a la seguent linia de la regio.
 /// \param options: Opcions.
-/// \param srcAddr: Adressa del primer pixel del origen.
-/// \param srcPitch: offset fins a la seguent linia.
+/// \param srcAddr: Adressa del primer pixel del mapa de bits.
+/// \param srcPitch: Offset per avançar a la seguent linia del mapa de bits.
 ///
 void halDMA2DStartCopy(
 	int dstAddr,
@@ -90,16 +90,16 @@ void halDMA2DStartCopy(
 	//
 	switch (options & HAL_DMA2D_SFMT_mask) {
 		case HAL_DMA2D_SFMT_RGB888:
-			DMA2D->FGPFCCR = 0b0001 << DMA2D_FGPFCCR_CM_Pos;
+			DMA2D->FGPFCCR = 0b0001 << DMA2D_FGPFCCR_CM_pos;
 			break;
 
 		case HAL_DMA2D_SFMT_RGB565:
-			DMA2D->FGPFCCR = 0b0010 << DMA2D_FGPFCCR_CM_Pos;
+			DMA2D->FGPFCCR = 0b0010 << DMA2D_FGPFCCR_CM_pos;
 			break;
 
 		default:
 		case HAL_DMA2D_SFMT_ARGB8888:
-			DMA2D->FGPFCCR = 0b0000 << DMA2D_FGPFCCR_CM_Pos;
+			DMA2D->FGPFCCR = 0b0000 << DMA2D_FGPFCCR_CM_pos;
 			break;
 	}
 
@@ -107,12 +107,12 @@ void halDMA2DStartCopy(
 	//
 	switch (options & HAL_DMA2D_DFMT_mask) {
 		case HAL_DMA2D_DFMT_RGB565:
-			DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;
+			DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_pos;
 			break;
 
 		default:
 		case HAL_DMA2D_DFMT_RGB888:
-			DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;
+			DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_pos;
 			break;
 	}
 
@@ -128,11 +128,11 @@ void halDMA2DStartCopy(
 
 	// Selecciona el tamany de la finestra
 	//
-	DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);
+	DMA2D->NLR = (width << DMA2D_NLR_PL_pos) | (height << DMA2D_NLR_NL_pos);
 
 	// Inicia la transferencia
 	//
-	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;
+	DMA2D->CR |= 1 << DMA2D_CR_START_pos;
 }
 
 
@@ -156,9 +156,9 @@ bool halDMA2DWaitForFinish(void) {
 			// Borra els flags d'error
 			//
 			uint32_t tmp = DMA2D->IFCR;
-			tmp |= (1 << DMA2D_IFCR_CCEIF_Pos);
-			tmp |= (1 << DMA2D_IFCR_CTEIF_Pos);
-			tmp |= (1 << DMA2D_IFCR_CAECIF_Pos);
+			tmp |= (1 << DMA2D_IFCR_CCEIF_pos);
+			tmp |= (1 << DMA2D_IFCR_CTEIF_pos);
+			tmp |= (1 << DMA2D_IFCR_CAECIF_pos);
 			DMA2D->IFCR = tmp;
 
 			// Retorna error
@@ -169,7 +169,7 @@ bool halDMA2DWaitForFinish(void) {
 
 	// Borra el flag de transferencia complerta
 	//
-	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
+	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_pos;
 
 	// Retorna OK
 	//

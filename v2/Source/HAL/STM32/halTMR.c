@@ -20,7 +20,7 @@ static TimerInfo timerInfoTbl[HAL_TMR_TIMER_MAX];
 /// \brief Activa el rellotge del temporitzador
 /// \param[in] timer: Identificador del temporitzador.
 ///
-static void enableTMR(
+static void enableClock(
 	TMRTimer timer) {
 
 	switch (timer) {
@@ -90,7 +90,7 @@ static void enableTMR(
 /// \brief Desactiva el rellotge del temporitzador
 /// \param timer: Identificador del temporitzador.
 ///
-static void disableTMR(
+static void disableClock(
 	TMRTimer timer) {
 
 	switch (timer) {
@@ -211,7 +211,7 @@ void halTMRInitialize(
 	TMRTimer timer = pInfo->timer;
 	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
 
-	enableTMR(timer);
+	enableClock(timer);
 
 	prepareTimerHandle(&pTimerInfo->handle, pInfo);
 	HAL_TIM_Base_Init(&pTimerInfo->handle);
@@ -246,7 +246,7 @@ void halTMRShutdown(
 
 	HAL_TIM_Base_DeInit(&pTimerInfo->handle);
 
-	disableTMR(timer);
+	disableClock(timer);
 }
 
 

@@ -32,23 +32,23 @@ typedef struct {                       // Parametres d'inicialitzacio
 #define HAL_SPI_ID_MAX            6u
 
 // Polaritat del rellotge
-#define HAL_SPI_CPOL_POS          0u
-#define HAL_SPI_CPOL_BITS         0b1u
-#define HAL_SPI_CPOL_MASK         (HAL_SPI_CPOL_BITS << HAL_SPI_CPOL_POS)
+#define HAL_SPI_CPOL_pos          0u
+#define HAL_SPI_CPOL_bits         0b1u
+#define HAL_SPI_CPOL_mask         (HAL_SPI_CPOL_bits << HAL_SPI_CPOL_pos)
 
-#define HAL_SPI_CPOL_HIGH         (0u << HAL_SPI_CPOL_POS)
-#define HAL_SPI_CPOL_LOW          (1u << HAL_SPI_CPOL_POS)
+#define HAL_SPI_CPOL_HIGH         (0u << HAL_SPI_CPOL_pos)
+#define HAL_SPI_CPOL_LOW          (1u << HAL_SPI_CPOL_pos)
 
 // Fase del rellotge
-#define HAL_SPI_CPHA_POS          1u
-#define HAL_SPI_CPHA_BITS         0b1u
-#define HAL_SPI_CPHA_MASK         (HAL_SPI_CPHA_BITS << HAL_SPI_CPHA_POS)
+#define HAL_SPI_CPHA_pos          1u
+#define HAL_SPI_CPHA_bits         0b1u
+#define HAL_SPI_CPHA_mask         (HAL_SPI_CPHA_bits << HAL_SPI_CPHA_pos)
 
-#define HAL_SPI_CPHA_EDGE1        (0u << HAL_SPI_CPHA_POS)
-#define HAL_SPI_CPHA_EDGE2        (1u << HAL_SPI_CPHA_POS)
+#define HAL_SPI_CPHA_EDGE1        (0u << HAL_SPI_CPHA_pos)
+#define HAL_SPI_CPHA_EDGE2        (1u << HAL_SPI_CPHA_poa)
 
 // Modus: Combinat de CPOL i CPHA
-#define HAL_SPI_MODE_MASK         (HAL_SPI_CPOL_MASK | HAL_SPI_CPHA_MASK)
+#define HAL_SPI_MODE_mask         (HAL_SPI_CPOL_mask | HAL_SPI_CPHA_nask)
 
 #define HAL_SPI_MODE_0            (HAL_SPI_CPOL_LOW | HAL_SPI_CPHA_EDGE1)
 #define HAL_SPI_MODE_1            (HAL_SPI_CPOL_LOW | HAL_SPI_CPHA_EDGE2)
@@ -93,7 +93,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 
 
 // Funcions d'inicialitzacio
-void halSPIInitialize(const SPIInitializeInfo *info);
+void halSPIInitialize(const SPIInitializeInfo *pInfo);
 void halSPIShutdown(uint8_t id);
 
 // Funcions de control

@@ -14,6 +14,7 @@ extern "C" {
 #define HAL_DMA2D_DFMT_pos        0u
 #define HAL_DMA2D_DFMT_bits       0b111u
 #define HAL_DMA2D_DFMT_mask       (HAL_DMA2D_DFMT_bits << HAL_DMA2D_DFMT_pos)
+
 #define HAL_DMA2D_DFMT_ARGB8888   (0u << HAL_DMA2D_DFMT_pos)
 #define HAL_DMA2D_DFMT_RGB888     (1u << HAL_DMA2D_DFMT_pos)
 #define HAL_DMA2D_DFMT_RGB565     (2u << HAL_DMA2D_DFMT_pos)
@@ -24,6 +25,7 @@ extern "C" {
 #define HAL_DMA2D_SFMT_pos        3u
 #define HAL_DMA2D_SFMT_bits       0b111u
 #define HAL_DMA2D_SFMT_mask       (HAL_DMA2D_SFMT_bits << HAL_DMA2D_SFMT_pos)
+
 #define HAL_DMA2D_SFMT_ARGB8888   (0u << HAL_DMA2D_SFMT_pos)
 #define HAL_DMA2D_SFMT_RGB888     (1u << HAL_DMA2D_SFMT_pos)
 #define HAL_DMA2D_SFMT_RGB565     (2u << HAL_DMA2D_SFMT_pos)
@@ -33,6 +35,7 @@ extern "C" {
 // Us de les interrupcions
 #define HAL_DMA2D_INT_pos         6u
 #define HAL_DMA2D_INT_bits        0b1u
+
 #define HAL_DMA2D_INT_mask        (HAL_DMS2D_INT_bits << HAL_DMA2D_INT_pos)
 #define HAL_DMA2D_INT_DISABLE     (0u << HAL_DMA2D_INT_POS)
 #define HAL_DMA2D_INT_ENABLE      (1u << HAL_DMA2D_INT_POS)

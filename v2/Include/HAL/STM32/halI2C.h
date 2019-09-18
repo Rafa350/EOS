@@ -24,7 +24,7 @@ typedef struct {
 } I2CInitializeInfo;
 
 
-void halI2CInitialize(const I2CInitializeInfo *info);
+void halI2CInitialize(const I2CInitializeInfo *pInfo);
 
 void halI2CWriteMultiple(uint8_t id, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
 void halI2CReadMultiple(uint8_t id, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);

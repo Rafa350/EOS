@@ -60,30 +60,30 @@ static void setupPin(
 
 	// Configura el registre IMR (Interrupt Mask Register);
 	//
-    if ((options & HAL_EXTI_MODE_MASK) == HAL_EXTI_MODE_INT)
+    if ((options & HAL_EXTI_MODE_mask) == HAL_EXTI_MODE_INT)
     	EXTI->IMR |= pinMask;
     else
     	EXTI->IMR &= ~pinMask;
 
 	// Configura el registre EMR (Event Mask Register);
 	//
-    if ((options & HAL_EXTI_MODE_MASK) == HAL_EXTI_MODE_EVENT)
+    if ((options & HAL_EXTI_MODE_mask) == HAL_EXTI_MODE_EVENT)
     	EXTI->EMR |= pinMask;
     else
     	EXTI->EMR &= ~pinMask;
 
 	// Configura el registre RTSR (Rising Trigger Selection Register)
 	//
-	if (((options & HAL_EXTI_TRIGGER_MASK) == HAL_EXTI_TRIGGER_RISING) ||
-		((options & HAL_EXTI_TRIGGER_MASK) == HAL_EXTI_TRIGGER_CHANGING))
+	if (((options & HAL_EXTI_TRIGGER_mask) == HAL_EXTI_TRIGGER_RISING) ||
+		((options & HAL_EXTI_TRIGGER_mask) == HAL_EXTI_TRIGGER_CHANGING))
 		EXTI->RTSR |= pinMask;
 	else
 		EXTI->RTSR &= ~pinMask;
 
 	// Configura el registre FTSR (Falling Trigger Selection Register)
 	//
-	if (((options & HAL_EXTI_TRIGGER_MASK) == HAL_EXTI_TRIGGER_FALLING) ||
-		((options & HAL_EXTI_TRIGGER_MASK) == HAL_EXTI_TRIGGER_CHANGING))
+	if (((options & HAL_EXTI_TRIGGER_mask) == HAL_EXTI_TRIGGER_FALLING) ||
+		((options & HAL_EXTI_TRIGGER_mask) == HAL_EXTI_TRIGGER_CHANGING))
 		EXTI->FTSR |= pinMask;
 	else
 		EXTI->FTSR &= ~pinMask;
@@ -102,7 +102,7 @@ void halEXTIInitializePins(
 	eosAssert(pInfo != NULL);
 	eosAssert(count > 0);
 
-	// Activa el modul EXTI
+	// Activa el clock del modul EXTI
 	//
 	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 

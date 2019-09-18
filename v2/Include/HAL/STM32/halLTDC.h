@@ -35,29 +35,37 @@ typedef struct {
 #define HAL_LTDC_LAYER_1          ((LTDCLayerNum) 1)
 
 
-#define HAL_LTDC_HSPOL_Pos        0u
-#define HAL_LTDC_HSPOL_Bits       0b1u
-#define HAL_LTDC_HSPOL_Mask       (HAL_LTDC_HSPOL_Bits << HAL_LTDC_HSPOL_Pos)
-#define HAL_LTDC_HSPOL_LOW        (0u << HAL_LTDC_HSPOL_Pos)
-#define HAL_LTDC_HSPOL_HIGH       (1u << HAL_LTDC_HSPOL_Pos)
+// Polaritat del senyal HSYNC
+#define HAL_LTDC_HSPOL_pos        0u
+#define HAL_LTDC_HSPOL_bits       0b1u
+#define HAL_LTDC_HSPOL_mask       (HAL_LTDC_HSPOL_bits << HAL_LTDC_HSPOL_pos)
 
-#define HAL_LTDC_VSPOL_Pos        1u
-#define HAL_LTDC_VSPOL_Bits       0b1u
-#define HAL_LTDC_VSPOL_Mask       (HAL_LTDC_VSPOL_Bits << HAL_LTDC_HSPOL_Pos)
-#define HAL_LTDC_VSPOL_LOW        (0u << HAL_LTDC_VSPOL_Pos)
-#define HAL_LTDC_VSPOL_HIGH       (1u << HAL_LTDC_VSPOL_Pos)
+#define HAL_LTDC_HSPOL_LOW        (0u << HAL_LTDC_HSPOL_pos)
+#define HAL_LTDC_HSPOL_HIGH       (1u << HAL_LTDC_HSPOL_pos)
 
-#define HAL_LTDC_DEPOL_Pos        2u
-#define HAL_LTDC_DEPOL_Bits       0b1u
-#define HAL_LTDC_DEPOL_Mask       (HAL_LTDC_DEPOL_Bits << HAL_LTDC_DEPOL_Pos)
-#define HAL_LTDC_DEPOL_LOW        (0u << HAL_LTDC_DEPOL_Pos)
-#define HAL_LTDC_DEPOL_HIGH       (1u << HAL_LTDC_DEPOL_Pos)
+// Polaritat del senyal VSYNC
+#define HAL_LTDC_VSPOL_pos        1u
+#define HAL_LTDC_VSPOL_bits       0b1u
+#define HAL_LTDC_VSPOL_mask       (HAL_LTDC_VSPOL_Bits << HAL_LTDC_HSPOL_pos)
 
-#define HAL_LTDC_PCPOL_Pos        3u
-#define HAL_LTDC_PCPOL_Bits       0b1u
-#define HAL_LTDC_PCPOL_Mask       (HAL_LTDC_PCPOL_Bits << HAL_LTDC_PCPOL_Pos)
-#define HAL_LTDC_PCPOL_LOW        (0u << HAL_LTDC_PCPOL_Pos)
-#define HAL_LTDC_PCPOL_HIGH       (1u << HAL_LTDC_PCPOL_Pos)
+#define HAL_LTDC_VSPOL_LOW        (0u << HAL_LTDC_VSPOL_pos)
+#define HAL_LTDC_VSPOL_HIGH       (1u << HAL_LTDC_VSPOL_pos)
+
+// Polaritat del senyal DE
+#define HAL_LTDC_DEPOL_pos        2u
+#define HAL_LTDC_DEPOL_bits       0b1u
+#define HAL_LTDC_DEPOL_mask       (HAL_LTDC_DEPOL_bits << HAL_LTDC_DEPOL_pos)
+
+#define HAL_LTDC_DEPOL_LOW        (0u << HAL_LTDC_DEPOL_pos)
+#define HAL_LTDC_DEPOL_HIGH       (1u << HAL_LTDC_DEPOL_pos)
+
+// Polaritat del senyal PC
+#define HAL_LTDC_PCPOL_pos        3u
+#define HAL_LTDC_PCPOL_bits       0b1u
+#define HAL_LTDC_PCPOL_mask       (HAL_LTDC_PCPOL_bits << HAL_LTDC_PCPOL_pos)
+
+#define HAL_LTDC_PCPOL_LOW        (0u << HAL_LTDC_PCPOL_pos)
+#define HAL_LTDC_PCPOL_HIGH       (1u << HAL_LTDC_PCPOL_pos)
 
 
 void halLDTCInitialize(const LTDCInitializeInfo *pInfo);

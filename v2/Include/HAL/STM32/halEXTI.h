@@ -63,23 +63,23 @@ typedef struct {
 
 
 // Mode de treball
-#define HAL_EXTI_MODE_POS         0u
-#define HAL_EXTI_MODE_BITS        0b11u
-#define HAL_EXTI_MODE_MASK        (HAL_EXTI_MODE_BITS << HAL_EXTI_MODE_POS)
+#define HAL_EXTI_MODE_pos         0u
+#define HAL_EXTI_MODE_bits        0b11u
+#define HAL_EXTI_MODE_mask        (HAL_EXTI_MODE_bits << HAL_EXTI_MODE_pos)
 
-#define HAL_EXTI_MODE_NONE        (0b00 << HAL_EXTI_MODE_POS)
-#define HAL_EXTI_MODE_INT         (0b01 << HAL_EXTI_MODE_POS)
-#define HAL_EXTI_MODE_EVENT       (0b10 << HAL_EXTI_MODE_POS)
+#define HAL_EXTI_MODE_NONE        (0b00 << HAL_EXTI_MODE_pos)
+#define HAL_EXTI_MODE_INT         (0b01 << HAL_EXTI_MODE_pos)
+#define HAL_EXTI_MODE_EVENT       (0b10 << HAL_EXTI_MODE_pos)
 
 // Disparador
-#define HAL_EXTI_TRIGGER_POS      2u
-#define HAL_EXTI_TRIGGER_BITS     0b11u
-#define HAL_EXTI_TRIGGER_MASK     (HAL_EXTI_TRIGGER_BITS << HAL_EXTI_TRIGGER_POS)
+#define HAL_EXTI_TRIGGER_pos      2u
+#define HAL_EXTI_TRIGGER_bits     0b11u
+#define HAL_EXTI_TRIGGER_mask     (HAL_EXTI_TRIGGER_bits << HAL_EXTI_TRIGGER_pos)
 
-#define HAL_EXTI_TRIGGER_NONE     (0b00u << HAL_EXTI_TRIGGER_POS)
-#define HAL_EXTI_TRIGGER_RISING   (0b01u << HAL_EXTI_TRIGGER_POS)
-#define HAL_EXTI_TRIGGER_FALLING  (0b10u << HAL_EXTI_TRIGGER_POS)
-#define HAL_EXTI_TRIGGER_CHANGING (0b11u << HAL_EXTI_TRIGGER_POS)
+#define HAL_EXTI_TRIGGER_NONE     (0b00u << HAL_EXTI_TRIGGER_pos)
+#define HAL_EXTI_TRIGGER_RISING   (0b01u << HAL_EXTI_TRIGGER_pos)
+#define HAL_EXTI_TRIGGER_FALLING  (0b10u << HAL_EXTI_TRIGGER_pos)
+#define HAL_EXTI_TRIGGER_CHANGING (0b11u << HAL_EXTI_TRIGGER_pos)
 
 
 void halEXTIInitialize(const EXTIInitializeInfo *pInfo);
