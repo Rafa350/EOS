@@ -223,7 +223,7 @@ void halGPIOInitializePins(
 
 		const GPIOInitializePinInfo *p = &pInfo[i];
 
-		if (!isCkockEnabled(p->port))
+		if (!isClockEnabled(p->port))
 			enableClock(p->port);
 
 		setupPin(p->port, p->pin, p->options, p->alt);

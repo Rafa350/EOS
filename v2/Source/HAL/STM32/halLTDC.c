@@ -6,7 +6,7 @@
 /// \brief Asigna l'adresa del buffer d'una capa.
 ///
 void halLTDCSetFrameAddress(
-	int layerNum,
+	LTDCLayerNum layerNum,
 	int frameAddr) {
 
 	LTDC_Layer_TypeDef *layer =

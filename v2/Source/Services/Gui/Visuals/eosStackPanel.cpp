@@ -21,7 +21,7 @@ StackPanel::StackPanel():
 /// \param availableSize: Tamany disponible.
 /// \return El tamany requerit.
 ///
-Size StackPanel::measureCore(
+Size StackPanel::measureOverride(
 	const Size &availableSize) const {
 
 	int contentWidth = 0;
@@ -31,8 +31,7 @@ Size StackPanel::measureCore(
 		eosAssert(pChild != nullptr);
 		if (pChild->isVisible()) {
 
-			Size childAvailableSize = availableSize;
-			pChild->measure(childAvailableSize);
+			pChild->measure(availableSize);
 			const Size& childSize = pChild->getDesiredSize();
 
 			if (orientation == Orientation::horitzontal) {
@@ -43,7 +42,6 @@ Size StackPanel::measureCore(
 				contentWidth = Math::max(contentWidth, childSize.getWidth());
 				contentHeight += childSize.getHeight();
 			}
-
 		}
 	}
 

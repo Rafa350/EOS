@@ -16,7 +16,9 @@ Visual::Visual():
 	needRender(false),
 	visibility(Visibility::visible),
 	position(0, 0),
-	size(0, 0) {
+	size(0, 0),
+	horizontalAlignment(HorizontalAlignment::stretch),
+	verticalAlignment(VerticalAlignment::stretch) {
 }
 
 
@@ -168,7 +170,13 @@ void Visual::removeVisuals() {
 void Visual::measure(
 	const Size &availableSize) {
 
-	desiredSize = measureCore(availableSize);
+	desiredSize = measureOverride(availableSize);
+}
+
+
+void Visual::arrange(
+	const Size &finalSize) {
+
 }
 
 
@@ -177,10 +185,17 @@ void Visual::measure(
 /// \param availableSize: Indica el tamany disponible.
 /// \return El tamany requerit.
 ///
-Size Visual::measureCore(
+Size Visual::measureOverride(
 	const Size &availableSize) const {
 
 	return Size(0, 0);
+}
+
+
+Size Visual::arrangeOverride(
+	const Size &finalSize) const {
+
+	return finalSize;
 }
 
 

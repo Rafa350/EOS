@@ -45,7 +45,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 #define HAL_SPI_CPHA_mask         (HAL_SPI_CPHA_bits << HAL_SPI_CPHA_pos)
 
 #define HAL_SPI_CPHA_EDGE1        (0u << HAL_SPI_CPHA_pos)
-#define HAL_SPI_CPHA_EDGE2        (1u << HAL_SPI_CPHA_poa)
+#define HAL_SPI_CPHA_EDGE2        (1u << HAL_SPI_CPHA_pos)
 
 // Modus: Combinat de CPOL i CPHA
 #define HAL_SPI_MODE_mask         (HAL_SPI_CPOL_mask | HAL_SPI_CPHA_nask)
@@ -56,27 +56,27 @@ typedef struct {                       // Parametres d'inicialitzacio
 #define HAL_SPI_MODE_3            (HAL_SPI_CPOL_HIGH | HAL_SPI_CPHA_EDGE2)
 
 // Tamany de les dades 8 o 16 bits
-#define HAL_SPI_SIZE_POS          2u
-#define HAL_SPI_SIZE_BITS         0b1u
-#define HAL_SPI_SIZE_MASK         0x00000004u
+#define HAL_SPI_SIZE_pos          2u
+#define HAL_SPI_SIZE_bits         0b1u
+#define HAL_SPI_SIZE_mask         0x00000004u
 
 #define HAL_SPI_SIZE_8            0x00000000u
 #define HAL_SPI_SIZE_16           0x00000004u
 
 // Modus Master/Slave
-#define HAL_SPI_MS_MASK           0x00000008u
+#define HAL_SPI_MS_mask           0x00000008u
 
 #define HAL_SPI_MS_MASTER         0x00000000u
 #define HAL_SPI_MS_SLAVE          0x00000008u
 
 // Primer bit a transmetre
-#define HAL_SPI_FIRSTBIT_MASK     0x00000010u
+#define HAL_SPI_FIRSTBIT_mask     0x00000010u
 
 #define HAL_SPI_FIRSTBIT_MSB      0x00000000u
 #define HAL_SPI_FIRSTBIT_LSB      0x00000010u
 
 // CRC automatic
-#define HAL_SPI_CRC_MASK          0x00000020u
+#define HAL_SPI_CRC_mask          0x00000020u
 
 #define HAL_SPI_CRC_DISABLED      0x00000000u
 #define HAL_SPI_CRC_ENABLED       0x00000020u

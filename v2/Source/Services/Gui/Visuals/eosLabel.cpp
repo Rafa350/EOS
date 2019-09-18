@@ -31,7 +31,7 @@ Label::Label():
 /// \brief Calcula la mida desitjada del visual.
 /// \param availableSize: Tamany disponible.
 ///
-Size Label::measureCore(
+Size Label::measureOverride(
 	const Size &availableSize) const {
 
 	if ((textFont != nullptr) && !text.isEmpty()) {

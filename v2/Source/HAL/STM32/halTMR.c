@@ -190,7 +190,7 @@ static void prepareTimerHandle(
 
 	pHandle->Instance = instances[pInfo->timer];
 	pHandle->Init.CounterMode = TIM_COUNTERMODE_UP;
-	pHandle->Init.ClockDivision = clockDivision[(pInfo->options & HAL_TMR_CLKDIV_MASK) >> HAL_TMR_CLKDIV_POS];
+	pHandle->Init.ClockDivision = clockDivision[(pInfo->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos];
 	pHandle->Init.Prescaler = pInfo->prescaler;
 	pHandle->Init.Period = pInfo->period;
 	pHandle->Init.RepetitionCounter = 0;
@@ -216,7 +216,7 @@ void halTMRInitialize(
 	prepareTimerHandle(&pTimerInfo->handle, pInfo);
 	HAL_TIM_Base_Init(&pTimerInfo->handle);
 
-	if ((pInfo->options & HAL_TMR_INTERRUPT_MASK) == HAL_TMR_INTERRUPT_ENABLE) {
+	if ((pInfo->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) {
 
 		static const IRQn_Type irq[] = {
 			0,

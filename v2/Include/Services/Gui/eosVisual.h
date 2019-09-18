@@ -56,7 +56,11 @@ namespace eos {
     		Visibility visibility;
     		Point position;
 			Size size;
+			Size minSize;
+			Size maxSize;
 			Size desiredSize;
+			HorizontalAlignment horizontalAlignment;
+			VerticalAlignment verticalAlignment;
 
     	protected:
     		virtual void onRender(RenderContext &context) = 0;
@@ -71,7 +75,8 @@ namespace eos {
     		virtual void onTouchPadRelease();
     		virtual void onTouchPadMove(const Point &position);
 #endif
-            virtual Size measureCore(const Size &availableSize) const;
+            virtual Size measureOverride(const Size &availableSize) const;
+            virtual Size arrangeOverride(const Size &finalSize) const;
 
             void addVisual(Visual *pVisual);
             void removeVisual(Visual *pVisual);
@@ -99,6 +104,7 @@ namespace eos {
             inline Rect getRect() const { return Rect(Point(0, 0), size); }
 
             void measure(const Size &availableSize);
+            void arrange(const Size &finalSize);
             const Size& getDesiredSize() const { return desiredSize; }
 
             void dispatch(const Message &msg);

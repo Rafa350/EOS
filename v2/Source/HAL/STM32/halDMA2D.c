@@ -32,18 +32,18 @@ void halDMA2DStartFill(
 
 	// Selecciona el tipus de transferencia com a R2M
 	//
-	DMA2D->CR = 0b11 << DMA2D_CR_MODE_pos;
+	DMA2D->CR = 0b11 << DMA2D_CR_MODE_Pos;
 
 	// Selecciona el color i el format de color del desti.
 	//
 	switch (options & HAL_DMA2D_DFMT_mask) {
 		case HAL_DMA2D_DFMT_RGB565: // RGB565
-			DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_pos;
+			DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;
 			break;
 
 		default:
 		case HAL_DMA2D_DFMT_RGB888: // RGB888
-			DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_pos;
+			DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;
 			break;
 	}
 	DMA2D->OCOLR = color;
@@ -55,7 +55,7 @@ void halDMA2DStartFill(
 
 	// Selecciona el tamany de la finestra
 	//
-	DMA2D->NLR = (width << DMA2D_NLR_PL_pos) | (height << DMA2D_NLR_NL_pos);
+	DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);
 
 	// Inicia la transferencia
 	//
@@ -90,16 +90,16 @@ void halDMA2DStartCopy(
 	//
 	switch (options & HAL_DMA2D_SFMT_mask) {
 		case HAL_DMA2D_SFMT_RGB888:
-			DMA2D->FGPFCCR = 0b0001 << DMA2D_FGPFCCR_CM_pos;
+			DMA2D->FGPFCCR = 0b0001 << DMA2D_FGPFCCR_CM_Pos;
 			break;
 
 		case HAL_DMA2D_SFMT_RGB565:
-			DMA2D->FGPFCCR = 0b0010 << DMA2D_FGPFCCR_CM_pos;
+			DMA2D->FGPFCCR = 0b0010 << DMA2D_FGPFCCR_CM_Pos;
 			break;
 
 		default:
 		case HAL_DMA2D_SFMT_ARGB8888:
-			DMA2D->FGPFCCR = 0b0000 << DMA2D_FGPFCCR_CM_pos;
+			DMA2D->FGPFCCR = 0b0000 << DMA2D_FGPFCCR_CM_Pos;
 			break;
 	}
 
@@ -107,12 +107,12 @@ void halDMA2DStartCopy(
 	//
 	switch (options & HAL_DMA2D_DFMT_mask) {
 		case HAL_DMA2D_DFMT_RGB565:
-			DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_pos;
+			DMA2D->OPFCCR = 0b010 << DMA2D_OPFCCR_CM_Pos;
 			break;
 
 		default:
 		case HAL_DMA2D_DFMT_RGB888:
-			DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_pos;
+			DMA2D->OPFCCR = 0b001 << DMA2D_OPFCCR_CM_Pos;
 			break;
 	}
 
@@ -128,11 +128,11 @@ void halDMA2DStartCopy(
 
 	// Selecciona el tamany de la finestra
 	//
-	DMA2D->NLR = (width << DMA2D_NLR_PL_pos) | (height << DMA2D_NLR_NL_pos);
+	DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);
 
 	// Inicia la transferencia
 	//
-	DMA2D->CR |= 1 << DMA2D_CR_START_pos;
+	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;
 }
 
 
@@ -156,9 +156,9 @@ bool halDMA2DWaitForFinish(void) {
 			// Borra els flags d'error
 			//
 			uint32_t tmp = DMA2D->IFCR;
-			tmp |= (1 << DMA2D_IFCR_CCEIF_pos);
-			tmp |= (1 << DMA2D_IFCR_CTEIF_pos);
-			tmp |= (1 << DMA2D_IFCR_CAECIF_pos);
+			tmp |= (1 << DMA2D_IFCR_CCEIF_Pos);
+			tmp |= (1 << DMA2D_IFCR_CTEIF_Pos);
+			tmp |= (1 << DMA2D_IFCR_CAECIF_Pos);
 			DMA2D->IFCR = tmp;
 
 			// Retorna error
@@ -169,7 +169,7 @@ bool halDMA2DWaitForFinish(void) {
 
 	// Borra el flag de transferencia complerta
 	//
-	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_pos;
+	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
 
 	// Retorna OK
 	//

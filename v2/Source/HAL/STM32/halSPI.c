@@ -108,7 +108,7 @@ static SPI_HandleTypeDef *prepareHandle(
 
 	// Precondicions
 	//
-	eosAssert(info != NULL);
+	eosAssert(pInfo != NULL);
 
 	static SPI_TypeDef * const instances[HAL_SPI_ID_MAX] = {
 		SPI1,
@@ -133,7 +133,7 @@ static SPI_HandleTypeDef *prepareHandle(
 	// Configura el modul
 	//
 	SPI_HandleTypeDef *handle = getHandle(pInfo->id);
-	handle->Instance = instances[info->id];
+	handle->Instance = instances[pInfo->id];
 	handle->Init.BaudRatePrescaler = baudRateTbl[pInfo->clockDiv];
 	handle->Init.Direction = SPI_DIRECTION_2LINES;
 	handle->Init.NSS = SPI_NSS_SOFT;
@@ -193,11 +193,11 @@ void halSPIInitialize(
 
 	// Precondicions
 	//
-	eosAssert(info != NULL);
+	eosAssert(pInfo != NULL);
 
 	// Activa el rellotge
 	//
-	enableClock(info->id);
+	enableClock(pInfo->id);
 
 	// Inicialitza el modul
 	//

@@ -28,7 +28,7 @@ namespace eos {
     	protected:
     		void onRender(RenderContext &context) override;
 
-    		Size measureCore(const Size &availableSize) const override;
+    		Size measureOverride(const Size &availableSize) const override;
 
         public:
     		Label();
