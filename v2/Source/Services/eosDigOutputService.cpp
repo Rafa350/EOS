@@ -80,7 +80,7 @@ void DigOutputService::addOutput(
 
 /// ----------------------------------------------------------------------
 /// \brief Elimina una sortida del servei.
-/// \param output: La sortida a eliminar.
+/// \param pOutput: La sortida a eliminar.
 ///
 void DigOutputService::removeOutput(
     DigOutput *pOutput) {
@@ -180,7 +180,7 @@ void DigOutputService::timerInterrupt(
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
-/// \param service: El servei al que s'asignara la sortida.
+/// \param pService: El servei al que s'asignara la sortida.
 /// \param configuration: Parametres de configuracio.
 ///
 DigOutput::DigOutput(

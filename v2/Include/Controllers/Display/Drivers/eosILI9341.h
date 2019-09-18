@@ -6,8 +6,6 @@
 #include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
-#include "stdint.h"
-
 
 #ifndef DISPLAY_SCREEN_WIDTH
 #define DISPLAY_SCREEN_WIDTH      240  // Tamany fix del controlador

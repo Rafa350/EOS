@@ -63,8 +63,8 @@ void DigInputService::addInput(
 
 
 /// ----------------------------------------------------------------------
-/// \brieg Elimina una entrada del servei.
-/// \param pInput:La entrada a eliminar.
+/// \brief Elimina una entrada del servei.
+/// \param pInput: La entrada a eliminar.
 ///
 void DigInputService::removeInput(
     DigInput *pInput) {
@@ -138,7 +138,7 @@ void DigInputService::onTask() {
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param pService: El servei.
-/// \param configuracion: Parametres de configuracio.
+/// \param configuration: Parametres de configuracio.
 ///
 DigInput::DigInput(
     DigInputService *pService,

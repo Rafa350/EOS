@@ -1,3 +1,5 @@
+#include "eos.h"
+#include "eosAssert.h"
 #include "hal/halUSBDevice.h"
 
 
@@ -6,7 +8,6 @@ extern PCD_HandleTypeDef hpcd_FS;
 #endif
 #ifdef USB_USE_HS
 extern PCD_HandleTypeDef hpcd_HS;
-#endif
 #endif
 
 

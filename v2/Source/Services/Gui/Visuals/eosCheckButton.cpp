@@ -25,7 +25,7 @@ CheckButton::CheckButton():
 
 /// ----------------------------------------------------------------------
 /// \brief Canvia l'estat del boto.
-/// \param newState: El nou estat.
+/// \param state: El nou estat.
 ///
 void CheckButton::setState(
 	CheckButtonState state) {
