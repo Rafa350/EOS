@@ -21,10 +21,10 @@ HTask osalTaskCreate(
 	HTask hTask;
     if (xTaskCreate(
         pInfo->function,
-        pInfo->name == NULL ? "" : info->name,
+        pInfo->name == NULL ? "" : pInfo->name,
         pInfo->stackSize,
         pInfo->params,
-        tskIDLE_PRIORITY + ((UBaseType_t) (pInfo->options & OSAL_TASK_PRIORITY_MASK)),
+        tskIDLE_PRIORITY + ((UBaseType_t) (pInfo->options & OSAL_TASK_PRIORITY_mask)),
         (TaskHandle_t*) &hTask) != pdPASS)
 		return NULL;
 

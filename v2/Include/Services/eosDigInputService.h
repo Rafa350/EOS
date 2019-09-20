@@ -21,6 +21,10 @@ namespace eos {
         GPIOPort port;
         GPIOPin pin;
     };
+    
+    struct DigInputEventArgs {
+        DigInput* pDigInput;
+    };
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
@@ -49,7 +53,7 @@ namespace eos {
     ///
     class DigInput final {
         private:
-            typedef ICallbackP1<DigInput*> IDigInputEvent;
+            typedef ICallbackP1<const DigInputEventArgs&> IDigInputEventCallback;
 
         private:
             DigInputService *pService;
@@ -57,7 +61,7 @@ namespace eos {
             GPIOPin pin;
             uint32_t pattern;
             bool state;
-            IDigInputEvent *evChange;
+            IDigInputEventCallback *pChangeEventCallback;
             
         private:
             void initialize();
@@ -72,12 +76,11 @@ namespace eos {
             inline bool get() const { return state; }
 
             /// \brief Asigna el event onChange
-            /// \param instance: La instancia
-            /// \param method: El metode
+            /// \param pCallback: El callback del event
             ///
             template <class cls>
-            void setChangeEvent(cls *instance, void (cls::*method)(DigInput *input)) {
-                evChange = new CallbackP1<cls, DigInput*>(instance, method);
+            void setChangeEventCallback(CallbackP1<cls, const DigInputEventArgs&> *pCallback) {
+                pChangeEventCallback = pCallback;
             }
 
         friend DigInputService;

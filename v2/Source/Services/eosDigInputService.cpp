@@ -127,8 +127,12 @@ void DigInputService::onTask() {
                 pInput->state = false;
             }
 
-            if (changed && (pInput->evChange != nullptr))
-                pInput->evChange->execute(pInput);
+            if (changed && (pInput->pChangeEventCallback != nullptr)) {
+                DigInputEventArgs args = {
+                    .pDigInput = pInput
+                };
+                pInput->pChangeEventCallback->execute(args);
+            }
         }
     }
 }
@@ -144,7 +148,7 @@ DigInput::DigInput(
     const DigInputConfiguration &configuration):
 
     pService(nullptr),
-    evChange(nullptr) {
+    pChangeEventCallback(nullptr) {
        
     port = configuration.port;
     pin = configuration.pin;
@@ -161,9 +165,6 @@ DigInput::~DigInput() {
 
     if (pService != nullptr)
         pService->removeInput(this);
-
-    if (evChange != nullptr)
-        delete evChange;
 }
 
 

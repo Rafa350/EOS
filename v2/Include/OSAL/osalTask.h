@@ -30,10 +30,10 @@ typedef struct {                       // Parametres d'inicialitzacio
 #define OSAL_TASK_PRIORITY_bits        0x11u
 #define OSAL_TASK_PRIORITY_mask        (OSAL_TASK_PRIORITY_bits << OSAL_TASK_PRIORITY_pos)
 
-#define OSAL_TASK_PRIORITY_IDLE	       (0u << OSAL_TASK_PRIORITY_POS)
-#define OSAL_TASK_PRIORITY_LOW	       (1u << OSAL_TASK_PRIORITY_POS)
-#define OSAL_TASK_PRIORITY_NORMAL      (2u << OSAL_TASK_PRIORITY_POS)
-#define OSAL_TASK_PRIORITY_HIGH        (3u << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_IDLE	       (0u << OSAL_TASK_PRIORITY_pos)
+#define OSAL_TASK_PRIORITY_LOW	       (1u << OSAL_TASK_PRIORITY_pos)
+#define OSAL_TASK_PRIORITY_NORMAL      (2u << OSAL_TASK_PRIORITY_pos)
+#define OSAL_TASK_PRIORITY_HIGH        (3u << OSAL_TASK_PRIORITY_pos)
 
 
 HTask osalTaskCreate(const TaskInitializeInfo *pInfo);

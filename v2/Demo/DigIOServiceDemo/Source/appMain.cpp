@@ -13,6 +13,9 @@ using namespace eos;
 
 class MyApplication: public Application {
     private:
+		typedef CallbackP1<MyApplication, const DigInputEventArgs&> DigInputEventCallback;
+        
+    private:
         DigOutputService *digOutputSrv;
 #ifdef EXIST_LEDS_LED1
         DigOutput *digOutput1;
@@ -26,23 +29,27 @@ class MyApplication: public Application {
         DigInputService *digInputSvc;
 #ifdef EXIST_SWITCHES_SW1
         DigInput *digInput1;
+        DigInputEventCallback digInput1EventCallback;
 #endif
 #ifdef EXIST_SWITCHES_SW2
         DigInput *digInput2;
+        DigInputEventCallback digInput2EventCallback;
 #endif
 #ifdef EXIST_SWITCHES_SW3
         DigInput *digInput3;
+        DigInputEventCallback digInput3EventCallback;
 #endif
 
     public:
+        MyApplication();
 #ifdef EXIST_SWITCHES_SW1
-        void digInput1_OnChange(DigInput *input);
+        void digInput1_OnChange(const DigInputEventArgs &args);
 #endif
 #ifdef EXIST_SWITCHES_SW2
-        void digInput2_OnChange(DigInput *input);
+        void digInput2_OnChange(const DigInputEventArgs &args);
 #endif
 #ifdef EXIST_SWITCHES_SW3
-        void digInput3_OnChange(DigInput *input);
+        void digInput3_OnChange(const DigInputEventArgs &args);
 #endif
 
 #ifdef EXIST_LEDS_LED1
@@ -79,7 +86,18 @@ static void initCN() {
 }
 
 
-/// ---------------------------------------------------------------------------
+/// ----------------------------------------------------------------------
+/// \brief Constructor del objecte.
+///
+MyApplication::MyApplication():
+    digInput1EventCallback(this, &MyApplication::digInput1_OnChange), 
+    digInput2EventCallback(this, &MyApplication::digInput2_OnChange), 
+    digInput3EventCallback(this, &MyApplication::digInput3_OnChange) {
+    
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Inicialitza l'aplicacio.
 ///
 void MyApplication::onInitialize() {
@@ -94,21 +112,21 @@ void MyApplication::onInitialize() {
     inputConfiguration.port = SW_SW1_PORT;
     inputConfiguration.pin = SW_SW1_PIN;
     digInput1 = new DigInput(digInputSvc, inputConfiguration);
-    digInput1->setChangeEvent<MyApplication>(this, &MyApplication::digInput1_OnChange);
+    digInput1->setChangeEventCallback(&digInput1EventCallback);
 #endif
 
 #ifdef EXIST_SWITCHES_SW2
     inputConfiguration.port = SW_SW2_PORT;
     inputConfiguration.pin = SW_SW2_PIN;
     digInput2 = new DigInput(digInputSvc, inputConfiguration);
-    digInput2->setChangeEvent<MyApplication>(this, &MyApplication::digInput2_OnChange);
+    digInput2->setChangeEventCallback(&digInput2EventCallback);
 #endif
 
 #ifdef EXIST_SWITCHES_SW3
     inputConfiguration.port = SW_SW3_PORT;
     inputConfiguration.pin = SW_SW3_PIN;
     digInput3 = new DigInput(digInputSvc, inputConfiguration);
-    digInput3->setChangeEvent<MyApplication>(this, &MyApplication::digInput3_OnChange);
+    digInput3->setChangeEventCallback(&digInput3EventCallback);
 #endif
 
     // Prepara el servei de sortides digitals
@@ -154,10 +172,10 @@ void MyApplication::onInitialize() {
 /// \param input: La entrada que ha produit l'event.
 ///
 #ifdef EXIST_SWITCHES_SW1
-void MyApplication::digInput1_OnChange(DigInput *input) {
+void MyApplication::digInput1_OnChange(const DigInputEventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!input->get()) 
+    if (!args.pDigInput->get()) 
         getLed3()->pulse(500);
 #endif    
 }
@@ -169,10 +187,10 @@ void MyApplication::digInput1_OnChange(DigInput *input) {
 /// \param input: La entrada que ha produit l'event.
 ///
 #ifdef EXIST_SWITCHES_SW2
-void MyApplication::digInput2_OnChange(DigInput *input) {
+void MyApplication::digInput2_OnChange(const DigInputEventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!input->get()) 
+    if (!args.pDigInput->get()) 
         getLed3()->pulse(1000);
 #endif    
 }
@@ -184,10 +202,10 @@ void MyApplication::digInput2_OnChange(DigInput *input) {
 /// \param input: La entrada que ha produit l'event.
 ///
 #ifdef EXIST_SWITCHES_SW3
-void MyApplication::digInput3_OnChange(DigInput *input) {
+void MyApplication::digInput3_OnChange(const DigInputEventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!input->get()) 
+    if (!args.pDigInput->get()) 
         getLed3()->pulse(1500);
 #endif    
 }
@@ -229,7 +247,7 @@ void LedLoopService::onLoop() {
 ///
 void appMain() {
 
-	Application *app = new MyApplication();
-	app->run();
-	delete app;
+	Application *pApp = new MyApplication();
+	pApp->run();
+	delete pApp;
 }
