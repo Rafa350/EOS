@@ -17,11 +17,11 @@ static int inISR() {
 
 /// ----------------------------------------------------------------------
 /// \brief Crea un temporitzador.
-/// \param[in] info: Parametres d'inicialitzacio.
+/// \param[in] pInfo: Parametres d'inicialitzacio.
 /// \return El handler del timer. NULL en cas d'error.
 ///
 HTimer osalTimerCreate(
-	const TimerInitializeInfo *info) {
+	const TimerInitializeInfo *pInfo) {
 
 	eosAssert(info != NULL);
 
@@ -30,9 +30,9 @@ HTimer osalTimerCreate(
     HTimer hTimer = xTimerCreate(
     	(const char*)"",
 		1,
-		(info->options & OSAL_TIMER_AUTO_MASK) == OSAL_TIMER_AUTO_ON ? pdTRUE : pdFALSE,
-		(void* const) info->context,
-		(void*) info->callback);
+		(pInfo->options & OSAL_TIMER_AUTO_MASK) == OSAL_TIMER_AUTO_ON ? pdTRUE : pdFALSE,
+		(void* const) pInfo->context,
+		(void*) pInfo->callback);
     if (hTimer == NULL)
     	return NULL;
 

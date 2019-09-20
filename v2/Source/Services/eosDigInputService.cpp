@@ -21,14 +21,13 @@ static DigInputServiceConfiguration defaultConfiguration = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
+/// \brief Constructor. Crea l'objecte amb els parametres per defecte.
 /// \param pApplication: L'aplicacio al que pertany.
 ///
 DigInputService::DigInputService(
     Application *pApplication) :
     
     DigInputService(pApplication, defaultConfiguration) {
-    
 }
 
 

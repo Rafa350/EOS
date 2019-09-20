@@ -26,16 +26,17 @@ typedef struct {                       // Parametres d'inicialitzacio
 
 
 // Prioritat de la tasca
-#define OSAL_TASK_PRIORITY_POS         0u
-#define OSAL_TASK_PRIORITY_MASK        ((TaskOptions)0b11 << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_pos         0u
+#define OSAL_TASK_PRIORITY_bits        0x11u
+#define OSAL_TASK_PRIORITY_mask        (OSAL_TASK_PRIORITY_bits << OSAL_TASK_PRIORITY_pos)
 
-#define OSAL_TASK_PRIORITY_IDLE	       ((TaskOptions)0 << OSAL_TASK_PRIORITY_POS)
-#define OSAL_TASK_PRIORITY_LOW	       ((TaskOptions)1 << OSAL_TASK_PRIORITY_POS)
-#define OSAL_TASK_PRIORITY_NORMAL      ((TaskOptions)2 << OSAL_TASK_PRIORITY_POS)
-#define OSAL_TASK_PRIORITY_HIGH        ((TaskOptions)3 << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_IDLE	       (0u << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_LOW	       (1u << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_NORMAL      (2u << OSAL_TASK_PRIORITY_POS)
+#define OSAL_TASK_PRIORITY_HIGH        (3u << OSAL_TASK_PRIORITY_POS)
 
 
-HTask osalTaskCreate(const TaskInitializeInfo *info);
+HTask osalTaskCreate(const TaskInitializeInfo *pInfo);
 void osalTaskDestroy(HTask hTask);
 void osalTaskYield();
 

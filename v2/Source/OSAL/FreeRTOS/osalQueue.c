@@ -8,15 +8,15 @@
 
 /// ----------------------------------------------------------------------
 /// \brief Crea una cua.
-/// \param info: Parametres d'inicialitzacio.
+/// \param pInfo: Parametres d'inicialitzacio.
 /// \result El handler de la cua. NULL en cas d'error.
 ///
 HQueue osalQueueCreate(
-	const QueueInitializeInfo *info) {
+	const QueueInitializeInfo *pInfo) {
 
-	eosAssert(info != NULL);
+	eosAssert(pInfo != NULL);
 
-	HQueue hQueue = xQueueCreate(info->maxElements, info->elementSize);
+	HQueue hQueue = xQueueCreate(pInfo->maxElements, pInfo->elementSize);
 	eosAssert(hQueue != NULL);
 
     return hQueue;

@@ -8,11 +8,11 @@
 
 /// ----------------------------------------------------------------------
 /// \brief Crea una tasca.
-/// \param[in] info: Parametres d'inicialitzacio.
+/// \param[in] pInfo: Parametres d'inicialitzacio.
 /// \return El handler de la tasca. NULL en cas d'error.
 ///
 HTask osalTaskCreate(
-	const TaskInitializeInfo *info) {
+	const TaskInitializeInfo *pInfo) {
 
     eosAssert(info != NULL);
 
@@ -20,11 +20,11 @@ HTask osalTaskCreate(
 	//
 	HTask hTask;
     if (xTaskCreate(
-        info->function,
-        info->name == NULL ? "" : info->name,
-        info->stackSize,
-        info->params,
-        tskIDLE_PRIORITY + ((UBaseType_t) (info->options & OSAL_TASK_PRIORITY_MASK)),
+        pInfo->function,
+        pInfo->name == NULL ? "" : info->name,
+        pInfo->stackSize,
+        pInfo->params,
+        tskIDLE_PRIORITY + ((UBaseType_t) (pInfo->options & OSAL_TASK_PRIORITY_MASK)),
         (TaskHandle_t*) &hTask) != pdPASS)
 		return NULL;
 

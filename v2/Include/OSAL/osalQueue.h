@@ -20,7 +20,7 @@ typedef struct {
 } QueueInitializeInfo;
 
 
-HQueue osalQueueCreate(const QueueInitializeInfo *info);
+HQueue osalQueueCreate(const QueueInitializeInfo *pInfo);
 void osalQueueDestroy(HQueue hQueue);
 
 void osalQueueClear(HQueue hQueue);

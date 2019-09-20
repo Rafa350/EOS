@@ -14,6 +14,7 @@ extern "C" {
 
 typedef struct OSAL_SEMAPHORE_DATA *HSemaphore;
 
+
 HSemaphore osalSemaphoreCreate();
 void osalSemaphoreDestroy(HSemaphore hSemaphore);
 

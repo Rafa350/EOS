@@ -14,6 +14,7 @@ extern "C" {
 
 typedef struct OSAL_HEAP_DATA *HHeap;
 
+
 HHeap osalHeapCreate();
 void *osalHeapAlloc(HHeap hHeap, unsigned blockSize);
 void osalHeapFree(HHeap hHeap, void *pBlock);

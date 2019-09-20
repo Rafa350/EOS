@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 
-typedef struct POOL *HPool;
+typedef struct OSAL_POOL_DATA *HPool;
 
 
 HPool osalPoolCreate(unsigned blockSize, unsigned maxBlocks, void *pBlock);
