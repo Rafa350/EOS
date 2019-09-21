@@ -10,14 +10,21 @@
 namespace eos {
 
     enum class FontStyle {
-        Regular,
-        Bold,
-        Italic,
-        BoldItalic
+        regular,
+        bold,
+        italic,
+        boldItalic
+    };
+
+    struct FontTableEntry {       // Entrada de la taula de fonts
+        const char *name;         // -Nom del font
+        int16_t height;           // -Alçada
+        FontStyle style;          // -Estil
+        const uint8_t *resource;  // -Taula d'informacio del font
     };
 
     struct FontInfo {             // Informacio del font
-        int16_t height;           // -Al�ada
+        int16_t height;           // -AlÇada
         int16_t ascent;           // -Ascendent
         int16_t descent;          // -Descendent
         char firstChar;           // -Primer caracter definit en el font
@@ -41,16 +48,20 @@ namespace eos {
             CharInfo ciCache;
             const uint8_t *fontResource;
 
+        private:
+            Font(const Font& other) = delete;
+
+            void updateCache(char ch);
+
         public:
-            Font(const String &fontName, int height, FontStyle style);
-            Font(const unsigned char *fontResource);
+            Font(const uint8_t *fontResource);
+
             void getFontInfo(FontInfo &fi) const;
             void getCharInfo(char ch, CharInfo &ci);
             inline int getFontHeight() const { return fontResource[1]; }
             int getCharAdvance(char ch);
 
-        private:
-            void updateCache(char ch);
+            static const uint8_t * getFontResource(const String& name, int height, FontStyle style);
     };
 }
 

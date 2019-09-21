@@ -15,6 +15,7 @@ namespace eos {
 			int bottom;
 
 		public:
+			Thickness();
 			Thickness(int thickness);
 			Thickness(int hThickness, int vThickness);
 			Thickness(int left, int top, int right, int bottom);
