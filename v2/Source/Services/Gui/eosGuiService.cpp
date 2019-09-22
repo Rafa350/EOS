@@ -217,6 +217,7 @@ void GuiService::onInitialize() {
 	StackPanel *sp = new StackPanel();
 	sp->setPosition(Point(20, 20));
 	sp->setSize(Size(100, 250));
+	sp->setMargin(Thickness(100, 10, 100, 10));
 	screen->addChild(sp);
 	for (int i = 0; i < 5; i++) {
 
@@ -224,7 +225,7 @@ void GuiService::onInitialize() {
 		l->setText("hola");
 
 		PushButton *pb = new PushButton();
-		pb->setMargin(Thickness(5));
+		pb->setMargin(Thickness(10));
 		pb->setContent(l);
 
 		sp->addChild(pb);

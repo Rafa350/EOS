@@ -15,6 +15,7 @@ namespace eos {
 
 			protected:
 				Size measureOverride(const Size &availableSize) const override;
+				Size arrangeOverride(const Size &finalSize) const override;
 
 		public:
 			ContentControl();

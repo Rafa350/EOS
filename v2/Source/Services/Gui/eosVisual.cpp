@@ -207,17 +207,18 @@ void Visual::arrange(
 
 	// TODO: Falta ajustar marges (margin)
 
-	Size size = arrangeOverride(finalRect.getSize());
+	Rect rect = finalRect;
+	Size size = arrangeOverride(rect.getSize());
 
-	int x = finalRect.getX();
+	int x = rect.getX();
 	switch (horizontalAlignment) {
 		case HorizontalAlignment::center:
 		case HorizontalAlignment::stretch:
-			x += (finalRect.getWidth() - size.getWidth()) / 2;
+			x += (rect.getWidth() - size.getWidth()) / 2;
 			break;
 
 		case HorizontalAlignment::right:
-			x += finalRect.getWidth() - size.getWidth();
+			x += rect.getWidth() - size.getWidth();
 			break;
 
 		default:
@@ -228,11 +229,11 @@ void Visual::arrange(
 	switch (verticalAlignment) {
 		case VerticalAlignment::center:
 		case VerticalAlignment::stretch:
-			y += (finalRect.getHeight() - size.getHeight()) / 2;
+			y += (rect.getHeight() - size.getHeight()) / 2;
 			break;
 
 		case VerticalAlignment::bottom:
-			y += finalRect.getHeight() - size.getHeight();
+			y += rect.getHeight() - size.getHeight();
 			break;
 
 		default:
@@ -365,6 +366,27 @@ void Visual::setMargin(
 		invalidate();
 	}
 }
+
+
+void Visual::setHorizontalAlignment(
+	HorizontalAlignment horizontalAlignment) {
+
+	if (this->horizontalAlignment != horizontalAlignment) {
+		this->horizontalAlignment = horizontalAlignment;
+		invalidate();
+	}
+}
+
+
+void Visual::setVerticalAlignment(
+	VerticalAlignment verticalAlignment) {
+
+	if (this->verticalAlignment != verticalAlignment) {
+		this->verticalAlignment = verticalAlignment;
+		invalidate();
+	}
+}
+
 
 
 /// ----------------------------------------------------------------------

@@ -220,7 +220,7 @@ int Graphics::getTextWidth(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte l'al�ada d'una cadena de texte.
+/// \brief    Obte l'alçada d'una cadena de texte.
 /// \param    text: La cadena de texte.
 /// \return   L'al�ada de la cadena.
 ///

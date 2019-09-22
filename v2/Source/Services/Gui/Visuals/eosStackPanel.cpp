@@ -58,7 +58,7 @@ Size StackPanel::measureOverride(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Ajusta el tamany del panell i dels seus fills..
+/// \brief Ajusta el tamany del panell i dels seus fills.
 /// \param finalSize: El tamany final a asignar.
 /// \return El tamany final obtingut.
 ///

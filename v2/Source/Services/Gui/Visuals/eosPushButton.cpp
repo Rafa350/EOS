@@ -41,39 +41,29 @@ void PushButton::setState(
 void PushButton::onRender(
 	RenderContext &context) {
 
-	const int r = 5;
-	Rect rect = getRect().deflate(getMargin());
+	const int radius = 5;
+	Rect rect = getRect();
 
 	Graphics &g = context.beginRender(this);
-
-	Color c1(0xFF7FC146);
-	Color c2(COLOR_Green);
 
 	switch (state) {
 		case PushButtonState::normal:
 			g.setColor(Color::fromRGB888(0x3A3A3A));
-			g.fillRoundedRectangle(rect, r, r);
+			g.fillRoundedRectangle(rect, radius, radius);
 			g.setColor(COLOR_LightSeaGreen);
-			g.drawRoundedRectangle(rect, r, r);
+			g.drawRoundedRectangle(rect, rarius, radius);
 			break;
 
 		case PushButtonState::pushed:
 			g.setColor(COLOR_DarkSlateGray);
-			g.fillRoundedRectangle(rect, r, r);
+			g.fillRoundedRectangle(rect, radius, radius);
 			g.setColor(COLOR_LightSeaGreen);
-			g.drawRoundedRectangle(rect, r, r);
+			g.drawRoundedRectangle(rect, radius, radius);
 			break;
 
 		default:
 			break;
 	}
-
-	g.setColor(COLOR_LightSeaGreen);
-	g.setTextAlign(HorizontalTextAlign::center, VerticalTextAlign::middle);
-	g.drawText(
-		rect.getX() + rect.getWidth() / 2,
-		rect.getY() + rect.getHeight() / 2,
-		"Boton", 0, -1);
 
 	context.endRender();
 }

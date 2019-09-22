@@ -24,7 +24,7 @@ namespace eos {
     };
 
     struct FontInfo {             // Informacio del font
-        int16_t height;           // -AlÇada
+        int16_t height;           // -Alçada
         int16_t ascent;           // -Ascendent
         int16_t descent;          // -Descendent
         char firstChar;           // -Primer caracter definit en el font
@@ -33,7 +33,7 @@ namespace eos {
 
     struct CharInfo {             // Informacio del caracter
         int16_t width;            // -Amplada del bitmap
-        int16_t height;           // -Al�ada del bitmap
+        int16_t height;           // -Alçada del bitmap
         int16_t left;             // -Offset horitzontal del bitmap
         int16_t top;              // -Offset vertical del bitmap
         int16_t advance;          // -Offset fins al origen del seguent bitmap

@@ -11,7 +11,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa un caracter amb el font i el color actual.
 /// \param    x: La coordinada X.
-/// \param    y: La coordinada Y.
+/// \param    y: La coordinada Y. El origen es a la linia base.
 /// \param    c: El caracter a dibuixar.
 ///
 int Graphics::drawChar(
@@ -67,6 +67,14 @@ int Graphics::drawText(
             x -= textWidth;
         else
             x -= textWidth / 2;
+    }
+
+    if (state.vAlign != VerticalTextAlign::top) {
+    	int textHeight = font->getFontHeight();
+    	if (state.vAlign == VerticalTextAlign::bottom)
+    		y += textHeight;
+    	else
+    		y += textHeight / 2;
     }
 
     int sx = x;

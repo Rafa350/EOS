@@ -2,6 +2,7 @@
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/Visuals/eosLabel.h"
+#include "Services/Gui/eosVisual.h"
 #include "System/Core/eosString.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
@@ -17,8 +18,8 @@ using namespace eos;
 ///
 Label::Label():
 
-	textColor(COLOR_White),
-	backgroundColor(COLOR_Transparent),
+	textColor(COLOR_Red),
+	backgroundColor(COLOR_Yellow),
 	horizontalTextAlign(HorizontalTextAlign::center),
 	verticalTextAlign(VerticalTextAlign::middle),
 	fontName("Tahoma"),
@@ -26,6 +27,8 @@ Label::Label():
 	fontStyle(FontStyle::regular),
 	text(String("")) {
 
+	setHorizontalAlignment(HorizontalAlignment::left);
+	setVerticalAlignment(VerticalAlignment::top);
 }
 
 
@@ -48,11 +51,7 @@ Size Label::measureOverride(
 
 		delete font;
 
-		const Thickness& margin = getMargin();
-
-		return Size(
-			measuredWidth +  margin.getLeft() + margin.getRight(),
-			measuredHeight + margin.getTop() + margin.getBottom());
+		return Size(measuredWidth, measuredHeight);
 	}
 	else
 		return Size(0, 0);

@@ -100,6 +100,8 @@ namespace eos {
             void setPosition(const Point &position);
             void setSize(const Size &size);
             void setMargin(const Thickness &margin);
+            void setHorizontalAlignment(HorizontalAlignment horizontalAlignment);
+            void setVerticalAlignment(VerticalAlignment verticalAlignment);
 
             inline const Point& getPosition() const { return position; }
             Point getAbsolutePosition() const;
