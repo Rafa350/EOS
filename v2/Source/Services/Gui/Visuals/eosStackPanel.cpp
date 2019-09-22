@@ -4,6 +4,7 @@
 #include "System/eosMath.h"
 
 
+
 using namespace eos;
 
 
@@ -17,38 +18,82 @@ StackPanel::StackPanel():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Calcula les mesures del control
-/// \param availableSize: Tamany disponible.
-/// \return El tamany requerit.
+/// \brief Calcula les mesures del panell i dels seus fills
+/// \param availableSize: Tamany maxim disponible.
+/// \return El tamany desitjat.
 ///
 Size StackPanel::measureOverride(
 	const Size &availableSize) const {
 
-	int contentWidth = 0;
-	int contentHeight = 0;
-	for (ListIterator<Visual*> it(getChilds()); it.hasNext(); it.next()) {
+	int measuredWidth = 0;
+	int measuredHeight = 0;
+
+	bool isHorizontal = orientation == Orientation::horitzontal;
+
+	Size childAvailableSize;
+	if (isHorizontal)
+		childAvailableSize = Size(INT32_MAX, availableSize.getHeight());
+	else
+		childAvailableSize = Size(availableSize.getWidth(), INT32_MAX);
+
+	for (VisualListIterator it(getChilds()); it.hasNext(); it.next()) {
 		Visual *pChild = it.current();
 		eosAssert(pChild != nullptr);
-		if (pChild->isVisible()) {
 
-			pChild->measure(availableSize);
-			const Size& childSize = pChild->getDesiredSize();
+		pChild->measure(childAvailableSize);
+		const Size& childSize = pChild->getDesiredSize();
 
-			if (orientation == Orientation::horitzontal) {
-				contentWidth += childSize.getWidth();
-				contentHeight = Math::max(contentHeight, childSize.getHeight());
-			}
-			else {
-				contentWidth = Math::max(contentWidth, childSize.getWidth());
-				contentHeight += childSize.getHeight();
-			}
+		if (isHorizontal) {
+			measuredWidth += childSize.getWidth();
+			measuredHeight = Math::max(measuredHeight, childSize.getHeight());
+		}
+		else {
+			measuredWidth = Math::max(measuredWidth, childSize.getWidth());
+			measuredHeight += childSize.getHeight();
 		}
 	}
 
-	const Size& size = getSize();
-	return Size(Math::max(size.getWidth(), contentWidth), Math::max(size.getHeight(), contentHeight));
+	return Size(measuredWidth, measuredHeight);
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief Ajusta el tamany del panell i dels seus fills..
+/// \param finalSize: El tamany final a asignar.
+/// \return El tamany final obtingut.
+///
+Size StackPanel::arrangeOverride(
+	const Size &finalSize) const {
+
+	int childX = 0;
+	int childY = 0;
+	int childWidth = finalSize.getWidth();
+	int childHeight = finalSize.getHeight();
+
+	bool isHorizontal = orientation == Orientation::horitzontal;
+
+	for (VisualListIterator it(getChilds()); it.hasNext(); it.next()) {
+		Visual *pChild = it.current();
+		eosAssert(pChild != nullptr);
+
+		if (pChild->isVisible()) {
+
+			if (isHorizontal)
+				childWidth = pChild->getDesiredSize().getWidth();
+			else
+				childHeight = pChild->getDesiredSize().getHeight();
+
+			pChild->arrange(Rect(childX, childY, childWidth, childHeight));
+
+			if (isHorizontal)
+				childX += childWidth;
+			else
+				childY += childHeight;
+		}
+	}
+
+	return finalSize;
+}
 
 /// ----------------------------------------------------------------------
 /// \brief Asigna l'orientacio del panell.

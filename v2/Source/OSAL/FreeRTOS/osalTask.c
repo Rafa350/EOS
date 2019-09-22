@@ -14,7 +14,7 @@
 HTask osalTaskCreate(
 	const TaskInitializeInfo *pInfo) {
 
-    eosAssert(info != NULL);
+    eosAssert(pInfo != NULL);
 
 	// Crea la tasca.
 	//

@@ -2,6 +2,7 @@
 #include "eosAssert.h"
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosVisual.h"
+#include "System/eosMath.h"
 #include "System/Graphics/eosGraphics.h"
 
 
@@ -17,6 +18,9 @@ Visual::Visual():
 	visibility(Visibility::visible),
 	position(0, 0),
 	size(0, 0),
+	minSize(0, 0),
+	maxSize(INT32_MAX, INT32_MAX),
+	margin(0),
 	horizontalAlignment(HorizontalAlignment::stretch),
 	verticalAlignment(VerticalAlignment::stretch) {
 }
@@ -170,28 +174,93 @@ void Visual::removeVisuals() {
 void Visual::measure(
 	const Size &availableSize) {
 
-	desiredSize = measureOverride(availableSize);
-}
+	if (isVisible()) {
 
+		Size size = measureOverride(availableSize.deflate(margin));
+		int width = size.getWidth();
+		int height = size.getHeight();
 
-void Visual::arrange(
-	const Size &finalSize) {
+		// Ajusta l'amplada als limits
+		//
+		width = Math::max(minSize.getWidth(), width);
+		width = Math::min(maxSize.getWidth(), width);
 
+		// Ajusta l'alçada als limits
+		//
+		height = Math::max(minSize.getHeight(), height);
+		height = Math::min(maxSize.getHeight(), height);
+
+		desiredSize = Size(width, height).inflate(margin);
+	}
+
+	else
+		desiredSize = Size();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Calcula la mida del visual. Primer par del layout.
+/// \brief Asigna la mida del visual. Segon pas i final del layout.
+/// \param finalSize: Tamany final per asignas al visual.
+///
+void Visual::arrange(
+	const Rect &finalRect) {
+
+	// TODO: Falta ajustar marges (margin)
+
+	Size size = arrangeOverride(finalRect.getSize());
+
+	int x = finalRect.getX();
+	switch (horizontalAlignment) {
+		case HorizontalAlignment::center:
+		case HorizontalAlignment::stretch:
+			x += (finalRect.getWidth() - size.getWidth()) / 2;
+			break;
+
+		case HorizontalAlignment::right:
+			x += finalRect.getWidth() - size.getWidth();
+			break;
+
+		default:
+			break;
+	}
+
+	int y = finalRect.getY();
+	switch (verticalAlignment) {
+		case VerticalAlignment::center:
+		case VerticalAlignment::stretch:
+			y += (finalRect.getHeight() - size.getHeight()) / 2;
+			break;
+
+		case VerticalAlignment::bottom:
+			y += finalRect.getHeight() - size.getHeight();
+			break;
+
+		default:
+			break;
+	}
+
+	setPosition(Point(x, y));
+	setSize(size);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Calcula la mida del visual i dels seus fills.
 /// \param availableSize: Indica el tamany disponible.
 /// \return El tamany requerit.
 ///
 Size Visual::measureOverride(
 	const Size &availableSize) const {
 
-	return Size(0, 0);
+	return availableSize;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Ajusta el tamany del visual i els seus fills.
+/// \param finalSize: El tamany final a asignar.
+/// \return El tamany final obtingut.
+///
 Size Visual::arrangeOverride(
 	const Size &finalSize) const {
 
@@ -281,6 +350,20 @@ void Visual::setSize(
     	this->size = size;
 		invalidate();
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna el marge.
+/// \param margin: El nou marge.
+///
+void Visual::setMargin(
+	const Thickness &margin) {
+
+	if (this->margin != margin) {
+		this->margin = margin;
+		invalidate();
+	}
 }
 
 

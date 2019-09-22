@@ -18,6 +18,7 @@
 #include "Services/Gui/Visuals/eosLabel.h"
 #include "Services/Gui/Visuals/eosPanel.h"
 #include "Services/Gui/Visuals/eosScreen.h"
+#include "Services/Gui/Visuals/eosStackPanel.h"
 #include "Services/Gui/Visuals/eosVirtualKbd.h"
 #include "Services/Gui/eosRenderContext.h"
 #ifdef OPT_GUI_TouchPad
@@ -91,7 +92,7 @@ GuiService::GuiService(
 	touchPadEventCallback(this, &GuiService::touchPadEventHandler) {
 
 #ifdef OPT_GUI_TouchPad
-	touchPadService = new GuiTouchPadService(application);
+	touchPadService = new TouchPadService(application);
 	touchPadService->setEventCallback(&touchPadEventCallback);
 	touchPadTarget = nullptr;
 #endif
@@ -157,7 +158,7 @@ void GuiService::onInitialize() {
 	screen->setColor(0xFF202020);
 	setActiveVisual(screen);
 
-	x = 0;
+	/*x = 0;
 	y = 0;
 
 	Border *border1 = new Border();
@@ -211,6 +212,27 @@ void GuiService::onInitialize() {
 	kbd->setPosition(Point(250, 20));
 	kbd->setSize(Size(120, 200));
 	screen->addChild(kbd);
+	*/
+
+	StackPanel *sp = new StackPanel();
+	sp->setPosition(Point(20, 20));
+	sp->setSize(Size(100, 250));
+	screen->addChild(sp);
+	for (int i = 0; i < 5; i++) {
+
+		Label *l = new Label();
+		l->setText("hola");
+
+		PushButton *pb = new PushButton();
+		pb->setMargin(Thickness(5));
+		pb->setContent(l);
+
+		sp->addChild(pb);
+	}
+
+	sp->measure(screen->getSize());
+	sp->arrange(screen->getRect());
+
 }
 
 

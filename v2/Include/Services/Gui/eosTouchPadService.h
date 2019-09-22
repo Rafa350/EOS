@@ -1,5 +1,5 @@
-#ifndef __eosGuiTouchPad__
-#define __eosGuiTouchPad__
+#ifndef __eosTouchPadService__
+#define __eosTouchPadService__
 
 
 // EOS includes
@@ -34,13 +34,13 @@ namespace eos {
 		int y;
 	};
 
-	struct GuiTouchPadServiceConfiguration {
+	struct TouchPadServiceConfiguration {
 		ServiceConfiguration serviceConfiguration;
 	};
 
-	class GuiTouchPadService final: public Service {
+	class TouchPadService final: public Service {
 		private:
-        	typedef ICallbackP1<const TouchPadEventArgs&> IEventCallback;
+			typedef ICallbackP1<const TouchPadEventArgs&> IEventCallback;
 
 		private:
     		ITouchPadDriver *touchDriver;
@@ -51,9 +51,9 @@ namespace eos {
         	int oldPressed;
 
 		public:
-			GuiTouchPadService(Application *application);
-			GuiTouchPadService(Application *pApplication, const GuiTouchPadServiceConfiguration &configuration);
-			~GuiTouchPadService();
+			TouchPadService(Application *application);
+			TouchPadService(Application *pApplication, const TouchPadServiceConfiguration &configuration);
+			~TouchPadService();
 
 			template <class cls>
 			void setEventCallback(CallbackP1<cls, const TouchPadEventArgs&> *pCallBack) {
@@ -71,4 +71,4 @@ namespace eos {
 }
 
 
-#endif // __eosGuiTouchPad__
+#endif // __eosTouchPadService__

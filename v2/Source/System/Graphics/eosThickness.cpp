@@ -6,6 +6,21 @@
 using namespace eos;
 
 
+/// ----------------------------------------------------------------------
+/// \brief Constructor per defecte.
+///
+Thickness::Thickness():
+	left(0),
+	top(0),
+	right(0),
+	bottom(0) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Constructor.
+/// \param thickness: Amplada.
+///
 Thickness::Thickness(
 	int thickness):
 
@@ -14,13 +29,15 @@ Thickness::Thickness(
 	right(thickness),
 	bottom(thickness) {
 
-	eosAssert(left >= 0);
-	eosAssert(top >= 0);
-	eosAssert(right >= 0);
-	eosAssert(bottom >= 0);
+	eosAssert(thickness >= 0);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Constructor.
+/// \param hThickness: Amplada en horitzontal.
+/// \param vThickness: Amplada en vertical.
+///
 Thickness::Thickness(
 	int hThickness,
 	int vThickness):
@@ -30,10 +47,8 @@ Thickness::Thickness(
 	right(hThickness),
 	bottom(vThickness) {
 
-	eosAssert(left >= 0);
-	eosAssert(top >= 0);
-	eosAssert(right >= 0);
-	eosAssert(bottom >= 0);
+	eosAssert(hThickness >= 0);
+	eosAssert(vThickness >= 0);
 }
 
 
@@ -55,6 +70,10 @@ Thickness::Thickness(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Constructor copia.
+/// \param t: L'objecte a copiar.
+///
 Thickness::Thickness(
 	const Thickness &t):
 

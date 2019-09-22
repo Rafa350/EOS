@@ -63,6 +63,32 @@ Size Size::inflate(
 
 
 /// ----------------------------------------------------------------------
+/// \brief Retorna un objecte inflat.
+/// \param t: Marges.
+///
+Size Size::inflate(
+	const Thickness &t) const {
+
+	return Size(
+		width + t.getLeft() + t.getRight(),
+		height + t.getTop() + t.getBottom());
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Retorna un objecte desinflat.
+/// \param t: Marges.
+///
+Size Size::deflate(
+	const Thickness &t) const {
+
+	return Size(
+		width - t.getLeft() - t.getRight(),
+		height - t.getTop() - t.getBottom());
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Comprova si el tamany es zero.
 /// \return True si es zero.
 ///

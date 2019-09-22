@@ -25,7 +25,7 @@ namespace eos {
 	class Visual;
 	class Point;
 #ifdef OPT_GUI_TouchPad
-	class GuiTouchPadService;
+	class TouchPadService;
 	struct TouchPadEventArgs;
 #endif
 #ifdef OPT_GUI_Keyboard
@@ -54,7 +54,7 @@ namespace eos {
 #endif
 #ifdef OPT_GUI_TouchPad
 			TouchPadEventCallback touchPadEventCallback;
-			GuiTouchPadService *touchPadService;
+			TouchPadService *touchPadService;
 			Visual *touchPadTarget;
 #endif
 

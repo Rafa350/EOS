@@ -42,26 +42,26 @@ void PushButton::onRender(
 	RenderContext &context) {
 
 	const int r = 5;
+	Rect rect = getRect().deflate(getMargin());
 
 	Graphics &g = context.beginRender(this);
 
-	const Size &s = getSize();
 	Color c1(0xFF7FC146);
 	Color c2(COLOR_Green);
 
 	switch (state) {
 		case PushButtonState::normal:
 			g.setColor(Color::fromRGB888(0x3A3A3A));
-			g.fillRoundedRectangle(getRect(), r, r);
+			g.fillRoundedRectangle(rect, r, r);
 			g.setColor(COLOR_LightSeaGreen);
-			g.drawRoundedRectangle(getRect(), r, r);
+			g.drawRoundedRectangle(rect, r, r);
 			break;
 
 		case PushButtonState::pushed:
 			g.setColor(COLOR_DarkSlateGray);
-			g.fillRoundedRectangle(getRect(), r, r);
+			g.fillRoundedRectangle(rect, r, r);
 			g.setColor(COLOR_LightSeaGreen);
-			g.drawRoundedRectangle(getRect(), r, r);
+			g.drawRoundedRectangle(rect, r, r);
 			break;
 
 		default:
@@ -70,7 +70,10 @@ void PushButton::onRender(
 
 	g.setColor(COLOR_LightSeaGreen);
 	g.setTextAlign(HorizontalTextAlign::center, VerticalTextAlign::middle);
-	g.drawText(s.getWidth() / 2, s.getHeight() / 2, "Boton", 0, -1);
+	g.drawText(
+		rect.getX() + rect.getWidth() / 2,
+		rect.getY() + rect.getHeight() / 2,
+		"Boton", 0, -1);
 
 	context.endRender();
 }

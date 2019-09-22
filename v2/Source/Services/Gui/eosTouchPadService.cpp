@@ -8,9 +8,9 @@
 using namespace eos;
 
 
-static GuiTouchPadServiceConfiguration defaultConfiguration = {
+static TouchPadServiceConfiguration defaultConfiguration = {
 	.serviceConfiguration = {
-		.serviceName = "GuiTouchPadService",
+		.serviceName = "TouchPadService",
 		.stackSize = OPT_GUI_TouchPadServiceStack,
 		.priority = OPT_GUI_TouchPadServicePriority
 	}
@@ -21,10 +21,10 @@ static GuiTouchPadServiceConfiguration defaultConfiguration = {
 /// \brief Constructor de l'objecte.
 /// \param pApplication: Aplicacio on afeigir el servei.
 ///
-GuiTouchPadService::GuiTouchPadService(
+TouchPadService::TouchPadService(
 	Application *pApplication) :
 
-	GuiTouchPadService(pApplication, defaultConfiguration) {
+	TouchPadService(pApplication, defaultConfiguration) {
 }
 
 
@@ -33,9 +33,9 @@ GuiTouchPadService::GuiTouchPadService(
 /// \param pApplication: Aplicacio on afeigir el servei
 /// \param configuration: Parametres de configuracio.
 ///
-GuiTouchPadService::GuiTouchPadService(
+TouchPadService::TouchPadService(
 	Application *pApplication,
-	const GuiTouchPadServiceConfiguration &configuration):
+	const TouchPadServiceConfiguration &configuration):
 
 	Service(pApplication, configuration.serviceConfiguration),
 	touchDriver(nullptr),
@@ -49,7 +49,7 @@ GuiTouchPadService::GuiTouchPadService(
 /// ----------------------------------------------------------------------
 /// \brief Destructor de l'objecte.
 ///
-GuiTouchPadService::~GuiTouchPadService() {
+TouchPadService::~TouchPadService() {
 
 }
 
@@ -57,7 +57,7 @@ GuiTouchPadService::~GuiTouchPadService() {
 /// ---------------------------------------------------------------------
 /// \brief Inicialitzacio abans del planificador.
 ///
-void GuiTouchPadService::onInitialize() {
+void TouchPadService::onInitialize() {
 
     // Inicialitzacio del touch pad
     //
@@ -72,7 +72,7 @@ void GuiTouchPadService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Bucle d'execucio.
 ///
-void GuiTouchPadService::onTask() {
+void TouchPadService::onTask() {
 
 	if (pEventCallback != nullptr) {
 
@@ -142,7 +142,7 @@ void GuiTouchPadService::onTask() {
 /// ----------------------------------------------------------------------
 /// \brief Procesa la interrupcio. Desbloqueja el process.
 ///
-void GuiTouchPadService::interruptHandler() {
+void TouchPadService::interruptHandler() {
 
 	lock.releaseISR();
 }
@@ -151,9 +151,9 @@ void GuiTouchPadService::interruptHandler() {
 /// ----------------------------------------------------------------------
 /// \brief Despatxa la interrupcio a la funcio membre.
 ///
-void GuiTouchPadService::interruptHandler(
+void TouchPadService::interruptHandler(
 	EXTILine line,
 	void *pParam) {
 
-	((GuiTouchPadService*)pParam)->interruptHandler();
+	((TouchPadService*)pParam)->interruptHandler();
 }

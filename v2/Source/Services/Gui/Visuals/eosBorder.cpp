@@ -30,8 +30,6 @@ Border::Border():
 Size Border::measureOverride(
 	const Size &availableSize) const{
 
-	Size size = availableSize;
-
 	return availableSize;
 }
 

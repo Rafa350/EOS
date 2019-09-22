@@ -21,8 +21,10 @@ Label::Label():
 	backgroundColor(COLOR_Transparent),
 	horizontalTextAlign(HorizontalTextAlign::center),
 	verticalTextAlign(VerticalTextAlign::middle),
-	textFont(nullptr),
-	text() {
+	fontName("Tahoma"),
+	fontHeight(12),
+	fontStyle(FontStyle::regular),
+	text(String("")) {
 
 }
 
@@ -34,14 +36,23 @@ Label::Label():
 Size Label::measureOverride(
 	const Size &availableSize) const {
 
-	if ((textFont != nullptr) && !text.isEmpty()) {
-		int width = 0;
+	if (isVisible() && !text.isEmpty()) {
+
+		const uint8_t *fontResource =  Font::getFontResource(fontName, fontHeight, fontStyle);
+		Font *font = new Font(fontResource);
+
+		int measuredWidth = 0;
 		for (int i = 0; text[i]; i++)
-			width += textFont->getCharAdvance(text[i]);
+			measuredWidth += font->getCharAdvance(text[i]);
+		int measuredHeight = font->getFontHeight();
 
-		int height = textFont->getFontHeight();
+		delete font;
 
-		return Size(width, height);
+		const Thickness& margin = getMargin();
+
+		return Size(
+			measuredWidth +  margin.getLeft() + margin.getRight(),
+			measuredHeight + margin.getTop() + margin.getBottom());
 	}
 	else
 		return Size(0, 0);
@@ -63,14 +74,42 @@ void Label::setTextColor(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna al font del text.
-/// \param font: El font.
+/// \brief Asigna el nom del font.
+/// \param fontname: El nom del font.
 ///
-void Label::setTextFont(
-	Font *textFont) {
+void Label::setFontName(
+	const String &fontName) {
 
-	if (this->textFont != textFont) {
-		this->textFont = textFont;
+	if (this->fontName != fontName) {
+		this->fontName = fontName;
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna el tamany del font.
+/// \param fontname: El tamany del font.
+///
+void Label::setFontHeight(
+	int fontHeight) {
+
+	if (this->fontHeight != fontHeight) {
+		this->fontHeight = fontHeight;
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Asigna L'estil del font.
+/// \param fontname: L'estil del font.
+///
+void Label::setFontStyle(
+	FontStyle fontStyle) {
+
+	if (this->fontStyle != fontStyle) {
+		this->fontStyle = fontStyle;
 		invalidate();
 	}
 }
@@ -143,14 +182,20 @@ void Label::onRender(
 
 	const Size &s = getSize();
 
+	const uint8_t *fontResource =  Font::getFontResource(fontName, fontHeight, fontStyle);
+	Font *font = new Font(fontResource);
+
+	g.setFont(font);
+
 	g.setColor(backgroundColor);
 	g.fillRectangle(getRect());
 
 	g.setColor(textColor);
 	g.setTextAlign(horizontalTextAlign, verticalTextAlign);
-	if (textFont != nullptr)
-		g.setFont(textFont);
+
 	g.drawText(s.getWidth() / 2, s.getHeight() / 2, text, 0, -1);
+
+	delete font;
 
 	context.endRender();
 }

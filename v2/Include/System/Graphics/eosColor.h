@@ -23,6 +23,7 @@
 #define COLOR_ARGB8888_SHIFT_G    8u
 #define COLOR_ARGB8888_SHIFT_B    0u
 #define COLOR_ARGB8888_TYPE       uint32_t
+#define COLOR_ARGB8888_BPP        32
 
 // Format RGB888
 #define COLOR_RGB888_MASK_R       0x00FF0000u
@@ -32,6 +33,7 @@
 #define COLOR_RGB888_SHIFT_G      8u
 #define COLOR_RGB888_SHIFT_B      0u
 #define COLOR_RGB888_TYPE         uint32_t
+#define COLOR_RGB888_BPP          24
 
 // Format RGB565
 #define COLOR_RGB565_MASK_R       0x0000F800u
@@ -41,6 +43,7 @@
 #define COLOR_RGB565_SHIFT_G      5u
 #define COLOR_RGB565_SHIFT_B      0u
 #define COLOR_RGB565_TYPE         uint16_t
+#define COLOR_RGB565_BPP          16
 
 // Format nadiu utilitzat internament en la clase Color
 #if defined(EOS_COLOR_ARGB8888)
@@ -53,6 +56,7 @@
 #define COLOR_SHIFT_G             COLOR_ARGB8888_SHIFT_G
 #define COLOR_SHIFT_B             COLOR_ARGB8888_SHIFT_B
 #define COLOR_TYPE                COLOR_ARGB8888_TYPE
+#define COLOR_BPP                 COLOR_ARGB8888_BPP
 #endif
 
 

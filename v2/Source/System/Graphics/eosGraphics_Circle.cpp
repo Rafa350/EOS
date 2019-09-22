@@ -11,10 +11,10 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un cercle buit.
-/// \param x: Coordinada X del centre.
-/// \param y: Coordinada Y del centre.
-/// \param r: Radi del cercle.
+/// \brief    Dibuixa un cercle buit.
+/// \param    x : Coordinada X del centre.
+/// \param    y : Coordinada Y del centre.
+/// \param    r : Radi del cercle.
 ///
 void Graphics::drawCircle(
     int x,
@@ -47,10 +47,10 @@ void Graphics::drawCircle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un cercle omplert.
-/// \param cx: Coordinada X del centre.
-/// \param cy: Coordinada Y del centre.
-/// \param r: Radi del cercle.
+/// \brief    Dibuixa un cercle omplert.
+/// \param    cx : Coordinada X del centre.
+/// \param    cy : Coordinada Y del centre.
+/// \param    r  : Radi del cercle.
 ///
 void Graphics::fillCircle(
     int cx,

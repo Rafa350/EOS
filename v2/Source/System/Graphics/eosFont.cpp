@@ -4,79 +4,18 @@
 #include "System/Graphics/eosFont.h"
 
 
+extern const eos::FontTableEntry* fontResourceTable;
+
+
 using namespace eos;
 
 
-#ifdef FONT_USE_Arial14pt
-extern const unsigned char *fontArial14pt;
-#endif
-#ifdef FONT_USE_Arial18pt
-extern const unsigned char *fontArial18pt;
-#endif
-#ifdef FONT_USE_Arial24pt
-extern const unsigned char *fontArial24pt;
-#endif
-extern const unsigned char *fontConsolas8pt;
-extern const unsigned char *fontConsolas10pt;
-extern const unsigned char *fontConsolas12pt;
-extern const unsigned char *fontConsolas14pt;
-extern const unsigned char *fontConsolas18pt;
-extern const unsigned char *fontConsolas24pt;
-
-typedef struct {
-    const char *faceName;
-    int16_t height;
-    FontStyle style;
-    const unsigned char *resource;
-} FontTableEntry;
-
-
-static const FontTableEntry fontTable[] = {
-
-#ifdef FONT_USE_Arial14pt
-    { "Arial", 14, FontStyle::Regular, fontArial14pt },
-#endif
-
-#ifdef FONT_USE_Arial18pt
-    { "Arial", 18, FontStyle::Regular, fontArial18pt },
-#endif
-
-#ifdef FONT_USE_Arial24pt
-    { "Arial", 24, FontStyle::Regular, fontArial24pt },
-#endif
-
-#ifdef FONT_USE_Consolas8pt
-    { "Consolas", 8, FontStyle::Regular, fontConsolas8pt },
-#endif
-
-#ifdef FONT_USE_Consolas10pt
-    { "Consolas", 10, FontStyle::Regular, fontConsolas10pt },
-#endif
-
-#ifdef FONT_USE_Consolas12pt
-    { "Consolas", 12, FontStyle::Regular, fontConsolas12pt },
-#endif
-
-#ifdef FONT_USE_Consolas14pt
-    { "Consolas", 14, FontStyle::Regular, fontConsolas14pt },
-#endif
-
-#ifdef FONT_USE_Consolas18pt
-    { "Consolas", 18, FontStyle::Regular, fontConsolas18pt },
-#endif
-
-#ifdef FONT_USE_Consolas24pt
-    { "Consolas", 24, FontStyle::Regular, fontConsolas24pt },
-#endif
-};
-
-
 /// ----------------------------------------------------------------------
-/// \brief Contructor.
-/// \param resourceId: Identificador del font.
+/// \brief Constructor.
+/// \param fontResource: El recurs del font.
 ///
 Font::Font(
-    const uint8_t *fontResource):
+	const uint8_t *fontResource):
 
     chCache(-1),
     fontResource(fontResource) {
@@ -84,27 +23,29 @@ Font::Font(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
+/// \brief Crea un font amb els parametres especificats.
 /// \param fontName: Nom del font.
-/// \param height: Al�ada del font.
+/// \param height: Alçada del font.
 /// \param style: Estil del font.
 ///
-Font::Font(
-    const String &fontName,
-    int height,
-    FontStyle style):
+const uint8_t* Font::getFontResource(
+	const String &name,
+	int height,
+	FontStyle style) {
 
-    chCache(-1),
-    fontResource(nullptr) {
+	const FontTableEntry *pResource = fontResourceTable;
 
-    for (uint16_t i = 0; i < sizeof(fontTable) / sizeof(fontTable[0]); i++) {
-        const FontTableEntry *entry = &fontTable[i];
-        if ((fontName.compare(entry->faceName) == 0) &&
-            (height == entry->height)) {
-            fontResource = entry->resource;
-            break;
-        }
-    }
+	for (unsigned i = 0; pResource[i].name != nullptr; i++) {
+		const FontTableEntry *pEntry = &pResource[i];
+		if ((name.compare(pEntry->name) == 0) &&
+			(pEntry->height == height) &&
+			(pEntry->style == style)) {
+
+			return pEntry->resource;
+		}
+	}
+
+	return nullptr;
 }
 
 
@@ -173,3 +114,5 @@ void Font::updateCache(
         }
     }
 }
+
+

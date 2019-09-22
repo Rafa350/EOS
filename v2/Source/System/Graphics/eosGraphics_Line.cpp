@@ -9,10 +9,10 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa una linia.
-/// \param    x1: Coordinada x del primer punt.
-/// \param    y1: Coordinada y del primer punt.
-/// \param    x2: Coordinada x del segon punt.
-/// \param    y2: Coordinada y del segon punt.
+/// \param    x1 : Coordinada x del primer punt.
+/// \param    y1 : Coordinada y del primer punt.
+/// \param    x2 : Coordinada x del segon punt.
+/// \param    y2 : Coordinada y del segon punt.
 ///
 void Graphics::drawLine(
     int x1,
@@ -120,10 +120,10 @@ void Graphics::drawLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia horitzontal.
-/// \param x1: Coordinada X inicial.
-/// \param x2: Coordinada Y final.
-/// \param y: Coordinada Y.
+/// \brief    Dibuixa una linia horitzontal.
+/// \param    x1 : Coordinada X inicial.
+/// \param    x2 : Coordinada Y final.
+/// \param    y  : Coordinada Y.
 ///
 void Graphics::drawHLine(
 	int x1,
@@ -147,10 +147,10 @@ void Graphics::drawHLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia vertical.
-/// \param x: Coordinada X.
-/// \param y1: Coordinada Y inicial.
-/// \param y2: Coordinada Y final.
+/// \brief    Dibuixa una linia vertical.
+/// \param    x  : Coordinada X.
+/// \param    y1 : Coordinada Y inicial.
+/// \param    y2 : Coordinada Y final.
 ///
 void Graphics::drawVLine(
 	int x,

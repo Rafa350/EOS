@@ -8,6 +8,7 @@
 #include "Services/Gui/eosVisual.h"
 #include "System/Core/eosString.h"
 #include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosGraphics.h"
 
 
@@ -22,7 +23,9 @@ namespace eos {
     		Color backgroundColor;
     		HorizontalTextAlign horizontalTextAlign;
     		VerticalTextAlign verticalTextAlign;
-    		Font *textFont;
+    		String fontName;
+    		int fontHeight;
+    		FontStyle fontStyle;
     		String text;
 
     	protected:
@@ -35,7 +38,9 @@ namespace eos {
 
             void setTextColor(const Color &color);
             void setBackgroundColor(const Color &color);
-            void setTextFont(Font *font);
+            void setFontName(const String &fontName);
+            void setFontHeight(int fontHeight);
+            void setFontStyle(FontStyle fontStyle);
             void setText(const String &text);
             void setHorizontalTextAlign(HorizontalTextAlign align);
             void setVerticalTextAlign(VerticalTextAlign align);

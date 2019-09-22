@@ -3,7 +3,6 @@
 #include "Services/Gui/Visuals/eosContentControl.h"
 
 
-
 using namespace eos;
 
 
@@ -11,6 +10,7 @@ using namespace eos;
 /// \brief Constructor del objecte.
 ///
 ContentControl::ContentControl() :
+	padding(Thickness(0)),
 	pContent(nullptr) {
 
 }
@@ -35,4 +35,35 @@ void ContentControl::setContent(
 
 		invalidate();
 	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Assigna el marge interior.
+/// \param padding: El marge interior.
+///
+void ContentControl::setPadding(
+	const Thickness &padding) {
+
+	if (this->padding != padding) {
+		this->padding = padding;
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Calcula la mida del visual i dels seus fills.
+/// \param availableSize: Indica el tamany disponible.
+/// \return El tamany requerit.
+///
+Size ContentControl::measureOverride(
+	const Size &availableSize) const {
+
+	if ((pContent != nullptr)) {
+		pContent->measure(availableSize.deflate(padding));
+		return pContent->getDesiredSize();
+	}
+	else
+		return Size(0, 0);
 }

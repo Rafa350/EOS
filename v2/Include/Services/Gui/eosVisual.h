@@ -9,6 +9,7 @@
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
 #include "System/Graphics/eosSize.h"
+#include "System/Graphics/eosThickness.h"
 
 
 namespace eos {
@@ -59,6 +60,7 @@ namespace eos {
 			Size minSize;
 			Size maxSize;
 			Size desiredSize;
+			Thickness margin;
 			HorizontalAlignment horizontalAlignment;
 			VerticalAlignment verticalAlignment;
 
@@ -97,14 +99,16 @@ namespace eos {
 
             void setPosition(const Point &position);
             void setSize(const Size &size);
+            void setMargin(const Thickness &margin);
 
             inline const Point& getPosition() const { return position; }
             Point getAbsolutePosition() const;
             inline const Size& getSize() const { return size; }
             inline Rect getRect() const { return Rect(Point(0, 0), size); }
+            inline const Thickness& getMargin() const { return margin; }
 
             void measure(const Size &availableSize);
-            void arrange(const Size &finalSize);
+            void arrange(const Rect &finalRect);
             const Size& getDesiredSize() const { return desiredSize; }
 
             void dispatch(const Message &msg);

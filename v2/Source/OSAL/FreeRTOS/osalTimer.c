@@ -23,7 +23,7 @@ static int inISR() {
 HTimer osalTimerCreate(
 	const TimerInitializeInfo *pInfo) {
 
-	eosAssert(info != NULL);
+	eosAssert(pInfo != NULL);
 
 	// Crea el temporitzador
 	//
