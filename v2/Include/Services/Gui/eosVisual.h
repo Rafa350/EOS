@@ -16,6 +16,7 @@ namespace eos {
 
 	class RenderContext;
 	class Message;
+	class MsgTouchPad;
 
 	enum class Visibility {
 		visible,
@@ -71,7 +72,7 @@ namespace eos {
     		virtual void onActivate(Visual *pVisual);
     		virtual void onDeactivate(Visual *pVisual);
 #ifdef OPT_GUI_TouchPad
-    		virtual void onDispatchTouchPadEvent(const Message &msg);
+    		virtual void onDispatchTouchPadEvent(const MsgTouchPad &msg);
     		virtual void onTouchPadEnter();
     		virtual void onTouchPadLeave();
     		virtual void onTouchPadPress(const Point &position);

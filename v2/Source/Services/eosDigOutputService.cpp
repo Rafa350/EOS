@@ -1,9 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "HAL/halGPIO.h"
+#include "HAL/halTMR.h"
+#include "OSAL/osalKernel.h"
 #include "Services/eosDigOutputService.h"
-#include "hal/halGPIO.h"
-#include "hal/halTMR.h"
-#include "osal/osalKernel.h"
 
 
 using namespace eos;
@@ -23,8 +23,8 @@ static DigOutputServiceConfiguration defaultConfiguration = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param pApplication: L'aplicacio on afeigir el servei.
+/// \brief    Constructor.
+/// \param    pApplication: L'aplicacio on afeigir el servei.
 ///
 DigOutputService::DigOutputService(
     Application *pApplication):
@@ -35,9 +35,9 @@ DigOutputService::DigOutputService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param pApplication: L'aplicacio on afeigir el servei..
-/// \param configuration: Parametres de configuracio.
+/// \brief    Constructor.
+/// \param    pApplication: L'aplicacio on afeigir el servei..
+/// \param    configuration: Parametres de configuracio.
 ///
 DigOutputService::DigOutputService(
     Application *pApplication,
@@ -51,7 +51,7 @@ DigOutputService::DigOutputService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor de l'objecte.
+/// \brief    Destructor de l'objecte.
 ///
 DigOutputService::~DigOutputService() {
 
@@ -62,8 +62,8 @@ DigOutputService::~DigOutputService() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeig una sortida al servei.
-/// \param pOutput: La sortida a afeigir.
+/// \brief    Afegeig una sortida al servei.
+/// \param    pOutput: La sortida a afeigir.
 ///
 void DigOutputService::addOutput(
     DigOutput *pOutput) {
@@ -79,8 +79,8 @@ void DigOutputService::addOutput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Elimina una sortida del servei.
-/// \param pOutput: La sortida a eliminar.
+/// \brief    Elimina una sortida del servei.
+/// \param    pOutput: La sortida a eliminar.
 ///
 void DigOutputService::removeOutput(
     DigOutput *pOutput) {
@@ -96,7 +96,7 @@ void DigOutputService::removeOutput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Elimina totes les sortides del servei.
+/// \brief    Elimina totes les sortides del servei.
 ///
 void DigOutputService::removeOutputs() {
     
@@ -106,7 +106,7 @@ void DigOutputService::removeOutputs() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el servei.
+/// \brief    Inicialitza el servei.
 ///
 void DigOutputService::onInitialize() {
 
@@ -144,7 +144,7 @@ void DigOutputService::onInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Bucle de proces del servei.
+/// \brief    Bucle de proces del servei.
 ///
 void DigOutputService::onTask() {
 
@@ -152,7 +152,7 @@ void DigOutputService::onTask() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa el timeout del temporitzador.
+/// \brief    Procesa el timeout del temporitzador.
 ///
 void DigOutputService::timeOut() {
 
@@ -162,7 +162,7 @@ void DigOutputService::timeOut() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Captura la interrupcio del temporitzador.
+/// \brief    Captura la interrupcio del temporitzador.
 ///
 void DigOutputService::timerInterrupt(
 	TMRTimer timer,
@@ -179,9 +179,9 @@ void DigOutputService::timerInterrupt(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param pService: El servei al que s'asignara la sortida.
-/// \param configuration: Parametres de configuracio.
+/// \brief    Constructor.
+/// \param    pService: El servei al que s'asignara la sortida.
+/// \param    configuration: Parametres de configuracio.
 ///
 DigOutput::DigOutput(
     DigOutputService *pService,
@@ -204,7 +204,7 @@ DigOutput::DigOutput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor.
+/// \brief    Destructor.
 ///
 DigOutput::~DigOutput() {
 
@@ -214,7 +214,7 @@ DigOutput::~DigOutput() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitzacio de la sortida.
+/// \brief    Inicialitzacio de la sortida.
 ///
 void DigOutput::initialize() {
 
@@ -223,7 +223,7 @@ void DigOutput::initialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la interrupcio del temporitzador.
+/// \brief    Procesa la interrupcio del temporitzador.
 ///
 void DigOutput::timeOut() {
 
@@ -255,8 +255,8 @@ void DigOutput::timeOut() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte actual l'estat d'una sortida.
-/// \return L'estat de la sortida.
+/// \brief    Obte actual l'estat d'una sortida.
+/// \return   L'estat de la sortida.
 ///
 bool DigOutput::get() const {
 
@@ -265,7 +265,7 @@ bool DigOutput::get() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Desactiva una sortida.
+/// \brief    Desactiva una sortida.
 ///
 void DigOutput::clear() {
 
@@ -279,7 +279,7 @@ void DigOutput::clear() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa una sortida
+/// \brief    Activa una sortida
 ///
 void DigOutput::set() {
 
@@ -293,7 +293,7 @@ void DigOutput::set() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inverteix una sortida.
+/// \brief    Inverteix una sortida.
 ///
 void DigOutput::toggle() {
 
@@ -307,8 +307,8 @@ void DigOutput::toggle() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Genera un puls.
-/// \param width: Amplada del puls.
+/// \brief    Genera un puls.
+/// \param    width: Amplada del puls.
 ///
 void DigOutput::pulse(
 	unsigned width) {
@@ -326,9 +326,9 @@ void DigOutput::pulse(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Genera un puls retardat.
-/// \param delay: Retard fins a l'inici del puls.
-/// \param width: Amplada del puls.
+/// \brief    Genera un puls retardat.
+/// \param    delay: Retard fins a l'inici del puls.
+/// \param    width: Amplada del puls.
 ///
 void DigOutput::delayedPulse(
 	unsigned delay,

@@ -7,7 +7,7 @@ using namespace eos;
 
 
 /// ---------------------------------------------------------------------
-/// \brief Inicialitza el control.
+/// \brief    Inicialitza el control.
 ///
 void Control::initializeControl() {
 

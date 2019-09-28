@@ -30,7 +30,9 @@ namespace eos {
 
     	protected:
     		void onRender(RenderContext &context) override;
-
+#ifdef OPT_GUI_TouchPad
+    		void onDispatch(const Message &msg) override;
+#endif
     		Size measureOverride(const Size &availableSize) const override;
 
         public:

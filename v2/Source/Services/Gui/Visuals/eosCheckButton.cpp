@@ -11,7 +11,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor del objecte.
+/// \brief    Constructor del objecte.
 ///
 CheckButton::CheckButton():
 	state(CheckButtonState::unchecked) {
@@ -20,8 +20,8 @@ CheckButton::CheckButton():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Canvia l'estat del boto.
-/// \param state: El nou estat.
+/// \brief    Canvia l'estat del boto.
+/// \param    state: El nou estat.
 ///
 void CheckButton::setState(
 	CheckButtonState state) {
@@ -34,8 +34,8 @@ void CheckButton::setState(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant cal Renderitzar el visual.
-/// \param context: El context de renderitzat.
+/// \brief    Es crida quant cal Renderitzar el visual.
+/// \param    context: El context de renderitzat.
 ///
 void CheckButton::onRender(
 	RenderContext &context) {
@@ -82,7 +82,7 @@ void CheckButton::onRender(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant es fal click en el boto.
+/// \brief    Es crida quant es fal click en el boto.
 ///
 void CheckButton::onClick() {
 

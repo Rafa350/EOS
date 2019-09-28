@@ -10,9 +10,9 @@ int Service::idCount = 0;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor
-/// \param pApplication: Aplicacio al que pertany.
-/// \param configuration: Parametres de configuracio.
+/// \brief    Constructor
+/// \param    pApplication: Aplicacio al que pertany.
+/// \param    configuration: Parametres de configuracio.
 ///
 Service::Service(
 	Application *pApplication,
@@ -32,7 +32,7 @@ Service::Service(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor.
+/// \brief    Destructor.
 ///
 Service::~Service() {
 
@@ -45,8 +45,8 @@ Service::~Service() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Funcio d'execucio de la tasca.
-/// \param pTask: La tasca.
+/// \brief    Funcio d'execucio de la tasca.
+/// \param    pTask: La tasca.
 ///
 void Service::run(
     Task *pThread) {
@@ -57,7 +57,7 @@ void Service::run(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura el servei, abans de l'inici del planificador.
+/// \brief    Configura el servei, abans de l'inici del planificador.
 ///
 void Service::initialize() {
 
@@ -66,7 +66,7 @@ void Service::initialize() {
 
 
 /// ---------------------------------------------------------------------
-/// \brief Executa les operacions de la interrupcio tick.
+/// \brief    Executa les operacions de la interrupcio tick.
 ///
 void Service::tick() {
 
@@ -75,7 +75,7 @@ void Service::tick() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Executa les operacions del servei.
+/// \brief    Executa les operacions del servei.
 ///
 void Service::task() {
 
@@ -84,7 +84,7 @@ void Service::task() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la inicialitzacio.
+/// \brief    Procesa la inicialitzacio.
 ///
 void Service::onInitialize() {
 
@@ -92,7 +92,7 @@ void Service::onInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa les operacions de la interrupcio tick.
+/// \brief    Procesa les operacions de la interrupcio tick.
 ///
 void Service::onTick() {
 
@@ -100,7 +100,7 @@ void Service::onTick() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa les operacions del servei.
+/// \brief    Procesa les operacions del servei.
 //
 void Service::onTask() {
 

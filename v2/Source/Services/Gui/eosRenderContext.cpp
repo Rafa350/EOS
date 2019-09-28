@@ -2,6 +2,7 @@
 #include "eosAssert.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/eosVisual.h"
+#include "Services/Gui/eosVisualUtils.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPoint.h"
@@ -11,50 +12,6 @@
 
 
 using namespace eos;
-
-
-/// ----------------------------------------------------------------------
-/// \brief Converteix un punt a coordinades de pantalla.
-/// \param    pVisual: El visual.
-/// \param    p: El punt en coordinades relatives al visual.
-/// \return   El punt en coordinades absolutes de pantalla.
-///
-static Point getPosition(
-	Visual *pVisual) {
-
-	int x = 0;
-	int y = 0;
-
-	while (pVisual != nullptr) {
-		const Rect& bounds = pVisual->getBounds();
-		x += bounds.getX();
-		y += bounds.getY();
-
-		pVisual = pVisual->getParent();
-	}
-
-	return Point(x, y);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el rectangle de retall d'un visual.
-/// \param    pVisual: El visual.
-/// \return   El rectangle de retall.
-///
-static Rect getClip(
-	Visual *pVisual) {
-
-	Rect clip(0, 0, INT32_MAX, INT32_MAX);
-	while (pVisual != nullptr) {
-		Rect bounds(pVisual->getBounds());
-		clip = clip.intersect(bounds.getSize());
-		clip = clip.offset(bounds.getPosition());
-		pVisual = pVisual->getParent();
-	}
-
-	return clip;
-}
 
 
 ///-----------------------------------------------------------------------
@@ -80,13 +37,13 @@ Graphics &RenderContext::beginRender(
 
 	// Selecciona el rectangle de retall
 	//
-	graphics.setClip(getClip(pVisual));
+	graphics.setClip(VisualUtils::getClip(pVisual));
 
 	// Aplica una translacio per situar l'origen de coordinades, al origen
 	// del widged
 	//
 	Transformation t;
-	t.translate(getPosition(pVisual));
+	t.translate(VisualUtils::getPosition(pVisual));
 	graphics.setTransformation(t);
 
 	return graphics;

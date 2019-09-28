@@ -2,7 +2,7 @@
 #include "HAL/STM32/halEXTI.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
-#include "Services/Gui/eosTouchPadService.h"
+#include "Services/eosTouchPadService.h"
 
 
 using namespace eos;
@@ -18,8 +18,8 @@ static TouchPadServiceConfiguration defaultConfiguration = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte.
-/// \param pApplication: Aplicacio on afeigir el servei.
+/// \brief    Constructor de l'objecte.
+/// \param    pApplication: Aplicacio on afeigir el servei.
 ///
 TouchPadService::TouchPadService(
 	Application *pApplication) :
@@ -29,9 +29,9 @@ TouchPadService::TouchPadService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor de l'objecte.
-/// \param pApplication: Aplicacio on afeigir el servei
-/// \param configuration: Parametres de configuracio.
+/// \brief    Contructor de l'objecte.
+/// \param    pApplication: Aplicacio on afeigir el servei
+/// \param    configuration: Parametres de configuracio.
 ///
 TouchPadService::TouchPadService(
 	Application *pApplication,
@@ -46,16 +46,8 @@ TouchPadService::TouchPadService(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief Destructor de l'objecte.
-///
-TouchPadService::~TouchPadService() {
-
-}
-
-
 /// ---------------------------------------------------------------------
-/// \brief Inicialitzacio abans del planificador.
+/// \brief    Inicialitzacio abans del planificador.
 ///
 void TouchPadService::onInitialize() {
 
@@ -70,7 +62,7 @@ void TouchPadService::onInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Bucle d'execucio.
+/// \brief    Bucle d'execucio.
 ///
 void TouchPadService::onTask() {
 
@@ -140,7 +132,7 @@ void TouchPadService::onTask() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la interrupcio. Desbloqueja el process.
+/// \brief    Procesa la interrupcio. Desbloqueja el process.
 ///
 void TouchPadService::interruptHandler() {
 
@@ -149,7 +141,7 @@ void TouchPadService::interruptHandler() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Despatxa la interrupcio a la funcio membre.
+/// \brief    Despatxa la interrupcio a la funcio membre.
 ///
 void TouchPadService::interruptHandler(
 	EXTILine line,

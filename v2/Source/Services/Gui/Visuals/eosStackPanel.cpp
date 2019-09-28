@@ -9,7 +9,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor del objecte.
+/// \brief    Constructor del objecte.
 ///
 StackPanel::StackPanel():
 	orientation(Orientation::vertical) {
@@ -18,9 +18,9 @@ StackPanel::StackPanel():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Calcula les mesures del panell i dels seus fills
-/// \param availableSize: Tamany maxim disponible.
-/// \return El tamany desitjat.
+/// \brief    Calcula les mesures del panell i dels seus fills
+/// \param    availableSize: Tamany maxim disponible.
+/// \return    El tamany desitjat.
 ///
 Size StackPanel::measureOverride(
 	const Size &availableSize) const {
@@ -62,9 +62,9 @@ Size StackPanel::measureOverride(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Ajusta el tamany del panell i dels seus fills.
-/// \param finalSize: El tamany final a asignar.
-/// \return El tamany final obtingut.
+/// \brief    Ajusta el tamany del panell i dels seus fills.
+/// \param    finalSize: El tamany final a asignar.
+/// \return    El tamany final obtingut.
 ///
 Size StackPanel::arrangeOverride(
 	const Size &finalSize) const {
@@ -97,8 +97,8 @@ Size StackPanel::arrangeOverride(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna l'orientacio del panell.
-/// \param orientation: El valor de la propietat.
+/// \brief    Asigna l'orientacio del panell.
+/// \param    orientation: El valor de la propietat.
 ///
 void StackPanel::setOrientation(
 	Orientation orientation) {

@@ -12,7 +12,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor del objecte.
+/// \brief    Constructor del objecte.
 ///
 PushButton::PushButton():
 	state(PushButtonState::normal) {
@@ -21,8 +21,8 @@ PushButton::PushButton():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Canvia l'estat del boto.
-/// \param state: El nou estat.
+/// \brief    Canvia l'estat del boto.
+/// \param    state: El nou estat.
 ///
 void PushButton::setState(
 	PushButtonState state) {
@@ -35,8 +35,8 @@ void PushButton::setState(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant cal Renderitzar el visual.
-/// \param context: El context de renderitzat.
+/// \brief    Es crida quant cal Renderitzar el visual.
+/// \param    context: El context de renderitzat.
 ///
 void PushButton::onRender(
 	RenderContext &context) {
@@ -80,7 +80,7 @@ void PushButton::onRender(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant es prem el boto.
+/// \brief    Es crida quant es prem el boto.
 ///
 void PushButton::onPress() {
 
@@ -91,7 +91,7 @@ void PushButton::onPress() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quanrt es deixa anar el boto.
+/// \brief    Es crida quanrt es deixa anar el boto.
 ///
 void PushButton::onRelease() {
 

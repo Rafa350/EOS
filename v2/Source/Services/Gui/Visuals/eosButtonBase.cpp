@@ -7,7 +7,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor
+/// \brief    Constructor
 ///
 ButtonBase::ButtonBase():
 	pressed(false) {
@@ -16,7 +16,7 @@ ButtonBase::ButtonBase():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Genera una pulsacio del boto.
+/// \brief    Genera una pulsacio del boto.
 ///
 void ButtonBase::click() {
 
@@ -25,8 +25,8 @@ void ButtonBase::click() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant es presiona el touchpad.
-/// \param position: Posicio del toc.
+/// \brief    Es crida quant es presiona el touchpad.
+/// \param    position: Posicio del toc.
 ///
 #ifdef OPT_GUI_TouchPad
 void ButtonBase::onTouchPadPress(
@@ -42,7 +42,7 @@ void ButtonBase::onTouchPadPress(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant es deixa de presionar el pad.
+/// \brief    Es crida quant es deixa de presionar el pad.
 ///
 #ifdef OPT_GUI_TouchPad
 void ButtonBase::onTouchPadRelease() {
@@ -60,7 +60,7 @@ void ButtonBase::onTouchPadRelease() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant el pad ja no actua en el visual.
+/// \brief    Es crida quant el pad ja no actua en el visual.
 ///
 #ifdef OPT_GUI_TouchPad
 void ButtonBase::onTouchPadLeave() {
@@ -75,7 +75,7 @@ void ButtonBase::onTouchPadLeave() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida quant es prem el boto i es deixa anar.
+/// \brief    Es crida quant es prem el boto i es deixa anar.
 ///
 void ButtonBase::onClick() {
 

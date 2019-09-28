@@ -9,7 +9,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte.
+/// \brief    Constructor de l'objecte.
 ///
 Screen::Screen() {
 

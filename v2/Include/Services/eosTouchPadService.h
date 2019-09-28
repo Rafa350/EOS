@@ -53,7 +53,6 @@ namespace eos {
 		public:
 			TouchPadService(Application *application);
 			TouchPadService(Application *pApplication, const TouchPadServiceConfiguration &configuration);
-			~TouchPadService();
 
 			template <class cls>
 			void setEventCallback(CallbackP1<cls, const TouchPadEventArgs&> *pCallBack) {

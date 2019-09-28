@@ -420,7 +420,7 @@ void Visual::setVerticalAlignment(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Es crida quent hi ha que despatxar un missatge..
+/// \brief    Es crida quant hi ha que despatxar un missatge..
 /// \param    msg: El missatge a despatxar.
 ///
 void Visual::onDispatch(
@@ -429,7 +429,7 @@ void Visual::onDispatch(
 	switch (msg.msgId) {
 #ifdef OPT_GUI_TouchPad
 		case MsgId::touchPadEvent:
-			onDispatchTouchPadEvent(msg);
+			onDispatchTouchPadEvent(msg.touchPad);
 			break;
 #endif
 
@@ -466,13 +466,14 @@ void Visual::onDeactivate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el missatge 'touchPadEvent'
+/// \brief    Procesa els events del touchpad
+/// \param    msg: L'event a procesar.
 ///
 #ifdef OPT_GUI_TouchPad
 void Visual::onDispatchTouchPadEvent(
-	const Message &msg) {
+	const MsgTouchPad &msg) {
 
-	switch (msg.touchPad.event) {
+	switch (msg.event) {
 		case MsgTouchPadEvent::enter:
 			onTouchPadEnter();
 			break;
@@ -482,24 +483,17 @@ void Visual::onDispatchTouchPadEvent(
 			break;
 
 		case MsgTouchPadEvent::move:
-			onTouchPadMove(Point(msg.touchPad.x, msg.touchPad.y));
+			onTouchPadMove(Point(msg.x, msg.y));
 			break;
 
 		case MsgTouchPadEvent::press:
-			onTouchPadPress(Point(msg.touchPad.x, msg.touchPad.y));
+			onTouchPadPress(Point(msg.x, msg.y));
 			break;
 
 		case MsgTouchPadEvent::release:
 			onTouchPadRelease();
 			break;
-
-		default:
-			// Si no el procesa, pasa al pare.
-			if (pParent != nullptr)
-				pParent->onDispatchTouchPadEvent(msg);
-			break;
 	}
-
 }
 #endif
 

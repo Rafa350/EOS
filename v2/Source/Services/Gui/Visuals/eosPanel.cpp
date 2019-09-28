@@ -11,7 +11,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor del objecte.
+/// \brief    Constructor del objecte.
 ///
 Panel::Panel() :
 	color(COLOR_Blue) {
@@ -20,8 +20,8 @@ Panel::Panel() :
 
 
 /// ----------------------------------------------------------------------
-/// \brief Assigna el color.
-/// \param color: El color.
+/// \brief    Assigna el color.
+/// \param    color: El color.
 ///
 void Panel::setColor(
 	const Color &color) {
@@ -34,13 +34,13 @@ void Panel::setColor(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Renderitza el visual.
-/// \param context: El context de renderitzat.
+/// \brief    Renderitza el visual.
+/// \param    context: El context de renderitzat.
 //
 void Panel::onRender(
 	RenderContext &context) {
 
-	if (color.getA() > 0) {
+	if (!color.isTransparent()) {
 
 		// Inicia el renderitzat.
 		//

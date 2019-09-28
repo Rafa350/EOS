@@ -1,8 +1,8 @@
 #include "eos.h"
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosRenderContext.h"
-#include "Services/Gui/Visuals/eosLabel.h"
 #include "Services/Gui/eosVisual.h"
+#include "Services/Gui/Visuals/eosLabel.h"
 #include "System/Core/eosString.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
@@ -17,19 +17,23 @@ struct LabelStyle {
 	Color textColor;
 	Color backgroundColor;
 	String fontName;
+	int fontHeight;
+	FontStyle fontStyle;
 };
 
 static const LabelStyle style = {
 	.textColor = COLOR_Yellow,
-	.backgroundColor = COLOR_Gray,
-	.fontName = "Tahoma"
+	.backgroundColor = COLOR_Transparent,
+	.fontName = "Tahoma",
+	.fontHeight = 12,
+	.fontStyle = FontStyle::regular
 };
 
 static const LabelStyle *pStyle = &style;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor de l'objecte.
+/// \brief    Contructor de l'objecte.
 ///
 Label::Label():
 
@@ -38,9 +42,8 @@ Label::Label():
 	horizontalTextAlign(HorizontalTextAlign::center),
 	verticalTextAlign(VerticalTextAlign::center),
 	fontName(pStyle->fontName),
-	fontHeight(12),
-	fontStyle(FontStyle::regular),
-	text(String("")) {
+	fontHeight(pStyle->fontHeight),
+	fontStyle(pStyle->fontStyle) {
 
 	setHorizontalAlignment(HorizontalAlignment::center);
 	setVerticalAlignment(VerticalAlignment::center);
@@ -48,8 +51,8 @@ Label::Label():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Calcula la mida desitjada del visual.
-/// \param availableSize: Tamany disponible.
+/// \brief    Calcula la mida desitjada del visual.
+/// \param    availableSize: Tamany disponible.
 ///
 Size Label::measureOverride(
 	const Size &availableSize) const {
@@ -76,8 +79,8 @@ Size Label::measureOverride(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el color del text.
-/// \param color: El color.
+/// \brief    Asigna el color del text.
+/// \param    color: El color.
 ///
 void Label::setTextColor(
 	const Color &color) {
@@ -90,8 +93,8 @@ void Label::setTextColor(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el nom del font.
-/// \param fontname: El nom del font.
+/// \brief    Asigna el nom del font.
+/// \param    fontname: El nom del font.
 ///
 void Label::setFontName(
 	const String &fontName) {
@@ -104,8 +107,8 @@ void Label::setFontName(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el tamany del font.
-/// \param fontname: El tamany del font.
+/// \brief    Asigna el tamany del font.
+/// \param    fontHeight: El tamany del font.
 ///
 void Label::setFontHeight(
 	int fontHeight) {
@@ -118,8 +121,8 @@ void Label::setFontHeight(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna L'estil del font.
-/// \param fontname: L'estil del font.
+/// \brief    Asigna L'estil del font.
+/// \param    fontStyle: L'estil del font.
 ///
 void Label::setFontStyle(
 	FontStyle fontStyle) {
@@ -132,8 +135,8 @@ void Label::setFontStyle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el color del fons.
-/// \param color: El color.
+/// \brief    Asigna el color del fons.
+/// \param    color: El color.
 ///
 void Label::setBackgroundColor(
 	const Color &color) {
@@ -146,8 +149,8 @@ void Label::setBackgroundColor(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna l'aliniacio horitzontal del text.
-/// \param align: L'aliniacio.
+/// \brief    Asigna l'aliniacio horitzontal del text.
+/// \param    align: L'aliniacio.
 ///
 void Label::setHorizontalTextAlign(
 	HorizontalTextAlign align) {
@@ -160,8 +163,8 @@ void Label::setHorizontalTextAlign(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna l'aliniacio vertical del text.
-/// \param align: L'aliniacio.
+/// \brief    Asigna l'aliniacio vertical del text.
+/// \param    align: L'aliniacio.
 ///
 void Label::setVerticalTextAlign(
 	VerticalTextAlign align) {
@@ -174,8 +177,8 @@ void Label::setVerticalTextAlign(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el text.
-/// \param text: El text.
+/// \brief    Asigna el text.
+/// \param    text: El text.
 ///
 void Label::setText(
 	const String &text) {
@@ -188,8 +191,8 @@ void Label::setText(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Renderitza la imatge.
-/// \param context: Context de renderitzat.
+/// \brief    Renderitza la imatge.
+/// \param    context: Context de renderitzat.
 ///
 void Label::onRender(
 	RenderContext &context) {
@@ -204,10 +207,12 @@ void Label::onRender(
 	int width = s.getWidth();
 	int height = s.getHeight();
 
-	// Dibuixa el fons
+	// Dibuixa el fons. Si es transparent optimitza i no el dibuixa.
 	//
-	g.setColor(backgroundColor);
-	g.fillRectangle(0, 0, width, height);
+	if (!backgroundColor.isTransparent()) {
+		g.setColor(backgroundColor);
+		g.fillRectangle(0, 0, width, height);
+	}
 
 	// Dibuixa el text
 	//
@@ -223,3 +228,27 @@ void Label::onRender(
 	//
 	context.endRender();
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Es crida quant hi ha que despatxar un missatge..
+/// \param    msg: El missatge a despatxar.
+///
+#ifdef OPT_GUI_TouchPad
+void Label::onDispatch(
+	const Message &msg) {
+
+	// Si es un missatge del touchpad, el retransmet al pare
+	//
+	if (msg.msgId == MsgId::touchPadEvent) {
+		Visual *pParent = getParent();
+		if (pParent != nullptr)
+			pParent->dispatch(msg);
+	}
+
+	// En cas contrari els procesa normalment
+	//
+	else
+		Visual::onDispatch(msg);
+}
+#endif

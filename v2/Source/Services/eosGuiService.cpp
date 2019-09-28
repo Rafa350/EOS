@@ -2,15 +2,19 @@
 #include "eosAssert.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
-#include "System/Core/eosString.h"
-#include "System/Graphics/eosBitmap.h"
-#include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosColorDefinitions.h"
-#include "System/Graphics/eosGraphics.h"
-#include "System/Graphics/eosPoint.h"
-#include "Services/Gui/eosGuiService.h"
+#include "Services/eosGuiService.h"
+#ifdef OPT_GUI_TouchPad
+#include "Services/eosTouchPadService.h"
+#endif
+#ifdef OPT_GUI_Selector
+#include "Services/eosSelectorService.h"
+#endif
+#ifdef OPT_GUI_Keyboard
+#include "Services/eosKeyboardService.h"
+#endif
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosVisual.h"
+#include "Services/Gui/eosVisualUtils.h"
 #include "Services/Gui/Visuals/eosBorder.h"
 #include "Services/Gui/Visuals/eosCheckButton.h"
 #include "Services/Gui/Visuals/eosImage.h"
@@ -21,16 +25,12 @@
 #include "Services/Gui/Visuals/eosStackPanel.h"
 #include "Services/Gui/Visuals/eosVirtualKbd.h"
 #include "Services/Gui/eosRenderContext.h"
-#ifdef OPT_GUI_TouchPad
-#include "Services/Gui/eosTouchPadService.h"
-#endif
-#ifdef OPT_GUI_Selector
-#include "Services/Gui/eosSelectorService.h"
-#endif
-#ifdef OPT_GUI_Keyboard
-#include "Services/Gui/eosKeyboardService.h"
-#endif
-#include "HAL/halINT.h"
+#include "System/Core/eosString.h"
+#include "System/Graphics/eosBitmap.h"
+#include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosColorDefinitions.h"
+#include "System/Graphics/eosGraphics.h"
+#include "System/Graphics/eosPoint.h"
 
 
 using namespace eos;
@@ -67,31 +67,9 @@ static Bitmap *createBitmap() {
 }
 
 
-static Visual *getVisual(Visual *pVisual, const Point &p) {
-
-	Rect bounds = pVisual->getBounds();
-
-	Rect testRect(bounds.getSize());
-	Point testPoint = p.offset(-bounds.getX(), -bounds.getY());
-
-	if (testRect.contains(testPoint)) {
-		for (VisualListIterator it(pVisual->getChilds()); it.hasNext(); it.next()) {
-			Visual *pChild = it.current();
-
-			Visual *pResult = getVisual(pChild, testPoint);
-			if (pResult != nullptr)
-				return pResult;
-		}
-		return pVisual;
-	}
-
-	return nullptr;
-}
-
-
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param pApplication: Aplicacio on afeigir el servei.
+/// \brief    Constructor.
+/// \param    pApplication: Aplicacio on afeigir el servei.
 ///
 GuiService::GuiService(Application *pApplication) :
 	GuiService(pApplication, defaultConfiguration) {
@@ -100,9 +78,9 @@ GuiService::GuiService(Application *pApplication) :
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor
-/// \param pApplication: Aplicacio on afeigir el servei.
-/// \param configuration: Parametres de configuracio
+/// \brief    Constructor
+/// \param    pApplication: Aplicacio on afeigir el servei.
+/// \param    configuration: Parametres de configuracio
 ///
 GuiService::GuiService(
 	Application *application,
@@ -150,7 +128,7 @@ Visual *GuiService::getVisualAt(
 	const Point &position) const {
 
 	if (screen != nullptr)
-		return getVisual(screen, position);
+		return VisualUtils::getVisual(screen, position);
 	else
 		return nullptr;
 }
@@ -275,13 +253,11 @@ void GuiService::onInitialize() {
 
 	screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
 	screen->arrange(screen->getDesiredSize());
-
-	Visual *v = getVisual(screen, Point(DISPLAY_IMAGE_WIDTH / 2, DISPLAY_IMAGE_HEIGHT / 2));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la tasca del servei.
+/// \brief    Procesa la tasca del servei.
 ///
 void GuiService::onTask() {
 
@@ -305,9 +281,9 @@ void GuiService::onTask() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa les notificacions del touchpad. S'executa en el
-///        contexte del que crida a aquest metode.
-/// \param args: Arguments del event.
+/// \brief    Procesa les notificacions del touchpad. S'executa en el
+///           contexte del que crida a aquest metode.
+/// \param    args: Arguments del event.
 ///
 #ifdef OPT_GUI_TouchPad
 void GuiService::touchPadEventHandler(
