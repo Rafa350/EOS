@@ -50,39 +50,3 @@ void ContentControl::setPadding(
 		invalidate();
 	}
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief Calcula la mida del visual i dels seus fills.
-/// \param availableSize: Indica el tamany disponible.
-/// \return El tamany requerit.
-///
-Size ContentControl::measureOverride(
-	const Size &availableSize) const {
-
-	if ((pContent != nullptr)) {
-		pContent->measure(availableSize);
-		return pContent->getDesiredSize();
-	}
-	else
-		return Size(0, 0);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Ajusta el tamany del panell i dels seus fills.
-/// \param finalSize: El tamany final a asignar.
-/// \return El tamany final obtingut.
-///
-Size ContentControl::arrangeOverride(
-	const Size &finalSize) const {
-
-	if (pContent != nullptr) {
-
-		Rect r(Point(0, 0), finalSize);
-		pContent->arrange(r);
-	}
-
-	return finalSize;
-}
-

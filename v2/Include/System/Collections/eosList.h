@@ -40,7 +40,15 @@ namespace eos {
             bool isEmpty() const { return count > 0; }
     };
 
-    /// \brief Interface generaic per les llistes
+    /// \brief interficie generica per llistes RO
+    ///
+    template <typename T>
+    class IReadOnlyList {
+    	public:
+    		virtual ~IReadOnlyList() {}
+    };
+
+    /// \brief Interface generic per les llistes RW
     ///
     template <typename T>
     class IList {

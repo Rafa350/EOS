@@ -1,14 +1,14 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Graphics/eosRect.h"
 #include "System/eosMath.h"
+#include "System/Graphics/eosRect.h"
 
 
 using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte. Crea un rectangle buit
+/// \brief    Constructor de l'objecte. Crea un rectangle buit
 ///
 Rect::Rect():
 	x(0),
@@ -19,11 +19,11 @@ Rect::Rect():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param width: Amplada.
-/// \param height: Al�ada.
+/// \brief    Constructor de l'objecte.
+/// \param    x: Coordinada X.
+/// \param    y: Coordinada Y.
+/// \param    width: Amplada.
+/// \param    height: Al�ada.
 ///
 Rect::Rect(
 	int x,
@@ -42,9 +42,9 @@ Rect::Rect(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte.
-/// \param p: Posicio.
-/// \param s: Tamany.
+/// \brief    Constructor de l'objecte.
+/// \param    p: Posicio.
+/// \param    s: Tamany.
 ///
 Rect::Rect(
 	const Point &p,
@@ -58,11 +58,27 @@ Rect::Rect(
 
 
 /// ----------------------------------------------------------------------
-/// \brief   Constructor del objecte.
-/// \param   p1: Primer punt.
-/// \param   p2: Segon punt.
-/// \remarks El rectangle creat, SEMPRE estata normalitzat, independentment
-///          dels punt inicials
+/// \brief    Constructor del objecte.
+/// \param    s: Tamany.
+/// \remarks  La posicio es x=0, y=0.
+///
+Rect::Rect(
+	const Size &s):
+
+	x(0),
+	y(0),
+	width(s.getWidth()),
+	height(s.getHeight()) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor del objecte.
+/// \param    p1: Primer punt.
+/// \param    p2: Segon punt.
+/// \remarks  El rectangle creat, SEMPRE estata normalitzat, independentment
+///           dels punt inicials
 ///
 Rect::Rect(
 	const Point &p1,
@@ -79,8 +95,8 @@ Rect::Rect(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor copia.
-/// \param r: L'objecte a copiar.
+/// \brief    Constructor copia.
+/// \param    r: L'objecte a copiar.
 ///
 Rect::Rect(
 	const Rect &r):
@@ -93,9 +109,9 @@ Rect::Rect(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Infla un rectangle.
-/// \param t: Gruixos per inflar.
-/// \return El resultat.
+/// \brief    Infla un rectangle.
+/// \param    t: Gruixos per inflar.
+/// \return   El resultat.
 ///
 Rect Rect::inflate(
 	const Thickness &t) const {
@@ -109,9 +125,9 @@ Rect Rect::inflate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Desinfla un rectangle.
-/// \param t: Gruixos per desinflar.
-/// \return El resultat.
+/// \brief    Desinfla un rectangle.
+/// \param    t: Gruixos per desinflar.
+/// \return   El resultat.
 ///
 Rect Rect::deflate(
 	const Thickness &t) const {
@@ -119,16 +135,16 @@ Rect Rect::deflate(
 	return Rect(
 		x + t.getLeft(),
 		y + t.getTop(),
-		width - t.getLeft() - t.getRight(),
-		height - t.getTop() - t.getBottom());
+		Math::max(0, width - t.getLeft() - t.getRight()),
+		Math::max(0, height - t.getTop() - t.getBottom()));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief   Obte un rectangle que es la interseccio d'aquest amb un altre.
-/// \param   r: Rectangle per realitzar la interseccio.
-/// \return  El resultat de la interseccio.
-/// \remarks El resultat SEMPRE sera un rectangle normalitzat.
+/// \brief    Obte un rectangle que es la interseccio d'aquest amb un altre.
+/// \param    r: Rectangle per realitzar la interseccio.
+/// \return   El resultat de la interseccio.
+/// \remarks  El resultat SEMPRE sera un rectangle normalitzat.
 ///
 Rect Rect::intersect(
 	const Rect &r) const {
@@ -161,8 +177,8 @@ bool Rect::contains(
 
 
 /// ----------------------------------------------------------------------
-/// \brief  Indica si es rectangle es buit.
-/// \return True si es buit.
+/// \brief    Indica si es rectangle es buit.
+/// \return   True si es buit.
 ///
 bool Rect::isEmpty() const {
 

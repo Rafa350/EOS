@@ -3,14 +3,13 @@
 
 
 #include "eos.h"
-#include "System/Graphics/eosRect.h"
 
 
 namespace eos {
 
 	class Visual;
 	class Graphics;
-	class Color;
+	class Rect;
 
 	class RenderContext {
 		private:

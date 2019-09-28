@@ -188,11 +188,11 @@ Service *Application::getService(
 /// \return El servei, null si no el troba.
 ///
 Service *Application::getService(
-    const char *name) const {
+    const String& name) const {
 
   	for (ServiceListIterator it(services); it.hasNext(); it.next()) {
    		Service *pService = it.current();
-        if (strcmp(pService->getName(), name))
+        if (pService->getName() == name)
             return pService;
     }
 

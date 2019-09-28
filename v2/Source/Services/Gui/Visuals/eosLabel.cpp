@@ -13,22 +13,37 @@
 using namespace eos;
 
 
+struct LabelStyle {
+	Color textColor;
+	Color backgroundColor;
+	String fontName;
+};
+
+static const LabelStyle style = {
+	.textColor = COLOR_Yellow,
+	.backgroundColor = COLOR_Gray,
+	.fontName = "Tahoma"
+};
+
+static const LabelStyle *pStyle = &style;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Contructor de l'objecte.
 ///
 Label::Label():
 
-	textColor(COLOR_Red),
-	backgroundColor(COLOR_Yellow),
+	textColor(pStyle->textColor),
+	backgroundColor(pStyle->backgroundColor),
 	horizontalTextAlign(HorizontalTextAlign::center),
-	verticalTextAlign(VerticalTextAlign::middle),
-	fontName("Tahoma"),
+	verticalTextAlign(VerticalTextAlign::center),
+	fontName(pStyle->fontName),
 	fontHeight(12),
 	fontStyle(FontStyle::regular),
 	text(String("")) {
 
-	setHorizontalAlignment(HorizontalAlignment::left);
-	setVerticalAlignment(VerticalAlignment::top);
+	setHorizontalAlignment(HorizontalAlignment::center);
+	setVerticalAlignment(VerticalAlignment::center);
 }
 
 
@@ -39,7 +54,11 @@ Label::Label():
 Size Label::measureOverride(
 	const Size &availableSize) const {
 
-	if (isVisible() && !text.isEmpty()) {
+	if (text.isEmpty())
+
+		return Size();
+
+	else {
 
 		const uint8_t *fontResource =  Font::getFontResource(fontName, fontHeight, fontStyle);
 		Font *font = new Font(fontResource);
@@ -53,8 +72,6 @@ Size Label::measureOverride(
 
 		return Size(measuredWidth, measuredHeight);
 	}
-	else
-		return Size(0, 0);
 }
 
 
@@ -177,24 +194,32 @@ void Label::setText(
 void Label::onRender(
 	RenderContext &context) {
 
+	// Inicia el renderitzat
+	//
 	Graphics &g = context.beginRender(this);
 
-	const Size &s = getSize();
+	// Obte les mides de l'area de dibuix
+	//
+	const Size &s = getBounds().getSize();
+	int width = s.getWidth();
+	int height = s.getHeight();
 
+	// Dibuixa el fons
+	//
+	g.setColor(backgroundColor);
+	g.fillRectangle(0, 0, width, height);
+
+	// Dibuixa el text
+	//
 	const uint8_t *fontResource =  Font::getFontResource(fontName, fontHeight, fontStyle);
 	Font *font = new Font(fontResource);
-
 	g.setFont(font);
-
-	g.setColor(backgroundColor);
-	g.fillRectangle(getRect());
-
 	g.setColor(textColor);
 	g.setTextAlign(horizontalTextAlign, verticalTextAlign);
-
-	g.drawText(s.getWidth() / 2, s.getHeight() / 2, text, 0, -1);
-
+	g.drawText(width / 2, height / 2, text, 0, -1);
 	delete font;
 
+	// Finalitza el renderitzat.
+	//
 	context.endRender();
 }

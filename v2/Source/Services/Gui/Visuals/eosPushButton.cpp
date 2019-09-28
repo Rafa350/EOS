@@ -41,30 +41,40 @@ void PushButton::setState(
 void PushButton::onRender(
 	RenderContext &context) {
 
-	const int radius = 5;
-	Rect rect = getRect();
-
+	// Inicia el renderitzat.
+	//
 	Graphics &g = context.beginRender(this);
 
+	// Obte les mides de l'area de dibuix
+	//
+	const int radius = 5;
+	const Size &s = getBounds().getSize();
+	int x2 = s.getWidth() - 1;
+	int y2 = s.getHeight() - 1;
+
+	// Dibuixa el boto
+	//
 	switch (state) {
 		case PushButtonState::normal:
-			g.setColor(Color::fromRGB888(0x3A3A3A));
-			g.fillRoundedRectangle(rect, radius, radius);
+			g.setColor(COLOR_Teal);
+			g.fillRoundedRectangle(0, 0, x2, y2, radius, radius);
 			g.setColor(COLOR_LightSeaGreen);
-			g.drawRoundedRectangle(rect, rarius, radius);
+			g.drawRoundedRectangle(0, 0, x2, y2, radius, radius);
 			break;
 
 		case PushButtonState::pushed:
-			g.setColor(COLOR_DarkSlateGray);
-			g.fillRoundedRectangle(rect, radius, radius);
-			g.setColor(COLOR_LightSeaGreen);
-			g.drawRoundedRectangle(rect, radius, radius);
+			g.setColor(COLOR_CadetBlue);
+			g.fillRoundedRectangle(0, 0, x2, y2, radius, radius);
+			g.setColor(COLOR_LightCyan);
+			g.drawRoundedRectangle(0, 0, x2, y2, radius, radius);
 			break;
 
 		default:
 			break;
 	}
 
+	// Finalitza el renderitzat.
+	//
 	context.endRender();
 }
 

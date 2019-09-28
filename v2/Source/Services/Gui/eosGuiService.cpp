@@ -155,7 +155,6 @@ void GuiService::onInitialize() {
 
 	context = new RenderContext(*graphics);
 
-	screen->setColor(0xFF202020);
 	setActiveVisual(screen);
 
 	/*x = 0;
@@ -214,26 +213,46 @@ void GuiService::onInitialize() {
 	screen->addChild(kbd);
 	*/
 
-	StackPanel *sp = new StackPanel();
+	/*StackPanel *sp = new StackPanel();
 	sp->setPosition(Point(20, 20));
 	sp->setSize(Size(100, 250));
 	sp->setMargin(Thickness(100, 10, 100, 10));
+	sp->setHorizontalAlignment(HorizontalAlignment::center);
+	sp->setVerticalAlignment(VerticalAlignment::top);
 	screen->addChild(sp);
 	for (int i = 0; i < 5; i++) {
 
 		Label *l = new Label();
+		l->setHorizontalAlignment(HorizontalAlignment::center);
+		l->setVerticalAlignment(VerticalAlignment::center);
 		l->setText("hola");
 
 		PushButton *pb = new PushButton();
+		pb->setHorizontalAlignment(HorizontalAlignment::center);
+		pb->setVerticalAlignment(VerticalAlignment::center);
 		pb->setMargin(Thickness(10));
 		pb->setContent(l);
 
 		sp->addChild(pb);
-	}
+	}*/
 
-	sp->measure(screen->getSize());
-	sp->arrange(screen->getRect());
+	Label *l1 = new Label();
+	//l1->setMargin(10);
+	l1->setText("Hola capullo");
+	l1->setHorizontalAlignment(HorizontalAlignment::center);
+	l1->setVerticalAlignment(VerticalAlignment::center);
 
+	PushButton *pb1 = new PushButton();
+	pb1->setHorizontalAlignment(HorizontalAlignment::stretch);
+	pb1->setVerticalAlignment(VerticalAlignment::center);
+	pb1->setMinSize(Size(100, 20));
+	pb1->setMargin(20);
+	//pb1->setContent(l1);
+
+	screen->addChild(pb1);
+
+	screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
+	screen->arrange(screen->getDesiredSize());
 }
 
 

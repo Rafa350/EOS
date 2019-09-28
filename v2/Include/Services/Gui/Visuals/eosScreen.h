@@ -10,9 +10,12 @@
 
 namespace eos {
 
-	class RenderContext;
+	class Size;
 
     class Screen final: public Panel {
+    	protected:
+			Size measureOverride(const Size &availableSize) const override;
+
     	public:
             Screen();
     };

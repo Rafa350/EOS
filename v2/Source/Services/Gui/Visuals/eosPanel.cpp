@@ -41,9 +41,24 @@ void Panel::onRender(
 	RenderContext &context) {
 
 	if (color.getA() > 0) {
+
+		// Inicia el renderitzat.
+		//
 		Graphics &g = context.beginRender(this);
+
+		// Obte les mides de l'area de dibuix.
+		//
+		const Size &s = getBounds().getSize();
+		int width = s.getWidth();
+		int height = s.getHeight();
+
+		// Dibuixa el fons.
+		//
 		g.setColor(color);
-		g.fillRectangle(getRect());
+		g.fillRectangle(0, 0, width, height);
+
+		// Finalitza el renderitzat.
+		//
 		context.endRender();
 	}
 }

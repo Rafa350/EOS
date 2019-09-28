@@ -142,6 +142,7 @@
                 <itemPath>../../../Source/System/Graphics/Fonts/Consolas18pt.cpp</itemPath>
                 <itemPath>../../../Source/System/Graphics/Fonts/Consolas24pt.cpp</itemPath>
                 <itemPath>../../../Source/System/Graphics/Fonts/Tahoma12pt.cpp</itemPath>
+                <itemPath>../../../Source/System/Graphics/Fonts/FontTable.cpp</itemPath>
               </logicalFolder>
               <itemPath>../../../Source/System/Graphics/eosColor.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosFont.cpp</itemPath>
@@ -154,6 +155,7 @@
               <itemPath>../../../Source/System/Graphics/eosSize.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosGraphics_Ellipse.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosTransformation.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Text.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
           </logicalFolder>

@@ -664,6 +664,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosColorDefinitions.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColorDefinitions.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosConsole.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosConsole.h</locationURI>

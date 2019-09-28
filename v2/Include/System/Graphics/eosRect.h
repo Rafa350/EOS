@@ -23,6 +23,7 @@ namespace eos {
             Rect(int x, int y, int width, int height);
             Rect(const Point &p1, const Point &p2);
             Rect(const Point &p, const Size &s);
+            Rect(const Size &s);
             Rect(const Rect &r);
 
             inline int getX() const { return x; }

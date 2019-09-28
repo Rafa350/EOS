@@ -22,12 +22,13 @@ namespace eos {
 			/// \brief Obte l'amplada.
 			inline int getWidth() const { return width; }
 
-			/// \brief Obte l'al�ada.
+			/// \brief Obte l'alçada.
 			inline int getHeight() const { return height; }
 
 			Size inflate(int dw, int dh) const;
 			Size inflate(const Thickness &t) const;
 			Size deflate(const Thickness &t) const;
+			Size constrain(const Size &s) const;
 
 			bool isEmpty() const;
 

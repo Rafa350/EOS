@@ -10,6 +10,7 @@
 
 namespace eos {
 
+	class String;
     class Task;
 
     /// \brief Interficie que cal que implementin les clases que poden
@@ -37,10 +38,10 @@ namespace eos {
             unsigned weakTime;
 
         private:
-            static void function(void *params);
+            static void function(void *pParams);
 
         public:
-            Task(unsigned stackSize, TaskPriority priority, const char *name, IRunable *runable);
+            Task(unsigned stackSize, TaskPriority priority, const String &name, IRunable *runable);
             virtual ~Task();
 
             static void delay(unsigned time);

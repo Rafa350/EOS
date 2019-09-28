@@ -11,6 +11,7 @@
 namespace eos {
 
     class Service;
+    class String;
 
     typedef List<Service*> ServiceList;
     typedef ListIterator<Service*> ServiceListIterator;
@@ -43,7 +44,7 @@ namespace eos {
             void removeService(Service *pService);
             void removeServices();
             Service *getService(int id) const;
-            Service *getService(const char *serviceName) const;
+            Service *getService(const String &serviceName) const;
             inline const ServiceList& getServices() const { return services; }
 
             Application(const Application&) = delete;

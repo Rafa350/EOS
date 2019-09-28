@@ -60,6 +60,7 @@ namespace eos {
 			Size minSize;
 			Size maxSize;
 			Size desiredSize;
+			Rect bounds;
 			Thickness margin;
 			HorizontalAlignment horizontalAlignment;
 			VerticalAlignment verticalAlignment;
@@ -85,6 +86,7 @@ namespace eos {
             void removeVisuals();
 
         public:
+            // Constructors i destructors
     		Visual();
     		virtual ~Visual();
 
@@ -92,26 +94,35 @@ namespace eos {
             inline const VisualList& getChilds() const { return childs; }
             Visual *getVisualAt(const Point &p);
 
+            // Checkers
             bool isRenderizable();
             bool isVisible() const;
-            void setVisibility(Visibility visibility);
-            Visibility getVisibility() const { return visibility; }
 
+            // Setters
+            void setHorizontalAlignment(HorizontalAlignment horizontalAlignment);
+            void setMargin(const Thickness &margin);
+            void setMinSize(const Size &size);
             void setPosition(const Point &position);
             void setSize(const Size &size);
-            void setMargin(const Thickness &margin);
-            void setHorizontalAlignment(HorizontalAlignment horizontalAlignment);
             void setVerticalAlignment(VerticalAlignment verticalAlignment);
+            void setVisibility(Visibility visibility);
 
-            inline const Point& getPosition() const { return position; }
+            // Getters
             Point getAbsolutePosition() const;
-            inline const Size& getSize() const { return size; }
-            inline Rect getRect() const { return Rect(Point(0, 0), size); }
+            inline HorizontalAlignment getHorizontalAlignment() const { return horizontalAlignment; }
+            inline const Size& getMaxSize() const { return maxSize; }
             inline const Thickness& getMargin() const { return margin; }
+            inline const Size& getMinSize() const { return minSize; }
+            inline const Point& getPosition() const { return position; }
+            inline Rect getRect() const { return Rect(Point(0, 0), size); }
+            inline const Size& getSize() const { return size; }
+            inline VerticalAlignment getVerticalAlignment() const { return verticalAlignment; }
+            Visibility getVisibility() const { return visibility; }
 
             void measure(const Size &availableSize);
             void arrange(const Rect &finalRect);
             const Size& getDesiredSize() const { return desiredSize; }
+            const Rect& getBounds() const { return bounds; }
 
             void dispatch(const Message &msg);
             bool render(RenderContext &context);

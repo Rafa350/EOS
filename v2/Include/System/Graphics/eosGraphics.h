@@ -29,7 +29,7 @@ namespace eos {
     /// \brief Aliniacio vertical del text.
     enum class VerticalTextAlign {
         top,
-        middle,
+        center,
         bottom
     };
 

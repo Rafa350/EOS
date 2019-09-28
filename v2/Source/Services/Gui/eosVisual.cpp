@@ -10,7 +10,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte.
+/// \brief    Constructor de l'objecte.
 ///
 Visual::Visual():
 	pParent(nullptr),
@@ -20,6 +20,7 @@ Visual::Visual():
 	size(0, 0),
 	minSize(0, 0),
 	maxSize(INT32_MAX, INT32_MAX),
+	bounds(0, 0, 0, 0),
 	margin(0),
 	horizontalAlignment(HorizontalAlignment::stretch),
 	verticalAlignment(VerticalAlignment::stretch) {
@@ -27,7 +28,7 @@ Visual::Visual():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor del objecte.
+/// \brief    Destructor del objecte.
 ///
 Visual::~Visual() {
 
@@ -45,7 +46,7 @@ Visual::~Visual() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Marca el visual per ser renderizat.
+/// \brief    Marca el visual per ser renderizat.
 ///
 void Visual::invalidate() {
 
@@ -54,8 +55,8 @@ void Visual::invalidate() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Comprova si cal renderitzar el visual o algun dels seus fills.
-/// \return True si cal renderitzar.
+/// \brief    Comprova si cal renderitzar el visual o algun dels seus fills.
+/// \return   True si cal renderitzar.
 ///
 bool Visual::isRenderizable() {
 
@@ -73,8 +74,8 @@ bool Visual::isRenderizable() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Comprova si el visual es visible.
-/// \return True si es visible.
+/// \brief    Comprova si el visual es visible.
+/// \return   True si es visible.
 ///
 bool Visual::isVisible() const {
 
@@ -90,9 +91,9 @@ bool Visual::isVisible() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Renderitza el visual.
-/// \param context: El context de renderitzat.
-/// \return True s'ha redibuixat el visual.
+/// \brief    Renderitza el visual.
+/// \param    context: El context de renderitzat.
+/// \return   True s'ha redibuixat el visual.
 ///
 bool Visual::render(
 	RenderContext &context) {
@@ -117,8 +118,8 @@ bool Visual::render(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Despatcha un missatge.
-/// \param msg: El missatge a despatchar.
+/// \brief    Despatcha un missatge.
+/// \param    msg: El missatge a despatchar.
 ///
 void Visual::dispatch(
 	const Message &msg) {
@@ -128,8 +129,8 @@ void Visual::dispatch(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix un visual.
-/// \param pVisual: L'objecte Visual a afeigir.
+/// \brief    Afegeix un visual.
+/// \param    pVisual: L'objecte Visual a afeigir.
 ///
 void Visual::addVisual(
 	Visual *pVisual) {
@@ -143,8 +144,8 @@ void Visual::addVisual(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Elimina un visual.
-/// \param pVisual: L'objecte Visual a eliminar.
+/// \brief    Elimina un visual.
+/// \param    pVisual: L'objecte Visual a eliminar.
 ///
 void Visual::removeVisual(
 	Visual *pVisual) {
@@ -158,7 +159,7 @@ void Visual::removeVisual(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Elimina els visuals de la llista.
+/// \brief    Elimina els visuals de la llista.
 ///
 void Visual::removeVisuals() {
 
@@ -168,17 +169,17 @@ void Visual::removeVisuals() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Calcula la mida del visual. Primer par del layout.
-/// \param availableSize: Indica el tamany disponible.
+/// \brief    Calcula la mida del visual. Primer par del layout.
+/// \param    availableSize: Indica el tamany disponible.
 ///
 void Visual::measure(
 	const Size &availableSize) {
 
 	if (isVisible()) {
 
-		Size size = measureOverride(availableSize.deflate(margin));
-		int width = size.getWidth();
-		int height = size.getHeight();
+		Size measuredSize = measureOverride(availableSize.deflate(margin));
+		int width = measuredSize.getWidth();
+		int height = measuredSize.getHeight();
 
 		// Ajusta l'amplada als limits
 		//
@@ -199,80 +200,131 @@ void Visual::measure(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna la mida del visual. Segon pas i final del layout.
-/// \param finalSize: Tamany final per asignas al visual.
+/// \brief    Asigna la mida i la posicio del visual. Segon pas i final del layout.
+/// \param    finalSize: Tamany final per asignar al visual.
 ///
 void Visual::arrange(
 	const Rect &finalRect) {
 
-	// TODO: Falta ajustar marges (margin)
+	if (isVisible()) {
 
-	Rect rect = finalRect;
-	Size size = arrangeOverride(rect.getSize());
+		// Ajusta el marge
+		//
+		Rect deflatedFinalRect = finalRect.deflate(margin);
+		int deflatedFinalWidth = deflatedFinalRect.getWidth();
+		int deflatedFinalHeight = deflatedFinalRect.getHeight();
 
-	int x = rect.getX();
-	switch (horizontalAlignment) {
-		case HorizontalAlignment::center:
-		case HorizontalAlignment::stretch:
-			x += (rect.getWidth() - size.getWidth()) / 2;
-			break;
+		int availableWidth = deflatedFinalWidth;
+        if (horizontalAlignment != HorizontalAlignment::stretch)
+            availableWidth = Math::max(0, Math::min(availableWidth, desiredSize.getWidth() - margin.getLeft() - margin.getRight()));
 
-		case HorizontalAlignment::right:
-			x += rect.getWidth() - size.getWidth();
-			break;
+		int availableHeight = deflatedFinalHeight;
+        if (verticalAlignment != VerticalAlignment::stretch)
+            availableHeight = Math::max(0, Math::min(availableHeight, desiredSize.getHeight() - margin.getTop() - margin.getBottom()));
 
-		default:
-			break;
+        // Obte el tamany definitiu
+		//
+		Size arrangedSize = arrangeOverride(Size(availableWidth, availableHeight));
+
+		int x = deflatedFinalRect.getX();
+		int y = deflatedFinalRect.getY();
+		int width = horizontalAlignment == HorizontalAlignment::stretch ? deflatedFinalWidth : arrangedSize.getWidth();
+		int height = verticalAlignment == VerticalAlignment::stretch ? deflatedFinalHeight : arrangedSize.getHeight();
+
+		switch (horizontalAlignment) {
+			case HorizontalAlignment::center:
+			case HorizontalAlignment::stretch:
+				x += (deflatedFinalWidth - width) / 2;
+				break;
+
+			case HorizontalAlignment::right:
+				x += deflatedFinalWidth - width;
+				break;
+
+			default:
+				break;
+		}
+
+		switch (verticalAlignment) {
+			case VerticalAlignment::center:
+			case VerticalAlignment::stretch:
+				y += (deflatedFinalHeight - height) / 2;
+				break;
+
+			case VerticalAlignment::bottom:
+				y += deflatedFinalHeight - height;
+				break;
+
+			default:
+				break;
+		}
+
+		setPosition(Point(x, y));
+		setSize(Size(width, height));
+
+		bounds = Rect(x, y, width, height);
+		invalidate();
 	}
-
-	int y = finalRect.getY();
-	switch (verticalAlignment) {
-		case VerticalAlignment::center:
-		case VerticalAlignment::stretch:
-			y += (rect.getHeight() - size.getHeight()) / 2;
-			break;
-
-		case VerticalAlignment::bottom:
-			y += rect.getHeight() - size.getHeight();
-			break;
-
-		default:
-			break;
-	}
-
-	setPosition(Point(x, y));
-	setSize(size);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Calcula la mida del visual i dels seus fills.
-/// \param availableSize: Indica el tamany disponible.
-/// \return El tamany requerit.
+/// \brief    Calcula la mida del visual i dels seus fills.
+/// \param    availableSize: Indica el tamany disponible.
+/// \return   El tamany requerit.
+/// \remarks  Per defecte, calcula el tamany necesari per encabir tots
+///           els fills. Si no te fills, el tamany es zero.
 ///
 Size Visual::measureOverride(
 	const Size &availableSize) const {
 
-	return availableSize;
+	int width = 0;
+	int height = 0;
+
+	for (VisualListIterator it(childs); it.hasNext(); it.next()) {
+
+		Visual *pChild = it.current();
+		eosAssert(pChild != nullptr);
+
+		if (pChild->isVisible()) {
+
+			pChild->measure(availableSize);
+			const Size& childDesiredSize = pChild->getDesiredSize();
+
+			width = Math::max(width, childDesiredSize.getWidth());
+			height = Math::max(height, childDesiredSize.getHeight());
+		}
+	}
+
+	return Size(width, height);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Ajusta el tamany del visual i els seus fills.
-/// \param finalSize: El tamany final a asignar.
-/// \return El tamany final obtingut.
+/// \brief    Ajusta el tamany del visual i els seus fills.
+/// \param    finalSize: El tamany final a asignar.
+/// \return   El tamany final obtingut.
 ///
 Size Visual::arrangeOverride(
 	const Size &finalSize) const {
+
+	for (VisualListIterator it(childs); it.hasNext(); it.next()) {
+
+		Visual *pChild = it.current();
+		eosAssert(pChild != nullptr);
+
+		if (pChild->isVisible())
+			pChild->arrange(Rect(finalSize));
+	}
 
 	return finalSize;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte el visual en la posicio indicada.
-/// \param position: La posicio.
-/// \return El visual, o null si no el troba.
+/// \brief    Obte el visual en la posicio indicada.
+/// \param    position: La posicio.
+/// \return   El visual, o null si no el troba.
 ///
 Visual *Visual::getVisualAt(
 	const Point &position) {
@@ -295,8 +347,8 @@ Visual *Visual::getVisualAt(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte la posicio absoluta del visual.
-/// \return La posicio absoluta.
+/// \brief    Obte la posicio absoluta del visual.
+/// \return   La posicio absoluta.
 ///
 Point Visual::getAbsolutePosition() const {
 
@@ -313,8 +365,8 @@ Point Visual::getAbsolutePosition() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Canvia l'estat de visibilitat.
-/// \param visible: True per fer el visual visible.
+/// \brief    Canvia l'estat de visibilitat.
+/// \param    visible: True per fer el visual visible.
 ///
 void Visual::setVisibility(
 	Visibility visibility) {
@@ -327,8 +379,8 @@ void Visual::setVisibility(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna la posicio.
-/// \param position: La nova posicio.
+/// \brief    Asigna la posicio.
+/// \param    position: La nova posicio.
 ///
 void Visual::setPosition(
 	const Point &position) {
@@ -341,8 +393,8 @@ void Visual::setPosition(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el tamany.
-/// \param size: El nou tamany.
+/// \brief    Asigna el tamany.
+/// \param    size: El nou tamany.
 ///
 void Visual::setSize(
 	const Size &size) {
@@ -355,8 +407,22 @@ void Visual::setSize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el marge.
-/// \param margin: El nou marge.
+/// \brief    Asigna el tamany minim.
+/// \param    size: El nou tamany.
+///
+void Visual::setMinSize(
+	const Size &size) {
+
+	if (minSize != size) {
+		minSize = size;
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el marge.
+/// \param    margin: El nou marge.
 ///
 void Visual::setMargin(
 	const Thickness &margin) {
@@ -368,6 +434,10 @@ void Visual::setMargin(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Asigna l'aliniacio horizontal.
+/// \param horizontalAlignment: L'aliniacio.
+///
 void Visual::setHorizontalAlignment(
 	HorizontalAlignment horizontalAlignment) {
 
@@ -378,6 +448,10 @@ void Visual::setHorizontalAlignment(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief Asigna l'aliniacio vertical
+/// \param verticalAlignment: L'aliniacio.
+///
 void Visual::setVerticalAlignment(
 	VerticalAlignment verticalAlignment) {
 
@@ -388,10 +462,9 @@ void Visual::setVerticalAlignment(
 }
 
 
-
 /// ----------------------------------------------------------------------
-/// \brief Es crida quent hi ha que despatxar un missatge..
-/// \param msg: El missatge a despatxar.
+/// \brief    Es crida quent hi ha que despatxar un missatge..
+/// \param    msg: El missatge a despatxar.
 ///
 void Visual::onDispatch(
 	const Message &msg) {
@@ -414,8 +487,8 @@ void Visual::onDispatch(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida al activar el visual.
-/// \param pVisual: El visual desactivat al activar aquest.
+/// \brief    Es crida al activar el visual.
+/// \param    pVisual: El visual desactivat al activar aquest.
 ///
 void Visual::onActivate(
 	Visual *pVisual) {
@@ -425,8 +498,8 @@ void Visual::onActivate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Es crida al desactivar el visual.
-/// \param pVisual: El visual activat al desactivar aquest.
+/// \brief    Es crida al desactivar el visual.
+/// \param    pVisual: El visual activat al desactivar aquest.
 ///
 void Visual::onDeactivate(
 	Visual *pVisual) {
@@ -436,7 +509,7 @@ void Visual::onDeactivate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa el missatge 'touchPadEvent'
+/// \brief    Procesa el missatge 'touchPadEvent'
 ///
 #ifdef OPT_GUI_TouchPad
 void Visual::onDispatchTouchPadEvent(
@@ -464,6 +537,9 @@ void Visual::onDispatchTouchPadEvent(
 			break;
 
 		default:
+			// Si no el procesa, pasa al pare.
+			if (pParent != nullptr)
+				pParent->onDispatchTouchPadEvent(msg);
 			break;
 	}
 

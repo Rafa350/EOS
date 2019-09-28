@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "System/eosMath.h"
 #include "System/Graphics/eosSize.h"
 
 
@@ -7,7 +8,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor del objecte. Crea un objecte buit.
+/// \brief    Constructor del objecte. Crea un objecte de tamany zero.
 ///
 Size::Size():
 
@@ -17,9 +18,9 @@ Size::Size():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor del objecte.
-/// \param width: L'amplada.
-/// \param height: L'al�ada.
+/// \brief    Constructor del objecte.
+/// \param    width: L'amplada.
+/// \param    height: L'alçada.
 ///
 Size::Size(
 	int width,
@@ -34,8 +35,8 @@ Size::Size(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor copia.
-/// \param s: L'objecte a copiar.
+/// \brief    Constructor copia.
+/// \param    s: L'objecte a copiar.
 ///
 Size::Size(
 	const Size &s):
@@ -46,25 +47,25 @@ Size::Size(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retorna un objecte engrandit.
-/// \param dw: Increment del tamany en amplada.
-/// \param dw: increment de tamany en al�ada.
-/// \return El nou objecte.
+/// \brief    Retorna un objecte engrandit.
+/// \param    dw: Increment del tamany en amplada.
+/// \param    dw: increment de tamany en alçada.
+/// \return   El nou objecte.
+/// \remarks  El increment tant en amplada com en alçada pot ser negatiu.
 ///
 Size Size::inflate(
 	int dw,
 	int dh) const {
 
-	eosAssert(width + dw >= 0);
-	eosAssert(height + dh >= 0);
-
-	return Size(width + dw, height + dh);
+	return Size(
+		Math::max(0, width + dw),
+		Math::max(0, height + dh));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retorna un objecte inflat.
-/// \param t: Marges.
+/// \brief    Retorna un objecte inflat.
+/// \param    t: Marges.
 ///
 Size Size::inflate(
 	const Thickness &t) const {
@@ -76,21 +77,34 @@ Size Size::inflate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retorna un objecte desinflat.
-/// \param t: Marges.
+/// \brief    Retorna un objecte desinflat.
+/// \param    t: Marges.
 ///
 Size Size::deflate(
 	const Thickness &t) const {
 
 	return Size(
-		width - t.getLeft() - t.getRight(),
-		height - t.getTop() - t.getBottom());
+		Math::max(0, width - t.getLeft() - t.getRight()),
+		Math::max(0, height - t.getTop() - t.getBottom()));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Comprova si el tamany es zero.
-/// \return True si es zero.
+/// \brief    Limita un tamany amb un altre.
+/// \param    s: El tamany per limitar.
+///
+Size Size::constrain(
+	const Size &s) const {
+
+	return Size(
+		Math::min(width, s.width),
+		Math::min(height, s.height));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el tamany es zero.
+/// \return   True si es zero.
 ///
 bool Size::isEmpty() const {
 
@@ -99,9 +113,9 @@ bool Size::isEmpty() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador ==
-/// \param s: Objecte a comparar.
-/// \return True si son iguals.
+/// \brief    Operador ==
+/// \param    s: Objecte a comparar.
+/// \return   True si son iguals.
 ///
 bool Size::operator==(
 	const Size &s) const {
@@ -111,9 +125,9 @@ bool Size::operator==(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador !=
-/// \param s: Objecte a comparar.
-/// \return True si son diferents.
+/// \brief    Operador !=
+/// \param    s: Objecte a comparar.
+/// \return   True si son diferents.
 ///
 bool Size::operator!=(
 	const Size &s) const {

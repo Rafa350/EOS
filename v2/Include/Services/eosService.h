@@ -6,13 +6,14 @@
 //
 #include "eos.h"
 #include "System/eosApplication.h"
+#include "System/Core/eosString.h"
 #include "System/Core/eosTask.h"
 
 
 namespace eos {
 
 	struct ServiceConfiguration {
-		const char *serviceName;
+		String serviceName;
 		unsigned stackSize;
 		TaskPriority priority;
 	};
@@ -22,7 +23,7 @@ namespace eos {
             static int idCount;
             int id;
             Application *pApplication;
-            const char *name;
+            String name;
             Task thread;
 
         private :
@@ -44,7 +45,7 @@ namespace eos {
             void task();
 
             inline int getId() const { return id; }
-            inline const char *getName() const { return name; }
+            inline const String& getName() const { return name; }
             
         friend void Application::addService(Service *pService);
         friend void Application::removeService(Service *pService);

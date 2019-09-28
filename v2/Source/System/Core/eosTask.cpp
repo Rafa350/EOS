@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "System/Core/eosString.h"
 #include "System/Core/eosTask.h"
 #include "OSAL/osalTask.h"
 #include "OSAL/osalKernel.h"
@@ -13,17 +14,17 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor. Crea un objecte Task que encapsula una tasca
-///        de FreeRTOS.
-/// \param stackSize: Tamany de la pila.
-/// \param priority: Prioritat del proces.
-/// \param name: Nom de la tasca.
-/// \param runable: Objecte que implementa IRunable.
+/// \brief    Constructor. Crea un objecte Task que encapsula una tasca
+///           de FreeRTOS.
+/// \param    stackSize: Tamany de la pila.
+/// \param    priority: Prioritat del proces.
+/// \param    name: Nom de la tasca.
+/// \param    runable: Objecte que implementa IRunable.
 ///
 Task::Task(
     unsigned stackSize,
     TaskPriority priority,
-    const char *name,
+    const String& name,
     IRunable *runable):
 
     runable(runable),
@@ -32,7 +33,7 @@ Task::Task(
     eosAssert(runable != nullptr);
 
     TaskInitializeInfo info;
-    info.name = name;
+    info.name = (const char*) name;
     info.stackSize = stackSize;
     info.options = OSAL_TASK_PRIORITY_NORMAL;
     info.function = function;
@@ -44,7 +45,7 @@ Task::Task(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor. Destrueix la tasca de FreeRTOS asociada.
+/// \brief    Destructor. Destrueix la tasca de FreeRTOS asociada.
 ///
 Task::~Task() {
 
@@ -53,15 +54,15 @@ Task::~Task() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Executa la funcio de la tasca.
-/// \param params: El handler de la tasca.
+/// \brief    Executa la funcio de la tasca.
+/// \param    pParams: El handler de la tasca.
 ///
 void Task::function(
-    void *params) {
+    void *pParams) {
 
-	eosAssert(params != nullptr);
+	eosAssert(pParams != nullptr);
 
-    Task *task = reinterpret_cast<Task*>(params);
+    Task *task = reinterpret_cast<Task*>(pParams);
     task->weakTime = osalGetTickCount();
     while (true)
         task->runable->run(task);
@@ -69,9 +70,9 @@ void Task::function(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retorna el numero te ticks transcurreguts desde la
-///        inicialitzacio del sistema.
-/// \return El numero de ticks.
+/// \brief    Retorna el numero te ticks transcurreguts desde la
+///           inicialitzacio del sistema.
+/// \return   El numero de ticks.
 ///
 unsigned Task::getTickCount() {
 

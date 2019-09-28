@@ -96,7 +96,6 @@
 #define COLOR_DarkCyan			  RGB(0, 139, 139)
 #define COLOR_Teal                RGB(0, 128, 128)
 
-
 // HTML blue colors
 //
 #define COLOR_PowderBlue          RGB(176, 224, 230)
@@ -118,7 +117,6 @@
 #define COLOR_SlateBlue           RGB(106, 90, 205)
 #define COLOR_DarkSlateBlue       RGB(72, 61, 139)
 
-
 // HTML gray colors
 //
 #define COLOR_DarkGray            RGB(169, 169, 169)
@@ -126,7 +124,8 @@
 #define COLOR_SlateGray           RGB(112, 128, 144)
 #define COLOR_DarkSlateGray       RGB(47, 79, 79)
 
-
+// Basic palete colors
+//
 #define COLOR_PAL_Black           0
 #define COLOR_PAL_White           1
 #define COLOR_PAL_Blue            2
@@ -138,5 +137,6 @@
 #define COLOR_PAL_Purple          8
 #define COLOR_PAL_Teal            9
 #define COLOR_PAL_Navy            10
+
 
 #endif // __eosColorDefinitions__

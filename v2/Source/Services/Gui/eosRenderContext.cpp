@@ -13,6 +13,45 @@
 using namespace eos;
 
 
+/// ----------------------------------------------------------------------
+/// \brief Converteix un punt a coordinades de pantalla.
+/// \param    pVisual: El visual.
+/// \param    p: El punt en coordinades relatives al visual.
+/// \return   El punt en coordinades absolutes de pantalla.
+///
+static Point PointToScreen(
+	Visual *pVisual,
+	const Point& p) {
+
+	int x = 0;
+	int y = 0;
+
+	while (pVisual != nullptr) {
+		const Rect& bounds = pVisual->getBounds();
+		x += bounds.getX();
+		y += bounds.getY();
+
+		pVisual = pVisual->getParent();
+	}
+
+	return Point(x, y);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Converteix un rectangle a coordinades de pantalla.
+/// \param    pVisual: El visual.
+/// \param    p: El rectangle en coordinades relatives al visual.
+/// \return   El rectangle en coordinades absolutes de pantalla.
+///
+static Rect PointToScreen(
+	Visual *pVisual,
+	const Rect& r) {
+
+	return Rect(PointToScreen(pVisual, r.getPosition()), r.getSize());
+}
+
+
 ///-----------------------------------------------------------------------
 /// \brief Contructor de l'objecte.
 /// \param graphics: L'objecte 'Graphics' per dibuixar.
@@ -42,7 +81,7 @@ Graphics &RenderContext::beginRender(
 	// del widged
 	//
 	Transformation t;
-	t.translate(pVisual->getAbsolutePosition());
+	t.translate(PointToScreen(pVisual, pVisual->getBounds().getPosition()));
 	graphics.setTransformation(t);
 
 	return graphics;
@@ -68,10 +107,10 @@ Rect RenderContext::getClip(
 	eosAssert(pVisual != nullptr);
 
 	Rect clip(0, 0, INT32_MAX, INT32_MAX);
-	for (Visual *v = pVisual; v != nullptr; v = v->getParent()) {
+	/*for (Visual *v = pVisual; v != nullptr; v = v->getParent()) {
 		Rect r(v->getAbsolutePosition(), v->getSize());
 		clip = clip.intersect(r);
-	}
+	}*/
 
 	return clip;
 }

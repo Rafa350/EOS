@@ -25,31 +25,35 @@ StackPanel::StackPanel():
 Size StackPanel::measureOverride(
 	const Size &availableSize) const {
 
+	bool isHorizontal = orientation == Orientation::horitzontal;
+
+	Size childAvailableSize(
+	    isHorizontal ? INT32_MAX : availableSize.getWidth(),
+	    isHorizontal ? availableSize.getHeight() : INT32_MAX);
+
 	int measuredWidth = 0;
 	int measuredHeight = 0;
 
-	bool isHorizontal = orientation == Orientation::horitzontal;
-
-	Size childAvailableSize;
-	if (isHorizontal)
-		childAvailableSize = Size(INT32_MAX, availableSize.getHeight());
-	else
-		childAvailableSize = Size(availableSize.getWidth(), INT32_MAX);
-
 	for (VisualListIterator it(getChilds()); it.hasNext(); it.next()) {
+
 		Visual *pChild = it.current();
 		eosAssert(pChild != nullptr);
 
-		pChild->measure(childAvailableSize);
-		const Size& childSize = pChild->getDesiredSize();
+		if (pChild->isVisible()) {
 
-		if (isHorizontal) {
-			measuredWidth += childSize.getWidth();
-			measuredHeight = Math::max(measuredHeight, childSize.getHeight());
-		}
-		else {
-			measuredWidth = Math::max(measuredWidth, childSize.getWidth());
-			measuredHeight += childSize.getHeight();
+			pChild->measure(childAvailableSize);
+			const Size& childSize = pChild->getDesiredSize();
+			int childWidth = childSize.getWidth();
+			int childHeight = childSize.getHeight();
+
+			if (isHorizontal) {
+				measuredWidth += childWidth;
+				measuredHeight = Math::max(measuredHeight, childHeight);
+			}
+			else {
+				measuredWidth = Math::max(measuredWidth, childWidth);
+				measuredHeight += childHeight;
+			}
 		}
 	}
 
@@ -67,28 +71,24 @@ Size StackPanel::arrangeOverride(
 
 	int childX = 0;
 	int childY = 0;
-	int childWidth = finalSize.getWidth();
-	int childHeight = finalSize.getHeight();
 
 	bool isHorizontal = orientation == Orientation::horitzontal;
 
 	for (VisualListIterator it(getChilds()); it.hasNext(); it.next()) {
+
 		Visual *pChild = it.current();
 		eosAssert(pChild != nullptr);
 
 		if (pChild->isVisible()) {
 
-			if (isHorizontal)
-				childWidth = pChild->getDesiredSize().getWidth();
-			else
-				childHeight = pChild->getDesiredSize().getHeight();
+			const Size &childSize = pChild->getDesiredSize();
 
-			pChild->arrange(Rect(childX, childY, childWidth, childHeight));
+			pChild->arrange(Rect(Point(childX, childY), childSize));
 
 			if (isHorizontal)
-				childX += childWidth;
+				childX += childSize.getWidth();
 			else
-				childY += childHeight;
+				childY += childSize.getHeight();
 		}
 	}
 
