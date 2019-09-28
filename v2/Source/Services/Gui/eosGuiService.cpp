@@ -67,6 +67,28 @@ static Bitmap *createBitmap() {
 }
 
 
+static Visual *getVisual(Visual *pVisual, const Point &p) {
+
+	Rect bounds = pVisual->getBounds();
+
+	Rect testRect(bounds.getSize());
+	Point testPoint = p.offset(-bounds.getX(), -bounds.getY());
+
+	if (testRect.contains(testPoint)) {
+		for (VisualListIterator it(pVisual->getChilds()); it.hasNext(); it.next()) {
+			Visual *pChild = it.current();
+
+			Visual *pResult = getVisual(pChild, testPoint);
+			if (pResult != nullptr)
+				return pResult;
+		}
+		return pVisual;
+	}
+
+	return nullptr;
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param pApplication: Aplicacio on afeigir el servei.
@@ -128,7 +150,7 @@ Visual *GuiService::getVisualAt(
 	const Point &position) const {
 
 	if (screen != nullptr)
-		return screen->getVisualAt(position);
+		return getVisual(screen, position);
 	else
 		return nullptr;
 }
@@ -237,7 +259,7 @@ void GuiService::onInitialize() {
 	}*/
 
 	Label *l1 = new Label();
-	//l1->setMargin(10);
+	l1->setMargin(5);
 	l1->setText("Hola capullo");
 	l1->setHorizontalAlignment(HorizontalAlignment::center);
 	l1->setVerticalAlignment(VerticalAlignment::center);
@@ -247,12 +269,14 @@ void GuiService::onInitialize() {
 	pb1->setVerticalAlignment(VerticalAlignment::center);
 	pb1->setMinSize(Size(100, 20));
 	pb1->setMargin(20);
-	//pb1->setContent(l1);
+	pb1->setContent(l1);
 
 	screen->addChild(pb1);
 
 	screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
 	screen->arrange(screen->getDesiredSize());
+
+	Visual *v = getVisual(screen, Point(DISPLAY_IMAGE_WIDTH / 2, DISPLAY_IMAGE_HEIGHT / 2));
 }
 
 

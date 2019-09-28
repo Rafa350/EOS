@@ -58,7 +58,7 @@ void Visual::invalidate() {
 /// \brief    Comprova si cal renderitzar el visual o algun dels seus fills.
 /// \return   True si cal renderitzar.
 ///
-bool Visual::isRenderizable() {
+bool Visual::isRenderizable() const {
 
 	if (needRender)
 		return true;
@@ -318,49 +318,6 @@ Size Visual::arrangeOverride(
 	}
 
 	return finalSize;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el visual en la posicio indicada.
-/// \param    position: La posicio.
-/// \return   El visual, o null si no el troba.
-///
-Visual *Visual::getVisualAt(
-	const Point &position) {
-
-	Rect r(getAbsolutePosition(), size);
-	if (r.contains(position)) {
-
-		for (VisualListIterator it(childs); it.hasNext(); it.next()) {
-			Visual *pChild = it.current()->getVisualAt(position);
-			if (pChild != nullptr)
-				return pChild;
-		}
-
-		return this;
-	}
-
-	else
-		return nullptr;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte la posicio absoluta del visual.
-/// \return   La posicio absoluta.
-///
-Point Visual::getAbsolutePosition() const {
-
-	int x = position.getX();
-	int y = position.getY();
-
-	for (Visual *pVisual = pParent; pVisual != nullptr; pVisual = pVisual->pParent) {
-		x += pVisual->position.getX();
-		y += pVisual->position.getY();
-	}
-
-	return Point(x, y);
 }
 
 

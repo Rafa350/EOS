@@ -15,9 +15,6 @@ namespace eos {
 		private:
 			Graphics &graphics;
 
-		private:
-			Rect getClip(Visual *pVisual) const;
-
 		public:
 			RenderContext(Graphics &graphics);
 			Graphics &beginRender(Visual *pVisual);

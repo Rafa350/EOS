@@ -95,6 +95,7 @@ Size StackPanel::arrangeOverride(
 	return finalSize;
 }
 
+
 /// ----------------------------------------------------------------------
 /// \brief Asigna l'orientacio del panell.
 /// \param orientation: El valor de la propietat.

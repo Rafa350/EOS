@@ -141,6 +141,19 @@ Rect Rect::deflate(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Desplaça un rectangle.
+/// \param    x: Desplaçament X.
+/// \param    y: Desplaçament Y.
+/// \return   El rectangle resultant de l'operacio.
+///
+Rect Rect::offset(
+	int x,
+	int y) const {
+
+	return Rect(this->x + x, this->y + y, width, height);
+}
+
+/// ----------------------------------------------------------------------
 /// \brief    Obte un rectangle que es la interseccio d'aquest amb un altre.
 /// \param    r: Rectangle per realitzar la interseccio.
 /// \return   El resultat de la interseccio.

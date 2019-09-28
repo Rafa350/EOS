@@ -39,11 +39,15 @@ void Image::setBitmap(
 void Image::onRender(
 	RenderContext &context) {
 
+	// Inicia el renderitzat.
+	//
 	Graphics &g = context.beginRender(this);
 
-	g.drawBitmap(
-		getPosition(),
-		pBitmap);
+	// Dibuixa la imatge.
+	//
+	g.drawBitmap(0, 0, pBitmap);
 
+	// Finalitza el renderitzat.
+	//
 	context.endRender();
 }

@@ -121,13 +121,15 @@ void Border::onRender(
 
 	Graphics &g = context.beginRender(this);
 
-	Rect r(getRect());
+	const Size &s = getBounds().getSize();
+	int x2 = s.getWidth() - 1;
+	int y2 = s.getHeight() - 1;
 
 	g.setColor(backgroundColor);
-	g.fillRectangle(r);
+	g.fillRectangle(0, 0, x2, y2);
 
 	g.setColor(color);
-	g.drawRectangle(r);
+	g.drawRectangle(0, 0, x2, y2);
 
 	context.endRender();
 }

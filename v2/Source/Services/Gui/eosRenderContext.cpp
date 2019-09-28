@@ -19,9 +19,8 @@ using namespace eos;
 /// \param    p: El punt en coordinades relatives al visual.
 /// \return   El punt en coordinades absolutes de pantalla.
 ///
-static Point PointToScreen(
-	Visual *pVisual,
-	const Point& p) {
+static Point getPosition(
+	Visual *pVisual) {
 
 	int x = 0;
 	int y = 0;
@@ -39,16 +38,22 @@ static Point PointToScreen(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Converteix un rectangle a coordinades de pantalla.
+/// \brief    Obte el rectangle de retall d'un visual.
 /// \param    pVisual: El visual.
-/// \param    p: El rectangle en coordinades relatives al visual.
-/// \return   El rectangle en coordinades absolutes de pantalla.
+/// \return   El rectangle de retall.
 ///
-static Rect PointToScreen(
-	Visual *pVisual,
-	const Rect& r) {
+static Rect getClip(
+	Visual *pVisual) {
 
-	return Rect(PointToScreen(pVisual, r.getPosition()), r.getSize());
+	Rect clip(0, 0, INT32_MAX, INT32_MAX);
+	while (pVisual != nullptr) {
+		Rect bounds(pVisual->getBounds());
+		clip = clip.intersect(bounds.getSize());
+		clip = clip.offset(bounds.getPosition());
+		pVisual = pVisual->getParent();
+	}
+
+	return clip;
 }
 
 
@@ -81,7 +86,7 @@ Graphics &RenderContext::beginRender(
 	// del widged
 	//
 	Transformation t;
-	t.translate(PointToScreen(pVisual, pVisual->getBounds().getPosition()));
+	t.translate(getPosition(pVisual));
 	graphics.setTransformation(t);
 
 	return graphics;
@@ -93,24 +98,4 @@ Graphics &RenderContext::beginRender(
 ///
 void RenderContext::endRender() {
 
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte el rectangle de retall d'un element visual.
-/// \param visual: L'element visual.
-/// \return El rectangle de retall.
-///
-Rect RenderContext::getClip(
-	Visual *pVisual) const {
-
-	eosAssert(pVisual != nullptr);
-
-	Rect clip(0, 0, INT32_MAX, INT32_MAX);
-	/*for (Visual *v = pVisual; v != nullptr; v = v->getParent()) {
-		Rect r(v->getAbsolutePosition(), v->getSize());
-		clip = clip.intersect(r);
-	}*/
-
-	return clip;
 }

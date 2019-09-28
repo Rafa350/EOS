@@ -92,11 +92,11 @@ namespace eos {
 
             inline Visual *getParent() const { return pParent; }
             inline const VisualList& getChilds() const { return childs; }
-            Visual *getVisualAt(const Point &p);
 
             // Checkers
-            bool isRenderizable();
+            bool isRenderizable() const;
             bool isVisible() const;
+            bool isEnabled() const;
 
             // Setters
             void setHorizontalAlignment(HorizontalAlignment horizontalAlignment);
@@ -108,13 +108,12 @@ namespace eos {
             void setVisibility(Visibility visibility);
 
             // Getters
-            Point getAbsolutePosition() const;
+            inline const Rect& getBounds() const { return bounds; }
             inline HorizontalAlignment getHorizontalAlignment() const { return horizontalAlignment; }
             inline const Size& getMaxSize() const { return maxSize; }
             inline const Thickness& getMargin() const { return margin; }
             inline const Size& getMinSize() const { return minSize; }
             inline const Point& getPosition() const { return position; }
-            inline Rect getRect() const { return Rect(Point(0, 0), size); }
             inline const Size& getSize() const { return size; }
             inline VerticalAlignment getVerticalAlignment() const { return verticalAlignment; }
             Visibility getVisibility() const { return visibility; }
@@ -122,7 +121,6 @@ namespace eos {
             void measure(const Size &availableSize);
             void arrange(const Rect &finalRect);
             const Size& getDesiredSize() const { return desiredSize; }
-            const Rect& getBounds() const { return bounds; }
 
             void dispatch(const Message &msg);
             bool render(RenderContext &context);

@@ -10,10 +10,6 @@
 using namespace eos;
 
 
-// TODO: Millorar la maquina d'estats del boto per evitar release
-// abans que push.
-
-
 /// ----------------------------------------------------------------------
 /// \brief Constructor del objecte.
 ///
@@ -44,34 +40,43 @@ void CheckButton::setState(
 void CheckButton::onRender(
 	RenderContext &context) {
 
-	const int r = 5;
-
+	// Inicia el renderitzat.
+	//
 	Graphics &g = context.beginRender(this);
+
+	// Obte les mides de l'area de dibuix
+	///
+	const int radius = 5;
+	const Size &s = getBounds().getSize();
+	int x2 = s.getWidth() - 1;
+	int y2 = s.getHeight() - 1;
 
 	// Dibuixa el fons del boto
 	//
 	g.setColor(Color::fromRGB888(0x3A3A3A));
-	g.fillRoundedRectangle(getRect(), r, r);
+	g.fillRoundedRectangle(0, 0, x2, y2, radius, radius);
 
 	// Dibuixa el fons del indicador
 	//
 	if (isPressed()) {
 		g.setColor(COLOR_DarkSlateGray);
-		g.fillRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
+		g.fillRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius);
 	}
 
 	// Dibuixa el indicador
 	//
 	if (state ==  CheckButtonState::unchecked) {
 		g.setColor(COLOR_LightSeaGreen);
-		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
+		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius);
 	}
 	else if (state == CheckButtonState::checked) {
 		g.setColor(COLOR_LightSeaGreen);
-		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), r, r);
-		g.fillRoundedRectangle(Point(10, 10), Size(10, 10), r/2, r/2);
+		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius);
+		g.fillRoundedRectangle(Point(10, 10), Size(10, 10), radius / 2, radius / 2);
 	}
 
+	// Finalitza el renderitzat.
+	///
 	context.endRender();
 }
 
