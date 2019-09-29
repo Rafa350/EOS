@@ -364,9 +364,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
+			<name>src/Framework/EOS/Services/eosAppLoopService.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoop.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>
@@ -744,6 +744,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosSemaphore.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Core/eosString.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosString.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTask.cpp</locationURI>
@@ -792,6 +797,11 @@
 			<name>src/Framework/EOS/System/Graphics/eosGraphics_Rectangle.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Rectangle.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosGraphics_Text.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Text.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/eosPoint.cpp</name>
@@ -852,6 +862,16 @@
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas8pt.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas8pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/FontTable.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/FontTable.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Tahoma10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Tahoma10pt.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/Fonts/Tahoma12pt.cpp</name>

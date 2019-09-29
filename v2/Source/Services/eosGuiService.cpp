@@ -214,30 +214,29 @@ void GuiService::onInitialize() {
 	screen->addChild(kbd);
 	*/
 
-	/*StackPanel *sp = new StackPanel();
-	sp->setPosition(Point(20, 20));
-	sp->setSize(Size(100, 250));
-	sp->setMargin(Thickness(100, 10, 100, 10));
-	sp->setHorizontalAlignment(HorizontalAlignment::center);
-	sp->setVerticalAlignment(VerticalAlignment::top);
+	StackPanel *sp = new StackPanel();
+	sp->setMargin(Thickness(50, 10, 50, 10));
+	sp->setHorizontalAlignment(HorizontalAlignment::stretch);
+	sp->setVerticalAlignment(VerticalAlignment::center);
 	screen->addChild(sp);
 	for (int i = 0; i < 5; i++) {
 
 		Label *l = new Label();
 		l->setHorizontalAlignment(HorizontalAlignment::center);
 		l->setVerticalAlignment(VerticalAlignment::center);
+		l->setMargin(Thickness(10, 5, 10, 5));
 		l->setText("hola");
 
 		PushButton *pb = new PushButton();
-		pb->setHorizontalAlignment(HorizontalAlignment::center);
+		pb->setHorizontalAlignment(HorizontalAlignment::stretch);
 		pb->setVerticalAlignment(VerticalAlignment::center);
-		pb->setMargin(Thickness(10));
+		pb->setMargin(Thickness(10, 5, 10, 5));
 		pb->setContent(l);
 
 		sp->addChild(pb);
-	}*/
+	}
 
-	ProgressBar *pbb = new ProgressBar();
+/*	ProgressBar *pbb = new ProgressBar();
 	pbb->setMargin(20);
 	pbb->setHorizontalAlignment(HorizontalAlignment::center);
 	pbb->setVerticalAlignment(VerticalAlignment::top);
@@ -256,7 +255,7 @@ void GuiService::onInitialize() {
 	pb1->setContent(l1);
 
 	screen->addChild(pb1);
-	screen->addChild(pbb);
+	screen->addChild(pbb);*/
 
 	screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
 	screen->arrange(screen->getDesiredSize());
