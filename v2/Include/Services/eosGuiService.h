@@ -1,5 +1,5 @@
-#ifndef __eosGui__
-#define __eosGui__
+#ifndef __eosGuiService__
+#define __eosGuiService__
 
 
 // EOS includes
@@ -78,5 +78,5 @@ namespace eos {
 }
 
 
-#endif // __eosGui__
+#endif // __eosGuiService__
 

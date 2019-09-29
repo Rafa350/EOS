@@ -1,5 +1,5 @@
-#ifndef __eosAppLoop__
-#define	__eosAppLoop__
+#ifndef __eosAppLoopService__
+#define	__eosAppLoopService__
 
 
 // EOS includes
@@ -35,5 +35,5 @@ namespace eos {
 }
 
 
-#endif // __eosAppLoop__
+#endif // __eosAppLoopService__
 

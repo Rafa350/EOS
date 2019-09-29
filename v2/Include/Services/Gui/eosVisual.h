@@ -114,8 +114,8 @@ namespace eos {
             inline const Size& getMaxSize() const { return maxSize; }
             inline const Thickness& getMargin() const { return margin; }
             inline const Size& getMinSize() const { return minSize; }
-            inline const Point& getPosition() const { return position; }
-            inline const Size& getSize() const { return size; }
+            //inline const Point& getPosition() const { return position; }
+            //inline const Size& getSize() const { return size; }
             inline VerticalAlignment getVerticalAlignment() const { return verticalAlignment; }
             Visibility getVisibility() const { return visibility; }
 

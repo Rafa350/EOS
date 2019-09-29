@@ -21,6 +21,7 @@
 #include "Services/Gui/Visuals/eosPushButton.h"
 #include "Services/Gui/Visuals/eosLabel.h"
 #include "Services/Gui/Visuals/eosPanel.h"
+#include "Services/Gui/Visuals/eosProgressBar.h"
 #include "Services/Gui/Visuals/eosScreen.h"
 #include "Services/Gui/Visuals/eosStackPanel.h"
 #include "Services/Gui/Visuals/eosVirtualKbd.h"
@@ -236,6 +237,11 @@ void GuiService::onInitialize() {
 		sp->addChild(pb);
 	}*/
 
+	ProgressBar *pbb = new ProgressBar();
+	pbb->setMargin(20);
+	pbb->setHorizontalAlignment(HorizontalAlignment::center);
+	pbb->setVerticalAlignment(VerticalAlignment::top);
+
 	Label *l1 = new Label();
 	l1->setMargin(5);
 	l1->setText("Hola capullo");
@@ -250,6 +256,7 @@ void GuiService::onInitialize() {
 	pb1->setContent(l1);
 
 	screen->addChild(pb1);
+	screen->addChild(pbb);
 
 	screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
 	screen->arrange(screen->getDesiredSize());
