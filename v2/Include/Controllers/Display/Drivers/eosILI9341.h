@@ -3,8 +3,8 @@
 
 
 #include "eos.h"
-#include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
+#include "System/Graphics/eosColor.h"
 
 
 #ifndef DISPLAY_SCREEN_WIDTH

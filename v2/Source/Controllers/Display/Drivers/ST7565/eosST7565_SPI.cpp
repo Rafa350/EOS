@@ -1,4 +1,4 @@
-#include "Controllers/Display/Drivers/eosST7565.hpp"
+#include "Controllers/Display/Drivers/eosST7565.h"
 
 
 ST7565_IO::ST7565_IO() {
