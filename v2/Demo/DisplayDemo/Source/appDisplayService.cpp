@@ -1,7 +1,8 @@
 #include "eos.h"
 #include "System/Core/eosString.h"
 #include "System/Core/eosTask.h"
-#include "System/graphics/eosColorDefinitions.h"
+#include "System/Graphics/eosColorDefinitions.h"
+#include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosGraphics.h"
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
@@ -109,9 +110,13 @@ void DisplayService::onLoop() {
     if (orientation == 4)
     	orientation = 0;
 
+    const uint8_t *pFontResource = Font::getFontResource("Consolas", 14, FontStyle::regular);
+    Font *font = new Font(pFontResource);
+    graphics->setFont(font);
+    graphics->setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::top);
+
     screenWidth = graphics->getWidth();
     screenHeight = graphics->getHeight();
-
 
     testOpacity();
 

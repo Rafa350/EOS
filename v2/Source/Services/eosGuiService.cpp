@@ -235,8 +235,8 @@ void GuiService::onInitialize() {
 
 		sp->addChild(pb);
 	}
-
-/*	ProgressBar *pbb = new ProgressBar();
+/*
+	ProgressBar *pbb = new ProgressBar();
 	pbb->setMargin(20);
 	pbb->setHorizontalAlignment(HorizontalAlignment::center);
 	pbb->setVerticalAlignment(VerticalAlignment::top);
@@ -255,8 +255,8 @@ void GuiService::onInitialize() {
 	pb1->setContent(l1);
 
 	screen->addChild(pb1);
-	screen->addChild(pbb);*/
-
+	screen->addChild(pbb);
+*/
 	screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
 	screen->arrange(screen->getDesiredSize());
 }

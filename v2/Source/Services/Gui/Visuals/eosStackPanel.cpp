@@ -43,14 +43,14 @@ Size StackPanel::measureOverride(
 			pChild->measure(childAvailableSize);
 			const Size& childDesiredSize = pChild->getDesiredSize();
 			int childDesiredWidth = childDesiredSize.getWidth();
-			int childDesiredHeight = childDesitedSize.getHeight();
+			int childDesiredHeight = childDesiredSize.getHeight();
 
 			if (isHorizontal) {
 				width += childDesiredWidth;
 				height = Math::max(height, childDesiredHeight);
 			}
 			else {
-				width = Math::max(width, chilDesiredWidth);
+				width = Math::max(width, childDesiredWidth);
 				height += childDesiredHeight;
 			}
 		}
@@ -72,8 +72,8 @@ Size StackPanel::arrangeOverride(
 
 	int childX = 0;
 	int childY = 0;
-    int childWidth = finalRect.getWidth();
-    int childHeight = finalRect.getHeight();
+    int childWidth = finalSize.getWidth();
+    int childHeight = finalSize.getHeight();
 
 	for (VisualListIterator it(getChilds()); it.hasNext(); it.next()) {
 
@@ -91,7 +91,7 @@ Size StackPanel::arrangeOverride(
 			pChild->arrange(Rect(childX, childY, childWidth, childHeight));
 
 			if (isHorizontal)
-				childX += chilWidth;
+				childX += childWidth;
 			else
 				childY += childHeight;
 		}
