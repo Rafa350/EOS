@@ -2,6 +2,11 @@
 #define	__eosString__
 
 
+// EOS includes
+//
+#include "eos.h"
+
+
 namespace eos {
     
     /// \brief Implementacio de cadenes de texte.

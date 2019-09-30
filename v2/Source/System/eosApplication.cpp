@@ -11,7 +11,7 @@ static Application *pApplication = nullptr;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
+/// \brief    Constructor.
 ///
 Application::Application() {
 
@@ -22,7 +22,7 @@ Application::Application() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor. Si conte serveis, els elimina de la llista.
+/// \brief    Destructor. Si conte serveis, els elimina de la llista.
 ///
 Application::~Application() {
 
@@ -47,7 +47,7 @@ Application *Application::getApplication() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Executa l'aplicacio.
+/// \brief    Executa l'aplicacio.
 ///
 void Application::run() {
 
@@ -70,7 +70,7 @@ void Application::run() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa la senyal tick del sistema
+/// \brief    Procesa la senyal tick del sistema
 ///
 void Application::tick() {
 
@@ -84,7 +84,7 @@ void Application::tick() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza els serveis.
+/// \brief    Inicialitza els serveis.
 ///
 void Application::initializeServices() {
 
@@ -96,7 +96,7 @@ void Application::initializeServices() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa les tasques del servei.
+/// \brief    Procesa les tasques del servei.
 ///
 void Application::runServices() {
 
@@ -117,8 +117,8 @@ void Application::runServices() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix un servei a l'aplicacio.
-/// \param pService: El servei a afeigir.
+/// \brief    Afegeix un servei a l'aplicacio.
+/// \param    pService: El servei a afeigir.
 ///
 void Application::addService(
     Service *pService) {
@@ -136,8 +136,8 @@ void Application::addService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Elimina un servei de l'aplicacio
-/// \param pService: El servei a eliminar.
+/// \brief    Elimina un servei de l'aplicacio
+/// \param    pService: El servei a eliminar.
 ///
 void Application::removeService(
     Service *pService) {
@@ -155,7 +155,7 @@ void Application::removeService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Elimina tots els serveis de l'aplicacio.
+/// \brief    Elimina tots els serveis de l'aplicacio.
 ///
 void Application::removeServices() {
 
@@ -165,9 +165,9 @@ void Application::removeServices() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte el servei especificat.
-/// \param id: El identificador del servei.
-/// \return El servei, null si no el troba.
+/// \brief    Obte el servei especificat.
+/// \param    id: El identificador del servei.
+/// \return   El servei, null si no el troba.
 ///
 Service *Application::getService(
     int id) const {
@@ -182,10 +182,10 @@ Service *Application::getService(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief Obte el servei especificat.
-/// \param name: El nom del servei.
-/// \return El servei, null si no el troba.
+/// ---------------------------------------------------------------------
+/// \brief    Obte el servei especificat.
+/// \param    name: El nom del servei.
+/// \return   El servei, null si no el troba.
 ///
 Service *Application::getService(
     const String& name) const {
@@ -201,27 +201,27 @@ Service *Application::getService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Notificacio de la initcialitzacio de l'aplicacio.
+/// \brief    Notificacio de la initcialitzacio de l'aplicacio.
 ///
 void Application::onInitialize() {
 
-	// if (initializeEvent != nullptr)
-	//     initializeEvent->execute(this);
+	// if (initializeEventCallback != nullptr)
+	//     initializeEventCallback->execute(this);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Notificacio la finalitzacio de l'aplicacio.
+/// \brief    Notificacio la finalitzacio de l'aplicacio.
 ///
 void Application::onTerminate() {
 
-	// if (terminateEvent != nullptr)
-	//     terminateEvent->execute(this);
+	// if (terminateEventCallback != nullptr)
+	//     terminateEventCallback->execute(this);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Notificacio del senyal tick
+/// \brief    Notificacio del senyal tick
 ///
 void Application::onTick() {
 

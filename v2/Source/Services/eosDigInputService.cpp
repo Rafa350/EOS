@@ -21,8 +21,8 @@ static DigInputServiceConfiguration defaultConfiguration = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor. Crea l'objecte amb els parametres per defecte.
-/// \param pApplication: L'aplicacio al que pertany.
+/// \brief    Constructor. Crea l'objecte amb els parametres per defecte.
+/// \param    pApplication: L'aplicacio al que pertany.
 ///
 DigInputService::DigInputService(
     Application *pApplication) :
@@ -32,9 +32,9 @@ DigInputService::DigInputService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param pApplication: L'aplicacio a la que pertany
-/// \param configuration: Parametres de configuracio.
+/// \brief    Constructor.
+/// \param    pApplication: L'aplicacio a la que pertany
+/// \param    configuration: Parametres de configuracio.
 ///
 DigInputService::DigInputService(
     Application *pApplication,
@@ -45,8 +45,19 @@ DigInputService::DigInputService(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix una entrada al servei.
-/// \param pInput: L'entrada a afeigir.
+/// \brief    Destructor.
+///
+DigInputService::~DigInputService() {
+   
+    // Elimina totes les entrades.
+    //
+    removeInputs();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix una entrada al servei.
+/// \param    pInput: L'entrada a afeigir.
 ///
 void DigInputService::addInput(
     DigInput *pInput) {
@@ -62,8 +73,8 @@ void DigInputService::addInput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Elimina una entrada del servei.
-/// \param pInput: La entrada a eliminar.
+/// \brief    Elimina una entrada del servei.
+/// \param    pInput: La entrada a eliminar.
 ///
 void DigInputService::removeInput(
     DigInput *pInput) {
@@ -79,7 +90,7 @@ void DigInputService::removeInput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Elimina totes les entrades del servei.
+/// \brief    Elimina totes les entrades del servei.
 ///
 void DigInputService::removeInputs() {
     
@@ -99,7 +110,7 @@ void DigInputService::onInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Bucle d'execucio.
+/// \brief    Bucle d'execucio.
 ///
 void DigInputService::onTask() {
 
@@ -139,9 +150,9 @@ void DigInputService::onTask() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param pService: El servei.
-/// \param configuration: Parametres de configuracio.
+/// \brief    Constructor.
+/// \param    pService: El servei.
+/// \param    configuration: Parametres de configuracio.
 ///
 DigInput::DigInput(
     DigInputService *pService,
@@ -159,7 +170,7 @@ DigInput::DigInput(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor.
+/// \brief    Destructor.
 ///
 DigInput::~DigInput() {
 
@@ -169,7 +180,7 @@ DigInput::~DigInput() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza la entrada.
+/// \brief    Inicialitza la entrada.
 ///
 void DigInput::initialize() {
     

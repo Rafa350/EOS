@@ -44,6 +44,8 @@ namespace eos {
         public:
             DigInputService(Application *pApplication);
             DigInputService(Application *pApplication, const DigInputServiceConfiguration &configuration);
+            ~DigInputService();
+            
             void addInput(DigInput *pInput);
             void removeInput(DigInput *pInput);
             void removeInputs();

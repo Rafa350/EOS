@@ -55,9 +55,13 @@ DigOutputService::DigOutputService(
 ///
 DigOutputService::~DigOutputService() {
 
-    // Elimina totes les sortides
-    //
-    removeOutputs();
+    while (!outputs.isEmpty()) {
+
+    	DigOutput *pOutput = outputs.getFront();
+    	outputs.remove(pOutput);
+
+    	delete pOutput;
+    }
 }
 
 
