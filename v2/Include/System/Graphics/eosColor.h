@@ -97,7 +97,7 @@ namespace eos {
             static inline Color fromRGB565(uint16_t c) { return Color((c & 0xF800u) >> 11u, (c & 0x03E0u) >> 5u, c & 0x001Fu); }
 
             inline uint32_t toARGB8888() const { return c; }
-            inline uint32_t toRGB888() const { return c | 0xFF000000u; } // TODO: Revisar no cal alpha
+            inline uint32_t toRGB888() const { return c | 0xFF000000u; } 
             inline uint16_t toRGB565() const { return ((c & 0x00F80000u) >> 8u) | ((c & 0x0000FC00u) >> 5u) | ((c & 0x000000F8u) >> 3u); };
 
             inline uint8_t getOpacity() const { return (c & COLOR_MASK_A) >> COLOR_SHIFT_A; }

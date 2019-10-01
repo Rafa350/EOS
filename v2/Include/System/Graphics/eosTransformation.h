@@ -8,7 +8,7 @@
 
 namespace eos {
 
-	enum class RotateTransformationAngle {
+	enum class RotateTransformationAngle: uint8_t {
 		r0,
 		r90,
 		r180,

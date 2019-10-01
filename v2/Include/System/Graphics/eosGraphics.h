@@ -20,14 +20,14 @@ namespace eos {
 	class String;
 
     /// \brief Aliniacio horitzontal del text.
-    enum class HorizontalTextAlign {
+    enum class HorizontalTextAlign: uint8_t {
         left,
         center,
         right
     };
 
     /// \brief Aliniacio vertical del text.
-    enum class VerticalTextAlign {
+    enum class VerticalTextAlign: uint8_t {
         top,
         center,
         bottom
