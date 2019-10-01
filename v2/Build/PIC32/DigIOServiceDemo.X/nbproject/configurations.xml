@@ -184,7 +184,7 @@
         <property key="addresss-attribute-use" value="false"/>
         <property key="enable-app-io" value="false"/>
         <property key="enable-omit-frame-pointer" value="true"/>
-        <property key="enable-symbols" value="true"/>
+        <property key="enable-symbols" value="false"/>
         <property key="enable-unroll-loops" value="true"/>
         <property key="exclude-floating-point" value="true"/>
         <property key="extra-include-directories" value=""/>

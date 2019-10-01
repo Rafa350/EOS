@@ -1,9 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Core/eosString.h"
-#include "System/Core/eosTask.h"
 #include "OSAL/osalTask.h"
 #include "OSAL/osalKernel.h"
+#include "System/Core/eosString.h"
+#include "System/Core/eosTask.h"
 
 #include "FreeRTOS.h"
 #include "task.h"

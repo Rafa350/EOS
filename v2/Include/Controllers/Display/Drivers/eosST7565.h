@@ -1,48 +1,48 @@
-#ifndef __EOS_CONTROLLERS_DISPLAY_DRIVERS_ST7565_HPP
-#define	__EOS_CONTROLLERS_DISPLAY_DRIVERS_ST7565_HPP
+#ifndef __eosST7565__
+#define	__eosST7565__
 
 
-#include "eos.hpp"
-#include "Controllers/Display/eosDisplay.hpp"
+#include "eos.h"
+#include "Controllers/Display/eosDisplayDriver.h"
+
+
+#ifndef DISPLAY_SCREEN_WIDTH
+#define DISPLAY_SCREEN_WIDTH      128  // Tamany fix del controlador
+#endif
+#ifndef DISPLAY_SCREEN_HEIGHT
+#define DISPLAY_SCREEN_HEIGHT      64  // Tamany fix del controlador
+#endif
 
 
 namespace eos {
     
-    class ST7565_IO {
-        public:
-            ILI9341_IO();
-            void initialize();
-            void reset();
-            void begin();
-            void end();
-            void address(uint8_t addr);
-            void write(uint8_t ddata);
-            inline void write(uint8_t addr, uint8_t data) { address(addr); write(data); }
-            uint8_t read();
-    };
+    class Color;
     
-    class ST7565_Driver: public IDisplayDriver {
+    class ST7565Driver: public IDisplayDriver {
         private:
-            ST7565_IO io;
-            int xScreenSize;
-            int yScreenSize;
+            int screenWidth;
+            int screenHeight;
+            DisplayOrientation orientation;
             
         public:
-            ST7565_Driver();
+            ST7565Driver();
             void initialize();
             void shutdown();
-            void setOrientation(Orientation orientation);
-            int getXSize() const { return xScreenSize; }
-            int getYSize() const { return yScreenSize; }
-            void clear(Color color);
-            void setPixel(int xPos, int yPos, Color color);
-            void setHPixels(int xPos, int yPos, int size, Color color);
-            void setVPixels(int xPos, int yPos, int size, Color color);
-            void setPixels(int xPos, int yPos, int xSize, int ySize, Color color);
-            void writePixels(int xPos, int yPos, int xSize, int ySize, const Color *colors);
-            void readPixels(int xPos, int yPos, int xSize, int ySize, Color *colors);
-            void vScroll(int delta, int xPos, int yPos, int xSize, int ySize);
-            void hScroll(int delta, int xPos, int yPos, int xSize, int ySize);   
+            void displayOn() override;
+            void displayOff() override;
+            void setOrientation(DisplayOrientation orientation) override;
+            int getXSize() const { return screenWidth; }
+            int getYSize() const { return screenHeight; }
+            void clear(const Color &color) override;
+            void setPixel(int x, int y, const Color &color) override;
+            void setHPixels(int x, int y, int size, const Color &color) override;
+            void setVPixels(int x, int y, int size, const Color &color) override;
+            void setPixels(int x, int y, int width, int height, const Color &color);
+            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
+            void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
+            void vScroll(int delta, int x, int y, int width, int height) override;
+            void hScroll(int delta, int x, int y, int width, int height) override;
+            void refresh() override;
             
         private:
             void writePixel(Color color, unsigned count);
@@ -51,10 +51,13 @@ namespace eos {
             void selectRegion(int x, int y, int width, int height);
             void startMemoryWrite();
             void startMemoryRead();
+            
+        private:
+            void setPage(uint8_t page);
+            void setColumn(uint8_t column);
+            void writeData(uint8_t data);
     };
 }
 
 
-
-#endif	
-
+#endif	// __eosST7565__

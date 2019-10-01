@@ -3,7 +3,6 @@
 
 
 #include "eos.h"
-#include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
 
@@ -32,6 +31,8 @@ typedef int32_t pixel_t;
 
 
 namespace eos {
+    
+    class Color;
 
     class ILI9341LTDCDriver: public IDisplayDriver {
         private:

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>com.microchip.mplab.nbide.embedded.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>MonoDisplayDemo</name>
+            <creation-uuid>0554b481-6040-4643-a261-93c151619246</creation-uuid>
+            <make-project-type>0</make-project-type>
+            <c-extensions>c</c-extensions>
+            <cpp-extensions>cpp</cpp-extensions>
+            <header-extensions>h</header-extensions>
+            <asminc-extensions/>
+            <sourceEncoding>ISO-8859-1</sourceEncoding>
+            <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>../../../Demo/MonoDisplayDemo/Source</sourceRootElem>
+                <sourceRootElem>../../../Include/Board</sourceRootElem>
+                <sourceRootElem>../../../Include/Controllers/Display</sourceRootElem>
+                <sourceRootElem>../../../Source/Controllers/Display/Drivers/ST7565</sourceRootElem>
+                <sourceRootElem>../../../Demo/MonoDisplayDemo/Include</sourceRootElem>
+                <sourceRootElem>../../../Source/System</sourceRootElem>
+                <sourceRootElem>../../../Library/PIC32/FreeRTOS/Source</sourceRootElem>
+                <sourceRootElem>../../../Source/OSAL/FreeRTOS</sourceRootElem>
+                <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>PIC32_USB_STARTER_KIT_I</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
+        </data>
+    </configuration>
+</project>
