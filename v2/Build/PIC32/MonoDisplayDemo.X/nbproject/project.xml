@@ -25,6 +25,7 @@
                 <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Source/Services</sourceRootElem>
                 <sourceRootElem>../../../Include/HAL</sourceRootElem>
+                <sourceRootElem>../../../Include/System/Graphics</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

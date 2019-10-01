@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Controllers/Display/Drivers/eosST7565.h"
+#include "Controllers/Display/Drivers/eosKS0108.h"
 #include "System/eosMath.h"
 #include "System/Graphics/eosColor.h"
 #include "HAL/halGPIO.h"
@@ -29,7 +29,7 @@ static uint8_t vFlags[DISPLAY_SCREEN_HEIGHT / 8];
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-ST7565Driver::ST7565Driver():
+KS0108Driver::KS0108Driver():
  	screenWidth(DISPLAY_SCREEN_WIDTH),
 	screenHeight(DISPLAY_SCREEN_HEIGHT),
 	orientation(DisplayOrientation::normal) {
@@ -40,26 +40,16 @@ ST7565Driver::ST7565Driver():
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el driver.
 ///
-void ST7565Driver::initialize() {
+void KS0108Driver::initialize() {
     
     static const GPIOInitializePinInfo gpioInit[] = {
         { DISPLAY_RST_PORT, DISPLAY_RST_PIN, HAL_GPIO_MODE_OUTPUT_PP },
-        { DISPLAY_CS_PORT,  DISPLAY_CS_PIN,  HAL_GPIO_MODE_OUTPUT_PP },
+        { DISPLAY_CS1_PORT,  DISPLAY_CS1_PIN,  HAL_GPIO_MODE_OUTPUT_PP },
+        { DISPLAY_CS2_PORT,  DISPLAY_CS2_PIN,  HAL_GPIO_MODE_OUTPUT_PP },
         { DISPLAY_A0_PORT,  DISPLAY_A0_PIN,  HAL_GPIO_MODE_OUTPUT_PP }
     };
 
     static const uint8_t initTab[] = {// Taula d'inicialitzacio del display
-        CMD_SET_START_LINE | 0,       // -Inici del display a la linia 0
-        0xA1,                         // -ADC invertit (Visio 6h)
-        0xC0,                         // -Normal COM0..63
-        CMD_DISPLAY_NORMAL,           // -Normal
-        0xA2,                         // -Bias 1/9
-        0x2F,                         // -Booster ON
-        0xF8, 0x00,                   // -Booster x4
-        0x27,                         // -Regulador de voltatge
-        0x81, 0x16,                   // -Modus del regulador de voltatge
-        0xAC, 0x00,                   // -Sense indicador static
-        CMD_DISPLAY_ON                // -Activa el display
     };
     
     // Inicialitza els pins
@@ -85,7 +75,7 @@ void ST7565Driver::initialize() {
 }
 
 
-void ST7565Driver::shutdown() {
+void KS0108Driver::shutdown() {
 
     writeCtrlRegister(CMD_DISPLAY_OFF);
     writeCtrlRegister(CMD_ALL_ON);
@@ -93,17 +83,17 @@ void ST7565Driver::shutdown() {
 }
 
 
-void ST7565Driver::displayOn() {
+void KS0108Driver::displayOn() {
     
 }
 
 
-void ST7565Driver::displayOff() {
+void KS0108Driver::displayOff() {
     
 }
 
 
-void ST7565Driver::setOrientation(
+void KS0108Driver::setOrientation(
     DisplayOrientation orientation) {
     
     if (this->orientation != orientation) {
@@ -116,7 +106,7 @@ void ST7565Driver::setOrientation(
 /// \brief    Borrat de la pantalla.
 /// \param    color: El color de borrat.
 ///
-void ST7565Driver::clear(
+void KS0108Driver::clear(
     const Color& color) {
     
     uint8_t c = (color == (color_t)0) ? 0xFF : 0x00;
@@ -134,7 +124,7 @@ void ST7565Driver::clear(
 /// \param    y: Coordinada Y.
 /// \param    color: Color del pixel.
 ///
-void ST7565Driver::setPixel(
+void KS0108Driver::setPixel(
     int x,
     int y,
     const Color &color) {
@@ -160,7 +150,7 @@ void ST7565Driver::setPixel(
 /// \param    size: Longitut de la linia.
 /// \param    color: Color dels pixels.
 ///
-void ST7565Driver::setHPixels(
+void KS0108Driver::setHPixels(
 	int x,
 	int y,
 	int size,
@@ -210,7 +200,7 @@ void ST7565Driver::setHPixels(
 /// \param    size: Longitut de la linia.
 /// \param    color: Color dels pixels.
 ///
-void ST7565Driver::setVPixels(
+void KS0108Driver::setVPixels(
 	int x,
 	int y,
 	int size,
@@ -258,7 +248,7 @@ void ST7565Driver::setVPixels(
 }
 
 
-void ST7565Driver::setPixels(
+void KS0108Driver::setPixels(
     int x,
     int y,
     int width,
@@ -267,7 +257,7 @@ void ST7565Driver::setPixels(
     
 }
 
-void ST7565Driver::writePixels(
+void KS0108Driver::writePixels(
     int x, 
     int y, 
     int width, 
@@ -281,7 +271,7 @@ void ST7565Driver::writePixels(
 }
 
 
-void ST7565Driver::readPixels(
+void KS0108Driver::readPixels(
     int x, 
     int y, 
     int width, 
@@ -295,7 +285,7 @@ void ST7565Driver::readPixels(
 }
 
 
-void ST7565Driver::vScroll(
+void KS0108Driver::vScroll(
     int delta, 
     int x, 
     int y, 
@@ -305,7 +295,7 @@ void ST7565Driver::vScroll(
 }
 
 
-void ST7565Driver::hScroll(
+void KS0108Driver::hScroll(
     int delta, 
     int x, 
     int y, 
@@ -315,7 +305,7 @@ void ST7565Driver::hScroll(
 }
 
 
-void ST7565Driver::refresh() {
+void KS0108Driver::refresh() {
     
     // Transfereix les pagines modificades
     //
@@ -344,7 +334,7 @@ void ST7565Driver::refresh() {
 /// \brief    Selecciona la pagina.
 /// \param    page: Numero de pagina.
 ///
-void ST7565Driver::setPage(
+void KS0108Driver::setPage(
     uint8_t page) {
     
     writeCtrlRegister((page & 0x07) | CMD_SET_PAGE);
@@ -355,7 +345,7 @@ void ST7565Driver::setPage(
 /// \brief    Selecciona la columna.
 /// \param    page: Numero de columna.
 ///
-void ST7565Driver::setColumn(
+void KS0108Driver::setColumn(
     uint8_t column) {
     
     writeCtrlRegister((column & 0x0F) | CMD_SET_COLUMN_L);
@@ -367,7 +357,7 @@ void ST7565Driver::setColumn(
 /// \brief    Escriu un byte en el registre de dades.
 /// \param    data: El valor a escriure.
 ///
-void ST7565Driver::writeDataRegister(
+void KS0108Driver::writeDataRegister(
     uint8_t data) {
     
     halGPIOSetPin(DISPLAY_A0_PORT, DISPLAY_A0_PIN);
@@ -381,7 +371,7 @@ void ST7565Driver::writeDataRegister(
 /// \brief    Escriu un byte en el registre de control.
 /// \param    cmd: El valor a escriure.
 ///
-void ST7565Driver::writeCtrlRegister(
+void KS0108Driver::writeCtrlRegister(
     uint8_t cmd) {
     
     halGPIOClearPin(DISPLAY_A0_PORT, DISPLAY_A0_PIN);
@@ -403,7 +393,7 @@ void ST7565Driver::writeCtrlRegister(
 /// \remarks  El controlador ha d'estar configurat per 
 ///           rebre el byte en el registre correcte.
 ///
-void ST7565Driver::writeRegister(
+void KS0108Driver::writeRegister(
     uint8_t data) {
     
 }

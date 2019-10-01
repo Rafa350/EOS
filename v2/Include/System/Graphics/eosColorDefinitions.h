@@ -126,8 +126,8 @@
 
 // Basic palete colors
 //
-#define COLOR_PAL_Black           0
-#define COLOR_PAL_White           1
+#define COLOR_PAL_Black           0   // LCD monochrome compatible
+#define COLOR_PAL_White           1   // LCD monochrome compatible
 #define COLOR_PAL_Blue            2
 #define COLOR_PAL_Cyan            3
 #define COLOR_PAL_Magenta         4

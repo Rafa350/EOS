@@ -23,6 +23,7 @@
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
                 <itemPath>../../../Include/Controllers/Display/Drivers/eosST7565.h</itemPath>
+                <itemPath>../../../Include/Controllers/Display/Drivers/eosKS0108.h</itemPath>
               </logicalFolder>
               <itemPath>../../../Include/Controllers/Display/eosDisplayDriver.h</itemPath>
             </logicalFolder>
@@ -33,6 +34,13 @@
             </logicalFolder>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f4" displayName="System" projectFiles="true">
+            <logicalFolder name="f1" displayName="Graphics" projectFiles="true">
+              <itemPath>../../../Include/System/Graphics/eosColor.h</itemPath>
+              <itemPath>../../../Include/System/Graphics/eosGraphics.h</itemPath>
+              <itemPath>../../../Include/System/Graphics/eosColorDefinitions.h</itemPath>
+            </logicalFolder>
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
@@ -73,6 +81,7 @@
             <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
             <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
             <itemPath>../../../Source/OSAL/FreeRTOS/osalTimer.c</itemPath>
+            <itemPath>../../../Source/OSAL/FreeRTOS/osalKernel.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f6" displayName="Services" projectFiles="true">
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>
@@ -90,7 +99,6 @@
               <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
-              <itemPath>../../../Source/OSAL/FreeRTOS/osalKernel.c</itemPath>
             </logicalFolder>
             <logicalFolder name="f2" displayName="Graphics" projectFiles="true">
               <logicalFolder name="f1" displayName="Fonts" projectFiles="true">
@@ -142,6 +150,7 @@
     <Elem>../../../Source/StartUp/PIC32</Elem>
     <Elem>../../../Source/Services</Elem>
     <Elem>../../../Include/HAL</Elem>
+    <Elem>../../../Include/System/Graphics</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -157,7 +166,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.28"/>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.53"/>
       </packs>
       <compileType>
         <linkerTool>
@@ -189,9 +198,9 @@
         <property key="addresss-attribute-use" value="false"/>
         <property key="enable-app-io" value="false"/>
         <property key="enable-omit-frame-pointer" value="true"/>
-        <property key="enable-symbols" value="false"/>
+        <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="true"/>
-        <property key="exclude-floating-point" value="true"/>
+        <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
@@ -234,6 +243,9 @@
         <property key="preprocessor-macros" value=""/>
         <property key="warning-level" value=""/>
       </C32-AS>
+      <C32-CO>
+        <property key="coverage-enable" value=""/>
+      </C32-CO>
       <C32-LD>
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>
@@ -241,7 +253,7 @@
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
-        <property key="exclude-floating-point-library" value="false"/>
+        <property key="exclude-floating-point-library" value="true"/>
         <property key="exclude-standard-libraries" value="false"/>
         <property key="extra-lib-directories" value=""/>
         <property key="fill-flash-options-addr" value=""/>

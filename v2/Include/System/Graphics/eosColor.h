@@ -45,6 +45,12 @@
 #define COLOR_RGB565_TYPE         uint16_t
 #define COLOR_RGB565_BPP          16
 
+// Format L8
+#define COLOR_LUMINANCE_MASK      0x000000FFu
+#define COLOR_LUMINANCE_SHIFT     0u
+#define COLOR_L8_TYPE             uint8_t
+#define COLOR_L8_BPP              8
+
 // Format nadiu utilitzat internament en la clase Color
 #if defined(EOS_COLOR_ARGB8888)
 #define COLOR_MASK_A              COLOR_ARGB8888_MASK_A
@@ -70,8 +76,7 @@ namespace eos {
 	enum class ColorFormat: uint8_t {
 		argb8888,  // ARGB 8 bit channel
 		rgb888,    // RGB 8 bit channel
-		rgb565,    // RGB 5 bits Red & Blue channels, 6 bit Green channel
-        l8         // Luminance 8 bit or CLUT[256] index
+		rgb565     // RGB 5 bits Red & Blue channels, 6 bit Green channel
 	};
 
 	/// \brief Clase que representa un color.
