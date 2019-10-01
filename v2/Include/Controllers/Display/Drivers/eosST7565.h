@@ -26,13 +26,14 @@ namespace eos {
             
         public:
             ST7565Driver();
-            void initialize();
-            void shutdown();
+            
+            void initialize() override;
+            void shutdown() override;
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getXSize() const { return screenWidth; }
-            int getYSize() const { return screenHeight; }
+            int getWidth() const override { return screenWidth; }
+            int getHeight() const override { return screenHeight; }
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
             void setHPixels(int x, int y, int size, const Color &color) override;
@@ -55,7 +56,9 @@ namespace eos {
         private:
             void setPage(uint8_t page);
             void setColumn(uint8_t column);
-            void writeData(uint8_t data);
+            void writeDataRegister(uint8_t data);
+            void writeCtrlRegister(uint8_t data);
+            void writeRegister(uint8_t data);
     };
 }
 

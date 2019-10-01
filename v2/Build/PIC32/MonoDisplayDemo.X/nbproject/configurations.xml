@@ -27,6 +27,13 @@
               <itemPath>../../../Include/Controllers/Display/eosDisplayDriver.h</itemPath>
             </logicalFolder>
           </logicalFolder>
+          <logicalFolder name="f3" displayName="HAL" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
+            </logicalFolder>
+            <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
+            <itemPath>../../../Include/HAL/halSYS.h</itemPath>
+          </logicalFolder>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -65,23 +72,42 @@
             <itemPath>../../../Source/OSAL/FreeRTOS/osalHeap.c</itemPath>
             <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
             <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
+            <itemPath>../../../Source/OSAL/FreeRTOS/osalTimer.c</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f6" displayName="Services" projectFiles="true">
+            <itemPath>../../../Source/Services/eosService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosAppLoopService.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="StartUp" projectFiles="true">
             <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="System" projectFiles="true">
+            <logicalFolder name="f3" displayName="Collections" projectFiles="true">
+              <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
+            </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Source/System/Core/eosString.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalKernel.c</itemPath>
             </logicalFolder>
             <logicalFolder name="f2" displayName="Graphics" projectFiles="true">
+              <logicalFolder name="f1" displayName="Fonts" projectFiles="true">
+                <itemPath>../../../Source/System/Graphics/Fonts/FontTable.cpp</itemPath>
+              </logicalFolder>
               <itemPath>../../../Source/System/Graphics/eosGraphics.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosGraphics_Line.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosPoint.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosRect.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosSize.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Rectangle.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Text.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosColor.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosTransformation.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Ellipse.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosFont.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosFontCache.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
           </logicalFolder>
@@ -93,6 +119,7 @@
           <itemPath>../../../Library/PIC32/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
           <itemPath>../../../Library/PIC32/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
           <itemPath>../../../Library/PIC32/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/timers.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -113,6 +140,8 @@
     <Elem>../../../Source/OSAL/FreeRTOS</Elem>
     <Elem>../../../Source/HAL/PIC32</Elem>
     <Elem>../../../Source/StartUp/PIC32</Elem>
+    <Elem>../../../Source/Services</Elem>
+    <Elem>../../../Include/HAL</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

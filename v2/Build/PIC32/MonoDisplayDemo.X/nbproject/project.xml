@@ -23,6 +23,8 @@
                 <sourceRootElem>../../../Source/OSAL/FreeRTOS</sourceRootElem>
                 <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Source/Services</sourceRootElem>
+                <sourceRootElem>../../../Include/HAL</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

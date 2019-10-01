@@ -70,6 +70,7 @@ void DisplayService::onSetup() {
 
 #if defined(DISPLAY_DRV_ST7565)
 	//driver = ST7565Driver::getInstance();
+    driver = new ST7565Driver();
 #else    
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif
