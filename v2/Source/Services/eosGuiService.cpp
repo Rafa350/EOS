@@ -141,11 +141,11 @@ Visual *GuiService::getVisualAt(
 void GuiService::onInitialize() {
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
-	displayDriver = ILI9341LTDCDriver::getInstance();
+	displayDriver = new ILI9341LTDCDriver();
 #elif defined(DISPLAY_DRV_ILI9341)
-	displayDriver = ILI9341Driver::getInstance();
+	displayDriver = new ILI9341Driver();
 #elif defined(DISPLAY_DRV_RGBLTDC)
-	displayDriver = RGBDirectDriver::getInstance();
+	displayDriver = new RGBDirectDriver();
 #else
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif

@@ -105,21 +105,6 @@ static inline pixel_t combinePixel(
 }
 
 
-IDisplayDriver *RGBDirectDriver::instance = nullptr;
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte una instancia unica del driver.
-/// \return La instancia del driver.
-///
-IDisplayDriver *RGBDirectDriver::getInstance() {
-
-	if (instance == nullptr)
-		instance = new RGBDirectDriver();
-	return instance;
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief Constructor
 ///
@@ -140,11 +125,11 @@ void RGBDirectDriver::initialize() {
 
 	// Inicialitza els pins
 	//
-	gpioInitialize();
+	initializeGPIO();
 
 	// Inicialitza el dispositiu LTDC
 	//
-	ltdcInitialize();
+	initializeLTDC();
 	halLTDCSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
 
     // Inicialitza el dispositiu DMA2D
@@ -447,7 +432,7 @@ void RGBDirectDriver::refresh() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el modul GPIO.
 ///
-void RGBDirectDriver::gpioInitialize() {
+void RGBDirectDriver::initializeGPIO() {
 
 	static const GPIOInitializePinInfo gpioInit[] = {
 		{DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
@@ -495,10 +480,33 @@ void RGBDirectDriver::gpioInitialize() {
 /// \remarks Prepara la capa Layer1, pero no s'activara fins que s'asigni
 /// una adressa per buffer de video.
 ///
-void RGBDirectDriver::ltdcInitialize() {
+void RGBDirectDriver::initializeLTDC() {
+
+	static const LTDCInitializeInfo ltdcInit = {
+		.HSYNC = DISPLAY_HSYNC,
+		.VSYNC = DISPLAY_VSYNC,
+		.HBP = DISPLAY_HBP,
+		.HFP = DISPLAY_HFP,
+		.VBP = DISPLAY_VBP,
+		.VFP = DISPLAY_VFP,
+		.options = DISPLAY_HSPOL | DISPLAY_VSPOL | DISPLAY_DEPOL | DISPLAY_PCPOL,
+		.width = DISPLAY_IMAGE_WIDTH,
+		.height = DISPLAY_IMAGE_HEIGHT,
+		.backgroundColor = 0x000000FFu
+	};
+
+	static const LTDCInitializeLayerInfo ltdcLayerInit = {
+		.width = 0,
+		.height = 1,
+		.defaultColor = 0xFF0000FFu,
+		.keyColor = 0x00000000
+	};
+
+	halLTDCInitialize(&ltdcInit);
+	//halLTDCInitializeLayer(HAL_LTDC_LAYER_0, &ltdcLayerInit);
 
 	uint32_t tmp;
-
+/*
 	// Configura el rellotge
 	// PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
 	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 192 Mhz
@@ -571,7 +579,7 @@ void RGBDirectDriver::ltdcInitialize() {
     tmp |= 0 << LTDC_BCCR_BCGREEN_Pos;
     tmp |= 255 << LTDC_BCCR_BCBLUE_Pos;
     LTDC->BCCR = tmp;
-
+*/
     // Configura Lx_WHPCR (Window Horizontal Position Configuration Register)
     // -Tamany horitzontal de la finestra
     //

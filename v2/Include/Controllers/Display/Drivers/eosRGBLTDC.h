@@ -47,25 +47,24 @@ namespace eos {
 
 	class RGBDirectDriver: public IDisplayDriver {
     	private:
-    		static IDisplayDriver *instance;
     		int screenWidth;
     		int screenHeight;
     		DisplayOrientation orientation;
     		int frontFrameAddr;
     		int backFrameAddr;
 
-    	private:
+        public:
             RGBDirectDriver();
 
-        public:
-            static IDisplayDriver *getInstance();
             void initialize() override;
             void shutdown() override;
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
+
             int getWidth() const override { return screenWidth; }
             int getHeight() const override { return screenHeight; }
+
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
             void setHPixels(int x, int y, int size, const Color &color) override;
@@ -75,11 +74,12 @@ namespace eos {
             void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
             void vScroll(int delta, int x, int y, int width, int height) override;
             void hScroll(int delta, int x, int y, int width, int height) override;
+
             void refresh() override;
 
         private:
-            void gpioInitialize();
-            void ltdcInitialize();
+            void initializeGPIO();
+            void initializeLTDC();
             void rotate(int &x, int &y);
             void rotate(int &x1, int &y1, int &x2, int &y2);
             void put(int x, int y, const Color &color);

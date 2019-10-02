@@ -54,10 +54,14 @@
 #define DISPLAY_VSYNC             10   // Vertical synchronization
 #define DISPLAY_VBP               2    // Vertical back porch
 #define DISPLAY_VFP               2    // Vertical front porch
-#define DISPLAY_HSPOL             0    // HSync active (0=LOW, 1=HIGHT)
+/*#define DISPLAY_HSPOL             0    // HSync active (0=LOW, 1=HIGHT)
 #define DISPLAY_VSPOL             0    // VSync active (0=LOW, 1=HIGHT)
 #define DISPLAY_DEPOL             0    // DE active (0=LOW, 1=HIGHT)
-#define DISPLAY_PCPOL             0    // PC active (0=LOW, 1=HIGHT)
+#define DISPLAY_PCPOL             0    // PC active (0=LOW, 1=HIGHT)*/
+#define DISPLAY_HSPOL             HAL_LTDC_HSPOL_LOW  // HSync active (0=LOW, 1=HIGHT)
+#define DISPLAY_VSPOL             HAL_LTDC_VSPOL_LOW  // VSync active (0=LOW, 1=HIGHT)
+#define DISPLAY_DEPOL             HAL_LTDC_DEPOL_LOW  // DE active (0=LOW, 1=HIGHT)
+#define DISPLAY_PCPOL             HAL_LTDC_PCPOL_LOW  // PC active (0=LOW, 1=HIGHT)
 #define DISPLAY_FDIV              5    // Divisor de fequencia
 
 // Tipus de lletra disponibles
