@@ -37,13 +37,13 @@ void halLTDCInitialize(
     //
     tmp = LTDC->GCR;
     tmp &= ~(LTDC_GCR_HSPOL | LTDC_GCR_VSPOL | LTDC_GCR_DEPOL | LTDC_GCR_PCPOL);
-    if ((pInfo->options & HAL_LTDC_HSPOL_mask) == HAL_LTDC_HSPOL_HIGH)
+    if ((pInfo->polarity.HSYNC)
     	tmp |= 1 << LTDC_GCR_HSPOL_Pos;
-    if ((pInfo->options & HAL_LTDC_VSPOL_mask) == HAL_LTDC_VSPOL_HIGH)
+    if ((pInfo->polarity.VSYNC)
     	tmp |= DISPLAY_VSPOL << LTDC_GCR_VSPOL_Pos;
-    if ((pInfo->options & HAL_LTDC_DEPOL_mask) == HAL_LTDC_DEPOL_HIGH)
+    if ((pInfo->polarity.DE)
     	tmp |= DISPLAY_DEPOL << LTDC_GCR_DEPOL_Pos;
-    if ((pInfo->options & HAL_LTDC_PCPOL_mask) == HAL_LTDC_PCPOL_HIGH)
+    if ((pInfo->polarity.PC)
     	tmp |= DISPLAY_PCPOL << LTDC_GCR_PCPOL_Pos;
     LTDC->GCR = tmp;
 
@@ -86,7 +86,10 @@ void halLTDCInitialize(
     // Configura el registre BCCR (Back Color Configuration Register)
     //
     tmp = LTDC->BCCR;
-    tmp |= pInfo->backgroundColor & 0x00FFFFFFu;
+    tmp &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
+    tmp |= pInfo->backgroundColor.R << LTDC_BCCR_BCRED_Pos;
+    tmp |= pInfo->backgroundColor.G << LTDC_BCCR_BCGREEN_Pos;
+    tmp |= pInfo->backgroundColor.B << LTDC_BCCR_BCBLUE_Pos;
     LTDC->BCCR = tmp;
 
 }
@@ -104,6 +107,8 @@ void halLTDCInitializeLayer(
 	eosAssert(pInfo != NULL);
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
 
+    // Selecciona la capa de a configurar
+    //
 	LTDC_Layer_TypeDef *layer =
 		layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
 
@@ -131,9 +136,15 @@ void halLTDCInitializeLayer(
     layer->WVPCR = tmp;
 
     // Configura Lx_DCCR (Default Color Configuration Register)
-    // -Color per defecte ARGB(255, 0, 0, 0)
+    // -Color per defecte
     //
-    layer->DCCR = 0xFF0000FF;
+    tmp = layer->DCCR;
+    tmp &= ~(LTDC_LxDCCR_DCALPHA | LTDC_LxDCCR_DCRED | LTDC_LxDCCR_DCGREEN | LTDC_LxDCCR_DCBLUE);
+    tmp |= pInfo->defaultColor.A << LTDC_LxDCCR_DCALPHA_Pos;
+    tmp |= pInfo->defaultColor.R << LTDC_LxDCCR_DCRED_Pos;
+    tmp |= pInfo->defaultColor.G << LTDC_LxDCCR_DCGREEN_Pos;
+    tmp |= pInfo->defaultColor.B << LTDC_LxDCCR_DCBLUE_Pos;
+    layer->DCCR = tmp;
 
     // Configura Lx_PFCR (Pixel Format Configuration Register)
     //
