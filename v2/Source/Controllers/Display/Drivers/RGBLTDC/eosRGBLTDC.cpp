@@ -23,6 +23,7 @@
 #if defined(DISPLAY_COLOR_RGB565)
 #define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB565
 #define LTDC_LxPFCR_PF_DEFAULT    0b010
+#define HAL_LTDC_FORMAT_DEFAULT   HAL_LTDC_FORMAT_RGB565
 #elif defined(DISPLAY_COLOR_RGB888)
 #define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB888
 #define LTDC_LxPFCR_PF_DEFAULT    0b001
@@ -489,17 +490,39 @@ void RGBDirectDriver::initializeLTDC() {
 		.HFP = DISPLAY_HFP,
 		.VBP = DISPLAY_VBP,
 		.VFP = DISPLAY_VFP,
-		.options = DISPLAY_HSPOL | DISPLAY_VSPOL | DISPLAY_DEPOL | DISPLAY_PCPOL,
+		.polarity = {
+			.HSYNC = DISPLAY_HSPOL,
+			.VSYNC = DISPLAY_VSPOL,
+			.DE = DISPLAY_DEPOL,
+			.PC = DISPLAY_PCPOL,
+		 },
 		.width = DISPLAY_IMAGE_WIDTH,
 		.height = DISPLAY_IMAGE_HEIGHT,
-		.backgroundColor = 0x000000FFu
+		.backgroundColor = {
+			.R = 0x00,
+			.G = 0x00,
+			.B = 0xFF
+		 },
 	};
 
 	static const LTDCInitializeLayerInfo ltdcLayerInit = {
+		.x = 0,
+		.y = 0,
 		.width = 0,
 		.height = 1,
-		.defaultColor = 0xFF0000FFu,
-		.keyColor = 0x00000000
+		.pixelFormat = HAL_LTDC_FORMAT_DEFAULT,
+		.defaultColor = {
+			.A = 0xFF,
+			.R = 0x00,
+			.G = 0x00,
+			.B = 0x00,
+		 },
+		.keyColor = {
+			.R = 0x00,
+			.G = 0x00,
+			.B = 0x00,
+		 },
+		 .constantAlpha = 0xFF,
 	};
 
 	halLTDCInitialize(&ltdcInit);

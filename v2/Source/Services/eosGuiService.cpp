@@ -219,13 +219,14 @@ void GuiService::onInitialize() {
 	sp->setHorizontalAlignment(HorizontalAlignment::stretch);
 	sp->setVerticalAlignment(VerticalAlignment::center);
 	screen->addChild(sp);
+	String hola("hola");
 	for (int i = 0; i < 5; i++) {
 
 		Label *l = new Label();
 		l->setHorizontalAlignment(HorizontalAlignment::center);
 		l->setVerticalAlignment(VerticalAlignment::center);
 		l->setMargin(Thickness(10, 5, 10, 5));
-		l->setText("hola");
+		l->setText(hola);
 
 		PushButton *pb = new PushButton();
 		pb->setHorizontalAlignment(HorizontalAlignment::stretch);

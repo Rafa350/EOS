@@ -37,14 +37,10 @@ void halLTDCInitialize(
     //
     tmp = LTDC->GCR;
     tmp &= ~(LTDC_GCR_HSPOL | LTDC_GCR_VSPOL | LTDC_GCR_DEPOL | LTDC_GCR_PCPOL);
-    if ((pInfo->polarity.HSYNC)
-    	tmp |= 1 << LTDC_GCR_HSPOL_Pos;
-    if ((pInfo->polarity.VSYNC)
-    	tmp |= DISPLAY_VSPOL << LTDC_GCR_VSPOL_Pos;
-    if ((pInfo->polarity.DE)
-    	tmp |= DISPLAY_DEPOL << LTDC_GCR_DEPOL_Pos;
-    if ((pInfo->polarity.PC)
-    	tmp |= DISPLAY_PCPOL << LTDC_GCR_PCPOL_Pos;
+   	tmp |= pInfo->polarity.HSYNC << LTDC_GCR_HSPOL_Pos;
+   	tmp |= pInfo->polarity.VSYNC << LTDC_GCR_VSPOL_Pos;
+  	tmp |= pInfo->polarity.DE << LTDC_GCR_DEPOL_Pos;
+    tmp |= pInfo->polarity.PC << LTDC_GCR_PCPOL_Pos;
     LTDC->GCR = tmp;
 
     // Configura el registre SSCR (Sinchronization Size Configuration Register)
@@ -150,14 +146,26 @@ void halLTDCInitializeLayer(
     //
     tmp = layer->PFCR;
     tmp &= ~(LTDC_LxPFCR_PF);
-    //tmp |= LTDC_LxPFCR_PF_DEFAULT << LTDC_LxPFCR_PF_Pos;
+    switch (pInfo->pixelFormat) {
+    	case HAL_LTDC_FORMAT_RGB565:
+    		tmp |= 0b010 << LTDC_LxPFCR_PF_Pos;
+    		break;
+
+    	case HAL_LTDC_FORMAT_RGB888:
+    		tmp |= 0b001 << LTDC_LxPFCR_PF_Pos;
+    		break;
+
+    	case HAL_LTDC_FORMAT_L8:
+    		tmp |= 0b101 << LTDC_LxPFCR_PF_Pos;
+    		break;
+    }
     layer->PFCR = tmp;
 
     // Configura Lx_CACR (Constant Alpha Configuration Register)
     //
     tmp = layer->CACR;
     tmp &= ~(LTDC_LxCACR_CONSTA);
-    tmp |= 255u;
+    tmp |= pInfo->constantAlpha;
     layer->CACR;
 
     // Configura Lx_BFCR
@@ -174,8 +182,8 @@ void halLTDCInitializeLayer(
     //
     tmp = layer->CFBLR;
     tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
-    //tmp |= LINE_SIZE << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= (pInfo->lineLength + 3) << LTDC_LxCFBLR_CFBLL_Pos;
+    tmp |= (((pInfo->width * halLTDCGetPixelSize(pInfo->pixelFormat)) + 63) & 0xFFFFFFC0) << LTDC_LxCFBLR_CFBP_Pos;
+    tmp |= ((pInfo->width * halLTDCGetPixelSize(pInfo->pixelFormat)) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
     layer->CFBLR = tmp;
 
     // Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
@@ -188,12 +196,13 @@ void halLTDCInitializeLayer(
     // Actualitza els parametres de la capa inmediatament
     //
 	LTDC->SRCR |= LTDC_SRCR_IMR;
-
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna l'adresa del buffer d'una capa.
+/// \param    layerNum: Identificador de la capa.
+/// \param    frameAddr: L'adresa del buffer.
 ///
 void halLTDCSetFrameAddress(
 	LTDCLayerNum layerNum,
@@ -207,7 +216,7 @@ void halLTDCSetFrameAddress(
 	if (frameAddr == 0)
 	    layer->CR &= (uint32_t) ~LTDC_LxCR_LEN;
 	else {
-		layer->CFBAR = frameAddr;
+		layer->CFBAR = (uint32_t) frameAddr;
 		layer->CR |= (uint32_t) LTDC_LxCR_LEN;
 	}
 
@@ -224,6 +233,23 @@ void halLTDCSetFrameAddress(
 		while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
 			continue;
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte la longitut en bytes d'un pixel.
+/// \param    format: El format de pixel.
+/// \return   El resultat.
+///
+uint8_t halLTDCGetPixelSize(
+	LTDCPixelFormat format) {
+
+	switch (format) {
+		default:
+		case HAL_LTDC_FORMAT_RGB565:
+		case HAL_LTDC_FORMAT_RGB888:
+			return 2;
+	}
 }
 
 

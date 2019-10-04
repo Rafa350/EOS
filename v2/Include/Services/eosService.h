@@ -13,7 +13,7 @@
 namespace eos {
 
 	struct ServiceConfiguration {
-		String serviceName;
+		const char *serviceName;
 		unsigned stackSize;
 		TaskPriority priority;
 	};

@@ -20,19 +20,19 @@ typedef struct {
     uint16_t HFP;
     uint16_t VBP;
     uint16_t VFP;
-    struct polarity {             // Polaritat
+    struct {                      // Polaritat
         unsigned HSYNC: 1;        //     Polaritat HSYNC
         unsigned VSYNC: 1;        //     Polaritat VSYNC
         unsigned DE: 1;           //     Polaritat DE
         unsigned PC: 1;           //     Polaritat PC
-    };
+    } polarity;
     uint16_t width;               // Amplada
     uint16_t height;              // Alçada
-    struct backgroundColor {      // Color de fons 
+    struct {                      // Color de fons
         uint8_t R;                //     Component R
         uint8_t G;                //     Component G
         uint8_t B;                //     Component B
-    };
+    } backgroundColor;
 } LTDCInitializeInfo;
 
 typedef struct {
@@ -40,18 +40,19 @@ typedef struct {
     uint16_t y;                   // Posicio Y
 	uint16_t width;               // Amplada
 	uint16_t height;              // Alçada
-    LTDCPixelFormat pixFormat;    // Format de pixel
-    struct defaultColor {         // Color per defecte
+    LTDCPixelFormat pixelFormat;  // Format de pixel
+    struct {                      // Color per defecte
         uint8_t A;
         uint8_t R;
         uint8_t G;
         uint8_t B;
-    };
-    struct keyColor{              // Color per croma 
+    } defaultColor;
+    struct {                      // Color per croma
         uint8_t R;
         uint8_t G;
         uint8_t B;
-    };
+    } keyColor;
+    uint8_t constantAlpha;
 } LTDCInitializeLayerInfo;
 
 
@@ -61,15 +62,16 @@ typedef struct {
 
 
 // Format de pixel
-#define HAL_LTDC_FORMAT_RGB888    ((LTSCPixelFormat) 0)
-#define HAL_LTDC_FORMAT_RGB565    ((LTSCPixelFormat) 1)
+#define HAL_LTDC_FORMAT_RGB888    ((LTDCPixelFormat) 0)
+#define HAL_LTDC_FORMAT_RGB565    ((LTDCPixelFormat) 1)
+#define HAL_LTDC_FORMAT_L8        ((LTDCPixelFormat) 2)
 
 
 void halLTDCInitialize(const LTDCInitializeInfo *pInfo);
 void halLTDCInitializeLayer(LTDCLayerNum layerNum, const LTDCInitializeLayerInfo *pInfo);
 
 void halLTDCSetFrameAddress(LTDCLayerNum layerNum, int frameAddr);
-uint8_t halLTDCGetPixelSize(uint8_t pixelFormat);
+uint8_t halLTDCGetPixelSize(LTDCPixelFormat pixelFormat);
 
 #define halLTDCEnable()      LTDC->GCR |= LTDC_GCR_LTDCEN
 #define halLTDCDisable()     LTDC->GCR &= ~LTDC_GCR_LTDCEN

@@ -16,7 +16,7 @@ using namespace eos;
 struct LabelStyle {
 	Color textColor;
 	Color backgroundColor;
-	String fontName;
+	const char *fontName;
 	int fontHeight;
 	FontStyle fontStyle;
 };

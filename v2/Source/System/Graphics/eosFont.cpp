@@ -37,7 +37,7 @@ const uint8_t* Font::getFontResource(
 
 	for (unsigned i = 0; pResource[i].name != nullptr; i++) {
 		const FontTableEntry *pEntry = &pResource[i];
-		if ((name.compare(pEntry->name) == 0) &&
+		if ((name == String(pEntry->name)) &&
 			(pEntry->height == height) &&
 			(pEntry->style == style)) {
 

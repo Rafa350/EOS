@@ -5,7 +5,6 @@
 using namespace eos;
 using namespace app;
 
-
 /// ----------------------------------------------------------------------
 /// \brief Entrada al programa.
 ///

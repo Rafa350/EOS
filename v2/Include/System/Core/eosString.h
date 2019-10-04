@@ -11,37 +11,45 @@ namespace eos {
     
     /// \brief Implementacio de cadenes de texte.
     ///
-    class String {
-        private:
-        	unsigned length;
-        	unsigned containerSize;
-            char *container;
+    class String final {
+    	private:
+			struct StringData {
+				unsigned refCount;
+				unsigned length;
+				char container[1];
+			};
+
+    	private:
+			StringData *pData;
 
         private:
-            void alloc(const char *text);
+            void create(const char *cstr, unsigned index, unsigned length);
+            void reference(const String &str);
+            void release();
 
         public:
             String();
-            String(const char *text);
-            String(const String &text);
-            String(const String &text, unsigned index, unsigned length);
+            String(const char *cstr);
+            String(const String &str);
+            String(const String &str, unsigned index, unsigned length);
             ~String();
             
-            inline unsigned getLength() const { return length; }
-            inline bool isEmpty() const { return length == 0; }
+            unsigned getLength() const;
+            bool isEmpty() const;
+            bool isNull() const;
             
-            int compare(const String& text) const;
-            int compare(const char *text) const;
+            String& operator = (const char *cstr);
+            String& operator = (const String &str);
 
-            String& operator = (const char *text);
-            String& operator = (const String &text);
+            bool operator ==(const String &str) const;
+            inline bool operator !=(const String &str) const { return !operator==(str); }
+            bool operator <(const String &str) const;
+            bool operator <=(const String &str) const;
+            bool operator >(const String &str) const;
+            bool operator >=(const String &str) const;
 
-            bool operator ==(const String &text) const;
-            inline bool operator !=(const String &text) const { return !operator ==(text); }
-
-            inline operator const char*() const { return container; }
-            inline char& operator[](int index) { return container[index]; }
-            inline const char& operator[](int index) const { return container[index]; }
+            inline operator const char*() const { return pData->container; }
+            char operator[](int index) const;
     };
     
     /// \brief Constructor de cadenes de texte.
