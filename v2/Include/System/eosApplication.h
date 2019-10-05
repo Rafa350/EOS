@@ -23,6 +23,9 @@ namespace eos {
             ServiceList services;
 
         private:
+            Application(const Application&) = delete;
+            Application& operator=(const Application&) = delete;
+
             void initializeServices();
             void runServices();
 
@@ -46,9 +49,6 @@ namespace eos {
             Service *getService(int id) const;
             Service *getService(const String &serviceName) const;
             inline const ServiceList& getServices() const { return services; }
-
-            Application(const Application&) = delete;
-            Application& operator=(const Application&) = delete;
     };
 }
 

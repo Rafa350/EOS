@@ -1,11 +1,23 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalHeap.h"
+#include "System/eosMath.h"
 #include "System/Core/eosString.h"
 #include <string.h>
 
 
 using namespace eos;
+
+
+struct String::StringData {
+	int refCount;
+	int length;
+	char container[1];
+};
+
+constexpr int minAllocSize = sizeof(uint32_t) * 6;
+
+const char *String::nullStr = "";
 
 
 /// ----------------------------------------------------------------------
@@ -46,6 +58,24 @@ String::String(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Constructor de l'objecte.
+/// \param    cstr: La string a copiar.
+/// \param    index: Caracter inicial a copiar.
+/// ºparam    length: Numero de caracters a copiar.
+///
+String::String(
+	const char *cstr,
+	int index,
+	int length):
+
+	pData(nullptr) {
+
+	if (cstr != nullptr)
+		create(cstr, index, length);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Destructor de l'objecte.
 ///
 String::~String() {
@@ -59,7 +89,7 @@ String::~String() {
 /// \brief    Obte la longitut.
 /// \return   La longitut en bytes.
 ///
-unsigned String::getLength() const {
+int String::getLength() const {
 
 	return pData == nullptr ? 0 : pData->length;
 }
@@ -156,10 +186,19 @@ bool String::operator ==(
 char String::operator[](
 	int index) const {
 
-	if ((pData == nullptr) || ((unsigned) index >= pData->length))
+	if ((pData == nullptr) || (index >= pData->length))
 		return 0;
 	else
 		return pData->container[index];
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brier    Operador const char *
+///
+String::operator const char*() const {
+
+	return pData == nullptr ? nullStr : pData->container;
 }
 
 
@@ -171,17 +210,27 @@ char String::operator[](
 ///
 void String::create(
 	const char *cstr,
-	unsigned index,
-	unsigned length) {
+	int index,
+	int length) {
 
 	eosAssert(pData == nullptr);
 
-	unsigned size = sizeof(StringData) + length;
+	if (length < 0)
+		length = strlen(&cstr[index]);
+
+	// Calcula la longitut del contenidor. Com que StringData ja te
+	// incorporat container[1], no cal afeigir espai pel '/0' final.
+	// Es limita el tamany del bloc per evitoa fragmentar massa la
+	// memoria.
+	//
+	int size = Math::min((int)sizeof(StringData) + length, minAllocSize);
+
 	pData = (StringData*) osalHeapAlloc(NULL, size);
 
 	pData->length = length;
 	pData->refCount = 1;
-	strcpy(pData->container, cstr);
+	strncpy(pData->container, &cstr[index], length);
+	pData->container[length] = 0;
 }
 
 

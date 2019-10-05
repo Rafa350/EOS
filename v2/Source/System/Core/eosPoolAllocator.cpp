@@ -4,7 +4,8 @@
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "osal/osalKernel.h"
+#include "OSAL/osalHeap.h"
+#include "OSAL/osalKernel.h"
 #include "System/Core/eosPoolAllocator.h"
 
 
@@ -12,13 +13,13 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param blockSize: Tamany de cada element en bytes.
-/// \param maxBlocks: Numero maxim d'elements.
+/// \brief    Constructor.
+/// \param    blockSize: Tamany de cada element en bytes.
+/// \param    maxBlocks: Numero maxim d'elements.
 ///
 GenericPoolAllocator::GenericPoolAllocator(
-    unsigned blockSize,
-    unsigned maxBlocks):
+    int blockSize,
+    int maxBlocks):
 
     blockSize(blockSize),
     maxBlocks(maxBlocks),
@@ -27,29 +28,32 @@ GenericPoolAllocator::GenericPoolAllocator(
 
     // Ajusta el tamany minim del block per poder guardar un 'unsigned'
     //
-    if (blockSize < sizeof(unsigned))
-        blockSize = sizeof(unsigned);
+    if (blockSize < (int) sizeof(unsigned))
+        blockSize = (int) sizeof(unsigned);
 
-    blocks = nextBlock = new uint8_t[blockSize * maxBlocks];
+    blocks = (uint8_t*) osalHeapAlloc(NULL, blockSize * maxBlocks);
+    eosAssert(blocks != nullptr);
+
+    nextBlock = blocks;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor.
+/// \brief    Destructor.
 ///
 GenericPoolAllocator::~GenericPoolAllocator() {
 
-    delete[] blocks;
+    osalHeapFree(NULL, blocks);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Reserva un bloc de memoria.
-/// \param size: El tamany del bloc. Com el tamany es fixe, no s'utilitza.
-/// \return El punter al block.
+/// \brief    Reserva un bloc de memoria.
+/// \param    size: El tamany del bloc. Com el tamany es fixe, no s'utilitza.
+/// \return   El punter al block.
 ///
 void *GenericPoolAllocator::allocate(
-    size_t size) {
+    int size) {
 
 	eosAssert(size > 0);
 
@@ -60,7 +64,7 @@ void *GenericPoolAllocator::allocate(
         osalEnterCritical();
 
         if (initializedBlocks < maxBlocks) {
-            unsigned *p = (unsigned*) addrFromIndex(initializedBlocks);
+            int *p = (int*) addrFromIndex(initializedBlocks);
             initializedBlocks += 1;
             *p = initializedBlocks;
         }
@@ -69,7 +73,7 @@ void *GenericPoolAllocator::allocate(
             ret = (void*) nextBlock;
             freeBlocks -= 1;
             if (freeBlocks > 0)
-                nextBlock = addrFromIndex(*((unsigned*) nextBlock) );
+                nextBlock = addrFromIndex(*((int*) nextBlock) );
             else
                 nextBlock = nullptr;
         }
@@ -86,8 +90,8 @@ void *GenericPoolAllocator::allocate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Allivera el bloc de memoria.
-/// \param p: El puntern al bloc de memoria.
+/// \brief    Allivera el bloc de memoria.
+/// \param    p: El puntern al bloc de memoria.
 ///
 void GenericPoolAllocator::deallocate(
     void *p) {
@@ -97,9 +101,9 @@ void GenericPoolAllocator::deallocate(
     osalEnterCritical();
 
     if (nextBlock != nullptr)
-        *((unsigned*)p) = indexFromAddr(nextBlock);
+        *((int*)p) = indexFromAddr(nextBlock);
     else
-        *((unsigned*)p) = maxBlocks;
+        *((int*)p) = maxBlocks;
 
     nextBlock = (uint8_t*) p;
     freeBlocks += 1;
@@ -109,23 +113,23 @@ void GenericPoolAllocator::deallocate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte l'adressa d'un bloc a partir del seu index.
-/// \param i: El index del bloc.
-/// \return L'adressa del bloc.
+/// \brief    Obte l'adressa d'un bloc a partir del seu index.
+/// \param    i: El index del bloc.
+/// \return   L'adressa del bloc.
 ///
 uint8_t *GenericPoolAllocator::addrFromIndex(
-    unsigned i) const {
+    int i) const {
 
     return blocks + (blockSize * i);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obje el index d'un bloc a partir de la seva adressa.
-/// \param p: L'adressa del bloc.
-/// \return El index del bloc.
+/// \brief    Obte el index d'un bloc a partir de la seva adressa.
+/// \param    p: L'adressa del bloc.
+/// \return   El index del bloc.
 ///
-unsigned GenericPoolAllocator::indexFromAddr(
+int GenericPoolAllocator::indexFromAddr(
     const uint8_t *p) const {
 
     return (p - blocks) / blockSize;

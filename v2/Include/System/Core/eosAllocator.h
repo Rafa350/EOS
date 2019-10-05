@@ -11,8 +11,8 @@ namespace eos {
 
     class IAllocator {
         public:
-    		virtual ~IAllocator() {}
-            virtual void *allocate(unsigned size) = 0;
+    		virtual ~IAllocator() = default;
+            virtual void *allocate(int size) = 0;
             virtual void deallocate(void *p) = 0;
     };
 

@@ -25,7 +25,7 @@ HHeap osalHeapCreate() {
 ///
 void *osalHeapAlloc(
     HHeap hHeap,
-	unsigned blockSize) {
+	int blockSize) {
 
     eosAssert(hHeap == NULL);
     eosAssert(blockSize > 0);

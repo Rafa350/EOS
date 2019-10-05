@@ -8,16 +8,16 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte un bloc de memoria
-/// \param[in] blockSize: Tamany del bloc de momoria.
-/// \return Punter al bloc de memoria. nullptr en cas d'error.
+/// \brief    Obte un bloc de memoria
+/// \param    blockSize: Tamany del bloc de momoria.
+/// \return   Punter al bloc de memoria. nullptr en cas d'error.
 ///
 void *HeapAllocator::allocate(
-    unsigned blockSize) {
+    int blockSize) {
 
     // Precondicions
     //
-    eosAssert(blockSize != 0);
+    eosAssert(blockSize > 0);
 
     // Obte el bloc de memoria
     //
@@ -29,8 +29,8 @@ void *HeapAllocator::allocate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Allibera un bloc de memoria.
-/// \param[in] pBlock: Punter al bloc de memoria.
+/// \brief    Allibera un bloc de memoria.
+/// \param    pBlock: Punter al bloc de memoria.
 ///
 void HeapAllocator::deallocate(
     void *pBlock) {

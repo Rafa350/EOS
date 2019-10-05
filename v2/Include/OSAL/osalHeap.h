@@ -16,7 +16,7 @@ typedef struct OSAL_HEAP_DATA *HHeap;
 
 
 HHeap osalHeapCreate();
-void *osalHeapAlloc(HHeap hHeap, unsigned blockSize);
+void *osalHeapAlloc(HHeap hHeap, int blockSize);
 void osalHeapFree(HHeap hHeap, void *pBlock);
 
 

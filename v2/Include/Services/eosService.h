@@ -27,6 +27,9 @@ namespace eos {
             Task thread;
 
         private :
+            Service(const Service &service) = delete;
+            Service& operator=(const Service&) = delete;
+
             void run(Task *pThread);
 
         protected:
@@ -49,9 +52,6 @@ namespace eos {
             
         friend void Application::addService(Service *pService);
         friend void Application::removeService(Service *pService);
-
-        Service(const Service &service) = delete;
-        Service& operator=(const Service&) = delete;
     };
 }
 

@@ -41,7 +41,7 @@ namespace eos {
 
 	class ITouchPadDriver {
 		public:
-			virtual ~ITouchPadDriver() {}
+			virtual ~ITouchPadDriver() = default;
 
 			virtual void initialize() = 0;
 			virtual void shutdown() = 0;

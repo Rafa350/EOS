@@ -15,34 +15,34 @@ namespace eos {
         private:
             uint8_t *blocks;
             uint8_t *nextBlock;
-            unsigned blockSize;
-            unsigned maxBlocks;
-            unsigned freeBlocks;
-            unsigned initializedBlocks;
+            int blockSize;
+            int maxBlocks;
+            int freeBlocks;
+            int initializedBlocks;
 
         public:
-            GenericPoolAllocator(unsigned blockSize, unsigned maxBlocks);
+            GenericPoolAllocator(int blockSize, int maxBlocks);
             virtual ~GenericPoolAllocator();
 
-            void *allocate(size_t size);
-            void deallocate(void *p);
+            void *allocate(int size) override;
+            void deallocate(void *p) override;
 
-            inline unsigned getBlockSize() const { return blockSize; }
-            inline unsigned getUsedBlocks() const { return maxBlocks - freeBlocks; }
-            inline unsigned getFreeBlocks() const { return freeBlocks; }
+            inline int getBlockSize() const { return blockSize; }
+            inline int getUsedBlocks() const { return maxBlocks - freeBlocks; }
+            inline int getFreeBlocks() const { return freeBlocks; }
 
         private:
-            uint8_t *addrFromIndex(unsigned i) const;
-            unsigned indexFromAddr(const uint8_t *p) const;
+            uint8_t *addrFromIndex(int i) const;
+            int indexFromAddr(const uint8_t *p) const;
     };
 
     template <class T>
     class PoolAllocator: public GenericPoolAllocator {
         public:
-            PoolAllocator(unsigned maxBlocks):
+            PoolAllocator(int maxBlocks):
             	GenericPoolAllocator(sizeof(T), maxBlocks) {
             }
-            T *allocate(size_t size) {
+            T *allocate(int size) {
             	return (T*) GenericPoolAllocator::allocate(size);
             }
             void deallocate(T *p) {

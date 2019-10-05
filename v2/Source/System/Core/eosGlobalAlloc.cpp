@@ -15,7 +15,7 @@ void *operator new(
 
     // Precondicions
     //
-    eosAssert(size != 0);
+    eosAssert(size > 0);
 
     void *p = defaultAllocator.allocate(size);
     eosAssert(p != nullptr);

@@ -13,28 +13,26 @@ namespace eos {
     ///
     class String final {
     	private:
-			struct StringData {
-				unsigned refCount;
-				unsigned length;
-				char container[1];
-			};
+    		struct StringData;
 
     	private:
+    		static const char *nullStr;
 			StringData *pData;
 
         private:
-            void create(const char *cstr, unsigned index, unsigned length);
+            void create(const char *cstr, int index, int length);
             void reference(const String &str);
             void release();
 
         public:
             String();
-            String(const char *cstr);
             String(const String &str);
-            String(const String &str, unsigned index, unsigned length);
+            String(const String &str, int index, int length);
+            String(const char *cstr);
+            String(const char *cstr, int index, int length);
             ~String();
             
-            unsigned getLength() const;
+            int getLength() const;
             bool isEmpty() const;
             bool isNull() const;
             
@@ -48,7 +46,7 @@ namespace eos {
             bool operator >(const String &str) const;
             bool operator >=(const String &str) const;
 
-            inline operator const char*() const { return pData->container; }
+            operator const char*() const;
             char operator[](int index) const;
     };
     

@@ -12,7 +12,7 @@ namespace eos {
 
     class HeapAllocator: public IAllocator {
         public:
-            void *allocate(unsigned size);
+            void *allocate(int size);
             void deallocate(void *p);
     };
 }
