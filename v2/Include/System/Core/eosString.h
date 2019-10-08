@@ -36,6 +36,9 @@ namespace eos {
             bool isEmpty() const;
             bool isNull() const;
             
+            int isEqual(const char *cstr) const;
+            inline int isEqual(const String &str) const { return isEqual((const char *) str); }
+
             String& operator = (const char *cstr);
             String& operator = (const String &str);
 

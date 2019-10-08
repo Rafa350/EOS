@@ -21,6 +21,24 @@ const char *String::nullStr = "";
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Comprova si un punter apunta a la ram.
+/// \param 	  p: El punter.
+/// \return   True si apunta a la ram.
+
+static inline bool isPtrRam(
+	void *p) {
+
+	extern unsigned _sdata;
+	extern unsigned _edata;
+
+	void *pStart = &_sdata;
+	void *pEnd = &_edata;
+
+	return (p >= pStart) && (p <= pEnd);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Contructor de l'objecte. Crea una string buida.
 ///
 String::String():
@@ -51,6 +69,10 @@ String::String(
 	const char *cstr):
 
 	pData(nullptr) {
+
+	if (isPtrRam((void*)cstr)) {
+
+	}
 
 	if (cstr != nullptr)
 		create(cstr, 0, strlen(cstr));
@@ -112,6 +134,21 @@ bool String::isEmpty() const {
 bool String::isNull() const {
 
 	return pData == nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si dues strings son iguals.
+/// \param    cstr: La string a comparar.
+/// \return   True si son iguals.
+///
+int String::isEqual(
+	const char *cstr) const {
+
+	if (pData == nullptr)
+		return cstr == nullptr;
+	else
+		return strcmp(pData->container, cstr) == 0;
 }
 
 

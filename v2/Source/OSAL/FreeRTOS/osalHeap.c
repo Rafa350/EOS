@@ -51,3 +51,16 @@ void osalHeapFree(
 
 	vPortFree(pBlock);
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte informacio del heap.
+/// ºparam    hHeap: El handler del heap;
+/// \param    pInfo: Adressa on deixar el resultat.
+///
+void osalHeapGetInformation(
+	HHeap hHeap,
+	HeapInformation *pInfo) {
+
+	eosAssert(pInfo != nullptr);
+}
