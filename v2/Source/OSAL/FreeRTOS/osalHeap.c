@@ -62,5 +62,5 @@ void osalHeapGetInformation(
 	HHeap hHeap,
 	HeapInformation *pInfo) {
 
-	eosAssert(pInfo != nullptr);
+	eosAssert(pInfo != NULL);
 }

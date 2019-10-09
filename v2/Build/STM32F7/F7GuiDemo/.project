@@ -1054,6 +1054,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosLabel.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosMenu.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosMenu.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosMenuItem.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosMenuItem.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosPanel.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosPanel.h</locationURI>

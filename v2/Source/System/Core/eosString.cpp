@@ -21,20 +21,17 @@ const char *String::nullStr = "";
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Comprova si un punter apunta a la ram.
-/// \param 	  p: El punter.
-/// \return   True si apunta a la ram.
+/// \brief    Comprova si una string es una constant definida en ROM
+/// \param 	  cstr: La string.
+/// \return   True si es constant.
 
-static inline bool isPtrRam(
-	void *p) {
+static inline bool isConst(
+	const char *cstr) {
 
-	extern unsigned _sdata;
-	extern unsigned _edata;
+	extern char _stext; // Declarada en el script del linker inici de la ROM
+	extern char _etext; // Declarada en el script del linker final de la ROM
 
-	void *pStart = &_sdata;
-	void *pEnd = &_edata;
-
-	return (p >= pStart) && (p <= pEnd);
+	return (cstr >= &_stext) && (cstr <= &_etext);
 }
 
 
@@ -70,7 +67,7 @@ String::String(
 
 	pData(nullptr) {
 
-	if (isPtrRam((void*)cstr)) {
+	if (isConst(cstr)) {
 
 	}
 
