@@ -52,9 +52,11 @@ SECTIONS {
     /* Constant data goes into FLASH */
     .rodata : {
         . = ALIGN(4);
+        _stext2 = .;
         *(.rodata)         /* .rodata sections (constants, strings, etc.) */
         *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
         . = ALIGN(4);
+        _etext2 = .;
     } >FLASH
 
     .ARM.extab : { 

@@ -10,14 +10,13 @@ using namespace eos;
 
 
 struct String::StringData {
-	int refCount;
-	int length;
-	char container[1];
+	int refCount;                 // Contador de referencies.
+	int length;                   // Longitut de la string.
+	const char *ptr;              // Punter a la cadena.
+	char container[1];            // Primer caracter del contenidor de la cadena.
 };
 
-constexpr int minAllocSize = sizeof(uint32_t) * 6;
-
-const char *String::nullStr = "";
+const char *String::nullStr = ""; // Cadena buida.
 
 
 /// ----------------------------------------------------------------------
@@ -28,10 +27,14 @@ const char *String::nullStr = "";
 static inline bool isConst(
 	const char *cstr) {
 
-	extern char _stext; // Declarada en el script del linker inici de la ROM
-	extern char _etext; // Declarada en el script del linker final de la ROM
+	extern char _stext2; // Declarada en el script del linker inici de la ROM
+	extern char _etext2; // Declarada en el script del linker final de la ROM
 
-	return (cstr >= &_stext) && (cstr <= &_etext);
+	unsigned start = unsigned(&_stext2);
+	unsigned end = unsigned(&_etext2);
+	unsigned addr = unsigned(cstr);
+
+	return (addr >= start) && (addr <= end);
 }
 
 
@@ -67,12 +70,8 @@ String::String(
 
 	pData(nullptr) {
 
-	if (isConst(cstr)) {
-
-	}
-
 	if (cstr != nullptr)
-		create(cstr, 0, strlen(cstr));
+		create(cstr, 0, -1);
 }
 
 
@@ -80,7 +79,7 @@ String::String(
 /// \brief    Constructor de l'objecte.
 /// \param    cstr: La string a copiar.
 /// \param    index: Caracter inicial a copiar.
-/// ºparam    length: Numero de caracters a copiar.
+/// \param    length: Numero de caracters a copiar.
 ///
 String::String(
 	const char *cstr,
@@ -89,7 +88,7 @@ String::String(
 
 	pData(nullptr) {
 
-	if (cstr != nullptr)
+	if ((cstr != nullptr) && (length > 0))
 		create(cstr, index, length);
 }
 
@@ -145,7 +144,7 @@ int String::isEqual(
 	if (pData == nullptr)
 		return cstr == nullptr;
 	else
-		return strcmp(pData->container, cstr) == 0;
+		return strcmp(pData->ptr, cstr) == 0;
 }
 
 
@@ -160,7 +159,7 @@ String& String::operator = (
 		release();
 
 	if (cstr != nullptr)
-		create(cstr, 0, strlen(cstr));
+		create(cstr, 0, -1);
 
 	return *this;
 }
@@ -208,7 +207,7 @@ bool String::operator ==(
 	// Si arriba aqui compara les dues string caracter a caracter.
 	//
 	else
-		return strcmp(pData->container, str.pData->container) == 0;
+		return strcmp(pData->ptr, str.pData->ptr) == 0;
 }
 
 
@@ -220,10 +219,10 @@ bool String::operator ==(
 char String::operator[](
 	int index) const {
 
-	if ((pData == nullptr) || (index >= pData->length))
+	if ((pData == nullptr) || (index < 0) || (index >= pData->length))
 		return 0;
 	else
-		return pData->container[index];
+		return pData->ptr[index];
 }
 
 
@@ -232,7 +231,7 @@ char String::operator[](
 ///
 String::operator const char*() const {
 
-	return pData == nullptr ? nullStr : pData->container;
+	return pData == nullptr ? nullStr : pData->ptr;
 }
 
 
@@ -248,23 +247,38 @@ void String::create(
 	int length) {
 
 	eosAssert(pData == nullptr);
+	eosAssert(index >= 0);
 
+	int totalLength = strlen(cstr);
 	if (length < 0)
-		length = strlen(&cstr[index]);
+		length = totalLength;
+	length = Math::min(length - index, totalLength);
 
-	// Calcula la longitut del contenidor. Com que StringData ja te
-	// incorporat container[1], no cal afeigir espai pel '/0' final.
-	// Es limita el tamany del bloc per evitoa fragmentar massa la
-	// memoria.
-	//
-	int size = Math::min((int)sizeof(StringData) + length, minAllocSize);
+	if (isConst(cstr) && (index == 0) && (length == totalLength)) {
 
-	pData = (StringData*) osalHeapAlloc(NULL, size);
+		pData = (StringData*) osalHeapAlloc(nullptr, int(sizeof(StringData) - 1));
+		eosAssert(pData != nullptr);
+
+		pData->ptr = cstr;
+	}
+
+	else {
+
+		// Reserva memoria pel contenidor. Com que StringData ja te
+		// incorporat container[1], no cal afeigir espai pel '/0' final.
+		// Es limita el tamany minim del bloc per evitar fragmentar massa la
+		// memoria.
+		//
+		pData = (StringData*) osalHeapAlloc(nullptr, int(sizeof(StringData)) + length);
+		eosAssert(pData != nullptr);
+
+		pData->ptr = pData->container;
+		strncpy(pData->container, &cstr[index], length);
+		pData->container[length] = 0;
+	}
 
 	pData->length = length;
 	pData->refCount = 1;
-	strncpy(pData->container, &cstr[index], length);
-	pData->container[length] = 0;
 }
 
 

@@ -1139,6 +1139,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosLabel.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosMenu.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosMenu.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosMenuItem.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosMenuItem.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosPanel.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosPanel.cpp</locationURI>
