@@ -216,7 +216,7 @@ void GuiService::onInitialize() {
 
 	StackPanel *sp = new StackPanel();
 	sp->setMargin(Thickness(50, 10, 50, 10));
-	sp->setHorizontalAlignment(HorizontalAlignment::stretch);
+	sp->setHorizontalAlignment(HorizontalAlignment::center);
 	sp->setVerticalAlignment(VerticalAlignment::center);
 	screen->addChild(sp);
 	String hola("hola");
@@ -229,7 +229,7 @@ void GuiService::onInitialize() {
 		l->setText(hola);
 
 		PushButton *pb = new PushButton();
-		pb->setHorizontalAlignment(HorizontalAlignment::stretch);
+		pb->setHorizontalAlignment(HorizontalAlignment::center);
 		pb->setVerticalAlignment(VerticalAlignment::center);
 		pb->setMargin(Thickness(10, 5, 10, 5));
 		pb->setContent(l);

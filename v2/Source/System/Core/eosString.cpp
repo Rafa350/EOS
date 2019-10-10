@@ -13,26 +13,25 @@ struct String::StringData {
 	int refCount;                 // Contador de referencies.
 	int length;                   // Longitut de la string.
 	const char *ptr;              // Punter a la cadena.
-	char container[1];            // Primer caracter del contenidor de la cadena.
 };
 
 const char *String::nullStr = ""; // Cadena buida.
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Comprova si una string es una constant definida en ROM
-/// \param 	  cstr: La string.
+/// \brief    Comprova si apunte al area de ROM
+/// \param 	  ptr: El punter
 /// \return   True si es constant.
 
-static inline bool isConst(
-	const char *cstr) {
+static inline bool isRomPointer(
+	const void *ptr) {
 
 	extern char _stext2; // Declarada en el script del linker inici de la ROM
 	extern char _etext2; // Declarada en el script del linker final de la ROM
 
 	unsigned start = unsigned(&_stext2);
 	unsigned end = unsigned(&_etext2);
-	unsigned addr = unsigned(cstr);
+	unsigned addr = unsigned(ptr);
 
 	return (addr >= start) && (addr <= end);
 }
@@ -58,6 +57,24 @@ String::String(
 
 	if (!str.isNull())
 		reference(str);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor. Crea la string a partir d'una part d'un altre.
+/// \param    str: La string a copiar
+/// \param    index: primer caracter a copiar.
+/// \param    length: Numero de caracters a copiar.
+///
+String::String(
+	const String &str,
+	int index,
+	int length):
+
+	pData(nullptr) {
+
+	if (!str.isNull())
+		create(str, index, length);
 }
 
 
@@ -254,9 +271,9 @@ void String::create(
 		length = totalLength;
 	length = Math::min(length - index, totalLength);
 
-	if (isConst(cstr) && (index == 0) && (length == totalLength)) {
+	if (isRomPointer(cstr) && (index == 0) && (length == totalLength)) {
 
-		pData = (StringData*) osalHeapAlloc(nullptr, int(sizeof(StringData) - 1));
+		pData = (StringData*) osalHeapAlloc(nullptr, int(sizeof(StringData)));
 		eosAssert(pData != nullptr);
 
 		pData->ptr = cstr;
@@ -264,17 +281,12 @@ void String::create(
 
 	else {
 
-		// Reserva memoria pel contenidor. Com que StringData ja te
-		// incorporat container[1], no cal afeigir espai pel '/0' final.
-		// Es limita el tamany minim del bloc per evitar fragmentar massa la
-		// memoria.
-		//
-		pData = (StringData*) osalHeapAlloc(nullptr, int(sizeof(StringData)) + length);
+		pData = (StringData*) osalHeapAlloc(nullptr, int(sizeof(StringData)) + length + 1);
 		eosAssert(pData != nullptr);
 
-		pData->ptr = pData->container;
-		strncpy(pData->container, &cstr[index], length);
-		pData->container[length] = 0;
+		pData->ptr = (char*)pData + sizeof(StringData);
+		strncpy((char*) pData->ptr, &cstr[index], length);
+		((char*)pData->ptr)[length] = 0;
 	}
 
 	pData->length = length;
