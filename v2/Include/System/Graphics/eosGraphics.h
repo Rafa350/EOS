@@ -138,6 +138,7 @@ namespace eos {
             bool clipLine(int &x1, int &y1, int &x2, int &y2) const;
             bool clipRectangle(int &x1, int &y1, int &x2, int &y2) const;
             static bool clipTest(int p, int q, int &t1, int &t2);
+            void transform(int &x, int &y) const;
     };
 
 }

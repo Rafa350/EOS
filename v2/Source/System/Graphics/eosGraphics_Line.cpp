@@ -22,8 +22,8 @@ void Graphics::drawLine(
 
 	// Transforma a coordinades fisiques
 	//
-	state.ct.apply(x1, y1);
-	state.ct.apply(x2, y2);
+	transform(x1, y1);
+	transform(x2, y2);
 
     if (clipLine(x1, y1, x2, y2)) {
 
@@ -133,8 +133,8 @@ void Graphics::drawHLine(
 	// Transforma a coordinades fisiques
 	//
 	int y2 = y;
-	state.ct.apply(x1, y);
-	state.ct.apply(x2, y2);
+	transform(x1, y);
+	transform(x2, y2);
 
 	if (clipHLine(x1, x2, y)) {
 
@@ -160,8 +160,8 @@ void Graphics::drawVLine(
 	// Transforma a coordinades fisiques
 	//
 	int x2 = x;
-	state.ct.apply(x, y1);
-	state.ct.apply(x2, y2);
+	transform(x, y1);
+	transform(x2, y2);
 
 	if (clipVLine(x, y1, y2)) {
 

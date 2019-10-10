@@ -44,8 +44,8 @@ void Graphics::fillRectangle(
 
     // Transforma a coordinades fisiques.
 	//
-	state.ct.apply(x1, y1);
-	state.ct.apply(x2, y2);
+	transform(x1, y1);
+	transform(x2, y2);
 
 	// Normalitza les coordinades.
 	//

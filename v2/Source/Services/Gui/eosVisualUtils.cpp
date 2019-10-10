@@ -42,7 +42,7 @@ Rect VisualUtils::getClip(
 
 	Rect clip(0, 0, INT32_MAX, INT32_MAX);
 	while (pVisual != nullptr) {
-		Rect bounds(pVisual->getBounds());
+		const Rect& bounds(pVisual->getBounds());
 		clip = clip.intersect(bounds.getSize());
 		clip = clip.offset(bounds.getPosition());
 		pVisual = pVisual->getParent();

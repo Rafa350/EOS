@@ -438,3 +438,11 @@ bool Graphics::clipRectangle(
 
 	return (x1 <= x2) && (y1 <= y2);
 }
+
+
+void Graphics::transform(
+	int &x,
+	int &y) const {
+
+	state.ct.apply(x, y);
+}

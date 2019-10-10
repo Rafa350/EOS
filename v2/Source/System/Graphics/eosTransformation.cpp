@@ -7,7 +7,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor per defecte. Crea una matriu identitat.
+/// \brief    Contructor per defecte. Crea una matriu identitat.
 ///
 Transformation::Transformation() {
 
@@ -16,8 +16,8 @@ Transformation::Transformation() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor copia.
-/// \param t: La transformacio a copiar.
+/// \brief    Constructor copia.
+/// \param    t: La transformacio a copiar.
 ///
 Transformation::Transformation(
     const Transformation &t) {
@@ -27,13 +27,13 @@ Transformation::Transformation(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor. Creacio a partir dels seus components.
-/// \param m11: Component m11.
-/// \param m12: Component m12.
-/// \param m21: Component m21.
-/// \param m22: Component m22.
-/// \param tx: Component tx.
-/// \param ty: Component ty.
+/// \brief    Constructor. Creacio a partir dels seus components.
+/// \param    m11: Component m11.
+/// \param    m12: Component m12.
+/// \param    m21: Component m21.
+/// \param    m22: Component m22.
+/// \param    tx: Component tx.
+/// \param    ty: Component ty.
 ///
 Transformation::Transformation(
     int m11,
@@ -58,8 +58,8 @@ Transformation::Transformation(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor. Creacio a partir d'una matriu.
-/// \param m: Matriu inicial.
+/// \brief    Contructor. Creacio a partir d'una matriu.
+/// \param    m: Matriu inicial.
 ///
 Transformation::Transformation(
 	const Matrix &m) {
@@ -69,7 +69,7 @@ Transformation::Transformation(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza la transformacio amb la nmatriu identitat.
+/// \brief    Inicialitza la transformacio amb la nmatriu identitat.
 ///
 void Transformation::identity() {
 
@@ -88,9 +88,9 @@ void Transformation::identity() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix una translacio a la matriu.
-/// \param tx: Component X de la translacio.
-/// \param ty: Component Y de la translacio.
+/// \brief    Afegeix una translacio a la matriu.
+/// \param    tx: Component X de la translacio.
+/// \param    ty: Component Y de la translacio.
 ///
 void Transformation::translate(
 	int tx,
@@ -116,11 +116,11 @@ void Transformation::translate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix un escalat respecte a un punt.
-/// \param sx: Escalat en el eix X.
-/// \param sy: Escalat en el eix Y.
-/// \param ox: Coordinada X de l'origen del escalat.
-/// \param oy: Coordinada Y de l'origen del escalat.
+/// \brief    Afegeix un escalat respecte a un punt.
+/// \param    sx: Escalat en el eix X.
+/// \param    sy: Escalat en el eix Y.
+/// \param    ox: Coordinada X de l'origen del escalat.
+/// \param    oy: Coordinada Y de l'origen del escalat.
 ///
 void Transformation::scale(
 	int sx,
@@ -162,8 +162,8 @@ void Transformation::rotate(
 
 
 /// ----------------------------------------------------------------------
-/// \bried Combina amb un altre matriu.
-/// \param t: La transformacio per combinar.
+/// \bried    Combina amb un altre matriu.
+/// \param    t: La transformacio per combinar.
 ///
 void Transformation::combine(
 	const Transformation &t) {
@@ -176,9 +176,9 @@ void Transformation::combine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Aplica la tranasformacio a un punt.
-/// \param x: Coordinada X del punt.
-/// \param y: Coordinada Y del punt.
+/// \brief    Aplica la tranasformacio a un punt.
+/// \param    x: Coordinada X del punt.
+/// \param    y: Coordinada Y del punt.
 ///
 void Transformation::apply(
 	int &x,
@@ -191,8 +191,8 @@ void Transformation::apply(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador '*'.
-/// \param t: La transformacio a asignar.
+/// \brief    Operador '*'.
+/// \param    t: La transformacio a asignar.
 ///
 Transformation& Transformation::operator = (
     const Transformation &t) {
@@ -203,8 +203,8 @@ Transformation& Transformation::operator = (
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador '*'.
-/// \param t: La transformacio per multiplicar.
+/// \brief    Operador '*'.
+/// \param    t: La transformacio per multiplicar.
 ///
 Transformation Transformation::operator *(
 	const Transformation &t) const {
@@ -217,8 +217,8 @@ Transformation Transformation::operator *(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador '*='.
-/// \param t: La transformacio per multiplicar.
+/// \brief    Operador '*='.
+/// \param    t: La transformacio per multiplicar.
 ///
 Transformation& Transformation::operator *=(
 	const Transformation &t) {
@@ -233,11 +233,11 @@ Transformation& Transformation::operator *=(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Multiplica dues matrius.
-/// \param dst: Destinacio del resultat.
-/// \param m1: Primera matriu a multiplicat.
-/// \param m2: Segona matriu a multiplicar.
-/// \param rm: Matriu resultat de l'operacio.
+/// \brief    Multiplica dues matrius.
+/// \param    dst: Destinacio del resultat.
+/// \param    m1: Primera matriu a multiplicat.
+/// \param    m2: Segona matriu a multiplicar.
+/// \param    rm: Matriu resultat de l'operacio.
 ///
 void Transformation::multiply(
 	Matrix &rm,

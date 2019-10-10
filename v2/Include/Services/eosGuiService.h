@@ -61,7 +61,7 @@ namespace eos {
 		public:
 			GuiService(Application *application);
 			GuiService(Application *application, const GuiServiceConfiguration &configuration);
-			inline Screen* getRootVisual() const { return screen; }
+			inline Screen* getScreen() const { return screen; }
 			inline Visual* getActiveVisual() const { return active; }
 			Visual *getVisualAt(const Point &position) const;
 			void setActiveVisual(Visual *pVisual);
