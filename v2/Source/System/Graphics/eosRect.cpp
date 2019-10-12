@@ -20,10 +20,10 @@ Rect::Rect():
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor de l'objecte.
-/// \param    x: Coordinada X.
-/// \param    y: Coordinada Y.
+/// \param    x: Posicio X.
+/// \param    y: Posicio Y.
 /// \param    width: Amplada.
-/// \param    height: Al�ada.
+/// \param    height: Alçada.
 ///
 Rect::Rect(
 	int x,
@@ -110,43 +110,33 @@ Rect::Rect(
 
 /// ----------------------------------------------------------------------
 /// \brief    Infla un rectangle.
-/// \param    t: Gruixos per inflar.
+/// \param    left: Inflat per l'esquerra.
+/// \param    top: Inflat per dalt.
+/// \param    right: Inflat per la dreta.
+/// \param    bottom: Inflat per avall.
 /// \return   El resultat.
 ///
-Rect Rect::inflate(
-	const Thickness &t) const {
+Rect Rect::inflated(
+	int left,
+	int top,
+	int right,
+	int bottom) const {
 
 	return Rect(
-		x - t.getLeft(),
-		y - t.getTop(),
-		width + t.getLeft() + t.getRight(),
-		height + t.getTop() + t.getBottom());
+		x - left,
+		y - top,
+		Math::max(0, width + left + right),
+		Math::max(0, height + top + bottom));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desinfla un rectangle.
-/// \param    t: Gruixos per desinflar.
-/// \return   El resultat.
-///
-Rect Rect::deflate(
-	const Thickness &t) const {
-
-	return Rect(
-		x + t.getLeft(),
-		y + t.getTop(),
-		Math::max(0, width - t.getLeft() - t.getRight()),
-		Math::max(0, height - t.getTop() - t.getBottom()));
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Desplaça un rectangle.
+/// \brief    Obte un rectangle desplaçat.
 /// \param    x: Desplaçament X.
 /// \param    y: Desplaçament Y.
 /// \return   El rectangle resultant de l'operacio.
 ///
-Rect Rect::offset(
+Rect Rect::translated(
 	int x,
 	int y) const {
 
@@ -159,7 +149,7 @@ Rect Rect::offset(
 /// \return   El resultat de la interseccio.
 /// \remarks  El resultat SEMPRE sera un rectangle normalitzat.
 ///
-Rect Rect::intersect(
+Rect Rect::intersected(
 	const Rect &r) const {
 
 	int x1 = Math::max(x, r.x);
@@ -179,6 +169,12 @@ Rect Rect::intersect(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si el rectangle conte el punt especificat.
+/// \param    x: Coordinada X del punt.
+/// \param    y: Coordinada Y del punt.
+/// \return   True si conte el punt.
+///
 bool Rect::contains(
 	int x,
 	int y) const {

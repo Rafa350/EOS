@@ -13,10 +13,9 @@ namespace eos {
 
 	namespace VisualUtils {
 
-		Rect getClip(Visual *pVisual);
-		Point getPosition(Visual *pVisual);
-		Visual *getVisual(Visual *pVisual, const Point &p);
-
+		Rect getClip(Visual *visual);
+		Point getPosition(Visual *visual);
+		Visual *getVisual(Visual *visual, const Point &p);
 	}
 
 }

@@ -7,7 +7,7 @@
 
 using namespace eos;
 
-static Application *pApplication = nullptr;
+static Application *application = nullptr;
 
 
 /// ----------------------------------------------------------------------
@@ -15,9 +15,9 @@ static Application *pApplication = nullptr;
 ///
 Application::Application() {
 
-	eosAssert(pApplication == nullptr);
+	eosAssert(application == nullptr);
 
-    pApplication = this;
+    application = this;
 }
 
 
@@ -28,10 +28,10 @@ Application::~Application() {
 
     while (!services.isEmpty()) {
 
-    	Service *pService = services.getFront();
-    	services.remove(pService);
+    	Service *service = services.getFront();
+    	services.remove(service);
 
-    	delete pService;
+    	delete service;
     }
 }
 
@@ -42,7 +42,7 @@ Application::~Application() {
 ///
 Application *Application::getApplication() {
 
-	return pApplication;
+	return application;
 }
 
 
@@ -118,39 +118,39 @@ void Application::runServices() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Afegeix un servei a l'aplicacio.
-/// \param    pService: El servei a afeigir.
+/// \param    service: El servei a afeigir.
 ///
 void Application::addService(
-    Service *pService) {
+    Service *service) {
 
     // Precondicions
     //
-    eosAssert(pService != nullptr);
-    eosAssert(pService->pApplication == nullptr);
+    eosAssert(service != nullptr);
+    eosAssert(service->application == nullptr);
 
     /// Afegeix el servei
     //
-    services.add(pService);
-    pService->pApplication = this;
+    services.add(service);
+    service->application = this;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Elimina un servei de l'aplicacio
-/// \param    pService: El servei a eliminar.
+/// \param    service: El servei a eliminar.
 ///
 void Application::removeService(
-    Service *pService) {
+    Service *service) {
 
     // Precondicions
     //
-    eosAssert(pService != nullptr);
-    eosAssert(pService->pApplication == this);
+    eosAssert(service != nullptr);
+    eosAssert(service->application == this);
 
     // Elimina el servei
     //
-    pService->pApplication = nullptr;
-    services.remove(pService);
+    service->application = nullptr;
+    services.remove(service);
 }
 
 
@@ -173,9 +173,9 @@ Service *Application::getService(
     int id) const {
 
   	for (ServiceListIterator it(services); it.hasNext(); it.next()) {
-   		Service *pService = it.current();
-        if (pService->getId() == id)
-            return pService;
+   		Service *service = it.current();
+        if (service->getId() == id)
+            return service;
     }
 
     return nullptr;
@@ -191,9 +191,9 @@ Service *Application::getService(
     const String& name) const {
 
   	for (ServiceListIterator it(services); it.hasNext(); it.next()) {
-   		Service *pService = it.current();
-        if (pService->getName() == name)
-            return pService;
+   		Service *service = it.current();
+        if (service->getName() == name)
+            return service;
     }
 
     return nullptr;

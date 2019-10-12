@@ -10,31 +10,31 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de la imatge.
+/// \brief    Constructor de la imatge.
 ///
 Image::Image() :
-	pBitmap(nullptr) {
+	bitmap(nullptr) {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna un bitmap a la imatge.
-/// \param newBitmap: El nou bitmap.
+/// \brief    Asigna un bitmap a la imatge.
+/// \param    value: El nou bitmap.
 ///
 void Image::setBitmap(
-	Bitmap *newBitmap) {
+	Bitmap *value) {
 
-	if (pBitmap != newBitmap){
-		pBitmap = newBitmap;
+	if (bitmap != value){
+		bitmap = value;
 		invalidate();
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Renderitza la imatge.
-/// \param context: El context de renderitzat.
+/// \brief    Renderitza la imatge.
+/// \param    context: El context de renderitzat.
 ///
 void Image::onRender(
 	RenderContext &context) {
@@ -45,7 +45,7 @@ void Image::onRender(
 
 	// Dibuixa la imatge.
 	//
-	g.drawBitmap(0, 0, pBitmap);
+	g.drawBitmap(0, 0, bitmap);
 
 	// Finalitza el renderitzat.
 	//

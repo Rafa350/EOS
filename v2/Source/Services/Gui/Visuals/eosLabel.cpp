@@ -80,13 +80,13 @@ Size Label::measureOverride(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el color del text.
-/// \param    color: El color.
+/// \param    value: El color.
 ///
 void Label::setTextColor(
-	const Color &color) {
+	const Color &value) {
 
-	if (textColor != color) {
-		textColor = color;
+	if (textColor != value) {
+		textColor = value;
 		invalidate();
 	}
 }
@@ -94,13 +94,13 @@ void Label::setTextColor(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el nom del font.
-/// \param    fontname: El nom del font.
+/// \param    value: El nom del font.
 ///
 void Label::setFontName(
-	const String &fontName) {
+	const String &value) {
 
-	if (this->fontName != fontName) {
-		this->fontName = fontName;
+	if (fontName != value) {
+		fontName = value;
 		invalidate();
 	}
 }
@@ -108,13 +108,13 @@ void Label::setFontName(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el tamany del font.
-/// \param    fontHeight: El tamany del font.
+/// \param    value: El tamany del font.
 ///
 void Label::setFontHeight(
-	int fontHeight) {
+	int value) {
 
-	if (this->fontHeight != fontHeight) {
-		this->fontHeight = fontHeight;
+	if (fontHeight != value) {
+		fontHeight = value;
 		invalidate();
 	}
 }
@@ -122,13 +122,13 @@ void Label::setFontHeight(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna L'estil del font.
-/// \param    fontStyle: L'estil del font.
+/// \param    value: L'estil del font.
 ///
 void Label::setFontStyle(
-	FontStyle fontStyle) {
+	FontStyle value) {
 
-	if (this->fontStyle != fontStyle) {
-		this->fontStyle = fontStyle;
+	if (fontStyle != value) {
+		fontStyle = value;
 		invalidate();
 	}
 }
@@ -136,13 +136,13 @@ void Label::setFontStyle(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el color del fons.
-/// \param    color: El color.
+/// \param    value: El color.
 ///
 void Label::setBackgroundColor(
-	const Color &color) {
+	const Color &value) {
 
-	if (backgroundColor != color) {
-		backgroundColor = color;
+	if (backgroundColor != value) {
+		backgroundColor = value;
 		invalidate();
 	}
 }
@@ -150,13 +150,13 @@ void Label::setBackgroundColor(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna l'aliniacio horitzontal del text.
-/// \param    align: L'aliniacio.
+/// \param    value: L'aliniacio.
 ///
 void Label::setHorizontalTextAlign(
-	HorizontalTextAlign align) {
+	HorizontalTextAlign value) {
 
-	if (horizontalTextAlign != align) {
-		horizontalTextAlign = align;
+	if (horizontalTextAlign != value) {
+		horizontalTextAlign = value;
 		invalidate();
 	}
 }
@@ -164,13 +164,13 @@ void Label::setHorizontalTextAlign(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna l'aliniacio vertical del text.
-/// \param    align: L'aliniacio.
+/// \param    value: L'aliniacio.
 ///
 void Label::setVerticalTextAlign(
-	VerticalTextAlign align) {
+	VerticalTextAlign value) {
 
-	if (verticalTextAlign != align) {
-		verticalTextAlign = align;
+	if (verticalTextAlign != value) {
+		verticalTextAlign = value;
 		invalidate();
 	}
 }
@@ -178,13 +178,13 @@ void Label::setVerticalTextAlign(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el text.
-/// \param    text: El text.
+/// \param    value: El text.
 ///
 void Label::setText(
-	const String &text) {
+	const String &value) {
 
-	if (this->text != text) {
-		this->text = text;
+	if (text != value) {
+		text = value;
 		invalidate();
 	}
 }
@@ -195,11 +195,11 @@ void Label::setText(
 /// \param    context: Context de renderitzat.
 ///
 void Label::onRender(
-	RenderContext &context) {
+	RenderContext *context) {
 
 	// Inicia el renderitzat
 	//
-	Graphics &g = context.beginRender(this);
+	Graphics &g = context->beginRender(this);
 
 	// Obte les mides de l'area de dibuix
 	//
@@ -226,7 +226,7 @@ void Label::onRender(
 
 	// Finalitza el renderitzat.
 	//
-	context.endRender();
+	context->endRender();
 }
 
 

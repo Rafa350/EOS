@@ -23,11 +23,11 @@ namespace eos {
     		PushButtonState state;
     
         protected:
-        	void onRender(RenderContext &context) override;
+        	void onRender(RenderContext *context) override;
             void onPress() override;
             void onRelease() override;
 
-            void setState(PushButtonState state);
+            void setState(PushButtonState value);
 
         public:
             PushButton();

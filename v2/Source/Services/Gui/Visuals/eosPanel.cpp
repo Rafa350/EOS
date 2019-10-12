@@ -21,13 +21,13 @@ Panel::Panel() :
 
 /// ----------------------------------------------------------------------
 /// \brief    Assigna el color.
-/// \param    color: El color.
+/// \param    value: El color.
 ///
 void Panel::setColor(
-	const Color &color) {
+	const Color &value) {
 
-	if (this->color != color) {
-		this->color = color;
+	if (color != value) {
+		color = value;
 		invalidate();
 	}
 }
@@ -38,13 +38,13 @@ void Panel::setColor(
 /// \param    context: El context de renderitzat.
 //
 void Panel::onRender(
-	RenderContext &context) {
+	RenderContext *context) {
 
 	if (!color.isTransparent()) {
 
 		// Inicia el renderitzat.
 		//
-		Graphics &g = context.beginRender(this);
+		Graphics &g = context->beginRender(this);
 
 		// Obte les mides de l'area de dibuix.
 		//
@@ -59,6 +59,6 @@ void Panel::onRender(
 
 		// Finalitza el renderitzat.
 		//
-		context.endRender();
+		context->endRender();
 	}
 }

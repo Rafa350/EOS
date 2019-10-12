@@ -10,22 +10,22 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief Converteix un punt a coordinades de pantalla.
-/// \param    pVisual: El visual.
+/// \param    visual: El visual.
 /// \param    p: El punt en coordinades relatives al visual.
 /// \return   El punt en coordinades absolutes de pantalla.
 ///
 Point VisualUtils::getPosition(
-	Visual *pVisual) {
+	Visual *visual) {
 
 	int x = 0;
 	int y = 0;
 
-	while (pVisual != nullptr) {
-		const Rect& bounds = pVisual->getBounds();
+	while (visual != nullptr) {
+		const Rect& bounds = visual->getBounds();
 		x += bounds.getX();
 		y += bounds.getY();
 
-		pVisual = pVisual->getParent();
+		visual = visual->getParent();
 	}
 
 	return Point(x, y);
@@ -34,18 +34,18 @@ Point VisualUtils::getPosition(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el rectangle de retall d'un visual.
-/// \param    pVisual: El visual.
+/// \param    visual: El visual.
 /// \return   El rectangle de retall.
 ///
 Rect VisualUtils::getClip(
-	Visual *pVisual) {
+	Visual *visual) {
 
 	Rect clip(0, 0, INT32_MAX, INT32_MAX);
-	while (pVisual != nullptr) {
-		const Rect& bounds(pVisual->getBounds());
-		clip = clip.intersect(bounds.getSize());
-		clip = clip.offset(bounds.getPosition());
-		pVisual = pVisual->getParent();
+	while (visual != nullptr) {
+		const Rect& bounds(visual->getBounds());
+		clip = clip.intersected(bounds.getSize());
+		clip = clip.translated(bounds.getPosition());
+		visual = visual->getParent();
 	}
 
 	return clip;
@@ -59,25 +59,25 @@ Rect VisualUtils::getClip(
 /// \return   El visual. Si no el troba retorna nullptr.
 ///
 Visual *VisualUtils::getVisual(
-	Visual *pVisual,
+	Visual *visual,
 	const Point &p) {
 
-	if (pVisual->isVisible()) {
+	if (visual->isVisible()) {
 
-		Rect bounds = pVisual->getBounds();
+		Rect bounds = visual->getBounds();
 
 		Rect testRect(bounds.getSize());
-		Point testPoint = p.offset(-bounds.getX(), -bounds.getY());
+		Point testPoint = p.translated(-bounds.getX(), -bounds.getY());
 
 		if (testRect.contains(testPoint)) {
-			for (VisualListIterator it(pVisual->getChilds()); it.hasNext(); it.next()) {
-				Visual *pChild = it.current();
+			for (VisualListIterator it(visual->getChilds()); it.hasNext(); it.next()) {
+				Visual *child = it.current();
 
-				Visual *pResult = getVisual(pChild, testPoint);
-				if (pResult != nullptr)
-					return pResult;
+				Visual *result = getVisual(child, testPoint);
+				if (result != nullptr)
+					return result;
 			}
-			return pVisual;
+			return visual;
 		}
 	}
 

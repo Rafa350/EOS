@@ -6,7 +6,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor del objecte.
+/// \brief    Constructor del objecte.
 ///
 Point::Point():
 
@@ -16,9 +16,9 @@ Point::Point():
 
 
 /// -----------------------------------------------------------------------
-/// \brief Constructor del objecte.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
+/// \brief    Constructor del objecte.
+/// \param    x: Coordinada X.
+/// \param    y: Coordinada Y.
 ///
 Point::Point(
 	int x,
@@ -30,8 +30,8 @@ Point::Point(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor copia.
-/// \param p: El objecte a copiar.
+/// \brief    Constructor copia.
+/// \param    p: El objecte a copiar.
 ///
 Point::Point(
 	const Point &p):
@@ -42,12 +42,12 @@ Point::Point(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte un punt desplaçat.
-/// \param dx: Increment X.
-/// \param dy: Increment Y.
-/// \return El punt desplaçat.
+/// \brief    Obte un punt desplaï¿½at.
+/// \param    dx: Increment X.
+/// \param    dy: Increment Y.
+/// \return   El punt desplaï¿½at.
 ///
-Point Point::offset(
+Point Point::translated(
 	int dx,
 	int dy) const {
 
@@ -56,11 +56,11 @@ Point Point::offset(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte un punt desplaçat.
-/// \param d: Increment.
-/// \return El punt desplaçat.
+/// \brief    Obte un punt desplaï¿½at.
+/// \param    d: Increment.
+/// \return   El punt desplaï¿½at.
 ///
-Point Point::offset(
+Point Point::translated(
 	const Point &d) const {
 
 	return Point(x + d.x, y + d.y);
@@ -68,9 +68,9 @@ Point Point::offset(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador ==
-/// \param p: Objecte a comparar.
-/// \return True si son iguals.
+/// \brief    Operador ==
+/// \param    p: Objecte a comparar.
+/// \return   True si son iguals.
 ///
 bool Point::operator==(
 	const Point &p) const {
@@ -80,9 +80,9 @@ bool Point::operator==(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador !=
-/// \param p: Objecte a comparar.
-/// \return True si son diferents.
+/// \brief    Operador !=
+/// \param    p: Objecte a comparar.
+/// \return   True si son diferents.
 ///
 bool Point::operator!=(
 	const Point &p) const {

@@ -534,6 +534,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halLTDC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halLTDC.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halRNG.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halRNG.h</locationURI>

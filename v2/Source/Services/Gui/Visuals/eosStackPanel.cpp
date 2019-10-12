@@ -103,13 +103,13 @@ Size StackPanel::arrangeOverride(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna l'orientacio del panell.
-/// \param    orientation: El valor de la propietat.
+/// \param    value: El valor de la propietat.
 ///
 void StackPanel::setOrientation(
-	Orientation orientation) {
+	Orientation value) {
 
-	if (this->orientation != orientation) {
-		this->orientation = orientation;
+	if (orientation != value) {
+		orientation = value;
 		invalidate();
 	}
 }

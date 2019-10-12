@@ -19,13 +19,12 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>com.st.stm32cube.ide.mcu.MCUProjectNature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUSingleCpuProjectNature</nature>
-		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUSW4STM32ConvertedProjectNature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
+		<nature>fr.ac6.mcu.ide.core.MCUProjectNature</nature>
+		<nature>fr.ac6.mcu.ide.core.MCUSingleCoreProjectNature</nature>
 	</natures>
 	<linkedResources>
 		<link>
@@ -349,9 +348,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/eosAppLoopService.cpp</name>
+			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoop.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>
@@ -679,11 +678,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosHeapAllocator.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/Core/eosString.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosString.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTask.cpp</locationURI>
@@ -717,36 +711,6 @@
 			<name>src/Framework/EOS/System/Graphics/eosGraphics.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosGraphics_Ellipse.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Ellipse.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosGraphics_Line.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Line.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosGraphics_Rectangle.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Rectangle.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosGraphics_Text.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Text.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosPoint.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosPoint.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosSize.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosSize.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/eosTransformation.cpp</name>
@@ -802,11 +766,6 @@
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas8pt.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas8pt.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/Fonts/FontTable.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/FontTable.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</name>

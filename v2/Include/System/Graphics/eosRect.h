@@ -5,7 +5,6 @@
 #include "eos.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosSize.h"
-#include "System/Graphics/eosThickness.h"
 
 
 namespace eos {
@@ -37,13 +36,12 @@ namespace eos {
             inline int getMaxX() const { return x + width - 1; }
             inline int getMaxY() const { return y + height - 1; }
 
-            Rect offset(int x, int y) const;
-            inline Rect offset(const Point &p) const { return offset(p.getX(), p.getY()); }
-            Rect inflate(int x, int y) const;
-            Rect inflate(const Thickness &t) const;
-            Rect deflate(const Thickness &t) const;
-            Rect intersect(const Rect &r) const;
-            Rect fusion(const Rect &r) const;
+            Rect translated(int x, int y) const;
+            inline Rect translated(const Point &p) const { return translated(p.getX(), p.getY()); }
+            Rect inflated(int h, int v) const { return inflated(h, v, h, v); }
+            Rect inflated(int left, int top, int right, int bottom) const;
+            Rect intersected(const Rect &r) const;
+            Rect fusioned(const Rect &r) const;
 
             bool contains(int x, int y) const;
             inline bool contains(const Point &p) const { return contains(p.getX(), p.getY()); }

@@ -1,16 +1,25 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/eosGuiService.h"
+#include "Services/Gui/eosThickness.h"
+#include "Services/Gui/Visuals/eosLabel.h"
+#include "Services/Gui/Visuals/eosPanel.h"
+#include "Services/Gui/Visuals/eosPushButton.h"
+#include "Services/Gui/Visuals/eosScreen.h"
+#include "Services/Gui/Visuals/eosStackPanel.h"
+#include "System/Graphics/eosBitmap.h"
 #include "appApplication.h"
 #include "appLedService.h"
 
+
+//extern "C" const unsigned char bitmapBmpMain[];
 
 using namespace eos;
 using namespace app;
 
 
 ///-----------------------------------------------------------------------
-/// \brief Contructor.
+/// \brief    Contructor.
 ///
 MyApplication::MyApplication():
 
@@ -18,4 +27,50 @@ MyApplication::MyApplication():
 
 	ledService = new LedService(this);
 	guiService = new GuiService(this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitzacio de l'aplicacio.
+///
+void MyApplication::onInitialize() {
+
+	// Carrega els recursos
+	//
+	//Bitmap *bitmap = new Bitmap(bitmapBmpMain);
+
+	Visual *visual = createMainPanel();
+	guiService->getScreen()->addChild(visual);
+
+	Application::onInitialize();
+}
+
+
+Panel *MyApplication::createMainPanel() {
+
+	StackPanel *sp = new StackPanel();
+	sp->setMargin(Thickness(50, 10, 50, 10));
+	sp->setHorizontalAlignment(HorizontalAlignment::center);
+	sp->setVerticalAlignment(VerticalAlignment::center);
+
+	String hola("hola");
+	for (int i = 0; i < 5; i++) {
+
+		Label *l = new Label();
+		l->setHorizontalAlignment(HorizontalAlignment::center);
+		l->setVerticalAlignment(VerticalAlignment::center);
+		l->setMargin(Thickness(10, 5, 10, 5));
+		l->setText(hola);
+
+		PushButton *pb = new PushButton();
+		pb->setHorizontalAlignment(HorizontalAlignment::center);
+		pb->setVerticalAlignment(VerticalAlignment::center);
+		pb->setSize(Size(100, 0));
+		pb->setMargin(Thickness(10, 5, 10, 5));
+		pb->setContent(l);
+
+		sp->addChild(pb);
+	}
+
+	return sp;
 }

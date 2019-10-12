@@ -1,4 +1,4 @@
-#ifndef __STM32_halRNG__
+ifndef __STM32_halRNG__
 #define __STM32_halRNG__
 
 

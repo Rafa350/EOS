@@ -9,15 +9,14 @@ namespace eos {
 
 	class Visual;
 	class Graphics;
-	class Rect;
 
 	class RenderContext {
 		private:
-			Graphics &graphics;
+			Graphics *graphics;
 
 		public:
-			RenderContext(Graphics &graphics);
-			Graphics &beginRender(Visual *pVisual);
+			RenderContext(Graphics *graphics);
+			Graphics &beginRender(Visual *visual);
 			void endRender();
 	};
 }

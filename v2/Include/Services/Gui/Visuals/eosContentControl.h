@@ -11,15 +11,16 @@ namespace eos {
 	class ContentControl: public Control {
 		private:
             Thickness padding;
-			Visual *pContent;
+			Visual *content;
 
 		public:
 			ContentControl();
 
-			void setPadding(const Thickness &padding);
+			void setPadding(const Thickness &value);
+			void setContent(Visual *value);
+
 			inline const Thickness &getPadding() const { return padding; }
-			void setContent(Visual *pNewContent);
-			inline Visual* getContent() const { return pContent; }
+			inline Visual* getContent() const { return content; }
 	};
 }
 

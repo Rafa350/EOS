@@ -17,7 +17,7 @@ namespace eos {
 
     	private:
 			bool pressed;
-			IClickCallback *pClickCallback;
+			IClickCallback *clickCallback;
 
     	protected:
 #ifdef OPT_GUI_TouchPad
@@ -37,8 +37,8 @@ namespace eos {
 			void click();
 
 			template <class cls>
-			inline void setClickCallback(CallbackP1<cls, Visual*> *pCallBack) {
-				pClickCallback = pCallBack;
+			inline void setClickCallback(CallbackP1<cls, Visual*> *callBack) {
+				clickCallback = callBack;
             }
     };
 

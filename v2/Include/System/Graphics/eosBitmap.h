@@ -20,6 +20,7 @@ namespace eos {
 			uint8_t *pixels;
 
 		public:
+			Bitmap(const uint8_t *bitmapResource);
 			Bitmap(int width, int height, ColorFormat format, const Color &color);
 			Bitmap(int width, int height, ColorFormat format, uint8_t *pixels);
 			Bitmap(int width, int height, ColorFormat format, const uint8_t *pixels);

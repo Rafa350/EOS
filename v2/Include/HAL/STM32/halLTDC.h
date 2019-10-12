@@ -28,32 +28,7 @@ typedef struct {
     } polarity;
     uint16_t width;               // Amplada
     uint16_t height;              // Alçada
-    struct {                      // Color de fons
-        uint8_t R;                //     Component R
-        uint8_t G;                //     Component G
-        uint8_t B;                //     Component B
-    } backgroundColor;
 } LTDCInitializeInfo;
-
-typedef struct {
-    uint16_t x;                   // Posicio X
-    uint16_t y;                   // Posicio Y
-	uint16_t width;               // Amplada
-	uint16_t height;              // Alçada
-    LTDCPixelFormat pixelFormat;  // Format de pixel
-    struct {                      // Color per defecte
-        uint8_t A;
-        uint8_t R;
-        uint8_t G;
-        uint8_t B;
-    } defaultColor;
-    struct {                      // Color per croma
-        uint8_t R;
-        uint8_t G;
-        uint8_t B;
-    } keyColor;
-    uint8_t constantAlpha;
-} LTDCInitializeLayerInfo;
 
 
 // Identificados de les capes
@@ -68,9 +43,17 @@ typedef struct {
 
 
 void halLTDCInitialize(const LTDCInitializeInfo *pInfo);
-void halLTDCInitializeLayer(LTDCLayerNum layerNum, const LTDCInitializeLayerInfo *pInfo);
+void halLTDCShutdown();
+void halLTDCSetBackgroundColor(uint32_t rgb);
 
-void halLTDCSetFrameAddress(LTDCLayerNum layerNum, int frameAddr);
+void halLTDCLayerSetWindow(LTDCLayerNum layerNum, int x, int y, int width, int height);
+void halLTDCLayerSetDefaultColor(LTDCLayerNum layerNum, uint32_t argb);
+void halLTDCLayerSetKeyColor(LTDCLayerNum layerNum, uint32_t rgb);
+void halLTDCLayerDisableKeyColor(LTDCLayerNum layerNum);
+void halLTDCLayerSetFrameFormat(LTDCLayerNum layerNum, LTDCPixelFormat pixelFormat, int lineWidth, int linePitch, int numLines);
+void halLTDCLayerSetFrameAddress(LTDCLayerNum layerNum, int frameAddr);
+void halLTDCLayerUpdate(LTDCLayerNum layerNum);
+
 uint8_t halLTDCGetPixelSize(LTDCPixelFormat pixelFormat);
 
 #define halLTDCEnable()      LTDC->GCR |= LTDC_GCR_LTDCEN

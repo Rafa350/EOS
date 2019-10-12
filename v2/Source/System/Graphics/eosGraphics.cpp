@@ -440,6 +440,11 @@ bool Graphics::clipRectangle(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Transforma les coordinades d'un punt.
+/// \param    x: Coordinada X del punt.
+/// \param    y: Coordinada Y del punt.
+///
 void Graphics::transform(
 	int &x,
 	int &y) const {

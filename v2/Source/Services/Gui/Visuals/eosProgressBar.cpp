@@ -96,9 +96,9 @@ Size ProgressBar::measureOverride(
 /// \param    context: El context de renderitzat.
 ///
 void ProgressBar::onRender(
-	RenderContext &context) {
+	RenderContext *context) {
 
-	Graphics &g = context.beginRender(this);
+	Graphics &g = context->beginRender(this);
 
 	const Rect &r = getBounds();
 	int width = r.getWidth();
@@ -116,5 +116,5 @@ void ProgressBar::onRender(
 	g.drawRectangle(0, 0, width - 1, height - 1);
 
 
-	context.endRender();
+	context->endRender();
 }

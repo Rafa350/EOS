@@ -1,6 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Graphics/eosThickness.h"
+#include "Services/Gui/eosThickness.h"
+#include "System/Graphics/eosRect.h"
+#include "System/Graphics/eosSize.h"
 
 
 using namespace eos;
@@ -94,3 +96,32 @@ bool Thickness::operator==(
 		right == other.right &&
 		bottom == other.bottom;
 }
+
+
+Rect Thickness::inflate(
+	const Rect &rect) {
+
+	return rect.inflated(left, top, right, bottom);
+}
+
+
+Size Thickness::inflate(
+	const Size &size) {
+
+	return size.inflated(left, top, right, bottom);
+}
+
+
+Rect Thickness::deflate(
+	const Rect &rect) {
+
+	return rect.inflated(-left, -top, -right, -bottom);
+}
+
+
+Size Thickness::deflate(
+	const Size &size) {
+
+	return size.inflated(-left, -top, -right, -bottom);
+}
+

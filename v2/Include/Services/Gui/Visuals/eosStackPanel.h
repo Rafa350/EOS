@@ -21,7 +21,7 @@ namespace eos {
 		public:
 			StackPanel();
 
-			void setOrientation(Orientation orientation);
+			void setOrientation(Orientation value);
 			Orientation getOrientation() const { return orientation; }
 	};
 }

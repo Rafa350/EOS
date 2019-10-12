@@ -22,10 +22,10 @@ namespace eos {
     		CheckButtonState state;
 
     	protected:
-    		void onRender(RenderContext &context) override;
+    		void onRender(RenderContext *context) override;
     		void onClick() override;
 
-    		void setState(CheckButtonState state);
+    		void setState(CheckButtonState value);
 
     	public:
     		CheckButton();

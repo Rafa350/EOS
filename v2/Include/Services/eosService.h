@@ -22,7 +22,7 @@ namespace eos {
         private:
             static int idCount;
             int id;
-            Application *pApplication;
+            Application *application;
             String name;
             Task thread;
 
@@ -33,14 +33,14 @@ namespace eos {
             void run(Task *pThread);
 
         protected:
-            inline Application *getApplication() const { return pApplication; }
+            inline Application *getApplication() const { return application; }
             inline Task *getThread() { return &thread; }
             virtual void onInitialize();
             virtual void onTask();
             virtual void onTick();
 
         public :
-            Service(Application *pApplication, const ServiceConfiguration &configuration);
+            Service(Application *application, const ServiceConfiguration &configuration);
             virtual ~Service();
 
             void initialize();
@@ -50,8 +50,8 @@ namespace eos {
             inline int getId() const { return id; }
             inline const String& getName() const { return name; }
             
-        friend void Application::addService(Service *pService);
-        friend void Application::removeService(Service *pService);
+        friend void Application::addService(Service *service);
+        friend void Application::removeService(Service *service);
     };
 }
 

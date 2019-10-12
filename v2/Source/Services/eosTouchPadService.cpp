@@ -19,27 +19,27 @@ static TouchPadServiceConfiguration defaultConfiguration = {
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor de l'objecte.
-/// \param    pApplication: Aplicacio on afeigir el servei.
+/// \param    application: Aplicacio on afeigir el servei.
 ///
 TouchPadService::TouchPadService(
-	Application *pApplication) :
+	Application *application) :
 
-	TouchPadService(pApplication, defaultConfiguration) {
+	TouchPadService(application, defaultConfiguration) {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Contructor de l'objecte.
-/// \param    pApplication: Aplicacio on afeigir el servei
+/// \param    application: Aplicacio on afeigir el servei
 /// \param    configuration: Parametres de configuracio.
 ///
 TouchPadService::TouchPadService(
-	Application *pApplication,
+	Application *application,
 	const TouchPadServiceConfiguration &configuration):
 
-	Service(pApplication, configuration.serviceConfiguration),
+	Service(application, configuration.serviceConfiguration),
 	touchDriver(nullptr),
-	pEventCallback(nullptr),
+	eventCallback(nullptr),
 	oldX(-1),
 	oldY(-1),
 	oldPressed(false) {
@@ -66,7 +66,7 @@ void TouchPadService::onInitialize() {
 ///
 void TouchPadService::onTask() {
 
-	if (pEventCallback != nullptr) {
+	if (eventCallback != nullptr) {
 
 		if (lock.wait((unsigned) -1)) {
 
@@ -96,7 +96,7 @@ void TouchPadService::onTask() {
 						.x = x,
 						.y = y
 					};
-				pEventCallback->execute(args);
+				eventCallback->execute(args);
 				}
 
 				// Detecta canvis de posicio
@@ -108,7 +108,7 @@ void TouchPadService::onTask() {
 						.x = x,
 						.y = y
 					};
-					pEventCallback->execute(args);
+					eventCallback->execute(args);
 				}
 
 				oldPressed = pressed;
@@ -122,7 +122,7 @@ void TouchPadService::onTask() {
 					.x = x,
 					.y = y
 				};
-				pEventCallback->execute(args);
+				eventCallback->execute(args);
 
 				oldPressed = false;
 			}
@@ -145,7 +145,7 @@ void TouchPadService::interruptHandler() {
 ///
 void TouchPadService::interruptHandler(
 	EXTILine line,
-	void *pParam) {
+	void *param) {
 
-	((TouchPadService*)pParam)->interruptHandler();
+	((TouchPadService*)param)->interruptHandler();
 }

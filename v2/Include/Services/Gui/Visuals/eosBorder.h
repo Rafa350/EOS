@@ -5,9 +5,9 @@
 // EOS includes
 //
 #include "eos.h"
+#include "Services/Gui/eosThickness.h"
 #include "Services/Gui/Visuals/eosDecorator.h"
 #include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosThickness.h"
 
 
 namespace eos {
@@ -20,26 +20,26 @@ namespace eos {
     		Color color;
     		Thickness thickness;
     		int radius;
-    		Visual *pContent;
+    		Visual *content;
 
     	protected:
-    		void onRender(RenderContext &context) override;
+    		void onRender(RenderContext *context) override;
 			Size measureOverride(const Size &availableSize) const override;
 
         public:
     		Border();
 
-            void setBackgroundColor(const Color &newColor);
-            void setColor(const Color &newColor);
-            void setThickness(int newThickness);
-            void setRadius(int newRadius);
-            void setContent(Visual *pNewContent);
+            void setBackgroundColor(const Color &value);
+            void setColor(const Color &value);
+            void setThickness(int value);
+            void setRadius(int value);
+            void setContent(Visual *value);
 
             inline Color getColor() const { return color; }
             inline Color getBackgroundColor() const { return backgroundColor; }
             inline const Thickness& getThickness() const { return thickness; }
             inline int getRadius() const { return radius; }
-            inline Visual* getContent() const { return pContent; }
+            inline Visual* getContent() const { return content; }
     };
 
 }

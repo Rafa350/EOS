@@ -15,19 +15,19 @@ int Service::idCount = 0;
 /// \param    configuration: Parametres de configuracio.
 ///
 Service::Service(
-	Application *pApplication,
+	Application *application,
 	const ServiceConfiguration &configuration) :
 
     id(idCount++),
-    pApplication(nullptr),
+    application(nullptr),
     name(configuration.serviceName),
     thread(configuration.stackSize, configuration.priority, configuration.serviceName, this) {
 
     // Si s'indica l'aplicacio, s'afegeix a la llista de
 	// serveis d'aquesta.
 	//
-    if (pApplication != nullptr)
-        pApplication->addService(this);
+    if (application != nullptr)
+        application->addService(this);
 }
 
 
@@ -39,8 +39,8 @@ Service::~Service() {
 	// Al destruir-se, s'elimina ell mateix de la llista de serveis
 	// de l'aplicacio.
 	//
-    if (pApplication != nullptr)
-        pApplication->removeService(this);
+    if (application != nullptr)
+        application->removeService(this);
 }
 
 

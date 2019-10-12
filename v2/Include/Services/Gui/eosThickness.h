@@ -7,6 +7,9 @@
 
 namespace eos {
 
+	class Rect;
+	class Size;
+
 	class Thickness {
 		private:
 			int left;
@@ -28,8 +31,13 @@ namespace eos {
 
 			bool operator==(const Thickness &other) const;
 			inline bool operator!=(const Thickness &other) const { return !operator==(other); }
+
+			Rect inflate(const Rect &rect);
+			Size inflate(const Size &size);
+			Rect deflate(const Rect &rect);
+			Size deflate(const Size &size);
 	};
-	
+
 }
 
 

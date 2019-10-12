@@ -12,9 +12,9 @@
 
 #include "eosAssert.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
+#include "HAL/STM32/halDMA2D.h"
 #include "HAL/STM32/halGPIO.h"
 #include "HAL/STM32/halLTDC.h"
-#include "HAL/STM32/halDMA2D.h"
 #include "System/eosMath.h"
 
 
@@ -131,7 +131,8 @@ void RGBDirectDriver::initialize() {
 	// Inicialitza el dispositiu LTDC
 	//
 	initializeLTDC();
-	halLTDCSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
+	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
+	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
 
     // Inicialitza el dispositiu DMA2D
     //
@@ -425,7 +426,8 @@ void RGBDirectDriver::refresh() {
 
 	// Asigna l'adresa de la capa
 	//
-	halLTDCSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
+	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
+	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
 #endif
 }
 
@@ -497,177 +499,24 @@ void RGBDirectDriver::initializeLTDC() {
 			.PC = DISPLAY_PCPOL,
 		 },
 		.width = DISPLAY_IMAGE_WIDTH,
-		.height = DISPLAY_IMAGE_HEIGHT,
-		.backgroundColor = {
-			.R = 0x00,
-			.G = 0x00,
-			.B = 0xFF
-		 },
+		.height = DISPLAY_IMAGE_HEIGHT
 	};
 
-	static const LTDCInitializeLayerInfo ltdcLayerInit = {
-		.x = 0,
-		.y = 0,
-		.width = 0,
-		.height = 1,
-		.pixelFormat = HAL_LTDC_FORMAT_DEFAULT,
-		.defaultColor = {
-			.A = 0xFF,
-			.R = 0x00,
-			.G = 0x00,
-			.B = 0x00,
-		 },
-		.keyColor = {
-			.R = 0x00,
-			.G = 0x00,
-			.B = 0x00,
-		 },
-		 .constantAlpha = 0xFF,
-	};
 
-	halLTDCInitialize(&ltdcInit);
-	//halLTDCInitializeLayer(HAL_LTDC_LAYER_0, &ltdcLayerInit);
-
-	uint32_t tmp;
-/*
-	// Configura el rellotge
-	// PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
-	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 192 Mhz
-	// PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 192/5 = 38.4 Mhz
-	// LTDC clock frequency = PLLLCDCLK / LTDC_PLLSAI_DIVR_4 = 38.4/4 = 9.6Mhz
+	// Inicialitza el modul LTDC
 	//
-	RCC_PeriphCLKInitTypeDef clkInit;
-	clkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
-	clkInit.PLLSAI.PLLSAIN = 192;
-	clkInit.PLLSAI.PLLSAIR = DISPLAY_FDIV;
-	clkInit.PLLSAIDivR = RCC_PLLSAIDIVR_4;
-	HAL_RCCEx_PeriphCLKConfig(&clkInit);
+	halLTDCInitialize(&ltdcInit);
+	halLTDCSetBackgroundColor(0x000000FF);
 
-    // Activa el modul LTDC
-    //
-    RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;
-
-    // Configure el registre GCR (General Configuration Register)
-    // -Polaritat HSYNC, VSYNC, DE i PC
-    //
-    tmp = LTDC->GCR;
-    tmp &= ~(LTDC_GCR_HSPOL | LTDC_GCR_VSPOL | LTDC_GCR_DEPOL | LTDC_GCR_PCPOL);
-    tmp |= DISPLAY_HSPOL << LTDC_GCR_HSPOL_Pos;
-    tmp |= DISPLAY_VSPOL << LTDC_GCR_VSPOL_Pos;
-    tmp |= DISPLAY_DEPOL << LTDC_GCR_DEPOL_Pos;
-    tmp |= DISPLAY_PCPOL << LTDC_GCR_PCPOL_Pos;
-    LTDC->GCR = tmp;
-
-    // Configura el registre SSCR (Sinchronization Size Configuration Register)
-    //
-    tmp = LTDC->SSCR;
-    tmp &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
-    tmp |= (DISPLAY_HSYNC - 1) << LTDC_SSCR_HSW_Pos;
-    tmp |= (DISPLAY_VSYNC - 1) << LTDC_SSCR_VSH_Pos;
-    LTDC->SSCR = tmp;
-
-    // Configura el registre BPCR (Back Porch Configuration Register)
-    //
-    tmp = LTDC->BPCR;
-    tmp &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
-    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP - 1) << LTDC_BPCR_AHBP_Pos;
-    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP - 1) << LTDC_BPCR_AVBP_Pos;
-    LTDC->BPCR = tmp;
-
-    // Configura el registre AWCR (Active Width Configuration Register)
-    // -AAH = HSYNC + HBP + WIDTH - 1
-    // -AAW = VSYNC + VBP + HEIGHT - 1
-    //
-    tmp = LTDC->AWCR;
-    tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
-    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_IMAGE_WIDTH - 1) << LTDC_AWCR_AAW_Pos;
-    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_IMAGE_HEIGHT - 1) << LTDC_AWCR_AAH_Pos;
-    LTDC->AWCR = tmp;
-
-    // Configura el registre TWCR (Total Width Configuration Register)
-    // -TOTALW = HSYNC + HBP + WIDTH + HFP - 1
-    // -TOTALH = VSYNC + VBP + HEIGHT + VFP - 1
-    //
-    tmp = LTDC->TWCR;
-    tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
-    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_IMAGE_WIDTH + DISPLAY_HFP - 1) << LTDC_TWCR_TOTALW_Pos;
-    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_IMAGE_HEIGHT + DISPLAY_VFP - 1) << LTDC_TWCR_TOTALH_Pos;
-    LTDC->TWCR = tmp;
-
-    // Configura el registre BCCR (Back Color Configuration Register)
-    //
-    tmp = LTDC->BCCR;
-    tmp &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
-    tmp |= 0 << LTDC_BCCR_BCRED_Pos;
-    tmp |= 0 << LTDC_BCCR_BCGREEN_Pos;
-    tmp |= 255 << LTDC_BCCR_BCBLUE_Pos;
-    LTDC->BCCR = tmp;
-*/
-    // Configura Lx_WHPCR (Window Horizontal Position Configuration Register)
-    // -Tamany horitzontal de la finestra
-    //
-    tmp = LTDC_Layer1->WHPCR;
-    tmp &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
-    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + 1) << LTDC_LxWHPCR_WHSTPOS_Pos;
-    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + DISPLAY_IMAGE_WIDTH) << LTDC_LxWHPCR_WHSPPOS_Pos;
-    LTDC_Layer1->WHPCR = tmp;
-
-    // Configura Lx_WHPCR (Window Vertical Position Configuration Register)
-    // -Tamany vertical de la finestra
-    //
-    tmp = LTDC_Layer1->WVPCR;
-    tmp &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
-    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + 1) << LTDC_LxWVPCR_WVSTPOS_Pos;
-    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + DISPLAY_IMAGE_HEIGHT) << LTDC_LxWVPCR_WVSPPOS_Pos;
-    LTDC_Layer1->WVPCR = tmp;
-
-    // Configura Lx_DCCR (Default Color Configuration Register)
-    // -Color per defecte ARGB(255, 0, 0, 0)
-    //
-    LTDC_Layer1->DCCR = 0xFF0000FF;
-
-    // Configura Lx_PFCR (Pixel Format Configuration Register)
-    //
-    tmp = LTDC_Layer1->PFCR;
-    tmp &= ~(LTDC_LxPFCR_PF);
-    tmp |= LTDC_LxPFCR_PF_DEFAULT << LTDC_LxPFCR_PF_Pos;
-    LTDC_Layer1->PFCR = tmp;
-
-    // Configura Lx_CACR (Constant Alpha Configuration Register)
-    //
-    tmp = LTDC_Layer1->CACR;
-    tmp &= ~(LTDC_LxCACR_CONSTA);
-    tmp |= 255u;
-    LTDC_Layer1->CACR;
-
-    // Configura Lx_BFCR
-    // -Specifies the blending factors
-    //
-    tmp = LTDC_Layer1->BFCR;
-    tmp &= ~(LTDC_LxBFCR_BF2 | LTDC_LxBFCR_BF1);
-    tmp |= 6 << LTDC_LxBFCR_BF1_Pos;
-    tmp |= 7 << LTDC_LxBFCR_BF2_Pos;
-    LTDC_Layer1->BFCR = tmp;
-
-    // Configura Lx_CFBLR (Color Frame Buffer Length Register)
-    // -Longitut de la linia en bytes.
-    //
-    tmp = LTDC_Layer1->CFBLR;
-    tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
-    tmp |= LINE_SIZE << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= ((DISPLAY_IMAGE_WIDTH * sizeof(PIXEL_TYPE)) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
-    LTDC_Layer1->CFBLR = tmp;
-
-    // Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
-    //
-    tmp = LTDC_Layer1->CFBLNR;
-    tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
-    tmp |= DISPLAY_IMAGE_HEIGHT;
-    LTDC_Layer1->CFBLNR = tmp;
-
-    // Actualitza els parametres de la capa inmediatament
-    //
-	LTDC->SRCR |= LTDC_SRCR_IMR;
+	// Inicialitza la capa 0
+	//
+	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT);
+	halLTDCLayerSetFrameFormat(HAL_LTDC_LAYER_0,
+		HAL_LTDC_FORMAT_DEFAULT,
+		DISPLAY_IMAGE_WIDTH * halLTDCGetPixelSize(HAL_LTDC_FORMAT_DEFAULT),
+		((DISPLAY_IMAGE_WIDTH * halLTDCGetPixelSize(HAL_LTDC_FORMAT_DEFAULT)) + 63) & 0xFFFFFFC0,
+		DISPLAY_IMAGE_HEIGHT);
+	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
 }
 
 

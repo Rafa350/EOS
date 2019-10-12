@@ -38,7 +38,7 @@ namespace eos {
             unsigned weakTime;
 
         private:
-            static void function(void *pParams);
+            static void function(void *params);
 
         public:
             Task(unsigned stackSize, TaskPriority priority, const String &name, IRunable *runable);

@@ -13,7 +13,7 @@ namespace eos {
 
 	class Image: public Visual {
 		private:
-			Bitmap *pBitmap;
+			Bitmap *bitmap;
 
 		protected:
 			void onRender(RenderContext &context);
@@ -21,8 +21,8 @@ namespace eos {
 		public:
 			Image();
 
-			void setBitmap(Bitmap *newBitmap);
-			Bitmap *getBitmap() const { return pBitmap; }
+			void setBitmap(Bitmap *value);
+			Bitmap *getBitmap() const { return bitmap; }
 	};
 
 }

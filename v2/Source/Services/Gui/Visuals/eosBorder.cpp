@@ -11,21 +11,21 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor del objecte.
+/// \brief    Constructor del objecte.
 ///
 Border::Border():
 	backgroundColor(COLOR_Transparent),
 	color(),
 	thickness(1),
 	radius(0),
-	pContent(nullptr) {
+	content(nullptr) {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Calcula les mesures del control
-/// \param availableSize: Tamany disponible.
+/// \brief    Calcula les mesures del control
+/// \param    availableSize: Tamany disponible.
 ///
 Size Border::measureOverride(
 	const Size &availableSize) const{
@@ -35,21 +35,21 @@ Size Border::measureOverride(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Assigna el contingut.
-/// \param pNewContent: El contingut.
+/// \brief    Assigna el contingut.
+/// \param    value: El contingut.
 ///
 void Border::setContent(
-	Visual *pNewContent) {
+	Visual *value) {
 
-	if (pContent != pNewContent) {
+	if (content != value) {
 
-		if (pContent != nullptr)
-			removeVisual(pContent);
+		if (content != nullptr)
+			removeVisual(content);
 
-		pContent = pNewContent;
+		content = value;
 
-		if (pContent != nullptr)
-			addVisual(pContent);
+		if (content != nullptr)
+			addVisual(content);
 
 		invalidate();
 	}
@@ -57,69 +57,69 @@ void Border::setContent(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el color del perfil.
-/// \param newColor: El color.
+/// \brief    Asigna el color del perfil.
+/// \param    value: El color.
 ///
 void Border::setColor(
-	const Color &newColor) {
+	const Color &value) {
 
-	if (this->color != newColor) {
-		this->color = newColor;
+	if (color != value) {
+		color = value;
 		invalidate();
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna l'amplada del perfil.
-/// \param newThickness: Amplada del perfil.
+/// \brief    Asigna l'amplada del perfil.
+/// \param    value: Amplada del perfil.
 ///
 void Border::setThickness(
-	int newThickness) {
+	int value) {
 
-	if (this->thickness != newThickness) {
-		this->thickness = newThickness;
+	if (thickness != value) {
+		thickness = value;
 		invalidate();
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el radi de curvatura del perfil.
-/// \param newRadius: Radi de curvatura.
+/// \brief    Asigna el radi de curvatura del perfil.
+/// \param    value: Radi de curvatura.
 ///
 void Border::setRadius(
-	int newRadius) {
+	int value) {
 
-	if (this->radius != newRadius) {
-		this->radius = newRadius;
+	if (radius != value) {
+		radius = value;
 		invalidate();
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el color del fons.
-/// \param newColor: El color.
+/// \brief    Asigna el color del fons.
+/// \param    value: El color.
 ///
 void Border::setBackgroundColor(
-	const Color &newColor) {
+	const Color &value) {
 
-	if (backgroundColor != newColor) {
-		backgroundColor = newColor;
+	if (backgroundColor != value) {
+		backgroundColor = value;
 		invalidate();
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Renderitza la imatge..
-/// \param context: El context de representacio.
+/// \brief    Renderitza la imatge..
+/// \param    context: El context de representacio.
 ///
 void Border::onRender(
-	RenderContext &context) {
+	RenderContext *context) {
 
-	Graphics &g = context.beginRender(this);
+	Graphics &g = context->beginRender(this);
 
 	const Size &s = getBounds().getSize();
 	int x2 = s.getWidth() - 1;
@@ -131,5 +131,5 @@ void Border::onRender(
 	g.setColor(color);
 	g.drawRectangle(0, 0, x2, y2);
 
-	context.endRender();
+	context->endRender();
 }

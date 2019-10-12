@@ -28,6 +28,9 @@
 #define OP_DELAY      255
 
 
+using namespace eos;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Obte l'adressa del pixel en la coordinada especificada.
 /// \param base: Adressa base.
@@ -35,16 +38,29 @@
 /// \param y: Coordinada Y.
 /// \return L'adressa del pixel.
 ///
-static inline int addressAt(
+static inline pixel_t *addressOf(
 	int base,
 	int x,
 	int y) {
 
-	return base + (((y * LINE_WIDTH) + x) * PIXEL_SIZE);
+	return (pixel_t*)(base + (((y * LINE_WIDTH) + x) * sizeof(pixel_t)));
 }
 
 
-using namespace eos;
+/// ----------------------------------------------------------------------
+/// \brief Converteix un color a format pixel.
+/// \param color: El color a convertir.
+/// \return El valor del pixel.
+///
+static inline pixel_t toPixel(
+	const Color &color) {
+
+#if defined(DISPLAY_COLOR_RGB565)
+	return (pixel_t) color.toRGB565();
+#elif defined(DISPLAY_COLOR_ARGB8888)
+	return (pixel_t) color.toRGB888();
+#endif
+}
 
 
 IDisplayDriver *ILI9341LTDCDriver::instance = nullptr;
@@ -83,7 +99,14 @@ ILI9341LTDCDriver::ILI9341LTDCDriver():
 void ILI9341LTDCDriver::initialize() {
 
     displayInit();
-    displayOn();
+
+    // Inicialitza el dispositiu LTDC
+    //
+    initializeLTDC();
+
+    // Inicialitza el dispositiu DMA2D
+    //
+    halDMA2DInitialize();
 }
 
 
@@ -177,7 +200,7 @@ void ILI9341LTDCDriver::setPixel(
 
 		// Dibuixa el pixel
 		//
-		*((pixel_t*) addressAt(frameAddr, xx, yy)) = PIXEL_VALUE(color);
+		put(xx, yy, color);
 	}
 }
 
@@ -223,7 +246,7 @@ void ILI9341LTDCDriver::setVPixels(
 /// \param x: Posicio X.
 /// \param y: Posicio Y.
 /// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
+/// \param height: Alï¿½ada de la regio.
 /// \param color: Color dels pixels.
 ///
 void ILI9341LTDCDriver::setPixels(
@@ -271,7 +294,7 @@ void ILI9341LTDCDriver::writePixels(
 	int width,
 	int height,
 	const uint8_t *pixels,
-	PixelFormat format,
+	ColorFormat format,
 	int dx,
 	int dy,
 	int pitch) {
@@ -285,7 +308,7 @@ void ILI9341LTDCDriver::readPixels(
 	int width,
 	int height,
 	uint8_t *pixels,
-	PixelFormat format,
+	ColorFormat format,
 	int dx,
 	int dy,
 	int pitch) {
@@ -362,11 +385,6 @@ void ILI9341LTDCDriver::displayInit() {
 	lcdInitialize();
 	lcdReset();
 	writeCommands(lcdInit);
-
-	// Inicialitza el controlador de video, dma, etc
-	//
-	ltdcInitialize();
-	dma2dInitialize();
 }
 
 
@@ -521,7 +539,7 @@ void ILI9341LTDCDriver::lcdWriteData(
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el controlador de video
 ///
-void ILI9341LTDCDriver::ltdcInitialize() {
+void ILI9341LTDCDriver::initializeLTDC() {
 
     uint32_t tmp;
 
@@ -736,21 +754,36 @@ void ILI9341LTDCDriver::ltdcInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el controlador DMA
+/// \brief Aigna un color a un pixel.
+/// \param x: Coordinada X del pixel.
+/// \param y: Coordinada Y del pixel.
+/// \param color: Color en format de pixel fisic;
+/// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
-void ILI9341LTDCDriver::dma2dInitialize() {
+void ILI9341LTDCDriver::put(
+	int x,
+	int y,
+	const Color &color) {
 
-    RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN;
+	if (!color.isTransparent()) {
+
+		pixel_t *pPixelAddr = addressOf(frameAddr, x, y);
+
+		//if (color.isOpaque())
+			*pPixelAddr = toPixel(color);
+		//else
+		//	*pPixelAddr = combinePixel(*pPixelAddr, toPixel(color), color.getOpacity());
+	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Ompla un area de memoria amb un color.
-/// \param x: Coordinada x.
-/// \param y: Coordinada y.
-/// \param width: Amplada del bloc.
-/// \param height: Alçada del bloc.
-/// \param color: El color per omplir.
+/// \brief    Ompla un area de memoria amb un color.
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada y.
+/// \param    width: Amplada del bloc.
+/// \param    height: Alï¿½ada del bloc.
+/// \param    color: El color per omplir.
 ///
 void ILI9341LTDCDriver::fill(
 	int x,
@@ -759,36 +792,67 @@ void ILI9341LTDCDriver::fill(
 	int height,
 	const Color &color) {
 
-	int addr = addressAt(frameAddr, x, y);
-	int pitch = LINE_WIDTH - width;
-    DMA2DOptions options = HAL_DMA2D_DFMT_DEFAULT;
-    int c = PIXEL_VALUE(color);
-
-	halDMA2DStartFill(addr, width, height, pitch, options, c);
-	halDMA2DWaitForFinish();
+	if (color.isOpaque()) {
+		halDMA2DStartFill(
+			(uint32_t) addressOf(frameAddr, x, y),
+			width,
+			height,
+			LINE_WIDTH - width,
+			HAL_DMA2D_DFMT_DEFAULT,
+			toPixel(color));
+		halDMA2DWaitForFinish();
+	}
+	else
+		for (int yy = 0; yy < height; yy++)
+			for (int xx = 0; xx < width; xx++)
+				put(x + xx, y + yy, color);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Espera que acabi la transaccio.
+/// \brief Copia un bitmap a una regio de la pantalla.
+/// \param x: Coordinada X de la posicio.
+/// \param y: Coordinada Y de la posicio.
+/// \param width: Amplada.
+/// \param height: AlÃ§ada.
+/// \param pixels: Llista de pixels.
+/// \param format: Format dels pixels.
+/// \param dx: Offset X dins del bitmap.
+/// \param dy: offset Y dins del vitmap.
+/// \param pitch: Offset a la seguent linia del bitmap. 0 si son consecutives.
 ///
-void ILI9341LTDCDriver::dma2dWaitFinish() {
+void ILI9341LTDCDriver::copy(
+	int x,
+	int y,
+	int width,
+	int height,
+	const uint8_t *pixels,
+	ColorFormat format,
+	int dx,
+	int dy,
+	int pitch) {
 
-	// Espera que acabi la transferencia
-	//
-	while ((DMA2D->ISR & DMA2D_ISR_TCIF_Msk) == 0) {
+	DMA2DOptions options = HAL_DMA2D_DFMT_DEFAULT;
+	switch (format) {
+		default:
+		case ColorFormat::rgb565:
+			options |= HAL_DMA2D_SFMT_RGB565;
+			break;
 
-		// Si troba errors, finalitza
-		//
-		volatile uint32_t isr = DMA2D->ISR;
-		if (((isr & DMA2D_ISR_CEIF_Msk) != 0) || ((isr & DMA2D_ISR_TEIF_Msk) != 0)) {
-			DMA2D->IFCR |=
-					1 << DMA2D_IFCR_CCEIF_Pos |
-					1 << DMA2D_IFCR_CTEIF_Pos;
-			return;
-		}
+		case ColorFormat::argb8888:
+			options |= HAL_DMA2D_SFMT_ARGB8888;
+			break;
 	}
-	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
+
+	halDMA2DStartCopy(
+		(uint32_t) addressOf(frameAddr, x, y),
+		width,
+		height,
+		LINE_WIDTH - width,
+		options,
+		((uint32_t) pixels) + (((dy * height) + dx) * sizeof(uint16_t)),
+	    pitch);
+	halDMA2DWaitForFinish();
 }
 
 

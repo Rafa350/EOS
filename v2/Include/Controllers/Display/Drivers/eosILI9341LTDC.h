@@ -59,8 +59,8 @@ namespace eos {
             void setHPixels(int x, int y, int size, const Color &color) override;
             void setVPixels(int x, int y, int size, const Color &color) override;
             void setPixels(int x, int y, int width, int height, const Color &color) override;
-            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch) override;
-            void readPixels(int x, int y, int width, int height, uint8_t *pixels, PixelFormat format, int dx, int dy, int pitch) override;
+            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
+            void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
             void vScroll(int delta, int x, int y, int width, int height) override;
             void hScroll(int delta, int x, int y, int width, int height) override;
             void refresh() override;
@@ -71,10 +71,10 @@ namespace eos {
             void writeCommands(const uint8_t *dada);
 
         private:
-            void ltdcInitialize();
-            void dma2dInitialize();
+            void initializeLTDC();
+            void put(int x, int y, const Color &color);
             void fill(int x, int y, int width, int height, const Color &color);
-            void dma2dWaitFinish();
+            void copy(int x, int y, int width, int height, const uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch);
             void lcdInitialize();
             void lcdReset();
             void lcdOpen();

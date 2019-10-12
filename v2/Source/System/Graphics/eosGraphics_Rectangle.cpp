@@ -30,6 +30,24 @@ void Graphics::drawRectangle(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Dibuixa un rectangle buit.
+/// \param    x1: Coordinada x del primer punt.
+/// \param    y1: Coordinada y del primer punt.
+/// \param    x2: Coordinada x del segon punt.
+/// \param    y2: Coordinada y del segon punt.
+/// \param    thickness: Amplada de linia.
+///
+void Graphics::drawRectangle(
+	int x1,
+	int y1,
+	int x2,
+	int y2,
+	int thickness) const {
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Dibuixa un rectangle omplert.
 /// \param    x1: Coordinada X del primer punt.
 /// \param    y1: Coordinada Y del primer punt.

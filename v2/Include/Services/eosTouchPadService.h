@@ -44,7 +44,7 @@ namespace eos {
 
 		private:
     		ITouchPadDriver *touchDriver;
-        	IEventCallback *pEventCallback;
+        	IEventCallback *eventCallback;
         	BinarySemaphore lock;
         	int oldX;
         	int oldY;
@@ -52,11 +52,11 @@ namespace eos {
 
 		public:
 			TouchPadService(Application *application);
-			TouchPadService(Application *pApplication, const TouchPadServiceConfiguration &configuration);
+			TouchPadService(Application *application, const TouchPadServiceConfiguration &configuration);
 
 			template <class cls>
-			void setEventCallback(CallbackP1<cls, const TouchPadEventArgs&> *pCallBack) {
-				pEventCallback = pCallBack;
+			void setEventCallback(CallbackP1<cls, const TouchPadEventArgs&> *callBack) {
+				eventCallback = callBack;
             }
 
 		protected:
@@ -65,7 +65,7 @@ namespace eos {
 
 		private:
 			void interruptHandler();
-			static void interruptHandler(EXTILine line, void *pParam);
+			static void interruptHandler(EXTILine line, void *param);
 	};
 }
 

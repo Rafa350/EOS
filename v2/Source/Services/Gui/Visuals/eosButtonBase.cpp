@@ -79,8 +79,8 @@ void ButtonBase::onTouchPadLeave() {
 ///
 void ButtonBase::onClick() {
 
-	if (pClickCallback != nullptr)
-		pClickCallback->execute(this);
+	if (clickCallback != nullptr)
+		clickCallback->execute(this);
 }
 
 

@@ -13,7 +13,7 @@ using namespace eos;
 /// \brief    Constructor de l'objecte.
 ///
 Visual::Visual():
-	pParent(nullptr),
+	parent(nullptr),
 	needRender(false),
 	visibility(Visibility::visible),
 	position(0, 0),
@@ -32,15 +32,15 @@ Visual::Visual():
 ///
 Visual::~Visual() {
 
-	if (pParent != nullptr)
-		pParent->removeVisual(this);
+	if (parent != nullptr)
+		parent->removeVisual(this);
 
 	while (!childs.isEmpty()) {
 
-		Visual *pChild = childs.getFront();
-		childs.remove(pChild);
+		Visual *child = childs.getFront();
+		childs.remove(child);
 
-		delete pChild;
+		delete child;
 	}
 }
 
@@ -80,8 +80,8 @@ bool Visual::isRenderizable() const {
 bool Visual::isVisible() const {
 
 	if (visibility == Visibility::visible) {
-		if (pParent != nullptr)
-			return pParent->isVisible();
+		if (parent != nullptr)
+			return parent->isVisible();
 		else
 			return true;
 	}
@@ -96,7 +96,7 @@ bool Visual::isVisible() const {
 /// \return   True s'ha redibuixat el visual.
 ///
 bool Visual::render(
-	RenderContext &context) {
+	RenderContext *context) {
 
 	bool renderized = false;
 	needRender = false;
@@ -108,8 +108,8 @@ bool Visual::render(
 	// Continua amb els fills.
 	//
 	for (VisualListIterator it(childs); it.hasNext(); it.next()) {
-		Visual *pChild = it.current();
-		if (pChild->render(context))
+		Visual *child = it.current();
+		if (child->render(context))
 			renderized = true;
 	}
 
@@ -130,31 +130,31 @@ void Visual::dispatch(
 
 /// ----------------------------------------------------------------------
 /// \brief    Afegeix un visual.
-/// \param    pVisual: L'objecte Visual a afeigir.
+/// \param    visual: L'objecte Visual a afeigir.
 ///
 void Visual::addVisual(
-	Visual *pVisual) {
+	Visual *visual) {
 
-	eosAssert(pVisual != nullptr);
-	eosAssert(pVisual->pParent == nullptr);
+	eosAssert(visual != nullptr);
+	eosAssert(visual->parent == nullptr);
 
-	childs.add(pVisual);
-	pVisual->pParent = this;
+	childs.add(visual);
+	visual->parent = this;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Elimina un visual.
-/// \param    pVisual: L'objecte Visual a eliminar.
+/// \param    visual: L'objecte Visual a eliminar.
 ///
 void Visual::removeVisual(
-	Visual *pVisual) {
+	Visual *visual) {
 
-	eosAssert(pVisual != nullptr);
-	eosAssert(pVisual->pParent != nullptr);
+	eosAssert(visual != nullptr);
+	eosAssert(visual->parent != nullptr);
 
-	pVisual->pParent = nullptr;
-	childs.remove(pVisual);
+	visual->parent = nullptr;
+	childs.remove(visual);
 }
 
 
@@ -177,9 +177,11 @@ void Visual::measure(
 
 	if (isVisible()) {
 
-		Size measuredSize = measureOverride(availableSize.deflate(margin));
-		int width = measuredSize.getWidth();
-		int height = measuredSize.getHeight();
+		Size measuredSize = measureOverride(margin.deflate(availableSize));
+		int declaredWidth = size.getWidth();
+		int declaredHeight = size.getHeight();
+		int width = declaredWidth != 0 ? declaredWidth : measuredSize.getWidth();
+		int height = declaredHeight != 0 ? declaredHeight : measuredSize.getHeight();
 
 		// Ajusta l'amplada als limits
 		//
@@ -191,7 +193,7 @@ void Visual::measure(
 		height = Math::max(minSize.getHeight(), height);
 		height = Math::min(maxSize.getHeight(), height);
 
-		desiredSize = Size(width, height).inflate(margin);
+		desiredSize = margin.inflate(Size(width, height));
 	}
 
 	else
@@ -210,7 +212,7 @@ void Visual::arrange(
 
 		// Ajusta el marge
 		//
-		Rect deflatedFinalRect = finalRect.deflate(margin);
+		Rect deflatedFinalRect = margin.deflate(finalRect);
 		int deflatedFinalWidth = deflatedFinalRect.getWidth();
 		int deflatedFinalHeight = deflatedFinalRect.getHeight();
 
@@ -283,13 +285,13 @@ Size Visual::measureOverride(
 
 	for (VisualListIterator it(childs); it.hasNext(); it.next()) {
 
-		Visual *pChild = it.current();
-		eosAssert(pChild != nullptr);
+		Visual *child = it.current();
+		eosAssert(child != nullptr);
 
-		if (pChild->isVisible()) {
+		if (child->isVisible()) {
 
-			pChild->measure(availableSize);
-			const Size& childDesiredSize = pChild->getDesiredSize();
+			child->measure(availableSize);
+			const Size& childDesiredSize = child->getDesiredSize();
 
 			width = Math::max(width, childDesiredSize.getWidth());
 			height = Math::max(height, childDesiredSize.getHeight());
@@ -310,11 +312,11 @@ Size Visual::arrangeOverride(
 
 	for (VisualListIterator it(childs); it.hasNext(); it.next()) {
 
-		Visual *pChild = it.current();
-		eosAssert(pChild != nullptr);
+		Visual *child = it.current();
+		eosAssert(child != nullptr);
 
-		if (pChild->isVisible())
-			pChild->arrange(Rect(finalSize));
+		if (child->isVisible())
+			child->arrange(Rect(finalSize));
 	}
 
 	return finalSize;
@@ -323,13 +325,13 @@ Size Visual::arrangeOverride(
 
 /// ----------------------------------------------------------------------
 /// \brief    Canvia l'estat de visibilitat.
-/// \param    visible: True per fer el visual visible.
+/// \param    newVisibility: La nova visibilitat.
 ///
 void Visual::setVisibility(
-	Visibility visibility) {
+	Visibility value) {
 
-	if (this->visibility != visibility) {
-		this->visibility = visibility;
+	if (visibility != value) {
+		visibility = value;
 		invalidate();
 	}
 }
@@ -337,13 +339,13 @@ void Visual::setVisibility(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna la posicio.
-/// \param    position: La nova posicio.
+/// \param    value: La nova posicio.
 ///
 void Visual::setPosition(
-	const Point &position) {
+	const Point &value) {
 
-	if (this->position != position) {
-		this->position = position;
+	if (position != value) {
+		position = value;
 		invalidate();
 	}
 }
@@ -351,13 +353,13 @@ void Visual::setPosition(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el tamany.
-/// \param    size: El nou tamany.
+/// \param    value: El nou tamany.
 ///
 void Visual::setSize(
-	const Size &size) {
+	const Size &value) {
 
-    if (this->size != size) {
-    	this->size = size;
+    if (size != value) {
+    	size = value;
 		invalidate();
     }
 }
@@ -365,13 +367,13 @@ void Visual::setSize(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el tamany minim.
-/// \param    size: El nou tamany.
+/// \param    value: El nou tamany.
 ///
 void Visual::setMinSize(
-	const Size &size) {
+	const Size &value) {
 
-	if (minSize != size) {
-		minSize = size;
+	if (minSize != value) {
+		minSize = value;
 		invalidate();
 	}
 }
@@ -379,41 +381,41 @@ void Visual::setMinSize(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el marge.
-/// \param    margin: El nou marge.
+/// \param    value: El nou marge.
 ///
 void Visual::setMargin(
-	const Thickness &margin) {
+	const Thickness &value) {
 
-	if (this->margin != margin) {
-		this->margin = margin;
+	if (margin != value) {
+		margin = value;
 		invalidate();
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna l'aliniacio horizontal.
-/// \param horizontalAlignment: L'aliniacio.
+/// \brief     Asigna l'aliniacio horizontal.
+/// \param     value: El nou valor de l'aliniacio.
 ///
 void Visual::setHorizontalAlignment(
-	HorizontalAlignment horizontalAlignment) {
+	HorizontalAlignment value) {
 
-	if (this->horizontalAlignment != horizontalAlignment) {
-		this->horizontalAlignment = horizontalAlignment;
+	if (horizontalAlignment != value) {
+		horizontalAlignment = value;
 		invalidate();
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna l'aliniacio vertical
-/// \param verticalAlignment: L'aliniacio.
+/// \brief    Asigna l'aliniacio vertical
+/// \param    value: El nou valor de l'aliniacio.
 ///
 void Visual::setVerticalAlignment(
-	VerticalAlignment verticalAlignment) {
+	VerticalAlignment value) {
 
-	if (this->verticalAlignment != verticalAlignment) {
-		this->verticalAlignment = verticalAlignment;
+	if (verticalAlignment != value) {
+		verticalAlignment = value;
 		invalidate();
 	}
 }
@@ -435,8 +437,8 @@ void Visual::onDispatch(
 
 		default:
 			// Si no el procesa, pasa al pare.
-			if (pParent != nullptr)
-				pParent->onDispatch(msg);
+			if (parent != nullptr)
+				parent->onDispatch(msg);
 			break;
 	}
 
@@ -445,10 +447,10 @@ void Visual::onDispatch(
 
 /// ----------------------------------------------------------------------
 /// \brief    Es crida al activar el visual.
-/// \param    pVisual: El visual desactivat al activar aquest.
+/// \param    visual: El visual desactivat al activar aquest.
 ///
 void Visual::onActivate(
-	Visual *pVisual) {
+	Visual *visual) {
 
 	invalidate();
 }
@@ -456,10 +458,10 @@ void Visual::onActivate(
 
 /// ----------------------------------------------------------------------
 /// \brief    Es crida al desactivar el visual.
-/// \param    pVisual: El visual activat al desactivar aquest.
+/// \param    visual: El visual activat al desactivar aquest.
 ///
 void Visual::onDeactivate(
-	Visual *pVisual) {
+	Visual *visual) {
 
 	invalidate();
 }

@@ -22,7 +22,8 @@ const char *String::nullStr = ""; // Cadena buida.
 /// \brief    Comprova si apunte al area de ROM
 /// \param 	  ptr: El punter
 /// \return   True si es constant.
-
+///
+#ifdef EOS_STM32
 static inline bool isRomPointer(
 	const void *ptr) {
 
@@ -35,6 +36,9 @@ static inline bool isRomPointer(
 
 	return (addr >= start) && (addr <= end);
 }
+#else
+#define isRomPointer(a) (false)
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -201,7 +205,7 @@ String& String::operator = (
 
 /// ----------------------------------------------------------------------
 /// \brief    Operator ==
-/// \param    str: El text amb que comparar.
+/// \param    str: La string a comparar.
 ///
 bool String::operator ==(
 	const String &str) const {
@@ -265,6 +269,7 @@ void String::create(
 
 	eosAssert(pData == nullptr);
 	eosAssert(index >= 0);
+	eosAssert(length >= -1);
 
 	int totalLength = strlen(cstr);
 	if (length < 0)

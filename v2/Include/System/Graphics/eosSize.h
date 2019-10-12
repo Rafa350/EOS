@@ -3,7 +3,6 @@
 
 
 #include "eos.h"
-#include "System/Graphics/eosThickness.h"
 
 
 namespace eos {
@@ -25,10 +24,9 @@ namespace eos {
 			/// \brief Obte l'alçada.
 			inline int getHeight() const { return height; }
 
-			Size inflate(int dw, int dh) const;
-			Size inflate(const Thickness &t) const;
-			Size deflate(const Thickness &t) const;
-			Size constrain(const Size &s) const;
+			Size inflated(int h, int v) const;
+			Size inflated(int left, int top, int right, int bottom) const;
+			Size constrained(const Size &s) const;
 
 			bool isEmpty() const;
 

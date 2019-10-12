@@ -14,6 +14,8 @@
 		#error "Unknown processor"
 	#endif
 
+    #define EOS_PIC32
+
 	// Debugger definitions
 	#if defined(__DEBUG)
 		#define EOS_DEBUG
@@ -30,6 +32,8 @@
 	#else
 		#error "Unknown processor"
 	#endif
+
+    #define EOS_STM32
 
 	// Debugger definitions
 	#if defined(DEBUG)

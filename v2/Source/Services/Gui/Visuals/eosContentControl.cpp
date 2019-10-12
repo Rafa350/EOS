@@ -7,31 +7,31 @@ using namespace eos;
 
 
 /// ---------------------------------------------------------------------
-/// \brief Constructor del objecte.
+/// \brief    Constructor del objecte.
 ///
 ContentControl::ContentControl() :
 	padding(Thickness(0)),
-	pContent(nullptr) {
+	content(nullptr) {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Assigna el contingut.
-/// \param pNewContent: El contingut.
+/// \brief    Assigna el contingut.
+/// \param    value: El contingut.
 ///
 void ContentControl::setContent(
-	Visual *pNewContent) {
+	Visual *value) {
 
-	if (pContent != pNewContent) {
+	if (content != value) {
 
-		if (pContent != nullptr)
-			removeVisual(pContent);
+		if (content != nullptr)
+			removeVisual(content);
 
-		pContent = pNewContent;
+		content = value;
 
-		if (pContent != nullptr)
-			addVisual(pContent);
+		if (content != nullptr)
+			addVisual(content);
 
 		invalidate();
 	}
@@ -39,14 +39,14 @@ void ContentControl::setContent(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Assigna el marge interior.
-/// \param padding: El marge interior.
+/// \brief    Assigna el marge interior.
+/// \param    value: El marge interior.
 ///
 void ContentControl::setPadding(
-	const Thickness &padding) {
+	const Thickness &value) {
 
-	if (this->padding != padding) {
-		this->padding = padding;
+	if (padding != value) {
+		padding = value;
 		invalidate();
 	}
 }

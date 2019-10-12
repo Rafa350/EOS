@@ -29,7 +29,7 @@ namespace eos {
     		String text;
 
     	protected:
-    		void onRender(RenderContext &context) override;
+    		void onRender(RenderContext *context) override;
 #ifdef OPT_GUI_TouchPad
     		void onDispatch(const Message &msg) override;
 #endif
@@ -38,14 +38,14 @@ namespace eos {
         public:
     		Label();
 
-            void setTextColor(const Color &color);
-            void setBackgroundColor(const Color &color);
-            void setFontName(const String &fontName);
-            void setFontHeight(int fontHeight);
-            void setFontStyle(FontStyle fontStyle);
-            void setText(const String &text);
-            void setHorizontalTextAlign(HorizontalTextAlign align);
-            void setVerticalTextAlign(VerticalTextAlign align);
+            void setTextColor(const Color &value);
+            void setBackgroundColor(const Color &value);
+            void setFontName(const String &value);
+            void setFontHeight(int value);
+            void setFontStyle(FontStyle value);
+            void setText(const String &value);
+            void setHorizontalTextAlign(HorizontalTextAlign value);
+            void setVerticalTextAlign(VerticalTextAlign value);
 
             inline Color getTextColor() const { return textColor; }
             inline Color getBackgroundColor() const { return backgroundColor; }

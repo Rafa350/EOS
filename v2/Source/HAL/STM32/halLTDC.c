@@ -60,8 +60,8 @@ void halLTDCInitialize(
     LTDC->BPCR = tmp;
 
     // Configura el registre AWCR (Active Width Configuration Register)
-    // -AAH = HSYNC + HBP + WIDTH - 1
-    // -AAW = VSYNC + VBP + HEIGHT - 1
+    // -AAW = HSYNC + HBP + WIDTH - 1
+    // -AAH = VSYNC + VBP + HEIGHT - 1
     //
     tmp = LTDC->AWCR;
     tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
@@ -78,75 +78,174 @@ void halLTDCInitialize(
     tmp |= (pInfo->HSYNC + pInfo->HBP + pInfo->width + pInfo->HFP - 1) << LTDC_TWCR_TOTALW_Pos;
     tmp |= (pInfo->VSYNC + pInfo->VBP + pInfo->height + pInfo->VFP - 1) << LTDC_TWCR_TOTALH_Pos;
     LTDC->TWCR = tmp;
-
-    // Configura el registre BCCR (Back Color Configuration Register)
-    //
-    tmp = LTDC->BCCR;
-    tmp &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
-    tmp |= pInfo->backgroundColor.R << LTDC_BCCR_BCRED_Pos;
-    tmp |= pInfo->backgroundColor.G << LTDC_BCCR_BCGREEN_Pos;
-    tmp |= pInfo->backgroundColor.B << LTDC_BCCR_BCBLUE_Pos;
-    LTDC->BCCR = tmp;
-
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el modul LTDC.
-/// \param    layerNum: Numero de capa.
-/// \param    pInfo: Informacio d'inicialitzacio.
+/// \brief    Desactiva el modul LTDC
 ///
-void halLTDCInitializeLayer(
-	LTDCLayerNum layerNum,
-	const LTDCInitializeLayerInfo *pInfo) {
+void halLTDCShutdown() {
 
-	eosAssert(pInfo != NULL);
+    RCC->APB2ENR &= ~RCC_APB2ENR_LTDCEN;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Canvia el color de fons de la pantalla.
+/// \param    rgb: El color en formar RGB888
+///
+void halLTDCSetBackgroundColor(
+	uint32_t rgb) {
+
+    // Configura el registre BCCR (Back Color Configuration Register)
+    //
+    uint32_t tmp = LTDC->BCCR;
+    tmp &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
+    tmp |= ((rgb & 0x00FF0000) >> 16) << LTDC_BCCR_BCRED_Pos;
+    tmp |= ((rgb & 0x0000FF00) >> 8) << LTDC_BCCR_BCGREEN_Pos;
+    tmp |= (rgb & 0x000000FF) << LTDC_BCCR_BCBLUE_Pos;
+    LTDC->BCCR = tmp;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona la finestra de visualitzacio d'una capa.
+/// \param    layerNum: Identificador de la capa.
+/// \param    x: Coordinada X de la posicio.
+/// \param    y: Coordinada y de la posicio.
+/// \param    width: Amplada de la capa.
+/// \param    height: Alçada de la capa.
+///
+void halLTDCLayerSetWindow(
+	LTDCLayerNum layerNum,
+	int x,
+	int y,
+	int width,
+	int height) {
+
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
 
-    // Selecciona la capa de a configurar
-    //
-	LTDC_Layer_TypeDef *layer =
-		layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
+	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
 
 	uint32_t tmp;
 
     // Configura Lx_WHPCR (Window Horizontal Position Configuration Register)
     // -Tamany horitzontal de la finestra
     //
-	uint32_t aaw = (LTDC->AWCR & LTDC_AWCR_AAW) >> LTDC_AWCR_AAW_Pos;
 	uint32_t ahbp = (LTDC->BPCR & LTDC_BPCR_AHBP) >> LTDC_BPCR_AHBP_Pos;
-
     tmp = layer->WHPCR;
     tmp &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
-    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + 1) << LTDC_LxWHPCR_WHSTPOS_Pos;
-    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + DISPLAY_IMAGE_WIDTH) << LTDC_LxWHPCR_WHSPPOS_Pos;
+    tmp |= (ahbp + x + 1) << LTDC_LxWHPCR_WHSTPOS_Pos;
+    tmp |= (ahbp + width - x) << LTDC_LxWHPCR_WHSPPOS_Pos;
     layer->WHPCR = tmp;
 
     // Configura Lx_WHPCR (Window Vertical Position Configuration Register)
     // -Tamany vertical de la finestra
     //
+	uint32_t avbp = (LTDC->BPCR & LTDC_BPCR_AVBP) >> LTDC_BPCR_AVBP_Pos;
     tmp = layer->WVPCR;
     tmp &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
-    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + 1) << LTDC_LxWVPCR_WVSTPOS_Pos;
-    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + DISPLAY_IMAGE_HEIGHT) << LTDC_LxWVPCR_WVSPPOS_Pos;
+    tmp |= (avbp + y + 1) << LTDC_LxWVPCR_WVSTPOS_Pos;
+    tmp |= (avbp + height - y) << LTDC_LxWVPCR_WVSPPOS_Pos;
     layer->WVPCR = tmp;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el color per defecte de la capa.
+/// \param    layerNum: Identificador de la capa.
+/// \param    argb: El color en formar ARGB8888
+///
+void halLTDCLayerSetDefaultColor(
+	LTDCLayerNum layerNum,
+	uint32_t argb) {
+
+	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
+
+	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
 
     // Configura Lx_DCCR (Default Color Configuration Register)
     // -Color per defecte
     //
-    tmp = layer->DCCR;
+    uint32_t tmp = layer->DCCR;
     tmp &= ~(LTDC_LxDCCR_DCALPHA | LTDC_LxDCCR_DCRED | LTDC_LxDCCR_DCGREEN | LTDC_LxDCCR_DCBLUE);
-    tmp |= pInfo->defaultColor.A << LTDC_LxDCCR_DCALPHA_Pos;
-    tmp |= pInfo->defaultColor.R << LTDC_LxDCCR_DCRED_Pos;
-    tmp |= pInfo->defaultColor.G << LTDC_LxDCCR_DCGREEN_Pos;
-    tmp |= pInfo->defaultColor.B << LTDC_LxDCCR_DCBLUE_Pos;
+    tmp |= ((argb & 0xFF000000) >> 24) << LTDC_LxDCCR_DCALPHA_Pos;
+    tmp |= ((argb & 0x00FF0000) >> 16) << LTDC_LxDCCR_DCRED_Pos;
+    tmp |= ((argb & 0x0000FF00) >> 8) << LTDC_LxDCCR_DCGREEN_Pos;
+    tmp |= (argb & 0x000000FF) << LTDC_LxDCCR_DCBLUE_Pos;
     layer->DCCR = tmp;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona i activa el color de croma
+/// \param    rgb: Color en format rgb888.
+///
+void halLTDCLayerSetKeyColor(
+	LTDCLayerNum layerNum,
+	uint32_t rgb) {
+
+	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
+
+	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
+
+	// Configura Lx_CKCR (Color Key Configuration Register)
+    // -Color clau per croma e
+    //
+    uint32_t tmp = layer->CKCR;
+    tmp &= ~(LTDC_LxCKCR_CKRED | LTDC_LxCKCR_CKGREEN | LTDC_LxCKCR_CKBLUE);
+    tmp |= ((rgb & 0x00FF0000) >> 16) << LTDC_LxCKCR_CKRED_Pos;
+    tmp |= ((rgb & 0x0000FF00) >> 8) << LTDC_LxCKCR_CKGREEN_Pos;
+    tmp |= (rgb & 0x000000FF) << LTDC_LxCKCR_CKBLUE_Pos;
+    layer->CKCR = tmp;
+
+    // Activa el color croma
+    //
+    layer->CR |= 1 << LTDC_LxCR_COLKEN_Pos;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el color de croma.
+///
+void halLTDCLayerDisableKeyColor(
+	LTDCLayerNum layerNum) {
+
+	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
+
+	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
+    layer->CR &= ~(1 << LTDC_LxCR_COLKEN_Pos);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configura el format de la capa.
+/// \param    layerNum: Identificador de la capa.
+/// \param    pixelFormat: Format de pixel.
+/// \param    lineWidth: Amplada de linia en bytes.
+/// \param    linePitch: Pitch entre linies en bytes.
+/// ºparam    numLines: Numero de linies.
+///
+void halLTDCLayerSetFrameFormat(
+	LTDCLayerNum layerNum,
+	LTDCPixelFormat pixelFormat,
+	int lineWidth,
+	int linePitch,
+	int numLines) {
+
+	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
+
+    // Selecciona la capa de a configurar
+    //
+	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
+
+	uint32_t tmp;
 
     // Configura Lx_PFCR (Pixel Format Configuration Register)
     //
     tmp = layer->PFCR;
     tmp &= ~(LTDC_LxPFCR_PF);
-    switch (pInfo->pixelFormat) {
+    switch (pixelFormat) {
     	case HAL_LTDC_FORMAT_RGB565:
     		tmp |= 0b010 << LTDC_LxPFCR_PF_Pos;
     		break;
@@ -161,41 +260,22 @@ void halLTDCInitializeLayer(
     }
     layer->PFCR = tmp;
 
-    // Configura Lx_CACR (Constant Alpha Configuration Register)
-    //
-    tmp = layer->CACR;
-    tmp &= ~(LTDC_LxCACR_CONSTA);
-    tmp |= pInfo->constantAlpha;
-    layer->CACR;
-
-    // Configura Lx_BFCR
-    // -Specifies the blending factors
-    //
-    tmp = layer->BFCR;
-    tmp &= ~(LTDC_LxBFCR_BF2 | LTDC_LxBFCR_BF1);
-    tmp |= 6 << LTDC_LxBFCR_BF1_Pos;
-    tmp |= 7 << LTDC_LxBFCR_BF2_Pos;
-    layer->BFCR = tmp;
-
     // Configura Lx_CFBLR (Color Frame Buffer Length Register)
     // -Longitut de la linia en bytes.
     //
     tmp = layer->CFBLR;
     tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
-    tmp |= (((pInfo->width * halLTDCGetPixelSize(pInfo->pixelFormat)) + 63) & 0xFFFFFFC0) << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= ((pInfo->width * halLTDCGetPixelSize(pInfo->pixelFormat)) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
+    tmp |= linePitch << LTDC_LxCFBLR_CFBP_Pos;
+    tmp |= (lineWidth + 3) << LTDC_LxCFBLR_CFBLL_Pos;
     layer->CFBLR = tmp;
 
     // Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
     //
     tmp = layer->CFBLNR;
     tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
-    tmp |= pInfo->height;
+    tmp |= numLines;
     layer->CFBLNR = tmp;
 
-    // Actualitza els parametres de la capa inmediatament
-    //
-	LTDC->SRCR |= LTDC_SRCR_IMR;
 }
 
 
@@ -203,15 +283,15 @@ void halLTDCInitializeLayer(
 /// \brief    Asigna l'adresa del buffer d'una capa.
 /// \param    layerNum: Identificador de la capa.
 /// \param    frameAddr: L'adresa del buffer.
+/// \remarks  Si frameAddr es zeo, aleshores desactiva la capa.
 ///
-void halLTDCSetFrameAddress(
+void halLTDCLayerSetFrameAddress(
 	LTDCLayerNum layerNum,
 	int frameAddr) {
 
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
 
-	LTDC_Layer_TypeDef *layer =
-		layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
+	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
 
 	if (frameAddr == 0)
 	    layer->CR &= (uint32_t) ~LTDC_LxCR_LEN;
@@ -219,6 +299,15 @@ void halLTDCSetFrameAddress(
 		layer->CFBAR = (uint32_t) frameAddr;
 		layer->CR |= (uint32_t) LTDC_LxCR_LEN;
 	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Actualiza la configuracio de les capes
+/// \param    layerNum: Identificador de la capa.
+///
+void halLTDCLayerUpdate(
+	LTDCLayerNum layerNum) {
 
 	// Si el LTDC esta inactiu, fa l'actualitzacio inmediata
 	//

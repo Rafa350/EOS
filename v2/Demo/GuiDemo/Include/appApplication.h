@@ -11,6 +11,7 @@
 namespace eos {
 
 	class GuiService;
+	class Panel;
 }
 
 
@@ -22,6 +23,13 @@ namespace app {
 		private:
 			LedService *ledService;
 			eos::GuiService *guiService;
+
+			eos::Panel *mainPanel;
+
+		protected:
+			void onInitialize() override;
+
+			eos::Panel *createMainPanel();
 
 		public :
 			MyApplication();

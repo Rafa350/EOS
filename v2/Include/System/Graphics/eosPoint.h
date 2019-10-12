@@ -21,8 +21,8 @@ namespace eos {
             inline int getX() const { return x; }
             inline int getY() const { return y; }
 
-            Point offset(int dx, int dy) const;
-            Point offset(const Point &d) const;
+            Point translated(int dx, int dy) const;
+            Point translated(const Point &d) const;
 
             bool operator==(const Point &p) const;
             bool operator!=(const Point &p) const;

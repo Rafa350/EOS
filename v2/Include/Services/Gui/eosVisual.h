@@ -5,11 +5,11 @@
 // EOS includes
 //
 #include "eos.h"
+#include "Services/Gui/eosThickness.h"
 #include "System/Collections/eosList.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
 #include "System/Graphics/eosSize.h"
-#include "System/Graphics/eosThickness.h"
 
 
 namespace eos {
@@ -52,7 +52,7 @@ namespace eos {
 	///
     class Visual {
     	private:
-    		Visual *pParent;
+    		Visual *parent;
     		VisualList childs;
     		bool needRender;
     		Visibility visibility;
@@ -67,10 +67,10 @@ namespace eos {
 			VerticalAlignment verticalAlignment;
 
     	protected:
-    		virtual void onRender(RenderContext &context) = 0;
+    		virtual void onRender(RenderContext *context) = 0;
     		virtual void onDispatch(const Message &msg);
-    		virtual void onActivate(Visual *pVisual);
-    		virtual void onDeactivate(Visual *pVisual);
+    		virtual void onActivate(Visual *visual);
+    		virtual void onDeactivate(Visual *visual);
 #ifdef OPT_GUI_TouchPad
     		virtual void onDispatchTouchPadEvent(const MsgTouchPad &msg);
     		virtual void onTouchPadEnter();
@@ -82,8 +82,8 @@ namespace eos {
             virtual Size measureOverride(const Size &availableSize) const;
             virtual Size arrangeOverride(const Size &finalSize) const;
 
-            void addVisual(Visual *pVisual);
-            void removeVisual(Visual *pVisual);
+            void addVisual(Visual *visual);
+            void removeVisual(Visual *visual);
             void removeVisuals();
 
         public:
@@ -91,7 +91,7 @@ namespace eos {
     		Visual();
     		virtual ~Visual();
 
-            inline Visual *getParent() const { return pParent; }
+            inline Visual *getParent() const { return parent; }
             inline const VisualList& getChilds() const { return childs; }
 
             // Checkers
@@ -100,13 +100,13 @@ namespace eos {
             bool isEnabled() const;
 
             // Setters
-            void setHorizontalAlignment(HorizontalAlignment horizontalAlignment);
-            void setMargin(const Thickness &margin);
-            void setMinSize(const Size &size);
-            void setPosition(const Point &position);
-            void setSize(const Size &size);
-            void setVerticalAlignment(VerticalAlignment verticalAlignment);
-            void setVisibility(Visibility visibility);
+            void setHorizontalAlignment(HorizontalAlignment value);
+            void setMargin(const Thickness &value);
+            void setMinSize(const Size &value);
+            void setPosition(const Point &value);
+            void setSize(const Size &value);
+            void setVerticalAlignment(VerticalAlignment value);
+            void setVisibility(Visibility value);
 
             // Getters
             inline const Rect& getBounds() const { return bounds; }
@@ -114,8 +114,7 @@ namespace eos {
             inline const Size& getMaxSize() const { return maxSize; }
             inline const Thickness& getMargin() const { return margin; }
             inline const Size& getMinSize() const { return minSize; }
-            //inline const Point& getPosition() const { return position; }
-            //inline const Size& getSize() const { return size; }
+            inline const Size& getSize() const { return size; }
             inline VerticalAlignment getVerticalAlignment() const { return verticalAlignment; }
             Visibility getVisibility() const { return visibility; }
 
@@ -124,7 +123,7 @@ namespace eos {
             const Size& getDesiredSize() const { return desiredSize; }
 
             void dispatch(const Message &msg);
-            bool render(RenderContext &context);
+            bool render(RenderContext *context);
     		void invalidate();
     };
 

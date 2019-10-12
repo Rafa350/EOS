@@ -13,7 +13,6 @@
 #else
 #error No se especifico DISPLAY_DRV_XXXX
 #endif
-#include "HAl/STM32/halRNG.h"
 #include "appDisplayService.h"
 #include "stdio.h"
 
@@ -68,8 +67,8 @@ void DisplayService::onSetup() {
 
 	// Inicialitza el generador de nombres aleatoris.
 	//
-#if defined(EOS_STM32F7) || defined(EOS_STM32F4)
-	halRNGInitialize();
+#if defined(EOS_STM32F7)
+	//halRNGInitialize();
 #endif    
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
@@ -77,7 +76,7 @@ void DisplayService::onSetup() {
 #elif defined(DISPLAY_DRV_ILI9341)
 	driver = ILI9341Driver::getInstance();
 #elif defined(DISPLAY_DRV_RGBLTDC)
-	driver = RGBDirectDriver::getInstance();
+	driver = new RGBDirectDriver();
 #else
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif

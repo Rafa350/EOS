@@ -7,6 +7,24 @@
 using namespace eos;
 
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Crea un bitmap des d'un recurs.
+/// \param    bitmapResource: El recurs.
+///
+Bitmap::Bitmap(
+	const uint8_t *bitmapResource):
+
+	allocated(false),
+	readonly(true) {
+
+	width = (int) (bitmapResource[0] | (bitmapResource[1] << 8));
+	height = (int) (bitmapResource[2] | (bitmapResource[3] << 8));
+	format = ColorFormat::rgb565;
+	pixels = (uint8_t*) &bitmapResource[6];
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief Constructor de l'objecte.
 /// \param width: Amplada en pixels.
@@ -125,6 +143,10 @@ Bitmap::~Bitmap() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte el numero de bytes per pixel.
+/// \return   El valor.
+///
 int Bitmap::getBytesPerPixel() const {
 
 	switch (format) {
@@ -139,10 +161,12 @@ int Bitmap::getBytesPerPixel() const {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte el numero de bytes per linia.
+/// \return   El valor.
+///
 int Bitmap::getBytesPerLine() const {
 
-	int bpp = getBytesPerPixel();
-
-	return ((width * bpp) + 3) & ~0b11;
+	return ((width * getBytesPerPixel()) + 3) & ~0b11;
 }
 

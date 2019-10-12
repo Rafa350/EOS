@@ -134,7 +134,7 @@ namespace eos {
             ///
             inline T &getFront() const {
 
-                return *((T*) GenericList::get(0));
+                return *(static_cast<T*>(GenericList::get(0)));
             }
 
             /// \brief Obte un element de la llista.
@@ -143,7 +143,7 @@ namespace eos {
             ///
             inline T &operator[](unsigned index) const {
 
-                return *((T*) GenericList::get(index));
+                return *(static_cast<T*>(GenericList::get(index)));
             }
     };
 

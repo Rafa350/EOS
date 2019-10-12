@@ -22,13 +22,13 @@ PushButton::PushButton():
 
 /// ----------------------------------------------------------------------
 /// \brief    Canvia l'estat del boto.
-/// \param    state: El nou estat.
+/// \param    value: El nou estat.
 ///
 void PushButton::setState(
-	PushButtonState state) {
+	PushButtonState value) {
 
-	if (this->state != state) {
-		this->state = state;
+	if (state != value) {
+		state = value;
 		invalidate();
 	}
 }
@@ -39,11 +39,11 @@ void PushButton::setState(
 /// \param    context: El context de renderitzat.
 ///
 void PushButton::onRender(
-	RenderContext &context) {
+	RenderContext *context) {
 
 	// Inicia el renderitzat.
 	//
-	Graphics &g = context.beginRender(this);
+	Graphics &g = context->beginRender(this);
 
 	// Obte les mides de l'area de dibuix
 	//
@@ -75,7 +75,7 @@ void PushButton::onRender(
 
 	// Finalitza el renderitzat.
 	//
-	context.endRender();
+	context->endRender();
 }
 
 

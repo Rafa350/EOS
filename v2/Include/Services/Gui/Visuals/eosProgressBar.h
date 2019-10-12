@@ -21,15 +21,15 @@ namespace eos {
 			int value;
 
 		protected:
-			void onRender(RenderContext &context) override;
+			void onRender(RenderContext *context) override;
 			Size measureOverride(const Size &availableSize) const override;
 
 		public:
 			ProgressBar();
 
-			void setBackgroundColor(const Color& color);
-			void setBarColor(const Color &color);
-			void setBorderColor(const Color &color);
+			void setBackgroundColor(const Color &value);
+			void setBarColor(const Color &value);
+			void setBorderColor(const Color &value);
 
 			void setMaxValue(int value);
 			void setMinValue(int value);

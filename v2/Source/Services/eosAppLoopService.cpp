@@ -14,27 +14,27 @@ static AppLoopServiceConfiguration defaultConfiguration = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor de l'objecte.
-/// \param pApplication: Aplicacio on afeigir el servei.
+/// \brief    Constructor de l'objecte.
+/// \param    application: Aplicacio on afeigir el servei.
 ///
 AppLoopService::AppLoopService(
-	Application *pApplication):
+	Application *application):
 
-	AppLoopService(pApplication, defaultConfiguration) {
+	AppLoopService(application, defaultConfiguration) {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param application: Aplicacio on afeigir el servei.
-/// \param configuration: Parametres de configuracio.
+/// \brief    Constructor.
+/// \param    application: Aplicacio on afeigir el servei.
+/// \param    configuration: Parametres de configuracio.
 ///
 AppLoopService::AppLoopService(
-    Application *pApplication,
+    Application *application,
 	const AppLoopServiceConfiguration &configuration):
 
-    Service(pApplication, configuration.serviceConfiguration),
+    Service(application, configuration.serviceConfiguration),
 	initialized(false) {
 }
 

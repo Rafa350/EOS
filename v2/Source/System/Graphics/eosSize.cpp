@@ -47,53 +47,46 @@ Size::Size(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Retorna un objecte engrandit.
-/// \param    dw: Increment del tamany en amplada.
-/// \param    dw: increment de tamany en alçada.
+/// \brief    Retorna un objecte inflat.
+/// \param    h: Inflat en horitzontal.
+/// \param    v: Inflat en vertical
 /// \return   El nou objecte.
 /// \remarks  El increment tant en amplada com en alçada pot ser negatiu.
 ///
-Size Size::inflate(
-	int dw,
-	int dh) const {
+Size Size::inflated(
+	int h,
+	int v) const {
 
 	return Size(
-		Math::max(0, width + dw),
-		Math::max(0, height + dh));
+		Math::max(0, width + h),
+		Math::max(0, height + v));
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Retorna un objecte inflat.
-/// \param    t: Marges.
+/// \param    left: Inflat per l'esquerra.
+/// \param    top: Inflat per dalt.
+/// \param    right: Inflat per la dreta.
+/// \param    bottom: Inflat per avall.
 ///
-Size Size::inflate(
-	const Thickness &t) const {
+Size Size::inflated(
+	int left,
+	int top,
+	int right,
+	int bottom) const {
 
 	return Size(
-		width + t.getLeft() + t.getRight(),
-		height + t.getTop() + t.getBottom());
+		Math::max(0, width + left + right),
+		Math::max(0, height + top + bottom));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Retorna un objecte desinflat.
-/// \param    t: Marges.
+/// \brief    Retorna un tamany limitat.
+/// \param    s: El tamany limit.
 ///
-Size Size::deflate(
-	const Thickness &t) const {
-
-	return Size(
-		Math::max(0, width - t.getLeft() - t.getRight()),
-		Math::max(0, height - t.getTop() - t.getBottom()));
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Limita un tamany amb un altre.
-/// \param    s: El tamany per limitar.
-///
-Size Size::constrain(
+Size Size::constrained(
 	const Size &s) const {
 
 	return Size(
