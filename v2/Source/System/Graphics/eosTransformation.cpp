@@ -23,6 +23,7 @@ Transformation::Transformation(
     const Transformation &t) {
 
     memcpy(m, t.m, sizeof(Matrix));
+    type = t.type;
 }
 
 
@@ -54,6 +55,8 @@ Transformation::Transformation(
 	m[2][0] = tx;
 	m[2][1] = ty;
 	m[2][2] = 1;
+
+	type = TypeUnknown;
 }
 
 
@@ -65,11 +68,13 @@ Transformation::Transformation(
 	const Matrix &m) {
 
 	memcpy(this->m, m, sizeof(Matrix));
+
+	type = TypeUnknown;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza la transformacio amb la nmatriu identitat.
+/// \brief    Inicialitza la transformacio amb la matriu identitat.
 ///
 void Transformation::identity() {
 
@@ -84,6 +89,8 @@ void Transformation::identity() {
 	m[2][0] = 0;
 	m[2][1] = 0;
 	m[2][2] = 1;
+
+	type = TypeIdentity;
 }
 
 
@@ -96,22 +103,34 @@ void Transformation::translate(
 	int tx,
 	int ty) {
 
-	Matrix tm, rm;
+	if (type == TypeIdentity) {
 
-	tm[0][0] = 1;
-	tm[0][1] = 0;
-	tm[0][2] = 0;
+		m[2][0] = tx;
+		m[2][1] = ty;
 
-	tm[1][0] = 0;
-	tm[1][1] = 1;
-	tm[1][2] = 0;
+		type = TypeTranslation;
+	}
 
-	tm[2][0] = tx;
-	tm[2][1] = ty;
-	tm[2][2] = 1;
+	else {
+		Matrix tm, rm;
 
-	multiply(rm, tm, m);
-	memcpy(m, rm, sizeof(Matrix));
+		tm[0][0] = 1;
+		tm[0][1] = 0;
+		tm[0][2] = 0;
+
+		tm[1][0] = 0;
+		tm[1][1] = 1;
+		tm[1][2] = 0;
+
+		tm[2][0] = tx;
+		tm[2][1] = ty;
+		tm[2][2] = 1;
+
+		combineType(type, type, TypeTranslation);
+		combineMatrix(rm, tm, m);
+
+		memcpy(m, rm, sizeof(Matrix));
+	}
 }
 
 
@@ -148,16 +167,25 @@ void Transformation::scale(
 		sm[2][1] = (1 - sy) * oy;
 	sm[2][2] = 1;
 
-	multiply(rm, sm, m);
+	combineType(type, type, TypeScale);
+	combineMatrix(rm, sm, m);
+
 	memcpy(m, rm, sizeof(Matrix));
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix una rotacio respecte a un punt.
+/// \param    r: Angle de rotacio.
+/// \param    ox: Coordinada X del centre de rotacio.
+/// \param    oy: Coordinada Y del centre de rotacio.
+///
 void Transformation::rotate(
 	RotateTransformationAngle r,
 	int ox,
 	int oy) {
 
+	combineType(type, type, TypeTranslation | TypeScale);
 }
 
 
@@ -170,7 +198,9 @@ void Transformation::combine(
 
 	Matrix rm;
 
-	multiply(rm, t.m, m);
+	combineType(type, type, t.type);
+	combineMatrix(rm, t.m, m);
+
 	memcpy(m, rm, sizeof(Matrix));
 }
 
@@ -184,20 +214,47 @@ void Transformation::apply(
 	int &x,
 	int &y) const {
 
-	int xx = x;
-	x = xx * m[0][0] + y * m[1][0] + m[2][0];
-	y = xx * m[0][1] + y * m[1][1] + m[2][1];
+	switch (type) {
+		case TypeIdentity:
+			break;
+
+		case TypeTranslation:
+			x += m[2][0];
+			y += m[2][1];
+			break;
+
+		case TypeScale:
+			x *= m[0][0];
+			y *= m[1][1];
+			break;
+
+		case TypeTranslation | TypeScale:
+			x *= m[0][0];
+			x += m[2][0];
+			y *= m[1][1];
+			y += m[2][1];
+			break;
+
+		default: {
+			int xx = x;
+			x = xx * m[0][0] + y * m[1][0] + m[2][0];
+			y = xx * m[0][1] + y * m[1][1] + m[2][1];
+			break;
+		}
+	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Operador '*'.
+/// \brief    Operador '='.
 /// \param    t: La transformacio a asignar.
 ///
 Transformation& Transformation::operator = (
     const Transformation &t) {
 
 	memcpy(m, t.m, sizeof(Matrix));
+	type = t.type;
+
     return *this;
 }
 
@@ -211,7 +268,7 @@ Transformation Transformation::operator *(
 
 	Matrix rm;
 
-	multiply(rm, t.m, m);
+	combineMatrix(rm, t.m, m);
 	return Transformation(rm);
 }
 
@@ -225,21 +282,22 @@ Transformation& Transformation::operator *=(
 
 	Matrix rm;
 
-	multiply(rm, t.m, m);
+	combineMatrix(rm, t.m, m);
 	memcpy(m, rm, sizeof(Matrix));
+	type = TypeUnknown;
 
 	return *this;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Multiplica dues matrius.
+/// \brief    Combina (Multiplica) dues matrius.
 /// \param    dst: Destinacio del resultat.
 /// \param    m1: Primera matriu a multiplicat.
 /// \param    m2: Segona matriu a multiplicar.
 /// \param    rm: Matriu resultat de l'operacio.
 ///
-void Transformation::multiply(
+void Transformation::combineMatrix(
 	Matrix &rm,
 	const Matrix &m1,
 	const Matrix &m2) {
@@ -251,4 +309,26 @@ void Transformation::multiply(
 				sum += m1[r][z] * m2[z][c];
 			rm[r][c] = sum;
 	    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Combina el tipus de matriu.
+/// \param    dst: Destinacio del resultat.
+/// \param    src1: Primer tipus a combinar.
+/// \param    src: Segon tipus a combinar.
+///
+void Transformation::combineType(
+	MatrixType &dst,
+	MatrixType src1,
+	MatrixType src2) {
+
+	if ((src1 == TypeUnknown) || (src2 == TypeUnknown))
+		dst = TypeUnknown;
+
+	else if (src1 == src2)
+		dst = src1;
+
+	else
+		dst = src1 | src2;
 }

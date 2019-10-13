@@ -18,13 +18,22 @@ namespace eos {
 	class Transformation {
 		private:
 			typedef int Matrix[3][3];
+			typedef uint8_t MatrixType;
+
+		private:
+		    constexpr static MatrixType TypeIdentity = 0;
+		    constexpr static MatrixType TypeTranslation = 1;
+		    constexpr static MatrixType TypeScale = 2;
+		    constexpr static MatrixType TypeUnknown = 4;
 
 		private:
 			Matrix m;
+			MatrixType type;
 
 		private:
 			Transformation(const Matrix &m);
-			static void multiply(Matrix &dst, const Matrix &src1, const Matrix &src2);
+			static void combineMatrix(Matrix &dst, const Matrix &src1, const Matrix &src2);
+			static void combineType(MatrixType &dst, MatrixType src1, MatrixType src2);
 
 		public:
 			Transformation();

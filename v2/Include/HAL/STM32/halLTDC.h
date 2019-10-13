@@ -44,6 +44,7 @@ typedef struct {
 
 void halLTDCInitialize(const LTDCInitializeInfo *pInfo);
 void halLTDCShutdown();
+
 void halLTDCSetBackgroundColor(uint32_t rgb);
 
 void halLTDCLayerSetWindow(LTDCLayerNum layerNum, int x, int y, int width, int height);

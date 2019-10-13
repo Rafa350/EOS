@@ -178,7 +178,7 @@ void halLTDCLayerSetDefaultColor(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona i activa el color de croma
+/// \brief    Selecciona i activa el color de transparencia.
 /// \param    rgb: Color en format rgb888.
 ///
 void halLTDCLayerSetKeyColor(
@@ -206,7 +206,7 @@ void halLTDCLayerSetKeyColor(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desactiva el color de croma.
+/// \brief    Desactiva el color de transparencia.
 ///
 void halLTDCLayerDisableKeyColor(
 	LTDCLayerNum layerNum) {
@@ -275,7 +275,6 @@ void halLTDCLayerSetFrameFormat(
     tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
     tmp |= numLines;
     layer->CFBLNR = tmp;
-
 }
 
 
@@ -338,6 +337,9 @@ uint8_t halLTDCGetPixelSize(
 		case HAL_LTDC_FORMAT_RGB565:
 		case HAL_LTDC_FORMAT_RGB888:
 			return 2;
+
+		case HAL_LTDC_FORMAT_L8:
+			return 1;
 	}
 }
 
