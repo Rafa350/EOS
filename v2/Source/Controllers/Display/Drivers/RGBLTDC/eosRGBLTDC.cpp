@@ -48,22 +48,6 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte l'adressa del pixel en la coordinada especificada.
-/// \param base: Adressa base.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \return L'adressa del pixel.
-///
-static inline pixel_t *addressOf(
-	int base,
-	int x,
-	int y) {
-
-	return (pixel_t*) (base + (((y * LINE_WIDTH) + x) * sizeof(pixel_t)));
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Converteix un color a format pixel.
 /// \param color: El color a convertir.
 /// \return El valor del pixel.
@@ -131,8 +115,6 @@ void RGBDirectDriver::initialize() {
 	// Inicialitza el dispositiu LTDC
 	//
 	initializeLTDC();
-	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
-	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
 
     // Inicialitza el dispositiu DMA2D
     //
@@ -516,6 +498,7 @@ void RGBDirectDriver::initializeLTDC() {
 		DISPLAY_IMAGE_WIDTH * halLTDCGetPixelSize(HAL_LTDC_FORMAT_DEFAULT),
 		((DISPLAY_IMAGE_WIDTH * halLTDCGetPixelSize(HAL_LTDC_FORMAT_DEFAULT)) + 63) & 0xFFFFFFC0,
 		DISPLAY_IMAGE_HEIGHT);
+	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
 	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
 }
 
@@ -631,12 +614,12 @@ void RGBDirectDriver::put(
 
 	if (!color.isTransparent()) {
 
-		pixel_t *pPixelAddr = addressOf(backFrameAddr, x, y);
+		pixel_t *pPixel = (pixel_t*) (backFrameAddr + halLTDCGetPixelOffset(HAL_LTDC_LAYER_0, x, y));
 
 		if (color.isOpaque())
-			*pPixelAddr = toPixel(color);
+			*pPixel = toPixel(color);
 		else
-			*pPixelAddr = combinePixel(*pPixelAddr, toPixel(color), color.getOpacity());
+			*pPixel = combinePixel(*pPixel, toPixel(color), color.getOpacity());
 	}
 }
 
@@ -659,15 +642,18 @@ void RGBDirectDriver::fill(
 
 	if (color.isOpaque()) {
 		halDMA2DStartFill(
-			(uint32_t) addressOf(backFrameAddr, x, y),
+			backFrameAddr + halLTDCGetPixelOffset(HAL_LTDC_LAYER_0, x, y),
 			width,
 			height,
-			LINE_WIDTH - width,
+			LINE_WIDTH - width, // TODO: Revisar aizo
 			HAL_DMA2D_DFMT_DEFAULT,
 			toPixel(color));
 		halDMA2DWaitForFinish();
 	}
 	else
+		// TODO
+		// Crear un buffer d'una linia amb el color
+		// Tranferir la linia amb DMA2D
 		for (int yy = 0; yy < height; yy++)
 			for (int xx = 0; xx < width; xx++)
 				put(x + xx, y + yy, color);
@@ -710,12 +696,12 @@ void RGBDirectDriver::copy(
 	}
 
 	halDMA2DStartCopy(
-		(uint32_t) addressOf(backFrameAddr, x, y),
+		backFrameAddr + halLTDCGetPixelOffset(HAL_LTDC_LAYER_0, x, y),
 		width,
 		height,
-		LINE_WIDTH - width,
+		LINE_WIDTH - width, // Revisar aixo
 		options,
-		((uint32_t) pixels) + (((dy * height) + dx) * sizeof(uint16_t)),
+		((uint32_t) pixels) + (((dy * height) + dx) * sizeof(uint16_t)), // TODO: Revisar aixo
 	    pitch);
 	halDMA2DWaitForFinish();
 }

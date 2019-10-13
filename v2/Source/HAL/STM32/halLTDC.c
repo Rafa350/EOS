@@ -308,6 +308,8 @@ void halLTDCLayerSetFrameAddress(
 void halLTDCLayerUpdate(
 	LTDCLayerNum layerNum) {
 
+	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
+
 	// Si el LTDC esta inactiu, fa l'actualitzacio inmediata
 	//
     if ((LTDC->GCR & LTDC_GCR_LTDCEN) == 0)
@@ -321,6 +323,40 @@ void halLTDCLayerUpdate(
 		while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
 			continue;
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el offset en bytes d'un pixel.
+/// \param    layerNum: La capa
+/// \param    x: Coordinada X del pixel.
+/// \param    y: Coordinada Y del pixel;
+/// \return   El offset calculat.
+///
+int halLTDCGetPixelOffset(
+	LTDCLayerNum layerNum,
+	int x,
+	int y) {
+
+	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
+
+	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
+
+	int pitch = (layer->CFBLR & LTDC_LxCFBLR_CFBP_Msk) >> LTDC_LxCFBLR_CFBP_Pos;
+	int pixBytes = 0;
+	switch ((layer->PFCR & LTDC_LxPFCR_PF_Msk) >> LTDC_LxPFCR_PF_Pos) {
+		default:
+		case 0b001: // RGB888
+		case 0b010: // RGB565
+			pixBytes = 2;
+			break;
+
+		case 0b101: // L8
+			pixBytes = 1;
+			break;
+	}
+
+	return (y * pitch) + (x * pixBytes);
 }
 
 

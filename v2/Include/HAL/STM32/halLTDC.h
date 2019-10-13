@@ -55,6 +55,7 @@ void halLTDCLayerSetFrameFormat(LTDCLayerNum layerNum, LTDCPixelFormat pixelForm
 void halLTDCLayerSetFrameAddress(LTDCLayerNum layerNum, int frameAddr);
 void halLTDCLayerUpdate(LTDCLayerNum layerNum);
 
+int halLTDCGetPixelOffset(LTDCLayerNum layerNum, int x, int y);
 uint8_t halLTDCGetPixelSize(LTDCPixelFormat pixelFormat);
 
 #define halLTDCEnable()      LTDC->GCR |= LTDC_GCR_LTDCEN

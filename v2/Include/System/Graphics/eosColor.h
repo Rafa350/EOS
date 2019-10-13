@@ -68,8 +68,6 @@
 
 namespace eos {
 
-	class Color;
-
 	typedef COLOR_TYPE color_t;
 
 	/// \brief Format de color
