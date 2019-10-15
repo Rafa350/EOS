@@ -15,21 +15,9 @@
 #include "Services/Gui/eosGuiMessageQueue.h"
 #include "Services/Gui/eosVisual.h"
 #include "Services/Gui/eosVisualUtils.h"
-#include "Services/Gui/Visuals/eosBorder.h"
-#include "Services/Gui/Visuals/eosCheckButton.h"
-#include "Services/Gui/Visuals/eosImage.h"
-#include "Services/Gui/Visuals/eosPushButton.h"
-#include "Services/Gui/Visuals/eosLabel.h"
-#include "Services/Gui/Visuals/eosPanel.h"
-#include "Services/Gui/Visuals/eosProgressBar.h"
 #include "Services/Gui/Visuals/eosScreen.h"
-#include "Services/Gui/Visuals/eosStackPanel.h"
-#include "Services/Gui/Visuals/eosVirtualKbd.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "System/Core/eosString.h"
-#include "System/Graphics/eosBitmap.h"
-#include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPoint.h"
 
@@ -49,9 +37,6 @@ static GuiServiceConfiguration defaultConfiguration = {
 static IDisplayDriver *displayDriver;
 static Graphics *graphics;
 static RenderContext *context;
-
-Panel *panel;
-int x, y, dx, dy;
 
 
 /// ----------------------------------------------------------------------

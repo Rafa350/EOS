@@ -3,14 +3,14 @@
 
 
 #include "eos.h"
-#include "Services/Gui/Visuals/eosControl.h"
+#include "Services/Gui/Visuals/eosItemsControl.h"
 
 
 namespace eos {
 
 	class Size;
 
-	class Menu: public Control {
+	class Menu: public ItemsControl {
 
 		protected:
 			Size measureOverride(const Size &availableSize) const override;

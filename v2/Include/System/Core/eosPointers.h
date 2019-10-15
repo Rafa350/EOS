@@ -7,6 +7,13 @@
 
 namespace eos {
 
+	template <class T>
+	class SharedPtr {
+		private:
+			T* ptr;
+			int* ptrRefCount;
+	};
+
 }
 
 
