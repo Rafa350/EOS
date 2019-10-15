@@ -1,7 +1,8 @@
-#include "Services/Fsm/eosFSM.hpp"
+#include "eos.h"
+#include "Services/Fsm/eosFSM.h"
 
 
-using namespace eos::fsm;
+using namespace eos;
 
 
 /*************************************************************************
