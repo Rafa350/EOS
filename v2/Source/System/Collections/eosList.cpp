@@ -205,6 +205,26 @@ void *GenericList::get(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Obte el punter al primer element de la llista.
+/// \return   El punter.
+///
+void *GenericList::getFront() const {
+
+	return count > 0 ? getPtr(0) : nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el punter al ultim element de la llista.
+/// \return   El punter.
+///
+void *GenericList::getBack() const {
+
+	return count > 0 ? getPtr(count - 1) : nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Obte l'adressa del element especificat.
 /// \param index: L'index del element.
 /// \return L'adresa del element.

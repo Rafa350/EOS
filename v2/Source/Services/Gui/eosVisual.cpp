@@ -35,13 +35,8 @@ Visual::~Visual() {
 	if (parent != nullptr)
 		parent->removeVisual(this);
 
-	while (!childs.isEmpty()) {
-
-		Visual *child = childs.getFront();
-		childs.remove(child);
-
+	for (auto child: childs.enumerate())
 		delete child;
-	}
 }
 
 
@@ -64,8 +59,8 @@ bool Visual::isRenderizable() const {
 		return true;
 
 	else {
-		for (VisualListIterator it(childs); it.hasNext(); it.next()) {
-			if (it.current()->isRenderizable())
+		for (auto child: childs.enumerate()) {
+			if (child->isRenderizable())
 				return true;
 		}
 		return false;
@@ -107,8 +102,7 @@ bool Visual::render(
 
 	// Continua amb els fills.
 	//
-	for (VisualListIterator it(childs); it.hasNext(); it.next()) {
-		Visual *child = it.current();
+	for (auto child: childs.enumerate()) {
 		if (child->render(context))
 			renderized = true;
 	}
@@ -164,7 +158,7 @@ void Visual::removeVisual(
 void Visual::removeVisuals() {
 
 	while (!childs.isEmpty())
-        removeVisual(childs.getFront());
+        removeVisual(childs.getFirst());
 }
 
 
@@ -283,9 +277,8 @@ Size Visual::measureOverride(
 	int width = 0;
 	int height = 0;
 
-	for (VisualListIterator it(childs); it.hasNext(); it.next()) {
+	for (auto child: childs.enumerate()) {
 
-		Visual *child = it.current();
 		eosAssert(child != nullptr);
 
 		if (child->isVisible()) {
@@ -310,9 +303,8 @@ Size Visual::measureOverride(
 Size Visual::arrangeOverride(
 	const Size &finalSize) const {
 
-	for (VisualListIterator it(childs); it.hasNext(); it.next()) {
+	for (auto child: childs.enumerate()) {
 
-		Visual *child = it.current();
 		eosAssert(child != nullptr);
 
 		if (child->isVisible())

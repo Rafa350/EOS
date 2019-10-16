@@ -4,224 +4,57 @@
 
 #include "eos.h"
 
+#include <algorithm>
+#include <vector>
+
 
 namespace eos {
 
-    /// \brief Llista generica implementada com array de bytes.
-    //
-    class GenericList {
-        private:
-            unsigned size;             // Tamany del element
-            unsigned count;            // Numero d'elements en la llista
-            unsigned capacity;         // Capacitat de la llista en elements
-            unsigned initialCapacity;  // Capacitat inicial de la llista
-            void *container;           // Contenidor d'elements
-
-        private:
-            void *getPtr(unsigned index) const;
-            void resize(unsigned newCapacity);
-
-        public:
-            virtual ~GenericList();
-
-        protected:
-            GenericList(unsigned size, unsigned initialCapacity);
-            GenericList(const GenericList &list);
-            void clear();
-            void addFront(const void *element);
-            void addBack(const void *element);
-            void remove(const void *element);
-            void removeAt(unsigned index);
-            void removeFront();
-            void removeBack();
-            inline unsigned getCount() const { return count; }
-            void *get(unsigned index) const;
-            unsigned indexOf(const void *element) const;
-            bool isEmpty() const { return count > 0; }
-    };
-
-    /// \brief interficie generica per llistes RO
-    ///
     template <typename T>
-    class IReadOnlyList {
+    class List {
+    	private:
+    		std::vector<T*> items;
+
     	public:
-    		virtual ~IReadOnlyList() {}
-    };
-
-    /// \brief Interface generic per les llistes RW
-    ///
-    template <typename T>
-    class IList {
-    	public:
-    		virtual ~IList() {}
-    		virtual void add(const T &element) = 0;
-    		virtual unsigned getCount() const = 0;
-    		virtual bool isEmpty() const = 0;
-    };
-
-    /// \brief Llista d'elements.
-    ///
-    template <typename T>
-    class List: private GenericList, public IList<T> {
-        public:
-            /// \brief Contructor.
-            ///
-            List() :
-                GenericList(sizeof(T), 10) {
+    		List() {
+    			items.reserve(5);
             }
 
-            /// \brief Contructor copia.
-            ///
-            List(const GenericList &list) :
-                GenericList(list) {
-            }
+			inline void add(T *item) {
+				items.push_back(item);
+			}
 
-            /// \brief Afegeix un element a la llista
-            /// \param element: Referencia al element a afeigir
-            ///
-            inline void add(const T &element) override {
+			inline void remove(T *item) {
+				auto it = std::find(items.begin(), items.end(), item);
+				items.erase(it);
+			}
 
-                GenericList::addBack(&element);
-            }
+			inline void clear() {
+				items.clear();
+			}
 
-            /// \brief Elimina un element de la llista
-            /// \param index: El index del element.
-            inline void removeAt(unsigned index) {
+			inline bool isEmpty() {
+				return items.empty();
+			}
 
-                GenericList::removeAt(index);
-            }
+			inline int getCount() const {
+				return items.count();
+			}
 
-            /// \brief Elimina un element de la llista
-            /// \param element: L'element a eliminar.
-            inline void remove(const T &element) {
+			inline T* getFirst() const {
+				return items.front();
+			}
 
-                GenericList::removeAt(indexOf(element));
-            }
+			inline T* getLast() const {
+				return items.back();
+			}
 
-            /// \brief Elimina tots els elements de la llista.
-            ///
-            inline void clear() {
-
-                GenericList::clear();
-            }
-
-            /// \brief Obte l'index del element especificat.
-            /// \param element: El element.
-            ///
-            inline unsigned indexOf(const T &element) const {
-
-                return GenericList::indexOf(&element);
-            }
-
-            /// \brief Obte el numero d'elements en la llista
-            /// \return El numero d'elements en la llista.
-            ///
-            inline unsigned getCount() const override {
-
-                return GenericList::getCount();
-            }
-
-            /// \brief Comprova si es buida.
-            /// \return True si la llista es buida.
-            ///
-            inline bool isEmpty() const override {
-
-                return GenericList::getCount() == 0;
-            }
-
-            /// \brief Obte el primer element de la llista
-            /// \return El primer element
-            ///
-            inline T &getFront() const {
-
-                return *(static_cast<T*>(GenericList::get(0)));
-            }
-
-            /// \brief Obte un element de la llista.
-            /// \param index: Index del element.
-            /// \return Referencia al element.
-            ///
-            inline T &operator[](unsigned index) const {
-
-                return *(static_cast<T*>(GenericList::get(index)));
-            }
-    };
-
-    /// \brief Iterator de llistes
-    ///
-    template <typename T>
-    class ListIterator {
-        private:
-            const List<T> &list;
-            unsigned index;
-            unsigned count;
-
-        public:
-            /// \brief: Contructor.
-            /// \param: list: La llista a iterar.
-            ///
-            ListIterator(const List<T> &_list):
-                list(_list),
-                index(0),
-                count(_list.getCount()) {
-            }
-
-            /// \brief Pasa al primer element.
-            ///
-            inline void first() {
-
-                index = 0;
-            }
-
-            /// \brief Pasa al ultim element.
-            ///
-            inline void last() {
-
-                index = count - 1;
-            }
-
-            /// \brief Comprova si hi ha un element posterior a l'actual.
-            /// \return Resultat de l'operacio.
-            ///
-            inline bool hasNext() const {
-
-                return index < count;
-            }
-
-            /// \brief Comprova si hi ha un element previ a l'actual
-            /// \return Resultat de l'operacio.
-            ///
-            inline bool hasPrev() const {
-
-                return index > 0;
-            }
-
-            /// \brief Obte el element actual.
-            /// \return L'element actual
-            ///
-            inline T &current() const {
-
-                return list[index];
-            }
-
-            /// \brief Pasa al seguent element.
-            ///
-            inline void next() {
-
-                index++;
-            }
-
-            /// \brief Pasa a l'element anterior.
-            ///
-            inline void prev() {
-
-                index--;
-            }
-
-        private:
-            ListIterator(const ListIterator &iterator) = delete;
+			inline std::vector<T*> enumerate() const {
+				return items;
+			}
     };
 }
+
 
 #endif // __eosList__
 

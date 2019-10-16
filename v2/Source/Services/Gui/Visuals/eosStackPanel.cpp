@@ -33,15 +33,14 @@ Size StackPanel::measureOverride(
 	int width = 0;
 	int height = 0;
 
-	for (VisualListIterator it(getChilds()); it.hasNext(); it.next()) {
+	for (auto child: getChilds().enumerate()) {
 
-		Visual *pChild = it.current();
-		eosAssert(pChild != nullptr);
+		eosAssert(child != nullptr);
 
-		if (pChild->isVisible()) {
+		if (child->isVisible()) {
 
-			pChild->measure(childAvailableSize);
-			const Size& childDesiredSize = pChild->getDesiredSize();
+			child->measure(childAvailableSize);
+			const Size& childDesiredSize = child->getDesiredSize();
 			int childDesiredWidth = childDesiredSize.getWidth();
 			int childDesiredHeight = childDesiredSize.getHeight();
 
@@ -75,20 +74,19 @@ Size StackPanel::arrangeOverride(
     int childWidth = finalSize.getWidth();
     int childHeight = finalSize.getHeight();
 
-	for (VisualListIterator it(getChilds()); it.hasNext(); it.next()) {
+	for (auto child: getChilds().enumerate()) {
 
-		Visual *pChild = it.current();
-		eosAssert(pChild != nullptr);
+		eosAssert(child != nullptr);
 
-		if (pChild->isVisible()) {
+		if (child->isVisible()) {
 
-			const Size &childSize = pChild->getDesiredSize();
+			const Size &childSize = child->getDesiredSize();
             if (isHorizontal)
                 childWidth = childSize.getWidth();
             else
                 childHeight = childSize.getHeight();
             
-			pChild->arrange(Rect(childX, childY, childWidth, childHeight));
+			child->arrange(Rect(childX, childY, childWidth, childHeight));
 
 			if (isHorizontal)
 				childX += childWidth;

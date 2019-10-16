@@ -19,7 +19,6 @@ namespace eos {
 		    	Font *font;
 		    };
 			typedef List<CacheEntry> Cache;
-			typedef ListIterator<CacheEntry> CacheIterator;
 
 		private:
 			static FontCache *instance;

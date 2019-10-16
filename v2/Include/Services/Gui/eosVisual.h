@@ -43,14 +43,12 @@ namespace eos {
 		bottom
 	};
 
-	class Visual;
-    typedef List<Visual*> VisualList;
-    //typedef ReadOnlyList<Visual*> ReadOnlyVisualList;
-    typedef ListIterator<Visual*> VisualListIterator;
-
     /// \brief Clase base que representa tots els elements visuals.
 	///
     class Visual {
+    	private:
+    		typedef List<Visual> VisualList;
+
     	private:
     		Visual *parent;
     		VisualList childs;

@@ -4,10 +4,10 @@
 #include "System/eosApplication.h"
 #include "string.h"
 
+#include <algorithm>
+
 
 using namespace eos;
-
-static Application *application = nullptr;
 
 
 /// ----------------------------------------------------------------------
@@ -15,9 +15,6 @@ static Application *application = nullptr;
 ///
 Application::Application() {
 
-	eosAssert(application == nullptr);
-
-    application = this;
 }
 
 
@@ -26,23 +23,8 @@ Application::Application() {
 ///
 Application::~Application() {
 
-    while (!services.isEmpty()) {
-
-    	Service *service = services.getFront();
-    	services.remove(service);
-
+	for (auto service: services.enumerate())
     	delete service;
-    }
-}
-
-
-/// ---------------------------------------------------------------------
-/// \brief Obte la instancia de l'aplicacio.
-/// \return L'aplicacio.
-///
-Application *Application::getApplication() {
-
-	return application;
 }
 
 
@@ -78,8 +60,8 @@ void Application::tick() {
 
 	// Notifica la senyal tick a tots els serveis.
     //
-    for (ServiceListIterator it(services); it.hasNext(); it.next())
-        it.current()->tick();
+	for (auto service: services.enumerate())
+		service->tick();
 }
 
 
@@ -90,8 +72,8 @@ void Application::initializeServices() {
 
     // Inicialitza els serveis de la llista, un a un.
     //
-    for (ServiceListIterator it(services); it.hasNext(); it.next())
-        it.current()->initialize();
+	for (auto service: services.enumerate())
+		service->initialize();
 }
 
 
@@ -109,8 +91,8 @@ void Application::runServices() {
 
         // Executa la tasca de cada servei, un a un
         //
-    	for (ServiceListIterator it(services); it.hasNext(); it.next())
-    		it.current()->task();
+    	for (auto service: services)
+    		service->task();
     }
 #endif
 }
@@ -159,8 +141,8 @@ void Application::removeService(
 ///
 void Application::removeServices() {
 
-    while (!services.isEmpty())
-        removeService(services.getFront());
+	while (!services.isEmpty())
+        removeService(services.getFirst());
 }
 
 
@@ -169,12 +151,11 @@ void Application::removeServices() {
 /// \param    id: El identificador del servei.
 /// \return   El servei, null si no el troba.
 ///
-Service *Application::getService(
+Service *Application::findService(
     int id) const {
 
-  	for (ServiceListIterator it(services); it.hasNext(); it.next()) {
-   		Service *service = it.current();
-        if (service->getId() == id)
+  	for (auto service: services.enumerate()) {
+   	    if (service->getId() == id)
             return service;
     }
 
@@ -187,11 +168,10 @@ Service *Application::getService(
 /// \param    name: El nom del servei.
 /// \return   El servei, null si no el troba.
 ///
-Service *Application::getService(
+Service *Application::findService(
     const String& name) const {
 
-  	for (ServiceListIterator it(services); it.hasNext(); it.next()) {
-   		Service *service = it.current();
+  	for (auto service: services.enumerate()) {
         if (service->getName() == name)
             return service;
     }

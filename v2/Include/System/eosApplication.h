@@ -7,18 +7,20 @@
 #include "eos.h"
 #include "System/Collections/eosList.h"
 
+//#include <vector>
+
 
 namespace eos {
 
     class Service;
     class String;
 
-    typedef List<Service*> ServiceList;
-    typedef ListIterator<Service*> ServiceListIterator;
-
-    /// \brief Clase que representa l'aplicacio.
+	/// \brief Clase que representa l'aplicacio.
     ///
     class Application {
+    	private:
+        	typedef List<Service> ServiceList;
+
         private:
             ServiceList services;
 
@@ -38,17 +40,15 @@ namespace eos {
             Application();
             virtual ~Application();
 
-            static Application *getApplication();
-
             void run();
             void tick();
 
-            void addService(Service *pService);
-            void removeService(Service *pService);
+            void addService(Service *service);
+            void removeService(Service *service);
             void removeServices();
-            Service *getService(int id) const;
-            Service *getService(const String &serviceName) const;
-            inline const ServiceList& getServices() const { return services; }
+
+            Service *findService(int id) const;
+            Service *findService(const String &serviceName) const;
     };
 }
 

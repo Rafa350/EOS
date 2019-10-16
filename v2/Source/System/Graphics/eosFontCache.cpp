@@ -36,12 +36,11 @@ Font *FontCache::getFont(
 
 	// Busca el font en el cache.
 	//
-	for (CacheIterator it(cache); it.hasNext() && (font == nullptr); it.next()) {
-		const CacheEntry &entry = it.current();
-		if ((entry.name == name) &&
-			(entry.height == height) &&
-			(entry.style == style))
-			font = entry.font;
+	for (auto entry: cache.enumerate()) {
+		if ((entry->name == name) &&
+			(entry->height == height) &&
+			(entry->style == style))
+			font = entry->font;
 	}
 
 	// Si no el troba, crea un de nou i l'afegeix al cache.
@@ -49,7 +48,7 @@ Font *FontCache::getFont(
 	if (font == nullptr) {
 		const uint8_t * fontResource = Font::getFontResource(name, height, style);
 		font = new Font(fontResource);
-		CacheEntry entry = {
+		CacheEntry *entry = new  CacheEntry {
 			.name = name,
 			.height = height,
 			.style = style,

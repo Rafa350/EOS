@@ -70,9 +70,7 @@ Visual *VisualUtils::getVisual(
 		Point testPoint = p.translated(-bounds.getX(), -bounds.getY());
 
 		if (testRect.contains(testPoint)) {
-			for (VisualListIterator it(visual->getChilds()); it.hasNext(); it.next()) {
-				Visual *child = it.current();
-
+			for (auto child: visual->getChilds().enumerate()) {
 				Visual *result = getVisual(child, testPoint);
 				if (result != nullptr)
 					return result;
