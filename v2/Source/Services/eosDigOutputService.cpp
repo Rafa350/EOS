@@ -57,45 +57,45 @@ DigOutputService::~DigOutputService() {
 
     while (!outputs.isEmpty()) {
 
-    	DigOutput *pOutput = outputs.getFront();
-    	outputs.remove(pOutput);
+    	DigOutput *output = outputs.getFirst();
+    	outputs.remove(output);
 
-    	delete pOutput;
+    	delete output;
     }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Afegeig una sortida al servei.
-/// \param    pOutput: La sortida a afeigir.
+/// \param    output: La sortida a afeigir.
 ///
 void DigOutputService::addOutput(
-    DigOutput *pOutput) {
+    DigOutput *output) {
 
     // Precondicions
     //
-    eosAssert(pOutput != nullptr);
-    eosAssert(pOutput->pService == nullptr);
+    eosAssert(output != nullptr);
+    eosAssert(output->service == nullptr);
 
-    outputs.add(pOutput);
-    pOutput->pService = this;
+    outputs.add(output);
+    output->service = this;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Elimina una sortida del servei.
-/// \param    pOutput: La sortida a eliminar.
+/// \param    output: La sortida a eliminar.
 ///
 void DigOutputService::removeOutput(
-    DigOutput *pOutput) {
+    DigOutput *output) {
 
     // Precondicions
     //
-    eosAssert(pOutput != nullptr);
-    eosAssert(pOutput->pService == this);
+    eosAssert(output != nullptr);
+    eosAssert(output->service == this);
 
-    outputs.remove(pOutput);
-    pOutput->pService = nullptr;
+    outputs.remove(output);
+    output->service = nullptr;
 }
 
 
@@ -105,7 +105,7 @@ void DigOutputService::removeOutput(
 void DigOutputService::removeOutputs() {
     
     while (!outputs.isEmpty())
-        outputs.remove(outputs.getFront());
+        outputs.remove(outputs.getFirst());
 }
 
 
@@ -136,8 +136,8 @@ void DigOutputService::onInitialize() {
 
     // Inicialitza les sortides
     //
-    for (DigOutputListIterator it(outputs); it.hasNext(); it.next())
-        it.current()->initialize();
+    for (auto output: outputs.enumerate())
+        output->initialize();
 
     // Inicia el temporitzador
     //
@@ -160,8 +160,8 @@ void DigOutputService::onTask() {
 ///
 void DigOutputService::timeOut() {
 
-    for (DigOutputListIterator it(outputs); it.hasNext(); it.next())
-        it.current()->timeOut();
+    for (auto output: outputs.enumerate())
+        output->timeOut();
 }
 
 
@@ -176,9 +176,9 @@ void DigOutputService::timerInterrupt(
     //
     eosAssert(pParam != nullptr);
 
-	DigOutputService *pService = reinterpret_cast<DigOutputService*>(pParam);
-    eosAssert(pService != nullptr);
-	pService->timeOut();
+	DigOutputService *service = reinterpret_cast<DigOutputService*>(pParam);
+    eosAssert(service != nullptr);
+	service->timeOut();
 }
 
 
@@ -191,13 +191,13 @@ DigOutput::DigOutput(
     DigOutputService *pService,
     const DigOutputConfiguration &configuration):
 
-    pService(nullptr),
+    service(nullptr),
     state(State::Idle),
 	delayCnt(0),
 	widthCnt(0) {
 
-    if (pService != nullptr)
-        pService->addOutput(this);
+    if (service != nullptr)
+        service->addOutput(this);
 
     port = configuration.port;
     pin = configuration.pin;
@@ -212,8 +212,8 @@ DigOutput::DigOutput(
 ///
 DigOutput::~DigOutput() {
 
-    if (pService != nullptr)
-        pService->removeOutput(this);
+    if (service != nullptr)
+        service->removeOutput(this);
 }
 
 

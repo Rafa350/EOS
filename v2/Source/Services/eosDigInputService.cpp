@@ -57,35 +57,35 @@ DigInputService::~DigInputService() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Afegeix una entrada al servei.
-/// \param    pInput: L'entrada a afeigir.
+/// \param    input: L'entrada a afeigir.
 ///
 void DigInputService::addInput(
-    DigInput *pInput) {
+    DigInput *input) {
 
     // Prerequisits
     //
-    eosAssert(pInput != nullptr);
-    eosAssert(pInput->pService == nullptr);
+    eosAssert(input != nullptr);
+    eosAssert(input->pService == nullptr);
 
-    inputs.add(pInput);
-    pInput->pService = this;
+    inputs.add(input);
+    input->service = this;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Elimina una entrada del servei.
-/// \param    pInput: La entrada a eliminar.
+/// \param    input: La entrada a eliminar.
 ///
 void DigInputService::removeInput(
-    DigInput *pInput) {
+    DigInput *input) {
 
     // Precondicions
     //
-    eosAssert(pInput != nullptr);
-    eosAssert(pInput->pService == this);
+    eosAssert(input != nullptr);
+    eosAssert(input->service == this);
 
-    pInput->pService = nullptr;
-    inputs.remove(pInput);
+    input->service = nullptr;
+    inputs.remove(input);
 }
 
 
@@ -95,7 +95,7 @@ void DigInputService::removeInput(
 void DigInputService::removeInputs() {
     
     while (!inputs.isEmpty())
-        inputs.remove(inputs.getFront());
+        inputs.remove(inputs.getFirst());
 }
 
 
@@ -104,8 +104,8 @@ void DigInputService::removeInputs() {
 ///
 void DigInputService::onInitialize() {
     
-    for (DigInputListIterator it(inputs); it.hasNext(); it.next())
-        it.current()->initialize();
+    for (auto input: inputs.enumerate())
+        input->initialize();
 }
 
 
@@ -120,29 +120,28 @@ void DigInputService::onTask() {
         
         Task::delay(10, weakTime);
 
-        for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
+        for (auto input: inputs.enumerate()) {
 
-            DigInput *pInput = it.current();
             bool changed = false;
 
-            pInput->pattern <<= 1;
-            if (halGPIOReadPin(pInput->port, pInput->pin))
-                pInput->pattern |= 1;
+            input->pattern <<= 1;
+            if (halGPIOReadPin(input->port, input->pin))
+                input->pattern |= 1;
 
-            if ((pInput->pattern & PATTERN_MASK) == PATTERN_ON) {
+            if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
                 changed = true;
-                pInput->state = true;
+                input->state = true;
             }
-            else if ((pInput->pattern & PATTERN_MASK) == PATTERN_OFF) {
+            else if ((input->pattern & PATTERN_MASK) == PATTERN_OFF) {
                 changed = true;
-                pInput->state = false;
+                input->state = false;
             }
 
-            if (changed && (pInput->pChangeEventCallback != nullptr)) {
+            if (changed && (input->pChangeEventCallback != nullptr)) {
                 DigInputEventArgs args = {
-                    .pDigInput = pInput
+                    .pDigInput = input
                 };
-                pInput->pChangeEventCallback->execute(args);
+                input->pChangeEventCallback->execute(args);
             }
         }
     }
@@ -151,21 +150,21 @@ void DigInputService::onTask() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    pService: El servei.
+/// \param    service: El servei.
 /// \param    configuration: Parametres de configuracio.
 ///
 DigInput::DigInput(
-    DigInputService *pService,
+    DigInputService *service,
     const DigInputConfiguration &configuration):
 
-    pService(nullptr),
+    service(nullptr),
     pChangeEventCallback(nullptr) {
        
     port = configuration.port;
     pin = configuration.pin;
 
-    if (pService != nullptr)
-        pService->addInput(this);
+    if (service != nullptr)
+        service->addInput(this);
 }
 
 
@@ -174,8 +173,8 @@ DigInput::DigInput(
 ///
 DigInput::~DigInput() {
 
-    if (pService != nullptr)
-        pService->removeInput(this);
+    if (service != nullptr)
+        service->removeInput(this);
 }
 
 

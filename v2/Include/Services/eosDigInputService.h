@@ -30,8 +30,7 @@ namespace eos {
     //
     class DigInputService final: public Service {
         private:
-            typedef List<DigInput*> DigInputList;
-            typedef ListIterator<DigInput*> DigInputListIterator;
+            typedef List<DigInput> DigInputList;
 
         private:
             unsigned weakTime;
@@ -42,12 +41,12 @@ namespace eos {
             void onTask();
 
         public:
-            DigInputService(Application *pApplication);
-            DigInputService(Application *pApplication, const DigInputServiceConfiguration &configuration);
+            DigInputService(Application *application);
+            DigInputService(Application *application, const DigInputServiceConfiguration &configuration);
             ~DigInputService();
             
-            void addInput(DigInput *pInput);
-            void removeInput(DigInput *pInput);
+            void addInput(DigInput *input);
+            void removeInput(DigInput *input);
             void removeInputs();
     };
 
@@ -58,7 +57,7 @@ namespace eos {
             typedef ICallbackP1<const DigInputEventArgs&> IDigInputEventCallback;
 
         private:
-            DigInputService *pService;
+            DigInputService *service;
             GPIOPort port;
             GPIOPin pin;
             uint32_t pattern;
@@ -69,7 +68,7 @@ namespace eos {
             void initialize();
 
         public:
-            DigInput(DigInputService *pService, const DigInputConfiguration &configuration);
+            DigInput(DigInputService *service, const DigInputConfiguration &configuration);
             ~DigInput();
 
             /// \brief Obte l'estat actual de la entrada.

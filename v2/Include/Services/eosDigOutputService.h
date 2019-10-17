@@ -30,15 +30,14 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
         private:
-            typedef List<DigOutput*> DigOutputList;
-            typedef ListIterator<DigOutput*> DigOutputListIterator;
+            typedef List<DigOutput> DigOutputList;
             
         private:
             DigOutputList outputs;
             TMRTimer timer;
             
         private:
-            static void timerInterrupt(TMRTimer timer, void *pParams);
+            static void timerInterrupt(TMRTimer timer, void *params);
             void timeOut();
             
         protected:
@@ -46,12 +45,12 @@ namespace eos {
             void onTask();
 
         public:
-            DigOutputService(Application *pApplication);
-            DigOutputService(Application *pApplication, const DigOutputServiceConfiguration &configuration);
+            DigOutputService(Application *application);
+            DigOutputService(Application *application, const DigOutputServiceConfiguration &configuration);
             ~DigOutputService();
 
-            void addOutput(DigOutput *pOutput);
-            void removeOutput(DigOutput *pOutput);
+            void addOutput(DigOutput *output);
+            void removeOutput(DigOutput *output);
             void removeOutputs();
     };
 
@@ -66,7 +65,7 @@ namespace eos {
             };
 
         private:
-            DigOutputService *pService;
+            DigOutputService *service;
             GPIOPort port;
             GPIOPin pin;
             GPIOOptions options;
@@ -79,10 +78,10 @@ namespace eos {
             void timeOut();
 
         public:
-            DigOutput(DigOutputService *pService, const DigOutputConfiguration &configuration);
+            DigOutput(DigOutputService *service, const DigOutputConfiguration &configuration);
             ~DigOutput();
 
-            DigOutputService *getService() const { return pService; }
+            DigOutputService *getService() const { return service; }
 
             bool get() const;
             void set();
