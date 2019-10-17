@@ -65,7 +65,7 @@ void DigInputService::addInput(
     // Prerequisits
     //
     eosAssert(input != nullptr);
-    eosAssert(input->pService == nullptr);
+    eosAssert(input->service == nullptr);
 
     inputs.add(input);
     input->service = this;
@@ -103,8 +103,8 @@ void DigInputService::removeInputs() {
 /// \brief Inicialitzacio del servei.
 ///
 void DigInputService::onInitialize() {
-    
-    for (auto input: inputs.enumerate())
+      
+    for (auto input: inputs)
         input->initialize();
 }
 
@@ -120,7 +120,7 @@ void DigInputService::onTask() {
         
         Task::delay(10, weakTime);
 
-        for (auto input: inputs.enumerate()) {
+        for (auto input: inputs) {
 
             bool changed = false;
 

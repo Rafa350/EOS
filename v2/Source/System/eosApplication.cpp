@@ -4,8 +4,6 @@
 #include "System/eosApplication.h"
 #include "string.h"
 
-#include <algorithm>
-
 
 using namespace eos;
 
@@ -23,7 +21,7 @@ Application::Application() {
 ///
 Application::~Application() {
 
-	for (auto service: services.enumerate())
+	for (auto service: services)
     	delete service;
 }
 
@@ -60,7 +58,7 @@ void Application::tick() {
 
 	// Notifica la senyal tick a tots els serveis.
     //
-	for (auto service: services.enumerate())
+	for (auto service: services)
 		service->tick();
 }
 
@@ -72,7 +70,7 @@ void Application::initializeServices() {
 
     // Inicialitza els serveis de la llista, un a un.
     //
-	for (auto service: services.enumerate())
+	for (auto service: services)
 		service->initialize();
 }
 
@@ -154,7 +152,7 @@ void Application::removeServices() {
 Service *Application::findService(
     int id) const {
 
-  	for (auto service: services.enumerate()) {
+  	for (auto service: services) {
    	    if (service->getId() == id)
             return service;
     }
@@ -171,7 +169,7 @@ Service *Application::findService(
 Service *Application::findService(
     const String& name) const {
 
-  	for (auto service: services.enumerate()) {
+  	for (auto service: services) {
         if (service->getName() == name)
             return service;
     }

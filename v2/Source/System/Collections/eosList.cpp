@@ -8,9 +8,9 @@
 using namespace eos;
 
 
-const unsigned capacityDelta = 10;
+constexpr unsigned capacityDelta = 10;
 
-
+/*
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 /// \param size: Tamany en bytes de cada element.
@@ -23,7 +23,6 @@ GenericList::GenericList(
     size(size),
     count(0),
     capacity(0),
-    initialCapacity(initialCapacity),
     container(nullptr) {
 
     eosAssert(size > 0);
@@ -42,16 +41,12 @@ GenericList::GenericList(
     size(other.size),
     count(0),
     capacity(0),
-    initialCapacity(other.capacity),
     container(nullptr) {
-
-    // Reserva memoria pel contenidor
-    //
-    resize(initialCapacity);
 
     // Copia el contingut de la llista
     //
     if (other.count > 0) {
+        resize(other.count);
         memcpy(container, other.container, other.count * size);
         count = other.count;
     }
@@ -162,7 +157,7 @@ void GenericList::clear() {
 
         // Reserva memoria en el contenidor
         //
-        resize(initialCapacity);
+        resize(0);
     }
 }
 
@@ -253,7 +248,7 @@ void GenericList::resize(
 
         // Reserva memoria per un nou contenidor
         //
-        container = osalHeapAlloc(NULL, newCapacity * size);
+        container = static_cast<char*>(osalHeapAlloc(NULL, newCapacity * size));
 
         // Comprova si hi havia un contenidor previ
         //
@@ -271,3 +266,12 @@ void GenericList::resize(
         capacity = newCapacity;
     }
 }
+
+
+void GenericList::copy(
+    void *dst, 
+    void *src, 
+    unsigned count) {
+    
+}
+*/

@@ -24,12 +24,12 @@ static DigOutputServiceConfiguration defaultConfiguration = {
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    pApplication: L'aplicacio on afeigir el servei.
+/// \param    application: L'aplicacio on afeigir el servei.
 ///
 DigOutputService::DigOutputService(
-    Application *pApplication):
+    Application *application):
     
-    DigOutputService(pApplication, defaultConfiguration) {
+    DigOutputService(application, defaultConfiguration) {
     
 }
 
@@ -40,10 +40,10 @@ DigOutputService::DigOutputService(
 /// \param    configuration: Parametres de configuracio.
 ///
 DigOutputService::DigOutputService(
-    Application *pApplication,
+    Application *application,
     const DigOutputServiceConfiguration &configuration):
 
-    Service(pApplication, configuration.serviceConfiguration) {
+    Service(application, configuration.serviceConfiguration) {
 
     //timer = pInfo->timer;
 	timer = HAL_TMR_TIMER_2;
@@ -136,7 +136,7 @@ void DigOutputService::onInitialize() {
 
     // Inicialitza les sortides
     //
-    for (auto output: outputs.enumerate())
+    for (auto output: outputs)
         output->initialize();
 
     // Inicia el temporitzador
@@ -160,7 +160,7 @@ void DigOutputService::onTask() {
 ///
 void DigOutputService::timeOut() {
 
-    for (auto output: outputs.enumerate())
+    for (auto output: outputs)
         output->timeOut();
 }
 

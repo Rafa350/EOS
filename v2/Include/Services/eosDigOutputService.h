@@ -30,7 +30,7 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
         private:
-            typedef List<DigOutput> DigOutputList;
+            typedef List<DigOutput*> DigOutputList;
             
         private:
             DigOutputList outputs;

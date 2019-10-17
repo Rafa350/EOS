@@ -7,8 +7,6 @@
 #include "eos.h"
 #include "System/Collections/eosList.h"
 
-//#include <vector>
-
 
 namespace eos {
 
@@ -19,7 +17,7 @@ namespace eos {
     ///
     class Application {
     	private:
-        	typedef List<Service> ServiceList;
+        	typedef List<Service*> ServiceList;
 
         private:
             ServiceList services;
