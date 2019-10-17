@@ -36,7 +36,7 @@ Font *FontCache::getFont(
 
 	// Busca el font en el cache.
 	//
-	for (auto entry: cache.enumerate()) {
+	for (auto entry: cache) {
 		if ((entry->name == name) &&
 			(entry->height == height) &&
 			(entry->style == style))

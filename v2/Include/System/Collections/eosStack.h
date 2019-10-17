@@ -3,84 +3,61 @@
 
 
 #include "eos.h"
+#include "eosAssert.h"
 
 
 namespace eos {
 
-    /// \brief Interface generic per les piles.
-    //
-    template <typename T>
-    class IStack {
-        public:
-    		virtual ~IStack() {}
-            virtual const T &peek() const = 0;
-            virtual void push(const T &element) = 0;
-            virtual void pop() = 0;
-            virtual bool isEmpty() const = 0;
-            virtual bool isFull() const = 0;
-            virtual void clear() = 0;
-    };
-
-
     /// \brief Pila
     ///
     template <typename T, const int SIZE = 10>
-    class Stack: public IStack<T> {
+    class Stack {
+
     	private:
     		T container[SIZE];
     		int top;
+
         public:
-            /// \brief Contructor.
-            ///
+
+    		/// \brief Contructor.
             Stack():
             	top(-1) {
             }
 
             /// \brief Afegeix un element a la pila.
             /// \param element: L'element a afeigir.
-            ///
-            inline void push(const T &element) override {
-
+            void push(const T &element) {
             	if (!isFull())
             		container[++top] = element;
             }
 
             /// \brief Elimina el primer element de la pila.
-            ///
-            inline void pop() override {
-
+            void pop() {
             	if (!isEmpty())
             		top--;
             }
 
             /// \brief: Obte el primer element de la pila.
             /// \return: El primer element.
-            ///
-            inline const T &peek() const override {
+            inline const T &peek() const {
 
                 return container[top];
             }
 
             /// \brief Buida la pila.
-            ///
             inline void clear() {
-
             	top = -1;
             }
 
             /// \brief: Indica si la pila es buida.
             /// \return: True si es buida.
-            ///
-            inline bool isEmpty() const override {
-
+            inline bool isEmpty() const {
                 return top == -1;
             }
 
             /// \brief: Indica si la pila es plena.
             /// \return: True si es plena.
-            ///
-            inline bool isFull() const override {
-
+            inline bool isFull() const {
             	return top == SIZE - 1;
             }
     };

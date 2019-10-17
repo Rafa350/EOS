@@ -36,7 +36,7 @@ DigOutputService::DigOutputService(
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    pApplication: L'aplicacio on afeigir el servei..
+/// \param    application: L'aplicacio on afeigir el servei..
 /// \param    configuration: Parametres de configuracio.
 ///
 DigOutputService::DigOutputService(
@@ -56,10 +56,8 @@ DigOutputService::DigOutputService(
 DigOutputService::~DigOutputService() {
 
     while (!outputs.isEmpty()) {
-
     	DigOutput *output = outputs.getFirst();
-    	outputs.remove(output);
-
+    	removeOutput(output);
     	delete output;
     }
 }
@@ -105,7 +103,7 @@ void DigOutputService::removeOutput(
 void DigOutputService::removeOutputs() {
     
     while (!outputs.isEmpty())
-        outputs.remove(outputs.getFirst());
+        removeOutput(outputs.getFirst());
 }
 
 

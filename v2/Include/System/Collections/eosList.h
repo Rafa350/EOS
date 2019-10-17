@@ -3,91 +3,146 @@
 
 
 #include "eos.h"
+#include "eosAssert.h"
+#include "OSAL/osalHeap.h"
+
+#include <string.h>
 
 
 namespace eos {
     
-    /*class GenericList {
-        private:
-            unsigned size;
-            unsigned count;
-            unsigned capacity;
-            char *container;
-            
-        private:
-            void resize(unsigned newCapacity);
-            void copy(void *dst, void *src, unsigned count);
-            
-        protected:
-            GenericList(unsigned size, unsigned initialCapacity);
-            GenericList(const GenericList& other);
-            ~GenericList();
-            
-            void addFront(const void *element);
-            void addBack(const void *element);
-            void removeAt(unsigned index);
-            void clear();
-
-            unsigned getCount() const { return count; }
-            
-            unsigned indexOf(const void *element) const;
-            void *get(unsigned index) const;
-            void *getFront() const;
-            void *getBack() const;
-            void *getPtr(unsigned index) const;
-    };*/
-
     template <typename T>
     class List {
+
         private:
-            unsigned size;
+    		constexpr static unsigned initialCapacity = 5;
+
+        private:
             unsigned count;
-            T buffer[5];
+            unsigned capacity;
+            T *container;
             
-    	public:
-    		List():
-                count(0),
-                size(5) {
+        private:
+
+            /// \brief Modifica el tamany del contenidor de dades.
+            /// \param newCapacity: Nova capacitat del contenidor.
+            void resize(unsigned newCapacity) {
+
+                // Comprova si cal aumentar la capacitat.
+                //
+                if (capacity < newCapacity) {
+
+                    // Salva un punter al contenidor actual
+                    //
+                    void *oldContainer = container;
+
+                    // Reserva memoria per un nou contenidor
+                    //
+                    container = static_cast<T*>(osalHeapAlloc(nullptr, newCapacity * sizeof(T)));
+
+                    // Comprova si hi havia un contenidor previ
+                    //
+                    if (oldContainer != nullptr) {
+
+                        // Copia les dades de l'antic contenidor al nou
+                        //
+                        memcpy(container, oldContainer, count * sizeof(T));
+
+                        // Allivera l'antic contenidor
+                        //
+                        osalHeapFree(nullptr, oldContainer);
+                    }
+
+                    capacity = newCapacity;
+                }
             }
 
-			inline void add(T element) {
-                if (count < size)
-                    buffer[count++] = element;
-                else
-                    while (true) {
-                        
-                    }
+
+    	public:
+
+            /// \brief Constructor.
+    		List():
+                count(0),
+				capacity(0),
+				container(nullptr) {
+    			resize(initialCapacity);
+            }
+
+    		/// \brief Destructor.
+    		~List() {
+    			if (container != nullptr)
+    				osalHeapFree(nullptr, container);
+    		}
+
+    		/// \brief Afegeix un element a la llista.
+    		/// \param element: L'element a afeigir.
+			void add(T element) {
+			    if (count == capacity)
+			        resize(capacity * 2);
+			    memcpy(&container[count], &element, sizeof(T));
+			    count += 1;
 			}
 
-			inline void remove(T element) {
+			/// \brief Elimina un element de la llista.
+			/// \param element: L'element a eliminar.
+			void remove(T element) {
+				for (unsigned index = 0; index < count; index++) {
+					if (container[index] == element) {
+						if (index < (count - 1))
+							memcpy(&container[index], &container[index + 1], (count - index - 1) * sizeof(T));
+						count--;
+					}
+				}
 			}
 
-			inline void clear() {
-                count = 0;
+			/// \brief Buida la llista.
+			void clear() {
+		        count = 0;
 			}
 
+			/// \brief Comprova si la llista es buida.
+			/// \return True si es buida.
 			inline bool isEmpty() {
 				return count == 0;
 			}
 
+			/// \brief Obte el numero d'elements que conte la llista.
+		    /// \return El numero d'elements.
 			inline int getCount() const {
 				return count;
 			}
 
-			inline T getFirst() const {
-				return buffer[0];
+			/// \brief Obte l'element en la posicio indicada de la llista.
+			/// \return L'element.
+			inline T get(unsigned index) const {
+				eosAssert(index < count);
+				return container[index];
 			}
 
+			/// \brief Obte el primer element de la llista.
+			/// \return L'element.
+			inline T getFirst() const {
+				eosAssert(count > 0);
+				return container[0];
+			}
+
+			/// \brief Obte l'ultim element de la llista.
+			/// \return L'element.
 			inline T getLast() const {
-				return buffer[count - 1];
+				eosAssert(count > 0);
+				return container[count - 1];
 			}
             
+			/// \brief Obte el iterator inicial
+			/// \return El iterator.
             inline const T* begin() const {
-                return &buffer[0];
+                return &container[0];
             }
 
+			/// \brief Obte el iterator final
+			/// \return El iterator.
             inline const T* end() const {
-                return &buffer[count];
+                return &container[count];
             }
     };
 }

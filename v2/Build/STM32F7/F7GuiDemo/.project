@@ -869,6 +869,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosWindow.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosList.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosErrorHandler.cpp</locationURI>

@@ -22,12 +22,12 @@ static DigInputServiceConfiguration defaultConfiguration = {
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor. Crea l'objecte amb els parametres per defecte.
-/// \param    pApplication: L'aplicacio al que pertany.
+/// \param    application: L'aplicacio al que pertany.
 ///
 DigInputService::DigInputService(
-    Application *pApplication) :
+    Application *application) :
     
-    DigInputService(pApplication, defaultConfiguration) {
+    DigInputService(application, defaultConfiguration) {
 }
 
 
@@ -37,10 +37,10 @@ DigInputService::DigInputService(
 /// \param    configuration: Parametres de configuracio.
 ///
 DigInputService::DigInputService(
-    Application *pApplication,
+    Application *application,
     const DigInputServiceConfiguration &configuration) :
     
-    Service(pApplication, configuration.serviceConfiguration) {
+    Service(application, configuration.serviceConfiguration) {
 }
 
 
@@ -48,10 +48,12 @@ DigInputService::DigInputService(
 /// \brief    Destructor.
 ///
 DigInputService::~DigInputService() {
-   
-    // Elimina totes les entrades.
-    //
-    removeInputs();
+
+    while (!inputs.isEmpty()) {
+        DigInput *input = inputs.getFirst();
+        removeInput(input);       
+        delete input;
+    }
 }
 
 
@@ -95,7 +97,7 @@ void DigInputService::removeInput(
 void DigInputService::removeInputs() {
     
     while (!inputs.isEmpty())
-        inputs.remove(inputs.getFirst());
+        removeInput(inputs.getFirst());
 }
 
 
@@ -137,11 +139,11 @@ void DigInputService::onTask() {
                 input->state = false;
             }
 
-            if (changed && (input->pChangeEventCallback != nullptr)) {
+            if (changed && (input->changeEventCallback != nullptr)) {
                 DigInputEventArgs args = {
                     .pDigInput = input
                 };
-                input->pChangeEventCallback->execute(args);
+                input->changeEventCallback->execute(args);
             }
         }
     }
@@ -158,7 +160,7 @@ DigInput::DigInput(
     const DigInputConfiguration &configuration):
 
     service(nullptr),
-    pChangeEventCallback(nullptr) {
+    changeEventCallback(nullptr) {
        
     port = configuration.port;
     pin = configuration.pin;

@@ -2,7 +2,6 @@
 #include "eosAssert.h"
 #include "Services/eosService.h"
 #include "System/eosApplication.h"
-#include "string.h"
 
 
 using namespace eos;
@@ -21,6 +20,9 @@ Application::Application() {
 ///
 Application::~Application() {
 
+	// Destrueix els serveis de la llista. El contenidor ja es
+	// destrueix automaticament
+	//
 	for (auto service: services)
     	delete service;
 }

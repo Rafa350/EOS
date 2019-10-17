@@ -8,8 +8,6 @@
 using namespace eos;
 
 
-constexpr unsigned capacityDelta = 10;
-
 /*
 /// ----------------------------------------------------------------------
 /// \brief Constructor.

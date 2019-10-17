@@ -33,7 +33,7 @@ Size StackPanel::measureOverride(
 	int width = 0;
 	int height = 0;
 
-	for (auto child: getChilds().enumerate()) {
+	for (auto child: getChilds()) {
 
 		eosAssert(child != nullptr);
 
@@ -74,7 +74,7 @@ Size StackPanel::arrangeOverride(
     int childWidth = finalSize.getWidth();
     int childHeight = finalSize.getHeight();
 
-	for (auto child: getChilds().enumerate()) {
+	for (auto child: getChilds()) {
 
 		eosAssert(child != nullptr);
 

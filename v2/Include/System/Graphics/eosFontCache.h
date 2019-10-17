@@ -18,7 +18,7 @@ namespace eos {
 		    	FontStyle style;
 		    	Font *font;
 		    };
-			typedef List<CacheEntry> Cache;
+			typedef List<CacheEntry*> Cache;
 
 		private:
 			static FontCache *instance;

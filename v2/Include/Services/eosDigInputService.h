@@ -62,7 +62,7 @@ namespace eos {
             GPIOPin pin;
             uint32_t pattern;
             bool state;
-            IDigInputEventCallback *pChangeEventCallback;
+            IDigInputEventCallback *changeEventCallback;
             
         private:
             void initialize();
@@ -80,8 +80,8 @@ namespace eos {
             /// \param pCallback: El callback del event
             ///
             template <class cls>
-            void setChangeEventCallback(CallbackP1<cls, const DigInputEventArgs&> *pCallback) {
-                pChangeEventCallback = pCallback;
+            inline void setChangeEventCallback(CallbackP1<cls, const DigInputEventArgs&> *callback) {
+                changeEventCallback = callback;
             }
 
         friend DigInputService;

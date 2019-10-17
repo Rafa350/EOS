@@ -47,7 +47,7 @@ namespace eos {
 	///
     class Visual {
     	private:
-    		typedef List<Visual> VisualList;
+    		typedef List<Visual*> VisualList;
 
     	private:
     		Visual *parent;
