@@ -5,9 +5,9 @@
 //		STM32 Libraries de Tilen Majerle
 // -----------------------------------------------------------------------
 
+#include "eos.h"
 #include "Controllers/Fat/Drivers/SDIO/sd_diskio.h"
 #include "stm32746g_discovery_sd.h"
-#include <stdbool.h>
 
 
 extern void *fsGetInstance(void);

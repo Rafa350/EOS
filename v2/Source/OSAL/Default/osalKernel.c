@@ -1,4 +1,5 @@
-#include "OSAL/osalTask.h"
+#include "eos.h"
+#include "OSAL/osalKernel.h"
 
 
 

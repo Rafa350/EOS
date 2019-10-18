@@ -1,4 +1,5 @@
-#include "hal/halSYS.h"
+#include "eos.h"
+#include "HAL/halSYS.h"
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_rcc.h"
 #include "stm32f7xx_hal_flash_ex.h"
@@ -44,7 +45,7 @@ static void SDRAMInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el hardware del sistema.
 ///
-void InitializeHardware() {
+void appInitialize() {
 
     SCB_EnableICache();
     SCB_EnableDCache();

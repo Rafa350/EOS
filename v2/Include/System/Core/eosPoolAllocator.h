@@ -5,9 +5,6 @@
 #include "eos.h"
 #include "System/Core/eosAllocator.h"
 
-#include <stddef.h>
-#include <stdint.h>
-
 
 namespace eos {
 
@@ -43,7 +40,7 @@ namespace eos {
             	GenericPoolAllocator(sizeof(T), maxBlocks) {
             }
             T *allocate(int size) {
-            	return (T*) GenericPoolAllocator::allocate(size);
+            	return static_cast<T*>(GenericPoolAllocator::allocate(size));
             }
             void deallocate(T *p) {
             	GenericPoolAllocator::deallocate(p);

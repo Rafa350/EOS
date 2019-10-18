@@ -43,14 +43,13 @@ extern "C" {
 typedef uint32_t DMA2DOptions;
 
 
-void halDMA2DInitialize(void);
+void halDMA2DInitialize();
 
 void halDMA2DConfigureCLUT();
 
 void halDMA2DStartFill(int dstAddr, int width, int height, int dstPitch, DMA2DOptions options, uint32_t color);
 void halDMA2DStartCopy(int dstAddr, int width, int height, int dstPitch, DMA2DOptions options, int srcAddr, int srcPitch);
-
-bool halDMA2DWaitForFinish(void);
+bool halDMA2DWaitForFinish();
 
 #ifdef	__cplusplus
 }

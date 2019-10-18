@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "Controllers/Fat/Drivers/SDIO/eosFileSystemSDIODriver.h"
 #include "HAL/halGPIO.h"
 

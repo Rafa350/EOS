@@ -21,8 +21,8 @@ typedef struct {
 
 HHeap osalHeapCreate();
 void *osalHeapAlloc(HHeap hHeap, int blockSize);
-void osalHeapFree(HHeap hHeap, void *pBlock);
-void osalGetHeapInformation(HHeap hHeap, HeapInformation *pInfo);
+void osalHeapFree(HHeap hHeap, void *block);
+void osalGetHeapInformation(HHeap hHeap, HeapInformation *info);
 
 
 #ifdef	__cplusplus

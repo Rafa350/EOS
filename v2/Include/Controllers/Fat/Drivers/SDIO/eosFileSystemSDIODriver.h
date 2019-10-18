@@ -5,8 +5,6 @@
 #include "eos.h"
 #include "Controllers/Fat/eosFileSystemDriver.h"
 
-#include <stdint.h>
-
 
 #if !defined(EOS_STM32F7)
     #error Hardware no soportado

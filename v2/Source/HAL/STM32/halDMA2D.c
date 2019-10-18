@@ -5,7 +5,7 @@
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el modul DMA2D
 ///
-void halDMA2DInitialize(void) {
+void halDMA2DInitialize() {
 
 	// Activa el modul DMA2D
 	//
@@ -140,7 +140,7 @@ void halDMA2DStartCopy(
 /// \brief Espera que acabi la transaccio.
 /// \return True si tot es correcte, false en cas d'error.
 ///
-bool halDMA2DWaitForFinish(void) {
+bool halDMA2DWaitForFinish() {
 
 	// Espera que acabi
 	//

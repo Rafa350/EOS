@@ -144,7 +144,7 @@ static void SDTest2() {
 /// ----------------------------------------------------------------------
 /// \brief Entrada al programa.
 ///
-void AppMain() {
+void appMain() {
 
 	SDTest1();
 //	SDTest2();

@@ -2,7 +2,10 @@
 #define __eosConfig__
 
 
-#include "board/board.h"
+
+#define USE_LEDS_LED1
+#define USE_SD
+
 
 
 // Opcions de configuracio pel servei 'DigInput'
@@ -26,5 +29,6 @@
 #define eosI2CMasterService_TransactionTimeout        1000
 
 
+#include "board/board.h"
 
 #endif
