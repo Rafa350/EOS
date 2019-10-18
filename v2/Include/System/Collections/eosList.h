@@ -4,13 +4,18 @@
 
 #include "eos.h"
 #include "eosAssert.h"
-#include "OSAL/osalHeap.h"
 
 #include <string.h>
 
 
 namespace eos {
-    
+
+	void *allocContainer(unsigned capacity, unsigned elementSize);
+	void freeContainer(void *container);
+	void *resizeContainer(void *oldContainer, unsigned oldCapacity, unsigned newCapacity, unsigned count, unsigned elementSize);
+	void insertElement(void *container, unsigned count, unsigned position, void *element, 	unsigned elementSize);
+	void removeElement(void *container, unsigned count, unsigned position, unsigned elementSize);
+
     template <typename T>
     class List {
 
@@ -22,42 +27,6 @@ namespace eos {
             unsigned capacity;
             T *container;
             
-        private:
-
-            /// \brief Modifica el tamany del contenidor de dades.
-            /// \param newCapacity: Nova capacitat del contenidor.
-            void resize(unsigned newCapacity) {
-
-                // Comprova si cal aumentar la capacitat.
-                //
-                if (capacity < newCapacity) {
-
-                    // Salva un punter al contenidor actual
-                    //
-                    void *oldContainer = container;
-
-                    // Reserva memoria per un nou contenidor
-                    //
-                    container = static_cast<T*>(osalHeapAlloc(nullptr, newCapacity * sizeof(T)));
-
-                    // Comprova si hi havia un contenidor previ
-                    //
-                    if (oldContainer != nullptr) {
-
-                        // Copia les dades de l'antic contenidor al nou
-                        //
-                        memcpy(container, oldContainer, count * sizeof(T));
-
-                        // Allivera l'antic contenidor
-                        //
-                        osalHeapFree(nullptr, oldContainer);
-                    }
-
-                    capacity = newCapacity;
-                }
-            }
-
-
     	public:
 
             /// \brief Constructor.
@@ -65,20 +34,22 @@ namespace eos {
                 count(0),
 				capacity(0),
 				container(nullptr) {
-    			resize(initialCapacity);
             }
 
     		/// \brief Destructor.
     		~List() {
     			if (container != nullptr)
-    				osalHeapFree(nullptr, container);
+    				freeContainer(container);
     		}
 
     		/// \brief Afegeix un element a la llista.
     		/// \param element: L'element a afeigir.
 			void add(T element) {
-			    if (count == capacity)
-			        resize(capacity * 2);
+			    if (count == capacity) {
+			    	unsigned newCapacity = (capacity == 0) ? initialCapacity : capacity * 2;
+			    	container = static_cast<T*>(resizeContainer(container, capacity, newCapacity, count, sizeof(T)));
+			    	capacity = newCapacity;
+			    }
 			    memcpy(&container[count], &element, sizeof(T));
 			    count += 1;
 			}
@@ -95,9 +66,17 @@ namespace eos {
 				}
 			}
 
-			/// \brief Buida la llista.
-			void clear() {
+			/// \brief Buida la llista, pero deixa el contenidor.
+			inline void empty() {
 		        count = 0;
+			}
+
+			/// \brief Buida la llista i borra el contenidor.
+			inline void clear() {
+		        freeContainer(container);
+		        count = 0;
+		        capacity = 0;
+		        container = nullptr;
 			}
 
 			/// \brief Comprova si la llista es buida.

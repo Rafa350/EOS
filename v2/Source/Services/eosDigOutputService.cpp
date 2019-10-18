@@ -182,11 +182,11 @@ void DigOutputService::timerInterrupt(
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    pService: El servei al que s'asignara la sortida.
+/// \param    service: El servei al que s'asignara la sortida.
 /// \param    configuration: Parametres de configuracio.
 ///
 DigOutput::DigOutput(
-    DigOutputService *pService,
+    DigOutputService *service,
     const DigOutputConfiguration &configuration):
 
     service(nullptr),
