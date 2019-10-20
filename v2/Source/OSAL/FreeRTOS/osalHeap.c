@@ -18,38 +18,38 @@ HHeap osalHeapCreate() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte un bloc de memoria.
-/// \param[in] hHeap: Handler del heap.]
-/// \param[in] blockSize: Tamany del bloc de memoria.
-/// \return Adressa del bloc de memoria obtingut. NULL en cas d'error.
+/// \brief    Obte un bloc de memoria.
+/// \param    hHeap: Handler del heap.]
+/// \param    size: Tamany del bloc de memoria.
+/// \return   Adressa del bloc de memoria obtingut. NULL en cas d'error.
 ///
 void *osalHeapAlloc(
     HHeap hHeap,
-	int blockSize) {
+	int size) {
 
     eosAssert(hHeap == NULL);
-    eosAssert(blockSize > 0);
+    eosAssert(size > 0);
 
-    void *pBlock = pvPortMalloc(blockSize);
-    eosAssert(pBlock != NULL);
+    void *p = pvPortMalloc(size);
+    eosAssert(p != NULL);
 
-    return pBlock;
+    return p;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Allivera un bloc de memoria.
-/// \param[in] hHeap: Handler del heap.]
-/// \param[in] pBlock: Adressa del bloc de memoria.
+/// \brief    Allivera un bloc de memoria.
+/// \param    hHeap: Handler del heap.]
+/// \param    p: Adressa del bloc de memoria.
 ///
 void osalHeapFree(
     HHeap hHeap,
-	void *pBlock) {
+	void *p) {
 
     eosAssert(hHeap == NULL);
-    eosAssert(pBlock != NULL);
+    eosAssert(p != NULL);
 
-	vPortFree(pBlock);
+	vPortFree(p);
 }
 
 

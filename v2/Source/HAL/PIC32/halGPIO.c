@@ -42,27 +42,27 @@ const GPIOPortRegs gpioPortRegs[] = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza una llista de pins.
-/// \param[in] pInfo: Parametres d'inicialitzacio.
-/// \param[in] count: Numero de pins a inicialitzar;
+/// \brief    Inicialitza una llista de pins.
+/// \param    info: Parametres d'inicialitzacio.
+/// \param    count: Numero de pins a inicialitzar;
 ///
 void halGPIOInitializePins(
-    const GPIOInitializePinInfo *pInfo, 
-    unsigned count) {
+    const GPIOInitializePinInfo *info, 
+    int count) {
     
-    for (unsigned i = 0; i < count; i++) {
-        const GPIOInitializePinInfo *p = &pInfo[i];
+    for (int i = 0; i < count; i++) {
+        const GPIOInitializePinInfo *p = &info[i];
         halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
     }
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Initialitza un pin individual.
-/// \param[in] port: Identificador del port.
-/// \param[in] pin: Identificador del pin.
-/// \param[in] options: Opcions de configuracio.
-/// \param[in] alt: Funcio alternativa del pin.
+/// \brief    Initialitza un pin individual.
+/// \param    port: Identificador del port.
+/// \param    pin: Identificador del pin.
+/// \param    options: Opcions de configuracio.
+/// \param    alt: Funcio alternativa del pin.
 ///
 void halGPIOInitializePin(
     GPIOPort port, 
@@ -75,27 +75,27 @@ void halGPIOInitializePin(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza una llista de ports.
-/// \param[in] pInfo: Parametres d'inicialitzacio.
-/// \param[in] count: Numero de ports a inicialitzar.
+/// \brief    Inicialitza una llista de ports.
+/// \param    info: Parametres d'inicialitzacio.
+/// \param    count: Numero de ports a inicialitzar.
 ///
 void halGPIOInitializePorts(
-    const GPIOInitializePortInfo *pInfo,
-    unsigned count) {
+    const GPIOInitializePortInfo *info,
+    int count) {
     
-    for (unsigned i = 0; i < count; i++) {
-        const GPIOInitializePortInfo *p = &pInfo[i];
+    for (int i = 0; i < count; i++) {
+        const GPIOInitializePortInfo *p = &info[i];
         halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
     }
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura un port.
-/// \param[in] port: Identificador del port.
-/// \param[in] mask: Mascara de pins.
-/// \param[in] options: Opcions de configuracio.
-/// \param[in] alt: Funcio alternativa dels pins.
+/// \brief    Configura un port.
+/// \param    port: Identificador del port.
+/// \param    mask: Mascara de pins.
+/// \param    options: Opcions de configuracio.
+/// \param    alt: Funcio alternativa dels pins.
 ///
 void halGPIOInitializePort(
     GPIOPort port,

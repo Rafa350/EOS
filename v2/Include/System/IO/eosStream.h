@@ -4,17 +4,15 @@
 
 #include "eos.h"
 
-#include <stdint.h>
-
 
 namespace eos {
 
 
     class Stream {
     	public:
-    		virtual ~Stream() {}
-    		virtual uint32_t write(void *data, uint32_t size) = 0;
-    		virtual uint32_t read(void *data, uint32_t size) = 0;
+    		virtual ~Stream() = default;
+    		virtual int write(void *data, int size) = 0;
+    		virtual int read(void *data, int size) = 0;
     };
 
 }

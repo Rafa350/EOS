@@ -35,7 +35,7 @@ namespace eos {
         private:
             HTask hTask;
             IRunable *runable;
-            unsigned weakTime;
+            int weakTime;
 
         private:
             static void function(void *params);
@@ -44,15 +44,15 @@ namespace eos {
             Task(unsigned stackSize, TaskPriority priority, const String &name, IRunable *runable);
             virtual ~Task();
 
-            static void delay(unsigned time);
-            static void delay(unsigned time, unsigned &weakTime);
+            static void delay(int time);
+            static void delay(int time, int &weakTime);
             static unsigned getTickCount();
             static void enterCriticalSection();
             static void exitCriticalSection();
             static void startAll();
             static void suspendAll();
             static void resumeAll();
-            static bool notificationTake(unsigned blockTime);
+            static bool notificationTake(int blockTime);
             static bool notificationGive();
             static void notificationGiveISR();
     };

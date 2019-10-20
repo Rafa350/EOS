@@ -1,6 +1,10 @@
+#include "eos.h"
+#include "eosAssert.h"
 #include "System/IO/eosFileStream.h"
 #include "System/Core/eosPoolAllocator.h"
-#include "Controllers/Fat/ff.h"
+#include "System/Core/eosString.h"
+
+#include "ff.h"
 
 
 #define MAX_FILES 10
@@ -16,7 +20,7 @@ static PoolAllocator<FIL> fileAllocator(MAX_FILES);
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor per defecte de l'objecte.
+/// \brief    Constructor per defecte de l'objecte.
 ///
 FileStream::FileStream():
 
@@ -25,10 +29,10 @@ FileStream::FileStream():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor de l'objecte.
-/// \param fileName: El nom del fitxer.
-/// \param mode: El modus d'apertura del fitxer.
-/// \param access: El tipus d'acces.
+/// \brief    Contructor de l'objecte.
+/// \param    fileName: El nom del fitxer.
+/// \param    mode: El modus d'apertura del fitxer.
+/// \param    access: El tipus d'acces.
 ///
 FileStream::FileStream(
 	const String &fileName,
@@ -42,7 +46,7 @@ FileStream::FileStream(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructoir de l'objecte.
+/// \brief    Destructoir de l'objecte.
 ///
 FileStream::~FileStream() {
 
@@ -51,11 +55,11 @@ FileStream::~FileStream() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obra el stream.
-/// \param fileName: El nom del fitxer.
-/// \param mode: El modus d'apertura del fitxer.
-/// \param access: El tipus d'acces.
-/// \return True si l'ha pogut obrir.
+/// \brief    Obra el stream.
+/// \param    fileName: El nom del fitxer.
+/// \param    mode: El modus d'apertura del fitxer.
+/// \param    access: El tipus d'acces.
+/// \return   True si l'ha pogut obrir.
 ///
 bool FileStream::open(
 	const String &fileName,
@@ -69,6 +73,7 @@ bool FileStream::open(
 
 	switch (mode) {
 		case FileMode::create:
+		case FileMode::truncate:
 			fmode |= FA_CREATE_ALWAYS;
 			break;
 
@@ -117,8 +122,8 @@ bool FileStream::open(
 }
 
 /// ----------------------------------------------------------------------
-/// \brief Tanca el stream si es obert.
-/// \return True si l'ha pogut tancar.
+/// \brief    Tanca el stream si es obert.
+/// \return   True si l'ha pogut tancar.
 ///
 bool FileStream::close() {
 
@@ -136,29 +141,33 @@ bool FileStream::close() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Llegeix un bloc de dades.
-/// \param data: Punter al bloc de dades.
-/// \param size: Tamany del bloc de dades.
-/// \return: Numero de bytes lleigits. -1 en cas d'error.
+/// \brief    Llegeix un bloc de dades.
+/// \param    data: Punter al bloc de dades.
+/// \param    size: Tamany del bloc de dades.
+/// \return:  Numero de bytes lleigits. -1 en cas d'error.
 ///
-uint32_t FileStream::read(void *data, uint32_t size) {
+int FileStream::read(
+	void *data,
+	int size) {
 
 	UINT rCount;
 
 	if (f_read((FIL*)hFile, data, size, &rCount) != FR_OK)
-		return (uint32_t)-1;
+		return -1;
 
 	return rCount;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Escriu un bloc de dades.
-/// \param data: Punter al bloc de dades.
-/// \param size: Tamany en bytes del bloc de dades.
-/// \return El numero de bytes escrits. -1 en cas d'error.
+/// \brief    Escriu un bloc de dades.
+/// \param    data: Punter al bloc de dades.
+/// \param    size: Tamany en bytes del bloc de dades.
+/// \return   El numero de bytes escrits. -1 en cas d'error.
 ///
-uint32_t FileStream::write(void *data, uint32_t size) {
+int FileStream::write(
+	void *data,
+	int size) {
 
 	UINT wCount;
 
@@ -170,21 +179,23 @@ uint32_t FileStream::write(void *data, uint32_t size) {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador 'new'.
-/// \param size: El tamany de memoria solicitat.
-/// \return El bloc de memoria obtingut.
+/// \brief    Operador 'new'.
+/// \param    size: El tamany de memoria solicitat.
+/// \return   El bloc de memoria obtingut.
 ///
-void *FileStream::operator new(size_t size) {
+void *FileStream::operator new(
+	size_t size) {
 
 	return fileStreamAllocator.allocate(size);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador 'delete'.
-/// \param p: El bloc de memoria a alliverar.
+/// \brief    Operador 'delete'.
+/// \param    p: El bloc de memoria a alliverar.
 ///
-void FileStream::operator delete(void *p) {
+void FileStream::operator delete(
+	void *p) {
 
-	fileStreamAllocator.deallocate((FileStream*)p);
+	fileStreamAllocator.deallocate(static_cast<FileStream*>(p));
 }

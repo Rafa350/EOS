@@ -3,12 +3,13 @@
 
 
 #include "eos.h"
-#include "System/Core/eosString.h"
 
 
 namespace eos {
 
-    /// \brief Especicica com obrir el fitxer.
+	class String;
+
+    /// \brief Especifica com obrir el fitxer.
     enum class FileMode {
         append,		         ///! Afegeix al final, o crea un de nou.
         create,              ///! Crea un de nou, o el sobrescriu.

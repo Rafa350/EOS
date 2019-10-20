@@ -15,14 +15,17 @@ extern "C" {
 typedef struct OSAL_HEAP_DATA *HHeap;
 
 typedef struct {
-	unsigned start;
-	unsigned length;
+	int start;
+	int length;
 } HeapInformation;
 
 HHeap osalHeapCreate();
-void *osalHeapAlloc(HHeap hHeap, int blockSize);
+void *osalHeapAlloc(HHeap hHeap, int size);
 void osalHeapFree(HHeap hHeap, void *block);
 void osalGetHeapInformation(HHeap hHeap, HeapInformation *info);
+
+void *osal_malloc(int size);
+void osal_free(void *p);
 
 
 #ifdef	__cplusplus

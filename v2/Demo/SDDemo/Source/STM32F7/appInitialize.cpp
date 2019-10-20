@@ -4,10 +4,11 @@
 #include "stm32f7xx_hal_rcc.h"
 #include "stm32f7xx_hal_flash_ex.h"
 #include "stm32746g_discovery.h"
+#include "stm32746g_discovery_sd.h"
 #include "stm32746g_discovery_sdram.h"
 
 
-static void CLKInitialize() {
+static void initializeCLK() {
 
 	RCC_ClkInitTypeDef clkInit;
 	RCC_OscInitTypeDef oscInit;
@@ -35,10 +36,16 @@ static void CLKInitialize() {
 }
 
 
-static void SDRAMInitialize() {
+static void initializeSDRAM() {
 
 	BSP_SDRAM_Init();
 	BSP_SDRAM_Initialization_sequence(REFRESH_COUNT);
+}
+
+
+static void initializeSD() {
+
+	BSP_SD_Init();
 }
 
 
@@ -51,6 +58,7 @@ void appInitialize() {
     SCB_EnableDCache();
 
     halSYSInitialize();
-	CLKInitialize();
-	SDRAMInitialize();
+	initializeCLK();
+	initializeSDRAM();
+	initializeSD();
 }

@@ -81,45 +81,45 @@ unsigned Task::getTickCount() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retarda la tasca actual un numero determinat de milisegons.
-/// \param time: El numero de milisegons a retardar.
+/// \brief    Retarda la tasca actual un numero determinat de milisegons.
+/// \param    time: El numero de milisegons a retardar.
 ///
 void Task::delay(
-    unsigned time) {
+    int time) {
 
 	osalDelay(time);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retarda la tasca actual un numero determinat de milisegons.
-/// \param time: El numero de milisegons a retardar.
-/// \param weakTime: El valor de contador de ticks actualitzat.
+/// \brief    Retarda la tasca actual un numero determinat de milisegons.
+/// \param    time: El numero de milisegons a retardar.
+/// \param    weakTime: El valor de contador de ticks actualitzat.
 ///
 void Task::delay(
-    unsigned time,
-    unsigned &weakTime) {
+    int time,
+    int &weakTime) {
 
 	osalDelayUntil(time, &weakTime);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Espera una notificacio interna de la tasca.
-/// \param blockTime: Temps maxim de bloqueig en milisegons.
-/// \return True si hi ha notificacio, false en cas contrari.
+/// \brief    Espera una notificacio interna de la tasca.
+/// \param    blockTime: Temps maxim de bloqueig en milisegons.
+/// \return   True si hi ha notificacio, false en cas contrari.
 ///
 bool Task::notificationTake(
-    unsigned blockTime) {
+    int blockTime) {
 
 	// Millorar a traves de OSAL
-    TickType_t ticks = blockTime == ((unsigned) -1) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
     return ulTaskNotifyTake(pdTRUE, ticks) != 0;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Entra en una seccio critica
+/// \brief    Entra en una seccio critica
 ///
 void Task::enterCriticalSection() {
 
@@ -128,7 +128,7 @@ void Task::enterCriticalSection() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Surt d'una seccio critica
+/// \brief    Surt d'una seccio critica
 ///
 void Task::exitCriticalSection() {
 
@@ -137,7 +137,7 @@ void Task::exitCriticalSection() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicia tots els fils d'execucio.
+/// \brief    Inicia tots els fils d'execucio.
 ///
 void Task::startAll() {
 
@@ -146,7 +146,7 @@ void Task::startAll() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Suspend tots els fils d'execucio. Impedeix el canvi de tasca
+/// \brief    Suspend tots els fils d'execucio. Impedeix el canvi de tasca
 ///
 void Task::suspendAll() {
 
@@ -155,7 +155,7 @@ void Task::suspendAll() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa tots els fils d'execucio
+/// \brief    Activa tots els fils d'execucio
 ///
 void Task::resumeAll() {
 

@@ -33,7 +33,7 @@ namespace eos {
             typedef List<DigInput*> DigInputList;
 
         private:
-            unsigned weakTime;
+            int weakTime;
             DigInputList inputs;
 
         protected:

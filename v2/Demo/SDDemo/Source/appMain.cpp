@@ -1,9 +1,9 @@
 #include "eos.h"
 #include "System/eosApplication.h"
+#include "System/Core/eosString.h"
 #include "System/IO/eosFileStream.h"
-#include "Controllers/Fat/Drivers/sdio/sd_diskio.h"
 
-
+#include "sd_diskio.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -32,12 +32,13 @@ static void SDTest1() {
 	if (FATFS_LinkDriver(&SD_Driver, SDPath) == 0) {
 
 		/*##-2- Register the file system object to the FatFs module ##############*/
-		fr = f_mount(&SDFatFs, (TCHAR const*)SDPath, 1);
+		fr = f_mount(&SDFatFs, (TCHAR const*)SDPath, 0);
 		if (fr != FR_OK)  {
 			/* FatFs Initialization Error */
 			Error_Handler(fr);
 		}
 		else {
+
 			/*##-3- Create a FAT file system (format) on the logical drive #########*/
 			/* WARNING: Formatting the uSD card will delete all content on the device */
 			fr = f_mkfs((TCHAR const*)SDPath, FM_ANY, 0, workBuffer, sizeof(workBuffer));
@@ -48,6 +49,11 @@ static void SDTest1() {
 			else {
 				String fileName("STM32.TXT");
 				Stream *f = new FileStream(fileName, FileMode::create, FileAccess::write);
+
+				for (int i = 0; i < 10; i++)  {
+					const char *data = "caca de Vaka\r\n";
+					f->write((void*)data, strlen(data));
+				}
 
 				delete f;
 			}

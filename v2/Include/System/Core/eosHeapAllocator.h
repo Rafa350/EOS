@@ -5,15 +5,31 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/Core/eosAllocator.h"
 
 
 namespace eos {
 
-    class HeapAllocator: public IAllocator {
+    class MemoryHeapAllocator {
         public:
             void *allocate(int size);
             void deallocate(void *p);
+    };
+
+    template <class T>
+    class HealAllocator {
+
+    	private:
+    		MemoryHeapAllocator allocator;
+
+    	public:
+
+    		inline T *allocate(int size) {
+            	return static_cast<T*>(allocator.allocate(size));
+            }
+
+            inline void deallocate(T *p) {
+            	allocator.deallocate(p);
+            }
     };
 }
 

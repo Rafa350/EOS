@@ -67,15 +67,15 @@ void osalResumeAll() {
 /// \param[in] time: Temps en ms.
 ///
 void osalDelay(
-	unsigned time) {
+	int time) {
 
     vTaskDelay((time ? time : time + 1) / portTICK_PERIOD_MS);
 }
 
 
 void osalDelayUntil(
-	unsigned time,
-	unsigned *lastTick) {
+	int time,
+	int *lastTick) {
 
     if (time > 0)
         vTaskDelayUntil((TickType_t*) lastTick, time / portTICK_PERIOD_MS);

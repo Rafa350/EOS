@@ -1,14 +1,18 @@
+#include "eos.h"
+#include "eosAssert.h"
+#include "System/Core/eosString.h"
 #include "System/IO/eosFile.h"
-#include "Controllers/Fat/ff.h"
+
+#include "ff.h"
 
 
 using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Comprofa l'existencia d'un fitxer.
-/// \param fileName: El nom del fitxer.
-/// \return True si existeix. False en cas contrari.
+/// \brief    Comprofa l'existencia d'un fitxer.
+/// \param    fileName: El nom del fitxer.
+/// \return   True si existeix. False en cas contrari.
 ///
 bool File::exists(
 	const String &fileName) {

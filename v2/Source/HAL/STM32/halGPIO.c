@@ -209,19 +209,19 @@ static void setupPin(
 
 /// ----------------------------------------------------------------------
 /// \brief Configura una llista de pins.
-/// \param pInfo: Llista d'elements de configuracio.
+/// \param info: Llista d'elements de configuracio.
 /// \param count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePins(
-	const GPIOInitializePinInfo *pInfo,
-	unsigned count) {
+	const GPIOInitializePinInfo *info,
+	int count) {
 
-	eosAssert(pInfo != NULL);
+	eosAssert(info != NULL);
 	eosAssert(count != 0);
 
-	for (unsigned i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) {
 
-		const GPIOInitializePinInfo *p = &pInfo[i];
+		const GPIOInitializePinInfo *p = &info[i];
 
 		if (!isClockEnabled(p->port))
 			enableClock(p->port);
@@ -233,24 +233,24 @@ void halGPIOInitializePins(
 
 /// ----------------------------------------------------------------------
 /// \brief Configura una llista de ports.
-/// \param pInfo: Llista d'informacio de configuracio.
+/// \param info: Llista d'informacio de configuracio.
 /// \param count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePorts(
-	const GPIOInitializePortInfo *pInfo,
-	unsigned count) {
+	const GPIOInitializePortInfo *info,
+	int count) {
 
-	eosAssert(pInfo != NULL);
+	eosAssert(info != NULL);
 	eosAssert(count != 0);
 
-	for (unsigned i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) {
 
-		const GPIOInitializePortInfo *p = &pInfo[i];
+		const GPIOInitializePortInfo *p = &info[i];
 
 		if (!isClockEnabled(p->port))
 			enableClock(p->port);
 
-		for (unsigned pin = 0; pin < 16; pin++)
+		for (GPIOPin pin = 0; pin < 16; pin++)
 			if (p->mask & (1u << pin))
 				setupPin(p->port, pin, p->options, p->alt);
 	}

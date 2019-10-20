@@ -108,7 +108,7 @@
 #define	_USE_FORWARD	0
 /* This option switches f_forward() function. (0:Disable or 1:Enable) */
 
-
+#define DISABLE_SD_INIT
 /*---------------------------------------------------------------------------/
 / Locale and Namespace Configurations
 /---------------------------------------------------------------------------*/
@@ -312,15 +312,18 @@
 
 #if _USE_LFN == 3
 #if !defined(ff_malloc) || !defined(ff_free)
-#include <stdlib.h>
+//#include <stdlib.h>
+#include "OSAL/osalHeap.h"
 #endif
 
 #if !defined(ff_malloc)
-#define ff_malloc malloc
+//#define ff_malloc malloc
+#define ff_malloc osal_malloc
 #endif
 
 #if !defined(ff_free)
-#define ff_free free
+//#define ff_free free
+#define ff_free osal_free
 #endif
 #endif
 /*--- End of configuration options ---*/

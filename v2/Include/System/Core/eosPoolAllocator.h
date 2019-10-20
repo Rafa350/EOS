@@ -3,12 +3,11 @@
 
 
 #include "eos.h"
-#include "System/Core/eosAllocator.h"
 
 
 namespace eos {
 
-    class GenericPoolAllocator: public IAllocator {
+    class MemoryPoolAllocator {
         private:
             uint8_t *blocks;
             uint8_t *nextBlock;
@@ -18,11 +17,11 @@ namespace eos {
             int initializedBlocks;
 
         public:
-            GenericPoolAllocator(int blockSize, int maxBlocks);
-            virtual ~GenericPoolAllocator();
+            MemoryPoolAllocator(int blockSize, int maxBlocks);
+            ~MemoryPoolAllocator();
 
-            void *allocate(int size) override;
-            void deallocate(void *p) override;
+            void *allocate(int size);
+            void deallocate(void *p);
 
             inline int getBlockSize() const { return blockSize; }
             inline int getUsedBlocks() const { return maxBlocks - freeBlocks; }
@@ -33,17 +32,25 @@ namespace eos {
             int indexFromAddr(const uint8_t *p) const;
     };
 
+
     template <class T>
-    class PoolAllocator: public GenericPoolAllocator {
-        public:
-            PoolAllocator(int maxBlocks):
-            	GenericPoolAllocator(sizeof(T), maxBlocks) {
+    class PoolAllocator {
+
+    	private:
+    		MemoryPoolAllocator allocator;
+
+    	public:
+
+    		PoolAllocator(int maxBlocks):
+            	allocator(sizeof(T), maxBlocks) {
             }
-            T *allocate(int size) {
-            	return static_cast<T*>(GenericPoolAllocator::allocate(size));
+
+    		inline T *allocate(int size) {
+            	return static_cast<T*>(allocator.allocate(size));
             }
-            void deallocate(T *p) {
-            	GenericPoolAllocator::deallocate(p);
+
+    		inline void deallocate(T *p) {
+            	allocator.deallocate(p);
             }
     };
 }

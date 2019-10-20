@@ -9,37 +9,37 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte un bloc de memoria
-/// \param    blockSize: Tamany del bloc de momoria.
+/// \param    size: Tamany del bloc de momoria.
 /// \return   Punter al bloc de memoria. nullptr en cas d'error.
 ///
-void *HeapAllocator::allocate(
-    int blockSize) {
+void *MemoryHeapAllocator::allocate(
+    int size) {
 
     // Precondicions
     //
-    eosAssert(blockSize > 0);
+    eosAssert(size > 0);
 
     // Obte el bloc de memoria
     //
-    void *pBlock = osalHeapAlloc(NULL, blockSize);
-    eosAssert(pBlock != nullptr);
+    void *p = osalHeapAlloc(NULL, size);
+    eosAssert(p != nullptr);
 
-    return pBlock;
+    return p;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Allibera un bloc de memoria.
-/// \param    pBlock: Punter al bloc de memoria.
+/// \param    p: Punter al bloc de memoria.
 ///
-void HeapAllocator::deallocate(
-    void *pBlock) {
+void MemoryHeapAllocator::deallocate(
+    void *p) {
 
     // Precondicions
     //
-    eosAssert(pBlock != nullptr);
+    eosAssert(p != nullptr);
 
     // Allivera el bloc de memoria
     //
-    osalHeapFree(NULL, pBlock);
+    osalHeapFree(NULL, p);
 }

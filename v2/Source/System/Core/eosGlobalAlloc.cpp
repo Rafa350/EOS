@@ -1,9 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Core/eosHeapAllocator.h"
-
-
-static eos::HeapAllocator defaultAllocator;
+#include "OSAL/osalHeap.h"
 
 
 /// ----------------------------------------------------------------------
@@ -13,11 +10,9 @@ static eos::HeapAllocator defaultAllocator;
 void *operator new(
     size_t size) {
 
-    // Precondicions
-    //
     eosAssert(size > 0);
 
-    void *p = defaultAllocator.allocate(size);
+    void *p = osalHeapAlloc(nullptr, size);
     eosAssert(p != nullptr);
     
     return p;
@@ -31,9 +26,7 @@ void *operator new(
 void operator delete(
     void *p) {
 
-    // Precondicions
-    //
-    eosAssert(p != NULL);
+    eosAssert(p != nullptr);
 
-    defaultAllocator.deallocate(p);
+    osalHeapFree(nullptr, p);
 }

@@ -17,7 +17,7 @@ using namespace eos;
 /// \param    blockSize: Tamany de cada element en bytes.
 /// \param    maxBlocks: Numero maxim d'elements.
 ///
-GenericPoolAllocator::GenericPoolAllocator(
+MemoryPoolAllocator::MemoryPoolAllocator(
     int blockSize,
     int maxBlocks):
 
@@ -41,7 +41,7 @@ GenericPoolAllocator::GenericPoolAllocator(
 /// ----------------------------------------------------------------------
 /// \brief    Destructor.
 ///
-GenericPoolAllocator::~GenericPoolAllocator() {
+MemoryPoolAllocator::~MemoryPoolAllocator() {
 
     osalHeapFree(NULL, blocks);
 }
@@ -52,7 +52,7 @@ GenericPoolAllocator::~GenericPoolAllocator() {
 /// \param    size: El tamany del bloc. Com el tamany es fixe, no s'utilitza.
 /// \return   El punter al block.
 ///
-void *GenericPoolAllocator::allocate(
+void *MemoryPoolAllocator::allocate(
     int size) {
 
 	eosAssert(size > 0);
@@ -93,7 +93,7 @@ void *GenericPoolAllocator::allocate(
 /// \brief    Allivera el bloc de memoria.
 /// \param    p: El puntern al bloc de memoria.
 ///
-void GenericPoolAllocator::deallocate(
+void MemoryPoolAllocator::deallocate(
     void *p) {
 
     eosAssert(p != nullptr);
@@ -117,7 +117,7 @@ void GenericPoolAllocator::deallocate(
 /// \param    i: El index del bloc.
 /// \return   L'adressa del bloc.
 ///
-uint8_t *GenericPoolAllocator::addrFromIndex(
+uint8_t *MemoryPoolAllocator::addrFromIndex(
     int i) const {
 
     return blocks + (blockSize * i);
@@ -129,7 +129,7 @@ uint8_t *GenericPoolAllocator::addrFromIndex(
 /// \param    p: L'adressa del bloc.
 /// \return   El index del bloc.
 ///
-int GenericPoolAllocator::indexFromAddr(
+int MemoryPoolAllocator::indexFromAddr(
     const uint8_t *p) const {
 
     return (p - blocks) / blockSize;
