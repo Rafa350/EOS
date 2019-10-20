@@ -31,6 +31,8 @@ static void SDTest1() {
 	/*##-1- Link the micro SD disk I/O driver ##################################*/
 	if (FATFS_LinkDriver(&SD_Driver, SDPath) == 0) {
 
+		HAL_Delay(1000);
+
 		/*##-2- Register the file system object to the FatFs module ##############*/
 		fr = f_mount(&SDFatFs, (TCHAR const*)SDPath, 0);
 		if (fr != FR_OK)  {

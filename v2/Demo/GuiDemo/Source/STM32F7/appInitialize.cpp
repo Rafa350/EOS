@@ -13,7 +13,8 @@ static void CLKInitialize() {
 	RCC_ClkInitTypeDef clkInit;
 	RCC_OscInitTypeDef oscInit;
 
-	/* Enable HSE Oscillator and activate PLL with HSE as source */
+	// Enable HSE Oscillator and activate PLL with HSE as source
+	//
 	oscInit.OscillatorType = RCC_OSCILLATORTYPE_HSE;
 	oscInit.HSEState = RCC_HSE_ON;
 	oscInit.HSIState = RCC_HSI_OFF;
@@ -24,9 +25,11 @@ static void CLKInitialize() {
 	oscInit.PLL.PLLP = RCC_PLLP_DIV2;
 	oscInit.PLL.PLLQ = 9;
 	HAL_RCC_OscConfig(&oscInit);
+	HAL_PWREx_EnableOverDrive();
 
-	/* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
-	 clocks dividers */
+	// Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
+	// clocks dividers
+	//
 	clkInit.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
 	clkInit.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
 	clkInit.AHBCLKDivider = RCC_SYSCLK_DIV1;

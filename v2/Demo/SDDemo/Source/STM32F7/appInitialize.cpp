@@ -25,6 +25,8 @@ static void initializeCLK() {
 	oscInit.PLL.PLLQ = 9;
 	HAL_RCC_OscConfig(&oscInit);
 
+	HAL_PWREx_EnableOverDrive();
+
 	/* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
 	 clocks dividers */
 	clkInit.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
