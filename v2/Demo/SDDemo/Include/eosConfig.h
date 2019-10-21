@@ -4,7 +4,7 @@
 
 
 #define USE_LEDS_LED1
-#define USE_SD
+//#define USE_SD
 
 
 

@@ -16,7 +16,7 @@ namespace eos {
     };
 
     template <class T>
-    class HealAllocator {
+    class HeapAllocator {
 
     	private:
     		MemoryHeapAllocator allocator;
