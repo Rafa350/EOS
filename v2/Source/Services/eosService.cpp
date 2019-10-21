@@ -6,7 +6,7 @@
 using namespace eos;
 
 
-int Service::idCount = 0;
+ServiceId Service::idCount = 0;
 
 
 /// ----------------------------------------------------------------------
@@ -46,10 +46,10 @@ Service::~Service() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Funcio d'execucio de la tasca.
-/// \param    pTask: La tasca.
+/// \param    thread: La tasca.
 ///
 void Service::run(
-    Task *pThread) {
+    Task *thread) {
 
     while (true)
         task();

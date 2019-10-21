@@ -23,7 +23,7 @@ namespace eos {
     };
     
     struct DigInputEventArgs {
-        DigInput* pDigInput;
+        DigInput* input;
     };
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals

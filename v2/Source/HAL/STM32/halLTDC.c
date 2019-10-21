@@ -6,12 +6,12 @@
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el modul LTDC.
-/// \param    pInfo: Informacio d'inicialitzacio.
+/// \param    info: Informacio d'inicialitzacio.
 ///
 void halLTDCInitialize(
-	const LTDCInitializeInfo *pInfo) {
+	const LTDCInitializeInfo *info) {
 
-	eosAssert(pInfo != NULL);
+	eosAssert(info != NULL);
 
 	uint32_t tmp;
 
@@ -37,26 +37,26 @@ void halLTDCInitialize(
     //
     tmp = LTDC->GCR;
     tmp &= ~(LTDC_GCR_HSPOL | LTDC_GCR_VSPOL | LTDC_GCR_DEPOL | LTDC_GCR_PCPOL);
-   	tmp |= pInfo->polarity.HSYNC << LTDC_GCR_HSPOL_Pos;
-   	tmp |= pInfo->polarity.VSYNC << LTDC_GCR_VSPOL_Pos;
-  	tmp |= pInfo->polarity.DE << LTDC_GCR_DEPOL_Pos;
-    tmp |= pInfo->polarity.PC << LTDC_GCR_PCPOL_Pos;
+   	tmp |= info->polarity.HSYNC << LTDC_GCR_HSPOL_Pos;
+   	tmp |= info->polarity.VSYNC << LTDC_GCR_VSPOL_Pos;
+  	tmp |= info->polarity.DE << LTDC_GCR_DEPOL_Pos;
+    tmp |= info->polarity.PC << LTDC_GCR_PCPOL_Pos;
     LTDC->GCR = tmp;
 
     // Configura el registre SSCR (Sinchronization Size Configuration Register)
     //
     tmp = LTDC->SSCR;
     tmp &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
-    tmp |= (pInfo->HSYNC - 1) << LTDC_SSCR_HSW_Pos;
-    tmp |= (pInfo->VSYNC - 1) << LTDC_SSCR_VSH_Pos;
+    tmp |= (info->HSYNC - 1) << LTDC_SSCR_HSW_Pos;
+    tmp |= (info->VSYNC - 1) << LTDC_SSCR_VSH_Pos;
     LTDC->SSCR = tmp;
 
     // Configura el registre BPCR (Back Porch Configuration Register)
     //
     tmp = LTDC->BPCR;
     tmp &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
-    tmp |= (pInfo->HSYNC + pInfo->HBP - 1) << LTDC_BPCR_AHBP_Pos;
-    tmp |= (pInfo->VSYNC + pInfo->VBP - 1) << LTDC_BPCR_AVBP_Pos;
+    tmp |= (info->HSYNC + info->HBP - 1) << LTDC_BPCR_AHBP_Pos;
+    tmp |= (info->VSYNC + info->VBP - 1) << LTDC_BPCR_AVBP_Pos;
     LTDC->BPCR = tmp;
 
     // Configura el registre AWCR (Active Width Configuration Register)
@@ -65,8 +65,8 @@ void halLTDCInitialize(
     //
     tmp = LTDC->AWCR;
     tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
-    tmp |= (pInfo->HSYNC + pInfo->HBP + pInfo->width - 1) << LTDC_AWCR_AAW_Pos;
-    tmp |= (pInfo->VSYNC + pInfo->VBP + pInfo->height - 1) << LTDC_AWCR_AAH_Pos;
+    tmp |= (info->HSYNC + info->HBP + pInfo->width - 1) << LTDC_AWCR_AAW_Pos;
+    tmp |= (info->VSYNC + info->VBP + pInfo->height - 1) << LTDC_AWCR_AAH_Pos;
     LTDC->AWCR = tmp;
 
     // Configura el registre TWCR (Total Width Configuration Register)
@@ -75,8 +75,8 @@ void halLTDCInitialize(
     //
     tmp = LTDC->TWCR;
     tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
-    tmp |= (pInfo->HSYNC + pInfo->HBP + pInfo->width + pInfo->HFP - 1) << LTDC_TWCR_TOTALW_Pos;
-    tmp |= (pInfo->VSYNC + pInfo->VBP + pInfo->height + pInfo->VFP - 1) << LTDC_TWCR_TOTALH_Pos;
+    tmp |= (info->HSYNC + info->HBP + info->width + info->HFP - 1) << LTDC_TWCR_TOTALW_Pos;
+    tmp |= (info->VSYNC + info->VBP + info->height + info->VFP - 1) << LTDC_TWCR_TOTALH_Pos;
     LTDC->TWCR = tmp;
 }
 

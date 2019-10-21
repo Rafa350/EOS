@@ -19,7 +19,7 @@ HHeap osalHeapCreate() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte un bloc de memoria.
-/// \param    hHeap: Handler del heap.]
+/// \param    hHeap: Handler del heap.
 /// \param    size: Tamany del bloc de memoria.
 /// \return   Adressa del bloc de memoria obtingut. NULL en cas d'error.
 ///
@@ -39,7 +39,7 @@ void *osalHeapAlloc(
 
 /// ----------------------------------------------------------------------
 /// \brief    Allivera un bloc de memoria.
-/// \param    hHeap: Handler del heap.]
+/// \param    hHeap: Handler del heap.
 /// \param    p: Adressa del bloc de memoria.
 ///
 void osalHeapFree(
@@ -55,12 +55,26 @@ void osalHeapFree(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte informacio del heap.
-/// ºparam    hHeap: El handler del heap;
-/// \param    pInfo: Adressa on deixar el resultat.
+/// \param    hHeap: El handler del heap;
+/// \param    info: Adressa on deixar el resultat.
 ///
 void osalHeapGetInformation(
 	HHeap hHeap,
-	HeapInformation *pInfo) {
+	HeapInformation *info) {
 
-	eosAssert(pInfo != NULL);
+	eosAssert(info != NULL);
+}
+
+
+void *osal_malloc(
+    int size) {
+    
+    return osalHeapAlloc(NULL, size);
+}
+
+
+void osal_free(
+    void *p) {
+    
+    osalHeapFree(NULL, p);
 }

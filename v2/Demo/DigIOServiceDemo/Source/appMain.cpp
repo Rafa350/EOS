@@ -175,7 +175,7 @@ void MyApplication::onInitialize() {
 void MyApplication::digInput1_OnChange(const DigInputEventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!args.pDigInput->get()) 
+    if (!args.input->get()) 
         getLed3()->pulse(500);
 #endif    
 }
@@ -190,7 +190,7 @@ void MyApplication::digInput1_OnChange(const DigInputEventArgs &args) {
 void MyApplication::digInput2_OnChange(const DigInputEventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!args.pDigInput->get()) 
+    if (!args.input->get()) 
         getLed3()->pulse(1000);
 #endif    
 }
@@ -205,7 +205,7 @@ void MyApplication::digInput2_OnChange(const DigInputEventArgs &args) {
 void MyApplication::digInput3_OnChange(const DigInputEventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!args.pDigInput->get()) 
+    if (!args.input->get()) 
         getLed3()->pulse(1500);
 #endif    
 }
@@ -247,7 +247,7 @@ void LedLoopService::onLoop() {
 ///
 void appMain() {
 
-	Application *pApp = new MyApplication();
-	pApp->run();
-	delete pApp;
+	Application *app = new MyApplication();
+	app->run();
+	delete app;
 }

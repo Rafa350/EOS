@@ -33,11 +33,11 @@ typedef struct {
 #define OSAL_TIMER_AUTO_ON             ((TimerOptions)1 << OSAL_TIMER_AUTO_POS)
 
 
-HTimer osalTimerCreate(const TimerInitializeInfo *pInfo);
-bool osalTimerDestroy(HTimer hTimer, unsigned waitTime);
+HTimer osalTimerCreate(const TimerInitializeInfo *info);
+bool osalTimerDestroy(HTimer hTimer, int waitTime);
 
-bool osalTimerStart(HTimer hTimer, unsigned time, unsigned waitTime);
-bool osalTimerStop(HTimer hTimer, unsigned waitTime);
+bool osalTimerStart(HTimer hTimer, int time, int waitTime);
+bool osalTimerStop(HTimer hTimer, int waitTime);
 
 bool osalTimerIsActive(HTimer hTimer);
 void *osalTimerGetContext(HTimer hTimer);

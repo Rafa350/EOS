@@ -128,8 +128,8 @@ void DigOutputService::onInitialize() {
 #else
 #error CPU no soportada
 #endif
-	tmrInfo.pIrqCall = timerInterrupt;
-	tmrInfo.pIrqParams = this;
+	tmrInfo.irqCallback = timerInterrupt;
+	tmrInfo.irqParam = this;
 	halTMRInitialize(&tmrInfo);
 
     // Inicialitza les sortides

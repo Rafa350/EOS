@@ -92,14 +92,14 @@ static void setupPin(
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza els pins per generar interrupcions o events.
-/// \param pInfo: Llista de configuracio.
+/// \param info: Llista de configuracio.
 /// \param count: Numero d'elements en la llista.
 ///
 void halEXTIInitializePins(
-	const EXTIInitializePinInfo *pInfo,
-	unsigned count) {
+	const EXTIInitializePinInfo *info,
+	int count) {
 
-	eosAssert(pInfo != NULL);
+	eosAssert(info != NULL);
 	eosAssert(count > 0);
 
 	// Activa el clock del modul EXTI
@@ -108,8 +108,8 @@ void halEXTIInitializePins(
 
 	// Inicialitza els elements de la llista
 	//
-	for (unsigned i = 0; i < count; i++) {
-		const EXTIInitializePinInfo *p = &pInfo[i];
+	for (int i = 0; i < count; i++) {
+		const EXTIInitializePinInfo *p = &info[i];
 		setupPin(p->port, p->pin, p->options);
 	}
 }
@@ -123,12 +123,12 @@ void halEXTIInitializePins(
 void halEXTISetCallbackFunction(
 	EXTILine line,
 	EXTICallbackFunction function,
-	void *pParam) {
+	void *param) {
 
 	eosAssert((line >= HAL_EXTI_LINE_0) && (line <= HAL_EXTI_LINE_15));
 
 	callback[line].function = function;
-	callback[line].pParam = pParam;
+	callback[line].param = param;
 }
 
 

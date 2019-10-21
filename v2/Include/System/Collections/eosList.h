@@ -10,21 +10,21 @@
 
 namespace eos {
 
-	void *allocContainer(unsigned capacity, unsigned elementSize);
+	void *allocContainer(int capacity, int elementSize);
 	void freeContainer(void *container);
-	void *resizeContainer(void *oldContainer, unsigned oldCapacity, unsigned newCapacity, unsigned count, unsigned elementSize);
-	void insertElement(void *container, unsigned count, unsigned position, void *element, 	unsigned elementSize);
-	void removeElement(void *container, unsigned count, unsigned position, unsigned elementSize);
+	void *resizeContainer(void *oldContainer, int oldCapacity, int newCapacity, int count, int elementSize);
+	void insertElement(void *container, int count, int position, void *element, int elementSize);
+	void removeElement(void *container, int count, int position, int elementSize);
 
     template <typename T>
     class List {
 
         private:
-    		constexpr static unsigned initialCapacity = 5;
+    		constexpr static int initialCapacity = 5;
 
         private:
-            unsigned count;
-            unsigned capacity;
+            int count;
+            int capacity;
             T *container;
             
     	public:
@@ -46,7 +46,7 @@ namespace eos {
     		/// \param element: L'element a afeigir.
 			void add(T element) {
 			    if (count == capacity) {
-			    	unsigned newCapacity = (capacity == 0) ? initialCapacity : capacity * 2;
+			    	int newCapacity = (capacity == 0) ? initialCapacity : capacity * 2;
 			    	container = static_cast<T*>(resizeContainer(container, capacity, newCapacity, count, sizeof(T)));
 			    	capacity = newCapacity;
 			    }
@@ -57,7 +57,7 @@ namespace eos {
 			/// \brief Elimina un element de la llista.
 			/// \param element: L'element a eliminar.
 			void remove(T element) {
-				for (unsigned index = 0; index < count; index++) {
+				for (int index = 0; index < count; index++) {
 					if (container[index] == element) {
 						if (index < (count - 1))
 							memcpy(&container[index], &container[index + 1], (count - index - 1) * sizeof(T));
@@ -93,7 +93,7 @@ namespace eos {
 
 			/// \brief Obte l'element en la posicio indicada de la llista.
 			/// \return L'element.
-			inline T get(unsigned index) const {
+			inline T get(int index) const {
 				eosAssert(index < count);
 				return container[index];
 			}

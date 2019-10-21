@@ -10,8 +10,8 @@ extern "C" {
 #endif
 
 
-void halRNGInitialize(void);
-unsigned halRNGGetRandomNumber(void);
+void halRNGInitialize();
+unsigned halRNGGetRandomNumber();
 
 
 #ifdef	__cplusplus

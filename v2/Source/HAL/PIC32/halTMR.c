@@ -79,33 +79,33 @@ extern void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el temporitzador.
-/// \param pInfo: Parametres d'inicialitzacio.
+/// \brief    Inicialitza el temporitzador.
+/// \param    info: Parametres d'inicialitzacio.
 ///
 void halTMRInitialize(
-    const TMRInitializeInfo *pInfo) {
+    const TMRInitializeInfo *info) {
     
-    const TimerInfo *ti = &timerInfoTbl[pInfo->timer];
+    const TimerInfo *ti = &timerInfoTbl[info->timer];
     
     PLIB_TMR_Stop(ti->tmrId);
     PLIB_TMR_ClockSourceSelect(ti->tmrId, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
-    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[(pInfo->options & HAL_TMR_CLKDIV_MASK) >> HAL_TMR_CLKDIV_POS]);
-    if ((pInfo->options & HAL_TMR_MODE_MASK) == HAL_TMR_MODE_16) {
+    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[(info->options & HAL_TMR_CLKDIV_MASK) >> HAL_TMR_CLKDIV_POS]);
+    if ((info->options & HAL_TMR_MODE_MASK) == HAL_TMR_MODE_16) {
         PLIB_TMR_Mode16BitEnable(ti->tmrId);
         PLIB_TMR_Counter16BitClear(ti->tmrId);
-        PLIB_TMR_Period16BitSet(ti->tmrId, pInfo->period);    
+        PLIB_TMR_Period16BitSet(ti->tmrId, info->period);    
     } 
-    else if ((pInfo->options & HAL_TMR_MODE_MASK) == HAL_TMR_MODE_32) {
+    else if ((info->options & HAL_TMR_MODE_MASK) == HAL_TMR_MODE_32) {
         PLIB_TMR_Mode32BitEnable(ti->tmrId);
         PLIB_TMR_Counter32BitClear(ti->tmrId);
-        PLIB_TMR_Period32BitSet(ti->tmrId, pInfo->period);            
+        PLIB_TMR_Period32BitSet(ti->tmrId, info->period);            
     }
 
-    if (((pInfo->options & HAL_TMR_INTERRUPT_MASK) == HAL_TMR_INTERRUPT_ENABLE) &&
-        (pInfo->pIrqCall != NULL)) {
+    if (((info->options & HAL_TMR_INTERRUPT_MASK) == HAL_TMR_INTERRUPT_ENABLE) &&
+        (info->irqCallback != NULL)) {
         
-        callbacks[pInfo->timer] = pInfo->pIrqCall;
-        params[pInfo->timer] = pInfo->pIrqParams;
+        callbacks[info->timer] = info->irqCallback;
+        params[info->timer] = info->irqParam;
 
         halINTDisableInterrupts();
 
@@ -118,13 +118,13 @@ void halTMRInitialize(
         halINTEnableInterrupts();
     }
     else
-        callbacks[pInfo->timer] = NULL;
+        callbacks[info->timer] = NULL;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicia el temporitzador.
-/// \param timer: El identificador del temporitzador.
+/// \brief    Inicia el temporitzador.
+/// \param    timer: El identificador del temporitzador.
 ///
 void halTMRStartTimer(
     TMRTimer timer) {
@@ -135,8 +135,8 @@ void halTMRStartTimer(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Para el temporitzador.
-/// \param timer: El identificador del temporitzador.
+/// \brief    Para el temporitzador.
+/// \param    timer: El identificador del temporitzador.
 ///
 void halTMRStopTimer(
     TMRTimer timer) {
@@ -147,8 +147,8 @@ void halTMRStopTimer(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Funcio callback de la interrupcio.
-/// \param timer: El identificador del temporitzador.
+/// \brief    Funcio callback de la interrupcio.
+/// \param    timer: El identificador del temporitzador.
 ///
 static void doCallback(
     TMRTimer timer) {
@@ -220,14 +220,14 @@ void isrTMR5Handler(void) {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retard en milisegons.
-/// \param time: Temps en milisegons.
+/// \brief    Retard en milisegons.
+/// \param    time: Temps en milisegons.
 ///
 void halTMRDelay(
-    unsigned time) {
+    int time) {
     
-    unsigned startCount = _CP0_GET_COUNT();
-    unsigned endCount = startCount + time * (80000000ul / 2000ul);
+    int startCount = _CP0_GET_COUNT();
+    int endCount = startCount + time * (80000000 / 2000);
     
     if (endCount >= startCount) 
         while (_CP0_GET_COUNT() < endCount);

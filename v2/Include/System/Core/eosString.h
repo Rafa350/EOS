@@ -16,7 +16,6 @@ namespace eos {
     		struct StringData;
 
     	private:
-    		static const char *nullStr;
 			StringData *pData;
 
         private:
@@ -58,8 +57,8 @@ namespace eos {
     class StringBuilder {
         private:
             char *container;
-            unsigned length;
-            unsigned capacity;            
+            int length;
+            int capacity;            
         public:
             StringBuilder();
             ~StringBuilder();

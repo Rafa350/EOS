@@ -16,23 +16,23 @@ static int inISR() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Crea un temporitzador.
-/// \param[in] pInfo: Parametres d'inicialitzacio.
-/// \return El handler del timer. NULL en cas d'error.
+/// \brief    Crea un temporitzador.
+/// \param    info: Parametres d'inicialitzacio.
+/// \return   El handler del timer. NULL en cas d'error.
 ///
 HTimer osalTimerCreate(
-	const TimerInitializeInfo *pInfo) {
+	const TimerInitializeInfo *info) {
 
-	eosAssert(pInfo != NULL);
+	eosAssert(info != NULL);
 
 	// Crea el temporitzador
 	//
     HTimer hTimer = xTimerCreate(
     	(const char*)"",
 		1,
-		(pInfo->options & OSAL_TIMER_AUTO_MASK) == OSAL_TIMER_AUTO_ON ? pdTRUE : pdFALSE,
-		(void* const) pInfo->context,
-		(void*) pInfo->callback);
+		(info->options & OSAL_TIMER_AUTO_MASK) == OSAL_TIMER_AUTO_ON ? pdTRUE : pdFALSE,
+		(void* const) info->context,
+		(void*) info->callback);
     if (hTimer == NULL)
     	return NULL;
 
@@ -47,16 +47,16 @@ HTimer osalTimerCreate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destrueix el temporitzador.
-/// \param[in] hTimer: El handler del temporitzador.
-/// \param[in] waitTime: Els temps maxim d'espera.
-/// \return True si tot es correcte. False en cas contrari.
-/// \remarks En cas d'error no s'allibera la memoria, ja que el temporitzador,
-/// pot estar pendent de destruccio.
+/// \brief    Destrueix el temporitzador.
+/// \param    hTimer: El handler del temporitzador.
+/// \param    waitTime: Els temps maxim d'espera.
+/// \return   True si tot es correcte. False en cas contrari.
+/// \remarks  En cas d'error no s'allibera la memoria, ja que el temporitzador,
+///           pot estar pendent de destruccio.
 ///
 bool osalTimerDestroy(
 	HTimer hTimer,
-	unsigned waitTime) {
+	int waitTime) {
 
 	eosAssert(hTimer != NULL);
 
@@ -65,17 +65,17 @@ bool osalTimerDestroy(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicia el temporitzador.
-/// \param[in] hTimer: El handler del temporitzador.
-/// \param[in] time: El temps del temporitzador. Si es zero, el temps es el
-///              mateix que tenia en el cicle anterior.
-/// \param[in] waitTime: El temps maxim de bloqueig.
-/// \return True si tot es correcte. False en cas contrari.
+/// \brief    Inicia el temporitzador.
+/// \param    hTimer: El handler del temporitzador.
+/// \param    time: El temps del temporitzador. Si es zero, el temps es el
+///           mateix que tenia en el cicle anterior.
+/// \param    waitTime: El temps maxim de bloqueig.
+/// \return   True si tot es correcte. False en cas contrari.
 ///
 bool osalTimerStart(
 	HTimer hTimer,
-	unsigned time,
-	unsigned waitTime) {
+	int time,
+	int waitTime) {
 
 	eosAssert(hTimer != NULL);
 
@@ -105,13 +105,13 @@ bool osalTimerStart(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Para el temporitzador.
-/// \param hTimer: El handler del temporitzador.
-/// \param waitTime: Temps maxim de bloqueig.
+/// \brief    Para el temporitzador.
+/// \param    hTimer: El handler del temporitzador.
+/// \param    waitTime: Temps maxim de bloqueig.
 ///
 bool osalTimerStop(
 	HTimer hTimer,
-	unsigned waitTime) {
+	int waitTime) {
 
 	eosAssert(hTimer != NULL);
 
@@ -120,9 +120,9 @@ bool osalTimerStop(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Comprova si el temporitzador es actiu.
-/// \param hTimer: El handler del temporitzador.
-/// \return True si es actiu, false en cas contrari.
+/// \brief    Comprova si el temporitzador es actiu.
+/// \param    hTimer: El handler del temporitzador.
+/// \return   True si es actiu, false en cas contrari.
 ///
 bool osalTimerIsActive(
 	HTimer hTimer) {
@@ -134,9 +134,9 @@ bool osalTimerIsActive(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte el context del temporitzador.
-/// \param hTimer: El handler del temporitzador.
-/// \return El context. NULL en cas d'error.
+/// \brief    Obte el context del temporitzador.
+/// \param    hTimer: El handler del temporitzador.
+/// \return   El context. NULL en cas d'error.
 ///
 void *osalTimerGetContext(
 	HTimer hTimer) {

@@ -15,7 +15,7 @@ struct String::StringData {
 	const char *ptr;              // Punter a la cadena.
 };
 
-const char *String::nullStr = ""; // Cadena buida.
+static const char *nullStr = "";  // Cadena buida.
 
 
 /// ----------------------------------------------------------------------
@@ -325,6 +325,6 @@ void String::release() {
 	eosAssert(pData != nullptr);
 
 	if (pData->refCount-- == 1)
-		osalHeapFree(NULL, pData);
+		osalHeapFree(nullptr, pData);
 	pData = nullptr;
 }

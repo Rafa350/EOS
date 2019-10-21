@@ -71,10 +71,10 @@ typedef void (*TMRInterruptCallback)(TMRTimer timer, void *params);
 
 typedef struct {
 	TMRTimer timer;
-    uint32_t period;
+    int period;
 	TMROptions options;
-	TMRInterruptCallback pIrqCall;
-	void *pIrqParams;
+	TMRInterruptCallback irqCallback;
+	void *irqParam;
 } TMRInitializeInfo;
 
 
@@ -84,7 +84,7 @@ void halTMRShutdown(TMRTimer timer);
 void halTMRStartTimer(TMRTimer timer);
 void halTMRStopTimer(TMRTimer timer);
 
-void halTMRDelay(uint32_t time);
+void halTMRDelay(int time);
 
 
 #ifdef	__cplusplus

@@ -60,7 +60,7 @@ typedef uint32_t TMROptions;
 
 
 
-typedef void (*TMRInterruptCallback)(TMRTimer timer, void *pParams);
+typedef void (*TMRInterruptCallback)(TMRTimer timer, void *params);
 
 typedef struct {
 	TMRTimer timer;
@@ -74,13 +74,13 @@ typedef struct {
 } TMRInitializeInfo;
 
 
-void halTMRInitialize(const TMRInitializeInfo *pInfo);
+void halTMRInitialize(const TMRInitializeInfo *info);
 void halTMRShutdown(TMRTimer timer);
 
 void halTMRStartTimer(TMRTimer timer);
 void halTMRStopTimer(TMRTimer timer);
 
-void halTMRDelay(uint32_t time);
+void halTMRDelay(int time);
 
 
 #ifdef	__cplusplus

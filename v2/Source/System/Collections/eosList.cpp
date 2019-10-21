@@ -12,8 +12,11 @@
 /// \return   L'adressa del contenidor.
 ///
 void *eos::allocContainer(
-	unsigned capacity,
-	unsigned elementSize) {
+	int capacity,
+	int elementSize) {
+    
+    eosAssert(capacity > 0);
+    eosAssert(elementSize > 0);
 
     return osalHeapAlloc(nullptr, capacity * elementSize);
 }
@@ -41,10 +44,10 @@ void eos::freeContainer(
 ///
 void *eos::resizeContainer(
 	void *oldContainer,
-	unsigned oldCapacity,
-	unsigned newCapacity,
-	unsigned count,
-	unsigned elementSize) {
+	int oldCapacity,
+	int newCapacity,
+	int count,
+	int elementSize) {
 
 	void *newContainer = oldContainer;
 
@@ -84,10 +87,10 @@ void *eos::resizeContainer(
 ///
 void eos::insertElement(
 	void *container,
-	unsigned count,
-	unsigned position,
+	int count,
+	int position,
 	void *element,
-	unsigned elementSize) {
+	int elementSize) {
 
 	// TODO
 }
@@ -102,9 +105,9 @@ void eos::insertElement(
 ///
 void eos::removeElement(
 	void *container,
-	unsigned count,
-	unsigned position,
-	unsigned elementSize) {
+	int count,
+	int position,
+	int elementSize) {
 
 	// TODO
 }

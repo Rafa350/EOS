@@ -93,7 +93,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 
 
 // Funcions d'inicialitzacio
-void halSPIInitialize(const SPIInitializeInfo *pInfo);
+void halSPIInitialize(const SPIInitializeInfo *info);
 void halSPIShutdown(uint8_t id);
 
 // Funcions de control

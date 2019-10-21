@@ -82,11 +82,11 @@ typedef struct {
 #define HAL_EXTI_TRIGGER_CHANGING (0b11u << HAL_EXTI_TRIGGER_pos)
 
 
-void halEXTIInitialize(const EXTIInitializeInfo *pInfo);
-void halEXTIInitializePins(const EXTIInitializePinInfo *pInfo, unsigned count);
+void halEXTIInitialize(const EXTIInitializeInfo *info);
+void halEXTIInitializePins(const EXTIInitializePinInfo *info, int count);
 void halEXTIEnableLine(EXTILine line);
 void halEXTIDisableLine(EXTILine line);
-void halEXTISetCallbackFunction(EXTILine line, EXTICallbackFunction function, void *pParam);
+void halEXTISetCallbackFunction(EXTILine line, EXTICallbackFunction function, void *param);
 
 
 #ifdef __cplusplus

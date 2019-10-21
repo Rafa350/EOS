@@ -14,14 +14,16 @@ namespace eos {
 
 	struct ServiceConfiguration {
 		const char *serviceName;
-		unsigned stackSize;
+		int stackSize;
 		TaskPriority priority;
 	};
+    
+    typedef unsigned ServiceId;
 
     class Service: private IRunable {
         private:
-            static int idCount;
-            int id;
+            static ServiceId idCount;
+            ServiceId id;
             Application *application;
             String name;
             Task thread;
@@ -30,7 +32,7 @@ namespace eos {
             Service(const Service &service) = delete;
             Service& operator=(const Service&) = delete;
 
-            void run(Task *pThread);
+            void run(Task *thread);
 
         protected:
             inline Application *getApplication() const { return application; }
@@ -47,7 +49,7 @@ namespace eos {
             void tick();
             void task();
 
-            inline int getId() const { return id; }
+            inline ServiceId getId() const { return id; }
             inline const String& getName() const { return name; }
             
         friend void Application::addService(Service *service);
