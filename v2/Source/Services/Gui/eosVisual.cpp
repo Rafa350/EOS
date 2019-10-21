@@ -35,8 +35,8 @@ Visual::~Visual() {
 	if (parent != nullptr)
 		parent->removeVisual(this);
 
-	for (auto child: childs)
-		delete child;
+	while (!childs.isEmpty())
+		delete childs.getFirst();
 }
 
 

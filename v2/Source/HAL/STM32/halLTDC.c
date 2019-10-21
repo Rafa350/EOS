@@ -65,8 +65,8 @@ void halLTDCInitialize(
     //
     tmp = LTDC->AWCR;
     tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
-    tmp |= (info->HSYNC + info->HBP + pInfo->width - 1) << LTDC_AWCR_AAW_Pos;
-    tmp |= (info->VSYNC + info->VBP + pInfo->height - 1) << LTDC_AWCR_AAH_Pos;
+    tmp |= (info->HSYNC + info->HBP + info->width - 1) << LTDC_AWCR_AAW_Pos;
+    tmp |= (info->VSYNC + info->VBP + info->height - 1) << LTDC_AWCR_AAH_Pos;
     LTDC->AWCR = tmp;
 
     // Configura el registre TWCR (Total Width Configuration Register)

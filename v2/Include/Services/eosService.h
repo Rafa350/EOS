@@ -5,7 +5,6 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/eosApplication.h"
 #include "System/Core/eosString.h"
 #include "System/Core/eosTask.h"
 
@@ -18,12 +17,10 @@ namespace eos {
 		TaskPriority priority;
 	};
     
-    typedef unsigned ServiceId;
+    class Application;
 
     class Service: private IRunable {
         private:
-            static ServiceId idCount;
-            ServiceId id;
             Application *application;
             String name;
             Task thread;
@@ -49,11 +46,10 @@ namespace eos {
             void tick();
             void task();
 
-            inline ServiceId getId() const { return id; }
             inline const String& getName() const { return name; }
             
-        friend void Application::addService(Service *service);
-        friend void Application::removeService(Service *service);
+        friend void link(Application *application, Service *service);
+        friend void unlink(Application *application, Service *service);
     };
 }
 

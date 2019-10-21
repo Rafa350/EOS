@@ -1,24 +1,21 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/eosService.h"
+#include "System/eosApplication.h"
 
 
 using namespace eos;
 
 
-ServiceId Service::idCount = 0;
-
-
 /// ----------------------------------------------------------------------
-/// \brief    Constructor
-/// \param    pApplication: Aplicacio al que pertany.
+/// \brief    Constructor.
+/// \param    application: Aplicacio al que pertany.
 /// \param    configuration: Parametres de configuracio.
 ///
 Service::Service(
 	Application *application,
 	const ServiceConfiguration &configuration) :
 
-    id(idCount++),
     application(nullptr),
     name(configuration.serviceName),
     thread(configuration.stackSize, configuration.priority, configuration.serviceName, this) {

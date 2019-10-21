@@ -5,7 +5,7 @@
 
 typedef struct {
 	EXTICallbackFunction function;
-	void *pParam;
+	void *param;
 } CallbackInfo;
 
 static CallbackInfo callback[16] = {
@@ -140,10 +140,10 @@ static inline void IRQHandler(
 	EXTILine line) {
 
 	if (globalCallback.function != NULL)
-		globalCallback.function(line, globalCallback.pParam);
+		globalCallback.function(line, globalCallback.param);
 
 	if (callback[line].function != NULL)
-		callback[line].function(line, callback[line].pParam);
+		callback[line].function(line, callback[line].param);
 }
 
 

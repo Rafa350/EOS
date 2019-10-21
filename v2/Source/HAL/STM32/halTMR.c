@@ -9,8 +9,8 @@
 
 typedef struct {
 	TIM_HandleTypeDef handle;
-	TMRInterruptCallback pIrqCall;
-	void *pIrqParams;
+	TMRInterruptCallback callback;
+	void *param;
 } TimerInfo;
 
 static TimerInfo timerInfoTbl[HAL_TMR_TIMER_MAX];
@@ -162,8 +162,8 @@ static void disableClock(
 /// \param pInfo: Parametres d'inicialitzacio.
 ///
 static void prepareTimerHandle(
-	TIM_HandleTypeDef *pHandle,
-	const TMRInitializeInfo *pInfo) {
+	TIM_HandleTypeDef *handle,
+	const TMRInitializeInfo *info) {
 
 	static TIM_TypeDef * const instances[] = {
 		TIM1,
@@ -188,35 +188,35 @@ static void prepareTimerHandle(
         TIM_CLOCKDIVISION_DIV4
 	};
 
-	pHandle->Instance = instances[pInfo->timer];
-	pHandle->Init.CounterMode = TIM_COUNTERMODE_UP;
-	pHandle->Init.ClockDivision = clockDivision[(pInfo->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos];
-	pHandle->Init.Prescaler = pInfo->prescaler;
-	pHandle->Init.Period = pInfo->period;
-	pHandle->Init.RepetitionCounter = 0;
+	handle->Instance = instances[info->timer];
+	handle->Init.CounterMode = TIM_COUNTERMODE_UP;
+	handle->Init.ClockDivision = clockDivision[(info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos];
+	handle->Init.Prescaler = info->prescaler;
+	handle->Init.Period = info->period;
+	handle->Init.RepetitionCounter = 0;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza un temporitzador
-/// \param pInfo: Parametres d'inicialitzacio.
+/// \brief    Inicialitza un temporitzador
+/// \param    pInfo: Parametres d'inicialitzacio.
 ///
 void halTMRInitialize(
-	const TMRInitializeInfo *pInfo) {
+	const TMRInitializeInfo *info) {
 
 	// Precondicions
 	//
-	eosAssert(pInfo != NULL);
+	eosAssert(info != NULL);
 
-	TMRTimer timer = pInfo->timer;
-	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
+	TMRTimer timer = info->timer;
+	TimerInfo *timerInfo = &timerInfoTbl[timer];
 
 	enableClock(timer);
 
-	prepareTimerHandle(&pTimerInfo->handle, pInfo);
-	HAL_TIM_Base_Init(&pTimerInfo->handle);
+	prepareTimerHandle(&timerInfo->handle, info);
+	HAL_TIM_Base_Init(&timerInfo->handle);
 
-	if ((pInfo->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) {
+	if ((info->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) {
 
 		static const IRQn_Type irq[] = {
 			0,
@@ -224,20 +224,20 @@ void halTMRInitialize(
 			TIM3_IRQn
 		};
 
-		pTimerInfo->pIrqCall = pInfo->pIrqCall;
-		pTimerInfo->pIrqParams = pInfo->pIrqParams;
+		timerInfo->callback = info->irqCallback;
+		timerInfo->param = info->irqParam;
 
-		halINTSetPriority(irq[timer], pInfo->irqPriority, pInfo->irqSubPriority);
+		halINTSetPriority(irq[timer], info->irqPriority, info->irqSubPriority);
 		halINTEnableIRQ(irq[timer]);
 	}
 	else
-		pTimerInfo->pIrqCall = NULL;
+		timerInfo->callback = NULL;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Desactiva un temporitzador
-/// \param id: Identificador del temporitzador.
+/// \brief    Desactiva un temporitzador
+/// \param    id: Identificador del temporitzador.
 ///
 void halTMRShutdown(
 	TMRTimer timer) {
@@ -251,62 +251,62 @@ void halTMRShutdown(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Posa en marxa el temporitzador i comen�a a contar.
-/// \param timer: El identificador del temporitzador.
+/// \brief    Posa en marxa el temporitzador i comen�a a contar.
+/// \param    timer: El identificador del temporitzador.
 ///
 void halTMRStartTimer(
 	TMRTimer timer) {
 
-	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
+	TimerInfo *timerInfo = &timerInfoTbl[timer];
 
-	if (pTimerInfo->pIrqCall != NULL)
-		__HAL_TIM_ENABLE_IT(&pTimerInfo->handle, TIM_IT_UPDATE);
-	__HAL_TIM_ENABLE(&pTimerInfo->handle);
+	if (timerInfo->callback != NULL)
+		__HAL_TIM_ENABLE_IT(&timerInfo->handle, TIM_IT_UPDATE);
+	__HAL_TIM_ENABLE(&timerInfo->handle);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Para el temporitzador.
-/// \param timer: El identificador del temporitzador.
+/// \brief    Para el temporitzador.
+/// \param    timer: El identificador del temporitzador.
 ///
 void halTMRStopTimer(
 	TMRTimer timer) {
 
-	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
+	TimerInfo *timerInfo = &timerInfoTbl[timer];
 
-	if (pTimerInfo->pIrqCall != NULL)
-		__HAL_TIM_DISABLE_IT(&pTimerInfo->handle, TIM_IT_UPDATE);
-	__HAL_TIM_DISABLE(&pTimerInfo->handle);
+	if (timerInfo->callback != NULL)
+		__HAL_TIM_DISABLE_IT(&timerInfo->handle, TIM_IT_UPDATE);
+	__HAL_TIM_DISABLE(&timerInfo->handle);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Retard en milisegons.
-/// \param time: Temps en milisegons.
+/// \brief    Retard en milisegons.
+/// \param    time: Temps en milisegons.
 ///
 void halTMRDelay(
-    uint32_t time) {
+    int time) {
 
 	HAL_Delay(time);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Handler de la interrupcio.
-/// \param timer: Identificador del temporitzador.
+/// \brief    Handler de la interrupcio.
+/// \param    timer: Identificador del temporitzador.
 ///
 static void IRQHandler(
 	TMRTimer timer) {
 
-	TimerInfo *pTimerInfo = &timerInfoTbl[timer];
+	TimerInfo *timerInfo = &timerInfoTbl[timer];
 
-	if(__HAL_TIM_GET_FLAG(&pTimerInfo->handle, TIM_FLAG_UPDATE) != RESET) {
-	    if(__HAL_TIM_GET_IT_SOURCE(&pTimerInfo->handle, TIM_IT_UPDATE) != RESET) {
+	if(__HAL_TIM_GET_FLAG(&timerInfo->handle, TIM_FLAG_UPDATE) != RESET) {
+	    if(__HAL_TIM_GET_IT_SOURCE(&timerInfo->handle, TIM_IT_UPDATE) != RESET) {
 
-	    	__HAL_TIM_CLEAR_IT(&pTimerInfo->handle, TIM_IT_UPDATE);
+	    	__HAL_TIM_CLEAR_IT(&timerInfo->handle, TIM_IT_UPDATE);
 
-	      if (pTimerInfo->pIrqCall != NULL)
-	    	  pTimerInfo->pIrqCall(timer, pTimerInfo->pIrqParams);
+	      if (timerInfo->callback != NULL)
+	    	  timerInfo->callback(timer, timerInfo->param);
 	    }
 	}
 }

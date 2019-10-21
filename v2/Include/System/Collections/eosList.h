@@ -16,11 +16,12 @@ namespace eos {
 	void insertElement(void *container, int count, int position, void *element, int elementSize);
 	void removeElement(void *container, int count, int position, int elementSize);
 
-    template <typename T>
+    template <typename T, const unsigned INITIAL_CAPACITY>
     class List {
 
         private:
-    		constexpr static int initialCapacity = 5;
+    		constexpr static int initialCapacity = INITIAL_CAPACITY;
+    		constexpr static int elementSize = sizeof(T);
 
         private:
             int count;
@@ -47,10 +48,10 @@ namespace eos {
 			void add(T element) {
 			    if (count == capacity) {
 			    	int newCapacity = (capacity == 0) ? initialCapacity : capacity * 2;
-			    	container = static_cast<T*>(resizeContainer(container, capacity, newCapacity, count, sizeof(T)));
+			    	container = static_cast<T*>(resizeContainer(container, capacity, newCapacity, count, elementSize));
 			    	capacity = newCapacity;
 			    }
-			    memcpy(&container[count], &element, sizeof(T));
+			    memcpy(&container[count], &element, elementSize);
 			    count += 1;
 			}
 
@@ -60,8 +61,9 @@ namespace eos {
 				for (int index = 0; index < count; index++) {
 					if (container[index] == element) {
 						if (index < (count - 1))
-							memcpy(&container[index], &container[index + 1], (count - index - 1) * sizeof(T));
+							memcpy(&container[index], &container[index + 1], (count - index - 1) * elementSize);
 						count--;
+						return;
 					}
 				}
 			}

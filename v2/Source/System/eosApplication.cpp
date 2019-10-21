@@ -23,8 +23,8 @@ Application::~Application() {
 	// Destrueix els serveis de la llista. El contenidor ja es
 	// destrueix automaticament
 	//
-	for (auto service: services)
-    	delete service;
+	while (!services.isEmpty())
+		delete services.getFirst();
 }
 
 
@@ -105,15 +105,9 @@ void Application::runServices() {
 void Application::addService(
     Service *service) {
 
-    // Precondicions
-    //
     eosAssert(service != nullptr);
-    eosAssert(service->application == nullptr);
 
-    /// Afegeix el servei
-    //
-    services.add(service);
-    service->application = this;
+    link(this, service);
 }
 
 
@@ -124,15 +118,9 @@ void Application::addService(
 void Application::removeService(
     Service *service) {
 
-    // Precondicions
-    //
     eosAssert(service != nullptr);
-    eosAssert(service->application == this);
 
-    // Elimina el servei
-    //
-    service->application = nullptr;
-    services.remove(service);
+    unlink(this, service);
 }
 
 
@@ -143,23 +131,6 @@ void Application::removeServices() {
 
 	while (!services.isEmpty())
         removeService(services.getFirst());
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el servei especificat.
-/// \param    id: El identificador del servei.
-/// \return   El servei, null si no el troba.
-///
-Service *Application::findService(
-    int id) const {
-
-  	for (auto service: services) {
-   	    if (service->getId() == id)
-            return service;
-    }
-
-    return nullptr;
 }
 
 
@@ -207,3 +178,36 @@ void Application::onTick() {
 
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix el servei a la llista de serveis
+/// \param    application: L'aplicacio.
+/// \param    service: El servei.
+///
+void eos::link(
+	Application *application,
+	Service *service) {
+
+	eosAssert(application != nullptr);
+    eosAssert(service->application == nullptr);
+
+    application->services.add(service);
+    service->application = application;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Treu el servei de la llista de serveis.
+/// \param    application: L'aplicacio.
+/// \param    service: El servei.
+///
+void eos::unlink(
+	Application *application,
+	Service *service) {
+
+	eosAssert(application != nullptr);
+    eosAssert(service->application == application);
+
+    service->application = nullptr;
+    application->services.remove(service);
+}

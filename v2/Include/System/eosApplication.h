@@ -10,14 +10,17 @@
 
 namespace eos {
 
-    class Service;
+	class Service;
     class String;
 
-	/// \brief Clase que representa l'aplicacio.
+    void link(Application *application, Service *service);
+    void unlink(Application *application, Service *service);
+
+    /// \brief Clase que representa l'aplicacio.
     ///
     class Application {
     	private:
-        	typedef List<Service*> ServiceList;
+        	typedef List<Service*, 5> ServiceList;
 
         private:
             ServiceList services;
@@ -45,8 +48,10 @@ namespace eos {
             void removeService(Service *service);
             void removeServices();
 
-            Service *findService(int id) const;
             Service *findService(const String &serviceName) const;
+
+            friend void link(Application *application, Service *service);
+            friend void unlink(Application *application, Service *service);
     };
 }
 

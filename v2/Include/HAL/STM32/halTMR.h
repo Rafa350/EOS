@@ -69,8 +69,8 @@ typedef struct {
 	TMROptions options;
 	uint32_t irqPriority;
 	uint32_t irqSubPriority;
-	TMRInterruptCallback pIrqCall;
-	void *pIrqParams;
+	TMRInterruptCallback irqCallback;
+	void *irqParam;
 } TMRInitializeInfo;
 
 

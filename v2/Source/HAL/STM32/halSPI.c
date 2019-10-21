@@ -108,7 +108,7 @@ static SPI_HandleTypeDef *prepareHandle(
 
 	// Precondicions
 	//
-	eosAssert(pInfo != NULL);
+	eosAssert(info != NULL);
 
 	static SPI_TypeDef * const instances[HAL_SPI_ID_MAX] = {
 		SPI1,
