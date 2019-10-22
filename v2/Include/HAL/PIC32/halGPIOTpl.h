@@ -98,7 +98,7 @@ namespace eos {
     class GPIOPinAdapter {
         private:
             inline static GPIO_TypeDef *getAddr() {           
-                return NULL;
+                return nullptr;
             }
             
             inline static uint32_t getMask() {

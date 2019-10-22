@@ -14,7 +14,7 @@ extern "C" {
     
 typedef uint8_t TMRTimer;
 typedef uint32_t TMROptions;
-typedef void (*TMRInterruptCallback)(TMRTimer timer, void *params);
+typedef void (*TMRInterruptCallback)(TMRTimer timer, void *param);
 
 
 //#define HAL_TMR_USE_T1_INTERRUPT    
@@ -78,7 +78,7 @@ typedef struct {
 } TMRInitializeInfo;
 
 
-void halTMRInitialize(const TMRInitializeInfo *pInfo);
+void halTMRInitialize(const TMRInitializeInfo *info);
 void halTMRShutdown(TMRTimer timer);
 
 void halTMRStartTimer(TMRTimer timer);

@@ -8,8 +8,8 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor
-/// \param autoreload: Indica si repeteix el cicle continuament
+/// \brief    Constructor.
+/// \param    autoreload: Indica si repeteix el cicle continuament.
 ///
 Timer::Timer(
     bool autoreload) :
@@ -17,17 +17,14 @@ Timer::Timer(
     hTimer(nullptr),
     autoreload(autoreload),
 	tag(nullptr),
-    evTimeout(nullptr) {
+    timerEventCallback(nullptr) {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor
+/// \brief    Destructor.
 ///
 Timer::~Timer() {
-
-    if (evTimeout != nullptr)
-        delete evTimeout;
 
     if (hTimer != nullptr)
         osalTimerDestroy(hTimer, 10);
@@ -35,13 +32,13 @@ Timer::~Timer() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicia el temporitzador.
-/// \param: timeout: Temps de cicle.
-/// \param blockTime: Temps maxim de bloqueix en milisegons.
+/// \brief    Inicia el temporitzador.
+/// \param    timeout: Temps de cicle.
+/// \param    blockTime: Temps maxim de bloqueix en milisegons.
 ///
 void Timer::start(
-    unsigned time,
-    unsigned blockTime) {
+    int time,
+    int blockTime) {
 
     if (hTimer == nullptr) {
 
@@ -49,7 +46,7 @@ void Timer::start(
     	info.options = 0;
     	info.options |= autoreload ? OSAL_TIMER_AUTO_ON : OSAL_TIMER_AUTO_OFF;
     	info.callback = timerCallback;
-    	info.context = this;
+    	info.param = this;
     	hTimer = osalTimerCreate(&info);
     }
 
@@ -58,11 +55,11 @@ void Timer::start(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Para el temporitzador.
-/// \param blockTime: Temps maxim de bloqueig en milisegons.
+/// \brief    Para el temporitzador.
+/// \param    blockTime: Temps maxim de bloqueig en milisegons.
 ///
 void Timer::stop(
-    unsigned blockTime) {
+    int blockTime) {
 
     if (hTimer != nullptr)
     	osalTimerStop(hTimer, blockTime);
@@ -70,8 +67,8 @@ void Timer::stop(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Comprova si el temporitzador esta actiu.
-/// \return True si esta actiu.
+/// \brief    Comprova si el temporitzador esta actiu.
+/// \return   True si esta actiu.
 ///
 bool Timer::isActive() const {
 
@@ -83,14 +80,18 @@ bool Timer::isActive() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Crida a la funcio 'onTimeout' al final del cicle
-/// \param handler: El handler del temporitzador.
+/// \brief    Crida a la funcio 'onTimeout' al final del cicle
+/// \param    hTimer: El handler del temporitzador.
 ///
 void Timer::timerCallback(
     HTimer hTimer) {
 
-    Timer *timer = (Timer*) osalTimerGetContext(hTimer);
-    if ((timer != nullptr) && (timer->evTimeout != nullptr))
-  		timer->evTimeout->execute(timer);
+    Timer *timer = static_cast<Timer*>(osalTimerGetContext(hTimer));
+    if ((timer != nullptr) && (timer->timerEventCallback != nullptr)) {
+        TimerEventArgs args = {
+            .timer = timer
+        };
+  		timer->timerEventCallback->execute(args);
+    }
 }
 

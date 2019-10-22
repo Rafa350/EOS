@@ -7,24 +7,24 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief Crea una tasca.
-/// \param[in] pInfo: Parametres d'inicialitzacio.
-/// \return El handler de la tasca. NULL en cas d'error.
+/// \brief    Crea una tasca.
+/// \param    info: Parametres d'inicialitzacio.
+/// \return   El handler de la tasca. NULL en cas d'error.
 ///
 HTask osalTaskCreate(
-	const TaskInitializeInfo *pInfo) {
+	const TaskInitializeInfo *info) {
 
-    eosAssert(pInfo != NULL);
+    eosAssert(info != NULL);
 
 	// Crea la tasca.
 	//
 	HTask hTask;
     if (xTaskCreate(
-        pInfo->function,
-        pInfo->name == NULL ? "" : pInfo->name,
-        pInfo->stackSize,
-        pInfo->params,
-        tskIDLE_PRIORITY + ((UBaseType_t) (pInfo->options & OSAL_TASK_PRIORITY_mask)),
+        info->function,
+        info->name == NULL ? "" : info->name,
+        info->stackSize,
+        info->params,
+        tskIDLE_PRIORITY + ((UBaseType_t) (info->options & OSAL_TASK_PRIORITY_mask)),
         (TaskHandle_t*) &hTask) != pdPASS)
 		return NULL;
 
@@ -33,8 +33,8 @@ HTask osalTaskCreate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destrueix la tasca.
-/// \param[in] hTask: El handler de la tasca. NULL si es la tasca actual.
+/// \brief    Destrueix la tasca.
+/// \param    hTask: El handler de la tasca. NULL si es la tasca actual.
 ///
 void osalTaskDestroy(
 	HTask hTask) {
@@ -46,7 +46,7 @@ void osalTaskDestroy(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Pasa el control a un altre tasca.
+/// \brief    Pasa el control a un altre tasca.
 ///
 void osalTaskYield() {
 

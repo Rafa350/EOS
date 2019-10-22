@@ -19,7 +19,7 @@ typedef void (*TimerCallback)(HTimer hTimer);
 typedef struct {
 	TimerOptions options;
 	TimerCallback callback;
-	void *context;
+	void *param;
 } TimerInitializeInfo;
 
 #define OSAL_TIMER_BLOCK               ((unsigned) -1)

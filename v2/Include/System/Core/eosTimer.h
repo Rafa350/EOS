@@ -10,32 +10,32 @@
 
 
 namespace eos {
+    
+    class Timer;
+    
+    struct TimerEventArgs {
+        Timer* timer;
+    };    
 
     class Timer {
         private:
-            typedef ICallbackP1<Timer*> ITimerEvent;
+            typedef ICallbackP1<const TimerEventArgs&> ITimerEventCallback;
 
         private:
             HTimer hTimer;
             bool autoreload;
             void *tag;
-            ITimerEvent *evTimeout;
+            ITimerEventCallback *timerEventCallback;
 
         public:
             Timer(bool autoreload = false);
             ~Timer();
-            void start(unsigned time, unsigned blockTime);
-            void stop(unsigned blockTime);
+            void start(int time, int blockTime);
+            void stop(int blockTime);
 
-            /// \brief Asigna el event onTimeout
-            /// \param instance: La instancia
-            /// \param method: El metode
-            ///
             template <class cls>
-            void setEvTimeout(cls *instance, void (cls::*method)(Timer *timer)) {
-                if (evTimeout != nullptr)
-                    delete evTimeout;
-                evTimeout = new CallbackP1<cls, Timer*>(instance, method);
+            inline void setTimerEventCallback(CallbackP1<cls, const TimerEventArgs&> *callback) {
+                timerEventCallback = callback;
             }
 
             inline void setTag(void *tag) { this->tag = tag; }

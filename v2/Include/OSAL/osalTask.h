@@ -20,7 +20,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 	const char *name;                  // -Nom
 	TaskFunction function;             // -Funcio a executar
 	void *params;                      // -Parametres de la funcio
-	unsigned stackSize;                // -Tamany de la pila
+	int stackSize;                     // -Tamany de la pila
 	TaskOptions options;               // -Opcions
 } TaskInitializeInfo;
 
@@ -36,7 +36,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 #define OSAL_TASK_PRIORITY_HIGH        (3u << OSAL_TASK_PRIORITY_pos)
 
 
-HTask osalTaskCreate(const TaskInitializeInfo *pInfo);
+HTask osalTaskCreate(const TaskInitializeInfo *info);
 void osalTaskDestroy(HTask hTask);
 void osalTaskYield();
 
