@@ -32,8 +32,6 @@ void ContentControl::setContent(
 
 		if (content != nullptr)
 			addVisual(content);
-
-		invalidate();
 	}
 }
 
@@ -47,6 +45,6 @@ void ContentControl::setPadding(
 
 	if (padding != value) {
 		padding = value;
-		invalidate();
+		invalidateLayout();
 	}
 }

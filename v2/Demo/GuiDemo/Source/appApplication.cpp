@@ -23,7 +23,8 @@ using namespace app;
 ///
 MyApplication::MyApplication():
 
-	Application() {
+	Application(),
+	buttonEventCallback(this, &MyApplication::buttonEventHandler) {
 
 	ledService = new LedService(this);
 	guiService = new GuiService(this);
@@ -67,10 +68,18 @@ Panel *MyApplication::createMainPanel() {
 		pb->setVerticalAlignment(VerticalAlignment::center);
 		pb->setSize(Size(100, 0));
 		pb->setMargin(Thickness(10, 5, 10, 5));
+		pb->setEventCallback(&buttonEventCallback);
 		pb->setContent(l);
 
 		sp->addChild(pb);
 	}
 
 	return sp;
+}
+
+
+void MyApplication::buttonEventHandler(
+	const ButtonEventArgs &args) {
+
+	args.button->setVisibility(Visibility::hidden);
 }

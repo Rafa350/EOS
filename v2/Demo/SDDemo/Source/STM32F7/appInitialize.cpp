@@ -10,10 +10,9 @@
 
 static void initializeCLK() {
 
-	RCC_ClkInitTypeDef clkInit;
+	// Enable HSE Oscillator and activate PLL with HSE as source
+	//
 	RCC_OscInitTypeDef oscInit;
-
-	/* Enable HSE Oscillator and activate PLL with HSE as source */
 	oscInit.OscillatorType = RCC_OSCILLATORTYPE_HSE;
 	oscInit.HSEState = RCC_HSE_ON;
 	oscInit.HSIState = RCC_HSI_OFF;
@@ -27,14 +26,24 @@ static void initializeCLK() {
 
 	HAL_PWREx_EnableOverDrive();
 
-	/* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
-	 clocks dividers */
-	clkInit.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
+	// Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
+	// clocks dividers
+	//
+	RCC_ClkInitTypeDef clkInit;
+	clkInit.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
 	clkInit.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
 	clkInit.AHBCLKDivider = RCC_SYSCLK_DIV1;
 	clkInit.APB1CLKDivider = RCC_HCLK_DIV4;
 	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
 	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_7);
+
+	// Inicialitza el rellotge del periferic SDMCC
+	//
+	RCC_PeriphCLKInitTypeDef perClkInit;
+	perClkInit.PeriphClockSelection = RCC_PERIPHCLK_SDMMC1 | RCC_PERIPHCLK_CLK48;
+	perClkInit.Clk48ClockSelection = RCC_CLK48SOURCE_PLL;
+	perClkInit.Sdmmc1ClockSelection = RCC_SDMMC1CLKSOURCE_CLK48;
+	HAL_RCCEx_PeriphCLKConfig(&perClkInit);
 }
 
 

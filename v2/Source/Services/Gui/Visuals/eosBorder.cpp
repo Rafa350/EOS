@@ -50,8 +50,6 @@ void Border::setContent(
 
 		if (content != nullptr)
 			addVisual(content);
-
-		invalidate();
 	}
 }
 

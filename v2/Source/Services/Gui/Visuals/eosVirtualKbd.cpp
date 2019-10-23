@@ -45,7 +45,7 @@ void VirtualKeyboard::initializePanel() {
 	for (int i = 0; i < 10; i++) {
 		const KeyInfo *p = &calculatorKeys[i];
 		PushButton *button = new PushButton();
-		button->setPosition(Point(p->x, p->y));
+		//button->setPosition(Point(p->x, p->y));
 		button->setSize(Size(p->width, p->height));
 		addChild(button);
 	}

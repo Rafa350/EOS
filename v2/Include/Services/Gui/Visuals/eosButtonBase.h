@@ -10,14 +10,26 @@
 namespace eos {
 
 	struct Message;
+	class ButtonBase;
+
+	enum class ButtonEventType {
+		press,
+		release,
+		click
+	};
+
+	struct ButtonEventArgs {
+		ButtonBase *button;
+		ButtonEventType event;
+	};
 
     class ButtonBase: public ContentControl {
     	private:
-			typedef ICallbackP1<Visual*> IClickCallback;
+			typedef ICallbackP1<const ButtonEventArgs&> IEventCallback;
 
     	private:
 			bool pressed;
-			IClickCallback *clickCallback;
+			IEventCallback *eventCallback;
 
     	protected:
 #ifdef OPT_GUI_TouchPad
@@ -37,8 +49,8 @@ namespace eos {
 			void click();
 
 			template <class cls>
-			inline void setClickCallback(CallbackP1<cls, Visual*> *callBack) {
-				clickCallback = callBack;
+			inline void setEventCallback(CallbackP1<cls, const ButtonEventArgs&> *callback) {
+				eventCallback = callback;
             }
     };
 

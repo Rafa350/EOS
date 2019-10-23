@@ -34,7 +34,7 @@ static void SDTest1() {
 		HAL_Delay(1000);
 
 		/*##-2- Register the file system object to the FatFs module ##############*/
-		fr = f_mount(&SDFatFs, (TCHAR const*)SDPath, 1);
+		fr = f_mount(&SDFatFs, (TCHAR const*)SDPath, 0);
 		if (fr != FR_OK)  {
 			/* FatFs Initialization Error */
 			Error_Handler(fr);

@@ -10,7 +10,8 @@ using namespace eos;
 /// \brief    Constructor
 ///
 ButtonBase::ButtonBase():
-	pressed(false) {
+	pressed(false),
+	eventCallback(nullptr) {
 
 }
 
@@ -79,8 +80,13 @@ void ButtonBase::onTouchPadLeave() {
 ///
 void ButtonBase::onClick() {
 
-	if (clickCallback != nullptr)
-		clickCallback->execute(this);
+	if (eventCallback != nullptr) {
+		ButtonEventArgs args = {
+			.button = this,
+			.event = ButtonEventType::click
+		};
+		eventCallback->execute(args);
+	}
 }
 
 

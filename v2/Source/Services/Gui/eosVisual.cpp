@@ -16,7 +16,6 @@ Visual::Visual():
 	parent(nullptr),
 	needRender(false),
 	visibility(Visibility::visible),
-	position(0, 0),
 	size(0, 0),
 	minSize(0, 0),
 	maxSize(INT32_MAX, INT32_MAX),
@@ -46,6 +45,14 @@ Visual::~Visual() {
 void Visual::invalidate() {
 
 	needRender = true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Marca el visual per reposicionar.
+///
+void Visual::invalidateLayout() {
+
 }
 
 
@@ -134,6 +141,8 @@ void Visual::addVisual(
 
 	childs.add(visual);
 	visual->parent = this;
+
+	invalidateLayout();
 }
 
 
@@ -149,6 +158,8 @@ void Visual::removeVisual(
 
 	visual->parent = nullptr;
 	childs.remove(visual);
+
+	invalidateLayout();
 }
 
 
@@ -255,9 +266,6 @@ void Visual::arrange(
 				break;
 		}
 
-		setPosition(Point(x, y));
-		setSize(Size(width, height));
-
 		bounds = Rect(x, y, width, height);
 		invalidate();
 	}
@@ -324,21 +332,7 @@ void Visual::setVisibility(
 
 	if (visibility != value) {
 		visibility = value;
-		invalidate();
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna la posicio.
-/// \param    value: La nova posicio.
-///
-void Visual::setPosition(
-	const Point &value) {
-
-	if (position != value) {
-		position = value;
-		invalidate();
+		invalidateLayout();
 	}
 }
 
@@ -352,7 +346,7 @@ void Visual::setSize(
 
     if (size != value) {
     	size = value;
-		invalidate();
+		invalidateLayout();
     }
 }
 
@@ -366,7 +360,7 @@ void Visual::setMinSize(
 
 	if (minSize != value) {
 		minSize = value;
-		invalidate();
+		invalidateLayout();
 	}
 }
 
@@ -380,7 +374,7 @@ void Visual::setMargin(
 
 	if (margin != value) {
 		margin = value;
-		invalidate();
+		invalidateLayout();
 	}
 }
 
@@ -394,7 +388,7 @@ void Visual::setHorizontalAlignment(
 
 	if (horizontalAlignment != value) {
 		horizontalAlignment = value;
-		invalidate();
+		invalidateLayout();
 	}
 }
 
@@ -408,7 +402,7 @@ void Visual::setVerticalAlignment(
 
 	if (verticalAlignment != value) {
 		verticalAlignment = value;
-		invalidate();
+		invalidateLayout();
 	}
 }
 

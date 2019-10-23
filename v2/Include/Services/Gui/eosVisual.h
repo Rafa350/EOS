@@ -54,7 +54,6 @@ namespace eos {
     		VisualList childs;
     		bool needRender;
     		Visibility visibility;
-    		Point position;
 			Size size;
 			Size minSize;
 			Size maxSize;
@@ -101,7 +100,6 @@ namespace eos {
             void setHorizontalAlignment(HorizontalAlignment value);
             void setMargin(const Thickness &value);
             void setMinSize(const Size &value);
-            void setPosition(const Point &value);
             void setSize(const Size &value);
             void setVerticalAlignment(VerticalAlignment value);
             void setVisibility(Visibility value);
@@ -123,6 +121,7 @@ namespace eos {
             void dispatch(const Message &msg);
             bool render(RenderContext *context);
     		void invalidate();
+    		void invalidateLayout();
     };
 
 }
