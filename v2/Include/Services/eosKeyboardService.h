@@ -1,12 +1,11 @@
-#ifndef __EOS_KEYBOARD_H
-#define __EOS_KEYBOARD_H
+#ifndef __eosKeyboardService__
+#define __eosKeyboardService__
 
 
 #include "eos.h"
 #include "System/Core/eosCallbacks.h"
 #include "Services/eosService.h"
 
-#include <stdint.h>
 
 
 namespace eos {
@@ -43,4 +42,4 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosKeyboardService__

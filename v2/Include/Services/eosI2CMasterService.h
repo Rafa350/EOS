@@ -1,13 +1,13 @@
-#ifndef __EOS_I2CMASTER_H
-#define __EOS_I2CMASTER_H
+#ifndef __eosI2CMasterService__
+#define __eosI2CMasterService__
 
 
 #include "eos.h"
-#include "System/Core/eosSemaphore.h"
-#include "System/Core/eosCallbacks.h"
-#include "System/Core/eosQueue.h"
-#include "System/Core/eosPoolAllocator.h"
 #include "Services/eosService.h"
+#include "System/Core/eosCallbacks.h"
+#include "System/Core/eosPoolAllocator.h"
+#include "System/Core/eosQueue.h"
+#include "System/Core/eosSemaphore.h"
 
 
 namespace eos {
@@ -85,5 +85,5 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosI2CMasterService__
 

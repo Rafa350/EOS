@@ -1,12 +1,10 @@
-#ifndef __EOS_SELECTOR_H
-#define __EOS_SELECTOR_H
+#ifndef __eosSelectorService__
+#define __eosSelectorService__
 
 
 #include "eos.h"
 #include "System/Core/eosCallbacks.h"
 #include "Services/eosService.h"
-
-#include <stdint.h>
 
 
 namespace eos {
@@ -45,4 +43,4 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosSelectorService__
