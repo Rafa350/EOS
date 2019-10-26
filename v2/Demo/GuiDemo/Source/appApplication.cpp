@@ -7,6 +7,7 @@
 #include "Services/Gui/Visuals/eosPushButton.h"
 #include "Services/Gui/Visuals/eosScreen.h"
 #include "Services/Gui/Visuals/eosStackPanel.h"
+#include "Services/Gui/Visuals/eosVirtualKeyboard.h"
 #include "System/Graphics/eosBitmap.h"
 #include "appApplication.h"
 #include "appLedService.h"
@@ -49,6 +50,7 @@ void MyApplication::onInitialize() {
 
 Panel *MyApplication::createMainPanel() {
 
+#if 0
 	StackPanel *sp = new StackPanel();
 	sp->setMargin(Thickness(50, 10, 50, 10));
 	sp->setHorizontalAlignment(HorizontalAlignment::center);
@@ -75,6 +77,13 @@ Panel *MyApplication::createMainPanel() {
 	}
 
 	return sp;
+#endif
+
+	VirtualKeyboard *kb = new VirtualKeyboard();
+	kb->setHorizontalAlignment(HorizontalAlignment::center);
+	kb->setVerticalAlignment(VerticalAlignment::center);
+	return kb;
+
 }
 
 

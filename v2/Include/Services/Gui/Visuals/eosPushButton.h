@@ -21,7 +21,7 @@ namespace eos {
 
     	private:
     		PushButtonState state;
-    
+
         protected:
         	void onRender(RenderContext *context) override;
             void onPress() override;

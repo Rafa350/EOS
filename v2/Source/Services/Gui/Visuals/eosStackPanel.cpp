@@ -24,7 +24,7 @@ StackPanel::StackPanel():
 Size StackPanel::measureOverride(
 	const Size &availableSize) const {
 
-	bool isHorizontal = orientation == Orientation::horitzontal;
+	bool isHorizontal = orientation == Orientation::horizontal;
 
 	Size childAvailableSize(
 	    isHorizontal ? INT32_MAX : availableSize.getWidth(),
@@ -67,7 +67,7 @@ Size StackPanel::measureOverride(
 Size StackPanel::arrangeOverride(
 	const Size &finalSize) const {
 
-	bool isHorizontal = orientation == Orientation::horitzontal;
+	bool isHorizontal = orientation == Orientation::horizontal;
 
 	int childX = 0;
 	int childY = 0;

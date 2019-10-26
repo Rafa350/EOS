@@ -619,6 +619,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosRenderContext.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/eosTemplate.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosTemplate.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosThickness.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosThickness.h</locationURI>
@@ -979,6 +984,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Line.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Graphics/eosGraphics_Polygon.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Polygon.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/Graphics/eosGraphics_Rectangle.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Rectangle.cpp</locationURI>
@@ -1119,9 +1129,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosStackPanel.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/Gui/Visuals/eosVirtualKbd.h</name>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosVirtualKeyboard.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosVirtualKbd.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosVirtualKeyboard.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC</name>
@@ -1204,9 +1214,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosStackPanel.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/Gui/Visuals/eosVirtualKbd.cpp</name>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosVirtualKeyboard.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosVirtualKbd.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosVirtualKeyboard.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosVirtualKeyboardTemplate.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosVirtualKeyboardTemplate.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas10pt.cpp</name>

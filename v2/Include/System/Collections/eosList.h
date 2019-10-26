@@ -23,6 +23,12 @@ namespace eos {
     		constexpr static int initialCapacity = INITIAL_CAPACITY;
     		constexpr static int elementSize = sizeof(T);
 
+        public:
+    		typedef T value_type;
+    		typedef T& reference;
+    		typedef T* iterator;
+    		typedef const T* const_iterator;
+
         private:
             int count;
             int capacity;
@@ -53,6 +59,10 @@ namespace eos {
 			    }
 			    memcpy(&container[count], &element, elementSize);
 			    count += 1;
+			}
+
+			void insert(T element, int index) {
+
 			}
 
 			/// \brief Elimina un element de la llista.
@@ -116,15 +126,17 @@ namespace eos {
             
 			/// \brief Obte el iterator inicial
 			/// \return El iterator.
-            inline const T* begin() const {
+            inline const_iterator begin() const {
                 return &container[0];
             }
 
 			/// \brief Obte el iterator final
 			/// \return El iterator.
-            inline const T* end() const {
+            inline const_iterator end() const {
                 return &container[count];
             }
+
+
     };
 }
 

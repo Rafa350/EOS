@@ -25,7 +25,7 @@ namespace eos {
 	};
 
 	enum class Orientation {
-		horitzontal,
+		horizontal,
 		vertical,
 	};
 
