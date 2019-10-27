@@ -21,6 +21,7 @@ namespace eos {
 	struct ButtonEventArgs {
 		ButtonBase *button;
 		ButtonEventType event;
+		uint8_t id;
 	};
 
     class ButtonBase: public ContentControl {
@@ -29,6 +30,7 @@ namespace eos {
 
     	private:
 			bool pressed;
+			uint8_t id;
 			IEventCallback *eventCallback;
 
     	protected:
@@ -47,6 +49,9 @@ namespace eos {
 			ButtonBase();
 
 			void click();
+
+			void setId(uint8_t id) { this.id = id; }
+			uint8_t getId() const { return id; }
 
 			template <class cls>
 			inline void setEventCallback(CallbackP1<cls, const ButtonEventArgs&> *callback) {
