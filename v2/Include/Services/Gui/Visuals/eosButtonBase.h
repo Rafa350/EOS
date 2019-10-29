@@ -30,7 +30,6 @@ namespace eos {
 
     	private:
 			bool pressed;
-			uint8_t id;
 			IEventCallback *eventCallback;
 
     	protected:
@@ -49,9 +48,6 @@ namespace eos {
 			ButtonBase();
 
 			void click();
-
-			void setId(uint8_t id) { this.id = id; }
-			uint8_t getId() const { return id; }
 
 			template <class cls>
 			inline void setEventCallback(CallbackP1<cls, const ButtonEventArgs&> *callback) {

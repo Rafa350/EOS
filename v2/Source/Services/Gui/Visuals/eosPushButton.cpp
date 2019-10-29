@@ -15,7 +15,8 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 PushButton::PushButton():
-	state(PushButtonState::normal) {
+	state(PushButtonState::normal),
+	command(0xFF) {
 
 }
 
@@ -98,4 +99,14 @@ void PushButton::onRelease() {
 	setState(PushButtonState::normal);
 
 	ButtonBase::onRelease();
+}
+
+
+void PushButton::onClick() {
+
+	Buttonbase::onClick();
+	if (command != 0xFF) {
+		// sendMessage(getParent(), command);;
+	}
+
 }

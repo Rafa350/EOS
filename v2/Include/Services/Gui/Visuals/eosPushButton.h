@@ -21,9 +21,11 @@ namespace eos {
 
     	private:
     		PushButtonState state;
+			uint8_t command;
 
         protected:
         	void onRender(RenderContext *context) override;
+        	void onClick() override;
             void onPress() override;
             void onRelease() override;
 
@@ -31,6 +33,9 @@ namespace eos {
 
         public:
             PushButton();
+
+			void setCommand(uint8_t command) { this->command = command; }
+			uint8_t getCommand() const { return id; }
     };
     
 }

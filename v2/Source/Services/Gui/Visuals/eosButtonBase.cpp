@@ -11,7 +11,6 @@ using namespace eos;
 ///
 ButtonBase::ButtonBase():
 	pressed(false),
-	id(0xFF),
 	eventCallback(nullptr) {
 
 }
@@ -84,8 +83,7 @@ void ButtonBase::onClick() {
 	if (eventCallback != nullptr) {
 		ButtonEventArgs args = {
 			.button = this,
-			.event = ButtonEventType::click,
-			.id = id
+			.event = ButtonEventType::click
 		};
 		eventCallback->execute(args);
 	}
@@ -100,8 +98,7 @@ void ButtonBase::onPress() {
 	if (eventCallback != nullptr) {
 		ButtonEventArgs args = {
 			.button = this,
-			.event = ButtonEventType::press,
-			.id = id
+			.event = ButtonEventType::press
 		};
 		eventCallback->execute(args);
 	}
@@ -116,8 +113,7 @@ void ButtonBase::onRelease() {
 	if (eventCallback != nullptr) {
 		ButtonEventArgs args = {
 			.button = this,
-			.event = ButtonEventType::release,
-			.id = id
+			.event = ButtonEventType::release
 		};
 		eventCallback->execute(args);
 	}

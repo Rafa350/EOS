@@ -64,11 +64,16 @@ namespace eos {
 
 #endif
 
+    struct MsgCommand {
+    	int commandId;
+    };
+
     enum class MsgId: uint8_t {
     	null,
     	touchPadEvent,
 		selectorEvent,
-		keyboardEvent
+		keyboardEvent,
+		commandEvent,
     };
 
     class Visual;
@@ -86,6 +91,7 @@ namespace eos {
 #ifdef OPT_GUI_TouchPad
             MsgTouchPad touchPad;
 #endif
+            MsgCommand command;
         };
     };
 
