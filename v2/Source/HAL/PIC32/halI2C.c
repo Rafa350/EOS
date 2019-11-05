@@ -1,4 +1,6 @@
-#include "HAL/halI2C.h"
+#include "eos.h"
+#include "HAL/PIC32/halI2C.h"
+
 #include "sys/attribs.h"
 #include "peripheral/int/plib_int.h"
 #include "Peripheral/i2c/plib_i2c.h"
@@ -8,7 +10,7 @@ static const INT_PRIORITY_LEVEL intPriority = INT_PRIORITY_LEVEL2;
 static const INT_SUBPRIORITY_LEVEL intSubPriority = INT_SUBPRIORITY_LEVEL0;
 
 static I2CInterruptCallback callbacks[I2C_NUMBER_OF_MODULES];
-static I2CInterruptParam params[I2C_NUMBER_OF_MODULES];
+static void* params[I2C_NUMBER_OF_MODULES];
 
 
 extern void __ISR(_I2C_1_VECTOR, IPL2SOFT) isrI2C1Wrapper(void);
@@ -74,16 +76,17 @@ static uint8_t getEosID(I2C_MODULE_ID id) {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief   Inicialitza el modul I2C
+/// \param   info: Informacio d'inicialitzacio.
+///
 void halI2CMasterInitialize(
-    uint8_t moduleId,
-    unsigned baudRate,
-    I2CInterruptCallback callback,
-    I2CInterruptParam param) {
+    const I2CMasterInitializeInfo *info) {
     
-    callbacks[moduleId] = callback;
-    params[moduleId] = param;
+    callbacks[info->module] = info->irqCallback;
+    params[info->module] = info->irqParam;
     
-    I2C_MODULE_ID id = getHarmonyID(moduleId);
+    I2C_MODULE_ID id = getHarmonyID(info->module);
 
     // Inicialitzacio general del modul
     //
@@ -94,7 +97,7 @@ void halI2CMasterInitialize(
 
     // Selecciona la frequencia de treball
     //
-    PLIB_I2C_BaudRateSet(id, CLOCK_PERIPHERICAL_HZ, baudRate);
+    PLIB_I2C_BaudRateSet(id, CLOCK_PERIPHERICAL_HZ, info->baudRate);
 
     // Configura les interrupcions
     //
@@ -144,39 +147,57 @@ void halI2CMasterInitialize(
 }
 
 
-void halI2CMasterStart(uint8_t moduleId) {
+/// ------------------------------------------------------------
+/// \brief   Genera la sequencia START
+/// \param   module: El modul.
+///
+void halI2CMasterStart(
+    I2CModule module) {
 
-    PLIB_I2C_MasterStart(getHarmonyID(moduleId));    
+    PLIB_I2C_MasterStart(getHarmonyID(module));    
 }
 
 
-void halI2CMasterStop(uint8_t moduleId) {
+/// ------------------------------------------------------------
+/// \brief   Genera la sequencia STOP
+/// \param   module: El modul.
+///
+void halI2CMasterStop(
+    I2CModule module) {
  
-    PLIB_I2C_MasterStop(getHarmonyID(moduleId));
+    PLIB_I2C_MasterStop(getHarmonyID(module));
 }
 
 
-void halI2CMasterStartRepeat(uint8_t moduleId) {
+/// ------------------------------------------------------------
+/// \brief   Genera la sequencia RESTART
+/// \param   module: El modul.
+///
+void halI2CMasterStartRepeat(
+    I2CModule module) {
 
-    PLIB_I2C_MasterStartRepeat(getHarmonyID(moduleId));
+    PLIB_I2C_MasterStartRepeat(getHarmonyID(module));
 }
 
 
-bool halI2CIsBusIdle(uint8_t moduleId) {
+bool halI2CIsBusIdle(
+    I2CModule module) {
  
-    return PLIB_I2C_BusIsIdle(getHarmonyID(moduleId));
+    return PLIB_I2C_BusIsIdle(getHarmonyID(module));
 }
 
 
-bool halI2CArbitrationLossHasOccurred(uint8_t moduleId) {
+bool halI2CArbitrationLossHasOccurred(
+    I2CModule module) {
 
-    return PLIB_I2C_ArbitrationLossHasOccurred(getHarmonyID(moduleId));
+    return PLIB_I2C_ArbitrationLossHasOccurred(getHarmonyID(module));
 }
 
 
-void halI2CArbitrationLossClear(uint8_t moduleId) {
+void halI2CArbitrationLossClear(
+    I2CModule module) {
 
-    PLIB_I2C_ArbitrationLossClear(getHarmonyID(moduleId));
+    PLIB_I2C_ArbitrationLossClear(getHarmonyID(module));
 }
 
 
@@ -204,32 +225,24 @@ void halI2CMasterReceiverClock1Byte(uint8_t moduleId) {
 }
 
 
-void halI2CReceivedByteAcknowledge(uint8_t moduleId, bool ack) {
+void halI2CReceivedByteAcknowledge(
+    I2CModule module, bool ack) {
  
-    PLIB_I2C_ReceivedByteAcknowledge(getHarmonyID(moduleId), ack);
+    PLIB_I2C_ReceivedByteAcknowledge(getHarmonyID(module), ack);
 }
 
 
-/*************************************************************************
- *
- *       Crida al callback adequat a cada modul I2C
- * 
- *       Funcio:
- *           void doCallback(
- *               I2C_MODULE_ID id)
- * 
- *       Entrada:
- *           id: Numero de modul I2C
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief    Crida a la funcio callback de la interrupcio.
+/// \param    id: identificacod 'Harmony' del modul.
+///
 static void doCallback(
     I2C_MODULE_ID id) {
     
-    uint8_t moduleId = getEosID(id);    
-    I2CInterruptCallback callback = callbacks[moduleId];
+    I2CModule module = getEosID(id);    
+    I2CInterruptCallback callback = callbacks[module];
     if (callback != NULL)
-        callback(moduleId, params[moduleId]);
+        callback(module, params[module]);
 }
 
 

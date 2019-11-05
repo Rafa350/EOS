@@ -11,7 +11,7 @@
 	#include "HAL/PIC32/halI2C.h"
 
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-	#include "hal/STM32/halI2C.h"
+	#include "HAL/STM32/halI2C.h"
 
 #endif
 

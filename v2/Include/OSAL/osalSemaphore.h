@@ -18,8 +18,8 @@ typedef struct OSAL_SEMAPHORE_DATA *HSemaphore;
 HSemaphore osalSemaphoreCreate();
 void osalSemaphoreDestroy(HSemaphore hSemaphore);
 
-bool osalSemaphoreWait(HSemaphore, unsigned waitTime);
-bool osalSemaphoreWaitISR(HSemaphore, unsigned waitTime);
+bool osalSemaphoreWait(HSemaphore, int waitTime);
+bool osalSemaphoreWaitISR(HSemaphore, int waitTime);
 void osalSemaphoreRelease(HSemaphore hSemaphore);
 void osalSemaphoreReleaseISR(HSemaphore hSemaphore);
 

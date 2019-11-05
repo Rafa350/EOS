@@ -31,7 +31,7 @@ BinarySemaphore::~BinarySemaphore() {
 /// \return True si s'ha alliverat. False en cas contrari.
 ///
 bool BinarySemaphore::wait(
-    unsigned blockTime) {
+    int blockTime) {
 
     return osalSemaphoreWait(hSemaphore, blockTime);
 }

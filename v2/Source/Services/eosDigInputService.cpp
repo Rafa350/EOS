@@ -6,7 +6,7 @@
 using namespace eos;
 
 
-static DigInputServiceConfiguration defaultConfiguration = {
+static const DigInputServiceConfiguration defaultConfiguration = {
     .serviceConfiguration = {
         .serviceName = "DigInputService",
         .stackSize = 512,

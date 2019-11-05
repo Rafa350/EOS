@@ -43,7 +43,6 @@
             </logicalFolder>
             <logicalFolder name="f2" displayName="Core" projectFiles="true">
               <itemPath>../../../Include/System/Core/eosHeapAllocator.h</itemPath>
-              <itemPath>../../../Include/System/Core/eosString.h</itemPath>
               <itemPath>../../../Include/System/Core/eosTimer.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
@@ -104,9 +103,9 @@
               <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
-              <itemPath>../../../Source/System/Core/eosString.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
+            <itemPath>../../../Source/System/eosString.cpp</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">

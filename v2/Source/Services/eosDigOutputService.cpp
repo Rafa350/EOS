@@ -9,7 +9,7 @@
 using namespace eos;
 
 
-static DigOutputServiceConfiguration defaultConfiguration = {
+static const DigOutputServiceConfiguration defaultConfiguration = {
     .serviceConfiguration = {
         .serviceName = "DigOutputService",
         .stackSize = 512,

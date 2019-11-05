@@ -1,5 +1,8 @@
-#ifndef __EOS_HAL_I2C_H
-#define	__EOS_HAL_I2C_H
+#ifndef __PIC32_halI2C__
+#define	__PIC32_halI2C__
+
+
+#include "eos.h"
 
 
 #ifdef	__cplusplus
@@ -7,37 +10,41 @@ extern "C" {
 #endif
 
     
-#include <stdint.h>
-#include <stdbool.h>
-    
-    
-#define HAL_I2C_I2C1         0
-#define HAL_I2C_I2C2         1
-#define HAL_I2C_I2C3         2
-#define HAL_I2C_I2C4         3
-    
-    
-typedef void *I2CInterruptParam;   
-typedef void (*I2CInterruptCallback)(uint8_t moduleId, I2CInterruptParam param);
+typedef uint8_t I2CModule;
+typedef void (*I2CInterruptCallback)(I2CModule module, void *param);
 
-void halI2CMasterInitialize(uint8_t moduleId, unsigned baudRate, 
-    I2CInterruptCallback callback, I2CInterruptParam param);
+typedef struct {
+    I2CModule module;
+    unsigned baudRate;
+    I2CInterruptCallback irqCallback;
+    void *irqParam;
+} I2CMasterInitializeInfo;
 
-void halI2CMasterStart(uint8_t moduleId);
-void halI2CMasterStartRepeat(uint8_t moduleId);
-void halI2CMasterStop(uint8_t id);
 
-bool halI2CIsBusIdle(uint8_t moduleId);
+#define HAL_I2C_I2C1         ((I2CModule) 0)
+#define HAL_I2C_I2C2         ((I2CModule) 1)
+#define HAL_I2C_I2C3         ((I2CModule) 2)
+#define HAL_I2C_I2C4         ((I2CModule) 3)
 
-bool halI2CArbitrationLossHasOccurred(uint8_t moduleId);
-void halI2CArbitrationLossClear(uint8_t moduleId);
 
-void halI2CTransmitterByteSend(uint8_t moduleId, uint8_t data);
-bool halI2CTransmitterByteWasAcknowledged(uint8_t moduleIdid); 
+void halI2CMasterInitialize(const I2CMasterInitializeInfo *info);
+void halI2CMasterShutdown(I2CModule module);
 
-uint8_t halI2CReceivedByteGet(uint8_t moduleId);
-void halI2CReceivedByteAcknowledge(uint8_t moduleId, bool ack);
-void halI2CMasterReceiverClock1Byte(uint8_t moduleId);
+void halI2CMasterStart(I2CModule module);
+void halI2CMasterStartRepeat(I2CModule module);
+void halI2CMasterStop(I2CModule module);
+
+bool halI2CIsBusIdle(I2CModule module);
+
+bool halI2CArbitrationLossHasOccurred(I2CModule module);
+void halI2CArbitrationLossClear(I2CModule module);
+
+void halI2CTransmitterByteSend(I2CModule module, uint8_t data);
+bool halI2CTransmitterByteWasAcknowledged(I2CModule module); 
+
+uint8_t halI2CReceivedByteGet(I2CModule module);
+void halI2CReceivedByteAcknowledge(I2CModule module, bool ack);
+void halI2CMasterReceiverClock1Byte(I2CModule module);
 
 
 #ifdef	__cplusplus
@@ -45,5 +52,5 @@ void halI2CMasterReceiverClock1Byte(uint8_t moduleId);
 #endif
 
 
-#endif
+#endif // __halI2C__
 

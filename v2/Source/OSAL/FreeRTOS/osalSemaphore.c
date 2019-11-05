@@ -6,8 +6,8 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief Crea un semafor
-/// \return El hansler sel semafor.
+/// \brief    Crea un semafor
+/// \return   El handler del semafor.
 ///
 HSemaphore osalSemaphoreCreate() {
 
@@ -16,8 +16,8 @@ HSemaphore osalSemaphoreCreate() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destrueix un semafor.
-/// \param hSemaphore: El handler del semafor.
+/// \brief    Destrueix un semafor.
+/// \param    hSemaphore: El handler del semafor.
 ///
 void osalSemaphoreDestroy(
 	HSemaphore hSemaphore) {
@@ -29,25 +29,25 @@ void osalSemaphoreDestroy(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Espera en un semafor fins que s'alliveri, o fins el temps
-///        maxim d'espera.
-/// \param hSemaphore: El handler del semaphor.
-/// \param waitTime: Temps maxim d'espera.
+/// \brief    Espera en un semafor fins que s'alliveri, o fins el temps
+///           maxim d'espera.
+/// \param    hSemaphore: El handler del semaphor.
+/// \param    waitTime: Temps maxim d'espera.
 ///
 bool osalSemaphoreWait(
 	HSemaphore hSemaphore,
-	unsigned waitTime) {
+	int waitTime) {
 
 	eosAssert(hSemaphore != NULL);
 
-	TickType_t ticks = waitTime == ((unsigned) -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+	TickType_t ticks = (waitTime == -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
 	return xSemaphoreTake(hSemaphore, ticks) == pdTRUE;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Allivera un semafor desde d'ins d'una interrupcio
-/// \param hSemaphore: El handler del semafor.
+/// \brief    Allivera un semafor desde d'ins d'una interrupcio
+/// \param    hSemaphore: El handler del semafor.
 ///
 void osalSemaphoreReleaseISR(
 	HSemaphore hSemaphore) {

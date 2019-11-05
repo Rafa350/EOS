@@ -15,7 +15,7 @@ namespace eos {
         public:
             BinarySemaphore();
             ~BinarySemaphore();
-            bool wait(unsigned blockTime);
+            bool wait(int blockTime);
             void release();
             void releaseISR();
     };

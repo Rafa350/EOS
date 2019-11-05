@@ -3,10 +3,10 @@
 
 
 #include "eos.h"
-#include "System/Core/eosCallbacks.h"
-#include "System/Collections/eosList.h"
-#include "Services/eosService.h"
 #include "HAL/halGPIO.h"
+#include "Services/eosService.h"
+#include "System/eosCallbacks.h"
+#include "System/Collections/eosList.h"
 
 
 namespace eos {

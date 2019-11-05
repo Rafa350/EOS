@@ -1,3 +1,4 @@
+#include "eos.h"
 #include "Services/eosAppLoopService.h"
 
 
