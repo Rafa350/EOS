@@ -26,6 +26,7 @@ void VirtualKeyboard::buttonEventHandler(
 
 	switch (args.event) {
 		case ButtonEventType::click:
+			// Genera un missatge MsgKey
 			break;
 
 		default:

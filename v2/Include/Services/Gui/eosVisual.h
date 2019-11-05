@@ -119,6 +119,7 @@ namespace eos {
             const Size& getDesiredSize() const { return desiredSize; }
 
             void dispatch(const Message &msg);
+            void send(const Message &msg);
             bool render(RenderContext *context);
     		void invalidate();
     		void invalidateLayout();

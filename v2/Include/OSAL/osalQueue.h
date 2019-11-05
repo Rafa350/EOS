@@ -15,19 +15,19 @@ extern "C" {
 typedef struct OSAL_QUEUE_DATA *HQueue;
 
 typedef struct {
-    unsigned maxElements;
-    unsigned elementSize;
+    int maxElements;
+    int elementSize;
 } QueueInitializeInfo;
 
 
-HQueue osalQueueCreate(const QueueInitializeInfo *pInfo);
+HQueue osalQueueCreate(const QueueInitializeInfo *info);
 void osalQueueDestroy(HQueue hQueue);
 
 void osalQueueClear(HQueue hQueue);
 
-bool osalQueuePut(HQueue hQueue, const void *element, unsigned waitTime);
+bool osalQueuePut(HQueue hQueue, const void *element, int waitTime);
 bool osalQueuePutISR(HQueue hQueue, const void *element);
-bool osalQueueGet(HQueue hQueue, void *element, unsigned waitTime);
+bool osalQueueGet(HQueue hQueue, void *element, int waitTime);
 bool osalQueueGetISR(HQueue hQueue, void *element);
 
 

@@ -4,7 +4,7 @@
 using namespace eos;
 
 
-static AppLoopServiceConfiguration defaultConfiguration = {
+static const AppLoopServiceConfiguration defaultConfiguration = {
 	.serviceConfiguration = {
 		.serviceName = "AppLoopService",
 		.stackSize = 512,

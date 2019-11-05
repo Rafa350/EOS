@@ -4,7 +4,7 @@
 #include "Services/Gui/Visuals/eosPushButton.h"
 #include "Services/Gui/Visuals/eosStackPanel.h"
 #include "Services/Gui/Visuals/eosVirtualKeyboard.h"
-#include "System/Core/eosString.h"
+#include "System/eosString.h"
 #include "System/Graphics/eosSize.h"
 
 
@@ -44,19 +44,16 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	// Boto "7"
 	//
 	PushButton *pb11 = createPushButton("7", size);
-	pb11->setId(7);
 	sp1->addChild(pb11);
 
 	// Boto "8"
 	//
 	PushButton *pb12 = createPushButton("8", size);
-	pb12->setId(8);
 	sp1->addChild(pb12);
 
 	// Boto "9"
 	//
 	PushButton *pb13 = createPushButton("9", size);
-	pb13->setId(9);
 	sp1->addChild(pb13);
 
 	// Panell de la segona fila

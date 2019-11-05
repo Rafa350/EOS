@@ -2,7 +2,7 @@
 #include "eosAssert.h"
 #include "OSAL/osalHeap.h"
 #include "System/eosMath.h"
-#include "System/Core/eosString.h"
+#include "System/eosString.h"
 #include <string.h>
 
 

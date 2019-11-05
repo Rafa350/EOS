@@ -4,7 +4,7 @@
 
 #include "eos.h"
 #include "Services/Gui/Visuals/eosContentControl.h"
-#include "System/Core/eosCallbacks.h"
+#include "System/eosCallbacks.h"
 
 
 namespace eos {
@@ -22,6 +22,11 @@ namespace eos {
 		ButtonBase *button;
 		ButtonEventType event;
 		uint8_t id;
+	};
+
+	enum class ClickMode {
+		atPress,
+		atRelease
 	};
 
     class ButtonBase: public ContentControl {

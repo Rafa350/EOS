@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "osal/osalTimer.h"
-#include "System/Core/eosCallbacks.h"
+#include "System/eosCallbacks.h"
 
 
 namespace eos {

@@ -2,7 +2,7 @@
 #include "eosAssert.h"
 #include "OSAL/osalTask.h"
 #include "OSAL/osalKernel.h"
-#include "System/Core/eosString.h"
+#include "System/eosString.h"
 #include "System/Core/eosTask.h"
 
 #include "FreeRTOS.h"
@@ -22,7 +22,7 @@ using namespace eos;
 /// \param    runable: Objecte que implementa IRunable.
 ///
 Task::Task(
-    unsigned stackSize,
+    int stackSize,
     TaskPriority priority,
     const String& name,
     IRunable *runable):

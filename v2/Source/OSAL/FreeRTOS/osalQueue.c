@@ -7,16 +7,16 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief Crea una cua.
-/// \param pInfo: Parametres d'inicialitzacio.
-/// \result El handler de la cua. NULL en cas d'error.
+/// \brief    Crea una cua.
+/// \param    info: Parametres d'inicialitzacio.
+/// \result   El handler de la cua. NULL en cas d'error.
 ///
 HQueue osalQueueCreate(
-	const QueueInitializeInfo *pInfo) {
+	const QueueInitializeInfo *info) {
 
-	eosAssert(pInfo != NULL);
+	eosAssert(info != NULL);
 
-	HQueue hQueue = xQueueCreate(pInfo->maxElements, pInfo->elementSize);
+	HQueue hQueue = xQueueCreate(info->maxElements, info->elementSize);
 	eosAssert(hQueue != NULL);
 
     return hQueue;
@@ -24,8 +24,8 @@ HQueue osalQueueCreate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destrueix una cua.
-/// \param hQueue: El handler de la cua.
+/// \brief    Destrueix una cua.
+/// \param    hQueue: El handler de la cua.
 ///
 void osalQueueDestroy(
 	HQueue hQueue) {
@@ -37,8 +37,8 @@ void osalQueueDestroy(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Buida el contingut de la cua.
-/// \param hQueue: El handler de la cua.
+/// \brief    Buida el contingut de la cua.
+/// \param    hQueue: El handler de la cua.
 ///
 void osalQueueClear(
 	HQueue hQueue) {
@@ -50,31 +50,31 @@ void osalQueueClear(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix un element a la cua.
-/// \param hQueue: El handler de la cua.
-/// \param element: El element a afeigir.
-/// \param waitTime: Temps maxim de bloqueig en ms.
-/// \return True si tot es correcte.
+/// \brief    Afegeix un element a la cua.
+/// \param    hQueue: El handler de la cua.
+/// \param    element: El element a afeigir.
+/// \param    waitTime: Temps maxim de bloqueig en ms.
+/// \return   True si tot es correcte.
 ///
 bool osalQueuePut(
 	HQueue hQueue,
 	const void *element,
-	unsigned waitTime) {
+	int waitTime) {
 
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    TickType_t ticks = waitTime == ((unsigned) -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    TickType_t ticks = (waitTime == -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
     return xQueueSendToBack(hQueue, element,  ticks) == pdPASS;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Afegeix un element a la cua. Aquesta versio es per ser cridada
-///		   d'ins d'una interrupcio.
-/// \param hQueue: El handler de la cua.
-/// \param element: El element a afeigir.
-/// \return True si tot es correcte
+/// \brief    Afegeix un element a la cua. Aquesta versio es per ser
+///           cridada d'ins d'una interrupcio.
+/// \param    hQueue: El handler de la cua.
+/// \param    element: El element a afeigir.
+/// \return   True si tot es correcte
 ///
 bool osalQueuePutISR(
 	HQueue hQueue,
@@ -89,31 +89,31 @@ bool osalQueuePutISR(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte un element de la cua.
-/// \param hQueue: handler de la cua.
-/// \param element: Buffer on deixar l'element.
-/// \param waitTime: Temps maxim de bloqueig en ms.
-/// \return True si tot es correcte
+/// \brief    Obte un element de la cua.
+/// \param    hQueue: handler de la cua.
+/// \param    element: Buffer on deixar l'element.
+/// \param    waitTime: Temps maxim de bloqueig en ms.
+/// \return   True si tot es correcte
 ///
 bool osalQueueGet(
 	HQueue hQueue,
 	void *element,
-	unsigned waitTime) {
+	int waitTime) {
 
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    TickType_t ticks = waitTime == ((unsigned) -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
+    TickType_t ticks = (waitTime == -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
     return xQueueReceive(hQueue, element, ticks) == pdPASS;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte un element de la cua. Aquesta versio es per ser cridada
-///        d'ins d'una interrupcio.
-/// \param hQueue: handler de la cua.
-/// \param element: Buffer on deixar l'element.
-/// \return True si tot es correcte.
+/// \brief    Obte un element de la cua. Aquesta versio es per ser cridada
+///           d'ins d'una interrupcio.
+/// \param    hQueue: handler de la cua.
+/// \param    element: Buffer on deixar l'element.
+/// \return   True si tot es correcte.
 ///
 bool osalQueueGetISR(
 	HQueue hQueue,

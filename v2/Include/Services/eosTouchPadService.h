@@ -8,7 +8,7 @@
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
 #include "HAL/STM32/halEXTI.h"
 #include "Services/eosService.h"
-#include "System/Core/eosCallbacks.h"
+#include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
 
 

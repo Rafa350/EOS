@@ -6,8 +6,7 @@
 //
 #include "eos.h"
 #include "Services/eosService.h"
-#include <Services/Gui/eosGuiMessageQueue.h>
-#include "System/Core/eosCallbacks.h"
+#include "System/eosCallbacks.h"
 #include "System/Core/eosTask.h"
 
 
@@ -24,6 +23,7 @@ namespace eos {
 	class Screen;
 	class Visual;
 	class Point;
+	class MsgQueue;
 #ifdef OPT_GUI_TouchPad
 	class TouchPadService;
 	struct TouchPadEventArgs;
@@ -47,7 +47,7 @@ namespace eos {
 		private:
 			Screen *screen;
 			Visual *active;
-			GuiMessageQueue msgQueue;
+			MsgQueue *msgQueue;
 #ifdef OPT_GUI_Keyboard
 #endif
 #ifdef OPT_GUI_Selector

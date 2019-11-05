@@ -8,7 +8,7 @@
 using namespace eos;
 
 
-static TouchPadServiceConfiguration defaultConfiguration = {
+static const TouchPadServiceConfiguration defaultConfiguration = {
 	.serviceConfiguration = {
 		.serviceName = "TouchPadService",
 		.stackSize = OPT_GUI_TouchPadServiceStack,

@@ -2,7 +2,7 @@
 #include "eosAssert.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/Visuals/eosPushButton.h"
-#include "System/Core/eosString.h"
+#include "System/eosString.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
@@ -15,9 +15,7 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 PushButton::PushButton():
-	state(PushButtonState::normal),
-	command(0xFF) {
-
+	state(PushButtonState::normal) {
 }
 
 
@@ -99,14 +97,4 @@ void PushButton::onRelease() {
 	setState(PushButtonState::normal);
 
 	ButtonBase::onRelease();
-}
-
-
-void PushButton::onClick() {
-
-	Buttonbase::onClick();
-	if (command != 0xFF) {
-		// sendMessage(getParent(), command);;
-	}
-
 }

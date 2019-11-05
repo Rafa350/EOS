@@ -349,6 +349,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/eosCallbacks.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosCallbacks.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/eosDebug.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosDebug.h</locationURI>
@@ -357,6 +362,11 @@
 			<name>inc/Framework/EOS/System/eosMath.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosMath.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/eosString.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosString.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
@@ -432,6 +442,11 @@
 			<name>src/Framework/EOS/System/eosDebug.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosDebug.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosString.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/BSP/stm32746g_discovery.c</name>
@@ -609,9 +624,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/Gui/eosGuiMessageQueue.h</name>
+			<name>inc/Framework/EOS/Services/Gui/eosMsgQueue.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosGuiMessageQueue.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosMsgQueue.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/eosRenderContext.h</name>
@@ -654,24 +669,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosStack.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Core/eosAllocator.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosAllocator.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/Core/eosCallbacks.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosCallbacks.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/System/Core/eosHeapAllocator.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosHeapAllocator.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/Core/eosPointers.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosPointers.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosQueue.h</name>
@@ -682,11 +682,6 @@
 			<name>inc/Framework/EOS/System/Core/eosSemaphore.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosSemaphore.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/Core/eosString.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosString.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
@@ -849,9 +844,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/Gui/eosGuiMessageQueue.cpp</name>
+			<name>src/Framework/EOS/Services/Gui/eosMsgQueue.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosGuiMessageQueue.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosMsgQueue.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/eosRenderContext.cpp</name>
@@ -912,11 +907,6 @@
 			<name>src/Framework/EOS/System/Core/eosSemaphore.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosSemaphore.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Core/eosString.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosString.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
@@ -1054,6 +1044,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosCheckButton.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosCommandButton.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosCommandButton.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosContentControl.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosContentControl.h</locationURI>
@@ -1129,6 +1124,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosStackPanel.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosTextBox.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosTextBox.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosVirtualKeyboard.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosVirtualKeyboard.h</locationURI>
@@ -1157,6 +1157,11 @@
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosCheckButton.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosCheckButton.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosCommandButton.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosCommandButton.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosContentControl.cpp</name>
@@ -1212,6 +1217,11 @@
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosStackPanel.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosStackPanel.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosTextBox.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosTextBox.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosVirtualKeyboard.cpp</name>

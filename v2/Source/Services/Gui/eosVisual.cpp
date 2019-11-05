@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "Services/Gui/eosGuiMessageQueue.h"
+#include "Services/Gui/eosMsgQueue.h"
 #include "Services/Gui/eosVisual.h"
 #include "System/eosMath.h"
 #include "System/Graphics/eosGraphics.h"
@@ -126,6 +126,18 @@ void Visual::dispatch(
 	const Message &msg) {
 
 	onDispatch(msg);
+}
+
+
+/// ---------------------------------------------------------------------
+/// \brief    Envia un missatge a la cua de missatges.
+/// \param    msg: El missatge a enviar.
+///
+void Visual::send(
+	const Message &msg) {
+
+	MsgQueue *msgQueue = MsgQueue::getInstance();
+	msgQueue->send(msg);
 }
 
 

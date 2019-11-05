@@ -7,6 +7,7 @@
 #include "Services/Gui/Visuals/eosPushButton.h"
 #include "Services/Gui/Visuals/eosScreen.h"
 #include "Services/Gui/Visuals/eosStackPanel.h"
+#include "Services/Gui/Visuals/eosTextBox.h"
 #include "Services/Gui/Visuals/eosVirtualKeyboard.h"
 #include "System/Graphics/eosBitmap.h"
 #include "appApplication.h"
@@ -50,40 +51,25 @@ void MyApplication::onInitialize() {
 
 Panel *MyApplication::createMainPanel() {
 
-#if 0
+
 	StackPanel *sp = new StackPanel();
-	sp->setMargin(Thickness(50, 10, 50, 10));
+	sp->setOrientation(Orientation::vertical);
 	sp->setHorizontalAlignment(HorizontalAlignment::center);
 	sp->setVerticalAlignment(VerticalAlignment::center);
 
-	String hola("hola");
-	for (int i = 0; i < 5; i++) {
-
-		Label *l = new Label();
-		l->setHorizontalAlignment(HorizontalAlignment::center);
-		l->setVerticalAlignment(VerticalAlignment::center);
-		l->setMargin(Thickness(10, 5, 10, 5));
-		l->setText(hola);
-
-		PushButton *pb = new PushButton();
-		pb->setHorizontalAlignment(HorizontalAlignment::center);
-		pb->setVerticalAlignment(VerticalAlignment::center);
-		pb->setSize(Size(100, 0));
-		pb->setMargin(Thickness(10, 5, 10, 5));
-		pb->setEventCallback(&buttonEventCallback);
-		pb->setContent(l);
-
-		sp->addChild(pb);
-	}
-
-	return sp;
-#endif
+	TextBox *tb = new TextBox();
+	tb->setSize(Size(200, 30));
+	tb->setMargin(Thickness(5, 5, 5, 5));
+	tb->setHorizontalAlignment(HorizontalAlignment::center);
+	tb->setVerticalAlignment(VerticalAlignment::center);
+	sp->addChild(tb);
 
 	VirtualKeyboard *kb = new VirtualKeyboard();
 	kb->setHorizontalAlignment(HorizontalAlignment::center);
 	kb->setVerticalAlignment(VerticalAlignment::center);
-	return kb;
+	sp->addChild(kb);
 
+	return sp;
 }
 
 

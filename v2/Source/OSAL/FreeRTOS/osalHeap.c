@@ -66,6 +66,9 @@ void osalHeapGetInformation(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Compatibilitat malloc per llibreries standard.
+///
 void *osal_malloc(
     int size) {
     
@@ -73,6 +76,9 @@ void *osal_malloc(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Compatibilitat free per llibreries standard.
+///
 void osal_free(
     void *p) {
     

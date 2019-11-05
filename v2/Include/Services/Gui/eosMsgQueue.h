@@ -1,5 +1,5 @@
-#ifndef __eosGuiMessageQueue__
-#define __eosGuiMessageQueue__
+#ifndef __eosMsgQueue__
+#define __eosMsgQueue__
 
 
 #include "eos.h"
@@ -64,8 +64,13 @@ namespace eos {
 
 #endif
 
+    struct MsgKey {
+    	int asciiCode;
+    };
+
     struct MsgCommand {
-    	int commandId;
+    	int id;
+    	void *param;
     };
 
     enum class MsgId: uint8_t {
@@ -74,6 +79,7 @@ namespace eos {
 		selectorEvent,
 		keyboardEvent,
 		commandEvent,
+		keyEvent
     };
 
     class Visual;
@@ -95,13 +101,20 @@ namespace eos {
         };
     };
 
-    class GuiMessageQueue {
+    class MsgQueue {
     	private:
+    		static MsgQueue *instance;
     		Queue<Message> queue;
+
+    	private:
+    		MsgQueue();
+
     	public:
-    		GuiMessageQueue();
     		void send(const Message &msg);
     		bool receive(Message &msg);
+    		bool isEmpty() const;
+
+    		static MsgQueue *getInstance();
     };
 
 }

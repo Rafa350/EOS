@@ -41,7 +41,7 @@ namespace eos {
             static void function(void *params);
 
         public:
-            Task(unsigned stackSize, TaskPriority priority, const String &name, IRunable *runable);
+            Task(int stackSize, TaskPriority priority, const String &name, IRunable *runable);
             virtual ~Task();
 
             static void delay(int time);

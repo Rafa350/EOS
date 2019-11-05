@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosMath.h"
-#include "System/Core/eosString.h"
+#include "System/eosString.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosFont.h"

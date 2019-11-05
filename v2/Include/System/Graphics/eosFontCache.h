@@ -4,7 +4,7 @@
 
 #include "eos.h"
 #include "System/Collections/eosList.h"
-#include "System/Core/eosString.h"
+#include "System/eosString.h"
 #include "System/Graphics/eosFont.h"
 
 

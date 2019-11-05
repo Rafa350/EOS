@@ -5,8 +5,8 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Services/Gui/eosVisual.h"
-#include "System/Core/eosString.h"
+#include "Services/Gui/Visuals/eosControl.h"
+#include "System/eosString.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosGraphics.h"
@@ -17,7 +17,7 @@ namespace eos {
     class RenderContext;
     class Message;
 
-    class Label: public Visual {
+    class Label: public Control {
     	private:
     		Color textColor;
     		Color backgroundColor;

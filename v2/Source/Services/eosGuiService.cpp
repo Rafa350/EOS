@@ -12,12 +12,12 @@
 #ifdef OPT_GUI_Keyboard
 #include "Services/eosKeyboardService.h"
 #endif
-#include "Services/Gui/eosGuiMessageQueue.h"
+#include "Services/Gui/eosMsgQueue.h"
 #include "Services/Gui/eosVisual.h"
 #include "Services/Gui/eosVisualUtils.h"
 #include "Services/Gui/Visuals/eosScreen.h"
 #include "Services/Gui/eosRenderContext.h"
-#include "System/Core/eosString.h"
+#include "System/eosString.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosPoint.h"
 
@@ -25,7 +25,7 @@
 using namespace eos;
 
 
-static GuiServiceConfiguration defaultConfiguration = {
+static const GuiServiceConfiguration defaultConfiguration = {
 	.serviceConfiguration = {
 		.serviceName = "GuiService",
 		.stackSize = OPT_GUI_ServiceStack,
@@ -51,7 +51,7 @@ GuiService::GuiService(Application *pApplication) :
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
-/// \param    pApplication: Aplicacio on afeigir el servei.
+/// \param    application: Aplicacio on afeigir el servei.
 /// \param    configuration: Parametres de configuracio
 ///
 GuiService::GuiService(
@@ -61,40 +61,46 @@ GuiService::GuiService(
 	Service(application, configuration.serviceConfiguration),
 	screen(new Screen()),
 	active(nullptr),
-	touchPadEventCallback(this, &GuiService::touchPadEventHandler) {
+	msgQueue(MsgQueue::getInstance())
+#ifdef OPT_GUI_TouchPad
+	, touchPadEventCallback(this, &GuiService::touchPadEventHandler)
+#endif
+	{
 
 #ifdef OPT_GUI_TouchPad
 	touchPadService = new TouchPadService(application);
 	touchPadService->setEventCallback(&touchPadEventCallback);
 	touchPadTarget = nullptr;
 #endif
+
 #ifdef OPT_GUI_Selector
 #endif
+
 #ifdef OPT_GUI_Keyboard
 #endif
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna el visual actiu.
-/// \param pVisual: El nou visual a activar.
+/// \brief    Asigna el visual actiu.
+/// \param    visual: El nou visual a activar.
 ///
 void GuiService::setActiveVisual(
-	Visual *pVisual) {
+	Visual *visual) {
 
 	/*if (active != nullptr)
-		active->onDeactivate(pVisual);
+		active->deactivate(pVisual);
 
 	if (pVisual != nullptr)
-		pVisual->onActivate(active);
-*/
-	active = pVisual;
+		pVisual->activate(active);*/
+
+	active = visual;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte el visual en la posicio indicada.
-/// \param position: Posicio a verificar.
+/// \brief    Obte el visual en la posicio indicada.
+/// \param    position: Posicio a verificar.
 ///
 Visual *GuiService::getVisualAt(
 	const Point &position) const {
@@ -107,7 +113,7 @@ Visual *GuiService::getVisualAt(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitzacio del servei.
+/// \brief    Inicialitzacio del servei.
 ///
 void GuiService::onInitialize() {
 
@@ -147,7 +153,7 @@ void GuiService::onTask() {
 	// Espera que arrivin missatges.
 	//
 	Message msg;
-	if (msgQueue.receive(msg)) {
+	if (msgQueue->receive(msg)) {
 
 		// Procesa el missatge
 		//
@@ -182,7 +188,7 @@ void GuiService::touchPadEventHandler(
 		if (touchPadTarget != nullptr) {
             msg.target = touchPadTarget;
             msg.touchPad.event = MsgTouchPadEvent::leave;
-            msgQueue.send(msg);
+            msgQueue->send(msg);
 		}
 
 		touchPadTarget = target;
@@ -192,7 +198,7 @@ void GuiService::touchPadEventHandler(
 		if (touchPadTarget != nullptr) {
             msg.target = touchPadTarget;
             msg.touchPad.event = MsgTouchPadEvent::enter;
-            msgQueue.send(msg);
+            msgQueue->send(msg);
 		}
 	}
 
@@ -214,13 +220,21 @@ void GuiService::touchPadEventHandler(
 			msg.touchPad.y = args.y;
 			break;
 	}
-	msgQueue.send(msg);
+	msgQueue->send(msg);
 }
 #endif
 
 
 #ifdef OPT_GUI_Keyboard
+void GuiService::keyboardEventhandler(
+	const KeyboardEventArgs &aargs) {
+
+}
 #endif
 
 #ifdef OPT_GUI_Selector
+void GuiService::selectorEventhandler(
+	const SelectorEventArgs &args) {
+
+}
 #endif
