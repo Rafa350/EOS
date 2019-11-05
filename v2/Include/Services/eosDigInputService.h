@@ -77,10 +77,9 @@ namespace eos {
             inline bool get() const { return state; }
 
             /// \brief Asigna el event onChange
-            /// \param pCallback: El callback del event
+            /// \param callback: El callback del event
             ///
-            template <class cls>
-            inline void setChangeEventCallback(CallbackP1<cls, const DigInputEventArgs&> *callback) {
+            inline void setChangeEventCallback(IDigInputEventCallback *callback) {
                 changeEventCallback = callback;
             }
 

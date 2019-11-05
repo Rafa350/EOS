@@ -68,6 +68,7 @@
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Source/HAL/PIC32/halI2C.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halI2CInterruptWrapper.S</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
@@ -87,6 +88,9 @@
             <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f1" displayName="System" projectFiles="true">
+            <logicalFolder name="f2" displayName="Collections" projectFiles="true">
+              <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
+            </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Source/System/Core/eosPoolAllocator.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
@@ -95,7 +99,17 @@
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
+            <itemPath>../../../Source/System/eosString.cpp</itemPath>
           </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/list.c</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/tasks.c</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+          <itemPath>../../../Library/PIC32/FreeRTOS/Source/timers.c</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -114,6 +128,7 @@
     <Elem>../../../Source/Services</Elem>
     <Elem>../../../Source/HAL/PIC32</Elem>
     <Elem>../../../Source/OSAL/FreeRTOS</Elem>
+    <Elem>../../../Library/PIC32/FreeRTOS/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -215,7 +230,7 @@
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
-        <property key="exclude-floating-point-library" value="false"/>
+        <property key="exclude-floating-point-library" value="true"/>
         <property key="exclude-standard-libraries" value="false"/>
         <property key="extra-lib-directories" value=""/>
         <property key="fill-flash-options-addr" value=""/>
@@ -228,7 +243,7 @@
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="heap-size" value=""/>
+        <property key="heap-size" value="2048"/>
         <property key="input-libraries" value=""/>
         <property key="kseg-length" value=""/>
         <property key="kseg-origin" value=""/>
@@ -243,7 +258,7 @@
         <property key="report-memory-usage" value="false"/>
         <property key="serial-length" value=""/>
         <property key="serial-origin" value=""/>
-        <property key="stack-size" value=""/>
+        <property key="stack-size" value="2048"/>
         <property key="symbol-stripping" value=""/>
         <property key="trace-symbols" value=""/>
         <property key="warn-section-align" value="false"/>
@@ -258,7 +273,7 @@
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="true"/>
         <property key="exceptions" value="false"/>
-        <property key="exclude-floating-point" value="false"/>
+        <property key="exclude-floating-point" value="true"/>
         <property key="extra-include-directories" value=""/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>

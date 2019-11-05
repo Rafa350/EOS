@@ -31,7 +31,7 @@ MemoryPoolAllocator::MemoryPoolAllocator(
     if (blockSize < (int) sizeof(unsigned))
         blockSize = (int) sizeof(unsigned);
 
-    blocks = (uint8_t*) osalHeapAlloc(NULL, blockSize * maxBlocks);
+    blocks = (uint8_t*) osalHeapAlloc(nullptr, blockSize * maxBlocks);
     eosAssert(blocks != nullptr);
 
     nextBlock = blocks;

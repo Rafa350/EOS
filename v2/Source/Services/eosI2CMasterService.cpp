@@ -23,7 +23,7 @@ static const I2CMasterServiceConfiguration configuration = {
 };
 
 
-I2CMasterService::TransactionAllocator I2CMasterService::transactionAllocator(20);
+static PoolAllocator<I2CMasterTransaction> transactionAllocator(20);
 
 
 /// ----------------------------------------------------------------------
@@ -43,43 +43,16 @@ I2CMasterService::I2CMasterService(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicia una transaccio.
-/// \param    addr: Adressa I2C del desti.
-/// \param    txBuffer: Buffer de dades de transmisio.
-/// \param    txCount: Numero de bytes en el buffer de transmissio.
-/// \param    rxBuffer: Buffer de recepcio.
-/// \param    rxSize: Tamany del buffer de recepcio.
+/// \param    transaction: La transaccio.
 /// \param    blockTime: Temps maxim de bloqueig.
-/// \param    notify: Semafor per notificar el final de la transaccio.
-/// \return  True si tot es correcte, false en cas contrari.
+/// \return   True si tot es correcte, false en cas contrari.
 ///
 bool I2CMasterService::startTransaction(
-    uint8_t addr,
-    void *txBuffer,
-    unsigned txCount,
-    void *rxBuffer,
-    unsigned rxSize,
-    unsigned blockTime,
-    BinarySemaphore *notify) {
+    I2CMasterTransaction *transaction,
+    int blockTime) {
     
-    Transaction *transaction = new Transaction();
-    if (transaction != nullptr)  {
-    
-        transaction->addr = addr;
-        transaction->txBuffer = (uint8_t*) txBuffer;
-        transaction->txCount = txCount;
-        transaction->rxBuffer = (uint8_t*) rxBuffer;
-        transaction->rxSize = rxSize;
-        transaction->rxCount = 0;
-        transaction->notify = notify;
-
-        if (transactionQueue.put(transaction, blockTime)) 
-            return true;
-        
-        else {
-            delete transaction;
-            return false;
-        }
-    }
+    if (transactionQueue.put(transaction, blockTime)) 
+        return true;
     else
         return false;
 }
@@ -106,7 +79,7 @@ void I2CMasterService::onInitialize() {
 ///
 void I2CMasterService::onTask() {
           
-    if (transactionQueue.get(transaction, (unsigned) -1)) {
+    if (transactionQueue.get(transaction, -1)) {
 
         // Espera a que el bus estigui lliure
         //
@@ -136,8 +109,10 @@ void I2CMasterService::onTask() {
 
         // Notifica el final de la transaccio
         //
-        if (transaction->notify != nullptr)
-            transaction->notify->give();
+        if (transaction->callback != nullptr) {
+            I2CMasterTransactionEventArgs args;
+            transaction->callback->execute(args);
+        }
 
         // Destrueix la transaccio
         //
@@ -290,7 +265,7 @@ void I2CMasterService::stateMachine() {
 
         case State::receiveLength: {
             uint8_t data = halI2CReceivedByteGet(module);
-            maxIndex = Math::min(transaction->rxSize, (unsigned) data);
+            maxIndex = Math::min(transaction->rxSize, (int) data);
             check += data;
             halI2CReceivedByteAcknowledge(module, true);
             waitingSlaveACK = true;
@@ -337,4 +312,36 @@ void I2CMasterService::stateMachine() {
             semaphore.releaseISR();
             break;
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor de l'objecte.
+/// \param    init: Parametres de configuracio.
+/// \param    callback: Callback per notificacions.
+///
+I2CMasterTransaction::I2CMasterTransaction(
+    const I2CMasterTransactionConfiguration& init, 
+    II2CMasterTransactionEventCallback* callback):
+
+    addr(init.addr),
+    txBuffer(init.txBuffer),
+    txCount(init.txCount),
+    rxBuffer(init.rxBuffer),
+    rxCount(0),
+    rxSize(init.rxSize),
+    callback(callback) {    
+}
+
+
+void *I2CMasterTransaction::operator new (
+    size_t size) {
+    
+    return transactionAllocator.allocate(size);
+}
+
+void I2CMasterTransaction::operator delete(
+    void *p) {
+    
+    transactionAllocator.deallocate(static_cast<I2CMasterTransaction*>(p));
 }

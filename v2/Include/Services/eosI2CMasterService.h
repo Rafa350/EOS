@@ -14,6 +14,7 @@
 namespace eos {
     
     class Application;
+    class I2CMasterTransaction;
     
     enum class I2CProtocolType {        // Protocol de comunicacio
         Raw,                            // -Modus I2C estandard
@@ -24,7 +25,20 @@ namespace eos {
         ServiceConfiguration serviceConfiguration;
         I2CModule module;
     };
+    
+    struct I2CMasterTransactionConfiguration {
+        uint8_t addr;
+        uint8_t *txBuffer;
+        int txCount;
+        uint8_t *rxBuffer;
+        int rxSize;
+        I2CProtocolType protocol;
+    };
           
+    struct I2CMasterTransactionEventArgs {
+        I2CMasterTransaction* transaction;
+    };
+    
     class I2CMasterService: public Service {
         private:
             enum class State {          // Estat de la transaccio
@@ -44,28 +58,12 @@ namespace eos {
                 finished                // -Finalitzada
             };        
             
-            struct Transaction {
-                uint8_t addr;
-                uint8_t *txBuffer;
-                uint8_t *rxBuffer;
-                unsigned txCount;
-                unsigned rxCount;
-                unsigned rxSize;
-                I2CProtocolType protocolType;
-                //BinarySemaphore *notify;
-                
-                inline void *operator new (size_t size) { return transactionAllocator.allocate(size); }
-                inline void operator delete(void *p) { transactionAllocator.deallocate(static_cast<Transaction*>(p)); }
-            };
-
-            typedef Queue<Transaction*> TransactionQueue;
-            typedef PoolAllocator<Transaction> TransactionAllocator;
+            typedef Queue<I2CMasterTransaction*> TransactionQueue;
 
         private:
-            static TransactionAllocator transactionAllocator;
             I2CModule module;
             TransactionQueue transactionQueue;
-            Transaction *transaction;
+            I2CMasterTransaction *transaction;
             BinarySemaphore semaphore;
             unsigned index;
             unsigned maxIndex;
@@ -85,14 +83,31 @@ namespace eos {
 
         public:
             I2CMasterService(Application *application, const I2CMasterServiceConfiguration &init);
+            bool startTransaction(I2CMasterTransaction *transaction, int blockTime);
+    };
+    
+    class I2CMasterTransaction {
+        private:
+            typedef ICallbackP1<const I2CMasterTransactionEventArgs&> II2CMasterTransactionEventCallback;
             
-            inline bool startTransaction(uint8_t addr, void *txBuffer, unsigned txCount, 
-                                         unsigned blockTime, BinarySemaphore *notify) {
-                return startTransaction(addr, txBuffer, txCount, nullptr, 0, blockTime, notify);
-            }
-            bool startTransaction(uint8_t addr, void *txBuffer, unsigned txCount, 
-                                  void *rxBuffer, unsigned rxSize, 
-                                  unsigned blockTime, BinarySemaphore *notify);
+        protected:
+            uint8_t addr;
+            uint8_t *txBuffer;
+            uint8_t *rxBuffer;
+            int txCount;
+            int rxCount;
+            int rxSize;
+            I2CProtocolType protocolType;
+            II2CMasterTransactionEventCallback *callback;
+
+        public:
+            I2CMasterTransaction(const I2CMasterTransactionConfiguration &init, II2CMasterTransactionEventCallback *callback);
+            
+            void *operator new(size_t size);
+            void operator delete(void *p);
+
+            
+        friend I2CMasterService;
     };
 }
 
