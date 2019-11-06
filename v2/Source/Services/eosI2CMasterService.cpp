@@ -23,7 +23,7 @@ static const I2CMasterServiceConfiguration configuration = {
 };
 
 
-static PoolAllocator<I2CMasterTransaction> transactionAllocator(20);
+static PoolAllocator<I2CMasterTransaction> transactionAllocator(eosI2CMasterService_TransactionQueueSize);
 
 
 /// ----------------------------------------------------------------------
@@ -37,7 +37,7 @@ I2CMasterService::I2CMasterService(
     
     module(init.module),
     Service(application, init.serviceConfiguration),
-    transactionQueue(10) {
+    transactionQueue(eosI2CMasterService_TransactionQueueSize) {
 }
 
 
@@ -51,10 +51,7 @@ bool I2CMasterService::startTransaction(
     I2CMasterTransaction *transaction,
     int blockTime) {
     
-    if (transactionQueue.put(transaction, blockTime)) 
-        return true;
-    else
-        return false;
+    return transactionQueue.put(transaction, blockTime);
 }
 
 

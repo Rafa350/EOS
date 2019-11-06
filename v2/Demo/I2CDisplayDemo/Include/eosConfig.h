@@ -23,6 +23,7 @@
 
 // Opcions del servei I2CMaster
 //
+#define eosI2CMasterService_TransactionQueueSize   10
 #define eosI2CMasterService_TransactionTimeout     1000
 #define eosI2CMasterService_EndTransactionDelay    100
 

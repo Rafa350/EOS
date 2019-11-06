@@ -17,8 +17,8 @@ namespace eos {
     class I2CMasterTransaction;
     
     enum class I2CProtocolType {        // Protocol de comunicacio
-        Raw,                            // -Modus I2C estandard
-        Packed                          // -Modus empaquetat (Longitut y verificacio))
+        raw,                            // -Modus I2C estandard
+        packed                          // -Modus empaquetat (Longitut y verificacio))
     };
     
     struct I2CMasterServiceConfiguration {

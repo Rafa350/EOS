@@ -3,6 +3,7 @@
 #include "Services/eosI2CMasterService.h"
 #include "System/Core/eosTask.h"
 #include "appApplication.h"
+#include "appDisplayService.h"
 
 
 using namespace eos;
@@ -13,15 +14,10 @@ using namespace app;
 /// \brief Constructor del objecte.
 ///
 MyApplication::MyApplication() {
-}
 
-
-/// ----------------------------------------------------------------------
-/// \brief Inicialitza l'aplicacio.
-///
-void MyApplication::onInitialize() {
-    
-    I2CMasterServiceConfiguration init = {
+    /// Crea el servei de cominicacio I2C
+    //
+    I2CMasterServiceConfiguration i2cServiceConfig = {
         .serviceConfiguration = {
             .serviceName = "I2CmasterService",
             .stackSize = 512,
@@ -29,6 +25,17 @@ void MyApplication::onInitialize() {
         },
         .module = HAL_I2C_I2C1
     };
+    i2cMasterService = new I2CMasterService(this, i2cServiceConfig);
     
-    i2cMasterService = new I2CMasterService(this, init);
+    // Crea el servei de gestio de display
+    //
+    displayService = new DisplayService(this, i2cMasterService);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza l'aplicacio.
+///
+void MyApplication::onInitialize() {
+       
 }

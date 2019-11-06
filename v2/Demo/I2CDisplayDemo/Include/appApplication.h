@@ -12,10 +12,13 @@ namespace eos {
 
 
 namespace app {
+    
+    class DisplayService;
 
     class MyApplication: public eos::Application {
         private:
             eos::I2CMasterService *i2cMasterService;
+            DisplayService *displayService;
 
         protected:
             void onInitialize();

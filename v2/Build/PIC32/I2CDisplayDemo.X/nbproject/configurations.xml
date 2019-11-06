@@ -10,6 +10,7 @@
         </logicalFolder>
         <itemPath>../../../Demo/I2CDisplayDemo/Include/eosConfig.h</itemPath>
         <itemPath>../../../Demo/I2CDisplayDemo/Include/appApplication.h</itemPath>
+        <itemPath>../../../Demo/I2CDisplayDemo/Include/appDisplayService.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -33,6 +34,7 @@
             <itemPath>../../../Include/Services/eosService.h</itemPath>
             <itemPath>../../../Include/Services/eosI2CMasterService.h</itemPath>
             <itemPath>../../../Include/Services/eosDigInputService.h</itemPath>
+            <itemPath>../../../Include/Services/eosAppLoopService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="System" projectFiles="true">
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
@@ -45,6 +47,7 @@
             <itemPath>../../../Include/System/eosMath.h</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
+          <itemPath>../../../Include/eosAssert.h</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -61,6 +64,7 @@
         </logicalFolder>
         <itemPath>../../../Demo/I2CDisplayDemo/Source/appMain.cpp</itemPath>
         <itemPath>../../../Demo/I2CDisplayDemo/Source/appApplication.cpp</itemPath>
+        <itemPath>../../../Demo/I2CDisplayDemo/Source/appDisplayService.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -97,6 +101,7 @@
               <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosSemaphore.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
             <itemPath>../../../Source/System/eosString.cpp</itemPath>
