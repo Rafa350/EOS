@@ -13,10 +13,10 @@ using namespace eos;
 
 class MyApplication: public Application {
     private:
-		typedef CallbackP1<MyApplication, const DigInputEventArgs&> DigInputEventCallback;
+		typedef CallbackP1<MyApplication, const DigInput::EventArgs&> DigInputEventCallback;
         
     private:
-        DigOutputService *digOutputSrv;
+        DigOutputService *digOutputService;
 #ifdef EXIST_LEDS_LED1
         DigOutput *digOutput1;
 #endif
@@ -26,7 +26,7 @@ class MyApplication: public Application {
 #ifdef EXIST_LEDS_LED3
         DigOutput *digOutput3;
 #endif
-        DigInputService *digInputSvc;
+        DigInputService *digInputService;
 #ifdef EXIST_SWITCHES_SW1
         DigInput *digInput1;
         DigInputEventCallback digInput1EventCallback;
@@ -43,13 +43,13 @@ class MyApplication: public Application {
     public:
         MyApplication();
 #ifdef EXIST_SWITCHES_SW1
-        void digInput1_OnChange(const DigInputEventArgs &args);
+        void digInput1_OnChange(const DigInput::EventArgs &args);
 #endif
 #ifdef EXIST_SWITCHES_SW2
-        void digInput2_OnChange(const DigInputEventArgs &args);
+        void digInput2_OnChange(const DigInput::EventArgs &args);
 #endif
 #ifdef EXIST_SWITCHES_SW3
-        void digInput3_OnChange(const DigInputEventArgs &args);
+        void digInput3_OnChange(const DigInput::EventArgs &args);
 #endif
 
 #ifdef EXIST_LEDS_LED1
@@ -104,57 +104,57 @@ void MyApplication::onInitialize() {
 
     // Prepara el servei d'entrades digitals
 	//
-    digInputSvc = new DigInputService(this);
+    digInputService = new DigInputService(this);
 
-	DigInputConfiguration inputConfiguration;
+	DigInput::Configuration inputConfiguration;
 
 #ifdef EXIST_SWITCHES_SW1
     inputConfiguration.port = SW_SW1_PORT;
     inputConfiguration.pin = SW_SW1_PIN;
-    digInput1 = new DigInput(digInputSvc, inputConfiguration);
+    digInput1 = new DigInput(digInputService, &inputConfiguration);
     digInput1->setChangeEventCallback(&digInput1EventCallback);
 #endif
 
 #ifdef EXIST_SWITCHES_SW2
     inputConfiguration.port = SW_SW2_PORT;
     inputConfiguration.pin = SW_SW2_PIN;
-    digInput2 = new DigInput(digInputSvc, inputConfiguration);
+    digInput2 = new DigInput(digInputService, &inputConfiguration);
     digInput2->setChangeEventCallback(&digInput2EventCallback);
 #endif
 
 #ifdef EXIST_SWITCHES_SW3
     inputConfiguration.port = SW_SW3_PORT;
     inputConfiguration.pin = SW_SW3_PIN;
-    digInput3 = new DigInput(digInputSvc, inputConfiguration);
+    digInput3 = new DigInput(digInputService, &inputConfiguration);
     digInput3->setChangeEventCallback(&digInput3EventCallback);
 #endif
 
     // Prepara el servei de sortides digitals
     //
-    DigOutputServiceConfiguration outputSrvConfiguration;
-    outputSrvConfiguration.timer = HAL_TMR_TIMER_2;
-    digOutputSrv = new DigOutputService(this, outputSrvConfiguration);
+    DigOutputService::Configuration digOutputServiceConfiguration;
+    digOutputServiceConfiguration.serviceConfiguration = nullptr;
+    digOutputServiceConfiguration.timer = HAL_TMR_TIMER_2;
+    digOutputService = new DigOutputService(this, &digOutputServiceConfiguration);
 
-    DigOutputConfiguration outputConfiguration;
-    outputConfiguration.openDrain = false;
-    outputConfiguration.initState = false;
+    DigOutput::Configuration outputConfiguration;
+    outputConfiguration.options = HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR;
 
 #ifdef EXIST_LEDS_LED1
     outputConfiguration.port = LED_LED1_PORT;
     outputConfiguration.pin = LED_LED1_PIN;
-    digOutput1 = new DigOutput(digOutputSrv, outputConfiguration);
+    digOutput1 = new DigOutput(digOutputService, &outputConfiguration);
 #endif
 
 #ifdef EXIST_LEDS_LED2
     outputConfiguration.port = LED_LED2_PORT;
     outputConfiguration.pin = LED_LED2_PIN;
-    digOutput2 = new DigOutput(digOutputSrv, outputConfiguration);
+    digOutput2 = new DigOutput(digOutputService, &outputConfiguration);
 #endif
 
 #ifdef EXIST_LEDS_LED3
     outputConfiguration.port = LED_LED3_PORT;
     outputConfiguration.pin = LED_LED3_PIN;
-    digOutput3 = new DigOutput(digOutputSrv, outputConfiguration);
+    digOutput3 = new DigOutput(digOutputService, &outputConfiguration);
 #endif
 
     // Prepara el servei de l'aplicacio principal
@@ -172,7 +172,7 @@ void MyApplication::onInitialize() {
 /// \param input: La entrada que ha produit l'event.
 ///
 #ifdef EXIST_SWITCHES_SW1
-void MyApplication::digInput1_OnChange(const DigInputEventArgs &args) {
+void MyApplication::digInput1_OnChange(const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
     if (!args.input->get()) 
@@ -187,7 +187,7 @@ void MyApplication::digInput1_OnChange(const DigInputEventArgs &args) {
 /// \param input: La entrada que ha produit l'event.
 ///
 #ifdef EXIST_SWITCHES_SW2
-void MyApplication::digInput2_OnChange(const DigInputEventArgs &args) {
+void MyApplication::digInput2_OnChange(const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
     if (!args.input->get()) 
@@ -202,7 +202,7 @@ void MyApplication::digInput2_OnChange(const DigInputEventArgs &args) {
 /// \param input: La entrada que ha produit l'event.
 ///
 #ifdef EXIST_SWITCHES_SW3
-void MyApplication::digInput3_OnChange(const DigInputEventArgs &args) {
+void MyApplication::digInput3_OnChange(const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
     if (!args.input->get()) 

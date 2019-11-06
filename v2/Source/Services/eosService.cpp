@@ -14,11 +14,11 @@ using namespace eos;
 ///
 Service::Service(
 	Application *application,
-	const ServiceConfiguration &configuration) :
+	const ServiceConfiguration *configuration) :
 
     application(nullptr),
-    name(configuration.serviceName),
-    thread(configuration.stackSize, configuration.priority, configuration.serviceName, this) {
+    name(configuration->serviceName),
+    thread(configuration->stackSize, configuration->priority, configuration->serviceName, this) {
 
     // Si s'indica l'aplicacio, s'afegeix a la llista de
 	// serveis d'aquesta.

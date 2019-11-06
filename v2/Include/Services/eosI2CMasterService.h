@@ -11,6 +11,28 @@
 #include "System/Core/eosSemaphore.h"
 
 
+// Numero maxim de transaccions en la cua
+#ifndef eosI2CMasterService_TransactionQueueSize
+#define eosI2CMasterService_TransactionQueueSize 10
+#endif
+
+// Nom del servei
+#ifndef eosI2CmasterService_ServiceName
+#define eosI2CMasterService_ServiceName "I2CMasterService"
+#endif
+
+// Prioritat d'execucio del servei
+#ifndef eosI2CMasterService_TaskPriority
+#define eosI2CMasterService_TaskPriority TaskPriority::normal
+#endif
+
+// Tamany del stack del servei
+//
+#ifndef eosI2CMasterService_StackSize 
+#define eosI2CMasterService_StackSize 512
+#endif
+
+
 namespace eos {
     
     class Application;
@@ -21,25 +43,17 @@ namespace eos {
         packed                          // -Modus empaquetat (Longitut y verificacio))
     };
     
-    struct I2CMasterServiceConfiguration {
-        ServiceConfiguration serviceConfiguration;
-        I2CModule module;
-    };
-    
-    struct I2CMasterTransactionConfiguration {
-        uint8_t addr;
-        uint8_t *txBuffer;
-        int txCount;
-        uint8_t *rxBuffer;
-        int rxSize;
-        I2CProtocolType protocol;
-    };
-          
     struct I2CMasterTransactionEventArgs {
         I2CMasterTransaction* transaction;
     };
     
     class I2CMasterService: public Service {
+        public:
+            struct Configuration {
+                const ServiceConfiguration *serviceConfiguration;
+                I2CModule module;
+            };
+        
         private:
             enum class State {          // Estat de la transaccio
                 idle,                   // -En espera de iniciar
@@ -82,7 +96,8 @@ namespace eos {
             void onTask() override;
 
         public:
-            I2CMasterService(Application *application, const I2CMasterServiceConfiguration &init);
+            I2CMasterService(Application *application, const Configuration *configuration);
+            
             bool startTransaction(I2CMasterTransaction *transaction, int blockTime);
     };
     
@@ -101,11 +116,11 @@ namespace eos {
             II2CMasterTransactionEventCallback *callback;
 
         public:
-            I2CMasterTransaction(const I2CMasterTransactionConfiguration &init, II2CMasterTransactionEventCallback *callback);
+            I2CMasterTransaction(uint8_t addr, I2CProtocolType protocol, uint8_t *txBuffer, int txCount, II2CMasterTransactionEventCallback *callback);
+            I2CMasterTransaction(uint8_t addr, I2CProtocolType protocol, uint8_t *txBuffer, int txCount, uint8_t *rxBuffer, int rxSize, II2CMasterTransactionEventCallback *callback);
             
             void *operator new(size_t size);
             void operator delete(void *p);
-
             
         friend I2CMasterService;
     };

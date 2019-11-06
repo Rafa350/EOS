@@ -3,10 +3,26 @@
 
 
 #include "eos.h"
-#include "System/Collections/eosList.h"
-#include "Services/eosService.h"
 #include "HAL/halGPIO.h"
-#include "hal/halTMR.h"
+#include "HAL/halTMR.h"
+#include "Services/eosService.h"
+#include "System/Collections/eosList.h"
+
+
+// Nom del servei
+#ifndef eosDigOutputService_ServiceName 
+#define eosDigOutputService_ServiceName "DigOutputService"
+#endif
+
+// Prioritat d'execucio del servei
+#ifndef eosDigOutputService_TaskPriority
+#define eosDigOutputService_taskPriority taskPriority::normal
+#endif
+
+// Tamany del stack del servei
+#ifndef eosDigOutputService_StackSize
+#define eosDigOutputService_StackSize 512
+#endif
 
 
 namespace eos {
@@ -14,23 +30,17 @@ namespace eos {
     class Application;
     class DigOutput;
 
-    struct  DigOutputServiceConfiguration {      
-        ServiceConfiguration serviceConfiguration;
-    	TMRTimer timer;
-    };
-
-    struct DigOutputConfiguration {
-        GPIOPort port;
-        GPIOPin pin;
-        bool initState;
-        bool openDrain;
-    };
-
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
     ///
     class DigOutputService final: public Service {
         private:
             typedef List<DigOutput*, 10> DigOutputList;
+            
+        public:
+            struct Configuration {      
+                const ServiceConfiguration *serviceConfiguration;
+                TMRTimer timer;
+            };
             
         private:
             DigOutputList outputs;
@@ -46,7 +56,7 @@ namespace eos {
 
         public:
             DigOutputService(Application *application);
-            DigOutputService(Application *application, const DigOutputServiceConfiguration &configuration);
+            DigOutputService(Application *application, const Configuration *configuration);
             ~DigOutputService();
 
             void addOutput(DigOutput *output);
@@ -63,6 +73,13 @@ namespace eos {
                 DelayedPulse,
                 Pulse
             };
+            
+        public:
+            struct Configuration {
+                GPIOPort port;
+                GPIOPin pin;
+                GPIOOptions options;                
+            };
 
         private:
             DigOutputService *service;
@@ -78,7 +95,8 @@ namespace eos {
             void timeOut();
 
         public:
-            DigOutput(DigOutputService *service, const DigOutputConfiguration &configuration);
+            DigOutput(DigOutputService *service, const Configuration *configuration);
+            DigOutput(DigOutputService *service, GPIOPort port, GPIOPin pin, GPIOOptions options);
             ~DigOutput();
 
             DigOutputService *getService() const { return service; }

@@ -299,7 +299,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\I2CDisplayDemo\Include;..\..\..\Demo\I2CDisplayDemo\Include\PIC32;..\..\..\Include;..\..\..\Library\PIC32\Harmony\Framework;..\..\..\Library\PIC32\FreeRTOS\Source\Include;..\..\..\Library\PIC32\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\I2CDisplayDemo\Include;..\..\..\Demo\I2CDisplayDemo\Include\PIC32;..\..\..\Include;..\..\..\Library\PIC32\Harmony\Framework;..\..\..\Library\PIC32\FreeRTOS\Source\Include;..\..\..\Library\PIC32\FreeRTOS\Source\portable\MPLAB\PIC32MX;..\..\..\..\..\MD-DSP04"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="true"/>
         <property key="mdtcm" value=""/>

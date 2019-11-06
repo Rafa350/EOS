@@ -6,12 +6,14 @@
 using namespace eos;
 
 
-static const DigInputServiceConfiguration defaultConfiguration = {
-    .serviceConfiguration = {
-        .serviceName = "DigInputService",
-        .stackSize = 512,
-        .priority = TaskPriority::normal
-    }
+static const ServiceConfiguration serviceConfiguration = {
+    .serviceName = "DigInputService",
+    .stackSize = 512,
+    .priority = TaskPriority::normal
+};
+
+static const DigInputService::Configuration digInputServiceConfiguration = {
+    .serviceConfiguration = &serviceConfiguration
 };
 
 
@@ -27,20 +29,20 @@ static const DigInputServiceConfiguration defaultConfiguration = {
 DigInputService::DigInputService(
     Application *application) :
     
-    DigInputService(application, defaultConfiguration) {
+    DigInputService(application, &digInputServiceConfiguration) {
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    pApplication: L'aplicacio a la que pertany
+/// \param    application: L'aplicacio a la que pertany
 /// \param    configuration: Parametres de configuracio.
 ///
 DigInputService::DigInputService(
     Application *application,
-    const DigInputServiceConfiguration &configuration) :
+    const DigInputService::Configuration *configuration) :
     
-    Service(application, configuration.serviceConfiguration) {
+    Service(application, (configuration == nullptr) || (configuration->serviceConfiguration == nullptr) ? &serviceConfiguration : configuration->serviceConfiguration) {
 }
 
 
@@ -140,7 +142,7 @@ void DigInputService::onTask() {
             }
 
             if (changed && (input->changeEventCallback != nullptr)) {
-                DigInputEventArgs args = {
+                DigInput::EventArgs args = {
                     .input = input
                 };
                 input->changeEventCallback->execute(args);
@@ -157,13 +159,13 @@ void DigInputService::onTask() {
 ///
 DigInput::DigInput(
     DigInputService *service,
-    const DigInputConfiguration &configuration):
+    const Configuration *configuration):
 
     service(nullptr),
     changeEventCallback(nullptr) {
        
-    port = configuration.port;
-    pin = configuration.pin;
+    port = configuration->port;
+    pin = configuration->pin;
 
     if (service != nullptr)
         service->addInput(this);

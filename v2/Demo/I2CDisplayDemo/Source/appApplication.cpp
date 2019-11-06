@@ -17,15 +17,17 @@ MyApplication::MyApplication() {
 
     /// Crea el servei de cominicacio I2C
     //
-    I2CMasterServiceConfiguration i2cServiceConfig = {
-        .serviceConfiguration = {
-            .serviceName = "I2CmasterService",
-            .stackSize = 512,
-            .priority = TaskPriority::normal
-        },
+    ServiceConfiguration serviceConfiguration = {
+        .serviceName = "I2CmasterService",
+        .stackSize = 512,
+        .priority = TaskPriority::normal
+    };
+
+    I2CMasterService::Configuration i2cServiceConfig = {
+        .serviceConfiguration = &serviceConfiguration,
         .module = HAL_I2C_I2C1
     };
-    i2cMasterService = new I2CMasterService(this, i2cServiceConfig);
+    i2cMasterService = new I2CMasterService(this, &i2cServiceConfig);
     
     // Crea el servei de gestio de display
     //

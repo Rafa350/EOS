@@ -5,12 +5,14 @@
 using namespace eos;
 
 
-static const AppLoopServiceConfiguration defaultConfiguration = {
-	.serviceConfiguration = {
-		.serviceName = "AppLoopService",
-		.stackSize = 512,
-		.priority = TaskPriority::normal
-	}
+static const ServiceConfiguration serviceConfiguration = {
+	.serviceName = "AppLoopService",
+	.stackSize = 512,
+	.priority = TaskPriority::normal
+};
+
+static const AppLoopService::Configuration appLoopServiceConfiguration = {
+	.serviceConfiguration = &serviceConfiguration
 };
 
 
@@ -21,7 +23,7 @@ static const AppLoopServiceConfiguration defaultConfiguration = {
 AppLoopService::AppLoopService(
 	Application *application):
 
-	AppLoopService(application, defaultConfiguration) {
+	AppLoopService(application, &appLoopServiceConfiguration) {
 
 }
 
@@ -33,9 +35,9 @@ AppLoopService::AppLoopService(
 ///
 AppLoopService::AppLoopService(
     Application *application,
-	const AppLoopServiceConfiguration &configuration):
+	const Configuration *configuration):
 
-    Service(application, configuration.serviceConfiguration),
+    Service(application, configuration->serviceConfiguration),
 	initialized(false) {
 }
 

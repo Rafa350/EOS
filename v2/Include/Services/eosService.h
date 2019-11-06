@@ -39,7 +39,7 @@ namespace eos {
             virtual void onTick();
 
         public :
-            Service(Application *application, const ServiceConfiguration &configuration);
+            Service(Application *application, const ServiceConfiguration *configuration);
             virtual ~Service();
 
             void initialize();

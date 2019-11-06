@@ -13,13 +13,12 @@ using namespace eos;
 static const unsigned baudRate = 100000;
 
 
-static const I2CMasterServiceConfiguration configuration = {
-    .serviceConfiguration = {
-        .serviceName = "I2CMasterService",
-        .stackSize = 512,
-        .priority = TaskPriority::normal,
-    },
-    .module = 0
+
+
+static const ServiceConfiguration serviceConfiguration = {
+    .serviceName = "I2CMasterService",
+    .stackSize = 512,
+    .priority = TaskPriority::normal
 };
 
 
@@ -29,14 +28,14 @@ static PoolAllocator<I2CMasterTransaction> transactionAllocator(eosI2CMasterServ
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: Aplicacio a la que pertany el servei.
-/// \param    init: parametres d'inicialitzacio.
+/// \param    configuration: Parametres de configuracio.
 ///
 I2CMasterService::I2CMasterService(
     Application *application,
-    const I2CMasterServiceConfiguration &init) :
+    const Configuration *configuration) :
     
-    module(init.module),
-    Service(application, init.serviceConfiguration),
+    module(configuration->module),
+    Service(application, (configuration == nullptr) || (configuration->serviceConfiguration == nullptr) ? &serviceConfiguration : configuration->serviceConfiguration),
     transactionQueue(eosI2CMasterService_TransactionQueueSize) {
 }
 
@@ -245,7 +244,7 @@ void I2CMasterService::stateMachine() {
 
         case State::startReceive:
 
-            // Si l'escau ha respos ACK, llegeix un byte
+            // Si l'esclau ha respos ACK, llegeix un byte
             //
             if (halI2CTransmitterByteWasAcknowledged(module)) {
                 halI2CMasterReceiverClock1Byte(module);
@@ -314,29 +313,42 @@ void I2CMasterService::stateMachine() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor de l'objecte.
-/// \param    init: Parametres de configuracio.
+/// \param    addr: Adressa I2C de 8 bits.
+/// \param    protocol: Protocol de comunicacio.
+/// \param    txBuffer: Buffer de transmissio.
+/// \param    txCount: Numero de bytes en el buffer de transmissio
 /// \param    callback: Callback per notificacions.
 ///
 I2CMasterTransaction::I2CMasterTransaction(
-    const I2CMasterTransactionConfiguration& init, 
+    uint8_t addr, 
+    I2CProtocolType protocol, 
+    uint8_t *txBuffer, 
+    int txCount, 
     II2CMasterTransactionEventCallback* callback):
 
-    addr(init.addr),
-    txBuffer(init.txBuffer),
-    txCount(init.txCount),
-    rxBuffer(init.rxBuffer),
+    addr(addr),
+    txBuffer(txBuffer),
+    txCount(txCount),
+    rxBuffer(nullptr),
     rxCount(0),
-    rxSize(init.rxSize),
+    rxSize(0),
     callback(callback) {    
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief   Operador new.
+///
 void *I2CMasterTransaction::operator new (
     size_t size) {
     
     return transactionAllocator.allocate(size);
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief   Operador delete.
+///
 void I2CMasterTransaction::operator delete(
     void *p) {
     

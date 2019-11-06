@@ -9,26 +9,34 @@
 #include "System/Collections/eosList.h"
 
 
+// Nom del servei
+#ifndef eosDigInputService_ServiceName 
+#define eosDigInputService_ServiceName "DigInputService"
+#endif
+
+// Prioritat d'execucio del servei
+#ifndef eosDigInputService_TaskPriority
+#define eosDigInputService_taskPriority taskPriority::normal
+#endif
+
+// Tamany del stack del servei
+#ifndef eosDigInputService_StackSize
+#define eosDigInputService_StackSize 512
+#endif
+
+
 namespace eos {
 
     class DigInput;
 
-    struct DigInputServiceConfiguration {
-        ServiceConfiguration serviceConfiguration;
-    };
-
-    struct DigInputConfiguration {
-        GPIOPort port;
-        GPIOPin pin;
-    };
-    
-    struct DigInputEventArgs {
-        DigInput* input;
-    };
-
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
     //
     class DigInputService final: public Service {
+        public:
+            struct Configuration {
+                const ServiceConfiguration *serviceConfiguration;
+            };
+
         private:
             typedef List<DigInput*, 10> DigInputList;
 
@@ -42,7 +50,7 @@ namespace eos {
 
         public:
             DigInputService(Application *application);
-            DigInputService(Application *application, const DigInputServiceConfiguration &configuration);
+            DigInputService(Application *application, const DigInputService::Configuration *configuration);
             ~DigInputService();
             
             void addInput(DigInput *input);
@@ -53,8 +61,17 @@ namespace eos {
     /// \brief Clase que impementa una entrada digital
     ///
     class DigInput final {
+        public:            
+            struct Configuration {
+                GPIOPort port;
+                GPIOPin pin;
+            };
+            struct EventArgs {
+                DigInput* input;
+            };
+
         private:
-            typedef ICallbackP1<const DigInputEventArgs&> IDigInputEventCallback;
+            typedef ICallbackP1<const EventArgs&> IDigInputEventCallback;
 
         private:
             DigInputService *service;
@@ -68,7 +85,7 @@ namespace eos {
             void initialize();
 
         public:
-            DigInput(DigInputService *service, const DigInputConfiguration &configuration);
+            DigInput(DigInputService *service, const Configuration *configuration);
             ~DigInput();
 
             /// \brief Obte l'estat actual de la entrada.
@@ -85,7 +102,6 @@ namespace eos {
 
         friend DigInputService;
     };
-
 }
 
 

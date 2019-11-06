@@ -9,12 +9,14 @@
 using namespace eos;
 
 
-static const DigOutputServiceConfiguration defaultConfiguration = {
-    .serviceConfiguration = {
-        .serviceName = "DigOutputService",
-        .stackSize = 512,
-        .priority = TaskPriority::normal
-    }
+static const ServiceConfiguration serviceConfiguration = {
+    .serviceName = "DigOutputService",
+    .stackSize = 512,
+    .priority = TaskPriority::normal  
+};
+
+static const DigOutputService::Configuration digOutputServiceConfiguration = {
+    .serviceConfiguration = &serviceConfiguration
 };
 
 
@@ -29,24 +31,23 @@ static const DigOutputServiceConfiguration defaultConfiguration = {
 DigOutputService::DigOutputService(
     Application *application):
     
-    DigOutputService(application, defaultConfiguration) {
+    DigOutputService(application, &digOutputServiceConfiguration) {
     
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    application: L'aplicacio on afeigir el servei..
+/// \param    application: L'aplicacio on afeigir el servei.
 /// \param    configuration: Parametres de configuracio.
 ///
 DigOutputService::DigOutputService(
     Application *application,
-    const DigOutputServiceConfiguration &configuration):
+    const Configuration *configuration):
 
-    Service(application, configuration.serviceConfiguration) {
+    Service(application, (configuration == nullptr) || (configuration->serviceConfiguration == nullptr) ? &serviceConfiguration : configuration->serviceConfiguration) {
 
-    //timer = pInfo->timer;
-	timer = HAL_TMR_TIMER_2;
+    timer = configuration->timer;
 }
 
 
@@ -70,8 +71,6 @@ DigOutputService::~DigOutputService() {
 void DigOutputService::addOutput(
     DigOutput *output) {
 
-    // Precondicions
-    //
     eosAssert(output != nullptr);
     eosAssert(output->service == nullptr);
 
@@ -87,8 +86,6 @@ void DigOutputService::addOutput(
 void DigOutputService::removeOutput(
     DigOutput *output) {
 
-    // Precondicions
-    //
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
@@ -168,13 +165,11 @@ void DigOutputService::timeOut() {
 ///
 void DigOutputService::timerInterrupt(
 	TMRTimer timer,
-	void *pParam) {
+	void *param) {
 
-    // Precondicions
-    //
-    eosAssert(pParam != nullptr);
+    eosAssert(param != nullptr);
 
-	DigOutputService *service = reinterpret_cast<DigOutputService*>(pParam);
+	DigOutputService *service = reinterpret_cast<DigOutputService*>(param);
     eosAssert(service != nullptr);
 	service->timeOut();
 }
@@ -187,7 +182,7 @@ void DigOutputService::timerInterrupt(
 ///
 DigOutput::DigOutput(
     DigOutputService *service,
-    const DigOutputConfiguration &configuration):
+    const Configuration *configuration):
 
     service(nullptr),
     state(State::Idle),
@@ -197,11 +192,9 @@ DigOutput::DigOutput(
     if (service != nullptr)
         service->addOutput(this);
 
-    port = configuration.port;
-    pin = configuration.pin;
-    options =
-        (configuration.openDrain ? HAL_GPIO_MODE_OUTPUT_OD : HAL_GPIO_MODE_OUTPUT_PP) |
-        (configuration.initState ? HAL_GPIO_INIT_SET : HAL_GPIO_INIT_CLR);
+    port = configuration->port;
+    pin = configuration->pin;
+    options = configuration->options;
 }
 
 

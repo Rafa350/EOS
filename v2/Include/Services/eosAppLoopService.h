@@ -11,14 +11,15 @@
 
 namespace eos {
 
-	struct AppLoopServiceConfiguration {
-		ServiceConfiguration serviceConfiguration;
-	};
-
     /// \brief Clase que implementa el servei del bucle principal
     ///        de l'aplicacio.
     ///
     class AppLoopService: public Service {
+        public:
+            struct Configuration {
+                const ServiceConfiguration *serviceConfiguration;
+            };
+            
     	private:
     		bool initialized;
 
@@ -30,7 +31,7 @@ namespace eos {
 
         public:
             AppLoopService(Application *application);
-            AppLoopService(Application *application, const AppLoopServiceConfiguration &configuration);
+            AppLoopService(Application *application, const Configuration *configuration);
     };
 }
 
