@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "HAL/halGPIO.h"
 #include "Services/eosDigInputService.h"
 
 
@@ -166,6 +167,9 @@ DigInput::DigInput(
        
     port = configuration->port;
     pin = configuration->pin;
+    options = configuration->options;
+    options &= ~HAL_GPIO_MODE_mask;
+    options |= HAL_GPIO_MODE_INPUT;
 
     if (service != nullptr)
         service->addInput(this);
@@ -187,7 +191,6 @@ DigInput::~DigInput() {
 ///
 void DigInput::initialize() {
     
-    GPIOOptions options = HAL_GPIO_MODE_INPUT;
     halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
 
     state = halGPIOReadPin(port, pin);

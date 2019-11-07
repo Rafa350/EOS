@@ -8,12 +8,14 @@
 using namespace eos;
 
 
-static const TouchPadServiceConfiguration defaultConfiguration = {
-	.serviceConfiguration = {
-		.serviceName = "TouchPadService",
-		.stackSize = OPT_GUI_TouchPadServiceStack,
-		.priority = OPT_GUI_TouchPadServicePriority
-	}
+static const ServiceConfiguration serviceConfiguration = {
+	.serviceName = "TouchPadService",
+	.stackSize = eosTouchPadService_StackSize,
+	.priority = eosTouchPadService_TaskPriority
+};
+
+static const TouchPadService::Configuration defaultConfiguration = {
+	.serviceConfiguration = &serviceConfiguration
 };
 
 
@@ -24,7 +26,7 @@ static const TouchPadServiceConfiguration defaultConfiguration = {
 TouchPadService::TouchPadService(
 	Application *application) :
 
-	TouchPadService(application, defaultConfiguration) {
+	TouchPadService(application, &defaultConfiguration) {
 }
 
 
@@ -35,9 +37,9 @@ TouchPadService::TouchPadService(
 ///
 TouchPadService::TouchPadService(
 	Application *application,
-	const TouchPadServiceConfiguration &configuration):
+	const Configuration *configuration):
 
-	Service(application, configuration.serviceConfiguration),
+	Service(application, (configuration == nullptr) || (configuration->serviceConfiguration == nullptr) ? nullptr : &serviceConfiguration),
 	touchDriver(nullptr),
 	eventCallback(nullptr),
 	oldX(-1),
@@ -91,8 +93,8 @@ void TouchPadService::onTask() {
 				//
 				if (!oldPressed && pressed) {
 
-					TouchPadEventArgs args = {
-						.event = TouchPadEventType::press,
+					EventArgs args = {
+						.event = EventType::press,
 						.x = x,
 						.y = y
 					};
@@ -103,8 +105,8 @@ void TouchPadService::onTask() {
 				//
 				else if (pressed && ((oldX != x) || (oldY != y))) {
 
-					TouchPadEventArgs args = {
-						.event = TouchPadEventType::move,
+					EventArgs args = {
+						.event = EventType::move,
 						.x = x,
 						.y = y
 					};
@@ -117,8 +119,8 @@ void TouchPadService::onTask() {
 			}
 
 			if (oldPressed) {
-				TouchPadEventArgs args = {
-					.event = TouchPadEventType::release,
+				EventArgs args = {
+					.event = EventType::release,
 					.x = x,
 					.y = y
 				};

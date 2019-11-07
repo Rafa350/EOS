@@ -31,42 +31,42 @@ typedef void (*TMRInterruptCallback)(TMRTimer timer, void *param);
 #define HAL_TMR_TIMER_MAX         5
 
 // Modus 16 o 32 bits
-#define HAL_TMR_MODE_POS          0
-#define HAL_TMR_MODE_BITS         0b1
-#define HAL_TMR_MODE_MASK         (HAL_TMR_MODE_BITS << HAL_TMR_MODE_POS)
+#define HAL_TMR_MODE_pos          0
+#define HAL_TMR_MODE_bits         0b1
+#define HAL_TMR_MODE_mask         (HAL_TMR_MODE_bits << HAL_TMR_MODE_pos)
 
-#define HAL_TMR_MODE_16           (0 << HAL_TMR_MODE_POS)
-#define HAL_TMR_MODE_32           (1 << HAL_TMR_MODE_POS)
+#define HAL_TMR_MODE_16           (0 << HAL_TMR_MODE_pos)
+#define HAL_TMR_MODE_32           (1 << HAL_TMR_MODE_pos)
 
 // Clock source
-#define HAL_TMR_CLKSRC_POS        1
-#define HAL_TMR_CLKSRC_BITS       0b1
-#define HAL_TMR_CLKSRC_MASK       (HAL_TMR_CLKSRC_BITS << HAL_TMR_CLKSRC_POS)
+#define HAL_TMR_CLKSRC_pos        1
+#define HAL_TMR_CLKSRC_bits       0b1
+#define HAL_TMR_CLKSRC_mask       (HAL_TMR_CLKSRC_bits << HAL_TMR_CLKSRC_pos)
 
-#define HAL_TMR_CLKSRC_PCLK       (0 << HAL_TMR_CLKSRC_POS)
-#define HAL_TMR_CLKSRC_EXT        (1 << HAL_TMR_CLKSRC_POS)
+#define HAL_TMR_CLKSRC_PCLK       (0 << HAL_TMR_CLKSRC_pos)
+#define HAL_TMR_CLKSRC_EXT        (1 << HAL_TMR_CLKSRC_pos)
 
 // Clock divider (Prescaler PIC32)
-#define HAL_TMR_CLKDIV_POS        2
-#define HAL_TMR_CLKDIV_BITS       0b111
-#define HAL_TMR_CLKDIV_MASK       (HAL_TMR_CLKDIV_BITS << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_pos        2
+#define HAL_TMR_CLKDIV_bits       0b111
+#define HAL_TMR_CLKDIV_mask       (HAL_TMR_CLKDIV_bits << HAL_TMR_CLKDIV_pos)
 
-#define HAL_TMR_CLKDIV_1          (0 << HAL_TMR_CLKDIV_POS)
-#define HAL_TMR_CLKDIV_2          (1 << HAL_TMR_CLKDIV_POS)
-#define HAL_TMR_CLKDIV_4          (2 << HAL_TMR_CLKDIV_POS)
-#define HAL_TMR_CLKDIV_8          (3 << HAL_TMR_CLKDIV_POS)
-#define HAL_TMR_CLKDIV_16         (4 << HAL_TMR_CLKDIV_POS)
-#define HAL_TMR_CLKDIV_32         (5 << HAL_TMR_CLKDIV_POS)
-#define HAL_TMR_CLKDIV_64         (6 << HAL_TMR_CLKDIV_POS)
-#define HAL_TMR_CLKDIV_256        (7 << HAL_TMR_CLKDIV_POS)
+#define HAL_TMR_CLKDIV_1          (0 << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_2          (1 << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_4          (2 << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_8          (3 << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_16         (4 << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_32         (5 << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_64         (6 << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_256        (7 << HAL_TMR_CLKDIV_pos)
 
 // Enable interrupt
-#define HAL_TMR_INTERRUPT_POS     5
-#define HAL_TMR_INTERRUPT_BITS    0b1
-#define HAL_TMR_INTERRUPT_MASK    (HAL_TMR_INTERRUPT_BITS << HAL_TMR_INTERRUPT_POS)
+#define HAL_TMR_INTERRUPT_pos     5
+#define HAL_TMR_INTERRUPT_bits    0b1
+#define HAL_TMR_INTERRUPT_mask    (HAL_TMR_INTERRUPT_bits << HAL_TMR_INTERRUPT_pos)
 
-#define HAL_TMR_INTERRUPT_DISABLE (0 << HAL_TMR_INTERRUPT_POS)
-#define HAL_TMR_INTERRUPT_ENABLE  (1 << HAL_TMR_INTERRUPT_POS)
+#define HAL_TMR_INTERRUPT_DISABLE (0 << HAL_TMR_INTERRUPT_pos)
+#define HAL_TMR_INTERRUPT_ENABLE  (1 << HAL_TMR_INTERRUPT_pos)
 
 
 typedef struct {

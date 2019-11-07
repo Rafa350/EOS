@@ -25,12 +25,14 @@
 using namespace eos;
 
 
-static const GuiServiceConfiguration defaultConfiguration = {
-	.serviceConfiguration = {
-		.serviceName = "GuiService",
-		.stackSize = OPT_GUI_ServiceStack,
-		.priority = OPT_GUI_ServicePriority
-	}
+static const ServiceConfiguration serviceConfiguration = {
+	.serviceName = eosGuiService_ServiceName,
+	.stackSize = eosGuiService_StackSize,
+	.priority = eosGuiService_TaskPriority
+};
+
+static const GuiService::Configuration defaultConfiguration = {
+	.serviceConfiguration = &serviceConfiguration
 };
 
 
@@ -41,10 +43,10 @@ static RenderContext *context;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    pApplication: Aplicacio on afeigir el servei.
+/// \param    application: Aplicacio on afeigir el servei.
 ///
-GuiService::GuiService(Application *pApplication) :
-	GuiService(pApplication, defaultConfiguration) {
+GuiService::GuiService(Application *application) :
+	GuiService(application, &defaultConfiguration) {
 
 }
 
@@ -56,9 +58,9 @@ GuiService::GuiService(Application *pApplication) :
 ///
 GuiService::GuiService(
 	Application *application,
-	const GuiServiceConfiguration &configuration):
+	const Configuration *configuration):
 
-	Service(application, configuration.serviceConfiguration),
+	Service(application, configuration->serviceConfiguration),
 	screen(new Screen()),
 	active(nullptr),
 	msgQueue(MsgQueue::getInstance())
@@ -170,7 +172,7 @@ void GuiService::onTask() {
 ///
 #ifdef OPT_GUI_TouchPad
 void GuiService::touchPadEventHandler(
-	const TouchPadEventArgs &args) {
+	const TouchPadService::EventArgs &args) {
 
 	Message msg;
 	msg.msgId = MsgId::touchPadEvent;
@@ -204,17 +206,17 @@ void GuiService::touchPadEventHandler(
 
 	msg.target = target;
 	switch (args.event) {
-		case TouchPadEventType::press:
+		case TouchPadService::EventType::press:
 			msg.touchPad.event = MsgTouchPadEvent::press;
 			msg.touchPad.x = args.x;
 			msg.touchPad.y = args.y;
 			break;
 
-		case TouchPadEventType::release:
+		case TouchPadService::EventType::release:
 			msg.touchPad.event = MsgTouchPadEvent::release;
 			break;
 
-		case TouchPadEventType::move:
+		case TouchPadService::EventType::move:
 			msg.touchPad.event = MsgTouchPadEvent::move;
 			msg.touchPad.x = args.x;
 			msg.touchPad.y = args.y;

@@ -14,11 +14,13 @@ namespace eos {
 namespace app {
     
     class DisplayService;
+    class LedService;
 
     class MyApplication: public eos::Application {
         private:
             eos::I2CMasterService *i2cMasterService;
             DisplayService *displayService;
+            LedService *ledService;
 
         protected:
             void onInitialize();

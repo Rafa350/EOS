@@ -189,12 +189,17 @@ DigOutput::DigOutput(
 	delayCnt(0),
 	widthCnt(0) {
 
-    if (service != nullptr)
-        service->addOutput(this);
-
     port = configuration->port;
     pin = configuration->pin;
     options = configuration->options;
+    if (((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_OD) ||
+        ((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_PP)) {
+        options &= ~HAL_GPIO_MODE_mask;
+        options |= HAL_GPIO_MODE_OUTPUT_PP;
+    }
+
+    if (service != nullptr)
+        service->addOutput(this);
 }
 
 

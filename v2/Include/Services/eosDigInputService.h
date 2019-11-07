@@ -65,6 +65,7 @@ namespace eos {
             struct Configuration {
                 GPIOPort port;
                 GPIOPin pin;
+                GPIOOptions options;
             };
             struct EventArgs {
                 DigInput* input;
@@ -77,6 +78,7 @@ namespace eos {
             DigInputService *service;
             GPIOPort port;
             GPIOPin pin;
+            GPIOOptions options;
             uint32_t pattern;
             bool state;
             IDigInputEventCallback *changeEventCallback;
@@ -86,6 +88,7 @@ namespace eos {
 
         public:
             DigInput(DigInputService *service, const Configuration *configuration);
+            DigInput(DigInputService *service, GPIOPort port, GPIOPin pin, GPIOOptions options);
             ~DigInput();
 
             /// \brief Obte l'estat actual de la entrada.

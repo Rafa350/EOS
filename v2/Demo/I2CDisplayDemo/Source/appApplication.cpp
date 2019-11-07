@@ -4,6 +4,7 @@
 #include "System/Core/eosTask.h"
 #include "appApplication.h"
 #include "appDisplayService.h"
+#include "appLedService.h"
 
 
 using namespace eos;
@@ -32,6 +33,10 @@ MyApplication::MyApplication() {
     // Crea el servei de gestio de display
     //
     displayService = new DisplayService(this, i2cMasterService);
+    
+    // Crea el sercei de gestio dels leds
+    //
+    ledService = new LedService(this);
 }
 
 

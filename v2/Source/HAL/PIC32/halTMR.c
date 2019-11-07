@@ -89,19 +89,19 @@ void halTMRInitialize(
     
     PLIB_TMR_Stop(ti->tmrId);
     PLIB_TMR_ClockSourceSelect(ti->tmrId, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
-    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[(info->options & HAL_TMR_CLKDIV_MASK) >> HAL_TMR_CLKDIV_POS]);
-    if ((info->options & HAL_TMR_MODE_MASK) == HAL_TMR_MODE_16) {
+    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[(info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos]);
+    if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_16) {
         PLIB_TMR_Mode16BitEnable(ti->tmrId);
         PLIB_TMR_Counter16BitClear(ti->tmrId);
         PLIB_TMR_Period16BitSet(ti->tmrId, info->period);    
     } 
-    else if ((info->options & HAL_TMR_MODE_MASK) == HAL_TMR_MODE_32) {
+    else if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32) {
         PLIB_TMR_Mode32BitEnable(ti->tmrId);
         PLIB_TMR_Counter32BitClear(ti->tmrId);
         PLIB_TMR_Period32BitSet(ti->tmrId, info->period);            
     }
 
-    if (((info->options & HAL_TMR_INTERRUPT_MASK) == HAL_TMR_INTERRUPT_ENABLE) &&
+    if (((info->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) &&
         (info->irqCallback != NULL)) {
         
         callbacks[info->timer] = info->irqCallback;

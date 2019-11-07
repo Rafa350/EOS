@@ -10,11 +10,24 @@
 #include "System/Core/eosTask.h"
 
 
-#ifndef OPT_GUI_ServicePriority
-#define OPT_GUI_ServicePriority        TaskPriority::normal
+#ifdef OPT_GUI_TouchPad
+#include "Services/eosTouchPadService.h"
 #endif
-#ifndef OPT_GUI_ServiceStack
-#define OPT_GUI_ServiceStack           512
+
+
+// Nom del servei
+#ifndef eosGuiService_ServiceName
+#define eosGuiService_ServiceName "GuiService"
+#endif
+
+// Prioritat d'execucio del servei
+#ifndef eosGuiService_TaskPriority
+#define eosGuiService_TaskPriority TaskPriority::normal
+#endif
+
+// Tamany del stack del servei
+#ifndef eosGuiService_StackSize
+#define eosGuiService_StackSize 512
 #endif
 
 
@@ -24,10 +37,6 @@ namespace eos {
 	class Visual;
 	class Point;
 	class MsgQueue;
-#ifdef OPT_GUI_TouchPad
-	class TouchPadService;
-	struct TouchPadEventArgs;
-#endif
 #ifdef OPT_GUI_Keyboard
 	class GuiKeyboardService;
 #endif
@@ -36,13 +45,14 @@ namespace eos {
 #endif
 
 
-	struct GuiServiceConfiguration {
-		ServiceConfiguration serviceConfiguration;
-	};
-
 	class GuiService final: public Service {
+		public:
+			struct Configuration {
+				const ServiceConfiguration *serviceConfiguration;
+			};
+
 		private:
-			typedef CallbackP1<GuiService, const TouchPadEventArgs&> TouchPadEventCallback;
+			typedef CallbackP1<GuiService, const TouchPadService::EventArgs&> TouchPadEventCallback;
 
 		private:
 			Screen *screen;
@@ -60,7 +70,7 @@ namespace eos {
 
 		public:
 			GuiService(Application *application);
-			GuiService(Application *application, const GuiServiceConfiguration &configuration);
+			GuiService(Application *application, const Configuration *configuration);
 			inline Screen* getScreen() const { return screen; }
 			inline Visual* getActiveVisual() const { return active; }
 			Visual *getVisualAt(const Point &position) const;
@@ -72,7 +82,7 @@ namespace eos {
 
 		private:
 #ifdef OPT_GUI_TouchPad
-			void touchPadEventHandler(const TouchPadEventArgs &args);
+			void touchPadEventHandler(const TouchPadService::EventArgs &args);
 #endif
 	};
 }

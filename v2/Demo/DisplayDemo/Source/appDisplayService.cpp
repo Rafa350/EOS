@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "System/Core/eosString.h"
+#include "System/eosString.h"
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosFont.h"

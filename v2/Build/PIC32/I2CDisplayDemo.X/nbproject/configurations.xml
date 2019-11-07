@@ -11,6 +11,7 @@
         <itemPath>../../../Demo/I2CDisplayDemo/Include/eosConfig.h</itemPath>
         <itemPath>../../../Demo/I2CDisplayDemo/Include/appApplication.h</itemPath>
         <itemPath>../../../Demo/I2CDisplayDemo/Include/appDisplayService.h</itemPath>
+        <itemPath>../../../Demo/I2CDisplayDemo/Include/appLedService.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -21,8 +22,10 @@
           <logicalFolder name="f4" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Include/HAL/PIC32/halI2C.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halI2C.h</itemPath>
+            <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalQueue.h</itemPath>
@@ -65,6 +68,7 @@
         <itemPath>../../../Demo/I2CDisplayDemo/Source/appMain.cpp</itemPath>
         <itemPath>../../../Demo/I2CDisplayDemo/Source/appApplication.cpp</itemPath>
         <itemPath>../../../Demo/I2CDisplayDemo/Source/appDisplayService.cpp</itemPath>
+        <itemPath>../../../Demo/I2CDisplayDemo/Source/appLedService.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -73,6 +77,7 @@
               <itemPath>../../../Source/HAL/PIC32/halI2C.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halI2CInterruptWrapper.S</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
@@ -201,6 +206,7 @@
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
+        <appendMe value="-std=gnu99"/>
       </C32>
       <C32-AR>
         <property key="additional-options-chop-files" value="false"/>
@@ -267,6 +273,7 @@
         <property key="symbol-stripping" value=""/>
         <property key="trace-symbols" value=""/>
         <property key="warn-section-align" value="false"/>
+        <appendMe value="--allow-multiple-definition"/>
       </C32-LD>
       <C32CPP>
         <property key="additional-warnings" value="false"/>

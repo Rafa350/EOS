@@ -238,7 +238,7 @@
         <property key="allocate-dinit" value="false"/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
-        <property key="enable-check-sections" value="true"/>
+        <property key="enable-check-sections" value="false"/>
         <property key="exclude-floating-point-library" value="true"/>
         <property key="exclude-standard-libraries" value="false"/>
         <property key="extra-lib-directories" value=""/>

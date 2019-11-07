@@ -12,35 +12,46 @@
 #include "System/Core/eosSemaphore.h"
 
 
-#ifndef OPT_GUI_TouchPadServicePrority
-#define OPT_GUI_TouchPadServicePriority     TaskPriority::normal
+// Nom del servei
+#ifndef eosTouchPadService_ServiceName
+#define eosTouchPadService_ServiceName "TouchPadService"
 #endif
-#ifndef OPT_GUI_TouchPadServiceStack
-#define OPT_GUI_TouchPadServiceStack        512
+
+// Prioritat d'execucio del servei
+#ifndef eosTouchPadService_TaskPrority
+#define eosTouchPadService_TaskPriority TaskPriority::normal
+#endif
+
+// Tamany del stack del servei
+#ifndef eosTouchPadService_StackSize
+#define eosTouchPadService_StackSize 512
 #endif
 
 
 namespace eos {
 
-	enum class TouchPadEventType {
-		press,
-		release,
-		move
-	};
-
-	struct TouchPadEventArgs {
-		TouchPadEventType event;
-		int x;
-		int y;
-	};
-
-	struct TouchPadServiceConfiguration {
-		ServiceConfiguration serviceConfiguration;
-	};
-
+	/// \brief Clase que implementa un servei de control del touchpad
+	///
 	class TouchPadService final: public Service {
+		public:
+			struct Configuration {
+				const ServiceConfiguration *serviceConfiguration;
+			};
+
+			enum class EventType {
+				press,
+				release,
+				move
+			};
+
+			struct EventArgs {
+				EventType event;
+				int x;
+				int y;
+			};
+
 		private:
-			typedef ICallbackP1<const TouchPadEventArgs&> IEventCallback;
+			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
 		private:
     		ITouchPadDriver *touchDriver;
@@ -52,12 +63,9 @@ namespace eos {
 
 		public:
 			TouchPadService(Application *application);
-			TouchPadService(Application *application, const TouchPadServiceConfiguration &configuration);
+			TouchPadService(Application *application, const Configuration *configuration);
 
-			template <class cls>
-			void setEventCallback(CallbackP1<cls, const TouchPadEventArgs&> *callBack) {
-				eventCallback = callBack;
-            }
+			void setEventCallback(IEventCallback *callBack) { eventCallback = callBack; }
 
 		protected:
 			void onInitialize();
