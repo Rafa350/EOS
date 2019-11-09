@@ -7,19 +7,12 @@
 #include "eos.h"
 
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
+	#include "HAL/PIC32/halSYS.h"
 
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
+	#include "HAL/STM32/halSYS.h"
 
-void halSYSInitialize();
-
-void halSYSInterruptEnable();
-void halSYSInterruptDisable();
-
-
-#ifdef	__cplusplus
-}
 #endif
 
 

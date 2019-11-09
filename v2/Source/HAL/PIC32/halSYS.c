@@ -1,5 +1,6 @@
 #include "eos.h"
-#include "HAL/halSys.h"
+#include "HAL/PIC32/halSys.h"
+
 #include "peripheral/int/plib_int.h"
 #include "peripheral/pcache/plib_pcache.h"
 #include "peripheral/bmx/plib_bmx.h"
@@ -66,7 +67,7 @@ void halSYSInitialize() {
     
     // Inicialitzacio del sistema
     //
-    PerformanceConfig(CLOCK_SYSTEM_HZ);
+    PerformanceConfig(halSYSGetSystemClockFrequency());
 
     // Inicialitza les interrupcions
     //

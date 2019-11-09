@@ -13,8 +13,6 @@ using namespace eos;
 static const unsigned baudRate = 100000;
 
 
-
-
 static const ServiceConfiguration serviceConfiguration = {
     .serviceName = "I2CMasterService",
     .stackSize = 512,
@@ -106,13 +104,17 @@ void I2CMasterService::onTask() {
         // Notifica el final de la transaccio
         //
         if (transaction->callback != nullptr) {
-            I2CMasterTransactionEventArgs args;
+            I2CMasterTransaction::EventArgs args;
+            args.transaction = transaction;
+            args.result = I2CMasterTransaction::Result::ok;
             transaction->callback->execute(args);
         }
 
         // Destrueix la transaccio
         //
         delete transaction;
+        
+        Task::delay(250); // Provisional
     }
 }
 
@@ -321,10 +323,10 @@ void I2CMasterService::stateMachine() {
 ///
 I2CMasterTransaction::I2CMasterTransaction(
     uint8_t addr, 
-    I2CProtocolType protocol, 
+    Protocol protocol, 
     uint8_t *txBuffer, 
     int txCount, 
-    II2CMasterTransactionEventCallback* callback):
+    IEventCallback* callback):
 
     addr(addr),
     txBuffer(txBuffer),
@@ -332,6 +334,35 @@ I2CMasterTransaction::I2CMasterTransaction(
     rxBuffer(nullptr),
     rxCount(0),
     rxSize(0),
+    callback(callback) {    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor de l'objecte.
+/// \param    addr: Adressa I2C de 8 bits.
+/// \param    protocol: Protocol de comunicacio.
+/// \param    txBuffer: Buffer de transmissio.
+/// \param    txCount: Numero de bytes en el buffer de transmissio
+/// \param    rxBuffer: Buffer de recepcio.
+/// \param    rxSize: Tamany del buffer de recepcio.
+/// \param    callback: Callback per notificacions.
+///
+I2CMasterTransaction::I2CMasterTransaction(
+    uint8_t addr, 
+    Protocol protocol, 
+    uint8_t *txBuffer, 
+    int txCount, 
+    uint8_t *rxBuffer,
+    int rxSize,
+    IEventCallback* callback):
+
+    addr(addr),
+    txBuffer(txBuffer),
+    txCount(txCount),
+    rxBuffer(rxBuffer),
+    rxCount(0),
+    rxSize(rxSize),
     callback(callback) {    
 }
 

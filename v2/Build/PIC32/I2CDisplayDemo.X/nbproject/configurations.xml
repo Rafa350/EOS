@@ -23,9 +23,11 @@
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Include/HAL/PIC32/halI2C.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halI2C.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
+            <itemPath>../../../Include/HAL/halSYS.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalQueue.h</itemPath>

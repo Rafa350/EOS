@@ -22,9 +22,18 @@ typedef struct {
 
 
 #define HAL_I2C_I2C1         ((I2CModule) 0)
+#ifdef _I2C2
 #define HAL_I2C_I2C2         ((I2CModule) 1)
+#endif
+#ifdef _I2C3
 #define HAL_I2C_I2C3         ((I2CModule) 2)
+#endif
+#ifdef _i2C4
 #define HAL_I2C_I2C4         ((I2CModule) 3)
+#endif
+#ifdef _I2C5
+#define HAL_I2C_I2C5         ((I2CModule) 4)
+#endif
 
 
 void halI2CMasterInitialize(const I2CMasterInitializeInfo *info);

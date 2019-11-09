@@ -26,7 +26,7 @@ MyApplication::MyApplication() {
 
     I2CMasterService::Configuration i2cServiceConfig = {
         .serviceConfiguration = &serviceConfiguration,
-        .module = HAL_I2C_I2C1
+        .module = HAL_I2C_I2C2
     };
     i2cMasterService = new I2CMasterService(this, &i2cServiceConfig);
     

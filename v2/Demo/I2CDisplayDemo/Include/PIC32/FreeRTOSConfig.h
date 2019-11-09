@@ -1,13 +1,15 @@
-
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
+
+
+#include "eosConfig.h"
 
 
 #define configUSE_PREEMPTION                    1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 #define configUSE_TICKLESS_IDLE                 0
-#define configCPU_CLOCK_HZ                      (80000000UL)
-#define configPERIPHERAL_CLOCK_HZ               (80000000UL)
+#define configCPU_CLOCK_HZ                      (CLOCK_SYSTEM_HZ)
+#define configPERIPHERAL_CLOCK_HZ               (CLOCK_PERIPHERICAL_HZ)
 #define configTICK_RATE_HZ                      ((TickType_t) 500)
 #define configMAX_PRIORITIES                    (6UL)
 #define configMINIMAL_STACK_SIZE                (512)

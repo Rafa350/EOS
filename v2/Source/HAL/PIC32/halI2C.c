@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "HAL/PIC32/halI2C.h"
+#include "HAL/PIC32/halSYS.h"
 
 #include "sys/attribs.h"
 #include "peripheral/int/plib_int.h"
@@ -28,7 +29,8 @@ extern void __ISR(_I2C_5_VECTOR, IPL2SOFT) isrI2C5Wrapper(void);
 #endif
 
 
-static I2C_MODULE_ID getHarmonyID(uint8_t moduleId) {
+static I2C_MODULE_ID getHarmonyID(
+    I2CModule moduleId) {
     
     static I2C_MODULE_ID idTable[I2C_NUMBER_OF_MODULES] = {
         I2C_ID_1, 
@@ -50,27 +52,28 @@ static I2C_MODULE_ID getHarmonyID(uint8_t moduleId) {
 }
 
 
-static uint8_t getEosID(I2C_MODULE_ID id) {
+static I2CModule 
+    getEosID(I2C_MODULE_ID id) {
     
     switch (id) {
         default:
         case I2C_ID_1: 
-            return 0;
+            return HAL_I2C_I2C1;
 #ifdef _I2C2
         case I2C_ID_2: 
-            return 1;
+            return HAL_I2C_I2C2;
 #endif        
 #ifdef _I2C3
         case I2C_ID_3: 
-            return 2;
+            return HAL_I2C_I2C3;
 #endif        
 #ifdef _I2C4
         case I2C_ID_4: 
-            return 3;
+            return HAL_I2C_I2C4;
 #endif        
 #ifdef _I2C5
         case I2C_ID_5: 
-            return 4;
+            return HAL_I2C_I2C5;
 #endif        
     }
 }
@@ -97,7 +100,11 @@ void halI2CMasterInitialize(
 
     // Selecciona la frequencia de treball
     //
-    PLIB_I2C_BaudRateSet(id, CLOCK_PERIPHERICAL_HZ, info->baudRate);
+    if (info->baudRate > 100000)
+        PLIB_I2C_HighFrequencyEnable(id);
+    else
+        PLIB_I2C_HighFrequencyDisable(id);
+    PLIB_I2C_BaudRateSet(id, halSYSGetPeripheralClockFrequency(), info->baudRate);
 
     // Configura les interrupcions
     //

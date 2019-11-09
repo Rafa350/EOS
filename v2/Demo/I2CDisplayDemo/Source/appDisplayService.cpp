@@ -8,6 +8,23 @@ using namespace eos;
 using namespace app;
 
 
+static void sendData(
+    I2CMasterService *service,
+    uint8_t *buffer, 
+    int count) {
+
+    I2CMasterTransaction *transaction = new I2CMasterTransaction(
+        DSP_ADDRESS,
+        I2CMasterTransaction::Protocol::packed,
+        buffer, 
+        count,
+        nullptr);
+
+    service->startTransaction(transaction, -1);  
+ }
+
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 /// \param    application: Applicacio a la que pertany el servei.
@@ -28,37 +45,27 @@ DisplayService::DisplayService(
 /// \remarks  S'executa d'ins del planificador.
 ///
 void DisplayService::onSetup() {
-        
-    dspDrawShapeMessage msg1;
-    msg1.cmd = DSP_CMD_DRAWSHAPE;
-    msg1.shape = DRAWSHAPE_ELLIPSE;
-    msg1.framed = 1;
-    msg1.filled = 0;
-    msg1.frameColor = 0xFF;
-    msg1.fillColor = 0xFF;
-    msg1.x1 = 10;
-    msg1.y1 = 10;
-    msg1.x2 = 30;
-    msg1.y2 = 30;
     
-    I2CMasterTransaction *transaction1 = new I2CMasterTransaction(
-        DSP_ADDRESS,
-        I2CProtocolType::packed,
-        (uint8_t*) &msg1, 
-        sizeof(msg1),
-        nullptr);
-    i2cMasterService->startTransaction(transaction1, -1);    
+    dspClearMessage msg1;
+    msg1.cmd = DSP_CMD_CLEAR;   
+    sendData(i2cMasterService, (uint8_t*) &msg1, sizeof(msg1));
     
-    dspRefreshMessage msg2;
-    msg2.cmd = DSP_CMD_REFRESH;
-
-    I2CMasterTransaction *transaction2 = new I2CMasterTransaction(
-        DSP_ADDRESS,
-        I2CProtocolType::packed,
-        (uint8_t*) &msg2, 
-        sizeof(msg2),
-        nullptr);
-    i2cMasterService->startTransaction(transaction2, -1);      
+    dspDrawTextMessage msg2;
+    msg2.cmd = DSP_CMD_DRAWTEXT;
+    msg2.color = 0xFF;
+    msg2.font = 0xFF;
+    msg2.x = 10;
+    msg2.y = 10;
+    msg2.textLen = 4;
+    sendData(i2cMasterService, (uint8_t*) &msg2, sizeof(msg2));
+    sendData(i2cMasterService, (uint8_t*) "HOLA", 4);
+    
+    dspRefreshMessage msg3;
+    msg3.cmd = DSP_CMD_REFRESH;
+    sendData(i2cMasterService, (uint8_t*) &msg3, sizeof(msg3));
+    
+    while (true)
+        Task::delay(1000);
 }
 
 
