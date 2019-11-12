@@ -22,6 +22,7 @@
                 <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Source/OSAL/FreeRTOS</sourceRootElem>
                 <sourceRootElem>../../../Library/PIC32/FreeRTOS/Source</sourceRootElem>
+                <sourceRootElem>../../../Source/Controllers/SmartDisplay</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

@@ -19,6 +19,11 @@
             <itemPath>../../../Include/Board/board.h</itemPath>
             <itemPath>../../../Include/Board/board_PIC32_ETH_STARTER_KIT.h</itemPath>
           </logicalFolder>
+          <logicalFolder name="f6" displayName="Controllers" projectFiles="true">
+            <logicalFolder name="f1" displayName="SmartDisplay" projectFiles="true">
+              <itemPath>../../../Include/Controllers/SmartDisplay/eosGfxDisplay.h</itemPath>
+            </logicalFolder>
+          </logicalFolder>
           <logicalFolder name="f4" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Include/HAL/PIC32/halI2C.h</itemPath>
@@ -74,6 +79,11 @@
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
+          <logicalFolder name="f6" displayName="Controllers" projectFiles="true">
+            <logicalFolder name="f1" displayName="SmartDisplay" projectFiles="true">
+              <itemPath>../../../Source/Controllers/SmartDisplay/eosGfxDisplay.cpp</itemPath>
+            </logicalFolder>
+          </logicalFolder>
           <logicalFolder name="f4" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Source/HAL/PIC32/halI2C.c</itemPath>
@@ -141,6 +151,7 @@
     <Elem>../../../Source/HAL/PIC32</Elem>
     <Elem>../../../Source/OSAL/FreeRTOS</Elem>
     <Elem>../../../Library/PIC32/FreeRTOS/Source</Elem>
+    <Elem>../../../Source/Controllers/SmartDisplay</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

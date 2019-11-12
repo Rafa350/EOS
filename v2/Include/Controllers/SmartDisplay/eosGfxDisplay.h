@@ -1,19 +1,18 @@
-#ifndef __EOS_CONTROLLERS_MDDSP04L_DISPLAY_HPP
-#define	__EOS_CONTROLLERS_MDDSP04L_DISPLAY_HPP
+#ifndef __eosGfxDisplay__
+#define	__eosGfxDisplay__
 
 
-#include "eos.hpp"
-#include "Services/eosI2CMaster.hpp"
+#include "eos.h"
+#include "Services/eosI2CMasterService.h"
 
 
 namespace eos {
     
-    class Display;
-    typedef Display *DisplayHandle;
+    class String;
     
     typedef unsigned Color;
 
-    class Display {
+    class GfxDisplay {
         private:
             I2CMasterService *i2cService;
             int curX;
@@ -25,8 +24,8 @@ namespace eos {
             bool bufferError;
             
         public:
-            Display(I2CMasterService *i2cService, uint8_t addr);
-            ~Display();
+            GfxDisplay(I2CMasterService *i2cService, uint8_t addr);
+            ~GfxDisplay();
             void setColor(Color color);
             //void setFont(Font *font);
             int getTextWidth(const char *text);
@@ -44,7 +43,7 @@ namespace eos {
             void drawCircle(int cx, int cy, int r);
             void drawBitmap1BPP(int x, int y, const uint8_t *bitmap, int sx, int sy, Color color);
             int drawChar(int x, int y, char c);
-            int drawString(int x, int y, const char *s);
+            int drawString(int x, int y, const String &s);
             void fillRectangle(int x1, int y1, int x2, int y2);
             void fillCircle(int cx, int cy, int r);              
 
@@ -53,8 +52,7 @@ namespace eos {
             bool endCommand();
             bool addUINT8(uint8_t data);
             bool addUINT16(uint16_t data);
-            bool addString(const char *data);
-            bool addBytes(const uint8_t *data, unsigned dataLen);
+            bool addBytes(const uint8_t *data, int length);
             bool addCommandClear();
             bool addCommandRefresh();
             bool addCommandSetColor(uint8_t fgColor, uint8_t bkColor);
@@ -63,12 +61,9 @@ namespace eos {
             bool addCommandDrawLine(int x1, int y1, int x2, int y2);
             bool addCommandDrawRectangle(int x1, int y1, int x2, int y2);
             bool addCommandFillRectangle(int x1, int y1, int x2, int y2);
-            bool addCommandDrawText(int x, int y, const char *text, unsigned offset, unsigned length);
+            bool addCommandDrawText(int x, int y, const char *s, int offset, int length);
             
         private:
-            inline static int min(int a, int b) {
-                return a < b ? a : b; 
-            }
             inline void fAddUINT8(uint8_t data) {
                 buffer[bufferCount++] = data;
             }
@@ -81,5 +76,5 @@ namespace eos {
 }
 
 
-#endif
+#endif // __eosGfxDisplay__
 
