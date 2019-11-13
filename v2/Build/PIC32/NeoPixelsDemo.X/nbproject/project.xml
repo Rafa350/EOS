@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>com.microchip.mplab.nbide.embedded.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>NeoPixelsDemo</name>
+            <creation-uuid>e1d9b534-74b9-487f-b67b-5e193891037b</creation-uuid>
+            <make-project-type>0</make-project-type>
+            <c-extensions/>
+            <cpp-extensions>cpp</cpp-extensions>
+            <header-extensions>h</header-extensions>
+            <asminc-extensions/>
+            <sourceEncoding>UTF-8</sourceEncoding>
+            <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>../../../Include/Controllers/NeoPixels</sourceRootElem>
+                <sourceRootElem>../../../Source/Controllers/NeoPixels</sourceRootElem>
+                <sourceRootElem>../../../Demo/NeoPixelsDemo/Include</sourceRootElem>
+                <sourceRootElem>../../../Include/Board</sourceRootElem>
+                <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Include/HAL</sourceRootElem>
+                <sourceRootElem>../../../Demo/NeoPixelsDemo/Source</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>default</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
+        </data>
+    </configuration>
+</project>
