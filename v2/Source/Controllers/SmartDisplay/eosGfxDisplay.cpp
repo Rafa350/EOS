@@ -507,7 +507,7 @@ bool GfxDisplay::addCommandDrawText(
     if (!bufferError) {
 
         if (length == -1)
-            length = Math::min(strlen(&text[offset]), 256);
+            length = Math::min((int) strlen(&text[offset]), 256);
         else
             length = Math::min(length, 255);
 
@@ -517,7 +517,7 @@ bool GfxDisplay::addCommandDrawText(
             fAddUINT8(0xFF);
             fAddUINT16(x);
             fAddUINT16(y);
-            fAddUINT8(len);
+            fAddUINT8(length);
             addBytes((uint8_t*) &text[offset], length);
         }
         else
