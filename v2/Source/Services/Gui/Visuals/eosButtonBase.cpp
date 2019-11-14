@@ -11,6 +11,7 @@ using namespace eos;
 ///
 ButtonBase::ButtonBase():
 	pressed(false),
+	clickMode(ClickMode::atRelease),
 	eventCallback(nullptr) {
 
 }
@@ -81,9 +82,9 @@ void ButtonBase::onTouchPadLeave() {
 void ButtonBase::onClick() {
 
 	if (eventCallback != nullptr) {
-		ButtonEventArgs args = {
+		EventArgs args = {
 			.button = this,
-			.event = ButtonEventType::click
+			.event = EventType::click
 		};
 		eventCallback->execute(args);
 	}
@@ -96,9 +97,9 @@ void ButtonBase::onClick() {
 void ButtonBase::onPress() {
 
 	if (eventCallback != nullptr) {
-		ButtonEventArgs args = {
+		EventArgs args = {
 			.button = this,
-			.event = ButtonEventType::press
+			.event = EventType::press
 		};
 		eventCallback->execute(args);
 	}
@@ -111,9 +112,9 @@ void ButtonBase::onPress() {
 void ButtonBase::onRelease() {
 
 	if (eventCallback != nullptr) {
-		ButtonEventArgs args = {
+		EventArgs args = {
 			.button = this,
-			.event = ButtonEventType::release
+			.event = EventType::release
 		};
 		eventCallback->execute(args);
 	}

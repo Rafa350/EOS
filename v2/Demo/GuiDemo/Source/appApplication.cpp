@@ -74,7 +74,7 @@ Panel *MyApplication::createMainPanel() {
 
 
 void MyApplication::buttonEventHandler(
-	const ButtonEventArgs &args) {
+	const ButtonBase::EventArgs &args) {
 
 	args.button->setVisibility(Visibility::hidden);
 }

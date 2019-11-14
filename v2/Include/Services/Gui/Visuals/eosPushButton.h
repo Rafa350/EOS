@@ -9,24 +9,24 @@
 namespace eos {
 
 	class RenderContext;
-
-    enum class PushButtonState {
-    	normal,
-		pushed,
-		disabled
-    };
     
     class PushButton: public ButtonBase {
+    	public:
+        	enum class State {
+        		normal,
+				pushed,
+				disabled
+        	};
 
     	private:
-    		PushButtonState state;
+    		State state;
 
         protected:
         	void onRender(RenderContext *context) override;
             void onPress() override;
             void onRelease() override;
 
-            void setState(PushButtonState value);
+            void setState(State value);
 
         public:
             PushButton();

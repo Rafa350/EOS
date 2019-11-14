@@ -12,29 +12,29 @@ namespace eos {
 	struct Message;
 	class ButtonBase;
 
-	enum class ButtonEventType {
-		press,
-		release,
-		click
-	};
-
-	struct ButtonEventArgs {
-		ButtonBase *button;
-		ButtonEventType event;
-		uint8_t id;
-	};
-
-	enum class ClickMode {
-		atPress,
-		atRelease
-	};
-
     class ButtonBase: public ContentControl {
+    	public:
+			enum class ClickMode {
+				atPress,
+				atRelease
+			};
+			enum class EventType {
+				press,
+				release,
+				click
+			};
+			struct EventArgs {
+				ButtonBase *button;
+				EventType event;
+				uint8_t id;
+			};
+
     	private:
-			typedef ICallbackP1<const ButtonEventArgs&> IEventCallback;
+			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
     	private:
 			bool pressed;
+			ClickMode clickMode;
 			IEventCallback *eventCallback;
 
     	protected:
@@ -54,10 +54,7 @@ namespace eos {
 
 			void click();
 
-			template <class cls>
-			inline void setEventCallback(CallbackP1<cls, const ButtonEventArgs&> *callback) {
-				eventCallback = callback;
-            }
+			inline void setEventCallback(IEventCallback *callback) { eventCallback = callback; }
     };
 
 }

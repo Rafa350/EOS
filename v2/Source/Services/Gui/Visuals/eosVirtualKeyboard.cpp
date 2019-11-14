@@ -22,10 +22,10 @@ VirtualKeyboard::VirtualKeyboard():
 /// \param    args: Arguments del event.
 ///
 void VirtualKeyboard::buttonEventHandler(
-	const ButtonEventArgs &args) {
+	const ButtonBase::EventArgs &args) {
 
 	switch (args.event) {
-		case ButtonEventType::click:
+		case ButtonBase::EventType::click:
 			// Genera un missatge MsgKey
 			break;
 

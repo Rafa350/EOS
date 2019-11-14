@@ -11,28 +11,28 @@ namespace eos {
 	struct Message;
 	class RenderContext;
 
-    enum class CheckButtonState {
-    	unchecked,
-		checked
-    };
-
     class CheckButton: public ButtonBase {
+    	public:
+    		enum class State {
+    			unchecked,
+				checked
+    		};
 
     	private:
-    		CheckButtonState state;
+    		State state;
 
     	protected:
     		void onRender(RenderContext *context) override;
     		void onClick() override;
 
-    		void setState(CheckButtonState value);
+    		void setState(State value);
 
     	public:
     		CheckButton();
 
-    		inline void check() { setState(CheckButtonState::checked); }
-    		inline void uncheck() { setState(CheckButtonState::unchecked); }
-    		inline bool isChecked() const { return state == CheckButtonState::checked; }
+    		inline void check() { setState(State::checked); }
+    		inline void uncheck() { setState(State::unchecked); }
+    		inline bool isChecked() const { return state == State::checked; }
     };
 
 }

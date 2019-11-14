@@ -23,7 +23,7 @@ namespace app {
 
 	class MyApplication: public eos::Application {
 		private:
-			typedef eos::CallbackP1<MyApplication, const eos::ButtonEventArgs&> ButtonEventCallback;
+			typedef eos::CallbackP1<MyApplication, const eos::ButtonBase::EventArgs&> ButtonEventCallback;
 
 		private:
 			LedService *ledService;
@@ -37,7 +37,7 @@ namespace app {
 			void onInitialize() override;
 
 			eos::Panel *createMainPanel();
-			void buttonEventHandler(const eos::ButtonEventArgs &args);
+			void buttonEventHandler(const eos::ButtonBase::EventArgs &args);
 
 		public :
 			MyApplication();

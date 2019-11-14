@@ -15,14 +15,14 @@ namespace eos {
 
 	class VirtualKeyboard: public Panel {
 		private:
-			typedef CallbackP1<VirtualKeyboard, const ButtonEventArgs&> ButtonEventCallback;
+			typedef CallbackP1<VirtualKeyboard, const ButtonBase::EventArgs&> ButtonEventCallback;
 
 		private:
 			ButtonEventCallback buttonEventCallback;
 
 		private:
 			PushButton *createPushButton(const String &text, const Size &size);
-			void buttonEventHandler(const ButtonEventArgs &args);
+			void buttonEventHandler(const ButtonBase::EventArgs &args);
 
 		protected:
 			void initializePanel();
