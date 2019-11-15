@@ -3,7 +3,7 @@
 
 
 #include "eos.h"
-#include "System/Core/eosCallbacks.h"
+#include "System/eosCallbacks.h"
 #include "Services/eosService.h"
 
 

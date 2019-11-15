@@ -344,6 +344,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosMath.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/eosString.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosString.h</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -392,6 +397,11 @@
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosString.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/heap_4.c</name>
@@ -589,11 +599,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosSemaphore.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Core/eosString.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosString.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
@@ -747,11 +752,6 @@
 			<name>src/Framework/EOS/System/Core/eosSemaphore.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosSemaphore.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Core/eosString.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosString.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>

@@ -319,6 +319,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosGuiService.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/eosKeyboardService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosKeyboardService.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/eosService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosService.h</locationURI>

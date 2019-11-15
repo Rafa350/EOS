@@ -25,6 +25,7 @@
 #endif
 
 //#define OPT_GUI_Keyboard
+#define OPT_GUI_VirtualKeyboard
 
 //#define OPT_GUI_Selector
 

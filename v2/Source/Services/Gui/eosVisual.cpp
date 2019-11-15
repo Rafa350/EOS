@@ -427,6 +427,11 @@ void Visual::onDispatch(
 	const Message &msg) {
 
 	switch (msg.msgId) {
+#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+		case MsgId::keyboardEvent:
+			onDispatchKeyboardEvent(msg.keyboard);
+			break;
+#endif
 #ifdef OPT_GUI_TouchPad
 		case MsgId::touchPadEvent:
 			onDispatchTouchPadEvent(msg.touchPad);
@@ -463,6 +468,45 @@ void Visual::onDeactivate(
 
 	invalidate();
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa els events del teclat.
+/// \param    msg: L'event a procesat.
+///
+#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+void Visual::onDispatchKeyboardEvent(
+	const MsgKeyboard &msg) {
+
+	switch (msg.event) {
+		case MsgKeyboardEvent::press:
+			onKeyboardPress(msg.keyCode, msg.ch);
+			break;
+
+		case MsgKeyboardEvent::release:
+			onKeyboardRelease(msg.keyCode, msg.ch);
+			break;
+	}
+}
+#endif
+
+
+#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+void Visual::onKeyboardPress(
+	KeyCode keyCode,
+	char ch) {
+
+}
+#endif
+
+
+#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+void Visual::onKeyboardRelease(
+	KeyCode keyCode,
+	char ch) {
+
+}
+#endif
 
 
 /// ----------------------------------------------------------------------

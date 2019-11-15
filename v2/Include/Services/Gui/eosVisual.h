@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "Services/Gui/eosMsgQueue.h"
 #include "Services/Gui/eosThickness.h"
 #include "System/Collections/eosList.h"
 #include "System/Graphics/eosPoint.h"
@@ -15,8 +16,6 @@
 namespace eos {
 
 	class RenderContext;
-	class Message;
-	class MsgTouchPad;
 
 	enum class Visibility {
 		visible,
@@ -68,6 +67,11 @@ namespace eos {
     		virtual void onDispatch(const Message &msg);
     		virtual void onActivate(Visual *visual);
     		virtual void onDeactivate(Visual *visual);
+#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+    		virtual void onDispatchKeyboardEvent(const MsgKeyboard &msg);
+    		virtual void onKeyboardPress(KeyCode keyCode, char ch);
+    		virtual void onKeyboardRelease(KeyCode keyCode, char ch);
+#endif
 #ifdef OPT_GUI_TouchPad
     		virtual void onDispatchTouchPadEvent(const MsgTouchPad &msg);
     		virtual void onTouchPadEnter();

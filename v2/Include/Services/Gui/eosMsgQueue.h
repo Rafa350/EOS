@@ -24,14 +24,16 @@ namespace eos {
 
 #endif
 
-#ifdef OPT_GUI_Keyboard
+#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
 
     enum class KeyCode {
         up,
         down,
         left,
         right,
-        enter
+        accept,
+		cancel,
+		character
     };
 
     enum class MsgKeyboardEvent {
@@ -42,6 +44,7 @@ namespace eos {
     struct MsgKeyboard {
         MsgKeyboardEvent event;
         KeyCode keyCode;
+        char ch;
     };
 
 #endif
@@ -64,10 +67,6 @@ namespace eos {
 
 #endif
 
-    struct MsgKey {
-    	int asciiCode;
-    };
-
     struct MsgCommand {
     	int id;
     	void *param;
@@ -78,8 +77,7 @@ namespace eos {
     	touchPadEvent,
 		selectorEvent,
 		keyboardEvent,
-		commandEvent,
-		keyEvent
+		commandEvent
     };
 
     class Visual;
@@ -91,7 +89,7 @@ namespace eos {
 #ifdef OPT_GUI_Selector
             MsgSelector selector;
 #endif
-#ifdef OPT_GUI_Keyboard
+#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
             MsgKeyboard keyboard;
 #endif
 #ifdef OPT_GUI_TouchPad
