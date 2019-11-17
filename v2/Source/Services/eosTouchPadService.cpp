@@ -8,38 +8,15 @@
 using namespace eos;
 
 
-static const ServiceConfiguration serviceConfiguration = {
-	.serviceName = "TouchPadService",
-	.stackSize = eosTouchPadService_StackSize,
-	.priority = eosTouchPadService_TaskPriority
-};
-
-static const TouchPadService::Configuration defaultConfiguration = {
-	.serviceConfiguration = &serviceConfiguration
-};
-
-
 /// ----------------------------------------------------------------------
-/// \brief    Constructor de l'objecte.
-/// \param    application: Aplicacio on afeigir el servei.
+/// \brief    Contructor de l'objecte.
+/// \param    application: Aplicacio on afeigir el servei
+/// \param    cfg: Parametres de configuracio.
 ///
 TouchPadService::TouchPadService(
 	Application *application) :
 
-	TouchPadService(application, &defaultConfiguration) {
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Contructor de l'objecte.
-/// \param    application: Aplicacio on afeigir el servei
-/// \param    configuration: Parametres de configuracio.
-///
-TouchPadService::TouchPadService(
-	Application *application,
-	const Configuration *configuration):
-
-	Service(application, (configuration == nullptr) || (configuration->serviceConfiguration == nullptr) ? nullptr : &serviceConfiguration),
+	Service(application),
 	touchDriver(nullptr),
 	eventCallback(nullptr),
 	oldX(-1),

@@ -23,12 +23,22 @@ typedef void (*TMRInterruptCallback)(TMRTimer timer, void *param);
 #define HAL_TMR_USE_T4_INTERRUPT    
 #define HAL_TMR_USE_T5_INTERRUPT    
 
+#ifdef _TMR1
 #define HAL_TMR_TIMER_1           ((TMRTimer) 0)
+#endif
+#ifdef _TMR2
 #define HAL_TMR_TIMER_2           ((TMRTimer) 1)
+#endif
+#ifdef _TMR3
 #define HAL_TMR_TIMER_3           ((TMRTimer) 2)
+#endif
+#ifdef _TMR4
 #define HAL_TMR_TIMER_4           ((TMRTimer) 3)
+#endif
+#ifdef _TMR5
 #define HAL_TMR_TIMER_5           ((TMRTimer) 4)
-#define HAL_TMR_TIMER_MAX         5
+#endif
+#define HAL_TMR_TIMER_NONE        ((TMRTimer) 255)
 
 // Modus 16 o 32 bits
 #define HAL_TMR_MODE_pos          0

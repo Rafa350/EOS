@@ -11,23 +11,25 @@
 extern "C" {
 #endif
 
+typedef uint8_t I2CModule;
 
-#define HAL_I2C_ID_1              0
-#define HAL_I2C_ID_2              1
-#define HAL_I2C_ID_3              2
-#define HAL_I2C_ID_4              3
+typedef struct {
+	I2CModule module;
+} I2CMasterInitializeInfo;
+
+
+#define HAL_I2C_I2C1              ((I2CModule) 0)
+#define HAL_I2C_I2C2              ((I2CModule) 1)
+#define HAL_I2C_I2C3              ((I2CModule) 2)
+#define HAL_I2C_I2C4              ((I2CModule) 3)
+
 #define HAL_I2C_ID_MAX            4
 
 
-typedef struct {
-	uint8_t id;
-} I2CInitializeInfo;
+void halI2CMasterInitialize(const I2CMasterInitializeInfo *info);
 
-
-void halI2CInitialize(const I2CInitializeInfo *info);
-
-void halI2CWriteMultiple(uint8_t id, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
-void halI2CReadMultiple(uint8_t id, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
+void halI2CMasterWriteMultiple(uint8_t id, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
+void halI2CMasterReadMultiple(uint8_t id, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
 
 
 #ifdef	__cplusplus

@@ -23,7 +23,7 @@ using namespace eos;
 ///
 Task::Task(
     int stackSize,
-    TaskPriority priority,
+    Priority priority,
     const String& name,
     IRunable *runable):
 
@@ -55,14 +55,14 @@ Task::~Task() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Executa la funcio de la tasca.
-/// \param    pParams: El handler de la tasca.
+/// \param    params: El handler de la tasca.
 ///
 void Task::function(
-    void *pParams) {
+    void *params) {
 
-	eosAssert(pParams != nullptr);
+	eosAssert(params != nullptr);
 
-    Task *task = reinterpret_cast<Task*>(pParams);
+    Task *task = reinterpret_cast<Task*>(params);
     task->weakTime = osalGetTickCount();
     while (true)
         task->runable->run(task);

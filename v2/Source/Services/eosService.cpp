@@ -10,15 +10,13 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: Aplicacio al que pertany.
-/// \param    configuration: Parametres de configuracio.
 ///
 Service::Service(
-	Application *application,
-	const ServiceConfiguration *configuration) :
+	Application *application) :
 
+	initialized(false),
     application(nullptr),
-    name(configuration->serviceName),
-    thread(configuration->stackSize, configuration->priority, configuration->serviceName, this) {
+	priority(Task::Priority::normal) {
 
     // Si s'indica l'aplicacio, s'afegeix a la llista de
 	// serveis d'aquesta.
@@ -58,7 +56,10 @@ void Service::run(
 ///
 void Service::initialize() {
 
-	onInitialize();
+	if (!initialized) {
+		onInitialize();
+		initialized = true;
+	}
 }
 
 
@@ -67,7 +68,8 @@ void Service::initialize() {
 ///
 void Service::tick() {
 
-	onTick();
+	if (initialized)
+		onTick();
 }
 
 
@@ -76,7 +78,8 @@ void Service::tick() {
 ///
 void Service::task() {
 
-	onTask();
+	if (initialized)
+		onTask();
 }
 
 

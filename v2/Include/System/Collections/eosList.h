@@ -16,7 +16,7 @@ namespace eos {
 	void insertElement(void *container, int count, int position, void *element, int elementSize);
 	void removeElement(void *container, int count, int position, int elementSize);
 
-    template <typename T, const unsigned INITIAL_CAPACITY>
+    template <typename T, const unsigned INITIAL_CAPACITY = 10>
     class List {
 
         private:

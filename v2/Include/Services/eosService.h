@@ -1,9 +1,6 @@
 #ifndef __eosService__
 #define	__eosService__
 
-
-// EOS includes
-//
 #include "eos.h"
 #include "System/eosString.h"
 #include "System/Core/eosTask.h"
@@ -11,43 +8,40 @@
 
 namespace eos {
 
-	struct ServiceConfiguration {
-		const char *serviceName;
-		int stackSize;
-		TaskPriority priority;
-	};
-    
     class Application;
 
-    class Service: private IRunable {
+    /// \brief Clase que representa un servei.
+    ///
+    class Service: public IRunable {
         private:
+    		bool initialized;
             Application *application;
-            String name;
-            Task thread;
+            Task::Priority priority;
 
-        private :
             Service(const Service &service) = delete;
             Service& operator=(const Service&) = delete;
-
-            void run(Task *thread);
-
+            
         protected:
             inline Application *getApplication() const { return application; }
-            inline Task *getThread() { return &thread; }
             virtual void onInitialize();
             virtual void onTask();
             virtual void onTick();
-
+            
         public :
-            Service(Application *application, const ServiceConfiguration *configuration);
+            Service(Application *application);
             virtual ~Service();
 
             void initialize();
             void tick();
             void task();
-
-            inline const String& getName() const { return name; }
+            void run(Task *thread);
             
+            inline bool isInitialized() const { return initialized; }
+
+            inline void setPriority(Task::Priority proprity) { this->priority = priority; }
+
+            inline Task::Priority getPriority() const { return priority; }
+
         friend void link(Application *application, Service *service);
         friend void unlink(Application *application, Service *service);
     };

@@ -1,9 +1,6 @@
 #ifndef __eosApplication__
 #define	__eosApplication__
 
-
-// EOS includes
-//
 #include "eos.h"
 #include "System/Collections/eosList.h"
 
@@ -12,6 +9,7 @@ namespace eos {
 
 	class Service;
     class String;
+    class Task;
 
     void link(Application *application, Service *service);
     void unlink(Application *application, Service *service);
@@ -20,15 +18,15 @@ namespace eos {
     ///
     class Application {
     	private:
-        	typedef List<Service*, 5> ServiceList;
+        	typedef List<Service*> ServiceList;
+            typedef List<Task*> TaskList;
 
-        private:
+            bool initialized;
             ServiceList services;
+            TaskList tasks;
 
-        private:
             Application(const Application&) = delete;
             Application& operator=(const Application&) = delete;
-
             void initializeServices();
             void runServices();
 
@@ -48,7 +46,7 @@ namespace eos {
             void removeService(Service *service);
             void removeServices();
 
-            Service *findService(const String &serviceName) const;
+            inline bool isInitialized() const { return initialized; }
 
             friend void link(Application *application, Service *service);
             friend void unlink(Application *application, Service *service);

@@ -2,52 +2,26 @@
 #include "eosAssert.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
-#include "OSAL/osalKernel.h"
 #include "Services/eosDigOutputService.h"
+#include "System/Core/eosTask.h"
 
 
 using namespace eos;
 
 
-static const ServiceConfiguration serviceConfiguration = {
-    .serviceName = "DigOutputService",
-    .stackSize = 512,
-    .priority = TaskPriority::normal  
-};
-
-static const DigOutputService::Configuration digOutputServiceConfiguration = {
-    .serviceConfiguration = &serviceConfiguration
-};
-
-
-#define lockSection()    osalEnterCritical()
-#define unlockSection()  osalExitCritical()
-
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: L'aplicacio on afeigir el servei.
-///
-DigOutputService::DigOutputService(
-    Application *application):
-    
-    DigOutputService(application, &digOutputServiceConfiguration) {
-    
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    application: L'aplicacio on afeigir el servei.
-/// \param    configuration: Parametres de configuracio.
+/// \param    timer: El temporitzador.
 ///
 DigOutputService::DigOutputService(
     Application *application,
-    const Configuration *configuration):
+    TMRTimer timer):
 
-    Service(application, (configuration == nullptr) || (configuration->serviceConfiguration == nullptr) ? &serviceConfiguration : configuration->serviceConfiguration) {
+    timer(timer),
+    Service(application) {
 
-    timer = configuration->timer;
 }
 
 
@@ -178,26 +152,24 @@ void DigOutputService::timerInterrupt(
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    service: El servei al que s'asignara la sortida.
-/// \param    configuration: Parametres de configuracio.
+/// \param    port: El port.
+/// \param    pin: El pin.
+/// \param    options: Opcions del pin.
 ///
 DigOutput::DigOutput(
     DigOutputService *service,
-    const Configuration *configuration):
+    GPIOPort port,
+    GPIOPin pin,
+    GPIOOptions options) :
 
     service(nullptr),
+    port(port),
+    pin(pin),
+    options(options),
     state(State::Idle),
 	delayCnt(0),
 	widthCnt(0) {
-
-    port = configuration->port;
-    pin = configuration->pin;
-    options = configuration->options;
-    if (((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_OD) ||
-        ((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_PP)) {
-        options &= ~HAL_GPIO_MODE_mask;
-        options |= HAL_GPIO_MODE_OUTPUT_PP;
-    }
-
+    
     if (service != nullptr)
         service->addOutput(this);
 }
@@ -218,6 +190,11 @@ DigOutput::~DigOutput() {
 ///
 void DigOutput::initialize() {
 
+    if (((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_OD) ||
+        ((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_PP)) {
+        options &= ~HAL_GPIO_MODE_mask;
+        options |= HAL_GPIO_MODE_OUTPUT_PP;
+    }
     halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
 }
 
@@ -269,12 +246,12 @@ bool DigOutput::get() const {
 ///
 void DigOutput::clear() {
 
-	lockSection();
+	Task::enterCriticalSection();
 
     halGPIOClearPin(port, pin);
     state = State::Idle;
 
-    unlockSection();
+    Task::exitCriticalSection();
 }
 
 
@@ -283,12 +260,12 @@ void DigOutput::clear() {
 ///
 void DigOutput::set() {
 
-	lockSection();
+	Task::enterCriticalSection();
 
     halGPIOSetPin(port, pin);
     state = State::Idle;
 
-    unlockSection();
+    Task::exitCriticalSection();
 }
 
 
@@ -297,12 +274,12 @@ void DigOutput::set() {
 ///
 void DigOutput::toggle() {
 
-	lockSection();
+	Task::enterCriticalSection();
 
     halGPIOTogglePin(port, pin);
     state = State::Idle;
 
-    unlockSection();
+    Task::exitCriticalSection();
 }
 
 
@@ -311,9 +288,9 @@ void DigOutput::toggle() {
 /// \param    width: Amplada del puls.
 ///
 void DigOutput::pulse(
-	unsigned width) {
+	int width) {
 
-	lockSection();
+	Task::enterCriticalSection();
 
 	if (state == State::Idle)
         halGPIOTogglePin(port, pin);
@@ -321,7 +298,7 @@ void DigOutput::pulse(
 	widthCnt = width;
     state = State::Pulse;
 
-    unlockSection();
+    Task::exitCriticalSection();
 }
 
 
@@ -331,14 +308,14 @@ void DigOutput::pulse(
 /// \param    width: Amplada del puls.
 ///
 void DigOutput::delayedPulse(
-	unsigned delay,
-	unsigned width) {
+	int delay,
+	int width) {
 
-	lockSection();
+	Task::enterCriticalSection();
 
 	delayCnt = delay;
     widthCnt = width;
     state = State::DelayedPulse;
 
-    unlockSection();
+    Task::exitCriticalSection();
 }

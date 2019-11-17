@@ -15,14 +15,9 @@
 #endif
 
 
-// Nom del servei
-#ifndef eosGuiService_ServiceName
-#define eosGuiService_ServiceName "GuiService"
-#endif
-
 // Prioritat d'execucio del servei
 #ifndef eosGuiService_TaskPriority
-#define eosGuiService_TaskPriority TaskPriority::normal
+#define eosGuiService_TaskPriority Task::Priority::normal
 #endif
 
 // Tamany del stack del servei
@@ -48,19 +43,22 @@ namespace eos {
 	class GuiService final: public Service {
 		public:
 			struct Configuration {
-				const ServiceConfiguration *serviceConfiguration;
+
+				Configuration();
 			};
 
 		private:
 			typedef CallbackP1<GuiService, const TouchPadService::EventArgs&> TouchPadEventCallback;
 
-		private:
+			Configuration cfg;
 			Screen *screen;
 			Visual *active;
 			MsgQueue *msgQueue;
 #ifdef OPT_GUI_Keyboard
+			KeyboardService *keyboardService;
 #endif
 #ifdef OPT_GUI_Selector
+			SelectorService *selectorService;
 #endif
 #ifdef OPT_GUI_TouchPad
 			TouchPadEventCallback touchPadEventCallback;
@@ -69,8 +67,7 @@ namespace eos {
 #endif
 
 		public:
-			GuiService(Application *application);
-			GuiService(Application *application, const Configuration *configuration);
+			GuiService(Application *application, const Configuration *cfg = nullptr);
 			inline Screen* getScreen() const { return screen; }
 			inline Visual* getActiveVisual() const { return active; }
 			Visual *getVisualAt(const Point &position) const;

@@ -24,26 +24,26 @@ static I2C_HandleTypeDef i2cHandler[HAL_I2C_ID_MAX];
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa el rellotge del modul I2C.
-/// \param id: identificador del modul.
+/// \brief    Activa el rellotge del modul I2C.
+/// \param    module: identificador del modul.
 ///
 static void EnableClock(
-	uint8_t id) {
+	I2CModule module) {
 
-	switch (id) {
-		case HAL_I2C_ID_1:
+	switch (module) {
+		case HAL_I2C_I2C1:
 			__HAL_RCC_I2C1_CLK_ENABLE();
 			break;
 
-		case HAL_I2C_ID_2:
+		case HAL_I2C_I2C2:
 			__HAL_RCC_I2C2_CLK_ENABLE();
 			break;
 
-		case HAL_I2C_ID_3:
+		case HAL_I2C_I2C3:
 			__HAL_RCC_I2C3_CLK_ENABLE();
 			break;
 
-		case HAL_I2C_ID_4:
+		case HAL_I2C_I2C4:
 			__HAL_RCC_I2C4_CLK_ENABLE();
 			break;
 	}
@@ -51,26 +51,26 @@ static void EnableClock(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte el handler del modul I2C
-/// \param id: Identificador del modul.
-/// \return El handler.
+/// \brief    Obte el handler del modul I2C
+/// \param    module: Identificador del modul.
+/// \return   El handler.
 ///
 static I2C_HandleTypeDef *GetHandler(
-	uint8_t id) {
+	I2CModule module) {
 
-	return &i2cHandler[id];
+	return &i2cHandler[module];
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura els parametres d'inicialitzacio del handler.
-/// \param info: Parametres d'inicialitzacio.
-/// \return El handler.
+/// \brief    Configura els parametres d'inicialitzacio del handler.
+/// \param    info: Parametres d'inicialitzacio.
+/// \return   El handler.
 ///
 static I2C_HandleTypeDef *PrepareHandler(
-	const I2CInitializeInfo *info) {
+	const I2CMasterInitializeInfo *info) {
 
-	EnableClock(info->id);
+	EnableClock(info->module);
 
 	static I2C_TypeDef * const instances[HAL_I2C_ID_MAX] = {
 		I2C1,
@@ -79,8 +79,8 @@ static I2C_HandleTypeDef *PrepareHandler(
 		I2C4
 	};
 
-	I2C_HandleTypeDef *handler = GetHandler(info->id);
-	handler->Instance = instances[info->id];
+	I2C_HandleTypeDef *handler = GetHandler(info->module);
+	handler->Instance = instances[info->module];
 
 	handler->Init.Timing           = DISCOVERY_I2Cx_TIMING;
     handler->Init.OwnAddress1      = 0;
@@ -95,8 +95,8 @@ static I2C_HandleTypeDef *PrepareHandler(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el modul.
-/// \param handler: El handler del modul.
+/// \brief    Inicialitza el modul.
+/// \param    handler: El handler del modul.
 //
 static void InitializeModule(
 	I2C_HandleTypeDef *handler) {
@@ -107,8 +107,8 @@ static void InitializeModule(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Desinicialitza el modul.
-/// \param handler: El handler del modul.
+/// \brief    Desinicialitza el modul.
+/// \param    handler: El handler del modul.
 ///
 static void DeinitializeModule(
 	I2C_HandleTypeDef *handler) {
@@ -119,13 +119,13 @@ static void DeinitializeModule(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza un modul I2C
-/// \param info: Els parametres d'inicialitzacio.
+/// \brief    Inicialitza un modul I2C
+/// \param    info: Els parametres d'inicialitzacio.
 ///
-void halI2CInitialize(
-	const I2CInitializeInfo *info) {
+void halI2CMasterInitialize(
+	const I2CMasterInitializeInfo *info) {
 
-	EnableClock(info->id);
+	EnableClock(info->module);
 
 	I2C_HandleTypeDef *handler = PrepareHandler(info);
 	InitializeModule(handler);
@@ -133,13 +133,13 @@ void halI2CInitialize(
 
 
 void halI2CShutdown(
-	uint8_t id) {
+	I2CModule module) {
 
-	DeinitializeModule(GetHandler(id));
+	DeinitializeModule(GetHandler(module));
 }
 
 
-void halI2CReadMultiple(
+void halI2CMasterReadMultiple(
 	uint8_t id,
 	uint8_t addr,
 	uint16_t reg,
@@ -160,7 +160,7 @@ void halI2CReadMultiple(
 }
 
 
-void halI2CWriteMultiple(
+void halI2CMasterWriteMultiple(
 	uint8_t id,
 	uint8_t addr,
 	uint16_t reg,

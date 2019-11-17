@@ -317,9 +317,9 @@ void FT5336Driver::ioInit() {
 	halINTEnableIRQ(TOUCHPAD_INT_IRQ);
 #endif
 
-	I2CInitializeInfo i2cInfo;
-	i2cInfo.id = TOUCHPAD_I2C_MODULE;
-	halI2CInitialize(&i2cInfo);
+	I2CMasterInitializeInfo i2cInfo;
+	i2cInfo.module = TOUCHPAD_I2C_MODULE;
+	halI2CMasterInitialize(&i2cInfo);
 }
 
 
@@ -333,7 +333,7 @@ void FT5336Driver::ioWrite(
 	uint8_t reg,
 	uint8_t value) {
 
-	halI2CWriteMultiple(TOUCHPAD_I2C_MODULE, addr, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT,(uint8_t*)&value, 1);
+	halI2CMasterWriteMultiple(TOUCHPAD_I2C_MODULE, addr, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT,(uint8_t*)&value, 1);
 }
 
 
@@ -348,7 +348,7 @@ uint8_t FT5336Driver::ioRead(
 
 	uint8_t value = 0;
 
-	halI2CReadMultiple(TOUCHPAD_I2C_MODULE, addr, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&value, 1);
+	halI2CMasterReadMultiple(TOUCHPAD_I2C_MODULE, addr, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&value, 1);
 
 	return value;
 }

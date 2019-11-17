@@ -105,56 +105,57 @@ void MyApplication::onInitialize() {
     // Prepara el servei d'entrades digitals
 	//
     digInputService = new DigInputService(this);
-
-	DigInput::Configuration inputConfiguration;
-
+    
 #ifdef EXIST_SWITCHES_SW1
-    inputConfiguration.port = SW_SW1_PORT;
-    inputConfiguration.pin = SW_SW1_PIN;
-    digInput1 = new DigInput(digInputService, &inputConfiguration);
+    digInput1 = new DigInput(
+        digInputService, 
+        SW_SW1_PORT, 
+        SW_SW1_PIN);
     digInput1->setChangeEventCallback(&digInput1EventCallback);
 #endif
 
 #ifdef EXIST_SWITCHES_SW2
-    inputConfiguration.port = SW_SW2_PORT;
-    inputConfiguration.pin = SW_SW2_PIN;
-    digInput2 = new DigInput(digInputService, &inputConfiguration);
+    digInput2 = new DigInput(
+        digInputService, 
+        SW_SW2_PORT, 
+        SW_SW2_PIN);
     digInput2->setChangeEventCallback(&digInput2EventCallback);
 #endif
 
 #ifdef EXIST_SWITCHES_SW3
-    inputConfiguration.port = SW_SW3_PORT;
-    inputConfiguration.pin = SW_SW3_PIN;
-    digInput3 = new DigInput(digInputService, &inputConfiguration);
+    digInput3 = new DigInput(
+        digInputService, 
+        SW_SW3_PORT, 
+        SW_SW3_PIN);
     digInput3->setChangeEventCallback(&digInput3EventCallback);
 #endif
 
     // Prepara el servei de sortides digitals
     //
-    DigOutputService::Configuration digOutputServiceConfiguration;
-    digOutputServiceConfiguration.serviceConfiguration = nullptr;
-    digOutputServiceConfiguration.timer = HAL_TMR_TIMER_2;
-    digOutputService = new DigOutputService(this, &digOutputServiceConfiguration);
-
-    DigOutput::Configuration outputConfiguration;
-    outputConfiguration.options = HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR;
+    digOutputService = new DigOutputService(this, HAL_TMR_TIMER_2);
 
 #ifdef EXIST_LEDS_LED1
-    outputConfiguration.port = LED_LED1_PORT;
-    outputConfiguration.pin = LED_LED1_PIN;
-    digOutput1 = new DigOutput(digOutputService, &outputConfiguration);
+    digOutput1 = new DigOutput(
+        digOutputService, 
+        LED_LED1_PORT, 
+        LED_LED1_PIN, 
+        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
 
 #ifdef EXIST_LEDS_LED2
-    outputConfiguration.port = LED_LED2_PORT;
-    outputConfiguration.pin = LED_LED2_PIN;
-    digOutput2 = new DigOutput(digOutputService, &outputConfiguration);
+    digOutput2 = new DigOutput(
+        digOutputService, 
+        LED_LED2_PORT, 
+        LED_LED2_PIN, 
+        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
 
 #ifdef EXIST_LEDS_LED3
-    outputConfiguration.port = LED_LED3_PORT;
-    outputConfiguration.pin = LED_LED3_PIN;
-    digOutput3 = new DigOutput(digOutputService, &outputConfiguration);
+    digOutput3 = new DigOutput(
+        digOutputService, 
+        LED_LED3_PORT, 
+        LED_LED3_PIN, 
+        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
 
     // Prepara el servei de l'aplicacio principal

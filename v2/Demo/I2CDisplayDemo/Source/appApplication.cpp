@@ -16,19 +16,7 @@ using namespace app;
 ///
 MyApplication::MyApplication() {
 
-    /// Crea el servei de cominicacio I2C
-    //
-    ServiceConfiguration serviceConfiguration = {
-        .serviceName = "I2CmasterService",
-        .stackSize = 512,
-        .priority = TaskPriority::normal
-    };
-
-    I2CMasterService::Configuration i2cServiceConfig = {
-        .serviceConfiguration = &serviceConfiguration,
-        .module = HAL_I2C_I2C2
-    };
-    i2cMasterService = new I2CMasterService(this, &i2cServiceConfig);
+    i2cMasterService = new I2CMasterService(this, nullptr);
     
     // Crea el servei de gestio de display
     //

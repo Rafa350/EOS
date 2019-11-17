@@ -1,82 +1,54 @@
-#include "Services/eosKeyboard.h"
-#include "Services/eosI2CMaster.h"
+#include "eos.h"
+#include "Services/eosKeyboardService.h"
+#include "Services/eosI2CMasterService.h"
 #include "../../../MD-KBD01/KBD01Messages.h"
 
 
 using namespace eos;
 
 
-static const char *serviceName = "KeyboardService";
-static const unsigned taskStackSize = 512;
-static const unsigned taskLoopDelay = 50;
-static const TaskPriority taskPriority = TaskPriority::normal;
+/// ----------------------------------------------------------------------
+/// \brief    Constructor per defecte.
+///
+KeyboardService::Configuration::Configuration() {
+
+	i2cAddress = 0;
+	i2cService = nullptr;
+}
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor
-/// \param application: Aplicacio a la que pertany.
-/// \param i2cService: El servei de comunicacions I2C
-/// \param addr: Adressa I2C del selector
+/// \brief    Constructor
+/// \param 	  application: Aplicacio a la que pertany.
+/// \param    cfg: Parametres de configuracio.
 ///
 KeyboardService::KeyboardService(
     Application *application,
-    I2CMasterService *i2cService,
-    uint8_t addr):
+	const Configuration *cfg) :
     
-    Service(application, serviceName, taskStackSize, taskPriority),
-    i2cService(i2cService),
-    addr(addr),
+    Service(application),
     state(0),
-    evNotify(nullptr) {
+    eventCallback(nullptr) {
+
+	if (cfg != nullptr)
+		this->cfg = *cfg;
+}
+
+
+/// ---------------------------------------------------------------------
+/// \brief    Inicialitzacio abans del planificador.
+///
+void KeyboardService::onInitialize() {
+
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Destructor.
+/// \brief    Procesa les tasques del servei
 ///
-KeyboardService::~KeyboardService() {
+void KeyboardService::onTask() {
     
-    if (evNotify != nullptr)
-        delete evNotify;
-}
+	if (eventCallback != nullptr) {
 
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa les tasques del servei
-/// \param task: La tasca actual.
-///
-void KeyboardService::run(
-    Task *task) {
-    
-    KbdGetStateMessage query;
-    query.cmd = KBD_CMD_GETSTATE;
-    
-    KbdGetStateResponse response;
-    
-    BinarySemaphore endTransactionNotify;
-
-    while (true) {
-        
-        Task::delay(taskLoopDelay);
-        
-        if (i2cService->startTransaction(
-            addr, 
-            &query, sizeof(query), 
-            &response, sizeof(response), 
-            (unsigned) -1, 
-            &endTransactionNotify)) {
-            
-            if (endTransactionNotify.take((unsigned) -1)) {
-            
-                if (response.cmd == KBD_CMD_GETSTATE) {
-                    
-                    if (state != response.keyState) {
-                        state = response.keyState;
-                        if (evNotify != nullptr) 
-                            evNotify->execute(state);
-                    }
-                }
-            }
-        }
-    }
+	}
 }

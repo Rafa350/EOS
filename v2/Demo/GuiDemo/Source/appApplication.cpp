@@ -51,7 +51,6 @@ void MyApplication::onInitialize() {
 
 Panel *MyApplication::createMainPanel() {
 
-
 	StackPanel *sp = new StackPanel();
 	sp->setOrientation(Orientation::vertical);
 	sp->setHorizontalAlignment(HorizontalAlignment::center);

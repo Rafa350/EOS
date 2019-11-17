@@ -376,7 +376,7 @@
 #define TOUCHPAD_EXTI_LINE          HAL_EXTI_LINE_13
 
 // Modul I2C de comunicacions
-#define TOUCHPAD_I2C_MODULE         HAL_I2C_ID_3
+#define TOUCHPAD_I2C_MODULE         HAL_I2C_I2C3
 
 #endif // USE_TOUCHPAD
 

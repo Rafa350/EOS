@@ -5,40 +5,15 @@
 using namespace eos;
 
 
-static const ServiceConfiguration serviceConfiguration = {
-	.serviceName = "AppLoopService",
-	.stackSize = 512,
-	.priority = TaskPriority::normal
-};
-
-static const AppLoopService::Configuration appLoopServiceConfiguration = {
-	.serviceConfiguration = &serviceConfiguration
-};
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor de l'objecte.
-/// \param    application: Aplicacio on afeigir el servei.
-///
-AppLoopService::AppLoopService(
-	Application *application):
-
-	AppLoopService(application, &appLoopServiceConfiguration) {
-
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: Aplicacio on afeigir el servei.
-/// \param    configuration: Parametres de configuracio.
 ///
 AppLoopService::AppLoopService(
-    Application *application,
-	const Configuration *configuration):
+    Application *application):
 
-    Service(application, configuration->serviceConfiguration),
-	initialized(false) {
+    initialized(false),
+    Service(application) {
 }
 
 

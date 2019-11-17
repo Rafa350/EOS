@@ -7,6 +7,14 @@
 #include "Services/eosService.h"
 
 
+#ifndef eosKeyboardService_StackSize
+#define eosKeyboardService_StackSize 512
+#endif
+
+#ifndef eosKeyboardService_TaskPriority
+#define eosKeyboardService_TaskPriority TaskPriority::normal
+#endif
+
 
 namespace eos {
 
@@ -16,28 +24,30 @@ namespace eos {
     typedef uint8_t KeyboardState;
 
     class KeyboardService: public Service {
-        private:
-            typedef ICallbackP1<KeyboardState> IKeyboardServiceEvent;
+    	public:
+    		struct Configuration {
+    			int i2cAddress;
+    			I2CMasterService *i2cService;
+
+    			Configuration();
+    		};
 
         private:
-            uint8_t addr;
-            I2CMasterService *i2cService;
+            typedef ICallbackP1<KeyboardState> IEventCallback;
+
+        private:
+            Configuration cfg;
             KeyboardState state;
-            IKeyboardServiceEvent *evNotify;
+            IEventCallback *eventCallback;
 
         public:
-            KeyboardService(Application *application, I2CMasterService *i2cService, uint8_t addr);
-            ~KeyboardService();
+            KeyboardService(Application *application, const Configuration *cfg);
 
-            template <class cls>
-            void setNotifyEventHandler(cls *instance, void (cls::*method)(KeyboardState)) {
-                if (evNotify != nullptr)
-                    delete evNotify;
-                evNotify = new CallbackP1<cls, KeyboardState>(instance, method);
-            }
+            inline void setEventCallback(IEventCallback *callback) { eventCallback = callback; }
 
-        private:
-            void run(Task *task);
+        protected:
+            void onInitialize() override;
+            void onTask() override;
     };
 }
 

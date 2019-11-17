@@ -409,6 +409,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosGuiService.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Services/eosKeyboardService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosKeyboardService.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosService.cpp</locationURI>

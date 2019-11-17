@@ -12,11 +12,6 @@
 #include "System/Core/eosSemaphore.h"
 
 
-// Nom del servei
-#ifndef eosTouchPadService_ServiceName
-#define eosTouchPadService_ServiceName "TouchPadService"
-#endif
-
 // Prioritat d'execucio del servei
 #ifndef eosTouchPadService_TaskPrority
 #define eosTouchPadService_TaskPriority TaskPriority::normal
@@ -34,10 +29,6 @@ namespace eos {
 	///
 	class TouchPadService final: public Service {
 		public:
-			struct Configuration {
-				const ServiceConfiguration *serviceConfiguration;
-			};
-
 			enum class EventType {
 				press,
 				release,
@@ -53,7 +44,6 @@ namespace eos {
 		private:
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
-		private:
     		ITouchPadDriver *touchDriver;
         	IEventCallback *eventCallback;
         	BinarySemaphore lock;
@@ -61,19 +51,16 @@ namespace eos {
         	int oldY;
         	int oldPressed;
 
-		public:
-			TouchPadService(Application *application);
-			TouchPadService(Application *application, const Configuration *configuration);
-
-			void setEventCallback(IEventCallback *callBack) { eventCallback = callBack; }
+        	void interruptHandler();
+			static void interruptHandler(EXTILine line, void *param);
 
 		protected:
 			void onInitialize();
 			void onTask();
 
-		private:
-			void interruptHandler();
-			static void interruptHandler(EXTILine line, void *param);
+		public:
+			TouchPadService(Application *application);
+			inline void setEventCallback(IEventCallback *callBack) { eventCallback = callBack; }
 	};
 }
 

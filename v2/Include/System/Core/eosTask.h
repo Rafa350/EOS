@@ -22,26 +22,18 @@ namespace eos {
             virtual void run(Task *task) = 0;
     };
 
-    enum class TaskPriority {
-        idle = OSAL_TASK_PRIORITY_IDLE,
-        low = OSAL_TASK_PRIORITY_LOW,
-        normal = OSAL_TASK_PRIORITY_NORMAL,
-        high = OSAL_TASK_PRIORITY_HIGH
-    };
-
     /// \brief Clase que implementa una tasca.
     ///
     class Task {
-        private:
-            HTask hTask;
-            IRunable *runable;
-            int weakTime;
-
-        private:
-            static void function(void *params);
-
         public:
-            Task(int stackSize, TaskPriority priority, const String &name, IRunable *runable);
+            enum class Priority {
+                idle = OSAL_TASK_PRIORITY_IDLE,
+                low = OSAL_TASK_PRIORITY_LOW,
+                normal = OSAL_TASK_PRIORITY_NORMAL,
+                high = OSAL_TASK_PRIORITY_HIGH
+            };
+            
+            Task(int stackSize, Priority priority, const String &name, IRunable *runable);
             virtual ~Task();
 
             static void delay(int time);
@@ -55,6 +47,13 @@ namespace eos {
             static bool notificationTake(int blockTime);
             static bool notificationGive();
             static void notificationGiveISR();
+
+        private:
+            HTask hTask;
+            IRunable *runable;
+            int weakTime;
+
+            static void function(void *params);    
     };
 }
 

@@ -25,28 +25,15 @@
 using namespace eos;
 
 
-static const ServiceConfiguration serviceConfiguration = {
-	.serviceName = eosGuiService_ServiceName,
-	.stackSize = eosGuiService_StackSize,
-	.priority = eosGuiService_TaskPriority
-};
-
-static const GuiService::Configuration defaultConfiguration = {
-	.serviceConfiguration = &serviceConfiguration
-};
-
-
 static IDisplayDriver *displayDriver;
 static Graphics *graphics;
 static RenderContext *context;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    application: Aplicacio on afeigir el servei.
+/// \brief    Constructor per defecte.
 ///
-GuiService::GuiService(Application *application) :
-	GuiService(application, &defaultConfiguration) {
+GuiService::Configuration::Configuration() {
 
 }
 
@@ -54,13 +41,13 @@ GuiService::GuiService(Application *application) :
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
 /// \param    application: Aplicacio on afeigir el servei.
-/// \param    configuration: Parametres de configuracio
+/// \param    cfg: Parametres de configuracio
 ///
 GuiService::GuiService(
 	Application *application,
-	const Configuration *configuration):
+	const Configuration *cfg):
 
-	Service(application, configuration->serviceConfiguration),
+	Service(application),
 	screen(new Screen()),
 	active(nullptr),
 	msgQueue(MsgQueue::getInstance())
@@ -68,6 +55,9 @@ GuiService::GuiService(
 	, touchPadEventCallback(this, &GuiService::touchPadEventHandler)
 #endif
 	{
+
+	if (cfg != nullptr)
+		this->cfg = *cfg;
 
 #ifdef OPT_GUI_TouchPad
 	touchPadService = new TouchPadService(application);

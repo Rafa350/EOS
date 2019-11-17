@@ -2,6 +2,7 @@
 #include "eosAssert.h"
 #include "Services/eosService.h"
 #include "System/eosApplication.h"
+#include "System/Core/eosTask.h"
 
 
 using namespace eos;
@@ -10,7 +11,9 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-Application::Application() {
+Application::Application():
+
+	initialized(false) {
 
 }
 
@@ -32,6 +35,8 @@ Application::~Application() {
 /// \brief    Executa l'aplicacio.
 ///
 void Application::run() {
+
+	initialized = true;
 
     // Notifica la inicialitzacio de l'aplicacio.
     //
@@ -83,6 +88,20 @@ void Application::initializeServices() {
 void Application::runServices() {
 
 #if  1 //def USE_SCHEDULER
+    
+    // Crea una tasca per executar cada servei
+    //
+    for (auto service: services) {
+        Task *task = new Task(
+            512,
+            service->getPriority(),
+            nullptr,
+            service);
+        tasks.add(task);
+    }  
+    
+    // Executa les tasques
+    //
     Task::startAll();
 
 #else
@@ -131,23 +150,6 @@ void Application::removeServices() {
 
 	while (!services.isEmpty())
         removeService(services.getFirst());
-}
-
-
-/// ---------------------------------------------------------------------
-/// \brief    Obte el servei especificat.
-/// \param    name: El nom del servei.
-/// \return   El servei, null si no el troba.
-///
-Service *Application::findService(
-    const String& name) const {
-
-  	for (auto service: services) {
-        if (service->getName() == name)
-            return service;
-    }
-
-    return nullptr;
 }
 
 

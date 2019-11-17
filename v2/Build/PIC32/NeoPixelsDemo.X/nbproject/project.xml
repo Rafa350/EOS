@@ -20,6 +20,8 @@
                 <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Include/HAL</sourceRootElem>
                 <sourceRootElem>../../../Demo/NeoPixelsDemo/Source</sourceRootElem>
+                <sourceRootElem>../../../Include/System</sourceRootElem>
+                <sourceRootElem>../../../Source/System</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

@@ -9,22 +9,6 @@
 #include "System/Collections/eosList.h"
 
 
-// Nom del servei
-#ifndef eosDigOutputService_ServiceName 
-#define eosDigOutputService_ServiceName "DigOutputService"
-#endif
-
-// Prioritat d'execucio del servei
-#ifndef eosDigOutputService_TaskPriority
-#define eosDigOutputService_taskPriority taskPriority::normal
-#endif
-
-// Tamany del stack del servei
-#ifndef eosDigOutputService_StackSize
-#define eosDigOutputService_StackSize 512
-#endif
-
-
 namespace eos {
 
     class Application;
@@ -34,19 +18,11 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
         private:
-            typedef List<DigOutput*, 10> DigOutputList;
-            
-        public:
-            struct Configuration {      
-                const ServiceConfiguration *serviceConfiguration;
-                TMRTimer timer;
-            };
-            
-        private:
-            DigOutputList outputs;
+            typedef List<DigOutput*> DigOutputList;
+
             TMRTimer timer;
+            DigOutputList outputs;
             
-        private:
             static void timerInterrupt(TMRTimer timer, void *params);
             void timeOut();
             
@@ -55,8 +31,7 @@ namespace eos {
             void onTask();
 
         public:
-            DigOutputService(Application *application);
-            DigOutputService(Application *application, const Configuration *configuration);
+            DigOutputService(Application *application, TMRTimer timer);
             ~DigOutputService();
 
             void addOutput(DigOutput *output);
@@ -74,44 +49,34 @@ namespace eos {
                 Pulse
             };
             
-        public:
-            struct Configuration {
-                GPIOPort port;
-                GPIOPin pin;
-                GPIOOptions options;                
-            };
-
-        private:
             DigOutputService *service;
             GPIOPort port;
             GPIOPin pin;
-            GPIOOptions options;
+            GPIOOptions options;   
             State state;
-            unsigned delayCnt;
-            unsigned widthCnt;
-            
-        private:
+            int delayCnt;
+            int widthCnt;
+
             void initialize();
             void timeOut();
-
+            
         public:
-            DigOutput(DigOutputService *service, const Configuration *configuration);
-            DigOutput(DigOutputService *service, GPIOPort port, GPIOPin pin, GPIOOptions options);
+            DigOutput(DigOutputService *service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
             ~DigOutput();
 
-            DigOutputService *getService() const { return service; }
+            inline DigOutputService *getService() const { return service; }
 
             bool get() const;
             void set();
             void clear();
             void toggle();
-            void pulse(unsigned width);
-            void cicle(unsigned width1, unsigned width2);
-            void delayedSet(unsigned delay);
-            void delayedClear(unsigned delay);
-            void delayedToggle(unsigned delay);
-            void delayedPulse(unsigned delay, unsigned width);
-            
+            void pulse(int width);
+            void cicle(int width1, int width2);
+            void delayedSet(int delay);
+            void delayedClear(int delay);
+            void delayedToggle(int delay);
+            void delayedPulse(int delay, int width);
+
         friend DigOutputService;
     };
 }

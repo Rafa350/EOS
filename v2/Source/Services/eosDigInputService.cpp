@@ -7,43 +7,20 @@
 using namespace eos;
 
 
-static const ServiceConfiguration serviceConfiguration = {
-    .serviceName = "DigInputService",
-    .stackSize = 512,
-    .priority = TaskPriority::normal
-};
-
-static const DigInputService::Configuration digInputServiceConfiguration = {
-    .serviceConfiguration = &serviceConfiguration
-};
-
-
 #define PATTERN_ON       0x0000007F
 #define PATTERN_OFF      0x00000080
 #define PATTERN_MASK     0x000000FF
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor. Crea l'objecte amb els parametres per defecte.
-/// \param    application: L'aplicacio al que pertany.
-///
-DigInputService::DigInputService(
-    Application *application) :
-    
-    DigInputService(application, &digInputServiceConfiguration) {
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: L'aplicacio a la que pertany
-/// \param    configuration: Parametres de configuracio.
+/// \param    cfg: Parametres de configuracio opcionals.
 ///
 DigInputService::DigInputService(
-    Application *application,
-    const DigInputService::Configuration *configuration) :
+    Application *application):
     
-    Service(application, (configuration == nullptr) || (configuration->serviceConfiguration == nullptr) ? &serviceConfiguration : configuration->serviceConfiguration) {
+    Service(application) {
 }
 
 
@@ -156,21 +133,22 @@ void DigInputService::onTask() {
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    service: El servei.
-/// \param    configuration: Parametres de configuracio.
+/// \param    port: El port.
+/// \param    pin: El numero de pin.
+/// \param    options: Opcions del pin.
 ///
 DigInput::DigInput(
     DigInputService *service,
-    const Configuration *configuration):
+    GPIOPort port, 
+    GPIOPin pin, 
+    GPIOOptions options) :
 
     service(nullptr),
+    port(port),
+    pin(pin),
+    options(options),
     changeEventCallback(nullptr) {
-       
-    port = configuration->port;
-    pin = configuration->pin;
-    options = configuration->options;
-    options &= ~HAL_GPIO_MODE_mask;
-    options |= HAL_GPIO_MODE_INPUT;
-
+    
     if (service != nullptr)
         service->addInput(this);
 }
@@ -191,6 +169,8 @@ DigInput::~DigInput() {
 ///
 void DigInput::initialize() {
     
+    options &= ~HAL_GPIO_MODE_mask;
+    options |= HAL_GPIO_MODE_INPUT;
     halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
 
     state = halGPIOReadPin(port, pin);

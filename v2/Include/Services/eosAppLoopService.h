@@ -1,12 +1,8 @@
 #ifndef __eosAppLoopService__
 #define	__eosAppLoopService__
 
-
-// EOS includes
-//
 #include "eos.h"
 #include "Services/eosService.h"
-#include "System/Core/eosTask.h"
 
 
 namespace eos {
@@ -15,14 +11,9 @@ namespace eos {
     ///        de l'aplicacio.
     ///
     class AppLoopService: public Service {
-        public:
-            struct Configuration {
-                const ServiceConfiguration *serviceConfiguration;
-            };
+        private:
+            bool initialized;
             
-    	private:
-    		bool initialized;
-
         protected:
             void onInitialize() override;
             void onTask() override;
@@ -31,7 +22,6 @@ namespace eos {
 
         public:
             AppLoopService(Application *application);
-            AppLoopService(Application *application, const Configuration *configuration);
     };
 }
 

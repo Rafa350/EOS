@@ -16,6 +16,16 @@
 #define eosI2CMasterService_TransactionQueueSize 10
 #endif
 
+// Modul de comunicacio I2C a gestionar 
+#ifndef eosI2CMasterService_I2CModule
+#define eosI2CMasterService_I2CModule HAL_I2C_I2C2
+#endif
+
+// Velocitat de comunicacio I2C
+#ifndef eosI2CMasterService_I2CBaudRate
+#define eosI2CMasterService_I2CBaudRate 100000
+#endif
+
 // Nom del servei
 #ifndef eosI2CmasterService_ServiceName
 #define eosI2CMasterService_ServiceName "I2CMasterService"
@@ -23,7 +33,7 @@
 
 // Prioritat d'execucio del servei
 #ifndef eosI2CMasterService_TaskPriority
-#define eosI2CMasterService_TaskPriority TaskPriority::normal
+#define eosI2CMasterService_TaskPriority Task::Priority::normal
 #endif
 
 // Tamany del stack del servei
@@ -41,8 +51,10 @@ namespace eos {
     class I2CMasterService: public Service {
         public:
             struct Configuration {
-                const ServiceConfiguration *serviceConfiguration;
                 I2CModule module;
+                int baudRate;
+                
+                Configuration();
             };
         
         private:
@@ -66,7 +78,7 @@ namespace eos {
             typedef Queue<I2CMasterTransaction*> TransactionQueue;
 
         private:
-            I2CModule module;
+            Configuration cfg;
             TransactionQueue transactionQueue;
             I2CMasterTransaction *transaction;
             BinarySemaphore semaphore;
@@ -77,20 +89,20 @@ namespace eos {
             bool waitingSlaveACK;   
             bool writeMode;         
             State state;
-            
-        private:
-            static void interruptCallback(I2CModule module, void *param);
-            void stateMachine();
-            
-        protected:
-            void onInitialize() override;
-            void onTask() override;
 
         public:
-            I2CMasterService(Application *application, const Configuration *configuration);
-            
+            I2CMasterService(Application *application, const Configuration *cfg);            
             bool startTransaction(I2CMasterTransaction *transaction, int blockTime);
+                           
+        protected:
+            void onInitialize() override;
+            void onTask() override;     
+    
+        private:
+            static void interruptCallback(I2CModule module, void *param);
+            void stateMachine();   
     };
+    
     
     class I2CMasterTransaction {
         public:

@@ -250,15 +250,14 @@ bool GfxDisplay::endCommand() {
         return false;
     
     else {
-        if (i2cService->startTransaction(
-            addr,
-            buffer,
-            bufferCount,
-            100,
-            nullptr)) {
-
-            return true;
-        }        
+        I2CMasterTransaction *transaction = new I2CMasterTransaction(
+            addr,  
+            I2CMasterTransaction::Protocol::packed, 
+            buffer, 
+            bufferCount, 
+            nullptr);
+        if (!i2cService->startTransaction(transaction, 1000))
+            delete transaction;
     }
 }
 

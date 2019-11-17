@@ -15,7 +15,7 @@ typedef void (*I2CInterruptCallback)(I2CModule module, void *param);
 
 typedef struct {
     I2CModule module;
-    unsigned baudRate;
+    int baudRate;
     I2CInterruptCallback irqCallback;
     void *irqParam;
 } I2CMasterInitializeInfo;
