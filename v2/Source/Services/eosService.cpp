@@ -14,11 +14,11 @@ using namespace eos;
 Service::Service(
 	Application *application) :
 
-	initialized(false),
+	state(State::idle),
     application(nullptr),
 	priority(Task::Priority::normal) {
 
-    // Si s'indica l'aplicacio, s'afegeix a la llista de
+    // Si s'indica l'aplicacio, aleshores s'afegeix a la llista de
 	// serveis d'aquesta.
 	//
     if (application != nullptr)
@@ -46,8 +46,11 @@ Service::~Service() {
 void Service::run(
     Task *thread) {
 
-    while (true)
-        task();
+    if (state == State::initialized) {
+        state = State::running;
+        while (state == State::running)
+            task();
+    }
 }
 
 
@@ -56,9 +59,9 @@ void Service::run(
 ///
 void Service::initialize() {
 
-	if (!initialized) {
+	if (state == State::idle) {
 		onInitialize();
-		initialized = true;
+		state = State::initialized;
 	}
 }
 
@@ -68,7 +71,7 @@ void Service::initialize() {
 ///
 void Service::tick() {
 
-	if (initialized)
+	if (state == State::running)
 		onTick();
 }
 
@@ -78,7 +81,7 @@ void Service::tick() {
 ///
 void Service::task() {
 
-	if (initialized)
+	if (state == State::running)
 		onTask();
 }
 

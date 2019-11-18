@@ -14,7 +14,13 @@ namespace eos {
     ///
     class Service: public IRunable {
         private:
-    		bool initialized;
+            enum class State {
+                idle,
+                initialized,
+                running
+            };
+            
+            State state;
             Application *application;
             Task::Priority priority;
 
@@ -36,7 +42,8 @@ namespace eos {
             void task();
             void run(Task *thread);
             
-            inline bool isInitialized() const { return initialized; }
+            inline bool isInitialized() const { return state == State::initialized; }
+            inline bool isRunning() const { return state == State::running; }
 
             inline void setPriority(Task::Priority proprity) { this->priority = priority; }
 
