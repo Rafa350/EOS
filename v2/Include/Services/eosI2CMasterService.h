@@ -26,22 +26,6 @@
 #define eosI2CMasterService_I2CBaudRate 100000
 #endif
 
-// Nom del servei
-#ifndef eosI2CmasterService_ServiceName
-#define eosI2CMasterService_ServiceName "I2CMasterService"
-#endif
-
-// Prioritat d'execucio del servei
-#ifndef eosI2CMasterService_TaskPriority
-#define eosI2CMasterService_TaskPriority Task::Priority::normal
-#endif
-
-// Tamany del stack del servei
-//
-#ifndef eosI2CMasterService_StackSize 
-#define eosI2CMasterService_StackSize 512
-#endif
-
 
 namespace eos {
     
@@ -53,8 +37,6 @@ namespace eos {
             struct Configuration {
                 I2CModule module;
                 int baudRate;
-                
-                Configuration();
             };
         
         private:
@@ -78,7 +60,8 @@ namespace eos {
             typedef Queue<I2CMasterTransaction*> TransactionQueue;
 
         private:
-            Configuration cfg;
+            I2CModule module;
+            int baudRate;
             TransactionQueue transactionQueue;
             I2CMasterTransaction *transaction;
             BinarySemaphore semaphore;

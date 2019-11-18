@@ -17,16 +17,6 @@ static PoolAllocator<I2CMasterTransaction> transactionAllocator(eosI2CMasterServ
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor per defecte. 
-///
-I2CMasterService::Configuration::Configuration():
-
-    module(eosI2CMasterService_I2CModule),
-    baudRate(eosI2CMasterService_I2CBaudRate) { 
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Constructor del servei.
 /// \param    application: Aplicacio a la que pertany el servei.
 /// \param    cfg: Parametres de configuracio.
@@ -36,10 +26,10 @@ I2CMasterService::I2CMasterService(
     const Configuration *cfg) :
     
     Service(application),
+    module(cfg->module),
+    baudRate(cfg->baudRate),
     transactionQueue(eosI2CMasterService_TransactionQueueSize) {
 
-    if (cfg != nullptr)
-        this->cfg = *cfg;
 }
 
 
@@ -65,8 +55,8 @@ bool I2CMasterService::startTransaction(
 void I2CMasterService::onInitialize() {
     
     I2CMasterInitializeInfo info = {
-        .module = cfg.module,
-        .baudRate = cfg.baudRate,
+        .module = module,
+        .baudRate = baudRate,
         .irqCallback = interruptCallback,
         .irqParam = this
     };

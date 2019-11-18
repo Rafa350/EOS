@@ -29,10 +29,12 @@
               <itemPath>../../../Include/HAL/PIC32/halI2C.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halUART.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halI2C.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
+            <itemPath>../../../Include/HAL/halUART.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalQueue.h</itemPath>
@@ -45,6 +47,7 @@
             <itemPath>../../../Include/Services/eosI2CMasterService.h</itemPath>
             <itemPath>../../../Include/Services/eosDigInputService.h</itemPath>
             <itemPath>../../../Include/Services/eosAppLoopService.h</itemPath>
+            <itemPath>../../../Include/Services/eosTerminalService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="System" projectFiles="true">
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
@@ -90,6 +93,7 @@
               <itemPath>../../../Source/HAL/PIC32/halI2CInterruptWrapper.S</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halUART.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
@@ -104,6 +108,7 @@
             <itemPath>../../../Source/Services/eosAppLoopService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosI2CMasterService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosTerminalService.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="StartUp" projectFiles="true">
             <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>

@@ -29,29 +29,47 @@ extern void __ISR(_I2C_5_VECTOR, IPL2SOFT) isrI2C5Wrapper(void);
 #endif
 
 
+/// -----------------------------------------------------------------
+/// \brief    Obte el identificador 'Harmony' del modul
+/// \param    module: El identificaodr 'EOS' del modul I2C.
+/// \return   El identificador 'Harmony'
+///
 static I2C_MODULE_ID getHarmonyID(
-    I2CModule moduleId) {
+    I2CModule module) {
     
-    static I2C_MODULE_ID idTable[I2C_NUMBER_OF_MODULES] = {
+    static const I2C_MODULE_ID idTable[] = {
         I2C_ID_1, 
 #ifdef _I2C2        
         I2C_ID_2,   
+#else
+       0,       
 #endif        
 #ifdef _I2C3        
         I2C_ID_3, 
+#else
+       0,        
 #endif        
 #ifdef _I2C4     
         I2C_ID_4, 
+#else
+       0,        
 #endif        
 #ifdef _I2C5        
         I2C_ID_5
+#else
+       0        
 #endif        
     };
     
-    return idTable[moduleId];
+    return idTable[module];
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte el identificador 'EOS' del modul.
+/// \param    id: El identificador 'Harmony' del modul I2C.
+/// \return   El identificador 'EOS'.
+///
 static I2CModule 
     getEosID(I2C_MODULE_ID id) {
     
