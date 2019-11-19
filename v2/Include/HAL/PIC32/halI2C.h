@@ -37,7 +37,7 @@ typedef struct {
 
 
 void halI2CMasterInitialize(const I2CMasterInitializeInfo *info);
-void halI2CMasterShutdown(I2CModule module);
+void halI2CMasterDeinitialize(I2CModule module);
 
 void halI2CMasterStart(I2CModule module);
 void halI2CMasterStartRepeat(I2CModule module);

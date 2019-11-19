@@ -172,7 +172,19 @@ void halI2CMasterInitialize(
 }
 
 
-/// ------------------------------------------------------------
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el modul.
+/// \param    module: El modul.
+///
+void halI2CMasterDeinitialize(
+    I2CModule module) {
+    
+    callbacks[module] = NULL;
+    params[module] = NULL;    
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief   Genera la sequencia START
 /// \param   module: El modul.
 ///
@@ -183,7 +195,7 @@ void halI2CMasterStart(
 }
 
 
-/// ------------------------------------------------------------
+/// ----------------------------------------------------------------------
 /// \brief   Genera la sequencia STOP
 /// \param   module: El modul.
 ///
@@ -194,7 +206,7 @@ void halI2CMasterStop(
 }
 
 
-/// ------------------------------------------------------------
+/// ----------------------------------------------------------------------
 /// \brief   Genera la sequencia RESTART
 /// \param   module: El modul.
 ///

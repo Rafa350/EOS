@@ -32,13 +32,13 @@ namespace eos {
     class Application;
     class I2CMasterTransaction;
           
-    class I2CMasterService: public Service {
+    class I2CMasterService: public Service {      
         public:
             struct Configuration {
                 I2CModule module;
                 int baudRate;
             };
-        
+            
         private:
             enum class State {          // Estat de la transaccio
                 idle,                   // -En espera de iniciar
@@ -61,7 +61,6 @@ namespace eos {
 
         private:
             I2CModule module;
-            int baudRate;
             TransactionQueue transactionQueue;
             I2CMasterTransaction *transaction;
             BinarySemaphore semaphore;
@@ -74,7 +73,9 @@ namespace eos {
             State state;
 
         public:
-            I2CMasterService(Application *application, const Configuration *cfg);            
+            I2CMasterService(Application *application, const Configuration &cfg);        
+            ~I2CMasterService();
+            
             bool startTransaction(I2CMasterTransaction *transaction, int blockTime);
                            
         protected:
@@ -82,6 +83,8 @@ namespace eos {
             void onTask() override;     
     
         private:
+            void initializeHardware(const Configuration &cfg);
+            void deinitializeHardware();
             static void interruptCallback(I2CModule module, void *param);
             void stateMachine();   
     };

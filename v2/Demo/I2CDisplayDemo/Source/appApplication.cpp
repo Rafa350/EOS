@@ -16,7 +16,11 @@ using namespace app;
 ///
 MyApplication::MyApplication() {
 
-    i2cMasterService = new I2CMasterService(this, nullptr);
+    I2CMasterService::Configuration cfg = {
+        .module = eosI2CMasterService_I2CModule, 
+        .baudRate = eosI2CMasterService_I2CBaudRate        
+    };
+    i2cMasterService = new I2CMasterService(this, cfg);
     
     // Crea el servei de gestio de display
     //

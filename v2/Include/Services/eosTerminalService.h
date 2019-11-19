@@ -19,7 +19,8 @@ namespace eos {
                 int baudRate;
             };
             
-            TerminalService(Application *application, const Configuration *cfg);
+            TerminalService(Application *application, const Configuration &cfg);
+            ~TerminalService();
             
         protected:
             void onInitialize() override;
@@ -27,8 +28,9 @@ namespace eos {
             
         private:
             UARTModule module;
-            int baudRate;
             
+            void initializeHardware(const Configuration &cfg);
+            void deinitializeHardware();
             static void interruptCallback(UARTModule module, void *param);
     };
 }

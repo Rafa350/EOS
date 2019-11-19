@@ -15,22 +15,42 @@ using namespace eos;
 ///
 TerminalService::TerminalService(
     Application *application,
-    const Configuration *cfg):
+    const Configuration &cfg):
 
     Service(application),
-    module(cfg->module),
-    baudRate(cfg->baudRate) {
+    module(cfg.module) {
+    
+    initializeHardware(cfg);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desructor del objecte.
+///
+TerminalService::~TerminalService() {
+    
+    deinitializeHardware();
+}
+
+
+void TerminalService::initializeHardware(
+    const Configuration& cfg) {
+    
+    UARTInitializeInfo info = {
+        .module = module,
+        .baudRate = cfg.baudRate
+    };
+    halUARTInitialize(&info);
+}
+
+
+void TerminalService::deinitializeHardware() {
     
 }
 
 
 void TerminalService::onInitialize() {
     
-    UARTInitializeInfo info = {
-        .module = module,
-        .baudRate = baudRate
-    };
-    halUARTInitialize(&info);
 }
 
 

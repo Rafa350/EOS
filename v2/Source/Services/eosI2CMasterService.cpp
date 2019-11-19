@@ -10,26 +10,59 @@
 using namespace eos;
 
 
-static const unsigned baudRate = 100000;
-
-
 static PoolAllocator<I2CMasterTransaction> transactionAllocator(eosI2CMasterService_TransactionQueueSize);
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor del servei.
+/// \brief    Constructor del objecte.
 /// \param    application: Aplicacio a la que pertany el servei.
 /// \param    cfg: Parametres de configuracio.
 ///
 I2CMasterService::I2CMasterService(
     Application *application,
-    const Configuration *cfg) :
+    const Configuration &cfg):
     
     Service(application),
-    module(cfg->module),
-    baudRate(cfg->baudRate),
+    module(cfg.module),
     transactionQueue(eosI2CMasterService_TransactionQueueSize) {
 
+    initializeHardware(cfg);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Destructor del objecte.
+///
+I2CMasterService::~I2CMasterService() {
+
+    deinitializeHardware();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el hardware.
+/// \param    cfg: Parametres de configuracio.
+///
+void I2CMasterService::initializeHardware(
+    const Configuration& cfg) {
+    
+    I2CMasterInitializeInfo info = {
+        .module = module,
+        .baudRate = cfg.baudRate,
+        .irqCallback = interruptCallback,
+        .irqParam = this
+    };
+    
+    halI2CMasterInitialize(&info);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desinicialitza el hardware.
+///
+void I2CMasterService::deinitializeHardware() {
+    
+    halI2CMasterDeinitialize(module);
 }
 
 
@@ -54,14 +87,6 @@ bool I2CMasterService::startTransaction(
 ///
 void I2CMasterService::onInitialize() {
     
-    I2CMasterInitializeInfo info = {
-        .module = module,
-        .baudRate = baudRate,
-        .irqCallback = interruptCallback,
-        .irqParam = this
-    };
-    
-    halI2CMasterInitialize(&info);
 }
 
 
