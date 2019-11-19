@@ -31,6 +31,8 @@
               <itemPath>../../../Include/HAL/PIC32/halINT.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halSPI.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halGPIOTpl.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halTMR.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>

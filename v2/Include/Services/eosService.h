@@ -12,17 +12,11 @@ namespace eos {
 
     /// \brief Clase que representa un servei.
     ///
-    class Service: public IRunable {
+    class Service {
         private:
-            enum class State {
-                idle,
-                initialized,
-                running
-            };
-            
-            State state;
             Application *application;
             Task::Priority priority;
+            bool initialized;
 
             Service(const Service &service) = delete;
             Service& operator=(const Service&) = delete;
@@ -40,13 +34,8 @@ namespace eos {
             void initialize();
             void tick();
             void task();
-            void run(Task *thread);
             
-            inline bool isInitialized() const { return state == State::initialized; }
-            inline bool isRunning() const { return state == State::running; }
-
             inline void setPriority(Task::Priority proprity) { this->priority = priority; }
-
             inline Task::Priority getPriority() const { return priority; }
 
         friend void link(Application *application, Service *service);

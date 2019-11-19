@@ -33,11 +33,13 @@ Application::~Application() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el event d'inici de la tasca del servei
+/// \brief    Procesa el event d'inici de la tasca del servei.
 /// \param    args: Parametres del event.
 ///
 void Application::taskEventHandler(
     const Task::EventArgs &args) {
+    
+    eosAssert(args.param != nullptr);
     
     Service *service = static_cast<Service*>(args.param);
     while (true)
@@ -110,7 +112,8 @@ void Application::runServices() {
             512,
             service->getPriority(),
             "service",
-            service);
+            &taskEventCallback,
+            (void*)service);
         tasks.add(task);
     }  
     

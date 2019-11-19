@@ -12,16 +12,6 @@
 namespace eos {
 
 	class String;
-    class Task;
-
-    /// \brief Interficie que cal que implementin les clases que poden
-    ///        ser procesades dins d'una tasca.
-    ///
-    class IRunable {
-        public:
-    		virtual ~IRunable() {}
-            virtual void run(Task *task) = 0;
-    };
 
     /// \brief Clase que implementa una tasca.
     ///
@@ -37,13 +27,12 @@ namespace eos {
 
         public:
             enum class Priority {
-                idle = OSAL_TASK_PRIORITY_IDLE,
-                low = OSAL_TASK_PRIORITY_LOW,
-                normal = OSAL_TASK_PRIORITY_NORMAL,
-                high = OSAL_TASK_PRIORITY_HIGH
+                idle,
+                low,
+                normal,
+                high
             };
             
-            Task(int stackSize, Priority priority, const String &name, IRunable *runable);
             Task(int stackSize, Priority priority, const String &name, IEventCallback *eventCallback, void *eventParam);
             virtual ~Task();
 
@@ -63,7 +52,6 @@ namespace eos {
             HTask hTask;
             IEventCallback *eventCallback;
             void *eventParam;
-            IRunable *runable;
             int weakTime;
 
             static void function(void *params);    

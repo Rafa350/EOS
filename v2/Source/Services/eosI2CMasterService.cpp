@@ -74,7 +74,7 @@ void I2CMasterService::onTask() {
 
         // Espera a que el bus estigui lliure
         //
-        while (!halI2CIsBusIdle(cfg.module)) 
+        while (!halI2CIsBusIdle(module)) 
             Task::delay(20);
 
         // Inicialitza la transaccio
@@ -85,7 +85,7 @@ void I2CMasterService::onTask() {
         // Inicia la comunicacio. A partir d'aquest punt es
         // generen les interrupcions del modul I2C
         //
-        halI2CMasterStart(cfg.module);
+        halI2CMasterStart(module);
 
         // Espera que finalitzi la transaccio
         //
@@ -146,18 +146,18 @@ void I2CMasterService::stateMachine() {
 
             // Si hi ha colissio, reinicia la transmissio
             //
-            if (halI2CArbitrationLossHasOccurred(cfg.module)) {
-                halI2CArbitrationLossClear(cfg.module);
-                while (!halI2CIsBusIdle(cfg.module))
+            if (halI2CArbitrationLossHasOccurred(module)) {
+                halI2CArbitrationLossClear(module);
+                while (!halI2CIsBusIdle(module))
                     continue;
-                halI2CMasterStart(cfg.module);
+                halI2CMasterStart(module);
             }
 
             else {
 
                 // Envia l'adressa del esclau
                 //
-                halI2CTransmitterByteSend(cfg.module, transaction->addr | (writeMode ? 0 : 1));
+                halI2CTransmitterByteSend(module, transaction->addr | (writeMode ? 0 : 1));
 
                 index = 0;
                 check = transaction->addr;
@@ -176,11 +176,11 @@ void I2CMasterService::stateMachine() {
 
             // Si hi ha colissio, reinicia la transmissio
             //
-            if (halI2CArbitrationLossHasOccurred(cfg.module)) {
-                halI2CArbitrationLossClear(cfg.module);
-                while (!halI2CIsBusIdle(cfg.module))
+            if (halI2CArbitrationLossHasOccurred(module)) {
+                halI2CArbitrationLossClear(module);
+                while (!halI2CIsBusIdle(module))
                     continue;
-                halI2CMasterStart(cfg.module);
+                halI2CMasterStart(module);
                 state = State::sendAddress;
             }
 
@@ -188,13 +188,13 @@ void I2CMasterService::stateMachine() {
 
                 // Si l'esclau ha respos ACK, continua amb els bytes pendents
                 //
-                if (halI2CTransmitterByteWasAcknowledged(cfg.module) && 
+                if (halI2CTransmitterByteWasAcknowledged(module) && 
                     (state != State::sendFinished)) {
 
                     switch (state) {
                         case State::sendLength:
                             check += transaction->txCount;
-                            halI2CTransmitterByteSend(cfg.module, transaction->txCount);
+                            halI2CTransmitterByteSend(module, transaction->txCount);
                             if (transaction->txCount > 0)
                                 state = State::sendData;
                             else
@@ -204,14 +204,14 @@ void I2CMasterService::stateMachine() {
                         case State::sendData: {
                             uint8_t data = transaction->txBuffer[index++];
                             check += data;
-                            halI2CTransmitterByteSend(cfg.module, data);
+                            halI2CTransmitterByteSend(module, data);
                             if (index == transaction->txCount) 
                                 state = State::sendCheck;
                             break;
                         }
 
                         case State::sendCheck:
-                            halI2CTransmitterByteSend(cfg.module, check);
+                            halI2CTransmitterByteSend(module, check);
                             state = State::sendFinished;
                             break;
                     }
@@ -226,7 +226,7 @@ void I2CMasterService::stateMachine() {
                     // i inicia la transaccio de nou per rebre la resposta de l'esclau
                     //
                     if (transaction->rxBuffer && transaction->rxSize) {
-                        halI2CMasterStartRepeat(cfg.module);
+                        halI2CMasterStartRepeat(module);
                         writeMode = false;
                         state = State::sendAddress;
                     }
@@ -234,7 +234,7 @@ void I2CMasterService::stateMachine() {
                     // En cas contrari finalitza
                     //
                     else {
-                        halI2CMasterStop(cfg.module);
+                        halI2CMasterStop(module);
                         state = State::waitStop;
                     }
                 }
@@ -245,24 +245,24 @@ void I2CMasterService::stateMachine() {
 
             // Si l'esclau ha respos ACK, llegeix un byte
             //
-            if (halI2CTransmitterByteWasAcknowledged(cfg.module)) {
-                halI2CMasterReceiverClock1Byte(cfg.module);
+            if (halI2CTransmitterByteWasAcknowledged(module)) {
+                halI2CMasterReceiverClock1Byte(module);
                 state = State::receiveLength;
             }
 
             // En cas contrari finalitza la transmissio
             //
             else {
-                halI2CMasterStop(cfg.module);
+                halI2CMasterStop(module);
                 state = State::waitStop;
             }
             break;
 
         case State::receiveLength: {
-            uint8_t data = halI2CReceivedByteGet(cfg.module);
+            uint8_t data = halI2CReceivedByteGet(module);
             maxIndex = Math::min(transaction->rxSize, (int) data);
             check += data;
-            halI2CReceivedByteAcknowledge(cfg.module, true);
+            halI2CReceivedByteAcknowledge(module, true);
             waitingSlaveACK = true;
             if (maxIndex > 0)
                 state = State::receiveData;
@@ -273,14 +273,14 @@ void I2CMasterService::stateMachine() {
 
         case State::receiveData:
             if (waitingSlaveACK) {
-                halI2CMasterReceiverClock1Byte(cfg.module);
+                halI2CMasterReceiverClock1Byte(module);
                 waitingSlaveACK = false;
             }
             else {
-                uint8_t data = halI2CReceivedByteGet(cfg.module);
+                uint8_t data = halI2CReceivedByteGet(module);
                 transaction->rxBuffer[index++] = data;
                 check += data;
-                halI2CReceivedByteAcknowledge(cfg.module, true);
+                halI2CReceivedByteAcknowledge(module, true);
                 waitingSlaveACK = true;
                 if (index == maxIndex)
                     state = State::receiveCheck;
@@ -289,15 +289,15 @@ void I2CMasterService::stateMachine() {
 
         case State::receiveCheck:
             if (waitingSlaveACK) {
-                halI2CMasterReceiverClock1Byte(cfg.module);
+                halI2CMasterReceiverClock1Byte(module);
                 waitingSlaveACK = false;
             }
             else  {
-                uint8_t data = halI2CReceivedByteGet(cfg.module);
+                uint8_t data = halI2CReceivedByteGet(module);
                 if (data != check)
                     error = 1;
                 transaction->rxCount = index;
-                halI2CMasterStop(cfg.module);
+                halI2CMasterStop(module);
                 state = State::waitStop;
             }
             break;

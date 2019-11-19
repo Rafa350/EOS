@@ -4,13 +4,13 @@
 #include "eos.h"
 #include "System/eosCallbacks.h"
 #include "System/Collections/eosList.h"
+#include "System/Core/eosTask.h"
 
 
 namespace eos {
 
 	class Service;
     class String;
-    class Task;
 
     void link(Application *application, Service *service);
     void unlink(Application *application, Service *service);

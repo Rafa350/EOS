@@ -14,9 +14,9 @@ using namespace eos;
 Service::Service(
 	Application *application) :
 
-	state(State::idle),
     application(nullptr),
-	priority(Task::Priority::normal) {
+	priority(Task::Priority::normal),
+    initialized(false) {
 
     // Si s'indica l'aplicacio, aleshores s'afegeix a la llista de
 	// serveis d'aquesta.
@@ -40,28 +40,13 @@ Service::~Service() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Funcio d'execucio de la tasca.
-/// \param    thread: La tasca.
-///
-void Service::run(
-    Task *thread) {
-
-    if (state == State::initialized) {
-        state = State::running;
-        while (state == State::running)
-            task();
-    }
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Configura el servei, abans de l'inici del planificador.
 ///
 void Service::initialize() {
 
-	if (state == State::idle) {
+	if (!initialized) {
 		onInitialize();
-		state = State::initialized;
+        initialized = true;
 	}
 }
 
@@ -71,7 +56,7 @@ void Service::initialize() {
 ///
 void Service::tick() {
 
-	if (state == State::running)
+	if (initialized)
 		onTick();
 }
 
@@ -81,8 +66,8 @@ void Service::tick() {
 ///
 void Service::task() {
 
-	if (state == State::running)
-		onTask();
+    if (initialized)
+        onTask();
 }
 
 

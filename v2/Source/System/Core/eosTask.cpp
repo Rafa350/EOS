@@ -17,39 +17,6 @@ using namespace eos;
 /// \param    stackSize: Tamany de la pila.
 /// \param    priority: Prioritat del proces.
 /// \param    name: Nom de la tasca.
-/// \param    runable: Objecte que implementa IRunable.
-///
-Task::Task(
-    int stackSize,
-    Priority priority,
-    const String& name,
-    IRunable *runable):
-
-    runable(runable),
-    eventCallback(nullptr),
-    eventParam(nullptr),
-	weakTime(0) {
-
-    eosAssert(runable != nullptr);
-
-    TaskInitializeInfo info;
-    info.name = (const char*) name;
-    info.stackSize = stackSize;
-    info.options = TaskOptions(priority);
-    info.function = function;
-    info.params = this;
-    hTask = osalTaskCreate(&info);
-
-    eosAssert(hTask != nullptr);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor. Crea un objecte Task que encapsula una tasca
-///           de FreeRTOS.
-/// \param    stackSize: Tamany de la pila.
-/// \param    priority: Prioritat del proces.
-/// \param    name: Nom de la tasca.
 /// \param    eventCallback: Funcio callback.
 /// \param    eventParam: Parametre que es passa a la funcio callback.
 ///
@@ -60,7 +27,6 @@ Task::Task(
     IEventCallback *eventCallback,
     void *eventParam):
 
-    runable(nullptr),
     eventCallback(eventCallback),
     eventParam(eventParam),
 	weakTime(0) {
@@ -68,11 +34,31 @@ Task::Task(
     eosAssert(eventCallback != nullptr);
 
     TaskInitializeInfo info;
+    
     info.name = (const char*) name;
     info.stackSize = stackSize;
-    info.options = TaskOptions(priority);
+    info.options = 0;
+    switch (priority) {
+        case Priority::high:
+            info.options |= OSAL_TASK_PRIORITY_HIGH;
+            break;
+            
+        case Priority::normal:
+            info.options |= OSAL_TASK_PRIORITY_NORMAL;
+            break;
+            
+        case Priority::low:
+            info.options |= OSAL_TASK_PRIORITY_LOW;
+            break;
+            
+        case Priority::idle:
+            info.options |= OSAL_TASK_PRIORITY_IDLE;
+            break;
+    }
+    
     info.function = function;
     info.params = this;
+    
     hTask = osalTaskCreate(&info);
 
     eosAssert(hTask != nullptr);
@@ -102,16 +88,7 @@ void Task::function(
     
     task->weakTime = osalGetTickCount();
     
-    // Version objecte runable
-    //
-    if (task->runable != nullptr) {
-        while (true)
-            task->runable->run(task);
-    }
-    
-    // Versio callback
-    //
-    else if (task->eventCallback != nullptr) {
+    if (task->eventCallback != nullptr) {
         EventArgs args = {
             .task = task,
             .param = task->eventParam
@@ -120,7 +97,7 @@ void Task::function(
             task->eventCallback->execute(args);
     }
     
-    eosFatal("No ha de llegar aqui mai.");
+    eosFatal("No s'ha d'arrivar mai aqui.");
 }
 
 
