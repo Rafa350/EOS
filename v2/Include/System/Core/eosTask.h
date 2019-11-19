@@ -34,6 +34,7 @@ namespace eos {
             };
             
             Task(int stackSize, Priority priority, const String &name, IRunable *runable);
+            Task(int stackSize, Priority priority, const String &name, TaskFunction function);
             virtual ~Task();
 
             static void delay(int time);

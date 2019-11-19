@@ -27,8 +27,11 @@ namespace eos {
 
             Application(const Application&) = delete;
             Application& operator=(const Application&) = delete;
+            
             void initializeServices();
             void runServices();
+            
+            static void taskFunction(void *param);
 
         protected:
             virtual void onInitialize();
@@ -48,8 +51,8 @@ namespace eos {
 
             inline bool isInitialized() const { return initialized; }
 
-            friend void link(Application *application, Service *service);
-            friend void unlink(Application *application, Service *service);
+        friend void link(Application *application, Service *service);
+        friend void unlink(Application *application, Service *service);
     };
 }
 

@@ -182,6 +182,19 @@ void Application::onTick() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Tasca d'execucio pels serveis
+/// \param    param: Parametre que conte un punter al servei.
+///
+void Application::taskFunction(
+    void *param) {
+    
+    Service *service = static_cast<Service*>(param);
+    while (true)
+        service->task();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Afegeix el servei a la llista de serveis
 /// \param    application: L'aplicacio.
 /// \param    service: El servei.
