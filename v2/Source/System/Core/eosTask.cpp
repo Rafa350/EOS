@@ -35,7 +35,7 @@ Task::Task(
 
     TaskInitializeInfo info;
     
-    info.name = (const char*) name;
+    info.name = name;
     info.stackSize = stackSize;
     info.options = 0;
     switch (priority) {

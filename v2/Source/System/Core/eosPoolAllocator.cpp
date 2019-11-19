@@ -70,7 +70,7 @@ void *MemoryPoolAllocator::allocate(
         }
 
         if (freeBlocks > 0) {
-            ret = (void*) nextBlock;
+            ret = static_cast<void*>(nextBlock);
             freeBlocks -= 1;
             if (freeBlocks > 0)
                 nextBlock = addrFromIndex(*((int*) nextBlock) );
@@ -83,7 +83,6 @@ void *MemoryPoolAllocator::allocate(
     }
 
     eosAssert(ret != nullptr);
-
 
     return ret;
 }
@@ -101,11 +100,11 @@ void MemoryPoolAllocator::deallocate(
     osalEnterCritical();
 
     if (nextBlock != nullptr)
-        *((int*)p) = indexFromAddr(nextBlock);
+        *(static_cast<int*>(p)) = indexFromAddr(nextBlock);
     else
-        *((int*)p) = maxBlocks;
+        *(static_cast<int*>(p)) = maxBlocks;
 
-    nextBlock = (uint8_t*) p;
+    nextBlock = static_cast<uint8_t*>(p);
     freeBlocks += 1;
 
     osalExitCritical();

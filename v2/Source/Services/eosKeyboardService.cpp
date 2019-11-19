@@ -8,30 +8,21 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor per defecte.
-///
-KeyboardService::Configuration::Configuration() {
-
-	i2cAddress = 0;
-	i2cService = nullptr;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Constructor
 /// \param 	  application: Aplicacio a la que pertany.
 /// \param    cfg: Parametres de configuracio.
 ///
 KeyboardService::KeyboardService(
     Application *application,
-	const Configuration *cfg) :
+	I2CMasterService *i2cService,
+	int i2cAddress) :
     
     Service(application),
+	i2cService(i2cService),
+	i2cAddress(i2cAddress),
     state(0),
     eventCallback(nullptr) {
 
-	if (cfg != nullptr)
-		this->cfg = *cfg;
 }
 
 

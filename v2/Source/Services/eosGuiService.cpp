@@ -31,21 +31,12 @@ static RenderContext *context;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor per defecte.
-///
-GuiService::Configuration::Configuration() {
-
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Constructor
 /// \param    application: Aplicacio on afeigir el servei.
 /// \param    cfg: Parametres de configuracio
 ///
 GuiService::GuiService(
-	Application *application,
-	const Configuration *cfg):
+	Application *application):
 
 	Service(application),
 	screen(new Screen()),
@@ -55,9 +46,6 @@ GuiService::GuiService(
 	, touchPadEventCallback(this, &GuiService::touchPadEventHandler)
 #endif
 	{
-
-	if (cfg != nullptr)
-		this->cfg = *cfg;
 
 #ifdef OPT_GUI_TouchPad
 	touchPadService = new TouchPadService(application);
@@ -218,14 +206,14 @@ void GuiService::touchPadEventHandler(
 
 
 #ifdef OPT_GUI_Keyboard
-void GuiService::keyboardEventhandler(
+void GuiService::keyboardEventHandler(
 	const KeyboardEventArgs &aargs) {
 
 }
 #endif
 
 #ifdef OPT_GUI_Selector
-void GuiService::selectorEventhandler(
+void GuiService::selectorEventHandler(
 	const SelectorEventArgs &args) {
 
 }

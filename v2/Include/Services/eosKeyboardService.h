@@ -24,24 +24,17 @@ namespace eos {
     typedef uint8_t KeyboardState;
 
     class KeyboardService: public Service {
-    	public:
-    		struct Configuration {
-    			int i2cAddress;
-    			I2CMasterService *i2cService;
-
-    			Configuration();
-    		};
-
         private:
             typedef ICallbackP1<KeyboardState> IEventCallback;
 
         private:
-            Configuration cfg;
+            int i2cAddress;
+            I2CMasterService *i2cService;
             KeyboardState state;
             IEventCallback *eventCallback;
 
         public:
-            KeyboardService(Application *application, const Configuration *cfg);
+            KeyboardService(Application *application, I2CMasterService *i2cService, int i2cAddress);
 
             inline void setEventCallback(IEventCallback *callback) { eventCallback = callback; }
 

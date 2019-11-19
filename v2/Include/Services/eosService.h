@@ -15,8 +15,10 @@ namespace eos {
     class Service {
         private:
             Application *application;
+            int stackSize;
             Task::Priority priority;
             bool initialized;
+            String name;
 
             Service(const Service &service) = delete;
             Service& operator=(const Service&) = delete;
@@ -35,8 +37,15 @@ namespace eos {
             void tick();
             void task();
             
+            inline void setName(const String &name) { this->name = name; }
             inline void setPriority(Task::Priority proprity) { this->priority = priority; }
+            inline void setStackSize(int stackSize) { this->stackSize = stackSize; }
+
+            inline const String& getName() const { return name; }
             inline Task::Priority getPriority() const { return priority; }
+            inline int getStackSize() const { return stackSize; }
+
+            inline bool isInitialized() const { return initialized; }
 
         friend void link(Application *application, Service *service);
         friend void unlink(Application *application, Service *service);

@@ -13,8 +13,8 @@ using namespace eos;
 ///
 Application::Application():
 
-    taskEventCallback(this, &Application::taskEventHandler),
-	initialized(false) {
+	initialized(false),
+    taskEventCallback(this, &Application::taskEventHandler) {
 
 }
 
@@ -109,11 +109,11 @@ void Application::runServices() {
     //
     for (auto service: services) {
         Task *task = new Task(
-            512,
+            service->getStackSize(),
             service->getPriority(),
-            "service",
+            service->getName(),
             &taskEventCallback,
-            (void*)service);
+            static_cast<void*>(service));
         tasks.add(task);
     }  
     

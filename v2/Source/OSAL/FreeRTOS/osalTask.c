@@ -25,10 +25,10 @@ HTask osalTaskCreate(
         info->stackSize,
         info->params,
         tskIDLE_PRIORITY + ((UBaseType_t) (info->options & OSAL_TASK_PRIORITY_mask) >> OSAL_TASK_PRIORITY_pos),
-        (TaskHandle_t*) &hTask) != pdPASS)
-		return NULL;
-
-    return hTask;
+        (TaskHandle_t*) &hTask) == pdPASS)
+		return hTask;
+    else
+    	return NULL;
 }
 
 

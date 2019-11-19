@@ -47,7 +47,7 @@ void TouchPadService::onTask() {
 
 	if (eventCallback != nullptr) {
 
-		if (lock.wait((unsigned) -1)) {
+		if (lock.wait(-1)) {
 
 			// Detecta variacions del estat del touchpad
 			//
@@ -126,5 +126,5 @@ void TouchPadService::interruptHandler(
 	EXTILine line,
 	void *param) {
 
-	((TouchPadService*)param)->interruptHandler();
+	static_cast<TouchPadService*>(param)->interruptHandler();
 }

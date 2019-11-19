@@ -41,16 +41,9 @@ namespace eos {
 
 
 	class GuiService final: public Service {
-		public:
-			struct Configuration {
-
-				Configuration();
-			};
-
 		private:
 			typedef CallbackP1<GuiService, const TouchPadService::EventArgs&> TouchPadEventCallback;
 
-			Configuration cfg;
 			Screen *screen;
 			Visual *active;
 			MsgQueue *msgQueue;
@@ -67,7 +60,7 @@ namespace eos {
 #endif
 
 		public:
-			GuiService(Application *application, const Configuration *cfg = nullptr);
+			GuiService(Application *application);
 			inline Screen* getScreen() const { return screen; }
 			inline Visual* getActiveVisual() const { return active; }
 			Visual *getVisualAt(const Point &position) const;

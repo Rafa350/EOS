@@ -12,8 +12,8 @@ using namespace eos;
 AppLoopService::AppLoopService(
     Application *application):
 
-    initialized(false),
-    Service(application) {
+	Service(application),
+    initialized(false) {
 }
 
 

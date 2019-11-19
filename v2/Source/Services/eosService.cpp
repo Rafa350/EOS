@@ -15,8 +15,10 @@ Service::Service(
 	Application *application) :
 
     application(nullptr),
+	stackSize(512),
 	priority(Task::Priority::normal),
-    initialized(false) {
+    initialized(false),
+	name("SERVICE") {
 
     // Si s'indica l'aplicacio, aleshores s'afegeix a la llista de
 	// serveis d'aquesta.
