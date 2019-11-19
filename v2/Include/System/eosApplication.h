@@ -2,6 +2,7 @@
 #define	__eosApplication__
 
 #include "eos.h"
+#include "System/eosCallbacks.h"
 #include "System/Collections/eosList.h"
 
 
@@ -20,19 +21,20 @@ namespace eos {
     	private:
         	typedef List<Service*> ServiceList;
             typedef List<Task*> TaskList;
+			typedef CallbackP1<Application, const Task::EventArgs&> TaskEventCallback;
 
             bool initialized;
             ServiceList services;
             TaskList tasks;
+            TaskEventCallback taskEventCallback;
 
             Application(const Application&) = delete;
             Application& operator=(const Application&) = delete;
             
             void initializeServices();
             void runServices();
+            void taskEventHandler(const Task::EventArgs &args);
             
-            static void taskFunction(void *param);
-
         protected:
             virtual void onInitialize();
             virtual void onTerminate();

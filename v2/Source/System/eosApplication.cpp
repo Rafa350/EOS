@@ -13,6 +13,7 @@ using namespace eos;
 ///
 Application::Application():
 
+    taskEventCallback(this, &Application::taskEventHandler),
 	initialized(false) {
 
 }
@@ -28,6 +29,19 @@ Application::~Application() {
 	//
 	while (!services.isEmpty())
 		delete services.getFirst();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el event d'inici de la tasca del servei
+/// \param    args: Parametres del event.
+///
+void Application::taskEventHandler(
+    const Task::EventArgs &args) {
+    
+    Service *service = static_cast<Service*>(args.param);
+    while (true)
+        service->task();
 }
 
 
@@ -95,7 +109,7 @@ void Application::runServices() {
         Task *task = new Task(
             512,
             service->getPriority(),
-            nullptr,
+            "service",
             service);
         tasks.add(task);
     }  
@@ -178,19 +192,6 @@ void Application::onTerminate() {
 ///
 void Application::onTick() {
 
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Tasca d'execucio pels serveis
-/// \param    param: Parametre que conte un punter al servei.
-///
-void Application::taskFunction(
-    void *param) {
-    
-    Service *service = static_cast<Service*>(param);
-    while (true)
-        service->task();
 }
 
 

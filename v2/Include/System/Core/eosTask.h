@@ -5,7 +5,8 @@
 // EOS includes
 //
 #include "eos.h"
-#include "osal/osalTask.h"
+#include "OSAL/osalTask.h"
+#include "System/eosCallbacks.h"
 
 
 namespace eos {
@@ -26,6 +27,15 @@ namespace eos {
     ///
     class Task {
         public:
+            struct EventArgs {
+                Task *task;
+                void *param;
+            };
+            
+        private:
+            typedef ICallbackP1<const EventArgs&> IEventCallback;
+
+        public:
             enum class Priority {
                 idle = OSAL_TASK_PRIORITY_IDLE,
                 low = OSAL_TASK_PRIORITY_LOW,
@@ -34,7 +44,7 @@ namespace eos {
             };
             
             Task(int stackSize, Priority priority, const String &name, IRunable *runable);
-            Task(int stackSize, Priority priority, const String &name, TaskFunction function);
+            Task(int stackSize, Priority priority, const String &name, IEventCallback *eventCallback, void *eventParam);
             virtual ~Task();
 
             static void delay(int time);
@@ -51,6 +61,8 @@ namespace eos {
 
         private:
             HTask hTask;
+            IEventCallback *eventCallback;
+            void *eventParam;
             IRunable *runable;
             int weakTime;
 

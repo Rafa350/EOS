@@ -12,10 +12,8 @@
 using namespace eos;
 
 
-
 /// ----------------------------------------------------------------------
-/// \brief    Constructor. Crea un objecte Task que encapsula una tasca
-///           de FreeRTOS.
+/// \brief    Constructor. Crea un objecte Task.
 /// \param    stackSize: Tamany de la pila.
 /// \param    priority: Prioritat del proces.
 /// \param    name: Nom de la tasca.
@@ -28,6 +26,8 @@ Task::Task(
     IRunable *runable):
 
     runable(runable),
+    eventCallback(nullptr),
+    eventParam(nullptr),
 	weakTime(0) {
 
     eosAssert(runable != nullptr);
@@ -35,7 +35,42 @@ Task::Task(
     TaskInitializeInfo info;
     info.name = (const char*) name;
     info.stackSize = stackSize;
-    info.options = OSAL_TASK_PRIORITY_NORMAL;
+    info.options = TaskOptions(priority);
+    info.function = function;
+    info.params = this;
+    hTask = osalTaskCreate(&info);
+
+    eosAssert(hTask != nullptr);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor. Crea un objecte Task que encapsula una tasca
+///           de FreeRTOS.
+/// \param    stackSize: Tamany de la pila.
+/// \param    priority: Prioritat del proces.
+/// \param    name: Nom de la tasca.
+/// \param    eventCallback: Funcio callback.
+/// \param    eventParam: Parametre que es passa a la funcio callback.
+///
+Task::Task(
+    int stackSize,
+    Priority priority,
+    const String& name,
+    IEventCallback *eventCallback,
+    void *eventParam):
+
+    runable(nullptr),
+    eventCallback(eventCallback),
+    eventParam(eventParam),
+	weakTime(0) {
+
+    eosAssert(eventCallback != nullptr);
+
+    TaskInitializeInfo info;
+    info.name = (const char*) name;
+    info.stackSize = stackSize;
+    info.options = TaskOptions(priority);
     info.function = function;
     info.params = this;
     hTask = osalTaskCreate(&info);
@@ -55,7 +90,8 @@ Task::~Task() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Executa la funcio de la tasca.
-/// \param    params: El handler de la tasca.
+/// \param    params: El parametre de la tasca.
+/// \remarks  No retorna mai.
 ///
 void Task::function(
     void *params) {
@@ -63,9 +99,28 @@ void Task::function(
 	eosAssert(params != nullptr);
 
     Task *task = reinterpret_cast<Task*>(params);
+    
     task->weakTime = osalGetTickCount();
-    while (true)
-        task->runable->run(task);
+    
+    // Version objecte runable
+    //
+    if (task->runable != nullptr) {
+        while (true)
+            task->runable->run(task);
+    }
+    
+    // Versio callback
+    //
+    else if (task->eventCallback != nullptr) {
+        EventArgs args = {
+            .task = task,
+            .param = task->eventParam
+        };
+        while (true)
+            task->eventCallback->execute(args);
+    }
+    
+    eosFatal("No ha de llegar aqui mai.");
 }
 
 

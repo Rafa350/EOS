@@ -10,9 +10,17 @@
 #define eosAssert(condition) \
     if (!(condition)) eosErrorHandler(__FILE__, __LINE__, #condition)
 
+#define eosWarning(msg) \
+    eosErrorHandler(__FILE__, __LINE__, msg)
+
+#define eosFatal(msg) \
+    eosErrorHandler(__FILE__, __LINE__, msg)
+
 #else
 
 #define eosAssert(condition)
+#define eosWarning(msg)
+#define eosFatal(msg)
 
 #endif
 
