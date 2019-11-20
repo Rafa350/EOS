@@ -16,8 +16,7 @@ MemoryStream::MemoryStream(
     int bufferSize):
 
     buffer(buffer),
-    bufferSize(bufferSize),
-    position(0) {
+    bufferSize(bufferSize) {
     
     eosAssert(buffer != nullptr);
     eosAssert(buffserSize > 0);    
@@ -39,19 +38,22 @@ MemoryStream::~MemoryStream() {
 /// \return   El numero de bytes escrits.
 ///
 int MemoryStream::write(
-    const uint8_t* data, 
+    const void* data, 
     int size) {
     
     eosAssert(data != nullptr);
     eosAssert(size > 0);
     
-    if ((bufferSize - position) < size)
-        size = bufferSize - position;
+    if ((bufferSize - writePosition) < size)
+        size = bufferSize - writePosition;
     
     if (size > 0) {
-        memcpy(buffer + position, data, size);
-        position += size;
+        memcpy(buffer + writePosition, data, size);
+        writePosition += size;
     }
+    
+    if (writePosition > length)
+        length = writePosition;
     
     return size;
 }

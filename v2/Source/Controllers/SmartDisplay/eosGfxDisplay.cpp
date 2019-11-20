@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "Controllers/SmartDisplay/eosGfxCommandBuilder.h"
 #include "Controllers/SmartDisplay/eosGfxDisplay.h"
 #include "Services/eosI2CMasterService.h"
 #include "System/eosMath.h"
@@ -28,7 +29,6 @@ GfxDisplay::GfxDisplay(
     
     bufferSize = BUFFER_SIZE;
     buffer = new uint8_t[bufferSize]();
-    stream = new MemoryStream(buffer, bufferSize);
 }
 
 
@@ -72,7 +72,9 @@ void GfxDisplay::putTTY(const char *s, int length) {
 void GfxDisplay::clear(
     Color color) {
     
-    GfxCommandBuilder cb(buffer, bufferSize);
+    MemoryStream ms(buffer, bufferSize);
+    StreamWriter wr(ms);
+    GfxCommandBuilder cb(wr);
     cb.cmdClear();
     cb.cmdRefresh();
     endCommand();
@@ -155,9 +157,9 @@ void GfxDisplay::drawRectangle(
     int x2, 
     int y2) {
     
-    beginCommand();
-    addCommandDrawRectangle(x1, y1, x2, y2);
-    addCommandRefresh();
+    GfxCommandBuilder cb(buffer, bufferSize);
+    cb.cmdDrawRectangle(x1, y1, x2, y2);
+    cb.cmdRefresh();
     endCommand();
 }
 
@@ -203,14 +205,20 @@ int GfxDisplay::drawChar(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa un text.
+/// \param    x: Coordinada X de la posicio.
+/// \param    y: Coordinada Y de la posicio.
+/// \param    text: El text a dibuixar.
+///
 int GfxDisplay::drawString(
     int x, 
     int y, 
-    const String &s) {
-    
-    beginCommand();
-    addCommandDrawText(x, y, s, 0, -1);    
-    addCommandRefresh();
+    const String &text) {
+
+    GfxCommandBuilder cb(buffer, bufferSize);
+    cb.cmdDrawText(x, y, text);
+    cb.cmdRefresh();
     endCommand();
 }
 
@@ -221,10 +229,6 @@ void GfxDisplay::fillRectangle(
     int x2, 
     int y2) {
 
-    beginCommand();
-    addCommandFillRectangle(x1, y1, x2, y2);
-    addCommandRefresh();
-    endCommand();    
 }
 
 
@@ -236,7 +240,8 @@ void GfxDisplay::fillCircle(int cx, int cy, int r) {
 /// ----------------------------------------------------------------------
 /// \brief    Finalitza la escriptura d'una comanda del display.
 ///
-bool GfxDisplay::endCommand() {
+/*
+bool GfxDisplay::refresh() {
     
     if (bufferError)
         return false;
@@ -253,3 +258,4 @@ bool GfxDisplay::endCommand() {
     }
 }
 
+*/

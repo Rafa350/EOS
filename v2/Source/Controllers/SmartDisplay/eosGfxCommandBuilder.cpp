@@ -2,8 +2,6 @@
 #include "Controllers/SmartDisplay/eosGfxCommandBuilder.h"
 #include "System/eosString.h"
 #include "System/IO/eosStream.h"
-
-
 #include "../../../MD-DSP04/DSP04Messages.h"
 
 
@@ -12,49 +10,21 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
-/// \param    buffer: Buffer on deixar la comanda.
-/// \param    bufferSize: Tamany del buffer.
+/// \param    stream: Stream on escriure la comanda.
 ///
 GfxCommandBuilder::GfxCommandBuilder(
-    uint8_t *buffer, 
-    int bufferSize):
+    Stream &stream):
 
-    stream(buffer, bufferSize) {    
+    stream(stream) {    
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Escriu un byte en el stream.
-/// \param    data: El byte a escriure.
+/// ---------------------------------------------------------------------
+/// \brief    Borra el contingut i comença de nou.
 ///
-void GfxCommandBuilder::writeByte(
-    uint8_t data) {
+void GfxCommandBuilder::clear() {
+
     
-    stream.write(data, 1);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu una sequencia de bytes en el stream.
-/// \param    data: Llista de bytes.
-/// \param    size: Numero de bytes en la llista.
-///
-void GfxCommandBuilder::writeBytes(
-    const uint8_t *data, 
-    int size) {
-    
-    stream.write(data, size);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Escriu un enter de 16 bits en el stream.
-/// \param    data: En enter de 16 bits a escriure.
-///
-void GfxCommandBuilder::writeInt16(
-    int16_t data) {
-    
-    stream.write(&data, 2);
 }
 
 
@@ -63,7 +33,10 @@ void GfxCommandBuilder::writeInt16(
 ///
 void GfxCommandBuilder::cmdClear() {
     
-    writeByte(DSP_CMD_CLEAR);    
+    dspClearMessage msg;    
+    msg.cmd = DSP_CMD_CLEAR;
+    
+    stream.write(&msg, sizeof(msg));    
 }
 
 
@@ -80,14 +53,19 @@ void GfxCommandBuilder::cmdDrawLine(
     int x2, 
     int y2) {
     
-    writeByte(DSP_CMD_DRAWSHAPE);
-    writeByte(0xFF);
-    writeByte(0xFF);
-    writeByte(DRAWSHAPE_LINE);
-    writeInt16(x1);
-    writeInt16(y1);
-    writeInt16(x2);
-    writeInt16(y2);
+    dspDrawShapeMessage msg;    
+    msg.cmd = DSP_CMD_DRAWSHAPE;
+    msg.fillColor = 0xFF;
+    msg.frameColor = 0xFF;
+    msg.filled = false;
+    msg.framed = true;
+    msg.shape = DRAWSHAPE_LINE;
+    msg.x1 = x1;
+    msg.y1 = y1;
+    msg.x2 = x2;
+    msg.y2 = y2;   
+    
+    stream.write(&msg, sizeof(msg));
 }
 
 
@@ -104,8 +82,7 @@ void GfxCommandBuilder::cmdDrawRectangle(
     int x2,
     int y2) {
 
-    dspDrawShapeMessage msg;
-
+    dspDrawShapeMessage msg;    
     msg.cmd = DSP_CMD_DRAWSHAPE;
     msg.fillColor = 0xFF;
     msg.frameColor = 0xFF;
@@ -115,9 +92,9 @@ void GfxCommandBuilder::cmdDrawRectangle(
     msg.x1 = x1;
     msg.y1 = y1;
     msg.x2 = x2;
-    msg.y2 = y2;    
+    msg.y2 = y2;   
     
-    writeBytes((uint8_t*) &msg, sizeof(msg));
+    stream.write(&msg, sizeof(msg));
 }
 
 
@@ -134,19 +111,16 @@ void GfxCommandBuilder::cmdDrawText(
     
     int length = text.getLength();
 
-    writeByte(DSP_CMD_DRAWTEXT);
-    writeByte(0xFF);
-    writeByte(0xFF);
-    writeInt16(x);
-    writeInt16(y);
-    writeByte(length);
-    writeBytes((uint8_t*)(const char*) text, length);    
-}
-
-void GfxCommandBuilder::cmdLineTo(
-    int x, 
-    int y) {
+    dspDrawTextMessage msg;    
+    msg.cmd = DSP_CMD_DRAWTEXT;
+    msg.color = 0xFF;
+    msg.font = 0xFF;
+    msg.x = x;
+    msg.y = y;
+    msg.textLen = length;
     
+    stream.write(&msg, sizeof(msg));
+    stream.write((const char*)text, length);    
 }
 
 
@@ -154,9 +128,12 @@ void GfxCommandBuilder::cmdMoveTo(
     int x, 
     int y) {
     
-    writeByte(DSP_CMD_MOVETO);
-    writeInt16(x);
-    writeInt16(y);
+    dspMoveToMessage msg;
+    msg.cmd = DSP_CMD_MOVETO;
+    msg.x = x;
+    msg.y = y;
+    
+    stream.write(&msg, sizeof(msg));
 }
 
 
@@ -165,7 +142,10 @@ void GfxCommandBuilder::cmdMoveTo(
 ///
 void GfxCommandBuilder::cmdRefresh() {
     
-    writeByte(DSP_CMD_REFRESH);    
+    dspRefreshMessage msg;
+    msg.cmd = DSP_CMD_REFRESH;
+
+    stream.write(&msg, sizeof(msg));
 }
 
 
@@ -176,9 +156,12 @@ void GfxCommandBuilder::cmdSetColor(
     uint8_t fgColor, 
     uint8_t bkColor) {
     
-    writeByte(DSP_CMD_SETCOLOR);
-    writeByte(fgColor);
-    writeByte(bkColor);
+    dspSetColorMessage msg;
+    msg.cmd = DSP_CMD_SETCOLOR;
+    msg.fgColor = fgColor;
+    msg.bkColor = bkColor;
+
+    stream.write(&msg, sizeof(msg));
 }
 
 
@@ -189,6 +172,9 @@ void GfxCommandBuilder::cmdSetColor(
 void GfxCommandBuilder::cmdSetFont(
     uint8_t font) {
     
-    writeByte(DSP_CMD_SETFONT);
-    writeByte(font);
+    dspSetFontMessage msg;
+    msg.cmd = DSP_CMD_SETFONT;
+    msg.font = font;
+
+    stream.write(&msg, sizeof(msg));   
 }

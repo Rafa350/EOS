@@ -19,10 +19,8 @@ namespace eos {
             int curX;
             int curY;
             uint8_t addr;
-            MemoryStream *stream;
             uint8_t *buffer;
             int bufferSize;
-            bool bufferError;
             
         public:
             GfxDisplay(I2CMasterService *i2cService, uint8_t addr);
@@ -46,23 +44,9 @@ namespace eos {
             int drawChar(int x, int y, char c);
             int drawString(int x, int y, const String &s);
             void fillRectangle(int x1, int y1, int x2, int y2);
-            void fillCircle(int cx, int cy, int r);              
-
-        private:
-            bool beginCommand();
-            bool endCommand();
-            bool addUINT8(uint8_t data);
-            bool addUINT16(uint16_t data);
-            bool addBytes(const uint8_t *data, int length);
-            bool addCommandClear();
-            bool addCommandRefresh();
-            bool addCommandSetColor(uint8_t fgColor, uint8_t bkColor);
-            bool addCommandSetFont(uint8_t font);
-            bool addCommandMoveTo(int x, int y);
-            bool addCommandDrawLine(int x1, int y1, int x2, int y2);
-            bool addCommandDrawRectangle(int x1, int y1, int x2, int y2);
-            bool addCommandFillRectangle(int x1, int y1, int x2, int y2);
-            bool addCommandDrawText(int x, int y, const char *s, int offset, int length);
+            void fillCircle(int cx, int cy, int r);     
+            void beginDraw();
+            void endDraw();
     };
 
 }
