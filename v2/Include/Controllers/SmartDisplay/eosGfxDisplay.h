@@ -9,6 +9,7 @@
 namespace eos {
     
     class String;
+    class MemoryStream;
     
     typedef unsigned Color;
 
@@ -18,9 +19,9 @@ namespace eos {
             int curX;
             int curY;
             uint8_t addr;
+            MemoryStream *stream;
             uint8_t *buffer;
-            unsigned bufferSize;
-            unsigned bufferCount;
+            int bufferSize;
             bool bufferError;
             
         public:
@@ -62,15 +63,6 @@ namespace eos {
             bool addCommandDrawRectangle(int x1, int y1, int x2, int y2);
             bool addCommandFillRectangle(int x1, int y1, int x2, int y2);
             bool addCommandDrawText(int x, int y, const char *s, int offset, int length);
-            
-        private:
-            inline void fAddUINT8(uint8_t data) {
-                buffer[bufferCount++] = data;
-            }
-            inline void fAddUINT16(uint16_t data) {
-                buffer[bufferCount++] = data & 0x00FF;       
-                buffer[bufferCount++] = (data & 0xFF00) >> 8;
-            }
     };
 
 }

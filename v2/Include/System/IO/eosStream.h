@@ -7,12 +7,11 @@
 
 namespace eos {
 
-
     class Stream {
     	public:
     		virtual ~Stream() = default;
-    		virtual int write(void *data, int size) = 0;
-    		virtual int read(void *data, int size) = 0;
+    		virtual int write(const uint8_t *data, int size) = 0;
+    		virtual int read(uint8_t *data, int size) = 0;
     };
 
 }
