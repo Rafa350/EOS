@@ -73,8 +73,7 @@ void GfxDisplay::clear(
     Color color) {
     
     MemoryStream ms(buffer, bufferSize);
-    StreamWriter wr(ms);
-    GfxCommandBuilder cb(wr);
+    GfxCommandBuilder cb(ms);
     cb.cmdClear();
     cb.cmdRefresh();
     endCommand();
@@ -90,7 +89,8 @@ void GfxDisplay::moveTo(
     int x, 
     int y) {
     
-    GfxCommandBuilder cb(buffer, bufferSize);
+    MemoryStream ms(buffer, bufferSize);
+    GfxCommandBuilder cb(ms);
     cb.cmdMoveTo(x, y);
     endCommand();
     
@@ -109,7 +109,8 @@ void GfxDisplay::lineTo(
     int x, 
     int y) {
     
-    GfxCommandBuilder cb(buffer, bufferSize);
+    MemoryStream ms(buffer, bufferSize);
+    GfxCommandBuilder cb(ms);
     cb.cmdDrawLine(curX, curY, x, y);
     cb.cmdRefresh();
     endCommand();
@@ -137,7 +138,8 @@ void GfxDisplay::drawLine(
     int x2, 
     int y2) {
 
-    GfxCommandBuilder cb(buffer, bufferSize);
+    MemoryStream ms(buffer, bufferSize);
+    GfxCommandBuilder cb(ms);
     cb.cmdDrawLine(x1, y1, x2, y2);
     cb.cmdRefresh();
     endCommand();
@@ -157,7 +159,8 @@ void GfxDisplay::drawRectangle(
     int x2, 
     int y2) {
     
-    GfxCommandBuilder cb(buffer, bufferSize);
+    MemoryStream ms(buffer, bufferSize);
+    GfxCommandBuilder cb(ms);
     cb.cmdDrawRectangle(x1, y1, x2, y2);
     cb.cmdRefresh();
     endCommand();
@@ -198,7 +201,8 @@ int GfxDisplay::drawChar(
     
     s[1] = 0;
     
-    beginCommand();
+    MemoryStream ms(buffer, bufferSize);
+    GfxCommandBuilder cb(ms);
     addCommandDrawText(x, y, s, 0, -1);
     addCommandRefresh();
     endCommand();
@@ -216,7 +220,8 @@ int GfxDisplay::drawString(
     int y, 
     const String &text) {
 
-    GfxCommandBuilder cb(buffer, bufferSize);
+    MemoryStream ms(buffer, bufferSize);
+    GfxCommandBuilder cb(ms);
     cb.cmdDrawText(x, y, text);
     cb.cmdRefresh();
     endCommand();

@@ -51,7 +51,7 @@ namespace eos {
 
     		/// \brief Afegeix un element a la llista.
     		/// \param element: L'element a afeigir.
-			void add(T element) {
+			void add(value_type element) {
 			    if (count == capacity) {
 			    	int newCapacity = (capacity == 0) ? initialCapacity : capacity * 2;
 			    	container = static_cast<T*>(resizeContainer(container, capacity, newCapacity, count, elementSize));
@@ -61,13 +61,13 @@ namespace eos {
 			    count += 1;
 			}
 
-			void insert(T element, int index) {
+			void insert(value_type element, int index) {
 
 			}
 
 			/// \brief Elimina un element de la llista.
 			/// \param element: L'element a eliminar.
-			void remove(T element) {
+			void remove(value_type element) {
 				for (int index = 0; index < count; index++) {
 					if (container[index] == element) {
 						if (index < (count - 1))
@@ -105,21 +105,21 @@ namespace eos {
 
 			/// \brief Obte l'element en la posicio indicada de la llista.
 			/// \return L'element.
-			inline T get(int index) const {
+			inline value_type get(int index) const {
 				eosAssert(index < count);
 				return container[index];
 			}
 
 			/// \brief Obte el primer element de la llista.
 			/// \return L'element.
-			inline T getFirst() const {
+			inline value_type getFirst() const {
 				eosAssert(count > 0);
 				return container[0];
 			}
 
 			/// \brief Obte l'ultim element de la llista.
 			/// \return L'element.
-			inline T getLast() const {
+			inline value_type getLast() const {
 				eosAssert(count > 0);
 				return container[count - 1];
 			}

@@ -51,6 +51,9 @@
             <itemPath>../../../Include/Services/eosTerminalService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="System" projectFiles="true">
+            <logicalFolder name="f3" displayName="Collections" projectFiles="true">
+              <itemPath>../../../Include/System/Collections/eosList.h</itemPath>
+            </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Include/System/Core/eosPoolAllocator.h</itemPath>
               <itemPath>../../../Include/System/Core/eosSemaphore.h</itemPath>
