@@ -20,7 +20,7 @@ namespace eos {
             MemoryPoolAllocator(int blockSize, int maxBlocks);
             ~MemoryPoolAllocator();
 
-            void *allocate(int size);
+            void *allocate();
             void deallocate(void *p);
 
             inline int getBlockSize() const { return blockSize; }
@@ -33,7 +33,7 @@ namespace eos {
     };
 
 
-    template <class T>
+    template <class T, int MAX_BLOCKS>
     class PoolAllocator {
 
     	private:
@@ -41,12 +41,12 @@ namespace eos {
 
     	public:
 
-    		PoolAllocator(int maxBlocks):
-            	allocator(sizeof(T), maxBlocks) {
+    		PoolAllocator():
+            	allocator(sizeof(T), MAX_BLOCKS) {
             }
 
-    		inline T *allocate(int size) {
-            	return static_cast<T*>(allocator.allocate(size));
+    		inline T *allocate() {
+            	return static_cast<T*>(allocator.allocate());
             }
 
     		inline void deallocate(T *p) {

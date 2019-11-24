@@ -3,22 +3,24 @@
 
 
 #include "eos.h"
+#include "Controllers/SmartDisplay/eosGfxDisplay.h"
 #include "Services/eosAppLoopService.h"
-#include "Services/eosI2CMasterService.h"
 
 
 namespace app {
     
     class DisplayService: public eos::AppLoopService {
         private:
-            eos::I2CMasterService *i2cMasterService;
+            eos::GfxDisplay *display;
+            int x;
+            int y;
             
         protected:
             void onLoop() override;
             void onSetup() override;
                        
         public:
-            DisplayService(eos::Application *application, eos::I2CMasterService *i2cMasterService);
+            DisplayService(eos::Application *application, eos::GfxDisplay *display);
     };
 }
 

@@ -4,15 +4,12 @@
 #include "Services/eosI2CMasterService.h"
 #include "System/eosMath.h"
 #include "System/eosString.h"
-#include "System/IO/eosMemoryStream.h"
-
 #include "../../../MD-DSP04/DSP04Messages.h"
 
 
-#define BUFFER_SIZE               1000      // Tamany del buffer
-
-
 using namespace eos;
+
+static uint8_t __buffer[500];
 
 
 /// ----------------------------------------------------------------------
@@ -22,22 +19,36 @@ using namespace eos;
 ///
 GfxDisplay::GfxDisplay(
     I2CMasterService *i2cService,
-    uint8_t addr) {
+    uint8_t addr) :
+    
+    cb(__buffer, sizeof(__buffer)),
+    transactionCallback(this, &GfxDisplay::transactionHandler) {
 
     this->i2cService = i2cService;
     this->addr = addr;
-    
-    bufferSize = BUFFER_SIZE;
-    buffer = new uint8_t[bufferSize]();
 }
 
 
-void GfxDisplay::setColor(Color color) {
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el color.
+/// \param    color: El color.
+///
+void GfxDisplay::setColor(
+    uint8_t color) {
+    
+    this->color = color;
     
 }
 
 
-//void Display::setFont(Font *font);
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el font.
+/// \param    font: El font.
+///
+void GfxDisplay::setFont(
+    uint8_t font) {
+    
+}
 
 
 int GfxDisplay::getTextWidth(const char *text) {
@@ -70,13 +81,9 @@ void GfxDisplay::putTTY(const char *s, int length) {
 /// \param    color: Color de borrat
 ///
 void GfxDisplay::clear(
-    Color color) {
+    uint8_t color) {
     
-    MemoryStream ms(buffer, bufferSize);
-    GfxCommandBuilder cb(ms);
     cb.cmdClear();
-    cb.cmdRefresh();
-    endCommand();
 }
 
 
@@ -89,10 +96,7 @@ void GfxDisplay::moveTo(
     int x, 
     int y) {
     
-    MemoryStream ms(buffer, bufferSize);
-    GfxCommandBuilder cb(ms);
     cb.cmdMoveTo(x, y);
-    endCommand();
     
     curX = x;
     curY = y;
@@ -109,18 +113,18 @@ void GfxDisplay::lineTo(
     int x, 
     int y) {
     
-    MemoryStream ms(buffer, bufferSize);
-    GfxCommandBuilder cb(ms);
     cb.cmdDrawLine(curX, curY, x, y);
-    cb.cmdRefresh();
-    endCommand();
     
     curX = x;
     curY = y;
 }
 
 
-void GfxDisplay::arcTo(int x, int y, int cx, int cy) {
+void GfxDisplay::arcTo(
+    int x, 
+    int y, 
+    int cx, 
+    int cy) {
     
 }
 
@@ -138,11 +142,7 @@ void GfxDisplay::drawLine(
     int x2, 
     int y2) {
 
-    MemoryStream ms(buffer, bufferSize);
-    GfxCommandBuilder cb(ms);
     cb.cmdDrawLine(x1, y1, x2, y2);
-    cb.cmdRefresh();
-    endCommand();
 }
 
 
@@ -159,11 +159,7 @@ void GfxDisplay::drawRectangle(
     int x2, 
     int y2) {
     
-    MemoryStream ms(buffer, bufferSize);
-    GfxCommandBuilder cb(ms);
     cb.cmdDrawRectangle(x1, y1, x2, y2);
-    cb.cmdRefresh();
-    endCommand();
 }
 
 
@@ -178,6 +174,7 @@ void GfxDisplay::drawCircle(
     int cy, 
     int r) {
     
+    cb.cmdDrawEllipse(cx - r, cy - r, cx + r, cy + r);
 }
 
 
@@ -187,7 +184,7 @@ void GfxDisplay::drawBitmap1BPP(
     const uint8_t *bitmap, 
     int sx, 
     int sy, 
-    Color color) {
+    uint8_t color) {
     
 }
 
@@ -201,11 +198,7 @@ int GfxDisplay::drawChar(
     
     s[1] = 0;
     
-    MemoryStream ms(buffer, bufferSize);
-    GfxCommandBuilder cb(ms);
-    addCommandDrawText(x, y, s, 0, -1);
-    addCommandRefresh();
-    endCommand();
+    cb.cmdDrawText(x, y, "c");
 }
 
 
@@ -220,11 +213,7 @@ int GfxDisplay::drawString(
     int y, 
     const String &text) {
 
-    MemoryStream ms(buffer, bufferSize);
-    GfxCommandBuilder cb(ms);
     cb.cmdDrawText(x, y, text);
-    cb.cmdRefresh();
-    endCommand();
 }
 
 
@@ -243,24 +232,35 @@ void GfxDisplay::fillCircle(int cx, int cy, int r) {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Finalitza la escriptura d'una comanda del display.
+/// \brief    Refresca la patalla.
 ///
-/*
-bool GfxDisplay::refresh() {
+void GfxDisplay::refresh() {
     
-    if (bufferError)
-        return false;
+    cb.cmdRefresh();
     
-    else {
-        I2CMasterTransaction *transaction = new I2CMasterTransaction(
-            addr,  
-            I2CMasterTransaction::Protocol::packed, 
-            stream->getBuffer(), 
-            stream->getPosition(), 
-            nullptr);
-        if (!i2cService->startTransaction(transaction, 1000))
-            delete transaction;
-    }
+    i2cService->startTransaction(
+        addr,  
+        I2CMasterService::TransactionProtocol::packet, 
+        cb.getBuffer(), 
+        cb.getBufferPos(), 
+        &transactionCallback);
+    
+    // Espara que finalitzi la transaccio
+    //
+    lock.wait(-1);
+
+    // Prepara el commandBuilder per la propera comanda
+    //
+    cb.clear();
 }
 
-*/
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el callback de la transaccio.
+/// \param    args: Areguments del callback.
+///
+void GfxDisplay::transactionHandler(
+    const I2CMasterService::TransactionEventArgs& args) {
+    
+    lock.release();
+}

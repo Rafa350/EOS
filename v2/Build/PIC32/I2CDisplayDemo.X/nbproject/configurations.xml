@@ -61,9 +61,6 @@
               <itemPath>../../../Include/System/Core/eosQueue.h</itemPath>
             </logicalFolder>
             <logicalFolder name="f2" displayName="IO" projectFiles="true">
-              <itemPath>../../../Include/System/IO/eosStream.h</itemPath>
-              <itemPath>../../../Include/System/IO/eosMemoryStream.h</itemPath>
-              <itemPath>../../../Include/System/IO/eosStreamWriter.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
             <itemPath>../../../Include/System/eosMath.h</itemPath>
@@ -136,8 +133,6 @@
               <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
             </logicalFolder>
             <logicalFolder name="f3" displayName="IO" projectFiles="true">
-              <itemPath>../../../Source/System/IO/eosMemoryStream.cpp</itemPath>
-              <itemPath>../../../Source/System/IO/eosStreamWriter.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
             <itemPath>../../../Source/System/eosString.cpp</itemPath>

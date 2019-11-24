@@ -10,9 +10,6 @@
 using namespace eos;
 
 
-static PoolAllocator<I2CMasterTransaction> transactionAllocator(eosI2CMasterService_TransactionQueueSize);
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 /// \param    application: Aplicacio a la que pertany el servei.
@@ -68,17 +65,69 @@ void I2CMasterService::deinitializeHardware() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicia una transaccio.
-/// \param    transaction: La transaccio.
-/// \param    blockTime: Temps maxim de bloqueig.
-/// \return   True si la transaccio s'ha afeigit a la cua, false en cas contrari.
-/// \remarks  Un cop la transaccio es a la cua, el servei pren posessio
-///           de la transaccio, i es responsabilitat seva la destruccio.
+/// \param    addr: Adressa I2C.
+/// \param    protocol: Protocol de comunicacio.
+/// \param    txBuffer: Buffer de transmissio.
+/// \param    txCount: Numero de bytes en el buffer de transmissio
+/// \param    callback: Callback per notificacions.
+/// \return   True si tot es correcte. False si no s'ha pogut iniciar 
+///           la transaccio.
 ///
 bool I2CMasterService::startTransaction(
-    I2CMasterTransaction *transaction,
-    int blockTime) {
+    uint8_t addr, 
+    TransactionProtocol protocol, 
+    const void *txBuffer, 
+    int txCount, 
+    ITransactionEventCallback *callback) {
     
-    return transactionQueue.put(transaction, blockTime);
+    Transaction *transaction = transactionAllocator.allocate();
+    if (transaction != nullptr) {
+        transaction->addr = addr;
+        transaction->protocol = protocol;
+        transaction->txBuffer = static_cast<const uint8_t*>(txBuffer);
+        transaction->txCount = txCount;
+        transaction->callback = callback;
+        return transactionQueue.put(transaction, 1000);
+    }
+    else
+        return false;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicia una transaccio.
+/// \param    addr: Adressa I2C de 8 bits.
+/// \param    protocol: Protocol de comunicacio.
+/// \param    txBuffer: Buffer de transmissio.
+/// \param    txCount: Numero de bytes en el buffer de transmissio
+/// \param    rxBuffer: Buffer de recepcio.
+/// \param    rxSize: Tamany del buffer de recepcio.
+/// \param    callback: Callback per notificacions.
+/// \return   True si tot es correcte. False si no s'ha pogut
+///           iniciar la transaccio.
+///
+bool I2CMasterService::startTransaction(
+    uint8_t addr, 
+    TransactionProtocol protocol, 
+    const void *txBuffer, 
+    int txCount, 
+    void *rxBuffer, 
+    int rxSize, 
+    ITransactionEventCallback *callback) {
+    
+    Transaction *transaction = transactionAllocator.allocate();
+    if (transaction != nullptr) {
+        transaction->addr = addr;
+        transaction->protocol = protocol;
+        transaction->txBuffer = (uint8_t*)txBuffer;
+        transaction->txCount = txCount;
+        transaction->rxBuffer = (uint8_t*)rxBuffer;
+        transaction->rxSize = rxSize;
+        transaction->callback = callback;
+        return transactionQueue.put(transaction, 1000);
+    }
+    else
+        return false;
 }
 
 
@@ -95,6 +144,8 @@ void I2CMasterService::onInitialize() {
 ///
 void I2CMasterService::onTask() {
           
+    // Espara indefinidament que hagi una transaccio e la cua
+    //
     if (transactionQueue.get(transaction, -1)) {
 
         // Espera a que el bus estigui lliure
@@ -126,15 +177,18 @@ void I2CMasterService::onTask() {
         // Notifica el final de la transaccio
         //
         if (transaction->callback != nullptr) {
-            I2CMasterTransaction::EventArgs args;
-            args.transaction = transaction;
-            args.result = I2CMasterTransaction::Result::ok;
+            I2CMasterService::TransactionEventArgs args;
+            args.txBuffer = (void*) transaction->txBuffer;
+            args.txCount = transaction->txCount;
+            args.rxBuffer = (void*) transaction->rxBuffer;
+            args.rxCount = transaction->rxCount;
+            args.result = I2CMasterService::TransactionResult::ok;
             transaction->callback->execute(args);
         }
 
         // Destrueix la transaccio
         //
-        delete transaction;
+        transactionAllocator.deallocate(transaction);
         
         Task::delay(25); // Provisional
     }
@@ -157,8 +211,8 @@ void I2CMasterService::interruptCallback(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Maquina d'estats per procesar les comunicacions. S'executa en
-///        el contexte de la interrupcio I2C.
+/// \brief    Maquina d'estats per procesar les comunicacions. S'executa en
+///           el contexte de la interrupcio I2C.
 ///
 /// Transmissio/Recepcio en format de trama
 /// |LENGTH|DATA-1|DATA-2| . . . |DATA-n|CHECK|
@@ -332,78 +386,4 @@ void I2CMasterService::stateMachine() {
             semaphore.releaseISR();
             break;
     }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor de l'objecte.
-/// \param    addr: Adressa I2C de 8 bits.
-/// \param    protocol: Protocol de comunicacio.
-/// \param    txBuffer: Buffer de transmissio.
-/// \param    txCount: Numero de bytes en el buffer de transmissio
-/// \param    callback: Callback per notificacions.
-///
-I2CMasterTransaction::I2CMasterTransaction(
-    uint8_t addr, 
-    Protocol protocol, 
-    uint8_t *txBuffer, 
-    int txCount, 
-    IEventCallback* callback):
-
-    addr(addr),
-    txBuffer(txBuffer),
-    txCount(txCount),
-    rxBuffer(nullptr),
-    rxCount(0),
-    rxSize(0),
-    callback(callback) {    
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor de l'objecte.
-/// \param    addr: Adressa I2C de 8 bits.
-/// \param    protocol: Protocol de comunicacio.
-/// \param    txBuffer: Buffer de transmissio.
-/// \param    txCount: Numero de bytes en el buffer de transmissio
-/// \param    rxBuffer: Buffer de recepcio.
-/// \param    rxSize: Tamany del buffer de recepcio.
-/// \param    callback: Callback per notificacions.
-///
-I2CMasterTransaction::I2CMasterTransaction(
-    uint8_t addr, 
-    Protocol protocol, 
-    uint8_t *txBuffer, 
-    int txCount, 
-    uint8_t *rxBuffer,
-    int rxSize,
-    IEventCallback* callback):
-
-    addr(addr),
-    txBuffer(txBuffer),
-    txCount(txCount),
-    rxBuffer(rxBuffer),
-    rxCount(0),
-    rxSize(rxSize),
-    callback(callback) {    
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief   Operador new.
-///
-void *I2CMasterTransaction::operator new (
-    size_t size) {
-    
-    return transactionAllocator.allocate(size);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief   Operador delete.
-///
-void I2CMasterTransaction::operator delete(
-    void *p) {
-    
-    transactionAllocator.deallocate(static_cast<I2CMasterTransaction*>(p));
 }

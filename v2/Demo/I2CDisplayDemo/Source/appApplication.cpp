@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "Controllers/SmartDisplay/eosGfxDisplay.h"
 #include "HAL/halI2C.h"
 #include "Services/eosI2CMasterService.h"
 #include "System/Core/eosTask.h"
@@ -24,7 +25,8 @@ MyApplication::MyApplication() {
     
     // Crea el servei de gestio de display
     //
-    displayService = new DisplayService(this, i2cMasterService);
+    GfxDisplay *display = new GfxDisplay(i2cMasterService, 0x62);
+    displayService = new DisplayService(this, display);
     
     // Crea el sercei de gestio dels leds
     //

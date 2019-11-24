@@ -31,7 +31,7 @@ MemoryPoolAllocator::MemoryPoolAllocator(
     if (blockSize < (int) sizeof(unsigned))
         blockSize = (int) sizeof(unsigned);
 
-    blocks = (uint8_t*) osalHeapAlloc(nullptr, blockSize * maxBlocks);
+    blocks = static_cast<uint8_t*>(osalHeapAlloc(nullptr, blockSize * maxBlocks));
     eosAssert(blocks != nullptr);
 
     nextBlock = blocks;
@@ -43,44 +43,36 @@ MemoryPoolAllocator::MemoryPoolAllocator(
 ///
 MemoryPoolAllocator::~MemoryPoolAllocator() {
 
-    osalHeapFree(NULL, blocks);
+    osalHeapFree(nullptr, blocks);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Reserva un bloc de memoria.
-/// \param    size: El tamany del bloc. Com el tamany es fixe, no s'utilitza.
 /// \return   El punter al block.
 ///
-void *MemoryPoolAllocator::allocate(
-    int size) {
-
-	eosAssert(size > 0);
+void *MemoryPoolAllocator::allocate() {
 
     void *ret = nullptr;
 
-    if (size <= blockSize) {
+    osalEnterCritical();
 
-        osalEnterCritical();
-
-        if (initializedBlocks < maxBlocks) {
-            int *p = (int*) addrFromIndex(initializedBlocks);
-            initializedBlocks += 1;
-            *p = initializedBlocks;
-        }
-
-        if (freeBlocks > 0) {
-            ret = static_cast<void*>(nextBlock);
-            freeBlocks -= 1;
-            if (freeBlocks > 0)
-                nextBlock = addrFromIndex(*((int*) nextBlock) );
-            else
-                nextBlock = nullptr;
-        }
-
-        osalExitCritical();
-
+    if (initializedBlocks < maxBlocks) {
+        int *p = (int*) addrFromIndex(initializedBlocks);
+        initializedBlocks += 1;
+        *p = initializedBlocks;
     }
+
+    if (freeBlocks > 0) {
+        ret = static_cast<void*>(nextBlock);
+        freeBlocks -= 1;
+        if (freeBlocks > 0)
+            nextBlock = addrFromIndex(*((int*) nextBlock) );
+        else
+            nextBlock = nullptr;
+    }
+
+    osalExitCritical();
 
     eosAssert(ret != nullptr);
 

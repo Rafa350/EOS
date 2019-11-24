@@ -46,6 +46,17 @@ bool osalSemaphoreWait(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Allivera un semafor.
+/// \param    hSemaphore: El handler del semafor.
+///
+void osalSemaphoreRelease(
+    HSemaphore hSemaphore) {
+    
+    xSemaphoreGive(hSemaphore);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Allivera un semafor desde d'ins d'una interrupcio
 /// \param    hSemaphore: El handler del semafor.
 ///

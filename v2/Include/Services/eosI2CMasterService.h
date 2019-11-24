@@ -30,8 +30,9 @@
 namespace eos {
     
     class Application;
-    class I2CMasterTransaction;
           
+    /// \brief Clase que gestiona el servei de comunicacions I2C
+    ///
     class I2CMasterService: public Service {      
         public:
             struct Configuration {
@@ -39,8 +40,33 @@ namespace eos {
                 int baudRate;
             };
             
+            /// \brief Protocol a utilitzar en la transaccio.
+            ///
+            enum class TransactionProtocol {
+                raw,
+                packet
+            };
+
+            /// \brief Resultat de la transaccio.
+            ///
+            enum class TransactionResult {
+                ok,
+                error
+            };
+
+            /// \brief Parametres del event.
+            ///
+            struct TransactionEventArgs {
+                void *txBuffer;
+                int txCount;
+                void *rxBuffer;
+                int rxCount;
+                TransactionResult result;
+            };
+
         private:
-            enum class State {          // Estat de la transaccio
+            /// \brief Estats de la maquina d'estats que procesa la transaccio
+            enum class State {          
                 idle,                   // -En espera de iniciar
                 sendAddress,            // -Transmeteix l'adressa
                 sendLength,             // -Transmeteix el byte de longitut
@@ -57,12 +83,29 @@ namespace eos {
                 finished                // -Finalitzada
             };        
             
-            typedef Queue<I2CMasterTransaction*> TransactionQueue;
+            typedef ICallbackP1<const TransactionEventArgs&> ITransactionEventCallback;
+
+            /// \brief Estructura per gestionar les transaccions.
+            ///
+            struct Transaction {
+                uint8_t addr;
+                const uint8_t *txBuffer;
+                uint8_t *rxBuffer;
+                int txCount;
+                int rxCount;
+                int rxSize;
+                TransactionProtocol protocol;
+                ITransactionEventCallback *callback;
+            };
+            
+            typedef PoolAllocator<Transaction, 20> TransactionAllocator;
+            typedef Queue<Transaction*> TransactionQueue;
 
         private:
             I2CModule module;
+            TransactionAllocator transactionAllocator;
             TransactionQueue transactionQueue;
-            I2CMasterTransaction *transaction;
+            Transaction *transaction;
             BinarySemaphore semaphore;
             int index;
             int maxIndex;
@@ -76,7 +119,8 @@ namespace eos {
             I2CMasterService(Application *application, const Configuration &cfg);        
             ~I2CMasterService();
             
-            bool startTransaction(I2CMasterTransaction *transaction, int blockTime);
+            bool startTransaction(uint8_t addr, TransactionProtocol protocol, void const *txBuffer, int txCount, ITransactionEventCallback *callback);
+            bool startTransaction(uint8_t addr, TransactionProtocol protocol, void const *txBuffer, int txCount, void *rxBuffer, int rxSize, ITransactionEventCallback *callback);
                            
         protected:
             void onInitialize() override;
@@ -89,44 +133,6 @@ namespace eos {
             void stateMachine();   
     };
     
-    
-    class I2CMasterTransaction {
-        public:
-            enum class Protocol {        // Protocol de comunicacio
-                raw,                     // -Modus I2C estandard
-                packed                   // -Modus empaquetat (Longitut y verificacio))
-            };
-            enum class Result {
-                ok,
-                error
-            };
-            struct EventArgs {
-                I2CMasterTransaction* transaction;
-                Result result;
-            };
-        
-        private:
-            typedef ICallbackP1<const EventArgs&> IEventCallback;
-            
-        protected:
-            uint8_t addr;
-            uint8_t *txBuffer;
-            uint8_t *rxBuffer;
-            int txCount;
-            int rxCount;
-            int rxSize;
-            Protocol protocol;
-            IEventCallback *callback;
-
-        public:
-            I2CMasterTransaction(uint8_t addr, Protocol protocol, uint8_t *txBuffer, int txCount, IEventCallback *callback);
-            I2CMasterTransaction(uint8_t addr, Protocol protocol, uint8_t *txBuffer, int txCount, uint8_t *rxBuffer, int rxSize, IEventCallback *callback);
-            
-            void *operator new(size_t size);
-            void operator delete(void *p);
-            
-        friend I2CMasterService;
-    };
 }
 
 
