@@ -53,7 +53,7 @@ void GenericQueue::clear() {
 ///
 bool GenericQueue::genericPut(
     const void *element,
-    unsigned blockTime) {
+    int blockTime) {
 
 	return osalQueuePut(hQueue, element, blockTime);
 }
@@ -67,7 +67,7 @@ bool GenericQueue::genericPut(
 ///
 bool GenericQueue::genericGet(
     void *element,
-    unsigned blockTime) {
+    int blockTime) {
 
 	return osalQueueGet(hQueue, element, blockTime);
 }

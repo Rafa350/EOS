@@ -60,7 +60,6 @@ Task::Task(
     info.params = this;
     
     hTask = osalTaskCreate(&info);
-
     eosAssert(hTask != nullptr);
 }
 
