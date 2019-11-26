@@ -38,6 +38,7 @@
             <itemPath>../../../Include/Services/eosAppLoopService.h</itemPath>
             <itemPath>../../../Include/Services/eosDigInputService.h</itemPath>
             <itemPath>../../../Include/Services/eosDigOutputService.h</itemPath>
+            <itemPath>../../../Include/Services/eosTimerService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f1" displayName="Collections" projectFiles="true">
@@ -98,6 +99,7 @@
             <itemPath>../../../Source/Services/eosAppLoopService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosDigInputService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosDigOutputService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosTimerService.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
