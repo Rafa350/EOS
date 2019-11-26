@@ -9,6 +9,8 @@
           <itemPath>../../../Demo/DigIOServiceDemo/Include/PIC32/FreeRTOSConfig.h</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/DigIOServiceDemo/Include/eosConfig.h</itemPath>
+        <itemPath>../../../Demo/DigIOServiceDemo/Include/appApplication.h</itemPath>
+        <itemPath>../../../Demo/DigIOServiceDemo/Include/appLedLoopService.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -47,6 +49,7 @@
               <itemPath>../../../Include/System/Core/eosTask.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
+            <itemPath>../../../Include/System/eosCallbacks.h</itemPath>
           </logicalFolder>
           <itemPath>../../../Include/eos.h</itemPath>
           <itemPath>../../../Include/eosAssert.h</itemPath>
@@ -66,6 +69,8 @@
           <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/DigIOServiceDemo/Source/AppMain.cpp</itemPath>
+        <itemPath>../../../Demo/DigIOServiceDemo/Source/appLedLoopService.cpp</itemPath>
+        <itemPath>../../../Demo/DigIOServiceDemo/Source/appApplication.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
