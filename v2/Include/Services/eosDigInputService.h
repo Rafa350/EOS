@@ -17,7 +17,7 @@ namespace eos {
     class DigInputService final: public Service {
         private:
             typedef List<DigInput*> DigInputList;
-
+            
             int weakTime;
             DigInputList inputs;
 

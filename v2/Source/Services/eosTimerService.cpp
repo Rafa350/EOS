@@ -12,7 +12,8 @@ using namespace eos;
 TimerService::TimerService(
     Application *application):
     
-    Service(application) {
+    Service(application),
+    commandQueue(10) {
     
 }
 
@@ -22,74 +23,196 @@ TimerService::TimerService(
 ///
 TimerService::~TimerService() {
     
-    while (!counters.isEmpty()) {
-        TimerCounter *counter = counters.getFirst();
-        removeCounter(counter);
-        delete counter;
+    while (!timers.isEmpty()) {
+        TimerCounter *timer = timers.getFirst();
+        removeTimer(timer);
+        delete timer;
     }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Afegeix un contador al servei.
-/// \param    conter: El contador a afeigir.
+/// \param    timer: El temporitzador a afeigir.
 ///
-void TimerService::addCounter(
-    TimerCounter *counter) {
+void TimerService::addTimer(
+    TimerCounter *timer) {
 
     // Prerequisits
     //
-    eosAssert(counter != nullptr);
-    eosAssert(counter->service == nullptr);
+    eosAssert(timer != nullptr);
+    eosAssert(timer->service == nullptr);
 
-    counters.add(counter);
-    counter->service = this;
+    timers.add(timer);
+    timer->service = this;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Elimina un contador del servei.
-/// \param    input: El contador a eliminar.
+/// \param    timer: El temporitzador a eliminar.
 ///
-void TimerService::removeCounter(
-    TimerCounter *counter) {
+void TimerService::removeTimer(
+    TimerCounter *timer) {
 
     // Precondicions
     //
-    eosAssert(counter != nullptr);
-    eosAssert(counter->service == this);
+    eosAssert(timer != nullptr);
+    eosAssert(timer->service == this);
 
-    counter->service = nullptr;
-    counters.remove(counter);
+    timer->service = nullptr;
+    timers.remove(timer);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Elimina tots contadors del servei.
+/// \brief    Elimina tots temporitzadors del servei.
 ///
-void TimerService::removeCounters() {
+void TimerService::removeTimers() {
     
-    while (!counters.isEmpty())
-        removeCounter(counters.getFirst());
+    while (!timers.isEmpty())
+        removeTimer(timers.getFirst());
 }
 
 
-void TimerService::startCicle() {
+/// ----------------------------------------------------------------------
+/// \brief    Inicia un temporitzador.
+/// \param    timer: El temporitzador.
+/// \param    time: El periode.
+///
+void TimerService::start(
+    TimerCounter *timer,
+    int time) {
     
-    int time = MAX_INT;
+    timer->time = time;
     
-    // Busca el minim periode de temps
-    //
-/*    for(auto counter: counters) {
-        if (counter->time < time)
-            time = counter->time;
-    }*/
+    Command cmd;
+    cmd.timer = timer;
+    cmd.opCode = OpCode::start;
+    commandQueue.put(cmd, 1000);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Para el temporitzador.
+/// \param    timer: El temporitzador.
+///
+void TimerService::stop(
+    TimerCounter *timer) {
     
-    // Activa el temnporizador
+    Command cmd;
+    cmd.timer = timer;
+    cmd.opCode = OpCode::stop;
+    commandQueue.put(cmd, 1000);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Posa el temporitzador en pausa.
+/// \param    timer: El temporitzador.
+///
+void TimerService::pause(
+    TimerCounter *timer) {
+    
+    Command cmd;
+    cmd.timer = timer;
+    cmd.opCode = OpCode::pause;
+    commandQueue.put(cmd, 1000);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Torna a posar en marxa el temporitzador despres d'una pausa.
+/// \param    timer: El temporitzador.
+///
+void TimerService::resume(
+    TimerCounter *timer) {
+    
+    Command cmd;
+    cmd.timer = timer;
+    cmd.opCode = OpCode::resume;
+    commandQueue.put(cmd, 1000);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la tasca del servei.
+///
+void TimerService::onTask() {
+    
+    while (true) {
+        processActiveTimers();
+        processCommands();
+        waitTime();
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa els temporitzadors actius.
+///
+void TimerService::processActiveTimers() {
+    
+    if (!activeTimers.isEmpty()) {
+
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la cua de comandes.
+///
+void TimerService::processCommands() {
+    
+    Command cmd;
+    while (commandQueue.get(cmd, 0)) {
+        switch (cmd.opCode) {
+            case OpCode::start:
+                break;
+
+            case OpCode::stop:
+                break;
+
+            case OpCode::pause:
+                break;
+
+            case OpCode::resume:
+                break;
+        }
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera el event de temps.
+///
+void TimerService::waitTime() {
     
 }
 
 
-void TimerService::timeOut() {
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    service: El servei.
+/// \param    callback: El callback dels events.
+///
+TimerCounter::TimerCounter(
+    TimerService *service,
+    IEventCallback *callback):
+
+    service(nullptr),
+    callback(callback) {    
     
+    if (service != nullptr)
+        service->addTimer(this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Destructor.
+///
+TimerCounter::~TimerCounter() {
+   
+    if (service != nullptr)
+        service->removeTimer(this);
 }

@@ -1,7 +1,6 @@
 #ifndef __eosDigOutput__
 #define	__eosDigOutput__
 
-
 #include "eos.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
