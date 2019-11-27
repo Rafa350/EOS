@@ -13,15 +13,9 @@ namespace eos {
 	void *allocContainer(int capacity, int elementSize);
 	void freeContainer(void *container);
 	void *resizeContainer(void *oldContainer, int oldCapacity, int newCapacity, int count, int elementSize);
-	void insertElement(void *container, int count, int position, void *element, int elementSize);
-	void removeElement(void *container, int count, int position, int elementSize);
 
     template <typename T, const unsigned INITIAL_CAPACITY = 10>
     class List {
-
-        private:
-    		constexpr static int initialCapacity = INITIAL_CAPACITY;
-    		constexpr static int elementSize = sizeof(T);
 
         public:
     		typedef T value_type;
@@ -30,10 +24,13 @@ namespace eos {
     		typedef const T* const_iterator;
 
         private:
+    		constexpr static int initialCapacity = INITIAL_CAPACITY;
+    		constexpr static int elementSize = sizeof(T);
+
             int count;
             int capacity;
             T *container;
-            
+
     	public:
 
             /// \brief Constructor.
@@ -57,12 +54,18 @@ namespace eos {
 			    	container = static_cast<T*>(resizeContainer(container, capacity, newCapacity, count, elementSize));
 			    	capacity = newCapacity;
 			    }
-			    memcpy(&container[count], &element, elementSize);
+                container[count] = element;
 			    count += 1;
 			}
 
+            /// \brief Inserta un element en la posicio indicada.
+            /// \param element: L'element a insertar.
+            /// \param index: La posicio on insertar l'element.
+            ///
 			void insert(value_type element, int index) {
 
+                memmove(&container[index + 1], &container[index], (count - index) * elementSize);
+                container[index] = element;
 			}
 
 			/// \brief Elimina un element de la llista.
@@ -71,7 +74,7 @@ namespace eos {
 				for (int index = 0; index < count; index++) {
 					if (container[index] == element) {
 						if (index < (count - 1))
-							memcpy(&container[index], &container[index + 1], (count - index - 1) * elementSize);
+							memmove(&container[index], &container[index + 1], (count - index - 1) * elementSize);
 						count--;
 						return;
 					}
@@ -79,12 +82,12 @@ namespace eos {
 			}
 
 			/// \brief Buida la llista, pero deixa el contenidor.
-			inline void empty() {
+			void empty() {
 		        count = 0;
 			}
 
 			/// \brief Buida la llista i borra el contenidor.
-			inline void clear() {
+			void clear() {
 		        freeContainer(container);
 		        count = 0;
 		        capacity = 0;
@@ -123,7 +126,7 @@ namespace eos {
 				eosAssert(count > 0);
 				return container[count - 1];
 			}
-            
+
 			/// \brief Obte el iterator inicial
 			/// \return El iterator.
             inline const_iterator begin() const {
@@ -135,8 +138,6 @@ namespace eos {
             inline const_iterator end() const {
                 return &container[count];
             }
-
-
     };
 }
 

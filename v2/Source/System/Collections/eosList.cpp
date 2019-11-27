@@ -17,7 +17,7 @@ using namespace eos;
 void *eos::allocContainer(
 	int capacity,
 	int elementSize) {
-    
+
     eosAssert(capacity > 0);
     eosAssert(elementSize > 0);
 
@@ -77,40 +77,4 @@ void *eos::resizeContainer(
     }
 
     return newContainer;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inserta un element en un contenidor.
-/// \params   container: El contenidor.
-/// \param    count: Numero d'elements en el contenidor.
-/// \param    position: Posicio d'insercio.
-/// \param    element: L'element a insertar.
-/// \param    elementSize: Tamany del element.
-///
-void eos::insertElement(
-	void *container,
-	int count,
-	int position,
-	void *element,
-	int elementSize) {
-
-	// TODO
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Elimina un element d'un contenidor.
-/// \params   container: El contenidor.
-/// \param    count: Numero d'elements en el contenidor.
-/// \param    position: Posicio d'insercio.
-/// \param    elementSize: Tamany del element.
-///
-void eos::removeElement(
-	void *container,
-	int count,
-	int position,
-	int elementSize) {
-
-	// TODO
 }

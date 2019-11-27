@@ -11,10 +11,10 @@ using namespace eos;
 ///
 TimerService::TimerService(
     Application *application):
-    
+
     Service(application),
     commandQueue(10) {
-    
+
 }
 
 
@@ -22,7 +22,7 @@ TimerService::TimerService(
 /// \brief    Destructor.
 ///
 TimerService::~TimerService() {
-    
+
     while (!timers.isEmpty()) {
         TimerCounter *timer = timers.getFirst();
         removeTimer(timer);
@@ -69,7 +69,7 @@ void TimerService::removeTimer(
 /// \brief    Elimina tots temporitzadors del servei.
 ///
 void TimerService::removeTimers() {
-    
+
     while (!timers.isEmpty())
         removeTimer(timers.getFirst());
 }
@@ -83,9 +83,9 @@ void TimerService::removeTimers() {
 void TimerService::start(
     TimerCounter *timer,
     int time) {
-    
+
     timer->time = time;
-    
+
     Command cmd;
     cmd.timer = timer;
     cmd.opCode = OpCode::start;
@@ -99,7 +99,7 @@ void TimerService::start(
 ///
 void TimerService::stop(
     TimerCounter *timer) {
-    
+
     Command cmd;
     cmd.timer = timer;
     cmd.opCode = OpCode::stop;
@@ -113,7 +113,7 @@ void TimerService::stop(
 ///
 void TimerService::pause(
     TimerCounter *timer) {
-    
+
     Command cmd;
     cmd.timer = timer;
     cmd.opCode = OpCode::pause;
@@ -127,7 +127,7 @@ void TimerService::pause(
 ///
 void TimerService::resume(
     TimerCounter *timer) {
-    
+
     Command cmd;
     cmd.timer = timer;
     cmd.opCode = OpCode::resume;
@@ -139,7 +139,7 @@ void TimerService::resume(
 /// \brief    Procesa la tasca del servei.
 ///
 void TimerService::onTask() {
-    
+
     while (true) {
         processActiveTimers();
         processCommands();
@@ -152,9 +152,45 @@ void TimerService::onTask() {
 /// \brief    Procesa els temporitzadors actius.
 ///
 void TimerService::processActiveTimers() {
-    
+
     if (!activeTimers.isEmpty()) {
 
+        int decrement = 1;
+
+        // Procesa els temporitzadors actius
+        //
+        TimerList discardTimers;
+
+        for (auto timer: activeTimers) {
+            if (!timer->paused) {
+
+                // Decrementa el contador
+                //
+                if (timer->counter > decrement)
+                    timer->counter -= decrement;
+                else
+                    timer->counter = 0;
+
+                // Si el contador arriba a zero, genera l'event
+                //
+                if ((timer->counter) == 0 && (timer->callback != nullptr)) {
+
+                    // Afegeix el temporitzador a la llista de descartables
+                    //
+                    discardTimers.add(timer);
+
+                    // Genera l'event
+                    //
+                    TimerCounter::EventArgs args;
+                    args.timer = timer;
+                    timer->callback->execute(args);
+                }
+
+            }
+        }
+
+        for (auto timer: discardTimers)
+            activeTimers.remove(timer);
     }
 }
 
@@ -163,20 +199,26 @@ void TimerService::processActiveTimers() {
 /// \brief    Procesa la cua de comandes.
 ///
 void TimerService::processCommands() {
-    
+
     Command cmd;
     while (commandQueue.get(cmd, 0)) {
         switch (cmd.opCode) {
             case OpCode::start:
+                cmd.timer->paused = false;
+                cmd.timer->counter = cmd.timer->time;
+                activeTimers.add(cmd.timer);
                 break;
 
             case OpCode::stop:
+                cmd.timer->counter = 0;
                 break;
 
             case OpCode::pause:
+                cmd.timer->paused = true;
                 break;
 
             case OpCode::resume:
+                cmd.timer->paused = false;
                 break;
         }
     }
@@ -187,7 +229,7 @@ void TimerService::processCommands() {
 /// \brief    Espera el event de temps.
 ///
 void TimerService::waitTime() {
-    
+
 }
 
 
@@ -201,8 +243,11 @@ TimerCounter::TimerCounter(
     IEventCallback *callback):
 
     service(nullptr),
-    callback(callback) {    
-    
+    callback(callback),
+    paused(false),
+    counter(0),
+    time(0) {
+
     if (service != nullptr)
         service->addTimer(this);
 }
@@ -212,7 +257,7 @@ TimerCounter::TimerCounter(
 /// \brief    Destructor.
 ///
 TimerCounter::~TimerCounter() {
-   
+
     if (service != nullptr)
         service->removeTimer(this);
 }
