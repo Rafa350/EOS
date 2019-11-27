@@ -27,6 +27,7 @@ MyApplication::MyApplication():
     digInputService = new DigInputService(this);
     digOutputService = new DigOutputService(this, HAL_TMR_TIMER_2);
     ledLoopService = new LedLoopService(this);
+    timerService = new TimerService(this);
 }
 
 
@@ -86,6 +87,8 @@ void MyApplication::onInitialize() {
         LED_LED3_PIN, 
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
+    
+    timer = new TimerCounter(timerService);
 }
 
 
@@ -127,8 +130,9 @@ void MyApplication::digInput2_OnChange(const DigInput::EventArgs &args) {
 void MyApplication::digInput3_OnChange(const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!args.input->get()) 
-        getLed3()->pulse(1500);
+    //if (!args.input->get()) 
+    //    getLed3()->pulse(1500);
+    timer->start(1000);
 #endif    
 }
 #endif

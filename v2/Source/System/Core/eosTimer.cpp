@@ -17,7 +17,7 @@ Timer::Timer(
     hTimer(nullptr),
     autoreload(autoreload),
 	tag(nullptr),
-    timerEventCallback(nullptr) {
+    eventCallback(nullptr) {
 }
 
 
@@ -45,7 +45,7 @@ void Timer::start(
     	TimerInitializeInfo info;
     	info.options = 0;
     	info.options |= autoreload ? OSAL_TIMER_AUTO_ON : OSAL_TIMER_AUTO_OFF;
-    	info.callback = timerCallback;
+    	info.callback = timerFunction;
     	info.param = this;
     	hTimer = osalTimerCreate(&info);
     }
@@ -83,15 +83,14 @@ bool Timer::isActive() const {
 /// \brief    Crida a la funcio 'onTimeout' al final del cicle
 /// \param    hTimer: El handler del temporitzador.
 ///
-void Timer::timerCallback(
+void Timer::timerFunction(
     HTimer hTimer) {
 
     Timer *timer = static_cast<Timer*>(osalTimerGetContext(hTimer));
-    if ((timer != nullptr) && (timer->timerEventCallback != nullptr)) {
-        TimerEventArgs args = {
-            .timer = timer
-        };
-  		timer->timerEventCallback->execute(args);
+    if ((timer != nullptr) && (timer->eventCallback != nullptr)) {
+        EventArgs args;
+        args.timer = timer;
+  		timer->eventCallback->execute(args);
     }
 }
 

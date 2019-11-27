@@ -32,6 +32,8 @@
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
             <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
             <itemPath>../../../Include/OSAL/osalHeap.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalQueue.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalSemaphore.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <itemPath>../../../Include/Services/eosService.h</itemPath>
@@ -50,6 +52,7 @@
               <itemPath>../../../Include/System/Core/eosTask.h</itemPath>
               <itemPath>../../../Include/System/Core/eosQueue.h</itemPath>
               <itemPath>../../../Include/System/Core/eosSemaphore.h</itemPath>
+              <itemPath>../../../Include/System/Core/eosTimer.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
             <itemPath>../../../Include/System/eosCallbacks.h</itemPath>
@@ -94,6 +97,8 @@
               <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalKernel.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalHeap.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalQueue.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalSemaphore.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
@@ -114,6 +119,7 @@
               <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosSemaphore.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
             <itemPath>../../../Source/System/eosString.cpp</itemPath>

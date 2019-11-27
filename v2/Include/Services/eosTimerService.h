@@ -6,7 +6,7 @@
 #include "System/eosCallbacks.h"
 #include "System/Collections/eosList.h"
 #include "System/Core/eosQueue.h"
-#include "System/Core/eosSemaphore.h"
+#include "System/Core/eosTimer.h"
 
 
 namespace eos {
@@ -20,12 +20,14 @@ namespace eos {
                 start,
                 stop,
                 pause,
-                resume
+                resume,
+                timeOut
             };
             struct Command {
                 TimerCounter *timer;
                 OpCode opCode;
             };
+            typedef CallbackP1<TimerService, const Timer::EventArgs&> TimerEventCallback;
             typedef Queue<Command> CommandQueue;
             typedef List<TimerCounter*> TimerList;
 
@@ -33,6 +35,8 @@ namespace eos {
             CommandQueue commandQueue;
             TimerList timers;
             TimerList activeTimers;
+            Timer osTimer;
+            TimerEventCallback osTimerEventCallback;
 
         public:
             TimerService(Application *application);
@@ -51,9 +55,8 @@ namespace eos {
             void onTask() override;
 
         private:
-            void processActiveTimers();
-            void processCommands();
-            void waitTime();
+            void processTime(int period);
+            void osTimerEventHandler(const Timer::EventArgs &args);
     };
 
     class TimerCounter {

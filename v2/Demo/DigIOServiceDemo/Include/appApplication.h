@@ -5,6 +5,7 @@
 #include "eos.h"
 #include "Services/eosDigInputService.h"
 #include "Services/eosDigOutputService.h"
+#include "Services/eosTimerService.h"
 #include "System/eosApplication.h"
 #include "System/eosCallbacks.h"
 
@@ -21,6 +22,8 @@ namespace app {
             LedLoopService *ledLoopService;
             eos::DigOutputService *digOutputService;
             eos::DigInputService *digInputService;
+            eos::TimerService *timerService;
+            eos::TimerCounter *timer;
             
     #ifdef EXIST_LEDS_LED1
             eos::DigOutput *digOutput1;

@@ -13,7 +13,8 @@ TimerService::TimerService(
     Application *application):
 
     Service(application),
-    commandQueue(10) {
+    commandQueue(10),
+    osTimerEventCallback(this, &TimerService::osTimerEventHandler) {
 
 }
 
@@ -136,26 +137,63 @@ void TimerService::resume(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Procesa els events del timer.
+/// \param    args: Parametres del event.
+///
+void TimerService::osTimerEventHandler(
+    const Timer::EventArgs &args) {
+    
+    Command cmd;
+    cmd.timer = nullptr;
+    cmd.opCode = OpCode::timeOut;
+    commandQueue.put(cmd, 0);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Procesa la tasca del servei.
 ///
 void TimerService::onTask() {
 
     while (true) {
-        processActiveTimers();
-        processCommands();
-        waitTime();
+        Command cmd;
+        while (commandQueue.get(cmd, 0)) {
+            switch (cmd.opCode) {
+                case OpCode::start:
+                    cmd.timer->paused = false;
+                    cmd.timer->counter = cmd.timer->time;
+                    activeTimers.add(cmd.timer);
+                    break;
+
+                case OpCode::stop:
+                    cmd.timer->counter = 0;
+                    break;
+
+                case OpCode::pause:
+                    cmd.timer->paused = true;
+                    break;
+
+                case OpCode::resume:
+                    cmd.timer->paused = false;
+                    break;
+
+                case OpCode::timeOut:
+                    processTime(1000);
+                    break;
+            }
+        }
     }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa els temporitzadors actius.
+/// \param    period: Periode de temps procesat.
 ///
-void TimerService::processActiveTimers() {
+void TimerService::processTime(
+    int period) {
 
     if (!activeTimers.isEmpty()) {
-
-        int decrement = 1;
 
         // Procesa els temporitzadors actius
         //
@@ -166,8 +204,8 @@ void TimerService::processActiveTimers() {
 
                 // Decrementa el contador
                 //
-                if (timer->counter > decrement)
-                    timer->counter -= decrement;
+                if (timer->counter > period)
+                    timer->counter -= period;
                 else
                     timer->counter = 0;
 
@@ -192,44 +230,6 @@ void TimerService::processActiveTimers() {
         for (auto timer: discardTimers)
             activeTimers.remove(timer);
     }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la cua de comandes.
-///
-void TimerService::processCommands() {
-
-    Command cmd;
-    while (commandQueue.get(cmd, 0)) {
-        switch (cmd.opCode) {
-            case OpCode::start:
-                cmd.timer->paused = false;
-                cmd.timer->counter = cmd.timer->time;
-                activeTimers.add(cmd.timer);
-                break;
-
-            case OpCode::stop:
-                cmd.timer->counter = 0;
-                break;
-
-            case OpCode::pause:
-                cmd.timer->paused = true;
-                break;
-
-            case OpCode::resume:
-                cmd.timer->paused = false;
-                break;
-        }
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Espera el event de temps.
-///
-void TimerService::waitTime() {
-
 }
 
 

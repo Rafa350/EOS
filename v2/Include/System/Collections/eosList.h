@@ -63,7 +63,7 @@ namespace eos {
             /// \param index: La posicio on insertar l'element.
             ///
 			void insert(value_type element, int index) {
-
+                eosAssert(index < count);
                 memmove(&container[index + 1], &container[index], (count - index) * elementSize);
                 container[index] = element;
 			}
@@ -96,7 +96,7 @@ namespace eos {
 
 			/// \brief Comprova si la llista es buida.
 			/// \return True si es buida.
-			inline bool isEmpty() {
+			inline bool isEmpty() const {
 				return count == 0;
 			}
 
@@ -127,13 +127,13 @@ namespace eos {
 				return container[count - 1];
 			}
 
-			/// \brief Obte el iterator inicial
+			/// \brief Obte el iterator inicial.
 			/// \return El iterator.
             inline const_iterator begin() const {
                 return &container[0];
             }
 
-			/// \brief Obte el iterator final
+			/// \brief Obte el iterator final.
 			/// \return El iterator.
             inline const_iterator end() const {
                 return &container[count];

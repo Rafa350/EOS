@@ -11,21 +11,20 @@
 
 namespace eos {
     
-    class Timer;
-    
-    struct TimerEventArgs {
-        Timer* timer;
-    };    
-
     class Timer {
+        public:
+            struct EventArgs {
+                Timer* timer;
+            };    
+            
         private:
-            typedef ICallbackP1<const TimerEventArgs&> ITimerEventCallback;
+            typedef ICallbackP1<const EventArgs&> IEventCallback;
 
         private:
             HTimer hTimer;
             bool autoreload;
             void *tag;
-            ITimerEventCallback *timerEventCallback;
+            IEventCallback *eventCallback;
 
         public:
             Timer(bool autoreload = false);
@@ -34,8 +33,8 @@ namespace eos {
             void stop(int blockTime);
 
             template <class cls>
-            inline void setTimerEventCallback(CallbackP1<cls, const TimerEventArgs&> *callback) {
-                timerEventCallback = callback;
+            inline void setEventCallback(CallbackP1<cls, const EventArgs&> *callback) {
+                eventCallback = callback;
             }
 
             inline void setTag(void *tag) { this->tag = tag; }
@@ -43,7 +42,7 @@ namespace eos {
             bool isActive() const;
 
         private:
-            static void timerCallback(HTimer hTimer);
+            static void timerFunction(HTimer hTimer);
     };
 }
 
