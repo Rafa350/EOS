@@ -18,8 +18,8 @@ KeyboardService::KeyboardService(
 	int i2cAddress) :
     
     Service(application),
-	i2cService(i2cService),
 	i2cAddress(i2cAddress),
+	i2cService(i2cService),
     state(0),
     eventCallback(nullptr) {
 
