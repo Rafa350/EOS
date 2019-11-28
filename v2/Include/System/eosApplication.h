@@ -20,6 +20,7 @@ namespace eos {
     class Application {
     	private:
         	typedef ArrayList<Service*> ServiceList;
+            typedef ArrayList<Service*>::Iterator ServiceListIterator;
             typedef ArrayList<Task*> TaskList;
 			typedef CallbackP1<Application, const Task::EventArgs&> TaskEventCallback;
 

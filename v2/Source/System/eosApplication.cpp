@@ -81,8 +81,10 @@ void Application::tick() {
 
 	// Notifica la senyal tick a tots els serveis.
     //
-	for (auto service: services)
+    for (ServiceListIterator it(services); it.hasNext(); it.next()) {
+        Service *service = it.getCurrent();
 		service->tick();
+    }
 }
 
 
@@ -92,9 +94,12 @@ void Application::tick() {
 void Application::initializeServices() {
 
     // Inicialitza els serveis de la llista, un a un.
-    //
-	for (auto service: services)
-		service->initialize();
+    //   
+    for (ServiceListIterator it(services); it.hasNext(); it.next()) {
+        Service *service = it.getCurrent();
+        service->initialize();
+    }
+    
 }
 
 
@@ -107,7 +112,8 @@ void Application::runServices() {
     
     // Crea una tasca per executar cada servei
     //
-    for (auto service: services) {
+    for (ServiceListIterator it(services); it.hasNext(); it.next()) {
+        Service *service = it.getCurrent();
         Task *task = new Task(
             service->getStackSize(),
             service->getPriority(),

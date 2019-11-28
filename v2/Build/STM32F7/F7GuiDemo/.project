@@ -674,9 +674,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosWindow.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Collections/eosList.h</name>
+			<name>inc/Framework/EOS/System/Collections/eosArrayList.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosList.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosArrayList.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Collections/eosStack.h</name>

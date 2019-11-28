@@ -18,18 +18,52 @@ namespace eos {
     class ArrayList {
 
         public:
-    		typedef T value_type;
-    		typedef T& reference;
-    		typedef T* iterator;
-    		typedef const T* const_iterator;
-
+            class Iterator {
+                private:
+                    const ArrayList<T>& list;
+                    int index;
+                    
+                public:
+                    Iterator(const ArrayList<T>& list, bool reverse = false):
+                        list(list),
+                        index(reverse ? list.getCount() - 1 : 0) {                        
+                    }
+                        
+                    inline void first() {
+                        index = 0;
+                    }
+                    
+                    inline void last() {
+                        index = list.getCount() - 1;
+                    }
+                        
+                    inline void prev() {
+                        index -=1;
+                    }
+                        
+                    inline void next() {
+                        index += 1;
+                    }
+                    
+                    inline bool hasPrev() const {
+                        return index >= 0;
+                    }
+                    
+                    inline bool hasNext() const {
+                        return index < list.getCount();
+                    }
+                    
+                    inline const T& getCurrent() const {
+                        return list.get(index);
+                    }
+            };
+            
         private:
     		constexpr static int initialCapacity = INITIAL_CAPACITY;
-    		constexpr static int elementSize = sizeof(T);
 
             int count;
             int capacity;
-            T *container;
+            T* container;
 
     	public:
 
@@ -48,10 +82,10 @@ namespace eos {
 
     		/// \brief Afegeix un element a la llista.
     		/// \param element: L'element a afeigir.
-			void add(value_type element) {
+			void add(const T& element) {
 			    if (count == capacity) {
 			    	int newCapacity = (capacity == 0) ? initialCapacity : capacity * 2;
-			    	container = static_cast<T*>(resizeContainer(container, capacity, newCapacity, count, elementSize));
+			    	container = static_cast<T*>(resizeContainer(container, capacity, newCapacity, count, sizeof(T)));
 			    	capacity = newCapacity;
 			    }
                 container[count] = element;
@@ -62,24 +96,33 @@ namespace eos {
             /// \param element: L'element a insertar.
             /// \param index: La posicio on insertar l'element.
             ///
-			void insert(value_type element, int index) {
+			void insert(const T& element, int index) {
                 eosAssert(index < count);
-                memmove(&container[index + 1], &container[index], (count - index) * elementSize);
+                memmove(&container[index + 1], &container[index], (count - index) * sizeof(T));
                 container[index] = element;
 			}
 
 			/// \brief Elimina un element de la llista.
 			/// \param element: L'element a eliminar.
-			void remove(value_type element) {
+			void remove(const T& element) {
 				for (int index = 0; index < count; index++) {
 					if (container[index] == element) {
 						if (index < (count - 1))
-							memmove(&container[index], &container[index + 1], (count - index - 1) * elementSize);
+							memmove(&container[index], &container[index + 1], (count - index - 1) * sizeof(T));
 						count--;
 						return;
 					}
 				}
 			}
+            
+            /// \brief Copia el contingut en un array.
+            /// \param dst: El array de destinacio.            
+            /// \param offset: Index del primer element a copiar.
+            /// \param length: Numero d'elements a copiar.
+            void copyTo(T* dst, int offset, int length) const {
+                eosAssert(offset + length <= count);
+                memcpy(dst, &container[offset], length * sizeof(T));
+            }
 
 			/// \brief Buida la llista, pero deixa el contenidor.
 			void empty() {
@@ -108,35 +151,39 @@ namespace eos {
 
 			/// \brief Obte l'element en la posicio indicada de la llista.
 			/// \return L'element.
-			inline value_type get(int index) const {
+			inline const T& get(int index) const {
 				eosAssert(index < count);
 				return container[index];
 			}
 
 			/// \brief Obte el primer element de la llista.
 			/// \return L'element.
-			inline value_type getFirst() const {
+			inline const T& getFirst() const {
 				eosAssert(count > 0);
 				return container[0];
 			}
 
 			/// \brief Obte l'ultim element de la llista.
 			/// \return L'element.
-			inline value_type getLast() const {
+			inline const T& getLast() const {
 				eosAssert(count > 0);
 				return container[count - 1];
 			}
 
 			/// \brief Obte el iterator inicial.
 			/// \return El iterator.
-            inline const_iterator begin() const {
+            inline T* begin() const {
                 return &container[0];
             }
 
 			/// \brief Obte el iterator final.
 			/// \return El iterator.
-            inline const_iterator end() const {
+            inline T* end() const {
                 return &container[count];
+            }
+            
+            inline const T& operator[](int index) const {
+                return get(index);
             }
     };
 }

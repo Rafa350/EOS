@@ -102,7 +102,8 @@ void DigInputService::onTask() {
         
         Task::delay(10, weakTime);
 
-        for (auto input: inputs) {
+        for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
+            DigInput *input = it.getCurrent();
 
             bool changed = false;
 
@@ -120,9 +121,8 @@ void DigInputService::onTask() {
             }
 
             if (changed && (input->changeEventCallback != nullptr)) {
-                DigInput::EventArgs args = {
-                    .input = input
-                };
+                DigInput::EventArgs args;
+                args.input = input;
                 input->changeEventCallback->execute(args);
             }
         }

@@ -52,15 +52,13 @@
           </logicalFolder>
           <logicalFolder name="f2" displayName="System" projectFiles="true">
             <logicalFolder name="f3" displayName="Collections" projectFiles="true">
-              <itemPath>../../../Include/System/Collections/eosList.h</itemPath>
+              <itemPath>../../../Include/System/Collections/eosArrayList.h</itemPath>
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Include/System/Core/eosPoolAllocator.h</itemPath>
               <itemPath>../../../Include/System/Core/eosSemaphore.h</itemPath>
               <itemPath>../../../Include/System/Core/eosTask.h</itemPath>
               <itemPath>../../../Include/System/Core/eosQueue.h</itemPath>
-            </logicalFolder>
-            <logicalFolder name="f2" displayName="IO" projectFiles="true">
             </logicalFolder>
             <itemPath>../../../Include/System/eosApplication.h</itemPath>
             <itemPath>../../../Include/System/eosMath.h</itemPath>
@@ -131,8 +129,6 @@
               <itemPath>../../../Source/System/Core/eosSemaphore.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
               <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
-            </logicalFolder>
-            <logicalFolder name="f3" displayName="IO" projectFiles="true">
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
             <itemPath>../../../Source/System/eosString.cpp</itemPath>

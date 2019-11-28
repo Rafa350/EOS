@@ -18,6 +18,7 @@ namespace eos {
     class DigOutputService final: public Service {
         private:
             typedef ArrayList<DigOutput*> DigOutputList;
+            typedef ArrayList<DigOutput*>::Iterator DigOutputListIterator;
 
             TMRTimer timer;
             DigOutputList outputs;

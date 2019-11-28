@@ -199,7 +199,8 @@ void TimerService::processTime(
         //
         TimerList discardTimers;
 
-        for (auto timer: activeTimers) {
+        for (TimerListIterator it(activeTimers); it.hasNext(); it.next()) {
+            TimerCounter *timer = it.getCurrent();
             if (!timer->paused) {
 
                 // Decrementa el contador
@@ -227,8 +228,10 @@ void TimerService::processTime(
             }
         }
 
-        for (auto timer: discardTimers)
+        for (TimerListIterator it(discardTimers); it.hasNext(); it.next()) {
+            TimerCounter *timer = it.getCurrent();
             activeTimers.remove(timer);
+        }
     }
 }
 

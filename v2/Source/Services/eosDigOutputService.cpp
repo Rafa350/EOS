@@ -129,8 +129,10 @@ void DigOutputService::onTask() {
 ///
 void DigOutputService::timeOut() {
 
-    for (auto output: outputs)
+    for (DigOutputListIterator it(outputs); it.hasNext(); it.next()) {
+        DigOutput *output = it.getCurrent();
         output->timeOut();
+    }
 }
 
 

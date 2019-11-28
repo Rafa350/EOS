@@ -7,7 +7,7 @@
 #include "eos.h"
 #include "Services/Gui/eosMsgQueue.h"
 #include "Services/Gui/eosThickness.h"
-#include "System/Collections/eosList.h"
+#include "System/Collections/eosArrayList.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
 #include "System/Graphics/eosSize.h"
@@ -46,7 +46,8 @@ namespace eos {
 	///
     class Visual {
     	private:
-    		typedef List<Visual*, 5> VisualList;
+    		typedef ArrayList<Visual*> VisualList;
+    		typedef ArrayList<Visual*> VisualListIterator;
 
     	private:
     		Visual *parent;

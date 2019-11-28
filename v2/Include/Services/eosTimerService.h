@@ -30,6 +30,7 @@ namespace eos {
             typedef CallbackP1<TimerService, const Timer::EventArgs&> TimerEventCallback;
             typedef Queue<Command> CommandQueue;
             typedef ArrayList<TimerCounter*> TimerList;
+            typedef ArrayList<TimerCounter*>::Iterator TimerListIterator;
 
         private:
             CommandQueue commandQueue;
