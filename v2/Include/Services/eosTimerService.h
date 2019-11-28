@@ -4,7 +4,7 @@
 #include "eos.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosList.h"
+#include "System/Collections/eosArrayList.h"
 #include "System/Core/eosQueue.h"
 #include "System/Core/eosTimer.h"
 
@@ -29,7 +29,7 @@ namespace eos {
             };
             typedef CallbackP1<TimerService, const Timer::EventArgs&> TimerEventCallback;
             typedef Queue<Command> CommandQueue;
-            typedef List<TimerCounter*> TimerList;
+            typedef ArrayList<TimerCounter*> TimerList;
 
         private:
             CommandQueue commandQueue;

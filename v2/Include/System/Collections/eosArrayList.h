@@ -1,5 +1,5 @@
-#ifndef __eosList__
-#define	__eosList__
+#ifndef __eosArrayList__
+#define	__eosArrayList__
 
 
 #include "eos.h"
@@ -15,7 +15,7 @@ namespace eos {
 	void *resizeContainer(void *oldContainer, int oldCapacity, int newCapacity, int count, int elementSize);
 
     template <typename T, const unsigned INITIAL_CAPACITY = 10>
-    class List {
+    class ArrayList {
 
         public:
     		typedef T value_type;
@@ -34,14 +34,14 @@ namespace eos {
     	public:
 
             /// \brief Constructor.
-    		List():
+    		ArrayList():
                 count(0),
 				capacity(0),
 				container(nullptr) {
             }
 
     		/// \brief Destructor.
-    		~List() {
+    		~ArrayList() {
     			if (container != nullptr)
     				freeContainer(container);
     		}
@@ -142,5 +142,5 @@ namespace eos {
 }
 
 
-#endif // __eosList__
+#endif // __eosArrayList__
 

@@ -5,7 +5,7 @@
 #include "HAL/halGPIO.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosList.h"
+#include "System/Collections/eosArrayList.h"
 
 
 namespace eos {
@@ -16,8 +16,8 @@ namespace eos {
     //
     class DigInputService final: public Service {
         private:
-            typedef List<DigInput*> DigInputList;
-            
+            typedef ArrayList<DigInput*> DigInputList;
+
             int weakTime;
             DigInputList inputs;
 
@@ -28,7 +28,7 @@ namespace eos {
         public:
             DigInputService(Application *application);
             ~DigInputService();
-            
+
             void addInput(DigInput *input);
             void removeInput(DigInput *input);
             void removeInputs();
@@ -37,7 +37,7 @@ namespace eos {
     /// \brief Clase que impementa una entrada digital
     ///
     class DigInput final {
-        public:            
+        public:
             struct EventArgs {
                 DigInput* input;
             };
@@ -53,7 +53,7 @@ namespace eos {
             uint32_t pattern;
             bool state;
             IEventCallback *changeEventCallback;
-            
+
         public:
             DigInput(DigInputService *service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
             ~DigInput();

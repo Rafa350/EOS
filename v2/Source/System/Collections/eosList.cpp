@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalHeap.h"
-#include "System/Collections/eosList.h"
+#include "System/Collections/eosArrayList.h"
 #include <string.h>
 
 

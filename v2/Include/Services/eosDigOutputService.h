@@ -5,7 +5,7 @@
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
 #include "Services/eosService.h"
-#include "System/Collections/eosList.h"
+#include "System/Collections/eosArrayList.h"
 
 
 namespace eos {
@@ -17,14 +17,14 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
         private:
-            typedef List<DigOutput*> DigOutputList;
+            typedef ArrayList<DigOutput*> DigOutputList;
 
             TMRTimer timer;
             DigOutputList outputs;
-            
+
             static void timerInterrupt(TMRTimer timer, void *params);
             void timeOut();
-            
+
         protected:
             void onInitialize();
             void onTask();
@@ -47,18 +47,18 @@ namespace eos {
                 DelayedPulse,
                 Pulse
             };
-            
+
             DigOutputService *service;
             GPIOPort port;
             GPIOPin pin;
-            GPIOOptions options;   
+            GPIOOptions options;
             State state;
             int delayCnt;
             int widthCnt;
 
             void initialize();
             void timeOut();
-            
+
         public:
             DigOutput(DigOutputService *service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
             ~DigOutput();
