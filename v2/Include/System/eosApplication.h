@@ -34,7 +34,7 @@ namespace eos {
 
             void initializeServices();
             void runServices();
-            void taskEventHandler(const Task::EventArgs &args);
+            void taskEventHandler(const Task::EventArgs& args);
 
         protected:
             virtual void onInitialize();

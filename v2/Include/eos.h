@@ -62,6 +62,11 @@
 		#define EOS_DEBUG
 	#endif
 
+#elif defined(_MSC_VER)
+
+	// Platform definitions
+	#define EOS_WINDOWS
+
 #else
 	#error "Unknown compiler"
 #endif
@@ -87,6 +92,7 @@
 	#include "stm32f7xx.h"
 #elif defined(EOS_MSP432)    
     #include "msp.h"
+#elif defined(EOS_WINDOWS) && defined(_MSC_VER)
 #endif
 
 

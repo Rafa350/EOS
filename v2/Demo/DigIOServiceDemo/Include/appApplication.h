@@ -17,6 +17,7 @@ namespace app {
     class MyApplication: public eos::Application {
         private:
             typedef eos::CallbackP1<MyApplication, const eos::DigInput::EventArgs&> DigInputEventCallback;
+            typedef eos::CallbackP1<MyApplication, const eos::TimerCounter::EventArgs&> TimerEventCallback;
 
         private:
             LedLoopService *ledLoopService;
@@ -24,6 +25,7 @@ namespace app {
             eos::DigInputService *digInputService;
             eos::TimerService *timerService;
             eos::TimerCounter *timer;
+            TimerEventCallback timerEventCallback;
             
     #ifdef EXIST_LEDS_LED1
             eos::DigOutput *digOutput1;
@@ -49,14 +51,15 @@ namespace app {
 
         public:
             MyApplication();
+            void timerEventHandler(const eos::TimerCounter::EventArgs& args);
     #ifdef EXIST_SWITCHES_SW1
-            void digInput1_OnChange(const eos::DigInput::EventArgs &args);
+            void digInput1EventHandler(const eos::DigInput::EventArgs &args);
     #endif
     #ifdef EXIST_SWITCHES_SW2
-            void digInput2_OnChange(const eos::DigInput::EventArgs &args);
+            void digInput2EventHandler(const eos::DigInput::EventArgs &args);
     #endif
     #ifdef EXIST_SWITCHES_SW3
-            void digInput3_OnChange(const eos::DigInput::EventArgs &args);
+            void digInput3EventHandler(const eos::DigInput::EventArgs &args);
     #endif
 
     #ifdef EXIST_LEDS_LED1

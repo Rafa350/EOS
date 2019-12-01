@@ -18,9 +18,10 @@ using namespace app;
 /// \brief Constructor del objecte.
 ///
 MyApplication::MyApplication():
-    digInput1EventCallback(this, &MyApplication::digInput1_OnChange), 
-    digInput2EventCallback(this, &MyApplication::digInput2_OnChange), 
-    digInput3EventCallback(this, &MyApplication::digInput3_OnChange) {
+    digInput1EventCallback(this, &MyApplication::digInput1EventHandler), 
+    digInput2EventCallback(this, &MyApplication::digInput2EventHandler), 
+    digInput3EventCallback(this, &MyApplication::digInput3EventHandler),
+    timerEventCallback(this, &MyApplication::timerEventHandler) {
     
     // Crea els serveis necesaris
     //
@@ -88,16 +89,29 @@ void MyApplication::onInitialize() {
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
     
+    // Inicialitza el servei de temporitzadors.
+    //
     timer = new TimerCounter(timerService);
+    timer->setEventCallback(&timerEventCallback);
+}
+
+
+void MyApplication::timerEventHandler(
+    const eos::TimerCounter::EventArgs& args) {
+    
+#ifdef EXIST_LEDS_LED3
+    getLed3()->pulse(1500);
+#endif    
 }
 
 
 /// --------------------------------------------------------------------
-/// \brief Procesa el event OnChange.
+/// \brief Procesa els events del switch 1.
 /// \param input: La entrada que ha produit l'event.
 ///
 #ifdef EXIST_SWITCHES_SW1
-void MyApplication::digInput1_OnChange(const DigInput::EventArgs &args) {
+void MyApplication::digInput1EventHandler(
+    const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
     if (!args.input->get()) 
@@ -108,11 +122,12 @@ void MyApplication::digInput1_OnChange(const DigInput::EventArgs &args) {
 
 
 /// --------------------------------------------------------------------
-/// \brief Procesa el event OnChange.
+/// \brief Procesa els events de switch 2.
 /// \param input: La entrada que ha produit l'event.
 ///
 #ifdef EXIST_SWITCHES_SW2
-void MyApplication::digInput2_OnChange(const DigInput::EventArgs &args) {
+void MyApplication::digInput2EventHandler(
+    const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
     if (!args.input->get()) 
@@ -123,27 +138,17 @@ void MyApplication::digInput2_OnChange(const DigInput::EventArgs &args) {
 
 
 /// --------------------------------------------------------------------
-/// \brief Procesa el event OnChange.
+/// \brief Procesa els events del switch 3.
 /// \param input: La entrada que ha produit l'event.
 ///
 #ifdef EXIST_SWITCHES_SW3
-void MyApplication::digInput3_OnChange(const DigInput::EventArgs &args) {
+void MyApplication::digInput3EventHandler(
+    const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    //if (!args.input->get()) 
+    if (!args.input->get()) 
     //    getLed3()->pulse(1500);
-    timer->start(1000);
+      timer->start(1000);
 #endif    
 }
 #endif
-
-
-/// ---------------------------------------------------------------------
-/// \brief Constructor.
-/// \param application: Aplicacio a la que pertany el servei.
-///
-LedLoopService::LedLoopService(
-    Application* application):
-
-    AppLoopService(application) {
-}

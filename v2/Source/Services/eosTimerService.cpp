@@ -15,7 +15,6 @@ TimerService::TimerService(
     Service(application),
     commandQueue(10),
     osTimerEventCallback(this, &TimerService::osTimerEventHandler) {
-
 }
 
 
@@ -72,7 +71,7 @@ void TimerService::removeTimer(
 void TimerService::removeTimers() {
 
     while (!timers.isEmpty())
-        removeTimer(timers.getFirst());
+        removeTimer(timers.getLast());
 }
 
 
@@ -144,11 +143,19 @@ void TimerService::osTimerEventHandler(
     const Timer::EventArgs &args) {
     
     Command cmd;
-    cmd.timer = nullptr;
+    cmd.period = osPeriod;
     cmd.opCode = OpCode::timeOut;
     commandQueue.put(cmd, 0);
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Initialiyza el servei.
+///
+void TimerService::onInitialize() {
+    
+    osTimer.setEventCallback(&osTimerEventCallback);
+}
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la tasca del servei.
@@ -160,25 +167,23 @@ void TimerService::onTask() {
         while (commandQueue.get(cmd, 0)) {
             switch (cmd.opCode) {
                 case OpCode::start:
-                    cmd.timer->paused = false;
-                    cmd.timer->counter = cmd.timer->time;
-                    activeTimers.add(cmd.timer);
+                    cmdStart(cmd.timer);
                     break;
 
                 case OpCode::stop:
-                    cmd.timer->counter = 0;
+                    cmdStop(cmd.timer);
                     break;
 
                 case OpCode::pause:
-                    cmd.timer->paused = true;
+                    cmdPause(cmd.timer);
                     break;
 
                 case OpCode::resume:
-                    cmd.timer->paused = false;
+                    cmdResume(cmd.timer);
                     break;
 
                 case OpCode::timeOut:
-                    processTime(1000);
+                    cmdTimeOut(cmd.period);
                     break;
             }
         }
@@ -187,50 +192,92 @@ void TimerService::onTask() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els temporitzadors actius.
+/// \brief    Procesa la comanda 'Start'.
+/// \param    timer: El temporitzador.
+///
+void TimerService::cmdStart(
+    TimerCounter *timer) {
+    
+    timer->counter = timer->time;
+    activeQueue.push(timer->counter, timer);
+    cmdTimeOut(0);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'Stop'.
+/// \param    timer: El temporitzador.
+///
+void TimerService::cmdStop(
+    TimerCounter *timer) {
+
+    timer->counter = 0;    
+    activeQueue.remove(timer);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'Pause'.
+/// \param    timer: El temporitzador.
+///
+void TimerService::cmdPause(
+    TimerCounter *timer) {
+    
+    activeQueue.remove(timer);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'Resume'.
+/// \param    timer: El temporitzador.
+///
+void TimerService::cmdResume(
+    TimerCounter *timer) {
+
+    activeQueue.push(timer->counter, timer);
+    cmdTimeOut(0);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'TimeOut'.
 /// \param    period: Periode de temps procesat.
 ///
-void TimerService::processTime(
+void TimerService::cmdTimeOut(
     int period) {
 
-    if (!activeTimers.isEmpty()) {
+    if (!activeQueue.isEmpty()) {
 
-        // Procesa els temporitzadors actius
+        TimerCounter* timer;
+
+        // Decrementa els contadors del temporitzadors actius
         //
-        TimerList discardTimers;
+        if (period > 0)
+            for (TimerQueueIterator it(activeQueue); it.hasNext(); it.next()) {
+                timer = it.getCurrent();
 
-        for (TimerListIterator it(activeTimers); it.hasNext(); it.next()) {
-            TimerCounter *timer = it.getCurrent();
-            if (!timer->paused) {
-
-                // Decrementa el contador
-                //
                 if (timer->counter > period)
                     timer->counter -= period;
                 else
                     timer->counter = 0;
+            }
 
-                // Si el contador arriba a zero, genera l'event
-                //
-                if ((timer->counter) == 0 && (timer->callback != nullptr)) {
-
-                    // Afegeix el temporitzador a la llista de descartables
-                    //
-                    discardTimers.add(timer);
-
-                    // Genera l'event
-                    //
-                    TimerCounter::EventArgs args;
-                    args.timer = timer;
-                    timer->callback->execute(args);
-                }
-
+        // Elimina els contadors que hagin arribat a zero
+        //
+        while (activeQueue.peek(timer) && (timer->counter == 0)) {
+            activeQueue.pop();
+            if (timer->callback != nullptr) {
+                TimerCounter::EventArgs args;
+                args.timer = timer;
+                timer->callback->execute(args);
             }
         }
-
-        for (TimerListIterator it(discardTimers); it.hasNext(); it.next()) {
-            TimerCounter *timer = it.getCurrent();
-            activeTimers.remove(timer);
+        
+        // Obte el nou periode
+        //
+        if (activeQueue.peek(timer)) {
+            osPeriod = timer->counter;
+            osTimer.start(osPeriod, 0);
         }
     }
 }
@@ -247,7 +294,6 @@ TimerCounter::TimerCounter(
 
     service(nullptr),
     callback(callback),
-    paused(false),
     counter(0),
     time(0) {
 
