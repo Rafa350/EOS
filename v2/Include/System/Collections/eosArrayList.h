@@ -26,7 +26,7 @@ namespace eos {
                 private:
                     const ArrayList<Element>& list;
                     int index;
-                    
+
                 public:
                     /// \brief Constructor.
                     /// \param list: La llista a iterar.
@@ -37,7 +37,7 @@ namespace eos {
                         list(list),
                         index(reverse ? list.getCount() - 1 : 0) {
                     }
-                        
+
                     /// \brief Mou el iterator al primer element.
                     /// \return True si tot es correcte.
                     ///
@@ -49,7 +49,7 @@ namespace eos {
                             return true;
                         }
                     }
-                    
+
                     /// \brief Mou el iterator a l'ultim element.
                     /// \return True si tot es correcte.
                     ///
@@ -61,7 +61,7 @@ namespace eos {
                             return true;
                         }
                     }
-                        
+
                     /// \brief Mou el iterator al anterior element.
                     /// \return True si tot es correcte.
                     ///
@@ -73,7 +73,7 @@ namespace eos {
                         else
                             return false;
                     }
-                        
+
                     /// \brief Mou el iterator al seguent element.
                     /// \return True si tot es correcte.
                     ///
@@ -85,21 +85,21 @@ namespace eos {
                         else
                             return false;
                     }
-                    
+
                     /// \brief Indica si hi ha un element previ.
                     /// \return True si existeix l'element previ.
                     ///
                     inline bool hasPrev() const {
                         return !list.isEmpty() && (index >= 0);
                     }
-                    
+
                     /// \brief Indica si hi ha un element posterior.
                     /// \return True si existeix l'element posterior.
                     ///
                     inline bool hasNext() const {
                         return !list.isEmpty() && (index < list.getCount());
                     }
-                    
+
                     /// \brief Obter l'element actual.
                     /// \return L'element actual.
                     ///
@@ -107,28 +107,28 @@ namespace eos {
                         return list.get(index);
                     }
             };
-            
+
         private:
             int count;
             int capacity;
             Element* container;
-            
+
         private:
             void updateCapacity() {
                 if (count == capacity) {
-                    int newCapacity = (capacity == 0) ? 
-                        Math::max(5, initialCapacity) : 
-                        ((capacity < 50) ? 
-                            capacity * 2 : 
+                    int newCapacity = (capacity == 0) ?
+                        Math::max(5, initialCapacity) :
+                        ((capacity < 50) ?
+                            capacity * 2 :
                             capacity + 25);
                     container = static_cast<Element*>(resizeContainer(container, capacity, newCapacity, count, sizeof(Element)));
                     capacity = newCapacity;
-                }                    
+                }
             }
-            
+
             void move(int dstIndex, int srcIndex, int count) {
                 if (count > 0)
-                    memmove(&container[dstIndex], &container[srcIndex], count * sizeof(Element);
+                    memmove(&container[dstIndex], &container[srcIndex], count * sizeof(Element));
             }
 
     	public:
@@ -156,19 +156,19 @@ namespace eos {
                 updateCapacity();
                 int index = count;
                 container[index] = element;
-			    count += 1;                
+			    count += 1;
                 return index;
 			}
-            
+
             /// \brief Inserta un element en la posicio indicada.
             /// \param element: L'element a insertar.
             /// \param index: La posicio on insertar l'element.
             /// \return True si tot es correcte. False en cas contrari.
             ///
 			bool insertAt(int index, const Element& element) {
-                if (index < 0) 
+                if (index < 0)
                     return false;
-                else (index == count) {
+                else if (index == count) {
                     updateCapacity();
                     container[index] = element;
                     count += 1;
@@ -191,7 +191,7 @@ namespace eos {
             ///
 			int remove(const Element& element) {
                 int index = indexOf(element);
-                return removeAt(index) ? index : -1);
+                return removeAt(index) ? index : -1;
 			}
 
             /// \brief Elimina un element de la posicio indicada.
@@ -199,19 +199,19 @@ namespace eos {
             /// \return True si tot es correcte. False en cas contrari.
             ///
             bool removeAt(int index) {
-                if (index < 0)
+                if ((index < 0) || (index >= count))
                     return false;
 				else if (index <= (count - 1)) {
                     move(index, index + 1, count - index - 1);
                     count -= 1;
-                    return true;
-				}               
+                    return true; REPASAR
+				}
                 else
                     return true;
             }
-            
+
             /// \brief Copia el contingut en un array.
-            /// \param dst: El array de destinacio.            
+            /// \param dst: El array de destinacio.
             /// \param offset: Index del primer element a copiar.
             /// \param length: Numero d'elements a copiar.
             ///
@@ -219,15 +219,15 @@ namespace eos {
                 eosAssert(offset + length <= count);
                 memcpy(dst, &container[offset], length * sizeof(Element));
             }
-            
+
             /// \brief Obte l'index d'un element.
             /// \return L'index o -1 si l'element no existeix.
             ///
             int indexOf(const Element &element) const {
-				for (int index = 0; index < count; index++) 
-					if (container[index] == element) 
+				for (int index = 0; index < count; index++)
+					if (container[index] == element)
                         return index;
-                return -1;                
+                return -1;
             }
 
 			/// \brief Buida la llista, pero deixa el contenidor.
@@ -258,7 +258,7 @@ namespace eos {
 			inline int getCount() const {
 				return count;
 			}
-            
+
             /// \brief Obte la capacitat actual.
             /// \return La capacitat.
             ///
@@ -303,7 +303,7 @@ namespace eos {
             inline Element* end() const {
                 return &container[count];
             }
-            
+
             /// \brief Implementa l'operador []
             /// \return El lemement en la posicio indicada.
             ///
