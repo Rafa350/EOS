@@ -15,7 +15,7 @@ namespace eos {
 	void freeContainer(void *container);
 	void *resizeContainer(void *oldContainer, int oldCapacity, int newCapacity, int count, int elementSize);
 
-    /// \brief Implementa una llista a partir d'un array
+    /// \brief Implementa una llista a partir d'un array.
     /// \remarks La llista enmagatzema copies del element.
     template <typename Element, const int initialCapacity = 0>
     class ArrayList {
@@ -201,10 +201,10 @@ namespace eos {
             bool removeAt(int index) {
                 if ((index < 0) || (index >= count))
                     return false;
-				else if (index <= (count - 1)) {
+				else if (index < count) {
                     move(index, index + 1, count - index - 1);
                     count -= 1;
-                    return true; REPASAR
+                    return true;
 				}
                 else
                     return true;
