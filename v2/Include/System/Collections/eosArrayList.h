@@ -125,6 +125,11 @@ namespace eos {
                     capacity = newCapacity;
                 }                    
             }
+            
+            void move(int dstIndex, int srcIndex, int count) {
+                if (count > 0)
+                    memmove(&container[dstIndex], &container[srcIndex], count * sizeof(Element);
+            }
 
     	public:
 
@@ -154,19 +159,6 @@ namespace eos {
 			    count += 1;                
                 return index;
 			}
-
-			/// \brief Elimina un element de la llista.
-			/// \param element: L'element a eliminar.
-            /// \return L'index del element eliminat.
-            ///
-			int remove(const Element& element) {
-                int index = indexOf(element);
-                if (index != -1) {
-                    memmove(&container[index], &container[index + 1], (count - index - 1) * sizeof(Element));
-                    count -= 1;
-                }
-                return index;
-			}
             
             /// \brief Inserta un element en la posicio indicada.
             /// \param element: L'element a insertar.
@@ -176,16 +168,30 @@ namespace eos {
 			bool insertAt(int index, const Element& element) {
                 if (index < 0) 
                     return false;
-                else if (index <= count) {
+                else (index == count) {
                     updateCapacity();
-                    if (index < count)
-                        memmove(&container[index + 1], &container[index], (count - index) * sizeof(Element));
+                    container[index] = element;
+                    count += 1;
+                    return true;
+                }
+                else if (index < count) {
+                    updateCapacity();
+                    move(index + 1, index, count - index);
                     container[index] = element;
                     count += 1;
                     return true;
                 }
                 else
                     return false;
+			}
+
+			/// \brief Elimina un element de la llista.
+			/// \param element: L'element a eliminar.
+            /// \return L'index del element eliminat. -1 en cas d'error.
+            ///
+			int remove(const Element& element) {
+                int index = indexOf(element);
+                return removeAt(index) ? index : -1);
 			}
 
             /// \brief Elimina un element de la posicio indicada.
@@ -196,8 +202,7 @@ namespace eos {
                 if (index < 0)
                     return false;
 				else if (index <= (count - 1)) {
-                    if (index < (count - 1))
-                        memmove(&container[index], &container[index + 1], (count - index - 1) * sizeof(Element));
+                    move(index, index + 1, count - index - 1);
                     count -= 1;
                     return true;
 				}               
