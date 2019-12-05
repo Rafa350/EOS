@@ -67,15 +67,15 @@ void osalResumeAll() {
 /// \param[in] time: Temps en ms.
 ///
 void osalDelay(
-	int time) {
+	unsigned time) {
 
     vTaskDelay((time ? time : time + 1) / portTICK_PERIOD_MS);
 }
 
 
 void osalDelayUntil(
-	int time,
-	int *lastTick) {
+	unsigned time,
+	unsigned* lastTick) {
 
     if (time > 0)
         vTaskDelayUntil((TickType_t*) lastTick, time / portTICK_PERIOD_MS);
@@ -89,6 +89,16 @@ void osalDelayUntil(
 unsigned osalGetTickCount() {
 
 	return xTaskGetTickCount();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el valor del contador de ticks en milisegons.
+/// \retorn El valor del contador.
+///
+unsigned osalGetTickTime() {
+    
+    return xTaskGetTickCount() * portTICK_PERIOD_MS;
 }
 
 

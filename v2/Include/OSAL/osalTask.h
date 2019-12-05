@@ -12,14 +12,14 @@ extern "C" {
 #endif
 
 
-typedef struct OSAL_TASK_DATA *HTask;
+typedef struct OSAL_TASK_DATA* HTask;
 typedef uint32_t TaskOptions;
-typedef void (*TaskFunction)(void *params);
+typedef void (*TaskFunction)(void* params);
 
 typedef struct {                       // Parametres d'inicialitzacio
-	const char *name;                  // -Nom
+	const char* name;                  // -Nom
 	TaskFunction function;             // -Funcio a executar
-	void *params;                      // -Parametres de la funcio
+	void* params;                      // -Parametres de la funcio
 	int stackSize;                     // -Tamany de la pila
 	TaskOptions options;               // -Opcions
 } TaskInitializeInfo;
@@ -36,7 +36,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 #define OSAL_TASK_PRIORITY_HIGH        (3u << OSAL_TASK_PRIORITY_pos)
 
 
-HTask osalTaskCreate(const TaskInitializeInfo *info);
+HTask osalTaskCreate(const TaskInitializeInfo* info);
 void osalTaskDestroy(HTask hTask);
 void osalTaskYield();
 

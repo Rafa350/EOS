@@ -12,14 +12,14 @@ extern "C" {
 #endif
 
 
-typedef struct OSAL_TIMER_DATA *HTimer;
+typedef struct OSAL_TIMER_DATA* HTimer;
 typedef uint32_t TimerOptions;
 typedef void (*TimerCallback)(HTimer hTimer);
 
 typedef struct {
 	TimerOptions options;
 	TimerCallback callback;
-	void *param;
+	void* param;
 } TimerInitializeInfo;
 
 #define OSAL_TIMER_BLOCK               ((unsigned) -1)
@@ -33,11 +33,11 @@ typedef struct {
 #define OSAL_TIMER_AUTO_ON             ((TimerOptions)1 << OSAL_TIMER_AUTO_POS)
 
 
-HTimer osalTimerCreate(const TimerInitializeInfo *info);
-bool osalTimerDestroy(HTimer hTimer, int waitTime);
+HTimer osalTimerCreate(const TimerInitializeInfo* info);
+bool osalTimerDestroy(HTimer hTimer, unsigned blockTime);
 
-bool osalTimerStart(HTimer hTimer, int time, int waitTime);
-bool osalTimerStop(HTimer hTimer, int waitTime);
+bool osalTimerStart(HTimer hTimer, unsigned time, unsigned blockTime);
+bool osalTimerStop(HTimer hTimer, unsigned blockTime);
 
 bool osalTimerIsActive(HTimer hTimer);
 void *osalTimerGetContext(HTimer hTimer);

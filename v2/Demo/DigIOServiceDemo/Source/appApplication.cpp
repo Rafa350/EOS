@@ -15,7 +15,7 @@ using namespace app;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor del objecte.
+/// \brief    Constructor del objecte.
 ///
 MyApplication::MyApplication():
     digInput1EventCallback(this, &MyApplication::digInput1EventHandler), 
@@ -33,7 +33,7 @@ MyApplication::MyApplication():
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza l'aplicacio.
+/// \brief    Inicialitza l'aplicacio.
 ///
 void MyApplication::onInitialize() {
 
@@ -91,23 +91,30 @@ void MyApplication::onInitialize() {
     
     // Inicialitza el servei de temporitzadors.
     //
-    timer = new TimerCounter(timerService);
-    timer->setEventCallback(&timerEventCallback);
+    timer1 = new TimerCounter(timerService);
+    timer1->setEventCallback(&timerEventCallback);
+
+    timer2 = new TimerCounter(timerService);
+    timer2->setEventCallback(&timerEventCallback);
 }
 
 
+/// --------------------------------------------------------------------
+/// \brief    Procesa els events del temporitzador 1 i 2.
+/// \param    args: Parametres del event.
+///
 void MyApplication::timerEventHandler(
     const eos::TimerCounter::EventArgs& args) {
     
 #ifdef EXIST_LEDS_LED3
-    getLed3()->pulse(1500);
+    getLed3()->pulse(250);
 #endif    
 }
 
 
 /// --------------------------------------------------------------------
-/// \brief Procesa els events del switch 1.
-/// \param input: La entrada que ha produit l'event.
+/// \brief    Procesa els events del switch 1.
+/// \param    args: Parametres del event.
 ///
 #ifdef EXIST_SWITCHES_SW1
 void MyApplication::digInput1EventHandler(
@@ -122,8 +129,8 @@ void MyApplication::digInput1EventHandler(
 
 
 /// --------------------------------------------------------------------
-/// \brief Procesa els events de switch 2.
-/// \param input: La entrada que ha produit l'event.
+/// \brief    Procesa els events de switch 2.
+/// \param    args: Parametres del event.
 ///
 #ifdef EXIST_SWITCHES_SW2
 void MyApplication::digInput2EventHandler(
@@ -138,8 +145,8 @@ void MyApplication::digInput2EventHandler(
 
 
 /// --------------------------------------------------------------------
-/// \brief Procesa els events del switch 3.
-/// \param input: La entrada que ha produit l'event.
+/// \brief    Procesa els events del switch 3.
+/// \param    args: Parametres del event.
 ///
 #ifdef EXIST_SWITCHES_SW3
 void MyApplication::digInput3EventHandler(
@@ -148,7 +155,8 @@ void MyApplication::digInput3EventHandler(
 #ifdef EXIST_LEDS_LED3
     if (!args.input->get()) 
     //    getLed3()->pulse(1500);
-      timer->start(1000);
+    timer1->start(1000);
+    timer2->start(1500);
 #endif    
 }
 #endif

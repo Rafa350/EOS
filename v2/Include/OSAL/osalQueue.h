@@ -25,9 +25,9 @@ void osalQueueDestroy(HQueue hQueue);
 
 void osalQueueClear(HQueue hQueue);
 
-bool osalQueuePut(HQueue hQueue, const void *element, int waitTime);
+bool osalQueuePut(HQueue hQueue, const void *element, unsigned blockTime);
 bool osalQueuePutISR(HQueue hQueue, const void *element);
-bool osalQueueGet(HQueue hQueue, void *element, int waitTime);
+bool osalQueueGet(HQueue hQueue, void *element, unsigned blockTime);
 bool osalQueueGetISR(HQueue hQueue, void *element);
 
 

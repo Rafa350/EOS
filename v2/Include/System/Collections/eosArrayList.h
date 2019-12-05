@@ -223,11 +223,17 @@ namespace eos {
             /// \brief Obte l'index d'un element.
             /// \return L'index o -1 si l'element no existeix.
             ///
-            int indexOf(const Element &element) const {
+            int indexOf(const Element& element) const {
 				for (int index = 0; index < count; index++)
 					if (container[index] == element)
                         return index;
                 return -1;
+            }
+            
+            /// \brief Comprova si l'element pertany a la llista.
+            ///
+            inline bool contains(const Element& element) const {
+                return indexOf(element) != -1;
             }
 
 			/// \brief Buida la llista, pero deixa el contenidor.

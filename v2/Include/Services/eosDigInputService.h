@@ -19,7 +19,7 @@ namespace eos {
             typedef ArrayList<DigInput*> DigInputList;
             typedef ArrayList<DigInput*>::Iterator DigInputListIterator;
 
-            int weakTime;
+            unsigned weakTime;
             DigInputList inputs;
 
         protected:

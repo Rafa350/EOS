@@ -24,7 +24,8 @@ namespace app {
             eos::DigOutputService *digOutputService;
             eos::DigInputService *digInputService;
             eos::TimerService *timerService;
-            eos::TimerCounter *timer;
+            eos::TimerCounter *timer1;
+            eos::TimerCounter *timer2;
             TimerEventCallback timerEventCallback;
             
     #ifdef EXIST_LEDS_LED1

@@ -39,17 +39,24 @@ namespace UnitTestArrayList {
 			const int numElements = 100;
 			ArrayList<int> list;
 			
+			// Afegeig elements
+			//
 			for (int i = 0; i < numElements; i++) {			
 				list.add(i + 100);
 			}
 
+			// Elimina un de cada dos.
+			//
 			for (int i = 0; i < numElements; i += 2) {
 				list.remove(i + 100);
 			}
 
+			// Comprova que els que resten son els correctes.
+			//
 			for (int i = 0; i < list.getCount(); i++) {
 				Assert::AreEqual<int>(i + i + 101, list[i], L"Els valors en la llista no son correctes.");
 			}
+			Assert::AreEqual(numElements / 2, list.getCount(), L"La quantitat no coincideix.");
 		}
 
 		TEST_METHOD(insertAt) {
@@ -109,8 +116,15 @@ namespace UnitTestArrayList {
 			bool r2 = list.removeAt(list.getCount() -1);
 			Assert::IsTrue(r2, L"Error al eliminar l'ultim element.");
 			Assert::AreEqual<int>(101, list[0], L"El primer element es incorrecte.");
-			Assert::AreEqual<int>(198, list[list.getCount()], L"L'ultim element es incorrecte.");
+			Assert::AreEqual<int>(198, list[list.getCount() - 1], L"L'ultim element es incorrecte.");
 			Assert::AreEqual<int>(98, list.getCount(), L"La quantitat es incorrecte.");
+
+			// Eliina un element central
+			//
+			bool r3 = list.removeAt(10);
+     		Assert::IsTrue(r2, L"Error al eliminar element.");
+			Assert::AreEqual<int>(112, list[10], L"El element 10, es incorrecte.");
+			Assert::AreEqual<int>(97, list.getCount(), L"La quantitat es incorrecte.");
 		}
 	};
 }

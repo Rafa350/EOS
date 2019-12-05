@@ -21,8 +21,9 @@ void osalStopScheduler();
 void osalSuspendAll();
 void osalResumeAll();
 unsigned osalGetTickCount();
-void osalDelay(int time);
-void osalDelayUntil(int time, int *lastTick);
+unsigned osalGetTickTime();
+void osalDelay(unsigned time);
+void osalDelayUntil(unsigned time, unsigned* lastTick);
 
 void osalSysTickHandler();
 

@@ -28,48 +28,48 @@ namespace eos {
                 OpCode opCode;
                 union {
                     TimerCounter *timer;
-                    int period;
+                    unsigned period;
                 };
             };
             typedef CallbackP1<TimerService, const Timer::EventArgs&> TimerEventCallback;
             typedef Queue<Command> CommandQueue;
             typedef ArrayList<TimerCounter*> TimerList;
             typedef ArrayList<TimerCounter*>::Iterator TimerListIterator;
-            typedef PriorityQueue<int, TimerCounter*> TimerQueue;
-            typedef PriorityQueue<int, TimerCounter*>::Iterator TimerQueueIterator;
+            typedef PriorityQueue<unsigned, TimerCounter*> TimerQueue;
+            typedef PriorityQueue<unsigned, TimerCounter*>::Iterator TimerQueueIterator;
 
         private:
             CommandQueue commandQueue;
             TimerList timers;
             TimerQueue activeQueue;
-            int osPeriod;
+            unsigned osPeriod;
             Timer osTimer;
             TimerEventCallback osTimerEventCallback;
 
         public:
-            TimerService(Application *application);
+            TimerService(Application* application);
             ~TimerService();
 
-            void addTimer(TimerCounter *timer);
-            void removeTimer(TimerCounter *timer);
+            void addTimer(TimerCounter* timer);
+            void removeTimer(TimerCounter* timer);
             void removeTimers();
 
-            void start(TimerCounter *timer, int time);
-            void stop(TimerCounter *timer);
-            void pause(TimerCounter *timer);
-            void resume(TimerCounter *timer);
+            void start(TimerCounter* timer, unsigned period, unsigned blockTime);
+            void stop(TimerCounter* timer, unsigned blockTime);
+            void pause(TimerCounter* timer, unsigned blockTime);
+            void resume(TimerCounter *timer, unsigned blockTime);
 
         protected:
             void onInitialize() override;
             void onTask() override;
 
         private:
-            void cmdStart(TimerCounter *timer);
-            void cmdStop(TimerCounter *timer);
-            void cmdPause(TimerCounter *timer);
-            void cmdResume(TimerCounter *timer);
-            void cmdTimeOut(int period);
-            void osTimerEventHandler(const Timer::EventArgs &args);
+            void cmdStart(TimerCounter* timer);
+            void cmdStop(TimerCounter* timer);
+            void cmdPause(TimerCounter* timer);
+            void cmdResume(TimerCounter* timer);
+            void cmdTimeOut();
+            void osTimerEventHandler(const Timer::EventArgs& args);
     };
 
     class TimerCounter {
@@ -84,19 +84,19 @@ namespace eos {
         private:
             TimerService *service;
             IEventCallback *callback;
-            int time;
-            int counter;
+            unsigned period;
+            unsigned expireTime;
 
         public:
-            TimerCounter(TimerService *service, IEventCallback *callback = nullptr);
+            TimerCounter(TimerService* service, IEventCallback* callback = nullptr);
             ~TimerCounter();
 
-            inline void setEventCallback(IEventCallback *callback) { this->callback = callback; }
+            inline void setEventCallback(IEventCallback* callback) { this->callback = callback; }
 
-            void start(int time) { service->start(this, time); }
-            void stop() { service->stop(this); }
-            void pause() { service->pause(this); }
-            void resume() { service->resume(this); }
+            void start(unsigned period, unsigned blockTime = ((unsigned)-1)) { service->start(this, period, blockTime); }
+            void stop(unsigned blockTime = ((unsigned)-1)) { service->stop(this, blockTime); }
+            void pause(unsigned blockTime = ((unsigned)-1)) { service->pause(this, blockTime); }
+            void resume(unsigned blockTime = ((unsigned)-1)) { service->resume(this, blockTime); }
 
         friend TimerService;
     };

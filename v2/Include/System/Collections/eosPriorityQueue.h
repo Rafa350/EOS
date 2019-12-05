@@ -26,7 +26,7 @@ namespace eos {
                     int index;
                     
                 public:
-                    Iterator(const PriorityQueue<Priority, Element, initialCapacity> queue):
+                    Iterator(const PriorityQueue<Priority, Element, initialCapacity>& queue):
                         list(queue.list),
                         index(0) {
                     }
@@ -67,7 +67,7 @@ namespace eos {
             /// \param element: L'element a afeigir.
             /// \return La posicio on s'ha insertat l'element.
             ///
-            int push(Priority priority, const Element &element) {
+            int push(Priority priority, const Element& element) {
                 
                 int index = 0;
                 while ((index < list.getCount()) &&
@@ -84,7 +84,7 @@ namespace eos {
             /// \param: El element recuperat.
             /// \return True si tot es correcte.
             ///
-            bool pop(Element &element) {
+            bool pop(Element& element) {
                
                 if (peek(element)) {
                     list.removeAt(0);
@@ -99,7 +99,7 @@ namespace eos {
             /// \param element: El element a eliminar.
             /// \return True si tot es correcte.
             ///
-            bool remove(Element &element) {
+            bool remove(Element& element) {
 
                 for (int i = 0; i < list.getCount(); i++) {
                     if (list[i].element == element)
@@ -124,13 +124,20 @@ namespace eos {
             /// \param: El element recuperat.
             /// \return True si tot es correcte.
             ///
-            bool peek(Element &element) {
+            bool peek(Element& element) {
                 if (list.isEmpty())
                     return false;
                 else {
                     element = list.getFirst().element;
                     return true;
                 }
+            }
+            
+            bool contains(const Element& element) const {
+                for (int i = 0; i < list.getCount(); i++)
+                    if (list[i].element == element)
+                        return true;
+                return false;
             }
             
             /// \brief Borra el contingut de la cua.

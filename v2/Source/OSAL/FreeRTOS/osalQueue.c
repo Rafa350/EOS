@@ -53,19 +53,19 @@ void osalQueueClear(
 /// \brief    Afegeix un element a la cua.
 /// \param    hQueue: El handler de la cua.
 /// \param    element: El element a afeigir.
-/// \param    waitTime: Temps maxim de bloqueig en ms.
+/// \param    blockTime: Temps maxim de bloqueig en ms.
 /// \return   True si tot es correcte.
 ///
 bool osalQueuePut(
 	HQueue hQueue,
 	const void *element,
-	int waitTime) {
+	unsigned blockTime) {
 
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    TickType_t ticks = (waitTime == -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
-    return xQueueSendToBack(hQueue, element,  ticks) == pdPASS;
+    TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    return xQueueSendToBack(hQueue, element,  blockTicks) == pdPASS;
 }
 
 
@@ -92,19 +92,19 @@ bool osalQueuePutISR(
 /// \brief    Obte un element de la cua.
 /// \param    hQueue: handler de la cua.
 /// \param    element: Buffer on deixar l'element.
-/// \param    waitTime: Temps maxim de bloqueig en ms.
+/// \param    blockTime: Temps maxim de bloqueig en ms.
 /// \return   True si tot es correcte
 ///
 bool osalQueueGet(
 	HQueue hQueue,
 	void *element,
-	int waitTime) {
+	unsigned blockTime) {
 
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    TickType_t ticks = (waitTime == -1) ? portMAX_DELAY : waitTime / portTICK_PERIOD_MS;
-    return xQueueReceive(hQueue, element, ticks) == pdPASS;
+    TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+    return xQueueReceive(hQueue, element, blockTicks) == pdPASS;
 }
 
 

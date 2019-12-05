@@ -116,7 +116,7 @@ unsigned Task::getTickCount() {
 /// \param    time: El numero de milisegons a retardar.
 ///
 void Task::delay(
-    int time) {
+    unsigned time) {
 
 	osalDelay(time);
 }
@@ -128,8 +128,8 @@ void Task::delay(
 /// \param    weakTime: El valor de contador de ticks actualitzat.
 ///
 void Task::delay(
-    int time,
-    int &weakTime) {
+    unsigned time,
+    unsigned &weakTime) {
 
 	osalDelayUntil(time, &weakTime);
 }
@@ -141,7 +141,7 @@ void Task::delay(
 /// \return   True si hi ha notificacio, false en cas contrari.
 ///
 bool Task::notificationTake(
-    int blockTime) {
+    unsigned blockTime) {
 
 	// Millorar a traves de OSAL
     TickType_t ticks = blockTime == -1 ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;

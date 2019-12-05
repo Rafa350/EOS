@@ -12,14 +12,14 @@ extern "C" {
 #endif
 
 
-typedef struct OSAL_SEMAPHORE_DATA *HSemaphore;
+typedef struct OSAL_SEMAPHORE_DATA* HSemaphore;
 
 
 HSemaphore osalSemaphoreCreate();
 void osalSemaphoreDestroy(HSemaphore hSemaphore);
 
-bool osalSemaphoreWait(HSemaphore, int waitTime);
-bool osalSemaphoreWaitISR(HSemaphore, int waitTime);
+bool osalSemaphoreWait(HSemaphore, unsigned blockTime);
+bool osalSemaphoreWaitISR(HSemaphore, unsigned blockTime);
 void osalSemaphoreRelease(HSemaphore hSemaphore);
 void osalSemaphoreReleaseISR(HSemaphore hSemaphore);
 

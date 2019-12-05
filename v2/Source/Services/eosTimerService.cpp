@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "OSAL/osalKernel.h"
 #include "Services/eosTimerService.h"
 
 
@@ -10,11 +11,12 @@ using namespace eos;
 /// \param    application: L'aplicacio a la que pertany el servei.
 ///
 TimerService::TimerService(
-    Application *application):
+    Application* application):
 
     Service(application),
     commandQueue(10),
     osTimerEventCallback(this, &TimerService::osTimerEventHandler) {
+
 }
 
 
@@ -24,7 +26,7 @@ TimerService::TimerService(
 TimerService::~TimerService() {
 
     while (!timers.isEmpty()) {
-        TimerCounter *timer = timers.getFirst();
+        TimerCounter* timer = timers.getFirst();
         removeTimer(timer);
         delete timer;
     }
@@ -36,7 +38,7 @@ TimerService::~TimerService() {
 /// \param    timer: El temporitzador a afeigir.
 ///
 void TimerService::addTimer(
-    TimerCounter *timer) {
+    TimerCounter* timer) {
 
     // Prerequisits
     //
@@ -53,12 +55,15 @@ void TimerService::addTimer(
 /// \param    timer: El temporitzador a eliminar.
 ///
 void TimerService::removeTimer(
-    TimerCounter *timer) {
+    TimerCounter* timer) {
 
     // Precondicions
     //
     eosAssert(timer != nullptr);
     eosAssert(timer->service == this);
+    
+    if (activeQueue.contains(timer))
+        activeQueue.remove(timer);
 
     timer->service = nullptr;
     timers.remove(timer);
@@ -78,41 +83,47 @@ void TimerService::removeTimers() {
 /// ----------------------------------------------------------------------
 /// \brief    Inicia un temporitzador.
 /// \param    timer: El temporitzador.
-/// \param    time: El periode.
+/// \param    period: El periode.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 void TimerService::start(
-    TimerCounter *timer,
-    int time) {
+    TimerCounter* timer,
+    unsigned period,
+    unsigned blockTime) {
 
-    timer->time = time;
+    timer->period = period;
 
     Command cmd;
     cmd.timer = timer;
     cmd.opCode = OpCode::start;
-    commandQueue.put(cmd, 1000);
+    commandQueue.put(cmd, blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Para el temporitzador.
 /// \param    timer: El temporitzador.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 void TimerService::stop(
-    TimerCounter *timer) {
+    TimerCounter* timer,
+    unsigned blockTime) {
 
     Command cmd;
     cmd.timer = timer;
     cmd.opCode = OpCode::stop;
-    commandQueue.put(cmd, 1000);
+    commandQueue.put(cmd, blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Posa el temporitzador en pausa.
 /// \param    timer: El temporitzador.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 void TimerService::pause(
-    TimerCounter *timer) {
+    TimerCounter* timer,
+    unsigned blockTime) {
 
     Command cmd;
     cmd.timer = timer;
@@ -124,14 +135,16 @@ void TimerService::pause(
 /// ----------------------------------------------------------------------
 /// \brief    Torna a posar en marxa el temporitzador despres d'una pausa.
 /// \param    timer: El temporitzador.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 void TimerService::resume(
-    TimerCounter *timer) {
+    TimerCounter* timer,
+    unsigned blockTime) {
 
     Command cmd;
     cmd.timer = timer;
     cmd.opCode = OpCode::resume;
-    commandQueue.put(cmd, 1000);
+    commandQueue.put(cmd, blockTime);
 }
 
 
@@ -140,12 +153,12 @@ void TimerService::resume(
 /// \param    args: Parametres del event.
 ///
 void TimerService::osTimerEventHandler(
-    const Timer::EventArgs &args) {
+    const Timer::EventArgs& args) {
     
     Command cmd;
     cmd.period = osPeriod;
     cmd.opCode = OpCode::timeOut;
-    commandQueue.put(cmd, 0);
+    commandQueue.put(cmd, 1000);
 }
 
 
@@ -157,6 +170,7 @@ void TimerService::onInitialize() {
     osTimer.setEventCallback(&osTimerEventCallback);
 }
 
+
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la tasca del servei.
 ///
@@ -164,7 +178,8 @@ void TimerService::onTask() {
 
     while (true) {
         Command cmd;
-        while (commandQueue.get(cmd, 0)) {
+        while (commandQueue.get(cmd, ((unsigned)-1))) {
+            Task::enterCriticalSection();
             switch (cmd.opCode) {
                 case OpCode::start:
                     cmdStart(cmd.timer);
@@ -183,9 +198,10 @@ void TimerService::onTask() {
                     break;
 
                 case OpCode::timeOut:
-                    cmdTimeOut(cmd.period);
+                    cmdTimeOut();
                     break;
             }
+            Task::exitCriticalSection();
         }
     }
 }
@@ -198,9 +214,13 @@ void TimerService::onTask() {
 void TimerService::cmdStart(
     TimerCounter *timer) {
     
-    timer->counter = timer->time;
-    activeQueue.push(timer->counter, timer);
-    cmdTimeOut(0);
+    bool isFirst = activeQueue.isEmpty();
+    
+    timer->expireTime = osalGetTickTime() + timer->period;
+    activeQueue.push(timer->expireTime, timer);
+    
+    if (isFirst)
+        osTimer.start(timer->period, 0);
 }
 
 
@@ -211,7 +231,6 @@ void TimerService::cmdStart(
 void TimerService::cmdStop(
     TimerCounter *timer) {
 
-    timer->counter = 0;    
     activeQueue.remove(timer);
 }
 
@@ -224,6 +243,7 @@ void TimerService::cmdPause(
     TimerCounter *timer) {
     
     activeQueue.remove(timer);
+    timer->period = timer->expireTime - osalGetTickTime();
 }
 
 
@@ -234,8 +254,9 @@ void TimerService::cmdPause(
 void TimerService::cmdResume(
     TimerCounter *timer) {
 
-    activeQueue.push(timer->counter, timer);
-    cmdTimeOut(0);
+    timer->expireTime = osalGetTickTime() + timer->period;
+    activeQueue.push(timer->expireTime, timer);
+    cmdTimeOut();
 }
 
 
@@ -243,28 +264,17 @@ void TimerService::cmdResume(
 /// \brief    Procesa la comanda 'TimeOut'.
 /// \param    period: Periode de temps procesat.
 ///
-void TimerService::cmdTimeOut(
-    int period) {
+void TimerService::cmdTimeOut() {
+    
+    unsigned currentTime = osalGetTickTime();
 
     if (!activeQueue.isEmpty()) {
 
         TimerCounter* timer;
 
-        // Decrementa els contadors del temporitzadors actius
+        // Elimina els contadors que hagin arraibat al final.
         //
-        if (period > 0)
-            for (TimerQueueIterator it(activeQueue); it.hasNext(); it.next()) {
-                timer = it.getCurrent();
-
-                if (timer->counter > period)
-                    timer->counter -= period;
-                else
-                    timer->counter = 0;
-            }
-
-        // Elimina els contadors que hagin arribat a zero
-        //
-        while (activeQueue.peek(timer) && (timer->counter == 0)) {
+        while (activeQueue.peek(timer) && (currentTime >= timer->expireTime)) {
             activeQueue.pop();
             if (timer->callback != nullptr) {
                 TimerCounter::EventArgs args;
@@ -276,7 +286,7 @@ void TimerService::cmdTimeOut(
         // Obte el nou periode
         //
         if (activeQueue.peek(timer)) {
-            osPeriod = timer->counter;
+            osPeriod = timer->expireTime - currentTime;
             osTimer.start(osPeriod, 0);
         }
     }
@@ -294,8 +304,7 @@ TimerCounter::TimerCounter(
 
     service(nullptr),
     callback(callback),
-    counter(0),
-    time(0) {
+    period(0) {
 
     if (service != nullptr)
         service->addTimer(this);

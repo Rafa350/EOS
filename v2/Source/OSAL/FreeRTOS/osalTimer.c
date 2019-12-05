@@ -49,18 +49,19 @@ HTimer osalTimerCreate(
 /// ----------------------------------------------------------------------
 /// \brief    Destrueix el temporitzador.
 /// \param    hTimer: El handler del temporitzador.
-/// \param    waitTime: Els temps maxim d'espera.
+/// \param    blockTime: Els temps maxim de bloqueig en ms.
 /// \return   True si tot es correcte. False en cas contrari.
 /// \remarks  En cas d'error no s'allibera la memoria, ja que el temporitzador,
 ///           pot estar pendent de destruccio.
 ///
 bool osalTimerDestroy(
 	HTimer hTimer,
-	int waitTime) {
+	unsigned blockTime) {
 
 	eosAssert(hTimer != NULL);
-
-	return xTimerDelete(hTimer, waitTime / portTICK_PERIOD_MS) == pdPASS;
+    
+    TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+	return xTimerDelete(hTimer, blockTicks) == pdPASS;
 }
 
 
@@ -69,13 +70,13 @@ bool osalTimerDestroy(
 /// \param    hTimer: El handler del temporitzador.
 /// \param    time: El temps del temporitzador. Si es zero, el temps es el
 ///           mateix que tenia en el cicle anterior.
-/// \param    waitTime: El temps maxim de bloqueig.
+/// \param    blockTime: El temps maxim de bloqueig en ms.
 /// \return   True si tot es correcte. False en cas contrari.
 ///
 bool osalTimerStart(
 	HTimer hTimer,
-	int time,
-	int waitTime) {
+	unsigned time,
+	unsigned blockTime) {
 
 	eosAssert(hTimer != NULL);
 
@@ -96,10 +97,11 @@ bool osalTimerStart(
 	}
 
 	else {
+        TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
 		if (time == 0)
-			return xTimerStart(hTimer, waitTime / portTICK_PERIOD_MS) == pdPASS;
+			return xTimerStart(hTimer, blockTicks) == pdPASS;
 		else
-			return xTimerChangePeriod(hTimer, time / portTICK_PERIOD_MS, waitTime / portTICK_PERIOD_MS) == pdPASS;
+			return xTimerChangePeriod(hTimer, time / portTICK_PERIOD_MS, blockTicks) == pdPASS;
 	}
 }
 
@@ -107,15 +109,16 @@ bool osalTimerStart(
 /// ----------------------------------------------------------------------
 /// \brief    Para el temporitzador.
 /// \param    hTimer: El handler del temporitzador.
-/// \param    waitTime: Temps maxim de bloqueig.
+/// \param    blockTime: Temps maxim de bloqueig en ms.
 ///
 bool osalTimerStop(
 	HTimer hTimer,
-	int waitTime) {
+	unsigned blockTime) {
 
 	eosAssert(hTimer != NULL);
 
-	return xTimerStop(hTimer, waitTime / portTICK_PERIOD_MS) == pdPASS;
+    TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+	return xTimerStop(hTimer, blockTicks) == pdPASS;
 }
 
 
