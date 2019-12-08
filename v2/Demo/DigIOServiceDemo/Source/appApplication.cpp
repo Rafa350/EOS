@@ -153,10 +153,11 @@ void MyApplication::digInput3EventHandler(
     const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!args.input->get()) 
+    if (!args.input->get()) {
     //    getLed3()->pulse(1500);
-    timer1->start(1000);
-    timer2->start(1500);
+        timer1->start(1000);
+        timer2->start(1500);
+    }
 #endif    
 }
 #endif

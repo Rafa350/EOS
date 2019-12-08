@@ -13,8 +13,10 @@
 	#else
 		#error "Unknown processor"
 	#endif
-
     #define EOS_PIC32
+
+    // Toolchain definitions
+    #define EOS_TOOLCHAIN_XC32
 
 	// Debugger definitions
 	#if defined(__DEBUG)
@@ -32,8 +34,10 @@
 	#else
 		#error "Unknown processor"
 	#endif
-
     #define EOS_STM32
+
+    // Toolchain definitions
+    #define EOS_TOOLCHAIN_GNU
 
 	// Debugger definitions
 	#if defined(DEBUG)
@@ -46,6 +50,9 @@
     // Platform definitions
     #define EOS_MSP432
 
+    // Toolchain definitions
+    #define EOS_TOOLCHAIN_GNU
+
 	// Debugger definitions
 	#if defined(DEBUG)
 		#define EOS_DEBUG
@@ -55,7 +62,11 @@
 #elif defined(__GNUC__) && (defined(__MINGW32__) || defined(__MINGW64__))
 
     // Platform definitions
+    #define EOS_DOS
     #define EOS_WINDOWS
+
+    // Toolchain definitions
+    #define EOS_TOOLCHAIN_GNU
 
 	// Debugger definitions
 	#if defined(DEBUG)
@@ -65,7 +76,11 @@
 #elif defined(_MSC_VER)
 
 	// Platform definitions
+    #define EOS_DOS
 	#define EOS_WINDOWS
+
+    // Toolchain definitions
+    #define EOS_TOOLCHAIN_MVC
 
 #else
 	#error "Unknown compiler"
@@ -82,9 +97,7 @@
 
 // Platform includes
 //
-#if defined(EOS_PIC32MX)
-	#include "xc.h"
-#elif defined(EOS_PIC32MZ)
+#if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
 	#include "xc.h"
 #elif defined(EOS_STM32F4)
 	#include "stm32f4xx.h"
@@ -92,13 +105,13 @@
 	#include "stm32f7xx.h"
 #elif defined(EOS_MSP432)    
     #include "msp.h"
-#elif defined(EOS_WINDOWS) && defined(_MSC_VER)
+#elif defined(EOS_DOS) || defined(EOS_WINDOWS)
 #endif
 
 
 // Compiler patchs
 //
-#ifdef __XC32
+#ifdef EOS_TOOLCHAIN_XC32
     #define final
 #endif
 
@@ -107,6 +120,15 @@
 //
 #include "eosConfig.h"
 
+
+// Optional includes
+//
+#ifdef INCLUDE_MATH
+#include "System/eosMath.h"
+#endif
+#ifdef INCLUDE_STRING
+#include "System/eosString.h"
+#endif
 
 // Declaracions previes
 //

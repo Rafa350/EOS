@@ -170,7 +170,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.53"/>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.1.215"/>
       </packs>
       <compileType>
         <linkerTool>
@@ -333,7 +333,6 @@
         <property key="wpo-lto" value="false"/>
       </C32Global>
       <SKDEPIC32PlatformTool>
-        <property key="debugoptions.useswbreakpoints" value="false"/>
         <property key="whatToProgram" value="all"/>
       </SKDEPIC32PlatformTool>
     </conf>
@@ -349,7 +348,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.53"/>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.1.215"/>
       </packs>
       <compileType>
         <linkerTool>

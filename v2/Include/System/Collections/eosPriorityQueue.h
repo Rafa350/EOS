@@ -101,7 +101,7 @@ namespace eos {
             ///
             bool remove(Element& element) {
 
-                for (int i = 0; i < list.getCount(); i++) {
+                for (int i = 0, ii = list.getCount(); i < ii; i++) {
                     if (list[i].element == element)
                         return list.removeAt(i);
                 }
@@ -134,7 +134,7 @@ namespace eos {
             }
             
             bool contains(const Element& element) const {
-                for (int i = 0; i < list.getCount(); i++)
+                for (int i = 0, ii = list.getCount(); i < ii; i++)
                     if (list[i].element == element)
                         return true;
                 return false;

@@ -85,6 +85,7 @@ namespace eos {
             TimerService *service;
             IEventCallback *callback;
             unsigned period;
+            unsigned currentPeriod;
             unsigned expireTime;
 
         public:
