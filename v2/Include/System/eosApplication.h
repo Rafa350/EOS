@@ -10,76 +10,57 @@
 #include "System/Core/eosTask.h"
 
 
-// EOS forward declarations
-//
 namespace eos {
-#ifdef EOS_USE_FULL_NAMESPACE
-    namespace Services {
-#endif
 
-        class Service;
+    class Application;
+    class Service;
 
-#ifdef EOS_USE_FULL_NAMESPACE
-    }
-#endif
-}
+    void link(Application* application, Service* service);
+    void unlink(Application* application, Service* service);
+    
+    /// \brief Clase que representa l'aplicacio.
+    ///
+    class Application {
+        private:
+            typedef ArrayList<Service*> ServiceList;
+            typedef ArrayList<Service*>::Iterator ServiceListIterator;
+            typedef ArrayList<Task*> TaskList;
+            typedef CallbackP1<Application, const Task::EventArgs&> TaskEventCallback;
 
+            bool initialized;
+            ServiceList services;
+            TaskList tasks;
+            TaskEventCallback taskEventCallback;
 
-namespace eos {
-#ifdef EOS_USE_FULL_NAMESPACE
-    namespace System {
-        using eos::System::Collections::ArrayList;
-#endif
+            Application(const Application&) = delete;
+            Application& operator=(const Application&) = delete;
 
-        void link(Application *application, Service *service);
-        void unlink(Application *application, Service *service);
+            void initializeServices();
+            void runServices();
+            void taskEventHandler(const Task::EventArgs& args);
 
-        /// \brief Clase que representa l'aplicacio.
-        ///
-        class Application {
-            private:
-                typedef ArrayList<Service*> ServiceList;
-                typedef ArrayList<Service*>::Iterator ServiceListIterator;
-                typedef ArrayList<Task*> TaskList;
-                typedef CallbackP1<Application, const Task::EventArgs&> TaskEventCallback;
+        protected:
+            virtual void onInitialize();
+            virtual void onTerminate();
+            virtual void onTick();
 
-                bool initialized;
-                ServiceList services;
-                TaskList tasks;
-                TaskEventCallback taskEventCallback;
+        public:
+            Application();
+            virtual ~Application();
 
-                Application(const Application&) = delete;
-                Application& operator=(const Application&) = delete;
+            void run();
+            void tick();
 
-                void initializeServices();
-                void runServices();
-                void taskEventHandler(const Task::EventArgs& args);
+            void addService(Service* service);
+            void removeService(Service* service);
+            void removeServices();
 
-            protected:
-                virtual void onInitialize();
-                virtual void onTerminate();
-                virtual void onTick();
+            inline bool isInitialized() const { return initialized; }
 
-            public:
-                Application();
-                virtual ~Application();
+        friend void link(Application* application, Service* service);
+        friend void unlink(Application* application, Service* service);
+    };
 
-                void run();
-                void tick();
-
-                void addService(Service* service);
-                void removeService(Service* service);
-                void removeServices();
-
-                inline bool isInitialized() const { return initialized; }
-
-            friend void link(Application* application, Service* service);
-            friend void unlink(Application* application, Service* service);
-        };
-
-#ifdef EOS_USE_FULL_NAMESPACE
-    }
-#endif
 }
 
 

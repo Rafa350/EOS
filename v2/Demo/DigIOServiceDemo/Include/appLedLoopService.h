@@ -9,12 +9,14 @@
 
 namespace app {
 
-    class LedLoopService: public eos::AppLoopService {
+    using namespace eos;
+
+    class LedLoopService: public AppLoopService {
         protected:
             void onLoop();
 
         public:
-            LedLoopService(eos::Application *application);
+            LedLoopService(Application* application);
     };
 
 }

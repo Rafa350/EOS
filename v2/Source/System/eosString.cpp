@@ -12,7 +12,7 @@ using namespace eos;
 struct String::StringData {
 	int refCount;                 // Contador de referencies.
 	int length;                   // Longitut de la string.
-	const char *ptr;              // Punter a la cadena.
+	const char* ptr;              // Punter a la cadena.
 };
 
 static const char *nullStr = "";  // Cadena buida.
@@ -71,7 +71,7 @@ String::String(
 /// \param    length: Numero de caracters a copiar.
 ///
 String::String(
-	const String &str,
+	const String& str,
 	int index,
 	int length):
 
@@ -87,7 +87,7 @@ String::String(
 /// \param    cstr: La string a copiar.
 ///
 String::String(
-	const char *cstr):
+	const char* cstr):
 
 	pData(nullptr) {
 
@@ -103,7 +103,7 @@ String::String(
 /// \param    length: Numero de caracters a copiar.
 ///
 String::String(
-	const char *cstr,
+	const char* cstr,
 	int index,
 	int length):
 
@@ -160,7 +160,7 @@ bool String::isNull() const {
 /// \return   True si son iguals.
 ///
 int String::isEqual(
-	const char *cstr) const {
+	const char* cstr) const {
 
 	if (pData == nullptr)
 		return cstr == nullptr;
@@ -174,7 +174,7 @@ int String::isEqual(
 /// \param    cstr: La string a asignar.
 ///
 String& String::operator = (
-	const char *cstr) {
+	const char* cstr) {
 
 	if (pData != nullptr)
 		release();
@@ -191,7 +191,7 @@ String& String::operator = (
 /// \param    str: La string a asignar.
 ///
 String& String::operator = (
-	const String &str) {
+	const String& str) {
 
 	if (pData != nullptr)
 		release();
@@ -207,8 +207,8 @@ String& String::operator = (
 /// \brief    Operator ==
 /// \param    str: La string a comparar.
 ///
-bool String::operator ==(
-	const String &str) const {
+bool String::operator == (
+	const String& str) const {
 
 	// Si les dues string son buides, aleshores son iguals
 	//
@@ -237,7 +237,7 @@ bool String::operator ==(
 /// \param    index: Index del caracter.
 /// \return   El caracter en el index especificat.
 ///
-char String::operator[](
+char String::operator [] (
 	int index) const {
 
 	if ((pData == nullptr) || (index < 0) || (index >= pData->length))
@@ -250,7 +250,7 @@ char String::operator[](
 /// ----------------------------------------------------------------------
 /// \brier    Operador const char *
 ///
-String::operator const char*() const {
+String::operator const char* () const {
 
 	return pData == nullptr ? nullStr : pData->ptr;
 }
@@ -263,7 +263,7 @@ String::operator const char*() const {
 /// \param    length: El numero de caracters a copiar.
 ///
 void String::create(
-	const char *cstr,
+	const char* cstr,
 	int index,
 	int length) {
 
@@ -304,7 +304,7 @@ void String::create(
 /// \param    str: La string a referenciar.
 ///
 void String::reference(
-	const String &str) {
+	const String& str) {
 
 	eosAssert(pData == nullptr);
 	eosAssert(str.pData != nullptr);

@@ -103,7 +103,7 @@ void DigInputService::onTask() {
         Task::delay(10, weakTime);
 
         for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
-            DigInput *input = it.getCurrent();
+            DigInput* input = it.getCurrent();
 
             bool changed = false;
 
@@ -138,7 +138,7 @@ void DigInputService::onTask() {
 /// \param    options: Opcions del pin.
 ///
 DigInput::DigInput(
-    DigInputService *service,
+    DigInputService* service,
     GPIOPort port, 
     GPIOPin pin, 
     GPIOOptions options) :

@@ -8,38 +8,30 @@
 
 
 namespace eos {
-#ifdef EOS_USE_FULL_NAMESPACE
-    namespace System {
-        namespace Core {
-#endif
 
-            class MemoryHeapAllocator {
-                public:
-                    void *allocate(int size);
-                    void deallocate(void *p);
-            };
+    class MemoryHeapAllocator {
+        public:
+            void *allocate(int size);
+            void deallocate(void *p);
+    };
 
-            template <class T>
-            class HeapAllocator {
+    template <class T>
+    class HeapAllocator {
 
-                private:
-                    MemoryHeapAllocator allocator;
+        private:
+            MemoryHeapAllocator allocator;
 
-                public:
+        public:
 
-                    inline T *allocate(int size) {
-                        return static_cast<T*>(allocator.allocate(size));
-                    }
+            inline T *allocate(int size) {
+                return static_cast<T*>(allocator.allocate(size));
+            }
 
-                    inline void deallocate(T *p) {
-                        allocator.deallocate(p);
-                    }
-            };
-
-#ifdef EOS_USE_FULL_NAMESPACE
-        }
-    }
-#endif
+            inline void deallocate(T *p) {
+                allocator.deallocate(p);
+            }
+    };
+    
 }
 
 

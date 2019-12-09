@@ -37,7 +37,7 @@ Application::~Application() {
 /// \param    args: Parametres del event.
 ///
 void Application::taskEventHandler(
-    const Task::EventArgs &args) {
+    const Task::EventArgs& args) {
     
     eosAssert(args.param != nullptr);
     
@@ -145,11 +145,11 @@ void Application::runServices() {
 /// \param    service: El servei a afeigir.
 ///
 void Application::addService(
-    Service *service) {
+    Service* service) {
 
     eosAssert(service != nullptr);
 
-    link(this, service);
+    eos::link(this, service);
 }
 
 
@@ -158,11 +158,11 @@ void Application::addService(
 /// \param    service: El servei a eliminar.
 ///
 void Application::removeService(
-    Service *service) {
+    Service* service) {
 
     eosAssert(service != nullptr);
 
-    unlink(this, service);
+    eos::unlink(this, service);
 }
 
 
@@ -210,8 +210,8 @@ void Application::onTick() {
 /// \param    service: El servei.
 ///
 void eos::link(
-	Application *application,
-	Service *service) {
+	Application* application,
+	Service* service) {
 
 	eosAssert(application != nullptr);
     eosAssert(service->application == nullptr);
@@ -227,8 +227,8 @@ void eos::link(
 /// \param    service: El servei.
 ///
 void eos::unlink(
-	Application *application,
-	Service *service) {
+	Application* application,
+	Service* service) {
 
 	eosAssert(application != nullptr);
     eosAssert(service->application == application);

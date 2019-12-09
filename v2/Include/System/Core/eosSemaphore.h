@@ -9,27 +9,20 @@
 
 
 namespace eos {
-#ifdef EOS_USE_FULL_NAMESPACE
-    namespace System {
-        namespace Core {
-#endif
 
-        class BinarySemaphore {
-            private:
-                HSemaphore hSemaphore;
+    class BinarySemaphore {
+        private:
+            HSemaphore hSemaphore;
 
-            public:
-                BinarySemaphore();
-                ~BinarySemaphore();
-                bool wait(unsigned blockTime);
-                void release();
-                void releaseISR();
-        };
+        public:
+            BinarySemaphore();
+            ~BinarySemaphore();
+            
+            bool wait(unsigned blockTime);
+            void release();
+            void releaseISR();
+    };
 
-#ifdef EOS_USE_FULL_NAMESPACE
-        }
-    }
-#endif
 }
 
 

@@ -7,7 +7,7 @@
 /// \brief Operador new global.
 /// \param size: Tamany en bytes de la memoria a reservar.
 ///
-void *operator new(
+void* operator new(
     size_t size) {
 
     eosAssert(size > 0);
@@ -24,7 +24,7 @@ void *operator new(
 /// \param p: Punter al bloc de memoria a alliberar.
 ///
 void operator delete(
-    void *p) {
+    void* p) {
 
     eosAssert(p != nullptr);
 

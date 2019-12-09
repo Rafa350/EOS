@@ -12,65 +12,67 @@
 
 namespace app {
     
+    using namespace eos;
+      
     class LedLoopService;
 
-    class MyApplication: public eos::Application {
+    class MyApplication: public Application {
         private:
-            typedef eos::CallbackP1<MyApplication, const eos::DigInput::EventArgs&> DigInputEventCallback;
-            typedef eos::CallbackP1<MyApplication, const eos::TimerCounter::EventArgs&> TimerEventCallback;
+            typedef CallbackP1<MyApplication, const DigInput::EventArgs&> DigInputEventCallback;
+            typedef CallbackP1<MyApplication, const TimerCounter::EventArgs&> TimerEventCallback;
 
         private:
-            LedLoopService *ledLoopService;
-            eos::DigOutputService *digOutputService;
-            eos::DigInputService *digInputService;
-            eos::TimerService *timerService;
-            eos::TimerCounter *timer1;
-            eos::TimerCounter *timer2;
+            LedLoopService* ledLoopService;
+            DigOutputService* digOutputService;
+            DigInputService* digInputService;
+            TimerService* timerService;
+            TimerCounter* timer1;
+            TimerCounter* timer2;
             TimerEventCallback timerEventCallback;
             
     #ifdef EXIST_LEDS_LED1
-            eos::DigOutput *digOutput1;
+            DigOutput *digOutput1;
     #endif
     #ifdef EXIST_LEDS_LED2
-            eos::DigOutput *digOutput2;
+            DigOutput *digOutput2;
     #endif
     #ifdef EXIST_LEDS_LED3
-            eos::DigOutput *digOutput3;
+            DigOutput *digOutput3;
     #endif
     #ifdef EXIST_SWITCHES_SW1
-            eos::DigInput *digInput1;
+            DigInput *digInput1;
             DigInputEventCallback digInput1EventCallback;
     #endif
     #ifdef EXIST_SWITCHES_SW2
-            eos::DigInput *digInput2;
+            DigInput *digInput2;
             DigInputEventCallback digInput2EventCallback;
     #endif
     #ifdef EXIST_SWITCHES_SW3
-            eos::DigInput *digInput3;
+            DigInput *digInput3;
             DigInputEventCallback digInput3EventCallback;
     #endif
 
         public:
             MyApplication();
-            void timerEventHandler(const eos::TimerCounter::EventArgs& args);
+            void timerEventHandler(const TimerCounter::EventArgs& args);
     #ifdef EXIST_SWITCHES_SW1
-            void digInput1EventHandler(const eos::DigInput::EventArgs &args);
+            void digInput1EventHandler(const DigInput::EventArgs &args);
     #endif
     #ifdef EXIST_SWITCHES_SW2
-            void digInput2EventHandler(const eos::DigInput::EventArgs &args);
+            void digInput2EventHandler(const DigInput::EventArgs &args);
     #endif
     #ifdef EXIST_SWITCHES_SW3
-            void digInput3EventHandler(const eos::DigInput::EventArgs &args);
+            void digInput3EventHandler(const DigInput::EventArgs &args);
     #endif
 
     #ifdef EXIST_LEDS_LED1
-            eos::DigOutput *getLed1() const { return digOutput1; }
+            DigOutput *getLed1() const { return digOutput1; }
     #endif
     #ifdef EXIST_LEDS_LED2
-            eos::DigOutput *getLed2() const { return digOutput2; }
+            DigOutput *getLed2() const { return digOutput2; }
     #endif
     #ifdef EXIST_LEDS_LED3
-            eos::DigOutput *getLed3() const { return digOutput3; }
+            DigOutput *getLed3() const { return digOutput3; }
     #endif
 
         protected:

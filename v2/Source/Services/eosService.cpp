@@ -12,7 +12,7 @@ using namespace eos;
 /// \param    application: Aplicacio al que pertany.
 ///
 Service::Service(
-	Application *application) :
+	Application* application) :
 
     application(nullptr),
 	stackSize(512),

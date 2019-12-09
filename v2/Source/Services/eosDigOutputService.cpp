@@ -9,7 +9,6 @@
 using namespace eos;
 
 
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: L'aplicacio on afeigir el servei.

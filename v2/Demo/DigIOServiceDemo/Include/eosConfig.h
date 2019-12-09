@@ -2,9 +2,6 @@
 #define __eosConfig__
 
 
-#define EOS_USE_FULL_NAMESPACE
-
-
 #define USE_LEDS_LED1
 #define USE_LEDS_LED2
 #if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)

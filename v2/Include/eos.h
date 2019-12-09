@@ -131,9 +131,6 @@
 #include "System/eosString.h"
 #endif
 
-
-// Namespace eos declaration
-//
 #ifdef __cplusplus
 namespace eos {
 }

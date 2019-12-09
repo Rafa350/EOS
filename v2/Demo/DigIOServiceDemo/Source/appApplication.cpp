@@ -6,6 +6,7 @@
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
 #include "System/eosApplication.h"
+
 #include "appApplication.h"
 #include "appLedLoopService.h"
 
@@ -104,7 +105,7 @@ void MyApplication::onInitialize() {
 /// \param    args: Parametres del event.
 ///
 void MyApplication::timerEventHandler(
-    const eos::TimerCounter::EventArgs& args) {
+    const TimerCounter::EventArgs& args) {
     
 #ifdef EXIST_LEDS_LED3
     getLed3()->pulse(250);

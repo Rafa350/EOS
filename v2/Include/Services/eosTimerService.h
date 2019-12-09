@@ -1,6 +1,9 @@
 #ifndef __eosTimerService__
 #define __eosTimerService__
 
+
+// EOS includes
+//
 #include "eos.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
@@ -11,8 +14,7 @@
 
 
 namespace eos {
-
-    class Application;
+        
     class TimerCounter;
 
     class TimerService final : public Service {
@@ -101,6 +103,7 @@ namespace eos {
 
         friend TimerService;
     };
+    
 }
 
 

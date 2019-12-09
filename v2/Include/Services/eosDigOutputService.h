@@ -1,6 +1,9 @@
 #ifndef __eosDigOutput__
 #define	__eosDigOutput__
 
+
+// EOS includes
+//
 #include "eos.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
@@ -10,7 +13,6 @@
 
 namespace eos {
 
-    class Application;
     class DigOutput;
 
     /// \brief Clase que implementa el servei de gestio de sortides digitals.
@@ -23,7 +25,7 @@ namespace eos {
             TMRTimer timer;
             DigOutputList outputs;
 
-            static void timerInterrupt(TMRTimer timer, void *params);
+            static void timerInterrupt(TMRTimer timer, void* params);
             void timeOut();
 
         protected:
@@ -31,11 +33,11 @@ namespace eos {
             void onTask();
 
         public:
-            DigOutputService(Application *application, TMRTimer timer);
+            DigOutputService(Application* application, TMRTimer timer);
             ~DigOutputService();
 
-            void addOutput(DigOutput *output);
-            void removeOutput(DigOutput *output);
+            void addOutput(DigOutput* output);
+            void removeOutput(DigOutput* output);
             void removeOutputs();
     };
 
@@ -49,7 +51,7 @@ namespace eos {
                 Pulse
             };
 
-            DigOutputService *service;
+            DigOutputService* service;
             GPIOPort port;
             GPIOPin pin;
             GPIOOptions options;
@@ -61,10 +63,10 @@ namespace eos {
             void timeOut();
 
         public:
-            DigOutput(DigOutputService *service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
+            DigOutput(DigOutputService* service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
             ~DigOutput();
 
-            inline DigOutputService *getService() const { return service; }
+            inline DigOutputService* getService() const { return service; }
 
             bool get() const;
             void set();
@@ -79,6 +81,7 @@ namespace eos {
 
         friend DigOutputService;
     };
+    
 }
 
 

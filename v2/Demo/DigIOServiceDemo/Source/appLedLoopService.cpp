@@ -1,6 +1,7 @@
 #include "eos.h"
-#include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
+#include "Services/eosDigOutputService.h"
+
 #include "appApplication.h"
 #include "appLedLoopService.h"
 

@@ -1,6 +1,9 @@
 #ifndef __eosDigInput__
 #define	__eosDigInput__
 
+
+// EOS includes
+//
 #include "eos.h"
 #include "HAL/halGPIO.h"
 #include "Services/eosService.h"
@@ -27,11 +30,11 @@ namespace eos {
             void onTask();
 
         public:
-            DigInputService(Application *application);
+            DigInputService(Application* application);
             ~DigInputService();
 
-            void addInput(DigInput *input);
-            void removeInput(DigInput *input);
+            void addInput(DigInput* input);
+            void removeInput(DigInput* input);
             void removeInputs();
     };
 
@@ -47,19 +50,19 @@ namespace eos {
             typedef ICallbackP1<const EventArgs&> IEventCallback;
 
         private:
-            DigInputService *service;
+            DigInputService* service;
             GPIOPort port;
             GPIOPin pin;
             GPIOOptions options;
             uint32_t pattern;
             bool state;
-            IEventCallback *changeEventCallback;
+            IEventCallback* changeEventCallback;
 
         public:
-            DigInput(DigInputService *service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
+            DigInput(DigInputService* service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
             ~DigInput();
 
-            inline DigInputService *getService() const { return service; }
+            inline DigInputService* getService() const { return service; }
 
             /// \brief Obte l'estat actual de la entrada.
             /// \return L'estat de la entrada.
@@ -69,13 +72,14 @@ namespace eos {
             /// \brief Asigna el event onChange
             /// \param callback: El callback del event
             ///
-            inline void setChangeEventCallback(IEventCallback *callback) { changeEventCallback = callback; }
+            inline void setChangeEventCallback(IEventCallback* callback) { changeEventCallback = callback; }
 
         private:
             void initialize();
 
         friend DigInputService;
     };
+
 }
 
 
