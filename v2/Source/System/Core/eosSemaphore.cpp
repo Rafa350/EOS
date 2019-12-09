@@ -1,9 +1,13 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "OSAL/osalSemaphore.h"
 #include "System/Core/eosSemaphore.h"
 
 
 using namespace eos;
+#ifdef EOS_USE_FULL_NAMESPACE
+using namespace eos::System::Core;
+#endif
 
 
 /// ----------------------------------------------------------------------

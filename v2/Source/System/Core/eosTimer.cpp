@@ -1,10 +1,13 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "OSAL/osalTimer.h"
 #include "System/Core/eosTimer.h"
-#include "osal/osalTimer.h"
 
 
 using namespace eos;
+#ifdef EOS_USE_FULL_NAMESPACE
+using namespace eos::System::Core;
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -37,8 +40,8 @@ Timer::~Timer() {
 /// \param    blockTime: Temps maxim de bloqueix en milisegons.
 ///
 void Timer::start(
-    int time,
-    int blockTime) {
+    unsigned time,
+    unsigned blockTime) {
 
     if (hTimer == nullptr) {
 
@@ -59,7 +62,7 @@ void Timer::start(
 /// \param    blockTime: Temps maxim de bloqueig en milisegons.
 ///
 void Timer::stop(
-    int blockTime) {
+    unsigned blockTime) {
 
     if (hTimer != nullptr)
     	osalTimerStop(hTimer, blockTime);

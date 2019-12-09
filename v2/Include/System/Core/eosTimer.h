@@ -10,40 +10,49 @@
 
 
 namespace eos {
-    
-    class Timer {
-        public:
-            struct EventArgs {
-                Timer* timer;
-            };    
-            
-        private:
-            typedef ICallbackP1<const EventArgs&> IEventCallback;
+#ifdef EOS_USE_FULL_NAMESPACE
+    namespace System {
+        namespace Core {
+#endif
 
-        private:
-            HTimer hTimer;
-            bool autoreload;
-            void *tag;
-            IEventCallback *eventCallback;
+            class Timer {
+                public:
+                    struct EventArgs {
+                        Timer* timer;
+                    };
 
-        public:
-            Timer(bool autoreload = false);
-            ~Timer();
-            void start(int time, int blockTime);
-            void stop(int blockTime);
+                private:
+                    typedef ICallbackP1<const EventArgs&> IEventCallback;
 
-            template <class cls>
-            inline void setEventCallback(CallbackP1<cls, const EventArgs&> *callback) {
-                eventCallback = callback;
-            }
+                private:
+                    HTimer hTimer;
+                    bool autoreload;
+                    void *tag;
+                    IEventCallback *eventCallback;
 
-            inline void setTag(void *tag) { this->tag = tag; }
-            inline void *getTag() const { return tag; }
-            bool isActive() const;
+                public:
+                    Timer(bool autoreload = false);
+                    ~Timer();
+                    void start(unsigned time, unsigned blockTime);
+                    void stop(unsigned blockTime);
 
-        private:
-            static void timerFunction(HTimer hTimer);
-    };
+                    template <class cls>
+                    inline void setEventCallback(CallbackP1<cls, const EventArgs&>* callback) {
+                        eventCallback = callback;
+                    }
+
+                    inline void setTag(void* tag) { this->tag = tag; }
+                    inline void* getTag() const { return tag; }
+                    bool isActive() const;
+
+                private:
+                    static void timerFunction(HTimer hTimer);
+            };
+
+#ifdef EOS_USE_FULL_NAMESPACE
+        }
+    }
+#endif
 }
 
 

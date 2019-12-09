@@ -2,13 +2,15 @@
 #define	__eosCallbacks__
 
 
+// EOS includes
+//
 #include "eos.h"
 
 
 namespace eos {
 #ifdef EOS_USE_FULL_NAMESPACE
     namespace System {
-#endif   
+#endif
 
         template <typename P1Type>
         class ICallbackP1 {
@@ -127,10 +129,10 @@ namespace eos {
                         RType();
                 }
         };
-    
-#ifdef EOS_USE_FULLNAMEPACE
+
+#ifdef EOS_USE_FULL_NAMESPACE
     }
-#endif    
+#endif
 }
 
 

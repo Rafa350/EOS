@@ -6,23 +6,31 @@
 
 
 namespace eos {
+#ifdef EOS_USE_FULL_NAMESPACE
+    namespace Services {
+        using eos::System::Application;
+#endif
 
-    /// \brief Clase que implementa el servei del bucle principal
-    ///        de l'aplicacio.
-    ///
-    class AppLoopService: public Service {
-        private:
-            bool initialized;
-            
-        protected:
-            void onInitialize() override;
-            void onTask() override;
-            virtual void onSetup();
-            virtual void onLoop();
+        /// \brief Clase que implementa el servei del bucle principal
+        ///        de l'aplicacio.
+        ///
+        class AppLoopService: public Service {
+            private:
+                bool initialized;
 
-        public:
-            AppLoopService(Application *application);
-    };
+            protected:
+                void onInitialize() override;
+                void onTask() override;
+                virtual void onSetup();
+                virtual void onLoop();
+
+            public:
+                AppLoopService(Application *application);
+        };
+
+#ifdef EOS_USE_FULL_NAMESPACE
+    }
+#endif
 }
 
 

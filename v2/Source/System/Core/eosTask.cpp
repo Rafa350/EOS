@@ -10,6 +10,10 @@
 
 
 using namespace eos;
+#ifdef EOS_USE_FULL_NAMESPACE
+using namespace eos::System;
+using namespace eos::System::Core;
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -24,8 +28,8 @@ Task::Task(
     int stackSize,
     Priority priority,
     const String& name,
-    IEventCallback *eventCallback,
-    void *eventParam):
+    IEventCallback* eventCallback,
+    void* eventParam):
 
     eventCallback(eventCallback),
     eventParam(eventParam),
@@ -34,7 +38,7 @@ Task::Task(
     eosAssert(eventCallback != nullptr);
 
     TaskInitializeInfo info;
-    
+
     info.name = name;
     info.stackSize = stackSize;
     info.options = 0;
@@ -42,23 +46,23 @@ Task::Task(
         case Priority::high:
             info.options |= OSAL_TASK_PRIORITY_HIGH;
             break;
-            
+
         case Priority::normal:
             info.options |= OSAL_TASK_PRIORITY_NORMAL;
             break;
-            
+
         case Priority::low:
             info.options |= OSAL_TASK_PRIORITY_LOW;
             break;
-            
+
         case Priority::idle:
             info.options |= OSAL_TASK_PRIORITY_IDLE;
             break;
     }
-    
+
     info.function = function;
     info.params = this;
-    
+
     hTask = osalTaskCreate(&info);
     eosAssert(hTask != nullptr);
 }
@@ -79,23 +83,22 @@ Task::~Task() {
 /// \remarks  No retorna mai.
 ///
 void Task::function(
-    void *params) {
+    void* params) {
 
 	eosAssert(params != nullptr);
 
     Task *task = reinterpret_cast<Task*>(params);
-    
+
     task->weakTime = osalGetTickCount();
-    
+
     if (task->eventCallback != nullptr) {
-        EventArgs args = {
-            .task = task,
-            .param = task->eventParam
-        };
+        EventArgs args;
+        args.task = task;
+        args.param = task->eventParam;
         while (true)
             task->eventCallback->execute(args);
     }
-    
+
     eosFatal("No s'ha d'arrivar mai aqui.");
 }
 

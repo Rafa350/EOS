@@ -4,6 +4,9 @@
 
 
 using namespace eos;
+#ifdef EOS_USE_FULL_NAMESPACE
+using namespace eos::System::Core;
+#endif
 
 
 /// ----------------------------------------------------------------------
