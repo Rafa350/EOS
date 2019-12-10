@@ -60,7 +60,7 @@ typedef uint32_t TMROptions;
 
 
 
-typedef void (*TMRInterruptCallback)(TMRTimer timer, void *params);
+typedef void (*TMRInterruptCallback)(TMRTimer timer, void* params);
 
 typedef struct {
 	TMRTimer timer;
@@ -70,11 +70,11 @@ typedef struct {
 	uint32_t irqPriority;
 	uint32_t irqSubPriority;
 	TMRInterruptCallback irqCallback;
-	void *irqParam;
+	void* irqParam;
 } TMRInitializeInfo;
 
 
-void halTMRInitialize(const TMRInitializeInfo *info);
+void halTMRInitialize(const TMRInitializeInfo* info);
 void halTMRShutdown(TMRTimer timer);
 
 void halTMRStartTimer(TMRTimer timer);

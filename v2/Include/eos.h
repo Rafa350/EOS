@@ -124,13 +124,38 @@
 
 // Optional includes
 //
-#ifdef INCLUDE_MATH
-#include "System/eosMath.h"
-#endif
-#ifdef INCLUDE_STRING
+#ifdef INCL_BASE
+#include "Services/eosService.h"
+#include "System/eosApplication.h"
 #include "System/eosString.h"
 #endif
 
+#ifdef INCL_CORE
+#include "System/Core/eosQueue.h"
+#include "System/Core/eosSemaphore.h"
+#include "System/Core/eosTask.h"
+#endif
+
+#ifdef INCL_GRAPHICS
+#include "System/Graphics/eosBitmap.h"
+#include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosFont.h"
+#include "System/Graphics/eosGraphics.h"
+#include "System/Graphics/eosPoint.h"
+#include "System/Graphics/eosRect.h"
+#include "System/Graphics/eosSize.h"
+#include "System/Graphics/eosTransformation.h"
+#endif
+
+#ifdef INCL_FSM
+#endif
+
+#ifdef INCL_GUI
+#endif
+
+
+// Base namespace declaration
+//
 #ifdef __cplusplus
 namespace eos {
 }

@@ -209,8 +209,8 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define halGPIOReadPort(port) \
     gpioTbl[port]->IDR
 
-void halGPIOInitializePins(const GPIOInitializePinInfo *info, int count);
-void halGPIOInitializePorts(const GPIOInitializePortInfo *info, int count);
+void halGPIOInitializePins(const GPIOInitializePinInfo* info, unsigned count);
+void halGPIOInitializePorts(const GPIOInitializePortInfo* info, unsigned count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 
