@@ -25,12 +25,12 @@ HHeap osalHeapCreate() {
 ///
 void *osalHeapAlloc(
     HHeap hHeap,
-	int size) {
+	unsigned size) {
 
     eosAssert(hHeap == NULL);
     eosAssert(size > 0);
 
-    void *p = pvPortMalloc(size);
+    void* p = pvPortMalloc(size);
     eosAssert(p != NULL);
 
     return p;
@@ -68,19 +68,21 @@ void osalHeapGetInformation(
 
 /// ----------------------------------------------------------------------
 /// \brief    Compatibilitat malloc per llibreries standard.
+/// \param    size: Tamany del bloc de memoria.
 ///
-void *osal_malloc(
-    int size) {
-    
+void* osal_malloc(
+    unsigned size) {
+
     return osalHeapAlloc(NULL, size);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Compatibilitat free per llibreries standard.
+/// \param    p: Adressa del bloc de memoria.
 ///
 void osal_free(
-    void *p) {
-    
+    void* p) {
+
     osalHeapFree(NULL, p);
 }

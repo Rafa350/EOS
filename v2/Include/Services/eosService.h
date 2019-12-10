@@ -10,7 +10,7 @@
 
 
 namespace eos {
-    
+
     class Application;
 
     /// \brief Clase que representa un servei.
@@ -18,7 +18,7 @@ namespace eos {
     class Service {
         private:
             Application* application;
-            int stackSize;
+            unsigned stackSize;
             Task::Priority priority;
             bool initialized;
             String name;
@@ -42,18 +42,18 @@ namespace eos {
 
             inline void setName(const String& name) { this->name = name; }
             inline void setPriority(Task::Priority priority) { this->priority = priority; }
-            inline void setStackSize(int stackSize) { this->stackSize = stackSize; }
+            inline void setStackSize(unsigned stackSize) { this->stackSize = stackSize; }
 
             inline const String& getName() const { return name; }
             inline Task::Priority getPriority() const { return priority; }
-            inline int getStackSize() const { return stackSize; }
+            inline unsigned getStackSize() const { return stackSize; }
 
             inline bool isInitialized() const { return initialized; }
 
         friend void link(Application* application, Service* service);
         friend void unlink(Application* application, Service* service);
     };
-    
+
 }
 
 

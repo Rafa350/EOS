@@ -11,7 +11,7 @@ namespace eos {
 
     class MemoryHeapAllocator {
         public:
-            void *allocate(int size);
+            void* allocate(unsigned size);
             void deallocate(void *p);
     };
 
@@ -23,7 +23,7 @@ namespace eos {
 
         public:
 
-            inline T *allocate(int size) {
+            inline T *allocate(unsigned size) {
                 return static_cast<T*>(allocator.allocate(size));
             }
 
@@ -31,7 +31,7 @@ namespace eos {
                 allocator.deallocate(p);
             }
     };
-    
+
 }
 
 

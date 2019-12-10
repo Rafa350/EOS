@@ -20,7 +20,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 	const char* name;                  // -Nom
 	TaskFunction function;             // -Funcio a executar
 	void* params;                      // -Parametres de la funcio
-	int stackSize;                     // -Tamany de la pila
+	unsigned stackSize;                // -Tamany de la pila
 	TaskOptions options;               // -Opcions
 } TaskInitializeInfo;
 

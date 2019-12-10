@@ -33,7 +33,7 @@ namespace eos {
                 high
             };
 
-            Task(int stackSize, Priority priority, const String& name, IEventCallback* eventCallback, void* eventParam);
+            Task(unsigned stackSize, Priority priority, const String& name, IEventCallback* eventCallback, void* eventParam);
             virtual ~Task();
 
             static void delay(unsigned time);

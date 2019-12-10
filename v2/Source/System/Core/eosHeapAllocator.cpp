@@ -12,8 +12,8 @@ using namespace eos;
 /// \param    size: Tamany del bloc de momoria.
 /// \return   Punter al bloc de memoria. nullptr en cas d'error.
 ///
-void *MemoryHeapAllocator::allocate(
-    int size) {
+void* MemoryHeapAllocator::allocate(
+    unsigned size) {
 
     // Precondicions
     //
@@ -21,7 +21,7 @@ void *MemoryHeapAllocator::allocate(
 
     // Obte el bloc de memoria
     //
-    void *p = osalHeapAlloc(NULL, size);
+    void* p = osalHeapAlloc(NULL, size);
     eosAssert(p != nullptr);
 
     return p;
@@ -33,7 +33,7 @@ void *MemoryHeapAllocator::allocate(
 /// \param    p: Punter al bloc de memoria.
 ///
 void MemoryHeapAllocator::deallocate(
-    void *p) {
+    void* p) {
 
     // Precondicions
     //

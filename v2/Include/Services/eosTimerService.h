@@ -14,7 +14,7 @@
 
 
 namespace eos {
-        
+
     class TimerCounter;
 
     class TimerService final : public Service {
@@ -64,6 +64,7 @@ namespace eos {
         protected:
             void onInitialize() override;
             void onTask() override;
+            //void onTick() override;
 
         private:
             void cmdStart(TimerCounter* timer);
@@ -103,7 +104,7 @@ namespace eos {
 
         friend TimerService;
     };
-    
+
 }
 
 

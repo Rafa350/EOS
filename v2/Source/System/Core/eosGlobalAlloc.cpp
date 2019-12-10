@@ -4,8 +4,8 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador new global.
-/// \param size: Tamany en bytes de la memoria a reservar.
+/// \brief    Operador new global.
+/// \param    size: Tamany en bytes de la memoria a reservar.
 ///
 void* operator new(
     size_t size) {
@@ -14,14 +14,14 @@ void* operator new(
 
     void *p = osalHeapAlloc(nullptr, size);
     eosAssert(p != nullptr);
-    
+
     return p;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Operador delete global.
-/// \param p: Punter al bloc de memoria a alliberar.
+/// \brief    Operador delete global.
+/// \param    p: Punter al bloc de memoria a alliberar.
 ///
 void operator delete(
     void* p) {

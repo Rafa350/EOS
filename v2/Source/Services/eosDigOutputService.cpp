@@ -71,7 +71,7 @@ void DigOutputService::removeOutput(
 /// \brief    Elimina totes les sortides del servei.
 ///
 void DigOutputService::removeOutputs() {
-    
+
     while (!outputs.isEmpty())
         removeOutput(outputs.getFirst());
 }
@@ -110,7 +110,7 @@ void DigOutputService::onInitialize() {
     // Inicia el temporitzador
     //
     halTMRStartTimer(timer);
-    
+
     Service::onInitialize();
 }
 
@@ -144,7 +144,7 @@ void DigOutputService::timerInterrupt(
 
     eosAssert(param != nullptr);
 
-	DigOutputService *service = reinterpret_cast<DigOutputService*>(param);
+	DigOutputService* service = reinterpret_cast<DigOutputService*>(param);
     eosAssert(service != nullptr);
 	service->timeOut();
 }
@@ -158,7 +158,7 @@ void DigOutputService::timerInterrupt(
 /// \param    options: Opcions del pin.
 ///
 DigOutput::DigOutput(
-    DigOutputService *service,
+    DigOutputService* service,
     GPIOPort port,
     GPIOPin pin,
     GPIOOptions options) :
@@ -170,7 +170,7 @@ DigOutput::DigOutput(
     state(State::Idle),
 	delayCnt(0),
 	widthCnt(0) {
-    
+
     if (service != nullptr)
         service->addOutput(this);
 }
@@ -225,7 +225,7 @@ void DigOutput::timeOut() {
 				}
 			}
 			break;
-            
+
         default:
             break;
 	}
@@ -289,7 +289,7 @@ void DigOutput::toggle() {
 /// \param    width: Amplada del puls.
 ///
 void DigOutput::pulse(
-	int width) {
+	unsigned width) {
 
 	Task::enterCriticalSection();
 
@@ -309,8 +309,8 @@ void DigOutput::pulse(
 /// \param    width: Amplada del puls.
 ///
 void DigOutput::delayedPulse(
-	int delay,
-	int width) {
+	unsigned delay,
+	unsigned width) {
 
 	Task::enterCriticalSection();
 

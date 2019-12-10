@@ -29,7 +29,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    void eosErrorHandler(const char *file, unsigned line, const char *message);
+    void eosErrorHandler(const char* file, unsigned line, const char* message);
 #ifdef __cplusplus
 }
 #endif

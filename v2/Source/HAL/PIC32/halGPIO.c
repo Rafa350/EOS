@@ -4,40 +4,40 @@
 
 const GPIOPortRegs gpioPortRegs[] = {
 #if defined(PORTA)
-    { &TRISASET, &TRISACLR, &ODCASET, &ODCACLR, &LATASET, &LATACLR, &LATAINV, &LATA, &PORTA}, 
+    { &TRISASET, &TRISACLR, &ODCASET, &ODCACLR, &LATASET, &LATACLR, &LATAINV, &LATA, &PORTA},
 #else
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif    
+#endif
 #if defined(PORTB)
-    { &TRISBSET, &TRISBCLR, &ODCBSET, &ODCBCLR, &LATBSET, &LATBCLR, &LATBINV, &LATB, &PORTB}, 
+    { &TRISBSET, &TRISBCLR, &ODCBSET, &ODCBCLR, &LATBSET, &LATBCLR, &LATBINV, &LATB, &PORTB},
 #else
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif    
+#endif
 #if defined(PORTC)
-    { &TRISCSET, &TRISCCLR, &ODCCSET, &ODCCCLR, &LATCSET, &LATCCLR, &LATCINV, &LATC, &PORTC}, 
+    { &TRISCSET, &TRISCCLR, &ODCCSET, &ODCCCLR, &LATCSET, &LATCCLR, &LATCINV, &LATC, &PORTC},
 #else
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif    
+#endif
 #if defined(PORTD)
-    { &TRISDSET, &TRISDCLR, &ODCDSET, &ODCDCLR, &LATDSET, &LATDCLR, &LATDINV, &LATD, &PORTD}, 
+    { &TRISDSET, &TRISDCLR, &ODCDSET, &ODCDCLR, &LATDSET, &LATDCLR, &LATDINV, &LATD, &PORTD},
 #else
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif    
+#endif
 #if defined(PORTE)
-    { &TRISESET, &TRISECLR, &ODCESET, &ODCECLR, &LATESET, &LATECLR, &LATEINV, &LATE, &PORTE}, 
+    { &TRISESET, &TRISECLR, &ODCESET, &ODCECLR, &LATESET, &LATECLR, &LATEINV, &LATE, &PORTE},
 #else
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif    
+#endif
 #if defined(PORTF)
-    { &TRISFSET, &TRISFCLR, &ODCFSET, &ODCFCLR, &LATFSET, &LATFCLR, &LATFINV, &LATF, &PORTF}, 
+    { &TRISFSET, &TRISFCLR, &ODCFSET, &ODCFCLR, &LATFSET, &LATFCLR, &LATFINV, &LATF, &PORTF},
 #else
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif    
+#endif
 #if defined(PORTG)
-    { &TRISGSET, &TRISGCLR, &ODCGSET, &ODCGCLR, &LATGSET, &LATGCLR, &LATGINV, &LATG, &PORTG}, 
+    { &TRISGSET, &TRISGCLR, &ODCGSET, &ODCGCLR, &LATGSET, &LATGCLR, &LATGINV, &LATG, &PORTG},
 #else
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif    
+#endif
 };
 
 
@@ -47,10 +47,10 @@ const GPIOPortRegs gpioPortRegs[] = {
 /// \param    count: Numero de pins a inicialitzar;
 ///
 void halGPIOInitializePins(
-    const GPIOInitializePinInfo *info, 
-    int count) {
-    
-    for (int i = 0; i < count; i++) {
+    const GPIOInitializePinInfo *info,
+    unsigned count) {
+
+    for (unsigned i = 0; i < count; i++) {
         const GPIOInitializePinInfo *p = &info[i];
         halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
     }
@@ -65,11 +65,11 @@ void halGPIOInitializePins(
 /// \param    alt: Funcio alternativa del pin.
 ///
 void halGPIOInitializePin(
-    GPIOPort port, 
-    GPIOPin pin, 
-    GPIOOptions options, 
+    GPIOPort port,
+    GPIOPin pin,
+    GPIOOptions options,
     GPIOAlt alt) {
-   
+
     halGPIOInitializePort(port, 1 << pin, options, alt);
 }
 
@@ -81,9 +81,9 @@ void halGPIOInitializePin(
 ///
 void halGPIOInitializePorts(
     const GPIOInitializePortInfo *info,
-    int count) {
-    
-    for (int i = 0; i < count; i++) {
+    unsigned count) {
+
+    for (unsigned i = 0; i < count; i++) {
         const GPIOInitializePortInfo *p = &info[i];
         halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
     }
@@ -102,17 +102,17 @@ void halGPIOInitializePort(
     GPIOMask mask,
     GPIOOptions options,
     GPIOAlt alt) {
-    
+
     if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
         ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {
-        
+
         // Selecciona el valor inicial del port
         //
         switch (options & HAL_GPIO_INIT_mask) {
             case HAL_GPIO_INIT_SET:
                 *gpioPortRegs[port].latSET = mask;
                 break;
-                
+
             case HAL_GPIO_INIT_CLR:
                 *gpioPortRegs[port].latCLR = mask;
                 break;
@@ -120,18 +120,18 @@ void halGPIOInitializePort(
 
         // El configura com sortida
         //
-        *gpioPortRegs[port].trisCLR = mask; 
-     
+        *gpioPortRegs[port].trisCLR = mask;
+
         // Configura com OPEN-DRAIN o PUSH-PULL
         //
         if ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)
             *gpioPortRegs[port].odcSET = mask;
         else
-            *gpioPortRegs[port].odcCLR = mask;        
-    }  
-    
+            *gpioPortRegs[port].odcCLR = mask;
+    }
+
     else if ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_INPUT) {
-       
+
         // El configura com entrada
         //
         *gpioPortRegs[port].trisSET = mask;

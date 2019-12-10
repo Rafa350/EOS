@@ -15,8 +15,8 @@ using namespace eos;
 /// \return   L'adressa del contenidor.
 ///
 void *eos::allocContainer(
-	int capacity,
-	int elementSize) {
+	unsigned capacity,
+	unsigned elementSize) {
 
     eosAssert(capacity > 0);
     eosAssert(elementSize > 0);
@@ -30,7 +30,7 @@ void *eos::allocContainer(
 /// \param    container: El contenidor.
 ///
 void eos::freeContainer(
-	void *container) {
+	void* container) {
 
 	osalHeapFree(nullptr, container);
 }
@@ -46,11 +46,11 @@ void eos::freeContainer(
 /// \return   L'adressa del nou contenidor.
 ///
 void *eos::resizeContainer(
-	void *oldContainer,
-	int oldCapacity,
-	int newCapacity,
-	int count,
-	int elementSize) {
+	void* oldContainer,
+	unsigned oldCapacity,
+	unsigned newCapacity,
+	unsigned count,
+	unsigned elementSize) {
 
 	void *newContainer = oldContainer;
 

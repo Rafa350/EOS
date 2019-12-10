@@ -154,26 +154,26 @@ extern const GPIOPortRegs gpioPortRegs[];
 #define HAL_GPIO_INIT_CLR         (1u << HAL_GPIO_INIT_pos)
 #define HAL_GPIO_INIT_SET         (2u << HAL_GPIO_INIT_pos)
 
-// Funcio alternativa 
+// Funcio alternativa
 #define HAL_GPIO_AF_NONE          ((GPIOAlt) 0)
 
 
 // Canvi d'entrada a sortida i viceversa
 //
 #define halGPIOModePinInput(portId, pin) \
-    *gpioPortRegs[portId].trisSET = 1u << (pin) 
+    *gpioPortRegs[portId].trisSET = 1u << (pin)
 
 #define halGPIOModePinOutput(portId, pin) \
     *gpioPortRegs[portId].trisCLR = 1u << (pin)
 
 #define halGPIOModePortInput(portId, mask) \
-    *gpioPortRegs[portId].trisSET = (mask) 
+    *gpioPortRegs[portId].trisSET = (mask)
 
 #define halGPIOModePortOutput(portId, mask) \
     *gpioPortRegs[portId].trisCLR = (mask)
 
 // Canvi del estat del pin
-//    
+//
 #define halGPIOSetPin(portId, pin) \
     *gpioPortRegs[portId].latSET = 1u << (pin)
 
@@ -184,7 +184,7 @@ extern const GPIOPortRegs gpioPortRegs[];
     *gpioPortRegs[portId].latINV = 1u << (pin)
 
 // Lectura i escriptura del pin
-//    
+//
 #define halGPIOReadPin(portId, pin) \
     (*gpioPortRegs[portId].port & (1u << (pin))) != 0
 
@@ -197,7 +197,7 @@ extern const GPIOPortRegs gpioPortRegs[];
     }
 
 // Lectura i escriptura del port
-//    
+//
 #define halGPIOWritePort(portId, data) \
     *gpioPortRegs[portId].lat = (data)
 
@@ -205,10 +205,10 @@ extern const GPIOPortRegs gpioPortRegs[];
     *gpioPortRegs[portId].port
 
 
-void halGPIOInitializePins(const GPIOInitializePinInfo *info, int count);
+void halGPIOInitializePins(const GPIOInitializePinInfo *info, unsigned count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 
-void halGPIOInitializePorts(const GPIOInitializePortInfo *info, int count);
+void halGPIOInitializePorts(const GPIOInitializePortInfo *info, unsigned count);
 void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 
 

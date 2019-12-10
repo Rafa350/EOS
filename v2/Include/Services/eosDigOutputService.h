@@ -29,8 +29,8 @@ namespace eos {
             void timeOut();
 
         protected:
-            void onInitialize();
-            void onTask();
+            void onInitialize() override;
+            void onTask() override;
 
         public:
             DigOutputService(Application* application, TMRTimer timer);
@@ -56,8 +56,8 @@ namespace eos {
             GPIOPin pin;
             GPIOOptions options;
             State state;
-            int delayCnt;
-            int widthCnt;
+            unsigned delayCnt;
+            unsigned widthCnt;
 
             void initialize();
             void timeOut();
@@ -72,16 +72,16 @@ namespace eos {
             void set();
             void clear();
             void toggle();
-            void pulse(int width);
-            void cicle(int width1, int width2);
-            void delayedSet(int delay);
-            void delayedClear(int delay);
-            void delayedToggle(int delay);
-            void delayedPulse(int delay, int width);
+            void pulse(unsigned width);
+            void cicle(unsigned width1, unsigned width2);
+            void delayedSet(unsigned delay);
+            void delayedClear(unsigned delay);
+            void delayedToggle(unsigned delay);
+            void delayedPulse(unsigned delay, unsigned width);
 
         friend DigOutputService;
     };
-    
+
 }
 
 

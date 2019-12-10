@@ -3,6 +3,7 @@
 #include "OSAL/osalHeap.h"
 #include "System/eosMath.h"
 #include "System/eosString.h"
+
 #include <string.h>
 
 
@@ -10,8 +11,8 @@ using namespace eos;
 
 
 struct String::StringData {
-	int refCount;                 // Contador de referencies.
-	int length;                   // Longitut de la string.
+	unsigned refCount;            // Contador de referencies.
+	unsigned length;              // Longitut de la string.
 	const char* ptr;              // Punter a la cadena.
 };
 
@@ -72,8 +73,8 @@ String::String(
 ///
 String::String(
 	const String& str,
-	int index,
-	int length):
+	unsigned index,
+	unsigned length):
 
 	pData(nullptr) {
 
@@ -92,7 +93,7 @@ String::String(
 	pData(nullptr) {
 
 	if (cstr != nullptr)
-		create(cstr, 0, -1);
+		create(cstr, 0, unsigned(-1));
 }
 
 
@@ -104,8 +105,8 @@ String::String(
 ///
 String::String(
 	const char* cstr,
-	int index,
-	int length):
+	unsigned index,
+	unsigned length):
 
 	pData(nullptr) {
 
@@ -128,7 +129,7 @@ String::~String() {
 /// \brief    Obte la longitut.
 /// \return   La longitut en bytes.
 ///
-int String::getLength() const {
+unsigned String::getLength() const {
 
 	return pData == nullptr ? 0 : pData->length;
 }
@@ -180,7 +181,7 @@ String& String::operator = (
 		release();
 
 	if (cstr != nullptr)
-		create(cstr, 0, -1);
+		create(cstr, 0, unsigned(-1));
 
 	return *this;
 }
@@ -238,9 +239,9 @@ bool String::operator == (
 /// \return   El caracter en el index especificat.
 ///
 char String::operator [] (
-	int index) const {
+	unsigned index) const {
 
-	if ((pData == nullptr) || (index < 0) || (index >= pData->length))
+	if ((pData == nullptr) || (index >= pData->length))
 		return 0;
 	else
 		return pData->ptr[index];
@@ -264,21 +265,19 @@ String::operator const char* () const {
 ///
 void String::create(
 	const char* cstr,
-	int index,
-	int length) {
+	unsigned index,
+	unsigned length) {
 
 	eosAssert(pData == nullptr);
-	eosAssert(index >= 0);
-	eosAssert(length >= -1);
 
-	int totalLength = strlen(cstr);
-	if (length < 0)
+	unsigned totalLength = strlen(cstr);
+	if (length == unsigned(-1))
 		length = totalLength;
 	length = Math::min(length - index, totalLength);
 
 	if (isRomPointer(cstr) && (index == 0) && (length == totalLength)) {
 
-		pData = (StringData*) osalHeapAlloc(nullptr, int(sizeof(StringData)));
+		pData = static_cast<StringData*>(osalHeapAlloc(nullptr, sizeof(StringData)));
 		eosAssert(pData != nullptr);
 
 		pData->ptr = cstr;
@@ -286,7 +285,7 @@ void String::create(
 
 	else {
 
-		pData = (StringData*) osalHeapAlloc(nullptr, int(sizeof(StringData)) + length + 1);
+		pData = static_cast<StringData*>(osalHeapAlloc(nullptr, sizeof(StringData) + length + 1));
 		eosAssert(pData != nullptr);
 
 		pData->ptr = (char*)pData + sizeof(StringData);

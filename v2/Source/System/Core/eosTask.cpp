@@ -21,7 +21,7 @@ using namespace eos;
 /// \param    eventParam: Parametre que es passa a la funcio callback.
 ///
 Task::Task(
-    int stackSize,
+    unsigned stackSize,
     Priority priority,
     const String& name,
     IEventCallback* eventCallback,
