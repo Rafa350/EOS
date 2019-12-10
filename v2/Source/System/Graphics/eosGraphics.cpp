@@ -212,7 +212,7 @@ int Graphics::getTextWidth(
     int length) const {
 
     int w = 0;
-    for (int i = offset, j = length; j && text[i]; i++, j--)
+    for (unsigned i = offset, j = length; j && text[i]; i++, j--)
         w += font->getCharAdvance(text[i]);
 
     return w;

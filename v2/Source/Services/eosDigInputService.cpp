@@ -120,10 +120,11 @@ void DigInputService::onTask() {
                 input->state = false;
             }
 
-            if (changed && (input->changeEventCallback != nullptr)) {
+            if (changed && (input->eventCallback != nullptr)) {
                 DigInput::EventArgs args;
+                args.type = DigInput::EventType::change;
                 args.input = input;
-                input->changeEventCallback->execute(args);
+                input->eventCallback->execute(args);
             }
         }
     }
@@ -147,7 +148,7 @@ DigInput::DigInput(
     port(port),
     pin(pin),
     options(options),
-    changeEventCallback(nullptr) {
+    eventCallback(nullptr) {
     
     if (service != nullptr)
         service->addInput(this);

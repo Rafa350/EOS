@@ -77,7 +77,11 @@ namespace eos {
 
     class TimerCounter {
         public:
+            enum class EventType {
+                timeout
+            };
             struct EventArgs {
+                EventType type;
                 TimerCounter *timer;
             };
 
@@ -86,7 +90,7 @@ namespace eos {
 
         private:
             TimerService *service;
-            IEventCallback *callback;
+            IEventCallback *eventCallback;
             unsigned period;
             unsigned currentPeriod;
             unsigned expireTime;
@@ -95,7 +99,7 @@ namespace eos {
             TimerCounter(TimerService* service, IEventCallback* callback = nullptr);
             ~TimerCounter();
 
-            inline void setEventCallback(IEventCallback* callback) { this->callback = callback; }
+            inline void setEventCallback(IEventCallback* callback) { eventCallback = callback; }
 
             void start(unsigned period, unsigned blockTime = ((unsigned)-1)) { service->start(this, period, blockTime); }
             void stop(unsigned blockTime = ((unsigned)-1)) { service->stop(this, blockTime); }

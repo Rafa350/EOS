@@ -42,7 +42,12 @@ namespace eos {
     ///
     class DigInput final {
         public:
+            enum class EventType {
+                change
+            };
+            
             struct EventArgs {
+                EventType type;
                 DigInput* input;
             };
 
@@ -56,7 +61,7 @@ namespace eos {
             GPIOOptions options;
             uint32_t pattern;
             bool state;
-            IEventCallback* changeEventCallback;
+            IEventCallback* eventCallback;
 
         public:
             DigInput(DigInputService* service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
@@ -72,7 +77,7 @@ namespace eos {
             /// \brief Asigna el event onChange
             /// \param callback: El callback del event
             ///
-            inline void setChangeEventCallback(IEventCallback* callback) { changeEventCallback = callback; }
+            inline void setEventCallback(IEventCallback* callback) { eventCallback = callback; }
 
         private:
             void initialize();

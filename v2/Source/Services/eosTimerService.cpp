@@ -320,10 +320,11 @@ void TimerService::cmdTimeOut() {
             
             // Crida a la funcio callback del contador.
             //
-            if (timer->callback != nullptr) {
+            if (timer->eventCallback != nullptr) {
                 TimerCounter::EventArgs args;
+                args.type = TimerCounter::EventType::timeout;
                 args.timer = timer;
-                timer->callback->execute(args);
+                timer->eventCallback->execute(args);
             }
         }
         
@@ -353,7 +354,7 @@ TimerCounter::TimerCounter(
     IEventCallback *callback):
 
     service(nullptr),
-    callback(callback),
+    eventCallback(callback),
     period(0) {
 
     if (service != nullptr)

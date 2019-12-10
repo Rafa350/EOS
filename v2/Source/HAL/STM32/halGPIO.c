@@ -21,8 +21,8 @@ static uint32_t enabledClocks = 0; // Indicador dels ports actius
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa el clock del port GPIO
-/// \param port: El identificador del port.
+/// \brief    Activa el clock del port GPIO
+/// \param    port: El identificador del port.
 ///
 static void enableClock(
 	GPIOPort port) {
@@ -78,9 +78,9 @@ static void enableClock(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Comprova si el clock del port GPIO esta activat.
-/// \param port: El identificador del port.
-/// \return True si esta activat.
+/// \brief    Comprova si el clock del port GPIO esta activat.
+/// \param    port: El identificador del port.
+/// \return   True si esta activat.
 ///
 static inline bool isClockEnabled(
 	GPIOPort port) {
@@ -90,11 +90,11 @@ static inline bool isClockEnabled(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura un pin.
-/// \param port: El numero de port.
-/// \param pin: El numero de pin.
-/// \param options: Les opcions de configuracio.
-/// \param alt: La funcio alternativa.
+/// \brief    Configura un pin.
+/// \param    port: El numero de port.
+/// \param    pin: El numero de pin.
+/// \param    options: Les opcions de configuracio.
+/// \param    alt: La funcio alternativa.
 ///
 static void setupPin(
 	GPIOPort port,
@@ -208,20 +208,20 @@ static void setupPin(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura una llista de pins.
-/// \param info: Llista d'elements de configuracio.
-/// \param count: Numero d'elements de la llista.
+/// \brief    Configura una llista de pins.
+/// \param    info: Llista d'elements de configuracio.
+/// \param    count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePins(
 	const GPIOInitializePinInfo *info,
-	int count) {
+	unsigned count) {
 
 	eosAssert(info != NULL);
 	eosAssert(count != 0);
 
-	for (int i = 0; i < count; i++) {
+	for (unsigned i = 0; i < count; i++) {
 
-		const GPIOInitializePinInfo *p = &info[i];
+		const GPIOInitializePinInfo* p = &info[i];
 
 		if (!isClockEnabled(p->port))
 			enableClock(p->port);
@@ -232,20 +232,20 @@ void halGPIOInitializePins(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura una llista de ports.
-/// \param info: Llista d'informacio de configuracio.
-/// \param count: Numero d'elements de la llista.
+/// \brief    Configura una llista de ports.
+/// \param    info: Llista d'informacio de configuracio.
+/// \param    count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePorts(
 	const GPIOInitializePortInfo *info,
-	int count) {
+	unsigned count) {
 
 	eosAssert(info != NULL);
 	eosAssert(count != 0);
 
-	for (int i = 0; i < count; i++) {
+	for (unsigned i = 0; i < count; i++) {
 
-		const GPIOInitializePortInfo *p = &info[i];
+		const GPIOInitializePortInfo* p = &info[i];
 
 		if (!isClockEnabled(p->port))
 			enableClock(p->port);
@@ -258,11 +258,11 @@ void halGPIOInitializePorts(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura un pin.
-/// \param port: Identificador del port.
-/// \param pin: Identificador del pin.
-/// \param options: Opcions.
-/// \param function: Funcio del pin.
+/// \brief    Configura un pin.
+/// \param    port: Identificador del port.
+/// \param    pin: Identificador del pin.
+/// \param    options: Opcions.
+/// \param    alt: Funcio alternativa.
 ///
 void halGPIOInitializePin(
 	GPIOPort port,

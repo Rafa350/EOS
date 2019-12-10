@@ -49,7 +49,7 @@ namespace eos {
             bool operator >= (const String& str) const;
 
             operator const char* () const;
-            char operator [] (int unsigned) const;
+            char operator [] (unsigned) const;
     };
 
     /// \brief Constructor de cadenes de texte.

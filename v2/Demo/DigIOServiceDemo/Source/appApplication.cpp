@@ -45,7 +45,7 @@ void MyApplication::onInitialize() {
         digInputService, 
         SW_SW1_PORT, 
         SW_SW1_PIN);
-    digInput1->setChangeEventCallback(&digInput1EventCallback);
+    digInput1->setEventCallback(&digInput1EventCallback);
 #endif
 
 #ifdef EXIST_SWITCHES_SW2
@@ -53,7 +53,7 @@ void MyApplication::onInitialize() {
         digInputService, 
         SW_SW2_PORT, 
         SW_SW2_PIN);
-    digInput2->setChangeEventCallback(&digInput2EventCallback);
+    digInput2->setEventCallback(&digInput2EventCallback);
 #endif
 
 #ifdef EXIST_SWITCHES_SW3
@@ -61,7 +61,7 @@ void MyApplication::onInitialize() {
         digInputService, 
         SW_SW3_PORT, 
         SW_SW3_PIN);
-    digInput3->setChangeEventCallback(&digInput3EventCallback);
+    digInput3->setEventCallback(&digInput3EventCallback);
 #endif
 
     // Inicialitza el servei de sortides digitals
@@ -122,7 +122,7 @@ void MyApplication::digInput1EventHandler(
     const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!args.input->get()) 
+    if ((args.type == DigInput::EventType::change) && !args.input->get()) 
         getLed3()->pulse(500);
 #endif    
 }
@@ -138,7 +138,7 @@ void MyApplication::digInput2EventHandler(
     const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!args.input->get()) 
+    if ((args.type == DigInput::EventType::change) && !args.input->get()) 
         getLed3()->pulse(1000);
 #endif    
 }
@@ -154,7 +154,7 @@ void MyApplication::digInput3EventHandler(
     const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!args.input->get()) {
+    if ((args.type == DigInput::EventType::change) && !args.input->get()) {
     //    getLed3()->pulse(1500);
         timer1->start(1000);
         timer2->start(1500);

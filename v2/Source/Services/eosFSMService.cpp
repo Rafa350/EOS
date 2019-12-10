@@ -1,74 +1,52 @@
-#include "Services/Fsm/eosFSM.hpp"
+#include "eos.h"
+#include "Services/eosFsmService.h"
 
 
 using namespace eos;
-using namespace eos::fsm;
 
 
-/*************************************************************************
- *
- *      Constructor
- * 
- *      Funcio:
- *          StateMachineService::StateMachineService(
- *              StateMachine *sm) 
- * 
- *      Entrada:
- *          sm: Implementacio de la maquina d'estats
- *
- *************************************************************************/
-
-StateMachineService::StateMachineService(
+/// ----------------------------------------------------------------------
+/// \brief   Constructor.
+/// \param   application: Aplicacio on afeigir el servei.
+/// \param   sm: La maquina d'estat a procesar.
+///
+FsmService::FsmService(
+    Application* application,
     StateMachine *sm): 
-    eventQueue(10) {
+    
+    Service(application),
+    sm(sm),
+    eventQueue(10),
+    eventCallback(nullptr),
+    actionCallback(nullptr) {
         
-    this->sm = sm;
 }
 
 
-/*************************************************************************
- *
- *       Executa la tasca de control del servei
- * 
- *       Funcio:
- *           void StateMachineService::run() 
- *
- *************************************************************************/
-
-void StateMachineService::run() {
+/// ----------------------------------------------------------------------
+/// \brief    Executa les tasques del servei.
+///
+void FsmService::onTask() {
     
     while (true) {
         
         Event event;
         
         if (eventQueue.get(event, 1000)) {
-            if (onEvent != nullptr)
-                onEvent->execute(this);
+            if (eventCallback != nullptr) {
+                EventArgs args;
+                eventCallback->execute(args);
+            }
             sm->acceptEvent(event);
         }
     }
 }
 
 
-/*************************************************************************
- *
- *       Envia un event extern a la maquina d'estats
- * 
- *       Funcio:
- *           bool StateMachineService::acceptEvent(
- *               Event event,
- *               unsigned timeout)
- * 
- *       Funcio:
- *           event  : El event
- *           timeout: Temos maxim d'espera
- * 
- *       Retorn:
- *           TRue si ha acceptat l'event. False en cas contari
- *
- *************************************************************************/
-
-bool StateMachineService::acceptEvent(
+/// ----------------------------------------------------------------------
+/// \brief    Envia un event a la maquina d'estats pel seu procesament.
+///
+bool FsmService::acceptEvent(
     Event event,
     unsigned timeout) {
     
