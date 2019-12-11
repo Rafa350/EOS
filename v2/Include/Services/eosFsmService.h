@@ -11,12 +11,12 @@
 
 
 namespace eos {
-    
+
 	typedef unsigned Event;
-	
+
     class Application;
 	class StateMachine;
-	
+
 	class IContext {
 		public:
 			virtual bool inpGet(unsigned inp) = 0;
@@ -27,7 +27,7 @@ namespace eos {
 			virtual void timStart(unsigned tim, unsigned timeout) = 0;
 			virtual unsigned varGet(unsigned var) = 0;
 	};
-	
+
 	class State {
 		private:
 			StateMachine* sm;
@@ -57,11 +57,13 @@ namespace eos {
 			void popState();
 			IContext* getContext() const { return context; }
 	};
-	
+
     class FsmService final: private Service {
-        private:
+        public:
 			struct EventArgs {
 			};
+
+        private:
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
             typedef Queue<Event> EventQueue;
 
@@ -70,10 +72,10 @@ namespace eos {
             EventQueue eventQueue;
             IEventCallback* eventCallback;
             IEventCallback* actionCallback;
-            
+
         private:
             void processEvent(Event event);
-            
+
         protected:
             void onTask() override;
             //void onTick() override;
@@ -84,7 +86,7 @@ namespace eos {
             inline void setEventCallback(IEventCallback* callback) { eventCallback = callback; }
             inline void setActionCallback(IEventCallback* callback) { actionCallback = callback; }
     };
-   
+
 }
 
 

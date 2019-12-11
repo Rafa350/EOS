@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>com.microchip.mplab.nbide.embedded.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>FsmServicesDemo</name>
+            <creation-uuid>a1e3a45e-b635-4334-9ba8-6fb8f8a45a90</creation-uuid>
+            <make-project-type>0</make-project-type>
+            <c-extensions>c</c-extensions>
+            <cpp-extensions>cpp</cpp-extensions>
+            <header-extensions>h</header-extensions>
+            <asminc-extensions/>
+            <sourceEncoding>ISO-8859-1</sourceEncoding>
+            <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>../../../Demo/OutputServiceDemo</sourceRootElem>
+                <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Source/Services</sourceRootElem>
+                <sourceRootElem>../../../Source/System</sourceRootElem>
+                <sourceRootElem>../../../Include</sourceRootElem>
+                <sourceRootElem>../../../Demo/DigIOServicesDemo</sourceRootElem>
+                <sourceRootElem>../../../Source/OSAL</sourceRootElem>
+                <sourceRootElem>../../../Demo/DigIOServiceDemo</sourceRootElem>
+                <sourceRootElem>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source</sourceRootElem>
+                <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
+                <sourceRootElem>.</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>PIC32_USB_STARTER_KIT_I</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>PIC32_ETH_STARTER_KIT</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
+        </data>
+    </configuration>
+</project>

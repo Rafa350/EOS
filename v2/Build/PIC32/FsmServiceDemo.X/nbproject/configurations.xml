@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="65">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <logicalFolder name="f1" displayName="App" projectFiles="true">
+        <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+          <itemPath>../../../Demo/DigIOServiceDemo/Include/PIC32/FreeRTOSConfig.h</itemPath>
+        </logicalFolder>
+        <itemPath>../../../Demo/DigIOServiceDemo/Include/eosConfig.h</itemPath>
+        <itemPath>../../../Demo/DigIOServiceDemo/Include/appApplication.h</itemPath>
+        <itemPath>../../../Demo/DigIOServiceDemo/Include/appLedLoopService.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f2" displayName="Framework" projectFiles="true">
+        <logicalFolder name="f1" displayName="EOS" projectFiles="true">
+          <logicalFolder name="f5" displayName="Board" projectFiles="true">
+            <itemPath>../../../Include/Board/board.h</itemPath>
+            <itemPath>../../../Include/Board/board_PIC32_USB_STARTER_KIT_I.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f1" displayName="HAL" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halTMR.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halGPIOTpl.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halCN.h</itemPath>
+            </logicalFolder>
+            <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
+            <itemPath>../../../Include/HAL/halTMR.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
+            <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalHeap.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalQueue.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalSemaphore.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f2" displayName="Services" projectFiles="true">
+            <itemPath>../../../Include/Services/eosService.h</itemPath>
+            <itemPath>../../../Include/Services/eosAppLoopService.h</itemPath>
+            <itemPath>../../../Include/Services/eosDigInputService.h</itemPath>
+            <itemPath>../../../Include/Services/eosDigOutputService.h</itemPath>
+            <itemPath>../../../Include/Services/eosTimerService.h</itemPath>
+            <itemPath>../../../Include/Services/eosFsmService.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f3" displayName="System" projectFiles="true">
+            <logicalFolder name="f1" displayName="Collections" projectFiles="true">
+              <itemPath>../../../Include/System/Collections/eosFlags.h</itemPath>
+              <itemPath>../../../Include/System/Collections/eosArrayList.h</itemPath>
+              <itemPath>../../../Include/System/Collections/eosPriorityQueue.h</itemPath>
+            </logicalFolder>
+            <logicalFolder name="f2" displayName="Core" projectFiles="true">
+              <itemPath>../../../Include/System/Core/eosHeapAllocator.h</itemPath>
+              <itemPath>../../../Include/System/Core/eosTask.h</itemPath>
+              <itemPath>../../../Include/System/Core/eosQueue.h</itemPath>
+              <itemPath>../../../Include/System/Core/eosSemaphore.h</itemPath>
+              <itemPath>../../../Include/System/Core/eosTimer.h</itemPath>
+            </logicalFolder>
+            <itemPath>../../../Include/System/eosApplication.h</itemPath>
+            <itemPath>../../../Include/System/eosCallbacks.h</itemPath>
+            <itemPath>../../../Include/System/eosString.h</itemPath>
+          </logicalFolder>
+          <itemPath>../../../Include/eos.h</itemPath>
+          <itemPath>../../../Include/eosAssert.h</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="LinkerScript"
+                   displayName="Linker Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="f1" displayName="App" projectFiles="true">
+        <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+          <itemPath>../../../Demo/DigIOServiceDemo/Source/PIC32/AppInitialize.cpp</itemPath>
+          <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>
+        </logicalFolder>
+        <itemPath>../../../Demo/DigIOServiceDemo/Source/AppMain.cpp</itemPath>
+        <itemPath>../../../Demo/DigIOServiceDemo/Source/appLedLoopService.cpp</itemPath>
+        <itemPath>../../../Demo/DigIOServiceDemo/Source/appApplication.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f2" displayName="Framework" projectFiles="true">
+        <logicalFolder name="f1" displayName="EOS" projectFiles="true">
+          <logicalFolder name="f1" displayName="HAL" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halTMR.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halTMRInterruptWrapper.S</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halCN.c</itemPath>
+              <itemPath>../../../Source/HAL/PIC32/halCNInterruptWrapper.S</itemPath>
+            </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
+            <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
+              <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalTimer.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalTask.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalKernel.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalHeap.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalQueue.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalSemaphore.c</itemPath>
+            </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="f2" displayName="Services" projectFiles="true">
+            <itemPath>../../../Source/Services/eosService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosAppLoopService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosDigInputService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosDigOutputService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosTimerService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosFsmService.cpp</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f3" displayName="System" projectFiles="true">
+            <logicalFolder name="f2" displayName="Collections" projectFiles="true">
+              <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
+            </logicalFolder>
+            <logicalFolder name="f1" displayName="Core" projectFiles="true">
+              <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosGlobalAlloc.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosHeapAllocator.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosErrorHandler.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosQueue.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosSemaphore.cpp</itemPath>
+              <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
+            </logicalFolder>
+            <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
+            <itemPath>../../../Source/System/eosString.cpp</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/portable/MemMang/heap_4.c</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/list.c</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/queue.c</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/tasks.c</itemPath>
+          <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../Demo/OutputServiceDemo</Elem>
+    <Elem>../../../Source/HAL/PIC32</Elem>
+    <Elem>../../../Source/Services</Elem>
+    <Elem>../../../Source/System</Elem>
+    <Elem>../../../Include</Elem>
+    <Elem>../../../Demo/DigIOServicesDemo</Elem>
+    <Elem>../../../Source/OSAL</Elem>
+    <Elem>../../../Demo/DigIOServiceDemo</Elem>
+    <Elem>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source</Elem>
+    <Elem>../../../Source/StartUp/PIC32</Elem>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="PIC32_USB_STARTER_KIT_I" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <targetDevice>PIC32MX460F512L</targetDevice>
+        <targetHeader></targetHeader>
+        <targetPluginBoard></targetPluginBoard>
+        <platformTool>SKDEPIC32PlatformTool</platformTool>
+        <languageToolchain>XC32</languageToolchain>
+        <languageToolchainVersion>2.30</languageToolchainVersion>
+        <platform>3</platform>
+      </toolsSet>
+      <packs>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.53"/>
+      </packs>
+      <compileType>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibFileItem>../../../Library/PIC32/Harmony/bin/framework/peripheral/PIC32MX460F512L_peripherals.a</linkerLibFileItem>
+          </linkerLibItems>
+        </linkerTool>
+        <archiverTool>
+        </archiverTool>
+        <loading>
+          <useAlternateLoadableFile>false</useAlternateLoadableFile>
+          <parseOnProdLoad>false</parseOnProdLoad>
+          <alternateLoadableFile></alternateLoadableFile>
+        </loading>
+        <subordinates>
+        </subordinates>
+      </compileType>
+      <makeCustomizationType>
+        <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeCustomizationPreStep></makeCustomizationPreStep>
+        <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
+        <makeCustomizationPostStep></makeCustomizationPostStep>
+        <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
+        <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
+        <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
+      </makeCustomizationType>
+      <C32>
+        <property key="additional-warnings" value="false"/>
+        <property key="addresss-attribute-use" value="false"/>
+        <property key="enable-app-io" value="false"/>
+        <property key="enable-omit-frame-pointer" value="true"/>
+        <property key="enable-symbols" value="false"/>
+        <property key="enable-unroll-loops" value="true"/>
+        <property key="exclude-floating-point" value="true"/>
+        <property key="extra-include-directories" value=""/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="isolate-each-function" value="true"/>
+        <property key="make-warnings-into-errors" value="false"/>
+        <property key="optimization-level" value=""/>
+        <property key="place-data-into-section" value="false"/>
+        <property key="post-instruction-scheduling" value="default"/>
+        <property key="pre-instruction-scheduling" value="default"/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_USB_STARTER_KIT_I"/>
+        <property key="strict-ansi" value="false"/>
+        <property key="support-ansi" value="false"/>
+        <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
+        <property key="use-cci" value="false"/>
+        <property key="use-iar" value="false"/>
+        <property key="use-indirect-calls" value="false"/>
+        <appendMe value="-std=gnu99"/>
+      </C32>
+      <C32-AR>
+        <property key="additional-options-chop-files" value="false"/>
+      </C32-AR>
+      <C32-AS>
+        <property key="assembler-symbols" value=""/>
+        <property key="enable-symbols" value="true"/>
+        <property key="exclude-floating-point-library" value="true"/>
+        <property key="expand-macros" value="false"/>
+        <property key="extra-include-directories-for-assembler" value=""/>
+        <property key="extra-include-directories-for-preprocessor" value=""/>
+        <property key="false-conditionals" value="false"/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="keep-locals" value="false"/>
+        <property key="list-assembly" value="false"/>
+        <property key="list-source" value="false"/>
+        <property key="list-symbols" value="false"/>
+        <property key="oXC32asm-list-to-file" value="false"/>
+        <property key="omit-debug-dirs" value="false"/>
+        <property key="omit-forms" value="false"/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_USB_STARTER_KIT_I"/>
+        <property key="warning-level" value=""/>
+      </C32-AS>
+      <C32-CO>
+        <property key="coverage-enable" value=""/>
+      </C32-CO>
+      <C32-LD>
+        <property key="additional-options-use-response-files" value="false"/>
+        <property key="additional-options-write-sla" value="false"/>
+        <property key="allocate-dinit" value="false"/>
+        <property key="code-dinit" value="false"/>
+        <property key="ebase-addr" value=""/>
+        <property key="enable-check-sections" value="false"/>
+        <property key="exclude-floating-point-library" value="true"/>
+        <property key="exclude-standard-libraries" value="false"/>
+        <property key="extra-lib-directories" value=""/>
+        <property key="fill-flash-options-addr" value=""/>
+        <property key="fill-flash-options-const" value=""/>
+        <property key="fill-flash-options-how" value="0"/>
+        <property key="fill-flash-options-inc-const" value="1"/>
+        <property key="fill-flash-options-increment" value=""/>
+        <property key="fill-flash-options-seq" value=""/>
+        <property key="fill-flash-options-what" value="0"/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-cross-reference-file" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="heap-size" value="2048"/>
+        <property key="input-libraries" value=""/>
+        <property key="kseg-length" value=""/>
+        <property key="kseg-origin" value=""/>
+        <property key="linker-symbols" value=""/>
+        <property key="map-file" value="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
+        <property key="no-device-startup-code" value="false"/>
+        <property key="no-startup-files" value="false"/>
+        <property key="oXC32ld-extra-opts" value=""/>
+        <property key="optimization-level" value=""/>
+        <property key="preprocessor-macros" value=""/>
+        <property key="remove-unused-sections" value="true"/>
+        <property key="report-memory-usage" value="false"/>
+        <property key="serial-length" value=""/>
+        <property key="serial-origin" value=""/>
+        <property key="stack-size" value="2048"/>
+        <property key="symbol-stripping" value=""/>
+        <property key="trace-symbols" value=""/>
+        <property key="warn-section-align" value="false"/>
+        <appendMe value="--allow-multiple-definition"/>
+      </C32-LD>
+      <C32CPP>
+        <property key="additional-warnings" value="false"/>
+        <property key="addresss-attribute-use" value="false"/>
+        <property key="check-new" value="false"/>
+        <property key="eh-specs" value="false"/>
+        <property key="enable-app-io" value="false"/>
+        <property key="enable-omit-frame-pointer" value="true"/>
+        <property key="enable-symbols" value="true"/>
+        <property key="enable-unroll-loops" value="true"/>
+        <property key="exceptions" value="false"/>
+        <property key="exclude-floating-point" value="true"/>
+        <property key="extra-include-directories" value=""/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="isolate-each-function" value="true"/>
+        <property key="make-warnings-into-errors" value="false"/>
+        <property key="optimization-level" value=""/>
+        <property key="place-data-into-section" value="false"/>
+        <property key="post-instruction-scheduling" value="default"/>
+        <property key="pre-instruction-scheduling" value="default"/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_USB_STARTER_KIT_I"/>
+        <property key="rtti" value="false"/>
+        <property key="strict-ansi" value="false"/>
+        <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
+        <property key="use-cci" value="false"/>
+        <property key="use-iar" value="false"/>
+        <property key="use-indirect-calls" value="false"/>
+      </C32CPP>
+      <C32Global>
+        <property key="common-include-directories"
+                  value="..\..\..\Demo\DigIOServiceDemo\Include;..\..\..\Demo\DigIOServiceDemo\Include\PIC32;..\..\..\Include;..\..\..\Source;..\..\..\Library\PIC32\Harmony\framework;..\..\..\Library\PIC32\FreeRTOS\Source\include;..\..\..\Library\PIC32\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+        <property key="gp-relative-option" value=""/>
+        <property key="legacy-libc" value="true"/>
+        <property key="mdtcm" value=""/>
+        <property key="mitcm" value=""/>
+        <property key="mstacktcm" value="false"/>
+        <property key="relaxed-math" value="false"/>
+        <property key="save-temps" value="false"/>
+        <property key="wpo-lto" value="false"/>
+      </C32Global>
+      <SKDEPIC32PlatformTool>
+        <property key="whatToProgram" value="all"/>
+      </SKDEPIC32PlatformTool>
+    </conf>
+    <conf name="PIC32_ETH_STARTER_KIT" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <targetDevice>PIC32MX795F512L</targetDevice>
+        <targetHeader></targetHeader>
+        <targetPluginBoard></targetPluginBoard>
+        <platformTool>SKDEPIC32PlatformTool</platformTool>
+        <languageToolchain>XC32</languageToolchain>
+        <languageToolchainVersion>2.30</languageToolchainVersion>
+        <platform>3</platform>
+      </toolsSet>
+      <packs>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.53"/>
+      </packs>
+      <compileType>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibFileItem>../../../Library/PIC32/Harmony/bin/framework/peripheral/PIC32MX460F512L_peripherals.a</linkerLibFileItem>
+          </linkerLibItems>
+        </linkerTool>
+        <archiverTool>
+        </archiverTool>
+        <loading>
+          <useAlternateLoadableFile>false</useAlternateLoadableFile>
+          <parseOnProdLoad>false</parseOnProdLoad>
+          <alternateLoadableFile></alternateLoadableFile>
+        </loading>
+        <subordinates>
+        </subordinates>
+      </compileType>
+      <makeCustomizationType>
+        <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeCustomizationPreStep></makeCustomizationPreStep>
+        <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
+        <makeCustomizationPostStep></makeCustomizationPostStep>
+        <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
+        <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
+        <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
+      </makeCustomizationType>
+      <C32>
+        <property key="additional-warnings" value="false"/>
+        <property key="addresss-attribute-use" value="false"/>
+        <property key="enable-app-io" value="false"/>
+        <property key="enable-omit-frame-pointer" value="true"/>
+        <property key="enable-symbols" value="true"/>
+        <property key="enable-unroll-loops" value="true"/>
+        <property key="exclude-floating-point" value="true"/>
+        <property key="extra-include-directories" value=""/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="isolate-each-function" value="true"/>
+        <property key="make-warnings-into-errors" value="false"/>
+        <property key="optimization-level" value="-O1"/>
+        <property key="place-data-into-section" value="false"/>
+        <property key="post-instruction-scheduling" value="default"/>
+        <property key="pre-instruction-scheduling" value="default"/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_USB_STARTER_KIT_I"/>
+        <property key="strict-ansi" value="false"/>
+        <property key="support-ansi" value="false"/>
+        <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
+        <property key="use-cci" value="false"/>
+        <property key="use-iar" value="false"/>
+        <property key="use-indirect-calls" value="false"/>
+        <appendMe value="-std=gnu99"/>
+      </C32>
+      <C32-AR>
+        <property key="additional-options-chop-files" value="false"/>
+      </C32-AR>
+      <C32-AS>
+        <property key="assembler-symbols" value=""/>
+        <property key="enable-symbols" value="true"/>
+        <property key="exclude-floating-point-library" value="true"/>
+        <property key="expand-macros" value="false"/>
+        <property key="extra-include-directories-for-assembler" value=""/>
+        <property key="extra-include-directories-for-preprocessor" value=""/>
+        <property key="false-conditionals" value="false"/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="keep-locals" value="false"/>
+        <property key="list-assembly" value="false"/>
+        <property key="list-source" value="false"/>
+        <property key="list-symbols" value="false"/>
+        <property key="oXC32asm-list-to-file" value="false"/>
+        <property key="omit-debug-dirs" value="false"/>
+        <property key="omit-forms" value="false"/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_USB_STARTER_KIT_I"/>
+        <property key="warning-level" value=""/>
+      </C32-AS>
+      <C32-CO>
+        <property key="coverage-enable" value=""/>
+      </C32-CO>
+      <C32-LD>
+        <property key="additional-options-use-response-files" value="false"/>
+        <property key="additional-options-write-sla" value="false"/>
+        <property key="allocate-dinit" value="false"/>
+        <property key="code-dinit" value="false"/>
+        <property key="ebase-addr" value=""/>
+        <property key="enable-check-sections" value="true"/>
+        <property key="exclude-floating-point-library" value="true"/>
+        <property key="exclude-standard-libraries" value="false"/>
+        <property key="extra-lib-directories" value=""/>
+        <property key="fill-flash-options-addr" value=""/>
+        <property key="fill-flash-options-const" value=""/>
+        <property key="fill-flash-options-how" value="0"/>
+        <property key="fill-flash-options-inc-const" value="1"/>
+        <property key="fill-flash-options-increment" value=""/>
+        <property key="fill-flash-options-seq" value=""/>
+        <property key="fill-flash-options-what" value="0"/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-cross-reference-file" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="heap-size" value="2048"/>
+        <property key="input-libraries" value=""/>
+        <property key="kseg-length" value=""/>
+        <property key="kseg-origin" value=""/>
+        <property key="linker-symbols" value=""/>
+        <property key="map-file" value="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
+        <property key="no-device-startup-code" value="false"/>
+        <property key="no-startup-files" value="false"/>
+        <property key="oXC32ld-extra-opts" value=""/>
+        <property key="optimization-level" value=""/>
+        <property key="preprocessor-macros" value=""/>
+        <property key="remove-unused-sections" value="true"/>
+        <property key="report-memory-usage" value="false"/>
+        <property key="serial-length" value=""/>
+        <property key="serial-origin" value=""/>
+        <property key="stack-size" value="2048"/>
+        <property key="symbol-stripping" value=""/>
+        <property key="trace-symbols" value=""/>
+        <property key="warn-section-align" value="false"/>
+        <appendMe value="--allow-multiple-definition"/>
+      </C32-LD>
+      <C32CPP>
+        <property key="additional-warnings" value="false"/>
+        <property key="addresss-attribute-use" value="false"/>
+        <property key="check-new" value="false"/>
+        <property key="eh-specs" value="false"/>
+        <property key="enable-app-io" value="false"/>
+        <property key="enable-omit-frame-pointer" value="true"/>
+        <property key="enable-symbols" value="true"/>
+        <property key="enable-unroll-loops" value="true"/>
+        <property key="exceptions" value="false"/>
+        <property key="exclude-floating-point" value="true"/>
+        <property key="extra-include-directories" value=""/>
+        <property key="generate-16-bit-code" value="false"/>
+        <property key="generate-micro-compressed-code" value="false"/>
+        <property key="isolate-each-function" value="true"/>
+        <property key="make-warnings-into-errors" value="false"/>
+        <property key="optimization-level" value="-O1"/>
+        <property key="place-data-into-section" value="false"/>
+        <property key="post-instruction-scheduling" value="default"/>
+        <property key="pre-instruction-scheduling" value="default"/>
+        <property key="preprocessor-macros" value="HARDWARE_PIC32_USB_STARTER_KIT_I"/>
+        <property key="rtti" value="false"/>
+        <property key="strict-ansi" value="false"/>
+        <property key="toplevel-reordering" value=""/>
+        <property key="unaligned-access" value=""/>
+        <property key="use-cci" value="false"/>
+        <property key="use-iar" value="false"/>
+        <property key="use-indirect-calls" value="false"/>
+      </C32CPP>
+      <C32Global>
+        <property key="common-include-directories"
+                  value="..\..\..\Demo\DigIOServiceDemo\Include;..\..\..\Demo\DigIOServiceDemo\Include\PIC32;..\..\..\Include;..\..\..\Source;..\..\..\Library\PIC32\Harmony\framework;..\..\..\Library\PIC32\FreeRTOS\Source\include;..\..\..\Library\PIC32\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+        <property key="gp-relative-option" value=""/>
+        <property key="legacy-libc" value="true"/>
+        <property key="mdtcm" value=""/>
+        <property key="mitcm" value=""/>
+        <property key="mstacktcm" value="false"/>
+        <property key="relaxed-math" value="false"/>
+        <property key="save-temps" value="false"/>
+        <property key="wpo-lto" value="false"/>
+      </C32Global>
+      <SKDEPIC32PlatformTool>
+        <property key="whatToProgram" value="all"/>
+      </SKDEPIC32PlatformTool>
+    </conf>
+  </confs>
+</configurationDescriptor>
