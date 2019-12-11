@@ -1,70 +1,43 @@
 #include "eos.h"
-#include "Services/Fsm/eosFSM.h"
+#include "Services/Fsm/eosStateMachine.h"
 
 
 using namespace eos;
 
 
-/*************************************************************************
- *
- *       Constructor
- * 
- *       Funcio:
- *           StateMachine::StateMachine(
- *               IContext *context)
- * 
- *       Entrada:
- *           context: Contexte de la maquina
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief    Constructor
+/// \param    context: Dades de context.
+///
 StateMachine::StateMachine(
-    IContext *context) {
-    
+    IContext* context) {
+
     this->context = context;
 }
 
 
-/*************************************************************************
- *
- *       Inicia la maquina d'estats i es posa en l'estat inicial
- *
- *       Funcio:
- *           void StateMachine::start(
- *               State *state) 
- * 
- *       Entrada:
- *           initialState: Estat inicial
- * 
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief    Inicia la maquina.
+/// \param    state: EL'estat inicial.
+///
 void StateMachine::start(
-    State *state) {
-    
+    State* state) {
+
     states.push(state);
     state->enterAction();
 }
 
 
-/*************************************************************************
- *
- *       Accepta un event
- * 
- *       Funcio:
- *           void StateMachine::acceptEvent(
- *               Event event) 
- * 
- *       Entrada:
- *           event: El event
- *
- *************************************************************************/
-
+/// ----------------------------------------------------------------------
+/// \brief    Procesa un event.
+/// \param    event: L'event a procesar.
+///
 void StateMachine::acceptEvent(
     Event event) {
 
-    State *curState = states.top();
+    State* curState = states.peek();
     curState->transition(event);
-    State *newState = states.top();
+    State* newState = states.peek();
     if (newState != curState) {
         curState->exitAction();
         newState->enterAction();
@@ -72,54 +45,20 @@ void StateMachine::acceptEvent(
 }
 
 
-/*************************************************************************
- *
- *       Cabvia a un nou estat
- * 
- *       Funcio:
- *           void StateMachine::setState(
- *               State* state) 
- * 
- *       Entrada:
- *           state: El nou estat
- *
- *************************************************************************/
-
 void StateMachine::setState(
     State* state) {
-    
+
     states.pop();
     states.push(state);
 }
 
 
-/*************************************************************************
- *
- *       Canvia a un nou estat, salvant en la pila el actual
- * 
- *       Funcio:
- *           void StateMachine::pushState(
- *               State* state)
- *
- *       Entrada:
- *           state: El nou estat
- *
- *************************************************************************/
+void StateMachine::pushState(
+    State* state) {
 
-void StateMachine::pushState(State* state) {
-    
     states.push(state);
 }
 
-
-/*************************************************************************
- *
- *       Canvia a l'ultim estat recuperat de la pila
- *
- *       Funcio:
- *           void StateMachine::popState() 
- *
- *************************************************************************/
 
 void StateMachine::popState() {
 

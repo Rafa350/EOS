@@ -12,14 +12,14 @@ using namespace eos;
 ///
 FsmService::FsmService(
     Application* application,
-    StateMachine *sm): 
-    
+    StateMachine *sm):
+
     Service(application),
     sm(sm),
     eventQueue(10),
     eventCallback(nullptr),
     actionCallback(nullptr) {
-        
+
 }
 
 
@@ -27,17 +27,17 @@ FsmService::FsmService(
 /// \brief    Executa les tasques del servei.
 ///
 void FsmService::onTask() {
-    
+
     while (true) {
-        
+
         Event event;
-        
-        if (eventQueue.get(event, 1000)) {
+
+        if (eventQueue.get(event, unsigned(-1))) {
             if (eventCallback != nullptr) {
                 EventArgs args;
                 eventCallback->execute(args);
             }
-            sm->acceptEvent(event);
+            //sm->acceptEvent(event);
         }
     }
 }
@@ -49,6 +49,6 @@ void FsmService::onTask() {
 bool FsmService::acceptEvent(
     Event event,
     unsigned timeout) {
-    
+
     return eventQueue.put(event, timeout);
 }

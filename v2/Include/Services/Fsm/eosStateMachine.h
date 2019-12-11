@@ -1,20 +1,19 @@
-#ifndef __eosFsmService__
-#define	__eosFsmService__
+#ifndef __eosStateMachine__
+#define	__eosStateMachine__
 
 
+// EOS includes
+//
 #include "eos.h"
-#include "System/eosCallbacks.h"
 #include "System/Collections/eosStack.h"
-#include "System/Core/eosQueue.h"
-#include "System/Core/eosTask.h"
 
 
 namespace eos {
-    
+
 	typedef unsigned Event;
-	
+
 	class StateMachine;
-	
+
 	class IContext {
 		public:
 			virtual bool inpGet(unsigned inp) = 0;
@@ -25,7 +24,7 @@ namespace eos {
 			virtual void timStart(unsigned tim, unsigned timeout) = 0;
 			virtual unsigned varGet(unsigned var) = 0;
 	};
-	
+
 	class State {
 		private:
 			StateMachine* sm;
@@ -55,31 +54,8 @@ namespace eos {
 			void popState();
 			IContext* getContext() const { return context; }
 	};
-	
-    class StateMachineService: private IRunable {
-        private:
-			struct EventArgs {
-			};
-			typedef ICallbackP1<const EventArgs&> IServiceEventCallback;
-            typedef Queue<fsm::Event> EventQueue;
 
-        private:
-            fsm::StateMachine* sm;
-            EventQueue eventQueue;
-            IServiceEventCallback* eventCallback;
-            IServiceEventCallback* actionCallback;
-
-        public:
-            StateMachineService(fsm::StateMachine *sm);
-            bool acceptEvent(fsm::Event event, unsigned timeout);
-            inline void setEventCallback(IServiceEventCallback* callback) { eventCallback = callback; }
-            inline void setActionCallback(IServiceEventCallback* callback) { actionCallback = callback; }
-        private:
-            void run();
-            void processEvent(fsm::Event event);
-    };
-   
 }
 
 
-#endif	// __eosFsmService__
+#endif	// __eosStateMachine__
