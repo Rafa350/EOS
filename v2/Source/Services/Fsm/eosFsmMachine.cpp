@@ -1,5 +1,6 @@
 #include "eos.h"
-#include "Services/Fsm/eosStateMachine.h"
+#include "Services/Fsm/eosFsmMachine.h"
+#include "Services/Fsm/eosFsmState.h"
 
 
 using namespace eos;
@@ -7,12 +8,8 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
-/// \param    context: Dades de context.
 ///
-StateMachine::StateMachine(
-    IContext* context) {
-
-    this->context = context;
+FsmMachine::FsmMachine() {
 }
 
 
@@ -20,8 +17,8 @@ StateMachine::StateMachine(
 /// \brief    Inicia la maquina.
 /// \param    state: EL'estat inicial.
 ///
-void StateMachine::start(
-    State* state) {
+void FsmMachine::start(
+    FsmState* state) {
 
     states.push(state);
     state->enterAction();
@@ -32,12 +29,12 @@ void StateMachine::start(
 /// \brief    Procesa un event.
 /// \param    event: L'event a procesar.
 ///
-void StateMachine::acceptEvent(
-    Event event) {
+void FsmMachine::acceptEvent(
+    const FsmEvent& event) {
 
-    State* curState = states.peek();
-    curState->transition(event);
-    State* newState = states.peek();
+    FsmState* curState = states.peek();
+    curState->acceptEvent(this, event);
+    FsmState* newState = states.peek();
     if (newState != curState) {
         curState->exitAction();
         newState->enterAction();
@@ -45,22 +42,22 @@ void StateMachine::acceptEvent(
 }
 
 
-void StateMachine::setState(
-    State* state) {
+void FsmMachine::setState(
+    FsmState* state) {
 
     states.pop();
     states.push(state);
 }
 
 
-void StateMachine::pushState(
-    State* state) {
+void FsmMachine::pushState(
+    FsmState* state) {
 
     states.push(state);
 }
 
 
-void StateMachine::popState() {
+void FsmMachine::popState() {
 
     states.pop();
 }
