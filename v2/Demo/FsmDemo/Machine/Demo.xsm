@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Logica de control de les senyals de aplicacio, 
+     inhibicio i aplicacio automatica 
+-->
+<machine name="Demo" start="WaitSW1">
+    
+    <!-- Espera al boto SW1
+    -->
+    <state name="WaitSW1">
+	
+		<enter>
+			<inline>outSet(LED1, false);</inline>
+		</enter>
+       
+        <!-- Es prem el boto SW1
+        -->
+        <transition event="SW1" state="WaitSW2">
+			<inline>outSet(LED1, true);</inline>
+        </transition>
+		
+	</state>
+               
+    <!-- Espera al boto SW2.
+    -->
+    <state name="WaitSW2">
+	
+		<enter>
+			<inline>timerOn();</inline>
+		</enter>
+		<exit>
+			<inline>exitingSW2();</inline>
+		</exit>
+    
+        <!-- Flanc negatiu en l'entrada INP_IH 
+        -->
+        <transition event="SW2" guard="p == 34" state="WaitSW3">
+			<inline>outSet(LED2, true);</inline>
+        </transition>
+        <transition event="SW2" guard="p == 345" state="WaitSW3">
+			<inline>outSet(LED2, true);</inline>
+        </transition>
+
+    </state>
+
+    <!-- Espera al boto SW3.
+    -->
+    <state name="WaitSW3">
+    
+        <!-- Si es prem Start/Reset es desactiva el test
+        -->
+        <transition event="SW3" state="WaitTimer1">
+			<inline>outSet(LED2, true);</inline>
+			<inline>send(TIMER1, 1000);</inline>
+        </transition>
+		
+    </state>
+    
+    <!-- Espera el temporitzador 
+    -->
+    <state name="WaitTimer1">
+        
+        <!-- Si es prem Start/Reset es desactiva el test
+        -->
+        <transition event="TIMER1" state="WaitSW1">
+			<inline>outSet(LED1, false);</inline>
+			<inline>outSet(LED2, false);</inline>
+			<inline>outSet(LED3, false);</inline>
+		</transition>
+
+    </state>
+
+</machine>

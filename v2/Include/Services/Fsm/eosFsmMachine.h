@@ -27,7 +27,7 @@ namespace eos {
 			void pushState(FsmState* state);
 			void popState();
 	};
-
+    
 }
 
 

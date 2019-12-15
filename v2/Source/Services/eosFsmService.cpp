@@ -12,7 +12,7 @@ using namespace eos;
 ///
 FsmService::FsmService(
     Application* application,
-    StateMachine *sm):
+    StateMachine* sm):
 
     Service(application),
     sm(sm),

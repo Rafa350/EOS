@@ -1,26 +1,16 @@
-#include "Services/Fsm/eosFSM.hpp"
-#include "fsmDefines.hpp"
-#include "fsmMachine.hpp"
-#include "fsmStates.hpp"
+#include "fsmDefines.h"
+#include ""
+#include "fsm_demo.h"
+#include "fsmState.h"
 
 
-MyMachine::MyMachine(eos::fsm::IContext *context) :
-    eos::fsm::StateMachine(context) {
+FsmMachine::FsmMachine(IFsmContext *context):
+    FsmMachineBase(context) {
 
-    stateWaitTriggerStart = new WaitTriggerStartState(this);
-    stateWaitTriggerDelay = new WaitTriggerDelayState(this);
-    stateArmUpStart = new ArmUpStartState(this);
-    stateArmUpMove = new ArmUpMoveState(this);
-    stateArmUpEnd = new ArmUpEndState(this);
-    stateArmDownStart = new ArmDownStartState(this);
-    stateArmDownEnd = new ArmDownEndState(this);
-    statePrintLabelStart = new PrintLabelStartState(this);
-    statePrintLabelPrint = new PrintLabelPrintState(this);
-    statePrintLabelEnd = new PrintLabelEndState(this);
-    stateApplyByTouchStart = new ApplyByTouchStartState(this);
-    stateApplyByTouchApply = new ApplyByTouchApplyState(this);
-    stateApplyByTouchEnd = new ApplyByTouchEndState(this);
-    stateErrorStart = new ErrorStartState(this);
+    states[ST_WaitSW1] = new WaitSW1State(this);
+    states[ST_WaitSW2] = new WaitSW2State(this);
+    states[ST_WaitSW3] = new WaitSW3State(this);
+    states[ST_WaitTimer1] = new WaitTimer1State(this);
 
-    start(stateArmUpStart);
+    start(states[ST_WaitSW1]);
 }
