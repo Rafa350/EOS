@@ -69,6 +69,10 @@
           <itemPath>../../../Include/eosAssert.h</itemPath>
         </logicalFolder>
       </logicalFolder>
+      <logicalFolder name="f3" displayName="Machine" projectFiles="true">
+        <itemPath>../../../Demo/FsmDemo/Machine/fsmMachine.h</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Machine/fsmState.h</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -148,6 +152,10 @@
           <itemPath>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source/timers.c</itemPath>
         </logicalFolder>
       </logicalFolder>
+      <logicalFolder name="f3" displayName="Machine" projectFiles="true">
+        <itemPath>../../../Demo/FsmDemo/Machine/fsmMachine.cpp</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Machine/fsmState.cpp</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -167,6 +175,7 @@
     <Elem>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source</Elem>
     <Elem>../../../Source/StartUp/PIC32</Elem>
     <Elem>.</Elem>
+    <Elem>../../../Demo/FsmDemo/Machine</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
