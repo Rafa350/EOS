@@ -16,34 +16,37 @@ class State {
         State(Machine* machine);
         virtual void enter();
         virtual void exit();
-        virtual void transition(unsigned eventId);
+        virtual void sw1_pressed();
+        virtual void sw2_pressed();
+        virtual void sw3_pressed();
+        virtual void timer1_timeout();
 };
 
-class WaitSW1State: public State {
+class WaitingSW1: public State {
     public:
-        WaitSW1State(Machine* machine);
+        WaitingSW1(Machine* machine);
         void enter() override;
-        void transition(unsigned eventId) override;
+        void sw1_pressed() override;
 };
 
-class WaitSW2State: public State {
+class WaitingSW2: public State {
     public:
-        WaitSW2State(Machine* machine);
+        WaitingSW2(Machine* machine);
         void enter() override;
         void exit() override;
-        void transition(unsigned eventId) override;
+        void sw2_pressed() override;
 };
 
-class WaitSW3State: public State {
+class WaitingSW3: public State {
     public:
-        WaitSW3State(Machine* machine);
-        void transition(unsigned eventId) override;
+        WaitingSW3(Machine* machine);
+        void sw3_pressed() override;
 };
 
-class WaitTimer1State: public State {
+class WaitingTimer1: public State {
     public:
-        WaitTimer1State(Machine* machine);
-        void transition(unsigned eventId) override;
+        WaitingTimer1(Machine* machine);
+        void timer1_timeout() override;
 };
 
 
