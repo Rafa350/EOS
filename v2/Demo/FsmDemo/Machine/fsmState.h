@@ -12,41 +12,39 @@ class State {
     protected:
         inline Machine* getMachine() const { return machine; }
         IContext* getContext() const;
+        inline void setState(State* state) const { machine->setState(state); }
     public:
         State(Machine* machine);
         virtual void enter();
         virtual void exit();
-        virtual void sw1_pressed();
-        virtual void sw2_pressed();
-        virtual void sw3_pressed();
-        virtual void timer1_timeout();
+        virtual void pressedSW1();
+        virtual void pressedSW2();
+        virtual void pressedSW3();
+        virtual void timeoutTMR1();
 };
 
 class WaitingSW1: public State {
     public:
         WaitingSW1(Machine* machine);
-        void enter() override;
-        void sw1_pressed() override;
+        void pressedSW1() override;
 };
 
 class WaitingSW2: public State {
     public:
         WaitingSW2(Machine* machine);
-        void enter() override;
-        void exit() override;
-        void sw2_pressed() override;
+        void pressedSW2() override;
 };
 
 class WaitingSW3: public State {
     public:
         WaitingSW3(Machine* machine);
-        void sw3_pressed() override;
+        void pressedSW3() override;
 };
 
-class WaitingTimer1: public State {
+class WaitingTMR1: public State {
     public:
-        WaitingTimer1(Machine* machine);
-        void timer1_timeout() override;
+        WaitingTMR1(Machine* machine);
+        void timeoutTMR1() override;
 };
 
 

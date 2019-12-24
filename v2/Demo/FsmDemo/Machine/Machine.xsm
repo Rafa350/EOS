@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-
 <machine name="Machine" start="WaitingSW1">
     
     <!-- Espera al boto SW1
     -->
     <state name="WaitingSW1">
 	
-		<enter>
-			<inline>outSet(LED1, false);</inline>
-		</enter>
-       
         <!-- Es prem el boto SW1
         -->
-        <transition name="sw1_pressed" event="pressedSW1" state="WaitingSW2">
-			<inline>outSet(LED1, true);</inline>
+        <transition name="pressedSW1" state="WaitingSW2">
+			<inline>IContext* ctx = getContext();</inline>
+			<inline>ctx->setLED1();</inline>
         </transition>
 		
 	</state>
@@ -24,22 +20,11 @@
     -->
     <state name="WaitingSW2">
 	
-		<enter>
-			<inline>timerOn();</inline>
-		</enter>
-
-		<exit>
-			<inline>exitingSW2();</inline>
-		</exit>
-    
-        <!-- Flanc negatiu en l'entrada INP_IH 
+        <!-- Es prem el boto SW2
         -->
-        <transition name="sw2_pressed" event="pressedSW2" guard="p == 34" state="WaitingSW3">
-			<inline>outSet(LED2, true);</inline>
-        </transition>
-		
-        <transition name="sw2_pressed" event="pressedSW2" guard="p == 345" state="WaitingSW3">
-			<inline>outSet(LED2, true);</inline>
+        <transition name="pressedSW2" state="WaitingSW3">
+			<inline>IContext* ctx = getContext();</inline>
+			<inline>ctx->setLED2();</inline>
         </transition>
 
     </state>
@@ -48,25 +33,27 @@
     -->
     <state name="WaitingSW3">
     
-        <!-- Si es prem Start/Reset es desactiva el test
+        <!-- Es prem el boto SW3
         -->
-        <transition name="sw3_pressed" event="pressedSW3" state="WaitingTimer1">
-			<inline>outSet(LED2, true);</inline>
-			<inline>send(TIMER1, 1000);</inline>
+        <transition name="pressedSW3" state="WaitingTMR1">
+			<inline>IContext* ctx = getContext();</inline>
+			<inline>ctx->setLED3();</inline>
+			<inline>ctx->startTIMER1(1000);</inline>
         </transition>
 		
     </state>
     
-    <!-- Espera el temporitzador 
+    <!-- Espera el timeout de TMR1
     -->
-    <state name="WaitingTimer1">
+    <state name="WaitingTMR1">
         
-        <!-- Si es prem Start/Reset es desactiva el test
+        <!-- Timrout del temporitzador TIMER1
         -->
-        <transition name="timer1_timeout" event="timeoutTIMER1" state="WaitingSW1">
-			<inline>outSet(LED1, false);</inline>
-			<inline>outSet(LED2, false);</inline>
-			<inline>outSet(LED3, false);</inline>
+        <transition name="timeoutTMR1" state="WaitingSW1">
+			<inline>IContext* ctx = getContext();</inline>
+			<inline>ctx->clearLED1();</inline>
+			<inline>ctx->clearLED2();</inline>
+			<inline>ctx->clearLED3();</inline>
 		</transition>
 
     </state>

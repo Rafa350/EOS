@@ -13,7 +13,7 @@ Machine::Machine(
     stateWaitingSW1(new WaitingSW1(this)),
     stateWaitingSW2(new WaitingSW2(this)),
     stateWaitingSW3(new WaitingSW3(this)),
-    stateWaitingTimer1(new WaitingTimer1(this)),
+    stateWaitingTMR1(new WaitingTMR1(this)),
     context(context) {
 
 }
@@ -29,38 +29,38 @@ void Machine::start() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'sw1_pressed' transition.
+/// \brief    Perform 'pressedSW1' transition.
 ///
-void Machine::sw1_pressed() {
+void Machine::pressedSW1() {
 
-    state->sw1_pressed();
+    state->pressedSW1();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'sw2_pressed' transition.
+/// \brief    Perform 'pressedSW2' transition.
 ///
-void Machine::sw2_pressed() {
+void Machine::pressedSW2() {
 
-    state->sw2_pressed();
+    state->pressedSW2();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'sw3_pressed' transition.
+/// \brief    Perform 'pressedSW3' transition.
 ///
-void Machine::sw3_pressed() {
+void Machine::pressedSW3() {
 
-    state->sw3_pressed();
+    state->pressedSW3();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'timer1_timeout' transition.
+/// \brief    Perform 'timeoutTMR1' transition.
 ///
-void Machine::timer1_timeout() {
+void Machine::timeoutTMR1() {
 
-    state->timer1_timeout();
+    state->timeoutTMR1();
 }
 
 

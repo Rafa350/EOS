@@ -12,7 +12,7 @@ class Machine {
         State* stateWaitingSW1;
         State* stateWaitingSW2;
         State* stateWaitingSW3;
-        State* stateWaitingTimer1;
+        State* stateWaitingTMR1;
         IContext* context;
     private:
         void setState(State* state);
@@ -23,10 +23,10 @@ class Machine {
         inline State* getState() const { return state; }
         inline IContext* getContext() const { return context; }
         void start();
-        void sw1_pressed();
-        void sw2_pressed();
-        void sw3_pressed();
-        void timer1_timeout();
+        void pressedSW1();
+        void pressedSW2();
+        void pressedSW3();
+        void timeoutTMR1();
 
     friend State;
 };

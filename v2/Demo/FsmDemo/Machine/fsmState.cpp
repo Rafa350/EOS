@@ -1,5 +1,6 @@
 #include "fsmMachine.h"
 #include "fsmState.h"
+#include "fsmContext.h"
 
 
 /// ----------------------------------------------------------------------
@@ -13,33 +14,33 @@ State::State(Machine* machine):
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'sw1_pressed' transition.
+/// \brief    Perform 'pressedSW1' transition.
 ///
-void State::sw1_pressed() {
+void State::pressedSW1() {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'sw2_pressed' transition.
+/// \brief    Perform 'pressedSW2' transition.
 ///
-void State::sw2_pressed() {
+void State::pressedSW2() {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'sw3_pressed' transition.
+/// \brief    Perform 'pressedSW3' transition.
 ///
-void State::sw3_pressed() {
+void State::pressedSW3() {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'timer1_timeout' transition.
+/// \brief    Perform 'timeoutTMR1' transition.
 ///
-void State::timer1_timeout() {
+void State::timeoutTMR1() {
 
 }
 
@@ -57,22 +58,16 @@ WaitingSW1::WaitingSW1(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'enter' action.
+/// \brief    Perform 'pressedSW1' transition.
 ///
-void WaitingSW1::enter() {
+void WaitingSW1::pressedSW1() {
 
+    IContext* ctx = getContext();
+    ctx->setLED1();
+
+    setState(getMachine()->WaitingSW2);
 }
 
-
-void WaitingSW1::transition(unsigned eventId) {
-
-    switch (eventId) {
-
-        case EV_pressedSW1:
-            setState(ST_WaitingSW2);
-            break;
-    }
-}
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
@@ -87,38 +82,16 @@ WaitingSW2::WaitingSW2(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'enter' action.
+/// \brief    Perform 'pressedSW2' transition.
 ///
-void WaitingSW2::enter() {
+void WaitingSW2::pressedSW2() {
 
+    IContext* ctx = getContext();
+    ctx->setLED2();
+
+    setState(getMachine()->WaitingSW3);
 }
 
-
-/// ----------------------------------------------------------------------
-/// \brief    Perform 'exit' action.
-///
-void WaitingSW2::exit() {
-
-}
-
-
-void WaitingSW2::transition(unsigned eventId) {
-
-    switch (eventId) {
-
-        case EV_pressedSW2:
-            if (p == 34) {
-                setState(ST_WaitingSW3);
-            }
-            break;
-
-        case EV_pressedSW2:
-            if (p == 345) {
-                setState(ST_WaitingSW3);
-            }
-            break;
-    }
-}
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
@@ -132,21 +105,24 @@ WaitingSW3::WaitingSW3(
 }
 
 
-void WaitingSW3::transition(unsigned eventId) {
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'pressedSW3' transition.
+///
+void WaitingSW3::pressedSW3() {
 
-    switch (eventId) {
+    IContext* ctx = getContext();
+    ctx->setLED3();
+    ctx->startTIMER1(1000);
 
-        case EV_pressedSW3:
-            setState(ST_WaitingTimer1);
-            break;
-    }
+    setState(getMachine()->WaitingTMR1);
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    machine: Pointer the machine.
 ///
-WaitingTimer1::WaitingTimer1(
+WaitingTMR1::WaitingTMR1(
     Machine* machine):
 
     State(machine) {
@@ -154,13 +130,17 @@ WaitingTimer1::WaitingTimer1(
 }
 
 
-void WaitingTimer1::transition(unsigned eventId) {
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'timeoutTMR1' transition.
+///
+void WaitingTMR1::timeoutTMR1() {
 
-    switch (eventId) {
+    IContext* ctx = getContext();
+    ctx->clearLED1();
+    ctx->clearLED2();
+    ctx->clearLED3();
 
-        case EV_timeoutTIMER1:
-            setState(ST_WaitingSW1);
-            break;
-    }
+    setState(getMachine()->WaitingSW1);
 }
+
 

@@ -72,6 +72,7 @@
       <logicalFolder name="f3" displayName="Machine" projectFiles="true">
         <itemPath>../../../Demo/FsmDemo/Machine/fsmMachine.h</itemPath>
         <itemPath>../../../Demo/FsmDemo/Machine/fsmState.h</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Machine/fsmContext.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
