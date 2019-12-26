@@ -10,7 +10,7 @@
         <!-- Es prem el boto SW1
         -->
         <transition name="pressedSW1" state="WaitingSW2">
-			<inline>IContext* ctx = getContext();</inline>
+			<inline>Context* ctx = getContext();</inline>
 			<inline>ctx->setLED1();</inline>
         </transition>
 		
@@ -23,7 +23,7 @@
         <!-- Es prem el boto SW2
         -->
         <transition name="pressedSW2" state="WaitingSW3">
-			<inline>IContext* ctx = getContext();</inline>
+			<inline>Context* ctx = getContext();</inline>
 			<inline>ctx->setLED2();</inline>
         </transition>
 
@@ -36,7 +36,7 @@
         <!-- Es prem el boto SW3
         -->
         <transition name="pressedSW3" state="WaitingTMR1">
-			<inline>IContext* ctx = getContext();</inline>
+			<inline>Context* ctx = getContext();</inline>
 			<inline>ctx->setLED3();</inline>
 			<inline>ctx->startTIMER1(1000);</inline>
         </transition>
@@ -50,7 +50,7 @@
         <!-- Timrout del temporitzador TIMER1
         -->
         <transition name="timeoutTMR1" state="WaitingSW1">
-			<inline>IContext* ctx = getContext();</inline>
+			<inline>Context* ctx = getContext();</inline>
 			<inline>ctx->clearLED1();</inline>
 			<inline>ctx->clearLED2();</inline>
 			<inline>ctx->clearLED3();</inline>

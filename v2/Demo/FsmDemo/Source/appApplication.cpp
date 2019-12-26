@@ -5,10 +5,12 @@
 #include "Services/eosAppLoopService.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
+#include "Services/eosFsmService.h"
 #include "System/eosApplication.h"
 
 #include "appApplication.h"
 #include "appLedLoopService.h"
+#include "appStateMachine.h"
 
 
 using namespace eos;
@@ -22,7 +24,8 @@ MyApplication::MyApplication():
     digInput1EventCallback(this, &MyApplication::digInput1EventHandler), 
     digInput2EventCallback(this, &MyApplication::digInput2EventHandler), 
     digInput3EventCallback(this, &MyApplication::digInput3EventHandler),
-    timerEventCallback(this, &MyApplication::timerEventHandler) {
+    timerEventCallback(this, &MyApplication::timerEventHandler),
+    fsmEventCallback(this, &MyApplication::fsmEventHandler) {
     
     // Crea els serveis necesaris
     //
@@ -30,6 +33,9 @@ MyApplication::MyApplication():
     digOutputService = new DigOutputService(this, HAL_TMR_TIMER_2);
     ledLoopService = new LedLoopService(this);
     timerService = new TimerService(this);
+    
+    StateMachine* sm = new StateMachine();
+    fsmService = new FsmService(this, sm);
 }
 
 
@@ -110,6 +116,16 @@ void MyApplication::timerEventHandler(
 #ifdef EXIST_LEDS_LED3
     getLed3()->pulse(250);
 #endif    
+}
+
+
+/// --------------------------------------------------------------------
+/// \brief    Procesa els events del servei 'FSM'
+/// \param    args: Parametres del event.
+///
+void MyApplication::fsmEventHandler(
+    const FsmService::EventArgs& args) {
+    
 }
 
 

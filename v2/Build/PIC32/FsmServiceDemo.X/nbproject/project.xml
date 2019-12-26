@@ -25,6 +25,8 @@
                 <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
                 <sourceRootElem>.</sourceRootElem>
                 <sourceRootElem>../../../Demo/FsmDemo/Machine</sourceRootElem>
+                <sourceRootElem>../../../Demo/FsmDemo/Include</sourceRootElem>
+                <sourceRootElem>../../../Demo/FsmDemo/Source</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

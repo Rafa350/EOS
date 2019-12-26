@@ -6,11 +6,12 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-          <itemPath>../../../Demo/DigIOServiceDemo/Include/PIC32/FreeRTOSConfig.h</itemPath>
+          <itemPath>../../../Demo/FsmDemo/Include/PIC32/FreeRTOSConfig.h</itemPath>
         </logicalFolder>
-        <itemPath>../../../Demo/DigIOServiceDemo/Include/eosConfig.h</itemPath>
-        <itemPath>../../../Demo/DigIOServiceDemo/Include/appApplication.h</itemPath>
-        <itemPath>../../../Demo/DigIOServiceDemo/Include/appLedLoopService.h</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Include/appApplication.h</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Include/appLedLoopService.h</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Include/eosConfig.h</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Include/appStateMachine.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -84,12 +85,12 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-          <itemPath>../../../Demo/DigIOServiceDemo/Source/PIC32/AppInitialize.cpp</itemPath>
           <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>
+          <itemPath>../../../Demo/FsmDemo/Source/PIC32/appInitialize.cpp</itemPath>
         </logicalFolder>
-        <itemPath>../../../Demo/DigIOServiceDemo/Source/AppMain.cpp</itemPath>
-        <itemPath>../../../Demo/DigIOServiceDemo/Source/appLedLoopService.cpp</itemPath>
-        <itemPath>../../../Demo/DigIOServiceDemo/Source/appApplication.cpp</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Source/appApplication.cpp</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Source/appLedLoopService.cpp</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Source/appMain.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -177,6 +178,8 @@
     <Elem>../../../Source/StartUp/PIC32</Elem>
     <Elem>.</Elem>
     <Elem>../../../Demo/FsmDemo/Machine</Elem>
+    <Elem>../../../Demo/FsmDemo/Include</Elem>
+    <Elem>../../../Demo/FsmDemo/Source</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -344,7 +347,7 @@
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
-                  value="..\..\..\Demo\DigIOServiceDemo\Include;..\..\..\Demo\DigIOServiceDemo\Include\PIC32;..\..\..\Include;..\..\..\Source;..\..\..\Library\PIC32\Harmony\framework;..\..\..\Library\PIC32\FreeRTOS\Source\include;..\..\..\Library\PIC32\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
+                  value="..\..\..\Demo\FsmDemo\Include;..\..\..\Demo\FsmDemo\Include\PIC32;..\..\..\Demo\FsmDemo\Machine;..\..\..\Include;..\..\..\Source;..\..\..\Library\PIC32\Harmony\framework;..\..\..\Library\PIC32\FreeRTOS\Source\include;..\..\..\Library\PIC32\FreeRTOS\Source\portable\MPLAB\PIC32MX"/>
         <property key="gp-relative-option" value=""/>
         <property key="legacy-libc" value="true"/>
         <property key="mdtcm" value=""/>

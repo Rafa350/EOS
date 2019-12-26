@@ -13,13 +13,14 @@
 namespace eos {
 
     class Application;
-	class StateMachine;
-
+    class StateMachine;
+    
     typedef unsigned Event;
 
     class FsmService final: private Service {
         public:
 			struct EventArgs {
+                FsmService* service;                
 			};
 
         private:
@@ -44,6 +45,11 @@ namespace eos {
             bool acceptEvent(Event event, unsigned timeout);
             inline void setEventCallback(IEventCallback* callback) { eventCallback = callback; }
             inline void setActionCallback(IEventCallback* callback) { actionCallback = callback; }
+    };
+    
+    
+    class StateMachine {
+        
     };
 
 }

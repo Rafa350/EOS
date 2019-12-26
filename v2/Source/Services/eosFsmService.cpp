@@ -35,6 +35,7 @@ void FsmService::onTask() {
         if (eventQueue.get(event, unsigned(-1))) {
             if (eventCallback != nullptr) {
                 EventArgs args;
+                args.service = this;
                 eventCallback->execute(args);
             }
             //sm->acceptEvent(event);

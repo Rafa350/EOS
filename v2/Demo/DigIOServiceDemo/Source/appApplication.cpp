@@ -4,11 +4,11 @@
 #include "Services/eosAppLoopService.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
-#include "Services/eosFsmService.h"
 #include "System/eosApplication.h"
 
 #include "appApplication.h"
 #include "appLedLoopService.h"
+
 
 
 using namespace eos;
@@ -22,14 +22,12 @@ MyApplication::MyApplication():
     digInput1EventCallback(this, &MyApplication::digInput1EventHandler),
     digInput2EventCallback(this, &MyApplication::digInput2EventHandler),
     digInput3EventCallback(this, &MyApplication::digInput3EventHandler),
-    timerEventCallback(this, &MyApplication::timerEventHandler),
-    fsmEventCallback(this, &MyApplication::fsmEventHandler) {
-
+    timerEventCallback(this, &MyApplication::timerEventHandler) {
+    
     // Crea els serveis necesaris
     //
     digInputService = new DigInputService(this);
     digOutputService = new DigOutputService(this, HAL_TMR_TIMER_2);
-    fsmService = new FsmService(this, nullptr);
     ledLoopService = new LedLoopService(this);
     timerService = new TimerService(this);
 }
@@ -74,10 +72,6 @@ void MyApplication::onInitialize() {
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
 
-    // Inicialitza el servei de maquina d'estats
-    //
-    fsmService->setEventCallback(&fsmEventCallback);
-
     // Inicialitza el servei de temporitzadors.
     //
     timer1 = new TimerCounter(timerService);
@@ -98,16 +92,6 @@ void MyApplication::timerEventHandler(
 #ifdef EXIST_LEDS_LED3
     getLed3()->pulse(250);
 #endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa els events del servei de maquina d'estats.
-/// \param    args: Parametres del event.
-///
-void MyApplication::fsmEventHandler(
-    const FsmService::EventArgs& args) {
-
 }
 
 

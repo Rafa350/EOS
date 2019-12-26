@@ -3,6 +3,9 @@
 #include "fsmContext.h"
 
 
+using namespace app;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    machine: Pointer the machine.
@@ -62,10 +65,10 @@ WaitingSW1::WaitingSW1(
 ///
 void WaitingSW1::pressedSW1() {
 
-    IContext* ctx = getContext();
+    Context* ctx = getContext();
     ctx->setLED1();
 
-    setState(getMachine()->WaitingSW2);
+    setState(getMachine()->stateWaitingSW2);
 }
 
 
@@ -86,10 +89,10 @@ WaitingSW2::WaitingSW2(
 ///
 void WaitingSW2::pressedSW2() {
 
-    IContext* ctx = getContext();
+    Context* ctx = getContext();
     ctx->setLED2();
 
-    setState(getMachine()->WaitingSW3);
+    setState(getMachine()->stateWaitingSW3);
 }
 
 
@@ -110,11 +113,11 @@ WaitingSW3::WaitingSW3(
 ///
 void WaitingSW3::pressedSW3() {
 
-    IContext* ctx = getContext();
+    Context* ctx = getContext();
     ctx->setLED3();
     ctx->startTIMER1(1000);
 
-    setState(getMachine()->WaitingTMR1);
+    setState(getMachine()->stateWaitingTMR1);
 }
 
 
@@ -135,12 +138,12 @@ WaitingTMR1::WaitingTMR1(
 ///
 void WaitingTMR1::timeoutTMR1() {
 
-    IContext* ctx = getContext();
+    Context* ctx = getContext();
     ctx->clearLED1();
     ctx->clearLED2();
     ctx->clearLED3();
 
-    setState(getMachine()->WaitingSW1);
+    setState(getMachine()->stateWaitingSW1);
 }
 
 

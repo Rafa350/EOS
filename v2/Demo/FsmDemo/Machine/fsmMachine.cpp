@@ -2,12 +2,15 @@
 #include "fsmState.h"
 
 
+using namespace app;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    context: Pointer to context data.
 ///
 Machine::Machine(
-    IContext* context):
+    Context* context):
 
     state(nullptr),
     stateWaitingSW1(new WaitingSW1(this)),
@@ -15,7 +18,6 @@ Machine::Machine(
     stateWaitingSW3(new WaitingSW3(this)),
     stateWaitingTMR1(new WaitingTMR1(this)),
     context(context) {
-
 }
 
 
