@@ -13,7 +13,7 @@ namespace app {
         protected:
             inline Machine* getMachine() const { return machine; }
             Context* getContext() const;
-            inline void setState(State* state) const { machine->setState(state); }
+            void setState(State* state) const;
         public:
             State(Machine* machine);
             virtual void enter();

@@ -34,7 +34,7 @@ MyApplication::MyApplication():
     ledLoopService = new LedLoopService(this);
     timerService = new TimerService(this);
     
-    StateMachine* sm = new StateMachine();
+    StateMachine* sm = new MyStateMachine();
     fsmService = new FsmService(this, sm);
 }
 
@@ -100,9 +100,10 @@ void MyApplication::onInitialize() {
     //
     timer1 = new TimerCounter(timerService);
     timer1->setEventCallback(&timerEventCallback);
-
-    timer2 = new TimerCounter(timerService);
-    timer2->setEventCallback(&timerEventCallback);
+    
+    // Inicialitza el servei de maquina d'estat
+    //
+    fsmService->setEventCallback(&fsmEventCallback);
 }
 
 

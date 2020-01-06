@@ -8,11 +8,25 @@ using namespace app;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    machine: Pointer the machine.
+/// \param    machine: Pointer to the machine.
 ///
 State::State(Machine* machine):
     machine(machine) {
 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'enter' action.
+///
+void State::enter() {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'exit' action.
+///
+void State::exit() {
 }
 
 
@@ -50,7 +64,7 @@ void State::timeoutTMR1() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    machine: Pointer the machine.
+/// \param    machine: Pointer to the machine.
 ///
 WaitingSW1::WaitingSW1(
     Machine* machine):
@@ -74,7 +88,7 @@ void WaitingSW1::pressedSW1() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    machine: Pointer the machine.
+/// \param    machine: Pointer to the machine.
 ///
 WaitingSW2::WaitingSW2(
     Machine* machine):
@@ -98,7 +112,7 @@ void WaitingSW2::pressedSW2() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    machine: Pointer the machine.
+/// \param    machine: Pointer to the machine.
 ///
 WaitingSW3::WaitingSW3(
     Machine* machine):
@@ -123,7 +137,7 @@ void WaitingSW3::pressedSW3() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    machine: Pointer the machine.
+/// \param    machine: Pointer to the machine.
 ///
 WaitingTMR1::WaitingTMR1(
     Machine* machine):
