@@ -9,7 +9,6 @@
 #include "System/eosApplication.h"
 
 #include "appApplication.h"
-#include "appLedLoopService.h"
 #include "appStateMachine.h"
 
 
@@ -31,7 +30,6 @@ MyApplication::MyApplication():
     //
     digInputService = new DigInputService(this);
     digOutputService = new DigOutputService(this, HAL_TMR_TIMER_2);
-    ledLoopService = new LedLoopService(this);
     timerService = new TimerService(this);
     
     StateMachine* sm = new MyStateMachine();
@@ -115,7 +113,7 @@ void MyApplication::timerEventHandler(
     const TimerCounter::EventArgs& args) {
     
 #ifdef EXIST_LEDS_LED3
-    getLed3()->pulse(250);
+    digOutput3->pulse(250);
 #endif    
 }
 
@@ -140,7 +138,7 @@ void MyApplication::digInput1EventHandler(
 
 #ifdef EXIST_LEDS_LED3
     if ((args.type == DigInput::EventType::change) && !args.input->get()) 
-        getLed3()->pulse(500);
+        digOutput3->pulse(500);
 #endif    
 }
 #endif
@@ -156,7 +154,7 @@ void MyApplication::digInput2EventHandler(
 
 #ifdef EXIST_LEDS_LED3
     if ((args.type == DigInput::EventType::change) && !args.input->get()) 
-        getLed3()->pulse(1000);
+        digOutput3->pulse(1000);
 #endif    
 }
 #endif
@@ -172,7 +170,7 @@ void MyApplication::digInput3EventHandler(
 
 #ifdef EXIST_LEDS_LED3
     if ((args.type == DigInput::EventType::change) && !args.input->get()) {
-    //    getLed3()->pulse(1500);
+        digOutput3->pulse(1500);
         timer1->start(1000);
         timer2->start(1500);
     }

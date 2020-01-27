@@ -24,7 +24,6 @@ namespace app {
             typedef CallbackP1<MyApplication, const FsmService::EventArgs&> FsmEventCallback;
 
         private:
-            LedLoopService* ledLoopService;
             DigOutputService* digOutputService;
             DigInputService* digInputService;
             FsmService *fsmService;
@@ -69,16 +68,6 @@ namespace app {
     #endif
     #ifdef EXIST_SWITCHES_SW3
             void digInput3EventHandler(const DigInput::EventArgs &args);
-    #endif
-
-    #ifdef EXIST_LEDS_LED1
-            DigOutput *getLed1() const { return digOutput1; }
-    #endif
-    #ifdef EXIST_LEDS_LED2
-            DigOutput *getLed2() const { return digOutput2; }
-    #endif
-    #ifdef EXIST_LEDS_LED3
-            DigOutput *getLed3() const { return digOutput3; }
     #endif
 
         protected:

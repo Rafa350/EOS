@@ -9,7 +9,6 @@
           <itemPath>../../../Demo/FsmDemo/Include/PIC32/FreeRTOSConfig.h</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/FsmDemo/Include/appApplication.h</itemPath>
-        <itemPath>../../../Demo/FsmDemo/Include/appLedLoopService.h</itemPath>
         <itemPath>../../../Demo/FsmDemo/Include/eosConfig.h</itemPath>
         <itemPath>../../../Demo/FsmDemo/Include/appStateMachine.h</itemPath>
       </logicalFolder>
@@ -89,7 +88,6 @@
           <itemPath>../../../Demo/FsmDemo/Source/PIC32/appInitialize.cpp</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/FsmDemo/Source/appApplication.cpp</itemPath>
-        <itemPath>../../../Demo/FsmDemo/Source/appLedLoopService.cpp</itemPath>
         <itemPath>../../../Demo/FsmDemo/Source/appMain.cpp</itemPath>
         <itemPath>../../../Demo/FsmDemo/Source/appStateMachine.cpp</itemPath>
       </logicalFolder>

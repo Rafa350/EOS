@@ -8,156 +8,263 @@ using namespace app;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    machine: Pointer to the machine.
 ///
-State::State(Machine* machine):
-    machine(machine) {
+State::State() {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'SW1_ON' transition.
+/// \param    machine: The state machine.
+/// \return   The next state.
+///
+State* State::onSW1_ON(Machine* machine) {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'enter' action.
+/// \brief    Perform 'SW3_ON' transition.
+/// \param    machine: The state machine.
+/// \return   The next state.
 ///
-void State::enter() {
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Perform 'exit' action.
-///
-void State::exit() {
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Perform 'pressedSW1' transition.
-///
-void State::pressedSW1() {
+State* State::onSW3_ON(Machine* machine) {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'pressedSW2' transition.
+/// \brief    Perform 'SW2_ON' transition.
+/// \param    machine: The state machine.
+/// \return   The next state.
 ///
-void State::pressedSW2() {
+State* State::onSW2_ON(Machine* machine) {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'pressedSW3' transition.
+/// \brief    Perform 'TMR1_TIMEOUT' transition.
+/// \param    machine: The state machine.
+/// \return   The next state.
 ///
-void State::pressedSW3() {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Perform 'timeoutTMR1' transition.
-///
-void State::timeoutTMR1() {
+State* State::onTMR1_TIMEOUT(Machine* machine) {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    machine: Pointer to the machine.
 ///
-WaitingSW1::WaitingSW1(
-    Machine* machine):
-
-    State(machine) {
-
+WaitingSW1::WaitingSW1() {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'pressedSW1' transition.
+/// \brief    Get a instance of class.
 ///
-void WaitingSW1::pressedSW1() {
+WaitingSW1* WaitingSW1::getInstance() {
 
-    Context* ctx = getContext();
-    ctx->setLED1();
+    if (instance == nullptr)
+        instance = new WaitingSW1();
+    
+    return instance;
+}
 
-    setState(getMachine()->stateWaitingSW2);
+WaitingSW1* WaitingSW1::instance = nullptr;
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'SW1_ON' transition to other state.
+/// \param    machine: The state machine.
+/// \return   The next state.
+///
+State* WaitingSW1::onSW1_ON(Machine* machine) {
+
+    // Check transition guard.
+    //
+    if (!isEnabled()) {
+
+        // Exit state actions.
+        //
+        machine->doWaitingSW1_ExitAction();
+
+        // Transition actions.
+        //
+        machine->doLED1_ON();
+        machine->doLED2_ON();
+        machine->doLED3_ON();
+
+        // Enter state actions.
+        //
+        machine->doWaitingSW3_EnterAction();
+
+        // Return the next state.
+        //
+        return WaitingSW3::getInstance();
+
+    }
+
+    // Check transition guard.
+    //
+    if (true) {
+
+        // Exit state actions.
+        //
+        machine->doWaitingSW1_ExitAction();
+
+        // Transition actions.
+        //
+        machine->doLED1_ON();
+
+        // Return the next state.
+        //
+        return WaitingSW2::getInstance();
+
+    }
+
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    machine: Pointer to the machine.
 ///
-WaitingSW2::WaitingSW2(
-    Machine* machine):
-
-    State(machine) {
-
+WaitingSW3::WaitingSW3() {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'pressedSW2' transition.
+/// \brief    Get a instance of class.
 ///
-void WaitingSW2::pressedSW2() {
+WaitingSW3* WaitingSW3::getInstance() {
 
-    Context* ctx = getContext();
-    ctx->setLED2();
+    if (instance == nullptr)
+        instance = new WaitingSW3();
+    
+    return instance;
+}
 
-    setState(getMachine()->stateWaitingSW3);
+WaitingSW3* WaitingSW3::instance = nullptr;
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'SW3_ON' transition to other state.
+/// \param    machine: The state machine.
+/// \return   The next state.
+///
+State* WaitingSW3::onSW3_ON(Machine* machine) {
+
+    // Check transition guard.
+    //
+    if (true) {
+
+        // Transition actions.
+        //
+        machine->doLED2_OFF();
+        machine->doLED3_ON();
+        machine->doTMR1_START();
+
+        // Return the next state.
+        //
+        return WaitingTMR1::getInstance();
+
+    }
+
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    machine: Pointer to the machine.
 ///
-WaitingSW3::WaitingSW3(
-    Machine* machine):
-
-    State(machine) {
-
+WaitingSW2::WaitingSW2() {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'pressedSW3' transition.
+/// \brief    Get a instance of class.
 ///
-void WaitingSW3::pressedSW3() {
+WaitingSW2* WaitingSW2::getInstance() {
 
-    Context* ctx = getContext();
-    ctx->setLED3();
-    ctx->startTIMER1(1000);
+    if (instance == nullptr)
+        instance = new WaitingSW2();
+    
+    return instance;
+}
 
-    setState(getMachine()->stateWaitingTMR1);
+WaitingSW2* WaitingSW2::instance = nullptr;
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'SW2_ON' transition to other state.
+/// \param    machine: The state machine.
+/// \return   The next state.
+///
+State* WaitingSW2::onSW2_ON(Machine* machine) {
+
+    // Check transition guard.
+    //
+    if (true) {
+
+        // Transition actions.
+        //
+        machine->doLED1_OFF();
+        machine->doLED2_ON();
+
+        // Enter state actions.
+        //
+        machine->doWaitingSW3_EnterAction();
+
+        // Return the next state.
+        //
+        return WaitingSW3::getInstance();
+
+    }
+
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    machine: Pointer to the machine.
 ///
-WaitingTMR1::WaitingTMR1(
-    Machine* machine):
-
-    State(machine) {
-
+WaitingTMR1::WaitingTMR1() {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'timeoutTMR1' transition.
+/// \brief    Get a instance of class.
 ///
-void WaitingTMR1::timeoutTMR1() {
+WaitingTMR1* WaitingTMR1::getInstance() {
 
-    Context* ctx = getContext();
-    ctx->clearLED1();
-    ctx->clearLED2();
-    ctx->clearLED3();
+    if (instance == nullptr)
+        instance = new WaitingTMR1();
+    
+    return instance;
+}
 
-    setState(getMachine()->stateWaitingSW1);
+WaitingTMR1* WaitingTMR1::instance = nullptr;
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'TMR1_TIMEOUT' transition to other state.
+/// \param    machine: The state machine.
+/// \return   The next state.
+///
+State* WaitingTMR1::onTMR1_TIMEOUT(Machine* machine) {
+
+    // Check transition guard.
+    //
+    if (true) {
+
+        // Enter state actions.
+        //
+        machine->doWaitingSW1_EnterAction();
+
+        // Return the next state.
+        //
+        return WaitingSW1::getInstance();
+
+    }
+
 }
 
 

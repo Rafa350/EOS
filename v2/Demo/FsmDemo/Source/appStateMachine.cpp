@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "appStateMachine.h"
+#include "fsmMachine.h"
 
 
 
@@ -8,18 +9,19 @@ using namespace app;
 
 
 MyStateMachine::MyStateMachine() :
-    machine(nullptr) {
+    machine(new Machine(nullptr)) {
     
-    machine.start();
 }
 
 
 void MyStateMachine::accept(
     Event event) {
     
+    State* state = machine->getState();
+    
     switch (event) {
         case Event::prossedSW1:
-            machine.pressedSW1();
+            state->onSW1_ON(machine);
             break;
     }
 }

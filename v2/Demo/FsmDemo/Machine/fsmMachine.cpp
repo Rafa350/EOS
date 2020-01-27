@@ -13,10 +13,6 @@ Machine::Machine(
     Context* context):
 
     state(nullptr),
-    stateWaitingSW1(new WaitingSW1(this)),
-    stateWaitingSW2(new WaitingSW2(this)),
-    stateWaitingSW3(new WaitingSW3(this)),
-    stateWaitingTMR1(new WaitingTMR1(this)),
     context(context) {
 }
 
@@ -26,43 +22,49 @@ Machine::Machine(
 ///
 void Machine::start() {
 
-    state = stateWaitingSW1;
+    // Enter state actions.
+    //
+    machine->doWaitingSW1_EnterAction();
+
+    // Select initial state.
+    //
+    state = WaitingSW1::getInstance();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'pressedSW1' transition.
+/// \brief    Perform 'SW1_ON' transition.
 ///
-void Machine::pressedSW1() {
+void Machine::onSW1_ON() {
 
-    state->pressedSW1();
+    state = state->onSW1_ON(this);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'pressedSW2' transition.
+/// \brief    Perform 'SW3_ON' transition.
 ///
-void Machine::pressedSW2() {
+void Machine::onSW3_ON() {
 
-    state->pressedSW2();
+    state = state->onSW3_ON(this);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'pressedSW3' transition.
+/// \brief    Perform 'SW2_ON' transition.
 ///
-void Machine::pressedSW3() {
+void Machine::onSW2_ON() {
 
-    state->pressedSW3();
+    state = state->onSW2_ON(this);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'timeoutTMR1' transition.
+/// \brief    Perform 'TMR1_TIMEOUT' transition.
 ///
-void Machine::timeoutTMR1() {
+void Machine::onTMR1_TIMEOUT() {
 
-    state->timeoutTMR1();
+    state = state->onTMR1_TIMEOUT(this);
 }
 
 

@@ -8,44 +8,53 @@ namespace app {
     class Context;
 
     class State {
-        private:
-            Machine* machine;
         protected:
-            inline Machine* getMachine() const { return machine; }
-            Context* getContext() const;
-            void setState(State* state) const;
+            State();
         public:
-            State(Machine* machine);
-            virtual void enter();
-            virtual void exit();
-            virtual void pressedSW1();
-            virtual void pressedSW2();
-            virtual void pressedSW3();
-            virtual void timeoutTMR1();
+            virtual State* onSW1_ON(Machine* machine);
+            virtual State* onSW3_ON(Machine* machine);
+            virtual State* onSW2_ON(Machine* machine);
+            virtual State* onTMR1_TIMEOUT(Machine* machine);
     };
 
     class WaitingSW1: public State {
+        private:
+            static WaitingSW1* instance;
+        private:
+            WaitingSW1();
         public:
-            WaitingSW1(Machine* machine);
-            void pressedSW1() override;
-    };
-
-    class WaitingSW2: public State {
-        public:
-            WaitingSW2(Machine* machine);
-            void pressedSW2() override;
+            static WaitingSW1* getInstance();
+            State* onSW1_ON(Machine* machine) override;
     };
 
     class WaitingSW3: public State {
+        private:
+            static WaitingSW3* instance;
+        private:
+            WaitingSW3();
         public:
-            WaitingSW3(Machine* machine);
-            void pressedSW3() override;
+            static WaitingSW3* getInstance();
+            State* onSW3_ON(Machine* machine) override;
+    };
+
+    class WaitingSW2: public State {
+        private:
+            static WaitingSW2* instance;
+        private:
+            WaitingSW2();
+        public:
+            static WaitingSW2* getInstance();
+            State* onSW2_ON(Machine* machine) override;
     };
 
     class WaitingTMR1: public State {
+        private:
+            static WaitingTMR1* instance;
+        private:
+            WaitingTMR1();
         public:
-            WaitingTMR1(Machine* machine);
-            void timeoutTMR1() override;
+            static WaitingTMR1* getInstance();
+            State* onTMR1_TIMEOUT(Machine* machine) override;
     };
 
 }

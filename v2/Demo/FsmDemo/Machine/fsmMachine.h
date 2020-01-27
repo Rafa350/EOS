@@ -11,12 +11,7 @@ namespace app {
         private:
             State* state;
             Context* context;
-        public:
-            State* stateWaitingSW1;
-            State* stateWaitingSW2;
-            State* stateWaitingSW3;
-            State* stateWaitingTMR1;
-        private:
+        protected:
             void setState(State* state);
             void pushState(State* state);
             void popState();
@@ -25,10 +20,19 @@ namespace app {
             inline State* getState() const { return state; }
             inline Context* getContext() const { return context; }
             void start();
-            void pressedSW1();
-            void pressedSW2();
-            void pressedSW3();
-            void timeoutTMR1();
+            void onSW1_ON();
+            void onSW3_ON();
+            void onSW2_ON();
+            void onTMR1_TIMEOUT();
+            void doLED1_ON();
+            void doLED2_ON();
+            void doLED3_ON();
+            void doWaitingSW1_EnterAction();
+            void doWaitingSW1_ExitAction();
+            void doLED2_OFF();
+            void doTMR1_START();
+            void doWaitingSW3_EnterAction();
+            void doLED1_OFF();
 
         friend State;
     };

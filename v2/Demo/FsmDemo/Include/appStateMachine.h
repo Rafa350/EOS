@@ -18,7 +18,7 @@ namespace app {
                 pressedSW3,
             };
         private:
-            Machine machine;
+            Machine* machine;
         public:
             MyStateMachine();
             void accept(Event event);
