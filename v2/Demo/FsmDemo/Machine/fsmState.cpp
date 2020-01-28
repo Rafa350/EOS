@@ -24,21 +24,21 @@ State* State::onSW1_ON(Machine* machine) {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'SW3_ON' transition.
-/// \param    machine: The state machine.
-/// \return   The next state.
-///
-State* State::onSW3_ON(Machine* machine) {
-
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Perform 'SW2_ON' transition.
 /// \param    machine: The state machine.
 /// \return   The next state.
 ///
 State* State::onSW2_ON(Machine* machine) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'SW3_ON' transition.
+/// \param    machine: The state machine.
+/// \return   The next state.
+///
+State* State::onSW3_ON(Machine* machine) {
 
 }
 
@@ -83,35 +83,7 @@ State* WaitingSW1::onSW1_ON(Machine* machine) {
 
     // Check transition guard.
     //
-    if (!isEnabled()) {
-
-        // Exit state actions.
-        //
-        machine->doWaitingSW1_ExitAction();
-
-        // Transition actions.
-        //
-        machine->doLED1_ON();
-        machine->doLED2_ON();
-        machine->doLED3_ON();
-
-        // Enter state actions.
-        //
-        machine->doWaitingSW3_EnterAction();
-
-        // Return the next state.
-        //
-        return WaitingSW3::getInstance();
-
-    }
-
-    // Check transition guard.
-    //
     if (true) {
-
-        // Exit state actions.
-        //
-        machine->doWaitingSW1_ExitAction();
 
         // Transition actions.
         //
@@ -120,6 +92,52 @@ State* WaitingSW1::onSW1_ON(Machine* machine) {
         // Return the next state.
         //
         return WaitingSW2::getInstance();
+
+    }
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+///
+WaitingSW2::WaitingSW2() {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Get a instance of class.
+///
+WaitingSW2* WaitingSW2::getInstance() {
+
+    if (instance == nullptr)
+        instance = new WaitingSW2();
+    
+    return instance;
+}
+
+WaitingSW2* WaitingSW2::instance = nullptr;
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'SW2_ON' transition to other state.
+/// \param    machine: The state machine.
+/// \return   The next state.
+///
+State* WaitingSW2::onSW2_ON(Machine* machine) {
+
+    // Check transition guard.
+    //
+    if (true) {
+
+        // Transition actions.
+        //
+        machine->doLED1_OFF();
+        machine->doLED2_ON();
+
+        // Return the next state.
+        //
+        return WaitingSW3::getInstance();
 
     }
 
@@ -176,56 +194,6 @@ State* WaitingSW3::onSW3_ON(Machine* machine) {
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
-WaitingSW2::WaitingSW2() {
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Get a instance of class.
-///
-WaitingSW2* WaitingSW2::getInstance() {
-
-    if (instance == nullptr)
-        instance = new WaitingSW2();
-    
-    return instance;
-}
-
-WaitingSW2* WaitingSW2::instance = nullptr;
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Perform 'SW2_ON' transition to other state.
-/// \param    machine: The state machine.
-/// \return   The next state.
-///
-State* WaitingSW2::onSW2_ON(Machine* machine) {
-
-    // Check transition guard.
-    //
-    if (true) {
-
-        // Transition actions.
-        //
-        machine->doLED1_OFF();
-        machine->doLED2_ON();
-
-        // Enter state actions.
-        //
-        machine->doWaitingSW3_EnterAction();
-
-        // Return the next state.
-        //
-        return WaitingSW3::getInstance();
-
-    }
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-///
 WaitingTMR1::WaitingTMR1() {
 }
 
@@ -255,9 +223,13 @@ State* WaitingTMR1::onTMR1_TIMEOUT(Machine* machine) {
     //
     if (true) {
 
+        // Transition actions.
+        //
+        machine->doLED3_OFF();
+
         // Enter state actions.
         //
-        machine->doWaitingSW1_EnterAction();
+        machine->doLED1_OFF();
 
         // Return the next state.
         //

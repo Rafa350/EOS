@@ -4,6 +4,7 @@
 
 #include "eos.h"
 #include "Services/eosFsmService.h"
+#include "System/Core/eosQueue.h"
 #include "fsmMachine.h"
 #include "fsmState.h"
 
@@ -12,16 +13,19 @@ namespace app {
        
     class MyStateMachine: public eos::StateMachine {
         public:
-            enum class Event {
-                prossedSW1,
+            enum class Message {
+                pressedSW1,
                 pressedSW2,
                 pressedSW3,
             };
+            typedef eos::Queue<Message> MessageQueue;
         private:
             Machine* machine;
+            MessageQueue messageQueue;
         public:
             MyStateMachine();
-            void accept(Event event);
+            bool acceptMessage(Message message, unsigned blockTime);
+            void task() override;
     };
     
 }

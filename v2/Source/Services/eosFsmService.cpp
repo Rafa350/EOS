@@ -16,9 +16,7 @@ FsmService::FsmService(
 
     Service(application),
     sm(sm),
-    eventQueue(10),
-    eventCallback(nullptr),
-    actionCallback(nullptr) {
+    eventCallback(nullptr) {
 
 }
 
@@ -29,27 +27,6 @@ FsmService::FsmService(
 void FsmService::onTask() {
 
     while (true) {
-
-        Event event;
-
-        if (eventQueue.get(event, unsigned(-1))) {
-            if (eventCallback != nullptr) {
-                EventArgs args;
-                args.service = this;
-                eventCallback->execute(args);
-            }
-            //sm->acceptEvent(event);
-        }
+        sm->task();
     }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Envia un event a la maquina d'estats pel seu procesament.
-///
-bool FsmService::acceptEvent(
-    Event event,
-    unsigned timeout) {
-
-    return eventQueue.put(event, timeout);
 }

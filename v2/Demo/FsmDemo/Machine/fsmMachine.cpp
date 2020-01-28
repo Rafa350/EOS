@@ -22,9 +22,15 @@ Machine::Machine(
 ///
 void Machine::start() {
 
+    // Machine initialization actions.
+    //
+    doLED1_OFF();
+    doLED2_OFF();
+    doLED3_OFF();
+
     // Enter state actions.
     //
-    machine->doWaitingSW1_EnterAction();
+    doLED1_OFF();
 
     // Select initial state.
     //
@@ -42,20 +48,20 @@ void Machine::onSW1_ON() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Perform 'SW3_ON' transition.
-///
-void Machine::onSW3_ON() {
-
-    state = state->onSW3_ON(this);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Perform 'SW2_ON' transition.
 ///
 void Machine::onSW2_ON() {
 
     state = state->onSW2_ON(this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Perform 'SW3_ON' transition.
+///
+void Machine::onSW3_ON() {
+
+    state = state->onSW3_ON(this);
 }
 
 

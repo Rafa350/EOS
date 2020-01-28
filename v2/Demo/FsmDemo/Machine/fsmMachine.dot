@@ -27,15 +27,15 @@ digraph {
     ]
 
     WaitingSW1 [
-        label = <<table cellborder="0" style="rounded" bgcolor="lemonchiffon"><tr><td><font point-size="14"> WaitingSW1 </font></td></tr><hr/><tr><td><font point-size="10"> ENTRY/ Action0 </font></td></tr><tr><td><font point-size="10"> EXIT/ Action1 </font></td></tr></table>>
-    ];
-
-    WaitingSW3 [
-        label = <<table cellborder="0" style="rounded" bgcolor="lemonchiffon"><tr><td><font point-size="14"> WaitingSW3 </font></td></tr><hr/><tr><td><font point-size="10"> ENTRY/ Action4 </font></td></tr></table>>
+        label = <<table cellborder="0" style="rounded" bgcolor="lemonchiffon"><tr><td><font point-size="14"> WaitingSW1 </font></td></tr><hr/><tr><td><font point-size="10"> ENTRY/ Action1 </font></td></tr></table>>
     ];
 
     WaitingSW2 [
         label = <<table cellborder="0" style="rounded" bgcolor="lemonchiffon"><tr><td><font point-size="14"> WaitingSW2 </font></td></tr></table>>
+    ];
+
+    WaitingSW3 [
+        label = <<table cellborder="0" style="rounded" bgcolor="lemonchiffon"><tr><td><font point-size="14"> WaitingSW3 </font></td></tr></table>>
     ];
 
     WaitingTMR1 [
@@ -45,23 +45,20 @@ digraph {
 
     START->WaitingSW1
 
-    WaitingSW1->WaitingSW3 [
-        label = "SW1_ON / Action2"
-    ];
     WaitingSW1->WaitingSW2 [
-        label = "SW1_ON / Action3"
-    ];
-
-    WaitingSW3->WaitingTMR1 [
-        label = "SW3_ON / Action5"
+        label = "SW1_ON / Action2"
     ];
 
     WaitingSW2->WaitingSW3 [
-        label = "SW2_ON / Action6"
+        label = "SW2_ON / Action3"
+    ];
+
+    WaitingSW3->WaitingTMR1 [
+        label = "SW3_ON / Action4"
     ];
 
     WaitingTMR1->WaitingSW1 [
-        label = "TMR1_TIMEOUT"
+        label = "TMR1_TIMEOUT / Action5"
     ];
 
 }

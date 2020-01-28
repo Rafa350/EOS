@@ -32,7 +32,7 @@ MyApplication::MyApplication():
     digOutputService = new DigOutputService(this, HAL_TMR_TIMER_2);
     timerService = new TimerService(this);
     
-    StateMachine* sm = new MyStateMachine();
+    sm = new MyStateMachine();
     fsmService = new FsmService(this, sm);
 }
 
@@ -136,10 +136,8 @@ void MyApplication::fsmEventHandler(
 void MyApplication::digInput1EventHandler(
     const DigInput::EventArgs &args) {
 
-#ifdef EXIST_LEDS_LED3
     if ((args.type == DigInput::EventType::change) && !args.input->get()) 
-        digOutput3->pulse(500);
-#endif    
+        sm->acceptMessage(MyStateMachine::Message::pressedSW1, (unsigned) -1);
 }
 #endif
 
@@ -152,10 +150,8 @@ void MyApplication::digInput1EventHandler(
 void MyApplication::digInput2EventHandler(
     const DigInput::EventArgs &args) {
 
-#ifdef EXIST_LEDS_LED3
     if ((args.type == DigInput::EventType::change) && !args.input->get()) 
-        digOutput3->pulse(1000);
-#endif    
+        sm->acceptMessage(MyStateMachine::Message::pressedSW2, (unsigned) -1);
 }
 #endif
 
@@ -168,12 +164,7 @@ void MyApplication::digInput2EventHandler(
 void MyApplication::digInput3EventHandler(
     const DigInput::EventArgs &args) {
 
-#ifdef EXIST_LEDS_LED3
-    if ((args.type == DigInput::EventType::change) && !args.input->get()) {
-        digOutput3->pulse(1500);
-        timer1->start(1000);
-        timer2->start(1500);
-    }
-#endif    
+    if ((args.type == DigInput::EventType::change) && !args.input->get())
+        sm->acceptMessage(MyStateMachine::Message::pressedSW3, (unsigned) -1);
 }
 #endif

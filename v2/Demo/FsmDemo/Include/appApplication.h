@@ -15,7 +15,7 @@ namespace app {
     
     using namespace eos;
       
-    class LedLoopService;
+    class MyStateMachine;
 
     class MyApplication: public Application {
         private:
@@ -32,6 +32,8 @@ namespace app {
             TimerCounter* timer2;
             TimerEventCallback timerEventCallback;
             FsmEventCallback fsmEventCallback;
+            
+            MyStateMachine *sm;
             
     #ifdef EXIST_LEDS_LED1
             DigOutput *digOutput1;

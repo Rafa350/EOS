@@ -3,25 +3,87 @@
 #include "fsmMachine.h"
 
 
-
 using namespace eos;
 using namespace app;
 
 
-MyStateMachine::MyStateMachine() :
-    machine(new Machine(nullptr)) {
+void Machine::doLED1_ON() {
+    
+}
+
+void Machine::doLED1_OFF() {
+    
+}
+
+void Machine::doLED2_ON() {
+    
+}
+
+void Machine::doLED2_OFF() {
+    
+}
+
+void Machine::doLED3_ON() {
+    
+}
+
+void Machine::doLED3_OFF() {
+    
+}
+
+void Machine::doTMR1_START() {
     
 }
 
 
-void MyStateMachine::accept(
-    Event event) {
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+///
+MyStateMachine::MyStateMachine() :
+    machine(nullptr),
+    messageQueue(10) {
     
-    State* state = machine->getState();
+    machine = new Machine(nullptr);
+    machine->start();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Accepta un missatge i l'afegeix a la cua.
+/// \param    message: El missatge.
+/// \param    blockTime: Temps maxim de bloqueig.
+/// \return   True si tot es correcte.
+///
+bool MyStateMachine::acceptMessage(
+    Message message,
+    unsigned blockTime) {
     
-    switch (event) {
-        case Event::prossedSW1:
-            state->onSW1_ON(machine);
-            break;
+    return messageQueue.put(message, blockTime);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa els missatges pendents en la cua.
+///
+void MyStateMachine::task() {
+
+    Message message;
+
+    if (messageQueue.get(message, unsigned(-1))) {
+       
+        switch (message) {
+            case Message::pressedSW1:
+                machine->onSW1_ON();
+                break;
+                
+            case Message::pressedSW2:
+                machine->onSW2_ON();
+                break;
+
+            case Message::pressedSW3:
+                machine->onSW3_ON();
+                break;
+        }
     }
+    
 }

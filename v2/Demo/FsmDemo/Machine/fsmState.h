@@ -12,8 +12,8 @@ namespace app {
             State();
         public:
             virtual State* onSW1_ON(Machine* machine);
-            virtual State* onSW3_ON(Machine* machine);
             virtual State* onSW2_ON(Machine* machine);
+            virtual State* onSW3_ON(Machine* machine);
             virtual State* onTMR1_TIMEOUT(Machine* machine);
     };
 
@@ -27,16 +27,6 @@ namespace app {
             State* onSW1_ON(Machine* machine) override;
     };
 
-    class WaitingSW3: public State {
-        private:
-            static WaitingSW3* instance;
-        private:
-            WaitingSW3();
-        public:
-            static WaitingSW3* getInstance();
-            State* onSW3_ON(Machine* machine) override;
-    };
-
     class WaitingSW2: public State {
         private:
             static WaitingSW2* instance;
@@ -45,6 +35,16 @@ namespace app {
         public:
             static WaitingSW2* getInstance();
             State* onSW2_ON(Machine* machine) override;
+    };
+
+    class WaitingSW3: public State {
+        private:
+            static WaitingSW3* instance;
+        private:
+            WaitingSW3();
+        public:
+            static WaitingSW3* getInstance();
+            State* onSW3_ON(Machine* machine) override;
     };
 
     class WaitingTMR1: public State {

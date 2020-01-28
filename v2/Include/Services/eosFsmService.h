@@ -7,7 +7,6 @@
 #include "eos.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Core/eosQueue.h"
 
 
 namespace eos {
@@ -15,41 +14,37 @@ namespace eos {
     class Application;
     class StateMachine;
     
-    typedef unsigned Event;
+    typedef unsigned Message;
 
     class FsmService final: private Service {
         public:
+            enum class EventType {
+                acceptMessage
+            };
 			struct EventArgs {
+                EventType type;
                 FsmService* service;                
 			};
 
         private:
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
-            typedef Queue<Event> EventQueue;
 
         private:
             StateMachine* sm;
-            EventQueue eventQueue;
             IEventCallback* eventCallback;
-            IEventCallback* actionCallback;
-
-        private:
-            void processEvent(Event event);
 
         protected:
             void onTask() override;
-            //void onTick() override;
 
         public:
             FsmService(Application* application, StateMachine* sm);
-            bool acceptEvent(Event event, unsigned timeout);
             inline void setEventCallback(IEventCallback* callback) { eventCallback = callback; }
-            inline void setActionCallback(IEventCallback* callback) { actionCallback = callback; }
     };
     
     
     class StateMachine {
-        
+        public:
+            virtual void task() = 0;
     };
 
 }
