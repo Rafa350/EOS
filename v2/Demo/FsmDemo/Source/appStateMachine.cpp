@@ -1,37 +1,37 @@
 #include "eos.h"
 #include "appStateMachine.h"
-#include "fsmMachine.h"
+#include "fsmContext.h"
 
 
 using namespace eos;
 using namespace app;
 
 
-void Machine::doLED1_ON() {
+void Context::doLED1_ON() {
     
 }
 
-void Machine::doLED1_OFF() {
+void Context::doLED1_OFF() {
     
 }
 
-void Machine::doLED2_ON() {
+void Context::doLED2_ON() {
     
 }
 
-void Machine::doLED2_OFF() {
+void Context::doLED2_OFF() {
     
 }
 
-void Machine::doLED3_ON() {
+void Context::doLED3_ON() {
     
 }
 
-void Machine::doLED3_OFF() {
+void Context::doLED3_OFF() {
     
 }
 
-void Machine::doTMR1_START() {
+void Context::doTMR1_START() {
     
 }
 
@@ -40,11 +40,11 @@ void Machine::doTMR1_START() {
 /// \brief    Constructor.
 ///
 MyStateMachine::MyStateMachine() :
-    machine(nullptr),
+    context(nullptr),
     messageQueue(10) {
     
-    machine = new Machine(nullptr);
-    machine->start();
+    context = new Context();
+    context->start();
 }
 
 
@@ -73,15 +73,15 @@ void MyStateMachine::task() {
        
         switch (message) {
             case Message::pressedSW1:
-                machine->onSW1_ON();
+                context->onSW1_ON();
                 break;
                 
             case Message::pressedSW2:
-                machine->onSW2_ON();
+                context->onSW2_ON();
                 break;
 
             case Message::pressedSW3:
-                machine->onSW3_ON();
+                context->onSW3_ON();
                 break;
         }
     }

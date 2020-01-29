@@ -1,6 +1,6 @@
 # Compilador de XSM a C
 cgen = C:\Users\Rafael\Documents\Projectes\Net\FSMCompiler\bin\Debug\FsmCompiler.exe
-cgen_options = /G:CPP2 
+cgen_options = /G:CPP2 /P:NsName="eos" /P:ContextBaseClassName="FsmContextBase" /P:StateBaseClassName="FsmStateBase"
 
 # Compilador de XSM a DOT
 dotgen = C:\Users\Rafael\Documents\Projectes\Net\FSMCompiler\bin\Debug\FsmCompiler.exe
@@ -11,8 +11,8 @@ dot = $(ProgramFiles)\Graphviz2.38\bin\dot.exe
 dot_options = -Tpdf
 
 targets = \
-       fsmMachine.cpp \
-	   fsmMachine.dot \
+       fsmContext.cpp \
+	   fsmContext.dot \
 	   fsmMachine.pdf
 
 .SUFFIXES: .xsm .dot .c .pdf

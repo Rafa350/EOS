@@ -5,7 +5,7 @@
 #include "eos.h"
 #include "Services/eosFsmService.h"
 #include "System/Core/eosQueue.h"
-#include "fsmMachine.h"
+#include "fsmContext.h"
 #include "fsmState.h"
 
 
@@ -20,7 +20,7 @@ namespace app {
             };
             typedef eos::Queue<Message> MessageQueue;
         private:
-            Machine* machine;
+            eos::Context* context;
             MessageQueue messageQueue;
         public:
             MyStateMachine();

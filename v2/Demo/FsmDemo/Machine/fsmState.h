@@ -2,62 +2,65 @@
 #define __FSMSTATE_H
 
 
-namespace app {
+#include "eos.h"
+#include "Services/Fsm/eosFsmStateBase.h"
 
-    class Machine;
+
+namespace eos {
+
     class Context;
 
-    class State {
+    class State: public FsmStateBase {
         protected:
             State();
         public:
-            virtual State* onSW1_ON(Machine* machine);
-            virtual State* onSW2_ON(Machine* machine);
-            virtual State* onSW3_ON(Machine* machine);
-            virtual State* onTMR1_TIMEOUT(Machine* machine);
+            virtual void onSW1_ON(Context* context);
+            virtual void onSW2_ON(Context* context);
+            virtual void onSW3_ON(Context* context);
+            virtual void onTMR1_TIMEOUT(Context* context);
     };
 
-    class WaitingSW1: public State {
+    class WaitingSW1: public FsmStateBase {
         private:
             static WaitingSW1* instance;
         private:
             WaitingSW1();
         public:
             static WaitingSW1* getInstance();
-            State* onSW1_ON(Machine* machine) override;
-    };
+            void onSW1_ON(Context* context) override;
+        };
 
-    class WaitingSW2: public State {
-        private:
-            static WaitingSW2* instance;
-        private:
-            WaitingSW2();
-        public:
-            static WaitingSW2* getInstance();
-            State* onSW2_ON(Machine* machine) override;
-    };
+        class WaitingSW2: public FsmStateBase {
+            private:
+                static WaitingSW2* instance;
+            private:
+                WaitingSW2();
+            public:
+                static WaitingSW2* getInstance();
+                void onSW2_ON(Context* context) override;
+            };
 
-    class WaitingSW3: public State {
-        private:
-            static WaitingSW3* instance;
-        private:
-            WaitingSW3();
-        public:
-            static WaitingSW3* getInstance();
-            State* onSW3_ON(Machine* machine) override;
-    };
+            class WaitingSW3: public FsmStateBase {
+                private:
+                    static WaitingSW3* instance;
+                private:
+                    WaitingSW3();
+                public:
+                    static WaitingSW3* getInstance();
+                    void onSW3_ON(Context* context) override;
+                };
 
-    class WaitingTMR1: public State {
-        private:
-            static WaitingTMR1* instance;
-        private:
-            WaitingTMR1();
-        public:
-            static WaitingTMR1* getInstance();
-            State* onTMR1_TIMEOUT(Machine* machine) override;
-    };
+                class WaitingTMR1: public FsmStateBase {
+                    private:
+                        static WaitingTMR1* instance;
+                    private:
+                        WaitingTMR1();
+                    public:
+                        static WaitingTMR1* getInstance();
+                        void onTMR1_TIMEOUT(Context* context) override;
+                    };
 
-}
+                }
 
 
-#endif // __FSMSTATE_H
+                #endif // __FSMSTATE_H

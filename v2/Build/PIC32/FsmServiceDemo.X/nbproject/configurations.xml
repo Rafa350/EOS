@@ -37,9 +37,8 @@
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
-              <itemPath>../../../Include/Services/Fsm/eosFsmEvent.h</itemPath>
-              <itemPath>../../../Include/Services/Fsm/eosFsmMachine.h</itemPath>
-              <itemPath>../../../Include/Services/Fsm/eosFsmState.h</itemPath>
+              <itemPath>../../../Include/Services/Fsm/eosFsmContextBase.h</itemPath>
+              <itemPath>../../../Include/Services/Fsm/eosFsmStateBase.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/Services/eosService.h</itemPath>
             <itemPath>../../../Include/Services/eosAppLoopService.h</itemPath>
@@ -70,7 +69,6 @@
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Machine" projectFiles="true">
-        <itemPath>../../../Demo/FsmDemo/Machine/fsmMachine.h</itemPath>
         <itemPath>../../../Demo/FsmDemo/Machine/fsmState.h</itemPath>
         <itemPath>../../../Demo/FsmDemo/Machine/fsmContext.h</itemPath>
       </logicalFolder>
@@ -116,8 +114,8 @@
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <logicalFolder name="f1" displayName="Fsm" projectFiles="true">
-              <itemPath>../../../Source/Services/Fsm/eosFsmMachine.cpp</itemPath>
-              <itemPath>../../../Source/Services/Fsm/eosFsmState.cpp</itemPath>
+              <itemPath>../../../Source/Services/Fsm/eosFsmContextBase.cpp</itemPath>
+              <itemPath>../../../Source/Services/Fsm/eosFsmStateBase.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosAppLoopService.cpp</itemPath>
@@ -154,8 +152,8 @@
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Machine" projectFiles="true">
-        <itemPath>../../../Demo/FsmDemo/Machine/fsmMachine.cpp</itemPath>
         <itemPath>../../../Demo/FsmDemo/Machine/fsmState.cpp</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Machine/fsmContext.cpp</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"

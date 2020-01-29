@@ -2,20 +2,32 @@
 #define __FSMCONTEXT_H
 
 
-namespace app {
-    
-    class Context {
-        public:
-            void clearLED1();
-            void clearLED2();
-            void clearLED3();
-            void setLED1();
-            void setLED2();
-            void setLED3();
-            void startTIMER1(unsigned time);
-    };
+#include "eos.h"
+#include "Services/Fsm/eosFsmContextBase.h"
 
+
+namespace eos {
+
+    class State;
+
+    class Context    : public FsmContextBase {
+        public:
+            Context();
+            void start();
+            void terminate();
+            void onSW1_ON();
+            void onSW2_ON();
+            void onSW3_ON();
+            void onTMR1_TIMEOUT();
+            void doLED1_ON();
+            void doLED1_OFF();
+            void doLED2_ON();
+            void doLED3_ON();
+            void doLED2_OFF();
+            void doTMR1_START();
+            void doLED3_OFF();
+    };
 }
 
 
-#endif
+#endif // __FSMCONTEXT_H

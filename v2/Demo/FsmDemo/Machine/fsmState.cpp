@@ -1,9 +1,8 @@
-#include "fsmMachine.h"
-#include "fsmState.h"
 #include "fsmContext.h"
+#include "fsmState.h"
 
 
-using namespace app;
+using namespace eos;
 
 
 /// ----------------------------------------------------------------------
@@ -15,40 +14,36 @@ State::State() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Perform 'SW1_ON' transition.
-/// \param    machine: The state machine.
-/// \return   The next state.
+/// \param    context: The context.
 ///
-State* State::onSW1_ON(Machine* machine) {
+void State::onSW1_ON(Context* context) {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Perform 'SW2_ON' transition.
-/// \param    machine: The state machine.
-/// \return   The next state.
+/// \param    context: The context.
 ///
-State* State::onSW2_ON(Machine* machine) {
+void State::onSW2_ON(Context* context) {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Perform 'SW3_ON' transition.
-/// \param    machine: The state machine.
-/// \return   The next state.
+/// \param    context: The context.
 ///
-State* State::onSW3_ON(Machine* machine) {
+void State::onSW3_ON(Context* context) {
 
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Perform 'TMR1_TIMEOUT' transition.
-/// \param    machine: The state machine.
-/// \return   The next state.
+/// \param    context: The context.
 ///
-State* State::onTMR1_TIMEOUT(Machine* machine) {
+void State::onTMR1_TIMEOUT(Context* context) {
 
 }
 
@@ -76,23 +71,31 @@ WaitingSW1* WaitingSW1::instance = nullptr;
 
 /// ----------------------------------------------------------------------
 /// \brief    Perform 'SW1_ON' transition to other state.
-/// \param    machine: The state machine.
-/// \return   The next state.
+/// \param    context: The context.
 ///
-State* WaitingSW1::onSW1_ON(Machine* machine) {
+void WaitingSW1::onSW1_ON(Context* context) {
 
     // Check transition guard.
     //
     if (true) {
 
-        // Transition actions.
+        // Exit state action.
         //
-        machine->doLED1_ON();
+        context->doLED1_ON();
 
-        // Return the next state.
+        // Transition action.
         //
-        return WaitingSW2::getInstance();
+        context->doLED1_ON();
 
+        // Enter state action.
+        //
+        context->doLED3_ON();
+
+        // Set the next state.
+        //
+        context->setState(WaitingSW2::getInstance());
+
+        return;
     }
 
 }
@@ -121,24 +124,24 @@ WaitingSW2* WaitingSW2::instance = nullptr;
 
 /// ----------------------------------------------------------------------
 /// \brief    Perform 'SW2_ON' transition to other state.
-/// \param    machine: The state machine.
-/// \return   The next state.
+/// \param    context: The context.
 ///
-State* WaitingSW2::onSW2_ON(Machine* machine) {
+void WaitingSW2::onSW2_ON(Context* context) {
 
     // Check transition guard.
     //
     if (true) {
 
-        // Transition actions.
+        // Transition action.
         //
-        machine->doLED1_OFF();
-        machine->doLED2_ON();
+        context->doLED1_OFF();
+        context->doLED2_ON();
 
-        // Return the next state.
+        // Set the next state.
         //
-        return WaitingSW3::getInstance();
+        context->setState(WaitingSW3::getInstance());
 
+        return;
     }
 
 }
@@ -167,25 +170,25 @@ WaitingSW3* WaitingSW3::instance = nullptr;
 
 /// ----------------------------------------------------------------------
 /// \brief    Perform 'SW3_ON' transition to other state.
-/// \param    machine: The state machine.
-/// \return   The next state.
+/// \param    context: The context.
 ///
-State* WaitingSW3::onSW3_ON(Machine* machine) {
+void WaitingSW3::onSW3_ON(Context* context) {
 
     // Check transition guard.
     //
     if (true) {
 
-        // Transition actions.
+        // Transition action.
         //
-        machine->doLED2_OFF();
-        machine->doLED3_ON();
-        machine->doTMR1_START();
+        context->doLED2_OFF();
+        context->doLED3_ON();
+        context->doTMR1_START();
 
-        // Return the next state.
+        // Set the next state.
         //
-        return WaitingTMR1::getInstance();
+        context->setState(WaitingTMR1::getInstance());
 
+        return;
     }
 
 }
@@ -214,27 +217,27 @@ WaitingTMR1* WaitingTMR1::instance = nullptr;
 
 /// ----------------------------------------------------------------------
 /// \brief    Perform 'TMR1_TIMEOUT' transition to other state.
-/// \param    machine: The state machine.
-/// \return   The next state.
+/// \param    context: The context.
 ///
-State* WaitingTMR1::onTMR1_TIMEOUT(Machine* machine) {
+void WaitingTMR1::onTMR1_TIMEOUT(Context* context) {
 
     // Check transition guard.
     //
     if (true) {
 
-        // Transition actions.
+        // Transition action.
         //
-        machine->doLED3_OFF();
+        context->doLED3_OFF();
 
-        // Enter state actions.
+        // Enter state action.
         //
-        machine->doLED1_OFF();
+        context->doLED1_OFF();
 
-        // Return the next state.
+        // Set the next state.
         //
-        return WaitingSW1::getInstance();
+        context->setState(WaitingSW1::getInstance());
 
+        return;
     }
 
 }
