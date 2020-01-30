@@ -13,54 +13,54 @@ namespace eos {
     class State: public FsmStateBase {
         protected:
             State();
-        public:
-            virtual void onSW1_ON(Context* context);
-            virtual void onSW2_ON(Context* context);
-            virtual void onSW3_ON(Context* context);
-            virtual void onTMR1_TIMEOUT(Context* context);
-    };
+    public:
+        virtual void onSW1_ON(Context* context);
+        virtual void onSW2_ON(Context* context);
+        virtual void onSW3_ON(Context* context);
+        virtual void onTMR1_TIMEOUT(Context* context);
+};
 
-    class WaitingSW1: public FsmStateBase {
-        private:
-            static WaitingSW1* instance;
-        private:
-            WaitingSW1();
-        public:
-            static WaitingSW1* getInstance();
-            void onSW1_ON(Context* context) override;
-        };
+class WaitingSW1: public FsmStateBase {
+    private:
+        static WaitingSW1* instance;
+private:
+    WaitingSW1();
+public:
+    static WaitingSW1* getInstance();
+    void onSW1_ON(Context* context) override;
+};
 
-        class WaitingSW2: public FsmStateBase {
-            private:
-                static WaitingSW2* instance;
-            private:
-                WaitingSW2();
-            public:
-                static WaitingSW2* getInstance();
-                void onSW2_ON(Context* context) override;
-            };
+class WaitingSW2: public FsmStateBase {
+    private:
+        static WaitingSW2* instance;
+private:
+    WaitingSW2();
+public:
+    static WaitingSW2* getInstance();
+    void onSW2_ON(Context* context) override;
+};
 
-            class WaitingSW3: public FsmStateBase {
-                private:
-                    static WaitingSW3* instance;
-                private:
-                    WaitingSW3();
-                public:
-                    static WaitingSW3* getInstance();
-                    void onSW3_ON(Context* context) override;
-                };
+class WaitingSW3: public FsmStateBase {
+    private:
+        static WaitingSW3* instance;
+private:
+    WaitingSW3();
+public:
+    static WaitingSW3* getInstance();
+    void onSW3_ON(Context* context) override;
+};
 
-                class WaitingTMR1: public FsmStateBase {
-                    private:
-                        static WaitingTMR1* instance;
-                    private:
-                        WaitingTMR1();
-                    public:
-                        static WaitingTMR1* getInstance();
-                        void onTMR1_TIMEOUT(Context* context) override;
-                    };
+class WaitingTMR1: public FsmStateBase {
+    private:
+        static WaitingTMR1* instance;
+private:
+    WaitingTMR1();
+public:
+    static WaitingTMR1* getInstance();
+    void onTMR1_TIMEOUT(Context* context) override;
+};
 
-                }
+}
 
 
-                #endif // __FSMSTATE_H
+#endif // __FSMSTATE_H

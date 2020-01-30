@@ -8,13 +8,12 @@
 
 namespace eos {
 
-    class State;
+    class Context: public FsmContextBase {
 
-    class Context    : public FsmContextBase {
         public:
             Context();
             void start();
-            void terminate();
+            void end();
             void onSW1_ON();
             void onSW2_ON();
             void onSW3_ON();
@@ -27,6 +26,7 @@ namespace eos {
             void doTMR1_START();
             void doLED3_OFF();
     };
+
 }
 
 
