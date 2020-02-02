@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <machine name="Machine" start="WaitingSW1">
 
 	<!-- Inicialitzacio de la maquina

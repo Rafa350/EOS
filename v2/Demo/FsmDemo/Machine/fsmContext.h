@@ -9,9 +9,9 @@
 namespace eos {
 
     class Context: public FsmContextBase {
-
         public:
             Context();
+        public:
             void start();
             void end();
             void onSW1_ON();
