@@ -5,8 +5,8 @@
 #include "eos.h"
 #include "Services/eosFsmService.h"
 #include "System/Core/eosQueue.h"
-#include "fsmContext.h"
-#include "fsmState.h"
+#include "MachineContext.h"
+#include "MachineState.h"
 
 
 namespace app {

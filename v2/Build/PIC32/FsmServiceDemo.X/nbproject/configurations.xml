@@ -69,8 +69,8 @@
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Machine" projectFiles="true">
-        <itemPath>../../../Demo/FsmDemo/Machine/fsmState.h</itemPath>
-        <itemPath>../../../Demo/FsmDemo/Machine/fsmContext.h</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Machine/MachineContext.h</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Machine/MachineState.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -152,8 +152,8 @@
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Machine" projectFiles="true">
-        <itemPath>../../../Demo/FsmDemo/Machine/fsmState.cpp</itemPath>
-        <itemPath>../../../Demo/FsmDemo/Machine/fsmContext.cpp</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Machine/MachineContext.cpp</itemPath>
+        <itemPath>../../../Demo/FsmDemo/Machine/MachineState.cpp</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"

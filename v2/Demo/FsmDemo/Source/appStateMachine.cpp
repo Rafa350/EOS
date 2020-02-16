@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "appStateMachine.h"
-#include "fsmContext.h"
+#include "MachineContext.h"
 
 
 using namespace eos;

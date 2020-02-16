@@ -1,33 +1,44 @@
 # Compilador de XSM a C
 cgen = C:\Users\Rafael\Documents\Projectes\Net\FSMCompiler\bin\Debug\FsmCompiler.exe
-cgen_options = /G:CPP2 /P:NsName="eos" /P:ContextBaseClassName="FsmContextBase" /P:StateBaseClassName="FsmStateBase"
+cgen_opt = /G:CPP
 
 # Compilador de XSM a DOT
 dotgen = C:\Users\Rafael\Documents\Projectes\Net\FSMCompiler\bin\Debug\FsmCompiler.exe
-dotgen_options = /G:DOT
+dotgen_opt = /G:DOT
 
 # Compilador de DOT a PDF: 
 dot = $(ProgramFiles)\Graphviz2.38\bin\dot.exe
-dot_options = -Tpdf
+dot_opt = -Tpdf
 
 targets = \
-       fsmContext.cpp \
-	   fsmContext.dot \
-	   fsmMachine.pdf
+	MachineContext.cpp \
+	MachineContext.h \
+	MachineState.cpp \
+	MachineState.h \
+	Machine.pdf
 
-.SUFFIXES: .xsm .dot .c .pdf
+.SUFFIXES: .xsm .dot .cpp .pdf
 .PHONY: all clean
 
 all: $(targets)
 
 clean:
-	rm -rf fsm*.pdf fsm*.dot fsm*.cpp fsm*.h
+	rm -rf *.pdf *.dot *.cpp *.h
 
-fsm%.cpp: %.xsm
-	$(cgen) $(cgen_options) $*.xsm
+%Context.cpp: %.xsm
+	$(cgen) $(cgen_opt) /P:OutputType=ContextCode /P:ContextCodeFileName=$*Context.cpp /P:ContextHeaderFileName=$*Context.h /P:StateHeaderFileName=$*State.h $*.xsm
 	
-fsm%.dot: %.xsm
-	$(dotgen) $(dotgen_options)	$*.xsm
+%Context.h: %.xsm
+	$(cgen) $(cgen_opt) /P:OutputType=ContextHeader /P:ContextHeaderFileName=$*Context.h $*.xsm
+
+%State.cpp: %.xsm
+	$(cgen) $(cgen_opt) /P:OutputType=StateCode /P:StateCodeFileName=$*State.cpp /P:ContextHeaderFileName=$*Context.h /P:StateHeaderFileName=$*State.h $*.xsm
+	
+%State.h: %.xsm
+	$(cgen) $(cgen_opt) /P:OutputType=StateHeader /P:StateHeaderFileName=$*State.h $*.xsm
+
+%.dot: %.xsm
+	$(dotgen) $(dotgen_opt)	$*.xsm
 	
 .dot.pdf:
-	$(dot) $(dot_options) $*.dot -o $*.pdf
+	$(dot) $(dot_opt) $*.dot -o $*.pdf
