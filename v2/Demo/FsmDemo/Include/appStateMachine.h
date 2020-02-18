@@ -10,7 +10,7 @@
 
 
 namespace app {
-       
+    
     class MyStateMachine: public eos::StateMachine {
         public:
             enum class Message {
@@ -20,7 +20,7 @@ namespace app {
             };
             typedef eos::Queue<Message> MessageQueue;
         private:
-            eos::Context* context;
+            Context* context;
             MessageQueue messageQueue;
         public:
             MyStateMachine();

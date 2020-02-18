@@ -11,8 +11,7 @@
 #define __MACHINECONTEXT_H
 
 
-#include "eos.h"
-#include "Services/Fsm/eosFsmContextBase.h"
+#include "appMachineConfig.h"
 
 
 namespace app {
@@ -23,10 +22,14 @@ namespace app {
         public:
             void start();
             void end();
-            void onSW1_ON();
-            void onSW2_ON();
-            void onSW3_ON();
-            void onTMR1_TIMEOUT();
+            void onSW1Pressed();
+            void onSW2Pressed();
+            void onSW3Pressed();
+            void onTMR1TimeOut();
+            void doLED1Off();
+            void doLED2Off();
+            void doLED3Off();
+            void doTMR1Start();
     };
 
 }

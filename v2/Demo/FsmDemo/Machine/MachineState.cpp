@@ -7,8 +7,9 @@
 //
 // -----------------------------------------------------------------------
 
-#include "MachineContext.h"
+
 #include "MachineState.h"
+#include "MachineContext.h"
 
 
 namespace app {
@@ -16,19 +17,19 @@ namespace app {
     State::State() {
     }
 
-    void State::onSW1_ON(
+    void State::onSW1Pressed(
         Context* context) {
     }
 
-    void State::onSW2_ON(
+    void State::onSW2Pressed(
         Context* context) {
     }
 
-    void State::onSW3_ON(
+    void State::onSW3Pressed(
         Context* context) {
     }
 
-    void State::onTMR1_TIMEOUT(
+    void State::onTMR1TimeOut(
         Context* context) {
     }
 
@@ -42,9 +43,12 @@ namespace app {
         return instance;
     }
 
-    void WaitingSW1::onSW1_ON(
+    void WaitingSW1::onSW1Pressed(
         Context* context) {
         if (true) {
+            context->doLED1Off();
+            context->doLED1Off();
+            context->doLED3Off();
             context->setState(WaitingSW2::getInstance());
         }
     }
@@ -59,9 +63,11 @@ namespace app {
         return instance;
     }
 
-    void WaitingSW2::onSW2_ON(
+    void WaitingSW2::onSW2Pressed(
         Context* context) {
         if (true) {
+            context->doLED1Off();
+            context->doLED2Off();
             context->setState(WaitingSW3::getInstance());
         }
     }
@@ -76,9 +82,12 @@ namespace app {
         return instance;
     }
 
-    void WaitingSW3::onSW3_ON(
+    void WaitingSW3::onSW3Pressed(
         Context* context) {
         if (true) {
+            context->doLED2Off();
+            context->doLED3Off();
+            context->doTMR1Start();
             context->setState(WaitingTMR1::getInstance());
         }
     }
@@ -93,9 +102,11 @@ namespace app {
         return instance;
     }
 
-    void WaitingTMR1::onTMR1_TIMEOUT(
+    void WaitingTMR1::onTMR1TimeOut(
         Context* context) {
         if (true) {
+            context->doLED3Off();
+            context->doLED1Off();
             context->setState(WaitingSW1::getInstance());
         }
     }

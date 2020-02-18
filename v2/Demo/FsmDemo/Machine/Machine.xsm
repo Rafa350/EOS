@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <machine name="Machine" start="WaitingSW1">
 
 	<!-- Inicialitzacio de la maquina
 	-->
 	<initialize>
-		<call name="LED1_OFF"/>
-		<call name="LED2_OFF"/>
-		<call name="LED3_OFF"/>
+		<run name="LED1Off"/>
+		<run name="LED2Off"/>
+		<run name="LED3Off"/>
 	</initialize>
     
     <!-- Espera al boto SW1
@@ -15,17 +16,17 @@
     <state name="WaitingSW1">
 	
 		<enter>
-			<call name="LED1_OFF"/>
+			<run name="LED1Off"/>
 		</enter>
 
 		<exit>
-			<call name="LED1_ON"/>
+			<run name="LED1Off"/>
 		</exit>
 		
         <!-- Es prem el boto SW1
         -->
-        <transition name="SW1_ON" state="WaitingSW2">
-			<command name="LED1_ON" />
+        <transition name="SW1Pressed" state="WaitingSW2">
+			<run name="LED1Off" />
         </transition>
 
 	</state>
@@ -35,14 +36,14 @@
     <state name="WaitingSW2">
 	
 		<enter>
-			<command name="LED3_ON"/>
+			<run name="LED3Off"/>
 		</enter>
 
         <!-- Es prem el boto SW2
         -->
-        <transition name="SW2_ON" state="WaitingSW3">
-			<command name="LED1_OFF" />
-			<command name="LED2_ON" />
+        <transition name="SW2Pressed" state="WaitingSW3">
+			<run name="LED1Off" />
+			<run name="LED2Off" />
         </transition>
 
     </state>
@@ -53,10 +54,10 @@
 	
         <!-- Es prem el boto SW3
         -->
-        <transition name="SW3_ON" state="WaitingTMR1">
-			<command name="LED2_OFF" />
-			<command name="LED3_ON" />
-			<command name="TMR1_START" />
+        <transition name="SW3Pressed" state="WaitingTMR1">
+			<run name="LED2Off" />
+			<run name="LED3Off" />
+			<run name="TMR1Start" />
         </transition>
 		
     </state>
@@ -67,8 +68,8 @@
         
         <!-- Timeout del temporitzador TIMER1
         -->
-        <transition name="TMR1_TIMEOUT" state="WaitingSW1">
-			<command name="LED3_OFF" />
+        <transition name="TMR1TimeOut" state="WaitingSW1">
+			<run name="LED3Off" />
 		</transition>
 
     </state>

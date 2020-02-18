@@ -11,60 +11,61 @@
 #define __MACHINESTATE_H
 
 
-#include "eos.h"
-#include "Services/Fsm/eosFsmStateBase.h"
+#include "appMachineConfig.h"
 
 
 namespace app {
+
+    class Context;
 
     class State: public eos::FsmStateBase {
         protected:
             State();
         public:
-            virtual void onSW1_ON(Context* context);
-            virtual void onSW2_ON(Context* context);
-            virtual void onSW3_ON(Context* context);
-            virtual void onTMR1_TIMEOUT(Context* context);
+            virtual void onSW1Pressed(Context* context);
+            virtual void onSW2Pressed(Context* context);
+            virtual void onSW3Pressed(Context* context);
+            virtual void onTMR1TimeOut(Context* context);
     };
 
-    class WaitingSW1 {
+    class WaitingSW1: public State {
         private:
             static WaitingSW1* instance;
         protected:
             WaitingSW1();
         public:
             static WaitingSW1* getInstance();
-            void onSW1_ON(Context* context) override;
+            void onSW1Pressed(Context* context) override;
     };
 
-    class WaitingSW2 {
+    class WaitingSW2: public State {
         private:
             static WaitingSW2* instance;
         protected:
             WaitingSW2();
         public:
             static WaitingSW2* getInstance();
-            void onSW2_ON(Context* context) override;
+            void onSW2Pressed(Context* context) override;
     };
 
-    class WaitingSW3 {
+    class WaitingSW3: public State {
         private:
             static WaitingSW3* instance;
         protected:
             WaitingSW3();
         public:
             static WaitingSW3* getInstance();
-            void onSW3_ON(Context* context) override;
+            void onSW3Pressed(Context* context) override;
     };
 
-    class WaitingTMR1 {
+    class WaitingTMR1: public State {
         private:
             static WaitingTMR1* instance;
         protected:
             WaitingTMR1();
         public:
             static WaitingTMR1* getInstance();
-            void onTMR1_TIMEOUT(Context* context) override;
+            void onTMR1TimeOut(Context* context) override;
     };
 
 }

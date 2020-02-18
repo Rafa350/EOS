@@ -7,8 +7,9 @@
 //
 // -----------------------------------------------------------------------
 
-#include "MachineContext.h"
+
 #include "MachineState.h"
+#include "MachineContext.h"
 
 
 namespace app {
@@ -17,26 +18,30 @@ namespace app {
     }
 
     void Context::start() {
+        doLED1Off();
+        doLED2Off();
+        doLED3Off();
+        doLED1Off();
         setState(WaitingSW1::getInstance());
     }
 
     void Context::end() {
     }
 
-    void Context::onSW1_ON() {
-        static_cast<State*>(getState())->onSW1_ON(this);
+    void Context::onSW1Pressed() {
+        static_cast<State*>(getState())->onSW1Pressed(this);
     }
 
-    void Context::onSW2_ON() {
-        static_cast<State*>(getState())->onSW2_ON(this);
+    void Context::onSW2Pressed() {
+        static_cast<State*>(getState())->onSW2Pressed(this);
     }
 
-    void Context::onSW3_ON() {
-        static_cast<State*>(getState())->onSW3_ON(this);
+    void Context::onSW3Pressed() {
+        static_cast<State*>(getState())->onSW3Pressed(this);
     }
 
-    void Context::onTMR1_TIMEOUT() {
-        static_cast<State*>(getState())->onTMR1_TIMEOUT(this);
+    void Context::onTMR1TimeOut() {
+        static_cast<State*>(getState())->onTMR1TimeOut(this);
     }
 
 }
