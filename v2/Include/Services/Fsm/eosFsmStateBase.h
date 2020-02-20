@@ -8,10 +8,22 @@
 
 
 namespace eos {
+    
+    class FsmContextBase;
 
 	class FsmStateBase {	
+        private:
+            FsmContextBase* context;
+    
         protected:
-			FsmStateBase();
+			FsmStateBase(FsmContextBase* context);
+            virtual ~FsmStateBase();
+        
+            inline FsmContextBase* getContext() const { return context; }
+        
+        public:
+            virtual void enter() = 0;
+            virtual void exit() = 0;
 	};
 
 }

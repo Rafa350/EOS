@@ -14,34 +14,40 @@
 
 namespace app {
 
+    class State;
+
     Context::Context() {
+        states[(int)StateID::WaitingSW1] = new WaitingSW1(this);
+        states[(int)StateID::WaitingSW2] = new WaitingSW2(this);
+        states[(int)StateID::WaitingSW3] = new WaitingSW3(this);
+    }
+
+    State* Context::getStateInstance(
+        StateID id) {
+        return states[(int)id];
     }
 
     void Context::start() {
         doLED1Off();
         doLED2Off();
         doLED3Off();
-        doLED1Off();
-        setState(WaitingSW1::getInstance());
+        doLED1On();
+        setState(getStateInstance(StateID::WaitingSW1));
     }
 
     void Context::end() {
     }
 
-    void Context::onSW1Pressed() {
-        static_cast<State*>(getState())->onSW1Pressed(this);
+    void Context::transition_SW1Pressed() {
+        static_cast<State*>(getState())->transition_SW1Pressed();
     }
 
-    void Context::onSW2Pressed() {
-        static_cast<State*>(getState())->onSW2Pressed(this);
+    void Context::transition_SW2Pressed() {
+        static_cast<State*>(getState())->transition_SW2Pressed();
     }
 
-    void Context::onSW3Pressed() {
-        static_cast<State*>(getState())->onSW3Pressed(this);
-    }
-
-    void Context::onTMR1TimeOut() {
-        static_cast<State*>(getState())->onTMR1TimeOut(this);
+    void Context::transition_SW3Pressed() {
+        static_cast<State*>(getState())->transition_SW3Pressed();
     }
 
 }

@@ -8,7 +8,19 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
+/// \param    context: El context.
 ///
-FsmStateBase::FsmStateBase() {
+FsmStateBase::FsmStateBase(
+    FsmContextBase* context):
 
+    context(context) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Destructor.
+///
+FsmStateBase::~FsmStateBase() {
+    
 }

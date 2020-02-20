@@ -20,52 +20,37 @@ namespace app {
 
     class State: public eos::FsmStateBase {
         protected:
-            State();
+            State(Context* context);
         public:
-            virtual void onSW1Pressed(Context* context);
-            virtual void onSW2Pressed(Context* context);
-            virtual void onSW3Pressed(Context* context);
-            virtual void onTMR1TimeOut(Context* context);
+            virtual void enter();
+            virtual void exit();
+            virtual void transition_SW1Pressed();
+            virtual void transition_SW2Pressed();
+            virtual void transition_SW3Pressed();
     };
 
     class WaitingSW1: public State {
-        private:
-            static WaitingSW1* instance;
-        protected:
-            WaitingSW1();
         public:
-            static WaitingSW1* getInstance();
-            void onSW1Pressed(Context* context) override;
+            WaitingSW1(Context* context);
+        public:
+            void enter() override;
+            void transition_SW1Pressed() override;
     };
 
     class WaitingSW2: public State {
-        private:
-            static WaitingSW2* instance;
-        protected:
-            WaitingSW2();
         public:
-            static WaitingSW2* getInstance();
-            void onSW2Pressed(Context* context) override;
+            WaitingSW2(Context* context);
+        public:
+            void enter() override;
+            void transition_SW2Pressed() override;
     };
 
     class WaitingSW3: public State {
-        private:
-            static WaitingSW3* instance;
-        protected:
-            WaitingSW3();
         public:
-            static WaitingSW3* getInstance();
-            void onSW3Pressed(Context* context) override;
-    };
-
-    class WaitingTMR1: public State {
-        private:
-            static WaitingTMR1* instance;
-        protected:
-            WaitingTMR1();
+            WaitingSW3(Context* context);
         public:
-            static WaitingTMR1* getInstance();
-            void onTMR1TimeOut(Context* context) override;
+            void enter() override;
+            void transition_SW3Pressed() override;
     };
 
 }

@@ -16,20 +16,32 @@
 
 namespace app {
 
+    class State;
+
     class Context: public eos::FsmContextBase {
+        public:
+            enum class StateID {
+                WaitingSW1,
+                WaitingSW2,
+                WaitingSW3
+            };
+        private:
+            State* states[3];
         public:
             Context();
         public:
+            State* getStateInstance(StateID id);
             void start();
             void end();
-            void onSW1Pressed();
-            void onSW2Pressed();
-            void onSW3Pressed();
-            void onTMR1TimeOut();
+            void transition_SW1Pressed();
+            void transition_SW2Pressed();
+            void transition_SW3Pressed();
             void doLED1Off();
+            void doLED1On();
             void doLED2Off();
+            void doLED2On();
             void doLED3Off();
-            void doTMR1Start();
+            void doLED3On();
     };
 
 }

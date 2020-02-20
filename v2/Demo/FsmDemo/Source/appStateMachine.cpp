@@ -44,15 +44,15 @@ void MyStateMachine::task() {
        
         switch (message) {
             case Message::pressedSW1:
-                context->onSW1Pressed();
+                context->transition_SW1Pressed();
                 break;
                 
             case Message::pressedSW2:
-                context->onSW2Pressed();
+                context->transition_SW2Pressed();
                 break;
 
             case Message::pressedSW3:
-                context->onSW3Pressed();
+                context->transition_SW3Pressed();
                 break;
         }
     }

@@ -14,100 +14,80 @@
 
 namespace app {
 
-    State::State() {
+    State::State(
+        Context* context) :
+        eos::FsmStateBase(context) {
     }
 
-    void State::onSW1Pressed(
-        Context* context) {
+    void State::enter() {
     }
 
-    void State::onSW2Pressed(
-        Context* context) {
+    void State::exit() {
     }
 
-    void State::onSW3Pressed(
-        Context* context) {
+    void State::transition_SW1Pressed() {
     }
 
-    void State::onTMR1TimeOut(
-        Context* context) {
+    void State::transition_SW2Pressed() {
     }
 
-    WaitingSW1* WaitingSW1::instance = nullptr;
-
-    WaitingSW1::WaitingSW1() {
+    void State::transition_SW3Pressed() {
     }
 
-    WaitingSW1* WaitingSW1::getInstance() {
-        if (instance == nullptr) instance = new WaitingSW1();
-        return instance;
+    WaitingSW1::WaitingSW1(
+        Context* context) :
+        State(context) {
     }
 
-    void WaitingSW1::onSW1Pressed(
-        Context* context) {
+    void WaitingSW1::enter() {
+        Context* ctx = static_cast<Context*>(getContext());
+        ctx->doLED1On();
+    }
+
+    void WaitingSW1::transition_SW1Pressed() {
+        Context* ctx = static_cast<Context*>(getContext());
         if (true) {
-            context->doLED1Off();
-            context->doLED1Off();
-            context->doLED3Off();
-            context->setState(WaitingSW2::getInstance());
+            ctx->clearState();
+            ctx->doLED1Off();
+            ctx->setState(ctx->getStateInstance(Context::StateID::WaitingSW2));
         }
     }
 
-    WaitingSW2* WaitingSW2::instance = nullptr;
-
-    WaitingSW2::WaitingSW2() {
+    WaitingSW2::WaitingSW2(
+        Context* context) :
+        State(context) {
     }
 
-    WaitingSW2* WaitingSW2::getInstance() {
-        if (instance == nullptr) instance = new WaitingSW2();
-        return instance;
+    void WaitingSW2::enter() {
+        Context* ctx = static_cast<Context*>(getContext());
+        ctx->doLED2On();
     }
 
-    void WaitingSW2::onSW2Pressed(
-        Context* context) {
+    void WaitingSW2::transition_SW2Pressed() {
+        Context* ctx = static_cast<Context*>(getContext());
         if (true) {
-            context->doLED1Off();
-            context->doLED2Off();
-            context->setState(WaitingSW3::getInstance());
+            ctx->clearState();
+            ctx->doLED2Off();
+            ctx->setState(ctx->getStateInstance(Context::StateID::WaitingSW3));
         }
     }
 
-    WaitingSW3* WaitingSW3::instance = nullptr;
-
-    WaitingSW3::WaitingSW3() {
+    WaitingSW3::WaitingSW3(
+        Context* context) :
+        State(context) {
     }
 
-    WaitingSW3* WaitingSW3::getInstance() {
-        if (instance == nullptr) instance = new WaitingSW3();
-        return instance;
+    void WaitingSW3::enter() {
+        Context* ctx = static_cast<Context*>(getContext());
+        ctx->doLED3On();
     }
 
-    void WaitingSW3::onSW3Pressed(
-        Context* context) {
+    void WaitingSW3::transition_SW3Pressed() {
+        Context* ctx = static_cast<Context*>(getContext());
         if (true) {
-            context->doLED2Off();
-            context->doLED3Off();
-            context->doTMR1Start();
-            context->setState(WaitingTMR1::getInstance());
-        }
-    }
-
-    WaitingTMR1* WaitingTMR1::instance = nullptr;
-
-    WaitingTMR1::WaitingTMR1() {
-    }
-
-    WaitingTMR1* WaitingTMR1::getInstance() {
-        if (instance == nullptr) instance = new WaitingTMR1();
-        return instance;
-    }
-
-    void WaitingTMR1::onTMR1TimeOut(
-        Context* context) {
-        if (true) {
-            context->doLED3Off();
-            context->doLED1Off();
-            context->setState(WaitingSW1::getInstance());
+            ctx->clearState();
+            ctx->doLED3Off();
+            ctx->setState(ctx->getStateInstance(Context::StateID::WaitingSW1));
         }
     }
 

@@ -16,12 +16,8 @@
     <state name="WaitingSW1">
 	
 		<enter>
-			<run name="LED1Off"/>
+			<run name="LED1On"/>
 		</enter>
-
-		<exit>
-			<run name="LED1Off"/>
-		</exit>
 		
         <!-- Es prem el boto SW1
         -->
@@ -34,15 +30,14 @@
     <!-- Espera al boto SW2.
     -->
     <state name="WaitingSW2">
-	
-		<enter>
-			<run name="LED3Off"/>
-		</enter>
 
+		<enter>
+			<run name="LED2On"/>
+		</enter>
+	
         <!-- Es prem el boto SW2
         -->
         <transition name="SW2Pressed" state="WaitingSW3">
-			<run name="LED1Off" />
 			<run name="LED2Off" />
         </transition>
 
@@ -52,26 +47,16 @@
     -->
     <state name="WaitingSW3">
 	
+		<enter>
+			<run name="LED3On"/>
+		</enter>
+
         <!-- Es prem el boto SW3
         -->
-        <transition name="SW3Pressed" state="WaitingTMR1">
-			<run name="LED2Off" />
+        <transition name="SW3Pressed" state="WaitingSW1">
 			<run name="LED3Off" />
-			<run name="TMR1Start" />
         </transition>
 		
-    </state>
-    
-    <!-- Espera el timeout de TMR1
-    -->
-    <state name="WaitingTMR1">
-        
-        <!-- Timeout del temporitzador TIMER1
-        -->
-        <transition name="TMR1TimeOut" state="WaitingSW1">
-			<run name="LED3Off" />
-		</transition>
-
     </state>
 
 </machine>

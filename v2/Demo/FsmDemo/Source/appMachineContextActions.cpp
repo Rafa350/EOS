@@ -27,7 +27,3 @@ void Context::doLED3On() {
 void Context::doLED3Off() {
     
 }
-
-void Context::doTMR1Start() {
-    
-}
