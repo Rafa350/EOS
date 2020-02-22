@@ -47,9 +47,9 @@ namespace app {
     void WaitingSW1::transition_SW1Pressed() {
         Context* ctx = static_cast<Context*>(getContext());
         if (true) {
-            ctx->clearState();
+            ctx->beginTransition();
             ctx->doLED1Off();
-            ctx->setState(ctx->getStateInstance(Context::StateID::WaitingSW2));
+            ctx->endTransition(ctx->getStateInstance(Context::StateID::WaitingSW2));
         }
     }
 
@@ -66,9 +66,9 @@ namespace app {
     void WaitingSW2::transition_SW2Pressed() {
         Context* ctx = static_cast<Context*>(getContext());
         if (true) {
-            ctx->clearState();
+            ctx->beginTransition();
             ctx->doLED2Off();
-            ctx->setState(ctx->getStateInstance(Context::StateID::WaitingSW3));
+            ctx->endTransition(ctx->getStateInstance(Context::StateID::WaitingSW3));
         }
     }
 
@@ -85,9 +85,9 @@ namespace app {
     void WaitingSW3::transition_SW3Pressed() {
         Context* ctx = static_cast<Context*>(getContext());
         if (true) {
-            ctx->clearState();
+            ctx->beginTransition();
             ctx->doLED3Off();
-            ctx->setState(ctx->getStateInstance(Context::StateID::WaitingSW1));
+            ctx->endTransition(ctx->getStateInstance(Context::StateID::WaitingSW1));
         }
     }
 

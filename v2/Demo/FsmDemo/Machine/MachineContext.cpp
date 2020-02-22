@@ -17,22 +17,21 @@ namespace app {
     class State;
 
     Context::Context() {
-        states[(int)StateID::WaitingSW1] = new WaitingSW1(this);
-        states[(int)StateID::WaitingSW2] = new WaitingSW2(this);
-        states[(int)StateID::WaitingSW3] = new WaitingSW3(this);
+        states[int(StateID::WaitingSW1)] = new WaitingSW1(this);
+        states[int(StateID::WaitingSW2)] = new WaitingSW2(this);
+        states[int(StateID::WaitingSW3)] = new WaitingSW3(this);
     }
 
     State* Context::getStateInstance(
         StateID id) {
-        return states[(int)id];
+        return states[int(id)];
     }
 
     void Context::start() {
         doLED1Off();
         doLED2Off();
         doLED3Off();
-        doLED1On();
-        setState(getStateInstance(StateID::WaitingSW1));
+        initialize(getStateInstance(StateID::WaitingSW1));
     }
 
     void Context::end() {

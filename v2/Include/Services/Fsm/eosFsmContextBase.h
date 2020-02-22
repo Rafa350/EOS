@@ -22,14 +22,15 @@ namespace eos {
             StateStack stateStack;
             
 		protected:
-			FsmContextBase();            
+			FsmContextBase();               
+            void initialize(FsmStateBase* state);
             FsmStateBase* getState() const;
 
         public:
-            void clearState();
-			void setState(FsmStateBase* state);
-            void pushState(FsmStateBase* state);
-            void popState();
+            void beginTransition();
+			void endTransition(FsmStateBase* state);
+            void endTransitionPush(FsmStateBase* state);
+            void endTransitionPop();
 	};
     
 }

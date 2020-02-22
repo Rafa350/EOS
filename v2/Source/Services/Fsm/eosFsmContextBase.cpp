@@ -24,12 +24,27 @@ FsmStateBase* FsmContextBase::getState() const {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Asigna el nou estat al context.
-/// \param    state: El nou estat.
-/// \remarks  Crida al metode 'enter' del estat.
+/// ---------------------------------------------------------------------
+/// \brief    Iniciazlitza la maquina d'estats.
+/// \param    state: El estat inicial.
 ///
-void FsmContextBase::setState(
+void FsmContextBase::initialize(
+    FsmStateBase *state) {
+    
+    if (state != nullptr) {
+        this->state = state;
+        state->enter();
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Es crida al final de la transicio per seleccionar el 
+///           nou estat.
+/// \param    state: El nou estat.
+/// \remarks  Crida al metode 'enter' del nou estat i el selecciona.
+///
+void FsmContextBase::endTransition(
     FsmStateBase* state) {
 
     if (this->state != state) {
@@ -41,10 +56,10 @@ void FsmContextBase::setState(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el estat null.
+/// \brief    Es crida al inici de la transicio.
 /// \remarks  Crida al metode 'exit' del estat.
 ///
-void FsmContextBase::clearState() {
+void FsmContextBase::beginTransition() {
     
     if (state != nullptr) {
         state->exit();
