@@ -16,7 +16,11 @@ namespace app {
 
     class State;
 
-    Context::Context() {
+    class MyStateMachine;
+
+    Context::Context(
+        MyStateMachine* owner) :
+        owner(owner) {
         states[int(StateID::WaitingSW1)] = new WaitingSW1(this);
         states[int(StateID::WaitingSW2)] = new WaitingSW2(this);
         states[int(StateID::WaitingSW3)] = new WaitingSW3(this);
@@ -27,10 +31,14 @@ namespace app {
         return states[int(id)];
     }
 
+    MyStateMachine* Context::getOwner() {
+        return owner;
+    }
+
     void Context::start() {
-        doLED1Off();
-        doLED2Off();
-        doLED3Off();
+        owner->doLED1Off();
+        owner->doLED2Off();
+        owner->doLED3Off();
         initialize(getStateInstance(StateID::WaitingSW1));
     }
 

@@ -25,8 +25,9 @@ FsmStateBase* FsmContextBase::getState() const {
 
 
 /// ---------------------------------------------------------------------
-/// \brief    Iniciazlitza la maquina d'estats.
+/// \brief    Inicialitza la maquina d'estats.
 /// \param    state: El estat inicial.
+/// \remarks  CRida al metode 'enter' del estat seleccionat.
 ///
 void FsmContextBase::initialize(
     FsmStateBase *state) {

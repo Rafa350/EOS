@@ -14,7 +14,7 @@ MyStateMachine::MyStateMachine() :
     context(nullptr),
     messageQueue(10) {
     
-    context = new Context();
+    context = new Context(this);
     context->start();
 }
 
@@ -56,5 +56,35 @@ void MyStateMachine::task() {
                 break;
         }
     }
+    
+}
+
+
+void  MyStateMachine::doLED1On() {
+    
+}
+
+
+void  MyStateMachine::doLED2On() {
+    
+}
+
+
+void  MyStateMachine::doLED3On() {
+    
+}
+
+
+void  MyStateMachine::doLED1Off() {
+    
+}
+
+
+void  MyStateMachine::doLED2Off() {
+    
+}
+
+
+void  MyStateMachine::doLED3Off() {
     
 }

@@ -5,11 +5,11 @@
 #include "eos.h"
 #include "Services/eosFsmService.h"
 #include "System/Core/eosQueue.h"
-#include "MachineContext.h"
-#include "MachineState.h"
 
 
 namespace app {
+    
+    class Context;
     
     class MyStateMachine: public eos::StateMachine {
         public:
@@ -26,6 +26,12 @@ namespace app {
             MyStateMachine();
             bool acceptMessage(Message message, unsigned blockTime);
             void task() override;
+            void doLED1On();
+            void doLED2On();
+            void doLED3On();
+            void doLED1Off();
+            void doLED2Off();
+            void doLED3Off();
     };
     
 }

@@ -41,14 +41,16 @@ namespace app {
 
     void WaitingSW1::enter() {
         Context* ctx = static_cast<Context*>(getContext());
-        ctx->doLED1On();
+        MyStateMachine* owner = ctx->getOwner();
+        owner->doLED1On();
     }
 
     void WaitingSW1::transition_SW1Pressed() {
         Context* ctx = static_cast<Context*>(getContext());
+        MyStateMachine* owner = ctx->getOwner();
         if (true) {
             ctx->beginTransition();
-            ctx->doLED1Off();
+            owner->doLED1Off();
             ctx->endTransition(ctx->getStateInstance(Context::StateID::WaitingSW2));
         }
     }
@@ -60,14 +62,16 @@ namespace app {
 
     void WaitingSW2::enter() {
         Context* ctx = static_cast<Context*>(getContext());
-        ctx->doLED2On();
+        MyStateMachine* owner = ctx->getOwner();
+        owner->doLED2On();
     }
 
     void WaitingSW2::transition_SW2Pressed() {
         Context* ctx = static_cast<Context*>(getContext());
+        MyStateMachine* owner = ctx->getOwner();
         if (true) {
             ctx->beginTransition();
-            ctx->doLED2Off();
+            owner->doLED2Off();
             ctx->endTransition(ctx->getStateInstance(Context::StateID::WaitingSW3));
         }
     }
@@ -79,14 +83,16 @@ namespace app {
 
     void WaitingSW3::enter() {
         Context* ctx = static_cast<Context*>(getContext());
-        ctx->doLED3On();
+        MyStateMachine* owner = ctx->getOwner();
+        owner->doLED3On();
     }
 
     void WaitingSW3::transition_SW3Pressed() {
         Context* ctx = static_cast<Context*>(getContext());
+        MyStateMachine* owner = ctx->getOwner();
         if (true) {
             ctx->beginTransition();
-            ctx->doLED3Off();
+            owner->doLED3Off();
             ctx->endTransition(ctx->getStateInstance(Context::StateID::WaitingSW1));
         }
     }

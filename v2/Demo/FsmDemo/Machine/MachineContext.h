@@ -18,6 +18,8 @@ namespace app {
 
     class State;
 
+    class MyStateMachine;
+
     class Context: public eos::FsmContextBase {
         public:
             enum class StateID {
@@ -27,21 +29,18 @@ namespace app {
             };
         private:
             State* states[3];
+        private:
+            MyStateMachine* owner;
         public:
-            Context();
+            Context(MyStateMachine* owner);
         public:
             State* getStateInstance(StateID id);
+            MyStateMachine* getOwner();
             void start();
             void end();
             void transition_SW1Pressed();
             void transition_SW2Pressed();
             void transition_SW3Pressed();
-            void doLED1Off();
-            void doLED1On();
-            void doLED2Off();
-            void doLED2On();
-            void doLED3Off();
-            void doLED3On();
     };
 
 }

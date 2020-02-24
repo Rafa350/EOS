@@ -20,6 +20,11 @@ namespace eos {
             virtual ~FsmStateBase();
         
             inline FsmContextBase* getContext() const { return context; }
+
+            void beginTransition();
+			void endTransition(FsmStateBase* state);
+            void endTransitionPush(FsmStateBase* state);
+            void endTransitionPop();
         
         public:
             virtual void enter() = 0;

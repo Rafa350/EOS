@@ -26,16 +26,16 @@ clean:
 	rm -rf *.pdf *.cpp *.h
 
 %Context.cpp: %.xsm
-	$(cgen) $(cgen_opt) /P:OutputType=ContextCode /P:ContextBaseClassName=eos::FsmContextBase /P:ContextCodeFileName=$*Context.cpp /P:ContextHeaderFileName=$*Context.h /P:StateHeaderFileName=$*State.h $*.xsm
+	$(cgen) $(cgen_opt) /P:OutputType=ContextCode /P:OwnerClassName=MyStateMachine /P:ContextBaseClassName=eos::FsmContextBase /P:ContextCodeFileName=$*Context.cpp /P:ContextHeaderFileName=$*Context.h /P:StateHeaderFileName=$*State.h $*.xsm
 	
 %Context.h: %.xsm
-	$(cgen) $(cgen_opt) /P:OutputType=ContextHeader /P:ContextBaseClassName=eos::FsmContextBase /P:ConfigHeaderFileName=appMachineConfig.h /P:ContextHeaderFileName=$*Context.h $*.xsm
+	$(cgen) $(cgen_opt) /P:OutputType=ContextHeader /P:OwnerClassName=MyStateMachine /P:ContextBaseClassName=eos::FsmContextBase /P:ConfigHeaderFileName=appMachineConfig.h /P:ContextHeaderFileName=$*Context.h $*.xsm
 
 %State.cpp: %.xsm
-	$(cgen) $(cgen_opt) /P:OutputType=StateCode /P:ContextBaseClassName=eos::FsmContextBase /P:StateBaseClassName=eos::FsmStateBase /P:StateCodeFileName=$*State.cpp /P:ContextHeaderFileName=$*Context.h /P:StateHeaderFileName=$*State.h $*.xsm
+	$(cgen) $(cgen_opt) /P:OutputType=StateCode /P:OwnerClassName=MyStateMachine /P:ContextBaseClassName=eos::FsmContextBase /P:StateBaseClassName=eos::FsmStateBase /P:StateCodeFileName=$*State.cpp /P:ContextHeaderFileName=$*Context.h /P:StateHeaderFileName=$*State.h $*.xsm
 	
 %State.h: %.xsm
-	$(cgen) $(cgen_opt) /P:OutputType=StateHeader /P:ContextBaseClassName=eos::FsmContextBase /P:StateBaseClassName=eos::FsmStateBase /P:ConfigHeaderFileName=appMachineConfig.h /P:StateHeaderFileName=$*State.h $*.xsm
+	$(cgen) $(cgen_opt) /P:OutputType=StateHeader /P:OwnerClassName=MyStateMachine /P:ContextBaseClassName=eos::FsmContextBase /P:StateBaseClassName=eos::FsmStateBase /P:ConfigHeaderFileName=appMachineConfig.h /P:StateHeaderFileName=$*State.h $*.xsm
 
 %.dot: %.xsm
 	$(dotgen) $(dotgen_opt)	$*.xsm
