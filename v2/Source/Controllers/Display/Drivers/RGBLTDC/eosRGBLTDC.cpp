@@ -645,7 +645,7 @@ void RGBDirectDriver::fill(
 			backFrameAddr + halLTDCGetPixelOffset(HAL_LTDC_LAYER_0, x, y),
 			width,
 			height,
-			LINE_WIDTH - width, // TODO: Revisar aizo
+			LINE_WIDTH - width, // TODO: Revisar aixo
 			HAL_DMA2D_DFMT_DEFAULT,
 			toPixel(color));
 		halDMA2DWaitForFinish();
