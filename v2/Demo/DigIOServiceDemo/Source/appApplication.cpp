@@ -104,8 +104,9 @@ void MyApplication::digInput1EventHandler(
     const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if ((args.type == DigInput::EventType::change) && !args.input->get())
-        getLed3()->pulse(500);
+    if (!args.input->get())
+        //getLed3()->pulse(500);
+        getLed3()->toggle();
 #endif
 }
 #endif
@@ -120,7 +121,7 @@ void MyApplication::digInput2EventHandler(
     const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if ((args.type == DigInput::EventType::change) && !args.input->get())
+    if (!args.input->get())
         getLed3()->pulse(1000);
 #endif
 }
@@ -136,7 +137,7 @@ void MyApplication::digInput3EventHandler(
     const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if ((args.type == DigInput::EventType::change) && !args.input->get()) {
+    if (!args.input->get()) {
     //    getLed3()->pulse(1500);
         timer1->start(1000);
         timer2->start(1500);

@@ -185,7 +185,7 @@ void TimerService::onTask() {
 
     while (true) {
         Command cmd;
-        while (commandQueue.get(cmd, ((unsigned)-1))) {
+        while (commandQueue.get(cmd, unsigned(-1))) {
             
             Task::enterCriticalSection();
             

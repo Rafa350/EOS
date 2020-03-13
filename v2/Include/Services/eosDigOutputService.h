@@ -9,6 +9,7 @@
 #include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/Collections/eosArrayList.h"
+#include "System/Core/eosQueue.h"
 
 
 namespace eos {
@@ -19,9 +20,21 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
         private:
+            enum class OpCode {
+                set,
+                clear,
+                toggle
+            };
+            struct Command {
+                OpCode opCode;
+                DigOutput* output;
+            };
+            typedef Queue<Command> CommandQueue;
             typedef ArrayList<DigOutput*> DigOutputList;
             typedef ArrayList<DigOutput*>::Iterator DigOutputListIterator;
 
+        private:
+            CommandQueue commandQueue;
             TMRTimer timer;
             DigOutputList outputs;
 
@@ -31,6 +44,9 @@ namespace eos {
         protected:
             void onInitialize() override;
             void onTask() override;
+            void cmdClear(DigOutput* output);
+            void cmdSet(DigOutput* output);
+            void cmdToggle(DigOutput* output);
 
         public:
             DigOutputService(Application* application, TMRTimer timer);
@@ -39,6 +55,10 @@ namespace eos {
             void addOutput(DigOutput* output);
             void removeOutput(DigOutput* output);
             void removeOutputs();
+            
+            void set(DigOutput* output);
+            void clear(DigOutput* output);
+            void toggle(DigOutput* output);
     };
 
     /// \brief Clase que implementa una sortida digital.
@@ -66,12 +86,24 @@ namespace eos {
             DigOutput(DigOutputService* service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
             ~DigOutput();
 
-            inline DigOutputService* getService() const { return service; }
+            inline DigOutputService* getService() const { 
+                return service; 
+            }
 
             bool get() const;
-            void set();
-            void clear();
-            void toggle();
+            
+            inline void set() {
+                service->set(this);
+            }
+            
+            inline void clear() {
+                service->clear(this);
+            }
+            
+            inline void toggle() {
+                service->toggle(this);
+            }
+            
             void pulse(unsigned width);
             void cicle(unsigned width1, unsigned width2);
             void delayedSet(unsigned delay);

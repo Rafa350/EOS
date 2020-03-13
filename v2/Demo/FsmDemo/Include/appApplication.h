@@ -6,7 +6,6 @@
 #include "Services/eosDigInputService.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosFsmService.h"
-#include "Services/eosTimerService.h"
 #include "System/eosApplication.h"
 #include "System/eosCallbacks.h"
 
@@ -20,17 +19,12 @@ namespace app {
     class MyApplication: public Application {
         private:
             typedef CallbackP1<MyApplication, const DigInput::EventArgs&> DigInputEventCallback;
-            typedef CallbackP1<MyApplication, const TimerCounter::EventArgs&> TimerEventCallback;
             typedef CallbackP1<MyApplication, const FsmService::EventArgs&> FsmEventCallback;
 
         private:
             DigOutputService* digOutputService;
             DigInputService* digInputService;
             FsmService *fsmService;
-            TimerService* timerService;
-            TimerCounter* timer1;
-            TimerCounter* timer2;
-            TimerEventCallback timerEventCallback;
             FsmEventCallback fsmEventCallback;
             
             MyStateMachine *sm;
@@ -57,11 +51,7 @@ namespace app {
             DigInputEventCallback digInput3EventCallback;
     #endif
 
-        public:
-            MyApplication();
-            void timerEventHandler(const TimerCounter::EventArgs& args);
-            void fsmEventHandler(const FsmService::EventArgs& args);
-            
+        private:
     #ifdef EXIST_SWITCHES_SW1
             void digInput1EventHandler(const DigInput::EventArgs &args);
     #endif
@@ -71,11 +61,14 @@ namespace app {
     #ifdef EXIST_SWITCHES_SW3
             void digInput3EventHandler(const DigInput::EventArgs &args);
     #endif
+            void fsmEventHandler(const FsmService::EventArgs& args);
 
         protected:
             void onInitialize();
-    };
 
+        public:
+            MyApplication();
+    };
 }
 
 

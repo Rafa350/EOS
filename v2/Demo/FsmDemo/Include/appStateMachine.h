@@ -11,7 +11,7 @@ namespace app {
     
     class Context;
     
-    class MyStateMachine: public eos::StateMachine {
+    class MyStateMachine: public eos::FsmMachine {
         public:
             enum class Message {
                 pressedSW1,
@@ -22,10 +22,12 @@ namespace app {
         private:
             Context* context;
             MessageQueue messageQueue;
+        protected:
+            void initialize() override;
+            void task() override;
         public:
             MyStateMachine();
             bool acceptMessage(Message message, unsigned blockTime);
-            void task() override;
             void doLED1On();
             void doLED2On();
             void doLED3On();

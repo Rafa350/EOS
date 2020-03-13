@@ -11,13 +11,53 @@ using namespace eos;
 /// \param   sm: La maquina d'estat a procesar.
 ///
 FsmService::FsmService(
-    Application* application,
-    StateMachine* sm):
+    Application* application) :
 
     Service(application),
-    sm(sm),
     eventCallback(nullptr) {
 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix una maquina al servei.
+/// \param    machine: La maquina a afeigir.
+///
+void FsmService::addMachine(
+    FsmMachine *machine) {
+    
+    eosAssert(machine != nullptr);
+    eosAssert(machine->service == nullptr);
+
+    machines.add(machine);
+    machine->service = this;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Elimina una maquina del servei.
+/// \param    machine: La maquina a eliminar.
+///
+void FsmService::removeMachine(
+    FsmMachine *machine) {
+
+    eosAssert(machine != nullptr);
+    eosAssert(machine->service == this);
+
+    machines.remove(machine);
+    machine->service = nullptr;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el servei.
+/// 
+void FsmService::onInitialize() {
+
+    for (MachineListIterator it(machines); it.hasNext(); it.next()) {
+        FsmMachine *machine = it.getCurrent();
+        machine->initialize();
+    }    
 }
 
 
@@ -27,6 +67,18 @@ FsmService::FsmService(
 void FsmService::onTask() {
 
     while (true) {
-        sm->task();
+        for (MachineListIterator it(machines); it.hasNext(); it.next()) {
+            FsmMachine *machine = it.getCurrent();
+            machine->task();
+        }
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief   Constructor.
+///
+FsmMachine::FsmMachine() :
+    service(nullptr) {
+    
 }

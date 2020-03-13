@@ -23,17 +23,13 @@ MyApplication::MyApplication():
     digInput1EventCallback(this, &MyApplication::digInput1EventHandler), 
     digInput2EventCallback(this, &MyApplication::digInput2EventHandler), 
     digInput3EventCallback(this, &MyApplication::digInput3EventHandler),
-    timerEventCallback(this, &MyApplication::timerEventHandler),
     fsmEventCallback(this, &MyApplication::fsmEventHandler) {
     
     // Crea els serveis necesaris
     //
     digInputService = new DigInputService(this);
-    digOutputService = new DigOutputService(this, HAL_TMR_TIMER_2);
-    timerService = new TimerService(this);
-    
-    sm = new MyStateMachine();
-    fsmService = new FsmService(this, sm);
+    digOutputService = new DigOutputService(this, HAL_TMR_TIMER_2);   
+    fsmService = new FsmService(this);
 }
 
 
@@ -93,28 +89,12 @@ void MyApplication::onInitialize() {
         LED_LED3_PIN, 
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
-    
-    // Inicialitza el servei de temporitzadors.
-    //
-    timer1 = new TimerCounter(timerService);
-    timer1->setEventCallback(&timerEventCallback);
-    
+       
     // Inicialitza el servei de maquina d'estat
     //
+    sm = new MyStateMachine();
+    fsmService->addMachine(sm);
     fsmService->setEventCallback(&fsmEventCallback);
-}
-
-
-/// --------------------------------------------------------------------
-/// \brief    Procesa els events del temporitzador 1 i 2.
-/// \param    args: Parametres del event.
-///
-void MyApplication::timerEventHandler(
-    const TimerCounter::EventArgs& args) {
-    
-#ifdef EXIST_LEDS_LED3
-    digOutput3->pulse(250);
-#endif    
 }
 
 
@@ -136,7 +116,7 @@ void MyApplication::fsmEventHandler(
 void MyApplication::digInput1EventHandler(
     const DigInput::EventArgs &args) {
 
-    if ((args.type == DigInput::EventType::change) && !args.input->get()) 
+    if (!args.input->get()) 
         sm->acceptMessage(MyStateMachine::Message::pressedSW1, (unsigned) -1);
 }
 #endif
@@ -150,7 +130,7 @@ void MyApplication::digInput1EventHandler(
 void MyApplication::digInput2EventHandler(
     const DigInput::EventArgs &args) {
 
-    if ((args.type == DigInput::EventType::change) && !args.input->get()) 
+    if (!args.input->get()) 
         sm->acceptMessage(MyStateMachine::Message::pressedSW2, (unsigned) -1);
 }
 #endif
@@ -164,7 +144,7 @@ void MyApplication::digInput2EventHandler(
 void MyApplication::digInput3EventHandler(
     const DigInput::EventArgs &args) {
 
-    if ((args.type == DigInput::EventType::change) && !args.input->get())
+    if (!args.input->get())
         sm->acceptMessage(MyStateMachine::Message::pressedSW3, (unsigned) -1);
 }
 #endif

@@ -11,11 +11,8 @@ using namespace app;
 /// \brief    Constructor.
 ///
 MyStateMachine::MyStateMachine() :
-    context(nullptr),
+    context(new Context(this)),
     messageQueue(10) {
-    
-    context = new Context(this);
-    context->start();
 }
 
 
@@ -30,6 +27,15 @@ bool MyStateMachine::acceptMessage(
     unsigned blockTime) {
     
     return messageQueue.put(message, blockTime);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza la maquina.
+///
+void MyStateMachine::initialize() {
+    
+    context->start();
 }
 
 
@@ -61,7 +67,7 @@ void MyStateMachine::task() {
 
 
 void  MyStateMachine::doLED1On() {
-    
+
 }
 
 

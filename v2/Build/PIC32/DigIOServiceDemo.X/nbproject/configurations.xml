@@ -41,6 +41,7 @@
             <itemPath>../../../Include/Services/eosDigInputService.h</itemPath>
             <itemPath>../../../Include/Services/eosDigOutputService.h</itemPath>
             <itemPath>../../../Include/Services/eosTimerService.h</itemPath>
+            <itemPath>../../../Include/Services/eosDispatchService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f1" displayName="Collections" projectFiles="true">
@@ -109,6 +110,7 @@
             <itemPath>../../../Source/Services/eosDigInputService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosDigOutputService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosTimerService.cpp</itemPath>
+            <itemPath>../../../Source/Services/eosDispatchService.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
@@ -167,7 +169,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.30</languageToolchainVersion>
+        <languageToolchainVersion>2.40</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -344,7 +346,7 @@
         <targetDevice>PIC32MX795F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool></platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>2.40</languageToolchainVersion>
         <platform>3</platform>

@@ -122,7 +122,6 @@ void DigInputService::onTask() {
 
             if (changed && (input->eventCallback != nullptr)) {
                 DigInput::EventArgs args;
-                args.type = DigInput::EventType::change;
                 args.input = input;
                 input->eventCallback->execute(args);
             }

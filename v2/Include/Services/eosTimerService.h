@@ -64,7 +64,6 @@ namespace eos {
         protected:
             void onInitialize() override;
             void onTask() override;
-            //void onTick() override;
 
         private:
             void cmdStart(TimerCounter* timer);
@@ -99,12 +98,25 @@ namespace eos {
             TimerCounter(TimerService* service, IEventCallback* callback = nullptr);
             ~TimerCounter();
 
-            inline void setEventCallback(IEventCallback* callback) { eventCallback = callback; }
+            inline void setEventCallback(IEventCallback* callback) { 
+                eventCallback = callback; 
+            }
 
-            void start(unsigned period, unsigned blockTime = ((unsigned)-1)) { service->start(this, period, blockTime); }
-            void stop(unsigned blockTime = ((unsigned)-1)) { service->stop(this, blockTime); }
-            void pause(unsigned blockTime = ((unsigned)-1)) { service->pause(this, blockTime); }
-            void resume(unsigned blockTime = ((unsigned)-1)) { service->resume(this, blockTime); }
+            void start(unsigned period, unsigned blockTime = ((unsigned)-1)) { 
+                service->start(this, period, blockTime); 
+            }
+            
+            void stop(unsigned blockTime = ((unsigned)-1)) { 
+                service->stop(this, blockTime); 
+            }
+            
+            void pause(unsigned blockTime = ((unsigned)-1)) { 
+                service->pause(this, blockTime); 
+            }
+            
+            void resume(unsigned blockTime = ((unsigned)-1)) { 
+                service->resume(this, blockTime); 
+            }
 
         friend TimerService;
     };

@@ -18,6 +18,7 @@ DigOutputService::DigOutputService(
     Application *application,
     TMRTimer timer):
 
+    commandQueue(10),
     timer(timer),
     Service(application) {
 
@@ -78,6 +79,51 @@ void DigOutputService::removeOutputs() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Posa la sortida en estat ON
+/// \param    output: La sortida.
+///
+void DigOutputService::set(
+    DigOutput* output) {
+    
+    Command cmd;
+    
+    cmd.opCode = OpCode::set;
+    cmd.output = output;
+    commandQueue.put(cmd, unsigned(-1));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Posa la sortida en estat OFF
+/// \param    outout: La sortida.
+///
+void DigOutputService::clear(
+    DigOutput* output) {
+    
+    Command cmd;
+    
+    cmd.opCode = OpCode::clear;
+    cmd.output = output;
+    commandQueue.put(cmd, unsigned(-1));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Conmuta l'estat de la sortida.
+/// \param    outout: La sortida.
+///
+void DigOutputService::toggle(
+    DigOutput* output) {
+    
+    Command cmd;
+    
+    cmd.opCode = OpCode::toggle;
+    cmd.output = output;
+    commandQueue.put(cmd, unsigned(-1));
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Inicialitza el servei.
 ///
 void DigOutputService::onInitialize() {
@@ -98,6 +144,7 @@ void DigOutputService::onInitialize() {
 #else
 #error CPU no soportada
 #endif
+    
 	tmrInfo.irqCallback = timerInterrupt;
 	tmrInfo.irqParam = this;
 	halTMRInitialize(&tmrInfo);
@@ -120,6 +167,57 @@ void DigOutputService::onInitialize() {
 ///
 void DigOutputService::onTask() {
 
+    while (true) {
+        Command cmd;
+        while (commandQueue.get(cmd, unsigned(-1))) {
+            switch (cmd.opCode) {
+                case OpCode::set:
+                    cmdSet(cmd.output);
+                    break;
+                    
+                case OpCode::clear:
+                    cmdClear(cmd.output);
+                    break;
+                    
+                case OpCode::toggle:
+                    cmdToggle(cmd.output);
+                    break;
+            }
+        }
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'clear'
+/// \param    outpout: La sortida.
+///
+void DigOutputService::cmdClear(
+    DigOutput* output) {
+    
+    halGPIOClearPin(output->port, output->pin);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'set'
+/// \param    outpout: La sortida.
+///
+void DigOutputService::cmdSet(
+    DigOutput* output) {
+
+    halGPIOSetPin(output->port, output->pin);   
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'toggle'
+/// \param    outpout: La sortida.
+///
+void DigOutputService::cmdToggle(
+    DigOutput* output) {
+
+    halGPIOTogglePin(output->port, output->pin);
 }
 
 
@@ -245,7 +343,7 @@ bool DigOutput::get() const {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva una sortida.
 ///
-void DigOutput::clear() {
+/*void DigOutput::clear() {
 
 	Task::enterCriticalSection();
 
@@ -254,12 +352,12 @@ void DigOutput::clear() {
 
     Task::exitCriticalSection();
 }
-
+*/
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa una sortida
 ///
-void DigOutput::set() {
+/*void DigOutput::set() {
 
 	Task::enterCriticalSection();
 
@@ -268,12 +366,12 @@ void DigOutput::set() {
 
     Task::exitCriticalSection();
 }
-
+*/
 
 /// ----------------------------------------------------------------------
 /// \brief    Inverteix una sortida.
 ///
-void DigOutput::toggle() {
+/*void DigOutput::toggle() {
 
 	Task::enterCriticalSection();
 
@@ -282,7 +380,7 @@ void DigOutput::toggle() {
 
     Task::exitCriticalSection();
 }
-
+*/
 
 /// ----------------------------------------------------------------------
 /// \brief    Genera un puls.

@@ -22,17 +22,16 @@ namespace eos {
             typedef ArrayList<DigInput*> DigInputList;
             typedef ArrayList<DigInput*>::Iterator DigInputListIterator;
 
+        private:
             unsigned weakTime;
             DigInputList inputs;
 
         protected:
             void onInitialize();
             void onTask();
-
         public:
             DigInputService(Application* application);
             ~DigInputService();
-
             void addInput(DigInput* input);
             void removeInput(DigInput* input);
             void removeInputs();
@@ -42,12 +41,7 @@ namespace eos {
     ///
     class DigInput final {
         public:
-            enum class EventType {
-                change
-            };
-            
             struct EventArgs {
-                EventType type;
                 DigInput* input;
             };
 
@@ -62,25 +56,30 @@ namespace eos {
             uint32_t pattern;
             bool state;
             IEventCallback* eventCallback;
-
+            
+        private:
+            void initialize();
         public:
             DigInput(DigInputService* service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
             ~DigInput();
 
-            inline DigInputService* getService() const { return service; }
+            inline DigInputService* getService() const { 
+                return service; 
+            }
 
             /// \brief Obte l'estat actual de la entrada.
             /// \return L'estat de la entrada.
             ///
-            inline bool get() const { return state; }
+            inline bool get() const { 
+                return state; 
+            }
 
             /// \brief Asigna el event onChange
             /// \param callback: El callback del event
             ///
-            inline void setEventCallback(IEventCallback* callback) { eventCallback = callback; }
-
-        private:
-            void initialize();
+            inline void setEventCallback(IEventCallback* callback) { 
+                eventCallback = callback; 
+            }
 
         friend DigInputService;
     };
