@@ -8,7 +8,7 @@
 
 namespace eos {
     
-    class DispatchService: public Service {
+    class DispatchService final: public Service {
         
     };
 }

@@ -6,7 +6,7 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Crea un semafor
+/// \brief    Crea un semafor binari
 /// \return   El handler del semafor.
 ///
 HSemaphore osalSemaphoreCreate() {
@@ -52,6 +52,8 @@ bool osalSemaphoreWait(
 void osalSemaphoreRelease(
     HSemaphore hSemaphore) {
     
+	eosAssert(hSemaphore != NULL);
+
     xSemaphoreGive(hSemaphore);
 }
 

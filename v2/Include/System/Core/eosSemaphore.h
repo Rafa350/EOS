@@ -10,19 +10,19 @@
 
 namespace eos {
 
-    class BinarySemaphore {
+    class Semaphore {
         private:
             HSemaphore hSemaphore;
-
-        public:
-            BinarySemaphore();
-            ~BinarySemaphore();
             
-            bool wait(unsigned blockTime);
-            void release();
-            void releaseISR();
+        public:
+            Semaphore();
+            Semaphore(unsigned count);
+            ~Semaphore();
+            
+            bool wait(unsigned blockTime) const;
+            void release() const;
+            void releaseISR() const;
     };
-
 }
 
 

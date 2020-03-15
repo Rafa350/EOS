@@ -5,8 +5,6 @@
 #include "eos.h"
 #include "Services/eosDigInputService.h"
 #include "Services/eosDigOutputService.h"
-#include "Services/eosFsmService.h"
-#include "Services/eosTimerService.h"
 #include "System/eosApplication.h"
 #include "System/eosCallbacks.h"
 
@@ -20,17 +18,10 @@ namespace app {
     class MyApplication: public Application {
         private:
             typedef CallbackP1<MyApplication, const DigInput::EventArgs&> DigInputEventCallback;
-            typedef CallbackP1<MyApplication, const TimerCounter::EventArgs&> TimerEventCallback;
 
         private:
-            LedLoopService* ledLoopService;
             DigOutputService* digOutputService;
             DigInputService* digInputService;
-            FsmService *fsmService;
-            TimerService* timerService;
-            TimerCounter* timer1;
-            TimerCounter* timer2;
-            TimerEventCallback timerEventCallback;
 
     #ifdef EXIST_LEDS_LED1
             DigOutput *digOutput1;
@@ -56,7 +47,6 @@ namespace app {
 
         public:
             MyApplication();
-            void timerEventHandler(const TimerCounter::EventArgs& args);
     #ifdef EXIST_SWITCHES_SW1
             void digInput1EventHandler(const DigInput::EventArgs &args);
     #endif

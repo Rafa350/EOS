@@ -10,7 +10,6 @@
         </logicalFolder>
         <itemPath>../../../Demo/DigIOServiceDemo/Include/eosConfig.h</itemPath>
         <itemPath>../../../Demo/DigIOServiceDemo/Include/appApplication.h</itemPath>
-        <itemPath>../../../Demo/DigIOServiceDemo/Include/appLedLoopService.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -34,6 +33,7 @@
             <itemPath>../../../Include/OSAL/osalHeap.h</itemPath>
             <itemPath>../../../Include/OSAL/osalQueue.h</itemPath>
             <itemPath>../../../Include/OSAL/osalSemaphore.h</itemPath>
+            <itemPath>../../../Include/OSAL/osalMutex.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
             <itemPath>../../../Include/Services/eosService.h</itemPath>
@@ -74,11 +74,9 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-          <itemPath>../../../Demo/DigIOServiceDemo/Source/PIC32/AppInitialize.cpp</itemPath>
-          <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>
+          <itemPath>../../../Demo/DigIOServiceDemo/Source/PIC32/appInitialize.cpp</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/DigIOServiceDemo/Source/AppMain.cpp</itemPath>
-        <itemPath>../../../Demo/DigIOServiceDemo/Source/appLedLoopService.cpp</itemPath>
         <itemPath>../../../Demo/DigIOServiceDemo/Source/appApplication.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
@@ -102,6 +100,7 @@
               <itemPath>../../../Source/OSAL/FreeRTOS/osalHeap.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalQueue.c</itemPath>
               <itemPath>../../../Source/OSAL/FreeRTOS/osalSemaphore.c</itemPath>
+              <itemPath>../../../Source/OSAL/FreeRTOS/osalMutex.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f2" displayName="Services" projectFiles="true">
@@ -111,6 +110,11 @@
             <itemPath>../../../Source/Services/eosDigOutputService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosTimerService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosDispatchService.cpp</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f5" displayName="StartUp" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>
+            </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f3" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">

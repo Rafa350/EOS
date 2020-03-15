@@ -157,6 +157,7 @@ namespace eos {
     typedef GPIOPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_15> PA15;
 #endif
     
+#ifdef HAL_GPIO_PORT_B    
     typedef GPIOPinAdapter<HAL_GPIO_PORT_B, HAL_GPIO_PIN_0> PB0;
     typedef GPIOPinAdapter<HAL_GPIO_PORT_B, HAL_GPIO_PIN_1> PB1;
     typedef GPIOPinAdapter<HAL_GPIO_PORT_B, HAL_GPIO_PIN_2> PB2;
@@ -173,6 +174,7 @@ namespace eos {
     typedef GPIOPinAdapter<HAL_GPIO_PORT_B, HAL_GPIO_PIN_13> PB13;
     typedef GPIOPinAdapter<HAL_GPIO_PORT_B, HAL_GPIO_PIN_14> PB14;
     typedef GPIOPinAdapter<HAL_GPIO_PORT_B, HAL_GPIO_PIN_15> PB15;
+#endif    
 }
 
 

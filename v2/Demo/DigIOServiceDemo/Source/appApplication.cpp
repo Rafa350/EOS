@@ -1,14 +1,11 @@
 #include "eos.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
-#include "Services/eosAppLoopService.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
 #include "System/eosApplication.h"
 
 #include "appApplication.h"
-#include "appLedLoopService.h"
-
 
 
 using namespace eos;
@@ -21,15 +18,12 @@ using namespace app;
 MyApplication::MyApplication():
     digInput1EventCallback(this, &MyApplication::digInput1EventHandler),
     digInput2EventCallback(this, &MyApplication::digInput2EventHandler),
-    digInput3EventCallback(this, &MyApplication::digInput3EventHandler),
-    timerEventCallback(this, &MyApplication::timerEventHandler) {
+    digInput3EventCallback(this, &MyApplication::digInput3EventHandler) {
     
     // Crea els serveis necesaris
     //
     digInputService = new DigInputService(this);
     digOutputService = new DigOutputService(this, HAL_TMR_TIMER_2);
-    ledLoopService = new LedLoopService(this);
-    timerService = new TimerService(this);
 }
 
 
@@ -71,27 +65,6 @@ void MyApplication::onInitialize() {
     digOutput3 = new DigOutput(digOutputService, LED_LED3_PORT, LED_LED3_PIN,
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
-
-    // Inicialitza el servei de temporitzadors.
-    //
-    timer1 = new TimerCounter(timerService);
-    timer1->setEventCallback(&timerEventCallback);
-
-    timer2 = new TimerCounter(timerService);
-    timer2->setEventCallback(&timerEventCallback);
-}
-
-
-/// --------------------------------------------------------------------
-/// \brief    Procesa els events del temporitzador 1 i 2.
-/// \param    args: Parametres del event.
-///
-void MyApplication::timerEventHandler(
-    const TimerCounter::EventArgs& args) {
-
-#ifdef EXIST_LEDS_LED3
-    getLed3()->pulse(250);
-#endif
 }
 
 
@@ -103,10 +76,12 @@ void MyApplication::timerEventHandler(
 void MyApplication::digInput1EventHandler(
     const DigInput::EventArgs &args) {
 
-#ifdef EXIST_LEDS_LED3
-    if (!args.input->get())
-        //getLed3()->pulse(500);
-        getLed3()->toggle();
+#ifdef EXIST_LEDS_LED1
+    if (!args.input->get()) {
+        getLed1()->pulse(500);
+        getLed2()->delayedPulse(250, 500);
+        getLed3()->delayedPulse(500, 500);
+    }
 #endif
 }
 #endif
@@ -120,9 +95,12 @@ void MyApplication::digInput1EventHandler(
 void MyApplication::digInput2EventHandler(
     const DigInput::EventArgs &args) {
 
-#ifdef EXIST_LEDS_LED3
-    if (!args.input->get())
-        getLed3()->pulse(1000);
+#ifdef EXIST_LEDS_LED2
+    if (!args.input->get()) {
+        getLed3()->pulse(500);
+        getLed2()->delayedPulse(250, 500);
+        getLed1()->delayedPulse(500, 500);
+    }
 #endif
 }
 #endif
@@ -138,9 +116,9 @@ void MyApplication::digInput3EventHandler(
 
 #ifdef EXIST_LEDS_LED3
     if (!args.input->get()) {
-    //    getLed3()->pulse(1500);
-        timer1->start(1000);
-        timer2->start(1500);
+        getLed1()->toggle();
+        getLed2()->toggle();
+        getLed3()->toggle();
     }
 #endif
 }

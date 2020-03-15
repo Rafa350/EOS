@@ -23,30 +23,38 @@ namespace eos {
             enum class OpCode {
                 set,
                 clear,
-                toggle
+                toggle,
+                pulse,
+                delayedPulse
             };
             struct Command {
                 OpCode opCode;
                 DigOutput* output;
+                unsigned param1;
+                unsigned param2;
             };
             typedef Queue<Command> CommandQueue;
             typedef ArrayList<DigOutput*> DigOutputList;
             typedef ArrayList<DigOutput*>::Iterator DigOutputListIterator;
 
         private:
+            const unsigned commandQueueSize = 5;
             CommandQueue commandQueue;
             TMRTimer timer;
             DigOutputList outputs;
 
+    private:
             static void timerInterrupt(TMRTimer timer, void* params);
             void timeOut();
+            void cmdClear(DigOutput* output);
+            void cmdSet(DigOutput* output);
+            void cmdToggle(DigOutput* output);
+            void cmdPulse(DigOutput* output, unsigned width);
+            void cmdDelayedPulse(DigOutput* output, unsigned delay, unsigned width);
 
         protected:
             void onInitialize() override;
             void onTask() override;
-            void cmdClear(DigOutput* output);
-            void cmdSet(DigOutput* output);
-            void cmdToggle(DigOutput* output);
 
         public:
             DigOutputService(Application* application, TMRTimer timer);
@@ -59,6 +67,8 @@ namespace eos {
             void set(DigOutput* output);
             void clear(DigOutput* output);
             void toggle(DigOutput* output);
+            void pulse(DigOutput* output, unsigned width);
+            void delayedPulse(DigOutput* output, unsigned delay, unsigned width);
     };
 
     /// \brief Clase que implementa una sortida digital.
@@ -66,9 +76,9 @@ namespace eos {
     class DigOutput final {
         private:
             enum class State {
-                Idle,
-                DelayedPulse,
-                Pulse
+                idle,
+                delayedPulse,
+                pulse
             };
 
             DigOutputService* service;
@@ -104,16 +114,16 @@ namespace eos {
                 service->toggle(this);
             }
             
-            void pulse(unsigned width);
-            void cicle(unsigned width1, unsigned width2);
-            void delayedSet(unsigned delay);
-            void delayedClear(unsigned delay);
-            void delayedToggle(unsigned delay);
-            void delayedPulse(unsigned delay, unsigned width);
+            inline void pulse(unsigned width) {
+                service->pulse(this, width);
+            }
 
-        friend DigOutputService;
+            inline void delayedPulse(unsigned delay, unsigned width) {
+                service->delayedPulse(this, delay, width);
+            }
+
+            friend DigOutputService;
     };
-
 }
 
 

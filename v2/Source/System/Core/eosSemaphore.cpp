@@ -10,7 +10,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Contructor
 ///
-BinarySemaphore::BinarySemaphore() {
+Semaphore::Semaphore() {
 
     hSemaphore = osalSemaphoreCreate();
     eosAssert(hSemaphore != nullptr);
@@ -20,37 +20,37 @@ BinarySemaphore::BinarySemaphore() {
 /// ----------------------------------------------------------------------
 /// \brief Destructor.
 ///
-BinarySemaphore::~BinarySemaphore() {
+Semaphore::~Semaphore() {
 
     osalSemaphoreDestroy(hSemaphore);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Espera que s'alliveri el semaforo.
-/// \param blockTime: Temps maxim de bloqueig en milisegons.
-/// \return True si s'ha alliverat. False en cas contrari.
+/// \brief    Espera que s'alliveri el semaforo.
+/// \param    blockTime: Temps maxim de bloqueig en milisegons.
+/// \return   True si s'ha alliverat. False en cas contrari.
 ///
-bool BinarySemaphore::wait(
-    unsigned blockTime) {
+bool Semaphore::wait(
+    unsigned blockTime) const {
 
     return osalSemaphoreWait(hSemaphore, blockTime);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Allivera un semaforo.
+/// \brief    Allivera un semaforo.
 ///
-void BinarySemaphore::release() {
+void Semaphore::release() const {
 
     osalSemaphoreRelease(hSemaphore);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Allivera un semaforo. Versio per cridar des d'una interrupcio.
+/// \brief    Allivera un semaforo. Versio per cridar des d'una interrupcio.
 ///
-void BinarySemaphore::releaseISR() {
+void Semaphore::releaseISR() const {
 
     osalSemaphoreReleaseISR(hSemaphore);
 }
