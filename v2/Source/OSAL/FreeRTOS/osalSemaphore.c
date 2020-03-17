@@ -7,11 +7,17 @@
 
 /// ----------------------------------------------------------------------
 /// \brief    Crea un semafor binari
+/// \param    maxCount: Valor maxim del contador. 0 per semafor binari
 /// \return   El handler del semafor.
 ///
-HSemaphore osalSemaphoreCreate() {
-
-	return xSemaphoreCreateBinary();
+HSemaphore osalSemaphoreCreate(
+    unsigned maxCount) {
+    
+    if (maxCount == 0)
+    	return xSemaphoreCreateBinary();
+    else
+        return xSemaphoreCreateCounting(maxCount, 0);
+            
 }
 
 

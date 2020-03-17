@@ -16,7 +16,7 @@ namespace eos {
             
         public:
             Semaphore();
-            Semaphore(unsigned count);
+            Semaphore(unsigned maxCount);
             ~Semaphore();
             
             bool wait(unsigned blockTime) const;

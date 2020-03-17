@@ -14,7 +14,7 @@ using namespace eos;
 /// \param    elementSize: Tamany del element.
 /// \return   L'adressa del contenidor.
 ///
-void *eos::allocContainer(
+void* eos::allocContainer(
 	unsigned capacity,
 	unsigned elementSize) {
 

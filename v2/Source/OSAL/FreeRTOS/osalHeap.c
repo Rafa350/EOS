@@ -23,7 +23,7 @@ HHeap osalHeapCreate() {
 /// \param    size: Tamany del bloc de memoria.
 /// \return   Adressa del bloc de memoria obtingut. NULL en cas d'error.
 ///
-void *osalHeapAlloc(
+void* osalHeapAlloc(
     HHeap hHeap,
 	unsigned size) {
 

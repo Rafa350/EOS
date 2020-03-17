@@ -21,7 +21,7 @@ static int inISR() {
 /// \return   El handler del timer. NULL en cas d'error.
 ///
 HTimer osalTimerCreate(
-	const TimerInitializeInfo *info) {
+	const TimerInitializeInfo* info) {
 
 	eosAssert(info != NULL);
 
@@ -141,7 +141,7 @@ bool osalTimerIsActive(
 /// \param    hTimer: El handler del temporitzador.
 /// \return   El context. NULL en cas d'error.
 ///
-void *osalTimerGetContext(
+void* osalTimerGetContext(
 	HTimer hTimer) {
 
 	eosAssert(hTimer != NULL);

@@ -22,10 +22,10 @@ namespace eos {
 
         protected:
             GenericQueue(unsigned size, unsigned capacity);
-            bool genericPut(const void *element, unsigned blockTime);
-            bool genericGet(void *element, unsigned blockTime);
-            bool genericPutISR(void *element);
-            bool genericGetISR(void *element);
+            bool genericPut(const void* element, unsigned blockTime);
+            bool genericGet(void* element, unsigned blockTime);
+            bool genericPutISR(void* element);
+            bool genericGetISR(void* element);
     };
 
     /// \brief Cua personalitzada amb plantilla.
@@ -45,7 +45,7 @@ namespace eos {
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.
             ///
-            inline bool put(const T &element, unsigned blockTime) {
+            inline bool push(const T& element, unsigned blockTime) {
                 return genericPut((void*) &element, blockTime);
             }
 
@@ -54,7 +54,7 @@ namespace eos {
             /// \param blockTime: Temps maxim de bloqueig en ticks.
             /// \return True si ha finalitzat l'operacio correctament.
             ///
-            inline bool get(T &element,  unsigned blockTime) {
+            inline bool pop(T& element,  unsigned blockTime) {
                 return genericGet((void*) &element, blockTime);
             }
     };

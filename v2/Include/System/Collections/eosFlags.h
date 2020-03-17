@@ -13,12 +13,16 @@ namespace eos {
             T bits;
 
         public :
-            inline void set(int pos) { bits |= (1 << pos); }
-            inline void clear(int pos) { bits &= ~(1 << pos); }
-            inline void toggle(int pos) { bits ^= (1 << pos); }
+            inline void set(unsigned pos) { bits |= (1u << pos); }
+            inline void clear(unsigned pos) { bits &= ~(1u << pos); }
+            inline void toggle(unsigned pos) { bits ^= (1u << pos); }
 
-            inline bool isSet(int pos) { return (bits & ~(1 << pos)); }
+            inline bool isSet(unsigned pos) { return (bits & ~(1u << pos)); }
     };
+    
+    typedef Flags<uint8_t> Flags8;
+    typedef Flags<uint16_t> Flags16;
+    typedef Flags<uint32_t> Flags32;
 }
 
 

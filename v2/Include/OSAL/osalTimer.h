@@ -40,7 +40,7 @@ bool osalTimerStart(HTimer hTimer, unsigned time, unsigned blockTime);
 bool osalTimerStop(HTimer hTimer, unsigned blockTime);
 
 bool osalTimerIsActive(HTimer hTimer);
-void *osalTimerGetContext(HTimer hTimer);
+void* osalTimerGetContext(HTimer hTimer);
 
 
 #ifdef	__cplusplus

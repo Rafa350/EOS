@@ -12,7 +12,18 @@ using namespace eos;
 ///
 Semaphore::Semaphore() {
 
-    hSemaphore = osalSemaphoreCreate();
+    hSemaphore = osalSemaphoreCreate(0);
+    eosAssert(hSemaphore != nullptr);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Contructor
+///
+Semaphore::Semaphore(
+    unsigned maxCount) {
+
+    hSemaphore = osalSemaphoreCreate(maxCount);
     eosAssert(hSemaphore != nullptr);
 }
 

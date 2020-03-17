@@ -26,7 +26,7 @@ bool MyStateMachine::acceptMessage(
     Message message,
     unsigned blockTime) {
     
-    return messageQueue.put(message, blockTime);
+    return messageQueue.push(message, blockTime);
 }
 
 
@@ -46,7 +46,7 @@ void MyStateMachine::task() {
 
     Message message;
 
-    if (messageQueue.get(message, unsigned(-1))) {
+    if (messageQueue.pop(message, unsigned(-1))) {
        
         switch (message) {
             case Message::pressedSW1:

@@ -18,7 +18,7 @@ using namespace eos;
 /// \param    cfg: Parametres de configuracio opcionals.
 ///
 DigInputService::DigInputService(
-    Application *application):
+    Application* application):
     
     Service(application) {
 }
@@ -30,7 +30,7 @@ DigInputService::DigInputService(
 DigInputService::~DigInputService() {
 
     while (!inputs.isEmpty()) {
-        DigInput *input = inputs.getFirst();
+        DigInput* input = inputs.getFirst();
         removeInput(input);       
         delete input;
     }
@@ -86,8 +86,10 @@ void DigInputService::removeInputs() {
 ///
 void DigInputService::onInitialize() {
       
-    for (auto input: inputs)
+    for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
+        DigInput* input = it.getCurrent();
         input->initialize();
+    }
 }
 
 

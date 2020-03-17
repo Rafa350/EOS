@@ -20,16 +20,16 @@ namespace eos {
             MemoryPoolAllocator(int blockSize, int maxBlocks);
             ~MemoryPoolAllocator();
 
-            void *allocate();
-            void deallocate(void *p);
+            void* allocate();
+            void deallocate(void* p);
 
             inline int getBlockSize() const { return blockSize; }
             inline int getUsedBlocks() const { return maxBlocks - freeBlocks; }
             inline int getFreeBlocks() const { return freeBlocks; }
 
         private:
-            uint8_t *addrFromIndex(int i) const;
-            int indexFromAddr(const uint8_t *p) const;
+            uint8_t* addrFromIndex(int i) const;
+            int indexFromAddr(const uint8_t* p) const;
     };
 
 
@@ -49,7 +49,7 @@ namespace eos {
             	return static_cast<T*>(allocator.allocate());
             }
 
-    		inline void deallocate(T *p) {
+    		inline void deallocate(T* p) {
             	allocator.deallocate(p);
             }
     };

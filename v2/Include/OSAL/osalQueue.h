@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 
-typedef struct OSAL_QUEUE_DATA *HQueue;
+typedef struct OSAL_QUEUE_DATA* HQueue;
 
 typedef struct {
     unsigned maxElements;

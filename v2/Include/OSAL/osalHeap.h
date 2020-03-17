@@ -21,11 +21,11 @@ typedef struct {
 
 HHeap osalHeapCreate();
 void *osalHeapAlloc(HHeap hHeap, unsigned size);
-void osalHeapFree(HHeap hHeap, void *block);
-void osalGetHeapInformation(HHeap hHeap, HeapInformation *info);
+void osalHeapFree(HHeap hHeap, void* block);
+void osalGetHeapInformation(HHeap hHeap, HeapInformation* info);
 
-void *osal_malloc(unsigned size);
-void osal_free(void *p);
+void* osal_malloc(unsigned size);
+void osal_free(void* p);
 
 
 #ifdef	__cplusplus

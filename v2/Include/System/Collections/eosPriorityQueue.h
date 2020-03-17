@@ -136,6 +136,10 @@ namespace eos {
                 }
             }
 
+            /// \brief Comprova si el element existeix.
+            /// \param element:El element a comprovar.
+            /// \return True si existeix, false en cas conmtrari.
+            ///
             bool contains(const Element& element) const {
                 for (unsigned i = 0, ii = list.getCount(); i < ii; i++)
                     if (list[i].element == element)

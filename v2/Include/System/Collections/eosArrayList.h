@@ -12,18 +12,20 @@
 
 
 namespace eos {
-
+    
 	void* allocContainer(unsigned capacity, unsigned elementSize);
 	void freeContainer(void* container);
 	void* resizeContainer(void* oldContainer, unsigned oldCapacity, unsigned newCapacity, unsigned count, unsigned elementSize);
 
     /// \brief Implementa una llista a partir d'un array.
     /// \remarks La llista enmagatzema copies del element.
+    ///
     template <typename Element, const unsigned initialCapacity = 0>
     class ArrayList {
 
         public:
             /// \brief Iterator bidireccional per la llista.
+            ///
             class Iterator {
                 private:
                     const ArrayList<Element>& list;
@@ -43,7 +45,7 @@ namespace eos {
                     /// \brief Mou el iterator al primer element.
                     /// \return True si tot es correcte.
                     ///
-                    inline bool first() {
+                    bool first() {
                         if (list.isEmpty())
                             return false;
                         else {
@@ -55,7 +57,7 @@ namespace eos {
                     /// \brief Mou el iterator a l'ultim element.
                     /// \return True si tot es correcte.
                     ///
-                    inline bool last() {
+                    bool last() {
                         if (list.isEmpty())
                             return false;
                         else {
@@ -67,7 +69,7 @@ namespace eos {
                     /// \brief Mou el iterator al anterior element.
                     /// \return True si tot es correcte.
                     ///
-                    inline bool prev() {
+                    bool prev() {
                         if (!list.isEmpty() && (index > 0)) {
                             index -=1;
                             return true;
@@ -79,7 +81,7 @@ namespace eos {
                     /// \brief Mou el iterator al seguent element.
                     /// \return True si tot es correcte.
                     ///
-                    inline bool next() {
+                    bool next() {
                         if (!list.isEmpty() && (index < list.getCount())) {
                             index += 1;
                             return true;
@@ -238,7 +240,7 @@ namespace eos {
 
             /// \brief Buida la llista, pero deixa el contenidor.
             ///
-            void empty() {
+            inline void empty() {
                 count = 0;
             }
 

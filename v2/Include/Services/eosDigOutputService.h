@@ -39,6 +39,8 @@ namespace eos {
 
         private:
             const unsigned commandQueueSize = 5;
+            const unsigned minDelay = 50;
+            const unsigned minWidth = 50;
             CommandQueue commandQueue;
             TMRTimer timer;
             DigOutputList outputs;
@@ -100,8 +102,6 @@ namespace eos {
                 return service; 
             }
 
-            bool get() const;
-            
             inline void set() {
                 service->set(this);
             }

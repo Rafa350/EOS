@@ -13,7 +13,7 @@ extern "C" {
 typedef uint8_t CNLine;
 typedef uint32_t CNOptions;
 
-typedef void (*CNCallbackFunction)(CNLine line, void *pParam);
+typedef void (*CNCallbackFunction)(CNLine line, void* param);
 
 typedef struct {
     CNLine line;
@@ -75,10 +75,10 @@ typedef struct {
 #define HAL_CN_ENABLE_YES         (1u << HAL_CN_ENABLE_POS)
 
        
-void halCNInitializeLines(const CNInitializeLineInfo *pInfo, unsigned count);
+void halCNInitializeLines(const CNInitializeLineInfo* info, unsigned count);
 void halCNEnableLine(CNLine line);
 void halCNDisableLine(CNLine line);
-void halCNSetCallbackFunction(CNLine line, CNCallbackFunction function, void *pParam);
+void halCNSetCallbackFunction(CNLine line, CNCallbackFunction function, void* param);
 
 
 
