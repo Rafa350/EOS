@@ -25,7 +25,7 @@ namespace app {
     void State::exit() {
     }
 
-    void State::transition_SW1Pressed() {
+    void State::transition_SW1Pressed(const SW1Arguments* args)() {
     }
 
     void State::transition_SW2Pressed() {
@@ -45,14 +45,9 @@ namespace app {
         owner->doLED1On();
     }
 
-    void WaitingSW1::transition_SW1Pressed() {
+    void WaitingSW1::transition_SW1Pressed(const SW1Arguments* args)() {
         Context* ctx = static_cast<Context*>(getContext());
         MyStateMachine* owner = ctx->getOwner();
-        if (true) {
-            ctx->beginTransition();
-            owner->doLED1Off();
-            ctx->endTransition(ctx->getStateInstance(Context::StateID::WaitingSW2));
-        }
     }
 
     WaitingSW2::WaitingSW2(

@@ -45,8 +45,8 @@ namespace app {
     void Context::end() {
     }
 
-    void Context::transition_SW1Pressed() {
-        static_cast<State*>(getState())->transition_SW1Pressed();
+    void Context::transition_SW1Pressed(const SW1Arguments* args)() {
+        static_cast<State*>(getState())->transition_SW1Pressed(const SW1Arguments* args)();
     }
 
     void Context::transition_SW2Pressed() {

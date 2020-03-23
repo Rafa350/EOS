@@ -38,7 +38,7 @@ namespace app {
             MyStateMachine* getOwner();
             void start();
             void end();
-            void transition_SW1Pressed();
+            void transition_SW1Pressed(const SW1Arguments* args)();
             void transition_SW2Pressed();
             void transition_SW3Pressed();
     };

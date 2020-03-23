@@ -18,6 +18,14 @@ namespace app {
                 pressedSW2,
                 pressedSW3,
             };
+            enum class Action {
+                led1ON,
+                led2ON,
+                led3ON,
+                led1OFF,
+                led2OFF,
+                led3OFF
+            };
             typedef eos::Queue<Message> MessageQueue;
         private:
             Context* context;

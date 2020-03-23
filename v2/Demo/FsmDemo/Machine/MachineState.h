@@ -24,7 +24,7 @@ namespace app {
         public:
             virtual void enter();
             virtual void exit();
-            virtual void transition_SW1Pressed();
+            virtual void transition_SW1Pressed(const SW1Arguments* args)();
             virtual void transition_SW2Pressed();
             virtual void transition_SW3Pressed();
     };
@@ -34,7 +34,7 @@ namespace app {
             WaitingSW1(Context* context);
         public:
             void enter() override;
-            void transition_SW1Pressed() override;
+            void transition_SW1Pressed(const SW1Arguments* args)() override;
     };
 
     class WaitingSW2: public State {

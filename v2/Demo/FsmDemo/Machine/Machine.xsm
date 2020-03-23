@@ -21,7 +21,7 @@
 		
         <!-- Es prem el boto SW1
         -->
-        <transition name="SW1Pressed" state="WaitingSW2">
+        <transition event="SW1Pressed" arguments="const SW1Arguments* args" state="WaitingSW2">
 			<run name="LED1Off" />
         </transition>
 
@@ -37,7 +37,7 @@
 	
         <!-- Es prem el boto SW2
         -->
-        <transition name="SW2Pressed" state="WaitingSW3">
+        <transition event="SW2Pressed" state="WaitingSW3">
 			<run name="LED2Off" />
         </transition>
 
@@ -53,7 +53,7 @@
 
         <!-- Es prem el boto SW3
         -->
-        <transition name="SW3Pressed" state="WaitingSW1">
+        <transition event="SW3Pressed" state="WaitingSW1">
 			<run name="LED3Off" />
         </transition>
 		
