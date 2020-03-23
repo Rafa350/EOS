@@ -17,7 +17,7 @@
 #endif
 
 
-#include "board/board.h"
+#include "board/eosBoard.h"
 
 
 #endif // __eosConfig__

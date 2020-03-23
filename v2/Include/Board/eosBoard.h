@@ -1,0 +1,29 @@
+#ifndef __eosBoard__
+#define __eosBoard__
+
+
+#if defined(HARDWARE_CUSTOM)
+    #include "eosBoard_Custom.h"
+
+#elif defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
+    #include "Board/eosBoard_PIC32_USB_STARTER_KIT_I.h"
+
+#elif defined(HARDWARE_PIC32_ETH_STARTER_KIT__)
+    #include "Board/eosBoard_PIC32_ETH_STARTER_KIT.h"
+
+#elif defined(HARDWARE_STM32F429I_DISC1)
+    #include "Board/eosBoard_STM32F429I_DISC1.h"
+
+#elif defined(HARDWARE_STM32F746G_DISCO)
+    #include "Board/eosBoard_STM32F746G_DISCO.h"
+
+#elif defined(HARDWARE_STM32F769I_DISCO)
+    #include "Board/eosBoard_STM32F769I_DISCO.h"
+
+#else
+    #error "Undefined HARDWARE_XXXX"
+
+#endif
+
+
+#endif // __eosBoard__

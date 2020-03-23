@@ -4,7 +4,7 @@
 // Comprova si son valids els parametres de compilacio
 //
 #if !(defined(EOS_PIC32MX) || defined(PIC32MZ))
-#error Hardware no soportado. Solo es valido PIC32MX o PIC32MZ
+    #error Hardware no soportado. Solo es valido PIC32MX o PIC32MZ
 #endif
 
 
