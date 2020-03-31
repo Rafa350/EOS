@@ -74,6 +74,11 @@ bool GenericQueue::genericGet(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix un element en la cua des d'una interrupcio.
+/// \param    element: Punter al element a afeigir.
+/// \return   True si tot es correcte.
+///
 bool GenericQueue::genericPutISR(
     void *element) {
 

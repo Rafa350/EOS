@@ -49,6 +49,14 @@ namespace eos {
                 return genericPut((void*) &element, blockTime);
             }
 
+            /// \brief Afegeix un element en la cua des d'una interrupcio
+            /// \param element: L'element a afeigir.
+            /// \return True si ha finalitzat l'operacio correctament.
+            ///
+            inline bool pushISR(const T& element) {
+                return genericPutISR((void*) &element);
+            }
+
             /// \brief Extreu un element de la cua.
             /// \param element: L'element a Exterure.
             /// \param blockTime: Temps maxim de bloqueig en ticks.

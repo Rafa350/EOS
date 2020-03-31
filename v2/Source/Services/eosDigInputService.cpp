@@ -7,15 +7,16 @@
 using namespace eos;
 
 
-#define PATTERN_ON       0x0000007F
-#define PATTERN_OFF      0x00000080
-#define PATTERN_MASK     0x000000FF
+#define PATTERN_mask     0xFF
+#define PATTERN_ON       0xFF
+#define PATTERN_OFF      0x00
+#define PATTERN_POSEDGE  0x7F
+#define PATTERN_NEGEDGE  0x80
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: L'aplicacio a la que pertany
-/// \param    cfg: Parametres de configuracio opcionals.
 ///
 DigInputService::DigInputService(
     Application* application):
@@ -29,11 +30,15 @@ DigInputService::DigInputService(
 ///
 DigInputService::~DigInputService() {
 
+    Task::enterCriticalSection();
+    
     while (!inputs.isEmpty()) {
         DigInput* input = inputs.getFirst();
         removeInput(input);       
         delete input;
     }
+    
+    Task::exitCriticalSection();
 }
 
 
@@ -42,15 +47,18 @@ DigInputService::~DigInputService() {
 /// \param    input: L'entrada a afeigir.
 ///
 void DigInputService::addInput(
-    DigInput *input) {
+    DigInput* input) {
 
-    // Prerequisits
-    //
     eosAssert(input != nullptr);
-    eosAssert(input->service == nullptr);
 
-    inputs.add(input);
-    input->service = this;
+    Task::enterCriticalSection();
+    
+    if (input->service == nullptr) {
+        inputs.add(input);
+        input->service = this;
+    }
+    
+    Task::exitCriticalSection();
 }
 
 
@@ -59,15 +67,18 @@ void DigInputService::addInput(
 /// \param    input: La entrada a eliminar.
 ///
 void DigInputService::removeInput(
-    DigInput *input) {
+    DigInput* input) {
 
-    // Precondicions
-    //
     eosAssert(input != nullptr);
-    eosAssert(input->service == this);
 
-    input->service = nullptr;
-    inputs.remove(input);
+    Task::enterCriticalSection();
+    
+    if (input->service == this) {
+        input->service = nullptr;
+        inputs.remove(input);
+    }
+    
+    Task::exitCriticalSection();
 }
 
 
@@ -76,8 +87,12 @@ void DigInputService::removeInput(
 ///
 void DigInputService::removeInputs() {
     
+    Task::enterCriticalSection();
+    
     while (!inputs.isEmpty())
         removeInput(inputs.getFirst());
+    
+    Task::exitCriticalSection();
 }
 
 
@@ -87,8 +102,15 @@ void DigInputService::removeInputs() {
 void DigInputService::onInitialize() {
       
     for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
+        
         DigInput* input = it.getCurrent();
-        input->initialize();
+
+        input->options &= ~HAL_GPIO_MODE_mask;
+        input->options |= HAL_GPIO_MODE_INPUT;
+        halGPIOInitializePin(input->port, input->pin, input->options, HAL_GPIO_AF_NONE);
+
+        input->state = halGPIOReadPin(input->port, input->pin);
+        input->pattern = input->state ? PATTERN_ON : PATTERN_OFF;
     }
 }
 
@@ -113,11 +135,11 @@ void DigInputService::onTask() {
             if (halGPIOReadPin(input->port, input->pin))
                 input->pattern |= 1;
 
-            if ((input->pattern & PATTERN_MASK) == PATTERN_ON) {
+            if ((input->pattern & PATTERN_mask) == PATTERN_POSEDGE) {
                 changed = true;
                 input->state = true;
             }
-            else if ((input->pattern & PATTERN_MASK) == PATTERN_OFF) {
+            else if ((input->pattern & PATTERN_mask) == PATTERN_NEGEDGE) {
                 changed = true;
                 input->state = false;
             }
@@ -163,18 +185,4 @@ DigInput::~DigInput() {
 
     if (service != nullptr)
         service->removeInput(this);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza la entrada.
-///
-void DigInput::initialize() {
-    
-    options &= ~HAL_GPIO_MODE_mask;
-    options |= HAL_GPIO_MODE_INPUT;
-    halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
-
-    state = halGPIOReadPin(port, pin);
-    pattern = state ? 0xFFFFFFFF : 0x00000000;
 }

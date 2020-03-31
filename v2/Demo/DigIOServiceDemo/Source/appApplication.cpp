@@ -120,6 +120,11 @@ void MyApplication::digInput3EventHandler(
         getLed2()->toggle();
         getLed3()->toggle();
     }
+    else {
+        getLed1()->toggle();
+        getLed2()->toggle();
+        getLed3()->toggle();        
+    }
 #endif
 }
 #endif

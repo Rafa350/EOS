@@ -51,12 +51,13 @@ void DigOutputService::addOutput(
     DigOutput* output) {
 
     eosAssert(output != nullptr);
-    eosAssert(output->service == nullptr);
 
     Task::enterCriticalSection();
     
-    outputs.add(output);
-    output->service = this;
+    if (output->service == nullptr) {    
+        outputs.add(output);
+        output->service = this;
+    }
     
     Task::exitCriticalSection();
 }
@@ -70,12 +71,13 @@ void DigOutputService::removeOutput(
     DigOutput* output) {
 
     eosAssert(output != nullptr);
-    eosAssert(output->service == this);
 
     Task::enterCriticalSection();
     
-    outputs.remove(output);
-    output->service = nullptr;
+    if (output->service == this) {
+        outputs.remove(output);
+        output->service = nullptr;
+    }
     
     Task::exitCriticalSection();
 }
@@ -201,7 +203,13 @@ void DigOutputService::onInitialize() {
     //
     for (DigOutputListIterator it(outputs); it.hasNext(); it.next()) {
         DigOutput* output = it.getCurrent();
-        output->initialize();
+        
+        if (((output->options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_OD) ||
+            ((output->options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_PP)) {
+            output->options &= ~HAL_GPIO_MODE_mask;
+            output->options |= HAL_GPIO_MODE_OUTPUT_PP;
+        }
+        halGPIOInitializePin(output->port, output->pin, output->options, HAL_GPIO_AF_NONE);
     }
 
     // Inicia el temporitzador
@@ -239,9 +247,25 @@ void DigOutputService::onTask() {
                 case OpCode::pulse:
                     cmdPulse(cmd.output, cmd.param1);
                     break;
+                    
+                case OpCode::delayedSet:
+                    cmdDelayedSet(cmd.output, cmd.param1);
+                    break;
+
+                case OpCode::delayedClear:
+                    cmdDelayedClear(cmd.output, cmd.param1);
+                    break;
+
+                case OpCode::delayedToggle:
+                    cmdDelayedToggle(cmd.output, cmd.param1);
+                    break;
 
                 case OpCode::delayedPulse:
                     cmdDelayedPulse(cmd.output, cmd.param1, cmd.param2);
+                    break;
+                    
+                case OpCode::timeOut:
+                    cmdTimeOut(cmd.param1);
                     break;
             }
         }
@@ -318,9 +342,64 @@ void DigOutputService::cmdPulse(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'delayedSet'.
+/// \param    output: La sortida.
+/// \param    delay: El retard.
+///
+void DigOutputService::cmdDelayedSet(
+    DigOutput* output, 
+    unsigned delay) {
+    
+    Task::enterCriticalSection();
+    
+    output->state = DigOutput::State::delayedSet;
+    output->delayCnt = delay;
+    
+    Task::exitCriticalSection();
+    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'delayedClear'.
+/// \param    output: La sortida.
+/// \param    delay: El retard.
+///
+void DigOutputService::cmdDelayedClear(
+    DigOutput* output, 
+    unsigned delay) {
+    
+    Task::enterCriticalSection();
+    
+    output->state = DigOutput::State::delayedClear;
+    output->delayCnt = delay;
+    
+    Task::exitCriticalSection();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la comanda 'delayedToggle'.
+/// \param    output: La sortida.
+/// \param    delay: El retard.
+///
+void DigOutputService::cmdDelayedToggle(
+    DigOutput* output, 
+    unsigned delay) {
+    
+    Task::enterCriticalSection();
+    
+    output->state = DigOutput::State::delayedToggle;
+    output->delayCnt = delay;
+    
+    Task::exitCriticalSection();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Procesa la comanda 'delayedPulse'.
 /// \param    output: La sortida.
-/// \param    delay:_ El retard del puls.
+/// \param    delay: El retard del puls.
 /// \param    width: L'amplada del puls.
 ///
 void DigOutputService::cmdDelayedPulse(
@@ -338,16 +417,69 @@ void DigOutputService::cmdDelayedPulse(
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Procesa el timeout del temporitzador.
+/// ---------------------------------------------------------------------
+/// \brief    Procesa la comanda 'timeOut'
+/// \param    time: El interval de temps.
 ///
-void DigOutputService::timeOut() {
+void DigOutputService::cmdTimeOut(
+    unsigned time) {
 
+    Task::enterCriticalSection();    
+    
     for (DigOutputListIterator it(outputs); it.hasNext(); it.next()) {
+        
         DigOutput *output = it.getCurrent();
-        if (output->state != DigOutput::State::idle)
-            output->timeOut();
+
+      	switch (output->state) {
+            case DigOutput::State::pulse:
+                if (output->widthCnt <= time) {
+                    halGPIOTogglePin(output->port, output->pin);
+                    output->state = DigOutput::State::idle;
+                }
+                else
+                    output->widthCnt -= time;
+                break;
+
+            case DigOutput::State::delayedSet:
+            case DigOutput::State::delayedClear:
+            case DigOutput::State::delayedToggle:
+            case DigOutput::State::delayedPulse:
+                if (output->delayCnt <= time) {
+                    switch (output->state) {
+                        case DigOutput::State::delayedSet:
+                            halGPIOSetPin(output->port, output->pin);
+                            output->state = DigOutput::State::idle;
+                            break;
+
+                        case DigOutput::State::delayedClear:
+                            halGPIOClearPin(output->port, output->pin);
+                            output->state = DigOutput::State::idle;
+                            break;
+
+                        case DigOutput::State::delayedToggle:
+                            halGPIOTogglePin(output->port, output->pin);
+                            output->state = DigOutput::State::idle;
+                            break;
+                            
+                        case DigOutput::State::delayedPulse:
+                            halGPIOTogglePin(output->port, output->pin);
+                            output->state = DigOutput::State::pulse;
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                }
+                else
+                    output->delayCnt -= time;
+                break;
+
+            default:
+                break;
+        }
     }
+    
+    Task::exitCriticalSection();
 }
 
 
@@ -358,11 +490,13 @@ void DigOutputService::timerInterrupt(
 	TMRTimer timer,
 	void *param) {
 
-    eosAssert(param != nullptr);
-
 	DigOutputService* service = reinterpret_cast<DigOutputService*>(param);
-    eosAssert(service != nullptr);
-	service->timeOut();
+    if (service != nullptr) {
+        Command cmd;
+        cmd.opCode = OpCode::timeOut;
+        cmd.param1 = 1;
+        service->commandQueue.pushISR(cmd);
+    }
 }
 
 
@@ -399,50 +533,4 @@ DigOutput::~DigOutput() {
 
     if (service != nullptr)
         service->removeOutput(this);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitzacio de la sortida.
-///
-void DigOutput::initialize() {
-
-    if (((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_OD) ||
-        ((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_PP)) {
-        options &= ~HAL_GPIO_MODE_mask;
-        options |= HAL_GPIO_MODE_OUTPUT_PP;
-    }
-    halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la interrupcio del temporitzador.
-///
-void DigOutput::timeOut() {
-
-	switch (state) {
-		case State::pulse:
-			if (widthCnt > 0) {
-				widthCnt--;
-				if (widthCnt == 0) {
-					halGPIOTogglePin(port, pin);
-					state = State::idle;
-				}
-			}
-			break;
-
-		case State::delayedPulse:
-			if (delayCnt > 0) {
-				delayCnt--;
-				if (delayCnt == 0) {
-					halGPIOTogglePin(port, pin);
-					state = State::pulse;
-				}
-			}
-			break;
-
-        default:
-            break;
-	}
 }

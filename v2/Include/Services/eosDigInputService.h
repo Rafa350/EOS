@@ -53,12 +53,10 @@ namespace eos {
             GPIOPort port;
             GPIOPin pin;
             GPIOOptions options;
-            uint32_t pattern;
+            uint8_t pattern;
             bool state;
             IEventCallback* eventCallback;
             
-        private:
-            void initialize();
         public:
             DigInput(DigInputService* service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
             ~DigInput();

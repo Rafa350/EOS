@@ -25,7 +25,11 @@ namespace eos {
                 clear,
                 toggle,
                 pulse,
-                delayedPulse
+                delayedSet,
+                delayedClear,
+                delayedToggle,      
+                delayedPulse,
+                timeOut
             };
             struct Command {
                 OpCode opCode;
@@ -47,12 +51,15 @@ namespace eos {
 
     private:
             static void timerInterrupt(TMRTimer timer, void* params);
-            void timeOut();
             void cmdClear(DigOutput* output);
             void cmdSet(DigOutput* output);
             void cmdToggle(DigOutput* output);
             void cmdPulse(DigOutput* output, unsigned width);
+            void cmdDelayedSet(DigOutput* output, unsigned delay);
+            void cmdDelayedClear(DigOutput* output, unsigned delay);
+            void cmdDelayedToggle(DigOutput* output, unsigned delay);
             void cmdDelayedPulse(DigOutput* output, unsigned delay, unsigned width);
+            void cmdTimeOut(unsigned time);
 
         protected:
             void onInitialize() override;
@@ -70,6 +77,9 @@ namespace eos {
             void clear(DigOutput* output);
             void toggle(DigOutput* output);
             void pulse(DigOutput* output, unsigned width);
+            void delayedSet(DigOutput* output, unsigned delay);
+            void delayedClear(DigOutput* output, unsigned delay);
+            void delayedToggle(DigOutput* output, unsigned delay);
             void delayedPulse(DigOutput* output, unsigned delay, unsigned width);
     };
 
@@ -79,6 +89,9 @@ namespace eos {
         private:
             enum class State {
                 idle,
+                delayedSet,
+                delayedClear,
+                delayedToggle,
                 delayedPulse,
                 pulse
             };
@@ -90,9 +103,6 @@ namespace eos {
             State state;
             unsigned delayCnt;
             unsigned widthCnt;
-
-            void initialize();
-            void timeOut();
 
         public:
             DigOutput(DigOutputService* service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
@@ -116,6 +126,18 @@ namespace eos {
             
             inline void pulse(unsigned width) {
                 service->pulse(this, width);
+            }
+            
+            inline void delayedSet(unsigned delay) {
+                service->delayedSet(this, delay);
+            }
+
+            inline void delayedClear(unsigned delay) {
+                service->delayedClear(this, delay);
+            }
+
+            inline void delayedToggle(unsigned delay) {
+                service->delayedToggle(this, delay);
             }
 
             inline void delayedPulse(unsigned delay, unsigned width) {
