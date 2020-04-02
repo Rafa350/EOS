@@ -20,10 +20,6 @@ MyApplication::MyApplication():
     digInput2EventCallback(this, &MyApplication::digInput2EventHandler),
     digInput3EventCallback(this, &MyApplication::digInput3EventHandler) {
     
-    // Crea els serveis necesaris
-    //
-    digInputService = new DigInputService(this);
-    digOutputService = new DigOutputService(this, HAL_TMR_TIMER_2);
 }
 
 
@@ -34,34 +30,79 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el servei d'entrades digitals
 	//
+    DigInputService::InitParams digInputServiceInit;
+    digInputServiceInit.timer = HAL_TMR_TIMER_3;
+    digInputServiceInit.period = 10;
+    digInputService = new DigInputService(this, digInputServiceInit);
+    
+    DigInput::InitParams digInputInit;
+    digInputInit.eventParam = nullptr;
+    
+    // Inicialitza la entrada corresponent al switch SW1
+    //
 #ifdef EXIST_SWITCHES_SW1
-    digInput1 = new DigInput(digInputService, SW_SW1_PORT, SW_SW1_PIN);
-    digInput1->setEventCallback(&digInput1EventCallback);
+    halGPIOInitializePin(SW_SW1_PORT, SW_SW1_PIN, HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+
+    digInputInit.port = SW_SW1_PORT;
+    digInputInit.pin = SW_SW1_PIN;
+    digInputInit.eventCallback = &digInput1EventCallback;
+    digInput1 = new DigInput(digInputService, digInputInit);
 #endif
 
+    // Inicialitza la entrada corresponent al switch SW2
+    //
 #ifdef EXIST_SWITCHES_SW2
-    digInput2 = new DigInput(digInputService, SW_SW2_PORT, SW_SW2_PIN);
-    digInput2->setEventCallback(&digInput2EventCallback);
+    halGPIOInitializePin(SW_SW2_PORT, SW_SW2_PIN, HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+
+    digInputInit.port = SW_SW2_PORT;
+    digInputInit.pin = SW_SW2_PIN;
+    digInputInit.eventCallback = &digInput2EventCallback;
+    digInput2 = new DigInput(digInputService, digInputInit);
 #endif
 
+    // Inicialitza la entrada corresponent al switch SW3
+    //
 #ifdef EXIST_SWITCHES_SW3
-    digInput3 = new DigInput(digInputService, SW_SW3_PORT, SW_SW3_PIN);
-    digInput3->setEventCallback(&digInput3EventCallback);
+    halGPIOInitializePin(SW_SW3_PORT, SW_SW3_PIN, HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+
+    digInputInit.port = SW_SW3_PORT;
+    digInputInit.pin = SW_SW3_PIN;
+    digInputInit.eventCallback = &digInput3EventCallback;
+    digInput3 = new DigInput(digInputService, digInputInit);
 #endif
 
     // Inicialitza el servei de sortides digitals
     //
+    DigOutputService::InitParams digOutputServiceInit;
+    digOutputServiceInit.timer = HAL_TMR_TIMER_2;
+    digOutputServiceInit.period = 1;
+    digOutputService = new DigOutputService(this, digOutputServiceInit);
+    
+    DigOutput::InitParams digOutputInit;
+
+    // Inicialitza la sortida corresponent al led LED1
+    //
 #ifdef EXIST_LEDS_LED1
+    digOutputInit.port = LED_LED1_PORT;
+    digOutputInit.pin = LED_LED1_PIN;
     digOutput1 = new DigOutput(digOutputService, LED_LED1_PORT, LED_LED1_PIN,
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
 
+    // Inicialitza la sortida corresponent al led LED2
+    //
 #ifdef EXIST_LEDS_LED2
+    digOutputInit.port = LED_LED2_PORT;
+    digOutputInit.pin = LED_LED2_PIN;
     digOutput2 = new DigOutput(digOutputService, LED_LED2_PORT, LED_LED2_PIN,
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
 
+    // Inicialitza la sortida corresponent al led LED3
+    //
 #ifdef EXIST_LEDS_LED3
+    digOutputInit.port = LED_LED3_PORT;
+    digOutputInit.pin = LED_LED3_PIN;
     digOutput3 = new DigOutput(digOutputService, LED_LED3_PORT, LED_LED3_PIN,
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
@@ -119,11 +160,6 @@ void MyApplication::digInput3EventHandler(
         getLed1()->toggle();
         getLed2()->toggle();
         getLed3()->toggle();
-    }
-    else {
-        getLed1()->toggle();
-        getLed2()->toggle();
-        getLed3()->toggle();        
     }
 #endif
 }

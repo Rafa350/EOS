@@ -19,7 +19,7 @@ namespace eos {
 
         private:
             I2CMasterService *i2cService;
-            BinarySemaphore lock;
+            Semaphore lock;
             int curX;
             int curY;
             uint8_t color;

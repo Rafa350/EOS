@@ -1,6 +1,8 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "HAL/halGPIO.h"
+#include "HAL/halINT.h"
+#include "HAL/halTMR.h"
 #include "Services/eosDigInputService.h"
 
 
@@ -17,10 +19,15 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: L'aplicacio a la que pertany
+/// \params   initParams: Parametres d'inicialitzacio.
 ///
 DigInputService::DigInputService(
-    Application* application):
+    Application* application,
+    const InitParams& initParams):
     
+    commandQueue(commandQueueSize),
+    timer(initParams.timer),
+    period(initParams.period),
     Service(application) {
 }
 
@@ -100,18 +107,40 @@ void DigInputService::removeInputs() {
 /// \brief Inicialitzacio del servei.
 ///
 void DigInputService::onInitialize() {
-      
+    
+    // Inicialitza les entrades
+    //
     for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
-        
         DigInput* input = it.getCurrent();
-
-        input->options &= ~HAL_GPIO_MODE_mask;
-        input->options |= HAL_GPIO_MODE_INPUT;
-        halGPIOInitializePin(input->port, input->pin, input->options, HAL_GPIO_AF_NONE);
-
         input->state = halGPIOReadPin(input->port, input->pin);
         input->pattern = input->state ? PATTERN_ON : PATTERN_OFF;
     }
+    
+    // Inicialitza el temporitzador
+    //
+	TMRInitializeInfo tmrInfo;
+	tmrInfo.timer = timer;
+#if defined(EOS_PIC32MX)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
+    tmrInfo.period = ((80000 * period) / 64) - 1; 
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
+    tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
+    tmrInfo.period = (1000 * period) - 1; 
+	tmrInfo.irqPriority = 1;
+	tmrInfo.irqSubPriority = 0;
+#else
+//#error CPU no soportada
+#endif
+    
+	tmrInfo.isrCallback = isrTimerCallback;
+	tmrInfo.isrParam = this;
+	halTMRInitialize(&tmrInfo);
+    halTMRStartTimer(timer);
+    
+    // Inicialitza el servei base
+    //
+    Service::onInitialize();
 }
 
 
@@ -120,34 +149,79 @@ void DigInputService::onInitialize() {
 ///
 void DigInputService::onTask() {
 
-    weakTime = Task::getTickCount();
-    
-    while (true) {
+    // Espera que hagi quelcom per fer
+    //
+    Command cmd;
+    while (commandQueue.pop(cmd, unsigned(-1))) {
         
-        Task::delay(10, weakTime);
+        DigInput* input = cmd.input;
 
-        for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
+        // Si te funcio callback, la crida
+        //
+        if (input->eventCallback != nullptr) {
+            
+            DigInput::EventArgs args;
+            args.input = input;
+            args.param = input->eventParam;
+            
+            input->eventCallback->execute(args);
+        }
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Captura la interrupcio del temporitzador.
+///
+void DigInputService::isrTimerCallback(
+    TMRTimer timer,
+    void* param) {
+    
+    DigInputService* service = reinterpret_cast<DigInputService*>(param);
+    if (service != nullptr) {
+        for (DigInputListIterator it(service->inputs); it.hasNext(); it.next()) {
+            
             DigInput* input = it.getCurrent();
-
-            bool changed = false;
-
+            
+            // Actualitza el patro
+            //
             input->pattern <<= 1;
             if (halGPIOReadPin(input->port, input->pin))
                 input->pattern |= 1;
 
-            if ((input->pattern & PATTERN_mask) == PATTERN_POSEDGE) {
-                changed = true;
-                input->state = true;
-            }
-            else if ((input->pattern & PATTERN_mask) == PATTERN_NEGEDGE) {
-                changed = true;
-                input->state = false;
+            // Detecta els canvis d'estat
+            //
+            OpCode opCode = OpCode::null;
+            switch (input->pattern & PATTERN_mask) {
+                case PATTERN_POSEDGE:
+                    input->state = true;
+                    opCode = OpCode::posEdge;
+                    break;
+            
+                case PATTERN_NEGEDGE:
+                    input->state = false;
+                    opCode = OpCode::negEdge;
+                    break;
+                    
+                case PATTERN_ON:
+                    input->state = true;
+                    break;
+
+                case PATTERN_OFF:
+                    input->state = false;
+                    break;
             }
 
-            if (changed && (input->eventCallback != nullptr)) {
-                DigInput::EventArgs args;
-                args.input = input;
-                input->eventCallback->execute(args);
+            // Si hi han canvis, genera la comanda per executar en la
+            // tasca del servei
+            //
+            if (opCode != OpCode::null) {
+                
+                Command cmd;
+                cmd.input = input,                    
+                cmd.opCode = opCode;
+                
+                service->commandQueue.pushISR(cmd);
             }
         }
     }
@@ -157,21 +231,17 @@ void DigInputService::onTask() {
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    service: El servei.
-/// \param    port: El port.
-/// \param    pin: El numero de pin.
-/// \param    options: Opcions del pin.
+/// \param    initParams: Parametres d'inicialitzacio.
 ///
 DigInput::DigInput(
     DigInputService* service,
-    GPIOPort port, 
-    GPIOPin pin, 
-    GPIOOptions options) :
+    const InitParams& initParams):
 
-    service(nullptr),
-    port(port),
-    pin(pin),
-    options(options),
-    eventCallback(nullptr) {
+    port(initParams.port),                    
+    pin(initParams.pin),
+    eventCallback(initParams.eventCallback),
+    eventParam(initParams.eventParam),
+    service(nullptr) {
     
     if (service != nullptr)
         service->addInput(this);
@@ -185,4 +255,18 @@ DigInput::~DigInput() {
 
     if (service != nullptr)
         service->removeInput(this);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'estat de l'entrada.
+/// \return   El estat.
+///
+bool DigInput::get() const {
+
+    halINTDisableInterrupts();
+    bool s = state;
+    halINTEnableInterrupts();
+    
+    return s;
 }

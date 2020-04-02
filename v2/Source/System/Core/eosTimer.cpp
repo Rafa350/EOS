@@ -17,7 +17,25 @@ Timer::Timer(
     hTimer(nullptr),
     autoreload(autoreload),
 	tag(nullptr),
-    eventCallback(nullptr) {
+    eventCallback(nullptr),
+    eventParam(nullptr) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    autoreload: Indica si repeteix el cicle continuament.
+///
+Timer::Timer(
+    bool autoreload,
+    IEventCallback* eventCallback,
+    void* eventParam) :
+
+    hTimer(nullptr),
+    autoreload(autoreload),
+	tag(nullptr),
+    eventCallback(eventCallback),
+    eventParam(eventParam) {
 }
 
 
@@ -88,9 +106,12 @@ void Timer::timerFunction(
 
     Timer *timer = static_cast<Timer*>(osalTimerGetContext(hTimer));
     if ((timer != nullptr) && (timer->eventCallback != nullptr)) {
+        
         EventArgs args;
         args.timer = timer;
-  		timer->eventCallback->execute(args);
+        args.param = timer->eventParam;
+  		
+        timer->eventCallback->execute(args);
     }
 }
 

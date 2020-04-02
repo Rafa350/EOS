@@ -87,7 +87,7 @@ bool I2CMasterService::startTransaction(
         transaction->txBuffer = static_cast<const uint8_t*>(txBuffer);
         transaction->txCount = txCount;
         transaction->callback = callback;
-        return transactionQueue.put(transaction, 1000);
+        return transactionQueue.push(transaction, 1000);
     }
     else
         return false;
@@ -124,7 +124,7 @@ bool I2CMasterService::startTransaction(
         transaction->rxBuffer = (uint8_t*)rxBuffer;
         transaction->rxSize = rxSize;
         transaction->callback = callback;
-        return transactionQueue.put(transaction, 1000);
+        return transactionQueue.push(transaction, 1000);
     }
     else
         return false;
@@ -146,7 +146,7 @@ void I2CMasterService::onTask() {
           
     // Espara indefinidament que hagi una transaccio e la cua
     //
-    if (transactionQueue.get(transaction, -1)) {
+    if (transactionQueue.pop(transaction, -1)) {
 
         // Espera a que el bus estigui lliure
         //

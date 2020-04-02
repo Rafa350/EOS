@@ -14,8 +14,12 @@ using namespace eos;
 Application::Application():
 
 	initialized(false),
-    taskEventCallback(this, &Application::taskEventHandler) {
-
+    taskEventCallback(this, &Application::taskEventHandler)
+#ifdef USE_APPLICATION_TICK        
+    ,timerEventCallback(this, &Application::timerEventHandler),
+    timer(true, &timerEventCallback, this)
+#endif
+{
 }
 
 
@@ -39,12 +43,24 @@ Application::~Application() {
 void Application::taskEventHandler(
     const Task::EventArgs& args) {
     
-    eosAssert(args.param != nullptr);
-    
     Service *service = static_cast<Service*>(args.param);
-    while (true)
-        service->task();
+    if (service != nullptr)
+        while (true)
+            service->task();
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el event del temporitzador TICK.
+/// \param    args: Parametres del event.
+///
+#ifdef USE_APPLICATION_TICK
+void Application::timerEventHandler(
+    const Timer::EventArgs& args) {
+    
+    tick();
+}
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -65,6 +81,10 @@ void Application::run() {
     // Executa els serveis fins que acavi l'aplicacio.
     //
     runServices();
+    
+    // Finalitza tots els serveis
+    //
+    terminateServices();
 
     // Notifica el final de l'aplicacio.
     //
@@ -75,6 +95,7 @@ void Application::run() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la senyal tick del sistema
 ///
+#ifdef USE_APPLICATION_TICK
 void Application::tick() {
 
 	onTick();
@@ -86,6 +107,7 @@ void Application::tick() {
 		service->tick();
     }
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -99,7 +121,19 @@ void Application::initializeServices() {
         Service *service = it.getCurrent();
         service->initialize();
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Finalitza els serveis.
+///
+void Application::terminateServices() {
     
+    // Finalitza els serveis de la llista, un a un.
+    //   
+    for (ServiceListIterator it(services); it.hasNext(); it.next()) {
+        Service *service = it.getCurrent();
+    }
 }
 
 
@@ -109,6 +143,12 @@ void Application::initializeServices() {
 void Application::runServices() {
 
 #if  1 //def USE_SCHEDULER
+    
+    // Inicialitza el terporitzador tick
+    //
+#ifdef USE_APPLICATION_TICK    
+    timer.start(APPLICATION_TICK_PERIOD, 0);
+#endif
     
     // Crea una tasca per executar cada servei
     //
@@ -199,9 +239,11 @@ void Application::onTerminate() {
 /// ----------------------------------------------------------------------
 /// \brief    Notificacio del senyal tick
 ///
+#ifdef USE_APPLICATION_TICK
 void Application::onTick() {
 
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

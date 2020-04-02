@@ -83,8 +83,8 @@ typedef struct {
 	TMRTimer timer;
     unsigned period;
 	TMROptions options;
-	TMRInterruptCallback irqCallback;
-	void *irqParam;
+	TMRInterruptCallback isrCallback;
+	void *isrParam;
 } TMRInitializeInfo;
 
 
@@ -95,6 +95,9 @@ void halTMRStartTimer(TMRTimer timer);
 void halTMRStopTimer(TMRTimer timer);
 
 void halTMRDelay(int time);
+
+void halTMREnableInterrupt(TMRTimer timer);
+void halTMRDisableInterrupt(TMRTimer timer);
 
 
 #ifdef	__cplusplus

@@ -15,6 +15,7 @@ TimerService::TimerService(
     Service(application),
     commandQueue(10),
     osTimerEventCallback(this, &TimerService::osTimerEventHandler) {
+    //osTimer(false, &osTimerEventCallback, nullptr) {
 }
 
 

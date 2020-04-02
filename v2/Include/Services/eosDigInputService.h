@@ -6,9 +6,11 @@
 //
 #include "eos.h"
 #include "HAL/halGPIO.h"
+#include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
 #include "System/Collections/eosArrayList.h"
+#include "System/Core/eosQueue.h"
 
 
 namespace eos {
@@ -19,18 +21,38 @@ namespace eos {
     //
     class DigInputService final: public Service {
         private:
+            enum class OpCode {
+                null,
+                posEdge,
+                negEdge
+            };
+            struct Command {
+                OpCode opCode;
+                DigInput* input;
+            };
+            typedef Queue<Command> CommandQueue;
             typedef ArrayList<DigInput*> DigInputList;
             typedef ArrayList<DigInput*>::Iterator DigInputListIterator;
+        public:
+            struct InitParams {  // Parametres d'inicialitzaci0.
+                TMRTimer timer;  // -Temporitzador
+                unsigned period; // -Periode en ms
+            };
 
         private:
-            unsigned weakTime;
+            const unsigned commandQueueSize = 10;
+            TMRTimer timer;
+            unsigned period;
             DigInputList inputs;
+            CommandQueue commandQueue;
 
+        private:
+            static void isrTimerCallback(TMRTimer timer, void* param);
         protected:
             void onInitialize();
             void onTask();
         public:
-            DigInputService(Application* application);
+            DigInputService(Application* application, const InitParams& initParams);
             ~DigInputService();
             void addInput(DigInput* input);
             void removeInput(DigInput* input);
@@ -43,41 +65,34 @@ namespace eos {
         public:
             struct EventArgs {
                 DigInput* input;
+                void* param;
             };
-
-        private:
             typedef ICallbackP1<const EventArgs&> IEventCallback;
+            struct InitParams {
+                GPIOPort port;
+                GPIOPin pin;
+                IEventCallback* eventCallback;
+                void* eventParam;
+            };
 
         private:
             DigInputService* service;
             GPIOPort port;
             GPIOPin pin;
-            GPIOOptions options;
-            uint8_t pattern;
-            bool state;
             IEventCallback* eventCallback;
+            void* eventParam;
+            uint32_t pattern;
+            bool state;
             
         public:
-            DigInput(DigInputService* service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
+            DigInput(DigInputService* service, const InitParams& initParams);
             ~DigInput();
 
             inline DigInputService* getService() const { 
                 return service; 
             }
-
-            /// \brief Obte l'estat actual de la entrada.
-            /// \return L'estat de la entrada.
-            ///
-            inline bool get() const { 
-                return state; 
-            }
-
-            /// \brief Asigna el event onChange
-            /// \param callback: El callback del event
-            ///
-            inline void setEventCallback(IEventCallback* callback) { 
-                eventCallback = callback; 
-            }
+            
+            bool get() const;
 
         friend DigInputService;
     };

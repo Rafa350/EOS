@@ -30,6 +30,7 @@ namespace eos {
             Service(Application* application);
             
             virtual void onInitialize();
+            virtual void onTerminate();
             virtual void onTask();
             virtual void onTick();
 
@@ -37,6 +38,7 @@ namespace eos {
             virtual ~Service();
 
             void initialize();
+            void terminate();
             void tick();
             void task();
 

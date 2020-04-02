@@ -28,7 +28,7 @@
 #define eosI2CMasterService_EndTransactionDelay    100
 
 
-#include "board/board.h"
+#include "board/eosBoard.h"
 
 
 #endif // __eosConfig__

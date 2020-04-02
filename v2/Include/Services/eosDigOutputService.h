@@ -40,17 +40,23 @@ namespace eos {
             typedef Queue<Command> CommandQueue;
             typedef ArrayList<DigOutput*> DigOutputList;
             typedef ArrayList<DigOutput*>::Iterator DigOutputListIterator;
+        public:
+            struct InitParams {
+                TMRTimer timer;
+                unsigned period;
+            };
 
         private:
             const unsigned commandQueueSize = 5;
             const unsigned minDelay = 50;
             const unsigned minWidth = 50;
-            CommandQueue commandQueue;
             TMRTimer timer;
+            unsigned period;
+            CommandQueue commandQueue;
             DigOutputList outputs;
 
     private:
-            static void timerInterrupt(TMRTimer timer, void* params);
+            static void isrTimerCallback(TMRTimer timer, void* params);
             void cmdClear(DigOutput* output);
             void cmdSet(DigOutput* output);
             void cmdToggle(DigOutput* output);
@@ -66,7 +72,7 @@ namespace eos {
             void onTask() override;
 
         public:
-            DigOutputService(Application* application, TMRTimer timer);
+            DigOutputService(Application* application, const InitParams& initParams);
             ~DigOutputService();
 
             void addOutput(DigOutput* output);
@@ -94,6 +100,11 @@ namespace eos {
                 delayedToggle,
                 delayedPulse,
                 pulse
+            };
+        public:
+            struct InitParams {
+                GPIOPort port;
+                GPIOPin pin;
             };
 
             DigOutputService* service;

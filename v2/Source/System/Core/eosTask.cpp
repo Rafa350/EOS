@@ -81,18 +81,18 @@ Task::~Task() {
 void Task::function(
     void* params) {
 
-	eosAssert(params != nullptr);
-
     Task *task = reinterpret_cast<Task*>(params);
+    if (task && task->eventCallback) {
+        
+        task->weakTime = osalGetTickCount();
 
-    task->weakTime = osalGetTickCount();
-
-    if (task->eventCallback != nullptr) {
         EventArgs args;
         args.task = task;
         args.param = task->eventParam;
-        while (true)
+        
+        while (true) {
             task->eventCallback->execute(args);
+        }
     }
 
     eosFatal("No s'ha d'arrivar mai aqui.");

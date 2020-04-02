@@ -20,7 +20,7 @@ typedef struct {
 #elif defined (_TMR2)
 #elif defined (_TMR1)
 #else
-#error No hay modulos TMRx en esta CPU
+    //#error No hay modulos TMRx en esta CPU
 #endif
 
 #define NUM_TIMERS TMR_NUMBER_OF_MODULES
@@ -102,10 +102,10 @@ void halTMRInitialize(
     }
 
     if (((info->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) &&
-        (info->irqCallback != NULL)) {
+        (info->isrCallback != NULL)) {
         
-        callbacks[info->timer] = info->irqCallback;
-        params[info->timer] = info->irqParam;
+        callbacks[info->timer] = info->isrCallback;
+        params[info->timer] = info->isrParam;
 
         halINTDisableInterrupts();
 

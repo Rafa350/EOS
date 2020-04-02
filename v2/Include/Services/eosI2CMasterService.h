@@ -106,7 +106,7 @@ namespace eos {
             TransactionAllocator transactionAllocator;
             TransactionQueue transactionQueue;
             Transaction *transaction;
-            BinarySemaphore semaphore;
+            Semaphore semaphore;
             int index;
             int maxIndex;
             uint8_t check;

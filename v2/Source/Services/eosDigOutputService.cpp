@@ -17,10 +17,11 @@ using namespace eos;
 ///
 DigOutputService::DigOutputService(
     Application* application,
-    TMRTimer timer):
+    const InitParams& initParams):
 
     commandQueue(commandQueueSize),
-    timer(timer),
+    timer(initParams.timer),
+    period(initParams.period),
     Service(application) {
 
 }
@@ -177,28 +178,7 @@ void DigOutputService::delayedPulse(
 /// \brief    Inicialitza el servei.
 ///
 void DigOutputService::onInitialize() {
-
-    // Configura el temporitzador
-    //
-	TMRInitializeInfo tmrInfo;
-	tmrInfo.timer = timer;
-#if defined(EOS_PIC32MX)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
-    tmrInfo.period = (80000000L / 64L / 1000L) - 1;
-#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
-    tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
-    tmrInfo.period = 1000 - 1; // 1ms
-	tmrInfo.irqPriority = 1;
-	tmrInfo.irqSubPriority = 0;
-#else
-//#error CPU no soportada
-#endif
     
-	tmrInfo.irqCallback = timerInterrupt;
-	tmrInfo.irqParam = this;
-	halTMRInitialize(&tmrInfo);
-
     // Inicialitza les sortides
     //
     for (DigOutputListIterator it(outputs); it.hasNext(); it.next()) {
@@ -212,8 +192,26 @@ void DigOutputService::onInitialize() {
         halGPIOInitializePin(output->port, output->pin, output->options, HAL_GPIO_AF_NONE);
     }
 
-    // Inicia el temporitzador
+    
+    // Inicialitza el temporitzador
     //
+	TMRInitializeInfo tmrInfo;
+	tmrInfo.timer = timer;
+#if defined(EOS_PIC32MX)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
+    tmrInfo.period = ((80000 * period) / 64) - 1; 
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
+    tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
+    tmrInfo.period = (1000 * period) - 1; 
+	tmrInfo.irqPriority = 1;
+	tmrInfo.irqSubPriority = 0;
+#else
+//#error CPU no soportada
+#endif   
+	tmrInfo.isrCallback = isrTimerCallback;
+	tmrInfo.isrParam = this;
+	halTMRInitialize(&tmrInfo);
     halTMRStartTimer(timer);
 
     // Inicialitza el servei base.
@@ -227,47 +225,45 @@ void DigOutputService::onInitialize() {
 ///
 void DigOutputService::onTask() {
 
-    while (true) {
-        Command cmd;
-        while (commandQueue.pop(cmd, unsigned(-1))) {
-                      
-            switch (cmd.opCode) {
-                case OpCode::set:
-                    cmdSet(cmd.output);
-                    break;
-                    
-                case OpCode::clear:
-                    cmdClear(cmd.output);
-                    break;
-                    
-                case OpCode::toggle:
-                    cmdToggle(cmd.output);
-                    break;
-                    
-                case OpCode::pulse:
-                    cmdPulse(cmd.output, cmd.param1);
-                    break;
-                    
-                case OpCode::delayedSet:
-                    cmdDelayedSet(cmd.output, cmd.param1);
-                    break;
+    Command cmd;
+    while (commandQueue.pop(cmd, unsigned(-1))) {
 
-                case OpCode::delayedClear:
-                    cmdDelayedClear(cmd.output, cmd.param1);
-                    break;
+        switch (cmd.opCode) {
+            case OpCode::set:
+                cmdSet(cmd.output);
+                break;
 
-                case OpCode::delayedToggle:
-                    cmdDelayedToggle(cmd.output, cmd.param1);
-                    break;
+            case OpCode::clear:
+                cmdClear(cmd.output);
+                break;
 
-                case OpCode::delayedPulse:
-                    cmdDelayedPulse(cmd.output, cmd.param1, cmd.param2);
-                    break;
-                    
-                case OpCode::timeOut:
-                    cmdTimeOut(cmd.param1);
-                    break;
-            }
+            case OpCode::toggle:
+                cmdToggle(cmd.output);
+                break;
+
+            case OpCode::pulse:
+                cmdPulse(cmd.output, cmd.param1);
+                break;
+
+            case OpCode::delayedSet:
+                cmdDelayedSet(cmd.output, cmd.param1);
+                break;
+
+            case OpCode::delayedClear:
+                cmdDelayedClear(cmd.output, cmd.param1);
+                break;
+
+            case OpCode::delayedToggle:
+                cmdDelayedToggle(cmd.output, cmd.param1);
+                break;
+
+            case OpCode::delayedPulse:
+                cmdDelayedPulse(cmd.output, cmd.param1, cmd.param2);
+                break;
+
+            case OpCode::timeOut:
+                cmdTimeOut(cmd.param1);
+                break;
         }
     }
 }
@@ -486,7 +482,7 @@ void DigOutputService::cmdTimeOut(
 /// ----------------------------------------------------------------------
 /// \brief    Captura la interrupcio del temporitzador.
 ///
-void DigOutputService::timerInterrupt(
+void DigOutputService::isrTimerCallback(
 	TMRTimer timer,
 	void *param) {
 

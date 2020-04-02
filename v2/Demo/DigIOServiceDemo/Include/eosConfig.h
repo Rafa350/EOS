@@ -16,6 +16,9 @@
 #define USE_SWITCHES_SW3
 #endif
 
+#define xUSE_APPLICATION_TICK
+#define APPLICATION_TICK_PERIOD     10
+
 
 #include "board/eosBoard.h"
 

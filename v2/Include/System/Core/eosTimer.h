@@ -15,6 +15,7 @@ namespace eos {
         public:
             struct EventArgs {
                 Timer* timer;
+                void* param;
             };
 
         private:
@@ -25,9 +26,11 @@ namespace eos {
             bool autoreload;
             void *tag;
             IEventCallback *eventCallback;
+            void* eventParam;
 
         public:
             Timer(bool autoreload = false);
+            Timer(bool autoreload, IEventCallback* eventCallback, void* eventParam);
             ~Timer();
             void start(unsigned time, unsigned blockTime);
             void stop(unsigned blockTime);

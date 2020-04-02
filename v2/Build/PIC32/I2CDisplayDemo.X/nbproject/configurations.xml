@@ -16,8 +16,8 @@
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
           <logicalFolder name="f1" displayName="Board" projectFiles="true">
-            <itemPath>../../../Include/Board/board.h</itemPath>
-            <itemPath>../../../Include/Board/board_PIC32_ETH_STARTER_KIT.h</itemPath>
+            <itemPath>../../../Include/Board/eosBoard.h</itemPath>
+            <itemPath>../../../Include/Board/eosBoard_PIC32_ETH_STARTER_KIT.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f6" displayName="Controllers" projectFiles="true">
             <logicalFolder name="f1" displayName="SmartDisplay" projectFiles="true">
@@ -173,11 +173,11 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.30</languageToolchainVersion>
+        <languageToolchainVersion>2.40</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.0.53"/>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.2.228"/>
       </packs>
       <compileType>
         <linkerTool>

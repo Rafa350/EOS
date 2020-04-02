@@ -42,7 +42,7 @@ Service::~Service() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Configura el servei, abans de l'inici del planificador.
+/// \brief    Inicialitza el servei, abans de l'inici del planificador.
 ///
 void Service::initialize() {
 
@@ -50,6 +50,18 @@ void Service::initialize() {
 		onInitialize();
         initialized = true;
 	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Finalitza el serevei.
+///
+void Service::terminate() {
+    
+    if (initialized) {
+        onTerminate();
+        initialized = false;
+    }
 }
 
 
@@ -78,6 +90,14 @@ void Service::task() {
 ///
 void Service::onInitialize() {
 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la finalitzacio.
+///
+void Service::onTerminate() {
+    
 }
 
 
