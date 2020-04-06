@@ -3,7 +3,6 @@
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"
-#include "System/eosMath.h"
 #include "System/Core/eosTask.h"
 
 
@@ -499,20 +498,16 @@ void DigOutputService::isrTimerCallback(
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    service: El servei al que s'asignara la sortida.
-/// \param    port: El port.
-/// \param    pin: El pin.
-/// \param    options: Opcions del pin.
+/// \param    initParams: Parametres d'inicialitzacio.
 ///
 DigOutput::DigOutput(
     DigOutputService* service,
-    GPIOPort port,
-    GPIOPin pin,
-    GPIOOptions options) :
+    const InitParams& initParams):
 
     service(nullptr),
-    port(port),
-    pin(pin),
-    options(options),
+    port(initParams.port),
+    pin(initParams.pin),
+    options(0),
     state(State::idle),
 	delayCnt(0),
 	widthCnt(0) {

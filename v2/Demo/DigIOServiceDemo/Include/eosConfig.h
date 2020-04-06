@@ -10,10 +10,10 @@
 
 #define USE_SWITCHES_SW1
 #if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
-#define USE_SWITCHES_SW2
+    #define USE_SWITCHES_SW2
 #endif
 #if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
-#define USE_SWITCHES_SW3
+    #define USE_SWITCHES_SW3
 #endif
 
 #define xUSE_APPLICATION_TICK

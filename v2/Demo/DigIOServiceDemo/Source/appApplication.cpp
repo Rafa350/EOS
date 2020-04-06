@@ -41,7 +41,8 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW1
     //
 #ifdef EXIST_SWITCHES_SW1
-    halGPIOInitializePin(SW_SW1_PORT, SW_SW1_PIN, HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+    halGPIOInitializePin(SW_SW1_PORT, SW_SW1_PIN, 
+        HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
 
     digInputInit.port = SW_SW1_PORT;
     digInputInit.pin = SW_SW1_PIN;
@@ -52,7 +53,8 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW2
     //
 #ifdef EXIST_SWITCHES_SW2
-    halGPIOInitializePin(SW_SW2_PORT, SW_SW2_PIN, HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+    halGPIOInitializePin(SW_SW2_PORT, SW_SW2_PIN, 
+        HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
 
     digInputInit.port = SW_SW2_PORT;
     digInputInit.pin = SW_SW2_PIN;
@@ -63,7 +65,8 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW3
     //
 #ifdef EXIST_SWITCHES_SW3
-    halGPIOInitializePin(SW_SW3_PORT, SW_SW3_PIN, HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+    halGPIOInitializePin(SW_SW3_PORT, SW_SW3_PIN, 
+        HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
 
     digInputInit.port = SW_SW3_PORT;
     digInputInit.pin = SW_SW3_PIN;
@@ -83,28 +86,34 @@ void MyApplication::onInitialize() {
     // Inicialitza la sortida corresponent al led LED1
     //
 #ifdef EXIST_LEDS_LED1
+    halGPIOInitializePin(LED_LED1_PORT, LED_LED1_PIN, 
+        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
+
     digOutputInit.port = LED_LED1_PORT;
     digOutputInit.pin = LED_LED1_PIN;
-    digOutput1 = new DigOutput(digOutputService, LED_LED1_PORT, LED_LED1_PIN,
-        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
+    digOutput1 = new DigOutput(digOutputService, digOutputInit);
 #endif
 
     // Inicialitza la sortida corresponent al led LED2
     //
 #ifdef EXIST_LEDS_LED2
+    halGPIOInitializePin(LED_LED2_PORT, LED_LED2_PIN, 
+        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
+
     digOutputInit.port = LED_LED2_PORT;
     digOutputInit.pin = LED_LED2_PIN;
-    digOutput2 = new DigOutput(digOutputService, LED_LED2_PORT, LED_LED2_PIN,
-        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
+    digOutput2 = new DigOutput(digOutputService, digOutputInit);
 #endif
 
     // Inicialitza la sortida corresponent al led LED3
     //
 #ifdef EXIST_LEDS_LED3
+    halGPIOInitializePin(LED_LED3_PORT, LED_LED3_PIN, 
+        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
+    
     digOutputInit.port = LED_LED3_PORT;
     digOutputInit.pin = LED_LED3_PIN;
-    digOutput3 = new DigOutput(digOutputService, LED_LED3_PORT, LED_LED3_PIN,
-        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
+    digOutput3 = new DigOutput(digOutputService, digOutputInit);
 #endif
 }
 

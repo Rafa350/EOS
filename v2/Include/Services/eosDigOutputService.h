@@ -116,7 +116,7 @@ namespace eos {
             unsigned widthCnt;
 
         public:
-            DigOutput(DigOutputService* service, GPIOPort port, GPIOPin pin, GPIOOptions options = 0);
+            DigOutput(DigOutputService* service, const InitParams& initParams);
             ~DigOutput();
 
             inline DigOutputService* getService() const { 

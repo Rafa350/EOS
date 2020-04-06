@@ -102,7 +102,7 @@ static I2CModule
 /// \param   info: Informacio d'inicialitzacio.
 ///
 void halI2CMasterInitialize(
-    const I2CMasterInitializeInfo *info) {
+    const I2CMasterInitializeInfo* info) {
     
     callbacks[info->module] = info->irqCallback;
     params[info->module] = info->irqParam;
