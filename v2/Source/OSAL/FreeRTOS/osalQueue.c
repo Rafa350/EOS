@@ -12,7 +12,7 @@
 /// \result   El handler de la cua. NULL en cas d'error.
 ///
 HQueue osalQueueCreate(
-	const QueueInitializeInfo *info) {
+	const QueueInitializeInfo* info) {
 
 	eosAssert(info != NULL);
 

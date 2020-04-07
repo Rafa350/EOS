@@ -93,7 +93,7 @@ namespace eos {
                 return service; 
             }
             
-            bool get() const;
+            bool read() const;
 
         friend DigInputService;
     };

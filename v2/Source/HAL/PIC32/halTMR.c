@@ -229,10 +229,10 @@ void isrTMR5Handler(void) {
 /// \param    time: Temps en milisegons.
 ///
 void halTMRDelay(
-    int time) {
+    unsigned time) {
     
     int startCount = _CP0_GET_COUNT();
-    int endCount = startCount + time * (halSYSGetSystemClockFrequency() / 2000);
+    int endCount = startCount + ((int)time) * (halSYSGetSystemClockFrequency() / 2000);
     
     if (endCount >= startCount) 
         while (_CP0_GET_COUNT() < endCount);

@@ -11,10 +11,10 @@ using namespace eos;
 
 
 #define PATTERN_mask     0xFF
-#define PATTERN_ON       0xFF
-#define PATTERN_OFF      0x00
 #define PATTERN_POSEDGE  0x7F
 #define PATTERN_NEGEDGE  0x80
+#define PATTERN_ON       0xFF
+#define PATTERN_OFF      0x00
 
 
 /// ----------------------------------------------------------------------
@@ -136,12 +136,21 @@ void DigInputService::onInitialize() {
 ///
 void DigInputService::onTask() {
 
-    // Espera que hagi quelcom per fer
+    // Espera indefinidament que hagi quelcom en la cua
     //
     Command cmd;
     while (commandQueue.pop(cmd, unsigned(-1))) {
         
         DigInput* input = cmd.input;
+        switch (cmd.opCode) {
+            case OpCode::posEdge:
+                input->state = true;
+                break;
+                
+            case OpCode::negEdge:
+                input->state = false;
+                break;
+        }
 
         // Si te funcio callback, la crida
         //
@@ -173,8 +182,9 @@ void DigInputService::isrTimerFunction(
     TMRTimer timer,
     void* params) {
     
-    DigInputService* service = reinterpret_cast<DigInputService*>(params);
+    DigInputService* service = static_cast<DigInputService*>(params);
     if (service != nullptr) {
+
         for (DigInputListIterator it(service->inputs); it.hasNext(); it.next()) {
             
             DigInput* input = it.getCurrent();
@@ -185,39 +195,21 @@ void DigInputService::isrTimerFunction(
             if (halGPIOReadPin(input->port, input->pin))
                 input->pattern |= 1;
 
-            // Detecta els canvis d'estat
+            // Detecta els canvis d'estat i els notifica a la tasca
             //
-            OpCode opCode = OpCode::null;
+            Command cmd;
             switch (input->pattern & PATTERN_mask) {
                 case PATTERN_POSEDGE:
-                    input->state = true;
-                    opCode = OpCode::posEdge;
+                    cmd.opCode = OpCode::posEdge;
+                    cmd.input = input;
+                    service->commandQueue.pushISR(cmd);
                     break;
             
                 case PATTERN_NEGEDGE:
-                    input->state = false;
-                    opCode = OpCode::negEdge;
+                    cmd.opCode = OpCode::negEdge;
+                    cmd.input = input;
+                    service->commandQueue.pushISR(cmd);
                     break;
-                    
-                case PATTERN_ON:
-                    input->state = true;
-                    break;
-
-                case PATTERN_OFF:
-                    input->state = false;
-                    break;
-            }
-
-            // Si hi han canvis, genera la comanda per executar en la
-            // tasca del servei
-            //
-            if (opCode != OpCode::null) {
-                
-                Command cmd;
-                cmd.input = input,                    
-                cmd.opCode = opCode;
-                
-                service->commandQueue.pushISR(cmd);
             }
         }
     }
@@ -258,11 +250,7 @@ DigInput::~DigInput() {
 /// \brief    Obte l'estat de l'entrada.
 /// \return   El estat.
 ///
-bool DigInput::get() const {
+bool DigInput::read() const {
 
-    halINTDisableInterrupts();
-    bool s = state;
-    halINTEnableInterrupts();
-    
-    return s;
+    return state;
 }

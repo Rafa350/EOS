@@ -49,6 +49,7 @@ void DigOutputService::addOutput(
     DigOutput* output) {
 
     eosAssert(output != nullptr);
+    eosAssert(output->service == nullptr);
 
     if (!isInitialized())
         if (output->service == nullptr) {    
@@ -68,6 +69,7 @@ void DigOutputService::removeOutput(
     DigOutput* output) {
 
     eosAssert(output != nullptr);
+    eosAssert(output->service == this);
 
     if (!isInitialized())
         if (output->service == this) {
@@ -118,6 +120,25 @@ void DigOutputService::clear(
 
     Command cmd;
     cmd.opCode = OpCode::clear;
+    cmd.output = output;
+    commandQueue.push(cmd, unsigned(-1));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna un valor a la sortida.
+/// \param    output: La sortida.
+/// \param    value: El valor a asignar.
+///
+void DigOutputService::write(
+    DigOutput* output,
+    bool value) {
+    
+    eosAssert(output != nullptr);
+    eosAssert(output->service == this);
+
+    Command cmd;
+    cmd.opCode = value ? OpCode::set : OpCode::clear;
     cmd.output = output;
     commandQueue.push(cmd, unsigned(-1));
 }
@@ -465,7 +486,7 @@ void DigOutputService::isrTimerFunction(
 	TMRTimer timer,
 	void *param) {
 
-	DigOutputService* service = reinterpret_cast<DigOutputService*>(param);
+	DigOutputService* service = static_cast<DigOutputService*>(param);
     if (service != nullptr) {
         
         Command cmd;

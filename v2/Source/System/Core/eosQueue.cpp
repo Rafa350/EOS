@@ -53,7 +53,7 @@ void GenericQueue::clear() {
 /// \return   True si tot es correcte.
 ///
 bool GenericQueue::genericPut(
-    const void *element,
+    const void* element,
     unsigned blockTime) {
 
 	return osalQueuePut(hQueue, element, blockTime);
@@ -67,7 +67,7 @@ bool GenericQueue::genericPut(
 /// \return   True si tot es correcte.
 ///
 bool GenericQueue::genericGet(
-    void *element,
+    void* element,
     unsigned blockTime) {
 
 	return osalQueueGet(hQueue, element, blockTime);
@@ -80,14 +80,14 @@ bool GenericQueue::genericGet(
 /// \return   True si tot es correcte.
 ///
 bool GenericQueue::genericPutISR(
-    void *element) {
+    void* element) {
 
 	return osalQueuePutISR(hQueue, element);
 }
 
 
 bool GenericQueue::genericGetISR(
-    void *element) {
+    void* element) {
 
 	return osalQueueGetISR(hQueue, element);
 }

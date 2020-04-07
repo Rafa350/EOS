@@ -42,12 +42,11 @@ void TimerService::addTimer(
     eosAssert(timer != nullptr);
     eosAssert(timer->service == nullptr);
 
-    Task::enterCriticalSection();
-    
-    timers.add(timer);
-    timer->service = this;
-    
-    Task::exitCriticalSection();
+    if (!isInitialized()) 
+        if (timer->service == nullptr) {
+            timers.add(timer);
+            timer->service = this;
+        }
 }
 
 
@@ -60,16 +59,14 @@ void TimerService::removeTimer(
 
     eosAssert(timer != nullptr);
     eosAssert(timer->service == this);
-    
-    Task::enterCriticalSection();
-    
-    if (activeQueue.contains(timer))
-        activeQueue.remove(timer);
 
-    timer->service = nullptr;
-    timers.remove(timer);
-    
-    Task::exitCriticalSection();
+    if (!isInitialized())
+        if (timer->service == this) {    
+            if (activeQueue.contains(timer))
+                activeQueue.remove(timer);
+            timer->service = nullptr;
+            timers.remove(timer);
+        }
 }
 
 
@@ -78,12 +75,8 @@ void TimerService::removeTimer(
 ///
 void TimerService::removeTimers() {
 
-    Task::enterCriticalSection();
-    
     while (!timers.isEmpty())
         removeTimer(timers.getLast());
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -99,6 +92,7 @@ void TimerService::start(
     unsigned blockTime) {
     
     eosAssert(timer != nullptr);
+    eosAssert(timer->service == this);
 
     if (period > 0) {
 
@@ -122,6 +116,7 @@ void TimerService::stop(
     unsigned blockTime) {
 
     eosAssert(timer != nullptr);
+    eosAssert(timer->service == this);
 
     Command cmd;
     cmd.opCode = OpCode::stop;
@@ -140,6 +135,7 @@ void TimerService::pause(
     unsigned blockTime) {
 
     eosAssert(timer != nullptr);
+    eosAssert(timer->service == this);
 
     Command cmd;
     cmd.opCode = OpCode::pause;
@@ -158,6 +154,7 @@ void TimerService::resume(
     unsigned blockTime) {
 
     eosAssert(timer != nullptr);
+    eosAssert(timer->service == this);
 
     Command cmd;
     cmd.opCode = OpCode::resume;
@@ -186,6 +183,8 @@ void TimerService::osTimerEventHandler(
 void TimerService::onInitialize() {
     
     osTimer.setEventCallback(&osTimerEventCallback);
+    
+    Service::onInitialize();
 }
 
 
@@ -194,31 +193,31 @@ void TimerService::onInitialize() {
 ///
 void TimerService::onTask() {
 
-    while (true) {
-        Command cmd;
-        while (commandQueue.pop(cmd, unsigned(-1))) {
-            
-            switch (cmd.opCode) {
-                case OpCode::start:
-                    cmdStart(cmd.timer);
-                    break;
+    // Espera indefinidament que arribin comandes per procesar
+    //
+    Command cmd;
+    while (commandQueue.pop(cmd, unsigned(-1))) {
 
-                case OpCode::stop:
-                    cmdStop(cmd.timer);
-                    break;
+        switch (cmd.opCode) {
+            case OpCode::start:
+                cmdStart(cmd.timer);
+                break;
 
-                case OpCode::pause:
-                    cmdPause(cmd.timer);
-                    break;
+            case OpCode::stop:
+                cmdStop(cmd.timer);
+                break;
 
-                case OpCode::resume:
-                    cmdResume(cmd.timer);
-                    break;
+            case OpCode::pause:
+                cmdPause(cmd.timer);
+                break;
 
-                case OpCode::timeOut:
-                    cmdTimeOut();
-                    break;
-            }
+            case OpCode::resume:
+                cmdResume(cmd.timer);
+                break;
+
+            case OpCode::timeOut:
+                cmdTimeOut();
+                break;
         }
     }
 }
@@ -231,8 +230,6 @@ void TimerService::onTask() {
 void TimerService::cmdStart(
     TimerCounter *timer) {
     
-    Task::enterCriticalSection();
-
     // Calcula el temps d'expiracio.
     //
     timer->currentPeriod = timer->period;
@@ -248,8 +245,6 @@ void TimerService::cmdStart(
     //
     if (activeQueue.getCount() == 1)
         osTimer.start(timer->currentPeriod, 0);
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -260,13 +255,9 @@ void TimerService::cmdStart(
 void TimerService::cmdStop(
     TimerCounter *timer) {
     
-    Task::enterCriticalSection();
-
     // Elimina el contador de la llista de contadors actius.
     //
     activeQueue.remove(timer);
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -277,8 +268,6 @@ void TimerService::cmdStop(
 void TimerService::cmdPause(
     TimerCounter *timer) {
     
-    Task::enterCriticalSection();
-    
     // Elimina el contador de la llista de contadors actius.
     //
     activeQueue.remove(timer);
@@ -286,8 +275,6 @@ void TimerService::cmdPause(
     // Recalcula el periode que resta.
     //
     timer->currentPeriod = timer->expireTime - osalGetTickTime();
-    
-    Task::enterCriticalSection();
 }
 
 
@@ -297,8 +284,6 @@ void TimerService::cmdPause(
 ///
 void TimerService::cmdResume(
     TimerCounter *timer) {
-    
-    Task::enterCriticalSection();
 
     // Recalcula el temps d'expiracio amb el periode ue resta.
     //
@@ -312,8 +297,6 @@ void TimerService::cmdResume(
     //
     if (activeQueue.getCount() == 1)
         osTimer.start(timer->currentPeriod, 0);
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -322,8 +305,6 @@ void TimerService::cmdResume(
 /// \param    period: Periode de temps procesat.
 ///
 void TimerService::cmdTimeOut() {
-    
-    Task::enterCriticalSection();
     
     TimerCounter* timer;
 
@@ -366,8 +347,6 @@ void TimerService::cmdTimeOut() {
             osTimer.start(osPeriod, 0);
         }
     }
-    
-    Task::exitCriticalSection();
 }
 
 

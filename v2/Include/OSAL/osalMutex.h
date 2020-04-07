@@ -13,7 +13,7 @@ extern "C" {
 
 typedef struct OSAL_MUTEX_DATA* HMutex;
 
-HMutex osalMutexCreate();
+HMutex osalMutexCreate(void);
 void osalMutexDestroy(HMutex hMutex);
 
 bool osalMutexLock(HMutex hMutex, unsigned blockTime);

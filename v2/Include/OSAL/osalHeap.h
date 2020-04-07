@@ -19,7 +19,7 @@ typedef struct {
 	unsigned length;
 } HeapInformation;
 
-HHeap osalHeapCreate();
+HHeap osalHeapCreate(void);
 void *osalHeapAlloc(HHeap hHeap, unsigned size);
 void osalHeapFree(HHeap hHeap, void* block);
 void osalGetHeapInformation(HHeap hHeap, HeapInformation* info);

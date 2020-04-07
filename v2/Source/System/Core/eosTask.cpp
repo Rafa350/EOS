@@ -25,10 +25,10 @@ Task::Task(
     Priority priority,
     const String& name,
     IEventCallback* eventCallback,
-    void* eventParam):
+    void* eventParams):
 
     eventCallback(eventCallback),
-    eventParam(eventParam),
+    eventParams(eventParams),
 	weakTime(0) {
 
     eosAssert(eventCallback != nullptr);
@@ -89,7 +89,7 @@ void Task::function(
 
         EventArgs args;
         args.task = task;
-        args.param = task->eventParam;
+        args.params = task->eventParams;
 
         // Executa continuament la funcio
         //
@@ -195,4 +195,16 @@ void Task::suspendAll() {
 void Task::resumeAll() {
 
     osalResumeAll();
+}
+
+
+void Task::yield() {
+    
+    osalTaskYield();
+}
+
+
+void Task::yieldISR() {
+    
+    //osalTaskYield();
 }

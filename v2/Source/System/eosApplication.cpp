@@ -43,7 +43,7 @@ Application::~Application() {
 void Application::taskEventHandler(
     const Task::EventArgs& args) {
     
-    Service *service = static_cast<Service*>(args.param);
+    Service *service = static_cast<Service*>(args.params);
     if (service != nullptr)
         while (true)
             service->task();

@@ -83,6 +83,7 @@ namespace eos {
             
             void set(DigOutput* output);
             void clear(DigOutput* output);
+            void write(DigOutput* output, bool value);
             void toggle(DigOutput* output);
             void pulse(DigOutput* output, unsigned width);
             void delayedSet(DigOutput* output, unsigned delay);
@@ -131,6 +132,10 @@ namespace eos {
             
             inline void clear() {
                 service->clear(this);
+            }
+            
+            inline void write(bool value) {
+                service->write(this, value);
             }
             
             inline void toggle() {

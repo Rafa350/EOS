@@ -34,6 +34,7 @@ void MyApplication::onInitialize() {
     digInputServiceInit.timer = HAL_TMR_TIMER_3;
     digInputServiceInit.period = 10;
     digInputService = new DigInputService(this, digInputServiceInit);
+    digInputService->setPriority(Task::Priority::high);
     
     DigInput::InitParams digInputInit;
     digInputInit.eventParam = nullptr;
@@ -127,7 +128,7 @@ void MyApplication::digInput1EventHandler(
     const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED1
-    if (!args.input->get()) {
+    if (!args.input->read()) {
         getLed1()->pulse(500);
         getLed2()->delayedPulse(250, 500);
         getLed3()->delayedPulse(500, 500);
@@ -146,7 +147,7 @@ void MyApplication::digInput2EventHandler(
     const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED2
-    if (!args.input->get()) {
+    if (!args.input->read()) {
         getLed3()->pulse(500);
         getLed2()->delayedPulse(250, 500);
         getLed1()->delayedPulse(500, 500);
@@ -165,11 +166,10 @@ void MyApplication::digInput3EventHandler(
     const DigInput::EventArgs &args) {
 
 #ifdef EXIST_LEDS_LED3
-    if (!args.input->get()) {
-        getLed1()->toggle();
-        getLed2()->toggle();
-        getLed3()->toggle();
-    }
+    bool value = !args.input->read();
+    getLed1()->write(value);
+    getLed2()->write(value);
+    getLed3()->write(value);
 #endif
 }
 #endif

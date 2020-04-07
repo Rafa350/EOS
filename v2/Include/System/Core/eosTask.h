@@ -19,7 +19,7 @@ namespace eos {
         public:
             struct EventArgs {
                 Task* task;
-                void* param;
+                void* params;
             };
 
         private:
@@ -33,7 +33,7 @@ namespace eos {
                 high
             };
 
-            Task(unsigned stackSize, Priority priority, const String& name, IEventCallback* eventCallback, void* eventParam);
+            Task(unsigned stackSize, Priority priority, const String& name, IEventCallback* eventCallback, void* eventParams);
             virtual ~Task();
 
             static void delay(unsigned time);
@@ -47,11 +47,13 @@ namespace eos {
             static bool notificationTake(unsigned blockTime);
             static bool notificationGive();
             static void notificationGiveISR();
+            static void yield();
+            static void yieldISR();
 
         private:
             HTask hTask;
             IEventCallback* eventCallback;
-            void* eventParam;
+            void* eventParams;
             unsigned weakTime;
 
             static void function(void* params);

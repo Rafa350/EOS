@@ -94,7 +94,7 @@ void halTMRShutdown(TMRTimer timer);
 void halTMRStartTimer(TMRTimer timer);
 void halTMRStopTimer(TMRTimer timer);
 
-void halTMRDelay(int time);
+void halTMRDelay(unsigned time);
 
 void halTMRSetInterruptFunction(TMRTimer timer, TMRInterruptFunction function, void* params);;
 void halTMREnableInterrupt(TMRTimer timer);

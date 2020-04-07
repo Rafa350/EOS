@@ -46,9 +46,25 @@ void osalTaskDestroy(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Canvia la prioritat de la tasca.
+/// \param    priority: La prioritat.
+///
+void osalTaskSetPriority(
+    HTask hTask, 
+    uint8_t priority) {
+   
+	eosAssert(hTask != NULL);
+
+    vTaskPrioritySet(
+        hTask,
+        tskIDLE_PRIORITY + ((UBaseType_t) (priority & OSAL_TASK_PRIORITY_mask) >> OSAL_TASK_PRIORITY_pos));    
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Pasa el control a un altre tasca.
 ///
-void osalTaskYield() {
+void osalTaskYield(void) {
 
 	taskYIELD();
 }

@@ -12,10 +12,10 @@ extern "C" {
 #endif
 
 
-void halSYSInitialize();
+void halSYSInitialize(void);
 
-void halSYSInterruptEnable();
-void halSYSInterruptDisable();
+void halSYSInterruptEnable(void);
+void halSYSInterruptDisable(void);
 
 #define halSYSGetSystemClockFrequency()     CLOCK_SYSTEM_HZ
 #define halSYSGetPeripheralClockFrequency() CLOCK_PERIPHERICAL_HZ
