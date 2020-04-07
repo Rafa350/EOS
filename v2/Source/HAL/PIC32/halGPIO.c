@@ -2,7 +2,7 @@
 #include "HAL/PIC32/halGPIO.h"
 
 
-const GPIOPortRegs gpioPortRegs[] = {
+const GPIORegs gpioRegs[] = {
 #if defined(PORTA)
     { &TRISASET, &TRISACLR, &ODCASET, &ODCACLR, &LATASET, &LATACLR, &LATAINV, &LATA, &PORTA},
 #else
@@ -47,11 +47,11 @@ const GPIOPortRegs gpioPortRegs[] = {
 /// \param    count: Numero de pins a inicialitzar;
 ///
 void halGPIOInitializePins(
-    const GPIOInitializePinInfo *info,
+    const GPIOInitializePinInfo* info,
     unsigned count) {
 
     for (unsigned i = 0; i < count; i++) {
-        const GPIOInitializePinInfo *p = &info[i];
+        const GPIOInitializePinInfo* p = &info[i];
         halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
     }
 }
@@ -80,11 +80,11 @@ void halGPIOInitializePin(
 /// \param    count: Numero de ports a inicialitzar.
 ///
 void halGPIOInitializePorts(
-    const GPIOInitializePortInfo *info,
+    const GPIOInitializePortInfo* info,
     unsigned count) {
 
     for (unsigned i = 0; i < count; i++) {
-        const GPIOInitializePortInfo *p = &info[i];
+        const GPIOInitializePortInfo* p = &info[i];
         halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
     }
 }
@@ -110,30 +110,30 @@ void halGPIOInitializePort(
         //
         switch (options & HAL_GPIO_INIT_mask) {
             case HAL_GPIO_INIT_SET:
-                *gpioPortRegs[port].latSET = mask;
+                *gpioRegs[port].latSET = mask;
                 break;
 
             case HAL_GPIO_INIT_CLR:
-                *gpioPortRegs[port].latCLR = mask;
+                *gpioRegs[port].latCLR = mask;
                 break;
         }
 
         // El configura com sortida
         //
-        *gpioPortRegs[port].trisCLR = mask;
+        *gpioRegs[port].trisCLR = mask;
 
         // Configura com OPEN-DRAIN o PUSH-PULL
         //
         if ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)
-            *gpioPortRegs[port].odcSET = mask;
+            *gpioRegs[port].odcSET = mask;
         else
-            *gpioPortRegs[port].odcCLR = mask;
+            *gpioRegs[port].odcCLR = mask;
     }
 
     else if ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_INPUT) {
 
         // El configura com entrada
         //
-        *gpioPortRegs[port].trisSET = mask;
+        *gpioRegs[port].trisSET = mask;
     }
 }

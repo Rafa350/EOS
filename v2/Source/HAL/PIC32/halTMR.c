@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "HAL/PIC32/halTMR.h"
 #include "HAL/PIC32/halINT.h"
+#include "HAL/PIC32/halSYS.h"
 #include "sys/attribs.h"
 
 #include "peripheral/int/plib_int.h"
@@ -12,6 +13,11 @@ typedef struct {
     INT_SOURCE intSource;
     INT_VECTOR intVector;
 } TimerInfo;
+
+typedef struct {
+    TMRInterruptFunction function;
+    void* params;
+} CallbackInfo;
 
 
 #if defined(_TMR5)
@@ -58,8 +64,7 @@ static const TMR_PRESCALE prescaleTbl[8] = {
 static const INT_PRIORITY_LEVEL intPriority = INT_PRIORITY_LEVEL2;
 static const INT_SUBPRIORITY_LEVEL intSubPriority = INT_SUBPRIORITY_LEVEL0;
 
-static TMRInterruptCallback callbacks[NUM_TIMERS];
-static void *params[NUM_TIMERS];
+static CallbackInfo callbacks[NUM_TIMERS];
 
 #if defined(_TMR1) && (HAL_TMR_USE_T1_INTERRUPT == 1)
 extern void __ISR(_TIMER_1_VECTOR, IPL2SOFT) isrTMR1Wrapper(void);
@@ -83,10 +88,10 @@ extern void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
 /// \param    info: Parametres d'inicialitzacio.
 ///
 void halTMRInitialize(
-    const TMRInitializeInfo *info) {
+    const TMRInitializeInfo* info) {
     
-    const TimerInfo *ti = &timerInfoTbl[info->timer];
-    
+    const TimerInfo* ti = &timerInfoTbl[info->timer];
+     
     PLIB_TMR_Stop(ti->tmrId);
     PLIB_TMR_ClockSourceSelect(ti->tmrId, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
     PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[(info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos]);
@@ -102,10 +107,10 @@ void halTMRInitialize(
     }
 
     if (((info->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) &&
-        (info->isrCallback != NULL)) {
+        (info->isrFunction != NULL)) {
         
-        callbacks[info->timer] = info->isrCallback;
-        params[info->timer] = info->isrParam;
+        callbacks[info->timer].function = info->isrFunction;
+        callbacks[info->timer].params = info->isrParams;
 
         halINTDisableInterrupts();
 
@@ -118,7 +123,7 @@ void halTMRInitialize(
         halINTEnableInterrupts();
     }
     else
-        callbacks[info->timer] = NULL;
+        callbacks[info->timer].function = NULL;
 }
 
 
@@ -150,12 +155,12 @@ void halTMRStopTimer(
 /// \brief    Funcio callback de la interrupcio.
 /// \param    timer: El identificador del temporitzador.
 ///
-static void doCallback(
+static void invokeCallback(
     TMRTimer timer) {
     
-    TMRInterruptCallback callback = callbacks[timer];
-    if (callback != NULL)
-        callback(timer, params[timer]);
+    TMRInterruptFunction function = callbacks[timer].function;
+    if (function != NULL)
+        function(timer, callbacks[timer].params);
 }
 
 
@@ -172,7 +177,7 @@ static void doCallback(
 void isrTMR1Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_1)) {
-        doCallback(HAL_TMR_TIMER_1);
+        invokeCallback(HAL_TMR_TIMER_1);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_1);
     }
 }
@@ -182,7 +187,7 @@ void isrTMR1Handler(void) {
 void isrTMR2Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_2)) {
-        doCallback(HAL_TMR_TIMER_2); 
+        invokeCallback(HAL_TMR_TIMER_2); 
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_2);
     }
 }
@@ -192,7 +197,7 @@ void isrTMR2Handler(void) {
 void isrTMR3Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_3)) {
-        doCallback(HAL_TMR_TIMER_3);
+        invokeCallback(HAL_TMR_TIMER_3);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_3);
     }
 }
@@ -202,7 +207,7 @@ void isrTMR3Handler(void) {
 void isrTMR4Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_4)) {
-        doCallback(HAL_TMR_TIMER_4);
+        invokeCallback(HAL_TMR_TIMER_4);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_4);
     }
 }
@@ -212,7 +217,7 @@ void isrTMR4Handler(void) {
 void isrTMR5Handler(void) {
 
     if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_5)) {
-        doCallback(HAL_TMR_TIMER_5);
+        invokeCallback(HAL_TMR_TIMER_5);
         PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_5);
     }
 }
@@ -227,7 +232,7 @@ void halTMRDelay(
     int time) {
     
     int startCount = _CP0_GET_COUNT();
-    int endCount = startCount + time * (80000000 / 2000);
+    int endCount = startCount + time * (halSYSGetSystemClockFrequency() / 2000);
     
     if (endCount >= startCount) 
         while (_CP0_GET_COUNT() < endCount);

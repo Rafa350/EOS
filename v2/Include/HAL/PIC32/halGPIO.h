@@ -42,9 +42,9 @@ typedef struct {                  // Registres de hardware
 	uint32_t volatile *latINV;
 	uint32_t volatile *lat;
 	uint32_t volatile *port;      // -Registre PORT
-} GPIOPortRegs;
+} GPIORegs;
 
-extern const GPIOPortRegs gpioPortRegs[];
+extern const GPIORegs gpioRegs[];
 
 
 // Identificador dels ports
@@ -161,54 +161,54 @@ extern const GPIOPortRegs gpioPortRegs[];
 // Canvi d'entrada a sortida i viceversa
 //
 #define halGPIOModePinInput(portId, pin) \
-    *gpioPortRegs[portId].trisSET = 1u << (pin)
+    *gpioRegs[portId].trisSET = 1u << (pin)
 
 #define halGPIOModePinOutput(portId, pin) \
-    *gpioPortRegs[portId].trisCLR = 1u << (pin)
+    *gpioRegs[portId].trisCLR = 1u << (pin)
 
 #define halGPIOModePortInput(portId, mask) \
-    *gpioPortRegs[portId].trisSET = (mask)
+    *gpioRegs[portId].trisSET = (mask)
 
 #define halGPIOModePortOutput(portId, mask) \
-    *gpioPortRegs[portId].trisCLR = (mask)
+    *gpioRegs[portId].trisCLR = (mask)
 
 // Canvi del estat del pin
 //
 #define halGPIOSetPin(portId, pin) \
-    *gpioPortRegs[portId].latSET = 1u << (pin)
+    *gpioRegs[portId].latSET = 1u << (pin)
 
 #define halGPIOClearPin(portId, pin) \
-    *gpioPortRegs[portId].latCLR = 1u << (pin)
+    *gpioRegs[portId].latCLR = 1u << (pin)
 
 #define halGPIOTogglePin(portId, pin) \
-    *gpioPortRegs[portId].latINV = 1u << (pin)
+    *gpioRegs[portId].latINV = 1u << (pin)
 
 // Lectura i escriptura del pin
 //
 #define halGPIOReadPin(portId, pin) \
-    (*gpioPortRegs[portId].port & (1u << (pin))) != 0
+    (*gpioRegs[portId].port & (1u << (pin))) != 0
 
 #define halGPIOWritePin(portId, pin, data) \
     if (1) { \
         if (data) \
-            *gpioPortRegs[portId].latSET = 1u << (pin); \
+            *gpioRegs[portId].latSET = 1u << (pin); \
         else \
-            *gpioPortRegs[portId].latCLR = 1u << (pin); \
+            *gpioRegs[portId].latCLR = 1u << (pin); \
     }
 
 // Lectura i escriptura del port
 //
 #define halGPIOWritePort(portId, data) \
-    *gpioPortRegs[portId].lat = (data)
+    *gpioRegs[portId].lat = (data)
 
 #define halGPIOReadPort(portId) \
-    *gpioPortRegs[portId].port
+    *gpioRegs[portId].port
 
 
-void halGPIOInitializePins(const GPIOInitializePinInfo *info, unsigned count);
+void halGPIOInitializePins(const GPIOInitializePinInfo* info, unsigned count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 
-void halGPIOInitializePorts(const GPIOInitializePortInfo *info, unsigned count);
+void halGPIOInitializePorts(const GPIOInitializePortInfo* info, unsigned count);
 void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 
 

@@ -12,7 +12,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: L'aplicacio on afeigir el servei.
-/// \param    timer: El temporitzador.
+/// \param    initParams: Parametres d'inicialitzacio.
 ///
 DigOutputService::DigOutputService(
     Application* application,
@@ -31,69 +31,61 @@ DigOutputService::DigOutputService(
 ///
 DigOutputService::~DigOutputService() {
 
-    Task::enterCriticalSection();
-    
     while (!outputs.isEmpty()) {
     	DigOutput* output = outputs.getFirst();
     	removeOutput(output);
     	delete output;
     }
-    
-    Task::exitCriticalSection();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Afegeig una sortida al servei.
 /// \param    output: La sortida a afeigir.
+/// \remarks  Nomes es poden afeigir sortides, quan el servei no 
+///           esta inicialitzat.
 ///
 void DigOutputService::addOutput(
     DigOutput* output) {
 
     eosAssert(output != nullptr);
 
-    Task::enterCriticalSection();
-    
-    if (output->service == nullptr) {    
-        outputs.add(output);
-        output->service = this;
-    }
-    
-    Task::exitCriticalSection();
+    if (!isInitialized())
+        if (output->service == nullptr) {    
+            outputs.add(output);
+            output->service = this;
+        }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Elimina una sortida del servei.
 /// \param    output: La sortida a eliminar.
+/// \remarks  Nomes es poden eliminar sortides, quan el servei no 
+///           esta inicialitzat.
 ///
 void DigOutputService::removeOutput(
     DigOutput* output) {
 
     eosAssert(output != nullptr);
 
-    Task::enterCriticalSection();
-    
-    if (output->service == this) {
-        outputs.remove(output);
-        output->service = nullptr;
-    }
-    
-    Task::exitCriticalSection();
+    if (!isInitialized())
+        if (output->service == this) {
+            outputs.remove(output);
+            output->service = nullptr;
+        }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Elimina totes les sortides del servei.
+/// \remarks  Nomes es poden eliminar sortides, quan el servei 
+///           no esta inicialitzat.
 ///
 void DigOutputService::removeOutputs() {
 
-    Task::enterCriticalSection();
-    
     while (!outputs.isEmpty())
         removeOutput(outputs.getFirst());
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -103,6 +95,9 @@ void DigOutputService::removeOutputs() {
 ///
 void DigOutputService::set(
     DigOutput* output) {
+    
+    eosAssert(output != nullptr);
+    eosAssert(output->service == this);
     
     Command cmd;
     cmd.opCode = OpCode::set;
@@ -118,6 +113,9 @@ void DigOutputService::set(
 void DigOutputService::clear(
     DigOutput* output) {
     
+    eosAssert(output != nullptr);
+    eosAssert(output->service == this);
+
     Command cmd;
     cmd.opCode = OpCode::clear;
     cmd.output = output;
@@ -132,6 +130,9 @@ void DigOutputService::clear(
 void DigOutputService::toggle(
     DigOutput* output) {
     
+    eosAssert(output != nullptr);
+    eosAssert(output->service == this);
+
     Command cmd;
     cmd.opCode = OpCode::toggle;
     cmd.output = output;
@@ -147,6 +148,9 @@ void DigOutputService::pulse(
     DigOutput* output,
     unsigned width) {
     
+    eosAssert(output != nullptr);
+    eosAssert(output->service == this);
+
     Command cmd;
     cmd.opCode = OpCode::pulse;
     cmd.output = output;
@@ -164,6 +168,9 @@ void DigOutputService::delayedPulse(
     unsigned delay,
     unsigned width) {
     
+    eosAssert(output != nullptr);
+    eosAssert(output->service == this);
+
     Command cmd;
     cmd.opCode = OpCode::delayedPulse;
     cmd.output = output;
@@ -177,20 +184,6 @@ void DigOutputService::delayedPulse(
 /// \brief    Inicialitza el servei.
 ///
 void DigOutputService::onInitialize() {
-    
-    // Inicialitza les sortides
-    //
-    for (DigOutputListIterator it(outputs); it.hasNext(); it.next()) {
-        DigOutput* output = it.getCurrent();
-        
-        if (((output->options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_OD) ||
-            ((output->options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_OUTPUT_PP)) {
-            output->options &= ~HAL_GPIO_MODE_mask;
-            output->options |= HAL_GPIO_MODE_OUTPUT_PP;
-        }
-        halGPIOInitializePin(output->port, output->pin, output->options, HAL_GPIO_AF_NONE);
-    }
-
     
     // Inicialitza el temporitzador
     //
@@ -208,14 +201,29 @@ void DigOutputService::onInitialize() {
 #else
 //#error CPU no soportada
 #endif   
-	tmrInfo.isrCallback = isrTimerCallback;
-	tmrInfo.isrParam = this;
+	tmrInfo.isrFunction = isrTimerFunction;
+	tmrInfo.isrParams = this;
 	halTMRInitialize(&tmrInfo);
     halTMRStartTimer(timer);
 
     // Inicialitza el servei base.
     //
     Service::onInitialize();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Finalitza el servei.
+///
+void DigOutputService::onTerminate() {
+    
+    // Desactiva el temporitzador
+    //
+    halTMRStopTimer(timer);
+    
+    // Finalitza el servei base
+    //
+    Service::onTerminate();
 }
 
 
@@ -269,18 +277,23 @@ void DigOutputService::onTask() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Procesa la interrupcio 'tick'.
+/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
+///
+void DigOutputService::onTick() {
+    
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Procesa la comanda 'clear'
 /// \param    output: La sortida.
 ///
 void DigOutputService::cmdClear(
     DigOutput* output) {
     
-    Task::enterCriticalSection();
-    
     halGPIOClearPin(output->port, output->pin);   
     output->state = DigOutput::State::idle;
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -291,12 +304,8 @@ void DigOutputService::cmdClear(
 void DigOutputService::cmdSet(
     DigOutput* output) {
 
-    Task::enterCriticalSection();
-    
     halGPIOSetPin(output->port, output->pin);      
     output->state = DigOutput::State::idle;
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -307,12 +316,8 @@ void DigOutputService::cmdSet(
 void DigOutputService::cmdToggle(
     DigOutput* output) {
 
-    Task::enterCriticalSection();
-    
     halGPIOTogglePin(output->port, output->pin);   
     output->state = DigOutput::State::idle;
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -325,14 +330,10 @@ void DigOutputService::cmdPulse(
     DigOutput* output,
     unsigned width) {
     
-    Task::enterCriticalSection();
-    
     if (output->state == DigOutput::State::idle)
         halGPIOTogglePin(output->port, output->pin);   
     output->state = DigOutput::State::pulse;
     output->widthCnt = width;
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -345,13 +346,8 @@ void DigOutputService::cmdDelayedSet(
     DigOutput* output, 
     unsigned delay) {
     
-    Task::enterCriticalSection();
-    
     output->state = DigOutput::State::delayedSet;
     output->delayCnt = delay;
-    
-    Task::exitCriticalSection();
-    
 }
 
 
@@ -364,12 +360,8 @@ void DigOutputService::cmdDelayedClear(
     DigOutput* output, 
     unsigned delay) {
     
-    Task::enterCriticalSection();
-    
     output->state = DigOutput::State::delayedClear;
     output->delayCnt = delay;
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -381,13 +373,9 @@ void DigOutputService::cmdDelayedClear(
 void DigOutputService::cmdDelayedToggle(
     DigOutput* output, 
     unsigned delay) {
-    
-    Task::enterCriticalSection();
-    
+
     output->state = DigOutput::State::delayedToggle;
     output->delayCnt = delay;
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -402,13 +390,9 @@ void DigOutputService::cmdDelayedPulse(
     unsigned delay,
     unsigned width) {
     
-    Task::enterCriticalSection();
-    
     output->state = DigOutput::State::delayedPulse;
     output->delayCnt = delay;
     output->widthCnt = width;
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -419,8 +403,6 @@ void DigOutputService::cmdDelayedPulse(
 void DigOutputService::cmdTimeOut(
     unsigned time) {
 
-    Task::enterCriticalSection();    
-    
     for (DigOutputListIterator it(outputs); it.hasNext(); it.next()) {
         
         DigOutput *output = it.getCurrent();
@@ -473,23 +455,23 @@ void DigOutputService::cmdTimeOut(
                 break;
         }
     }
-    
-    Task::exitCriticalSection();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Captura la interrupcio del temporitzador.
 ///
-void DigOutputService::isrTimerCallback(
+void DigOutputService::isrTimerFunction(
 	TMRTimer timer,
 	void *param) {
 
 	DigOutputService* service = reinterpret_cast<DigOutputService*>(param);
     if (service != nullptr) {
+        
         Command cmd;
         cmd.opCode = OpCode::timeOut;
         cmd.param1 = 1;
+        
         service->commandQueue.pushISR(cmd);
     }
 }

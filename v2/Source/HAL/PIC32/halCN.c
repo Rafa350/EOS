@@ -6,8 +6,8 @@
 
 
 typedef struct {
-    CNCallbackFunction function;
-    void *pParam;
+    CNInterruptFunction function;
+    void* params;
 } CallbackInfo;
 
 static CallbackInfo callback[HAL_CN_LINE_COUNT] = {
@@ -40,9 +40,9 @@ extern void __ISR(_CHANGE_NOTICE_VECTOR, IPL2SOFT) isrCNWrapper(void);
 
 
 /// ----------------------------------------------------------------------
-/// \brief Configura la linia d'interrupcio externa.
-/// \param line: Numero de linia d'interrupcio.
-/// \param options: Opcions.
+/// \brief    Configura la linia d'interrupcio externa.
+/// \param    line: Numero de linia d'interrupcio.
+/// \param    options: Opcions.
 ///
 static void setupLine(
     CNLine line,
@@ -65,15 +65,15 @@ static void setupLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza els pins d'entrada d'interrupcio.
-/// \param pInfo: Llista linies a configurar.
-/// \param count: Numero de linies en la llista.
+/// \brief    Inicialitza els pins d'entrada d'interrupcio.
+/// \param    info: Llista linies a configurar.
+/// \param    count: Numero de linies en la llista.
 ///
 void halCNInitializeLines(
-    const CNInitializeLineInfo *pInfo, 
+    const CNInitializeLineInfo* info, 
     unsigned count) {
     
-	eosAssert(pInfo != NULL);
+	eosAssert(info != NULL);
 	eosAssert(count > 0);
 
     // Activa el modul
@@ -83,7 +83,7 @@ void halCNInitializeLines(
     // Configura cada linia
     //
     for (unsigned i = 0; i < count; i++) {
-		const CNInitializeLineInfo *p = &pInfo[i];              
+		const CNInitializeLineInfo* p = &info[i];          
 		setupLine(p->line, p->options);
     }    
     
@@ -97,8 +97,8 @@ void halCNInitializeLines(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Autoritza la generacio d'interrupcions en aquesta linia.
-/// \param line: La linia.
+/// \brief    Autoritza la generacio d'interrupcions en aquesta linia.
+/// \param    line: La linia.
 ///
 void halCNEnableLine(
     CNLine line) {
@@ -110,8 +110,8 @@ void halCNEnableLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Desactiva la generacio d'interrupcions en aquesta linia.
-/// \param line: La linia.
+/// \brief    Desactiva la generacio d'interrupcions en aquesta linia.
+/// \param    line: La linia.
 ///
 void halCNDisableLine(
     CNLine line) {
@@ -123,19 +123,20 @@ void halCNDisableLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna la funcio callback per gestionar les interrupcions
-/// \param line: Linea CN a configurar.
-/// \param function: La funcio.
+/// \brief    Asigna la funcio callback per gestionar les interrupcions
+/// \param    line: Linea CN a configurar.
+/// \param    function: La funcio.
+/// \param    params: Es parametres de la funcio.
 ///
 void halCNSetCallbackFunction(
     CNLine line, 
-    CNCallbackFunction function, 
-    void *pParam) {
+    CNInterruptFunction function, 
+    void* params) {
 
 	eosAssert((line >= HAL_CN_LINE_0) && (line <= HAL_CN_LINE_15));
 
 	callback[line].function = function;
-	callback[line].pParam = pParam;   
+	callback[line].params = params;   
 }
 
 
@@ -161,7 +162,7 @@ void isrCNHandler(void) {
         // Crida a la funcio callback
         //
         if (callback[line].function != NULL)
-            callback[line].function(line, callback[line].pParam);
+            callback[line].function(line, callback[line].params);
 
         // Borra el flag d'interrupcio
         //

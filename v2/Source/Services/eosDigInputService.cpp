@@ -2,6 +2,7 @@
 #include "eosAssert.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halINT.h"
+#include "HAL/halSYS.h"
 #include "HAL/halTMR.h"
 #include "Services/eosDigInputService.h"
 
@@ -37,15 +38,11 @@ DigInputService::DigInputService(
 ///
 DigInputService::~DigInputService() {
 
-    Task::enterCriticalSection();
-    
     while (!inputs.isEmpty()) {
         DigInput* input = inputs.getFirst();
         removeInput(input);       
         delete input;
     }
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -58,14 +55,11 @@ void DigInputService::addInput(
 
     eosAssert(input != nullptr);
 
-    Task::enterCriticalSection();
-    
-    if (input->service == nullptr) {
-        inputs.add(input);
-        input->service = this;
-    }
-    
-    Task::exitCriticalSection();
+    if (!isInitialized())
+        if (input->service == nullptr) {
+            inputs.add(input);
+            input->service = this;
+        }
 }
 
 
@@ -78,14 +72,11 @@ void DigInputService::removeInput(
 
     eosAssert(input != nullptr);
 
-    Task::enterCriticalSection();
-    
-    if (input->service == this) {
-        input->service = nullptr;
-        inputs.remove(input);
-    }
-    
-    Task::exitCriticalSection();
+    if (!isInitialized())
+        if (input->service == this) {
+            input->service = nullptr;
+            inputs.remove(input);
+        }
 }
 
 
@@ -94,12 +85,8 @@ void DigInputService::removeInput(
 ///
 void DigInputService::removeInputs() {
     
-    Task::enterCriticalSection();
-    
     while (!inputs.isEmpty())
         removeInput(inputs.getFirst());
-    
-    Task::exitCriticalSection();
 }
 
 
@@ -122,7 +109,7 @@ void DigInputService::onInitialize() {
 	tmrInfo.timer = timer;
 #if defined(EOS_PIC32MX)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
-    tmrInfo.period = ((80000 * period) / 64) - 1; 
+    tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * period) / 64000) - 1; 
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
@@ -133,8 +120,8 @@ void DigInputService::onInitialize() {
 //#error CPU no soportada
 #endif
     
-	tmrInfo.isrCallback = isrTimerCallback;
-	tmrInfo.isrParam = this;
+	tmrInfo.isrFunction = isrTimerFunction;
+	tmrInfo.isrParams = this;
 	halTMRInitialize(&tmrInfo);
     halTMRStartTimer(timer);
     
@@ -171,13 +158,22 @@ void DigInputService::onTask() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Procesa la interrupcio 'tick'.
+/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
+///
+void DigInputService::onTick() {
+    
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Captura la interrupcio del temporitzador.
 ///
-void DigInputService::isrTimerCallback(
+void DigInputService::isrTimerFunction(
     TMRTimer timer,
-    void* param) {
+    void* params) {
     
-    DigInputService* service = reinterpret_cast<DigInputService*>(param);
+    DigInputService* service = reinterpret_cast<DigInputService*>(params);
     if (service != nullptr) {
         for (DigInputListIterator it(service->inputs); it.hasNext(); it.next()) {
             

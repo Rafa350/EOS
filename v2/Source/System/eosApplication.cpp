@@ -133,6 +133,7 @@ void Application::terminateServices() {
     //   
     for (ServiceListIterator it(services); it.hasNext(); it.next()) {
         Service *service = it.getCurrent();
+        service->terminate();
     }
 }
 

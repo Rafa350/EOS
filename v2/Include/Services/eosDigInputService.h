@@ -47,10 +47,11 @@ namespace eos {
             CommandQueue commandQueue;
 
         private:
-            static void isrTimerCallback(TMRTimer timer, void* param);
+            static void isrTimerFunction(TMRTimer timer, void* params);
         protected:
             void onInitialize();
             void onTask();
+            void onTick();
         public:
             DigInputService(Application* application, const InitParams& initParams);
             ~DigInputService();

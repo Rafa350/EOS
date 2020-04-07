@@ -69,7 +69,8 @@ Task::Task(
 ///
 Task::~Task() {
 
-	osalTaskDestroy(hTask);
+    if (hTask != nullptr)
+        osalTaskDestroy(hTask);
 }
 
 
@@ -89,13 +90,17 @@ void Task::function(
         EventArgs args;
         args.task = task;
         args.param = task->eventParam;
-        
-        while (true) {
+
+        // Executa continuament la funcio
+        //
+        while (true)
             task->eventCallback->execute(args);
-        }
     }
 
-    eosFatal("No s'ha d'arrivar mai aqui.");
+    // Destrueix la propia tasca perque no s'executi mes
+    //
+    osalTaskDestroy(NULL);
+    task->hTask = nullptr;
 }
 
 

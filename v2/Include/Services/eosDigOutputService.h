@@ -56,7 +56,7 @@ namespace eos {
             DigOutputList outputs;
 
     private:
-            static void isrTimerCallback(TMRTimer timer, void* params);
+            static void isrTimerFunction(TMRTimer timer, void* params);
             void cmdClear(DigOutput* output);
             void cmdSet(DigOutput* output);
             void cmdToggle(DigOutput* output);
@@ -69,8 +69,10 @@ namespace eos {
 
         protected:
             void onInitialize() override;
+            void onTerminate() override;
             void onTask() override;
-
+            void onTick() override;
+            
         public:
             DigOutputService(Application* application, const InitParams& initParams);
             ~DigOutputService();

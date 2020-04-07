@@ -24,10 +24,12 @@
               <itemPath>../../../Include/HAL/PIC32/halGPIOTpl.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halCN.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halINT.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
+            <itemPath>../../../Include/HAL/halSYS.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
