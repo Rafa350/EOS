@@ -44,9 +44,9 @@ namespace eos {
 		private:
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
-    		ITouchPadDriver *touchDriver;
-        	IEventCallback *eventCallback;
-        	BinarySemaphore lock;
+    		ITouchPadDriver* touchDriver;
+        	IEventCallback* eventCallback;
+        	Semaphore lock;
         	int oldX;
         	int oldY;
         	int oldPressed;

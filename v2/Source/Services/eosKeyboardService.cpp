@@ -13,8 +13,8 @@ using namespace eos;
 /// \param    cfg: Parametres de configuracio.
 ///
 KeyboardService::KeyboardService(
-    Application *application,
-	I2CMasterService *i2cService,
+    Application* application,
+	I2CMasterService* i2cService,
 	int i2cAddress) :
     
     Service(application),

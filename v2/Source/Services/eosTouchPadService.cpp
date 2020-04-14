@@ -14,7 +14,7 @@ using namespace eos;
 /// \param    cfg: Parametres de configuracio.
 ///
 TouchPadService::TouchPadService(
-	Application *application) :
+	Application* application) :
 
 	Service(application),
 	touchDriver(nullptr),

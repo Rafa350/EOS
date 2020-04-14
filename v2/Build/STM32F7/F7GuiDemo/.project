@@ -234,14 +234,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Board/board.h</name>
+			<name>inc/Framework/EOS/Board/eosBoard.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Board/board_STM32F746G_DISCO.h</name>
+			<name>inc/Framework/EOS/Board/eosBoard_STM32F746G_DISCO.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board_STM32F746G_DISCO.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard_STM32F746G_DISCO.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display</name>

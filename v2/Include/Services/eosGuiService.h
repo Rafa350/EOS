@@ -48,10 +48,10 @@ namespace eos {
 			Visual *active;
 			MsgQueue *msgQueue;
 #ifdef OPT_GUI_Keyboard
-			KeyboardService *keyboardService;
+			KeyboardService* keyboardService;
 #endif
 #ifdef OPT_GUI_Selector
-			SelectorService *selectorService;
+			SelectorService* selectorService;
 #endif
 #ifdef OPT_GUI_TouchPad
 			TouchPadEventCallback touchPadEventCallback;
@@ -60,7 +60,7 @@ namespace eos {
 #endif
 
 		public:
-			GuiService(Application *application);
+			GuiService(Application* application);
 			inline Screen* getScreen() const { return screen; }
 			inline Visual* getActiveVisual() const { return active; }
 			Visual *getVisualAt(const Point &position) const;

@@ -36,7 +36,7 @@ MsgQueue* MsgQueue::getInstance() {
 void MsgQueue::send(
 	const Message &msg) {
 
-	queue.put(msg, 0);
+	queue.push(msg, 0);
 }
 
 
@@ -48,7 +48,7 @@ void MsgQueue::send(
 bool MsgQueue::receive(
 	Message &msg) {
 
-	return queue.get(msg, OPT_GUI_MessageQueueBlockTime);
+	return queue.pop(msg, OPT_GUI_MessageQueueBlockTime);
 }
 
 

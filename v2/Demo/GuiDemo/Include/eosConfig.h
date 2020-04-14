@@ -33,7 +33,7 @@
 #define OPT_GUI_MessageQueueBlockTime            ((unsigned)-1)
 
 
-#include "board/board.h"
+#include "board/eosBoard.h"
 
 
 #endif // __eosConfig__
