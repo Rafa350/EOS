@@ -13,6 +13,11 @@
 #include "System/Core/eosQueue.h"
 
 
+#ifndef DigInputService_CommandQueueSize
+    #define DigInputService_CommandQueueSize 5
+#endif
+
+
 namespace eos {
 
     class DigInput;
@@ -40,7 +45,7 @@ namespace eos {
             };
 
         private:
-            const unsigned commandQueueSize = 10;
+            const unsigned commandQueueSize = DigInputService_CommandQueueSize;
             TMRTimer timer;
             unsigned period;
             DigInputList inputs;

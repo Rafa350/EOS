@@ -23,4 +23,17 @@
 #include "board/eosBoard.h"
 
 
+// Configuracio del servei DigInputs
+//
+#define DigInputService_Enabled                  1    // Servei activat
+#define DigInputService_CommandQueueSize        10    // Tamany de la cua de comandes
+#define DigInputService_SafeMode                 1    // Modus segur
+
+// Configuracio del servei DigOutputs
+//
+#define DigOutputService_Enabled                 1    // Servei activat
+#define DigOutputService_CommandQueueSize        5    // Tamany de la cua de comandes
+#define DigOutputService_SafeMode                1    // Modus segur
+
+
 #endif // __eosConfig__

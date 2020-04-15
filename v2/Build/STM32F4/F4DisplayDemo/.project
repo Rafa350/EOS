@@ -239,14 +239,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Board/Board_STM32F429I_DISC1.h</name>
+			<name>inc/Framework/EOS/Board/eosBoard.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/Board_STM32F429I_DISC1.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Board/board.h</name>
+			<name>inc/Framework/EOS/Board/eosBoard_STM32F429I_DISC1.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard_STM32F429I_DISC1.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display</name>
@@ -299,14 +299,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTimer.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosAppLoop.h</name>
+			<name>inc/Framework/EOS/Services/eosAppLoopService.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoop.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoopService.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosDigOutput.h</name>
+			<name>inc/Framework/EOS/Services/eosDigOutputService.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosDigOutput.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosDigOutputService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/eosService.h</name>

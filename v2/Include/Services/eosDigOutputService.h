@@ -12,6 +12,22 @@
 #include "System/Core/eosQueue.h"
 
 
+// Numero maxim d'elements en la cua de comandes
+#ifndef DigOutputService_CommandQueueSize
+    #define DigOutputService_CommandQueueSize 5
+#endif
+
+// Retard minim en ms
+#ifndef DigOutputService_MinDelay
+    #define DigOutputService_MinDelay 50
+#endif
+
+// Amplada minima en ms
+#ifndef DigOutputService_MinWidth
+#define DigOutputService_MinWidth 50
+#endif
+
+
 namespace eos {
 
     class DigOutput;
@@ -47,9 +63,9 @@ namespace eos {
             };
 
         private:
-            const unsigned commandQueueSize = 5;
-            const unsigned minDelay = 50;
-            const unsigned minWidth = 50;
+            const unsigned commandQueueSize = DigOutputService_CommandQueueSize;
+            const unsigned minDelay = DigOutputService_MinDelay;
+            const unsigned minWidth = DigOutputService_MinWidth;
             TMRTimer timer;
             unsigned period;
             CommandQueue commandQueue;

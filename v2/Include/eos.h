@@ -84,7 +84,7 @@
     #define EOS_TOOLCHAIN_MVC
 
 #else
-	#error "Unknown compiler"
+	#error "Unknown toolchain"
 #endif
 
 

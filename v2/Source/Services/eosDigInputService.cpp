@@ -117,7 +117,7 @@ void DigInputService::onInitialize() {
 	tmrInfo.irqPriority = 1;
 	tmrInfo.irqSubPriority = 0;
 #else
-//#error CPU no soportada
+    #error CPU no soportada
 #endif
     
 	tmrInfo.isrFunction = isrTimerFunction;
