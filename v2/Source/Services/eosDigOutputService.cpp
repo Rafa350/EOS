@@ -16,7 +16,7 @@ using namespace eos;
 ///
 DigOutputService::DigOutputService(
     Application* application,
-    const InitParams& initParams):
+    const DigOutputService::InitParams& initParams):
 
     commandQueue(commandQueueSize),
     timer(initParams.timer),
@@ -505,7 +505,7 @@ void DigOutputService::isrTimerFunction(
 ///
 DigOutput::DigOutput(
     DigOutputService* service,
-    const InitParams& initParams):
+    const DigOutput::InitParams& initParams):
 
     service(nullptr),
     port(initParams.port),
