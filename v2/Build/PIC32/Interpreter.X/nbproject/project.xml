@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>com.microchip.mplab.nbide.embedded.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>Interpreter</name>
+            <creation-uuid>9ff248ee-6ef0-4ddd-8834-0cfeb9e242e7</creation-uuid>
+            <make-project-type>0</make-project-type>
+            <c-extensions>c</c-extensions>
+            <cpp-extensions>cpp</cpp-extensions>
+            <header-extensions>h</header-extensions>
+            <asminc-extensions/>
+            <sourceEncoding>UTF-8</sourceEncoding>
+            <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>../../../Demo/Interpreter/Include</sourceRootElem>
+                <sourceRootElem>../../../Demo/Interpreter/Source</sourceRootElem>
+                <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Include</sourceRootElem>
+                <sourceRootElem>../../../Source/Services</sourceRootElem>
+                <sourceRootElem>../../../Source/System</sourceRootElem>
+                <sourceRootElem>../../../Source/OSAL/FreeRTOS</sourceRootElem>
+                <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Library/PIC32/FreeRTOS/Source</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>default</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
+        </data>
+    </configuration>
+</project>
