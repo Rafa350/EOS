@@ -228,7 +228,7 @@ void TimerService::onTask() {
 /// \param    timer: El temporitzador.
 ///
 void TimerService::cmdStart(
-    TimerCounter *timer) {
+    TimerCounter* timer) {
     
     // Calcula el temps d'expiracio.
     //
@@ -253,7 +253,7 @@ void TimerService::cmdStart(
 /// \param    timer: El temporitzador.
 ///
 void TimerService::cmdStop(
-    TimerCounter *timer) {
+    TimerCounter* timer) {
     
     // Elimina el contador de la llista de contadors actius.
     //
@@ -266,13 +266,13 @@ void TimerService::cmdStop(
 /// \param    timer: El temporitzador.
 ///
 void TimerService::cmdPause(
-    TimerCounter *timer) {
+    TimerCounter* timer) {
     
     // Elimina el contador de la llista de contadors actius.
     //
     activeQueue.remove(timer);
     
-    // Recalcula el periode que resta.
+    // Recalcula el periode que resta. 
     //
     timer->currentPeriod = timer->expireTime - osalGetTickTime();
 }
@@ -283,7 +283,7 @@ void TimerService::cmdPause(
 /// \param    timer: El temporitzador.
 ///
 void TimerService::cmdResume(
-    TimerCounter *timer) {
+    TimerCounter* timer) {
 
     // Recalcula el temps d'expiracio amb el periode ue resta.
     //
