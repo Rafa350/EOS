@@ -26,7 +26,7 @@ namespace eos {
             typedef ICallbackP1<const EventArgs&> IEventCallback;
 
         public:
-            enum class Priority {
+            enum class Priority: uint8_t {
                 idle,
                 low,
                 normal,

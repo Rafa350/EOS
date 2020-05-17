@@ -510,7 +510,6 @@ DigOutput::DigOutput(
     service(nullptr),
     port(initParams.port),
     pin(initParams.pin),
-    options(0),
     state(State::idle),
 	delayCnt(0),
 	widthCnt(0) {

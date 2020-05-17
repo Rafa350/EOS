@@ -19,7 +19,7 @@ namespace eos {
 
     class TimerService final : public Service {
         private:
-            enum class OpCode {
+            enum class OpCode: uint8_t {
                 start,
                 stop,
                 pause,
@@ -76,7 +76,11 @@ namespace eos {
 
     class TimerCounter {
         public:
-            enum class EventType {
+            enum class EventType: uint8_t {
+                start,
+                stop,
+                pause,
+                resume,
                 timeout
             };
             struct EventArgs {

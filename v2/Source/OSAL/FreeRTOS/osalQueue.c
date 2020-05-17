@@ -58,7 +58,7 @@ void osalQueueClear(
 ///
 bool osalQueuePut(
 	HQueue hQueue,
-	const void *element,
+	const void* element,
 	unsigned blockTime) {
 
 	eosAssert(hQueue != NULL);
@@ -78,7 +78,7 @@ bool osalQueuePut(
 ///
 bool osalQueuePutISR(
 	HQueue hQueue,
-	const void *element) {
+	const void* element) {
 
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
@@ -97,7 +97,7 @@ bool osalQueuePutISR(
 ///
 bool osalQueueGet(
 	HQueue hQueue,
-	void *element,
+	void* element,
 	unsigned blockTime) {
 
 	eosAssert(hQueue != NULL);
@@ -117,7 +117,7 @@ bool osalQueueGet(
 ///
 bool osalQueueGetISR(
 	HQueue hQueue,
-	void *element) {
+	void* element) {
 
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);

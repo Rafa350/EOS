@@ -36,7 +36,7 @@ namespace eos {
     ///
     class DigOutputService final: public Service {
         private:
-            enum class OpCode {
+            enum class OpCode: uint8_t {
                 set,
                 clear,
                 toggle,
@@ -112,7 +112,7 @@ namespace eos {
     ///
     class DigOutput final {
         private:
-            enum class State {
+            enum class State: uint8_t {
                 idle,
                 delayedSet,
                 delayedClear,
@@ -129,7 +129,6 @@ namespace eos {
             DigOutputService* service;
             GPIOPort port;
             GPIOPin pin;
-            GPIOOptions options;
             State state;
             unsigned delayCnt;
             unsigned widthCnt;

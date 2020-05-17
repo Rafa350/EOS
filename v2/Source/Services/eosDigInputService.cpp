@@ -10,11 +10,11 @@
 using namespace eos;
 
 
-#define PATTERN_mask     0xFF
-#define PATTERN_POSEDGE  0x7F
-#define PATTERN_NEGEDGE  0x80
-#define PATTERN_ON       0xFF
-#define PATTERN_OFF      0x00
+#define PATTERN_MASK     0x0FFF
+#define PATTERN_POSEDGE  0x07FF
+#define PATTERN_NEGEDGE  0x0800
+#define PATTERN_ON       0x0FFF
+#define PATTERN_OFF      0x0000
 
 
 /// ----------------------------------------------------------------------
@@ -26,7 +26,6 @@ DigInputService::DigInputService(
     Application* application,
     const InitParams& initParams):
     
-    commandQueue(commandQueueSize),
     timer(initParams.timer),
     period(initParams.period),
     Service(application) {
@@ -117,7 +116,7 @@ void DigInputService::onInitialize() {
 	tmrInfo.irqPriority = 1;
 	tmrInfo.irqSubPriority = 0;
 #else
-    #error CPU no soportada
+    //#error CPU no soportada
 #endif
     
 	tmrInfo.isrFunction = isrTimerFunction;
@@ -136,31 +135,33 @@ void DigInputService::onInitialize() {
 ///
 void DigInputService::onTask() {
 
-    // Espera indefinidament que hagi quelcom en la cua
+    // Espera indefinidament que hagi canvis en les entrades
     //
-    Command cmd;
-    while (commandQueue.pop(cmd, unsigned(-1))) {
+    if (semaphore.wait(-1)) {
         
-        DigInput* input = cmd.input;
-        switch (cmd.opCode) {
-            case OpCode::posEdge:
-                input->state = true;
-                break;
-                
-            case OpCode::negEdge:
-                input->state = false;
-                break;
-        }
+        for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
+        
+            DigInput* input = it.getCurrent();
+          
+            // Analitza el patro
+            //
+            if ((input->pattern & PATTERN_MASK) == PATTERN_POSEDGE)
+                input->state = 1;           
+            else if ((input->pattern & PATTERN_MASK) == PATTERN_NEGEDGE)
+                input->state = 0;            
+            else
+                continue;
 
-        // Si te funcio callback, la crida
-        //
-        if (input->eventCallback != nullptr) {
-            
-            DigInput::EventArgs args;
-            args.input = input;
-            args.param = input->eventParam;
-            
-            input->eventCallback->execute(args);
+            // Si te funcio callback, la crida
+            //
+            if (input->eventCallback != nullptr) {
+
+                DigInput::EventArgs args;
+                args.input = input;
+                args.param = input->eventParam;
+
+                input->eventCallback->execute(args);
+            }
         }
     }
 }
@@ -185,33 +186,30 @@ void DigInputService::isrTimerFunction(
     DigInputService* service = static_cast<DigInputService*>(params);
     if (service != nullptr) {
 
+        bool patternChanged = false;
+        
         for (DigInputListIterator it(service->inputs); it.hasNext(); it.next()) {
             
             DigInput* input = it.getCurrent();
+
+            uint32_t oldPattern = input->pattern;
             
             // Actualitza el patro
             //
             input->pattern <<= 1;
             if (halGPIOReadPin(input->port, input->pin))
                 input->pattern |= 1;
-
-            // Detecta els canvis d'estat i els notifica a la tasca
-            //
-            Command cmd;
-            switch (input->pattern & PATTERN_mask) {
-                case PATTERN_POSEDGE:
-                    cmd.opCode = OpCode::posEdge;
-                    cmd.input = input;
-                    service->commandQueue.pushISR(cmd);
-                    break;
             
-                case PATTERN_NEGEDGE:
-                    cmd.opCode = OpCode::negEdge;
-                    cmd.input = input;
-                    service->commandQueue.pushISR(cmd);
-                    break;
-            }
+            // Comprova si ha canviat
+            //
+            if (input->pattern != oldPattern)
+                patternChanged = true;
         }
+        
+        // Notifica a la tasca que hi han canvis pendents per procesar
+        //
+        if (patternChanged)
+            service->semaphore.releaseISR();
     }
 }
 

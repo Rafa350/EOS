@@ -10,12 +10,7 @@
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
 #include "System/Collections/eosArrayList.h"
-#include "System/Core/eosQueue.h"
-
-
-#ifndef DigInputService_CommandQueueSize
-    #define DigInputService_CommandQueueSize 5
-#endif
+#include "System/Core/eosSemaphore.h"
 
 
 namespace eos {
@@ -26,16 +21,6 @@ namespace eos {
     //
     class DigInputService final: public Service {
         private:
-            enum class OpCode {
-                null,
-                posEdge,
-                negEdge
-            };
-            struct Command {
-                OpCode opCode;
-                DigInput* input;
-            };
-            typedef Queue<Command> CommandQueue;
             typedef ArrayList<DigInput*> DigInputList;
             typedef ArrayList<DigInput*>::Iterator DigInputListIterator;
         public:
@@ -45,11 +30,10 @@ namespace eos {
             };
 
         private:
-            const unsigned commandQueueSize = DigInputService_CommandQueueSize;
+            Semaphore semaphore;
             TMRTimer timer;
             unsigned period;
             DigInputList inputs;
-            CommandQueue commandQueue;
 
         private:
             static void isrTimerFunction(TMRTimer timer, void* params);

@@ -32,7 +32,7 @@ void MyApplication::onInitialize() {
 	//
     DigInputService::InitParams digInputServiceInit;
     digInputServiceInit.timer = HAL_TMR_TIMER_3;
-    digInputServiceInit.period = 10;
+    digInputServiceInit.period = 5;
     digInputService = new DigInputService(this, digInputServiceInit);
     digInputService->setPriority(Task::Priority::high);
     
