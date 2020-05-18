@@ -25,7 +25,7 @@ TimerService::TimerService(
 TimerService::~TimerService() {
 
     while (!timers.isEmpty()) {
-        TimerCounter* timer = timers.getFirst();
+        TimerCounter* timer = timers.getBack();
         removeTimer(timer);
         delete timer;
     }
@@ -44,7 +44,7 @@ void TimerService::addTimer(
 
     if (!isInitialized()) 
         if (timer->service == nullptr) {
-            timers.add(timer);
+            timers.pushBack(timer);
             timer->service = this;
         }
 }
@@ -65,7 +65,7 @@ void TimerService::removeTimer(
             if (activeQueue.contains(timer))
                 activeQueue.remove(timer);
             timer->service = nullptr;
-            timers.remove(timer);
+            timers.removeAt(timers.indexOf(timer));
         }
 }
 
@@ -76,7 +76,7 @@ void TimerService::removeTimer(
 void TimerService::removeTimers() {
 
     while (!timers.isEmpty())
-        removeTimer(timers.getLast());
+        removeTimer(timers.getBack());
 }
 
 
@@ -243,7 +243,7 @@ void TimerService::cmdStart(
     
     // Si es el primer, inicia el temporitzador.
     //
-    if (activeQueue.getCount() == 1)
+    if (activeQueue.getSize() == 1)
         osTimer.start(timer->currentPeriod, 0);
 }
 
@@ -295,7 +295,7 @@ void TimerService::cmdResume(
 
     // Si es el primer, inicia el temporitzador.
     //
-    if (activeQueue.getCount() == 1)
+    if (activeQueue.getSize() == 1)
         osTimer.start(timer->currentPeriod, 0);
 }
 

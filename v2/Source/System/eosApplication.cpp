@@ -28,11 +28,11 @@ Application::Application():
 ///
 Application::~Application() {
 
-	// Destrueix els serveis de la llista. El contenidor ja es
+	// Destrueix els serveis de la llista. El contenidor ja els
 	// destrueix automaticament
 	//
 	while (!services.isEmpty())
-		delete services.getFirst();
+		delete services.getFront();
 }
 
 
@@ -161,7 +161,7 @@ void Application::runServices() {
             service->getName(),
             &taskEventCallback,
             static_cast<void*>(service));
-        tasks.add(task);
+        tasks.pushBack(task);
     }  
     
     // Executa les tasques
@@ -213,7 +213,7 @@ void Application::removeService(
 void Application::removeServices() {
 
 	while (!services.isEmpty())
-        removeService(services.getFirst());
+        removeService(services.getFront());
 }
 
 
@@ -259,7 +259,7 @@ void eos::link(
 	eosAssert(application != nullptr);
     eosAssert(service->application == nullptr);
 
-    application->services.add(service);
+    application->services.pushBack(service);
     service->application = application;
 }
 
@@ -277,5 +277,5 @@ void eos::unlink(
     eosAssert(service->application == application);
 
     service->application = nullptr;
-    application->services.remove(service);
+    application->services.removeAt(application->services.indexOf(service));
 }

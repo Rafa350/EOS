@@ -38,7 +38,7 @@ DigInputService::DigInputService(
 DigInputService::~DigInputService() {
 
     while (!inputs.isEmpty()) {
-        DigInput* input = inputs.getFirst();
+        DigInput* input = inputs.getFront();
         removeInput(input);       
         delete input;
     }
@@ -56,7 +56,7 @@ void DigInputService::addInput(
 
     if (!isInitialized())
         if (input->service == nullptr) {
-            inputs.add(input);
+            inputs.pushBack(input);
             input->service = this;
         }
 }
@@ -74,7 +74,7 @@ void DigInputService::removeInput(
     if (!isInitialized())
         if (input->service == this) {
             input->service = nullptr;
-            inputs.remove(input);
+            inputs.removeAt(inputs.indexOf(input));
         }
 }
 
@@ -85,7 +85,7 @@ void DigInputService::removeInput(
 void DigInputService::removeInputs() {
     
     while (!inputs.isEmpty())
-        removeInput(inputs.getFirst());
+        removeInput(inputs.getFront());
 }
 
 

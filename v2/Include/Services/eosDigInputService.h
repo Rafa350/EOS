@@ -9,7 +9,7 @@
 #include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosArrayList.h"
+#include "System/Collections/eosDynamicArray.h"
 #include "System/Core/eosSemaphore.h"
 
 
@@ -21,8 +21,8 @@ namespace eos {
     //
     class DigInputService final: public Service {
         private:
-            typedef ArrayList<DigInput*> DigInputList;
-            typedef ArrayList<DigInput*>::Iterator DigInputListIterator;
+            typedef DynamicArray<DigInput*> DigInputList;
+            typedef DynamicArray<DigInput*>::Iterator DigInputListIterator;
         public:
             struct InitParams {  // Parametres d'inicialitzaci0.
                 TMRTimer timer;  // -Temporitzador

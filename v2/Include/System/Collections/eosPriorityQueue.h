@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/Collections/eosArrayList.h"
+#include "System/Collections/eosDynamicArray.h"
 
 
 namespace eos {
@@ -20,16 +20,16 @@ namespace eos {
                 Element element;
             };
 
-            typedef ArrayList<Node, initialCapacity> List;
+            typedef DynamicArray<Node, initialCapacity> List;
 
         public:
             class Iterator {
                 private:
-                    const List& list;
+                    List& list;
                     unsigned index;
 
                 public:
-                    Iterator(const PriorityQueue<Priority, Element, initialCapacity>& queue):
+                    Iterator(PriorityQueue<Priority, Element, initialCapacity>& queue):
                         list(queue.list),
                         index(0) {
                     }
@@ -73,7 +73,7 @@ namespace eos {
             unsigned push(Priority priority, const Element& element) {
 
                 unsigned index = 0;
-                while ((index < list.getCount()) &&
+                while ((index < list.getSize()) &&
                        (list[index].priority <= priority))
                     index += 1;
 
@@ -104,7 +104,7 @@ namespace eos {
             ///
             bool remove(Element& element) {
 
-                for (unsigned i = 0, ii = list.getCount(); i < ii; i++) {
+                for (unsigned i = 0, ii = list.getSize(); i < ii; i++) {
                     if (list[i].element == element)
                         return list.removeAt(i);
                 }
@@ -131,7 +131,7 @@ namespace eos {
                 if (list.isEmpty())
                     return false;
                 else {
-                    element = list.getFirst().element;
+                    element = list.getFront().element;
                     return true;
                 }
             }
@@ -140,8 +140,8 @@ namespace eos {
             /// \param element:El element a comprovar.
             /// \return True si existeix, false en cas conmtrari.
             ///
-            bool contains(const Element& element) const {
-                for (unsigned i = 0, ii = list.getCount(); i < ii; i++)
+            bool contains(const Element& element) {
+                for (unsigned i = 0, ii = list.getSize(); i < ii; i++)
                     if (list[i].element == element)
                         return true;
                 return false;
@@ -156,8 +156,8 @@ namespace eos {
             /// \brief Obte el numero d'elements en ña cua.
             /// \return El nombre d'elements.
             ///
-            inline unsigned getCount() const {
-                return list.getCount();
+            inline unsigned getSize() const {
+                return list.getSize();
             }
 
             /// \brief Indica si la cua es buida.
@@ -167,7 +167,7 @@ namespace eos {
                 return list.isEmpty();
             }
     };
-
+    
 }
 
 

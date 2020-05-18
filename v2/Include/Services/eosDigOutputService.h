@@ -8,7 +8,7 @@
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
 #include "Services/eosService.h"
-#include "System/Collections/eosArrayList.h"
+#include "System/Collections/eosDynamicArray.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -54,8 +54,8 @@ namespace eos {
                 unsigned param2;
             };
             typedef Queue<Command> CommandQueue;
-            typedef ArrayList<DigOutput*> DigOutputList;
-            typedef ArrayList<DigOutput*>::Iterator DigOutputListIterator;
+            typedef DynamicArray<DigOutput*> DigOutputList;
+            typedef DynamicArray<DigOutput*>::Iterator DigOutputListIterator;
         public:
             struct InitParams {
                 TMRTimer timer;

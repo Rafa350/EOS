@@ -32,7 +32,7 @@ DigOutputService::DigOutputService(
 DigOutputService::~DigOutputService() {
 
     while (!outputs.isEmpty()) {
-    	DigOutput* output = outputs.getFirst();
+    	DigOutput* output = outputs.getBack();
     	removeOutput(output);
     	delete output;
     }
@@ -53,7 +53,7 @@ void DigOutputService::addOutput(
 
     if (!isInitialized())
         if (output->service == nullptr) {    
-            outputs.add(output);
+            outputs.pushBack(output);
             output->service = this;
         }
 }
@@ -73,7 +73,7 @@ void DigOutputService::removeOutput(
 
     if (!isInitialized())
         if (output->service == this) {
-            outputs.remove(output);
+            outputs.removeAt(outputs.indexOf(output));
             output->service = nullptr;
         }
 }
@@ -87,7 +87,7 @@ void DigOutputService::removeOutput(
 void DigOutputService::removeOutputs() {
 
     while (!outputs.isEmpty())
-        removeOutput(outputs.getFirst());
+        removeOutput(outputs.getBack());
 }
 
 
