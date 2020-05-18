@@ -424,7 +424,7 @@ void DigOutputService::cmdDelayedPulse(
 void DigOutputService::cmdTimeOut(
     unsigned time) {
 
-    for (DigOutputListIterator it(outputs); it.hasNext(); it.next()) {
+    for (auto it  = outputs.getIterator(); it.hasNext(); it.next()) {
         
         DigOutput *output = it.getCurrent();
 

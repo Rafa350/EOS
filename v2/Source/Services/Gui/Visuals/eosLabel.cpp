@@ -67,7 +67,7 @@ Size Label::measureOverride(
 		Font *font = new Font(fontResource);
 
 		int measuredWidth = 0;
-		for (int i = 0; text[i]; i++)
+		for (unsigned i = 0; text[i]; i++)
 			measuredWidth += font->getCharAdvance(text[i]);
 		int measuredHeight = font->getFontHeight();
 

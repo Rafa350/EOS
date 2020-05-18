@@ -33,7 +33,9 @@ Size StackPanel::measureOverride(
 	int width = 0;
 	int height = 0;
 
-	for (auto child: getChilds()) {
+	for (DynamicArray<Visual*>::ConstIterator it(getChilds()); it.hasNext(); it.next()) {
+
+		Visual* child = it.getCurrent();
 
 		eosAssert(child != nullptr);
 
@@ -74,8 +76,9 @@ Size StackPanel::arrangeOverride(
     int childWidth = finalSize.getWidth();
     int childHeight = finalSize.getHeight();
 
-	for (auto child: getChilds()) {
+	for (DynamicArray<Visual*>::ConstIterator it(getChilds()); it.hasNext(); it.next()) {
 
+		Visual* child = it.getCurrent();
 		eosAssert(child != nullptr);
 
 		if (child->isVisible()) {

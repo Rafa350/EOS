@@ -28,25 +28,25 @@ namespace eos {
             ///
             class Iterator {
                 private:
-                    DynamicArray<Element>& array;
+                    DynamicArray<Element>& container;
                     unsigned index;
 
                 public:
                     /// \brief Constructor.
-                    /// \param array: El array a iterar.
+                    /// \param container: El array a iterar.
                     /// \param reverse: True si es recorre la llista del final al principi.
                     /// \remarks No es permet modificar la llista mente s'utilitzi el iterator.
                     ///
-                    Iterator(DynamicArray<Element>& array, bool reverse = false):
-                        array(array),
-                        index(reverse ? array.getSize() - 1 : 0) {
+                    Iterator(DynamicArray<Element>& container, bool reverse = false):
+                        container(container),
+                        index(reverse ? container.getSize() - 1 : 0) {
                     }
 
                     /// \brief Mou el iterator al primer element.
                     /// \return True si tot es correcte.
                     ///
                     bool first() {
-                        if (array.isEmpty())
+                        if (container.isEmpty())
                             return false;
                         else {
                             index = 0;
@@ -58,10 +58,10 @@ namespace eos {
                     /// \return True si tot es correcte.
                     ///
                     bool last() {
-                        if (array.isEmpty())
+                        if (container.isEmpty())
                             return false;
                         else {
-                            index = array.getSize() - 1;
+                            index = container.getSize() - 1;
                             return true;
                         }
                     }
@@ -70,7 +70,7 @@ namespace eos {
                     /// \return True si tot es correcte.
                     ///
                     bool prev() {
-                        if (!array.isEmpty() && (index > 0)) {
+                        if (!container.isEmpty() && (index > 0)) {
                             index -=1;
                             return true;
                         }
@@ -82,7 +82,7 @@ namespace eos {
                     /// \return True si tot es correcte.
                     ///
                     bool next() {
-                        if (!array.isEmpty() && (index < array.getSize())) {
+                        if (!container.isEmpty() && (index < container.getSize())) {
                             index += 1;
                             return true;
                         }
@@ -94,21 +94,109 @@ namespace eos {
                     /// \return True si existeix l'element previ.
                     ///
                     inline bool hasPrev() const {
-                        return !array.isEmpty() && (index >= 0);
+                        return !container.isEmpty() && (index >= 0);
                     }
 
                     /// \brief Indica si hi ha un element posterior.
                     /// \return True si existeix l'element posterior.
                     ///
                     inline bool hasNext() const {
-                        return !array.isEmpty() && (index < array.getSize());
+                        return !container.isEmpty() && (index < container.getSize());
                     }
 
                     /// \brief Obter l'element actual.
                     /// \return L'element actual.
                     ///
-                    inline Element& getCurrent() {
-                        return array.getAt(index);
+                    inline Element& getCurrent() const {
+                        return container.getAt(index);
+                    }
+            };
+
+            /// \brief Iterator bidireccional per la llista.
+            ///
+            class ConstIterator {
+                private:
+                    const DynamicArray<Element>& container;
+                    unsigned index;
+
+                public:
+                    /// \brief Constructor.
+                    /// \param container: El array a iterar.
+                    /// \param reverse: True si es recorre la llista del final al principi.
+                    /// \remarks No es permet modificar la llista mente s'utilitzi el iterator.
+                    ///
+                    ConstIterator(const DynamicArray<Element>& container, bool reverse = false):
+                        container(container),
+                        index(reverse ? container.getSize() - 1 : 0) {
+                    }
+
+                    /// \brief Mou el iterator al primer element.
+                    /// \return True si tot es correcte.
+                    ///
+                    bool first() {
+                        if (container.isEmpty())
+                            return false;
+                        else {
+                            index = 0;
+                            return true;
+                        }
+                    }
+
+                    /// \brief Mou el iterator a l'ultim element.
+                    /// \return True si tot es correcte.
+                    ///
+                    bool last() {
+                        if (container.isEmpty())
+                            return false;
+                        else {
+                            index = container.getSize() - 1;
+                            return true;
+                        }
+                    }
+
+                    /// \brief Mou el iterator al anterior element.
+                    /// \return True si tot es correcte.
+                    ///
+                    bool prev() {
+                        if (!container.isEmpty() && (index > 0)) {
+                            index -=1;
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
+
+                    /// \brief Mou el iterator al seguent element.
+                    /// \return True si tot es correcte.
+                    ///
+                    bool next() {
+                        if (!container.isEmpty() && (index < container.getSize())) {
+                            index += 1;
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
+
+                    /// \brief Indica si hi ha un element previ.
+                    /// \return True si existeix l'element previ.
+                    ///
+                    inline bool hasPrev() const {
+                        return !container.isEmpty() && (index >= 0);
+                    }
+
+                    /// \brief Indica si hi ha un element posterior.
+                    /// \return True si existeix l'element posterior.
+                    ///
+                    inline bool hasNext() const {
+                        return !container.isEmpty() && (index < container.getSize());
+                    }
+
+                    /// \brief Obter l'element actual.
+                    /// \return L'element actual.
+                    ///
+                    inline const Element& getCurrent() const {
+                        return container.getAt(index);
                     }
             };
 
@@ -151,6 +239,22 @@ namespace eos {
                 if (elements != nullptr)
                     freeContainer(elements);
             }
+            
+            /// \brief Obte un iterator.
+            /// \return El iterator.
+            //
+            Iterator getIterator() {
+                
+                return Iterator(*this);
+            }
+
+            /// \brief Obte un iterator.
+            /// \return El iterator.
+            ///
+            ConstIterator getConstIterator() const {
+                
+                return ConstIterator(*this);
+            }
 
             /// \brief Inserta un element al final
             /// \param element: L'element a inserter.
@@ -191,9 +295,24 @@ namespace eos {
                 return elements[0];
             }
             
+            /// \brief Obte el primer element.
+            ///
+            const Element& getFront() const {
+                
+                eosAssert(size > 0);
+                return elements[0];
+            }
+
             /// \brief Obte l'ultim element
             ///
             Element& getBack() {
+                
+                return elements[size - 1];
+            }
+
+            /// \brief Obte l'ultim element
+            ///
+            const Element& getBack() const {
                 
                 return elements[size - 1];
             }
@@ -202,6 +321,14 @@ namespace eos {
             /// \return L'element.
             ///
             inline Element& getAt(unsigned index) {
+                eosAssert(index < size);
+                return elements[index];
+            }
+
+            /// \brief Obte l'element en la posicio indicada de la llista.
+            /// \return L'element.
+            ///
+            inline const Element& getAt(unsigned index) const {
                 eosAssert(index < size);
                 return elements[index];
             }

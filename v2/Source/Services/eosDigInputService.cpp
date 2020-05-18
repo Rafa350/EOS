@@ -96,7 +96,7 @@ void DigInputService::onInitialize() {
     
     // Inicialitza les entrades
     //
-    for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
+    for (auto it = inputs.getIterator(); it.hasNext(); it.next()) {
         DigInput* input = it.getCurrent();
         input->state = halGPIOReadPin(input->port, input->pin);
         input->pattern = input->state ? PATTERN_ON : PATTERN_OFF;
@@ -139,7 +139,7 @@ void DigInputService::onTask() {
     //
     if (semaphore.wait(-1)) {
         
-        for (DigInputListIterator it(inputs); it.hasNext(); it.next()) {
+        for (auto it = inputs.getIterator(); it.hasNext(); it.next()) {
         
             DigInput* input = it.getCurrent();
           
@@ -188,7 +188,7 @@ void DigInputService::isrTimerFunction(
 
         bool patternChanged = false;
         
-        for (DigInputListIterator it(service->inputs); it.hasNext(); it.next()) {
+        for (auto it = service->inputs.getIterator(); it.hasNext(); it.next()) {
             
             DigInput* input = it.getCurrent();
 

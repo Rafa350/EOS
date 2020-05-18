@@ -7,7 +7,7 @@
 #include "eos.h"
 #include "Services/Gui/eosMsgQueue.h"
 #include "Services/Gui/eosThickness.h"
-#include "System/Collections/eosArrayList.h"
+#include "System/Collections/eosDynamicArray.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
 #include "System/Graphics/eosSize.h"
@@ -42,14 +42,14 @@ namespace eos {
 		bottom
 	};
 
-    /// \brief Clase base que representa tots els elements visuals.
+	typedef DynamicArray<Visual*> VisualList;
+	typedef DynamicArray<Visual*>::Iterator VisualListIterator;
+	typedef DynamicArray<Visual*>::ConstIterator VisualListConstIterator;
+
+	/// \brief Clase base que representa tots els elements visuals.
 	///
     class Visual {
-    	private:
-    		typedef ArrayList<Visual*> VisualList;
-    		typedef ArrayList<Visual*> VisualListIterator;
-
-    	private:
+        	private:
     		Visual *parent;
     		VisualList childs;
     		bool needRender;
