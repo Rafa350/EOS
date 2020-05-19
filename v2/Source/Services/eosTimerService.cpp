@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "OSAL/osalKernel.h"
 #include "Services/eosTimerService.h"
+#include "System/Core/eosTask.h"
 
 using namespace eos;
 
@@ -24,11 +25,8 @@ TimerService::TimerService(
 ///
 TimerService::~TimerService() {
 
-    while (!timers.isEmpty()) {
-        TimerCounter* timer = timers.getBack();
-        removeTimer(timer);
-        delete timer;
-    }
+    while (!timers.isEmpty())
+        delete timers.getBack();
 }
 
 
@@ -42,11 +40,18 @@ void TimerService::addTimer(
     eosAssert(timer != nullptr);
     eosAssert(timer->service == nullptr);
 
-    if (!isInitialized()) 
-        if (timer->service == nullptr) {
-            timers.pushBack(timer);
-            timer->service = this;
-        }
+    // Inici de seccio critica. No es pot permetre accedir durant els canvis
+    //
+    Task::enterCriticalSection();
+    
+    if (timer->service == nullptr) {
+        timers.pushBack(timer);
+        timer->service = this;
+    }
+    
+    // Fi de la seccio critica
+    //
+    Task::exitCriticalSection();
 }
 
 
@@ -60,13 +65,24 @@ void TimerService::removeTimer(
     eosAssert(timer != nullptr);
     eosAssert(timer->service == this);
 
-    if (!isInitialized())
-        if (timer->service == this) {    
-            if (activeQueue.contains(timer))
-                activeQueue.remove(timer);
-            timer->service = nullptr;
-            timers.removeAt(timers.indexOf(timer));
-        }
+    // Inici de seccio critica. No es pot permetre accedir durant els canvis
+    //
+    Task::enterCriticalSection();
+    
+    if (timer->service == this) {    
+        
+        // Si esta actiu l'elimina de la cua d'actius
+        //
+        if (activeQueue.contains(timer))
+            activeQueue.remove(timer);
+        
+        timer->service = nullptr;
+        timers.removeAt(timers.indexOf(timer));
+    }
+
+    // Fi de la seccio critica
+    //    
+    Task::exitCriticalSection();
 }
 
 
@@ -75,8 +91,26 @@ void TimerService::removeTimer(
 ///
 void TimerService::removeTimers() {
 
-    while (!timers.isEmpty())
-        removeTimer(timers.getBack());
+    // Inici de seccio critica. No es pot permetre accedir durant els canvis
+    //
+    Task::enterCriticalSection();
+    
+    while (!timers.isEmpty()) {
+        
+        TimerCounter* timer = timers.getBack();
+
+        // Si esta actiu l'elimina de la cua d'actius
+        //
+        if (activeQueue.contains(timer))
+            activeQueue.remove(timer);
+
+        timers.popBack();
+        timer->service = nullptr;
+    }
+
+    // Fi de la seccio critica
+    //
+    Task::exitCriticalSection();
 }
 
 

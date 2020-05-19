@@ -3,6 +3,9 @@
 
 
 #include "eos.h"
+#include "eosAssert.h"
+#include "System/eosMath.h"
+#include <string.h>
 
 
 namespace eos {
@@ -11,10 +14,23 @@ namespace eos {
         namespace Collections {
 #endif            
         
+            /// \brief Implementa array de tamany fix.
+            /// \remarks La llista enmagatzema copies del element.
+            ///
             template <typename Element, const unsigned size>
             class StaticArray {
+                
+                public:
+                    typedef Element Value;
+                    typedef Element& Reference;
+                    typedef const Element& CReference;
+                    typedef Element* Pointer;
+                    typedef const Element* CPointer;
+                    typedef Element* Iterator;
+                    typedef const Element* CIterator;
+                    
                 private:
-                    Element elements[size];
+                    Value elements[size];
                     
                 public:
                     /// \brief Constructor per defecte.
@@ -24,22 +40,41 @@ namespace eos {
   
                     /// \brief Constructor copia.                    
                     ///
-                    StaticArray(const StaticArray& array) {
-                        for (int i = 0; i < size; i++)
-                            elements[i] = array.elements[i];
+                    StaticArray(const StaticArray& other) {
+                        memmove(elements, other.elements, size * sizeof(Value));
+                    }
+                    
+                    /// \brief Contructor a partir d'un rang.
+                    /// \param first: Primer element del rang.
+                    /// \param last: L'ultim element del rang.
+                    ///
+                    StaticArray(Iterator first, Iterator last) {
+                        for(auto it = first; it != last; it++)
+                            pushBack(*it);
                     }
                     
                     /// \brief Constructor a partir d'un array 'C'.
                     ///
-                    StaticArray(const Element elements[]) {                        
-                        for (int i = 0; i < size; i++)
-                            this->elements[0] = elements[i];
+                    StaticArray(const Value array[], unsigned arraySize) {                        
+                        memmove(elements, array, Math::min(size, arraySize) * sizeof(Value));
+                    }
+                    
+                    /// \brief Obte el iterator al principi
+                    ///
+                    inline Iterator begin() const {
+                        return elements;
+                    }
+                    
+                    /// \brief Obte el iterator al final
+                    ///
+                    inline Iterator end() const {
+                        return elements + size;
                     }
                     
                     /// \brief Obte el tamany del array.
                     /// \return El tamany.
                     ///
-                    inline int getSize() const {
+                    inline unsigned getSize() const {
                         return size;
                     }
                                        
@@ -48,32 +83,21 @@ namespace eos {
                     /// \return Una referencia a this.
                     ///
                     StaticArray& operator=(const StaticArray& array) {                        
-                        for (int i = 0; i < size; i++)
-                            elements[i] = array.elements[i];                        
-                        return *this;
-                    }
-
-                    /// \brief Operador d'assignacio a un array 'C'
-                    /// \param array: El array a asignar.
-                    /// \return Una referencia a this.
-                    ///
-                    StaticArray& operator=(const Element elements[]) {                        
-                        for (int i = 0; i < size; i++)
-                            this->elements[i] = elements[i];                        
+                        memmove(elements, array.elements, size * sizeof(Value));
                         return *this;
                     }
 
                     /// \brief Obte un element del array
                     /// \param index: Index del element
                     ///
-                    inline const Element& operator[](int index) const {
+                    inline CReference operator[](int index) const {
                         return elements[index];
                     }
 
                     /// \brief Obte un element del array
                     /// \param indes: Index del element
                     ///
-                    inline Element& operator[](int index) {
+                    inline Reference operator[](int index) {
                         return elements[index];
                     }
             };

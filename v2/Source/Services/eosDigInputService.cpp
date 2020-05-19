@@ -5,6 +5,7 @@
 #include "HAL/halSYS.h"
 #include "HAL/halTMR.h"
 #include "Services/eosDigInputService.h"
+#include "System/Core/eosTask.h"
 
 
 using namespace eos;
@@ -37,11 +38,8 @@ DigInputService::DigInputService(
 ///
 DigInputService::~DigInputService() {
 
-    while (!inputs.isEmpty()) {
-        DigInput* input = inputs.getFront();
-        removeInput(input);       
-        delete input;
-    }
+    while (!inputs.isEmpty())
+        delete inputs.getBack();
 }
 
 
@@ -53,12 +51,19 @@ void DigInputService::addInput(
     DigInput* input) {
 
     eosAssert(input != nullptr);
+    
+    // Inici de seccio critica. No es pot permetre accedir durant els canvis
+    //
+    Task::enterCriticalSection();
 
-    if (!isInitialized())
-        if (input->service == nullptr) {
-            inputs.pushBack(input);
-            input->service = this;
-        }
+    if (input->service == nullptr) {
+        inputs.pushBack(input);
+        input->service = this;
+    }
+    
+    // Fi de la seccio critica
+    //
+    Task::exitCriticalSection();
 }
 
 
@@ -71,11 +76,18 @@ void DigInputService::removeInput(
 
     eosAssert(input != nullptr);
 
-    if (!isInitialized())
-        if (input->service == this) {
-            input->service = nullptr;
-            inputs.removeAt(inputs.indexOf(input));
-        }
+    // Inici de seccio critica. No es pot permetre accedir durant els canvis
+    //
+    Task::enterCriticalSection();
+    
+    if (input->service == this) {
+        input->service = nullptr;
+        inputs.removeAt(inputs.indexOf(input));
+    }
+    
+    // Fi de la seccio critica
+    //
+    Task::exitCriticalSection();
 }
 
 
@@ -84,8 +96,19 @@ void DigInputService::removeInput(
 ///
 void DigInputService::removeInputs() {
     
-    while (!inputs.isEmpty())
-        removeInput(inputs.getFront());
+    // Inici de seccio critica. No es pot permetre accedir durant els canvis
+    //
+    Task::enterCriticalSection();
+    
+    while (!inputs.isEmpty()) {
+        DigInput* input = inputs.getBack();
+        inputs.popBack();
+        input->service = nullptr;
+    }
+    
+    // Fi de la seccio critica
+    //
+    Task::exitCriticalSection();
 }
 
 
@@ -96,8 +119,8 @@ void DigInputService::onInitialize() {
     
     // Inicialitza les entrades
     //
-    for (auto it = inputs.getIterator(); it.hasNext(); it.next()) {
-        DigInput* input = it.getCurrent();
+    for (auto it = inputs.begin(); it != inputs.end(); it++) {
+        DigInput* input = *it;
         input->state = halGPIOReadPin(input->port, input->pin);
         input->pattern = input->state ? PATTERN_ON : PATTERN_OFF;
     }
@@ -139,9 +162,9 @@ void DigInputService::onTask() {
     //
     if (semaphore.wait(-1)) {
         
-        for (auto it = inputs.getIterator(); it.hasNext(); it.next()) {
+        for (auto it = inputs.begin(); it != inputs.end(); it++) {
         
-            DigInput* input = it.getCurrent();
+            DigInput* input = *it;
           
             // Analitza el patro
             //
@@ -188,9 +211,9 @@ void DigInputService::isrTimerFunction(
 
         bool patternChanged = false;
         
-        for (auto it = service->inputs.getIterator(); it.hasNext(); it.next()) {
+        for (auto it = service->inputs.begin(); it != service->inputs.end(); it++) {
             
-            DigInput* input = it.getCurrent();
+            DigInput* input = *it;
 
             uint32_t oldPattern = input->pattern;
             

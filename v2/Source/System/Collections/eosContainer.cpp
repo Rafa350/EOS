@@ -38,7 +38,7 @@ void eos::freeContainer(
 
 /// ----------------------------------------------------------------------
 /// \brief    Canvia la capacitat d'un contenidor.
-/// \param    oldContainer: El contenidor.
+/// \param    container: El contenidor.
 /// \param    oldCapacity: La capcitat actual del contenidor.
 /// \param    newCapacity: La nova capcitat del contenidor.
 /// \param    count: El numero d'elements que conte el contenidor.
@@ -46,13 +46,13 @@ void eos::freeContainer(
 /// \return   L'adressa del nou contenidor.
 ///
 void *eos::resizeContainer(
-	void* oldContainer,
+	void* container,
 	unsigned oldCapacity,
 	unsigned newCapacity,
 	unsigned count,
 	unsigned elementSize) {
 
-	void *newContainer = oldContainer;
+	void *newContainer = container;
 
     // Comprova si cal aumentar la capacitat.
     //
@@ -64,15 +64,15 @@ void *eos::resizeContainer(
 
         // Comprova si hi havia un contenidor previ
         //
-        if (oldContainer != nullptr) {
+        if (container != nullptr) {
 
             // Copia les dades de l'antic contenidor al nou
             //
-            memcpy(newContainer, oldContainer, count * elementSize);
+            memcpy(newContainer, container, count * elementSize);
 
             // Allivera l'antic contenidor
             //
-            freeContainer(oldContainer);
+            freeContainer(container);
         }
     }
 

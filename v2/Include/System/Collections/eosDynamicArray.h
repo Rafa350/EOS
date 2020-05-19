@@ -7,447 +7,295 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosMath.h"
-
 #include <string.h>
 
 
 namespace eos {
-    
-	void* allocContainer(unsigned capacity, unsigned elementSize);
-	void freeContainer(void* container);
-	void* resizeContainer(void* oldContainer, unsigned oldCapacity, unsigned newCapacity, unsigned count, unsigned elementSize);
+#ifdef EOS_USE_FULL_NAMESPACE
+    namespace System {
+        namespace Collections {
+#endif            
 
-    /// \brief Implementa una llista a partir d'un array.
-    /// \remarks La llista enmagatzema copies del element.
-    ///
-    template <typename Element, const unsigned initialCapacity = 0>
-    class DynamicArray {
+            void* allocContainer(unsigned capacity, unsigned elementSize);
+            void freeContainer(void* container);
+            void* resizeContainer(void* container, unsigned oldCapacity, unsigned newCapacity, unsigned count, unsigned elementSize);
 
-        public:
-            /// \brief Iterator bidireccional per la llista.
+            /// \brief Implementa array de tamany variable.
+            /// \remarks La llista enmagatzema copies del element.
             ///
-            class Iterator {
+            template <typename Element, const unsigned initialCapacity = 0>
+            class DynamicArray {
+                
+                public:
+                    typedef Element Value;
+                    typedef Element& Reference;
+                    typedef const Element& CReference;
+                    typedef Element* Pointer;
+                    typedef const Element* CPointer;
+                    typedef Element* Iterator;
+                    typedef const Element* CIterator;
+
                 private:
-                    DynamicArray<Element>& container;
-                    unsigned index;
+                    unsigned size;
+                    unsigned capacity;
+                    Value* elements;
+
+                private:
+                    void updateCapacity() {
+                        if (size == capacity) {
+                            unsigned newCapacity = (capacity == 0) ?
+                                Math::max(unsigned(5), initialCapacity) :
+                                ((capacity < 50) ?
+                                    capacity * 2 :
+                                    capacity + 25);
+                            elements = static_cast<Element*>(resizeContainer(elements, capacity, newCapacity, size, sizeof(Element)));
+                            capacity = newCapacity;
+                        }
+                    }
+
+                    void move(unsigned dstIndex, unsigned srcIndex, unsigned count) {
+                        if (count > 0)
+                            memmove(&elements[dstIndex], &elements[srcIndex], count * sizeof(Element));
+                    }
 
                 public:
-                    /// \brief Constructor.
-                    /// \param container: El array a iterar.
-                    /// \param reverse: True si es recorre la llista del final al principi.
-                    /// \remarks No es permet modificar la llista mente s'utilitzi el iterator.
+
+                    /// \brief Constructor per defecte
                     ///
-                    Iterator(DynamicArray<Element>& container, bool reverse = false):
-                        container(container),
-                        index(reverse ? container.getSize() - 1 : 0) {
+                    DynamicArray():
+                        size(0),
+                        capacity(0),
+                        elements(nullptr) {
+                    }
+                        
+                    /// \brief Constructor copia
+                    ///
+                    DynamicArray(const DynamicArray& other):
+                        size(other.size),
+                        capacity(other.capacity),
+                        elements(allocContainer(capacity, sizeof(Value))) {                       
+                        memmove(elements, other.elements, size * sizeof(Value));
                     }
 
-                    /// \brief Mou el iterator al primer element.
-                    /// \return True si tot es correcte.
+                    /// \brief Destructor.
                     ///
-                    bool first() {
-                        if (container.isEmpty())
-                            return false;
-                        else {
-                            index = 0;
+                    ~DynamicArray() {
+                        if (elements != nullptr)
+                            freeContainer(elements);
+                    }
+
+                    /// \brief Inserta un element al final
+                    /// \param element: L'element a inserter.
+                    ///
+                    inline void pushBack(CReference element) {
+                        insertAt(size, element);
+                    }
+
+                    /// \brief Inserta un element al principi.
+                    /// \param element: L'element a inserter.
+                    ///
+                    inline void pushFront(CReference element) {
+                        insertAt(0, element);
+                    }
+
+                    /// \brief Extreu un element del final.
+                    ///
+                    inline void popBack() {
+                        eosAssert(size > 0);
+                        removeAt(size - 1);
+                    }
+
+                    /// \brief Extreu un elkement del principi.
+                    ///
+                    inline void popFront() {
+                        eosAssert(size > 0);
+                        removeAt(0);
+                    }
+
+                    /// \brief Obte el element del principi.
+                    ///
+                    inline Reference getFront() {
+                        eosAssert(size > 0);
+                        return elements[0];
+                    }
+
+                    /// \brief Obte el element del principi.
+                    ///
+                    inline CReference getFront() const {
+                        eosAssert(size > 0);
+                        return elements[0];
+                    }
+
+                    /// \brief Obte l'element del final.
+                    /// \return Una referencia a l'element.
+                    //
+                    inline Reference getBack() {
+                        eosAssert(size > 0);
+                        return elements[size - 1];
+                    }
+
+                    /// \brief Obte l'element del final.
+                    /// \return Una referencia a l'element.
+                    ///
+                    inline CReference getBack() const {
+                        eosAssert(size > 0);
+                        return elements[size - 1];
+                    }
+
+                    /// \brief Obte l'element en la posicio indicada.
+                    /// \param index: Posicio de l'element.
+                    /// \return Una referenciua a l'element.
+                    ///
+                    inline Reference getAt(unsigned index) {
+                        eosAssert(index < size);
+                        return elements[index];
+                    }
+
+                    /// \brief Obte l'element en la posicio indicada
+                    /// \param index: Posicio de l'element.
+                    /// \return Una referencia a l'element.
+                    ///
+                    inline CReference getAt(unsigned index) const {
+                        eosAssert(index < size);
+                        return elements[index];
+                    }
+
+                    /// \brief Inserta un element en la posicio indicada.
+                    /// \param element: L'element a insertar.
+                    /// \param index: La posicio on insertar l'element.
+                    /// \return True si tot es correcte. False en cas contrari.
+                    ///
+                    bool insertAt(unsigned index, CReference element) {
+                        if (index == size) {
+                            updateCapacity();
+                            elements[index] = element;
+                            size += 1;
                             return true;
                         }
-                    }
-
-                    /// \brief Mou el iterator a l'ultim element.
-                    /// \return True si tot es correcte.
-                    ///
-                    bool last() {
-                        if (container.isEmpty())
-                            return false;
-                        else {
-                            index = container.getSize() - 1;
-                            return true;
-                        }
-                    }
-
-                    /// \brief Mou el iterator al anterior element.
-                    /// \return True si tot es correcte.
-                    ///
-                    bool prev() {
-                        if (!container.isEmpty() && (index > 0)) {
-                            index -=1;
+                        else if (index < size) {
+                            updateCapacity();
+                            move(index + 1, index, size - index);
+                            elements[index] = element;
+                            size += 1;
                             return true;
                         }
                         else
                             return false;
                     }
 
-                    /// \brief Mou el iterator al seguent element.
-                    /// \return True si tot es correcte.
+                    /// \brief Elimina un element de la posicio indicada.
+                    /// \param index: Posicio del element a eliminar.
+                    /// \return True si tot es correcte. False en cas contrari.
                     ///
-                    bool next() {
-                        if (!container.isEmpty() && (index < container.getSize())) {
-                            index += 1;
+                    bool removeAt(unsigned index) {
+                        if (index >= size)
+                            return false;
+                        else if (index < size) {
+                            move(index, index + 1, size - index - 1);
+                            size -= 1;
                             return true;
                         }
                         else
-                            return false;
+                            return true;
                     }
 
-                    /// \brief Indica si hi ha un element previ.
-                    /// \return True si existeix l'element previ.
+                    /// \brief Copia el contingut en un array.
+                    /// \param dst: El array de destinacio.
+                    /// \param offset: Index del primer element a copiar.
+                    /// \param length: Numero d'elements a copiar.
                     ///
-                    inline bool hasPrev() const {
-                        return !container.isEmpty() && (index >= 0);
+                    void copyTo(Pointer dst, unsigned offset, unsigned length) const {
+                        eosAssert(offset + length <= size);
+                        memcpy(dst, &elements[offset], length * sizeof(Element));
                     }
 
-                    /// \brief Indica si hi ha un element posterior.
-                    /// \return True si existeix l'element posterior.
+                    /// \brief Obte l'index d'un element.
+                    /// \param element: L'element.
+                    /// \return L'index o -1 si l'element no existeix.
                     ///
-                    inline bool hasNext() const {
-                        return !container.isEmpty() && (index < container.getSize());
+                    unsigned indexOf(CReference element) const {
+                        for (unsigned index = 0; index < size; index++)
+                            if (elements[index] == element)
+                                return index;
+                        return unsigned(-1);
                     }
 
-                    /// \brief Obter l'element actual.
-                    /// \return L'element actual.
+                    /// \brief Comprova si l'element pertany a la llista.
+                    /// \param element: L'element.
+                    /// \return Trus si pertany, false en cas contrari.
                     ///
-                    inline Element& getCurrent() const {
-                        return container.getAt(index);
+                    inline bool contains(CReference element) const {
+                        return indexOf(element) != unsigned(-1);
+                    }
+
+                    /// \brief Buida el array, pero deixa el contenidor.
+                    ///
+                    inline void empty() {
+                        size = 0;
+                    }
+
+                    /// \brief Buida el array i borra el contenidor.
+                    ///
+                    void clear() {
+                        freeContainer(elements);
+                        size = 0;
+                        capacity = 0;
+                        elements = nullptr;
+                    }
+
+                    /// \brief Comprova si es buit.
+                    /// \return True si es buit.
+                    ///
+                    inline bool isEmpty() const {
+                        return size == 0;
+                    }
+
+                    /// \brief Obte el tamany
+                    /// \return El tamamy.
+                    ///
+                    inline unsigned getSize() const {
+                        return size;
+                    }
+
+                    /// \brief Obte la capacitat actual.
+                    /// \return La capacitat.
+                    ///
+                    inline unsigned getCapacity() const {
+                        return capacity;
+                    }
+                    
+                    /// \brief Obte el iterator.
+                    ///
+                    inline Iterator begin() const {
+                        return elements;
+                    }
+                    
+                    /// \brief Obte el iterator
+                    ///
+                    inline Iterator end() const {
+                        return elements + size;
+                    }
+
+                    /// \brief Implementa l'operador []
+                    /// \param index: La posicio.
+                    /// \return L'element en la posicio indicada.
+                    ///
+                    inline CReference operator[](unsigned index) const {
+                        return getAt(index);
+                    }
+
+                    /// \brief Implementa l'operador []
+                    /// \param index: La posicio.
+                    /// \return L'element en la posicio indicada.
+                    ///
+                    inline Reference operator[](unsigned index) {
+                        return getAt(index);
                     }
             };
-
-            /// \brief Iterator bidireccional per la llista.
-            ///
-            class ConstIterator {
-                private:
-                    const DynamicArray<Element>& container;
-                    unsigned index;
-
-                public:
-                    /// \brief Constructor.
-                    /// \param container: El array a iterar.
-                    /// \param reverse: True si es recorre la llista del final al principi.
-                    /// \remarks No es permet modificar la llista mente s'utilitzi el iterator.
-                    ///
-                    ConstIterator(const DynamicArray<Element>& container, bool reverse = false):
-                        container(container),
-                        index(reverse ? container.getSize() - 1 : 0) {
-                    }
-
-                    /// \brief Mou el iterator al primer element.
-                    /// \return True si tot es correcte.
-                    ///
-                    bool first() {
-                        if (container.isEmpty())
-                            return false;
-                        else {
-                            index = 0;
-                            return true;
-                        }
-                    }
-
-                    /// \brief Mou el iterator a l'ultim element.
-                    /// \return True si tot es correcte.
-                    ///
-                    bool last() {
-                        if (container.isEmpty())
-                            return false;
-                        else {
-                            index = container.getSize() - 1;
-                            return true;
-                        }
-                    }
-
-                    /// \brief Mou el iterator al anterior element.
-                    /// \return True si tot es correcte.
-                    ///
-                    bool prev() {
-                        if (!container.isEmpty() && (index > 0)) {
-                            index -=1;
-                            return true;
-                        }
-                        else
-                            return false;
-                    }
-
-                    /// \brief Mou el iterator al seguent element.
-                    /// \return True si tot es correcte.
-                    ///
-                    bool next() {
-                        if (!container.isEmpty() && (index < container.getSize())) {
-                            index += 1;
-                            return true;
-                        }
-                        else
-                            return false;
-                    }
-
-                    /// \brief Indica si hi ha un element previ.
-                    /// \return True si existeix l'element previ.
-                    ///
-                    inline bool hasPrev() const {
-                        return !container.isEmpty() && (index >= 0);
-                    }
-
-                    /// \brief Indica si hi ha un element posterior.
-                    /// \return True si existeix l'element posterior.
-                    ///
-                    inline bool hasNext() const {
-                        return !container.isEmpty() && (index < container.getSize());
-                    }
-
-                    /// \brief Obter l'element actual.
-                    /// \return L'element actual.
-                    ///
-                    inline const Element& getCurrent() const {
-                        return container.getAt(index);
-                    }
-            };
-
-        private:
-            unsigned size;
-            unsigned capacity;
-            Element* elements;
-
-        private:
-            void updateCapacity() {
-                if (size == capacity) {
-                    unsigned newCapacity = (capacity == 0) ?
-                        Math::max(unsigned(5), initialCapacity) :
-                        ((capacity < 50) ?
-                            capacity * 2 :
-                            capacity + 25);
-                    elements = static_cast<Element*>(resizeContainer(elements, capacity, newCapacity, size, sizeof(Element)));
-                    capacity = newCapacity;
-                }
-            }
-
-            void move(unsigned dstIndex, unsigned srcIndex, unsigned count) {
-                if (count > 0)
-                    memmove(&elements[dstIndex], &elements[srcIndex], count * sizeof(Element));
-            }
-
-        public:
-
-            /// \brief Constructor.
-            ///
-            DynamicArray():
-                size(0),
-                capacity(0),
-                elements(nullptr) {
-            }
-
-            /// \brief Destructor.
-            ///
-            ~DynamicArray() {
-                if (elements != nullptr)
-                    freeContainer(elements);
-            }
-            
-            /// \brief Obte un iterator.
-            /// \return El iterator.
-            //
-            Iterator getIterator() {
-                
-                return Iterator(*this);
-            }
-
-            /// \brief Obte un iterator.
-            /// \return El iterator.
-            ///
-            ConstIterator getConstIterator() const {
-                
-                return ConstIterator(*this);
-            }
-
-            /// \brief Inserta un element al final
-            /// \param element: L'element a inserter.
-            ///
-            void pushBack(const Element& element) {
-                
-                insertAt(size, element);
-            }
-            
-            /// \brief Inserta un element al principi
-            /// \param element: L'element a inserter.
-            ///
-            void pushFront(const Element& element) {
-                
-                insertAt(0, element);
-            }
-
-            /// \brief Extreu l'ultim element.
-            ///
-            void popBack() {
-                
-                eosAssert(size > 0);
-                removeAt(size - 1);
-            }
-            
-            /// \brief Extreu el primer element
-            ///
-            void popFront() {
-                
-                removeAt(0);
-            }
-            
-            /// \brief Obte el primer element.
-            ///
-            Element& getFront() {
-                
-                eosAssert(size > 0);
-                return elements[0];
-            }
-            
-            /// \brief Obte el primer element.
-            ///
-            const Element& getFront() const {
-                
-                eosAssert(size > 0);
-                return elements[0];
-            }
-
-            /// \brief Obte l'ultim element
-            ///
-            Element& getBack() {
-                
-                return elements[size - 1];
-            }
-
-            /// \brief Obte l'ultim element
-            ///
-            const Element& getBack() const {
-                
-                return elements[size - 1];
-            }
-
-            /// \brief Obte l'element en la posicio indicada de la llista.
-            /// \return L'element.
-            ///
-            inline Element& getAt(unsigned index) {
-                eosAssert(index < size);
-                return elements[index];
-            }
-
-            /// \brief Obte l'element en la posicio indicada de la llista.
-            /// \return L'element.
-            ///
-            inline const Element& getAt(unsigned index) const {
-                eosAssert(index < size);
-                return elements[index];
-            }
-
-            /// \brief Inserta un element en la posicio indicada.
-            /// \param element: L'element a insertar.
-            /// \param index: La posicio on insertar l'element.
-            /// \return True si tot es correcte. False en cas contrari.
-            ///
-            bool insertAt(unsigned index, const Element& element) {
-                if (index == size) {
-                    updateCapacity();
-                    elements[index] = element;
-                    size += 1;
-                    return true;
-                }
-                else if (index < size) {
-                    updateCapacity();
-                    move(index + 1, index, size - index);
-                    elements[index] = element;
-                    size += 1;
-                    return true;
-                }
-                else
-                    return false;
-            }
-
-            /// \brief Elimina un element de la posicio indicada.
-            /// \param index: Posicio del element a eliminar.
-            /// \return True si tot es correcte. False en cas contrari.
-            ///
-            bool removeAt(unsigned index) {
-                if (index >= size)
-                    return false;
-                else if (index < size) {
-                    move(index, index + 1, size - index - 1);
-                    size -= 1;
-                    return true;
-                }
-                else
-                    return true;
-            }
-
-            /// \brief Copia el contingut en un array.
-            /// \param dst: El array de destinacio.
-            /// \param offset: Index del primer element a copiar.
-            /// \param length: Numero d'elements a copiar.
-            ///
-            void copyTo(Element* dst, unsigned offset, unsigned length) const {
-                eosAssert(offset + length <= size);
-                memcpy(dst, &elements[offset], length * sizeof(Element));
-            }
-
-            /// \brief Obte l'index d'un element.
-            /// \return L'index o -1 si l'element no existeix.
-            ///
-            unsigned indexOf(const Element& element) const {
-                for (unsigned index = 0; index < size; index++)
-                    if (elements[index] == element)
-                        return index;
-                return unsigned(-1);
-            }
-
-            /// \brief Comprova si l'element pertany a la llista.
-            ///
-            inline bool contains(const Element& element) const {
-                return indexOf(element) != unsigned(-1);
-            }
-
-            /// \brief Buida el array, pero deixa el contenidor.
-            ///
-            inline void empty() {
-                size = 0;
-            }
-
-            /// \brief Buida el array i borra el contenidor.
-            ///
-            void clear() {
-                freeContainer(elements);
-                size = 0;
-                capacity = 0;
-                elements = nullptr;
-            }
-
-            /// \brief Comprova si es buit.
-            /// \return True si es buit.
-            ///
-            inline bool isEmpty() const {
-                return size == 0;
-            }
-
-            /// \brief Obte el tamany
-            /// \return El numero d'elements.
-            ///
-            inline unsigned getSize() const {
-                return size;
-            }
-
-            /// \brief Obte la capacitat actual.
-            /// \return La capacitat.
-            ///
-            inline unsigned getCapacity() const {
-                return capacity;
-            }
-
-            /// \brief Implementa l'operador []
-            /// \return L'element en la posicio indicada.
-            ///
-            inline const Element& operator[](unsigned index) const {
-                return getAt(index);
-            }
-
-            /// \brief Implementa l'operador []
-            /// \return L'element en la posicio indicada.
-            ///
-            inline Element& operator[](unsigned index) {
-                return getAt(index);
-            }
-    };
+#ifdef EOS_USE_FULL_NAMESPACE            
+        }
+    }
+#endif    
 }
 
 

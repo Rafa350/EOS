@@ -31,11 +31,8 @@ DigOutputService::DigOutputService(
 ///
 DigOutputService::~DigOutputService() {
 
-    while (!outputs.isEmpty()) {
-    	DigOutput* output = outputs.getBack();
-    	removeOutput(output);
-    	delete output;
-    }
+    while (!outputs.isEmpty())
+    	delete outputs.getBack();
 }
 
 
@@ -50,12 +47,19 @@ void DigOutputService::addOutput(
 
     eosAssert(output != nullptr);
     eosAssert(output->service == nullptr);
+    
+    // Inici de seccio critica. No es pot permetre accedir durant els canvis
+    //
+    Task::enterCriticalSection();
 
-    if (!isInitialized())
-        if (output->service == nullptr) {    
-            outputs.pushBack(output);
-            output->service = this;
-        }
+    if (output->service == nullptr) {    
+        outputs.pushBack(output);
+        output->service = this;
+    }
+    
+    // Fi de la seccio critica
+    //
+    Task::exitCriticalSection();
 }
 
 
@@ -71,11 +75,18 @@ void DigOutputService::removeOutput(
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
-    if (!isInitialized())
-        if (output->service == this) {
-            outputs.removeAt(outputs.indexOf(output));
-            output->service = nullptr;
-        }
+    // Inici de seccio critica. No es pot permetre accedir durant els canvis
+    //
+    Task::enterCriticalSection();
+    
+    if (output->service == this) {
+        outputs.removeAt(outputs.indexOf(output));
+        output->service = nullptr;
+    }
+    
+    // Fi de la seccio critica
+    //
+    Task::exitCriticalSection();
 }
 
 
@@ -86,8 +97,19 @@ void DigOutputService::removeOutput(
 ///
 void DigOutputService::removeOutputs() {
 
-    while (!outputs.isEmpty())
-        removeOutput(outputs.getBack());
+    // Inici de seccio critica. No es pot permetre accedir durant els canvis
+    //
+    Task::enterCriticalSection();
+    
+    while (!outputs.isEmpty()) {
+        DigOutput* output = outputs.getBack();
+        outputs.popBack();
+        output->service = nullptr;
+    }
+    
+    // Fi de la seccio critica
+    //
+    Task::exitCriticalSection();
 }
 
 
@@ -424,9 +446,9 @@ void DigOutputService::cmdDelayedPulse(
 void DigOutputService::cmdTimeOut(
     unsigned time) {
 
-    for (auto it  = outputs.getIterator(); it.hasNext(); it.next()) {
+    for (auto it = outputs.begin(); it != outputs.end(); it++) {
         
-        DigOutput *output = it.getCurrent();
+        DigOutput* output = *it;
 
       	switch (output->state) {
             case DigOutput::State::pulse:

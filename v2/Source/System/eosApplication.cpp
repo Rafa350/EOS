@@ -117,8 +117,8 @@ void Application::initializeServices() {
 
     // Inicialitza els serveis de la llista, un a un.
     //   
-    for (auto it = services.getIterator(); it.hasNext(); it.next()) {
-        Service *service = it.getCurrent();
+    for (auto it = services.begin(); it != services.end(); it++) {
+        Service *service = *it;
         service->initialize();
     }
 }
@@ -131,8 +131,8 @@ void Application::terminateServices() {
     
     // Finalitza els serveis de la llista, un a un.
     //   
-    for (auto it = services.getIterator(); it.hasNext(); it.next()) {
-        Service *service = it.getCurrent();
+    for (auto it = services.begin(); it != services.end(); it++) {
+        Service *service = *it;
         service->terminate();
     }
 }
@@ -153,8 +153,8 @@ void Application::runServices() {
     
     // Crea una tasca per executar cada servei
     //
-    for (auto it = services.getIterator(); it.hasNext(); it.next()) {
-        Service *service = it.getCurrent();
+    for (auto it = services.begin(); it != services.end(); it++) {
+        Service* service = *it;
         Task *task = new Task(
             service->getStackSize(),
             service->getPriority(),

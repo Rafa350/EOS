@@ -23,13 +23,6 @@ bool compare(const long& a, const long& b) {
 ///
 void appMain() {
     
-    DynamicArray<int, 100> da;
-    StaticArray<int, 100> sa;
-    
-    da.pushBack(12);
-    da.pushFront(13);
-    da.clear();
-    
     PriorityQueueHeap<long> pq(compare);
     pq.push(100);
     pq.push(700);

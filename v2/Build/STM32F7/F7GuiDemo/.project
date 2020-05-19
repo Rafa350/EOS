@@ -674,9 +674,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/eosWindow.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Collections/eosArrayList.h</name>
+			<name>inc/Framework/EOS/System/Collections/eosDynamicArray.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosArrayList.h</locationURI>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/System/Collections/eosDynamicArray.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Collections/eosStack.h</name>
@@ -889,9 +889,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/eosWindow.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
+			<name>src/Framework/EOS/System/Collections/eosContainer.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosList.cpp</locationURI>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/System/Collections/eosContainer.cpp</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>

@@ -42,14 +42,14 @@ namespace eos {
 		bottom
 	};
 
-	typedef DynamicArray<Visual*> VisualList;
-	typedef DynamicArray<Visual*>::Iterator VisualListIterator;
-	typedef DynamicArray<Visual*>::ConstIterator VisualListConstIterator;
-
 	/// \brief Clase base que representa tots els elements visuals.
 	///
     class Visual {
-        	private:
+    	public:
+			typedef DynamicArray<Visual*> VisualList;
+			typedef DynamicArray<Visual*>::Iterator VisualListIterator;
+
+      	private:
     		Visual *parent;
     		VisualList childs;
     		bool needRender;

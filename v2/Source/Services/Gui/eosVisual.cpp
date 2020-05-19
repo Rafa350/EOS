@@ -66,8 +66,8 @@ bool Visual::isRenderizable() const {
 		return true;
 
 	else {
-		for (auto it = childs.getConstIterator(); it.hasNext(); it.next()) {
-			const Visual* child = it.getCurrent();
+		for (auto it = childs.begin(); it != childs.end(); it++) {
+			const Visual* child = *it;
 			if (child->isRenderizable())
 				return true;
 		}
@@ -110,8 +110,8 @@ bool Visual::render(
 
 	// Continua amb els fills.
 	//
-	for (auto it = childs.getIterator(); it.hasNext(); it.next()) {
-		Visual* child = it.getCurrent();
+	for (auto it = childs.begin(); it != childs.end(); it++) {
+		Visual* child = *it;
 		if (child->render(context))
 			renderized = true;
 	}
@@ -299,8 +299,8 @@ Size Visual::measureOverride(
 	int width = 0;
 	int height = 0;
 
-	for (auto it = childs.getConstIterator(); it.hasNext(); it.next()) {
-		Visual* child = it.getCurrent();
+	for (auto it = childs.begin(); it != childs.end(); it++) {
+		Visual* child = *it;
 		eosAssert(child != nullptr);
 
 		if (child->isVisible()) {
@@ -325,8 +325,8 @@ Size Visual::measureOverride(
 Size Visual::arrangeOverride(
 	const Size &finalSize) const {
 
-	for (auto it = childs.getConstIterator(); it.hasNext(); it.next()) {
-		Visual* child = it.getCurrent();
+	for (auto it = childs.begin(); it != childs.end(); it++) {
+		Visual* child = *it;
 		eosAssert(child != nullptr);
 
 		if (child->isVisible())
