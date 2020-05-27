@@ -1,6 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Collections/eosArrayList.h"
 #include "System/eosString.h"
 #include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosFontCache.h"
@@ -54,7 +53,7 @@ Font *FontCache::getFont(
 			.style = style,
 			.font = font
 		};
-		cache.add(entry);
+		cache.pushBack(entry);
 	}
 
 	return font;

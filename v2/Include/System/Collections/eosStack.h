@@ -8,57 +8,65 @@
 
 namespace eos {
 
-    /// \brief Pila
+    /// \brief Pila (LIFO). Adapta un contenidor per treballar com a pila.
     ///
-    template <typename T, const int SIZE = 10>
+    template <typename Element, typename Container>
     class Stack {
+        public:
+            typedef Element Value;
+            typedef Element& Reference;
+            typedef const Element& CReference;
+            typedef Element* Pointer;
+            typedef const Element* CPointer;
 
     	private:
-    		T container[SIZE];
-    		int top;
+            Container container;
 
         public:
 
-    		/// \brief Contructor.
-            Stack():
-            	top(-1) {
+    		/// \brief Contructor per defecte
+            ///
+            Stack() {
             }
 
             /// \brief Afegeix un element a la pila.
             /// \param element: L'element a afeigir.
-            void push(const T &element) {
-            	if (!isFull())
-            		container[++top] = element;
+            //
+            inline void push(CReference element) {
+                container.pushBack(element);
             }
 
-            /// \brief Elimina el primer element de la pila.
-            void pop() {
-            	if (!isEmpty())
-            		top--;
+            /// \brief Elimina un element de la pila.
+            ///
+            inline void pop() {
+                container.popBack();
             }
 
             /// \brief: Obte el primer element de la pila.
             /// \return: El primer element.
-            inline const T &peek() const {
+            ///
+            inline Reference peek() {
+                return container.getBack();
+            }
 
-                return container[top];
+            /// \brief: Obte el primer element de la pila.
+            /// \return: El primer element.
+            ///
+            inline CReference peek() const {
+                return container.getBack();
             }
 
             /// \brief Buida la pila.
+            ///
             inline void clear() {
-            	top = -1;
+            	container.clear();
             }
 
             /// \brief: Indica si la pila es buida.
             /// \return: True si es buida.
+            ///
             inline bool isEmpty() const {
-                return top == -1;
-            }
-
-            /// \brief: Indica si la pila es plena.
-            /// \return: True si es plena.
-            inline bool isFull() const {
-            	return top == SIZE - 1;
+                return container.isEmpty();
             }
     };
 

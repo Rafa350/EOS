@@ -59,6 +59,11 @@ namespace eos {
                         memmove(elements, array, Math::min(size, arraySize) * sizeof(Value));
                     }
                     
+                    /// \brief Destructor
+                    ///
+                    ~StaticArray() {                        
+                    }
+                    
                     /// \brief Obte el iterator al principi
                     ///
                     inline Iterator begin() const {

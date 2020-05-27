@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 #include "System/Collections/eosStack.h"
+#include "System/Collections/eosDynamicArray.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
@@ -45,7 +46,7 @@ namespace eos {
     			int clipY2;
     			Transformation ct;
     		};
-    		typedef Stack<State> StateStack;
+    		typedef Stack<State, DynamicArray<State, 10> > StateStack;
 
         private:
             IDisplayDriver* driver;

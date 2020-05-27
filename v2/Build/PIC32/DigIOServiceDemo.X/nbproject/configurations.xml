@@ -54,6 +54,8 @@
               <itemPath>../../../Include/System/Collections/eosPriorityQueueHeap.h</itemPath>
               <itemPath>../../../Include/System/Collections/eosStaticArray.h</itemPath>
               <itemPath>../../../Include/System/Collections/eosDynamicArray.h</itemPath>
+              <itemPath>../../../Include/System/Collections/eosStack.h</itemPath>
+              <itemPath>../../../Include/System/Collections/eosContainer.h</itemPath>
             </logicalFolder>
             <logicalFolder name="f2" displayName="Core" projectFiles="true">
               <itemPath>../../../Include/System/Core/eosHeapAllocator.h</itemPath>

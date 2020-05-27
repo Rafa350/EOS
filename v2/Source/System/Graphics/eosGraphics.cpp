@@ -146,7 +146,7 @@ void Graphics::resetTransformation() {
 ///
 void Graphics::push() {
 
-	if (!stack.isFull())
+	//if (!stack.isFull())
 		stack.push(state);
 }
 

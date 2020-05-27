@@ -1,4 +1,4 @@
-#include "xc_asm.h" // Bug en xc v1.40
+#include <xc.h>
 #include <sys/asm.h>
 #include "ISR_Support.h"
 

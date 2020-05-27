@@ -3,8 +3,8 @@
 
 
 #include "eos.h"
-#include "System/Collections/eosArrayList.h"
 #include "System/eosString.h"
+#include "System/Collections/eosDynamicArray.h"
 #include "System/Graphics/eosFont.h"
 
 
@@ -18,7 +18,7 @@ namespace eos {
 		    	FontStyle style;
 		    	Font *font;
 		    };
-			typedef ArrayList<CacheEntry*, 10> Cache;
+			typedef DynamicArray<CacheEntry*, 10> Cache;
 
 		private:
 			static FontCache *instance;

@@ -7,6 +7,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosMath.h"
+#include "System/Collections/eosContainer.h"
 #include <string.h>
 
 
@@ -15,10 +16,6 @@ namespace eos {
     namespace System {
         namespace Collections {
 #endif            
-
-            void* allocContainer(unsigned capacity, unsigned elementSize);
-            void freeContainer(void* container);
-            void* resizeContainer(void* container, unsigned oldCapacity, unsigned newCapacity, unsigned count, unsigned elementSize);
 
             /// \brief Implementa array de tamany variable.
             /// \remarks La llista enmagatzema copies del element.
@@ -48,14 +45,14 @@ namespace eos {
                                 ((capacity < 50) ?
                                     capacity * 2 :
                                     capacity + 25);
-                            elements = static_cast<Element*>(resizeContainer(elements, capacity, newCapacity, size, sizeof(Element)));
+                            elements = static_cast<Pointer>(Container::resize(elements, capacity, newCapacity, size, sizeof(Value)));
                             capacity = newCapacity;
                         }
                     }
 
                     void move(unsigned dstIndex, unsigned srcIndex, unsigned count) {
                         if (count > 0)
-                            memmove(&elements[dstIndex], &elements[srcIndex], count * sizeof(Element));
+                            memmove(&elements[dstIndex], &elements[srcIndex], count * sizeof(Value));
                     }
 
                 public:
@@ -73,7 +70,7 @@ namespace eos {
                     DynamicArray(const DynamicArray& other):
                         size(other.size),
                         capacity(other.capacity),
-                        elements(allocContainer(capacity, sizeof(Value))) {                       
+                        elements(Container::alloc(capacity, sizeof(Value))) {                       
                         memmove(elements, other.elements, size * sizeof(Value));
                     }
 
@@ -81,7 +78,7 @@ namespace eos {
                     ///
                     ~DynamicArray() {
                         if (elements != nullptr)
-                            freeContainer(elements);
+                            Container::free(elements);
                     }
 
                     /// \brief Inserta un element al final

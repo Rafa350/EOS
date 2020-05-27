@@ -16,7 +16,7 @@ struct String::StringData {
 	const char* ptr;              // Punter a la cadena.
 };
 
-static const char *nullStr = "";  // Cadena buida.
+static const char* nullStr = "";  // Cadena buida.
 
 
 /// ----------------------------------------------------------------------

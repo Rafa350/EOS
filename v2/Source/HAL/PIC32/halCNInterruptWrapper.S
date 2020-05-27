@@ -1,4 +1,4 @@
-#include <xc_asm.h>
+#include <xc.h>
 #include <sys/asm.h>
 #include "ISR_Support.h"
 

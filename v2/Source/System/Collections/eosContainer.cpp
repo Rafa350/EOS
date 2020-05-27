@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalHeap.h"
-#include "System/Collections/eosDynamicArray.h"
+#include "System/Collections/eosContainer.h"
 #include <string.h>
 
 
@@ -14,7 +14,7 @@ using namespace eos;
 /// \param    elementSize: Tamany del element.
 /// \return   L'adressa del contenidor.
 ///
-void* eos::allocContainer(
+void* Container::alloc(
 	unsigned capacity,
 	unsigned elementSize) {
 
@@ -29,7 +29,7 @@ void* eos::allocContainer(
 /// \brief    Allivera la memoria d'un contenidor.
 /// \param    container: El contenidor.
 ///
-void eos::freeContainer(
+void Container::free(
 	void* container) {
 
 	osalHeapFree(nullptr, container);
@@ -45,7 +45,7 @@ void eos::freeContainer(
 /// \param    elementSize: El tamany de cada element.
 /// \return   L'adressa del nou contenidor.
 ///
-void *eos::resizeContainer(
+void *Container::resize(
 	void* container,
 	unsigned oldCapacity,
 	unsigned newCapacity,
@@ -60,7 +60,7 @@ void *eos::resizeContainer(
 
         // Reserva memoria per un nou contenidor
         //
-        newContainer = allocContainer(newCapacity, elementSize);
+        newContainer = Container::alloc(newCapacity, elementSize);
 
         // Comprova si hi havia un contenidor previ
         //
@@ -68,11 +68,11 @@ void *eos::resizeContainer(
 
             // Copia les dades de l'antic contenidor al nou
             //
-            memcpy(newContainer, container, count * elementSize);
+            memmove(newContainer, container, count * elementSize);
 
             // Allivera l'antic contenidor
             //
-            freeContainer(container);
+            Container::free(container);
         }
     }
 

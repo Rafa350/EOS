@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
 #include "System/Collections/eosDynamicArray.h"
@@ -39,6 +40,12 @@ namespace eos {
             typedef DynamicArray<TimerCounter*>::Iterator TimerListIterator;
             typedef PriorityQueue<unsigned, TimerCounter*> TimerQueue;
             typedef PriorityQueue<unsigned, TimerCounter*>::Iterator TimerQueueIterator;
+            
+        public:
+            struct InitParams {
+                TMRTimer timer;
+                unsigned period;
+            };
 
         private:
             CommandQueue commandQueue;

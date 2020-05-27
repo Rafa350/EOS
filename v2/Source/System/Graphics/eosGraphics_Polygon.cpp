@@ -1,7 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosMath.h"
-#include "System/Collections/eosArrayList.h"
 #include "System/Graphics/eosGraphics.h"
 
 #include <vector>
