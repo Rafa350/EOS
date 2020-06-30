@@ -206,6 +206,12 @@ void DigInputService::isrTimerFunction(
     TMRTimer timer,
     void* params) {
     
+    
+    ERROR HORROR MODIFICAR AIXO!!!!!
+    Igual que en EOSPic patro i analisi al mateix temps!!!
+    
+    
+    
     DigInputService* service = static_cast<DigInputService*>(params);
     if (service != nullptr) {
 
