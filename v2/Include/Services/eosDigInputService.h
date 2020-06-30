@@ -72,7 +72,8 @@ namespace eos {
             IEventCallback* eventCallback;
             void* eventParam;
             uint32_t pattern;
-            bool state;
+            bool value;
+            bool edge;
             
         public:
             DigInput(DigInputService* service, const InitParams& initParams);

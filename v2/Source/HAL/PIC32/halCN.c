@@ -86,13 +86,6 @@ void halCNInitializeLines(
 		const CNInitializeLineInfo* p = &info[i];          
 		setupLine(p->line, p->options);
     }    
-    
-    // Activa les interrupcions
-    //
-    IPC6bits.CNIP = 2; // Interrupt Priority = 2;
-    IPC6bits.CNIS = 0; // Interrupt Subpriority = 0;
-    IFS1bits.CNIF = 0; // Interrupt Flag = 0
-    IEC1bits.CNIE = 1; // Interrupt Enable = 1
 }
 
 
@@ -128,7 +121,7 @@ void halCNDisableLine(
 /// \param    function: La funcio.
 /// \param    params: Es parametres de la funcio.
 ///
-void halCNSetCallbackFunction(
+void halCNSetInterruptFunction(
     CNLine line, 
     CNInterruptFunction function, 
     void* params) {
@@ -137,6 +130,39 @@ void halCNSetCallbackFunction(
 
 	callback[line].function = function;
 	callback[line].params = params;   
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la prioritat de la interrupcio.
+/// \param    p: Prioritat.
+/// \param    s: Subprioritat.
+///
+void halCNSetInterruptPriority(
+    unsigned p, 
+    unsigned s) {
+    
+    IPC6bits.CNIP = p; 
+    IPC6bits.CNIS = s;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Autoritza les interrrupcions
+///
+void halCNEnableInterrupots() {
+    
+    IFS1bits.CNIF = 0; // Interrupt Flag = 0
+    IEC1bits.CNIE = 1; // Interrupt Enable = 1
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desautoritza les interrrupcions
+///
+void halCNDisableInterrupts() {
+    
+    IEC1bits.CNIE = 0; // Interrupt Enable = 0
 }
 
 

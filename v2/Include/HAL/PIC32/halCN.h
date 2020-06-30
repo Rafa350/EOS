@@ -74,13 +74,16 @@ typedef struct {
 #define HAL_CN_ENABLE_NO          (0u << HAL_CN_ENABLE_POS)
 #define HAL_CN_ENABLE_YES         (1u << HAL_CN_ENABLE_POS)
 
-       
+
 void halCNInitializeLines(const CNInitializeLineInfo* info, unsigned count);
 
 void halCNEnableLine(CNLine line);
 void halCNDisableLine(CNLine line);
 
 void halCNSetInterruptFunction(CNLine line, CNInterruptFunction function, void* params);
+void halCNSetInterruptPriority(unsigned p, unsigned s);
+void halCNEnableInterrupt();
+void halCNDisableInterrupt();
 
 
 

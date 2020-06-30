@@ -120,9 +120,10 @@ void DigInputService::onInitialize() {
     // Inicialitza les entrades
     //
     for (auto it = inputs.begin(); it != inputs.end(); it++) {
-        DigInput* input = *it;
-        input->state = halGPIOReadPin(input->port, input->pin);
-        input->pattern = input->state ? PATTERN_ON : PATTERN_OFF;
+        DigInput* input = *it;        
+        input->value = halGPIOReadPin(input->port, input->pin);
+        input->edge = false;
+        input->pattern = input->value ? PATTERN_ON : PATTERN_OFF;
     }
     
     // Inicialitza el temporitzador
@@ -162,28 +163,24 @@ void DigInputService::onTask() {
     //
     if (semaphore.wait(-1)) {
         
-        for (auto it = inputs.begin(); it != inputs.end(); it++) {
-        
+        for (auto it = inputs.begin(); it != inputs.end(); it++) {        
             DigInput* input = *it;
           
-            // Analitza el patro
-            //
-            if ((input->pattern & PATTERN_MASK) == PATTERN_POSEDGE)
-                input->state = 1;           
-            else if ((input->pattern & PATTERN_MASK) == PATTERN_NEGEDGE)
-                input->state = 0;            
-            else
-                continue;
-
-            // Si te funcio callback, la crida
-            //
             if (input->eventCallback != nullptr) {
+                
+                halINTDisableInterrupts();
+                bool edge = input->edge;
+                input->edge = false;
+                halINTEnableInterrupts();
 
-                DigInput::EventArgs args;
-                args.input = input;
-                args.param = input->eventParam;
+                if (edge) {
+                       
+                    DigInput::EventArgs args;
+                    args.input = input;
+                    args.param = input->eventParam;
 
-                input->eventCallback->execute(args);
+                    input->eventCallback->execute(args);
+                }
             }
         }
     }
@@ -205,39 +202,43 @@ void DigInputService::onTick() {
 void DigInputService::isrTimerFunction(
     TMRTimer timer,
     void* params) {
-    
-    
-    ERROR HORROR MODIFICAR AIXO!!!!!
-    Igual que en EOSPic patro i analisi al mateix temps!!!
-    
-    
-    
+           
     DigInputService* service = static_cast<DigInputService*>(params);
     if (service != nullptr) {
 
-        bool patternChanged = false;
+        bool changed = false;
         
+        // Procesa totes les entrades
+        //
         for (auto it = service->inputs.begin(); it != service->inputs.end(); it++) {
-            
             DigInput* input = *it;
 
-            uint32_t oldPattern = input->pattern;
-            
             // Actualitza el patro
             //
             input->pattern <<= 1;
-            if (halGPIOReadPin(input->port, input->pin))
+            if (halGPIOReadPin(input->port, input->pin)) 
                 input->pattern |= 1;
-            
-            // Comprova si ha canviat
+
+            // Analitza el patro per detectar un flanc positiu
             //
-            if (input->pattern != oldPattern)
-                patternChanged = true;
+            if ((input->pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
+                input->value = 1;           
+                input->edge = 1;
+                changed = true;
+            }
+            
+            // Analitza el patro per detectar un flanc negatiu
+            //
+            else if ((input->pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
+                input->value = 0;            
+                input->edge = 1;
+                changed = true;
+            }
         }
         
         // Notifica a la tasca que hi han canvis pendents per procesar
         //
-        if (patternChanged)
+        if (changed)
             service->semaphore.releaseISR();
     }
 }
@@ -279,5 +280,8 @@ DigInput::~DigInput() {
 ///
 bool DigInput::read() const {
 
-    return state;
+    halINTDisableInterrupts();
+    bool result = value;
+    halINTEnableInterrupts();
+    return result;
 }
