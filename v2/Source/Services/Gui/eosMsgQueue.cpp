@@ -13,7 +13,7 @@ MsgQueue *MsgQueue::instance = nullptr;
 ///
 MsgQueue::MsgQueue():
 
-	queue(OPT_GUI_MessageQueueSize) {
+	queue(eosGuiService_MessageQueueSize) {
 }
 
 
@@ -48,7 +48,7 @@ void MsgQueue::send(
 bool MsgQueue::receive(
 	Message &msg) {
 
-	return queue.pop(msg, OPT_GUI_MessageQueueBlockTime);
+	return queue.pop(msg, eosGuiService_MessageQueueBlockTime);
 }
 
 

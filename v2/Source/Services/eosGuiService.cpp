@@ -3,13 +3,13 @@
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #include "Services/eosGuiService.h"
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 #include "Services/eosTouchPadService.h"
 #endif
-#ifdef OPT_GUI_Selector
+#if eosGuiService_SelectorEnabled
 #include "Services/eosSelectorService.h"
 #endif
-#ifdef OPT_GUI_Keyboard
+#if eosGuiService_KeyboardEnabled
 #include "Services/eosKeyboardService.h"
 #endif
 #include "Services/Gui/eosMsgQueue.h"
@@ -25,9 +25,9 @@
 using namespace eos;
 
 
-static IDisplayDriver *displayDriver;
-static Graphics *graphics;
-static RenderContext *context;
+static IDisplayDriver* displayDriver;
+static Graphics* graphics;
+static RenderContext* context;
 
 
 /// ----------------------------------------------------------------------
@@ -36,27 +36,27 @@ static RenderContext *context;
 /// \param    cfg: Parametres de configuracio
 ///
 GuiService::GuiService(
-	Application *application):
+	Application* application):
 
 	Service(application),
 	screen(new Screen()),
 	active(nullptr),
 	msgQueue(MsgQueue::getInstance())
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 	, touchPadEventCallback(this, &GuiService::touchPadEventHandler)
 #endif
 	{
 
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 	touchPadService = new TouchPadService(application);
 	touchPadService->setEventCallback(&touchPadEventCallback);
 	touchPadTarget = nullptr;
 #endif
 
-#ifdef OPT_GUI_Selector
+#if eosGuiService_SelectorEnabled
 #endif
 
-#ifdef OPT_GUI_Keyboard
+#if eosGuiService_KeyboardEnabled
 #endif
 }
 
@@ -148,7 +148,7 @@ void GuiService::onTask() {
 ///           contexte del que crida a aquest metode.
 /// \param    args: Arguments del event.
 ///
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void GuiService::touchPadEventHandler(
 	const TouchPadService::EventArgs &args) {
 
@@ -205,14 +205,14 @@ void GuiService::touchPadEventHandler(
 #endif
 
 
-#ifdef OPT_GUI_Keyboard
+#if eosGuiService_KeyboardEnabled
 void GuiService::keyboardEventHandler(
-	const KeyboardEventArgs &aargs) {
+	const KeyboardEventArgs &args) {
 
 }
 #endif
 
-#ifdef OPT_GUI_Selector
+#if eosGuiService_SelectorEnabled
 void GuiService::selectorEventHandler(
 	const SelectorEventArgs &args) {
 

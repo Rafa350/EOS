@@ -8,7 +8,7 @@
 
 namespace eos {
 
-#ifdef OPT_GUI_Selector
+#if eosGuiService_SelectorEnabled
 
     enum class MsgSelectorEvent {
         inc,
@@ -24,7 +24,7 @@ namespace eos {
 
 #endif
 
-#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
 
     enum class KeyCode {
         up,
@@ -49,7 +49,7 @@ namespace eos {
 
 #endif
 
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 
     enum class MsgTouchPadEvent: uint8_t {
     	press,
@@ -86,13 +86,13 @@ namespace eos {
         MsgId msgId;
         Visual *target;
         union {
-#ifdef OPT_GUI_Selector
+#if eosGuiService_SelectorEnabled
             MsgSelector selector;
 #endif
-#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
             MsgKeyboard keyboard;
 #endif
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
             MsgTouchPad touchPad;
 #endif
             MsgCommand command;

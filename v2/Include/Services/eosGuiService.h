@@ -10,7 +10,7 @@
 #include "System/Core/eosTask.h"
 
 
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 #include "Services/eosTouchPadService.h"
 #endif
 
@@ -32,10 +32,10 @@ namespace eos {
 	class Visual;
 	class Point;
 	class MsgQueue;
-#ifdef OPT_GUI_Keyboard
+#if eosGuiService_KeyboardEnabled
 	class GuiKeyboardService;
 #endif
-#ifdef OPT_GUI_Selector
+#if eosGuiService_SelectorEnabled
 	class GuiSelectorService;
 #endif
 
@@ -47,13 +47,13 @@ namespace eos {
 			Screen *screen;
 			Visual *active;
 			MsgQueue *msgQueue;
-#ifdef OPT_GUI_Keyboard
+#if eosGuiService_KeyboardEnabled
 			KeyboardService* keyboardService;
 #endif
-#ifdef OPT_GUI_Selector
+#if eosGuiService_SelectorEnabled
 			SelectorService* selectorService;
 #endif
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 			TouchPadEventCallback touchPadEventCallback;
 			TouchPadService *touchPadService;
 			Visual *touchPadTarget;
@@ -71,7 +71,7 @@ namespace eos {
 			void onTask() override;
 
 		private:
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 			void touchPadEventHandler(const TouchPadService::EventArgs &args);
 #endif
 	};

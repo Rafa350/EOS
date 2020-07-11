@@ -68,12 +68,12 @@ namespace eos {
     		virtual void onDispatch(const Message &msg);
     		virtual void onActivate(Visual *visual);
     		virtual void onDeactivate(Visual *visual);
-#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
     		virtual void onDispatchKeyboardEvent(const MsgKeyboard &msg);
     		virtual void onKeyboardPress(KeyCode keyCode, char ch);
     		virtual void onKeyboardRelease(KeyCode keyCode, char ch);
 #endif
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
     		virtual void onDispatchTouchPadEvent(const MsgTouchPad &msg);
     		virtual void onTouchPadEnter();
     		virtual void onTouchPadLeave();
@@ -119,13 +119,13 @@ namespace eos {
             inline VerticalAlignment getVerticalAlignment() const { return verticalAlignment; }
             Visibility getVisibility() const { return visibility; }
 
-            void measure(const Size &availableSize);
-            void arrange(const Rect &finalRect);
+            void measure(const Size& availableSize);
+            void arrange(const Rect& finalRect);
             const Size& getDesiredSize() const { return desiredSize; }
 
-            void dispatch(const Message &msg);
-            void send(const Message &msg);
-            bool render(RenderContext *context);
+            void dispatch(const Message& msg);
+            void send(const Message& msg);
+            bool render(RenderContext* context);
     		void invalidate();
     		void invalidateLayout();
     };

@@ -8,6 +8,8 @@
 
 namespace eos {
 
+    /// \brief Angle de rotacio
+    ///
 	enum class RotateTransformationAngle: uint8_t {
 		r0,
 		r90,
@@ -15,6 +17,8 @@ namespace eos {
 		r270
 	};
 
+	/// \brief Clase que representa una transformacio 2D
+	//
 	class Transformation {
 		private:
 			typedef int Matrix[3][3];

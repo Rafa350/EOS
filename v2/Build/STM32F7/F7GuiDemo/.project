@@ -314,6 +314,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoopService.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/eosDigInputService.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/Services/eosDigInputService.h</location>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/eosGuiService.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosGuiService.h</locationURI>
@@ -402,6 +407,11 @@
 			<name>src/Framework/EOS/Services/eosAppLoopService.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/eosDigInputService.cpp</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/Services/eosDigInputService.cpp</location>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosGuiService.cpp</name>

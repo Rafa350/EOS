@@ -8,6 +8,7 @@
 namespace eos {
 
 	/// \brief Clase que representa un tamany
+    ///
 	class Size {
 		private:
 			int width;

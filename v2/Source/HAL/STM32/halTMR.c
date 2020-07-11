@@ -9,8 +9,8 @@
 
 typedef struct {
 	TIM_HandleTypeDef handle;
-	TMRInterruptCallback callback;
-	void *param;
+	TMRInterruptFunction isrFunction;
+	void* isrParams;
 } TimerInfo;
 
 static TimerInfo timerInfoTbl[HAL_TMR_TIMER_MAX];
@@ -224,14 +224,14 @@ void halTMRInitialize(
 			TIM3_IRQn
 		};
 
-		timerInfo->callback = info->irqCallback;
-		timerInfo->param = info->irqParam;
+		timerInfo->isrFunction = info->isrFunction;
+		timerInfo->isrParams = info->isrParams;
 
 		halINTSetPriority(irq[timer], info->irqPriority, info->irqSubPriority);
 		halINTEnableIRQ(irq[timer]);
 	}
 	else
-		timerInfo->callback = NULL;
+		timerInfo->isrFunction = NULL;
 }
 
 
@@ -259,7 +259,7 @@ void halTMRStartTimer(
 
 	TimerInfo *timerInfo = &timerInfoTbl[timer];
 
-	if (timerInfo->callback != NULL)
+	if (timerInfo->isrFunction != NULL)
 		__HAL_TIM_ENABLE_IT(&timerInfo->handle, TIM_IT_UPDATE);
 	__HAL_TIM_ENABLE(&timerInfo->handle);
 }
@@ -274,7 +274,7 @@ void halTMRStopTimer(
 
 	TimerInfo *timerInfo = &timerInfoTbl[timer];
 
-	if (timerInfo->callback != NULL)
+	if (timerInfo->isrFunction != NULL)
 		__HAL_TIM_DISABLE_IT(&timerInfo->handle, TIM_IT_UPDATE);
 	__HAL_TIM_DISABLE(&timerInfo->handle);
 }
@@ -305,8 +305,8 @@ static void IRQHandler(
 
 	    	__HAL_TIM_CLEAR_IT(&timerInfo->handle, TIM_IT_UPDATE);
 
-	      if (timerInfo->callback != NULL)
-	    	  timerInfo->callback(timer, timerInfo->param);
+	      if (timerInfo->isrFunction != NULL)
+	    	  timerInfo->isrFunction(timer, timerInfo->isrParams);
 	    }
 	}
 }

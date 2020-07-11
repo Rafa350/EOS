@@ -429,12 +429,12 @@ void Visual::onDispatch(
 	const Message &msg) {
 
 	switch (msg.msgId) {
-#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
 		case MsgId::keyboardEvent:
 			onDispatchKeyboardEvent(msg.keyboard);
 			break;
 #endif
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 		case MsgId::touchPadEvent:
 			onDispatchTouchPadEvent(msg.touchPad);
 			break;
@@ -476,7 +476,7 @@ void Visual::onDeactivate(
 /// \brief    Procesa els events del teclat.
 /// \param    msg: L'event a procesat.
 ///
-#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+#if eosGuiService_KeyboardEnablked || eosGuiService_VirtualKeyboardEnabled
 void Visual::onDispatchKeyboardEvent(
 	const MsgKeyboard &msg) {
 
@@ -493,7 +493,7 @@ void Visual::onDispatchKeyboardEvent(
 #endif
 
 
-#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
 void Visual::onKeyboardPress(
 	KeyCode keyCode,
 	char ch) {
@@ -502,7 +502,7 @@ void Visual::onKeyboardPress(
 #endif
 
 
-#if defined(OPT_GUI_Keyboard) || defined(OPT_GUI_VirtualKeyboard)
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
 void Visual::onKeyboardRelease(
 	KeyCode keyCode,
 	char ch) {
@@ -515,7 +515,7 @@ void Visual::onKeyboardRelease(
 /// \brief    Procesa els events del touchpad
 /// \param    msg: L'event a procesar.
 ///
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void Visual::onDispatchTouchPadEvent(
 	const MsgTouchPad &msg) {
 
@@ -544,21 +544,21 @@ void Visual::onDispatchTouchPadEvent(
 #endif
 
 
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void Visual::onTouchPadEnter() {
 
 }
 #endif
 
 
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void Visual::onTouchPadLeave() {
 
 }
 #endif
 
 
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void Visual::onTouchPadPress(
 	const Point &position) {
 
@@ -566,14 +566,14 @@ void Visual::onTouchPadPress(
 #endif
 
 
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void Visual::onTouchPadRelease() {
 
 }
 #endif
 
 
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void Visual::onTouchPadMove(
 	const Point &position) {
 

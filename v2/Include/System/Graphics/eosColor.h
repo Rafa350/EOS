@@ -71,6 +71,7 @@ namespace eos {
 	typedef COLOR_TYPE color_t;
 
 	/// \brief Format de color
+	///
 	enum class ColorFormat: uint8_t {
 		argb8888,  // ARGB 8 bit channel
 		rgb888,    // RGB 8 bit channel
@@ -78,6 +79,7 @@ namespace eos {
 	};
 
 	/// \brief Clase que representa un color.
+	///
     class Color {
         private:
             color_t c;
@@ -116,6 +118,8 @@ namespace eos {
     };
 
 
+    /// \brief Clase que representa la paleta de colors.
+    ///
     class ColorPalette {
         private:
             Color colorTable[256];

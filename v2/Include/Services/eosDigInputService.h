@@ -1,5 +1,5 @@
-#ifndef __eosDigInput__
-#define	__eosDigInput__
+#ifndef __eosDigInputService__
+#define	__eosDigInputService__
 
 
 // EOS includes
@@ -49,7 +49,7 @@ namespace eos {
             void removeInputs();
     };
 
-    /// \brief Clase que impementa una entrada digital
+    /// \brief Clase que implementa una entrada digital
     ///
     class DigInput final {
         public:
@@ -91,5 +91,5 @@ namespace eos {
 }
 
 
-#endif	// __eosDigInput__
+#endif	// __eosDigInputService__
 

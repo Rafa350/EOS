@@ -59,8 +59,7 @@ typedef uint32_t TMROptions;
 #define HAL_TMR_INTERRUPT_ENABLE  (1u << HAL_TMR_INTERRUPT_pos)
 
 
-
-typedef void (*TMRInterruptCallback)(TMRTimer timer, void* params);
+typedef void (*TMRInterruptFunction)(TMRTimer timer, void* params);
 
 typedef struct {
 	TMRTimer timer;
@@ -69,8 +68,8 @@ typedef struct {
 	TMROptions options;
 	uint32_t irqPriority;
 	uint32_t irqSubPriority;
-	TMRInterruptCallback irqCallback;
-	void* irqParam;
+	TMRInterruptFunction isrFunction;
+	void* isrParams;
 } TMRInitializeInfo;
 
 
@@ -81,6 +80,10 @@ void halTMRStartTimer(TMRTimer timer);
 void halTMRStopTimer(TMRTimer timer);
 
 void halTMRDelay(int time);
+
+void halTMRSetInterruptFunction(TMRTimer timer, TMRInterruptFunction function, void* params);
+void halTMREnableInterrupt(TMRTimer timer);
+void halTMRDisableInterrupt(TMRTimer timer);
 
 
 #ifdef	__cplusplus

@@ -8,6 +8,7 @@
 namespace eos {
 
 	/// \brief Clase que representa un punt.
+	///
 	class Point {
 		private:
 			int x;

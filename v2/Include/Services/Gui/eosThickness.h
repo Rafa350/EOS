@@ -10,6 +10,8 @@ namespace eos {
 	class Rect;
 	class Size;
 
+	/// \Clase que representa l'amplada dels perfils
+	///
 	class Thickness {
 		private:
 			int left;

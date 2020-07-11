@@ -20,17 +20,17 @@
 
 // Opcions del servei GUI
 //
+#define eosGuiService_Enabled                         1
+#define eosGuiService_MessageQueueSize                10
+#define eosGuiService_MessageQueueBlockTime           ((unsigned)-1)
 #ifdef USE_TOUCHPAD
-#define OPT_GUI_TouchPad
+#define eosGuiService_TouchPadEnabled                 1
 #endif
 
-//#define OPT_GUI_Keyboard
-#define OPT_GUI_VirtualKeyboard
+//#define eosGuiService_KeyboardEnabled                 1
+#define eosGuiService_VirtualKeyboardEnabled          1
 
 //#define OPT_GUI_Selector
-
-#define OPT_GUI_MessageQueueSize                 10
-#define OPT_GUI_MessageQueueBlockTime            ((unsigned)-1)
 
 
 #include "board/eosBoard.h"

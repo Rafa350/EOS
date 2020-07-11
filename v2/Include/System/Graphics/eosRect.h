@@ -9,7 +9,8 @@
 
 namespace eos {
 
-    /// \brief Clase que representa un rectangle.
+    /// \brief Clase que representa un rectangle aliniat amb els eixos.
+    ///
 	class Rect {
 		private:
 			int x;
