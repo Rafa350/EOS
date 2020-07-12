@@ -21,8 +21,8 @@ namespace eos {
 			ButtonEventCallback buttonEventCallback;
 
 		private:
-			PushButton *createPushButton(const String &text, const Size &size);
-			void buttonEventHandler(const ButtonBase::EventArgs &args);
+			PushButton *createPushButton(const String& text, const Size& size);
+			void buttonEventHandler(const ButtonBase::EventArgs& args);
 
 		protected:
 			void initializePanel();
@@ -33,13 +33,13 @@ namespace eos {
 
 	class VirtualKeyboardTemplate: public ITemplate {
 		private:
-			VirtualKeyboard *visual;
+			VirtualKeyboard* visual;
 
 		private:
-			PushButton *createPushButton(const String &text, const Size &size);
+			PushButton* createPushButton(const String& text, const Size& size);
 
 		public:
-			VirtualKeyboardTemplate(VirtualKeyboard *visual);
+			VirtualKeyboardTemplate(VirtualKeyboard* visual);
 			void applyTemplate() override;
 	};
 }

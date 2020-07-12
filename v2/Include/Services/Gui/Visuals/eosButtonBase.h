@@ -24,7 +24,7 @@ namespace eos {
 				click
 			};
 			struct EventArgs {
-				ButtonBase *button;
+				ButtonBase* button;
 				EventType event;
 				uint8_t id;
 			};
@@ -35,11 +35,11 @@ namespace eos {
     	private:
 			bool pressed;
 			ClickMode clickMode;
-			IEventCallback *eventCallback;
+			IEventCallback* eventCallback;
 
     	protected:
-#ifdef OPT_GUI_TouchPad
-		    void onTouchPadPress(const Point &position) override;
+#if eosGuiService_TouchPadEnabled
+		    void onTouchPadPress(const Point& position) override;
 		    void onTouchPadRelease() override;
 		    void onTouchPadLeave() override;
 #endif
@@ -54,7 +54,7 @@ namespace eos {
 
 			void click();
 
-			inline void setEventCallback(IEventCallback *callback) { eventCallback = callback; }
+			inline void setEventCallback(IEventCallback* callback) { eventCallback = callback; }
     };
 
 }

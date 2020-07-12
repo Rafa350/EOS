@@ -22,7 +22,7 @@ StackPanel::StackPanel():
 /// \return   El tamany desitjat.
 ///
 Size StackPanel::measureOverride(
-	const Size &availableSize) const {
+	const Size& availableSize) const {
 
 	bool isHorizontal = orientation == Orientation::horizontal;
 

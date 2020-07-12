@@ -102,8 +102,8 @@ void Application::tick() {
 
 	// Notifica la senyal tick a tots els serveis.
     //
-    for (ServiceListIterator it(services); it.hasNext(); it.next()) {
-        Service *service = it.getCurrent();
+    for (auto it = services.begin(); it != services.end(); it++) {
+        Service *service = *it;
 		service->tick();
     }
 }

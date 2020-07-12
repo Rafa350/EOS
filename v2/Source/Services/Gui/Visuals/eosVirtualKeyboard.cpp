@@ -22,7 +22,7 @@ VirtualKeyboard::VirtualKeyboard():
 /// \param    args: Arguments del event.
 ///
 void VirtualKeyboard::buttonEventHandler(
-	const ButtonBase::EventArgs &args) {
+	const ButtonBase::EventArgs& args) {
 
 	switch (args.event) {
 		case ButtonBase::EventType::click:

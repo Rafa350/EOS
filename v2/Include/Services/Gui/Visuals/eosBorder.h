@@ -33,7 +33,7 @@ namespace eos {
             void setColor(const Color &value);
             void setThickness(int value);
             void setRadius(int value);
-            void setContent(Visual *value);
+            void setContent(Visual* value);
 
             inline Color getColor() const { return color; }
             inline Color getBackgroundColor() const { return backgroundColor; }

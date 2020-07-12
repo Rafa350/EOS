@@ -29,21 +29,21 @@ namespace eos {
     		String text;
 
     	protected:
-    		void onRender(RenderContext *context) override;
-#ifdef OPT_GUI_TouchPad
-    		void onDispatch(const Message &msg) override;
+    		void onRender(RenderContext* context) override;
+#if eosGuiService_TouchPadEnabled
+    		void onDispatch(const Message& msg) override;
 #endif
-    		Size measureOverride(const Size &availableSize) const override;
+    		Size measureOverride(const Size& availableSize) const override;
 
         public:
     		Label();
 
-            void setTextColor(const Color &value);
-            void setBackgroundColor(const Color &value);
-            void setFontName(const String &value);
+            void setTextColor(const Color& value);
+            void setBackgroundColor(const Color& value);
+            void setFontName(const String& value);
             void setFontHeight(int value);
             void setFontStyle(FontStyle value);
-            void setText(const String &value);
+            void setText(const String& value);
             void setHorizontalTextAlign(HorizontalTextAlign value);
             void setVerticalTextAlign(VerticalTextAlign value);
 

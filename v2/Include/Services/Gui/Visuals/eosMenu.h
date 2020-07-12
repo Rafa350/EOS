@@ -13,8 +13,8 @@ namespace eos {
 	class Menu: public ItemsControl {
 
 		protected:
-			Size measureOverride(const Size &availableSize) const override;
-			Size arrangeOverride(const Size &finalSize) const override;
+			Size measureOverride(const Size& availableSize) const override;
+			Size arrangeOverride(const Size& finalSize) const override;
 	};
 }
 

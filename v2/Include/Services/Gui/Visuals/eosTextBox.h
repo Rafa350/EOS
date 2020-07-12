@@ -18,7 +18,7 @@ namespace eos {
 
 		protected:
 			void onKeyboardPress(KeyCode keyCode, char ch) override;
-			void onRender(RenderContext *context) override;
+			void onRender(RenderContext* context) override;
 
 		public:
 			TextBox();

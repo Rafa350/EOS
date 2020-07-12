@@ -138,7 +138,7 @@ void Visual::dispatch(
 void Visual::send(
 	const Message &msg) {
 
-	MsgQueue *msgQueue = MsgQueue::getInstance();
+	MsgQueue* msgQueue = MsgQueue::getInstance();
 	msgQueue->send(msg);
 }
 
@@ -148,7 +148,7 @@ void Visual::send(
 /// \param    visual: L'objecte Visual a afeigir.
 ///
 void Visual::addVisual(
-	Visual *visual) {
+	Visual* visual) {
 
 	eosAssert(visual != nullptr);
 	eosAssert(visual->parent == nullptr);
@@ -165,7 +165,7 @@ void Visual::addVisual(
 /// \param    visual: L'objecte Visual a eliminar.
 ///
 void Visual::removeVisual(
-	Visual *visual) {
+	Visual* visual) {
 
 	eosAssert(visual != nullptr);
 	eosAssert(visual->parent != nullptr);
@@ -192,7 +192,7 @@ void Visual::removeVisuals() {
 /// \param    availableSize: Indica el tamany disponible.
 ///
 void Visual::measure(
-	const Size &availableSize) {
+	const Size& availableSize) {
 
 	if (isVisible()) {
 
@@ -225,7 +225,7 @@ void Visual::measure(
 /// \param    finalSize: Tamany final per asignar al visual.
 ///
 void Visual::arrange(
-	const Rect &finalRect) {
+	const Rect& finalRect) {
 
 	if (isVisible()) {
 
@@ -294,7 +294,7 @@ void Visual::arrange(
 ///           els fills. Si no te fills, el tamany es zero.
 ///
 Size Visual::measureOverride(
-	const Size &availableSize) const {
+	const Size& availableSize) const {
 
 	int width = 0;
 	int height = 0;
@@ -323,7 +323,7 @@ Size Visual::measureOverride(
 /// \return   El tamany final obtingut.
 ///
 Size Visual::arrangeOverride(
-	const Size &finalSize) const {
+	const Size& finalSize) const {
 
 	for (auto it = childs.begin(); it != childs.end(); it++) {
 		Visual* child = *it;
@@ -426,7 +426,7 @@ void Visual::setVerticalAlignment(
 /// \param    msg: El missatge a despatxar.
 ///
 void Visual::onDispatch(
-	const Message &msg) {
+	const Message& msg) {
 
 	switch (msg.msgId) {
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
@@ -455,7 +455,7 @@ void Visual::onDispatch(
 /// \param    visual: El visual desactivat al activar aquest.
 ///
 void Visual::onActivate(
-	Visual *visual) {
+	Visual* visual) {
 
 	invalidate();
 }
@@ -466,7 +466,7 @@ void Visual::onActivate(
 /// \param    visual: El visual activat al desactivar aquest.
 ///
 void Visual::onDeactivate(
-	Visual *visual) {
+	Visual* visual) {
 
 	invalidate();
 }
@@ -478,7 +478,7 @@ void Visual::onDeactivate(
 ///
 #if eosGuiService_KeyboardEnablked || eosGuiService_VirtualKeyboardEnabled
 void Visual::onDispatchKeyboardEvent(
-	const MsgKeyboard &msg) {
+	const MsgKeyboard& msg) {
 
 	switch (msg.event) {
 		case MsgKeyboardEvent::press:
@@ -517,7 +517,7 @@ void Visual::onKeyboardRelease(
 ///
 #if eosGuiService_TouchPadEnabled
 void Visual::onDispatchTouchPadEvent(
-	const MsgTouchPad &msg) {
+	const MsgTouchPad& msg) {
 
 	switch (msg.event) {
 		case MsgTouchPadEvent::enter:

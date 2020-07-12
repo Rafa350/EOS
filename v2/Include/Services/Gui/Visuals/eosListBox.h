@@ -12,7 +12,7 @@ namespace eos {
 
 	class ListBox: public ItemsControl {
 		private:
-			Panel *panel;
+			Panel* panel;
 
 		public:
 			void addItem();

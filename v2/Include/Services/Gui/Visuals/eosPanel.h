@@ -16,14 +16,14 @@ namespace eos {
 			Color color;
 
 		protected:
-			void onRender(RenderContext *context) override;
+			void onRender(RenderContext* context) override;
 
 		public:
 			Panel();
 
-			inline void addChild(Visual *visual) { addVisual(visual); }
+			inline void addChild(Visual* visual) { addVisual(visual); }
 
-			void setColor(const Color &value);
+			void setColor(const Color& value);
 			inline Color getColor() const { return color; }
 	};
 }

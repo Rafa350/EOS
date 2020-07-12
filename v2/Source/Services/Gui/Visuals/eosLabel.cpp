@@ -234,7 +234,7 @@ void Label::onRender(
 /// \brief    Es crida quant hi ha que despatxar un missatge..
 /// \param    msg: El missatge a despatxar.
 ///
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void Label::onDispatch(
 	const Message &msg) {
 

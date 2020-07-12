@@ -13,7 +13,7 @@
 ///
 void *osalHeapAlloc(
 	HHeap hHeap,
-	int size) {
+	unsigned size) {
 
 	eosAssert(size > 0);
 
@@ -41,7 +41,7 @@ void osalHeapFree(
 /// \param    size. Tamany del bloc.
 /// \return   Adressa del bloc obtingut.
 ///
-void *osal_malloc(int size) {
+void *osal_malloc(unsigned size) {
 
 	return osalHeapAlloc(NULL, size);
 }

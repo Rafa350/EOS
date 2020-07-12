@@ -30,9 +30,9 @@ void ButtonBase::click() {
 /// \brief    Es crida quant es presiona el touchpad.
 /// \param    position: Posicio del toc.
 ///
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void ButtonBase::onTouchPadPress(
-	const Point &position) {
+	const Point& position) {
 
 	onPress();
 
@@ -46,7 +46,7 @@ void ButtonBase::onTouchPadPress(
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quant es deixa de presionar el pad.
 ///
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void ButtonBase::onTouchPadRelease() {
 
 	onRelease();
@@ -64,7 +64,7 @@ void ButtonBase::onTouchPadRelease() {
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quant el pad ja no actua en el visual.
 ///
-#ifdef OPT_GUI_TouchPad
+#if eosGuiService_TouchPadEnabled
 void ButtonBase::onTouchPadLeave() {
 
 	onRelease();

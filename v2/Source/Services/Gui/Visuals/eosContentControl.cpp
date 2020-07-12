@@ -21,7 +21,7 @@ ContentControl::ContentControl() :
 /// \param    value: El contingut.
 ///
 void ContentControl::setContent(
-	Visual *value) {
+	Visual* value) {
 
 	if (content != value) {
 
@@ -41,7 +41,7 @@ void ContentControl::setContent(
 /// \param    value: El marge interior.
 ///
 void ContentControl::setPadding(
-	const Thickness &value) {
+	const Thickness& value) {
 
 	if (padding != value) {
 		padding = value;

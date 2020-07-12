@@ -15,8 +15,8 @@ namespace eos {
 			Orientation orientation;
 
 		protected:
-			Size measureOverride(const Size &availableSize) const override;
-			Size arrangeOverride(const Size &finalSize) const override;
+			Size measureOverride(const Size& availableSize) const override;
+			Size arrangeOverride(const Size& finalSize) const override;
 
 		public:
 			StackPanel();

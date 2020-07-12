@@ -21,8 +21,8 @@ namespace eos {
 		public:
 			Image();
 
-			void setBitmap(Bitmap *value);
-			Bitmap *getBitmap() const { return bitmap; }
+			void setBitmap(Bitmap* value);
+			Bitmap* getBitmap() const { return bitmap; }
 	};
 
 }

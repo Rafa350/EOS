@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>com.microchip.mplab.nbide.embedded.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>ReactiveDemo</name>
+            <creation-uuid>8f50e65e-fb1e-40ee-8ff2-23e2af14d876</creation-uuid>
+            <make-project-type>0</make-project-type>
+            <c-extensions>c</c-extensions>
+            <cpp-extensions>cpp</cpp-extensions>
+            <header-extensions>h</header-extensions>
+            <asminc-extensions/>
+            <sourceEncoding>UTF-8</sourceEncoding>
+            <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>../../../Demo/ReactiveDemo/Source</sourceRootElem>
+                <sourceRootElem>../../../Demo/ReactiveDemo/Include</sourceRootElem>
+                <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
+                <sourceRootElem>../../../Include</sourceRootElem>
+                <sourceRootElem>../../../../Demo/ReactiveDemo/Source</sourceRootElem>
+                <sourceRootElem>../../../../Demo/ReactiveDemo/Include</sourceRootElem>
+                <sourceRootElem>../../../../Source/StartUp/PIC32</sourceRootElem>
+                <sourceRootElem>../../../../Source/HAL/PIC32</sourceRootElem>
+                <sourceRootElem>../../../../Include</sourceRootElem>
+                <sourceRootElem>../../../Source/System/Collections</sourceRootElem>
+                <sourceRootElem>../../../Source/OSAL/Default</sourceRootElem>
+                <sourceRootElem>../../../Source/System/Core</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>default</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
+        </data>
+    </configuration>
+</project>

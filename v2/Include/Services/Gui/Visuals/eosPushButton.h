@@ -22,7 +22,7 @@ namespace eos {
     		State state;
 
         protected:
-        	void onRender(RenderContext *context) override;
+        	void onRender(RenderContext* context) override;
             void onPress() override;
             void onRelease() override;
 

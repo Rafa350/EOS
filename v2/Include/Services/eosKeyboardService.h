@@ -29,14 +29,14 @@ namespace eos {
 
         private:
             int i2cAddress;
-            I2CMasterService *i2cService;
+            I2CMasterService* i2cService;
             KeyboardState state;
-            IEventCallback *eventCallback;
+            IEventCallback* eventCallback;
 
         public:
-            KeyboardService(Application *application, I2CMasterService *i2cService, int i2cAddress);
+            KeyboardService(Application* application, I2CMasterService* i2cService, int i2cAddress);
 
-            inline void setEventCallback(IEventCallback *callback) { eventCallback = callback; }
+            inline void setEventCallback(IEventCallback* callback) { eventCallback = callback; }
 
         protected:
             void onInitialize() override;

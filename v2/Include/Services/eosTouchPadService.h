@@ -52,15 +52,15 @@ namespace eos {
         	int oldPressed;
 
         	void interruptHandler();
-			static void interruptHandler(EXTILine line, void *param);
+			static void interruptHandler(EXTILine line, void* param);
 
 		protected:
 			void onInitialize();
 			void onTask();
 
 		public:
-			TouchPadService(Application *application);
-			inline void setEventCallback(IEventCallback *callBack) { eventCallback = callBack; }
+			TouchPadService(Application* application);
+			inline void setEventCallback(IEventCallback* callBack) { eventCallback = callBack; }
 	};
 }
 
