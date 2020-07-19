@@ -3,6 +3,7 @@
 
 
 #include "eos.h"
+#include "HAL/PIC32/halGPIO.h"
 
 
 #ifdef	__cplusplus
@@ -46,7 +47,63 @@ typedef struct {
 #define HAL_CN_LINE_21            ((CNLine) 21)
 
 #define HAL_CN_LINE_COUNT         22
-  
+
+
+// Identificador del port de cada linia
+//
+#if defined(__32MX460F512L__)
+#define HAL_CN_LINE_0_PORT        HAL_GPIO_PORT_C
+#define HAL_CN_LINE_1_PORT        HAL_GPIO_PORT_C
+#define HAL_CN_LINE_2_PORT        HAL_GPIO_PORT_B
+#define HAL_CN_LINE_3_PORT        HAL_GPIO_PORT_B
+#define HAL_CN_LINE_4_PORT        HAL_GPIO_PORT_B
+#define HAL_CN_LINE_5_PORT        HAL_GPIO_PORT_B
+#define HAL_CN_LINE_6_PORT        HAL_GPIO_PORT_B
+#define HAL_CN_LINE_7_PORT        HAL_GPIO_PORT_A
+#define HAL_CN_LINE_8_PORT        HAL_GPIO_PORT_G
+#define HAL_CN_LINE_9_PORT        HAL_GPIO_PORT_G
+#define HAL_CN_LINE_10_PORT       HAL_GPIO_PORT_G
+#define HAL_CN_LINE_11_PORT       HAL_GPIO_PORT_G
+#define HAL_CN_LINE_12_PORT       HAL_GPIO_PORT_B
+#define HAL_CN_LINE_13_PORT       HAL_GPIO_PORT_D
+#define HAL_CN_LINE_14_PORT       HAL_GPIO_PORT_D
+#define HAL_CN_LINE_15_PORT       HAL_GPIO_PORT_D
+#define HAL_CN_LINE_16_PORT       HAL_GPIO_PORT_D
+#define HAL_CN_LINE_17_PORT       HAL_GPIO_PORT_F
+#define HAL_CN_LINE_18_PORT       HAL_GPIO_PORT_F
+#define HAL_CN_LINE_19_PORT       HAL_GPIO_PORT_D
+#define HAL_CN_LINE_20_PORT       HAL_GPIO_PORT_D
+#define HAL_CN_LINE_21_PORT       HAL_GPIO_PORT_D
+#endif
+
+
+// Identificador del pin de cada linia
+//
+#if defined(__32MX460F512L__)
+#define HAL_CN_LINE_0_PIN         HAL_GPIO_PIN_14
+#define HAL_CN_LINE_1_PIN         HAL_GPIO_PIN_13
+#define HAL_CN_LINE_2_PIN         HAL_GPIO_PIN_0
+#define HAL_CN_LINE_3_PIN         HAL_GPIO_PIN_1
+#define HAL_CN_LINE_4_PIN         HAL_GPIO_PIN_2
+#define HAL_CN_LINE_5_PIN         HAL_GPIO_PIN_3
+#define HAL_CN_LINE_6_PIN         HAL_GPIO_PIN_4
+#define HAL_CN_LINE_7_PIN         HAL_GPIO_PIN_5
+#define HAL_CN_LINE_8_PIN         HAL_GPIO_PIN_6
+#define HAL_CN_LINE_9_PIN         HAL_GPIO_PIN_7
+#define HAL_CN_LINE_10_PIN        HAL_GPIO_PIN_8
+#define HAL_CN_LINE_11_PIN        HAL_GPIO_PIN_9
+#define HAL_CN_LINE_12_PIN        HAL_GPIO_PIN_15
+#define HAL_CN_LINE_13_PIN        HAL_GPIO_PIN_4
+#define HAL_CN_LINE_14_PIN        HAL_GPIO_PIN_5
+#define HAL_CN_LINE_15_PIN        HAL_GPIO_PIN_6
+#define HAL_CN_LINE_16_PIN        HAL_GPIO_PIN_7
+#define HAL_CN_LINE_17_PIN        HAL_GPIO_PIN_4
+#define HAL_CN_LINE_18_PIN        HAL_GPIO_PIN_5
+#define HAL_CN_LINE_19_PIN        HAL_GPIO_PIN_13
+#define HAL_CN_LINE_20_PIN        HAL_GPIO_PIN_14
+#define HAL_CN_LINE_21_PIN        HAL_GPIO_PIN_5
+#endif
+
 
 // Disparador
 #define HAL_CN_TRIGGER_POS        0u

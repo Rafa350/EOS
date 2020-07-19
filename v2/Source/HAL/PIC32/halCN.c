@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "HAL/PIC32/halCN.h"
+#include "HAL/PIC32/halGPIO.h"
 #include "HAL/PIC32/halINT.h"
 #include "sys/attribs.h"
 
@@ -9,6 +10,7 @@ typedef struct {
     CNInterruptFunction function;
     void* params;
 } CallbackInfo;
+
 
 static CallbackInfo callback[HAL_CN_LINE_COUNT] = {
     { NULL, NULL },
@@ -49,7 +51,7 @@ static void setupLine(
 	CNOptions options) {
     
     eosAssert((line >= 0) && (line <= HAL_CN_LINE_COUNT));
-    
+       
     // Activa pullup
     //
     if ((options & HAL_CN_PULL_MASK) == HAL_CN_PULL_UP)
