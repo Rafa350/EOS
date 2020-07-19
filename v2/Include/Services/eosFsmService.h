@@ -7,7 +7,7 @@
 #include "eos.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosArrayList.h"
+#include "System/Collections/eosDynamicArray.h"
 
 
 namespace eos {
@@ -29,8 +29,8 @@ namespace eos {
 			};                        
 
         private:
-            typedef ArrayList<FsmMachine*> MachineList;
-            typedef ArrayList<FsmMachine*>::Iterator MachineListIterator;
+            typedef DynamicArray<FsmMachine*> MachineList;
+            typedef DynamicArray<FsmMachine*>::Iterator MachineListIterator;
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
             MachineList machines;

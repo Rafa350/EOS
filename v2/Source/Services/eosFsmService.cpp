@@ -29,7 +29,7 @@ void FsmService::addMachine(
     eosAssert(machine != nullptr);
     eosAssert(machine->service == nullptr);
 
-    machines.add(machine);
+    machines.pushBack(machine);
     machine->service = this;
 }
 
@@ -39,12 +39,12 @@ void FsmService::addMachine(
 /// \param    machine: La maquina a eliminar.
 ///
 void FsmService::removeMachine(
-    FsmMachine *machine) {
+    FsmMachine* machine) {
 
     eosAssert(machine != nullptr);
     eosAssert(machine->service == this);
 
-    machines.remove(machine);
+    machines.removeAt(machines.indexOf(machine));
     machine->service = nullptr;
 }
 
@@ -54,8 +54,8 @@ void FsmService::removeMachine(
 /// 
 void FsmService::onInitialize() {
 
-    for (MachineListIterator it(machines); it.hasNext(); it.next()) {
-        FsmMachine *machine = it.getCurrent();
+    for (auto it = machines.begin(); it != machines.end(); it++) {
+        FsmMachine* machine = *it;
         machine->initialize();
     }    
 }
@@ -67,8 +67,8 @@ void FsmService::onInitialize() {
 void FsmService::onTask() {
 
     while (true) {
-        for (MachineListIterator it(machines); it.hasNext(); it.next()) {
-            FsmMachine *machine = it.getCurrent();
+        for (auto it = machines.begin(); it != machines.end(); it++) {
+            FsmMachine* machine = *it;
             machine->task();
         }
     }

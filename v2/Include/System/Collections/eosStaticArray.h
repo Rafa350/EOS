@@ -55,7 +55,7 @@ namespace eos {
                     
                     /// \brief Constructor a partir d'un array 'C'.
                     ///
-                    StaticArray(const Value array[], unsigned arraySize) {                        
+                    StaticArray(const Value array[], unsigned arraySize = size) {                        
                         memmove(elements, array, Math::min(size, arraySize) * sizeof(Value));
                     }
                     
