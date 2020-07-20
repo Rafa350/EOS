@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "HAL/halGPIO.h"
+#include "HAL/halINT.h"
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"
 #include "System/Core/eosTask.h"
@@ -235,6 +236,8 @@ void DigOutputService::onInitialize() {
 #if defined(EOS_PIC32MX)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.period = ((80000 * period) / 64) - 1; 
+    tmrInfo.irqPriority = HAL_INT_PRIORITY_LEVEL2;
+    tmrInfo.irqSubPriority = HAL_INT_SUBPRIORITY_LEVEL0;
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz

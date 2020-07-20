@@ -8,7 +8,7 @@
 #elif defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
     #include "Board/eosBoard_PIC32_USB_STARTER_KIT_I.h"
 
-#elif defined(HARDWARE_PIC32_ETH_STARTER_KIT__)
+#elif defined(HARDWARE_PIC32_ETH_STARTER_KIT)
     #include "Board/eosBoard_PIC32_ETH_STARTER_KIT.h"
 
 #elif defined(HARDWARE_STM32F429I_DISC1)

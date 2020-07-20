@@ -83,6 +83,8 @@ typedef struct {
 	TMRTimer timer;
     unsigned period;
 	TMROptions options;
+    int irqPriority;
+    int irqSubPriority;
 	TMRInterruptFunction isrFunction;
 	void* isrParams;
 } TMRInitializeInfo;
@@ -97,6 +99,9 @@ void halTMRStopTimer(TMRTimer timer);
 void halTMRDelay(unsigned time);
 
 void halTMRSetInterruptFunction(TMRTimer timer, TMRInterruptFunction function, void* params);
+void halTMRSetInterruptPriority(TMRTimer timer, unsigned priority, unsigned subPriority);
+bool halTMRGetInterruptFlag(TMRTimer timer);
+void halTMRClearInterruptFlag(TMRTimer timer);
 void halTMREnableInterrupt(TMRTimer timer);
 void halTMRDisableInterrupt(TMRTimer timer);
 

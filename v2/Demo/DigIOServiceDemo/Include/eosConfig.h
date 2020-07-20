@@ -26,7 +26,6 @@
 // Configuracio del servei DigInputs
 //
 #define DigInputService_Enabled                  1    // Servei activat
-#define DigInputService_CommandQueueSize        10    // Tamany de la cua de comandes
 #define DigInputService_SafeMode                 1    // Modus segur
 
 // Configuracio del servei DigOutputs

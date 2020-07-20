@@ -67,6 +67,23 @@ static void setupLine(
 
 
 /// ----------------------------------------------------------------------
+/// \brief   Inicialitza un pìn.
+/// \param   line: Identificador de la linia.
+/// \param   options: Opcions.
+///
+void halCNInitializeLine(CNLine line, CNOptions options) {
+
+    // Activa el modul.
+    //
+    CNCONbits.ON = 1; // ON = 1
+
+    // Configura la linia
+    //
+    setupLine(line, options)    ;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Inicialitza els pins d'entrada d'interrupcio.
 /// \param    info: Llista linies a configurar.
 /// \param    count: Numero de linies en la llista.
@@ -137,24 +154,23 @@ void halCNSetInterruptFunction(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna la prioritat de la interrupcio.
-/// \param    p: Prioritat.
-/// \param    s: Subprioritat.
+/// \param    priority: Prioritat.
+/// \param    subPriority: Subprioritat.
 ///
 void halCNSetInterruptPriority(
-    unsigned p, 
-    unsigned s) {
+    unsigned priority, 
+    unsigned subPriority) {
     
-    IPC6bits.CNIP = p; 
-    IPC6bits.CNIS = s;
+    IPC6bits.CNIP = priority; 
+    IPC6bits.CNIS = subPriority;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Autoritza les interrrupcions
 ///
-void halCNEnableInterrupots() {
+void halCNEnableInterrupts() {
     
-    IFS1bits.CNIF = 0; // Interrupt Flag = 0
     IEC1bits.CNIE = 1; // Interrupt Enable = 1
 }
 

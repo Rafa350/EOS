@@ -4,15 +4,8 @@
 #include "HAL/PIC32/halSYS.h"
 #include "sys/attribs.h"
 
-#include "peripheral/int/plib_int.h"
 #include "peripheral/tmr/plib_tmr.h"
 
-
-typedef struct {
-    TMR_MODULE_ID tmrId;
-    INT_SOURCE intSource;
-    INT_VECTOR intVector;
-} TimerInfo;
 
 typedef struct {
     TMRInterruptFunction function;
@@ -32,21 +25,21 @@ typedef struct {
 #define NUM_TIMERS TMR_NUMBER_OF_MODULES
 
 
-static const TimerInfo timerInfoTbl[NUM_TIMERS] = {
+static const TMR_MODULE_ID timerIdTbl[NUM_TIMERS] = {
 #ifdef _TMR1    
-    { TMR_ID_1, INT_SOURCE_TIMER_1, INT_VECTOR_T1 },
+    TMR_ID_1,
 #endif    
 #ifdef _TMR2    
-    { TMR_ID_2, INT_SOURCE_TIMER_2, INT_VECTOR_T2 },
+    TMR_ID_2,
 #endif
 #ifdef _TMR3    
-    { TMR_ID_3, INT_SOURCE_TIMER_3, INT_VECTOR_T3 },
+    TMR_ID_3,
 #endif
 #ifdef _TMR4    
-    { TMR_ID_4, INT_SOURCE_TIMER_4, INT_VECTOR_T4 },
+    TMR_ID_4,
 #endif
 #ifdef _TMR5    
-    { TMR_ID_5, INT_SOURCE_TIMER_5, INT_VECTOR_T5 },
+    TMR_ID_5,
 #endif
 };
 
@@ -60,9 +53,6 @@ static const TMR_PRESCALE prescaleTbl[8] = {
     TMR_PRESCALE_VALUE_64,
     TMR_PRESCALE_VALUE_256
 };
-
-static const INT_PRIORITY_LEVEL intPriority = INT_PRIORITY_LEVEL2;
-static const INT_SUBPRIORITY_LEVEL intSubPriority = INT_SUBPRIORITY_LEVEL0;
 
 static CallbackInfo callbacks[NUM_TIMERS];
 
@@ -90,40 +80,39 @@ extern void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
 void halTMRInitialize(
     const TMRInitializeInfo* info) {
     
-    const TimerInfo* ti = &timerInfoTbl[info->timer];
+    TMR_MODULE_ID tmrId = timerIdTbl[info->timer];
      
-    PLIB_TMR_Stop(ti->tmrId);
-    PLIB_TMR_ClockSourceSelect(ti->tmrId, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
-    PLIB_TMR_PrescaleSelect(ti->tmrId, prescaleTbl[(info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos]);
+    PLIB_TMR_Stop(tmrId);
+    halTMRDisableInterrupt(info->timer);
+    
+    PLIB_TMR_ClockSourceSelect(tmrId, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
+    PLIB_TMR_PrescaleSelect(tmrId, prescaleTbl[(info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos]);
     if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_16) {
-        PLIB_TMR_Mode16BitEnable(ti->tmrId);
-        PLIB_TMR_Counter16BitClear(ti->tmrId);
-        PLIB_TMR_Period16BitSet(ti->tmrId, info->period);    
+        PLIB_TMR_Mode16BitEnable(tmrId);
+        PLIB_TMR_Counter16BitClear(tmrId);
+        PLIB_TMR_Period16BitSet(tmrId, info->period);    
     } 
     else if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32) {
-        PLIB_TMR_Mode32BitEnable(ti->tmrId);
-        PLIB_TMR_Counter32BitClear(ti->tmrId);
-        PLIB_TMR_Period32BitSet(ti->tmrId, info->period);            
+        PLIB_TMR_Mode32BitEnable(tmrId);
+        PLIB_TMR_Counter32BitClear(tmrId);
+        PLIB_TMR_Period32BitSet(tmrId, info->period);            
     }
 
-    if (((info->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) &&
-        (info->isrFunction != NULL)) {
-        
+    if (info->isrFunction != NULL) {       
         callbacks[info->timer].function = info->isrFunction;
         callbacks[info->timer].params = info->isrParams;
 
-        halINTDisableInterrupts();
-
-        PLIB_INT_VectorPrioritySet(INT_ID_0, ti->intVector, intPriority);
-        PLIB_INT_VectorSubPrioritySet(INT_ID_0, ti->intVector, intSubPriority);    
-
-        PLIB_INT_SourceFlagClear(INT_ID_0, ti->intSource);
-        PLIB_INT_SourceEnable(INT_ID_0, ti->intSource);
-
-        halINTEnableInterrupts();
+        if ((info->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) {
+            unsigned state = halINTDisable();
+            halTMRSetInterruptPriority(info->timer, info->irqPriority, info->irqSubPriority);
+            halTMREnableInterrupt(info->timer);
+            halINTRestore(state);
+        }
     }
-    else
+    else {
         callbacks[info->timer].function = NULL;
+        callbacks[info->timer].params = NULL;
+    }
 }
 
 
@@ -134,8 +123,7 @@ void halTMRInitialize(
 void halTMRStartTimer(
     TMRTimer timer) {
     
-    const TimerInfo *ti = &timerInfoTbl[timer];
-    PLIB_TMR_Start(ti->tmrId);    
+    PLIB_TMR_Start(timerIdTbl[timer]);    
 }
 
 
@@ -146,8 +134,170 @@ void halTMRStartTimer(
 void halTMRStopTimer(
     TMRTimer timer) {
     
-    const TimerInfo *ti = &timerInfoTbl[timer];
-    PLIB_TMR_Stop(ti->tmrId);    
+    PLIB_TMR_Stop(timerIdTbl[timer]);    
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief   Activa les interrupcions del temporitzador.
+/// \param   timer: El identificador del temporitzador.
+///
+void halTMREnableInterrupt(
+    TMRTimer timer) {
+
+    switch (timer) {
+        case HAL_TMR_TIMER_1:
+            IEC0bits.T1IE = 1;
+            break;
+            
+        case HAL_TMR_TIMER_2:
+            IEC0bits.T2IE = 1;
+            break;
+        
+        case HAL_TMR_TIMER_3:
+            IEC0bits.T3IE = 1;
+            break;
+        
+        case HAL_TMR_TIMER_4:
+            IEC0bits.T4IE = 1;
+            break;
+        
+        case HAL_TMR_TIMER_5:
+            IEC0bits.T5IE = 1;
+            break;
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva les interrupcions del temporitzador.
+/// \param    timer: El identificador del temporitzador.
+///
+void halTMRDisableInterrupt(
+    TMRTimer timer) {
+
+    switch (timer) {
+        case HAL_TMR_TIMER_1:
+            IEC0bits.T1IE = 0;
+            break;
+            
+        case HAL_TMR_TIMER_2:
+            IEC0bits.T2IE = 0;
+            break;
+        
+        case HAL_TMR_TIMER_3:
+            IEC0bits.T3IE = 0;
+            break;
+        
+        case HAL_TMR_TIMER_4:
+            IEC0bits.T4IE = 0;
+            break;
+        
+        case HAL_TMR_TIMER_5:
+            IEC0bits.T5IE = 0;
+            break;
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la prioritaty der la interrupcio.
+/// \param    timer: El identificador del temporitzador.
+/// \param    priority: Prioritat.
+/// \param    subPriority: Sub prioritat.
+///
+void halTMRSetInterruptPriority(
+    TMRTimer timer,
+    unsigned priority, 
+    unsigned subPriority) {
+       
+    switch (timer) {
+        case HAL_TMR_TIMER_1:
+            IPC1bits.T1IP = priority;
+            IPC1bits.T1IS = subPriority;
+            break;
+
+        case HAL_TMR_TIMER_2:
+            IPC2bits.T2IP = priority;
+            IPC2bits.T2IS = subPriority;
+            break;
+
+        case HAL_TMR_TIMER_3:
+            IPC3bits.T3IP = priority;
+            IPC3bits.T3IS = subPriority;
+            break;
+
+        case HAL_TMR_TIMER_4:
+            IPC4bits.T4IP = priority;
+            IPC4bits.T4IS = subPriority;
+            break;
+
+        case HAL_TMR_TIMER_5:
+            IPC5bits.T5IP = priority;
+            IPC5bits.T5IS = subPriority;
+            break;
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el flag d'interrupcio del temporitzador.
+/// \param    timer: El identificador del temporitzador.
+/// \return   El valor del flag.
+///
+bool halTMRGetInterruptFlag(
+    TMRTimer timer) {
+    
+    switch (timer) {
+        case HAL_TMR_TIMER_1:
+            return IFS0bits.T1IF;
+            
+        case HAL_TMR_TIMER_2:
+            return IFS0bits.T2IF;
+        
+        case HAL_TMR_TIMER_3:
+            return IFS0bits.T3IF;
+        
+        case HAL_TMR_TIMER_4:
+            return IFS0bits.T4IF;
+        
+        case HAL_TMR_TIMER_5:
+            return IFS0bits.T5IF;
+            
+        default:
+            return false;
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Borra el flag d'interrupcio del temporitzador.
+/// \param    timer: El identificador del temporitzador.
+///
+void halTMRClearInterruptFlag(
+    TMRTimer timer) {
+    
+    switch (timer) {
+        case HAL_TMR_TIMER_1:
+            IFS0bits.T1IF = 0;
+            break;
+            
+        case HAL_TMR_TIMER_2:
+            IFS0bits.T2IF = 0;
+            break;
+        
+        case HAL_TMR_TIMER_3:
+            IFS0bits.T3IF = 0;
+            break;
+        
+        case HAL_TMR_TIMER_4:
+            IFS0bits.T4IF = 0;
+            break;
+        
+        case HAL_TMR_TIMER_5:
+            IFS0bits.T5IF = 0;
+            break;
+    }
 }
 
 
@@ -176,9 +326,9 @@ static void invokeCallback(
 #ifdef _TMR1
 void isrTMR1Handler(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_1)) {
+    if (IFS0bits.T1IF) {
         invokeCallback(HAL_TMR_TIMER_1);
-        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_1);
+        IFS0bits.T1IF = 0;
     }
 }
 #endif
@@ -186,9 +336,9 @@ void isrTMR1Handler(void) {
 #ifdef _TMR2
 void isrTMR2Handler(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_2)) {
-        invokeCallback(HAL_TMR_TIMER_2); 
-        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_2);
+    if (IFS0bits.T2IF) {
+        invokeCallback(HAL_TMR_TIMER_2);
+        IFS0bits.T2IF = 0;
     }
 }
 #endif            
@@ -196,9 +346,9 @@ void isrTMR2Handler(void) {
 #ifdef _TMR3
 void isrTMR3Handler(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_3)) {
+    if (IFS0bits.T3IF) {
         invokeCallback(HAL_TMR_TIMER_3);
-        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_3);
+        IFS0bits.T3IF = 0;
     }
 }
 #endif            
@@ -206,9 +356,9 @@ void isrTMR3Handler(void) {
 #ifdef _TMR4
 void isrTMR4Handler(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_4)) {
+    if (IFS0bits.T4IF) {
         invokeCallback(HAL_TMR_TIMER_4);
-        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_4);
+        IFS0bits.T4IF = 0;
     }
 }
 #endif            
@@ -216,9 +366,9 @@ void isrTMR4Handler(void) {
 #ifdef _TMR5
 void isrTMR5Handler(void) {
 
-    if (PLIB_INT_SourceFlagGet(INT_ID_0, INT_SOURCE_TIMER_5)) {
+    if (IFS0bits.T5IF) {
         invokeCallback(HAL_TMR_TIMER_5);
-        PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_TIMER_5);
+        IFS0bits.T5IF = 0;
     }
 }
 #endif            

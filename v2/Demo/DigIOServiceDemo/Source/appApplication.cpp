@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "HAL/halGPIO.h"
+#include "HAL/PIC32/halCN.h"
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
@@ -44,6 +45,7 @@ void MyApplication::onInitialize() {
 #ifdef EXIST_SWITCHES_SW1
     halGPIOInitializePin(SW_SW1_PORT, SW_SW1_PIN, 
         HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+    halCNInitializeLine(SW_SW1_CN, HAL_CN_PULL_UP);
 
     digInputInit.port = SW_SW1_PORT;
     digInputInit.pin = SW_SW1_PIN;
@@ -56,6 +58,7 @@ void MyApplication::onInitialize() {
 #ifdef EXIST_SWITCHES_SW2
     halGPIOInitializePin(SW_SW2_PORT, SW_SW2_PIN, 
         HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+    halCNInitializeLine(SW_SW2_CN, HAL_CN_PULL_UP);
 
     digInputInit.port = SW_SW2_PORT;
     digInputInit.pin = SW_SW2_PIN;
@@ -68,6 +71,7 @@ void MyApplication::onInitialize() {
 #ifdef EXIST_SWITCHES_SW3
     halGPIOInitializePin(SW_SW3_PORT, SW_SW3_PIN, 
         HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+    halCNInitializeLine(SW_SW3_CN, HAL_CN_PULL_UP);
 
     digInputInit.port = SW_SW3_PORT;
     digInputInit.pin = SW_SW3_PIN;

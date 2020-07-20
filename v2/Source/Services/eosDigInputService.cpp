@@ -133,6 +133,8 @@ void DigInputService::onInitialize() {
 #if defined(EOS_PIC32MX)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * period) / 64000) - 1; 
+    tmrInfo.irqPriority = HAL_INT_PRIORITY_LEVEL2;
+    tmrInfo.irqSubPriority = HAL_INT_SUBPRIORITY_LEVEL0;
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
@@ -141,10 +143,9 @@ void DigInputService::onInitialize() {
 	tmrInfo.irqSubPriority = 0;
 #else
     //#error CPU no soportada
-#endif
-    
+#endif   
 	tmrInfo.isrFunction = isrTimerFunction;
-	tmrInfo.isrParams = this;
+	tmrInfo.isrParams = this;    
 	halTMRInitialize(&tmrInfo);
     halTMRStartTimer(timer);
     
@@ -168,10 +169,10 @@ void DigInputService::onTask() {
           
             if (input->eventCallback != nullptr) {
                 
-                halINTDisableInterrupts();
+                halTMRDisableInterrupt(timer);
                 bool edge = input->edge;
                 input->edge = false;
-                halINTEnableInterrupts();
+                halTMREnableInterrupt(timer);
 
                 if (edge) {
                        
