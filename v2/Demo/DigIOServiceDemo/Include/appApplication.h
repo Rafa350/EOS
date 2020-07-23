@@ -24,47 +24,37 @@ namespace app {
             DigInputService* digInputService;
 
     #ifdef EXIST_LEDS_LED1
-            DigOutput *digOutput1;
+            DigOutput* led1;
     #endif
     #ifdef EXIST_LEDS_LED2
-            DigOutput *digOutput2;
+            DigOutput* led2;
     #endif
     #ifdef EXIST_LEDS_LED3
-            DigOutput *digOutput3;
+            DigOutput* led3;
     #endif
     #ifdef EXIST_SWITCHES_SW1
-            DigInput *digInput1;
-            DigInputEventCallback digInput1EventCallback;
+            DigInput* sw1;
+            DigInputEventCallback sw1EventCallback;
     #endif
     #ifdef EXIST_SWITCHES_SW2
-            DigInput *digInput2;
-            DigInputEventCallback digInput2EventCallback;
+            DigInput* sw2;
+            DigInputEventCallback sw2EventCallback;
     #endif
     #ifdef EXIST_SWITCHES_SW3
-            DigInput *digInput3;
-            DigInputEventCallback digInput3EventCallback;
+            DigInput* sw3;
+            DigInputEventCallback sw3EventCallback;
     #endif
 
         public:
             MyApplication();
     #ifdef EXIST_SWITCHES_SW1
-            void digInput1EventHandler(const DigInput::EventArgs &args);
+            void sw1EventHandler(const DigInput::EventArgs &args);
     #endif
     #ifdef EXIST_SWITCHES_SW2
-            void digInput2EventHandler(const DigInput::EventArgs &args);
+            void sw2EventHandler(const DigInput::EventArgs &args);
     #endif
     #ifdef EXIST_SWITCHES_SW3
-            void digInput3EventHandler(const DigInput::EventArgs &args);
-    #endif
-
-    #ifdef EXIST_LEDS_LED1
-            DigOutput *getLed1() const { return digOutput1; }
-    #endif
-    #ifdef EXIST_LEDS_LED2
-            DigOutput *getLed2() const { return digOutput2; }
-    #endif
-    #ifdef EXIST_LEDS_LED3
-            DigOutput *getLed3() const { return digOutput3; }
+            void sw3EventHandler(const DigInput::EventArgs &args);
     #endif
 
         protected:

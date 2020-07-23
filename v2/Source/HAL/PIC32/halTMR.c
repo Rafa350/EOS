@@ -4,8 +4,6 @@
 #include "HAL/PIC32/halSYS.h"
 #include "sys/attribs.h"
 
-#include "peripheral/tmr/plib_tmr.h"
-
 
 typedef struct {
     TMRInterruptFunction function;
@@ -13,48 +11,7 @@ typedef struct {
 } CallbackInfo;
 
 
-#if defined(_TMR5)
-#elif defined (_TMR4)
-#elif defined (_TMR3)
-#elif defined (_TMR2)
-#elif defined (_TMR1)
-#else
-    //#error No hay modulos TMRx en esta CPU
-#endif
-
-#define NUM_TIMERS TMR_NUMBER_OF_MODULES
-
-
-static const TMR_MODULE_ID timerIdTbl[NUM_TIMERS] = {
-#ifdef _TMR1    
-    TMR_ID_1,
-#endif    
-#ifdef _TMR2    
-    TMR_ID_2,
-#endif
-#ifdef _TMR3    
-    TMR_ID_3,
-#endif
-#ifdef _TMR4    
-    TMR_ID_4,
-#endif
-#ifdef _TMR5    
-    TMR_ID_5,
-#endif
-};
-
-static const TMR_PRESCALE prescaleTbl[8] = {
-    TMR_PRESCALE_VALUE_1,
-    TMR_PRESCALE_VALUE_2,
-    TMR_PRESCALE_VALUE_4,
-    TMR_PRESCALE_VALUE_8,
-    TMR_PRESCALE_VALUE_16,
-    TMR_PRESCALE_VALUE_32,
-    TMR_PRESCALE_VALUE_64,
-    TMR_PRESCALE_VALUE_256
-};
-
-static CallbackInfo callbacks[NUM_TIMERS];
+static CallbackInfo callbacks[HAL_TMR_TIMER_MAX];
 
 #if defined(_TMR1) && (HAL_TMR_USE_T1_INTERRUPT == 1)
 extern void __ISR(_TIMER_1_VECTOR, IPL2SOFT) isrTMR1Wrapper(void);
@@ -80,24 +37,64 @@ extern void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
 void halTMRInitialize(
     const TMRInitializeInfo* info) {
     
-    TMR_MODULE_ID tmrId = timerIdTbl[info->timer];
-     
-    PLIB_TMR_Stop(tmrId);
     halTMRDisableInterrupt(info->timer);
-    
-    PLIB_TMR_ClockSourceSelect(tmrId, TMR_CLOCK_SOURCE_PERIPHERAL_CLOCK);
-    PLIB_TMR_PrescaleSelect(tmrId, prescaleTbl[(info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos]);
-    if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_16) {
-        PLIB_TMR_Mode16BitEnable(tmrId);
-        PLIB_TMR_Counter16BitClear(tmrId);
-        PLIB_TMR_Period16BitSet(tmrId, info->period);    
-    } 
-    else if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32) {
-        PLIB_TMR_Mode32BitEnable(tmrId);
-        PLIB_TMR_Counter32BitClear(tmrId);
-        PLIB_TMR_Period32BitSet(tmrId, info->period);            
-    }
 
+    // Contigura el timer de tipus A
+    //
+    if (IsTypeA(info->timer)) {
+        
+        TMRTypeARegisters* registers = GetTimerARegisterPtr(info->timer);
+
+        registers->TxCON.ON = 0;    // Desactiva el timer
+        registers->TxCON.TCS = 0;   // Clock source interna.
+        switch((info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos) {
+            case HAL_TMR_CLKDIV_8:
+                registers->TxCON.TCKPS = 1;    
+                break;
+
+            case HAL_TMR_CLKDIV_64:
+                registers->TxCON.TCKPS = 2;    
+                break;
+
+            case HAL_TMR_CLKDIV_256:
+                registers->TxCON.TCKPS = 3;    
+                break;
+                
+            default:
+                registers->TxCON.TCKPS = 0;    
+                break;
+        }
+        registers->TMRx = 0;
+        registers->PRx = info->period & 0xFFFF;
+    }
+    
+    // Configura el timer de tipus B
+    //
+    else {
+        
+        TMRTypeBRegisters* registers = GetTimerBRegisterPtr(info->timer);
+
+        registers->TxCON.ON = 0;    // Desactiva el timer
+        registers->TxCON.TCS = 0;   // Clock source interna.
+        registers->TxCON.TCKPS = (info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos;    
+
+        if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_16) {
+            registers->TxCON.T32 = 0;
+            registers->TMRx = 0;
+            registers->PRx = info->period & 0xFFFF;
+        } 
+        else if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32) {
+            TMRTypeBRegisters* registersHi = GetTimerBPairRegisterPtr(info->timer);
+            registers->TxCON.T32 = 1;
+            registers->TMRx = 0;
+            registersHi->TMRx = 0;
+            registers->PRx = info->period & 0xFFFF;
+            registersHi->PRx = (info->period >> 16) & 0xFFFF;
+        }
+    }
+    
+    // Configura les interrupcions
+    //
     if (info->isrFunction != NULL) {       
         callbacks[info->timer].function = info->isrFunction;
         callbacks[info->timer].params = info->isrParams;
@@ -123,7 +120,14 @@ void halTMRInitialize(
 void halTMRStartTimer(
     TMRTimer timer) {
     
-    PLIB_TMR_Start(timerIdTbl[timer]);    
+    if (IsTypeA(timer)) {
+        TMRTypeARegisters* registers = GetTimerARegisterPtr(timer);
+        registers->TxCON.ON = 1;
+    }
+    else {
+        TMRTypeBRegisters* registers = GetTimerBRegisterPtr(timer);
+        registers->TxCON.ON = 1;
+    }
 }
 
 
@@ -134,7 +138,14 @@ void halTMRStartTimer(
 void halTMRStopTimer(
     TMRTimer timer) {
     
-    PLIB_TMR_Stop(timerIdTbl[timer]);    
+    if (IsTypeA(timer)) {
+        TMRTypeARegisters* registers = GetTimerARegisterPtr(timer);
+        registers->TxCON.ON = 0;
+    }
+    else {
+        TMRTypeBRegisters* registers = GetTimerBRegisterPtr(timer);
+        registers->TxCON.ON = 0;
+    }
 }
 
 
@@ -201,7 +212,7 @@ void halTMRDisableInterrupt(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna la prioritaty der la interrupcio.
+/// \brief    Asigna la prioritaty de la interrupcio.
 /// \param    timer: El identificador del temporitzador.
 /// \param    priority: Prioritat.
 /// \param    subPriority: Sub prioritat.

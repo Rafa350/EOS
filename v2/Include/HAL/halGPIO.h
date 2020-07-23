@@ -16,7 +16,7 @@
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
 	#include "HAL/STM32/halGPIO.h"
     #ifdef __cplusplus  
-        #include "HAL/STM32/halGPIOTpl.h"
+        //#include "HAL/STM32/halGPIOTpl.h"
     #endif
     
 #elif defined(EOS_MSP432)    

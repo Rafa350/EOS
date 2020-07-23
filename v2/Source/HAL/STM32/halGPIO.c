@@ -73,7 +73,7 @@ static void enableClock(
 			break;
 	}
 
-	enabledClocks |= 1 << port;
+	enabledClocks |= (1 << port);
 }
 
 
@@ -103,17 +103,7 @@ static void setupPin(
 	GPIOAlt alt) {
 
 	uint32_t temp;
-	GPIO_TypeDef *gpio = gpioTbl[port];
-
-	// Configura el registre AFR (Alternate Funcion Register)
-	//
-	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
-		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
-        temp = gpio->AFR[pin >> 3u];
-        temp &= ~(0xFU << ((uint32_t)(pin & 0x07U) * 4u)) ;
-        temp |= ((uint32_t)(alt) << (((uint32_t)pin & 0x07u) * 4u));
-        gpio->AFR[pin >> 3u] = temp;
-	}
+	GPIO_TypeDef* gpio = gpioTbl[port];
 
 	// Configura el registre MODER (Mode Register)
 	//
@@ -143,6 +133,16 @@ static void setupPin(
 	}
 	gpio->MODER = temp;
 
+	// Configura el registre AFR (Alternate Funcion Register)
+	//
+	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
+		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
+	    temp = gpio->AFR[pin >> 3u];
+	    temp &= ~(0xFU << ((uint32_t)(pin & 0x07U) * 4u)) ;
+        temp |= ((uint32_t)(alt) << (((uint32_t)pin & 0x07u) * 4u));
+        gpio->AFR[pin >> 3u] = temp;
+	}
+
 	// Configura el registre OSPEEDR (Output Speed Register)
 	//
 	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
@@ -170,29 +170,36 @@ static void setupPin(
 
 	// Configura el registre OTYPER (Output Type Register)
 	//
-	temp = gpio->OTYPER;
-	temp &= ~(1u << pin);
-	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD) ||
-        ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD))
-		temp |= 1u << pin;
-	gpio->OTYPER = temp;
+	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
+		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD) ||
+		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
+		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
+		temp = gpio->OTYPER;
+		temp &= ~(1u << pin);
+		if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD) ||
+			((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD))
+			temp |= 1u << pin;
+		gpio->OTYPER = temp;
+	}
 
 	// Configura el registre PUPDR (PullUp PullDown Register)
 	//
-	temp = gpio->PUPDR;
-	temp &= ~(0b11u << (pin * 2u));
-	switch (options & HAL_GPIO_PULL_mask) {
-		case HAL_GPIO_PULL_UP:
-			temp |= 0b01u << (pin * 2u);
-			break;
+	if ((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_ANALOG) {
+		temp = gpio->PUPDR;
+		temp &= ~(0b11u << (pin * 2u));
+		switch (options & HAL_GPIO_PULL_mask) {
+			case HAL_GPIO_PULL_UP:
+				temp |= 0b01u << (pin * 2u);
+				break;
 
-		case HAL_GPIO_PULL_DOWN:
-			temp |= 0b10u << (pin * 2u);
-			break;
+			case HAL_GPIO_PULL_DOWN:
+				temp |= 0b10u << (pin * 2u);
+				break;
+		}
+		gpio->PUPDR = temp;
 	}
-	gpio->PUPDR = temp;
 
-	// Configura el valor pin de sortida
+	// Configura el valor inicial pin de sortida
 	//
 	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {

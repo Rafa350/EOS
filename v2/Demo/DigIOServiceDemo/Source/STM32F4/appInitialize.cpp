@@ -52,4 +52,6 @@ void appInitialize() {
 
 	halSYSInitialize();
 	CLKInitialize();
+
+	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 }

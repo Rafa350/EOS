@@ -29,16 +29,15 @@ static void enableClock(
 			break;
 
 		case HAL_TMR_TIMER_2:
-			//__HAL_RCC_TIM2_CLK_ENABLE();
 			RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 			break;
 
 		case HAL_TMR_TIMER_3:
-			__HAL_RCC_TIM3_CLK_ENABLE();
+			RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
 			break;
 
 		case HAL_TMR_TIMER_4:
-			__HAL_RCC_TIM4_CLK_ENABLE();
+			RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
 			break;
 
 		case HAL_TMR_TIMER_5:
@@ -99,16 +98,15 @@ static void disableClock(
 			break;
 
 		case HAL_TMR_TIMER_2:
-			//__HAL_RCC_TIM2_CLK_DISABLE();
 			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM2EN);
 			break;
 
 		case HAL_TMR_TIMER_3:
-			__HAL_RCC_TIM3_CLK_DISABLE();
+			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM3EN);
 			break;
 
 		case HAL_TMR_TIMER_4:
-			__HAL_RCC_TIM4_CLK_DISABLE();
+			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM4EN);
 			break;
 
 		case HAL_TMR_TIMER_5:
@@ -162,8 +160,8 @@ static void disableClock(
 /// \param pInfo: Parametres d'inicialitzacio.
 ///
 static void prepareTimerHandle(
-	TIM_HandleTypeDef *handle,
-	const TMRInitializeInfo *info) {
+	TIM_HandleTypeDef* handle,
+	const TMRInitializeInfo* info) {
 
 	static TIM_TypeDef * const instances[] = {
 		TIM1,
@@ -202,7 +200,7 @@ static void prepareTimerHandle(
 /// \param    pInfo: Parametres d'inicialitzacio.
 ///
 void halTMRInitialize(
-	const TMRInitializeInfo *info) {
+	const TMRInitializeInfo* info) {
 
 	// Precondicions
 	//
@@ -221,7 +219,8 @@ void halTMRInitialize(
 		static const IRQn_Type irq[] = {
 			0,
 		    TIM2_IRQn,
-			TIM3_IRQn
+			TIM3_IRQn,
+			TIM4_IRQn
 		};
 
 		timerInfo->isrFunction = info->isrFunction;
@@ -281,6 +280,30 @@ void halTMRStopTimer(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Activa les interrupcions del temporitzador.
+/// \param    timer: El temporitzador.
+///
+void halTMREnableInterrupt(
+	TMRTimer timer) {
+
+	TimerInfo *timerInfo = &timerInfoTbl[timer];
+	__HAL_TIM_ENABLE_IT(&timerInfo->handle, TIM_IT_UPDATE);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Activa les interrupcions del temporitzador.
+/// \param    timer: El temporitzador.
+///
+void halTMRDisableInterrupt(
+	TMRTimer timer) {
+
+	TimerInfo *timerInfo = &timerInfoTbl[timer];
+	__HAL_TIM_DISABLE_IT(&timerInfo->handle, TIM_IT_UPDATE);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Retard en milisegons.
 /// \param    time: Temps en milisegons.
 ///
@@ -298,15 +321,17 @@ void halTMRDelay(
 static void IRQHandler(
 	TMRTimer timer) {
 
-	TimerInfo *timerInfo = &timerInfoTbl[timer];
+	TimerInfo* timerInfo = &timerInfoTbl[timer];
 
+	// Interrupcio UPDATE
+	//
 	if(__HAL_TIM_GET_FLAG(&timerInfo->handle, TIM_FLAG_UPDATE) != RESET) {
-	    if(__HAL_TIM_GET_IT_SOURCE(&timerInfo->handle, TIM_IT_UPDATE) != RESET) {
+		if(__HAL_TIM_GET_IT_SOURCE(&timerInfo->handle, TIM_IT_UPDATE) != RESET) {
 
-	    	__HAL_TIM_CLEAR_IT(&timerInfo->handle, TIM_IT_UPDATE);
+			if (timerInfo->isrFunction != NULL)
+				timerInfo->isrFunction(timer, timerInfo->isrParams);
 
-	      if (timerInfo->isrFunction != NULL)
-	    	  timerInfo->isrFunction(timer, timerInfo->isrParams);
+			__HAL_TIM_CLEAR_IT(&timerInfo->handle, TIM_IT_UPDATE);
 	    }
 	}
 }
@@ -330,6 +355,17 @@ void TIM2_IRQHandler() {
 void TIM3_IRQHandler() {
 
 	IRQHandler(HAL_TMR_TIMER_3);
+}
+#endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief Handler de la interrupcio.
+///
+#ifdef HAL_TMR_TIMER_4
+void TIM4_IRQHandler() {
+
+	IRQHandler(HAL_TMR_TIMER_4);
 }
 #endif
 

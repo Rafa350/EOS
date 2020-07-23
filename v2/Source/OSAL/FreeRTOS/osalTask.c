@@ -41,7 +41,7 @@ void osalTaskDestroy(
 
 	eosAssert(hTask != NULL);
 
-	vTaskDelete(hTask);
+	vTaskDelete((TaskHandle_t)hTask);
 }
 
 
@@ -56,7 +56,7 @@ void osalTaskSetPriority(
 	eosAssert(hTask != NULL);
 
     vTaskPrioritySet(
-        hTask,
+        (TaskHandle_t) hTask,
         tskIDLE_PRIORITY + ((UBaseType_t) (priority & OSAL_TASK_PRIORITY_mask) >> OSAL_TASK_PRIORITY_pos));    
 }
 

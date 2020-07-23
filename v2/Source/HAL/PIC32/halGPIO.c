@@ -2,45 +2,6 @@
 #include "HAL/PIC32/halGPIO.h"
 
 
-const GPIORegs gpioRegs[] = {
-#if defined(PORTA)
-    { &TRISASET, &TRISACLR, &ODCASET, &ODCACLR, &LATASET, &LATACLR, &LATAINV, &LATA, &PORTA},
-#else
-    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif
-#if defined(PORTB)
-    { &TRISBSET, &TRISBCLR, &ODCBSET, &ODCBCLR, &LATBSET, &LATBCLR, &LATBINV, &LATB, &PORTB},
-#else
-    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif
-#if defined(PORTC)
-    { &TRISCSET, &TRISCCLR, &ODCCSET, &ODCCCLR, &LATCSET, &LATCCLR, &LATCINV, &LATC, &PORTC},
-#else
-    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif
-#if defined(PORTD)
-    { &TRISDSET, &TRISDCLR, &ODCDSET, &ODCDCLR, &LATDSET, &LATDCLR, &LATDINV, &LATD, &PORTD},
-#else
-    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif
-#if defined(PORTE)
-    { &TRISESET, &TRISECLR, &ODCESET, &ODCECLR, &LATESET, &LATECLR, &LATEINV, &LATE, &PORTE},
-#else
-    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif
-#if defined(PORTF)
-    { &TRISFSET, &TRISFCLR, &ODCFSET, &ODCFCLR, &LATFSET, &LATFCLR, &LATFINV, &LATF, &PORTF},
-#else
-    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif
-#if defined(PORTG)
-    { &TRISGSET, &TRISGCLR, &ODCGSET, &ODCGCLR, &LATGSET, &LATGCLR, &LATGINV, &LATG, &PORTG},
-#else
-    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-#endif
-};
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza una llista de pins.
 /// \param    info: Parametres d'inicialitzacio.
@@ -102,7 +63,9 @@ void halGPIOInitializePort(
     GPIOMask mask,
     GPIOOptions options,
     GPIOAlt alt) {
-
+    
+    GPIORegisters* registers = GetPortRegisterPtr(port);
+       
     if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
         ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {
 
@@ -110,30 +73,30 @@ void halGPIOInitializePort(
         //
         switch (options & HAL_GPIO_INIT_mask) {
             case HAL_GPIO_INIT_SET:
-                *gpioRegs[port].latSET = mask;
+                registers->LATxSET = mask;
                 break;
 
             case HAL_GPIO_INIT_CLR:
-                *gpioRegs[port].latCLR = mask;
+                registers->LATxCLR = mask;
                 break;
         }
 
         // El configura com sortida
         //
-        *gpioRegs[port].trisCLR = mask;
+        registers->TRISxCLR = mask;
 
         // Configura com OPEN-DRAIN o PUSH-PULL
         //
         if ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)
-            *gpioRegs[port].odcSET = mask;
+            registers->ODCxSET = mask;
         else
-            *gpioRegs[port].odcCLR = mask;
+            registers->ODCxCLR = mask;
     }
 
     else if ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_INPUT) {
 
         // El configura com entrada
         //
-        *gpioRegs[port].trisSET = mask;
+        registers->TRISxSET = mask;
     }
 }

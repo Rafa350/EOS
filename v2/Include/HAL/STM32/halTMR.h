@@ -31,6 +31,8 @@ typedef uint32_t TMROptions;
 #define HAL_TMR_TIMER_12          ((TMRTimer) 11)
 #define HAL_TMR_TIMER_13          ((TMRTimer) 12)
 #define HAL_TMR_TIMER_14          ((TMRTimer) 13)
+#define HAL_TMR_TIMER_NONE        ((TMRTimer) 255)
+
 #define HAL_TMR_TIMER_MAX         13
 
 // Modus 16 o 32 bits
@@ -58,8 +60,8 @@ typedef uint32_t TMROptions;
 #define HAL_TMR_INTERRUPT_DISABLE (0u << HAL_TMR_INTERRUPT_pos)
 #define HAL_TMR_INTERRUPT_ENABLE  (1u << HAL_TMR_INTERRUPT_pos)
 
-
 typedef void (*TMRInterruptFunction)(TMRTimer timer, void* params);
+
 
 typedef struct {
 	TMRTimer timer;
@@ -82,6 +84,9 @@ void halTMRStopTimer(TMRTimer timer);
 void halTMRDelay(int time);
 
 void halTMRSetInterruptFunction(TMRTimer timer, TMRInterruptFunction function, void* params);
+void halTMRSetInterruptPriority(TMRTimer timer, unsigned priority, unsigned subPriority);
+bool halTMRGetInterruptFlag(TMRTimer timer);
+void halTMRClearInterruptFlag(TMRTimer timer);
 void halTMREnableInterrupt(TMRTimer timer);
 void halTMRDisableInterrupt(TMRTimer timer);
 

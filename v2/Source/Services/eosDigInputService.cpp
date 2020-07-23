@@ -27,9 +27,9 @@ DigInputService::DigInputService(
     Application* application,
     const InitParams& initParams):
     
+	Service(application),
     timer(initParams.timer),
-    period(initParams.period),
-    Service(application) {
+    period(initParams.period) {
 }
 
 
@@ -133,17 +133,15 @@ void DigInputService::onInitialize() {
 #if defined(EOS_PIC32MX)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * period) / 64000) - 1; 
-    tmrInfo.irqPriority = HAL_INT_PRIORITY_LEVEL2;
-    tmrInfo.irqSubPriority = HAL_INT_SUBPRIORITY_LEVEL0;
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
-    tmrInfo.period = (1000 * period) - 1; 
-	tmrInfo.irqPriority = 1;
-	tmrInfo.irqSubPriority = 0;
+    tmrInfo.period = (1000 * period) - 1;
 #else
     //#error CPU no soportada
 #endif   
+	tmrInfo.irqPriority = DigOutputService_TimerInterruptPriority;
+	tmrInfo.irqSubPriority = DigOutputService_TimerInterruptSubPriority;
 	tmrInfo.isrFunction = isrTimerFunction;
 	tmrInfo.isrParams = this;    
 	halTMRInitialize(&tmrInfo);
@@ -198,7 +196,8 @@ void DigInputService::onTick() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Captura la interrupcio del temporitzador.
+/// \brief    Procesa la interrupcio del temporitzador.
+/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
 void DigInputService::isrTimerFunction(
     TMRTimer timer,
@@ -254,11 +253,11 @@ DigInput::DigInput(
     DigInputService* service,
     const InitParams& initParams):
 
+	service(nullptr),
     port(initParams.port),                    
     pin(initParams.pin),
     eventCallback(initParams.eventCallback),
-    eventParam(initParams.eventParam),
-    service(nullptr) {
+    eventParam(initParams.eventParam) {
     
     if (service != nullptr)
         service->addInput(this);

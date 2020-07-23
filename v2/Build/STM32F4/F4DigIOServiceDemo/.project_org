@@ -19,13 +19,12 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>com.st.stm32cube.ide.mcu.MCUProjectNature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUSingleCpuProjectNature</nature>
-		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUSW4STM32ConvertedProjectNature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
+		<nature>fr.ac6.mcu.ide.core.MCUProjectNature</nature>
+		<nature>fr.ac6.mcu.ide.core.MCUSingleCoreProjectNature</nature>
 	</natures>
 	<linkedResources>
 		<link>
@@ -56,22 +55,22 @@
 		<link>
 			<name>inc/App/appApplication.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appApplication.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Include/appApplication.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/appDisplayService.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appDisplayService.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Include/appDisplayService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/appLedService.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/appLedService.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Include/appLedService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/eosConfig.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/eosConfig.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Include/eosConfig.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS</name>
@@ -86,22 +85,22 @@
 		<link>
 			<name>src/App/appApplication.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appApplication.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/appApplication.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/appDisplayService.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appDisplayService.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/appDisplayService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/appLedService.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appLedService.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/appLedService.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/appMain.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/appMain.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/appMain.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS</name>
@@ -116,22 +115,22 @@
 		<link>
 			<name>inc/App/STM32F4/FreeRTOSConfig.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/FreeRTOSConfig.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Include/STM32F4/FreeRTOSConfig.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F4/stm32f429i_discovery.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/stm32f429i_discovery.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Include/STM32F4/stm32f429i_discovery.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F4/stm32f429i_discovery_sdram.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/stm32f429i_discovery_sdram.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Include/STM32F4/stm32f429i_discovery_sdram.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F4/stm32f4xx_hal_conf.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/stm32f4xx_hal_conf.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Include/STM32F4/stm32f4xx_hal_conf.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Board</name>
@@ -176,17 +175,17 @@
 		<link>
 			<name>src/App/STM32F4/appInitialize.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/appInitialize.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/STM32F4/appInitialize.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F4/stm32f429i_discovery_sdram.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f429i_discovery_sdram.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/STM32F4/stm32f429i_discovery_sdram.c</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F4/stm32f4xx_hal_timebase_tim.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f4xx_hal_timebase_tim.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DigIOServiceDemo/Source/STM32F4/stm32f4xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
@@ -239,14 +238,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Board/eosBoard.h</name>
+			<name>inc/Framework/EOS/Board/Board_STM32F429I_DISC1.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/Board_STM32F429I_DISC1.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Board/eosBoard_STM32F429I_DISC1.h</name>
+			<name>inc/Framework/EOS/Board/board.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard_STM32F429I_DISC1.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/board.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display</name>
@@ -299,14 +298,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTimer.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosAppLoopService.h</name>
+			<name>inc/Framework/EOS/Services/eosAppLoop.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoopService.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoop.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/eosDigOutputService.h</name>
+			<name>inc/Framework/EOS/Services/eosDigOutput.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosDigOutputService.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosDigOutput.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/eosService.h</name>
@@ -334,16 +333,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/eosCallbacks.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosCallbacks.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/System/eosString.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosString.h</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Controllers/Display</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -359,9 +348,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/eosAppLoopService.cpp</name>
+			<name>src/Framework/EOS/Services/eosAppLoop.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoop.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/eosService.cpp</name>
@@ -392,11 +381,6 @@
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/eosString.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/cmsis_os.c</name>
@@ -516,7 +500,7 @@
 		<link>
 			<name>src/Framework/STM32/System/system_stm32f4xx.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/system/Src/system_stm32f4xx.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/CMSIS_DEVICE/Source/Templates/system_stm32f4xx.c</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers</name>
@@ -562,6 +546,16 @@
 			<name>inc/Framework/EOS/System/Collections/eosList.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosList.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Core/eosAllocator.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosAllocator.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Core/eosCallbacks.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosCallbacks.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosHeapAllocator.h</name>
@@ -664,9 +658,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/Collections/eosContainer.cpp</name>
+			<name>src/Framework/EOS/System/Collections/eosList.cpp</name>
 			<type>1</type>
-			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/System/Collections/eosContainer.cpp</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosList.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
@@ -717,36 +711,6 @@
 			<name>src/Framework/EOS/System/Graphics/eosGraphics.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosGraphics_Ellipse.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Ellipse.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosGraphics_Line.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Line.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosGraphics_Rectangle.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Rectangle.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosGraphics_Text.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Text.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosPoint.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosPoint.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/eosSize.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosSize.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/eosTransformation.cpp</name>
@@ -802,11 +766,6 @@
 			<name>src/Framework/EOS/System/Graphics/Fonts/Consolas8pt.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Consolas8pt.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Graphics/Fonts/FontTable.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/FontTable.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</name>

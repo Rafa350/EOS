@@ -1,6 +1,8 @@
 #include "eos.h"
 #include "HAL/halGPIO.h"
+#ifdef EOS_PIC32
 #include "HAL/PIC32/halCN.h"
+#endif
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
@@ -17,9 +19,14 @@ using namespace app;
 /// \brief    Constructor del objecte.
 ///
 MyApplication::MyApplication():
-    digInput1EventCallback(this, &MyApplication::digInput1EventHandler),
-    digInput2EventCallback(this, &MyApplication::digInput2EventHandler),
-    digInput3EventCallback(this, &MyApplication::digInput3EventHandler) {
+    sw1EventCallback(this, &MyApplication::sw1EventHandler)
+#ifdef EXIST_SWITCHES_SW2
+    , sw2EventCallback(this, &MyApplication::sw2EventHandler)
+#endif
+#ifdef EXIST_SWITCHES_SW3
+    , sw3EventCallback(this, &MyApplication::sw3EventHandler)
+#endif
+{
     
 }
 
@@ -45,12 +52,14 @@ void MyApplication::onInitialize() {
 #ifdef EXIST_SWITCHES_SW1
     halGPIOInitializePin(SW_SW1_PORT, SW_SW1_PIN, 
         HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+#ifdef EOS_PIC32
     halCNInitializeLine(SW_SW1_CN, HAL_CN_PULL_UP);
+#endif
 
     digInputInit.port = SW_SW1_PORT;
     digInputInit.pin = SW_SW1_PIN;
-    digInputInit.eventCallback = &digInput1EventCallback;
-    digInput1 = new DigInput(digInputService, digInputInit);
+    digInputInit.eventCallback = &sw1EventCallback;
+    sw1 = new DigInput(digInputService, digInputInit);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW2
@@ -62,8 +71,8 @@ void MyApplication::onInitialize() {
 
     digInputInit.port = SW_SW2_PORT;
     digInputInit.pin = SW_SW2_PIN;
-    digInputInit.eventCallback = &digInput2EventCallback;
-    digInput2 = new DigInput(digInputService, digInputInit);
+    digInputInit.eventCallback = &sw2EventCallback;
+    sw2 = new DigInput(digInputService, digInputInit);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW3
@@ -75,8 +84,8 @@ void MyApplication::onInitialize() {
 
     digInputInit.port = SW_SW3_PORT;
     digInputInit.pin = SW_SW3_PIN;
-    digInputInit.eventCallback = &digInput3EventCallback;
-    digInput3 = new DigInput(digInputService, digInputInit);
+    digInputInit.eventCallback = &sw3EventCallback;
+    sw3 = new DigInput(digInputService, digInputInit);
 #endif
 
     // Inicialitza el servei de sortides digitals
@@ -96,7 +105,7 @@ void MyApplication::onInitialize() {
 
     digOutputInit.port = LED_LED1_PORT;
     digOutputInit.pin = LED_LED1_PIN;
-    digOutput1 = new DigOutput(digOutputService, digOutputInit);
+    led1 = new DigOutput(digOutputService, digOutputInit);
 #endif
 
     // Inicialitza la sortida corresponent al led LED2
@@ -107,7 +116,7 @@ void MyApplication::onInitialize() {
 
     digOutputInit.port = LED_LED2_PORT;
     digOutputInit.pin = LED_LED2_PIN;
-    digOutput2 = new DigOutput(digOutputService, digOutputInit);
+    led2 = new DigOutput(digOutputService, digOutputInit);
 #endif
 
     // Inicialitza la sortida corresponent al led LED3
@@ -118,8 +127,9 @@ void MyApplication::onInitialize() {
     
     digOutputInit.port = LED_LED3_PORT;
     digOutputInit.pin = LED_LED3_PIN;
-    digOutput3 = new DigOutput(digOutputService, digOutputInit);
+    led3 = new DigOutput(digOutputService, digOutputInit);
 #endif
+
 }
 
 
@@ -128,16 +138,16 @@ void MyApplication::onInitialize() {
 /// \param    args: Parametres del event.
 ///
 #ifdef EXIST_SWITCHES_SW1
-void MyApplication::digInput1EventHandler(
+void MyApplication::sw1EventHandler(
     const DigInput::EventArgs &args) {
 
-#ifdef EXIST_LEDS_LED1
-    if (!args.input->read()) {
-        getLed1()->pulse(500);
-        getLed2()->delayedPulse(250, 500);
-        getLed3()->delayedPulse(500, 500);
-    }
+    if (!sw1->read()) {
+        led1->pulse(500);
+        led2->delayedPulse(250, 500);
+#ifdef EXIST_LEDS_LED3
+        led3->delayedPulse(500, 500);
 #endif
+    }
 }
 #endif
 
@@ -147,16 +157,18 @@ void MyApplication::digInput1EventHandler(
 /// \param    args: Parametres del event.
 ///
 #ifdef EXIST_SWITCHES_SW2
-void MyApplication::digInput2EventHandler(
+void MyApplication::sw2EventHandler(
     const DigInput::EventArgs &args) {
 
-#ifdef EXIST_LEDS_LED2
-    if (!args.input->read()) {
-        getLed3()->pulse(500);
-        getLed2()->delayedPulse(250, 500);
-        getLed1()->delayedPulse(500, 500);
-    }
+    if (!sw2->read()) {
+#ifdef EXIST_LEDS_LED3
+        led3->pulse(500);
 #endif
+#ifdef EXIST_LEDS_LED2
+        led2->delayedPulse(250, 500);
+#endif
+        led1->delayedPulse(500, 500);
+    }
 }
 #endif
 
@@ -166,14 +178,16 @@ void MyApplication::digInput2EventHandler(
 /// \param    args: Parametres del event.
 ///
 #ifdef EXIST_SWITCHES_SW3
-void MyApplication::digInput3EventHandler(
+void MyApplication::sw3EventHandler(
     const DigInput::EventArgs &args) {
 
+    bool value = !sw3->read();
+    led1->write(value);
+#ifdef EXIST_LEDS_LED2
+    led2->write(value);
+#endif
 #ifdef EXIST_LEDS_LED3
-    bool value = !args.input->read();
-    getLed1()->write(value);
-    getLed2()->write(value);
-    getLed3()->write(value);
+    led3->write(value);
 #endif
 }
 #endif

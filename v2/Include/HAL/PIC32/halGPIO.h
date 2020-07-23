@@ -11,6 +11,26 @@
 extern "C" {
 #endif
 
+typedef struct __attribute__((packed , aligned(4))) {
+    volatile uint32_t TRISx;
+    volatile uint32_t TRISxCLR;
+    volatile uint32_t TRISxSET;
+    volatile uint32_t TRISxINV;
+    volatile uint32_t PORTx;
+    volatile uint32_t PORTxCLR;
+    volatile uint32_t PORTxSET;
+    volatile uint32_t PORTxINV;
+    volatile uint32_t LATx;
+    volatile uint32_t LATxCLR;
+    volatile uint32_t LATxSET;
+    volatile uint32_t LATxINV;
+    volatile uint32_t ODCx;
+    volatile uint32_t ODCxCLR;
+    volatile uint32_t ODCxSET;
+    volatile uint32_t ODCxINV;
+} GPIORegisters;
+
+#define GetPortRegisterPtr(port)  ((GPIORegisters*)(0xBF886000 + ((port) * 0x40)))
 
 typedef uint8_t GPIOPort;
 typedef uint8_t GPIOPin;
@@ -32,41 +52,27 @@ typedef struct {                  // Parametres d'inicialitzacio d'un port
 	GPIOAlt alt;                  // -Funcio alternativa
 } GPIOInitializePortInfo;
 
-typedef struct {                  // Registres de hardware
-	uint32_t volatile *trisSET;   // -Registre TRIS
-	uint32_t volatile *trisCLR;
-	uint32_t volatile *odcSET;    // -Registre ODC
-	uint32_t volatile *odcCLR;
-	uint32_t volatile *latSET;    // -Registre LAT
-	uint32_t volatile *latCLR;
-	uint32_t volatile *latINV;
-	uint32_t volatile *lat;
-	uint32_t volatile *port;      // -Registre PORT
-} GPIORegs;
-
-extern const GPIORegs gpioRegs[];
-
 
 // Identificador dels ports
-#if defined(PORTA)
+#if defined(_PORTA)
 #define HAL_GPIO_PORT_A      ((GPIOPort) 0)
 #endif
-#if defined(PORTB)
+#if defined(_PORTB)
 #define HAL_GPIO_PORT_B      ((GPIOPort) 1)
 #endif
-#if defined(PORTC)
+#if defined(_PORTC)
 #define HAL_GPIO_PORT_C      ((GPIOPort) 2)
 #endif
-#if defined(PORTD)
+#if defined(_PORTD)
 #define HAL_GPIO_PORT_D      ((GPIOPort) 3)
 #endif
-#if defined(PORTE)
+#if defined(_PORTE)
 #define HAL_GPIO_PORT_E      ((GPIOPort) 4)
 #endif
-#if defined(PORTF)
+#if defined(_PORTF)
 #define HAL_GPIO_PORT_F      ((GPIOPort) 5)
 #endif
-#if defined(PORTG)
+#if defined(_PORTG)
 #define HAL_GPIO_PORT_G      ((GPIOPort) 6)
 #endif
 #define HAL_GPIO_PORT_NONE   ((GPIOPort) 255)
@@ -160,49 +166,49 @@ extern const GPIORegs gpioRegs[];
 
 // Canvi d'entrada a sortida i viceversa
 //
-#define halGPIOModePinInput(portId, pin) \
-    *gpioRegs[portId].trisSET = 1u << (pin)
+#define halGPIOModePinInput(port, pin) \
+    GetPortRegisterPtr(port)->TRISxSET = 1u << (pin)
 
-#define halGPIOModePinOutput(portId, pin) \
-    *gpioRegs[portId].trisCLR = 1u << (pin)
+#define halGPIOModePinOutput(port, pin) \
+    GetPortRegisterPtr(port)->TRISxCLR = 1u << (pin)
 
-#define halGPIOModePortInput(portId, mask) \
-    *gpioRegs[portId].trisSET = (mask)
+#define halGPIOModePortInput(port, mask) \
+    GetPortRegisterPtr(port)->TRISxSET = (mask)
 
-#define halGPIOModePortOutput(portId, mask) \
-    *gpioRegs[portId].trisCLR = (mask)
+#define halGPIOModePortOutput(port, mask) \
+    GetPortRegisterPtr(port)->TRISxCLR = (mask)
 
 // Canvi del estat del pin
 //
-#define halGPIOSetPin(portId, pin) \
-    *gpioRegs[portId].latSET = 1u << (pin)
+#define halGPIOSetPin(port, pin) \
+    GetPortRegisterPtr(port)->LATxSET = 1u << (pin)
 
-#define halGPIOClearPin(portId, pin) \
-    *gpioRegs[portId].latCLR = 1u << (pin)
+#define halGPIOClearPin(port, pin) \
+    GetPortRegisterPtr(port)->LATxCLR = 1u << (pin)
 
-#define halGPIOTogglePin(portId, pin) \
-    *gpioRegs[portId].latINV = 1u << (pin)
+#define halGPIOTogglePin(port, pin) \
+    GetPortRegisterPtr(port)->LATxINV = 1u << (pin)
 
 // Lectura i escriptura del pin
 //
-#define halGPIOReadPin(portId, pin) \
-    (*gpioRegs[portId].port & (1u << (pin))) != 0
+#define halGPIOReadPin(port, pin) \
+    ((GetPortRegisterPtr(port)->PORTx & (1u << (pin))) != 0)
 
-#define halGPIOWritePin(portId, pin, data) \
+#define halGPIOWritePin(port, pin, data) \
     if (1) { \
         if (data) \
-            *gpioRegs[portId].latSET = 1u << (pin); \
+            GetPortRegisterPtr(port)->LATxSET = 1u << (pin) \
         else \
-            *gpioRegs[portId].latCLR = 1u << (pin); \
+            GetPortRegisterPtr(port)->LATxCLR = 1u << (pin) \
     }
 
 // Lectura i escriptura del port
 //
-#define halGPIOWritePort(portId, data) \
-    *gpioRegs[portId].lat = (data)
+#define halGPIOWritePort(port, data) \
+    GetPortRegisterPtr(port)->LATx = data
 
-#define halGPIOReadPort(portId) \
-    *gpioRegs[portId].port
+#define halGPIOReadPort(port) \
+    GetPortRegisterPtr(port)->PORTx;
 
 
 void halGPIOInitializePins(const GPIOInitializePinInfo* info, unsigned count);

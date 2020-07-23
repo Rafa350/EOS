@@ -24,8 +24,8 @@ namespace eos {
             typedef DynamicArray<DigInput*> DigInputList;
             typedef DynamicArray<DigInput*>::Iterator DigInputListIterator;
         public:
-            struct InitParams {  // Parametres d'inicialitzaci0.
-                TMRTimer timer;  // -Temporitzador
+            struct InitParams {  // Parametres d'inicialitzacio.
+                TMRTimer timer;  // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema
                 unsigned period; // -Periode en ms
             };
 

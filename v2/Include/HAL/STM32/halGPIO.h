@@ -58,6 +58,7 @@ extern GPIO_TypeDef * const gpioTbl[];
 #define HAL_GPIO_PORT_I      ((GPIOPort) 8)
 #define HAL_GPIO_PORT_J      ((GPIOPort) 9)
 #define HAL_GPIO_PORT_K      ((GPIOPort) 10)
+#define HAL_GPIO_PORT_NONE   ((GPIOPort) 255)
 
 // Identificador del pin
 #define HAL_GPIO_PIN_0       ((GPIOPin) 0)

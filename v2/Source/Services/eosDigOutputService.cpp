@@ -19,10 +19,10 @@ DigOutputService::DigOutputService(
     Application* application,
     const DigOutputService::InitParams& initParams):
 
-    commandQueue(commandQueueSize),
+	Service(application),
     timer(initParams.timer),
     period(initParams.period),
-    Service(application) {
+	commandQueue(commandQueueSize) {
 
 }
 
@@ -236,17 +236,15 @@ void DigOutputService::onInitialize() {
 #if defined(EOS_PIC32MX)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.period = ((80000 * period) / 64) - 1; 
-    tmrInfo.irqPriority = HAL_INT_PRIORITY_LEVEL2;
-    tmrInfo.irqSubPriority = HAL_INT_SUBPRIORITY_LEVEL0;
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
     tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
     tmrInfo.period = (1000 * period) - 1; 
-	tmrInfo.irqPriority = 1;
-	tmrInfo.irqSubPriority = 0;
 #else
 //#error CPU no soportada
 #endif   
+	tmrInfo.irqPriority = DigOutputService_TimerInterruptPriority;
+	tmrInfo.irqSubPriority = DigOutputService_TimerInterruptSubPriority;
 	tmrInfo.isrFunction = isrTimerFunction;
 	tmrInfo.isrParams = this;
 	halTMRInitialize(&tmrInfo);

@@ -27,7 +27,7 @@ HTimer osalTimerCreate(
 
 	// Crea el temporitzador
 	//
-    HTimer hTimer = xTimerCreate(
+    HTimer hTimer = (HTimer) xTimerCreate(
     	(const char*)"",
 		1,
 		(info->options & OSAL_TIMER_AUTO_MASK) == OSAL_TIMER_AUTO_ON ? pdTRUE : pdFALSE,
@@ -38,7 +38,7 @@ HTimer osalTimerCreate(
 
     // Para el temporitzador, per que FreeRTOS el crea en marxa.
     //
-    xTimerStop(hTimer, 0);
+    xTimerStop((TimerHandle_t)hTimer, 0);
 
     // Tot correcte. Retorna el handler.
     //
@@ -61,7 +61,7 @@ bool osalTimerDestroy(
 	eosAssert(hTimer != NULL);
     
     TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-	return xTimerDelete(hTimer, blockTicks) == pdPASS;
+	return xTimerDelete((TimerHandle_t)hTimer, blockTicks) == pdPASS;
 }
 
 
@@ -88,9 +88,9 @@ bool osalTimerStart(
 
 		portBASE_TYPE task = pdFALSE;
 		if (time == 0)
-			result = xTimerStartFromISR(hTimer, &task) == pdPASS;
+			result = xTimerStartFromISR((TimerHandle_t)hTimer, &task) == pdPASS;
 		else
-			result = xTimerChangePeriodFromISR(hTimer, time / portTICK_PERIOD_MS, &task) == pdPASS;
+			result = xTimerChangePeriodFromISR((TimerHandle_t)hTimer, time / portTICK_PERIOD_MS, &task) == pdPASS;
 	    portEND_SWITCHING_ISR(task);
 
 	    return result;
@@ -99,9 +99,9 @@ bool osalTimerStart(
 	else {
         TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
 		if (time == 0)
-			return xTimerStart(hTimer, blockTicks) == pdPASS;
+			return xTimerStart((TimerHandle_t)hTimer, blockTicks) == pdPASS;
 		else
-			return xTimerChangePeriod(hTimer, time / portTICK_PERIOD_MS, blockTicks) == pdPASS;
+			return xTimerChangePeriod((TimerHandle_t)hTimer, time / portTICK_PERIOD_MS, blockTicks) == pdPASS;
 	}
 }
 
@@ -118,7 +118,7 @@ bool osalTimerStop(
 	eosAssert(hTimer != NULL);
 
     TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-	return xTimerStop(hTimer, blockTicks) == pdPASS;
+	return xTimerStop((TimerHandle_t)hTimer, blockTicks) == pdPASS;
 }
 
 
@@ -132,7 +132,7 @@ bool osalTimerIsActive(
 
 	eosAssert(hTimer != NULL);
 
-	return xTimerIsTimerActive(hTimer) == pdTRUE;
+	return xTimerIsTimerActive((TimerHandle_t)hTimer) == pdTRUE;
 }
 
 
@@ -146,5 +146,5 @@ void* osalTimerGetContext(
 
 	eosAssert(hTimer != NULL);
 
-	return pvTimerGetTimerID(hTimer);
+	return pvTimerGetTimerID((TimerHandle_t)hTimer);
 }

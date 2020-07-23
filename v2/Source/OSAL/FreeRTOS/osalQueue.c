@@ -16,7 +16,7 @@ HQueue osalQueueCreate(
 
 	eosAssert(info != NULL);
 
-	HQueue hQueue = xQueueCreate(info->maxElements, info->elementSize);
+	HQueue hQueue = (HQueue) xQueueCreate(info->maxElements, info->elementSize);
 	eosAssert(hQueue != NULL);
 
     return hQueue;
@@ -32,7 +32,7 @@ void osalQueueDestroy(
 
 	eosAssert(hQueue != NULL);
 
-	vQueueDelete(hQueue);
+	vQueueDelete((QueueHandle_t)hQueue);
 }
 
 
@@ -45,7 +45,7 @@ void osalQueueClear(
 
 	eosAssert(hQueue != NULL);
 
-	xQueueReset(hQueue);
+	xQueueReset((QueueHandle_t)hQueue);
 }
 
 
@@ -65,7 +65,7 @@ bool osalQueuePut(
 	eosAssert(element != NULL);
 
     TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-    return xQueueSendToBack(hQueue, element,  blockTicks) == pdPASS;
+    return xQueueSendToBack((QueueHandle_t)hQueue, element,  blockTicks) == pdPASS;
 }
 
 
@@ -84,7 +84,7 @@ bool osalQueuePutISR(
 	eosAssert(element != NULL);
 
     BaseType_t priority = pdFALSE;
-    return xQueueSendFromISR(hQueue, element, &priority) == pdPASS;
+    return xQueueSendFromISR((QueueHandle_t)hQueue, element, &priority) == pdPASS;
 }
 
 
@@ -104,7 +104,7 @@ bool osalQueueGet(
 	eosAssert(element != NULL);
 
     TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-    return xQueueReceive(hQueue, element, blockTicks) == pdPASS;
+    return xQueueReceive((QueueHandle_t)hQueue, element, blockTicks) == pdPASS;
 }
 
 
@@ -123,5 +123,5 @@ bool osalQueueGetISR(
 	eosAssert(element != NULL);
 
     BaseType_t priority = pdFALSE;
-    return xQueueReceiveFromISR(hQueue, element, &priority) == pdPASS;
+    return xQueueReceiveFromISR((QueueHandle_t)hQueue, element, &priority) == pdPASS;
 }
