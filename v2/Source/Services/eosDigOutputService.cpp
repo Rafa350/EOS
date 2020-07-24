@@ -9,6 +9,14 @@
 
 using namespace eos;
 
+#ifndef DigOutputService_TimerInterruptPriority
+    #define DigOutputService_TimerInterruptPriority HAL_INT_PRIORITY_LEVEL2;
+#endif
+
+#ifndef DigOutputService_TimerInterruptSubPriority
+    #define DigOutputService_TimerInterruptSubPriority HAL_INT_SUBPRIORITY_LEVEL0;
+#endif
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.

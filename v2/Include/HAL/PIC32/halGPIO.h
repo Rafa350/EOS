@@ -197,9 +197,9 @@ typedef struct {                  // Parametres d'inicialitzacio d'un port
 #define halGPIOWritePin(port, pin, data) \
     if (1) { \
         if (data) \
-            GetPortRegisterPtr(port)->LATxSET = 1u << (pin) \
+            GetPortRegisterPtr(port)->LATxSET = 1u << (pin); \
         else \
-            GetPortRegisterPtr(port)->LATxCLR = 1u << (pin) \
+            GetPortRegisterPtr(port)->LATxCLR = 1u << (pin); \
     }
 
 // Lectura i escriptura del port

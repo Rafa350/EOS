@@ -11,6 +11,15 @@
 using namespace eos;
 
 
+#ifndef DigInputService_TimerInterruptPriority
+    #define DigInputService_TimerInterruptPriority HAL_INT_PRIORITY_LEVEL2;
+#endif
+
+#ifndef DigInputService_TimerInterruptSubPriority
+    #define DigInputService_TimerInterruptSubPriority HAL_INT_SUBPRIORITY_LEVEL0;
+#endif
+
+
 #define PATTERN_MASK     0x0FFF
 #define PATTERN_POSEDGE  0x07FF
 #define PATTERN_NEGEDGE  0x0800
@@ -140,8 +149,8 @@ void DigInputService::onInitialize() {
 #else
     //#error CPU no soportada
 #endif   
-	tmrInfo.irqPriority = DigOutputService_TimerInterruptPriority;
-	tmrInfo.irqSubPriority = DigOutputService_TimerInterruptSubPriority;
+	tmrInfo.irqPriority = DigInputService_TimerInterruptPriority;
+	tmrInfo.irqSubPriority = DigInputService_TimerInterruptSubPriority;
 	tmrInfo.isrFunction = isrTimerFunction;
 	tmrInfo.isrParams = this;    
 	halTMRInitialize(&tmrInfo);
