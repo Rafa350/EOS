@@ -9,7 +9,7 @@
 /// \param    info: Informacio d'inicialitzacio.
 ///
 void halLTDCInitialize(
-	const LTDCInitializeInfo *info) {
+	const LTDCInitializeInfo* info) {
 
 	eosAssert(info != NULL);
 
@@ -213,7 +213,7 @@ void halLTDCLayerDisableKeyColor(
 
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
 
-	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
+	LTDC_Layer_TypeDef* layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
     layer->CR &= ~(1 << LTDC_LxCR_COLKEN_Pos);
 }
 

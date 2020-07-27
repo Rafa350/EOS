@@ -17,6 +17,14 @@ namespace eos {
 		r270
 	};
 
+	/// \brief Implementa un numero en notacio fixa.
+	///
+	class Fixed {
+		private:
+		    const int factor = 1024;
+			int value;
+	};
+
 	/// \brief Clase que representa una transformacio 2D
 	//
 	class Transformation {

@@ -24,6 +24,7 @@
 #define COLOR_ARGB8888_SHIFT_B    0u
 #define COLOR_ARGB8888_TYPE       uint32_t
 #define COLOR_ARGB8888_BPP        32
+#define COLOR_ARGB8888_FORMAT     ColorFormat::argb8888
 
 // Format RGB888
 #define COLOR_RGB888_MASK_R       0x00FF0000u
@@ -34,6 +35,7 @@
 #define COLOR_RGB888_SHIFT_B      0u
 #define COLOR_RGB888_TYPE         uint32_t
 #define COLOR_RGB888_BPP          24
+#define COLOR_RGB888_FORMAT       ColorFormat::rgb888
 
 // Format RGB565
 #define COLOR_RGB565_MASK_R       0x0000F800u
@@ -44,12 +46,14 @@
 #define COLOR_RGB565_SHIFT_B      0u
 #define COLOR_RGB565_TYPE         uint16_t
 #define COLOR_RGB565_BPP          16
+#define COLOR_RGB565_FOPRMAT      ColorFormat::rgb565
 
 // Format L8
 #define COLOR_LUMINANCE_MASK      0x000000FFu
 #define COLOR_LUMINANCE_SHIFT     0u
 #define COLOR_L8_TYPE             uint8_t
 #define COLOR_L8_BPP              8
+#define COLOR_L8_FORMAT           ColorFormat::l8
 
 // Format nadiu utilitzat internament en la clase Color
 #if defined(EOS_COLOR_ARGB8888)
@@ -63,6 +67,7 @@
 #define COLOR_SHIFT_B             COLOR_ARGB8888_SHIFT_B
 #define COLOR_TYPE                COLOR_ARGB8888_TYPE
 #define COLOR_BPP                 COLOR_ARGB8888_BPP
+#define COLOR_FORMAT              COLOR_ARGB8888_FORMAT
 #endif
 
 
@@ -75,7 +80,8 @@ namespace eos {
 	enum class ColorFormat: uint8_t {
 		argb8888,  // ARGB 8 bit channel
 		rgb888,    // RGB 8 bit channel
-		rgb565     // RGB 5 bits Red & Blue channels, 6 bit Green channel
+		rgb565,    // RGB 5 bits Red & Blue channels, 6 bit Green channel
+		l8         // Luminancia
 	};
 
 	/// \brief Clase que representa un color.
@@ -86,7 +92,7 @@ namespace eos {
 
         public :
             inline Color(): c(0) {}
-            inline Color(const Color &color): c(color.c) {}
+            inline Color(const Color& color): c(color.c) {}
             inline Color(color_t c): c(c) {}
 
             inline Color(uint8_t r, uint8_t g, uint8_t b): c(COLOR_MASK_A | (r << COLOR_SHIFT_R) | (g << COLOR_SHIFT_G) | (b << COLOR_SHIFT_B)) {}

@@ -69,7 +69,7 @@ void Graphics::drawLine(
 
             driver->setPixel(x1, y1, color);
 
-            // Es mes gran el depla�ament X que el Y
+            // Es mes gran el desplaçament X que el Y
             //
             if (deltaX > deltaY) {
                 p = deltaY + deltaY - deltaX;
@@ -87,7 +87,7 @@ void Graphics::drawLine(
                 }
             }
 
-            // Es mes gran el depla�ament Y que el X
+            // Es mes gran el deslaçament Y que el X
             //
             else if (deltaX < deltaY) {
                 p = deltaX + deltaX - deltaY;

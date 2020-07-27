@@ -15,7 +15,7 @@ namespace eos {
             /// \brief Implementa una cua circular de tamany fix.
             /// \remarks La cua enmagatzema copies del element.
             ///
-            template <typename Element, unsigned size>
+            template <typename Element, const unsigned size>
             class CircularQueue {
                 
                 private:

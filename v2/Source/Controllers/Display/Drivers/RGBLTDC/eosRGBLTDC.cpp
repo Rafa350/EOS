@@ -512,14 +512,16 @@ void RGBDirectDriver::rotate(
 	int &x,
 	int &y) {
 
-	int xx = x;
-	int yy = y;
+	int xx;
+	int yy;
 
 	// Realitza la rotacio. D'aquesta manera es mes rapida que
 	// fer dues multiplicacione fent servir la formula.
 	//
 	switch (orientation) {
 		case DisplayOrientation::normal:
+            xx = x;
+            yy = y;
 			break;
 
 		case DisplayOrientation::rotate90:
@@ -557,16 +559,20 @@ void RGBDirectDriver::rotate(
 	int &x2,
 	int &y2) {
 
-	int xx1 = x1;
-	int yy1 = y1;
-	int xx2 = x2;
-	int yy2 = y2;
+	int xx1;
+	int yy1;
+	int xx2;
+	int yy2;
 
 	// Realitza la rotacio. D'aquesta manera es mes rapida que
 	// fer dues multiplicacione fent servir la formula.
 	//
 	switch (orientation) {
 		case DisplayOrientation::normal:
+            xx1 = x1;
+            yy1 = y1;
+            xx2 = x2;
+            yy2 = y2;
 			break;
 
 		case DisplayOrientation::rotate90:
@@ -601,7 +607,7 @@ void RGBDirectDriver::rotate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Aigna un color a un pixel.
+/// \brief Asigna un color a un pixel.
 /// \param x: Coordinada X del pixel.
 /// \param y: Coordinada Y del pixel.
 /// \param color: Color en format de pixel fisic;

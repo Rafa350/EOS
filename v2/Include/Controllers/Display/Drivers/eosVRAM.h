@@ -6,37 +6,33 @@
 #include "Controllers/Display/eosDisplay.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
-#include <stdint.h>
-
 
 namespace eos {
     
-    class VRAM_Driver: public IDisplayDriver {
+    class VRAMDriver: public IDisplayDriver {
         private:
             ColorBuffer canvas;
-            int16_t screenWidth;
-            int16_t screenHeight;
+            int screenWidth;
+            int screenHeight;
             
         public:
-            VRAM_Driver(int16_t screenWidth, int16_t screenHeight);
-            ~VRAM_Driver();
-            void initialize();
-            void shutdown();
+            VRAMDriver(int screenWidth, int screenHeight);
+            ~VRAMDriver();
             void setOrientation(DisplayOrientation orientation);
-            int16_t getWidth() const { return screenWidth; }
-            int16_t getHeight() const { return screenHeight; }
+            int getWidth() const { return screenWidth; }
+            int getHeight() const { return screenHeight; }
             void clear(Color color);
-            void setPixel(int16_t x, int16_t y, Color color);
-            void setHPixels(int16_t x, int16_t y, int16_t size, Color color);
-            void setVPixels(int16_t x, int16_t y, int16_t size, Color color);
-            void setPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color color);
-            void writePixels(int16_t x, int16_t y, int16_t width, int16_t height, const Color *colors);
-            void readPixels(int16_t x, int16_t y, int16_t width, int16_t height, Color *colors);
-            void vScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);
-            void hScroll(int16_t delta, int16_t x, int16_t y, int16_t width, int16_t height);   
+            void setPixel(int x, int y, const Color& color);
+            void setHPixels(int x, int y, int size, Color color);
+            void setVPixels(int x, int y, int size, Color color);
+            void setPixels(int x, int y, int width, int height, Color color);
+            void writePixels(int x, int y, int width, int height, const Color *colors);
+            void readPixels(int x, int y, int width, int height, Color *colors);
+            void vScroll(int delta, int x, int y, int width, int height);
+            void hScroll(int delta, int x, int y, int width, int height);   
             
         private:
-            inline int offsetOf(int16_t x, int16_t y) { return x + (y * screenWidth); }
+            inline int offsetOf(int x, int y) { return x + (y * screenWidth); }
     };
 }
 

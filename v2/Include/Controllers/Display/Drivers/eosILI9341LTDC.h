@@ -4,6 +4,7 @@
 
 #include "eos.h"
 #include "Controllers/Display/eosDisplayDriver.h"
+#include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
 
 
 #if !defined(DISPLAY_COLOR_RGB565) && !defined(DISPLAY_COLOR_RGB888)
@@ -29,6 +30,28 @@ typedef int32_t pixel_t;
 #define LINE_WIDTH                (LINE_SIZE / PIXEL_SIZE)
 #define FRAME_SIZE                (LINE_SIZE * DISPLAY_SCREEN_HEIGHT)
 
+#if defined(DISPLAY_COLOR_RGB888)
+// Format Pixel RGB888
+#define PIXEL_MASK_R              COLOR_RGB888_MASK_R
+#define PIXEL_MASK_G              COLOR_RGB888_MASK_G
+#define PIXEL_MASK_B              COLOR_RGB888_MASK_B
+#define PIXEL_SHIFT_R             COLOR_RGB888_SHIFT_R
+#define PIXEL_SHIFT_G             COLOR_RGB888_SHIFT_G
+#define PIXEL_SHIFT_B             COLOR_RGB888_SHIFT_B
+#define PIXEL_FORMAT              ColorFormat::rgb888
+#define PIXEL_TYPE                uint32_t
+
+#elif defined(DISPLAY_COLOR_RGB565)
+// Format Pixel RGB565
+#define PIXEL_MASK_R              COLOR_RGB565_MASK_R
+#define PIXEL_MASK_G              COLOR_RGB565_MASK_G
+#define PIXEL_MASK_B              COLOR_RGB565_MASK_B
+#define PIXEL_SHIFT_R             COLOR_RGB565_SHIFT_R
+#define PIXEL_SHIFT_G             COLOR_RGB565_SHIFT_G
+#define PIXEL_SHIFT_B             COLOR_RGB565_SHIFT_B
+#define PIXEL_FORMAT              ColorFormat::rgb565
+#define PIXEL_TYPE                uint16_t
+#endif
 
 namespace eos {
     
@@ -37,13 +60,7 @@ namespace eos {
     class ILI9341LTDCDriver: public IDisplayDriver {
         private:
     		static IDisplayDriver *instance;
-    		int screenWidth;
-    		int screenHeight;
-    		int sin;
-    		int cos;
-    		int dx;
-    		int dy;
-            int frameAddr;
+            FrameBuffer* frameBuffer;
 
         public:
             static IDisplayDriver *getInstance();;
@@ -52,8 +69,8 @@ namespace eos {
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() const override { return screenWidth; }
-            int getHeight() const override { return screenHeight; }
+            int getWidth() const override { return frameBuffer->getWidth(); }
+            int getHeight() const override { return frameBuffer->getHeight(); }
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
             void setHPixels(int x, int y, int size, const Color &color) override;
@@ -72,9 +89,6 @@ namespace eos {
 
         private:
             void initializeLTDC();
-            void put(int x, int y, const Color &color);
-            void fill(int x, int y, int width, int height, const Color &color);
-            void copy(int x, int y, int width, int height, const uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch);
             void lcdInitialize();
             void lcdReset();
             void lcdOpen();

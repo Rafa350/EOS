@@ -529,6 +529,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halDMA2D.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D.h</locationURI>
@@ -559,9 +569,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Collections/eosList.h</name>
+			<name>inc/Framework/EOS/System/Collections/eosDynamicArray.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosList.h</locationURI>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/System/Collections/eosDynamicArray.h</location>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosHeapAllocator.h</name>
@@ -604,6 +614,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosGraphics.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosPoint.h</name>
+			<type>1</type>
+			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/System/Graphics/eosPoint.h</location>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosTransformation.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosTransformation.h</locationURI>
@@ -612,6 +627,16 @@
 			<name>src/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DAM2D.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer_RGB565_DAM2D.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32/halDMA2D.c</name>
