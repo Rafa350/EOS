@@ -30,8 +30,8 @@
 
 // Tamany de la pantalla
 //
-#define DISPLAY_IMAGE_WIDTH       480  // Amplada en pixels
-#define DISPLAY_IMAGE_HEIGHT      272  // Alçada en pixels
+#define DISPLAY_SCREEN_WIDTH      480  // Amplada en pixels
+#define DISPLAY_SCREEN_HEIGHT     272  // Alçada en pixels
 
 // Tipus de codificacio de color
 //

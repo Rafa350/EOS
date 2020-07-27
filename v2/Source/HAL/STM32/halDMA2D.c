@@ -14,19 +14,29 @@ void halDMA2DInitialize() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Desactiva el modul.
+///
+void halDMA2DShutdown() {
+
+    RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA2DEN;
+}
+
+
+
+/// ----------------------------------------------------------------------
 /// \brief Ompla una regio amb un color solid.
 /// \param dstAddr: Adressa del primer pixel de la regio.
 /// \param width: Amplada de la regio.
 /// \param height: Alçada de la regio.
 /// \param dstPitch: Offset per avançar a la seguent linia de la regio.
 /// \param options: Opcions
-/// \param color: Color per omplir.
+/// \param color: Color per omplir. Nomes accepta el format de desti.
 ///
 void halDMA2DStartFill(
-	int dstAddr,
-	int width,
-	int height,
-	int dstPitch,
+	uint32_t dstAddr,
+	uint32_t width,
+	uint32_t height,
+	uint32_t dstPitch,
 	DMA2DOptions options,
 	uint32_t color) {
 
@@ -64,7 +74,7 @@ void halDMA2DStartFill(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Copia un mapa de bits a una regio.
+/// \brief Copia un mapa de bits a una regio
 /// \param dstAddr: Adresa del primer pixel de la regio.
 /// \param width: Amplada de la regio.
 /// \param height: Alçada de la regio.
@@ -74,13 +84,13 @@ void halDMA2DStartFill(
 /// \param srcPitch: Offset per avançar a la seguent linia del mapa de bits.
 ///
 void halDMA2DStartCopy(
-	int dstAddr,
-	int width,
-	int height,
-	int dstPitch,
+	uint32_t dstAddr,
+	uint32_t width,
+	uint32_t height,
+	uint32_t dstPitch,
 	DMA2DOptions options,
-	int srcAddr,
-	int srcPitch) {
+	uint32_t srcAddr,
+	uint32_t srcPitch) {
 
 	// Selecciona el tipus de transferencia com a M2M/PFC
 	//

@@ -27,7 +27,7 @@ namespace eos {
         protected:
             virtual void put(int x, int y, const Color& color) = 0;
             virtual void fill(int x, int y, int width, int height, const Color& color) = 0;
-            virtual void copy(int x, int y, int width, int height, const uint8_t* pixels, int dx, int dy, int pitch) = 0;
+            virtual void copy(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch) = 0;
 
 		public:
 			FrameBuffer(int screenWidth, int screenHeight, DisplayOrientation orientation);
@@ -43,8 +43,8 @@ namespace eos {
             inline void setHPixels(int x, int y, int size, const Color &color) { setPixels(x, y, size, 1, color); }
             inline void setVPixels(int x, int y, int size, const Color &color) { setPixels(x, y, 1, size, color); }
             void setPixels(int x, int y, int width, int height, const Color &color);
-            /*void writePixels(int x, int y, int width, int height, const uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch);
-            void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch);
+            void writePixels(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch);
+            /*void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch);
             void vScroll(int delta, int x, int y, int width, int height);
             void hScroll(int delta, int x, int y, int width, int height);*/
 	};

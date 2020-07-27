@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 #include "System/Graphics/eosColor.h"
+#include "Controllers/Display/eosFrameBuffer.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
 
@@ -47,9 +48,8 @@ namespace eos {
 
 	class RGBDirectDriver: public IDisplayDriver {
     	private:
-    		int screenWidth;
-    		int screenHeight;
-    		DisplayOrientation orientation;
+    		FrameBuffer *frontFrameBuffer;
+    		FrameBuffer *backFrameBuffer;
     		int frontFrameAddr;
     		int backFrameAddr;
 
@@ -62,8 +62,8 @@ namespace eos {
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
 
-            int getWidth() const override { return screenWidth; }
-            int getHeight() const override { return screenHeight; }
+            inline int getWidth() const override { return frontFrameBuffer->getWidth(); }
+            inline int getHeight() const override { return frontFrameBuffer->getHeight(); }
 
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
@@ -80,11 +80,6 @@ namespace eos {
         private:
             void initializeGPIO();
             void initializeLTDC();
-            void rotate(int &x, int &y);
-            void rotate(int &x1, int &y1, int &x2, int &y2);
-            void put(int x, int y, const Color &color);
-            void fill(int x, int y, int width, int height, const Color &color);
-            void copy(int x, int y, int width, int height, const uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch);
     };
 }
 

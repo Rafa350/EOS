@@ -1,12 +1,11 @@
 #include "eos.h"
 #include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
 #include "HAL/STM32/halDMA2D.h"
+#include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosColorMath.h"
 
 
 using namespace eos;
-
-
-static uint16_t combinePixel(uint16_t b, uint16_t f, uint8_t o);
 
 
 /// ----------------------------------------------------------------------
@@ -49,7 +48,7 @@ void RGB565_DMA2D_FrameBuffer::put(
 	if (opacity != 0) {
 		uint16_t c = color.toRGB565();
 		uint16_t* p = (uint16_t*)(buffer + ((y * lineWidth) + x) * sizeof(uint16_t));
-	    *p = opacity == 0xFF ? c : combinePixel(*p, c, opacity);
+	    *p = opacity == 0xFF ? c : ColorMath::RGB565_combineColor(*p, c, opacity);
 	}
 }
 
@@ -73,7 +72,7 @@ void RGB565_DMA2D_FrameBuffer::fill(
 	uint8_t opacity = color.getOpacity();
 	if (opacity != 0) {
 
-		int addr = (int)buffer + ((y * lineWidth) + x) * sizeof(uint16_t);
+		uint32_t addr = (int)buffer + ((y * lineWidth) + x) * sizeof(uint16_t);
 
 		halDMA2DStartFill(
 			addr,
@@ -100,7 +99,7 @@ void RGB565_DMA2D_FrameBuffer::fill(
 /// \param y: Coordinada Y de la posicio.
 /// \param width: Amplada.
 /// \param height: Alçada.
-/// \param pixels: Llista de pixels.
+/// \param colors: Llista de pixels.
 /// \param dx: Offset X dins del bitmap.
 /// \param dy: offset Y dins del vitmap.
 /// \param pitch: Offset a la seguent linia del bitmap. 0 si son consecutives.
@@ -110,48 +109,33 @@ void RGB565_DMA2D_FrameBuffer::copy(
 	int y,
 	int width,
 	int height,
-	const uint8_t* pixels,
+	const Color* colors,
 	int dx,
 	int dy,
 	int pitch) {
 
-	int addr = (int)buffer + ((y * lineWidth) + x) * sizeof(uint16_t);
+	uint32_t addr = (int)buffer + ((y * lineWidth) + x) * sizeof(uint16_t);
+
+#if defined(EOS_COLOR_ARGB8888)
+	uint32_t colorAddr = ((uint32_t) colors) + (((dy * height) + dx) * sizeof(uint32_t));
+	DMA2DOptions options = HAL_DMA2D_DFMT_RGB565 | HAL_DMA2D_SFMT_ARGB8888;
+
+#elif defined(EOS_COLOR_RGB565)
+	uint32_t colorAddr = ((uint32_t) colors) + (((dy * height) + dx) * sizeof(uint16_t));
+	DMA2DOptions options = HAL_DMA2D_DFMT_RGB565 | HAL_DMA2D_SFMT_RGB565;
+
+#else
+#error No se especifico el formato de color del sistema
+#endif
 
 	halDMA2DStartCopy(
 		addr,
 		width,
 		height,
 		lineWidth - width,
-		HAL_DMA2D_DFMT_RGB565,
-		((uint32_t) pixels) + (((dy * height) + dx) * sizeof(uint16_t)),
+		options,
+		colorAddr,
 	    pitch);
 
 	halDMA2DWaitForFinish();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Compbina dos pixels.
-/// \param b: Pixel del fons.
-/// \param f: Pixel del primer pla.
-/// \param o: Opacitat.
-/// \return El valor del pixel combinat.
-///
-static uint16_t combinePixel(
-	uint16_t b,
-	uint16_t f,
-	uint8_t o) {
-
-	uint8_t br = (b & COLOR_RGB565_MASK_R) >> COLOR_RGB565_SHIFT_R;
-	uint8_t bg = (b & COLOR_RGB565_MASK_G) >> COLOR_RGB565_SHIFT_G;
-	uint8_t bb = (b & COLOR_RGB565_MASK_B) >> COLOR_RGB565_SHIFT_B;
-
-	uint8_t fr = (f & COLOR_RGB565_MASK_R) >> COLOR_RGB565_SHIFT_R;
-	uint8_t fg = (f & COLOR_RGB565_MASK_G) >> COLOR_RGB565_SHIFT_G;
-	uint8_t fb = (f & COLOR_RGB565_MASK_B) >> COLOR_RGB565_SHIFT_B;
-
-	return (uint16_t)
-		((((fr * o) + (br * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_R) |
-		((((fg * o) + (bg * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_G) |
-		((((fb * o) + (bb * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_B);
 }

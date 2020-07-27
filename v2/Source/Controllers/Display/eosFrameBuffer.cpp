@@ -51,8 +51,8 @@ void FrameBuffer::setOrientation(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Borra la imatge.
-/// \param color: Color de borrat.
+/// \brief    Borra la imatge.
+/// \param    color: Color de borrat.
 ///
 void FrameBuffer::clear(
 	const Color &color) {
@@ -62,10 +62,10 @@ void FrameBuffer::clear(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un pixel.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param color: Color del pixel.
+/// \brief    Dibuixa un pixel.
+/// \param    x: Coordinada X.
+/// \param    y: Coordinada Y.
+/// \param    color: Color del pixel.
 ///
 void FrameBuffer::setPixel(
 	int x,
@@ -80,12 +80,12 @@ void FrameBuffer::setPixel(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una regio rectangular de pixels.
-/// \param x: Posicio X.
-/// \param y: Posicio Y.
-/// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
-/// \param color: Color dels pixels.
+/// \brief    Dibuixa una regio rectangular de pixels.
+/// \param    x: Posicio X.
+/// \param    y: Posicio Y.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    color: Color dels pixels.
 ///
 void FrameBuffer::setPixels(
 	int x,
@@ -119,6 +119,33 @@ void FrameBuffer::setPixels(
 		rotate(x1, y1, x2, y2);
 		fill(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
 	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Escriu en una regio rectangular.
+/// \param    x: Posicio X.
+/// \param    y: Posicio Y.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    colors: Els colors d'origen a copiar.
+/// \param    dx: Offset X del origen.
+/// \param    dy: Offset Y del origen.
+/// \param    pitch: Pitch del origen.
+///
+void FrameBuffer::writePixels(
+	int x,
+	int y,
+	int width,
+	int height,
+	const Color* colors,
+	int dx,
+	int dy,
+	int pitch) {
+
+	//TODO Girs i retall
+
+	copy(x, y, width, height, colors, dx, dy, pitch);
 }
 
 

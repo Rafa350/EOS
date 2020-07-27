@@ -121,6 +121,8 @@ namespace eos {
             inline bool operator != (const Color &color) { return c != color.c; }
 
             inline operator color_t() const { return c; }
+
+            inline static ColorFormat getColorFormat() { return COLOR_FORMAT; }
     };
 
 
@@ -136,7 +138,6 @@ namespace eos {
             inline const Color* getTable() const { return colorTable; }
             void setColor(uint8_t index, const Color &color);
     };
-    
 }
 
 

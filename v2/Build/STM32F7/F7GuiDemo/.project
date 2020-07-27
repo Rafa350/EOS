@@ -594,6 +594,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer_RGB565.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -739,6 +749,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColorDefinitions.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosColorMath.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColorMath.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosConsole.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosConsole.h</locationURI>
@@ -782,6 +797,16 @@
 			<name>src/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DAM2D.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer_RGB565_DAM2D.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/TouchPad/Drivers</name>
@@ -962,6 +987,11 @@
 			<name>src/Framework/EOS/System/Graphics/eosColor.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosColor.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosColorMath.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosColorMath.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/eosConsole.cpp</name>

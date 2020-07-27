@@ -17,7 +17,7 @@ namespace eos {
 		protected:
 			void put(int x, int y, const Color& color) override;
             void fill(int x, int y, int width, int height, const Color& color) override;
-            void copy(int x, int y, int width, int height, const uint8_t* pixels, int dx, int dy, int pitch) override;
+            void copy(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch) override;
 
 		public:
 			RGB565_DMA2D_FrameBuffer(int screenWidth, int screenHeight, DisplayOrientation orientation, uint8_t* buffer, int lineBytes);

@@ -31,6 +31,7 @@ extern "C" {
 #define HAL_DMA2D_SFMT_RGB565     (2u << HAL_DMA2D_SFMT_pos)
 #define HAL_DMA2D_SFMT_A8         (3u << HAL_DMA2D_DFMT_pos)
 #define HAL_DMA2D_SFMT_L8         (4u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_SFMT_NOCHANGE   (7u << HAL_DMA2D_DFMT_pos)
 
 // Us de les interrupcions
 #define HAL_DMA2D_INT_pos         6u
@@ -44,11 +45,12 @@ typedef uint32_t DMA2DOptions;
 
 
 void halDMA2DInitialize();
+void halDMA2DShutdown();
 
 void halDMA2DConfigureCLUT();
 
-void halDMA2DStartFill(int dstAddr, int width, int height, int dstPitch, DMA2DOptions options, uint32_t color);
-void halDMA2DStartCopy(int dstAddr, int width, int height, int dstPitch, DMA2DOptions options, int srcAddr, int srcPitch);
+void halDMA2DStartFill(uint32_t dstAddr, uint32_t width, uint32_t height, uint32_t dstPitch, DMA2DOptions options, uint32_t color);
+void halDMA2DStartCopy(uint32_t dstAddr, uint32_t width, uint32_t height, uint32_t dstPitch, DMA2DOptions options, uint32_t srcAddr, uint32_t srcPitch);
 bool halDMA2DWaitForFinish();
 
 #ifdef	__cplusplus
