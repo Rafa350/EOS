@@ -44,7 +44,7 @@ typedef struct  __attribute__((packed , aligned(4))) {
 #define IsTypeA(timer)                  (timer == HAL_TMR_TIMER_1)
 #define GetTimerARegisterPtr(timer)     ((TMRTypeARegisters*)(0xBF800600 + ((timer) * 0x0200)))
 #define GetTimerBRegisterPtr(timer)     ((TMRTypeBRegisters*)(0xBF800600 + ((timer) * 0x0200)))
-#define GetTimerBPairRegisterPtr(timer) ((TMRTypeBRegisters*)(0xBF800600 + ((timer) * 0x0200) + 0x0200))
+#define GetTimerBRegisterHiPtr(timer)   ((TMRTypeBRegisters*)(0xBF800600 + ((timer) * 0x0200) + 0x0200))
 
 
 typedef uint8_t TMRTimer;

@@ -52,7 +52,7 @@
           </logicalFolder>
           <logicalFolder name="f2" displayName="System" projectFiles="true">
             <logicalFolder name="f3" displayName="Collections" projectFiles="true">
-              <itemPath>../../../Include/System/Collections/eosArrayList.h</itemPath>
+              <itemPath>../../../Include/System/Collections/eosDynamicArray.h</itemPath>
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Include/System/Core/eosPoolAllocator.h</itemPath>
@@ -120,7 +120,7 @@
           </logicalFolder>
           <logicalFolder name="f1" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
-              <itemPath>../../../Source/System/Collections/eosList.cpp</itemPath>
+              <itemPath>../../../Source/System/Collections/eosContainer.cpp</itemPath>
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Source/System/Core/eosPoolAllocator.cpp</itemPath>
@@ -165,20 +165,22 @@
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
-    <conf name="default" type="2">
+    <conf name="PIC32_USB_STARTER_KIT_I" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <targetDevice>PIC32MX460F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>SKDEPIC32PlatformTool</platformTool>
+        <platformTool>noID</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.40</languageToolchainVersion>
+        <languageToolchainVersion>2.41</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.2.228"/>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.3.231"/>
       </packs>
+      <ScriptingSettings>
+      </ScriptingSettings>
       <compileType>
         <linkerTool>
           <linkerLibItems>
@@ -335,6 +337,7 @@
         <property key="mdtcm" value=""/>
         <property key="mitcm" value=""/>
         <property key="mstacktcm" value="false"/>
+        <property key="omit-pack-options" value="1"/>
         <property key="relaxed-math" value="false"/>
         <property key="save-temps" value="false"/>
         <property key="wpo-lto" value="false"/>

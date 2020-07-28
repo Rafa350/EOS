@@ -75,7 +75,9 @@ void halTMRInitialize(
         TMRTypeBRegisters* registers = GetTimerBRegisterPtr(info->timer);
 
         registers->TxCON.ON = 0;    // Desactiva el timer
+#if defined(__32MX460F512L__)        
         registers->TxCON.TCS = 0;   // Clock source interna.
+#endif        
         registers->TxCON.TCKPS = (info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos;    
 
         if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_16) {
@@ -84,7 +86,7 @@ void halTMRInitialize(
             registers->PRx = info->period & 0xFFFF;
         } 
         else if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32) {
-            TMRTypeBRegisters* registersHi = GetTimerBPairRegisterPtr(info->timer);
+            TMRTypeBRegisters* registersHi = GetTimerBRegisterHiPtr(info->timer);
             registers->TxCON.T32 = 1;
             registers->TMRx = 0;
             registersHi->TMRx = 0;

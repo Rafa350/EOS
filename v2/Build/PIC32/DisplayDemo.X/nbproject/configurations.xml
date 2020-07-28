@@ -6,15 +6,15 @@
                    projectFiles="true">
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-          <itemPath>../../../Demo/DisplayDemo/Include/PIC32/board_Custom.h</itemPath>
           <itemPath>../../../Demo/DisplayDemo/Include/PIC32/FreeRTOSConfig.h</itemPath>
+          <itemPath>../../../Demo/DisplayDemo/Include/PIC32/eosBoard_Custom.h</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/DisplayDemo/Include/eosConfig.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
           <logicalFolder name="f6" displayName="Board" projectFiles="true">
-            <itemPath>../../../Include/Board/board.h</itemPath>
+            <itemPath>../../../Include/Board/eosBoard.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="Controllers" projectFiles="true">
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
@@ -50,7 +50,7 @@
           </logicalFolder>
           <logicalFolder name="f1" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
-              <itemPath>../../../Include/System/Collections/eosArrayList.h</itemPath>
+              <itemPath>../../../Include/System/Collections/eosDynamicArray.h</itemPath>
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Include/System/Core/eosSemaphore.h</itemPath>
@@ -204,7 +204,7 @@
         <targetDevice>PIC32MX440F256H</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool></platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>2.41</languageToolchainVersion>
         <platform>3</platform>

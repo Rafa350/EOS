@@ -26,7 +26,7 @@
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>default</name>
+                    <name>PIC32_USB_STARTER_KIT_I</name>
                     <type>2</type>
                 </confElem>
             </confList>

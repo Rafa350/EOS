@@ -5,6 +5,7 @@
         <group>
             <file>file:/C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Demo/DigIOServiceDemo/Include/eosConfig.h</file>
             <file>file:/C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/Services/eosDigInputService.cpp</file>
+            <file>file:/C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/HAL/PIC32/halTMR.c</file>
         </group>
     </open-files>
 </project-private>

@@ -35,7 +35,7 @@ void GfxCommandBuilder::clear() {
 ///
 void GfxCommandBuilder::cmdClear() {
     
-    dspClearMessage msg;    
+    DspClearMessage msg;    
     
     if (bufferPos + sizeof(msg) < bufferSize) {
         msg.cmd = DSP_CMD_CLEAR;
@@ -58,7 +58,7 @@ void GfxCommandBuilder::cmdDrawLine(
     int x2, 
     int y2) {
     
-    dspDrawShapeMessage msg;    
+    DspDrawShapeMessage msg;    
     
     if (bufferPos + sizeof(msg) < bufferSize) {
         msg.cmd = DSP_CMD_DRAWSHAPE;
@@ -90,7 +90,7 @@ void GfxCommandBuilder::cmdDrawRectangle(
     int x2,
     int y2) {
 
-    dspDrawShapeMessage msg;    
+    DspDrawShapeMessage msg;    
     
     if (bufferPos + sizeof(msg) < bufferSize) {
         msg.cmd = DSP_CMD_DRAWSHAPE;
@@ -122,7 +122,7 @@ void GfxCommandBuilder::cmdDrawEllipse(
     int x2,
     int y2) {
 
-    dspDrawShapeMessage msg;    
+    DspDrawShapeMessage msg;    
     
     if (bufferPos + sizeof(msg) < bufferSize) {
         msg.cmd = DSP_CMD_DRAWSHAPE;
@@ -152,7 +152,7 @@ void GfxCommandBuilder::cmdDrawText(
     int y, 
     const String &text) {
     
-    dspDrawTextMessage msg;    
+    DspDrawTextMessage msg;    
 
     int length = text.getLength();
     int size = length + sizeof(msg);
@@ -184,7 +184,7 @@ void GfxCommandBuilder::cmdFillRectangle(
     int x2,
     int y2) {
 
-    dspDrawShapeMessage msg;    
+    DspDrawShapeMessage msg;    
     
     if (bufferPos + sizeof(msg) < bufferSize) {
         msg.cmd = DSP_CMD_DRAWSHAPE;
@@ -216,7 +216,7 @@ void GfxCommandBuilder::cmdFillEllipse(
     int x2,
     int y2) {
 
-    dspDrawShapeMessage msg;    
+    DspDrawShapeMessage msg;    
     
     if (bufferPos + sizeof(msg) < bufferSize) {
         msg.cmd = DSP_CMD_DRAWSHAPE;
@@ -244,7 +244,7 @@ void GfxCommandBuilder::cmdMoveTo(
     int x, 
     int y) {
     
-    dspMoveToMessage msg;
+    DspMoveToMessage msg;
     
     if (bufferPos + sizeof(msg) < bufferSize) {
         msg.cmd = DSP_CMD_MOVETO;
@@ -261,7 +261,7 @@ void GfxCommandBuilder::cmdMoveTo(
 ///
 void GfxCommandBuilder::cmdRefresh() {
     
-    dspRefreshMessage msg;
+    DspRefreshMessage msg;
     
     if (bufferPos + sizeof(msg) < bufferSize) {
         msg.cmd = DSP_CMD_REFRESH;
@@ -278,7 +278,7 @@ void GfxCommandBuilder::cmdSetColor(
     uint8_t fgColor, 
     uint8_t bkColor) {
     
-    dspSetColorMessage msg;
+    DspSetColorMessage msg;
     
     if (bufferPos + sizeof(msg) < bufferSize) {
         msg.cmd = DSP_CMD_SETCOLOR;
@@ -297,7 +297,7 @@ void GfxCommandBuilder::cmdSetColor(
 void GfxCommandBuilder::cmdSetFont(
     uint8_t font) {
     
-    dspSetFontMessage msg;
+    DspSetFontMessage msg;
     
     if (bufferPos + sizeof(msg) < bufferSize) {
         msg.cmd = DSP_CMD_SETFONT;

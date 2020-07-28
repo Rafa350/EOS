@@ -4,10 +4,10 @@
 # NOCDDL
 #
 CND_BASEDIR=`pwd`
-# default configuration
-CND_ARTIFACT_DIR_default=dist/default/production
-CND_ARTIFACT_NAME_default=I2CDisplayDemo.X.production.hex
-CND_ARTIFACT_PATH_default=dist/default/production/I2CDisplayDemo.X.production.hex
-CND_PACKAGE_DIR_default=${CND_DISTDIR}/default/package
-CND_PACKAGE_NAME_default=i2cdisplaydemo.x.tar
-CND_PACKAGE_PATH_default=${CND_DISTDIR}/default/package/i2cdisplaydemo.x.tar
+# PIC32_USB_STARTER_KIT_I configuration
+CND_ARTIFACT_DIR_PIC32_USB_STARTER_KIT_I=dist/PIC32_USB_STARTER_KIT_I/production
+CND_ARTIFACT_NAME_PIC32_USB_STARTER_KIT_I=I2CDisplayDemo.X.production.hex
+CND_ARTIFACT_PATH_PIC32_USB_STARTER_KIT_I=dist/PIC32_USB_STARTER_KIT_I/production/I2CDisplayDemo.X.production.hex
+CND_PACKAGE_DIR_PIC32_USB_STARTER_KIT_I=${CND_DISTDIR}/PIC32_USB_STARTER_KIT_I/package
+CND_PACKAGE_NAME_PIC32_USB_STARTER_KIT_I=i2cdisplaydemo.x.tar
+CND_PACKAGE_PATH_PIC32_USB_STARTER_KIT_I=${CND_DISTDIR}/PIC32_USB_STARTER_KIT_I/package/i2cdisplaydemo.x.tar
