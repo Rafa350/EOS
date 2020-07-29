@@ -14,8 +14,6 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>../../../Demo/MonoDisplayDemo/Source</sourceRootElem>
-                <sourceRootElem>../../../Include/Board</sourceRootElem>
-                <sourceRootElem>../../../Include/Controllers/Display</sourceRootElem>
                 <sourceRootElem>../../../Source/Controllers/Display/Drivers/ST7565</sourceRootElem>
                 <sourceRootElem>../../../Demo/MonoDisplayDemo/Include</sourceRootElem>
                 <sourceRootElem>../../../Source/System</sourceRootElem>
@@ -24,8 +22,7 @@
                 <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Source/Services</sourceRootElem>
-                <sourceRootElem>../../../Include/HAL</sourceRootElem>
-                <sourceRootElem>../../../Include/System/Graphics</sourceRootElem>
+                <sourceRootElem>../../../Include</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

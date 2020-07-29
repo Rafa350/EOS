@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Controllers/Display/eosFrameBuffer.h"
+#include "Controllers/Display/eosColorFrameBuffer.h"
 #include "System/eosMath.h"
 
 
@@ -14,7 +14,7 @@ using namespace eos;
 /// \param    imageBuffer: Buffer d'imatge.
 /// \param    colorFormat: Format de color del buffer.
 ///
-FrameBuffer::FrameBuffer(
+ColorFrameBuffer::ColorFrameBuffer(
 	int screenWidth,
 	int screenHeight,
 	DisplayOrientation orientation):
@@ -30,7 +30,7 @@ FrameBuffer::FrameBuffer(
 /// \brief    Canvia l'orientacio de la imatge.
 /// \param    orientation: L'orientacio.
 ///
-void FrameBuffer::setOrientation(
+void ColorFrameBuffer::setOrientation(
 	DisplayOrientation orientation) {
 
 	this->orientation = orientation;
@@ -54,7 +54,7 @@ void FrameBuffer::setOrientation(
 /// \brief    Borra la imatge.
 /// \param    color: Color de borrat.
 ///
-void FrameBuffer::clear(
+void ColorFrameBuffer::clear(
 	const Color &color) {
 
 	fill(0, 0, maxX + 1, maxY + 1, color);
@@ -67,7 +67,7 @@ void FrameBuffer::clear(
 /// \param    y: Coordinada Y.
 /// \param    color: Color del pixel.
 ///
-void FrameBuffer::setPixel(
+void ColorFrameBuffer::setPixel(
 	int x,
 	int y,
 	const Color& color) {
@@ -87,7 +87,7 @@ void FrameBuffer::setPixel(
 /// \param    height: Alçada de la regio.
 /// \param    color: Color dels pixels.
 ///
-void FrameBuffer::setPixels(
+void ColorFrameBuffer::setPixels(
 	int x,
 	int y,
 	int width,
@@ -133,7 +133,7 @@ void FrameBuffer::setPixels(
 /// \param    dy: Offset Y del origen.
 /// \param    pitch: Pitch del origen.
 ///
-void FrameBuffer::writePixels(
+void ColorFrameBuffer::writePixels(
 	int x,
 	int y,
 	int width,
@@ -154,7 +154,7 @@ void FrameBuffer::writePixels(
 /// \param x: Coordinada X del punt.
 /// \param y: Coordinada Y del punt.
 ///
-void FrameBuffer::rotate(
+void ColorFrameBuffer::rotate(
 	int &x,
 	int &y) {
 
@@ -200,7 +200,7 @@ void FrameBuffer::rotate(
 /// \param y2: Coordinada Y inferior.
 /// \remarks Les coordinades son retornades en forma normalitzada.
 ///
-void FrameBuffer::rotate(
+void ColorFrameBuffer::rotate(
 	int &x1,
 	int &y1,
 	int &x2,

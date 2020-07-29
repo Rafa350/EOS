@@ -3,12 +3,12 @@
 
 
 #include "eos.h"
-#include "Controllers/Display/eosFrameBuffer.h"
+#include "Controllers/Display/eosColorFrameBuffer.h"
 
 
 namespace eos {
 
-	class RGB565_FrameBuffer: public FrameBufferBase {
+	class RGB565_FrameBuffer: public ColorFrameBufferBase {
 		private:
 			uint8_t* buffer;
 			int lineBytes;

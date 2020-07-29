@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "System/Core/eosString.h"
+#include "System/eosString.h"
 #include "System/Core/eosTask.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosFont.h"
@@ -7,8 +7,8 @@
 #if defined(DISPLAY_DRV_ST7565)
 #include "Controllers/Display/Drivers/eosST7565.h"
 #else
-#error No se especifico DISPLAY_DRV_XXXX
-#endif
+    #error "No se especifico DISPLAY_DRV_XXXX"
+#endif 
 #include "HAl/STM32/halRNG.h"
 #include "appDisplayService.h"
 #include "stdio.h"

@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "System/Graphics/eosColor.h"
-#include "Controllers/Display/eosFrameBuffer.h"
+#include "Controllers/Display/eosColorFrameBuffer.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
 
@@ -48,8 +48,8 @@ namespace eos {
 
 	class RGBDirectDriver: public IDisplayDriver {
     	private:
-    		FrameBuffer *frontFrameBuffer;
-    		FrameBuffer *backFrameBuffer;
+    		ColorFrameBuffer *frontFrameBuffer;
+    		ColorFrameBuffer *backFrameBuffer;
     		int frontFrameAddr;
     		int backFrameAddr;
 

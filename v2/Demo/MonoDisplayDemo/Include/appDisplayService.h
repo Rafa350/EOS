@@ -20,8 +20,8 @@ namespace app {
 
 	class DisplayService: public eos::AppLoopService {
 	    private:
-			eos::IDisplayDriver *driver;
-	        eos::Graphics *graphics;
+			eos::IDisplayDriver* driver;
+	        eos::Graphics* graphics;
 	        int screenWidth;
 	        int screenHeight;
 	        int orientation;

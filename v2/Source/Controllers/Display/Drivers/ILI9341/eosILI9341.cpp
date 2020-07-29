@@ -624,4 +624,4 @@ void ILI9341Driver::readRegion(
     lcdClose();
 }
 
-#endif // USE_DISPLAY_ILI9341_SPI
+#endif // DISPLAY_DRV_ILI9341

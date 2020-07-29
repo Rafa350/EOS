@@ -23,7 +23,7 @@ RGB565_DMA2D_FrameBuffer::RGB565_DMA2D_FrameBuffer(
 	uint8_t* buffer,
 	int lineBytes):
 
-	FrameBuffer(screenWidth, screenHeight, orientation),
+	ColorFrameBuffer(screenWidth, screenHeight, orientation),
 	buffer(buffer),
 	lineWidth(lineBytes / sizeof(uint16_t)),
 	lineBytes(lineBytes) {

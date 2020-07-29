@@ -9,7 +9,7 @@
 //#define DISPLAY_DOUBLE_BUFFER
 
 
-#include "board/board.h"
+#include "Board/eosBoard.h"
 
 
 #ifdef USE_DISPLAY

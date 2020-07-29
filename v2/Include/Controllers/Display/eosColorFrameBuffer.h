@@ -1,5 +1,5 @@
-#ifndef __eosFrameBuffer__
-#define __eosFrameBuffer__
+#ifndef __eosColorFrameBuffer__
+#define __eosColorFrameBuffer__
 
 
 #include "eos.h"
@@ -11,7 +11,7 @@ namespace eos {
 
 	/// \brief Superficie de dibuix basada en memoria ram
 	///
-	class FrameBuffer {
+	class ColorFrameBuffer {
 
 		private:
 			int screenWidth;
@@ -22,7 +22,7 @@ namespace eos {
             
         private:
             void rotate(int& x, int& y);
-            void rotate(int& x1, int&y1, int &x2, int& y2);
+            void rotate(int& x1, int& y1, int &x2, int& y2);
 
         protected:
             virtual void put(int x, int y, const Color& color) = 0;
@@ -30,8 +30,8 @@ namespace eos {
             virtual void copy(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch) = 0;
 
 		public:
-			FrameBuffer(int screenWidth, int screenHeight, DisplayOrientation orientation);
-			virtual ~FrameBuffer() {}
+			ColorFrameBuffer(int screenWidth, int screenHeight, DisplayOrientation orientation);
+			virtual ~ColorFrameBuffer() = default;
 
             void setOrientation(DisplayOrientation orientation);
 
@@ -39,10 +39,10 @@ namespace eos {
             inline int getHeight() const { return maxY + 1; }
 
             void clear(const Color &color);
-            void setPixel(int x, int y, const Color &color);
-            inline void setHPixels(int x, int y, int size, const Color &color) { setPixels(x, y, size, 1, color); }
-            inline void setVPixels(int x, int y, int size, const Color &color) { setPixels(x, y, 1, size, color); }
-            void setPixels(int x, int y, int width, int height, const Color &color);
+            void setPixel(int x, int y, const Color& color);
+            inline void setHPixels(int x, int y, int size, const Color& color) { setPixels(x, y, size, 1, color); }
+            inline void setVPixels(int x, int y, int size, const Color& color) { setPixels(x, y, 1, size, color); }
+            void setPixels(int x, int y, int width, int height, const Color& color);
             void writePixels(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch);
             /*void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch);
             void vScroll(int delta, int x, int y, int width, int height);
@@ -51,4 +51,4 @@ namespace eos {
 }
 
 
-#endif // __eosFrameBuffer__
+#endif // __eosColorFrameBuffer__
