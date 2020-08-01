@@ -10,20 +10,19 @@
 
 namespace app {
 
-	using namespace eos;
-
-	class LedLoopService;
+	class LedService;
 	class DisplayService;
 
-	class MyApplication: public Application {
+	class MyApplication: public eos::Application {
 		private:
-			LedLoopService *ledService;
-			DisplayService *displayService;
+			LedService* ledService;
+			DisplayService* displayService;
 
 		public :
 			MyApplication();
 	};
 
 }
+
 
 #endif

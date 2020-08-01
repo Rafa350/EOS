@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cdtprojectproperties>
+<section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.IncludePaths">
+<language name="s,S">
+<includepath>${ProjDirPath}\..\..\..\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Demo\GuiDemo\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Demo\GuiDemo\Include\STM32F7</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_CORE\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\system\Inc</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\CMSIS_RTOS</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery</includepath>
+
+</language>
+<language name="C Source File">
+<includepath>${ProjDirPath}\..\..\..\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Demo\GuiDemo\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Demo\GuiDemo\Include\STM32F7</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_CORE\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\system\Inc</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\CMSIS_RTOS</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery</includepath>
+
+</language>
+<language name="C++ Source File">
+<includepath>${ProjDirPath}\..\..\..\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Demo\GuiDemo\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Demo\GuiDemo\Include\STM32F7</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_CORE\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\system\Inc</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\Include</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\CMSIS_RTOS</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1</includepath>
+<includepath>${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery</includepath>
+
+</language>
+<language name="Object File">
+
+</language>
+</section>
+<section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">
+<language name="s,S">
+
+</language>
+<language name="C Source File">
+<macro>
+<name>STM32</name><value/>
+</macro>
+<macro>
+<name>STM32F7</name><value/>
+</macro>
+<macro>
+<name>STM32F746NGHx</name><value/>
+</macro>
+<macro>
+<name>STM32F746G_DISCO</name><value/>
+</macro>
+<macro>
+<name>DEBUG</name><value/>
+</macro>
+<macro>
+<name>STM32F746xx</name><value/>
+</macro>
+<macro>
+<name>USE_HAL_DRIVER</name><value/>
+</macro>
+<macro>
+<name>HARDWARE_STM32F746G_DISCO</name><value/>
+</macro>
+
+</language>
+<language name="C++ Source File">
+<macro>
+<name>STM32</name><value/>
+</macro>
+<macro>
+<name>STM32F7</name><value/>
+</macro>
+<macro>
+<name>STM32F746NGHx</name><value/>
+</macro>
+<macro>
+<name>STM32F746G_DISCO</name><value/>
+</macro>
+<macro>
+<name>DEBUG</name><value/>
+</macro>
+<macro>
+<name>STM32F746xx</name><value/>
+</macro>
+<macro>
+<name>USE_HAL_DRIVER</name><value/>
+</macro>
+<macro>
+<name>HARDWARE_STM32F746G_DISCO</name><value/>
+</macro>
+
+</language>
+<language name="Object File">
+
+</language>
+</section>
+</cdtprojectproperties>

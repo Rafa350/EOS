@@ -5,24 +5,26 @@
 /// EOS includes
 //
 #include "eos.h"
-#include "Services/eosAppLoop.h"
+#include "Services/eosAppLoopService.h"
+
+
+namespace eos {
+
+	class Application;
+	class IDisplayDriver;
+	class Graphics;
+}
 
 
 namespace app {
 
-    using namespace eos;
-
-    class Application;
-	class IDisplayDriver;
-	class Display;
-
-	class DisplayService: public AppLoopService {
+	class DisplayService: public eos::AppLoopService {
 		private:
-			IDisplayDriver *driver;
-			Display *display;
+			eos::IDisplayDriver* driver;
+			eos::Graphics* graphics;
 
 		public:
-			DisplayService(Application *application);
+			DisplayService(eos::Application* application);
 
 		protected:
 			void onSetup();

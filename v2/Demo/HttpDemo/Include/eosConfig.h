@@ -7,7 +7,7 @@
 #define USE_DISPLAY
 
 
-#include "board/board.h"
+#include "Board/eosBoard.h"
 
 
 // Opcions de configuracio pel servei 'DigInput'

@@ -110,9 +110,9 @@ static void ConfigureMPU() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el hardware del sistema.
 ///
-void AppInitialize() {
+void appInitialize() {
 
-	//ConfigureMPU();
+	ConfigureMPU();
 	ConfigureSystemCache();
     halSYSInitialize();
 	ConfigureSystemClock();

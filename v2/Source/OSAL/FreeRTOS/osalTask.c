@@ -20,15 +20,15 @@ HTask osalTaskCreate(
 	//
 	HTask hTask;
     if (xTaskCreate(
-        info->function,
-        info->name == NULL ? "" : info->name,
+        (TaskFunction_t) info->function,
+        (const portCHAR*) info->name == NULL ? "" : info->name,
         info->stackSize,
         info->params,
         tskIDLE_PRIORITY + ((UBaseType_t) (info->options & OSAL_TASK_PRIORITY_mask) >> OSAL_TASK_PRIORITY_pos),
-        (TaskHandle_t*) &hTask) == pdPASS)
-		return hTask;
-    else
-    	return NULL;
+        (TaskHandle_t*) &hTask) != pdPASS)
+		return NULL;
+
+   	return hTask;
 }
 
 
@@ -39,9 +39,7 @@ HTask osalTaskCreate(
 void osalTaskDestroy(
 	HTask hTask) {
 
-	eosAssert(hTask != NULL);
-
-	vTaskDelete((TaskHandle_t)hTask);
+	vTaskDelete((TaskHandle_t) hTask);
 }
 
 

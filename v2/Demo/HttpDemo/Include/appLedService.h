@@ -5,27 +5,28 @@
 // EOS includes
 //
 #include "eos.h"
-#include "Services/eosAppLoop.h"
+#include "Services/eosAppLoopService.h"
 #include "HAL/halGPIO.h"
 
 
-namespace app {
-
-	using namespace eos;
+namespace eos {
 
 	class Application;
+}
 
-	class LedService: public AppLoopService {
+namespace app {
+
+	class LedService: public eos::AppLoopService {
 		private:
 #ifdef EXIST_LEDS_LED1
-			GPIOPinAdapter<LED_LED1_PORT, LED_LED1_PIN> led1;
+			eos::GPIOPinAdapter<LED_LED1_PORT, LED_LED1_PIN> led1;
 #endif
 #ifdef EXIST_LEDS_LED2
-			GPIOPinAdapter<LED_LED2_PORT, LED_LED2_PIN> led2;
+			eos::GPIOPinAdapter<LED_LED2_PORT, LED_LED2_PIN> led2;
 #endif
 
 		public:
-			LedService(Application *application);
+			LedService(eos::Application* application);
 
 		protected:
 			void onSetup();

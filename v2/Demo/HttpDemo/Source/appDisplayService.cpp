@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
-#include "System/Graphics/eosDisplay.h"
+#include "System/Graphics/eosColorDefinitions.h"
+#include "System/Graphics/eosGraphics.h"
 #include "appDisplayService.h"
 
 
@@ -17,7 +18,7 @@ DisplayService::DisplayService(
 
 	eos::AppLoopService(application),
 	driver(nullptr),
-	display(nullptr) {
+	graphics(nullptr) {
 }
 
 
@@ -26,12 +27,11 @@ DisplayService::DisplayService(
 ///
 void DisplayService::onSetup() {
 
-	driver = RGBDirectDriver::getInstance();
+	driver = new RGBDirectDriver();
     driver->initialize();
     driver->displayOn();
 
-    display = new Display(driver);
-    display->clear(COLOR_Blue);
+    graphics = new eos::Graphics(driver);
 }
 
 

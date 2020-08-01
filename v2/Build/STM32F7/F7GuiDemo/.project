@@ -536,7 +536,7 @@
 		<link>
 			<name>src/Framework/STM32/HAL/stm32f7xx_hal_pwr_ex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.15.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pwr_ex.c</locationURI>
+			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.16.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pwr_ex.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/HAL/stm32f7xx_hal_rcc.c</name>
