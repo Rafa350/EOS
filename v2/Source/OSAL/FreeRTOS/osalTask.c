@@ -12,7 +12,7 @@
 /// \return   El handler de la tasca. NULL en cas d'error.
 ///
 HTask osalTaskCreate(
-	const TaskInitializeInfo *info) {
+	const TaskInitializeInfo* info) {
 
     eosAssert(info != NULL);
 
@@ -45,14 +45,13 @@ void osalTaskDestroy(
 
 /// ----------------------------------------------------------------------
 /// \brief    Canvia la prioritat de la tasca.
+/// \param    hTask: El handler de la tasca. NULL si es la tasca actual.
 /// \param    priority: La prioritat.
 ///
 void osalTaskSetPriority(
     HTask hTask, 
     uint8_t priority) {
    
-	eosAssert(hTask != NULL);
-
     vTaskPrioritySet(
         (TaskHandle_t) hTask,
         tskIDLE_PRIORITY + ((UBaseType_t) (priority & OSAL_TASK_PRIORITY_mask) >> OSAL_TASK_PRIORITY_pos));    

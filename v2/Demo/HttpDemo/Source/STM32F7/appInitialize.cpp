@@ -22,7 +22,7 @@ static void ConfigureSystemClock() {
 	oscInit.PLL.PLLState = RCC_PLL_ON;
 	oscInit.PLL.PLLSource = RCC_PLLSOURCE_HSE;
 	oscInit.PLL.PLLM = 25;
-	oscInit.PLL.PLLN = 432;
+	oscInit.PLL.PLLN = 400; // 432???
 	oscInit.PLL.PLLP = RCC_PLLP_DIV2;
 	oscInit.PLL.PLLQ = 9;
 	HAL_RCC_OscConfig(&oscInit);
@@ -82,7 +82,6 @@ static void ConfigureMPU() {
 	MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL1;
 	MPU_InitStruct.SubRegionDisable = 0x00;
 	MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
-
 	HAL_MPU_ConfigRegion(&MPU_InitStruct);
 
 	// Configure the MPU as Device for Ethernet Descriptors in the SRAM2
@@ -98,7 +97,6 @@ static void ConfigureMPU() {
 	MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
 	MPU_InitStruct.SubRegionDisable = 0x00;
 	MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
-
 	HAL_MPU_ConfigRegion(&MPU_InitStruct);
 
 	// Enable the MPU

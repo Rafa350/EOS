@@ -14,9 +14,9 @@ HSemaphore osalSemaphoreCreate(
     unsigned maxCount) {
     
     if (maxCount == 0)
-    	return xSemaphoreCreateBinary();
+    	return (HSemaphore) xSemaphoreCreateBinary();
     else
-        return xSemaphoreCreateCounting(maxCount, 0);
+        return (HSemaphore) xSemaphoreCreateCounting(maxCount, 0);
             
 }
 
@@ -30,7 +30,7 @@ void osalSemaphoreDestroy(
 
 	eosAssert(hSemaphore != NULL);
 
-	vSemaphoreDelete(hSemaphore);
+	vSemaphoreDelete((SemaphoreHandle_t) hSemaphore);
 }
 
 
@@ -47,7 +47,7 @@ bool osalSemaphoreWait(
 	eosAssert(hSemaphore != NULL);
 
 	TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-	return xSemaphoreTake(hSemaphore, blockTicks) == pdTRUE;
+	return xSemaphoreTake((SemaphoreHandle_t) hSemaphore, blockTicks) == pdTRUE;
 }
 
 
@@ -60,7 +60,7 @@ void osalSemaphoreRelease(
     
 	eosAssert(hSemaphore != NULL);
 
-    xSemaphoreGive(hSemaphore);
+    xSemaphoreGive((SemaphoreHandle_t) hSemaphore);
 }
 
 
@@ -74,6 +74,6 @@ void osalSemaphoreReleaseISR(
 	eosAssert(hSemaphore != NULL);
 
 	portBASE_TYPE taskWoken;
-	if (xSemaphoreGiveFromISR(hSemaphore, &taskWoken) == pdTRUE)
+	if (xSemaphoreGiveFromISR((SemaphoreHandle_t) hSemaphore, &taskWoken) == pdTRUE)
 		portEND_SWITCHING_ISR(taskWoken)
 }

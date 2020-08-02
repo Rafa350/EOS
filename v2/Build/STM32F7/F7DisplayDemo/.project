@@ -179,16 +179,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/StartUp/STM32F7/main.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F7/stm32f746g_discovery.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/stm32f746g_discovery.c</locationURI>
-		</link>
-		<link>
-			<name>src/App/STM32F7/stm32f746g_discovery_sdram.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/stm32f746g_discovery_sdram.c</locationURI>
-		</link>
-		<link>
 			<name>src/App/STM32F7/stm32f7xx_hal_timebase_tim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F7/stm32f7xx_hal_timebase_tim.c</locationURI>
@@ -220,6 +210,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/System</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/BSP</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -402,6 +397,11 @@
 			<name>src/Framework/EOS/System/eosString.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/BSP/stm32746g_discovery_sdram.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/heap_4.c</name>
@@ -659,9 +659,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/eosColorFrameBuffer.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColorFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DAM2D.cpp</name>

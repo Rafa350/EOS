@@ -28,7 +28,7 @@ using namespace app;
 #define TEST_OPACITY
 #define SHOW_RESULTS
 
-#if defined(EOS_STM32F7) || defined(EOS_STM32F4)
+#if defined(xEOS_STM32F7) || defined(EOS_STM32F4)
 static uint64_t rnd = 0L;
 
 void srand(uint32_t r) {

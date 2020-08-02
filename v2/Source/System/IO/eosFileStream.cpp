@@ -183,7 +183,7 @@ int FileStream::write(
 /// \param    size: El tamany de memoria solicitat.
 /// \return   El bloc de memoria obtingut.
 ///
-void *FileStream::operator new(
+void* FileStream::operator new(
 	size_t size) {
 
 	return fileStreamAllocator.allocate(size);

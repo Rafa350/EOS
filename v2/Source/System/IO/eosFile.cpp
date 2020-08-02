@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Core/eosString.h"
+#include "System/eosString.h"
 #include "System/IO/eosFile.h"
 
 #include "ff.h"
@@ -15,7 +15,7 @@ using namespace eos;
 /// \return   True si existeix. False en cas contrari.
 ///
 bool File::exists(
-	const String &fileName) {
+	const String& fileName) {
 
 	return f_stat(fileName, nullptr) == FR_OK;
 }

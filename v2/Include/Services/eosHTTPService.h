@@ -9,6 +9,13 @@
 namespace eos {
     
     class HTTPService: public Service {
+    	public:
+    		struct InitParams {
+    		};
+
+    	private:
+    		void initInterface();
+
 		protected:
 			void onInitialize() override;
 			void onTask() override;

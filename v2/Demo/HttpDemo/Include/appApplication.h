@@ -8,6 +8,12 @@
 #include "System/eosApplication.h"
 
 
+namespace eos {
+
+	class HTTPService;
+}
+
+
 namespace app {
 
 	class LedService;
@@ -17,6 +23,7 @@ namespace app {
 		private:
 			LedService* ledService;
 			DisplayService* displayService;
+			eos::HTTPService* httpService;
 
 		public :
 			MyApplication();
