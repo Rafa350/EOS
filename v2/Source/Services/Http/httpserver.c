@@ -1,10 +1,6 @@
-#include "lwip/opt.h"
-#include "lwip/arch.h"
 #include "lwip/api.h"
 #include "lwip/apps/fs.h"
 #include "string.h"
-#include <stdio.h>
-#include "cmsis_os.h"
 
 
 static void DynWebPage(struct netconn *conn);

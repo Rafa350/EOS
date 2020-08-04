@@ -14,7 +14,8 @@ namespace eos {
     		};
 
     	private:
-    		void initInterface();
+    		void httpInitialize();
+    		void httpThread();
 
 		protected:
 			void onInitialize() override;

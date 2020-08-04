@@ -5,7 +5,6 @@
 #include "task.h"
 
 
-
 /// ----------------------------------------------------------------------
 /// \brief    Crea una tasca.
 /// \param    info: Parametres d'inicialitzacio.

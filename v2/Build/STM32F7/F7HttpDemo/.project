@@ -179,14 +179,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/appInitialize.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F7/custom_stm32f7xx_it.c</name>
+			<name>src/App/STM32F7/stm32f7xx_ethernetif.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/custom_stm32f7xx_it.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/stm32f7xx_ethernetif.c</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F7/stm32f7xx_hal_timebase_tim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/stm32f7xx_hal_timebase_tim.c</locationURI>
+		</link>
+		<link>
+			<name>src/App/STM32F7/stm32f7xx_it.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/HttpDemo/Source/STM32F7/stm32f7xx_it.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers</name>
@@ -812,11 +817,6 @@
 			<name>src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Services/Http/ethernetif.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Http/ethernetif.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Http/httpserver.c</name>

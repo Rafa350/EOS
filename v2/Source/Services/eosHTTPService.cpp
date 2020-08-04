@@ -9,9 +9,6 @@
 using namespace eos;
 
 
-struct netif gnetif;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Contructor del objecte.
 /// \param    application: L'aplicacio.
@@ -35,8 +32,9 @@ void HTTPService::onInitialize() {
 	//
 	tcpip_init(NULL, NULL);
 
-	initInterface();
-    http_server_init();
+	// Inicialitza el servidor
+	//
+	httpInitialize();
 }
 
 
@@ -45,15 +43,18 @@ void HTTPService::onInitialize() {
 ///
 void HTTPService::onTask() {
 
-	http_server_thread(NULL);
+	// Executa el servidor
+	//
+	httpThread();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza la interficio TCPIP
-//
-void HTTPService::initInterface(){
+/// \brief    Inicialitza el servicoe web
+///
+void HTTPService::httpInitialize() {
 
+	static struct netif gnetif;
 	ip_addr_t addr;
 	ip_addr_t mask;
 	ip_addr_t gw;
@@ -68,10 +69,20 @@ void HTTPService::initInterface(){
 	IP_ADDR4(&gw, eosHTTPService_Gateway0, eosHTTPService_Gateway1, eosHTTPService_Gateway2, eosHTTPService_Gateway3);
 #endif
 
-	netif_add(&gnetif, &addr, &mask, &gw, NULL, &ethernetif_init, &tcpip_input);
 	netif_set_default(&gnetif);
 	if (netif_is_link_up(&gnetif))
 		netif_set_up(&gnetif);
 	else
 		netif_set_down(&gnetif);
+
+	http_server_init();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Executa el servidor
+///
+void HTTPService::httpThread() {
+
+	http_server_thread(NULL);
 }

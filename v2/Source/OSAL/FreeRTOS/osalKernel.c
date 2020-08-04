@@ -107,11 +107,11 @@ unsigned osalGetTickTime() {
 ///
 void osalSysTickHandler() {
 
-#if (INCLUDE_xTaskGetSchedulerState  == 1)
+#if (INCLUDE_xTaskGetSchedulerState == 1)
 	if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
 #endif
 		xPortSysTickHandler();
-#if (INCLUDE_xTaskGetSchedulerState  == 1)
+#if (INCLUDE_xTaskGetSchedulerState == 1)
 	}
 #endif
 }

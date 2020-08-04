@@ -338,7 +338,7 @@ static void IRQHandler(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Handler de la interrupcio.
+/// \brief    Handler de la interrupcio.
 ///
 #ifdef HAL_TMR_TIMER_2
 void TIM2_IRQHandler() {
@@ -349,7 +349,7 @@ void TIM2_IRQHandler() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Handler de la interrupcio.
+/// \brief    Handler de la interrupcio.
 ///
 #ifdef HAL_TMR_TIMER_3
 void TIM3_IRQHandler() {
@@ -360,7 +360,7 @@ void TIM3_IRQHandler() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Handler de la interrupcio.
+/// \brief    Handler de la interrupcio.
 ///
 #ifdef HAL_TMR_TIMER_4
 void TIM4_IRQHandler() {

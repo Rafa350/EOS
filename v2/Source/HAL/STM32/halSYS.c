@@ -6,7 +6,7 @@
 #elif defined(EOS_STM32F7)
 #include "stm32f7xx_hal.h"
 #else
-#error hardware no soportado
+#error Hardware no soportado
 #endif
 
 

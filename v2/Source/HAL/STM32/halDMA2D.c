@@ -3,7 +3,7 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el modul DMA2D
+/// \brief    Inicialitza el modul DMA2D
 ///
 void halDMA2DInitialize() {
 
@@ -24,13 +24,13 @@ void halDMA2DShutdown() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Ompla una regio amb un color solid.
-/// \param dstAddr: Adressa del primer pixel de la regio.
-/// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
-/// \param dstPitch: Offset per avançar a la seguent linia de la regio.
-/// \param options: Opcions
-/// \param color: Color per omplir. Nomes accepta el format de desti.
+/// \brief    Ompla una regio amb un color solid.
+/// \param    dstAddr: Adressa del primer pixel de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    dstPitch: Offset per avançar a la seguent linia de la regio.
+/// \param    options: Opcions
+/// \param    color: Color per omplir. Nomes accepta el format de desti.
 ///
 void halDMA2DStartFill(
 	uint32_t dstAddr,
@@ -74,14 +74,14 @@ void halDMA2DStartFill(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Copia un mapa de bits a una regio
-/// \param dstAddr: Adresa del primer pixel de la regio.
-/// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
-/// \param dstPitch: Offset per avançar a la seguent linia de la regio.
-/// \param options: Opcions.
-/// \param srcAddr: Adressa del primer pixel del mapa de bits.
-/// \param srcPitch: Offset per avançar a la seguent linia del mapa de bits.
+/// \brief    Copia un mapa de bits a una regio
+/// \param    dstAddr: Adresa del primer pixel de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    dstPitch: Offset per avançar a la seguent linia de la regio.
+/// \param    options: Opcions.
+/// \param    srcAddr: Adressa del primer pixel del mapa de bits.
+/// \param    srcPitch: Offset per avançar a la seguent linia del mapa de bits.
 ///
 void halDMA2DStartCopy(
 	uint32_t dstAddr,
@@ -147,8 +147,8 @@ void halDMA2DStartCopy(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Espera que acabi la transaccio.
-/// \return True si tot es correcte, false en cas d'error.
+/// \brief    Espera que acabi la transaccio.
+/// \return   True si tot es correcte, false en cas d'error.
 ///
 bool halDMA2DWaitForFinish() {
 
@@ -188,7 +188,7 @@ bool halDMA2DWaitForFinish() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa les interrupcions
+/// \brief    Procesa les interrupcions
 ///
 void DMA2D_IRQHandler() {
 

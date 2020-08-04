@@ -381,7 +381,7 @@ uint8_t halLTDCGetPixelSize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief procesa les interrupcions.
+/// \brief    Procesa les interrupcions.
 ///
 void LTDC_IRQHandler() {
 
@@ -389,7 +389,7 @@ void LTDC_IRQHandler() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief procesa les interrupcions.
+/// \brief    Procesa les interrupcions.
 ///
 void LTDC_ER_IRQHandler() {
 
