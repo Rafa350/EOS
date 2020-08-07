@@ -35,6 +35,8 @@
 //
 #define eosHTTPService_Enabled                           1
 
+#define eosHTTPService_Port                             80
+
 #define eosHTTPService_Addr0                	       192
 #define eosHTTPService_Addr1						   168
 #define eosHTTPService_Addr2                             1

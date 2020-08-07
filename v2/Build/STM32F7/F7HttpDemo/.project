@@ -649,6 +649,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Http/eosHttpServer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Http/eosHttpServer.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Http/ethernetif.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Http/ethernetif.h</locationURI>
@@ -817,6 +822,11 @@
 			<name>src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Http/eosHttpServer.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Http/eosHttpServer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Http/httpserver.c</name>

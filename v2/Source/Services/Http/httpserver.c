@@ -4,7 +4,6 @@
 
 
 static void DynWebPage(struct netconn *conn);
-static void http_server_serve(struct netconn *conn);
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -124,7 +123,7 @@ static const unsigned char PAGE_START[] = {
   * @param conn: pointer on connection structure
   * @retval None
   */
-static void http_server_serve(
+void http_server_serve(
     struct netconn *conn) {
 
     struct netbuf *inbuf;
@@ -217,6 +216,7 @@ static void http_server_serve(
 /// \brief    Fill d'execucio del servidor.
 /// \params   args: Argument.
 ///
+#if 1
 void http_server_thread(
 	void* args) {
 
@@ -244,11 +244,11 @@ void http_server_thread(
 				accept_err = netconn_accept(conn, &newconn);
 				if (accept_err == ERR_OK) {
 
-					// serve connection
+					// Serve connection
 					//
 					http_server_serve(newconn);
 
-					// delete connection
+					// Delete connection
 					//
 					netconn_delete(newconn);
 				}
@@ -256,6 +256,7 @@ void http_server_thread(
 		}
 	}
 }
+#endif
 
 /**
   * @brief  Initialize the HTTP server (start its thread)

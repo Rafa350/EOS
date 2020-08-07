@@ -11,7 +11,8 @@ extern "C" {
 
 
 void http_server_init(void);
-void http_server_thread(void *args);
+void http_server_thread(void* args);
+void http_server_serve(struct netconn *conn);
 
 
 #ifdef	__cplusplus

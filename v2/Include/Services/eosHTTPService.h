@@ -4,6 +4,7 @@
 
 #include "eos.h"
 #include "Services/eosService.h"
+#include "Services/Http/eosHttpServer.h"
 
 
 namespace eos {
@@ -14,8 +15,7 @@ namespace eos {
     		};
 
     	private:
-    		void httpInitialize();
-    		void httpThread();
+    		HttpServer httpServer;
 
 		protected:
 			void onInitialize() override;
