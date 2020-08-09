@@ -156,17 +156,83 @@ bool String::isNull() const {
 
 
 /// ----------------------------------------------------------------------
+/// \brief Obte el iterator.
+///
+String::Iterator String::begin() {
+
+	return pData == nullptr ? nullptr : const_cast<char*>(pData->ptr);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el iterator.
+///
+String::CIterator String::begin() const {
+
+	return pData == nullptr ? nullptr : pData->ptr;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el iterator
+///
+String::Iterator String::end() {
+
+	return pData == nullptr ? nullptr : const_cast<char*>(pData->ptr) + pData->length;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte el iterator
+///
+String::CIterator String::end() const {
+
+	return pData == nullptr ? nullptr : pData->ptr + pData->length;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Comprova si dues strings son iguals.
 /// \param    cstr: La string a comparar.
 /// \return   True si son iguals.
 ///
-int String::isEqual(
+bool String::isEqual(
 	const char* cstr) const {
 
 	if (pData == nullptr)
 		return cstr == nullptr;
 	else
 		return strcmp(pData->ptr, cstr) == 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Conmprova si dues strings son iguals.
+/// \param    str: L'altre cadena a comparar.
+/// \return   True si son iguals.
+///
+bool String::isEqual(
+	const String& str) const {
+
+	// Si les dues string son buides, aleshores son iguals
+	//
+	if ((pData == nullptr) && (str.pData == nullptr))
+		return true;
+
+	// Si les dues string tenen el mateix bloc de dades, aleshores son iguals.
+	//
+	else if (pData == str.pData)
+		return true;
+
+	// Si les longituts no coincideixen, aleshores son diferents.
+	//
+	else if (pData->length != str.pData->length)
+		return false;
+
+	// Si arriba aqui compara les dues string caracter a caracter.
+	//
+	else
+		return strcmp(pData->ptr, str.pData->ptr) == 0;
 }
 
 
@@ -201,35 +267,6 @@ String& String::operator = (
 		reference(str);
 
 	return *this;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operator ==
-/// \param    str: La string a comparar.
-///
-bool String::operator == (
-	const String& str) const {
-
-	// Si les dues string son buides, aleshores son iguals
-	//
-	if ((pData == nullptr) && (str.pData == nullptr))
-		return true;
-
-	// Si les dues string tenen el mateix bloc de dades, aleshores son iguals.
-	//
-	else if (pData == str.pData)
-		return true;
-
-	// Si les longituts no coincideixen, aleshores son diferents.
-	//
-	else if (pData->length != str.pData->length)
-		return false;
-
-	// Si arriba aqui compara les dues string caracter a caracter.
-	//
-	else
-		return strcmp(pData->ptr, str.pData->ptr) == 0;
 }
 
 

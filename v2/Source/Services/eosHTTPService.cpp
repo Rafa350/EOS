@@ -12,7 +12,8 @@ using namespace eos;
 HTTPService::HTTPService(
 	Application* application):
 
-	Service(application) {
+	Service(application),
+	httpServer(eosHTTPService_Port) {
 
 }
 

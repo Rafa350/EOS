@@ -15,6 +15,10 @@ namespace eos {
         private:
             struct StringData;
 
+        public:
+            typedef char* Iterator;
+            typedef const char* CIterator;
+
         private:
             StringData* pData;
 
@@ -35,14 +39,21 @@ namespace eos {
             bool isEmpty() const;
             bool isNull() const;
 
-            int isEqual(const char* cstr) const;
-            inline int isEqual(const String& str) const { return isEqual((const char*) str); }
+            bool isEqual(const char* cstr) const;
+            bool isEqual(const String& str) const;
+            int compare(const char* cstr) const;
+            int compare(const String& str) const;
+
+            Iterator begin();
+            CIterator begin() const;
+            Iterator end();
+            CIterator end() const;
 
             String& operator = (const char* cstr);
             String& operator = (const String& str);
 
-            bool operator == (const String& str) const;
-            inline bool operator != (const String& str) const { return !operator==(str); }
+            inline bool operator == (const String& str) const { return isEqual(str); }
+            inline bool operator != (const String& str) const { return !isEqual(str); }
             bool operator < (const String& str) const;
             bool operator <= (const String& str) const;
             bool operator > (const String& str) const;

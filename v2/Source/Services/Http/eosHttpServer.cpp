@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Services/Http/eosHttpServer.h"
 #include "Services/Http/ethernetif.h"
 #include "lwip/api.h"
@@ -13,8 +14,24 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
-HttpServer::HttpServer() {
+HttpServer::HttpServer(
+	uint8_t port):
 
+	port(port) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix un controlador.
+/// \param    controller: El controlador.
+///
+void HttpServer::addController(
+	HttpController* controller) {
+
+	eosAssert(controller != nullptr);
+
+	controllers.pushBack(controller);
 }
 
 
@@ -64,7 +81,7 @@ void HttpServer::run() {
 
 		// Bind to port (HTTP) with default IP address
 		//
-		if (netconn_bind(hListenConnection, NULL, eosHTTPService_Port) == ERR_OK) {
+		if (netconn_bind(hListenConnection, NULL, port) == ERR_OK) {
 
 			// Put the connection into LISTEN state
 			//
@@ -124,6 +141,8 @@ void HttpServer::processData(
 	HConnection hConnection,
 	const char* data,
 	unsigned dataLength) {
+
+	HttpRequest request(String(data, 0, dataLength));
 
 	const char* header =
 		"HTTP/1.1 200 OK\r\n"

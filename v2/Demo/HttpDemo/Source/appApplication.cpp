@@ -1,7 +1,9 @@
 #include "eos.h"
 #include "appApplication.h"
 #include "appLedService.h"
+#ifdef USE_DISPLAY
 #include "appDisplayService.h"
+#endif
 #include "Services/eosHTTPService.h"
 
 
@@ -15,6 +17,8 @@ using namespace app;
 MyApplication::MyApplication() {
 
 	ledService = new LedService(this);
+#ifdef USE_DISPLAY    
 	displayService = new DisplayService(this);
+#endif    
 	httpService = new HTTPService(this);
 }
