@@ -42,8 +42,13 @@ namespace eos {
 	/// \brief Controlador de verbs del servidor HTTP
 	///
 	class HttpController {
+		private:
+			String verb;
+
 		public:
 			HttpController(const String& verb);
+
+			String getVerb() const { return verb; }
 	};
 
 

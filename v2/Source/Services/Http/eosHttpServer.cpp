@@ -74,6 +74,10 @@ void HttpServer::initialize() {
 ///
 void HttpServer::run() {
 
+	addController(new HttpController("GET"));
+	addController(new HttpController("HEAD"));
+	addController(new HttpController("POST"));
+
 	// Create a new TCP connection handle
 	//
 	HConnection hListenConnection = netconn_new(NETCONN_TCP);
@@ -143,6 +147,12 @@ void HttpServer::processData(
 	unsigned dataLength) {
 
 	HttpRequest request(String(data, 0, dataLength));
+
+	for (auto it = controllers.begin(); it != controllers.end(); it++) {
+		if ((*it)->getVerb() == request.getVerb()) {
+
+		}
+	}
 
 	const char* header =
 		"HTTP/1.1 200 OK\r\n"

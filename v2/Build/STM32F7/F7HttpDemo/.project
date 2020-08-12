@@ -829,6 +829,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Services/Http/eosHttpController.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Http/eosHttpController.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Services/Http/eosHttpRequest.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Http/eosHttpRequest.cpp</locationURI>
