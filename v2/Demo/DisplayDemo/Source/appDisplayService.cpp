@@ -28,7 +28,7 @@ using namespace app;
 #define TEST_OPACITY
 #define SHOW_RESULTS
 
-#if defined(xEOS_STM32F7) || defined(EOS_STM32F4)
+#if defined(EOS_STM32F7) || defined(EOS_STM32F4)
 static uint64_t rnd = 0L;
 
 void srand(uint32_t r) {
@@ -44,6 +44,7 @@ uint32_t rand() {
 
 	rnd = (a * (rnd >> 11)) + c;
 	return (uint32_t) rnd;
+
 }
 #endif
 
@@ -145,6 +146,8 @@ void DisplayService::onLoop() {
     for (int i = 0; i < 50000; i++) {
         int x = rand() % screenWidth;
         int y = rand() % screenHeight;
+
+        rand(); // Mantre la sequencia de 3 rand's per cicle
 
         graphics->drawPoint(x, y);
     }

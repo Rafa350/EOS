@@ -4,6 +4,7 @@
 
 #include "eos.h"
 #include "System/eosString.h"
+#include "System/eosCallbacks.h"
 #include "System/Collections/eosDynamicArray.h"
 
 #include "lwip/api.h"
@@ -16,39 +17,59 @@ namespace eos {
     //
 	class HttpRequest {
 		private:
-			const char* pVerb;
-			const char* pUri;
-			unsigned verbLength;
-			unsigned uriLength;
+			String method;
+			String uri;
+			const char* pHeaders;
+			unsigned headersLength;
 
 		private:
-			void parseData(const String& data);
+			void parseText(const String& text);
 
 		public:
-			HttpRequest(const String& data);
+			HttpRequest(const String& text);
+			HttpRequest(const HttpRequest& other);
 
-			inline String getVerb() const { return String(pVerb, 0, verbLength); }
-			inline String getUri() const { return String(pUri, 0, uriLength); }
+			inline const String& getMethod() const { return method; }
+			inline const String& getUri() const { return uri; }
+			inline String getHeader(const String& name) const;
 	};
 
 	/// \brief Resposta HTTP
 	///
 	class HttpResponse {
+		private:
+			unsigned statusCode;
+			String statusMessage;
+			String body;
+
+		private:
+			String printText() const;
+
 		public:
 			HttpResponse();
+			HttpResponse(unsigned statusCode, const String& statusMessage, const String& body);
+			HttpResponse(const HttpResponse& other);
 
+			String getText() const;
 	};
 
 	/// \brief Controlador de verbs del servidor HTTP
 	///
 	class HttpController {
+		public:
+        	typedef ICallbackP1R<HttpResponse, const HttpRequest&> ICallback;
+
 		private:
-			String verb;
+			String method;
+			ICallback* callback;
 
 		public:
-			HttpController(const String& verb);
+			HttpController(const String& method, ICallback* callback);
 
-			String getVerb() const { return verb; }
+			bool canProcess(const HttpRequest& request) const;
+			HttpResponse process(const HttpRequest& request);
+
+			inline const String& getMethod() const { return method; }
 	};
 
 
@@ -56,17 +77,22 @@ namespace eos {
 	///
     class HttpServer {
     	private:
+            typedef CallbackP1R<HttpServer, HttpResponse, const HttpRequest&> ControllerCallback;
 		    typedef DynamicArray<HttpController*> ControllerList;
     		typedef CONNECTION_HANDLER HConnection;
 
     	private:
     		ControllerList controllers;
+    		ControllerCallback getCallback;
+    		ControllerCallback headCallback;
+    		ControllerCallback postCallback;
     		uint8_t port;
 
     	private:
     		void error(HConnection hConnection);
-    		void processGET(HConnection hConnection, const char* data, unsigned dateLength);
-    		void processData(HConnection hConnection, const char* data, unsigned dataLength);
+    		HttpResponse getHandler(const HttpRequest& request);
+    		HttpResponse headHandler(const HttpRequest& request);
+    		HttpResponse postHandler(const HttpRequest& request);
 
         public:
             HttpServer(uint8_t port);

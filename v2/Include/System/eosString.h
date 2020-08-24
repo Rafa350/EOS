@@ -69,8 +69,11 @@ namespace eos {
 
         private:
             char* container;
-            unsigned length;
+            unsigned size;
             unsigned capacity;
+
+        private:
+            void reserve(unsigned size);
 
         public:
             StringBuilder();
@@ -78,6 +81,10 @@ namespace eos {
             void append(char);
             void append(const char* s);
             void append(const String& s);
+            void append(int value);
+            void append(bool value);
+
+            inline operator String () const { return String(container, 0, size); }
     };
 
 }

@@ -459,6 +459,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/eosStringBuilder.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosStringBuilder.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/STM32/BSP/stm32746g_discovery.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery.c</locationURI>
@@ -837,6 +842,11 @@
 			<name>src/Framework/EOS/Services/Http/eosHttpRequest.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Http/eosHttpRequest.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Http/eosHttpResponse.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Http/eosHttpResponse.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Http/eosHttpServer.cpp</name>

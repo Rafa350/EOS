@@ -17,6 +17,9 @@ using namespace eos;
 HttpServer::HttpServer(
 	uint8_t port):
 
+	getCallback(this, &HttpServer::getHandler),
+	headCallback(this, &HttpServer::headHandler),
+	postCallback(this, &HttpServer::postHandler),
 	port(port) {
 
 }
@@ -74,9 +77,9 @@ void HttpServer::initialize() {
 ///
 void HttpServer::run() {
 
-	addController(new HttpController("GET"));
-	addController(new HttpController("HEAD"));
-	addController(new HttpController("POST"));
+	addController(new HttpController("GET", &getCallback));
+	addController(new HttpController("HEAD", &headCallback));
+	addController(new HttpController("POST", &postCallback));
 
 	// Create a new TCP connection handle
 	//
@@ -109,7 +112,18 @@ void HttpServer::run() {
 				    	    u16_t dataLength;
 				    		netbuf_data(inbuf, (void**)&data, &dataLength);
 
-				    		processData(hConnection, data, dataLength);
+				    		HttpRequest request(String(data, 0, dataLength));
+
+				    		for (auto it = controllers.begin(); it != controllers.end(); it++) {
+				    			HttpController* controller = *it;
+
+				    			if (controller->canProcess(request)) {
+				    				HttpResponse response = controller->process(request);
+				    				String text = response.getText();
+				    				netconn_write(hConnection, text, text.getLength(), NETCONN_NOCOPY);
+				    			}
+				    		}
+
 				    	}
 				    }
 
@@ -135,45 +149,27 @@ void HttpServer::run() {
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Procesa les dades del paquet.
-/// \brief    hConnection: La conexio.
-/// \param    data: Buffer de dades
-/// \param    dataLength: Longitut del buffer de dades.
-///
-void HttpServer::processData(
-	HConnection hConnection,
-	const char* data,
-	unsigned dataLength) {
+HttpResponse HttpServer::getHandler(
+	const HttpRequest& request) {
 
-	HttpRequest request(String(data, 0, dataLength));
-
-	for (auto it = controllers.begin(); it != controllers.end(); it++) {
-		if ((*it)->getVerb() == request.getVerb()) {
-
-		}
-	}
-
-	const char* header =
-		"HTTP/1.1 200 OK\r\n"
-	    "Content-Length: 12\r\n"
-		"Content-Type: text/plain; charset=utf-8\r\n"
-		"\r\n";
-
-	netconn_write(hConnection, header, strlen(header), NETCONN_NOCOPY);
-	netconn_write(hConnection, "Hola capullo", 12, NETCONN_NOCOPY);
+	return HttpResponse(200, "OK", "Hola capullo");
 }
 
 
-void HttpServer::processGET(
-	HConnection hConnection,
-	const char* data,
-	unsigned dataLength) {
+HttpResponse HttpServer::headHandler(
+	const HttpRequest& request) {
 
+	return HttpResponse(400, String(""), String(""));
+}
+
+
+HttpResponse HttpServer::postHandler(
+	const HttpRequest& request) {
+
+	return HttpResponse(400, "", "");
 }
 
 
 void HttpServer::error(
 	HConnection hConnection) {
-
 }
