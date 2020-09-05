@@ -512,10 +512,12 @@ void DigOutputService::cmdTimeOut(
 
 /// ----------------------------------------------------------------------
 /// \brief    Captura la interrupcio del temporitzador.
+/// \param    timer: El temporitzador.
+/// \param    param: El handler del servei.
 ///
 void DigOutputService::isrTimerFunction(
 	TMRTimer timer,
-	void *param) {
+	void* param) {
 
 	DigOutputService* service = static_cast<DigOutputService*>(param);
     if (service != nullptr) {

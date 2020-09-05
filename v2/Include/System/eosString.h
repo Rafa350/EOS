@@ -73,15 +73,19 @@ namespace eos {
             unsigned capacity;
 
         private:
+            unsigned calcNewCapacity(unsigned requiredCapacity) const;
             void reserve(unsigned size);
 
         public:
             StringBuilder();
             ~StringBuilder();
-            void append(char);
-            void append(const char* s);
-            void append(const String& s);
+            void clear();
+            void append(char value);
+            void append(const char* value);
+            void append(const char* value, unsigned index, unsigned length);
+            void append(const String& value);
             void append(int value);
+            void append(unsigned value);
             void append(bool value);
 
             inline operator String () const { return String(container, 0, size); }

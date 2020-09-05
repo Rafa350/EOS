@@ -49,6 +49,7 @@ void ConfigureSystemCache() {
     SCB_EnableDCache();
 }
 
+
 /// ----------------------------------------------------------------------
 /// \brief Configura el modul SDRAM
 ///

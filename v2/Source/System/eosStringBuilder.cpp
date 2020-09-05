@@ -2,6 +2,7 @@
 #include "System/eosString.h"
 #include "System/Collections/eosContainer.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 
@@ -30,14 +31,44 @@ StringBuilder::~StringBuilder() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Calcula la nova capacitat.
+/// \param    La nova capacitat necesaria.
+/// \return   La nova capacitat a reservar.
+///
+unsigned StringBuilder::calcNewCapacity(
+	unsigned requiredCapacity) const {
+
+	if (requiredCapacity > capacity) {
+		unsigned extra = (capacity == 0) ? 16 :
+				         ((capacity < 128) ? 32 :
+				          capacity >> 2);
+		return requiredCapacity + extra;
+	}
+	else
+		return capacity;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Reserva memoria.
 /// \param    newCapacity: La nova capacitat de memoria a reservar.
 ///
 void StringBuilder::reserve(
 	unsigned newCapacity) {
 
-	container = static_cast<char*>(Container::resize(container, capacity, newCapacity, size, sizeof(char)));
-	capacity = newCapacity;
+	if (newCapacity > capacity) {
+		container = static_cast<char*>(Container::resize(container, capacity, newCapacity, size, sizeof(char)));
+		capacity = newCapacity;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Buida el contingut.
+///
+void StringBuilder::clear() {
+
+	size = 0;
 }
 
 
@@ -49,7 +80,7 @@ void StringBuilder::append(
 	char value) {
 
 	if (size + sizeof(char) >= capacity)
-		reserve(capacity + sizeof(char) + 10);
+		reserve(calcNewCapacity(capacity + sizeof(char)));
 
 	container[size++] = value;
 }
@@ -64,7 +95,7 @@ void StringBuilder::append(
 
 	unsigned length = strlen(value);
 	if (size + length >= capacity)
-		reserve(capacity + length + 10);
+		reserve(calcNewCapacity(capacity + length));
 
 	memcpy(&container[size], value, length);
 	size += length;
@@ -103,4 +134,22 @@ void StringBuilder::append(
 void StringBuilder::append(
 	int value) {
 
+	char buffer[15];
+
+	itoa(value, buffer, 10);
+	append(buffer);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix un valor unsigned.
+/// \param    value: El valor a afeigir.
+///
+void StringBuilder::append(
+	unsigned value) {
+
+	char buffer[15];
+
+	utoa(value, buffer, 10);
+	append(buffer);
 }

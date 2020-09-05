@@ -32,18 +32,22 @@ static void EnableClock(
 
 	switch (module) {
 		case HAL_I2C_I2C1:
-			__HAL_RCC_I2C1_CLK_ENABLE();
+            //RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
+            __HAL_RCC_I2C1_CLK_ENABLE();
 			break;
 
 		case HAL_I2C_I2C2:
+            //RCC->APB1ENR |=  RCC_APB1ENR_I2C2EN;
 			__HAL_RCC_I2C2_CLK_ENABLE();
 			break;
 
 		case HAL_I2C_I2C3:
+            //RCC->APB1ENR |= RCC_APB1ENR_I2C3EN;
 			__HAL_RCC_I2C3_CLK_ENABLE();
 			break;
 
 		case HAL_I2C_I2C4:
+            //RCC->APB1ENR |= RCC_APB1ENR_I2C4EN;
 			__HAL_RCC_I2C4_CLK_ENABLE();
 			break;
 	}

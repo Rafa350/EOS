@@ -5,7 +5,6 @@
 #include "lwip/api.h"
 #include "lwip/netif.h"
 #include "lwip/tcpip.h"
-#include "string.h"
 
 
 using namespace eos;
