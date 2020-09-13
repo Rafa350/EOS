@@ -12,6 +12,11 @@ extern "C" {
 #endif
 
 
+#define halSYSGetSystemClockFrequency()      HAL_RCC_GetSysClockFreq()
+#define halSYSGetPeripheralClock1Frequency() HAL_RCC_GetPCLK1Freq()
+#define halSYSGetPeripheralClock2Frequency() HAL_RCC_GetPCLK2Freq()
+
+
 void halSYSInitialize();
 
 void halSYSInterruptEnable();
