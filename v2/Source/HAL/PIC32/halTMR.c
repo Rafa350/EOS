@@ -43,7 +43,7 @@ void halTMRInitialize(
     //
     if (IsTypeA(info->timer)) {
         
-        TMRTypeARegisters* registers = GetTimerARegisterPtr(info->timer);
+        TMRTypeARegisters* registers = halTMRGetTypeARegisterPtr(info->timer);
 
         registers->TxCON.ON = 0;    // Desactiva el timer
         registers->TxCON.TCS = 0;   // Clock source interna.
@@ -72,7 +72,7 @@ void halTMRInitialize(
     //
     else {
         
-        TMRTypeBRegisters* registers = GetTimerBRegisterPtr(info->timer);
+        TMRTypeBRegisters* registers = halTMRGetTypeBRegisterPtr(info->timer);
 
         registers->TxCON.ON = 0;    // Desactiva el timer
 #if defined(__32MX460F512L__)        
@@ -86,7 +86,7 @@ void halTMRInitialize(
             registers->PRx = info->period & 0xFFFF;
         } 
         else if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32) {
-            TMRTypeBRegisters* registersHi = GetTimerBRegisterHiPtr(info->timer);
+            TMRTypeBRegisters* registersHi = halTMRGetTypeBRegisterHiPtr(info->timer);
             registers->TxCON.T32 = 1;
             registers->TMRx = 0;
             registersHi->TMRx = 0;
@@ -98,8 +98,7 @@ void halTMRInitialize(
     // Configura les interrupcions
     //
     if (info->isrFunction != NULL) {       
-        callbacks[info->timer].function = info->isrFunction;
-        callbacks[info->timer].params = info->isrParams;
+        halTMRSetInterruptFunction(info->timer, info->isrFunction, info->isrParams);
 
         if ((info->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) {
             unsigned state = halINTDisable();
@@ -108,10 +107,8 @@ void halTMRInitialize(
             halINTRestore(state);
         }
     }
-    else {
-        callbacks[info->timer].function = NULL;
-        callbacks[info->timer].params = NULL;
-    }
+    else
+        halTMRSetInterruptFunction(info->timer, NULL, NULL);
 }
 
 
@@ -123,11 +120,11 @@ void halTMRStartTimer(
     TMRTimer timer) {
     
     if (IsTypeA(timer)) {
-        TMRTypeARegisters* registers = GetTimerARegisterPtr(timer);
+        TMRTypeARegisters* registers = halTMRGetTypeARegisterPtr(timer);
         registers->TxCON.ON = 1;
     }
     else {
-        TMRTypeBRegisters* registers = GetTimerBRegisterPtr(timer);
+        TMRTypeBRegisters* registers = halTMRGetTypeBRegisterPtr(timer);
         registers->TxCON.ON = 1;
     }
 }
@@ -141,13 +138,29 @@ void halTMRStopTimer(
     TMRTimer timer) {
     
     if (IsTypeA(timer)) {
-        TMRTypeARegisters* registers = GetTimerARegisterPtr(timer);
+        TMRTypeARegisters* registers = halTMRGetTypeARegisterPtr(timer);
         registers->TxCON.ON = 0;
     }
     else {
-        TMRTypeBRegisters* registers = GetTimerBRegisterPtr(timer);
+        TMRTypeBRegisters* registers = halTMRGetTypeBRegisterPtr(timer);
         registers->TxCON.ON = 0;
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la funcio d'interrupcio.
+/// \param    timer: El identificador del temporitzador.
+/// \param    function: La funcio.
+/// \param    params: Els parametres de la funcio.
+///
+void halTMRSetInterruptFunction(
+    TMRTimer timer,
+    TMRInterruptFunction function,
+    void* params) {
+    
+    callbacks[timer].function = function;
+    callbacks[timer].params = params;
 }
 
 

@@ -31,7 +31,7 @@ typedef struct __attribute__((packed , aligned(4))) {
     volatile uint32_t ODCxINV;
 } GPIORegisters;
 
-#define GetPortRegisterPtr(port)  ((GPIORegisters*)(0xBF886000 + ((port) * 0x40)))
+#define halGPIOGetRegisterPtr(port)  ((GPIORegisters*)(0xBF886000 + ((port) * 0x40)))
 
 typedef uint8_t GPIOPort;
 typedef uint8_t GPIOPin;
@@ -168,48 +168,48 @@ typedef struct {                  // Parametres d'inicialitzacio d'un port
 // Canvi d'entrada a sortida i viceversa
 //
 #define halGPIOModePinInput(port, pin) \
-    GetPortRegisterPtr(port)->TRISxSET = 1u << (pin)
+    halGPIOGetRegisterPtr(port)->TRISxSET = 1u << (pin)
 
 #define halGPIOModePinOutput(port, pin) \
-    GetPortRegisterPtr(port)->TRISxCLR = 1u << (pin)
+    halGPIOGetRegisterPtr(port)->TRISxCLR = 1u << (pin)
 
 #define halGPIOModePortInput(port, mask) \
-    GetPortRegisterPtr(port)->TRISxSET = (mask)
+    halGPIOGetRegisterPtr(port)->TRISxSET = (mask)
 
 #define halGPIOModePortOutput(port, mask) \
-    GetPortRegisterPtr(port)->TRISxCLR = (mask)
+    halGPIOGetRegisterPtr(port)->TRISxCLR = (mask)
 
 // Canvi del estat del pin
 //
 #define halGPIOSetPin(port, pin) \
-    GetPortRegisterPtr(port)->LATxSET = 1u << (pin)
+    halGPIOGetRegisterPtr(port)->LATxSET = 1u << (pin)
 
 #define halGPIOClearPin(port, pin) \
-    GetPortRegisterPtr(port)->LATxCLR = 1u << (pin)
+    halGPIOGetRegisterPtr(port)->LATxCLR = 1u << (pin)
 
 #define halGPIOTogglePin(port, pin) \
-    GetPortRegisterPtr(port)->LATxINV = 1u << (pin)
+    halGPIOGetRegisterPtr(port)->LATxINV = 1u << (pin)
 
 // Lectura i escriptura del pin
 //
 #define halGPIOReadPin(port, pin) \
-    ((GetPortRegisterPtr(port)->PORTx & (1u << (pin))) != 0)
+    ((halGPIOGetRegisterPtr(port)->PORTx & (1u << (pin))) != 0)
 
 #define halGPIOWritePin(port, pin, data) \
     if (1) { \
         if (data) \
-            GetPortRegisterPtr(port)->LATxSET = 1u << (pin); \
+            halGPIOGetRegisterPtr(port)->LATxSET = 1u << (pin); \
         else \
-            GetPortRegisterPtr(port)->LATxCLR = 1u << (pin); \
+            halGPIOGetRegisterPtr(port)->LATxCLR = 1u << (pin); \
     }
 
 // Lectura i escriptura del port
 //
 #define halGPIOWritePort(port, data) \
-    GetPortRegisterPtr(port)->LATx = data
+    halGPIOGetRegisterPtr(port)->LATx = data
 
 #define halGPIOReadPort(port) \
-    GetPortRegisterPtr(port)->PORTx;
+    halGPIOGetRegisterPtr(port)->PORTx;
 
 
 void halGPIOInitializePins(const GPIOInitializePinInfo* info, unsigned count);

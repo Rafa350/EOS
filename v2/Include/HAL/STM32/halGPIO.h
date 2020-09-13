@@ -197,6 +197,8 @@ extern GPIO_TypeDef * const gpioTbl[];
 	halGPIOInitializePin(port, pin, HAL_GPIO_MODE_OUTPUT_PP, HAL_GPIO_AF_NONE);
 
 #if 1
+// Canvi del estat del pin
+//
 #define halGPIOSetPin(port, pin) \
 	gpioTbl[port]->BSRR = ((uint32_t) 1) << (pin)
 
@@ -207,15 +209,27 @@ extern GPIO_TypeDef * const gpioTbl[];
 	gpioTbl[port]->ODR ^= ((uint32_t) 1) << (pin)
 #endif
 
+// Lectura i escriptura del pin
+//
 #define halGPIOReadPin(port, pin) \
 	((gpioTbl[port]->IDR & (((uint32_t) 1) << (pin))) != 0)
 
+#define halGPIOWritePin(port, pin, data) \
+	if (1) {                             \
+		if (data)                        \
+			halGPIOSetPin(port, pin);    \
+	    else                             \
+			halGPIOClearPin(port, pin);  \
+	}
 
+// Lectura i escriptura del port
+//
 #define halGPIOWritePort(port, data) \
     gpioTbl[port]->ODR = data
 
 #define halGPIOReadPort(port) \
     gpioTbl[port]->IDR
+
 
 void halGPIOInitializePins(const GPIOInitializePinInfo* info, unsigned count);
 void halGPIOInitializePorts(const GPIOInitializePortInfo* info, unsigned count);

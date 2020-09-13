@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "hal/halGPIO.h"
+#include "HAL/STM32/halGPIO.h"
 
 
 namespace eos {
