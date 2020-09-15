@@ -1,5 +1,5 @@
-#ifndef __board_PIC32_USB_STARTER_KIT_I__
-#define __board_PIC32_USB_STARTER_KIT_I__
+#ifndef __eosBoard_PIC32_USB_STARTER_KIT_I__
+#define __eosBoard_PIC32_USB_STARTER_KIT_I__
 
 
 // -----------------------------------------------------------------------
@@ -56,4 +56,4 @@
 #endif
 
 
-#endif // __board_PIC32_USB_STARTER_KIT_I__
+#endif // __eosBoard_PIC32_USB_STARTER_KIT_I__

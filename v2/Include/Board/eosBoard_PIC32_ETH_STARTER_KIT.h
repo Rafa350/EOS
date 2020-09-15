@@ -1,5 +1,5 @@
-#ifndef __board_PIC32_ETH_STARTER_KIT__
-#define __board_PIC32_ETH_STARTER_KIT__
+#ifndef __eosBoard_PIC32_ETH_STARTER_KIT__
+#define __eosBoard_PIC32_ETH_STARTER_KIT__
 
 
 // -----------------------------------------------------------------------
@@ -56,4 +56,4 @@
 #endif
 
 
-#endif // __board_PIC32_ETH_STARTER_KIT__
+#endif // __eosBoard_PIC32_ETH_STARTER_KIT__
