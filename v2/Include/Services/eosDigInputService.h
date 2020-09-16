@@ -40,7 +40,9 @@ namespace eos {
         protected:
             void onInitialize();
             void onTask();
+#if Eos_ApplicationTickEnabled            
             void onTick();
+#endif            
         public:
             DigInputService(Application* application, const InitParams& initParams);
             ~DigInputService();

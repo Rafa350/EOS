@@ -82,13 +82,13 @@ namespace eos {
             void cmdDelayedToggle(DigOutput* output, unsigned delay);
             void cmdDelayedPulse(DigOutput* output, unsigned delay, unsigned width);
             void cmdTimeOut(unsigned time);
-
         protected:
             void onInitialize() override;
             void onTerminate() override;
             void onTask() override;
+#if Eos_ApplicationTickEnabled            
             void onTick() override;
-            
+#endif            
         public:
             DigOutputService(Application* application, const InitParams& initParams);
             ~DigOutputService();

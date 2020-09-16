@@ -199,9 +199,11 @@ void DigInputService::onTask() {
 /// \brief    Procesa la interrupcio 'tick'.
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
+#if Eos_ApplicationmTickEnabled
 void DigInputService::onTick() {
     
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

@@ -68,11 +68,13 @@ void Service::terminate() {
 /// ---------------------------------------------------------------------
 /// \brief    Executa les operacions de la interrupcio tick.
 ///
+#if Eos_ApplicationTickEnabled
 void Service::tick() {
 
 	if (initialized)
 		onTick();
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -104,9 +106,11 @@ void Service::onTerminate() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les operacions de la interrupcio tick.
 ///
+#if Eos_ApplicationTickEnabled
 void Service::onTick() {
 
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

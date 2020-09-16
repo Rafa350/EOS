@@ -9,6 +9,7 @@
 
 using namespace eos;
 
+
 #ifndef DigOutputService_TimerInterruptPriority
     #define DigOutputService_TimerInterruptPriority HAL_INT_PRIORITY_LEVEL2;
 #endif
@@ -332,9 +333,11 @@ void DigOutputService::onTask() {
 /// \brief    Procesa la interrupcio 'tick'.
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
+#if Eos_ApplicationTickEnabled
 void DigOutputService::onTick() {
     
 }
+#endif
 
 
 /// ----------------------------------------------------------------------

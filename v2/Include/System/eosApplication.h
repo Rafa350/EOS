@@ -28,7 +28,7 @@ namespace eos {
             typedef DynamicArray<Service*>::Iterator ServiceListIterator;
             typedef DynamicArray<Task*> TaskList;
             typedef CallbackP1<Application, const Task::EventArgs&> TaskEventCallback;
-#ifdef USE_APPLICATION_TICK            
+#if Eos_ApplicationTickEnabled
             typedef CallbackP1<Application, const Timer::EventArgs&> TimerEventCallback;
 #endif            
 
@@ -36,7 +36,7 @@ namespace eos {
             ServiceList services;
             TaskList tasks;
             TaskEventCallback taskEventCallback;
-#ifdef USE_APPLICATION_TICK            
+#if Eos_ApplicationTickEnabled          
             TimerEventCallback timerEventCallback;
             Timer timer;
 #endif            
@@ -48,14 +48,14 @@ namespace eos {
             void terminateServices();
             void runServices();
             void taskEventHandler(const Task::EventArgs& args);
-#ifdef USE_APPLICATION_TICK            
+#if Eos_ApplicationTickEnabled         
             void timerEventHandler(const Timer::EventArgs& args);
 #endif
 
         protected:
             virtual void onInitialize();
             virtual void onTerminate();
-#ifdef USE_APPLICATRION_TICK            
+#if Eos_ApplicationTickEnabled
             virtual void onTick();
 #endif
 
@@ -64,7 +64,7 @@ namespace eos {
             virtual ~Application();
 
             void run();
-#ifdef USE_APPLICATION_TICK            
+#if Eos_ApplicationTickEnabled       
             void tick();
 #endif
 

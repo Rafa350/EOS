@@ -32,14 +32,18 @@ namespace eos {
             virtual void onInitialize();
             virtual void onTerminate();
             virtual void onTask();
+#if Eos_ApplicationTickEnabled            
             virtual void onTick();
+#endif            
 
         public :
             virtual ~Service();
 
             void initialize();
             void terminate();
+#if Eos_ApplicationTickEnabled            
             void tick();
+#endif            
             void task();
 
             inline void setName(const String& name) { 

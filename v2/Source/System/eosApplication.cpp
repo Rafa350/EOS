@@ -15,7 +15,7 @@ Application::Application():
 
 	initialized(false),
     taskEventCallback(this, &Application::taskEventHandler)
-#ifdef USE_APPLICATION_TICK        
+#if Eos_ApplicationTickEnabled
     ,timerEventCallback(this, &Application::timerEventHandler),
     timer(true, &timerEventCallback, this)
 #endif
@@ -43,7 +43,7 @@ Application::~Application() {
 void Application::taskEventHandler(
     const Task::EventArgs& args) {
     
-    Service *service = static_cast<Service*>(args.params);
+    Service* service = static_cast<Service*>(args.params);
     if (service != nullptr)
         while (true)
             service->task();
@@ -54,7 +54,7 @@ void Application::taskEventHandler(
 /// \brief    Procesa el event del temporitzador TICK.
 /// \param    args: Parametres del event.
 ///
-#ifdef USE_APPLICATION_TICK
+#if Eos_ApplicationTickEnabled
 void Application::timerEventHandler(
     const Timer::EventArgs& args) {
     
@@ -95,7 +95,7 @@ void Application::run() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la senyal tick del sistema
 ///
-#ifdef USE_APPLICATION_TICK
+#if Eos_ApplicationTickEnabled
 void Application::tick() {
 
 	onTick();
@@ -103,7 +103,7 @@ void Application::tick() {
 	// Notifica la senyal tick a tots els serveis.
     //
     for (auto it = services.begin(); it != services.end(); it++) {
-        Service *service = *it;
+        Service* service = *it;
 		service->tick();
     }
 }
@@ -118,7 +118,7 @@ void Application::initializeServices() {
     // Inicialitza els serveis de la llista, un a un.
     //   
     for (auto it = services.begin(); it != services.end(); it++) {
-        Service *service = *it;
+        Service* service = *it;
         service->initialize();
     }
 }
@@ -132,7 +132,7 @@ void Application::terminateServices() {
     // Finalitza els serveis de la llista, un a un.
     //   
     for (auto it = services.begin(); it != services.end(); it++) {
-        Service *service = *it;
+        Service* service = *it;
         service->terminate();
     }
 }
@@ -147,7 +147,7 @@ void Application::runServices() {
     
     // Inicialitza el terporitzador tick
     //
-#ifdef USE_APPLICATION_TICK    
+#if Eos_ApplicationTickEnabled
     timer.start(APPLICATION_TICK_PERIOD, 0);
 #endif
     
@@ -222,8 +222,10 @@ void Application::removeServices() {
 ///
 void Application::onInitialize() {
 
-	// if (initializeEventCallback != nullptr)
-	//     initializeEventCallback->execute(this);
+#if Eos_UseApplicationInitializeCallback    
+    if (initializeEventCallback != nullptr)
+	    initializeEventCallback->execute(this);
+#endif    
 }
 
 
@@ -232,15 +234,17 @@ void Application::onInitialize() {
 ///
 void Application::onTerminate() {
 
-	// if (terminateEventCallback != nullptr)
-	//     terminateEventCallback->execute(this);
+#if Eos_UseApplicationTerminateCallback    
+	if (terminateEventCallback != nullptr)
+	    terminateEventCallback->execute(this);
+#endif    
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Notificacio del senyal tick
 ///
-#ifdef USE_APPLICATION_TICK
+#if Eos_ApplicationTickEnabled
 void Application::onTick() {
 
 }
