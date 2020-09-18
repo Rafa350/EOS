@@ -2,22 +2,12 @@
 #include "eosAssert.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halINT.h"
-#include "HAL/halSYS.h"
 #include "HAL/halTMR.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
 
 
 using namespace eos;
-
-
-#ifndef DigInputService_TimerInterruptPriority
-    #define DigInputService_TimerInterruptPriority HAL_INT_PRIORITY_LEVEL2;
-#endif
-
-#ifndef DigInputService_TimerInterruptSubPriority
-    #define DigInputService_TimerInterruptSubPriority HAL_INT_SUBPRIORITY_LEVEL0;
-#endif
 
 
 #define PATTERN_MASK     0x0FFF
@@ -37,8 +27,7 @@ DigInputService::DigInputService(
     const InitParams& initParams):
     
 	Service(application),
-    timer(initParams.timer),
-    period(initParams.period) {
+    timer(initParams.timer) {
 }
 
 
@@ -133,32 +122,33 @@ void DigInputService::onInitialize() {
         input->value = halGPIOReadPin(input->port, input->pin);
         input->edge = false;
         input->pattern = input->value ? PATTERN_ON : PATTERN_OFF;
-    }
-    
-    // Inicialitza el temporitzador
-    //
-	TMRInitializeInfo tmrInfo;
-	tmrInfo.timer = timer;
-#if defined(EOS_PIC32MX)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
-    tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * period) / 64000) - 1; 
-#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
-    tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
-    tmrInfo.period = (1000 * period) - 1;
-#else
-    //#error CPU no soportada
-#endif   
-	tmrInfo.irqPriority = DigInputService_TimerInterruptPriority;
-	tmrInfo.irqSubPriority = DigInputService_TimerInterruptSubPriority;
-	tmrInfo.isrFunction = isrTimerFunction;
-	tmrInfo.isrParams = this;    
-	halTMRInitialize(&tmrInfo);
-    halTMRStartTimer(timer);
+    }   
     
     // Inicialitza el servei base
     //
     Service::onInitialize();
+
+    // Activa el temporitzador
+    //
+    halTMRSetInterruptFunction(timer, tmrInterruptFunction, this);
+    halTMREnableInterrupt(timer);
+    halTMRStartTimer(timer);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Finalitza el servei.
+///
+void DigInputService::onTerminate() {
+    
+    // Desactiva el temporitzador
+    //
+    halTMRStopTimer(timer);
+    halTMRDisableInterrupt(timer);
+       
+    // Finalitza el servei base
+    //
+    Service::onTerminate();
 }
 
 
@@ -207,51 +197,78 @@ void DigInputService::onTick() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Obte l'estat de l'entrada.
+/// \param    input: La entrada.
+/// \return   El estat.
+///
+bool DigInputService::read(
+    const DigInput* input) const {  
+    
+    eosAssert(input != nullptr);
+    eosAssert(input->service == this);
+
+    halTMRDisableInterrupt(timer);
+    bool result = input->value;
+    halTMREnableInterrupt(timer);
+    return result;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Procesa la interrupcio del temporitzador.
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
-void DigInputService::isrTimerFunction(
+void DigInputService::tmrInterruptFunction() {
+           
+    bool changed = false;
+
+    // Procesa totes les entrades
+    //
+    for (auto it = inputs.begin(); it != inputs.end(); it++) {
+        DigInput* input = *it;
+
+        // Actualitza el patro
+        //
+        input->pattern <<= 1;
+        if (halGPIOReadPin(input->port, input->pin)) 
+            input->pattern |= 1;
+
+        // Analitza el patro per detectar un flanc positiu
+        //
+        if ((input->pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
+            input->value = 1;           
+            input->edge = 1;
+            changed = true;
+        }
+
+        // Analitza el patro per detectar un flanc negatiu
+        //
+        else if ((input->pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
+            input->value = 0;            
+            input->edge = 1;
+            changed = true;
+        }
+    }
+
+    // Notifica a la tasca que hi han canvis pendents per procesar
+    //
+    if (changed)
+        semaphore.releaseISR();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la interrupcio del temporitzador.
+/// \param    timer: Identificador del temporitzador.
+/// \param    params: Handler del servei.
+///
+void DigInputService::tmrInterruptFunction(
     TMRTimer timer,
     void* params) {
            
     DigInputService* service = static_cast<DigInputService*>(params);
-    if (service != nullptr) {
-
-        bool changed = false;
-        
-        // Procesa totes les entrades
-        //
-        for (auto it = service->inputs.begin(); it != service->inputs.end(); it++) {
-            DigInput* input = *it;
-
-            // Actualitza el patro
-            //
-            input->pattern <<= 1;
-            if (halGPIOReadPin(input->port, input->pin)) 
-                input->pattern |= 1;
-
-            // Analitza el patro per detectar un flanc positiu
-            //
-            if ((input->pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
-                input->value = 1;           
-                input->edge = 1;
-                changed = true;
-            }
-            
-            // Analitza el patro per detectar un flanc negatiu
-            //
-            else if ((input->pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
-                input->value = 0;            
-                input->edge = 1;
-                changed = true;
-            }
-        }
-        
-        // Notifica a la tasca que hi han canvis pendents per procesar
-        //
-        if (changed)
-            service->semaphore.releaseISR();
-    }
+    if (service != nullptr) 
+        service->tmrInterruptFunction();
 }
 
 
@@ -282,17 +299,4 @@ DigInput::~DigInput() {
 
     if (service != nullptr)
         service->removeInput(this);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte l'estat de l'entrada.
-/// \return   El estat.
-///
-bool DigInput::read() const {
-
-    halINTDisableInterrupts();
-    bool result = value;
-    halINTEnableInterrupts();
-    return result;
 }

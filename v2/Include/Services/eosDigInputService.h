@@ -24,21 +24,18 @@ namespace eos {
             typedef DynamicArray<DigInput*> DigInputList;
             typedef DynamicArray<DigInput*>::Iterator DigInputListIterator;
         public:
-            struct InitParams {  // Parametres d'inicialitzacio.
+            struct InitParams {  // Parametres d'inicialitzacio del servei.
                 TMRTimer timer;  // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema
-                unsigned period; // -Periode en ms
             };
 
         private:
             Semaphore semaphore;
             TMRTimer timer;
-            unsigned period;
             DigInputList inputs;
 
-        private:
-            static void isrTimerFunction(TMRTimer timer, void* params);
         protected:
-            void onInitialize();
+            void onInitialize() override;
+            void onTerminate() override;
             void onTask();
 #if Eos_ApplicationTickEnabled            
             void onTick();
@@ -49,6 +46,11 @@ namespace eos {
             void addInput(DigInput* input);
             void removeInput(DigInput* input);
             void removeInputs();
+            
+            bool read(const DigInput* input) const;
+            
+            void tmrInterruptFunction();
+            static void tmrInterruptFunction(TMRTimer timer, void* params);
     };
 
     /// \brief Clase que implementa una entrada digital
@@ -60,9 +62,9 @@ namespace eos {
                 void* param;
             };
             typedef ICallbackP1<const EventArgs&> IEventCallback;
-            struct InitParams {
-                GPIOPort port;
-                GPIOPin pin;
+            struct InitParams {  // Parametres d'inicialitzacio de l'entrada.
+                GPIOPort port;   // -El port
+                GPIOPin pin;     // -El pin
                 IEventCallback* eventCallback;
                 void* eventParam;
             };
@@ -85,7 +87,9 @@ namespace eos {
                 return service; 
             }
             
-            bool read() const;
+            inline bool read() const { 
+                return service->read(this); 
+            }
 
         friend DigInputService;
     };

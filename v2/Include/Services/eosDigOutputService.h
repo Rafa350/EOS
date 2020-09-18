@@ -57,9 +57,8 @@ namespace eos {
             typedef DynamicArray<DigOutput*> DigOutputList;
             typedef DynamicArray<DigOutput*>::Iterator DigOutputListIterator;
         public:
-            struct InitParams {
-                TMRTimer timer;
-                unsigned period;
+            struct InitParams {    // Parametres d'inicialitzacio del servei
+                TMRTimer timer;    // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema
             };
 
         private:
@@ -67,12 +66,10 @@ namespace eos {
             const unsigned minDelay = DigOutputService_MinDelay;
             const unsigned minWidth = DigOutputService_MinWidth;
             TMRTimer timer;
-            unsigned period;
             CommandQueue commandQueue;
             DigOutputList outputs;
 
-    private:
-            static void isrTimerFunction(TMRTimer timer, void* params);
+        private:
             void cmdClear(DigOutput* output);
             void cmdSet(DigOutput* output);
             void cmdToggle(DigOutput* output);
@@ -106,6 +103,9 @@ namespace eos {
             void delayedClear(DigOutput* output, unsigned delay);
             void delayedToggle(DigOutput* output, unsigned delay);
             void delayedPulse(DigOutput* output, unsigned delay, unsigned width);
+
+            void tmrInterruptFunction();
+            static void tmrInterruptFunction(TMRTimer timer, void* params);
     };
 
     /// \brief Clase que implementa una sortida digital.

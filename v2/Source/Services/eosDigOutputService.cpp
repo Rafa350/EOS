@@ -10,15 +10,6 @@
 using namespace eos;
 
 
-#ifndef DigOutputService_TimerInterruptPriority
-    #define DigOutputService_TimerInterruptPriority HAL_INT_PRIORITY_LEVEL2;
-#endif
-
-#ifndef DigOutputService_TimerInterruptSubPriority
-    #define DigOutputService_TimerInterruptSubPriority HAL_INT_SUBPRIORITY_LEVEL0;
-#endif
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    application: L'aplicacio on afeigir el servei.
@@ -30,7 +21,6 @@ DigOutputService::DigOutputService(
 
 	Service(application),
     timer(initParams.timer),
-    period(initParams.period),
 	commandQueue(commandQueueSize) {
 
 }
@@ -238,30 +228,15 @@ void DigOutputService::delayedPulse(
 ///
 void DigOutputService::onInitialize() {
     
-    // Inicialitza el temporitzador
-    //
-	TMRInitializeInfo tmrInfo;
-	tmrInfo.timer = timer;
-#if defined(EOS_PIC32MX)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64 | HAL_TMR_INTERRUPT_ENABLE;
-    tmrInfo.period = ((80000 * period) / 64) - 1; 
-#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1 | HAL_TMR_INTERRUPT_ENABLE;
-    tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
-    tmrInfo.period = (1000 * period) - 1; 
-#else
-//#error CPU no soportada
-#endif   
-	tmrInfo.irqPriority = DigOutputService_TimerInterruptPriority;
-	tmrInfo.irqSubPriority = DigOutputService_TimerInterruptSubPriority;
-	tmrInfo.isrFunction = isrTimerFunction;
-	tmrInfo.isrParams = this;
-	halTMRInitialize(&tmrInfo);
-    halTMRStartTimer(timer);
-
     // Inicialitza el servei base.
     //
     Service::onInitialize();
+
+    // Activa el temporitzador.
+    //
+    halTMRSetInterruptFunction(timer, tmrInterruptFunction, this);
+    halTMREnableInterrupt(timer);
+    halTMRStartTimer(timer);
 }
 
 
@@ -273,7 +248,8 @@ void DigOutputService::onTerminate() {
     // Desactiva el temporitzador
     //
     halTMRStopTimer(timer);
-    
+    halTMRDisableInterrupt(timer);
+       
     // Finalitza el servei base
     //
     Service::onTerminate();
@@ -285,6 +261,8 @@ void DigOutputService::onTerminate() {
 ///
 void DigOutputService::onTask() {
 
+    // Procesa les comandes rebudes
+    //
     Command cmd;
     while (commandQueue.pop(cmd, unsigned(-1))) {
 
@@ -514,23 +492,31 @@ void DigOutputService::cmdTimeOut(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Captura la interrupcio del temporitzador.
+/// \brief    Procesa la interrupcio del temportitzador
+/// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
+///
+void DigOutputService::tmrInterruptFunction() {
+
+    Command cmd;
+    cmd.opCode = OpCode::timeOut;
+    cmd.param1 = 1;
+
+    commandQueue.pushISR(cmd);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa la interrupcio del temporitzador.
 /// \param    timer: El temporitzador.
 /// \param    param: El handler del servei.
 ///
-void DigOutputService::isrTimerFunction(
+void DigOutputService::tmrInterruptFunction(
 	TMRTimer timer,
 	void* param) {
 
 	DigOutputService* service = static_cast<DigOutputService*>(param);
-    if (service != nullptr) {
-        
-        Command cmd;
-        cmd.opCode = OpCode::timeOut;
-        cmd.param1 = 1;
-        
-        service->commandQueue.pushISR(cmd);
-    }
+    if (service != nullptr) 
+        service->tmrInterruptFunction();
 }
 
 
