@@ -131,6 +131,7 @@ void DigInputService::onInitialize() {
     // Activa el temporitzador
     //
     halTMRSetInterruptFunction(timer, tmrInterruptFunction, this);
+    halTMRClearInterruptFlag(timer);
     halTMREnableInterrupt(timer);
     halTMRStartTimer(timer);
 }
@@ -157,28 +158,29 @@ void DigInputService::onTerminate() {
 ///
 void DigInputService::onTask() {
 
-    // Espera indefinidament que hagi canvis en les entrades
+    // Espera que es notifiquin canvis en les entrades
     //
-    if (semaphore.wait(-1)) {
-        
-        for (auto it = inputs.begin(); it != inputs.end(); it++) {        
-            DigInput* input = *it;
-          
-            if (input->eventCallback != nullptr) {
-                
-                halTMRDisableInterrupt(timer);
-                bool edge = input->edge;
-                input->edge = false;
-                halTMREnableInterrupt(timer);
+    semaphore.wait(-1);
 
-                if (edge) {
-                       
-                    DigInput::EventArgs args;
-                    args.input = input;
-                    args.param = input->eventParam;
+    // Procesa les entrades
+    //
+    for (auto it = inputs.begin(); it != inputs.end(); it++) {        
+        DigInput* input = *it;
 
-                    input->eventCallback->execute(args);
-                }
+        if (input->eventCallback != nullptr) {
+
+            halTMRDisableInterrupt(timer);
+            bool edge = input->edge;
+            input->edge = false;
+            halTMREnableInterrupt(timer);
+
+            if (edge) {
+
+                DigInput::EventArgs args;
+                args.input = input;
+                args.param = input->eventParam;
+
+                input->eventCallback->execute(args);
             }
         }
     }

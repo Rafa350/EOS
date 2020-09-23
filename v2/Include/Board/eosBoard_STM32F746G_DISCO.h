@@ -35,6 +35,40 @@
 
 
 // -----------------------------------------------------------------------
+// Arduino expansion conector
+// -----------------------------------------------------------------------
+
+#ifdef USE_ARDUINO
+#define EXISTS_ARDUINO
+
+#define ARDUINO_D0_PORT           HAL_GPIO_PORT_C
+#define ARDUINO_D0_PIN            HAL_GPIO_PIN_7
+
+#define ARDUINO_D1_PORT           HAL_GPIO_PORT_C
+#define ARDUINO_D1_PIN            HAL_GPIO_PIN_6
+
+#define ARDUINO_D2_PORT           HAL_GPIO_PORT_G
+#define ARDUINO_D2_PIN            HAL_GPIO_PIN_6
+
+#define ARDUINO_D3_PORT           HAL_GPIO_PORT_B
+#define ARDUINO_D3_PIN            HAL_GPIO_PIN_4
+
+#define ARDUINO_D4_PORT           HAL_GPIO_PORT_G
+#define ARDUINO_D4_PIN            HAL_GPIO_PIN_7
+
+#define ARDUINO_D5_PORT           HAL_GPIO_PORT_I
+#define ARDUINO_D5_PIN            HAL_GPIO_PIN_0
+
+#define ARDUINO_D6_PORT           HAL_GPIO_PORT_H
+#define ARDUINO_D6_PIN            HAL_GPIO_PIN_6
+
+#define ARDUINO_D7_PORT           HAL_GPIO_PORT_I
+#define ARDUINO_D7_PIN            HAL_GPIO_PIN_3
+
+#endif
+
+
+// -----------------------------------------------------------------------
 // Display
 // -----------------------------------------------------------------------
 

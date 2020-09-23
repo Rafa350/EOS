@@ -21,6 +21,7 @@
 //
 #define DigInputService_Enabled                       1    // Servei activat
 #define DigInputService_SafeMode                      1    // Modus segur
+#define DigInputService_TimerPeriod                   5    // 5 ms de periode
 #if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
 #define DigInputService_Timer					      HAL_TMR_TIMER_2
 #define DigInputService_TimerInterruptPriority        HAL_INT_PRIORITY_LEVEL2
@@ -36,6 +37,7 @@
 #define DigOutputService_Enabled                      1    // Servei activat
 #define DigOutputService_CommandQueueSize             5    // Tamany de la cua de comandes
 #define DigOutputService_SafeMode                     1    // Modus segur
+#define DigOutputService_TimerPeriod                  1    // 1 ms de periode
 #if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
 #define DigOutputService_Timer					      HAL_TMR_TIMER_3
 #define DigOutputService_TimerInterruptPriority       HAL_INT_PRIORITY_LEVEL2

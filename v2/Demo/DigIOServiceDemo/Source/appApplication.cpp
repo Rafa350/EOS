@@ -1,5 +1,7 @@
 #include "eos.h"
 #include "HAL/halGPIO.h"
+#include "HAL/halINT.h"
+#include "HAL/halSYS.h"
 #ifdef EOS_PIC32
 #include "HAL/PIC32/halCN.h"
 #endif
@@ -35,12 +37,29 @@ MyApplication::MyApplication():
 /// \brief    Inicialitza l'aplicacio.
 ///
 void MyApplication::onInitialize() {
+    
+    // Inicialitza el temporitzador pel servei d'entrades digitals
+    //
+	TMRInitializeInfo tmrInfo;
+	tmrInfo.timer = DigInputService_Timer;
+	tmrInfo.isrFunction = NULL;
+#if defined(EOS_PIC32)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
+    tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1; 
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
+    tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
+    tmrInfo.period = (1000 * AXIS_INPUTS_TIMER_PERIOD) - 1;
+#else
+    //#error CPU no soportada
+#endif   
+	halTMRInitialize(&tmrInfo);
+    halTMRSetInterruptPriority(DigInputService_Timer, DigInputService_TimerInterruptPriority, DigInputService_TimerInterruptSubPriority);
 
     // Inicialitza el servei d'entrades digitals
 	//
     DigInputService::InitParams digInputServiceInit;
-    digInputServiceInit.timer = HAL_TMR_TIMER_3;
-    digInputServiceInit.period = 5;
+    digInputServiceInit.timer = DigInputService_Timer;
     digInputService = new DigInputService(this, digInputServiceInit);
     digInputService->setPriority(Task::Priority::high);
     
@@ -88,11 +107,28 @@ void MyApplication::onInitialize() {
     sw3 = new DigInput(digInputService, digInputInit);
 #endif
 
+    // Inicialitza el temporitzador pel servei de sortides digitals
+    //
+	//TMRInitializeInfo tmrInfo;
+	tmrInfo.timer = DigOutputService_Timer;
+	tmrInfo.isrFunction = NULL;
+#if defined(EOS_PIC32)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
+    tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigOutputService_TimerPeriod) / 64000) - 1; 
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
+    tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
+    tmrInfo.period = (1000 * AXIS_INPUTS_OUTPUTS_PERIOD) - 1;
+#else
+    //#error CPU no soportada
+#endif   
+	halTMRInitialize(&tmrInfo);
+    halTMRSetInterruptPriority(DigOutputService_Timer, DigOutputService_TimerInterruptPriority, DigOutputService_TimerInterruptSubPriority);    
+
     // Inicialitza el servei de sortides digitals
     //
     DigOutputService::InitParams digOutputServiceInit;
-    digOutputServiceInit.timer = HAL_TMR_TIMER_2;
-    digOutputServiceInit.period = 1;
+    digOutputServiceInit.timer = DigOutputService_Timer;
     digOutputService = new DigOutputService(this, digOutputServiceInit);
     
     DigOutput::InitParams digOutputInit;

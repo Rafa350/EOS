@@ -3,7 +3,7 @@
 
 
 #if defined(HARDWARE_CUSTOM)
-    #include "eosBoard_Custom.h"
+    #include "Board/eosBoard_Custom.h"
 
 #elif defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
     #include "Board/eosBoard_PIC32_USB_STARTER_KIT_I.h"
