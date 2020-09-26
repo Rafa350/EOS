@@ -15,8 +15,8 @@
 #ifdef USE_LEDS_LED1
 #define EXIST_LEDS_LED1
 
-#define LED_LED1_PORT             HAL_GPIO_PORT_I
-#define LED_LED1_PIN              HAL_GPIO_PIN_1
+#define LEDS_LED1_PORT            HAL_GPIO_PORT_I
+#define LEDS_LED1_PIN             HAL_GPIO_PIN_1
 
 #endif // USE_LED_LED1
 
@@ -28,8 +28,8 @@
 #ifdef USE_SWITCHES_SW1
 #define EXISTS_SWITCHES_SW1
 
-#define SW_SW1_PORT               HAL_GPIO_PORT_I
-#define SW_SW1_PIN                HAL_GPIO_PIN_11
+#define SWITCHES_SW1_PORT         HAL_GPIO_PORT_I
+#define SWITCHES_SW1_PIN          HAL_GPIO_PIN_11
 
 #endif // USE_SWITCHES_SW1
 
@@ -65,7 +65,7 @@
 #define ARDUINO_D7_PORT           HAL_GPIO_PORT_I
 #define ARDUINO_D7_PIN            HAL_GPIO_PIN_3
 
-#endif
+#endif // USE_ARDUINO
 
 
 // -----------------------------------------------------------------------

@@ -140,7 +140,7 @@ void halTMRSetInterruptPriority(TMRTimer timer, unsigned priority, unsigned subP
 bool halTMRGetInterruptFlag(TMRTimer timer);
 void halTMRClearInterruptFlag(TMRTimer timer);
 void halTMREnableInterrupt(TMRTimer timer);
-void halTMRDisableInterrupt(TMRTimer timer);
+bool halTMRDisableInterrupt(TMRTimer timer);
 
 
 #ifdef	__cplusplus

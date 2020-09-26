@@ -8,14 +8,14 @@
 
 #ifdef USE_LEDS_LED1
 #define EXIST_LEDS_LED1
-#define LED_LED1_PORT             HAL_GPIO_PORT_G
-#define LED_LED1_PIN              HAL_GPIO_PIN_13
+#define LEDS_LED1_PORT            HAL_GPIO_PORT_G
+#define LEDS_LED1_PIN             HAL_GPIO_PIN_13
 #endif // USE_LEDS_LED1
 
 #ifdef USE_LEDS_LED2
 #define EXIST_LEDS_LED2
-#define LED_LED2_PORT             HAL_GPIO_PORT_G
-#define LED_LED2_PIN              HAL_GPIO_PIN_14
+#define LEDS_LED2_PORT            HAL_GPIO_PORT_G
+#define LEDS_LED2_PIN             HAL_GPIO_PIN_14
 #endif // USE_LEDS_LED2
 
 
@@ -25,8 +25,8 @@
 
 #ifdef USE_SWITCHES_SW1
 #define EXIST_SWITCHES_SW1
-#define SW_SW1_PORT               HAL_GPIO_PORT_A
-#define SW_SW1_PIN                HAL_GPIO_PIN_0
+#define SWITCHES_SW1_PORT         HAL_GPIO_PORT_A
+#define SWITCHES_SW1_PIN          HAL_GPIO_PIN_0
 #endif // USE_SWITCHES_SW1
 
 
@@ -108,7 +108,7 @@
 // Parametres de la imatge
 //
 #define DISPLAY_SCREEN_WIDTH      240  // Amplada en pixels
-#define DISPLAY_SCREEN_HEIGHT     320  // Alçada en pixels
+#define DISPLAY_SCREEN_HEIGHT     320  // Alï¿½ada en pixels
 #define DISPLAY_COLOR_RGB565           // Format de color RGB565
 
 // Parametres del controlador

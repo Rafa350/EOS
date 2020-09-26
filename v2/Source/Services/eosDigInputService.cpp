@@ -169,10 +169,13 @@ void DigInputService::onTask() {
 
         if (input->eventCallback != nullptr) {
 
-            halTMRDisableInterrupt(timer);
+            bool ie = halTMRDisableInterrupt(timer);
+
             bool edge = input->edge;
             input->edge = false;
-            halTMREnableInterrupt(timer);
+
+            if (ie)
+            	halTMREnableInterrupt(timer);
 
             if (edge) {
 

@@ -5,37 +5,57 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna la prioruitat d'una interrupcio.
-/// \param priority: La prioritat.
-/// \param subPriority: La sub-prioritat.
+/// \brief    Asigna la prioruitat d'una interrupcio.
+/// \param    source: Identificador de la interrupcio.
+/// \param    priority: La prioritat.
+/// \param    subPriority: La sub-prioritat.
 ///
 void halINTSetPriority(
-	IRQn_Type irq,
+	INTSource source,
 	uint32_t priority,
 	uint32_t subPriority) {
 
-	HAL_NVIC_SetPriority(irq, priority, subPriority);
+	uint32_t priorityGroup = NVIC_GetPriorityGrouping();
+    NVIC_SetPriority((IRQn_Type) source, NVIC_EncodePriority(priorityGroup, priority, subPriority));
 }
 
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa la interrupcio IRQ especificada.
-/// \param irq: identificador de la interrupcio.
+/// \brief    Activa la interrupcio IRQ especificada.
+/// \param    source: Identificador de la interrupcio.
 ///
-void halINTEnableIRQ(
-	IRQn_Type irq) {
+void halINTEnableInterrupt(
+	INTSource source) {
 
-	NVIC_EnableIRQ(irq);
+	NVIC_EnableIRQ((IRQn_Type) source);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \bried Desactiva la interrupcio especificada.
-/// \param irq: identificador de la interrupcio.
+/// \bried    Desactiva la interrupcio especificada.
+/// \param    source: Identificador de la interrupcio.
+/// \return   Estat per restaurar la interrupcio.
 ///
-void halINTDisableIRQ(
-	IRQn_Type irq) {
+bool halINTDisableInterrupt(
+	INTSource source) {
 
-	NVIC_DisableIRQ(irq);
+	bool state = NVIC_GetEnableIRQ((IRQn_Type) source);
+	if (state)
+		NVIC_DisableIRQ((IRQn_Type) source);
+	return state;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Restaura l'estat de la interrupcio.
+/// \param    source: Identificadord e la interrupcio.
+/// \param    state: L'estat a restaurar.
+///
+void halIRQRestoreInterrupt(
+	INTSource source,
+	bool state) {
+
+	if (state)
+		NVIC_EnableIRQ((IRQn_Type) source);
 }

@@ -3,7 +3,7 @@
 #include "HAL/STM32/halGPIO.h"
 
 
-GPIO_TypeDef * const gpioTbl[] = {
+GPIORegisters * const gpioTbl[] = {
     GPIOA,
 	GPIOB,
 	GPIOC,
@@ -103,7 +103,7 @@ static void setupPin(
 	GPIOAlt alt) {
 
 	uint32_t temp;
-	GPIO_TypeDef* gpio = gpioTbl[port];
+	GPIORegisters* gpio = halGPIOGetRegisterPtr(port);
 
 	// Configura el registre MODER (Mode Register)
 	//

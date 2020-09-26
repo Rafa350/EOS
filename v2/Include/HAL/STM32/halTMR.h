@@ -15,6 +15,11 @@ extern "C" {
 typedef uint8_t TMRTimer;
 typedef uint32_t TMROptions;
 
+typedef TIM_TypeDef TMRRegisters;
+extern TMRRegisters* const tmrRegistersTbl[];
+
+#define halTMRGetRegisterPtr(timer)  ((TMRRegisters*)(tmrRegistersTbl[timer]))
+
 
 // Identificador del timer
 #define HAL_TMR_TIMER_1           ((TMRTimer) 0)
@@ -60,6 +65,11 @@ typedef uint32_t TMROptions;
 #define HAL_TMR_INTERRUPT_DISABLE (0u << HAL_TMR_INTERRUPT_pos)
 #define HAL_TMR_INTERRUPT_ENABLE  (1u << HAL_TMR_INTERRUPT_pos)
 
+// Interrupt timer sources
+#define HAL_TMR_SOURCE_UP
+#define HAL_TMR_SOURCE_BRK
+#define HAL_TMR_SOURCE_TRG
+
 typedef void (*TMRInterruptFunction)(TMRTimer timer, void* params);
 
 
@@ -84,11 +94,12 @@ void halTMRStopTimer(TMRTimer timer);
 void halTMRDelay(int time);
 
 void halTMRSetInterruptFunction(TMRTimer timer, TMRInterruptFunction function, void* params);
-void halTMRSetInterruptPriority(TMRTimer timer, unsigned priority, unsigned subPriority);
+void halTMRSetInterruptPriority(TMRTimer timer, uint32_t priority, uint32_t subPriority);
 bool halTMRGetInterruptFlag(TMRTimer timer);
 void halTMRClearInterruptFlag(TMRTimer timer);
 void halTMREnableInterrupt(TMRTimer timer);
-void halTMRDisableInterrupt(TMRTimer timer);
+bool halTMRDisableInterrupt(TMRTimer timer);
+void halTMRInterruptHandler(TMRTimer timer);
 
 
 #ifdef	__cplusplus

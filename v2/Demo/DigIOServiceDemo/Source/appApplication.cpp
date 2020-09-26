@@ -49,7 +49,7 @@ void MyApplication::onInitialize() {
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
     tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
-    tmrInfo.period = (1000 * AXIS_INPUTS_TIMER_PERIOD) - 1;
+    tmrInfo.period = (1000 * DigInputService_TimerPeriod) - 1;
 #else
     //#error CPU no soportada
 #endif   
@@ -69,14 +69,14 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW1
     //
 #ifdef EXIST_SWITCHES_SW1
-    halGPIOInitializePin(SW_SW1_PORT, SW_SW1_PIN, 
+    halGPIOInitializePin(SWITCHES_SW1_PORT, SWITCHES_SW1_PIN, 
         HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
 #ifdef EOS_PIC32
-    halCNInitializeLine(SW_SW1_CN, HAL_CN_PULL_UP);
+    halCNInitializeLine(SWITCHES_SW1_CN, HAL_CN_PULL_UP);
 #endif
 
-    digInputInit.port = SW_SW1_PORT;
-    digInputInit.pin = SW_SW1_PIN;
+    digInputInit.port = SWITCHES_SW1_PORT;
+    digInputInit.pin = SWITCHES_SW1_PIN;
     digInputInit.eventCallback = &sw1EventCallback;
     sw1 = new DigInput(digInputService, digInputInit);
 #endif
@@ -84,12 +84,12 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW2
     //
 #ifdef EXIST_SWITCHES_SW2
-    halGPIOInitializePin(SW_SW2_PORT, SW_SW2_PIN, 
+    halGPIOInitializePin(SWITCHES_SW2_PORT, SWITCHES_SW2_PIN, 
         HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
-    halCNInitializeLine(SW_SW2_CN, HAL_CN_PULL_UP);
+    halCNInitializeLine(SWITCHES_SW2_CN, HAL_CN_PULL_UP);
 
-    digInputInit.port = SW_SW2_PORT;
-    digInputInit.pin = SW_SW2_PIN;
+    digInputInit.port = SWITCHES_SW2_PORT;
+    digInputInit.pin = SWITCHES_SW2_PIN;
     digInputInit.eventCallback = &sw2EventCallback;
     sw2 = new DigInput(digInputService, digInputInit);
 #endif
@@ -97,12 +97,12 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW3
     //
 #ifdef EXIST_SWITCHES_SW3
-    halGPIOInitializePin(SW_SW3_PORT, SW_SW3_PIN, 
+    halGPIOInitializePin(SWITCHES_SW3_PORT, SWITCHES_SW3_PIN, 
         HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
-    halCNInitializeLine(SW_SW3_CN, HAL_CN_PULL_UP);
+    halCNInitializeLine(SWITCHES_SW3_CN, HAL_CN_PULL_UP);
 
-    digInputInit.port = SW_SW3_PORT;
-    digInputInit.pin = SW_SW3_PIN;
+    digInputInit.port = SWITCHES_SW3_PORT;
+    digInputInit.pin = SWITCHES_SW3_PIN;
     digInputInit.eventCallback = &sw3EventCallback;
     sw3 = new DigInput(digInputService, digInputInit);
 #endif
@@ -118,7 +118,7 @@ void MyApplication::onInitialize() {
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
     tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
-    tmrInfo.period = (1000 * AXIS_INPUTS_OUTPUTS_PERIOD) - 1;
+    tmrInfo.period = (1000 * DigOutputService_TimerPeriod) - 1;
 #else
     //#error CPU no soportada
 #endif   
@@ -136,33 +136,33 @@ void MyApplication::onInitialize() {
     // Inicialitza la sortida corresponent al led LED1
     //
 #ifdef EXIST_LEDS_LED1
-    halGPIOInitializePin(LED_LED1_PORT, LED_LED1_PIN, 
+    halGPIOInitializePin(LEDS_LED1_PORT, LEDS_LED1_PIN, 
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
 
-    digOutputInit.port = LED_LED1_PORT;
-    digOutputInit.pin = LED_LED1_PIN;
+    digOutputInit.port = LEDS_LED1_PORT;
+    digOutputInit.pin = LEDS_LED1_PIN;
     led1 = new DigOutput(digOutputService, digOutputInit);
 #endif
 
     // Inicialitza la sortida corresponent al led LED2
     //
 #ifdef EXIST_LEDS_LED2
-    halGPIOInitializePin(LED_LED2_PORT, LED_LED2_PIN, 
+    halGPIOInitializePin(LEDS_LED2_PORT, LEDS_LED2_PIN, 
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
 
-    digOutputInit.port = LED_LED2_PORT;
-    digOutputInit.pin = LED_LED2_PIN;
+    digOutputInit.port = LEDS_LED2_PORT;
+    digOutputInit.pin = LEDS_LED2_PIN;
     led2 = new DigOutput(digOutputService, digOutputInit);
 #endif
 
     // Inicialitza la sortida corresponent al led LED3
     //
 #ifdef EXIST_LEDS_LED3
-    halGPIOInitializePin(LED_LED3_PORT, LED_LED3_PIN, 
+    halGPIOInitializePin(LEDS_LED3_PORT, LEDS_LED3_PIN, 
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
     
-    digOutputInit.port = LED_LED3_PORT;
-    digOutputInit.pin = LED_LED3_PIN;
+    digOutputInit.port = LEDS_LED3_PORT;
+    digOutputInit.pin = LEDS_LED3_PIN;
     led3 = new DigOutput(digOutputService, digOutputInit);
 #endif
 

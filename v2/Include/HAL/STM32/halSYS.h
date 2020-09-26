@@ -19,9 +19,6 @@ extern "C" {
 
 void halSYSInitialize();
 
-void halSYSInterruptEnable();
-void halSYSInterruptDisable();
-
 
 #ifdef	__cplusplus
 }

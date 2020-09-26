@@ -121,12 +121,12 @@
 		<link>
 			<name>inc/App/STM32F4/stm32f429i_discovery.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/stm32f429i_discovery.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/BSP/STM32F429I-Discovery/stm32f429i_discovery.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F4/stm32f429i_discovery_sdram.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/STM32F4/stm32f429i_discovery_sdram.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/BSP/STM32F429I-Discovery/stm32f429i_discovery_sdram.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F4/stm32f4xx_hal_conf.h</name>
@@ -179,9 +179,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/appInitialize.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/App/STM32F4/stm32f429i_discovery.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/BSP/STM32F429I-Discovery/stm32f429i_discovery.c</locationURI>
+		</link>
+		<link>
 			<name>src/App/STM32F4/stm32f429i_discovery_sdram.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f429i_discovery_sdram.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/BSP/STM32F429I-Discovery/stm32f429i_discovery_sdram.c</locationURI>
 		</link>
 		<link>
 			<name>src/App/STM32F4/stm32f4xx_hal_timebase_tim.c</name>
@@ -629,9 +634,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/eosColorFrameBuffer.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColorFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DAM2D.cpp</name>
@@ -732,6 +737,11 @@
 			<name>src/Framework/EOS/System/Graphics/eosColor.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosColor.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosColorMath.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosColorMath.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/eosFont.cpp</name>

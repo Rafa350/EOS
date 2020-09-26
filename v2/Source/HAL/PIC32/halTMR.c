@@ -10,8 +10,16 @@ typedef struct {
     void* params;
 } CallbackInfo;
 
-
 static CallbackInfo callbacks[HAL_TMR_TIMER_MAX];
+
+static INTSource irqTbl[] = {
+    HAL_INT_SOURCE_TMR1,
+    HAL_INT_SOURCE_TMR2,
+    HAL_INT_SOURCE_TMR3,
+    HAL_INT_SOURCE_TMR4,
+    HAL_INT_SOURCE_TMR5
+};
+
 
 #if defined(_TMR1) && (HAL_TMR_USE_T1_INTERRUPT == 1)
 extern void __ISR(_TIMER_1_VECTOR, IPL2SOFT) isrTMR1Wrapper(void);
@@ -43,55 +51,55 @@ void halTMRInitialize(
     //
     if (IsTypeA(info->timer)) {
         
-        TMRTypeARegisters* registers = halTMRGetTypeARegisterPtr(info->timer);
+        TMRTypeARegisters* tmr = halTMRGetTypeARegisterPtr(info->timer);
 
-        registers->TxCON.ON = 0;    // Desactiva el timer
-        registers->TxCON.TCS = 0;   // Clock source interna.
+        tmr->TxCON.ON = 0;    // Desactiva el timer
+        tmr->TxCON.TCS = 0;   // Clock source interna.
         switch((info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos) {
             case HAL_TMR_CLKDIV_8:
-                registers->TxCON.TCKPS = 1;    
+                tmr->TxCON.TCKPS = 1;    
                 break;
 
             case HAL_TMR_CLKDIV_64:
-                registers->TxCON.TCKPS = 2;    
+                tmr->TxCON.TCKPS = 2;    
                 break;
 
             case HAL_TMR_CLKDIV_256:
-                registers->TxCON.TCKPS = 3;    
+                tmr->TxCON.TCKPS = 3;    
                 break;
                 
             default:
-                registers->TxCON.TCKPS = 0;    
+                tmr->TxCON.TCKPS = 0;    
                 break;
         }
-        registers->TMRx = 0;
-        registers->PRx = info->period & 0xFFFF;
+        tmr->TMRx = 0;
+        tmr->PRx = info->period & 0xFFFF;
     }
     
     // Configura el timer de tipus B
     //
     else {
         
-        TMRTypeBRegisters* registers = halTMRGetTypeBRegisterPtr(info->timer);
+        TMRTypeBRegisters* tmr = halTMRGetTypeBRegisterPtr(info->timer);
 
-        registers->TxCON.ON = 0;    // Desactiva el timer
+        tmr->TxCON.ON = 0;    // Desactiva el timer
 #if defined(__32MX460F512L__)        
-        registers->TxCON.TCS = 0;   // Clock source interna.
+        tmr->TxCON.TCS = 0;   // Clock source interna.
 #endif        
-        registers->TxCON.TCKPS = (info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos;    
+        tmr->TxCON.TCKPS = (info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos;    
 
         if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_16) {
-            registers->TxCON.T32 = 0;
-            registers->TMRx = 0;
-            registers->PRx = info->period & 0xFFFF;
+            tmr->TxCON.T32 = 0;
+            tmr->TMRx = 0;
+            tmr->PRx = info->period & 0xFFFF;
         } 
         else if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32) {
-            TMRTypeBRegisters* registersHi = halTMRGetTypeBRegisterHiPtr(info->timer);
-            registers->TxCON.T32 = 1;
-            registers->TMRx = 0;
-            registersHi->TMRx = 0;
-            registers->PRx = info->period & 0xFFFF;
-            registersHi->PRx = (info->period >> 16) & 0xFFFF;
+            TMRTypeBRegisters* tmrHi = halTMRGetTypeBRegisterHiPtr(info->timer);
+            tmr->TxCON.T32 = 1;
+            tmr->TMRx = 0;
+            tmrHi->TMRx = 0;
+            tmr->PRx = info->period & 0xFFFF;
+            tmrHi->PRx = (info->period >> 16) & 0xFFFF;
         }
     }
     
@@ -101,10 +109,8 @@ void halTMRInitialize(
         halTMRSetInterruptFunction(info->timer, info->isrFunction, info->isrParams);
 
         if ((info->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) {
-            unsigned state = halINTDisable();
             halTMRSetInterruptPriority(info->timer, info->irqPriority, info->irqSubPriority);
             halTMREnableInterrupt(info->timer);
-            halINTRestore(state);
         }
     }
     else
@@ -120,12 +126,12 @@ void halTMRStartTimer(
     TMRTimer timer) {
     
     if (IsTypeA(timer)) {
-        TMRTypeARegisters* registers = halTMRGetTypeARegisterPtr(timer);
-        registers->TxCON.ON = 1;
+        TMRTypeARegisters* tmr = halTMRGetTypeARegisterPtr(timer);
+        tmr->TxCON.ON = 1;
     }
     else {
-        TMRTypeBRegisters* registers = halTMRGetTypeBRegisterPtr(timer);
-        registers->TxCON.ON = 1;
+        TMRTypeBRegisters* tmr = halTMRGetTypeBRegisterPtr(timer);
+        tmr->TxCON.ON = 1;
     }
 }
 
@@ -138,12 +144,12 @@ void halTMRStopTimer(
     TMRTimer timer) {
     
     if (IsTypeA(timer)) {
-        TMRTypeARegisters* registers = halTMRGetTypeARegisterPtr(timer);
-        registers->TxCON.ON = 0;
+        TMRTypeARegisters* tmr = halTMRGetTypeARegisterPtr(timer);
+        tmr->TxCON.ON = 0;
     }
     else {
-        TMRTypeBRegisters* registers = halTMRGetTypeBRegisterPtr(timer);
-        registers->TxCON.ON = 0;
+        TMRTypeBRegisters* tmr = halTMRGetTypeBRegisterPtr(timer);
+        tmr->TxCON.ON = 0;
     }
 }
 
@@ -170,59 +176,20 @@ void halTMRSetInterruptFunction(
 ///
 void halTMREnableInterrupt(
     TMRTimer timer) {
-
-    switch (timer) {
-        case HAL_TMR_TIMER_1:
-            IEC0bits.T1IE = 1;
-            break;
-            
-        case HAL_TMR_TIMER_2:
-            IEC0bits.T2IE = 1;
-            break;
-        
-        case HAL_TMR_TIMER_3:
-            IEC0bits.T3IE = 1;
-            break;
-        
-        case HAL_TMR_TIMER_4:
-            IEC0bits.T4IE = 1;
-            break;
-        
-        case HAL_TMR_TIMER_5:
-            IEC0bits.T5IE = 1;
-            break;
-    }
+    
+    halINTEnableInterrupt(irqTbl[timer]);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva les interrupcions del temporitzador.
 /// \param    timer: El identificador del temporitzador.
+/// \return   True si previament estava activada.
 ///
-void halTMRDisableInterrupt(
+bool halTMRDisableInterrupt(
     TMRTimer timer) {
-
-    switch (timer) {
-        case HAL_TMR_TIMER_1:
-            IEC0bits.T1IE = 0;
-            break;
-            
-        case HAL_TMR_TIMER_2:
-            IEC0bits.T2IE = 0;
-            break;
-        
-        case HAL_TMR_TIMER_3:
-            IEC0bits.T3IE = 0;
-            break;
-        
-        case HAL_TMR_TIMER_4:
-            IEC0bits.T4IE = 0;
-            break;
-        
-        case HAL_TMR_TIMER_5:
-            IEC0bits.T5IE = 0;
-            break;
-    }
+    
+    return halINTDisableInterrupt(irqTbl[timer]);
 }
 
 
@@ -274,25 +241,7 @@ void halTMRSetInterruptPriority(
 bool halTMRGetInterruptFlag(
     TMRTimer timer) {
     
-    switch (timer) {
-        case HAL_TMR_TIMER_1:
-            return IFS0bits.T1IF;
-            
-        case HAL_TMR_TIMER_2:
-            return IFS0bits.T2IF;
-        
-        case HAL_TMR_TIMER_3:
-            return IFS0bits.T3IF;
-        
-        case HAL_TMR_TIMER_4:
-            return IFS0bits.T4IF;
-        
-        case HAL_TMR_TIMER_5:
-            return IFS0bits.T5IF;
-            
-        default:
-            return false;
-    }
+    return halINTGetInterruptFlag(irqTbl[timer]);
 }
 
 
@@ -303,27 +252,7 @@ bool halTMRGetInterruptFlag(
 void halTMRClearInterruptFlag(
     TMRTimer timer) {
     
-    switch (timer) {
-        case HAL_TMR_TIMER_1:
-            IFS0bits.T1IF = 0;
-            break;
-            
-        case HAL_TMR_TIMER_2:
-            IFS0bits.T2IF = 0;
-            break;
-        
-        case HAL_TMR_TIMER_3:
-            IFS0bits.T3IF = 0;
-            break;
-        
-        case HAL_TMR_TIMER_4:
-            IFS0bits.T4IF = 0;
-            break;
-        
-        case HAL_TMR_TIMER_5:
-            IFS0bits.T5IF = 0;
-            break;
-    }
+    halINTClearInterruptFlag(irqTbl[timer]);
 }
 
 

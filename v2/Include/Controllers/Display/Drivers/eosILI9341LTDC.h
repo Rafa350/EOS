@@ -60,7 +60,7 @@ namespace eos {
     class ILI9341LTDCDriver: public IDisplayDriver {
         private:
     		static IDisplayDriver *instance;
-            FrameBuffer* frameBuffer;
+            ColorFrameBuffer* frameBuffer;
 
         public:
             static IDisplayDriver *getInstance();;

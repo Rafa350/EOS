@@ -43,7 +43,10 @@ typedef struct {
 } GPIOInitializePortInfo;
 
 
-extern GPIO_TypeDef * const gpioTbl[];
+typedef GPIO_TypeDef GPIORegisters;
+extern GPIORegisters* const gpioTbl[];
+
+#define halGPIOGetRegisterPtr(port)  ((GPIORegisters*)(gpioTbl[port]))
 
 
 // Identificado del port
@@ -200,19 +203,19 @@ extern GPIO_TypeDef * const gpioTbl[];
 // Canvi del estat del pin
 //
 #define halGPIOSetPin(port, pin) \
-	gpioTbl[port]->BSRR = ((uint32_t) 1) << (pin)
+	halGPIOGetRegisterPtr(port)->BSRR = ((uint32_t) 1) << (pin)
 
 #define halGPIOClearPin(port, pin) \
-	gpioTbl[port]->BSRR = ((uint32_t) 1) << ((pin) + 16)
+	halGPIOGetRegisterPtr(port)->BSRR = ((uint32_t) 1) << ((pin) + 16)
 
 #define halGPIOTogglePin(port, pin) \
-	gpioTbl[port]->ODR ^= ((uint32_t) 1) << (pin)
+	halGPIOGetRegisterPtr(port)->ODR ^= ((uint32_t) 1) << (pin)
 #endif
 
 // Lectura i escriptura del pin
 //
 #define halGPIOReadPin(port, pin) \
-	((gpioTbl[port]->IDR & (((uint32_t) 1) << (pin))) != 0)
+	((halGPIOGetRegisterPtr(port)->IDR & (((uint32_t) 1) << (pin))) != 0)
 
 #define halGPIOWritePin(port, pin, data) \
 	if (1) {                             \
@@ -225,10 +228,10 @@ extern GPIO_TypeDef * const gpioTbl[];
 // Lectura i escriptura del port
 //
 #define halGPIOWritePort(port, data) \
-    gpioTbl[port]->ODR = data
+	halGPIOGetRegisterPtr(port)->ODR = data
 
 #define halGPIOReadPort(port) \
-    gpioTbl[port]->IDR
+	halGPIOGetRegisterPtr(port)->IDR
 
 
 void halGPIOInitializePins(const GPIOInitializePinInfo* info, unsigned count);
