@@ -8,3 +8,5 @@ USBDevice
 USBHost
 Audio
 CMSIS_CORE
+BSP
+
