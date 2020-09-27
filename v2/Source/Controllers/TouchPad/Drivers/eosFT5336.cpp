@@ -314,7 +314,7 @@ void FT5336Driver::ioInit() {
 #ifdef TOUCHPAD_INT_PORT
 	halEXTIInitializePins(extiInfo, sizeof(extiInfo) / sizeof(extiInfo[0]));
 	halINTSetPriority(TOUCHPAD_INT_IRQ, 0x0F, 0x00);
-	halINTEnableIRQ(TOUCHPAD_INT_IRQ);
+	halINTEnableInterrupt(TOUCHPAD_INT_IRQ);
 #endif
 
 	I2CMasterInitializeInfo i2cInfo;

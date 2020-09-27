@@ -33,6 +33,12 @@
 // Interrupcions (Alguns vectors son compartits)
 #define HAL_INT_SOURCE_DAC            TIM6_DAC_IRQn
 #define HAL_INT_SOURCE_DMA2D          DMA2D_IRQn
+#define HAL_INT_SOURCE_EXTI10         EXTI15_10_IRQn
+#define HAL_INT_SOURCE_EXTI11         EXTI15_10_IRQn
+#define HAL_INT_SOURCE_EXTI12         EXTI15_10_IRQn
+#define HAL_INT_SOURCE_EXTI13         EXTI15_10_IRQn
+#define HAL_INT_SOURCE_EXTI14         EXTI15_10_IRQn
+#define HAL_INT_SOURCE_EXTI15         EXTI15_10_IRQn
 #define HAL_INT_SOURCE_LTDC           LTDC_IRQn
 #define HAL_INT_SOURCE_LTDC_ER        LTDC_ER_IRQn
 #define HAL_INT_SOURCE_SPI1           SPI1_IRQn
