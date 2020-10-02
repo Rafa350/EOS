@@ -18,7 +18,7 @@ using namespace app;
 MyApplication::MyApplication() {
 
     I2CMasterService::Configuration cfg = {
-        .module = eosI2CMasterService_I2CModule, 
+        .channel = eosI2CMasterService_I2CModule, 
         .baudRate = eosI2CMasterService_I2CBaudRate        
     };
     i2cMasterService = new I2CMasterService(this, cfg);

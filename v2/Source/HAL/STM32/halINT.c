@@ -5,13 +5,13 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna la prioruitat d'una interrupcio.
+/// \brief    Asigna la prioritat d'una interrupcio.
 /// \param    source: Identificador de la interrupcio.
 /// \param    priority: La prioritat.
 /// \param    subPriority: La sub-prioritat.
 ///
-void halINTSetPriority(
-	INTSource source,
+void halINTSetInterruptVectorPriority(
+	uint32_t source,
 	uint32_t priority,
 	uint32_t subPriority) {
 
@@ -20,13 +20,23 @@ void halINTSetPriority(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Activa la interrupcio IRQ especificada.
+/// \param    source: Identificador de la interrupcio.
+///
+void halINTEnableInterruptVector(
+	uint32_t vector) {
+
+	NVIC_EnableIRQ((IRQn_Type) vector);
+}
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa la interrupcio IRQ especificada.
 /// \param    source: Identificador de la interrupcio.
 ///
-void halINTEnableInterrupt(
-	INTSource source) {
+void halINTEnableInterruptSource(
+	uint32_t source) {
 
 	NVIC_EnableIRQ((IRQn_Type) source);
 }
@@ -37,8 +47,8 @@ void halINTEnableInterrupt(
 /// \param    source: Identificador de la interrupcio.
 /// \return   Estat per restaurar la interrupcio.
 ///
-bool halINTDisableInterrupt(
-	INTSource source) {
+bool halINTDisableInterruptSource(
+	uint32_t source) {
 
 	bool state = NVIC_GetEnableIRQ((IRQn_Type) source);
 	if (state)
@@ -52,8 +62,8 @@ bool halINTDisableInterrupt(
 /// \param    source: Identificadord e la interrupcio.
 /// \param    state: L'estat a restaurar.
 ///
-void halIRQRestoreInterrupt(
-	INTSource source,
+void halIRQRestoreInterruptSource(
+	uint32_t source,
 	bool state) {
 
 	if (state)

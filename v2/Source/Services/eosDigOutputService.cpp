@@ -7,6 +7,21 @@
 #include "System/Core/eosTask.h"
 
 
+#if defined(EOS_PIC32)
+
+#define enableInterruptSource(handler)      halTMREnableInterruptSource(handler)
+#define disableInterruptSource(handler)     halTMRDisableInterruptSource(handler)
+#define clearInterruptSourceFlag(handler)   halTMRClearInterruptSourceFlag(handler)
+
+#elif defined(EOS_STM32)
+
+#define enableInterruptSource(handler)      halTMREnableInterruptSources(handler, HAL_TMR_EVENT_UP)
+#define disableInterruptSource(handler)     halTMRDisableInterruptSources(handler, HAL_TMR_EVENT_UP)
+#define clearInterruptSourceFlag(handler)   halTMRClearInterruptSourceFlag(handler, HAL_TMR_EVENT_UP)
+
+#endif
+
+
 using namespace eos;
 
 
@@ -20,7 +35,7 @@ DigOutputService::DigOutputService(
     const DigOutputService::InitParams& initParams):
 
 	Service(application),
-    timer(initParams.timer),
+    hTimer(initParams.hTimer),
 	commandQueue(commandQueueSize) {
 
 }
@@ -234,10 +249,10 @@ void DigOutputService::onInitialize() {
 
     // Activa el temporitzador.
     //
-    halTMRSetInterruptFunction(timer, tmrInterruptFunction, this);
-    halTMRClearInterruptFlag(timer);
-    halTMREnableInterrupt(timer);
-    halTMRStartTimer(timer);
+    clearInterruptSourceFlag(hTimer);
+    enableInterruptSource(hTimer);
+    halTMRSetInterruptFunction(hTimer, tmrInterruptFunction, this);
+    halTMRStartTimer(hTimer);
 }
 
 
@@ -248,8 +263,8 @@ void DigOutputService::onTerminate() {
     
     // Desactiva el temporitzador
     //
-    halTMRStopTimer(timer);
-    halTMRDisableInterrupt(timer);
+    halTMRStopTimer(hTimer);
+    disableInterruptSource(hTimer);
        
     // Finalitza el servei base
     //
@@ -510,14 +525,14 @@ void DigOutputService::tmrInterruptFunction() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la interrupcio del temporitzador.
-/// \param    timer: El temporitzador.
+/// \param    handler: Handler del temporitzador.
 /// \param    param: El handler del servei.
 ///
 void DigOutputService::tmrInterruptFunction(
-	TMRTimer timer,
-	void* param) {
+	TMRHandler handler,
+	void* params) {
 
-	DigOutputService* service = static_cast<DigOutputService*>(param);
+	DigOutputService* service = static_cast<DigOutputService*>(params);
     if (service != nullptr) 
         service->tmrInterruptFunction();
 }

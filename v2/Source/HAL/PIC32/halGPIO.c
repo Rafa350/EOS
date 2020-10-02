@@ -9,9 +9,9 @@
 ///
 void halGPIOInitializePins(
     const GPIOInitializePinInfo* info,
-    unsigned count) {
+    uint32_t count) {
 
-    for (unsigned i = 0; i < count; i++) {
+    for (uint32_t i = 0; i < count; i++) {
         const GPIOInitializePinInfo* p = &info[i];
         halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
     }
@@ -42,9 +42,9 @@ void halGPIOInitializePin(
 ///
 void halGPIOInitializePorts(
     const GPIOInitializePortInfo* info,
-    unsigned count) {
+    uint32_t count) {
 
-    for (unsigned i = 0; i < count; i++) {
+    for (uint32_t i = 0; i < count; i++) {
         const GPIOInitializePortInfo* p = &info[i];
         halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
     }
@@ -64,7 +64,7 @@ void halGPIOInitializePort(
     GPIOOptions options,
     GPIOAlt alt) {
     
-    GPIORegisters* gpio = halGPIOGetRegisterPtr(port);
+    GPIORegisters* regs = (GPIORegisters*) port;
        
     if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
         ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {
@@ -73,30 +73,30 @@ void halGPIOInitializePort(
         //
         switch (options & HAL_GPIO_INIT_mask) {
             case HAL_GPIO_INIT_SET:
-                gpio->LATxSET = mask;
+                regs->LATxSET = mask;
                 break;
 
             case HAL_GPIO_INIT_CLR:
-                gpio->LATxCLR = mask;
+                regs->LATxCLR = mask;
                 break;
         }
 
         // El configura com sortida
         //
-        gpio->TRISxCLR = mask;
+        regs->TRISxCLR = mask;
 
         // Configura com OPEN-DRAIN o PUSH-PULL
         //
         if ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)
-            gpio->ODCxSET = mask;
+            regs->ODCxSET = mask;
         else
-            gpio->ODCxCLR = mask;
+            regs->ODCxCLR = mask;
     }
 
     else if ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_INPUT) {
 
         // El configura com entrada
         //
-        gpio->TRISxSET = mask;
+        regs->TRISxSET = mask;
     }
 }

@@ -9,25 +9,6 @@
 
 
 namespace eos {
-    
-    typedef struct {
-        volatile uint32_t TRIS;
-        volatile uint32_t TRISCLR;
-        volatile uint32_t TRISSET;
-        volatile uint32_t TRISINV;
-        volatile uint32_t PORT;
-        volatile uint32_t PORTCLR;
-        volatile uint32_t PORTSET;
-        volatile uint32_t PORTINV;
-        volatile uint32_t LAT;
-        volatile uint32_t LATCLR;
-        volatile uint32_t LATSET;
-        volatile uint32_t LATINV;
-        volatile uint32_t ODC;
-        volatile uint32_t ODCCLR;
-        volatile uint32_t ODCSET;
-        volatile uint32_t ODCINV;
-    } GPIO_TypeDef;
 
     /*
 	template <uint32_t base>
@@ -95,16 +76,7 @@ namespace eos {
     */
     
     template <GPIOPort port, GPIOPin pin>
-    class GPIOPinAdapter {
-        private:
-            inline static GPIO_TypeDef *getAddr() {           
-                return nullptr;
-            }
-            
-            inline static uint32_t getMask() {
-                return 1ul << pin;
-            }
-            
+    class GPIOPinAdapter {          
         public:
             inline static void initialize(GPIOOptions options) {
                 halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);

@@ -7,14 +7,28 @@
 #include "System/Core/eosTask.h"
 
 
-using namespace eos;
-
-
 #define PATTERN_MASK     0x0FFF
 #define PATTERN_POSEDGE  0x07FF
 #define PATTERN_NEGEDGE  0x0800
 #define PATTERN_ON       0x0FFF
 #define PATTERN_OFF      0x0000
+
+#if defined(EOS_PIC32)
+
+#define enableInterruptSource(handler)      halTMREnableInterruptSource(handler)
+#define disableInterruptSource(handler)     halTMRDisableInterruptSource(handler)
+#define clearInterruptSourceFlag(handler)   halTMRClearInterruptSourceFlag(handler)
+
+#elif defined(EOS_STM32)
+
+#define enableInterruptSource(handler)      halTMREnableInterruptSources(handler, HAL_TMR_EVENT_UP)
+#define disableInterruptSource(handler)     halTMRDisableInterruptSources(handler, HAL_TMR_EVENT_UP)
+#define clearInterruptSourceFlag(handler)   halTMRClearInterruptSourceFlag(handler, HAL_TMR_EVENT_UP)
+
+#endif
+
+
+using namespace eos;
 
 
 /// ----------------------------------------------------------------------
@@ -27,7 +41,7 @@ DigInputService::DigInputService(
     const InitParams& initParams):
     
 	Service(application),
-    timer(initParams.timer) {
+    hTimer(initParams.hTimer) {
 }
 
 
@@ -130,10 +144,10 @@ void DigInputService::onInitialize() {
 
     // Activa el temporitzador
     //
-    halTMRSetInterruptFunction(timer, tmrInterruptFunction, this);
-    halTMRClearInterruptFlag(timer);
-    halTMREnableInterrupt(timer);
-    halTMRStartTimer(timer);
+    clearInterruptSourceFlag(hTimer);
+    enableInterruptSource(hTimer);
+    halTMRSetInterruptFunction(hTimer, tmrInterruptFunction, this);
+    halTMRStartTimer(hTimer);
 }
 
 
@@ -144,8 +158,8 @@ void DigInputService::onTerminate() {
     
     // Desactiva el temporitzador
     //
-    halTMRStopTimer(timer);
-    halTMRDisableInterrupt(timer);
+    halTMRStopTimer(hTimer);
+    disableInterruptSource(hTimer);
        
     // Finalitza el servei base
     //
@@ -169,13 +183,13 @@ void DigInputService::onTask() {
 
         if (input->eventCallback != nullptr) {
 
-            bool ie = halTMRDisableInterrupt(timer);
+            uint32_t state = disableInterruptSource(hTimer);
 
             bool edge = input->edge;
             input->edge = false;
 
-            if (ie)
-            	halTMREnableInterrupt(timer);
+            if (state)
+            	enableInterruptSource(hTimer);
 
             if (edge) {
 
@@ -212,9 +226,10 @@ bool DigInputService::read(
     eosAssert(input != nullptr);
     eosAssert(input->service == this);
 
-    halTMRDisableInterrupt(timer);
+    uint32_t state = disableInterruptSource(hTimer);
     bool result = input->value;
-    halTMREnableInterrupt(timer);
+    if (state)
+        enableInterruptSource(hTimer);
     return result;
 }
 
@@ -230,6 +245,7 @@ void DigInputService::tmrInterruptFunction() {
     // Procesa totes les entrades
     //
     for (auto it = inputs.begin(); it != inputs.end(); it++) {
+
         DigInput* input = *it;
 
         // Actualitza el patro
@@ -264,11 +280,11 @@ void DigInputService::tmrInterruptFunction() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la interrupcio del temporitzador.
-/// \param    timer: Identificador del temporitzador.
+/// \param    handler: Handler del temporitzador.
 /// \param    params: Handler del servei.
 ///
 void DigInputService::tmrInterruptFunction(
-    TMRTimer timer,
+    TMRHandler handler,
     void* params) {
            
     DigInputService* service = static_cast<DigInputService*>(params);

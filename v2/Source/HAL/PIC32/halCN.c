@@ -2,17 +2,15 @@
 #include "eosAssert.h"
 #include "HAL/PIC32/halCN.h"
 #include "HAL/PIC32/halGPIO.h"
-#include "HAL/PIC32/halINT.h"
 #include "sys/attribs.h"
 
 
 typedef struct {
-    CNInterruptFunction function;
-    void* params;
-} CallbackInfo;
+    CNInterruptFunction isrFunction;
+    void* isrParams;
+} CNData;
 
-
-static CallbackInfo callback[HAL_CN_LINE_COUNT] = {
+static CNData dataTbl[HAL_CN_LINE_COUNT] = {
     { NULL, NULL },
     { NULL, NULL },
     { NULL, NULL },
@@ -79,7 +77,7 @@ void halCNInitializeLine(CNLine line, CNOptions options) {
 
     // Configura la linia
     //
-    setupLine(line, options)    ;
+    setupLine(line, options);
 }
 
 
@@ -90,7 +88,7 @@ void halCNInitializeLine(CNLine line, CNOptions options) {
 ///
 void halCNInitializeLines(
     const CNInitializeLineInfo* info, 
-    unsigned count) {
+    uint32_t count) {
     
 	eosAssert(info != NULL);
 	eosAssert(count > 0);
@@ -101,7 +99,7 @@ void halCNInitializeLines(
     
     // Configura cada linia
     //
-    for (unsigned i = 0; i < count; i++) {
+    for (uint32_t i = 0; i < count; i++) {
 		const CNInitializeLineInfo* p = &info[i];          
 		setupLine(p->line, p->options);
     }    
@@ -135,7 +133,7 @@ void halCNDisableLine(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna la funcio callback per gestionar les interrupcions
+/// \brief    Asigna la funcio d'interrupcio.
 /// \param    line: Linea CN a configurar.
 /// \param    function: La funcio.
 /// \param    params: Es parametres de la funcio.
@@ -147,49 +145,57 @@ void halCNSetInterruptFunction(
 
 	eosAssert((line >= HAL_CN_LINE_0) && (line <= HAL_CN_LINE_15));
 
-	callback[line].function = function;
-	callback[line].params = params;   
+	dataTbl[line].isrFunction = function;
+	dataTbl[line].isrParams = params;   
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna la prioritat de la interrupcio.
-/// \param    priority: Prioritat.
-/// \param    subPriority: Subprioritat.
+/// \brief    Activa les interrupcions
 ///
-void halCNSetInterruptPriority(
-    unsigned priority, 
-    unsigned subPriority) {
-    
-    IPC6bits.CNIP = priority; 
-    IPC6bits.CNIS = subPriority;
+void halCNEnableInterruptSource() {
+ 
+    IEC1bits.CNIE = 1;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Autoritza les interrrupcions
+/// \brief    Desactiva les interrupcions.
+/// \return   True si estava previament activada.
 ///
-void halCNEnableInterrupts() {
-    
-    IEC1bits.CNIE = 1; // Interrupt Enable = 1
+bool halCNDisableInterruptSource() {
+
+    bool state = IEC1bits.CNIE == 1;
+    IEC1bits.CNIE = 0;
+    return state;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desautoritza les interrrupcions
+/// \brief    Obte el indicador d'interrupcio.
+/// \return   El valor del indicador.
 ///
-void halCNDisableInterrupts() {
+bool halCNGetInterruptSourceFlag() {
     
-    IEC1bits.CNIE = 0; // Interrupt Enable = 0
+    return __halCNGetInterruptSourceFlag();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Handler de la interrupcio
+/// \brief    Borra el indicador d'interrupcio.
+///
+void halCNClearInterruptSourceFlag() {
+    
+    __halCNClearInterruptSourceFlag();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el vector _CHANGE_NOTICE_VECTOR
 /// 
 void isrCNHandler(void) {
     
-    if (IFS1bits.CNIF) {    
+    if (__halCNGetInterruptSourceFlag()) {    
         
         uint32_t newA = PORTA;
         uint32_t newB = PORTB;
@@ -205,11 +211,12 @@ void isrCNHandler(void) {
     
         // Crida a la funcio callback
         //
-        if (callback[line].function != NULL)
-            callback[line].function(line, callback[line].params);
+        CNData* data = &dataTbl[line];
+        if (data->isrFunction != NULL)
+            data->isrFunction(line, data->isrParams);
 
         // Borra el flag d'interrupcio
         //
-        IFS1bits.CNIF = 0; // Interrupt Flag = 0;
+        __halCNClearInterruptSourceFlag();
     }
 }

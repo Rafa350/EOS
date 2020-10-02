@@ -24,13 +24,13 @@ namespace eos {
             typedef DynamicArray<DigInput*> DigInputList;
             typedef DynamicArray<DigInput*>::Iterator DigInputListIterator;
         public:
-            struct InitParams {  // Parametres d'inicialitzacio del servei.
-                TMRTimer timer;  // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema
+            struct InitParams {     // Parametres d'inicialitzacio del servei.
+                TMRHandler hTimer;  // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema
             };
 
         private:
             Semaphore semaphore;
-            TMRTimer timer;
+            TMRHandler hTimer;
             DigInputList inputs;
 
         protected:
@@ -50,7 +50,7 @@ namespace eos {
             bool read(const DigInput* input) const;
             
             void tmrInterruptFunction();
-            static void tmrInterruptFunction(TMRTimer timer, void* params);
+            static void tmrInterruptFunction(TMRHandler handler, void* params);
     };
 
     /// \brief Clase que implementa una entrada digital

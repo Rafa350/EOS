@@ -12,6 +12,7 @@
 	.set	noreorder
 	.set 	noat
 		
+	
 /*************************************************************************
  *
  *       Punt d'entrada del del vector de interrupcio _CHANGE_NOTICE_VECTOR

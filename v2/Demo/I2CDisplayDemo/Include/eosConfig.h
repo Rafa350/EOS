@@ -6,19 +6,13 @@
 //
 #define USE_LEDS_LED1
 #define USE_LEDS_LED2
-#if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
-	#define USE_LEDS_LED3
-#endif
+#define USE_LEDS_LED3
 
 // Configuracio dels switch
 //
 #define USE_SWITCHES_SW1
-#if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
 #define USE_SWITCHES_SW2
-#endif
-#if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
 #define USE_SWITCHES_SW3
-#endif
 
 
 // Opcions del servei I2CMaster

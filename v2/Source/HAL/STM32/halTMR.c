@@ -1,181 +1,200 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "HAL/STM32/halTMR.h"
-#include "HAL/STM32/halINT.h"
 
-// TODO
-// Eliminar les referencies a la llibreria HAL
-
-
-typedef struct {
-	TIM_HandleTypeDef handle;
-	TMRInterruptFunction isrFunction;
-	void* isrParams;
-} TMRInfo;
-
-static TMRInfo tmrInfoTbl[HAL_TMR_TIMER_MAX];
-
-static const INTSource irq[] = {
-	HAL_INT_SOURCE_TMR1_UP,
-	HAL_INT_SOURCE_TMR2,
-	HAL_INT_SOURCE_TMR3,
-	HAL_INT_SOURCE_TMR4,
-	HAL_INT_SOURCE_TMR5,
-	HAL_INT_SOURCE_TMR6,
-	HAL_INT_SOURCE_TMR7,
-	HAL_INT_SOURCE_TMR8_UP
-};
-
-
-TMRRegisters* const tmrRegistersTbl[] = {
-	TIM1,
-	TIM2,
-	TIM3,
-	TIM4,
-	TIM5,
-	TIM6,
-	TIM7,
-	TIM8,
-	TIM9,
-	TIM10,
-	TIM11,
-	TIM12,
-	TIM13,
-	TIM14
-};
 
 /// ----------------------------------------------------------------------
-/// \brief Activa el rellotge del temporitzador
-/// \param[in] timer: Identificador del temporitzador.
+/// \brief    Inicialitza el handler del temporitzador.
+/// \param    data: Bloc de memoria pel handler del temporitzador.
+/// \param    info: Parametres d'inicialitzacio.
+/// \return   El handler del temporitzador.
 ///
-static void enableClock(
-	TMRTimer timer) {
+TMRHandler halTMRInitialize(
+	TMRData* data,
+	const TMRInitializeInfo* info) {
 
-	switch (timer) {
+	TMRHandler handler = data;
+
+	switch (info->timer) {
 		case HAL_TMR_TIMER_1:
+			handler->regs = TIM1;
             RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
 			break;
 
 		case HAL_TMR_TIMER_2:
+			handler->regs = TIM2;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 			break;
 
 		case HAL_TMR_TIMER_3:
+			handler->regs = TIM3;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
 			break;
 
 		case HAL_TMR_TIMER_4:
+			handler->regs = TIM4;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
 			break;
 
 		case HAL_TMR_TIMER_5:
+			handler->regs = TIM5;
             RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
 			break;
 
-#ifdef HAL_TMR_TIMER_6
 		case HAL_TMR_TIMER_6:
-			__HAL_RCC_TIM6_CLK_ENABLE();
+			handler->regs = TIM6;
+			RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
 			break;
-#endif
 
 		case HAL_TMR_TIMER_7:
-			__HAL_RCC_TIM7_CLK_ENABLE();
+			handler->regs = TIM7;
+			RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
 			break;
 
 		case HAL_TMR_TIMER_8:
-			__HAL_RCC_TIM8_CLK_ENABLE();
+			handler->regs = TIM8;
+			RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
 			break;
 
 		case HAL_TMR_TIMER_9:
-			__HAL_RCC_TIM9_CLK_ENABLE();
+			handler->regs = TIM9;
+			RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
 			break;
 
 		case HAL_TMR_TIMER_10:
-			__HAL_RCC_TIM10_CLK_ENABLE();
+			handler->regs = TIM10;
+			RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
 			break;
 
 		case HAL_TMR_TIMER_11:
-			__HAL_RCC_TIM11_CLK_ENABLE();
+			handler->regs = TIM11;
+			RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
 			break;
 
 		case HAL_TMR_TIMER_12:
-			__HAL_RCC_TIM12_CLK_ENABLE();
+			handler->regs = TIM12;
+			RCC->APB1ENR |= RCC_APB1ENR_TIM12EN;
 			break;
 
 		case HAL_TMR_TIMER_13:
-			__HAL_RCC_TIM13_CLK_ENABLE();
+			handler->regs = TIM13;
+			RCC->APB1ENR |= RCC_APB1ENR_TIM13EN;
 			break;
 
 		case HAL_TMR_TIMER_14:
-			__HAL_RCC_TIM14_CLK_ENABLE();
+			handler->regs = TIM14;
+			RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
 			break;
 	}
+
+	uint32_t temp;
+
+	// Configura el registre CR1
+	//
+	temp = handler->regs->CR1;
+	temp &= ~(TIM_CR1_CEN);                 // Para el timer
+
+	if (IS_TIM_CLOCK_DIVISION_INSTANCE(handler->regs)) {
+		temp &= ~(TIM_CR1_CKD); 			// Divisor per 1 per defecte
+		switch ((info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos) {
+			case HAL_TMR_CLKDIV_2:
+				temp |= TIM_CR1_CKD_0;      // Divisor per 2
+				break;
+
+			case HAL_TMR_CLKDIV_4:          // Divisor per 4
+				temp |= TIM_CR1_CKD_1;
+				break;
+		}
+	}
+
+	if ((info->options & HAL_TMR_DIRECTION_mask) == HAL_TMR_DIRECTION_DOWN)
+		temp |= TIM_CR1_DIR;                // Conta cap avall
+
+	handler->regs->CR1 = temp;
+
+	// Configura el registre PSC (Prescaler)
+	//
+	handler->regs->PSC = info->prescaler;
+
+	// Configura el registre ARR (Periode)
+	//
+	handler->regs->ARR = info->period;
+
+	// Configura la funcio ISR
+	//
+	handler->isrFunction = NULL;
+	handler->isrParams = NULL;
+
+	return handler;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Desactiva el rellotge del temporitzador
-/// \param timer: Identificador del temporitzador.
+/// \brief    Desactivacio del temporitzador.
+/// \param    handler: Handler del temporitzador.
 ///
-static void disableClock(
-	TMRTimer timer) {
+void halTMRShutdown(
+	TMRHandler handler) {
 
-	switch (timer) {
-		case HAL_TMR_TIMER_1:
+	eosAssert(handler != NULL);
+
+	halTMRStopTimer(handler);
+	halTMRDisableInterruptSources(handler, HAL_TMR_EVENT_ALL);
+
+	switch ((uint32_t)handler->regs) {
+		case TIM1_BASE:
             RCC->APB2ENR &= ~(RCC_APB2ENR_TIM1EN);
 			break;
 
-		case HAL_TMR_TIMER_2:
+		case TIM2_BASE:
 			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM2EN);
 			break;
 
-		case HAL_TMR_TIMER_3:
+		case TIM3_BASE:
 			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM3EN);
 			break;
 
-		case HAL_TMR_TIMER_4:
+		case TIM4_BASE:
 			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM4EN);
 			break;
 
-		case HAL_TMR_TIMER_5:
+		case TIM5_BASE:
 			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM5EN);
 			break;
 
-#ifdef HAL_TMR_TIMER_6
-		case HAL_TMR_TIMER_6:
+		case TIM6_BASE:
 			__HAL_RCC_TIM6_CLK_DISABLE();
 			break;
-#endif
 
-		case HAL_TMR_TIMER_7:
+		case TIM7_BASE:
 			__HAL_RCC_TIM7_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_TIMER_8:
+		case TIM8_BASE:
 			__HAL_RCC_TIM8_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_TIMER_9:
+		case TIM9_BASE:
 			__HAL_RCC_TIM9_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_TIMER_10:
+		case TIM10_BASE:
 			__HAL_RCC_TIM10_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_TIMER_11:
+		case TIM11_BASE:
 			__HAL_RCC_TIM11_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_TIMER_12:
+		case TIM12_BASE:
 			__HAL_RCC_TIM12_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_TIMER_13:
+		case TIM13_BASE:
 			__HAL_RCC_TIM13_CLK_DISABLE();
 			break;
 
-		case HAL_TMR_TIMER_14:
+		case TIM14_BASE:
 			__HAL_RCC_TIM14_CLK_DISABLE();
 			break;
 	}
@@ -183,299 +202,185 @@ static void disableClock(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Prepara el handle per inicialitzar.
-/// \brief pHandle: El handle a inicialitzar.
-/// \param pInfo: Parametres d'inicialitzacio.
-///
-static void prepareTimerHandle(
-	TIM_HandleTypeDef* handle,
-	const TMRInitializeInfo* info) {
-
-	static const uint32_t clockDivision[] = {
-        TIM_CLOCKDIVISION_DIV1,
-        TIM_CLOCKDIVISION_DIV2,
-        TIM_CLOCKDIVISION_DIV4
-	};
-
-	handle->Instance = tmrRegistersTbl[info->timer];
-	handle->Init.CounterMode = TIM_COUNTERMODE_UP;
-	handle->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-	handle->Init.ClockDivision = clockDivision[(info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos];
-	handle->Init.Prescaler = info->prescaler;
-	handle->Init.Period = info->period;
-	handle->Init.RepetitionCounter = 0;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Invoca a la funcio ISR.
-/// \param    timer: El temporitzador.
-///
-static void invokeIsrFunction(
-	TMRTimer timer) {
-
-	TMRInfo* tmrInfo = &tmrInfoTbl[timer];
-	if (tmrInfo->isrFunction != NULL)
-		tmrInfo->isrFunction(timer, tmrInfo->isrParams);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza un temporitzador
-/// \param    pInfo: Parametres d'inicialitzacio.
-///
-void halTMRInitialize(
-	const TMRInitializeInfo* info) {
-
-	// Precondicions
-	//
-	eosAssert(info != NULL);
-
-	TMRTimer timer = info->timer;
-	TMRInfo* tmrInfo = &tmrInfoTbl[timer];
-
-	enableClock(timer);
-
-	prepareTimerHandle(&tmrInfo->handle, info);
-	HAL_TIM_Base_Init(&tmrInfo->handle);
-
-	if ((info->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) {
-
-		tmrInfo->isrFunction = info->isrFunction;
-		tmrInfo->isrParams = info->isrParams;
-
-		halTMREnableInterrupt(timer);
-		halINTSetPriority(irq[timer], info->irqPriority, info->irqSubPriority);
-		halINTEnableInterrupt(irq[timer]);
-	}
-	else
-		tmrInfo->isrFunction = NULL;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Desactiva un temporitzador
-/// \param    id: Identificador del temporitzador.
-///
-void halTMRShutdown(
-	TMRTimer timer) {
-
-	halTMRDisableInterrupt(timer);
-
-	TMRInfo* tmrInfo = &tmrInfoTbl[timer];
-	tmrInfo->isrFunction = NULL;
-	HAL_TIM_Base_DeInit(&tmrInfo->handle);
-
-	disableClock(timer);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Posa en marxa el temporitzador i comença a contar.
-/// \param    timer: El identificador del temporitzador.
+/// \brief    Activa el temporitzador.
+/// \param    handler: Handler del temporitzador.
 ///
 void halTMRStartTimer(
-	TMRTimer timer) {
+	TMRHandler handler) {
 
-	TMRRegisters* tmr = halTMRGetRegisterPtr(timer);
-	tmr->CR1 |= TIM_CR1_CEN;
+	eosAssert(handler != NULL);
+
+	handler->regs->CR1 |= TIM_CR1_CEN;      // Activa el temporitzador.
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Para el temporitzador.
-/// \param    timer: El identificador del temporitzador.
+/// \brief    Desactiva el temporitzador.
+/// \param    handler: Handler del temporitzador.
 ///
 void halTMRStopTimer(
-	TMRTimer timer) {
+	TMRHandler handler) {
 
-	TMRRegisters* tmr = halTMRGetRegisterPtr(timer);
-	tmr->CR1 &= ~TIM_CR1_CEN;
+	eosAssert(handler != NULL);
+
+	handler->regs->CR1 &= ~TIM_CR1_CEN;     // Desactiva el temporitzador
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna la funcio d'interrupcio
-/// \param    timer: El temporitzador.
+/// \brief    Asigna la funcio de gestion de la interrupcio.
+/// \param    handler: Handler del temporitzador.
 /// \param    function: La funcio.
-/// \param    params: El parametre de la funcioo.
+/// \param    params: El parametre.
 ///
 void halTMRSetInterruptFunction(
-	TMRTimer timer,
+	TMRHandler handler,
 	TMRInterruptFunction function,
 	void* params) {
 
-	TMRInfo* tmrInfo = &tmrInfoTbl[timer];
-	tmrInfo->isrFunction = function;
-	tmrInfo->isrParams = params;
+	eosAssert(handler != NULL);
+
+	handler->isrFunction = function;
+	handler->isrParams = params;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa las interrupcions del temporitzador.
+/// \param    handler: Handler del temporitzador.
+///
+void halTMRInterruptHandler(
+	TMRHandler handler) {
+
+	eosAssert(handler != NULL);
+
+	// Comprova si es un event UPDATE
+	//
+	if ((handler->regs->SR & TIM_SR_UIF) == TIM_SR_UIF) {
+		if (handler->isrFunction != NULL)
+			handler->isrFunction(handler, handler->isrParams);
+		handler->regs->SR &= ~TIM_SR_UIF;
+	}
+
+	// Comprova si es un event TRIGGER
+	//
+	if ((handler->regs->SR & TIM_SR_TIF) == TIM_SR_TIF) {
+		if (handler->isrFunction != NULL)
+			handler->isrFunction(handler, handler->isrParams);
+		handler->regs->SR &= ~TIM_SR_TIF;
+	}
+
+	// Comprova si es un event COM
+	//
+	if ((handler->regs->SR & TIM_SR_COMIF) == TIM_SR_COMIF) {
+		if (handler->isrFunction != NULL)
+			handler->isrFunction(handler, handler->isrParams);
+		handler->regs->SR &= ~TIM_SR_COMIF;
+	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa les interrupcions del temporitzador.
-/// \param    timer: El temporitzador.
+/// \param    handler: Handler del temporitzador.
+/// \param    events: Events a activar.
 ///
-void halTMREnableInterrupt(
-	TMRTimer timer) {
+void halTMREnableInterruptSources(
+	TMRHandler handler,
+	uint32_t events) {
 
-	TMRRegisters* tmr = halTMRGetRegisterPtr(timer);
+	uint32_t temp = handler->regs->DIER;
 
-	// Permet al temporitzador generar interrupcions
-	//
-	tmr->DIER |= TIM_DIER_UIE;
+	if ((events & HAL_TMR_EVENT_UP) == HAL_TMR_EVENT_UP)
+		temp |= TIM_DIER_UIE;
+	if ((events & HAL_TMR_EVENT_TRG) == HAL_TMR_EVENT_TRG)
+		temp |= TIM_DIER_TIE;
+	if ((events & HAL_TMR_EVENT_COM) == HAL_TMR_EVENT_COM)
+		temp |= TIM_DIER_COMIE;
 
-	// Permet a la cpu acceptar interrupcions del temporitzador
-	//
-	halINTEnableInterrupt(irq[timer]);
+	handler->regs->DIER = temp;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Activa les interrupcions del temporitzador.
-/// \param    timer: El temporitzador.
+/// \brief    Desactiva les interrupcions del temporitzador.
+/// \param    handler: Handler del temporitzador.
+/// \param    events: Events a desactivar.
+/// \return   Els events previament actius.
 ///
-bool halTMRDisableInterrupt(
-	TMRTimer timer) {
+uint32_t halTMRDisableInterruptSources(
+	TMRHandler handler,
+	uint32_t events) {
 
-	TMRRegisters* tmr = halTMRGetRegisterPtr(timer);
+	uint32_t temp = handler->regs->DIER;
 
-	// Obte el valor previ.
-	//
-	bool enabled = (tmr->DIER & TIM_DIER_UIE) == TIM_DIER_UIE;
+	uint32_t enabled = 0;
+	if ((temp & TIM_DIER_UIE) == TIM_DIER_UIE)
+		enabled |= HAL_TMR_EVENT_UP;
+	if ((temp & TIM_DIER_UIE) == TIM_DIER_TIE)
+		enabled |= HAL_TMR_EVENT_TRG;
+	if ((temp & TIM_DIER_UIE) == TIM_DIER_COMIE)
+		enabled |= HAL_TMR_EVENT_COM;
 
-	// Impidex que el temporitzador generi interrupcions.
-	//
-	tmr->DIER &= ~TIM_DIER_UIE;
+	if ((events & HAL_TMR_EVENT_UP) == HAL_TMR_EVENT_UP)
+		temp &= ~TIM_DIER_UIE;
+	if ((events & HAL_TMR_EVENT_TRG) == HAL_TMR_EVENT_TRG)
+		temp &= ~TIM_DIER_TIE;
+	if ((events & HAL_TMR_EVENT_COM) == HAL_TMR_EVENT_COM)
+		temp &= ~TIM_DIER_COMIE;
 
-	// Evita que la cpu accepti interrupcions del temporitzador.
-	//
-	halINTDisableInterrupt(irq[timer]);
+	handler->regs->DIER = temp;
 
 	return enabled;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna la prioritat de la interrupcio.
-/// \param    timer: El temporitzador.
-/// \param    priority: La prioritat
-/// \param    subPriority: La sub-prioritat.
-//
-void halTMRSetInterruptPriority(
-	TMRTimer timer,
-	uint32_t priority,
-	uint32_t subPriority) {
-
-	halINTSetPriority(irq[timer], priority, subPriority);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Borra el indicador d'interrupcio del temporitzador.
-/// \param    timer: Identificador del temporitzador.
+/// \param    handler: Handler del temporitzador.
 /// \return   Valor del indicador.
 ///
-void halTMRClearInterruptFlag(
-	TMRTimer timer) {
+void halTMRClearInterruptSourceFlag(
+	TMRHandler handler,
+	uint32_t event) {
 
-	TMRRegisters* tmr = halTMRGetRegisterPtr(timer);
-	tmr->SR &= ~TIM_SR_UIF;
-}
+	switch (event) {
+		case HAL_TMR_EVENT_UP:
+			handler->regs->SR &= ~TIM_SR_UIF;
+			break;
 
+		case HAL_TMR_EVENT_TRG:
+			handler->regs->SR &= ~TIM_SR_TIF;
+			break;
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte el valor del inficador d'interrupcio del temporitzador.
-/// \param    timer: Identificador del temporitzador.
-/// \return   El valor del indicador.
-///
-bool halTMRGetInterruptFlag(
-	TMRTimer timer) {
-
-	TMRRegisters* tmr = halTMRGetRegisterPtr(timer);
-	return (tmr->SR & TIM_SR_UIF) == TIM_SR_UIF;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Handler de la interrupcio.
-/// \param    timer: Identificador del temporitzador.
-///
-void halTIMInterruptHandler(
-	TMRTimer timer) {
-
-	TMRRegisters* tmr = halTMRGetRegisterPtr(timer);
-
-	// Comprova si es un event UPDATE
-	//
-	if ((tmr->SR & TIM_SR_UIF) == TIM_SR_UIF) {
-		tmr->SR &= ~TIM_SR_UIF;
-		invokeIsrFunction(timer);
+		case HAL_TMR_EVENT_COM:
+			handler->regs->SR &= ~TIM_SR_COMIF;
+			break;
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Retard en milisegons.
-/// \param    time: Temps en milisegons.
+/// \brief    Obte el valor del indicador d'interrupcio del temporitzador.
+/// \param    handler: Handler del tempositzador.
+/// \param    event: Identificador del event
+/// \return   El valor del indicador.
 ///
-void halTMRDelay(
-    int time) {
+bool halTMRGetInterruptSourceFlag(
+	TMRHandler handler,
+	uint32_t event) {
 
-	HAL_Delay(time);
+	switch (event) {
+		case HAL_TMR_EVENT_UP:
+			return (handler->regs->SR & TIM_SR_UIF) == TIM_SR_UIF;
+
+		case HAL_TMR_EVENT_TRG:
+			return (handler->regs->SR & TIM_SR_TIF) == TIM_SR_TIF;
+
+		case HAL_TMR_EVENT_COM:
+			return (handler->regs->SR & TIM_SR_COMIF) == TIM_SR_COMIF;
+
+		default:
+			return false;
+	}
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Handler de la interrupcio.
-///
-#ifdef HAL_TMR_TIMER_2
-void TIM2_IRQHandler() {
-
-	halTIMInterruptHandler(HAL_TMR_TIMER_2);
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Handler de la interrupcio.
-///
-#ifdef HAL_TMR_TIMER_3
-void TIM3_IRQHandler() {
-
-	halTIMInterruptHandler(HAL_TMR_TIMER_3);
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Handler de la interrupcio.
-///
-#ifdef HAL_TMR_TIMER_4
-void TIM4_IRQHandler() {
-
-	halTIMInterruptHandler(HAL_TMR_TIMER_4);
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Handler de la interrupcio.
-///
-#ifdef HAL_TMR_TIMER_5
-void TIM5_IRQHandler() {
-
-	halTIMInterruptHandler(HAL_TMR_TIMER_5);
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Handler de la interrupcio.
-///
-#ifdef HAL_TMR_TIMER_7
-void TIM7_IRQHandler() {
-
-	halTIMInterruptHandler(HAL_TMR_TIMER_7);
-}
-#endif
-

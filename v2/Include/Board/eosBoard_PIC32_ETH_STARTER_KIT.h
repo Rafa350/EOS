@@ -55,5 +55,8 @@
 #define SWITCHES_SW3_CN      HAL_CN_LINE_19
 #endif
 
+#define SWITCHES_STATE_ON    0
+#define SWITCHES_STATE_OFF   1
+
 
 #endif // __eosBoard_PIC32_ETH_STARTER_KIT__

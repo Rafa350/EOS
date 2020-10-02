@@ -18,7 +18,7 @@
 
 // Modul de comunicacio I2C a gestionar 
 #ifndef eosI2CMasterService_I2CModule
-#define eosI2CMasterService_I2CModule HAL_I2C_I2C2
+#define eosI2CMasterService_I2CModule HAL_I2C_CHANNEL_2
 #endif
 
 // Velocitat de comunicacio I2C
@@ -36,8 +36,8 @@ namespace eos {
     class I2CMasterService: public Service {      
         public:
             struct Configuration {
-                I2CModule module;
-                int baudRate;
+                I2CChannel channel;
+                uint32_t baudRate;
             };
             
             /// \brief Protocol a utilitzar en la transaccio.
@@ -102,7 +102,7 @@ namespace eos {
             typedef Queue<Transaction*> TransactionQueue;
 
         private:
-            I2CModule module;
+            I2CChannel channel;
             TransactionAllocator transactionAllocator;
             TransactionQueue transactionQueue;
             Transaction *transaction;
@@ -116,7 +116,7 @@ namespace eos {
             State state;
 
         public:
-            I2CMasterService(Application *application, const Configuration &cfg);        
+            I2CMasterService(Application* application, const Configuration& cfg);        
             ~I2CMasterService();
             
             bool startTransaction(uint8_t addr, TransactionProtocol protocol, void const *txBuffer, int txCount, ITransactionEventCallback *callback);
@@ -129,7 +129,7 @@ namespace eos {
         private:
             void initializeHardware(const Configuration &cfg);
             void deinitializeHardware();
-            static void interruptCallback(I2CModule module, void *param);
+            static void i2cInterruptFunction(I2CChannel channel, void* params);
             void stateMachine();   
     };
     

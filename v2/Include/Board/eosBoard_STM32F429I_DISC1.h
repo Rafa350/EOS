@@ -29,6 +29,9 @@
 #define SWITCHES_SW1_PIN          HAL_GPIO_PIN_0
 #endif // USE_SWITCHES_SW1
 
+#define SWITCHES_STATE_ON         1
+#define SWITCHES_STATE_OFF        0
+
 
 // -----------------------------------------------------------------------
 // USB FS (OTG1)

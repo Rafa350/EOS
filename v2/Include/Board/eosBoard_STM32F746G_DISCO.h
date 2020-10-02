@@ -2,12 +2,6 @@
 #define __board_SMT32F746G_DISCO__
 
 
-// Configuracio del sistema
-//
-#define CLOCK_SYSTEM_HZ            80000000
-#define CLOCK_PERIPHERICAL_HZ      (CLOCK_SYSTEM_HZ / 1)
-
-
 // -----------------------------------------------------------------------
 // Leds
 // -----------------------------------------------------------------------
@@ -19,6 +13,9 @@
 #define LEDS_LED1_PIN             HAL_GPIO_PIN_1
 
 #endif // USE_LED_LED1
+
+#define LEDS_STATE_ON             1
+#define LEDS_STATE_OFF            0
 
 
 // -----------------------------------------------------------------------
@@ -32,6 +29,9 @@
 #define SWITCHES_SW1_PIN          HAL_GPIO_PIN_11
 
 #endif // USE_SWITCHES_SW1
+
+#define SWITCHES_STATE_ON         1
+#define SWITCHES_STATE_OFF        0
 
 
 // -----------------------------------------------------------------------
@@ -64,6 +64,30 @@
 
 #define ARDUINO_D7_PORT           HAL_GPIO_PORT_I
 #define ARDUINO_D7_PIN            HAL_GPIO_PIN_3
+
+#define ARDUINO_D8_PORT           HAL_GPIO_PORT_I
+#define ARDUINO_D8_PIN            HAL_GPIO_PIN_2
+
+#define ARDUINO_D9_PORT           HAL_GPIO_PORT_A
+#define ARDUINO_D9_PIN            HAL_GPIO_PIN_15
+
+#define ARDUINO_D10_PORT          HAL_GPIO_PORT_A
+#define ARDUINO_D10_PIN           HAL_GPIO_PIN_8
+
+#define ARDUINO_D11_PORT          HAL_GPIO_PORT_B
+#define ARDUINO_D11_PIN           HAL_GPIO_PIN_15
+
+#define ARDUINO_D12_PORT          HAL_GPIO_PORT_B
+#define ARDUINO_D12_PIN           HAL_GPIO_PIN_14
+
+#define ARDUINO_D13_PORT          HAL_GPIO_PORT_I
+#define ARDUINO_D13_PIN           HAL_GPIO_PIN_1
+
+#define ARDUINO_D14_PORT          HAL_GPIO_PORT_B
+#define ARDUINO_D14_PIN           HAL_GPIO_PIN_9
+
+#define ARDUINO_D15_PORT          HAL_GPIO_PORT_B
+#define ARDUINO_D15_PIN           HAL_GPIO_PIN_8
 
 #endif // USE_ARDUINO
 

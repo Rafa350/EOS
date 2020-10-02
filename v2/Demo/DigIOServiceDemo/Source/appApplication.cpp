@@ -17,6 +17,10 @@ using namespace eos;
 using namespace app;
 
 
+TMRData digInputTimer;
+TMRData digOutputTimer;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
@@ -42,7 +46,6 @@ void MyApplication::onInitialize() {
     //
 	TMRInitializeInfo tmrInfo;
 	tmrInfo.timer = DigInputService_Timer;
-	tmrInfo.isrFunction = NULL;
 #if defined(EOS_PIC32)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
     tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1; 
@@ -53,15 +56,19 @@ void MyApplication::onInitialize() {
 #else
     //#error CPU no soportada
 #endif   
-	halTMRInitialize(&tmrInfo);
-    halTMRSetInterruptPriority(DigInputService_Timer, DigInputService_TimerInterruptPriority, DigInputService_TimerInterruptSubPriority);
+    halTMRInitialize(&digInputTimer, &tmrInfo);
 
     // Inicialitza el servei d'entrades digitals
 	//
     DigInputService::InitParams digInputServiceInit;
-    digInputServiceInit.timer = DigInputService_Timer;
+    digInputServiceInit.hTimer = &digInputTimer;
     digInputService = new DigInputService(this, digInputServiceInit);
     digInputService->setPriority(Task::Priority::high);
+
+    // Inicialitza les interrupcions
+    //
+    halINTSetInterruptVectorPriority(DigInputService_TimerInterruptVector, DigInputService_TimerInterruptPriority, DigInputService_TimerInterruptSubPriority);
+    halINTEnableInterruptVector(DigInputService_TimerInterruptVector);
     
     DigInput::InitParams digInputInit;
     digInputInit.eventParam = nullptr;
@@ -109,9 +116,7 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el temporitzador pel servei de sortides digitals
     //
-	//TMRInitializeInfo tmrInfo;
 	tmrInfo.timer = DigOutputService_Timer;
-	tmrInfo.isrFunction = NULL;
 #if defined(EOS_PIC32)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
     tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigOutputService_TimerPeriod) / 64000) - 1; 
@@ -122,14 +127,18 @@ void MyApplication::onInitialize() {
 #else
     //#error CPU no soportada
 #endif   
-	halTMRInitialize(&tmrInfo);
-    halTMRSetInterruptPriority(DigOutputService_Timer, DigOutputService_TimerInterruptPriority, DigOutputService_TimerInterruptSubPriority);    
+	halTMRInitialize(&digOutputTimer, &tmrInfo);
 
     // Inicialitza el servei de sortides digitals
     //
     DigOutputService::InitParams digOutputServiceInit;
-    digOutputServiceInit.timer = DigOutputService_Timer;
+    digOutputServiceInit.hTimer = &digOutputTimer;
     digOutputService = new DigOutputService(this, digOutputServiceInit);
+
+    // Inicialitza les interrupcions
+    //
+    halINTSetInterruptVectorPriority(DigOutputService_TimerInterruptVector, DigOutputService_TimerInterruptPriority, DigOutputService_TimerInterruptSubPriority);
+    halINTEnableInterruptVector(DigOutputService_TimerInterruptVector);
     
     DigOutput::InitParams digOutputInit;
 
@@ -177,7 +186,7 @@ void MyApplication::onInitialize() {
 void MyApplication::sw1EventHandler(
     const DigInput::EventArgs &args) {
 
-    if (!sw1->read()) {
+    if (sw1->read() == SWITCHES_STATE_ON) {
         led1->pulse(500);
         led2->delayedPulse(250, 500);
 #ifdef EXIST_LEDS_LED3
@@ -196,7 +205,7 @@ void MyApplication::sw1EventHandler(
 void MyApplication::sw2EventHandler(
     const DigInput::EventArgs &args) {
 
-    if (!sw2->read()) {
+    if (sw2->read() == SWITCHES_STATE_ON) {
 #ifdef EXIST_LEDS_LED3
         led3->pulse(500);
 #endif
@@ -217,13 +226,32 @@ void MyApplication::sw2EventHandler(
 void MyApplication::sw3EventHandler(
     const DigInput::EventArgs &args) {
 
-    bool value = !sw3->read();
-    led1->write(value);
+    if (sw3->read() == SWITCHES_STATE_ON) {
+        led1->pulse(1000);
 #ifdef EXIST_LEDS_LED2
-    led2->write(value);
+        led2->pulse(2000);
 #endif
 #ifdef EXIST_LEDS_LED3
-    led3->write(value);
+        led3->pulse(3000);
 #endif
+    }
 }
 #endif
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el vector d'interrupcio TIM2_IRQn
+///
+extern "C" void TIM2_IRQHandler() {
+
+	halTMRInterruptHandler(&digInputTimer);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el vector d'interrupcio TIM3_IRQn
+///
+extern "C" void TIM3_IRQHandler() {
+
+	halTMRInterruptHandler(&digOutputTimer);
+}

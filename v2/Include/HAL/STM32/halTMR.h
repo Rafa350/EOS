@@ -12,94 +12,93 @@ extern "C" {
 #endif
 
 
-typedef uint8_t TMRTimer;
-typedef uint32_t TMROptions;
-
-typedef TIM_TypeDef TMRRegisters;
-extern TMRRegisters* const tmrRegistersTbl[];
-
-#define halTMRGetRegisterPtr(timer)  ((TMRRegisters*)(tmrRegistersTbl[timer]))
-
-
 // Identificador del timer
-#define HAL_TMR_TIMER_1           ((TMRTimer) 0)
-#define HAL_TMR_TIMER_2           ((TMRTimer) 1)
-#define HAL_TMR_TIMER_3           ((TMRTimer) 2)
-#define HAL_TMR_TIMER_4           ((TMRTimer) 3)
-#define HAL_TMR_TIMER_5           ((TMRTimer) 4)
-//#define HAL_TMR_TIMER_6           ((TMRTimer) 5)
-#define HAL_TMR_TIMER_7           ((TMRTimer) 6)
-#define HAL_TMR_TIMER_8           ((TMRTimer) 7)
-#define HAL_TMR_TIMER_9           ((TMRTimer) 8)
-#define HAL_TMR_TIMER_10          ((TMRTimer) 9)
-#define HAL_TMR_TIMER_11          ((TMRTimer) 10)
-#define HAL_TMR_TIMER_12          ((TMRTimer) 11)
-#define HAL_TMR_TIMER_13          ((TMRTimer) 12)
-#define HAL_TMR_TIMER_14          ((TMRTimer) 13)
-#define HAL_TMR_TIMER_NONE        ((TMRTimer) 255)
+#define HAL_TMR_TIMER_1           0
+#define HAL_TMR_TIMER_2           1
+#define HAL_TMR_TIMER_3           2
+#define HAL_TMR_TIMER_4           3
+#define HAL_TMR_TIMER_5           4
+#define HAL_TMR_TIMER_6           5
+#define HAL_TMR_TIMER_7           6
+#define HAL_TMR_TIMER_8           7
+#define HAL_TMR_TIMER_9           8
+#define HAL_TMR_TIMER_10          9
+#define HAL_TMR_TIMER_11          10
+#define HAL_TMR_TIMER_12          11
+#define HAL_TMR_TIMER_13          12
+#define HAL_TMR_TIMER_14          13
 
-#define HAL_TMR_TIMER_MAX         13
-
-// Modus 16 o 32 bits
-#define HAL_TMR_MODE_pos          0u
-#define HAL_TMR_MODE_bits         0b1u
+// Opcions: Modus 16 o 32 bits
+#define HAL_TMR_MODE_pos          0
+#define HAL_TMR_MODE_bits         0b1
 #define HAL_TMR_MODE_mask         (HAL_TMR_MODE_bits << HAL_TMR_MODE_pos)
 
-#define HAL_TMR_MODE_16           (0u << HAL_TMR_MODE_pos)
-#define HAL_TMR_MODE_32           (1u << HAL_TMR_MODE_pos)
+#define HAL_TMR_MODE_16           (0 << HAL_TMR_MODE_pos)
+#define HAL_TMR_MODE_32           (1 << HAL_TMR_MODE_pos)
 
-// Clock divider
-#define HAL_TMR_CLKDIV_pos        1u
-#define HAL_TMR_CLKDIV_bits       0b11u
+// Opcions: Clock divider
+#define HAL_TMR_CLKDIV_pos        1
+#define HAL_TMR_CLKDIV_bits       0b11
 #define HAL_TMR_CLKDIV_mask       (HAL_TMR_CLKDIV_bits << HAL_TMR_CLKDIV_pos)
 
-#define HAL_TMR_CLKDIV_1          (0u << HAL_TMR_CLKDIV_pos)
-#define HAL_TMR_CLKDIV_2          (1u << HAL_TMR_CLKDIV_pos)
-#define HAL_TMR_CLKDIV_4          (2u << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_1          (0 << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_2          (1 << HAL_TMR_CLKDIV_pos)
+#define HAL_TMR_CLKDIV_4          (2 << HAL_TMR_CLKDIV_pos)
 
-// Enable interrupt
-#define HAL_TMR_INTERRUPT_pos     3u
-#define HAL_TMR_INTERRUPT_bits    0b1u
-#define HAL_TMR_INTERRUPT_mask    (HAL_TMR_INTERRUPT_bits << HAL_TMR_INTERRUPT_pos)
+// Opcions: Count direction
+#define HAL_TMR_DIRECTION_pos     3
+#define HAL_TMR_DIRECTION_bits    0b1
+#define HAL_TMR_DIRECTION_mask    (1 << HAL_TMR_DIRECTION_pos)
 
-#define HAL_TMR_INTERRUPT_DISABLE (0u << HAL_TMR_INTERRUPT_pos)
-#define HAL_TMR_INTERRUPT_ENABLE  (1u << HAL_TMR_INTERRUPT_pos)
+#define HAL_TMR_DIRECTION_UP      (0 << HAL_TMR_DIRECTION_pos)
+#define HAL_TMR_DIRECTION_DOWN    (1 << HAL_TMR_DIRECTION_pos)
 
-// Interrupt timer sources
-#define HAL_TMR_SOURCE_UP
-#define HAL_TMR_SOURCE_BRK
-#define HAL_TMR_SOURCE_TRG
+// Identificador dels events
+#define HAL_TMR_EVENT_BRK         0x01
+#define HAL_TMR_EVENT_CC          0x02
+#define HAL_TMR_EVENT_COM         0x04
+#define HAL_TMR_EVENT_TRG         0x08
+#define HAL_TMR_EVENT_UP          0x10
+#define HAL_TMR_EVENT_ALL         0x1F
 
-typedef void (*TMRInterruptFunction)(TMRTimer timer, void* params);
 
+typedef uint32_t TMRTimer;
+typedef uint32_t TMROptions;
+
+typedef struct __TMRData* TMRHandler;
+
+typedef void (*TMRInterruptFunction)(TMRHandler handler, void* params);
+
+struct __TMRData {
+	TIM_TypeDef* regs;
+	TMRInterruptFunction isrFunction;
+	void* isrParams;
+};
+typedef struct __TMRData TMRData;
 
 typedef struct {
 	TMRTimer timer;
 	uint32_t prescaler;
 	uint32_t period;
 	TMROptions options;
-	uint32_t irqPriority;
-	uint32_t irqSubPriority;
-	TMRInterruptFunction isrFunction;
-	void* isrParams;
 } TMRInitializeInfo;
 
+TMRHandler halTMRInitialize(TMRData* data, const TMRInitializeInfo* info);
+void halTMRShutdown(TMRHandler handler);
 
-void halTMRInitialize(const TMRInitializeInfo* info);
-void halTMRShutdown(TMRTimer timer);
+void halTMRStartTimer(TMRHandler handler);
+void halTMRStopTimer(TMRHandler handler);
 
-void halTMRStartTimer(TMRTimer timer);
-void halTMRStopTimer(TMRTimer timer);
+void halTMRSetInterruptFunction(TMRHandler handler, TMRInterruptFunction function, void* params);
+void halTMRInterruptHandler(TMRHandler handler);
 
-void halTMRDelay(int time);
+void halTMREnableInterruptSources(TMRHandler handler, uint32_t events);
+uint32_t halTMRDisableInterruptSources(TMRHandler handler, uint32_t events);
+bool halTMRGetInterruptSourceFlag(TMRHandler handler, uint32_t event);
+void halTMRClearInterruptSourceFlag(TMRHandler handler, uint32_t event);
 
-void halTMRSetInterruptFunction(TMRTimer timer, TMRInterruptFunction function, void* params);
-void halTMRSetInterruptPriority(TMRTimer timer, uint32_t priority, uint32_t subPriority);
-bool halTMRGetInterruptFlag(TMRTimer timer);
-void halTMRClearInterruptFlag(TMRTimer timer);
-void halTMREnableInterrupt(TMRTimer timer);
-bool halTMRDisableInterrupt(TMRTimer timer);
-void halTMRInterruptHandler(TMRTimer timer);
+
+#define halTMRDelay(time)         HAL_Delay(time)
 
 
 #ifdef	__cplusplus

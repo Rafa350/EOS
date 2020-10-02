@@ -1,332 +1,369 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "HAL/PIC32/halTMR.h"
-#include "HAL/PIC32/halINT.h"
 #include "HAL/PIC32/halSYS.h"
-#include "sys/attribs.h"
 
 
-typedef struct {
-    TMRInterruptFunction function;
-    void* params;
-} CallbackInfo;
+#define __getRegisterPtr(timer)        ((TMRRegisters*)(_TMR1_BASE_ADDRESS + (timer * 0x00000200)))
 
-static CallbackInfo callbacks[HAL_TMR_TIMER_MAX];
+#define __isTypeA(handler)             ((uint32_t) handler->regs == _TMR1_BASE_ADDRESS)
+#define __is32Bits(handler)            (handler->regs->TBxCON.T32 == 1)
 
-static INTSource irqTbl[] = {
-    HAL_INT_SOURCE_TMR1,
-    HAL_INT_SOURCE_TMR2,
-    HAL_INT_SOURCE_TMR3,
-    HAL_INT_SOURCE_TMR4,
-    HAL_INT_SOURCE_TMR5
-};
-
-
-#if defined(_TMR1) && (HAL_TMR_USE_T1_INTERRUPT == 1)
-extern void __ISR(_TIMER_1_VECTOR, IPL2SOFT) isrTMR1Wrapper(void);
-#endif
-#if defined(_TMR2) && defined(HAL_TMR_USE_T2_INTERRUPT)
-extern void __ISR(_TIMER_2_VECTOR, IPL2SOFT) isrTMR2Wrapper(void);
-#endif
-#if defined(_TMR3) && defined(HAL_TMR_USE_T3_INTERRUPT)
-extern void __ISR(_TIMER_3_VECTOR, IPL2SOFT) isrTMR3Wrapper(void);
-#endif
-#if defined(_TMR4) && defined(HAL_TMR_USE_T4_INTERRUPT)
-extern void __ISR(_TIMER_4_VECTOR, IPL2SOFT) isrTMR4Wrapper(void);
-#endif
-#if defined(_TMR5) && defined(HAL_TMR_USE_T5_INTERRUPT)
-extern void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
-#endif
+#define __getRegs16Ptr(handler)        handler->regs
+#define __getRegs32Ptr(handler)        ((TMRRegisters*)((uint32_t) handler->regs + 0x00000200))
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el temporitzador.
+/// \param    data: Buffer de dades del temporitzador.
 /// \param    info: Parametres d'inicialitzacio.
+/// \return   El handler del temporitzador.
+/// \remarks  El temporitzador queda configurat, pero no genera 
+///           interrupcions, i esta parat.
 ///
-void halTMRInitialize(
+TMRHandler halTMRInitialize(
+    TMRData* data,
     const TMRInitializeInfo* info) {
     
-    halTMRDisableInterrupt(info->timer);
-
-    // Contigura el timer de tipus A
+    // Inicialitza el handler
     //
-    if (IsTypeA(info->timer)) {
-        
-        TMRTypeARegisters* tmr = halTMRGetTypeARegisterPtr(info->timer);
+    TMRHandler handler = data;
+    handler->regs = __getRegisterPtr(info->timer);
+    
+    // Desactiva les interrupcions del temporitzador
+    //
+    halTMRDisableInterruptSource(handler);
 
-        tmr->TxCON.ON = 0;    // Desactiva el timer
-        tmr->TxCON.TCS = 0;   // Clock source interna.
+    // Configura el timer de tipus A
+    //
+    if (__isTypeA(handler)) {
+        
+        handler->regs->TAxCON.ON = 0;    // Desactiva el timer
+        handler->regs->TAxCON.TCS = 0;   // Clock source interna.
         switch((info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos) {
             case HAL_TMR_CLKDIV_8:
-                tmr->TxCON.TCKPS = 1;    
+                handler->regs->TAxCON.TCKPS = 1;    
                 break;
 
             case HAL_TMR_CLKDIV_64:
-                tmr->TxCON.TCKPS = 2;    
+                handler->regs->TAxCON.TCKPS = 2;    
                 break;
 
             case HAL_TMR_CLKDIV_256:
-                tmr->TxCON.TCKPS = 3;    
+                handler->regs->TAxCON.TCKPS = 3;    
                 break;
                 
             default:
-                tmr->TxCON.TCKPS = 0;    
+                handler->regs->TAxCON.TCKPS = 0;    
                 break;
         }
-        tmr->TMRx = 0;
-        tmr->PRx = info->period & 0xFFFF;
     }
     
     // Configura el timer de tipus B
     //
     else {
         
-        TMRTypeBRegisters* tmr = halTMRGetTypeBRegisterPtr(info->timer);
-
-        tmr->TxCON.ON = 0;    // Desactiva el timer
+        handler->regs->TBxCON.ON = 0;    // Desactiva el timer
 #if defined(__32MX460F512L__)        
-        tmr->TxCON.TCS = 0;   // Clock source interna.
+        handler->regs->TBxCON.TCS = 0;   // Clock source interna.
 #endif        
-        tmr->TxCON.TCKPS = (info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos;    
-
-        if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_16) {
-            tmr->TxCON.T32 = 0;
-            tmr->TMRx = 0;
-            tmr->PRx = info->period & 0xFFFF;
-        } 
-        else if ((info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32) {
-            TMRTypeBRegisters* tmrHi = halTMRGetTypeBRegisterHiPtr(info->timer);
-            tmr->TxCON.T32 = 1;
-            tmr->TMRx = 0;
-            tmrHi->TMRx = 0;
-            tmr->PRx = info->period & 0xFFFF;
-            tmrHi->PRx = (info->period >> 16) & 0xFFFF;
-        }
+        handler->regs->TBxCON.TCKPS = (info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos;    
+        handler->regs->TBxCON.T32 = (info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32;
     }
+
+    halTMRSetCounter(handler, 0);
+    halTMRSetPeriod(handler, info->period);
     
-    // Configura les interrupcions
-    //
-    if (info->isrFunction != NULL) {       
-        halTMRSetInterruptFunction(info->timer, info->isrFunction, info->isrParams);
+    handler->isrFunction = NULL;
+    
+    return handler;
+}
 
-        if ((info->options & HAL_TMR_INTERRUPT_mask) == HAL_TMR_INTERRUPT_ENABLE) {
-            halTMRSetInterruptPriority(info->timer, info->irqPriority, info->irqSubPriority);
-            halTMREnableInterrupt(info->timer);
-        }
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el temporitzador
+/// \param    handler: Handler del temporitzador.
+///
+void halTMRShutdown(
+    TMRHandler handler) {
+    
+    halTMRStopTimer(handler);
+    halTMRDisableInterruptSource(handler); 
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el contador.
+/// \param    period: El valor del contador.
+///
+void halTMRSetCounter(
+    TMRHandler handler, 
+    uint32_t counter) {
+    
+    eosAssert(handler != NULL);
+    
+    if (!__isTypeA(handler) && __is32Bits(handler)) {
+        TMRRegisters* regs32 = __getRegs32Ptr(handler);
+        regs32->TMRx = (counter >> 16) & 0xFFFF;
     }
-    else
-        halTMRSetInterruptFunction(info->timer, NULL, NULL);
+    handler->regs->TMRx = counter & 0xFFFF;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el periode.
+/// \param    period: El valor del periode.
+///
+void halTMRSetPeriod(
+    TMRHandler handler, 
+    uint32_t period) {
+    
+    eosAssert(handler != NULL);
+    
+    if (!__isTypeA(handler) && __is32Bits(handler)) {
+        TMRRegisters* regs32 = __getRegs32Ptr(handler);
+        regs32->PRx = (period >> 16) & 0xFFFF;
+    }
+    handler->regs->PRx = period & 0xFFFF;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicia el temporitzador.
-/// \param    timer: El identificador del temporitzador.
+/// \param    handler: Handler del temporitzador
+/// \remarks  El temporitzador comença a contar i genera interrupcions, si 
+///           estan activades.
 ///
 void halTMRStartTimer(
-    TMRTimer timer) {
+    TMRHandler handler) {
     
-    if (IsTypeA(timer)) {
-        TMRTypeARegisters* tmr = halTMRGetTypeARegisterPtr(timer);
-        tmr->TxCON.ON = 1;
-    }
-    else {
-        TMRTypeBRegisters* tmr = halTMRGetTypeBRegisterPtr(timer);
-        tmr->TxCON.ON = 1;
-    }
+    if (__isTypeA(handler))
+        handler->regs->TAxCON.ON = 1;
+    else 
+        handler->regs->TBxCON.ON = 1;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Para el temporitzador.
-/// \param    timer: El identificador del temporitzador.
+/// \param    handler: Handler del temporitzador.
+/// \remarks  El contador deixa de contar.
 ///
 void halTMRStopTimer(
-    TMRTimer timer) {
+    TMRHandler handler) {
     
-    if (IsTypeA(timer)) {
-        TMRTypeARegisters* tmr = halTMRGetTypeARegisterPtr(timer);
-        tmr->TxCON.ON = 0;
-    }
-    else {
-        TMRTypeBRegisters* tmr = halTMRGetTypeBRegisterPtr(timer);
-        tmr->TxCON.ON = 0;
-    }
+    if (__isTypeA(handler))
+        handler->regs->TAxCON.ON = 0;
+    else 
+        handler->regs->TBxCON.ON = 0;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna la funcio d'interrupcio.
-/// \param    timer: El identificador del temporitzador.
+/// \param    handler: El handler del temporitzador.
 /// \param    function: La funcio.
-/// \param    params: Els parametres de la funcio.
+/// \param    params: Els parametres.
 ///
 void halTMRSetInterruptFunction(
-    TMRTimer timer,
+    TMRHandler handler,
     TMRInterruptFunction function,
     void* params) {
     
-    callbacks[timer].function = function;
-    callbacks[timer].params = params;
+    eosAssert(handler != NULL);
+    
+    handler->isrFunction = function;
+    handler->isrParams = params;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief   Activa les interrupcions del temporitzador.
-/// \param   timer: El identificador del temporitzador.
+/// \param   handler: El handler del temporitzador.
 ///
-void halTMREnableInterrupt(
-    TMRTimer timer) {
+void halTMREnableInterruptSource(
+    TMRHandler handler) {
     
-    halINTEnableInterrupt(irqTbl[timer]);
+    switch ((uint32_t) handler->regs) {
+#ifdef _TMR1
+        case _TMR1_BASE_ADDRESS:
+            IEC0bits.T1IE = 1;
+            break;
+#endif            
+
+#ifdef _TMR2
+        case _TMR2_BASE_ADDRESS:
+            IEC0bits.T2IE = 1;
+            break;
+#endif            
+
+#ifdef _TMR3
+        case _TMR3_BASE_ADDRESS:
+            IEC0bits.T3IE = 1;
+            break;
+#endif            
+
+#ifdef _TMR4
+        case _TMR4_BASE_ADDRESS:
+            IEC0bits.T4IE = 1;
+            break;
+#endif            
+
+#ifdef _TMR5
+        case _TMR5_BASE_ADDRESS:
+            IEC0bits.T5IE = 1;
+            break;
+#endif            
+    }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva les interrupcions del temporitzador.
-/// \param    timer: El identificador del temporitzador.
-/// \return   True si previament estava activada.
+/// \param    timer: El identificador del modul.
+/// \return   Diferent de zero si previament estava activada.
 ///
-bool halTMRDisableInterrupt(
-    TMRTimer timer) {
+uint32_t halTMRDisableInterruptSource(
+    TMRHandler handler) {
     
-    return halINTDisableInterrupt(irqTbl[timer]);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna la prioritaty de la interrupcio.
-/// \param    timer: El identificador del temporitzador.
-/// \param    priority: Prioritat.
-/// \param    subPriority: Sub prioritat.
-///
-void halTMRSetInterruptPriority(
-    TMRTimer timer,
-    unsigned priority, 
-    unsigned subPriority) {
-       
-    switch (timer) {
-        case HAL_TMR_TIMER_1:
-            IPC1bits.T1IP = priority;
-            IPC1bits.T1IS = subPriority;
+    uint32_t state = false;
+    
+    switch ((uint32_t) handler->regs) {
+#ifdef _TMR1
+        case _TMR1_BASE_ADDRESS:
+            state = IEC0bits.T1IE;
+            IEC0bits.T1IE = 0;
             break;
+#endif            
 
-        case HAL_TMR_TIMER_2:
-            IPC2bits.T2IP = priority;
-            IPC2bits.T2IS = subPriority;
+#ifdef _TMR2
+        case _TMR2_BASE_ADDRESS:
+            state = IEC0bits.T1IE;
+            IEC0bits.T2IE = 0;
             break;
+#endif            
 
-        case HAL_TMR_TIMER_3:
-            IPC3bits.T3IP = priority;
-            IPC3bits.T3IS = subPriority;
+#ifdef _TMR3
+        case _TMR3_BASE_ADDRESS:
+            state = IEC0bits.T1IE;
+            IEC0bits.T3IE = 0;
             break;
+#endif            
 
-        case HAL_TMR_TIMER_4:
-            IPC4bits.T4IP = priority;
-            IPC4bits.T4IS = subPriority;
+#ifdef _TMR4
+        case _TMR4_BASE_ADDRESS:
+            state = IEC0bits.T1IE;
+            IEC0bits.T4IE = 0;
             break;
+#endif            
 
-        case HAL_TMR_TIMER_5:
-            IPC5bits.T5IP = priority;
-            IPC5bits.T5IS = subPriority;
+#ifdef _TMR5
+        case _TMR5_BASE_ADDRESS:
+            state = IEC0bits.T1IE;
+            IEC0bits.T5IE = 0;
             break;
+#endif            
     }
+    
+    return state;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el flag d'interrupcio del temporitzador.
-/// \param    timer: El identificador del temporitzador.
+/// \param    timer: El identificador del modul.
+/// \param    event: El indicador del event.
 /// \return   El valor del flag.
 ///
-bool halTMRGetInterruptFlag(
-    TMRTimer timer) {
+bool halTMRGetInterruptSourceFlag(
+    TMRHandler handler) {
     
-    return halINTGetInterruptFlag(irqTbl[timer]);
+    switch ((uint32_t) handler->regs) {
+#ifdef _TMR1
+        case _TMR1_BASE_ADDRESS:
+            return __halTMRGetTMR1InterruptSourceFlag();
+#endif            
+
+#ifdef _TMR2
+        case _TMR2_BASE_ADDRESS:
+            return __halTMRGetTMR2InterruptSourceFlag();
+#endif            
+
+#ifdef _TMR3
+        case _TMR3_BASE_ADDRESS:
+            return __halTMRGetTMR3InterruptSourceFlag();
+#endif            
+
+#ifdef _TMR4
+        case _TMR4_BASE_ADDRESS:
+            return __halTMRGetTMR4InterruptSourceFlag();
+#endif            
+
+#ifdef _TMR5
+        case _TMR5_BASE_ADDRESS:
+            return __halTMRGetTMR5InterruptSourceFlag();
+#endif            
+            
+        default:
+            return false;
+    }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Borra el flag d'interrupcio del temporitzador.
-/// \param    timer: El identificador del temporitzador.
+/// \param    tmrId: El identificador del modul.
 ///
-void halTMRClearInterruptFlag(
-    TMRTimer timer) {
+void halTMRClearInterruptSourceFlag(
+    TMRHandler handler) {
     
-    halINTClearInterruptFlag(irqTbl[timer]);
+    switch ((uint32_t) handler->regs) {
+#ifdef _TMR1
+        case _TMR1_BASE_ADDRESS:
+            __halTMRClearTMR1InterruptSourceFlag();
+            break;
+#endif            
+
+#ifdef _TMR2
+        case _TMR2_BASE_ADDRESS:
+            __halTMRClearTMR2InterruptSourceFlag();
+            break;
+#endif            
+
+#ifdef _TMR3
+        case _TMR3_BASE_ADDRESS:
+            __halTMRClearTMR3InterruptSourceFlag();
+            break;
+#endif            
+
+#ifdef _TMR4
+        case _TMR4_BASE_ADDRESS:
+            __halTMRClearTMR4InterruptSourceFlag();
+            break;
+#endif            
+
+#ifdef _TMR5
+        case _TMR5_BASE_ADDRESS:
+            __halTMRClearTMR5InterruptSourceFlag();
+            break;
+#endif            
+    }
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Funcio callback de la interrupcio.
-/// \param    timer: El identificador del temporitzador.
+/// \brief    Procesa la interrupcio.
+/// \param    handler: El temporitzador.
 ///
-static void invokeCallback(
-    TMRTimer timer) {
+void halTMRInterruptHandler(
+    TMRHandler handler) {
     
-    TMRInterruptFunction function = callbacks[timer].function;
-    if (function != NULL)
-        function(timer, callbacks[timer].params);
-}
-
-
-/*************************************************************************
- *
- *       Funcions ISR del modul TMR (Hi una per cada modul)
- * 
- *       Funcio:
- *          void isrTMRxHandler(void)
- *
- *************************************************************************/
-
-#ifdef _TMR1
-void isrTMR1Handler(void) {
-
-    if (IFS0bits.T1IF) {
-        invokeCallback(HAL_TMR_TIMER_1);
-        IFS0bits.T1IF = 0;
+    if (halTMRGetInterruptSourceFlag(handler)) {
+        if (handler->isrFunction != NULL)
+            handler->isrFunction(handler, handler->isrParams);
+        halTMRClearInterruptSourceFlag(handler);
     }
 }
-#endif
-
-#ifdef _TMR2
-void isrTMR2Handler(void) {
-
-    if (IFS0bits.T2IF) {
-        invokeCallback(HAL_TMR_TIMER_2);
-        IFS0bits.T2IF = 0;
-    }
-}
-#endif            
-
-#ifdef _TMR3
-void isrTMR3Handler(void) {
-
-    if (IFS0bits.T3IF) {
-        invokeCallback(HAL_TMR_TIMER_3);
-        IFS0bits.T3IF = 0;
-    }
-}
-#endif            
-
-#ifdef _TMR4
-void isrTMR4Handler(void) {
-
-    if (IFS0bits.T4IF) {
-        invokeCallback(HAL_TMR_TIMER_4);
-        IFS0bits.T4IF = 0;
-    }
-}
-#endif            
-
-#ifdef _TMR5
-void isrTMR5Handler(void) {
-
-    if (IFS0bits.T5IF) {
-        invokeCallback(HAL_TMR_TIMER_5);
-        IFS0bits.T5IF = 0;
-    }
-}
-#endif            
 
 
 /// ----------------------------------------------------------------------

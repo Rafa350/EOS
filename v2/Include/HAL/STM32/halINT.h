@@ -30,50 +30,43 @@
 #define HAL_INT_SUBPRIORITY_LEVEL2    2
 #define HAL_INT_SUBPRIORITY_LEVEL3    3
 
-// Interrupcions (Alguns vectors son compartits)
-#define HAL_INT_SOURCE_DAC            TIM6_DAC_IRQn
-#define HAL_INT_SOURCE_DMA2D          DMA2D_IRQn
-#define HAL_INT_SOURCE_EXTI10         EXTI15_10_IRQn
-#define HAL_INT_SOURCE_EXTI11         EXTI15_10_IRQn
-#define HAL_INT_SOURCE_EXTI12         EXTI15_10_IRQn
-#define HAL_INT_SOURCE_EXTI13         EXTI15_10_IRQn
-#define HAL_INT_SOURCE_EXTI14         EXTI15_10_IRQn
-#define HAL_INT_SOURCE_EXTI15         EXTI15_10_IRQn
-#define HAL_INT_SOURCE_LTDC           LTDC_IRQn
-#define HAL_INT_SOURCE_LTDC_ER        LTDC_ER_IRQn
-#define HAL_INT_SOURCE_SPI1           SPI1_IRQn
-#define HAL_INT_SOURCE_SPI2           SPI2_IRQn
-#define HAL_INT_SOURCE_SPI3           SPI3_IRQn
-#define HAL_INT_SOURCE_SPI4           SPI4_IRQn
-#define HAL_INT_SOURCE_SPI5           SPI5_IRQn
-#define HAL_INT_SOURCE_SPI6           SPI6_IRQn
-#define HAL_INT_SOURCE_TMR1_BRK       TIM1_BRK_TIM9_IRQn
-#define HAL_INT_SOURCE_TMR1_CC        TIM1_CC_IRQn
-#define HAL_INT_SOURCE_TMR1_TRG       TIM1_TRG_COM_TIM11_IRQn
-#define HAL_INT_SOURCE_TMR1_UP        TIM1_UP_TIM10_IRQn
-#define HAL_INT_SOURCE_TMR2           TIM2_IRQn
-#define HAL_INT_SOURCE_TMR3           TIM3_IRQn
-#define HAL_INT_SOURCE_TMR4           TIM4_IRQn
-#define HAL_INT_SOURCE_TMR5           TIM5_IRQn
-#define HAL_INT_SOURCE_TMR6           TIM6_DAC_IRQn
-#define HAL_INT_SOURCE_TMR7           TIM7_IRQn
-#define HAL_INT_SOURCE_TMR9           TIM1_BRK_TIM9_IRQn
-#define HAL_INT_SOURCE_TMR8_BRK       TIM8_BRK_TIM12_IRQn
-#define HAL_INT_SOURCE_TMR8_CC        TIM8_CC_IRQn
-#define HAL_INT_SOURCE_TMR8_TRG       TIM8_TRG_COM_TIM14_IRQn
-#define HAL_INT_SOURCE_TMR8_UP        TIM8_UP_TIM13_IRQn
-#define HAL_INT_SOURCE_TMR10          TIM1_UP_TIM10_IRQn
-#define HAL_INT_SOURCE_TMR11          TIM1_TRG_COM_TIM11_IRQn
-#define HAL_INT_SOURCE_TMR12          TIM8_BRK_TIM12_IRQn
-#define HAL_INT_SOURCE_TMR13          TIM8_UP_TIM13_IRQn
-#define HAL_INT_SOURCE_TIM14          TIM8_TRG_COM_TIM14_IRQn
-
-
-#define halINTEnableInterrupts() \
-	__enable_irq()
-
-#define halINTDisableInterrupts() \
-	__disable_irq()
+// Vectord d'interrupcion
+#define HAL_INT_VECTOR_DAC            TIM6_DAC_IRQn
+#define HAL_INT_VECTOR_DMA2D          DMA2D_IRQn
+#define HAL_INT_VECTOR_EXTI10         EXTI15_10_IRQn
+#define HAL_INT_VECTOR_EXTI11         EXTI15_10_IRQn
+#define HAL_INT_VECTOR_EXTI12         EXTI15_10_IRQn
+#define HAL_INT_VECTOR_EXTI13         EXTI15_10_IRQn
+#define HAL_INT_VECTOR_EXTI14         EXTI15_10_IRQn
+#define HAL_INT_VECTOR_EXTI15         EXTI15_10_IRQn
+#define HAL_INT_VECTOR_LTDC           LTDC_IRQn
+#define HAL_INT_VECTOR_LTDC_ER        LTDC_ER_IRQn
+#define HAL_INT_VECTOR_SPI1           SPI1_IRQn
+#define HAL_INT_VECTOR_SPI2           SPI2_IRQn
+#define HAL_INT_VECTOR_SPI3           SPI3_IRQn
+#define HAL_INT_VECTOR_SPI4           SPI4_IRQn
+#define HAL_INT_VECTOR_SPI5           SPI5_IRQn
+#define HAL_INT_VECTOR_SPI6           SPI6_IRQn
+#define HAL_INT_VECTOR_TMR1_BRK       TIM1_BRK_TIM9_IRQn
+#define HAL_INT_VECTOR_TMR1_CC        TIM1_CC_IRQn
+#define HAL_INT_VECTOR_TMR1_TRG       TIM1_TRG_COM_TIM11_IRQn
+#define HAL_INT_VECTOR_TMR1_UP        TIM1_UP_TIM10_IRQn
+#define HAL_INT_VECTOR_TMR2           TIM2_IRQn
+#define HAL_INT_VECTOR_TMR3           TIM3_IRQn
+#define HAL_INT_VECTOR_TMR4           TIM4_IRQn
+#define HAL_INT_VECTOR_TMR5           TIM5_IRQn
+#define HAL_INT_VECTOR_TMR6           TIM6_DAC_IRQn
+#define HAL_INT_VECTOR_TMR7           TIM7_IRQn
+#define HAL_INT_VECTOR_TMR8_BRK       TIM8_BRK_TIM12_IRQn
+#define HAL_INT_VECTOR_TMR8_CC        TIM8_CC_IRQn
+#define HAL_INT_VECTOR_TMR8_TRG       TIM8_TRG_COM_TIM14_IRQn
+#define HAL_INT_VECTOR_TMR8_UP        TIM8_UP_TIM13_IRQn
+#define HAL_INT_VECTOR_TMR9           TIM1_BRK_TIM9_IRQn
+#define HAL_INT_VECTOR_TMR10          TIM1_UP_TIM10_IRQn
+#define HAL_INT_VECTOR_TMR11          TIM1_TRG_COM_TIM11_IRQn
+#define HAL_INT_VECTOR_TMR12          TIM8_BRK_TIM12_IRQn
+#define HAL_INT_VECTOR_TMR13          TIM8_UP_TIM13_IRQn
+#define HAL_INT_VECTOR_TIM14          TIM8_TRG_COM_TIM14_IRQn
 
 
 #ifdef	__cplusplus
@@ -81,14 +74,15 @@ extern "C" {
 #endif
 
 
-typedef uint32_t INTSource;
+#define halINTEnableInterrupts()      __enable_irq()
+#define halINTDisableInterrupts()     __disable_irq()
 
+void halINTSetInterruptVectorPriority(uint32_t vector, uint32_t priority, uint32_t subPriority);
+void halINTEnableInterruptVector(uint32_t vector);
 
-void halINTSetPriority(INTSource source, uint32_t priority, uint32_t subPriority);
-
-void halINTEnableInterrupt(INTSource source);
-bool halINTDisableInterrupt(INTSource source);
-void halINTRestoreInterrupt(INTSource source, bool state);
+void halINTEnableInterruptSource(uint32_t source);
+bool halINTDisableInterruptSource(uint32_t source);
+void halINTRestoreInterruptSource(uint32_t source, bool state);
 
 
 #ifdef	__cplusplus

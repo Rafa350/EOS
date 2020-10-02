@@ -11,46 +11,6 @@
 extern "C" {
 #endif
     
-typedef struct  __attribute__((packed , aligned(4))) {
-    __T1CONbits_t TxCON;
-    volatile uint32_t TxCONCLR;
-    volatile uint32_t TxCONSET;
-    volatile uint32_t TxCONINV;
-    volatile uint32_t TMRx;
-    volatile uint32_t TMRxCLR;
-    volatile uint32_t TMRxSET;
-    volatile uint32_t TMRxINV;
-    volatile uint32_t PRx;
-    volatile uint32_t PRxCLR;
-    volatile uint32_t PRxSET;
-    volatile uint32_t PRxINV;    
-} TMRTypeARegisters;
-
-typedef struct  __attribute__((packed , aligned(4))) {
-    __T2CONbits_t TxCON;
-    volatile uint32_t TxCONCLR;
-    volatile uint32_t TxCONSET;
-    volatile uint32_t TxCONINV;
-    volatile uint32_t TMRx;
-    volatile uint32_t TMRxCLR;
-    volatile uint32_t TMRxSET;
-    volatile uint32_t TMRxINV;
-    volatile uint32_t PRx;
-    volatile uint32_t PRxCLR;
-    volatile uint32_t PRxSET;
-    volatile uint32_t PRxINV;    
-} TMRTypeBRegisters;
-
-#define IsTypeA(timer)                      (timer == HAL_TMR_TIMER_1)
-#define halTMRGetTypeARegisterPtr(timer)    ((TMRTypeARegisters*)(0xBF800600 + ((timer) * 0x0200)))
-#define halTMRGetTypeBRegisterPtr(timer)    ((TMRTypeBRegisters*)(0xBF800600 + ((timer) * 0x0200)))
-#define halTMRGetTypeBRegisterHiPtr(timer)  ((TMRTypeBRegisters*)(0xBF800600 + ((timer) * 0x0200) + 0x0200))
-
-
-typedef uint8_t TMRTimer;
-typedef uint32_t TMROptions;
-typedef void (*TMRInterruptFunction)(TMRTimer timer, void* params);
-
 
 //#define HAL_TMR_USE_T1_INTERRUPT
 #define HAL_TMR_USE_T2_INTERRUPT
@@ -58,25 +18,25 @@ typedef void (*TMRInterruptFunction)(TMRTimer timer, void* params);
 #define HAL_TMR_USE_T4_INTERRUPT
 #define HAL_TMR_USE_T5_INTERRUPT
 
+// Identificador dels timers
 #ifdef _TMR1
-#define HAL_TMR_TIMER_1           ((TMRTimer) 0)
+#define HAL_TMR_TIMER_1           0
 #endif
 #ifdef _TMR2
-#define HAL_TMR_TIMER_2           ((TMRTimer) 1)
+#define HAL_TMR_TIMER_2           1
 #endif
 #ifdef _TMR3
-#define HAL_TMR_TIMER_3           ((TMRTimer) 2)
+#define HAL_TMR_TIMER_3           2
 #endif
 #ifdef _TMR4
-#define HAL_TMR_TIMER_4           ((TMRTimer) 3)
+#define HAL_TMR_TIMER_4           3
 #endif
 #ifdef _TMR5
-#define HAL_TMR_TIMER_5           ((TMRTimer) 4)
+#define HAL_TMR_TIMER_5           4
 #endif
-#define HAL_TMR_TIMER_NONE        ((TMRTimer) 255)
+#define HAL_TMR_NONE              0xFFFFFFFF
 
-#define HAL_TMR_TIMER_MAX         5
-
+   
 // Modus 16 o 32 bits
 #define HAL_TMR_MODE_pos          0
 #define HAL_TMR_MODE_bits         0b1
@@ -107,40 +67,75 @@ typedef void (*TMRInterruptFunction)(TMRTimer timer, void* params);
 #define HAL_TMR_CLKDIV_64         (6 << HAL_TMR_CLKDIV_pos)
 #define HAL_TMR_CLKDIV_256        (7 << HAL_TMR_CLKDIV_pos)
 
-// Enable interrupt
-#define HAL_TMR_INTERRUPT_pos     5
-#define HAL_TMR_INTERRUPT_bits    0b1
-#define HAL_TMR_INTERRUPT_mask    (HAL_TMR_INTERRUPT_bits << HAL_TMR_INTERRUPT_pos)
 
-#define HAL_TMR_INTERRUPT_DISABLE (0 << HAL_TMR_INTERRUPT_pos)
-#define HAL_TMR_INTERRUPT_ENABLE  (1 << HAL_TMR_INTERRUPT_pos)
+typedef uint32_t TMRTimer;
+typedef uint32_t TMROptions;
+typedef struct __TMRData* TMRHandler;
+typedef void (*TMRInterruptFunction)(TMRHandler hTimer, void* params);
 
+typedef struct  __attribute__((packed , aligned(4))) {
+    union {
+        __T1CONbits_t TAxCON;
+        __T2CONbits_t TBxCON;
+    };
+    volatile uint32_t TxCONCLR;
+    volatile uint32_t TxCONSET;
+    volatile uint32_t TxCONINV;
+    volatile uint32_t TMRx;
+    volatile uint32_t TMRxCLR;
+    volatile uint32_t TMRxSET;
+    volatile uint32_t TMRxINV;
+    volatile uint32_t PRx;
+    volatile uint32_t PRxCLR;
+    volatile uint32_t PRxSET;
+    volatile uint32_t PRxINV;    
+} TMRRegisters;
+
+struct __TMRData {
+    TMRRegisters* regs;
+    TMRInterruptFunction isrFunction;
+    void* isrParams;
+};
+typedef struct __TMRData TMRData;
 
 typedef struct {
 	TMRTimer timer;
-    unsigned period;
+    uint32_t period;
 	TMROptions options;
-    int irqPriority;
-    int irqSubPriority;
-	TMRInterruptFunction isrFunction;
-	void* isrParams;
 } TMRInitializeInfo;
 
 
-void halTMRInitialize(const TMRInitializeInfo* info);
-void halTMRShutdown(TMRTimer timer);
+TMRHandler halTMRInitialize(TMRData* data, const TMRInitializeInfo* info);
+void halTMRShutdown(TMRHandler hTimer);
 
-void halTMRStartTimer(TMRTimer timer);
-void halTMRStopTimer(TMRTimer timer);
+uint32_t halTMRGetCounter(TMRHandler handler);
+void halTMRSetCounter(TMRHandler handler, uint32_t counter);
+void halTMRSetPeriod(TMRHandler handler, uint32_t period);
+
+void halTMRStartTimer(TMRHandler hTimer);
+void halTMRStopTimer(TMRHandler hTimer);
+
+void halTMRSetInterruptFunction(TMRHandler timer, TMRInterruptFunction function, void* params);
+void halTMREnableInterruptSource(TMRHandler timer);
+uint32_t halTMRDisableInterruptSource(TMRHandler timer);
+bool halTMRGetInterruptSourceFlag(TMRHandler timer);
+void halTMRClearInterruptSourceFlag(TMRHandler timer);
+
+void halTMRInterruptHandler(TMRHandler handler);
 
 void halTMRDelay(unsigned time);
 
-void halTMRSetInterruptFunction(TMRTimer timer, TMRInterruptFunction function, void* params);
-void halTMRSetInterruptPriority(TMRTimer timer, unsigned priority, unsigned subPriority);
-bool halTMRGetInterruptFlag(TMRTimer timer);
-void halTMRClearInterruptFlag(TMRTimer timer);
-void halTMREnableInterrupt(TMRTimer timer);
-bool halTMRDisableInterrupt(TMRTimer timer);
+#define __halTMRGetTMR1InterruptSourceFlag()     IFS0bits.T1IF
+#define __halTMRGetTMR2InterruptSourceFlag()     IFS0bits.T2IF
+#define __halTMRGetTMR3InterruptSourceFlag()     IFS0bits.T3IF
+#define __halTMRGetTMR4InterruptSourceFlag()     IFS0bits.T4IF
+#define __halTMRGetTMR5InterruptSourceFlag()     IFS0bits.T5IF
+
+#define __halTMRClearTMR1InterruptSourceFlag()   IFS0bits.T1IF = 0
+#define __halTMRClearTMR2InterruptSourceFlag()   IFS0bits.T2IF = 0
+#define __halTMRClearTMR3InterruptSourceFlag()   IFS0bits.T3IF = 0
+#define __halTMRClearTMR4InterruptSourceFlag()   IFS0bits.T4IF = 0
+#define __halTMRClearTMR5InterruptSourceFlag()   IFS0bits.T5IF = 0
 
 
 #ifdef	__cplusplus

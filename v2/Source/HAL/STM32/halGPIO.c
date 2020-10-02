@@ -3,29 +3,14 @@
 #include "HAL/STM32/halGPIO.h"
 
 
-GPIORegisters * const gpioTbl[] = {
-    GPIOA,
-	GPIOB,
-	GPIOC,
-	GPIOD,
-	GPIOE,
-	GPIOF,
-	GPIOG,
-	GPIOH,
-	GPIOI,
-	GPIOJ,
-	GPIOK
-};
-
-static uint32_t enabledClocks = 0; // Indicador dels ports actius
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Activa el clock del port GPIO
-/// \param    port: El identificador del port.
+/// \param    port: Identificador del port.
 ///
-static void enableClock(
+static void enablePeripheralClock(
 	GPIOPort port) {
+
+	eosAssert(IS_GPIO_ALL_INSTANCE(port));
 
 	switch (port) {
 		case HAL_GPIO_PORT_A:
@@ -72,29 +57,15 @@ static void enableClock(
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
 			break;
 	}
-
-	enabledClocks |= (1 << port);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Comprova si el clock del port GPIO esta activat.
-/// \param    port: El identificador del port.
-/// \return   True si esta activat.
-///
-static inline bool isClockEnabled(
-	GPIOPort port) {
-
-	return (enabledClocks & (1 << port)) != 0;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Configura un pin.
-/// \param    port: El numero de port.
-/// \param    pin: El numero de pin.
-/// \param    options: Les opcions de configuracio.
-/// \param    alt: La funcio alternativa.
+/// \param    port: Identificador del port.
+/// \param    pin: Numero de pin.
+/// \param    options: Opcions de configuracio.
+/// \param    alt: Funcio alternativa.
 ///
 static void setupPin(
 	GPIOPort port,
@@ -102,45 +73,48 @@ static void setupPin(
 	GPIOOptions options,
 	GPIOAlt alt) {
 
+	eosAssert(IS_GPIO_ALL_INSTANCE(port));
+	eosAssert((pin >= 0) && (pin <= 15));
+
 	uint32_t temp;
-	GPIORegisters* gpio = halGPIOGetRegisterPtr(port);
+	GPIORegisters* regs = (GPIORegisters*) port;
 
 	// Configura el registre MODER (Mode Register)
 	//
-	temp = gpio->MODER;
-	temp &= ~(0b11u << (pin * 2u));
+	temp = regs->MODER;
+	temp &= ~(0b11 << (pin * 2));
 	switch (options & HAL_GPIO_MODE_mask) {
 		// Sortida digital
 		case HAL_GPIO_MODE_OUTPUT_PP:
 		case HAL_GPIO_MODE_OUTPUT_OD:
-			temp |= 0b01u << (pin * 2u);
+			temp |= 0b01 << (pin * 2);
 			break;
 
 		// Funcio alternativa
 		case HAL_GPIO_MODE_ALT_PP:
 		case HAL_GPIO_MODE_ALT_OD:
-			temp |= 0b10u << (pin * 2u);
+			temp |= 0b10 << (pin * 2);
 			break;
 
 		// Entrada analogica
 		case HAL_GPIO_MODE_ANALOG:
-			temp |= 0b11u << (pin * 2u);
+			temp |= 0b11 << (pin * 2);
 			break;
 
 		// Entrada digital
 		case HAL_GPIO_MODE_INPUT:
 			break;
 	}
-	gpio->MODER = temp;
+	regs->MODER = temp;
 
 	// Configura el registre AFR (Alternate Funcion Register)
 	//
 	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
-	    temp = gpio->AFR[pin >> 3u];
-	    temp &= ~(0xFU << ((uint32_t)(pin & 0x07U) * 4u)) ;
-        temp |= ((uint32_t)(alt) << (((uint32_t)pin & 0x07u) * 4u));
-        gpio->AFR[pin >> 3u] = temp;
+	    temp = regs->AFR[pin >> 3];
+	    temp &= ~(0x0F << ((uint32_t)(pin & 0x07) * 4)) ;
+        temp |= ((uint32_t)(alt) << (((uint32_t)pin & 0x07) * 4));
+        regs->AFR[pin >> 3] = temp;
 	}
 
 	// Configura el registre OSPEEDR (Output Speed Register)
@@ -150,22 +124,22 @@ static void setupPin(
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
 
-		temp = gpio->OSPEEDR;
-		temp &= ~(0b11u << (pin * 2u));
+		temp = regs->OSPEEDR;
+		temp &= ~(0b11 << (pin * 2));
 		switch (options & HAL_GPIO_SPEED_mask) {
 			case HAL_GPIO_SPEED_MEDIUM:
-				temp |= 0b01u < (pin * 2u);
+				temp |= 0b01 < (pin * 2);
 				break;
 
 			case HAL_GPIO_SPEED_HIGH:
-				temp |= 0b10u < (pin * 2u);
+				temp |= 0b10 < (pin * 2);
 				break;
 
 			case HAL_GPIO_SPEED_FAST:
-				temp |= 0b11u < (pin * 2u);
+				temp |= 0b11u < (pin * 2);
 				break;
 		}
-		gpio->OSPEEDR = temp;
+		regs->OSPEEDR = temp;
 	}
 
 	// Configura el registre OTYPER (Output Type Register)
@@ -174,29 +148,29 @@ static void setupPin(
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
-		temp = gpio->OTYPER;
+		temp = regs->OTYPER;
 		temp &= ~(1u << pin);
 		if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD) ||
 			((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD))
-			temp |= 1u << pin;
-		gpio->OTYPER = temp;
+			temp |= 1 << pin;
+		regs->OTYPER = temp;
 	}
 
-	// Configura el registre PUPDR (PullUp PullDown Register)
+	// Configura el registre PUPDR (Pull Up/Down Register)
 	//
 	if ((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_ANALOG) {
-		temp = gpio->PUPDR;
-		temp &= ~(0b11u << (pin * 2u));
+		temp = regs->PUPDR;
+		temp &= ~(0b11 << (pin * 2u));
 		switch (options & HAL_GPIO_PULL_mask) {
 			case HAL_GPIO_PULL_UP:
-				temp |= 0b01u << (pin * 2u);
+				temp |= 0b01 << (pin * 2);
 				break;
 
 			case HAL_GPIO_PULL_DOWN:
-				temp |= 0b10u << (pin * 2u);
+				temp |= 0b10 << (pin * 2);
 				break;
 		}
-		gpio->PUPDR = temp;
+		regs->PUPDR = temp;
 	}
 
 	// Configura el valor inicial pin de sortida
@@ -204,12 +178,12 @@ static void setupPin(
 	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {
 
-		temp = gpio->BSRR;
+		temp = regs->BSRR;
 		if ((options & HAL_GPIO_INIT_mask) == HAL_GPIO_INIT_SET)
-			temp |= 1u << pin;
+			temp |= 1 << pin;
 		else
-			temp |= 1u << (pin + 16u);
-		gpio->BSRR = temp;
+			temp |= 1 << (pin + 16);
+		regs->BSRR = temp;
 	}
 }
 
@@ -221,18 +195,16 @@ static void setupPin(
 ///
 void halGPIOInitializePins(
 	const GPIOInitializePinInfo *info,
-	unsigned count) {
+	uint32_t count) {
 
 	eosAssert(info != NULL);
 	eosAssert(count != 0);
 
-	for (unsigned i = 0; i < count; i++) {
+	for (uint32_t i = 0; i < count; i++) {
 
 		const GPIOInitializePinInfo* p = &info[i];
 
-		if (!isClockEnabled(p->port))
-			enableClock(p->port);
-
+		enablePeripheralClock(p->port);
 		setupPin(p->port, p->pin, p->options, p->alt);
 	}
 }
@@ -240,25 +212,24 @@ void halGPIOInitializePins(
 
 /// ----------------------------------------------------------------------
 /// \brief    Configura una llista de ports.
-/// \param    info: Llista d'informacio de configuracio.
+/// \param    info: Llista d'elements de configuracio.
 /// \param    count: Numero d'elements de la llista.
 ///
 void halGPIOInitializePorts(
-	const GPIOInitializePortInfo *info,
-	unsigned count) {
+	const GPIOInitializePortInfo* info,
+	uint32_t count) {
 
 	eosAssert(info != NULL);
 	eosAssert(count != 0);
 
-	for (unsigned i = 0; i < count; i++) {
+	for (uint32_t i = 0; i < count; i++) {
 
 		const GPIOInitializePortInfo* p = &info[i];
 
-		if (!isClockEnabled(p->port))
-			enableClock(p->port);
+		enablePeripheralClock(p->port);
 
 		for (GPIOPin pin = 0; pin < 16; pin++)
-			if (p->mask & (1u << pin))
+			if (p->mask & (1 << pin))
 				setupPin(p->port, pin, p->options, p->alt);
 	}
 }
@@ -277,54 +248,65 @@ void halGPIOInitializePin(
 	GPIOOptions options,
 	GPIOAlt alt) {
 
-	if (!isClockEnabled(port))
-		enableClock(port);
+	eosAssert(IS_GPIO_ALL_INSTANCE(port));
+	eosAssert((pin >= 0) && (pin <= 15));
+
+	enablePeripheralClock(port);
 
 	setupPin(port, pin, options, alt);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Posa un pin al estat inactiu.
-/// \param port: El identificador del port.
-/// \param pin: El identificador del pin.
+/// \brief    Posa un pin al estat inactiu.
+/// \param    port: Identificador del port.
+/// \param    pin: Numero de pin.
 ///
-#if 0
+#if HAL_GPIO_INLINE == 0
 inline void halGPIOClearPin(
 	GPIOPort port,
 	GPIOPin pin) {
 
-	gpioTbl[port]->BSRR = 1u << (pin + 16);
+	eosAssert(IS_GPIO_ALL_INSTANCE(port));
+	eosAssert((pin >= 0) && (pin <= 15));
+
+	((GPIORegisters*)port)->BSRR = 1u << (pin + 16);
 
 }
 #endif
 
 
 /// ----------------------------------------------------------------------
-/// \brief Posa un pin al estat actiu.
-/// \param port: El identificador del port.
-/// \param pin: El identificador del pin.
+/// \brief    Posa un pin al estat actiu.
+/// \param    port: Identificador del port.
+/// \param    pin: Numero de pin.
 ///
-#if 0
+#if HAL_GPIO_INLINE == 0
 inline void halGPIOSetPin(
 	GPIOPort port,
 	GPIOPin pin) {
 
-	gpioTbl[port]->BSRR = 1u << pin;
+	eosAssert(IS_GPIO_ALL_INSTANCE(port));
+	eosAssert((pin >= 0) && (pin <= 15));
+
+	((GPIORegisters*)port)->BSRR = 1u << pin;
 }
 #endif
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inverteix l'estat del pin.
-/// \param port: El identificador del port.
-/// \param pin: El identificador del pin.
+/// \brief    Inverteix l'estat del pin.
+/// \param    port: Identificador del port.
+/// \param    pin: Numero de pin.
 ///
-#if 0
+#if HAL_GPIO_INLINE == 0
 inline void halGPIOTogglePin(
 	GPIOPort port,
 	GPIOPin pin) {
 
-	gpioTbl[port]->ODR ^= 1u << pin;
+	eosAssert(IS_GPIO_ALL_INSTANCE(port));
+	eosAssert((pin >= 0) && (pin <= 15));
+
+	((GPIORegisters*)port)->ODR ^= 1u << pin;
 }
 #endif

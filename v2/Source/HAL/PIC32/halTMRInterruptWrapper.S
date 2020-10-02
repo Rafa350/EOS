@@ -20,6 +20,7 @@
 	.set	noreorder
 	.set 	noat
 		
+	
 /*************************************************************************
  *
  *       Punt d'entrada del del vector de interrupcio _TIMER_1_VECTOR
