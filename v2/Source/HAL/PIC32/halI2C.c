@@ -1,46 +1,11 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "HAL/PIC32/halI2C.h"
 #include "HAL/PIC32/halSYS.h"
 
 #include "sys/attribs.h"
 #include "peripheral/int/plib_int.h"
 #include "Peripheral/i2c/plib_i2c.h"
-
-
-typedef struct  __attribute__((packed , aligned(4))) {
-   __I2C1CONbits_t I2CxCON;
-   volatile uint32_t I2CxCONCLR;
-   volatile uint32_t I2CxCONSET;
-   volatile uint32_t I2CxCONINV;
-   __I2C1STATbits_t I2CxSTAT;
-   volatile uint32_t I2CxSTATCLR;
-   volatile uint32_t I2CxSTATSET;
-   volatile uint32_t I2CxSTATINV;
-   volatile uint32_t I2CxADD;
-   uint32_t DONTUSE1[3];
-   volatile uint32_t I2CxMSK;
-   uint32_t DONTUSE2[3];
-   volatile uint32_t I2CxBRG;
-   uint32_t DONTUSE3[3];
-   volatile uint32_t I2CxTRN;
-   uint32_t DONTUSE4[3];
-   volatile uint32_t I2CxRCV;
-   uint32_t DONTUSE5[3];
-} I2CRegisters;
-
-typedef struct {
-    I2CInterruptFunction isrFunction;
-    void* isrParams;
-} I2CData;
-
-
-static I2CData dataTbl[] = {
-    { NULL, NULL },
-    { NULL, NULL },
-    { NULL, NULL },
-    { NULL, NULL },
-    { NULL, NULL }    
-};
 
 
 extern void __ISR(_I2C_1_VECTOR, IPL2SOFT) isrI2C1Wrapper(void);
@@ -57,75 +22,95 @@ extern void __ISR(_I2C_4_VECTOR, IPL2SOFT) isrI2C4Wrapper(void);
 extern void __ISR(_I2C_5_VECTOR, IPL2SOFT) isrI2C5Wrapper(void);
 #endif
 
-#define __getRegisterPtr(channel)      ((I2CRegisters*) channel)
-#define __getDataPtr(channel)          ((I2CData*) &dataTbl[((channel - HAL_I2C_ADDR_1) / 0x200)])
-
 
 /// ----------------------------------------------------------------------
 /// \brief   Inicialitza el modul I2C
 /// \param   info: Informacio d'inicialitzacio.
 ///
-void halI2CMasterInitialize(
+I2CHandler halI2CMasterInitialize(
+    I2CData* data,
     const I2CMasterInitializeInfo* info) {
-    
-    I2CChannel channel = info->channel;
-       
+
+    I2CHandler handler = data;
+
+    switch(info->channel) {
+        case HAL_I2C_CHANNEL_1:
+            handler->regs = (I2CRegisters*) _I2C1_BASE_ADDRESS;
+            break;
+
+        case HAL_I2C_CHANNEL_2:
+            handler->regs = (I2CRegisters*) _I2C2_BASE_ADDRESS;
+            break;
+    }
+
+    handler->isrFunction = NULL;
+    handler->isrParams = NULL;
+
     // Inicialitzacio general del modul
     //
-    PLIB_I2C_SlaveClockStretchingEnable(channel);
-    PLIB_I2C_SMBDisable(channel);
-    PLIB_I2C_HighFrequencyDisable(channel);
-    PLIB_I2C_StopInIdleEnable(channel);
+    //PLIB_I2C_SlaveClockStretchingEnable((I2C_MODULE_ID) handler->regs);
+    handler->regs->I2CxCON.STREN = 1;
+    //PLIB_I2C_SMBDisable(handler->regs);
+    handler->regs->I2CxCON.SMEN = 0;
+    //PLIB_I2C_StopInIdleEnable(handler->regs);
+    handler->regs->I2CxCON.SIDL = 1;
 
     // Selecciona la frequencia de treball
     //
-    if (info->baudRate > 100000)
-        PLIB_I2C_HighFrequencyEnable(channel);
-    else
-        PLIB_I2C_HighFrequencyDisable(channel);
-    PLIB_I2C_BaudRateSet(channel, halSYSGetPeripheralClockFrequency(), info->baudRate);
+    if (info->baudRate > 100000) {
+        //PLIB_I2C_HighFrequencyEnable(handler->regs);
+        handler->regs->I2CxCON.DISSLW = 1;
+    }
+    else {
+        //PLIB_I2C_HighFrequencyDisable(handler->regs);
+        handler->regs->I2CxCON.DISSLW = 0;
+    }
+    PLIB_I2C_BaudRateSet((I2C_MODULE_ID) handler->regs, halSYSGetPeripheralClockFrequency(), info->baudRate);
 
     // Activa el modul
     //
-    PLIB_I2C_Enable(channel);
+    //PLIB_I2C_Enable(handler->regs);
+    handler->regs->I2CxCON.ON = 1;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el modul.
-/// \param    channel: El identificador del modul.
+/// \param    handler: Handler del modul.
 ///
 void halI2CMasterDeinitialize(
-    I2CChannel channel) {
+    I2CHandler handler) {
 
-    PLIB_I2C_Disable(channel);
+    eosAssert(handler != NULL);
 
-    I2CData* data = __getDataPtr(channel);
-    data->isrFunction = NULL;
+    handler->regs->I2CxCON.ON = 0;
+    //PLIB_I2C_Disable(handler->regs);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief   Genera la sequencia START
-/// \param   channel: El identificador del modul.
+/// \param   handler: Handler del modul.
 ///
 void halI2CMasterStart(
-    I2CChannel channel) {
-    
-    I2CRegisters* regs = __getRegisterPtr(channel);
-    regs->I2CxCON.SEN = 1;
+    I2CHandler handler) {
+
+    eosAssert(handler != NULL);
+
+    handler->regs->I2CxCON.SEN = 1;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief   Genera la sequencia STOP
-/// \param   channel: El identificador del modul.
+/// \param   handler: Handler del modul.
 ///
 void halI2CMasterStop(
-    I2CChannel channel) {
- 
-    I2CRegisters* regs = __getRegisterPtr(channel);
-    regs->I2CxCON.PEN = 1;
+    I2CHandler handler) {
+
+    eosAssert(handler != NULL);
+
+    handler->regs->I2CxCON.PEN = 1;
 }
 
 
@@ -134,100 +119,117 @@ void halI2CMasterStop(
 /// \param   channel: El identificador del modul.
 ///
 void halI2CMasterStartRepeat(
-    I2CChannel channel) {
+    I2CHandler handler) {
 
-    I2CRegisters* regs = __getRegisterPtr(channel);
-    regs->I2CxCON.RSEN = 1;
+    eosAssert(handler != NULL);
+
+    handler->regs->I2CxCON.RSEN = 1;
 }
 
 
 bool halI2CIsBusIdle(
-    I2CChannel channel) {
- 
-    return PLIB_I2C_BusIsIdle(channel);
+    I2CHandler handler) {
+
+    eosAssert(handler != NULL);
+
+    return PLIB_I2C_BusIsIdle((I2C_MODULE_ID)handler->regs);
 }
 
 
 bool halI2CArbitrationLossHasOccurred(
-    I2CChannel channel) {
+    I2CHandler handler) {
 
-    return PLIB_I2C_ArbitrationLossHasOccurred(channel);
+    eosAssert(handler != NULL);
+
+    return PLIB_I2C_ArbitrationLossHasOccurred((I2C_MODULE_ID)handler->regs);
 }
 
 
 void halI2CArbitrationLossClear(
-    I2CChannel channel) {
+    I2CHandler handler) {
 
-    PLIB_I2C_ArbitrationLossClear(channel);
+    eosAssert(handler != NULL);
+
+    PLIB_I2C_ArbitrationLossClear((I2C_MODULE_ID)handler->regs);
 }
 
 
 void halI2CTransmitterByteSend(
-    I2CChannel channel, 
+    I2CHandler handler,
     uint8_t data) {
-    
-    PLIB_I2C_TransmitterByteSend(channel, data);
+
+    eosAssert(handler != NULL);
+
+    PLIB_I2C_TransmitterByteSend((I2C_MODULE_ID)handler->regs, data);
 }
 
 
 bool halI2CTransmitterByteWasAcknowledged(
-    I2CChannel channel) {
-                    
-    return PLIB_I2C_TransmitterByteWasAcknowledged(channel);
+    I2CHandler handler) {
+
+    eosAssert(handler != NULL);
+
+    return PLIB_I2C_TransmitterByteWasAcknowledged((I2C_MODULE_ID)handler->regs);
 }
 
 
 uint8_t halI2CReceivedByteGet(
-    I2CChannel channel) {
+    I2CHandler handler) {
 
-    return PLIB_I2C_ReceivedByteGet(channel);
+    eosAssert(handler != NULL);
+
+    return PLIB_I2C_ReceivedByteGet((I2C_MODULE_ID)handler->regs);
 }
 
 
 void halI2CMasterReceiverClock1Byte(
-    I2CChannel channel) {
- 
-    PLIB_I2C_MasterReceiverClock1Byte(channel);
+    I2CHandler handler) {
+
+    eosAssert(handler != NULL);
+
+    PLIB_I2C_MasterReceiverClock1Byte((I2C_MODULE_ID)handler->regs);
 }
 
 
 void halI2CReceivedByteAcknowledge(
-    I2CChannel channel, 
+    I2CHandler handler,
     bool ack) {
- 
-    PLIB_I2C_ReceivedByteAcknowledge(channel, ack);
+
+    eosAssert(handler != NULL);
+
+    PLIB_I2C_ReceivedByteAcknowledge((I2C_MODULE_ID)handler->regs, ack);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna la fuincio d'interrupcio.
-/// \param    channel: Identificador del modul.
+/// \param    handler: Handler del modul.
 /// \param    function: La funcio.
 /// \param    params: Els parametres.
 ///
 void halI2CSetInterruptFunction(
-    I2CChannel channel,
-    I2CInterruptFunction function, 
+    I2CHandler handler,
+    I2CInterruptFunction function,
     void* params) {
-    
-    I2CData* data = __getDataPtr(channel);
-    data->isrFunction = function;
-    data->isrParams = params;
-    
+
+    eosAssert(handler != NULL);
+
+    handler->isrFunction = function;
+    handler->isrParams = params;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa les interrupcionsd el modul.
-/// \param    channel: Identificador del modul.
+/// \param    handler: Handler del modul.
 /// \params   sources: Els events a activat
 ///
-void halI2CEnableInterruptSources(
-    I2CChannel channel, 
+void halI2CEnableInterrupts(
+    I2CHandler handler,
     uint32_t sources) {
-    
-    switch (channel) {
-        case HAL_I2C_CHANNEL_1:
+
+    switch ((uint32_t) handler->regs) {
+        case _I2C1_BASE_ADDRESS:
             if ((sources & HAL_I2C_EVENT_MASTER) == HAL_I2C_EVENT_MASTER)
                 IEC0bits.I2C1MIE = 1;
             if ((sources & HAL_I2C_EVENT_SLAVE) == HAL_I2C_EVENT_SLAVE)
@@ -236,8 +238,8 @@ void halI2CEnableInterruptSources(
                 IEC0bits.I2C1BIE = 1;
             break;
 
-#ifdef _I2C2            
-        case HAL_I2C_CHANNEL_2:
+#ifdef _I2C2
+        case _I2C2_BASE_ADDRESS:
             if ((sources & HAL_I2C_EVENT_MASTER) == HAL_I2C_EVENT_MASTER)
                 IEC1bits.I2C2MIE = 1;
             if ((sources & HAL_I2C_EVENT_SLAVE) == HAL_I2C_EVENT_SLAVE)
@@ -245,22 +247,22 @@ void halI2CEnableInterruptSources(
             if ((sources & HAL_I2C_EVENT_BUS) == HAL_I2C_EVENT_BUS)
                 IEC1bits.I2C2BIE = 1;
             break;
-#endif            
+#endif
     }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva les interrupcionsd el modul.
-/// \param    channel: Identificador del modul.
+/// \param    handler: Handler del modul.
 /// \params   sources: Els events a activat
 ///
-void halI2CDisableInterruptSources(
-    I2CChannel channel, 
+uint32_t halI2CDisableInterrupts(
+    I2CHandler handler,
     uint32_t sources) {
-    
-    switch (channel) {
-        case HAL_I2C_CHANNEL_1:
+
+    switch ((uint32_t)handler->regs) {
+        case _I2C1_BASE_ADDRESS:
             if ((sources & HAL_I2C_EVENT_MASTER) == HAL_I2C_EVENT_MASTER)
                 IEC0bits.I2C1MIE = 0;
             if ((sources & HAL_I2C_EVENT_SLAVE) == HAL_I2C_EVENT_SLAVE)
@@ -269,8 +271,8 @@ void halI2CDisableInterruptSources(
                 IEC0bits.I2C1BIE = 0;
             break;
 
-#ifdef _I2C2            
-        case HAL_I2C_CHANNEL_2:
+#ifdef _I2C2
+        case _I2C2_BASE_ADDRESS:
             if ((sources & HAL_I2C_EVENT_MASTER) == HAL_I2C_EVENT_MASTER)
                 IEC1bits.I2C2MIE = 0;
             if ((sources & HAL_I2C_EVENT_SLAVE) == HAL_I2C_EVENT_SLAVE)
@@ -278,17 +280,19 @@ void halI2CDisableInterruptSources(
             if ((sources & HAL_I2C_EVENT_BUS) == HAL_I2C_EVENT_BUS)
                 IEC1bits.I2C2BIE = 0;
             break;
-#endif            
+#endif
     }
+
+    return 0;
 }
 
 
-void halI2CClearInterruptSourceFlag(
-    I2CChannel channel,
+void halI2CClearInterruptFlags(
+    I2CHandler handler,
     uint32_t sources) {
-    
-    switch (channel) {
-        case HAL_I2C_CHANNEL_1:
+
+    switch ((uint32_t) handler->regs) {
+        case _I2C1_BASE_ADDRESS:
             if ((sources & HAL_I2C_EVENT_MASTER) == HAL_I2C_EVENT_MASTER)
                 IFS0bits.I2C1BIF = 0;
             if ((sources & HAL_I2C_EVENT_SLAVE) == HAL_I2C_EVENT_SLAVE)
@@ -297,8 +301,8 @@ void halI2CClearInterruptSourceFlag(
                 IFS0bits.I2C1MIF = 0;
             break;
 
-#ifdef _I2C2            
-        case HAL_I2C_CHANNEL_2:
+#ifdef _I2C2
+        case _I2C2_BASE_ADDRESS:
             if ((sources & HAL_I2C_EVENT_MASTER) == HAL_I2C_EVENT_MASTER)
                 IFS1bits.I2C2MIF = 0;
             if ((sources & HAL_I2C_EVENT_SLAVE) == HAL_I2C_EVENT_SLAVE)
@@ -306,45 +310,45 @@ void halI2CClearInterruptSourceFlag(
             if ((sources & HAL_I2C_EVENT_BUS) == HAL_I2C_EVENT_BUS)
                 IFS1bits.I2C2BIF = 0;
             break;
-#endif            
+#endif
     }
 }
 
 
-bool halI2CGetInterruptSourceFlag(
-    I2CChannel channel,
+bool halI2CGetInterruptFlag(
+    I2CHandler handler,
     uint32_t source) {
-    
-    switch (channel) {
-        case HAL_I2C_CHANNEL_1:
+
+    switch ((uint32_t) handler->regs) {
+        case _I2C1_BASE_ADDRESS:
             switch (source) {
                 case HAL_I2C_EVENT_MASTER:
                     return IFS0bits.I2C1BIF;
-                    
+
                 case HAL_I2C_EVENT_SLAVE:
                     return IFS0bits.I2C1SIF;
-                    
+
                 case HAL_I2C_EVENT_BUS:
                     return IFS0bits.I2C1MIF;
             }
             break;
 
-#ifdef _I2C2            
-        case HAL_I2C_CHANNEL_2:
+#ifdef _I2C2
+        case _I2C2_BASE_ADDRESS:
             switch (source) {
                 case HAL_I2C_EVENT_MASTER:
                     return IFS1bits.I2C2MIF;
-                    
+
                 case HAL_I2C_EVENT_SLAVE:
                     return IFS1bits.I2C2SIF;
-                    
+
                 case HAL_I2C_EVENT_BUS:
                     return IFS1bits.I2C2BIF;
             }
             break;
-#endif            
+#endif
     }
-    
+
     return false;
 }
 
@@ -353,25 +357,34 @@ bool halI2CGetInterruptSourceFlag(
 /// \brief    Crida a la funcio callback de la interrupcio.
 /// \param    i2cId: identificacod del modul.
 ///
-static void invokeInterruptFunction(
-    I2CChannel channel) {
-    
-    I2CData* data = __getDataPtr(channel);
-    if (data->isrFunction != NULL)
-        data->isrFunction(channel, data->isrParams);
+void halI2CInterruptHandler(
+    I2CHandler handler) {
+
+    eosAssert(handler != NULL);
+
+    // Comprova si es un event MASTER
+    //
+    if (halI2CGetInterruptFlag(handler, HAL_I2C_EVENT_MASTER)) {
+
+        if (handler->isrFunction != NULL)
+            handler->isrFunction(handler, handler->isrParams);
+
+        halI2CClearInterruptFlags(handler, HAL_I2C_EVENT_MASTER);
+    }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa el vector _I2C_1_VECTOR
 ///
+/*
 void isrI2C1Handler(void) {
 
     if (IFS0bits.I2C1MIF) {
         invokeInterruptFunction(HAL_I2C_CHANNEL_1);
         IFS0bits.I2C1MIF = 0;
     }
-    
+
     if (IFS0bits.I2C1SIF) {
         invokeInterruptFunction(HAL_I2C_CHANNEL_1);
         IFS0bits.I2C1SIF = 0;
@@ -382,7 +395,7 @@ void isrI2C1Handler(void) {
         IFS0bits.I2C1BIF = 0;
     }
 }
-
+*/
 
 /// ----------------------------------------------------------------------
 /// \brief Procesa el vector _I2C_2_VECTOR
@@ -391,11 +404,11 @@ void isrI2C1Handler(void) {
 void isrI2C2Handler(void) {
 
     if (IFS1bits.I2C2MIF) {
-        invokeInterruptFunction(HAL_I2C_CHANNEL_2); 
+//        invokeInterruptFunction(HAL_I2C_CHANNEL_2);
         IFS1bits.I2C2MIF = 0;
     }
 }
-#endif            
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -409,7 +422,7 @@ void isrI2C3Handler(void) {
         IFS1bits.I2C3MIF = 0;
     }
 }
-#endif            
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -423,7 +436,7 @@ void isrI2C4Handler(void) {
         IFS1bits.I2C4MIF = 0;
     }
 }
-#endif            
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -437,4 +450,4 @@ void isrI2C5Handler(void) {
         IFS1bits.I2C5MIF = 0);
     }
 }
-#endif            
+#endif

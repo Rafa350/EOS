@@ -43,7 +43,7 @@ namespace eos {
                 pulse,
                 delayedSet,
                 delayedClear,
-                delayedToggle,      
+                delayedToggle,
                 delayedPulse,
                 timeOut
             };
@@ -83,9 +83,9 @@ namespace eos {
             void onInitialize() override;
             void onTerminate() override;
             void onTask() override;
-#if Eos_ApplicationTickEnabled            
+#if Eos_ApplicationTickEnabled
             void onTick() override;
-#endif            
+#endif
         public:
             DigOutputService(Application* application, const InitParams& initParams);
             ~DigOutputService();
@@ -93,7 +93,7 @@ namespace eos {
             void addOutput(DigOutput* output);
             void removeOutput(DigOutput* output);
             void removeOutputs();
-            
+
             void set(DigOutput* output);
             void clear(DigOutput* output);
             void write(DigOutput* output, bool value);
@@ -137,30 +137,30 @@ namespace eos {
             DigOutput(DigOutputService* service, const InitParams& initParams);
             ~DigOutput();
 
-            inline DigOutputService* getService() const { 
-                return service; 
+            inline DigOutputService* getService() const {
+                return service;
             }
 
             inline void set() {
                 service->set(this);
             }
-            
+
             inline void clear() {
                 service->clear(this);
             }
-            
+
             inline void write(bool value) {
                 service->write(this, value);
             }
-            
+
             inline void toggle() {
                 service->toggle(this);
             }
-            
+
             inline void pulse(unsigned width) {
                 service->pulse(this, width);
             }
-            
+
             inline void delayedSet(unsigned delay) {
                 service->delayedSet(this, delay);
             }

@@ -33,11 +33,11 @@ RGB565_DMA2D_FrameBuffer::RGB565_DMA2D_FrameBuffer(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Asigna un color a un pixel.
-/// \param x: Coordinada X del pixel.
-/// \param y: Coordinada Y del pixel.
-/// \param color: Color en format de pixel fisic;
-/// \remarks No es fa cap tipus de verificacio dels parametres.
+/// \brief    Asigna un color a un pixel.
+/// \param    x: Coordinada X del pixel.
+/// \param    y: Coordinada Y del pixel.
+/// \param    color: Color en format de pixel fisic;
+/// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
 void RGB565_DMA2D_FrameBuffer::put(
 	int x,
@@ -54,13 +54,13 @@ void RGB565_DMA2D_FrameBuffer::put(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Ompla amb un color, una regio de la pantalla.
-/// \param x: Coordinada x.
-/// \param y: Coordinada y.
-/// \param width: Amplada del bloc.
-/// \param height: Alçada del bloc.
-/// \param color: Color.
-/// \remarks No es fa cap tipus de verificacio dels parametres.
+/// \brief    Ompla amb un color, una regio de la pantalla.
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada y.
+/// \param    width: Amplada del bloc.
+/// \param    height: Alçada del bloc.
+/// \param    color: Color.
+/// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
 void RGB565_DMA2D_FrameBuffer::fill(
 	int x,
@@ -70,7 +70,7 @@ void RGB565_DMA2D_FrameBuffer::fill(
 	const Color& color) {
 
 	uint8_t opacity = color.getOpacity();
-	if (opacity != 0) {
+	if (opacity == 0xFF) {
 
 		uint32_t addr = (int)buffer + ((y * lineWidth) + x) * sizeof(uint16_t);
 
@@ -84,25 +84,26 @@ void RGB565_DMA2D_FrameBuffer::fill(
 
 		halDMA2DWaitForFinish();
 	}
-	else
+	else if (opacity > 0) {
 		// TODO
 		// Crear un buffer d'una linia amb el color
 		// Tranferir la linia amb DMA2D
 		for (int yy = 0; yy < height; yy++)
 			for (int xx = 0; xx < width; xx++)
 				put(x + xx, y + yy, color);
+	}
 }
 
 /// ----------------------------------------------------------------------
-/// \brief Copia un bitmap a una regio de la pantalla.
-/// \param x: Coordinada X de la posicio.
-/// \param y: Coordinada Y de la posicio.
-/// \param width: Amplada.
-/// \param height: Alçada.
-/// \param colors: Llista de pixels.
-/// \param dx: Offset X dins del bitmap.
-/// \param dy: offset Y dins del vitmap.
-/// \param pitch: Offset a la seguent linia del bitmap. 0 si son consecutives.
+/// \brief    Copia un bitmap a una regio de la pantalla.
+/// \param    x: Coordinada X de la posicio.
+/// \param    y: Coordinada Y de la posicio.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
+/// \param    colors: Llista de pixels.
+/// \param    dx: Offset X dins del bitmap.
+/// \param    dy: offset Y dins del vitmap.
+/// \param    pitch: Offset a la seguent linia del bitmap. 0 si son consecutives.
 ///
 void RGB565_DMA2D_FrameBuffer::copy(
 	int x,

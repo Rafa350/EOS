@@ -10,7 +10,7 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-    
+
 
 //#define HAL_TMR_USE_T1_INTERRUPT
 #define HAL_TMR_USE_T2_INTERRUPT
@@ -36,7 +36,7 @@ extern "C" {
 #endif
 #define HAL_TMR_NONE              0xFFFFFFFF
 
-   
+
 // Modus 16 o 32 bits
 #define HAL_TMR_MODE_pos          0
 #define HAL_TMR_MODE_bits         0b1
@@ -88,7 +88,7 @@ typedef struct  __attribute__((packed , aligned(4))) {
     volatile uint32_t PRx;
     volatile uint32_t PRxCLR;
     volatile uint32_t PRxSET;
-    volatile uint32_t PRxINV;    
+    volatile uint32_t PRxINV;
 } TMRRegisters;
 
 struct __TMRData {
@@ -116,12 +116,13 @@ void halTMRStartTimer(TMRHandler hTimer);
 void halTMRStopTimer(TMRHandler hTimer);
 
 void halTMRSetInterruptFunction(TMRHandler timer, TMRInterruptFunction function, void* params);
-void halTMREnableInterruptSource(TMRHandler timer);
-uint32_t halTMRDisableInterruptSource(TMRHandler timer);
-bool halTMRGetInterruptSourceFlag(TMRHandler timer);
-void halTMRClearInterruptSourceFlag(TMRHandler timer);
-
 void halTMRInterruptHandler(TMRHandler handler);
+
+void halTMREnableInterrupts(TMRHandler timer);
+uint32_t halTMRDisableInterrupts(TMRHandler timer);
+
+bool halTMRGetInterruptFlag(TMRHandler timer);
+void halTMRClearInterruptFlags(TMRHandler timer);
 
 void halTMRDelay(unsigned time);
 

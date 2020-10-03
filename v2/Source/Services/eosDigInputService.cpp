@@ -15,15 +15,15 @@
 
 #if defined(EOS_PIC32)
 
-#define enableInterruptSource(handler)      halTMREnableInterruptSource(handler)
-#define disableInterruptSource(handler)     halTMRDisableInterruptSource(handler)
-#define clearInterruptSourceFlag(handler)   halTMRClearInterruptSourceFlag(handler)
+#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler)
+#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler)
+#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler)
 
 #elif defined(EOS_STM32)
 
-#define enableInterruptSource(handler)      halTMREnableInterruptSources(handler, HAL_TMR_EVENT_UP)
-#define disableInterruptSource(handler)     halTMRDisableInterruptSources(handler, HAL_TMR_EVENT_UP)
-#define clearInterruptSourceFlag(handler)   halTMRClearInterruptSourceFlag(handler, HAL_TMR_EVENT_UP)
+#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler, HAL_TMR_EVENT_UP)
+#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler, HAL_TMR_EVENT_UP)
+#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler, HAL_TMR_EVENT_UP)
 
 #endif
 
@@ -39,7 +39,7 @@ using namespace eos;
 DigInputService::DigInputService(
     Application* application,
     const InitParams& initParams):
-    
+
 	Service(application),
     hTimer(initParams.hTimer) {
 }
@@ -63,7 +63,7 @@ void DigInputService::addInput(
     DigInput* input) {
 
     eosAssert(input != nullptr);
-    
+
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
@@ -72,7 +72,7 @@ void DigInputService::addInput(
         inputs.pushBack(input);
         input->service = this;
     }
-    
+
     // Fi de la seccio critica
     //
     Task::exitCriticalSection();
@@ -91,12 +91,12 @@ void DigInputService::removeInput(
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
-    
+
     if (input->service == this) {
         input->service = nullptr;
         inputs.removeAt(inputs.indexOf(input));
     }
-    
+
     // Fi de la seccio critica
     //
     Task::exitCriticalSection();
@@ -107,17 +107,17 @@ void DigInputService::removeInput(
 /// \brief    Elimina totes les entrades del servei.
 ///
 void DigInputService::removeInputs() {
-    
+
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
-    
+
     while (!inputs.isEmpty()) {
         DigInput* input = inputs.getBack();
         inputs.popBack();
         input->service = nullptr;
     }
-    
+
     // Fi de la seccio critica
     //
     Task::exitCriticalSection();
@@ -128,24 +128,24 @@ void DigInputService::removeInputs() {
 /// \brief Inicialitzacio del servei.
 ///
 void DigInputService::onInitialize() {
-    
+
     // Inicialitza les entrades
     //
     for (auto it = inputs.begin(); it != inputs.end(); it++) {
-        DigInput* input = *it;        
+        DigInput* input = *it;
         input->value = halGPIOReadPin(input->port, input->pin);
         input->edge = false;
         input->pattern = input->value ? PATTERN_ON : PATTERN_OFF;
-    }   
-    
+    }
+
     // Inicialitza el servei base
     //
     Service::onInitialize();
 
     // Activa el temporitzador
     //
-    clearInterruptSourceFlag(hTimer);
-    enableInterruptSource(hTimer);
+    __halTMRClearInterruptFlags(hTimer);
+    __halTMREnableInterrupts(hTimer);
     halTMRSetInterruptFunction(hTimer, tmrInterruptFunction, this);
     halTMRStartTimer(hTimer);
 }
@@ -155,12 +155,12 @@ void DigInputService::onInitialize() {
 /// \brief    Finalitza el servei.
 ///
 void DigInputService::onTerminate() {
-    
+
     // Desactiva el temporitzador
     //
     halTMRStopTimer(hTimer);
-    disableInterruptSource(hTimer);
-       
+    __halTMRDisableInterrupts(hTimer);
+
     // Finalitza el servei base
     //
     Service::onTerminate();
@@ -178,18 +178,18 @@ void DigInputService::onTask() {
 
     // Procesa les entrades
     //
-    for (auto it = inputs.begin(); it != inputs.end(); it++) {        
+    for (auto it = inputs.begin(); it != inputs.end(); it++) {
         DigInput* input = *it;
 
         if (input->eventCallback != nullptr) {
 
-            uint32_t state = disableInterruptSource(hTimer);
+            uint32_t state = __halTMRDisableInterrupts(hTimer);
 
             bool edge = input->edge;
             input->edge = false;
 
             if (state)
-            	enableInterruptSource(hTimer);
+            	__halTMREnableInterrupts(hTimer);
 
             if (edge) {
 
@@ -210,7 +210,7 @@ void DigInputService::onTask() {
 ///
 #if Eos_ApplicationmTickEnabled
 void DigInputService::onTick() {
-    
+
 }
 #endif
 
@@ -221,15 +221,15 @@ void DigInputService::onTick() {
 /// \return   El estat.
 ///
 bool DigInputService::read(
-    const DigInput* input) const {  
-    
+    const DigInput* input) const {
+
     eosAssert(input != nullptr);
     eosAssert(input->service == this);
 
-    uint32_t state = disableInterruptSource(hTimer);
+    uint32_t state = __halTMRDisableInterrupts(hTimer);
     bool result = input->value;
     if (state)
-        enableInterruptSource(hTimer);
+    	__halTMREnableInterrupts(hTimer);
     return result;
 }
 
@@ -239,7 +239,7 @@ bool DigInputService::read(
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
 void DigInputService::tmrInterruptFunction() {
-           
+
     bool changed = false;
 
     // Procesa totes les entrades
@@ -251,13 +251,13 @@ void DigInputService::tmrInterruptFunction() {
         // Actualitza el patro
         //
         input->pattern <<= 1;
-        if (halGPIOReadPin(input->port, input->pin)) 
+        if (halGPIOReadPin(input->port, input->pin))
             input->pattern |= 1;
 
         // Analitza el patro per detectar un flanc positiu
         //
         if ((input->pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
-            input->value = 1;           
+            input->value = 1;
             input->edge = 1;
             changed = true;
         }
@@ -265,7 +265,7 @@ void DigInputService::tmrInterruptFunction() {
         // Analitza el patro per detectar un flanc negatiu
         //
         else if ((input->pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
-            input->value = 0;            
+            input->value = 0;
             input->edge = 1;
             changed = true;
         }
@@ -286,9 +286,9 @@ void DigInputService::tmrInterruptFunction() {
 void DigInputService::tmrInterruptFunction(
     TMRHandler handler,
     void* params) {
-           
+
     DigInputService* service = static_cast<DigInputService*>(params);
-    if (service != nullptr) 
+    if (service != nullptr)
         service->tmrInterruptFunction();
 }
 
@@ -303,11 +303,11 @@ DigInput::DigInput(
     const InitParams& initParams):
 
 	service(nullptr),
-    port(initParams.port),                    
+    port(initParams.port),
     pin(initParams.pin),
     eventCallback(initParams.eventCallback),
     eventParam(initParams.eventParam) {
-    
+
     if (service != nullptr)
         service->addInput(this);
 }

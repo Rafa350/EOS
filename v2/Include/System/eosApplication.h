@@ -19,7 +19,7 @@ namespace eos {
 
     void link(Application* application, Service* service);
     void unlink(Application* application, Service* service);
-    
+
     /// \brief Clase que representa l'aplicacio.
     ///
     class Application {
@@ -30,16 +30,16 @@ namespace eos {
             typedef CallbackP1<Application, const Task::EventArgs&> TaskEventCallback;
 #if Eos_ApplicationTickEnabled
             typedef CallbackP1<Application, const Timer::EventArgs&> TimerEventCallback;
-#endif            
+#endif
 
             bool initialized;
             ServiceList services;
             TaskList tasks;
             TaskEventCallback taskEventCallback;
-#if Eos_ApplicationTickEnabled          
+#if Eos_ApplicationTickEnabled
             TimerEventCallback timerEventCallback;
             Timer timer;
-#endif            
+#endif
 
             Application(const Application&) = delete;
             Application& operator=(const Application&) = delete;
@@ -48,7 +48,7 @@ namespace eos {
             void terminateServices();
             void runServices();
             void taskEventHandler(const Task::EventArgs& args);
-#if Eos_ApplicationTickEnabled         
+#if Eos_ApplicationTickEnabled
             void timerEventHandler(const Timer::EventArgs& args);
 #endif
 
@@ -64,8 +64,10 @@ namespace eos {
             virtual ~Application();
 
             void run();
-#if Eos_ApplicationTickEnabled       
+#if Eos_ApplicationTickEnabled
             void tick();
+            void tmrInterruptFunction();
+            static void tmrInterruptFunction(TMRHandler handler, void* params);
 #endif
 
             void addService(Service* service);

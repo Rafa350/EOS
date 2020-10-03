@@ -53,4 +53,7 @@ void appInitialize() {
     halSYSInitialize();
 	CLKInitialize();
 	SDRAMInitialize();
+
+	__HAL_FREEZE_TIM6_DBGMCU();
+
 }

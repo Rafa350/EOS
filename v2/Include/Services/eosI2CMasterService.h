@@ -16,7 +16,7 @@
 #define eosI2CMasterService_TransactionQueueSize 10
 #endif
 
-// Modul de comunicacio I2C a gestionar 
+// Modul de comunicacio I2C a gestionar
 #ifndef eosI2CMasterService_I2CModule
 #define eosI2CMasterService_I2CModule HAL_I2C_CHANNEL_2
 #endif
@@ -28,18 +28,17 @@
 
 
 namespace eos {
-    
+
     class Application;
-          
+
     /// \brief Clase que gestiona el servei de comunicacions I2C
     ///
-    class I2CMasterService: public Service {      
+    class I2CMasterService: public Service {
         public:
             struct Configuration {
-                I2CChannel channel;
-                uint32_t baudRate;
+                I2CHandler hChannel;
             };
-            
+
             /// \brief Protocol a utilitzar en la transaccio.
             ///
             enum class TransactionProtocol {
@@ -66,7 +65,7 @@ namespace eos {
 
         private:
             /// \brief Estats de la maquina d'estats que procesa la transaccio
-            enum class State {          
+            enum class State {
                 idle,                   // -En espera de iniciar
                 sendAddress,            // -Transmeteix l'adressa
                 sendLength,             // -Transmeteix el byte de longitut
@@ -81,8 +80,8 @@ namespace eos {
                 nak,                    // -NAK transmitit
                 waitStop,               // -Esperant STOP
                 finished                // -Finalitzada
-            };        
-            
+            };
+
             typedef ICallbackP1<const TransactionEventArgs&> ITransactionEventCallback;
 
             /// \brief Estructura per gestionar les transaccions.
@@ -97,12 +96,12 @@ namespace eos {
                 TransactionProtocol protocol;
                 ITransactionEventCallback *callback;
             };
-            
+
             typedef PoolAllocator<Transaction, 20> TransactionAllocator;
             typedef Queue<Transaction*> TransactionQueue;
 
         private:
-            I2CChannel channel;
+            I2CHandler hChannel;
             TransactionAllocator transactionAllocator;
             TransactionQueue transactionQueue;
             Transaction *transaction;
@@ -111,28 +110,29 @@ namespace eos {
             int maxIndex;
             uint8_t check;
             uint8_t error;
-            bool waitingSlaveACK;   
-            bool writeMode;         
+            bool waitingSlaveACK;
+            bool writeMode;
             State state;
 
         public:
-            I2CMasterService(Application* application, const Configuration& cfg);        
+            I2CMasterService(Application* application, const Configuration& cfg);
             ~I2CMasterService();
-            
+
             bool startTransaction(uint8_t addr, TransactionProtocol protocol, void const *txBuffer, int txCount, ITransactionEventCallback *callback);
             bool startTransaction(uint8_t addr, TransactionProtocol protocol, void const *txBuffer, int txCount, void *rxBuffer, int rxSize, ITransactionEventCallback *callback);
-                           
+
         protected:
             void onInitialize() override;
-            void onTask() override;     
-    
+            void onTerminate() override;
+            void onTask() override;
+
         private:
             void initializeHardware(const Configuration &cfg);
             void deinitializeHardware();
-            static void i2cInterruptFunction(I2CChannel channel, void* params);
-            void stateMachine();   
+            static void i2cInterruptFunction(I2CHandler handler, void* params);
+            void stateMachine();
     };
-    
+
 }
 
 

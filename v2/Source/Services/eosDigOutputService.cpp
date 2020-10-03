@@ -9,15 +9,15 @@
 
 #if defined(EOS_PIC32)
 
-#define enableInterruptSource(handler)      halTMREnableInterruptSource(handler)
-#define disableInterruptSource(handler)     halTMRDisableInterruptSource(handler)
-#define clearInterruptSourceFlag(handler)   halTMRClearInterruptSourceFlag(handler)
+#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler)
+#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler)
+#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler)
 
 #elif defined(EOS_STM32)
 
-#define enableInterruptSource(handler)      halTMREnableInterruptSources(handler, HAL_TMR_EVENT_UP)
-#define disableInterruptSource(handler)     halTMRDisableInterruptSources(handler, HAL_TMR_EVENT_UP)
-#define clearInterruptSourceFlag(handler)   halTMRClearInterruptSourceFlag(handler, HAL_TMR_EVENT_UP)
+#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler, HAL_TMR_EVENT_UP)
+#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler, HAL_TMR_EVENT_UP)
+#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler, HAL_TMR_EVENT_UP)
 
 #endif
 
@@ -54,7 +54,7 @@ DigOutputService::~DigOutputService() {
 /// ----------------------------------------------------------------------
 /// \brief    Afegeig una sortida al servei.
 /// \param    output: La sortida a afeigir.
-/// \remarks  Nomes es poden afeigir sortides, quan el servei no 
+/// \remarks  Nomes es poden afeigir sortides, quan el servei no
 ///           esta inicialitzat.
 ///
 void DigOutputService::addOutput(
@@ -62,16 +62,16 @@ void DigOutputService::addOutput(
 
     eosAssert(output != nullptr);
     eosAssert(output->service == nullptr);
-    
+
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
 
-    if (output->service == nullptr) {    
+    if (output->service == nullptr) {
         outputs.pushBack(output);
         output->service = this;
     }
-    
+
     // Fi de la seccio critica
     //
     Task::exitCriticalSection();
@@ -81,7 +81,7 @@ void DigOutputService::addOutput(
 /// ----------------------------------------------------------------------
 /// \brief    Elimina una sortida del servei.
 /// \param    output: La sortida a eliminar.
-/// \remarks  Nomes es poden eliminar sortides, quan el servei no 
+/// \remarks  Nomes es poden eliminar sortides, quan el servei no
 ///           esta inicialitzat.
 ///
 void DigOutputService::removeOutput(
@@ -93,12 +93,12 @@ void DigOutputService::removeOutput(
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
-    
+
     if (output->service == this) {
         outputs.removeAt(outputs.indexOf(output));
         output->service = nullptr;
     }
-    
+
     // Fi de la seccio critica
     //
     Task::exitCriticalSection();
@@ -107,7 +107,7 @@ void DigOutputService::removeOutput(
 
 /// ----------------------------------------------------------------------
 /// \brief    Elimina totes les sortides del servei.
-/// \remarks  Nomes es poden eliminar sortides, quan el servei 
+/// \remarks  Nomes es poden eliminar sortides, quan el servei
 ///           no esta inicialitzat.
 ///
 void DigOutputService::removeOutputs() {
@@ -115,13 +115,13 @@ void DigOutputService::removeOutputs() {
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
-    
+
     while (!outputs.isEmpty()) {
         DigOutput* output = outputs.getBack();
         outputs.popBack();
         output->service = nullptr;
     }
-    
+
     // Fi de la seccio critica
     //
     Task::exitCriticalSection();
@@ -134,10 +134,10 @@ void DigOutputService::removeOutputs() {
 ///
 void DigOutputService::set(
     DigOutput* output) {
-    
+
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
-    
+
     Command cmd;
     cmd.opCode = OpCode::set;
     cmd.output = output;
@@ -151,7 +151,7 @@ void DigOutputService::set(
 ///
 void DigOutputService::clear(
     DigOutput* output) {
-    
+
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
@@ -170,7 +170,7 @@ void DigOutputService::clear(
 void DigOutputService::write(
     DigOutput* output,
     bool value) {
-    
+
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
@@ -187,7 +187,7 @@ void DigOutputService::write(
 ///
 void DigOutputService::toggle(
     DigOutput* output) {
-    
+
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
@@ -205,7 +205,7 @@ void DigOutputService::toggle(
 void DigOutputService::pulse(
     DigOutput* output,
     unsigned width) {
-    
+
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
@@ -225,7 +225,7 @@ void DigOutputService::delayedPulse(
     DigOutput* output,
     unsigned delay,
     unsigned width) {
-    
+
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
@@ -242,15 +242,15 @@ void DigOutputService::delayedPulse(
 /// \brief    Inicialitza el servei.
 ///
 void DigOutputService::onInitialize() {
-    
+
     // Inicialitza el servei base.
     //
     Service::onInitialize();
 
     // Activa el temporitzador.
     //
-    clearInterruptSourceFlag(hTimer);
-    enableInterruptSource(hTimer);
+    __halTMRClearInterruptFlags(hTimer);
+    __halTMREnableInterrupts(hTimer);
     halTMRSetInterruptFunction(hTimer, tmrInterruptFunction, this);
     halTMRStartTimer(hTimer);
 }
@@ -260,12 +260,12 @@ void DigOutputService::onInitialize() {
 /// \brief    Finalitza el servei.
 ///
 void DigOutputService::onTerminate() {
-    
+
     // Desactiva el temporitzador
     //
     halTMRStopTimer(hTimer);
-    disableInterruptSource(hTimer);
-       
+    __halTMRDisableInterrupts(hTimer);
+
     // Finalitza el servei base
     //
     Service::onTerminate();
@@ -278,7 +278,7 @@ void DigOutputService::onTerminate() {
 void DigOutputService::onTask() {
 
     Command cmd;
-    
+
     // Espera que arribi una comanda
     //
     commandQueue.pop(cmd, unsigned(-1));
@@ -331,7 +331,7 @@ void DigOutputService::onTask() {
 ///
 #if Eos_ApplicationTickEnabled
 void DigOutputService::onTick() {
-    
+
 }
 #endif
 
@@ -342,8 +342,8 @@ void DigOutputService::onTick() {
 ///
 void DigOutputService::cmdClear(
     DigOutput* output) {
-    
-    halGPIOClearPin(output->port, output->pin);   
+
+    halGPIOClearPin(output->port, output->pin);
     output->state = DigOutput::State::idle;
 }
 
@@ -355,7 +355,7 @@ void DigOutputService::cmdClear(
 void DigOutputService::cmdSet(
     DigOutput* output) {
 
-    halGPIOSetPin(output->port, output->pin);      
+    halGPIOSetPin(output->port, output->pin);
     output->state = DigOutput::State::idle;
 }
 
@@ -367,7 +367,7 @@ void DigOutputService::cmdSet(
 void DigOutputService::cmdToggle(
     DigOutput* output) {
 
-    halGPIOTogglePin(output->port, output->pin);   
+    halGPIOTogglePin(output->port, output->pin);
     output->state = DigOutput::State::idle;
 }
 
@@ -380,9 +380,9 @@ void DigOutputService::cmdToggle(
 void DigOutputService::cmdPulse(
     DigOutput* output,
     unsigned width) {
-    
+
     if (output->state == DigOutput::State::idle)
-        halGPIOTogglePin(output->port, output->pin);   
+        halGPIOTogglePin(output->port, output->pin);
     output->state = DigOutput::State::pulse;
     output->widthCnt = width;
 }
@@ -394,9 +394,9 @@ void DigOutputService::cmdPulse(
 /// \param    delay: El retard.
 ///
 void DigOutputService::cmdDelayedSet(
-    DigOutput* output, 
+    DigOutput* output,
     unsigned delay) {
-    
+
     output->state = DigOutput::State::delayedSet;
     output->delayCnt = delay;
 }
@@ -408,9 +408,9 @@ void DigOutputService::cmdDelayedSet(
 /// \param    delay: El retard.
 ///
 void DigOutputService::cmdDelayedClear(
-    DigOutput* output, 
+    DigOutput* output,
     unsigned delay) {
-    
+
     output->state = DigOutput::State::delayedClear;
     output->delayCnt = delay;
 }
@@ -422,7 +422,7 @@ void DigOutputService::cmdDelayedClear(
 /// \param    delay: El retard.
 ///
 void DigOutputService::cmdDelayedToggle(
-    DigOutput* output, 
+    DigOutput* output,
     unsigned delay) {
 
     output->state = DigOutput::State::delayedToggle;
@@ -440,7 +440,7 @@ void DigOutputService::cmdDelayedPulse(
     DigOutput* output,
     unsigned delay,
     unsigned width) {
-    
+
     output->state = DigOutput::State::delayedPulse;
     output->delayCnt = delay;
     output->widthCnt = width;
@@ -455,7 +455,7 @@ void DigOutputService::cmdTimeOut(
     unsigned time) {
 
     for (auto it = outputs.begin(); it != outputs.end(); it++) {
-        
+
         DigOutput* output = *it;
 
       	switch (output->state) {
@@ -488,12 +488,12 @@ void DigOutputService::cmdTimeOut(
                             halGPIOTogglePin(output->port, output->pin);
                             output->state = DigOutput::State::idle;
                             break;
-                            
+
                         case DigOutput::State::delayedPulse:
                             halGPIOTogglePin(output->port, output->pin);
                             output->state = DigOutput::State::pulse;
                             break;
-                            
+
                         default:
                             break;
                     }
@@ -533,7 +533,7 @@ void DigOutputService::tmrInterruptFunction(
 	void* params) {
 
 	DigOutputService* service = static_cast<DigOutputService*>(params);
-    if (service != nullptr) 
+    if (service != nullptr)
         service->tmrInterruptFunction();
 }
 

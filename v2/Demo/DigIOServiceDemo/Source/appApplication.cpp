@@ -239,19 +239,3 @@ void MyApplication::sw3EventHandler(
 #endif
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Procesa el vector d'interrupcio TIM2_IRQn
-///
-extern "C" void TIM2_IRQHandler() {
-
-	halTMRInterruptHandler(&digInputTimer);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa el vector d'interrupcio TIM3_IRQn
-///
-extern "C" void TIM3_IRQHandler() {
-
-	halTMRInterruptHandler(&digOutputTimer);
-}

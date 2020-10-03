@@ -10,7 +10,7 @@
 static void enablePeripheralClock(
 	GPIOPort port) {
 
-	eosAssert(IS_GPIO_ALL_INSTANCE(port));
+	eosAssert(IS_GPIO_ALL_INSTANCE((GPIORegisters*)port));
 
 	switch (port) {
 		case HAL_GPIO_PORT_A:
@@ -73,7 +73,7 @@ static void setupPin(
 	GPIOOptions options,
 	GPIOAlt alt) {
 
-	eosAssert(IS_GPIO_ALL_INSTANCE(port));
+	eosAssert(IS_GPIO_ALL_INSTANCE((GPIORegisters*)port));
 	eosAssert((pin >= 0) && (pin <= 15));
 
 	uint32_t temp;
@@ -248,7 +248,7 @@ void halGPIOInitializePin(
 	GPIOOptions options,
 	GPIOAlt alt) {
 
-	eosAssert(IS_GPIO_ALL_INSTANCE(port));
+	eosAssert(IS_GPIO_ALL_INSTANCE((GPIORegisters*)port));
 	eosAssert((pin >= 0) && (pin <= 15));
 
 	enablePeripheralClock(port);
@@ -267,7 +267,7 @@ inline void halGPIOClearPin(
 	GPIOPort port,
 	GPIOPin pin) {
 
-	eosAssert(IS_GPIO_ALL_INSTANCE(port));
+	eosAssert(IS_GPIO_ALL_INSTANCE((GPIORegisters*)port));
 	eosAssert((pin >= 0) && (pin <= 15));
 
 	((GPIORegisters*)port)->BSRR = 1u << (pin + 16);

@@ -89,7 +89,7 @@ TMRHandler halTMRInitialize(
 
 	uint32_t temp;
 
-	// Configura el registre CR1
+	// Configura el registre CR1 (Control 1)
 	//
 	temp = handler->regs->CR1;
 	temp &= ~(TIM_CR1_CEN);                 // Para el timer
@@ -139,7 +139,7 @@ void halTMRShutdown(
 	eosAssert(handler != NULL);
 
 	halTMRStopTimer(handler);
-	halTMRDisableInterruptSources(handler, HAL_TMR_EVENT_ALL);
+	halTMRDisableInterrupts(handler, HAL_TMR_EVENT_ALL);
 
 	switch ((uint32_t)handler->regs) {
 		case TIM1_BASE:
@@ -285,7 +285,7 @@ void halTMRInterruptHandler(
 /// \param    handler: Handler del temporitzador.
 /// \param    events: Events a activar.
 ///
-void halTMREnableInterruptSources(
+void halTMREnableInterrupts(
 	TMRHandler handler,
 	uint32_t events) {
 
@@ -308,7 +308,7 @@ void halTMREnableInterruptSources(
 /// \param    events: Events a desactivar.
 /// \return   Els events previament actius.
 ///
-uint32_t halTMRDisableInterruptSources(
+uint32_t halTMRDisableInterrupts(
 	TMRHandler handler,
 	uint32_t events) {
 
@@ -340,23 +340,18 @@ uint32_t halTMRDisableInterruptSources(
 /// \param    handler: Handler del temporitzador.
 /// \return   Valor del indicador.
 ///
-void halTMRClearInterruptSourceFlag(
+void halTMRClearInterruptFlags(
 	TMRHandler handler,
-	uint32_t event) {
+	uint32_t events) {
 
-	switch (event) {
-		case HAL_TMR_EVENT_UP:
-			handler->regs->SR &= ~TIM_SR_UIF;
-			break;
+	if ((events & HAL_TMR_EVENT_UP) == HAL_TMR_EVENT_UP)
+		handler->regs->SR &= ~TIM_SR_UIF;
 
-		case HAL_TMR_EVENT_TRG:
-			handler->regs->SR &= ~TIM_SR_TIF;
-			break;
+	if ((events & HAL_TMR_EVENT_TRG) == HAL_TMR_EVENT_TRG)
+		handler->regs->SR &= ~TIM_SR_TIF;
 
-		case HAL_TMR_EVENT_COM:
-			handler->regs->SR &= ~TIM_SR_COMIF;
-			break;
-	}
+	if ((events & HAL_TMR_EVENT_COM) == HAL_TMR_EVENT_COM)
+		handler->regs->SR &= ~TIM_SR_COMIF;
 }
 
 
@@ -366,7 +361,7 @@ void halTMRClearInterruptSourceFlag(
 /// \param    event: Identificador del event
 /// \return   El valor del indicador.
 ///
-bool halTMRGetInterruptSourceFlag(
+bool halTMRGetInterruptFlag(
 	TMRHandler handler,
 	uint32_t event) {
 

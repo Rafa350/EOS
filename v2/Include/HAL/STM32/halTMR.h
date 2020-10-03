@@ -92,10 +92,11 @@ void halTMRStopTimer(TMRHandler handler);
 void halTMRSetInterruptFunction(TMRHandler handler, TMRInterruptFunction function, void* params);
 void halTMRInterruptHandler(TMRHandler handler);
 
-void halTMREnableInterruptSources(TMRHandler handler, uint32_t events);
-uint32_t halTMRDisableInterruptSources(TMRHandler handler, uint32_t events);
-bool halTMRGetInterruptSourceFlag(TMRHandler handler, uint32_t event);
-void halTMRClearInterruptSourceFlag(TMRHandler handler, uint32_t event);
+void halTMREnableInterrupts(TMRHandler handler, uint32_t events);
+uint32_t halTMRDisableInterrupts(TMRHandler handler, uint32_t events);
+
+bool halTMRGetInterruptFlag(TMRHandler handler, uint32_t event);
+void halTMRClearInterruptFlags(TMRHandler handler, uint32_t events);
 
 
 #define halTMRDelay(time)         HAL_Delay(time)
