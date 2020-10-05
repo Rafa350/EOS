@@ -2,6 +2,8 @@
 #include "HAL\halTMR.h"
 #include "sys/attribs.h"
 
+
+
 #if defined(_TMR1) && (HAL_TMR_USE_T1_INTERRUPT == 1)
 extern "C" void __ISR(_TIMER_1_VECTOR, IPL2SOFT) isrTMR1Wrapper(void);
 #endif
@@ -24,7 +26,7 @@ extern "C" void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
 ///
 #ifdef _TMR1
 extern "C" void isrTMR1Handler(void) {
-    
+
 }
 #endif
 
@@ -36,10 +38,10 @@ extern "C" void isrTMR1Handler(void) {
 extern "C" void isrTMR2Handler(void) {
 
     extern TMRData digInputTimer;
-    
+
     halTMRInterruptHandler(&digInputTimer);
 }
-#endif            
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -49,10 +51,10 @@ extern "C" void isrTMR2Handler(void) {
 extern "C" void isrTMR3Handler(void) {
 
     extern TMRData digOutputTimer;
-    
+
     halTMRInterruptHandler(&digOutputTimer);
 }
-#endif            
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -61,7 +63,7 @@ extern "C" void isrTMR3Handler(void) {
 #ifdef _TMR4
 extern "C" void isrTMR4Handler(void) {
 }
-#endif            
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -70,4 +72,4 @@ extern "C" void isrTMR4Handler(void) {
 #ifdef _TMR5
 extern "C" void isrTMR5Handler(void) {
 }
-#endif            
+#endif

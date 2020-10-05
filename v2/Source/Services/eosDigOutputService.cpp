@@ -281,46 +281,47 @@ void DigOutputService::onTask() {
 
     // Espera que arribi una comanda
     //
-    commandQueue.pop(cmd, unsigned(-1));
+    while (commandQueue.pop(cmd, unsigned(-1))) {
 
-    // Procesa la comanda
-    //
-    switch (cmd.opCode) {
-        case OpCode::set:
-            cmdSet(cmd.output);
-            break;
+        // Procesa la comanda
+        //
+        switch (cmd.opCode) {
+            case OpCode::set:
+                cmdSet(cmd.output);
+                break;
 
-        case OpCode::clear:
-            cmdClear(cmd.output);
-            break;
+            case OpCode::clear:
+                cmdClear(cmd.output);
+                break;
 
-        case OpCode::toggle:
-            cmdToggle(cmd.output);
-            break;
+            case OpCode::toggle:
+                cmdToggle(cmd.output);
+                break;
 
-        case OpCode::pulse:
-            cmdPulse(cmd.output, cmd.param1);
-            break;
+            case OpCode::pulse:
+                cmdPulse(cmd.output, cmd.param1);
+                break;
 
-        case OpCode::delayedSet:
-            cmdDelayedSet(cmd.output, cmd.param1);
-            break;
+            case OpCode::delayedSet:
+                cmdDelayedSet(cmd.output, cmd.param1);
+                break;
 
-        case OpCode::delayedClear:
-            cmdDelayedClear(cmd.output, cmd.param1);
-            break;
+            case OpCode::delayedClear:
+                cmdDelayedClear(cmd.output, cmd.param1);
+                break;
 
-        case OpCode::delayedToggle:
-            cmdDelayedToggle(cmd.output, cmd.param1);
-            break;
+            case OpCode::delayedToggle:
+                cmdDelayedToggle(cmd.output, cmd.param1);
+                break;
 
-        case OpCode::delayedPulse:
-            cmdDelayedPulse(cmd.output, cmd.param1, cmd.param2);
-            break;
+            case OpCode::delayedPulse:
+                cmdDelayedPulse(cmd.output, cmd.param1, cmd.param2);
+                break;
 
-        case OpCode::timeOut:
-            cmdTimeOut(cmd.param1);
-            break;
+            case OpCode::timeOut:
+                cmdTimeOut(cmd.param1);
+                break;
+        }
     }
 }
 

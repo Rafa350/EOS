@@ -12,12 +12,13 @@ extern "C" {
 #endif
 
 
-#define halSYSGetSystemClockFrequency()      HAL_RCC_GetSysClockFreq()
-#define halSYSGetPeripheralClock1Frequency() HAL_RCC_GetPCLK1Freq()
-#define halSYSGetPeripheralClock2Frequency() HAL_RCC_GetPCLK2Freq()
-
-
 void halSYSInitialize();
+
+uint32_t halSYSGetSystemClockFrequency();
+uint32_t halSYSGetPeripheralClock1Frequency();
+uint32_t halSYSGetPeripheralClock2Frequency();
+uint32_t halSYSGetTimerClock1Frequency();
+uint32_t halSYSGetTimerClock2Frequency();
 
 
 #ifdef	__cplusplus

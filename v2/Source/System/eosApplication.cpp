@@ -42,7 +42,7 @@ Application::~Application() {
 ///
 void Application::taskEventHandler(
     const Task::EventArgs& args) {
-    
+
     Service* service = static_cast<Service*>(args.params);
     if (service != nullptr)
         while (true)
@@ -57,7 +57,7 @@ void Application::taskEventHandler(
 #if Eos_ApplicationTickEnabled
 void Application::timerEventHandler(
     const Timer::EventArgs& args) {
-    
+
     tick();
 }
 #endif
@@ -81,7 +81,7 @@ void Application::run() {
     // Executa els serveis fins que acavi l'aplicacio.
     //
     runServices();
-    
+
     // Finalitza tots els serveis
     //
     terminateServices();
@@ -116,7 +116,7 @@ void Application::tick() {
 void Application::initializeServices() {
 
     // Inicialitza els serveis de la llista, un a un.
-    //   
+    //
     for (auto it = services.begin(); it != services.end(); it++) {
         Service* service = *it;
         service->initialize();
@@ -128,9 +128,9 @@ void Application::initializeServices() {
 /// \brief    Finalitza els serveis.
 ///
 void Application::terminateServices() {
-    
+
     // Finalitza els serveis de la llista, un a un.
-    //   
+    //
     for (auto it = services.begin(); it != services.end(); it++) {
         Service* service = *it;
         service->terminate();
@@ -144,13 +144,13 @@ void Application::terminateServices() {
 void Application::runServices() {
 
 #if  1 //def USE_SCHEDULER
-    
+
     // Inicialitza el terporitzador tick
     //
 #if Eos_ApplicationTickEnabled
     timer.start(APPLICATION_TICK_PERIOD, 0);
 #endif
-    
+
     // Crea una tasca per executar cada servei
     //
     for (auto it = services.begin(); it != services.end(); it++) {
@@ -162,8 +162,8 @@ void Application::runServices() {
             &taskEventCallback,
             static_cast<void*>(service));
         tasks.pushBack(task);
-    }  
-    
+    }
+
     // Executa les tasques
     //
     Task::startAll();
@@ -222,10 +222,10 @@ void Application::removeServices() {
 ///
 void Application::onInitialize() {
 
-#if Eos_UseApplicationInitializeCallback    
+#if Eos_UseApplicationInitializeCallback
     if (initializeEventCallback != nullptr)
 	    initializeEventCallback->execute(this);
-#endif    
+#endif
 }
 
 
@@ -234,10 +234,10 @@ void Application::onInitialize() {
 ///
 void Application::onTerminate() {
 
-#if Eos_UseApplicationTerminateCallback    
+#if Eos_UseApplicationTerminateCallback
 	if (terminateEventCallback != nullptr)
 	    terminateEventCallback->execute(this);
-#endif    
+#endif
 }
 
 

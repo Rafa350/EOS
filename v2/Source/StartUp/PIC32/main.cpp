@@ -3,7 +3,7 @@
 
 // Comprova si son valids els parametres de compilacio
 //
-#if !(defined(EOS_PIC32MX) || defined(PIC32MZ))
+#if !defined(EOS_PIC32)
     #error Hardware no soportado. Solo es valido PIC32MX o PIC32MZ
 #endif
 
@@ -48,11 +48,11 @@
 /// \brief Entrada al programa.
 ///
 int main(void) {
-    
+
     // Inicialitza el cache, les interrupcions i el clock.
     //
     appInitialize();
-    
+
     // Crida a la funcio d'entrada de l'aplicacio d'usuari.
     //
     appMain();
