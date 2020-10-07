@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalSemaphore.h"
+
 #include "FreeRTOS.h"
 #include "semphr.h"
 
@@ -12,12 +13,12 @@
 ///
 HSemaphore osalSemaphoreCreate(
     unsigned maxCount) {
-    
+
     if (maxCount == 0)
     	return (HSemaphore) xSemaphoreCreateBinary();
     else
         return (HSemaphore) xSemaphoreCreateCounting(maxCount, 0);
-            
+
 }
 
 
@@ -57,7 +58,7 @@ bool osalSemaphoreWait(
 ///
 void osalSemaphoreRelease(
     HSemaphore hSemaphore) {
-    
+
 	eosAssert(hSemaphore != NULL);
 
     xSemaphoreGive((SemaphoreHandle_t) hSemaphore);

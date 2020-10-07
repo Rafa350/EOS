@@ -17,73 +17,73 @@ TMRHandler halTMRInitialize(
 
 	switch (info->timer) {
 		case HAL_TMR_TIMER_1:
-			handler->regs = TIM1;
             RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+			handler->regs = TIM1;
 			break;
 
 		case HAL_TMR_TIMER_2:
-			handler->regs = TIM2;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+			handler->regs = TIM2;
 			break;
 
 		case HAL_TMR_TIMER_3:
-			handler->regs = TIM3;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+			handler->regs = TIM3;
 			break;
 
 		case HAL_TMR_TIMER_4:
-			handler->regs = TIM4;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
+			handler->regs = TIM4;
 			break;
 
 		case HAL_TMR_TIMER_5:
-			handler->regs = TIM5;
             RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
+			handler->regs = TIM5;
 			break;
 
 		case HAL_TMR_TIMER_6:
-			handler->regs = TIM6;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
+			handler->regs = TIM6;
 			break;
 
 		case HAL_TMR_TIMER_7:
-			handler->regs = TIM7;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
+			handler->regs = TIM7;
 			break;
 
 		case HAL_TMR_TIMER_8:
-			handler->regs = TIM8;
 			RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
+			handler->regs = TIM8;
 			break;
 
 		case HAL_TMR_TIMER_9:
-			handler->regs = TIM9;
 			RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
+			handler->regs = TIM9;
 			break;
 
 		case HAL_TMR_TIMER_10:
-			handler->regs = TIM10;
 			RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
+			handler->regs = TIM10;
 			break;
 
 		case HAL_TMR_TIMER_11:
-			handler->regs = TIM11;
 			RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
+			handler->regs = TIM11;
 			break;
 
 		case HAL_TMR_TIMER_12:
-			handler->regs = TIM12;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM12EN;
+			handler->regs = TIM12;
 			break;
 
 		case HAL_TMR_TIMER_13:
-			handler->regs = TIM13;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM13EN;
+			handler->regs = TIM13;
 			break;
 
 		case HAL_TMR_TIMER_14:
-			handler->regs = TIM14;
 			RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
+			handler->regs = TIM14;
 			break;
 	}
 

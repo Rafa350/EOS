@@ -2,6 +2,8 @@
 #define	__halUART__
 
 
+// EOS includes
+//
 #include "eos.h"
 
 

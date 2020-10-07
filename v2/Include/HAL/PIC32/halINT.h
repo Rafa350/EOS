@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-    
+
 // Prioritats de les interrupcions
 #define HAL_INT_PRIORITY_LEVEL0       0
 #define HAL_INT_PRIORITY_LEVEL1       1
@@ -50,10 +50,14 @@ extern "C" {
 #define HAL_INT_VECTOR_TMR5           _TIMER_5_VECTOR
 
 
-#define halINTEnableInterrupts()      __builtin_enable_interrupts()
-#define halINTDisableInterrupts() 	  __builtin_disable_interrupts()
+#define __halINTEnableInterrupts()    __builtin_enable_interrupts()
+#define __halINTDisableInterrupts()   (bool)(__builtin_disable_interrupts() & 0x01)
 
-    
+void halINTEnableInterrupts();
+bool halINTDisableInterrupts();
+void halINTRestoreInterrupts(bool state);
+
+
 void halINTSetInterruptVectorPriority(uint32_t vector, uint32_t priority, uint32_t subPriority);
 #define halINTEnableInterruptVector(vector)
 

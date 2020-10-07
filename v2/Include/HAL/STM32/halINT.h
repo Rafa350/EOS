@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 
+
 // Prioritats de les interrupcions
 #define HAL_INT_PRIORITY_0             0
 #define HAL_INT_PRIORITY_1             1
@@ -67,6 +68,14 @@
 #define HAL_INT_VECTOR_TMR12          TIM8_BRK_TIM12_IRQn
 #define HAL_INT_VECTOR_TMR13          TIM8_UP_TIM13_IRQn
 #define HAL_INT_VECTOR_TIM14          TIM8_TRG_COM_TIM14_IRQn
+#define HAL_INT_VECTOR_UART1          USART1_IRQn
+#define HAL_INT_VECTOR_UART2          USART2_IRQn
+#define HAL_INT_VECTOR_UART3          USART3_IRQn
+#define HAL_INT_VECTOR_UART4          UART4_IRQn
+#define HAL_INT_VECTOR_UART5          UART5_IRQn
+#define HAL_INT_VECTOR_UART6          USART6_IRQn
+#define HAL_INT_VECTOR_UART7          UART7_IRQn
+#define HAL_INT_VECTOR_UART8          UART8_IRQn
 
 
 #ifdef	__cplusplus
@@ -76,6 +85,10 @@ extern "C" {
 
 #define halINTEnableInterrupts()      __enable_irq()
 #define halINTDisableInterrupts()     __disable_irq()
+
+#define __halINTEnableInterrupts()    __enable_irq()
+#define __halINTDisableInterrupts()   __disable_irq()
+
 
 void halINTSetInterruptVectorPriority(uint32_t vector, uint32_t priority, uint32_t subPriority);
 void halINTEnableInterruptVector(uint32_t vector);

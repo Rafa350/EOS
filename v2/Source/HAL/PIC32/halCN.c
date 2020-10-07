@@ -1,7 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "HAL/PIC32/halCN.h"
-#include "HAL/PIC32/halGPIO.h"
 #include "sys/attribs.h"
 
 
@@ -47,9 +46,9 @@ extern void __ISR(_CHANGE_NOTICE_VECTOR, IPL2SOFT) isrCNWrapper(void);
 static void setupLine(
     CNLine line,
 	CNOptions options) {
-    
+
     eosAssert((line >= 0) && (line <= HAL_CN_LINE_COUNT));
-       
+
     // Activa pullup
     //
     if ((options & HAL_CN_PULL_MASK) == HAL_CN_PULL_UP)
@@ -61,6 +60,8 @@ static void setupLine(
     //
     if ((options & HAL_CN_ENABLE_MASK) == HAL_CN_ENABLE_YES)
         CNENSET = 1 << line; // Enable = 1;
+    else
+        CNENCLR = 1 << line; // Enable = 0;
 }
 
 
@@ -87,22 +88,22 @@ void halCNInitializeLine(CNLine line, CNOptions options) {
 /// \param    count: Numero de linies en la llista.
 ///
 void halCNInitializeLines(
-    const CNInitializeLineInfo* info, 
+    const CNInitializeLineInfo* info,
     uint32_t count) {
-    
+
 	eosAssert(info != NULL);
 	eosAssert(count > 0);
 
     // Activa el modul
     //
     CNCONbits.ON = 1; // ON = 1
-    
+
     // Configura cada linia
     //
     for (uint32_t i = 0; i < count; i++) {
-		const CNInitializeLineInfo* p = &info[i];          
+		const CNInitializeLineInfo* p = &info[i];
 		setupLine(p->line, p->options);
-    }    
+    }
 }
 
 
@@ -112,7 +113,7 @@ void halCNInitializeLines(
 ///
 void halCNEnableLine(
     CNLine line) {
-    
+
     eosAssert((line >= 0) && (line <= HAL_CN_LINE_COUNT));
 
     CNENSET = 1 << line; // Enable = 1
@@ -125,7 +126,7 @@ void halCNEnableLine(
 ///
 void halCNDisableLine(
     CNLine line) {
-    
+
     eosAssert((line >= 0) && (line <= HAL_CN_LINE_COUNT));
 
     CNENCLR = 1 << line; // Enable = 0;
@@ -139,22 +140,22 @@ void halCNDisableLine(
 /// \param    params: Es parametres de la funcio.
 ///
 void halCNSetInterruptFunction(
-    CNLine line, 
-    CNInterruptFunction function, 
+    CNLine line,
+    CNInterruptFunction function,
     void* params) {
 
 	eosAssert((line >= HAL_CN_LINE_0) && (line <= HAL_CN_LINE_15));
 
 	dataTbl[line].isrFunction = function;
-	dataTbl[line].isrParams = params;   
+	dataTbl[line].isrParams = params;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa les interrupcions
 ///
-void halCNEnableInterruptSource() {
- 
+void halCNEnableInterrupts() {
+
     IEC1bits.CNIE = 1;
 }
 
@@ -163,9 +164,9 @@ void halCNEnableInterruptSource() {
 /// \brief    Desactiva les interrupcions.
 /// \return   True si estava previament activada.
 ///
-bool halCNDisableInterruptSource() {
+uint32_t halCNDisableInterrupts() {
 
-    bool state = IEC1bits.CNIE == 1;
+    uint32_t state = IEC1bits.CNIE == 1;
     IEC1bits.CNIE = 0;
     return state;
 }
@@ -175,8 +176,8 @@ bool halCNDisableInterruptSource() {
 /// \brief    Obte el indicador d'interrupcio.
 /// \return   El valor del indicador.
 ///
-bool halCNGetInterruptSourceFlag() {
-    
+bool halCNGetInterruptFlag() {
+
     return __halCNGetInterruptSourceFlag();
 }
 
@@ -184,19 +185,18 @@ bool halCNGetInterruptSourceFlag() {
 /// ----------------------------------------------------------------------
 /// \brief    Borra el indicador d'interrupcio.
 ///
-void halCNClearInterruptSourceFlag() {
-    
+void halCNClearInterruptFlags() {
+
     __halCNClearInterruptSourceFlag();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el vector _CHANGE_NOTICE_VECTOR
-/// 
-void isrCNHandler(void) {
-    
-    if (__halCNGetInterruptSourceFlag()) {    
-        
+///
+void halCNInterruptHandler() {
+
+    if (__halCNGetInterruptSourceFlag()) {
+
         uint32_t newA = PORTA;
         uint32_t newB = PORTB;
         uint32_t newC = PORTC;
@@ -204,11 +204,11 @@ void isrCNHandler(void) {
         uint32_t newE = PORTE;
         uint32_t newF = PORTF;
         uint32_t newG = PORTG;
-    
+
         // Obte la linia que ha generat la interrupcio
         //
         CNLine line = 0;
-    
+
         // Crida a la funcio callback
         //
         CNData* data = &dataTbl[line];
@@ -219,4 +219,13 @@ void isrCNHandler(void) {
         //
         __halCNClearInterruptSourceFlag();
     }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el vector _CHANGE_NOTICE_VECTOR
+///
+void isrCNHandler(void) {
+
+    halCNInterruptHandler();
 }

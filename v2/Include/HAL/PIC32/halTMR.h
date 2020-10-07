@@ -34,7 +34,7 @@ extern "C" {
 #ifdef _TMR5
 #define HAL_TMR_TIMER_5           4
 #endif
-#define HAL_TMR_NONE              0xFFFFFFFF
+#define HAL_TMR_TIMER_NONE        0xFFFFFFFF
 
 
 // Modus 16 o 32 bits

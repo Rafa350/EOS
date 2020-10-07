@@ -11,17 +11,6 @@ extern "C" {
 #endif
 
 
-typedef uint32_t CNLine;
-typedef uint32_t CNOptions;
-
-typedef void (*CNInterruptFunction)(CNLine line, void* params);
-
-typedef struct {
-    CNLine line;
-    CNOptions options;
-} CNInitializeLineInfo;
-
-
 // Identificador de les linies
 #define HAL_CN_LINE_0             0
 #define HAL_CN_LINE_1             1
@@ -45,6 +34,7 @@ typedef struct {
 #define HAL_CN_LINE_19            19
 #define HAL_CN_LINE_20            20
 #define HAL_CN_LINE_21            21
+#define HAL_CN_LINE_NONE          0xFFFFFFFFF
 
 #define HAL_CN_LINE_COUNT         22
 
@@ -132,6 +122,17 @@ typedef struct {
 #define HAL_CN_ENABLE_YES         (1 << HAL_CN_ENABLE_POS)
 
 
+typedef uint32_t CNLine;
+typedef uint32_t CNOptions;
+
+typedef void (*CNInterruptFunction)(CNLine line, void* params);
+
+typedef struct {
+    CNLine line;
+    CNOptions options;
+} CNInitializeLineInfo;
+
+
 void halCNInitializeLine(CNLine line, CNOptions options);
 void halCNInitializeLines(const CNInitializeLineInfo* info, uint32_t count);
 
@@ -139,10 +140,13 @@ void halCNEnableLine(CNLine line);
 void halCNDisableLine(CNLine line);
 
 void halCNSetInterruptFunction(CNLine line, CNInterruptFunction function, void* params);
-void halCNEnableInterruptSource();
-bool halCNDisableInterruptSource();
-bool halCNGetInterruptSourceFlag();
-void halCNClearInterruptSourceFlag();
+void halCNInterruptHandler();
+
+void halCNEnableInterrupts();
+uint32_t halCNDisableInterrupts();
+
+bool halCNGetInterruptFlag();
+void halCNClearInterruptFlags();
 
 #define __halCNGetInterruptSourceFlag()      IFS1bits.CNIF
 #define __halCNClearInterruptSourceFlag()    IFS1bits.CNIF = 0

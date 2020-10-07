@@ -205,6 +205,7 @@ void halGPIOInitializePins(
 		const GPIOInitializePinInfo* p = &info[i];
 
 		enablePeripheralClock(p->port);
+
 		setupPin(p->port, p->pin, p->options, p->alt);
 	}
 }

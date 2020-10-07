@@ -3,6 +3,36 @@
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Activa les interrupcions.
+///
+void halINTEnableInterrupts() {
+
+    __halINTEnableInterrupts();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva les interrupcions
+/// \return   True si previament les interrupcions estaven activades.
+///
+bool halINTDisableInterrupts() {
+
+    return __halINTDisableInterrupts();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Restaura les interrupcions.
+/// \param    state: True si cal activar les interrupcions.
+///
+void halINTRestoreInterrupts(bool state) {
+
+    if (state)
+        __halINTEnableInterrupts();
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Asigna la prioritat al vector.
 /// \param    vector: El vector.
 ///
@@ -13,9 +43,9 @@ void halINTSetInterruptVectorPriority(
 
     uint32_t mask;
     uint32_t position;
-    
+
     volatile uint32_t* IPCx = (volatile uint32_t*)(&IPC0 + ((0x10 * (vector >> 2)) >> 2));
-        
+
     mask = 0x07 << ((vector & 0x03) * 8 + 2);
     position = (vector & 0x03) * 8 + 2;
     *IPCx &= ~mask;
@@ -23,8 +53,8 @@ void halINTSetInterruptVectorPriority(
 
     mask = 0x03 << ((vector & 0x03) * 8);
     position = (vector & 0x03) * 8;
-    *IPCx &= ~mask; 
-    *IPCx |= (subPriority << position) & mask; 
+    *IPCx &= ~mask;
+    *IPCx |= (subPriority << position) & mask;
 }
 
 
@@ -34,7 +64,7 @@ void halINTSetInterruptVectorPriority(
 ///
 void halINTEnableInterruptSource(
     uint32_t source) {
-    
+
     volatile uint32_t* IECx = (volatile uint32_t*) (&IEC0 + ((0x10 * (source / 32)) / 4));
     volatile uint32_t* IECxSET = (volatile uint32_t *)(IECx + 2);
     *IECxSET = 1 << (source & 0x1f);
@@ -49,13 +79,19 @@ void halINTEnableInterruptSource(
 bool halINTDisableInterruptSource(
     uint32_t source) {
 
+    bool iState = __halINTDisableInterrupts();
+
     volatile uint32_t* IECx = (volatile uint32_t*) (&IEC0 + ((0x10 * (source / 32)) / 4));
-    bool state = (bool) ((*IECx >> (source & 0x1f)) & 0x01);
-    if (!state) {
+    bool sState = (bool) ((*IECx >> (source & 0x1f)) & 0x01);
+    if (!sState) {
         volatile uint32_t* IECxCLR = (volatile uint32_t*)(IECx + 1);
         *IECxCLR = 1 << (source & 0x1f);
     }
-    return state;
+
+    if (iState)
+        __halINTEnableInterrupts();
+
+    return sState;
 }
 
 
@@ -67,7 +103,7 @@ bool halINTDisableInterruptSource(
 void halINTRestoreInterruptSource(
     uint32_t source,
     bool state) {
-    
+
     if (state)
         halINTEnableInterruptSource(source);
 }
@@ -79,7 +115,7 @@ void halINTRestoreInterruptSource(
 ///
 bool halINTGetInterruptSourceFlag(
     uint32_t source) {
-        
+
     volatile uint32_t* IFSx = (volatile uint32_t*)(&IFS0 + ((0x10 * (source / 32)) / 4));
     return (bool)((*IFSx >> (source & 0x1f)) & 0x1);
 }
@@ -88,11 +124,11 @@ bool halINTGetInterruptSourceFlag(
 /// ----------------------------------------------------------------------
 /// \brief    Borra el flag d'interrupcio.
 /// \param    source: El identificador de la interrupcio.
-///  
+///
 void halINTClearInterruptSourceFlag(
     uint32_t source) {
 
     volatile uint32_t* IFSx = (volatile uint32_t*)(&IFS0 + ((0x10 * (source / 32)) / 4));
     volatile uint32_t* IFSxCLR = (volatile uint32_t*)(IFSx + 1);
-    *IFSxCLR = 1 << (source & 0x1f);  
+    *IFSxCLR = 1 << (source & 0x1f);
 }

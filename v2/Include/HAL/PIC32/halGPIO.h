@@ -11,80 +11,30 @@
 extern "C" {
 #endif
 
-    
-// Estructura de registres de cada port    
-typedef struct __attribute__((packed , aligned(4))) {
-    volatile uint32_t TRISx;
-    volatile uint32_t TRISxCLR;
-    volatile uint32_t TRISxSET;
-    volatile uint32_t TRISxINV;
-    volatile uint32_t PORTx;
-    volatile uint32_t PORTxCLR;
-    volatile uint32_t PORTxSET;
-    volatile uint32_t PORTxINV;
-    volatile uint32_t LATx;
-    volatile uint32_t LATxCLR;
-    volatile uint32_t LATxSET;
-    volatile uint32_t LATxINV;
-    volatile uint32_t ODCx;
-    volatile uint32_t ODCxCLR;
-    volatile uint32_t ODCxSET;
-    volatile uint32_t ODCxINV;
-} GPIORegisters;
-
-typedef uint32_t GPIOPort;
-typedef uint32_t GPIOPin;
-typedef uint32_t GPIOMask;
-typedef uint32_t GPIOOptions;
-typedef uint32_t GPIOAlt;
-
-typedef struct {                  // Parametres d'inicialitzacio per pins
-	GPIOPort port;                // -Identificador del port
-	GPIOPin pin;                  // -Identificador del pin
-	GPIOOptions options;          // -Opcions
-	GPIOAlt alt;                  // -Funcio alternativa
-} GPIOInitializePinInfo;
-
-typedef struct {                  // Parametres d'inicialitzacio d'un port
-	GPIOPort port;                // -Identificador del port
-	GPIOMask mask;                // -Mascara de pins
-	GPIOOptions options;          // -Opcions
-	GPIOAlt alt;                  // -Funcio alternativa
-} GPIOInitializePortInfo;
-
-
-// Adresses base de cada port
-#define HAL_GPIO_ADDR_A           (_PORTA_BASE_ADDRESS - 0x10)
-#define HAL_GPIO_ADDR_B           (_PORTB_BASE_ADDRESS - 0x10)
-#define HAL_GPIO_ADDR_C           (_PORTC_BASE_ADDRESS - 0x10)
-#define HAL_GPIO_ADDR_D           (_PORTD_BASE_ADDRESS - 0x10)
-#define HAL_GPIO_ADDR_E           (_PORTE_BASE_ADDRESS - 0x10)
-#define HAL_GPIO_ADDR_F           (_PORTF_BASE_ADDRESS - 0x10)
-#define HAL_GPIO_ADDR_G           (_PORTG_BASE_ADDRESS - 0x10)
 
 // Identificador dels ports
-#if defined(_PORTA)
-#define HAL_GPIO_PORT_A           HAL_GPIO_ADDR_A
+#ifdef _PORTA
+#define HAL_GPIO_PORT_A           (_PORTA_BASE_ADDRESS - 0x10)
 #endif
-#if defined(_PORTB)
-#define HAL_GPIO_PORT_B           HAL_GPIO_ADDR_B
+#ifdef _PORTB
+#define HAL_GPIO_PORT_B           (_PORTB_BASE_ADDRESS - 0x10)
 #endif
-#if defined(_PORTC)
-#define HAL_GPIO_PORT_C           HAL_GPIO_ADDR_C
+#ifdef _PORTC
+#define HAL_GPIO_PORT_C           (_PORTC_BASE_ADDRESS - 0x10)
 #endif
-#if defined(_PORTD)
-#define HAL_GPIO_PORT_D           HAL_GPIO_ADDR_D
+#ifdef _PORTD
+#define HAL_GPIO_PORT_D           (_PORTD_BASE_ADDRESS - 0x10)
 #endif
-#if defined(_PORTE)
-#define HAL_GPIO_PORT_E           HAL_GPIO_ADDR_E
+#ifdef _PORTE
+#define HAL_GPIO_PORT_E           (_PORTE_BASE_ADDRESS - 0x10)
 #endif
-#if defined(_PORTF)
-#define HAL_GPIO_PORT_F           HAL_GPIO_ADDR_F
+#ifdef _PORTF
+#define HAL_GPIO_PORT_F           (_PORTF_BASE_ADDRESS - 0x10)
 #endif
-#if defined(_PORTG)
-#define HAL_GPIO_PORT_G           HAL_GPIO_ADDR_G
+#ifdef _PORTG
+#define HAL_GPIO_PORT_G           (_PORTG_BASE_ADDRESS - 0x10)
 #endif
-#define HAL_GPIO_PORT_NONE        0
+#define HAL_GPIO_PORT_NONE        0xFFFFFFFF
 
 // Identificador dels pins
 #define HAL_GPIO_PIN_0            0
@@ -168,6 +118,47 @@ typedef struct {                  // Parametres d'inicialitzacio d'un port
 
 // Funcio alternativa
 #define HAL_GPIO_AF_NONE          0
+
+
+// Estructura de registres de cada port
+typedef struct __attribute__((packed , aligned(4))) {
+    volatile uint32_t TRISx;
+    volatile uint32_t TRISxCLR;
+    volatile uint32_t TRISxSET;
+    volatile uint32_t TRISxINV;
+    volatile uint32_t PORTx;
+    volatile uint32_t PORTxCLR;
+    volatile uint32_t PORTxSET;
+    volatile uint32_t PORTxINV;
+    volatile uint32_t LATx;
+    volatile uint32_t LATxCLR;
+    volatile uint32_t LATxSET;
+    volatile uint32_t LATxINV;
+    volatile uint32_t ODCx;
+    volatile uint32_t ODCxCLR;
+    volatile uint32_t ODCxSET;
+    volatile uint32_t ODCxINV;
+} GPIORegisters;
+
+typedef uint32_t GPIOPort;
+typedef uint32_t GPIOPin;
+typedef uint32_t GPIOMask;
+typedef uint32_t GPIOOptions;
+typedef uint32_t GPIOAlt;
+
+typedef struct {                  // Parametres d'inicialitzacio per pins
+	GPIOPort port;                // -Identificador del port
+	GPIOPin pin;                  // -Identificador del pin
+	GPIOOptions options;          // -Opcions
+	GPIOAlt alt;                  // -Funcio alternativa
+} GPIOInitializePinInfo;
+
+typedef struct {                  // Parametres d'inicialitzacio d'un port
+	GPIOPort port;                // -Identificador del port
+	GPIOMask mask;                // -Mascara de pins
+	GPIOOptions options;          // -Opcions
+	GPIOAlt alt;                  // -Funcio alternativa
+} GPIOInitializePortInfo;
 
 
 // Canvi d'entrada a sortida i viceversa
