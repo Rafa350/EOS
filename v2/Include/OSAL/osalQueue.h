@@ -30,6 +30,9 @@ bool osalQueuePutISR(HQueue hQueue, const void* element);
 bool osalQueueGet(HQueue hQueue, void* element, unsigned blockTime);
 bool osalQueueGetISR(HQueue hQueue, void* element);
 
+bool osalQueueIsEmpty(HQueue hQueue);
+bool osalQueueIsEmptyISR(HQueue hQueue);
+
 
 #ifdef	__cplusplus
 }

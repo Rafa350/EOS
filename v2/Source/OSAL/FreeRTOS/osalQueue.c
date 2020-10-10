@@ -25,7 +25,7 @@ HQueue osalQueueCreate(
 
 /// ----------------------------------------------------------------------
 /// \brief    Destrueix una cua.
-/// \param    hQueue: El handler de la cua.
+/// \param    hQueue: Handler de la cua.
 ///
 void osalQueueDestroy(
 	HQueue hQueue) {
@@ -38,7 +38,7 @@ void osalQueueDestroy(
 
 /// ----------------------------------------------------------------------
 /// \brief    Buida el contingut de la cua.
-/// \param    hQueue: El handler de la cua.
+/// \param    hQueue: Handler de la cua.
 ///
 void osalQueueClear(
 	HQueue hQueue) {
@@ -51,7 +51,7 @@ void osalQueueClear(
 
 /// ----------------------------------------------------------------------
 /// \brief    Afegeix un element a la cua.
-/// \param    hQueue: El handler de la cua.
+/// \param    hQueue: Handler de la cua.
 /// \param    element: El element a afeigir.
 /// \param    blockTime: Temps maxim de bloqueig en ms.
 /// \return   True si tot es correcte.
@@ -72,7 +72,7 @@ bool osalQueuePut(
 /// ----------------------------------------------------------------------
 /// \brief    Afegeix un element a la cua. Aquesta versio es per ser
 ///           cridada d'ins d'una interrupcio.
-/// \param    hQueue: El handler de la cua.
+/// \param    hQueue: Handler de la cua.
 /// \param    element: El element a afeigir.
 /// \return   True si tot es correcte
 ///
@@ -90,7 +90,7 @@ bool osalQueuePutISR(
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte un element de la cua.
-/// \param    hQueue: handler de la cua.
+/// \param    hQueue: Handler de la cua.
 /// \param    element: Buffer on deixar l'element.
 /// \param    blockTime: Temps maxim de bloqueig en ms.
 /// \return   True si tot es correcte
@@ -111,7 +111,7 @@ bool osalQueueGet(
 /// ----------------------------------------------------------------------
 /// \brief    Obte un element de la cua. Aquesta versio es per ser cridada
 ///           d'ins d'una interrupcio.
-/// \param    hQueue: handler de la cua.
+/// \param    hQueue: Handler de la cua.
 /// \param    element: Buffer on deixar l'element.
 /// \return   True si tot es correcte.
 ///
@@ -124,4 +124,32 @@ bool osalQueueGetISR(
 
     BaseType_t priority = pdFALSE;
     return xQueueReceiveFromISR((QueueHandle_t)hQueue, element, &priority) == pdPASS;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si la cua es buida.
+/// \param    hQueue: Handler de la cua.
+/// \return   TRue si es buida, false en cas contrari.
+///
+bool osalQueueIsEmpty(
+	HQueue hQueue) {
+
+	eosAssert(hQueue != NULL);
+
+	return uxQueueMessagesWaiting((QueueHandle_t)hQueue) == 0;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Comprova si la cua es buida d'ins d'una interrupcio.
+/// \param    hQueue: Handler de la cua.
+/// \return   TRue si es buida, false en cas contrari.
+///
+bool osalQueueIsEmptyISR(
+	HQueue hQueue) {
+
+	eosAssert(hQueue != NULL);
+
+	return uxQueueMessagesWaitingFromISR((QueueHandle_t)hQueue) == 0;
 }

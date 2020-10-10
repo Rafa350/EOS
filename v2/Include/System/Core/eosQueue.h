@@ -26,6 +26,8 @@ namespace eos {
             bool genericGet(void* element, unsigned blockTime);
             bool genericPutISR(void* element);
             bool genericGetISR(void* element);
+            bool genericIsEmpty() const { return osalQueueIsEmpty(hQueue); }
+            bool genericIsEmptyISR() const { return osalQueueIsEmptyISR(hQueue); }
     };
 
     /// \brief Cua personalitzada amb plantilla.
@@ -64,6 +66,13 @@ namespace eos {
             ///
             inline bool pop(T& element,  unsigned blockTime) {
                 return genericGet((void*) &element, blockTime);
+            }
+
+            /// \brief Indica si la cua es buida
+            /// \truen True si es buida
+            //
+            inline bool isEmpty() const {
+            	return genericIsEmpty();
             }
     };
 
