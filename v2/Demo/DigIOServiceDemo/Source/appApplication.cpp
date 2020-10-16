@@ -151,6 +151,7 @@ void MyApplication::onInitialize() {
     digOutputInit.port = LEDS_LED1_PORT;
     digOutputInit.pin = LEDS_LED1_PIN;
     led1 = new DigOutput(digOutputService, digOutputInit);
+    led1->write(LEDS_STATE_OFF);
 #endif
 
     // Inicialitza la sortida corresponent al led LED2
@@ -162,6 +163,7 @@ void MyApplication::onInitialize() {
     digOutputInit.port = LEDS_LED2_PORT;
     digOutputInit.pin = LEDS_LED2_PIN;
     led2 = new DigOutput(digOutputService, digOutputInit);
+    led2->write(LEDS_STATE_OFF);
 #endif
 
     // Inicialitza la sortida corresponent al led LED3
@@ -173,6 +175,7 @@ void MyApplication::onInitialize() {
     digOutputInit.port = LEDS_LED3_PORT;
     digOutputInit.pin = LEDS_LED3_PIN;
     led3 = new DigOutput(digOutputService, digOutputInit);
+    led3->write(LEDS_STATE_OFF);
 #endif
 
 }

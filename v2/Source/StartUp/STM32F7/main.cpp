@@ -2,9 +2,6 @@
 #include "System/eosDebug.h"
 
 
-using namespace eos;
-
-
 /// ----------------------------------------------------------------------
 /// \brief Punt d'entrada a l'aplicacio.
 ///

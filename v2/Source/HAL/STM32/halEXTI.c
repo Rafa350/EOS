@@ -105,6 +105,7 @@ void halEXTIInitializePins(
 	// Activa el clock del modul EXTI
 	//
 	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+    __DSB();
 
 	// Inicialitza els elements de la llista
 	//

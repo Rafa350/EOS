@@ -70,7 +70,7 @@ typedef struct __TMRData* TMRHandler;
 typedef void (*TMRInterruptFunction)(TMRHandler handler, void* params);
 
 struct __TMRData {
-	TIM_TypeDef* regs;
+	TIM_TypeDef* device;
 	TMRInterruptFunction isrFunction;
 	void* isrParams;
 };
@@ -84,7 +84,7 @@ typedef struct {
 } TMRInitializeInfo;
 
 TMRHandler halTMRInitialize(TMRData* data, const TMRInitializeInfo* info);
-void halTMRShutdown(TMRHandler handler);
+void halTMRDeinitialize(TMRHandler handler);
 
 void halTMRStartTimer(TMRHandler handler);
 void halTMRStopTimer(TMRHandler handler);

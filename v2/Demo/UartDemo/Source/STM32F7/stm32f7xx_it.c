@@ -34,7 +34,6 @@ void UsageFault_Handler(void) {
 
 
 void DebugMon_Handler(void) {
-
 }
 
 

@@ -18,6 +18,9 @@
 #define LEDS_LED2_PIN             HAL_GPIO_PIN_14
 #endif // USE_LEDS_LED2
 
+#define LEDS_STATE_ON             1
+#define LEDS_STATE_OFF            0
+
 
 // -----------------------------------------------------------------------
 // Switches
@@ -156,7 +159,7 @@
 
 // Modul SPI a utilitzar
 //
-#define DISPLAY_SPI_ID       HAL_SPI_ID_5
+#define DISPLAY_SPI_ID       HAL_SPI_CHANNEL_5
 
 #endif // DISPLAY_DRV_ILI9341
 
@@ -346,7 +349,7 @@
 
 // Control del modul SPI
 //
-#define DISPLAY_SPI_ID       HAL_SPI_ID_5
+#define DISPLAY_SPI_ID       HAL_SPI_CHANNEL_5
 
 #endif // DISPLAY_DRV_ILI9341LTDC
 

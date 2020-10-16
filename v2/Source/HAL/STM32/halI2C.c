@@ -27,7 +27,7 @@ static I2C_HandleTypeDef i2cHandler[HAL_I2C_ID_MAX];
 /// \brief    Activa el rellotge del modul I2C.
 /// \param    module: identificador del modul.
 ///
-static void EnableClock(
+static void enableClock(
 	I2CModule module) {
 
 	switch (module) {
@@ -74,7 +74,7 @@ static I2C_HandleTypeDef *GetHandler(
 static I2C_HandleTypeDef *PrepareHandler(
 	const I2CMasterInitializeInfo *info) {
 
-	EnableClock(info->module);
+	enableClock(info->module);
 
 	static I2C_TypeDef * const instances[HAL_I2C_ID_MAX] = {
 		I2C1,
@@ -129,7 +129,7 @@ static void DeinitializeModule(
 void halI2CMasterInitialize(
 	const I2CMasterInitializeInfo *info) {
 
-	EnableClock(info->module);
+	enableClock(info->module);
 
 	I2C_HandleTypeDef *handler = PrepareHandler(info);
 	InitializeModule(handler);

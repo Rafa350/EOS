@@ -50,7 +50,7 @@ void FT5336Driver::initialize() {
 	// Wait at least 200ms after power up before accessing registers
 	// Trsi timing (Time of starting to report point after resetting) from FT5336GQQ datasheet
 	//
-	//halTMRDelay(200);
+	halTMRDelay(200);
     ioInit();
 
 #ifdef TOUCHPAD_INT_PORT
@@ -313,8 +313,8 @@ void FT5336Driver::ioInit() {
 
 #ifdef TOUCHPAD_INT_PORT
 	halEXTIInitializePins(extiInfo, sizeof(extiInfo) / sizeof(extiInfo[0]));
-	halINTSetPriority(TOUCHPAD_INT_IRQ, 0x0F, 0x00);
-	halINTEnableInterrupt(TOUCHPAD_INT_IRQ);
+	halINTSetInterruptVectorPriority(TOUCHPAD_INT_IRQ, TOUCHPAD_INT_PRIORITY, TOUCHPAD_INT_SUBPRIORITY);
+	halINTEnableInterruptVector(TOUCHPAD_INT_IRQ);
 #endif
 
 	I2CMasterInitializeInfo i2cInfo;

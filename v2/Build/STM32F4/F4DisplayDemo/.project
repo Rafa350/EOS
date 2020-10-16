@@ -179,16 +179,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/appInitialize.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/App/STM32F4/stm32f429i_discovery.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/BSP/STM32F429I-Discovery/stm32f429i_discovery.c</locationURI>
-		</link>
-		<link>
-			<name>src/App/STM32F4/stm32f429i_discovery_sdram.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/BSP/STM32F429I-Discovery/stm32f429i_discovery_sdram.c</locationURI>
-		</link>
-		<link>
 			<name>src/App/STM32F4/stm32f4xx_hal_timebase_tim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f4xx_hal_timebase_tim.c</locationURI>
@@ -220,6 +210,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/System</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/BSP</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -402,6 +397,16 @@
 			<name>src/Framework/EOS/System/eosString.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/BSP/stm32f429i_discovery.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/BSP/STM32F429I-Discovery/stm32f429i_discovery.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/STM32/BSP/stm32f429i_discovery_sdram.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F4/BSP/STM32F429I-Discovery/stm32f429i_discovery_sdram.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/cmsis_os.c</name>
@@ -639,9 +644,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColorFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DAM2D.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer_RGB565_DAM2D.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32/halDMA2D.c</name>

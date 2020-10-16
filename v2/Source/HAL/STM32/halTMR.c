@@ -3,145 +3,134 @@
 #include "HAL/STM32/halTMR.h"
 
 
+#define __VERIFY_TIMER(timer)     eosAssert((timer >= HAL_TMR_TIMER_1) && (timer <= HAL_TMR_TIMER_14))
+#define __VERIFY_DEVICE(device)   eosAssert(IS_TIM_INSTANCE(device))
+
+
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el handler del temporitzador.
-/// \param    data: Bloc de memoria pel handler del temporitzador.
-/// \param    info: Parametres d'inicialitzacio.
-/// \return   El handler del temporitzador.
+/// \brief    Obte el dispositiu.
+/// \param    channel: El identificador del dispositiu.
+/// \return   El dispositiu.
 ///
-TMRHandler halTMRInitialize(
-	TMRData* data,
-	const TMRInitializeInfo* info) {
+static inline TIM_TypeDef* getDevice(
+	TMRTimer timer) {
 
-	TMRHandler handler = data;
+	__VERIFY_TIMER(timer);
 
-	switch (info->timer) {
-		case HAL_TMR_TIMER_1:
-            RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
-			handler->regs = TIM1;
-			break;
+	static TIM_TypeDef* const devices[] = {
+		TIM1,
+		TIM2,
+		TIM3,
+		TIM4,
+		TIM5,
+		TIM6,
+		TIM7,
+		TIM8,
+		TIM9,
+		TIM10,
+		TIM11,
+		TIM12,
+		TIM13,
+		TIM14
+	};
 
-		case HAL_TMR_TIMER_2:
-			RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-			handler->regs = TIM2;
-			break;
-
-		case HAL_TMR_TIMER_3:
-			RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-			handler->regs = TIM3;
-			break;
-
-		case HAL_TMR_TIMER_4:
-			RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
-			handler->regs = TIM4;
-			break;
-
-		case HAL_TMR_TIMER_5:
-            RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
-			handler->regs = TIM5;
-			break;
-
-		case HAL_TMR_TIMER_6:
-			RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
-			handler->regs = TIM6;
-			break;
-
-		case HAL_TMR_TIMER_7:
-			RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
-			handler->regs = TIM7;
-			break;
-
-		case HAL_TMR_TIMER_8:
-			RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
-			handler->regs = TIM8;
-			break;
-
-		case HAL_TMR_TIMER_9:
-			RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
-			handler->regs = TIM9;
-			break;
-
-		case HAL_TMR_TIMER_10:
-			RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
-			handler->regs = TIM10;
-			break;
-
-		case HAL_TMR_TIMER_11:
-			RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
-			handler->regs = TIM11;
-			break;
-
-		case HAL_TMR_TIMER_12:
-			RCC->APB1ENR |= RCC_APB1ENR_TIM12EN;
-			handler->regs = TIM12;
-			break;
-
-		case HAL_TMR_TIMER_13:
-			RCC->APB1ENR |= RCC_APB1ENR_TIM13EN;
-			handler->regs = TIM13;
-			break;
-
-		case HAL_TMR_TIMER_14:
-			RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
-			handler->regs = TIM14;
-			break;
-	}
-
-	uint32_t temp;
-
-	// Configura el registre CR1 (Control 1)
-	//
-	temp = handler->regs->CR1;
-	temp &= ~(TIM_CR1_CEN);                 // Para el timer
-
-	if (IS_TIM_CLOCK_DIVISION_INSTANCE(handler->regs)) {
-		temp &= ~(TIM_CR1_CKD); 			// Divisor per 1 per defecte
-		switch ((info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos) {
-			case HAL_TMR_CLKDIV_2:
-				temp |= TIM_CR1_CKD_0;      // Divisor per 2
-				break;
-
-			case HAL_TMR_CLKDIV_4:          // Divisor per 4
-				temp |= TIM_CR1_CKD_1;
-				break;
-		}
-	}
-
-	if ((info->options & HAL_TMR_DIRECTION_mask) == HAL_TMR_DIRECTION_DOWN)
-		temp |= TIM_CR1_DIR;                // Conta cap avall
-
-	handler->regs->CR1 = temp;
-
-	// Configura el registre PSC (Prescaler)
-	//
-	handler->regs->PSC = info->prescaler;
-
-	// Configura el registre ARR (Periode)
-	//
-	handler->regs->ARR = info->period;
-
-	// Configura la funcio ISR
-	//
-	handler->isrFunction = NULL;
-	handler->isrParams = NULL;
-
-	return handler;
+	return devices[timer];
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desactivacio del temporitzador.
-/// \param    handler: Handler del temporitzador.
+/// \brief    Activa el dispositiu.
+/// \param    device: El dispositiu.
 ///
-void halTMRShutdown(
-	TMRHandler handler) {
+static void enableDeviceClock(
+	TIM_TypeDef* device) {
 
-	eosAssert(handler != NULL);
+	__VERIFY_DEVICE(device);
 
-	halTMRStopTimer(handler);
-	halTMRDisableInterrupts(handler, HAL_TMR_EVENT_ALL);
+	switch ((uint32_t) device) {
+		case TIM1_BASE:
+            RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+			__DSB();
+			break;
 
-	switch ((uint32_t)handler->regs) {
+		case TIM2_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+			__DSB();
+			break;
+
+		case TIM3_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+			__DSB();
+			break;
+
+		case TIM4_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
+			__DSB();
+			break;
+
+		case TIM5_BASE:
+            RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
+			__DSB();
+			break;
+
+		case TIM6_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
+			__DSB();
+			break;
+
+		case TIM7_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
+			__DSB();
+			break;
+
+		case TIM8_BASE:
+			RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
+			__DSB();
+			break;
+
+		case TIM9_BASE:
+			RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
+			__DSB();
+			break;
+
+		case TIM10_BASE:
+			RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
+			__DSB();
+			break;
+
+		case TIM11_BASE:
+			RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
+			__DSB();
+			break;
+
+		case TIM12_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM12EN;
+			__DSB();
+			break;
+
+		case TIM13_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM13EN;
+			__DSB();
+			break;
+
+		case TIM14_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
+			__DSB();
+			break;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el dispositiu.
+/// \param    device: El dispositiu.
+///
+static void disableDeviceClock(
+	TIM_TypeDef* device) {
+
+	__VERIFY_DEVICE(device);
+
+	switch ((uint32_t) device) {
 		case TIM1_BASE:
             RCC->APB2ENR &= ~(RCC_APB2ENR_TIM1EN);
 			break;
@@ -163,41 +152,114 @@ void halTMRShutdown(
 			break;
 
 		case TIM6_BASE:
-			__HAL_RCC_TIM6_CLK_DISABLE();
+			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM6EN);
 			break;
 
 		case TIM7_BASE:
-			__HAL_RCC_TIM7_CLK_DISABLE();
+			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM7EN);
 			break;
 
 		case TIM8_BASE:
-			__HAL_RCC_TIM8_CLK_DISABLE();
+			RCC->APB2ENR &= ~(RCC_APB2ENR_TIM8EN);
 			break;
 
 		case TIM9_BASE:
-			__HAL_RCC_TIM9_CLK_DISABLE();
+			RCC->APB2ENR &= ~(RCC_APB2ENR_TIM9EN);
 			break;
 
 		case TIM10_BASE:
-			__HAL_RCC_TIM10_CLK_DISABLE();
+			RCC->APB2ENR &= ~(RCC_APB2ENR_TIM10EN);
 			break;
 
 		case TIM11_BASE:
-			__HAL_RCC_TIM11_CLK_DISABLE();
+			RCC->APB2ENR &= ~(RCC_APB2ENR_TIM11EN);
 			break;
 
 		case TIM12_BASE:
-			__HAL_RCC_TIM12_CLK_DISABLE();
+			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM12EN);
 			break;
 
 		case TIM13_BASE:
-			__HAL_RCC_TIM13_CLK_DISABLE();
+			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM13EN);
 			break;
 
 		case TIM14_BASE:
-			__HAL_RCC_TIM14_CLK_DISABLE();
+			RCC->APB1ENR &= ~(RCC_APB1ENR_TIM14EN);
 			break;
 	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el handler del temporitzador.
+/// \param    data: Bloc de memoria pel handler del temporitzador.
+/// \param    info: Parametres d'inicialitzacio.
+/// \return   El handler del temporitzador.
+///
+TMRHandler halTMRInitialize(
+	TMRData* data,
+	const TMRInitializeInfo* info) {
+
+	TIM_TypeDef* device = getDevice(info->timer);
+
+	enableDeviceClock(device);
+
+	uint32_t temp;
+
+	// Configura el registre CR1 (Control 1)
+	//
+	temp = device->CR1;
+	temp &= ~(TIM_CR1_CEN);                 // Para el timer
+
+	if (IS_TIM_CLOCK_DIVISION_INSTANCE(device)) {
+		temp &= ~(TIM_CR1_CKD); 			// Divisor per 1 per defecte
+		switch ((info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos) {
+			case HAL_TMR_CLKDIV_2:
+				temp |= TIM_CR1_CKD_0;      // Divisor per 2
+				break;
+
+			case HAL_TMR_CLKDIV_4:          // Divisor per 4
+				temp |= TIM_CR1_CKD_1;
+				break;
+		}
+	}
+
+	if ((info->options & HAL_TMR_DIRECTION_mask) == HAL_TMR_DIRECTION_DOWN)
+		temp |= TIM_CR1_DIR;                // Conta cap avall
+
+	device->CR1 = temp;
+
+	// Configura el registre PSC (Prescaler)
+	//
+	device->PSC = info->prescaler;
+
+	// Configura el registre ARR (Periode)
+	//
+	device->ARR = info->period;
+
+
+	TMRHandler handler = data;
+	handler->device = device;
+	handler->isrFunction = NULL;
+	handler->isrParams = NULL;
+
+	return handler;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactivacio del temporitzador.
+/// \param    handler: Handler del temporitzador.
+///
+void halTMRDeinitialize(
+	TMRHandler handler) {
+
+	eosAssert(handler != NULL);
+
+	halTMRStopTimer(handler);
+	halTMRDisableInterrupts(handler, HAL_TMR_EVENT_ALL);
+
+	disableDeviceClock(handler->device);
 }
 
 
@@ -210,7 +272,7 @@ void halTMRStartTimer(
 
 	eosAssert(handler != NULL);
 
-	handler->regs->CR1 |= TIM_CR1_CEN;      // Activa el temporitzador.
+	handler->device->CR1 |= TIM_CR1_CEN;      // Activa el temporitzador.
 }
 
 
@@ -223,7 +285,7 @@ void halTMRStopTimer(
 
 	eosAssert(handler != NULL);
 
-	handler->regs->CR1 &= ~TIM_CR1_CEN;     // Desactiva el temporitzador
+	handler->device->CR1 &= ~TIM_CR1_CEN;     // Desactiva el temporitzador
 }
 
 
@@ -254,34 +316,36 @@ void halTMRInterruptHandler(
 
 	eosAssert(handler != NULL);
 
+	TIM_TypeDef* device = handler->device;
+
 	// Comprova si es un event UPDATE
 	//
-	if ((handler->regs->SR & TIM_SR_UIF) == TIM_SR_UIF) {
+	if ((device->SR & TIM_SR_UIF) == TIM_SR_UIF) {
 		if (handler->isrFunction != NULL)
 			handler->isrFunction(handler, handler->isrParams);
-		handler->regs->SR &= ~TIM_SR_UIF;
+		device->SR &= ~TIM_SR_UIF;
 	}
 
 	// Comprova si es un event TRIGGER
 	//
-	if ((handler->regs->SR & TIM_SR_TIF) == TIM_SR_TIF) {
+	if ((device->SR & TIM_SR_TIF) == TIM_SR_TIF) {
 		if (handler->isrFunction != NULL)
 			handler->isrFunction(handler, handler->isrParams);
-		handler->regs->SR &= ~TIM_SR_TIF;
+		device->SR &= ~TIM_SR_TIF;
 	}
 
 	// Comprova si es un event COM
 	//
-	if ((handler->regs->SR & TIM_SR_COMIF) == TIM_SR_COMIF) {
+	if ((device->SR & TIM_SR_COMIF) == TIM_SR_COMIF) {
 		if (handler->isrFunction != NULL)
 			handler->isrFunction(handler, handler->isrParams);
-		handler->regs->SR &= ~TIM_SR_COMIF;
+		device->SR &= ~TIM_SR_COMIF;
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Activa les interrupcions del temporitzador.
+/// \brief    Habilita les interrupcions del temporitzador.
 /// \param    handler: Handler del temporitzador.
 /// \param    events: Events a activar.
 ///
@@ -289,7 +353,7 @@ void halTMREnableInterrupts(
 	TMRHandler handler,
 	uint32_t events) {
 
-	uint32_t temp = handler->regs->DIER;
+	uint32_t temp = handler->device->DIER;
 
 	if ((events & HAL_TMR_EVENT_UP) == HAL_TMR_EVENT_UP)
 		temp |= TIM_DIER_UIE;
@@ -298,12 +362,12 @@ void halTMREnableInterrupts(
 	if ((events & HAL_TMR_EVENT_COM) == HAL_TMR_EVENT_COM)
 		temp |= TIM_DIER_COMIE;
 
-	handler->regs->DIER = temp;
+	handler->device->DIER = temp;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desactiva les interrupcions del temporitzador.
+/// \brief    Deshabilita les interrupcions del temporitzador.
 /// \param    handler: Handler del temporitzador.
 /// \param    events: Events a desactivar.
 /// \return   Els events previament actius.
@@ -312,7 +376,7 @@ uint32_t halTMRDisableInterrupts(
 	TMRHandler handler,
 	uint32_t events) {
 
-	uint32_t temp = handler->regs->DIER;
+	uint32_t temp = handler->device->DIER;
 
 	uint32_t enabled = 0;
 	if ((temp & TIM_DIER_UIE) == TIM_DIER_UIE)
@@ -329,7 +393,7 @@ uint32_t halTMRDisableInterrupts(
 	if ((events & HAL_TMR_EVENT_COM) == HAL_TMR_EVENT_COM)
 		temp &= ~TIM_DIER_COMIE;
 
-	handler->regs->DIER = temp;
+	handler->device->DIER = temp;
 
 	return enabled;
 }
@@ -344,14 +408,16 @@ void halTMRClearInterruptFlags(
 	TMRHandler handler,
 	uint32_t events) {
 
+	TIM_TypeDef* device = handler->device;
+
 	if ((events & HAL_TMR_EVENT_UP) == HAL_TMR_EVENT_UP)
-		handler->regs->SR &= ~TIM_SR_UIF;
+		device->SR &= ~TIM_SR_UIF;
 
 	if ((events & HAL_TMR_EVENT_TRG) == HAL_TMR_EVENT_TRG)
-		handler->regs->SR &= ~TIM_SR_TIF;
+		device->SR &= ~TIM_SR_TIF;
 
 	if ((events & HAL_TMR_EVENT_COM) == HAL_TMR_EVENT_COM)
-		handler->regs->SR &= ~TIM_SR_COMIF;
+		device->SR &= ~TIM_SR_COMIF;
 }
 
 
@@ -365,15 +431,17 @@ bool halTMRGetInterruptFlag(
 	TMRHandler handler,
 	uint32_t event) {
 
+	TIM_TypeDef* device = handler->device;
+
 	switch (event) {
 		case HAL_TMR_EVENT_UP:
-			return (handler->regs->SR & TIM_SR_UIF) == TIM_SR_UIF;
+			return (device->SR & TIM_SR_UIF) == TIM_SR_UIF;
 
 		case HAL_TMR_EVENT_TRG:
-			return (handler->regs->SR & TIM_SR_TIF) == TIM_SR_TIF;
+			return (device->SR & TIM_SR_TIF) == TIM_SR_TIF;
 
 		case HAL_TMR_EVENT_COM:
-			return (handler->regs->SR & TIM_SR_COMIF) == TIM_SR_COMIF;
+			return (device->SR & TIM_SR_COMIF) == TIM_SR_COMIF;
 
 		default:
 			return false;

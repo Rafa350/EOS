@@ -22,6 +22,10 @@
 using namespace eos;
 
 
+static SPIData spiData;
+static SPIHandler hSpi;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Compbina dos pixels.
 /// \param b: Pixel del fons.
@@ -373,7 +377,7 @@ void ILI9341LTDCDriver::lcdInitialize() {
 
 	static const SPIInitializeInfo spiInit = {
 		DISPLAY_SPI_ID,
-			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB, HAL_SPI_CLOCKDIV_16, 0, 0
+			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
 	};
 
 	// Inicialitza modul GPIO
@@ -382,7 +386,7 @@ void ILI9341LTDCDriver::lcdInitialize() {
 
 	// Inicialitza el modul SPI
 	//
-	halSPIInitialize(&spiInit);
+	hSpi = halSPIInitialize(&spiData, &spiInit);
 }
 
 
@@ -425,7 +429,7 @@ void ILI9341LTDCDriver::lcdWriteCommand(
 	uint8_t d) {
 
 	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(DISPLAY_SPI_ID, &d, sizeof(d));
+	halSPISendBuffer(hSpi, &d, sizeof(d));
 }
 
 
@@ -437,7 +441,7 @@ void ILI9341LTDCDriver::lcdWriteData(
 	uint8_t d) {
 
 	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(DISPLAY_SPI_ID, &d, sizeof(d));
+	halSPISendBuffer(hSpi, &d, sizeof(d));
 }
 
 

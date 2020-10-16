@@ -3,58 +3,88 @@
 #include "HAL/STM32/halGPIO.h"
 
 
+#define __VERIFY_DEVICE(device)   eosAssert(IS_GPIO_ALL_INSTANCE(device))
+#define __VERIFY_PORT(port)       eosAssert(IS_GPIO_ALL_INSTANCE(((GPIO_TypeDef*)port)))
+#define __VERIFY_PIN(pin)   	  eosAssert((pin >= 0) && (pin <= 15))
+
+
 /// ----------------------------------------------------------------------
-/// \brief    Activa el clock del port GPIO
-/// \param    port: Identificador del port.
+/// \brief    Obte el dispositiu.
+/// \param    port: El identificador del dispositiu.
+/// \return   El dispositiu.
 ///
-static void enablePeripheralClock(
+static inline GPIO_TypeDef* getDevice(
 	GPIOPort port) {
 
-	eosAssert(IS_GPIO_ALL_INSTANCE((GPIORegisters*)port));
+	__VERIFY_PORT(port);
 
-	switch (port) {
-		case HAL_GPIO_PORT_A:
+	return (GPIO_TypeDef*) port;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Activa el dispositiu
+/// \param    device: El dispositiu.
+///
+static void enableDeviceClock(
+	GPIO_TypeDef* device) {
+
+	__VERIFY_DEVICE(device);
+
+	switch ((uint32_t) device) {
+		case GPIOA_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+			__DSB();
 			break;
 
-		case HAL_GPIO_PORT_B:
+		case GPIOB_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
+			__DSB();
 			break;
 
-		case HAL_GPIO_PORT_C:
+		case GPIOC_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+			__DSB();
 			break;
 
-		case HAL_GPIO_PORT_D:
+		case GPIOD_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
+			__DSB();
 			break;
 
-		case HAL_GPIO_PORT_E:
+		case GPIOE_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
+			__DSB();
 			break;
 
-		case HAL_GPIO_PORT_F:
+		case GPIOF_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN;
+			__DSB();
 			break;
 
-		case HAL_GPIO_PORT_G:
+		case GPIOG_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
+			__DSB();
 			break;
 
-		case HAL_GPIO_PORT_H:
+		case GPIOH_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN;
+			__DSB();
 			break;
 
-		case HAL_GPIO_PORT_I:
+		case GPIOI_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
+			__DSB();
 			break;
 
-		case HAL_GPIO_PORT_J:
+		case GPIOJ_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN;
+			__DSB();
 			break;
 
-		case HAL_GPIO_PORT_K:
+		case GPIOK_BASE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
+			__DSB();
 			break;
 	}
 }
@@ -62,26 +92,25 @@ static void enablePeripheralClock(
 
 /// ----------------------------------------------------------------------
 /// \brief    Configura un pin.
-/// \param    port: Identificador del port.
+/// \param    device: El dispositiu.
 /// \param    pin: Numero de pin.
 /// \param    options: Opcions de configuracio.
 /// \param    alt: Funcio alternativa.
 ///
-static void setupPin(
-	GPIOPort port,
+static void setupDevicePin(
+	GPIO_TypeDef* device,
 	GPIOPin pin,
 	GPIOOptions options,
 	GPIOAlt alt) {
 
-	eosAssert(IS_GPIO_ALL_INSTANCE((GPIORegisters*)port));
-	eosAssert((pin >= 0) && (pin <= 15));
+	__VERIFY_DEVICE(device);
+	__VERIFY_PIN(pin);
 
 	uint32_t temp;
-	GPIORegisters* regs = (GPIORegisters*) port;
 
 	// Configura el registre MODER (Mode Register)
 	//
-	temp = regs->MODER;
+	temp = device->MODER;
 	temp &= ~(0b11 << (pin * 2));
 	switch (options & HAL_GPIO_MODE_mask) {
 		// Sortida digital
@@ -105,16 +134,16 @@ static void setupPin(
 		case HAL_GPIO_MODE_INPUT:
 			break;
 	}
-	regs->MODER = temp;
+	device->MODER = temp;
 
 	// Configura el registre AFR (Alternate Funcion Register)
 	//
 	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
-	    temp = regs->AFR[pin >> 3];
+	    temp = device->AFR[pin >> 3];
 	    temp &= ~(0x0F << ((uint32_t)(pin & 0x07) * 4)) ;
         temp |= ((uint32_t)(alt) << (((uint32_t)pin & 0x07) * 4));
-        regs->AFR[pin >> 3] = temp;
+        device->AFR[pin >> 3] = temp;
 	}
 
 	// Configura el registre OSPEEDR (Output Speed Register)
@@ -124,7 +153,7 @@ static void setupPin(
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
 
-		temp = regs->OSPEEDR;
+		temp = device->OSPEEDR;
 		temp &= ~(0b11 << (pin * 2));
 		switch (options & HAL_GPIO_SPEED_mask) {
 			case HAL_GPIO_SPEED_MEDIUM:
@@ -139,7 +168,7 @@ static void setupPin(
 				temp |= 0b11u < (pin * 2);
 				break;
 		}
-		regs->OSPEEDR = temp;
+		device->OSPEEDR = temp;
 	}
 
 	// Configura el registre OTYPER (Output Type Register)
@@ -148,18 +177,18 @@ static void setupPin(
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
-		temp = regs->OTYPER;
+		temp = device->OTYPER;
 		temp &= ~(1u << pin);
 		if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD) ||
 			((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD))
 			temp |= 1 << pin;
-		regs->OTYPER = temp;
+		device->OTYPER = temp;
 	}
 
 	// Configura el registre PUPDR (Pull Up/Down Register)
 	//
 	if ((options & HAL_GPIO_MODE_mask) != HAL_GPIO_MODE_ANALOG) {
-		temp = regs->PUPDR;
+		temp = device->PUPDR;
 		temp &= ~(0b11 << (pin * 2u));
 		switch (options & HAL_GPIO_PULL_mask) {
 			case HAL_GPIO_PULL_UP:
@@ -170,7 +199,7 @@ static void setupPin(
 				temp |= 0b10 << (pin * 2);
 				break;
 		}
-		regs->PUPDR = temp;
+		device->PUPDR = temp;
 	}
 
 	// Configura el valor inicial pin de sortida
@@ -178,12 +207,12 @@ static void setupPin(
 	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {
 
-		temp = regs->BSRR;
+		temp = device->BSRR;
 		if ((options & HAL_GPIO_INIT_mask) == HAL_GPIO_INIT_SET)
 			temp |= 1 << pin;
 		else
 			temp |= 1 << (pin + 16);
-		regs->BSRR = temp;
+		device->BSRR = temp;
 	}
 }
 
@@ -203,10 +232,10 @@ void halGPIOInitializePins(
 	for (uint32_t i = 0; i < count; i++) {
 
 		const GPIOInitializePinInfo* p = &info[i];
+		GPIO_TypeDef* device = getDevice(p->port);
 
-		enablePeripheralClock(p->port);
-
-		setupPin(p->port, p->pin, p->options, p->alt);
+		enableDeviceClock(device);
+		setupDevicePin(device, p->pin, p->options, p->alt);
 	}
 }
 
@@ -226,12 +255,13 @@ void halGPIOInitializePorts(
 	for (uint32_t i = 0; i < count; i++) {
 
 		const GPIOInitializePortInfo* p = &info[i];
+		GPIO_TypeDef* device = getDevice(p->port);
 
-		enablePeripheralClock(p->port);
+		enableDeviceClock(device);
 
 		for (GPIOPin pin = 0; pin < 16; pin++)
 			if (p->mask & (1 << pin))
-				setupPin(p->port, pin, p->options, p->alt);
+				setupDevicePin(device, pin, p->options, p->alt);
 	}
 }
 
@@ -249,12 +279,13 @@ void halGPIOInitializePin(
 	GPIOOptions options,
 	GPIOAlt alt) {
 
-	eosAssert(IS_GPIO_ALL_INSTANCE((GPIORegisters*)port));
-	eosAssert((pin >= 0) && (pin <= 15));
+	__VERIFY_PORT(port);
+	__VERIFY_PIN(pin);
 
-	enablePeripheralClock(port);
+	GPIO_TypeDef* device = getDevice(port);
+	enableDeviceClock(device);
 
-	setupPin(port, pin, options, alt);
+	setupDevicePin(device, pin, options, alt);
 }
 
 
@@ -271,7 +302,8 @@ inline void halGPIOClearPin(
 	eosAssert(IS_GPIO_ALL_INSTANCE((GPIORegisters*)port));
 	eosAssert((pin >= 0) && (pin <= 15));
 
-	((GPIORegisters*)port)->BSRR = 1u << (pin + 16);
+	GPIO_TypeDef* device = getDevice(port);
+	device->BSRR = 1u << (pin + 16);
 
 }
 #endif
@@ -290,7 +322,8 @@ inline void halGPIOSetPin(
 	eosAssert(IS_GPIO_ALL_INSTANCE(port));
 	eosAssert((pin >= 0) && (pin <= 15));
 
-	((GPIORegisters*)port)->BSRR = 1u << pin;
+	GPIO_TypeDef* device = getDevice(port);
+	device->BSRR = 1u << pin;
 }
 #endif
 
@@ -308,6 +341,7 @@ inline void halGPIOTogglePin(
 	eosAssert(IS_GPIO_ALL_INSTANCE(port));
 	eosAssert((pin >= 0) && (pin <= 15));
 
-	((GPIORegisters*)port)->ODR ^= 1u << pin;
+	GPIO_TypeDef* device = getDevice(p->port);
+	device->ODR ^= 1u << pin;
 }
 #endif

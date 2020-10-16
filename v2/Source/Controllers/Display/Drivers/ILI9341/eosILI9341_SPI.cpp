@@ -11,6 +11,10 @@
 using namespace eos;
 
 
+static SPIData spiData;
+static SPIHandler hSPI = NULL;
+
+
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza les comunicacions.
 ///
@@ -37,7 +41,7 @@ void ILI9341Driver::lcdInitialize() {
 
 	static const SPIInitializeInfo spiInit = {
 		DISPLAY_SPI_ID,
-			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB, HAL_SPI_CLOCKDIV_4, 0, 0
+			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_4, 0, 0
 	};
 
 	/// Inicialitza el modul GPIO
@@ -46,7 +50,7 @@ void ILI9341Driver::lcdInitialize() {
 
     // Inicialitza el modul SPI
     //
-	halSPIInitialize(&spiInit);
+	hSPI = halSPIInitialize(&spiData, &spiInit);
 }
 
 
@@ -89,7 +93,7 @@ void ILI9341Driver::lcdWriteCommand(
     uint8_t cmd) {
 
     halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-    halSPISendBuffer(DISPLAY_SPI_ID, &cmd, sizeof(cmd));
+    halSPISendBuffer(hSPI, &cmd, sizeof(cmd));
 }
 
 
@@ -101,7 +105,7 @@ void ILI9341Driver::lcdWriteData(
     uint8_t data) {
 
     halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-    halSPISendBuffer(DISPLAY_SPI_ID, &data, sizeof(data));
+    halSPISendBuffer(hSPI, &data, sizeof(data));
 }
 
 
@@ -115,7 +119,7 @@ void ILI9341Driver::lcdWriteData(
 	int size) {
 
     halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-    halSPISendBuffer(DISPLAY_SPI_ID, data, size);
+    halSPISendBuffer(hSPI, data, size);
 }
 
 

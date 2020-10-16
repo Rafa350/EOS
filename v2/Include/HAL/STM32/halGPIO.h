@@ -31,7 +31,6 @@ typedef uint32_t GPIOPin;
 typedef uint32_t GPIOMask;
 typedef uint32_t GPIOOptions;
 typedef uint32_t GPIOAlt;
-typedef GPIO_TypeDef GPIORegisters;
 
 typedef struct {
 	GPIOPort port;
@@ -48,32 +47,18 @@ typedef struct {
 } GPIOInitializePortInfo;
 
 
-// Adressa base dels port
-//
-#define HAL_GPIO_ADDR_A           GPIOA_BASE
-#define HAL_GPIO_ADDR_B           GPIOB_BASE
-#define HAL_GPIO_ADDR_C           GPIOC_BASE
-#define HAL_GPIO_ADDR_D           GPIOD_BASE
-#define HAL_GPIO_ADDR_E           GPIOE_BASE
-#define HAL_GPIO_ADDR_F           GPIOF_BASE
-#define HAL_GPIO_ADDR_G           GPIOG_BASE
-#define HAL_GPIO_ADDR_H           GPIOH_BASE
-#define HAL_GPIO_ADDR_I           GPIOI_BASE
-#define HAL_GPIO_ADDR_J           GPIOJ_BASE
-#define HAL_GPIO_ADDR_K           GPIOK_BASE
-
 // Identificado del port
-#define HAL_GPIO_PORT_A           HAL_GPIO_ADDR_A
-#define HAL_GPIO_PORT_B           HAL_GPIO_ADDR_B
-#define HAL_GPIO_PORT_C           HAL_GPIO_ADDR_C
-#define HAL_GPIO_PORT_D           HAL_GPIO_ADDR_D
-#define HAL_GPIO_PORT_E           HAL_GPIO_ADDR_E
-#define HAL_GPIO_PORT_F           HAL_GPIO_ADDR_F
-#define HAL_GPIO_PORT_G           HAL_GPIO_ADDR_G
-#define HAL_GPIO_PORT_H           HAL_GPIO_ADDR_H
-#define HAL_GPIO_PORT_I           HAL_GPIO_ADDR_I
-#define HAL_GPIO_PORT_J           HAL_GPIO_ADDR_J
-#define HAL_GPIO_PORT_K           HAL_GPIO_ADDR_K
+#define HAL_GPIO_PORT_A           GPIOA_BASE
+#define HAL_GPIO_PORT_B           GPIOB_BASE
+#define HAL_GPIO_PORT_C           GPIOC_BASE
+#define HAL_GPIO_PORT_D           GPIOD_BASE
+#define HAL_GPIO_PORT_E           GPIOE_BASE
+#define HAL_GPIO_PORT_F           GPIOF_BASE
+#define HAL_GPIO_PORT_G           GPIOG_BASE
+#define HAL_GPIO_PORT_H           GPIOH_BASE
+#define HAL_GPIO_PORT_I           GPIOI_BASE
+#define HAL_GPIO_PORT_J           GPIOJ_BASE
+#define HAL_GPIO_PORT_K           GPIOK_BASE
 #define HAL_GPIO_PORT_NONE        0
 
 // Identificador del pin
@@ -135,6 +120,10 @@ typedef struct {
 #define HAL_GPIO_AF5_SPI4         GPIO_AF5_SPI4
 #define HAL_GPIO_AF5_SPI5         GPIO_AF5_SPI5
 #define HAL_GPIO_AF5_SPI6         GPIO_AF5_SPI6
+
+// Funcio alternativa AF8
+// -Funcio USART
+#define HAL_GPIO_AF8_USART6       GPIO_AF8_USART6
 
 // Funcio alternativa AF9
 // -Funcio LTDC
@@ -216,19 +205,19 @@ typedef struct {
 // Canvi del estat del pin
 //
 #define halGPIOSetPin(port, pin) \
-	((GPIORegisters*)port)->BSRR = ((uint32_t) 1) << (pin)
+	((GPIO_TypeDef*)port)->BSRR = ((uint32_t) 1) << (pin)
 
 #define halGPIOClearPin(port, pin) \
-	((GPIORegisters*)port)->BSRR = ((uint32_t) 1) << ((pin) + 16)
+	((GPIO_TypeDef*)port)->BSRR = ((uint32_t) 1) << ((pin) + 16)
 
 #define halGPIOTogglePin(port, pin) \
-	((GPIORegisters*)port)->ODR ^= ((uint32_t) 1) << (pin)
+	((GPIO_TypeDef*)port)->ODR ^= ((uint32_t) 1) << (pin)
 #endif
 
 // Lectura i escriptura del pin
 //
 #define halGPIOReadPin(port, pin) \
-	((((GPIORegisters*)port)->IDR & (((uint32_t) 1) << (pin))) != 0)
+	((((GPIO_TypeDef*)port)->IDR & (((uint32_t) 1) << (pin))) != 0)
 
 #define halGPIOWritePin(port, pin, data) \
 	if (1) {                             \
@@ -241,10 +230,10 @@ typedef struct {
 // Lectura i escriptura del port
 //
 #define halGPIOWritePort(port, data) \
-	((GPIORegisters*)port)->ODR = data
+	((GPIO_TypeDef*)port)->ODR = data
 
 #define halGPIOReadPort(port) \
-	((GPIORegisters*)port)->IDR
+	((GPIO_TypeDef*)port)->IDR
 
 
 void halGPIOInitializePins(const GPIOInitializePinInfo* info, uint32_t count);

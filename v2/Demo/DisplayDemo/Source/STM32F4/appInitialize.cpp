@@ -8,7 +8,7 @@
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el rellotge del sistema.
 ///
-static void CLKInitialize() {
+static void initializeCLK() {
 
 	RCC_ClkInitTypeDef clkInit;
 	RCC_OscInitTypeDef oscInit;
@@ -54,7 +54,7 @@ static void CLKInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza la SDRAM
 ///
-static void SDRAMInitialize() {
+static void initializeSDRAM() {
 
 	BSP_SDRAM_Init();
 	BSP_SDRAM_Initialization_sequence(REFRESH_COUNT);
@@ -67,6 +67,7 @@ static void SDRAMInitialize() {
 void appInitialize() {
 
 	halSYSInitialize();
-	CLKInitialize();
-	SDRAMInitialize();
+
+	initializeCLK();
+	initializeSDRAM();
 }

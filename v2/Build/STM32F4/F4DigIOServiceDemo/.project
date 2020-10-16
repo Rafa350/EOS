@@ -229,34 +229,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/OSAL/osalHeap.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalHeap.c</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/OSAL/osalKernel.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalKernel.c</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/OSAL/osalQueue.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalQueue.c</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/OSAL/osalSemaphore.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalSemaphore.c</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/OSAL/osalTask.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTask.c</locationURI>
-		</link>
-		<link>
-			<name>Src/Framework/EOS/OSAL/rtos_hooks.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/Services/eosDigInputService.cpp</name>
@@ -437,6 +412,36 @@
 			<name>Src/Framework/EOS/HAL/STM32/halTMR.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalHeap.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalKernel.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalKernel.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalQueue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalQueue.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalSemaphore.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalSemaphore.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalTask.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTask.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/System/Collections/eosContainer.cpp</name>
