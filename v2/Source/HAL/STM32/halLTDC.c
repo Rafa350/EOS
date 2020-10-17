@@ -15,6 +15,7 @@ void halLTDCInitialize(
 
 	uint32_t tmp;
 
+	// TODO No utilitzar HAL
 	// Configura el rellotge
 	// PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
 	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 192 Mhz
@@ -30,7 +31,8 @@ void halLTDCInitialize(
 
     // Activa el modul LTDC
     //
-    RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;
+    __set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_LTDCEN);
+    __DSB();
 
     // Configure el registre GCR (General Configuration Register)
     // -Polaritat HSYNC, VSYNC, DE i PC
@@ -84,9 +86,9 @@ void halLTDCInitialize(
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el modul LTDC
 ///
-void halLTDCShutdown() {
+void halLTDCDeinitialize() {
 
-    RCC->APB2ENR &= ~RCC_APB2ENR_LTDCEN;
+    __clear_bit_msk(RCC->APB2ENR, RCC_APB2ENR_LTDCEN);
 }
 
 
@@ -293,10 +295,10 @@ void halLTDCLayerSetFrameAddress(
 	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
 
 	if (frameAddr == 0)
-	    layer->CR &= (uint32_t) ~LTDC_LxCR_LEN;
+	    __clear_bit_msk(layer->CR, LTDC_LxCR_LEN);
 	else {
 		layer->CFBAR = (uint32_t) frameAddr;
-		layer->CR |= (uint32_t) LTDC_LxCR_LEN;
+		__set_bit_msk(layer->CR, LTDC_LxCR_LEN);
 	}
 }
 
@@ -313,13 +315,13 @@ void halLTDCLayerUpdate(
 	// Si el LTDC esta inactiu, fa l'actualitzacio inmediata
 	//
     if ((LTDC->GCR & LTDC_GCR_LTDCEN) == 0)
-    	LTDC->SRCR |=  LTDC_SRCR_IMR;
+    	__set_bit_msk(LTDC->SRCR, LTDC_SRCR_IMR);
 
     // En cas contrari, fa l'actualitzacio durant la sincronitzacio
     // vertical, i espera que finalitzi.
     //
     else {
-    	LTDC->SRCR |=  LTDC_SRCR_VBR;
+    	__set_bit_msk(LTDC->SRCR, LTDC_SRCR_VBR);
 		while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
 			continue;
     }

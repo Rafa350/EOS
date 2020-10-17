@@ -37,7 +37,7 @@ void srand(uint32_t r) {
 }
 
 
-uint32_t rand() {
+uint32_t rand(void) {
 
 	const uint64_t a = 1664523;
 	const uint64_t c = 1013904223;
@@ -70,7 +70,7 @@ void DisplayService::onSetup() {
 	//
 #if defined(EOS_STM32F7)
 	//halRNGInitialize();
-#endif    
+#endif
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 	driver = ILI9341LTDCDriver::getInstance();

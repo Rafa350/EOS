@@ -122,21 +122,21 @@
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
-#define INCLUDE_vTaskPrioritySet		1
-#define INCLUDE_uxTaskPriorityGet		1
-#define INCLUDE_vTaskDelete			1
-#define INCLUDE_vTaskCleanUpResources	        1
-#define INCLUDE_vTaskSuspend			1
-#define INCLUDE_vTaskDelayUntil			1
-#define INCLUDE_vTaskDelay			1
-#define INCLUDE_xTaskGetSchedulerState          1
+#define INCLUDE_vTaskPrioritySet		    1
+#define INCLUDE_uxTaskPriorityGet		    1
+#define INCLUDE_vTaskDelete			        1
+#define INCLUDE_vTaskCleanUpResources	    1
+#define INCLUDE_vTaskSuspend			    1
+#define INCLUDE_vTaskDelayUntil			    1
+#define INCLUDE_vTaskDelay			        1
+#define INCLUDE_xTaskGetSchedulerState      1
 
 /* Cortex-M specific definitions. */
 #ifdef __NVIC_PRIO_BITS
 	/* __BVIC_PRIO_BITS will be specified when CMSIS is being used. */
-	#define configPRIO_BITS       		__NVIC_PRIO_BITS
+	#define configPRIO_BITS       		    __NVIC_PRIO_BITS
 #else
-	#define configPRIO_BITS       		4        /* 15 priority levels */
+	#define configPRIO_BITS       		    4        /* 15 priority levels */
 #endif
 
 /* The lowest interrupt priority that can be used in a call to a "set priority"
@@ -167,7 +167,7 @@ standard names. */
 
 /* IMPORTANT: This define MUST be commented when used with STM32Cube firmware,
               to prevent overwriting SysTick_Handler defined within STM32Cube HAL */
-/* #define xPortSysTickHandler SysTick_Handler */
+#define xPortSysTickHandler SysTick_Handler
 
 #endif /* FREERTOS_CONFIG_H */
 

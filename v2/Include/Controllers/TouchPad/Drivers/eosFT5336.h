@@ -5,6 +5,7 @@
 // EOS includes
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
+#include "HAL\halI2C.h"
 
 
 // Adressa I2C
@@ -17,7 +18,7 @@
 #define FT5336_PAD_WIDTH               480
 #endif
 
-// Alçada del pad
+// Alï¿½ada del pad
 #ifndef FT5336_PAD_HEIGHT
 #define FT5336_PAD_HEIGHT              272
 #endif
@@ -251,6 +252,8 @@ namespace eos {
 			int padWidth;
 			int padHeight;
 			TouchPadOrientation orientation;
+			I2CData i2cData;
+			I2CHandler hI2C;
 
 		private:
 			FT5336Driver();

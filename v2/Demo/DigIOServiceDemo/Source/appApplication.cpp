@@ -51,7 +51,7 @@ void MyApplication::onInitialize() {
     tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1;
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
-    tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
+    tmrInfo.prescaler = (halSYSGetTimerClock1Frequency() / 1000000L) - 1; // 1MHz
     tmrInfo.period = (1000 * DigInputService_TimerPeriod) - 1;
 #else
     //#error CPU no soportada
@@ -122,7 +122,7 @@ void MyApplication::onInitialize() {
     tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigOutputService_TimerPeriod) / 64000) - 1;
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
     tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
-    tmrInfo.prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000L) - 1; // 1MHz
+    tmrInfo.prescaler = (halSYSGetTimerClock1Frequency() / 1000000L) - 1; // 1MHz
     tmrInfo.period = (1000 * DigOutputService_TimerPeriod) - 1;
 #else
     //#error CPU no soportada
@@ -190,8 +190,8 @@ void MyApplication::sw1EventHandler(
     const DigInput::EventArgs &args) {
 
     if (sw1->read() == SWITCHES_STATE_ON) {
-        led1->pulse(500);
-        led2->delayedPulse(250, 500);
+        led1->pulse(1000);
+        led2->delayedPulse(500, 500);
 #ifdef EXIST_LEDS_LED3
         led3->delayedPulse(500, 500);
 #endif

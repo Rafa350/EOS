@@ -45,13 +45,16 @@ typedef uint32_t DMA2DOptions;
 
 
 void halDMA2DInitialize();
-void halDMA2DShutdown();
+void halDMA2DDeinitialize();
 
 void halDMA2DConfigureCLUT();
 
 void halDMA2DStartFill(uint32_t dstAddr, uint32_t width, uint32_t height, uint32_t dstPitch, DMA2DOptions options, uint32_t color);
 void halDMA2DStartCopy(uint32_t dstAddr, uint32_t width, uint32_t height, uint32_t dstPitch, DMA2DOptions options, uint32_t srcAddr, uint32_t srcPitch);
 bool halDMA2DWaitForFinish();
+
+void halDMA2DInterruptHandler();
+
 
 #ifdef	__cplusplus
 }

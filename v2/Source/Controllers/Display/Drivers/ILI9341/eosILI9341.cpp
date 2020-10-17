@@ -257,7 +257,7 @@ void ILI9341Driver::setVPixels(
 /// \param x: Posicio X.
 /// \param y: Posicio Y.
 /// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
+/// \param height: Alï¿½ada de la regio.
 /// \param color: Color dels pixels.
 ///
 void ILI9341Driver::setPixels(
@@ -277,7 +277,7 @@ void ILI9341Driver::setPixels(
 /// \param x: Posicio X.
 /// \param y: Posicio Y.
 /// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
+/// \param height: Alï¿½ada de la regio.
 /// \param colors: Color dels pixels.
 ///
 void ILI9341Driver::writePixels(
@@ -302,7 +302,7 @@ void ILI9341Driver::writePixels(
 /// \param x: Posicio X.
 /// \param y: Posicio Y.
 /// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
+/// \param height: Alï¿½ada de la regio.
 /// \params colors: Buffer on deixar els pixels.
 ///
 void ILI9341Driver::readPixels(
@@ -323,11 +323,11 @@ void ILI9341Driver::readPixels(
 
 /// ----------------------------------------------------------------------
 /// \brief Realitza un scroll vertical de la pantalla.
-/// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
+/// \param delta: Numero de lineas a desplaï¿½ar. El signe indica la direccio.
 /// \param x: Posicio x de la regio.
 /// \param y: Posicio y de la regio.
 /// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
+/// \param height: Alï¿½ada de la regio.
 ///
 void ILI9341Driver::vScroll(
     int delta,
@@ -358,12 +358,12 @@ void ILI9341Driver::vScroll(
 
 /// ----------------------------------------------------------------------
 /// \brief Realitza un scroll horitzontal de la pantalla.
-/// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
-/// \param delta: Numero de lineas a desplaçar. El signe indica la direccio.
+/// \param delta: Numero de lineas a desplaï¿½ar. El signe indica la direccio.
+/// \param delta: Numero de lineas a desplaï¿½ar. El signe indica la direccio.
 /// \param x: Posicio x de la regio.
 /// \param y: Posicio y de la regio.
 /// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
+/// \param height: Alï¿½ada de la regio.
 ///
 void ILI9341Driver::hScroll(
     int delta,
@@ -379,7 +379,7 @@ void ILI9341Driver::hScroll(
 /// \brief Refresca la imatge de la pantalla.
 ///
 void ILI9341Driver::refresh() {
-    
+
 }
 
 
@@ -454,7 +454,7 @@ void ILI9341Driver::writeCommands(
 /// \param x: Coordinada X origen.
 /// \param y: Coordinada Y oriden.
 /// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
+/// \param height: Alï¿½ada de la regio.
 ///
 void ILI9341Driver::selectRegion(
     int x,
@@ -537,10 +537,11 @@ void ILI9341Driver::writeRegion(
 
 #if defined(DISPLAY_COLOR_RGB565)
 
-    static uint8_t cc[sizeof(uint16_t) * 240 / 4];
-    static uint16_t _c;
+	static uint8_t cc_buffer[sizeof(uint16_t) * DISPLAY_SCREEN_WIDTH] __attribute__ ((aligned (__BIGGEST_ALIGNMENT__)));
+	static uint16_t _c;
     static int16_t _ccCapacity = 0;
 
+	uint8_t* cc = (uint8_t*) cc_buffer;  // Fer-ho aixi si no no va
     uint16_t c = color.toRGB565();
 	int16_t ccCapacity = count < (int32_t)(sizeof(cc) / sizeof(cc[0])) ? count : (int32_t)(sizeof(cc) / sizeof(cc[0]));
 	if (c != _c || _ccCapacity < ccCapacity) {

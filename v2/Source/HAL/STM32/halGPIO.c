@@ -33,57 +33,57 @@ static void enableDeviceClock(
 
 	switch ((uint32_t) device) {
 		case GPIOA_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
 			__DSB();
 			break;
 
 		case GPIOB_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
 			__DSB();
 			break;
 
 		case GPIOC_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
 			__DSB();
 			break;
 
 		case GPIOD_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
 			__DSB();
 			break;
 
 		case GPIOE_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
 			__DSB();
 			break;
 
 		case GPIOF_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
 			__DSB();
 			break;
 
 		case GPIOG_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
 			__DSB();
 			break;
 
 		case GPIOH_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
 			__DSB();
 			break;
 
 		case GPIOI_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
 			__DSB();
 			break;
 
 		case GPIOJ_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN);
 			__DSB();
 			break;
 
 		case GPIOK_BASE:
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
+			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
 			__DSB();
 			break;
 	}
@@ -299,8 +299,8 @@ inline void halGPIOClearPin(
 	GPIOPort port,
 	GPIOPin pin) {
 
-	eosAssert(IS_GPIO_ALL_INSTANCE((GPIORegisters*)port));
-	eosAssert((pin >= 0) && (pin <= 15));
+	__VERIFY_PORT(port);
+	__VERIFY_PIN(pin);
 
 	GPIO_TypeDef* device = getDevice(port);
 	device->BSRR = 1u << (pin + 16);
@@ -319,8 +319,8 @@ inline void halGPIOSetPin(
 	GPIOPort port,
 	GPIOPin pin) {
 
-	eosAssert(IS_GPIO_ALL_INSTANCE(port));
-	eosAssert((pin >= 0) && (pin <= 15));
+	__VERIFY_PORT(port);
+	__VERIFY_PIN(pin);
 
 	GPIO_TypeDef* device = getDevice(port);
 	device->BSRR = 1u << pin;
@@ -338,8 +338,8 @@ inline void halGPIOTogglePin(
 	GPIOPort port,
 	GPIOPin pin) {
 
-	eosAssert(IS_GPIO_ALL_INSTANCE(port));
-	eosAssert((pin >= 0) && (pin <= 15));
+	__VERIFY_PORT(port);
+	__VERIFY_PIN(pin);
 
 	GPIO_TypeDef* device = getDevice(p->port);
 	device->ODR ^= 1u << pin;

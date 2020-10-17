@@ -7,29 +7,42 @@
 #include "eos.h"
 
 
+// Identificador del canal I2C
+#define HAL_I2C_CHANNEL_1         0
+#define HAL_I2C_CHANNEL_2         1
+#define HAL_I2C_CHANNEL_3         2
+#define HAL_I2C_CHANNEL_4         3
+#define HAL_I2C_CHANNEL_NONE      0xFFFFFFFF
+
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-typedef uint8_t I2CModule;
+
+typedef uint32_t I2CChannel;
+typedef uint32_t I2COptions;
+typedef struct __I2CData* I2CHandler;
+typedef void (*I2CInterruptFunction)(I2CHandler handler, void *params);
+
+struct __I2CData {
+	I2C_TypeDef* device;
+	I2C_HandleTypeDef handle;
+	I2CInterruptFunction isrFunction;
+	void* isrParams;
+};
+typedef struct __I2CData I2CData;
 
 typedef struct {
-	I2CModule module;
+	I2CChannel channel;
+	I2COptions options;
 } I2CMasterInitializeInfo;
 
 
-#define HAL_I2C_I2C1              ((I2CModule) 0)
-#define HAL_I2C_I2C2              ((I2CModule) 1)
-#define HAL_I2C_I2C3              ((I2CModule) 2)
-#define HAL_I2C_I2C4              ((I2CModule) 3)
+I2CHandler halI2CMasterInitialize(I2CData* data, const I2CMasterInitializeInfo *info);
 
-#define HAL_I2C_ID_MAX            4
-
-
-void halI2CMasterInitialize(const I2CMasterInitializeInfo *info);
-
-void halI2CMasterWriteMultiple(uint8_t id, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
-void halI2CMasterReadMultiple(uint8_t id, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
+void halI2CMasterWriteMultiple(I2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
+void halI2CMasterReadMultiple(I2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
 
 
 #ifdef	__cplusplus

@@ -19,9 +19,9 @@ void Debug::initialize() {
 
 void Debug::print(const char *msg) {
 
-	//for (const char *p = msg; *p != '\0'; p++)
-    //  	ITM_SendChar(*p);
-    
+	for (const char *p = msg; *p != '\0'; p++)
+      	ITM_SendChar(*p);
+
     while (1)
         continue;
 }

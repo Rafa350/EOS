@@ -184,6 +184,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f4xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
+			<name>src/App/STM32F4/stm32f7xx_it.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Source/STM32F4/stm32f7xx_it.c</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -792,6 +797,11 @@
 			<name>src/Framework/EOS/System/Graphics/eosTransformation.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosTransformation.cpp</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosILI9341.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341Defs.h</name>

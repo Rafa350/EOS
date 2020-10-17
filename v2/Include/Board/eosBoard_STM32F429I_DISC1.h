@@ -119,8 +119,8 @@
 
 // Parametres del controlador
 //
-#define DISPLAY_DRV_ILI9341LTDC        // Driver ILI9341-RGB
-//#define DISPLAY_DRV_ILI9341            // Driver ILI9341
+//#define DISPLAY_DRV_ILI9341LTDC        // Driver ILI9341-RGB
+#define DISPLAY_DRV_ILI9341            // Driver ILI9341
 
 
 // -----------------------------------------------------------------------

@@ -43,7 +43,7 @@ typedef struct {
 
 
 void halLTDCInitialize(const LTDCInitializeInfo *pInfo);
-void halLTDCShutdown();
+void halLTDCDeinitialize();
 
 void halLTDCSetBackgroundColor(uint32_t rgb);
 
@@ -58,8 +58,8 @@ void halLTDCLayerUpdate(LTDCLayerNum layerNum);
 int halLTDCGetPixelOffset(LTDCLayerNum layerNum, int x, int y);
 uint8_t halLTDCGetPixelSize(LTDCPixelFormat pixelFormat);
 
-#define halLTDCEnable()      LTDC->GCR |= LTDC_GCR_LTDCEN
-#define halLTDCDisable()     LTDC->GCR &= ~LTDC_GCR_LTDCEN
+#define halLTDCEnable()      __set_bit_msk(LTDC->GCR, LTDC_GCR_LTDCEN)
+#define halLTDCDisable()     __clear_bit_msk(LTDC->GCR, LTDC_GCR_LTDCEN)
 
 
 #ifdef	__cplusplus

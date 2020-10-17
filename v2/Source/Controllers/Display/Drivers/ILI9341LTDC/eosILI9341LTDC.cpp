@@ -359,20 +359,20 @@ void ILI9341LTDCDriver::lcdInitialize() {
 	static const GPIOInitializePinInfo gpioInit[] = {
 #ifdef DISPLAY_RST_PIN
 		{ DISPLAY_RST_PORT,    DISPLAY_RST_PIN,
-			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0            },
+			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0 },
 #endif
 		{ DISPLAY_CS_PORT,     DISPLAY_CS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, 0         },
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_SET, 0 },
 		{ DISPLAY_RS_PORT,     DISPLAY_RS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0         },
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_CLR, 0 },
 		{ DISPLAY_CLK_PORT,    DISPLAY_CLK_PIN,
-			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_CLK_AF },
+			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_CLK_AF },
 #ifdef DISPLAY_MISO_PORT
 		{ DISPLAY_MISO_PORT,   DISPLAY_MISO_PIN,
-			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_MISO_AF},
+			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MISO_AF},
 #endif
 		{ DISPLAY_MOSI_PORT,   DISPLAY_MOSI_PIN,
-			HAL_GPIO_MODE_ALT_PP,                   DISPLAY_MOSI_AF}
+			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF}
 	};
 
 	static const SPIInitializeInfo spiInit = {
@@ -423,13 +423,13 @@ void ILI9341LTDCDriver::lcdClose() {
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu un byte de comanda en el controlador
-/// \param data: El byte de comanda.
+/// \param cmd: El byte de comanda.
 ///
 void ILI9341LTDCDriver::lcdWriteCommand(
-	uint8_t d) {
+	uint8_t cmd) {
 
 	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(hSpi, &d, sizeof(d));
+	halSPISendBuffer(hSpi, &cmd, sizeof(cmd));
 }
 
 
@@ -438,10 +438,10 @@ void ILI9341LTDCDriver::lcdWriteCommand(
 /// \param data: El byte de dades.
 ///
 void ILI9341LTDCDriver::lcdWriteData(
-	uint8_t d) {
+	uint8_t data) {
 
 	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(hSpi, &d, sizeof(d));
+	halSPISendBuffer(hSpi, &data, sizeof(data));
 }
 
 

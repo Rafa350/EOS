@@ -6,6 +6,7 @@
 
 #define __VERIFY_CHANNEL(channel) eosAssert((channel >= HAL_UART_CHANNEL_1) && (channel <= HAL_UART_CHANNEL_8))
 #define __VERIFY_DEVICE(device)   eosAssert(IS_UART_INSTANCE(device))
+#define __VERIFY_HANDLER(handler) eosAssert(handler != NULL)
 
 
 /// ----------------------------------------------------------------------
@@ -44,42 +45,42 @@ static void enableDeviceClock(
 
     switch ((uint32_t) device) {
     	case USART1_BASE:
-    		RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+    		__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_USART1EN);
 			__DSB();
 			break;
 
     	case USART2_BASE:
-			RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_USART2EN);
 			__DSB();
     		break;
 
     	case USART3_BASE:
-    		RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+    		__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_USART3EN);
 			__DSB();
     		break;
 
     	case UART4_BASE:
-    		RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+    		__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_UART4EN);
 			__DSB();
     		break;
 
     	case UART5_BASE:
-    		RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+    		__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_UART5EN);
 			__DSB();
     		break;
 
     	case USART6_BASE:
-    		RCC->APB2ENR |= RCC_APB2ENR_USART6EN;
+    		__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_USART6EN);
 			__DSB();
 			break;
 
     	case UART7_BASE:
-    		RCC->APB1ENR |= RCC_APB1ENR_UART7EN;
+    		__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_UART7EN);
 			__DSB();
 			break;
 
     	case UART8_BASE:
-    		RCC->APB1ENR |= RCC_APB1ENR_UART8EN;
+    		__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_UART8EN);
 			__DSB();
 			break;
     }
@@ -157,22 +158,17 @@ static void setupDevice(
 
 	// Desactiva el modul, per poder configurar-lo
     //
-    device->CR1 &= ~USART_CR1_UE;
+    __clear_bit_msk(device->CR1, USART_CR1_UE);
 
-    // Configura els valors inicials
-    //
-    device->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
-    device->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
-
-    // Configura el oversampling
+    // Configura el registre CR1 (Control Register 1)
     //
     if ((options & HAL_UART_OVERSAMPLING_mask) == HAL_UART_OVERSAMPLING_8)
-    	device->CR1 |= USART_CR1_OVER8;
+    	__set_bit_msk(device->CR1, USART_CR1_OVER8);
     else
-    	device->CR1 &= ~USART_CR1_OVER8;
+    	__clear_bit_msk(device->CR1, USART_CR1_OVER8);
 
-    // Configura la longitut de paraula
-    //
+    device->CR1 |= USART_CR1_RE | USART_CR1_TE;
+
     switch (options & HAL_UART_LEN_mask) {
     	case HAL_UART_LEN_7:
     		device->CR1 |= USART_CR1_M1;
@@ -191,8 +187,27 @@ static void setupDevice(
     		break;
     }
 
-    // Configura els bits de parada
+    switch (options & HAL_UART_PARITY_mask) {
+    	default:
+    	case HAL_UART_PARITY_NONE:
+    		device->CR1 &= ~USART_CR1_PCE;
+    		break;
+
+    	case HAL_UART_PARITY_EVEN:
+    		device->CR1 |= USART_CR1_PCE;
+    		device->CR1 &= ~USART_CR1_PS;
+    		break;
+
+    	case HAL_UART_PARITY_ODD:
+    		device->CR1 |= USART_CR1_PCE;
+    		device->CR1 |= USART_CR1_PS;
+    		break;
+    }
+
+    // Confgigura el registre CR2 (Control Register 2)
     //
+    device->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
+
     switch (options & HAL_UART_STOP_mask) {
     	case HAL_UART_STOP_05:
     		device->CR2 &= ~USART_CR2_STOP_1;
@@ -216,26 +231,11 @@ static void setupDevice(
     		break;
     }
 
-    // Configura la paritat
+    // Configura el registre CR3 (Control Register 3)
     //
-    switch (options & HAL_UART_PARITY_mask) {
-    	default:
-    	case HAL_UART_PARITY_NONE:
-    		device->CR1 &= ~USART_CR1_PCE;
-    		break;
+    device->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
 
-    	case HAL_UART_PARITY_EVEN:
-    		device->CR1 |= USART_CR1_PCE;
-    		device->CR1 &= ~USART_CR1_PS;
-    		break;
-
-    	case HAL_UART_PARITY_ODD:
-    		device->CR1 |= USART_CR1_PCE;
-    		device->CR1 |= USART_CR1_PS;
-    		break;
-    }
-
-    // Configura la velocitat de transmissio
+    // Configura el regisre BRR (Baud Rate Register)
     //
     switch (options & HAL_UART_BAUD_mask) {
     	case HAL_UART_BAUD_1200:
@@ -315,13 +315,9 @@ static void setupDevice(
     else
     	device->BRR = div;
 
-    // Configura el modus de comunicacio
-    //
-    device->CR1 |= USART_CR1_RE | USART_CR1_TE;
-
     // Activa el modul
     //
-    device->CR1 |= USART_CR1_UE;
+    __set_bit_msk(device->CR1, USART_CR1_UE);
 }
 
 
@@ -343,8 +339,8 @@ UARTHandler halUARTInitialize(
 
     uint32_t options = info->options;
     if ((options & HAL_UART_CLOCK_mask) == HAL_UART_CLOCK_AUTO) {
-    	options &= ~HAL_UART_CLOCK_mask;
-    	options |= getClockSourceOption(device);
+    	__clear_bit_msk(options, HAL_UART_CLOCK_mask);
+    	__set_bit_msk(options, getClockSourceOption(device));
     }
     setupDevice(device, options, info->baud);
 
@@ -364,9 +360,9 @@ UARTHandler halUARTInitialize(
 void halUARTDeinitialize(
 	UARTHandler handler) {
 
-	eosAssert(handler != NULL);
+	__VERIFY_HANDLER(handler);
 
-	handler->device->CR1 &= ~USART_CR1_UE;
+	__clear_bit_msk(handler->device->CR1, USART_CR1_UE);
 }
 
 
@@ -382,11 +378,14 @@ uint32_t halUARTSend(
 	const void* data,
 	uint32_t length) {
 
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
 	USART_TypeDef* device = handler->device;
 
 	// Habilita la transmissio
 	//
-	device->CR1 |= USART_CR1_TE;
+	__set_bit_msk(device->CR1, USART_CR1_TE);
 
 	// Transmiteix el contingut del buffer
 	//
@@ -415,7 +414,7 @@ uint32_t halUARTSend(
 
 	// Desabilita la transmissio
 	//
-	device->CR1 &= ~USART_CR1_TE;
+	__clear_bit_msk(device->CR1, USART_CR1_TE);
 
 	return count;
 }
@@ -432,7 +431,7 @@ void halUARTSetInterruptFunction(
 	UARTInterruptFunction function,
 	void* params) {
 
-	eosAssert(handler != NULL);
+	__VERIFY_HANDLER(handler);
 
 	handler->isrFunction = function;
 	handler->isrParams = params;
@@ -448,33 +447,33 @@ void halUARTEnableInterrupts(
 	UARTHandler handler,
 	uint32_t events) {
 
-	eosAssert(handler != NULL);
+	__VERIFY_HANDLER(handler);
 
 	USART_TypeDef* device = handler->device;
 
 	if ((events & HAL_UART_EVENT_CTS) == HAL_UART_EVENT_CTS)
-		device->CR3 |= USART_CR3_CTSIE;
+		__set_bit_msk(device->CR3, USART_CR3_CTSIE);
 
 	if ((events & HAL_UART_EVENT_LBD) == HAL_UART_EVENT_LBD)
-		device->CR2 |= USART_CR2_LBDIE;
+		__set_bit_msk(device->CR2, USART_CR2_LBDIE);
 
 	if ((events & HAL_UART_EVENT_IDLE) == HAL_UART_EVENT_IDLE)
-		device->CR1 |= USART_CR1_IDLEIE;
+		__set_bit_msk(device->CR1, USART_CR1_IDLEIE);
 
 	if ((events & HAL_UART_EVENT_TXE) == HAL_UART_EVENT_TXE)
-		device->CR1 |= USART_CR1_TXEIE;
+		__set_bit_msk(device->CR1, USART_CR1_TXEIE);
 
 	if ((events & HAL_UART_EVENT_TC) == HAL_UART_EVENT_TC)
-		device->CR1 |= USART_CR1_TCIE;
+		__set_bit_msk(device->CR1, USART_CR1_TCIE);
 
 	if ((events & HAL_UART_EVENT_RXNE) == HAL_UART_EVENT_RXNE)
-		device->CR1 |= USART_CR1_RXNEIE;
+		__set_bit_msk(device->CR1, USART_CR1_RXNEIE);
 
 	if ((events & HAL_UART_EVENT_PE) == HAL_UART_EVENT_PE)
-		device->CR1 |= USART_CR1_PEIE;
+		__set_bit_msk(device->CR1, USART_CR1_PEIE);
 
 	if ((events & HAL_UART_EVENT_ERR) == HAL_UART_EVENT_ERR)
-		device->CR3 |= USART_CR3_EIE;
+		__set_bit_msk(device->CR3, USART_CR3_EIE);
 }
 
 
@@ -487,33 +486,33 @@ uint32_t halUARTDisableInterrupts(
 	UARTHandler handler,
 	uint32_t events) {
 
-	eosAssert(handler != NULL);
+	__VERIFY_HANDLER(handler);
 
 	USART_TypeDef* device = handler->device;
 
 	if ((events & HAL_UART_EVENT_CTS) == HAL_UART_EVENT_CTS)
-		device->CR3 &= ~USART_CR3_CTSIE;
+		__clear_bit_msk(device->CR3, USART_CR3_CTSIE);
 
 	if ((events & HAL_UART_EVENT_LBD) == HAL_UART_EVENT_LBD)
-		device->CR2 &= ~USART_CR2_LBDIE;
+		__clear_bit_msk(device->CR2, USART_CR2_LBDIE);
 
 	if ((events & HAL_UART_EVENT_IDLE) == HAL_UART_EVENT_IDLE)
-		device->CR1 &= ~USART_CR1_IDLEIE;
+		__clear_bit_msk(device->CR1, USART_CR1_IDLEIE);
 
 	if ((events & HAL_UART_EVENT_TXE) == HAL_UART_EVENT_TXE)
-		device->CR1 &= ~USART_CR1_TXEIE;
+		__clear_bit_msk(device->CR1, USART_CR1_TXEIE);
 
 	if ((events & HAL_UART_EVENT_TC) == HAL_UART_EVENT_TC)
-		device->CR1 &= ~USART_CR1_TCIE;
+		__clear_bit_msk(device->CR1, USART_CR1_TCIE);
 
 	if ((events & HAL_UART_EVENT_RXNE) == HAL_UART_EVENT_RXNE)
-		device->CR1 &= ~USART_CR1_RXNEIE;
+		__clear_bit_msk(device->CR1, USART_CR1_RXNEIE);
 
 	if ((events & HAL_UART_EVENT_PE) == HAL_UART_EVENT_PE)
-		device->CR1 &= ~USART_CR1_PEIE;
+		__clear_bit_msk(device->CR1, USART_CR1_PEIE);
 
 	if ((events & HAL_UART_EVENT_ERR) == HAL_UART_EVENT_ERR)
-		device->CR3 &= ~USART_CR3_EIE;
+		__clear_bit_msk(device->CR3, USART_CR3_EIE);
 
 	return 0;
 }
@@ -526,7 +525,7 @@ uint32_t halUARTDisableInterrupts(
 void halUARTInterruptHandler(
 	UARTHandler handler) {
 
-	eosAssert(handler != NULL);
+	__VERIFY_HANDLER(handler);
 
 	if (handler->isrFunction != NULL)
 		handler->isrFunction(handler, handler->isrParams);

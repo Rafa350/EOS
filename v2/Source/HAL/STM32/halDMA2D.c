@@ -9,16 +9,17 @@ void halDMA2DInitialize() {
 
 	// Activa el modul DMA2D
 	//
-    RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN;
+    __set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_DMA2DEN);
+    __DSB();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el modul.
 ///
-void halDMA2DShutdown() {
+void halDMA2DDeinitialize() {
 
-    RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA2DEN;
+    __clear_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_DMA2DEN);
 }
 
 
@@ -69,7 +70,7 @@ void halDMA2DStartFill(
 
 	// Inicia la transferencia
 	//
-	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;
+	__set_bit_msk(DMA2D->CR, DMA2D_CR_START);
 }
 
 
@@ -142,7 +143,7 @@ void halDMA2DStartCopy(
 
 	// Inicia la transferencia
 	//
-	DMA2D->CR |= 1 << DMA2D_CR_START_Pos;
+	__set_bit_msk(DMA2D->CR, DMA2D_CR_START);
 }
 
 
@@ -179,7 +180,7 @@ bool halDMA2DWaitForFinish() {
 
 	// Borra el flag de transferencia complerta
 	//
-	DMA2D->IFCR |= 1 << DMA2D_IFCR_CTCIF_Pos;
+	__set_bit_msk(DMA2D->IFCR, DMA2D_IFCR_CTCIF);
 
 	// Retorna OK
 	//
@@ -187,9 +188,18 @@ bool halDMA2DWaitForFinish() {
 }
 
 
+/// ---------------------------------------------------------------------
+/// \brief    Procesa les interrupcionsdel modul.
+///
+void halDMA2DInterruptHandler() {
+
+}
+
+
 /// ----------------------------------------------------------------------
-/// \brief    Procesa les interrupcions
+/// \brief    Captura la interrupcio del modul
 ///
 void DMA2D_IRQHandler() {
 
+	halDMA2DInterruptHandler();
 }

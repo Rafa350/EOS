@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "hal/STM32/halSPI.h"
+#include "HAL/STM32/halGPIO.h"
 #if defined(EOS_STM32F4)
 #include "stm32f4xx_hal.h"
 #elif defined(EOS_STM32F7)
@@ -9,7 +10,6 @@
 #error Hardware no soportado
 #endif
 
-#include "HAL/halGPIO.h"
 
 #define __VERIFY_CHANNEL(chanel)  eosAssert((channel >= HAL_SPI_CHANNEL_1) && (channel <= HAL_SPI_CHANNEL_6))
 #define __VERIFY_HANDLER(handler) eosAssert(handler != NULL)
@@ -65,7 +65,7 @@ static void enableDeviceClock(
 			break;
 
 		case SPI5_BASE:
-			RCC->APB2ENR |= RCC_APB2ENR_SPI5EN;
+			__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI5EN);
 			__DSB();
 			break;
 
@@ -107,7 +107,7 @@ static void disableDeviceClock(
 			break;
 
 		case SPI6_BASE:
-			RCC->APB2ENR &= ~RCC_APB2ENR_SPI5EN;
+			__clear_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI5EN);
 			break;
 	}
 }
@@ -124,6 +124,7 @@ static void setupDevice(
 	SPI_HandleTypeDef* handle,
 	SPIOptions options) {
 
+	eosAssert(handle != NULL);
 	__VERIFY_DEVICE(device);
 
 	static uint32_t const baudRateTbl[] = {
@@ -155,7 +156,7 @@ static void setupDevice(
 
 	// Activa el modul
 	//
-	device->CR1 |= SPI_CR1_SPE;
+	__set_bit_msk(device->CR1, SPI_CR1_SPE);
 }
 
 
@@ -199,7 +200,7 @@ void halSPIDeinitialize(
 
 	// Desactiva les comunucacions
 	//
-	device->CR1 &= ~SPI_CR1_SPE;
+	__clear_bit_msk(device->CR1, ~SPI_CR1_SPE);
 
 	// Desactiva el dicpositiu
 	//
@@ -223,6 +224,7 @@ void halSPISetInterruptFunction(
 	handler->isrFunction = function;
 	handler->isrParams = params;
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Envia un bloc de dades.

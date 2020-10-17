@@ -17,6 +17,12 @@
 #define LEDS_STATE_ON             1
 #define LEDS_STATE_OFF            0
 
+#ifdef EXIST_LEDS_LED1
+#define LEDS_Led1Initialize()      halGPIOInitializePin(LEDS_LED1_PORT, LEDS_LED1_PIN, HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE)
+#define LEDS_Led1On()              halGPIOSetPin(LEDS_LED1_PORT, LEDS_LED1_PIN)
+#define LEDS_Led1Toggle()          halGPIOTogglePin(LEDS_LED1_PORT, LEDS_LED1_PIN)
+#endif
+
 
 // -----------------------------------------------------------------------
 // Switches
@@ -449,7 +455,7 @@
 #define TOUCHPAD_INT_SUBPRIORITY    HAL_INT_SUBPRIORITY_0
 
 // Modul I2C de comunicacions
-#define TOUCHPAD_I2C_MODULE         HAL_I2C_I2C3
+#define TOUCHPAD_I2C_CHANNEL        HAL_I2C_CHANNEL_3
 
 #endif // USE_TOUCHPAD
 

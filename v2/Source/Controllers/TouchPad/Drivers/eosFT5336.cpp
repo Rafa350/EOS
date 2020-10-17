@@ -273,17 +273,17 @@ void FT5336Driver::enableInt() {
 ///
 void FT5336Driver::disableInt() {
 
-	  uint8_t regValue = 0;
-	  regValue = (FT5336_G_MODE_INTERRUPT_POLLING & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
+	uint8_t regValue = 0;
+	regValue = (FT5336_G_MODE_INTERRUPT_POLLING & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
 
-	  // Set interrupt polling mode in FT5336_GMODE_REG
-	  //
-	  ioWrite(FT5336_GMODE_REG, regValue);
+	// Set interrupt polling mode in FT5336_GMODE_REG
+	//
+	ioWrite(FT5336_GMODE_REG, regValue);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Borra la intrrupcio generada
+/// \brief Borra la interrupcio generada
 ///
 void FT5336Driver::clearInt() {
 
@@ -295,7 +295,7 @@ void FT5336Driver::clearInt() {
 ///
 void FT5336Driver::ioInit() {
 
-	static const GPIOInitializePinInfo gpioInfo[] = {
+	static GPIOInitializePinInfo const gpioInfo[] = {
 #ifdef TOUCHPAD_INT_PORT
 		{TOUCHPAD_INT_PORT, TOUCHPAD_INT_PIN, HAL_GPIO_MODE_INPUT | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_NONE, 0},
 #endif
@@ -304,8 +304,8 @@ void FT5336Driver::ioInit() {
 	};
 
 #ifdef TOUCHPAD_INT_PORT
-	static const EXTIInitializePinInfo extiInfo[] = {
-		{TOUCHPAD_INT_PORT, TOUCHPAD_INT_PIN,  HAL_EXTI_MODE_INT | HAL_EXTI_TRIGGER_FALLING}
+	static EXTIInitializePinInfo const extiInfo[] = {
+		{TOUCHPAD_INT_PORT, TOUCHPAD_INT_PIN, HAL_EXTI_MODE_INT | HAL_EXTI_TRIGGER_RISING}
 	};
 #endif
 
@@ -318,8 +318,8 @@ void FT5336Driver::ioInit() {
 #endif
 
 	I2CMasterInitializeInfo i2cInfo;
-	i2cInfo.module = TOUCHPAD_I2C_MODULE;
-	halI2CMasterInitialize(&i2cInfo);
+	i2cInfo.channel = TOUCHPAD_I2C_CHANNEL;
+	hI2C = halI2CMasterInitialize(&i2cData, &i2cInfo);
 }
 
 
@@ -333,7 +333,10 @@ void FT5336Driver::ioWrite(
 	uint8_t reg,
 	uint8_t value) {
 
-	halI2CMasterWriteMultiple(TOUCHPAD_I2C_MODULE, addr, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT,(uint8_t*)&value, 1);
+	uint8_t buffer[1];
+
+	buffer[0] = value;
+	halI2CMasterWriteMultiple(hI2C, addr, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT, buffer, sizeof(buffer));
 }
 
 
@@ -346,11 +349,11 @@ void FT5336Driver::ioWrite(
 uint8_t FT5336Driver::ioRead(
 	uint8_t reg) {
 
-	uint8_t value = 0;
+	uint8_t buffer[1];
 
-	halI2CMasterReadMultiple(TOUCHPAD_I2C_MODULE, addr, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&value, 1);
+	halI2CMasterReadMultiple(hI2C, addr, reg, I2C_MEMADD_SIZE_8BIT, buffer, sizeof(buffer));
 
-	return value;
+	return buffer[0];
 }
 
 

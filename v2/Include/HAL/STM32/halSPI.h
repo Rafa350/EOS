@@ -7,7 +7,7 @@
 #include "eos.h"
 
 
-// Identificador del SPI
+// Identificador del canal SPI
 #define HAL_SPI_CHANNEL_1	      0
 #define HAL_SPI_CHANNEL_2         1
 #define HAL_SPI_CHANNEL_3         2
@@ -95,7 +95,7 @@ extern "C" {
 typedef uint32_t SPIChannel;
 typedef uint32_t SPIOptions;
 typedef struct __SPIData* SPIHandler;
-typedef void (*SPIInterruptFunction)(SPIHandler, void *params);
+typedef void (*SPIInterruptFunction)(SPIHandler handler, void *params);
 
 struct __SPIData {
 	SPI_TypeDef* device;

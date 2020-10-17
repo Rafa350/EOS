@@ -70,4 +70,6 @@ void appInitialize() {
 
 	initializeCLK();
 	initializeSDRAM();
+
+	__HAL_FREEZE_TIM6_DBGMCU();
 }

@@ -28,7 +28,7 @@ MyApplication::MyApplication():
 	Application(),
 	buttonEventCallback(this, &MyApplication::buttonEventHandler) {
 
-	ledService = new LedService(this);
+	//ledService = new LedService(this);
 	guiService = new GuiService(this);
 }
 

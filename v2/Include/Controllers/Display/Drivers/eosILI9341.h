@@ -60,7 +60,7 @@ namespace eos {
             static void lcdClose();
             static void lcdWriteCommand(uint8_t cmd);
             static void lcdWriteData(uint8_t data);
-            static void lcdWriteData(uint8_t *data, int size);
+            static void lcdWriteData(uint8_t *data, int count);
             static uint8_t lcdReadData();
     };
 }

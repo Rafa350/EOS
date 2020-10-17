@@ -247,11 +247,14 @@ void DigOutputService::onInitialize() {
     //
     Service::onInitialize();
 
-    // Activa el temporitzador.
+    // Habilita les interrupcions del temporitzador.
     //
+    halTMRSetInterruptFunction(hTimer, tmrInterruptFunction, this);
     __halTMRClearInterruptFlags(hTimer);
     __halTMREnableInterrupts(hTimer);
-    halTMRSetInterruptFunction(hTimer, tmrInterruptFunction, this);
+
+    // Activa el temporitzador.
+    //
     halTMRStartTimer(hTimer);
 }
 
@@ -264,6 +267,9 @@ void DigOutputService::onTerminate() {
     // Desactiva el temporitzador
     //
     halTMRStopTimer(hTimer);
+
+    // Desabilita les interrupcions del temporitzador
+    //
     __halTMRDisableInterrupts(hTimer);
 
     // Finalitza el servei base
