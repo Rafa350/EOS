@@ -382,11 +382,20 @@ uint8_t halLTDCGetPixelSize(
 }
 
 
+/// ---------------------------------------------------------------------
+/// \brief    Procesa les interrupcions del dispositiu.
+///
+void halLTDCInterruptHandler() {
+
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les interrupcions.
 ///
 void LTDC_IRQHandler() {
 
+	halLTDCInterruptHandler();
 }
 
 
@@ -395,4 +404,5 @@ void LTDC_IRQHandler() {
 ///
 void LTDC_ER_IRQHandler() {
 
+	halLTDCInterruptHandler();
 }

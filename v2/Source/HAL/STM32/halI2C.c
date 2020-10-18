@@ -92,6 +92,7 @@ static void setupDevice(
 	I2C_HandleTypeDef* handle,
 	I2COptions options) {
 
+	eosAssert(handle != NULL);
 	__VERIFY_DEVICE(device);
 
 	// TODO : Fer-ho be.
@@ -111,7 +112,6 @@ static void setupDevice(
     handle->Init.NoStretchMode    = I2C_NOSTRETCH_DISABLE;
 
 	HAL_I2C_Init(handle);
-	__set_bit_msk(device->CR1, I2C_CR1_PE);
 }
 
 
@@ -135,10 +135,19 @@ I2CHandler halI2CMasterInitialize(
 
 	I2CHandler handler = data;
 	handler->device = device;
-    handler->isrFunction = NULL;
-    handler->isrParams = NULL;
 
-	return handler;
+	if (__check_bit_msk(info->options, HAL_I2C_INT_ENABLE)) {
+		handler->isrFunction = info->isrFunction;
+		handler->isrParams = info->isrParams;
+	}
+	else {
+		handler->isrFunction = NULL;
+		handler->isrParams = NULL;
+	}
+
+    halI2CEnable(handler);
+
+    return handler;
 }
 
 
@@ -150,6 +159,34 @@ void halI2CDeinitialize(
 	I2CHandler handler) {
 
 	__VERIFY_HANDLER(handler);
+
+	halI2CDisable(handler);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Activa el dispositiu.
+/// \param    handler: Handler del dispositiu.
+///
+void halI2CEnable(
+	I2CHandler handler) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
+	__set_bit_msk(handler->device->CR1, I2C_CR1_PE);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el dispositiu.
+/// \param    handler: Handler del dispositiu.
+///
+void halI2CDisable(
+	I2CHandler handler) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
 
 	__clear_bit_msk(handler->device->CR1, I2C_CR1_PE);
 }

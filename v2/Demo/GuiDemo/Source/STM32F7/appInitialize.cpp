@@ -38,7 +38,7 @@ static void initializeCLK() {
 	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
 	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_7);
 
-	// Configura el rellotge pel I2C-3 del TouchPad
+	// Configura el rellotge pel I2Cx
 	//
     pclkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1 | RCC_PERIPHCLK_I2C2 | RCC_PERIPHCLK_I2C3 | RCC_PERIPHCLK_I2C4;
 	pclkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
@@ -56,13 +56,19 @@ static void initializeSDRAM() {
 }
 
 
+static void enableCache() {
+
+    SCB_EnableICache();
+    SCB_EnableDCache();
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el hardware del sistema.
 ///
 void appInitialize() {
 
-    SCB_EnableICache();
-    SCB_EnableDCache();
+	enableCache();
 
     halSYSInitialize();
 

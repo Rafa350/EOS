@@ -36,7 +36,7 @@ void TouchPadService::onInitialize() {
     touchDriver->initialize();
     touchDriver->setOrientation(TouchPadOrientation::rotate90);
 
-    halEXTISetInterruptFunction(TOUCHPAD_EXTI_LINE, interruptHandler, this);
+    halEXTISetInterruptFunction(TOUCHPAD_INT_EXTI_LINE, interruptHandler, this);
 }
 
 

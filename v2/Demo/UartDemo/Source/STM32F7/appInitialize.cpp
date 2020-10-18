@@ -44,13 +44,19 @@ static void initializeSDRam() {
 }
 
 
+static void enableCache() {
+
+    SCB_EnableICache();
+    SCB_EnableDCache();
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el hardware del sistema.
 ///
 void appInitialize() {
 
-    SCB_EnableICache();
-    SCB_EnableDCache();
+	enableCache();
 
     halSYSInitialize();
 
@@ -58,5 +64,4 @@ void appInitialize() {
 	initializeSDRam();
 
 	__HAL_FREEZE_TIM6_DBGMCU();
-
 }

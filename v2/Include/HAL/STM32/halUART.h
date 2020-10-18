@@ -146,7 +146,10 @@ typedef struct {
 UARTHandler halUARTInitialize(UARTData* data, const UARTInitializeInfo *info);
 void halUARTDeinitialize(UARTHandler handler);
 
+void halUARTEnable(UARTHandler handler);
+void halUARTDisable(UARTHandler handler);
 uint32_t halUARTSend(UARTHandler handler, const void* data, uint32_t length);
+uint32_t halUARTReceive(UARTHandler handler, const void* data, uint32_t length);
 
 void halUARTSetInterruptFunction(UARTHandler handler, UARTInterruptFunction function, void* params);
 void halUARTInterruptHandler(UARTHandler handler);

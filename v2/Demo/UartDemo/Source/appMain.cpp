@@ -3,6 +3,7 @@
 #include "HAL/halGPIO.h"
 
 #include "string.h"
+#include "stdio.h"
 
 
 using namespace eos;
@@ -42,14 +43,17 @@ void appMain() {
 		HAL_UART_LEN_8 | HAL_UART_STOP_10 | HAL_UART_PARITY_NONE;
 
 	UARTHandler hUart = halUARTInitialize(&uartData, &uartInfo);
+	halUARTEnable(hUart);
 
 	// Envia dades de test
 	//
-	const char* data = "Hello world!\r\n";
-	int len = strlen(data);
+	const char* greetings = "Hello world!\r\n";
+	char buffer[100];
 
-	for (int i = 0; i < 100; i++)
-		halUARTSend(hUart, data, len);
+	for (int i = 0; i < 100; i++) {
+		sprintf(buffer, "%d, %s", i, greetings);
+		halUARTSend(hUart, buffer, strlen(buffer));
+	}
 
 	// Desinicialitza la UART
 	//

@@ -370,6 +370,9 @@ void halTMREnableInterrupts(
 	TMRHandler handler,
 	uint32_t events) {
 
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
 	uint32_t temp = handler->device->DIER;
 
 	if (__check_bit_msk(events, HAL_TMR_EVENT_UP))
@@ -394,6 +397,9 @@ void halTMREnableInterrupts(
 uint32_t halTMRDisableInterrupts(
 	TMRHandler handler,
 	uint32_t events) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
 
 	uint32_t temp = handler->device->DIER;
 	uint32_t enabled = 0;
@@ -435,6 +441,9 @@ void halTMRClearInterruptFlags(
 	TMRHandler handler,
 	uint32_t events) {
 
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
 	TIM_TypeDef* device = handler->device;
 
 	if (__check_bit_msk(events, HAL_TMR_EVENT_UP))
@@ -457,6 +466,9 @@ void halTMRClearInterruptFlags(
 bool halTMRGetInterruptFlag(
 	TMRHandler handler,
 	uint32_t event) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
 
 	TIM_TypeDef* device = handler->device;
 

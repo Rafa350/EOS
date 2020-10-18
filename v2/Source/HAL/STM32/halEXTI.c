@@ -4,14 +4,22 @@
 
 
 #define __VERIFY_LINE(line)  eosAssert((line >= HAL_EXTI_LINE_0) && (line <= HAL_EXTI_LINE_24))
+#define __VERIFY_PORT(port)  eosAssert((port >= HAL_EXTI_PORT_A) && (port <= HAL_EXTI_PORT_K))
 
 
 typedef struct {
 	EXTIInterruptFunction function;
 	void *params;
-} CallbackInfo;
+} EXTIData;
 
-static CallbackInfo callback[16] = {
+static EXTIData callback[24] = {
+	{ NULL, NULL},
+	{ NULL, NULL},
+	{ NULL, NULL},
+	{ NULL, NULL},
+	{ NULL, NULL},
+	{ NULL, NULL},
+	{ NULL, NULL},
 	{ NULL, NULL},
 	{ NULL, NULL},
 	{ NULL, NULL},
@@ -30,66 +38,66 @@ static CallbackInfo callback[16] = {
 	{ NULL, NULL}
 };
 
-static CallbackInfo globalCallback = {
-	NULL, NULL
-};
-
-
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza un pin per que generi interrupcions
-/// \param port: El port.
-/// \param pin: El pin.
-/// \param options: Opcions de configuracio.
+/// \brief    Inicialitza un pin per que generi interrupcions
+/// \param    line: La linia.
+/// \param    options: Opcions de configuracio.
 ///
 static void setupPin(
-	GPIOPort port,
-	GPIOPin pin,
+	EXTILine line,
 	EXTIOptions options) {
 
-	eosAssert((port >= HAL_GPIO_PORT_A) && (port <= HAL_GPIO_PORT_K));
-	eosAssert((pin >= HAL_GPIO_PIN_0) && (pin <= HAL_GPIO_PIN_15));
+	__VERIFY_LINE(line);
 
 	uint32_t temp;
 
-	// Configura el registre EXTICR per mepejar la linia amb el pin GPIO
+	// Configura el registre EXTICR per asignar la linia al port
 	//
-    temp = SYSCFG->EXTICR[pin >> 2];
-    temp &= ~(((uint32_t)0x0F) << (4 * (pin & 0x03)));
-    temp |= ((uint32_t)(port) << (4 * (pin & 0x03)));
-    SYSCFG->EXTICR[pin >> 2] = temp;
+	if (line <= HAL_EXTI_LINE_15) {
 
-    uint32_t pinMask = 1 << pin;
+		uint32_t port = (options & HAL_EXTI_PORT_mask) >> HAL_EXTI_PORT_pos;
+		__VERIFY_PORT(port);
+
+		temp = SYSCFG->EXTICR[line >> 2];
+		temp &= ~(((uint32_t)0x0F) << (4 * (line & 0x03)));
+		temp |= ((uint32_t)(port) << (4 * (line & 0x03)));
+		SYSCFG->EXTICR[line >> 2] = temp;
+	}
+
+    // Obte la mascara corresponent al pin
+    //
+    uint32_t lineMsk = 1 << line;
 
 	// Configura el registre IMR (Interrupt Mask Register);
 	//
     if ((options & HAL_EXTI_MODE_mask) == HAL_EXTI_MODE_INT)
-    	EXTI->IMR |= pinMask;
+    	__set_bit_msk(EXTI->IMR, lineMsk);
     else
-    	EXTI->IMR &= ~pinMask;
+    	__clear_bit_msk(EXTI->IMR, lineMsk);
 
 	// Configura el registre EMR (Event Mask Register);
 	//
     if ((options & HAL_EXTI_MODE_mask) == HAL_EXTI_MODE_EVENT)
-    	EXTI->EMR |= pinMask;
+    	__set_bit_msk(EXTI->EMR, lineMsk);
     else
-    	EXTI->EMR &= ~pinMask;
+    	__clear_bit_msk(EXTI->EMR, lineMsk);
 
 	// Configura el registre RTSR (Rising Trigger Selection Register)
 	//
 	if (((options & HAL_EXTI_TRIGGER_mask) == HAL_EXTI_TRIGGER_RISING) ||
 		((options & HAL_EXTI_TRIGGER_mask) == HAL_EXTI_TRIGGER_CHANGING))
-		EXTI->RTSR |= pinMask;
+		__set_bit_msk(EXTI->RTSR, lineMsk);
 	else
-		EXTI->RTSR &= ~pinMask;
+		__clear_bit_msk(EXTI->RTSR, lineMsk);
 
 	// Configura el registre FTSR (Falling Trigger Selection Register)
 	//
 	if (((options & HAL_EXTI_TRIGGER_mask) == HAL_EXTI_TRIGGER_FALLING) ||
 		((options & HAL_EXTI_TRIGGER_mask) == HAL_EXTI_TRIGGER_CHANGING))
-		EXTI->FTSR |= pinMask;
+		__set_bit_msk(EXTI->FTSR, lineMsk);
 	else
-		EXTI->FTSR &= ~pinMask;
+		__clear_bit_msk(EXTI->FTSR, lineMsk);
 }
 
 
@@ -107,33 +115,21 @@ void halEXTIInitializePins(
 
 	// Activa el clock del modul EXTI
 	//
-	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+	__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SYSCFGEN);
     __DSB();
 
 	// Inicialitza els elements de la llista
 	//
 	for (int i = 0; i < count; i++) {
+
 		const EXTIInitializePinInfo* p = &info[i];
-		setupPin(p->port, p->pin, p->options);
+		setupPin(p->line, p->options);
+
+		if ((p->options & HAL_EXTI_MODE_mask) == HAL_EXTI_MODE_INT) {
+			callback[p->line].function = p->isrFunction;
+			callback[p->line].params = p->isrParams;
+		}
 	}
-}
-
-
-void halEXTIEnableLine(
-	EXTILine line) {
-
-	__VERIFY_LINE(line);
-
-	__set_bit_pos(EXTI->EMR, line);
-}
-
-
-void halEXTIDisableLine(
-	EXTILine line) {
-
-	__VERIFY_LINE(line);
-
-	__clear_bit_pos(EXTI->EMR, line);
 }
 
 
@@ -150,22 +146,24 @@ void halEXTISetInterruptFunction(
 
 	__VERIFY_LINE(line);
 
-	uint32_t state = EXTI->IMR;
-
 	// Desactiva la interrupcio de la linea
 	//
-	__clear_bit_pos(EXTI->IMR, line);
+	bool state = halEXTIDisableInterrupt(line);
 
 	callback[line].function = function;
 	callback[line].params = params;
 
 	// Restaura l'estat de la interrupcio de la linia
 	//
-	if (state != 0)
-		EXTI->IMR = state;
+	if (state)
+		halEXTIEnableInterrupt(line);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Habilita la interrupcio en la linia especificada.
+/// \param    line: La linia.
+///
 void halEXTIEnableInterrupt(
 	EXTILine line) {
 
@@ -175,12 +173,21 @@ void halEXTIEnableInterrupt(
 }
 
 
-void halEXTIDisableInterrupt(
+/// ----------------------------------------------------------------------
+/// \brief    Desabilita la interrupcio en la linia especificada.
+/// \param    line: La linia.
+/// \retrurn  state: Estat previ de la interrupcio.
+///
+bool halEXTIDisableInterrupt(
 	EXTILine line) {
 
 	__VERIFY_LINE(line);
 
+	bool state = __check_bit_pos(EXTI->IMR, line);
+
 	__clear_bit_pos(EXTI->IMR, line);
+
+	return state;
 }
 
 
@@ -192,9 +199,6 @@ static inline void IRQHandler(
 	EXTILine line) {
 
 	__VERIFY_LINE(line);
-
-	if (globalCallback.function != NULL)
-		globalCallback.function(line, globalCallback.params);
 
 	if (callback[line].function != NULL)
 		callback[line].function(line, callback[line].params);
@@ -210,7 +214,7 @@ void EXTI0_IRQHandler() {
 
 	// Borra les interrupcions pendents
 	//
-	EXTI->PR = 1 << HAL_EXTI_LINE_0;
+	__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_0);
 }
 
 
@@ -223,7 +227,7 @@ void EXTI1_IRQHandler() {
 
 	// Borra les interrupcions pendents
 	//
-	EXTI->PR = 1 << HAL_EXTI_LINE_1;
+	__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_1);
 }
 
 
@@ -236,7 +240,7 @@ void EXTI2_IRQHandler() {
 
 	// Borra les interrupcions pendents
 	//
-	EXTI->PR = 1 << HAL_EXTI_LINE_2;
+	__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_2);
 }
 
 
@@ -249,7 +253,7 @@ void EXTI3_IRQHandler() {
 
 	// Borra les interrupcions pendents
 	//
-	EXTI->PR = 1 << HAL_EXTI_LINE_3;
+	__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_3);
 }
 
 
@@ -262,7 +266,7 @@ void EXTI4_IRQHandler() {
 
 	// Borra les interrupcions pendents
 	//
-	EXTI->PR = 1 << HAL_EXTI_LINE_4;
+	__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_4);
 }
 
 
@@ -276,19 +280,19 @@ void EXTI9_5_IRQHandler() {
 	uint32_t pending = EXTI->PR & 0x000003E0;
     if (pending != 0) {
 
-		if (pending == 1 << HAL_EXTI_LINE_5)
+		if (__check_bit_pos(pending, HAL_EXTI_LINE_5))
 			IRQHandler(HAL_EXTI_LINE_5);
 
-		if (pending == 1 << HAL_EXTI_LINE_6)
+		if (__check_bit_pos(pending, HAL_EXTI_LINE_6))
 			IRQHandler(HAL_EXTI_LINE_6);
 
-		if (pending == 1 << HAL_EXTI_LINE_7)
+		if (__check_bit_pos(pending, HAL_EXTI_LINE_7))
 			IRQHandler(HAL_EXTI_LINE_7);
 
-		if (pending == 1 << HAL_EXTI_LINE_8)
+		if (__check_bit_pos(pending, HAL_EXTI_LINE_8))
 			IRQHandler(HAL_EXTI_LINE_8);
 
-		if (pending == 1 << HAL_EXTI_LINE_9)
+		if (__check_bit_pos(pending, HAL_EXTI_LINE_9))
 			IRQHandler(HAL_EXTI_LINE_9);
 
 		// Borra les interrupcions pendents
@@ -308,22 +312,22 @@ void EXTI15_10_IRQHandler() {
 	uint32_t pending = EXTI->PR & 0x0000FC00;
     if (pending != 0) {
 
-    	if ((pending & (1 << HAL_EXTI_LINE_10)) != 0)
+    	if (__check_bit_pos(pending, HAL_EXTI_LINE_10))
     		IRQHandler(HAL_EXTI_LINE_10);
 
-    	if ((pending & (1 << HAL_EXTI_LINE_11)) != 0)
+    	if (__check_bit_pos(pending, HAL_EXTI_LINE_11))
     		IRQHandler(HAL_EXTI_LINE_11);
 
-    	if ((pending & (1 << HAL_EXTI_LINE_12)) != 0)
+    	if (__check_bit_pos(pending, HAL_EXTI_LINE_12))
     		IRQHandler(HAL_EXTI_LINE_12);
 
-    	if ((pending & (1 << HAL_EXTI_LINE_13)) != 0)
+    	if (__check_bit_pos(pending, HAL_EXTI_LINE_13))
     		IRQHandler(HAL_EXTI_LINE_13);
 
-    	if ((pending & (1 << HAL_EXTI_LINE_14)) != 0)
+    	if (__check_bit_pos(pending, HAL_EXTI_LINE_14))
     		IRQHandler(HAL_EXTI_LINE_14);
 
-    	if ((pending & (1 << HAL_EXTI_LINE_15)) != 0)
+    	if (__check_bit_pos(pending, HAL_EXTI_LINE_15))
     		IRQHandler(HAL_EXTI_LINE_15);
 
 		// Borra les interrupcions pendents

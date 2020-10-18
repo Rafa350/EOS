@@ -7,6 +7,10 @@
 #define USE_LEDS_LED1
 #define USE_LEDS_LED2
 
+// Opcions dels switches integrats
+//
+#define USE_SWITCHES_SW1
+
 // Opcions del display integrat
 //
 #define USE_DISPLAY

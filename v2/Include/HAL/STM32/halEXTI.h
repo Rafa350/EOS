@@ -10,6 +10,7 @@
 extern "C" {
 #endif
 
+
 // Linies configurables asignades a PINs GPIO
 #define HAL_EXTI_LINE_0           0    // Px0
 #define HAL_EXTI_LINE_1           1    // Px1
@@ -40,7 +41,7 @@ extern "C" {
 #define HAL_EXTI_LINE_24          24   // MDIO slave asynchronous interrupt
 
 
-// Mode de treball
+// Opcions: Mode de treball INT/EVENT
 #define HAL_EXTI_MODE_pos         0
 #define HAL_EXTI_MODE_bits        0b11
 #define HAL_EXTI_MODE_mask        (HAL_EXTI_MODE_bits << HAL_EXTI_MODE_pos)
@@ -49,7 +50,7 @@ extern "C" {
 #define HAL_EXTI_MODE_INT         (1 << HAL_EXTI_MODE_pos)
 #define HAL_EXTI_MODE_EVENT       (2 << HAL_EXTI_MODE_pos)
 
-// Disparador
+// Opcions: Flanc a detectar
 #define HAL_EXTI_TRIGGER_pos      2
 #define HAL_EXTI_TRIGGER_bits     0b11
 #define HAL_EXTI_TRIGGER_mask     (HAL_EXTI_TRIGGER_bits << HAL_EXTI_TRIGGER_pos)
@@ -59,37 +60,42 @@ extern "C" {
 #define HAL_EXTI_TRIGGER_FALLING  (2 << HAL_EXTI_TRIGGER_pos)
 #define HAL_EXTI_TRIGGER_CHANGING (3 << HAL_EXTI_TRIGGER_pos)
 
+// Opcions: Port a capturar
+#define HAL_EXTI_PORT_pos         4
+#define HAL_EXTI_PORT_bits        0b1111
+#define HAL_EXTI_PORT_mask        (HAL_EXTI_PORT_bits << HAL_EXTI_PORT_pos)
 
-typedef uint32_t EXTIOptions;
+#define HAL_EXTI_PORT_A           (0 << HAL_EXTI_PORT_pos)
+#define HAL_EXTI_PORT_B           (1 << HAL_EXTI_PORT_pos)
+#define HAL_EXTI_PORT_C           (2 << HAL_EXTI_PORT_pos)
+#define HAL_EXTI_PORT_D           (3 << HAL_EXTI_PORT_pos)
+#define HAL_EXTI_PORT_E           (4 << HAL_EXTI_PORT_pos)
+#define HAL_EXTI_PORT_F           (5 << HAL_EXTI_PORT_pos)
+#define HAL_EXTI_PORT_G           (6 << HAL_EXTI_PORT_pos)
+#define HAL_EXTI_PORT_H           (7 << HAL_EXTI_PORT_pos)
+#define HAL_EXTI_PORT_I           (8 << HAL_EXTI_PORT_pos)
+#define HAL_EXTI_PORT_J           (9 << HAL_EXTI_PORT_pos)
+#define HAL_EXTI_PORT_K           (10 << HAL_EXTI_PORT_pos)
+
+
 typedef uint32_t EXTILine;
+typedef uint32_t EXTIOptions;
 
 typedef void (*EXTIInterruptFunction)(EXTILine line, void *params);
 
 typedef struct {
-	uint32_t irqPriority;
-	uint32_t irqSubPriority;
-	EXTIInterruptFunction function;
-	void *params;
-} EXTIInitializeInfo;
-
-typedef struct {
-    GPIOPort port;
-    GPIOPin pin;
+    EXTILine line;
     EXTIOptions options;
-    EXTIInterruptFunction function;
-    void *params;
+    EXTIInterruptFunction isrFunction;
+    void *isrParams;
 } EXTIInitializePinInfo;
 
 
-void halEXTIInitialize(const EXTIInitializeInfo *info);
 void halEXTIInitializePins(const EXTIInitializePinInfo *info, int count);
-
-void halEXTIEnableLine(EXTILine line);
-void halEXTIDisableLine(EXTILine line);
 
 void halEXTISetInterruptFunction(EXTILine line, EXTIInterruptFunction function, void *params);
 void halEXTIEnableInterrupt(EXTILine line);
-void halEXTIDisableInterrupt(EXTILine line);
+bool halEXTIDisableInterrupt(EXTILine line);
 
 #ifdef __cplusplus
 }

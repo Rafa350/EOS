@@ -156,55 +156,61 @@ static void setupDevice(
 
 	__VERIFY_DEVICE(device);
 
+	uint32_t temp;
+
 	// Desactiva el modul, per poder configurar-lo
     //
     __clear_bit_msk(device->CR1, USART_CR1_UE);
 
     // Configura el registre CR1 (Control Register 1)
     //
-    if ((options & HAL_UART_OVERSAMPLING_mask) == HAL_UART_OVERSAMPLING_8)
-    	__set_bit_msk(device->CR1, USART_CR1_OVER8);
-    else
-    	__clear_bit_msk(device->CR1, USART_CR1_OVER8);
+    temp = device->CR1;
 
-    device->CR1 |= USART_CR1_RE | USART_CR1_TE;
+    if ((options & HAL_UART_OVERSAMPLING_mask) == HAL_UART_OVERSAMPLING_8)
+    	__set_bit_msk(temp, USART_CR1_OVER8);
+    else
+    	__clear_bit_msk(temp, USART_CR1_OVER8);
+
+    temp |= USART_CR1_RE | USART_CR1_TE;
 
     switch (options & HAL_UART_LEN_mask) {
     	case HAL_UART_LEN_7:
-    		device->CR1 |= USART_CR1_M1;
-    		device->CR1 &= ~USART_CR1_M0;
+    		__set_bit_msk(temp, USART_CR1_M1);
+    		__clear_bit_msk(temp, USART_CR1_M0);
     		break;
 
     	default:
     	case HAL_UART_LEN_8:
-    		device->CR1 &= ~USART_CR1_M1;
-    		device->CR1 &= ~USART_CR1_M0;
+    		__clear_bit_msk(temp, USART_CR1_M1);
+    		__clear_bit_msk(temp, USART_CR1_M0);
     		break;
 
     	case HAL_UART_LEN_9:
-    		device->CR1 &= ~USART_CR1_M1;
-    		device->CR1 |= USART_CR1_M0;
+    		__clear_bit_msk(temp, USART_CR1_M1);
+    		__set_bit_msk(temp, USART_CR1_M0);
     		break;
     }
 
     switch (options & HAL_UART_PARITY_mask) {
     	default:
     	case HAL_UART_PARITY_NONE:
-    		device->CR1 &= ~USART_CR1_PCE;
+    		__clear_bit_msk(temp, USART_CR1_PCE);
     		break;
 
     	case HAL_UART_PARITY_EVEN:
-    		device->CR1 |= USART_CR1_PCE;
-    		device->CR1 &= ~USART_CR1_PS;
+    		__set_bit_msk(temp, USART_CR1_PCE);
+    		__clear_bit_msk(temp, USART_CR1_PS);
     		break;
 
     	case HAL_UART_PARITY_ODD:
-    		device->CR1 |= USART_CR1_PCE;
-    		device->CR1 |= USART_CR1_PS;
+    		__set_bit_msk(temp, USART_CR1_PCE);
+    		__set_bit_msk(temp, USART_CR1_PS);
     		break;
     }
 
-    // Confgigura el registre CR2 (Control Register 2)
+    device->CR1 = temp;
+
+    // Configura el registre CR2 (Control Register 2)
     //
     device->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
 
@@ -314,10 +320,6 @@ static void setupDevice(
     }
     else
     	device->BRR = div;
-
-    // Activa el modul
-    //
-    __set_bit_msk(device->CR1, USART_CR1_UE);
 }
 
 
@@ -361,6 +363,34 @@ void halUARTDeinitialize(
 	UARTHandler handler) {
 
 	__VERIFY_HANDLER(handler);
+
+	halUARTDisable(handler);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Activa el dispositiu.
+/// \param    handler: El handler del dispositiu.
+///
+void halUARTEnable(
+	UARTHandler handler) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
+	__set_bit_msk(handler->device->CR1, USART_CR1_UE);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el dispositiu.
+/// \param    handler: El handler del dispositiu.
+///
+void halUARTDisable(
+	UARTHandler handler) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
 
 	__clear_bit_msk(handler->device->CR1, USART_CR1_UE);
 }
