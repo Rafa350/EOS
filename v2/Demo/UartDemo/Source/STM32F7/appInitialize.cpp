@@ -7,6 +7,9 @@
 #include "stm32746g_discovery_sdram.h"
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el rellotge del sistems i dels periferics
+///
 static void initializeClock() {
 
 	RCC_ClkInitTypeDef clkInit;
@@ -37,6 +40,9 @@ static void initializeClock() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza la SDRAM
+///
 static void initializeSDRam() {
 
 	BSP_SDRAM_Init();
@@ -44,6 +50,9 @@ static void initializeSDRam() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Activa els caches.
+///
 static void enableCache() {
 
     SCB_EnableICache();
@@ -63,5 +72,7 @@ void appInitialize() {
 	initializeClock();
 	initializeSDRam();
 
+	__HAL_FREEZE_TIM2_DBGMCU();
+	__HAL_FREEZE_TIM3_DBGMCU();
 	__HAL_FREEZE_TIM6_DBGMCU();
 }

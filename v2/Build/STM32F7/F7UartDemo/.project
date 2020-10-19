@@ -56,6 +56,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Inc/App/appApplication.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/appApplication.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/App/eosConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/eosConfig.h</locationURI>
@@ -71,6 +76,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Src/App/appApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/appApplication.cpp</locationURI>
+		</link>
+		<link>
 			<name>Src/App/appMain.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/appMain.cpp</locationURI>
@@ -84,6 +94,11 @@
 			<name>Src/Framework/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Inc/App/STM32F7/FreeRTOSConfig.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/STM32F7/FreeRTOSConfig.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/App/STM32F7/stm32f7xx_hal_conf.h</name>
@@ -102,6 +117,11 @@
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/OSAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/Services</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -126,6 +146,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/STM32F7/appInitialize.cpp</locationURI>
 		</link>
 		<link>
+			<name>Src/App/STM32F7/appInterrupts.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/STM32F7/appInterrupts.cpp</locationURI>
+		</link>
+		<link>
 			<name>Src/App/STM32F7/stm32f7xx_hal_timebase_tim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/STM32F7/stm32f7xx_hal_timebase_tim.c</locationURI>
@@ -146,6 +171,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/EOS/Services</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/EOS/Startup</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -157,6 +187,11 @@
 		</link>
 		<link>
 			<name>Src/Framework/STM32/BSP</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/STM32/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -216,6 +251,36 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalKernel.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/Services/eosAppLoopService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosAppLoopService.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/Services/eosDigInputService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosDigInputService.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/Services/eosDigOutputService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosDigOutputService.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/Services/eosService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosService.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/Services/eosUARTService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosUARTService.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/System/eosApplication.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/System/eosDebug.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosDebug.h</locationURI>
@@ -226,9 +291,34 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/OSAL/Default</name>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Services/eosAppLoopService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosAppLoopService.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Services/eosDigInputService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosDigInputService.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Services/eosDigOutputService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosDigOutputService.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Services/eosService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosService.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Services/eosUARTService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/eosUARTService.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/Startup/main.cpp</name>
@@ -236,9 +326,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/StartUp/STM32F7/main.cpp</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/EOS/System/Collections</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/EOS/System/Core</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/eosApplication.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/eosDebug.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosDebug.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/eosString.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/BSP/stm32746g_discovery.c</name>
@@ -249,6 +359,36 @@
 			<name>Src/Framework/STM32/BSP/stm32746g_discovery_sdram.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/STM32/FreeRTOS/heap_4.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/STM32/FreeRTOS/list.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/list.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/STM32/FreeRTOS/port.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/STM32/FreeRTOS/queue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/queue.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/STM32/FreeRTOS/tasks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/tasks.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/STM32/FreeRTOS/timers.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/timers.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/HAL/stm32f7xx_hal.c</name>
@@ -356,19 +496,74 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halSYS.c</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/EOS/HAL/STM32/halTMR.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/EOS/HAL/STM32/halUART.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halUART.c</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/EOS/OSAL/Default/osalKernel.c</name>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/Default/osalKernel.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalHeap.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalKernel.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalKernel.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalQueue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalQueue.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalSemaphore.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalSemaphore.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalTask.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTask.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/rtos_hooks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/rtos_hooks.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/Collections/eosContainer.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosContainer.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosErrorHandler.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/Core/eosGlobalAlloc.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosGlobalAlloc.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/Core/eosQueue.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosQueue.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/Core/eosSemaphore.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosSemaphore.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/Core/eosTask.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTask.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

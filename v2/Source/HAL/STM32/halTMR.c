@@ -207,14 +207,13 @@ TMRHandler halTMRInitialize(
 	TIM_TypeDef* device = getDevice(info->timer);
 
 	enableDeviceClock(device);
+	__clear_bit_msk(device->CR1, TIM_CR1_CEN);                 // Para el timer
 
 	uint32_t temp;
 
 	// Configura el registre CR1 (Control 1)
 	//
 	temp = device->CR1;
-
-	__clear_bit_msk(temp, TIM_CR1_CEN);                 // Para el timer
 
 	if (IS_TIM_CLOCK_DIVISION_INSTANCE(device)) {
 		__clear_bit_msk(temp, TIM_CR1_CKD); 			// Divisor per 1 per defecte

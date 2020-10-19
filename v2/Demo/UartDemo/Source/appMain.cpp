@@ -1,22 +1,26 @@
 #include "eos.h"
-#include "HAL/halUart.h"
 #include "HAL/halGPIO.h"
+#include "HAL/halINT.h"
+#include "HAL/halUART.h"
+
+#include "appApplication.h"
 
 #include "string.h"
 #include "stdio.h"
 
 
 using namespace eos;
+using namespace app;
 
 
-static UARTData uartData;
+UARTData uart6Data;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Entrada al programa.
 ///
 void appMain() {
-
+#if 0
 	// Inicialitza els port utilitzats per la UART
 	//
 	GPIOInitializePinInfo gpioInfo;
@@ -42,21 +46,28 @@ void appMain() {
 		HAL_UART_CLOCK_AUTO | HAL_UART_BAUD_9600 | HAL_UART_OVERSAMPLING_16 |
 		HAL_UART_LEN_8 | HAL_UART_STOP_10 | HAL_UART_PARITY_NONE;
 
-	UARTHandler hUart = halUARTInitialize(&uartData, &uartInfo);
-	halUARTEnable(hUart);
+	UARTHandler hUart = halUARTInitialize(&uart6Data, &uartInfo);
+
+	//halINTEnableInterruptVector(HAL_INT_VECTOR_UART6);
 
 	// Envia dades de test
 	//
 	const char* greetings = "Hello world!\r\n";
 	char buffer[100];
 
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 1; i++) {
 		sprintf(buffer, "%d, %s", i, greetings);
-		halUARTSend(hUart, buffer, strlen(buffer));
+		halUARTTransmit(hUart, (uint8_t*) buffer, strlen(buffer));
 	}
+
+	HAL_Delay(2000);
 
 	// Desinicialitza la UART
 	//
 	halUARTDeinitialize(hUart);
+#endif
 
+	Application* app = new MyApplication();
+    app->run();
+    delete app;
 }

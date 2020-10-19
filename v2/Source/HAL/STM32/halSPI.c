@@ -49,19 +49,23 @@ static void enableDeviceClock(
 
 	switch ((uint32_t) device) {
 		case SPI1_BASE:
-			__HAL_RCC_SPI1_CLK_ENABLE();
+			__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI1EN);
+			__DSB();
 			break;
 
 		case SPI2_BASE:
-			__HAL_RCC_SPI2_CLK_ENABLE();
+			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_SPI2EN);
+			__DSB();
 			break;
 
 		case SPI3_BASE:
-			__HAL_RCC_SPI3_CLK_ENABLE();
+			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_SPI3EN);
+			__DSB();
 			break;
 
 		case SPI4_BASE:
-			__HAL_RCC_SPI4_CLK_ENABLE();
+			__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI4EN);
+			__DSB();
 			break;
 
 		case SPI5_BASE:
@@ -70,7 +74,8 @@ static void enableDeviceClock(
 			break;
 
 		case SPI6_BASE:
-			__HAL_RCC_SPI6_CLK_ENABLE();
+			 __set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI6EN);
+			 __DSB();
 			break;
 	}
 }
@@ -86,24 +91,25 @@ static void disableDeviceClock(
 	__VERIFY_DEVICE(device);
 
 	switch ((uint32_t) device) {
+
 		case SPI1_BASE:
-			__HAL_RCC_SPI1_CLK_DISABLE();
+			__clear_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI1EN);
 			break;
 
 		case SPI2_BASE:
-			__HAL_RCC_SPI2_CLK_DISABLE();
+			__clear_bit_msk(RCC->APB1ENR, RCC_APB1ENR_SPI2EN);
 			break;
 
 		case SPI3_BASE:
-			__HAL_RCC_SPI3_CLK_DISABLE();
+			__clear_bit_msk(RCC->APB1ENR, RCC_APB1ENR_SPI3EN);
 			break;
 
 		case SPI4_BASE:
-			__HAL_RCC_SPI4_CLK_DISABLE();
+			__clear_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI4EN);
 			break;
 
 		case SPI5_BASE:
-			__HAL_RCC_SPI5_CLK_DISABLE();
+			__clear_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI5EN);
 			break;
 
 		case SPI6_BASE:
@@ -175,7 +181,6 @@ SPIHandler halSPIInitialize(
 	SPI_TypeDef* device = getDevice(info->channel);
 
 	enableDeviceClock(device);
-
     setupDevice(device, &data->handle, info->options);
 
     SPIHandler handler = data;
@@ -195,15 +200,11 @@ void halSPIDeinitialize(
 	SPIHandler handler) {
 
 	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
 
 	SPI_TypeDef* device = handler->device;
 
-	// Desactiva les comunucacions
-	//
 	__clear_bit_msk(device->CR1, ~SPI_CR1_SPE);
-
-	// Desactiva el dicpositiu
-	//
 	disableDeviceClock(device);
 }
 

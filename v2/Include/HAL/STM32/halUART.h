@@ -75,17 +75,16 @@
 
 #define HAL_UART_LEN_7			  (0 << HAL_UART_LEN_pos)
 #define HAL_UART_LEN_8			  (1 << HAL_UART_LEN_pos)
-#define HAL_UART_LEN_9			  (2 << HAL_UART_LEN_pos)
 
 // Opcions: Stop bits
 #define HAL_UART_STOP_pos         10
 #define HAL_UART_STOP_bits        0b11
 #define HAL_UART_STOP_mask        (HAL_UART_STOP_bits << HAL_UART_STOP_pos)
 
-#define HAL_UART_STOP_05		  (0 << HAL_UART_STOP_pos)
-#define HAL_UART_STOP_10          (1 << HAL_UART_STOP_pos)
-#define HAL_UART_STOP_15		  (2 << HAL_UART_STOP_pos)
-#define HAL_UART_STOP_20		  (3 << HAL_UART_STOP_pos)
+#define HAL_UART_STOP_HALF		  (0 << HAL_UART_STOP_pos)
+#define HAL_UART_STOP_1           (1 << HAL_UART_STOP_pos)
+#define HAL_UART_STOP_1HALF		  (2 << HAL_UART_STOP_pos)
+#define HAL_UART_STOP_2	          (3 << HAL_UART_STOP_pos)
 
 // Opcions: Paritat
 #define HAL_UART_PARITY_pos       12
@@ -109,9 +108,9 @@
 
 // Identificadors dels events
 #define HAL_UART_EVENT_CTS        0x01      // CTS interrupt
-#define HAL_UART_EVENT_LBD        0x20      // Break detection
-#define HAL_UART_EVENT_TXE        0x40      // Transmit register empty
-#define HAL_UART_EVENT_TC         0x80      // Transmission complete
+#define HAL_UART_EVENT_LBD        0x02      // Break detection
+#define HAL_UART_EVENT_TXE        0x04      // Transmit data register register empty
+#define HAL_UART_EVENT_TC         0x08      // Transmission complete
 #define HAL_UART_EVENT_RXNE       0x10      // Receiver data register no empty
 #define HAL_UART_EVENT_IDLE       0x20      // Idle line detected
 #define HAL_UART_EVENT_PE         0x40      // Parity error
@@ -127,12 +126,15 @@ extern "C" {
 typedef uint32_t UARTChannel;
 typedef uint32_t UARTOptions;
 typedef struct __UARTData* UARTHandler;
-typedef void (*UARTInterruptFunction)(UARTHandler handler, void* params);
+typedef void (*UARTInterruptFunction)(UARTHandler handler, void* params, uint32_t event);
 
 struct __UARTData {
     USART_TypeDef* device;
     UARTInterruptFunction isrFunction;
     void* isrParams;
+    int txCount;
+    int txLength;
+    uint8_t* txBuffer;
 };
 typedef struct __UARTData UARTData;
 
@@ -146,10 +148,11 @@ typedef struct {
 UARTHandler halUARTInitialize(UARTData* data, const UARTInitializeInfo *info);
 void halUARTDeinitialize(UARTHandler handler);
 
-void halUARTEnable(UARTHandler handler);
-void halUARTDisable(UARTHandler handler);
-uint32_t halUARTSend(UARTHandler handler, const void* data, uint32_t length);
-uint32_t halUARTReceive(UARTHandler handler, const void* data, uint32_t length);
+void halUARTSend(UARTHandler handler, uint8_t data);
+
+uint32_t halUARTTransmit(UARTHandler handler, uint8_t* data, uint32_t length);
+void halUARTTransmitINT(UARTHandler handler, uint8_t* data, uint32_t length);
+uint32_t halUARTReceive(UARTHandler handler, uint8_t* data, uint32_t length);
 
 void halUARTSetInterruptFunction(UARTHandler handler, UARTInterruptFunction function, void* params);
 void halUARTInterruptHandler(UARTHandler handler);

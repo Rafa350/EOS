@@ -62,10 +62,14 @@ uint8_t halLTDCGetPixelSize(LTDCPixelFormat pixelFormat);
 #define halLTDCDisable()     __clear_bit_msk(LTDC->GCR, LTDC_GCR_LTDCEN)
 
 
+void halLTDCSetInterruptFunction();
 void halLTDCInterruptHandler();
 
 void halLTDCEnableInterrupts();
 void halLTDCDisableInterrupts();
+
+bool halLTDCGetInterruptFlag();
+void halLTDCClearInterruptFlag();
 
 
 #ifdef	__cplusplus

@@ -65,7 +65,7 @@ static void setupPin(
 		SYSCFG->EXTICR[line >> 2] = temp;
 	}
 
-    // Obte la mascara corresponent al pin
+    // Obte la mascara corresponent a la linia
     //
     uint32_t lineMsk = 1 << line;
 
@@ -210,11 +210,10 @@ static inline void IRQHandler(
 ///
 void EXTI0_IRQHandler() {
 
-	IRQHandler(HAL_EXTI_LINE_0);
-
-	// Borra les interrupcions pendents
-	//
-	__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_0);
+	if (__check_bit_pos(EXTI->PR, HAL_EXTI_LINE_0)) {
+		IRQHandler(HAL_EXTI_LINE_0);
+		__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_0);
+	}
 }
 
 
@@ -223,11 +222,10 @@ void EXTI0_IRQHandler() {
 ///
 void EXTI1_IRQHandler() {
 
-	IRQHandler(HAL_EXTI_LINE_1);
-
-	// Borra les interrupcions pendents
-	//
-	__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_1);
+	if (__check_bit_pos(EXTI->PR, HAL_EXTI_LINE_1)) {
+		IRQHandler(HAL_EXTI_LINE_1);
+		__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_1);
+	}
 }
 
 
@@ -236,11 +234,10 @@ void EXTI1_IRQHandler() {
 ///
 void EXTI2_IRQHandler() {
 
-	IRQHandler(HAL_EXTI_LINE_2);
-
-	// Borra les interrupcions pendents
-	//
-	__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_2);
+	if (__check_bit_pos(EXTI->PR, HAL_EXTI_LINE_2)) {
+		IRQHandler(HAL_EXTI_LINE_2);
+		__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_2);
+	}
 }
 
 
@@ -249,11 +246,10 @@ void EXTI2_IRQHandler() {
 ///
 void EXTI3_IRQHandler() {
 
-	IRQHandler(HAL_EXTI_LINE_3);
-
-	// Borra les interrupcions pendents
-	//
-	__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_3);
+	if (__check_bit_pos(EXTI->PR, HAL_EXTI_LINE_3)) {
+		IRQHandler(HAL_EXTI_LINE_3);
+		__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_3);
+	}
 }
 
 
@@ -262,11 +258,10 @@ void EXTI3_IRQHandler() {
 ///
 void EXTI4_IRQHandler() {
 
-	IRQHandler(HAL_EXTI_LINE_4);
-
-	// Borra les interrupcions pendents
-	//
-	__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_4);
+	if (__check_bit_pos(EXTI->PR, HAL_EXTI_LINE_4)) {
+		IRQHandler(HAL_EXTI_LINE_4);
+		__clear_bit_pos(EXTI->PR, HAL_EXTI_LINE_4);
+	}
 }
 
 

@@ -83,6 +83,7 @@ typedef struct {
 	TMROptions options;
 } TMRInitializeInfo;
 
+
 TMRHandler halTMRInitialize(TMRData* data, const TMRInitializeInfo* info);
 void halTMRDeinitialize(TMRHandler handler);
 

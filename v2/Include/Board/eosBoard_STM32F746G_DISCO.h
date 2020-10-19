@@ -29,7 +29,7 @@
 // -----------------------------------------------------------------------
 
 #ifdef USE_SWITCHES_SW1
-#define EXISTS_SWITCHES_SW1
+#define EXIST_SWITCHES_SW1
 
 #define SWITCHES_SW1_PORT         HAL_GPIO_PORT_I
 #define SWITCHES_SW1_PIN          HAL_GPIO_PIN_11

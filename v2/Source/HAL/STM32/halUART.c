@@ -88,6 +88,17 @@ static void enableDeviceClock(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Desactiva el clock del dispositiu.
+/// \param    device: El dispositiu.
+///
+static void disableDeviceClock(
+	USART_TypeDef* device) {
+
+	__VERIFY_DEVICE(device);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Obte el rellotge asignat al generador de bauds.
 /// \param    device: El dispositiu.
 /// \return   La opcio corresponent al rellotge.
@@ -171,21 +182,25 @@ static void setupDevice(
     else
     	__clear_bit_msk(temp, USART_CR1_OVER8);
 
-    temp |= USART_CR1_RE | USART_CR1_TE;
+    __set_bit_msk(temp, USART_CR1_RE);      // Habilita recepcio
+    __set_bit_msk(temp, USART_CR1_TE);      // Habilita transmissio
 
-    switch (options & HAL_UART_LEN_mask) {
-    	case HAL_UART_LEN_7:
+    int len = 7 + ((options & HAL_UART_LEN_mask) >> HAL_UART_LEN_pos);
+    if ((options & HAL_UART_PARITY_mask) != HAL_UART_PARITY_NONE)
+    	len++;
+    switch (len) {
+    	case 7:
     		__set_bit_msk(temp, USART_CR1_M1);
     		__clear_bit_msk(temp, USART_CR1_M0);
     		break;
 
     	default:
-    	case HAL_UART_LEN_8:
+    	case 8:
     		__clear_bit_msk(temp, USART_CR1_M1);
     		__clear_bit_msk(temp, USART_CR1_M0);
     		break;
 
-    	case HAL_UART_LEN_9:
+    	case 9:
     		__clear_bit_msk(temp, USART_CR1_M1);
     		__set_bit_msk(temp, USART_CR1_M0);
     		break;
@@ -212,26 +227,26 @@ static void setupDevice(
 
     // Configura el registre CR2 (Control Register 2)
     //
-    device->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
+    __clear_bit_msk(device->CR2, USART_CR2_LINEN | USART_CR2_CLKEN);
 
     switch (options & HAL_UART_STOP_mask) {
-    	case HAL_UART_STOP_05:
+    	case HAL_UART_STOP_HALF:
     		device->CR2 &= ~USART_CR2_STOP_1;
     		device->CR2 |= USART_CR2_STOP_0;
     		break;
 
     	default:
-    	case HAL_UART_STOP_10:
+    	case HAL_UART_STOP_1:
     		device->CR2 &= ~USART_CR2_STOP_1;
     		device->CR2 &= ~USART_CR2_STOP_0;
     		break;
 
-    	case HAL_UART_STOP_15:
+    	case HAL_UART_STOP_1HALF:
     		device->CR2 |= USART_CR2_STOP_1;
     		device->CR2 |= USART_CR2_STOP_0;
     		break;
 
-    	case HAL_UART_STOP_20:
+    	case HAL_UART_STOP_2:
     		device->CR2 |= USART_CR2_STOP_1;
     		device->CR2 &= ~USART_CR2_STOP_0;
     		break;
@@ -239,7 +254,7 @@ static void setupDevice(
 
     // Configura el registre CR3 (Control Register 3)
     //
-    device->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
+    __clear_bit_msk(device->CR3, USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
 
     // Configura el regisre BRR (Baud Rate Register)
     //
@@ -320,6 +335,10 @@ static void setupDevice(
     }
     else
     	device->BRR = div;
+
+    // Torna a activar el modul
+    //
+    __set_bit_msk(device->CR1, USART_CR1_UE);
 }
 
 
@@ -356,56 +375,48 @@ UARTHandler halUARTInitialize(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desactiva el modul.
+/// \brief    Desinicialitza el dispositiu.
 /// \param    handler: El handler del dispositiu.
 ///
 void halUARTDeinitialize(
 	UARTHandler handler) {
 
 	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
 
-	halUARTDisable(handler);
+	USART_TypeDef* device = handler->device;
+
+	__clear_bit_msk(device->CR1, USART_CR1_UE);
+	disableDeviceClock(device);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Activa el dispositiu.
+/// \brief    Transmiteix un byte.
 /// \param    handler: El handler del dispositiu.
+/// \param    data: El byte a transmetre.
 ///
-void halUARTEnable(
-	UARTHandler handler) {
+void halUARTSend(
+	UARTHandler handler,
+	uint8_t data) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
 
-	__set_bit_msk(handler->device->CR1, USART_CR1_UE);
+	handler->device->TDR = data;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Desactiva el dispositiu.
-/// \param    handler: El handler del dispositiu.
-///
-void halUARTDisable(
-	UARTHandler handler) {
-
-	__VERIFY_HANDLER(handler);
-	__VERIFY_DEVICE(handler->device);
-
-	__clear_bit_msk(handler->device->CR1, USART_CR1_UE);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Transmirteix un bloc de dades, en modus bloqueig.
+/// \brief    Transmiteix un bloc de dades, en modus bloqueig.
 /// \param    handler: El handler del dispoaitiu.
 /// \param    data: El bloc de dades.
-/// \param    length: Logitut del bloc.
+/// \param    length: Longitut del bloc.
 /// \return   Numero de bytes realment transmitits.
 ///
-uint32_t halUARTSend(
+uint32_t halUARTTransmit(
 	UARTHandler handler,
-	const void* data,
+	uint8_t* data,
 	uint32_t length) {
 
 	__VERIFY_HANDLER(handler);
@@ -413,40 +424,58 @@ uint32_t halUARTSend(
 
 	USART_TypeDef* device = handler->device;
 
-	// Habilita la transmissio
-	//
-	__set_bit_msk(device->CR1, USART_CR1_TE);
-
 	// Transmiteix el contingut del buffer
 	//
-	uint8_t* p = (uint8_t*) data;
-
 	uint32_t count = 0;
 	for (int i = 0; i < length; i++) {
 
-		while ((device->ISR & USART_ISR_TXE) == 0) {
+		while (!__check_bit_msk(device->ISR, USART_ISR_TXE)) {
 
 			// TODO Controloar el timeout
 			continue;
 		}
 
-		device->TDR = *p++;
+		device->TDR = *data++;
 		count++;
 	}
 
 	// Espera que acabi la transmissio
 	//
-	while ((device->ISR & USART_ISR_TC) != USART_ISR_TC) {
+	while (!__check_bit_msk(device->ISR, USART_ISR_TC)) {
 
 		// TODO Controlar el timeout
 		continue;
 	}
 
-	// Desabilita la transmissio
-	//
-	__clear_bit_msk(device->CR1, USART_CR1_TE);
+	handler->device->ICR = USART_ICR_TCCF;
 
 	return count;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Transmiteix un bloc de dades en modus interrupcio.
+/// \param    hander: Handler del dispositiu.
+/// \param    data: El bloc de dades.
+/// \param    length: Longitut del bloc.
+///
+void halUARTTransmitINT(
+	UARTHandler handler,
+	uint8_t* data,
+	uint32_t length) {
+
+	eosAssert(data != NULL);
+	eosAssert(length > 0);
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
+	handler->txBuffer = data;
+	handler->txLength = length;
+	handler->txCount = 0;
+
+	// Habilita la interrupcio 'Transmision register empty'
+	//
+    __set_bit_msk(handler->device->CR1, USART_CR1_TXEIE);
 }
 
 
@@ -549,6 +578,91 @@ uint32_t halUARTDisableInterrupts(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Obte el valor del flag d'interrupcio.
+/// \param    handler: El handler del dispositiu.
+/// \param    event: El flag.
+/// \return   El valor del flag.
+///
+bool halDMAGetInterruptFlag(
+	UARTHandler handler,
+	uint32_t event) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
+	USART_TypeDef* device = handler->device;
+
+	switch (event) {
+		case HAL_UART_EVENT_TXE:
+			return __check_bit_msk(device->ISR, USART_ISR_TXE);
+
+		case HAL_UART_EVENT_TC:
+			return __check_bit_msk(device->ISR, USART_ISR_TC);
+
+		default:
+			return false;
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Borra els flags d'interrupcio
+/// \param    handler: Handler del dispositiu.
+/// \param    events: Els flags a boarrar
+///
+void halUARTClearInterruptFlags(
+	UARTHandler handler,
+	uint32_t events) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
+	if (__check_bit_msk(events, HAL_UART_EVENT_TC))
+		handler->device->ICR = USART_ICR_TCCF;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'event TXE (Transmission register empty)
+/// \param    handler: Handler del dispositiu.
+//
+static void isrTxEmptyHandler(
+	UARTHandler handler) {
+
+	if (handler->txCount == handler->txLength) {
+
+		// Desactiva la interrupcio 'Transmit data register empty'
+		//
+		__clear_bit_msk(handler->device->CR1, USART_CR1_TXEIE);
+
+		// Activa la interrupcio 'Transmit complete)
+		//
+		__set_bit_msk(handler->device->CR1, USART_CR1_TCIE);
+	}
+	else
+		handler->device->TDR = handler->txBuffer[handler->txCount++];
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'event TC (Transmission complete)
+/// \param    handler: Handler del dispositiu.
+//
+static void isrTxCompleteHandler(
+	UARTHandler handler) {
+
+	// Desactiva la interrupcio 'Transmit complete'
+	//
+	__clear_bit_msk(handler->device->CR1, USART_CR1_TCIE);
+
+	// Desactiva la interrupcio 'Error'
+	//
+	__clear_bit_msk(handler->device->CR3, USART_CR3_EIE);
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Procesa la interrupcio.
 /// \param    handler: Handler del dispositiu.
 ///
@@ -556,7 +670,23 @@ void halUARTInterruptHandler(
 	UARTHandler handler) {
 
 	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
 
-	if (handler->isrFunction != NULL)
-		handler->isrFunction(handler, handler->isrParams);
+	uint32_t isr = handler->device->ISR;
+	uint32_t cr1 = handler->device->CR1;
+
+	if (__check_bit_msk(isr, USART_ISR_TXE) &&
+		__check_bit_msk(cr1, USART_CR1_TXEIE)) {
+		isrTxEmptyHandler(handler);
+		if (handler->isrFunction != NULL)
+			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_TXE);
+	}
+
+	if (__check_bit_msk(isr, USART_ISR_TC) &&
+		__check_bit_msk(cr1, USART_CR1_TCIE)) {
+		isrTxCompleteHandler(handler);
+		if (handler->isrFunction != NULL)
+			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_TC);
+		handler->device->ICR = USART_ICR_TCCF;
+	}
 }
