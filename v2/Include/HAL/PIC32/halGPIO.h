@@ -1,3 +1,13 @@
+/// \file      halGPIO.h
+/// \author    Rafael Serrano (rsr.openware@gmail.com)
+/// \brief     Gestio del PORT d'entrada/sortida
+/// \addtogroup HAL Hardware Abstraction Layer
+/// @{
+/// \addtogroup HAL_PIC32 PIC32 Hardware Abstraction Layer
+/// @{
+/// \defgroup HAL_PIC32_GPIO GPIO
+/// @{
+///
 #ifndef __PIC32_halGPIO__
 #define	__PIC32_halGPIO__
 
@@ -221,3 +231,7 @@ void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GP
 
 
 #endif // __PIC32_halGPIO__
+
+/// @}
+/// @}
+/// @}

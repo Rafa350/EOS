@@ -276,6 +276,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosUARTService.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/System/Collections</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/System/eosApplication.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosApplication.h</locationURI>
@@ -441,6 +446,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_tim_ex.c</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/STM32/HAL/stm32f7xx_hal_uart.c</name>
+			<type>1</type>
+			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.16.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart.c</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/STM32/HAL/stm32f7xx_ll_fmc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_ll_fmc.c</locationURI>
@@ -479,6 +489,11 @@
 			<name>Inc/Framework/EOS/HAL/STM32/halUART.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halUART.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/System/Collections/eosCircularQueue.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosCircularQueue.h</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HAL/STM32/halGPIO.c</name>

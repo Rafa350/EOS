@@ -6,8 +6,8 @@
 //
 #include "eos.h"
 #include "HAL/halUART.h"
-#include "System/Core/eosSemaphore.h"
 #include "System/Core/eosQueue.h"
+#include "System/Core/eosSemaphore.h"
 #include "Services/eosService.h"
 
 
@@ -27,11 +27,11 @@ namespace eos {
 
 		private:
 			UARTHandler hUART;
-			Semaphore semaphore;
 			CommandQueue commandQueue;
-			unsigned txCount;     // Nombre de bytes transmessos
-			unsigned txLength;    // Longitut de les dades en bytes.
-			uint8_t* txBuffer;    // Buffer de dades a transmetre
+			Semaphore txPending;
+			uint8_t* txData;
+			unsigned txLength;
+			unsigned txCount;
 
 		public:
 			UARTService(Application* application, const InitParams& initParams);
@@ -41,7 +41,7 @@ namespace eos {
 			void onTerminate() override;
 			void onTask() override;
 
-			void send(uint8_t* data, unsigned length, unsigned blockTime);
+			bool send(uint8_t* data, unsigned length, unsigned blockTime);
 
 			void uartInterruptFunction(uint32_t event);
             static void uartInterruptFunction(UARTHandler handler, void* params, uint32_t event);

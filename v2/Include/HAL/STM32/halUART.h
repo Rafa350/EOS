@@ -1,3 +1,13 @@
+/// \file      halUART.h
+/// \author    Rafael Serrano (rsr.openware@gmail.com)
+/// \brief     Gestio de la UART
+/// \addtogroup HAL Hardware Abstraction Layer
+/// @{
+/// \addtogroup HAL_STM32 STM32 Hardware Abstraction Layer
+/// @{
+/// \defgroup HAL_STM32_UART UART
+/// @{
+///
 #ifndef __STM32_halUART__
 #define __STM32_halUART__
 
@@ -132,9 +142,6 @@ struct __UARTData {
     USART_TypeDef* device;
     UARTInterruptFunction isrFunction;
     void* isrParams;
-    int txCount;
-    int txLength;
-    uint8_t* txBuffer;
 };
 typedef struct __UARTData UARTData;
 
@@ -149,10 +156,7 @@ UARTHandler halUARTInitialize(UARTData* data, const UARTInitializeInfo *info);
 void halUARTDeinitialize(UARTHandler handler);
 
 void halUARTSend(UARTHandler handler, uint8_t data);
-
-uint32_t halUARTTransmit(UARTHandler handler, uint8_t* data, uint32_t length);
-void halUARTTransmitINT(UARTHandler handler, uint8_t* data, uint32_t length);
-uint32_t halUARTReceive(UARTHandler handler, uint8_t* data, uint32_t length);
+uint8_t halUARTReceive(UARTHandler handler);
 
 void halUARTSetInterruptFunction(UARTHandler handler, UARTInterruptFunction function, void* params);
 void halUARTInterruptHandler(UARTHandler handler);
@@ -170,3 +174,7 @@ void halUARTClearInterruptFlags(UARTHandler handler, uint32_t events);
 
 
 #endif // __STM32_halUART__
+
+/// @}
+/// @}
+/// @}

@@ -37,8 +37,9 @@ UARTService::~UARTService() {
 /// \param    data: El bloc de dades.
 /// \param    length: Longitut en bytes del bloc de dades.
 /// \params   blockTime: Tempos maxim de bloqueig.
+/// \return   True si l'operacio finalitza correctament.
 ///
-void UARTService::send(
+bool UARTService::send(
 	uint8_t* data,
 	unsigned length,
 	unsigned blockTime) {
@@ -46,7 +47,7 @@ void UARTService::send(
 	Command cmd;
 	cmd.data = data;
 	cmd.length = length;
-	commandQueue.push(cmd, blockTime);
+	return commandQueue.push(cmd,  unsigned(-1));
 }
 
 
@@ -78,13 +79,20 @@ void UARTService::onTerminate() {
 ///
 void UARTService::onTask() {
 
-	static char* text = "cagarro pudent.\r\n";
+	Command cmd;
+	if (commandQueue.pop(cmd,  unsigned(-1))) {
 
-	halUARTTransmitINT(hUART, (uint8_t*) text, strlen(text));
+		// Inicia la comunicacio
+		//
+		txData = cmd.data;
+		txLength = cmd.length;
+		txCount = 0;
+		halUARTEnableInterrupts(hUART, HAL_UART_EVENT_TXE);
 
-	// Espera que finalitzi la comunicacio pendent.
-	///
-	semaphore.wait(-1);
+		// Espera que finalitzi la comunicacio pendent.
+		//
+		txPending.wait(-1);
+	}
 }
 
 
@@ -98,13 +106,19 @@ void UARTService::uartInterruptFunction(
 	// Comprova si es un event TXE (Transmit data register empty)
 	//
 	if (event == HAL_UART_EVENT_TXE) {
-
+		if (txCount == txLength) {
+			halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXE);
+			halUARTEnableInterrupts(hUART, HAL_UART_EVENT_TC);
+		}
+		else
+			halUARTSend(hUART, txData[txCount++]);
 	}
 
 	// Comprova un event TC (Transmit complete).
 	//
 	if (event == HAL_UART_EVENT_TC) {
-		semaphore.releaseISR();
+		halUARTDisableInterrupts(hUART, HAL_UART_EVENT_ALL);
+		txPending.releaseISR();
 	}
 }
 

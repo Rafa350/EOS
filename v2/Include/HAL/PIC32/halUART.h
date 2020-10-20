@@ -1,3 +1,13 @@
+/// \file      halGPIO.h
+/// \author    Rafael Serrano (rsr.openware@gmail.com)
+/// \brief     Gestio del modul UART
+/// \addtogroup HAL Hardware Abstraction Layer
+/// @{
+/// \addtogroup HAL_PIC32 PIC32 Hardware Abstraction Layer
+/// @{
+/// \defgroup HAL_PIC32_UART UART
+/// @{
+///
 #ifndef __PIC32_halUART__
 #define __PIC32_halUART__
 
@@ -59,6 +69,8 @@ typedef struct {
 
 
 UARTHandler halUARTInitialize(UARTData* data, const UARTInitializeInfo *info);
+void halUARTDeinitialize(UARTHandler handler);
+
 
 void halUARTInterruptHandler(UARTHandler handler);
 

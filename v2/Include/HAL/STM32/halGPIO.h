@@ -1,3 +1,13 @@
+/// \file      halGPIO.h
+/// \author    Rafael Serrano (rsr.openware@gmail.com)
+/// \brief     Gestio del PORT d'entrada/sortida
+/// \addtogroup HAL Hardware Abstraction Layer
+/// @{
+/// \addtogroup HAL_STM32 STM32 Hardware Abstraction Layer
+/// @{
+/// \defgroup HAL_STM32_GPIO GPIO
+/// @{
+///
 #ifndef __STM32_halGPIO__
 #define	__STM32_halGPIO__
 
@@ -255,3 +265,6 @@ void halGPIOTogglePin(GPIOPort port, GPIOPin pin);
 
 #endif // __STM32_halGPIO__
 
+/// @}
+/// @}
+/// @}

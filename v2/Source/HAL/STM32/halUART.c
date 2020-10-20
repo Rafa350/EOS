@@ -408,78 +408,6 @@ void halUARTSend(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Transmiteix un bloc de dades, en modus bloqueig.
-/// \param    handler: El handler del dispoaitiu.
-/// \param    data: El bloc de dades.
-/// \param    length: Longitut del bloc.
-/// \return   Numero de bytes realment transmitits.
-///
-uint32_t halUARTTransmit(
-	UARTHandler handler,
-	uint8_t* data,
-	uint32_t length) {
-
-	__VERIFY_HANDLER(handler);
-	__VERIFY_DEVICE(handler->device);
-
-	USART_TypeDef* device = handler->device;
-
-	// Transmiteix el contingut del buffer
-	//
-	uint32_t count = 0;
-	for (int i = 0; i < length; i++) {
-
-		while (!__check_bit_msk(device->ISR, USART_ISR_TXE)) {
-
-			// TODO Controloar el timeout
-			continue;
-		}
-
-		device->TDR = *data++;
-		count++;
-	}
-
-	// Espera que acabi la transmissio
-	//
-	while (!__check_bit_msk(device->ISR, USART_ISR_TC)) {
-
-		// TODO Controlar el timeout
-		continue;
-	}
-
-	handler->device->ICR = USART_ICR_TCCF;
-
-	return count;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Transmiteix un bloc de dades en modus interrupcio.
-/// \param    hander: Handler del dispositiu.
-/// \param    data: El bloc de dades.
-/// \param    length: Longitut del bloc.
-///
-void halUARTTransmitINT(
-	UARTHandler handler,
-	uint8_t* data,
-	uint32_t length) {
-
-	eosAssert(data != NULL);
-	eosAssert(length > 0);
-	__VERIFY_HANDLER(handler);
-	__VERIFY_DEVICE(handler->device);
-
-	handler->txBuffer = data;
-	handler->txLength = length;
-	handler->txCount = 0;
-
-	// Habilita la interrupcio 'Transmision register empty'
-	//
-    __set_bit_msk(handler->device->CR1, USART_CR1_TXEIE);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Assigna la funcio d'interrupcio.
 /// \param    handler: Handler del dispositiu.
 /// \param    function: La funcio.
@@ -510,28 +438,28 @@ void halUARTEnableInterrupts(
 
 	USART_TypeDef* device = handler->device;
 
-	if ((events & HAL_UART_EVENT_CTS) == HAL_UART_EVENT_CTS)
+	if (__check_bit_msk(events, HAL_UART_EVENT_CTS))
 		__set_bit_msk(device->CR3, USART_CR3_CTSIE);
 
-	if ((events & HAL_UART_EVENT_LBD) == HAL_UART_EVENT_LBD)
+	if (__check_bit_msk(events, HAL_UART_EVENT_LBD))
 		__set_bit_msk(device->CR2, USART_CR2_LBDIE);
 
-	if ((events & HAL_UART_EVENT_IDLE) == HAL_UART_EVENT_IDLE)
+	if (__check_bit_msk(events, HAL_UART_EVENT_IDLE))
 		__set_bit_msk(device->CR1, USART_CR1_IDLEIE);
 
-	if ((events & HAL_UART_EVENT_TXE) == HAL_UART_EVENT_TXE)
+	if (__check_bit_msk(events, HAL_UART_EVENT_TXE))
 		__set_bit_msk(device->CR1, USART_CR1_TXEIE);
 
-	if ((events & HAL_UART_EVENT_TC) == HAL_UART_EVENT_TC)
+	if (__check_bit_msk(events, HAL_UART_EVENT_TC))
 		__set_bit_msk(device->CR1, USART_CR1_TCIE);
 
-	if ((events & HAL_UART_EVENT_RXNE) == HAL_UART_EVENT_RXNE)
+	if (__check_bit_msk(events, HAL_UART_EVENT_RXNE))
 		__set_bit_msk(device->CR1, USART_CR1_RXNEIE);
 
-	if ((events & HAL_UART_EVENT_PE) == HAL_UART_EVENT_PE)
+	if (__check_bit_msk(events, HAL_UART_EVENT_PE))
 		__set_bit_msk(device->CR1, USART_CR1_PEIE);
 
-	if ((events & HAL_UART_EVENT_ERR) == HAL_UART_EVENT_ERR)
+	if (__check_bit_msk(events, HAL_UART_EVENT_ERR))
 		__set_bit_msk(device->CR3, USART_CR3_EIE);
 }
 
@@ -548,6 +476,33 @@ uint32_t halUARTDisableInterrupts(
 	__VERIFY_HANDLER(handler);
 
 	USART_TypeDef* device = handler->device;
+
+	uint32_t state = 0;
+
+	if (__check_bit_msk(device->CR3, USART_CR3_CTSIE))
+		__set_bit_msk(state, HAL_UART_EVENT_CTS);
+
+	if (__check_bit_msk(device->CR2, USART_CR2_LBDIE))
+		__set_bit_msk(state, HAL_UART_EVENT_LBD);
+
+	if (__check_bit_msk(device->CR1, USART_CR1_IDLEIE))
+		__set_bit_msk(state, HAL_UART_EVENT_IDLE);
+
+	if (__check_bit_msk(device->CR1, USART_CR1_TXEIE))
+		__set_bit_msk(state, HAL_UART_EVENT_TXE);
+
+	if (__check_bit_msk(device->CR1, USART_CR1_TCIE))
+		__set_bit_msk(state, HAL_UART_EVENT_TC);
+
+	if (__check_bit_msk(device->CR1, USART_CR1_RXNEIE))
+		__set_bit_msk(state, HAL_UART_EVENT_RXNE);
+
+	if (__check_bit_msk(device->CR1, USART_CR1_PEIE))
+		__set_bit_msk(state, HAL_UART_EVENT_PE);
+
+	if (__check_bit_msk(device->CR3, USART_CR3_EIE))
+		__set_bit_msk(state, HAL_UART_EVENT_ERR);
+
 
 	if ((events & HAL_UART_EVENT_CTS) == HAL_UART_EVENT_CTS)
 		__clear_bit_msk(device->CR3, USART_CR3_CTSIE);
@@ -573,7 +528,7 @@ uint32_t halUARTDisableInterrupts(
 	if ((events & HAL_UART_EVENT_ERR) == HAL_UART_EVENT_ERR)
 		__clear_bit_msk(device->CR3, USART_CR3_EIE);
 
-	return 0;
+	return state;
 }
 
 
@@ -593,6 +548,9 @@ bool halDMAGetInterruptFlag(
 	USART_TypeDef* device = handler->device;
 
 	switch (event) {
+		case HAL_UART_EVENT_RXNE:
+			return __check_bit_msk(device->ISR, USART_ISR_RXNE);
+
 		case HAL_UART_EVENT_TXE:
 			return __check_bit_msk(device->ISR, USART_ISR_TXE);
 
@@ -623,46 +581,6 @@ void halUARTClearInterruptFlags(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa l'event TXE (Transmission register empty)
-/// \param    handler: Handler del dispositiu.
-//
-static void isrTxEmptyHandler(
-	UARTHandler handler) {
-
-	if (handler->txCount == handler->txLength) {
-
-		// Desactiva la interrupcio 'Transmit data register empty'
-		//
-		__clear_bit_msk(handler->device->CR1, USART_CR1_TXEIE);
-
-		// Activa la interrupcio 'Transmit complete)
-		//
-		__set_bit_msk(handler->device->CR1, USART_CR1_TCIE);
-	}
-	else
-		handler->device->TDR = handler->txBuffer[handler->txCount++];
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa l'event TC (Transmission complete)
-/// \param    handler: Handler del dispositiu.
-//
-static void isrTxCompleteHandler(
-	UARTHandler handler) {
-
-	// Desactiva la interrupcio 'Transmit complete'
-	//
-	__clear_bit_msk(handler->device->CR1, USART_CR1_TCIE);
-
-	// Desactiva la interrupcio 'Error'
-	//
-	__clear_bit_msk(handler->device->CR3, USART_CR3_EIE);
-
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Procesa la interrupcio.
 /// \param    handler: Handler del dispositiu.
 ///
@@ -675,16 +593,20 @@ void halUARTInterruptHandler(
 	uint32_t isr = handler->device->ISR;
 	uint32_t cr1 = handler->device->CR1;
 
+	if (__check_bit_msk(isr, USART_ISR_RXNE) &&
+		__check_bit_msk(cr1, USART_CR1_RXNEIE)) {
+		if (handler->isrFunction != NULL)
+			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_RXNE);
+	}
+
 	if (__check_bit_msk(isr, USART_ISR_TXE) &&
 		__check_bit_msk(cr1, USART_CR1_TXEIE)) {
-		isrTxEmptyHandler(handler);
 		if (handler->isrFunction != NULL)
 			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_TXE);
 	}
 
 	if (__check_bit_msk(isr, USART_ISR_TC) &&
 		__check_bit_msk(cr1, USART_CR1_TCIE)) {
-		isrTxCompleteHandler(handler);
 		if (handler->isrFunction != NULL)
 			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_TC);
 		handler->device->ICR = USART_ICR_TCCF;

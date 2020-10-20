@@ -242,6 +242,7 @@ void MyApplication::sw1EventHandler(
 
     if (sw1->read() == SWITCHES_STATE_ON) {
         led1->pulse(1000);
+        uartService->send((uint8_t*) "hola\r\n", 6, unsigned(-1));
 #ifdef ESIST_LEDS_LED2
         led2->delayedPulse(500, 500);
 #endif
