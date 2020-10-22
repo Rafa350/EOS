@@ -30,6 +30,9 @@
 #define LEDS_LED3_PIN        HAL_GPIO_PIN_2
 #endif
 
+#define LEDS_STATE_ON        1
+#define LEDS_STATE_OFF       0
+
 
 // -----------------------------------------------------------------------
 // SWITCHES

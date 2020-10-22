@@ -7,7 +7,7 @@
 #define USE_LEDS_LED3
 
 
-#include "Board/board.h"
+#include "Board/eosBoard.h"
 
 
 #endif // __eosConfig__

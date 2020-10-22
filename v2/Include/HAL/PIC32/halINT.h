@@ -11,20 +11,20 @@ extern "C" {
 
 
 // Prioritats de les interrupcions
-#define HAL_INT_PRIORITY_LEVEL0       0
-#define HAL_INT_PRIORITY_LEVEL1       1
-#define HAL_INT_PRIORITY_LEVEL2       2
-#define HAL_INT_PRIORITY_LEVEL3       3
-#define HAL_INT_PRIORITY_LEVEL4       4
-#define HAL_INT_PRIORITY_LEVEL5       5
-#define HAL_INT_PRIORITY_LEVEL6       6
-#define HAL_INT_PRIORITY_LEVEL7       7
+#define HAL_INT_PRIORITY_0             0
+#define HAL_INT_PRIORITY_1             1
+#define HAL_INT_PRIORITY_2             2
+#define HAL_INT_PRIORITY_3             3
+#define HAL_INT_PRIORITY_4             4
+#define HAL_INT_PRIORITY_5             5
+#define HAL_INT_PRIORITY_6             6
+#define HAL_INT_PRIORITY_7             7
 
 // Subprioritats de les interrupcions
-#define HAL_INT_SUBPRIORITY_LEVEL0    0
-#define HAL_INT_SUBPRIORITY_LEVEL1    1
-#define HAL_INT_SUBPRIORITY_LEVEL2    2
-#define HAL_INT_SUBPRIORITY_LEVEL3    3
+#define HAL_INT_SUBPRIORITY_0          0
+#define HAL_INT_SUBPRIORITY_1          1
+#define HAL_INT_SUBPRIORITY_2          2
+#define HAL_INT_SUBPRIORITY_3          3
 
 // Fonts d'interrupcio
 #define HAL_INT_SOURCE_CN             _CHANGE_NOTICE_IRQ
