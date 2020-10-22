@@ -15,9 +15,9 @@
 
 #elif defined(EOS_STM32)
 
-#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler, HAL_TMR_EVENT_UP)
-#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler, HAL_TMR_EVENT_UP)
-#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler, HAL_TMR_EVENT_UP)
+#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler, HAL_TMR_EVENT_UPDATE)
+#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler, HAL_TMR_EVENT_UPDATE)
+#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler, HAL_TMR_EVENT_UPDATE)
 
 #endif
 

@@ -14,7 +14,7 @@ namespace app {
 
     using namespace eos;
 
-    class LedLoopService;
+    class MyAppLoopService;
 
     class MyApplication: public Application {
         private:
@@ -24,6 +24,7 @@ namespace app {
             DigOutputService* digOutputService;
             DigInputService* digInputService;
             UARTService* uartService;
+            MyAppLoopService* loopService;
 
     #ifdef EXIST_LEDS_LED1
             DigOutput* led1;
@@ -58,6 +59,7 @@ namespace app {
     #ifdef EXIST_SWITCHES_SW3
             void sw3EventHandler(const DigInput::EventArgs &args);
     #endif
+            inline UARTService* getUARTService() const { return uartService; }
 
         protected:
             void onInitialize();

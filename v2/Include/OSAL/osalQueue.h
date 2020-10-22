@@ -12,15 +12,10 @@ extern "C" {
 #endif
 
 
-typedef struct OSAL_QUEUE_DATA* HQueue;
-
-typedef struct {
-    unsigned maxElements;
-    unsigned elementSize;
-} QueueInitializeInfo;
+typedef struct OSAL_QUEUE_DATA *HQueue;
 
 
-HQueue osalQueueCreate(const QueueInitializeInfo* info);
+HQueue osalQueueCreate(unsigned maxElements, unsigned elementSize);
 void osalQueueDestroy(HQueue hQueue);
 
 void osalQueueClear(HQueue hQueue);

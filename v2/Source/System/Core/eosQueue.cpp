@@ -16,13 +16,10 @@ GenericQueue::GenericQueue(
     unsigned size,
     unsigned capacity) {
 
-    eosAssert(size != 0);
-    eosAssert(capacity != 0);
+    eosAssert(size > 0);
+    eosAssert(capacity > 0);
 
-    QueueInitializeInfo info;
-    info.maxElements = capacity;
-    info.elementSize = size;
-    hQueue = osalQueueCreate(&info);
+    hQueue = osalQueueCreate(capacity, size);
     eosAssert(hQueue != nullptr);
 }
 

@@ -61,6 +61,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/appApplication.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/App/appLoopService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/appLoopService.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/App/eosConfig.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Include/eosConfig.h</locationURI>
@@ -79,6 +84,11 @@
 			<name>Src/App/appApplication.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/appApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/App/appLoopService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/UartDemo/Source/appLoopService.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/App/appMain.cpp</name>
@@ -241,14 +251,44 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSYS.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/HAL/halTMR.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halTMR.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/HAL/halUART.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halUART.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/OSAL/osalHeap.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalHeap.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/OSAL/osalKernel.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalKernel.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/OSAL/osalMutex.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalMutex.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/OSAL/osalQueue.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalQueue.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/OSAL/osalSemaphore.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalSemaphore.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/OSAL/osalTask.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTask.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/Services/eosAppLoopService.h</name>
@@ -277,6 +317,11 @@
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/System/Collections</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/System/Core</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -446,11 +491,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_tim_ex.c</locationURI>
 		</link>
 		<link>
-			<name>Src/Framework/STM32/HAL/stm32f7xx_hal_uart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/Library/STMicroelectronics/STM32Cube/STM32Cube_FW_F7_V1.16.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart.c</locationURI>
-		</link>
-		<link>
 			<name>Src/Framework/STM32/HAL/stm32f7xx_ll_fmc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_ll_fmc.c</locationURI>
@@ -486,14 +526,39 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSYS.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/HAL/STM32/halTMR.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halUART.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halUART.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/System/Collections/eosCircularQueue.h</name>
+			<name>Inc/Framework/EOS/System/Collections/eosFIFOContainer.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosCircularQueue.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosFIFOContainer.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/System/Core/eosMutex.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosMutex.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/System/Core/eosQueue.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosQueue.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/System/Core/eosSemaphore.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosSemaphore.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/System/Core/eosTask.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HAL/STM32/halGPIO.c</name>
@@ -531,6 +596,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalKernel.c</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalMutex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalMutex.c</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalQueue.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalQueue.c</locationURI>
@@ -564,6 +634,11 @@
 			<name>Src/Framework/EOS/System/Core/eosGlobalAlloc.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosGlobalAlloc.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/Core/eosMutex.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosMutex.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/System/Core/eosQueue.cpp</name>

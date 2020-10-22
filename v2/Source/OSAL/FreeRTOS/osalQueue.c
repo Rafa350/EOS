@@ -5,18 +5,19 @@
 #include "queue.h"
 
 
-
 /// ----------------------------------------------------------------------
 /// \brief    Crea una cua.
 /// \param    info: Parametres d'inicialitzacio.
 /// \result   El handler de la cua. NULL en cas d'error.
 ///
 HQueue osalQueueCreate(
-	const QueueInitializeInfo* info) {
+	unsigned maxElements,
+	unsigned elementSize) {
 
-	eosAssert(info != NULL);
+	eosAssert(maxElements > 0);
+	eosAssert(elementSize > 0);
 
-	HQueue hQueue = (HQueue) xQueueCreate(info->maxElements, info->elementSize);
+	HQueue hQueue = (HQueue) xQueueCreate(maxElements, elementSize);
 	eosAssert(hQueue != NULL);
 
     return hQueue;
@@ -32,7 +33,7 @@ void osalQueueDestroy(
 
 	eosAssert(hQueue != NULL);
 
-	vQueueDelete((QueueHandle_t)hQueue);
+	vQueueDelete((QueueHandle_t) hQueue);
 }
 
 
@@ -45,7 +46,7 @@ void osalQueueClear(
 
 	eosAssert(hQueue != NULL);
 
-	xQueueReset((QueueHandle_t)hQueue);
+	xQueueReset((QueueHandle_t) hQueue);
 }
 
 
@@ -58,14 +59,23 @@ void osalQueueClear(
 ///
 bool osalQueuePut(
 	HQueue hQueue,
-	const void* element,
+	const void *element,
 	unsigned blockTime) {
 
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-    return xQueueSendToBack((QueueHandle_t)hQueue, element,  blockTicks) == pdPASS;
+    TickType_t blockTicks = (blockTime == ((unsigned) -1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+
+    bool result;
+    if (__is_isr_code()) {
+        BaseType_t taskWoken = pdFALSE;
+        result = xQueueSendFromISR((QueueHandle_t) hQueue, element, &taskWoken) == pdPASS;
+        portEND_SWITCHING_ISR(taskWoken);
+    }
+    else
+    	result = xQueueSendToBack((QueueHandle_t) hQueue, element,  blockTicks) == pdPASS;
+    return result;
 }
 
 
@@ -78,13 +88,15 @@ bool osalQueuePut(
 ///
 bool osalQueuePutISR(
 	HQueue hQueue,
-	const void* element) {
+	const void *element) {
 
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    BaseType_t priority = pdFALSE;
-    return xQueueSendFromISR((QueueHandle_t)hQueue, element, &priority) == pdPASS;
+    BaseType_t taskWoken = pdFALSE;
+    bool result = xQueueSendFromISR((QueueHandle_t) hQueue, element, &taskWoken) == pdPASS;
+    portEND_SWITCHING_ISR(taskWoken);
+    return result;
 }
 
 
@@ -97,14 +109,23 @@ bool osalQueuePutISR(
 ///
 bool osalQueueGet(
 	HQueue hQueue,
-	void* element,
+	void *element,
 	unsigned blockTime) {
 
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
     TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-    return xQueueReceive((QueueHandle_t)hQueue, element, blockTicks) == pdPASS;
+
+    bool result;
+    if (__is_isr_code()) {
+        BaseType_t taskWoken = pdFALSE;
+        result = xQueueReceiveFromISR((QueueHandle_t)hQueue, element, &taskWoken) == pdPASS;
+        portEND_SWITCHING_ISR(taskWoken);
+    }
+    else
+    	result = xQueueReceive((QueueHandle_t)hQueue, element, blockTicks) == pdPASS;
+    return result;
 }
 
 
@@ -117,13 +138,15 @@ bool osalQueueGet(
 ///
 bool osalQueueGetISR(
 	HQueue hQueue,
-	void* element) {
+	void *element) {
 
 	eosAssert(hQueue != NULL);
 	eosAssert(element != NULL);
 
-    BaseType_t priority = pdFALSE;
-    return xQueueReceiveFromISR((QueueHandle_t)hQueue, element, &priority) == pdPASS;
+    BaseType_t taskWoken = pdFALSE;
+    bool result = xQueueReceiveFromISR((QueueHandle_t) hQueue, element, &taskWoken) == pdPASS;
+    portEND_SWITCHING_ISR(taskWoken);
+    return result;
 }
 
 
@@ -137,7 +160,7 @@ bool osalQueueIsEmpty(
 
 	eosAssert(hQueue != NULL);
 
-	return uxQueueMessagesWaiting((QueueHandle_t)hQueue) == 0;
+	return uxQueueMessagesWaiting((QueueHandle_t) hQueue) == 0;
 }
 
 
@@ -151,5 +174,5 @@ bool osalQueueIsEmptyISR(
 
 	eosAssert(hQueue != NULL);
 
-	return uxQueueMessagesWaitingFromISR((QueueHandle_t)hQueue) == 0;
+	return uxQueueMessagesWaitingFromISR((QueueHandle_t) hQueue) == 0;
 }

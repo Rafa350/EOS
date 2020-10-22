@@ -374,10 +374,10 @@ void halTMREnableInterrupts(
 
 	uint32_t temp = handler->device->DIER;
 
-	if (__check_bit_msk(events, HAL_TMR_EVENT_UP))
+	if (__check_bit_msk(events, HAL_TMR_EVENT_UPDATE))
 		__set_bit_msk(temp, TIM_DIER_UIE);
 
-	if (__check_bit_msk(events, HAL_TMR_EVENT_TRG))
+	if (__check_bit_msk(events, HAL_TMR_EVENT_TRIGGER))
 		__set_bit_msk(temp, TIM_DIER_TIE);
 
 	if (__check_bit_msk(events, HAL_TMR_EVENT_COM))
@@ -406,20 +406,20 @@ uint32_t halTMRDisableInterrupts(
 	// Recupera l'estat d'habilitacio de les interrupcions
 	//
 	if (__check_bit_msk(temp, TIM_DIER_UIE))
-		__set_bit_msk(enabled, HAL_TMR_EVENT_UP);
+		__set_bit_msk(enabled, HAL_TMR_EVENT_UPDATE);
 
 	if (__check_bit_msk(temp, TIM_DIER_TIE))
-		__set_bit_msk(enabled, HAL_TMR_EVENT_TRG);
+		__set_bit_msk(enabled, HAL_TMR_EVENT_TRIGGER);
 
 	if (__check_bit_msk(temp, TIM_DIER_COMIE))
 		__set_bit_msk(enabled, HAL_TMR_EVENT_COM);
 
 	// Desabilita les interrupcions
 	//
-	if (__check_bit_msk(events, HAL_TMR_EVENT_UP))
+	if (__check_bit_msk(events, HAL_TMR_EVENT_UPDATE))
 		__clear_bit_msk(temp, TIM_DIER_UIE);
 
-	if (__check_bit_msk(events, HAL_TMR_EVENT_TRG))
+	if (__check_bit_msk(events, HAL_TMR_EVENT_TRIGGER))
 		__clear_bit_msk(temp, TIM_DIER_TIE);
 
 	if (__check_bit_msk(events, HAL_TMR_EVENT_COM))
@@ -445,10 +445,10 @@ void halTMRClearInterruptFlags(
 
 	TIM_TypeDef* device = handler->device;
 
-	if (__check_bit_msk(events, HAL_TMR_EVENT_UP))
+	if (__check_bit_msk(events, HAL_TMR_EVENT_UPDATE))
 		__clear_bit_msk(device->SR, TIM_SR_UIF);
 
-	if (__check_bit_msk(events, HAL_TMR_EVENT_TRG))
+	if (__check_bit_msk(events, HAL_TMR_EVENT_TRIGGER))
 		__clear_bit_msk(device->SR, TIM_SR_TIF);
 
 	if (__check_bit_msk(events, HAL_TMR_EVENT_COM))
@@ -472,10 +472,10 @@ bool halTMRGetInterruptFlag(
 	TIM_TypeDef* device = handler->device;
 
 	switch (event) {
-		case HAL_TMR_EVENT_UP:
+		case HAL_TMR_EVENT_UPDATE:
 			return __check_bit_msk(device->SR, TIM_SR_UIF);
 
-		case HAL_TMR_EVENT_TRG:
+		case HAL_TMR_EVENT_TRIGGER:
 			return __check_bit_msk(device->SR, TIM_SR_TIF);
 
 		case HAL_TMR_EVENT_COM:

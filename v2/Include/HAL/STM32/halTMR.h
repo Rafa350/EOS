@@ -1,3 +1,13 @@
+/// \file     halTMR.h
+/// \author   Rafael Serrano (rsr.openware@gmail.com)
+/// \brief    Gestio dels timers
+/// \addtogroup HAL Hardware Abstraction Layer
+/// @{
+/// \addtogroup HAL_STM32 STM32 Hardware Abstraction Layer
+/// @{
+/// \defgroup HAL_STM32_TMR TMR
+/// @{
+///
 #ifndef __STM32_halTMR__
 #define __STM32_halTMR__
 
@@ -54,11 +64,11 @@ extern "C" {
 #define HAL_TMR_DIRECTION_DOWN    (1 << HAL_TMR_DIRECTION_pos)
 
 // Identificador dels events
-#define HAL_TMR_EVENT_BRK         0x01
+#define HAL_TMR_EVENT_BREAK       0x01
 #define HAL_TMR_EVENT_CC          0x02
 #define HAL_TMR_EVENT_COM         0x04
-#define HAL_TMR_EVENT_TRG         0x08
-#define HAL_TMR_EVENT_UP          0x10
+#define HAL_TMR_EVENT_TRIGGER     0x08
+#define HAL_TMR_EVENT_UPDATE      0x10
 #define HAL_TMR_EVENT_ALL         0x1F
 
 
@@ -109,3 +119,7 @@ void halTMRClearInterruptFlags(TMRHandler handler, uint32_t events);
 
 
 #endif // __STM32_halTMR__
+
+/// @}
+/// @}
+/// @}

@@ -54,14 +54,15 @@ bool Semaphore::wait(
 ///
 void Semaphore::release() const {
 
-    osalSemaphoreRelease(hSemaphore);
+	osalSemaphoreRelease(hSemaphore);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Allivera un semaforo. Versio per cridar des d'una interrupcio.
+/// \brief    Allivera un semaforo.
 ///
 void Semaphore::releaseISR() const {
 
-    osalSemaphoreReleaseISR(hSemaphore);
+	osalSemaphoreReleaseISR(hSemaphore);
 }
+

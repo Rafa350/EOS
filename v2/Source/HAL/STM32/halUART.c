@@ -1,3 +1,7 @@
+/// \file     halUART.c
+/// \author   Rafael Serrano (rsr.openware@gmail.com)
+/// \brief    Gestio de la UART
+///
 #include "eos.h"
 #include "eosAssert.h"
 #include "HAL/STM32/halUART.h"
@@ -408,6 +412,21 @@ void halUARTSend(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Reb un byte
+/// \param    handler: Handler del dispositiu.
+/// \return   El byte lleigit.
+///
+uint8_t halUARTReceive(
+	UARTHandler handler) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
+	return handler->device->RDR;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Assigna la funcio d'interrupcio.
 /// \param    handler: Handler del dispositiu.
 /// \param    function: La funcio.
@@ -428,7 +447,7 @@ void halUARTSetInterruptFunction(
 /// ----------------------------------------------------------------------
 /// \brief    Habilita les interrupcions.
 /// \param    handler: Handler del dispositiu.
-/// \param    events: Interrupcios a habiolitar.
+/// \param    events: Interrupcions a habilitar.
 ///
 void halUARTEnableInterrupts(
 	UARTHandler handler,
@@ -441,26 +460,32 @@ void halUARTEnableInterrupts(
 	if (__check_bit_msk(events, HAL_UART_EVENT_CTS))
 		__set_bit_msk(device->CR3, USART_CR3_CTSIE);
 
-	if (__check_bit_msk(events, HAL_UART_EVENT_LBD))
+	if (__check_bit_msk(events, HAL_UART_EVENT_BREAK))
 		__set_bit_msk(device->CR2, USART_CR2_LBDIE);
 
 	if (__check_bit_msk(events, HAL_UART_EVENT_IDLE))
 		__set_bit_msk(device->CR1, USART_CR1_IDLEIE);
 
-	if (__check_bit_msk(events, HAL_UART_EVENT_TXE))
+	if (__check_bit_msk(events, HAL_UART_EVENT_TXEMPTY))
 		__set_bit_msk(device->CR1, USART_CR1_TXEIE);
 
-	if (__check_bit_msk(events, HAL_UART_EVENT_TC))
+	if (__check_bit_msk(events, HAL_UART_EVENT_TXCOMPLETE))
 		__set_bit_msk(device->CR1, USART_CR1_TCIE);
 
-	if (__check_bit_msk(events, HAL_UART_EVENT_RXNE))
+	if (__check_bit_msk(events, HAL_UART_EVENT_RXFULL)) {
+		// Activa RXNE i PE
+		//
 		__set_bit_msk(device->CR1, USART_CR1_RXNEIE);
+	}
 
-	if (__check_bit_msk(events, HAL_UART_EVENT_PE))
+	if (__check_bit_msk(events, HAL_UART_EVENT_PARITY))
 		__set_bit_msk(device->CR1, USART_CR1_PEIE);
 
-	if (__check_bit_msk(events, HAL_UART_EVENT_ERR))
+	if (__check_bit_msk(events, HAL_UART_EVENT_ERROR)) {
+		// Activa les tres interrupcions d'error PE, ORE, FE i NE
+		//
 		__set_bit_msk(device->CR3, USART_CR3_EIE);
+	}
 }
 
 
@@ -483,49 +508,54 @@ uint32_t halUARTDisableInterrupts(
 		__set_bit_msk(state, HAL_UART_EVENT_CTS);
 
 	if (__check_bit_msk(device->CR2, USART_CR2_LBDIE))
-		__set_bit_msk(state, HAL_UART_EVENT_LBD);
+		__set_bit_msk(state, HAL_UART_EVENT_BREAK);
 
 	if (__check_bit_msk(device->CR1, USART_CR1_IDLEIE))
 		__set_bit_msk(state, HAL_UART_EVENT_IDLE);
 
 	if (__check_bit_msk(device->CR1, USART_CR1_TXEIE))
-		__set_bit_msk(state, HAL_UART_EVENT_TXE);
+		__set_bit_msk(state, HAL_UART_EVENT_TXEMPTY);
 
 	if (__check_bit_msk(device->CR1, USART_CR1_TCIE))
-		__set_bit_msk(state, HAL_UART_EVENT_TC);
+		__set_bit_msk(state, HAL_UART_EVENT_TXCOMPLETE);
 
-	if (__check_bit_msk(device->CR1, USART_CR1_RXNEIE))
-		__set_bit_msk(state, HAL_UART_EVENT_RXNE);
+	if (__check_bit_msk(device->CR1, USART_CR1_RXNEIE)) {
+		// Desactiva RXNE i PE
+		//
+		__set_bit_msk(state, HAL_UART_EVENT_RXFULL);
+	}
 
 	if (__check_bit_msk(device->CR1, USART_CR1_PEIE))
-		__set_bit_msk(state, HAL_UART_EVENT_PE);
+		__set_bit_msk(state, HAL_UART_EVENT_PARITY);
 
-	if (__check_bit_msk(device->CR3, USART_CR3_EIE))
-		__set_bit_msk(state, HAL_UART_EVENT_ERR);
+	if (__check_bit_msk(device->CR3, USART_CR3_EIE)) {
+		// Desactiva les tres interrupcions d'error PE, ORE, FE i NE
+		//
+		__set_bit_msk(state, HAL_UART_EVENT_ERROR);
+	}
 
-
-	if ((events & HAL_UART_EVENT_CTS) == HAL_UART_EVENT_CTS)
+	if (__check_bit_msk(events, HAL_UART_EVENT_CTS))
 		__clear_bit_msk(device->CR3, USART_CR3_CTSIE);
 
-	if ((events & HAL_UART_EVENT_LBD) == HAL_UART_EVENT_LBD)
+	if (__check_bit_msk(events, HAL_UART_EVENT_BREAK))
 		__clear_bit_msk(device->CR2, USART_CR2_LBDIE);
 
-	if ((events & HAL_UART_EVENT_IDLE) == HAL_UART_EVENT_IDLE)
+	if (__check_bit_msk(events, HAL_UART_EVENT_IDLE))
 		__clear_bit_msk(device->CR1, USART_CR1_IDLEIE);
 
-	if ((events & HAL_UART_EVENT_TXE) == HAL_UART_EVENT_TXE)
+	if (__check_bit_msk(events, HAL_UART_EVENT_TXEMPTY))
 		__clear_bit_msk(device->CR1, USART_CR1_TXEIE);
 
-	if ((events & HAL_UART_EVENT_TC) == HAL_UART_EVENT_TC)
+	if (__check_bit_msk(events, HAL_UART_EVENT_TXCOMPLETE))
 		__clear_bit_msk(device->CR1, USART_CR1_TCIE);
 
-	if ((events & HAL_UART_EVENT_RXNE) == HAL_UART_EVENT_RXNE)
+	if (__check_bit_msk(events, HAL_UART_EVENT_RXFULL))
 		__clear_bit_msk(device->CR1, USART_CR1_RXNEIE);
 
-	if ((events & HAL_UART_EVENT_PE) == HAL_UART_EVENT_PE)
+	if (__check_bit_msk(events, HAL_UART_EVENT_PARITY))
 		__clear_bit_msk(device->CR1, USART_CR1_PEIE);
 
-	if ((events & HAL_UART_EVENT_ERR) == HAL_UART_EVENT_ERR)
+	if (__check_bit_msk(events, HAL_UART_EVENT_ERROR))
 		__clear_bit_msk(device->CR3, USART_CR3_EIE);
 
 	return state;
@@ -548,14 +578,26 @@ bool halDMAGetInterruptFlag(
 	USART_TypeDef* device = handler->device;
 
 	switch (event) {
-		case HAL_UART_EVENT_RXNE:
+		case HAL_UART_EVENT_RXFULL:
 			return __check_bit_msk(device->ISR, USART_ISR_RXNE);
 
-		case HAL_UART_EVENT_TXE:
+		case HAL_UART_EVENT_TXEMPTY:
 			return __check_bit_msk(device->ISR, USART_ISR_TXE);
 
-		case HAL_UART_EVENT_TC:
+		case HAL_UART_EVENT_TXCOMPLETE:
 			return __check_bit_msk(device->ISR, USART_ISR_TC);
+
+		case HAL_UART_EVENT_PARITY:
+			return __check_bit_msk(device->ISR, USART_ISR_PE);
+
+		case HAL_UART_EVENT_OVERRUN:
+			return __check_bit_msk(device->ISR, USART_ISR_ORE);
+
+		case HAL_UART_EVENT_FRAMING:
+			return __check_bit_msk(device->ISR, USART_ISR_FE);
+
+		case HAL_UART_EVENT_NOISE:
+			return __check_bit_msk(device->ISR, USART_ISR_NE);
 
 		default:
 			return false;
@@ -566,7 +608,7 @@ bool halDMAGetInterruptFlag(
 /// ----------------------------------------------------------------------
 /// \brief    Borra els flags d'interrupcio
 /// \param    handler: Handler del dispositiu.
-/// \param    events: Els flags a boarrar
+/// \param    events: Els flags a borrar
 ///
 void halUARTClearInterruptFlags(
 	UARTHandler handler,
@@ -575,8 +617,17 @@ void halUARTClearInterruptFlags(
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
 
-	if (__check_bit_msk(events, HAL_UART_EVENT_TC))
+	if (__check_bit_msk(events, HAL_UART_EVENT_TXCOMPLETE))
 		handler->device->ICR = USART_ICR_TCCF;
+
+	if (__check_bit_msk(events, HAL_UART_EVENT_PARITY))
+		handler->device->ICR = USART_ICR_PECF;
+
+	if (__check_bit_msk(events, HAL_UART_EVENT_OVERRUN))
+		handler->device->ICR = USART_ICR_ORECF;
+
+	if (__check_bit_msk(events, HAL_UART_EVENT_NOISE))
+		handler->device->ICR = USART_ICR_NCF;
 }
 
 
@@ -592,23 +643,68 @@ void halUARTInterruptHandler(
 
 	uint32_t isr = handler->device->ISR;
 	uint32_t cr1 = handler->device->CR1;
+	uint32_t cr3 = handler->device->CR3;
 
+	// Comprova si es una interrupcio RXNE
+	//
 	if (__check_bit_msk(isr, USART_ISR_RXNE) &&
 		__check_bit_msk(cr1, USART_CR1_RXNEIE)) {
 		if (handler->isrFunction != NULL)
-			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_RXNE);
+			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_RXFULL);
+		// El flag es borra automaticament al lleigir el registre RDR
 	}
 
+	// Comprova si es una interrupcio 'parity error'
+	//
+	if (__check_bit_msk(isr, USART_ISR_PE) &&
+		__check_bit_msk(cr1, USART_CR1_PEIE)) {
+		if (handler->isrFunction != NULL)
+			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_PARITY);
+		handler->device->ICR = USART_ICR_PECF;
+	}
+
+	// Comprova si es una interrupcio 'overrun error'
+	//
+	if (__check_bit_msk(isr, USART_ISR_ORE) &&
+		(__check_bit_msk(cr3, USART_CR3_EIE) || __check_bit_msk(cr1, USART_CR1_RXNEIE))) {
+		if (handler->isrFunction != NULL)
+			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_OVERRUN);
+		handler->device->ICR = USART_ICR_ORECF;
+	}
+
+	// Comprova si es una interrupcio 'framing error'
+	//
+	if (__check_bit_msk(isr, USART_ISR_FE) &&
+		__check_bit_msk(cr3, USART_CR3_EIE)) {
+		if (handler->isrFunction != NULL)
+			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_FRAMING);
+		handler->device->ICR = USART_ICR_FECF;
+	}
+
+	// Comprova si es una interrupcio 'noise error'
+	//
+	if (__check_bit_msk(isr, USART_ISR_NE) &&
+		__check_bit_msk(cr3, USART_CR3_EIE)) {
+		if (handler->isrFunction != NULL)
+			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_NOISE);
+		handler->device->ICR = USART_ICR_NCF;
+	}
+
+	// Comprova si es una interrupcio TXE
+	//
 	if (__check_bit_msk(isr, USART_ISR_TXE) &&
 		__check_bit_msk(cr1, USART_CR1_TXEIE)) {
 		if (handler->isrFunction != NULL)
-			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_TXE);
+			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_TXEMPTY);
+		// El flag es borra automaticament al escriure el registre TDR
 	}
 
+	// Comprova si es una interrupcio TC
+	//
 	if (__check_bit_msk(isr, USART_ISR_TC) &&
 		__check_bit_msk(cr1, USART_CR1_TCIE)) {
 		if (handler->isrFunction != NULL)
-			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_TC);
+			handler->isrFunction(handler, handler->isrParams, HAL_UART_EVENT_TXCOMPLETE);
 		handler->device->ICR = USART_ICR_TCCF;
 	}
 }

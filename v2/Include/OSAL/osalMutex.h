@@ -16,8 +16,8 @@ typedef struct OSAL_MUTEX_DATA* HMutex;
 HMutex osalMutexCreate(void);
 void osalMutexDestroy(HMutex hMutex);
 
-bool osalMutexLock(HMutex hMutex, unsigned blockTime);
-bool osalMutexUnlock(HMutex hMutex);
+bool osalMutexWait(HMutex hMutex, unsigned blockTime);
+bool osalMutexRelease(HMutex hMutex);
 
 
 #ifdef	__cplusplus

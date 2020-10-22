@@ -21,9 +21,9 @@
 
 #elif defined(EOS_STM32)
 
-#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler, HAL_TMR_EVENT_UP)
-#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler, HAL_TMR_EVENT_UP)
-#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler, HAL_TMR_EVENT_UP)
+#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler, HAL_TMR_EVENT_UPDATE)
+#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler, HAL_TMR_EVENT_UPDATE)
+#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler, HAL_TMR_EVENT_UPDATE)
 
 #endif
 
@@ -145,6 +145,7 @@ void DigInputService::onInitialize() {
     // Hebilita les interrupcions del temporitzador
     //
     halTMRSetInterruptFunction(hTimer, tmrInterruptFunction, this);
+
     __halTMRClearInterruptFlags(hTimer);
     __halTMREnableInterrupts(hTimer);
 
@@ -165,6 +166,8 @@ void DigInputService::onTerminate() {
 
     // Deshabilita les interrupcions del temporitzador
     //
+    halTMRSetInterruptFunction(hTimer, NULL, NULL);
+
     __halTMRDisableInterrupts(hTimer);
 
     // Finalitza el servei base

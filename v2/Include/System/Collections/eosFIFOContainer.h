@@ -1,5 +1,5 @@
-#ifndef __eosCircularQueue__
-#define __eosCircularQueue__
+#ifndef __eosFIFOContainer__
+#define __eosFIFOContainer__
 
 
 #include "eos.h"
@@ -11,81 +11,95 @@ namespace eos {
 #ifdef EOS_USE_FULL_NAMESPACE
     namespace System {
         namespace Collections {
-#endif            
-            /// \brief Implementa una cua circular de tamany fix.
-            /// \remarks La cua enmagatzema copies del element.
+#endif
+            /// \brief Implementa un contenidor FIFO de tamany fix.
+            /// \remarks El contenidor enmagatzema copies del element.
             ///
             template <typename Element, const unsigned size>
-            class CircularQueue {
-                
+            class FIFOContainer {
+
                 private:
-                    typedef StaticArray<Element, size> Data;
-                    
+                    typedef StaticArray<Element, size> Container;
+
                 public:
                     typedef Element Value;
                     typedef Element& Reference;
                     typedef const Element& CReference;
-                    
+
                 private:
-                    int count;
-                    int enqueueIndex;
-                    int dequeueIndex;
-                    Data data;
-                
+                    unsigned count;
+                    unsigned enqueueIndex;
+                    unsigned dequeueIndex;
+                    Container container;
+
                 public:
-                    
+
                     /// \brief Constructor per defecte.
                     ///
-                    CircularQueue():
+                    FIFOContainer():
                         count(0),
                         enqueueIndex(0),
                         dequeueIndex(0) {
-                        
+
                     }
-                        
+
                     /// \brief Afegeix un elemenmt a la cua
                     /// \param element: L'element a afeigir.
-                    ///
-                    void enqueue(CReference element) {
-                        eosAssert(count < size);
+                    /// \return True si tot es correcte.
+                    bool enqueue(CReference element) {
                         if (count < size) {
-                            data[enqueueIndex++] = element;
+                            container[enqueueIndex++] = element;
                             if (enqueueIndex == size)
                                 enqueueIndex = 0;
                             count++;
+                            return true;
                         }
+                        else
+                        	return false;
                     }
-                    
-                    Value dequeue() {
-                        eosAssert(count > 0);
+
+                    /// \brief Extreu un element
+                    /// \param element: Referencia on deixar l'element.
+                    /// \return Trus si tot es correcte.
+                    bool dequeue(Reference element) {
                         if (count > 0) {
-                            Reference element = data[dequeueIndex++];
+                            element = container[dequeueIndex++];
                             if (dequeueIndex == size)
                                 dequeueIndex = 0;
                             count--;
-                            return element;
+                            return true;
                         }
+                        else
+                        	return false;
                     }
-                    
-                    inline unsigned getCount() const { 
-                        return count; 
+
+                    inline void clear() {
+                    	count = 0;
                     }
-                    
+
+                    inline unsigned getCount() const {
+                        return count;
+                    }
+
+                    inline unsigned getSize() const {
+                        return size;
+                    }
+
                     inline bool isEmpty() const {
                         return count == 0;
                     }
-                    
+
                     inline bool isFull() const {
                         return count == size;
                     }
             };
 
 
-#ifdef EOS_USE_FULL_NAMESPACE            
+#ifdef EOS_USE_FULL_NAMESPACE
         }
     }
-#endif    
+#endif
 }
 
 
-#endif // __eosCircularQueue__
+#endif // __eosFIFOContainer__

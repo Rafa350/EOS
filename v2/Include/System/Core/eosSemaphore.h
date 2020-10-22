@@ -13,12 +13,12 @@ namespace eos {
     class Semaphore {
         private:
             HSemaphore hSemaphore;
-            
+
         public:
             Semaphore();
             Semaphore(unsigned maxCount);
             ~Semaphore();
-            
+
             bool wait(unsigned blockTime) const;
             void release() const;
             void releaseISR() const;

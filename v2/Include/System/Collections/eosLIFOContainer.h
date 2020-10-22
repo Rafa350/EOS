@@ -1,5 +1,5 @@
-#ifndef __eosStack__
-#define	__eosStack__
+#ifndef __eosLIFOContainer__
+#define	__eosLIFOContainer__
 
 
 #include "eos.h"
@@ -8,10 +8,10 @@
 
 namespace eos {
 
-    /// \brief Pila (LIFO). Adapta un contenidor per treballar com a pila.
+    /// \brief Implementa una pila (LIFO)
     ///
     template <typename Element, typename Container>
-    class Stack {
+    class LIFOContainer {
         public:
             typedef Element Value;
             typedef Element& Reference;
@@ -26,7 +26,7 @@ namespace eos {
 
     		/// \brief Contructor per defecte
             ///
-            Stack() {
+            LIFOContainer() {
             }
 
             /// \brief Afegeix un element a la pila.
@@ -73,6 +73,6 @@ namespace eos {
 }
 
 
-#endif // __eosStack__
+#endif // __eosLIFOContainer__
 
 

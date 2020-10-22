@@ -3,7 +3,6 @@
 #include "HAL/halUART.h"
 #include "Services/eosUARTService.h"
 
-#include "string.h"
 
 using namespace eos;
 
@@ -18,9 +17,9 @@ UARTService::UARTService(
 	const InitParams& initParams):
 
 	Service(application),
-	hUART(initParams.hUART),
-	commandQueue(10) {
+	hUART(initParams.hUART) {
 
+	rxPending.release();
 }
 
 
@@ -33,21 +32,82 @@ UARTService::~UARTService() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Transmeteix un bloc de dades.
-/// \param    data: El bloc de dades.
-/// \param    length: Longitut en bytes del bloc de dades.
-/// \params   blockTime: Tempos maxim de bloqueig.
-/// \return   True si l'operacio finalitza correctament.
+/// \brief    Transmet un bloc de dades.
+/// \param    data: Buffer de dades.
+/// \param    length: Nombre de bytes en el buffer.
+/// \params   blockTime: Temps maxim de bloqueig.
+/// \return   Nombre de bytes transmessos realment.
+/// \remarks  Si no es pot transmetre en el temps 'blockTime', es cancel·la
+///           la transmissio dels bytes que resten.
 ///
-bool UARTService::send(
+unsigned UARTService::send(
 	uint8_t* data,
 	unsigned length,
 	unsigned blockTime) {
 
-	Command cmd;
-	cmd.data = data;
-	cmd.length = length;
-	return commandQueue.push(cmd,  unsigned(-1));
+	eosAssert(data != nullptr);
+	eosAssert(length > 0);
+
+	// Inicialitza les variables per la transmissio
+	//
+	txBuffer = data;
+	txLength = length;
+	txCount = 0;
+
+	// Activa la interrupcio TXE, i comença la transmissio.
+	//
+	halUARTEnableInterrupts(hUART, HAL_UART_EVENT_TXEMPTY);
+
+	// Espera el final de la transmissio.
+	//
+	if (!txPending.wait(blockTime)) {
+
+		// Si ha pasat el temps de bloqueig i no ha acabat, aborta
+		// la transmissio de dades
+		//
+		halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXEMPTY);
+		halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXCOMPLETE);
+		halUARTClearInterruptFlags(hUART, HAL_UART_EVENT_ALL);
+	}
+
+	return txCount;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Reb un bloc de dades.
+/// \param    data: El buffer de dades.
+/// \param    size: Tamany del buffer.
+/// \param    blockTime: Temps maxim de bloqueig.
+/// \return   El nombre de bytes rebuts.
+///
+unsigned UARTService::receive(
+	uint8_t* data,
+	unsigned size,
+	unsigned blockTime) {
+
+	eosAssert(data != nullptr);
+	eosAssert(size > 0);
+
+	rxBuffer = data;
+	rxSize = size;
+	rxCount = 0;
+
+	// Activa la interrupcio RXNE. A partir d'aquest moment,
+	// cada cop que el registre de recepcio no estigui buit,
+	// es genera una interrupcio.
+	//
+	halUARTEnableInterrupts(hUART, HAL_UART_EVENT_RXFULL);
+
+	if (!rxPending.wait(blockTime)) {
+    	halUARTDisableInterrupts(hUART, HAL_UART_EVENT_RXFULL);
+		halUARTDisableInterrupts(hUART, HAL_UART_EVENT_PARITY);
+		halUARTDisableInterrupts(hUART, HAL_UART_EVENT_ERROR);
+		halUARTClearInterruptFlags(hUART, HAL_UART_EVENT_ALL);
+    	rxPending.release();
+	}
+
+	return rxCount;
 }
 
 
@@ -79,20 +139,7 @@ void UARTService::onTerminate() {
 ///
 void UARTService::onTask() {
 
-	Command cmd;
-	if (commandQueue.pop(cmd,  unsigned(-1))) {
-
-		// Inicia la comunicacio
-		//
-		txData = cmd.data;
-		txLength = cmd.length;
-		txCount = 0;
-		halUARTEnableInterrupts(hUART, HAL_UART_EVENT_TXE);
-
-		// Espera que finalitzi la comunicacio pendent.
-		//
-		txPending.wait(-1);
-	}
+	Task::delay(1000);
 }
 
 
@@ -103,22 +150,39 @@ void UARTService::onTask() {
 void UARTService::uartInterruptFunction(
 	uint32_t event) {
 
-	// Comprova si es un event TXE (Transmit data register empty)
-	//
-	if (event == HAL_UART_EVENT_TXE) {
-		if (txCount == txLength) {
-			halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXE);
-			halUARTEnableInterrupts(hUART, HAL_UART_EVENT_TC);
-		}
-		else
-			halUARTSend(hUART, txData[txCount++]);
-	}
+	switch (event) {
 
-	// Comprova un event TC (Transmit complete).
-	//
-	if (event == HAL_UART_EVENT_TC) {
-		halUARTDisableInterrupts(hUART, HAL_UART_EVENT_ALL);
-		txPending.releaseISR();
+		// RXNE (Reception data register not empty)
+		//
+		case HAL_UART_EVENT_RXFULL:
+			rxBuffer[rxCount++] = halUARTReceive(hUART);
+			if (rxCount == rxSize) {
+				halUARTDisableInterrupts(hUART, HAL_UART_EVENT_RXFULL);
+				halUARTDisableInterrupts(hUART, HAL_UART_EVENT_PARITY);
+				halUARTDisableInterrupts(hUART, HAL_UART_EVENT_ERROR);
+				rxPending.releaseISR();
+			}
+			break;
+
+		// TXE (Transmit data register empty)
+		//
+		case HAL_UART_EVENT_TXEMPTY: {
+			if (txCount == txLength) {
+				halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXEMPTY);
+				halUARTEnableInterrupts(hUART, HAL_UART_EVENT_TXCOMPLETE);
+			}
+			else
+				halUARTSend(hUART, txBuffer[txCount++]);
+			break;
+		}
+
+		// Comprova un event TC (Transmit complete).
+		//
+		case HAL_UART_EVENT_TXCOMPLETE:
+			halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXEMPTY);
+			halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXCOMPLETE);
+			txPending.releaseISR();
+			break;
 	}
 }
 
@@ -133,6 +197,9 @@ void UARTService::uartInterruptFunction(
 	UARTHandler handler,
 	void* params,
 	uint32_t event) {
+
+	eosAssert(handler != nullptr);
+	eosAssert(params != nullptr);
 
 	UARTService* service = static_cast<UARTService*>(params);
 	service->uartInterruptFunction(event);

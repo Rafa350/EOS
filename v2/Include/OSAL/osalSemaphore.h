@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 
-typedef struct OSAL_SEMAPHORE_DATA* HSemaphore;
+typedef struct OSAL_SEMAPHORE_DATA *HSemaphore;
 
 
 HSemaphore osalSemaphoreCreate(unsigned maxCount);

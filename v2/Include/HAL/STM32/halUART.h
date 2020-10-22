@@ -1,6 +1,6 @@
-/// \file      halUART.h
-/// \author    Rafael Serrano (rsr.openware@gmail.com)
-/// \brief     Gestio de la UART
+/// \file     halUART.h
+/// \author   Rafael Serrano (rsr.openware@gmail.com)
+/// \brief    Gestio de la UART
 /// \addtogroup HAL Hardware Abstraction Layer
 /// @{
 /// \addtogroup HAL_STM32 STM32 Hardware Abstraction Layer
@@ -118,14 +118,17 @@
 
 // Identificadors dels events
 #define HAL_UART_EVENT_CTS        0x01      // CTS interrupt
-#define HAL_UART_EVENT_LBD        0x02      // Break detection
-#define HAL_UART_EVENT_TXE        0x04      // Transmit data register register empty
-#define HAL_UART_EVENT_TC         0x08      // Transmission complete
-#define HAL_UART_EVENT_RXNE       0x10      // Receiver data register no empty
+#define HAL_UART_EVENT_BREAK      0x02      // Break detected
+#define HAL_UART_EVENT_TXEMPTY    0x04      // Transmit data register register empty
+#define HAL_UART_EVENT_TXCOMPLETE 0x08      // Transmission complete
+#define HAL_UART_EVENT_RXFULL     0x10      // Receiver data register no empty
 #define HAL_UART_EVENT_IDLE       0x20      // Idle line detected
-#define HAL_UART_EVENT_PE         0x40      // Parity error
-#define HAL_UART_EVENT_ERR        0x80      //
-#define HAL_UART_EVENT_ALL        0xFF      // Totes combinades
+#define HAL_UART_EVENT_PARITY     0x40      // Parity error
+#define HAL_UART_EVENT_FRAMING    0x80      // Framing error
+#define HAL_UART_EVENT_OVERRUN    0x100     // Overrun error
+#define HAL_UART_EVENT_NOISE      0x200     // Noise error
+#define HAL_UART_EVENT_ERROR      0x380     // Combinat Noise, Framing i Overrun
+#define HAL_UART_EVENT_ALL        0x3FF     // Totes combinades
 
 
 #ifdef	__cplusplus

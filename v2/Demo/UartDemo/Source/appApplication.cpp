@@ -12,15 +12,16 @@
 #include "System/eosApplication.h"
 
 #include "appApplication.h"
+#include "appLoopService.h"
 
 
 using namespace eos;
 using namespace app;
 
 
-TMRData digInputTimerData;
-TMRData digOutputTimerData;
-UARTData uartData;
+TMRData digInputTimerData;   // Dades del TMR del servei DigInputService
+TMRData digOutputTimerData;  // Dades del TMR del servei DigOutputService
+UARTData uartData;           // Dades de la UART del servei UARTService
 
 
 /// ----------------------------------------------------------------------
@@ -46,143 +47,6 @@ void MyApplication::onInitialize() {
 
 	initializeHardware();
 	initializeServices();
-
-    // Inicialitza el temporitzador pel servei d'entrades digitals
-    //
-	TMRInitializeInfo tmrInfo;
-	tmrInfo.timer = DigInputService_Timer;
-#if defined(EOS_PIC32)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
-    tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1;
-#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
-    tmrInfo.prescaler = (halSYSGetTimerClock1Frequency() / 1000000L) - 1; // 1MHz
-    tmrInfo.period = (1000 * DigInputService_TimerPeriod) - 1;
-#else
-    //#error CPU no soportada
-#endif
-    halTMRInitialize(&digInputTimerData, &tmrInfo);
-
-    // Inicialitza les interrupcions
-    //
-    halINTSetInterruptVectorPriority(DigInputService_TimerInterruptVector, DigInputService_TimerInterruptPriority, DigInputService_TimerInterruptSubPriority);
-    halINTEnableInterruptVector(DigInputService_TimerInterruptVector);
-
-    // Inicialitza el servei d'entrades digitals
-	//
-    DigInputService::InitParams digInputServiceInit;
-    digInputServiceInit.hTimer = &digInputTimerData;
-    digInputService = new DigInputService(this, digInputServiceInit);
-    digInputService->setPriority(Task::Priority::high);
-
-    DigInput::InitParams digInputInit;
-    digInputInit.eventParam = nullptr;
-
-    // Inicialitza la entrada corresponent al switch SW1
-    //
-#ifdef EXIST_SWITCHES_SW1
-    halGPIOInitializePin(SWITCHES_SW1_PORT, SWITCHES_SW1_PIN,
-        HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
-#ifdef EOS_PIC32
-    halCNInitializeLine(SWITCHES_SW1_CN, HAL_CN_PULL_UP);
-#endif
-
-    digInputInit.port = SWITCHES_SW1_PORT;
-    digInputInit.pin = SWITCHES_SW1_PIN;
-    digInputInit.eventCallback = &sw1EventCallback;
-    sw1 = new DigInput(digInputService, digInputInit);
-#endif
-
-    // Inicialitza la entrada corresponent al switch SW2
-    //
-#ifdef EXIST_SWITCHES_SW2
-    halGPIOInitializePin(SWITCHES_SW2_PORT, SWITCHES_SW2_PIN,
-        HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
-    halCNInitializeLine(SWITCHES_SW2_CN, HAL_CN_PULL_UP);
-
-    digInputInit.port = SWITCHES_SW2_PORT;
-    digInputInit.pin = SWITCHES_SW2_PIN;
-    digInputInit.eventCallback = &sw2EventCallback;
-    sw2 = new DigInput(digInputService, digInputInit);
-#endif
-
-    // Inicialitza la entrada corresponent al switch SW3
-    //
-#ifdef EXIST_SWITCHES_SW3
-    halGPIOInitializePin(SWITCHES_SW3_PORT, SWITCHES_SW3_PIN,
-        HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
-    halCNInitializeLine(SWITCHES_SW3_CN, HAL_CN_PULL_UP);
-
-    digInputInit.port = SWITCHES_SW3_PORT;
-    digInputInit.pin = SWITCHES_SW3_PIN;
-    digInputInit.eventCallback = &sw3EventCallback;
-    sw3 = new DigInput(digInputService, digInputInit);
-#endif
-
-    // Inicialitza el temporitzador pel servei de sortides digitals
-    //
-	tmrInfo.timer = DigOutputService_Timer;
-#if defined(EOS_PIC32)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
-    tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigOutputService_TimerPeriod) / 64000) - 1;
-#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
-    tmrInfo.prescaler = (halSYSGetTimerClock1Frequency() / 1000000L) - 1; // 1MHz
-    tmrInfo.period = (1000 * DigOutputService_TimerPeriod) - 1;
-#else
-    //#error CPU no soportada
-#endif
-	halTMRInitialize(&digOutputTimerData, &tmrInfo);
-
-    // Inicialitza les interrupcions
-    //
-    halINTSetInterruptVectorPriority(DigOutputService_TimerInterruptVector, DigOutputService_TimerInterruptPriority, DigOutputService_TimerInterruptSubPriority);
-    halINTEnableInterruptVector(DigOutputService_TimerInterruptVector);
-
-    // Inicialitza el servei de sortides digitals
-    //
-    DigOutputService::InitParams digOutputServiceInit;
-    digOutputServiceInit.hTimer = &digOutputTimerData;
-    digOutputService = new DigOutputService(this, digOutputServiceInit);
-
-    DigOutput::InitParams digOutputInit;
-
-    // Inicialitza la sortida corresponent al led LED1
-    //
-#ifdef EXIST_LEDS_LED1
-    halGPIOInitializePin(LEDS_LED1_PORT, LEDS_LED1_PIN,
-        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
-
-    digOutputInit.port = LEDS_LED1_PORT;
-    digOutputInit.pin = LEDS_LED1_PIN;
-    led1 = new DigOutput(digOutputService, digOutputInit);
-    led1->write(LEDS_STATE_OFF);
-#endif
-
-    // Inicialitza la sortida corresponent al led LED2
-    //
-#ifdef EXIST_LEDS_LED2
-    halGPIOInitializePin(LEDS_LED2_PORT, LEDS_LED2_PIN,
-        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
-
-    digOutputInit.port = LEDS_LED2_PORT;
-    digOutputInit.pin = LEDS_LED2_PIN;
-    led2 = new DigOutput(digOutputService, digOutputInit);
-    led2->write(LEDS_STATE_OFF);
-#endif
-
-    // Inicialitza la sortida corresponent al led LED3
-    //
-#ifdef EXIST_LEDS_LED3
-    halGPIOInitializePin(LEDS_LED3_PORT, LEDS_LED3_PIN,
-        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
-
-    digOutputInit.port = LEDS_LED3_PORT;
-    digOutputInit.pin = LEDS_LED3_PIN;
-    led3 = new DigOutput(digOutputService, digOutputInit);
-    led3->write(LEDS_STATE_OFF);
-#endif
-
 }
 
 
@@ -191,9 +55,63 @@ void MyApplication::onInitialize() {
 ///
 void MyApplication::initializeHardware() {
 
-	// Inicialitza els port utilitzats per la UART
-	//
 	GPIOInitializePinInfo gpioInit;
+	UARTInitializeInfo uartInit;
+	TMRInitializeInfo tmrInfo;
+
+	// Inicialitza els pins SW1, SW2 i SW3 dels pulsadors
+	//
+	gpioInit.options = HAL_GPIO_MODE_INPUT;
+	gpioInit.alt = HAL_GPIO_AF_NONE;
+
+#ifdef EXIST_SWITCHES_SW1
+	gpioInit.port = SWITCHES_SW1_PORT;
+	gpioInit.pin = SWITCHES_SW1_PIN;
+    halGPIOInitializePins(&gpioInit, 1);
+#ifdef EOS_PIC32
+    halCNInitializeLine(SWITCHES_SW1_CN, HAL_CN_PULL_UP);
+#endif
+#endif
+
+#ifdef EXIST_SWITCHES_SW2
+	gpioInit.port = SWITCHES_SW2_PORT;
+	gpioInit.pin = SWITCHES_SW2_PIN;
+    halGPIOInitializePins(&gpioInit, 1);
+    halCNInitializeLine(SWITCHES_SW2_CN, HAL_CN_PULL_UP);
+#endif
+
+#ifdef EXIST_SWITCHES_SW3
+	gpioInit.port = SWITCHES_SW3_PORT;
+	gpioInit.pin = SWITCHES_SW3_PIN;
+    halGPIOInitializePins(&gpioInit, 1);
+    halCNInitializeLine(SWITCHES_SW3_CN, HAL_CN_PULL_UP);
+#endif
+
+    // Inicialitza els pins LED1, LED2 i LED3 dels leds
+    //
+    gpioInit.options = HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR;
+    gpioInit.alt = HAL_GPIO_AF_NONE;
+
+#ifdef EXIST_LEDS_LED1
+    gpioInit.port = LEDS_LED1_PORT;
+    gpioInit.pin = LEDS_LED1_PIN;
+    halGPIOInitializePins(&gpioInit, 1);
+#endif
+
+#ifdef EXIST_LEDS_LED2
+    gpioInit.port = LEDS_LED2_PORT;
+    gpioInit.pin = LEDS_LED2_PIN;
+    halGPIOInitializePins(&gpioInit, 1);
+#endif
+
+#ifdef EXIST_LEDS_LED3
+    gpioInit.port = LEDS_LED3_PORT;
+    gpioInit.pin = LEDS_LED3_PIN;
+    halGPIOInitializePins(&gpioInit, 1);
+#endif
+
+    // Inicialitza els pins TX/RX de la UART
+	//
 	gpioInit.options = HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_HIGH | HAL_GPIO_PULL_UP;
 	gpioInit.alt = HAL_GPIO_AF8_USART6;
 
@@ -205,19 +123,49 @@ void MyApplication::initializeHardware() {
 	gpioInit.pin = HAL_GPIO_PIN_7;
 	halGPIOInitializePins(&gpioInit, 1);
 
-	// Inicialitza la UART
+	// Inicialitza UART6
 	//
-	UARTInitializeInfo uartInit;
 	uartInit.channel = HAL_UART_CHANNEL_6;
 	uartInit.options =
 		HAL_UART_CLOCK_AUTO | HAL_UART_BAUD_9600 | HAL_UART_OVERSAMPLING_16 |
 		HAL_UART_LEN_8 | HAL_UART_STOP_1 | HAL_UART_PARITY_NONE;
 	halUARTInitialize(&uartData, &uartInit);
-
-	// Inicialitza la interrupcio associada al UART
-	//
 	halINTEnableInterruptVector(HAL_INT_VECTOR_UART6);
 	halINTSetInterruptVectorPriority(HAL_INT_VECTOR_UART6, HAL_INT_PRIORITY_10, HAL_INT_SUBPRIORITY_0);
+
+	// Inicialitza el temporitzador per les entrades digitals
+	//
+	tmrInfo.timer = DigInputService_Timer;
+#if defined(EOS_PIC32)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
+    tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1;
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
+    tmrInfo.prescaler = (halSYSGetTimerClock1Frequency() / 1000000L) - 1; // 1MHz
+    tmrInfo.period = (1000 * DigInputService_TimerPeriod) - 1;
+#else
+    #error CPU no soportada
+#endif
+    halTMRInitialize(&digInputTimerData, &tmrInfo);
+    halINTSetInterruptVectorPriority(DigInputService_TimerInterruptVector, DigInputService_TimerInterruptPriority, DigInputService_TimerInterruptSubPriority);
+    halINTEnableInterruptVector(DigInputService_TimerInterruptVector);
+
+	// Inicialitza el temporitzador per les sortides digitals
+	//
+	tmrInfo.timer = DigOutputService_Timer;
+#if defined(EOS_PIC32)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
+    tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigOutputService_TimerPeriod) / 64000) - 1;
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
+    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
+    tmrInfo.prescaler = (halSYSGetTimerClock1Frequency() / 1000000L) - 1; // 1MHz
+    tmrInfo.period = (1000 * DigOutputService_TimerPeriod) - 1;
+#else
+    #error CPU no soportada
+#endif
+	halTMRInitialize(&digOutputTimerData, &tmrInfo);
+    halINTSetInterruptVectorPriority(DigOutputService_TimerInterruptVector, DigOutputService_TimerInterruptPriority, DigOutputService_TimerInterruptSubPriority);
+    halINTEnableInterruptVector(DigOutputService_TimerInterruptVector);
 }
 
 
@@ -226,9 +174,72 @@ void MyApplication::initializeHardware() {
 ///
 void MyApplication::initializeServices() {
 
+    // Inicialitza el servei d'entrades digitals
+	//
+    DigInputService::InitParams digInputServiceInit;
+    DigInput::InitParams digInputInit;
+
+    digInputServiceInit.hTimer = &digInputTimerData;
+    digInputService = new DigInputService(this, digInputServiceInit);
+    digInputService->setPriority(Task::Priority::high);
+
+    digInputInit.eventParam = nullptr;
+
+    digInputInit.port = SWITCHES_SW1_PORT;
+    digInputInit.pin = SWITCHES_SW1_PIN;
+    digInputInit.eventCallback = &sw1EventCallback;
+    sw1 = new DigInput(digInputService, digInputInit);
+
+#ifdef EXIST_SWITCHES_SW2
+    digInputInit.port = SWITCHES_SW2_PORT;
+    digInputInit.pin = SWITCHES_SW2_PIN;
+    digInputInit.eventCallback = &sw2EventCallback;
+    sw2 = new DigInput(digInputService, digInputInit);
+#endif
+
+#ifdef EXIST_SWITCHES_SW3
+    digInputInit.port = SWITCHES_SW3_PORT;
+    digInputInit.pin = SWITCHES_SW3_PIN;
+    digInputInit.eventCallback = &sw3EventCallback;
+    sw3 = new DigInput(digInputService, digInputInit);
+#endif
+
+    // Inicialitza el servei de sortides digitals
+    //
+    DigOutputService::InitParams digOutputServiceInit;
+    DigOutput::InitParams digOutputInit;
+
+    digOutputServiceInit.hTimer = &digOutputTimerData;
+    digOutputService = new DigOutputService(this, digOutputServiceInit);
+
+    digOutputInit.port = LEDS_LED1_PORT;
+    digOutputInit.pin = LEDS_LED1_PIN;
+    led1 = new DigOutput(digOutputService, digOutputInit);
+    led1->write(LEDS_STATE_OFF);
+
+#ifdef EXIST_LEDS_LED2
+    digOutputInit.port = LEDS_LED2_PORT;
+    digOutputInit.pin = LEDS_LED2_PIN;
+    led2 = new DigOutput(digOutputService, digOutputInit);
+    led2->write(LEDS_STATE_OFF);
+#endif
+
+#ifdef EXIST_LEDS_LED3
+    digOutputInit.port = LEDS_LED3_PORT;
+    digOutputInit.pin = LEDS_LED3_PIN;
+    led3 = new DigOutput(digOutputService, digOutputInit);
+    led3->write(LEDS_STATE_OFF);
+#endif
+
+	// Inicialitza el servei UartService
+	//
 	UARTService::InitParams uartServiceInit;
 	uartServiceInit.hUART = &uartData;
 	uartService = new UARTService(this, uartServiceInit);
+
+	// Inicialitza el servei AppLoop
+	//
+	loopService = new MyAppLoopService(this);
 }
 
 

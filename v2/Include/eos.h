@@ -131,6 +131,16 @@
 #define __read_bit(a, b)          ((a) & (b))
 
 
+// Control del procesador
+//
+#if defined(EOS_STM32x)
+#define __is_isr_code()           (__get_IPSR() != 0)
+#elif defined(EOS_PIC32)
+#define __is_isr_code()           false
+#else
+#define __is_isr_code()           false
+#endif
+
 // EOS includes
 //
 #include "eosConfig.h"

@@ -47,8 +47,17 @@ bool osalSemaphoreWait(
 
 	eosAssert(hSemaphore != NULL);
 
-	TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-	return xSemaphoreTake((SemaphoreHandle_t) hSemaphore, blockTicks) == pdTRUE;
+	TickType_t blockTicks = (blockTime == ((unsigned) -1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
+
+	bool result;
+	if (__is_isr_code()) {
+		BaseType_t taskWoken = pdFALSE;
+	    result = xSemaphoreTakeFromISR((SemaphoreHandle_t) hSemaphore, &taskWoken);
+    	portEND_SWITCHING_ISR(taskWoken)
+	}
+	else
+		result = xSemaphoreTake((SemaphoreHandle_t) hSemaphore, blockTicks) == pdTRUE;
+	return result;
 }
 
 
@@ -61,7 +70,13 @@ void osalSemaphoreRelease(
 
 	eosAssert(hSemaphore != NULL);
 
-    xSemaphoreGive((SemaphoreHandle_t) hSemaphore);
+	if (__is_isr_code()) {
+		portBASE_TYPE taskWoken = pdFALSE;
+		xSemaphoreGiveFromISR((SemaphoreHandle_t) hSemaphore, &taskWoken);
+		portEND_SWITCHING_ISR(taskWoken)
+	}
+	else
+		xSemaphoreGive((SemaphoreHandle_t) hSemaphore);
 }
 
 
@@ -74,7 +89,7 @@ void osalSemaphoreReleaseISR(
 
 	eosAssert(hSemaphore != NULL);
 
-	portBASE_TYPE taskWoken;
-	if (xSemaphoreGiveFromISR((SemaphoreHandle_t) hSemaphore, &taskWoken) == pdTRUE)
-		portEND_SWITCHING_ISR(taskWoken)
+	portBASE_TYPE taskWoken = pdFALSE;
+	xSemaphoreGiveFromISR((SemaphoreHandle_t) hSemaphore, &taskWoken);
+	portEND_SWITCHING_ISR(taskWoken)
 }
