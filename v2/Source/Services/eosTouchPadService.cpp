@@ -126,5 +126,6 @@ void TouchPadService::interruptHandler(
 	EXTILine line,
 	void *param) {
 
-	static_cast<TouchPadService*>(param)->interruptHandler();
+	TouchPadService* service = static_cast<TouchPadService*>(param);
+	service->interruptHandler();
 }

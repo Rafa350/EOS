@@ -25,7 +25,7 @@ FsmService::FsmService(
 ///
 void FsmService::addMachine(
     FsmMachine *machine) {
-    
+
     eosAssert(machine != nullptr);
     eosAssert(machine->service == nullptr);
 
@@ -51,20 +51,21 @@ void FsmService::removeMachine(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el servei.
-/// 
+///
 void FsmService::onInitialize() {
 
     for (auto it = machines.begin(); it != machines.end(); it++) {
         FsmMachine* machine = *it;
         machine->initialize();
-    }    
+    }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Executa les tasques del servei.
 ///
-void FsmService::onTask() {
+void FsmService::onTask(
+    Task *task) {
 
     while (true) {
         for (auto it = machines.begin(); it != machines.end(); it++) {
@@ -80,5 +81,5 @@ void FsmService::onTask() {
 ///
 FsmMachine::FsmMachine() :
     service(nullptr) {
-    
+
 }

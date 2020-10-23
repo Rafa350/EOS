@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalKernel.h"
+
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -97,7 +98,7 @@ unsigned osalGetTickCount() {
 /// \retorn El valor del contador.
 ///
 unsigned osalGetTickTime() {
-    
+
     return xTaskGetTickCount() * portTICK_PERIOD_MS;
 }
 

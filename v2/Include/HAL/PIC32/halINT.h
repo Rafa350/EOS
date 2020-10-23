@@ -48,6 +48,8 @@ extern "C" {
 #define HAL_INT_VECTOR_TMR3           _TIMER_3_VECTOR
 #define HAL_INT_VECTOR_TMR4           _TIMER_4_VECTOR
 #define HAL_INT_VECTOR_TMR5           _TIMER_5_VECTOR
+#define HAL_INT_VECTOR_UART1          _UART_1_VECTOR
+#define HAL_INT_VECTOR_UART2          _UART_2_VECTOR
 
 
 #define __halINTEnableInterrupts()    __builtin_enable_interrupts()

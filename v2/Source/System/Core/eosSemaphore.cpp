@@ -8,7 +8,7 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor
+/// \brief Contructor.
 ///
 Semaphore::Semaphore() {
 
@@ -18,7 +18,7 @@ Semaphore::Semaphore() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor
+/// \brief Contructor.
 ///
 Semaphore::Semaphore(
     unsigned maxCount) {

@@ -1,6 +1,6 @@
 /// \file      halGPIO.h
 /// \author    Rafael Serrano (rsr.openware@gmail.com)
-/// \brief     Gestio del PORT d'entrada/sortida
+/// \brief     GPIO module manager.
 /// \addtogroup HAL Hardware Abstraction Layer
 /// @{
 /// \addtogroup HAL_STM32 STM32 Hardware Abstraction Layer
@@ -18,7 +18,7 @@
 
 // Opcions del modul
 //
-#define HAL_GPIO_INLINE           1              // Funcions inline
+#define HAL_GPIO_INLINE           1    ///< Use macro functions for performance
 
 // STM32 includes
 //
@@ -36,24 +36,26 @@ extern "C" {
 #endif
 
 
-typedef uint32_t GPIOPort;
-typedef uint32_t GPIOPin;
-typedef uint32_t GPIOMask;
-typedef uint32_t GPIOOptions;
-typedef uint32_t GPIOAlt;
+typedef uint32_t GPIOPort;        ///< Port identifier.
+typedef uint32_t GPIOPin;         ///< Pin number.
+typedef uint32_t GPIOMask;        ///< Position pin mask.
+typedef uint32_t GPIOOptions;     ///< Pin options.
+typedef uint32_t GPIOAlt;         ///< Alternate pin function.
 
+/// \brief GPIO pin initialization parameters.
 typedef struct {
-	GPIOPort port;
-	GPIOPin pin;
-	GPIOOptions options;
-	GPIOAlt alt;
+	GPIOPort port;                ///< Port identifier.
+	GPIOPin pin;                  ///< Pin identifier
+	GPIOOptions options;          ///< Options
+	GPIOAlt alt;                  ///< Alternate pin function
 } GPIOInitializePinInfo;
 
+/// \brief GPIO port initialization parameters
 typedef struct {
-	GPIOPort port;
-	GPIOMask mask;
-	GPIOOptions options;
-	GPIOAlt alt;
+	GPIOPort port;                ///< Port identifier.
+	GPIOMask mask;                ///< Selection pin mask.
+	GPIOOptions options;          ///< Options.
+	GPIOAlt alt;                  ///< Alternate pin function.
 } GPIOInitializePortInfo;
 
 

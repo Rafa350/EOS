@@ -24,7 +24,6 @@ namespace eos {
         private:
             HTimer hTimer;
             bool autoreload;
-            void *tag;
             IEventCallback *eventCallback;
             void* eventParam;
 
@@ -32,13 +31,12 @@ namespace eos {
             Timer(bool autoreload = false);
             Timer(bool autoreload, IEventCallback* eventCallback, void* eventParam);
             ~Timer();
+
             void start(unsigned time, unsigned blockTime);
             void stop(unsigned blockTime);
 
             inline void setEventCallback(IEventCallback* callback) {  eventCallback = callback; }
 
-            inline void setTag(void* tag) { this->tag = tag; }
-            inline void* getTag() const { return tag; }
             bool isActive() const;
 
         private:

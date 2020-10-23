@@ -57,7 +57,7 @@ namespace eos {
             typedef DynamicArray<DigOutput*> DigOutputList;
             typedef DynamicArray<DigOutput*>::Iterator DigOutputListIterator;
         public:
-            struct InitParams {     // Parametres d'inicialitzacio del servei
+            struct InitializeInfo { // Informacio d'inicialitzacio del servei
                 TMRHandler hTimer;  // -Temporitzador. Si es NULL utilitza el tick del sistema
             };
 
@@ -82,12 +82,12 @@ namespace eos {
         protected:
             void onInitialize() override;
             void onTerminate() override;
-            void onTask() override;
+            void onTask(Task *task) override;
 #if Eos_ApplicationTickEnabled
             void onTick() override;
 #endif
         public:
-            DigOutputService(Application* application, const InitParams& initParams);
+            DigOutputService(Application* application, const InitializeInfo& info);
             ~DigOutputService();
 
             void addOutput(DigOutput* output);
@@ -104,8 +104,8 @@ namespace eos {
             void delayedToggle(DigOutput* output, unsigned delay);
             void delayedPulse(DigOutput* output, unsigned delay, unsigned width);
 
-            void tmrInterruptFunction();
-            static void tmrInterruptFunction(TMRHandler handler, void* params);
+            void tmrInterruptFunction(uint32_t event);
+            static void tmrInterruptFunction(TMRHandler handler, void* params, uint32_t event);
     };
 
     /// \brief Clase que implementa una sortida digital.

@@ -14,7 +14,7 @@ namespace eos {
 
 	class UARTService: public Service {
 		public:
-			struct InitParams {
+			struct InitializeInfo {
 				UARTHandler hUART;
 			};
 
@@ -30,12 +30,12 @@ namespace eos {
 			Semaphore rxPending;
 
 		public:
-			UARTService(Application* application, const InitParams& initParams);
+			UARTService(Application* application, const InitializeInfo& initializeInfo);
 			virtual ~UARTService();
 
 			void onInitialize() override;
 			void onTerminate() override;
-			void onTask() override;
+			void onTask(Task *task) override;
 
 			unsigned send(uint8_t* data, unsigned length, unsigned blockTime);
 			unsigned receive(uint8_t* data, unsigned size, unsigned blockTime);

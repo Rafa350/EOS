@@ -7,20 +7,6 @@
 #include "System/Core/eosTask.h"
 
 
-#if defined(EOS_PIC32)
-
-#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler)
-#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler)
-#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler)
-
-#elif defined(EOS_STM32)
-
-#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler, HAL_TMR_EVENT_UPDATE)
-#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler, HAL_TMR_EVENT_UPDATE)
-#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler, HAL_TMR_EVENT_UPDATE)
-
-#endif
-
 
 using namespace eos;
 
@@ -32,10 +18,10 @@ using namespace eos;
 ///
 DigOutputService::DigOutputService(
     Application* application,
-    const DigOutputService::InitParams& initParams):
+    const InitializeInfo& info):
 
 	Service(application),
-    hTimer(initParams.hTimer),
+    hTimer(info.hTimer),
 	commandQueue(commandQueueSize) {
 
 }
@@ -250,8 +236,8 @@ void DigOutputService::onInitialize() {
     // Habilita les interrupcions del temporitzador.
     //
     halTMRSetInterruptFunction(hTimer, tmrInterruptFunction, this);
-    __halTMRClearInterruptFlags(hTimer);
-    __halTMREnableInterrupts(hTimer);
+    halTMRClearInterruptFlags(hTimer, HAL_TMR_EVENT_UPDATE);
+    halTMREnableInterrupts(hTimer, HAL_TMR_EVENT_UPDATE);
 
     // Activa el temporitzador.
     //
@@ -270,7 +256,7 @@ void DigOutputService::onTerminate() {
 
     // Desabilita les interrupcions del temporitzador
     //
-    __halTMRDisableInterrupts(hTimer);
+    halTMRDisableInterrupts(hTimer, HAL_TMR_EVENT_ALL);
 
     // Finalitza el servei base
     //
@@ -280,8 +266,10 @@ void DigOutputService::onTerminate() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Bucle de proces del servei.
+/// \param    task: L'objecte Task que executa el servei.
 ///
-void DigOutputService::onTask() {
+void DigOutputService::onTask(
+	Task *task) {
 
     Command cmd;
 
@@ -518,15 +506,19 @@ void DigOutputService::cmdTimeOut(
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la interrupcio del temportitzador
+/// \param    event: L'event que ha generat la interrupcio.
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
-void DigOutputService::tmrInterruptFunction() {
+void DigOutputService::tmrInterruptFunction(
+	uint32_t event) {
 
-    Command cmd;
-    cmd.opCode = OpCode::timeOut;
-    cmd.param1 = 1;
+	if (event == HAL_TMR_EVENT_UPDATE) {
+		Command cmd;
+		cmd.opCode = OpCode::timeOut;
+		cmd.param1 = 1;
 
-    commandQueue.pushISR(cmd);
+		commandQueue.pushISR(cmd);
+	}
 }
 
 
@@ -534,14 +526,16 @@ void DigOutputService::tmrInterruptFunction() {
 /// \brief    Procesa la interrupcio del temporitzador.
 /// \param    handler: Handler del temporitzador.
 /// \param    param: El handler del servei.
+/// \param    event: L'event que ha generat la interrupcio.
 ///
 void DigOutputService::tmrInterruptFunction(
 	TMRHandler handler,
-	void* params) {
+	void* params,
+	uint32_t event) {
 
 	DigOutputService* service = static_cast<DigOutputService*>(params);
     if (service != nullptr)
-        service->tmrInterruptFunction();
+        service->tmrInterruptFunction(event);
 }
 
 

@@ -7,9 +7,9 @@
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Crea un semafor binari
+/// \brief    Crea un semafor.
 /// \param    maxCount: Valor maxim del contador. 0 per semafor binari
-/// \return   El handler del semafor.
+/// \return   El handler del semafor. NULL en cas d'error.
 ///
 HSemaphore osalSemaphoreCreate(
     unsigned maxCount) {
@@ -18,7 +18,6 @@ HSemaphore osalSemaphoreCreate(
     	return (HSemaphore) xSemaphoreCreateBinary();
     else
         return (HSemaphore) xSemaphoreCreateCounting(maxCount, 0);
-
 }
 
 
@@ -38,8 +37,9 @@ void osalSemaphoreDestroy(
 /// ----------------------------------------------------------------------
 /// \brief    Espera en un semafor fins que s'alliveri, o fins el temps
 ///           maxim d'espera.
-/// \param    hSemaphore: El handler del semaphor.
+/// \param    hSemaphore: El handler del semafor.
 /// \param    blockTime: Temps maxim de bloqueig en ms.
+/// \return   True si es correcte. False en cas d'error o timeout.
 ///
 bool osalSemaphoreWait(
 	HSemaphore hSemaphore,
@@ -48,16 +48,7 @@ bool osalSemaphoreWait(
 	eosAssert(hSemaphore != NULL);
 
 	TickType_t blockTicks = (blockTime == ((unsigned) -1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-
-	bool result;
-	if (__is_isr_code()) {
-		BaseType_t taskWoken = pdFALSE;
-	    result = xSemaphoreTakeFromISR((SemaphoreHandle_t) hSemaphore, &taskWoken);
-    	portEND_SWITCHING_ISR(taskWoken)
-	}
-	else
-		result = xSemaphoreTake((SemaphoreHandle_t) hSemaphore, blockTicks) == pdTRUE;
-	return result;
+    return xSemaphoreTake((SemaphoreHandle_t) hSemaphore, blockTicks) == pdTRUE;
 }
 
 
@@ -70,13 +61,7 @@ void osalSemaphoreRelease(
 
 	eosAssert(hSemaphore != NULL);
 
-	if (__is_isr_code()) {
-		portBASE_TYPE taskWoken = pdFALSE;
-		xSemaphoreGiveFromISR((SemaphoreHandle_t) hSemaphore, &taskWoken);
-		portEND_SWITCHING_ISR(taskWoken)
-	}
-	else
-		xSemaphoreGive((SemaphoreHandle_t) hSemaphore);
+	xSemaphoreGive((SemaphoreHandle_t) hSemaphore);
 }
 
 
@@ -90,6 +75,6 @@ void osalSemaphoreReleaseISR(
 	eosAssert(hSemaphore != NULL);
 
 	portBASE_TYPE taskWoken = pdFALSE;
-	xSemaphoreGiveFromISR((SemaphoreHandle_t) hSemaphore, &taskWoken);
-	portEND_SWITCHING_ISR(taskWoken)
+	if (xSemaphoreGiveFromISR((SemaphoreHandle_t) hSemaphore, &taskWoken) == pdPASS)
+		portEND_SWITCHING_ISR(taskWoken)
 }

@@ -13,20 +13,6 @@
 #define PATTERN_ON       0x0FFF
 #define PATTERN_OFF      0x0000
 
-#if defined(EOS_PIC32)
-
-#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler)
-#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler)
-#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler)
-
-#elif defined(EOS_STM32)
-
-#define __halTMREnableInterrupts(handler)        halTMREnableInterrupts(handler, HAL_TMR_EVENT_UPDATE)
-#define __halTMRDisableInterrupts(handler)       halTMRDisableInterrupts(handler, HAL_TMR_EVENT_UPDATE)
-#define __halTMRClearInterruptFlags(handler)     halTMRClearInterruptFlags(handler, HAL_TMR_EVENT_UPDATE)
-
-#endif
-
 
 using namespace eos;
 
@@ -38,10 +24,10 @@ using namespace eos;
 ///
 DigInputService::DigInputService(
     Application* application,
-    const InitParams& initParams):
+    const InitializeInfo& info):
 
 	Service(application),
-    hTimer(initParams.hTimer) {
+    hTimer(info.hTimer) {
 }
 
 
@@ -129,7 +115,7 @@ void DigInputService::removeInputs() {
 ///
 void DigInputService::onInitialize() {
 
-    // Inicialitza les entrades
+    // Inicialitza les entrades al valor actual
     //
     for (auto it = inputs.begin(); it != inputs.end(); it++) {
         DigInput* input = *it;
@@ -142,12 +128,12 @@ void DigInputService::onInitialize() {
     //
     Service::onInitialize();
 
-    // Hebilita les interrupcions del temporitzador
+    // Habilita les interrupcions del temporitzador
     //
     halTMRSetInterruptFunction(hTimer, tmrInterruptFunction, this);
 
-    __halTMRClearInterruptFlags(hTimer);
-    __halTMREnableInterrupts(hTimer);
+    halTMRClearInterruptFlags(hTimer, HAL_TMR_EVENT_UPDATE);
+    halTMREnableInterrupts(hTimer, HAL_TMR_EVENT_UPDATE);
 
     // Activa el temporitzador
     //
@@ -168,7 +154,7 @@ void DigInputService::onTerminate() {
     //
     halTMRSetInterruptFunction(hTimer, NULL, NULL);
 
-    __halTMRDisableInterrupts(hTimer);
+    halTMRDisableInterrupts(hTimer, HAL_TMR_EVENT_ALL);
 
     // Finalitza el servei base
     //
@@ -178,37 +164,40 @@ void DigInputService::onTerminate() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Bucle d'execucio.
+/// \param    task: La tasca que executa el servei.
 ///
-void DigInputService::onTask() {
+void DigInputService::onTask(
+	Task *task) {
 
     // Espera que es notifiquin canvis en les entrades
     //
-    semaphore.wait(-1);
+    if (changes.wait(unsigned(-1))) {
 
-    // Procesa les entrades
-    //
-    for (auto it = inputs.begin(); it != inputs.end(); it++) {
-        DigInput* input = *it;
+		// Procesa les entrades
+		//
+		for (auto it = inputs.begin(); it != inputs.end(); it++) {
+			DigInput* input = *it;
 
-        if (input->eventCallback != nullptr) {
+			if (input->eventCallback != nullptr) {
 
-            uint32_t state = __halTMRDisableInterrupts(hTimer);
+				uint32_t state = halTMRDisableInterrupts(hTimer, HAL_TMR_EVENT_UPDATE);
 
-            bool edge = input->edge;
-            input->edge = false;
+				bool edge = input->edge;
+				input->edge = false;
 
-            if (state)
-            	__halTMREnableInterrupts(hTimer);
+				if (state)
+					halTMREnableInterrupts(hTimer, state);
 
-            if (edge) {
+				if (edge) {
 
-                DigInput::EventArgs args;
-                args.input = input;
-                args.param = input->eventParam;
+					DigInput::EventArgs args;
+					args.input = input;
+					args.param = input->eventParam;
 
-                input->eventCallback->execute(args);
-            }
-        }
+					input->eventCallback->execute(args);
+				}
+			}
+		}
     }
 }
 
@@ -235,19 +224,21 @@ bool DigInputService::read(
     eosAssert(input != nullptr);
     eosAssert(input->service == this);
 
-    uint32_t state = __halTMRDisableInterrupts(hTimer);
+    uint32_t state = halTMRDisableInterrupts(hTimer, HAL_TMR_EVENT_UPDATE);
     bool result = input->value;
     if (state)
-    	__halTMREnableInterrupts(hTimer);
+    	halTMREnableInterrupts(hTimer, HAL_TMR_EVENT_UPDATE);
     return result;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la interrupcio del temporitzador.
+/// \param    event: L'event que ha generat la interrupcio.
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
-void DigInputService::tmrInterruptFunction() {
+void DigInputService::tmrInterruptFunction(
+	uint32_t event) {
 
     bool changed = false;
 
@@ -283,7 +274,7 @@ void DigInputService::tmrInterruptFunction() {
     // Notifica a la tasca que hi han canvis pendents per procesar
     //
     if (changed)
-        semaphore.releaseISR();
+        changes.releaseISR();
 }
 
 
@@ -291,14 +282,16 @@ void DigInputService::tmrInterruptFunction() {
 /// \brief    Procesa la interrupcio del temporitzador.
 /// \param    handler: Handler del temporitzador.
 /// \param    params: Handler del servei.
+/// \param    event: El event que ha generat la interrupcio.
 ///
 void DigInputService::tmrInterruptFunction(
     TMRHandler handler,
-    void* params) {
+    void* params,
+	uint32_t event) {
 
     DigInputService* service = static_cast<DigInputService*>(params);
     if (service != nullptr)
-        service->tmrInterruptFunction();
+        service->tmrInterruptFunction(event);
 }
 
 

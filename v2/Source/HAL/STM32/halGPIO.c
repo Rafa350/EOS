@@ -218,9 +218,9 @@ static void setupDevicePin(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Configura una llista de pins.
-/// \param    info: Llista d'elements de configuracio.
-/// \param    count: Numero d'elements de la llista.
+/// \brief    Initialize a pin list.
+/// \param    info: Initialization table.
+/// \param    count: Numer of elements in table.
 ///
 void halGPIOInitializePins(
 	const GPIOInitializePinInfo *info,
@@ -241,9 +241,9 @@ void halGPIOInitializePins(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Configura una llista de ports.
-/// \param    info: Llista d'elements de configuracio.
-/// \param    count: Numero d'elements de la llista.
+/// \brief    Initialize a port list.
+/// \param    info: Initialization table.
+/// \param    count: Number of elements in table.
 ///
 void halGPIOInitializePorts(
 	const GPIOInitializePortInfo* info,
@@ -267,11 +267,11 @@ void halGPIOInitializePorts(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Configura un pin.
-/// \param    port: Identificador del port.
-/// \param    pin: Identificador del pin.
-/// \param    options: Opcions.
-/// \param    alt: Funcio alternativa.
+/// \brief    Initialize a single pin.
+/// \param    port: Port identifier.
+/// \param    pin: Pin number
+/// \param    options: Pin oOptions
+/// \param    alt: Pin alternate function.
 ///
 void halGPIOInitializePin(
 	GPIOPort port,
@@ -290,9 +290,9 @@ void halGPIOInitializePin(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Posa un pin al estat inactiu.
-/// \param    port: Identificador del port.
-/// \param    pin: Numero de pin.
+/// \brief    Let pin in clear state.
+/// \param    port: Port identifier.
+/// \param    pin: Pin number.
 ///
 #if HAL_GPIO_INLINE == 0
 inline void halGPIOClearPin(
@@ -310,9 +310,9 @@ inline void halGPIOClearPin(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Posa un pin al estat actiu.
-/// \param    port: Identificador del port.
-/// \param    pin: Numero de pin.
+/// \brief    Let pin in set state.
+/// \param    port: Port identifier.
+/// \param    pin: Pin number.
 ///
 #if HAL_GPIO_INLINE == 0
 inline void halGPIOSetPin(
@@ -329,9 +329,9 @@ inline void halGPIOSetPin(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inverteix l'estat del pin.
-/// \param    port: Identificador del port.
-/// \param    pin: Numero de pin.
+/// \brief    Toggle pin state.
+/// \param    port: Port identifier.
+/// \param    pin: Pin number.
 ///
 #if HAL_GPIO_INLINE == 0
 inline void halGPIOTogglePin(

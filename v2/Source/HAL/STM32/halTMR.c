@@ -338,7 +338,7 @@ void halTMRInterruptHandler(
 	//
 	if (__check_bit_msk(device->SR, TIM_SR_UIF)) {
 		if (handler->isrFunction != NULL)
-			handler->isrFunction(handler, handler->isrParams);
+			handler->isrFunction(handler, handler->isrParams, HAL_TMR_EVENT_UPDATE);
 		__clear_bit_msk(device->SR, TIM_SR_UIF);
 	}
 
@@ -346,7 +346,7 @@ void halTMRInterruptHandler(
 	//
 	if (__check_bit_msk(device->SR, TIM_SR_TIF)) {
 		if (handler->isrFunction != NULL)
-			handler->isrFunction(handler, handler->isrParams);
+			handler->isrFunction(handler, handler->isrParams, HAL_TMR_EVENT_TRIGGER);
 		__clear_bit_msk(device->SR, TIM_SR_TIF);
 	}
 
@@ -354,7 +354,7 @@ void halTMRInterruptHandler(
 	//
 	if (__check_bit_msk(device->SR, TIM_SR_COMIF)) {
 		if (handler->isrFunction != NULL)
-			handler->isrFunction(handler, handler->isrParams);
+			handler->isrFunction(handler, handler->isrParams, HAL_TMR_EVENT_COM);
 		__clear_bit_msk(device->SR, TIM_SR_COMIF);
 	}
 }

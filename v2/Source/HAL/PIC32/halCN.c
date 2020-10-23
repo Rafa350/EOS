@@ -9,6 +9,7 @@ typedef struct {
     void* isrParams;
 } CNData;
 
+
 static CNData dataTbl[HAL_CN_LINE_COUNT] = {
     { NULL, NULL },
     { NULL, NULL },
@@ -213,7 +214,7 @@ void halCNInterruptHandler() {
         //
         CNData* data = &dataTbl[line];
         if (data->isrFunction != NULL)
-            data->isrFunction(line, data->isrParams);
+            data->isrFunction(line, data->isrParams, HAL_CN_EVENT_TRIGGER);
 
         // Borra el flag d'interrupcio
         //

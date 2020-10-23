@@ -24,33 +24,33 @@ namespace eos {
             typedef DynamicArray<DigInput*> DigInputList;
             typedef DynamicArray<DigInput*>::Iterator DigInputListIterator;
         public:
-            struct InitParams {     // Parametres d'inicialitzacio del servei.
+            struct InitializeInfo { // Informacio d'inicialitzacio del servei.
                 TMRHandler hTimer;  // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema
             };
 
         private:
-            Semaphore semaphore;
+            Semaphore changes;
             TMRHandler hTimer;
             DigInputList inputs;
 
         protected:
             void onInitialize() override;
             void onTerminate() override;
-            void onTask();
-#if Eos_ApplicationTickEnabled            
+            void onTask(Task *task) override;
+#if Eos_ApplicationTickEnabled
             void onTick();
-#endif            
+#endif
         public:
-            DigInputService(Application* application, const InitParams& initParams);
+            DigInputService(Application* application, const InitializeInfo& info);
             ~DigInputService();
             void addInput(DigInput* input);
             void removeInput(DigInput* input);
             void removeInputs();
-            
+
             bool read(const DigInput* input) const;
-            
-            void tmrInterruptFunction();
-            static void tmrInterruptFunction(TMRHandler handler, void* params);
+
+            void tmrInterruptFunction(uint32_t event);
+            static void tmrInterruptFunction(TMRHandler handler, void* params, uint32_t event);
     };
 
     /// \brief Clase que implementa una entrada digital
@@ -78,17 +78,17 @@ namespace eos {
             uint32_t pattern;
             bool value;
             bool edge;
-            
+
         public:
             DigInput(DigInputService* service, const InitParams& initParams);
             ~DigInput();
 
-            inline DigInputService* getService() const { 
-                return service; 
+            inline DigInputService* getService() const {
+                return service;
             }
-            
-            inline bool read() const { 
-                return service->read(this); 
+
+            inline bool read() const {
+                return service->read(this);
             }
 
         friend DigInputService;

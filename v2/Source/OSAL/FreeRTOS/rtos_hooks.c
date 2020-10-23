@@ -1,4 +1,5 @@
 #include "eos.h"
+
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -9,9 +10,6 @@
 void vApplicationStackOverflowHook(
 	TaskHandle_t pxTask,
 	signed char *pcTaskName) {
-
-	(void) pcTaskName;
-	(void) pxTask;
 
 	/* Run time task stack overflow checking is performed if
    	   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook	function is
@@ -49,7 +47,8 @@ void vApplicationMallocFailedHook(void) {
       heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
       FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
       to query the size of free heap space that remains (although it does not
-      provide information on how the remaining heap might be fragmented). */
+      provide information on how the remaining heap might be fragmented).
+   */
    taskDISABLE_INTERRUPTS();
    for( ;; );
 }
@@ -65,7 +64,8 @@ void vApplicationIdleHook(void) {
 	vTaskDelete() API function  then it is also
 	important that vApplicationIdleHook() is permitted to return to its calling
 	function, because it is the responsibility of the idle task to clean up
-	memory allocated by the kernel to any task that has since been deleted. */
+	memory allocated by the kernel to any task that has since been deleted.
+	*/
 }
 
 
@@ -75,7 +75,8 @@ void vApplicationTickHook(void) {
 	configUSE_TICK_HOOK is set to 1 in FreeRTOSConfig.h.  User code can be
 	added here, but the tick hook is called from an interrupt context, so
 	code must not attempt to block, and only the interrupt safe FreeRTOS API
-	functions can be used (those that end in FromISR()). */
+	functions can be used (those that end in FromISR()).
+	*/
 }
 
 
@@ -88,15 +89,12 @@ void vAssertCalled(
 
 	volatile unsigned long ul = 0;
 
-	(void) pcFile;
-	(void) ulLine;
-
 	taskENTER_CRITICAL();
 
 	// Set ul to a non-zero value using the debugger to step out of this
     // function.
 	//
-	while(ul == 0 ) {
+	while (ul == 0 ) {
 		portNOP();
     }
 

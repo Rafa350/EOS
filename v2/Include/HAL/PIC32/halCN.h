@@ -121,11 +121,15 @@ extern "C" {
 #define HAL_CN_ENABLE_NO          (0 << HAL_CN_ENABLE_POS)
 #define HAL_CN_ENABLE_YES         (1 << HAL_CN_ENABLE_POS)
 
+// Events
+#define HAL_CN_EVENT_TRIGGER      0x1
+#define HAL_CN_EVENT_ALL          0x1
+
 
 typedef uint32_t CNLine;
 typedef uint32_t CNOptions;
 
-typedef void (*CNInterruptFunction)(CNLine line, void* params);
+typedef void (*CNInterruptFunction)(CNLine line, void* params, uint32_t event);
 
 typedef struct {
     CNLine line;

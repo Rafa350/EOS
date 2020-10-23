@@ -20,8 +20,11 @@ typedef struct {
 } HeapInformation;
 
 HHeap osalHeapCreate(void);
+void osalHeapDestroy(HHeap hHeap);
+
 void *osalHeapAlloc(HHeap hHeap, unsigned size);
 void osalHeapFree(HHeap hHeap, void* block);
+
 void osalGetHeapInformation(HHeap hHeap, HeapInformation* info);
 
 void* osal_malloc(unsigned size);

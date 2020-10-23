@@ -57,7 +57,7 @@ void Service::initialize() {
 /// \brief    Finalitza el serevei.
 ///
 void Service::terminate() {
-    
+
     if (initialized) {
         onTerminate();
         initialized = false;
@@ -79,11 +79,13 @@ void Service::tick() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Executa les operacions del servei.
+/// \param    task: L'objecte Task que executa el servei.
 ///
-void Service::task() {
+void Service::task(
+	Task *task) {
 
     if (initialized)
-        onTask();
+        onTask(task);
 }
 
 
@@ -99,7 +101,7 @@ void Service::onInitialize() {
 /// \brief    Procesa la finalitzacio.
 ///
 void Service::onTerminate() {
-    
+
 }
 
 
@@ -115,7 +117,9 @@ void Service::onTick() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa les operacions del servei.
-//
-void Service::onTask() {
+/// \param    task: L'objecte task que executa el servei.
+///
+void Service::onTask(
+	Task *task) {
 
 }

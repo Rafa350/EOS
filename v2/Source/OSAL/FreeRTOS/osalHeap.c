@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalHeap.h"
+
 #include "FreeRTOS.h"
 
 
@@ -18,7 +19,17 @@ HHeap osalHeapCreate() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte un bloc de memoria.
+/// \brief    Destrueix el heap.
+/// \param    hHeam: Handler del heap.
+///
+void halHeapDestroy(
+	HHeap hHeap) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte un bloc de memoria del heap.
 /// \param    hHeap: Handler del heap.
 /// \param    size: Tamany del bloc de memoria.
 /// \return   Adressa del bloc de memoria obtingut. NULL en cas d'error.
@@ -38,7 +49,7 @@ void* osalHeapAlloc(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Allivera un bloc de memoria.
+/// \brief    Allivera un bloc de memoria del heap.
 /// \param    hHeap: Handler del heap.
 /// \param    p: Adressa del bloc de memoria.
 ///

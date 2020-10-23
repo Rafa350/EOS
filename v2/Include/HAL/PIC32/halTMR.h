@@ -67,11 +67,14 @@ extern "C" {
 #define HAL_TMR_CLKDIV_64         (6 << HAL_TMR_CLKDIV_pos)
 #define HAL_TMR_CLKDIV_256        (7 << HAL_TMR_CLKDIV_pos)
 
+#define HAL_TMR_EVENT_UPDATE      0x1
+#define HAL_TMR_EVENT_ALL         0x1
+
 
 typedef uint32_t TMRTimer;
 typedef uint32_t TMROptions;
 typedef struct __TMRData* TMRHandler;
-typedef void (*TMRInterruptFunction)(TMRHandler hTimer, void* params);
+typedef void (*TMRInterruptFunction)(TMRHandler hTimer, void* params, uint32_t event);
 
 typedef struct  __attribute__((packed , aligned(4))) {
     union {
@@ -118,11 +121,11 @@ void halTMRStopTimer(TMRHandler hTimer);
 void halTMRSetInterruptFunction(TMRHandler timer, TMRInterruptFunction function, void* params);
 void halTMRInterruptHandler(TMRHandler handler);
 
-void halTMREnableInterrupts(TMRHandler timer);
-uint32_t halTMRDisableInterrupts(TMRHandler timer);
+void halTMREnableInterrupts(TMRHandler timer, uint32_t events);
+uint32_t halTMRDisableInterrupts(TMRHandler timer, uint32_t events);
 
-bool halTMRGetInterruptFlag(TMRHandler timer);
-void halTMRClearInterruptFlags(TMRHandler timer);
+bool halTMRGetInterruptFlag(TMRHandler timer, uint32_t event);
+void halTMRClearInterruptFlags(TMRHandler timer, uint32_t events);
 
 void halTMRDelay(unsigned time);
 

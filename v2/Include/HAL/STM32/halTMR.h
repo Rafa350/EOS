@@ -77,7 +77,7 @@ typedef uint32_t TMROptions;
 
 typedef struct __TMRData* TMRHandler;
 
-typedef void (*TMRInterruptFunction)(TMRHandler handler, void* params);
+typedef void (*TMRInterruptFunction)(TMRHandler handler, void* params, uint32_t event);
 
 struct __TMRData {
 	TIM_TypeDef* device;

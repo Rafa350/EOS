@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/Core/eosHeapAllocator.h"
-#include "osal/osalHeap.h"
+#include "OSAL/osalHeap.h"
 
 
 using namespace eos;
@@ -15,12 +15,8 @@ using namespace eos;
 void* MemoryHeapAllocator::allocate(
     unsigned size) {
 
-    // Precondicions
-    //
     eosAssert(size > 0);
 
-    // Obte el bloc de memoria
-    //
     void* p = osalHeapAlloc(NULL, size);
     eosAssert(p != nullptr);
 
@@ -35,11 +31,7 @@ void* MemoryHeapAllocator::allocate(
 void MemoryHeapAllocator::deallocate(
     void* p) {
 
-    // Precondicions
-    //
     eosAssert(p != nullptr);
 
-    // Allivera el bloc de memoria
-    //
     osalHeapFree(NULL, p);
 }

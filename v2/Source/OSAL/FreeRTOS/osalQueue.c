@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalQueue.h"
+
 #include "FreeRTOS.h"
 #include "queue.h"
 
@@ -66,16 +67,7 @@ bool osalQueuePut(
 	eosAssert(element != NULL);
 
     TickType_t blockTicks = (blockTime == ((unsigned) -1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-
-    bool result;
-    if (__is_isr_code()) {
-        BaseType_t taskWoken = pdFALSE;
-        result = xQueueSendFromISR((QueueHandle_t) hQueue, element, &taskWoken) == pdPASS;
-        portEND_SWITCHING_ISR(taskWoken);
-    }
-    else
-    	result = xQueueSendToBack((QueueHandle_t) hQueue, element,  blockTicks) == pdPASS;
-    return result;
+    return xQueueSendToBack((QueueHandle_t) hQueue, element,  blockTicks) == pdPASS;
 }
 
 
@@ -95,7 +87,8 @@ bool osalQueuePutISR(
 
     BaseType_t taskWoken = pdFALSE;
     bool result = xQueueSendFromISR((QueueHandle_t) hQueue, element, &taskWoken) == pdPASS;
-    portEND_SWITCHING_ISR(taskWoken);
+    if (result)
+    	portEND_SWITCHING_ISR(taskWoken);
     return result;
 }
 
@@ -116,16 +109,7 @@ bool osalQueueGet(
 	eosAssert(element != NULL);
 
     TickType_t blockTicks = (blockTime == ((unsigned)-1)) ? portMAX_DELAY : blockTime / portTICK_PERIOD_MS;
-
-    bool result;
-    if (__is_isr_code()) {
-        BaseType_t taskWoken = pdFALSE;
-        result = xQueueReceiveFromISR((QueueHandle_t)hQueue, element, &taskWoken) == pdPASS;
-        portEND_SWITCHING_ISR(taskWoken);
-    }
-    else
-    	result = xQueueReceive((QueueHandle_t)hQueue, element, blockTicks) == pdPASS;
-    return result;
+    return xQueueReceive((QueueHandle_t)hQueue, element, blockTicks) == pdPASS;
 }
 
 
@@ -145,7 +129,8 @@ bool osalQueueGetISR(
 
     BaseType_t taskWoken = pdFALSE;
     bool result = xQueueReceiveFromISR((QueueHandle_t) hQueue, element, &taskWoken) == pdPASS;
-    portEND_SWITCHING_ISR(taskWoken);
+    if (result)
+    	portEND_SWITCHING_ISR(taskWoken);
     return result;
 }
 

@@ -16,7 +16,6 @@ Timer::Timer(
 
     hTimer(nullptr),
     autoreload(autoreload),
-	tag(nullptr),
     eventCallback(nullptr),
     eventParam(nullptr) {
 }
@@ -33,7 +32,6 @@ Timer::Timer(
 
     hTimer(nullptr),
     autoreload(autoreload),
-	tag(nullptr),
     eventCallback(eventCallback),
     eventParam(eventParam) {
 }
@@ -98,7 +96,7 @@ bool Timer::isActive() const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Crida a la funcio 'onTimeout' al final del cicle
+/// \brief    Executa el callback al final del cicle.
 /// \param    hTimer: El handler del temporitzador.
 ///
 void Timer::timerFunction(
@@ -106,11 +104,11 @@ void Timer::timerFunction(
 
     Timer *timer = static_cast<Timer*>(osalTimerGetContext(hTimer));
     if ((timer != nullptr) && (timer->eventCallback != nullptr)) {
-        
+
         EventArgs args;
         args.timer = timer;
         args.param = timer->eventParam;
-  		
+
         timer->eventCallback->execute(args);
     }
 }

@@ -14,10 +14,10 @@ using namespace eos;
 ///
 UARTService::UARTService(
 	Application* application,
-	const InitParams& initParams):
+	const InitializeInfo& info):
 
 	Service(application),
-	hUART(initParams.hUART) {
+	hUART(info.hUART) {
 
 	rxPending.release();
 }
@@ -136,8 +136,10 @@ void UARTService::onTerminate() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Tasca del servei.
+/// \param    task: L'objecte tTask que executa el servei.
 ///
-void UARTService::onTask() {
+void UARTService::onTask(
+	Task *task) {
 
 	Task::delay(1000);
 }

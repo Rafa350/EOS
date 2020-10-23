@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalTask.h"
+
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -48,12 +49,12 @@ void osalTaskDestroy(
 /// \param    priority: La prioritat.
 ///
 void osalTaskSetPriority(
-    HTask hTask, 
+    HTask hTask,
     uint8_t priority) {
-   
+
     vTaskPrioritySet(
         (TaskHandle_t) hTask,
-        tskIDLE_PRIORITY + ((UBaseType_t) (priority & OSAL_TASK_PRIORITY_mask) >> OSAL_TASK_PRIORITY_pos));    
+        tskIDLE_PRIORITY + ((UBaseType_t) (priority & OSAL_TASK_PRIORITY_mask) >> OSAL_TASK_PRIORITY_pos));
 }
 
 

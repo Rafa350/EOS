@@ -32,7 +32,7 @@ TMRHandler halTMRInitialize(
 
     // Desactiva les interrupcions del temporitzador
     //
-    halTMRDisableInterrupts(handler);
+    halTMRDisableInterrupts(handler, HAL_TMR_EVENT_ALL);
 
     // Configura el timer de tipus A
     //
@@ -91,7 +91,7 @@ void halTMRShutdown(
     eosAssert(handler != NULL);
 
     halTMRStopTimer(handler);
-    halTMRDisableInterrupts(handler);
+    halTMRDisableInterrupts(handler, HAL_TMR_EVENT_ALL);
 }
 
 
@@ -136,7 +136,7 @@ void halTMRSetPeriod(
 /// ----------------------------------------------------------------------
 /// \brief    Inicia el temporitzador.
 /// \param    handler: Handler del temporitzador.
-/// \remarks  El temporitzador comença a contar i genera interrupcions, si
+/// \remarks  El temporitzador comenï¿½a a contar i genera interrupcions, si
 ///           estan activades.
 ///
 void halTMRStartTimer(
@@ -189,9 +189,11 @@ void halTMRSetInterruptFunction(
 /// ----------------------------------------------------------------------
 /// \brief   Activa les interrupcions del temporitzador.
 /// \param   handler: El handler del temporitzador.
+/// \param   event: El event a activar.
 ///
 void halTMREnableInterrupts(
-    TMRHandler handler) {
+    TMRHandler handler,
+    uint32_t event) {
 
     eosAssert(handler != NULL);
 
@@ -232,10 +234,12 @@ void halTMREnableInterrupts(
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva les interrupcions del temporitzador.
 /// \param    handler: El handler del temporitzador
+/// \param    event: El event a desactivar.
 /// \return   Diferent de zero si previament estava activada.
 ///
 uint32_t halTMRDisableInterrupts(
-    TMRHandler handler) {
+    TMRHandler handler,
+    uint32_t event) {
 
     eosAssert(handler != NULL);
 
@@ -285,10 +289,12 @@ uint32_t halTMRDisableInterrupts(
 /// ----------------------------------------------------------------------
 /// \brief    Obte el flag d'interrupcio del temporitzador.
 /// \param    handler: Handler del temporitzador.
+/// \param    event: El event.
 /// \return   El valor del flag.
 ///
 bool halTMRGetInterruptFlag(
-    TMRHandler handler) {
+    TMRHandler handler,
+    uint32_t event) {
 
     switch ((uint32_t) handler->regs) {
 #ifdef _TMR1
@@ -325,9 +331,11 @@ bool halTMRGetInterruptFlag(
 /// ----------------------------------------------------------------------
 /// \brief    Borra els flags d'interrupcio del temporitzador.
 /// \param    handler: El handler del temporitzador.
+/// \param    event: El event.
 ///
 void halTMRClearInterruptFlags(
-    TMRHandler handler) {
+    TMRHandler handler,
+    uint32_t event) {
 
     switch ((uint32_t) handler->regs) {
 #ifdef _TMR1
@@ -366,18 +374,19 @@ void halTMRClearInterruptFlags(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la interrupcio.
 /// \param    handler: El temporitzador.
+/// \param    event: L'event que ha generat la interrupcio.
 ///
 void halTMRInterruptHandler(
     TMRHandler handler) {
 
     eosAssert(handler);
 
-    if (halTMRGetInterruptFlag(handler)) {
+    if (halTMRGetInterruptFlag(handler, HAL_TMR_EVENT_UPDATE)) {
 
         if (handler->isrFunction != NULL)
-            handler->isrFunction(handler, handler->isrParams);
+            handler->isrFunction(handler, handler->isrParams, HAL_TMR_EVENT_UPDATE);
 
-        halTMRClearInterruptFlags(handler);
+        halTMRClearInterruptFlags(handler, HAL_TMR_EVENT_UPDATE);
     }
 }
 
