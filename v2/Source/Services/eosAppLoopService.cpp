@@ -28,7 +28,8 @@ void AppLoopService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief Bucle d'execucio.
 ///
-void AppLoopService::onTask() {
+void AppLoopService::onTask(
+	Task *task) {
 
 	if (!initialized) {
 		onSetup();

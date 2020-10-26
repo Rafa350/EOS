@@ -44,19 +44,19 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el temporitzador pel servei d'entrades digitals
     //
-	TMRInitializeInfo tmrInfo;
-	tmrInfo.timer = DigInputService_Timer;
+	TMRSettings tmrSettings;
+	tmrSettings.timer = DigInputService_Timer;
 #if defined(EOS_PIC32)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
-    tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1;
+    tmrSettings.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
+    tmrSettings.period = ((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1;
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
-    tmrInfo.prescaler = (halSYSGetTimerClock1Frequency() / 1000000L) - 1; // 1MHz
-    tmrInfo.period = (1000 * DigInputService_TimerPeriod) - 1;
+    tmrSettings.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
+    tmrSettings.prescaler = (halSYSGetTimerClock1Frequency() / 1000000L) - 1; // 1MHz
+    tmrSettings.period = (1000 * DigInputService_TimerPeriod) - 1;
 #else
     //#error CPU no soportada
 #endif
-    halTMRInitialize(&digInputTimer, &tmrInfo);
+    halTMRInitialize(&digInputTimer, &tmrSettings);
 
     // Inicialitza les interrupcions
     //
@@ -65,13 +65,13 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el servei d'entrades digitals
 	//
-    DigInputService::InitParams digInputServiceInit;
-    digInputServiceInit.hTimer = &digInputTimer;
-    digInputService = new DigInputService(this, digInputServiceInit);
+    DigInputService::Settings digInputServiceSettings;
+    digInputServiceSettings.hTimer = &digInputTimer;
+    digInputService = new DigInputService(this, digInputServiceSettings);
     digInputService->setPriority(Task::Priority::high);
 
-    DigInput::InitParams digInputInit;
-    digInputInit.eventParam = nullptr;
+    DigInput::Settings digInputSettings;
+    digInputSettings.eventParam = nullptr;
 
     // Inicialitza la entrada corresponent al switch SW1
     //
@@ -82,10 +82,10 @@ void MyApplication::onInitialize() {
     halCNInitializeLine(SWITCHES_SW1_CN, HAL_CN_PULL_UP);
 #endif
 
-    digInputInit.port = SWITCHES_SW1_PORT;
-    digInputInit.pin = SWITCHES_SW1_PIN;
-    digInputInit.eventCallback = &sw1EventCallback;
-    sw1 = new DigInput(digInputService, digInputInit);
+    digInputSettings.port = SWITCHES_SW1_PORT;
+    digInputSettings.pin = SWITCHES_SW1_PIN;
+    digInputSettings.eventCallback = &sw1EventCallback;
+    sw1 = new DigInput(digInputService, digInputSettings);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW2
@@ -95,10 +95,10 @@ void MyApplication::onInitialize() {
         HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
     halCNInitializeLine(SWITCHES_SW2_CN, HAL_CN_PULL_UP);
 
-    digInputInit.port = SWITCHES_SW2_PORT;
-    digInputInit.pin = SWITCHES_SW2_PIN;
-    digInputInit.eventCallback = &sw2EventCallback;
-    sw2 = new DigInput(digInputService, digInputInit);
+    digInputSettings.port = SWITCHES_SW2_PORT;
+    digInputSettings.pin = SWITCHES_SW2_PIN;
+    digInputSettings.eventCallback = &sw2EventCallback;
+    sw2 = new DigInput(digInputService, digInputSettings);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW3
@@ -108,26 +108,26 @@ void MyApplication::onInitialize() {
         HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
     halCNInitializeLine(SWITCHES_SW3_CN, HAL_CN_PULL_UP);
 
-    digInputInit.port = SWITCHES_SW3_PORT;
-    digInputInit.pin = SWITCHES_SW3_PIN;
-    digInputInit.eventCallback = &sw3EventCallback;
-    sw3 = new DigInput(digInputService, digInputInit);
+    digInputSettings.port = SWITCHES_SW3_PORT;
+    digInputSettings.pin = SWITCHES_SW3_PIN;
+    digInputSettings.eventCallback = &sw3EventCallback;
+    sw3 = new DigInput(digInputService, digInputSettings);
 #endif
 
     // Inicialitza el temporitzador pel servei de sortides digitals
     //
-	tmrInfo.timer = DigOutputService_Timer;
+	tmrSettings.timer = DigOutputService_Timer;
 #if defined(EOS_PIC32)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
-    tmrInfo.period = ((halSYSGetPeripheralClockFrequency() * DigOutputService_TimerPeriod) / 64000) - 1;
+    tmrSettings.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
+    tmrSettings.period = ((halSYSGetPeripheralClockFrequency() * DigOutputService_TimerPeriod) / 64000) - 1;
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-    tmrInfo.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
-    tmrInfo.prescaler = (halSYSGetTimerClock1Frequency() / 1000000L) - 1; // 1MHz
-    tmrInfo.period = (1000 * DigOutputService_TimerPeriod) - 1;
+    tmrSettings.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_1;
+    tmrSettings.prescaler = (halSYSGetTimerClock1Frequency() / 1000000L) - 1; // 1MHz
+    tmrSettings.period = (1000 * DigOutputService_TimerPeriod) - 1;
 #else
     //#error CPU no soportada
 #endif
-	halTMRInitialize(&digOutputTimer, &tmrInfo);
+	halTMRInitialize(&digOutputTimer, &tmrSettings);
 
     // Inicialitza les interrupcions
     //
@@ -136,11 +136,11 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el servei de sortides digitals
     //
-    DigOutputService::InitParams digOutputServiceInit;
-    digOutputServiceInit.hTimer = &digOutputTimer;
-    digOutputService = new DigOutputService(this, digOutputServiceInit);
+    DigOutputService::Settings digOutputServiceSettings;
+    digOutputServiceSettings.hTimer = &digOutputTimer;
+    digOutputService = new DigOutputService(this, digOutputServiceSettings);
 
-    DigOutput::InitParams digOutputInit;
+    DigOutput::Settings digOutputSettings;
 
     // Inicialitza la sortida corresponent al led LED1
     //
@@ -148,9 +148,9 @@ void MyApplication::onInitialize() {
     halGPIOInitializePin(LEDS_LED1_PORT, LEDS_LED1_PIN,
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
 
-    digOutputInit.port = LEDS_LED1_PORT;
-    digOutputInit.pin = LEDS_LED1_PIN;
-    led1 = new DigOutput(digOutputService, digOutputInit);
+    digOutputSettings.port = LEDS_LED1_PORT;
+    digOutputSettings.pin = LEDS_LED1_PIN;
+    led1 = new DigOutput(digOutputService, digOutputSettings);
     led1->write(LEDS_STATE_OFF);
 #endif
 
@@ -160,9 +160,9 @@ void MyApplication::onInitialize() {
     halGPIOInitializePin(LEDS_LED2_PORT, LEDS_LED2_PIN,
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
 
-    digOutputInit.port = LEDS_LED2_PORT;
-    digOutputInit.pin = LEDS_LED2_PIN;
-    led2 = new DigOutput(digOutputService, digOutputInit);
+    digOutputSettings.port = LEDS_LED2_PORT;
+    digOutputSettings.pin = LEDS_LED2_PIN;
+    led2 = new DigOutput(digOutputService, digOutputSettings);
     led2->write(LEDS_STATE_OFF);
 #endif
 
@@ -172,9 +172,9 @@ void MyApplication::onInitialize() {
     halGPIOInitializePin(LEDS_LED3_PORT, LEDS_LED3_PIN,
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
 
-    digOutputInit.port = LEDS_LED3_PORT;
-    digOutputInit.pin = LEDS_LED3_PIN;
-    led3 = new DigOutput(digOutputService, digOutputInit);
+    digOutputSettings.port = LEDS_LED3_PORT;
+    digOutputSettings.pin = LEDS_LED3_PIN;
+    led3 = new DigOutput(digOutputService, digOutputSettings);
     led3->write(LEDS_STATE_OFF);
 #endif
 

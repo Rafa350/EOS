@@ -19,12 +19,12 @@ namespace eos {
 
         protected:
             void onInitialize() override;
-            void onTask() override;
+            void onTask(Task *task) override;
             virtual void onSetup();
             virtual void onLoop();
 
         public:
-            AppLoopService(Application* application);
+            AppLoopService(Application *application);
     };
 
 }

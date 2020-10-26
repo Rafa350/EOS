@@ -57,7 +57,7 @@ namespace eos {
             typedef DynamicArray<DigOutput*> DigOutputList;
             typedef DynamicArray<DigOutput*>::Iterator DigOutputListIterator;
         public:
-            struct InitializeInfo { // Informacio d'inicialitzacio del servei
+            struct Settings {       // Informacio d'inicialitzacio del servei
                 TMRHandler hTimer;  // -Temporitzador. Si es NULL utilitza el tick del sistema
             };
 
@@ -87,7 +87,7 @@ namespace eos {
             void onTick() override;
 #endif
         public:
-            DigOutputService(Application* application, const InitializeInfo& info);
+            DigOutputService(Application *application, const Settings &settings);
             ~DigOutputService();
 
             void addOutput(DigOutput* output);
@@ -121,20 +121,20 @@ namespace eos {
                 pulse
             };
         public:
-            struct InitParams {
-                uint32_t port;
-                uint32_t pin;
+            struct Settings {
+                GPIOPort port;
+                GPIOPin pin;
             };
 
-            DigOutputService* service;
-            uint32_t port;
-            uint32_t pin;
+            DigOutputService *service;
+            GPIOPort port;
+            GPIOPin pin;
             State state;
             unsigned delayCnt;
             unsigned widthCnt;
 
         public:
-            DigOutput(DigOutputService* service, const InitParams& initParams);
+            DigOutput(DigOutputService* service, const Settings &settings);
             ~DigOutput();
 
             inline DigOutputService* getService() const {

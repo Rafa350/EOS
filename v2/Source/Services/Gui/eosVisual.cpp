@@ -22,7 +22,8 @@ Visual::Visual():
 	bounds(0, 0, 0, 0),
 	margin(0),
 	horizontalAlignment(HorizontalAlignment::stretch),
-	verticalAlignment(VerticalAlignment::stretch) {
+	verticalAlignment(VerticalAlignment::stretch),
+	id(0) {
 }
 
 
@@ -148,7 +149,7 @@ void Visual::send(
 /// \param    visual: L'objecte Visual a afeigir.
 ///
 void Visual::addVisual(
-	Visual* visual) {
+	Visual *visual) {
 
 	eosAssert(visual != nullptr);
 	eosAssert(visual->parent == nullptr);
@@ -165,7 +166,7 @@ void Visual::addVisual(
 /// \param    visual: L'objecte Visual a eliminar.
 ///
 void Visual::removeVisual(
-	Visual* visual) {
+	Visual *visual) {
 
 	eosAssert(visual != nullptr);
 	eosAssert(visual->parent != nullptr);

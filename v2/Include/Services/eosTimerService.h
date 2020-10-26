@@ -40,7 +40,7 @@ namespace eos {
             typedef DynamicArray<TimerCounter*>::Iterator TimerListIterator;
             typedef PriorityQueue<unsigned, TimerCounter*> TimerQueue;
             typedef PriorityQueue<unsigned, TimerCounter*>::Iterator TimerQueueIterator;
-            
+
         public:
             struct InitParams {
                 TMRTimer timer;
@@ -70,7 +70,7 @@ namespace eos {
 
         protected:
             void onInitialize() override;
-            void onTask() override;
+            void onTask(Task *task) override;
 
         private:
             void cmdStart(TimerCounter* timer);
@@ -109,24 +109,24 @@ namespace eos {
             TimerCounter(TimerService* service, IEventCallback* callback = nullptr);
             ~TimerCounter();
 
-            inline void setEventCallback(IEventCallback* callback) { 
-                eventCallback = callback; 
+            inline void setEventCallback(IEventCallback* callback) {
+                eventCallback = callback;
             }
 
-            void start(unsigned period, unsigned blockTime = ((unsigned)-1)) { 
-                service->start(this, period, blockTime); 
+            void start(unsigned period, unsigned blockTime = ((unsigned)-1)) {
+                service->start(this, period, blockTime);
             }
-            
-            void stop(unsigned blockTime = ((unsigned)-1)) { 
-                service->stop(this, blockTime); 
+
+            void stop(unsigned blockTime = ((unsigned)-1)) {
+                service->stop(this, blockTime);
             }
-            
-            void pause(unsigned blockTime = ((unsigned)-1)) { 
-                service->pause(this, blockTime); 
+
+            void pause(unsigned blockTime = ((unsigned)-1)) {
+                service->pause(this, blockTime);
             }
-            
-            void resume(unsigned blockTime = ((unsigned)-1)) { 
-                service->resume(this, blockTime); 
+
+            void resume(unsigned blockTime = ((unsigned)-1)) {
+                service->resume(this, blockTime);
             }
 
         friend TimerService;

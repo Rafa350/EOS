@@ -199,12 +199,12 @@ static void disableDeviceClock(
 ///
 TMRHandler halTMRInitialize(
 	TMRData* data,
-	const TMRInitializeInfo* info) {
+	const TMRSettings *settings) {
 
 	eosAssert(data !=NULL);
-	eosAssert(info != NULL);
+	eosAssert(settings != NULL);
 
-	TIM_TypeDef* device = getDevice(info->timer);
+	TIM_TypeDef* device = getDevice(settings->timer);
 
 	enableDeviceClock(device);
 	__clear_bit_msk(device->CR1, TIM_CR1_CEN);                 // Para el timer
@@ -217,7 +217,7 @@ TMRHandler halTMRInitialize(
 
 	if (IS_TIM_CLOCK_DIVISION_INSTANCE(device)) {
 		__clear_bit_msk(temp, TIM_CR1_CKD); 			// Divisor per 1 per defecte
-		switch ((info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos) {
+		switch ((settings->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos) {
 			case HAL_TMR_CLKDIV_2:
 				__set_bit_msk(temp, TIM_CR1_CKD_0);     // Divisor per 2
 				break;
@@ -228,18 +228,18 @@ TMRHandler halTMRInitialize(
 		}
 	}
 
-	if ((info->options & HAL_TMR_DIRECTION_mask) == HAL_TMR_DIRECTION_DOWN)
+	if ((settings->options & HAL_TMR_DIRECTION_mask) == HAL_TMR_DIRECTION_DOWN)
 		__set_bit_msk(temp, TIM_CR1_DIR);               // Conta cap avall
 
 	device->CR1 = temp;
 
 	// Configura el registre PSC (Prescaler)
 	//
-	device->PSC = info->prescaler;
+	device->PSC = settings->prescaler;
 
 	// Configura el registre ARR (Periode)
 	//
-	device->ARR = info->period;
+	device->ARR = settings->period;
 
 	TMRHandler handler = data;
 	handler->device = device;

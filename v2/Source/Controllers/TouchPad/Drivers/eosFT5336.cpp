@@ -295,7 +295,7 @@ void FT5336Driver::clearInt() {
 ///
 void FT5336Driver::ioInit() {
 
-	static GPIOInitializePinInfo const gpioInfo[] = {
+	static GPIOPinSettings const gpioSettings[] = {
 #ifdef TOUCHPAD_INT_PORT
 		{TOUCHPAD_INT_PORT, TOUCHPAD_INT_PIN, HAL_GPIO_MODE_INPUT | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_UP, 0},
 #endif
@@ -304,15 +304,15 @@ void FT5336Driver::ioInit() {
 	};
 
 #ifdef TOUCHPAD_INT_PORT
-	static EXTIInitializePinInfo const extiInfo[] = {
+	static EXTIPinSettings const extiSettings[] = {
 		{TOUCHPAD_INT_EXTI_LINE, HAL_EXTI_MODE_INT | HAL_EXTI_TRIGGER_RISING | TOUCHPAD_INT_EXTI_PORT, nullptr, nullptr}
 	};
 #endif
 
-	halGPIOInitializePins(gpioInfo, sizeof(gpioInfo) / sizeof(gpioInfo[0]));
+	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
 
 #ifdef TOUCHPAD_INT_PORT
-	halEXTIInitializePins(extiInfo, sizeof(extiInfo) / sizeof(extiInfo[0]));
+	halEXTIInitializePins(extiSettings, sizeof(extiSettings) / sizeof(extiSettings[0]));
 	halINTSetInterruptVectorPriority(TOUCHPAD_INT_IRQ, TOUCHPAD_INT_PRIORITY, TOUCHPAD_INT_SUBPRIORITY);
 	halINTEnableInterruptVector(TOUCHPAD_INT_IRQ);
 #endif

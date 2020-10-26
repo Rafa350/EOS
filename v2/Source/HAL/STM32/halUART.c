@@ -353,21 +353,21 @@ static void setupDevice(
 ///
 UARTHandler halUARTInitialize(
     UARTData* data,
-    const UARTInitializeInfo *info) {
+    const UARTSettings *settings) {
 
 	eosAssert(data != NULL);
-	eosAssert(info != NULL);
+	eosAssert(settings != NULL);
 
-    USART_TypeDef* device = getDevice(info->channel);
+    USART_TypeDef* device = getDevice(settings->channel);
 
     enableDeviceClock(device);
 
-    uint32_t options = info->options;
+    uint32_t options = settings->options;
     if ((options & HAL_UART_CLOCK_mask) == HAL_UART_CLOCK_AUTO) {
     	__clear_bit_msk(options, HAL_UART_CLOCK_mask);
     	__set_bit_msk(options, getClockSourceOption(device));
     }
-    setupDevice(device, options, info->baud);
+    setupDevice(device, options, settings->baud);
 
     UARTHandler handler = data;
     handler->device = device;

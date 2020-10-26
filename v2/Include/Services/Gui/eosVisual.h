@@ -62,6 +62,7 @@ namespace eos {
 			Thickness margin;
 			HorizontalAlignment horizontalAlignment;
 			VerticalAlignment verticalAlignment;
+			unsigned id;
 
     	protected:
     		virtual void onRender(RenderContext *context) = 0;
@@ -102,6 +103,7 @@ namespace eos {
             bool isEnabled() const;
 
             // Setters
+            void setId(unsigned id) { this->id = id; }
             void setHorizontalAlignment(HorizontalAlignment value);
             void setMargin(const Thickness &value);
             void setMinSize(const Size &value);
@@ -112,6 +114,7 @@ namespace eos {
             // Getters
             inline const Rect& getBounds() const { return bounds; }
             inline HorizontalAlignment getHorizontalAlignment() const { return horizontalAlignment; }
+            inline unsigned getId() const { return id; }
             inline const Size& getMaxSize() const { return maxSize; }
             inline const Thickness& getMargin() const { return margin; }
             inline const Size& getMinSize() const { return minSize; }

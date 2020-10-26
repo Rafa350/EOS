@@ -122,7 +122,8 @@ void GuiService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la tasca del servei.
 ///
-void GuiService::onTask() {
+void GuiService::onTask(
+	Task *task) {
 
 	// Refresca la pantalla si cal
 	//

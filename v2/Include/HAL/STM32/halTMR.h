@@ -91,10 +91,10 @@ typedef struct {
 	uint32_t prescaler;
 	uint32_t period;
 	TMROptions options;
-} TMRInitializeInfo;
+} TMRSettings;
 
 
-TMRHandler halTMRInitialize(TMRData* data, const TMRInitializeInfo* info);
+TMRHandler halTMRInitialize(TMRData* data, const TMRSettings *settings);
 void halTMRDeinitialize(TMRHandler handler);
 
 void halTMRStartTimer(TMRHandler handler);

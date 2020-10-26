@@ -23,7 +23,7 @@ static SPIHandler hSPI = NULL;
 ///
 void ILI9341Driver::lcdInitialize() {
 
-	static GPIOInitializePinInfo const gpioInit[] = {
+	static GPIOPinSettings const gpioInit[] = {
 #ifdef DISPLAY_RST_PORT
 		{DISPLAY_RST_PORT,  DISPLAY_RST_PIN,
 			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0                        },

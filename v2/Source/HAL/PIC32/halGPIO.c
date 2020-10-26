@@ -8,11 +8,11 @@
 /// \param    count: Numero de pins a inicialitzar;
 ///
 void halGPIOInitializePins(
-    const GPIOInitializePinInfo* info,
+    const GPIOPinSettings *settings,
     uint32_t count) {
 
     for (uint32_t i = 0; i < count; i++) {
-        const GPIOInitializePinInfo* p = &info[i];
+        const GPIOPinSettings *p = &settings[i];
         halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
     }
 }
@@ -41,11 +41,11 @@ void halGPIOInitializePin(
 /// \param    count: Numero de ports a inicialitzar.
 ///
 void halGPIOInitializePorts(
-    const GPIOInitializePortInfo* info,
+    const GPIOPortSettings *settings,
     uint32_t count) {
 
     for (uint32_t i = 0; i < count; i++) {
-        const GPIOInitializePortInfo* p = &info[i];
+        const GPIOPortSettings *p = &settings[i];
         halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
     }
 }
@@ -63,9 +63,9 @@ void halGPIOInitializePort(
     GPIOMask mask,
     GPIOOptions options,
     GPIOAlt alt) {
-    
+
     GPIORegisters* regs = (GPIORegisters*) port;
-       
+
     if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
         ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {
 

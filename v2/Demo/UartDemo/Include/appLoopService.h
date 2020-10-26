@@ -19,6 +19,10 @@ namespace app {
 		protected:
 			void onSetup() override;
 			void onLoop() override;
+
+			char getChar();
+			void putChar(char ch);
+			void putString(char *s);
 	};
 }
 

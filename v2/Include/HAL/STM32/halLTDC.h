@@ -28,7 +28,7 @@ typedef struct {
     } polarity;
     uint16_t width;               // Amplada
     uint16_t height;              // Alçada
-} LTDCInitializeInfo;
+} LTDCSettings;
 
 
 // Identificados de les capes
@@ -42,7 +42,7 @@ typedef struct {
 #define HAL_LTDC_FORMAT_L8        ((LTDCPixelFormat) 2)
 
 
-void halLTDCInitialize(const LTDCInitializeInfo *pInfo);
+void halLTDCInitialize(const LTDCSettings *settings);
 void halLTDCDeinitialize();
 
 void halLTDCSetBackgroundColor(uint32_t rgb);

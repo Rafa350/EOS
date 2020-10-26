@@ -3,62 +3,72 @@
 #include "HAL/STM32/halLTDC.h"
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Enable LTDC device clock.
+///
+static void enableDeviceClock() {
+
+    __set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_LTDCEN);
+    __DSB();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Disable LTDC device clock.
+///
+static void disableDeviceClock() {
+
+    __clear_bit_msk(RCC->APB2ENR, RCC_APB2ENR_LTDCEN);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Configure LTDC peripheral clocks.
+///
+__weak void configureLTDCDeviceClock() {
+
+}
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el modul LTDC.
 /// \param    info: Informacio d'inicialitzacio.
 ///
 void halLTDCInitialize(
-	const LTDCInitializeInfo* info) {
+	const LTDCSettings *settings) {
 
-	eosAssert(info != NULL);
+	eosAssert(settings != NULL);
 
 	uint32_t tmp;
 
-	// TODO No utilitzar HAL
-	// Configura el rellotge
-	// PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
-	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 192 Mhz
-	// PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 192/5 = 38.4 Mhz
-	// LTDC clock frequency = PLLLCDCLK / LTDC_PLLSAI_DIVR_4 = 38.4/4 = 9.6Mhz
-	//
-	RCC_PeriphCLKInitTypeDef clkInit;
-	clkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
-	clkInit.PLLSAI.PLLSAIN = 192;
-	clkInit.PLLSAI.PLLSAIR = DISPLAY_FDIV;
-	clkInit.PLLSAIDivR = RCC_PLLSAIDIVR_4;
-	HAL_RCCEx_PeriphCLKConfig(&clkInit);
-
-    // Activa el modul LTDC
-    //
-    __set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_LTDCEN);
-    __DSB();
+	configureLTDCDeviceClock();
+	enableDeviceClock();
 
     // Configure el registre GCR (General Configuration Register)
     // -Polaritat HSYNC, VSYNC, DE i PC
     //
     tmp = LTDC->GCR;
     tmp &= ~(LTDC_GCR_HSPOL | LTDC_GCR_VSPOL | LTDC_GCR_DEPOL | LTDC_GCR_PCPOL);
-   	tmp |= info->polarity.HSYNC << LTDC_GCR_HSPOL_Pos;
-   	tmp |= info->polarity.VSYNC << LTDC_GCR_VSPOL_Pos;
-  	tmp |= info->polarity.DE << LTDC_GCR_DEPOL_Pos;
-    tmp |= info->polarity.PC << LTDC_GCR_PCPOL_Pos;
+   	tmp |= settings->polarity.HSYNC << LTDC_GCR_HSPOL_Pos;
+   	tmp |= settings->polarity.VSYNC << LTDC_GCR_VSPOL_Pos;
+  	tmp |= settings->polarity.DE << LTDC_GCR_DEPOL_Pos;
+    tmp |= settings->polarity.PC << LTDC_GCR_PCPOL_Pos;
     LTDC->GCR = tmp;
 
     // Configura el registre SSCR (Sinchronization Size Configuration Register)
     //
     tmp = LTDC->SSCR;
     tmp &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
-    tmp |= (info->HSYNC - 1) << LTDC_SSCR_HSW_Pos;
-    tmp |= (info->VSYNC - 1) << LTDC_SSCR_VSH_Pos;
+    tmp |= (settings->HSYNC - 1) << LTDC_SSCR_HSW_Pos;
+    tmp |= (settings->VSYNC - 1) << LTDC_SSCR_VSH_Pos;
     LTDC->SSCR = tmp;
 
     // Configura el registre BPCR (Back Porch Configuration Register)
     //
     tmp = LTDC->BPCR;
     tmp &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
-    tmp |= (info->HSYNC + info->HBP - 1) << LTDC_BPCR_AHBP_Pos;
-    tmp |= (info->VSYNC + info->VBP - 1) << LTDC_BPCR_AVBP_Pos;
+    tmp |= (settings->HSYNC + settings->HBP - 1) << LTDC_BPCR_AHBP_Pos;
+    tmp |= (settings->VSYNC + settings->VBP - 1) << LTDC_BPCR_AVBP_Pos;
     LTDC->BPCR = tmp;
 
     // Configura el registre AWCR (Active Width Configuration Register)
@@ -67,8 +77,8 @@ void halLTDCInitialize(
     //
     tmp = LTDC->AWCR;
     tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
-    tmp |= (info->HSYNC + info->HBP + info->width - 1) << LTDC_AWCR_AAW_Pos;
-    tmp |= (info->VSYNC + info->VBP + info->height - 1) << LTDC_AWCR_AAH_Pos;
+    tmp |= (settings->HSYNC + settings->HBP + settings->width - 1) << LTDC_AWCR_AAW_Pos;
+    tmp |= (settings->VSYNC + settings->VBP + settings->height - 1) << LTDC_AWCR_AAH_Pos;
     LTDC->AWCR = tmp;
 
     // Configura el registre TWCR (Total Width Configuration Register)
@@ -77,8 +87,8 @@ void halLTDCInitialize(
     //
     tmp = LTDC->TWCR;
     tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
-    tmp |= (info->HSYNC + info->HBP + info->width + info->HFP - 1) << LTDC_TWCR_TOTALW_Pos;
-    tmp |= (info->VSYNC + info->VBP + info->height + info->VFP - 1) << LTDC_TWCR_TOTALH_Pos;
+    tmp |= (settings->HSYNC + settings->HBP + settings->width + settings->HFP - 1) << LTDC_TWCR_TOTALW_Pos;
+    tmp |= (settings->VSYNC + settings->VBP + settings->height + settings->VFP - 1) << LTDC_TWCR_TOTALH_Pos;
     LTDC->TWCR = tmp;
 }
 
@@ -88,7 +98,7 @@ void halLTDCInitialize(
 ///
 void halLTDCDeinitialize() {
 
-    __clear_bit_msk(RCC->APB2ENR, RCC_APB2ENR_LTDCEN);
+	disableDeviceClock();
 }
 
 

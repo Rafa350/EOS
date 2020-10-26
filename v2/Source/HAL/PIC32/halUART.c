@@ -11,7 +11,7 @@
 /// \param    module: El modul UART.
 /// \return   El identificador 'Harmony' del modul.
 ///
-static USART_MODULE_ID getHarmonyID(
+static inline USART_MODULE_ID getHarmonyID(
     UARTChannel module) {
 
     static const USART_MODULE_ID idTable[] = {
@@ -54,13 +54,13 @@ static USART_MODULE_ID getHarmonyID(
 ///
 UARTHandler halUARTInitialize(
     UARTData* data,
-    const UARTInitializeInfo *info) {
+    const UARTSettings *settings) {
 
     UARTHandler handler = data;
 
-    USART_MODULE_ID id = getHarmonyID(info->channel);
+    USART_MODULE_ID id = getHarmonyID(settings->channel);
 
-    PLIB_USART_BaudRateSet(id, halSYSGetSystemClockFrequency(), info->baudRate);
+    PLIB_USART_BaudRateSet(id, halSYSGetSystemClockFrequency(), settings->baudRate);
     //PLIB_USART_SyncModeSelect(id, USART_ASYNC_MODE);
     PLIB_USART_LineControlModeSelect(id, USART_8N1);
     PLIB_USART_Enable(id);

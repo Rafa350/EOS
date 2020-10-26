@@ -32,7 +32,7 @@ void ButtonBase::click() {
 ///
 #if eosGuiService_TouchPadEnabled
 void ButtonBase::onTouchPadPress(
-	const Point& position) {
+	const Point &position) {
 
 	onPress();
 

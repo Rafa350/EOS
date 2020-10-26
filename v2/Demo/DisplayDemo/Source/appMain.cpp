@@ -1,5 +1,4 @@
 #include "eos.h"
-#include "System/eosApplication.h"
 #include "appApplication.h"
 
 

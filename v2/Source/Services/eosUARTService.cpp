@@ -13,11 +13,11 @@ using namespace eos;
 /// \param    initParams: Parametres d'inicialitzacio.
 ///
 UARTService::UARTService(
-	Application* application,
-	const InitializeInfo& info):
+	Application *application,
+	const Settings &settings):
 
 	Service(application),
-	hUART(info.hUART) {
+	hUART(settings.hUART) {
 
 	rxPending.release();
 }
@@ -41,7 +41,7 @@ UARTService::~UARTService() {
 ///           la transmissio dels bytes que resten.
 ///
 unsigned UARTService::send(
-	uint8_t* data,
+	uint8_t *data,
 	unsigned length,
 	unsigned blockTime) {
 

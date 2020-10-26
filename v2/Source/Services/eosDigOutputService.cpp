@@ -13,15 +13,15 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    application: L'aplicacio on afeigir el servei.
-/// \param    initParams: Parametres d'inicialitzacio.
+/// \param    application: The application.
+/// \param    settings: Configuration parameters.
 ///
 DigOutputService::DigOutputService(
-    Application* application,
-    const InitializeInfo& info):
+    Application *application,
+    const Settings &settings):
 
 	Service(application),
-    hTimer(info.hTimer),
+    hTimer(settings.hTimer),
 	commandQueue(commandQueueSize) {
 
 }
@@ -545,12 +545,12 @@ void DigOutputService::tmrInterruptFunction(
 /// \param    initParams: Parametres d'inicialitzacio.
 ///
 DigOutput::DigOutput(
-    DigOutputService* service,
-    const DigOutput::InitParams& initParams):
+    DigOutputService *service,
+    const Settings &settings):
 
     service(nullptr),
-    port(initParams.port),
-    pin(initParams.pin),
+    port(settings.port),
+    pin(settings.pin),
     state(State::idle),
 	delayCnt(0),
 	widthCnt(0) {

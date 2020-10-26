@@ -43,12 +43,12 @@ void TimerService::addTimer(
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
-    
+
     if (timer->service == nullptr) {
         timers.pushBack(timer);
         timer->service = this;
     }
-    
+
     // Fi de la seccio critica
     //
     Task::exitCriticalSection();
@@ -68,20 +68,20 @@ void TimerService::removeTimer(
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
-    
-    if (timer->service == this) {    
-        
+
+    if (timer->service == this) {
+
         // Si esta actiu l'elimina de la cua d'actius
         //
         if (activeQueue.contains(timer))
             activeQueue.remove(timer);
-        
+
         timer->service = nullptr;
         timers.removeAt(timers.indexOf(timer));
     }
 
     // Fi de la seccio critica
-    //    
+    //
     Task::exitCriticalSection();
 }
 
@@ -94,9 +94,9 @@ void TimerService::removeTimers() {
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
     Task::enterCriticalSection();
-    
+
     while (!timers.isEmpty()) {
-        
+
         TimerCounter* timer = timers.getBack();
 
         // Si esta actiu l'elimina de la cua d'actius
@@ -124,7 +124,7 @@ void TimerService::start(
     TimerCounter* timer,
     unsigned period,
     unsigned blockTime) {
-    
+
     eosAssert(timer != nullptr);
     eosAssert(timer->service == this);
 
@@ -203,7 +203,7 @@ void TimerService::resume(
 ///
 void TimerService::osTimerEventHandler(
     const Timer::EventArgs& args) {
-    
+
     Command cmd;
     cmd.opCode = OpCode::timeOut;
     cmd.period = osPeriod;
@@ -215,9 +215,9 @@ void TimerService::osTimerEventHandler(
 /// \brief    Initialiyza el servei.
 ///
 void TimerService::onInitialize() {
-    
+
     osTimer.setEventCallback(&osTimerEventCallback);
-    
+
     Service::onInitialize();
 }
 
@@ -225,7 +225,8 @@ void TimerService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la tasca del servei.
 ///
-void TimerService::onTask() {
+void TimerService::onTask(
+    Task *task) {
 
     // Espera indefinidament que arribin comandes per procesar
     //
@@ -263,7 +264,7 @@ void TimerService::onTask() {
 ///
 void TimerService::cmdStart(
     TimerCounter* timer) {
-    
+
     // Calcula el temps d'expiracio.
     //
     timer->currentPeriod = timer->period;
@@ -274,7 +275,7 @@ void TimerService::cmdStart(
     if (activeQueue.contains(timer))
         activeQueue.remove(timer);
     activeQueue.push(timer->expireTime, timer);
-    
+
     // Si es el primer, inicia el temporitzador.
     //
     if (activeQueue.getSize() == 1)
@@ -288,7 +289,7 @@ void TimerService::cmdStart(
 ///
 void TimerService::cmdStop(
     TimerCounter* timer) {
-    
+
     // Elimina el contador de la llista de contadors actius.
     //
     activeQueue.remove(timer);
@@ -301,12 +302,12 @@ void TimerService::cmdStop(
 ///
 void TimerService::cmdPause(
     TimerCounter* timer) {
-    
+
     // Elimina el contador de la llista de contadors actius.
     //
     activeQueue.remove(timer);
-    
-    // Recalcula el periode que resta. 
+
+    // Recalcula el periode que resta.
     //
     timer->currentPeriod = timer->expireTime - osalGetTickTime();
 }
@@ -322,7 +323,7 @@ void TimerService::cmdResume(
     // Recalcula el temps d'expiracio amb el periode ue resta.
     //
     timer->expireTime = osalGetTickTime() + timer->currentPeriod;
-    
+
     // Afegeix el contador a la cua de contadors actius.
     //
     activeQueue.push(timer->expireTime, timer);
@@ -339,7 +340,7 @@ void TimerService::cmdResume(
 /// \param    period: Periode de temps procesat.
 ///
 void TimerService::cmdTimeOut() {
-    
+
     TimerCounter* timer;
 
     // Comprova si hi han contadors actius.
@@ -349,15 +350,15 @@ void TimerService::cmdTimeOut() {
         // Obte el temps actual.
         //
         unsigned currentTime = osalGetTickTime();
-    
+
         // Elimina els contadors que hagin arribat al final.
         //
         while (activeQueue.peek(timer) && (currentTime >= timer->expireTime)) {
-            
+
             // Elimina el contador de la cua d'actius.
             //
             activeQueue.pop();
-            
+
             // Crida a la funcio callback del contador.
             //
             if (timer->eventCallback != nullptr) {
@@ -367,15 +368,15 @@ void TimerService::cmdTimeOut() {
                 timer->eventCallback->execute(args);
             }
         }
-        
+
         // Obte el primer contador actiu.
         //
         if (activeQueue.peek(timer)) {
-            
+
             // Recalcula el temps d'expiracio.
             //
             osPeriod = timer->expireTime - currentTime;
-            
+
             // Activa el temporitzador, per un nou cicle.
             //
             osTimer.start(osPeriod, 0);

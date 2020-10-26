@@ -69,10 +69,10 @@ typedef struct __I2CData I2CData;
 typedef struct {
     I2CChannel channel;
     uint32_t baudRate;
-} I2CMasterInitializeInfo;
+} I2CMasterSettings;
 
 
-I2CHandler halI2CMasterInitialize(I2CData* data, const I2CMasterInitializeInfo* info);
+I2CHandler halI2CMasterInitialize(I2CData* data, const I2CMasterSettings *settings);
 void halI2CMasterDeinitialize(I2CHandler handler);
 
 void halI2CMasterStart(I2CHandler hander);

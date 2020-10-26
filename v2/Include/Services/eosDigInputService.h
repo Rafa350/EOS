@@ -24,7 +24,7 @@ namespace eos {
             typedef DynamicArray<DigInput*> DigInputList;
             typedef DynamicArray<DigInput*>::Iterator DigInputListIterator;
         public:
-            struct InitializeInfo { // Informacio d'inicialitzacio del servei.
+            struct Settings {       // Informacio d'inicialitzacio del servei.
                 TMRHandler hTimer;  // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema
             };
 
@@ -41,7 +41,7 @@ namespace eos {
             void onTick();
 #endif
         public:
-            DigInputService(Application* application, const InitializeInfo& info);
+            DigInputService(Application* application, const Settings &settings);
             ~DigInputService();
             void addInput(DigInput* input);
             void removeInput(DigInput* input);
@@ -61,11 +61,11 @@ namespace eos {
                 DigInput* input;
                 void* param;
             };
-            typedef ICallbackP1<const EventArgs&> IEventCallback;
-            struct InitParams {  // Parametres d'inicialitzacio de l'entrada.
+        	typedef ICallbackP1<const EventArgs&> IEventCallback;
+            struct Settings {    // Parametres de configuracio de l'entrada.
                 GPIOPort port;   // -El port
                 GPIOPin pin;     // -El pin
-                IEventCallback* eventCallback;
+                IEventCallback *eventCallback;
                 void* eventParam;
             };
 
@@ -80,7 +80,7 @@ namespace eos {
             bool edge;
 
         public:
-            DigInput(DigInputService* service, const InitParams& initParams);
+            DigInput(DigInputService* service, const Settings &settings);
             ~DigInput();
 
             inline DigInputService* getService() const {

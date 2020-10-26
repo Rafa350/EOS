@@ -107,10 +107,10 @@ static void setupPin(
 /// \param    count: Numero d'elements en la llista.
 ///
 void halEXTIInitializePins(
-	const EXTIInitializePinInfo* info,
-	int count) {
+	const EXTIPinSettings *settings,
+	uint32_t count) {
 
-	eosAssert(info != NULL);
+	eosAssert(settings != NULL);
 	eosAssert(count > 0);
 
 	// Activa el clock del modul EXTI
@@ -122,7 +122,7 @@ void halEXTIInitializePins(
 	//
 	for (int i = 0; i < count; i++) {
 
-		const EXTIInitializePinInfo* p = &info[i];
+		const EXTIPinSettings *p = &settings[i];
 		setupPin(p->line, p->options);
 
 		if ((p->options & HAL_EXTI_MODE_mask) == HAL_EXTI_MODE_INT) {

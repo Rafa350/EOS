@@ -35,8 +35,8 @@ namespace eos {
     ///
     class I2CMasterService: public Service {
         public:
-            struct Configuration {
-                I2CHandler hChannel;
+            struct Settings {
+                I2CHandler hI2C;
             };
 
             /// \brief Protocol a utilitzar en la transaccio.
@@ -101,7 +101,7 @@ namespace eos {
             typedef Queue<Transaction*> TransactionQueue;
 
         private:
-            I2CHandler hChannel;
+            I2CHandler hI2C;
             TransactionAllocator transactionAllocator;
             TransactionQueue transactionQueue;
             Transaction *transaction;
@@ -115,7 +115,7 @@ namespace eos {
             State state;
 
         public:
-            I2CMasterService(Application* application, const Configuration& cfg);
+            I2CMasterService(Application* application, const Settings &settings);
             ~I2CMasterService();
 
             bool startTransaction(uint8_t addr, TransactionProtocol protocol, void const *txBuffer, int txCount, ITransactionEventCallback *callback);
@@ -124,10 +124,10 @@ namespace eos {
         protected:
             void onInitialize() override;
             void onTerminate() override;
-            void onTask() override;
+            void onTask(Task *task) override;
 
         private:
-            void initializeHardware(const Configuration &cfg);
+            void initializeHardware(const Settings &settings);
             void deinitializeHardware();
             static void i2cInterruptFunction(I2CHandler handler, void* params);
             void stateMachine();

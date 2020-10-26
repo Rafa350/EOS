@@ -88,10 +88,10 @@ typedef struct {
     EXTIOptions options;
     EXTIInterruptFunction isrFunction;
     void *isrParams;
-} EXTIInitializePinInfo;
+} EXTIPinSettings;
 
 
-void halEXTIInitializePins(const EXTIInitializePinInfo *info, int count);
+void halEXTIInitializePins(const EXTIPinSettings *settings, uint32_t count);
 
 void halEXTISetInterruptFunction(EXTILine line, EXTIInterruptFunction function, void *params);
 void halEXTIEnableInterrupt(EXTILine line);

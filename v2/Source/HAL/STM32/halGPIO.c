@@ -23,8 +23,8 @@ static inline GPIO_TypeDef* getDevice(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Activa el dispositiu
-/// \param    device: El dispositiu.
+/// \brief    Enable device GPIO clock
+/// \param    device: Device.
 ///
 static void enableDeviceClock(
 	GPIO_TypeDef* device) {
@@ -91,11 +91,11 @@ static void enableDeviceClock(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Configura un pin.
-/// \param    device: El dispositiu.
-/// \param    pin: Numero de pin.
-/// \param    options: Opcions de configuracio.
-/// \param    alt: Funcio alternativa.
+/// \brief    Setup device pin.
+/// \param    device: Device.
+/// \param    pin: Pun number.
+/// \param    options: Pin settings.
+/// \param    alt: Alternate piu function.
 ///
 static void setupDevicePin(
 	GPIO_TypeDef* device,
@@ -219,19 +219,19 @@ static void setupDevicePin(
 
 /// ----------------------------------------------------------------------
 /// \brief    Initialize a pin list.
-/// \param    info: Initialization table.
-/// \param    count: Numer of elements in table.
+/// \param    info: Settings table.
+/// \param    count: Number of elements in table.
 ///
 void halGPIOInitializePins(
-	const GPIOInitializePinInfo *info,
+	const GPIOPinSettings *settings,
 	uint32_t count) {
 
-	eosAssert(info != NULL);
+	eosAssert(settings != NULL);
 	eosAssert(count != 0);
 
 	for (uint32_t i = 0; i < count; i++) {
 
-		const GPIOInitializePinInfo* p = &info[i];
+		const GPIOPinSettings *p = &settings[i];
 		GPIO_TypeDef* device = getDevice(p->port);
 
 		enableDeviceClock(device);
@@ -242,19 +242,19 @@ void halGPIOInitializePins(
 
 /// ----------------------------------------------------------------------
 /// \brief    Initialize a port list.
-/// \param    info: Initialization table.
+/// \param    info: Setup table.
 /// \param    count: Number of elements in table.
 ///
 void halGPIOInitializePorts(
-	const GPIOInitializePortInfo* info,
+	const GPIOPortSettings *settings,
 	uint32_t count) {
 
-	eosAssert(info != NULL);
+	eosAssert(settings != NULL);
 	eosAssert(count != 0);
 
 	for (uint32_t i = 0; i < count; i++) {
 
-		const GPIOInitializePortInfo* p = &info[i];
+		const GPIOPortSettings* p = &settings[i];
 		GPIO_TypeDef* device = getDevice(p->port);
 
 		enableDeviceClock(device);

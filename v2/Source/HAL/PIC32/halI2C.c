@@ -8,32 +8,17 @@
 #include "Peripheral/i2c/plib_i2c.h"
 
 
-extern void __ISR(_I2C_1_VECTOR, IPL2SOFT) isrI2C1Wrapper(void);
-#ifdef _I2C2
-extern void __ISR(_I2C_2_VECTOR, IPL2SOFT) isrI2C2Wrapper(void);
-#endif
-#ifdef _I2C3
-extern void __ISR(_I2C_3_VECTOR, IPL2SOFT) isrI2C3Wrapper(void);
-#endif
-#ifdef _I2C4
-extern void __ISR(_I2C_4_VECTOR, IPL2SOFT) isrI2C4Wrapper(void);
-#endif
-#ifdef _I2C5
-extern void __ISR(_I2C_5_VECTOR, IPL2SOFT) isrI2C5Wrapper(void);
-#endif
-
-
 /// ----------------------------------------------------------------------
 /// \brief   Inicialitza el modul I2C
 /// \param   info: Informacio d'inicialitzacio.
 ///
 I2CHandler halI2CMasterInitialize(
     I2CData* data,
-    const I2CMasterInitializeInfo* info) {
+    const I2CMasterSettings *settings) {
 
     I2CHandler handler = data;
 
-    switch(info->channel) {
+    switch(settings->channel) {
         case HAL_I2C_CHANNEL_1:
             handler->regs = (I2CRegisters*) _I2C1_BASE_ADDRESS;
             break;
@@ -57,7 +42,7 @@ I2CHandler halI2CMasterInitialize(
 
     // Selecciona la frequencia de treball
     //
-    if (info->baudRate > 100000) {
+    if (settings->baudRate > 100000) {
         //PLIB_I2C_HighFrequencyEnable(handler->regs);
         handler->regs->I2CxCON.DISSLW = 1;
     }
@@ -65,11 +50,10 @@ I2CHandler halI2CMasterInitialize(
         //PLIB_I2C_HighFrequencyDisable(handler->regs);
         handler->regs->I2CxCON.DISSLW = 0;
     }
-    PLIB_I2C_BaudRateSet((I2C_MODULE_ID) handler->regs, halSYSGetPeripheralClockFrequency(), info->baudRate);
+    PLIB_I2C_BaudRateSet((I2C_MODULE_ID) handler->regs, halSYSGetPeripheralClockFrequency(), settings->baudRate);
 
     // Activa el modul
     //
-    //PLIB_I2C_Enable(handler->regs);
     handler->regs->I2CxCON.ON = 1;
 }
 
@@ -84,7 +68,6 @@ void halI2CMasterDeinitialize(
     eosAssert(handler != NULL);
 
     handler->regs->I2CxCON.ON = 0;
-    //PLIB_I2C_Disable(handler->regs);
 }
 
 
@@ -372,82 +355,3 @@ void halI2CInterruptHandler(
         halI2CClearInterruptFlags(handler, HAL_I2C_EVENT_MASTER);
     }
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa el vector _I2C_1_VECTOR
-///
-/*
-void isrI2C1Handler(void) {
-
-    if (IFS0bits.I2C1MIF) {
-        invokeInterruptFunction(HAL_I2C_CHANNEL_1);
-        IFS0bits.I2C1MIF = 0;
-    }
-
-    if (IFS0bits.I2C1SIF) {
-        invokeInterruptFunction(HAL_I2C_CHANNEL_1);
-        IFS0bits.I2C1SIF = 0;
-    }
-
-    if (IFS0bits.I2C1BIF) {
-        invokeInterruptFunction(HAL_I2C_CHANNEL_1);
-        IFS0bits.I2C1BIF = 0;
-    }
-}
-*/
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa el vector _I2C_2_VECTOR
-///
-#ifdef _I2C2
-void isrI2C2Handler(void) {
-
-    if (IFS1bits.I2C2MIF) {
-//        invokeInterruptFunction(HAL_I2C_CHANNEL_2);
-        IFS1bits.I2C2MIF = 0;
-    }
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa el vector _I2C_3_VECTOR
-///
-#ifdef _I2C3
-void isrI2C3Handler(void) {
-
-    if (IFS2bits.I2C3MIF) {
-        invokeInterruptFunction(HAL_I2C_CHANNEL_3);
-        IFS1bits.I2C3MIF = 0;
-    }
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa el vector _I2C_4_VECTOR
-///
-#ifdef _I2C4
-void isrI2C4Handler(void) {
-
-    if (IFS1bits.I2C4MIF) {
-        invokeInterruptFunction(HAL_I2C_CHANNEL_4);
-        IFS1bits.I2C4MIF = 0;
-    }
-}
-#endif
-
-
-/// ----------------------------------------------------------------------
-/// \brief Procesa el vector _I2C_5_VECTOR
-///
-#ifdef _I2C5
-void isrI2C5Handler(void) {
-
-    if (IFS1bits.I2C5MIF) {
-        invokeInterruptFunction(HAL_I2C_CHANNEL_5);
-        IFS1bits.I2C5MIF = 0);
-    }
-}
-#endif

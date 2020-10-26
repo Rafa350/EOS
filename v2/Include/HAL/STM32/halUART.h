@@ -152,16 +152,16 @@ typedef struct {
     UARTChannel channel;
     UARTOptions options;
     uint32_t baud;
-} UARTInitializeInfo;
+} UARTSettings;
 
 
-UARTHandler halUARTInitialize(UARTData* data, const UARTInitializeInfo *info);
+UARTHandler halUARTInitialize(UARTData* data, const UARTSettings *settings);
 void halUARTDeinitialize(UARTHandler handler);
 
 void halUARTSend(UARTHandler handler, uint8_t data);
 uint8_t halUARTReceive(UARTHandler handler);
 
-void halUARTSetInterruptFunction(UARTHandler handler, UARTInterruptFunction function, void* params);
+void halUARTSetInterruptFunction(UARTHandler handler, UARTInterruptFunction function, void *params);
 void halUARTInterruptHandler(UARTHandler handler);
 
 void halUARTEnableInterrupts(UARTHandler handler, uint32_t events);

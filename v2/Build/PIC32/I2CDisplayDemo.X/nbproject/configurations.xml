@@ -30,13 +30,11 @@
               <itemPath>../../../Include/HAL/PIC32/halI2C.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
-              <itemPath>../../../Include/HAL/PIC32/halUART.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halINT.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halI2C.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
-            <itemPath>../../../Include/HAL/halUART.h</itemPath>
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
@@ -80,6 +78,7 @@
       <logicalFolder name="f1" displayName="App" projectFiles="true">
         <logicalFolder name="f2" displayName="PIC32" projectFiles="true">
           <itemPath>../../../Demo/I2CDisplayDemo/Source/PIC32/appInitialize.cpp</itemPath>
+          <itemPath>../../../Demo/I2CDisplayDemo/Source/PIC32/appInterrupts.cpp</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/I2CDisplayDemo/Source/appMain.cpp</itemPath>
         <itemPath>../../../Demo/I2CDisplayDemo/Source/appApplication.cpp</itemPath>
@@ -100,7 +99,6 @@
               <itemPath>../../../Source/HAL/PIC32/halI2CInterruptWrapper.S</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
-              <itemPath>../../../Source/HAL/PIC32/halUART.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halINT.c</itemPath>
             </logicalFolder>
           </logicalFolder>

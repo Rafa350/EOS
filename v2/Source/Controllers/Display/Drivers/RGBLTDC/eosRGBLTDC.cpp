@@ -341,7 +341,7 @@ void RGBDirectDriver::refresh() {
 ///
 void RGBDirectDriver::initializeGPIO() {
 
-	static const GPIOInitializePinInfo gpioInit[] = {
+	static const GPIOPinSettings gpioSettings[] = {
 		{DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
 		{DISPLAY_BKE_PORT, DISPLAY_BKE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
 
@@ -378,7 +378,7 @@ void RGBDirectDriver::initializeGPIO() {
 		{DISPLAY_B7_PORT, DISPLAY_B7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B7_AF}
 	};
 
-	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
+	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
 }
 
 
@@ -389,7 +389,7 @@ void RGBDirectDriver::initializeGPIO() {
 ///
 void RGBDirectDriver::initializeLTDC() {
 
-	static const LTDCInitializeInfo ltdcInit = {
+	static const LTDCSettings ltdcSettings = {
 		.HSYNC = DISPLAY_HSYNC,
 		.VSYNC = DISPLAY_VSYNC,
 		.HBP = DISPLAY_HBP,
@@ -408,7 +408,7 @@ void RGBDirectDriver::initializeLTDC() {
 
 	// Inicialitza el modul LTDC
 	//
-	halLTDCInitialize(&ltdcInit);
+	halLTDCInitialize(&ltdcSettings);
 	halLTDCSetBackgroundColor(0x000000FF);
 
 	// Inicialitza la capa 0

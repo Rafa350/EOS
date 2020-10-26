@@ -68,7 +68,7 @@ namespace eos {
 
 		protected:
 			void onInitialize() override;
-			void onTask() override;
+			void onTask(Task *task) override;
 
 		private:
 #if eosGuiService_TouchPadEnabled

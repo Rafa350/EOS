@@ -84,7 +84,7 @@ void Task::function(
 
     Task *task = reinterpret_cast<Task*>(params);
     if (task && task->eventCallback) {
-        
+
         task->weakTime = osalGetTickCount();
 
         EventArgs args;
@@ -199,12 +199,12 @@ void Task::resumeAll() {
 
 
 void Task::yield() {
-    
+
     osalTaskYield();
 }
 
 
 void Task::yieldISR() {
-    
+
     //osalTaskYield();
 }

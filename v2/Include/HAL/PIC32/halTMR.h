@@ -105,10 +105,10 @@ typedef struct {
 	TMRTimer timer;
     uint32_t period;
 	TMROptions options;
-} TMRInitializeInfo;
+} TMRSettings;
 
 
-TMRHandler halTMRInitialize(TMRData* data, const TMRInitializeInfo* info);
+TMRHandler halTMRInitialize(TMRData* data, const TMRSettings *settings);
 void halTMRShutdown(TMRHandler hTimer);
 
 uint32_t halTMRGetCounter(TMRHandler handler);

@@ -29,7 +29,8 @@ using namespace app;
 MyApplication::MyApplication():
 
 	Application(),
-	buttonEventCallback(this, &MyApplication::buttonEventHandler) {
+	buttonEventCallback(this, &MyApplication::buttonEventHandler),
+	virtualKeyboardEventCallback(this, &MyApplication::virtualKeyboardEventHandler) {
 
 	ledService = new LedService(this);
 	guiService = new GuiService(this);
@@ -69,6 +70,7 @@ Panel *MyApplication::createMainPanel() {
 	VirtualKeyboard *kb = new VirtualKeyboard();
 	kb->setHorizontalAlignment(HorizontalAlignment::center);
 	kb->setVerticalAlignment(VerticalAlignment::center);
+	kb->setEventCallback(&virtualKeyboardEventCallback);
 	sp->addChild(kb);
 
 	return sp;
@@ -79,4 +81,14 @@ void MyApplication::buttonEventHandler(
 	const ButtonBase::EventArgs &args) {
 
 	args.button->setVisibility(Visibility::hidden);
+}
+
+
+void MyApplication::virtualKeyboardEventHandler(
+	const eos::VirtualKeyboard::EventArgs &args) {
+
+	unsigned key = unsigned(args.keyCode);
+
+	String text = "caca de perro";
+	//tb->setText(text);
 }

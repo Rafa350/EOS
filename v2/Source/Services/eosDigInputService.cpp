@@ -19,15 +19,15 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    application: L'aplicacio a la que pertany
-/// \params   initParams: Parametres d'inicialitzacio.
+/// \param    application: The application.
+/// \params   settings: Conmfigurationparameters.
 ///
 DigInputService::DigInputService(
-    Application* application,
-    const InitializeInfo& info):
+    Application *application,
+    const Settings &settings):
 
 	Service(application),
-    hTimer(info.hTimer) {
+    hTimer(settings.hTimer) {
 }
 
 
@@ -297,18 +297,18 @@ void DigInputService::tmrInterruptFunction(
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    service: El servei.
-/// \param    initParams: Parametres d'inicialitzacio.
+/// \param    service: The service.
+/// \param    settings: Configuration settings
 ///
 DigInput::DigInput(
     DigInputService* service,
-    const InitParams& initParams):
+    const Settings &settings):
 
 	service(nullptr),
-    port(initParams.port),
-    pin(initParams.pin),
-    eventCallback(initParams.eventCallback),
-    eventParam(initParams.eventParam) {
+    port(settings.port),
+    pin(settings.pin),
+    eventCallback(settings.eventCallback),
+    eventParam(settings.eventParam) {
 
     if (service != nullptr)
         service->addInput(this);

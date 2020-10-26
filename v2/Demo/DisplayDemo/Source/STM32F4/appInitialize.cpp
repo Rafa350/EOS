@@ -10,8 +10,9 @@
 ///
 static void initializeCLK() {
 
-	RCC_ClkInitTypeDef clkInit;
 	RCC_OscInitTypeDef oscInit;
+	RCC_ClkInitTypeDef clkInit;
+    //RCC_PeriphCLKInitTypeDef pclkInit;
 
 	// Enable Power Control clock
 	//
@@ -48,6 +49,20 @@ static void initializeCLK() {
 	clkInit.APB1CLKDivider = RCC_HCLK_DIV4;
 	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
 	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_5);
+
+	// Configura el rellotge pel periferic LTDC
+	// PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
+	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 192 Mhz
+	// PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 192/5 = 38.4 Mhz
+	// LTDC clock frequency = PLLLCDCLK / LTDC_PLLSAI_DIVR_4 = 38.4/4 = 9.6Mhz
+	//
+	/*
+	pclkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
+	pclkInit.PLLSAI.PLLSAIN = 192;
+	pclkInit.PLLSAI.PLLSAIR = DISPLAY_FDIV;
+	pclkInit.PLLSAIDivR = RCC_PLLSAIDIVR_4;
+	HAL_RCCEx_PeriphCLKConfig(&pclkInit);
+	*/
 }
 
 
@@ -71,5 +86,7 @@ void appInitialize() {
 	initializeCLK();
 	initializeSDRAM();
 
+#ifdef EOS_DEBUG
 	__HAL_FREEZE_TIM6_DBGMCU();
+#endif
 }

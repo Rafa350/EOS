@@ -48,7 +48,7 @@ typedef struct {
 	GPIOPin pin;                  ///< Pin identifier
 	GPIOOptions options;          ///< Options
 	GPIOAlt alt;                  ///< Alternate pin function
-} GPIOInitializePinInfo;
+} GPIOPinSettings;
 
 /// \brief GPIO port initialization parameters
 typedef struct {
@@ -56,7 +56,7 @@ typedef struct {
 	GPIOMask mask;                ///< Selection pin mask.
 	GPIOOptions options;          ///< Options.
 	GPIOAlt alt;                  ///< Alternate pin function.
-} GPIOInitializePortInfo;
+} GPIOPortSettings;
 
 
 // Identificado del port
@@ -248,8 +248,8 @@ typedef struct {
 	((GPIO_TypeDef*)port)->IDR
 
 
-void halGPIOInitializePins(const GPIOInitializePinInfo* info, uint32_t count);
-void halGPIOInitializePorts(const GPIOInitializePortInfo* info, uint32_t count);
+void halGPIOInitializePins(const GPIOPinSettings *settings, uint32_t count);
+void halGPIOInitializePorts(const GPIOPortSettings *settings, uint32_t count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 

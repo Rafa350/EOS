@@ -43,7 +43,8 @@ void TouchPadService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Bucle d'execucio.
 ///
-void TouchPadService::onTask() {
+void TouchPadService::onTask(
+	Task *task) {
 
 	if (eventCallback != nullptr) {
 

@@ -8,30 +8,29 @@
 
 
 namespace eos {
-    
+
     class Application;
     class Task;
-    
+
     class TerminalService: public Service {
         public:
-            struct Configuration {
-                UARTModule module;
+            struct Settings {
+                UARTHandler hUART;
                 int baudRate;
             };
-            
-            TerminalService(Application *application, const Configuration &cfg);
+
+            TerminalService(Application *application, const Settings &settings);
             ~TerminalService();
-            
+
         protected:
             void onInitialize() override;
-            void onTask() override;
-            
+            void onTask(Task *task) override;
+
         private:
-            UARTModule module;
-            
-            void initializeHardware(const Configuration &cfg);
+            UARTHandler hUART;
+
             void deinitializeHardware();
-            static void interruptCallback(UARTModule module, void *param);
+            static void interruptFunction(UARTHandler handler, void *params);
     };
 }
 

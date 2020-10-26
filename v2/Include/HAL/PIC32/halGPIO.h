@@ -161,14 +161,14 @@ typedef struct {                  // Parametres d'inicialitzacio per pins
 	GPIOPin pin;                  // -Identificador del pin
 	GPIOOptions options;          // -Opcions
 	GPIOAlt alt;                  // -Funcio alternativa
-} GPIOInitializePinInfo;
+} GPIOPinSettings;
 
 typedef struct {                  // Parametres d'inicialitzacio d'un port
 	GPIOPort port;                // -Identificador del port
 	GPIOMask mask;                // -Mascara de pins
 	GPIOOptions options;          // -Opcions
 	GPIOAlt alt;                  // -Funcio alternativa
-} GPIOInitializePortInfo;
+} GPIOPortSettings;
 
 
 // Canvi d'entrada a sortida i viceversa
@@ -218,10 +218,10 @@ typedef struct {                  // Parametres d'inicialitzacio d'un port
     ((GPIORegisters*)port)->PORTx;
 
 
-void halGPIOInitializePins(const GPIOInitializePinInfo* info, uint32_t count);
+void halGPIOInitializePins(const GPIOPinSettings *settings, uint32_t count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 
-void halGPIOInitializePorts(const GPIOInitializePortInfo* info, uint32_t count);
+void halGPIOInitializePorts(const GPIOPortSettings *settings, uint32_t count);
 void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 
 

@@ -55,8 +55,8 @@ namespace eos {
 			static void interruptHandler(EXTILine line, void* param);
 
 		protected:
-			void onInitialize();
-			void onTask();
+			void onInitialize() override;
+			void onTask(Task *task) override;
 
 		public:
 			TouchPadService(Application* application);

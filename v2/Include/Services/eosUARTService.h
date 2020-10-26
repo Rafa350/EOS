@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 #include "HAL/halUART.h"
+#include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
 #include "Services/eosService.h"
 
@@ -14,8 +15,20 @@ namespace eos {
 
 	class UARTService: public Service {
 		public:
-			struct InitializeInfo {
+			enum class Event {
+				transmissionFiniched,
+				receptionFinished
+			};
+			struct EventArgs {
+				Event event;
+				uint8_t *buffer;
+				unsigned count;
+			};
+			typedef ICallbackP1<const EventArgs&> IEventCallback;
+			struct Settings {
 				UARTHandler hUART;
+				IEventCallback *eventCallback;
+				void *eventParams;
 			};
 
 		private:
@@ -30,7 +43,7 @@ namespace eos {
 			Semaphore rxPending;
 
 		public:
-			UARTService(Application* application, const InitializeInfo& initializeInfo);
+			UARTService(Application *application, const Settings &settings);
 			virtual ~UARTService();
 
 			void onInitialize() override;

@@ -2,10 +2,11 @@
 #include "stm32f4xx_hal.h"
 
 
-static void CLKInitialize() {
+static void initializeCLK() {
 
-	RCC_ClkInitTypeDef clkInit;
 	RCC_OscInitTypeDef oscInit;
+	RCC_ClkInitTypeDef clkInit;
+    RCC_PeriphCLKInitTypeDef pclkInit;
 
 	// Enable Power Control clock
 	//
@@ -51,7 +52,8 @@ static void CLKInitialize() {
 void appInitialize() {
 
 	halSYSInitialize();
-	CLKInitialize();
+
+	initializeCLK();
 
 	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 }

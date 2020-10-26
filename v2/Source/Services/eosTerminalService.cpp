@@ -15,12 +15,11 @@ using namespace eos;
 ///
 TerminalService::TerminalService(
     Application *application,
-    const Configuration &cfg):
+    const Settings &settings):
 
     Service(application),
-    module(cfg.module) {
-    
-    initializeHardware(cfg);
+    hUART(settings.hUART) {
+
 }
 
 
@@ -28,32 +27,22 @@ TerminalService::TerminalService(
 /// \brief    Desructor del objecte.
 ///
 TerminalService::~TerminalService() {
-    
+
     deinitializeHardware();
 }
 
 
-void TerminalService::initializeHardware(
-    const Configuration& cfg) {
-    
-    UARTInitializeInfo info = {
-        .module = module,
-        .baudRate = cfg.baudRate
-    };
-    halUARTInitialize(&info);
-}
-
-
 void TerminalService::deinitializeHardware() {
-    
+
 }
 
 
 void TerminalService::onInitialize() {
-    
+
 }
 
 
-void TerminalService::onTask() {
-    
+void TerminalService::onTask(
+    Task *task) {
+
 }

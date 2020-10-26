@@ -13,7 +13,7 @@ using namespace eos;
 using namespace app;
 
 
-I2CData channel;
+I2CData i2cData;
 
 
 /// ----------------------------------------------------------------------
@@ -21,14 +21,14 @@ I2CData channel;
 ///
 MyApplication::MyApplication() {
 
-    I2CMasterInitializeInfo i2cInit;
-    i2cInit.channel = HAL_I2C_CHANNEL_1;
-    i2cInit.baudRate = 100000;
-    halI2CMasterInitialize(&channel, &i2cInit);
+    I2CMasterSettings i2cSettings;
+    i2cSettings.channel = HAL_I2C_CHANNEL_1;
+    i2cSettings.baudRate = 100000;
+    I2CHandler hI2C = halI2CMasterInitialize(&i2cData, &i2cSettings);
 
-    I2CMasterService::Configuration cfg;
-    cfg.hChannel = &channel;
-    i2cMasterService = new I2CMasterService(this, cfg);
+    I2CMasterService::Settings i2cMasterServiceSettings;
+    i2cMasterServiceSettings.hI2C = hI2C;
+    i2cMasterService = new I2CMasterService(this, i2cMasterServiceSettings);
 
     // Crea el servei de gestio de display
     //

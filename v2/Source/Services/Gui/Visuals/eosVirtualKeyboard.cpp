@@ -10,6 +10,7 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 VirtualKeyboard::VirtualKeyboard():
+	eventCallback(nullptr),
 	buttonEventCallback(this, &VirtualKeyboard::buttonEventHandler) {
 
 	VirtualKeyboardTemplate t(this);
@@ -22,14 +23,17 @@ VirtualKeyboard::VirtualKeyboard():
 /// \param    args: Arguments del event.
 ///
 void VirtualKeyboard::buttonEventHandler(
-	const ButtonBase::EventArgs& args) {
+	const ButtonBase::EventArgs &args) {
 
-	switch (args.event) {
-		case ButtonBase::EventType::click:
-			// Genera un missatge MsgKey
-			break;
+	if (eventCallback != nullptr) {
 
-		default:
-			break;
+		if (args.event == ButtonBase::EventType::click) {
+
+			EventArgs vkArgs = {
+					.keyboard = this,
+					.keyCode = KeyCode(args.button->getId())
+			};
+			eventCallback->execute(vkArgs);
+		}
 	}
 }

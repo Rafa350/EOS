@@ -24,10 +24,32 @@ void MyAppLoopService::onSetup() {
 
 void MyAppLoopService::onLoop() {
 
-	static uint8_t data[10];
-	unsigned length;
+	char ch;
 
-	length = uartService->receive(data, sizeof(data), 500);
-	if (length > 0)
-		uartService->send(data, length, unsigned(-1));
+	if ((ch = getChar()) != 0) {
+		putChar(ch);
+	}
+}
+
+
+char MyAppLoopService::getChar() {
+
+	char ch;
+	if (uartService->receive((uint8_t*) &ch, sizeof(ch), unsigned(-1)))
+		return ch;
+	else
+		return 0;
+}
+
+
+void MyAppLoopService::putChar(
+	char ch) {
+
+	uartService->send((uint8_t*) &ch, sizeof(ch), unsigned(-1));
+}
+
+
+void MyAppLoopService::putString(char *s) {
+
+	uartService->send((uint8_t*) s, strlen(s), unsigned(-1));
 }

@@ -6,11 +6,11 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Compbina dos pixels en format RGB565
-/// \param b: Pixel del fons.
-/// \param f: Pixel del primer pla.
-/// \param o: Opacitat.
-/// \return El valor del pixel combinat.
+/// \brief    Compbina dos pixels en format RGB565
+/// \param    b: Pixel del fons.
+/// \param    f: Pixel del primer pla.
+/// \param    o: Opacitat.
+/// \return   El valor del pixel combinat.
 ///
 uint16_t ColorMath::RGB565_combineColor(
 	uint16_t b,

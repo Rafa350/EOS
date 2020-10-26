@@ -23,12 +23,12 @@
 ///
 TMRHandler halTMRInitialize(
     TMRData* data,
-    const TMRInitializeInfo* info) {
+    const TMRSettings *settings) {
 
     // Inicialitza el handler
     //
     TMRHandler handler = data;
-    handler->regs = __getRegisterPtr(info->timer);
+    handler->regs = __getRegisterPtr(settings->timer);
 
     // Desactiva les interrupcions del temporitzador
     //
@@ -40,7 +40,7 @@ TMRHandler halTMRInitialize(
 
         handler->regs->TAxCON.ON = 0;    // Desactiva el timer
         handler->regs->TAxCON.TCS = 0;   // Clock source interna.
-        switch((info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos) {
+        switch((settings->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos) {
             case HAL_TMR_CLKDIV_8:
                 handler->regs->TAxCON.TCKPS = 1;
                 break;
@@ -67,12 +67,12 @@ TMRHandler halTMRInitialize(
 #if defined(__32MX460F512L__)
         handler->regs->TBxCON.TCS = 0;   // Clock source interna.
 #endif
-        handler->regs->TBxCON.TCKPS = (info->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos;
-        handler->regs->TBxCON.T32 = (info->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32;
+        handler->regs->TBxCON.TCKPS = (settings->options & HAL_TMR_CLKDIV_mask) >> HAL_TMR_CLKDIV_pos;
+        handler->regs->TBxCON.T32 = (settings->options & HAL_TMR_MODE_mask) == HAL_TMR_MODE_32;
     }
 
     halTMRSetCounter(handler, 0);
-    halTMRSetPeriod(handler, info->period);
+    halTMRSetPeriod(handler, settings->period);
 
     handler->isrFunction = NULL;
     handler->isrParams = NULL;
