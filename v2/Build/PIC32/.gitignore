@@ -2,3 +2,4 @@ dist
 build
 debug
 disassembly
+.generated_files
