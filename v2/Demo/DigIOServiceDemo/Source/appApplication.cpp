@@ -190,8 +190,8 @@ void MyApplication::sw1EventHandler(
     const DigInput::EventArgs &args) {
 
     if (sw1->read() == SWITCHES_STATE_ON) {
-        led1->pulse(1000);
-        led2->delayedPulse(500, 500);
+        led1->pulse(500);
+        led2->delayedPulse(250, 500);
 #ifdef EXIST_LEDS_LED3
         led3->delayedPulse(500, 500);
 #endif

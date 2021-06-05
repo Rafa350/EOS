@@ -21,10 +21,6 @@
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>PIC32_USB_STARTER_KIT_I</name>
-                    <type>2</type>
-                </confElem>
-                <confElem>
                     <name>PIC32_ETH_STARTER_KIT</name>
                     <type>2</type>
                 </confElem>
