@@ -76,7 +76,7 @@ void TouchPadService::onTask(
 						.x = x,
 						.y = y
 					};
-				eventCallback->execute(args);
+					eventCallback->execute(args);
 				}
 
 				// Detecta canvis de posicio

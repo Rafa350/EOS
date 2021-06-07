@@ -216,12 +216,16 @@ void Label::onRender(
 
 	// Dibuixa el text
 	//
-	const uint8_t *fontResource =  Font::getFontResource(fontName, fontHeight, fontStyle);
+	const uint8_t *fontResource = Font::getFontResource(fontName, fontHeight, fontStyle);
 	Font *font = new Font(fontResource);
+
+	Font* oldFont = g.getFont();
 	g.setFont(font);
 	g.setColor(textColor);
 	g.setTextAlign(horizontalTextAlign, verticalTextAlign);
 	g.drawText(width / 2, height / 2, text, 0, -1);
+	g.setFont(oldFont);
+
 	delete font;
 
 	// Finalitza el renderitzat.

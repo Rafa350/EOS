@@ -4,6 +4,7 @@
 #include "HAL/halINT.h"
 #include "HAL/STM32/halEXTI.h"
 #include "Services/eosGuiService.h"
+#include "Services/Gui/eosVisualUtils.h"
 #include "Services/Gui/eosThickness.h"
 #include "Services/Gui/Visuals/eosLabel.h"
 #include "Services/Gui/Visuals/eosPanel.h"
@@ -61,6 +62,7 @@ Panel *MyApplication::createMainPanel() {
 	sp->setVerticalAlignment(VerticalAlignment::center);
 
 	TextBox *tb = new TextBox();
+	tb->setId(1000);
 	tb->setSize(Size(200, 30));
 	tb->setMargin(Thickness(5, 5, 5, 5));
 	tb->setHorizontalAlignment(HorizontalAlignment::center);
@@ -89,6 +91,12 @@ void MyApplication::virtualKeyboardEventHandler(
 
 	unsigned key = unsigned(args.keyCode);
 
-	String text = "caca de perro";
-	//tb->setText(text);
+	String text;
+
+	text = "caca de perro";
+	text = "mierda";
+
+	TextBox* tb = (TextBox*) VisualUtils::getVisual(guiService->getScreen(), 1000);
+	unsigned id = tb->getId();
+	tb->setText(text);
 }

@@ -17,7 +17,9 @@ void vApplicationStackOverflowHook(
        stack is not checked.
     */
 	taskDISABLE_INTERRUPTS();
-	for( ;; );
+
+	while (1) {
+    }
 }
 
 
@@ -50,7 +52,9 @@ void vApplicationMallocFailedHook(void) {
       provide information on how the remaining heap might be fragmented).
    */
    taskDISABLE_INTERRUPTS();
-   for( ;; );
+
+   while (1) {
+   }
 }
 
 
@@ -82,19 +86,18 @@ void vApplicationTickHook(void) {
 
 /// ----------------------------------------------------------------------
 /// \brief    Funcio que es crida en cas d'error d'assercio del FreeRTOS
+/// \param    file: Nom del fitxer.
+/// \param    line: Numero de linia.
 ///
 void vAssertCalled(
-	const char* pcFile,
-	unsigned long ulLine) {
+	const char* file,
+	unsigned long line) {
 
-	volatile unsigned long ul = 0;
+	volatile bool done = 0;
 
 	taskENTER_CRITICAL();
 
-	// Set ul to a non-zero value using the debugger to step out of this
-    // function.
-	//
-	while (ul == 0 ) {
+	while (!done) {
 		portNOP();
     }
 

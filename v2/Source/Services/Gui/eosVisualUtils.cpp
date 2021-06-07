@@ -84,3 +84,21 @@ Visual *VisualUtils::getVisual(
 	return nullptr;
 }
 
+
+Visual *VisualUtils::getVisual(
+	Visual *visual,
+	unsigned id) {
+
+	if (visual->getId() == id)
+		return visual;
+
+	else {
+		const Visual::VisualList& childs = visual->getChilds();
+		for (auto it = childs.begin(); it != childs.end(); it++) {
+			Visual* child = *it;
+			return VisualUtils::getVisual(child, id);
+		}
+	}
+
+	return nullptr;
+}

@@ -5,9 +5,60 @@
 // EOS includes
 //
 #include "eos.h"
+#ifdef USE_STD_STRINGS
+    #include <string>
+#endif
 
 
 namespace eos {
+
+#ifdef USE_STD_STRINGS
+
+    class String {
+        public:
+            typedef std::string::iterator Iterator;
+            typedef std::string::const_iterator CIterator;
+
+        private:
+            std::string s;
+
+        public:
+            String() {}
+            String(const String& str): s(str.s) {}
+            String(const String& str, unsigned index, unsigned length): s(str.s, index, length) {}
+            String(const char* cstr): s(cstr) {}
+            String(const char* cstr, unsigned index, unsigned length): s(cstr, length) {}
+            ~String() {}
+
+            inline unsigned getLength() const { return s.size(); }
+            inline bool isEmpty() const { return s.empty(); }
+            inline bool isNull() const { return s.empty(); }
+
+            inline bool isEqual(const char* cstr) const { return compare(cstr) == 0; }
+            inline bool isEqual(const String& str) const { return compare(str) == 0; }
+            inline int compare(const char* cstr) const { return s.compare(cstr); }
+            inline int compare(const String& str) const { return s.compare(str); }
+
+            inline Iterator begin() { return s.begin(); }
+            inline CIterator begin() const { return s.cbegin(); }
+            inline Iterator end() { return s.end(); }
+            inline CIterator end() const { return s.cend(); }
+
+            inline String& operator = (const char* cstr) { s = cstr; return *this; }
+            inline String& operator = (const String& str) { s = str; return *this; }
+
+            inline bool operator == (const String& str) const { return s == str.s; }
+            inline bool operator != (const String& str) const { return s != str.s; }
+            inline bool operator < (const String& str) const { return s < str.s; }
+            inline bool operator <= (const String& str) const { return s <= str.s; }
+            inline bool operator > (const String& str) const { return s > str.s; }
+            inline bool operator >= (const String& str) const { return s >= str.s; }
+
+            inline operator const char* () const { return s.c_str(); }
+            inline char operator [] (unsigned pos) const { return s[pos]; }
+    };
+
+#else
 
     /// \brief Implementacio de cadenes de texte.
     ///
@@ -62,6 +113,9 @@ namespace eos {
             operator const char* () const;
             char operator [] (unsigned) const;
     };
+
+#endif
+
 
     /// \brief Constructor de cadenes de texte.
     ///

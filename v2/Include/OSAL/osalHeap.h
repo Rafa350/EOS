@@ -25,7 +25,8 @@ void osalHeapDestroy(HHeap hHeap);
 void *osalHeapAlloc(HHeap hHeap, unsigned size);
 void osalHeapFree(HHeap hHeap, void* block);
 
-void osalGetHeapInformation(HHeap hHeap, HeapInformation* info);
+bool osalHeapVerify(HHeap hHeap, void* block);
+void osalHeapGetInfo(HHeap hHeap, HeapInformation* info);
 
 void* osal_malloc(unsigned size);
 void osal_free(void* p);

@@ -704,9 +704,9 @@
 			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/System/Collections/eosDynamicArray.h</location>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Collections/eosStack.h</name>
+			<name>inc/Framework/EOS/System/Collections/eosLIFOContainer.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosStack.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosLIFOContainer.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosHeapAllocator.h</name>

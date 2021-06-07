@@ -1,10 +1,11 @@
 #include "eos.h"
+#ifndef USE_STD_STRINGS
+
 #include "eosAssert.h"
+#include "HAL/halINT.h"
 #include "OSAL/osalHeap.h"
 #include "System/eosMath.h"
 #include "System/eosString.h"
-
-#include <string.h>
 
 
 using namespace eos;
@@ -260,11 +261,14 @@ String& String::operator = (
 String& String::operator = (
 	const String& str) {
 
-	if (pData != nullptr)
-		release();
+	if (this != &str) {
 
-	if (!str.isNull())
-		reference(str);
+		if (pData != nullptr)
+			release();
+
+		if (!str.isNull())
+			reference(str);
+	}
 
 	return *this;
 }
@@ -345,9 +349,10 @@ void String::reference(
 	eosAssert(pData == nullptr);
 	eosAssert(str.pData != nullptr);
 
-	str.pData->refCount++;
-
-	pData = str.pData;
+	if (this != &str) {
+		str.pData->refCount++;
+		pData = str.pData;
+	}
 }
 
 
@@ -364,3 +369,6 @@ void String::release() {
 		osalHeapFree(nullptr, pData);
 	pData = nullptr;
 }
+
+
+#endif // USE_STD_STRINGS

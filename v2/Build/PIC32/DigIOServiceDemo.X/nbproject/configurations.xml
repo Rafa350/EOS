@@ -139,7 +139,6 @@
               <itemPath>../../../Source/System/Core/eosTimer.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
-            <itemPath>../../../Source/System/eosString.cpp</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">
@@ -332,7 +331,8 @@
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value="HARDWARE_PIC32_USB_STARTER_KIT_I"/>
+        <property key="preprocessor-macros"
+                  value="HARDWARE_PIC32_USB_STARTER_KIT_I;USE_STD_STRINGS"/>
         <property key="rtti" value="false"/>
         <property key="strict-ansi" value="false"/>
         <property key="toplevel-reordering" value=""/>
@@ -356,6 +356,9 @@
         <property key="wpo-lto" value="false"/>
       </C32Global>
       <SKDEPIC32PlatformTool>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="lastid" value=""/>
         <property key="whatToProgram" value="all"/>
       </SKDEPIC32PlatformTool>
       <Tool>

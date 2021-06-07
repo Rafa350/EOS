@@ -11,8 +11,8 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
-/// \param fontResource: El recurs del font.
+/// \brief    Constructor.
+/// \param    fontResource: El recurs del font.
 ///
 Font::Font(
 	const uint8_t *fontResource):
@@ -99,11 +99,11 @@ void Font::updateCache(
     char ch) {
 
     if (chCache != ch) {
+        chCache = ch;
         if ((ch >= fontResource[4]) && (ch <= fontResource[5])) {
             unsigned offset = fontResource[6] + fontResource[7] * 256u + (ch - fontResource[4]) * 2u;
             unsigned charInfoOffset = fontResource[offset] + fontResource[offset + 1] * 256u;
             unsigned charBitsOffset = fontResource[charInfoOffset + 5u] + fontResource[charInfoOffset + 6u] * 256u;
-            chCache = ch;
 
             ciCache.width = fontResource[charInfoOffset];
             ciCache.height = fontResource[charInfoOffset + 1u];
@@ -111,6 +111,14 @@ void Font::updateCache(
             ciCache.top = fontResource[charInfoOffset + 3u];
             ciCache.advance = fontResource[charInfoOffset + 4u];
             ciCache.bitmap = (charBitsOffset == (unsigned) -1) ? nullptr : &fontResource[charBitsOffset];
+        }
+        else {
+            ciCache.width = 0;
+            ciCache.height = 0;
+            ciCache.left = 0;
+            ciCache.top = 0;
+            ciCache.advance = 0;
+            ciCache.bitmap = nullptr;
         }
     }
 }

@@ -3,7 +3,6 @@
 #include "HAL/STM32/halINT.h"
 
 
-
 /// ----------------------------------------------------------------------
 /// \brief    Asigna la prioritat d'una interrupcio.
 /// \param    source: Identificador de la interrupcio.

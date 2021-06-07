@@ -36,6 +36,9 @@ void ButtonBase::onTouchPadPress(
 
 	onPress();
 
+	if (clickMode == ClickMode::atPress)
+		onClick();
+
 	pressed = true;
 
 	Visual::onTouchPadPress(position);
@@ -51,7 +54,7 @@ void ButtonBase::onTouchPadRelease() {
 
 	onRelease();
 
-	if (pressed)
+	if (pressed && (clickMode == ClickMode::atRelease))
 		onClick();
 
 	pressed = false;
