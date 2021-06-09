@@ -19,16 +19,16 @@ namespace eos {
     class HeapAllocator {
 
         private:
-            MemoryHeapAllocator allocator;
+            MemoryHeapAllocator _allocator;
 
         public:
 
             inline T *allocate(unsigned size) {
-                return static_cast<T*>(allocator.allocate(size));
+                return static_cast<T*>(_allocator.allocate(size));
             }
 
             inline void deallocate(T *p) {
-                allocator.deallocate(p);
+                _allocator.deallocate(p);
             }
     };
 

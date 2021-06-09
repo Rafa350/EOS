@@ -12,12 +12,12 @@ namespace eos {
 
 	class Bitmap {
 		private:
-			int width;
-			int height;
-			ColorFormat format;
-			bool allocated;
-			bool readonly;
-			uint8_t *pixels;
+			int _width;
+			int _height;
+			ColorFormat _format;
+			bool _allocated;
+			bool _readonly;
+			uint8_t *_pixels;
 
 		public:
 			Bitmap(const uint8_t *bitmapResource);
@@ -29,10 +29,10 @@ namespace eos {
 			void setPixel(int x, int y, const Color &color);
 			Color getPixel(int x, int y);
 
-			inline int getWidth() const { return width; }
-			inline int getHeight() const { return height; }
-			inline uint8_t *getPixels() const { return pixels; }
-			inline ColorFormat getFormat() const { return format; }
+			inline int getWidth() const { return _width; }
+			inline int getHeight() const { return _height; }
+			inline uint8_t *getPixels() const { return _pixels; }
+			inline ColorFormat getFormat() const { return _format; }
 			int getBytesPerPixel() const;
 			int getBytesPerLine() const;
 	};

@@ -75,5 +75,5 @@ void Graphics::fillRectangle(
     // Dibuixa el rectangle si es visible
     //
     if (clipRectangle(x1, y1, x2, y2))
-         driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
+         _driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, _color);
 }

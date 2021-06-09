@@ -11,8 +11,8 @@ namespace eos {
     ///
 	class Size {
 		private:
-			int width;
-			int height;
+			int _width;
+			int _height;
 
 		public:
 			Size();
@@ -20,10 +20,10 @@ namespace eos {
 			Size(const Size &s);
 
 			/// \brief Obte l'amplada.
-			inline int getWidth() const { return width; }
+			inline int getWidth() const { return _width; }
 
 			/// \brief Obte l'alçada.
-			inline int getHeight() const { return height; }
+			inline int getHeight() const { return _height; }
 
 			Size inflated(int h, int v) const;
 			Size inflated(int left, int top, int right, int bottom) const;

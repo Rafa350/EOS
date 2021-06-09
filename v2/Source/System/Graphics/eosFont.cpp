@@ -4,11 +4,28 @@
 #include "System/Graphics/eosFont.h"
 
 
-extern const eos::FontTableEntry* fontResourceTable;
-
-
 using namespace eos;
 
+
+extern const FontTableEntry* fontResourceTable;
+
+
+struct Font::Impl {
+    char chCache;
+    CharInfo ciCache;
+    const uint8_t *fontResource;
+};
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor. Crea el font per defecte.
+///
+Font::Font() :
+	_pImpl(allocate()) {
+
+	_pImpl->chCache = -1;
+	_pImpl->fontResource = nullptr;
+}
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
@@ -17,8 +34,41 @@ using namespace eos;
 Font::Font(
 	const uint8_t *fontResource):
 
-    chCache(-1),
-    fontResource(fontResource) {
+	_pImpl(allocate()) {
+
+    _pImpl->chCache = -1;
+    _pImpl->fontResource = getFontResource("Tahoma", 12, FontStyle::regular);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor copia
+/// \param    other: L'altre objecte per copiar.
+///
+Font::Font(
+	const Font& other):
+
+	_pImpl(other._pImpl) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Crea el bloc ded memoria de Impl
+/// \return   El punter al bloc.
+///
+Font::PImpl Font::allocate() {
+
+	return PImpl(new Font::Impl);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'alçada del font.
+/// \return   El resultat.
+///
+int Font::getFontHeight() const {
+
+	return _pImpl->fontResource[1];
 }
 
 
@@ -56,11 +106,11 @@ const uint8_t* Font::getFontResource(
 void Font::getFontInfo(
     FontInfo &fi) const {
 
-    fi.height = fontResource[1];
-    fi.ascent = fontResource[2];
-    fi.descent = fontResource[3];
-    fi.firstChar = fontResource[4];
-    fi.lastChar = fontResource[5];
+    fi.height = _pImpl->fontResource[1];
+    fi.ascent = _pImpl->fontResource[2];
+    fi.descent = _pImpl->fontResource[3];
+    fi.firstChar = _pImpl->fontResource[4];
+    fi.lastChar = _pImpl->fontResource[5];
 }
 
 
@@ -71,10 +121,10 @@ void Font::getFontInfo(
 ///
 void Font::getCharInfo(
     char ch,
-    CharInfo &ci) {
+    CharInfo &ci) const {
 
     updateCache(ch);
-    ci = ciCache;
+    ci = _pImpl->ciCache;
 }
 
 
@@ -84,10 +134,10 @@ void Font::getCharInfo(
 /// \return L'avan� del caracter.
 ///
 int Font::getCharAdvance(
-    char ch) {
+    char ch) const {
 
     updateCache(ch);
-    return ciCache.advance;
+    return _pImpl->ciCache.advance;
 }
 
 
@@ -96,29 +146,29 @@ int Font::getCharAdvance(
 /// \param ch: El caracter.
 ///
 void Font::updateCache(
-    char ch) {
+    char ch) const {
 
-    if (chCache != ch) {
-        chCache = ch;
-        if ((ch >= fontResource[4]) && (ch <= fontResource[5])) {
-            unsigned offset = fontResource[6] + fontResource[7] * 256u + (ch - fontResource[4]) * 2u;
-            unsigned charInfoOffset = fontResource[offset] + fontResource[offset + 1] * 256u;
-            unsigned charBitsOffset = fontResource[charInfoOffset + 5u] + fontResource[charInfoOffset + 6u] * 256u;
+    if (_pImpl->chCache != ch) {
+        _pImpl->chCache = ch;
+        if ((ch >= _pImpl->fontResource[4]) && (ch <= _pImpl->fontResource[5])) {
+            unsigned offset = _pImpl->fontResource[6] + _pImpl->fontResource[7] * 256u + (ch - _pImpl->fontResource[4]) * 2u;
+            unsigned charInfoOffset = _pImpl->fontResource[offset] + _pImpl->fontResource[offset + 1] * 256u;
+            unsigned charBitsOffset = _pImpl->fontResource[charInfoOffset + 5u] + _pImpl->fontResource[charInfoOffset + 6u] * 256u;
 
-            ciCache.width = fontResource[charInfoOffset];
-            ciCache.height = fontResource[charInfoOffset + 1u];
-            ciCache.left = fontResource[charInfoOffset + 2u];
-            ciCache.top = fontResource[charInfoOffset + 3u];
-            ciCache.advance = fontResource[charInfoOffset + 4u];
-            ciCache.bitmap = (charBitsOffset == (unsigned) -1) ? nullptr : &fontResource[charBitsOffset];
+            _pImpl->ciCache.width = _pImpl->fontResource[charInfoOffset];
+            _pImpl->ciCache.height = _pImpl->fontResource[charInfoOffset + 1u];
+            _pImpl->ciCache.left = _pImpl->fontResource[charInfoOffset + 2u];
+            _pImpl->ciCache.top = _pImpl->fontResource[charInfoOffset + 3u];
+            _pImpl->ciCache.advance = _pImpl->fontResource[charInfoOffset + 4u];
+            _pImpl->ciCache.bitmap = (charBitsOffset == (unsigned) -1) ? nullptr : &_pImpl->fontResource[charBitsOffset];
         }
         else {
-            ciCache.width = 0;
-            ciCache.height = 0;
-            ciCache.left = 0;
-            ciCache.top = 0;
-            ciCache.advance = 0;
-            ciCache.bitmap = nullptr;
+            _pImpl->ciCache.width = 0;
+            _pImpl->ciCache.height = 0;
+            _pImpl->ciCache.left = 0;
+            _pImpl->ciCache.top = 0;
+            _pImpl->ciCache.advance = 0;
+            _pImpl->ciCache.bitmap = nullptr;
         }
     }
 }

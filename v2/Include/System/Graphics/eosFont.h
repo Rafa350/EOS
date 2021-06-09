@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "System/eosPointers.h"
 
 
 namespace eos {
@@ -43,23 +44,26 @@ namespace eos {
     class String;
 
     class Font {
-        private:
-            char chCache;
-            CharInfo ciCache;
-            const uint8_t *fontResource;
+    	private:
+    		struct Impl;
+    		typedef std::shared_ptr<Impl> PImpl;
+
+    	private:
+    		PImpl _pImpl;
 
         private:
-            Font(const Font& other) = delete;
-
-            void updateCache(char ch);
+            PImpl allocate();
+            void updateCache(char ch) const;
 
         public:
+            Font();
             Font(const uint8_t *fontResource);
+            Font(const Font& other);
 
             void getFontInfo(FontInfo &fi) const;
-            void getCharInfo(char ch, CharInfo &ci);
-            inline int getFontHeight() const { return fontResource[1]; }
-            int getCharAdvance(char ch);
+            void getCharInfo(char ch, CharInfo &ci) const;
+            int getFontHeight() const;
+            int getCharAdvance(char ch) const;
 
             static const uint8_t * getFontResource(const String& name, int height, FontStyle style);
     };

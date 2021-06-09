@@ -48,7 +48,7 @@ static inline bool isRomPointer(
 ///
 String::String():
 
-	pData(nullptr) {
+	_data(nullptr) {
 }
 
 
@@ -59,7 +59,7 @@ String::String():
 String::String(
 	const String& str):
 
-	pData(nullptr) {
+	_data(nullptr) {
 
 	if (!str.isNull())
 		reference(str);
@@ -77,7 +77,7 @@ String::String(
 	unsigned index,
 	unsigned length):
 
-	pData(nullptr) {
+	_data(nullptr) {
 
 	if (!str.isNull())
 		create(str, index, length);
@@ -91,7 +91,7 @@ String::String(
 String::String(
 	const char* cstr):
 
-	pData(nullptr) {
+	_data(nullptr) {
 
 	if (cstr != nullptr)
 		create(cstr, 0, unsigned(-1));
@@ -109,7 +109,7 @@ String::String(
 	unsigned index,
 	unsigned length):
 
-	pData(nullptr) {
+	_data(nullptr) {
 
 	if ((cstr != nullptr) && (length > 0))
 		create(cstr, index, length);
@@ -121,7 +121,7 @@ String::String(
 ///
 String::~String() {
 
-	if (pData != nullptr)
+	if (_data != nullptr)
 		release();
 }
 
@@ -132,7 +132,7 @@ String::~String() {
 ///
 unsigned String::getLength() const {
 
-	return pData == nullptr ? 0 : pData->length;
+	return _data == nullptr ? 0 : _data->length;
 }
 
 
@@ -142,7 +142,7 @@ unsigned String::getLength() const {
 ///
 bool String::isEmpty() const {
 
-	return (pData == nullptr) || (pData->length == 0);
+	return (_data == nullptr) || (_data->length == 0);
 }
 
 
@@ -152,7 +152,7 @@ bool String::isEmpty() const {
 ///
 bool String::isNull() const {
 
-	return pData == nullptr;
+	return _data == nullptr;
 }
 
 
@@ -161,7 +161,7 @@ bool String::isNull() const {
 ///
 String::Iterator String::begin() {
 
-	return pData == nullptr ? nullptr : const_cast<char*>(pData->ptr);
+	return _data == nullptr ? nullptr : const_cast<char*>(_data->ptr);
 }
 
 
@@ -170,7 +170,7 @@ String::Iterator String::begin() {
 ///
 String::CIterator String::begin() const {
 
-	return pData == nullptr ? nullptr : pData->ptr;
+	return _data == nullptr ? nullptr : _data->ptr;
 }
 
 
@@ -179,7 +179,7 @@ String::CIterator String::begin() const {
 ///
 String::Iterator String::end() {
 
-	return pData == nullptr ? nullptr : const_cast<char*>(pData->ptr) + pData->length;
+	return _data == nullptr ? nullptr : const_cast<char*>(_data->ptr) + _data->length;
 }
 
 
@@ -188,7 +188,7 @@ String::Iterator String::end() {
 ///
 String::CIterator String::end() const {
 
-	return pData == nullptr ? nullptr : pData->ptr + pData->length;
+	return _data == nullptr ? nullptr : _data->ptr + _data->length;
 }
 
 
@@ -200,10 +200,10 @@ String::CIterator String::end() const {
 bool String::isEqual(
 	const char* cstr) const {
 
-	if (pData == nullptr)
+	if (_data == nullptr)
 		return cstr == nullptr;
 	else
-		return strcmp(pData->ptr, cstr) == 0;
+		return strcmp(_data->ptr, cstr) == 0;
 }
 
 
@@ -217,23 +217,23 @@ bool String::isEqual(
 
 	// Si les dues string son buides, aleshores son iguals
 	//
-	if ((pData == nullptr) && (str.pData == nullptr))
+	if ((_data == nullptr) && (str._data == nullptr))
 		return true;
 
 	// Si les dues string tenen el mateix bloc de dades, aleshores son iguals.
 	//
-	else if (pData == str.pData)
+	else if (_data == str._data)
 		return true;
 
 	// Si les longituts no coincideixen, aleshores son diferents.
 	//
-	else if (pData->length != str.pData->length)
+	else if (_data->length != str._data->length)
 		return false;
 
 	// Si arriba aqui compara les dues string caracter a caracter.
 	//
 	else
-		return strcmp(pData->ptr, str.pData->ptr) == 0;
+		return strcmp(_data->ptr, str._data->ptr) == 0;
 }
 
 
@@ -244,7 +244,7 @@ bool String::isEqual(
 String& String::operator = (
 	const char* cstr) {
 
-	if (pData != nullptr)
+	if (_data != nullptr)
 		release();
 
 	if (cstr != nullptr)
@@ -263,7 +263,7 @@ String& String::operator = (
 
 	if (this != &str) {
 
-		if (pData != nullptr)
+		if (_data != nullptr)
 			release();
 
 		if (!str.isNull())
@@ -282,10 +282,10 @@ String& String::operator = (
 char String::operator [] (
 	unsigned index) const {
 
-	if ((pData == nullptr) || (index >= pData->length))
+	if ((_data == nullptr) || (index >= _data->length))
 		return 0;
 	else
-		return pData->ptr[index];
+		return _data->ptr[index];
 }
 
 
@@ -294,7 +294,7 @@ char String::operator [] (
 ///
 String::operator const char* () const {
 
-	return pData == nullptr ? nullStr : pData->ptr;
+	return _data == nullptr ? nullStr : _data->ptr;
 }
 
 
@@ -309,7 +309,7 @@ void String::create(
 	unsigned index,
 	unsigned length) {
 
-	eosAssert(pData == nullptr);
+	eosAssert(_data == nullptr);
 
 	unsigned totalLength = strlen(cstr);
 	if (length == unsigned(-1))
@@ -318,24 +318,24 @@ void String::create(
 
 	if (isRomPointer(cstr) && (index == 0) && (length == totalLength)) {
 
-		pData = static_cast<StringData*>(osalHeapAlloc(nullptr, sizeof(StringData)));
-		eosAssert(pData != nullptr);
+		_data = static_cast<StringData*>(osalHeapAlloc(nullptr, sizeof(StringData)));
+		eosAssert(_data != nullptr);
 
-		pData->ptr = cstr;
+		_data->ptr = cstr;
 	}
 
 	else {
 
-		pData = static_cast<StringData*>(osalHeapAlloc(nullptr, sizeof(StringData) + length + 1));
-		eosAssert(pData != nullptr);
+		_data = static_cast<StringData*>(osalHeapAlloc(nullptr, sizeof(StringData) + length + 1));
+		eosAssert(_data != nullptr);
 
-		pData->ptr = (char*)pData + sizeof(StringData);
-		strncpy((char*) pData->ptr, &cstr[index], length);
-		((char*)pData->ptr)[length] = 0;
+		_data->ptr = (char*)_data + sizeof(StringData);
+		strncpy((char*) _data->ptr, &cstr[index], length);
+		((char*)_data->ptr)[length] = 0;
 	}
 
-	pData->length = length;
-	pData->refCount = 1;
+	_data->length = length;
+	_data->refCount = 1;
 }
 
 
@@ -346,12 +346,12 @@ void String::create(
 void String::reference(
 	const String& str) {
 
-	eosAssert(pData == nullptr);
-	eosAssert(str.pData != nullptr);
+	eosAssert(_data == nullptr);
+	eosAssert(str._data != nullptr);
 
 	if (this != &str) {
-		str.pData->refCount++;
-		pData = str.pData;
+		str._data->refCount++;
+		_data = str._data;
 	}
 }
 
@@ -363,11 +363,11 @@ void String::reference(
 ///
 void String::release() {
 
-	eosAssert(pData != nullptr);
+	eosAssert(_data != nullptr);
 
-	if (pData->refCount-- == 1)
-		osalHeapFree(nullptr, pData);
-	pData = nullptr;
+	if (_data->refCount-- == 1)
+		osalHeapFree(nullptr, _data);
+	_data = nullptr;
 }
 
 

@@ -12,8 +12,8 @@ using namespace eos;
 ///
 Size::Size():
 
-	width(0),
-	height(0) {
+	_width(0),
+	_height(0) {
 }
 
 
@@ -26,8 +26,8 @@ Size::Size(
 	int width,
 	int height):
 
-	width(width),
-	height(height) {
+	_width(width),
+	_height(height) {
 
 	eosAssert(width >= 0);
 	eosAssert(height >= 0);
@@ -41,8 +41,8 @@ Size::Size(
 Size::Size(
 	const Size &s):
 
-	width(s.width),
-	height(s.height) {
+	_width(s._width),
+	_height(s._height) {
 }
 
 
@@ -58,8 +58,8 @@ Size Size::inflated(
 	int v) const {
 
 	return Size(
-		Math::max(0, width + h),
-		Math::max(0, height + v));
+		Math::max(0, _width + h),
+		Math::max(0, _height + v));
 }
 
 
@@ -77,8 +77,8 @@ Size Size::inflated(
 	int bottom) const {
 
 	return Size(
-		Math::max(0, width + left + right),
-		Math::max(0, height + top + bottom));
+		Math::max(0, _width + left + right),
+		Math::max(0, _height + top + bottom));
 }
 
 
@@ -90,8 +90,8 @@ Size Size::constrained(
 	const Size &s) const {
 
 	return Size(
-		Math::min(width, s.width),
-		Math::min(height, s.height));
+		Math::min(_width, s._width),
+		Math::min(_height, s._height));
 }
 
 
@@ -101,7 +101,7 @@ Size Size::constrained(
 ///
 bool Size::isEmpty() const {
 
-	return (width == 0) && (height == 0);
+	return (_width == 0) && (_height == 0);
 }
 
 
@@ -113,7 +113,7 @@ bool Size::isEmpty() const {
 bool Size::operator==(
 	const Size &s) const {
 
-	return (width == s.width) && (height == s.height);
+	return (_width == s._width) && (_height == s._height);
 }
 
 
@@ -125,5 +125,5 @@ bool Size::operator==(
 bool Size::operator!=(
 	const Size &s) const {
 
-	return (width != s.width) || (height != s.height);
+	return (_width != s._width) || (_height != s._height);
 }

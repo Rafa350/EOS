@@ -11,10 +11,10 @@ using namespace eos;
 /// \brief    Constructor de l'objecte. Crea un rectangle buit
 ///
 Rect::Rect():
-	x(0),
-	y(0),
-	width(0),
-	height(0) {
+	_x(0),
+	_y(0),
+	_width(0),
+	_height(0) {
 }
 
 
@@ -31,10 +31,10 @@ Rect::Rect(
 	int width,
 	int height):
 
-	x(x),
-	y(y),
-	width(width),
-	height(height) {
+	_x(x),
+	_y(y),
+	_width(width),
+	_height(height) {
 
 	eosAssert(width >= 0);
 	eosAssert(height >= 0);
@@ -50,10 +50,10 @@ Rect::Rect(
 	const Point &p,
 	const Size &s):
 
-	x(p.getX()),
-	y(p.getY()),
-	width(s.getWidth()),
-	height(s.getHeight()) {
+	_x(p.getX()),
+	_y(p.getY()),
+	_width(s.getWidth()),
+	_height(s.getHeight()) {
 }
 
 
@@ -65,10 +65,10 @@ Rect::Rect(
 Rect::Rect(
 	const Size &s):
 
-	x(0),
-	y(0),
-	width(s.getWidth()),
-	height(s.getHeight()) {
+	_x(0),
+	_y(0),
+	_width(s.getWidth()),
+	_height(s.getHeight()) {
 
 }
 
@@ -84,13 +84,13 @@ Rect::Rect(
 	const Point &p1,
 	const Point &p2):
 
-	x(Math::min(p1.getX(), p2.getX())),
-	y(Math::min(p1.getY(), p2.getY())),
-	width(Math::abs(p2.getX() - p1.getX()) + 1),
-	height(Math::abs(p2.getY() - p1.getY()) + 1) {
+	_x(Math::min(p1.getX(), p2.getX())),
+	_y(Math::min(p1.getY(), p2.getY())),
+	_width(Math::abs(p2.getX() - p1.getX()) + 1),
+	_height(Math::abs(p2.getY() - p1.getY()) + 1) {
 
-	eosAssert(width >= 0);
-	eosAssert(height >= 0);
+	eosAssert(_width >= 0);
+	eosAssert(_height >= 0);
 }
 
 
@@ -101,10 +101,10 @@ Rect::Rect(
 Rect::Rect(
 	const Rect &r):
 
-	x(r.x),
-	y(r.y),
-	width(r.width),
-	height(r.height) {
+	_x(r._x),
+	_y(r._y),
+	_width(r._width),
+	_height(r._height) {
 }
 
 
@@ -123,10 +123,10 @@ Rect Rect::inflated(
 	int bottom) const {
 
 	return Rect(
-		x - left,
-		y - top,
-		Math::max(0, width + left + right),
-		Math::max(0, height + top + bottom));
+		_x - left,
+		_y - top,
+		Math::max(0, _width + left + right),
+		Math::max(0, _height + top + bottom));
 }
 
 
@@ -140,7 +140,7 @@ Rect Rect::translated(
 	int x,
 	int y) const {
 
-	return Rect(this->x + x, this->y + y, width, height);
+	return Rect(_x + x, _y + y, _width, _height);
 }
 
 /// ----------------------------------------------------------------------
@@ -152,8 +152,8 @@ Rect Rect::translated(
 Rect Rect::intersected(
 	const Rect &r) const {
 
-	int x1 = Math::max(x, r.x);
-	int y1 = Math::max(y, r.y);
+	int x1 = Math::max(_x, r._x);
+	int y1 = Math::max(_y, r._y);
 	int x2 = Math::min(getMaxX(), r.getMaxX());
 	int y2 = Math::min(getMaxY(), r.getMaxY());
 
@@ -191,6 +191,6 @@ bool Rect::contains(
 ///
 bool Rect::isEmpty() const {
 
-	return (width == 0) && (height == 0);
+	return (_width == 0) && (_height == 0);
 }
 

@@ -32,7 +32,7 @@ void Graphics::drawLine(
 		if (x1 == x2) {
 			if (y1 > y2)
 				Math::swap(y1, y2);
-			driver->setVPixels(x1, y1, y2 - y1 + 1, color);
+			_driver->setVPixels(x1, y1, y2 - y1 + 1, _color);
 		}
 
 		// Es una linia horitzontal
@@ -40,7 +40,7 @@ void Graphics::drawLine(
 		else if (y1 == y2) {
 			if (x1 > x2)
 				Math::swap(x1, x2);
-			driver->setHPixels(x1, y1, x2 - x1 + 1, color);
+			_driver->setHPixels(x1, y1, x2 - x1 + 1, _color);
 		}
 
 		// No es ni horitzontal ni vertical
@@ -67,7 +67,7 @@ void Graphics::drawLine(
             else
                 stepX = 1;
 
-            driver->setPixel(x1, y1, color);
+            _driver->setPixel(x1, y1, _color);
 
             // Es mes gran el desplaçament X que el Y
             //
@@ -83,7 +83,7 @@ void Graphics::drawLine(
                         y1 += stepY;
                         p += incNE;
                     }
-                    driver->setPixel(x1, y1, color);
+                    _driver->setPixel(x1, y1, _color);
                 }
             }
 
@@ -101,7 +101,7 @@ void Graphics::drawLine(
                         x1 += stepX;
                         p += incNE;
                     }
-                    driver->setPixel(x1, y1, color);
+                    _driver->setPixel(x1, y1, _color);
                 }
             }
 
@@ -111,7 +111,7 @@ void Graphics::drawLine(
                 while (y1 != y2) {
                     y1 += stepY;
                     x1 += stepX;
-                    driver->setPixel(x1, y1, color);
+                    _driver->setPixel(x1, y1, _color);
                 }
             }
         }
@@ -141,7 +141,7 @@ void Graphics::drawHLine(
 		if (x1 > x2)
 			Math::swap(x1, x2);
 
-		driver->setHPixels(x1, y, x2 - x1 + 1, color);
+		_driver->setHPixels(x1, y, x2 - x1 + 1, _color);
 	}
 }
 
@@ -168,7 +168,7 @@ void Graphics::drawVLine(
 		if (y1 > y2)
 			Math::swap(y1, y2);
 
-		driver->setVPixels(x, y1, y2 - y1 + 1, color);
+		_driver->setVPixels(x, y1, y2 - y1 + 1, _color);
 	}
 }
 

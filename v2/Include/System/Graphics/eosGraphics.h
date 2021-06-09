@@ -10,6 +10,7 @@
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
+#include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosTransformation.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
@@ -18,6 +19,7 @@ namespace eos {
 
 	class Bitmap;
 	class Font;
+	class Pen;
 	class String;
 
     /// \brief Aliniacio horitzontal del text.
@@ -49,25 +51,26 @@ namespace eos {
     		typedef LIFOContainer<State, DynamicArray<State, 10> > StateStack;
 
         private:
-            IDisplayDriver* driver;
-            Color color;
-            Font* font;
-            StateStack stack;
-            State state;
+            IDisplayDriver* _driver;
+            Color _color;
+            Font _font;
+            StateStack _stack;
+            State _state;
 
         public:
             Graphics(IDisplayDriver *driver);
             ~Graphics();
 
-            inline IDisplayDriver* getDriver() const { return driver; }
-            inline int getWidth() const { return driver->getWidth(); }
-            inline int getHeight() const { return driver->getHeight(); }
+            inline IDisplayDriver* getDriver() const { return _driver; }
+            inline int getWidth() const { return _driver->getWidth(); }
+            inline int getHeight() const { return _driver->getHeight(); }
             void clear(const Color &color) const;
 
             void setColor(const Color &color);
-            inline Color getColor() const { return color; }
-            void setFont(Font* font);
-            inline Font* getFont() const { return font; }
+            inline Color getColor() const { return _color; }
+            void setFont(const Font &_font);
+            inline const Font& getFont() const { return _font; }
+            inline Font getFont() { return _font; }
 
             void setClip(int x1, int y1, int x2, int y2);
             void setClip(const Rect &r) { setClip(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }

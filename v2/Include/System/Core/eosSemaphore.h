@@ -12,7 +12,7 @@ namespace eos {
 
     class Semaphore {
         private:
-            HSemaphore hSemaphore;
+            HSemaphore _hSemaphore;
 
         public:
             Semaphore();

@@ -18,15 +18,15 @@ using namespace eos;
 Graphics::Graphics(
     IDisplayDriver *driver) :
 
-    driver(driver),
-    color(COLOR_Black) {
+    _driver(driver),
+    _color(COLOR_Black) {
 
 	resetClip();
 	resetTransformation();
     setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::bottom);
 
     const uint8_t *fontResource = Font::getFontResource("Tahoma", 12, FontStyle::regular);
-    setFont(new Font(fontResource));
+    setFont(Font(fontResource));
 }
 
 
@@ -45,7 +45,7 @@ Graphics::~Graphics() {
 void Graphics::setColor(
     const Color &color) {
 
-    this->color = color;
+    _color = color;
 }
 
 
@@ -58,8 +58,8 @@ void Graphics::setTextAlign(
     HorizontalTextAlign hAlign,
     VerticalTextAlign vAlign) {
 
-    state.hAlign = hAlign;
-    state.vAlign = vAlign;
+    _state.hAlign = hAlign;
+    _state.vAlign = vAlign;
 }
 
 
@@ -69,9 +69,9 @@ void Graphics::setTextAlign(
 /// \return   L'anterior font seleccionat.
 ///
 void Graphics::setFont(
-    Font *font) {
+    const Font &font) {
 
-    this->font = font;
+    _font = font;
 }
 
 
@@ -98,10 +98,10 @@ void Graphics::setClip(
 
     // Asigna la nova area de retall
     //
-	state.clipX1 = Math::max(0, x1);
-	state.clipY1 = Math::max(0, y1);
-	state.clipX2 = Math::min(x2, driver->getWidth() - 1);
-	state.clipY2 = Math::min(y2, driver->getHeight() - 1);
+	_state.clipX1 = Math::max(0, x1);
+	_state.clipY1 = Math::max(0, y1);
+	_state.clipX2 = Math::min(x2, _driver->getWidth() - 1);
+	_state.clipY2 = Math::min(y2, _driver->getHeight() - 1);
 }
 
 
@@ -110,10 +110,10 @@ void Graphics::setClip(
 ///
 void Graphics::resetClip() {
 
-	state.clipX1 = 0;
-	state.clipY1 = 0;
-	state.clipX2 = driver->getWidth() - 1;
-	state.clipY2 = driver->getHeight() - 1;
+	_state.clipX1 = 0;
+	_state.clipY1 = 0;
+	_state.clipX2 = _driver->getWidth() - 1;
+	_state.clipY2 = _driver->getHeight() - 1;
 }
 
 
@@ -128,7 +128,7 @@ void Graphics::setTransformation(
 
 	// Asigna la nova transformacio
 	//
-	state.ct = t;
+	_state.ct = t;
 }
 
 
@@ -137,7 +137,7 @@ void Graphics::setTransformation(
 ///
 void Graphics::resetTransformation() {
 
-	state.ct.identity();
+	_state.ct.identity();
 }
 
 
@@ -147,7 +147,7 @@ void Graphics::resetTransformation() {
 void Graphics::push() {
 
 	//if (!stack.isFull())
-		stack.push(state);
+		_stack.push(_state);
 }
 
 
@@ -156,9 +156,9 @@ void Graphics::push() {
 ///
 void Graphics::pop() {
 
-	if (!stack.isEmpty()) {
-		state = stack.peek();
-		stack.pop();
+	if (!_stack.isEmpty()) {
+		_state = _stack.peek();
+		_stack.pop();
 	}
 }
 
@@ -172,11 +172,11 @@ void Graphics::clear(
 
 	int x1 = 0;
 	int y1 = 0;
-	int x2 = driver->getWidth() - 1;
-	int y2 = driver->getHeight() - 1;
+	int x2 = _driver->getWidth() - 1;
+	int y2 = _driver->getHeight() - 1;
 
     if (clipRectangle(x1, y1, x2, y2))
-        driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
+        _driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, _color);
 }
 
 
@@ -191,10 +191,10 @@ void Graphics::drawPoint(
 
 	// Transforma a coordinades fisiques
 	//
-	state.ct.apply(x, y);
+	_state.ct.apply(x, y);
 
     if (clipPoint(x, y))
-        driver->setPixel(x, y, color);
+        _driver->setPixel(x, y, _color);
 }
 
 
@@ -213,7 +213,7 @@ int Graphics::getTextWidth(
 
     int w = 0;
     for (unsigned i = offset, j = length; j && text[i]; i++, j--)
-        w += font->getCharAdvance(text[i]);
+        w += _font.getCharAdvance(text[i]);
 
     return w;
 }
@@ -227,7 +227,7 @@ int Graphics::getTextWidth(
 int Graphics::getTextHeight(
     const String &text) const {
 
-    return font->getFontHeight();
+    return _font.getFontHeight();
 }
 
 
@@ -242,8 +242,8 @@ bool Graphics::clipPoint(
     int y) const {
 
     return
-    	(x >= state.clipX1) && (x <= state.clipX2) &&
-    	(y >= state.clipY1) && (y <= state.clipY2);
+    	(x >= _state.clipX1) && (x <= _state.clipX2) &&
+    	(y >= _state.clipY1) && (y <= _state.clipY2);
 }
 
 
@@ -261,7 +261,7 @@ bool Graphics::clipHLine(
 
 	// Descarta si es fora de l'area de visualitzacio
 	//
-	if ((y < state.clipY1) || (y > state.clipY2))
+	if ((y < _state.clipY1) || (y > _state.clipY2))
 		return false;
 
 	// Normalitza les coordinades
@@ -271,8 +271,8 @@ bool Graphics::clipHLine(
 
 	// Ajusta els punts d'interseccio
 	//
-	x1 = Math::max(state.clipX1, x1);
-	x2 = Math::min(x2, state.clipX2);
+	x1 = Math::max(_state.clipX1, x1);
+	x2 = Math::min(x2, _state.clipX2);
 
 	return x1 <= x2;
 }
@@ -292,7 +292,7 @@ bool Graphics::clipVLine(
 
 	// Descarta si es fora de l'area de visualitzacio
 	//
-	if ((x < state.clipX1) || (x > state.clipX2))
+	if ((x < _state.clipX1) || (x > _state.clipX2))
 		return false;
 
 	// Normalitza les coordinades
@@ -302,8 +302,8 @@ bool Graphics::clipVLine(
 
 	// Ajusta els punts d'interseccio
 	//
-	y1 = Math::max(state.clipY1, y1);
-	y2 = Math::min(y2, state.clipY2);
+	y1 = Math::max(_state.clipY1, y1);
+	y2 = Math::min(y2, _state.clipY2);
 
 	return y1 <= y2;
 }
@@ -325,25 +325,25 @@ bool Graphics::clipLine(
 
 	// La descarta si es fora de l'area de visualitzacio
 	//
-    if (((x1 < state.clipX1) && (x2 < state.clipX1)) ||
-        ((x1 > state.clipX2) && (x2 > state.clipX2)) ||
-        ((y1 < state.clipY1) && (y2 < state.clipY1)) ||
-        ((y1 > state.clipY2) && (y2 > state.clipY2)))
+    if (((x1 < _state.clipX1) && (x2 < _state.clipX1)) ||
+        ((x1 > _state.clipX2) && (x2 > _state.clipX2)) ||
+        ((y1 < _state.clipY1) && (y2 < _state.clipY1)) ||
+        ((y1 > _state.clipY2) && (y2 > _state.clipY2)))
         return false;
 
     int t1 = 0;
     int t2 = 1 << 16;
 
     int dx = x2 - x1;
-    if (!clipTest(-dx, x1 - state.clipX1, t1, t2))
+    if (!clipTest(-dx, x1 - _state.clipX1, t1, t2))
         return false;
-    if (!clipTest(dx, state.clipX2 - x1, t1, t2))
+    if (!clipTest(dx, _state.clipX2 - x1, t1, t2))
         return false;
 
     int dy = y2 - y1;
-    if (!clipTest(-dy, y1 - state.clipY1, t1, t2))
+    if (!clipTest(-dy, y1 - _state.clipY1, t1, t2))
         return false;
-    if (!clipTest(dy, state.clipY2 - y1, t1, t2))
+    if (!clipTest(dy, _state.clipY2 - y1, t1, t2))
         return false;
 
     // Ajusta el punt d'interseccio x2, y2
@@ -431,10 +431,10 @@ bool Graphics::clipRectangle(
 
 	// Calcula la interseccio
 	//
-	x1 = Math::max(x1, state.clipX1);
-	y1 = Math::max(y1, state.clipY1);
-	x2 = Math::min(x2, state.clipX2);
-	y2 = Math::min(y2, state.clipY2);
+	x1 = Math::max(x1, _state.clipX1);
+	y1 = Math::max(y1, _state.clipY1);
+	x2 = Math::min(x2, _state.clipX2);
+	y2 = Math::min(y2, _state.clipY2);
 
 	return (x1 <= x2) && (y1 <= y2);
 }
@@ -449,5 +449,5 @@ void Graphics::transform(
 	int &x,
 	int &y) const {
 
-	state.ct.apply(x, y);
+	_state.ct.apply(x, y);
 }

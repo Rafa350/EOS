@@ -12,7 +12,7 @@
 ///
 void *osalHeapAlloc(
 	HHeap hHeap,
-	int size) {
+	unsigned size) {
 
     return malloc(size);
 }

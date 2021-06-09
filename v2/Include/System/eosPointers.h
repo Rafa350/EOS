@@ -2,7 +2,13 @@
 #define __eosPointers__
 
 
+// EOS includes
+//
 #include "eos.h"
+
+// Standard includes
+//
+#include <memory>
 
 
 namespace eos {
@@ -20,7 +26,7 @@ namespace eos {
             inline void inc_count() {
                 (*count)++;
             }
-    
+
         public:
             SharedPtr(T* _ptr) {
                 ptr = _ptr;
@@ -43,7 +49,7 @@ namespace eos {
                 }
             }
 
-            Shared Ptr<T>& operator = (const SharedPtr<T>& other) {
+            SharedPtr<T>& operator = (const SharedPtr<T>& other) {
                 if (this != &other) {
                     if (count != nullptr) {
                         dec_count();

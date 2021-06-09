@@ -20,10 +20,10 @@ int Graphics::drawChar(
     char c) const {
 
     FontInfo fi;
-    font->getFontInfo(fi);
+    _font.getFontInfo(fi);
     if ((c >= fi.firstChar) && (c <= fi.lastChar)) {
         CharInfo ci;
-        font->getCharInfo(c, ci);
+        _font.getCharInfo(c, ci);
         if (ci.bitmap != nullptr) {
             int cw = (ci.width + 7) / 8;
             x += ci.left;
@@ -61,17 +61,17 @@ int Graphics::drawText(
     unsigned offset,
     unsigned length) const {
 
-    if (state.hAlign != HorizontalTextAlign::left) {
+    if (_state.hAlign != HorizontalTextAlign::left) {
         int textWidth = getTextWidth(text, offset, length);
-        if (state.hAlign == HorizontalTextAlign::right)
+        if (_state.hAlign == HorizontalTextAlign::right)
             x -= textWidth;
         else
             x -= textWidth / 2;
     }
 
-    if (state.vAlign != VerticalTextAlign::top) {
-    	int textHeight = font->getFontHeight();
-    	if (state.vAlign == VerticalTextAlign::bottom)
+    if (_state.vAlign != VerticalTextAlign::top) {
+    	int textHeight = _font.getFontHeight();
+    	if (_state.vAlign == VerticalTextAlign::bottom)
     		y += textHeight;
     	else
     		y += textHeight / 2;

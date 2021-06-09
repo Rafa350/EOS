@@ -18,15 +18,18 @@
     <ClCompile Include="UnitTestArrayList.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\System\Collections\eosList.cpp">
+    <ClCompile Include="..\..\Source\OSAL\Windows\osalHeap.c">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\OSAL\Windows\osalHeap.c">
+    <ClCompile Include="..\..\Source\System\Collections\eosContainer.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="eosConfig.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\eos.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>

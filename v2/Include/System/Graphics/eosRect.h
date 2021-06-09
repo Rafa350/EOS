@@ -13,10 +13,10 @@ namespace eos {
     ///
 	class Rect {
 		private:
-			int x;
-			int y;
-			int width;
-			int height;
+			int _x;
+			int _y;
+			int _width;
+			int _height;
 
         public:
 			Rect();
@@ -26,16 +26,16 @@ namespace eos {
             Rect(const Size &s);
             Rect(const Rect &r);
 
-            inline int getX() const { return x; }
-            inline int getY() const { return y; }
-            inline Point getPosition() const { return Point(x, y); }
-            inline int getWidth() const { return width; }
-            inline int getHeight() const { return height; }
-            inline Size getSize() const { return Size(width, height); }
-            inline int getMinX() const { return x; };
-            inline int getMinY() const { return y; }
-            inline int getMaxX() const { return x + width - 1; }
-            inline int getMaxY() const { return y + height - 1; }
+            inline int getX() const { return _x; }
+            inline int getY() const { return _y; }
+            inline Point getPosition() const { return Point(_x, _y); }
+            inline int getWidth() const { return _width; }
+            inline int getHeight() const { return _height; }
+            inline Size getSize() const { return Size(_width, _height); }
+            inline int getMinX() const { return _x; };
+            inline int getMinY() const { return _y; }
+            inline int getMaxX() const { return _x + _width - 1; }
+            inline int getMaxY() const { return _y + _height - 1; }
 
             Rect translated(int x, int y) const;
             inline Rect translated(const Point &p) const { return translated(p.getX(), p.getY()); }

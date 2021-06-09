@@ -11,16 +11,16 @@ namespace eos {
 	///
 	class Point {
 		private:
-			int x;
-			int y;
+			int _x;
+			int _y;
 
         public:
 			Point();
             Point(int x, int y);
             Point(const Point &p);
 
-            inline int getX() const { return x; }
-            inline int getY() const { return y; }
+            inline int getX() const { return _x; }
+            inline int getY() const { return _y; }
 
             Point translated(int dx, int dy) const;
             Point translated(const Point &d) const;

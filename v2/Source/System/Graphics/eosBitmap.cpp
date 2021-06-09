@@ -15,13 +15,13 @@ using namespace eos;
 Bitmap::Bitmap(
 	const uint8_t *bitmapResource):
 
-	allocated(false),
-	readonly(true) {
+	_allocated(false),
+	_readonly(true) {
 
-	width = (int) (bitmapResource[0] | (bitmapResource[1] << 8));
-	height = (int) (bitmapResource[2] | (bitmapResource[3] << 8));
-	format = ColorFormat::rgb565;
-	pixels = (uint8_t*) &bitmapResource[6];
+	_width = (int) (bitmapResource[0] | (bitmapResource[1] << 8));
+	_height = (int) (bitmapResource[2] | (bitmapResource[3] << 8));
+	_format = ColorFormat::rgb565;
+	_pixels = (uint8_t*) &bitmapResource[6];
 }
 
 
@@ -37,12 +37,12 @@ Bitmap::Bitmap(
 	ColorFormat format,
 	const Color &color):
 
-	width(width),
-	height(height),
-	format(format),
-	allocated(true),
-	readonly(false),
-	pixels(nullptr) {
+	_width(width),
+	_height(height),
+	_format(format),
+	_allocated(true),
+	_readonly(false),
+	_pixels(nullptr) {
 
 	// Calcula el numero de pixels
 	//
@@ -65,25 +65,25 @@ Bitmap::Bitmap(
 
 	// Reserva memoria pel bitmap
 	//
-	pixels = (uint8_t*) osalHeapAlloc(NULL, numPixels * pixelSize);
+	_pixels = (uint8_t*) osalHeapAlloc(NULL, numPixels * pixelSize);
 
 	// Crea el contingut del bitmap
 	//
 	switch (format) {
 		case ColorFormat::rgb888:
 			for (int i = 0; i < numPixels; i++)
-				((uint32_t*)pixels)[i] = color.toRGB888();
+				((uint32_t*)_pixels)[i] = color.toRGB888();
 		break;
 
 		case ColorFormat::rgb565:
 			for (int i = 0; i < numPixels; i++)
-				((uint16_t*)pixels)[i] = color.toRGB565();
+				((uint16_t*)_pixels)[i] = color.toRGB565();
 		break;
 
 		default:
 		case ColorFormat::argb8888:
 			for (int i = 0; i < numPixels; i++)
-				((uint32_t*)pixels)[i] = color.toARGB8888();
+				((uint32_t*)_pixels)[i] = color.toARGB8888();
 		break;
 	}
 }
@@ -102,12 +102,12 @@ Bitmap::Bitmap(
 	ColorFormat format,
 	uint8_t *pixels):
 
-	width(width),
-	height(height),
-	format(format),
-	allocated(false),
-	readonly(false),
-	pixels(pixels) {
+	_width(width),
+	_height(height),
+	_format(format),
+	_allocated(false),
+	_readonly(false),
+	_pixels(pixels) {
 }
 
 
@@ -124,12 +124,13 @@ Bitmap::Bitmap(
 	ColorFormat format,
 	const uint8_t *pixels):
 
-	width(width),
-	height(height),
-	format(format),
-	allocated(false),
-	readonly(true),
-	pixels((uint8_t*)pixels) {
+	_width(width),
+	_height(height),
+	_format(format),
+	_allocated(false),
+	_readonly(true),
+	_pixels((uint8_t*)pixels) {
+
 }
 
 
@@ -138,8 +139,8 @@ Bitmap::Bitmap(
 ///
 Bitmap::~Bitmap() {
 
-	if (allocated && (pixels != nullptr))
-		osalHeapFree(NULL, pixels);
+	if (_allocated && (_pixels != nullptr))
+		osalHeapFree(NULL, _pixels);
 }
 
 
@@ -149,7 +150,7 @@ Bitmap::~Bitmap() {
 ///
 int Bitmap::getBytesPerPixel() const {
 
-	switch (format) {
+	switch (_format) {
 		default:
 		case ColorFormat::rgb888:
 		case ColorFormat::argb8888:
@@ -167,6 +168,6 @@ int Bitmap::getBytesPerPixel() const {
 ///
 int Bitmap::getBytesPerLine() const {
 
-	return ((width * getBytesPerPixel()) + 3) & ~0b11;
+	return ((_width * getBytesPerPixel()) + 3) & ~0b11;
 }
 

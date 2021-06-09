@@ -73,7 +73,7 @@ void Console::moveTo(
 void Console::put(
     char c) {
 
-    Font *font = graphics->getFont();
+    Font font = graphics->getFont();
 
     switch (state) {
         case 0:
@@ -97,17 +97,17 @@ void Console::put(
 
                 case '\n':
                     cx = 0;
-                    cy += font->getFontHeight();
+                    cy += font.getFontHeight();
                     if (cy >= height)
                         cy = 0;
                     break;
 
                 default: {
                     CharInfo ci;
-                    font->getCharInfo(c, ci);
+                    font.getCharInfo(c, ci);
                     if ((cx + ci.advance) >= width) {
                         cx = 0;
-                        cy += font->getFontHeight();
+                        cy += font.getFontHeight();
                         if (y >= height) {
 
                             // TODO: fer scroll de pantalla linia a linia

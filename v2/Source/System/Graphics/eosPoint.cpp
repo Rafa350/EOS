@@ -10,8 +10,8 @@ using namespace eos;
 ///
 Point::Point():
 
-	x(0),
-	y(0) {
+	_x(0),
+	_y(0) {
 }
 
 
@@ -24,8 +24,8 @@ Point::Point(
 	int x,
 	int y):
 
-	x(x),
-	y(y) {
+	_x(x),
+	_y(y) {
 }
 
 
@@ -36,8 +36,8 @@ Point::Point(
 Point::Point(
 	const Point &p):
 
-	x(p.x),
-	y(p.y) {
+	_x(p._x),
+	_y(p._y) {
 }
 
 
@@ -51,7 +51,7 @@ Point Point::translated(
 	int dx,
 	int dy) const {
 
-	return Point(x + dx, y + dy);
+	return Point(_x + dx, _y + dy);
 }
 
 
@@ -63,7 +63,7 @@ Point Point::translated(
 Point Point::translated(
 	const Point &d) const {
 
-	return Point(x + d.x, y + d.y);
+	return Point(_x + d._x, _y + d._y);
 }
 
 
@@ -75,7 +75,7 @@ Point Point::translated(
 bool Point::operator==(
 	const Point &p) const {
 
-	return (x == p.x) && (y == p.y);
+	return (_x == p._x) && (_y == p._y);
 }
 
 
@@ -87,5 +87,5 @@ bool Point::operator==(
 bool Point::operator!=(
 	const Point &p) const {
 
-	return (x != p.x) || (y != p.y);
+	return (_x != p._x) || (_y != p._y);
 }

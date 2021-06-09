@@ -12,8 +12,8 @@ using namespace eos;
 ///
 Semaphore::Semaphore() {
 
-    hSemaphore = osalSemaphoreCreate(0);
-    eosAssert(hSemaphore != nullptr);
+    _hSemaphore = osalSemaphoreCreate(0);
+    eosAssert(_hSemaphore != nullptr);
 }
 
 
@@ -23,8 +23,8 @@ Semaphore::Semaphore() {
 Semaphore::Semaphore(
     unsigned maxCount) {
 
-    hSemaphore = osalSemaphoreCreate(maxCount);
-    eosAssert(hSemaphore != nullptr);
+    _hSemaphore = osalSemaphoreCreate(maxCount);
+    eosAssert(_hSemaphore != nullptr);
 }
 
 
@@ -33,7 +33,7 @@ Semaphore::Semaphore(
 ///
 Semaphore::~Semaphore() {
 
-    osalSemaphoreDestroy(hSemaphore);
+    osalSemaphoreDestroy(_hSemaphore);
 }
 
 
@@ -45,7 +45,7 @@ Semaphore::~Semaphore() {
 bool Semaphore::wait(
     unsigned blockTime) const {
 
-    return osalSemaphoreWait(hSemaphore, blockTime);
+    return osalSemaphoreWait(_hSemaphore, blockTime);
 }
 
 
@@ -54,7 +54,7 @@ bool Semaphore::wait(
 ///
 void Semaphore::release() const {
 
-	osalSemaphoreRelease(hSemaphore);
+	osalSemaphoreRelease(_hSemaphore);
 }
 
 
@@ -63,6 +63,6 @@ void Semaphore::release() const {
 ///
 void Semaphore::releaseISR() const {
 
-	osalSemaphoreReleaseISR(hSemaphore);
+	osalSemaphoreReleaseISR(_hSemaphore);
 }
 

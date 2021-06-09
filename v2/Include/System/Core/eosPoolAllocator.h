@@ -9,12 +9,12 @@ namespace eos {
 
     class MemoryPoolAllocator {
         private:
-            uint8_t *blocks;
-            uint8_t *nextBlock;
-            int blockSize;
-            int maxBlocks;
-            int freeBlocks;
-            int initializedBlocks;
+            uint8_t *_blocks;
+            uint8_t *_nextBlock;
+            int _blockSize;
+            int _maxBlocks;
+            int _freeBlocks;
+            int _initializedBlocks;
 
         public:
             MemoryPoolAllocator(int blockSize, int maxBlocks);
@@ -23,9 +23,9 @@ namespace eos {
             void* allocate();
             void deallocate(void* p);
 
-            inline int getBlockSize() const { return blockSize; }
-            inline int getUsedBlocks() const { return maxBlocks - freeBlocks; }
-            inline int getFreeBlocks() const { return freeBlocks; }
+            inline int getBlockSize() const { return _blockSize; }
+            inline int getUsedBlocks() const { return _maxBlocks - _freeBlocks; }
+            inline int getFreeBlocks() const { return _freeBlocks; }
 
         private:
             uint8_t* addrFromIndex(int i) const;
@@ -37,20 +37,20 @@ namespace eos {
     class PoolAllocator {
 
     	private:
-    		MemoryPoolAllocator allocator;
+    		MemoryPoolAllocator _allocator;
 
     	public:
 
     		PoolAllocator():
-            	allocator(sizeof(T), MAX_BLOCKS) {
+            	_allocator(sizeof(T), MAX_BLOCKS) {
             }
 
     		inline T *allocate() {
-            	return static_cast<T*>(allocator.allocate());
+            	return static_cast<T*>(_allocator.allocate());
             }
 
     		inline void deallocate(T* p) {
-            	allocator.deallocate(p);
+            	_allocator.deallocate(p);
             }
     };
 }

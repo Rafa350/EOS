@@ -9,12 +9,11 @@
     #include <string>
 #endif
 
-
 namespace eos {
 
 #ifdef USE_STD_STRINGS
 
-    class String {
+    class String final {
         public:
             typedef std::string::iterator Iterator;
             typedef std::string::const_iterator CIterator;
@@ -71,7 +70,7 @@ namespace eos {
             typedef const char* CIterator;
 
         private:
-            StringData* pData;
+            StringData* _data;
 
         private:
             void create(const char* cstr, unsigned index, unsigned length);

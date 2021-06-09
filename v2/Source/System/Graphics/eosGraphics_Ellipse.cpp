@@ -67,22 +67,22 @@ void Graphics::drawEllipse(
 		xx = cx + x;
 		yy = cy + y;
 		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+			_driver->setPixel(xx, yy, _color);
 
 	    xx = cx - x;
 	    yy = cy + y;
 		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+			_driver->setPixel(xx, yy, _color);
 
 		xx = cx - x;
 		yy = cy - y;
 		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+			_driver->setPixel(xx, yy, _color);
 
 		xx = cx + x;
 		yy = cy - y;
 		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+			_driver->setPixel(xx, yy, _color);
 
 		y += 1;
 		stoppingY += aa;
@@ -113,22 +113,22 @@ void Graphics::drawEllipse(
 		xx = cx + x;
 		yy = cy + y;
 		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+			_driver->setPixel(xx, yy, _color);
 
 	    xx = cx - x;
 	    yy = cy + y;
 		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+			_driver->setPixel(xx, yy, _color);
 
 		xx = cx - x;
 		yy = cy - y;
 		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+			_driver->setPixel(xx, yy, _color);
 
 		xx = cx + x;
 		yy = cy - y;
 		if (clipPoint(xx, yy))
-			driver->setPixel(xx, yy, color);
+			_driver->setPixel(xx, yy, _color);
 
 		x += 1;
 		stoppingX += bb;
@@ -203,13 +203,13 @@ void Graphics::fillEllipse(
 	    xx2 = cx + x;
 		yy = cy + y;
 		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, _color);
 
 		xx1 = cx - x;
 		xx2 = cx + x;
 		yy = cy - y;
 		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, _color);
 
 		y += 1;
 		stoppingY += aa;
@@ -241,13 +241,13 @@ void Graphics::fillEllipse(
 	    xx2 = cx + x;
 		yy = cy + y;
 		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, _color);
 
 		xx1 = cx - x;
 		xx2 = cx + x;
 		yy = cy - y;
 		if (clipHLine(xx1, xx2, yy))
-			driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
+			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, _color);
 
 		x += 1;
 		stoppingX += bb;
