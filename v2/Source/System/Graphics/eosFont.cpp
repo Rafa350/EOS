@@ -46,9 +46,9 @@ Font::Font(
 /// \param    other: L'altre objecte per copiar.
 ///
 Font::Font(
-	const Font& other):
+	const Font& font):
 
-	_pImpl(other._pImpl) {
+	_pImpl(font._pImpl) {
 }
 
 
@@ -59,6 +59,20 @@ Font::Font(
 Font::PImpl Font::allocate() {
 
 	return PImpl(new Font::Impl);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador d'assignacio.
+/// \param    font: L'objecte a asignar.
+/// \return   El propi objecte.
+///
+Font& Font::operator = (
+	const Font& font) {
+
+	_pImpl = font._pImpl;
+
+	return *this;
 }
 
 

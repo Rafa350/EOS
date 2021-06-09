@@ -13,6 +13,9 @@
 
 namespace eos {
 
+#if 1
+	#define SharedPtr std::shared_ptr
+#else
 	template <class T>
 	class SharedPtr {
         private:
@@ -90,6 +93,9 @@ namespace eos {
                 return ptr;
             }
     };
+
+#endif
+
 }
 
 

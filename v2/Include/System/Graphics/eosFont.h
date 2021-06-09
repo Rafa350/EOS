@@ -46,7 +46,7 @@ namespace eos {
     class Font {
     	private:
     		struct Impl;
-    		typedef std::shared_ptr<Impl> PImpl;
+    		typedef SharedPtr<Impl> PImpl;
 
     	private:
     		PImpl _pImpl;
@@ -58,7 +58,9 @@ namespace eos {
         public:
             Font();
             Font(const uint8_t *fontResource);
-            Font(const Font& other);
+            Font(const Font& font);
+
+            Font& operator = (const Font& font);
 
             void getFontInfo(FontInfo &fi) const;
             void getCharInfo(char ch, CharInfo &ci) const;

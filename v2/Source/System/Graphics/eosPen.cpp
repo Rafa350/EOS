@@ -42,6 +42,31 @@ Pen::Pen(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Constructor de copia.
+/// \param    pen: L'objecte a copiar.
+///
+Pen::Pen(
+	const Pen& pen) :
+
+	_pImpl(pen._pImpl) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador d'asignacio.
+/// \param    L'objecte a asignar.
+/// \return   El propi objecte.
+///
+Pen& Pen::operator = (
+	const Pen& pen) {
+
+	_pImpl = pen._pImpl;
+
+	return *this;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Crea l'estructura interna de dades.
 /// \return   El resultat.
 ///
@@ -51,11 +76,20 @@ Pen::PImpl Pen::allocate() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte el color.
+/// \return   El valor obtingut.
+///
 Color Pen::getColor() const {
 
 	return _pImpl->color;
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'amplada de linia.
+/// \return   El valor obtingut.
+///
 int Pen::getThickness() const {
 
 	return _pImpl->thickness;

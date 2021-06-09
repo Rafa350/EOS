@@ -13,7 +13,7 @@ namespace eos {
 	class Pen {
 		private:
 			struct Impl;
-			typedef std::shared_ptr<Impl> PImpl;
+			typedef SharedPtr<Impl> PImpl;
 
 		private:
 			PImpl _pImpl;
@@ -24,6 +24,9 @@ namespace eos {
 		public:
 			Pen();
 			Pen(const Color& color, int thickness);
+			Pen(const Pen& pen);
+
+			Pen& operator = (const Pen& pen);
 
 			Color getColor() const;
 			int getThickness() const;
