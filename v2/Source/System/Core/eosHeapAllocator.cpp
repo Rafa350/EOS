@@ -35,3 +35,12 @@ void MemoryHeapAllocator::deallocate(
 
     osalHeapFree(NULL, p);
 }
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'adresa del bloc de memoria
+/// \return   El resultat.
+///
+uint8_t* MemoryHeapAllocator::getAddr() const {
+
+	return nullptr;
+}

@@ -90,6 +90,7 @@ namespace eos {
             inline void drawPoint(const Point& p) const { drawPoint(p.getX(), p.getY()); }
 
             void drawLine(int x1, int y1, int x2, int y2) const;
+            void drawLine(const Pen& pen, const Point& p1, const Point& p2);
             inline void drawLine(const Point& p1, const Point& p2) const { drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY()); }
             void drawHLine(int x1, int x2, int y) const;
             void drawVLine(int x, int y1, int y2) const;

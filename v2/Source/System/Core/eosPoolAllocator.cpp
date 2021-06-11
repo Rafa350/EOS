@@ -74,8 +74,6 @@ void *MemoryPoolAllocator::allocate() {
 
     osalExitCritical();
 
-    eosAssert(ret != nullptr);
-
     return ret;
 }
 

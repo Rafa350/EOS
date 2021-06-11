@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "System/eosRefCounter.h"
 
 // Standard includes
 //
@@ -13,84 +14,75 @@
 
 namespace eos {
 
-#if 1
+#if 0
 	#define SharedPtr std::shared_ptr
 #else
 	template <class T>
 	class SharedPtr {
         private:
-            T* ptr;
-            int *count;
-
-            inline void dec_count() {
-                (*count)--;
-            }
-
-            inline void inc_count() {
-                (*count)++;
-            }
+            T* _ptr;
+            RefCounter* _count;
 
         public:
-            SharedPtr(T* _ptr) {
-                ptr = _ptr;
-                count = new int(1);
+            SharedPtr(T* ptr) {
+                _ptr = ptr;
+                _count = new RefCounter(1);
             }
 
             SharedPtr (const SharedPtr<T>& other) {
-                ptr = other.ptr;
-                count = other.count;
-                inc_count();
+                _ptr = other._ptr;
+                _count = other._count;
+                _count->inc();
             }
 
             ~SharedPtr() {
-                if (count != nullptr) {
-                    dec_count();
-                    if (*count == 0) {
-                        delete ptr;
-                        delete count;
+                if (_count != nullptr) {
+                    _count->dec();
+                    if (!(*_count)) {
+                        delete _ptr;
+                        delete _count;
                     }
                 }
             }
 
             SharedPtr<T>& operator = (const SharedPtr<T>& other) {
                 if (this != &other) {
-                    if (count != nullptr) {
-                        dec_count();
-                        if (*count == 0)
-                            delete ptr;
+                    if (_count != nullptr) {
+                        _count->dec();
+                        if (!(*_count)) {
+                            delete _ptr;
+                            delete _count;
+                        }
                     }
-                    ptr = other.ptr;
-                    count = other.count;
-                    inc_count();
+                    _ptr = other._ptr;
+                    _count = other._count;
+                    _count->inc();
                 }
                 return *this;
             }
 
-            int use_count() const {
-                if (count != nullptr)
-                    return *count;
-                else
-                    return 0;
+            int uses() const {
+                return (_count == nullptr) ? 0 : int(*_count);
             }
 
             void reset() {
-                if (count != nullptr) {
-                    dec_count();
-                    if(*count == 0) {
-                        delete ptr;
-                        delete count;
+                if (_count != nullptr) {
+                    _count->dec();
+                    if (!(*_count)) {
+                        delete _ptr;
+                        delete _count;
                     }
-                    count = nullptr;
-                    ptr = nullptr;
+                    _count = nullptr;
+                    _ptr = nullptr;
                 }
             }
 
-            inline T* operator*() {
-                return ptr;
+            inline T& operator*() const {
+                return *_ptr;
             }
 
-            inline T* operator ->() {
-                return ptr;
+            inline T* operator ->() const {
+                return _ptr;
             }
     };
 

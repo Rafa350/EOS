@@ -17,11 +17,11 @@ TouchPadService::TouchPadService(
 	Application* application) :
 
 	Service(application),
-	touchDriver(nullptr),
-	eventCallback(nullptr),
-	oldX(-1),
-	oldY(-1),
-	oldPressed(false) {
+	_touchDriver(nullptr),
+	_eventCallback(nullptr),
+	_oldX(-1),
+	_oldY(-1),
+	_oldPressed(false) {
 }
 
 
@@ -32,9 +32,9 @@ void TouchPadService::onInitialize() {
 
     // Inicialitzacio del touch pad
     //
-    touchDriver = FT5336Driver::getInstance();
-    touchDriver->initialize();
-    touchDriver->setOrientation(TouchPadOrientation::rotate90);
+    _touchDriver = FT5336Driver::getInstance();
+    _touchDriver->initialize();
+    _touchDriver->setOrientation(TouchPadOrientation::rotate90);
 
     halEXTISetInterruptFunction(TOUCHPAD_INT_EXTI_LINE, interruptHandler, this);
 }
@@ -46,21 +46,21 @@ void TouchPadService::onInitialize() {
 void TouchPadService::onTask(
 	Task *task) {
 
-	if (eventCallback != nullptr) {
+	if (_eventCallback != nullptr) {
 
-		if (lock.wait(-1)) {
+		if (_lock.wait(-1)) {
 
 			// Detecta variacions del estat del touchpad
 			//
 			bool pressed = false;
 			int x = -1;
 			int y = -1;
-			while (touchDriver->getTouchCount()) {
+			while (_touchDriver->getTouchCount()) {
 
 				// Obte l'estat
 				//
 				TouchPadState state;
-				touchDriver->getState(state);
+				_touchDriver->getState(state);
 				if (state.numPoints == 1) {
 					pressed = true;
 					x = state.x[0];
@@ -69,42 +69,42 @@ void TouchPadService::onTask(
 
 				// Detecta canvis de contacte.
 				//
-				if (!oldPressed && pressed) {
+				if (!_oldPressed && pressed) {
 
 					EventArgs args = {
 						.event = EventType::press,
 						.x = x,
 						.y = y
 					};
-					eventCallback->execute(args);
+					_eventCallback->execute(args);
 				}
 
 				// Detecta canvis de posicio
 				//
-				else if (pressed && ((oldX != x) || (oldY != y))) {
+				else if (pressed && ((_oldX != x) || (_oldY != y))) {
 
 					EventArgs args = {
 						.event = EventType::move,
 						.x = x,
 						.y = y
 					};
-					eventCallback->execute(args);
+					_eventCallback->execute(args);
 				}
 
-				oldPressed = pressed;
-				oldX = x;
-				oldY = y;
+				_oldPressed = pressed;
+				_oldX = x;
+				_oldY = y;
 			}
 
-			if (oldPressed) {
+			if (_oldPressed) {
 				EventArgs args = {
 					.event = EventType::release,
 					.x = x,
 					.y = y
 				};
-				eventCallback->execute(args);
+				_eventCallback->execute(args);
 
-				oldPressed = false;
+				_oldPressed = false;
 			}
 		}
 	}
@@ -116,7 +116,7 @@ void TouchPadService::onTask(
 ///
 void TouchPadService::interruptHandler() {
 
-	lock.releaseISR();
+	_lock.releaseISR();
 }
 
 

@@ -13,6 +13,9 @@ namespace eos {
         public:
             void* allocate(unsigned size);
             void deallocate(void *p);
+
+            uint8_t* getAddr() const;
+            unsigned getSize() const;
     };
 
     template <class T>

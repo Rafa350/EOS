@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "System/Core/eosPoolAllocator.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosPen.h"
@@ -8,10 +9,51 @@
 using namespace eos;
 
 
-struct Pen::Impl {
-	Color color;
-	int thickness;
+class Pen::Impl {
+	private:
+		static MemoryPoolAllocator _allocator;
+
+	public:
+		Color color;
+		int thickness;
+
+	public:
+    	void* operator new(unsigned size);
+    	void operator delete(void*p);
 };
+
+
+MemoryPoolAllocator Pen::Impl::_allocator(sizeof(Pen::Impl), eosGraphics_MaxPens);
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador new
+/// \param    size: Tamany del bloc.
+/// \return   El bloc.
+///
+void* Pen::Impl::operator new(
+	unsigned size) {
+
+	eosAssert(size == sizeof(Pen::Impl));
+
+	void* p = Pen::Impl::_allocator.allocate();
+	eosAssert(p != 0);
+
+	return p;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador delete.
+/// \param    p: El bloc.
+///
+void Pen::Impl::operator delete(
+	void* p) {
+
+	eosAssert(p != nullptr);
+
+	Pen::Impl::_allocator.deallocate(p);
+}
 
 
 /// ----------------------------------------------------------------------
@@ -53,6 +95,14 @@ Pen::Pen(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Descruttor
+///
+Pen::~Pen() {
+
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Operador d'asignacio.
 /// \param    L'objecte a asignar.
 /// \return   El propi objecte.
@@ -72,7 +122,7 @@ Pen& Pen::operator = (
 ///
 Pen::PImpl Pen::allocate() {
 
-	return std::shared_ptr<Impl>(new Impl);
+	return PImpl(new Impl);
 }
 
 

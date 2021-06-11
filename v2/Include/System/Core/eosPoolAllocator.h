@@ -23,6 +23,9 @@ namespace eos {
             void* allocate();
             void deallocate(void* p);
 
+            inline uint8_t* getAddr() const { return _blocks; }
+            inline unsigned getSize() const { return _blockSize * _maxBlocks; }
+
             inline int getBlockSize() const { return _blockSize; }
             inline int getUsedBlocks() const { return _maxBlocks - _freeBlocks; }
             inline int getFreeBlocks() const { return _freeBlocks; }

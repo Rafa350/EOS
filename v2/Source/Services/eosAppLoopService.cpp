@@ -13,7 +13,7 @@ AppLoopService::AppLoopService(
     Application* application):
 
 	Service(application),
-    initialized(false) {
+    _initialized(false) {
 }
 
 
@@ -31,9 +31,9 @@ void AppLoopService::onInitialize() {
 void AppLoopService::onTask(
 	Task *task) {
 
-	if (!initialized) {
+	if (!_initialized) {
 		onSetup();
-		initialized = true;
+		_initialized = true;
 	}
     onLoop();
 }

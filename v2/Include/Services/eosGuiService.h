@@ -44,25 +44,25 @@ namespace eos {
 		private:
 			typedef CallbackP1<GuiService, const TouchPadService::EventArgs&> TouchPadEventCallback;
 
-			Screen* screen;
-			Visual* active;
-			MsgQueue* msgQueue;
+			Screen* _screen;
+			Visual* _active;
+			MsgQueue* _msgQueue;
 #if eosGuiService_KeyboardEnabled
-			KeyboardService* keyboardService;
+			KeyboardService* _keyboardService;
 #endif
 #if eosGuiService_SelectorEnabled
-			SelectorService* selectorService;
+			SelectorService* _selectorService;
 #endif
 #if eosGuiService_TouchPadEnabled
-			TouchPadEventCallback touchPadEventCallback;
-			TouchPadService* touchPadService;
-			Visual* touchPadTarget;
+			TouchPadEventCallback _touchPadEventCallback;
+			TouchPadService* _touchPadService;
+			Visual* _touchPadTarget;
 #endif
 
 		public:
 			GuiService(Application* application);
-			inline Screen* getScreen() const { return screen; }
-			inline Visual* getActiveVisual() const { return active; }
+			inline Screen* getScreen() const { return _screen; }
+			inline Visual* getActiveVisual() const { return _active; }
 			Visual* getVisualAt(const Point &position) const;
 			void setActiveVisual(Visual *pVisual);
 

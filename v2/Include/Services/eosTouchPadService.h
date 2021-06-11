@@ -44,12 +44,12 @@ namespace eos {
 		private:
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
-    		ITouchPadDriver* touchDriver;
-        	IEventCallback* eventCallback;
-        	Semaphore lock;
-        	int oldX;
-        	int oldY;
-        	int oldPressed;
+    		ITouchPadDriver* _touchDriver;
+        	IEventCallback* _eventCallback;
+        	Semaphore _lock;
+        	int _oldX;
+        	int _oldY;
+        	int _oldPressed;
 
         	void interruptHandler();
 			static void interruptHandler(EXTILine line, void* param);
@@ -60,7 +60,7 @@ namespace eos {
 
 		public:
 			TouchPadService(Application* application);
-			inline void setEventCallback(IEventCallback* callBack) { eventCallback = callBack; }
+			inline void setEventCallback(IEventCallback* callBack) { _eventCallback = callBack; }
 	};
 }
 

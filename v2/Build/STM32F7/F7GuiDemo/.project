@@ -374,6 +374,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosPointers.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/eosRefCounter.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosRefCounter.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/eosString.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosString.h</locationURI>
@@ -452,6 +457,11 @@
 			<name>src/Framework/EOS/System/eosDebug.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosDebug.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosRefCounter.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosRefCounter.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/eosString.cpp</name>

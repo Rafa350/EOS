@@ -8,6 +8,11 @@
 #include "System/eosPointers.h"
 
 
+#ifndef eosGraphics_MaxFonts
+#define eosGraphics_MaxFonts 10
+#endif
+
+
 namespace eos {
 
     enum class FontStyle: uint8_t {
@@ -59,6 +64,7 @@ namespace eos {
             Font();
             Font(const uint8_t *fontResource);
             Font(const Font& font);
+            ~Font();
 
             Font& operator = (const Font& font);
 

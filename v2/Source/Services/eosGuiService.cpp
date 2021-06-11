@@ -39,18 +39,18 @@ GuiService::GuiService(
 	Application* application):
 
 	Service(application),
-	screen(new Screen()),
-	active(nullptr),
-	msgQueue(MsgQueue::getInstance())
+	_screen(new Screen()),
+	_active(nullptr),
+	_msgQueue(MsgQueue::getInstance())
 #if eosGuiService_TouchPadEnabled
-	, touchPadEventCallback(this, &GuiService::touchPadEventHandler)
+	, _touchPadEventCallback(this, &GuiService::touchPadEventHandler)
 #endif
 	{
 
 #if eosGuiService_TouchPadEnabled
-	touchPadService = new TouchPadService(application);
-	touchPadService->setEventCallback(&touchPadEventCallback);
-	touchPadTarget = nullptr;
+	_touchPadService = new TouchPadService(application);
+	_touchPadService->setEventCallback(&_touchPadEventCallback);
+	_touchPadTarget = nullptr;
 #endif
 
 #if eosGuiService_SelectorEnabled
@@ -74,7 +74,7 @@ void GuiService::setActiveVisual(
 	if (pVisual != nullptr)
 		pVisual->activate(active);*/
 
-	active = visual;
+	_active = visual;
 }
 
 
@@ -85,8 +85,8 @@ void GuiService::setActiveVisual(
 Visual *GuiService::getVisualAt(
 	const Point &position) const {
 
-	if (screen != nullptr)
-		return VisualUtils::getVisual(screen, position);
+	if (_screen != nullptr)
+		return VisualUtils::getVisual(_screen, position);
 	else
 		return nullptr;
 }
@@ -112,10 +112,10 @@ void GuiService::onInitialize() {
 	graphics = new Graphics(displayDriver);
 	context = new RenderContext(graphics);
 
-	setActiveVisual(screen);
+	setActiveVisual(_screen);
 
-	screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
-	screen->arrange(screen->getDesiredSize());
+	_screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
+	_screen->arrange(_screen->getDesiredSize());
 }
 
 
@@ -127,14 +127,14 @@ void GuiService::onTask(
 
 	// Refresca la pantalla si cal
 	//
-	if (screen->isRenderizable())
-		if (screen->render(context))
+	if (_screen->isRenderizable())
+		if (_screen->render(context))
 			displayDriver->refresh();
 
 	// Espera que arrivin missatges.
 	//
 	Message msg;
-	if (msgQueue->receive(msg)) {
+	if (_msgQueue->receive(msg)) {
 
 		// Procesa el missatge
 		//
@@ -162,24 +162,24 @@ void GuiService::touchPadEventHandler(
 
 	// Comprova si ha canviat el target.
 	//
-	if (touchPadTarget != target) {
+	if (_touchPadTarget != target) {
 
 		// Si cal, notifica la sortida d'un visual.
 		//
-		if (touchPadTarget != nullptr) {
-            msg.target = touchPadTarget;
+		if (_touchPadTarget != nullptr) {
+            msg.target = _touchPadTarget;
             msg.touchPad.event = MsgTouchPadEvent::leave;
-            msgQueue->send(msg);
+            _msgQueue->send(msg);
 		}
 
-		touchPadTarget = target;
+		_touchPadTarget = target;
 
 		// Si cal, notifica la entrada en un visual.
 		//
-		if (touchPadTarget != nullptr) {
-            msg.target = touchPadTarget;
+		if (_touchPadTarget != nullptr) {
+            msg.target = _touchPadTarget;
             msg.touchPad.event = MsgTouchPadEvent::enter;
-            msgQueue->send(msg);
+            _msgQueue->send(msg);
 		}
 	}
 
@@ -201,7 +201,7 @@ void GuiService::touchPadEventHandler(
 			msg.touchPad.y = args.y;
 			break;
 	}
-	msgQueue->send(msg);
+	_msgQueue->send(msg);
 }
 #endif
 

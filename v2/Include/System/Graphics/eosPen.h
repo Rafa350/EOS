@@ -8,6 +8,11 @@
 #include "System/eosPointers.h"
 
 
+#ifndef eosGraphics_MaxPens
+#define eosGraphics_MaxPens 10
+#endif
+
+
 namespace eos {
 
 	class Pen {
@@ -25,6 +30,7 @@ namespace eos {
 			Pen();
 			Pen(const Color& color, int thickness);
 			Pen(const Pen& pen);
+			~Pen();
 
 			Pen& operator = (const Pen& pen);
 

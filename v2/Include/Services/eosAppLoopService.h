@@ -15,7 +15,7 @@ namespace eos {
     ///
     class AppLoopService: public Service {
         private:
-            bool initialized;
+            bool _initialized;
 
         protected:
             void onInitialize() override;

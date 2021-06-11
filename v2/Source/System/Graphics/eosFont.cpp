@@ -1,20 +1,60 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosString.h"
+#include "System/Core/eosPoolAllocator.h"
 #include "System/Graphics/eosFont.h"
 
 
 using namespace eos;
 
 
+class Font::Impl {
+	private:
+    	static MemoryPoolAllocator _allocator;
+
+	public:
+    	char chCache;
+    	CharInfo ciCache;
+    	const uint8_t *fontResource;
+
+	public:
+    	void* operator new(unsigned size);
+    	void operator delete(void*p);
+};
+
+
+MemoryPoolAllocator Font::Impl::_allocator(sizeof(Font::Impl), eosGraphics_MaxFonts);
 extern const FontTableEntry* fontResourceTable;
 
 
-struct Font::Impl {
-    char chCache;
-    CharInfo ciCache;
-    const uint8_t *fontResource;
-};
+/// ----------------------------------------------------------------------
+/// \brief    Operador new
+/// \param    size: Tamany del bloc.
+/// \return   El bloc.
+///
+void* Font::Impl::operator new(
+	unsigned size) {
+
+	eosAssert(size == sizeof(Font::Impl));
+
+	void* p = Font::Impl::_allocator.allocate();
+	eosAssert(p != 0);
+
+	return p;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador delete.
+/// \param    p: El bloc.
+///
+void Font::Impl::operator delete(
+	void* p) {
+
+	eosAssert(p != nullptr);
+
+	Font::Impl::_allocator.deallocate(p);
+}
 
 
 /// ----------------------------------------------------------------------
@@ -49,6 +89,14 @@ Font::Font(
 	const Font& font):
 
 	_pImpl(font._pImpl) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Destructor
+///
+Font::~Font() {
+
 }
 
 
