@@ -13,14 +13,14 @@ using namespace eos;
 /// \param    y1: Coordinada Y del primer punt.
 /// \param    x2: Coordinada X del segon punt.
 /// \param    y2: Coordinada Y del segon punt.
-/// \param    sx: Espaiat x.
-/// \param    sy: Espaiat y.
+/// \param    color: Color.
 ///
 void Graphics::drawEllipse(
 	int x1,
 	int y1,
 	int x2,
-	int y2) const {
+	int y2,
+	const Color& color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -67,22 +67,22 @@ void Graphics::drawEllipse(
 		xx = cx + x;
 		yy = cy + y;
 		if (clipPoint(xx, yy))
-			_driver->setPixel(xx, yy, _color);
+			_driver->setPixel(xx, yy, color);
 
 	    xx = cx - x;
 	    yy = cy + y;
 		if (clipPoint(xx, yy))
-			_driver->setPixel(xx, yy, _color);
+			_driver->setPixel(xx, yy, color);
 
 		xx = cx - x;
 		yy = cy - y;
 		if (clipPoint(xx, yy))
-			_driver->setPixel(xx, yy, _color);
+			_driver->setPixel(xx, yy, color);
 
 		xx = cx + x;
 		yy = cy - y;
 		if (clipPoint(xx, yy))
-			_driver->setPixel(xx, yy, _color);
+			_driver->setPixel(xx, yy, color);
 
 		y += 1;
 		stoppingY += aa;
@@ -113,22 +113,22 @@ void Graphics::drawEllipse(
 		xx = cx + x;
 		yy = cy + y;
 		if (clipPoint(xx, yy))
-			_driver->setPixel(xx, yy, _color);
+			_driver->setPixel(xx, yy, color);
 
 	    xx = cx - x;
 	    yy = cy + y;
 		if (clipPoint(xx, yy))
-			_driver->setPixel(xx, yy, _color);
+			_driver->setPixel(xx, yy, color);
 
 		xx = cx - x;
 		yy = cy - y;
 		if (clipPoint(xx, yy))
-			_driver->setPixel(xx, yy, _color);
+			_driver->setPixel(xx, yy, color);
 
 		xx = cx + x;
 		yy = cy - y;
 		if (clipPoint(xx, yy))
-			_driver->setPixel(xx, yy, _color);
+			_driver->setPixel(xx, yy, color);
 
 		x += 1;
 		stoppingX += bb;
@@ -150,12 +150,14 @@ void Graphics::drawEllipse(
 /// \param    y1: Coordinada Y del primer punt.
 /// \param    x2: Coordinada X del segon punt.
 /// \param    y2: Coordinada Y del segon punt.
+/// \param    color: Color
 ///
 void Graphics::fillEllipse(
 	int x1,
 	int y1,
 	int x2,
-	int y2) const {
+	int y2,
+	const Color& color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -203,13 +205,13 @@ void Graphics::fillEllipse(
 	    xx2 = cx + x;
 		yy = cy + y;
 		if (clipHLine(xx1, xx2, yy))
-			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, _color);
+			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
 
 		xx1 = cx - x;
 		xx2 = cx + x;
 		yy = cy - y;
 		if (clipHLine(xx1, xx2, yy))
-			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, _color);
+			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
 
 		y += 1;
 		stoppingY += aa;
@@ -241,13 +243,13 @@ void Graphics::fillEllipse(
 	    xx2 = cx + x;
 		yy = cy + y;
 		if (clipHLine(xx1, xx2, yy))
-			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, _color);
+			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
 
 		xx1 = cx - x;
 		xx2 = cx + x;
 		yy = cy - y;
 		if (clipHLine(xx1, xx2, yy))
-			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, _color);
+			_driver->setPixels(xx1, yy, xx2 - xx1 + 1, 1, color);
 
 		x += 1;
 		stoppingX += bb;

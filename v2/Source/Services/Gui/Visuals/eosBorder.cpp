@@ -123,11 +123,8 @@ void Border::onRender(
 	int x2 = s.getWidth() - 1;
 	int y2 = s.getHeight() - 1;
 
-	g.setColor(backgroundColor);
-	g.fillRectangle(0, 0, x2, y2);
-
-	g.setColor(color);
-	g.drawRectangle(0, 0, x2, y2);
+	g.fillRectangle(0, 0, x2, y2, backgroundColor);
+	g.drawRectangle(0, 0, x2, y2, color);
 
 	context->endRender();
 }

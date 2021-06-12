@@ -106,14 +106,9 @@ void ProgressBar::onRender(
 
 	int w = value * width / (Math::max(1, maxValue - minValue));
 
-	g.setColor(backgroundColor);
-	g.fillRectangle(w, 0, width - 1, height - 1);
-
-	g.setColor(barColor);
-	g.fillRectangle(0, 0, w, height - 1);
-
-	g.setColor(borderColor);
-	g.drawRectangle(0, 0, width - 1, height - 1);
+	g.fillRectangle(w, 0, width - 1, height - 1, backgroundColor);
+	g.fillRectangle(0, 0, w, height - 1, barColor);
+	g.drawRectangle(0, 0, width - 1, height - 1, borderColor);
 
 
 	context->endRender();

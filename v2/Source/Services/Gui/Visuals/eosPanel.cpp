@@ -54,8 +54,7 @@ void Panel::onRender(
 
 		// Dibuixa el fons.
 		//
-		g.setColor(color);
-		g.fillRectangle(0, 0, width, height);
+		g.fillRectangle(0, 0, width, height, color);
 
 		// Finalitza el renderitzat.
 		//

@@ -599,6 +599,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer_RGB565.h</locationURI>
@@ -754,6 +759,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosBitmap.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosBrush.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosBrush.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosColor.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
@@ -822,6 +832,11 @@
 			<name>src/Framework/EOS/Controllers/Display/eosColorFrameBuffer.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColorFrameBuffer.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.cpp</name>
@@ -1002,6 +1017,11 @@
 			<name>src/Framework/EOS/System/Graphics/eosBitmap.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosBitmap.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosBrush.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosBrush.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/eosColor.cpp</name>

@@ -24,9 +24,9 @@ RGB565_DMA2D_FrameBuffer::RGB565_DMA2D_FrameBuffer(
 	int lineBytes):
 
 	ColorFrameBuffer(screenWidth, screenHeight, orientation),
-	buffer(buffer),
-	lineWidth(lineBytes / sizeof(uint16_t)),
-	lineBytes(lineBytes) {
+	_buffer(buffer),
+	_lineWidth(lineBytes / _pixelBytes),      // Amplada de linia en pixels
+	_lineBytes(lineBytes) {                   // Amplada de linia en bytes
 
     halDMA2DInitialize();
 }
@@ -47,7 +47,7 @@ void RGB565_DMA2D_FrameBuffer::put(
 	uint8_t opacity = color.getOpacity();
 	if (opacity != 0) {
 		uint16_t c = color.toRGB565();
-		uint16_t* p = (uint16_t*)(buffer + ((y * lineWidth) + x) * sizeof(uint16_t));
+		uint16_t* p = (uint16_t*) getPixelAddr(x, y);
 	    *p = opacity == 0xFF ? c : ColorMath::RGB565_combineColor(*p, c, opacity);
 	}
 }
@@ -72,13 +72,13 @@ void RGB565_DMA2D_FrameBuffer::fill(
 	uint8_t opacity = color.getOpacity();
 	if (opacity == 0xFF) {
 
-		uint32_t addr = (int)buffer + ((y * lineWidth) + x) * sizeof(uint16_t);
+		uint32_t addr = getPixelAddr(x, y);
 
 		halDMA2DStartFill(
 			addr,
 			width,
 			height,
-			lineWidth - width,
+			_lineWidth - width,
 			HAL_DMA2D_DFMT_RGB565,
 			color.toRGB565());
 
@@ -115,8 +115,6 @@ void RGB565_DMA2D_FrameBuffer::copy(
 	int dy,
 	int pitch) {
 
-	uint32_t addr = (int)buffer + ((y * lineWidth) + x) * sizeof(uint16_t);
-
 #if defined(EOS_COLOR_ARGB8888)
 	uint32_t colorAddr = ((uint32_t) colors) + (((dy * height) + dx) * sizeof(uint32_t));
 	DMA2DOptions options = HAL_DMA2D_DFMT_RGB565 | HAL_DMA2D_SFMT_ARGB8888;
@@ -129,11 +127,13 @@ void RGB565_DMA2D_FrameBuffer::copy(
 #error No se especifico el formato de color del sistema
 #endif
 
+	uint32_t addr = getPixelAddr(x, y);
+
 	halDMA2DStartCopy(
 		addr,
 		width,
 		height,
-		lineWidth - width,
+		_lineWidth - width,
 		options,
 		colorAddr,
 	    pitch);

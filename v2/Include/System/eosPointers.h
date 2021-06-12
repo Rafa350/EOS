@@ -24,14 +24,14 @@ namespace eos {
             RefCounter* _count;
 
         public:
-            SharedPtr(T* ptr) {
-                _ptr = ptr;
-                _count = new RefCounter(1);
+            SharedPtr(T* ptr):
+            	_ptr(ptr),
+				_count(new RefCounter(1)) {
             }
 
-            SharedPtr (const SharedPtr<T>& other) {
-                _ptr = other._ptr;
-                _count = other._count;
+            SharedPtr (const SharedPtr<T>& other):
+                _ptr(other._ptr),
+                _count(other._count) {
                 _count->inc();
             }
 

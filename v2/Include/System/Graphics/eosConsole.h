@@ -11,14 +11,16 @@ namespace eos {
 
 	class Console {
 		private:
-			Graphics *graphics;
-			int x;
-			int y;
-			int width;
-			int height;
-			int cx;
-			int cy;
-			int state;
+			Graphics *_graphics;
+			int _x;
+			int _y;
+			int _width;
+			int _height;
+			Color _bkColor;
+			Color _fgColor;
+			int _cx;
+			int _cy;
+			int _state;
 
 		public:
 			Console(Graphics *graphics, int x, int y, int width, int height);
@@ -28,8 +30,8 @@ namespace eos {
 			void put(char ch);
 			void put(const char *s, int offset, int length);
 
-			inline int getX() const { return x; }
-			inline int getY() const { return y; }
+			inline int getX() const { return _x; }
+			inline int getY() const { return _y; }
 	};
 }
 

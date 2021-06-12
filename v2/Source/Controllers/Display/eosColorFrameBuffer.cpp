@@ -11,42 +11,13 @@ using namespace eos;
 /// \param    screenWidth: Amplada fisica de la pantalla.
 /// \param    screenHeight: Alçada fisica de la pantalla.
 /// \param    orientation: Orientacio inicial.
-/// \param    imageBuffer: Buffer d'imatge.
-/// \param    colorFormat: Format de color del buffer.
 ///
 ColorFrameBuffer::ColorFrameBuffer(
 	int screenWidth,
 	int screenHeight,
 	DisplayOrientation orientation):
 
-	screenWidth(screenWidth),
-	screenHeight(screenHeight) {
-
-	setOrientation(orientation);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Canvia l'orientacio de la imatge.
-/// \param    orientation: L'orientacio.
-///
-void ColorFrameBuffer::setOrientation(
-	DisplayOrientation orientation) {
-
-	this->orientation = orientation;
-	switch (orientation) {
-		case DisplayOrientation::normal:
-		case DisplayOrientation::rotate180:
-			maxX = screenWidth - 1;
-			maxY = screenHeight - 1;
-			break;
-
-		case DisplayOrientation::rotate90:
-		case DisplayOrientation::rotate270:
-			maxX = screenHeight - 1;
-			maxY = screenWidth - 1;
-			break;
-	}
+	FrameBuffer(screenWidth, screenHeight, orientation) {
 }
 
 
@@ -57,7 +28,7 @@ void ColorFrameBuffer::setOrientation(
 void ColorFrameBuffer::clear(
 	const Color &color) {
 
-	fill(0, 0, maxX + 1, maxY + 1, color);
+	fill(0, 0, getWidth(), getHeight(), color);
 }
 
 
@@ -72,7 +43,7 @@ void ColorFrameBuffer::setPixel(
 	int y,
 	const Color& color) {
 
-	if ((x >= 0) && (x <= maxX) && (y >= 0) && (y <= maxY)) {
+	if ((x >= 0) && (x < getWidth()) && (y >= 0) && (y < getHeight())) {
 		rotate(x, y);
 		put(x, y, color);
 	}
@@ -103,8 +74,8 @@ void ColorFrameBuffer::setPixels(
 	//
 	x1 = Math::max(x1, 0);
 	y1 = Math::max(y1, 0);
-	x2 = Math::min(x2, maxX);
-	y2 = Math::min(y2, maxY);
+	x2 = Math::min(x2, getWidth() - 1);
+	y2 = Math::min(y2, getHeight() - 1);
 
 	// Cas que nomes sigui un pixel
 	//
@@ -147,109 +118,3 @@ void ColorFrameBuffer::writePixels(
 
 	copy(x, y, width, height, colors, dx, dy, pitch);
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief Rota les coordinades d'un punt.
-/// \param x: Coordinada X del punt.
-/// \param y: Coordinada Y del punt.
-///
-void ColorFrameBuffer::rotate(
-	int &x,
-	int &y) {
-
-	int xx;
-	int yy;
-
-	// Realitza la rotacio. D'aquesta manera es mes rapida que
-	// fer dues multiplicacione fent servir la formula.
-	//
-	switch (orientation) {
-		default:
-		case DisplayOrientation::normal:
-            xx = x;
-            yy = y;
-			break;
-
-		case DisplayOrientation::rotate90:
-			xx = (screenWidth - 1) - y;
-			yy = x;
-			break;
-
-		case DisplayOrientation::rotate180:
-			xx = (screenWidth - 1) - x;
-			yy = (screenHeight - 1) - y;
-			break;
-
-		case DisplayOrientation::rotate270:
-			xx = y;
-			yy = (screenHeight - 1) - x;
-			break;
-	}
-
-	x = xx;
-	y = yy;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Rota les coordinades d'un rectangle.
-/// \param x1: Coordinada X esquerra.
-/// \param y1: Coordinada Y superior.
-/// \param x2: Coordinada X dreta.
-/// \param y2: Coordinada Y inferior.
-/// \remarks Les coordinades son retornades en forma normalitzada.
-///
-void ColorFrameBuffer::rotate(
-	int &x1,
-	int &y1,
-	int &x2,
-	int &y2) {
-
-	int xx1;
-	int yy1;
-	int xx2;
-	int yy2;
-
-	// Realitza la rotacio. D'aquesta manera es mes rapida que
-	// fer dues multiplicacione fent servir la formula.
-	//
-	switch (orientation) {
-		default:
-		case DisplayOrientation::normal:
-            xx1 = x1;
-            yy1 = y1;
-            xx2 = x2;
-            yy2 = y2;
-			break;
-
-		case DisplayOrientation::rotate90:
-			xx1 = (screenWidth - 1) - y1;
-			yy1 = x1;
-			xx2 = (screenWidth - 1) - y2;
-			yy2 = x2;
-			break;
-
-		case DisplayOrientation::rotate180:
-			xx1 = (screenWidth - 1) - x1;
-			yy1 = (screenHeight - 1) - y1;
-			xx2 = (screenWidth - 1) - x2;
-			yy2 = (screenHeight - 1) - y2;
-			break;
-
-		case DisplayOrientation::rotate270:
-			xx1 = y1;
-			yy1 = (screenHeight - 1) - x1;
-			xx2 = y2;
-			yy2 = (screenHeight - 1) - x2;
-			break;
-	}
-
-	// Normalitza el resultat
-	//
-	x1 = Math::min(xx1, xx2);
-	y1 = Math::min(yy1, yy2);
-	x2 = Math::max(xx1, xx2);
-	y2 = Math::max(yy1, yy2);
-}
-

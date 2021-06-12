@@ -12,11 +12,13 @@ using namespace eos;
 /// \brief    Dibuixa un caracter amb el font i el color actual.
 /// \param    x: La coordinada X.
 /// \param    y: La coordinada Y. El origen es a la linia base.
+/// \param    color: Color.
 /// \param    c: El caracter a dibuixar.
 ///
 int Graphics::drawChar(
     int x,
     int y,
+	const Color& color,
     char c) const {
 
     FontInfo fi;
@@ -32,7 +34,7 @@ int Graphics::drawChar(
                 int d = cy * cw;
                 for (int cx = 0; cx < ci.width; cx++)
                     if (ci.bitmap[d + (cx / 8)] & (((uint8_t)0x80) >> (cx % 8)))
-                        drawPoint(x + cx, y + cy);
+                        drawPoint(x + cx, y + cy, color);
             }
         }
 
@@ -48,6 +50,7 @@ int Graphics::drawChar(
 /// \brief    Dibuixa un text amb el font i el color actual.
 /// \param    x      : Coordinada X.
 /// \param    y      : Coordinada Y.
+/// \param    color  : Color.
 /// \param    text   : El text a dibuixar.
 /// \param    offset : El primer caracter del text
 /// \param    length : Numero de caracters a dibuixar. -1 si dibuixa fins al final
@@ -57,6 +60,7 @@ int Graphics::drawChar(
 int Graphics::drawText(
     int x,
     int y,
+	const Color& color,
     const String &text,
     unsigned offset,
     unsigned length) const {
@@ -80,7 +84,7 @@ int Graphics::drawText(
     int sx = x;
 
     for (unsigned i = offset, j = length; j && text[i]; i++, j--)
-        x += drawChar(x, y, text[i]);
+        x += drawChar(x, y, color, text[i]);
 
     return x - sx;
 }

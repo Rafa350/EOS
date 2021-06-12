@@ -19,7 +19,8 @@ Graphics::Graphics(
     IDisplayDriver *driver) :
 
     _driver(driver),
-    _color(COLOR_Black) {
+	_pen(COLOR_Black, 1, PenStyle::Solid),
+	_brush(COLOR_White) {
 
 	resetClip();
 	resetTransformation();
@@ -35,17 +36,6 @@ Graphics::Graphics(
 ///
 Graphics::~Graphics() {
 
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona el color per dibuixar.
-/// \param    color: El color a seleccionar.
-///
-void Graphics::setColor(
-    const Color &color) {
-
-    _color = color;
 }
 
 
@@ -176,7 +166,7 @@ void Graphics::clear(
 	int y2 = _driver->getHeight() - 1;
 
     if (clipRectangle(x1, y1, x2, y2))
-        _driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, _color);
+        _driver->setPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
 }
 
 
@@ -184,17 +174,19 @@ void Graphics::clear(
 /// \brief    Dibuixa un pixel.
 /// \param    x: Coordinada X del punt.
 /// \param    y: Coordinada Y del punt.
+/// \param    color: Colcor
 ///
 void Graphics::drawPoint(
     int x,
-    int y) const {
+    int y,
+	const Color& color) const {
 
 	// Transforma a coordinades fisiques
 	//
 	_state.ct.apply(x, y);
 
     if (clipPoint(x, y))
-        _driver->setPixel(x, y, _color);
+        _driver->setPixel(x, y, color);
 }
 
 

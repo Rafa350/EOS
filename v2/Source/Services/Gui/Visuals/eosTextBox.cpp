@@ -65,12 +65,10 @@ void TextBox::onRender(
 
 	Graphics &g = context->beginRender(this);
 
-	g.setColor(COLOR_DarkSeaGreen);
-	g.fillRoundedRectangle(0, 0, x2, y2, radius, radius);
+	g.fillRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_DarkSeaGreen);
 
-	g.setColor(textColor);
 	g.setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::center);
-	g.drawText(0, y2 / 2, text, 0, -1);
+	g.drawText(0, y2 / 2, textColor, text, 0, -1);
 
 	context->endRender();
 }

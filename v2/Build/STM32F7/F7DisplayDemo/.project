@@ -339,6 +339,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosMath.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/eosPointers.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosPointers.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/eosRefCounter.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosRefCounter.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/eosString.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosString.h</locationURI>
@@ -397,6 +407,11 @@
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosRefCounter.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosRefCounter.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/eosString.cpp</name>
@@ -519,6 +534,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosColorFrameBuffer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosColorFrameBuffer.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosDisplayDriver.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
@@ -634,6 +654,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosBitmap.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosBrush.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosBrush.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosColor.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
@@ -659,6 +684,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosGraphics.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosPen.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosPen.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosTransformation.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosTransformation.h</locationURI>
@@ -672,6 +702,11 @@
 			<name>src/Framework/EOS/Controllers/Display/eosColorFrameBuffer.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColorFrameBuffer.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.cpp</name>
@@ -809,6 +844,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosBitmap.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Graphics/eosBrush.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosBrush.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/Graphics/eosColor.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosColor.cpp</locationURI>
@@ -847,6 +887,11 @@
 			<name>src/Framework/EOS/System/Graphics/eosGraphics_Text.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Text.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosPen.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosPen.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/eosPoint.cpp</name>

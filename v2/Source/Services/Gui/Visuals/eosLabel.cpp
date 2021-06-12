@@ -209,10 +209,8 @@ void Label::onRender(
 
 	// Dibuixa el fons. Si es transparent optimitza i no el dibuixa.
 	//
-	if (!backgroundColor.isTransparent()) {
-		g.setColor(backgroundColor);
-		g.fillRectangle(0, 0, width, height);
-	}
+	if (!backgroundColor.isTransparent())
+		g.fillRectangle(0, 0, width, height, backgroundColor);
 
 	// Dibuixa el text
 	//
@@ -220,9 +218,8 @@ void Label::onRender(
 	Font font(fontResource);
 
 	g.setFont(font);
-	g.setColor(textColor);
 	g.setTextAlign(horizontalTextAlign, verticalTextAlign);
-	g.drawText(width / 2, height / 2, text, 0, -1);
+	g.drawText(width / 2, height / 2, textColor, text, 0, -1);
 
 	// Finalitza el renderitzat.
 	//

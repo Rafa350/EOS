@@ -53,26 +53,20 @@ void CheckButton::onRender(
 
 	// Dibuixa el fons del boto
 	//
-	g.setColor(Color::fromRGB888(0x3A3A3A));
-	g.fillRoundedRectangle(0, 0, x2, y2, radius, radius);
+	g.fillRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_DarkSlateGray);
 
 	// Dibuixa el fons del indicador
 	//
-	if (isPressed()) {
-		g.setColor(COLOR_DarkSlateGray);
-		g.fillRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius);
-	}
+	if (isPressed())
+		g.fillRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius, COLOR_DarkSlateGray);
 
 	// Dibuixa el indicador
 	//
-	if (state ==  State::unchecked) {
-		g.setColor(COLOR_LightSeaGreen);
-		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius);
-	}
+	if (state ==  State::unchecked)
+		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius, COLOR_LightSeaGreen);
 	else if (state == State::checked) {
-		g.setColor(COLOR_LightSeaGreen);
-		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius);
-		g.fillRoundedRectangle(Point(10, 10), Size(10, 10), radius / 2, radius / 2);
+		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius, COLOR_LightSeaGreen);
+		g.fillRoundedRectangle(Point(10, 10), Size(10, 10), radius / 2, radius / 2, COLOR_LightSeaGreen);
 	}
 
 	// Finalitza el renderitzat.

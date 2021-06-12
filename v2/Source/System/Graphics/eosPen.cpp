@@ -16,6 +16,7 @@ class Pen::Impl {
 	public:
 		Color color;
 		int thickness;
+		PenStyle style;
 
 	public:
     	void* operator new(unsigned size);
@@ -57,27 +58,19 @@ void Pen::Impl::operator delete(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor. Crea el objecte amb els valors per defecte.
-///
-Pen::Pen():
-	_pImpl(allocate()) {
-
-	_pImpl->color = COLOR_Black;
-	_pImpl->thickness = 1;
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    color: El color de linia.
 /// \param    thickness: Emplada de linia.
+/// \param    style: Estil.
 ///
 Pen::Pen(
 	const Color& color,
-	int thickness) :
+	int thickness,
+	PenStyle style) :
 
 	_pImpl(allocate()) {
 
+	_pImpl->style = style;
 	_pImpl->color = color;
 	_pImpl->thickness = thickness;
 }
@@ -143,4 +136,14 @@ Color Pen::getColor() const {
 int Pen::getThickness() const {
 
 	return _pImpl->thickness;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'estil.
+/// \return   El valor obtingut.
+///
+PenStyle Pen::getStyle() const {
+
+	return _pImpl->style;
 }

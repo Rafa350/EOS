@@ -11,22 +11,19 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Dibuixa un linia.
-/// \param    pen: El pen per dibuixar.
+/// \brief    Dibuixa un linia amb el pen actual.
 /// \param    p1: Punt inicial.
 /// \param    p2: Punt final.
 ///
-void Graphics::drawLine(
-	const Pen& pen,
+void Graphics::paintLine(
 	const Point& p1,
 	const Point& p2) {
 
-	Color oldColor = _color;
-	_color = pen.getColor();
+	if (_pen.getStyle() != PenStyle::Null) {
 
-	drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-
-	_color = oldColor;
+		Color color = _pen.getColor();
+		drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color);
+	}
 }
 
 
@@ -36,12 +33,14 @@ void Graphics::drawLine(
 /// \param    y1 : Coordinada y del primer punt.
 /// \param    x2 : Coordinada x del segon punt.
 /// \param    y2 : Coordinada y del segon punt.
+/// \param    color: Color.
 ///
 void Graphics::drawLine(
     int x1,
     int y1,
     int x2,
-    int y2) const {
+    int y2,
+	const Color& color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -55,7 +54,7 @@ void Graphics::drawLine(
 		if (x1 == x2) {
 			if (y1 > y2)
 				Math::swap(y1, y2);
-			_driver->setVPixels(x1, y1, y2 - y1 + 1, _color);
+			_driver->setVPixels(x1, y1, y2 - y1 + 1, color);
 		}
 
 		// Es una linia horitzontal
@@ -63,7 +62,7 @@ void Graphics::drawLine(
 		else if (y1 == y2) {
 			if (x1 > x2)
 				Math::swap(x1, x2);
-			_driver->setHPixels(x1, y1, x2 - x1 + 1, _color);
+			_driver->setHPixels(x1, y1, x2 - x1 + 1, color);
 		}
 
 		// No es ni horitzontal ni vertical
@@ -90,7 +89,7 @@ void Graphics::drawLine(
             else
                 stepX = 1;
 
-            _driver->setPixel(x1, y1, _color);
+            _driver->setPixel(x1, y1, color);
 
             // Es mes gran el desplaçament X que el Y
             //
@@ -106,7 +105,7 @@ void Graphics::drawLine(
                         y1 += stepY;
                         p += incNE;
                     }
-                    _driver->setPixel(x1, y1, _color);
+                    _driver->setPixel(x1, y1, color);
                 }
             }
 
@@ -124,7 +123,7 @@ void Graphics::drawLine(
                         x1 += stepX;
                         p += incNE;
                     }
-                    _driver->setPixel(x1, y1, _color);
+                    _driver->setPixel(x1, y1, color);
                 }
             }
 
@@ -134,7 +133,7 @@ void Graphics::drawLine(
                 while (y1 != y2) {
                     y1 += stepY;
                     x1 += stepX;
-                    _driver->setPixel(x1, y1, _color);
+                    _driver->setPixel(x1, y1, color);
                 }
             }
         }
@@ -250,14 +249,16 @@ void drawLineWu(int x1, int y1, int x2, int y2) {
 
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa una linia horitzontal.
-/// \param    x1 : Coordinada X inicial.
-/// \param    x2 : Coordinada Y final.
-/// \param    y  : Coordinada Y.
+/// \param    x1: Coordinada X inicial.
+/// \param    x2: Coordinada Y final.
+/// \param    y: Coordinada Y.
+/// \param    color: Color.
 ///
 void Graphics::drawHLine(
 	int x1,
 	int x2,
-	int y) const {
+	int y,
+	const Color& color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -270,21 +271,23 @@ void Graphics::drawHLine(
 		if (x1 > x2)
 			Math::swap(x1, x2);
 
-		_driver->setHPixels(x1, y, x2 - x1 + 1, _color);
+		_driver->setHPixels(x1, y, x2 - x1 + 1, color);
 	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa una linia vertical.
-/// \param    x  : Coordinada X.
-/// \param    y1 : Coordinada Y inicial.
-/// \param    y2 : Coordinada Y final.
+/// \param    x: Coordinada X.
+/// \param    y1: Coordinada Y inicial.
+/// \param    y2: Coordinada Y final.
+/// \param    color: Color.
 ///
 void Graphics::drawVLine(
 	int x,
 	int y1,
-	int y2) const {
+	int y2,
+	const Color& color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -297,7 +300,7 @@ void Graphics::drawVLine(
 		if (y1 > y2)
 			Math::swap(y1, y2);
 
-		_driver->setVPixels(x, y1, y2 - y1 + 1, _color);
+		_driver->setVPixels(x, y1, y2 - y1 + 1, color);
 	}
 }
 

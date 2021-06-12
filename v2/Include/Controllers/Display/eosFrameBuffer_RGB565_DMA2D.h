@@ -8,11 +8,17 @@
 
 namespace eos {
 
+	/// \brief Superficie de dibuix basada en memoria ram en format RGB565
+	///
 	class RGB565_DMA2D_FrameBuffer: public ColorFrameBuffer {
 		private:
-			uint8_t* buffer;
-			int lineWidth;
-			int lineBytes;
+			uint8_t* _buffer;
+			int _lineWidth;
+			int _lineBytes;
+			constexpr static int _pixelBytes = sizeof(uint16_t);
+
+		private:
+			inline uint32_t getPixelAddr(int x, int y) { return (int)_buffer + (y * _lineBytes) + (x * _pixelBytes); }
 
 		protected:
 			void put(int x, int y, const Color& color) override;

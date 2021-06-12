@@ -4,6 +4,7 @@
 
 #include "eos.h"
 #include "System/Graphics/eosColor.h"
+#include "Controllers/Display/eosFrameBuffer.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 
 
@@ -11,32 +12,11 @@ namespace eos {
 
 	/// \brief Superficie de dibuix basada en memoria ram
 	///
-	class ColorFrameBuffer {
-
-		private:
-			int screenWidth;
-			int screenHeight;
-			int maxX;
-			int maxY;
-			DisplayOrientation orientation;
-            
-        private:
-            void rotate(int& x, int& y);
-            void rotate(int& x1, int& y1, int &x2, int& y2);
-
-        protected:
-            virtual void put(int x, int y, const Color& color) = 0;
-            virtual void fill(int x, int y, int width, int height, const Color& color) = 0;
-            virtual void copy(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch) = 0;
+	class ColorFrameBuffer: public FrameBuffer {
 
 		public:
 			ColorFrameBuffer(int screenWidth, int screenHeight, DisplayOrientation orientation);
 			virtual ~ColorFrameBuffer() = default;
-
-            void setOrientation(DisplayOrientation orientation);
-
-            inline int getWidth() const { return maxX + 1; }
-            inline int getHeight() const { return maxY + 1; }
 
             void clear(const Color &color);
             void setPixel(int x, int y, const Color& color);

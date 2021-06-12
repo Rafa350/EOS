@@ -31,13 +31,14 @@ using namespace app;
 #if defined(EOS_STM32F7) || defined(EOS_STM32F4)
 static uint64_t rnd = 0L;
 
-void srand(uint32_t r) {
+
+void __srand(uint32_t r) {
 
 	rnd = r;
 }
 
 
-uint32_t rand(void) {
+uint32_t __rand(void) {
 
 	const uint64_t a = 1664523;
 	const uint64_t c = 1013904223;
@@ -111,7 +112,7 @@ void DisplayService::onLoop() {
     	orientation = 0;
 
     const uint8_t *pFontResource = Font::getFontResource("Consolas", 14, FontStyle::regular);
-    Font *font = new Font(pFontResource);
+    Font font(pFontResource);
     graphics->setFont(font);
     graphics->setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::top);
 
@@ -126,30 +127,29 @@ void DisplayService::onLoop() {
     drawBackground("50K Points");
     Task::delay(250);
 
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
 
-    srand(seed);
+    __srand(seed);
     ticks = Task::getTickCount();
     for (int i = 0; i < 50000; i++) {
-        int x = rand() % screenWidth;
-        int y = rand() % screenHeight;
+        int x = __rand() % screenWidth;
+        int y = __rand() % screenHeight;
 
-        graphics->setColor(rand() | 0xFF000000);
-        graphics->drawPoint(x, y);
+        Color c(__rand() | 0xFF000000);
+        graphics->drawPoint(x, y, c);
     }
     pointsTicks = Task::getTickCount() - ticks;
     Task::delay(250);
 
-    srand(seed);
-    graphics->setColor(COLOR_Black);
+    __srand(seed);
     for (int i = 0; i < 50000; i++) {
-        int x = rand() % screenWidth;
-        int y = rand() % screenHeight;
+        int x = __rand() % screenWidth;
+        int y = __rand() % screenHeight;
 
-        rand(); // Mantre la sequencia de 3 rand's per cicle
+        __rand(); // Mantre la sequencia de 3 rand's per cicle
 
-        graphics->drawPoint(x, y);
+        graphics->drawPoint(x, y, COLOR_Black);
     }
 
     Task::delay(250);
@@ -161,16 +161,16 @@ void DisplayService::onLoop() {
     drawBackground("Vertical lines");
     Task::delay(250);
 
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 250; i++) {
-        int x = rand() % screenWidth;
-        int y1 = rand() % screenHeight;
-        int y2 = rand() % screenHeight;
+        int x = __rand() % screenWidth;
+        int y1 = __rand() % screenHeight;
+        int y2 = __rand() % screenHeight;
 
-        graphics->setColor(rand() | 0xFF000000);
-        graphics->drawVLine(x, y1, y2);
+        Color c(__rand() | 0xFF000000);
+        graphics->drawVLine(x, y1, y2, c);
     }
     verticalLinesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -180,16 +180,16 @@ void DisplayService::onLoop() {
     drawBackground("Horizontal lines");
     Task::delay(250);
 
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 250; i++) {
-        int x1 = rand() % screenWidth;
-        int x2 = rand() % screenWidth;
-        int y = rand() % screenHeight;
+        int x1 = __rand() % screenWidth;
+        int x2 = __rand() % screenWidth;
+        int y = __rand() % screenHeight;
 
-        graphics->setColor(rand() | 0xFF000000);
-        graphics->drawHLine(x1, x2, y);
+        Color c(__rand() | 0xFF000000);
+        graphics->drawHLine(x1, x2, y, c);
     }
     horizontalLinesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -199,17 +199,17 @@ void DisplayService::onLoop() {
     drawBackground("Random lines");
     Task::delay(250);
 
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 250; i++) {
-        int x1 = rand() % screenWidth;
-        int y1 = rand() % screenHeight;
-        int x2 = rand() % screenWidth;
-        int y2 = rand() % screenHeight;
+        int x1 = __rand() % screenWidth;
+        int y1 = __rand() % screenHeight;
+        int x2 = __rand() % screenWidth;
+        int y2 = __rand() % screenHeight;
 
-        graphics->setColor(rand() | 0xFF000000);
-        graphics->drawLine(x1, y1, x2, y2);
+        Color c(__rand() | 0xFF000000);
+        graphics->drawLine(x1, y1, x2, y2, c);
     }
     linesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -222,17 +222,17 @@ void DisplayService::onLoop() {
     drawBackground("Rectangles");
     Task::delay(250);
 
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 200; i++) {
-        int x1 = rand() % screenWidth;
-        int y1 = rand() % screenHeight;
-        int x2 = x1 + rand() % 150;
-        int y2 = y1 + rand() % 150;
+        int x1 = __rand() % screenWidth;
+        int y1 = __rand() % screenHeight;
+        int x2 = x1 + __rand() % 150;
+        int y2 = y1 + __rand() % 150;
 
-        graphics->setColor(rand() | 0xFF000000);
-        graphics->drawRectangle(x1, y1, x2, y2);
+        Color c(__rand() | 0xFF000000);
+        graphics->drawRectangle(x1, y1, x2, y2, c);
     }
     rectanglesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -242,17 +242,17 @@ void DisplayService::onLoop() {
     drawBackground("Filled rectangles");
     Task::delay(250);
 
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 200; i++) {
-        int x1 = rand() % screenWidth;
-        int y1 = rand() % screenHeight;
-        int x2 = x1 + rand() % 150;
-        int y2 = y1 + rand() % 150;
+        int x1 = __rand() % screenWidth;
+        int y1 = __rand() % screenHeight;
+        int x2 = x1 + __rand() % 150;
+        int y2 = y1 + __rand() % 150;
 
-        graphics->setColor(rand() | 0xFF000000);
-        graphics->fillRectangle(x1, y1, x2, y2);
+        Color c(__rand() | 0xFF000000);
+        graphics->fillRectangle(x1, y1, x2, y2, c);
     }
     filledRectanglesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -264,16 +264,16 @@ void DisplayService::onLoop() {
     drawBackground("Ellipses");
     Task::delay(250);
 
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 200; i++) {
-        int cx = rand() % screenWidth;
-        int cy = rand() % screenHeight;
-        int r = (rand() % 60) + 3;
+        int cx = __rand() % screenWidth;
+        int cy = __rand() % screenHeight;
+        int r = (__rand() % 60) + 3;
 
-        graphics->setColor(rand() | 0xFF000000);
-        graphics->drawEllipse(cx - r, cy - r, cx + r, cy + r);
+        Color c(__rand() | 0xFF000000);
+        graphics->drawEllipse(cx - r, cy - r, cx + r, cy + r, c);
     }
     ellipsesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -283,16 +283,16 @@ void DisplayService::onLoop() {
     drawBackground("Filled ellipses");
     Task::delay(250);
 
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
     for (int i = 0; i < 200; i++) {
-        int cx = rand() % screenWidth;
-        int cy = rand() % screenHeight;
-        int r = (rand() % 60) + 3;
+        int cx = __rand() % screenWidth;
+        int cy = __rand() % screenHeight;
+        int r = (__rand() % 60) + 3;
 
-        graphics->setColor(rand() | 0xFF000000);
-       	graphics->fillEllipse(cx - r, cy - r, cx + r, cy + r);
+        Color c(__rand() | 0xFF000000);
+       	graphics->fillEllipse(cx - r, cy - r, cx + r, cy + r, c);
     }
     filledEllipsesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -307,23 +307,22 @@ void DisplayService::onLoop() {
     char lineBuffer[30];
     int y = 50;
 
-    graphics->setColor(COLOR_Yellow);
     sprintf(lineBuffer, "50K Points    %d ms", pointsTicks * 2);
-    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "V. lines      %d ms", verticalLinesTicks * 2);
-    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "H. lines      %d ms", horizontalLinesTicks * 2);
-    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "Lines         %d ms", linesTicks * 2);
-    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "Rectangles    %d ms", rectanglesTicks * 2);
-    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "F. rectangles %d ms", filledRectanglesTicks * 2);
-    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "Ellipses      %d ms", ellipsesTicks * 2);
-    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "F. ellipses   %d ms", filledEllipsesTicks * 2);
-    graphics->drawText(10, y, lineBuffer, 0, -1); y += 20;
+    graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
 
     Task::delay(5000);
 }
@@ -334,11 +333,10 @@ void DisplayService::drawBackground(
 
 	graphics->resetClip();
     graphics->clear(COLOR_Black);
-    graphics->setColor(COLOR_Red);
-    graphics->drawRectangle(0, 0, screenWidth - 1, screenHeight - 1);
-    graphics->drawLine(screenWidth - 1, 20, 0, 20);
-    graphics->drawText(4, 16, title, 0, -1);
-    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10);
+    graphics->drawRectangle(0, 0, screenWidth - 1, screenHeight - 1, COLOR_Red);
+    graphics->drawLine(screenWidth - 1, 20, 0, 20, COLOR_Red);
+    graphics->drawText(4, 16, COLOR_Yellow, title, 0, -1);
+    graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
 }
 
 
@@ -352,15 +350,9 @@ void DisplayService::testOpacity() {
 	drawBackground("Opacity");
 
 	graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
-
-	graphics->setColor(Color(128, 255, 0, 0));
-	graphics->fillRectangle(Point(40, 40), Size(w, w));
-
-	graphics->setColor(Color(128, 0, 255, 0));
-	graphics->fillRectangle(Point(80, 80), Size(w, w));
-
-	graphics->setColor(Color(128, 0, 0, 255));
-	graphics->fillRectangle(Point(120, 120), Size(w, w));
+	graphics->fillRectangle(Point(40, 40), Size(w, w), Color(128, 255, 0, 0));
+	graphics->fillRectangle(Point(80, 80), Size(w, w), Color(128, 0, 255, 0));
+	graphics->fillRectangle(Point(120, 120), Size(w, w), Color(128, 0, 0, 255));
 
 	Task::delay(5000);
 }

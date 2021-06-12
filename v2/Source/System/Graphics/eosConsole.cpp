@@ -12,8 +12,6 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Constructor de l'objecte.
 /// \param graphics: Objecte 'Graphics' per dibuixar.
-/// \param columns: Numero de columnes.
-/// \param rows: Numero de fil�leres.
 ///
 Console::Console(
 	Graphics *graphics,
@@ -22,14 +20,16 @@ Console::Console(
 	int width,
 	int height) :
 
-	graphics(graphics),
-	x(x),
-	y(y),
-	width(width),
-	height(height),
-	cx(0),
-	cy(0),
-	state(0) {
+	_graphics(graphics),
+	_x(x),
+	_y(y),
+	_width(width),
+	_height(height),
+	_bkColor(COLOR_Black),
+	_fgColor(COLOR_Yellow),
+	_cx(0),
+	_cy(0),
+	_state(0) {
 }
 
 
@@ -38,7 +38,7 @@ Console::Console(
 ///
 void Console::clear() {
 
-	graphics->clear(COLOR_Black);
+	_graphics->clear(_bkColor);
 	home();
 }
 
@@ -47,8 +47,8 @@ void Console::clear() {
 ///
 void Console::home() {
 
-	cx = 0;
-	cy = 0;
+	_cx = 0;
+	_cy = 0;
 }
 
 
@@ -61,8 +61,8 @@ void Console::moveTo(
 	int x,
 	int y) {
 
-	cx = x;
-	cy = y;
+	_cx = x;
+	_cy = y;
 }
 
 
@@ -73,48 +73,48 @@ void Console::moveTo(
 void Console::put(
     char c) {
 
-    Font font = graphics->getFont();
+    Font font = _graphics->getFont();
 
-    switch (state) {
+    switch (_state) {
         case 0:
             switch (c) {
                 case (char)0xFF:
-                    state = 1;
+                    _state = 1;
                     break;
 
                 case (char)0xFE:
-                    graphics->clear(COLOR_Black);
+                    _graphics->clear(_bkColor);
                     break;
 
                 case (char)0xFD:
-                	x = 0;
-                	y = 0;
+                	_cx = 0;
+                	_cy = 0;
                     break;
 
                 case '\r':
-                    x = 0;
+                    _cx = 0;
                     break;
 
                 case '\n':
-                    cx = 0;
-                    cy += font.getFontHeight();
-                    if (cy >= height)
-                        cy = 0;
+                    _cx = 0;
+                    _cy += font.getFontHeight();
+                    if (_cy >= _height)
+                        _cy = 0;
                     break;
 
                 default: {
                     CharInfo ci;
                     font.getCharInfo(c, ci);
-                    if ((cx + ci.advance) >= width) {
-                        cx = 0;
-                        cy += font.getFontHeight();
-                        if (y >= height) {
+                    if ((_cx + ci.advance) >= _width) {
+                        _cx = 0;
+                        _cy += font.getFontHeight();
+                        if (_cy >= _height) {
 
                             // TODO: fer scroll de pantalla linia a linia
                             return;
                         }
                     }
-                    cx += graphics->drawChar(x + cx, y + cy, c);
+                    _cx += _graphics->drawChar(_x + _cx, _y + _cy, _fgColor, c);
                     break;
                 }
             }

@@ -55,17 +55,13 @@ void PushButton::onRender(
 	//
 	switch (state) {
 		case State::normal:
-			g.setColor(COLOR_Teal);
-			g.fillRoundedRectangle(0, 0, x2, y2, radius, radius);
-			g.setColor(COLOR_LightSeaGreen);
-			g.drawRoundedRectangle(0, 0, x2, y2, radius, radius);
+			g.fillRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_Teal);
+			g.drawRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_LightSeaGreen);
 			break;
 
 		case State::pushed:
-			g.setColor(COLOR_CadetBlue);
-			g.fillRoundedRectangle(0, 0, x2, y2, radius, radius);
-			g.setColor(COLOR_LightCyan);
-			g.drawRoundedRectangle(0, 0, x2, y2, radius, radius);
+			g.fillRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_CadetBlue);
+			g.drawRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_LightCyan);
 			break;
 
 		default:

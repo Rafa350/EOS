@@ -20,7 +20,7 @@ static uint8_t __buffer[500];
 GfxDisplay::GfxDisplay(
     I2CMasterService *i2cService,
     uint8_t addr) :
-    
+
     cb(__buffer, sizeof(__buffer)),
     transactionCallback(this, &GfxDisplay::transactionHandler) {
 
@@ -35,9 +35,9 @@ GfxDisplay::GfxDisplay(
 ///
 void GfxDisplay::setColor(
     uint8_t color) {
-    
+
     this->color = color;
-    
+
 }
 
 
@@ -47,32 +47,34 @@ void GfxDisplay::setColor(
 ///
 void GfxDisplay::setFont(
     uint8_t font) {
-    
+
 }
 
 
 int GfxDisplay::getTextWidth(const char *text) {
-    
+
+    return 0;
 }
 
 
 int GfxDisplay::getTextHeight(const char *text) {
-    
+
+    return 0;
 }
 
 
 void GfxDisplay::putTTY(char ch) {
-    
+
 }
 
 
 void GfxDisplay::putTTY(const char *s) {
-    
+
 }
 
 
 void GfxDisplay::putTTY(const char *s, int length) {
-    
+
 }
 
 
@@ -82,7 +84,7 @@ void GfxDisplay::putTTY(const char *s, int length) {
 ///
 void GfxDisplay::clear(
     uint8_t color) {
-    
+
     cb.cmdClear();
 }
 
@@ -93,11 +95,11 @@ void GfxDisplay::clear(
 /// \param    : y: CoordinadaY de la posicio.
 ///
 void GfxDisplay::moveTo(
-    int x, 
+    int x,
     int y) {
-    
+
     cb.cmdMoveTo(x, y);
-    
+
     curX = x;
     curY = y;
 }
@@ -110,22 +112,22 @@ void GfxDisplay::moveTo(
 /// \remarks  La nova posicio pasa a ser la posicio actual.
 ///
 void GfxDisplay::lineTo(
-    int x, 
+    int x,
     int y) {
-    
+
     cb.cmdDrawLine(curX, curY, x, y);
-    
+
     curX = x;
     curY = y;
 }
 
 
 void GfxDisplay::arcTo(
-    int x, 
-    int y, 
-    int cx, 
+    int x,
+    int y,
+    int cx,
     int cy) {
-    
+
 }
 
 
@@ -137,9 +139,9 @@ void GfxDisplay::arcTo(
 /// \param    y2: Coordinada Y final.
 ///
 void GfxDisplay::drawLine(
-    int x1, 
-    int y1, 
-    int x2, 
+    int x1,
+    int y1,
+    int x2,
     int y2) {
 
     cb.cmdDrawLine(x1, y1, x2, y2);
@@ -152,13 +154,13 @@ void GfxDisplay::drawLine(
 /// \param    y1: Coordinada Y inicial.
 /// \param    x2: Coordinada X final.
 /// \param    y2: Coordinada Y final.
-/// 
+///
 void GfxDisplay::drawRectangle(
-    int x1, 
-    int y1, 
-    int x2, 
+    int x1,
+    int y1,
+    int x2,
     int y2) {
-    
+
     cb.cmdDrawRectangle(x1, y1, x2, y2);
 }
 
@@ -170,35 +172,37 @@ void GfxDisplay::drawRectangle(
 /// \param    r: Radi.
 ///
 void GfxDisplay::drawCircle(
-    int cx, 
-    int cy, 
+    int cx,
+    int cy,
     int r) {
-    
+
     cb.cmdDrawEllipse(cx - r, cy - r, cx + r, cy + r);
 }
 
 
 void GfxDisplay::drawBitmap1BPP(
-    int x, 
-    int y, 
-    const uint8_t *bitmap, 
-    int sx, 
-    int sy, 
+    int x,
+    int y,
+    const uint8_t *bitmap,
+    int sx,
+    int sy,
     uint8_t color) {
-    
+
 }
 
 
 int GfxDisplay::drawChar(
-    int x, 
-    int y, 
+    int x,
+    int y,
     char c) {
-    
+
     static char s[2] = { 0, 0 };
-    
+
     s[1] = 0;
-    
+
     cb.cmdDrawText(x, y, "c");
+
+    return 0;
 }
 
 
@@ -209,25 +213,27 @@ int GfxDisplay::drawChar(
 /// \param    text: El text a dibuixar.
 ///
 int GfxDisplay::drawString(
-    int x, 
-    int y, 
+    int x,
+    int y,
     const String &text) {
 
     cb.cmdDrawText(x, y, text);
+
+    return 0;
 }
 
 
 void GfxDisplay::fillRectangle(
-    int x1, 
-    int y1, 
-    int x2, 
+    int x1,
+    int y1,
+    int x2,
     int y2) {
 
 }
 
 
 void GfxDisplay::fillCircle(int cx, int cy, int r) {
-    
+
 }
 
 
@@ -235,16 +241,16 @@ void GfxDisplay::fillCircle(int cx, int cy, int r) {
 /// \brief    Refresca la patalla.
 ///
 void GfxDisplay::refresh() {
-    
+
     cb.cmdRefresh();
-    
+
     i2cService->startTransaction(
-        addr,  
-        I2CMasterService::TransactionProtocol::packet, 
-        cb.getBuffer(), 
-        cb.getBufferPos(), 
+        addr,
+        I2CMasterService::TransactionProtocol::packet,
+        cb.getBuffer(),
+        cb.getBufferPos(),
         &transactionCallback);
-    
+
     // Espara que finalitzi la transaccio
     //
     lock.wait(-1);
@@ -261,6 +267,6 @@ void GfxDisplay::refresh() {
 ///
 void GfxDisplay::transactionHandler(
     const I2CMasterService::TransactionEventArgs& args) {
-    
+
     lock.release();
 }

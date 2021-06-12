@@ -15,6 +15,7 @@ using namespace eos;
 /// \param    y2: Coordinada y del segon punt.
 /// \param    rx: Radi x de les cantonades.
 /// \param    ry: Radi y de les cantonades.
+/// \param    color: Color.
 ///
 void Graphics::drawRoundedRectangle(
 	int x1,
@@ -22,7 +23,8 @@ void Graphics::drawRoundedRectangle(
 	int x2,
 	int y2,
 	int rx,
-	int ry) const {
+	int ry,
+	const Color& color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -65,22 +67,22 @@ void Graphics::drawRoundedRectangle(
 		xx1 = xc1 - x;
 		yy1 = yc1 - y;
 		if (clipPoint(xx1, yy1))
-			_driver->setPixel(xx1, yy1, _color);
+			_driver->setPixel(xx1, yy1, color);
 
 	    xx1 = xc2 + x;
 	    yy1 = yc1 - y;
 		if (clipPoint(xx1, yy1))
-			_driver->setPixel(xx1, yy1, _color);
+			_driver->setPixel(xx1, yy1, color);
 
 		xx1 = xc1 - x;
 		yy1 = yc2 + y;
 		if (clipPoint(xx1, yy1))
-			_driver->setPixel(xx1, yy1, _color);
+			_driver->setPixel(xx1, yy1, color);
 
 		xx1 = xc2 + x;
 		yy1 = yc2 + y;
 		if (clipPoint(xx1, yy1))
-			_driver->setPixel(xx1, yy1, _color);
+			_driver->setPixel(xx1, yy1, color);
 
 		y += 1;
 		stoppingY += aa;
@@ -109,22 +111,22 @@ void Graphics::drawRoundedRectangle(
 		xx1 = xc1 - x;
 		yy1 = yc1 - y;
 		if (clipPoint(xx1, yy1))
-			_driver->setPixel(xx1, yy1, _color);
+			_driver->setPixel(xx1, yy1, color);
 
 	    xx1 = xc2 + x;
 	    yy1 = yc1 - y;
 		if (clipPoint(xx1, yy1))
-			_driver->setPixel(xx1, yy1, _color);
+			_driver->setPixel(xx1, yy1, color);
 
 		xx1 = xc1 - x;
 		yy1 = yc2 + y;
 		if (clipPoint(xx1, yy1))
-			_driver->setPixel(xx1, yy1, _color);
+			_driver->setPixel(xx1, yy1, color);
 
 		xx1 = xc2 + x;
 		yy1 = yc2 + y;
 		if (clipPoint(xx1, yy1))
-			_driver->setPixel(xx1, yy1, _color);
+			_driver->setPixel(xx1, yy1, color);
 
 		x += 1;
 		stoppingX += bb;
@@ -144,25 +146,25 @@ void Graphics::drawRoundedRectangle(
 	yy1 = yc1;
 	yy2 = yc2;
 	if (clipVLine(xx1, yy1, yy2))
-		_driver->setVPixels(xx1, yy1, yc2 - yc1 + 1, _color);
+		_driver->setVPixels(xx1, yy1, yc2 - yc1 + 1, color);
 
 	xx1 = x2;
 	yy1 = yc1;
 	yy2 = yc2;
 	if (clipVLine(xx1, yy1, yy2))
-		_driver->setVPixels(xx1, yy1, yc2 - yc1 + 1, _color);
+		_driver->setVPixels(xx1, yy1, yc2 - yc1 + 1, color);
 
 	xx1 = xc1;
 	xx2 = xc2;
 	yy1 = y1;
 	if (clipHLine(xx1, xx2, yy1))
-		_driver->setHPixels(xx1, yy1, xc2 - xc1 + 1, _color);
+		_driver->setHPixels(xx1, yy1, xc2 - xc1 + 1, color);
 
 	xx1 = xc1;
 	xx2 = xc2;
 	yy1 = y2;
 	if (clipHLine(xx1, xx2, yy1))
-		_driver->setHPixels(xx1, yy1, xc2 - xc1 + 1, _color);
+		_driver->setHPixels(xx1, yy1, xc2 - xc1 + 1, color);
 
 }
 
@@ -182,7 +184,8 @@ void Graphics::fillRoundedRectangle(
 	int x2,
 	int y2,
 	int rx,
-	int ry) const {
+	int ry,
+	const Color& color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -226,13 +229,13 @@ void Graphics::fillRoundedRectangle(
 	    xx2 = xc2 + x;
 		yy1 = yc1 - y;
 		if (clipHLine(xx1, xx2, yy1))
-			_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, _color);
+			_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, color);
 
 		xx1 = xc1 - x;
 		xx2 = xc2 + x;
 		yy1 = yc2 + y;
 		if (clipHLine(xx1, xx2, yy1))
-			_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, _color);
+			_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, color);
 
 		y += 1;
 		stoppingY += aa;
@@ -262,13 +265,13 @@ void Graphics::fillRoundedRectangle(
 	    xx2 = xc2 + x;
 		yy1 = yc1 - y;
 		if (clipHLine(xx1, xx2, yy1))
-			_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, _color);
+			_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, color);
 
 		xx1 = xc1 - x;
 		xx2 = xc2 + x;
 		yy1 = yc2 + y;
 		if (clipHLine(xx1, xx2, yy1))
-			_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, _color);
+			_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, 1, color);
 
 		x += 1;
 		stoppingX += bb;
@@ -289,5 +292,5 @@ void Graphics::fillRoundedRectangle(
 	xx2 = x2;
 	yy2 = yc2;
 	if (clipRectangle(xx1, yy1, xx2, yy2))
-		_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, yy2 - yy1 + 1, _color);
+		_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, yy2 - yy1 + 1, color);
 }
