@@ -27,6 +27,7 @@ void Graphics::paintLine(
 }
 
 
+#if 1
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa una linia amb l'algorisme de Bresenham
 /// \param    x1 : Coordinada x del primer punt.
@@ -139,6 +140,96 @@ void Graphics::drawLine(
         }
     }
 }
+#endif
+
+
+#if 0
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa una linia amb l'algorisme EFLA (Extremely Fasl Line Algorithm)
+/// \param    x1 : Coordinada x del primer punt.
+/// \param    y1 : Coordinada y del primer punt.
+/// \param    x2 : Coordinada x del segon punt.
+/// \param    y2 : Coordinada y del segon punt.
+/// \param    color: Color.
+///
+void Graphics::drawLine(
+    int x1,
+    int y1,
+    int x2,
+    int y2,
+	const Color& color) const {
+
+	// Transforma a coordinades fisiques
+	//
+	transform(x1, y1);
+	transform(x2, y2);
+
+    if (clipLine(x1, y1, x2, y2)) {
+
+    	// Es una linea vertical
+		//
+		if (x1 == x2) {
+			if (y1 > y2)
+				Math::swap(y1, y2);
+			_driver->setVPixels(x1, y1, y2 - y1 + 1, color);
+		}
+
+		// Es una linia horitzontal
+		//
+		else if (y1 == y2) {
+			if (x1 > x2)
+				Math::swap(x1, x2);
+			_driver->setHPixels(x1, y1, x2 - x1 + 1, color);
+		}
+
+		// No es ni horitzontal ni vertical
+		//
+		else {
+
+			int shortLen = y2 - y1;
+			int longLen = x2 - x1;
+			bool yLonger = Math::abs(shortLen) > Math::abs(longLen);
+			if (yLonger)
+				Math::swap(shortLen, longLen);
+			int delta = (shortLen << 16) / longLen;
+
+			if (yLonger) {
+				if (longLen > 0) {
+					longLen += y1;
+					for (int j = 0x8000 + (x1 << 16); y1 <= longLen; y1++) {
+						_driver->setPixel(j >> 16, y1, color);
+						j += delta;
+					}
+				}
+				else {
+					longLen += y1;
+					for (int j = 0x8000 + (x1 << 16); y1 >= longLen; y1--) {
+						_driver->setPixel(j >> 16, y1, color);
+						j -= delta;
+					}
+				}
+			}
+
+			else {
+				if (longLen > 0) {
+					longLen += x1;
+					for (int j = 0x8000 + (y1 << 16); x1 <= longLen; x1++) {
+						_driver->setPixel(x1, j >> 16, color);
+						j += delta;
+					}
+				}
+				else {
+					longLen += x1;
+					for (int j = 0x8000 + (y1 << 16); x1 >= longLen; x1--) {
+						_driver->setPixel(x1, j >> 16, color);
+						j -= delta;
+					}
+				}
+			}
+		}
+    }
+}
+#endif
 
 
 /// ----------------------------------------------------------------------

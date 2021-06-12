@@ -124,7 +124,7 @@ void DisplayService::onLoop() {
     // Points
     //
 #ifdef TEST_POINTS
-    drawBackground("50K Points");
+    drawBackground("Random points");
     Task::delay(250);
 
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
@@ -164,7 +164,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 250; i++) {
+    for (int i = 0; i < 5000; i++) {
         int x = __rand() % screenWidth;
         int y1 = __rand() % screenHeight;
         int y2 = __rand() % screenHeight;
@@ -183,7 +183,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 250; i++) {
+    for (int i = 0; i < 5000; i++) {
         int x1 = __rand() % screenWidth;
         int x2 = __rand() % screenWidth;
         int y = __rand() % screenHeight;
@@ -202,7 +202,7 @@ void DisplayService::onLoop() {
     graphics->drawRectangle(7, 27, screenWidth - 10, screenHeight - 10, COLOR_Red);
     graphics->setClip(8, 28, screenWidth - 11, screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 250; i++) {
+    for (int i = 0; i < 5000; i++) {
         int x1 = __rand() % screenWidth;
         int y1 = __rand() % screenHeight;
         int x2 = __rand() % screenWidth;
@@ -307,7 +307,7 @@ void DisplayService::onLoop() {
     char lineBuffer[30];
     int y = 50;
 
-    sprintf(lineBuffer, "50K Points    %d ms", pointsTicks * 2);
+    sprintf(lineBuffer, "Points        %d ms", pointsTicks * 2);
     graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
     sprintf(lineBuffer, "V. lines      %d ms", verticalLinesTicks * 2);
     graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
