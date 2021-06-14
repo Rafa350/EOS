@@ -48,8 +48,8 @@ namespace eos {
 
 	class RGBDirectDriver: public IDisplayDriver {
     	private:
-    		ColorFrameBuffer *frontFrameBuffer;
-    		ColorFrameBuffer *backFrameBuffer;
+    		FrameBuffer *frontFrameBuffer;
+    		FrameBuffer *backFrameBuffer;
     		int frontFrameAddr;
     		int backFrameAddr;
 

@@ -37,6 +37,16 @@ namespace eos {
 
             inline int getWidth() const { return _maxX + 1; }
             inline int getHeight() const { return _maxY + 1; }
+
+            void clear(const Color &color);
+            void setPixel(int x, int y, const Color& color);
+            inline void setHPixels(int x, int y, int size, const Color& color) { setPixels(x, y, size, 1, color); }
+            inline void setVPixels(int x, int y, int size, const Color& color) { setPixels(x, y, 1, size, color); }
+            void setPixels(int x, int y, int width, int height, const Color& color);
+            void writePixels(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch);
+            /*void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch);
+            void vScroll(int delta, int x, int y, int width, int height);
+            void hScroll(int delta, int x, int y, int width, int height);*/
 	};
 }
 

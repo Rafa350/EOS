@@ -3,14 +3,14 @@
 
 
 #include "eos.h"
-#include "Controllers/Display/eosColorFrameBuffer.h"
+#include "Controllers/Display/eosFrameBuffer.h"
 
 
 namespace eos {
 
 	/// \brief Superficie de dibuix basada en memoria ram en format RGB565
 	///
-	class RGB565_DMA2D_FrameBuffer: public ColorFrameBuffer {
+	class RGB565_DMA2D_FrameBuffer: public FrameBuffer {
 		private:
 			uint8_t* _buffer;
 			int _lineWidth;
