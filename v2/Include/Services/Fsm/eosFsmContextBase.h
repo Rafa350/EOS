@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/Collections/eosStack.h"
+#include "System/Collections/eosFIFOContainer.h"
 
 
 namespace eos {
@@ -13,16 +13,16 @@ namespace eos {
     class FsmStateBase;
 
 	class FsmContextBase {
-        
+
         private:
-            typedef Stack<FsmStateBase*> StateStack;
-            
+            typedef FIFOContainer<FsmStateBase*, 20> StateStack;
+
 		private:
             FsmStateBase* state;
             StateStack stateStack;
-            
+
 		protected:
-			FsmContextBase();               
+			FsmContextBase();
             void initialize(FsmStateBase* state);
             FsmStateBase* getState() const;
 
@@ -32,7 +32,7 @@ namespace eos {
             void endTransitionPush(FsmStateBase* state);
             void endTransitionPop();
 	};
-    
+
 }
 
 

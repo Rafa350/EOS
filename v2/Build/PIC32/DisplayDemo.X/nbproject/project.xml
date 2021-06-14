@@ -23,10 +23,15 @@
                 <sourceRootElem>../../../Library/PIC32/FreeRTOS/Source</sourceRootElem>
                 <sourceRootElem>../../../Source/Services</sourceRootElem>
                 <sourceRootElem>../../../Source/System</sourceRootElem>
+                <sourceRootElem>../../../Source/Controllers/Display/Drivers/SSD1306</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
                     <name>PINGUINO</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>PIC32_USB_STARTER_KIT_1</name>
                     <type>2</type>
                 </confElem>
             </confList>

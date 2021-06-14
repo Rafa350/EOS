@@ -40,7 +40,7 @@ extern "C" void isrTMR2Handler(void) {
 
     extern TMRData digInputTimer;
 
-    halTMRInterruptHandler(&digInputTimer);
+    halTMRInterruptHandler((TMRHandler)&digInputTimer);
 }
 #endif
 
@@ -53,7 +53,7 @@ extern "C" void isrTMR3Handler(void) {
 
     extern TMRData digOutputTimer;
 
-    halTMRInterruptHandler(&digOutputTimer);
+    halTMRInterruptHandler((TMRHandler)&digOutputTimer);
 }
 #endif
 

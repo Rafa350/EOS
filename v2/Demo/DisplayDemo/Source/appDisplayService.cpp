@@ -10,6 +10,8 @@
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #elif defined(DISPLAY_DRV_RGBLTDC)
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
+#elif defined(DISPLAY_DRV_SSD1306)
+#include "Controllers/Display/Drivers/eosSSD1306.h"
 #else
 #error No se especifico DISPLAY_DRV_XXXX
 #endif
@@ -37,7 +39,6 @@ void __srand(uint32_t r) {
 	rnd = r;
 }
 
-
 uint32_t __rand(void) {
 
 	const uint64_t a = 1664523;
@@ -47,6 +48,9 @@ uint32_t __rand(void) {
 	return (uint32_t) rnd;
 
 }
+#elif defined(EOS_PIC32)
+#define __srand(a)  srand(a)
+#define __rand()    rand()
 #endif
 
 
@@ -79,6 +83,8 @@ void DisplayService::onSetup() {
 	driver = ILI9341Driver::getInstance();
 #elif defined(DISPLAY_DRV_RGBLTDC)
 	driver = new RGBDirectDriver();
+#elif defined(DISPLAY_DRV_SSD1306)
+	driver = SSD1306Driver::getInstance();
 #else
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif

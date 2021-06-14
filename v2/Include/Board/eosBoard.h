@@ -20,6 +20,9 @@
 #elif defined(HARDWARE_STM32F769I_DISCO)
     #include "Board/eosBoard_STM32F769I_DISCO.h"
 
+#elif defined(HARDWARE_PINGUINO)
+    #include "Board/eosBoard_PINGUINO.h"
+
 #else
     #error "Undefined HARDWARE_XXXX"
 

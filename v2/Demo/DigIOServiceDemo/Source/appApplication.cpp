@@ -56,7 +56,7 @@ void MyApplication::onInitialize() {
 #else
     //#error CPU no soportada
 #endif
-    halTMRInitialize(&digInputTimer, &tmrSettings);
+    TMRHandler hDigInputServiceTimer = halTMRInitialize(&digInputTimer, &tmrSettings);
 
     // Inicialitza les interrupcions
     //
@@ -66,7 +66,7 @@ void MyApplication::onInitialize() {
     // Inicialitza el servei d'entrades digitals
 	//
     DigInputService::Settings digInputServiceSettings;
-    digInputServiceSettings.hTimer = &digInputTimer;
+    digInputServiceSettings.hTimer = hDigInputServiceTimer;
     digInputService = new DigInputService(this, digInputServiceSettings);
     digInputService->setPriority(Task::Priority::high);
 
@@ -127,7 +127,7 @@ void MyApplication::onInitialize() {
 #else
     //#error CPU no soportada
 #endif
-	halTMRInitialize(&digOutputTimer, &tmrSettings);
+	TMRHandler hDigOutputServiceTimer = halTMRInitialize(&digOutputTimer, &tmrSettings);
 
     // Inicialitza les interrupcions
     //
@@ -137,7 +137,7 @@ void MyApplication::onInitialize() {
     // Inicialitza el servei de sortides digitals
     //
     DigOutputService::Settings digOutputServiceSettings;
-    digOutputServiceSettings.hTimer = &digOutputTimer;
+    digOutputServiceSettings.hTimer = hDigOutputServiceTimer;
     digOutputService = new DigOutputService(this, digOutputServiceSettings);
 
     DigOutput::Settings digOutputSettings;

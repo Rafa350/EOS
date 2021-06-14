@@ -106,4 +106,4 @@ void halI2CClearInterruptFlags(I2CHandler handler, uint32_t sources);
 #endif
 
 
-#endif // __halI2C__
+#endif // __PIC32_halI2C__

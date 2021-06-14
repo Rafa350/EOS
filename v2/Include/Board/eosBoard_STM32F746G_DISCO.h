@@ -18,9 +18,10 @@
 #define LEDS_STATE_OFF            0
 
 #ifdef EXIST_LEDS_LED1
-#define LEDS_Led1Initialize()      halGPIOInitializePin(LEDS_LED1_PORT, LEDS_LED1_PIN, HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE)
-#define LEDS_Led1On()              halGPIOSetPin(LEDS_LED1_PORT, LEDS_LED1_PIN)
-#define LEDS_Led1Toggle()          halGPIOTogglePin(LEDS_LED1_PORT, LEDS_LED1_PIN)
+#define LEDS_Led1Initialize()     halGPIOInitializePin(LEDS_LED1_PORT, LEDS_LED1_PIN, HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE)
+#define LEDS_Led1On()             halGPIOSetPin(LEDS_LED1_PORT, LEDS_LED1_PIN)
+#define LEDS_Led1Off()            halGPIOClearPin(LEDS_LED1_PORT, LEDS_LED1_PIN)
+#define LEDS_Led1Toggle()         halGPIOTogglePin(LEDS_LED1_PORT, LEDS_LED1_PIN)
 #endif
 
 

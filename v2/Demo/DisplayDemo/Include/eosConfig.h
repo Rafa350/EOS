@@ -7,6 +7,7 @@
 #define USE_DISPLAY
 
 //#define DISPLAY_DOUBLE_BUFFER
+#define DISPLAY_DRV_SSD1306
 
 
 #include "board/eosBoard.h"

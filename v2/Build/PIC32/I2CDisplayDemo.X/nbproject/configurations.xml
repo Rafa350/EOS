@@ -344,7 +344,7 @@
         <property key="mitcm" value=""/>
         <property key="mstacktcm" value="false"/>
         <property key="omit-pack-options" value="1"/>
-        <property key="relaxed-math" value="false"/>
+        <property key="relaxed-math" value="true"/>
         <property key="save-temps" value="false"/>
         <property key="stack-smashing" value=""/>
         <property key="wpo-lto" value="false"/>
