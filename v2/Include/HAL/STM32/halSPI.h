@@ -111,10 +111,10 @@ typedef struct {                       // Parametres d'inicialitzacio
 	SPIOptions options;                // -Opcions
 	SPIInterruptFunction isrFunction;  // -Funcio d'interrupcio
 	void *isrParams;                   // -Parametres de la funcio d'interrupcio
-} SPIInitializeInfo;
+} SPISettings;
 
 
-SPIHandler halSPIInitialize(SPIData* data, const SPIInitializeInfo *info);
+SPIHandler halSPIInitialize(SPIData* data, const SPISettings *settings);
 void halSPIDeinitialize(SPIHandler handler);
 
 bool halSPIIsBusy(SPIHandler handler);

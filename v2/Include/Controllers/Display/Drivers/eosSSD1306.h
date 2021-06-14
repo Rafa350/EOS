@@ -3,6 +3,7 @@
 
 
 #include "eos.h"
+#include "HAL/halSPI.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "System/Graphics/eosColor.h"
 
@@ -19,9 +20,10 @@ namespace eos {
 
     class SSD1306Driver: public IDisplayDriver {
     	private:
-    		static IDisplayDriver *instance;
-    		int screenWidth;
-    		int screenHeight;
+    		static IDisplayDriver *_instance;
+    		const int _screenWidth;
+    		const int _screenHeight;
+    		SPIHandler _hSpi;
 
         public:
     		static IDisplayDriver *getInstance();
@@ -30,8 +32,8 @@ namespace eos {
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() const { return screenWidth; }
-            int getHeight() const { return screenHeight; }
+            int getWidth() const { return _screenWidth; }
+            int getHeight() const { return _screenHeight; }
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
             void setHPixels(int x, int y, int size, const Color &color) override;
@@ -47,9 +49,10 @@ namespace eos {
             SSD1306Driver();
 
             void oledInitialize();
+            void oledSelect();
+            void oledUnselect();
             void oledWriteCommand(uint8_t cmd);
             void oledWriteData(uint8_t data);
-
     };
 }
 

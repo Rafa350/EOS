@@ -17,13 +17,13 @@ using namespace eos;
 /// \param    lineBytes: Bytes per linia d'imatge.
 ///
 RGB565_DMA2D_FrameBuffer::RGB565_DMA2D_FrameBuffer(
-	int screenWidth,
-	int screenHeight,
+	int frameWidth,
+	int frameHeight,
 	DisplayOrientation orientation,
 	uint8_t* buffer,
 	int lineBytes):
 
-	ColorFrameBuffer(screenWidth, screenHeight, orientation),
+	FrameBuffer(frameWidth, frameHeight, orientation),
 	_buffer(buffer),
 	_lineWidth(lineBytes / _pixelBytes),      // Amplada de linia en pixels
 	_lineBytes(lineBytes) {                   // Amplada de linia en bytes

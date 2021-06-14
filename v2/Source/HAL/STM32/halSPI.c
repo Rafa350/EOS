@@ -169,19 +169,19 @@ static void setupDevice(
 /// ----------------------------------------------------------------------
 /// \brief    Inicilitza el modul SPI.
 /// \param    data: Buffer de dades.
-/// \param    info: Parametres d'inicialitzacio.
+/// \param    settings: Parametres d'inicialitzacio.
 ///
 SPIHandler halSPIInitialize(
 	SPIData* data,
-	const SPIInitializeInfo *info) {
+	const SPISettings *settings) {
 
 	eosAssert(data != NULL);
-	eosAssert(info != NULL);
+	eosAssert(settings != NULL);
 
-	SPI_TypeDef* device = getDevice(info->channel);
+	SPI_TypeDef* device = getDevice(settings->channel);
 
 	enableDeviceClock(device);
-    setupDevice(device, &data->handle, info->options);
+    setupDevice(device, &data->handle, settings->options);
 
     SPIHandler handler = data;
     handler->device = device;

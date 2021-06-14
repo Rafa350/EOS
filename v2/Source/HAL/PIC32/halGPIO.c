@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "HAL/PIC32/halGPIO.h"
 
 

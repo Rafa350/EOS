@@ -27,11 +27,15 @@
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>PINGUINO</name>
+                    <name>PINGUINO_ILI9341_SPI</name>
                     <type>2</type>
                 </confElem>
                 <confElem>
-                    <name>PIC32_USB_STARTER_KIT_1</name>
+                    <name>PIC32_USB_STARTER_KIT_1_ILI9341_SPI</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>PIC32_USB_STARTER_KIT_1_SSD1306</name>
                     <type>2</type>
                 </confElem>
             </confList>

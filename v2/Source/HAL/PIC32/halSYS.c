@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "HAL/PIC32/halINT.h"
 #include "HAL/PIC32/halSYS.h"
 

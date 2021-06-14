@@ -16,7 +16,7 @@ RGB565_FrameBuffer::RGB565_FrameBuffer(
 	uint8_t* buffer,
 	int lineBytes):
 
-	FrameBufferBase(screenWidth, screenHeight, orientation),
+	FrameBuffer(screenWidth, screenHeight, orientation),
 	buffer(buffer),
 	lineBytes(lineBytes) {
 

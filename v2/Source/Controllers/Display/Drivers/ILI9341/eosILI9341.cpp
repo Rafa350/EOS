@@ -1,7 +1,4 @@
 #include "eos.h"
-
-#ifdef DISPLAY_DRV_ILI9341
-
 #include "eosAssert.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #include "Controllers/Display/Drivers/eosILI9341Defs.h"
@@ -624,5 +621,3 @@ void ILI9341Driver::readRegion(
     }
     lcdClose();
 }
-
-#endif // DISPLAY_DRV_ILI9341

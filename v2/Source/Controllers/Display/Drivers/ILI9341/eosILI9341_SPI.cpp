@@ -1,7 +1,5 @@
 #include "eos.h"
-
-#ifdef DISPLAY_DRV_ILI9341
-
+#include "eosAssert.h"
 #include "Controllers/Display/Drivers/eosILI9341.h"
 #include "HAL/halSPI.h"
 #include "HAL/halGPIO.h"
@@ -42,7 +40,7 @@ void ILI9341Driver::lcdInitialize() {
 			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF           }
 	};
 
-	static SPIInitializeInfo const spiInit = {
+	static SPISettings const spiInit = {
 		DISPLAY_SPI_ID,
 			HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
 			HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
@@ -142,6 +140,3 @@ uint8_t ILI9341Driver::lcdReadData() {
 	return 0;
 #endif
 }
-
-
-#endif // USE_DISPLAY_ILI9341

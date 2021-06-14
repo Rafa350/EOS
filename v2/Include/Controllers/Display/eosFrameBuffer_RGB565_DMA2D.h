@@ -18,7 +18,7 @@ namespace eos {
 			constexpr static int _pixelBytes = sizeof(uint16_t);
 
 		private:
-			inline uint32_t getPixelAddr(int x, int y) { return (int)_buffer + (y * _lineBytes) + (x * _pixelBytes); }
+			inline uint32_t getPixelAddr(int x, int y) const { return (int)_buffer + (y * _lineBytes) + (x * _pixelBytes); }
 
 		protected:
 			void put(int x, int y, const Color& color) override;
@@ -26,7 +26,7 @@ namespace eos {
             void copy(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch) override;
 
 		public:
-			RGB565_DMA2D_FrameBuffer(int screenWidth, int screenHeight, DisplayOrientation orientation, uint8_t* buffer, int lineBytes);
+			RGB565_DMA2D_FrameBuffer(int frameWidth, int frameHeight, DisplayOrientation orientation, uint8_t* buffer, int lineBytes);
 	};
 }
 

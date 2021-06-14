@@ -3,8 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/Controllers/Display/Drivers/SSD1306/eosSSD1306.cpp</file>
-            <file>file:/C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/Controllers/Display/Drivers/eosSSD1306.h</file>
+            <file>file:/C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/HAL/PIC32/halSPI.c</file>
+            <file>file:/C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/HAL/PIC32/halSPI.h</file>
         </group>
     </open-files>
 </project-private>

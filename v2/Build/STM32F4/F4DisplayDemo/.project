@@ -49,6 +49,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/App/Board</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/App/STM32F4</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -112,6 +117,16 @@
 			<name>src/Framework/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/App/Board/eosBoard_Custom.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/Board/eosBoard_Custom.h</locationURI>
+		</link>
+		<link>
+			<name>inc/App/Board/eosBoard_Custom_STM32F429I_DISC1.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/DisplayDemo/Include/Board/eosBoard_Custom_STM32F429I_DISC1.h</locationURI>
 		</link>
 		<link>
 			<name>inc/App/STM32F4/FreeRTOSConfig.h</name>
@@ -344,6 +359,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosCallbacks.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/eosPointers.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosPointers.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/eosRefCounter.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosRefCounter.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/eosString.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosString.h</locationURI>
@@ -397,6 +422,11 @@
 			<name>src/Framework/EOS/System/eosApplication.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/eosRefCounter.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosRefCounter.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/eosString.cpp</name>
@@ -599,6 +629,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosInterrupts.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Core/eosPoolAllocator.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosPoolAllocator.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
@@ -644,9 +679,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosColorFrameBuffer.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColorFrameBuffer.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.cpp</name>
@@ -722,6 +757,11 @@
 			<name>src/Framework/EOS/System/Core/eosHeapAllocator.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosHeapAllocator.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Core/eosPoolAllocator.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosPoolAllocator.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosTask.cpp</name>
@@ -824,12 +864,27 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosILI9341LTDC.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosSSD1306.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosSSD1306.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosSSD1306Defs.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosSSD1306Defs.h</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/SSD1306</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -869,24 +924,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/FontTable.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Tahoma10pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Tahoma10pt.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/Fonts/Tahoma12pt.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Tahoma12pt.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PIO8.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_PMP8.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_PMP8.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SIO.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</name>
@@ -897,6 +947,11 @@
 			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/SSD1306/eosSSD1306.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/SSD1306/eosSSD1306.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

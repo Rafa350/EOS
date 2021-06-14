@@ -8,6 +8,9 @@
 #elif defined(HARDWARE_CUSTOM_STM32F746G_DISCO)
     #include "Board/eosBoard_Custom_STM32F746G_DISCO.h"
 
+#elif defined(HARDWARE_CUSTOM_STM32F429I_DISC1)
+    #include "Board/eosBoard_Custom_STM32F429I_DISC1.h"
+
 #elif defined(HARDWARE_CUSTOM_PINGUINO)
     #include "Board/eosBoard_Custom_PINGUINO.h"
 

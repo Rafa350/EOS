@@ -7,7 +7,7 @@
 #include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
 #include "HAL/halINT.h"
 #include "hAL/halTMR.h"
-#include "hAL/halGPIO.h"
+#include "HAL/halGPIO.h"
 #include "HAL/halSPI.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "System/eosMath.h"
@@ -53,7 +53,7 @@ static inline pixel_t combinePixel(
 }
 
 
-IDisplayDriver *ILI9341LTDCDriver::instance = nullptr;
+IDisplayDriver *ILI9341LTDCDriver::_instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
@@ -62,9 +62,9 @@ IDisplayDriver *ILI9341LTDCDriver::instance = nullptr;
 ///
 IDisplayDriver *ILI9341LTDCDriver::getInstance() {
 
-	if (instance == nullptr)
-		instance = new ILI9341LTDCDriver();
-	return instance;
+	if (_instance == nullptr)
+		_instance = new ILI9341LTDCDriver();
+	return _instance;
 }
 
 
@@ -73,7 +73,7 @@ IDisplayDriver *ILI9341LTDCDriver::getInstance() {
 ///
 ILI9341LTDCDriver::ILI9341LTDCDriver() {
 
-	frameBuffer = new RGB565_DMA2D_FrameBuffer(
+	_frameBuffer = new RGB565_DMA2D_FrameBuffer(
 		DISPLAY_SCREEN_WIDTH,
 		DISPLAY_SCREEN_HEIGHT,
 		DisplayOrientation::normal,
@@ -111,7 +111,7 @@ void ILI9341LTDCDriver::shutdown() {
 void ILI9341LTDCDriver::setOrientation(
 	DisplayOrientation orientation) {
 
-	frameBuffer->setOrientation(orientation);
+	_frameBuffer->setOrientation(orientation);
 }
 
 
@@ -122,7 +122,7 @@ void ILI9341LTDCDriver::setOrientation(
 void ILI9341LTDCDriver::clear(
 	const Color &color) {
 
-	frameBuffer->clear(color);
+	_frameBuffer->clear(color);
 }
 
 
@@ -138,7 +138,7 @@ void ILI9341LTDCDriver::setPixel(
 	int y,
 	const Color &color) {
 
-	frameBuffer->setPixel(x, y, color);
+	_frameBuffer->setPixel(x, y, color);
 }
 
 
@@ -156,7 +156,7 @@ void ILI9341LTDCDriver::setHPixels(
 	int size,
 	const Color &color) {
 
-	frameBuffer->setPixels(x, y, size, 1, color);
+	_frameBuffer->setPixels(x, y, size, 1, color);
 }
 
 
@@ -174,7 +174,7 @@ void ILI9341LTDCDriver::setVPixels(
 	int size,
 	const Color &color) {
 
-	frameBuffer->setPixels(x, y, 1, size, color);
+	_frameBuffer->setPixels(x, y, 1, size, color);
 }
 
 
@@ -193,7 +193,7 @@ void ILI9341LTDCDriver::setPixels(
 	int height,
 	const Color &color) {
 
-	frameBuffer->setPixels(x, y, width, height, color);
+	_frameBuffer->setPixels(x, y, width, height, color);
 }
 
 
@@ -356,7 +356,7 @@ void ILI9341LTDCDriver::writeCommands(
 ///
 void ILI9341LTDCDriver::lcdInitialize() {
 
-	static const GPIOInitializePinInfo gpioInit[] = {
+	static const GPIOPinSettings gpioInit[] = {
 #ifdef DISPLAY_RST_PIN
 		{ DISPLAY_RST_PORT,    DISPLAY_RST_PIN,
 			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0 },
@@ -375,7 +375,7 @@ void ILI9341LTDCDriver::lcdInitialize() {
 			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF}
 	};
 
-	static const SPIInitializeInfo spiInit = {
+	static const SPISettings spiInit = {
 		DISPLAY_SPI_ID,
 			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
 	};
@@ -452,7 +452,7 @@ void ILI9341LTDCDriver::initializeLTDC() {
 
     uint32_t tmp;
 
-    static const GPIOInitializePinInfo gpioInit[] = {
+    static const GPIOPinSettings gpioInit[] = {
     	{ DISPLAY_DE_PORT,     DISPLAY_DE_PIN,
     		HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_DE_AF    },
 		{ DISPLAY_HSYNC_PORT,  DISPLAY_HSYNC_PIN,

@@ -54,13 +54,13 @@ typedef int32_t pixel_t;
 #endif
 
 namespace eos {
-    
+
     class Color;
 
     class ILI9341LTDCDriver: public IDisplayDriver {
         private:
-    		static IDisplayDriver *instance;
-            ColorFrameBuffer* frameBuffer;
+    		static IDisplayDriver* _instance;
+            FrameBuffer* _frameBuffer;
 
         public:
             static IDisplayDriver *getInstance();;
@@ -69,8 +69,8 @@ namespace eos {
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() const override { return frameBuffer->getWidth(); }
-            int getHeight() const override { return frameBuffer->getHeight(); }
+            int getWidth() const override { return _frameBuffer->getWidth(); }
+            int getHeight() const override { return _frameBuffer->getHeight(); }
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
             void setHPixels(int x, int y, int size, const Color &color) override;

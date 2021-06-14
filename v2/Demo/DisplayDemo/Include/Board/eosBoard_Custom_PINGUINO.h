@@ -1,5 +1,5 @@
-#ifndef __eosBoard_CUSSOM_PINGUINO__
-#define __eosBoard_CUSTOM_PINGUINO__
+#ifndef __eosBoard_Custom_PINGUINO__
+#define __eosBoard_Custom_PINGUINO__
 
 
 #include "Board/eosBoard_PINGUINO.h"
@@ -60,4 +60,4 @@
 //
 #define ILI9341_DATAPort     E
 
-#endif // __eosBoard_CUSTOM_PINGUINO__
+#endif // __eosBoard_Custom_PINGUINO__

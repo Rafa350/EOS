@@ -106,6 +106,8 @@
 #define FONT_USE_Consolas14pt
 #define FONT_USE_Consolas18pt
 #define FONT_USE_Consolas24pt
+#define FONT_USE_Tahoma12pt
+#define FONT_USE_Tahoma14pt
 
 // Tipus de pantalla
 //
@@ -119,8 +121,10 @@
 
 // Parametres del controlador
 //
-//#define DISPLAY_DRV_ILI9341LTDC        // Driver ILI9341-RGB
-#define DISPLAY_DRV_ILI9341            // Driver ILI9341
+#if !defined(DISPLAY_DRV_ILI9341) && !defined(DISPLAY_DRV_ILI9341LTDC)
+#define DISPLAY_DRV_ILI9341LTDC        // Driver ILI9341 amb accelerador
+//#define DISPLAY_DRV_ILI9341            // Driver ILI9341
+#endif
 
 
 // -----------------------------------------------------------------------

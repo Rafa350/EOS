@@ -534,11 +534,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosColorFrameBuffer.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosColorFrameBuffer.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosDisplayDriver.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
@@ -547,6 +542,11 @@
 			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer_L1.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer_L1.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h</name>
@@ -697,11 +697,6 @@
 			<name>src/Framework/EOS/Controllers/Display/Drivers</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosColorFrameBuffer.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColorFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer.cpp</name>

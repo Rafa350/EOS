@@ -14,15 +14,15 @@ namespace eos {
 	class FrameBuffer {
 
 		private:
-			int _screenWidth;
-			int _screenHeight;
+			const int _frameWidth;
+			const int _frameHeight;
 			int _maxX;
 			int _maxY;
 			DisplayOrientation _orientation;
 
         protected:
-            void rotate(int& x, int& y);
-            void rotate(int& x1, int& y1, int &x2, int& y2);
+            void rotate(int& x, int& y) const;
+            void rotate(int& x1, int& y1, int &x2, int& y2) const;
 
         protected:
             virtual void put(int x, int y, const Color& color) = 0;
@@ -30,7 +30,7 @@ namespace eos {
             virtual void copy(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch) = 0;
 
 		public:
-			FrameBuffer(int screenWidth, int screenHeight, DisplayOrientation orientation);
+			FrameBuffer(int frameWidth, int frameHeight, DisplayOrientation orientation);
 			virtual ~FrameBuffer() = default;
 
             void setOrientation(DisplayOrientation orientation);
