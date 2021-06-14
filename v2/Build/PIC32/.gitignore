@@ -3,3 +3,5 @@ build
 debug
 disassembly
 .generated_files
+*.mk
+*.bash
