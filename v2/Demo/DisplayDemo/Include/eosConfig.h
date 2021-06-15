@@ -1,7 +1,6 @@
 #ifndef __eosConfig__
 #define __eosConfig__
 
-
 #if defined(BUILD_ILI9341_SPI)
 #if defined(EOS_STM32F4)
 #define HARDWARE_STM32F429I_DISC1
@@ -38,7 +37,7 @@
 #define HARDWARE_CUSTOM_PIC32_USB_STARTER_KIT_I
 #define DISPLAY_ADAFRUIT_SSD1306_128x64_D098
 #else
-#error "Hardware no soportado para ILI9341-LTDC "
+#error "Hardware no soportado para SSD1306"
 #endif
 #define DISPLAY_DRV_SSD1306
 

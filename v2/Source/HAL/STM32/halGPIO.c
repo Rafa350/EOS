@@ -34,59 +34,49 @@ static void enableDeviceClock(
 	switch ((uint32_t) device) {
 		case GPIOA_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
-			__DSB();
 			break;
 
 		case GPIOB_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
-			__DSB();
 			break;
 
 		case GPIOC_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
-			__DSB();
 			break;
 
 		case GPIOD_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
-			__DSB();
 			break;
 
 		case GPIOE_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
-			__DSB();
 			break;
 
 		case GPIOF_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
-			__DSB();
 			break;
 
 		case GPIOG_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
-			__DSB();
 			break;
 
 		case GPIOH_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
-			__DSB();
 			break;
 
 		case GPIOI_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
-			__DSB();
 			break;
 
 		case GPIOJ_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN);
-			__DSB();
 			break;
 
 		case GPIOK_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
-			__DSB();
 			break;
 	}
+	__DSB();
 }
 
 

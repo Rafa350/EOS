@@ -48,16 +48,18 @@
 #define HAL_SPI_MODE_2            (HAL_SPI_CPOL_HIGH | HAL_SPI_CPHA_EDGE1)
 #define HAL_SPI_MODE_3            (HAL_SPI_CPOL_HIGH | HAL_SPI_CPHA_EDGE2)
 
-// Opcions: Tamany de les dades 8 o 16 bits
+// Opcions: Tamany de les dades 8, 16 o 32 bits
 #define HAL_SPI_SIZE_pos          2
-#define HAL_SPI_SIZE_bits         0b1
+#define HAL_SPI_SIZE_bits         0b11
 #define HAL_SPI_SIZE_mask         (HAL_SPI_SIZE_bits << HAL_SPI_SIZE_pos)
 
 #define HAL_SPI_SIZE_8            (0 << HAL_SPI_SIZE_pos)
 #define HAL_SPI_SIZE_16           (1 << HAL_SPI_SIZE_pos)
+#define HAL_SPI_SIZE_24           (2 << HAL_SPI_SIZE_pos)
+#define HAL_SPI_SIZE_32           (3 << HAL_SPI_SIZE_pos)
 
 // Opcions: Modus Master/Slave
-#define HAL_SPI_MS_pos            3
+#define HAL_SPI_MS_pos            4
 #define HAL_SPI_MS_bits           0b1
 #define HAL_SPI_MS_mask           (HAL_SPI_MS_bits << HAL_SPI_MS_pos)
 
@@ -65,7 +67,7 @@
 #define HAL_SPI_MS_SLAVE          (1 << HAL_SPI_MS_pos)
 
 // Opcions: Primer bit a transmetre
-#define HAL_SPI_FIRSTBIT_pos      4
+#define HAL_SPI_FIRSTBIT_pos      5
 #define HAL_SPI_FIRSTBIT_bits     0b1
 #define HAL_SPI_FIRSTBIT_mask     (HAL_SPI_FIRSTBIT_bits << HAL_SPI_FIRSTBIT_pos)
 
@@ -73,7 +75,7 @@
 #define HAL_SPI_FIRSTBIT_LSB      (1 << HAL_SPI_FIRSTBIT_pos)
 
 // Opcions: CRC automatic
-#define HAL_SPI_CRC_pos           5
+#define HAL_SPI_CRC_pos           6
 #define HAL_SPI_CRC_bits          0b1
 #define HAL_SPI_CRC_mask          (HAL_SPI_CRC_bits << HAL_SPI_CRC_pos)
 
@@ -81,7 +83,7 @@
 #define HAL_SPI_CRC_ENABLED       (0 << HAL_SPI_CRC_pos)
 
 // Opcions: Divisor del rellotge
-#define HAL_SPI_CLOCKDIV_pos      6
+#define HAL_SPI_CLOCKDIV_pos      7
 #define HAL_SPI_CLOCKDIV_bits     0b111
 #define HAL_SPI_CLOCKDIV_mask     (HAL_SPI_CLOCKDIV_bits << HAL_SPI_CLOCKDIV_pos)
 
@@ -105,26 +107,24 @@ typedef struct __SPIData* SPIHandler;
 typedef void (*SPIInterruptFunction)(SPIHandler handler, void *params);
 
 typedef struct  __attribute__((packed , aligned(4))) {
-    volatile uint32_t SPIxCON;
+    __SPI2CONbits_t SPIxCON;
     volatile uint32_t SPIxCONCLR;
     volatile uint32_t SPIxCONSET;
     volatile uint32_t SPIxCONINV;
-#ifdef SPI1CON2
-    volatile uint32_t SPIxCON2;
-    volatile uint32_t SPIxCON2CLR;
-    volatile uint32_t SPIxCON2SET;
-    volatile uint32_t SPIxCON2INV;
-#endif
-    volatile uint32_t SPIxSTAT;
+    __SPI2STATbits_t SPIxSTAT;
     volatile uint32_t SPIxSTATCLR;
     volatile uint32_t SPIxSTATSET;
     volatile uint32_t SPIxSTATINV;
     volatile uint32_t SPIxBUF;
-    volatile uint32_t stace[3];
+    volatile uint32_t offset1[3];
     volatile uint32_t SPIxBRG;
-    volatile uint32_t SPIxBRGCLR;
-    volatile uint32_t SPIxBRGSET;
-    volatile uint32_t SPIxBRGINV;
+#ifdef _SPI2CON2_w_MASK
+    volatile uint32_t offset2[3];
+    __SPI2CON2bits_t SPIxCON2;
+    volatile uint32_t SPIxCON2CLR;
+    volatile uint32_t SPIxCON2SET;
+    volatile uint32_t SPIxCON2INV;
+#endif
 } SPIRegisters;
 
 struct __SPIData {
@@ -137,6 +137,7 @@ typedef struct __SPIData SPIData;
 typedef struct {                       // Parametres d'inicialitzacio
 	SPIChannel channel;                // -Identificador del dispositiu.
 	SPIOptions options;                // -Opcions
+    unsigned baudRate;                 // -Baudrate
 	SPIInterruptFunction isrFunction;  // -Funcio d'interrupcio
 	void *isrParams;                   // -Parametres de la funcio d'interrupcio
 } SPISettings;
@@ -148,6 +149,7 @@ void halSPIDeinitialize(SPIHandler handler);
 
 bool halSPIIsBusy(SPIHandler handler);
 
+void halSendData(SPIHandler handler, uint8_t data);
 void halSPISendBuffer(SPIHandler handler, uint8_t *data, uint32_t size);
 void halSPIReceiveBuffer(SPIHandler handler, uint8_t *data, uint32_t size);
 void halSPITransmitBuffer(SPIHandler handler, uint8_t *txData, uint8_t *rxData, uint32_t size);

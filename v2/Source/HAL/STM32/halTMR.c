@@ -51,74 +51,62 @@ static void enableDeviceClock(
 	switch ((uint32_t) device) {
 		case TIM1_BASE:
             __set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_TIM1EN);
-			__DSB();
 			break;
 
 		case TIM2_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM2EN);
-			__DSB();
 			break;
 
 		case TIM3_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM3EN);
-			__DSB();
 			break;
 
 		case TIM4_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM4EN);
-			__DSB();
 			break;
 
 		case TIM5_BASE:
             __set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM5EN);
-			__DSB();
 			break;
 
 		case TIM6_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM6EN);
-			__DSB();
 			break;
 
 		case TIM7_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM7EN);
-			__DSB();
 			break;
 
 		case TIM8_BASE:
 			__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_TIM8EN);
-			__DSB();
 			break;
 
 		case TIM9_BASE:
 			__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_TIM9EN);
-			__DSB();
 			break;
 
 		case TIM10_BASE:
 			__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_TIM10EN);
-			__DSB();
 			break;
 
 		case TIM11_BASE:
 			__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_TIM11EN);
-			__DSB();
 			break;
 
 		case TIM12_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM12EN);
-			__DSB();
 			break;
 
 		case TIM13_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM13EN);
-			__DSB();
 			break;
 
 		case TIM14_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM14EN);
-			__DSB();
 			break;
 	}
+
+	__DSB();
 }
 
 
@@ -207,7 +195,7 @@ TMRHandler halTMRInitialize(
 	TIM_TypeDef* device = getDevice(settings->timer);
 
 	enableDeviceClock(device);
-	__clear_bit_msk(device->CR1, TIM_CR1_CEN);                 // Para el timer
+	__clear_bit_msk(device->CR1, TIM_CR1_CEN);         // Para el timer
 
 	uint32_t temp;
 

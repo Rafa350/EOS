@@ -50,34 +50,30 @@ static void enableDeviceClock(
 	switch ((uint32_t) device) {
 		case SPI1_BASE:
 			__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI1EN);
-			__DSB();
 			break;
 
 		case SPI2_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_SPI2EN);
-			__DSB();
 			break;
 
 		case SPI3_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_SPI3EN);
-			__DSB();
 			break;
 
 		case SPI4_BASE:
 			__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI4EN);
-			__DSB();
 			break;
 
 		case SPI5_BASE:
 			__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI5EN);
-			__DSB();
 			break;
 
 		case SPI6_BASE:
 			 __set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SPI6EN);
-			 __DSB();
 			break;
 	}
+
+	__DSB();
 }
 
 

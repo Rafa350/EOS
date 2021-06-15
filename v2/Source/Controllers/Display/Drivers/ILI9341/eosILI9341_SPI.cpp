@@ -21,6 +21,8 @@ static SPIHandler hSPI = NULL;
 ///
 void ILI9341Driver::lcdInitialize() {
 
+	/// Inicialitza el modul GPIO
+	//
 	static GPIOPinSettings const gpioInit[] = {
 #ifdef DISPLAY_RST_PORT
 		{DISPLAY_RST_PORT,  DISPLAY_RST_PIN,
@@ -39,19 +41,15 @@ void ILI9341Driver::lcdInitialize() {
 		{DISPLAY_MOSI_PORT, DISPLAY_MOSI_PIN,
 			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF           }
 	};
+	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
 
+    // Inicialitza el modul SPI
+    //
 	static SPISettings const spiInit = {
 		DISPLAY_SPI_ID,
 			HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
 			HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
 	};
-
-	/// Inicialitza el modul GPIO
-	//
-	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
-
-    // Inicialitza el modul SPI
-    //
 	hSPI = halSPIInitialize(&spiData, &spiInit);
 }
 
