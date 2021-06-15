@@ -121,9 +121,9 @@ namespace eos {
     class StringBuilder {
 
         private:
-            char* container;
-            unsigned size;
-            unsigned capacity;
+            char* _container;
+            unsigned _size;
+            unsigned _capacity;
 
         private:
             unsigned calcNewCapacity(unsigned requiredCapacity) const;
@@ -141,7 +141,7 @@ namespace eos {
             void append(unsigned value);
             void append(bool value);
 
-            inline operator String () const { return String(container, 0, size); }
+            inline operator String () const { return String(_container, 0, _size); }
     };
 
 }
