@@ -115,8 +115,8 @@
 
 // Parametres de la imatge
 //
-#define DISPLAY_SCREEN_WIDTH      240  // Amplada en pixels
-#define DISPLAY_SCREEN_HEIGHT     320  // Al�ada en pixels
+#define DISPLAY_IMAGE_WIDTH       240  // Amplada en pixels
+#define DISPLAY_IMAGE_HEIGHT      320  // Al�ada en pixels
 #define DISPLAY_COLOR_RGB565           // Format de color RGB565
 
 // Parametres del controlador

@@ -10,9 +10,9 @@ namespace eos {
 
 	/// \brief Superficie de dibuix basada en memoria ram en format RGB565
 	///
-	class RGB565_DMA2D_FrameBuffer: public FrameBuffer {
+	class FrameBuffer_RGB565_DMA2D: public FrameBuffer {
 		private:
-			uint8_t* _buffer;
+			void* _buffer;
 			int _lineWidth;
 			int _lineBytes;
 			constexpr static int _pixelBytes = sizeof(uint16_t);
@@ -26,7 +26,7 @@ namespace eos {
             void copy(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch) override;
 
 		public:
-			RGB565_DMA2D_FrameBuffer(int frameWidth, int frameHeight, DisplayOrientation orientation, uint8_t* buffer, int lineBytes);
+			FrameBuffer_RGB565_DMA2D(int frameWidth, int frameHeight, DisplayOrientation orientation, void* buffer);
 	};
 }
 

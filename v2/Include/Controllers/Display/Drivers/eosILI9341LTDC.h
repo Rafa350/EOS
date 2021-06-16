@@ -12,11 +12,11 @@
 #endif
 
 
-#ifndef DISPLAY_SCREEN_WIDTH
-#define DISPLAY_SCREEN_WIDTH      240  // Tamany fix del controlador
+#ifndef DISPLAY_IMAGE_WIDTH
+#define DISPLAY_IMAGE_WIDTH       240  // Tamany fix del controlador
 #endif
-#ifndef DISPLAY_SCREEN_HEIGHT
-#define DISPLAY_SCREEN_HEIGHT     320  // Tamany fix del controlador
+#ifndef DISPLAY_IMAGE_HEIGHT
+#define DISPLAY_IMAGE_HEIGHT      320  // Tamany fix del controlador
 #endif
 
 
@@ -26,38 +26,13 @@ typedef int16_t pixel_t;
 typedef int32_t pixel_t;
 #endif
 #define PIXEL_SIZE                sizeof(pixel_t)
-#define LINE_SIZE                 (((DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
-#define LINE_WIDTH                (LINE_SIZE / PIXEL_SIZE)
-#define FRAME_SIZE                (LINE_SIZE * DISPLAY_SCREEN_HEIGHT)
-
-#if defined(DISPLAY_COLOR_RGB888)
-// Format Pixel RGB888
-#define PIXEL_MASK_R              COLOR_RGB888_MASK_R
-#define PIXEL_MASK_G              COLOR_RGB888_MASK_G
-#define PIXEL_MASK_B              COLOR_RGB888_MASK_B
-#define PIXEL_SHIFT_R             COLOR_RGB888_SHIFT_R
-#define PIXEL_SHIFT_G             COLOR_RGB888_SHIFT_G
-#define PIXEL_SHIFT_B             COLOR_RGB888_SHIFT_B
-#define PIXEL_FORMAT              ColorFormat::rgb888
-#define PIXEL_TYPE                uint32_t
-
-#elif defined(DISPLAY_COLOR_RGB565)
-// Format Pixel RGB565
-#define PIXEL_MASK_R              COLOR_RGB565_MASK_R
-#define PIXEL_MASK_G              COLOR_RGB565_MASK_G
-#define PIXEL_MASK_B              COLOR_RGB565_MASK_B
-#define PIXEL_SHIFT_R             COLOR_RGB565_SHIFT_R
-#define PIXEL_SHIFT_G             COLOR_RGB565_SHIFT_G
-#define PIXEL_SHIFT_B             COLOR_RGB565_SHIFT_B
-#define PIXEL_FORMAT              ColorFormat::rgb565
-#define PIXEL_TYPE                uint16_t
-#endif
+#define LINE_SIZE                 (((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
 
 namespace eos {
 
     class Color;
 
-    class ILI9341LTDCDriver: public IDisplayDriver {
+    class DisplayDriver_ILI9341_LTDC: public IDisplayDriver {
         private:
     		static IDisplayDriver* _instance;
             FrameBuffer* _frameBuffer;
@@ -83,11 +58,12 @@ namespace eos {
             void refresh() override;
 
         private:
-            ILI9341LTDCDriver();
-            void displayInit();
+            DisplayDriver_ILI9341_LTDC();
             void writeCommands(const uint8_t *dada);
 
         private:
+            void initializeGPIO();
+            void initializeSPI();
             void initializeLTDC();
             void lcdInitialize();
             void lcdReset();

@@ -1,7 +1,4 @@
 #include "eos.h"
-
-#ifdef DISPLAY_DRV_ILI9341LTDC
-
 #include "Controllers/Display/Drivers/eosILI9341LTDC.h"
 #include "Controllers/Display/Drivers/eosILI9341Defs.h"
 #include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
@@ -9,6 +6,7 @@
 #include "hAL/halTMR.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halSPI.h"
+#include "HAL/STM32/halLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "System/eosMath.h"
 
@@ -24,46 +22,17 @@ using namespace eos;
 
 static SPIData spiData;
 static SPIHandler hSpi;
-
-
-/// ----------------------------------------------------------------------
-/// \brief Compbina dos pixels.
-/// \param b: Pixel del fons.
-/// \param f: Pixel del primer pla.
-/// \param o: Opacitat.
-/// \return El valor del pixel combinat.
-///
-static inline pixel_t combinePixel(
-	pixel_t b,
-	pixel_t f,
-	uint8_t o) {
-
-	uint8_t br = (b & PIXEL_MASK_R) >> PIXEL_SHIFT_R;
-	uint8_t bg = (b & PIXEL_MASK_G) >> PIXEL_SHIFT_G;
-	uint8_t bb = (b & PIXEL_MASK_B) >> PIXEL_SHIFT_B;
-
-	uint8_t fr = (f & PIXEL_MASK_R) >> PIXEL_SHIFT_R;
-	uint8_t fg = (f & PIXEL_MASK_G) >> PIXEL_SHIFT_G;
-	uint8_t fb = (f & PIXEL_MASK_B) >> PIXEL_SHIFT_B;
-
-	return (pixel_t)
-		((((fr * o) + (br * (255u - o))) >> 8) << PIXEL_SHIFT_R) |
-		((((fg * o) + (bg * (255u - o))) >> 8) << PIXEL_SHIFT_G) |
-		((((fb * o) + (bb * (255u - o))) >> 8) << PIXEL_SHIFT_B);
-}
-
-
-IDisplayDriver *ILI9341LTDCDriver::_instance = nullptr;
+IDisplayDriver *DisplayDriver_ILI9341_LTDC::_instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Obte una instancia unica del driver.
 /// \return La instancia del driver.
 ///
-IDisplayDriver *ILI9341LTDCDriver::getInstance() {
+IDisplayDriver *DisplayDriver_ILI9341_LTDC::getInstance() {
 
 	if (_instance == nullptr)
-		_instance = new ILI9341LTDCDriver();
+		_instance = new DisplayDriver_ILI9341_LTDC();
 	return _instance;
 }
 
@@ -71,34 +40,43 @@ IDisplayDriver *ILI9341LTDCDriver::getInstance() {
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
-ILI9341LTDCDriver::ILI9341LTDCDriver() {
+DisplayDriver_ILI9341_LTDC::DisplayDriver_ILI9341_LTDC() {
 
-	_frameBuffer = new RGB565_DMA2D_FrameBuffer(
-		DISPLAY_SCREEN_WIDTH,
-		DISPLAY_SCREEN_HEIGHT,
+	_frameBuffer = new FrameBuffer_RGB565_DMA2D(
+		DISPLAY_IMAGE_WIDTH,
+		DISPLAY_IMAGE_HEIGHT,
 		DisplayOrientation::normal,
-		(uint8_t*) DISPLAY_VRAM_ADDR,
-		LINE_SIZE);
+		(void*) DISPLAY_VRAM_ADDR);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Inicialitzacio.
 ///
-void ILI9341LTDCDriver::initialize() {
+void DisplayDriver_ILI9341_LTDC::initialize() {
 
-    displayInit();
+    // Inicialitza el modul GPIO
+    //
+    initializeGPIO();
+
+    // Inicialitza el modul SPI
+    //
+    initializeSPI();
 
     // Inicialitza el dispositiu LTDC
     //
     initializeLTDC();
+
+    // Inicialitza el display
+    //
+    lcdInitialize();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Desactiva el modul.
 ///
-void ILI9341LTDCDriver::shutdown() {
+void DisplayDriver_ILI9341_LTDC::shutdown() {
 
 	displayOff();
 }
@@ -108,7 +86,7 @@ void ILI9341LTDCDriver::shutdown() {
 /// \brief Selecciona la orientacio.
 /// \param orientation: L'orientacio a seleccionar.
 ///
-void ILI9341LTDCDriver::setOrientation(
+void DisplayDriver_ILI9341_LTDC::setOrientation(
 	DisplayOrientation orientation) {
 
 	_frameBuffer->setOrientation(orientation);
@@ -119,7 +97,7 @@ void ILI9341LTDCDriver::setOrientation(
 /// \brief Borra la pantalla.
 /// \param color: Color de borrat.
 ///
-void ILI9341LTDCDriver::clear(
+void DisplayDriver_ILI9341_LTDC::clear(
 	const Color &color) {
 
 	_frameBuffer->clear(color);
@@ -133,7 +111,7 @@ void ILI9341LTDCDriver::clear(
 /// \param color: Color del pixel.
 /// \remarks Si esta fora de limits no dibuixa res.
 ///
-void ILI9341LTDCDriver::setPixel(
+void DisplayDriver_ILI9341_LTDC::setPixel(
 	int x,
 	int y,
 	const Color &color) {
@@ -150,7 +128,7 @@ void ILI9341LTDCDriver::setPixel(
 /// \param color: Color dels pixels.
 /// \remarks Si esta fora de limits no dibuixa res.
 ///
-void ILI9341LTDCDriver::setHPixels(
+void DisplayDriver_ILI9341_LTDC::setHPixels(
 	int x,
 	int y,
 	int size,
@@ -168,7 +146,7 @@ void ILI9341LTDCDriver::setHPixels(
 /// \param color: Color dels pixels.
 /// \remarks Si esta fora de limits no dibuixa res.
 ///
-void ILI9341LTDCDriver::setVPixels(
+void DisplayDriver_ILI9341_LTDC::setVPixels(
 	int x,
 	int y,
 	int size,
@@ -186,7 +164,7 @@ void ILI9341LTDCDriver::setVPixels(
 /// \param height: Al�ada de la regio.
 /// \param color: Color dels pixels.
 ///
-void ILI9341LTDCDriver::setPixels(
+void DisplayDriver_ILI9341_LTDC::setPixels(
 	int x,
 	int y,
 	int width,
@@ -197,7 +175,7 @@ void ILI9341LTDCDriver::setPixels(
 }
 
 
-void ILI9341LTDCDriver::writePixels(
+void DisplayDriver_ILI9341_LTDC::writePixels(
 	int x,
 	int y,
 	int width,
@@ -211,7 +189,7 @@ void ILI9341LTDCDriver::writePixels(
 }
 
 
-void ILI9341LTDCDriver::readPixels(
+void DisplayDriver_ILI9341_LTDC::readPixels(
 	int x,
 	int y,
 	int width,
@@ -225,7 +203,7 @@ void ILI9341LTDCDriver::readPixels(
 }
 
 
-void ILI9341LTDCDriver::vScroll(
+void DisplayDriver_ILI9341_LTDC::vScroll(
 	int delta,
 	int x,
 	int y,
@@ -235,7 +213,7 @@ void ILI9341LTDCDriver::vScroll(
 }
 
 
-void ILI9341LTDCDriver::hScroll(
+void DisplayDriver_ILI9341_LTDC::hScroll(
 	int delta,
 	int x,
 	int y,
@@ -245,7 +223,7 @@ void ILI9341LTDCDriver::hScroll(
 }
 
 
-void ILI9341LTDCDriver::refresh() {
+void DisplayDriver_ILI9341_LTDC::refresh() {
 
 }
 
@@ -253,7 +231,7 @@ void ILI9341LTDCDriver::refresh() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el display.
 ///
-void ILI9341LTDCDriver::displayInit() {
+void DisplayDriver_ILI9341_LTDC::lcdInitialize() {
 
 #if defined(STM32F429I_DISC1)
     static const uint8_t lcdInit[] = {
@@ -289,9 +267,6 @@ void ILI9341LTDCDriver::displayInit() {
 #error "Display no soportado"
 #endif
 
-    // Inicialitza la pantalla
-    //
-	lcdInitialize();
 	lcdReset();
 	writeCommands(lcdInit);
 }
@@ -300,7 +275,9 @@ void ILI9341LTDCDriver::displayInit() {
 /// ----------------------------------------------------------------------
 /// \brief Activa el display
 ///
-void ILI9341LTDCDriver::displayOn() {
+void DisplayDriver_ILI9341_LTDC::displayOn() {
+
+	halLTDCEnable();
 
 	lcdOpen();
 	lcdWriteCommand(CMD_SLEEP_OUT);
@@ -313,13 +290,15 @@ void ILI9341LTDCDriver::displayOn() {
 /// ----------------------------------------------------------------------
 /// \brief Desactiva el display.
 ///
-void ILI9341LTDCDriver::displayOff() {
+void DisplayDriver_ILI9341_LTDC::displayOff() {
 
 	lcdOpen();
 	lcdWriteCommand(CMD_DISPLAY_OFF);
 	lcdWriteCommand(CMD_ENTER_SLEEP_MODE);
 	halTMRDelay(120);
 	lcdClose();
+
+	halLTDCDisable();
 }
 
 
@@ -327,7 +306,7 @@ void ILI9341LTDCDriver::displayOff() {
 /// \brief Escriu una sequencia de comandes en el controlador.
 /// \param data: La sequencia de comandes.
 ///
-void ILI9341LTDCDriver::writeCommands(
+void DisplayDriver_ILI9341_LTDC::writeCommands(
 	const uint8_t *data) {
 
     lcdOpen();
@@ -352,48 +331,9 @@ void ILI9341LTDCDriver::writeCommands(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza les comunicacions amb el driver.
-///
-void ILI9341LTDCDriver::lcdInitialize() {
-
-	static const GPIOPinSettings gpioInit[] = {
-#ifdef DISPLAY_RST_PIN
-		{ DISPLAY_RST_PORT,    DISPLAY_RST_PIN,
-			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0 },
-#endif
-		{ DISPLAY_CS_PORT,     DISPLAY_CS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_SET, 0 },
-		{ DISPLAY_RS_PORT,     DISPLAY_RS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_CLR, 0 },
-		{ DISPLAY_CLK_PORT,    DISPLAY_CLK_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_CLK_AF },
-#ifdef DISPLAY_MISO_PORT
-		{ DISPLAY_MISO_PORT,   DISPLAY_MISO_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MISO_AF},
-#endif
-		{ DISPLAY_MOSI_PORT,   DISPLAY_MOSI_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF}
-	};
-
-	static const SPISettings spiInit = {
-		DISPLAY_SPI_ID,
-			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
-	};
-
-	// Inicialitza modul GPIO
-	//
-	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
-
-	// Inicialitza el modul SPI
-	//
-	hSpi = halSPIInitialize(&spiData, &spiInit);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Reseteja el driver.
 ///
-void ILI9341LTDCDriver::lcdReset() {
+void DisplayDriver_ILI9341_LTDC::lcdReset() {
 
 #ifdef DISPLAY_RST_PORT
     halTMRDelay(10);
@@ -406,7 +346,7 @@ void ILI9341LTDCDriver::lcdReset() {
 /// ----------------------------------------------------------------------
 /// \brief Inicia la comunicacio amb el controlador.
 ///
-void ILI9341LTDCDriver::lcdOpen() {
+void DisplayDriver_ILI9341_LTDC::lcdOpen() {
 
 	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
@@ -415,7 +355,7 @@ void ILI9341LTDCDriver::lcdOpen() {
 /// ----------------------------------------------------------------------
 /// \brief Finalitza la comunicacio amb el controlador.
 ///
-void ILI9341LTDCDriver::lcdClose() {
+void DisplayDriver_ILI9341_LTDC::lcdClose() {
 
     halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
@@ -425,7 +365,7 @@ void ILI9341LTDCDriver::lcdClose() {
 /// \brief Escriu un byte de comanda en el controlador
 /// \param cmd: El byte de comanda.
 ///
-void ILI9341LTDCDriver::lcdWriteCommand(
+void DisplayDriver_ILI9341_LTDC::lcdWriteCommand(
 	uint8_t cmd) {
 
 	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
@@ -437,7 +377,7 @@ void ILI9341LTDCDriver::lcdWriteCommand(
 /// \brief Escriu un byte de dades en el controlador
 /// \param data: El byte de dades.
 ///
-void ILI9341LTDCDriver::lcdWriteData(
+void DisplayDriver_ILI9341_LTDC::lcdWriteData(
 	uint8_t data) {
 
 	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
@@ -446,13 +386,11 @@ void ILI9341LTDCDriver::lcdWriteData(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el controlador de video
+/// \brief    Inicialitza el modul GPIO
 ///
-void ILI9341LTDCDriver::initializeLTDC() {
+void DisplayDriver_ILI9341_LTDC::initializeGPIO() {
 
-    uint32_t tmp;
-
-    static const GPIOPinSettings gpioInit[] = {
+	static const GPIOPinSettings gpioSettings[] = {
     	{ DISPLAY_DE_PORT,     DISPLAY_DE_PIN,
     		HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_DE_AF    },
 		{ DISPLAY_HSYNC_PORT,  DISPLAY_HSYNC_PIN,
@@ -497,169 +435,79 @@ void ILI9341LTDCDriver::initializeLTDC() {
 			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B6_AF    },
 		{ DISPLAY_B7_PORT,     DISPLAY_B7_PIN,
 			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B7_AF    },
-	};
-
-	// Inicialitza el modul GPIO
-	//
-	halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
-
-	// Inicialitza rellotge del modul LTDC
-	// -Configure PLLSAI prescalers for LCD
-	// -Enable Pixel Clock
-	// -PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
-	// -PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAI_N = 192 Mhz
-	// -PLLLCDCLK = PLLSAI_VCO Output/PLLSAI_R = 192/4 = 96 Mhz
-	// -LTDC clock frequency = PLLLCDCLK / RCC_PLLSAIDivR = 96/4 = 24 Mhz
-	//
-	RCC_PeriphCLKInitTypeDef clkInit;
-    clkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
-    clkInit.PLLSAI.PLLSAIN = 192;
-    clkInit.PLLSAI.PLLSAIR = 4;
-    clkInit.PLLSAIDivR = RCC_PLLSAIDIVR_8;
-    HAL_RCCEx_PeriphCLKConfig(&clkInit);
-
-    // Inicialitza el modul LTDC
-    //
-    RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;
-
-    // Configure el registre GCR (General Configuration Register)
-    // -Polaritat HSYNC, VSYNC, DE i PC
-    //
-    tmp = LTDC->GCR;
-    tmp &= ~(LTDC_GCR_HSPOL | LTDC_GCR_VSPOL | LTDC_GCR_DEPOL | LTDC_GCR_PCPOL);
-    tmp |= DISPLAY_HSPOL << LTDC_GCR_HSPOL_Pos;
-    tmp |= DISPLAY_VSPOL << LTDC_GCR_VSPOL_Pos;
-    tmp |= DISPLAY_DEPOL << LTDC_GCR_DEPOL_Pos;
-    tmp |= DISPLAY_PCPOL << LTDC_GCR_PCPOL_Pos;
-    LTDC->GCR = tmp;
-
-    // Configura el registre SSCR (Sinchronization Size Configuration Register)
-    //
-    tmp = LTDC->SSCR;
-    tmp &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
-    tmp |= (DISPLAY_HSYNC - 1) << LTDC_SSCR_HSW_Pos;
-    tmp |= (DISPLAY_VSYNC - 1) << LTDC_SSCR_VSH_Pos;
-    LTDC->SSCR = tmp;
-
-    // Configura el registre BPCR (Back Porch Configuration Register)
-    //
-    tmp = LTDC->BPCR;
-    tmp &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
-    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP - 1) << LTDC_BPCR_AHBP_Pos;
-    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP - 1) << LTDC_BPCR_AVBP_Pos;
-    LTDC->BPCR = tmp;
-
-    // Configura el registre AWCR (Active Width Configuration Register)
-    // -AAH = HSYNC + HBP + WIDTH - 1
-    // -AAW = VSYNC + VBP + HEIGHT - 1
-    //
-    tmp = LTDC->AWCR;
-    tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
-    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_SCREEN_WIDTH - 1) << LTDC_AWCR_AAW_Pos;
-    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_SCREEN_HEIGHT - 1) << LTDC_AWCR_AAH_Pos;
-    LTDC->AWCR = tmp;
-
-    // Configura el registre TWCR (Total Width Configuration Register)
-    // -TOTALW = HSYNC + HBP + WIDTH + HFP - 1
-    // -TOTALH = VSYNC + VBP + HEIGHT + VFP - 1
-    //
-    tmp = LTDC->TWCR;
-    tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
-    tmp |= (DISPLAY_HSYNC + DISPLAY_HBP + DISPLAY_SCREEN_WIDTH + DISPLAY_HFP - 1) << LTDC_TWCR_TOTALW_Pos;
-    tmp |= (DISPLAY_VSYNC + DISPLAY_VBP + DISPLAY_SCREEN_HEIGHT + DISPLAY_VFP - 1) << LTDC_TWCR_TOTALH_Pos;
-    LTDC->TWCR = tmp;
-
-    // Configura el registre BCCR (Back Color Configuration Register)
-    //
-    tmp = LTDC->BCCR;
-    tmp &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
-    tmp |= 0 << LTDC_BCCR_BCRED_Pos;
-    tmp |= 0 << LTDC_BCCR_BCGREEN_Pos;
-    tmp |= 255 << LTDC_BCCR_BCBLUE_Pos;
-    LTDC->BCCR = tmp;
-
-    // Configura la Layer-1 WHPCR (Window Horizontal Position Configuration Register)
-    // -Tamany horitzontal de la finestra
-    //
-    tmp = LTDC_Layer1->WHPCR;
-    tmp &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
-    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + 1) << LTDC_LxWHPCR_WHSTPOS_Pos;
-    tmp |= ((DISPLAY_HSYNC + DISPLAY_HBP - 1) + DISPLAY_SCREEN_WIDTH) << LTDC_LxWHPCR_WHSPPOS_Pos;
-    LTDC_Layer1->WHPCR = tmp;
-
-    // Configura L1_WHPCR (Window Vertical Position Configuration Register)
-    // -Tamany vertical de la finestra
-    //
-    tmp = LTDC_Layer1->WVPCR;
-    tmp &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
-    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + 1) << LTDC_LxWVPCR_WVSTPOS_Pos;
-    tmp |= ((DISPLAY_VSYNC + DISPLAY_VBP - 1) + DISPLAY_SCREEN_HEIGHT) << LTDC_LxWVPCR_WVSPPOS_Pos;
-    LTDC_Layer1->WVPCR = tmp;
-
-    // Configura L1_DCCR (Default Color Configuration Register)
-    // -Color per defecte ARGB(255, 0, 0, 0)
-    //
-    LTDC_Layer1->DCCR = 0xFF0000FF;
-
-    // Configura L1_PFCR (Pixel Format Configuration Register)
-    //
-    tmp = LTDC_Layer1->PFCR;
-    tmp &= ~(LTDC_LxPFCR_PF);
-#if defined(DISPLAY_COLOR_RGB565)
-    tmp |= 0b010 << LTDC_LxPFCR_PF_Pos;
-#elif defined(DISPLAY_COLOR_RGB888)
-    tmp |= 0b001 << LTDC_LxPFCR_PF_Pos;
-#else
-#error No se especifico DISPLAY_COLOR_xxxx
+#ifdef DISPLAY_RST_PIN
+		{ DISPLAY_RST_PORT,    DISPLAY_RST_PIN,
+			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0 },
 #endif
-    LTDC_Layer1->PFCR = tmp;
-
-    // Configura L1_CACR (Constant Alpha Configuration Register)
-    //
-    tmp = LTDC_Layer1->CACR;
-    tmp &= ~(LTDC_LxCACR_CONSTA);
-    tmp |= 255u;
-    LTDC_Layer1->CACR;
-
-    // Configura L1_BFCR
-    // -Specifies the blending factors
-    //
-    tmp = LTDC_Layer1->BFCR;
-    tmp &= ~(LTDC_LxBFCR_BF2 | LTDC_LxBFCR_BF1);
-    tmp |= 6 << LTDC_LxBFCR_BF1_Pos;
-    tmp |= 7 << LTDC_LxBFCR_BF2_Pos;
-    LTDC_Layer1->BFCR = tmp;
-
-    // Configura L1_CFBAR (Color Frame Buffer Address Register)
-    // -Adressa del buffer de video
-    //
-    LTDC_Layer1->CFBAR = DISPLAY_VRAM_ADDR;
-
-    // Configura L1_CFBLR (Color Frame Buffer Length Register)
-    // -Longitut de la linia en bytes.
-    //
-    tmp = LTDC_Layer1->CFBLR;
-    tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
-    tmp |= LINE_SIZE << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= ((DISPLAY_SCREEN_WIDTH * PIXEL_SIZE) + 3) << LTDC_LxCFBLR_CFBLL_Pos;
-    LTDC_Layer1->CFBLR = tmp;
-
-    // Configura L1_CFBLNR (Color Frame Buffer Line Number Register)
-    //
-    tmp = LTDC_Layer1->CFBLNR;
-    tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
-    tmp |= DISPLAY_SCREEN_HEIGHT;
-    LTDC_Layer1->CFBLNR = tmp;
-
-    // Activa la capa
-    //
-    LTDC_Layer1->CR |= (uint32_t) LTDC_LxCR_LEN;
-    LTDC->SRCR |= LTDC_SRCR_IMR;
-
-    // Activa el controlador
-    //
-    LTDC->GCR |= LTDC_GCR_LTDCEN;
+		{ DISPLAY_CS_PORT,     DISPLAY_CS_PIN,
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_SET, 0 },
+		{ DISPLAY_RS_PORT,     DISPLAY_RS_PIN,
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_CLR, 0 },
+		{ DISPLAY_CLK_PORT,    DISPLAY_CLK_PIN,
+			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_CLK_AF },
+#ifdef DISPLAY_MISO_PORT
+		{ DISPLAY_MISO_PORT,   DISPLAY_MISO_PIN,
+			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MISO_AF},
+#endif
+		{ DISPLAY_MOSI_PORT,   DISPLAY_MOSI_PIN,
+			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF}
+	};
+	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
 }
 
 
-#endif // USE_DISPLAY_ILI9341_LTDC
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza el modul SPI
+///
+void DisplayDriver_ILI9341_LTDC::initializeSPI() {
+
+	// Inicialitza el modul SPI
+	//
+	static const SPISettings spiSettings = {
+		DISPLAY_SPI_ID,
+			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
+	};
+	hSpi = halSPIInitialize(&spiData, &spiSettings);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Inicialitza el modul LTDC
+///
+void DisplayDriver_ILI9341_LTDC::initializeLTDC() {
+
+	// Inicialitza el modul LTDC
+	//
+	static const LTDCSettings ltdcSettings = {
+		.HSYNC = DISPLAY_HSYNC,
+		.VSYNC = DISPLAY_VSYNC,
+		.HBP = DISPLAY_HBP,
+		.HFP = DISPLAY_HFP,
+		.VBP = DISPLAY_VBP,
+		.VFP = DISPLAY_VFP,
+		.polarity = {
+			.HSYNC = DISPLAY_HSPOL,
+			.VSYNC = DISPLAY_VSPOL,
+			.DE = DISPLAY_DEPOL,
+			.PC = DISPLAY_PCPOL,
+		 },
+		.width = DISPLAY_IMAGE_WIDTH,
+		.height = DISPLAY_IMAGE_HEIGHT
+	};
+	halLTDCInitialize(&ltdcSettings);
+	halLTDCSetBackgroundColor(0x000000FF);
+
+	// Inicialitza la capa 0
+	//
+	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT);
+
+	unsigned pixelSize = halLTDCGetPixelSize(HAL_LTDC_FORMAT_RGB565);
+	halLTDCLayerSetFrameFormat(HAL_LTDC_LAYER_0,
+		HAL_LTDC_FORMAT_RGB565,
+		DISPLAY_IMAGE_WIDTH * pixelSize,
+		((DISPLAY_IMAGE_WIDTH * pixelSize) + 63) & 0xFFFFFFC0,
+		DISPLAY_IMAGE_HEIGHT);
+
+	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, DISPLAY_VRAM_ADDR);
+	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
+}

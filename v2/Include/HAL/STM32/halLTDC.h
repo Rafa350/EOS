@@ -52,7 +52,7 @@ void halLTDCLayerSetDefaultColor(LTDCLayerNum layerNum, uint32_t argb);
 void halLTDCLayerSetKeyColor(LTDCLayerNum layerNum, uint32_t rgb);
 void halLTDCLayerDisableKeyColor(LTDCLayerNum layerNum);
 void halLTDCLayerSetFrameFormat(LTDCLayerNum layerNum, LTDCPixelFormat pixelFormat, int lineWidth, int linePitch, int numLines);
-void halLTDCLayerSetFrameAddress(LTDCLayerNum layerNum, int frameAddr);
+void halLTDCLayerSetFrameAddress(LTDCLayerNum layerNum, uint32_t frameAddr);
 void halLTDCLayerUpdate(LTDCLayerNum layerNum);
 
 int halLTDCGetPixelOffset(LTDCLayerNum layerNum, int x, int y);

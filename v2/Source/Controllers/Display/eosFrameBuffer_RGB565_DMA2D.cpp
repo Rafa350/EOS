@@ -10,23 +10,25 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
-/// \param    screenWidth: Amplada fisica de la pantalla.
-/// \param    screenHeight: Alçada fisica de la pantalla.
+/// \param    frameWidth: Amplada fisica en pixels.
+/// \param    frameHeight: Alçada fisica en pixels.
 /// \param    orientation: Orientacio inicial.
 /// \param    buffer: Buffer d'imatge.
-/// \param    lineBytes: Bytes per linia d'imatge.
 ///
-RGB565_DMA2D_FrameBuffer::RGB565_DMA2D_FrameBuffer(
+FrameBuffer_RGB565_DMA2D::FrameBuffer_RGB565_DMA2D(
 	int frameWidth,
 	int frameHeight,
 	DisplayOrientation orientation,
-	uint8_t* buffer,
-	int lineBytes):
+	void* buffer):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
-	_buffer(buffer),
-	_lineWidth(lineBytes / _pixelBytes),      // Amplada de linia en pixels
-	_lineBytes(lineBytes) {                   // Amplada de linia en bytes
+	_buffer(buffer) {
+
+	// Ajusta l'amplada per ser multiple de 64 bytes, per
+	// optimitzar les transferencies de DMA2D
+	//
+	_lineBytes = ((frameWidth * _pixelBytes) + 63) & 0xFFFFFFC0;
+	_lineWidth = _lineBytes / _pixelBytes;
 
     halDMA2DInitialize();
 }
@@ -39,7 +41,7 @@ RGB565_DMA2D_FrameBuffer::RGB565_DMA2D_FrameBuffer(
 /// \param    color: Color en format de pixel fisic;
 /// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
-void RGB565_DMA2D_FrameBuffer::put(
+void FrameBuffer_RGB565_DMA2D::put(
 	int x,
 	int y,
 	const Color& color) {
@@ -62,7 +64,7 @@ void RGB565_DMA2D_FrameBuffer::put(
 /// \param    color: Color.
 /// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
-void RGB565_DMA2D_FrameBuffer::fill(
+void FrameBuffer_RGB565_DMA2D::fill(
 	int x,
 	int y,
 	int width,
@@ -86,7 +88,8 @@ void RGB565_DMA2D_FrameBuffer::fill(
 	}
 	else if (opacity > 0) {
 		// TODO
-		// Crear un buffer d'una linia amb el color
+		// Crear un buffer d'una linia amb el color. Pot ser l'ultima
+		// linia del buffer
 		// Tranferir la linia amb DMA2D
 		for (int yy = 0; yy < height; yy++)
 			for (int xx = 0; xx < width; xx++)
@@ -94,18 +97,19 @@ void RGB565_DMA2D_FrameBuffer::fill(
 	}
 }
 
+
 /// ----------------------------------------------------------------------
 /// \brief    Copia un bitmap a una regio de la pantalla.
-/// \param    x: Coordinada X de la posicio.
-/// \param    y: Coordinada Y de la posicio.
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada y.
 /// \param    width: Amplada.
 /// \param    height: Alçada.
 /// \param    colors: Llista de pixels.
-/// \param    dx: Offset X dins del bitmap.
-/// \param    dy: offset Y dins del vitmap.
+/// \param    dx: Offset x dins del bitmap.
+/// \param    dy: offset y dins del bitmap.
 /// \param    pitch: Offset a la seguent linia del bitmap. 0 si son consecutives.
 ///
-void RGB565_DMA2D_FrameBuffer::copy(
+void FrameBuffer_RGB565_DMA2D::copy(
 	int x,
 	int y,
 	int width,

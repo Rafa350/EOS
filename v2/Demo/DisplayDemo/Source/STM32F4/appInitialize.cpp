@@ -12,7 +12,7 @@ static void initializeCLK() {
 
 	RCC_OscInitTypeDef oscInit;
 	RCC_ClkInitTypeDef clkInit;
-    //RCC_PeriphCLKInitTypeDef pclkInit;
+    RCC_PeriphCLKInitTypeDef pclkInit;
 
 	// Enable Power Control clock
 	//
@@ -50,19 +50,19 @@ static void initializeCLK() {
 	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
 	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_5);
 
-	// Configura el rellotge pel periferic LTDC
-	// PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
-	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 192 Mhz
-	// PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 192/5 = 38.4 Mhz
-	// LTDC clock frequency = PLLLCDCLK / LTDC_PLLSAI_DIVR_4 = 38.4/4 = 9.6Mhz
+	// Inicialitza rellotge del modul LTDC
+	// -Configure PLLSAI prescalers for LCD
+	// -Enable Pixel Clock
+	// -PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
+	// -PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAI_N = 192 Mhz
+	// -PLLLCDCLK = PLLSAI_VCO Output/PLLSAI_R = 192/4 = 96 Mhz
+	// -LTDC clock frequency = PLLLCDCLK / RCC_PLLSAIDivR = 96/4 = 24 Mhz
 	//
-	/*
-	pclkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
-	pclkInit.PLLSAI.PLLSAIN = 192;
-	pclkInit.PLLSAI.PLLSAIR = DISPLAY_FDIV;
-	pclkInit.PLLSAIDivR = RCC_PLLSAIDIVR_4;
-	HAL_RCCEx_PeriphCLKConfig(&pclkInit);
-	*/
+    pclkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
+    pclkInit.PLLSAI.PLLSAIN = 192;
+    pclkInit.PLLSAI.PLLSAIR = 4;
+    pclkInit.PLLSAIDivR = RCC_PLLSAIDIVR_8;
+    HAL_RCCEx_PeriphCLKConfig(&pclkInit);
 }
 
 

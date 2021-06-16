@@ -48,7 +48,7 @@ void halLTDCInitialize(
     // -Polaritat HSYNC, VSYNC, DE i PC
     //
     tmp = LTDC->GCR;
-    tmp &= ~(LTDC_GCR_HSPOL | LTDC_GCR_VSPOL | LTDC_GCR_DEPOL | LTDC_GCR_PCPOL);
+    tmp &= ~(LTDC_GCR_HSPOL | LTDC_GCR_VSPOL | LTDC_GCR_DEPOL | LTDC_GCR_PCPOL | LTDC_GCR_LTDCEN);
    	tmp |= settings->polarity.HSYNC << LTDC_GCR_HSPOL_Pos;
    	tmp |= settings->polarity.VSYNC << LTDC_GCR_VSPOL_Pos;
   	tmp |= settings->polarity.DE << LTDC_GCR_DEPOL_Pos;
@@ -236,7 +236,7 @@ void halLTDCLayerDisableKeyColor(
 /// \param    pixelFormat: Format de pixel.
 /// \param    lineWidth: Amplada de linia en bytes.
 /// \param    linePitch: Pitch entre linies en bytes.
-/// ºparam    numLines: Numero de linies.
+/// \param    numLines: Numero de linies.
 ///
 void halLTDCLayerSetFrameFormat(
 	LTDCLayerNum layerNum,
@@ -298,7 +298,7 @@ void halLTDCLayerSetFrameFormat(
 ///
 void halLTDCLayerSetFrameAddress(
 	LTDCLayerNum layerNum,
-	int frameAddr) {
+	uint32_t frameAddr) {
 
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
 
@@ -307,7 +307,7 @@ void halLTDCLayerSetFrameAddress(
 	if (frameAddr == 0)
 	    __clear_bit_msk(layer->CR, LTDC_LxCR_LEN);
 	else {
-		layer->CFBAR = (uint32_t) frameAddr;
+		layer->CFBAR = frameAddr;
 		__set_bit_msk(layer->CR, LTDC_LxCR_LEN);
 	}
 }

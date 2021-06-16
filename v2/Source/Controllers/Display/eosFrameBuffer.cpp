@@ -8,11 +8,9 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
-/// \param    frameWidth: Amplada fisica.
-/// \param    frameHeight: Alçada fisica.
+/// \param    frameWidth: Amplada fisica en pixels.
+/// \param    frameHeight: Alçada fisica en pixels.
 /// \param    orientation: Orientacio inicial.
-/// \param    imageBuffer: Buffer d'imatge.
-/// \param    colorFormat: Format de color del buffer.
 ///
 FrameBuffer::FrameBuffer(
 	int frameWidth,

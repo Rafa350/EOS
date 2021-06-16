@@ -78,7 +78,7 @@ void DisplayService::onSetup() {
 #endif
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
-	driver = ILI9341LTDCDriver::getInstance();
+	driver = DisplayDriver_ILI9341_LTDC::getInstance();
 #elif defined(DISPLAY_DRV_ILI9341)
 	driver = ILI9341Driver::getInstance();
 #elif defined(DISPLAY_DRV_RGBLTDC)
