@@ -3,25 +3,26 @@
 #include "HAL/halGPIO.h"
 #include "HAL/halSPI.h"
 #include "HAL/halTMR.h"
-#include "Controllers/Display/Drivers/eosSSD1306.h"
-#include "Controllers/Display/Drivers/eosSSD1306Defs.h"
+#include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
+#include "Controllers/Display/Drivers/SSD1306/eosSSD1306Defs.h"
 
 
 using namespace eos;
 
 
-IDisplayDriver* SSD1306Driver::_instance = nullptr;
-SPIData spiData;
+IDisplayDriver* DisplayDriver_SSD1306::_instance = nullptr;
+static SPIData __spiData;
+static SPIHandler __hSpi;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte una instancia del driver
 /// �\return  La instancia.
 ///
-IDisplayDriver* SSD1306Driver::getInstance() {
+IDisplayDriver* DisplayDriver_SSD1306::getInstance() {
 
 	if (_instance == nullptr)
-		_instance = new SSD1306Driver();
+		_instance = new DisplayDriver_SSD1306();
 	return _instance;
 }
 
@@ -29,9 +30,9 @@ IDisplayDriver* SSD1306Driver::getInstance() {
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
 ///
-SSD1306Driver::SSD1306Driver() :
-	_screenWidth(DISPLAY_SCREEN_WIDTH),
-	_screenHeight(DISPLAY_SCREEN_HEIGHT) {
+DisplayDriver_SSD1306::DisplayDriver_SSD1306() :
+	_imageWidth(DISPLAY_IMAGE_WIDTH),
+	_imageHeight(DISPLAY_IMAGE_HEIGHT) {
 
 }
 
@@ -39,34 +40,34 @@ SSD1306Driver::SSD1306Driver() :
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el driver.
 ///
-void SSD1306Driver::initialize() {
+void DisplayDriver_SSD1306::initialize() {
 
-	oledInitialize();
+	hwInitialize();
 }
 
-void SSD1306Driver::shutdown() {
-
-}
-
-void SSD1306Driver::displayOn() {
+void DisplayDriver_SSD1306::shutdown() {
 
 }
 
-void SSD1306Driver::displayOff() {
+void DisplayDriver_SSD1306::displayOn() {
 
 }
 
-void SSD1306Driver::setOrientation(
+void DisplayDriver_SSD1306::displayOff() {
+
+}
+
+void DisplayDriver_SSD1306::setOrientation(
     DisplayOrientation orientation) {
 
 }
 
-void SSD1306Driver::clear(
+void DisplayDriver_SSD1306::clear(
     const Color &color) {
 
 }
 
-void SSD1306Driver::setPixel(
+void DisplayDriver_SSD1306::setPixel(
     int x,
     int y,
     const Color &color) {
@@ -74,16 +75,7 @@ void SSD1306Driver::setPixel(
 }
 
 
-void SSD1306Driver::setHPixels(
-    int x,
-    int y,
-    int size,
-    const Color &color) {
-
-}
-
-
-void SSD1306Driver::setVPixels(
+void DisplayDriver_SSD1306::setHPixels(
     int x,
     int y,
     int size,
@@ -92,7 +84,16 @@ void SSD1306Driver::setVPixels(
 }
 
 
-void SSD1306Driver::setPixels(
+void DisplayDriver_SSD1306::setVPixels(
+    int x,
+    int y,
+    int size,
+    const Color &color) {
+
+}
+
+
+void DisplayDriver_SSD1306::setPixels(
     int x,
     int y,
     int width,
@@ -102,7 +103,7 @@ void SSD1306Driver::setPixels(
 }
 
 
-void SSD1306Driver::writePixels(
+void DisplayDriver_SSD1306::writePixels(
     int x,
     int y,
     int width,
@@ -116,7 +117,7 @@ void SSD1306Driver::writePixels(
 }
 
 
-void SSD1306Driver::readPixels(
+void DisplayDriver_SSD1306::readPixels(
     int x,
     int y,
     int width,
@@ -129,7 +130,7 @@ void SSD1306Driver::readPixels(
 
 }
 
-void SSD1306Driver::vScroll(
+void DisplayDriver_SSD1306::vScroll(
     int delta,
     int x,
     int y,
@@ -138,7 +139,7 @@ void SSD1306Driver::vScroll(
 
 }
 
-void SSD1306Driver::hScroll(
+void DisplayDriver_SSD1306::hScroll(
     int delta,
     int x,
     int y,
@@ -148,12 +149,12 @@ void SSD1306Driver::hScroll(
 }
 
 
-void SSD1306Driver::refresh() {
+void DisplayDriver_SSD1306::refresh() {
 
 }
 
 
-void SSD1306Driver::oledInitialize() {
+void DisplayDriver_SSD1306::hwInitialize() {
 
 	// Inicialitza modul GPIO
 	//
@@ -184,7 +185,7 @@ void SSD1306Driver::oledInitialize() {
 		DISPLAY_SPI_ID,
 			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
 	};
-	_hSpi = halSPIInitialize(&spiData, &spiSettings);
+	__hSpi = halSPIInitialize(&__spiData, &spiSettings);
 
 
 	// Inicialitza el display OLED
@@ -192,7 +193,7 @@ void SSD1306Driver::oledInitialize() {
 	static const uint8_t oledCommands[] = {
 		OP_CMD_DISPLAY_OFF,
 		OP_CMD_SET_DISPLAY_CLOCK(0x80),
-		OP_CMD_SET_MULTIPLEX_RATIO(DISPLAY_SCREEN_HEIGHT - 1),
+		OP_CMD_SET_MULTIPLEX_RATIO(DISPLAY_IMAGE_HEIGHT - 1),
 		OP_CMD_SET_DISPLAY_OFFSET(0),
 		OP_CMD_SET_START_LINE(0),
 		OP_CMD_SET_MEMORY_MODE(0),
@@ -204,7 +205,7 @@ void SSD1306Driver::oledInitialize() {
 		OP_END
 	};
 
-	oledSelect();
+	hwOpen();
     const uint8_t *p = oledCommands;
 	uint8_t c;
     while ((c = *p++) != OP_END) {
@@ -214,20 +215,20 @@ void SSD1306Driver::oledInitialize() {
                 break;
 
             default:
-                oledWriteCommand(*p++);
+                hwWriteCommand(*p++);
                 while (--c != 0)
-                    oledWriteData(*p++);
+                    hwWriteCommand(*p++);
                 break;
         }
     }
-	oledUnselect();
+	hwClose();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el controlador OLED
 ///
-void SSD1306Driver::oledSelect() {
+void DisplayDriver_SSD1306::hwOpen() {
 
 	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
@@ -236,7 +237,7 @@ void SSD1306Driver::oledSelect() {
 /// ----------------------------------------------------------------------
 /// \brief    Deselecciona el controlador OLED
 ///
-void SSD1306Driver::oledUnselect() {
+void DisplayDriver_SSD1306::hwClose() {
 
 	halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
@@ -246,11 +247,11 @@ void SSD1306Driver::oledUnselect() {
 /// \brief    Escriu un byte de comanda.
 /// \param    cmd: La comanda.
 ///
-void SSD1306Driver::oledWriteCommand(
+void DisplayDriver_SSD1306::hwWriteCommand(
     uint8_t cmd) {
 
 	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(_hSpi, &cmd, sizeof(cmd));
+	halSPISendBuffer(__hSpi, &cmd, sizeof(cmd));
 }
 
 
@@ -258,9 +259,9 @@ void SSD1306Driver::oledWriteCommand(
 /// \brief    Escriu un byte de dades.
 /// \param    cmd: Les dades.
 ///
-void SSD1306Driver::oledWriteData(
+void DisplayDriver_SSD1306::hwWriteData(
     uint8_t data) {
 
 	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(_hSpi, &data, sizeof(data));
+	halSPISendBuffer(__hSpi, &data, sizeof(data));
 }

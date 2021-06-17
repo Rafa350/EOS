@@ -1,6 +1,6 @@
 #include "eos.h"
-#include "Controllers/Display/Drivers/eosILI9341LTDC.h"
-#include "Controllers/Display/Drivers/eosILI9341Defs.h"
+#include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
+#include "Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h"
 #include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
 #include "HAL/halINT.h"
 #include "hAL/halTMR.h"
@@ -22,17 +22,17 @@ using namespace eos;
 
 static SPIData spiData;
 static SPIHandler hSpi;
-IDisplayDriver *DisplayDriver_ILI9341_LTDC::_instance = nullptr;
+IDisplayDriver *DisplayDriver_ILI9341LTDC::_instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
 /// \brief Obte una instancia unica del driver.
 /// \return La instancia del driver.
 ///
-IDisplayDriver *DisplayDriver_ILI9341_LTDC::getInstance() {
+IDisplayDriver *DisplayDriver_ILI9341LTDC::getInstance() {
 
 	if (_instance == nullptr)
-		_instance = new DisplayDriver_ILI9341_LTDC();
+		_instance = new DisplayDriver_ILI9341LTDC();
 	return _instance;
 }
 
@@ -40,7 +40,7 @@ IDisplayDriver *DisplayDriver_ILI9341_LTDC::getInstance() {
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
-DisplayDriver_ILI9341_LTDC::DisplayDriver_ILI9341_LTDC() {
+DisplayDriver_ILI9341LTDC::DisplayDriver_ILI9341LTDC() {
 
 	_frameBuffer = new FrameBuffer_RGB565_DMA2D(
 		DISPLAY_IMAGE_WIDTH,
@@ -53,30 +53,16 @@ DisplayDriver_ILI9341_LTDC::DisplayDriver_ILI9341_LTDC() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitzacio.
 ///
-void DisplayDriver_ILI9341_LTDC::initialize() {
+void DisplayDriver_ILI9341LTDC::initialize() {
 
-    // Inicialitza el modul GPIO
-    //
-    initializeGPIO();
-
-    // Inicialitza el modul SPI
-    //
-    initializeSPI();
-
-    // Inicialitza el dispositiu LTDC
-    //
-    initializeLTDC();
-
-    // Inicialitza el display
-    //
-    lcdInitialize();
+    hwInitialize();
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief Desactiva el modul.
 ///
-void DisplayDriver_ILI9341_LTDC::shutdown() {
+void DisplayDriver_ILI9341LTDC::shutdown() {
 
 	displayOff();
 }
@@ -86,7 +72,7 @@ void DisplayDriver_ILI9341_LTDC::shutdown() {
 /// \brief Selecciona la orientacio.
 /// \param orientation: L'orientacio a seleccionar.
 ///
-void DisplayDriver_ILI9341_LTDC::setOrientation(
+void DisplayDriver_ILI9341LTDC::setOrientation(
 	DisplayOrientation orientation) {
 
 	_frameBuffer->setOrientation(orientation);
@@ -97,7 +83,7 @@ void DisplayDriver_ILI9341_LTDC::setOrientation(
 /// \brief Borra la pantalla.
 /// \param color: Color de borrat.
 ///
-void DisplayDriver_ILI9341_LTDC::clear(
+void DisplayDriver_ILI9341LTDC::clear(
 	const Color &color) {
 
 	_frameBuffer->clear(color);
@@ -111,7 +97,7 @@ void DisplayDriver_ILI9341_LTDC::clear(
 /// \param color: Color del pixel.
 /// \remarks Si esta fora de limits no dibuixa res.
 ///
-void DisplayDriver_ILI9341_LTDC::setPixel(
+void DisplayDriver_ILI9341LTDC::setPixel(
 	int x,
 	int y,
 	const Color &color) {
@@ -128,7 +114,7 @@ void DisplayDriver_ILI9341_LTDC::setPixel(
 /// \param color: Color dels pixels.
 /// \remarks Si esta fora de limits no dibuixa res.
 ///
-void DisplayDriver_ILI9341_LTDC::setHPixels(
+void DisplayDriver_ILI9341LTDC::setHPixels(
 	int x,
 	int y,
 	int size,
@@ -146,7 +132,7 @@ void DisplayDriver_ILI9341_LTDC::setHPixels(
 /// \param color: Color dels pixels.
 /// \remarks Si esta fora de limits no dibuixa res.
 ///
-void DisplayDriver_ILI9341_LTDC::setVPixels(
+void DisplayDriver_ILI9341LTDC::setVPixels(
 	int x,
 	int y,
 	int size,
@@ -164,7 +150,7 @@ void DisplayDriver_ILI9341_LTDC::setVPixels(
 /// \param height: Al�ada de la regio.
 /// \param color: Color dels pixels.
 ///
-void DisplayDriver_ILI9341_LTDC::setPixels(
+void DisplayDriver_ILI9341LTDC::setPixels(
 	int x,
 	int y,
 	int width,
@@ -175,7 +161,7 @@ void DisplayDriver_ILI9341_LTDC::setPixels(
 }
 
 
-void DisplayDriver_ILI9341_LTDC::writePixels(
+void DisplayDriver_ILI9341LTDC::writePixels(
 	int x,
 	int y,
 	int width,
@@ -189,7 +175,7 @@ void DisplayDriver_ILI9341_LTDC::writePixels(
 }
 
 
-void DisplayDriver_ILI9341_LTDC::readPixels(
+void DisplayDriver_ILI9341LTDC::readPixels(
 	int x,
 	int y,
 	int width,
@@ -203,7 +189,7 @@ void DisplayDriver_ILI9341_LTDC::readPixels(
 }
 
 
-void DisplayDriver_ILI9341_LTDC::vScroll(
+void DisplayDriver_ILI9341LTDC::vScroll(
 	int delta,
 	int x,
 	int y,
@@ -213,7 +199,7 @@ void DisplayDriver_ILI9341_LTDC::vScroll(
 }
 
 
-void DisplayDriver_ILI9341_LTDC::hScroll(
+void DisplayDriver_ILI9341LTDC::hScroll(
 	int delta,
 	int x,
 	int y,
@@ -223,7 +209,7 @@ void DisplayDriver_ILI9341_LTDC::hScroll(
 }
 
 
-void DisplayDriver_ILI9341_LTDC::refresh() {
+void DisplayDriver_ILI9341LTDC::refresh() {
 
 }
 
@@ -231,165 +217,10 @@ void DisplayDriver_ILI9341_LTDC::refresh() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el display.
 ///
-void DisplayDriver_ILI9341_LTDC::lcdInitialize() {
+void DisplayDriver_ILI9341LTDC::hwInitialize() {
 
-#if defined(STM32F429I_DISC1)
-    static const uint8_t lcdInit[] = {
-        __SOFTWARE_RESET,
-        OP_DELAY, 250,
-        OP_DELAY, 250,
-		__PUMP_RATIO_CONTROL(0x20),
-		__POWER_CONTROL_A(0x39, 0x2C, 0x00, 0x34, 0x02),
-    	__POWER_CONTROL_B(0x00, 0xC1, 0x30),
-		__POWER_ON_SEQUENCE_CONTROL(0x64, 0x03, 0x12, 0x81),
-    	__POWER_CONTROL_1(0x23),
-    	__POWER_CONTROL_2(0x10),
-    	__FRAME_RATE_CONTROL_1(0x00, 0x18),
-    	__DRIVER_TIMING_CONTROL_A(0x85, 0x00, 0x78),
-    	__DRIVER_TIMING_CONTROL_B(0x00, 0x00),
-		__VCOM_CONTROL_1(0x3E, 0x28),
-		__VCOM_CONTROL_2(0x86),
-		__ENABLE_3G(0x00),
-		__MEMORY_ACCESS_CONTROL(0x08 | MAC_MX_ON | MAC_MY_ON),
-		__RGB_INTERFACE_SIGNAL_CONTROL(0xC2),
-		__DISPLAY_FUNCTION_CONTROL(0x0A, 0xA7, 0x27, 0x04),
-		__INTERFACE_CONTROL(0x01, 0x00, 0x06),
-		OP_DELAY, 200,
-		__GAMMA_SET(0x01),
-		__POSITIVE_GAMMA_CORRECTION(0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
-            0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00),
-    	__NEGATIVE_GAMMA_CORRECTION(0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
-            0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F),
-        OP_END
-    };
-
-#elif
-#error "Display no soportado"
-#endif
-
-	lcdReset();
-	writeCommands(lcdInit);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Activa el display
-///
-void DisplayDriver_ILI9341_LTDC::displayOn() {
-
-	halLTDCEnable();
-
-	lcdOpen();
-	lcdWriteCommand(CMD_SLEEP_OUT);
-	halTMRDelay(120);
-	lcdWriteCommand(CMD_DISPLAY_ON);
-	lcdClose();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Desactiva el display.
-///
-void DisplayDriver_ILI9341_LTDC::displayOff() {
-
-	lcdOpen();
-	lcdWriteCommand(CMD_DISPLAY_OFF);
-	lcdWriteCommand(CMD_ENTER_SLEEP_MODE);
-	halTMRDelay(120);
-	lcdClose();
-
-	halLTDCDisable();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Escriu una sequencia de comandes en el controlador.
-/// \param data: La sequencia de comandes.
-///
-void DisplayDriver_ILI9341_LTDC::writeCommands(
-	const uint8_t *data) {
-
-    lcdOpen();
-
-    uint8_t c;
-    const uint8_t *p = data;
-    while ((c = *p++) != OP_END) {
-        switch (c) {
-            case OP_DELAY:
-                halTMRDelay(*p++);
-                break;
-
-            default:
-                lcdWriteCommand(*p++);
-                while (--c != 0)
-                    lcdWriteData(*p++);
-                break;
-        }
-    }
-    lcdClose();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Reseteja el driver.
-///
-void DisplayDriver_ILI9341_LTDC::lcdReset() {
-
-#ifdef DISPLAY_RST_PORT
-    halTMRDelay(10);
-	halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
-    halTMRDelay(120);
-#endif
-
-}
-
-/// ----------------------------------------------------------------------
-/// \brief Inicia la comunicacio amb el controlador.
-///
-void DisplayDriver_ILI9341_LTDC::lcdOpen() {
-
-	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Finalitza la comunicacio amb el controlador.
-///
-void DisplayDriver_ILI9341_LTDC::lcdClose() {
-
-    halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Escriu un byte de comanda en el controlador
-/// \param cmd: El byte de comanda.
-///
-void DisplayDriver_ILI9341_LTDC::lcdWriteCommand(
-	uint8_t cmd) {
-
-	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(hSpi, &cmd, sizeof(cmd));
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Escriu un byte de dades en el controlador
-/// \param data: El byte de dades.
-///
-void DisplayDriver_ILI9341_LTDC::lcdWriteData(
-	uint8_t data) {
-
-	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(hSpi, &data, sizeof(data));
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Inicialitza el modul GPIO
-///
-void DisplayDriver_ILI9341_LTDC::initializeGPIO() {
-
+	// Inicialitza el modul GPIO
+	//
 	static const GPIOPinSettings gpioSettings[] = {
     	{ DISPLAY_DE_PORT,     DISPLAY_DE_PIN,
     		HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_DE_AF    },
@@ -453,13 +284,6 @@ void DisplayDriver_ILI9341_LTDC::initializeGPIO() {
 			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF}
 	};
 	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Inicialitza el modul SPI
-///
-void DisplayDriver_ILI9341_LTDC::initializeSPI() {
 
 	// Inicialitza el modul SPI
 	//
@@ -468,13 +292,6 @@ void DisplayDriver_ILI9341_LTDC::initializeSPI() {
 			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
 	};
 	hSpi = halSPIInitialize(&spiData, &spiSettings);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Inicialitza el modul LTDC
-///
-void DisplayDriver_ILI9341_LTDC::initializeLTDC() {
 
 	// Inicialitza el modul LTDC
 	//
@@ -497,7 +314,7 @@ void DisplayDriver_ILI9341_LTDC::initializeLTDC() {
 	halLTDCInitialize(&ltdcSettings);
 	halLTDCSetBackgroundColor(0x000000FF);
 
-	// Inicialitza la capa 0
+	// Inicialitza la capa 0 del modul LTDC
 	//
 	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT);
 
@@ -510,4 +327,144 @@ void DisplayDriver_ILI9341_LTDC::initializeLTDC() {
 
 	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, DISPLAY_VRAM_ADDR);
 	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
+
+	// Inicialitza el controlador del display
+	//
+#if defined(STM32F429I_DISC1)
+    static const uint8_t initCommands[] = {
+        __SOFTWARE_RESET,
+        OP_DELAY, 250,
+        OP_DELAY, 250,
+		__PUMP_RATIO_CONTROL(0x20),
+		__POWER_CONTROL_A(0x39, 0x2C, 0x00, 0x34, 0x02),
+    	__POWER_CONTROL_B(0x00, 0xC1, 0x30),
+		__POWER_ON_SEQUENCE_CONTROL(0x64, 0x03, 0x12, 0x81),
+    	__POWER_CONTROL_1(0x23),
+    	__POWER_CONTROL_2(0x10),
+    	__FRAME_RATE_CONTROL_1(0x00, 0x18),
+    	__DRIVER_TIMING_CONTROL_A(0x85, 0x00, 0x78),
+    	__DRIVER_TIMING_CONTROL_B(0x00, 0x00),
+		__VCOM_CONTROL_1(0x3E, 0x28),
+		__VCOM_CONTROL_2(0x86),
+		__ENABLE_3G(0x00),
+		__MEMORY_ACCESS_CONTROL(0x08 | MAC_MX_ON | MAC_MY_ON),
+		__RGB_INTERFACE_SIGNAL_CONTROL(0xC2),
+		__DISPLAY_FUNCTION_CONTROL(0x0A, 0xA7, 0x27, 0x04),
+		__INTERFACE_CONTROL(0x01, 0x00, 0x06),
+		OP_DELAY, 200,
+		__GAMMA_SET(0x01),
+		__POSITIVE_GAMMA_CORRECTION(0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08,
+            0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00),
+    	__NEGATIVE_GAMMA_CORRECTION(0x00, 0x0E, 0x14, 0x03, 0x11, 0x07,
+            0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F),
+        OP_END
+    };
+
+#elif
+#error "Display no soportado"
+#endif
+
+	hwReset();
+    hwOpen();
+    uint8_t c;
+    const uint8_t *p = initCommands;
+    while ((c = *p++) != OP_END) {
+        switch (c) {
+            case OP_DELAY:
+                halTMRDelay(*p++);
+                break;
+
+            default:
+                hwWriteCommand(*p++);
+                while (--c != 0)
+                    hwWriteData(*p++);
+                break;
+        }
+    }
+    hwClose();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Activa el display
+///
+void DisplayDriver_ILI9341LTDC::displayOn() {
+
+	halLTDCEnable();
+
+	hwOpen();
+	hwWriteCommand(CMD_SLEEP_OUT);
+	halTMRDelay(120);
+	hwWriteCommand(CMD_DISPLAY_ON);
+	hwClose();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Desactiva el display.
+///
+void DisplayDriver_ILI9341LTDC::displayOff() {
+
+	hwOpen();
+	hwWriteCommand(CMD_DISPLAY_OFF);
+	hwWriteCommand(CMD_ENTER_SLEEP_MODE);
+	halTMRDelay(120);
+	hwClose();
+
+	halLTDCDisable();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Reseteja el driver.
+///
+void DisplayDriver_ILI9341LTDC::hwReset() {
+
+#ifdef DISPLAY_RST_PORT
+    halTMRDelay(10);
+	halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
+    halTMRDelay(120);
+#endif
+
+}
+
+/// ----------------------------------------------------------------------
+/// \brief Inicia la comunicacio amb el controlador.
+///
+void DisplayDriver_ILI9341LTDC::hwOpen() {
+
+	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Finalitza la comunicacio amb el controlador.
+///
+void DisplayDriver_ILI9341LTDC::hwClose() {
+
+    halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Escriu un byte de comanda en el controlador
+/// \param cmd: El byte de comanda.
+///
+void DisplayDriver_ILI9341LTDC::hwWriteCommand(
+	uint8_t cmd) {
+
+	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+	halSPISendBuffer(hSpi, &cmd, sizeof(cmd));
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Escriu un byte de dades en el controlador
+/// \param data: El byte de dades.
+///
+void DisplayDriver_ILI9341LTDC::hwWriteData(
+	uint8_t data) {
+
+	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+	halSPISendBuffer(hSpi, &data, sizeof(data));
 }

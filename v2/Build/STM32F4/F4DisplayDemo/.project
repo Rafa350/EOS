@@ -854,37 +854,17 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosTransformation.cpp</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosILI9341.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341Defs.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosILI9341Defs.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosILI9341LTDC.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosILI9341LTDC.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosSSD1306.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosSSD1306.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosSSD1306Defs.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosSSD1306Defs.h</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341</name>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/ILI9341</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC</name>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/SSD1306</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -939,24 +919,49 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Tahoma12pt.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</name>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.h</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</name>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</name>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341LTDC/eosILI9341LTDC.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/SSD1306/eosSSD1306.cpp</name>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/SSD1306/eosSSD1306.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/SSD1306/eosSSD1306Defs.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/SSD1306/eosSSD1306Defs.h</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

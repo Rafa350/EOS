@@ -1,15 +1,10 @@
-#ifndef __eosILI9341LTDC__
-#define	__eosILI9341LTDC__
+#ifndef __eosILI9341__
+#define	__eosILI9341__
 
 
 #include "eos.h"
 #include "Controllers/Display/eosDisplayDriver.h"
-#include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
-
-
-#if !defined(DISPLAY_COLOR_RGB565) && !defined(DISPLAY_COLOR_RGB888)
-	#error Formato de color no soportado
-#endif
+#include "System/Graphics/eosColor.h"
 
 
 #ifndef DISPLAY_IMAGE_WIDTH
@@ -20,32 +15,23 @@
 #endif
 
 
-#if defined(DISPLAY_COLOR_RGB565)
-typedef int16_t pixel_t;
-#elif defined(DISPLAY_COLOR_RGB888)
-typedef int32_t pixel_t;
-#endif
-#define PIXEL_SIZE                sizeof(pixel_t)
-#define LINE_SIZE                 (((DISPLAY_IMAGE_WIDTH * PIXEL_SIZE) + 63) & 0xFFFFFFC0)
-
 namespace eos {
 
-    class Color;
-
-    class DisplayDriver_ILI9341_LTDC: public IDisplayDriver {
-        private:
-    		static IDisplayDriver* _instance;
-            FrameBuffer* _frameBuffer;
+    class DisplayDriver_ILI9341: public IDisplayDriver {
+    	private:
+    		static IDisplayDriver *_instance;
+    		int _imageWidth;
+    		int _imageHeight;
 
         public:
-            static IDisplayDriver *getInstance();;
+    		static IDisplayDriver *getInstance();
             void initialize() override;
             void shutdown() override;
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() const override { return _frameBuffer->getWidth(); }
-            int getHeight() const override { return _frameBuffer->getHeight(); }
+            int getWidth() const { return _imageWidth; }
+            int getHeight() const { return _imageHeight; }
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
             void setHPixels(int x, int y, int size, const Color &color) override;
@@ -58,21 +44,25 @@ namespace eos {
             void refresh() override;
 
         private:
-            DisplayDriver_ILI9341_LTDC();
-            void writeCommands(const uint8_t *dada);
+            DisplayDriver_ILI9341();
+            void writeRegion(const Color &color);
+            void writeRegion(const Color &color, int count);
+            void writeRegion(const Color *colors, int count);
+            void readRegion(Color *colors, int count);
+            void selectRegion(int x, int y, int width, int height);
 
         private:
-            void initializeGPIO();
-            void initializeSPI();
-            void initializeLTDC();
-            void lcdInitialize();
-            void lcdReset();
-            void lcdOpen();
-            void lcdClose();
-            void lcdWriteCommand(uint8_t d);
-            void lcdWriteData(uint8_t d);
+            static void hwInitialize();
+            static void hwReset();
+            static void hwOpen();
+            static void hwClose();
+            static void hwWriteCommand(uint8_t cmd);
+            static void hwWriteData(uint8_t data);
+            static void hwWriteData(uint8_t *data, int count);
+            static uint8_t hwReadData();
     };
 }
 
 
-#endif // __eos_ILI9341LTDC__
+#endif // __eosILI9341__
+

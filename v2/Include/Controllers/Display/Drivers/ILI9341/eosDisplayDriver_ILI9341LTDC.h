@@ -1,39 +1,38 @@
-#ifndef __eosSSD1306__
-#define __eosSSD1306__
+#ifndef __eosDisplayDriver_ILI9341LTDC__
+#define	__eosDisplayDriver_ILI9341LTDC__
 
 
 #include "eos.h"
-#include "HAL/halSPI.h"
 #include "Controllers/Display/eosDisplayDriver.h"
-#include "System/Graphics/eosColor.h"
+#include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
 
 
-#ifndef DISPLAY_SCREEN_WIDTH
-#define DISPLAY_SCREEN_WIDTH      128  // Tamany fix del controlador
+#ifndef DISPLAY_IMAGE_WIDTH
+#define DISPLAY_IMAGE_WIDTH       240  // Tamany fix del controlador
 #endif
-#ifndef DISPLAY_SCREEN_HEIGHT
-#define DISPLAY_SCREEN_HEIGHT     64   // Tamany fix del controlador
+#ifndef DISPLAY_IMAGE_HEIGHT
+#define DISPLAY_IMAGE_HEIGHT      320  // Tamany fix del controlador
 #endif
 
 
 namespace eos {
 
-    class SSD1306Driver: public IDisplayDriver {
-    	private:
-    		static IDisplayDriver *_instance;
-    		const int _screenWidth;
-    		const int _screenHeight;
-    		SPIHandler _hSpi;
+    class Color;
+
+    class DisplayDriver_ILI9341LTDC: public IDisplayDriver {
+        private:
+    		static IDisplayDriver* _instance;
+            FrameBuffer* _frameBuffer;
 
         public:
-    		static IDisplayDriver *getInstance();
+            static IDisplayDriver *getInstance();;
             void initialize() override;
             void shutdown() override;
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() const { return _screenWidth; }
-            int getHeight() const { return _screenHeight; }
+            int getWidth() const override { return _frameBuffer->getWidth(); }
+            int getHeight() const override { return _frameBuffer->getHeight(); }
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
             void setHPixels(int x, int y, int size, const Color &color) override;
@@ -46,16 +45,16 @@ namespace eos {
             void refresh() override;
 
         private:
-            SSD1306Driver();
+            DisplayDriver_ILI9341LTDC();
 
-            void oledInitialize();
-            void oledSelect();
-            void oledUnselect();
-            void oledWriteCommand(uint8_t cmd);
-            void oledWriteData(uint8_t data);
+            static void hwInitialize();
+            static void hwReset();
+            static void hwOpen();
+            static void hwClose();
+            static void hwWriteCommand(uint8_t d);
+            static void hwWriteData(uint8_t d);
     };
 }
 
 
-#endif // __eosSSD1306__
-
+#endif // __eos_DisplayDriver_ILI9341LTDC__

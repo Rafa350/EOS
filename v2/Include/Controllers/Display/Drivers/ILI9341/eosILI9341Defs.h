@@ -114,6 +114,9 @@
 #define __READ_DISPLAY_SELF_DIAGNOSTIC_RESULT
 #define __ENTER_SLEEP_MODE
 
+#define OP_END        0
+#define OP_DELAY      255
+
 #define __SLEEP_OUT \
 	1, CMD_SLEEP_OUT
 

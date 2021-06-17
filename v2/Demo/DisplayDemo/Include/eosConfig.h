@@ -50,7 +50,4 @@
 #define USE_SWITCHES_SW1
 
 
-#include "board/eosBoard.h"
-
-
 #endif // __eosConfig__

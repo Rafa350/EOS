@@ -5,13 +5,13 @@
 #include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosGraphics.h"
 #if defined(DISPLAY_DRV_ILI9341LTDC)
-#include "Controllers/Display/Drivers/eosILI9341LTDC.h"
+#include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
 #elif defined(DISPLAY_DRV_ILI9341)
-#include "Controllers/Display/Drivers/eosILI9341.h"
+#include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.h"
 #elif defined(DISPLAY_DRV_RGBLTDC)
 #include "Controllers/Display/Drivers/eosRGBLTDC.h"
 #elif defined(DISPLAY_DRV_SSD1306)
-#include "Controllers/Display/Drivers/eosSSD1306.h"
+#include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
 #else
 #error No se especifico DISPLAY_DRV_XXXX
 #endif
@@ -78,13 +78,13 @@ void DisplayService::onSetup() {
 #endif
 
 #if defined(DISPLAY_DRV_ILI9341LTDC)
-	driver = DisplayDriver_ILI9341_LTDC::getInstance();
+	driver = DisplayDriver_ILI9341LTDC::getInstance();
 #elif defined(DISPLAY_DRV_ILI9341)
-	driver = ILI9341Driver::getInstance();
+	driver = DisplayDriver_ILI9341::getInstance();
 #elif defined(DISPLAY_DRV_RGBLTDC)
 	driver = new RGBDirectDriver();
 #elif defined(DISPLAY_DRV_SSD1306)
-	driver = SSD1306Driver::getInstance();
+	driver = DisplayDriver_SSD1306::getInstance();
 #else
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif

@@ -135,6 +135,7 @@
 // EOS includes
 //
 #include "eosConfig.h"
+#include "Board/eosBoard.h"
 
 
 // Optional includes
