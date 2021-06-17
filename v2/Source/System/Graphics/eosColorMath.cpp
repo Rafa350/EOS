@@ -12,7 +12,7 @@ using namespace eos;
 /// \param    o: Opacitat.
 /// \return   El valor del pixel combinat.
 ///
-uint16_t ColorMath::RGB565_combineColor(
+uint16_t ColorMath::combineColor_RGB565(
 	uint16_t b,
 	uint16_t f,
 	uint8_t o) {

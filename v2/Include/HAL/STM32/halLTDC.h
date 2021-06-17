@@ -20,14 +20,14 @@ typedef struct {
     uint16_t HFP;
     uint16_t VBP;
     uint16_t VFP;
-    struct {                      // Polaritat
-        unsigned HSYNC: 1;        //     Polaritat HSYNC
-        unsigned VSYNC: 1;        //     Polaritat VSYNC
-        unsigned DE: 1;           //     Polaritat DE
-        unsigned PC: 1;           //     Polaritat PC
+    struct {                 // Polaritat
+        unsigned HSYNC: 1;   // -HSYNC
+        unsigned VSYNC: 1;   // -VSYNC
+        unsigned DE: 1;      // -DE
+        unsigned PC: 1;      // -PC
     } polarity;
-    uint16_t width;               // Amplada
-    uint16_t height;              // Alçada
+    int width;               // Amplada
+    int height;              // Alçada
 } LTDCSettings;
 
 

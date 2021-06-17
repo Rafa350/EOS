@@ -27,6 +27,17 @@
 #define USE_DISPLAY
 #define DISPLAY_DRV_ILI9341LTDC
 
+#elif defined(BUILD_RGBLTDC)
+#if defined(EOS_STM32F4)
+#define HARDWARE_STM32F429I_DISC1
+#elif defined(EOS_STM32F7)
+#define HARDWARE_STM32F746G_DISCO
+#else
+#error "Hardware no soportado para RGBLTDC "
+#endif
+#define USE_DISPLAY
+#define DISPLAY_DRV_RGBLTDC
+
 #elif defined(BUILD_SSD1306)
 #define HARDWARE_CUSTOM
 #if defined(EOS_STM32F4)

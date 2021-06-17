@@ -14,11 +14,10 @@ namespace eos {
 		private:
 			void* _buffer;
 			int _lineWidth;
-			int _lineBytes;
-			constexpr static int _pixelBytes = sizeof(uint16_t);
 
 		private:
-			inline uint32_t getPixelAddr(int x, int y) const { return (int)_buffer + (y * _lineBytes) + (x * _pixelBytes); }
+			inline uint32_t getAddr() const { return (uint32_t)_buffer; }
+			inline uint32_t getPixelAddr(int x, int y) const { return (int)_buffer + ((y * _lineWidth) + x) * sizeof(uint16_t); }
 
 		protected:
 			void put(int x, int y, const Color& color) override;

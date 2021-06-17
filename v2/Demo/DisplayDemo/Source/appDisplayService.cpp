@@ -9,7 +9,7 @@
 #elif defined(DISPLAY_DRV_ILI9341)
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.h"
 #elif defined(DISPLAY_DRV_RGBLTDC)
-#include "Controllers/Display/Drivers/eosRGBLTDC.h"
+#include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #elif defined(DISPLAY_DRV_SSD1306)
 #include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
 #else
@@ -82,7 +82,7 @@ void DisplayService::onSetup() {
 #elif defined(DISPLAY_DRV_ILI9341)
 	driver = DisplayDriver_ILI9341::getInstance();
 #elif defined(DISPLAY_DRV_RGBLTDC)
-	driver = new RGBDirectDriver();
+	driver = new DisplayDriver_RGBLTDC();
 #elif defined(DISPLAY_DRV_SSD1306)
 	driver = DisplayDriver_SSD1306::getInstance();
 #else

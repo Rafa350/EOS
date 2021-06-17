@@ -1,7 +1,5 @@
 #include "eos.h"
 
-#if defined(USE_DISPLAY) && defined(DISPLAY_DRV_RGBLTDC)
-
 #if !((defined(LTDC) && (defined(EOS_STM32F4) || defined(EOS_STM32F7))))
 #error Hardware no soportado
 #endif
@@ -12,7 +10,7 @@
 
 #include "eosAssert.h"
 #include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
-#include "Controllers/Display/Drivers/eosRGBLTDC.h"
+#include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "HAL/STM32/halGPIO.h"
 #include "HAL/STM32/halLTDC.h"
@@ -23,12 +21,12 @@
 // Parametres depenents del format de pixel
 //
 #if defined(DISPLAY_COLOR_RGB565)
-#define FRAME_BUFFER              RGB565_DMA2D_FrameBuffer
+#define FRAME_BUFFER              FrameBuffer_RGB565_DMA2D
 #define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB565
-#define LTDC_LxPFCR_PF_DEFAULT    0b010
+//#define LTDC_LxPFCR_PF_DEFAULT    0b010
 #define HAL_LTDC_FORMAT_DEFAULT   HAL_LTDC_FORMAT_RGB565
 #elif defined(DISPLAY_COLOR_RGB888)
-#define FRAME_BUFFER              RGB888_DMA2D_FrameBuffer
+#define FRAME_BUFFER              FrameBuffer_RGB888_DMA2D
 #define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB888
 #define LTDC_LxPFCR_PF_DEFAULT    0b001
 #else
@@ -53,27 +51,25 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Constructor
 ///
-RGBDirectDriver::RGBDirectDriver() {
+DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 
-	frontFrameAddr = FRAME1_ADDR;
-	frontFrameBuffer = new FRAME_BUFFER(
-		DISPLAY_SCREEN_WIDTH,
-		DISPLAY_SCREEN_HEIGHT,
+	_frontFrameAddr = FRAME1_ADDR;
+	_frontFrameBuffer = new FRAME_BUFFER(
+		DISPLAY_IMAGE_WIDTH,
+		DISPLAY_IMAGE_HEIGHT,
 		DisplayOrientation::normal,
-		(uint8_t*) frontFrameAddr,
-		LINE_SIZE);
+		(void*) _frontFrameAddr);
 
 #ifdef DISPLAY_DOUBLE_BUFFER
-	backFrameAddr = FRAME2_ADDR;
-	backFrameBuffer = new FRAME_BUFFER(
-		DISPLAY_SCREEN_WIDTH,
-		DISPLAY_SCREEN_HEIGHT,
+	_backFrameAddr = FRAME2_ADDR;
+	_backFrameBuffer = new FRAME_BUFFER(
+		DISPLAY_IMAGE_WIDTH,
+		DISPLAY_IMAGE_HEIGHT,
 		DisplayOrientation::normal,
-		(uint8_t*) backFrameAddr,
-		LINE_SIZE);
+		(void*) _backFrameAddr);
 #else
-	backFrameAddr = frontFrameAddr;
-	backFrameBuffer = frontFrameBuffer;
+	_backFrameAddr = _frontFrameAddr;
+	_backFrameBuffer = _frontFrameBuffer;
 #endif
 }
 
@@ -81,7 +77,7 @@ RGBDirectDriver::RGBDirectDriver() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el driver.
 ///
-void RGBDirectDriver::initialize() {
+void DisplayDriver_RGBLTDC::initialize() {
 
 	// Inicialitza els pins
 	//
@@ -97,9 +93,9 @@ void RGBDirectDriver::initialize() {
 
 	// Inicialitza els buffers a color negre
 	//
-	frontFrameBuffer->clear(COLOR_Black);
+	_frontFrameBuffer->clear(COLOR_Black);
 #ifdef DISPLAY_DOUBLE_BUFFER
-	backFrameBuffer->clear(COLOR_Black);
+	_backFrameBuffer->clear(COLOR_Black);
 #endif
 }
 
@@ -107,7 +103,7 @@ void RGBDirectDriver::initialize() {
 /// ---------------------------------------------------------------------
 /// \brief Finalitza el driver.
 ///
-void RGBDirectDriver::shutdown() {
+void DisplayDriver_RGBLTDC::shutdown() {
 
 	displayOff();
 }
@@ -116,7 +112,7 @@ void RGBDirectDriver::shutdown() {
 /// ----------------------------------------------------------------------
 /// \brief Activa el display.
 ///
-void RGBDirectDriver::displayOn() {
+void DisplayDriver_RGBLTDC::displayOn() {
 
     // Activa el modul LDTC
     //
@@ -135,7 +131,7 @@ void RGBDirectDriver::displayOn() {
 /// ----------------------------------------------------------------------
 /// \brief Desactiva el display.
 ///
-void RGBDirectDriver::displayOff() {
+void DisplayDriver_RGBLTDC::displayOff() {
 
 	// Desactiva el display
 	//
@@ -155,10 +151,10 @@ void RGBDirectDriver::displayOff() {
 /// \brief Selecciona l'orientacio de la pantalla.
 /// \param orientation: L'orientacio.
 ///
-void RGBDirectDriver::setOrientation(
+void DisplayDriver_RGBLTDC::setOrientation(
 	DisplayOrientation orientation) {
 
-	backFrameBuffer->setOrientation(orientation);
+	_backFrameBuffer->setOrientation(orientation);
 }
 
 
@@ -166,10 +162,10 @@ void RGBDirectDriver::setOrientation(
 /// \brief Borra la imatge.
 /// \param color: Color de borrat.
 ///
-void RGBDirectDriver::clear(
+void DisplayDriver_RGBLTDC::clear(
 	const Color &color) {
 
-	backFrameBuffer->clear(color);
+	_backFrameBuffer->clear(color);
 }
 
 
@@ -179,12 +175,12 @@ void RGBDirectDriver::clear(
 /// \param y: Coordinada Y.
 /// \param color: Color del pixel.
 ///
-void RGBDirectDriver::setPixel(
+void DisplayDriver_RGBLTDC::setPixel(
 	int x,
 	int y,
 	const Color &color) {
 
-	backFrameBuffer->setPixel(x, y, color);
+	_backFrameBuffer->setPixel(x, y, color);
 }
 
 
@@ -195,13 +191,13 @@ void RGBDirectDriver::setPixel(
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
-void RGBDirectDriver::setHPixels(
+void DisplayDriver_RGBLTDC::setHPixels(
 	int x,
 	int y,
 	int size,
 	const Color &color) {
 
-	backFrameBuffer->setPixels(x, y, size, 1, color);
+	_backFrameBuffer->setPixels(x, y, size, 1, color);
 }
 
 
@@ -212,13 +208,13 @@ void RGBDirectDriver::setHPixels(
 /// \param length: Longitut de la linia.
 /// \param color: Color dels pixels.
 ///
-void RGBDirectDriver::setVPixels(
+void DisplayDriver_RGBLTDC::setVPixels(
 	int x,
 	int y,
 	int size,
 	const Color &color) {
 
-	backFrameBuffer->setPixels(x, y, 1, size, color);
+	_backFrameBuffer->setPixels(x, y, 1, size, color);
 }
 
 
@@ -230,14 +226,14 @@ void RGBDirectDriver::setVPixels(
 /// \param height: Alçada de la regio.
 /// \param color: Color dels pixels.
 ///
-void RGBDirectDriver::setPixels(
+void DisplayDriver_RGBLTDC::setPixels(
 	int x,
 	int y,
 	int width,
 	int height,
 	const Color &color) {
 
-	backFrameBuffer->setPixels(x, y, width, height, color);
+	_backFrameBuffer->setPixels(x, y, width, height, color);
 }
 
 
@@ -253,7 +249,7 @@ void RGBDirectDriver::setPixels(
 /// \param dy: offset Y dins del vitmap.
 /// \param pitch: Aplada de linia del bitmap.
 ///
-void RGBDirectDriver::writePixels(
+void DisplayDriver_RGBLTDC::writePixels(
 	int x,
 	int y,
 	int width,
@@ -276,7 +272,7 @@ void RGBDirectDriver::writePixels(
 /// \param pixels: Buffer de pixels.
 /// \param format: Format de pixels.
 ///
-void RGBDirectDriver::readPixels(
+void DisplayDriver_RGBLTDC::readPixels(
 	int x,
 	int y,
 	int width,
@@ -293,7 +289,7 @@ void RGBDirectDriver::readPixels(
 /// ----------------------------------------------------------------------
 /// \brief Realitza un scroll vertical
 ///
-void RGBDirectDriver::vScroll(
+void DisplayDriver_RGBLTDC::vScroll(
 	int delta,
 	int x,
 	int y,
@@ -306,7 +302,7 @@ void RGBDirectDriver::vScroll(
 /// ----------------------------------------------------------------------
 /// \brief Realitza un scroll horitzontal.
 ///
-void RGBDirectDriver::hScroll(
+void DisplayDriver_RGBLTDC::hScroll(
 	int delta,
 	int x,
 	int y,
@@ -320,17 +316,17 @@ void RGBDirectDriver::hScroll(
 /// \brief Refresca la pantalla.
 /// \remarks Si es treballa en doble buffer, intercanvia els frames.
 ///
-void RGBDirectDriver::refresh() {
+void DisplayDriver_RGBLTDC::refresh() {
 #ifdef DISPLAY_DOUBLE_BUFFER
 
 	// Intercanvia els buffers
 	//
-	Math::swap(frontFrameBuffer, backFrameBuffer);
-	Math::swap(frontFrameAddr, backFrameAddr);
+	Math::swap(_frontFrameBuffer, _backFrameBuffer);
+	Math::swap(_frontFrameAddr, _backFrameAddr);
 
 	// Asigna l'adresa de la capa
 	//
-	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
+	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, _frontFrameAddr);
 	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
 #endif
 }
@@ -339,7 +335,7 @@ void RGBDirectDriver::refresh() {
 /// ----------------------------------------------------------------------
 /// \brief Inicialitza el modul GPIO.
 ///
-void RGBDirectDriver::initializeGPIO() {
+void DisplayDriver_RGBLTDC::initializeGPIO() {
 
 	static const GPIOPinSettings gpioSettings[] = {
 		{DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
@@ -387,7 +383,7 @@ void RGBDirectDriver::initializeGPIO() {
 /// \remarks Prepara la capa Layer1, pero no s'activara fins que s'asigni
 /// una adressa per buffer de video.
 ///
-void RGBDirectDriver::initializeLTDC() {
+void DisplayDriver_RGBLTDC::initializeLTDC() {
 
 	static const LTDCSettings ltdcSettings = {
 		.HSYNC = DISPLAY_HSYNC,
@@ -414,15 +410,12 @@ void RGBDirectDriver::initializeLTDC() {
 	// Inicialitza la capa 0
 	//
 	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT);
+	int pixelSize = halLTDCGetPixelSize(HAL_LTDC_FORMAT_DEFAULT);
 	halLTDCLayerSetFrameFormat(HAL_LTDC_LAYER_0,
 		HAL_LTDC_FORMAT_DEFAULT,
-		DISPLAY_IMAGE_WIDTH * halLTDCGetPixelSize(HAL_LTDC_FORMAT_DEFAULT),
-		((DISPLAY_IMAGE_WIDTH * halLTDCGetPixelSize(HAL_LTDC_FORMAT_DEFAULT)) + 63) & 0xFFFFFFC0,
+		DISPLAY_IMAGE_WIDTH * pixelSize,
+		((DISPLAY_IMAGE_WIDTH * pixelSize) + 63) & 0xFFFFFFC0,
 		DISPLAY_IMAGE_HEIGHT);
-	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, frontFrameAddr);
+	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, _frontFrameAddr);
 	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
 }
-
-
-#endif // USE_DISPLAY && DISPLAY_DRV_RGBLTDC
-

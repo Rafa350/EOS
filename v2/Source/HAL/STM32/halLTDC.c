@@ -59,16 +59,16 @@ void halLTDCInitialize(
     //
     tmp = LTDC->SSCR;
     tmp &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
-    tmp |= (settings->HSYNC - 1) << LTDC_SSCR_HSW_Pos;
-    tmp |= (settings->VSYNC - 1) << LTDC_SSCR_VSH_Pos;
+    tmp |= ((settings->HSYNC - 1) & 0xFFF) << LTDC_SSCR_HSW_Pos;
+    tmp |= ((settings->VSYNC - 1) & 0x7FF) << LTDC_SSCR_VSH_Pos;
     LTDC->SSCR = tmp;
 
     // Configura el registre BPCR (Back Porch Configuration Register)
     //
     tmp = LTDC->BPCR;
     tmp &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
-    tmp |= (settings->HSYNC + settings->HBP - 1) << LTDC_BPCR_AHBP_Pos;
-    tmp |= (settings->VSYNC + settings->VBP - 1) << LTDC_BPCR_AVBP_Pos;
+    tmp |= ((settings->HSYNC + settings->HBP - 1) & 0xFFF) << LTDC_BPCR_AHBP_Pos;
+    tmp |= ((settings->VSYNC + settings->VBP - 1) & 0x7FF) << LTDC_BPCR_AVBP_Pos;
     LTDC->BPCR = tmp;
 
     // Configura el registre AWCR (Active Width Configuration Register)
@@ -77,8 +77,8 @@ void halLTDCInitialize(
     //
     tmp = LTDC->AWCR;
     tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
-    tmp |= (settings->HSYNC + settings->HBP + settings->width - 1) << LTDC_AWCR_AAW_Pos;
-    tmp |= (settings->VSYNC + settings->VBP + settings->height - 1) << LTDC_AWCR_AAH_Pos;
+    tmp |= ((settings->HSYNC + settings->HBP + (uint16_t)settings->width - 1) & 0xFFF) << LTDC_AWCR_AAW_Pos;
+    tmp |= ((settings->VSYNC + settings->VBP + (uint16_t)settings->height - 1) & 0x7FF)  << LTDC_AWCR_AAH_Pos;
     LTDC->AWCR = tmp;
 
     // Configura el registre TWCR (Total Width Configuration Register)
@@ -87,8 +87,8 @@ void halLTDCInitialize(
     //
     tmp = LTDC->TWCR;
     tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
-    tmp |= (settings->HSYNC + settings->HBP + settings->width + settings->HFP - 1) << LTDC_TWCR_TOTALW_Pos;
-    tmp |= (settings->VSYNC + settings->VBP + settings->height + settings->VFP - 1) << LTDC_TWCR_TOTALH_Pos;
+    tmp |= ((settings->HSYNC + settings->HBP + (uint16_t)settings->width + settings->HFP - 1) & 0xFFF) << LTDC_TWCR_TOTALW_Pos;
+    tmp |= ((settings->VSYNC + settings->VBP + (uint16_t)settings->height + settings->VFP - 1) & 0x7FF) << LTDC_TWCR_TOTALH_Pos;
     LTDC->TWCR = tmp;
 }
 
@@ -147,8 +147,8 @@ void halLTDCLayerSetWindow(
 	uint32_t ahbp = (LTDC->BPCR & LTDC_BPCR_AHBP) >> LTDC_BPCR_AHBP_Pos;
     tmp = layer->WHPCR;
     tmp &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
-    tmp |= (ahbp + x + 1) << LTDC_LxWHPCR_WHSTPOS_Pos;
-    tmp |= (ahbp + width - x) << LTDC_LxWHPCR_WHSPPOS_Pos;
+    tmp |= ((ahbp + x + 1) & 0xFFF) << LTDC_LxWHPCR_WHSTPOS_Pos;
+    tmp |= ((ahbp + width - x) & 0xFFF) << LTDC_LxWHPCR_WHSPPOS_Pos;
     layer->WHPCR = tmp;
 
     // Configura Lx_WHPCR (Window Vertical Position Configuration Register)
@@ -157,8 +157,8 @@ void halLTDCLayerSetWindow(
 	uint32_t avbp = (LTDC->BPCR & LTDC_BPCR_AVBP) >> LTDC_BPCR_AVBP_Pos;
     tmp = layer->WVPCR;
     tmp &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
-    tmp |= (avbp + y + 1) << LTDC_LxWVPCR_WVSTPOS_Pos;
-    tmp |= (avbp + height - y) << LTDC_LxWVPCR_WVSPPOS_Pos;
+    tmp |= ((avbp + y + 1) & 0x7FF) << LTDC_LxWVPCR_WVSTPOS_Pos;
+    tmp |= ((avbp + height - y) & 0x7FF) << LTDC_LxWVPCR_WVSPPOS_Pos;
     layer->WVPCR = tmp;
 }
 
@@ -277,15 +277,15 @@ void halLTDCLayerSetFrameFormat(
     //
     tmp = layer->CFBLR;
     tmp &= ~(LTDC_LxCFBLR_CFBLL | LTDC_LxCFBLR_CFBP);
-    tmp |= linePitch << LTDC_LxCFBLR_CFBP_Pos;
-    tmp |= (lineWidth + 3) << LTDC_LxCFBLR_CFBLL_Pos;
+    tmp |= (linePitch & 0x1FFF) << LTDC_LxCFBLR_CFBP_Pos;
+    tmp |= ((lineWidth + 3) & 0x1FFF) << LTDC_LxCFBLR_CFBLL_Pos;
     layer->CFBLR = tmp;
 
     // Configura Lx_CFBLNR (Color Frame Buffer Line Number Register)
     //
     tmp = layer->CFBLNR;
     tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
-    tmp |= numLines;
+    tmp |= numLines & 0x7FF;
     layer->CFBLNR = tmp;
 }
 
@@ -354,21 +354,21 @@ int halLTDCGetPixelOffset(
 
 	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
 
-	int pitch = (layer->CFBLR & LTDC_LxCFBLR_CFBP_Msk) >> LTDC_LxCFBLR_CFBP_Pos;
-	int pixBytes = 0;
+	int lineBytes = (layer->CFBLR & LTDC_LxCFBLR_CFBP_Msk) >> LTDC_LxCFBLR_CFBP_Pos;
+	int pixelBytes = 0;
 	switch ((layer->PFCR & LTDC_LxPFCR_PF_Msk) >> LTDC_LxPFCR_PF_Pos) {
 		default:
 		case 0b001: // RGB888
 		case 0b010: // RGB565
-			pixBytes = 2;
+			pixelBytes = 2;
 			break;
 
 		case 0b101: // L8
-			pixBytes = 1;
+			pixelBytes = 1;
 			break;
 	}
 
-	return (y * pitch) + (x * pixBytes);
+	return (y * lineBytes) + (x * pixelBytes);
 }
 
 

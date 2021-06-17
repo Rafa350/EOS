@@ -26,18 +26,18 @@ void halDMA2DDeinitialize() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Ompla una regio amb un color solid.
-/// \param    dstAddr: Adressa del primer pixel de la regio.
+/// \param    addr: Adressa del primer pixel de la regio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
-/// \param    dstPitch: Offset per avançar a la seguent linia de la regio.
+/// \param    offset: Offset per avançar a la seguent linia de la regio.
 /// \param    options: Opcions
 /// \param    color: Color per omplir. Nomes accepta el format de desti.
 ///
 void halDMA2DStartFill(
-	uint32_t dstAddr,
-	uint32_t width,
-	uint32_t height,
-	uint32_t dstPitch,
+	uint32_t addr,
+	int width,
+	int height,
+	int offset,
 	DMA2DOptions options,
 	uint32_t color) {
 
@@ -61,12 +61,14 @@ void halDMA2DStartFill(
 
 	// Selecciona l'adressa i el pitch del desti
 	//
-	DMA2D->OMAR = dstAddr;
-	DMA2D->OOR = dstPitch;
+	DMA2D->OMAR = addr;
+	DMA2D->OOR = offset & 0x3FFF;
 
 	// Selecciona el tamany de la finestra
 	//
-	DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);
+	DMA2D->NLR =
+		((width & 0x3FFF) << DMA2D_NLR_PL_Pos) |
+		((height & 0xFFFF) << DMA2D_NLR_NL_Pos);
 
 	// Inicia la transferencia
 	//
@@ -76,22 +78,22 @@ void halDMA2DStartFill(
 
 /// ----------------------------------------------------------------------
 /// \brief    Copia un mapa de bits a una regio
-/// \param    dstAddr: Adresa del primer pixel de la regio.
+/// \param    addr: Adresa del primer pixel de la regio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
-/// \param    dstPitch: Offset per avançar a la seguent linia de la regio.
+/// \param    offset: Offset per avançar a la seguent linia de la regio.
 /// \param    options: Opcions.
 /// \param    srcAddr: Adressa del primer pixel del mapa de bits.
-/// \param    srcPitch: Offset per avançar a la seguent linia del mapa de bits.
+/// \param    srcOffset: Offset per avançar a la seguent linia del mapa de bits.
 ///
 void halDMA2DStartCopy(
-	uint32_t dstAddr,
-	uint32_t width,
-	uint32_t height,
-	uint32_t dstPitch,
+	uint32_t addr,
+	int width,
+	int height,
+	int offset,
 	DMA2DOptions options,
 	uint32_t srcAddr,
-	uint32_t srcPitch) {
+	int srcOffset) {
 
 	// Selecciona el tipus de transferencia com a M2M/PFC
 	//
@@ -130,16 +132,18 @@ void halDMA2DStartCopy(
 	// Selecciona l'adressa i el pitch del origen
 	//
 	DMA2D->FGMAR = srcAddr;
-	DMA2D->FGOR = srcPitch;
+	DMA2D->FGOR = srcOffset & 0x3FFF;
 
 	// Selecciona l'adressa i el pitch del desti.
 	//
-	DMA2D->OMAR = dstAddr;
-	DMA2D->OOR = dstPitch;
+	DMA2D->OMAR = addr;
+	DMA2D->OOR = offset & 0x3FFF;
 
 	// Selecciona el tamany de la finestra
 	//
-	DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);
+	DMA2D->NLR =
+		((width & 0x3FFF) << DMA2D_NLR_PL_Pos) |
+		((height & 0xFFFF) << DMA2D_NLR_NL_Pos);
 
 	// Inicia la transferencia
 	//

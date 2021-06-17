@@ -14,6 +14,8 @@ using namespace eos;
 /// \param    frameHeight: Alçada fisica en pixels.
 /// \param    orientation: Orientacio inicial.
 /// \param    buffer: Buffer d'imatge.
+/// \remarks  S'ajusta l'amplada per ser multiple de 64 bytes, aixo permet
+///           optimitzar les transferencies de DMA2D
 ///
 FrameBuffer_RGB565_DMA2D::FrameBuffer_RGB565_DMA2D(
 	int frameWidth,
@@ -22,13 +24,8 @@ FrameBuffer_RGB565_DMA2D::FrameBuffer_RGB565_DMA2D(
 	void* buffer):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
-	_buffer(buffer) {
-
-	// Ajusta l'amplada per ser multiple de 64 bytes, per
-	// optimitzar les transferencies de DMA2D
-	//
-	_lineBytes = ((frameWidth * _pixelBytes) + 63) & 0xFFFFFFC0;
-	_lineWidth = _lineBytes / _pixelBytes;
+	_buffer(buffer),
+	_lineWidth((((frameWidth * sizeof(uint16_t)) + 63) & 0xFFFFFFC0) / sizeof(uint16_t)) {
 
     halDMA2DInitialize();
 }
@@ -36,9 +33,9 @@ FrameBuffer_RGB565_DMA2D::FrameBuffer_RGB565_DMA2D(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna un color a un pixel.
-/// \param    x: Coordinada X del pixel.
-/// \param    y: Coordinada Y del pixel.
-/// \param    color: Color en format de pixel fisic;
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada y.
+/// \param    color: Color.
 /// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
 void FrameBuffer_RGB565_DMA2D::put(
@@ -50,7 +47,7 @@ void FrameBuffer_RGB565_DMA2D::put(
 	if (opacity != 0) {
 		uint16_t c = color.toRGB565();
 		uint16_t* p = (uint16_t*) getPixelAddr(x, y);
-	    *p = opacity == 0xFF ? c : ColorMath::RGB565_combineColor(*p, c, opacity);
+	    *p = opacity == 0xFF ? c : ColorMath::combineColor_RGB565(*p, c, opacity);
 	}
 }
 
@@ -59,8 +56,8 @@ void FrameBuffer_RGB565_DMA2D::put(
 /// \brief    Ompla amb un color, una regio de la pantalla.
 /// \param    x: Coordinada x.
 /// \param    y: Coordinada y.
-/// \param    width: Amplada del bloc.
-/// \param    height: Alçada del bloc.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
 /// \param    color: Color.
 /// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
@@ -106,7 +103,7 @@ void FrameBuffer_RGB565_DMA2D::fill(
 /// \param    height: Alçada.
 /// \param    colors: Llista de pixels.
 /// \param    dx: Offset x dins del bitmap.
-/// \param    dy: offset y dins del bitmap.
+/// \param    dy: Offset y dins del bitmap.
 /// \param    pitch: Offset a la seguent linia del bitmap. 0 si son consecutives.
 ///
 void FrameBuffer_RGB565_DMA2D::copy(

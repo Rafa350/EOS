@@ -7,10 +7,11 @@
 #include "eos.h"
 #include "System/Graphics/eosColor.h"
 
+
 namespace eos {
 
     namespace ColorMath {
-		uint16_t RGB565_combineColor(uint16_t b, uint16_t f, uint8_t o);
+		uint16_t combineColor_RGB565(uint16_t b, uint16_t f, uint8_t o);
     }
 }
 

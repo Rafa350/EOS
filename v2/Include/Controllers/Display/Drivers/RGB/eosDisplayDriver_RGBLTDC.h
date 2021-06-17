@@ -1,5 +1,5 @@
-#ifndef __eosRGBLTDC__
-#define	__eosRGBLTDC__
+#ifndef __eosDisplayDriver_RGBLTDC__
+#define	__eosDIsplayDriver_RGBLTDC__
 
 
 // EOS includes
@@ -18,43 +18,18 @@
 #define DISPLAY_IMAGE_HEIGHT      272       // Tamany fix del controlador
 #endif
 
-#if defined(DISPLAY_COLOR_RGB888)
-// Format Pixel RGB888
-#define PIXEL_MASK_R              COLOR_RGB888_MASK_R
-#define PIXEL_MASK_G              COLOR_RGB888_MASK_G
-#define PIXEL_MASK_B              COLOR_RGB888_MASK_B
-#define PIXEL_SHIFT_R             COLOR_RGB888_SHIFT_R
-#define PIXEL_SHIFT_G             COLOR_RGB888_SHIFT_G
-#define PIXEL_SHIFT_B             COLOR_RGB888_SHIFT_B
-#define PIXEL_FORMAT              ColorFormat::rgb888
-#define PIXEL_TYPE                uint32_t
-
-#elif defined(DISPLAY_COLOR_RGB565)
-// Format Pixel RGB565
-#define PIXEL_MASK_R              COLOR_RGB565_MASK_R
-#define PIXEL_MASK_G              COLOR_RGB565_MASK_G
-#define PIXEL_MASK_B              COLOR_RGB565_MASK_B
-#define PIXEL_SHIFT_R             COLOR_RGB565_SHIFT_R
-#define PIXEL_SHIFT_G             COLOR_RGB565_SHIFT_G
-#define PIXEL_SHIFT_B             COLOR_RGB565_SHIFT_B
-#define PIXEL_FORMAT              ColorFormat::rgb565
-#define PIXEL_TYPE                uint16_t
-#endif
-
 
 namespace eos {
 
-    typedef PIXEL_TYPE pixel_t;
-
-	class RGBDirectDriver: public IDisplayDriver {
+	class DisplayDriver_RGBLTDC: public IDisplayDriver {
     	private:
-    		FrameBuffer *frontFrameBuffer;
-    		FrameBuffer *backFrameBuffer;
-    		int frontFrameAddr;
-    		int backFrameAddr;
+    		FrameBuffer *_frontFrameBuffer;
+    		FrameBuffer *_backFrameBuffer;
+    		uint32_t _frontFrameAddr;
+    		uint32_t _backFrameAddr;
 
         public:
-            RGBDirectDriver();
+    		DisplayDriver_RGBLTDC();
 
             void initialize() override;
             void shutdown() override;
@@ -62,8 +37,8 @@ namespace eos {
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
 
-            inline int getWidth() const override { return frontFrameBuffer->getWidth(); }
-            inline int getHeight() const override { return frontFrameBuffer->getHeight(); }
+            inline int getWidth() const override { return _frontFrameBuffer->getWidth(); }
+            inline int getHeight() const override { return _frontFrameBuffer->getHeight(); }
 
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
@@ -83,4 +58,4 @@ namespace eos {
     };
 }
 
-#endif // __eosRGBDirect__
+#endif // __eosDisplayDriver_RGBLTDC__

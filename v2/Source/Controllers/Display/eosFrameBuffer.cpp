@@ -51,8 +51,8 @@ void FrameBuffer::setOrientation(
 
 /// ----------------------------------------------------------------------
 /// \brief Rota les coordinades d'un punt.
-/// \param x: Coordinada X del punt.
-/// \param y: Coordinada Y del punt.
+/// \param x: Coordinada x.
+/// \param y: Coordinada y.
 ///
 void FrameBuffer::rotate(
 	int &x,
@@ -94,10 +94,10 @@ void FrameBuffer::rotate(
 
 /// ----------------------------------------------------------------------
 /// \brief Rota les coordinades d'un rectangle.
-/// \param x1: Coordinada X esquerra.
-/// \param y1: Coordinada Y superior.
-/// \param x2: Coordinada X dreta.
-/// \param y2: Coordinada Y inferior.
+/// \param x1: Coordinada x esquerra.
+/// \param y1: Coordinada y superior.
+/// \param x2: Coordinada x dreta.
+/// \param y2: Coordinada y inferior.
 /// \remarks Les coordinades son retornades en forma normalitzada.
 ///
 void FrameBuffer::rotate(
