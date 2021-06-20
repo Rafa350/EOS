@@ -273,7 +273,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+                        <entry excluding="Framework/EOS/Controllers/Display/eosFrameBuffer_L1_PAGECOL.cpp|Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.cpp|Framework/EOS/Controllers/Display/eosFrameBuffer.cpp|Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
                         					
                     </sourceEntries>
                     				
@@ -555,7 +555,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+                        <entry excluding="Framework/EOS/Controllers/Display/eosFrameBuffer_L1_PAGECOL.cpp|Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
                         					
                     </sourceEntries>
                     				
@@ -833,7 +833,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+                        <entry excluding="Framework/EOS/Controllers/Display/eosFrameBuffer_L1_PAGECOL.cpp|Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
                         					
                     </sourceEntries>
                     				
@@ -1111,7 +1111,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+                        <entry excluding="Framework/EOS/Controllers/Display/eosFrameBuffer_L1_PAGECOL.cpp|Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.cpp|Framework/EOS/Controllers/Display/eosFrameBuffer.cpp|Framework/EOS/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
                         					
                     </sourceEntries>
                     				
@@ -1393,7 +1393,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+                        <entry excluding="Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosILI9341_SPI.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.cpp|Framework/EOS/Controllers/Display/Drivers/ILI9341LTDC" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
                         					
                     </sourceEntries>
                     				

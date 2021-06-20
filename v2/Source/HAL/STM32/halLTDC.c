@@ -123,10 +123,10 @@ void halLTDCSetBackgroundColor(
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona la finestra de visualitzacio d'una capa.
 /// \param    layerNum: Identificador de la capa.
-/// \param    x: Coordinada X de la posicio.
-/// \param    y: Coordinada y de la posicio.
-/// \param    width: Amplada de la capa.
-/// \param    height: Alçada de la capa.
+/// \param    x: Coordinada x de la posicio de la finestra.
+/// \param    y: Coordinada y de la posicio de la finestra.
+/// \param    width: Amplada de la finestra.
+/// \param    height: Alçada de la finestra.
 ///
 void halLTDCLayerSetWindow(
 	LTDCLayerNum layerNum,
@@ -166,7 +166,7 @@ void halLTDCLayerSetWindow(
 /// ----------------------------------------------------------------------
 /// \brief    Selecciona el color per defecte de la capa.
 /// \param    layerNum: Identificador de la capa.
-/// \param    argb: El color en formar ARGB8888
+/// \param    argb: El color en format ARGB8888
 ///
 void halLTDCLayerSetDefaultColor(
 	LTDCLayerNum layerNum,
@@ -233,14 +233,15 @@ void halLTDCLayerDisableKeyColor(
 /// ----------------------------------------------------------------------
 /// \brief    Configura el format de la capa.
 /// \param    layerNum: Identificador de la capa.
-/// \param    pixelFormat: Format de pixel.
+/// \param    format: Format de pixel.
 /// \param    lineWidth: Amplada de linia en bytes.
 /// \param    linePitch: Pitch entre linies en bytes.
 /// \param    numLines: Numero de linies.
 ///
+// TODO: Parametres en pixels i despres convertirlos a bytes;
 void halLTDCLayerSetFrameFormat(
 	LTDCLayerNum layerNum,
-	LTDCPixelFormat pixelFormat,
+	LTDCPixelFormat format,
 	int lineWidth,
 	int linePitch,
 	int numLines) {
@@ -253,11 +254,12 @@ void halLTDCLayerSetFrameFormat(
 
 	uint32_t tmp;
 
+
     // Configura Lx_PFCR (Pixel Format Configuration Register)
     //
     tmp = layer->PFCR;
     tmp &= ~(LTDC_LxPFCR_PF);
-    switch (pixelFormat) {
+    switch (format) {
     	case HAL_LTDC_FORMAT_RGB565:
     		tmp |= 0b010 << LTDC_LxPFCR_PF_Pos;
     		break;
@@ -271,6 +273,10 @@ void halLTDCLayerSetFrameFormat(
     		break;
     }
     layer->PFCR = tmp;
+
+    // Converteix les mides de pixels a bytes
+    //
+    int pixelSize = halLTDCGetPixelBytes(format);
 
     // Configura Lx_CFBLR (Color Frame Buffer Length Register)
     // -Longitut de la linia en bytes.
@@ -291,23 +297,23 @@ void halLTDCLayerSetFrameFormat(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna l'adresa del buffer d'una capa.
+/// \brief    Asigna el bufer a una capa.
 /// \param    layerNum: Identificador de la capa.
-/// \param    frameAddr: L'adresa del buffer.
-/// \remarks  Si frameAddr es zeo, aleshores desactiva la capa.
+/// \param    buffer: Punter al buffer
+/// \remarks  Si frame es nul, aleshores desactiva la capa.
 ///
-void halLTDCLayerSetFrameAddress(
+void halLTDCLayerSetFrameBuffer(
 	LTDCLayerNum layerNum,
-	uint32_t frameAddr) {
+	void *buffer) {
 
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
 
 	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
 
-	if (frameAddr == 0)
+	if (buffer == 0)
 	    __clear_bit_msk(layer->CR, LTDC_LxCR_LEN);
 	else {
-		layer->CFBAR = frameAddr;
+		layer->CFBAR = (uint32_t)buffer;
 		__set_bit_msk(layer->CR, LTDC_LxCR_LEN);
 	}
 }
@@ -341,8 +347,8 @@ void halLTDCLayerUpdate(
 /// ----------------------------------------------------------------------
 /// \brief    Obte el offset en bytes d'un pixel.
 /// \param    layerNum: La capa
-/// \param    x: Coordinada X del pixel.
-/// \param    y: Coordinada Y del pixel;
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada y.
 /// \return   El offset calculat.
 ///
 int halLTDCGetPixelOffset(
@@ -373,11 +379,11 @@ int halLTDCGetPixelOffset(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte la longitut en bytes d'un pixel.
+/// \brief    Obte la tamany en bytes d'un pixel.
 /// \param    format: El format de pixel.
 /// \return   El resultat.
 ///
-uint8_t halLTDCGetPixelSize(
+uint8_t halLTDCGetPixelBytes(
 	LTDCPixelFormat format) {
 
 	switch (format) {

@@ -5,6 +5,7 @@
 #include "eos.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
+#include "HAL/halSPI.h"
 
 
 #ifndef DISPLAY_IMAGE_WIDTH
@@ -17,42 +18,53 @@
 
 namespace eos {
 
-    class Color;
-
     class DisplayDriver_ILI9341LTDC: public IDisplayDriver {
+    	private:
+    		typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
+
+    	private:
+    		constexpr static int _displayWidth = DISPLAY_IMAGE_WIDTH;
+    		constexpr static int _displayHeight = DISPLAY_IMAGE_HEIGHT;
+    		constexpr static int _displayBuffer = DISPLAY_IMAGE_BUFFER;
+
         private:
-    		static IDisplayDriver* _instance;
+    		SPIData _spiData;
+    		SPIHandler _hSpi;
             FrameBuffer* _frameBuffer;
 
         public:
-            static IDisplayDriver *getInstance();;
+            DisplayDriver_ILI9341LTDC();
+
             void initialize() override;
             void shutdown() override;
+
             void displayOn() override;
             void displayOff() override;
+
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() const override { return _frameBuffer->getWidth(); }
-            int getHeight() const override { return _frameBuffer->getHeight(); }
-            void clear(const Color &color) override;
-            void setPixel(int x, int y, const Color &color) override;
-            void setHPixels(int x, int y, int size, const Color &color) override;
-            void setVPixels(int x, int y, int size, const Color &color) override;
-            void setPixels(int x, int y, int width, int height, const Color &color) override;
-            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
-            void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
+            int getImageWidth() const override { return _frameBuffer->getImageWidth(); }
+            int getImageHeight() const override { return _frameBuffer->getImageHeight(); }
+
+            void clear(Color color) override;
+            void setPixel(int x, int y, Color color) override;
+            void setHPixels(int x, int y, int size, Color color) override;
+            void setVPixels(int x, int y, int size, Color color) override;
+            void setPixels(int x, int y, int width, int height, Color color) override;
+            void setPixels(int x, int y, int width, int height, const Color *colors, int pitch) override;
+
+            void writePixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int dx, int dy, int pitch) override;
+            void readPixels(int x, int y, int width, int height, void *pixels, ColorFormat format, int dx, int dy, int pitch) override;
             void vScroll(int delta, int x, int y, int width, int height) override;
             void hScroll(int delta, int x, int y, int width, int height) override;
             void refresh() override;
 
         private:
-            DisplayDriver_ILI9341LTDC();
-
-            static void hwInitialize();
+            void hwInitialize();
             static void hwReset();
             static void hwOpen();
             static void hwClose();
-            static void hwWriteCommand(uint8_t d);
-            static void hwWriteData(uint8_t d);
+            void hwWriteCommand(uint8_t d);
+            void hwWriteData(uint8_t d);
     };
 }
 

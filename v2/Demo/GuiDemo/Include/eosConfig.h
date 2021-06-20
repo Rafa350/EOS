@@ -14,7 +14,8 @@
 // Opcions del display integrat
 //
 #define USE_DISPLAY
-#define DISPLAY_DOUBLE_BUFFER
+#define DISPLAY_COLOR_FORMAT                          ColorFormat::rgb565
+#define DISPLAY_DOUBLEBUFFER                          true
 #define OPT_DISPLAY_DoubleBuffer
 
 // Opcions del touchpad integrat

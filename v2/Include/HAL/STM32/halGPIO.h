@@ -248,8 +248,8 @@ typedef struct {
 	((GPIO_TypeDef*)port)->IDR
 
 
-void halGPIOInitializePins(const GPIOPinSettings *settings, uint32_t count);
-void halGPIOInitializePorts(const GPIOPortSettings *settings, uint32_t count);
+void halGPIOInitializePins(const GPIOPinSettings *settings, int count);
+void halGPIOInitializePorts(const GPIOPortSettings *settings, int count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 

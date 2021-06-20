@@ -15,28 +15,13 @@
 using namespace eos;
 
 
-IDisplayDriver *DisplayDriver_ILI9341::_instance = nullptr;
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte una instancia unica del driver.
-/// \return   La instancia del driver.
-///
-IDisplayDriver *DisplayDriver_ILI9341::getInstance() {
-
-	if (_instance == nullptr)
-		_instance = new DisplayDriver_ILI9341();
-	return _instance;
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Contructor.
 ///
 DisplayDriver_ILI9341::DisplayDriver_ILI9341():
 
-	_imageWidth(DISPLAY_IMAGE_WIDTH),
-	_imageHeight(DISPLAY_IMAGE_HEIGHT) {
+	_imageWidth(_displayWidth),
+	_imageHeight(_displayHeight) {
 }
 
 
@@ -83,26 +68,26 @@ void DisplayDriver_ILI9341::setOrientation(
     uint8_t data = 0;
     switch (orientation) {
         case DisplayOrientation::normal:
-            _imageWidth = DISPLAY_IMAGE_WIDTH;
-            _imageHeight = DISPLAY_IMAGE_HEIGHT;
+            _imageWidth = _displayWidth;
+            _imageHeight = _displayHeight;
             data = data0;
             break;
 
         case DisplayOrientation::rotate90:
-            _imageWidth = DISPLAY_IMAGE_HEIGHT;
-            _imageHeight = DISPLAY_IMAGE_WIDTH;
+            _imageWidth = _displayHeight;
+            _imageHeight = _displayWidth;
             data = data90;
             break;
 
         case DisplayOrientation::rotate180:
-            _imageWidth = DISPLAY_IMAGE_WIDTH;
-            _imageHeight = DISPLAY_IMAGE_HEIGHT;
+            _imageWidth = _displayWidth;
+            _imageHeight = _displayHeight;
             data = data180;
             break;
 
         case DisplayOrientation::rotate270:
-            _imageWidth = DISPLAY_IMAGE_HEIGHT;
-            _imageHeight = DISPLAY_IMAGE_WIDTH;
+            _imageWidth = _displayHeight;
+            _imageHeight = _displayWidth;
             data = data270;
             break;
     }
@@ -121,7 +106,7 @@ void DisplayDriver_ILI9341::setOrientation(
 /// \param    color: Color per borrar
 ///
 void DisplayDriver_ILI9341::clear(
-    const Color &color) {
+    Color color) {
 
     selectRegion(0, 0, _imageWidth, _imageHeight);
     writeRegion(color, _imageWidth * _imageHeight);
@@ -137,7 +122,7 @@ void DisplayDriver_ILI9341::clear(
 void DisplayDriver_ILI9341::setPixel(
     int x,
     int y,
-    const Color &color) {
+    Color color) {
 
     selectRegion(x, y, 1, 1);
     writeRegion(color);
@@ -155,7 +140,7 @@ void DisplayDriver_ILI9341::setHPixels(
     int x,
     int y,
     int length,
-    const Color &color) {
+    Color color) {
 
     selectRegion(x, y, length, 1);
     writeRegion(color, length);
@@ -173,7 +158,7 @@ void DisplayDriver_ILI9341::setVPixels(
     int x,
     int y,
     int length,
-    const Color &color) {
+    Color color) {
 
     selectRegion(x, y, 1, length);
     writeRegion(color, length);
@@ -193,10 +178,29 @@ void DisplayDriver_ILI9341::setPixels(
     int y,
     int width,
     int height,
-    const Color &color) {
+    Color color) {
 
     selectRegion(x, y, width, height);
     writeRegion(color, width * height);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Copia una regio rectangular de pixels.
+/// \param    x: Posicio x.
+/// \param    y: Posicio y.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
+/// \param    colors: Colors a copiar.
+/// \param    pitch: Pitch dels colors.
+///
+void DisplayDriver_ILI9341::setPixels(
+	int x,
+	int y,
+	int width,
+	int height,
+	const Color* colors,
+	int pitch) {
 }
 
 
@@ -213,7 +217,7 @@ void DisplayDriver_ILI9341::writePixels(
     int y,
     int width,
     int height,
-    const uint8_t *pixels,
+    const void *pixels,
 	ColorFormat format,
 	int dx,
 	int xy,
@@ -238,7 +242,7 @@ void DisplayDriver_ILI9341::readPixels(
     int y,
     int width,
     int height,
-    uint8_t *pixels,
+    void *pixels,
 	ColorFormat format,
 	int dx,
 	int dy,
@@ -384,11 +388,11 @@ void DisplayDriver_ILI9341::selectRegion(
 /// \param    data: El color.
 ///
 void DisplayDriver_ILI9341::writeRegion(
-	const Color &color) {
+	Color color) {
 
 #if defined(DISPLAY_COLOR_RGB565)
 
-    uint16_t c = color.toRGB565();
+    pixel_t c = toPixel(color);
     uint8_t cc[sizeof(uint16_t)];
  	cc[0] = c >> 8;
    	cc[1] = c;
@@ -421,17 +425,17 @@ void DisplayDriver_ILI9341::writeRegion(
 /// \param    count: Numero de copies a escriure.
 ///
 void DisplayDriver_ILI9341::writeRegion(
-    const Color &color,
+    Color color,
     int count) {
 
 #if defined(DISPLAY_COLOR_RGB565)
 
-	static uint8_t cc_buffer[sizeof(uint16_t) * DISPLAY_IMAGE_WIDTH] __attribute__ ((aligned (__BIGGEST_ALIGNMENT__)));
+	static uint8_t cc_buffer[sizeof(uint16_t) * _displayWidth] __attribute__ ((aligned (__BIGGEST_ALIGNMENT__)));
 	static uint16_t _c;
     static int16_t _ccCapacity = 0;
 
 	uint8_t* cc = (uint8_t*) cc_buffer;  // Fer-ho aixi si no no va
-    uint16_t c = color.toRGB565();
+    pixel_t c = toPixel(color);
 	int ccCapacity = Math::min(count, (int)(sizeof(cc_buffer) / sizeof(cc_buffer[0])));
 	if (c != _c || _ccCapacity < ccCapacity) {
 		for (int16_t i = 0; i < ccCapacity; i++) {
@@ -455,7 +459,7 @@ void DisplayDriver_ILI9341::writeRegion(
 
 #elif defined(DISPLAY_COLOR_RGB666)
 
-    uint32_t c = color.c;
+    pixel_t c = toPixel(color);
     uint8_t cc[3];
     cc[0] = (uint32_t)(c & 0x00FC0000) >> 16;
     cc[1] = (uint32_t)(c & 0x0000FC00) >> 8;

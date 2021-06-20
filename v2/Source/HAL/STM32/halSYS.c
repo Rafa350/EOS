@@ -59,7 +59,7 @@ uint32_t halSYSGetTimerClock1Frequency() {
 
 	// PCLK1 prescaler equal to 1 => TIMCLK = PCLK1
 	//
-	if((RCC->CFGR & RCC_CFGR_PPRE1) == 0)
+	if ((RCC->CFGR & RCC_CFGR_PPRE1) == 0)
 	    return (f);
 
     // PCLK1 prescaler different from 1 => TIMCLK = 2 * PCLK1

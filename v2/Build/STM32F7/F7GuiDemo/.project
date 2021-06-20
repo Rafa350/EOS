@@ -1114,9 +1114,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosTransformation.cpp</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosRGBLTDC.h</name>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosDisplayDriver_RGBLTDC.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosRGBLTDC.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers/eosFT5336.h</name>
@@ -1229,7 +1229,7 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosVirtualKeyboard.h</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC</name>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/RGB</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -1374,9 +1374,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/Fonts/Tahoma12pt.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDC.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDC.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.cpp</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>

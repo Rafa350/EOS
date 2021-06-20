@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
-#include "HAL/STM32/halDMA2D.h"
+#include "HAL/STM32/halDMA2DTpl.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorMath.h"
 
@@ -14,18 +14,20 @@ using namespace eos;
 /// \param    frameHeight: Alçada fisica en pixels.
 /// \param    orientation: Orientacio inicial.
 /// \param    buffer: Buffer d'imatge.
-/// \remarks  S'ajusta l'amplada per ser multiple de 64 bytes, aixo permet
+/// \param    bufferPitch: Pitch del buffer d'imatge.
+/// \remarks  S'ajusta l'amplada per ser multiple de 64 bits, aixo permet
 ///           optimitzar les transferencies de DMA2D
 ///
 FrameBuffer_RGB565_DMA2D::FrameBuffer_RGB565_DMA2D(
 	int frameWidth,
 	int frameHeight,
 	DisplayOrientation orientation,
-	void* buffer):
+	void* buffer,
+	int bufferPitch):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
-	_buffer(buffer),
-	_lineWidth((((frameWidth * sizeof(uint16_t)) + 63) & 0xFFFFFFC0) / sizeof(uint16_t)) {
+	_buffer((pixel_t*)buffer),
+	_bufferPitch((((frameWidth * sizeof(pixel_t)) + 63) & 0xFFFFFFC0) / sizeof(pixel_t)) {
 
     halDMA2DInitialize();
 }
@@ -41,13 +43,15 @@ FrameBuffer_RGB565_DMA2D::FrameBuffer_RGB565_DMA2D(
 void FrameBuffer_RGB565_DMA2D::put(
 	int x,
 	int y,
-	const Color& color) {
+	Color color) {
 
 	uint8_t opacity = color.getOpacity();
 	if (opacity != 0) {
-		uint16_t c = color.toRGB565();
-		uint16_t* p = (uint16_t*) getPixelAddr(x, y);
-	    *p = opacity == 0xFF ? c : ColorMath::combineColor_RGB565(*p, c, opacity);
+
+		pixel_t vPixel = toPixel(color);
+		pixel_t* pPixel = getPixelPtr(x, y);
+
+	    *pPixel = opacity == 0xFF ? vPixel : ColorMath::combineColor_RGB565(*pPixel, vPixel, opacity);
 	}
 }
 
@@ -66,23 +70,24 @@ void FrameBuffer_RGB565_DMA2D::fill(
 	int y,
 	int width,
 	int height,
-	const Color& color) {
+	Color color) {
 
 	uint8_t opacity = color.getOpacity();
 	if (opacity == 0xFF) {
 
-		uint32_t addr = getPixelAddr(x, y);
+		pixel_t vPixel = toPixel(color);
+		pixel_t* pPixel = getPixelPtr(x, y);
 
-		halDMA2DStartFill(
-			addr,
-			width,
-			height,
-			_lineWidth - width,
-			HAL_DMA2D_DFMT_RGB565,
-			color.toRGB565());
+		DMA2DOptions options = DMA2DOptionsFor<CI::format>::DFMT;
 
+		// Rellena la regio amb el valor de color del pixel. Hi ha que
+		// suministrar el color en format adecuat, ja que no es realitza
+		// cap tipis de converssio de format.
+		//
+		halDMA2DStartFill(pPixel, width, height, _bufferPitch - width, options, vPixel);
 		halDMA2DWaitForFinish();
 	}
+
 	else if (opacity > 0) {
 		// TODO
 		// Crear un buffer d'una linia amb el color. Pot ser l'ultima
@@ -101,10 +106,8 @@ void FrameBuffer_RGB565_DMA2D::fill(
 /// \param    y: Coordinada y.
 /// \param    width: Amplada.
 /// \param    height: Alçada.
-/// \param    colors: Llista de pixels.
-/// \param    dx: Offset x dins del bitmap.
-/// \param    dy: Offset y dins del bitmap.
-/// \param    pitch: Offset a la seguent linia del bitmap. 0 si son consecutives.
+/// \param    colors: Llista de pixels del bitmap
+/// \param    pitch: Offset a la seguent linia del bitmap.
 ///
 void FrameBuffer_RGB565_DMA2D::copy(
 	int x,
@@ -112,32 +115,20 @@ void FrameBuffer_RGB565_DMA2D::copy(
 	int width,
 	int height,
 	const Color* colors,
-	int dx,
-	int dy,
 	int pitch) {
 
-#if defined(EOS_COLOR_ARGB8888)
-	uint32_t colorAddr = ((uint32_t) colors) + (((dy * height) + dx) * sizeof(uint32_t));
-	DMA2DOptions options = HAL_DMA2D_DFMT_RGB565 | HAL_DMA2D_SFMT_ARGB8888;
+	// TODO: Revisar que esta malament dy * height --> dy * (width + pitch)
 
-#elif defined(EOS_COLOR_RGB565)
-	uint32_t colorAddr = ((uint32_t) colors) + (((dy * height) + dx) * sizeof(uint16_t));
-	DMA2DOptions options = HAL_DMA2D_DFMT_RGB565 | HAL_DMA2D_SFMT_RGB565;
+	pixel_t* pPixel = getPixelPtr(x, y);
 
-#else
-#error No se especifico el formato de color del sistema
-#endif
+	DMA2DOptions options =
+		DMA2DOptionsFor<CI::format>::DFMT |
+		DMA2DOptionsFor<Color::CI::format>::SFMT;
 
-	uint32_t addr = getPixelAddr(x, y);
-
-	halDMA2DStartCopy(
-		addr,
-		width,
-		height,
-		_lineWidth - width,
-		options,
-		colorAddr,
-	    pitch);
-
+	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
+	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
+	// les opcions.
+	//
+	halDMA2DStartCopy(pPixel, width, height, _bufferPitch - width, options, (void*)colors, pitch - width);
 	halDMA2DWaitForFinish();
 }

@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Controllers/Display/eosDisplayDriver.h"
-#include "Controllers/Display/Drivers/eosRGBLTDC.h"
+#include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "Services/eosGuiService.h"
 #if eosGuiService_TouchPadEnabled
 #include "Services/eosTouchPadService.h"
@@ -102,7 +102,7 @@ void GuiService::onInitialize() {
 #elif defined(DISPLAY_DRV_ILI9341)
 	displayDriver = new ILI9341Driver();
 #elif defined(DISPLAY_DRV_RGBLTDC)
-	displayDriver = new RGBDirectDriver();
+	displayDriver = new DisplayDriver_RGBLTDC();
 #else
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif

@@ -5,6 +5,7 @@
 #include "eos.h"
 #include "HAL/halSPI.h"
 #include "Controllers/Display/eosDisplayDriver.h"
+#include "Controllers/Display/eosFRameBuffer.h"
 #include "System/Graphics/eosColor.h"
 
 
@@ -21,18 +22,18 @@ namespace eos {
     class DisplayDriver_SSD1306: public IDisplayDriver {
     	private:
     		static IDisplayDriver *_instance;
-    		const int _imageWidth;
-    		const int _imageHeight;
+    		FrameBuffer *_frameBuffer;
 
         public:
-    		static IDisplayDriver *getInstance();
+            DisplayDriver_SSD1306();
+
             void initialize() override;
             void shutdown() override;
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() const { return _imageWidth; }
-            int getHeight() const { return _imageHeight; }
+            int getWidth() const { return _frameBuffer->getWidth(); }
+            int getHeight() const { return _frameBuffer->getHeight(); }
             void clear(const Color &color) override;
             void setPixel(int x, int y, const Color &color) override;
             void setHPixels(int x, int y, int size, const Color &color) override;
@@ -45,9 +46,8 @@ namespace eos {
             void refresh() override;
 
         private:
-            DisplayDriver_SSD1306();
-
             static void hwInitialize();
+            static void hwReset();
             static void hwOpen();
             static void hwClose();
             static void hwWriteCommand(uint8_t cmd);

@@ -218,15 +218,19 @@ typedef struct {                  // Parametres d'inicialitzacio d'un port
     ((GPIORegisters*)port)->PORTx;
 
 
-void halGPIOInitializePins(const GPIOPinSettings *settings, uint32_t count);
+void halGPIOInitializePins(const GPIOPinSettings *settings, int count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 
-void halGPIOInitializePorts(const GPIOPortSettings *settings, uint32_t count);
+void halGPIOInitializePorts(const GPIOPortSettings *settings, int count);
 void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 
 
 #ifdef	__cplusplus
 }
+#endif
+
+#ifdef __cplusplus
+    #include "HAL/PIC32/halGPIOTpl.h"
 #endif
 
 

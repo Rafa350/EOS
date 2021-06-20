@@ -214,12 +214,12 @@ static void setupDevicePin(
 ///
 void halGPIOInitializePins(
 	const GPIOPinSettings *settings,
-	uint32_t count) {
+	int count) {
 
 	eosAssert(settings != NULL);
 	eosAssert(count != 0);
 
-	for (uint32_t i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) {
 
 		const GPIOPinSettings *p = &settings[i];
 		GPIO_TypeDef* device = getDevice(p->port);
@@ -237,12 +237,12 @@ void halGPIOInitializePins(
 ///
 void halGPIOInitializePorts(
 	const GPIOPortSettings *settings,
-	uint32_t count) {
+	int count) {
 
 	eosAssert(settings != NULL);
 	eosAssert(count != 0);
 
-	for (uint32_t i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) {
 
 		const GPIOPortSettings* p = &settings[i];
 		GPIO_TypeDef* device = getDevice(p->port);

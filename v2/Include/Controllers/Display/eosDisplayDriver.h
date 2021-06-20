@@ -19,25 +19,31 @@ namespace eos {
 		rotate270,
 	};
 
-    /// \brief Interficie del driver del display.
+	/// \brief Interficie del driver del display.
     class IDisplayDriver {
         public:
     		virtual ~IDisplayDriver() = default;
 
             virtual void initialize() = 0;
             virtual void shutdown() = 0;
+
             virtual void displayOn() = 0;
             virtual void displayOff() = 0;
+
             virtual void setOrientation(DisplayOrientation orientation) = 0;
-            virtual int getWidth() const = 0;
-            virtual int getHeight() const = 0;
-            virtual void clear(const Color &color) = 0;
-            virtual void setPixel(int x, int y, const Color &color) = 0;
-            virtual void setHPixels(int x, int y, int length, const Color &color) = 0;
-            virtual void setVPixels(int x, int y, int length, const Color &color) = 0;
-            virtual void setPixels(int x, int y, int width, int height, const Color &color) = 0;
-            virtual void writePixels(int x, int y, int width, int height, const uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) = 0;
-            virtual void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) = 0;
+            virtual int getImageWidth() const = 0;
+            virtual int getImageHeight() const = 0;
+
+            virtual void clear(Color color) = 0;
+            virtual void setPixel(int x, int y, Color color) = 0;
+            virtual void setHPixels(int x, int y, int length, Color color) = 0;
+            virtual void setVPixels(int x, int y, int length, Color color) = 0;
+            virtual void setPixels(int x, int y, int width, int height, Color color) = 0;
+            virtual void setPixels(int x, int y, int width, int height, const Color *colors, int pitch) = 0;
+
+            virtual void writePixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int dx, int dy, int pitch) = 0;
+            virtual void readPixels(int x, int y, int width, int height, void *pixels, ColorFormat format, int dx, int dy, int pitch) = 0;
+
             virtual void vScroll(int delta, int x, int y, int width, int height) = 0;
             virtual void hScroll(int delta, int x, int y, int width, int height) = 0;
             virtual void refresh() = 0;

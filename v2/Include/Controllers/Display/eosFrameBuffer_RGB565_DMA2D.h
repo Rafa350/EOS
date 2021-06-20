@@ -12,20 +12,25 @@ namespace eos {
 	///
 	class FrameBuffer_RGB565_DMA2D: public FrameBuffer {
 		private:
-			void* _buffer;
-			int _lineWidth;
+			typedef ColorInfo<ColorFormat::rgb565> CI;
+			typedef CI::color_t pixel_t;
 
 		private:
-			inline uint32_t getAddr() const { return (uint32_t)_buffer; }
-			inline uint32_t getPixelAddr(int x, int y) const { return (int)_buffer + ((y * _lineWidth) + x) * sizeof(uint16_t); }
+			pixel_t* _buffer;
+			int _bufferPitch;
+
+		private:
+			inline pixel_t* getPixelPtr(int x, int y) const { return &_buffer[(y * _bufferPitch) + x]; }
+            inline static pixel_t toPixel(Color color) { return ConvertTo<CI::format>(color); }
+
 
 		protected:
-			void put(int x, int y, const Color& color) override;
-            void fill(int x, int y, int width, int height, const Color& color) override;
-            void copy(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch) override;
+			void put(int x, int y, Color color) override;
+            void fill(int x, int y, int width, int height, Color color) override;
+            void copy(int x, int y, int width, int height, const Color* colors, int pitch) override;
 
 		public:
-			FrameBuffer_RGB565_DMA2D(int frameWidth, int frameHeight, DisplayOrientation orientation, void* buffer);
+			FrameBuffer_RGB565_DMA2D(int frameWidth, int frameHeight, DisplayOrientation orientation, void* buffer, int bufferPitch);
 	};
 }
 

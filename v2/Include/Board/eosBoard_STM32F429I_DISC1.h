@@ -117,6 +117,7 @@
 //
 #define DISPLAY_IMAGE_WIDTH       240  // Amplada en pixels
 #define DISPLAY_IMAGE_HEIGHT      320  // Al�ada en pixels
+#define DISPLAY_COLOR_FORMAT      ColorFormat::rgb565  // Format de color
 #define DISPLAY_COLOR_RGB565           // Format de color RGB565
 
 // Parametres del controlador
@@ -174,9 +175,9 @@
 
 #ifdef DISPLAY_DRV_ILI9341LTDC
 
-// Adressa del buffer de video
+// Adressa del buffer d'imatge
 //
-#define DISPLAY_VRAM_ADDR    0xD0000000
+#define DISPLAY_IMAGE_BUFFER 0xD0000000
 
 // Parametres fisics de la pantalla
 //

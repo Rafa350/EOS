@@ -108,22 +108,14 @@
 #ifdef USE_DISPLAY
 #define EXIST_DISPLAY
 
-// Tamany de la pantalla
+// Parametres del display
 //
-#define DISPLAY_IMAGE_WIDTH       480  // Amplada en pixels
-#define DISPLAY_IMAGE_HEIGHT      272  // Alçada en pixels
-
-// Tipus de codificacio de color
-//
-#define DISPLAY_COLOR_RGB565           // Format de color
-
-// Adressa de la memoria de video
-//
-#define DISPLAY_VRAM_ADDR         0xC0000000
-
-// Controlador
-//
-#define DISPLAY_DRV_RGBLTDC            // RK043FN48H
+#define DISPLAY_SCREEN_WIDTH      480            // Amplada de la pantalla
+#define DISPLAY_SCREEN_HEIGHT     272            // Alçada de la pantalla
+#define DISPLAY_COLOR_FORMAT      ColorFormat::rgb565  // Format de color
+#define DISPLAY_COLOR_RGB565  // TODO: Eliminar quan es pugui
+#define DISPLAY_IMAGE_BUFFER      0xC0000000     // Adressa de la ram de video
+#define DISPLAY_DRV_RGBLTDC                      // Driver
 
 
 // Parametres de temporitzacio i sincronitzacio
@@ -314,19 +306,19 @@
 // Control del pin B5
 //
 #define DISPLAY_B5_PORT           HAL_GPIO_PORT_K
-#define DISPLAY_B5_PIN            HAL_GPIO_PIN_5
+#define DISPLAY_B5_PIN            HAL_GPIO_PIN_4
 #define DISPLAY_B5_AF             HAL_GPIO_AF14_LTDC
 
 // Control del pin B6
 //
 #define DISPLAY_B6_PORT           HAL_GPIO_PORT_K
-#define DISPLAY_B6_PIN            HAL_GPIO_PIN_6
+#define DISPLAY_B6_PIN            HAL_GPIO_PIN_5
 #define DISPLAY_B6_AF             HAL_GPIO_AF14_LTDC
 
 // Control del pin B7
 //
 #define DISPLAY_B7_PORT           HAL_GPIO_PORT_K
-#define DISPLAY_B7_PIN            HAL_GPIO_PIN_7
+#define DISPLAY_B7_PIN            HAL_GPIO_PIN_6
 #define DISPLAY_B7_AF             HAL_GPIO_AF14_LTDC
 
 #endif // USE_DISPLAY

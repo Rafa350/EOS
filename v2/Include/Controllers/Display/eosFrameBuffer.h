@@ -16,8 +16,8 @@ namespace eos {
 		private:
 			const int _frameWidth;
 			const int _frameHeight;
-			int _maxX;
-			int _maxY;
+			int _imageWidth;
+			int _imageHeight;
 			DisplayOrientation _orientation;
 
         protected:
@@ -25,9 +25,9 @@ namespace eos {
             void rotate(int& x1, int& y1, int &x2, int& y2) const;
 
         protected:
-            virtual void put(int x, int y, const Color& color) = 0;
-            virtual void fill(int x, int y, int width, int height, const Color& color) = 0;
-            virtual void copy(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch) = 0;
+            virtual void put(int x, int y, Color color) = 0;
+            virtual void fill(int x, int y, int width, int height, Color color) = 0;
+            virtual void copy(int x, int y, int width, int height, const Color* colors, int pitch) = 0;
 
 		public:
 			FrameBuffer(int frameWidth, int frameHeight, DisplayOrientation orientation);
@@ -35,18 +35,18 @@ namespace eos {
 
             void setOrientation(DisplayOrientation orientation);
 
-            inline int getWidth() const { return _maxX + 1; }
-            inline int getHeight() const { return _maxY + 1; }
+            inline int getImageWidth() const { return _imageWidth; }
+            inline int getImageHeight() const { return _imageHeight; }
 
-            void clear(const Color &color);
-            void setPixel(int x, int y, const Color& color);
-            inline void setHPixels(int x, int y, int size, const Color& color) { setPixels(x, y, size, 1, color); }
-            inline void setVPixels(int x, int y, int size, const Color& color) { setPixels(x, y, 1, size, color); }
-            void setPixels(int x, int y, int width, int height, const Color& color);
-            void writePixels(int x, int y, int width, int height, const Color* colors, int dx, int dy, int pitch);
-            /*void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch);
-            void vScroll(int delta, int x, int y, int width, int height);
-            void hScroll(int delta, int x, int y, int width, int height);*/
+            void clear(Color color);
+            void setPixel(int x, int y, Color color);
+            inline void setHPixels(int x, int y, int size, Color color) { setPixels(x, y, size, 1, color); }
+            inline void setVPixels(int x, int y, int size, Color color) { setPixels(x, y, 1, size, color); }
+            void setPixels(int x, int y, int width, int height, Color color);
+            void setPixels(int x, int y, int width, int height, const Color* colors, int pitch);
+            void setPixels(int x, int y, int width, int height, void* pixels, ColorFormat format, int dx, int dy, int pitch);
+            //void vScroll(int delta, int x, int y, int width, int height);
+            //void hScroll(int delta, int x, int y, int width, int height);
 	};
 }
 

@@ -63,8 +63,8 @@ namespace eos {
             ~Graphics();
 
             inline IDisplayDriver* getDriver() const { return _driver; }
-            inline int getWidth() const { return _driver->getWidth(); }
-            inline int getHeight() const { return _driver->getHeight(); }
+            inline int getWidth() const { return _driver->getImageWidth(); }
+            inline int getHeight() const { return _driver->getImageHeight(); }
             void clear(const Color &color) const;
 
             void setPen(const Pen& pen);
@@ -124,8 +124,8 @@ namespace eos {
             void drawEllipse(int x1, int y1, int x2, int y2, const Color& color) const;
             inline void drawEllipse(const Rect& r, const Color& color) const { drawEllipse(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
 
-            void drawBitmap(int x, int y, const Bitmap* pBitmap) const;
-            inline void drawBitmap(const Point& p, const Bitmap *pBitmap) const { drawBitmap(p.getX(), p.getY(), pBitmap); }
+            void drawBitmap(int x, int y, const Bitmap* bitmap) const;
+            inline void drawBitmap(const Point& p, const Bitmap *bitmap) const { drawBitmap(p.getX(), p.getY(), bitmap); }
 
             int drawChar(int x, int y, const Color& color, char c) const;
             int drawText(int x, int y, const Color& color, const String& text, unsigned offset = 0, unsigned length = unsigned(-1)) const;

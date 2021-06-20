@@ -13,69 +13,62 @@
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "HAL/STM32/halGPIO.h"
-#include "HAL/STM32/halLTDC.h"
+#include "HAL/STM32/halLTDCTpl.h"
 #include "System/eosMath.h"
 #include "System/Graphics/eosColorDefinitions.h"
 
 
-// Parametres depenents del format de pixel
+// Parametres depenents del format de color
 //
 #if defined(DISPLAY_COLOR_RGB565)
 #define FRAME_BUFFER              FrameBuffer_RGB565_DMA2D
-#define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB565
-//#define LTDC_LxPFCR_PF_DEFAULT    0b010
-#define HAL_LTDC_FORMAT_DEFAULT   HAL_LTDC_FORMAT_RGB565
+
 #elif defined(DISPLAY_COLOR_RGB888)
 #define FRAME_BUFFER              FrameBuffer_RGB888_DMA2D
-#define HAL_DMA2D_DFMT_DEFAULT    HAL_DMA2D_DFMT_RGB888
-#define LTDC_LxPFCR_PF_DEFAULT    0b001
+
 #else
 #error No se definio DISPLAY_COLOR_xxxx
 #endif
-
-#define FRAME1_ADDR          DISPLAY_VRAM_ADDR
-#ifdef DISPLAY_DOUBLE_BUFFER
-#define FRAME2_ADDR          DISPLAY_VRAM_ADDR + FRAME_SIZE
-#else
-#define FRAME2_ADDR          DISPLAY_VRAM_ADDR
-#endif
-#define LINEBUF_ADDR         DISPLAY_FRAME2_ADDR + LINE_SIZE
-
-#define LINE_SIZE            (((DISPLAY_IMAGE_WIDTH * sizeof(PIXEL_TYPE)) + 63) & 0xFFFFFFC0)
-#define FRAME_SIZE           (LINE_SIZE * DISPLAY_IMAGE_HEIGHT)
 
 
 using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor
+/// \brief    Constructor
 ///
 DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 
-	_frontFrameAddr = FRAME1_ADDR;
-	_frontFrameBuffer = new FRAME_BUFFER(
-		DISPLAY_IMAGE_WIDTH,
-		DISPLAY_IMAGE_HEIGHT,
-		DisplayOrientation::normal,
-		(void*) _frontFrameAddr);
+	constexpr const int frameBufferPitchBytes = (_screenWidth * CI::bytes + 63) & 0xFFFFFFC0;
+	constexpr const int frameBufferPitch = frameBufferPitchBytes / CI::bytes;
+	constexpr const int frameSize = frameBufferPitchBytes * _screenHeight;
 
-#ifdef DISPLAY_DOUBLE_BUFFER
-	_backFrameAddr = FRAME2_ADDR;
-	_backFrameBuffer = new FRAME_BUFFER(
-		DISPLAY_IMAGE_WIDTH,
-		DISPLAY_IMAGE_HEIGHT,
+	_frontImageBuffer = (void*)_imageBuffer;
+	_frontFrameBuffer = new FRAME_BUFFER(
+		_screenWidth,
+		_screenHeight,
 		DisplayOrientation::normal,
-		(void*) _backFrameAddr);
-#else
-	_backFrameAddr = _frontFrameAddr;
-	_backFrameBuffer = _frontFrameBuffer;
-#endif
+		_frontImageBuffer,
+		frameBufferPitch);
+
+	if (_useDoubleBuffer) {
+		_backImageBuffer = (void*)(_imageBuffer + frameSize);
+		_backFrameBuffer = new FRAME_BUFFER(
+			_screenWidth,
+			_screenHeight,
+			DisplayOrientation::normal,
+			_backImageBuffer,
+			frameBufferPitch);
+	}
+	else {
+		_backImageBuffer = _frontImageBuffer;
+		_backFrameBuffer = _frontFrameBuffer;
+	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el driver.
+/// \brief    Inicialitza el driver.
 ///
 void DisplayDriver_RGBLTDC::initialize() {
 
@@ -94,14 +87,13 @@ void DisplayDriver_RGBLTDC::initialize() {
 	// Inicialitza els buffers a color negre
 	//
 	_frontFrameBuffer->clear(COLOR_Black);
-#ifdef DISPLAY_DOUBLE_BUFFER
-	_backFrameBuffer->clear(COLOR_Black);
-#endif
+	if (_useDoubleBuffer)
+		_backFrameBuffer->clear(COLOR_Black);
 }
 
 
 /// ---------------------------------------------------------------------
-/// \brief Finalitza el driver.
+/// \brief    Finalitza el driver.
 ///
 void DisplayDriver_RGBLTDC::shutdown() {
 
@@ -110,7 +102,7 @@ void DisplayDriver_RGBLTDC::shutdown() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa el display.
+/// \brief    Activa el display.
 ///
 void DisplayDriver_RGBLTDC::displayOn() {
 
@@ -129,7 +121,7 @@ void DisplayDriver_RGBLTDC::displayOn() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Desactiva el display.
+/// \brief    Desactiva el display.
 ///
 void DisplayDriver_RGBLTDC::displayOff() {
 
@@ -148,8 +140,8 @@ void DisplayDriver_RGBLTDC::displayOff() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Selecciona l'orientacio de la pantalla.
-/// \param orientation: L'orientacio.
+/// \brief    Selecciona l'orientacio de la pantalla.
+/// \param    orientation: L'orientacio.
 ///
 void DisplayDriver_RGBLTDC::setOrientation(
 	DisplayOrientation orientation) {
@@ -159,83 +151,103 @@ void DisplayDriver_RGBLTDC::setOrientation(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Borra la imatge.
-/// \param color: Color de borrat.
+/// \brief    Borra la imatge.
+/// \param    color: Color de borrat.
 ///
 void DisplayDriver_RGBLTDC::clear(
-	const Color &color) {
+	Color color) {
 
 	_backFrameBuffer->clear(color);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un pixel.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param color: Color del pixel.
+/// \brief    Asigna un color a un pixel.
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada y.
+/// \param    color: Color.
 ///
 void DisplayDriver_RGBLTDC::setPixel(
 	int x,
 	int y,
-	const Color &color) {
+	Color color) {
 
 	_backFrameBuffer->setPixel(x, y, color);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia de pixels horitzontals.
-/// \param x: Coordinada X.
-/// \param y: Colordinada Y.
-/// \param length: Longitut de la linia.
-/// \param color: Color dels pixels.
+/// \brief    Asigna un color a una linia horitzontal.
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada y.
+/// \param    length: Longitut.
+/// \param    color: Color.
 ///
 void DisplayDriver_RGBLTDC::setHPixels(
 	int x,
 	int y,
 	int size,
-	const Color &color) {
+	Color color) {
 
 	_backFrameBuffer->setPixels(x, y, size, 1, color);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia de pixels en vertical.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param length: Longitut de la linia.
-/// \param color: Color dels pixels.
+/// \brief    Assigna un color a una linia vertical.
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada x.
+/// \param    length: Longitut de la linia.
+/// \param    color: Color.
 ///
 void DisplayDriver_RGBLTDC::setVPixels(
 	int x,
 	int y,
 	int size,
-	const Color &color) {
+	Color color) {
 
 	_backFrameBuffer->setPixels(x, y, 1, size, color);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una regio rectangular de pixels.
-/// \param x: Posicio X.
-/// \param y: Posicio Y.
-/// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
-/// \param color: Color dels pixels.
+/// \brief    Asigna un color a una regio rectangular.
+/// \param    x: Posicio x.
+/// \param    y: Posicio y.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
+/// \param    color: Color.
 ///
 void DisplayDriver_RGBLTDC::setPixels(
 	int x,
 	int y,
 	int width,
 	int height,
-	const Color &color) {
+	Color color) {
 
 	_backFrameBuffer->setPixels(x, y, width, height, color);
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna una llista colors a una regio rectangular.
+/// \param    x: Posicio x.
+/// \param    y: Posicio y.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
+/// \param    colors: Punter als colors.
+/// \param    pitch: Pitch dels colors.
+///
+void DisplayDriver_RGBLTDC::setPixels(
+	int x,
+	int y,
+	int width,
+	int height,
+	const Color *colors,
+	int pitch) {
+
+	_backFrameBuffer->setPixels(x, y, width, height, colors, pitch);
+}
 
 /// ----------------------------------------------------------------------
 /// \brief Escriu una regio rectangular de pixels.
@@ -254,12 +266,14 @@ void DisplayDriver_RGBLTDC::writePixels(
 	int y,
 	int width,
 	int height,
-	const uint8_t *pixels,
+	const void *pixels,
 	ColorFormat format,
 	int dx,
 	int dy,
 	int pitch) {
 
+	Color *colors;
+	_backFrameBuffer->setPixels(x, y, width, height, colors, pitch);
 }
 
 
@@ -277,7 +291,7 @@ void DisplayDriver_RGBLTDC::readPixels(
 	int y,
 	int width,
 	int height,
-	uint8_t *pixels,
+	void *pixels,
 	ColorFormat format,
 	int dc,
 	int dy,
@@ -317,18 +331,19 @@ void DisplayDriver_RGBLTDC::hScroll(
 /// \remarks Si es treballa en doble buffer, intercanvia els frames.
 ///
 void DisplayDriver_RGBLTDC::refresh() {
-#ifdef DISPLAY_DOUBLE_BUFFER
 
-	// Intercanvia els buffers
-	//
-	Math::swap(_frontFrameBuffer, _backFrameBuffer);
-	Math::swap(_frontFrameAddr, _backFrameAddr);
+	if (_useDoubleBuffer) {
 
-	// Asigna l'adresa de la capa
-	//
-	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, _frontFrameAddr);
-	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
-#endif
+		// Intercanvia els buffers
+		//
+		Math::swap(_frontFrameBuffer, _backFrameBuffer);
+		Math::swap(_frontImageBuffer, _backImageBuffer);
+
+		// Asigna l'adresa de la capa
+		//
+		halLTDCLayerSetFrameBuffer(HAL_LTDC_LAYER_0, _frontImageBuffer);
+		halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
+	}
 }
 
 
@@ -385,37 +400,33 @@ void DisplayDriver_RGBLTDC::initializeGPIO() {
 ///
 void DisplayDriver_RGBLTDC::initializeLTDC() {
 
-	static const LTDCSettings ltdcSettings = {
-		.HSYNC = DISPLAY_HSYNC,
-		.VSYNC = DISPLAY_VSYNC,
-		.HBP = DISPLAY_HBP,
-		.HFP = DISPLAY_HFP,
-		.VBP = DISPLAY_VBP,
-		.VFP = DISPLAY_VFP,
-		.polarity = {
-			.HSYNC = DISPLAY_HSPOL,
-			.VSYNC = DISPLAY_VSPOL,
-			.DE = DISPLAY_DEPOL,
-			.PC = DISPLAY_PCPOL,
-		 },
-		.width = DISPLAY_IMAGE_WIDTH,
-		.height = DISPLAY_IMAGE_HEIGHT
-	};
-
 	// Inicialitza el modul LTDC
 	//
+	LTDCSettings ltdcSettings;
+	ltdcSettings.HSYNC = DISPLAY_HSYNC;
+	ltdcSettings.VSYNC = DISPLAY_VSYNC;
+	ltdcSettings.HBP = DISPLAY_HBP;
+	ltdcSettings.HFP = DISPLAY_HFP;
+	ltdcSettings.VBP = DISPLAY_VBP;
+	ltdcSettings.VFP = DISPLAY_VFP;
+	ltdcSettings.polarity.HSYNC = DISPLAY_HSPOL;
+	ltdcSettings.polarity.VSYNC = DISPLAY_VSPOL;
+	ltdcSettings.polarity.DE = DISPLAY_DEPOL;
+	ltdcSettings.polarity.PC = DISPLAY_PCPOL;
+	ltdcSettings.width = _screenWidth;
+	ltdcSettings.height = _screenHeight;
 	halLTDCInitialize(&ltdcSettings);
 	halLTDCSetBackgroundColor(0x000000FF);
 
 	// Inicialitza la capa 0
 	//
-	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT);
-	int pixelSize = halLTDCGetPixelSize(HAL_LTDC_FORMAT_DEFAULT);
+	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, _screenWidth, _screenHeight);
+
 	halLTDCLayerSetFrameFormat(HAL_LTDC_LAYER_0,
-		HAL_LTDC_FORMAT_DEFAULT,
-		DISPLAY_IMAGE_WIDTH * pixelSize,
-		((DISPLAY_IMAGE_WIDTH * pixelSize) + 63) & 0xFFFFFFC0,
-		DISPLAY_IMAGE_HEIGHT);
-	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, _frontFrameAddr);
+		LTDCPixelFormatFor<CI::format>::value,
+		_screenWidth * CI::bytes,
+		((_screenWidth * CI::bytes) + 63) & 0xFFFFFFC0,
+		_screenHeight);
+	halLTDCLayerSetFrameBuffer(HAL_LTDC_LAYER_0, _frontImageBuffer);
 	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
 }

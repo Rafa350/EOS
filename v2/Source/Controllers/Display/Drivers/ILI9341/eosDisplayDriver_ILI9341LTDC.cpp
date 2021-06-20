@@ -5,8 +5,7 @@
 #include "HAL/halINT.h"
 #include "hAL/halTMR.h"
 #include "HAL/halGPIO.h"
-#include "HAL/halSPI.h"
-#include "HAL/STM32/halLTDC.h"
+#include "HAL/STM32/halLTDCTpl.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "System/eosMath.h"
 
@@ -20,33 +19,17 @@
 using namespace eos;
 
 
-static SPIData spiData;
-static SPIHandler hSpi;
-IDisplayDriver *DisplayDriver_ILI9341LTDC::_instance = nullptr;
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte una instancia unica del driver.
-/// \return La instancia del driver.
-///
-IDisplayDriver *DisplayDriver_ILI9341LTDC::getInstance() {
-
-	if (_instance == nullptr)
-		_instance = new DisplayDriver_ILI9341LTDC();
-	return _instance;
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
 ///
 DisplayDriver_ILI9341LTDC::DisplayDriver_ILI9341LTDC() {
 
 	_frameBuffer = new FrameBuffer_RGB565_DMA2D(
-		DISPLAY_IMAGE_WIDTH,
-		DISPLAY_IMAGE_HEIGHT,
+		_displayWidth,
+		_displayHeight,
 		DisplayOrientation::normal,
-		(void*) DISPLAY_VRAM_ADDR);
+		(void*) _displayBuffer,
+		_displayWidth);
 }
 
 
@@ -80,84 +63,105 @@ void DisplayDriver_ILI9341LTDC::setOrientation(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Borra la pantalla.
-/// \param color: Color de borrat.
+/// \brief    Borra la pantalla.
+/// \param    color: Color de borrat.
 ///
 void DisplayDriver_ILI9341LTDC::clear(
-	const Color &color) {
+	Color color) {
 
 	_frameBuffer->clear(color);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa un pixel.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param color: Color del pixel.
-/// \remarks Si esta fora de limits no dibuixa res.
+/// \brief    Dibuixa un pixel.
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada x.
+/// \param    color: Color.
+/// \remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_ILI9341LTDC::setPixel(
 	int x,
 	int y,
-	const Color &color) {
+	Color color) {
 
 	_frameBuffer->setPixel(x, y, color);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia de pixels horitzontals.
-/// \param x: Coordinada X.
-/// \param y: Colordinada Y.
-/// \param length: Longitut de la linia.
-/// \param color: Color dels pixels.
-/// \remarks Si esta fora de limits no dibuixa res.
+/// \brief    Dibuixa una linia de pixels horitzontals.
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada y.
+/// \param    length: Longitut de la linia.
+/// \param    color: Color.
+/// \remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_ILI9341LTDC::setHPixels(
 	int x,
 	int y,
 	int size,
-	const Color &color) {
+	Color color) {
 
 	_frameBuffer->setPixels(x, y, size, 1, color);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una linia de pixels en vertical.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param length: Longitut de la linia.
-/// \param color: Color dels pixels.
-/// \remarks Si esta fora de limits no dibuixa res.
+/// \brief    Dibuixa una linia de pixels en vertical.
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada y.
+/// \param    length: Longitut de la linia.
+/// \param    color: Color.
+/// \remarks  Si esta fora de limits no dibuixa res.
 ///
 void DisplayDriver_ILI9341LTDC::setVPixels(
 	int x,
 	int y,
 	int size,
-	const Color &color) {
+	Color color) {
 
 	_frameBuffer->setPixels(x, y, 1, size, color);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Dibuixa una regio rectangular de pixels.
-/// \param x: Posicio X.
-/// \param y: Posicio Y.
-/// \param width: Amplada de la regio.
-/// \param height: Al�ada de la regio.
-/// \param color: Color dels pixels.
+/// \brief    Dibuixa una regio rectangular d'un color
+/// \param    x: Posicio x.
+/// \param    y: Posicio y.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
+/// \param    color: Color.
 ///
 void DisplayDriver_ILI9341LTDC::setPixels(
 	int x,
 	int y,
 	int width,
 	int height,
-	const Color &color) {
+	Color color) {
 
 	_frameBuffer->setPixels(x, y, width, height, color);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Copia una regio rectangular de pixels.
+/// \param    x: Posicio x.
+/// \param    y: Posicio y.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
+/// \param    colors: Colors a copiar.
+/// \param    pitch: Pitch dels colors.
+///
+void DisplayDriver_ILI9341LTDC::setPixels(
+	int x,
+	int y,
+	int width,
+	int height,
+	const Color* colors,
+	int pitch) {
+
+	_frameBuffer->setPixels(x, y, width, height, colors, pitch);
 }
 
 
@@ -166,7 +170,7 @@ void DisplayDriver_ILI9341LTDC::writePixels(
 	int y,
 	int width,
 	int height,
-	const uint8_t *pixels,
+	const void *pixels,
 	ColorFormat format,
 	int dx,
 	int dy,
@@ -174,13 +178,12 @@ void DisplayDriver_ILI9341LTDC::writePixels(
 
 }
 
-
 void DisplayDriver_ILI9341LTDC::readPixels(
 	int x,
 	int y,
 	int width,
 	int height,
-	uint8_t *pixels,
+	void *pixels,
 	ColorFormat format,
 	int dx,
 	int dy,
@@ -291,7 +294,7 @@ void DisplayDriver_ILI9341LTDC::hwInitialize() {
 		DISPLAY_SPI_ID,
 			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
 	};
-	hSpi = halSPIInitialize(&spiData, &spiSettings);
+	_hSpi = halSPIInitialize(&_spiData, &spiSettings);
 
 	// Inicialitza el modul LTDC
 	//
@@ -308,24 +311,23 @@ void DisplayDriver_ILI9341LTDC::hwInitialize() {
 			.DE = DISPLAY_DEPOL,
 			.PC = DISPLAY_PCPOL,
 		 },
-		.width = DISPLAY_IMAGE_WIDTH,
-		.height = DISPLAY_IMAGE_HEIGHT
+		.width = _displayWidth,
+		.height = _displayHeight
 	};
 	halLTDCInitialize(&ltdcSettings);
 	halLTDCSetBackgroundColor(0x000000FF);
 
 	// Inicialitza la capa 0 del modul LTDC
 	//
-	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT);
+	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, _displayWidth, _displayHeight);
 
-	unsigned pixelSize = halLTDCGetPixelSize(HAL_LTDC_FORMAT_RGB565);
 	halLTDCLayerSetFrameFormat(HAL_LTDC_LAYER_0,
-		HAL_LTDC_FORMAT_RGB565,
-		DISPLAY_IMAGE_WIDTH * pixelSize,
-		((DISPLAY_IMAGE_WIDTH * pixelSize) + 63) & 0xFFFFFFC0,
-		DISPLAY_IMAGE_HEIGHT);
+		LTDCPixelFormatFor<CI::format>::value,
+		_displayWidth * CI::bytes,
+		((_displayWidth * CI::bytes) + 63) & 0xFFFFFFC0,
+		_displayHeight);
 
-	halLTDCLayerSetFrameAddress(HAL_LTDC_LAYER_0, DISPLAY_VRAM_ADDR);
+	halLTDCLayerSetFrameBuffer(HAL_LTDC_LAYER_0, (void*) _displayBuffer);
 	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
 
 	// Inicialitza el controlador del display
@@ -454,7 +456,7 @@ void DisplayDriver_ILI9341LTDC::hwWriteCommand(
 	uint8_t cmd) {
 
 	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(hSpi, &cmd, sizeof(cmd));
+	halSPISendBuffer(_hSpi, &cmd, sizeof(cmd));
 }
 
 
@@ -466,5 +468,5 @@ void DisplayDriver_ILI9341LTDC::hwWriteData(
 	uint8_t data) {
 
 	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(hSpi, &data, sizeof(data));
+	halSPISendBuffer(_hSpi, &data, sizeof(data));
 }

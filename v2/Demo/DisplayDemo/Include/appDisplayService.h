@@ -20,12 +20,22 @@ namespace app {
 
 	class DisplayService: public eos::AppLoopService {
 	    private:
-			eos::IDisplayDriver *driver;
-	        eos::Graphics *graphics;
-	        int screenWidth;
-	        int screenHeight;
-	        int orientation;
-	        int loopCount;
+			eos::IDisplayDriver *_driver;
+	        eos::Graphics *_graphics;
+	        int _screenWidth;
+	        int _screenHeight;
+	        int _orientation;
+	        int _loopCount;
+
+	        int _pointsTicks;
+	        int _horizontalLinesTicks;
+	        int _verticalLinesTicks;
+	        int _linesTicks;
+	        int _rectanglesTicks;
+	        int _filledRectanglesTicks;
+	        int _ellipsesTicks;
+	        int _filledEllipsesTicks;
+	        int _bitmapTicks;
 
 	    public:
 	        DisplayService(eos::Application *application);
@@ -36,9 +46,14 @@ namespace app {
 
 	    private:
 	        void drawBackground(const char *title);
+	        void testColors();
 	        void testOpacity();
+	        void testPoints();
+	        void testLines();
+	        void testRectangles();
+	        void testEllipses();
+	        void testBitmaps();
 	};
-
 
 }
 

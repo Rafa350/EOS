@@ -17,18 +17,20 @@ uint16_t ColorMath::combineColor_RGB565(
 	uint16_t f,
 	uint8_t o) {
 
-	uint8_t br = (b & COLOR_RGB565_MASK_R) >> COLOR_RGB565_SHIFT_R;
-	uint8_t bg = (b & COLOR_RGB565_MASK_G) >> COLOR_RGB565_SHIFT_G;
-	uint8_t bb = (b & COLOR_RGB565_MASK_B) >> COLOR_RGB565_SHIFT_B;
+	typedef ColorInfo<ColorFormat::rgb565> CI;
 
-	uint8_t fr = (f & COLOR_RGB565_MASK_R) >> COLOR_RGB565_SHIFT_R;
-	uint8_t fg = (f & COLOR_RGB565_MASK_G) >> COLOR_RGB565_SHIFT_G;
-	uint8_t fb = (f & COLOR_RGB565_MASK_B) >> COLOR_RGB565_SHIFT_B;
+	uint8_t br = (b & CI::maskR) >> CI::shiftR;
+	uint8_t bg = (b & CI::maskG) >> CI::shiftG;
+	uint8_t bb = (b & CI::maskB) >> CI::shiftB;
+
+	uint8_t fr = (f & CI::maskR) >> CI::shiftR;
+	uint8_t fg = (f & CI::maskG) >> CI::shiftG;
+	uint8_t fb = (f & CI::maskB) >> CI::shiftB;
 
 	return (uint16_t)
-		((((fr * o) + (br * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_R) |
-		((((fg * o) + (bg * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_G) |
-		((((fb * o) + (bb * (255u - o))) >> 8) << COLOR_RGB565_SHIFT_B);
+		((((fr * o) + (br * (255u - o))) >> 8) << CI::shiftR) |
+		((((fg * o) + (bg * (255u - o))) >> 8) << CI::shiftG) |
+		((((fb * o) + (bb * (255u - o))) >> 8) << CI::shiftB);
 }
 
 

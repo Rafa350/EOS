@@ -17,25 +17,24 @@ using namespace eos;
 void Graphics::drawBitmap(
     int x,
     int y,
-    const Bitmap *pBitmap) const {
+    const Bitmap *bitmap) const {
 
 	int x1 = x;
 	int y1 = y;
-	int x2 = x + pBitmap->getWidth() - 1;
-	int y2 = y + pBitmap->getHeight() - 1;
+	int x2 = x + bitmap->getWidth() - 1;
+	int y2 = y + bitmap->getHeight() - 1;
 
 	if (clipRectangle(x1, y1, x2, y2)) {
 
         int w = x2 - x1 + 1;
         int h = y2 - y1 + 1;
 
-        if ((w > 0) && (h > 0))
-			_driver->writePixels(
+        if ((w > 0) && (h > 0)) {
+        	_driver->writePixels(x1, y1, w, h,
+        		bitmap->getPixels(),
+				bitmap->getFormat(),
 				x1, y1,
-				w, h,
-				pBitmap->getPixels(),
-				pBitmap->getFormat(),
-				x1 - x, y1 - y,
-				x1 - x);
+				bitmap->getWidth());
+        }
 	}
 }

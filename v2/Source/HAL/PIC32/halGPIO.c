@@ -10,9 +10,9 @@
 ///
 void halGPIOInitializePins(
     const GPIOPinSettings *settings,
-    uint32_t count) {
+    int count) {
 
-    for (uint32_t i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
         const GPIOPinSettings *p = &settings[i];
         halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
     }
@@ -43,9 +43,9 @@ void halGPIOInitializePin(
 ///
 void halGPIOInitializePorts(
     const GPIOPortSettings *settings,
-    uint32_t count) {
+    int count) {
 
-    for (uint32_t i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
         const GPIOPortSettings *p = &settings[i];
         halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
     }

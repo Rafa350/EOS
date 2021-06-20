@@ -26,7 +26,7 @@ void halDMA2DDeinitialize() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Ompla una regio amb un color solid.
-/// \param    addr: Adressa del primer pixel de la regio.
+/// \param    dst: Punter al primer pixel regio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
 /// \param    offset: Offset per avançar a la seguent linia de la regio.
@@ -34,7 +34,7 @@ void halDMA2DDeinitialize() {
 /// \param    color: Color per omplir. Nomes accepta el format de desti.
 ///
 void halDMA2DStartFill(
-	uint32_t addr,
+	void* dst,
 	int width,
 	int height,
 	int offset,
@@ -59,9 +59,9 @@ void halDMA2DStartFill(
 	}
 	DMA2D->OCOLR = color;
 
-	// Selecciona l'adressa i el pitch del desti
+	// Selecciona l'adressa i el offset del desti
 	//
-	DMA2D->OMAR = addr;
+	DMA2D->OMAR = (uint32_t) dst;
 	DMA2D->OOR = offset & 0x3FFF;
 
 	// Selecciona el tamany de la finestra
@@ -78,21 +78,21 @@ void halDMA2DStartFill(
 
 /// ----------------------------------------------------------------------
 /// \brief    Copia un mapa de bits a una regio
-/// \param    addr: Adresa del primer pixel de la regio.
+/// \param    dst: Punter al primer pixel de la regio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
 /// \param    offset: Offset per avançar a la seguent linia de la regio.
 /// \param    options: Opcions.
-/// \param    srcAddr: Adressa del primer pixel del mapa de bits.
+/// \param    src: Punter al primer pixel del mapa de bits.
 /// \param    srcOffset: Offset per avançar a la seguent linia del mapa de bits.
 ///
 void halDMA2DStartCopy(
-	uint32_t addr,
+	void* dst,
 	int width,
 	int height,
 	int offset,
 	DMA2DOptions options,
-	uint32_t srcAddr,
+	void* src,
 	int srcOffset) {
 
 	// Selecciona el tipus de transferencia com a M2M/PFC
@@ -129,14 +129,14 @@ void halDMA2DStartCopy(
 			break;
 	}
 
-	// Selecciona l'adressa i el pitch del origen
+	// Selecciona l'adressa i el offset del origen
 	//
-	DMA2D->FGMAR = srcAddr;
+	DMA2D->FGMAR = (uint32_t) src;
 	DMA2D->FGOR = srcOffset & 0x3FFF;
 
-	// Selecciona l'adressa i el pitch del desti.
+	// Selecciona l'adressa i el offset del desti.
 	//
-	DMA2D->OMAR = addr;
+	DMA2D->OMAR = (uint32_t) dst;
 	DMA2D->OOR = offset & 0x3FFF;
 
 	// Selecciona el tamany de la finestra

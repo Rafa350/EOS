@@ -7,73 +7,12 @@
 #include "eos.h"
 
 
-// Si no esta definit, el format de color del sistema es ARGB8888
-#if !defined(EOS_COLOR_ARGB8888) & !defined(EOS_COLOR_RGB888) & !defined(EOS_COLOR_RGB565)
-#define EOS_COLOR_ARGB8888
-#endif
-
-
-// Format ARGB8888
-#define COLOR_ARGB8888_MASK_A     0xFF000000u
-#define COLOR_ARGB8888_MASK_R     0x00FF0000u
-#define COLOR_ARGB8888_MASK_G     0x0000FF00u
-#define COLOR_ARGB8888_MASK_B     0x000000FFu
-#define COLOR_ARGB8888_SHIFT_A    24u
-#define COLOR_ARGB8888_SHIFT_R    16u
-#define COLOR_ARGB8888_SHIFT_G    8u
-#define COLOR_ARGB8888_SHIFT_B    0u
-#define COLOR_ARGB8888_TYPE       uint32_t
-#define COLOR_ARGB8888_BPP        32
-#define COLOR_ARGB8888_FORMAT     ColorFormat::argb8888
-
-// Format RGB888
-#define COLOR_RGB888_MASK_R       0x00FF0000u
-#define COLOR_RGB888_MASK_G       0x0000FF00u
-#define COLOR_RGB888_MASK_B       0x000000FFu
-#define COLOR_RGB888_SHIFT_R      16u
-#define COLOR_RGB888_SHIFT_G      8u
-#define COLOR_RGB888_SHIFT_B      0u
-#define COLOR_RGB888_TYPE         uint32_t
-#define COLOR_RGB888_BPP          24
-#define COLOR_RGB888_FORMAT       ColorFormat::rgb888
-
-// Format RGB565
-#define COLOR_RGB565_MASK_R       0x0000F800u
-#define COLOR_RGB565_MASK_G       0x000003E0u
-#define COLOR_RGB565_MASK_B       0x0000001Fu
-#define COLOR_RGB565_SHIFT_R      11u
-#define COLOR_RGB565_SHIFT_G      5u
-#define COLOR_RGB565_SHIFT_B      0u
-#define COLOR_RGB565_TYPE         uint16_t
-#define COLOR_RGB565_BPP          16
-#define COLOR_RGB565_FOPRMAT      ColorFormat::rgb565
-
-// Format L8
-#define COLOR_LUMINANCE_MASK      0x000000FFu
-#define COLOR_LUMINANCE_SHIFT     0u
-#define COLOR_L8_TYPE             uint8_t
-#define COLOR_L8_BPP              8
-#define COLOR_L8_FORMAT           ColorFormat::l8
-
-// Format nadiu utilitzat internament en la clase Color
-#if defined(EOS_COLOR_ARGB8888)
-#define COLOR_MASK_A              COLOR_ARGB8888_MASK_A
-#define COLOR_MASK_R              COLOR_ARGB8888_MASK_R
-#define COLOR_MASK_G              COLOR_ARGB8888_MASK_G
-#define COLOR_MASK_B              COLOR_ARGB8888_MASK_B
-#define COLOR_SHIFT_A             COLOR_ARGB8888_SHIFT_A
-#define COLOR_SHIFT_R             COLOR_ARGB8888_SHIFT_R
-#define COLOR_SHIFT_G             COLOR_ARGB8888_SHIFT_G
-#define COLOR_SHIFT_B             COLOR_ARGB8888_SHIFT_B
-#define COLOR_TYPE                COLOR_ARGB8888_TYPE
-#define COLOR_BPP                 COLOR_ARGB8888_BPP
-#define COLOR_FORMAT              COLOR_ARGB8888_FORMAT
+#ifndef EOS_COLOR_FORMAT
+#define EOS_COLOR_FORMAT ColorFormat::argb8888
 #endif
 
 
 namespace eos {
-
-	typedef COLOR_TYPE color_t;
 
 	/// \brief Format de color
 	///
@@ -81,52 +20,165 @@ namespace eos {
 		argb8888,  // ARGB 8 bit channel
 		rgb888,    // RGB 8 bit channel
 		rgb565,    // RGB 5 bits Red & Blue channels, 6 bit Green channel
-		l8         // Luminancia
+		l8         // Luminancia 8 bits
 	};
 
-	/// \brief Clase que representa un color.
+	/// \brief Informacio sobre els formats de color
 	///
-    class Color {
-        private:
-            color_t c;
+	template <ColorFormat FORMAT>
+	struct ColorInfo {
+	};
 
-        public :
-            inline Color(): c(0) {}
-            inline Color(const Color& color): c(color.c) {}
-            inline Color(color_t c): c(c) {}
+	template <>
+	struct ColorInfo<ColorFormat::argb8888> {
+		typedef uint32_t color_t;
+		constexpr static ColorFormat format = ColorFormat::argb8888;
+		constexpr static const int bits = 32;
+		constexpr static const int bytes = bits / 8;
+		constexpr static const bool hasAlpha = true;
+		constexpr static const unsigned maskA = 0xFF000000;
+		constexpr static const unsigned maskR = 0x00FF0000;
+		constexpr static const unsigned maskG = 0x0000FF00;
+		constexpr static const unsigned maskB = 0x000000FF;
+		constexpr static const unsigned shiftA = 24;
+		constexpr static const unsigned shiftR = 16;
+		constexpr static const unsigned shiftG = 8;
+		constexpr static const unsigned shiftB = 0;
+		constexpr static const unsigned adjA = 0;
+		constexpr static const unsigned adjR = 0;
+		constexpr static const unsigned adjG = 0;
+		constexpr static const unsigned adjB = 0;
+	};
 
-            inline Color(uint8_t r, uint8_t g, uint8_t b): c(COLOR_MASK_A | (r << COLOR_SHIFT_R) | (g << COLOR_SHIFT_G) | (b << COLOR_SHIFT_B)) {}
-            inline Color(uint8_t a, uint8_t r, uint8_t g, uint8_t b): c((a << COLOR_SHIFT_A) | (r << COLOR_SHIFT_R) | (g << COLOR_SHIFT_G) | (b << COLOR_SHIFT_B)) {}
+	template <>
+	struct ColorInfo<ColorFormat::rgb888> {
+		typedef uint32_t color_t;
+		constexpr static ColorFormat format = ColorFormat::rgb888;
+		constexpr static const int bits = 24;
+		constexpr static const int bytes = bits / 8;
+		constexpr static const bool hasAlpha = false;
+		constexpr static const unsigned maskA = 0x000000;
+		constexpr static const unsigned maskR = 0xFF0000;
+		constexpr static const unsigned maskG = 0x00FF00;
+		constexpr static const unsigned maskB = 0x0000FF;
+		constexpr static const unsigned shiftA = 8 * sizeof(color_t);
+		constexpr static const unsigned shiftR = 16;
+		constexpr static const unsigned shiftG = 8;
+		constexpr static const unsigned shiftB = 0;
+		constexpr static const unsigned adjA = 0;
+		constexpr static const unsigned adjR = 0;
+		constexpr static const unsigned adjG = 0;
+		constexpr static const unsigned adjB = 0;
+	};
 
-            inline uint8_t getA() const { return (c & COLOR_MASK_A) >> COLOR_SHIFT_A; }
-            inline uint8_t getR() const { return (c & COLOR_MASK_R) >> COLOR_SHIFT_R; }
-            inline uint8_t getG() const { return (c & COLOR_MASK_G) >> COLOR_SHIFT_G; }
-            inline uint8_t getB() const { return (c & COLOR_MASK_B) >> COLOR_SHIFT_B; }
+	template <>
+	struct ColorInfo<ColorFormat::rgb565> {
+		typedef uint16_t color_t;
+		constexpr static ColorFormat format = ColorFormat::rgb565;
+		constexpr static const int bits = 16;
+		constexpr static const int bytes = bits / 8;
+		constexpr static const bool hasAlpha = false;
+		constexpr static const unsigned maskA = 0x0000;
+		constexpr static const unsigned maskR = 0xF800;
+		constexpr static const unsigned maskG = 0x07E0;
+		constexpr static const unsigned maskB = 0x001F;
+		constexpr static const unsigned shiftA = 8 * sizeof(color_t);
+		constexpr static const unsigned shiftR = 11;
+		constexpr static const unsigned shiftG = 5;
+		constexpr static const unsigned shiftB = 0;
+		constexpr static const unsigned adjA = 0;
+		constexpr static const unsigned adjR = 3;
+		constexpr static const unsigned adjG = 2;
+		constexpr static const unsigned adjB = 3;
+	};
 
-            static inline Color fromARGB8888(uint32_t c) { return Color(c); }
-            static inline Color fromRGB888(uint32_t c) { return Color(COLOR_MASK_A | c); }
-            static inline Color fromRGB565(uint16_t c) { return Color((c & 0xF800u) >> 11u, (c & 0x03E0u) >> 5u, c & 0x001Fu); }
 
-            inline uint32_t toARGB8888() const { return c; }
-            inline uint32_t toRGB888() const { return c | 0xFF000000u; } 
-            inline uint16_t toRGB565() const { return ((c & 0x00F80000u) >> 8u) | ((c & 0x0000FC00u) >> 5u) | ((c & 0x000000F8u) >> 3u); };
+	/// \brief Clase que representa un color en el format especificat
+	///
+	template <ColorFormat FORMAT>
+	class ColorBase {
+		public:
+			typedef ColorInfo<FORMAT> CI;
+			typedef typename ColorInfo<FORMAT>::color_t color_t;
+		private:
+			color_t _c;
+		public:
+			inline ColorBase(): _c(0) {}
+			inline ColorBase(const ColorBase& color): _c(color._c) {}
+			inline ColorBase(color_t c): _c(c) {}
 
-            inline uint8_t getOpacity() const { return (c & COLOR_MASK_A) >> COLOR_SHIFT_A; }
+			inline ColorBase(uint8_t r, uint8_t g, uint8_t b): _c(CI::maskA | (((color_t)r >> CI::adjR << CI::shiftR) & CI::maskR) | (((color_t)g >> CI::adjG << CI::shiftG) & CI::maskG) | (((color_t)b >> CI::adjB << CI::shiftB) & CI::maskB)) {}
+			inline ColorBase(uint8_t a, uint8_t r, uint8_t g, uint8_t b): _c((CI::hasAlpha ? ((color_t)a >> CI::adjA << CI::shiftA) : 0) | ((color_t)r >> CI::adjR << CI::shiftR) | ((color_t)g >> CI::adjG << CI::shiftG) | ((color_t)b >> CI::adjB << CI::shiftB)) {}
+
+			inline uint8_t getA() const { return (_c & CI::maskA) >> CI::shiftA << CI::adjA; }
+            inline uint8_t getR() const { return (_c & CI::maskR) >> CI::shiftR << CI::adjR; }
+            inline uint8_t getG() const { return (_c & CI::maskG) >> CI::shiftG << CI::adjG; }
+            inline uint8_t getB() const { return (_c & CI::maskB) >> CI::shiftB << CI::adjB; }
+
+            inline uint8_t getOpacity() const { return CI::hasAlpha ? getA() : 0xFF; }
             inline bool isOpaque() const { return getOpacity() == 0xFF; }
             inline bool isTransparent() const { return getOpacity() == 0x00; }
 
-            inline Color &operator = (const Color &color) { c = color.c; return *this;}
+            inline ColorBase &operator = (const ColorBase &color) { _c = color._c; return *this;}
 
-            inline bool operator == (const Color &color) { return c == color.c; }
-            inline bool operator != (const Color &color) { return c != color.c; }
+            inline bool operator == (const ColorBase &color) { return _c == color._c; }
+            inline bool operator != (const ColorBase &color) { return _c != color._c; }
 
-            inline operator color_t() const { return c; }
+            inline operator color_t() const { return _c; }
 
-            inline static ColorFormat getColorFormat() { return COLOR_FORMAT; }
-    };
+            constexpr static ColorFormat getFormat() { return FORMAT; }
+	};
 
 
-    /// \brief Clase que representa la paleta de colors.
+	/// \brief Crea un color amb el format especificat a partir dels seus components
+	///
+	template <ColorFormat FORMAT>
+	struct ColorBuilder {
+	};
+
+	template <>
+    struct ColorBuilder<ColorFormat::rgb565> {
+		static ColorBase<ColorFormat::rgb565> Build(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
+			return ColorBase<ColorFormat::rgb565>(((r & 0xF8) << 8) | ((g & 0xFC) << 3) | ((b & 0xF8) >> 3));
+		}
+	};
+
+	template <>
+    struct ColorBuilder<ColorFormat::rgb888> {
+		static ColorBase<ColorFormat::rgb888> Build(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
+			return ColorBase<ColorFormat::rgb888>((r << 16) | (g << 8) | b);
+		}
+	};
+
+	template <>
+    struct ColorBuilder<ColorFormat::argb8888> {
+		static ColorBase<ColorFormat::argb8888> Build(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
+			typedef ColorBase<ColorFormat::argb8888>::color_t color_t;
+			color_t c =
+				(((color_t)a) << 24) |
+				(((color_t)r) << 16) |
+				(((color_t)g) << 8) |
+				((color_t)b);
+ 			return ColorBase<ColorFormat::argb8888>(c);
+		}
+	};
+
+
+	/// \brief Color basic del sistema
+	///
+	typedef ColorBase<EOS_COLOR_FORMAT> Color;
+
+
+	/// \brief Conversio de formats de color
+	///
+	template <ColorFormat FORMAT>
+	inline ColorBase<FORMAT> ConvertTo(Color src) {
+		//return ColorBase<FORMAT>(src.getA(), src.getR(), src.getG(), src.getB());
+		return ColorBuilder<FORMAT>::Build(src.getA(), src.getR(), src.getG(), src.getB());
+	}
+
+
+	/// \brief Clase que representa la paleta de colors.
     ///
     class ColorPalette {
         private:

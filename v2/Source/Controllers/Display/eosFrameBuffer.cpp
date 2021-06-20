@@ -8,8 +8,8 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
-/// \param    frameWidth: Amplada fisica en pixels.
-/// \param    frameHeight: Alçada fisica en pixels.
+/// \param    frameWidth: Amplada.
+/// \param    frameHeight: Alçada.
 /// \param    orientation: Orientacio inicial.
 ///
 FrameBuffer::FrameBuffer(
@@ -19,8 +19,8 @@ FrameBuffer::FrameBuffer(
 
 	_frameWidth(frameWidth),
 	_frameHeight(frameHeight),
-	_maxX(frameWidth - 1),
-	_maxY(frameHeight - 1),
+	_imageWidth(frameWidth),
+	_imageHeight(frameHeight),
 	_orientation(DisplayOrientation::normal) {
 }
 
@@ -36,23 +36,23 @@ void FrameBuffer::setOrientation(
 	switch (_orientation) {
 		case DisplayOrientation::normal:
 		case DisplayOrientation::rotate180:
-			_maxX = _frameWidth - 1;
-			_maxY = _frameHeight - 1;
+			_imageWidth = _frameWidth;
+			_imageHeight = _frameHeight;
 			break;
 
 		case DisplayOrientation::rotate90:
 		case DisplayOrientation::rotate270:
-			_maxX = _frameHeight - 1;
-			_maxY = _frameWidth - 1;
+			_imageWidth = _frameHeight;
+			_imageHeight = _frameWidth;
 			break;
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Rota les coordinades d'un punt.
-/// \param x: Coordinada x.
-/// \param y: Coordinada y.
+/// \brief    Rota les coordinades d'un punt.
+/// \param    x: Coordinada x.
+/// \param    y: Coordinada y.
 ///
 void FrameBuffer::rotate(
 	int &x,
@@ -93,12 +93,12 @@ void FrameBuffer::rotate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Rota les coordinades d'un rectangle.
-/// \param x1: Coordinada x esquerra.
-/// \param y1: Coordinada y superior.
-/// \param x2: Coordinada x dreta.
-/// \param y2: Coordinada y inferior.
-/// \remarks Les coordinades son retornades en forma normalitzada.
+/// \brief    Rota les coordinades d'un rectangle.
+/// \param    x1: Coordinada x esquerra.
+/// \param    y1: Coordinada y superior.
+/// \param    x2: Coordinada x dreta.
+/// \param    y2: Coordinada y inferior.
+/// \remarks  Les coordinades son retornades en forma normalitzada.
 ///
 void FrameBuffer::rotate(
 	int &x1,
@@ -159,7 +159,7 @@ void FrameBuffer::rotate(
 /// \param    color: Color de borrat.
 ///
 void FrameBuffer::clear(
-	const Color &color) {
+	Color color) {
 
 	fill(0, 0, _frameWidth, _frameHeight, color);
 }
@@ -174,9 +174,9 @@ void FrameBuffer::clear(
 void FrameBuffer::setPixel(
 	int x,
 	int y,
-	const Color& color) {
+	Color color) {
 
-	if ((x >= 0) && (x <= _maxX) && (y >= 0) && (y <= _maxY)) {
+	if ((x >= 0) && (x < _imageWidth) && (y >= 0) && (y < _imageHeight)) {
 		rotate(x, y);
 		put(x, y, color);
 	}
@@ -187,16 +187,16 @@ void FrameBuffer::setPixel(
 /// \brief    Dibuixa una regio rectangular de pixels.
 /// \param    x: Posicio X.
 /// \param    y: Posicio Y.
-/// \param    width: Amplada de la regio.
-/// \param    height: Alçada de la regio.
-/// \param    color: Color dels pixels.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
+/// \param    color: Color.
 ///
 void FrameBuffer::setPixels(
 	int x,
 	int y,
 	int width,
 	int height,
-	const Color &color) {
+	Color color) {
 
 	int x1 = x;
 	int y1 = y;
@@ -207,8 +207,8 @@ void FrameBuffer::setPixels(
 	//
 	x1 = Math::max(x1, 0);
 	y1 = Math::max(y1, 0);
-	x2 = Math::min(x2, _maxX);
-	y2 = Math::min(y2, _maxY);
+	x2 = Math::min(x2, _imageWidth - 1);
+	y2 = Math::min(y2, _imageHeight - 1);
 
 	// Cas que nomes sigui un pixel
 	//
@@ -228,26 +228,36 @@ void FrameBuffer::setPixels(
 
 /// ----------------------------------------------------------------------
 /// \brief    Escriu en una regio rectangular.
-/// \param    x: Posicio X.
-/// \param    y: Posicio Y.
-/// \param    width: Amplada de la regio.
-/// \param    height: Alçada de la regio.
+/// \param    x: Posicio x.
+/// \param    y: Posicio y.
+/// \param    width: Amplada.
+/// \param    height: Alçada.
 /// \param    colors: Els colors d'origen a copiar.
-/// \param    dx: Offset X del origen.
-/// \param    dy: Offset Y del origen.
 /// \param    pitch: Pitch del origen.
 ///
-void FrameBuffer::writePixels(
+void FrameBuffer::setPixels(
 	int x,
 	int y,
 	int width,
 	int height,
 	const Color* colors,
-	int dx,
-	int dy,
 	int pitch) {
 
-	//TODO Girs i retall
+	// TODO: Girs i retall
 
-	copy(x, y, width, height, colors, dx, dy, pitch);
+	copy(x, y, width, height, colors, pitch);
+}
+
+
+void FrameBuffer::setPixels(
+	int x,
+	int y,
+	int width,
+	int height,
+	void* pixels,
+	ColorFormat format,
+	int dx,
+	int dy,
+	int pitch)  {
+
 }

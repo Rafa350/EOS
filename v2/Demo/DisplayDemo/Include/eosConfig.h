@@ -37,6 +37,7 @@
 #endif
 #define USE_DISPLAY
 #define DISPLAY_DRV_RGBLTDC
+#define DISPLAY_DOUBLEBUFFER false
 
 #elif defined(BUILD_SSD1306)
 #define HARDWARE_CUSTOM

@@ -9,6 +9,7 @@
 
 
 namespace eos {
+
 	template <GPIOPort port, GPIOPin pin>
 	class GPIOPinAdapter {
 		public:
