@@ -96,6 +96,7 @@
         <itemPath>../../../Demo/DisplayDemo/Source/appApplication.cpp</itemPath>
         <itemPath>../../../Demo/DisplayDemo/Source/appLedService.cpp</itemPath>
         <itemPath>../../../Demo/DisplayDemo/Source/appDisplayService.cpp</itemPath>
+        <itemPath>../../../Demo/DisplayDemo/Source/appBitmap.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -103,6 +104,8 @@
             <logicalFolder name="f1" displayName="Display" projectFiles="true">
               <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
                 <logicalFolder name="f1" displayName="ILI9341" projectFiles="true">
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp</itemPath>
+                  <itemPath>../../../Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp</itemPath>
                 </logicalFolder>
                 <logicalFolder name="f2" displayName="SSD1306" projectFiles="true">
                   <itemPath>../../../Source/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp</itemPath>
@@ -171,6 +174,8 @@
               <itemPath>../../../Source/System/Graphics/eosGraphics_Text.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosBrush.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosPen.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Bitmap.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosBitmap.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
             <itemPath>../../../Source/System/eosString.cpp</itemPath>

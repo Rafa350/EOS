@@ -8,7 +8,7 @@
 #define HARDWARE_STM32F746G_DISCO
 #elif defined(EOS_PIC32)
 #define HARDWARE_CUSTOM
-#define HARDWARE_CUSTOM_PIC32_USR_STARTER_KIT_I
+#define HARDWARE_CUSTOM_PIC32_USB_STARTER_KIT_I
 #define DISPLAY_ER_TFT028_4
 #else
 #error "Hardware no soportado para ILI9341-SPI "
