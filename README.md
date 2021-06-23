@@ -5,7 +5,7 @@
 * FreeRTOS scheduler.
 * Graphic module.
   * Fonts (Conversion tool from TrueType/OpenType).
-  * RGB888, RGB565 color scheme.
+  * ARGB8888, RGB888, RGB565 color scheme.
   * Basic primitives line, circle, rectangle, ellipse, etc.
   * Single and double buffer.
   * Use hardware acceleration where available (STM32/DMA2D)
