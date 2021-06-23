@@ -4,7 +4,7 @@
 
 #include "eos.h"
 #include "Controllers/Display/eosDisplayDriver.h"
-#include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
+#include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HAL/halSPI.h"
 
 

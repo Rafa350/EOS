@@ -15,11 +15,14 @@ namespace eos {
     //
 	template <ColorFormat FORMAT>
 	struct LTDCPixelFormatFor {
-		constexpr static const LTDCPixelFormat value = 0;
 	};
 	template<>
 	struct LTDCPixelFormatFor<ColorFormat::rgb565> {
 		constexpr static const LTDCPixelFormat value = HAL_LTDC_FORMAT_RGB565;
+	};
+	template<>
+	struct LTDCPixelFormatFor<ColorFormat::rgb888> {
+		constexpr static const LTDCPixelFormat value = HAL_LTDC_FORMAT_RGB888;
 	};
 	template<>
 	struct LTDCPixelFormatFor<ColorFormat::argb8888> {

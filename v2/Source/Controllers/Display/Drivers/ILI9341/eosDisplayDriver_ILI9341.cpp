@@ -390,32 +390,31 @@ void DisplayDriver_ILI9341::selectRegion(
 void DisplayDriver_ILI9341::writeRegion(
 	Color color) {
 
-#if defined(DISPLAY_COLOR_RGB565)
+	pixel_t c = toPixel(color);
 
-    pixel_t c = toPixel(color);
-    uint8_t cc[sizeof(uint16_t)];
- 	cc[0] = c >> 8;
-   	cc[1] = c;
+	hwOpen();
+	hwWriteCommand(CMD_MEMORY_WRITE);
 
-    hwOpen();
-    hwWriteCommand(CMD_MEMORY_WRITE);
-    hwWriteData(cc, sizeof(cc));
-    hwClose();
+	if constexpr (CI::format == ColorFormat::rgb565) {
 
-#elif defined(DISPLAY_COLOR_RGB666)
+		uint8_t data[2];
+		data[0] = c >> 8;
+		data[1] = c;
 
-    uint32_t c = color.toRGB888();
-    uint8_t cc[3];
-    cc[0] = (uint32_t)(c & 0x00FC0000) >> 16;
-    cc[1] = (uint32_t)(c & 0x0000FC00) >> 8;
-    cc[2] = (uint32_t)(c & 0x000000FC);
+		hwWriteData(data, sizeof(data));
+	}
 
-    lcdOpen();
-    lcdWriteCommand(CMD_MEMORY_WRITE);
-    lcdWriteData(cc, sizeof(cc));
-    lcdClose();
+	else if constexpr (CI::format == ColorFormat::rgb666) {
 
-#endif
+		uint8_t data[3];
+		data[0] = (uint32_t)(c & 0x00FC0000) >> 16;
+		data[1] = (uint32_t)(c & 0x0000FC00) >> 8;
+		data[2] = (uint32_t)(c & 0x000000FC);
+
+		hwWriteData(data, sizeof(data));
+	}
+
+	hwClose();
 }
 
 
@@ -428,50 +427,34 @@ void DisplayDriver_ILI9341::writeRegion(
     Color color,
     int count) {
 
-#if defined(DISPLAY_COLOR_RGB565)
+	pixel_t c = toPixel(color);
 
-	static uint8_t cc_buffer[sizeof(uint16_t) * _displayWidth] __attribute__ ((aligned (__BIGGEST_ALIGNMENT__)));
-	static uint16_t _c;
-    static int16_t _ccCapacity = 0;
+	if constexpr (CI::format == ColorFormat::rgb565) {
 
-	uint8_t* cc = (uint8_t*) cc_buffer;  // Fer-ho aixi si no no va
-    pixel_t c = toPixel(color);
-	int ccCapacity = Math::min(count, (int)(sizeof(cc_buffer) / sizeof(cc_buffer[0])));
-	if (c != _c || _ccCapacity < ccCapacity) {
-		for (int16_t i = 0; i < ccCapacity; i++) {
-			cc[i + i + 0] = c >> 8;
-			cc[i + i + 1] = c;
-		}
-		_c = c;
-		_ccCapacity = ccCapacity;
+		uint8_t data[2];
+		data[0] = c >> 8;
+		data[1] = c;
+
+		hwOpen();
+		hwWriteCommand(CMD_MEMORY_WRITE);
+		while (count--)
+			hwWriteData(data, sizeof(data));
+		hwClose();
 	}
 
-    hwOpen();
-    hwWriteCommand(CMD_MEMORY_WRITE);
-    while (count) {
-    	int16_t  n = ccCapacity;
-    	if (count < n)
-    		n = count;
-        hwWriteData(cc, (int16_t) sizeof(uint16_t) * n);
-        count -= n;
-    }
-    hwClose();
+	else if constexpr (CI::format == ColorFormat::rgb666) {
 
-#elif defined(DISPLAY_COLOR_RGB666)
+		uint8_t data[3];
+		data[0] = (uint32_t)(c & 0x00FC0000) >> 16;
+		data[1] = (uint32_t)(c & 0x0000FC00) >> 8;
+		data[2] = (uint32_t)(c & 0x000000FC);
 
-    pixel_t c = toPixel(color);
-    uint8_t cc[3];
-    cc[0] = (uint32_t)(c & 0x00FC0000) >> 16;
-    cc[1] = (uint32_t)(c & 0x0000FC00) >> 8;
-    cc[2] = (uint32_t)(c & 0x000000FC);
-
-    lcdOpen();
-    lcdWriteCommand(CMD_MEMORY_WRITE);
-    while (count--)
-        lcdWriteData(cc, sizeof(cc));
-    lcdClose();
-
-#endif
+		hwOpen();
+		hwWriteCommand(CMD_MEMORY_WRITE);
+		while (count--)
+			hwWriteData(data, sizeof(data));
+		hwClose();
+	}
 }
 
 
@@ -504,16 +487,16 @@ void DisplayDriver_ILI9341::readRegion(
     hwReadData();               // Dummy read
     while (count--) {
 
-#if defined(DISPLAY_COLOR_RGB565)
-        uint8_t volatile c1 = hwReadData();
-        uint8_t volatile c2 = hwReadData();
-        uint8_t volatile c3 = hwReadData();
-        Color color(c1, c2, c3);
-        *colors++ = color;
+		if constexpr (CI::format == ColorFormat::rgb565) {
+			uint8_t c1 = hwReadData();
+			uint8_t c2 = hwReadData();
+			uint8_t c3 = hwReadData();
+			*colors++ = Color(c1, c2, c3);
 
-#elif defined(DISPLAY_COLOR_RGB666)
-#endif
+		}
 
+		else if constexpr (CI::format == ColorFormat::rgb666) {
+		}
     }
     hwClose();
 }

@@ -15,8 +15,6 @@ namespace eos {
 	//
 	template <ColorFormat FORMAT>
 	struct DMA2DOptionsFor {
-		constexpr static const DMA2DOptions DFMT = 0;
-		constexpr static const DMA2DOptions SFMT = 0;
 	};
 	template<>
 	struct DMA2DOptionsFor<ColorFormat::argb8888> {

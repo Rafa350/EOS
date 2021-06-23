@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Controllers/Display/eosFrameBuffer_RGB565.h"
+#include "Controllers/Display/eosColorFrameBuffer.h"
 
 
 using namespace eos;
@@ -9,16 +9,16 @@ static uint16_t combinePixel(uint16_t b, uint16_t f, uint8_t o);
 
 
 
-RGB565_FrameBuffer::RGB565_FrameBuffer(
+ColorFrameBuffer::ColorFrameBuffer(
 	int screenWidth,
 	int screenHeight,
 	DisplayOrientation orientation,
-	uint8_t* buffer,
-	int lineBytes):
+	void* buffer,
+	int bufferPitch):
 
 	FrameBuffer(screenWidth, screenHeight, orientation),
-	buffer(buffer),
-	lineBytes(lineBytes) {
+	_buffer(buffer),
+	_bufferPitch(bufferPitsh) {
 
 }
 
@@ -30,7 +30,7 @@ RGB565_FrameBuffer::RGB565_FrameBuffer(
 /// \param color: Color en format de pixel fisic;
 /// \remarks No es fa cap tipus de verificacio dels parametres.
 ///
-void RGB565_FrameBuffer::put(
+void ColorFrameBuffer::put(
 	int x,
 	int y,
 	const Color& color) {
@@ -38,7 +38,7 @@ void RGB565_FrameBuffer::put(
 	uint8_t opacity = color.getOpacity();
 	if (opacity != 0) {
 		uint16_t c = color.toRGB565();
-		uint16_t* p = (uint16_t*)(buffer + (y * lineBytes) + (x * sizeof(uint16_t)));
+		uint16_t* p = (uint16_t*)(_buffer + (y * lineBytes) + (x * sizeof(uint16_t)));
 	    *p = opacity == 0xFF ? c : combinePixel(*p, c, opacity);
 	}
 }
@@ -52,12 +52,12 @@ void RGB565_FrameBuffer::put(
 /// \param    height: Alçada.
 /// \param    color: Color.-
 ///
-void RGB565_FrameBuffer::fill(
+void ColorFrameBuffer::fill(
 	int x,
 	int y,
 	int width,
 	int height,
-	const Color& color) {
+	Color color) {
 
 	for (int yy = 0; yy < height; yy++)
 		for (int xx = 0; xx < width; xx++)

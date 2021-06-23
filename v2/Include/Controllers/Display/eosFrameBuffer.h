@@ -4,12 +4,12 @@
 
 #include "eos.h"
 #include "System/Graphics/eosColor.h"
-#include "Controllers/Display/eosDisplayDriver.h"
+#include "Controllers/Display/eosDisplayOrientation.h"
 
 
 namespace eos {
 
-	/// \brief Superficie de dibuix basada en memoria ram
+	/// \brief Superficie de dibuix basada en memoria ram.
 	///
 	class FrameBuffer {
 
@@ -20,7 +20,7 @@ namespace eos {
 			int _imageHeight;
 			DisplayOrientation _orientation;
 
-        protected:
+        private:
             void rotate(int& x, int& y) const;
             void rotate(int& x1, int& y1, int &x2, int& y2) const;
 
@@ -45,8 +45,6 @@ namespace eos {
             void setPixels(int x, int y, int width, int height, Color color);
             void setPixels(int x, int y, int width, int height, const Color* colors, int pitch);
             void setPixels(int x, int y, int width, int height, void* pixels, ColorFormat format, int dx, int dy, int pitch);
-            //void vScroll(int delta, int x, int y, int width, int height);
-            //void hScroll(int delta, int x, int y, int width, int height);
 	};
 }
 

@@ -114,7 +114,7 @@ void GuiService::onInitialize() {
 
 	setActiveVisual(_screen);
 
-	_screen->measure(Size(displayDriver->getWidth(), displayDriver->getHeight()));
+	_screen->measure(Size(displayDriver->getImageWidth(), displayDriver->getImageHeight()));
 	_screen->arrange(_screen->getDesiredSize());
 }
 

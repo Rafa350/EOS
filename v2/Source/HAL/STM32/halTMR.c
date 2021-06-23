@@ -104,6 +104,9 @@ static void enableDeviceClock(
 		case TIM14_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM14EN);
 			break;
+
+		default:
+			break;
 	}
 
 	__DSB();
@@ -175,6 +178,9 @@ static void disableDeviceClock(
 		case TIM14_BASE:
 			__clear_bit_msk(RCC->APB1ENR, RCC_APB1ENR_TIM14EN);
 			break;
+
+		default:
+			break;
 	}
 }
 
@@ -212,6 +218,9 @@ TMRHandler halTMRInitialize(
 
 			case HAL_TMR_CLKDIV_4:
 				__set_bit_msk(temp, TIM_CR1_CKD_1);     // Divisor per 4
+				break;
+
+			default:
 				break;
 		}
 	}

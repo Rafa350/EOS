@@ -29,7 +29,7 @@ namespace eos {
 
     class DisplayDriver_ILI9341: public IDisplayDriver {
     	private:
-    		typedef ColorBase<DISPLAY_COLOR_FORMAT>::CI CI;
+    		typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
     		typedef CI::color_t pixel_t;
 
     	private:

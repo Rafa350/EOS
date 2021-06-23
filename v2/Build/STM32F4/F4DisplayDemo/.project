@@ -574,6 +574,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosColorFrameBuffer_DMA2D.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosColorFrameBuffer_DMA2D.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosDisplayDriver.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
@@ -584,14 +589,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer_L1_PAGECOL.h</name>
+			<name>inc/Framework/EOS/Controllers/Display/eosMonoFrameBuffer.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer_L1_PAGECOL.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosMonoFrameBuffer.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halDMA2D.h</name>
@@ -644,6 +644,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosPoolAllocator.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Core/eosStackAllocator.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosStackAllocator.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Core/eosTask.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosTask.h</locationURI>
@@ -662,6 +667,11 @@
 			<name>inc/Framework/EOS/System/Graphics/eosColor.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColor.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosColorDefinitions.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColorDefinitions.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosFont.h</name>
@@ -689,19 +699,19 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Controllers/Display/eosColorFrameBuffer_DMA2D.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColorFrameBuffer_DMA2D.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_L1_PAGECOL.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/eosMonoFrameBuffer.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer_L1_PAGECOL.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer_RGB565_DMA2D.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosMonoFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32/halDMA2D.c</name>

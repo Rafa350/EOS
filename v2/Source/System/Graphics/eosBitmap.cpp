@@ -64,11 +64,14 @@ Bitmap::Bitmap(
 		case ColorFormat::argb8888:
 			pixelSize = ColorInfo<ColorFormat::argb8888>::bytes;
 			break;
+
+		case ColorFormat::l8:
+			break;
 	}
 
 	// Reserva memoria pel bitmap
 	//
-	_pixels = osalHeapAlloc(NULL, numPixels * pixelSize);
+	//_pixels = osalHeapAlloc(NULL, numPixels * pixelSize);
 
 	// Crea el contingut del bitmap
 	//
@@ -88,6 +91,10 @@ Bitmap::Bitmap(
 			for (int i = 0; i < numPixels; i++)
 				((uint32_t*)_pixels)[i] = ConvertTo<ColorFormat::argb8888>(color);
 		break;
+
+		case ColorFormat::l8:
+			break;
+
 	}
 }
 
@@ -161,6 +168,9 @@ int Bitmap::getBytesPerPixel() const {
 
 		case ColorFormat::rgb565:
 			return sizeof(uint16_t);
+
+		case ColorFormat::l8:
+			return sizeof(uint8_t);
 	}
 }
 

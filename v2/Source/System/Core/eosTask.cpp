@@ -54,6 +54,9 @@ Task::Task(
         case Priority::idle:
             info.options |= OSAL_TASK_PRIORITY_IDLE;
             break;
+
+        default:
+        	break;
     }
 
     info.function = function;

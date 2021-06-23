@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
 #include "Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h"
-#include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
+#include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HAL/halINT.h"
 #include "hAL/halTMR.h"
 #include "HAL/halGPIO.h"
@@ -20,21 +20,23 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Constructor.
+/// \brief    Constructor.
 ///
 DisplayDriver_ILI9341LTDC::DisplayDriver_ILI9341LTDC() {
 
-	_frameBuffer = new FrameBuffer_RGB565_DMA2D(
+	int displayPitch = (((_displayWidth * CI::bytes) + 63) & 0xFFFFFFC0) / CI::bytes;
+
+	_frameBuffer = new ColorFrameBuffer_DMA2D(
 		_displayWidth,
 		_displayHeight,
 		DisplayOrientation::normal,
 		(void*) _displayBuffer,
-		_displayWidth);
+		displayPitch);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitzacio.
+/// \brief    Inicialitzacio.
 ///
 void DisplayDriver_ILI9341LTDC::initialize() {
 
@@ -43,7 +45,7 @@ void DisplayDriver_ILI9341LTDC::initialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Desactiva el modul.
+/// \brief    Desactiva el modul.
 ///
 void DisplayDriver_ILI9341LTDC::shutdown() {
 
@@ -52,8 +54,38 @@ void DisplayDriver_ILI9341LTDC::shutdown() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Selecciona la orientacio.
-/// \param orientation: L'orientacio a seleccionar.
+/// \brief    Activa el display
+///
+void DisplayDriver_ILI9341LTDC::displayOn() {
+
+	halLTDCEnable();
+
+	hwOpen();
+	hwWriteCommand(CMD_SLEEP_OUT);
+	halTMRDelay(120);
+	hwWriteCommand(CMD_DISPLAY_ON);
+	hwClose();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desactiva el display.
+///
+void DisplayDriver_ILI9341LTDC::displayOff() {
+
+	hwOpen();
+	hwWriteCommand(CMD_DISPLAY_OFF);
+	hwWriteCommand(CMD_ENTER_SLEEP_MODE);
+	halTMRDelay(120);
+	hwClose();
+
+	halLTDCDisable();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona la orientacio.
+/// \param    orientation: L'orientacio a seleccionar.
 ///
 void DisplayDriver_ILI9341LTDC::setOrientation(
 	DisplayOrientation orientation) {
@@ -212,13 +244,19 @@ void DisplayDriver_ILI9341LTDC::hScroll(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Refresca la pantalla
+/// \remarks  La funcio no fa res, ja que el controlador LTDC, fa la
+///           transferencia de dades a la pantalla de forma continua
+///           i automatica.
+///
 void DisplayDriver_ILI9341LTDC::refresh() {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el display.
+/// \brief    Inicialitza el display.
 ///
 void DisplayDriver_ILI9341LTDC::hwInitialize() {
 
@@ -349,7 +387,7 @@ void DisplayDriver_ILI9341LTDC::hwInitialize() {
 		__VCOM_CONTROL_1(0x3E, 0x28),
 		__VCOM_CONTROL_2(0x86),
 		__ENABLE_3G(0x00),
-		__MEMORY_ACCESS_CONTROL(0x08 | MAC_MX_ON | MAC_MY_ON),
+		__MEMORY_ACCESS_CONTROL(0x08 | MAC_MX_OFF | MAC_MY_OFF),
 		__RGB_INTERFACE_SIGNAL_CONTROL(0xC2),
 		__DISPLAY_FUNCTION_CONTROL(0x0A, 0xA7, 0x27, 0x04),
 		__INTERFACE_CONTROL(0x01, 0x00, 0x06),
@@ -388,36 +426,6 @@ void DisplayDriver_ILI9341LTDC::hwInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa el display
-///
-void DisplayDriver_ILI9341LTDC::displayOn() {
-
-	halLTDCEnable();
-
-	hwOpen();
-	hwWriteCommand(CMD_SLEEP_OUT);
-	halTMRDelay(120);
-	hwWriteCommand(CMD_DISPLAY_ON);
-	hwClose();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Desactiva el display.
-///
-void DisplayDriver_ILI9341LTDC::displayOff() {
-
-	hwOpen();
-	hwWriteCommand(CMD_DISPLAY_OFF);
-	hwWriteCommand(CMD_ENTER_SLEEP_MODE);
-	halTMRDelay(120);
-	hwClose();
-
-	halLTDCDisable();
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief Reseteja el driver.
 ///
 void DisplayDriver_ILI9341LTDC::hwReset() {
@@ -431,7 +439,7 @@ void DisplayDriver_ILI9341LTDC::hwReset() {
 }
 
 /// ----------------------------------------------------------------------
-/// \brief Inicia la comunicacio amb el controlador.
+/// \brief    Inicia la comunicacio amb el controlador.
 ///
 void DisplayDriver_ILI9341LTDC::hwOpen() {
 
@@ -440,7 +448,7 @@ void DisplayDriver_ILI9341LTDC::hwOpen() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Finalitza la comunicacio amb el controlador.
+/// \brief    Finalitza la comunicacio amb el controlador.
 ///
 void DisplayDriver_ILI9341LTDC::hwClose() {
 
@@ -449,8 +457,8 @@ void DisplayDriver_ILI9341LTDC::hwClose() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Escriu un byte de comanda en el controlador
-/// \param cmd: El byte de comanda.
+/// \brief    Escriu un byte de comanda en el controlador
+/// \param    cmd: El byte de comanda.
 ///
 void DisplayDriver_ILI9341LTDC::hwWriteCommand(
 	uint8_t cmd) {
@@ -461,8 +469,8 @@ void DisplayDriver_ILI9341LTDC::hwWriteCommand(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Escriu un byte de dades en el controlador
-/// \param data: El byte de dades.
+/// \brief    Escriu un byte de dades en el controlador
+/// \param    data: El byte de dades.
 ///
 void DisplayDriver_ILI9341LTDC::hwWriteData(
 	uint8_t data) {

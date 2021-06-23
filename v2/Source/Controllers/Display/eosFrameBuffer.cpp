@@ -1,4 +1,5 @@
 #include "eos.h"
+#include "eosAssert.h"
 #include "Controllers/Display/eosFrameBuffer.h"
 #include "System/eosMath.h"
 
@@ -33,7 +34,7 @@ void FrameBuffer::setOrientation(
 	DisplayOrientation orientation) {
 
 	_orientation = orientation;
-	switch (_orientation) {
+	switch (orientation) {
 		case DisplayOrientation::normal:
 		case DisplayOrientation::rotate180:
 			_imageWidth = _frameWidth;
@@ -50,7 +51,8 @@ void FrameBuffer::setOrientation(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Rota les coordinades d'un punt.
+/// \brief    Rota les coordinades d'un punt, segons l'orientacio de
+///           la pantaslla
 /// \param    x: Coordinada x.
 /// \param    y: Coordinada y.
 ///
@@ -93,7 +95,8 @@ void FrameBuffer::rotate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Rota les coordinades d'un rectangle.
+/// \brief    Rota les coordinades d'un rectangle segons l'orientacio
+///           de la pantalla
 /// \param    x1: Coordinada x esquerra.
 /// \param    y1: Coordinada y superior.
 /// \param    x2: Coordinada x dreta.
@@ -111,11 +114,11 @@ void FrameBuffer::rotate(
 	int xx2;
 	int yy2;
 
+
 	// Realitza la rotacio. D'aquesta manera es mes rapida que
 	// fer dues multiplicacione fent servir la formula.
 	//
 	switch (_orientation) {
-		default:
 		case DisplayOrientation::normal:
             xx1 = x1;
             yy1 = y1;

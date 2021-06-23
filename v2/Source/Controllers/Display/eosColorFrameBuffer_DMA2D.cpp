@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
+#include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HAL/STM32/halDMA2DTpl.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorMath.h"
@@ -15,10 +15,8 @@ using namespace eos;
 /// \param    orientation: Orientacio inicial.
 /// \param    buffer: Buffer d'imatge.
 /// \param    bufferPitch: Pitch del buffer d'imatge.
-/// \remarks  S'ajusta l'amplada per ser multiple de 64 bits, aixo permet
-///           optimitzar les transferencies de DMA2D
 ///
-FrameBuffer_RGB565_DMA2D::FrameBuffer_RGB565_DMA2D(
+ColorFrameBuffer_DMA2D::ColorFrameBuffer_DMA2D(
 	int frameWidth,
 	int frameHeight,
 	DisplayOrientation orientation,
@@ -27,7 +25,7 @@ FrameBuffer_RGB565_DMA2D::FrameBuffer_RGB565_DMA2D(
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
 	_buffer((pixel_t*)buffer),
-	_bufferPitch((((frameWidth * sizeof(pixel_t)) + 63) & 0xFFFFFFC0) / sizeof(pixel_t)) {
+	_bufferPitch(bufferPitch) {
 
     halDMA2DInitialize();
 }
@@ -40,7 +38,7 @@ FrameBuffer_RGB565_DMA2D::FrameBuffer_RGB565_DMA2D(
 /// \param    color: Color.
 /// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
-void FrameBuffer_RGB565_DMA2D::put(
+void ColorFrameBuffer_DMA2D::put(
 	int x,
 	int y,
 	Color color) {
@@ -65,7 +63,7 @@ void FrameBuffer_RGB565_DMA2D::put(
 /// \param    color: Color.
 /// \remarks  No es fa cap tipus de verificacio dels parametres.
 ///
-void FrameBuffer_RGB565_DMA2D::fill(
+void ColorFrameBuffer_DMA2D::fill(
 	int x,
 	int y,
 	int width,
@@ -81,21 +79,25 @@ void FrameBuffer_RGB565_DMA2D::fill(
 		DMA2DOptions options = DMA2DOptionsFor<CI::format>::DFMT;
 
 		// Rellena la regio amb el valor de color del pixel. Hi ha que
-		// suministrar el color en format adecuat, ja que no es realitza
-		// cap tipis de converssio de format.
+		// suministrar el color en format adecuat, ja que no es fa cap
+		// tipus de converssio. La funcio 'toPixel()' realitza la
+		// converssio al format adequat.
 		//
 		halDMA2DStartFill(pPixel, width, height, _bufferPitch - width, options, vPixel);
 		halDMA2DWaitForFinish();
 	}
 
-	else if (opacity > 0) {
-		// TODO
-		// Crear un buffer d'una linia amb el color. Pot ser l'ultima
-		// linia del buffer
-		// Tranferir la linia amb DMA2D
-		for (int yy = 0; yy < height; yy++)
-			for (int xx = 0; xx < width; xx++)
-				put(x + xx, y + yy, color);
+	else if (opacity != 0) {
+
+		pixel_t vPixel = toPixel(color);
+
+		for (int yy = y; yy < height + y; yy++)
+			for (int xx = x; xx < width + x; xx++) {
+
+				pixel_t* pPixel = getPixelPtr(xx, yy);
+
+				*pPixel = ColorMath::combineColor_RGB565(*pPixel, vPixel, opacity);
+			}
 	}
 }
 
@@ -109,7 +111,7 @@ void FrameBuffer_RGB565_DMA2D::fill(
 /// \param    colors: Llista de pixels del bitmap
 /// \param    pitch: Offset a la seguent linia del bitmap.
 ///
-void FrameBuffer_RGB565_DMA2D::copy(
+void ColorFrameBuffer_DMA2D::copy(
 	int x,
 	int y,
 	int width,
@@ -127,7 +129,7 @@ void FrameBuffer_RGB565_DMA2D::copy(
 
 	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
 	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
-	// les opcions.
+	// les opcions. No cal cridar a 'toPixel()'
 	//
 	halDMA2DStartCopy(pPixel, width, height, _bufferPitch - width, options, (void*)colors, pitch - width);
 	halDMA2DWaitForFinish();

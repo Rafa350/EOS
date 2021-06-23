@@ -23,7 +23,7 @@ namespace eos {
             void* allocate();
             void deallocate(void* p);
 
-            inline uint8_t* getAddr() const { return _blocks; }
+            inline void* getAddr() const { return _blocks; }
             inline unsigned getSize() const { return _blockSize * _maxBlocks; }
 
             inline int getBlockSize() const { return _blockSize; }
@@ -36,7 +36,7 @@ namespace eos {
     };
 
 
-    template <class T, int MAX_BLOCKS>
+    template <typename T, int MAX_BLOCKS>
     class PoolAllocator {
 
     	private:

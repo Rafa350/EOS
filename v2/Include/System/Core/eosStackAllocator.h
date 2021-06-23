@@ -9,19 +9,22 @@ namespace eos {
 
     class MemoryStackAllocator {
         private:
-            uint8_t *_memory;
-            unsigned _memorySize;
+            uint8_t *_storage;
+            unsigned _size;
 
         public:
-            StackPoolAllocator(unsigned memorySize);
-            ~StackPoolAllocator();
+            MemoryStackAllocator(unsigned size);
+            ~MemoryStackAllocator();
 
-            void* allocate();
+            void* allocate(unsigned size);
             void deallocate(void* p);
+
+            inline void* getAddr() const { return _storage; }
+            inline unsigned getSize() const { return _size; }
     };
 
 
-    template <class T>
+    template <typename T, unsigned SIZE>
     class StackAllocator {
 
     	private:
@@ -29,8 +32,8 @@ namespace eos {
 
     	public:
 
-    		StackAllocator(unsigned memorySize):
-            	_allocator(memorySize) {
+    		StackAllocator():
+            	_allocator(SIZE) {
             }
 
     		inline T *allocate() {

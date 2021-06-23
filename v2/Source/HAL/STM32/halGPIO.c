@@ -75,6 +75,9 @@ static void enableDeviceClock(
 		case GPIOK_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
 			break;
+
+		default:
+			break;
 	}
 	__DSB();
 }
@@ -123,6 +126,9 @@ static void setupDevicePin(
 		// Entrada digital
 		case HAL_GPIO_MODE_INPUT:
 			break;
+
+		default:
+			break;
 	}
 	device->MODER = temp;
 
@@ -157,6 +163,9 @@ static void setupDevicePin(
 			case HAL_GPIO_SPEED_FAST:
 				temp |= 0b11u < (pin * 2);
 				break;
+
+			default:
+				break;
 		}
 		device->OSPEEDR = temp;
 	}
@@ -187,6 +196,9 @@ static void setupDevicePin(
 
 			case HAL_GPIO_PULL_DOWN:
 				temp |= 0b10 << (pin * 2);
+				break;
+
+			default:
 				break;
 		}
 		device->PUPDR = temp;

@@ -271,12 +271,15 @@ void halLTDCLayerSetFrameFormat(
     	case HAL_LTDC_FORMAT_L8:
     		tmp |= 0b101 << LTDC_LxPFCR_PF_Pos;
     		break;
+
+    	default:
+    		break;
     }
     layer->PFCR = tmp;
 
     // Converteix les mides de pixels a bytes
     //
-    int pixelSize = halLTDCGetPixelBytes(format);
+    //int pixelSize = halLTDCGetPixelBytes(format);
 
     // Configura Lx_CFBLR (Color Frame Buffer Length Register)
     // -Longitut de la linia en bytes.

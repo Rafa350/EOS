@@ -1,13 +1,14 @@
-#ifndef __eosFrameBuffer_L1__
-#define __eosFrameBuffer_L1__
+#ifndef __eosMonoFrameBuffer__
+#define __eosMonoFrameBuffer__
 
 
 #include "eos.h"
+#include "Controllers/Display/eosFrameBuffer.h"
 
 
 namespace eos {
 
-    class FrameBuffer_L1: public FrameBuffer {
+    class MonoFrameBuffer: public FrameBuffer {
         private:
             uint8_t* _buffer;
             unsigned _lineBytes;
@@ -23,4 +24,4 @@ namespace eos {
 }
 
 
-#endif // __eosFrameBuffer_L1__
+#endif // __eosMonoFrameBuffer__

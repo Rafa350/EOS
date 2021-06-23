@@ -1,5 +1,5 @@
-#ifndef __eosFrameBuffer_RGB565_DMA2D__
-#define __eosFrameBuffer_RGB565_DMA2D__
+#ifndef __eosColorFrameBuffer_DMA2D__
+#define __eosColorFrameBuffer_DMA2D__
 
 
 #include "eos.h"
@@ -10,9 +10,9 @@ namespace eos {
 
 	/// \brief Superficie de dibuix basada en memoria ram en format RGB565
 	///
-	class FrameBuffer_RGB565_DMA2D: public FrameBuffer {
+	class ColorFrameBuffer_DMA2D: public FrameBuffer {
 		private:
-			typedef ColorInfo<ColorFormat::rgb565> CI;
+			typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
 			typedef CI::color_t pixel_t;
 
 		private:
@@ -30,7 +30,7 @@ namespace eos {
             void copy(int x, int y, int width, int height, const Color* colors, int pitch) override;
 
 		public:
-			FrameBuffer_RGB565_DMA2D(int frameWidth, int frameHeight, DisplayOrientation orientation, void* buffer, int bufferPitch);
+			ColorFrameBuffer_DMA2D(int frameWidth, int frameHeight, DisplayOrientation orientation, void* buffer, int bufferPitch);
 	};
 }
 

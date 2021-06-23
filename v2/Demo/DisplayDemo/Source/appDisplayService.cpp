@@ -234,7 +234,7 @@ void DisplayService::testColors() {
 		_graphics->drawRectangle(x + i, y + hh + 150,  x + i,  y + 150 + h,  Color(255 - c, 255 - c, 255 - c));
 	}
 
-	Task::delay(5000);
+	Task::delay(2500);
 }
 
 /// ----------------------------------------------------------------------
@@ -252,7 +252,7 @@ void DisplayService::testOpacity() {
 	_graphics->fillRectangle(Point(80, 80), Size(w, w), Color(128, 0, 255, 0));
 	_graphics->fillRectangle(Point(120, 120), Size(w, w), Color(128, 0, 0, 255));
 
-	Task::delay(1000);
+	Task::delay(2500);
 }
 
 

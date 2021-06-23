@@ -7,8 +7,9 @@
 #include "eos.h"
 
 
-#define ARGB(a, r, g, b)     uint32_t(((uint32_t(a) << 24u) | (uint32_t(r) << 16u) | (uint32_t(g) << 8u) | (uint32_t(b))))
-#define RGB(r, g, b)         ARGB(255, r, g, b)
+#define ARGB(a, r, g, b)          Color(a, r, g, b)
+#define RGB(r, g, b)              Color(r, g, b)
+#define PAL(i)
 
 // Basic colors
 //
@@ -126,8 +127,8 @@
 
 // Basic palete colors
 //
-#define COLOR_PAL_Black           0   // LCD monochrome compatible
-#define COLOR_PAL_White           1   // LCD monochrome compatible
+#define COLOR_PAL_Black           PAL(0)     // LCD monochrome compatible
+#define COLOR_PAL_White           PAL(1)     // LCD monochrome compatible
 #define COLOR_PAL_Blue            2
 #define COLOR_PAL_Cyan            3
 #define COLOR_PAL_Magenta         4

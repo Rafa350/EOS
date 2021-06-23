@@ -2,6 +2,7 @@
 #include "eosAssert.h"
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.h"
 #include "Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h"
+#include "System/Graphics/eosColor.h"
 #include "HAL/halSPI.h"
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
@@ -68,11 +69,6 @@ void DisplayDriver_ILI9341::hwInitialize() {
         3, CMD_VCOM_CONTROL_1, 0x3D, 0x20,
         2, CMD_VCOM_CONTROL_2, 0xAA,
         2, CMD_MEMORY_ACCESS_CONTROL, 0x08 | MAC_MV_OFF | MAC_MX_OFF | MAC_MY_OFF,
-#if defined(DISPLAY_COLOR_RGB565)
-        2, CMD_PIXEL_FORMAT_SET, 0x55,
-#elif defined(DISPLAY_COLOR_RGB666)
-        2, CMD_PIXEL_FORMAT_SET, 0x66,
-#endif
         3, CMD_FRAME_RATE_CONTROL_1, 0x00, 0x13,
         3, CMD_DISPLAY_FUNCTION_CONTROL, 0x0A, 0xA2,
         3, CMD_INTERFACE_CONTROL, 0x01, 0x30,
@@ -101,11 +97,6 @@ void DisplayDriver_ILI9341::hwInitialize() {
 		__VCOM_CONTROL_1(0x3E, 0x28),
 		__VCOM_CONTROL_2(0x86),
     	__MEMORY_ACCESS_CONTROL(0x08 | MAC_MV_OFF | MAC_MX_ON | MAC_MY_OFF),
-#if defined(DISPLAY_COLOR_RGB565)
-		__PIXEL_FORMAT_SET(0x55),
-#elif defined(DISPLAY_COLOR_RGB666)
-        __PIXEL_FORMAT_SET(0x66),
-#endif
 		__FRAME_RATE_CONTROL_1(0x00, 0x18),
 		__DISPLAY_FUNCTION_CONTROL(0x08, 0x82, 0x27, 0x00),
 		__ENABLE_3G(0x00),
@@ -134,6 +125,16 @@ void DisplayDriver_ILI9341::hwInitialize() {
                 break;
         }
     }
+
+    if constexpr (CI::format == ColorFormat::rgb565) {
+    	hwWriteCommand(CMD_PIXEL_FORMAT_SET);
+    	hwWriteData(0x55);
+    }
+    else if constexpr (CI::format == ColorFormat::rgb666) {
+    	hwWriteCommand(CMD_PIXEL_FORMAT_SET);
+    	hwWriteData(0x66);
+    }
+
     hwClose();
 }
 

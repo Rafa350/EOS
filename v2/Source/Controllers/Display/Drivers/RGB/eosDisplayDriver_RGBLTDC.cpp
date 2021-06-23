@@ -9,26 +9,13 @@
 // o doble buffer.
 
 #include "eosAssert.h"
-#include "Controllers/Display/eosFrameBuffer_RGB565_DMA2D.h"
+#include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "HAL/STM32/halGPIO.h"
 #include "HAL/STM32/halLTDCTpl.h"
 #include "System/eosMath.h"
 #include "System/Graphics/eosColorDefinitions.h"
-
-
-// Parametres depenents del format de color
-//
-#if defined(DISPLAY_COLOR_RGB565)
-#define FRAME_BUFFER              FrameBuffer_RGB565_DMA2D
-
-#elif defined(DISPLAY_COLOR_RGB888)
-#define FRAME_BUFFER              FrameBuffer_RGB888_DMA2D
-
-#else
-#error No se definio DISPLAY_COLOR_xxxx
-#endif
 
 
 using namespace eos;
@@ -44,7 +31,7 @@ DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 	constexpr const int frameSize = frameBufferPitchBytes * _screenHeight;
 
 	_frontImageBuffer = (void*)_imageBuffer;
-	_frontFrameBuffer = new FRAME_BUFFER(
+	_frontFrameBuffer = new ColorFrameBuffer_DMA2D(
 		_screenWidth,
 		_screenHeight,
 		DisplayOrientation::normal,
@@ -53,7 +40,7 @@ DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 
 	if (_useDoubleBuffer) {
 		_backImageBuffer = (void*)(_imageBuffer + frameSize);
-		_backFrameBuffer = new FRAME_BUFFER(
+		_backFrameBuffer = new ColorFrameBuffer_DMA2D(
 			_screenWidth,
 			_screenHeight,
 			DisplayOrientation::normal,

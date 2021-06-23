@@ -14,7 +14,7 @@ using namespace eos;
 Screen::Screen() {
 
 	setColor(0xFF505050);
-	setSize(Size(DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT));
+	setSize(Size(DISPLAY_SCREEN_WIDTH, DISPLAY_SCREEN_HEIGHT));
 }
 
 

@@ -5,33 +5,43 @@
 // EOS includes
 //
 #include "eos.h"
+#include "Controllers/Display/eosDisplayOrientation.h"
 #include "System/Graphics/eosColor.h"
 
 
 namespace eos {
 
-	/// \brief Orientacio de la pantalla.
-	enum class DisplayOrientation: uint8_t {
-		normal = 0,
-	    rotate0 = normal,
-		rotate90,
-		rotate180,
-		rotate270,
-	};
-
 	/// \brief Interficie del driver del display.
+	///
     class IDisplayDriver {
         public:
+			/// \brief Destructor
+			///
     		virtual ~IDisplayDriver() = default;
 
+    		/// \brief Inicialitza el driver.
+    		///
             virtual void initialize() = 0;
+
+            /// \brief Deiniciaialitza el driver.
+            ///
             virtual void shutdown() = 0;
 
             virtual void displayOn() = 0;
             virtual void displayOff() = 0;
 
+            /// \brief Selecciona l'orientacio de la imatge
+            ///
             virtual void setOrientation(DisplayOrientation orientation) = 0;
+
+            /// \brief Obte l'amplada de la imatge
+            /// \return El valor de l'amplada en pixels.
+            ///
             virtual int getImageWidth() const = 0;
+
+            /// \brief Obte l'alçada de la imatge
+            /// \return El valor de l'alçada en pixels.
+            ///
             virtual int getImageHeight() const = 0;
 
             virtual void clear(Color color) = 0;
