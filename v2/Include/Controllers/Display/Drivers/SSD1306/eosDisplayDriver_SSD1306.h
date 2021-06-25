@@ -5,7 +5,7 @@
 #include "eos.h"
 #include "HAL/halSPI.h"
 #include "Controllers/Display/eosDisplayDriver.h"
-#include "Controllers/Display/eosFRameBuffer.h"
+#include "Controllers/Display/eosFrameBuffer.h"
 #include "System/Graphics/eosColor.h"
 
 
@@ -32,15 +32,17 @@ namespace eos {
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() const { return _frameBuffer->getWidth(); }
-            int getHeight() const { return _frameBuffer->getHeight(); }
-            void clear(const Color &color) override;
-            void setPixel(int x, int y, const Color &color) override;
-            void setHPixels(int x, int y, int size, const Color &color) override;
-            void setVPixels(int x, int y, int size, const Color &color) override;
-            void setPixels(int x, int y, int width, int height, const Color &color) override;
-            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
-            void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
+            int getImageWidth() const { return _frameBuffer->getImageWidth(); }
+            int getImageHeight() const { return _frameBuffer->getImageHeight(); }
+            void clear(Color color) override;
+            void setPixel(int x, int y, Color color) override;
+            void setHPixels(int x, int y, int size, Color color) override;
+            void setVPixels(int x, int y, int size, Color color) override;
+            void setPixels(int x, int y, int width, int height, Color color) override;
+            void setPixels(int x, int y, int width, int height, const Color *colors, int pitch) override;
+
+            void writePixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int dx, int dy, int pitch) override;
+            void readPixels(int x, int y, int width, int height, void *pixels, ColorFormat format, int dx, int dy, int pitch) override;
             void vScroll(int delta, int x, int y, int width, int height) override;
             void hScroll(int delta, int x, int y, int width, int height) override;
             void refresh() override;

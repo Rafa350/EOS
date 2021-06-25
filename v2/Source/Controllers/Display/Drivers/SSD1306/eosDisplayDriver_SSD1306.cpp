@@ -3,7 +3,7 @@
 #include "HAL/halGPIO.h"
 #include "HAL/halSPI.h"
 #include "HAL/halTMR.h"
-#include "Controllers/Display/eosFrameBuffer_L1_PAGECOL.h"
+#include "Controllers/Display/eosMonoFrameBuffer.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
 #include "Controllers/Display/Drivers/SSD1306/eosSSD1306Defs.h"
 
@@ -20,11 +20,12 @@ static SPIHandler __hSpi;
 ///
 DisplayDriver_SSD1306::DisplayDriver_SSD1306() {
 
-	_frameBuffer = new FrameBuffer_L1_PAGECOL(
+	_frameBuffer = new MonoFrameBuffer(
 		DISPLAY_IMAGE_WIDTH,
 		DISPLAY_IMAGE_HEIGHT,
 		DisplayOrientation::normal,
-		(void*) DISPLAY_VRAM_ADDR);
+		(void*) DISPLAY_IMAGE_BUFFER,
+        DISPLAY_IMAGE_WIDTH);
 }
 
 
@@ -80,7 +81,7 @@ void DisplayDriver_SSD1306::setOrientation(
 /// \param    color: Color de borrat.
 ///
 void DisplayDriver_SSD1306::clear(
-    const Color &color) {
+    Color color) {
 
 	_frameBuffer->clear(color);
 }
@@ -96,7 +97,7 @@ void DisplayDriver_SSD1306::clear(
 void DisplayDriver_SSD1306::setPixel(
     int x,
     int y,
-    const Color &color) {
+    Color color) {
 
 	_frameBuffer->setPixel(x, y, color);
 }
@@ -114,7 +115,7 @@ void DisplayDriver_SSD1306::setHPixels(
     int x,
     int y,
     int size,
-    const Color &color) {
+    Color color) {
 
 	_frameBuffer->setPixels(x, y, size, 1, color);
 }
@@ -132,7 +133,7 @@ void DisplayDriver_SSD1306::setVPixels(
     int x,
     int y,
     int size,
-    const Color &color) {
+    Color color) {
 
 	_frameBuffer->setPixels(x, y, 1, size, color);
 }
@@ -151,7 +152,7 @@ void DisplayDriver_SSD1306::setPixels(
     int y,
     int width,
     int height,
-    const Color &color) {
+    Color color) {
 
 	_frameBuffer->setPixels(x, y, width, height, color);
 }
@@ -162,7 +163,7 @@ void DisplayDriver_SSD1306::writePixels(
     int y,
     int width,
     int height,
-    const uint8_t *pixels,
+    const void *pixels,
     ColorFormat format,
     int dx,
     int dy,
@@ -176,7 +177,7 @@ void DisplayDriver_SSD1306::readPixels(
     int y,
     int width,
     int height,
-    uint8_t *pixels,
+    void *pixels,
     ColorFormat format,
     int dx,
     int dy,

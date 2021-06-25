@@ -21,7 +21,7 @@ namespace eos {
 
 		private:
 			inline pixel_t* getPixelPtr(int x, int y) const { return &_buffer[(y * _bufferPitch) + x]; }
-            inline static pixel_t toPixel(Color color) { return ConvertTo<CI::format>(color); }
+            inline static pixel_t toPixel(Color color) { return color.convertTo<CI::format>(); }
 
 
 		protected:

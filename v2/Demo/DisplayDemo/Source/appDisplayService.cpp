@@ -38,12 +38,12 @@ static int seed = 537;
 #if defined(EOS_STM32F7) || defined(EOS_STM32F4)
 static uint64_t rnd = 0L;
 
-void __srand(uint32_t r) {
+static void __srand(uint32_t r) {
 
 	rnd = r;
 }
 
-uint32_t __rand(void) {
+static uint32_t __rand(void) {
 
 	const uint64_t a = 1664523;
 	const uint64_t c = 1013904223;
@@ -56,6 +56,13 @@ uint32_t __rand(void) {
 #define __srand(a)  srand(a)
 #define __rand()    rand()
 #endif
+
+
+static inline Color __getRandomColor() {
+
+	uint32_t c = __rand();
+	return Color((c & 0x00FF0000) >> 16, (c & 0x0000FF00) >> 8, c & 0x000000FF);
+}
 
 
 /// ----------------------------------------------------------------------
@@ -274,7 +281,7 @@ void DisplayService::testPoints() {
         int x = __rand() % _screenWidth;
         int y = __rand() % _screenHeight;
 
-        Color c(__rand() | 0xFF000000);
+        Color c = __getRandomColor();
         _graphics->drawPoint(x, y, c);
     }
     _pointsTicks = Task::getTickCount() - ticks;
@@ -313,7 +320,7 @@ void DisplayService::testLines() {
         int y1 = __rand() % _screenHeight;
         int y2 = __rand() % _screenHeight;
 
-        Color c(__rand() | 0xFF000000);
+        Color c = __getRandomColor();
         _graphics->drawVLine(x, y1, y2, c);
     }
     _verticalLinesTicks = Task::getTickCount() - ticks;
@@ -331,7 +338,7 @@ void DisplayService::testLines() {
         int x2 = __rand() % _screenWidth;
         int y = __rand() % _screenHeight;
 
-        Color c(__rand() | 0xFF000000);
+        Color c = __getRandomColor();
         _graphics->drawHLine(x1, x2, y, c);
     }
     _horizontalLinesTicks = Task::getTickCount() - ticks;
@@ -350,7 +357,7 @@ void DisplayService::testLines() {
         int x2 = __rand() % _screenWidth;
         int y2 = __rand() % _screenHeight;
 
-        Color c(__rand() | 0xFF000000);
+        Color c = __getRandomColor();
         _graphics->drawLine(x1, y1, x2, y2, c);
     }
     _linesTicks = Task::getTickCount() - ticks;
@@ -378,7 +385,7 @@ void DisplayService::testRectangles() {
         int x2 = x1 + __rand() % 150;
         int y2 = y1 + __rand() % 150;
 
-        Color c(__rand() | 0xFF000000);
+        Color c = __getRandomColor();
         _graphics->drawRectangle(x1, y1, x2, y2, c);
     }
     _rectanglesTicks = Task::getTickCount() - ticks;
@@ -397,7 +404,7 @@ void DisplayService::testRectangles() {
         int x2 = x1 + __rand() % 150;
         int y2 = y1 + __rand() % 150;
 
-        Color c(__rand() | 0xFF000000);
+        Color c = __getRandomColor();
         _graphics->fillRectangle(x1, y1, x2, y2, c);
     }
     _filledRectanglesTicks = Task::getTickCount() - ticks;
@@ -424,7 +431,7 @@ void DisplayService::testEllipses() {
         int cy = __rand() % _screenHeight;
         int r = (__rand() % 60) + 3;
 
-        Color c(__rand() | 0xFF000000);
+        Color c = __getRandomColor();
         _graphics->drawEllipse(cx - r, cy - r, cx + r, cy + r, c);
     }
     _ellipsesTicks = Task::getTickCount() - ticks;
@@ -442,7 +449,7 @@ void DisplayService::testEllipses() {
         int cy = __rand() % _screenHeight;
         int r = (__rand() % 60) + 3;
 
-        Color c(__rand() | 0xFF000000);
+        Color c = __getRandomColor();
        	_graphics->fillEllipse(cx - r, cy - r, cx + r, cy + r, c);
     }
     _filledEllipsesTicks = Task::getTickCount() - ticks;

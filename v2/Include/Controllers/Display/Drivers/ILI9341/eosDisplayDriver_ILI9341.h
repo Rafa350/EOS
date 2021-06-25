@@ -74,7 +74,7 @@ namespace eos {
             void readRegion(Color *colors, int count);
             void selectRegion(int x, int y, int width, int height);
 
-            inline static pixel_t toPixel(Color color) { return ConvertTo<CI::format>(color); }
+            inline static pixel_t toPixel(Color color) { return color.convertTo<CI::format>(); }
 
             static void hwInitialize();
             static void hwReset();

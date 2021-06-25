@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Controllers/Display/eosFrameBuffer_L1_PAGECOL.h"
+#include "Controllers/Display/eosMonoFrameBuffer.h"
 
 
 using namespace eos;
@@ -12,21 +12,23 @@ using namespace eos;
 /// \param    orientation: Orientacio.
 /// \param    buffer: El buffer de memoria.
 ///
-FrameBuffer_L1_PAGECOL::FrameBuffer_L1_PAGECOL(
+MonoFrameBuffer::MonoFrameBuffer(
 	int frameWidth,
 	int frameHeight,
 	DisplayOrientation orientation,
-	void* buffer):
+	void* buffer,
+	int bufferPitch):
 
 	FrameBuffer(frameWidth, frameHeight, orientation),
-	_buffer(buffer) {
+	_buffer(buffer),
+	_bufferPitch(bufferPitch) {
 }
 
 
-void FrameBuffer_L1_PAGECOL::put(
+void MonoFrameBuffer::put(
 	int x,
 	int y,
-	const Color& color) {
+	Color color) {
 
 	uint8_t* p = (uint8_t*)((int)_buffer + ((y >> 3) * getWidth()) + x);
 	if (color)
@@ -35,17 +37,17 @@ void FrameBuffer_L1_PAGECOL::put(
 		*p = *p & ~(1 << (y & 3));
 }
 
-void FrameBuffer_L1_PAGECOL::fill(
+void MonoFrameBuffer::fill(
 	int x,
 	int y,
 	int width,
 	int height,
-	const Color& color) {
+	Color color) {
 
 }
 
 
-void FrameBuffer_L1_PAGECOL::copy(
+void MonoFrameBuffer::copy(
 	int x,
 	int y,
 	int width,

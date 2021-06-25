@@ -38,7 +38,7 @@ DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 		_frontImageBuffer,
 		frameBufferPitch);
 
-	if (_useDoubleBuffer) {
+	if constexpr (_useDoubleBuffer) {
 		_backImageBuffer = (void*)(_imageBuffer + frameSize);
 		_backFrameBuffer = new ColorFrameBuffer_DMA2D(
 			_screenWidth,
@@ -319,7 +319,7 @@ void DisplayDriver_RGBLTDC::hScroll(
 ///
 void DisplayDriver_RGBLTDC::refresh() {
 
-	if (_useDoubleBuffer) {
+	if constexpr (_useDoubleBuffer) {
 
 		// Intercanvia els buffers
 		//

@@ -30,8 +30,9 @@
 // Parametres de la imatge
 //
 #define DISPLAY_SCREEN_WIDTH      240  // Amplada en pixels
-#define DISPLAY_SCREEN_HEIUGHT    320  // Alçada en pixels
+#define DISPLAY_SCREEN_HEIGHT     320  // Alçada en pixels
 #define DISPLAY_COLOR_RGB565           // Codificacio de color RGB565
+#define DISPLAY_IMAGE_BUFFER        0
 
 // Parametres de controlador
 //
@@ -93,6 +94,14 @@
 // 5V0        +5.0                  J10-28
 // 3V3        +3.3                  J10-27
 // GND        GND                   J10-45
+
+
+// Parametres de la imatge
+//
+#define DISPLAY_SCREEN_WIDTH      240  // Amplada en pixels
+#define DISPLAY_SCREEN_HEIGHT     320  // Alçada en pixels
+#define DISPLAY_COLOR_FORMAT      ColorFormat::l1  // Format de color
+#define DISPLAY_IMAGE_BUFFER        0
 
 
 #define DISPLAY_DRV_SSD1306

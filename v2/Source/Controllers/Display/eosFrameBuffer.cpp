@@ -51,12 +51,12 @@ void FrameBuffer::setOrientation(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Rota les coordinades d'un punt, segons l'orientacio de
+/// \brief    Transforma les coordinades d'un punt, segons l'orientacio de
 ///           la pantaslla
 /// \param    x: Coordinada x.
 /// \param    y: Coordinada y.
 ///
-void FrameBuffer::rotate(
+void FrameBuffer::transform(
 	int &x,
 	int &y) const {
 
@@ -95,7 +95,7 @@ void FrameBuffer::rotate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Rota les coordinades d'un rectangle segons l'orientacio
+/// \brief    Transforma les coordinades d'un rectangle segons l'orientacio
 ///           de la pantalla
 /// \param    x1: Coordinada x esquerra.
 /// \param    y1: Coordinada y superior.
@@ -103,7 +103,7 @@ void FrameBuffer::rotate(
 /// \param    y2: Coordinada y inferior.
 /// \remarks  Les coordinades son retornades en forma normalitzada.
 ///
-void FrameBuffer::rotate(
+void FrameBuffer::transform(
 	int &x1,
 	int &y1,
 	int &x2,
@@ -113,7 +113,6 @@ void FrameBuffer::rotate(
 	int yy1;
 	int xx2;
 	int yy2;
-
 
 	// Realitza la rotacio. D'aquesta manera es mes rapida que
 	// fer dues multiplicacione fent servir la formula.
@@ -180,7 +179,7 @@ void FrameBuffer::setPixel(
 	Color color) {
 
 	if ((x >= 0) && (x < _imageWidth) && (y >= 0) && (y < _imageHeight)) {
-		rotate(x, y);
+		transform(x, y);
 		put(x, y, color);
 	}
 }
@@ -216,14 +215,14 @@ void FrameBuffer::setPixels(
 	// Cas que nomes sigui un pixel
 	//
 	if ((x1 == x2) && (y1 == y2)) {
-		rotate(x1, y1);
+		transform(x1, y1);
 		put(x1, y1, color);
 	}
 
 	// Cas que hagi una regio rectangular per dibuixar
 	//
 	else if ((x1 <= x2) && (y1 <= y2)) {
-		rotate(x1, y1, x2, y2);
+		transform(x1, y1, x2, y2);
 		fill(x1, y1, x2 - x1 + 1, y2 - y1 + 1, color);
 	}
 }

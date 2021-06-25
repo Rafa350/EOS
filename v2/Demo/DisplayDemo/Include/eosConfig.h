@@ -27,6 +27,7 @@
 #define USE_DISPLAY
 #define DISPLAY_DRV_ILI9341LTDC
 #define EOS_COLOR_FORMAT ColorFormat::argb8888
+//#define EOS_COLOR_FORMAT ColorFormat::rgb565
 
 #elif defined(BUILD_RGBLTDC)
 #if defined(EOS_STM32F4)
@@ -44,6 +45,7 @@
 #define HARDWARE_CUSTOM
 #if defined(EOS_STM32F4)
 #define HARDWARE_CUSTOM_STM32F429I_DISC1
+#define DISPLAY_ADAFRUIT_SSD1306_128x64_D098
 #elif defined(EOS_STM32F7)
 #define HARDWARE_CUSTOM_STM32F746G_DISCO
 #elif defined(EOS_PIC32)

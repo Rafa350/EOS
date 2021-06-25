@@ -31,6 +31,9 @@
                 </logicalFolder>
               </logicalFolder>
               <itemPath>../../../Include/Controllers/Display/eosDisplayDriver.h</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosDisplayOrientation.h</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosFrameBuffer.h</itemPath>
+              <itemPath>../../../Include/Controllers/Display/eosMonoFrameBuffer.h</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f2" displayName="HAL" projectFiles="true">
@@ -260,6 +263,10 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
+      <item path="../../../Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp"
+            ex="true"
+            overriding="false">
+      </item>
       <item path="../../../Source/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp"
             ex="true"
             overriding="false">
@@ -676,6 +683,7 @@
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
+        <appendMe value="-std=gnu++17"/>
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
@@ -806,6 +814,14 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
+      <item path="../../../Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp"
+            ex="true"
+            overriding="false">
+      </item>
       <C32>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
@@ -930,6 +946,7 @@
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
+        <appendMe value="-std=gnu++17"/>
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"

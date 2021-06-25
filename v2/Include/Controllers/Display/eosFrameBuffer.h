@@ -21,8 +21,8 @@ namespace eos {
 			DisplayOrientation _orientation;
 
         private:
-            void rotate(int& x, int& y) const;
-            void rotate(int& x1, int& y1, int &x2, int& y2) const;
+            void transform(int& x, int& y) const;
+            void transform(int& x1, int& y1, int &x2, int& y2) const;
 
         protected:
             virtual void put(int x, int y, Color color) = 0;

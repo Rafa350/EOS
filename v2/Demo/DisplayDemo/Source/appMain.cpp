@@ -2,7 +2,6 @@
 #include "appApplication.h"
 
 
-#include "System/Graphics/eosColor.h"
 using namespace eos;
 
 using namespace app;

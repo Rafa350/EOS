@@ -75,7 +75,7 @@ Bitmap::Bitmap(
 
 	// Crea el contingut del bitmap
 	//
-	switch (format) {
+	/*switch (format) {
 		case ColorFormat::rgb888:
 			for (int i = 0; i < numPixels; i++)
 				((uint32_t*)_pixels)[i] = ConvertTo<ColorFormat::rgb888>(color);
@@ -95,7 +95,7 @@ Bitmap::Bitmap(
 		case ColorFormat::l8:
 			break;
 
-	}
+	}*/
 }
 
 
