@@ -5,11 +5,12 @@
 // EOS includes
 //
 #include "eos.h"
+#include "System/Graphics/eosColor.h"
 
 
-#define ARGB(a, r, g, b)          Color(a, r, g, b)
-#define RGB(r, g, b)              Color(r, g, b)
-#define PAL(i)
+#define ARGB(a, r, g, b)          makeColor<EOS_COLOR_FORMAT>(a, r, g, b)
+#define RGB(r, g, b)              makeColor<EOS_COLOR_FORMAT>(r, g, b)
+#define PAL(l)                    makeColor<EOS_COLOR_FORMAT>(l);
 
 // Basic colors
 //
@@ -127,8 +128,8 @@
 
 // Basic palete colors
 //
-#define COLOR_PAL_Black           PAL(0)     // LCD monochrome compatible
-#define COLOR_PAL_White           PAL(1)     // LCD monochrome compatible
+#define COLOR_PAL_Black           0
+#define COLOR_PAL_White           255
 #define COLOR_PAL_Blue            2
 #define COLOR_PAL_Cyan            3
 #define COLOR_PAL_Magenta         4

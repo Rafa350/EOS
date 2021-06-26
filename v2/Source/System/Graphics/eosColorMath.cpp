@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "System/Graphics/eosColorMath.h"
+#include "System/Graphics/eosColor.h"
 
 
 using namespace eos;
@@ -34,3 +35,28 @@ uint16_t ColorMath::combineColor_RGB565(
 }
 
 
+uint8_t ColorMath::grayAverage(
+	uint8_t r,
+	uint8_t g,
+	uint8_t b) {
+
+	unsigned rr = r;
+	unsigned gg = g;
+	unsigned bb = b;
+
+	return (rr + gg + bb) / 3;
+}
+
+
+uint8_t ColorMath::grayWeight(
+	uint8_t r,
+	uint8_t g,
+	uint8_t b) {
+
+	unsigned rr = (unsigned)r * 612;   // 0.299 * 2048
+	unsigned gg = (unsigned)g * 1202;  // 0.587 * 2048
+	unsigned bb = (unsigned)b * 294;   // 0.144 * 2048
+
+	return (rr + gg + bb) >> 11;
+
+}

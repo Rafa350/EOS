@@ -61,7 +61,7 @@ static uint32_t __rand(void) {
 static inline Color __getRandomColor() {
 
 	uint32_t c = __rand();
-	return Color((c & 0x00FF0000) >> 16, (c & 0x0000FF00) >> 8, c & 0x000000FF);
+	return RGB((c & 0x00FF0000) >> 16, (c & 0x0000FF00) >> 8, c & 0x000000FF);
 }
 
 
@@ -215,10 +215,10 @@ void DisplayService::testColors() {
 	int w = barWidth;
 	int h = barHeight;
 
-	_graphics->drawRectangle(x, y, x + w, y + h, Color(255, 0, 0));
-	_graphics->drawRectangle(x, y + 50, x + w, y + 50 + h, Color(0, 255, 0));
-	_graphics->drawRectangle(x, y + 100, x + w, y + 100 + h, Color(0, 0, 255));
-	_graphics->drawRectangle(x, y + 150, x + w, y + 150 + h, Color(255, 255, 255));
+	_graphics->drawRectangle(x, y, x + w, y + h, RGB(255, 0, 0));
+	_graphics->drawRectangle(x, y + 50, x + w, y + 50 + h, RGB(0, 255, 0));
+	_graphics->drawRectangle(x, y + 100, x + w, y + 100 + h, RGB(0, 0, 255));
+	_graphics->drawRectangle(x, y + 150, x + w, y + 150 + h, RGB(255, 255, 255));
 
 	y = 41;
 	h = barHeight - 2;
@@ -228,17 +228,17 @@ void DisplayService::testColors() {
 
 		int c = i * 256 / barWidth;
 
-		_graphics->drawRectangle(x + i, y,             x + i,  y + hh,       Color(c, 0, 0));
-		_graphics->drawRectangle(x + i, y + hh,        x + i,  y + h,        Color(255 - c, 0, 0));
+		_graphics->drawRectangle(x + i, y,             x + i,  y + hh,       RGB(c, 0, 0));
+		_graphics->drawRectangle(x + i, y + hh,        x + i,  y + h,        RGB(255 - c, 0, 0));
 
-		_graphics->drawRectangle(x + i, y + 50,        x + i,  y + 50 + hh,  Color(0, c, 0));
-		_graphics->drawRectangle(x + i, y + hh + 50,   x + i,  y + 50 + h,   Color(0, 255 - c, 0));
+		_graphics->drawRectangle(x + i, y + 50,        x + i,  y + 50 + hh,  RGB(0, c, 0));
+		_graphics->drawRectangle(x + i, y + hh + 50,   x + i,  y + 50 + h,   RGB(0, 255 - c, 0));
 
-		_graphics->drawRectangle(x + i, y + 100,       x + i,  y + 100 + hh, Color(0, 0, c));
-		_graphics->drawRectangle(x + i, y + hh + 100,  x + i,  y + 100 + h,  Color(0, 0, 255 - c));
+		_graphics->drawRectangle(x + i, y + 100,       x + i,  y + 100 + hh, RGB(0, 0, c));
+		_graphics->drawRectangle(x + i, y + hh + 100,  x + i,  y + 100 + h,  RGB(0, 0, 255 - c));
 
-		_graphics->drawRectangle(x + i, y + 150,       x + i,  y + 150 + hh, Color(c, c, c));
-		_graphics->drawRectangle(x + i, y + hh + 150,  x + i,  y + 150 + h,  Color(255 - c, 255 - c, 255 - c));
+		_graphics->drawRectangle(x + i, y + 150,       x + i,  y + 150 + hh, RGB(c, c, c));
+		_graphics->drawRectangle(x + i, y + hh + 150,  x + i,  y + 150 + h,  RGB(255 - c, 255 - c, 255 - c));
 	}
 
 	Task::delay(2500);
@@ -255,9 +255,9 @@ void DisplayService::testOpacity() {
 	Task::delay(250);
 
 	_graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
-	_graphics->fillRectangle(Point(40, 40), Size(w, w), Color(128, 255, 0, 0));
-	_graphics->fillRectangle(Point(80, 80), Size(w, w), Color(128, 0, 255, 0));
-	_graphics->fillRectangle(Point(120, 120), Size(w, w), Color(128, 0, 0, 255));
+	_graphics->fillRectangle(Point(40, 40), Size(w, w), ARGB(128, 255, 0, 0));
+	_graphics->fillRectangle(Point(80, 80), Size(w, w), ARGB(128, 0, 255, 0));
+	_graphics->fillRectangle(Point(120, 120), Size(w, w), ARGB(128, 0, 0, 255));
 
 	Task::delay(2500);
 }

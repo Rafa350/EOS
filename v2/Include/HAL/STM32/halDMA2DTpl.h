@@ -22,16 +22,20 @@ namespace eos {
 		constexpr static const DMA2DOptions SFMT = HAL_DMA2D_SFMT_ARGB8888;
 	};
 	template<>
+	struct DMA2DOptionsFor<ColorFormat::rgb888> {
+		constexpr static const DMA2DOptions DFMT = HAL_DMA2D_DFMT_RGB888;
+		constexpr static const DMA2DOptions SFMT = HAL_DMA2D_SFMT_RGB888;
+	};
+	template<>
 	struct DMA2DOptionsFor<ColorFormat::rgb565> {
 		constexpr static const DMA2DOptions DFMT = HAL_DMA2D_DFMT_RGB565;
 		constexpr static const DMA2DOptions SFMT = HAL_DMA2D_SFMT_RGB565;
 	};
 	template<>
-	struct DMA2DOptionsFor<ColorFormat::rgb888> {
-		constexpr static const DMA2DOptions DFMT = HAL_DMA2D_DFMT_RGB888;
-		constexpr static const DMA2DOptions SFMT = HAL_DMA2D_SFMT_RGB888;
+	struct DMA2DOptionsFor<ColorFormat::l8> {
+		constexpr static const DMA2DOptions DFMT = HAL_DMA2D_DFMT_L8;
+		constexpr static const DMA2DOptions SFMT = HAL_DMA2D_SFMT_L8;
 	};
-
 }
 
 

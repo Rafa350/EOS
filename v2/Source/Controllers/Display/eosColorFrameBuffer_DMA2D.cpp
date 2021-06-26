@@ -43,13 +43,28 @@ void ColorFrameBuffer_DMA2D::put(
 	int y,
 	Color color) {
 
-	uint8_t opacity = color.getOpacity();
-	if (opacity != 0) {
+	// Color amb opacitat (Canal alpha)
+	//
+	if constexpr (Color::CI::hasAlpha) {
+
+		uint8_t opacity = color.getOpacity();
+		if (opacity != 0) {
+
+			pixel_t vPixel = toPixel(color);
+			pixel_t* pPixel = getPixelPtr(x, y);
+
+			*pPixel = opacity == 0xFF ? vPixel : combinePixels(*pPixel, vPixel, opacity);
+		}
+	}
+
+	// Color sense opacitat
+	//
+	else {
 
 		pixel_t vPixel = toPixel(color);
 		pixel_t* pPixel = getPixelPtr(x, y);
 
-	    *pPixel = opacity == 0xFF ? vPixel : ColorMath::combineColor_RGB565(*pPixel, vPixel, opacity);
+		*pPixel = vPixel;
 	}
 }
 
@@ -96,7 +111,7 @@ void ColorFrameBuffer_DMA2D::fill(
 
 				pixel_t* pPixel = getPixelPtr(xx, yy);
 
-				*pPixel = ColorMath::combineColor_RGB565(*pPixel, vPixel, opacity);
+				*pPixel = combinePixels(*pPixel, vPixel, opacity);
 			}
 	}
 }
@@ -134,3 +149,31 @@ void ColorFrameBuffer_DMA2D::copy(
 	halDMA2DStartCopy(pPixel, width, height, _bufferPitch - width, options, (void*)colors, pitch - width);
 	halDMA2DWaitForFinish();
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Combina dos pixels amb opacitat
+/// \param    b: Pixel de fons
+/// \param    f: Pixel a combinar.
+/// \param    opascity: Opacitat.
+/// \return   El pixel combinat.
+///
+ColorFrameBuffer_DMA2D::pixel_t ColorFrameBuffer_DMA2D::combinePixels(
+	pixel_t b,
+	pixel_t f,
+	uint8_t opacity) {
+
+	uint8_t br = (b & CI::maskR) >> CI::shiftR;
+	uint8_t bg = (b & CI::maskG) >> CI::shiftG;
+	uint8_t bb = (b & CI::maskB) >> CI::shiftB;
+
+	uint8_t fr = (f & CI::maskR) >> CI::shiftR;
+	uint8_t fg = (f & CI::maskG) >> CI::shiftG;
+	uint8_t fb = (f & CI::maskB) >> CI::shiftB;
+
+	return
+		((((fr * opacity) + (br * (255u - opacity))) >> 8) << CI::shiftR) |
+		((((fg * opacity) + (bg * (255u - opacity))) >> 8) << CI::shiftG) |
+		((((fb * opacity) + (bb * (255u - opacity))) >> 8) << CI::shiftB);
+}
+

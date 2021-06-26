@@ -604,6 +604,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halDMA2DTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2DTpl.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
@@ -617,6 +622,16 @@
 			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halLTDC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halLTDC.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halLTDCTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halLTDCTpl.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halSPI.h</name>
@@ -677,6 +692,11 @@
 			<name>inc/Framework/EOS/System/Graphics/eosColorDefinitions.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColorDefinitions.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosColorMath.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosColorMath.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosFont.h</name>

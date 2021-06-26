@@ -26,7 +26,7 @@
 #endif
 #define USE_DISPLAY
 #define DISPLAY_DRV_ILI9341LTDC
-#define EOS_COLOR_FORMAT ColorFormat::argb8888
+#define EOS_COLOR_FORMAT ColorFormat::l8
 //#define EOS_COLOR_FORMAT ColorFormat::rgb565
 
 #elif defined(BUILD_RGBLTDC)
