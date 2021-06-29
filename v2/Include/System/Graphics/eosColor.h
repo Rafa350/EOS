@@ -441,9 +441,17 @@ namespace eos {
 			}
 	};
 
+	/// \brief Clase generica que representa un color.
+	///
 	template <ColorFormat FORMAT>
 	class ColorBase {
 	};
+
+	template <ColorFormat FORMAT>
+	ColorBase<FORMAT> makeColor(uint8_t a, uint8_t r, uint8_t g, uint8_t b);
+
+	template <ColorFormat FORMAT>
+	ColorBase<FORMAT> makeColor(uint8_t r, uint8_t g, uint8_t b);
 
 	template <>
 	class ColorBase<ColorFormat::argb8888> : public ColorARGB8888 {
@@ -460,12 +468,13 @@ namespace eos {
 				ColorARGB8888(a, r, g, b) {
 			}
 
+			inline ColorBase<ColorFormat::argb8888>(const ColorBase<ColorFormat::argb8888>& color):
+				ColorARGB8888(color) {
+			}
+
 			template <ColorFormat FORMAT>
 			inline ColorBase<FORMAT> convertTo() {
-				if constexpr (ColorInfo<FORMAT>::hasAlpha)
-					return ColorBase<FORMAT>(getA(), getR(), getG(), getB());
-				else
-					return ColorBase<FORMAT>(getR(), getG(), getB());
+				return makeColor<FORMAT>(getA(), getR(), getG(), getB());
 			}
 	};
 
@@ -485,13 +494,13 @@ namespace eos {
 				ColorRGB565(r, g, b) {
 			}
 
-			/*inline ColorBase<ColorFormat::rgb565>(uint8_t a, uint8_t r, uint8_t g, uint8_t b):
-				ColorRGB565(r, g, b) {
-			}*/
+			inline ColorBase<ColorFormat::rgb565>(const ColorBase<ColorFormat::rgb565>& color):
+				ColorRGB565(color) {
+			}
 
 			template <ColorFormat FORMAT>
 			inline ColorBase<FORMAT> convertTo() {
-				return ColorBase<FORMAT>(getR(), getG(), getB());
+				return makeColor<FORMAT>(getR(), getG(), getB());
 			}
 	};
 
@@ -506,29 +515,22 @@ namespace eos {
 				ColorL8(l) {
 			}
 
-			/*inline ColorBase<ColorFormat::l8>(uint8_t r, uint8_t g, uint8_t b):
-				ColorL8(ColorMath::grayWeight(r, g, b)) {
+			inline ColorBase<ColorFormat::l8>(const ColorBase<ColorFormat::l8>& color):
+				ColorL8(color) {
 			}
-
-			inline ColorBase<ColorFormat::l8>(uint8_t a, uint8_t r, uint8_t g, uint8_t b):
-				ColorL8(ColorMath::grayWeight(r, g, b)) {
-			}*/
 
 			template <ColorFormat FORMAT>
 			inline ColorBase<FORMAT> convertTo() {
-				if constexpr (ColorInfo<FORMAT>::isColor)
-					return ColorBase<FORMAT>(getL(), getL(), getL());
-				else
-					return ColorBase<FORMAT>(getL());
+				return makeColor<FORMAT>(getL());
 			}
 	};
 
-	/// \brief Color basic del sistema
+	/// \brief Color base del sistema
 	///
 	typedef ColorBase<EOS_COLOR_FORMAT> Color;
 
 
-	/// \brief Contruccio de colors
+	/// \brief Funcions de construccio de colors
 	///
 	template <ColorFormat FORMAT>
 	inline ColorBase<FORMAT> makeColor(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
@@ -550,6 +552,15 @@ namespace eos {
 	template <ColorFormat FORMAT>
 	inline ColorBase<FORMAT> makeColor(uint8_t r, uint8_t g, uint8_t b) {
 		return makeColor<FORMAT>(0xFF, r, g, b);
+	}
+
+	template <ColorFormat FORMAT>
+	inline ColorBase<FORMAT> makeColor(uint8_t l) {
+		typedef ColorInfo<FORMAT> CI;
+		if constexpr (CI::isColor)
+			return ColorBase<FORMAT>(0xFF, l, l, l);
+		else
+			return ColorBase<FORMAT>(l);
 	}
 
 

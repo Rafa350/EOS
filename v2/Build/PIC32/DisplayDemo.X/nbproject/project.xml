@@ -16,14 +16,12 @@
                 <sourceRootElem>../../../Demo/DisplayDemo</sourceRootElem>
                 <sourceRootElem>../../../Source/HAL/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Include</sourceRootElem>
-                <sourceRootElem>../../../Source/Controllers/Display/Drivers/ILI9341</sourceRootElem>
-                <sourceRootElem>../../../Source/Controllers/Display/Drivers/VRAM</sourceRootElem>
                 <sourceRootElem>../../../Source/OSAL</sourceRootElem>
                 <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
                 <sourceRootElem>../../../Library/PIC32/FreeRTOS/Source</sourceRootElem>
                 <sourceRootElem>../../../Source/Services</sourceRootElem>
                 <sourceRootElem>../../../Source/System</sourceRootElem>
-                <sourceRootElem>../../../Source/Controllers/Display/Drivers/SSD1306</sourceRootElem>
+                <sourceRootElem>../../../Source/Controllers/Display</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

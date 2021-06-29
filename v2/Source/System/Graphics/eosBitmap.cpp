@@ -1,11 +1,62 @@
 #include "eos.h"
 #include "eosAssert.h"
+#include "System/Core/eosPoolAllocator.h"
 #include "System/Graphics/eosBitmap.h"
 #include "OSAL/osalHeap.h"
 
 
 using namespace eos;
 
+
+class Bitmap::Impl {
+	private:
+    	static MemoryPoolAllocator _allocator;
+
+	public:
+		int width;
+		int height;
+		ColorFormat format;
+		bool allocated;
+		bool readonly;
+		void *pixels;
+
+	public:
+    	void* operator new(unsigned size);
+    	void operator delete(void*p);
+};
+
+
+MemoryPoolAllocator Bitmap::Impl::_allocator(sizeof(Bitmap::Impl), eosGraphics_MaxBitmaps);
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador new
+/// \param    size: Tamany del bloc.
+/// \return   El bloc.
+///
+void* Bitmap::Impl::operator new(
+	unsigned size) {
+
+	eosAssert(size == sizeof(Bitmap::Impl));
+
+	void* p = Bitmap::Impl::_allocator.allocate();
+	eosAssert(p != 0);
+
+	return p;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador delete.
+/// \param    p: El bloc.
+///
+void Bitmap::Impl::operator delete(
+	void* p) {
+
+	eosAssert(p != nullptr);
+
+	Bitmap::Impl::_allocator.deallocate(p);
+}
 
 
 /// ----------------------------------------------------------------------
@@ -15,13 +66,14 @@ using namespace eos;
 Bitmap::Bitmap(
 	const uint8_t *bitmapResource):
 
-	_allocated(false),
-	_readonly(true) {
+	_pImpl(allocate()) {
 
-	_width = (int) (bitmapResource[0] | (bitmapResource[1] << 8));
-	_height = (int) (bitmapResource[2] | (bitmapResource[3] << 8));
-	_format = ColorFormat::rgb565;
-	_pixels = (void*) &bitmapResource[6];
+	_pImpl->allocated =false;
+	_pImpl->readonly = true;
+	_pImpl->width = (int) (bitmapResource[0] | (bitmapResource[1] << 8));
+	_pImpl->height = (int) (bitmapResource[2] | (bitmapResource[3] << 8));
+	_pImpl->format = ColorFormat::rgb565;
+	_pImpl->pixels = (void*) &bitmapResource[6];
 }
 
 
@@ -37,12 +89,14 @@ Bitmap::Bitmap(
 	ColorFormat format,
 	Color color):
 
-	_width(width),
-	_height(height),
-	_format(format),
-	_allocated(true),
-	_readonly(false),
-	_pixels(nullptr) {
+	_pImpl(allocate()) {
+
+	_pImpl->width = width;
+	_pImpl->height= height;
+	_pImpl->format= format;
+	_pImpl->allocated = true;
+	_pImpl->readonly = false;
+	_pImpl->pixels = nullptr;
 
 	// Calcula el numero de pixels
 	//
@@ -112,12 +166,14 @@ Bitmap::Bitmap(
 	ColorFormat format,
 	void *pixels):
 
-	_width(width),
-	_height(height),
-	_format(format),
-	_allocated(false),
-	_readonly(false),
-	_pixels(pixels) {
+	_pImpl(allocate()) {
+
+	_pImpl->width = width;
+	_pImpl->height = height;
+	_pImpl->format = format;
+	_pImpl->allocated = false;
+	_pImpl->readonly = false;
+	_pImpl->pixels = pixels;
 }
 
 
@@ -134,13 +190,25 @@ Bitmap::Bitmap(
 	ColorFormat format,
 	const void *pixels):
 
-	_width(width),
-	_height(height),
-	_format(format),
-	_allocated(false),
-	_readonly(true),
-	_pixels((void*) pixels) {
+	_pImpl(allocate()) {
 
+	_pImpl->width = width;
+	_pImpl->height = height;
+	_pImpl->format = format;
+	_pImpl->allocated = false;
+	_pImpl->readonly = true;
+	_pImpl->pixels = (void*) pixels;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor copia
+/// \param    bitmap: L'altre objecte per copiar.
+///
+Bitmap::Bitmap(
+	const Bitmap& bitmap):
+
+	_pImpl(bitmap._pImpl) {
 }
 
 
@@ -149,8 +217,32 @@ Bitmap::Bitmap(
 ///
 Bitmap::~Bitmap() {
 
-	if (_allocated && (_pixels != nullptr))
-		osalHeapFree(NULL, _pixels);
+	if (_pImpl->allocated && (_pImpl->pixels != nullptr))
+		osalHeapFree(NULL, _pImpl->pixels);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Crea l'estructura interna de dades.
+/// \param    Punter a l'estructura.
+///
+Bitmap::PImpl Bitmap::allocate() {
+
+	return PImpl(new Impl);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador d'assignacio.
+/// \param    bitmap: L'objecte a asignar.
+/// \return   El propi objecte.
+///
+Bitmap& Bitmap::operator = (
+	const Bitmap& bitmap) {
+
+	_pImpl = bitmap._pImpl;
+
+	return *this;
 }
 
 
@@ -160,7 +252,7 @@ Bitmap::~Bitmap() {
 ///
 int Bitmap::getBytesPerPixel() const {
 
-	switch (_format) {
+	switch (_pImpl->format) {
 		default:
 		case ColorFormat::rgb888:
 		case ColorFormat::argb8888:
@@ -181,5 +273,5 @@ int Bitmap::getBytesPerPixel() const {
 ///
 int Bitmap::getBytesPerLine() const {
 
-	return ((_width * getBytesPerPixel()) + 3) & ~0b11;
+	return ((_pImpl->width * getBytesPerPixel()) + 3) & ~0b11;
 }

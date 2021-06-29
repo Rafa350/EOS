@@ -5,12 +5,24 @@
 // EOS includes
 //
 #include "eos.h"
+#include "System/eosPointers.h"
 #include "System/Graphics/eosColor.h"
+
+
+#ifndef eosGraphics_MaxBitmaps
+#define eosGraphics_MaxBitmaps 50
+#endif
 
 
 namespace eos {
 
 	class Bitmap {
+		private:
+			struct Impl;
+			typedef SharedPtr<Impl> PImpl;
+
+    	private:
+    		PImpl _pImpl;
 		private:
 			int _width;
 			int _height;
@@ -19,12 +31,18 @@ namespace eos {
 			bool _readonly;
 			void *_pixels;
 
+		private:
+            PImpl allocate();
+
 		public:
 			Bitmap(const uint8_t *bitmapResource);
 			Bitmap(int width, int height, ColorFormat format, Color color);
 			Bitmap(int width, int height, ColorFormat format, void *pixels);
 			Bitmap(int width, int height, ColorFormat format, const void *pixels);
+			Bitmap(const Bitmap& bitmap);
 			~Bitmap();
+
+			Bitmap& operator = (const Bitmap& bitmap);
 
 			void setPixel(int x, int y, const Color &color);
 			Color getPixel(int x, int y);

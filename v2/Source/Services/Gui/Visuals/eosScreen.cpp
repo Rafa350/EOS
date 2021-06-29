@@ -3,6 +3,7 @@
 #include "Services/Gui/Visuals/eosScreen.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosSize.h"
+#include "System/Graphics/eosColorDefinitions.h"
 
 
 using namespace eos;
@@ -13,7 +14,7 @@ using namespace eos;
 ///
 Screen::Screen() {
 
-	setColor(0xFF505050);
+	setColor(RGB(0x50, 0x50, 0x50));
 	setSize(Size(DISPLAY_SCREEN_WIDTH, DISPLAY_SCREEN_HEIGHT));
 }
 

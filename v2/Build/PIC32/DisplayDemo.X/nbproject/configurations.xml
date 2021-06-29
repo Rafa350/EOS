@@ -113,7 +113,9 @@
                 <logicalFolder name="f2" displayName="SSD1306" projectFiles="true">
                   <itemPath>../../../Source/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp</itemPath>
                 </logicalFolder>
+                <itemPath>../../../Source/Controllers/Display/eosMonoFrameBuffer.cpp</itemPath>
               </logicalFolder>
+              <itemPath>../../../Source/Controllers/Display/eosFrameBuffer.cpp</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f3" displayName="HAL" projectFiles="true">
@@ -210,14 +212,12 @@
     <Elem>../../../Demo/DisplayDemo</Elem>
     <Elem>../../../Source/HAL/PIC32</Elem>
     <Elem>../../../Include</Elem>
-    <Elem>../../../Source/Controllers/Display/Drivers/ILI9341</Elem>
-    <Elem>../../../Source/Controllers/Display/Drivers/VRAM</Elem>
     <Elem>../../../Source/OSAL</Elem>
     <Elem>../../../Source/StartUp/PIC32</Elem>
     <Elem>../../../Library/PIC32/FreeRTOS/Source</Elem>
     <Elem>../../../Source/Services</Elem>
     <Elem>../../../Source/System</Elem>
-    <Elem>../../../Source/Controllers/Display/Drivers/SSD1306</Elem>
+    <Elem>../../../Source/Controllers/Display</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -266,6 +266,20 @@
       <item path="../../../Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp"
             ex="true"
             overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <item path="../../../Source/Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.cpp"
             ex="true"
@@ -817,10 +831,38 @@
       <item path="../../../Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341.cpp"
             ex="true"
             overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <item path="../../../Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp"
             ex="true"
             overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <C32>
         <property key="additional-warnings" value="false"/>

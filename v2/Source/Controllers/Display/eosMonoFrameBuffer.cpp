@@ -30,7 +30,7 @@ void MonoFrameBuffer::put(
 	int y,
 	Color color) {
 
-	uint8_t* p = (uint8_t*)((int)_buffer + ((y >> 3) * getWidth()) + x);
+	uint8_t* p = (uint8_t*)((int)_buffer + ((y >> 3) * getImageWidth()) + x);
 	if (color)
 		*p = *p | (1 << (y & 3));
 	else

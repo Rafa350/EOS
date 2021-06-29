@@ -83,7 +83,7 @@ Font::Font(
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor copia
-/// \param    other: L'altre objecte per copiar.
+/// \param    font: L'altre objecte per copiar.
 ///
 Font::Font(
 	const Font& font):

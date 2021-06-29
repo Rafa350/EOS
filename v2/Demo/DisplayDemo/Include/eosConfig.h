@@ -40,6 +40,7 @@
 #define USE_DISPLAY
 #define DISPLAY_DRV_RGBLTDC
 #define DISPLAY_DOUBLEBUFFER false
+//#define EOS_COLOR_FORMAT ColorFormat::l8
 
 #elif defined(BUILD_SSD1306)
 #define HARDWARE_CUSTOM
