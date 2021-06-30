@@ -53,8 +53,6 @@ namespace eos {
         private:
             IDisplayDriver* _driver;
             Font _font;
-            Pen _pen;
-            Brush _brush;
             StateStack _stack;
             State _state;
 
@@ -65,15 +63,9 @@ namespace eos {
             inline IDisplayDriver* getDriver() const { return _driver; }
             inline int getWidth() const { return _driver->getImageWidth(); }
             inline int getHeight() const { return _driver->getImageHeight(); }
-            void clear(const Color &color) const;
+            void clear(Color color) const;
 
-            void setPen(const Pen& pen);
-            void setBrush(const Brush& brush);
-            void setFont(const Font &_font);
-            inline const Pen& getPen() const { return _pen; }
-            inline Pen getPen() { return _pen; }
-            inline const Brush& getBrush() const { return _brush; }
-            inline Brush getBrush() { return _brush; }
+            void setFont(const Font &font);
             inline const Font& getFont() const { return _font; }
             inline Font getFont() { return _font; }
 
@@ -91,60 +83,60 @@ namespace eos {
             int getTextWidth(const String& text, int offset = 0, int length = -1) const;
             int getTextHeight(const String& text) const;
 
-            void paintLine(const Point& p1, const Point& p2);
-            void paintRectangle(const Rect& rect);
+            void paintLine(const Pen& pen, const Point& p1, const Point& p2);
+            void paintRectangle(const Pen &pen, const Brush &brush, const Rect& rect);
             void paintRoundedRectangle(const Rect& rect, int rx, int ry);
             void paintCircle(const Point& center, int radius);
             void paintEllipse(const Rect& rect);
 
-            void drawPoint(int x, int y, const Color& color) const;
-            inline void drawPoint(const Point& p, const Color& color) const { drawPoint(p.getX(), p.getY(), color); }
+            void drawPoint(int x, int y, Color color) const;
+            inline void drawPoint(const Point& p, Color color) const { drawPoint(p.getX(), p.getY(), color); }
 
-            void drawLine(int x1, int y1, int x2, int y2, const Color& color) const;
-            inline void drawLine(const Point& p1, const Point& p2, const Color& color) const { drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }
-            void drawHLine(int x1, int x2, int y, const Color& color) const;
-            void drawVLine(int x, int y1, int y2, const Color& color) const;
+            void drawLine(int x1, int y1, int x2, int y2, Color color) const;
+            inline void drawLine(const Point& p1, const Point& p2, Color color) const { drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }
+            void drawHLine(int x1, int x2, int y, Color color) const;
+            void drawVLine(int x, int y1, int y2, Color color) const;
 
-            void drawRectangle(int x1, int y1, int x2, int y2, const Color& color) const;
-            inline void drawRectangle(const Point& p1, const Point& p2, const Color& color) const { drawRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }
-            inline void drawRectangle(const Point& p, const Size& s, const Color& color) const { drawRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1, color); }
-            inline void drawRectangle(const Rect& r, const Color& color) const { drawRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
+            void drawRectangle(int x1, int y1, int x2, int y2, Color color) const;
+            inline void drawRectangle(const Point& p1, const Point& p2, Color color) const { drawRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }
+            inline void drawRectangle(const Point& p, const Size& s, Color color) const { drawRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1, color); }
+            inline void drawRectangle(const Rect& r, Color color) const { drawRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
 
-            void drawRoundedRectangle(int x1, int y1, int x2, int y2, int rx, int ry, const Color& color) const;
-            inline void drawRoundedRectangle(const Point& p1, const Point& p2, int rx, int ry, const Color& color) const { drawRoundedRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), rx, ry, color);}
-            inline void drawRoundedRectangle(const Point& p, const Size& s, int rx, int ry, const Color& color) const { drawRoundedRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1, rx, ry, color);}
-            inline void drawRoundedRectangle(const Rect& r, int rx, int ry, const Color& color) const { drawRoundedRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), rx, ry, color); }
+            void drawRoundedRectangle(int x1, int y1, int x2, int y2, int rx, int ry, Color color) const;
+            inline void drawRoundedRectangle(const Point& p1, const Point& p2, int rx, int ry, Color color) const { drawRoundedRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), rx, ry, color);}
+            inline void drawRoundedRectangle(const Point& p, const Size& s, int rx, int ry, Color color) const { drawRoundedRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1, rx, ry, color);}
+            inline void drawRoundedRectangle(const Rect& r, int rx, int ry, Color color) const { drawRoundedRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), rx, ry, color); }
 
-            void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color) const;
-            inline void drawTriangle(const Point& p1, const Point& p2, const Point &p3, const Color& color) const { drawTriangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY(), color); }
+            void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, Color color) const;
+            inline void drawTriangle(const Point& p1, const Point& p2, const Point &p3, Color color) const { drawTriangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY(), color); }
 
-            void drawCircle(int x, int y, int r, const Color& color) const;
-            inline void drawCircle(const Point& p, int r, const Color& color) const { drawCircle(p.getX(), p.getY(), r, color); }
+            void drawCircle(int x, int y, int r, Color color) const;
+            inline void drawCircle(const Point& p, int r, Color color) const { drawCircle(p.getX(), p.getY(), r, color); }
 
-            void drawEllipse(int x1, int y1, int x2, int y2, const Color& color) const;
-            inline void drawEllipse(const Rect& r, const Color& color) const { drawEllipse(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
+            void drawEllipse(int x1, int y1, int x2, int y2, Color color) const;
+            inline void drawEllipse(const Rect& r, Color color) const { drawEllipse(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
 
             void drawBitmap(int x, int y, const Bitmap* bitmap) const;
             inline void drawBitmap(const Point& p, const Bitmap *bitmap) const { drawBitmap(p.getX(), p.getY(), bitmap); }
 
-            int drawChar(int x, int y, const Color& color, char c) const;
-            int drawText(int x, int y, const Color& color, const String& text, unsigned offset = 0, unsigned length = unsigned(-1)) const;
+            int drawChar(int x, int y, Color color, char c) const;
+            int drawText(int x, int y, Color color, const String& text, unsigned offset = 0, unsigned length = unsigned(-1)) const;
 
-            void fillRectangle(int x1, int y1, int x2, int y2, const Color& color) const;
-            inline void fillRectangle(const Point& p1, const Point& p2, const Color& color) const { fillRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }
-            inline void fillRectangle(const Point& p, const Size& s, const Color& color) const { fillRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1, color); }
-            inline void fillRectangle(const Rect& r, const Color& color) const { fillRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
+            void fillRectangle(int x1, int y1, int x2, int y2, Color color) const;
+            inline void fillRectangle(const Point& p1, const Point& p2, Color color) const { fillRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }
+            inline void fillRectangle(const Point& p, const Size& s, Color color) const { fillRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1, color); }
+            inline void fillRectangle(const Rect& r, Color color) const { fillRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
 
-            void fillRoundedRectangle(int x1, int y1, int x2, int y2, int rx, int ry, const Color& color) const;
-            inline void fillRoundedRectangle(const Point& p1, const Point& p2, int rx, int ry, const Color& color) const { fillRoundedRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), rx, ry, color);}
-            inline void fillRoundedRectangle(const Point& p, const Size& s, int rx, int ry, const Color& color) const { fillRoundedRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1, rx, ry, color);}
-            inline void fillRoundedRectangle(const Rect& r, int rx, int ry, const Color& color) const { fillRoundedRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), rx, ry, color); }
+            void fillRoundedRectangle(int x1, int y1, int x2, int y2, int rx, int ry, Color color) const;
+            inline void fillRoundedRectangle(const Point& p1, const Point& p2, int rx, int ry, Color color) const { fillRoundedRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), rx, ry, color);}
+            inline void fillRoundedRectangle(const Point& p, const Size& s, int rx, int ry, Color color) const { fillRoundedRectangle(p.getX(), p.getY(), p.getX() + s.getWidth() - 1, p.getY() + s.getHeight() - 1, rx, ry, color);}
+            inline void fillRoundedRectangle(const Rect& r, int rx, int ry, Color color) const { fillRoundedRectangle(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), rx, ry, color); }
 
-            void fillCircle(int x, int y, int r, const Color& color) const;
-            inline void fillCircle(const Point& p, int r, const Color& color) const { fillCircle(p.getX(), p.getY(), r, color); }
+            void fillCircle(int x, int y, int r, Color color) const;
+            inline void fillCircle(const Point& p, int r, Color color) const { fillCircle(p.getX(), p.getY(), r, color); }
 
-            void fillEllipse(int x1, int y1, int x2, int y2, const Color& color) const;
-            inline void fillEllipse(const Rect& r, const Color& color) const { fillEllipse(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
+            void fillEllipse(int x1, int y1, int x2, int y2, Color color) const;
+            inline void fillEllipse(const Rect& r, Color color) const { fillEllipse(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
 
         private:
             bool clipPoint(int x, int y) const;

@@ -4,7 +4,7 @@
 
 #include "eos.h"
 #include "Services/Gui/eosVisual.h"
-#include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosBrush.h"
 
 
 namespace eos {
@@ -13,7 +13,7 @@ namespace eos {
 
 	class Panel: public Visual {
 		private:
-			Color color;
+			Brush _background;
 
 		protected:
 			void onRender(RenderContext* context) override;
@@ -23,8 +23,8 @@ namespace eos {
 
 			inline void addChild(Visual* visual) { addVisual(visual); }
 
-			void setColor(const Color& value);
-			inline Color getColor() const { return color; }
+			void setBackground(const Brush &value);
+			inline const Brush& getBackground() const { return _background; }
 	};
 }
 

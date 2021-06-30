@@ -14,7 +14,7 @@ namespace eos {
 
     class Screen final: public Panel {
     	protected:
-			Size measureOverride(const Size& availableSize) const override;
+			Size measureOverride(const Size &availableSize) const override;
 
     	public:
             Screen();

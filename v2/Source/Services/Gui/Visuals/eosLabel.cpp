@@ -37,13 +37,13 @@ static const LabelStyle *pStyle = &style;
 ///
 Label::Label():
 
-	textColor(pStyle->textColor),
-	backgroundColor(pStyle->backgroundColor),
-	horizontalTextAlign(HorizontalTextAlign::center),
-	verticalTextAlign(VerticalTextAlign::center),
-	fontName(pStyle->fontName),
-	fontHeight(pStyle->fontHeight),
-	fontStyle(pStyle->fontStyle) {
+	_textColor(pStyle->textColor),
+	_backgroundColor(pStyle->backgroundColor),
+	_horizontalTextAlign(HorizontalTextAlign::center),
+	_verticalTextAlign(VerticalTextAlign::center),
+	_fontName(pStyle->fontName),
+	_fontHeight(pStyle->fontHeight),
+	_fontStyle(pStyle->fontStyle) {
 
 	setHorizontalAlignment(HorizontalAlignment::center);
 	setVerticalAlignment(VerticalAlignment::center);
@@ -57,21 +57,19 @@ Label::Label():
 Size Label::measureOverride(
 	const Size &availableSize) const {
 
-	if (text.isEmpty())
+	if (_text.isEmpty())
 
 		return Size();
 
 	else {
 
-		const uint8_t *fontResource =  Font::getFontResource(fontName, fontHeight, fontStyle);
-		Font *font = new Font(fontResource);
+		const uint8_t *fontResource =  Font::getFontResource(_fontName, _fontHeight, _fontStyle);
+		Font font(fontResource);
 
 		int measuredWidth = 0;
-		for (unsigned i = 0; text[i]; i++)
-			measuredWidth += font->getCharAdvance(text[i]);
-		int measuredHeight = font->getFontHeight();
-
-		delete font;
+		for (unsigned i = 0; _text[i]; i++)
+			measuredWidth += font.getCharAdvance(_text[i]);
+		int measuredHeight = font.getFontHeight();
 
 		return Size(measuredWidth, measuredHeight);
 	}
@@ -83,10 +81,10 @@ Size Label::measureOverride(
 /// \param    value: El color.
 ///
 void Label::setTextColor(
-	const Color &value) {
+	Color value) {
 
-	if (textColor != value) {
-		textColor = value;
+	if (_textColor != value) {
+		_textColor = value;
 		invalidate();
 	}
 }
@@ -99,8 +97,8 @@ void Label::setTextColor(
 void Label::setFontName(
 	const String &value) {
 
-	if (fontName != value) {
-		fontName = value;
+	if (_fontName != value) {
+		_fontName = value;
 		invalidate();
 	}
 }
@@ -113,8 +111,8 @@ void Label::setFontName(
 void Label::setFontHeight(
 	int value) {
 
-	if (fontHeight != value) {
-		fontHeight = value;
+	if (_fontHeight != value) {
+		_fontHeight = value;
 		invalidate();
 	}
 }
@@ -127,8 +125,8 @@ void Label::setFontHeight(
 void Label::setFontStyle(
 	FontStyle value) {
 
-	if (fontStyle != value) {
-		fontStyle = value;
+	if (_fontStyle != value) {
+		_fontStyle = value;
 		invalidate();
 	}
 }
@@ -139,10 +137,10 @@ void Label::setFontStyle(
 /// \param    value: El color.
 ///
 void Label::setBackgroundColor(
-	const Color &value) {
+	Color value) {
 
-	if (backgroundColor != value) {
-		backgroundColor = value;
+	if (_backgroundColor != value) {
+		_backgroundColor = value;
 		invalidate();
 	}
 }
@@ -155,8 +153,8 @@ void Label::setBackgroundColor(
 void Label::setHorizontalTextAlign(
 	HorizontalTextAlign value) {
 
-	if (horizontalTextAlign != value) {
-		horizontalTextAlign = value;
+	if (_horizontalTextAlign != value) {
+		_horizontalTextAlign = value;
 		invalidate();
 	}
 }
@@ -169,8 +167,8 @@ void Label::setHorizontalTextAlign(
 void Label::setVerticalTextAlign(
 	VerticalTextAlign value) {
 
-	if (verticalTextAlign != value) {
-		verticalTextAlign = value;
+	if (_verticalTextAlign != value) {
+		_verticalTextAlign = value;
 		invalidate();
 	}
 }
@@ -183,8 +181,8 @@ void Label::setVerticalTextAlign(
 void Label::setText(
 	const String &value) {
 
-	if (text != value) {
-		text = value;
+	if (_text != value) {
+		_text = value;
 		invalidate();
 	}
 }
@@ -209,17 +207,17 @@ void Label::onRender(
 
 	// Dibuixa el fons. Si es transparent optimitza i no el dibuixa.
 	//
-	if (!backgroundColor.isTransparent())
-		g.fillRectangle(0, 0, width, height, backgroundColor);
+	if (!_backgroundColor.isTransparent())
+		g.fillRectangle(0, 0, width, height, _backgroundColor);
 
 	// Dibuixa el text
 	//
-	const uint8_t *fontResource = Font::getFontResource(fontName, fontHeight, fontStyle);
+	const uint8_t *fontResource = Font::getFontResource(_fontName, _fontHeight, _fontStyle);
 	Font font(fontResource);
 
 	g.setFont(font);
-	g.setTextAlign(horizontalTextAlign, verticalTextAlign);
-	g.drawText(width / 2, height / 2, textColor, text, 0, -1);
+	g.setTextAlign(_horizontalTextAlign, _verticalTextAlign);
+	g.drawText(width / 2, height / 2, _textColor, _text, 0, -1);
 
 	// Finalitza el renderitzat.
 	//

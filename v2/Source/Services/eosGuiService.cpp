@@ -36,7 +36,7 @@ static RenderContext* context;
 /// \param    cfg: Parametres de configuracio
 ///
 GuiService::GuiService(
-	Application* application):
+	Application *application):
 
 	Service(application),
 	_screen(new Screen()),

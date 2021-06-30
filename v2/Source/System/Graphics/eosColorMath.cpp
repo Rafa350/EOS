@@ -57,6 +57,6 @@ uint8_t ColorMath::grayWeight(
 	unsigned gg = (unsigned)g * 1202;  // 0.587 * 2048
 	unsigned bb = (unsigned)b * 294;   // 0.144 * 2048
 
-	return (rr + gg + bb) >> 11;
+	return (rr + gg + bb) >> 11;       // Divideix per 2048
 
 }

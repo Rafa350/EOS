@@ -7,6 +7,8 @@
 
 namespace eos {
 
+	/// \brief Pool de memoria
+    ///
     class MemoryPoolAllocator {
         private:
             uint8_t *_blocks;
@@ -52,9 +54,24 @@ namespace eos {
             	return static_cast<T*>(_allocator.allocate());
             }
 
-    		inline void deallocate(T* p) {
+    		inline void deallocate(T *p) {
             	_allocator.deallocate(p);
             }
+    };
+
+    template <typename T, int MAX_BLOCKS>
+    class PoolAllocatable {
+    	private:
+    		inline static PoolAllocator<T, MAX_BLOCKS> _allocator = PoolAllocator<T, MAX_BLOCKS>();
+
+    	public:
+        	void* operator new(unsigned size) {
+        		return _allocator.allocate();
+        	}
+
+        	void operator delete(void *p) {
+        		_allocator.deallocate(static_cast<T*>(p));
+        	}
     };
 }
 

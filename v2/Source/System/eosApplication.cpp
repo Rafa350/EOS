@@ -257,14 +257,14 @@ void Application::onTick() {
 /// \param    service: El servei.
 ///
 void eos::link(
-	Application* application,
-	Service* service) {
+	Application *application,
+	Service *service) {
 
 	eosAssert(application != nullptr);
-    eosAssert(service->application == nullptr);
+    eosAssert(service->_application == nullptr);
 
     application->services.pushBack(service);
-    service->application = application;
+    service->_application = application;
 }
 
 
@@ -274,12 +274,12 @@ void eos::link(
 /// \param    service: El servei.
 ///
 void eos::unlink(
-	Application* application,
-	Service* service) {
+	Application *application,
+	Service *service) {
 
 	eosAssert(application != nullptr);
-    eosAssert(service->application == application);
+    eosAssert(service->_application == application);
 
-    service->application = nullptr;
+    service->_application = nullptr;
     application->services.removeAt(application->services.indexOf(service));
 }

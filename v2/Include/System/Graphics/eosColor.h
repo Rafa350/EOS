@@ -8,6 +8,8 @@
 #include "System/Graphics/eosColorMath.h"
 
 
+// Defineix el color del sistema
+//
 #ifndef EOS_COLOR_FORMAT
 #define EOS_COLOR_FORMAT ColorFormat::argb8888
 #endif
@@ -103,7 +105,7 @@ namespace eos {
 		constexpr static const int bits = 16;
 		constexpr static const int bytes = (bits + 7) / 8;
 		constexpr static const bool isColor = false;
-		constexpr static const bool isIndex = false;
+		constexpr static const bool isIndex = true;
 		constexpr static const bool hasAlpha = false;
 		constexpr static const unsigned maskA = 0xFF00;
 		constexpr static const unsigned maskL = 0x00FF;
@@ -120,7 +122,7 @@ namespace eos {
 		constexpr static const int bits = 8;
 		constexpr static const int bytes = (bits + 7) / 8;
 		constexpr static const bool isColor = false;
-		constexpr static const bool isIndex = false;
+		constexpr static const bool isIndex = true;
 		constexpr static const bool hasAlpha = false;
 		constexpr static const unsigned maskL = 0xFF;
 		constexpr static const unsigned shiftL = 0;
@@ -480,7 +482,23 @@ namespace eos {
 
 	template <>
 	class ColorBase<ColorFormat::rgb888> : public ColorRGB888 {
+	public:
+		inline ColorBase<ColorFormat::rgb888>():
+			ColorRGB888() {
+		}
 
+		inline ColorBase<ColorFormat::rgb888>(uint8_t r, uint8_t g, uint8_t b):
+			ColorRGB888(r, g, b) {
+		}
+
+		inline ColorBase<ColorFormat::rgb888>(const ColorBase<ColorFormat::rgb888>& color):
+			ColorRGB888(color) {
+		}
+
+		template <ColorFormat FORMAT>
+		inline ColorBase<FORMAT> convertTo() {
+			return makeColor<FORMAT>(getR(), getG(), getB());
+		}
 	};
 
 	template <>

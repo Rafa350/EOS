@@ -35,7 +35,7 @@ namespace eos {
             PImpl allocate();
 
 		public:
-			Bitmap(const uint8_t *bitmapResource);
+			Bitmap(const void *bitmapResource);
 			Bitmap(int width, int height, ColorFormat format, Color color);
 			Bitmap(int width, int height, ColorFormat format, void *pixels);
 			Bitmap(int width, int height, ColorFormat format, const void *pixels);

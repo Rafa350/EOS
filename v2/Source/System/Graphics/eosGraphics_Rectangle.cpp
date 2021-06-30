@@ -12,31 +12,33 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa un rectangle.
 /// \param    pen: El pen.
-/// \param    brush: La brotza.
+/// \param    brush: El brush.
 /// \param    rect: El rectangle.
 ///
 void Graphics::paintRectangle(
-	const Rect& rect) {
+	const Pen &pen,
+	const Brush &brush,
+	const Rect &rect) {
 
 	int x1 = rect.getMinX();
 	int y1 = rect.getMinY();
 	int x2 = rect.getMaxX();
 	int y2 = rect.getMaxY();
 
-	if (_brush.getStyle() != BrushStyle::Null) {
-		Color c = _brush.getColor();
+	if (brush.getStyle() != BrushStyle::Null) {
+		Color c = brush.getColor();
 		fillRectangle(x1, y1, x2, y2, c);
 	}
 
-	if (_pen.getStyle() != PenStyle::Null) {
-		Color c = _pen.getColor();
-		int t = _pen.getThickness();
+	if (pen.getStyle() != PenStyle::Null) {
+		Color c = pen.getColor();
+		int t = pen.getThickness();
 		if (t < Math::min(Math::abs(x2 - x1), Math::abs(y2 - y1)) / 2) {
 			if (t > 1) {
-				drawRectangle(x1, y1, x2, y1 + t, c);
-				drawRectangle(x1, y2 - t, x2, y2, c);
-				drawRectangle(x1, y1 + t, x1 + t, y2 - t, c);
-				drawRectangle(x2 - t, y1 + t, x2, y2 - t, c);
+				fillRectangle(x1, y1, x2, y1 + t, c);
+				fillRectangle(x1, y2 - t, x2, y2, c);
+				fillRectangle(x1, y1 + t, x1 + t, y2 - t, c);
+				fillRectangle(x2 - t, y1 + t, x2, y2 - t, c);
 			}
 			else
 				drawRectangle(x1, y1, x2, y2, c);
@@ -58,7 +60,7 @@ void Graphics::drawRectangle(
     int y1,
     int x2,
     int y2,
-	const Color& color) const {
+	Color color) const {
 
 	// Dibuixa el perfil com quatre linies independents
 	//
@@ -82,7 +84,7 @@ void Graphics::fillRectangle(
     int y1,
     int x2,
     int y2,
-	const Color& color) const {
+	Color color) const {
 
     // Transforma a coordinades fisiques.
 	//

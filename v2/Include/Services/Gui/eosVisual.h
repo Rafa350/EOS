@@ -50,19 +50,19 @@ namespace eos {
 			typedef DynamicArray<Visual*>::Iterator VisualListIterator;
 
       	private:
-    		Visual *parent;
-    		VisualList childs;
-    		bool needRender;
-    		Visibility visibility;
-			Size size;
-			Size minSize;
-			Size maxSize;
-			Size desiredSize;
-			Rect bounds;
-			Thickness margin;
-			HorizontalAlignment horizontalAlignment;
-			VerticalAlignment verticalAlignment;
-			unsigned id;
+    		Visual *_parent;
+    		VisualList _childs;
+    		bool _needRender;
+    		Visibility _visibility;
+			Size _size;
+			Size _minSize;
+			Size _maxSize;
+			Size _desiredSize;
+			Rect _bounds;
+			Thickness _margin;
+			HorizontalAlignment _horizontalAlignment;
+			VerticalAlignment _verticalAlignment;
+			unsigned _id;
 
     	protected:
     		virtual void onRender(RenderContext *context) = 0;
@@ -94,8 +94,8 @@ namespace eos {
     		Visual();
     		virtual ~Visual();
 
-            inline Visual *getParent() const { return parent; }
-            inline const VisualList& getChilds() const { return childs; }
+            inline Visual *getParent() const { return _parent; }
+            inline const VisualList& getChilds() const { return _childs; }
 
             // Checkers
             bool isRenderizable() const;
@@ -103,7 +103,7 @@ namespace eos {
             bool isEnabled() const;
 
             // Setters
-            void setId(unsigned id) { this->id = id; }
+            void setId(unsigned id) { _id = id; }
             void setHorizontalAlignment(HorizontalAlignment value);
             void setMargin(const Thickness &value);
             void setMinSize(const Size &value);
@@ -112,23 +112,23 @@ namespace eos {
             void setVisibility(Visibility value);
 
             // Getters
-            inline const Rect& getBounds() const { return bounds; }
-            inline HorizontalAlignment getHorizontalAlignment() const { return horizontalAlignment; }
-            inline unsigned getId() const { return id; }
-            inline const Size& getMaxSize() const { return maxSize; }
-            inline const Thickness& getMargin() const { return margin; }
-            inline const Size& getMinSize() const { return minSize; }
-            inline const Size& getSize() const { return size; }
-            inline VerticalAlignment getVerticalAlignment() const { return verticalAlignment; }
-            Visibility getVisibility() const { return visibility; }
+            inline const Rect& getBounds() const { return _bounds; }
+            inline HorizontalAlignment getHorizontalAlignment() const { return _horizontalAlignment; }
+            inline unsigned getId() const { return _id; }
+            inline const Size& getMaxSize() const { return _maxSize; }
+            inline const Thickness& getMargin() const { return _margin; }
+            inline const Size& getMinSize() const { return _minSize; }
+            inline const Size& getSize() const { return _size; }
+            inline VerticalAlignment getVerticalAlignment() const { return _verticalAlignment; }
+            Visibility getVisibility() const { return _visibility; }
 
-            void measure(const Size& availableSize);
-            void arrange(const Rect& finalRect);
-            const Size& getDesiredSize() const { return desiredSize; }
+            void measure(const Size &availableSize);
+            void arrange(const Rect &finalRect);
+            const Size& getDesiredSize() const { return _desiredSize; }
 
-            void dispatch(const Message& msg);
-            void send(const Message& msg);
-            bool render(RenderContext* context);
+            void dispatch(const Message &msg);
+            void send(const Message &msg);
+            bool render(RenderContext *context);
     		void invalidate();
     		void invalidateLayout();
     };

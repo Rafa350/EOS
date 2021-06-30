@@ -18,7 +18,7 @@ using namespace eos;
 int Graphics::drawChar(
     int x,
     int y,
-	const Color& color,
+	Color color,
     char c) const {
 
     FontInfo fi;
@@ -60,7 +60,7 @@ int Graphics::drawChar(
 int Graphics::drawText(
     int x,
     int y,
-	const Color& color,
+	Color color,
     const String &text,
     unsigned offset,
     unsigned length) const {

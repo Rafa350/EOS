@@ -8,10 +8,7 @@
 using namespace eos;
 
 
-class Bitmap::Impl {
-	private:
-    	static MemoryPoolAllocator _allocator;
-
+class Bitmap::Impl: public PoolAllocatable<Bitmap::Impl, eosGraphics_MaxBitmaps> {
 	public:
 		int width;
 		int height;
@@ -19,44 +16,7 @@ class Bitmap::Impl {
 		bool allocated;
 		bool readonly;
 		void *pixels;
-
-	public:
-    	void* operator new(unsigned size);
-    	void operator delete(void*p);
 };
-
-
-MemoryPoolAllocator Bitmap::Impl::_allocator(sizeof(Bitmap::Impl), eosGraphics_MaxBitmaps);
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador new
-/// \param    size: Tamany del bloc.
-/// \return   El bloc.
-///
-void* Bitmap::Impl::operator new(
-	unsigned size) {
-
-	eosAssert(size == sizeof(Bitmap::Impl));
-
-	void* p = Bitmap::Impl::_allocator.allocate();
-	eosAssert(p != 0);
-
-	return p;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador delete.
-/// \param    p: El bloc.
-///
-void Bitmap::Impl::operator delete(
-	void* p) {
-
-	eosAssert(p != nullptr);
-
-	Bitmap::Impl::_allocator.deallocate(p);
-}
 
 
 /// ----------------------------------------------------------------------
@@ -64,16 +24,18 @@ void Bitmap::Impl::operator delete(
 /// \param    bitmapResource: El recurs.
 ///
 Bitmap::Bitmap(
-	const uint8_t *bitmapResource):
+	const void *bitmapResource):
 
 	_pImpl(allocate()) {
 
-	_pImpl->allocated =false;
+	uint8_t *r = (uint8_t*) bitmapResource;
+
+	_pImpl->allocated = false;
 	_pImpl->readonly = true;
-	_pImpl->width = (int) (bitmapResource[0] | (bitmapResource[1] << 8));
-	_pImpl->height = (int) (bitmapResource[2] | (bitmapResource[3] << 8));
-	_pImpl->format = ColorFormat::rgb565;
-	_pImpl->pixels = (void*) &bitmapResource[6];
+	_pImpl->width = (int) (r[0] | (r[1] << 8));
+	_pImpl->height = (int) (r[2] | (r[3] << 8));
+	_pImpl->format = ColorFormat::rgb565; // TODO: Corregir aixo
+	_pImpl->pixels = (void*) &r[6];
 }
 
 
@@ -101,12 +63,12 @@ Bitmap::Bitmap(
 	// Calcula el numero de pixels
 	//
 	int numPixels = width * height;
+	eosAssert(numPixels > 0);
 
 	// Calcula el tamany de cada pixel
 	//
-	int pixelSize;
+	int pixelSize = 0;
 	switch (format) {
-		default:
 		case ColorFormat::rgb565:
 			pixelSize = ColorInfo<ColorFormat::rgb565>::bytes;
 			break;
@@ -115,41 +77,55 @@ Bitmap::Bitmap(
 			pixelSize = ColorInfo<ColorFormat::rgb888>::bytes;
 			break;
 
+		default:
 		case ColorFormat::argb8888:
 			pixelSize = ColorInfo<ColorFormat::argb8888>::bytes;
 			break;
 
 		case ColorFormat::l8:
+			pixelSize = ColorInfo<ColorFormat::l8>::bytes;
 			break;
 	}
+	eosAssert(pixelSize != 0);
 
 	// Reserva memoria pel bitmap
 	//
-	//_pixels = osalHeapAlloc(NULL, numPixels * pixelSize);
+	_pImpl->pixels = osalHeapAlloc(NULL, numPixels * pixelSize);
+	eosAssert(_pixels != nullptr);
 
 	// Crea el contingut del bitmap
 	//
-	/*switch (format) {
-		case ColorFormat::rgb888:
+	switch (format) {
+		case ColorFormat::rgb888: {
+			ColorInfo<ColorFormat::rgb888>::color_t c = color.convertTo<ColorFormat::rgb888>();
 			for (int i = 0; i < numPixels; i++)
-				((uint32_t*)_pixels)[i] = ConvertTo<ColorFormat::rgb888>(color);
+				((ColorInfo<ColorFormat::rgb888>::color_t*)_pImpl->pixels)[i] = c;
+		}
 		break;
 
-		case ColorFormat::rgb565:
+		case ColorFormat::rgb565: {
+			ColorInfo<ColorFormat::rgb565>::color_t c = color.convertTo<ColorFormat::rgb565>();
 			for (int i = 0; i < numPixels; i++)
-				((uint16_t*)_pixels)[i] = ConvertTo<ColorFormat::rgb565>(color);
+				((ColorInfo<ColorFormat::rgb565>::color_t*)_pImpl->pixels)[i] = c;
+		}
 		break;
 
 		default:
-		case ColorFormat::argb8888:
+		case ColorFormat::argb8888: {
+			ColorInfo<ColorFormat::argb8888>::color_t c = color.convertTo<ColorFormat::argb8888>();
 			for (int i = 0; i < numPixels; i++)
-				((uint32_t*)_pixels)[i] = ConvertTo<ColorFormat::argb8888>(color);
+				((ColorInfo<ColorFormat::argb8888>::color_t*)_pImpl->pixels)[i] = c;
+		}
 		break;
 
-		case ColorFormat::l8:
-			break;
+		case ColorFormat::l8: {
+			ColorInfo<ColorFormat::l8>::color_t c = color.convertTo<ColorFormat::l8>();
+			for (int i = 0; i < numPixels; i++)
+				((ColorInfo<ColorFormat::l8>::color_t*)_pixels)[i] = c;
+		}
+		break;
 
-	}*/
+	}
 }
 
 

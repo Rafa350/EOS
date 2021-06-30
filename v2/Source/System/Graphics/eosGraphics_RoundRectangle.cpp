@@ -24,7 +24,7 @@ void Graphics::drawRoundedRectangle(
 	int y2,
 	int rx,
 	int ry,
-	const Color& color) const {
+	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -185,7 +185,7 @@ void Graphics::fillRoundedRectangle(
 	int y2,
 	int rx,
 	int ry,
-	const Color& color) const {
+	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//

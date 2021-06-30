@@ -14,23 +14,20 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 Border::Border():
-	backgroundColor(COLOR_Transparent),
-	color(),
-	thickness(1),
-	radius(0),
-	content(nullptr) {
+	_background(Brush(COLOR_Red)),
+	_borderBrush(Brush(COLOR_Black)),
+	_borderThickness(1),
+	_radius(0),
+	_content(nullptr) {
 
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Calcula les mesures del control
-/// \param    availableSize: Tamany disponible.
-///
 Size Border::measureOverride(
-	const Size &availableSize) const{
+	const Size &availableSize) const {
 
-	return availableSize;
+	Size size = Decorator::measureOverride(availableSize);
+	return _borderThickness.inflate(size);
 }
 
 
@@ -41,15 +38,15 @@ Size Border::measureOverride(
 void Border::setContent(
 	Visual *value) {
 
-	if (content != value) {
+	if (_content != value) {
 
-		if (content != nullptr)
-			removeVisual(content);
+		if (_content != nullptr)
+			removeVisual(_content);
 
-		content = value;
+		_content = value;
 
-		if (content != nullptr)
-			addVisual(content);
+		if (_content != nullptr)
+			addVisual(_content);
 	}
 }
 
@@ -58,11 +55,11 @@ void Border::setContent(
 /// \brief    Asigna el color del perfil.
 /// \param    value: El color.
 ///
-void Border::setColor(
-	const Color &value) {
+void Border::setBorderBrush(
+	const Brush &value) {
 
-	if (color != value) {
-		color = value;
+	if (_borderBrush != value) {
+		_borderBrush = value;
 		invalidate();
 	}
 }
@@ -72,11 +69,11 @@ void Border::setColor(
 /// \brief    Asigna l'amplada del perfil.
 /// \param    value: Amplada del perfil.
 ///
-void Border::setThickness(
+void Border::setBorderThickness(
 	int value) {
 
-	if (thickness != value) {
-		thickness = value;
+	if (_borderThickness != value) {
+		_borderThickness = value;
 		invalidate();
 	}
 }
@@ -89,8 +86,8 @@ void Border::setThickness(
 void Border::setRadius(
 	int value) {
 
-	if (radius != value) {
-		radius = value;
+	if (_radius != value) {
+		_radius = value;
 		invalidate();
 	}
 }
@@ -100,11 +97,11 @@ void Border::setRadius(
 /// \brief    Asigna el color del fons.
 /// \param    value: El color.
 ///
-void Border::setBackgroundColor(
-	const Color &value) {
+void Border::setBackground(
+	const Brush &value) {
 
-	if (backgroundColor != value) {
-		backgroundColor = value;
+	if (_background != value) {
+		_background = value;
 		invalidate();
 	}
 }
@@ -120,11 +117,8 @@ void Border::onRender(
 	Graphics &g = context->beginRender(this);
 
 	const Size &s = getBounds().getSize();
-	int x2 = s.getWidth() - 1;
-	int y2 = s.getHeight() - 1;
-
-	g.fillRectangle(0, 0, x2, y2, backgroundColor);
-	g.drawRectangle(0, 0, x2, y2, color);
+	Pen pen(_borderBrush, _borderThickness.getLeft(), PenStyle::Solid);
+	g.paintRectangle(pen, _background, Rect(0, 0, s.getWidth(), s.getHeight()));
 
 	context->endRender();
 }

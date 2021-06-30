@@ -23,7 +23,7 @@ void Graphics::drawTriangle(
     int y2,
     int x3,
     int y3,
-	const Color& color) const {
+	Color color) const {
 
 	// Dibuixa el triangle com tres linies independents
 	//

@@ -729,6 +729,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosHeapAllocator.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Core/eosPoolAllocator.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosPoolAllocator.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Core/eosQueue.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosQueue.h</locationURI>

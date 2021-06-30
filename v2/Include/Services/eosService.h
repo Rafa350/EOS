@@ -17,7 +17,7 @@ namespace eos {
     ///
     class Service {
         private:
-            Application *application;
+            Application *_application;
             unsigned stackSize;
             Task::Priority priority;
             bool initialized;
@@ -59,7 +59,7 @@ namespace eos {
             }
 
             inline Application * getApplication() const {
-                return application;
+                return _application;
             }
 
             inline const String & getName() const {

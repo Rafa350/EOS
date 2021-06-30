@@ -22,7 +22,7 @@ StackPanel::StackPanel():
 /// \return   El tamany desitjat.
 ///
 Size StackPanel::measureOverride(
-	const Size& availableSize) const {
+	const Size &availableSize) const {
 
 	bool isHorizontal = orientation == Orientation::horizontal;
 
@@ -33,7 +33,7 @@ Size StackPanel::measureOverride(
 	int width = 0;
 	int height = 0;
 
-	const VisualList& childs = getChilds();
+	const VisualList &childs = getChilds();
 	for (auto it = childs.begin(); it != childs.end(); it++) {
 
 		Visual* child = *it;

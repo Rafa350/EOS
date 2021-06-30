@@ -29,9 +29,9 @@ namespace eos {
             };
 
         private:
-            Semaphore changes;
-            TMRHandler hTimer;
-            DigInputList inputs;
+            Semaphore _changes;
+            TMRHandler _hTimer;
+            DigInputList _inputs;
 
         protected:
             void onInitialize() override;
@@ -43,8 +43,8 @@ namespace eos {
         public:
             DigInputService(Application* application, const Settings &settings);
             ~DigInputService();
-            void addInput(DigInput* input);
-            void removeInput(DigInput* input);
+            void addInput(DigInput *input);
+            void removeInput(DigInput *input);
             void removeInputs();
 
             bool read(const DigInput* input) const;
@@ -70,25 +70,25 @@ namespace eos {
             };
 
         private:
-            DigInputService* service;
-            GPIOPort port;
-            GPIOPin pin;
-            IEventCallback* eventCallback;
-            void* eventParam;
-            uint32_t pattern;
-            bool value;
-            bool edge;
+            DigInputService *_service;
+            GPIOPort _port;
+            GPIOPin _pin;
+            IEventCallback *_eventCallback;
+            void *_eventParam;
+            uint32_t _pattern;
+            bool _value;
+            bool _edge;
 
         public:
-            DigInput(DigInputService* service, const Settings &settings);
+            DigInput(DigInputService *service, const Settings &settings);
             ~DigInput();
 
-            inline DigInputService* getService() const {
-                return service;
+            inline DigInputService *getService() const {
+                return _service;
             }
 
             inline bool read() const {
-                return service->read(this);
+                return _service->read(this);
             }
 
         friend DigInputService;

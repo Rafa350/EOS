@@ -9,59 +9,19 @@
 using namespace eos;
 
 
-class Brush::Impl {
-	private:
-		static MemoryPoolAllocator _allocator;
-
+class Brush::Impl: public PoolAllocatable<Brush::Impl, eosGraphics_MaxBrushes> {
 	public:
 		Color color;
 		BrushStyle style;
-
-	public:
-    	void* operator new(unsigned size);
-    	void operator delete(void*p);
 };
-
-
-MemoryPoolAllocator Brush::Impl::_allocator(sizeof(Brush::Impl), eosGraphics_MaxBrushes);
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador new
-/// \param    size: Tamany del bloc.
-/// \return   El bloc.
-///
-void* Brush::Impl::operator new(
-	unsigned size) {
-
-	eosAssert(size == sizeof(Brush::Impl));
-
-	void* p = Brush::Impl::_allocator.allocate();
-	eosAssert(p != 0);
-
-	return p;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador delete.
-/// \param    p: El bloc.
-///
-void Brush::Impl::operator delete(
-	void* p) {
-
-	eosAssert(p != nullptr);
-
-	Brush::Impl::_allocator.deallocate(p);
-}
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    color: Color.
+/// \param    color: El color.
 ///
 Brush::Brush(
-	const Color& color):
+	Color color):
 
 	_pImpl(allocate()){
 
@@ -71,11 +31,27 @@ Brush::Brush(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor de copia.
-/// \param    pen: L'objecte a copiar.
+/// \brief    Constructor.
+/// \param    color: El color.
+/// \param    style: L'estil.
 ///
 Brush::Brush(
-	const Brush& brush) :
+	Color color,
+	BrushStyle style):
+
+	_pImpl(allocate()){
+
+	_pImpl->style = style;
+	_pImpl->color = color;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor de copia.
+/// \param    brush: L'objecte a copiar.
+///
+Brush::Brush(
+	const Brush &brush) :
 
 	_pImpl(brush._pImpl) {
 }
@@ -90,6 +66,44 @@ Brush::~Brush() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Operador d'asignacio.
+/// \param    brush: L'objecte a asignar.
+/// \return   El propi objecte.
+///
+Brush& Brush::operator = (
+	const Brush &brush) {
+
+	_pImpl = brush._pImpl;
+
+	return *this;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador ==
+/// \param    brush: El operand
+/// \return   True si son iguals.
+///
+bool Brush::operator == (
+	const Brush &brush) const {
+
+	return &(*_pImpl) == &(*brush._pImpl);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador !=
+/// \param    brush: El operand
+/// \return   True si son diferents.
+///
+bool Brush::operator != (
+	const Brush &brush) const {
+
+	return &(*_pImpl) != &(*brush._pImpl);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Crea l'estructura interna de dades.
 /// \param    Punter a l'estructura.
 ///
@@ -99,12 +113,19 @@ Brush::PImpl Brush::allocate() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Obte l'estil del brush.
+/// \return   L'estil.
+///
 BrushStyle Brush::getStyle() const {
 
 	return _pImpl->style;
 }
 
-
+/// ----------------------------------------------------------------------
+/// \brief    Obte el color.
+/// \return   El color.
+///
 Color Brush::getColor() const {
 
 	return _pImpl->color;

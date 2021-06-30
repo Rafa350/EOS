@@ -18,9 +18,7 @@ using namespace eos;
 Graphics::Graphics(
     IDisplayDriver *driver) :
 
-    _driver(driver),
-	_pen(COLOR_Black, 1, PenStyle::Solid),
-	_brush(COLOR_White) {
+    _driver(driver) {
 
 	resetClip();
 	resetTransformation();
@@ -158,7 +156,7 @@ void Graphics::pop() {
 /// \param    color: El color per realitzar el borrat.
 ///
 void Graphics::clear(
-    const Color &color) const {
+    Color color) const {
 
 	int x1 = 0;
 	int y1 = 0;
@@ -179,7 +177,7 @@ void Graphics::clear(
 void Graphics::drawPoint(
     int x,
     int y,
-	const Color& color) const {
+	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//

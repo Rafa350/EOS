@@ -33,11 +33,14 @@ namespace eos {
 		PImpl allocate();
 
 	public:
-		Brush(const Color& color);
+		Brush(Color color);
+		Brush(Color color, BrushStyle style);
 		Brush(const Brush& brush);
 		~Brush();
 
 		Brush& operator = (const Brush& brush);
+		bool operator == (const Brush& pen) const;
+		bool operator != (const Brush& pen) const;
 
 		Color getColor() const;
 		BrushStyle getStyle() const;

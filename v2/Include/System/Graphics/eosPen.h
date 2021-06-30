@@ -7,6 +7,7 @@
 #include "eos.h"
 #include "System/eosPointers.h"
 #include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosBrush.h"
 
 
 #ifndef eosGraphics_MaxPens
@@ -21,6 +22,14 @@ namespace eos {
 		Solid
 	};
 
+	enum class PenCapStyle {
+
+	};
+
+	enum class PenJoinStyle {
+
+	};
+
 	class Pen {
 		private:
 			struct Impl;
@@ -33,19 +42,25 @@ namespace eos {
 			PImpl allocate();
 
 		public:
-			Pen(const Color& color, int thickness, PenStyle style);
-			Pen(const Pen& pen);
+			Pen();
+			Pen(Color color);
+			Pen(Color color, int thickness, PenStyle style);
+			Pen(const Brush &brush);
+			Pen(const Brush &brush, int thickness, PenStyle style);
+			Pen(const Pen &pen);
 			~Pen();
 
 			Pen& operator = (const Pen& pen);
+			bool operator == (const Pen& pen) const;
+			bool operator != (const Pen& pen) const;
 
 			Color getColor() const;
 			int getThickness() const;
 			PenStyle getStyle() const;
 
-			void setColor(const Color& color);
-			void setThickness(int thickness);
-			void setStyele(PenStyle style);
+			//void setColor(const Color& color);
+			//void setThickness(int thickness);
+			//void setStyle(PenStyle style);
 	};
 }
 

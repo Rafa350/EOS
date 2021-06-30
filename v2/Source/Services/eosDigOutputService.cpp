@@ -21,8 +21,8 @@ DigOutputService::DigOutputService(
     const Settings &settings):
 
 	Service(application),
-    hTimer(settings.hTimer),
-	commandQueue(commandQueueSize) {
+    _hTimer(settings.hTimer),
+	_commandQueue(_commandQueueSize) {
 
 }
 
@@ -32,8 +32,8 @@ DigOutputService::DigOutputService(
 ///
 DigOutputService::~DigOutputService() {
 
-    while (!outputs.isEmpty())
-    	delete outputs.getBack();
+    while (!_outputs.isEmpty())
+    	delete _outputs.getBack();
 }
 
 
@@ -44,7 +44,7 @@ DigOutputService::~DigOutputService() {
 ///           esta inicialitzat.
 ///
 void DigOutputService::addOutput(
-    DigOutput* output) {
+    DigOutput *output) {
 
     eosAssert(output != nullptr);
     eosAssert(output->service == nullptr);
@@ -53,9 +53,9 @@ void DigOutputService::addOutput(
     //
     Task::enterCriticalSection();
 
-    if (output->service == nullptr) {
-        outputs.pushBack(output);
-        output->service = this;
+    if (output->_service == nullptr) {
+        _outputs.pushBack(output);
+        output->_service = this;
     }
 
     // Fi de la seccio critica
@@ -71,7 +71,7 @@ void DigOutputService::addOutput(
 ///           esta inicialitzat.
 ///
 void DigOutputService::removeOutput(
-    DigOutput* output) {
+    DigOutput *output) {
 
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
@@ -80,9 +80,9 @@ void DigOutputService::removeOutput(
     //
     Task::enterCriticalSection();
 
-    if (output->service == this) {
-        outputs.removeAt(outputs.indexOf(output));
-        output->service = nullptr;
+    if (output->_service == this) {
+        _outputs.removeAt(_outputs.indexOf(output));
+        output->_service = nullptr;
     }
 
     // Fi de la seccio critica
@@ -102,10 +102,10 @@ void DigOutputService::removeOutputs() {
     //
     Task::enterCriticalSection();
 
-    while (!outputs.isEmpty()) {
-        DigOutput* output = outputs.getBack();
-        outputs.popBack();
-        output->service = nullptr;
+    while (!_outputs.isEmpty()) {
+        DigOutput *output = _outputs.getBack();
+        _outputs.popBack();
+        output->_service = nullptr;
     }
 
     // Fi de la seccio critica
@@ -119,15 +119,16 @@ void DigOutputService::removeOutputs() {
 /// \param    output: La sortida.
 ///
 void DigOutputService::set(
-    DigOutput* output) {
+    DigOutput *output) {
 
     eosAssert(output != nullptr);
-    eosAssert(output->service == this);
+    eosAssert(output->_service == this);
 
-    Command cmd;
-    cmd.opCode = OpCode::set;
-    cmd.output = output;
-    commandQueue.push(cmd, unsigned(-1));
+    Command cmd = {
+        .opCode = OpCode::set,
+        .output = output
+    };
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -136,15 +137,16 @@ void DigOutputService::set(
 /// \param    output: La sortida.
 ///
 void DigOutputService::clear(
-    DigOutput* output) {
+    DigOutput *output) {
 
     eosAssert(output != nullptr);
-    eosAssert(output->service == this);
+    eosAssert(output->_service == this);
 
-    Command cmd;
-    cmd.opCode = OpCode::clear;
-    cmd.output = output;
-    commandQueue.push(cmd, unsigned(-1));
+    Command cmd = {
+        .opCode = OpCode::clear,
+        .output = output
+    };
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -154,16 +156,17 @@ void DigOutputService::clear(
 /// \param    value: El valor a asignar.
 ///
 void DigOutputService::write(
-    DigOutput* output,
+    DigOutput *output,
     bool value) {
 
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
-    Command cmd;
-    cmd.opCode = value ? OpCode::set : OpCode::clear;
-    cmd.output = output;
-    commandQueue.push(cmd, unsigned(-1));
+    Command cmd = {
+        .opCode = value ? OpCode::set : OpCode::clear,
+        .output = output
+    };
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -172,15 +175,16 @@ void DigOutputService::write(
 /// \param    output: La sortida.
 ///
 void DigOutputService::toggle(
-    DigOutput* output) {
+    DigOutput *output) {
 
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
-    Command cmd;
-    cmd.opCode = OpCode::toggle;
-    cmd.output = output;
-    commandQueue.push(cmd, unsigned(-1));
+    Command cmd = {
+        .opCode = OpCode::toggle,
+        .output = output
+    };
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -189,17 +193,18 @@ void DigOutputService::toggle(
 /// \param    output: La sortida.
 ///
 void DigOutputService::pulse(
-    DigOutput* output,
+    DigOutput *output,
     unsigned width) {
 
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
-    Command cmd;
-    cmd.opCode = OpCode::pulse;
-    cmd.output = output;
-    cmd.param1 = Math::max(width, minWidth);
-    commandQueue.push(cmd, unsigned(-1));
+    Command cmd = {
+        .opCode = OpCode::pulse,
+        .output = output,
+        .param1 = Math::max(width, _minWidth)
+    };
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -208,19 +213,20 @@ void DigOutputService::pulse(
 /// \param    output: La sortida.
 ///
 void DigOutputService::delayedPulse(
-    DigOutput* output,
+    DigOutput *output,
     unsigned delay,
     unsigned width) {
 
     eosAssert(output != nullptr);
     eosAssert(output->service == this);
 
-    Command cmd;
-    cmd.opCode = OpCode::delayedPulse;
-    cmd.output = output;
-    cmd.param1 = Math::max(delay, minDelay);
-    cmd.param2 = Math::max(width, minWidth);
-    commandQueue.push(cmd, unsigned(-1));
+    Command cmd = {
+        .opCode = OpCode::delayedPulse,
+        .output = output,
+        .param1 = Math::max(delay, _minDelay),
+        .param2 = Math::max(width, _minWidth)
+    };
+    _commandQueue.push(cmd, unsigned(-1));
 }
 
 
@@ -235,13 +241,13 @@ void DigOutputService::onInitialize() {
 
     // Habilita les interrupcions del temporitzador.
     //
-    halTMRSetInterruptFunction(hTimer, tmrInterruptFunction, this);
-    halTMRClearInterruptFlags(hTimer, HAL_TMR_EVENT_UPDATE);
-    halTMREnableInterrupts(hTimer, HAL_TMR_EVENT_UPDATE);
+    halTMRSetInterruptFunction(_hTimer, tmrInterruptFunction, this);
+    halTMRClearInterruptFlags(_hTimer, HAL_TMR_EVENT_UPDATE);
+    halTMREnableInterrupts(_hTimer, HAL_TMR_EVENT_UPDATE);
 
     // Activa el temporitzador.
     //
-    halTMRStartTimer(hTimer);
+    halTMRStartTimer(_hTimer);
 }
 
 
@@ -252,11 +258,11 @@ void DigOutputService::onTerminate() {
 
     // Desactiva el temporitzador
     //
-    halTMRStopTimer(hTimer);
+    halTMRStopTimer(_hTimer);
 
     // Desabilita les interrupcions del temporitzador
     //
-    halTMRDisableInterrupts(hTimer, HAL_TMR_EVENT_ALL);
+    halTMRDisableInterrupts(_hTimer, HAL_TMR_EVENT_ALL);
 
     // Finalitza el servei base
     //
@@ -275,7 +281,7 @@ void DigOutputService::onTask(
 
     // Espera que arribi una comanda
     //
-    while (commandQueue.pop(cmd, unsigned(-1))) {
+    while (_commandQueue.pop(cmd, unsigned(-1))) {
 
         // Procesa la comanda
         //
@@ -336,10 +342,12 @@ void DigOutputService::onTick() {
 /// \param    output: La sortida.
 ///
 void DigOutputService::cmdClear(
-    DigOutput* output) {
+    DigOutput *output) {
 
-    halGPIOClearPin(output->port, output->pin);
-    output->state = DigOutput::State::idle;
+    eosAssert(output != nullptr);
+
+    halGPIOClearPin(output->_port, output->_pin);
+    output->_state = DigOutput::State::idle;
 }
 
 
@@ -348,10 +356,12 @@ void DigOutputService::cmdClear(
 /// \param    output: La sortida.
 ///
 void DigOutputService::cmdSet(
-    DigOutput* output) {
+    DigOutput *output) {
 
-    halGPIOSetPin(output->port, output->pin);
-    output->state = DigOutput::State::idle;
+    eosAssert(output != nullptr);
+
+    halGPIOSetPin(output->_port, output->_pin);
+    output->_state = DigOutput::State::idle;
 }
 
 
@@ -360,10 +370,12 @@ void DigOutputService::cmdSet(
 /// \param    output: La sortida.
 ///
 void DigOutputService::cmdToggle(
-    DigOutput* output) {
+    DigOutput *output) {
 
-    halGPIOTogglePin(output->port, output->pin);
-    output->state = DigOutput::State::idle;
+    eosAssert(output != nullptr);
+
+    halGPIOTogglePin(output->_port, output->_pin);
+    output->_state = DigOutput::State::idle;
 }
 
 
@@ -373,13 +385,15 @@ void DigOutputService::cmdToggle(
 /// \param    width: L'amplada del puls.
 ///
 void DigOutputService::cmdPulse(
-    DigOutput* output,
+    DigOutput *output,
     unsigned width) {
 
-    if (output->state == DigOutput::State::idle)
-        halGPIOTogglePin(output->port, output->pin);
-    output->state = DigOutput::State::pulse;
-    output->widthCnt = width;
+    eosAssert(output != nullptr);
+
+    if (output->_state == DigOutput::State::idle)
+        halGPIOTogglePin(output->_port, output->_pin);
+    output->_state = DigOutput::State::pulse;
+    output->_widthCnt = width;
 }
 
 
@@ -389,11 +403,13 @@ void DigOutputService::cmdPulse(
 /// \param    delay: El retard.
 ///
 void DigOutputService::cmdDelayedSet(
-    DigOutput* output,
+    DigOutput *output,
     unsigned delay) {
 
-    output->state = DigOutput::State::delayedSet;
-    output->delayCnt = delay;
+    eosAssert(output != nullptr);
+
+    output->_state = DigOutput::State::delayedSet;
+    output->_delayCnt = delay;
 }
 
 
@@ -403,11 +419,13 @@ void DigOutputService::cmdDelayedSet(
 /// \param    delay: El retard.
 ///
 void DigOutputService::cmdDelayedClear(
-    DigOutput* output,
+    DigOutput *output,
     unsigned delay) {
 
-    output->state = DigOutput::State::delayedClear;
-    output->delayCnt = delay;
+    eosAssert(output != nullptr);
+
+    output->_state = DigOutput::State::delayedClear;
+    output->_delayCnt = delay;
 }
 
 
@@ -417,11 +435,13 @@ void DigOutputService::cmdDelayedClear(
 /// \param    delay: El retard.
 ///
 void DigOutputService::cmdDelayedToggle(
-    DigOutput* output,
+    DigOutput *output,
     unsigned delay) {
 
-    output->state = DigOutput::State::delayedToggle;
-    output->delayCnt = delay;
+    eosAssert(output != nullptr);
+
+    output->_state = DigOutput::State::delayedToggle;
+    output->_delayCnt = delay;
 }
 
 
@@ -432,13 +452,15 @@ void DigOutputService::cmdDelayedToggle(
 /// \param    width: L'amplada del puls.
 ///
 void DigOutputService::cmdDelayedPulse(
-    DigOutput* output,
+    DigOutput *output,
     unsigned delay,
     unsigned width) {
 
-    output->state = DigOutput::State::delayedPulse;
-    output->delayCnt = delay;
-    output->widthCnt = width;
+    eosAssert(output != nullptr);
+
+    output->_state = DigOutput::State::delayedPulse;
+    output->_delayCnt = delay;
+    output->_widthCnt = width;
 }
 
 
@@ -449,44 +471,44 @@ void DigOutputService::cmdDelayedPulse(
 void DigOutputService::cmdTimeOut(
     unsigned time) {
 
-    for (auto it = outputs.begin(); it != outputs.end(); it++) {
+    for (auto it = _outputs.begin(); it != _outputs.end(); it++) {
 
-        DigOutput* output = *it;
+        DigOutput *output = *it;
 
-      	switch (output->state) {
+      	switch (output->_state) {
             case DigOutput::State::pulse:
-                if (output->widthCnt <= time) {
-                    halGPIOTogglePin(output->port, output->pin);
-                    output->state = DigOutput::State::idle;
+                if (output->_widthCnt <= time) {
+                    halGPIOTogglePin(output->_port, output->_pin);
+                    output->_state = DigOutput::State::idle;
                 }
                 else
-                    output->widthCnt -= time;
+                    output->_widthCnt -= time;
                 break;
 
             case DigOutput::State::delayedSet:
             case DigOutput::State::delayedClear:
             case DigOutput::State::delayedToggle:
             case DigOutput::State::delayedPulse:
-                if (output->delayCnt <= time) {
-                    switch (output->state) {
+                if (output->_delayCnt <= time) {
+                    switch (output->_state) {
                         case DigOutput::State::delayedSet:
-                            halGPIOSetPin(output->port, output->pin);
-                            output->state = DigOutput::State::idle;
+                            halGPIOSetPin(output->_port, output->_pin);
+                            output->_state = DigOutput::State::idle;
                             break;
 
                         case DigOutput::State::delayedClear:
-                            halGPIOClearPin(output->port, output->pin);
-                            output->state = DigOutput::State::idle;
+                            halGPIOClearPin(output->_port, output->_pin);
+                            output->_state = DigOutput::State::idle;
                             break;
 
                         case DigOutput::State::delayedToggle:
-                            halGPIOTogglePin(output->port, output->pin);
-                            output->state = DigOutput::State::idle;
+                            halGPIOTogglePin(output->_port, output->_pin);
+                            output->_state = DigOutput::State::idle;
                             break;
 
                         case DigOutput::State::delayedPulse:
-                            halGPIOTogglePin(output->port, output->pin);
-                            output->state = DigOutput::State::pulse;
+                            halGPIOTogglePin(output->_port, output->_pin);
+                            output->_state = DigOutput::State::pulse;
                             break;
 
                         default:
@@ -494,7 +516,7 @@ void DigOutputService::cmdTimeOut(
                     }
                 }
                 else
-                    output->delayCnt -= time;
+                    output->_delayCnt -= time;
                 break;
 
             default:
@@ -513,11 +535,11 @@ void DigOutputService::tmrInterruptFunction(
 	uint32_t event) {
 
 	if (event == HAL_TMR_EVENT_UPDATE) {
-		Command cmd;
-		cmd.opCode = OpCode::timeOut;
-		cmd.param1 = 1;
-
-		commandQueue.pushISR(cmd);
+		Command cmd = {
+            .opCode = OpCode::timeOut,
+            .param1 = 1
+        };
+		_commandQueue.pushISR(cmd);
 	}
 }
 
@@ -530,10 +552,10 @@ void DigOutputService::tmrInterruptFunction(
 ///
 void DigOutputService::tmrInterruptFunction(
 	TMRHandler handler,
-	void* params,
+	void *params,
 	uint32_t event) {
 
-	DigOutputService* service = static_cast<DigOutputService*>(params);
+	DigOutputService *service = static_cast<DigOutputService*>(params);
     if (service != nullptr)
         service->tmrInterruptFunction(event);
 }
@@ -548,12 +570,12 @@ DigOutput::DigOutput(
     DigOutputService *service,
     const Settings &settings):
 
-    service(nullptr),
-    port(settings.port),
-    pin(settings.pin),
-    state(State::idle),
-	delayCnt(0),
-	widthCnt(0) {
+    _service(nullptr),
+    _port(settings.port),
+    _pin(settings.pin),
+    _state(State::idle),
+	_delayCnt(0),
+	_widthCnt(0) {
 
     if (service != nullptr)
         service->addOutput(this);
@@ -565,6 +587,6 @@ DigOutput::DigOutput(
 ///
 DigOutput::~DigOutput() {
 
-    if (service != nullptr)
-        service->removeOutput(this);
+    if (_service != nullptr)
+        _service->removeOutput(this);
 }

@@ -14,7 +14,7 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 Panel::Panel() :
-	color(COLOR_Blue) {
+	_background(Brush(COLOR_Transparent)) {
 
 }
 
@@ -23,11 +23,11 @@ Panel::Panel() :
 /// \brief    Assigna el color.
 /// \param    value: El color.
 ///
-void Panel::setColor(
-	const Color &value) {
+void Panel::setBackground(
+	const Brush &value) {
 
-	if (color != value) {
-		color = value;
+	if (_background != value) {
+		_background = value;
 		invalidate();
 	}
 }
@@ -40,7 +40,7 @@ void Panel::setColor(
 void Panel::onRender(
 	RenderContext *context) {
 
-	if (!color.isTransparent()) {
+	if (!_background.getColor().isTransparent()) {
 
 		// Inicia el renderitzat.
 		//
@@ -54,7 +54,8 @@ void Panel::onRender(
 
 		// Dibuixa el fons.
 		//
-		g.fillRectangle(0, 0, width, height, color);
+		Pen pen(COLOR_Transparent);
+		g.paintRectangle(pen, _background, Rect(0, 0, width, height));
 
 		// Finalitza el renderitzat.
 		//

@@ -21,7 +21,7 @@ void Graphics::drawCircle(
     int x,
     int y,
     int r,
-	const Color& color) const {
+	Color color) const {
 
     int xx = r;
     int yy = 0;
@@ -59,7 +59,7 @@ void Graphics::fillCircle(
     int cx,
     int cy,
     int r,
-	const Color& color) const {
+	Color color) const {
 
     int x = r;
     int y = 0;

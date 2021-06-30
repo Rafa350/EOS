@@ -234,7 +234,7 @@ namespace eos {
                     /// \brief Buida el array i borra el contenidor.
                     ///
                     void clear() {
-                        freeContainer(elements);
+                        Container::free(elements);
                         size = 0;
                         capacity = 0;
                         elements = nullptr;

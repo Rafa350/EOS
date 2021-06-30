@@ -8,6 +8,7 @@
 #include "Services/Gui/eosThickness.h"
 #include "Services/Gui/Visuals/eosDecorator.h"
 #include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosBrush.h"
 
 
 namespace eos {
@@ -16,30 +17,30 @@ namespace eos {
 
     class Border: public Decorator {
     	private:
-    		Color backgroundColor;
-    		Color color;
-    		Thickness thickness;
-    		int radius;
-    		Visual *content;
+    		Brush _background;
+    		Brush _borderBrush;
+    		Thickness _borderThickness;
+    		int _radius;
+    		Visual *_content;
 
     	protected:
+    		Size measureOverride(const Size &availableSize) const override;
     		void onRender(RenderContext *context) override;
-			Size measureOverride(const Size &availableSize) const override;
 
         public:
     		Border();
 
-            void setBackgroundColor(const Color &value);
-            void setColor(const Color &value);
-            void setThickness(int value);
+            void setBackground(const Brush &value);
+            void setBorderBrush(const Brush &value);
+            void setBorderThickness(int value);
             void setRadius(int value);
-            void setContent(Visual* value);
+            void setContent(Visual *value);
 
-            inline Color getColor() const { return color; }
-            inline Color getBackgroundColor() const { return backgroundColor; }
-            inline const Thickness& getThickness() const { return thickness; }
-            inline int getRadius() const { return radius; }
-            inline Visual* getContent() const { return content; }
+            inline const Brush& getBorderBrush() const { return _borderBrush; }
+            inline const Brush& getBackground() const { return _background; }
+            inline const Thickness& getThickness() const { return _borderThickness; }
+            inline int getRadius() const { return _radius; }
+            inline Visual* getContent() const { return _content; }
     };
 
 }

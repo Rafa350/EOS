@@ -12,9 +12,9 @@ using namespace eos;
 /// \param    application: Aplicacio al que pertany.
 ///
 Service::Service(
-	Application* application) :
+	Application *application) :
 
-    application(nullptr),
+    _application(nullptr),
 	stackSize(512),
 	priority(Task::Priority::normal),
     initialized(false),
@@ -36,8 +36,8 @@ Service::~Service() {
 	// Al destruir-se, s'elimina ell mateix de la llista de serveis
 	// de l'aplicacio.
 	//
-    if (application != nullptr)
-        application->removeService(this);
+    if (_application != nullptr)
+        _application->removeService(this);
 }
 
 

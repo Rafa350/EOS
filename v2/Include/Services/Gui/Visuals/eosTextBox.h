@@ -13,8 +13,8 @@ namespace eos {
 
 	class TextBox: public Control {
 		private:
-			Color textColor;
-			String text;
+			Color _textColor;
+			String _text;
 
 		protected:
 			void onKeyboardPress(KeyCode keyCode, char ch) override;
@@ -24,7 +24,8 @@ namespace eos {
 			TextBox();
 
 			void clearText();
-			void setText(const String &text);
+			void setTextColor(Color value);
+			void setText(const String &value);
 	};
 }
 

@@ -20,7 +20,7 @@ void Graphics::drawEllipse(
 	int y1,
 	int x2,
 	int y2,
-	const Color& color) const {
+	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -157,7 +157,7 @@ void Graphics::fillEllipse(
 	int y1,
 	int x2,
 	int y2,
-	const Color& color) const {
+	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//

@@ -62,12 +62,12 @@ namespace eos {
             };
 
         private:
-            const unsigned commandQueueSize = DigOutputService_CommandQueueSize;
-            const unsigned minDelay = DigOutputService_MinDelay;
-            const unsigned minWidth = DigOutputService_MinWidth;
-            TMRHandler hTimer;
-            CommandQueue commandQueue;
-            DigOutputList outputs;
+            const unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
+            const unsigned _minDelay = DigOutputService_MinDelay;
+            const unsigned _minWidth = DigOutputService_MinWidth;
+            TMRHandler _hTimer;
+            CommandQueue _commandQueue;
+            DigOutputList _outputs;
 
         private:
             void cmdClear(DigOutput* output);
@@ -126,55 +126,55 @@ namespace eos {
                 GPIOPin pin;
             };
 
-            DigOutputService *service;
-            GPIOPort port;
-            GPIOPin pin;
-            State state;
-            unsigned delayCnt;
-            unsigned widthCnt;
+            DigOutputService *_service;
+            GPIOPort _port;
+            GPIOPin _pin;
+            State _state;
+            unsigned _delayCnt;
+            unsigned _widthCnt;
 
         public:
-            DigOutput(DigOutputService* service, const Settings &settings);
+            DigOutput(DigOutputService *service, const Settings &settings);
             ~DigOutput();
 
-            inline DigOutputService* getService() const {
-                return service;
+            inline DigOutputService *getService() const {
+                return _service;
             }
 
             inline void set() {
-                service->set(this);
+                _service->set(this);
             }
 
             inline void clear() {
-                service->clear(this);
+                _service->clear(this);
             }
 
             inline void write(bool value) {
-                service->write(this, value);
+                _service->write(this, value);
             }
 
             inline void toggle() {
-                service->toggle(this);
+                _service->toggle(this);
             }
 
             inline void pulse(unsigned width) {
-                service->pulse(this, width);
+                _service->pulse(this, width);
             }
 
             inline void delayedSet(unsigned delay) {
-                service->delayedSet(this, delay);
+                _service->delayedSet(this, delay);
             }
 
             inline void delayedClear(unsigned delay) {
-                service->delayedClear(this, delay);
+                _service->delayedClear(this, delay);
             }
 
             inline void delayedToggle(unsigned delay) {
-                service->delayedToggle(this, delay);
+                _service->delayedToggle(this, delay);
             }
 
             inline void delayedPulse(unsigned delay, unsigned width) {
-                service->delayedPulse(this, delay, width);
+                _service->delayedPulse(this, delay, width);
             }
 
             friend DigOutputService;

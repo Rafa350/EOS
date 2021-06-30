@@ -15,26 +15,45 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 TextBox::TextBox():
-	textColor(COLOR_Red) {
-
-	text = "Hola capullo.";
+	_textColor(COLOR_Red) {
 }
 
 
+/// ---------------------------------------------------------------------
+/// \brief    Asigna el text
+/// \param    text: El text.
+///
 void TextBox::setText(
-	const String &text) {
+	const String &value) {
 
-	if (this->text != text) {
-		this->text = text;
+	if (_text != value) {
+		_text = value;
 		invalidate();
 	}
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Borra el text.
+///
 void TextBox::clearText() {
 
-	if (!text.isEmpty()) {
-		text = "";
+	if (!_text.isEmpty()) {
+		_text = "";
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \bried    Asigna el color del text.
+/// \param    value: El color.
+///
+void TextBox::setTextColor(
+	Color value) {
+
+	if (_textColor != value) {
+		_textColor = value;
 		invalidate();
 	}
 }
@@ -68,7 +87,7 @@ void TextBox::onRender(
 	g.fillRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_DarkSeaGreen);
 
 	g.setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::center);
-	g.drawText(0, y2 / 2, textColor, text, 0, -1);
+	g.drawText(0, y2 / 2, _textColor, _text, 0, -1);
 
 	context->endRender();
 }

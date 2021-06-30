@@ -7,6 +7,7 @@
 #include "Services/Gui/eosVisualUtils.h"
 #include "Services/Gui/eosThickness.h"
 #include "Services/Gui/Visuals/eosLabel.h"
+#include "Services/Gui/Visuals/eosBorder.h"
 #include "Services/Gui/Visuals/eosPanel.h"
 #include "Services/Gui/Visuals/eosPushButton.h"
 #include "Services/Gui/Visuals/eosScreen.h"
@@ -14,6 +15,7 @@
 #include "Services/Gui/Visuals/eosTextBox.h"
 #include "Services/Gui/Visuals/eosVirtualKeyboard.h"
 #include "System/Graphics/eosBitmap.h"
+#include "System/Graphics/eosColorDefinitions.h"
 #include "appApplication.h"
 #include "appLedService.h"
 
@@ -54,12 +56,20 @@ void MyApplication::onInitialize() {
 }
 
 
-Panel *MyApplication::createMainPanel() {
+Visual *MyApplication::createMainPanel() {
+
+	Border *border = new Border();
+	border->setHorizontalAlignment(HorizontalAlignment::center);
+	border->setVerticalAlignment(VerticalAlignment::center);
+	border->setBackground(Brush(COLOR_Blue));
+	border->setBorderBrush(Brush(COLOR_Yellow));
+	border->setBorderThickness(5);
 
 	StackPanel *sp = new StackPanel();
 	sp->setOrientation(Orientation::vertical);
 	sp->setHorizontalAlignment(HorizontalAlignment::center);
 	sp->setVerticalAlignment(VerticalAlignment::center);
+	border->setContent(sp);
 
 	TextBox *tb = new TextBox();
 	tb->setId(1000);
@@ -75,7 +85,7 @@ Panel *MyApplication::createMainPanel() {
 	kb->setEventCallback(&virtualKeyboardEventCallback);
 	sp->addChild(kb);
 
-	return sp;
+	return border;
 }
 
 

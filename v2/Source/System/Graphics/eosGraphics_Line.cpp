@@ -12,16 +12,18 @@ using namespace eos;
 
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa un linia amb el pen actual.
+/// \brief    pen: El pen per dibuixar la linia
 /// \param    p1: Punt inicial.
 /// \param    p2: Punt final.
 ///
 void Graphics::paintLine(
+	const Pen &pen,
 	const Point& p1,
 	const Point& p2) {
 
-	if (_pen.getStyle() != PenStyle::Null) {
+	if (pen.getStyle() != PenStyle::Null) {
 
-		Color color = _pen.getColor();
+		Color color = pen.getColor();
 		drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color);
 	}
 }
@@ -41,7 +43,7 @@ void Graphics::drawLine(
     int y1,
     int x2,
     int y2,
-	const Color& color) const {
+	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -157,7 +159,7 @@ void Graphics::drawLine(
     int y1,
     int x2,
     int y2,
-	const Color& color) const {
+	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -349,7 +351,7 @@ void Graphics::drawHLine(
 	int x1,
 	int x2,
 	int y,
-	const Color& color) const {
+	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//
@@ -378,7 +380,7 @@ void Graphics::drawVLine(
 	int x,
 	int y1,
 	int y2,
-	const Color& color) const {
+	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//

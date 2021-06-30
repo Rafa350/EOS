@@ -169,6 +169,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -322,6 +327,11 @@
 			<name>inc/Framework/EOS/OSAL/osalTimer.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalTimer.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/eosService.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/eosService.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Collections</name>

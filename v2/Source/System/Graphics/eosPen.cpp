@@ -9,62 +9,49 @@
 using namespace eos;
 
 
-class Pen::Impl {
-	private:
-		static MemoryPoolAllocator _allocator;
-
+/// \brief Estructura que representa les dades internes del Pen
+//
+class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 	public:
 		Color color;
 		int thickness;
 		PenStyle style;
-
-	public:
-    	void* operator new(unsigned size);
-    	void operator delete(void*p);
 };
-
-
-MemoryPoolAllocator Pen::Impl::_allocator(sizeof(Pen::Impl), eosGraphics_MaxPens);
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador new
-/// \param    size: Tamany del bloc.
-/// \return   El bloc.
-///
-void* Pen::Impl::operator new(
-	unsigned size) {
-
-	eosAssert(size == sizeof(Pen::Impl));
-
-	void* p = Pen::Impl::_allocator.allocate();
-	eosAssert(p != 0);
-
-	return p;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador delete.
-/// \param    p: El bloc.
-///
-void Pen::Impl::operator delete(
-	void* p) {
-
-	eosAssert(p != nullptr);
-
-	Pen::Impl::_allocator.deallocate(p);
-}
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
+///
+Pen::Pen() :
+	_pImpl(allocate()) {
+
+	_pImpl->style = PenStyle::Solid;
+	_pImpl->color = COLOR_Black;
+	_pImpl->thickness = 1;
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
 /// \param    color: El color de linia.
-/// \param    thickness: Emplada de linia.
+///
+Pen::Pen(
+	Color color):
+
+	_pImpl(allocate()) {
+
+	_pImpl->style = PenStyle::Solid;
+	_pImpl->color = color;
+	_pImpl->thickness = 1;
+}
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    color: El color de linia.
+/// \param    thickness: Amplada de linia.
 /// \param    style: Estil.
 ///
 Pen::Pen(
-	const Color& color,
+	Color color,
 	int thickness,
 	PenStyle style) :
 
@@ -77,18 +64,37 @@ Pen::Pen(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    color: El color de linia.
+/// \param    thickness: Amplada de linia.
+/// \param    style: Estil.
+///
+Pen::Pen(
+	const Brush &brush,
+	int thickness,
+	PenStyle style) :
+
+	_pImpl(allocate()) {
+
+	_pImpl->style = style;
+	_pImpl->color = brush.getColor();
+	_pImpl->thickness = thickness;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Constructor de copia.
 /// \param    pen: L'objecte a copiar.
 ///
 Pen::Pen(
-	const Pen& pen) :
+	const Pen &pen) :
 
 	_pImpl(pen._pImpl) {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Descruttor
+/// \brief    Destructor
 ///
 Pen::~Pen() {
 
@@ -97,15 +103,45 @@ Pen::~Pen() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Operador d'asignacio.
-/// \param    L'objecte a asignar.
+/// \param    pen L'objecte a asignar.
 /// \return   El propi objecte.
 ///
 Pen& Pen::operator = (
-	const Pen& pen) {
+	const Pen &pen) {
 
 	_pImpl = pen._pImpl;
 
 	return *this;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operator ==
+/// \param    pen: L'operand.
+/// \return   True si son iguals.
+///
+bool Pen::operator == (
+	const Pen &pen) const {
+
+	// Compara l'adresa de les dades internes per verificar
+	// si son iguals.
+	//
+	return &(*_pImpl) == &(*pen._pImpl);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operator !=
+/// \param    pen: L'operand.
+/// \return   True si son diferents.
+///
+bool Pen::operator != (
+	const Pen &pen) const {
+
+	// Compara l'adresa de les dades internes per verificar
+	// si son diferents.
+	//
+	return &(*_pImpl) != &(*pen._pImpl);
 }
 
 

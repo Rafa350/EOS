@@ -19,14 +19,14 @@ namespace eos {
 
     class Label: public Control {
     	private:
-    		Color textColor;
-    		Color backgroundColor;
-    		HorizontalTextAlign horizontalTextAlign;
-    		VerticalTextAlign verticalTextAlign;
-    		String fontName;
-    		int fontHeight;
-    		FontStyle fontStyle;
-    		String text;
+    		Color _textColor;
+    		Color _backgroundColor;
+    		HorizontalTextAlign _horizontalTextAlign;
+    		VerticalTextAlign _verticalTextAlign;
+    		String _fontName;
+    		int _fontHeight;
+    		FontStyle _fontStyle;
+    		String _text;
 
     	protected:
     		void onRender(RenderContext* context) override;
@@ -38,8 +38,8 @@ namespace eos {
         public:
     		Label();
 
-            void setTextColor(const Color& value);
-            void setBackgroundColor(const Color& value);
+            void setTextColor(Color value);
+            void setBackgroundColor(Color value);
             void setFontName(const String& value);
             void setFontHeight(int value);
             void setFontStyle(FontStyle value);
@@ -47,9 +47,9 @@ namespace eos {
             void setHorizontalTextAlign(HorizontalTextAlign value);
             void setVerticalTextAlign(VerticalTextAlign value);
 
-            inline Color getTextColor() const { return textColor; }
-            inline Color getBackgroundColor() const { return backgroundColor; }
-            inline const String& getText() const { return text; }
+            inline Color getTextColor() const { return _textColor; }
+            inline Color getBackgroundColor() const { return _backgroundColor; }
+            inline const String& getText() const { return _text; }
     };
 
 }

@@ -13,17 +13,17 @@ using namespace eos;
 /// \brief    Constructor de l'objecte.
 ///
 Visual::Visual():
-	parent(nullptr),
-	needRender(false),
-	visibility(Visibility::visible),
-	size(0, 0),
-	minSize(0, 0),
-	maxSize(INT32_MAX, INT32_MAX),
-	bounds(0, 0, 0, 0),
-	margin(0),
-	horizontalAlignment(HorizontalAlignment::stretch),
-	verticalAlignment(VerticalAlignment::stretch),
-	id(0) {
+	_parent(nullptr),
+	_needRender(false),
+	_visibility(Visibility::visible),
+	_size(0, 0),
+	_minSize(0, 0),
+	_maxSize(INT32_MAX, INT32_MAX),
+	_bounds(0, 0, 0, 0),
+	_margin(0),
+	_horizontalAlignment(HorizontalAlignment::stretch),
+	_verticalAlignment(VerticalAlignment::stretch),
+	_id(0) {
 }
 
 
@@ -32,11 +32,11 @@ Visual::Visual():
 ///
 Visual::~Visual() {
 
-	if (parent != nullptr)
-		parent->removeVisual(this);
+	if (_parent != nullptr)
+		_parent->removeVisual(this);
 
-	while (!childs.isEmpty())
-		delete childs.getBack();
+	while (!_childs.isEmpty())
+		delete _childs.getBack();
 }
 
 
@@ -45,7 +45,7 @@ Visual::~Visual() {
 ///
 void Visual::invalidate() {
 
-	needRender = true;
+	_needRender = true;
 }
 
 
@@ -63,12 +63,12 @@ void Visual::invalidateLayout() {
 ///
 bool Visual::isRenderizable() const {
 
-	if (needRender)
+	if (_needRender)
 		return true;
 
 	else {
-		for (auto it = childs.begin(); it != childs.end(); it++) {
-			const Visual* child = *it;
+		for (auto it = _childs.begin(); it != _childs.end(); it++) {
+			const Visual *child = *it;
 			if (child->isRenderizable())
 				return true;
 		}
@@ -83,9 +83,9 @@ bool Visual::isRenderizable() const {
 ///
 bool Visual::isVisible() const {
 
-	if (visibility == Visibility::visible) {
-		if (parent != nullptr)
-			return parent->isVisible();
+	if (_visibility == Visibility::visible) {
+		if (_parent != nullptr)
+			return _parent->isVisible();
 		else
 			return true;
 	}
@@ -103,7 +103,7 @@ bool Visual::render(
 	RenderContext *context) {
 
 	bool renderized = false;
-	needRender = false;
+	_needRender = false;
 
 	if (isVisible())
 		onRender(context);
@@ -111,8 +111,8 @@ bool Visual::render(
 
 	// Continua amb els fills.
 	//
-	for (auto it = childs.begin(); it != childs.end(); it++) {
-		Visual* child = *it;
+	for (auto it = _childs.begin(); it != _childs.end(); it++) {
+		Visual *child = *it;
 		if (child->render(context))
 			renderized = true;
 	}
@@ -139,7 +139,7 @@ void Visual::dispatch(
 void Visual::send(
 	const Message &msg) {
 
-	MsgQueue* msgQueue = MsgQueue::getInstance();
+	MsgQueue *msgQueue = MsgQueue::getInstance();
 	msgQueue->send(msg);
 }
 
@@ -152,10 +152,10 @@ void Visual::addVisual(
 	Visual *visual) {
 
 	eosAssert(visual != nullptr);
-	eosAssert(visual->parent == nullptr);
+	eosAssert(visual->_parent == nullptr);
 
-	childs.pushBack(visual);
-	visual->parent = this;
+	_childs.pushBack(visual);
+	visual->_parent = this;
 
 	invalidateLayout();
 }
@@ -169,10 +169,10 @@ void Visual::removeVisual(
 	Visual *visual) {
 
 	eosAssert(visual != nullptr);
-	eosAssert(visual->parent != nullptr);
+	eosAssert(visual->_parent != nullptr);
 
-	visual->parent = nullptr;
-	childs.removeAt(childs.indexOf(visual));
+	visual->_parent = nullptr;
+	_childs.removeAt(_childs.indexOf(visual));
 
 	invalidateLayout();
 }
@@ -183,41 +183,41 @@ void Visual::removeVisual(
 ///
 void Visual::removeVisuals() {
 
-	while (!childs.isEmpty())
-        removeVisual(childs.getBack());
+	while (!_childs.isEmpty())
+        removeVisual(_childs.getBack());
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Calcula la mida del visual. Primer par del layout.
+/// \brief    Calcula la mida del visual. Primera par del layout.
 /// \param    availableSize: Indica el tamany disponible.
 ///
 void Visual::measure(
-	const Size& availableSize) {
+	const Size &availableSize) {
 
 	if (isVisible()) {
 
-		Size measuredSize = measureOverride(margin.deflate(availableSize));
-		int declaredWidth = size.getWidth();
-		int declaredHeight = size.getHeight();
+		Size measuredSize = measureOverride(_margin.deflate(availableSize));
+		int declaredWidth = _size.getWidth();
+		int declaredHeight = _size.getHeight();
 		int width = declaredWidth != 0 ? declaredWidth : measuredSize.getWidth();
 		int height = declaredHeight != 0 ? declaredHeight : measuredSize.getHeight();
 
 		// Ajusta l'amplada als limits
 		//
-		width = Math::max(minSize.getWidth(), width);
-		width = Math::min(maxSize.getWidth(), width);
+		width = Math::max(_minSize.getWidth(), width);
+		width = Math::min(_maxSize.getWidth(), width);
 
 		// Ajusta l'alçada als limits
 		//
-		height = Math::max(minSize.getHeight(), height);
-		height = Math::min(maxSize.getHeight(), height);
+		height = Math::max(_minSize.getHeight(), height);
+		height = Math::min(_maxSize.getHeight(), height);
 
-		desiredSize = margin.inflate(Size(width, height));
+		_desiredSize = _margin.inflate(Size(width, height));
 	}
 
 	else
-		desiredSize = Size();
+		_desiredSize = Size();
 }
 
 
@@ -232,17 +232,17 @@ void Visual::arrange(
 
 		// Ajusta el marge
 		//
-		Rect deflatedFinalRect = margin.deflate(finalRect);
+		Rect deflatedFinalRect = _margin.deflate(finalRect);
 		int deflatedFinalWidth = deflatedFinalRect.getWidth();
 		int deflatedFinalHeight = deflatedFinalRect.getHeight();
 
 		int availableWidth = deflatedFinalWidth;
-        if (horizontalAlignment != HorizontalAlignment::stretch)
-            availableWidth = Math::max(0, Math::min(availableWidth, desiredSize.getWidth() - margin.getLeft() - margin.getRight()));
+        if (_horizontalAlignment != HorizontalAlignment::stretch)
+            availableWidth = Math::max(0, Math::min(availableWidth, _desiredSize.getWidth() - _margin.getLeft() - _margin.getRight()));
 
 		int availableHeight = deflatedFinalHeight;
-        if (verticalAlignment != VerticalAlignment::stretch)
-            availableHeight = Math::max(0, Math::min(availableHeight, desiredSize.getHeight() - margin.getTop() - margin.getBottom()));
+        if (_verticalAlignment != VerticalAlignment::stretch)
+            availableHeight = Math::max(0, Math::min(availableHeight, _desiredSize.getHeight() - _margin.getTop() - _margin.getBottom()));
 
         // Obte el tamany definitiu
 		//
@@ -250,10 +250,10 @@ void Visual::arrange(
 
 		int x = deflatedFinalRect.getX();
 		int y = deflatedFinalRect.getY();
-		int width = horizontalAlignment == HorizontalAlignment::stretch ? deflatedFinalWidth : arrangedSize.getWidth();
-		int height = verticalAlignment == VerticalAlignment::stretch ? deflatedFinalHeight : arrangedSize.getHeight();
+		int width = _horizontalAlignment == HorizontalAlignment::stretch ? deflatedFinalWidth : arrangedSize.getWidth();
+		int height = _verticalAlignment == VerticalAlignment::stretch ? deflatedFinalHeight : arrangedSize.getHeight();
 
-		switch (horizontalAlignment) {
+		switch (_horizontalAlignment) {
 			case HorizontalAlignment::center:
 			case HorizontalAlignment::stretch:
 				x += (deflatedFinalWidth - width) / 2;
@@ -267,7 +267,7 @@ void Visual::arrange(
 				break;
 		}
 
-		switch (verticalAlignment) {
+		switch (_verticalAlignment) {
 			case VerticalAlignment::center:
 			case VerticalAlignment::stretch:
 				y += (deflatedFinalHeight - height) / 2;
@@ -281,7 +281,7 @@ void Visual::arrange(
 				break;
 		}
 
-		bounds = Rect(x, y, width, height);
+		_bounds = Rect(x, y, width, height);
 		invalidate();
 	}
 }
@@ -300,7 +300,7 @@ Size Visual::measureOverride(
 	int width = 0;
 	int height = 0;
 
-	for (auto it = childs.begin(); it != childs.end(); it++) {
+	for (auto it = _childs.begin(); it != _childs.end(); it++) {
 		Visual* child = *it;
 		eosAssert(child != nullptr);
 
@@ -326,7 +326,7 @@ Size Visual::measureOverride(
 Size Visual::arrangeOverride(
 	const Size& finalSize) const {
 
-	for (auto it = childs.begin(); it != childs.end(); it++) {
+	for (auto it = _childs.begin(); it != _childs.end(); it++) {
 		Visual* child = *it;
 		eosAssert(child != nullptr);
 
@@ -345,8 +345,8 @@ Size Visual::arrangeOverride(
 void Visual::setVisibility(
 	Visibility value) {
 
-	if (visibility != value) {
-		visibility = value;
+	if (_visibility != value) {
+		_visibility = value;
 		invalidateLayout();
 	}
 }
@@ -359,8 +359,8 @@ void Visual::setVisibility(
 void Visual::setSize(
 	const Size &value) {
 
-    if (size != value) {
-    	size = value;
+    if (_size != value) {
+    	_size = value;
 		invalidateLayout();
     }
 }
@@ -373,8 +373,8 @@ void Visual::setSize(
 void Visual::setMinSize(
 	const Size &value) {
 
-	if (minSize != value) {
-		minSize = value;
+	if (_minSize != value) {
+		_minSize = value;
 		invalidateLayout();
 	}
 }
@@ -387,8 +387,8 @@ void Visual::setMinSize(
 void Visual::setMargin(
 	const Thickness &value) {
 
-	if (margin != value) {
-		margin = value;
+	if (_margin != value) {
+		_margin = value;
 		invalidateLayout();
 	}
 }
@@ -401,8 +401,8 @@ void Visual::setMargin(
 void Visual::setHorizontalAlignment(
 	HorizontalAlignment value) {
 
-	if (horizontalAlignment != value) {
-		horizontalAlignment = value;
+	if (_horizontalAlignment != value) {
+		_horizontalAlignment = value;
 		invalidateLayout();
 	}
 }
@@ -415,8 +415,8 @@ void Visual::setHorizontalAlignment(
 void Visual::setVerticalAlignment(
 	VerticalAlignment value) {
 
-	if (verticalAlignment != value) {
-		verticalAlignment = value;
+	if (_verticalAlignment != value) {
+		_verticalAlignment = value;
 		invalidateLayout();
 	}
 }
@@ -427,7 +427,7 @@ void Visual::setVerticalAlignment(
 /// \param    msg: El missatge a despatxar.
 ///
 void Visual::onDispatch(
-	const Message& msg) {
+	const Message &msg) {
 
 	switch (msg.msgId) {
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
@@ -443,8 +443,8 @@ void Visual::onDispatch(
 
 		default:
 			// Si no el procesa, pasa al pare.
-			if (parent != nullptr)
-				parent->onDispatch(msg);
+			if (_parent != nullptr)
+				_parent->onDispatch(msg);
 			break;
 	}
 
@@ -456,7 +456,7 @@ void Visual::onDispatch(
 /// \param    visual: El visual desactivat al activar aquest.
 ///
 void Visual::onActivate(
-	Visual* visual) {
+	Visual *visual) {
 
 	invalidate();
 }
@@ -467,7 +467,7 @@ void Visual::onActivate(
 /// \param    visual: El visual activat al desactivar aquest.
 ///
 void Visual::onDeactivate(
-	Visual* visual) {
+	Visual *visual) {
 
 	invalidate();
 }
@@ -479,7 +479,7 @@ void Visual::onDeactivate(
 ///
 #if eosGuiService_KeyboardEnablked || eosGuiService_VirtualKeyboardEnabled
 void Visual::onDispatchKeyboardEvent(
-	const MsgKeyboard& msg) {
+	const MsgKeyboard &msg) {
 
 	switch (msg.event) {
 		case MsgKeyboardEvent::press:
@@ -518,7 +518,7 @@ void Visual::onKeyboardRelease(
 ///
 #if eosGuiService_TouchPadEnabled
 void Visual::onDispatchTouchPadEvent(
-	const MsgTouchPad& msg) {
+	const MsgTouchPad &msg) {
 
 	switch (msg.event) {
 		case MsgTouchPadEvent::enter:

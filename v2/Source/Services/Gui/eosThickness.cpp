@@ -12,10 +12,10 @@ using namespace eos;
 /// \brief Constructor per defecte.
 ///
 Thickness::Thickness():
-	left(0),
-	top(0),
-	right(0),
-	bottom(0) {
+	_left(0),
+	_top(0),
+	_right(0),
+	_bottom(0) {
 }
 
 
@@ -26,10 +26,10 @@ Thickness::Thickness():
 Thickness::Thickness(
 	int thickness):
 
-	left(thickness),
-	top(thickness),
-	right(thickness),
-	bottom(thickness) {
+	_left(thickness),
+	_top(thickness),
+	_right(thickness),
+	_bottom(thickness) {
 
 	eosAssert(thickness >= 0);
 }
@@ -41,16 +41,16 @@ Thickness::Thickness(
 /// \param vThickness: Amplada en vertical.
 ///
 Thickness::Thickness(
-	int hThickness,
-	int vThickness):
+	int horizontal,
+	int vertical):
 
-	left(hThickness),
-	top(vThickness),
-	right(hThickness),
-	bottom(vThickness) {
+	_left(horizontal),
+	_top(vertical),
+	_right(horizontal),
+	_bottom(vertical) {
 
-	eosAssert(hThickness >= 0);
-	eosAssert(vThickness >= 0);
+	eosAssert(horizontal >= 0);
+	eosAssert(vertical >= 0);
 }
 
 
@@ -60,10 +60,10 @@ Thickness::Thickness(
 	int right,
 	int bottom):
 
-	left(left),
-	top(top),
-	right(right),
-	bottom(bottom) {
+	_left(left),
+	_top(top),
+	_right(right),
+	_bottom(bottom) {
 
 	eosAssert(left >= 0);
 	eosAssert(top >= 0);
@@ -79,10 +79,10 @@ Thickness::Thickness(
 Thickness::Thickness(
 	const Thickness &t):
 
-	left(t.left),
-	top(t.top),
-	right(t.right),
-	bottom(t.bottom) {
+	_left(t._left),
+	_top(t._top),
+	_right(t._right),
+	_bottom(t._bottom) {
 
 }
 
@@ -91,37 +91,37 @@ bool Thickness::operator==(
 	const Thickness &other) const {
 
 	return
-		left == other.left &&
-		top == other.top &&
-		right == other.right &&
-		bottom == other.bottom;
+		_left == other._left &&
+		_top == other._top &&
+		_right == other._right &&
+		_bottom == other._bottom;
 }
 
 
 Rect Thickness::inflate(
-	const Rect &rect) {
+	const Rect &rect) const {
 
-	return rect.inflated(left, top, right, bottom);
+	return rect.inflated(_left, _top, _right, _bottom);
 }
 
 
 Size Thickness::inflate(
-	const Size &size) {
+	const Size &size) const {
 
-	return size.inflated(left, top, right, bottom);
+	return size.inflated(_left, _top, _right, _bottom);
 }
 
 
 Rect Thickness::deflate(
-	const Rect &rect) {
+	const Rect &rect) const {
 
-	return rect.inflated(-left, -top, -right, -bottom);
+	return rect.inflated(-_left, -_top, -_right, -_bottom);
 }
 
 
 Size Thickness::deflate(
-	const Size &size) {
+	const Size &size) const {
 
-	return size.inflated(-left, -top, -right, -bottom);
+	return size.inflated(-_left, -_top, -_right, -_bottom);
 }
 
