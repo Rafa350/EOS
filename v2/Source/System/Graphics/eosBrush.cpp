@@ -11,8 +11,8 @@ using namespace eos;
 
 class Brush::Impl: public PoolAllocatable<Brush::Impl, eosGraphics_MaxBrushes> {
 	public:
-		Color color;
 		BrushStyle style;
+		Color color;
 };
 
 
@@ -121,32 +121,6 @@ BrushStyle Brush::getStyle() const {
 Color Brush::getColor() const {
 
 	return _pImpl->color;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el color.
-/// \param    gX: Gradient linial X.
-/// \param    gY: Gradient linial Y.
-/// \return   El color.
-///
-Color Brush::getColor(
-	uint8_t gX,
-	uint8_t gY) const {
-
-	return getColor();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el color.
-/// \param    gR: Gradient radial.
-/// \return   El color.
-///
-Color Brush::getColor(
-	uint8_t gR) const {
-
-	return getColor();
 }
 
 

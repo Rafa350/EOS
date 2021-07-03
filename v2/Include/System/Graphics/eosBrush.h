@@ -47,9 +47,6 @@ namespace eos {
 		Color getColor() const;
 		BrushStyle getStyle() const;
 
-		Color getColor(uint8_t gX, uint8_t gY) const;
-		Color getColor(uint8_t gR) const;
-
 		bool isNull() const;
 	};
 
