@@ -14,15 +14,16 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 Border::Border():
-	_background(Brush(COLOR_Red)),
-	_borderBrush(Brush(COLOR_Black)),
+	_background(Brush(BrushStyle::solid, COLOR_Red)),
+	_borderBrush(Brush(BrushStyle::solid, COLOR_Black)),
 	_borderThickness(1),
-	_radius(0),
-	_content(nullptr) {
+	_radius(0) {
 
 }
 
 
+/// ----------------------------------------------------------------------
+///
 Size Border::measureOverride(
 	const Size &availableSize) const {
 
@@ -32,28 +33,8 @@ Size Border::measureOverride(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Assigna el contingut.
-/// \param    value: El contingut.
-///
-void Border::setContent(
-	Visual *value) {
-
-	if (_content != value) {
-
-		if (_content != nullptr)
-			removeVisual(_content);
-
-		_content = value;
-
-		if (_content != nullptr)
-			addVisual(_content);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna el color del perfil.
-/// \param    value: El color.
+/// \brief    Asigna la brotxa del perfil.
+/// \param    value: La brotxa
 ///
 void Border::setBorderBrush(
 	const Brush &value) {
@@ -94,8 +75,8 @@ void Border::setRadius(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el color del fons.
-/// \param    value: El color.
+/// \brief    Asigna la brotxa del fons.
+/// \param    value: La brotxa.
 ///
 void Border::setBackground(
 	const Brush &value) {
@@ -117,7 +98,7 @@ void Border::onRender(
 	Graphics &g = context->beginRender(this);
 
 	const Size &s = getBounds().getSize();
-	Pen pen(_borderBrush, _borderThickness.getLeft(), PenStyle::Solid);
+	Pen pen(PenStyle::solid, _borderBrush.getColor(), _borderThickness.getLeft());
 	g.paintRectangle(pen, _background, Rect(0, 0, s.getWidth(), s.getHeight()));
 
 	context->endRender();

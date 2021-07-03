@@ -10,9 +10,9 @@ using namespace eos;
 /// \brief    Constructor
 ///
 ButtonBase::ButtonBase():
-	pressed(false),
-	clickMode(ClickMode::atRelease),
-	eventCallback(nullptr) {
+	_pressed(false),
+	_clickMode(ClickMode::atRelease),
+	_eventCallback(nullptr) {
 
 }
 
@@ -36,10 +36,10 @@ void ButtonBase::onTouchPadPress(
 
 	onPress();
 
-	if (clickMode == ClickMode::atPress)
+	if (_clickMode == ClickMode::atPress)
 		onClick();
 
-	pressed = true;
+	_pressed = true;
 
 	Visual::onTouchPadPress(position);
 }
@@ -54,10 +54,10 @@ void ButtonBase::onTouchPadRelease() {
 
 	onRelease();
 
-	if (pressed && (clickMode == ClickMode::atRelease))
+	if (_pressed && (_clickMode == ClickMode::atRelease))
 		onClick();
 
-	pressed = false;
+	_pressed = false;
 
 	Visual::onTouchPadRelease();
 }
@@ -72,7 +72,7 @@ void ButtonBase::onTouchPadLeave() {
 
 	onRelease();
 
-	pressed = false;
+	_pressed = false;
 
 	Visual::onTouchPadLeave();
 }
@@ -84,12 +84,12 @@ void ButtonBase::onTouchPadLeave() {
 ///
 void ButtonBase::onClick() {
 
-	if (eventCallback != nullptr) {
+	if (_eventCallback != nullptr) {
 		EventArgs args = {
 			.button = this,
 			.event = EventType::click
 		};
-		eventCallback->execute(args);
+		_eventCallback->execute(args);
 	}
 }
 
@@ -99,12 +99,12 @@ void ButtonBase::onClick() {
 ///
 void ButtonBase::onPress() {
 
-	if (eventCallback != nullptr) {
+	if (_eventCallback != nullptr) {
 		EventArgs args = {
 			.button = this,
 			.event = EventType::press
 		};
-		eventCallback->execute(args);
+		_eventCallback->execute(args);
 	}
 }
 
@@ -114,11 +114,11 @@ void ButtonBase::onPress() {
 ///
 void ButtonBase::onRelease() {
 
-	if (eventCallback != nullptr) {
+	if (_eventCallback != nullptr) {
 		EventArgs args = {
 			.button = this,
 			.event = EventType::release
 		};
-		eventCallback->execute(args);
+		_eventCallback->execute(args);
 	}
 }

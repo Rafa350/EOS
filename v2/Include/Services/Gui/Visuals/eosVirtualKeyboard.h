@@ -29,8 +29,8 @@ namespace eos {
 			typedef CallbackP1<VirtualKeyboard, const ButtonBase::EventArgs&> ButtonEventCallback;
 
 		private:
-			const IEventCallback* eventCallback;
-			ButtonEventCallback buttonEventCallback;
+			const IEventCallback *_eventCallback;
+			ButtonEventCallback _buttonEventCallback;
 
 		private:
 			PushButton *createPushButton(const String& text, const Size &size);
@@ -43,23 +43,23 @@ namespace eos {
 			VirtualKeyboard();
 
 			inline const ButtonEventCallback *getButtonEventCallback() const {
-				return &buttonEventCallback;
+				return &_buttonEventCallback;
 			}
 
 			inline void setEventCallback(const IEventCallback *callback) {
-				eventCallback = callback;
+				_eventCallback = callback;
 			}
 	};
 
 	class VirtualKeyboardTemplate: public ITemplate {
 		private:
-			VirtualKeyboard* visual;
+			VirtualKeyboard *_visual;
 
 		private:
-			PushButton* createPushButton(const String& text, const Size& size);
+			PushButton* createPushButton(const String &text, const Size &size);
 
 		public:
-			VirtualKeyboardTemplate(VirtualKeyboard* visual);
+			VirtualKeyboardTemplate(VirtualKeyboard *visual);
 			void applyTemplate() override;
 	};
 }

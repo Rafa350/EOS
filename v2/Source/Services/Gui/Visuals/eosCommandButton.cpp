@@ -10,9 +10,9 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 CommandButton::CommandButton():
-	id(-1),
-	param(nullptr),
-	target(nullptr) {
+	_id(-1),
+	_param(nullptr),
+	_target(nullptr) {
 
 }
 
@@ -22,12 +22,12 @@ CommandButton::CommandButton():
 ///
 void CommandButton::onClick() {
 
-	if (id != -1) {
+	if (_id != -1) {
 		Message msg;
 		msg.msgId = MsgId::commandEvent;
-		msg.target = (target == nullptr) ? getParent() : target;
-		msg.command.id = id;
-		msg.command.param = param;
+		msg.target = (_target == nullptr) ? getParent() : _target;
+		msg.command.id = _id;
+		msg.command.param = _param;
 		send(msg);
 	}
 

@@ -17,7 +17,7 @@ using namespace eos;
 RenderContext::RenderContext(
 	Graphics *graphics):
 
-	graphics(graphics) {
+	_graphics(graphics) {
 }
 
 
@@ -33,16 +33,17 @@ Graphics &RenderContext::beginRender(
 
 	// Selecciona el rectangle de retall
 	//
-	graphics->setClip(VisualUtils::getClip(visual));
+	_graphics->setClip(VisualUtils::getClip(visual));
 
 	// Aplica una translacio per situar l'origen de coordinades, al origen
 	// del widged
 	//
 	Transformation t;
 	t.translate(VisualUtils::getPosition(visual));
-	graphics->setTransformation(t);
+	_graphics->setTransformation(t);
+	//_graphics->push();
 
-	return *graphics;
+	return *_graphics;
 }
 
 
@@ -51,4 +52,5 @@ Graphics &RenderContext::beginRender(
 ///
 void RenderContext::endRender() {
 
+	//_graphics->pop();
 }

@@ -11,7 +11,7 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 StackPanel::StackPanel():
-	orientation(Orientation::vertical) {
+	_orientation(Orientation::vertical) {
 
 }
 
@@ -24,7 +24,7 @@ StackPanel::StackPanel():
 Size StackPanel::measureOverride(
 	const Size &availableSize) const {
 
-	bool isHorizontal = orientation == Orientation::horizontal;
+	bool isHorizontal = _orientation == Orientation::horizontal;
 
 	Size childAvailableSize(
 	    isHorizontal ? INT32_MAX : availableSize.getWidth(),
@@ -36,7 +36,7 @@ Size StackPanel::measureOverride(
 	const VisualList &childs = getChilds();
 	for (auto it = childs.begin(); it != childs.end(); it++) {
 
-		Visual* child = *it;
+		Visual *child = *it;
 
 		eosAssert(child != nullptr);
 
@@ -70,7 +70,7 @@ Size StackPanel::measureOverride(
 Size StackPanel::arrangeOverride(
 	const Size &finalSize) const {
 
-	bool isHorizontal = orientation == Orientation::horizontal;
+	bool isHorizontal = _orientation == Orientation::horizontal;
 
 	int childX = 0;
 	int childY = 0;
@@ -111,8 +111,8 @@ Size StackPanel::arrangeOverride(
 void StackPanel::setOrientation(
 	Orientation value) {
 
-	if (orientation != value) {
-		orientation = value;
+	if (_orientation != value) {
+		_orientation = value;
 		invalidate();
 	}
 }

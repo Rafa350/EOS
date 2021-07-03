@@ -17,29 +17,27 @@ class Brush::Impl: public PoolAllocatable<Brush::Impl, eosGraphics_MaxBrushes> {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    color: El color.
+/// \brief    Contructor.
 ///
-Brush::Brush(
-	Color color):
+Brush::Brush():
+	_pImpl(allocate()) {
 
-	_pImpl(allocate()){
-
-	_pImpl->style = BrushStyle::Solid;
-	_pImpl->color = color;
+	_pImpl->style = BrushStyle::null;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    color: El color.
 /// \param    style: L'estil.
+/// \param    color: El color.
 ///
 Brush::Brush(
-	Color color,
-	BrushStyle style):
+	BrushStyle style,
+	Color color):
 
-	_pImpl(allocate()){
+	_pImpl(allocate()) {
+
+	eosAssert(style == BrushStyle::solid);
 
 	_pImpl->style = style;
 	_pImpl->color = color;
@@ -87,19 +85,12 @@ Brush& Brush::operator = (
 bool Brush::operator == (
 	const Brush &brush) const {
 
-	return &(*_pImpl) == &(*brush._pImpl);
-}
+	Brush::Impl *b1 = &(*_pImpl);
+	Brush::Impl *b2 = &(*brush._pImpl);
 
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador !=
-/// \param    brush: El operand
-/// \return   True si son diferents.
-///
-bool Brush::operator != (
-	const Brush &brush) const {
-
-	return &(*_pImpl) != &(*brush._pImpl);
+	return
+		(b1->style == b2->style) &&
+		(b1->color == b2->color);
 }
 
 
@@ -125,8 +116,46 @@ BrushStyle Brush::getStyle() const {
 /// ----------------------------------------------------------------------
 /// \brief    Obte el color.
 /// \return   El color.
+/// \remarks  Nomes es valid per BrushStyle::solid
 ///
 Color Brush::getColor() const {
 
 	return _pImpl->color;
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el color.
+/// \param    gX: Gradient linial X.
+/// \param    gY: Gradient linial Y.
+/// \return   El color.
+///
+Color Brush::getColor(
+	uint8_t gX,
+	uint8_t gY) const {
+
+	return getColor();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el color.
+/// \param    gR: Gradient radial.
+/// \return   El color.
+///
+Color Brush::getColor(
+	uint8_t gR) const {
+
+	return getColor();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Indica si es nul.
+/// \return   True si es nul, false en cas contrari.
+///
+bool Brush::isNull() const {
+
+	return _pImpl->style == BrushStyle::null;
+}
+

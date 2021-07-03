@@ -87,6 +87,22 @@ Font& Font::operator = (
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Operador ==.
+/// \param    font: L'altre font a comparar.
+/// \return   True si son iguals.
+///
+bool Font::operator == (
+	const Font& font) const {
+
+	Font::Impl *f1 = &(*_pImpl);
+	Font::Impl *f2 = &(*font._pImpl);
+
+	return
+		f1->fontResource == f2->fontResource;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Obte l'alçada del font.
 /// \return   El resultat.
 ///

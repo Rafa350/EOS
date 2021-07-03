@@ -17,8 +17,10 @@
 namespace eos {
 
 	enum class BrushStyle: uint8_t {
-		Null,
-		Solid
+		null,
+		solid,
+		linearGradient,
+		radialGradient
 	};
 
 	class Brush {
@@ -33,21 +35,24 @@ namespace eos {
 		PImpl allocate();
 
 	public:
-		Brush(Color color);
-		Brush(Color color, BrushStyle style);
-		Brush(const Brush& brush);
+		Brush();
+		Brush(BrushStyle style, Color color);
+		Brush(const Brush &brush);
 		~Brush();
 
-		Brush& operator = (const Brush& brush);
-		bool operator == (const Brush& pen) const;
-		bool operator != (const Brush& pen) const;
+		Brush& operator = (const Brush &brush);
+		bool operator == (const Brush &brush) const;
+		bool operator != (const Brush &brush) const { return !(*this == brush); }
 
 		Color getColor() const;
 		BrushStyle getStyle() const;
 
-		void setColor(const Color& color);
-		void setStyle(BrushStyle style);
+		Color getColor(uint8_t gX, uint8_t gY) const;
+		Color getColor(uint8_t gR) const;
+
+		bool isNull() const;
 	};
+
 }
 
 

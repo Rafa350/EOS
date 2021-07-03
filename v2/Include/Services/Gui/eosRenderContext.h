@@ -12,7 +12,7 @@ namespace eos {
 
 	class RenderContext {
 		private:
-			Graphics *graphics;
+			Graphics *_graphics;
 
 		public:
 			RenderContext(Graphics *graphics);

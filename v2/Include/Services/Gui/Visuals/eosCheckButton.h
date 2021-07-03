@@ -19,7 +19,7 @@ namespace eos {
     		};
 
     	private:
-    		State state;
+    		State _state;
 
     	protected:
     		void onRender(RenderContext *context) override;
@@ -32,7 +32,7 @@ namespace eos {
 
     		inline void check() { setState(State::checked); }
     		inline void uncheck() { setState(State::unchecked); }
-    		inline bool isChecked() const { return state == State::checked; }
+    		inline bool isChecked() const { return _state == State::checked; }
     };
 
 }

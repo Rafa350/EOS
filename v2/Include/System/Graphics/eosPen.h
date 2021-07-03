@@ -18,8 +18,8 @@
 namespace eos {
 
 	enum class PenStyle: uint8_t {
-		Null,
-		Solid
+		null,
+		solid
 	};
 
 	enum class PenCapStyle {
@@ -43,24 +43,19 @@ namespace eos {
 
 		public:
 			Pen();
-			Pen(Color color);
-			Pen(Color color, int thickness, PenStyle style);
-			Pen(const Brush &brush);
-			Pen(const Brush &brush, int thickness, PenStyle style);
+			Pen(PenStyle style, Color color, int thickness);
 			Pen(const Pen &pen);
 			~Pen();
 
 			Pen& operator = (const Pen& pen);
 			bool operator == (const Pen& pen) const;
-			bool operator != (const Pen& pen) const;
+			inline bool operator != (const Pen& pen) const { return !(*this == pen); }
 
 			Color getColor() const;
 			int getThickness() const;
 			PenStyle getStyle() const;
 
-			//void setColor(const Color& color);
-			//void setThickness(int thickness);
-			//void setStyle(PenStyle style);
+			bool isNull() const;
 	};
 }
 

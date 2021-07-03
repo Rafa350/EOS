@@ -13,15 +13,14 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
-Panel::Panel() :
-	_background(Brush(COLOR_Transparent)) {
+Panel::Panel() {
 
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Assigna el color.
-/// \param    value: El color.
+/// \brief    Assigna la brotxa de fons.
+/// \param    value: La brotxa.
 ///
 void Panel::setBackground(
 	const Brush &value) {
@@ -40,7 +39,7 @@ void Panel::setBackground(
 void Panel::onRender(
 	RenderContext *context) {
 
-	if (!_background.getColor().isTransparent()) {
+	if (!_background.isNull()) {
 
 		// Inicia el renderitzat.
 		//
@@ -54,8 +53,7 @@ void Panel::onRender(
 
 		// Dibuixa el fons.
 		//
-		Pen pen(COLOR_Transparent);
-		g.paintRectangle(pen, _background, Rect(0, 0, width, height));
+		g.paintRectangle(Pen(), _background, Rect(0, 0, width, height));
 
 		// Finalitza el renderitzat.
 		//

@@ -9,7 +9,13 @@
 namespace eos {
 
 	class Decorator: public Visual {
+		private:
+			Visual *_child;
+		public:
+			Decorator();
 
+        	void setChild(Visual *value);
+        	inline Visual* getChild() const { return _child; }
 	};
 }
 

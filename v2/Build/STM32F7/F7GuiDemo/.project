@@ -1274,6 +1274,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosControl.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosDecorator.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosDecorator.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosImage.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosImage.cpp</locationURI>

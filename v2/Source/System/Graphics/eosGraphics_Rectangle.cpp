@@ -25,12 +25,12 @@ void Graphics::paintRectangle(
 	int x2 = rect.getMaxX();
 	int y2 = rect.getMaxY();
 
-	if (brush.getStyle() != BrushStyle::Null) {
+	if (!brush.isNull()) {
 		Color c = brush.getColor();
 		fillRectangle(x1, y1, x2, y2, c);
 	}
 
-	if (pen.getStyle() != PenStyle::Null) {
+	if (!pen.isNull()) {
 		Color c = pen.getColor();
 		int t = pen.getThickness();
 		if (t < Math::min(Math::abs(x2 - x1), Math::abs(y2 - y1)) / 2) {

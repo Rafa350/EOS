@@ -37,8 +37,8 @@ Thickness::Thickness(
 
 /// ----------------------------------------------------------------------
 /// \brief Constructor.
-/// \param hThickness: Amplada en horitzontal.
-/// \param vThickness: Amplada en vertical.
+/// \param hThickness: Amplada dels perfils horitzontals.
+/// \param vThickness: Amplada dels perfils verticals.
 ///
 Thickness::Thickness(
 	int horizontal,
@@ -54,6 +54,13 @@ Thickness::Thickness(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor.
+/// \param    left: Amplada del perfil esquerra
+/// \param    top: Amplada del perfil superior.
+/// \param    right: Amplada del perfil dret.
+/// \param    bottom: Amplada del perfil inferior.
+///
 Thickness::Thickness(
 	int left,
 	int top,

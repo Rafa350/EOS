@@ -10,8 +10,8 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 VirtualKeyboard::VirtualKeyboard():
-	eventCallback(nullptr),
-	buttonEventCallback(this, &VirtualKeyboard::buttonEventHandler) {
+	_eventCallback(nullptr),
+	_buttonEventCallback(this, &VirtualKeyboard::buttonEventHandler) {
 
 	VirtualKeyboardTemplate t(this);
 	t.applyTemplate();
@@ -25,7 +25,7 @@ VirtualKeyboard::VirtualKeyboard():
 void VirtualKeyboard::buttonEventHandler(
 	const ButtonBase::EventArgs &args) {
 
-	if (eventCallback != nullptr) {
+	if (_eventCallback != nullptr) {
 
 		if (args.event == ButtonBase::EventType::click) {
 
@@ -33,7 +33,7 @@ void VirtualKeyboard::buttonEventHandler(
 					.keyboard = this,
 					.keyCode = KeyCode(args.button->getId())
 			};
-			eventCallback->execute(vkArgs);
+			_eventCallback->execute(vkArgs);
 		}
 	}
 }

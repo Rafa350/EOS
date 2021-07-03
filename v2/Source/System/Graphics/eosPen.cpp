@@ -25,59 +25,26 @@ class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 Pen::Pen() :
 	_pImpl(allocate()) {
 
-	_pImpl->style = PenStyle::Solid;
-	_pImpl->color = COLOR_Black;
-	_pImpl->thickness = 1;
+	_pImpl->style = PenStyle::null;
 }
+
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    color: El color de linia.
-///
-Pen::Pen(
-	Color color):
-
-	_pImpl(allocate()) {
-
-	_pImpl->style = PenStyle::Solid;
-	_pImpl->color = color;
-	_pImpl->thickness = 1;
-}
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
+/// \param    style: Estil.
 /// \param    color: El color de linia.
 /// \param    thickness: Amplada de linia.
-/// \param    style: Estil.
 ///
 Pen::Pen(
+	PenStyle style,
 	Color color,
-	int thickness,
-	PenStyle style) :
+	int thickness):
 
 	_pImpl(allocate()) {
 
 	_pImpl->style = style;
 	_pImpl->color = color;
-	_pImpl->thickness = thickness;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Constructor.
-/// \param    color: El color de linia.
-/// \param    thickness: Amplada de linia.
-/// \param    style: Estil.
-///
-Pen::Pen(
-	const Brush &brush,
-	int thickness,
-	PenStyle style) :
-
-	_pImpl(allocate()) {
-
-	_pImpl->style = style;
-	_pImpl->color = brush.getColor();
 	_pImpl->thickness = thickness;
 }
 
@@ -123,25 +90,13 @@ Pen& Pen::operator = (
 bool Pen::operator == (
 	const Pen &pen) const {
 
-	// Compara l'adresa de les dades internes per verificar
-	// si son iguals.
-	//
-	return &(*_pImpl) == &(*pen._pImpl);
-}
+	Pen::Impl *p1 = &(*_pImpl);
+	Pen::Impl *p2 = &(*pen._pImpl);
 
-
-/// ----------------------------------------------------------------------
-/// \brief    Operator !=
-/// \param    pen: L'operand.
-/// \return   True si son diferents.
-///
-bool Pen::operator != (
-	const Pen &pen) const {
-
-	// Compara l'adresa de les dades internes per verificar
-	// si son diferents.
-	//
-	return &(*_pImpl) != &(*pen._pImpl);
+	return
+		(p1->style == p2->style) &&
+		(p1->color == p2->color) &&
+		(p1->thickness == p2->thickness);
 }
 
 
@@ -182,4 +137,14 @@ int Pen::getThickness() const {
 PenStyle Pen::getStyle() const {
 
 	return _pImpl->style;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Indica si es nul.
+/// \return   True si es nul.
+///
+bool Pen::isNull() const {
+
+	return _pImpl->style == PenStyle::null;
 }

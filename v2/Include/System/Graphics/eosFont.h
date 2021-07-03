@@ -67,6 +67,8 @@ namespace eos {
             ~Font();
 
             Font& operator = (const Font& font);
+            bool operator ==(const Font &font) const;
+            inline bool operator !=(const Font&font) const { return !(*this == font); }
 
             void getFontInfo(FontInfo &fi) const;
             void getCharInfo(char ch, CharInfo &ci) const;

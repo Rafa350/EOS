@@ -31,9 +31,9 @@ namespace eos {
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
     	private:
-			bool pressed;
-			ClickMode clickMode;
-			const IEventCallback* eventCallback;
+			bool _pressed;
+			ClickMode _clickMode;
+			const IEventCallback *_eventCallback;
 
     	protected:
 #if eosGuiService_TouchPadEnabled
@@ -45,15 +45,15 @@ namespace eos {
 			virtual void onPress();
 			virtual void onRelease();
 
-			inline bool isPressed() const { return pressed; }
+			inline bool isPressed() const { return _pressed; }
 
     	public:
 			ButtonBase();
 
 			void click();
 
-			inline void setEventCallback(const IEventCallback* callback) {
-				eventCallback = callback;
+			inline void setEventCallback(const IEventCallback *callback) {
+				_eventCallback = callback;
 			}
     };
 

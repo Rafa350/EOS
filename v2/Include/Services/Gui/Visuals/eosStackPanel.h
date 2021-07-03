@@ -12,7 +12,7 @@ namespace eos {
 
 	class StackPanel: public Panel {
 		private:
-			Orientation orientation;
+			Orientation _orientation;
 
 		protected:
 			Size measureOverride(const Size& availableSize) const override;
@@ -22,7 +22,7 @@ namespace eos {
 			StackPanel();
 
 			void setOrientation(Orientation value);
-			Orientation getOrientation() const { return orientation; }
+			inline Orientation getOrientation() const { return _orientation; }
 	};
 }
 

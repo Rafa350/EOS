@@ -15,7 +15,7 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 PushButton::PushButton():
-	state(State::normal) {
+	_state(State::normal) {
 }
 
 
@@ -26,8 +26,8 @@ PushButton::PushButton():
 void PushButton::setState(
 	State value) {
 
-	if (state != value) {
-		state = value;
+	if (_state != value) {
+		_state = value;
 		invalidate();
 	}
 }
@@ -53,7 +53,7 @@ void PushButton::onRender(
 
 	// Dibuixa el boto
 	//
-	switch (state) {
+	switch (_state) {
 		case State::normal:
 			g.fillRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_Teal);
 			g.drawRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_LightSeaGreen);

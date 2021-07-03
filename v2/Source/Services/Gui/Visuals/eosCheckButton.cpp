@@ -14,7 +14,7 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 CheckButton::CheckButton():
-	state(State::unchecked) {
+	_state(State::unchecked) {
 
 }
 
@@ -26,8 +26,8 @@ CheckButton::CheckButton():
 void CheckButton::setState(
 	State value) {
 
-	if (state != value) {
-		state = value;
+	if (_state != value) {
+		_state = value;
 		invalidate();
 	}
 }
@@ -62,9 +62,9 @@ void CheckButton::onRender(
 
 	// Dibuixa el indicador
 	//
-	if (state ==  State::unchecked)
+	if (_state ==  State::unchecked)
 		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius, COLOR_LightSeaGreen);
-	else if (state == State::checked) {
+	else if (_state == State::checked) {
 		g.drawRoundedRectangle(Point(5, 5), Size(20, 20), radius, radius, COLOR_LightSeaGreen);
 		g.fillRoundedRectangle(Point(10, 10), Size(10, 10), radius / 2, radius / 2, COLOR_LightSeaGreen);
 	}
@@ -80,7 +80,7 @@ void CheckButton::onRender(
 ///
 void CheckButton::onClick() {
 
-	switch (state) {
+	switch (_state) {
 		case State::unchecked:
 			setState(State::checked);
 			break;

@@ -10,8 +10,8 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 ContentControl::ContentControl() :
-	padding(Thickness(0)),
-	content(nullptr) {
+	_padding(Thickness(0)),
+	_content(nullptr) {
 
 }
 
@@ -23,15 +23,15 @@ ContentControl::ContentControl() :
 void ContentControl::setContent(
 	Visual* value) {
 
-	if (content != value) {
+	if (_content != value) {
 
-		if (content != nullptr)
-			removeVisual(content);
+		if (_content != nullptr)
+			removeVisual(_content);
 
-		content = value;
+		_content = value;
 
-		if (content != nullptr)
-			addVisual(content);
+		if (_content != nullptr)
+			addVisual(_content);
 	}
 }
 
@@ -41,10 +41,10 @@ void ContentControl::setContent(
 /// \param    value: El marge interior.
 ///
 void ContentControl::setPadding(
-	const Thickness& value) {
+	const Thickness &value) {
 
-	if (padding != value) {
-		padding = value;
+	if (_padding != value) {
+		_padding = value;
 		invalidateLayout();
 	}
 }

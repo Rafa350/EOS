@@ -19,10 +19,10 @@ namespace eos {
         	};
 
     	private:
-    		State state;
+    		State _state;
 
         protected:
-        	void onRender(RenderContext* context) override;
+        	void onRender(RenderContext *context) override;
             void onPress() override;
             void onRelease() override;
 

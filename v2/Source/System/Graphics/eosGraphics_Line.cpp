@@ -21,7 +21,7 @@ void Graphics::paintLine(
 	const Point& p1,
 	const Point& p2) {
 
-	if (pen.getStyle() != PenStyle::Null) {
+	if (pen.getStyle() != PenStyle::null) {
 
 		Color color = pen.getColor();
 		drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color);
@@ -147,7 +147,7 @@ void Graphics::drawLine(
 
 #if 0
 /// ----------------------------------------------------------------------
-/// \brief    Dibuixa una linia amb l'algorisme EFLA (Extremely Fasl Line Algorithm)
+/// \brief    Dibuixa una linia amb l'algorisme EFLA (Extremely Fast Line Algorithm)
 /// \param    x1 : Coordinada x del primer punt.
 /// \param    y1 : Coordinada y del primer punt.
 /// \param    x2 : Coordinada x del segon punt.

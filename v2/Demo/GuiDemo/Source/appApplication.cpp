@@ -61,15 +61,15 @@ Visual *MyApplication::createMainPanel() {
 	Border *border = new Border();
 	border->setHorizontalAlignment(HorizontalAlignment::center);
 	border->setVerticalAlignment(VerticalAlignment::center);
-	border->setBackground(Brush(COLOR_Blue));
-	border->setBorderBrush(Brush(COLOR_Yellow));
+	border->setBackground(Brush(BrushStyle::solid, COLOR_Blue));
+	border->setBorderBrush(Brush(BrushStyle::solid, COLOR_Yellow));
 	border->setBorderThickness(5);
 
 	StackPanel *sp = new StackPanel();
 	sp->setOrientation(Orientation::vertical);
 	sp->setHorizontalAlignment(HorizontalAlignment::center);
 	sp->setVerticalAlignment(VerticalAlignment::center);
-	border->setContent(sp);
+	border->setChild(sp);
 
 	TextBox *tb = new TextBox();
 	tb->setId(1000);
