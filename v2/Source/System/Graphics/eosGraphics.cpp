@@ -225,13 +225,13 @@ int Graphics::getTextHeight(
 /// \brief    Retalla un punt.
 /// \param    x: Coordinada X del punt.
 /// \param    y: Coordinada Y del punt.
-/// \return    True si es visible.
+/// \return   True si es visible.
 ///
 bool Graphics::clipPoint(
     int x,
     int y) const {
 
-    return
+	return
     	(x >= _state.clipX1) && (x <= _state.clipX2) &&
     	(y >= _state.clipY1) && (y <= _state.clipY2);
 }
@@ -336,18 +336,20 @@ bool Graphics::clipLine(
     if (!clipTest(dy, _state.clipY2 - y1, t1, t2))
         return false;
 
-    // Ajusta el punt d'interseccio x2, y2
+    // Ajusta el punt d'interseccio x2, y2. La  funcio min
+    // evita els errors d'arrodoniment.
     //
     if (t2 < (1 << 16)) {
-        x2 = x1 + ((t2 * dx) >> 16);
-        y2 = y1 + ((t2 * dy) >> 16);
+        x2 = Math::min(_state.clipX2, x1 + ((t2 * dx) >> 16));
+        y2 = Math::min(_state.clipY2, y1 + ((t2 * dy) >> 16));
     }
 
-    // Ajusta el punt d'interseccio x1, y1
+    // Ajusta el punt d'interseccio x1, y1. La funcio max
+    // evita els errors d'errodoniment.
     //
     if (t1 > 0) {
-        x1 = x1 + ((t1 * dx) >> 16);
-        y1 = y1 + ((t1 * dy) >> 16);
+        x1 = Math::max(_state.clipX1, x1 + ((t1 * dx) >> 16));
+        y1 = Math::max(_state.clipY1, y1 + ((t1 * dy) >> 16));
     }
 
     return true;
@@ -390,11 +392,10 @@ bool Graphics::clipTest(
         }
     }
 
-    else
-        if (q < 0)
-            return false;
+    else if (q < 0)
+    	return false;
 
-    return true;
+   	return true;
 }
 
 

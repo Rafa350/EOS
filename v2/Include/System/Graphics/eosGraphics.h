@@ -94,8 +94,10 @@ namespace eos {
 
             void drawLine(int x1, int y1, int x2, int y2, Color color) const;
             inline void drawLine(const Point& p1, const Point& p2, Color color) const { drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }
+            void drawLine(int x1, int y1, int x2, int y2, int width, Color color);
             void drawHLine(int x1, int x2, int y, Color color) const;
             void drawVLine(int x, int y1, int y2, Color color) const;
+
 
             void drawRectangle(int x1, int y1, int x2, int y2, Color color) const;
             inline void drawRectangle(const Point& p1, const Point& p2, Color color) const { drawRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }

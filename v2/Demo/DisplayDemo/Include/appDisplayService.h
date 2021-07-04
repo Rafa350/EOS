@@ -50,6 +50,7 @@ namespace app {
 	        void testOpacity();
 	        void testPoints();
 	        void testLines();
+	        void testThickLines();
 	        void testRectangles();
 	        void testEllipses();
 	        void testBitmaps();

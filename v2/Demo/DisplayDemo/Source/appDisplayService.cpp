@@ -24,13 +24,14 @@ using namespace eos;
 using namespace app;
 
 
-#define TEST_OPACITY
-#define TEST_COLORS
+//#define TEST_OPACITY
+//#define TEST_COLORS
 #define TEST_POINTS
 #define TEST_LINES
-#define TEST_RECTANGLES
-#define TEST_ELLIPSES
-#define TEST_BITMAPS
+//#define TEST_THICKLINES
+//#define TEST_RECTANGLES
+//#define TEST_ELLIPSES
+//#define TEST_BITMAPS
 #define SHOW_RESULTS
 
 static int seed = 537;
@@ -146,6 +147,9 @@ void DisplayService::onLoop() {
 #ifdef TEST_LINES
     testLines();
 #endif
+#ifdef TEST_THICKLINES
+    testThickLines();
+#endif
 #ifdef TEST_RECTANGLES
     testRectangles();
 #endif
@@ -156,6 +160,7 @@ void DisplayService::onLoop() {
     testBitmaps();
 #endif
 
+#ifdef SHOW_RESULTS
     // Show results
     //
     drawBackground("Results");
@@ -182,6 +187,7 @@ void DisplayService::onLoop() {
     _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
 
     Task::delay(5000);
+#endif
 }
 
 
@@ -298,6 +304,9 @@ void DisplayService::testPoints() {
     }
 
     Task::delay(250);
+
+    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    ticks = Task::getTickCount();
 }
 
 
@@ -362,6 +371,24 @@ void DisplayService::testLines() {
     }
     _linesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Test de linies amples.
+///
+void DisplayService::testThickLines() {
+
+	// Thick lines
+    //
+    drawBackground("Thick lines");
+    Task::delay(250);
+
+    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+
+    _graphics->drawLine(10, 10, 200, 376, 5, COLOR_White);
+
+    Task::delay(50000);
 }
 
 
