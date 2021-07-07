@@ -85,7 +85,7 @@ namespace eos {
 
             void paintLine(const Pen& pen, const Point& p1, const Point& p2);
             void paintRectangle(const Pen &pen, const Brush &brush, const Rect& rect);
-            void paintRoundedRectangle(const Rect& rect, int rx, int ry);
+            void paintRoundedRectangle(const Pen &pen, const Brush &brush, const Rect& rect, int rx, int ry);
             void paintCircle(const Point& center, int radius);
             void paintEllipse(const Rect& rect);
 

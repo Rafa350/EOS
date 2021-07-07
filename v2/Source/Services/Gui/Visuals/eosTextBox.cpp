@@ -77,14 +77,13 @@ void TextBox::onKeyboardPress(
 void TextBox::onRender(
 	RenderContext *context) {
 
-	const int radius = 5;
 	const Size &s = getBounds().getSize();
 	int x2 = s.getWidth() - 1;
 	int y2 = s.getHeight() - 1;
 
 	Graphics &g = context->beginRender(this);
 
-	g.fillRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_DarkSeaGreen);
+	g.fillRectangle(0, 0, x2, y2, getBackground().getColor());
 
 	g.setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::center);
 	g.drawText(0, y2 / 2, _textColor, _text, 0, -1);

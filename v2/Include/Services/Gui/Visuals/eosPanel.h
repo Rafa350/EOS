@@ -21,9 +21,10 @@ namespace eos {
 		public:
 			Panel();
 
-			inline void addChild(Visual* visual) { addVisual(visual); }
+			inline void addChild(Visual *visual) { addVisual(visual); }
 
 			void setBackground(const Brush &value);
+
 			inline const Brush& getBackground() const { return _background; }
 	};
 }

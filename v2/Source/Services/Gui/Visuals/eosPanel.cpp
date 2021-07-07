@@ -5,6 +5,7 @@
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
+#include "System/Graphics/eosBrush.h"
 
 
 using namespace eos;
@@ -13,7 +14,8 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
-Panel::Panel() {
+Panel::Panel():
+	_background(BrushStyle::solid, COLOR_Green) {
 
 }
 
@@ -33,7 +35,7 @@ void Panel::setBackground(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Renderitza el visual.
+/// \brief    Renderitza el panell.
 /// \param    context: El context de renderitzat.
 //
 void Panel::onRender(

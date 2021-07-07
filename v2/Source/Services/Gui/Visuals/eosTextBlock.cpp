@@ -2,7 +2,7 @@
 #include "Services/Gui/eosMsgQueue.h"
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/eosVisual.h"
-#include "Services/Gui/Visuals/eosLabel.h"
+#include "Services/Gui/Visuals/eosTextBlock.h"
 #include "System/eosString.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
@@ -15,7 +15,7 @@ using namespace eos;
 
 struct LabelStyle {
 	Color textColor;
-	Color backgroundColor;
+    Color backgroundColor;
 	const char *fontName;
 	int fontHeight;
 	FontStyle fontStyle;
@@ -35,10 +35,10 @@ static const LabelStyle *pStyle = &style;
 /// ----------------------------------------------------------------------
 /// \brief    Contructor de l'objecte.
 ///
-Label::Label():
+TextBlock::TextBlock():
 
 	_textColor(pStyle->textColor),
-	_backgroundColor(pStyle->backgroundColor),
+	_background(Brush(BrushStyle::solid, pStyle->backgroundColor)),
 	_horizontalTextAlign(HorizontalTextAlign::center),
 	_verticalTextAlign(VerticalTextAlign::center),
 	_fontName(pStyle->fontName),
@@ -54,7 +54,7 @@ Label::Label():
 /// \brief    Calcula la mida desitjada del visual.
 /// \param    availableSize: Tamany disponible.
 ///
-Size Label::measureOverride(
+Size TextBlock::measureOverride(
 	const Size &availableSize) const {
 
 	if (_text.isEmpty())
@@ -80,7 +80,7 @@ Size Label::measureOverride(
 /// \brief    Asigna el color del text.
 /// \param    value: El color.
 ///
-void Label::setTextColor(
+void TextBlock::setTextColor(
 	Color value) {
 
 	if (_textColor != value) {
@@ -94,7 +94,7 @@ void Label::setTextColor(
 /// \brief    Asigna el nom del font.
 /// \param    value: El nom del font.
 ///
-void Label::setFontName(
+void TextBlock::setFontName(
 	const String &value) {
 
 	if (_fontName != value) {
@@ -108,7 +108,7 @@ void Label::setFontName(
 /// \brief    Asigna el tamany del font.
 /// \param    value: El tamany del font.
 ///
-void Label::setFontHeight(
+void TextBlock::setFontHeight(
 	int value) {
 
 	if (_fontHeight != value) {
@@ -122,7 +122,7 @@ void Label::setFontHeight(
 /// \brief    Asigna L'estil del font.
 /// \param    value: L'estil del font.
 ///
-void Label::setFontStyle(
+void TextBlock::setFontStyle(
 	FontStyle value) {
 
 	if (_fontStyle != value) {
@@ -133,14 +133,14 @@ void Label::setFontStyle(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el color del fons.
-/// \param    value: El color.
+/// \brief    Asigna la brotxa del fons.
+/// \param    value: La brotxa.
 ///
-void Label::setBackgroundColor(
-	Color value) {
+void TextBlock::setBackground(
+	const Brush &value) {
 
-	if (_backgroundColor != value) {
-		_backgroundColor = value;
+	if (_background != value) {
+		_background = value;
 		invalidate();
 	}
 }
@@ -150,7 +150,7 @@ void Label::setBackgroundColor(
 /// \brief    Asigna l'aliniacio horitzontal del text.
 /// \param    value: L'aliniacio.
 ///
-void Label::setHorizontalTextAlign(
+void TextBlock::setHorizontalTextAlign(
 	HorizontalTextAlign value) {
 
 	if (_horizontalTextAlign != value) {
@@ -164,7 +164,7 @@ void Label::setHorizontalTextAlign(
 /// \brief    Asigna l'aliniacio vertical del text.
 /// \param    value: L'aliniacio.
 ///
-void Label::setVerticalTextAlign(
+void TextBlock::setVerticalTextAlign(
 	VerticalTextAlign value) {
 
 	if (_verticalTextAlign != value) {
@@ -178,7 +178,7 @@ void Label::setVerticalTextAlign(
 /// \brief    Asigna el text.
 /// \param    value: El text.
 ///
-void Label::setText(
+void TextBlock::setText(
 	const String &value) {
 
 	if (_text != value) {
@@ -192,7 +192,7 @@ void Label::setText(
 /// \brief    Renderitza la imatge.
 /// \param    context: Context de renderitzat.
 ///
-void Label::onRender(
+void TextBlock::onRender(
 	RenderContext *context) {
 
 	// Inicia el renderitzat
@@ -207,8 +207,8 @@ void Label::onRender(
 
 	// Dibuixa el fons. Si es transparent optimitza i no el dibuixa.
 	//
-	if (!_backgroundColor.isTransparent())
-		g.fillRectangle(0, 0, width, height, _backgroundColor);
+	if (!_background.isNull())
+		g.paintRectangle(Pen(), _background, Rect(0, 0, width, height));
 
 	// Dibuixa el text
 	//
@@ -230,7 +230,7 @@ void Label::onRender(
 /// \param    msg: El missatge a despatxar.
 ///
 #if eosGuiService_TouchPadEnabled
-void Label::onDispatch(
+void TextBlock::onDispatch(
 	const Message &msg) {
 
 	// Si es un missatge del touchpad, el retransmet al pare

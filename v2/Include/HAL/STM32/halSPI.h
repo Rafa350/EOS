@@ -94,14 +94,14 @@ extern "C" {
 
 typedef uint32_t SPIChannel;
 typedef uint32_t SPIOptions;
-typedef struct __SPIData* SPIHandler;
+typedef struct __SPIData *SPIHandler;
 typedef void (*SPIInterruptFunction)(SPIHandler handler, void *params);
 
 struct __SPIData {
-	SPI_TypeDef* device;
+	SPI_TypeDef *device;
 	SPI_HandleTypeDef handle;
 	SPIInterruptFunction isrFunction;
-	void* isrParams;
+	void *isrParams;
 };
 typedef struct __SPIData SPIData;
 
@@ -114,7 +114,7 @@ typedef struct {                       // Parametres d'inicialitzacio
 } SPISettings;
 
 
-SPIHandler halSPIInitialize(SPIData* data, const SPISettings *settings);
+SPIHandler halSPIInitialize(SPIData *data, const SPISettings *settings);
 void halSPIDeinitialize(SPIHandler handler);
 
 bool halSPIIsBusy(SPIHandler handler);

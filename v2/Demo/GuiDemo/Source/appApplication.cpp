@@ -6,7 +6,7 @@
 #include "Services/eosGuiService.h"
 #include "Services/Gui/eosVisualUtils.h"
 #include "Services/Gui/eosThickness.h"
-#include "Services/Gui/Visuals/eosLabel.h"
+#include "Services/Gui/Visuals/eosTextBlock.h"
 #include "Services/Gui/Visuals/eosBorder.h"
 #include "Services/Gui/Visuals/eosPanel.h"
 #include "Services/Gui/Visuals/eosPushButton.h"
@@ -61,9 +61,9 @@ Visual *MyApplication::createMainPanel() {
 	Border *border = new Border();
 	border->setHorizontalAlignment(HorizontalAlignment::center);
 	border->setVerticalAlignment(VerticalAlignment::center);
-	border->setBackground(Brush(BrushStyle::solid, COLOR_Blue));
-	border->setBorderBrush(Brush(BrushStyle::solid, COLOR_Yellow));
-	border->setBorderThickness(5);
+	border->setBackground(Brush(BrushStyle::solid, RGB(50, 50, 50)));
+	//border->setBorderBrush(Brush(BrushStyle::solid, COLOR_Yellow));
+	border->setBorderThickness(1);
 
 	StackPanel *sp = new StackPanel();
 	sp->setOrientation(Orientation::vertical);

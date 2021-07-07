@@ -1,5 +1,5 @@
-#ifndef __eosLabel__
-#define __eosLabel__
+#ifndef __eosTextBlock__
+#define __eosTextBlock__
 
 
 // EOS includes
@@ -17,10 +17,10 @@ namespace eos {
     class RenderContext;
     class Message;
 
-    class Label: public Control {
+    class TextBlock: public Control {
     	private:
+			Brush _background;
     		Color _textColor;
-    		Color _backgroundColor;
     		HorizontalTextAlign _horizontalTextAlign;
     		VerticalTextAlign _verticalTextAlign;
     		String _fontName;
@@ -36,10 +36,10 @@ namespace eos {
     		Size measureOverride(const Size& availableSize) const override;
 
         public:
-    		Label();
+    		TextBlock();
 
+            void setBackground(const Brush &value);
             void setTextColor(Color value);
-            void setBackgroundColor(Color value);
             void setFontName(const String& value);
             void setFontHeight(int value);
             void setFontStyle(FontStyle value);
@@ -47,12 +47,12 @@ namespace eos {
             void setHorizontalTextAlign(HorizontalTextAlign value);
             void setVerticalTextAlign(VerticalTextAlign value);
 
+            inline const Brush& getBackground() const { return _background; }
             inline Color getTextColor() const { return _textColor; }
-            inline Color getBackgroundColor() const { return _backgroundColor; }
             inline const String& getText() const { return _text; }
     };
 
 }
 
 
-#endif // __eosLabel__
+#endif // __eosTextBlock__

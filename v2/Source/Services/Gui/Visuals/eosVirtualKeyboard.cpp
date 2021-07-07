@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "Services/Gui/Visuals/eosVirtualKeyboard.h"
+#include "System/Graphics/eosColorDefinitions.h"
 
 
 using namespace eos;

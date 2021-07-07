@@ -14,15 +14,18 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 Border::Border():
-	_background(Brush(BrushStyle::solid, COLOR_Red)),
-	_borderBrush(Brush(BrushStyle::solid, COLOR_Black)),
+	_background(Brush(BrushStyle::solid, COLOR_Black)),
+	_borderBrush(Brush(BrushStyle::solid, COLOR_White)),
 	_borderThickness(1),
-	_radius(0) {
+	_cornerRadius(0) {
 
 }
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Calcula les measures del panell i dels seus fills
+/// \param    availableSize: Tamany maxim disponible.
+/// \return   El tamany desitjat.
 ///
 Size Border::measureOverride(
 	const Size &availableSize) const {
@@ -64,11 +67,11 @@ void Border::setBorderThickness(
 /// \brief    Asigna el radi de curvatura del perfil.
 /// \param    value: Radi de curvatura.
 ///
-void Border::setRadius(
+void Border::setCornerRadius(
 	int value) {
 
-	if (_radius != value) {
-		_radius = value;
+	if (_cornerRadius != value) {
+		_cornerRadius = value;
 		invalidate();
 	}
 }
@@ -97,9 +100,12 @@ void Border::onRender(
 
 	Graphics &g = context->beginRender(this);
 
-	const Size &s = getBounds().getSize();
+	const Rect r(Point(0, 0), getBounds().getSize());
+
 	Pen pen(PenStyle::solid, _borderBrush.getColor(), _borderThickness.getLeft());
-	g.paintRectangle(pen, _background, Rect(0, 0, s.getWidth(), s.getHeight()));
+	Brush brush(_background);
+
+	g.paintRoundedRectangle(pen, brush, r, _cornerRadius, _cornerRadius);
 
 	context->endRender();
 }

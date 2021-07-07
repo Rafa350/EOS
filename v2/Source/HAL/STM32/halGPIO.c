@@ -27,7 +27,7 @@ static inline GPIO_TypeDef* getDevice(
 /// \param    device: Device.
 ///
 static void enableDeviceClock(
-	GPIO_TypeDef* device) {
+	GPIO_TypeDef *device) {
 
 	__VERIFY_DEVICE(device);
 
@@ -91,7 +91,7 @@ static void enableDeviceClock(
 /// \param    alt: Alternate piu function.
 ///
 static void setupDevicePin(
-	GPIO_TypeDef* device,
+	GPIO_TypeDef *device,
 	GPIOPin pin,
 	GPIOOptions options,
 	GPIOAlt alt) {

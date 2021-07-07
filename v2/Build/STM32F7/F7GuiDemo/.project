@@ -1174,11 +1174,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosItemsControl.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Services/Gui/Visuals/eosLabel.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosLabel.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosListBox.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosListBox.h</locationURI>
@@ -1222,6 +1217,11 @@
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosStackPanel.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosStackPanel.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosTextBlock.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosTextBlock.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosTextBox.h</name>
@@ -1284,11 +1284,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosImage.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Services/Gui/Visuals/eosLabel.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosLabel.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosMenu.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosMenu.cpp</locationURI>
@@ -1322,6 +1317,11 @@
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosStackPanel.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosStackPanel.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosTextBlock.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosTextBlock.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosTextBox.cpp</name>

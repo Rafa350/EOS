@@ -26,6 +26,8 @@ Pen::Pen() :
 	_pImpl(allocate()) {
 
 	_pImpl->style = PenStyle::null;
+	_pImpl->color = COLOR_Transparent;
+	_pImpl->thickness = 1;
 }
 
 

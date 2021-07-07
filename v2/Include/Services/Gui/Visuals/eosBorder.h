@@ -20,7 +20,7 @@ namespace eos {
     		Brush _background;
     		Brush _borderBrush;
     		Thickness _borderThickness;
-    		int _radius;
+    		int _cornerRadius;
 
     	protected:
     		Size measureOverride(const Size &availableSize) const override;
@@ -32,12 +32,12 @@ namespace eos {
             void setBackground(const Brush &value);
             void setBorderBrush(const Brush &value);
             void setBorderThickness(int value);
-            void setRadius(int value);
+            void setCornerRadius(int value);
 
             inline const Brush& getBorderBrush() const { return _borderBrush; }
             inline const Brush& getBackground() const { return _background; }
-            inline const Thickness& getThickness() const { return _borderThickness; }
-            inline int getRadius() const { return _radius; }
+            inline const Thickness& getBorderThickness() const { return _borderThickness; }
+            inline int getCornerRadius() const { return _cornerRadius; }
     };
 
 }

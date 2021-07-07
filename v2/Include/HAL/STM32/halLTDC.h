@@ -13,6 +13,10 @@ extern "C" {
 typedef uint8_t LTDCLayerNum;
 typedef uint8_t LTDCPixelFormat;
 
+typedef struct __LDTCData *LTDCHandler;
+
+typedef void (*LTDCInterruptFunction)(void *params, uint32_t event);
+
 typedef struct {
     uint16_t HSYNC;
     uint16_t VSYNC;
@@ -28,6 +32,8 @@ typedef struct {
     } polarity;
     int width;               // Amplada
     int height;              // Alçada
+    LTDCInterruptFunction isrFunction;
+    void *isrParams;
 } LTDCSettings;
 
 
@@ -62,14 +68,14 @@ uint8_t halLTDCGetPixelBytes(LTDCPixelFormat pixelFormat);
 #define halLTDCDisable()     __clear_bit_msk(LTDC->GCR, LTDC_GCR_LTDCEN)
 
 
-void halLTDCSetInterruptFunction();
+void halLTDCSetInterruptFunction(LTDCInterruptFunction function, void *params);
 void halLTDCInterruptHandler();
 
 void halLTDCEnableInterrupts();
 void halLTDCDisableInterrupts();
 
-bool halLTDCGetInterruptFlag();
-void halLTDCClearInterruptFlag();
+bool halLTDCGetInterruptFlag(uint32_t event);
+void halLTDCClearInterruptFlag(uint32_t events);
 
 
 #ifdef	__cplusplus

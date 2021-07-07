@@ -75,9 +75,9 @@ extern "C" {
 typedef uint32_t TMRTimer;
 typedef uint32_t TMROptions;
 
-typedef struct __TMRData* TMRHandler;
+typedef struct __TMRData *TMRHandler;
 
-typedef void (*TMRInterruptFunction)(TMRHandler handler, void* params, uint32_t event);
+typedef void (*TMRInterruptFunction)(TMRHandler handler, void *params, uint32_t event);
 
 struct __TMRData {
 	TIM_TypeDef* device;

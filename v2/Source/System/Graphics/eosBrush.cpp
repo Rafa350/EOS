@@ -23,6 +23,7 @@ Brush::Brush():
 	_pImpl(allocate()) {
 
 	_pImpl->style = BrushStyle::null;
+	_pImpl->color = COLOR_Transparent;
 }
 
 

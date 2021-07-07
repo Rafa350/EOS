@@ -30,6 +30,8 @@ namespace eos {
 			inline int getTop() const { return _top; }
 			inline int getRight() const { return _right; }
 			inline int getBottom() const { return _bottom; }
+			inline bool isUniform() const;
+			inline bool isDefault() const;
 
 			bool operator==(const Thickness &other) const;
 			inline bool operator!=(const Thickness &other) const { return !operator==(other); }

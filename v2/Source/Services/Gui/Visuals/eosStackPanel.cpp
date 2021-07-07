@@ -37,7 +37,6 @@ Size StackPanel::measureOverride(
 	for (auto it = childs.begin(); it != childs.end(); it++) {
 
 		Visual *child = *it;
-
 		eosAssert(child != nullptr);
 
 		if (child->isVisible()) {

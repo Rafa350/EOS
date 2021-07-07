@@ -10,7 +10,7 @@
 
 
 #ifndef eosGraphics_MaxBrushes
-#define eosGraphics_MaxBrushes 10
+#define eosGraphics_MaxBrushes 20
 #endif
 
 
