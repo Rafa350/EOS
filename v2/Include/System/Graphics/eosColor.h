@@ -15,6 +15,11 @@
 #endif
 
 
+#define ARGB(a, r, g, b)          makeColor<EOS_COLOR_FORMAT>(a, r, g, b)
+#define RGB(r, g, b)              makeColor<EOS_COLOR_FORMAT>(r, g, b)
+#define PAL(l)                    makeColor<EOS_COLOR_FORMAT>(l);
+
+
 namespace eos {
 
 	/// \brief Format de color

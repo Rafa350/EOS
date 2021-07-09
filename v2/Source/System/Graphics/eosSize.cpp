@@ -39,7 +39,7 @@ Size::Size(
 /// \param    s: L'objecte a copiar.
 ///
 Size::Size(
-	const Size &s):
+	const Size& s):
 
 	_width(s._width),
 	_height(s._height) {
@@ -87,7 +87,7 @@ Size Size::inflated(
 /// \param    s: El tamany limit.
 ///
 Size Size::constrained(
-	const Size &s) const {
+	const Size& s) const {
 
 	return Size(
 		Math::min(_width, s._width),
@@ -110,20 +110,8 @@ bool Size::isEmpty() const {
 /// \param    s: Objecte a comparar.
 /// \return   True si son iguals.
 ///
-bool Size::operator==(
-	const Size &s) const {
+bool Size::operator == (
+	const Size& s) const {
 
 	return (_width == s._width) && (_height == s._height);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador !=
-/// \param    s: Objecte a comparar.
-/// \return   True si son diferents.
-///
-bool Size::operator!=(
-	const Size &s) const {
-
-	return (_width != s._width) || (_height != s._height);
 }

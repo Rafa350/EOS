@@ -58,20 +58,19 @@ void MyApplication::onInitialize() {
 
 Visual *MyApplication::createMainPanel() {
 
-	Border *border = new Border();
+	Border* border = new Border();
 	border->setHorizontalAlignment(HorizontalAlignment::center);
 	border->setVerticalAlignment(VerticalAlignment::center);
 	border->setBackground(Brush(BrushStyle::solid, RGB(50, 50, 50)));
-	//border->setBorderBrush(Brush(BrushStyle::solid, COLOR_Yellow));
 	border->setBorderThickness(1);
 
-	StackPanel *sp = new StackPanel();
+	StackPanel* sp = new StackPanel();
 	sp->setOrientation(Orientation::vertical);
 	sp->setHorizontalAlignment(HorizontalAlignment::center);
 	sp->setVerticalAlignment(VerticalAlignment::center);
 	border->setChild(sp);
 
-	TextBox *tb = new TextBox();
+	TextBox* tb = new TextBox();
 	tb->setId(1000);
 	tb->setSize(Size(200, 30));
 	tb->setMargin(Thickness(5, 5, 5, 5));
@@ -79,7 +78,7 @@ Visual *MyApplication::createMainPanel() {
 	tb->setVerticalAlignment(VerticalAlignment::center);
 	sp->addChild(tb);
 
-	VirtualKeyboard *kb = new VirtualKeyboard();
+	VirtualKeyboard* kb = new VirtualKeyboard();
 	kb->setHorizontalAlignment(HorizontalAlignment::center);
 	kb->setVerticalAlignment(VerticalAlignment::center);
 	kb->setEventCallback(&virtualKeyboardEventCallback);
@@ -90,14 +89,14 @@ Visual *MyApplication::createMainPanel() {
 
 
 void MyApplication::buttonEventHandler(
-	const ButtonBase::EventArgs &args) {
+	const ButtonBase::EventArgs& args) {
 
 	args.button->setVisibility(Visibility::hidden);
 }
 
 
 void MyApplication::virtualKeyboardEventHandler(
-	const eos::VirtualKeyboard::EventArgs &args) {
+	const eos::VirtualKeyboard::EventArgs& args) {
 
 	unsigned key = unsigned(args.keyCode);
 

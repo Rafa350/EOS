@@ -28,7 +28,7 @@ Border::Border():
 /// \return   El tamany desitjat.
 ///
 Size Border::measureOverride(
-	const Size &availableSize) const {
+	const Size& availableSize) const {
 
 	Size size = Decorator::measureOverride(availableSize);
 	return _borderThickness.inflate(size);

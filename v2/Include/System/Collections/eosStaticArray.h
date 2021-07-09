@@ -73,7 +73,7 @@ namespace eos {
                     /// \brief Obte el iterator al final
                     ///
                     inline Iterator end() const {
-                        return elements + size;
+                        return &elements[size];
                     }
                     
                     /// \brief Obte el tamany del array.

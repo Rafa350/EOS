@@ -24,18 +24,18 @@ class Bitmap::Impl: public PoolAllocatable<Bitmap::Impl, eosGraphics_MaxBitmaps>
 /// \param    bitmapResource: El recurs.
 ///
 Bitmap::Bitmap(
-	const void *bitmapResource):
+	const void* bitmapResource):
 
-	_pImpl(allocate()) {
+	_impl(allocate()) {
 
-	uint8_t *r = (uint8_t*) bitmapResource;
+	uint8_t* r = (uint8_t*) bitmapResource;
 
-	_pImpl->allocated = false;
-	_pImpl->readonly = true;
-	_pImpl->width = (int) (r[0] | (r[1] << 8));
-	_pImpl->height = (int) (r[2] | (r[3] << 8));
-	_pImpl->format = ColorFormat::rgb565; // TODO: Corregir aixo
-	_pImpl->pixels = (void*) &r[6];
+	_impl->allocated = false;
+	_impl->readonly = true;
+	_impl->width = (int) (r[0] | (r[1] << 8));
+	_impl->height = (int) (r[2] | (r[3] << 8));
+	_impl->format = ColorFormat::rgb565; // TODO: Corregir aixo
+	_impl->pixels = (void*) &r[6];
 }
 
 
@@ -51,14 +51,14 @@ Bitmap::Bitmap(
 	ColorFormat format,
 	Color color):
 
-	_pImpl(allocate()) {
+	_impl(allocate()) {
 
-	_pImpl->width = width;
-	_pImpl->height= height;
-	_pImpl->format= format;
-	_pImpl->allocated = true;
-	_pImpl->readonly = false;
-	_pImpl->pixels = nullptr;
+	_impl->width = width;
+	_impl->height= height;
+	_impl->format= format;
+	_impl->allocated = true;
+	_impl->readonly = false;
+	_impl->pixels = nullptr;
 
 	// Calcula el numero de pixels
 	//
@@ -90,8 +90,8 @@ Bitmap::Bitmap(
 
 	// Reserva memoria pel bitmap
 	//
-	_pImpl->pixels = osalHeapAlloc(NULL, numPixels * pixelSize);
-	eosAssert(_pixels != nullptr);
+	_impl->pixels = osalHeapAlloc(NULL, numPixels * pixelSize);
+	eosAssert(_impl->pixels != nullptr);
 
 	// Crea el contingut del bitmap
 	//
@@ -99,14 +99,14 @@ Bitmap::Bitmap(
 		case ColorFormat::rgb888: {
 			ColorInfo<ColorFormat::rgb888>::color_t c = color.convertTo<ColorFormat::rgb888>();
 			for (int i = 0; i < numPixels; i++)
-				((ColorInfo<ColorFormat::rgb888>::color_t*)_pImpl->pixels)[i] = c;
+				((ColorInfo<ColorFormat::rgb888>::color_t*)_impl->pixels)[i] = c;
 		}
 		break;
 
 		case ColorFormat::rgb565: {
 			ColorInfo<ColorFormat::rgb565>::color_t c = color.convertTo<ColorFormat::rgb565>();
 			for (int i = 0; i < numPixels; i++)
-				((ColorInfo<ColorFormat::rgb565>::color_t*)_pImpl->pixels)[i] = c;
+				((ColorInfo<ColorFormat::rgb565>::color_t*)_impl->pixels)[i] = c;
 		}
 		break;
 
@@ -114,14 +114,14 @@ Bitmap::Bitmap(
 		case ColorFormat::argb8888: {
 			ColorInfo<ColorFormat::argb8888>::color_t c = color.convertTo<ColorFormat::argb8888>();
 			for (int i = 0; i < numPixels; i++)
-				((ColorInfo<ColorFormat::argb8888>::color_t*)_pImpl->pixels)[i] = c;
+				((ColorInfo<ColorFormat::argb8888>::color_t*)_impl->pixels)[i] = c;
 		}
 		break;
 
 		case ColorFormat::l8: {
 			ColorInfo<ColorFormat::l8>::color_t c = color.convertTo<ColorFormat::l8>();
 			for (int i = 0; i < numPixels; i++)
-				((ColorInfo<ColorFormat::l8>::color_t*)_pixels)[i] = c;
+				((ColorInfo<ColorFormat::l8>::color_t*)_impl->pixels)[i] = c;
 		}
 		break;
 
@@ -140,16 +140,16 @@ Bitmap::Bitmap(
 	int width,
 	int height,
 	ColorFormat format,
-	void *pixels):
+	void* pixels):
 
-	_pImpl(allocate()) {
+	_impl(allocate()) {
 
-	_pImpl->width = width;
-	_pImpl->height = height;
-	_pImpl->format = format;
-	_pImpl->allocated = false;
-	_pImpl->readonly = false;
-	_pImpl->pixels = pixels;
+	_impl->width = width;
+	_impl->height = height;
+	_impl->format = format;
+	_impl->allocated = false;
+	_impl->readonly = false;
+	_impl->pixels = pixels;
 }
 
 
@@ -164,16 +164,16 @@ Bitmap::Bitmap(
 	int width,
 	int height,
 	ColorFormat format,
-	const void *pixels):
+	const void* pixels):
 
-	_pImpl(allocate()) {
+	_impl(allocate()) {
 
-	_pImpl->width = width;
-	_pImpl->height = height;
-	_pImpl->format = format;
-	_pImpl->allocated = false;
-	_pImpl->readonly = true;
-	_pImpl->pixels = (void*) pixels;
+	_impl->width = width;
+	_impl->height = height;
+	_impl->format = format;
+	_impl->allocated = false;
+	_impl->readonly = true;
+	_impl->pixels = (void*) pixels;
 }
 
 
@@ -184,7 +184,7 @@ Bitmap::Bitmap(
 Bitmap::Bitmap(
 	const Bitmap& bitmap):
 
-	_pImpl(bitmap._pImpl) {
+	_impl(bitmap._impl) {
 }
 
 
@@ -193,8 +193,8 @@ Bitmap::Bitmap(
 ///
 Bitmap::~Bitmap() {
 
-	if (_pImpl->allocated && (_pImpl->pixels != nullptr))
-		osalHeapFree(NULL, _pImpl->pixels);
+	if (_impl->allocated && (_impl->pixels != nullptr))
+		osalHeapFree(NULL, _impl->pixels);
 }
 
 
@@ -202,9 +202,9 @@ Bitmap::~Bitmap() {
 /// \brief    Crea l'estructura interna de dades.
 /// \param    Punter a l'estructura.
 ///
-Bitmap::PImpl Bitmap::allocate() {
+Bitmap::ImplPtr Bitmap::allocate() {
 
-	return PImpl(new Impl);
+	return ImplPtr(new Impl);
 }
 
 
@@ -216,7 +216,7 @@ Bitmap::PImpl Bitmap::allocate() {
 Bitmap& Bitmap::operator = (
 	const Bitmap& bitmap) {
 
-	_pImpl = bitmap._pImpl;
+	_impl = bitmap._impl;
 
 	return *this;
 }
@@ -228,7 +228,7 @@ Bitmap& Bitmap::operator = (
 ///
 int Bitmap::getBytesPerPixel() const {
 
-	switch (_pImpl->format) {
+	switch (_impl->format) {
 		default:
 		case ColorFormat::rgb888:
 		case ColorFormat::argb8888:
@@ -249,5 +249,5 @@ int Bitmap::getBytesPerPixel() const {
 ///
 int Bitmap::getBytesPerLine() const {
 
-	return ((_pImpl->width * getBytesPerPixel()) + 3) & ~0b11;
+	return ((_impl->width * getBytesPerPixel()) + 3) & ~0b11;
 }

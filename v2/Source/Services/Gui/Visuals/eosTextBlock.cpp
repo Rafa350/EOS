@@ -37,8 +37,8 @@ static const LabelStyle *pStyle = &style;
 ///
 TextBlock::TextBlock():
 
-	_textColor(pStyle->textColor),
 	_background(Brush(BrushStyle::solid, pStyle->backgroundColor)),
+	_textColor(pStyle->textColor),
 	_horizontalTextAlign(HorizontalTextAlign::center),
 	_verticalTextAlign(VerticalTextAlign::center),
 	_fontName(pStyle->fontName),

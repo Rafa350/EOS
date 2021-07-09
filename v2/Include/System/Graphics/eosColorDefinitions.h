@@ -8,10 +8,6 @@
 #include "System/Graphics/eosColor.h"
 
 
-#define ARGB(a, r, g, b)          makeColor<EOS_COLOR_FORMAT>(a, r, g, b)
-#define RGB(r, g, b)              makeColor<EOS_COLOR_FORMAT>(r, g, b)
-#define PAL(l)                    makeColor<EOS_COLOR_FORMAT>(l);
-
 // Basic colors
 //
 #define COLOR_Transparent         ARGB(0, 0, 0, 0)

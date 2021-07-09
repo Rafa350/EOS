@@ -20,7 +20,7 @@ namespace eos {
             /// \brief Implementa array de tamany variable.
             /// \remarks La llista enmagatzema copies del element.
             ///
-            template <typename Element, const unsigned initialCapacity = 0>
+            template <typename Element, const int initialCapacity = 0>
             class DynamicArray {
                 
                 public:
@@ -33,26 +33,26 @@ namespace eos {
                     typedef const Element* CIterator;
 
                 private:
-                    unsigned size;
-                    unsigned capacity;
-                    Value* elements;
+                    int _size;
+                    int _capacity;
+                    Value *_elements;
 
                 private:
                     void updateCapacity() {
-                        if (size == capacity) {
-                            unsigned newCapacity = (capacity == 0) ?
-                                Math::max(unsigned(5), initialCapacity) :
-                                ((capacity < 50) ?
-                                    capacity * 2 :
-                                    capacity + 25);
-                            elements = static_cast<Pointer>(Container::resize(elements, capacity, newCapacity, size, sizeof(Value)));
-                            capacity = newCapacity;
+                        if (_size == _capacity) {
+                            int newCapacity = (_capacity == 0) ?
+                                Math::max(5, initialCapacity) :
+                                ((_capacity < 50) ?
+                                    _capacity * 2 :
+                                    _capacity + 25);
+                            _elements = static_cast<Pointer>(Container::resize(_elements, _capacity, newCapacity, _size, sizeof(Value)));
+                            _capacity = newCapacity;
                         }
                     }
 
-                    void move(unsigned dstIndex, unsigned srcIndex, unsigned count) {
+                    void move(int dstIndex, int srcIndex, int count) {
                         if (count > 0)
-                            memmove(&elements[dstIndex], &elements[srcIndex], count * sizeof(Value));
+                            memmove(&_elements[dstIndex], &_elements[srcIndex], count * (int)sizeof(Value));
                     }
 
                 public:
@@ -60,32 +60,32 @@ namespace eos {
                     /// \brief Constructor per defecte
                     ///
                     DynamicArray():
-                        size(0),
-                        capacity(0),
-                        elements(nullptr) {
+                        _size(0),
+                        _capacity(0),
+                        _elements(nullptr) {
                     }
                         
                     /// \brief Constructor copia
                     ///
                     DynamicArray(const DynamicArray& other):
-                        size(other.size),
-                        capacity(other.capacity),
-                        elements(Container::alloc(capacity, sizeof(Value))) {                       
-                        memmove(elements, other.elements, size * sizeof(Value));
+                        _size(other._size),
+                        _capacity(other._capacity),
+                        _elements(Container::alloc(_capacity, (int)sizeof(Value))) {
+                        memmove(_elements, other._elements, _size * (int)sizeof(Value));
                     }
 
                     /// \brief Destructor.
                     ///
                     ~DynamicArray() {
-                        if (elements != nullptr)
-                            Container::free(elements);
+                        if (_elements != nullptr)
+                            Container::free(_elements);
                     }
 
                     /// \brief Inserta un element al final
                     /// \param element: L'element a inserter.
                     ///
                     inline void pushBack(CReference element) {
-                        insertAt(size, element);
+                        insertAt(_size, element);
                     }
 
                     /// \brief Inserta un element al principi.
@@ -98,63 +98,63 @@ namespace eos {
                     /// \brief Extreu un element del final.
                     ///
                     inline void popBack() {
-                        eosAssert(size > 0);
-                        removeAt(size - 1);
+                        eosAssert(_size > 0);
+                        removeAt(_size - 1);
                     }
 
                     /// \brief Extreu un elkement del principi.
                     ///
                     inline void popFront() {
-                        eosAssert(size > 0);
+                        eosAssert(_size > 0);
                         removeAt(0);
                     }
 
                     /// \brief Obte el element del principi.
                     ///
                     inline Reference getFront() {
-                        eosAssert(size > 0);
-                        return elements[0];
+                        eosAssert(_size > 0);
+                        return _elements[0];
                     }
 
                     /// \brief Obte el element del principi.
                     ///
                     inline CReference getFront() const {
-                        eosAssert(size > 0);
-                        return elements[0];
+                        eosAssert(_size > 0);
+                        return _elements[0];
                     }
 
                     /// \brief Obte l'element del final.
                     /// \return Una referencia a l'element.
                     //
                     inline Reference getBack() {
-                        eosAssert(size > 0);
-                        return elements[size - 1];
+                        eosAssert(_size > 0);
+                        return _elements[_size - 1];
                     }
 
                     /// \brief Obte l'element del final.
                     /// \return Una referencia a l'element.
                     ///
                     inline CReference getBack() const {
-                        eosAssert(size > 0);
-                        return elements[size - 1];
+                        eosAssert(_size > 0);
+                        return _elements[_size - 1];
                     }
 
                     /// \brief Obte l'element en la posicio indicada.
                     /// \param index: Posicio de l'element.
                     /// \return Una referenciua a l'element.
                     ///
-                    inline Reference getAt(unsigned index) {
-                        eosAssert(index < size);
-                        return elements[index];
+                    inline Reference getAt(int index) {
+                        eosAssert(index < _size);
+                        return _elements[index];
                     }
 
                     /// \brief Obte l'element en la posicio indicada
                     /// \param index: Posicio de l'element.
                     /// \return Una referencia a l'element.
                     ///
-                    inline CReference getAt(unsigned index) const {
-                        eosAssert(index < size);
-                        return elements[index];
+                    inline CReference getAt(int index) const {
+                        eosAssert(index < _size);
+                        return _elements[index];
                     }
 
                     /// \brief Inserta un element en la posicio indicada.
@@ -162,18 +162,18 @@ namespace eos {
                     /// \param index: La posicio on insertar l'element.
                     /// \return True si tot es correcte. False en cas contrari.
                     ///
-                    bool insertAt(unsigned index, CReference element) {
-                        if (index == size) {
+                    bool insertAt(int index, CReference element) {
+                        if (index == _size) {
                             updateCapacity();
-                            elements[index] = element;
-                            size += 1;
+                            _elements[index] = element;
+                            _size += 1;
                             return true;
                         }
-                        else if (index < size) {
+                        else if (index < _size) {
                             updateCapacity();
-                            move(index + 1, index, size - index);
-                            elements[index] = element;
-                            size += 1;
+                            move(index + 1, index, _size - index);
+                            _elements[index] = element;
+                            _size += 1;
                             return true;
                         }
                         else
@@ -184,12 +184,12 @@ namespace eos {
                     /// \param index: Posicio del element a eliminar.
                     /// \return True si tot es correcte. False en cas contrari.
                     ///
-                    bool removeAt(unsigned index) {
-                        if (index >= size)
+                    bool removeAt(int index) {
+                        if (index >= _size)
                             return false;
-                        else if (index < size) {
-                            move(index, index + 1, size - index - 1);
-                            size -= 1;
+                        else if (index < _size) {
+                            move(index, index + 1, _size - index - 1);
+                            _size -= 1;
                             return true;
                         }
                         else
@@ -201,20 +201,20 @@ namespace eos {
                     /// \param offset: Index del primer element a copiar.
                     /// \param length: Numero d'elements a copiar.
                     ///
-                    void copyTo(Pointer dst, unsigned offset, unsigned length) const {
-                        eosAssert(offset + length <= size);
-                        memcpy(dst, &elements[offset], length * sizeof(Element));
+                    void copyTo(Pointer dst, int offset, int length) const {
+                        eosAssert(offset + length <= _size);
+                        memcpy(dst, &_elements[offset], length * (int)sizeof(Element));
                     }
 
                     /// \brief Obte l'index d'un element.
                     /// \param element: L'element.
                     /// \return L'index o -1 si l'element no existeix.
                     ///
-                    unsigned indexOf(CReference element) const {
-                        for (unsigned index = 0; index < size; index++)
-                            if (elements[index] == element)
+                    int indexOf(CReference element) const {
+                        for (int index = 0; index < _size; index++)
+                            if (_elements[index] == element)
                                 return index;
-                        return unsigned(-1);
+                        return -1;
                     }
 
                     /// \brief Comprova si l'element pertany a la llista.
@@ -222,62 +222,62 @@ namespace eos {
                     /// \return Trus si pertany, false en cas contrari.
                     ///
                     inline bool contains(CReference element) const {
-                        return indexOf(element) != unsigned(-1);
+                        return indexOf(element) != -1;
                     }
 
                     /// \brief Buida el array, pero deixa el contenidor.
                     ///
                     inline void empty() {
-                        size = 0;
+                        _size = 0;
                     }
 
                     /// \brief Buida el array i borra el contenidor.
                     ///
                     void clear() {
-                        Container::free(elements);
-                        size = 0;
-                        capacity = 0;
-                        elements = nullptr;
+                        Container::free(_elements);
+                        _size = 0;
+                        _capacity = 0;
+                        _elements = nullptr;
                     }
 
                     /// \brief Comprova si es buit.
                     /// \return True si es buit.
                     ///
                     inline bool isEmpty() const {
-                        return size == 0;
+                        return _size == 0;
                     }
 
                     /// \brief Obte el tamany
                     /// \return El tamamy.
                     ///
-                    inline unsigned getSize() const {
-                        return size;
+                    inline int getSize() const {
+                        return _size;
                     }
 
                     /// \brief Obte la capacitat actual.
                     /// \return La capacitat.
                     ///
-                    inline unsigned getCapacity() const {
-                        return capacity;
+                    inline int getCapacity() const {
+                        return _capacity;
                     }
                     
                     /// \brief Obte el iterator.
                     ///
                     inline Iterator begin() const {
-                        return elements;
+                        return _elements;
                     }
                     
                     /// \brief Obte el iterator
                     ///
                     inline Iterator end() const {
-                        return elements + size;
+                        return _elements + _size;
                     }
 
                     /// \brief Implementa l'operador []
                     /// \param index: La posicio.
                     /// \return L'element en la posicio indicada.
                     ///
-                    inline CReference operator[](unsigned index) const {
+                    inline CReference operator[](int index) const {
                         return getAt(index);
                     }
 
@@ -285,7 +285,7 @@ namespace eos {
                     /// \param index: La posicio.
                     /// \return L'element en la posicio indicada.
                     ///
-                    inline Reference operator[](unsigned index) {
+                    inline Reference operator[](int index) {
                         return getAt(index);
                     }
             };

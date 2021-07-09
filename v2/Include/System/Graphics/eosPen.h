@@ -33,18 +33,18 @@ namespace eos {
 	class Pen {
 		private:
 			struct Impl;
-			typedef SharedPtr<Impl> PImpl;
+			typedef SharedPtr<Impl> ImplPtr;
 
 		private:
-			PImpl _pImpl;
+			ImplPtr _impl;
 
 		private:
-			PImpl allocate();
+			ImplPtr allocate(PenStyle style, Color color, int thickness);
 
 		public:
 			Pen();
 			Pen(PenStyle style, Color color, int thickness);
-			Pen(const Pen &pen);
+			Pen(const Pen& pen);
 			~Pen();
 
 			Pen& operator = (const Pen& pen);

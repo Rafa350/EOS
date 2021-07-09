@@ -3,11 +3,12 @@
 
 
 #include "eos.h"
+#include "eosAssert.h"
 
 
 namespace eos {
 
-	/// \brief Pool de memoria
+	/// \brief Pool de memoria generic
     ///
     class MemoryPoolAllocator {
         private:
@@ -38,6 +39,8 @@ namespace eos {
     };
 
 
+    /// \brief Pool de memoria
+    ///
     template <typename T, int MAX_BLOCKS>
     class PoolAllocator {
 
@@ -51,7 +54,9 @@ namespace eos {
             }
 
     		inline T *allocate() {
-            	return static_cast<T*>(_allocator.allocate());
+    			void *p = _allocator.allocate();
+    			eosAssert(p != nullptr);
+            	return static_cast<T*>(p);
             }
 
     		inline void deallocate(T *p) {
@@ -59,6 +64,8 @@ namespace eos {
             }
     };
 
+    /// \brief Base pels objectes del pool de memoria
+    ///
     template <typename T, int MAX_BLOCKS>
     class PoolAllocatable {
     	private:

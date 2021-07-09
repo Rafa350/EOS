@@ -3,7 +3,6 @@
 #include "Services/Gui/eosRenderContext.h"
 #include "Services/Gui/Visuals/eosPanel.h"
 #include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosBrush.h"
 
@@ -15,7 +14,7 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 Panel::Panel():
-	_background(BrushStyle::solid, COLOR_Green) {
+	_background(Brush(BrushStyle::solid, RGB(0x3F, 0x3F, 0x3F))) {
 
 }
 
@@ -25,7 +24,7 @@ Panel::Panel():
 /// \param    value: La brotxa.
 ///
 void Panel::setBackground(
-	const Brush &value) {
+	const Brush& value) {
 
 	if (_background != value) {
 		_background = value;
@@ -39,17 +38,17 @@ void Panel::setBackground(
 /// \param    context: El context de renderitzat.
 //
 void Panel::onRender(
-	RenderContext *context) {
+	RenderContext* context) {
 
 	if (!_background.isNull()) {
 
 		// Inicia el renderitzat.
 		//
-		Graphics &g = context->beginRender(this);
+		Graphics& g = context->beginRender(this);
 
 		// Obte les mides de l'area de dibuix.
 		//
-		const Size &s = getBounds().getSize();
+		const Size& s = getBounds().getSize();
 		int width = s.getWidth();
 		int height = s.getHeight();
 

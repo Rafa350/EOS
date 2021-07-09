@@ -5,59 +5,9 @@
 // EOS includes
 //
 #include "eos.h"
-#ifdef USE_STD_STRINGS
-    #include <string>
-#endif
+
 
 namespace eos {
-
-#ifdef USE_STD_STRINGS
-
-    class String final {
-        public:
-            typedef std::string::iterator Iterator;
-            typedef std::string::const_iterator CIterator;
-
-        private:
-            std::string s;
-
-        public:
-            String() {}
-            String(const String& str): s(str.s) {}
-            String(const String& str, unsigned index, unsigned length): s(str.s, index, length) {}
-            String(const char* cstr): s(cstr) {}
-            String(const char* cstr, unsigned index, unsigned length): s(cstr, length) {}
-            ~String() {}
-
-            inline unsigned getLength() const { return s.size(); }
-            inline bool isEmpty() const { return s.empty(); }
-            inline bool isNull() const { return s.empty(); }
-
-            inline bool isEqual(const char* cstr) const { return compare(cstr) == 0; }
-            inline bool isEqual(const String& str) const { return compare(str) == 0; }
-            inline int compare(const char* cstr) const { return s.compare(cstr); }
-            inline int compare(const String& str) const { return s.compare(str); }
-
-            inline Iterator begin() { return s.begin(); }
-            inline CIterator begin() const { return s.cbegin(); }
-            inline Iterator end() { return s.end(); }
-            inline CIterator end() const { return s.cend(); }
-
-            inline String& operator = (const char* cstr) { s = cstr; return *this; }
-            inline String& operator = (const String& str) { s = str; return *this; }
-
-            inline bool operator == (const String& str) const { return s == str.s; }
-            inline bool operator != (const String& str) const { return s != str.s; }
-            inline bool operator < (const String& str) const { return s < str.s; }
-            inline bool operator <= (const String& str) const { return s <= str.s; }
-            inline bool operator > (const String& str) const { return s > str.s; }
-            inline bool operator >= (const String& str) const { return s >= str.s; }
-
-            inline operator const char* () const { return s.c_str(); }
-            inline char operator [] (unsigned pos) const { return s[pos]; }
-    };
-
-#else
 
     /// \brief Implementacio de cadenes de texte.
     ///
@@ -73,16 +23,16 @@ namespace eos {
             StringData* _data;
 
         private:
-            void create(const char* cstr, unsigned index, unsigned length);
+            void create(const char* cstr, int index, int length);
             void reference(const String& str);
             void release();
 
         public:
             String();
             String(const String& str);
-            String(const String& str, unsigned index, unsigned length);
+            String(const String& str, int index, int length);
             String(const char* cstr);
-            String(const char* cstr, unsigned index, unsigned length);
+            String(const char* cstr, int index, int length);
             ~String();
 
             unsigned getLength() const;
@@ -110,10 +60,8 @@ namespace eos {
             bool operator >= (const String& str) const;
 
             operator const char* () const;
-            char operator [] (unsigned) const;
+            char operator [] (int) const;
     };
-
-#endif
 
 
     /// \brief Constructor de cadenes de texte.
@@ -122,12 +70,12 @@ namespace eos {
 
         private:
             char* _container;
-            unsigned _size;
-            unsigned _capacity;
+            int _size;
+            int _capacity;
 
         private:
-            unsigned calcNewCapacity(unsigned requiredCapacity) const;
-            void reserve(unsigned size);
+            int calcNewCapacity(int requiredCapacity) const;
+            void reserve(int size);
 
         public:
             StringBuilder();
@@ -135,7 +83,7 @@ namespace eos {
             void clear();
             void append(char value);
             void append(const char* value);
-            void append(const char* value, unsigned index, unsigned length);
+            void append(const char* value, int index, int length);
             void append(const String& value);
             void append(int value);
             void append(unsigned value);

@@ -31,8 +31,8 @@ void VirtualKeyboard::buttonEventHandler(
 		if (args.event == ButtonBase::EventType::click) {
 
 			EventArgs vkArgs = {
-					.keyboard = this,
-					.keyCode = KeyCode(args.button->getId())
+				.keyboard = this,
+				.keyCode = KeyCode(args.button->getId())
 			};
 			_eventCallback->execute(vkArgs);
 		}

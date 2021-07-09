@@ -1,6 +1,4 @@
 #include "eos.h"
-#ifndef USE_STD_STRINGS
-
 #include "eosAssert.h"
 #include "HAL/halINT.h"
 #include "OSAL/osalHeap.h"
@@ -12,8 +10,8 @@ using namespace eos;
 
 
 struct String::StringData {
-	unsigned refCount;            // Contador de referencies.
-	unsigned length;              // Longitut de la string.
+	int refCount;                 // Contador de referencies.
+	int length;                   // Longitut de la string.
 	const char* ptr;              // Punter a la cadena.
 };
 
@@ -57,7 +55,7 @@ String::String():
 /// \param    str: La string a copiar.
 ///
 String::String(
-	const String& str):
+	const String &str):
 
 	_data(nullptr) {
 
@@ -73,9 +71,9 @@ String::String(
 /// \param    length: Numero de caracters a copiar.
 ///
 String::String(
-	const String& str,
-	unsigned index,
-	unsigned length):
+	const String &str,
+	int index,
+	int length):
 
 	_data(nullptr) {
 
@@ -89,7 +87,7 @@ String::String(
 /// \param    cstr: La string a copiar.
 ///
 String::String(
-	const char* cstr):
+	const char *cstr):
 
 	_data(nullptr) {
 
@@ -105,9 +103,9 @@ String::String(
 /// \param    length: Numero de caracters a copiar.
 ///
 String::String(
-	const char* cstr,
-	unsigned index,
-	unsigned length):
+	const char *cstr,
+	int index,
+	int length):
 
 	_data(nullptr) {
 
@@ -280,7 +278,7 @@ String& String::operator = (
 /// \return   El caracter en el index especificat.
 ///
 char String::operator [] (
-	unsigned index) const {
+	int index) const {
 
 	if ((_data == nullptr) || (index >= _data->length))
 		return 0;
@@ -305,14 +303,14 @@ String::operator const char* () const {
 /// \param    length: El numero de caracters a copiar.
 ///
 void String::create(
-	const char* cstr,
-	unsigned index,
-	unsigned length) {
+	const char *cstr,
+	int index,
+	int length) {
 
 	eosAssert(_data == nullptr);
 
-	unsigned totalLength = strlen(cstr);
-	if (length == unsigned(-1))
+	int totalLength = (int)strlen(cstr);
+	if (length == -1)
 		length = totalLength;
 	length = Math::min(length - index, totalLength);
 
@@ -370,5 +368,3 @@ void String::release() {
 	_data = nullptr;
 }
 
-
-#endif // USE_STD_STRINGS

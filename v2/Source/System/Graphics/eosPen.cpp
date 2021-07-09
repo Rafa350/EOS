@@ -12,10 +12,67 @@ using namespace eos;
 /// \brief Estructura que representa les dades internes del Pen
 //
 class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
+	private:
+		PenStyle _style;
+		Color _color;
+		int _thickness;
+
 	public:
-		Color color;
-		int thickness;
-		PenStyle style;
+		/// \brief Constructor.
+		/// \param style: L'estil.
+		/// \param color: El color.
+		/// \param thickness: L'amplada de linmia.
+		///
+		Impl(PenStyle style, Color color, int thickness):
+			_style(style),
+			_color(color),
+			_thickness(thickness) {
+		}
+
+		/// \brief Destructor.
+		///
+		~Impl() {
+		}
+
+		/// \brief Operador ==
+		/// \param other: L'altre objecte per comparar.
+		/// \return True si son iguals.
+		///
+		inline bool operator == (const Impl &other) const {
+			return
+				(_style == other._style) &&
+				(_color == other._color) &&
+				(_thickness == other._thickness);
+		}
+
+		/// \brief Operador !=
+		/// \param other: L'altre objecte per comparar.
+		/// \return True si son diferents.
+		///
+		inline bool operator != (const Impl &other) const {
+			return !(*this == other);
+		}
+
+		/// \brief Obte l'estil.
+		/// \return El valor de l'estil.
+		///
+		inline PenStyle getStyle() const {
+			return _style;
+		}
+
+		/// \brief Obte el color.
+		/// \return El valor del color.
+		///
+		inline Color getColor() const {
+			return _color;
+		}
+
+		/// \brief Obte l'amplada de linia.
+		/// \return El valor de l'amplada.
+		///
+		inline int getThickness() const {
+			return _thickness;
+		}
 };
 
 
@@ -23,11 +80,8 @@ class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 /// \brief    Constructor.
 ///
 Pen::Pen() :
-	_pImpl(allocate()) {
 
-	_pImpl->style = PenStyle::null;
-	_pImpl->color = COLOR_Transparent;
-	_pImpl->thickness = 1;
+	_impl(allocate(PenStyle::null, COLOR_Transparent, 1)) {
 }
 
 
@@ -43,11 +97,7 @@ Pen::Pen(
 	Color color,
 	int thickness):
 
-	_pImpl(allocate()) {
-
-	_pImpl->style = style;
-	_pImpl->color = color;
-	_pImpl->thickness = thickness;
+	_impl(allocate(style, color, thickness)) {
 }
 
 
@@ -58,7 +108,7 @@ Pen::Pen(
 Pen::Pen(
 	const Pen &pen) :
 
-	_pImpl(pen._pImpl) {
+	_impl(pen._impl) {
 }
 
 
@@ -78,7 +128,7 @@ Pen::~Pen() {
 Pen& Pen::operator = (
 	const Pen &pen) {
 
-	_pImpl = pen._pImpl;
+	_impl = pen._impl;
 
 	return *this;
 }
@@ -92,23 +142,23 @@ Pen& Pen::operator = (
 bool Pen::operator == (
 	const Pen &pen) const {
 
-	Pen::Impl *p1 = &(*_pImpl);
-	Pen::Impl *p2 = &(*pen._pImpl);
-
-	return
-		(p1->style == p2->style) &&
-		(p1->color == p2->color) &&
-		(p1->thickness == p2->thickness);
+	return *_impl == *pen._impl;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Crea l'estructura interna de dades.
+/// \param    style: L'estil.
+/// \param    color: El color.
+/// \param    thickness: Amplada de linia.
 /// \return   El resultat.
 ///
-Pen::PImpl Pen::allocate() {
+Pen::ImplPtr Pen::allocate(
+	PenStyle style,
+	Color color,
+	int thickness) {
 
-	return PImpl(new Impl);
+	return ImplPtr(new Impl(style, color, thickness));
 }
 
 
@@ -118,7 +168,7 @@ Pen::PImpl Pen::allocate() {
 ///
 Color Pen::getColor() const {
 
-	return _pImpl->color;
+	return _impl->getColor();
 }
 
 
@@ -128,7 +178,7 @@ Color Pen::getColor() const {
 ///
 int Pen::getThickness() const {
 
-	return _pImpl->thickness;
+	return _impl->getThickness();
 }
 
 
@@ -138,7 +188,7 @@ int Pen::getThickness() const {
 ///
 PenStyle Pen::getStyle() const {
 
-	return _pImpl->style;
+	return _impl->getStyle();
 }
 
 
@@ -148,5 +198,5 @@ PenStyle Pen::getStyle() const {
 ///
 bool Pen::isNull() const {
 
-	return _pImpl->style == PenStyle::null;
+	return _impl->getStyle() == PenStyle::null;
 }

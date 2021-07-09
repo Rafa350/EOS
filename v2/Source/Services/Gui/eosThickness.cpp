@@ -84,7 +84,7 @@ Thickness::Thickness(
 /// \param t: L'objecte a copiar.
 ///
 Thickness::Thickness(
-	const Thickness &t):
+	const Thickness& t):
 
 	_left(t._left),
 	_top(t._top),
@@ -94,8 +94,8 @@ Thickness::Thickness(
 }
 
 
-bool Thickness::operator==(
-	const Thickness &other) const {
+bool Thickness::operator == (
+	const Thickness& other) const {
 
 	return
 		_left == other._left &&
@@ -106,28 +106,28 @@ bool Thickness::operator==(
 
 
 Rect Thickness::inflate(
-	const Rect &rect) const {
+	const Rect& rect) const {
 
 	return rect.inflated(_left, _top, _right, _bottom);
 }
 
 
 Size Thickness::inflate(
-	const Size &size) const {
+	const Size& size) const {
 
 	return size.inflated(_left, _top, _right, _bottom);
 }
 
 
 Rect Thickness::deflate(
-	const Rect &rect) const {
+	const Rect& rect) const {
 
 	return rect.inflated(-_left, -_top, -_right, -_bottom);
 }
 
 
 Size Thickness::deflate(
-	const Size &size) const {
+	const Size& size) const {
 
 	return size.inflated(-_left, -_top, -_right, -_bottom);
 }

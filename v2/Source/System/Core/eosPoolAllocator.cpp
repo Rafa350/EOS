@@ -53,7 +53,7 @@ MemoryPoolAllocator::~MemoryPoolAllocator() {
 ///
 void *MemoryPoolAllocator::allocate() {
 
-    void *ret = nullptr;
+    void* ret = nullptr;
 
     osalEnterCritical();
 

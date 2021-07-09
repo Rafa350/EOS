@@ -47,8 +47,8 @@ Rect::Rect(
 /// \param    s: Tamany.
 ///
 Rect::Rect(
-	const Point &p,
-	const Size &s):
+	const Point& p,
+	const Size& s):
 
 	_x(p.getX()),
 	_y(p.getY()),
@@ -63,7 +63,7 @@ Rect::Rect(
 /// \remarks  La posicio es x=0, y=0.
 ///
 Rect::Rect(
-	const Size &s):
+	const Size& s):
 
 	_x(0),
 	_y(0),
@@ -81,8 +81,8 @@ Rect::Rect(
 ///           dels punt inicials
 ///
 Rect::Rect(
-	const Point &p1,
-	const Point &p2):
+	const Point& p1,
+	const Point& p2):
 
 	_x(Math::min(p1.getX(), p2.getX())),
 	_y(Math::min(p1.getY(), p2.getY())),
@@ -99,7 +99,7 @@ Rect::Rect(
 /// \param    r: L'objecte a copiar.
 ///
 Rect::Rect(
-	const Rect &r):
+	const Rect& r):
 
 	_x(r._x),
 	_y(r._y),
@@ -150,7 +150,7 @@ Rect Rect::translated(
 /// \remarks  El resultat SEMPRE sera un rectangle normalitzat.
 ///
 Rect Rect::intersected(
-	const Rect &r) const {
+	const Rect& r) const {
 
 	int x1 = Math::max(_x, r._x);
 	int y1 = Math::max(_y, r._y);

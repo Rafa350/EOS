@@ -7,16 +7,9 @@
 #include "eos.h"
 #include "System/eosRefCounter.h"
 
-// Standard includes
-//
-#include <memory>
-
 
 namespace eos {
 
-#if 0
-	#define SharedPtr std::shared_ptr
-#else
 	template <class T>
 	class SharedPtr {
         private:
@@ -77,17 +70,22 @@ namespace eos {
                 }
             }
 
-            inline T& operator*() const {
+            inline bool operator == (const SharedPtr<T>& other) const  {
+            	return _ptr == other._ptr;
+            }
+
+            inline bool operator != (const SharedPtr<T>& other) const  {
+            	return _ptr != other._ptr;
+            }
+
+            inline T& operator * () const {
                 return *_ptr;
             }
 
-            inline T* operator ->() const {
+            inline T* operator -> () const {
                 return _ptr;
             }
     };
-
-#endif
-
 }
 
 

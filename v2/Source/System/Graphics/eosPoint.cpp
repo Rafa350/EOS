@@ -34,7 +34,7 @@ Point::Point(
 /// \param    p: El objecte a copiar.
 ///
 Point::Point(
-	const Point &p):
+	const Point& p):
 
 	_x(p._x),
 	_y(p._y) {
@@ -61,7 +61,7 @@ Point Point::translated(
 /// \return   El punt despla�at.
 ///
 Point Point::translated(
-	const Point &d) const {
+	const Point& d) const {
 
 	return Point(_x + d._x, _y + d._y);
 }
@@ -72,20 +72,8 @@ Point Point::translated(
 /// \param    p: Objecte a comparar.
 /// \return   True si son iguals.
 ///
-bool Point::operator==(
-	const Point &p) const {
+bool Point::operator == (
+	const Point& p) const {
 
 	return (_x == p._x) && (_y == p._y);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador !=
-/// \param    p: Objecte a comparar.
-/// \return   True si son diferents.
-///
-bool Point::operator!=(
-	const Point &p) const {
-
-	return (_x != p._x) || (_y != p._y);
 }

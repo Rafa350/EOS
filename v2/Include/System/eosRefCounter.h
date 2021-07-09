@@ -6,27 +6,41 @@
 #include "Core/eosPoolAllocator.h"
 
 
+#ifndef eos_MaxRefCounters
+#define eos_MaxRefCounters 200
+#endif
+
+
 namespace eos {
 
-	class RefCounter {
+	class RefCounter: public PoolAllocatable<RefCounter, eos_MaxRefCounters> {
 		private:
-			unsigned _count;
-			static MemoryPoolAllocator _allocator;
+			int _count;
 
 		public:
-			inline RefCounter(int count): _count(count) {}
+			inline RefCounter(int count):
+				_count(count) {
+			}
+
 			RefCounter(const RefCounter&) = delete;
-
-			inline void inc() { _count++; }
-			inline void dec() { _count--; }
-
-			inline operator unsigned() const { return _count; }
-			inline operator bool() const { return _count != 0; }
 
 			RefCounter& operator = (const RefCounter&) = delete;
 
-			void* operator new(unsigned size);
-			void operator delete(void* p);
+			inline void inc() {
+				_count++;
+			}
+
+			inline void dec() {
+				_count--;
+			}
+
+			inline operator int() const {
+				return _count;
+			}
+
+			inline operator bool() const {
+				return _count != 0;
+			}
 	};
 
 }

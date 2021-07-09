@@ -6,7 +6,6 @@
 #include "Services/Gui/Visuals/eosVirtualKeyboard.h"
 #include "System/eosString.h"
 #include "System/Graphics/eosSize.h"
-#include "System/Graphics/eosColorDefinitions.h"
 
 
 using namespace eos;
@@ -39,7 +38,6 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	// Panell de la primera fila
 	//
 	StackPanel *sp1 = new StackPanel();
-	//sp1->setBackground(Brush(BrushStyle::solid, COLOR_Red));
 	sp1->setOrientation(Orientation::horizontal);
 	sp->addChild(sp1);
 
@@ -64,7 +62,6 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	// Panell de la segona fila
 	//
 	StackPanel *sp2 = new StackPanel();
-									sp2->setBackground(Brush(BrushStyle::solid, COLOR_Red));
 	sp2->setOrientation(Orientation::horizontal);
 	sp->addChild(sp2);
 

@@ -8,22 +8,86 @@
 
 using namespace eos;
 
+#ifdef EOS_DEBUG
+static int __allocatedBrushCount = 0;
+static int __allocatedBrushImplCount = 0;
+#endif
 
+
+/// \brief Clase que implementa les dades internes del brush
+///
 class Brush::Impl: public PoolAllocatable<Brush::Impl, eosGraphics_MaxBrushes> {
+	private:
+		BrushStyle _style;
+		Color _color;
+
 	public:
-		BrushStyle style;
-		Color color;
+		/// \brief Constructor del objecte.
+		/// \param style: L'estil.
+		/// \param color: El color.
+		///
+		Impl(BrushStyle style, Color color):
+			_style(style),
+			_color(color) {
+#ifdef EOS_DEBUG
+			__allocatedBrushImplCount++;
+#endif
+		}
+
+		/// \brief Destructor.
+		///
+		~Impl() {
+#ifdef EOS_DEBUG
+			__allocatedBrushImplCount--;
+#endif
+		}
+
+		/// \brief Operador ==
+		/// \param other: L'altre objecte per comparar.
+		/// \return True si son iguals.
+		///
+		inline bool operator == (const Impl &other) const {
+			return
+				(_style == other._style) &&
+				(_color == other._color);
+		}
+
+		/// \brief Operador !=
+		/// \param other: L'altre objecte per comparar.
+		/// \return True si son diferents.
+		///
+		inline bool operator != (const Impl &other) const {
+			return !(*this == other);
+		}
+
+		/// \brief Obte el estil
+		/// \return El valor del estil.
+		///
+		inline BrushStyle getStyle() const {
+			return _style;
+		}
+
+		/// \brief Obte el colcor.
+		/// \return El valor del color.
+		///
+		inline Color getColor() const {
+			return _color;
+		}
 };
+
+
+Brush::ImplPtrCache Brush::_implCache;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Contructor.
 ///
 Brush::Brush():
-	_pImpl(allocate()) {
+	_impl(allocate(BrushStyle::null, COLOR_Transparent)) {
 
-	_pImpl->style = BrushStyle::null;
-	_pImpl->color = COLOR_Transparent;
+#ifdef EOS_DEBUG
+	__allocatedBrushCount++;
+#endif
 }
 
 
@@ -36,12 +100,11 @@ Brush::Brush(
 	BrushStyle style,
 	Color color):
 
-	_pImpl(allocate()) {
+	_impl(allocate(style, color)) {
 
-	eosAssert(style == BrushStyle::solid);
-
-	_pImpl->style = style;
-	_pImpl->color = color;
+#ifdef EOS_DEBUG
+	__allocatedBrushCount++;
+#endif
 }
 
 
@@ -52,7 +115,11 @@ Brush::Brush(
 Brush::Brush(
 	const Brush &brush) :
 
-	_pImpl(brush._pImpl) {
+	_impl(brush._impl) {
+
+#ifdef EOS_DEBUG
+	__allocatedBrushCount++;
+#endif
 }
 
 
@@ -61,6 +128,18 @@ Brush::Brush(
 ///
 Brush::~Brush() {
 
+	if (_impl.uses() < 2) {
+		for (int index = 0; index < _implCache.getSize(); index++) {
+			if (_implCache[index] == _impl) {
+				_implCache.removeAt(index);
+				break;
+			}
+		}
+	}
+
+#ifdef EOS_DEBUG
+	__allocatedBrushCount--;
+#endif
 }
 
 
@@ -72,7 +151,7 @@ Brush::~Brush() {
 Brush& Brush::operator = (
 	const Brush &brush) {
 
-	_pImpl = brush._pImpl;
+	_impl = brush._impl;
 
 	return *this;
 }
@@ -86,22 +165,33 @@ Brush& Brush::operator = (
 bool Brush::operator == (
 	const Brush &brush) const {
 
-	Brush::Impl *b1 = &(*_pImpl);
-	Brush::Impl *b2 = &(*brush._pImpl);
-
-	return
-		(b1->style == b2->style) &&
-		(b1->color == b2->color);
+	return *_impl == *brush._impl;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Crea l'estructura interna de dades.
-/// \param    Punter a l'estructura.
+/// \param    style: L'estil.
+/// \param    color: EL color.
 ///
-Brush::PImpl Brush::allocate() {
+Brush::ImplPtr Brush::allocate(
+	BrushStyle style,
+	Color color) {
 
-	return PImpl(new Impl);
+	// Si ja esta en el cache, el reutilitza.
+	//
+	for (auto it = _implCache.begin(); it != _implCache.end(); it++) {
+		ImplPtr impl = *it;
+		if ((impl->getStyle() == style) &&
+			(impl->getColor() == color))
+			return impl;
+	}
+
+	// Si no el troba, en crea un de nou
+	//
+	ImplPtr pImpl(new Impl(style, color));
+	_implCache.pushBack(pImpl);
+	return pImpl;
 }
 
 
@@ -111,7 +201,7 @@ Brush::PImpl Brush::allocate() {
 ///
 BrushStyle Brush::getStyle() const {
 
-	return _pImpl->style;
+	return _impl->getStyle();
 }
 
 /// ----------------------------------------------------------------------
@@ -121,7 +211,7 @@ BrushStyle Brush::getStyle() const {
 ///
 Color Brush::getColor() const {
 
-	return _pImpl->color;
+	return _impl->getColor();
 }
 
 
@@ -131,6 +221,6 @@ Color Brush::getColor() const {
 ///
 bool Brush::isNull() const {
 
-	return _pImpl->style == BrushStyle::null;
+	return _impl->getStyle() == BrushStyle::null;
 }
 

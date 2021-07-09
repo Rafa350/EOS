@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 #include "System/eosPointers.h"
+#include "System/Collections/eosDynamicArray.h"
 #include "System/Graphics/eosColor.h"
 
 
@@ -26,23 +27,25 @@ namespace eos {
 	class Brush {
 	private:
 		struct Impl;
-		typedef SharedPtr<Impl> PImpl;
+		typedef SharedPtr<Impl> ImplPtr;
+		typedef DynamicArray<ImplPtr, eosGraphics_MaxBrushes> ImplPtrCache;
 
 	private:
-		PImpl _pImpl;
+		static ImplPtrCache _implCache;
+		ImplPtr _impl;
 
 	private:
-		PImpl allocate();
+		ImplPtr allocate(BrushStyle stype, Color color);
 
 	public:
 		Brush();
 		Brush(BrushStyle style, Color color);
-		Brush(const Brush &brush);
+		Brush(const Brush& brush);
 		~Brush();
 
-		Brush& operator = (const Brush &brush);
-		bool operator == (const Brush &brush) const;
-		bool operator != (const Brush &brush) const { return !(*this == brush); }
+		Brush& operator = (const Brush& brush);
+		bool operator == (const Brush& brush) const;
+		inline bool operator != (const Brush& brush) const { return !(*this == brush); }
 
 		Color getColor() const;
 		BrushStyle getStyle() const;

@@ -65,7 +65,7 @@ namespace eos {
             inline int getHeight() const { return _driver->getImageHeight(); }
             void clear(Color color) const;
 
-            void setFont(const Font &font);
+            void setFont(const Font& font);
             inline const Font& getFont() const { return _font; }
             inline Font getFont() { return _font; }
 
@@ -73,7 +73,7 @@ namespace eos {
             void setClip(const Rect &r) { setClip(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
             void resetClip();
 
-            void setTransformation(const Transformation &t, bool combine = false);
+            void setTransformation(const Transformation& t, bool combine = false);
             void resetTransformation();
 
             void push();

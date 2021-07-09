@@ -21,10 +21,10 @@ namespace eos {
         public:
 			Rect();
             Rect(int x, int y, int width, int height);
-            Rect(const Point &p1, const Point &p2);
-            Rect(const Point &p, const Size &s);
-            Rect(const Size &s);
-            Rect(const Rect &r);
+            Rect(const Point& p1, const Point& p2);
+            Rect(const Point& p, const Size& s);
+            Rect(const Size& s);
+            Rect(const Rect& r);
 
             inline int getX() const { return _x; }
             inline int getY() const { return _y; }
@@ -38,20 +38,20 @@ namespace eos {
             inline int getMaxY() const { return _y + _height - 1; }
 
             Rect translated(int x, int y) const;
-            inline Rect translated(const Point &p) const { return translated(p.getX(), p.getY()); }
+            inline Rect translated(const Point& p) const { return translated(p.getX(), p.getY()); }
             Rect inflated(int h, int v) const { return inflated(h, v, h, v); }
             Rect inflated(int left, int top, int right, int bottom) const;
-            Rect intersected(const Rect &r) const;
-            Rect fusioned(const Rect &r) const;
+            Rect intersected(const Rect& r) const;
+            Rect fusioned(const Rect& r) const;
 
             bool contains(int x, int y) const;
-            inline bool contains(const Point &p) const { return contains(p.getX(), p.getY()); }
-            bool contains(const Rect &r) const;
+            inline bool contains(const Point& p) const { return contains(p.getX(), p.getY()); }
+            bool contains(const Rect& r) const;
 
             bool isEmpty() const;
 
-            bool operator==(const Rect &r) const;
-            bool operator!=(const Rect &r) const;
+            bool operator == (const Rect& r) const;
+            inline bool operator != (const Rect& r) const { return !(*this == r); }
 	};
 }
 

@@ -23,10 +23,10 @@ namespace eos {
             inline int getY() const { return _y; }
 
             Point translated(int dx, int dy) const;
-            Point translated(const Point &d) const;
+            Point translated(const Point& d) const;
 
-            bool operator==(const Point &p) const;
-            bool operator!=(const Point &p) const;
+            bool operator == (const Point& p) const;
+            inline bool operator!=(const Point& p) const { return !(*this == p); }
 	};
 }
 
