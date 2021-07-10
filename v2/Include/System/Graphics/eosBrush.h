@@ -35,7 +35,7 @@ namespace eos {
 		ImplPtr _impl;
 
 	private:
-		ImplPtr allocate(BrushStyle stype, Color color);
+		ImplPtr makeImpl(BrushStyle stype, Color color);
 
 	public:
 		Brush();

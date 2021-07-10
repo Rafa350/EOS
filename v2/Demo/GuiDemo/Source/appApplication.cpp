@@ -79,6 +79,7 @@ Visual *MyApplication::createMainPanel() {
 	sp->addChild(tb);
 
 	VirtualKeyboard* kb = new VirtualKeyboard();
+	kb->setMargin(Thickness(5, 0, 5, 5));
 	kb->setHorizontalAlignment(HorizontalAlignment::center);
 	kb->setVerticalAlignment(VerticalAlignment::center);
 	kb->setEventCallback(&virtualKeyboardEventCallback);
@@ -98,14 +99,10 @@ void MyApplication::buttonEventHandler(
 void MyApplication::virtualKeyboardEventHandler(
 	const eos::VirtualKeyboard::EventArgs& args) {
 
-	unsigned key = unsigned(args.keyCode);
+	char key = char(unsigned(args.keyCode) + 0x30u);
 
-	String text;
-
-	text = "caca de perro";
-	text = "mierda";
+	//String x = String("Hola") + String("adios");
 
 	TextBox* tb = (TextBox*) VisualUtils::getVisual(guiService->getScreen(), 1000);
-	unsigned id = tb->getId();
-	tb->setText(text);
+	tb->setText(tb->getText() + key);
 }

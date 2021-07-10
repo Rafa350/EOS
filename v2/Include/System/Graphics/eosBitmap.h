@@ -25,10 +25,10 @@ namespace eos {
     		ImplPtr _impl;
 
 		private:
-            ImplPtr allocate();
+            ImplPtr makeImpl();
 
 		public:
-			Bitmap(const void *bitmapResource);
+			Bitmap(const void* bitmapResource);
 			Bitmap(int width, int height, ColorFormat format, Color color);
 			Bitmap(int width, int height, ColorFormat format, void* pixels);
 			Bitmap(int width, int height, ColorFormat format, const void* pixels);

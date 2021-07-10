@@ -11,6 +11,7 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 Control::Control():
+	_foreground(Brush(BrushStyle::solid, COLOR_Black)),
 	_background(Brush(BrushStyle::solid, COLOR_White)),
 	_borderBrush(Brush(BrushStyle::solid, COLOR_Black)),
 	_borderThickness(1) {
@@ -32,7 +33,7 @@ void Control::initializeControl() {
 /// \return   El tamany desitjat.
 ///
 Size Control::measureOverride(
-	const Size &availableSize) const {
+	const Size& availableSize) const {
 
 	Size size = Visual::measureOverride(availableSize);
 	return _borderThickness.inflate(size);
@@ -44,7 +45,7 @@ Size Control::measureOverride(
 /// \param    value: La brotxa
 ///
 void Control::setBorderBrush(
-	const Brush &value) {
+	const Brush& value) {
 
 	if (_borderBrush != value) {
 		_borderBrush = value;
@@ -68,11 +69,25 @@ void Control::setBorderThickness(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Asigna la brotxa de primer pla.
+/// \param    value: La brotxa.
+///
+void Control::setForeground(
+	const Brush& value) {
+
+	if (_foreground != value) {
+		_foreground = value;
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Asigna la brotxa del fons.
 /// \param    value: La brotxa.
 ///
 void Control::setBackground(
-	const Brush &value) {
+	const Brush& value) {
 
 	if (_background != value) {
 		_background = value;

@@ -50,7 +50,7 @@ namespace eos {
 			typedef DynamicArray<Visual*>::Iterator VisualListIterator;
 
       	private:
-    		Visual *_parent;
+    		Visual* _parent;
     		VisualList _childs;
     		bool _needRender;
     		Visibility _visibility;
@@ -65,17 +65,17 @@ namespace eos {
 			unsigned _id;
 
     	protected:
-    		virtual void onRender(RenderContext *context) = 0;
-    		virtual void onDispatch(const Message &msg);
-    		virtual void onActivate(Visual *visual);
-    		virtual void onDeactivate(Visual *visual);
+    		virtual void onRender(RenderContext* context) = 0;
+    		virtual void onDispatch(const Message& msg);
+    		virtual void onActivate(Visual* visual);
+    		virtual void onDeactivate(Visual* visual);
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
-    		virtual void onDispatchKeyboardEvent(const MsgKeyboard &msg);
+    		virtual void onDispatchKeyboardEvent(const MsgKeyboard& msg);
     		virtual void onKeyboardPress(KeyCode keyCode, char ch);
     		virtual void onKeyboardRelease(KeyCode keyCode, char ch);
 #endif
 #if eosGuiService_TouchPadEnabled
-    		virtual void onDispatchTouchPadEvent(const MsgTouchPad &msg);
+    		virtual void onDispatchTouchPadEvent(const MsgTouchPad& msg);
     		virtual void onTouchPadEnter();
     		virtual void onTouchPadLeave();
     		virtual void onTouchPadPress(const Point &position);
@@ -94,7 +94,7 @@ namespace eos {
     		Visual();
     		virtual ~Visual();
 
-            inline Visual *getParent() const { return _parent; }
+            inline Visual* getParent() const { return _parent; }
             inline const VisualList& getChilds() const { return _childs; }
 
             // Checkers
@@ -122,13 +122,13 @@ namespace eos {
             inline VerticalAlignment getVerticalAlignment() const { return _verticalAlignment; }
             Visibility getVisibility() const { return _visibility; }
 
-            void measure(const Size &availableSize);
-            void arrange(const Rect &finalRect);
+            void measure(const Size& availableSize);
+            void arrange(const Rect& finalRect);
             const Size& getDesiredSize() const { return _desiredSize; }
 
-            void dispatch(const Message &msg);
-            void send(const Message &msg);
-            bool render(RenderContext *context);
+            void dispatch(const Message& msg);
+            void send(const Message& msg);
+            bool render(RenderContext* context);
     		void invalidate();
     		void invalidateLayout();
     };

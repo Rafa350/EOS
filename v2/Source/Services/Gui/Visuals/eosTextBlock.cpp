@@ -14,7 +14,7 @@ using namespace eos;
 
 
 struct LabelStyle {
-	Color textColor;
+	Color foregroundColor;
     Color backgroundColor;
 	const char *fontName;
 	int fontHeight;
@@ -22,7 +22,7 @@ struct LabelStyle {
 };
 
 static const LabelStyle style = {
-	.textColor = COLOR_Yellow,
+	.foregroundColor = COLOR_Yellow,
 	.backgroundColor = COLOR_Transparent,
 	.fontName = "Tahoma",
 	.fontHeight = 12,
@@ -37,8 +37,8 @@ static const LabelStyle *pStyle = &style;
 ///
 TextBlock::TextBlock():
 
+	_foreground(Brush(BrushStyle::solid, pStyle->foregroundColor)),
 	_background(Brush(BrushStyle::solid, pStyle->backgroundColor)),
-	_textColor(pStyle->textColor),
 	_horizontalTextAlign(HorizontalTextAlign::center),
 	_verticalTextAlign(VerticalTextAlign::center),
 	_fontName(pStyle->fontName),
@@ -55,7 +55,7 @@ TextBlock::TextBlock():
 /// \param    availableSize: Tamany disponible.
 ///
 Size TextBlock::measureOverride(
-	const Size &availableSize) const {
+	const Size& availableSize) const {
 
 	if (_text.isEmpty())
 
@@ -77,25 +77,11 @@ Size TextBlock::measureOverride(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el color del text.
-/// \param    value: El color.
-///
-void TextBlock::setTextColor(
-	Color value) {
-
-	if (_textColor != value) {
-		_textColor = value;
-		invalidate();
-	}
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Asigna el nom del font.
 /// \param    value: El nom del font.
 ///
 void TextBlock::setFontName(
-	const String &value) {
+	const String& value) {
 
 	if (_fontName != value) {
 		_fontName = value;
@@ -133,11 +119,25 @@ void TextBlock::setFontStyle(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Asigna la brotxa del primer pla.
+/// \param    value: La brotxa.
+///
+void TextBlock::setForeground(
+	const Brush& value) {
+
+	if (_foreground != value) {
+		_foreground = value;
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Asigna la brotxa del fons.
 /// \param    value: La brotxa.
 ///
 void TextBlock::setBackground(
-	const Brush &value) {
+	const Brush& value) {
 
 	if (_background != value) {
 		_background = value;
@@ -217,7 +217,7 @@ void TextBlock::onRender(
 
 	g.setFont(font);
 	g.setTextAlign(_horizontalTextAlign, _verticalTextAlign);
-	g.drawText(width / 2, height / 2, _textColor, _text, 0, -1);
+	g.drawText(width / 2, height / 2, _foreground.getColor(), _text, 0, -1);
 
 	// Finalitza el renderitzat.
 	//

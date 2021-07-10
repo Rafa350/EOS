@@ -13,6 +13,15 @@ class Font::Impl: public PoolAllocatable<Font::Impl, eosGraphics_MaxFonts> {
     	char chCache;
     	CharInfo ciCache;
     	const uint8_t *fontResource;
+
+	public:
+    	bool operator == (const Impl& other) const {
+    		return fontResource == other.fontResource;
+    	}
+
+    	bool operator != (const Impl& other) const {
+    		return !(*this == other);
+    	}
 };
 
 
@@ -23,10 +32,10 @@ extern const FontTableEntry* fontResourceTable;
 /// \brief    Constructor. Crea el font per defecte.
 ///
 Font::Font() :
-	_pImpl(allocate()) {
+	_impl(makeImpl()) {
 
-	_pImpl->chCache = -1;
-	_pImpl->fontResource = nullptr;
+	_impl->chCache = -1;
+	_impl->fontResource = nullptr;
 }
 
 /// ----------------------------------------------------------------------
@@ -36,10 +45,10 @@ Font::Font() :
 Font::Font(
 	const uint8_t *fontResource):
 
-	_pImpl(allocate()) {
+	_impl(makeImpl()) {
 
-    _pImpl->chCache = -1;
-    _pImpl->fontResource = getFontResource("Tahoma", 12, FontStyle::regular);
+    _impl->chCache = -1;
+    _impl->fontResource = getFontResource("Tahoma", 12, FontStyle::regular);
 }
 
 
@@ -50,7 +59,7 @@ Font::Font(
 Font::Font(
 	const Font& font):
 
-	_pImpl(font._pImpl) {
+	_impl(font._impl) {
 }
 
 
@@ -63,12 +72,12 @@ Font::~Font() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Crea el bloc ded memoria de Impl
+/// \brief    Crea el bloc de memoria de Impl
 /// \return   El punter al bloc.
 ///
-Font::PImpl Font::allocate() {
+Font::ImplPtr Font::makeImpl() {
 
-	return PImpl(new Font::Impl);
+	return ImplPtr(new Font::Impl);
 }
 
 
@@ -80,7 +89,7 @@ Font::PImpl Font::allocate() {
 Font& Font::operator = (
 	const Font& font) {
 
-	_pImpl = font._pImpl;
+	_impl = font._impl;
 
 	return *this;
 }
@@ -94,11 +103,7 @@ Font& Font::operator = (
 bool Font::operator == (
 	const Font& font) const {
 
-	Font::Impl *f1 = &(*_pImpl);
-	Font::Impl *f2 = &(*font._pImpl);
-
-	return
-		f1->fontResource == f2->fontResource;
+	return *_impl == *font._impl;
 }
 
 
@@ -108,7 +113,7 @@ bool Font::operator == (
 ///
 int Font::getFontHeight() const {
 
-	return _pImpl->fontResource[1];
+	return _impl->fontResource[1];
 }
 
 
@@ -119,14 +124,14 @@ int Font::getFontHeight() const {
 /// \param style: Estil del font.
 ///
 const uint8_t* Font::getFontResource(
-	const String &name,
+	const String& name,
 	int height,
 	FontStyle style) {
 
 	const FontTableEntry *pResource = fontResourceTable;
 
-	for (unsigned i = 0; pResource[i].name != nullptr; i++) {
-		const FontTableEntry *pEntry = &pResource[i];
+	for (int i = 0; pResource[i].name != nullptr; i++) {
+		const FontTableEntry* pEntry = &pResource[i];
 		if ((name.isEqual(pEntry->name)) &&
 			(pEntry->height == height) &&
 			(pEntry->style == style)) {
@@ -146,11 +151,11 @@ const uint8_t* Font::getFontResource(
 void Font::getFontInfo(
     FontInfo &fi) const {
 
-    fi.height = _pImpl->fontResource[1];
-    fi.ascent = _pImpl->fontResource[2];
-    fi.descent = _pImpl->fontResource[3];
-    fi.firstChar = _pImpl->fontResource[4];
-    fi.lastChar = _pImpl->fontResource[5];
+    fi.height = _impl->fontResource[1];
+    fi.ascent = _impl->fontResource[2];
+    fi.descent = _impl->fontResource[3];
+    fi.firstChar = _impl->fontResource[4];
+    fi.lastChar = _impl->fontResource[5];
 }
 
 
@@ -164,7 +169,7 @@ void Font::getCharInfo(
     CharInfo &ci) const {
 
     updateCache(ch);
-    ci = _pImpl->ciCache;
+    ci = _impl->ciCache;
 }
 
 
@@ -177,7 +182,7 @@ int Font::getCharAdvance(
     char ch) const {
 
     updateCache(ch);
-    return _pImpl->ciCache.advance;
+    return _impl->ciCache.advance;
 }
 
 
@@ -188,27 +193,27 @@ int Font::getCharAdvance(
 void Font::updateCache(
     char ch) const {
 
-    if (_pImpl->chCache != ch) {
-        _pImpl->chCache = ch;
-        if ((ch >= _pImpl->fontResource[4]) && (ch <= _pImpl->fontResource[5])) {
-            unsigned offset = _pImpl->fontResource[6] + _pImpl->fontResource[7] * 256u + (ch - _pImpl->fontResource[4]) * 2u;
-            unsigned charInfoOffset = _pImpl->fontResource[offset] + _pImpl->fontResource[offset + 1] * 256u;
-            unsigned charBitsOffset = _pImpl->fontResource[charInfoOffset + 5u] + _pImpl->fontResource[charInfoOffset + 6u] * 256u;
+    if (_impl->chCache != ch) {
+        _impl->chCache = ch;
+        if ((ch >= _impl->fontResource[4]) && (ch <= _impl->fontResource[5])) {
+            unsigned offset = _impl->fontResource[6] + _impl->fontResource[7] * 256u + (ch - _impl->fontResource[4]) * 2u;
+            unsigned charInfoOffset = _impl->fontResource[offset] + _impl->fontResource[offset + 1] * 256u;
+            unsigned charBitsOffset = _impl->fontResource[charInfoOffset + 5u] + _impl->fontResource[charInfoOffset + 6u] * 256u;
 
-            _pImpl->ciCache.width = _pImpl->fontResource[charInfoOffset];
-            _pImpl->ciCache.height = _pImpl->fontResource[charInfoOffset + 1u];
-            _pImpl->ciCache.left = _pImpl->fontResource[charInfoOffset + 2u];
-            _pImpl->ciCache.top = _pImpl->fontResource[charInfoOffset + 3u];
-            _pImpl->ciCache.advance = _pImpl->fontResource[charInfoOffset + 4u];
-            _pImpl->ciCache.bitmap = (charBitsOffset == (unsigned) -1) ? nullptr : &_pImpl->fontResource[charBitsOffset];
+            _impl->ciCache.width = _impl->fontResource[charInfoOffset];
+            _impl->ciCache.height = _impl->fontResource[charInfoOffset + 1u];
+            _impl->ciCache.left = _impl->fontResource[charInfoOffset + 2u];
+            _impl->ciCache.top = _impl->fontResource[charInfoOffset + 3u];
+            _impl->ciCache.advance = _impl->fontResource[charInfoOffset + 4u];
+            _impl->ciCache.bitmap = (charBitsOffset == (unsigned) -1) ? nullptr : &_impl->fontResource[charBitsOffset];
         }
         else {
-            _pImpl->ciCache.width = 0;
-            _pImpl->ciCache.height = 0;
-            _pImpl->ciCache.left = 0;
-            _pImpl->ciCache.top = 0;
-            _pImpl->ciCache.advance = 0;
-            _pImpl->ciCache.bitmap = nullptr;
+            _impl->ciCache.width = 0;
+            _impl->ciCache.height = 0;
+            _impl->ciCache.left = 0;
+            _impl->ciCache.top = 0;
+            _impl->ciCache.advance = 0;
+            _impl->ciCache.bitmap = nullptr;
         }
     }
 }

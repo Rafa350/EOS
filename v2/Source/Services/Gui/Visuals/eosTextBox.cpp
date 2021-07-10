@@ -14,8 +14,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
-TextBox::TextBox():
-	_textColor(COLOR_Red) {
+TextBox::TextBox() {
 }
 
 
@@ -46,20 +45,6 @@ void TextBox::clearText() {
 
 
 /// ----------------------------------------------------------------------
-/// \bried    Asigna el color del text.
-/// \param    value: El color.
-///
-void TextBox::setTextColor(
-	Color value) {
-
-	if (_textColor != value) {
-		_textColor = value;
-		invalidate();
-	}
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Es crida quant cal procesar un missatge.
 /// \param    keyCode: El codi de la tecla
 /// \param    ch: El caracter de la tecla.
@@ -75,18 +60,18 @@ void TextBox::onKeyboardPress(
 /// \param    contet: Context de renderitzaqt.
 ///
 void TextBox::onRender(
-	RenderContext *context) {
+	RenderContext* context) {
 
-	const Size &s = getBounds().getSize();
+	const Size& s = getBounds().getSize();
 	int x2 = s.getWidth() - 1;
 	int y2 = s.getHeight() - 1;
 
-	Graphics &g = context->beginRender(this);
+	Graphics& g = context->beginRender(this);
 
 	g.fillRectangle(0, 0, x2, y2, getBackground().getColor());
 
 	g.setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::center);
-	g.drawText(0, y2 / 2, _textColor, _text, 0, -1);
+	g.drawText(0, y2 / 2, getForeground().getColor(), _text, 0, -1);
 
 	context->endRender();
 }

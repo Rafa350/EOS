@@ -46,7 +46,7 @@ class Brush::Impl: public PoolAllocatable<Brush::Impl, eosGraphics_MaxBrushes> {
 		/// \param other: L'altre objecte per comparar.
 		/// \return True si son iguals.
 		///
-		inline bool operator == (const Impl &other) const {
+		inline bool operator == (const Impl& other) const {
 			return
 				(_style == other._style) &&
 				(_color == other._color);
@@ -56,7 +56,7 @@ class Brush::Impl: public PoolAllocatable<Brush::Impl, eosGraphics_MaxBrushes> {
 		/// \param other: L'altre objecte per comparar.
 		/// \return True si son diferents.
 		///
-		inline bool operator != (const Impl &other) const {
+		inline bool operator != (const Impl& other) const {
 			return !(*this == other);
 		}
 
@@ -67,7 +67,7 @@ class Brush::Impl: public PoolAllocatable<Brush::Impl, eosGraphics_MaxBrushes> {
 			return _style;
 		}
 
-		/// \brief Obte el colcor.
+		/// \brief Obte el color.
 		/// \return El valor del color.
 		///
 		inline Color getColor() const {
@@ -83,7 +83,7 @@ Brush::ImplPtrCache Brush::_implCache;
 /// \brief    Contructor.
 ///
 Brush::Brush():
-	_impl(allocate(BrushStyle::null, COLOR_Transparent)) {
+	_impl(makeImpl(BrushStyle::null, COLOR_Transparent)) {
 
 #ifdef EOS_DEBUG
 	__allocatedBrushCount++;
@@ -100,7 +100,7 @@ Brush::Brush(
 	BrushStyle style,
 	Color color):
 
-	_impl(allocate(style, color)) {
+	_impl(makeImpl(style, color)) {
 
 #ifdef EOS_DEBUG
 	__allocatedBrushCount++;
@@ -113,7 +113,7 @@ Brush::Brush(
 /// \param    brush: L'objecte a copiar.
 ///
 Brush::Brush(
-	const Brush &brush) :
+	const Brush& brush) :
 
 	_impl(brush._impl) {
 
@@ -149,7 +149,7 @@ Brush::~Brush() {
 /// \return   El propi objecte.
 ///
 Brush& Brush::operator = (
-	const Brush &brush) {
+	const Brush& brush) {
 
 	_impl = brush._impl;
 
@@ -163,7 +163,7 @@ Brush& Brush::operator = (
 /// \return   True si son iguals.
 ///
 bool Brush::operator == (
-	const Brush &brush) const {
+	const Brush& brush) const {
 
 	return *_impl == *brush._impl;
 }
@@ -174,7 +174,7 @@ bool Brush::operator == (
 /// \param    style: L'estil.
 /// \param    color: EL color.
 ///
-Brush::ImplPtr Brush::allocate(
+Brush::ImplPtr Brush::makeImpl(
 	BrushStyle style,
 	Color color) {
 
@@ -203,6 +203,7 @@ BrushStyle Brush::getStyle() const {
 
 	return _impl->getStyle();
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte el color.

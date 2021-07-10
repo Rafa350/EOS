@@ -2,6 +2,10 @@
 #define __eosConfig__
 
 
+// Opcions generals del sistema
+//
+#define USE_STD_STRINGS
+
 // Opcions dels leds integrats
 //
 #define USE_LEDS_LED1

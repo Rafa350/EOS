@@ -19,8 +19,8 @@ namespace eos {
 
     class TextBlock: public Control {
     	private:
+    		Brush _foreground;
 			Brush _background;
-    		Color _textColor;
     		HorizontalTextAlign _horizontalTextAlign;
     		VerticalTextAlign _verticalTextAlign;
     		String _fontName;
@@ -38,8 +38,8 @@ namespace eos {
         public:
     		TextBlock();
 
-            void setBackground(const Brush &value);
-            void setTextColor(Color value);
+            void setForeground(const Brush& value);
+            void setBackground(const Brush& value);
             void setFontName(const String& value);
             void setFontHeight(int value);
             void setFontStyle(FontStyle value);
@@ -47,11 +47,10 @@ namespace eos {
             void setHorizontalTextAlign(HorizontalTextAlign value);
             void setVerticalTextAlign(VerticalTextAlign value);
 
+            inline const Brush& getForeground() const { return _foreground; }
             inline const Brush& getBackground() const { return _background; }
-            inline Color getTextColor() const { return _textColor; }
             inline const String& getText() const { return _text; }
     };
-
 }
 
 

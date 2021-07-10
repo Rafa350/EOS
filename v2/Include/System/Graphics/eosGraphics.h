@@ -57,7 +57,7 @@ namespace eos {
             State _state;
 
         public:
-            Graphics(IDisplayDriver *driver);
+            Graphics(IDisplayDriver* driver);
             ~Graphics();
 
             inline IDisplayDriver* getDriver() const { return _driver; }
@@ -70,7 +70,7 @@ namespace eos {
             inline Font getFont() { return _font; }
 
             void setClip(int x1, int y1, int x2, int y2);
-            void setClip(const Rect &r) { setClip(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
+            void setClip(const Rect& r) { setClip(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
             void resetClip();
 
             void setTransformation(const Transformation& t, bool combine = false);

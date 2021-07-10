@@ -1,4 +1,7 @@
 #include "eos.h"
+
+#ifndef USE_STD_STRINGS
+
 #include "eosAssert.h"
 #include "HAL/halINT.h"
 #include "OSAL/osalHeap.h"
@@ -55,7 +58,7 @@ String::String():
 /// \param    str: La string a copiar.
 ///
 String::String(
-	const String &str):
+	const String& str):
 
 	_data(nullptr) {
 
@@ -71,7 +74,7 @@ String::String(
 /// \param    length: Numero de caracters a copiar.
 ///
 String::String(
-	const String &str,
+	const String& str,
 	int index,
 	int length):
 
@@ -87,12 +90,12 @@ String::String(
 /// \param    cstr: La string a copiar.
 ///
 String::String(
-	const char *cstr):
+	const char* cstr):
 
 	_data(nullptr) {
 
 	if (cstr != nullptr)
-		create(cstr, 0, unsigned(-1));
+		create(cstr, 0, -1);
 }
 
 
@@ -103,7 +106,7 @@ String::String(
 /// \param    length: Numero de caracters a copiar.
 ///
 String::String(
-	const char *cstr,
+	const char* cstr,
 	int index,
 	int length):
 
@@ -128,7 +131,7 @@ String::~String() {
 /// \brief    Obte la longitut.
 /// \return   La longitut en bytes.
 ///
-unsigned String::getLength() const {
+int String::getLength() const {
 
 	return _data == nullptr ? 0 : _data->length;
 }
@@ -238,6 +241,7 @@ bool String::isEqual(
 /// ----------------------------------------------------------------------
 /// \brief    Operador d'asignacio.
 /// \param    cstr: La string a asignar.
+/// \return   La propia string.
 ///
 String& String::operator = (
 	const char* cstr) {
@@ -255,6 +259,7 @@ String& String::operator = (
 /// ----------------------------------------------------------------------
 /// \brief    Operador d'asignacio.
 /// \param    str: La string a asignar.
+/// \return   La propia estring.
 ///
 String& String::operator = (
 	const String& str) {
@@ -269,6 +274,52 @@ String& String::operator = (
 	}
 
 	return *this;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador suma
+/// \param    str: La string a sumar
+/// \return   Una string amb el resultat.
+///
+String String::operator + (
+	const String& str) const {
+
+	if (getLength() > 0) {
+
+		String result;
+
+		result.create(_data->length + str._data->length);
+
+		strcpy((char*) result._data->ptr, _data->ptr);
+		strcpy((char*) &result._data->ptr[_data->length], str._data->ptr);
+
+		return result;
+	}
+	else
+		return str;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador suma
+/// \param    ch: El caracter a sumar
+/// \return   Una estring amb el resultat.
+///
+String String::operator + (
+	const char ch) const {
+
+	String result;
+
+	int length = getLength();
+	result.create(length + 1);
+
+	if (length > 0)
+		strcpy((char*) result._data->ptr, _data->ptr);
+	((char*)result._data->ptr)[result._data->length - 1] = ch;
+	((char*)result._data->ptr)[result._data->length] = 0;
+
+	return result;
 }
 
 
@@ -297,7 +348,7 @@ String::operator const char* () const {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Crea un bloc de dades desde una string C.
+/// \brief    Crea un bloc de dades.
 /// \param    cstr: La string inicial.
 /// \param    index: El primer caracter a copiar.
 /// \param    length: El numero de caracters a copiar.
@@ -338,6 +389,24 @@ void String::create(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Crea un bloc de dades.
+/// \param    length: El numero de caracters que admet el bloc.
+///
+void String::create(
+	int length) {
+
+	eosAssert(length >= 0);
+
+	_data = static_cast<StringData*>(osalHeapAlloc(nullptr, sizeof(StringData) + length + 1));
+	eosAssert(_data != nullptr);
+
+	_data->ptr = (char*)_data + sizeof(StringData);
+	_data->length = length;
+	_data->refCount = 1;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Referencia un bloc de dades d'un altre string.
 /// \param    str: La string a referenciar.
 ///
@@ -368,3 +437,4 @@ void String::release() {
 	_data = nullptr;
 }
 
+#endif // USE_STD_STRINGS

@@ -26,7 +26,7 @@ class Bitmap::Impl: public PoolAllocatable<Bitmap::Impl, eosGraphics_MaxBitmaps>
 Bitmap::Bitmap(
 	const void* bitmapResource):
 
-	_impl(allocate()) {
+	_impl(makeImpl()) {
 
 	uint8_t* r = (uint8_t*) bitmapResource;
 
@@ -51,7 +51,7 @@ Bitmap::Bitmap(
 	ColorFormat format,
 	Color color):
 
-	_impl(allocate()) {
+	_impl(makeImpl()) {
 
 	_impl->width = width;
 	_impl->height= height;
@@ -142,7 +142,7 @@ Bitmap::Bitmap(
 	ColorFormat format,
 	void* pixels):
 
-	_impl(allocate()) {
+	_impl(makeImpl()) {
 
 	_impl->width = width;
 	_impl->height = height;
@@ -166,7 +166,7 @@ Bitmap::Bitmap(
 	ColorFormat format,
 	const void* pixels):
 
-	_impl(allocate()) {
+	_impl(makeImpl()) {
 
 	_impl->width = width;
 	_impl->height = height;
@@ -202,7 +202,7 @@ Bitmap::~Bitmap() {
 /// \brief    Crea l'estructura interna de dades.
 /// \param    Punter a l'estructura.
 ///
-Bitmap::ImplPtr Bitmap::allocate() {
+Bitmap::ImplPtr Bitmap::makeImpl() {
 
 	return ImplPtr(new Impl);
 }

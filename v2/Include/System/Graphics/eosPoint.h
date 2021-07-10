@@ -17,7 +17,7 @@ namespace eos {
         public:
 			Point();
             Point(int x, int y);
-            Point(const Point &p);
+            Point(const Point& p);
 
             inline int getX() const { return _x; }
             inline int getY() const { return _y; }

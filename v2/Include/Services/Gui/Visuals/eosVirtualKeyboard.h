@@ -20,7 +20,7 @@ namespace eos {
 				keyEnter
 			};
 			struct EventArgs {
-				VirtualKeyboard *keyboard;
+				VirtualKeyboard* keyboard;
 				KeyCode keyCode;
 			};
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
@@ -29,12 +29,11 @@ namespace eos {
 			typedef CallbackP1<VirtualKeyboard, const ButtonBase::EventArgs&> ButtonEventCallback;
 
 		private:
-			const IEventCallback *_eventCallback;
+			const IEventCallback* _eventCallback;
 			ButtonEventCallback _buttonEventCallback;
 
 		private:
-			PushButton *createPushButton(const String& text, const Size &size);
-			void buttonEventHandler(const ButtonBase::EventArgs &args);
+			void buttonEventHandler(const ButtonBase::EventArgs& args);
 
 		protected:
 			void initializePanel();
@@ -42,24 +41,24 @@ namespace eos {
 		public:
 			VirtualKeyboard();
 
-			inline const ButtonEventCallback *getButtonEventCallback() const {
+			inline const ButtonEventCallback* getButtonEventCallback() const {
 				return &_buttonEventCallback;
 			}
 
-			inline void setEventCallback(const IEventCallback *callback) {
+			inline void setEventCallback(const IEventCallback* callback) {
 				_eventCallback = callback;
 			}
 	};
 
 	class VirtualKeyboardTemplate: public ITemplate {
 		private:
-			VirtualKeyboard *_visual;
+			VirtualKeyboard* _visual;
 
 		private:
-			PushButton* createPushButton(const String &text, const Size &size);
+			PushButton* createPushButton(const String& text, const Size& size);
 
 		public:
-			VirtualKeyboardTemplate(VirtualKeyboard *visual);
+			VirtualKeyboardTemplate(VirtualKeyboard* visual);
 			void applyTemplate() override;
 	};
 }

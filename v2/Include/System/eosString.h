@@ -5,9 +5,151 @@
 // EOS includes
 //
 #include "eos.h"
+#ifdef USE_STD_STRINGS
+	#include "System/Core/eosStdHeapAllocator.h"
+    #include <string>
+#endif
 
 
 namespace eos {
+
+
+#ifdef USE_STD_STRINGS
+
+	class String final {
+        public:
+			typedef std::basic_string<char, std::char_traits<char>, StdHeapAllocator<char> > S;
+            typedef S::iterator Iterator;
+            typedef S::const_iterator CIterator;
+
+        private:
+            S _s;
+
+        private:
+            String(const S& s):
+            	_s(s) {
+            }
+
+        public:
+            String() {
+            }
+
+            String(const String& str):
+            	_s(str._s) {
+            }
+
+            String(const String& str, int index, int length):
+            	_s(str._s, index, length) {
+            }
+
+            String(const char* cstr):
+            	_s(cstr) {
+            }
+
+            String(const char* cstr, int index, int length):
+            	_s(cstr, length) {
+            }
+
+            ~String() {
+            }
+
+            inline int getLength() const {
+            	return (int) _s.size();
+            }
+
+            inline bool isEmpty() const {
+            	return _s.empty();
+            }
+
+            inline bool isNull() const {
+            	return _s.empty();
+            }
+
+            inline bool isEqual(const char* cstr) const {
+            	return compare(cstr) == 0;
+            }
+
+            inline bool isEqual(const String& str) const {
+            	return compare(str) == 0;
+            }
+
+            inline int compare(const char* cstr) const {
+            	return _s.compare(cstr);
+            }
+
+            inline int compare(const String& str) const {
+            	return _s.compare(str);
+            }
+
+            inline Iterator begin() {
+            	return _s.begin();
+            }
+
+            inline CIterator begin() const {
+            	return _s.cbegin();
+            }
+
+            inline Iterator end() {
+            	return _s.end();
+            }
+
+            inline CIterator end() const {
+            	return _s.cend();
+            }
+
+            inline String& operator = (const char* cstr) {
+            	_s = cstr;
+            	return *this;
+            }
+
+            inline String& operator = (const String& str) {
+            	_s = str;
+            	return *this;
+            }
+
+            inline String operator + (const String& str) const {
+            	return String(_s + str._s);
+            }
+
+            inline String operator + (const char ch) const {
+            	return String(_s + S(1u, ch));
+            }
+
+            inline bool operator == (const String& str) const {
+            	return _s == str._s;
+            }
+
+            inline bool operator != (const String& str) const {
+            	return _s != str._s;
+            }
+
+            inline bool operator < (const String& str) const {
+            	return _s < str._s;
+            }
+
+            inline bool operator <= (const String& str) const {
+            	return _s <= str._s;
+            }
+
+            inline bool operator > (const String& str) const {
+            	return _s > str._s;
+            }
+
+            inline bool operator >= (const String& str) const {
+            	return _s >= str._s;
+            }
+
+            inline operator const char* () const {
+            	return _s.c_str();
+            }
+
+            inline char operator [] (int pos) const {
+            	return _s[pos];
+            }
+    };
+
+
+#else
 
     /// \brief Implementacio de cadenes de texte.
     ///
@@ -23,6 +165,7 @@ namespace eos {
             StringData* _data;
 
         private:
+            void create(int length);
             void create(const char* cstr, int index, int length);
             void reference(const String& str);
             void release();
@@ -35,7 +178,7 @@ namespace eos {
             String(const char* cstr, int index, int length);
             ~String();
 
-            unsigned getLength() const;
+            int getLength() const;
             bool isEmpty() const;
             bool isNull() const;
 
@@ -52,6 +195,8 @@ namespace eos {
             String& operator = (const char* cstr);
             String& operator = (const String& str);
 
+            String operator + (const String& str) const;
+            String operator + (const char ch) const;
             inline bool operator == (const String& str) const { return isEqual(str); }
             inline bool operator != (const String& str) const { return !isEqual(str); }
             bool operator < (const String& str) const;
@@ -62,6 +207,8 @@ namespace eos {
             operator const char* () const;
             char operator [] (int) const;
     };
+
+#endif
 
 
     /// \brief Constructor de cadenes de texte.

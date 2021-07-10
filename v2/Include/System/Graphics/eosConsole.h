@@ -11,7 +11,7 @@ namespace eos {
 
 	class Console {
 		private:
-			Graphics *_graphics;
+			Graphics* _graphics;
 			int _x;
 			int _y;
 			int _width;
@@ -23,7 +23,7 @@ namespace eos {
 			int _state;
 
 		public:
-			Console(Graphics *graphics, int x, int y, int width, int height);
+			Console(Graphics* graphics, int x, int y, int width, int height);
 			void clear();
 			void home();
 			void moveTo(int x, int y);

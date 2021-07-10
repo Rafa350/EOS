@@ -23,10 +23,10 @@ namespace eos {
     };
 
     struct FontTableEntry {       // Entrada de la taula de fonts
-        const char *name;         // -Nom del font
+        const char* name;         // -Nom del font
         int16_t height;           // -Alçada
         FontStyle style;          // -Estil
-        const uint8_t *resource;  // -Taula d'informacio del font
+        const uint8_t* resource;  // -Taula d'informacio del font
     };
 
     struct FontInfo {             // Informacio del font
@@ -43,7 +43,7 @@ namespace eos {
         int16_t left;             // -Offset horitzontal del bitmap
         int16_t top;              // -Offset vertical del bitmap
         int16_t advance;          // -Offset fins al origen del seguent bitmap
-        const uint8_t *bitmap;    // -Punter al primer byte del caracter
+        const uint8_t* bitmap;    // -Punter al primer byte del caracter
     };
 
     class String;
@@ -51,31 +51,31 @@ namespace eos {
     class Font {
     	private:
     		struct Impl;
-    		typedef SharedPtr<Impl> PImpl;
+    		typedef SharedPtr<Impl> ImplPtr;
 
     	private:
-    		PImpl _pImpl;
+    		ImplPtr _impl;
 
         private:
-            PImpl allocate();
+            ImplPtr makeImpl();
             void updateCache(char ch) const;
 
         public:
             Font();
-            Font(const uint8_t *fontResource);
+            Font(const uint8_t* fontResource);
             Font(const Font& font);
             ~Font();
 
             Font& operator = (const Font& font);
             bool operator ==(const Font &font) const;
-            inline bool operator !=(const Font&font) const { return !(*this == font); }
+            inline bool operator !=(const Font& font) const { return !(*this == font); }
 
-            void getFontInfo(FontInfo &fi) const;
-            void getCharInfo(char ch, CharInfo &ci) const;
+            void getFontInfo(FontInfo& fi) const;
+            void getCharInfo(char ch, CharInfo& ci) const;
             int getFontHeight() const;
             int getCharAdvance(char ch) const;
 
-            static const uint8_t * getFontResource(const String& name, int height, FontStyle style);
+            static const uint8_t* getFontResource(const String& name, int height, FontStyle style);
     };
 }
 

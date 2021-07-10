@@ -38,7 +38,7 @@ class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 		/// \param other: L'altre objecte per comparar.
 		/// \return True si son iguals.
 		///
-		inline bool operator == (const Impl &other) const {
+		inline bool operator == (const Impl& other) const {
 			return
 				(_style == other._style) &&
 				(_color == other._color) &&
@@ -49,7 +49,7 @@ class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 		/// \param other: L'altre objecte per comparar.
 		/// \return True si son diferents.
 		///
-		inline bool operator != (const Impl &other) const {
+		inline bool operator != (const Impl& other) const {
 			return !(*this == other);
 		}
 
@@ -81,7 +81,7 @@ class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 ///
 Pen::Pen() :
 
-	_impl(allocate(PenStyle::null, COLOR_Transparent, 1)) {
+	_impl(makeImpl(PenStyle::null, COLOR_Transparent, 1)) {
 }
 
 
@@ -97,7 +97,7 @@ Pen::Pen(
 	Color color,
 	int thickness):
 
-	_impl(allocate(style, color, thickness)) {
+	_impl(makeImpl(style, color, thickness)) {
 }
 
 
@@ -126,7 +126,7 @@ Pen::~Pen() {
 /// \return   El propi objecte.
 ///
 Pen& Pen::operator = (
-	const Pen &pen) {
+	const Pen& pen) {
 
 	_impl = pen._impl;
 
@@ -140,7 +140,7 @@ Pen& Pen::operator = (
 /// \return   True si son iguals.
 ///
 bool Pen::operator == (
-	const Pen &pen) const {
+	const Pen& pen) const {
 
 	return *_impl == *pen._impl;
 }
@@ -153,7 +153,7 @@ bool Pen::operator == (
 /// \param    thickness: Amplada de linia.
 /// \return   El resultat.
 ///
-Pen::ImplPtr Pen::allocate(
+Pen::ImplPtr Pen::makeImpl(
 	PenStyle style,
 	Color color,
 	int thickness) {

@@ -39,7 +39,7 @@ namespace eos {
 			ImplPtr _impl;
 
 		private:
-			ImplPtr allocate(PenStyle style, Color color, int thickness);
+			ImplPtr makeImpl(PenStyle style, Color color, int thickness);
 
 		public:
 			Pen();
