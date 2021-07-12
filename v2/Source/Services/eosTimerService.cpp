@@ -341,8 +341,6 @@ void TimerService::cmdResume(
 ///
 void TimerService::cmdTimeOut() {
 
-    TimerCounter* timer;
-
     // Comprova si hi han contadors actius.
     //
     if (!activeQueue.isEmpty()) {
@@ -353,7 +351,14 @@ void TimerService::cmdTimeOut() {
 
         // Elimina els contadors que hagin arribat al final.
         //
-        while (activeQueue.peek(timer) && (currentTime >= timer->expireTime)) {
+        while (true) {
+
+            if (activeQueue.isEmpty())
+                break;
+            
+            TimerCounter* timer = activeQueue.peek();
+            if (currentTime < timer->expireTime)
+                break;
 
             // Elimina el contador de la cua d'actius.
             //
@@ -371,10 +376,11 @@ void TimerService::cmdTimeOut() {
 
         // Obte el primer contador actiu.
         //
-        if (activeQueue.peek(timer)) {
+        if (!activeQueue.isEmpty()) {
 
             // Recalcula el temps d'expiracio.
             //
+            TimerCounter* timer = activeQueue.peek();
             osPeriod = timer->expireTime - currentTime;
 
             // Activa el temporitzador, per un nou cicle.

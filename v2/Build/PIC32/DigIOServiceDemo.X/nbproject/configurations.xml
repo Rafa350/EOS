@@ -51,7 +51,6 @@
             <logicalFolder name="f1" displayName="Collections" projectFiles="true">
               <itemPath>../../../Include/System/Collections/eosFlags.h</itemPath>
               <itemPath>../../../Include/System/Collections/eosPriorityQueue.h</itemPath>
-              <itemPath>../../../Include/System/Collections/eosPriorityQueueHeap.h</itemPath>
               <itemPath>../../../Include/System/Collections/eosStaticArray.h</itemPath>
               <itemPath>../../../Include/System/Collections/eosDynamicArray.h</itemPath>
               <itemPath>../../../Include/System/Collections/eosContainer.h</itemPath>
@@ -341,6 +340,7 @@
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
+        <appendMe value="-std=gnu++17"/>
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"
@@ -533,6 +533,7 @@
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
+        <appendMe value="-std=gnu++17"/>
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"

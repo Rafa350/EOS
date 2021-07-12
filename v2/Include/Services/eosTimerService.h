@@ -39,7 +39,7 @@ namespace eos {
             typedef DynamicArray<TimerCounter*> TimerList;
             typedef DynamicArray<TimerCounter*>::Iterator TimerListIterator;
             typedef PriorityQueue<unsigned, TimerCounter*> TimerQueue;
-            typedef PriorityQueue<unsigned, TimerCounter*>::Iterator TimerQueueIterator;
+            //typedef PriorityQueue<unsigned, TimerCounter*>::Iterator TimerQueueIterator;
 
         public:
             struct InitParams {
