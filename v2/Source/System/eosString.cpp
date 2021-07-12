@@ -1,6 +1,6 @@
 #include "eos.h"
 
-#ifndef USE_STD_STRINGS
+#ifndef EOS_USE_STD_STRING
 
 #include "eosAssert.h"
 #include "HAL/halINT.h"
@@ -437,4 +437,4 @@ void String::release() {
 	_data = nullptr;
 }
 
-#endif // USE_STD_STRINGS
+#endif // USE_STD_STRING

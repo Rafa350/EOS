@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#ifdef USE_STD_STRINGS
+#ifdef EOS_USE_STD_STRING
 	#include "System/Core/eosStdHeapAllocator.h"
     #include <string>
 #endif
@@ -14,7 +14,7 @@
 namespace eos {
 
 
-#ifdef USE_STD_STRINGS
+#ifdef EOS_USE_STD_STRING
 
 	class String final {
         public:
@@ -47,7 +47,7 @@ namespace eos {
             }
 
             String(const char* cstr, int index, int length):
-            	_s(cstr, length) {
+            	_s(&cstr[index], length) {
             }
 
             ~String() {
@@ -81,18 +81,26 @@ namespace eos {
             	return _s.compare(str);
             }
 
+            /// \brief Obte el iterador inicial.
+            ///
             inline Iterator begin() {
             	return _s.begin();
             }
 
+            /// \brief Obte el iterador inicial.
+            ///
             inline CIterator begin() const {
             	return _s.cbegin();
             }
 
+            /// \brief Obte el iterator final.
+            ///
             inline Iterator end() {
             	return _s.end();
             }
 
+            /// \brief Obte el iterator final.
+            ///
             inline CIterator end() const {
             	return _s.cend();
             }

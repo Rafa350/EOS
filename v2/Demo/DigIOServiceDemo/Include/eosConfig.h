@@ -12,6 +12,9 @@
 #define xUSE_APPLICATION_TICK
 #define APPLICATION_TICK_PERIOD     10
 
+#define EOS_USE_STD_STRING
+#define EOS_USE_STD_VECTOR
+
 
 #include "board/eosBoard.h"
 

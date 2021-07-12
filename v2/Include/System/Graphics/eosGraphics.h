@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/Collections/eosLIFOContainer.h"
+#include "System/Collections/eosStack.h"
 #include "System/Collections/eosDynamicArray.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosPoint.h"
@@ -48,7 +48,7 @@ namespace eos {
     			int clipY2;
     			Transformation ct;
     		};
-    		typedef LIFOContainer<State, DynamicArray<State, 10> > StateStack;
+    		typedef Stack<State> StateStack;
 
         private:
             IDisplayDriver* _driver;

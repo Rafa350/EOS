@@ -5,166 +5,132 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/Collections/eosDynamicArray.h"
+#include "eosAssert.h"
+#include "System/Core/eosStdHeapAllocator.h"
+
+
+/// Std includes
+///
+#include <vector>
+#include <queue>
 
 
 namespace eos {
 
-    /// \brief Implementa una cua amb prioritat basada en una lista
+    /// \brief Implementa una cua amb prioritat.
     ///
-    template <typename Priority, typename Element, const unsigned initialCapacity = 0>
+    template <typename Priority, typename Element, int initialCapacity = 0, bool fixedCapacity = false>
     class PriorityQueue {
         private:
-            struct Node {
-                Priority priority;
-                Element element;
-            };
-
-            typedef DynamicArray<Node, initialCapacity> List;
+			class Node {
+				public:
+					Priority priority;
+					Element element;
+			};
+    		class NodeComparator {
+    			public:
+    				bool operator () (const Node& left, const Node& right) {
+    					return left.priority < right.priority;
+    				}
+    		};
+    		typedef std::priority_queue<Node, std::vector<Node, StdHeapAllocator<Node> >, NodeComparator > Q;
 
         public:
-            class Iterator {
-                private:
-                    List& list;
-                    unsigned index;
-
-                public:
-                    Iterator(PriorityQueue<Priority, Element, initialCapacity>& queue):
-                        list(queue.list),
-                        index(0) {
-                    }
-
-                    inline bool first() {
-                        if (list.isEmpty())
-                            return false;
-                        else {
-                            index = 0;
-                            return true;
-                        }
-                    }
-
-                    inline bool next() {
-                        if (!list.isEmpty() && index < list.getCount()) {
-                            index += 1;
-                            return true;
-                        }
-                        else
-                            return false;
-                    }
-
-                    inline bool hasNext() const {
-                        return index < list.getCount();
-                    }
-
-                    inline const Element& getCurrent() const {
-                        return list[index].element;
-                    }
-            };
+            typedef Element Value;
+            typedef Element& Reference;
+            typedef const Element& CReference;
+            typedef Element* Pointer;
 
         private:
-            List list;
+            Q _q;
 
         public:
+            PriorityQueue() :
+            	_q(NodeComparator()) {
+            }
+
+            PriorityQueue(const PriorityQueue& other) = delete;
+
             /// \brief Afegeig un element a la cua.
             /// \param priority: La prioritat.
             /// \param element: L'element a afeigir.
             /// \return La posicio on s'ha insertat l'element.
             ///
-            unsigned push(Priority priority, const Element& element) {
+            bool push(Priority priority, CReference element) {
 
-                unsigned index = 0;
-                while ((index < list.getSize()) &&
-                       (list[index].priority <= priority))
-                    index += 1;
+            	if constexpr (fixedCapacity)
+            		if (_q.size() == initialCapacity)
+            			return false;
 
-                Node node;
-                node.priority = priority;
-                node.element = element;
-                return list.insertAt(index, node) ? index : unsigned(-1);
+            	Node node = {
+            		.priority = priority,
+					.element = element
+            	};
+            	_q.push(node);
+            	return true;
             }
 
             /// \brief Recupera i elimina de la cua el primer element.
             /// \param: El element recuperat.
             /// \return True si tot es correcte.
             ///
-            bool pop(Element& element) {
-
-                if (peek(element)) {
-                    list.removeAt(0);
-                    return true;
-                }
-                else
-                    return false;
-            }
-
-            /// ----------------------------------------------------------
-            /// \brief Elimina el element especificat.
-            /// \param element: El element a eliminar.
-            /// \return True si tot es correcte.
-            ///
-            bool remove(Element& element) {
-
-                for (unsigned i = 0, ii = list.getSize(); i < ii; i++) {
-                    if (list[i].element == element)
-                        return list.removeAt(i);
-                }
-                return false;
-            }
-
-            /// \brief Elimina de la cua el primer element.
-            /// \return True si s'ha realitzat l'operacio correctament.
-            ///
             bool pop() {
-                if (list.isEmpty())
-                    return false;
-                else {
-                    list.removeAt(0);
-                    return true;
-                }
+            	if (_q.size() > 0) {
+            		_q.pop();
+            		return true;
+            	}
+            	return false;
             }
 
             /// \brief Recupera de la cua el primer element.
             /// \param: El element recuperat.
             /// \return True si tot es correcte.
             ///
-            bool peek(Element& element) {
-                if (list.isEmpty())
-                    return false;
-                else {
-                    element = list.getFront().element;
-                    return true;
-                }
+            CReference peek() const {
+            	eosAssert(_q.size() > 0);
+            	const Node& node = _q.top();
+            	return node.element;
             }
 
-            /// \brief Comprova si el element existeix.
-            /// \param element:El element a comprovar.
-            /// \return True si existeix, false en cas conmtrari.
+            /// \brief Recupera de la cua la prioritat del primer element.
+            /// \param: El element recuperat.
+            /// \return True si tot es correcte.
             ///
-            bool contains(const Element& element) {
-                for (unsigned i = 0, ii = list.getSize(); i < ii; i++)
-                    if (list[i].element == element)
-                        return true;
-                return false;
+            const Priority& peekPriority() const {
+            	eosAssert(_q.size() > 0);
+            	const Node& node = _q.top();
+            	return node.priority;
             }
 
             /// \brief Borra el contingut de la cua.
             ///
             inline void clear() {
-                list.clear();
+            	_q.clear();
             }
 
-            /// \brief Obte el numero d'elements en ña cua.
+            /// \brief Obte el numero d'elements en ï¿½a cua.
             /// \return El nombre d'elements.
             ///
-            inline unsigned getSize() const {
-                return list.getSize();
+            inline int getSize() const {
+            	return _q.size();
+            }
+
+            inline int getCapacity() const {
+            	return _q.size();
             }
 
             /// \brief Indica si la cua es buida.
             /// \remarks True si es buida.
             ///
             inline bool isEmpty() const {
-                return list.isEmpty();
+            	return _q.empty();
+            }
+
+            inline bool isFull() const {
+            	if constexpr (fixedCapacity)
+            		return _q.size() == initialCapacity;
+            	else
+            		return false;
             }
     };
     

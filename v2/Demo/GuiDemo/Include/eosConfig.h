@@ -4,7 +4,8 @@
 
 // Opcions generals del sistema
 //
-#define USE_STD_STRINGS
+#define EOS_USE_STD_STRING
+
 
 // Opcions dels leds integrats
 //
