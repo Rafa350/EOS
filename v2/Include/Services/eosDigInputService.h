@@ -36,15 +36,15 @@ namespace eos {
         protected:
             void onInitialize() override;
             void onTerminate() override;
-            void onTask(Task *task) override;
+            void onTask(Task* task) override;
 #if Eos_ApplicationTickEnabled
             void onTick();
 #endif
         public:
-            DigInputService(Application* application, const Settings &settings);
+            DigInputService(Application* application, const Settings& settings);
             ~DigInputService();
-            void addInput(DigInput *input);
-            void removeInput(DigInput *input);
+            void addInput(DigInput* input);
+            void removeInput(DigInput* input);
             void removeInputs();
 
             bool read(const DigInput* input) const;
@@ -65,25 +65,25 @@ namespace eos {
             struct Settings {    // Parametres de configuracio de l'entrada.
                 GPIOPort port;   // -El port
                 GPIOPin pin;     // -El pin
-                IEventCallback *eventCallback;
+                IEventCallback* eventCallback;
                 void* eventParam;
             };
 
         private:
-            DigInputService *_service;
+            DigInputService* _service;
             GPIOPort _port;
             GPIOPin _pin;
-            IEventCallback *_eventCallback;
-            void *_eventParam;
+            IEventCallback* _eventCallback;
+            void* _eventParam;
             uint32_t _pattern;
             bool _value;
             bool _edge;
 
         public:
-            DigInput(DigInputService *service, const Settings &settings);
+            DigInput(DigInputService* service, const Settings& settings);
             ~DigInput();
 
-            inline DigInputService *getService() const {
+            inline DigInputService* getService() const {
                 return _service;
             }
 

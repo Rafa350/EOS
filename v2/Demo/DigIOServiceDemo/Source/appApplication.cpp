@@ -178,6 +178,9 @@ void MyApplication::onInitialize() {
     led3->write(LEDS_STATE_OFF);
 #endif
 
+    timerService = new TimerService(this);
+    TimerCounter* timer = new TimerCounter(timerService, nullptr);
+    timer->start(10000);
 }
 
 

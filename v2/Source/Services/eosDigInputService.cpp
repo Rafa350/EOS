@@ -118,7 +118,7 @@ void DigInputService::onInitialize() {
     // Inicialitza les entrades al valor actual
     //
     for (auto it = _inputs.begin(); it != _inputs.end(); it++) {
-        DigInput *input = *it;
+        DigInput* input = *it;
         input->_value = halGPIOReadPin(input->_port, input->_pin);
         input->_edge = false;
         input->_pattern = input->_value ? PATTERN_ON : PATTERN_OFF;
@@ -165,7 +165,7 @@ void DigInputService::onTerminate() {
 /// \param    task: La tasca que executa el servei.
 ///
 void DigInputService::onTask(
-	Task *task) {
+	Task* task) {
 
     // Espera que es notifiquin canvis en les entrades
     //
@@ -220,7 +220,7 @@ bool DigInputService::read(
     const DigInput *input) const {
 
     eosAssert(input != nullptr);
-    eosAssert(input->service == this);
+    eosAssert(input->_service == this);
 
     uint32_t state = halTMRDisableInterrupts(_hTimer, HAL_TMR_EVENT_UPDATE);
     bool result = input->_value;

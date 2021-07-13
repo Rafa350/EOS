@@ -44,10 +44,10 @@ DigOutputService::~DigOutputService() {
 ///           esta inicialitzat.
 ///
 void DigOutputService::addOutput(
-    DigOutput *output) {
+    DigOutput* output) {
 
     eosAssert(output != nullptr);
-    eosAssert(output->service == nullptr);
+    eosAssert(output->_service == nullptr);
 
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
@@ -74,7 +74,7 @@ void DigOutputService::removeOutput(
     DigOutput *output) {
 
     eosAssert(output != nullptr);
-    eosAssert(output->service == this);
+    eosAssert(output->_service == this);
 
     // Inici de seccio critica. No es pot permetre accedir durant els canvis
     //
@@ -160,7 +160,7 @@ void DigOutputService::write(
     bool value) {
 
     eosAssert(output != nullptr);
-    eosAssert(output->service == this);
+    eosAssert(output->_service == this);
 
     Command cmd = {
         .opCode = value ? OpCode::set : OpCode::clear,
@@ -178,7 +178,7 @@ void DigOutputService::toggle(
     DigOutput *output) {
 
     eosAssert(output != nullptr);
-    eosAssert(output->service == this);
+    eosAssert(output->_service == this);
 
     Command cmd = {
         .opCode = OpCode::toggle,
@@ -197,7 +197,7 @@ void DigOutputService::pulse(
     unsigned width) {
 
     eosAssert(output != nullptr);
-    eosAssert(output->service == this);
+    eosAssert(output->_service == this);
 
     Command cmd = {
         .opCode = OpCode::pulse,
@@ -218,7 +218,7 @@ void DigOutputService::delayedPulse(
     unsigned width) {
 
     eosAssert(output != nullptr);
-    eosAssert(output->service == this);
+    eosAssert(output->_service == this);
 
     Command cmd = {
         .opCode = OpCode::delayedPulse,

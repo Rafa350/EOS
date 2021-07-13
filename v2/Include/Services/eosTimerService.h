@@ -18,6 +18,10 @@ namespace eos {
 
     class TimerCounter;
 
+    struct QueueComparator {
+        bool operator () (const TimerCounter* left, const TimerCounter* right);
+    };
+
     class TimerService final : public Service {
         private:
             enum class OpCode: uint8_t {
@@ -30,7 +34,7 @@ namespace eos {
             struct Command {
                 OpCode opCode;
                 union {
-                    TimerCounter *timer;
+                    TimerCounter* timer;
                     unsigned period;
                 };
             };
@@ -38,8 +42,7 @@ namespace eos {
             typedef Queue<Command> CommandQueue;
             typedef DynamicArray<TimerCounter*> TimerList;
             typedef DynamicArray<TimerCounter*>::Iterator TimerListIterator;
-            typedef PriorityQueue<unsigned, TimerCounter*> TimerQueue;
-            //typedef PriorityQueue<unsigned, TimerCounter*>::Iterator TimerQueueIterator;
+            typedef PriorityQueue<TimerCounter*, QueueComparator> TimerQueue;
 
         public:
             struct InitParams {
@@ -48,12 +51,12 @@ namespace eos {
             };
 
         private:
-            CommandQueue commandQueue;
-            TimerList timers;
-            TimerQueue activeQueue;
-            unsigned osPeriod;
-            Timer osTimer;
-            TimerEventCallback osTimerEventCallback;
+            CommandQueue _commandQueue;
+            TimerList _timers;
+            TimerQueue _activeQueue;
+            unsigned _osPeriod;
+            Timer _osTimer;
+            TimerEventCallback _osTimerEventCallback;
 
         public:
             TimerService(Application* application);
@@ -99,37 +102,38 @@ namespace eos {
             typedef ICallbackP1<const EventArgs&> IEventCallback;
 
         private:
-            TimerService *service;
-            IEventCallback *eventCallback;
-            unsigned period;
-            unsigned currentPeriod;
-            unsigned expireTime;
+            TimerService *_service;
+            IEventCallback *_eventCallback;
+            unsigned _period;
+            unsigned _currentPeriod;
+            unsigned _expireTime;
 
         public:
             TimerCounter(TimerService* service, IEventCallback* callback = nullptr);
             ~TimerCounter();
 
             inline void setEventCallback(IEventCallback* callback) {
-                eventCallback = callback;
+                _eventCallback = callback;
             }
 
             void start(unsigned period, unsigned blockTime = ((unsigned)-1)) {
-                service->start(this, period, blockTime);
+                _service->start(this, period, blockTime);
             }
 
             void stop(unsigned blockTime = ((unsigned)-1)) {
-                service->stop(this, blockTime);
+                _service->stop(this, blockTime);
             }
 
             void pause(unsigned blockTime = ((unsigned)-1)) {
-                service->pause(this, blockTime);
+                _service->pause(this, blockTime);
             }
 
             void resume(unsigned blockTime = ((unsigned)-1)) {
-                service->resume(this, blockTime);
+                _service->resume(this, blockTime);
             }
 
         friend TimerService;
+        friend QueueComparator;
     };
 
 }

@@ -14,7 +14,7 @@ namespace eos {
     namespace System {
         namespace Collections {
 #endif
-            /// \brief Implementa un contenidor FIFO de tamany fix, implñementat
+            /// \brief Implementa un contenidor FIFO de tamany fix, implementat
             ///        com un buffer circular.
             /// \remarks El contenidor enmagatzema copies del element.
             ///

@@ -21,22 +21,23 @@ namespace eos {
         namespace Collections {
 #endif            
 
-            template <typename Element, int initialCapacity = 10>
+            template <typename Element, int initialCapacity = 10, bool fixedCapacity = false>
             class DynamicArray {
             	private:
-            		typedef std::vector<Element, StdHeapAllocator<Element> > V;
+            		using Allocator = StdHeapAllocator<Element>;
+            		using Container = std::vector<Element, Allocator>;
 
             	public:
-                    typedef Element Value;
-                    typedef Element& Reference;
-                    typedef const Element& CReference;
-                    typedef Element* Pointer;
-                    typedef const Element* CPointer;
-                    typedef typename V::iterator Iterator;
-                    typedef typename V::const_iterator CIterator;
+                    typedef typename Container::value_type Value;
+                    typedef typename Container::reference Reference;
+                    typedef typename Container::const_reference CReference;
+                    typedef typename Container::pointer Pointer;
+                    typedef typename Container::const_pointer CPointer;
+                    typedef typename Container::iterator Iterator;
+                    typedef typename Container::const_iterator CIterator;
 
             	private:
-            		V _v;
+            		Container _c;
 
             	public:
 
@@ -44,7 +45,7 @@ namespace eos {
                     ///
                     DynamicArray() {
                     	if constexpr (initialCapacity > 0)
-                    		_v.reserve(initialCapacity);
+                    		_c.reserve(initialCapacity);
                     }
 
                     /// \brief Constructor copia
@@ -55,52 +56,52 @@ namespace eos {
                     /// \param element: L'element a inserter.
                     ///
                     inline void pushBack(CReference element) {
-                        _v.push_back(element);
+                        _c.push_back(element);
                     }
 
                     /// \brief Inserta un element al principi.
                     /// \param element: L'element a inserter.
                     ///
                     inline void pushFront(CReference element) {
-                        _v.push_front(element);
+                        _c.push_front(element);
                     }
 
                     /// \brief Extreu un element del final.
                     ///
                     inline void popBack() {
-                    	_v.pop_back();
+                    	_c.pop_back();
                     }
 
                     /// \brief Extreu un element del principi.
                     ///
                     inline void popFront() {
-                    	_v.remove(_v.begin());
+                    	_c.remove(_c.begin());
                     }
 
                     /// \brief Obte el element del principi.
                     ///
                     inline Reference getFront() {
-                        return _v.front();
+                        return _c.front();
                     }
 
                     /// \brief Obte el element del principi.
                     ///
                     inline CReference getFront() const {
-                        return _v.front();
+                        return _c.front();
                     }
 
                     /// \brief Obte l'element del final.
                     /// \return Una referencia a l'element.
                     //
                     inline Reference getBack() {
-                        return _v.back();
+                        return _c.back();
                     }
 
                     /// \brief Obte l'element del final.
                     /// \return Una referencia a l'element.
                     ///
                     inline CReference getBack() const {
-                        return _v.back();
+                        return _c.back();
                     }
 
                     /// \brief Obte l'element en la posicio indicada.
@@ -108,7 +109,7 @@ namespace eos {
                     /// \return Una referenciua a l'element.
                     ///
                     inline Reference getAt(int index) {
-                        return _v.at(index);
+                        return _c.at(index);
                     }
 
                     /// \brief Obte l'element en la posicio indicada
@@ -116,7 +117,7 @@ namespace eos {
                     /// \return Una referencia a l'element.
                     ///
                     inline CReference getAt(int index) const {
-                        return _v.at(index);
+                        return _c.at(index);
                     }
 
                     /// \brief Inserta un element en la posicio indicada.
@@ -125,7 +126,7 @@ namespace eos {
                     /// \return True si tot es correcte. False en cas contrari.
                     ///
                     bool insertAt(int index, CReference element) {
-                    	_v.insert(_v.begin() + index, element);
+                    	_c.insert(_c.begin() + index, element);
                     	return true;
                     }
 
@@ -134,7 +135,7 @@ namespace eos {
                     /// \return True si tot es correcte. False en cas contrari.
                     ///
                     bool removeAt(int index) {
-                    	_v.erase(_v.begin() + index);
+                    	_c.erase(_c.begin() + index);
                     	return true;
                     }
 
@@ -144,7 +145,7 @@ namespace eos {
                     /// \param length: Numero d'elements a copiar.
                     ///
                     void copyTo(Pointer dst, int offset, int length) const {
-                    	std::copy(_v.begin() + offset, _v.begin() + offset + length, dst);
+                    	std::copy(_c.begin() + offset, _c.begin() + offset + length, dst);
                     }
 
                     /// \brief Obte l'index d'un element.
@@ -152,11 +153,11 @@ namespace eos {
                     /// \return L'index o -1 si l'element no existeix.
                     ///
                     int indexOf(CReference element) const {
-                    	typename V::const_iterator it = std::find(_v.begin(), _v.end(), element);
+                    	CIterator it = std::find(_c.begin(), _c.end(), element);
                     	if (it == end())
                     		return -1;
                     	else
-                    		return it - _v.begin();
+                    		return it - _c.begin();
                     }
 
                     /// \brief Comprova si l'element pertany a la llista.
@@ -164,58 +165,58 @@ namespace eos {
                     /// \return Trus si pertany, false en cas contrari.
                     ///
                     inline bool contains(CReference element) const {
-                    	return std::find(_v.begin(), _v.end(), element) != _v.end();
+                    	return std::find(_c.begin(), _c.end(), element) != _c.end();
                     }
 
                     /// \brief Buida el array i borra el contenidor.
                     ///
                     inline void clear() {
-                    	_v.clear();
+                    	_c.clear();
                     }
 
                     /// \brief Comprova si es buit.
                     /// \return True si es buit.
                     ///
                     inline bool isEmpty() const {
-                    	return _v.empty();
+                    	return _c.empty();
                     }
 
                     /// \brief Obte el tamany
                     /// \return El tamamy.
                     ///
                     inline int getSize() const {
-                    	return _v.size();
+                    	return _c.size();
                     }
 
                     /// \brief Obte la capacitat actual.
                     /// \return La capacitat.
                     ///
                     inline int getCapacity() const {
-                    	return _v.capacity();
+                    	return _c.capacity();
                     }
 
                     /// \brief Obte el iterator inicial
                     ///
                     inline Iterator begin() {
-                        return _v.begin();
+                        return _c.begin();
                     }
 
                     /// \brief Obte el iterator inicial
                     ///
                     inline CIterator begin() const {
-                        return _v.cbegin();
+                        return _c.cbegin();
                     }
 
                     /// \brief Obte el iterator final
                     ///
                     inline Iterator end() {
-                        return _v.end();
+                        return _c.end();
                     }
 
                     /// \brief Obte el iterator final
                     ///
                     inline CIterator end() const {
-                        return _v.cend();
+                        return _c.cend();
                     }
 
                     /// \brief Implementa l'operador []
@@ -223,7 +224,7 @@ namespace eos {
                     /// \return L'element en la posicio indicada.
                     ///
                     inline CReference operator[](int index) const {
-                        return _v[index];
+                        return _c[index];
                     }
 
                     /// \brief Implementa l'operador []
@@ -231,7 +232,7 @@ namespace eos {
                     /// \return L'element en la posicio indicada.
                     ///
                     inline Reference operator[](int index) {
-                        return _v[index];
+                        return _c[index];
                     }
             };
 

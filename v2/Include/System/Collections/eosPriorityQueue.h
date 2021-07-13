@@ -20,36 +20,28 @@ namespace eos {
 
     /// \brief Implementa una cua amb prioritat.
     ///
-    template <typename Priority, typename Element, int initialCapacity = 0, bool fixedCapacity = false>
+    template <typename Element, typename Comparator, int initialCapacity = 0, bool fixedCapacity = false>
     class PriorityQueue {
+    	private:
+    		using Allocator = StdHeapAllocator<Element>;
+    		using Container = std::vector<Element, Allocator>;
+
+    	public:
+    		typedef typename Container::value_type Value;
+    		typedef typename Container::reference Reference;
+    		typedef typename Container::const_reference CReference;
+
         private:
-			class Node {
-				public:
-					Priority priority;
-					Element element;
-				public:
-					inline bool operator == (const Node& other) {
-						return
-							(priority == other.priority) &&
-							(element == other.element);
-					}
-			};
-
-			class NodeComparator {
-    			public:
-    				bool operator () (const Node& left, const Node& right) {
-    					return left.priority < right.priority;
-    				}
-    		};
-
-			template <typename T, typename C>
-    	    class custom_priority_queue: public std::priority_queue<T, std::vector<T, eos::StdHeapAllocator<T> >, C> {
+    	    class Queue: public std::priority_queue<Element, Container, Comparator> {
     	        public:
-    	            custom_priority_queue(C comparator):
-    	                std::priority_queue<T, std::vector<T, eos::StdHeapAllocator<T> >, C>(comparator) {
+    	            Queue() {
     	            }
 
-    	            bool remove(const T& value) {
+    	            Queue(Comparator comparator):
+    	                std::priority_queue<Element, Container, Comparator>(comparator) {
+    	            }
+
+    	            bool remove(CReference value) {
     	                auto it = std::find(this->c.begin(), this->c.end(), value);
     	                if (it != this->c.end()) {
     	                    this->c.erase(it);
@@ -60,55 +52,44 @@ namespace eos {
     	                    return false;
     	            }
 
-    	            typename std::vector<T, eos::StdHeapAllocator<T> >::const_iterator begin() const {
-    	                return this->c.begin();
-    	            }
-
-    	            typename std::vector<T, eos::StdHeapAllocator<T> >::const_iterator end() const {
-    	                return this->c.end();
-    	            }
+                    bool contains(CReference value) {
+                        auto it = std::find(this->c.begin(), this->c.end(), value);
+                        return it != this->c.end();
+                    }
     	    };
 
-			typedef custom_priority_queue<Node, NodeComparator> Q;
-
-        public:
-            typedef Element Value;
-            typedef Element& Reference;
-            typedef const Element& CReference;
-            typedef Element* Pointer;
-
         private:
-            Q _q;
+            Queue _q;
 
         public:
-            /// \brief Contructor
+            /// \brief Contructor per defecte
             ///
             PriorityQueue() :
-            	_q(NodeComparator()) {
+            	_q() {
+            }
+
+            /// \brief Contructor
+            /// \param comparator: El objecte comparador.
+            ///
+            PriorityQueue(Comparator comparator) :
+            	_q(comparator) {
             }
 
             PriorityQueue(const PriorityQueue& other) = delete;
 
             /// \brief Afegeig un element a la cua.
-            /// \param priority: La prioritat.
             /// \param element: L'element a afeigir.
-            /// \return La posicio on s'ha insertat l'element.
+            /// \return True si tot es correcte.
             ///
-            bool push(Priority priority, CReference element) {
-
+            bool push(CReference element) {
             	if constexpr (fixedCapacity)
             		if (_q.size() == initialCapacity)
             			return false;
-
-            	Node node = {
-            		.priority = priority,
-					.element = element
-            	};
-            	_q.push(node);
+            	_q.push(element);
             	return true;
             }
 
-            /// \brief Recupera i elimina de la cua el primer element.
+            /// \brief Extreu el primer element de la cua.
             /// \param: El element recuperat.
             /// \return True si tot es correcte.
             ///
@@ -120,37 +101,32 @@ namespace eos {
             	return false;
             }
 
-            /// \brief Recupera de la cua el primer element.
+            /// \brief Obte el primer element de la cua.
+            /// \param element: Referencia al resultat.
             /// \return True si tot es correcte.
+            ///
+            bool peek(Reference element) {
+            	if (_q.size() > 0) {
+            		element = _q.top();
+            		return true;
+            	}
+            	return false;
+            }
+
+            /// \brief Obte el primer element de la cua.
+            /// \return El element.
             ///
             CReference peek() const {
             	eosAssert(_q.size() > 0);
-            	const Node& node = _q.top();
-            	return node.element;
-            }
-
-            /// \brief Recupera de la cua la prioritat del primer element.
-            /// \return True si tot es correcte.
-            ///
-            const Priority& peekPriority() const {
-            	eosAssert(_q.size() > 0);
-            	const Node& node = _q.top();
-            	return node.priority;
+            	return _q.top();
             }
 
             /// \brief Elimina un element de la cua.
             /// \param element: El element a eliminar.
-            /// \return True si toto es correcte.
+            /// \return True si tot es correcte.
             ///
             inline bool remove(CReference element) {
-                for (auto it = _q.begin(); it != _q.end(); it++) {
-                    const Node& node = *it;
-                    if (node.element == element) {
-                        _q.remove(node);
-                        return true;
-                    }
-                }
-                return false;
+                return _q.remove(element);
             }
 
             /// \brief Comprova si la cua conte un element.
@@ -158,12 +134,7 @@ namespace eos {
             /// \return True si esta en la cua, false en cas contrari.
             ///
             inline bool contains(CReference element) {
-                for (auto it = _q.begin(); it != _q.end(); it++) {
-                    const Node& node = *it;
-                    if (node.element == element)
-                    	return true;
-                }
-                return false;
+                return _q.contains(element);
             }
 
             /// \brief Borra el contingut de la cua.

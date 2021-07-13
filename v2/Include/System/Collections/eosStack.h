@@ -25,14 +25,16 @@ namespace eos {
 			template <typename Element, int initialCapacity = 0, bool fixedCapacity = false>
 			class Stack {
 				private:
-					typedef std::vector<Element, StdHeapAllocator<Element> > V;
+					using Allocator = StdHeapAllocator<Element>;
+					using Container = std::vector<Element, Allocator>;
 
 				public:
-					typedef Element& Reference;
-					typedef const Element& CReference;
+					typedef typename Container::value_type Value;
+					typedef typename Container::reference Reference;
+					typedef typename Container::const_reference CReference;
 
 				private:
-					V _v;
+					Container _c;
 
 				public:
 
@@ -40,7 +42,7 @@ namespace eos {
 					///
 					Stack() {
 						if constexpr (initialCapacity > 0)
-							_v.reserve(initialCapacity);
+							_c.reserve(initialCapacity);
 					}
 
 					/// \brief Constructor copia
@@ -52,17 +54,17 @@ namespace eos {
 					//
 					inline bool push(CReference element) {
 						if constexpr (fixedCapacity)
-							if (_v.size() == _v.capacity())
+							if (_c.size() == _c.capacity())
 								return false;
-						_v.push_back(element);
+						_c.push_back(element);
 						return true;
 					}
 
 					/// \brief Elimina un element de la pila.
 					///
 					inline bool pop() {
-						if (_v.size() > 0) {
-							_v.pop_back();
+						if (_c.size() > 0) {
+							_c.pop_back();
 							return true;
 						}
 						return false;
@@ -72,50 +74,50 @@ namespace eos {
 					/// \return: El primer element.
 					///
 					inline Reference peek() {
-						eosAssert(_v.size() > 0);
-						return _v.back();
+						eosAssert(_c.size() > 0);
+						return _c.back();
 					}
 
 					/// \brief: Obte el primer element de la pila.
 					/// \return: El primer element.
 					///
 					inline CReference peek() const {
-						eosAssert(_v.size() > 0);
-						return _v.back();
+						eosAssert(_c.size() > 0);
+						return _c.back();
 					}
 
 					/// \brief Buida la pila.
 					///
 					inline void clear() {
-						_v.clear();
+						_c.clear();
 					}
 
 					/// \brief: Indica si la pila es buida.
 					/// \return: True si es buida.
 					///
 					inline bool isEmpty() const {
-						return _v.empty();
+						return _c.empty();
 					}
 
 					/// \brief: Indica si la pila es plena
 					/// \return: True si es plena.
 					///
 					inline bool isFull() const {
-						return _v.size() == _v.capacity();
+						return _c.size() == _c.capacity();
 					}
 
 					/// \brief Obte el tamany de la pila.
 					/// \return El valor.
 					///
 					inline int getSize() const {
-						return _v.size();
+						return _c.size();
 					}
 
 					/// \brief Obte capacitat actual de la pila.
 					/// \return El valor.
 					///
 					inline int getCapacity() const {
-						return _v.capacity();
+						return _c.capacity();
 					}
 			};
 

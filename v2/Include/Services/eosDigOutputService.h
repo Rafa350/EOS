@@ -82,12 +82,12 @@ namespace eos {
         protected:
             void onInitialize() override;
             void onTerminate() override;
-            void onTask(Task *task) override;
+            void onTask(Task* task) override;
 #if Eos_ApplicationTickEnabled
             void onTick() override;
 #endif
         public:
-            DigOutputService(Application *application, const Settings &settings);
+            DigOutputService(Application* application, const Settings& settings);
             ~DigOutputService();
 
             void addOutput(DigOutput* output);
