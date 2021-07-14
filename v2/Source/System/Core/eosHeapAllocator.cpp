@@ -13,7 +13,7 @@ using namespace eos;
 /// \return   Punter al bloc de memoria. nullptr en cas d'error.
 ///
 void* MemoryHeapAllocator::allocate(
-    unsigned size) {
+    int size) {
 
     eosAssert(size > 0);
 

@@ -22,13 +22,13 @@ typedef struct {
 HHeap osalHeapCreate(void);
 void osalHeapDestroy(HHeap hHeap);
 
-void *osalHeapAlloc(HHeap hHeap, unsigned size);
+void *osalHeapAlloc(HHeap hHeap, int size);
 void osalHeapFree(HHeap hHeap, void* block);
 
 bool osalHeapVerify(HHeap hHeap, void* block);
 void osalHeapGetInfo(HHeap hHeap, HeapInformation* info);
 
-void* osal_malloc(unsigned size);
+void* osal_malloc(int size);
 void osal_free(void* p);
 
 

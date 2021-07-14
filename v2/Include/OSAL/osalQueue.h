@@ -15,7 +15,7 @@ extern "C" {
 typedef struct OSAL_QUEUE_DATA *HQueue;
 
 
-HQueue osalQueueCreate(unsigned maxElements, unsigned elementSize);
+HQueue osalQueueCreate(int maxElements, int elementSize);
 void osalQueueDestroy(HQueue hQueue);
 
 void osalQueueClear(HQueue hQueue);

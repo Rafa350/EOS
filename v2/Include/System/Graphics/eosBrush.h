@@ -28,7 +28,7 @@ namespace eos {
 	private:
 		struct Impl;
 		typedef SharedPtr<Impl> ImplPtr;
-		typedef DynamicArray<ImplPtr, eosGraphics_MaxBrushes> ImplPtrCache;
+		typedef DynamicArray<ImplPtr, eosGraphics_MaxBrushes, true> ImplPtrCache;
 
 	private:
 		static ImplPtrCache _implCache;

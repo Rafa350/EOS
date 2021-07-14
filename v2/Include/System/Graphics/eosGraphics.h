@@ -70,7 +70,7 @@ namespace eos {
             inline Font getFont() { return _font; }
 
             void setClip(int x1, int y1, int x2, int y2);
-            void setClip(const Rect& r) { setClip(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
+            inline void setClip(const Rect& r) { setClip(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
             void resetClip();
 
             void setTransformation(const Transformation& t, bool combine = false);

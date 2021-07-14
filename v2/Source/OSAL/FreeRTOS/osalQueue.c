@@ -12,8 +12,8 @@
 /// \result   El handler de la cua. NULL en cas d'error.
 ///
 HQueue osalQueueCreate(
-	unsigned maxElements,
-	unsigned elementSize) {
+	int maxElements,
+	int elementSize) {
 
 	eosAssert(maxElements > 0);
 	eosAssert(elementSize > 0);

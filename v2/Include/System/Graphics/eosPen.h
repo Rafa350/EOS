@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 #include "System/eosPointers.h"
+#include "System/Collections/eosDynamicArray.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosBrush.h"
 
@@ -34,6 +35,7 @@ namespace eos {
 		private:
 			struct Impl;
 			typedef SharedPtr<Impl> ImplPtr;
+			typedef DynamicArray<ImplPtr, eosGraphics_MaxPens, true> ImplPtrCache;
 
 		private:
 			ImplPtr _impl;

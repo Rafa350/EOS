@@ -54,7 +54,7 @@ namespace eos {
                 return *this;
             }
 
-            int uses() const {
+            inline int uses() const {
                 return (_count == nullptr) ? 0 : int(*_count);
             }
 

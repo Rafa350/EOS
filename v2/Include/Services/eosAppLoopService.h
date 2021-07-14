@@ -24,7 +24,7 @@ namespace eos {
             virtual void onLoop();
 
         public:
-            AppLoopService(Application *application);
+            AppLoopService(Application* application);
     };
 
 }

@@ -43,7 +43,7 @@ void halHeapDestroy(
 ///
 void* osalHeapAlloc(
     HHeap hHeap,
-	unsigned size) {
+	int size) {
 
     eosAssert(hHeap == NULL);
     eosAssert(size > 0);
@@ -71,7 +71,7 @@ void* osalHeapAlloc(
 ///
 void osalHeapFree(
     HHeap hHeap,
-	void *block) {
+	void* block) {
 
     eosAssert(hHeap == NULL);
     eosAssert(block != NULL);
@@ -93,7 +93,7 @@ void osalHeapFree(
 ///
 bool osalHeapVerify(
 	HHeap hHeap,
-	void *block) {
+	void* block) {
 
 #ifdef SAFE_MODE
     block = (char*)block - sizeof(signature);
@@ -111,7 +111,7 @@ bool osalHeapVerify(
 ///
 void osalHeapGetInfo(
 	HHeap hHeap,
-	HeapInformation *info) {
+	HeapInformation* info) {
 
 	eosAssert(info != NULL);
 }
@@ -122,7 +122,7 @@ void osalHeapGetInfo(
 /// \param    size: Tamany del bloc de memoria.
 ///
 void* osal_malloc(
-    unsigned size) {
+    int size) {
 
     return osalHeapAlloc(NULL, size);
 }

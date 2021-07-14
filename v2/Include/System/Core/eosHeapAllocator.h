@@ -11,30 +11,30 @@ namespace eos {
 
     class MemoryHeapAllocator {
         public:
-    		MemoryHeapAllocator(unsigned size);
+    		MemoryHeapAllocator(int size);
     		~MemoryHeapAllocator();
 
-            void* allocate(unsigned size);
-            void deallocate(void *p);
+            void* allocate(int size);
+            void deallocate(void* p);
 
             void* getAddr() const;
-            unsigned getSize() const;
+            int getSize() const;
     };
 
-    template <typename T, unsigned SIZE>
+    template <typename T, int size>
     class HeapAllocator {
         private:
             MemoryHeapAllocator _allocator;
 
         public:
             HeapAllocator() :
-            	_allocator(SIZE) {}
+            	_allocator(size) {}
 
             inline T *allocate() {
                 return static_cast<T*>(_allocator.allocate(sizeof(T)));
             }
 
-            inline void deallocate(T *p) {
+            inline void deallocate(T* p) {
                 _allocator.deallocate(p);
             }
     };

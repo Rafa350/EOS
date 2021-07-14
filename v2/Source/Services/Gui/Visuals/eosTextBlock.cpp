@@ -63,11 +63,10 @@ Size TextBlock::measureOverride(
 
 	else {
 
-		const uint8_t *fontResource =  Font::getFontResource(_fontName, _fontHeight, _fontStyle);
-		Font font(fontResource);
+		Font font(_fontName, _fontHeight, _fontStyle);
 
 		int measuredWidth = 0;
-		for (unsigned i = 0; _text[i]; i++)
+		for (int i = 0; _text[i]; i++)
 			measuredWidth += font.getCharAdvance(_text[i]);
 		int measuredHeight = font.getFontHeight();
 
@@ -212,8 +211,7 @@ void TextBlock::onRender(
 
 	// Dibuixa el text
 	//
-	const uint8_t *fontResource = Font::getFontResource(_fontName, _fontHeight, _fontStyle);
-	Font font(fontResource);
+	Font font(_fontName, _fontHeight, _fontStyle);
 
 	g.setFont(font);
 	g.setTextAlign(_horizontalTextAlign, _verticalTextAlign);

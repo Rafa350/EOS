@@ -23,9 +23,12 @@ int Graphics::drawChar(
 
     FontInfo fi;
     _font.getFontInfo(fi);
+
     if ((c >= fi.firstChar) && (c <= fi.lastChar)) {
-        CharInfo ci;
+
+    	CharInfo ci;
         _font.getCharInfo(c, ci);
+
         if (ci.bitmap != nullptr) {
             int cw = (ci.width + 7) / 8;
             x += ci.left;

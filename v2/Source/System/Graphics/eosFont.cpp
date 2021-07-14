@@ -7,48 +7,65 @@
 
 using namespace eos;
 
+#define DEFAULT_FONT_NAME "Tahoma"
+#define DEFAULT_FONT_HEIGHT 12
+#define DEFAULT_FONT_STYLE FontStyle::regular
+
+#define FR_FONT_HEIGHT 1
+#define FR_FONT_ASCEND 2
+#define FR_FONT_DESCEND 3
+#define FR_FONT_FIRST 4
+#define FR_FONT_LAST 5
+
 
 class Font::Impl: public PoolAllocatable<Font::Impl, eosGraphics_MaxFonts> {
-	public:
-    	char chCache;
-    	CharInfo ciCache;
-    	const uint8_t *fontResource;
+	private:
+    	const uint8_t* _fontResource;
 
 	public:
-    	bool operator == (const Impl& other) const {
-    		return fontResource == other.fontResource;
+    	Impl(const uint8_t* fontResource):
+    		_fontResource(fontResource) {
     	}
 
-    	bool operator != (const Impl& other) const {
+    	bool operator == (const Impl& other) const {
+    		return _fontResource == other._fontResource;
+    	}
+
+    	inline bool operator != (const Impl& other) const {
     		return !(*this == other);
+    	}
+
+    	inline const uint8_t* getFontResource() const {
+    		return _fontResource;
     	}
 };
 
 
-extern const FontTableEntry* fontResourceTable;
+Font::ImplPtrCache Font::_implCache;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor. Crea el font per defecte.
 ///
 Font::Font() :
-	_impl(makeImpl()) {
+	_impl(makeImpl(getFontResource(DEFAULT_FONT_NAME, DEFAULT_FONT_HEIGHT, DEFAULT_FONT_STYLE))) {
 
-	_impl->chCache = -1;
-	_impl->fontResource = nullptr;
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
-/// \param    fontResource: El recurs del font.
+/// \param    name: Nom del font
+/// \param    height: Alçada de la lletra.
+/// \param    style: Estil.
 ///
 Font::Font(
-	const uint8_t *fontResource):
+	const String& name,
+	int height,
+	FontStyle style):
 
-	_impl(makeImpl()) {
+	_impl(makeImpl(getFontResource(name, height, style))) {
 
-    _impl->chCache = -1;
-    _impl->fontResource = getFontResource("Tahoma", 12, FontStyle::regular);
 }
 
 
@@ -75,9 +92,22 @@ Font::~Font() {
 /// \brief    Crea el bloc de memoria de Impl
 /// \return   El punter al bloc.
 ///
-Font::ImplPtr Font::makeImpl() {
+Font::ImplPtr Font::makeImpl(
+	const uint8_t* fontResource) {
 
-	return ImplPtr(new Font::Impl);
+	eosAssert(fontResource != nullptr);
+
+	// Si ja esta en el cache, el reutilitza.
+	//
+	for (auto it = _implCache.begin(); it != _implCache.end(); it++) {
+		ImplPtr impl = *it;
+		if (impl->getFontResource() == fontResource)
+			return impl;
+	}
+
+	ImplPtr impl(new Font::Impl(fontResource));
+	_implCache.pushBack(impl);
+	return impl;
 }
 
 
@@ -113,7 +143,79 @@ bool Font::operator == (
 ///
 int Font::getFontHeight() const {
 
-	return _impl->fontResource[1];
+	const uint8_t* fr = _impl->getFontResource();
+	return fr[FR_FONT_HEIGHT];
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte informacio del font
+/// \param fi: Destinacio de la informacio.
+///
+void Font::getFontInfo(
+    FontInfo& fi) const {
+
+	const uint8_t* fr = _impl->getFontResource();
+
+	fi.height = fr[FR_FONT_HEIGHT];
+    fi.ascent = fr[FR_FONT_ASCEND];
+    fi.descent = fr[FR_FONT_DESCEND];
+    fi.firstChar = fr[FR_FONT_FIRST];
+    fi.lastChar = fr[FR_FONT_LAST];
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte informacio d'un caracter del font.
+/// \param c: El caracter.
+/// \param ci: Destinacio de la informacio.
+///
+void Font::getCharInfo(
+    char ch,
+    CharInfo &ci) const {
+
+    const uint8_t* fr = _impl->getFontResource();
+
+    if ((ch >= fr[FR_FONT_FIRST]) && (ch <= fr[FR_FONT_LAST])) {
+        int offset = fr[6] + fr[7] * 256 + (ch - fr[4]) * 2;
+        int charInfoOffset = fr[offset] + fr[offset + 1] * 256;
+        int charBitsOffset = fr[charInfoOffset + 5] + fr[charInfoOffset + 6] * 256;
+
+        ci.width = fr[charInfoOffset];
+        ci.height = fr[charInfoOffset + 1];
+        ci.left = fr[charInfoOffset + 2];
+        ci.top = fr[charInfoOffset + 3];
+        ci.advance = fr[charInfoOffset + 4];
+        ci.bitmap = (charBitsOffset == -1) ? nullptr : &fr[charBitsOffset];
+    }
+    else {
+        ci.width = 0;
+        ci.height = 0;
+        ci.left = 0;
+        ci.top = 0;
+        ci.advance = 0;
+        ci.bitmap = nullptr;
+    }
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief Obte l'avan� deun caracter.
+/// \param ch: El caracter.
+/// \return L'avan� del caracter.
+///
+int Font::getCharAdvance(
+    char ch) const {
+
+	const uint8_t* fr = _impl->getFontResource();
+
+    if ((ch >= fr[4]) && (ch <= fr[5])) {
+		int offset = fr[6] + fr[7] * 256 + (ch - fr[4]) * 2;
+		int charInfoOffset = fr[offset] + fr[offset + 1] * 256;
+		return fr[charInfoOffset + 4];
+    }
+    else
+    	return 0;
 }
 
 
@@ -123,12 +225,13 @@ int Font::getFontHeight() const {
 /// \param height: Alçada del font.
 /// \param style: Estil del font.
 ///
+extern const FontTableEntry* fontResourceTable;
 const uint8_t* Font::getFontResource(
 	const String& name,
 	int height,
 	FontStyle style) {
 
-	const FontTableEntry *pResource = fontResourceTable;
+	const FontTableEntry* pResource = fontResourceTable;
 
 	for (int i = 0; pResource[i].name != nullptr; i++) {
 		const FontTableEntry* pEntry = &pResource[i];
@@ -142,80 +245,3 @@ const uint8_t* Font::getFontResource(
 
 	return nullptr;
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte informacio del font
-/// \param fi: Destinacio de la informacio.
-///
-void Font::getFontInfo(
-    FontInfo &fi) const {
-
-    fi.height = _impl->fontResource[1];
-    fi.ascent = _impl->fontResource[2];
-    fi.descent = _impl->fontResource[3];
-    fi.firstChar = _impl->fontResource[4];
-    fi.lastChar = _impl->fontResource[5];
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte informacio d'un caracter del font.
-/// \param c: El caracter.
-/// \param ci: Destinacio de la informacio.
-///
-void Font::getCharInfo(
-    char ch,
-    CharInfo &ci) const {
-
-    updateCache(ch);
-    ci = _impl->ciCache;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Obte l'avan� deun caracter.
-/// \param ch: El caracter.
-/// \return L'avan� del caracter.
-///
-int Font::getCharAdvance(
-    char ch) const {
-
-    updateCache(ch);
-    return _impl->ciCache.advance;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief : Actualitza el cache amb la informacio del caracter.
-/// \param ch: El caracter.
-///
-void Font::updateCache(
-    char ch) const {
-
-    if (_impl->chCache != ch) {
-        _impl->chCache = ch;
-        if ((ch >= _impl->fontResource[4]) && (ch <= _impl->fontResource[5])) {
-            unsigned offset = _impl->fontResource[6] + _impl->fontResource[7] * 256u + (ch - _impl->fontResource[4]) * 2u;
-            unsigned charInfoOffset = _impl->fontResource[offset] + _impl->fontResource[offset + 1] * 256u;
-            unsigned charBitsOffset = _impl->fontResource[charInfoOffset + 5u] + _impl->fontResource[charInfoOffset + 6u] * 256u;
-
-            _impl->ciCache.width = _impl->fontResource[charInfoOffset];
-            _impl->ciCache.height = _impl->fontResource[charInfoOffset + 1u];
-            _impl->ciCache.left = _impl->fontResource[charInfoOffset + 2u];
-            _impl->ciCache.top = _impl->fontResource[charInfoOffset + 3u];
-            _impl->ciCache.advance = _impl->fontResource[charInfoOffset + 4u];
-            _impl->ciCache.bitmap = (charBitsOffset == (unsigned) -1) ? nullptr : &_impl->fontResource[charBitsOffset];
-        }
-        else {
-            _impl->ciCache.width = 0;
-            _impl->ciCache.height = 0;
-            _impl->ciCache.left = 0;
-            _impl->ciCache.top = 0;
-            _impl->ciCache.advance = 0;
-            _impl->ciCache.bitmap = nullptr;
-        }
-    }
-}
-
-

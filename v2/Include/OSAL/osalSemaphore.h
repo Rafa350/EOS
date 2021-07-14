@@ -15,7 +15,7 @@ extern "C" {
 typedef struct OSAL_SEMAPHORE_DATA *HSemaphore;
 
 
-HSemaphore osalSemaphoreCreate(unsigned maxCount);
+HSemaphore osalSemaphoreCreate(int maxCount);
 void osalSemaphoreDestroy(HSemaphore hSemaphore);
 
 bool osalSemaphoreWait(HSemaphore hSemaphore, unsigned blockTime);

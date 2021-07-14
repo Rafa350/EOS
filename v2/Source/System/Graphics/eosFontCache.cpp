@@ -45,8 +45,7 @@ Font *FontCache::getFont(
 	// Si no el troba, crea un de nou i l'afegeix al cache.
 	//
 	if (font == nullptr) {
-		const uint8_t * fontResource = Font::getFontResource(name, height, style);
-		font = new Font(fontResource);
+		font = new Font(name, height, style);
 		CacheEntry *entry = new  CacheEntry {
 			.name = name,
 			.height = height,

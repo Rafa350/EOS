@@ -17,21 +17,21 @@ namespace eos {
     ///
     class Service {
         private:
-            Application *_application;
-            unsigned stackSize;
-            Task::Priority priority;
-            bool initialized;
-            String name;
+            Application* _application;
+            int _stackSize;
+            Task::Priority _priority;
+            bool _initialized;
+            String _name;
 
-            Service(const Service &) = delete;
-            Service& operator=(const Service &) = delete;
+            Service(const Service&) = delete;
+            Service& operator=(const Service&) = delete;
 
         protected:
-            Service(Application *application);
+            Service(Application* application);
 
             virtual void onInitialize();
             virtual void onTerminate();
-            virtual void onTask(Task *task);
+            virtual void onTask(Task* task);
 #if Eos_ApplicationTickEnabled
             virtual void onTick();
 #endif
@@ -44,42 +44,42 @@ namespace eos {
 #if Eos_ApplicationTickEnabled
             void tick();
 #endif
-            void task(Task *task);
+            void task(Task* task);
 
-            inline void setName(const String &name) {
-                this->name = name;
+            inline void setName(const String& name) {
+                _name = name;
             }
 
             inline void setPriority(Task::Priority priority) {
-                this->priority = priority;
+                _priority = priority;
             }
 
-            inline void setStackSize(unsigned stackSize) {
-                this->stackSize = stackSize;
+            inline void setStackSize(int stackSize) {
+                _stackSize = stackSize;
             }
 
-            inline Application * getApplication() const {
+            inline Application* getApplication() const {
                 return _application;
             }
 
-            inline const String & getName() const {
-                return name;
+            inline const String& getName() const {
+                return _name;
             }
 
             inline Task::Priority getPriority() const {
-                return priority;
+                return _priority;
             }
 
-            inline unsigned getStackSize() const {
-                return stackSize;
+            inline int getStackSize() const {
+                return _stackSize;
             }
 
             inline bool isInitialized() const {
-                return initialized;
+                return _initialized;
             }
 
-        friend void link(Application *application, Service *service);
-        friend void unlink(Application *application, Service *service);
+        friend void link(Application* application, Service* service);
+        friend void unlink(Application* application, Service* service);
     };
 
 }

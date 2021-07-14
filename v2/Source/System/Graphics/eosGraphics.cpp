@@ -16,7 +16,7 @@ using namespace eos;
 /// \param    driver: Driver del display
 ///
 Graphics::Graphics(
-    IDisplayDriver *driver) :
+    IDisplayDriver* driver) :
 
     _driver(driver) {
 
@@ -24,8 +24,7 @@ Graphics::Graphics(
 	resetTransformation();
     setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::bottom);
 
-    const uint8_t *fontResource = Font::getFontResource("Tahoma", 12, FontStyle::regular);
-    setFont(Font(fontResource));
+    setFont(Font());
 }
 
 
@@ -57,7 +56,7 @@ void Graphics::setTextAlign(
 /// \return   L'anterior font seleccionat.
 ///
 void Graphics::setFont(
-    const Font &font) {
+    const Font& font) {
 
     _font = font;
 }
@@ -69,7 +68,7 @@ void Graphics::setFont(
 /// \param    combine: True si cal combinar la transformacio amb l'actual.
 ///
 void Graphics::setTransformation(
-	const Transformation &t,
+	const Transformation& t,
 	bool combine) {
 
 	// Asigna la nova transformacio
@@ -155,7 +154,7 @@ void Graphics::drawPoint(
 /// \return    L'amplada de la cadena en pixels.
 ///
 int Graphics::getTextWidth(
-    const String &text,
+    const String& text,
     int offset,
     int length) const {
 
@@ -173,7 +172,7 @@ int Graphics::getTextWidth(
 /// \return   L'al�ada de la cadena.
 ///
 int Graphics::getTextHeight(
-    const String &text) const {
+    const String& text) const {
 
     return _font.getFontHeight();
 }
@@ -185,8 +184,8 @@ int Graphics::getTextHeight(
 /// \param    y: Coordinada Y del punt.
 ///
 void Graphics::transform(
-	int &x,
-	int &y) const {
+	int& x,
+	int& y) const {
 
 	_state.ct.apply(x, y);
 }

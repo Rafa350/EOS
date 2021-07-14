@@ -38,7 +38,7 @@ class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 		/// \param other: L'altre objecte per comparar.
 		/// \return True si son iguals.
 		///
-		inline bool operator == (const Impl& other) const {
+		bool operator == (const Impl& other) const {
 			return
 				(_style == other._style) &&
 				(_color == other._color) &&

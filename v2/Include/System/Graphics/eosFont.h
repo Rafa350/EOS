@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 #include "System/eosPointers.h"
+#include "System/Collections/eosDynamicArray.h"
 
 
 #ifndef eosGraphics_MaxFonts
@@ -52,23 +53,24 @@ namespace eos {
     	private:
     		struct Impl;
     		typedef SharedPtr<Impl> ImplPtr;
+			typedef DynamicArray<ImplPtr, eosGraphics_MaxFonts, true> ImplPtrCache;
 
     	private:
+			static ImplPtrCache _implCache;
     		ImplPtr _impl;
 
         private:
-            ImplPtr makeImpl();
-            void updateCache(char ch) const;
+            ImplPtr makeImpl(const uint8_t* fontResource);
 
         public:
             Font();
-            Font(const uint8_t* fontResource);
+            Font(const String& name, int height, FontStyle style);
             Font(const Font& font);
             ~Font();
 
             Font& operator = (const Font& font);
-            bool operator ==(const Font &font) const;
-            inline bool operator !=(const Font& font) const { return !(*this == font); }
+            bool operator == (const Font &font) const;
+            inline bool operator != (const Font& font) const { return !(*this == font); }
 
             void getFontInfo(FontInfo& fi) const;
             void getCharInfo(char ch, CharInfo& ci) const;

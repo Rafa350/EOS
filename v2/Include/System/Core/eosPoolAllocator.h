@@ -12,8 +12,8 @@ namespace eos {
     ///
     class MemoryPoolAllocator {
         private:
-            uint8_t *_blocks;
-            uint8_t *_nextBlock;
+            uint8_t* _blocks;
+            uint8_t* _nextBlock;
             int _blockSize;
             int _maxBlocks;
             int _freeBlocks;
@@ -26,12 +26,25 @@ namespace eos {
             void* allocate();
             void deallocate(void* p);
 
-            inline void* getAddr() const { return _blocks; }
-            inline unsigned getSize() const { return _blockSize * _maxBlocks; }
+            inline void* getAddr() const {
+            	return _blocks;
+            }
 
-            inline int getBlockSize() const { return _blockSize; }
-            inline int getUsedBlocks() const { return _maxBlocks - _freeBlocks; }
-            inline int getFreeBlocks() const { return _freeBlocks; }
+            inline unsigned getSize() const {
+            	return _blockSize * _maxBlocks;
+            }
+
+            inline int getBlockSize() const {
+            	return _blockSize;
+            }
+
+            inline int getUsedBlocks() const {
+            	return _maxBlocks - _freeBlocks;
+            }
+
+            inline int getFreeBlocks() const {
+            	return _freeBlocks;
+            }
 
         private:
             uint8_t* addrFromIndex(int i) const;
@@ -41,7 +54,7 @@ namespace eos {
 
     /// \brief Pool de memoria
     ///
-    template <typename T, int MAX_BLOCKS>
+    template <typename T, int maxBlocks>
     class PoolAllocator {
 
     	private:
@@ -50,33 +63,33 @@ namespace eos {
     	public:
 
     		PoolAllocator():
-            	_allocator(sizeof(T), MAX_BLOCKS) {
+            	_allocator(sizeof(T), maxBlocks) {
             }
 
-    		inline T *allocate() {
-    			void *p = _allocator.allocate();
+    		inline T* allocate() {
+    			void* p = _allocator.allocate();
     			eosAssert(p != nullptr);
             	return static_cast<T*>(p);
             }
 
-    		inline void deallocate(T *p) {
+    		inline void deallocate(T* p) {
             	_allocator.deallocate(p);
             }
     };
 
     /// \brief Base pels objectes del pool de memoria
     ///
-    template <typename T, int MAX_BLOCKS>
+    template <typename T, int maxBlocks>
     class PoolAllocatable {
     	private:
-    		inline static PoolAllocator<T, MAX_BLOCKS> _allocator = PoolAllocator<T, MAX_BLOCKS>();
+    		inline static PoolAllocator<T, maxBlocks> _allocator = PoolAllocator<T, maxBlocks>();
 
     	public:
         	void* operator new(unsigned size) {
         		return _allocator.allocate();
         	}
 
-        	void operator delete(void *p) {
+        	void operator delete(void* p) {
         		_allocator.deallocate(static_cast<T*>(p));
         	}
     };

@@ -15,10 +15,10 @@ Service::Service(
 	Application *application) :
 
     _application(nullptr),
-	stackSize(512),
-	priority(Task::Priority::normal),
-    initialized(false),
-	name("SERVICE") {
+	_stackSize(512),
+	_priority(Task::Priority::normal),
+    _initialized(false),
+	_name("SERVICE") {
 
     // Si s'indica l'aplicacio, aleshores s'afegeix a la llista de
 	// serveis d'aquesta.
@@ -46,9 +46,9 @@ Service::~Service() {
 ///
 void Service::initialize() {
 
-	if (!initialized) {
+	if (!_initialized) {
 		onInitialize();
-        initialized = true;
+        _initialized = true;
 	}
 }
 
@@ -58,9 +58,9 @@ void Service::initialize() {
 ///
 void Service::terminate() {
 
-    if (initialized) {
+    if (_initialized) {
         onTerminate();
-        initialized = false;
+        _initialized = false;
     }
 }
 
@@ -82,9 +82,9 @@ void Service::tick() {
 /// \param    task: L'objecte Task que executa el servei.
 ///
 void Service::task(
-	Task *task) {
+	Task* task) {
 
-    if (initialized)
+    if (_initialized)
         onTask(task);
 }
 

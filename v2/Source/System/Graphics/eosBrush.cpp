@@ -46,7 +46,7 @@ class Brush::Impl: public PoolAllocatable<Brush::Impl, eosGraphics_MaxBrushes> {
 		/// \param other: L'altre objecte per comparar.
 		/// \return True si son iguals.
 		///
-		inline bool operator == (const Impl& other) const {
+		bool operator == (const Impl& other) const {
 			return
 				(_style == other._style) &&
 				(_color == other._color);
@@ -189,9 +189,9 @@ Brush::ImplPtr Brush::makeImpl(
 
 	// Si no el troba, en crea un de nou
 	//
-	ImplPtr pImpl(new Impl(style, color));
-	_implCache.pushBack(pImpl);
-	return pImpl;
+	ImplPtr impl(new Impl(style, color));
+	_implCache.pushBack(impl);
+	return impl;
 }
 
 

@@ -12,7 +12,7 @@
 /// \return   El handler del semafor. NULL en cas d'error.
 ///
 HSemaphore osalSemaphoreCreate(
-    unsigned maxCount) {
+    int maxCount) {
 
     if (maxCount == 0)
     	return (HSemaphore) xSemaphoreCreateBinary();
