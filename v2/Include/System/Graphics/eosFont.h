@@ -13,6 +13,10 @@
 #define eosGraphics_MaxFonts 10
 #endif
 
+#ifndef EOS_FONT_FORMAT
+#define EOS_FONT_FORMAT ColorFormat::al44
+#endif
+
 
 namespace eos {
 
@@ -69,7 +73,7 @@ namespace eos {
             ~Font();
 
             Font& operator = (const Font& font);
-            bool operator == (const Font &font) const;
+            bool operator == (const Font& font) const;
             inline bool operator != (const Font& font) const { return !(*this == font); }
 
             void getFontInfo(FontInfo& fi) const;

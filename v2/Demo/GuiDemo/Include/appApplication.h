@@ -39,9 +39,9 @@ namespace app {
 		protected:
 			void onInitialize() override;
 
-			eos::Visual *createMainPanel();
-			void buttonEventHandler(const eos::ButtonBase::EventArgs &args);
-			void virtualKeyboardEventHandler(const eos::VirtualKeyboard::EventArgs &args);
+			void createMainPanel();
+			void buttonEventHandler(const eos::ButtonBase::EventArgs& args);
+			void virtualKeyboardEventHandler(const eos::VirtualKeyboard::EventArgs& args);
 
 		public :
 			MyApplication();

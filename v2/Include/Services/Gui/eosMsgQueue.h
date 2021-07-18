@@ -10,7 +10,7 @@ namespace eos {
 
 #if eosGuiService_SelectorEnabled
 
-    enum class MsgSelectorEvent {
+    enum class MsgSelectorEvent: uint8_t {
         inc,
         dec,
         press,
@@ -26,25 +26,26 @@ namespace eos {
 
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
 
-    enum class KeyCode {
-        up,
-        down,
-        left,
-        right,
-        accept,
-		cancel,
-		character
+    enum class KeyCode: uint8_t {
+        keyUp, keyDown, keyLeft, keyRight,
+		keyEnter, keyEsc,
+		key0, key1, key2, key3, key4, key5, key6, key7, key8, key9,
+		keyA, keyB, keyC, keyD, keyE, keyF, keyG, keyH, keyI, keyJ,
+		keyK, keyL, keyM, keyN, keyO, keyP, keyQ, keyR, keyS, keyT,
+		keyU, keyV, keyW, keyX, keyY, keyZ
     };
 
-    enum class MsgKeyboardEvent {
+    enum class MsgKeyboardEvent: uint8_t {
         press,
         release
     };
 
+    typedef uint8_t KeyFlags;
+
     struct MsgKeyboard {
         MsgKeyboardEvent event;
         KeyCode keyCode;
-        char ch;
+        KeyFlags keyFlags;
     };
 
 #endif
@@ -77,7 +78,7 @@ namespace eos {
     	touchPadEvent,
 		selectorEvent,
 		keyboardEvent,
-		commandEvent
+		commandEvent,
     };
 
     class Visual;

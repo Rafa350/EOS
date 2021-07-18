@@ -44,19 +44,19 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	// Boto "7"
 	//
 	PushButton *pb11 = createPushButton("7", size);
-	pb11->setId(unsigned(VirtualKeyboard::KeyCode::key7));
+	pb11->setId(unsigned(KeyCode::key7));
 	sp1->addChild(pb11);
 
 	// Boto "8"
 	//
 	PushButton *pb12 = createPushButton("8", size);
-	pb12->setId(unsigned(VirtualKeyboard::KeyCode::key8));
+	pb12->setId(unsigned(KeyCode::key8));
 	sp1->addChild(pb12);
 
 	// Boto "9"
 	//
 	PushButton *pb13 = createPushButton("9", size);
-	pb13->setId(unsigned(VirtualKeyboard::KeyCode::key9));
+	pb13->setId(unsigned(KeyCode::key9));
 	sp1->addChild(pb13);
 
 	// Panell de la segona fila
@@ -66,15 +66,15 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	sp->addChild(sp2);
 
 	PushButton *pb21 = createPushButton("4", size);
-	pb21->setId(unsigned(VirtualKeyboard::KeyCode::key4));
+	pb21->setId(unsigned(KeyCode::key4));
 	sp2->addChild(pb21);
 
 	PushButton *pb22 = createPushButton("5", size);
-	pb22->setId(unsigned(VirtualKeyboard::KeyCode::key5));
+	pb22->setId(unsigned(KeyCode::key5));
 	sp2->addChild(pb22);
 
 	PushButton *pb23 = createPushButton("6", size);
-	pb23->setId(unsigned(VirtualKeyboard::KeyCode::key6));
+	pb23->setId(unsigned(KeyCode::key6));
 	sp2->addChild(pb23);
 
 	// Panell de la tercera fila
@@ -84,15 +84,15 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	sp->addChild(sp3);
 
 	PushButton *pb31 = createPushButton("1", size);
-	pb31->setId(unsigned(VirtualKeyboard::KeyCode::key1));
+	pb31->setId(unsigned(KeyCode::key1));
 	sp3->addChild(pb31);
 
 	PushButton *pb32 = createPushButton("2", size);
-	pb32->setId(unsigned(VirtualKeyboard::KeyCode::key2));
+	pb32->setId(unsigned(KeyCode::key2));
 	sp3->addChild(pb32);
 
 	PushButton *pb33 = createPushButton("3", size);
-	pb33->setId(unsigned(VirtualKeyboard::KeyCode::key3));
+	pb33->setId(unsigned(KeyCode::key3));
 	sp3->addChild(pb33);
 
 	// Panell de la quarta fila
@@ -102,7 +102,7 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	sp->addChild(sp4);
 
 	PushButton *pb41 = createPushButton("0", size);
-	pb41->setId(unsigned(VirtualKeyboard::KeyCode::key0));
+	pb41->setId(unsigned(KeyCode::key0));
 	sp4->addChild(pb41);
 }
 
@@ -116,6 +116,7 @@ PushButton* VirtualKeyboardTemplate::createPushButton(
 
 	PushButton *pb = new PushButton();
 	pb->setMargin(Thickness(2, 2, 2, 2));
+	pb->setClickMode(ButtonBase::ClickMode::atPress);
 	pb->setSize(size);
 	pb->setContent(tb);
 	pb->setEventCallback(_visual->getButtonEventCallback());

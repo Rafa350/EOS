@@ -19,7 +19,6 @@
 namespace eos {
 
 	enum class PenStyle: uint8_t {
-		null,
 		solid
 	};
 

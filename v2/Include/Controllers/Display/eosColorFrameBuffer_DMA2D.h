@@ -8,7 +8,7 @@
 
 namespace eos {
 
-	/// \brief Superficie de dibuix basada en memoria ram en format RGB565
+	/// \brief Superficie de dibuix basada en memoria ram
 	///
 	class ColorFrameBuffer_DMA2D: public FrameBuffer {
 		private:
@@ -28,7 +28,8 @@ namespace eos {
 		protected:
 			void put(int x, int y, Color color) override;
             void fill(int x, int y, int width, int height, Color color) override;
-            void copy(int x, int y, int width, int height, const Color* colors, int pitch) override;
+            void copy(int x, int y, int width, int height, const Color* colors, int offset) override;
+            void write(int x, int y, int width, int height, const void* pixels, ColorFormat format, int offset) override;
 
 		public:
 			ColorFrameBuffer_DMA2D(int frameWidth, int frameHeight, DisplayOrientation orientation, void* buffer, int bufferPitch);

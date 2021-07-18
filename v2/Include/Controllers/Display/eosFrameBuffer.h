@@ -27,7 +27,8 @@ namespace eos {
         protected:
             virtual void put(int x, int y, Color color) = 0;
             virtual void fill(int x, int y, int width, int height, Color color) = 0;
-            virtual void copy(int x, int y, int width, int height, const Color* colors, int pitch) = 0;
+            virtual void copy(int x, int y, int width, int height, const Color* colors, int offset) = 0;
+            virtual void write(int x, int y, int width, int height, const void* pixels, ColorFormat format, int offset) = 0;
 
 		public:
 			FrameBuffer(int frameWidth, int frameHeight, DisplayOrientation orientation);
@@ -44,7 +45,7 @@ namespace eos {
             inline void setVPixels(int x, int y, int size, Color color) { setPixels(x, y, 1, size, color); }
             void setPixels(int x, int y, int width, int height, Color color);
             void setPixels(int x, int y, int width, int height, const Color* colors, int pitch);
-            void setPixels(int x, int y, int width, int height, void* pixels, ColorFormat format, int dx, int dy, int pitch);
+            void setPixels(int x, int y, int width, int height, const void* pixels, ColorFormat format, int pitch);
 	};
 }
 

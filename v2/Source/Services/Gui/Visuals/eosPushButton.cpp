@@ -47,21 +47,26 @@ void PushButton::onRender(
 	// Obte les mides de l'area de dibuix
 	//
 	const int radius = 5;
-	const Size &s = getBounds().getSize();
-	int x2 = s.getWidth() - 1;
-	int y2 = s.getHeight() - 1;
+	const Size s = getBounds().getSize();
+	const Rect r(0, 0, s.getWidth(), s.getHeight());
 
 	// Dibuixa el boto
 	//
 	switch (_state) {
 		case State::normal:
-			g.fillRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_Teal);
-			g.drawRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_LightSeaGreen);
+			g.paintRoundedRectangle(
+				Pen(PenStyle::solid, COLOR_LightSeaGreen, 1),
+				Brush(BrushStyle::solid, COLOR_Teal),
+				r,
+				radius, radius);
 			break;
 
 		case State::pushed:
-			g.fillRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_CadetBlue);
-			g.drawRoundedRectangle(0, 0, x2, y2, radius, radius, COLOR_LightCyan);
+			g.paintRoundedRectangle(
+				Pen(PenStyle::solid, COLOR_LightCyan, 1),
+				Brush(BrushStyle::solid, COLOR_CadetBlue),
+				r,
+				radius, radius);
 			break;
 
 		default:

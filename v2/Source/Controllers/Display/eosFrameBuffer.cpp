@@ -57,8 +57,8 @@ void FrameBuffer::setOrientation(
 /// \param    y: Coordinada y.
 ///
 void FrameBuffer::transform(
-	int &x,
-	int &y) const {
+	int& x,
+	int& y) const {
 
 	int xx;
 	int yy;
@@ -104,10 +104,10 @@ void FrameBuffer::transform(
 /// \remarks  Les coordinades son retornades en forma normalitzada.
 ///
 void FrameBuffer::transform(
-	int &x1,
-	int &y1,
-	int &x2,
-	int &y2) const {
+	int& x1,
+	int& y1,
+	int& x2,
+	int& y2) const {
 
 	int xx1;
 	int yy1;
@@ -230,12 +230,12 @@ void FrameBuffer::setPixels(
 
 /// ----------------------------------------------------------------------
 /// \brief    Escriu en una regio rectangular.
-/// \param    x: Posicio x.
-/// \param    y: Posicio y.
-/// \param    width: Amplada.
-/// \param    height: Alçada.
-/// \param    colors: Els colors d'origen a copiar.
-/// \param    pitch: Pitch del origen.
+/// \param    x: Posicio x de la regio.
+/// \param    y: Posicio y de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    colors: Array de colors.
+/// \param    pitch: El pitch del array de colors.
 ///
 void FrameBuffer::setPixels(
 	int x,
@@ -247,19 +247,75 @@ void FrameBuffer::setPixels(
 
 	// TODO: Girs i retall
 
-	copy(x, y, width, height, colors, pitch);
+	copy(x, y, width, height, colors, /* Offset */ pitch - width);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un bitmap en una regio rectangular
+/// \param    x: Posicio x de la regio.
+/// \param    y: Posicio y de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    pixels: Array de pixels.
+/// \param    format: Format dels pixels.
+/// \param    pitch: Pitch dels pixels.
+///
 void FrameBuffer::setPixels(
 	int x,
 	int y,
 	int width,
 	int height,
-	void* pixels,
+	const void* pixels,
 	ColorFormat format,
-	int dx,
-	int dy,
 	int pitch)  {
 
+	int x1 = x;
+	int y1 = y;
+	int x2 = x + width - 1;
+	int y2 = y + height - 1;
+
+	// Retalla al tamany de pantalla
+	//
+	x1 = Math::max(x1, 0);
+	y1 = Math::max(y1, 0);
+	x2 = Math::min(x2, _imageWidth - 1);
+	y2 = Math::min(y2, _imageHeight - 1);
+
+	if ((x1 <= x2) && (y1 <= y2)) {
+		transform(x1, y1, x2, y2);
+
+		int bytesPerPixel = 2;
+
+		switch (_orientation) {
+			case DisplayOrientation::rotate0:
+				write(x1, y1, width, height, pixels, format, /* Offset */ pitch - width);
+				break;
+
+			case DisplayOrientation::rotate90:
+				for (int yy = 0; yy < height; yy++) {
+					write(
+						x1 + height - yy, y1,
+						1, width,
+						(const void*)((int)pixels + (pitch * bytesPerPixel * yy)),
+						format,
+						/* Offset */ pitch - width);
+				}
+				break;
+
+			case DisplayOrientation::rotate180:
+				for (int yy = 0; yy < height; yy++)
+					for (int xx = 0; xx < width; xx++) {
+						int p = (int)pixels + ((yy * pitch) + xx) * bytesPerPixel;
+				}
+				break;
+
+			case DisplayOrientation::rotate270:
+				for (int yy = 0; yy < height; yy++)
+					for (int xx = 0; xx < width; xx++) {
+						int p = (int)pixels + ((yy * pitch) + xx) * bytesPerPixel;
+				}
+				break;
+		}
+	}
 }

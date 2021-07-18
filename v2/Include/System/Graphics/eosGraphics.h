@@ -122,7 +122,7 @@ namespace eos {
             inline void drawBitmap(const Point& p, const Bitmap *bitmap) const { drawBitmap(p.getX(), p.getY(), bitmap); }
 
             int drawChar(int x, int y, Color color, char c) const;
-            int drawText(int x, int y, Color color, const String& text, unsigned offset = 0, unsigned length = unsigned(-1)) const;
+            int drawText(int x, int y, Color color, const String& text, int offset = 0, int length = -1) const;
 
             void fillRectangle(int x1, int y1, int x2, int y2, Color color) const;
             inline void fillRectangle(const Point& p1, const Point& p2, Color color) const { fillRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }

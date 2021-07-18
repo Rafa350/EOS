@@ -223,6 +223,34 @@ Bitmap& Bitmap::operator = (
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Obte el format del bitmap.
+/// \param    El valor.
+///
+ColorFormat Bitmap::getFormat() const {
+
+	return _impl->format;
+}
+
+
+int Bitmap::getWidth() const {
+
+	return _impl->width;
+}
+
+
+int Bitmap::getHeight() const {
+
+	return _impl->height;
+}
+
+
+void* Bitmap::getPixels() const {
+
+	return _impl->pixels;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Obte el numero de bytes per pixel.
 /// \return   El valor.
 ///
@@ -231,14 +259,19 @@ int Bitmap::getBytesPerPixel() const {
 	switch (_impl->format) {
 		default:
 		case ColorFormat::rgb888:
+			return ColorInfo<ColorFormat::rgb888>::bytes;
+
 		case ColorFormat::argb8888:
-			return sizeof(uint32_t);
+			return ColorInfo<ColorFormat::argb8888>::bytes;
 
 		case ColorFormat::rgb565:
-			return sizeof(uint16_t);
+			return ColorInfo<ColorFormat::rgb565>::bytes;
+
+		case ColorFormat::al44:
+			return ColorInfo<ColorFormat::al44>::bytes;
 
 		case ColorFormat::l8:
-			return sizeof(uint8_t);
+			return ColorInfo<ColorFormat::l8>::bytes;
 	}
 }
 

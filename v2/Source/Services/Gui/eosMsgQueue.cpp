@@ -34,7 +34,7 @@ MsgQueue* MsgQueue::getInstance() {
 /// \param    msg: El missatge a enviar.
 ///
 void MsgQueue::send(
-	const Message &msg) {
+	const Message& msg) {
 
 	queue.push(msg, 0);
 }
@@ -46,7 +46,7 @@ void MsgQueue::send(
 /// \return   True si tot es correcte.
 ///
 bool MsgQueue::receive(
-	Message &msg) {
+	Message& msg) {
 
 	return queue.pop(msg, eosGuiService_MessageQueueBlockTime);
 }

@@ -25,14 +25,14 @@ using namespace app;
 
 
 //#define TEST_OPACITY
-//#define TEST_COLORS
-#define TEST_POINTS
-#define TEST_LINES
+#define TEST_COLORS
+//#define TEST_POINTS
+//#define TEST_LINES
 //#define TEST_THICKLINES
 //#define TEST_RECTANGLES
 //#define TEST_ELLIPSES
-//#define TEST_BITMAPS
-#define SHOW_RESULTS
+#define TEST_BITMAPS
+//#define SHOW_RESULTS
 
 static int seed = 537;
 
@@ -109,8 +109,7 @@ void DisplayService::onSetup() {
     //
     _graphics = new eos::Graphics(_driver);
 
-    const uint8_t *pFontResource = Font::getFontResource("Consolas", 14, FontStyle::regular);
-    Font font(pFontResource);
+    Font font("Consolas", 14, FontStyle::regular);
     _graphics->setFont(font);
     _graphics->setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::top);
 }
@@ -171,18 +170,25 @@ void DisplayService::onLoop() {
 
     sprintf(lineBuffer, "Points        %d ms", _pointsTicks * 2);
     _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+
     sprintf(lineBuffer, "V. lines      %d ms", _verticalLinesTicks * 2);
     _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+
     sprintf(lineBuffer, "H. lines      %d ms", _horizontalLinesTicks * 2);
     _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+
     sprintf(lineBuffer, "Lines         %d ms", _linesTicks * 2);
     _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+
     sprintf(lineBuffer, "Rectangles    %d ms", _rectanglesTicks * 2);
     _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+
     sprintf(lineBuffer, "F. rectangles %d ms", _filledRectanglesTicks * 2);
     _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+
     sprintf(lineBuffer, "Ellipses      %d ms", _ellipsesTicks * 2);
     _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+
     sprintf(lineBuffer, "F. ellipses   %d ms", _filledEllipsesTicks * 2);
     _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
 
@@ -234,17 +240,17 @@ void DisplayService::testColors() {
 
 		int c = i * 256 / barWidth;
 
-		_graphics->drawRectangle(x + i, y,             x + i,  y + hh,       RGB(c, 0, 0));
-		_graphics->drawRectangle(x + i, y + hh,        x + i,  y + h,        RGB(255 - c, 0, 0));
+		_graphics->fillRectangle(x + i, y,             x + i,  y + hh,       RGB(c, 0, 0));
+		_graphics->fillRectangle(x + i, y + hh,        x + i,  y + h,        RGB(255 - c, 0, 0));
 
-		_graphics->drawRectangle(x + i, y + 50,        x + i,  y + 50 + hh,  RGB(0, c, 0));
-		_graphics->drawRectangle(x + i, y + hh + 50,   x + i,  y + 50 + h,   RGB(0, 255 - c, 0));
+		_graphics->fillRectangle(x + i, y + 50,        x + i,  y + 50 + hh,  RGB(0, c, 0));
+		_graphics->fillRectangle(x + i, y + hh + 50,   x + i,  y + 50 + h,   RGB(0, 255 - c, 0));
 
-		_graphics->drawRectangle(x + i, y + 100,       x + i,  y + 100 + hh, RGB(0, 0, c));
-		_graphics->drawRectangle(x + i, y + hh + 100,  x + i,  y + 100 + h,  RGB(0, 0, 255 - c));
+		_graphics->fillRectangle(x + i, y + 100,       x + i,  y + 100 + hh, RGB(0, 0, c));
+		_graphics->fillRectangle(x + i, y + hh + 100,  x + i,  y + 100 + h,  RGB(0, 0, 255 - c));
 
-		_graphics->drawRectangle(x + i, y + 150,       x + i,  y + 150 + hh, RGB(c, c, c));
-		_graphics->drawRectangle(x + i, y + hh + 150,  x + i,  y + 150 + h,  RGB(255 - c, 255 - c, 255 - c));
+		_graphics->fillRectangle(x + i, y + 150,       x + i,  y + 150 + hh, RGB(c, c, c));
+		_graphics->fillRectangle(x + i, y + hh + 150,  x + i,  y + 150 + h,  RGB(255 - c, 255 - c, 255 - c));
 	}
 
 	Task::delay(2500);

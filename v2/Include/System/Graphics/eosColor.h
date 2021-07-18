@@ -30,6 +30,7 @@ namespace eos {
 		argb4444,  ///< A4 + R4 + G4 + B4   (16 bits ARGB)
 		rgb565,    ///< R5 + G6 + B5        (16 bits RGB)
 		al88,      ///< A8 + L8             (16 bits AL/A+CLUD)
+		al44,      ///< A4 + L4             (8 bits AL/A+CLUD)
 		l8         ///< L8                  (8 bits L/CLUD)
 	};
 
@@ -115,6 +116,23 @@ namespace eos {
 		constexpr static const unsigned maskA = 0xFF00;
 		constexpr static const unsigned maskL = 0x00FF;
 		constexpr static const unsigned shiftA = 8;
+		constexpr static const unsigned shiftL = 0;
+		constexpr static const unsigned adjA = 0;
+		constexpr static const unsigned adjL = 0;
+	};
+
+	template <>
+	struct ColorInfo<ColorFormat::al44> {
+		typedef uint16_t color_t;
+		constexpr static ColorFormat format = ColorFormat::al44;
+		constexpr static const int bits = 8;
+		constexpr static const int bytes = (bits + 7) / 8;
+		constexpr static const bool isColor = false;
+		constexpr static const bool isIndex = true;
+		constexpr static const bool hasAlpha = true;
+		constexpr static const unsigned maskA = 0xF0;
+		constexpr static const unsigned maskL = 0x0F;
+		constexpr static const unsigned shiftA = 4;
 		constexpr static const unsigned shiftL = 0;
 		constexpr static const unsigned adjA = 0;
 		constexpr static const unsigned adjL = 0;

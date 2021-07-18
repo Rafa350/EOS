@@ -217,7 +217,8 @@ void DisplayDriver_RGBLTDC::setPixels(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna una llista colors a una regio rectangular.
+/// \brief    Asigna una llista colors a una regio rectangular. El format
+///           de color es el meteix que el del buffer
 /// \param    x: Posicio x.
 /// \param    y: Posicio y.
 /// \param    width: Amplada.
@@ -230,23 +231,22 @@ void DisplayDriver_RGBLTDC::setPixels(
 	int y,
 	int width,
 	int height,
-	const Color *colors,
+	const Color* colors,
 	int pitch) {
 
 	_backFrameBuffer->setPixels(x, y, width, height, colors, pitch);
 }
 
+
 /// ----------------------------------------------------------------------
-/// \brief Escriu una regio rectangular de pixels.
-/// \param x: Coordinada X de la posicio.
-/// \param y: Coordinada Y de la posicio.
-/// \param width: Amplada de la regio
-/// \param height: Alçada de la regio
-/// \param pixels: Els pixels a copiar.
-/// \param format: Format dels pixels.
-/// \param dx: Offset X dins del bitmap.
-/// \param dy: offset Y dins del vitmap.
-/// \param pitch: Aplada de linia del bitmap.
+/// \brief    Escriu una regio rectangular de pixels.
+/// \param    x: Posicio x de la regio.
+/// \param    y: Posicio y de la regio..
+/// \param    width: Amplada de la regio
+/// \param    height: Alçada de la regio
+/// \param    pixels: Els pixels a copiar.
+/// \param    format: Format dels pixels.
+/// \param    pitch: Amplada de linia del bitmap.
 ///
 void DisplayDriver_RGBLTDC::writePixels(
 	int x,
@@ -255,23 +255,21 @@ void DisplayDriver_RGBLTDC::writePixels(
 	int height,
 	const void *pixels,
 	ColorFormat format,
-	int dx,
-	int dy,
 	int pitch) {
 
-	Color *colors;
-	_backFrameBuffer->setPixels(x, y, width, height, colors, pitch);
+	_backFrameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Llegeix una regio rectangular de pixels.
-/// \param x: Coordinada X.
-/// \param y: Coordinada Y.
-/// \param width: Amplada de la regio.
-/// \param height: Alçada de la regio.
-/// \param pixels: Buffer de pixels.
-/// \param format: Format de pixels.
+/// \brief    Llegeix una regio rectangular de pixels.
+/// \param    x: Coordinada X.
+/// \param    y: Coordinada Y.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    pixels: Buffer de pixels.
+/// \param    format: Format de pixels.
+/// \param
 ///
 void DisplayDriver_RGBLTDC::readPixels(
 	int x,
@@ -280,8 +278,6 @@ void DisplayDriver_RGBLTDC::readPixels(
 	int height,
 	void *pixels,
 	ColorFormat format,
-	int dc,
-	int dy,
 	int pitch) {
 
 }

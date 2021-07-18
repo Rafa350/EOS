@@ -64,9 +64,9 @@ int Graphics::drawText(
     int x,
     int y,
 	Color color,
-    const String &text,
-    unsigned offset,
-    unsigned length) const {
+    const String& text,
+    int offset,
+    int length) const {
 
     if (_state.hAlign != HorizontalTextAlign::left) {
         int textWidth = getTextWidth(text, offset, length);
@@ -86,7 +86,7 @@ int Graphics::drawText(
 
     int sx = x;
 
-    for (unsigned i = offset, j = length; j && text[i]; i++, j--)
+    for (int i = offset, j = length; j && text[i]; i++, j--)
         x += drawChar(x, y, color, text[i]);
 
     return x - sx;

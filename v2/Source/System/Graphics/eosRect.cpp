@@ -180,8 +180,8 @@ bool Rect::contains(
 	int y) const {
 
 	return
-		(x >= getMinX()) && (y >= getMinY()) &&
-		(x <= getMaxX()) && (y <= getMaxY());
+		(x >= _x) && (y >= _y) &&
+		(x < _x + _width) && (y < _y + _height);
 }
 
 

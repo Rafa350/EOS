@@ -11,8 +11,8 @@ namespace eos {
 	class CommandButton: public PushButton {
 		private:
 			int _id;
-			void *_param;
-			Visual *_target;
+			void* _param;
+			Visual* _target;
 
 		protected:
 			void onClick() override;
@@ -21,11 +21,12 @@ namespace eos {
 			CommandButton();
 
 			inline void setId(int id) { _id = id; }
-			inline void setParam(void *param) { _param = param; }
-			inline void setTarget(Visual *target) { _target = target; }
+			inline void setParam(void* param) { _param = param; }
+			inline void setTarget(Visual* target) { _target = target; }
+
 			inline int getId() const { return _id; }
-			inline void *getParam() const { return _param; }
-			inline Visual *getTarget() const { return _target; }
+			inline void* getParam() const { return _param; }
+			inline Visual* getTarget() const { return _target; }
 	};
 }
 

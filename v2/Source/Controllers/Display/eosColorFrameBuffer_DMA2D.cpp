@@ -47,6 +47,8 @@ void ColorFrameBuffer_DMA2D::put(
 	//
 	if constexpr (Color::CI::hasAlpha) {
 
+		// Nomes el pinta si no es transparent
+		//
 		uint8_t opacity = color.getOpacity();
 		if (opacity != 0) {
 
@@ -86,6 +88,9 @@ void ColorFrameBuffer_DMA2D::fill(
 	Color color) {
 
 	uint8_t opacity = color.getOpacity();
+
+	// Cas quie sigui un color solid
+	//
 	if (opacity == 0xFF) {
 
 		pixel_t vPixel = toPixel(color);
@@ -102,6 +107,8 @@ void ColorFrameBuffer_DMA2D::fill(
 		halDMA2DWaitForFinish();
 	}
 
+	// Cas que no sigui transparent
+	//
 	else if (opacity != 0) {
 
 		pixel_t vPixel = toPixel(color);
@@ -124,7 +131,7 @@ void ColorFrameBuffer_DMA2D::fill(
 /// \param    width: Amplada.
 /// \param    height: Alçada.
 /// \param    colors: Llista de pixels del bitmap
-/// \param    pitch: Offset a la seguent linia del bitmap.
+/// \param    offset: Offset entre linies del bitmap.
 ///
 void ColorFrameBuffer_DMA2D::copy(
 	int x,
@@ -132,21 +139,61 @@ void ColorFrameBuffer_DMA2D::copy(
 	int width,
 	int height,
 	const Color* colors,
-	int pitch) {
-
-	// TODO: Revisar que esta malament dy * height --> dy * (width + pitch)
+	int offset) {
 
 	pixel_t* pPixel = getPixelPtr(x, y);
 
 	DMA2DOptions options =
-		DMA2DOptionsFor<CI::format>::DFMT |
-		DMA2DOptionsFor<Color::CI::format>::SFMT;
+		DMA2DOptionsFor<CI::format>::DFMT |           // Format desti
+		DMA2DOptionsFor<Color::CI::format>::SFMT;     // Format origen
+
+	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
+	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
+	// les opcions.
+	//
+	halDMA2DStartCopy(pPixel, width, height, _bufferPitch - width, options, colors, offset);
+	halDMA2DWaitForFinish();
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Copia un bitmap a una regio de la pantalla.
+/// \param    x: Coordinada x de la regio.
+/// \param    y: Coordinada y de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    pixels: Llista de pixels del bitmap
+/// \param    format: Format de color
+/// \param    offset: Offset entre linies del bitmap.
+///
+void ColorFrameBuffer_DMA2D::write(
+	int x,
+	int y,
+	int width,
+	int height,
+	const void* pixels,
+	ColorFormat format,
+	int offset) {
+
+	pixel_t* pPixel = getPixelPtr(x, y);
+
+	DMA2DOptions options = DMA2DOptionsFor<CI::format>::DFMT; // Format desti
+	switch (format) {
+		default:
+		case ColorFormat::argb8888:
+			options |= DMA2DOptionsFor<ColorFormat::argb8888>::SFMT; // Format origen
+			break;
+
+		case ColorFormat::rgb565:
+			options |= DMA2DOptionsFor<ColorFormat::rgb565>::SFMT; // Format origen
+			break;
+	}
 
 	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
 	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
 	// les opcions. No cal cridar a 'toPixel()'
 	//
-	halDMA2DStartCopy(pPixel, width, height, _bufferPitch - width, options, (void*)colors, pitch - width);
+	halDMA2DStartCopy(pPixel, width, height, _bufferPitch - width, options, pixels, offset);
 	halDMA2DWaitForFinish();
 }
 

@@ -15,9 +15,11 @@ using namespace eos;
 /// \param    graphics: L'objecte 'Graphics' per dibuixar.
 //
 RenderContext::RenderContext(
-	Graphics *graphics):
+	Graphics* graphics):
 
 	_graphics(graphics) {
+
+	eosAssert(graphics != nullptr);
 }
 
 
@@ -26,8 +28,8 @@ RenderContext::RenderContext(
 /// \param    visual: El visual a renderitzar.
 /// \return   L'objecte 'Graphics' per dibuixar.
 ///
-Graphics &RenderContext::beginRender(
-	Visual *visual) {
+Graphics& RenderContext::beginRender(
+	Visual* visual) {
 
 	eosAssert(visual != nullptr);
 

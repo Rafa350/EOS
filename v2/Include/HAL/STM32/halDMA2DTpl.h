@@ -33,7 +33,6 @@ namespace eos {
 	};
 	template<>
 	struct DMA2DOptionsFor<ColorFormat::l8> {
-		constexpr static const DMA2DOptions DFMT = HAL_DMA2D_DFMT_L8;
 		constexpr static const DMA2DOptions SFMT = HAL_DMA2D_SFMT_L8;
 	};
 }

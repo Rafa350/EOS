@@ -7,14 +7,16 @@
 #include "System/Graphics/eosGraphics.h"
 
 
-
 using namespace eos;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
-TextBox::TextBox() {
+TextBox::TextBox():
+	_visiblePos(0),
+	_visibleLength(10),
+	_insertPos(0) {
 }
 
 
@@ -23,7 +25,7 @@ TextBox::TextBox() {
 /// \param    text: El text.
 ///
 void TextBox::setText(
-	const String &value) {
+	const String& value) {
 
 	if (_text != value) {
 		_text = value;
@@ -39,6 +41,8 @@ void TextBox::clearText() {
 
 	if (!_text.isEmpty()) {
 		_text = "";
+		_visiblePos = 0;
+		_insertPos = 0;
 		invalidate();
 	}
 }
@@ -51,27 +55,38 @@ void TextBox::clearText() {
 ///
 void TextBox::onKeyboardPress(
 	KeyCode keyCode,
+	KeyFlags flags,
 	char ch) {
+
+	switch (ch) {
+		default:
+			if (ch >= 0x30 && ch < 0x7F) {
+				_text.insert(_insertPos++, ch);
+				if (_insertPos > _visiblePos + _visibleLength)
+					_visiblePos++;
+				invalidate();
+			}
+			break;
+	}
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Renderitza la imatge del visual.
-/// \param    contet: Context de renderitzaqt.
+/// \param    contet: Context de renderitzat.
 ///
 void TextBox::onRender(
 	RenderContext* context) {
 
-	const Size& s = getBounds().getSize();
-	int x2 = s.getWidth() - 1;
-	int y2 = s.getHeight() - 1;
+	const Size s(getBounds().getSize());
 
 	Graphics& g = context->beginRender(this);
 
-	g.fillRectangle(0, 0, x2, y2, getBackground().getColor());
+	g.paintRectangle(Pen(), getBackground(), Rect(s));
 
 	g.setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::center);
-	g.drawText(0, y2 / 2, getForeground().getColor(), _text, 0, -1);
+	g.drawText(0, s.getHeight() / 2, getForeground().getColor(),
+		_text, _visiblePos, _visibleLength);
 
 	context->endRender();
 }

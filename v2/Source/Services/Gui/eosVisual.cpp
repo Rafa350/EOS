@@ -100,7 +100,7 @@ bool Visual::isVisible() const {
 /// \return   True s'ha redibuixat el visual.
 ///
 bool Visual::render(
-	RenderContext *context) {
+	RenderContext* context) {
 
 	bool renderized = false;
 	_needRender = false;
@@ -137,9 +137,9 @@ void Visual::dispatch(
 /// \param    msg: El missatge a enviar.
 ///
 void Visual::send(
-	const Message &msg) {
+	const Message& msg) {
 
-	MsgQueue *msgQueue = MsgQueue::getInstance();
+	MsgQueue* msgQueue = MsgQueue::getInstance();
 	msgQueue->send(msg);
 }
 
@@ -149,7 +149,7 @@ void Visual::send(
 /// \param    visual: L'objecte Visual a afeigir.
 ///
 void Visual::addVisual(
-	Visual *visual) {
+	Visual* visual) {
 
 	eosAssert(visual != nullptr);
 	eosAssert(visual->_parent == nullptr);
@@ -166,7 +166,7 @@ void Visual::addVisual(
 /// \param    visual: L'objecte Visual a eliminar.
 ///
 void Visual::removeVisual(
-	Visual *visual) {
+	Visual* visual) {
 
 	eosAssert(visual != nullptr);
 	eosAssert(visual->_parent != nullptr);
@@ -193,7 +193,7 @@ void Visual::removeVisuals() {
 /// \param    availableSize: Indica el tamany disponible.
 ///
 void Visual::measure(
-	const Size &availableSize) {
+	const Size& availableSize) {
 
 	if (isVisible()) {
 
@@ -423,7 +423,7 @@ void Visual::setVerticalAlignment(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Es crida quant hi ha que despatxar un missatge..
+/// \brief    Es crida quant hi ha que despatxar un missatge.
 /// \param    msg: El missatge a despatxar.
 ///
 void Visual::onDispatch(
@@ -440,7 +440,6 @@ void Visual::onDispatch(
 			onDispatchTouchPadEvent(msg.touchPad);
 			break;
 #endif
-
 		default:
 			// Si no el procesa, pasa al pare.
 			if (_parent != nullptr)
@@ -456,7 +455,7 @@ void Visual::onDispatch(
 /// \param    visual: El visual desactivat al activar aquest.
 ///
 void Visual::onActivate(
-	Visual *visual) {
+	Visual* visual) {
 
 	invalidate();
 }
@@ -467,7 +466,7 @@ void Visual::onActivate(
 /// \param    visual: El visual activat al desactivar aquest.
 ///
 void Visual::onDeactivate(
-	Visual *visual) {
+	Visual* visual) {
 
 	invalidate();
 }
@@ -479,33 +478,53 @@ void Visual::onDeactivate(
 ///
 #if eosGuiService_KeyboardEnablked || eosGuiService_VirtualKeyboardEnabled
 void Visual::onDispatchKeyboardEvent(
-	const MsgKeyboard &msg) {
+	const MsgKeyboard& msg) {
+
+	char ch = 0;
+	if ((msg.keyCode >= KeyCode::key0) && (msg.keyCode <= KeyCode::key9))
+		ch = 0x30 + char(msg.keyCode) - char(KeyCode::key0);
+	else if ((msg.keyCode >= KeyCode::keyA) && (msg.keyCode <= KeyCode::keyZ))
+		ch = 0x41 + char(msg.keyCode) - char(KeyCode::keyA);
 
 	switch (msg.event) {
 		case MsgKeyboardEvent::press:
-			onKeyboardPress(msg.keyCode, msg.ch);
+			onKeyboardPress(msg.keyCode, msg.keyFlags, ch);
 			break;
 
 		case MsgKeyboardEvent::release:
-			onKeyboardRelease(msg.keyCode, msg.ch);
+			onKeyboardRelease(msg.keyCode, msg.keyFlags, ch);
 			break;
 	}
 }
 #endif
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el event press del teclat
+/// \param    keyCode: Codi de la tecla
+/// \param    flags: Indicadors de la trecla: shift, control, etc.
+/// \param    ch: Caracter de la tecla, 0 si no correspon a cap.
+///
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
 void Visual::onKeyboardPress(
 	KeyCode keyCode,
+	KeyFlags flags,
 	char ch) {
 
 }
 #endif
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el event release del teclat
+/// \param    keyCode: Codi de la tecla
+/// \param    flags: Indicadors de la trecla: shift, control, etc.
+/// \param    ch: Caracter de la tecla, 0 si no correspon a cap.
+///
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
 void Visual::onKeyboardRelease(
 	KeyCode keyCode,
+	KeyFlags flags,
 	char ch) {
 
 }
@@ -518,7 +537,7 @@ void Visual::onKeyboardRelease(
 ///
 #if eosGuiService_TouchPadEnabled
 void Visual::onDispatchTouchPadEvent(
-	const MsgTouchPad &msg) {
+	const MsgTouchPad& msg) {
 
 	switch (msg.event) {
 		case MsgTouchPadEvent::enter:

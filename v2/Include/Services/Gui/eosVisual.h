@@ -71,8 +71,8 @@ namespace eos {
     		virtual void onDeactivate(Visual* visual);
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
     		virtual void onDispatchKeyboardEvent(const MsgKeyboard& msg);
-    		virtual void onKeyboardPress(KeyCode keyCode, char ch);
-    		virtual void onKeyboardRelease(KeyCode keyCode, char ch);
+    		virtual void onKeyboardPress(KeyCode keyCode, KeyFlags flags, char ch);
+    		virtual void onKeyboardRelease(KeyCode keyCode, KeyFlags flags, char ch);
 #endif
 #if eosGuiService_TouchPadEnabled
     		virtual void onDispatchTouchPadEvent(const MsgTouchPad& msg);

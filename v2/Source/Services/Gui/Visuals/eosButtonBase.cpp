@@ -27,6 +27,16 @@ void ButtonBase::click() {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Selecciona el modus de click.
+/// \param    clickMode: El modus.
+///
+void ButtonBase::setClickMode(ClickMode value) {
+
+	_clickMode = value;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Es crida quant es presiona el touchpad.
 /// \param    position: Posicio del toc.
 ///
@@ -87,7 +97,8 @@ void ButtonBase::onClick() {
 	if (_eventCallback != nullptr) {
 		EventArgs args = {
 			.button = this,
-			.event = EventType::click
+			.event = EventType::click,
+			.id = getId()
 		};
 		_eventCallback->execute(args);
 	}

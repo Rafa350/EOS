@@ -22,19 +22,25 @@ void Graphics::paintRoundedRectangle(
 	const Rect& rect,
 	int rx, int ry) {
 
-	int x1 = rect.getMinX();
-	int y1 = rect.getMinY();
-	int x2 = rect.getMaxX();
-	int y2 = rect.getMaxY();
+	bool penVisible = !pen.isNull();
+	bool brushVisible = !brush.isNull();
 
-	if (!brush.isNull()) {
-		Color color = brush.getColor();
-		fillRoundedRectangle(x1, y1, x2, y2, rx, ry, color);
-	}
+	if (penVisible || brushVisible) {
 
-	if (!pen.isNull()) {
-		Color color = pen.getColor();
-		drawRoundedRectangle(x1, y1, x2, y2, rx, ry, color);
+		int x1 = rect.getMinX();
+		int y1 = rect.getMinY();
+		int x2 = rect.getMaxX();
+		int y2 = rect.getMaxY();
+
+		if (brushVisible) {
+			Color color = brush.getColor();
+			fillRoundedRectangle(x1, y1, x2, y2, rx, ry, color);
+		}
+
+		if (penVisible) {
+			Color color = pen.getColor();
+			drawRoundedRectangle(x1, y1, x2, y2, rx, ry, color);
+		}
 	}
 }
 

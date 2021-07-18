@@ -80,8 +80,7 @@ class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 /// \brief    Constructor.
 ///
 Pen::Pen() :
-
-	_impl(makeImpl(PenStyle::null, COLOR_Transparent, 1)) {
+	_impl(makeImpl(PenStyle::solid, COLOR_Transparent, 0)) {
 }
 
 
@@ -106,7 +105,7 @@ Pen::Pen(
 /// \param    pen: L'objecte a copiar.
 ///
 Pen::Pen(
-	const Pen &pen) :
+	const Pen& pen) :
 
 	_impl(pen._impl) {
 }
@@ -198,5 +197,5 @@ PenStyle Pen::getStyle() const {
 ///
 bool Pen::isNull() const {
 
-	return _impl->getStyle() == PenStyle::null;
+	return _impl->getColor().isTransparent();
 }

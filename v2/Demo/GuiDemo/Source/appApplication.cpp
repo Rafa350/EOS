@@ -49,14 +49,12 @@ void MyApplication::onInitialize() {
 	//
 	//Bitmap *bitmap = new Bitmap(bitmapBmpMain);
 
-	Visual *visual = createMainPanel();
-	guiService->getScreen()->addChild(visual);
-
+	createMainPanel();
 	Application::onInitialize();
 }
 
 
-Visual *MyApplication::createMainPanel() {
+void MyApplication::createMainPanel() {
 
 	Border* border = new Border();
 	border->setHorizontalAlignment(HorizontalAlignment::center);
@@ -85,7 +83,8 @@ Visual *MyApplication::createMainPanel() {
 	kb->setEventCallback(&virtualKeyboardEventCallback);
 	sp->addChild(kb);
 
-	return border;
+	guiService->getScreen()->addChild(border);
+	guiService->setFocus(tb);
 }
 
 
@@ -98,11 +97,4 @@ void MyApplication::buttonEventHandler(
 
 void MyApplication::virtualKeyboardEventHandler(
 	const eos::VirtualKeyboard::EventArgs& args) {
-
-	char key = char(unsigned(args.keyCode) + 0x30u);
-
-	//String x = String("Hola") + String("adios");
-
-	TextBox* tb = (TextBox*) VisualUtils::getVisual(guiService->getScreen(), 1000);
-	tb->setText(tb->getText() + key);
 }

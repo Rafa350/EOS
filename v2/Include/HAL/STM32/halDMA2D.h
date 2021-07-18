@@ -18,23 +18,28 @@ extern "C" {
 #define HAL_DMA2D_DFMT_ARGB8888   (0u << HAL_DMA2D_DFMT_pos)
 #define HAL_DMA2D_DFMT_RGB888     (1u << HAL_DMA2D_DFMT_pos)
 #define HAL_DMA2D_DFMT_RGB565     (2u << HAL_DMA2D_DFMT_pos)
-#define HAL_DMA2D_DFMT_A8         (3u << HAL_DMA2D_DFMT_pos)
-#define HAL_DMA2D_DFMT_L8         (4u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_DFMT_ARGB1555   (3u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_DFMT_ARGB4444   (4u << HAL_DMA2D_DFMT_pos)
 
 // Format de color del origen
 #define HAL_DMA2D_SFMT_pos        3u
-#define HAL_DMA2D_SFMT_bits       0b111u
+#define HAL_DMA2D_SFMT_bits       0b1111u
 #define HAL_DMA2D_SFMT_mask       (HAL_DMA2D_SFMT_bits << HAL_DMA2D_SFMT_pos)
 
 #define HAL_DMA2D_SFMT_ARGB8888   (0u << HAL_DMA2D_SFMT_pos)
 #define HAL_DMA2D_SFMT_RGB888     (1u << HAL_DMA2D_SFMT_pos)
 #define HAL_DMA2D_SFMT_RGB565     (2u << HAL_DMA2D_SFMT_pos)
-#define HAL_DMA2D_SFMT_A8         (3u << HAL_DMA2D_DFMT_pos)
-#define HAL_DMA2D_SFMT_L8         (4u << HAL_DMA2D_DFMT_pos)
-#define HAL_DMA2D_SFMT_NOCHANGE   (7u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_SFMT_ARGB1555   (3u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_SFMT_ARGB4444   (4u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_SFMT_L8         (5u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_SFMT_AL44       (6u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_SFMT_L4         (7u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_SFMT_A8         (8u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_SFMT_A4         (9u << HAL_DMA2D_DFMT_pos)
+#define HAL_DMA2D_SFMT_NOCHANGE   (10u << HAL_DMA2D_DFMT_pos)
 
 // Us de les interrupcions
-#define HAL_DMA2D_INT_pos         6u
+#define HAL_DMA2D_INT_pos         7u
 #define HAL_DMA2D_INT_bits        0b1u
 
 #define HAL_DMA2D_INT_mask        (HAL_DMS2D_INT_bits << HAL_DMA2D_INT_pos)
@@ -50,7 +55,7 @@ void halDMA2DDeinitialize();
 void halDMA2DConfigureCLUT();
 
 void halDMA2DStartFill(void* dst, int width, int height, int offset, DMA2DOptions options, uint32_t color);
-void halDMA2DStartCopy(void* dst, int width, int height, int offset, DMA2DOptions options, void* src, int srcOffset);
+void halDMA2DStartCopy(void* dst, int width, int height, int offset, DMA2DOptions options, const void* src, int srcOffset);
 bool halDMA2DWaitForFinish();
 
 void halDMA2DInterruptHandler();

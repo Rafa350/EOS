@@ -17,7 +17,7 @@ using namespace eos;
 void Graphics::drawBitmap(
     int x,
     int y,
-    const Bitmap *bitmap) const {
+    const Bitmap* bitmap) const {
 
 	int x1 = x;
 	int y1 = y;
@@ -30,10 +30,11 @@ void Graphics::drawBitmap(
         int h = y2 - y1 + 1;
 
         if ((w > 0) && (h > 0)) {
-        	_driver->writePixels(x1, y1, w, h,
+        	_driver->writePixels(
+        		x1, y1,
+				w, h,
         		bitmap->getPixels(),
 				bitmap->getFormat(),
-				x1, y1,
 				bitmap->getWidth());
         }
 	}

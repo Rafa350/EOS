@@ -50,6 +50,9 @@ namespace eos {
     	public:
 			ButtonBase();
 
+			void setClickMode(ClickMode value);
+			inline ClickMode getClickMode() const { return _clickMode; }
+
 			void click();
 
 			inline void setEventCallback(const IEventCallback *callback) {

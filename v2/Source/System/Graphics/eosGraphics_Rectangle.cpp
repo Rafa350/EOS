@@ -20,28 +20,34 @@ void Graphics::paintRectangle(
 	const Brush &brush,
 	const Rect &rect) {
 
-	int x1 = rect.getMinX();
-	int y1 = rect.getMinY();
-	int x2 = rect.getMaxX();
-	int y2 = rect.getMaxY();
+	bool penVisible = !pen.isNull();
+	bool brushVisible = !brush.isNull();
 
-	if (!brush.isNull()) {
-		Color c = brush.getColor();
-		fillRectangle(x1, y1, x2, y2, c);
-	}
+	if (penVisible || brushVisible) {
 
-	if (!pen.isNull()) {
-		Color c = pen.getColor();
-		int t = pen.getThickness();
-		if (t < Math::min(Math::abs(x2 - x1), Math::abs(y2 - y1)) / 2) {
-			if (t > 1) {
-				fillRectangle(x1, y1, x2, y1 + t, c);
-				fillRectangle(x1, y2 - t, x2, y2, c);
-				fillRectangle(x1, y1 + t, x1 + t, y2 - t, c);
-				fillRectangle(x2 - t, y1 + t, x2, y2 - t, c);
+		int x1 = rect.getMinX();
+		int y1 = rect.getMinY();
+		int x2 = rect.getMaxX();
+		int y2 = rect.getMaxY();
+
+		if (brushVisible) {
+			Color c = brush.getColor();
+			fillRectangle(x1, y1, x2, y2, c);
+		}
+
+		if (penVisible) {
+			Color c = pen.getColor();
+			int t = pen.getThickness();
+			if (t < Math::min(Math::abs(x2 - x1), Math::abs(y2 - y1)) / 2) {
+				if (t > 1) {
+					fillRectangle(x1, y1, x2, y1 + t, c);
+					fillRectangle(x1, y2 - t, x2, y2, c);
+					fillRectangle(x1, y1 + t, x1 + t, y2 - t, c);
+					fillRectangle(x2 - t, y1 + t, x2, y2 - t, c);
+				}
+				else
+					drawRectangle(x1, y1, x2, y2, c);
 			}
-			else
-				drawRectangle(x1, y1, x2, y2, c);
 		}
 	}
 }

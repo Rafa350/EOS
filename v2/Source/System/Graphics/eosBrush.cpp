@@ -80,10 +80,10 @@ Brush::ImplPtrCache Brush::_implCache;
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Contructor.
+/// \brief    Constructor.
 ///
 Brush::Brush():
-	_impl(makeImpl(BrushStyle::null, COLOR_Transparent)) {
+	_impl(makeImpl(BrushStyle::solid, COLOR_Transparent)) {
 
 #ifdef EOS_DEBUG
 	__allocatedBrushCount++;
@@ -222,6 +222,6 @@ Color Brush::getColor() const {
 ///
 bool Brush::isNull() const {
 
-	return _impl->getStyle() == BrushStyle::null;
+	return _impl->getColor().isTransparent();
 }
 

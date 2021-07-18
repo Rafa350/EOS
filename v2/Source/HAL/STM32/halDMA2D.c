@@ -92,7 +92,7 @@ void halDMA2DStartCopy(
 	int height,
 	int offset,
 	DMA2DOptions options,
-	void* src,
+	const void* src,
 	int srcOffset) {
 
 	// Selecciona el tipus de transferencia com a M2M/PFC

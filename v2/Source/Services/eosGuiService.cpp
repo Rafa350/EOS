@@ -36,11 +36,12 @@ static RenderContext* context;
 /// \param    cfg: Parametres de configuracio
 ///
 GuiService::GuiService(
-	Application *application):
+	Application* application):
 
 	Service(application),
 	_screen(new Screen()),
 	_active(nullptr),
+	_focus(nullptr),
 	_msgQueue(MsgQueue::getInstance())
 #if eosGuiService_TouchPadEnabled
 	, _touchPadEventCallback(this, &GuiService::touchPadEventHandler)
@@ -63,18 +64,29 @@ GuiService::GuiService(
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el visual actiu.
-/// \param    visual: El nou visual a activar.
+/// \param    visual: El visual.
 ///
-void GuiService::setActiveVisual(
-	Visual *visual) {
+void GuiService::setActive(
+	Visual* visual) {
 
 	/*if (active != nullptr)
-		active->deactivate(pVisual);
+		_active->deactivate(visual);
 
-	if (pVisual != nullptr)
-		pVisual->activate(active);*/
+	if (visual != nullptr)
+		visual->activate(_active);*/
 
 	_active = visual;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el visual focus.
+/// \param    visual: El visual.
+///
+void GuiService::setFocus(
+	Visual* visual) {
+
+	_focus = visual;
 }
 
 
@@ -82,8 +94,8 @@ void GuiService::setActiveVisual(
 /// \brief    Obte el visual en la posicio indicada.
 /// \param    position: Posicio a verificar.
 ///
-Visual *GuiService::getVisualAt(
-	const Point &position) const {
+Visual* GuiService::getVisualAt(
+	const Point& position) const {
 
 	if (_screen != nullptr)
 		return VisualUtils::getVisual(_screen, position);
@@ -112,7 +124,7 @@ void GuiService::onInitialize() {
 	graphics = new Graphics(displayDriver);
 	context = new RenderContext(graphics);
 
-	setActiveVisual(_screen);
+	setActive(_screen);
 
 	_screen->measure(Size(displayDriver->getImageWidth(), displayDriver->getImageHeight()));
 	_screen->arrange(_screen->getDesiredSize());
@@ -123,7 +135,7 @@ void GuiService::onInitialize() {
 /// \brief    Procesa la tasca del servei.
 ///
 void GuiService::onTask(
-	Task *task) {
+	Task* task) {
 
 	// Refresca la pantalla si cal
 	//
@@ -131,13 +143,14 @@ void GuiService::onTask(
 		if (_screen->render(context))
 			displayDriver->refresh();
 
-	// Espera que arrivin missatges.
+	// procesa els missatges.
 	//
 	Message msg;
 	if (_msgQueue->receive(msg)) {
 
-		// Procesa el missatge
-		//
+		if ((msg.msgId == MsgId::keyboardEvent) && (msg.target == nullptr))
+			msg.target = _focus;
+
 		if (msg.target != nullptr)
 			msg.target->dispatch(msg);
 	}
@@ -151,14 +164,14 @@ void GuiService::onTask(
 ///
 #if eosGuiService_TouchPadEnabled
 void GuiService::touchPadEventHandler(
-	const TouchPadService::EventArgs &args) {
+	const TouchPadService::EventArgs& args) {
 
 	Message msg;
 	msg.msgId = MsgId::touchPadEvent;
 
 	// Obte el target.
 	//
-	Visual *target = getVisualAt(Point(args.x, args.y));
+	Visual* target = getVisualAt(Point(args.x, args.y));
 
 	// Comprova si ha canviat el target.
 	//
@@ -208,14 +221,14 @@ void GuiService::touchPadEventHandler(
 
 #if eosGuiService_KeyboardEnabled
 void GuiService::keyboardEventHandler(
-	const KeyboardEventArgs &args) {
+	const KeyboardEventArgs& args) {
 
 }
 #endif
 
 #if eosGuiService_SelectorEnabled
 void GuiService::selectorEventHandler(
-	const SelectorEventArgs &args) {
+	const SelectorEventArgs& args) {
 
 }
 #endif

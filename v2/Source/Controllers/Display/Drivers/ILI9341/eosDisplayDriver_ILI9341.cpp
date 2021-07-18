@@ -219,8 +219,6 @@ void DisplayDriver_ILI9341::writePixels(
     int height,
     const void *pixels,
 	ColorFormat format,
-	int dx,
-	int xy,
 	int pitch) {
 
     //selectRegion(x, y, width, width);
@@ -244,8 +242,6 @@ void DisplayDriver_ILI9341::readPixels(
     int height,
     void *pixels,
 	ColorFormat format,
-	int dx,
-	int dy,
 	int pitch) {
 
     //selectRegion(x, y, width, height);

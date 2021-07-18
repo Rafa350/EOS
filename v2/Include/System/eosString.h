@@ -81,6 +81,30 @@ namespace eos {
             	return _s.compare(str);
             }
 
+            inline String& insert(int pos, char ch) {
+            	_s.insert(pos, 1, ch);
+            	return *this;
+            }
+
+            inline String& insert(int pos, char* cstr) {
+            	_s.insert(pos, cstr);
+            	return *this;
+            }
+
+            inline String& insert(int pos, const String& str) {
+            	_s.insert(pos, str);
+            	return *this;
+            }
+
+            inline String& erase(int pos, int length) {
+            	_s.erase(pos, length);
+            	return *this;
+            }
+
+            inline String substr(int pos, int length) {
+            	return _s.substr(pos, length);
+            }
+
             /// \brief Obte el iterador inicial.
             ///
             inline Iterator begin() {

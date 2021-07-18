@@ -113,7 +113,6 @@
 #define DISPLAY_SCREEN_WIDTH      480            // Amplada de la pantalla
 #define DISPLAY_SCREEN_HEIGHT     272            // Alçada de la pantalla
 #define DISPLAY_COLOR_FORMAT      ColorFormat::rgb565  // Format de color
-#define DISPLAY_COLOR_RGB565  // TODO: Eliminar quan es pugui
 #define DISPLAY_IMAGE_BUFFER      0xC0000000     // Adressa de la ram de video
 #define DISPLAY_DRV_RGBLTDC                      // Driver
 
