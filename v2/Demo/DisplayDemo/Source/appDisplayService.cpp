@@ -25,13 +25,14 @@ using namespace app;
 
 
 //#define TEST_OPACITY
-#define TEST_COLORS
+//#define TEST_COLORS
 //#define TEST_POINTS
 //#define TEST_LINES
 //#define TEST_THICKLINES
 //#define TEST_RECTANGLES
 //#define TEST_ELLIPSES
-#define TEST_BITMAPS
+#define TEST_POLYGONS
+//#define TEST_BITMAPS
 //#define SHOW_RESULTS
 
 static int seed = 537;
@@ -154,6 +155,9 @@ void DisplayService::onLoop() {
 #endif
 #ifdef TEST_ELLIPSES
     testEllipses();
+#endif
+#ifdef TEST_POLYGONS
+    testPolygons();
 #endif
 #ifdef TEST_BITMAPS
     testBitmaps();
@@ -394,7 +398,7 @@ void DisplayService::testThickLines() {
 
     _graphics->drawLine(10, 10, 200, 376, 5, COLOR_White);
 
-    Task::delay(50000);
+    Task::delay(1000);
 }
 
 
@@ -462,10 +466,11 @@ void DisplayService::testEllipses() {
     for (int i = 0; i < 200; i++) {
         int cx = __rand() % _screenWidth;
         int cy = __rand() % _screenHeight;
-        int r = (__rand() % 60) + 3;
+        int rx = (__rand() % 60) + 3;
+        int ry = (__rand() % 60) + 3;
 
         Color c = __getRandomColor();
-        _graphics->drawEllipse(cx - r, cy - r, cx + r, cy + r, c);
+        _graphics->drawEllipse(cx - rx, cy - ry, cx + rx, cy + ry, c);
     }
     _ellipsesTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
@@ -480,12 +485,60 @@ void DisplayService::testEllipses() {
     for (int i = 0; i < 200; i++) {
         int cx = __rand() % _screenWidth;
         int cy = __rand() % _screenHeight;
-        int r = (__rand() % 60) + 3;
+        int rx = (__rand() % 60) + 3;
+        int ry = (__rand() % 60) + 3;
 
         Color c = __getRandomColor();
-       	_graphics->fillEllipse(cx - r, cy - r, cx + r, cy + r, c);
+       	_graphics->fillEllipse(cx - rx, cy - ry, cx + rx, cy + ry, c);
     }
     _filledEllipsesTicks = Task::getTickCount() - ticks;
+    Task::delay(1000);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Test de poligons.
+///
+void DisplayService::testPolygons() {
+
+	int ticks;
+	static Point __points[8] = {
+		{100, 100},
+		{100, 160},
+		{160, 200},
+		{280, 100},
+		{280, 160},
+		{220, 100},
+	};
+
+    // Poligons buides
+    //
+    drawBackground("Polygons");
+    Task::delay(250);
+
+    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    ticks = Task::getTickCount();
+    for (int i = 0; i < 1; i++) {
+
+        Color c = __getRandomColor();
+    	_graphics->drawPolygon(__points, 6, c);
+    }
+    _polygonsTicks = Task::getTickCount() - ticks;
+    Task::delay(1000);
+
+    // Elipses plenes
+    //
+    drawBackground("Filled polygons");
+    Task::delay(250);
+
+    _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
+    ticks = Task::getTickCount();
+    for (int i = 0; i < 1; i++) {
+
+    	Color c = __getRandomColor();
+    	_graphics->fillPolygon(__points, 6, c);
+    }
+    _filledPolygonsTicks = Task::getTickCount() - ticks;
     Task::delay(1000);
 }
 

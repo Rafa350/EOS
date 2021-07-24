@@ -17,7 +17,7 @@ using namespace eos;
 /// \param    p2: Punt final.
 ///
 void Graphics::paintLine(
-	const Pen &pen,
+	const Pen& pen,
 	const Point& p1,
 	const Point& p2) {
 
@@ -195,7 +195,7 @@ void Graphics::drawLine(
 
 			uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(err - dx + dy) / ed - wd + 1.0f));
 
-			Color c(alpha, color.getR(), color.getG(), color.getB());
+			Color c(makeColor<Color::CI::format>(alpha, color.getR(), color.getG(), color.getB()));
 			_driver->setPixel(x0, y0, c);
 			e2 = err;
 			x2 = x0;
@@ -207,7 +207,7 @@ void Graphics::drawLine(
 
 					uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(e2) / ed - wd + 1.0f));
 
-					Color c(alpha, color.getR(), color.getG(), color.getB());
+					Color c(makeColor<Color::CI::format>(alpha, color.getR(), color.getG(), color.getB()));
 					_driver->setPixel(x0, y2 += sy, c);
 				}
 				if (x0 == x1)
@@ -224,7 +224,7 @@ void Graphics::drawLine(
 
 					uint8_t alpha = 255 - (uint8_t)Math::max(0.0f, 255.0f * (Math::abs(e2) / ed - wd + 1.0f));
 
-					Color c(alpha, color.getR(), color.getG(), color.getB());
+					Color c(makeColor<Color::CI::format>(alpha, color.getR(), color.getG(), color.getB()));
 					_driver->setPixel(x2 += sx, y0, c);
 				}
 				if (y0 == y1)

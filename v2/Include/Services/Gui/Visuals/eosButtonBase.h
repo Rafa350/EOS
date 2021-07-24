@@ -26,7 +26,7 @@ namespace eos {
 			struct EventArgs {
 				ButtonBase *button;
 				EventType event;
-				uint8_t id;
+				unsigned id;
 			};
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 

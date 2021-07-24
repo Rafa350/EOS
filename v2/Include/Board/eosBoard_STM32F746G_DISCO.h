@@ -98,6 +98,21 @@
 #define ARDUINO_D15_PORT          HAL_GPIO_PORT_B
 #define ARDUINO_D15_PIN           HAL_GPIO_PIN_8
 
+#define ARDUINO_SPI_SCK_PORT      ARDUINO_D13_PORT
+#define ARDUINO_SPI_SCK_PIN       ARDUINO_D13_PIN
+
+#define ARDUINO_SPI_MOSI_PORT     ARDUINO_D11_PORT
+#define ARDUINO_SPI_MOSI_PIN      ARDUINO_D11_PIN
+
+#define ARDUINO_SPI_MISO_PORT     ARDUINO_D12_PORT
+#define ARDUINO_SPI_MISO_PIN      ARDUINO_D12_PIN
+
+#define ARDUINO_I2C_SCL_PORT      ARDUINO_D15_PORT
+#define ARDUINO_I2C_SCL_PIN       ARDUINO_D15_PIN
+
+#define ARDUINO_I2C_SDA_PORT      ARDUINO_D14_PORT
+#define ARDUINO_I2C_SDA_PIN       ARDUINO_D14_PIN
+
 #endif // USE_ARDUINO
 
 
@@ -129,7 +144,7 @@
 #define DISPLAY_VSPOL             0    // VSync active (0=LOW, 1=HIGHT)
 #define DISPLAY_DEPOL             0    // DE active (0=LOW, 1=HIGHT)
 #define DISPLAY_PCPOL             0    // PC active (0=LOW, 1=HIGHT)
-#define DISPLAY_FDIV              5    // Divisor de fequencia
+#define DISPLAY_FDIV              5    // Divisor de frequencia
 
 // Tipus de lletra disponibles
 //

@@ -8,6 +8,7 @@
 
 using namespace eos;
 
+
 #ifdef EOS_DEBUG
 static int __allocatedBrushCount = 0;
 static int __allocatedBrushImplCount = 0;

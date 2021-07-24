@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "System/eosPointers.h"
-#include "System/Collections/eosDynamicArray.h"
+#include "System/Collections/eosVector.h"
 
 
 #ifndef eosGraphics_MaxFonts
@@ -57,7 +57,7 @@ namespace eos {
     	private:
     		struct Impl;
     		typedef SharedPtr<Impl> ImplPtr;
-			typedef DynamicArray<ImplPtr, eosGraphics_MaxFonts, true> ImplPtrCache;
+			typedef Vector<ImplPtr, eosGraphics_MaxFonts, true> ImplPtrCache;
 
     	private:
 			static ImplPtrCache _implCache;

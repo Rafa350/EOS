@@ -27,7 +27,7 @@ TimerService::TimerService(
 TimerService::~TimerService() {
 
     while (!_timers.isEmpty())
-        delete _timers.getBack();
+        delete _timers.peekBack();
 }
 
 
@@ -98,7 +98,7 @@ void TimerService::removeTimers() {
 
     while (!_timers.isEmpty()) {
 
-        TimerCounter* timer = _timers.getBack();
+        TimerCounter* timer = _timers.peekBack();
 
         // Si esta actiu l'elimina de la cua d'actius
         //

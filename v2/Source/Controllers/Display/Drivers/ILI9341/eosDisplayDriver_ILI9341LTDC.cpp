@@ -202,12 +202,11 @@ void DisplayDriver_ILI9341LTDC::writePixels(
 	int y,
 	int width,
 	int height,
-	const void *pixels,
+	const void* pixels,
 	ColorFormat format,
-	int dx,
-	int dy,
 	int pitch) {
 
+	_frameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
 }
 
 void DisplayDriver_ILI9341LTDC::readPixels(
@@ -217,8 +216,6 @@ void DisplayDriver_ILI9341LTDC::readPixels(
 	int height,
 	void *pixels,
 	ColorFormat format,
-	int dx,
-	int dy,
 	int pitch) {
 
 }

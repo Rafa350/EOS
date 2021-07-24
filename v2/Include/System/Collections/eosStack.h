@@ -103,7 +103,10 @@ namespace eos {
 					/// \return: True si es plena.
 					///
 					inline bool isFull() const {
-						return _c.size() == _c.capacity();
+						if constexpr (fixedCapacity)
+							return _c.size() == _c.capacity();
+						else
+							return false;
 					}
 
 					/// \brief Obte el tamany de la pila.

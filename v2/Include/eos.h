@@ -140,19 +140,19 @@
 
 // Optional includes
 //
-#ifdef INCL_BASE
+#ifdef EOS_INC_BASE
 #include "Services/eosService.h"
 #include "System/eosApplication.h"
 #include "System/eosString.h"
 #endif
 
-#ifdef INCL_CORE
+#ifdef EOS_INC_CORE
 #include "System/Core/eosQueue.h"
 #include "System/Core/eosSemaphore.h"
 #include "System/Core/eosTask.h"
 #endif
 
-#ifdef INCL_GRAPHICS
+#ifdef EOS_INC_GRAPHICS
 #include "System/Graphics/eosBitmap.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosFont.h"
@@ -163,10 +163,10 @@
 #include "System/Graphics/eosTransformation.h"
 #endif
 
-#ifdef INCL_FSM
+#ifdef EOS_INC_FSM
 #endif
 
-#ifdef INCL_GUI
+#ifdef EOS_INC_GUI
 #endif
 
 

@@ -9,7 +9,7 @@
 #include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosDynamicArray.h"
+#include "System/Collections/eosVector.h"
 #include "System/Core/eosSemaphore.h"
 
 
@@ -21,8 +21,8 @@ namespace eos {
     //
     class DigInputService final: public Service {
         private:
-            typedef DynamicArray<DigInput*> DigInputList;
-            typedef DynamicArray<DigInput*>::Iterator DigInputListIterator;
+            typedef Vector<DigInput*> DigInputList;
+            typedef DigInputList::Iterator DigInputIterator;
         public:
             struct Settings {       // Informacio d'inicialitzacio del servei.
                 TMRHandler hTimer;  // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema

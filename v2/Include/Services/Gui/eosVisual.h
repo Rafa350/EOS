@@ -7,7 +7,7 @@
 #include "eos.h"
 #include "Services/Gui/eosMsgQueue.h"
 #include "Services/Gui/eosThickness.h"
-#include "System/Collections/eosDynamicArray.h"
+#include "System/Collections/eosVector.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
 #include "System/Graphics/eosSize.h"
@@ -46,8 +46,8 @@ namespace eos {
 	///
     class Visual {
     	public:
-			typedef DynamicArray<Visual*> VisualList;
-			typedef DynamicArray<Visual*>::Iterator VisualListIterator;
+			typedef Vector<Visual*> VisualList;
+			typedef typename VisualList::Iterator VisualIterator;
 
       	private:
     		Visual* _parent;

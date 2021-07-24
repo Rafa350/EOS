@@ -4,7 +4,7 @@
 
 #include "eos.h"
 #include "System/eosString.h"
-#include "System/Collections/eosDynamicArray.h"
+#include "System/Collections/eosVector.h"
 #include "System/Graphics/eosFont.h"
 
 
@@ -18,7 +18,7 @@ namespace eos {
 		    	FontStyle style;
 		    	Font *font;
 		    };
-			typedef DynamicArray<CacheEntry*, 10> Cache;
+			typedef Vector<CacheEntry*, 10> Cache;
 
 		private:
 			static FontCache *instance;

@@ -37,7 +37,7 @@ DigInputService::DigInputService(
 DigInputService::~DigInputService() {
 
     while (!_inputs.isEmpty())
-        delete _inputs.getBack();
+        delete _inputs.peekBack();
 }
 
 
@@ -99,7 +99,7 @@ void DigInputService::removeInputs() {
     Task::enterCriticalSection();
 
     while (!_inputs.isEmpty()) {
-        DigInput *input = _inputs.getBack();
+        DigInput *input = _inputs.peekBack();
         _inputs.popBack();
         input->_service = nullptr;
     }

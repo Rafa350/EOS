@@ -1,5 +1,5 @@
-#ifndef __eosStaticArray__
-#define __eosStaticArray__
+#ifndef __eosArray__
+#define __eosArray__
 
 
 #include "eos.h"
@@ -18,7 +18,7 @@ namespace eos {
             /// \remarks La llista enmagatzema copies del element.
             ///
             template <typename Element, int size>
-            class StaticArray {
+            class Array {
 
                 public:
                     typedef Element Value;

@@ -53,8 +53,17 @@ void MonoFrameBuffer::copy(
 	int width,
 	int height,
 	const Color* colors,
-	int dx,
-	int dy,
-	int pitch) {
+	int offset) {
+
+}
+
+void MonoFrameBuffer::write(
+	int x,
+	int y,
+	int width,
+	int height,
+	const void* pixels,
+	ColorFormat format,
+	int offset) {
 
 }

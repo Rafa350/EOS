@@ -35,6 +35,8 @@ namespace app {
 	        int _filledRectanglesTicks;
 	        int _ellipsesTicks;
 	        int _filledEllipsesTicks;
+	        int _polygonsTicks;
+	        int _filledPolygonsTicks;
 	        int _bitmapTicks;
 
 	    public:
@@ -53,6 +55,7 @@ namespace app {
 	        void testThickLines();
 	        void testRectangles();
 	        void testEllipses();
+	        void testPolygons();
 	        void testBitmaps();
 	};
 

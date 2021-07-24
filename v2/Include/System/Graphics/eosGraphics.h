@@ -6,7 +6,6 @@
 //
 #include "eos.h"
 #include "System/Collections/eosStack.h"
-#include "System/Collections/eosDynamicArray.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
@@ -118,6 +117,8 @@ namespace eos {
             void drawEllipse(int x1, int y1, int x2, int y2, Color color) const;
             inline void drawEllipse(const Rect& r, Color color) const { drawEllipse(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
 
+            void drawPolygon(const Point* points, int numPoints, Color color);
+
             void drawBitmap(int x, int y, const Bitmap* bitmap) const;
             inline void drawBitmap(const Point& p, const Bitmap *bitmap) const { drawBitmap(p.getX(), p.getY(), bitmap); }
 
@@ -139,6 +140,8 @@ namespace eos {
 
             void fillEllipse(int x1, int y1, int x2, int y2, Color color) const;
             inline void fillEllipse(const Rect& r, Color color) const { fillEllipse(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY(), color); }
+
+            void fillPolygon(const Point* points, int numPoints, Color color);
 
         private:
             bool clipPoint(int x, int y) const;

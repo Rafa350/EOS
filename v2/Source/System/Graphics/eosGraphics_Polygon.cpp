@@ -1,21 +1,17 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosMath.h"
+#include "System/Collections/eosVector.h"
 #include "System/Graphics/eosGraphics.h"
 
-#include <vector>
+
 #include <algorithm>
 
 
 using namespace eos;
 
 
-struct Vertex {
-    int x;
-    int y;
-};
-
-typedef std::vector<Vertex> VertexList;
+#define MAX_POINTS  15
 
 struct Edge {
     int yMin;
@@ -27,13 +23,65 @@ struct Edge {
     int step;
 };
 
-typedef std::vector<Edge> EdgeList;
-typedef std::vector<Edge>::iterator EdgeIterator;
+typedef Vector<Edge, MAX_POINTS, true> EdgeList;
+typedef typename EdgeList::Iterator EdgeIterator;
+
+static EdgeList __global;
+static EdgeList __active;
+
+static void fillPolygonAlgorithm(Graphics* g, const Point* points, int numPoints, Color color);
 
 
-bool compareEdges(
-	const Edge &e1,
-	const Edge &e2) {
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa un poligon.
+/// \param    points: La llista de punts.
+/// \param    numPoints: Nombre de punts en la llista.
+/// \param    color: El color per dibuixar.
+///
+void Graphics::drawPolygon(
+	const Point* points,
+	int numPoints,
+	Color color) {
+
+	if (numPoints >= 2) {
+
+		int x1 = points[numPoints - 1].getX();
+		int y1 = points[numPoints - 1].getY();
+
+		for (int i = 0; i < numPoints; i++) {
+
+			int x2 = points[i].getX();
+			int y2 = points[i].getY();
+
+			drawLine(x1, y1, x2, y2, color);
+
+			x1 = x2;
+			y1 = y2;
+		}
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa un poligon ple.
+/// \param    points: La llista de punts.
+/// \param    numPoints: Nombre de punts en la llista.
+/// \param    color: El color per dibuixar.
+///
+void Graphics::fillPolygon(
+	const Point* points,
+	int numPoints,
+	Color color) {
+
+	if (numPoints > 2 && numPoints < MAX_POINTS)
+		fillPolygonAlgorithm(this, points, numPoints, color);
+}
+
+
+
+static bool compareGlobalEdges(
+	const Edge& e1,
+	const Edge& e2) {
 
 	if (e1.yMin < e2.yMin)
 		return true;
@@ -50,9 +98,9 @@ bool compareEdges(
 }
 
 
-bool compareActiveEdges(
-	const Edge &e1,
-	const Edge &e2) {
+static bool compareActiveEdges(
+	const Edge& e1,
+	const Edge& e2) {
 
 	return e1.xVal < e2.xVal;
 }
@@ -63,122 +111,184 @@ bool compareActiveEdges(
 /// \param    globalEdges: Llista d'arestes global.
 /// \param    polygon: Llista de vertex del poligon.
 ///
-void addGlobalEdges(
-	EdgeList &globalEdges,
-	const VertexList &polygon) {
+static void initializeGlobalEdges(
+	EdgeList& globalEdges,
+	const Point* points,
+	int numPoints) {
 
 	globalEdges.clear();
-	globalEdges.reserve(polygon.size());
 
-	Vertex v1 = polygon.back();
-	for (const Vertex &v2: polygon) {
+	int x1 = points[numPoints - 1].getX();
+	int y1 = points[numPoints - 1].getY();
 
-		if (v1.y != v2.y) {
+	for (int i = 0; i < numPoints; i++) {
+
+		int x2 = points[i].getX();
+		int y2 = points[i].getY();
+
+		if (y1 != y2) {
 			Edge edge;
-			if (v1.y < v2.y) {
-				edge.yMin = v1.y;
-				edge.yMax = v2.y;
-				edge.xVal = v1.x;
+
+			if (y1 <= y2) {
+				edge.yMin = y1;
+				edge.yMax = y2;
+				edge.xVal = x1;
+			    edge.step = x1 <= x2 ? 1 : -1;
 			}
 			else {
-				edge.yMin = v2.y;
-				edge.yMax = v1.y;
-				edge.xVal = v2.x;
+				edge.yMin = y2;
+				edge.yMax = y1;
+				edge.xVal = x2;
+			    edge.step = x1 <= x2 ? -1 : 1;
 			}
-			edge.dx = Math::abs(v2.x - v1.x);
-			edge.dy = Math::abs(v2.y - v1.y);
-			edge.step = v1.x <= v2.x ? 1 : -1;
+
+			edge.dx = Math::abs(x2 - x1);
+		    edge.dy = Math::abs(y2 - y1);
 			edge.sum = 0;
-			globalEdges.push_back(edge);
+
+			globalEdges.pushBack(edge);
 		}
 
-		v1 = v2;
+		x1 = x2;
+		y1 = y2;
 	}
 
-	std::sort(globalEdges.begin(), globalEdges.end(), compareEdges);
+	std::sort(globalEdges.begin(), globalEdges.end(), compareGlobalEdges);
 }
 
 
-void addActiveEdges(
-	EdgeList &activeEdges,
-	const EdgeList &globalEdges,
+/// ----------------------------------------------------------------------
+/// \brief    Afegeix elements a la llista d'elements actius i els
+///           elimina de la global.
+/// \param    activeEdges: Llista d'elements actius.
+/// \param    globalEdges: Llista d'elements global.
+/// \param    yScan: Linia actual d'exploracio.
+///
+static void addActiveEdges(
+	EdgeList& activeEdges,
+	EdgeList& globalEdges,
 	int yScan) {
 
-	for (const Edge &edge: globalEdges) {
-		if (edge.yMin == yScan)
-			activeEdges.push_back(edge);
+	auto it = globalEdges.begin();
+	while (it != globalEdges.end()) {
+		if ((*it).yMin == yScan) {
+			activeEdges.pushBack(*it);
+			it = globalEdges.remove(it);
+		}
+		else
+			++it;
 	}
 	std::sort(activeEdges.begin(), activeEdges.end(), compareActiveEdges);
 }
 
 
-void removeEdgesAtYScan(
-	EdgeList &edges,
+/// ----------------------------------------------------------------------
+/// \brief    Elimina elements de la llista d'actius.
+/// \param    edges: La llista.
+/// \param    yScan: Linia actual d'exploracio.
+///
+static void removeActiveEdges(
+	EdgeList& edges,
 	int yScan) {
 
 	auto it = edges.begin();
 	while (it != edges.end()) {
 		if ((*it).yMax == yScan)
-			it = edges.erase(it);
+			it = edges.remove(it);
 		else
 			++it;
 	}
 }
 
 
-void fillPolygon(
-	const VertexList &polygon) {
+/// ----------------------------------------------------------------------
+/// \brief    Actualitza les coordinades X de la llista d'actius.
+/// \param    activeEdges: Llista d'actius
+///
+static void updateActiveEdges(
+	EdgeList& activeEdges) {
 
-	EdgeList globalEdges;
-	EdgeList activeEdges;
-
-	addGlobalEdges(globalEdges, polygon);
-
-	int yScan = globalEdges[0].yMin;
-
-	while (!globalEdges.empty()) {
-
-		if (!activeEdges.empty()) {
-			removeEdgesAtYScan(activeEdges, yScan);
-			removeEdgesAtYScan(globalEdges, yScan);
-		}
-
-		for (Edge edge: globalEdges) {
-			if (edge.yMin == yScan)
-				activeEdges.push_back(edge);
-		}
-		std::sort(activeEdges.begin(), activeEdges.end(), compareActiveEdges);
-
-		for (Edge edge: activeEdges) {
-			int x = edge.xVal;
-		}
-
-		yScan++;
-
-		for (auto edge: activeEdges) {
-			if (edge.dx != 0) {
-				edge.sum += edge.dx;
-				while (edge.sum >= edge.dy) {
-					edge.xVal += edge.step;
-					edge.sum -= edge.dy;
-				}
+	for (auto& edge: activeEdges) {
+		if (edge.dx != 0) {
+			edge.sum += edge.dx;
+			while (edge.sum >= edge.dy) {
+				edge.xVal += edge.step;
+				edge.sum -= edge.dy;
 			}
 		}
+	}
+	std::sort(activeEdges.begin(), activeEdges.end(), compareActiveEdges);
+}
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa la linia actual.
+/// \param    activeEdges: La llista activa.
+/// \param    yScan: La linia actual d'exploracio.
+/// \param    g: Grafics.
+/// \param    color: Color de la linia.
+///
+static void drawScanLine(
+	EdgeList& activeEdges,
+	int yScan,
+	Graphics* g,
+	Color color) {
+
+	if (!activeEdges.isEmpty()) {
+
+		bool parity = true;
+
+		auto it = activeEdges.begin();
+		int x1 = (*it).xVal;
+		++it;
+		while (it != activeEdges.end()) {
+			int x2 = (*it).xVal;
+
+			if (parity)
+				g->drawHLine(x1, x2, yScan, color);
+
+			++it;
+			x1 = x2;
+			parity = !parity;
+		}
 	}
 }
 
 
-void polygonTest() {
+static void fillPolygonAlgorithm(
+	Graphics* g,
+	const Point* points,
+	int numPoints,
+	Color color) {
 
-	VertexList polygon;
+	EdgeList& globalEdges = __global;
+	EdgeList& activeEdges = __active;
 
-	polygon.push_back(Vertex {10, 10});
-	polygon.push_back(Vertex {10, 16});
-	polygon.push_back(Vertex {16, 20});
-	polygon.push_back(Vertex {28, 10});
-	polygon.push_back(Vertex {18, 16});
-	polygon.push_back(Vertex {22, 10});
+	// Inicialitza la llista global
+	//
+	initializeGlobalEdges(globalEdges, points, numPoints);
 
-    fillPolygon(polygon);
+	// Obte la primera linia per procesar
+	//
+	int yScan = globalEdges.peekFront().yMin;
+
+	do {
+		// Elimina els segment que ja s'ha procesat
+		//
+		removeActiveEdges(activeEdges, yScan);
+
+		// Afegeix els nous segments per procesar
+		//
+		addActiveEdges(activeEdges, globalEdges, yScan);
+
+		// Dibuixa la linia actual
+		//
+		drawScanLine(activeEdges, yScan, g, color);
+
+		// Passa a la seguent linia i actualitza coordinades
+		//
+		yScan++;
+		updateActiveEdges(activeEdges);
+
+	} while (!activeEdges.isEmpty());
 }

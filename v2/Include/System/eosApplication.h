@@ -7,7 +7,7 @@
 #include "eos.h"
 #include "HAL/halTMR.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosDynamicArray.h"
+#include "System/Collections/eosVector.h"
 #include "System/Core/eosTask.h"
 #include "System/Core/eosTimer.h"
 
@@ -24,9 +24,9 @@ namespace eos {
     ///
     class Application {
         private:
-            typedef DynamicArray<Service*> ServiceList;
-            typedef DynamicArray<Service*>::Iterator ServiceListIterator;
-            typedef DynamicArray<Task*> TaskList;
+            typedef Vector<Service*> ServiceList;
+            typedef Vector<Service*>::Iterator ServiceListIterator;
+            typedef Vector<Task*> TaskList;
             typedef CallbackP1<Application, const Task::EventArgs&> TaskEventCallback;
 #if Eos_ApplicationTickEnabled
             typedef CallbackP1<Application, const Timer::EventArgs&> TimerEventCallback;

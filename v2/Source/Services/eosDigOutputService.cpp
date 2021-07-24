@@ -33,7 +33,7 @@ DigOutputService::DigOutputService(
 DigOutputService::~DigOutputService() {
 
     while (!_outputs.isEmpty())
-    	delete _outputs.getBack();
+    	delete _outputs.peekBack();
 }
 
 
@@ -103,7 +103,7 @@ void DigOutputService::removeOutputs() {
     Task::enterCriticalSection();
 
     while (!_outputs.isEmpty()) {
-        DigOutput *output = _outputs.getBack();
+        DigOutput *output = _outputs.peekBack();
         _outputs.popBack();
         output->_service = nullptr;
     }

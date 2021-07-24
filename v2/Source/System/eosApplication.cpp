@@ -32,7 +32,7 @@ Application::~Application() {
 	// destrueix automaticament
 	//
 	while (!services.isEmpty())
-		delete services.getFront();
+		delete services.peekFront();
 }
 
 
@@ -213,7 +213,7 @@ void Application::removeService(
 void Application::removeServices() {
 
 	while (!services.isEmpty())
-        removeService(services.getFront());
+        removeService(services.peekFront());
 }
 
 

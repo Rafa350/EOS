@@ -36,7 +36,7 @@ Visual::~Visual() {
 		_parent->removeVisual(this);
 
 	while (!_childs.isEmpty())
-		delete _childs.getBack();
+		delete _childs.peekBack();
 }
 
 
@@ -184,7 +184,7 @@ void Visual::removeVisual(
 void Visual::removeVisuals() {
 
 	while (!_childs.isEmpty())
-        removeVisual(_childs.getBack());
+        removeVisual(_childs.peekBack());
 }
 
 

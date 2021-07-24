@@ -65,6 +65,29 @@ namespace eos {
 	};
 
 	template <>
+	struct ColorInfo<ColorFormat::argb4444> {
+		typedef uint32_t color_t;
+		constexpr static ColorFormat format = ColorFormat::argb4444;
+		constexpr static const int bits = 16;
+		constexpr static const int bytes = (bits + 7) / 8;
+		constexpr static const bool isColor = true;
+		constexpr static const bool isIndex = false;
+		constexpr static const bool hasAlpha = true;
+		constexpr static const unsigned maskA = 0xF000;
+		constexpr static const unsigned maskR = 0x0F00;
+		constexpr static const unsigned maskG = 0x00F0;
+		constexpr static const unsigned maskB = 0x000F;
+		constexpr static const unsigned shiftA = 12;
+		constexpr static const unsigned shiftR = 8;
+		constexpr static const unsigned shiftG = 4;
+		constexpr static const unsigned shiftB = 0;
+		constexpr static const unsigned adjA = 0;
+		constexpr static const unsigned adjR = 0;
+		constexpr static const unsigned adjG = 0;
+		constexpr static const unsigned adjB = 0;
+	};
+
+	template <>
 	struct ColorInfo<ColorFormat::rgb888> {
 		typedef uint32_t color_t;
 		constexpr static ColorFormat format = ColorFormat::rgb888;
@@ -599,7 +622,7 @@ namespace eos {
 	inline ColorBase<FORMAT> makeColor(uint8_t l) {
 		typedef ColorInfo<FORMAT> CI;
 		if constexpr (CI::isColor)
-			return ColorBase<FORMAT>(0xFF, l, l, l);
+			return makeColor<FORMAT>(0xFF, l, l, l);
 		else
 			return ColorBase<FORMAT>(l);
 	}

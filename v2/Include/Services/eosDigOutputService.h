@@ -8,7 +8,7 @@
 #include "HAL/halGPIO.h"
 #include "HAL/halTMR.h"
 #include "Services/eosService.h"
-#include "System/Collections/eosDynamicArray.h"
+#include "System/Collections/eosVector.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -54,8 +54,8 @@ namespace eos {
                 unsigned param2;
             };
             typedef Queue<Command> CommandQueue;
-            typedef DynamicArray<DigOutput*> DigOutputList;
-            typedef DynamicArray<DigOutput*>::Iterator DigOutputListIterator;
+            typedef Vector<DigOutput*> DigOutputList;
+            typedef DigOutputList::Iterator DigOutputIterator;
         public:
             struct Settings {       // Informacio d'inicialitzacio del servei
                 TMRHandler hTimer;  // -Temporitzador. Si es NULL utilitza el tick del sistema

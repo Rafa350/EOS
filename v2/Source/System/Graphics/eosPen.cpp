@@ -9,6 +9,12 @@
 using namespace eos;
 
 
+#ifdef EOS_DEBUG
+static int __allocatedPenCount = 0;
+static int __allocatedPenImplCount = 0;
+#endif
+
+
 /// \brief Estructura que representa les dades internes del Pen
 //
 class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
@@ -27,11 +33,17 @@ class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 			_style(style),
 			_color(color),
 			_thickness(thickness) {
+#ifdef EOS_DEBUG
+			__allocatedPenImplCount++;
+#endif
 		}
 
 		/// \brief Destructor.
 		///
 		~Impl() {
+#ifdef EOS_DEBUG
+			__allocatedPenImplCount--;
+#endif
 		}
 
 		/// \brief Operador ==
@@ -76,6 +88,9 @@ class Pen::Impl: public PoolAllocatable<Pen::Impl, eosGraphics_MaxPens> {
 };
 
 
+Pen::ImplPtrCache Pen::_implCache;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
@@ -97,6 +112,10 @@ Pen::Pen(
 	int thickness):
 
 	_impl(makeImpl(style, color, thickness)) {
+
+#ifdef EOS_DEBUG
+	__allocatedPenCount++;
+#endif
 }
 
 
@@ -108,6 +127,10 @@ Pen::Pen(
 	const Pen& pen) :
 
 	_impl(pen._impl) {
+
+#ifdef EOS_DEBUG
+	__allocatedPenCount++;
+#endif
 }
 
 
@@ -116,6 +139,18 @@ Pen::Pen(
 ///
 Pen::~Pen() {
 
+	if (_impl.uses() < 2) {
+		for (int index = 0; index < _implCache.getSize(); index++) {
+			if (_implCache[index] == _impl) {
+				_implCache.removeAt(index);
+				break;
+			}
+		}
+	}
+
+#ifdef EOS_DEBUG
+	__allocatedPenCount--;
+#endif
 }
 
 
@@ -157,7 +192,21 @@ Pen::ImplPtr Pen::makeImpl(
 	Color color,
 	int thickness) {
 
-	return ImplPtr(new Impl(style, color, thickness));
+	// Si ja esta en el cache, el reutilitza.
+	//
+	for (auto it = _implCache.begin(); it != _implCache.end(); it++) {
+		ImplPtr impl = *it;
+		if ((impl->getStyle() == style) &&
+			(impl->getColor() == color) &&
+			(impl->getThickness() == thickness))
+			return impl;
+	}
+
+	// Si no el troba, en crea un de nou
+	//
+	ImplPtr impl(new Impl(style, color, thickness));
+	_implCache.pushBack(impl);
+	return impl;
 }
 
 

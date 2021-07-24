@@ -165,8 +165,6 @@ void DisplayDriver_SSD1306::writePixels(
     int height,
     const void *pixels,
     ColorFormat format,
-    int dx,
-    int dy,
     int pitch) {
 
 }
@@ -179,8 +177,6 @@ void DisplayDriver_SSD1306::readPixels(
     int height,
     void *pixels,
     ColorFormat format,
-    int dx,
-    int dy,
     int pitch) {
 
 }

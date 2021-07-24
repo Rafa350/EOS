@@ -1,5 +1,5 @@
-#ifndef __eosDynamicArray__
-#define	__eosDynamicArray__
+#ifndef __eosVector__
+#define	__eosVector__
 
 
 // EOS includes
@@ -22,7 +22,7 @@ namespace eos {
 #endif            
 
             template <typename Element, int initialCapacity = 10, bool fixedCapacity = false>
-            class DynamicArray {
+            class Vector {
             	private:
             		using Allocator = StdHeapAllocator<Element>;
             		using Container = std::vector<Element, Allocator>;
@@ -43,14 +43,14 @@ namespace eos {
 
                     /// \brief Constructor per defecte
                     ///
-                    DynamicArray() {
+                    Vector() {
                     	if constexpr (initialCapacity > 0)
                     		_c.reserve(initialCapacity);
                     }
 
                     /// \brief Constructor copia
                     ///
-                    DynamicArray(const DynamicArray& other) = delete;
+                    Vector(const Vector& other) = delete;
 
                     /// \brief Inserta un element al final
                     /// \param element: L'element a inserter.
@@ -80,27 +80,27 @@ namespace eos {
 
                     /// \brief Obte el element del principi.
                     ///
-                    inline Reference getFront() {
+                    inline Reference peekFront() {
                         return _c.front();
                     }
 
                     /// \brief Obte el element del principi.
                     ///
-                    inline CReference getFront() const {
+                    inline CReference peekFront() const {
                         return _c.front();
                     }
 
                     /// \brief Obte l'element del final.
                     /// \return Una referencia a l'element.
                     //
-                    inline Reference getBack() {
+                    inline Reference peekBack() {
                         return _c.back();
                     }
 
                     /// \brief Obte l'element del final.
                     /// \return Una referencia a l'element.
                     ///
-                    inline CReference getBack() const {
+                    inline CReference peekBack() const {
                         return _c.back();
                     }
 
@@ -120,7 +120,7 @@ namespace eos {
                         return _c.at(index);
                     }
 
-                    /// \brief Inserta un element en la posicio indicada.
+                    /// \brief Inserta un element en el index indicat.
                     /// \param element: L'element a insertar.
                     /// \param index: La posicio on insertar l'element.
                     /// \return True si tot es correcte. False en cas contrari.
@@ -130,13 +130,39 @@ namespace eos {
                     	return true;
                     }
 
-                    /// \brief Elimina un element de la posicio indicada.
-                    /// \param index: Posicio del element a eliminar.
+                    /// \brief Inserta un element en la posicio indicada.
+                    /// \param element: L'element a insertar.
+                    /// \param index: La posicio on insertar l'element.
+                    /// \return La posicio del primer element insertat.
+                    ///
+                    Iterator insert(CIterator position, CReference element) {
+                    	return _c.insert(position, element);
+                    }
+
+                    /// \brief Elimina un element del index expecificat.
+                    /// \param index: Index del element a eliminar.
                     /// \return True si tot es correcte. False en cas contrari.
                     ///
                     bool removeAt(int index) {
                     	_c.erase(_c.begin() + index);
                     	return true;
+                    }
+
+                    /// \brief Elimina un element de al posicio especificada.
+                    /// \param position: La posicio.
+                    /// \return La posicio del element que segueix al element borrat.
+                    ///
+                    Iterator remove(CIterator position) {
+                    	return _c.erase(position);
+                    }
+
+                    /// \brief Elimina un grup element de al posicio especificada.
+                    /// \param begin: La posicio del primer element
+                    /// \param end: La posicio de l'ultim element
+                    /// \return La posicio despre del element que segeix a l'ultim element borrat
+                    ///
+                    Iterator remove(CIterator begin, CIterator end) {
+                    	return _c.erase(begin, end);
                     }
 
                     /// \brief Copia el contingut en un array.
@@ -168,7 +194,7 @@ namespace eos {
                     	return std::find(_c.begin(), _c.end(), element) != _c.end();
                     }
 
-                    /// \brief Buida el array i borra el contenidor.
+                    /// \brief Buida el array.
                     ///
                     inline void clear() {
                     	_c.clear();
@@ -179,6 +205,16 @@ namespace eos {
                     ///
                     inline bool isEmpty() const {
                     	return _c.empty();
+                    }
+
+                    /// \brief Comprova si es ple.
+                    /// \return True si es buit.
+                    ///
+                    inline bool isFull() const {
+                    	if constexpr (fixedCapacity)
+                    		return _c.size() == _c.capacity();
+                    	else
+                    		return false;
                     }
 
                     /// \brief Obte el tamany
@@ -223,7 +259,7 @@ namespace eos {
                     /// \param index: La posicio.
                     /// \return L'element en la posicio indicada.
                     ///
-                    inline CReference operator[](int index) const {
+                    inline CReference operator [] (int index) const {
                         return _c[index];
                     }
 
@@ -231,7 +267,7 @@ namespace eos {
                     /// \param index: La posicio.
                     /// \return L'element en la posicio indicada.
                     ///
-                    inline Reference operator[](int index) {
+                    inline Reference operator [] (int index) {
                         return _c[index];
                     }
             };
@@ -243,5 +279,5 @@ namespace eos {
 }
 
 
-#endif // __eosDynamicArray__
+#endif // __eosVector__
 
