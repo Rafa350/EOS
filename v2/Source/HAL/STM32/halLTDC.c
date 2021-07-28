@@ -1,5 +1,4 @@
-#include "eos.h"
-#include "eosAssert.h"
+#include "HAL/hal.h"
 #include "HAL/STM32/halLTDC.h"
 
 
@@ -25,7 +24,7 @@ static void disableDeviceClock() {
 /// ----------------------------------------------------------------------
 /// \brief    Configure LTDC peripheral clocks.
 ///
-__weak void configureLTDCDeviceClock() {
+__attribute__((weak)) void configureLTDCDeviceClock() {
 
 }
 

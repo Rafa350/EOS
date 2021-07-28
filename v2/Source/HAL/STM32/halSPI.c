@@ -1,7 +1,7 @@
-#include "eos.h"
-#include "eosAssert.h"
-#include "hal/STM32/halSPI.h"
+#include "HAL/hal.h"
+#include "HAL/STM32/halSPI.h"
 #include "HAL/STM32/halGPIO.h"
+
 #if defined(EOS_STM32F4)
 #include "stm32f4xx_hal.h"
 #elif defined(EOS_STM32F7)
@@ -231,8 +231,8 @@ void halSPISetInterruptFunction(
 ///
 void halSPISendBuffer(
 	SPIHandler handler,
-	uint8_t *data,
-	uint32_t size) {
+	uint8_t* data,
+	int size) {
 
 	__VERIFY_HANDLER(handler);
 

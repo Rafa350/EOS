@@ -31,7 +31,8 @@ namespace eos {
 		rgb565,    ///< R5 + G6 + B5        (16 bits RGB)
 		al88,      ///< A8 + L8             (16 bits AL/A+CLUD)
 		al44,      ///< A4 + L4             (8 bits AL/A+CLUD)
-		l8         ///< L8                  (8 bits L/CLUD)
+		l8,        ///< L8                  (8 bits L/CLUD)
+		l1         ///< L1                  (1 bit)
 	};
 
 
@@ -135,7 +136,7 @@ namespace eos {
 		constexpr static const int bytes = (bits + 7) / 8;
 		constexpr static const bool isColor = false;
 		constexpr static const bool isIndex = true;
-		constexpr static const bool hasAlpha = false;
+		constexpr static const bool hasAlpha = true;
 		constexpr static const unsigned maskA = 0xFF00;
 		constexpr static const unsigned maskL = 0x00FF;
 		constexpr static const unsigned shiftA = 8;
@@ -170,7 +171,21 @@ namespace eos {
 		constexpr static const bool isColor = false;
 		constexpr static const bool isIndex = true;
 		constexpr static const bool hasAlpha = false;
-		constexpr static const unsigned maskL = 0xFF;
+		constexpr static const unsigned maskL = 0;
+		constexpr static const unsigned shiftL = 0;
+		constexpr static const unsigned adjL = 0;
+	};
+
+	template <>
+	struct ColorInfo<ColorFormat::l1> {
+		typedef uint8_t color_t;
+		constexpr static ColorFormat format = ColorFormat::l1;
+		constexpr static const int bits = 1;
+		constexpr static const int bytes = (bits + 7) / 8;
+		constexpr static const bool isColor = false;
+		constexpr static const bool isIndex = true;
+		constexpr static const bool hasAlpha = false;
+		constexpr static const unsigned maskL = 0;
 		constexpr static const unsigned shiftL = 0;
 		constexpr static const unsigned adjL = 0;
 	};
@@ -377,7 +392,7 @@ namespace eos {
 				_c = color._c;
 			}
 
-			inline ColorRGB565 &operator = (const ColorRGB565 &color) {
+			inline ColorRGB565 &operator = (const ColorRGB565& color) {
             	_c = color._c;
             	return *this;
             }
@@ -451,7 +466,7 @@ namespace eos {
 				_c = color._c;
 			}
 
-			inline ColorL8 &operator = (const ColorL8 &color) {
+			inline ColorL8 &operator = (const ColorL8& color) {
             	_c = color._c;
             	return *this;
             }
@@ -488,6 +503,73 @@ namespace eos {
 				return true;
 			}
 	};
+
+	/// \brief Clase que representa un color en format L1
+	///
+	class ColorL1 {
+		public:
+			typedef ColorInfo<ColorFormat::l1> CI;
+			typedef CI::color_t color_t;
+
+		private:
+			color_t _c;
+
+		public:
+			/// \brief Constructor per defecte
+			///
+			inline ColorL1() :
+				_c(0) {
+			}
+
+			/// \brief Constructor per compopnents L
+			/// \param L: Component L
+			///
+			inline ColorL1(uint8_t l):
+				_c((color_t)l >> CI::adjL << CI::shiftL) {
+			}
+
+			inline ColorL1(const ColorL1& color) {
+				_c = color._c;
+			}
+
+			inline ColorL1 &operator = (const ColorL1& color) {
+            	_c = color._c;
+            	return *this;
+            }
+
+            inline bool operator == (const ColorL1 color) const {
+            	return _c == color._c;
+            }
+
+            inline bool operator != (const ColorL1 color) const {
+            	return _c != color._c;
+            }
+
+            inline operator color_t() const {
+            	return _c;
+            }
+
+            inline uint8_t getA() const {
+            	return 0xFF;
+            }
+
+			inline uint8_t getL() const  {
+				return (_c & CI::maskL) >> CI::shiftL << CI::adjL;
+			}
+
+			inline uint8_t getOpacity() const {
+				return 0xFF;
+			}
+
+			inline bool isTransparent() const {
+				return false;
+			}
+
+			inline bool isOpaque() const {
+				return true;
+			}
+	};
+
 
 	/// \brief Clase generica que representa un color.
 	///
@@ -588,6 +670,28 @@ namespace eos {
 				return makeColor<FORMAT>(getL());
 			}
 	};
+
+	template <>
+	class ColorBase<ColorFormat::l1> : public ColorL1 {
+		public:
+			inline ColorBase<ColorFormat::l1>():
+				ColorL1() {
+			}
+
+			inline ColorBase<ColorFormat::l1>(uint8_t l):
+				ColorL1(l) {
+			}
+
+			inline ColorBase<ColorFormat::l1>(const ColorBase<ColorFormat::l1>& color):
+				ColorL1(color) {
+			}
+
+			template <ColorFormat FORMAT>
+			inline ColorBase<FORMAT> convertTo() {
+				return makeColor<FORMAT>(getL());
+			}
+	};
+
 
 	/// \brief Color base del sistema
 	///

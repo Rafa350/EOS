@@ -2,9 +2,9 @@
 #define	__STM32_halI2C__
 
 
-// EOS includes
+// HAL includes
 //
-#include "eos.h"
+#include "HAL/hal.h"
 
 
 // Identificador del canal I2C
@@ -22,6 +22,7 @@
 
 #define HAL_I2C_INT_DISABLE       (0 << HAL_I2C_INT_pos)
 #define HAL_I2C_INT_ENABLE        (1 << HAL_I2C_INT_pos)
+
 
 #ifdef	__cplusplus
 extern "C" {

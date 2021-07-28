@@ -30,6 +30,7 @@
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
+            <itemPath>../../../Include/HAL/hal.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>

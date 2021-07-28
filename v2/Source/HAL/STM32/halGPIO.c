@@ -1,5 +1,4 @@
-#include "eos.h"
-#include "eosAssert.h"
+#include "HAL/hal.h"
 #include "HAL/STM32/halGPIO.h"
 
 
@@ -27,7 +26,7 @@ static inline GPIO_TypeDef* getDevice(
 /// \param    device: Device.
 ///
 static void enableDeviceClock(
-	GPIO_TypeDef *device) {
+	GPIO_TypeDef* device) {
 
 	__VERIFY_DEVICE(device);
 
@@ -91,7 +90,7 @@ static void enableDeviceClock(
 /// \param    alt: Alternate piu function.
 ///
 static void setupDevicePin(
-	GPIO_TypeDef *device,
+	GPIO_TypeDef* device,
 	GPIOPin pin,
 	GPIOOptions options,
 	GPIOAlt alt) {
@@ -225,7 +224,7 @@ static void setupDevicePin(
 /// \param    count: Number of elements in table.
 ///
 void halGPIOInitializePins(
-	const GPIOPinSettings *settings,
+	const GPIOPinSettings* settings,
 	int count) {
 
 	eosAssert(settings != NULL);
@@ -233,7 +232,7 @@ void halGPIOInitializePins(
 
 	for (int i = 0; i < count; i++) {
 
-		const GPIOPinSettings *p = &settings[i];
+		const GPIOPinSettings* p = &settings[i];
 		GPIO_TypeDef* device = getDevice(p->port);
 
 		enableDeviceClock(device);
@@ -248,7 +247,7 @@ void halGPIOInitializePins(
 /// \param    count: Number of elements in table.
 ///
 void halGPIOInitializePorts(
-	const GPIOPortSettings *settings,
+	const GPIOPortSettings* settings,
 	int count) {
 
 	eosAssert(settings != NULL);

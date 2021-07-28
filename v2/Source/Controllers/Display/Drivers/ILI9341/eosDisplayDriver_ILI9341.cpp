@@ -400,7 +400,7 @@ void DisplayDriver_ILI9341::writeRegion(
 		hwWriteData(data, sizeof(data));
 	}
 
-	else if constexpr (CI::format == ColorFormat::rgb666) {
+	/*else if constexpr (CI::format == ColorFormat::rgb666) {
 
 		uint8_t data[3];
 		data[0] = (uint32_t)(c & 0x00FC0000) >> 16;
@@ -408,7 +408,7 @@ void DisplayDriver_ILI9341::writeRegion(
 		data[2] = (uint32_t)(c & 0x000000FC);
 
 		hwWriteData(data, sizeof(data));
-	}
+	}*/
 
 	hwClose();
 }
@@ -438,7 +438,7 @@ void DisplayDriver_ILI9341::writeRegion(
 		hwClose();
 	}
 
-	else if constexpr (CI::format == ColorFormat::rgb666) {
+	/*else if constexpr (CI::format == ColorFormat::rgb666) {
 
 		uint8_t data[3];
 		data[0] = (uint32_t)(c & 0x00FC0000) >> 16;
@@ -450,7 +450,7 @@ void DisplayDriver_ILI9341::writeRegion(
 		while (count--)
 			hwWriteData(data, sizeof(data));
 		hwClose();
-	}
+	}*/
 }
 
 
@@ -491,8 +491,8 @@ void DisplayDriver_ILI9341::readRegion(
 
 		}
 
-		else if constexpr (CI::format == ColorFormat::rgb666) {
-		}
+		/*else if constexpr (CI::format == ColorFormat::rgb666) {
+		}*/
     }
     hwClose();
 }

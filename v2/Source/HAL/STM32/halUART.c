@@ -2,10 +2,17 @@
 /// \author   Rafael Serrano (rsr.openware@gmail.com)
 /// \brief    Gestio de la UART
 ///
-#include "eos.h"
-#include "eosAssert.h"
+#include "HAL/hal.h"
 #include "HAL/STM32/halUART.h"
 #include "HAL/STM32/halSYS.h"
+
+#if defined(EOS_STM32F4)
+#include "stm32f4xx_hal.h"
+#elif defined(EOS_STM32F7)
+#include "stm32f7xx_hal.h"
+#else
+#error Hardware no soportado
+#endif
 
 
 #define __VERIFY_CHANNEL(channel) eosAssert((channel >= HAL_UART_CHANNEL_1) && (channel <= HAL_UART_CHANNEL_8))

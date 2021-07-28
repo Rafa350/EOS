@@ -1,4 +1,4 @@
-#include "eos.h"
+#include "HAL/hal.h"
 #include "HAL/STM32/halDMA2D.h"
 
 
@@ -21,7 +21,6 @@ void halDMA2DDeinitialize() {
 
     __clear_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_DMA2DEN);
 }
-
 
 
 /// ----------------------------------------------------------------------

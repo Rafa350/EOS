@@ -1,9 +1,9 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "OSAL/osalTimer.h"
+
 #include "FreeRTOS.h"
 #include "timers.h"
-#include "stddef.h"
 
 
 static int inISR() {

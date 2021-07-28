@@ -10,8 +10,7 @@
 
 namespace eos {
 
-    /// \brief Clase que implementa el servei del bucle principal
-    ///        de l'aplicacio.
+    /// \brief Clase que implementa el servei basic d'usuari.
     ///
     class AppLoopService: public Service {
         private:
@@ -19,7 +18,7 @@ namespace eos {
 
         protected:
             void onInitialize() override;
-            void onTask(Task *task) override;
+            void onTask(Task* task) override;
             virtual void onSetup();
             virtual void onLoop();
 

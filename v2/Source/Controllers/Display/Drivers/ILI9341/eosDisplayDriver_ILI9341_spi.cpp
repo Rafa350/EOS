@@ -130,10 +130,10 @@ void DisplayDriver_ILI9341::hwInitialize() {
     	hwWriteCommand(CMD_PIXEL_FORMAT_SET);
     	hwWriteData(0x55);
     }
-    else if constexpr (CI::format == ColorFormat::rgb666) {
+    /*else if constexpr (CI::format == ColorFormat::rgb666) {
     	hwWriteCommand(CMD_PIXEL_FORMAT_SET);
     	hwWriteData(0x66);
-    }
+    }*/
 
     hwClose();
 }

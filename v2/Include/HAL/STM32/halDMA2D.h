@@ -2,7 +2,9 @@
 #define __STM32_halDMA2D__
 
 
-#include "eos.h"
+// HAL includes
+//
+#include "HAL/hal.h"
 
 
 #ifdef	__cplusplus

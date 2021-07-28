@@ -140,12 +140,12 @@ void DisplayDriver_SSD1306::setVPixels(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Dibuixa una regio rectangular de pixels.
-/// \param    x: Posicio x.
-/// \param    y: Posicio y.
+/// \brief    Dibuixa una regio rectangular.
+/// \param    x: Posicio x de la regio.
+/// \param    y: Posicio y de la regio.
 /// \param    width: Amplada de la regio.
 /// \param    height: Alçada de la regio.
-/// \param    color: Color dels pixels.
+/// \param    color: Color.
 ///
 void DisplayDriver_SSD1306::setPixels(
     int x,
@@ -155,6 +155,27 @@ void DisplayDriver_SSD1306::setPixels(
     Color color) {
 
 	_frameBuffer->setPixels(x, y, width, height, color);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa una regio rectangular.
+/// \param    x: Posicio x de la regio.
+/// \param    y: Posicio y de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    color: Punter als colors.
+/// \param    pitch: Pitch dels colors.
+///
+void DisplayDriver_SSD1306::setPixels(
+    int x,
+    int y,
+    int width,
+    int height,
+    const Color* color,
+	int pitch) {
+
+	_frameBuffer->setPixels(x, y, width, height, color, pitch);
 }
 
 
@@ -200,11 +221,26 @@ void DisplayDriver_SSD1306::hScroll(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Transfereix el buffer d'imatge al diaplay
+///
 void DisplayDriver_SSD1306::refresh() {
 
+    for (int i = 0; i < DISPLAY_IMAGE_HEIGHT / 8; i++) {
+
+        hwWriteCommand(0xB0 + i); // Set the current RAM page address.
+        hwWriteCommand(0x00);
+        hwWriteCommand(0x10);
+
+        uint8_t* buffer = (uint8_t*) DISPLAY_IMAGE_BUFFER;
+        hwWriteData(buffer[DISPLAY_IMAGE_WIDTH * i], DISPLAY_IMAGE_WIDTH);
+    }
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief     Inicialitza el display.
+///
 void DisplayDriver_SSD1306::hwInitialize() {
 
 	// Inicialitza modul GPIO
@@ -238,7 +274,7 @@ void DisplayDriver_SSD1306::hwInitialize() {
 	// Inicialitza el modul SPI
 	//
 	static const SPISettings spiSettings = {
-		DISPLAY_SPI_ID,
+		DISPLAY_SPI_CHANNEL,
 			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_64, 0, 0
 	};
 
@@ -297,7 +333,7 @@ void DisplayDriver_SSD1306::hwInitialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Reseteja el driver.
+/// \brief Reseteja el display OLED
 ///
 void DisplayDriver_SSD1306::hwReset() {
 
@@ -310,7 +346,7 @@ void DisplayDriver_SSD1306::hwReset() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona el controlador OLED
+/// \brief    Selecciona el display OLED
 ///
 void DisplayDriver_SSD1306::hwOpen() {
 
@@ -319,7 +355,7 @@ void DisplayDriver_SSD1306::hwOpen() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Deselecciona el controlador OLED
+/// \brief    Deselecciona el display OLED
 ///
 void DisplayDriver_SSD1306::hwClose() {
 
@@ -344,7 +380,8 @@ void DisplayDriver_SSD1306::hwWriteCommand(
 /// \param    cmd: Les dades.
 ///
 void DisplayDriver_SSD1306::hwWriteData(
-    uint8_t data) {
+    uint8_t data,
+	int length) {
 
 	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
 	halSPISendBuffer(__hSpi, &data, sizeof(data));

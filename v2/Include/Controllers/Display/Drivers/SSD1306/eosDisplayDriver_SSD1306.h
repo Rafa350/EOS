@@ -53,7 +53,7 @@ namespace eos {
             static void hwOpen();
             static void hwClose();
             static void hwWriteCommand(uint8_t cmd);
-            static void hwWriteData(uint8_t data);
+            static void hwWriteData(uint8_t data, int length);
     };
 }
 

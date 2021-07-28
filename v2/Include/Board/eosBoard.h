@@ -22,6 +22,8 @@
 
 #elif defined(HARDWARE_PINGUINO)
     #include "Board/eosBoard_PINGUINO.h"
+    
+#elif defined(HARDWARE_NONE)    
 
 #else
     #error "Undefined HARDWARE_XXXX"

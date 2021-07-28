@@ -11,9 +11,9 @@
 /// \param    size: Tamany del bloc de memoria.
 /// \return   Adressa del bloc de memoria obtingut. NULL en cas d'error.
 ///
-void *osalHeapAlloc(
+void* osalHeapAlloc(
 	HHeap hHeap,
-	unsigned size) {
+	int size) {
 
 	eosAssert(size > 0);
 
@@ -28,7 +28,7 @@ void *osalHeapAlloc(
 ///
 void osalHeapFree(
 	HHeap hHeap,
-	void *block) {
+	void* block) {
 
 	eosAssert(block != NULL);
 
@@ -41,7 +41,7 @@ void osalHeapFree(
 /// \param    size. Tamany del bloc.
 /// \return   Adressa del bloc obtingut.
 ///
-void *osal_malloc(unsigned size) {
+void* osal_malloc(int size) {
 
 	return osalHeapAlloc(NULL, size);
 }
@@ -51,7 +51,7 @@ void *osal_malloc(unsigned size) {
 /// \brief    Allivera un bloc de memoria. Version compatible amb stdlib
 /// \param    p: Adressa del bloc.
 ///
-void osal_free(void *p) {
+void osal_free(void* p) {
 
 	osalHeapFree(NULL, p);
 }

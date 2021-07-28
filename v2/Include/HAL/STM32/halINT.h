@@ -12,9 +12,9 @@
 #define __STM32_halINT__
 
 
-// EOS includes
+// HAL includes
 //
-#include "eos.h"
+#include "HAL/hal.h"
 
 
 // Prioritats de les interrupcions

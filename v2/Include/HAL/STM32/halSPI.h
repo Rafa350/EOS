@@ -2,9 +2,19 @@
 #define __STM32_halSPI__
 
 
-// EOS includes
+// HAL includes
 //
-#include "eos.h"
+#include "HAL/hal.h"
+
+// STM32 includes
+//
+#if defined(EOS_STM32F4)
+#include "stm32f4xx_hal.h"
+#elif defined(EOS_STM32F7)
+#include "stm32f7xx_hal.h"
+#else
+#error Hardware no soportado
+#endif
 
 
 // Identificador del canal SPI
@@ -70,7 +80,7 @@
 #define HAL_SPI_CRC_mask          (HAL_SPI_CRC_bits << HAL_SPI_CRC_pos)
 
 #define HAL_SPI_CRC_DISABLED      (0 << HAL_SPI_CRC_pos)
-#define HAL_SPI_CRC_ENABLED       (0 << HAL_SPI_CRC_pos)
+#define HAL_SPI_CRC_ENABLED       (1 << HAL_SPI_CRC_pos)
 
 // Opcions: Divisor del rellotge
 #define HAL_SPI_CLOCKDIV_pos      6
@@ -95,13 +105,13 @@ extern "C" {
 typedef uint32_t SPIChannel;
 typedef uint32_t SPIOptions;
 typedef struct __SPIData *SPIHandler;
-typedef void (*SPIInterruptFunction)(SPIHandler handler, void *params);
+typedef void (*SPIInterruptFunction)(SPIHandler handler, void* params);
 
 struct __SPIData {
-	SPI_TypeDef *device;
+	SPI_TypeDef* device;
 	SPI_HandleTypeDef handle;
 	SPIInterruptFunction isrFunction;
-	void *isrParams;
+	void* isrParams;
 };
 typedef struct __SPIData SPIData;
 
@@ -110,18 +120,18 @@ typedef struct {                       // Parametres d'inicialitzacio
 	SPIChannel channel;                // -Identificador del dispositiu.
 	SPIOptions options;                // -Opcions
 	SPIInterruptFunction isrFunction;  // -Funcio d'interrupcio
-	void *isrParams;                   // -Parametres de la funcio d'interrupcio
+	void* isrParams;                   // -Parametres de la funcio d'interrupcio
 } SPISettings;
 
 
-SPIHandler halSPIInitialize(SPIData *data, const SPISettings *settings);
+SPIHandler halSPIInitialize(SPIData* data, const SPISettings* settings);
 void halSPIDeinitialize(SPIHandler handler);
 
 bool halSPIIsBusy(SPIHandler handler);
 
-void halSPISendBuffer(SPIHandler handler, uint8_t *data, uint32_t size);
-void halSPIReceiveBuffer(SPIHandler handler, uint8_t *data, uint32_t size);
-void halSPITransmitBuffer(SPIHandler handler, uint8_t *txData, uint8_t *rxData, uint32_t size);
+void halSPISendBuffer(SPIHandler handler, uint8_t* data, int size);
+void halSPIReceiveBuffer(SPIHandler handler, uint8_t* data, int size);
+void halSPITransmitBuffer(SPIHandler handler, uint8_t* txData, uint8_t* rxData, int size);
 
 void halSPISetInterruptFunction(SPIHandler handler, SPIInterruptFunction function, void* params);
 void halSPIInterruptHandler(SPIHandler handler);

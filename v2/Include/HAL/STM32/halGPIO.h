@@ -12,13 +12,9 @@
 #define	__STM32_halGPIO__
 
 
-// EOS includes
+// HAL includes
 //
-#include "eos.h"
-
-// Opcions del modul
-//
-#define HAL_GPIO_INLINE           1    ///< Use macro functions for performance
+#include "HAL/hal.h"
 
 // STM32 includes
 //
@@ -29,6 +25,11 @@
 #else
 #error Hardware no soportado
 #endif
+
+
+// Opcions del modul
+//
+#define HAL_GPIO_INLINE           1    ///< Use macro functions for performance
 
 
 #ifdef	__cplusplus
@@ -248,8 +249,8 @@ typedef struct {
 	((GPIO_TypeDef*)port)->IDR
 
 
-void halGPIOInitializePins(const GPIOPinSettings *settings, int count);
-void halGPIOInitializePorts(const GPIOPortSettings *settings, int count);
+void halGPIOInitializePins(const GPIOPinSettings* settings, int count);
+void halGPIOInitializePorts(const GPIOPortSettings* settings, int count);
 void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
 void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
 

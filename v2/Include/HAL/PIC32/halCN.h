@@ -2,7 +2,7 @@
 #define	__PIC32_halCN__
 
 
-#include "eos.h"
+#include "HAL/hal.h"
 #include "HAL/PIC32/halGPIO.h"
 
 

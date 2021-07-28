@@ -12,6 +12,7 @@ namespace eos {
         private:
             void* _buffer;
             unsigned _bufferPitch;
+
 		private:
 			inline uint32_t getPixelAddr(int x, int y) const { return ((int)_buffer + (y * _bufferPitch) + (x >> 3)); }
             inline uint8_t getPixel(uint32_t addr, int x) const { return  *((uint8_t*)addr) & (0x80 >> (x & 0x07)); }

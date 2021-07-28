@@ -12,7 +12,9 @@
 #define __STM32_halUART__
 
 
-#include "eos.h"
+// HAL includes
+//
+#include "HAL/hal.h"
 
 
 // Identificador de la UART

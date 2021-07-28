@@ -2,7 +2,9 @@
 #define __PIC32_halINT__
 
 
-#include "eos.h"
+// HAL includes
+//
+#include "HAL/hal.h"
 
 
 #ifdef	__cplusplus
