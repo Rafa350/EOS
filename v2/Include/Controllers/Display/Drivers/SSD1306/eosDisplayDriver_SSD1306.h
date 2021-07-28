@@ -21,8 +21,8 @@ namespace eos {
 
     class DisplayDriver_SSD1306: public IDisplayDriver {
     	private:
-    		static IDisplayDriver *_instance;
-    		FrameBuffer *_frameBuffer;
+    		static IDisplayDriver* _instance;
+    		FrameBuffer* _frameBuffer;
 
         public:
             DisplayDriver_SSD1306();

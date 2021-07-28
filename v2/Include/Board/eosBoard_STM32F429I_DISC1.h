@@ -145,15 +145,15 @@
 
 // Control del pin CLK (Serial clock)
 //
-#define DISPLAY_CLK_PORT     HAL_GPIO_PORT_F
-#define DISPLAY_CLK_PIN      HAL_GPIO_PIN_7
-#define DISPLAY_CLK_AF       HAL_GPIO_AF5_SPI5
+#define DISPLAY_SCK_PORT     HAL_GPIO_PORT_F
+#define DISPLAY_SCK_PIN      HAL_GPIO_PIN_7
+#define DISPLAY_SCK_AF       HAL_GPIO_AF_F7_SPI5_SCK
 
 // Control del pin MOSI (CPU to Controller)
 //
 #define DISPLAY_MOSI_PORT    HAL_GPIO_PORT_F
 #define DISPLAY_MOSI_PIN     HAL_GPIO_PIN_9
-#define DISPLAY_MOSI_AF      HAL_GPIO_AF5_SPI5
+#define DISPLAY_MOSI_AF      HAL_GPIO_AF_F9_SPI5_MOSI
 
 // Control del pin MISO (Controller to CPU)
 //
@@ -203,15 +203,15 @@
 
 // Control del pin CLK (Serial clock)
 //
-#define DISPLAY_CLK_PORT     HAL_GPIO_PORT_F
-#define DISPLAY_CLK_PIN      HAL_GPIO_PIN_7
-#define DISPLAY_CLK_AF       HAL_GPIO_AF5_SPI5
+#define DISPLAY_SCK_PORT     HAL_GPIO_PORT_F
+#define DISPLAY_SCK_PIN      HAL_GPIO_PIN_7
+#define DISPLAY_SCK_AF       HAL_GPIO_AF_F7_SPI5_SCK
 
 // Control del pin MOSI (CPU to controller)
 //
 #define DISPLAY_MOSI_PORT    HAL_GPIO_PORT_F
 #define DISPLAY_MOSI_PIN     HAL_GPIO_PIN_9
-#define DISPLAY_MOSI_AF      HAL_GPIO_AF5_SPI5
+#define DISPLAY_MOSI_AF      HAL_GPIO_AF_F9_SPI5_MOSI
 
 // Control del pin MISO (Controller to CPU)
 //

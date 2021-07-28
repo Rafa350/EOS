@@ -15,15 +15,20 @@
 // HAL includes
 //
 #include "HAL/hal.h"
+#if defined(EOS_STM32F4)
+	#include "HAL/STM32/halGPIO_F4xx.h"
+#elif defined(EOS_STM32F7)
+	#include "HAL/STM32/halGPIO_F7xx.h"
+#endif
 
 // STM32 includes
 //
 #if defined(EOS_STM32F4)
-#include "stm32f4xx_hal_gpio_ex.h"
+	#include "stm32f4xx_hal_gpio_ex.h"
 #elif defined(EOS_STM32F7)
-#include "stm32f7xx_hal_gpio_ex.h"
+	#include "stm32f7xx_hal_gpio_ex.h"
 #else
-#error Hardware no soportado
+	#error Hardware no soportado
 #endif
 
 
@@ -93,6 +98,26 @@ typedef struct {
 #define HAL_GPIO_PIN_15           15
 #define HAL_GPIO_PIN_NONE         255
 
+// Identificador de la funcio alternativa
+#define HAL_GPIO_AF_0             0
+#define HAL_GPIO_AF_1             1
+#define HAL_GPIO_AF_2             2
+#define HAL_GPIO_AF_3             3
+#define HAL_GPIO_AF_4             4
+#define HAL_GPIO_AF_5             5
+#define HAL_GPIO_AF_6             6
+#define HAL_GPIO_AF_7             7
+#define HAL_GPIO_AF_8             8
+#define HAL_GPIO_AF_9             9
+#define HAL_GPIO_AF_10            10
+#define HAL_GPIO_AF_11            11
+#define HAL_GPIO_AF_12            12
+#define HAL_GPIO_AF_13            13
+#define HAL_GPIO_AF_14            14
+#define HAL_GPIO_AF_15            15
+#define HAL_GPIO_AF_NONE          HAL_GPIO_AF_0
+
+
 // Mascara de posicio del pin
 #define HAL_GPIO_POS_0            (1 << 0)
 #define HAL_GPIO_POS_1            (1 << 1)
@@ -113,10 +138,6 @@ typedef struct {
 #define HAL_GPIO_POS_LO           0x000000FF
 #define HAL_GPIO_POS_HI           0x0000FF00
 #define HAL_GPIO_POS_ALL          0x0000FFFF
-
-// Funcio alternativa
-// Sense funcio asignada
-#define HAL_GPIO_AF_NONE          0
 
 // Funcio alternativa AF4
 // -Funcio I2Cx
@@ -167,13 +188,12 @@ typedef struct {
 // -Funcio LTDC
 #define HAL_GPIO_AF14_LTDC        GPIO_AF14_LTDC
 
-
 // Tipus de port
 #define HAL_GPIO_MODE_pos         0
 #define HAL_GPIO_MODE_bits        0b1111
 #define HAL_GPIO_MODE_mask        (HAL_GPIO_MODE_bits << HAL_GPIO_MODE_pos)
 
-#define HAL_GPIO_MODE_INPUT       (0 << HAL_GPIO_MODE_pos) // -Entrada digital
+#define HAL_GPIO_MODE_INPUT       (0 << HAL_GPIO_MODE_pos) // -Entrada digital (Sempre es entrada
 #define HAL_GPIO_MODE_OUTPUT_PP   (1 << HAL_GPIO_MODE_pos) // -Sortida push-pull
 #define HAL_GPIO_MODE_OUTPUT_OD   (2 << HAL_GPIO_MODE_pos) // -Sortida open-drain
 #define HAL_GPIO_MODE_ALT_PP      (3 << HAL_GPIO_MODE_pos) // -Sortida alternativa push-pull

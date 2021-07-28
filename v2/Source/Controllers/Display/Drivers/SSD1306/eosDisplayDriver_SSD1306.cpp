@@ -228,12 +228,16 @@ void DisplayDriver_SSD1306::refresh() {
 
     for (int i = 0; i < DISPLAY_IMAGE_HEIGHT / 8; i++) {
 
-        hwWriteCommand(0xB0 + i); // Set the current RAM page address.
+    	hwOpen();
+
+    	hwWriteCommand(0xB0 + i); // Set the current RAM page address.
         hwWriteCommand(0x00);
         hwWriteCommand(0x10);
 
         uint8_t* buffer = (uint8_t*) DISPLAY_IMAGE_BUFFER;
         hwWriteData(buffer[DISPLAY_IMAGE_WIDTH * i], DISPLAY_IMAGE_WIDTH);
+
+        hwClose();
     }
 }
 
@@ -265,7 +269,7 @@ void DisplayDriver_SSD1306::hwInitialize() {
 
 		// Chip select del display de la placa. Inicialitzar a 1
 		{ HAL_GPIO_PORT_C,     HAL_GPIO_PIN_2,
-			HAL_GPIO_MODE_OUTPUT_PP |HAL_GPIO_INIT_SET, 0}
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, 0}
 	};
 
 	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
@@ -275,7 +279,8 @@ void DisplayDriver_SSD1306::hwInitialize() {
 	//
 	static const SPISettings spiSettings = {
 		DISPLAY_SPI_CHANNEL,
-			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_64, 0, 0
+			HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
+			HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
 	};
 
 	__hSpi = halSPIInitialize(&__spiData, &spiSettings);
@@ -326,9 +331,6 @@ void DisplayDriver_SSD1306::hwInitialize() {
 		hwWriteCommand(initSequence[i]);
 		hwClose();
 	}
-
-	while (1)
-		continue;
 }
 
 

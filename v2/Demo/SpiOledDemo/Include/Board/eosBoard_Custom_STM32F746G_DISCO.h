@@ -9,7 +9,7 @@
 
 #define DISPLAY_IMAGE_WIDTH       240  // Amplada en pixels
 #define DISPLAY_IMAGE_HEIGHT      320  // Alçada en pixels
-#define DISPLAY_COLOR_FORMAT      ColorFormat::rgb565  // Format de color
+#define DISPLAY_COLOR_FORMAT      ColorFormat::l1  // Format de color
 #define DISPLAY_IMAGE_BUFFER      0xD0000000
 #define DISPLAY_DRV_SSD1306
 
@@ -24,12 +24,12 @@
 #define DISPLAY_CS_PIN            ARDUINO_D2_PIN
 
 #define DISPLAY_CLK_PORT          ARDUINO_SPI_SCK_PORT
-#define DISPLAY_CLK_PIN           ARDUINO_SPI_SCK_PORT
-#define DISPLAY_CLK_AF			  HAL_GPIO_AF5_SPI2
+#define DISPLAY_CLK_PIN           ARDUINO_SPI_SCK_PIN
+#define DISPLAY_CLK_AF			  ARDUINO_SPI_SCK_AF
 
 #define DISPLAY_MOSI_PORT         ARDUINO_SPI_MOSI_PORT
 #define DISPLAY_MOSI_PIN          ARDUINO_SPI_MOSI_PIN
-#define DISPLAY_MOSI_AF           HAL_GPIO_AF5_SPI2
+#define DISPLAY_MOSI_AF           ARDUINO_SPI_MOSI_AF
 
 #define DISPLAY_SPI_CHANNEL       HAL_SPI_CHANNEL_2
 
