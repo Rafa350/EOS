@@ -234,8 +234,8 @@ void DisplayDriver_SSD1306::refresh() {
         hwWriteCommand(0x00);
         hwWriteCommand(0x10);
 
-        uint8_t* buffer = (uint8_t*) DISPLAY_IMAGE_BUFFER;
-        hwWriteData(buffer[DISPLAY_IMAGE_WIDTH * i], DISPLAY_IMAGE_WIDTH);
+        const uint8_t* buffer = (const uint8_t*) DISPLAY_IMAGE_BUFFER;
+        hwWriteData(&buffer[DISPLAY_IMAGE_WIDTH * i], DISPLAY_IMAGE_WIDTH);
 
         hwClose();
     }
@@ -321,7 +321,7 @@ void DisplayDriver_SSD1306::hwInitialize() {
 		0x40, // VCOMH Deselect Level
 
 		0xA5, //0xA4, // Set all pixels OFF
-		0xA6, // Set display not inverted
+		0xA7, //0xA6, // Set display not inverted
 		0xAF  // Set display On
 	};
 
@@ -340,9 +340,18 @@ void DisplayDriver_SSD1306::hwInitialize() {
 void DisplayDriver_SSD1306::hwReset() {
 
 #ifdef DISPLAY_RST_PORT
+
+	// Delselecciona el display
+	//
+	halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+
+	// Genera el puls de reset
+	//
+    halGPIOClearPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
     halTMRDelay(10);
     halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
-    halTMRDelay(120);
+    halTMRDelay(110);
+
 #endif
 }
 
@@ -352,7 +361,7 @@ void DisplayDriver_SSD1306::hwReset() {
 ///
 void DisplayDriver_SSD1306::hwOpen() {
 
-	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+	//halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
 
@@ -361,7 +370,7 @@ void DisplayDriver_SSD1306::hwOpen() {
 ///
 void DisplayDriver_SSD1306::hwClose() {
 
-	halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+	//halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
 
@@ -372,8 +381,10 @@ void DisplayDriver_SSD1306::hwClose() {
 void DisplayDriver_SSD1306::hwWriteCommand(
     uint8_t cmd) {
 
+	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
 	halSPISendBuffer(__hSpi, &cmd, sizeof(cmd));
+	halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
 
@@ -382,9 +393,11 @@ void DisplayDriver_SSD1306::hwWriteCommand(
 /// \param    cmd: Les dades.
 ///
 void DisplayDriver_SSD1306::hwWriteData(
-    uint8_t data,
+    const uint8_t* data,
 	int length) {
 
+	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(__hSpi, &data, sizeof(data));
+	halSPISendBuffer(__hSpi, data, length);
+	halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }

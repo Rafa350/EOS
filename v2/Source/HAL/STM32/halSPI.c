@@ -231,7 +231,7 @@ void halSPISetInterruptFunction(
 ///
 void halSPISendBuffer(
 	SPIHandler handler,
-	uint8_t* data,
+	const uint8_t* data,
 	int size) {
 
 	__VERIFY_HANDLER(handler);

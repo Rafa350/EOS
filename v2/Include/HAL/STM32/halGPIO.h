@@ -12,15 +12,6 @@
 #define	__STM32_halGPIO__
 
 
-// HAL includes
-//
-#include "HAL/hal.h"
-#if defined(EOS_STM32F4)
-	#include "HAL/STM32/halGPIO_F4xx.h"
-#elif defined(EOS_STM32F7)
-	#include "HAL/STM32/halGPIO_F7xx.h"
-#endif
-
 // STM32 includes
 //
 #if defined(EOS_STM32F4)
