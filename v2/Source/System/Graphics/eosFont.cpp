@@ -7,9 +7,6 @@
 
 using namespace eos;
 
-#define DEFAULT_FONT_NAME "Tahoma"
-#define DEFAULT_FONT_HEIGHT 12
-#define DEFAULT_FONT_STYLE FontStyle::regular
 
 #define FR_FONT_HEIGHT 1
 #define FR_FONT_ASCEND 2
@@ -48,7 +45,7 @@ Font::ImplPtrCache Font::_implCache;
 /// \brief    Constructor. Crea el font per defecte.
 ///
 Font::Font() :
-	_impl(makeImpl(getFontResource(DEFAULT_FONT_NAME, DEFAULT_FONT_HEIGHT, DEFAULT_FONT_STYLE))) {
+	_impl(makeImpl(getFontResource(eosGraphics_DefFontName, eosGraphics_DefFontHeight, eosGraphics_DefFontStyle))) {
 
 }
 

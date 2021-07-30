@@ -24,6 +24,8 @@
 
 // Opcions generals del sistema
 //
+#define EOS_COLOR_L8
+#define FONT_USE_Tahoma12pt
 #define EOS_USE_STD_STRING
 #define USE_ARDUINO
 #define USE_LEDS_LED1

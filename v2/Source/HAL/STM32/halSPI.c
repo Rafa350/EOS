@@ -144,7 +144,8 @@ static void setupDevice(
 	//
 	handle->Instance = device;
 	handle->Init.BaudRatePrescaler = baudRateTbl[(options & HAL_SPI_CLOCKDIV_mask) >> HAL_SPI_CLOCKDIV_pos];
-	handle->Init.Direction = SPI_DIRECTION_2LINES;
+	//handle->Init.Direction = SPI_DIRECTION_2LINES;
+	handle->Init.Direction = SPI_DIRECTION_1LINE;
 	handle->Init.NSS = SPI_NSS_SOFT;
 	handle->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
 	handle->Init.TIMode = SPI_TIMODE_DISABLED;

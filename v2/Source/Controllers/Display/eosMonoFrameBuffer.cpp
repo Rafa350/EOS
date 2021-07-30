@@ -25,17 +25,26 @@ MonoFrameBuffer::MonoFrameBuffer(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Escriu un pixel en lña posicio indicada.
+/// \param    x: Coordinada x de la posicio
+/// \param    y: Coordinada y de la posicio
+/// \param    color: Colord el pixel.
+///
 void MonoFrameBuffer::put(
 	int x,
 	int y,
 	Color color) {
 
-	uint8_t* p = (uint8_t*)((int)_buffer + ((y >> 3) * getImageWidth()) + x);
-	if (color)
-		*p = *p | (1 << (y & 3));
+	ColorBase<ColorFormat::l1> c = color.convertTo<ColorFormat::l1>();
+
+	uint8_t* page = (uint8_t*)((int)_buffer + ((y >> 3) * getImageWidth()));
+	if (c)
+		page[x] = page[x] | (1 << (y & 7));
 	else
-		*p = *p & ~(1 << (y & 3));
+		page[x] = page[x] & ~(1 << (y & 7));
 }
+
 
 void MonoFrameBuffer::fill(
 	int x,
@@ -43,6 +52,13 @@ void MonoFrameBuffer::fill(
 	int width,
 	int height,
 	Color color) {
+
+	//memset(_buffer, 0x00, 128 * 8);
+
+	// Pendent d'optimitzar
+	for (int yy = y; yy < y + height; yy++)
+		for (int xx = x; xx < x + width; xx++)
+			put(xx, yy, color);
 
 }
 

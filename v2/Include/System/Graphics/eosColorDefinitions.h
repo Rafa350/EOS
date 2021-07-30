@@ -124,17 +124,17 @@
 
 // Basic palete colors
 //
-#define COLOR_PAL_Black           0
-#define COLOR_PAL_White           255
-#define COLOR_PAL_Blue            2
-#define COLOR_PAL_Cyan            3
-#define COLOR_PAL_Magenta         4
-#define COLOR_PAL_Silver          5
-#define COLOR_PAL_Gray            6
-#define COLOR_PAL_Maroon          7
-#define COLOR_PAL_Purple          8
-#define COLOR_PAL_Teal            9
-#define COLOR_PAL_Navy            10
+#define COLOR_PAL_Black           PAL(0)
+#define COLOR_PAL_White           PAL(255)
+#define COLOR_PAL_Blue            PAL(2)
+#define COLOR_PAL_Cyan            PAL(3)
+#define COLOR_PAL_Magenta         PAL(4)
+#define COLOR_PAL_Silver          PAL(5)
+#define COLOR_PAL_Gray            PAL(6)
+#define COLOR_PAL_Maroon          PAL(7)
+#define COLOR_PAL_Purple          PAL(8)
+#define COLOR_PAL_Teal            PAL(9)
+#define COLOR_PAL_Navy            PAL(10)
 
 
 #endif // __eosColorDefinitions__

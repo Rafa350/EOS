@@ -12,7 +12,7 @@
 
 
 #ifndef eosGraphics_MaxPens
-#define eosGraphics_MaxPens 10
+	#define eosGraphics_MaxPens 10
 #endif
 
 

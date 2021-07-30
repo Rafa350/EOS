@@ -12,6 +12,7 @@ namespace eos {
 
 	class Application;
 	class IDisplayDriver;
+	class Graphics;
 }
 
 namespace app {
@@ -19,6 +20,7 @@ namespace app {
 	class DisplayService: public eos::AppLoopService {
 		private:
 			eos::IDisplayDriver* _driver;
+			eos::Graphics *_graphics;
 
 		protected:
 			void onSetup();

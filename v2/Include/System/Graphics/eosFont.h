@@ -10,11 +10,18 @@
 
 
 #ifndef eosGraphics_MaxFonts
-#define eosGraphics_MaxFonts 10
+	#define eosGraphics_MaxFonts 10
+#endif
+
+#ifndef eosGraphics_DefFontName
+	#define eosGraphics_DefFontName "Tahoma"
+	#define eosGraphics_DefFontHeight 12
+	#define eosGraphics_DefFontStyle FontStyle::regular
+	#define eosGraphics_DefFontResource fontTahoma12pt
 #endif
 
 #ifndef EOS_FONT_FORMAT
-#define EOS_FONT_FORMAT ColorFormat::al44
+	#define EOS_FONT_FORMAT ColorFormat::al44
 #endif
 
 

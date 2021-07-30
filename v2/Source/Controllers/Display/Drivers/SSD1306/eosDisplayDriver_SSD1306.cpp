@@ -226,16 +226,16 @@ void DisplayDriver_SSD1306::hScroll(
 ///
 void DisplayDriver_SSD1306::refresh() {
 
-    for (int i = 0; i < DISPLAY_IMAGE_HEIGHT / 8; i++) {
+    for (int page = 0; page < DISPLAY_IMAGE_HEIGHT / 8; page++) {
 
     	hwOpen();
 
-    	hwWriteCommand(0xB0 + i); // Set the current RAM page address.
-        hwWriteCommand(0x00);
-        hwWriteCommand(0x10);
+    	hwWriteCommand(0xB0 + page); // Set the current page.
+        hwWriteCommand(0x00);        // Set first column (LO nibble)
+        hwWriteCommand(0x10);        // Sit first column (HI nibble)
 
         const uint8_t* buffer = (const uint8_t*) DISPLAY_IMAGE_BUFFER;
-        hwWriteData(&buffer[DISPLAY_IMAGE_WIDTH * i], DISPLAY_IMAGE_WIDTH);
+        hwWriteData(&buffer[page * DISPLAY_IMAGE_WIDTH], DISPLAY_IMAGE_WIDTH);
 
         hwClose();
     }
@@ -252,24 +252,20 @@ void DisplayDriver_SSD1306::hwInitialize() {
 	static const GPIOPinSettings gpioSettings[] = {
 #ifdef DISPLAY_RST_PIN
 		{ DISPLAY_RST_PORT,    DISPLAY_RST_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, 0 },
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_INIT_CLR, 0 },
 #endif
 		{ DISPLAY_CS_PORT,     DISPLAY_CS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_SET, 0 },
-		{ DISPLAY_RS_PORT,     DISPLAY_RS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_CLR, 0 },
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_SET, 0 },
+		{ DISPLAY_DC_PORT,     DISPLAY_DC_PIN,
+			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_CLR, 0 },
 		{ DISPLAY_CLK_PORT,    DISPLAY_CLK_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_CLK_AF },
+			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST, DISPLAY_CLK_AF },
 #ifdef DISPLAY_MISO_PORT
 		{ DISPLAY_MISO_PORT,   DISPLAY_MISO_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MISO_AF},
+			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST, DISPLAY_MISO_AF},
 #endif
 		{ DISPLAY_MOSI_PORT,   DISPLAY_MOSI_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF},
-
-		// Chip select del display de la placa. Inicialitzar a 1
-		{ HAL_GPIO_PORT_C,     HAL_GPIO_PIN_2,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET, 0}
+			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF},
 	};
 
 	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
@@ -280,7 +276,7 @@ void DisplayDriver_SSD1306::hwInitialize() {
 	static const SPISettings spiSettings = {
 		DISPLAY_SPI_CHANNEL,
 			HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
-			HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
+			HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_128, 0, 0
 	};
 
 	__hSpi = halSPIInitialize(&__spiData, &spiSettings);
@@ -289,40 +285,50 @@ void DisplayDriver_SSD1306::hwInitialize() {
 	// Inicialitza el display OLED
 	//
 	static const uint8_t initSequence[] = {
-		0xAE, // Set display OFF
+		// Turn off display
+		0xAE,
 
-		0xD4, // Set Display Clock Divide Ratio / OSC Frequency
-		0x80, // Display Clock Divide Ratio / OSC Frequency
+		// Set addrerssing mode
+		0x20, 0x00,
 
-		0xA8, // Set Multiplex Ratio
-		0x3F, // Multiplex Ratio for 128x64 (64-1)
+		// Set display clock divider
+		0xD5, 0x80,
 
-		0xD3, // Set Display Offset
-		0x00, // Display Offset
+		// Set multiplex ratio
+		0xA8, 0x3F,
 
-		0x40, // Set Display Start Line
+		// Set charge pump
+		0x8D, 0x14,
 
-		0x8D, // Set Charge Pump
-		0x14, // Charge Pump (0x10 External, 0x14 Internal DC/DC)
+		// Set start line address
+		0x40,
 
-		0xA1, // Set Segment Re-Map
-		0xC8, // Set Com Output Scan Direction
+		// Set display offset
+		0xD3, 0x00,
 
-		0xDA, // Set COM Hardware Configuration
-		0x12, // COM Hardware Configuration
+		// Set normal/inverted display
+		0xA6,
 
-		0x81, // Set Contrast
-		0xCF, // Contrast
+		// Set entire display enable
+		0xA4,
 
-		0xD9, // Set Pre-Charge Period
-		0xF1, // Set Pre-Charge Period (0x22 External, 0xF1 Internal)
+		// Set COM Output Scan Direction 64 to 0
+		0xC8,
 
-		0xDB, // Set VCOMH Deselect Level
-		0x40, // VCOMH Deselect Level
+		// Set com pins hardware configuration
+		0xDA, 0x12,
 
-		0xA5, //0xA4, // Set all pixels OFF
-		0xA7, //0xA6, // Set display not inverted
-		0xAF  // Set display On
+		// Set contrast control register
+		0x81, 0xCF,
+
+		// Set pre-charge period
+		0xD9, 0xF1,
+
+		// Set VCOMH
+		0xDB, 0x40,
+
+		// Turn ON display
+		0xAF
 	};
 
 	hwReset();
@@ -341,7 +347,7 @@ void DisplayDriver_SSD1306::hwReset() {
 
 #ifdef DISPLAY_RST_PORT
 
-	// Delselecciona el display
+	// Deselecciona el display
 	//
 	halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 
@@ -350,7 +356,7 @@ void DisplayDriver_SSD1306::hwReset() {
     halGPIOClearPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
     halTMRDelay(10);
     halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
-    halTMRDelay(110);
+    halTMRDelay(150);
 
 #endif
 }
@@ -382,7 +388,7 @@ void DisplayDriver_SSD1306::hwWriteCommand(
     uint8_t cmd) {
 
 	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
-	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+	halGPIOClearPin(DISPLAY_DC_PORT, DISPLAY_DC_PIN);
 	halSPISendBuffer(__hSpi, &cmd, sizeof(cmd));
 	halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
@@ -397,7 +403,7 @@ void DisplayDriver_SSD1306::hwWriteData(
 	int length) {
 
 	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
-	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
+	halGPIOSetPin(DISPLAY_DC_PORT, DISPLAY_DC_PIN);
 	halSPISendBuffer(__hSpi, data, length);
 	halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }

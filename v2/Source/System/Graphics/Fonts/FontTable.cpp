@@ -27,6 +27,9 @@ extern const unsigned char *fontTahoma12pt;
 
 static const FontTableEntry fonts[] = {
 
+	// Primer sempre el font per defecte
+	{ eosGraphics_DefFontName, eosGraphics_DefFontHeight, eosGraphics_DefFontStyle, eosGraphics_DefFontResource },
+
 #ifdef FONT_USE_Arial14pt
     { "Arial", 14, FontStyle::regular, fontArial14pt },
 #endif
@@ -71,6 +74,7 @@ static const FontTableEntry fonts[] = {
     { "Tahoma", 12, FontStyle::regular, fontTahoma12pt },
 #endif
 
+	// Marca de final de taula
 	{ NULL, 0, FontStyle::regular, NULL }
 };
 
