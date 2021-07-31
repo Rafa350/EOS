@@ -35,11 +35,23 @@ Size::Size(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor copia.
+/// \brief    Constructor copy.
 /// \param    s: L'objecte a copiar.
 ///
 Size::Size(
 	const Size& s):
+
+	_width(s._width),
+	_height(s._height) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor move.
+/// \param    s: L'objecte a copiar.
+///
+Size::Size(
+	const Size&& s):
 
 	_width(s._width),
 	_height(s._height) {
@@ -104,6 +116,20 @@ bool Size::isEmpty() const {
 	return (_width == 0) && (_height == 0);
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador =
+/// \param    s: L'objecte a asignar.
+/// \return   Referencia al propi objecte.
+///
+Size& Size::operator = (
+	const Size& s) {
+
+	_width = s._width;
+	_height = s._height;
+
+	return *this;
+}
 
 /// ----------------------------------------------------------------------
 /// \brief    Operador ==

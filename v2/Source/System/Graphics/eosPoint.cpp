@@ -30,7 +30,7 @@ Point::Point(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor copia.
+/// \brief    Constructor copy.
 /// \param    p: El objecte a copiar.
 ///
 Point::Point(
@@ -38,6 +38,51 @@ Point::Point(
 
 	_x(p._x),
 	_y(p._y) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor move.
+/// \param    p: L'objecte a moure.
+///
+Point::Point(
+	const Point&& p) :
+
+	_x(p._x),
+	_y(p._y) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desplaça el punt.
+/// \param    dx: Desplaçament x.
+/// \param    dy: Desplaçament y.
+/// \return   Referencia al propi objecte.
+///
+Point& Point::translate(
+	int dx,
+	int dy) {
+
+	_x += dx;
+	_y += dy;
+
+	return *this;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Desplaça el punt.
+/// \param    p: El vector de desplaçament.
+/// \return   Referencia al propi objecte.
+///
+Point& Point::translate(
+	const Point& p) {
+
+	_x += p._x;
+	_y += p._y;
+
+	return *this;
 }
 
 
@@ -64,6 +109,21 @@ Point Point::translated(
 	const Point& d) const {
 
 	return Point(_x + d._x, _y + d._y);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador =
+/// \param    p: L'objecte a asignar.
+/// \return   Referencioa al propi objecte.
+///
+Point& Point::operator = (
+	const Point& p) {
+
+	_x = p._x;
+	_y = p._y;
+
+	return *this;
 }
 
 

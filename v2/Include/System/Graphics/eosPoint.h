@@ -18,15 +18,20 @@ namespace eos {
 			Point();
             Point(int x, int y);
             Point(const Point& p);
+            Point(const Point&& p);
 
             inline int getX() const { return _x; }
             inline int getY() const { return _y; }
 
+            Point& translate(int dx, int dy);
+            Point& translate(const Point& d);
             Point translated(int dx, int dy) const;
-            Point translated(const Point& d) const;
+            Point translated(const Point& p) const;
+
+            Point& operator = (const Point& p);
 
             bool operator == (const Point& p) const;
-            inline bool operator!=(const Point& p) const { return !(*this == p); }
+            inline bool operator != (const Point& p) const { return !(*this == p); }
 	};
 }
 

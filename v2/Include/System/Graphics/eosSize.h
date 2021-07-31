@@ -18,6 +18,7 @@ namespace eos {
 			Size();
 			Size(int width, int height);
 			Size(const Size& s);
+			Size(const Size&& s);
 
 			/// \brief Obte l'amplada.
 			inline int getWidth() const { return _width; }
@@ -30,6 +31,8 @@ namespace eos {
 			Size constrained(const Size& s) const;
 
 			bool isEmpty() const;
+
+			Size& operator = (const Size& s);
 
 			bool operator == (const Size& s) const;
             inline bool operator != (const Size& s) const { return !(*this == s); }

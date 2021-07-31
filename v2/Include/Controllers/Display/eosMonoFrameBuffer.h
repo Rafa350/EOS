@@ -10,8 +10,8 @@ namespace eos {
 
     class MonoFrameBuffer: public FrameBuffer {
         private:
-            void* _buffer;
-            unsigned _bufferPitch;
+            const void* _buffer;
+            const int _bufferPitch;
 
 		protected:
             void put(int x, int y, Color color) override;

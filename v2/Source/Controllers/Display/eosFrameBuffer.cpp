@@ -12,11 +12,12 @@ using namespace eos;
 /// \param    frameWidth: Amplada.
 /// \param    frameHeight: Alçada.
 /// \param    orientation: Orientacio inicial.
+/// \param    color: Color inicial
 ///
 FrameBuffer::FrameBuffer(
 	int frameWidth,
 	int frameHeight,
-	DisplayOrientation orientation):
+	DisplayOrientation orientation) :
 
 	_frameWidth(frameWidth),
 	_frameHeight(frameHeight),

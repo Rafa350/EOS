@@ -95,7 +95,7 @@ Rect::Rect(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Constructor copia.
+/// \brief    Constructor copy
 /// \param    r: L'objecte a copiar.
 ///
 Rect::Rect(
@@ -105,6 +105,21 @@ Rect::Rect(
 	_y(r._y),
 	_width(r._width),
 	_height(r._height) {
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Constructor move
+/// \param    r: L'objecte a moure.
+///
+Rect::Rect(
+	const Rect&& r) :
+
+	_x(r._x),
+	_y(r._y),
+	_width(r._width),
+	_height(r._height) {
+
 }
 
 
@@ -194,3 +209,35 @@ bool Rect::isEmpty() const {
 	return (_width == 0) && (_height == 0);
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador =
+/// \param    r: L'objecte a asignar.
+/// \return   Referencia al propi objecte.
+///
+Rect& Rect::operator = (
+	const Rect& r) {
+
+	_x = r._x;
+	_y = r._y;
+	_width = r._width;
+	_height = r._height;
+
+	return *this;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador ==
+/// \param    r: L'objecte a comparar.
+/// \return   True si son ifguals, false en cas contrari.
+///
+bool Rect::operator == (
+	const Rect& r) const {
+
+	return
+		(_x == r._x) &&
+		(_y == r._y) &&
+		(_width == r._width) &&
+		(_height == r._height);
+}

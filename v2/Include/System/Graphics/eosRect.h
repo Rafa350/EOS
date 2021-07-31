@@ -25,6 +25,7 @@ namespace eos {
             Rect(const Point& p, const Size& s);
             Rect(const Size& s);
             Rect(const Rect& r);
+            Rect(const Rect&& r);
 
             inline int getX() const { return _x; }
             inline int getY() const { return _y; }
@@ -49,6 +50,8 @@ namespace eos {
             bool contains(const Rect& r) const;
 
             bool isEmpty() const;
+
+            Rect& operator = (const Rect& r);
 
             bool operator == (const Rect& r) const;
             inline bool operator != (const Rect& r) const { return !(*this == r); }
