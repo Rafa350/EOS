@@ -70,11 +70,8 @@ namespace eos {
             void setVPixels(int x, int y, int size, Color color) override;
             void setPixels(int x, int y, int width, int height, Color color) override;
             void setPixels(int x, int y, int width, int height, const Color *colors, int pitch) override;
+            void setPixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int pitch) override;
 
-            void writePixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int pitch) override;
-            void readPixels(int x, int y, int width, int height, void *pixels, ColorFormat format, int pitch) override;
-            void vScroll(int delta, int x, int y, int width, int height) override;
-            void hScroll(int delta, int x, int y, int width, int height) override;
             void refresh() override;
 
         private:

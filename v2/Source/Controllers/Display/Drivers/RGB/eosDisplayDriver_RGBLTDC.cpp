@@ -1,7 +1,7 @@
 #include "eos.h"
 
 #if !((defined(LTDC) && (defined(EOS_STM32F4) || defined(EOS_STM32F7))))
-#error Hardware no soportado
+#error "LTDC hardware unavailable"
 #endif
 
 
@@ -26,14 +26,14 @@ using namespace eos;
 ///
 DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 
-	constexpr const int frameBufferPitchBytes = (_screenWidth * CI::bytes + 63) & 0xFFFFFFC0;
+	constexpr const int frameBufferPitchBytes = (_imageWidth * CI::bytes + 63) & 0xFFFFFFC0;
 	constexpr const int frameBufferPitch = frameBufferPitchBytes / CI::bytes;
-	constexpr const int frameSize = frameBufferPitchBytes * _screenHeight;
+	constexpr const int frameSize = frameBufferPitchBytes * _imageHeight;
 
 	_frontImageBuffer = (void*)_imageBuffer;
 	_frontFrameBuffer = new ColorFrameBuffer_DMA2D(
-		_screenWidth,
-		_screenHeight,
+		_imageWidth,
+		_imageHeight,
 		DisplayOrientation::normal,
 		_frontImageBuffer,
 		frameBufferPitch);
@@ -41,8 +41,8 @@ DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 	if constexpr (_useDoubleBuffer) {
 		_backImageBuffer = (void*)(_imageBuffer + frameSize);
 		_backFrameBuffer = new ColorFrameBuffer_DMA2D(
-			_screenWidth,
-			_screenHeight,
+			_imageWidth,
+			_imageHeight,
 			DisplayOrientation::normal,
 			_backImageBuffer,
 			frameBufferPitch);
@@ -248,7 +248,7 @@ void DisplayDriver_RGBLTDC::setPixels(
 /// \param    format: Format dels pixels.
 /// \param    pitch: Amplada de linia del bitmap.
 ///
-void DisplayDriver_RGBLTDC::writePixels(
+void DisplayDriver_RGBLTDC::setPixels(
 	int x,
 	int y,
 	int width,
@@ -258,54 +258,6 @@ void DisplayDriver_RGBLTDC::writePixels(
 	int pitch) {
 
 	_backFrameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Llegeix una regio rectangular de pixels.
-/// \param    x: Coordinada X.
-/// \param    y: Coordinada Y.
-/// \param    width: Amplada de la regio.
-/// \param    height: Alçada de la regio.
-/// \param    pixels: Buffer de pixels.
-/// \param    format: Format de pixels.
-/// \param
-///
-void DisplayDriver_RGBLTDC::readPixels(
-	int x,
-	int y,
-	int width,
-	int height,
-	void *pixels,
-	ColorFormat format,
-	int pitch) {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Realitza un scroll vertical
-///
-void DisplayDriver_RGBLTDC::vScroll(
-	int delta,
-	int x,
-	int y,
-	int width,
-	int height) {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Realitza un scroll horitzontal.
-///
-void DisplayDriver_RGBLTDC::hScroll(
-	int delta,
-	int x,
-	int y,
-	int width,
-	int height) {
-
 }
 
 
@@ -396,20 +348,20 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	ltdcSettings.polarity.VSYNC = DISPLAY_VSPOL;
 	ltdcSettings.polarity.DE = DISPLAY_DEPOL;
 	ltdcSettings.polarity.PC = DISPLAY_PCPOL;
-	ltdcSettings.width = _screenWidth;
-	ltdcSettings.height = _screenHeight;
+	ltdcSettings.width = _imageWidth;
+	ltdcSettings.height = _imageHeight;
 	halLTDCInitialize(&ltdcSettings);
 	halLTDCSetBackgroundColor(0x000000FF);
 
 	// Inicialitza la capa 0
 	//
-	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, _screenWidth, _screenHeight);
+	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, _imageWidth, _imageHeight);
 
 	halLTDCLayerSetFrameFormat(HAL_LTDC_LAYER_0,
 		LTDCPixelFormatFor<CI::format>::value,
-		_screenWidth * CI::bytes,
-		((_screenWidth * CI::bytes) + 63) & 0xFFFFFFC0,
-		_screenHeight);
+		_imageWidth * CI::bytes,
+		((_imageWidth * CI::bytes) + 63) & 0xFFFFFFC0,
+		_imageHeight);
 	halLTDCLayerSetFrameBuffer(HAL_LTDC_LAYER_0, _frontImageBuffer);
 	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
 }

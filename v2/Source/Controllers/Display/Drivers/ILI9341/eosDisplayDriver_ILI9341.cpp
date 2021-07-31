@@ -68,6 +68,7 @@ void DisplayDriver_ILI9341::setOrientation(
 
     uint8_t data = 0;
     switch (orientation) {
+    	default:
         case DisplayOrientation::normal:
             _imageWidth = _displayWidth;
             _imageHeight = _displayHeight;
@@ -213,7 +214,7 @@ void DisplayDriver_ILI9341::setPixels(
 /// \param    height: Al�ada de la regio.
 /// \param    colors: Color dels pixels.
 ///
-void DisplayDriver_ILI9341::writePixels(
+void DisplayDriver_ILI9341::setPixels(
     int x,
     int y,
     int width,
@@ -224,83 +225,6 @@ void DisplayDriver_ILI9341::writePixels(
 
     //selectRegion(x, y, width, width);
     //writeRegion(colors, width * height);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Llegeix una regio rectangular de pixels. No hi ha cap tipus de
-///           comprovacio de la validesa dels parametres.
-/// \param    x: Posicio X.
-/// \param    y: Posicio Y.
-/// \param    width: Amplada de la regio.
-/// \param    height: Al�ada de la regio.
-/// \params   colors: Buffer on deixar els pixels.
-///
-void DisplayDriver_ILI9341::readPixels(
-    int x,
-    int y,
-    int width,
-    int height,
-    void *pixels,
-	ColorFormat format,
-	int pitch) {
-
-    //selectRegion(x, y, width, height);
-    //readRegion(colors, width * height);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Realitza un scroll vertical de la pantalla.
-/// \param    delta: Numero de lineas a despla�ar. El signe indica la direccio.
-/// \param    x: Posicio x de la regio.
-/// \param    y: Posicio y de la regio.
-/// \param    width: Amplada de la regio.
-/// \param    height: Al�ada de la regio.
-///
-void DisplayDriver_ILI9341::vScroll(
-    int delta,
-    int x,
-    int y,
-    int width,
-    int height) {
-
-    static Color buffer[DISPLAY_IMAGE_WIDTH];
-
-    if (delta > 0) {
-
-        for (int i = y; i < height - y - delta; i++) {
-
-            selectRegion(x, i + delta, width, 1);
-            readRegion(buffer, width);
-
-            selectRegion(x, i, width, 1);
-            writeRegion(buffer, width);
-        }
-    }
-
-    else if (delta < 0) {
-
-    }
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Realitza un scroll horitzontal de la pantalla.
-/// \param    delta: Numero de lineas a despla�ar. El signe indica la direccio.
-/// \param    delta: Numero de lineas a despla�ar. El signe indica la direccio.
-/// \param    x: Posicio x de la regio.
-/// \param    y: Posicio y de la regio.
-/// \param    width: Amplada de la regio.
-/// \param    height: Al�ada de la regio.
-///
-void DisplayDriver_ILI9341::hScroll(
-    int delta,
-    int x,
-    int y,
-    int width,
-    int height) {
-
 }
 
 
@@ -319,7 +243,11 @@ void DisplayDriver_ILI9341::displayOn() {
 
 	open();
 	writeCommand(CMD_SLEEP_OUT);
+	close();
+
 	halTMRDelay(120);
+
+	open();
 	writeCommand(CMD_DISPLAY_ON);
 	close();
 }
@@ -333,8 +261,9 @@ void DisplayDriver_ILI9341::displayOff() {
 	open();
 	writeCommand(CMD_DISPLAY_OFF);
 	writeCommand(CMD_ENTER_SLEEP_MODE);
-	halTMRDelay(120);
 	close();
+
+	halTMRDelay(120);
 }
 
 

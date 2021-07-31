@@ -9,14 +9,20 @@
 
 // Amplada de la imatge
 //
-#ifndef DISPLAY_SCREEN_WIDTH
-#define DISPLAY_SCREEN_WIDTH      480
+#ifndef DISPLAY_IMAGE_WIDTH
+#define DISPLAY_IMAGE_WIDTH      480
+#endif
+#if (DISPLAY_IMAGE_WIDTH != 480)
+#error DISPLAY_IMAGE_WIDTH
 #endif
 
 // Alçada de la imatge
 //
-#ifndef DISPLAY_SCREEN_HEIGHT
-#define DISPLAY_SCREEN_HEIGHT     272
+#ifndef DISPLAY_IMAGE_HEIGHT
+#define DISPLAY_IMAGE_HEIGHT     272
+#endif
+#if (DISPLAY_IMAGE_HEIGHT != 272)
+#error DISPLAY_IMAGE_WIDTH
 #endif
 
 // Format de color
@@ -44,8 +50,8 @@ namespace eos {
 			typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
 
 		private:
-			constexpr static const int _screenWidth      = DISPLAY_SCREEN_WIDTH;
-			constexpr static const int _screenHeight     = DISPLAY_SCREEN_HEIGHT;
+			constexpr static const int _imageWidth       = DISPLAY_IMAGE_WIDTH;
+			constexpr static const int _imageHeight      = DISPLAY_IMAGE_HEIGHT;
 			constexpr static const int _imageBuffer      = DISPLAY_IMAGE_BUFFER;
 			constexpr static const bool _useDoubleBuffer = DISPLAY_DOUBLEBUFFER;
 
@@ -74,11 +80,7 @@ namespace eos {
             void setVPixels(int x, int y, int size, Color color) override;
             void setPixels(int x, int y, int width, int height, Color color) override;
             void setPixels(int x, int y, int width, int height, const Color* colors, int pitch) override;
-
-            void writePixels(int x, int y, int width, int height, const void* pixels, ColorFormat format, int pitch) override;
-            void readPixels(int x, int y, int width, int height, void* pixels, ColorFormat format, int pitch) override;
-            void vScroll(int delta, int x, int y, int width, int height) override;
-            void hScroll(int delta, int x, int y, int width, int height) override;
+            void setPixels(int x, int y, int width, int height, const void* pixels, ColorFormat format, int pitch) override;
 
             void refresh() override;
 

@@ -198,7 +198,7 @@ void DisplayDriver_ILI9341LTDC::setPixels(
 }
 
 
-void DisplayDriver_ILI9341LTDC::writePixels(
+void DisplayDriver_ILI9341LTDC::setPixels(
 	int x,
 	int y,
 	int width,
@@ -208,37 +208,6 @@ void DisplayDriver_ILI9341LTDC::writePixels(
 	int pitch) {
 
 	_frameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
-}
-
-void DisplayDriver_ILI9341LTDC::readPixels(
-	int x,
-	int y,
-	int width,
-	int height,
-	void *pixels,
-	ColorFormat format,
-	int pitch) {
-
-}
-
-
-void DisplayDriver_ILI9341LTDC::vScroll(
-	int delta,
-	int x,
-	int y,
-	int width,
-	int height) {
-
-}
-
-
-void DisplayDriver_ILI9341LTDC::hScroll(
-	int delta,
-	int x,
-	int y,
-	int width,
-	int height) {
-
 }
 
 

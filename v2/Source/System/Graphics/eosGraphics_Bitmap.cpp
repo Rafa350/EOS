@@ -30,7 +30,7 @@ void Graphics::drawBitmap(
         int h = y2 - y1 + 1;
 
         if ((w > 0) && (h > 0)) {
-        	_driver->writePixels(
+        	_driver->setPixels(
         		x1, y1,
 				w, h,
         		bitmap->getPixels(),

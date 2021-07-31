@@ -44,6 +44,9 @@
 #include "System/Graphics/eosColor.h"
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
 #include "HAL/halSPI.h"
+#include "HAL/halSPITpl.h"
+#include "HAL/halGPIO.h"
+#include "HAL/halGPIOTpl.h"
 #elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
 #include "HAL/halI2C.h"
 #endif
@@ -58,8 +61,14 @@ namespace eos {
 
     	private:
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-    		SPIData _spiData;
-    		SPIHandler _hSpi;
+#ifdef DISPLAY_RST_PORT
+			GPIOPinAdapter<DISPLAY_RST_PORT, DISPLAY_RST_PIN> _pinRST;
+#endif
+			GPIOPinAdapter<DISPLAY_CS_PORT, DISPLAY_CS_PIN> _pinCS;
+			GPIOPinAdapter<DISPLAY_DC_PORT, DISPLAY_DC_PIN> _pinDC;
+			GPIOPinAdapter<DISPLAY_SCK_PORT, DISPLAY_SCK_PIN> _pinSCK;
+			GPIOPinAdapter<DISPLAY_MOSI_PORT, DISPLAY_MOSI_PIN> _pinMOSI;
+			SPIAdapter<DISPLAY_SPI_CHANNEL> _spi;
 #elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
     		I2CData _i2cData;
     		I2CHandler _hI2C;
@@ -78,17 +87,15 @@ namespace eos {
             void setOrientation(DisplayOrientation orientation) override;
             int getImageWidth() const { return _frameBuffer->getImageWidth(); }
             int getImageHeight() const { return _frameBuffer->getImageHeight(); }
+
             void clear(Color color) override;
             void setPixel(int x, int y, Color color) override;
             void setHPixels(int x, int y, int size, Color color) override;
             void setVPixels(int x, int y, int size, Color color) override;
             void setPixels(int x, int y, int width, int height, Color color) override;
             void setPixels(int x, int y, int width, int height, const Color *colors, int pitch) override;
+            void setPixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int pitch) override;
 
-            void writePixels(int x, int y, int width, int height, const void *pixels, ColorFormat format, int pitch) override;
-            void readPixels(int x, int y, int width, int height, void *pixels, ColorFormat format, int pitch) override;
-            void vScroll(int delta, int x, int y, int width, int height) override;
-            void hScroll(int delta, int x, int y, int width, int height) override;
             void refresh() override;
 
         private:

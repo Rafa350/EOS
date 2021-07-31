@@ -175,7 +175,17 @@ void DisplayDriver_SSD1306::setPixels(
 }
 
 
-void DisplayDriver_SSD1306::writePixels(
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa una regio rectangular.
+/// \param    x: Posicio x de la regio.
+/// \param    y: Posicio y de la regio.
+/// \param    width: Amplada de la regio.
+/// \param    height: Alçada de la regio.
+/// \param    pixels: Punter als colors.
+/// \param    format: Format de color
+/// \param    pitch: Pitch dels colors.
+///
+void DisplayDriver_SSD1306::setPixels(
     int x,
     int y,
     int width,
@@ -184,36 +194,7 @@ void DisplayDriver_SSD1306::writePixels(
     ColorFormat format,
     int pitch) {
 
-}
-
-
-void DisplayDriver_SSD1306::readPixels(
-    int x,
-    int y,
-    int width,
-    int height,
-    void *pixels,
-    ColorFormat format,
-    int pitch) {
-
-}
-
-void DisplayDriver_SSD1306::vScroll(
-    int delta,
-    int x,
-    int y,
-    int width,
-    int height) {
-
-}
-
-void DisplayDriver_SSD1306::hScroll(
-    int delta,
-    int x,
-    int y,
-    int width,
-    int height) {
-
+	_frameBuffer->setPixels(x, y, width, height, pixels, format, pitch);
 }
 
 
@@ -237,41 +218,26 @@ void DisplayDriver_SSD1306::refresh() {
 /// ----------------------------------------------------------------------
 /// \brief     Inicialitza l'interficie amb el controlador.
 ///
+#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
 void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza modul GPIO
 	//
-	static const GPIOPinSettings gpioSettings[] = {
-#ifdef DISPLAY_RST_PIN
-		{ DISPLAY_RST_PORT,    DISPLAY_RST_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_INIT_CLR, 0 },
+	_pinSCK.initialize(HAL_GPIO_MODE_ALT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST, DISPLAY_SCK_AF );
+	_pinMOSI.initialize(HAL_GPIO_MODE_ALT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF);
+	_pinCS.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_SET);
+	_pinDC.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_SET);
+#ifdef DISPLAY_RST_PORT
+	_pinRST.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_INIT_CLR);
 #endif
-		{ DISPLAY_CS_PORT,     DISPLAY_CS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_SET, 0 },
-		{ DISPLAY_DC_PORT,     DISPLAY_DC_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_CLR, 0 },
-		{ DISPLAY_CLK_PORT,    DISPLAY_CLK_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST, DISPLAY_CLK_AF },
-		{ DISPLAY_MOSI_PORT,   DISPLAY_MOSI_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_PULL_NONE | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF},
-	};
-	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
-
-#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
 
 	// Inicialitza el modul SPI
 	//
-	static const SPISettings spiSettings = {
-		DISPLAY_SPI_CHANNEL,
-			HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
-			HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_128, 0, 0
-	};
-	_hSpi = halSPIInitialize(&_spiData, &spiSettings);
-
+	_spi.initialize(HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_128);
+}
 #else
 #error "DISPLAY_SSD1306_INTERFACE"
 #endif
-}
 
 
 /// ----------------------------------------------------------------------
@@ -279,15 +245,13 @@ void DisplayDriver_SSD1306::initializeInterface() {
 ///
 void DisplayDriver_SSD1306::initializeController() {
 
-#ifdef DISPLAY_RST_PORT
-
 	// Reseteja el controlador
 	//
-    halGPIOClearPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
+#ifdef DISPLAY_RST_PORT
+	_pinRST.clear();
     halTMRDelay(10);
-    halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
+    _pinRST.set();
     halTMRDelay(150);
-
 #endif
 
     // Inicialitza el controlador
@@ -351,18 +315,18 @@ void DisplayDriver_SSD1306::initializeController() {
 /// \brief    Escriu un byte de comanda en el display.
 /// \param    cmd: La comanda.
 ///
+#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
 void DisplayDriver_SSD1306::writeCommand(
     uint8_t cmd) {
 
-#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
-	halGPIOClearPin(DISPLAY_DC_PORT, DISPLAY_DC_PIN);
-	halSPISendBuffer(_hSpi, &cmd, sizeof(cmd));
-	halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+	_pinCS.clear();
+	_pinDC.clear();
+	_spi.send(&cmd, sizeof(cmd));
+	_pinCS.set();
+}
 #else
 #error "DISPLAY_SSD1306_INTERFACE"
 #endif
-}
 
 
 /// ----------------------------------------------------------------------
@@ -370,17 +334,17 @@ void DisplayDriver_SSD1306::writeCommand(
 /// \param    data: Buffer de dades.
 /// \param    length: Longitut de les dades en bytes.
 ///
+#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
 void DisplayDriver_SSD1306::writeData(
     const uint8_t* data,
 	int length) {
 
-#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
-	halGPIOSetPin(DISPLAY_DC_PORT, DISPLAY_DC_PIN);
-	halSPISendBuffer(_hSpi, data, length);
-	halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+	_pinCS.clear();
+	_pinDC.set();
+	_spi.send(data, length);
+	_pinCS.set();
+}
 #else
 #error "DISPLAY_SSD1306_INTERFACE"
 #endif
-}
 

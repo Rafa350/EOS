@@ -29,10 +29,11 @@
 
 // Parametres de la imatge
 //
-#define DISPLAY_SCREEN_WIDTH      240  // Amplada en pixels
-#define DISPLAY_SCREEN_HEIGHT     320  // Alçada en pixels
-#define DISPLAY_COLOR_RGB565           // Codificacio de color RGB565
-#define DISPLAY_IMAGE_BUFFER        0
+#define DISPLAY_IMAGE_WIDTH            240
+#define DISPLAY_IMAGE_HEIGHT           320
+#define DISPLAY_COLOR_FORMAT           ColorFormat::rgb565
+#define DISPLAY_IMAGE_BUFFER           0
+#define DISPLAY_ILI9341_INTERFACE      DISPLAY_ILI9341_INTERFACE_PIO8
 
 // Parametres de controlador
 //
@@ -48,10 +49,10 @@
 #define FONT_USE_Consolas24pt
 #define FONT_USE_Tahoma12pt
 
-// Tipus d'interficie amb el controlador
-//
-#define DISPLAY_IO_TYPE_PIO8
+#if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
 
+
+#elif (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_PIO)
 
 // Control del pin RST (Reset) CON1-13
 //
@@ -81,6 +82,8 @@
 // Control del port DATA (I/O paralel port) CON1-3..10
 //
 #define DISPLAY_DATA_PORT    HAL_GPIO_PORT_E
+
+#endif
 
 
 #elif defined(DISPLAY_ADAFRUIT_SSD1306_128x64_D098)

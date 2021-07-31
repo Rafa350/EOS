@@ -4,7 +4,7 @@
 
 // EOS includes
 //
-#include "eos.h"
+#include "HAL/hal.h"
 #include "HAL/STM32/halGPIO.h"
 
 
@@ -15,6 +15,9 @@ namespace eos {
 		public:
 			inline static void initialize(GPIOOptions options) {
 				halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
+			}
+			inline static void initialize(GPIOOptions options, GPIOAlt alt) {
+				halGPIOInitializePin(port, pin, options, alt);
 			}
 
 			inline static void set() {
@@ -31,6 +34,14 @@ namespace eos {
 
 			inline static bool read() {
 				return halGPIOReadPin(port, pin);
+			}
+
+			inline static GPIOPort getPort() {
+				return port;
+			}
+
+			inline static GPIOPin getPin() {
+				return port;
 			}
 	};
 

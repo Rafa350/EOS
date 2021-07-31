@@ -2,6 +2,10 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Source/Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341_spi.cpp</file>
+            <file>file:/C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Demo/DisplayDemo/Include/Board/eosBoard_Custom_PIC32_USB_STARTER_KIT_I.h</file>
+            <file>file:/C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Demo/DisplayDemo/Include/eosConfig.h</file>
+        </group>
     </open-files>
 </project-private>
