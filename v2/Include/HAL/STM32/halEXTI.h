@@ -2,8 +2,8 @@
 #define __STM32_halEXTI__
 
 
-#include "eos.h"
-#include "hal/STM32/halGPIO.h"
+#include "HAL/hal.h"
+#include "HAL/STM32/halGPIO.h"
 
 
 #ifdef	__cplusplus

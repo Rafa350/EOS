@@ -11,7 +11,6 @@
 #define DISPLAY_IMAGE_HEIGHT      320  // Alçada en pixels
 #define DISPLAY_COLOR_FORMAT      ColorFormat::rgb565  // Format de color
 #define DISPLAY_IMAGE_BUFFER      0xD0000000
-#define DISPLAY_DRV_SSD1306
 
 
 #define DISPLAY_RST_PORT          HAL_GPIO_PORT_A

@@ -136,7 +136,7 @@ void Task::delay(
 ///
 void Task::delay(
     unsigned time,
-    unsigned &weakTime) {
+    unsigned& weakTime) {
 
 	osalDelayUntil(time, &weakTime);
 }

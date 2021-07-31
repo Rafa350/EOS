@@ -3,8 +3,6 @@
 
 
 #include "eos.h"
-#include "Controllers/Display/eosDisplayDriver.h"
-#include "System/Graphics/eosColor.h"
 
 
 // Amplada d'imatge
@@ -12,17 +10,45 @@
 #ifndef DISPLAY_IMAGE_WIDTH
 #define DISPLAY_IMAGE_WIDTH       240
 #endif
+#if (DISPLAY_IMAGE_WIDTH != 240)
+#error "DISPLAY_IMAGE_WIDTH"
+#endif
 
 // Alçada d'imatge
 //
 #ifndef DISPLAY_IMAGE_HEIGHT
 #define DISPLAY_IMAGE_HEIGHT      320
 #endif
+#if (DISPLAY_IMAGE_HEIGHT != 320)
+#error "DISPLAY_IMAGE_HEIGHT"
+#endif
 
 // Format de color
+//
 #ifndef DISPLAY_COLOR_FORMAT
 #define DISPLAY_COLOR_FORMAT      ColorFormat::rgb565
 #endif
+
+// Interficie amb el controlador
+//
+#define DISPLAY_ILI9341_INTERRFACE_SPI      0
+#define DISPLAY_ILI9341_INTERRFACE_SIO      1
+#define DISPLAY_ILI9341_INTERRFACE_PIO      2
+#ifndef DISPLAY_ILI9341_INTERFACE
+#define DISPLAY_ILI9341_INTERFACE           DISPLAY_INTERFACE_SPI
+#endif
+#if (DISPLAY_ILI9341_INTERFACE != DISPLAY_ILI9341_INTERFACE_SPI) && \
+    (DISPLAY_ILI9341_INTERFACE != DISPLAY_ILI9341_INTERFACE_SIO) && \
+    (DISPLAY_ILI9341_INTERFACE != DISPLAY_ILI9341_INTERFACE_PIO)
+#error "DISPLAY_ILI9341_INTERFACE"
+#endif
+
+
+#if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
+#include "HAL/halSPI.h"
+#endif
+#include "Controllers/Display/eosDisplayDriver.h"
+#include "System/Graphics/eosColor.h"
 
 
 namespace eos {
@@ -37,6 +63,10 @@ namespace eos {
     		constexpr static int _displayHeight = DISPLAY_IMAGE_HEIGHT;
 
     	private:
+#if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
+    		SPIData _spiData;
+    		SPIHandler _hSPI;
+#endif
     		int _imageWidth;
     		int _imageHeight;
 
@@ -76,14 +106,14 @@ namespace eos {
 
             inline static pixel_t toPixel(Color color) { return color.convertTo<CI::format>(); }
 
-            static void hwInitialize();
-            static void hwReset();
-            static void hwOpen();
-            static void hwClose();
-            static void hwWriteCommand(uint8_t cmd);
-            static void hwWriteData(uint8_t data);
-            static void hwWriteData(uint8_t *data, int count);
-            static uint8_t hwReadData();
+            void initializeInterface();
+            void initializeController();
+
+            void open();
+            void close();
+            void writeCommand(uint8_t cmd);
+            void writeData(uint8_t data);
+            void writeData(const uint8_t *data, int length);
     };
 }
 

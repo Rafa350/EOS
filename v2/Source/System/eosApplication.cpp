@@ -155,7 +155,7 @@ void Application::runServices() {
     //
     for (auto it = services.begin(); it != services.end(); it++) {
         Service* service = *it;
-        Task *task = new Task(
+        Task* task = new Task(
             service->getStackSize(),
             service->getPriority(),
             service->getName(),

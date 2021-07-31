@@ -155,12 +155,6 @@
 #define DISPLAY_MOSI_PIN     HAL_GPIO_PIN_9
 #define DISPLAY_MOSI_AF      HAL_GPIO_AF_F9_SPI5_MOSI
 
-// Control del pin MISO (Controller to CPU)
-//
-#define DISPLAY_MISO_PORT    HAL_GPIO_PORT_F
-#define DISPLAY_MISO_PIN     HAL_GPIO_PIN_8
-#define DISPLAY_MISO_AF      HAL_GPIO_AF5_SPI5
-
 // Modul SPI a utilitzar
 //
 #define DISPLAY_SPI_ID       HAL_SPI_CHANNEL_5
@@ -212,12 +206,6 @@
 #define DISPLAY_MOSI_PORT    HAL_GPIO_PORT_F
 #define DISPLAY_MOSI_PIN     HAL_GPIO_PIN_9
 #define DISPLAY_MOSI_AF      HAL_GPIO_AF_F9_SPI5_MOSI
-
-// Control del pin MISO (Controller to CPU)
-//
-#define DISPLAY_MISO_PORT    HAL_GPIO_PORT_F
-#define DISPLAY_MISO_PIN     HAL_GPIO_PIN_8
-#define DISPLAY_MISO_AF      HAL_GPIO_AF5_SPI5
 
 // Control del pin HSYNC (Horizontal sync)
 //

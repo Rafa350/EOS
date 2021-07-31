@@ -1,5 +1,4 @@
-#include "eos.h"
-#include "eosAssert.h"
+#include "HAL/hal.h"
 #include "HAL/STM32/halEXTI.h"
 
 

@@ -11,14 +11,10 @@
 using namespace eos;
 
 
-static SPIData __spiData;
-static SPIHandler __hSPI;
-
-
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el display.
+/// \brief    Inicialitza l'interficie amb el controlador.
 ///
-void DisplayDriver_ILI9341::hwInitialize() {
+void DisplayDriver_ILI9341::initializeInterface() {
 
 	// Inicialitza el modul GPIO
 	//
@@ -33,10 +29,6 @@ void DisplayDriver_ILI9341::hwInitialize() {
 			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_CLR, 0  },
 		{DISPLAY_SCK_PORT,  DISPLAY_SCK_PIN,
 			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_SCK_AF            },
-#ifdef DISPLAY_MISO_PORT
-		{DISPLAY_MISO_PORT, DISPLAY_MISO_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MISO_AF           },
-#endif
 		{DISPLAY_MOSI_PORT, DISPLAY_MOSI_PIN,
 			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF           }
 	};
@@ -49,7 +41,14 @@ void DisplayDriver_ILI9341::hwInitialize() {
 			HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
 			HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
 	};
-	__hSPI = halSPIInitialize(&__spiData, &spiSettings);
+	_hSPI = halSPIInitialize(&_spiData, &spiSettings);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el controlador.
+///
+void DisplayDriver_ILI9341::initializeController() {
 
 	// Inicialitza el controlador del display
 	//
@@ -108,10 +107,17 @@ void DisplayDriver_ILI9341::hwInitialize() {
         OP_END
     };
 #endif
-    hwReset();
-    hwOpen();
+
+#ifdef DISPLAY_RST_PORT
+    halTMRDelay(10);
+    halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
+    halTMRDelay(120);
+#endif
+
     uint8_t c;
     const uint8_t *p = initCommands;
+
+    open();
     while ((c = *p++) != OP_END) {
         switch (c) {
             case OP_DELAY:
@@ -119,107 +125,78 @@ void DisplayDriver_ILI9341::hwInitialize() {
                 break;
 
             default:
-                hwWriteCommand(*p++);
+                writeCommand(*p++);
                 while (--c != 0)
-                    hwWriteData(*p++);
+                    writeData(*p++);
                 break;
         }
     }
 
     if constexpr (CI::format == ColorFormat::rgb565) {
-    	hwWriteCommand(CMD_PIXEL_FORMAT_SET);
-    	hwWriteData(0x55);
+    	writeCommand(CMD_PIXEL_FORMAT_SET);
+    	writeData(0x55);
     }
     /*else if constexpr (CI::format == ColorFormat::rgb666) {
     	hwWriteCommand(CMD_PIXEL_FORMAT_SET);
     	hwWriteData(0x66);
     }*/
 
-    hwClose();
+    close();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Reseteja el driver.
+/// \brief Inicia una transferencia de dades amb el controlador.
 ///
-void DisplayDriver_ILI9341::hwReset() {
-
-#ifdef DISPLAY_RST_PORT
-    halTMRDelay(10);
-    halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
-    halTMRDelay(120);
-#endif
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief Inicia una transferencia de dades amb el driver.
-///
-void DisplayDriver_ILI9341::hwOpen() {
+void DisplayDriver_ILI9341::open() {
 
     halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Finalitza una transferencia de dades amb el driver.
+/// \brief Finalitza una transferencia de dades amb el controlador.
 ///
-void DisplayDriver_ILI9341::hwClose() {
+void DisplayDriver_ILI9341::close() {
 
     halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Escriu un byte de comanda.
+/// \brief Escriu un byte de comanda en el controlador.
 /// \param cmd: El byte a escriure.
 ///
-void DisplayDriver_ILI9341::hwWriteCommand(
+void DisplayDriver_ILI9341::writeCommand(
     uint8_t cmd) {
 
     halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-    halSPISendBuffer(__hSPI, &cmd, sizeof(cmd));
+    halSPISendBuffer(_hSPI, &cmd, sizeof(cmd));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Escriu un byte de dades.
+/// \brief Escriu un byte de dades en el controlador
 /// \param data: El byte a escriure.
 ///
-void DisplayDriver_ILI9341::hwWriteData(
+void DisplayDriver_ILI9341::writeData(
     uint8_t data) {
 
     halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-    halSPISendBuffer(__hSPI, &data, sizeof(data));
+    halSPISendBuffer(_hSPI, &data, sizeof(data));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu una cadena de dades.
+/// \brief    Escriu un bloc de dades en el controlador
 /// \param    data: Buffer de dades.
-/// \param    cocunt: Numero de bytes en el buffer.
+/// \param    length: Numero de bytes en el buffer.
 ///
-void DisplayDriver_ILI9341::hwWriteData(
-	uint8_t *data,
-	int count) {
+void DisplayDriver_ILI9341::writeData(
+	const uint8_t* data,
+	int length) {
 
     halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-    halSPISendBuffer(__hSPI, data, count);
+    halSPISendBuffer(_hSPI, data, length);
 }
 
-
-/// ----------------------------------------------------------------------
-/// \brief Llegeix un byte de dades.
-/// \return El byte lleigit.
-///
-uint8_t DisplayDriver_ILI9341::hwReadData() {
-
-#ifdef DISPLAY_MISO_PORT
-
-	//return halSPIRead(DISPLAY_SPI_MODULE);
-	return 0;
-
-#else
-	return 0;
-#endif
-}

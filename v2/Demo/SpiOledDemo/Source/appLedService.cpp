@@ -39,13 +39,13 @@ void LedService::onLoop() {
 
 	while (true) {
 
+		Task::delay(500);
+
 #ifdef EXIST_LEDS_LED1
 		led1.toggle();
 #endif
 #ifdef EXIST_LEDS_LED2
 		led2.toggle();
 #endif
-
-		Task::delay(500);
 	}
 }

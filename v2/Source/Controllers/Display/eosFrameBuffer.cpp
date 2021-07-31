@@ -118,6 +118,7 @@ void FrameBuffer::transform(
 	// fer dues multiplicacione fent servir la formula.
 	//
 	switch (_orientation) {
+		default:
 		case DisplayOrientation::normal:
             xx1 = x1;
             yy1 = y1;

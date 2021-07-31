@@ -24,16 +24,16 @@ using namespace eos;
 using namespace app;
 
 
-//#define TEST_OPACITY
-//#define TEST_COLORS
-//#define TEST_POINTS
-//#define TEST_LINES
+#define TEST_OPACITY
+#define TEST_COLORS
+#define TEST_POINTS
+#define TEST_LINES
 //#define TEST_THICKLINES
-//#define TEST_RECTANGLES
-//#define TEST_ELLIPSES
+#define TEST_RECTANGLES
+#define TEST_ELLIPSES
 #define TEST_POLYGONS
-//#define TEST_BITMAPS
-//#define SHOW_RESULTS
+#define TEST_BITMAPS
+#define SHOW_RESULTS
 
 static int seed = 537;
 

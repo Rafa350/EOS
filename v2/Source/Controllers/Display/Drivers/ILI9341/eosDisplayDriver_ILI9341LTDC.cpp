@@ -40,7 +40,8 @@ DisplayDriver_ILI9341LTDC::DisplayDriver_ILI9341LTDC() {
 ///
 void DisplayDriver_ILI9341LTDC::initialize() {
 
-    hwInitialize();
+    initializeInterface();
+    initializeController();
 }
 
 
@@ -60,11 +61,11 @@ void DisplayDriver_ILI9341LTDC::displayOn() {
 
 	halLTDCEnable();
 
-	hwOpen();
-	hwWriteCommand(CMD_SLEEP_OUT);
+	open();
+	writeCommand(CMD_SLEEP_OUT);
 	halTMRDelay(120);
-	hwWriteCommand(CMD_DISPLAY_ON);
-	hwClose();
+	writeCommand(CMD_DISPLAY_ON);
+	close();
 }
 
 
@@ -73,11 +74,11 @@ void DisplayDriver_ILI9341LTDC::displayOn() {
 ///
 void DisplayDriver_ILI9341LTDC::displayOff() {
 
-	hwOpen();
-	hwWriteCommand(CMD_DISPLAY_OFF);
-	hwWriteCommand(CMD_ENTER_SLEEP_MODE);
+	open();
+	writeCommand(CMD_DISPLAY_OFF);
+	writeCommand(CMD_ENTER_SLEEP_MODE);
 	halTMRDelay(120);
-	hwClose();
+	close();
 
 	halLTDCDisable();
 }
@@ -253,9 +254,9 @@ void DisplayDriver_ILI9341LTDC::refresh() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el display.
+/// \brief    Inicialitza l'interficie amb el controlador.
 ///
-void DisplayDriver_ILI9341LTDC::hwInitialize() {
+void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza el modul GPIO
 	//
@@ -314,10 +315,6 @@ void DisplayDriver_ILI9341LTDC::hwInitialize() {
 			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_CLR, 0 },
 		{ DISPLAY_SCK_PORT,    DISPLAY_SCK_PIN,
 			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_SCK_AF },
-#ifdef DISPLAY_MISO_PORT
-		{ DISPLAY_MISO_PORT,   DISPLAY_MISO_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MISO_AF},
-#endif
 		{ DISPLAY_MOSI_PORT,   DISPLAY_MOSI_PIN,
 			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF}
 	};
@@ -364,6 +361,13 @@ void DisplayDriver_ILI9341LTDC::hwInitialize() {
 
 	halLTDCLayerSetFrameBuffer(HAL_LTDC_LAYER_0, (void*) _displayBuffer);
 	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el controlador
+///
+void DisplayDriver_ILI9341LTDC::initializeController() {
 
 	// Inicialitza el controlador del display
 	//
@@ -401,10 +405,16 @@ void DisplayDriver_ILI9341LTDC::hwInitialize() {
 #error "Display no soportado"
 #endif
 
-	hwReset();
-    hwOpen();
+#ifdef DISPLAY_RST_PORT
+    halTMRDelay(10);
+	halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
+    halTMRDelay(120);
+#endif
+
     uint8_t c;
     const uint8_t *p = initCommands;
+
+    open();
     while ((c = *p++) != OP_END) {
         switch (c) {
             case OP_DELAY:
@@ -412,33 +422,20 @@ void DisplayDriver_ILI9341LTDC::hwInitialize() {
                 break;
 
             default:
-                hwWriteCommand(*p++);
+                writeCommand(*p++);
                 while (--c != 0)
-                    hwWriteData(*p++);
+                    writeData(*p++);
                 break;
         }
     }
-    hwClose();
+    close();
 }
 
-
-/// ----------------------------------------------------------------------
-/// \brief Reseteja el driver.
-///
-void DisplayDriver_ILI9341LTDC::hwReset() {
-
-#ifdef DISPLAY_RST_PORT
-    halTMRDelay(10);
-	halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
-    halTMRDelay(120);
-#endif
-
-}
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicia la comunicacio amb el controlador.
 ///
-void DisplayDriver_ILI9341LTDC::hwOpen() {
+void DisplayDriver_ILI9341LTDC::open() {
 
 	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
@@ -447,7 +444,7 @@ void DisplayDriver_ILI9341LTDC::hwOpen() {
 /// ----------------------------------------------------------------------
 /// \brief    Finalitza la comunicacio amb el controlador.
 ///
-void DisplayDriver_ILI9341LTDC::hwClose() {
+void DisplayDriver_ILI9341LTDC::close() {
 
     halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
@@ -457,7 +454,7 @@ void DisplayDriver_ILI9341LTDC::hwClose() {
 /// \brief    Escriu un byte de comanda en el controlador
 /// \param    cmd: El byte de comanda.
 ///
-void DisplayDriver_ILI9341LTDC::hwWriteCommand(
+void DisplayDriver_ILI9341LTDC::writeCommand(
 	uint8_t cmd) {
 
 	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
@@ -469,7 +466,7 @@ void DisplayDriver_ILI9341LTDC::hwWriteCommand(
 /// \brief    Escriu un byte de dades en el controlador
 /// \param    data: El byte de dades.
 ///
-void DisplayDriver_ILI9341LTDC::hwWriteData(
+void DisplayDriver_ILI9341LTDC::writeData(
 	uint8_t data) {
 
 	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);

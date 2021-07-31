@@ -624,7 +624,7 @@ namespace eos {
 		}
 
 		template <ColorFormat FORMAT>
-		inline ColorBase<FORMAT> convertTo() {
+		inline ColorBase<FORMAT> convertTo() const {
 			return makeColor<FORMAT>(getR(), getG(), getB());
 		}
 	};
@@ -645,7 +645,7 @@ namespace eos {
 			}
 
 			template <ColorFormat FORMAT>
-			inline ColorBase<FORMAT> convertTo() {
+			inline ColorBase<FORMAT> convertTo() const {
 				return makeColor<FORMAT>(getR(), getG(), getB());
 			}
 	};
@@ -666,7 +666,7 @@ namespace eos {
 			}
 
 			template <ColorFormat FORMAT>
-			inline ColorBase<FORMAT> convertTo() {
+			inline ColorBase<FORMAT> convertTo() const {
 				return makeColor<FORMAT>(getL());
 			}
 	};
@@ -687,7 +687,7 @@ namespace eos {
 			}
 
 			template <ColorFormat FORMAT>
-			inline ColorBase<FORMAT> convertTo() {
+			inline ColorBase<FORMAT> convertTo() const {
 				return makeColor<FORMAT>(getL());
 			}
 	};

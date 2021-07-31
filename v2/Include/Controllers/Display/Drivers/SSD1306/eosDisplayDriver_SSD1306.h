@@ -3,17 +3,49 @@
 
 
 #include "eos.h"
-#include "HAL/halSPI.h"
+
+
+// Amplada del display
+//
+#ifndef DISPLAY_IMAGE_WIDTH
+#define DISPLAY_IMAGE_WIDTH       128
+#endif
+#if (DISPLAY_IMAGE_WIDTH != 128) && \
+	(DISPLAY_IMAGE_WIDTH != 256)
+#error "DISPLAY_WIDTH"
+#endif
+
+// Alçada del display
+//
+#ifndef DISPLAY_IMAGE_HEIGHT
+#define DISPLAY_IMAGE_HEIGHT      64
+#endif
+#if (DISPLAY_IMAGE_HEIGHT != 32) && \
+	(DISPLAY_IMAGE_HEIGHT != 64) && \
+	(DISPLAY_IMAGE_HEIGHT != 128)
+#error "DISPLAY_HEIGHT"
+#endif
+
+// Interficie amb el controlador
+//
+#define DISPLAY_SSD1306_INTERFACE_SPI  0
+#define DISPLAY_SSD1306_INTERFACE_I2C  1
+#ifndef DISPLAY_SSD1306_INTERFACE
+#define DISPLAY_SSD1306_INTERFACE      DISPLAY_SSD1306_INTERFACE_SPI
+#endif
+#if (DISPLAY_SSD1306_INTERFASE != DISPLAY_SSD1306_INTERFACE_SPI) && \
+    (DISPLAY_SSD1306_INTERFASE != DISPLAY_SSD1306_INTERFACE_I2C)
+#error "DISPLAY_SSD1306_INTERFACE"
+#endif
+
+
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/eosFrameBuffer.h"
 #include "System/Graphics/eosColor.h"
-
-
-#ifndef DISPLAY_IMAGE_WIDTH
-#define DISPLAY_IMAGE_WIDTH       128  // Tamany fix del controlador
-#endif
-#ifndef DISPLAY_IMAGE_HEIGHT
-#define DISPLAY_IMAGE_HEIGHT      64   // Tamany fix del controlador
+#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
+#include "HAL/halSPI.h"
+#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
+#include "HAL/halI2C.h"
 #endif
 
 
@@ -21,6 +53,18 @@ namespace eos {
 
     class DisplayDriver_SSD1306: public IDisplayDriver {
     	private:
+			constexpr static int _displayWidth = DISPLAY_IMAGE_WIDTH;
+			constexpr static int _displayHeight = DISPLAY_IMAGE_HEIGHT;
+
+    	private:
+#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
+    		SPIData _spiData;
+    		SPIHandler _hSpi;
+#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
+    		I2CData _i2cData;
+    		I2CHandler _hI2C;
+#endif
+
     		static IDisplayDriver* _instance;
     		FrameBuffer* _frameBuffer;
 
@@ -48,12 +92,10 @@ namespace eos {
             void refresh() override;
 
         private:
-            static void hwInitialize();
-            static void hwReset();
-            static void hwOpen();
-            static void hwClose();
-            static void hwWriteCommand(uint8_t cmd);
-            static void hwWriteData(const uint8_t* data, int length);
+            void initializeInterface();
+            void initializeController();
+            void writeCommand(uint8_t cmd);
+            void writeData(const uint8_t* data, int length);
     };
 }
 

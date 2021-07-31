@@ -32,7 +32,8 @@ DisplayDriver_ILI9341::DisplayDriver_ILI9341():
 ///
 void DisplayDriver_ILI9341::initialize() {
 
-	hwInitialize();
+	initializeInterface();
+	initializeController();
 }
 
 
@@ -93,10 +94,10 @@ void DisplayDriver_ILI9341::setOrientation(
     }
 
     if (data) {
-		hwOpen();
-		hwWriteCommand(CMD_MEMORY_ACCESS_CONTROL);
-		hwWriteData(data);
-		hwClose();
+		open();
+		writeCommand(CMD_MEMORY_ACCESS_CONTROL);
+		writeData(data);
+		close();
     }
 }
 
@@ -316,11 +317,11 @@ void DisplayDriver_ILI9341::refresh() {
 ///
 void DisplayDriver_ILI9341::displayOn() {
 
-	hwOpen();
-	hwWriteCommand(CMD_SLEEP_OUT);
+	open();
+	writeCommand(CMD_SLEEP_OUT);
 	halTMRDelay(120);
-	hwWriteCommand(CMD_DISPLAY_ON);
-	hwClose();
+	writeCommand(CMD_DISPLAY_ON);
+	close();
 }
 
 
@@ -329,11 +330,11 @@ void DisplayDriver_ILI9341::displayOn() {
 ///
 void DisplayDriver_ILI9341::displayOff() {
 
-	hwOpen();
-	hwWriteCommand(CMD_DISPLAY_OFF);
-	hwWriteCommand(CMD_ENTER_SLEEP_MODE);
+	open();
+	writeCommand(CMD_DISPLAY_OFF);
+	writeCommand(CMD_ENTER_SLEEP_MODE);
 	halTMRDelay(120);
-	hwClose();
+	close();
 }
 
 
@@ -356,25 +357,25 @@ void DisplayDriver_ILI9341::selectRegion(
     int x2 = x + width - 1;
     int y2 = y + height - 1;
 
-    hwOpen();
+    open();
 
-    hwWriteCommand(CMD_COLUMN_ADDRESS_SET);
+    writeCommand(CMD_COLUMN_ADDRESS_SET);
 
     buffer[0] = x >> 8;
     buffer[1] = x;
     buffer[2] = x2 >> 8;
     buffer[3] = x2;
-	hwWriteData(buffer, sizeof(buffer));
+	writeData(buffer, sizeof(buffer));
 
-	hwWriteCommand(CMD_PAGE_ADDRESS_SET);
+	writeCommand(CMD_PAGE_ADDRESS_SET);
 
 	buffer[0] = y >> 8;
     buffer[1] = y;
     buffer[2] = y2 >> 8;
     buffer[3] = y2;
-	hwWriteData(buffer, sizeof(buffer));
+	writeData(buffer, sizeof(buffer));
 
-    hwClose();
+    close();
 }
 
 
@@ -388,8 +389,8 @@ void DisplayDriver_ILI9341::writeRegion(
 
 	pixel_t c = toPixel(color);
 
-	hwOpen();
-	hwWriteCommand(CMD_MEMORY_WRITE);
+	open();
+	writeCommand(CMD_MEMORY_WRITE);
 
 	if constexpr (CI::format == ColorFormat::rgb565) {
 
@@ -397,7 +398,7 @@ void DisplayDriver_ILI9341::writeRegion(
 		data[0] = c >> 8;
 		data[1] = c;
 
-		hwWriteData(data, sizeof(data));
+		writeData(data, sizeof(data));
 	}
 
 	/*else if constexpr (CI::format == ColorFormat::rgb666) {
@@ -410,7 +411,7 @@ void DisplayDriver_ILI9341::writeRegion(
 		hwWriteData(data, sizeof(data));
 	}*/
 
-	hwClose();
+	close();
 }
 
 
@@ -431,11 +432,11 @@ void DisplayDriver_ILI9341::writeRegion(
 		data[0] = c >> 8;
 		data[1] = c;
 
-		hwOpen();
-		hwWriteCommand(CMD_MEMORY_WRITE);
+		open();
+		writeCommand(CMD_MEMORY_WRITE);
 		while (count--)
-			hwWriteData(data, sizeof(data));
-		hwClose();
+			writeData(data, sizeof(data));
+		close();
 	}
 
 	/*else if constexpr (CI::format == ColorFormat::rgb666) {
@@ -476,9 +477,9 @@ void DisplayDriver_ILI9341::writeRegion(
 void DisplayDriver_ILI9341::readRegion(
     Color *colors,
     int count) {
-
-    hwOpen();
-    hwWriteCommand(CMD_MEMORY_READ);
+#if 0
+    select();
+    writeCommand(CMD_MEMORY_READ);
     hwReadData();               // Dummy read
     hwReadData();               // Dummy read
     while (count--) {
@@ -495,4 +496,5 @@ void DisplayDriver_ILI9341::readRegion(
 		}*/
     }
     hwClose();
+#endif
 }

@@ -5,9 +5,6 @@
 // EOS includes
 //
 #include "eos.h"
-#include "System/Graphics/eosColor.h"
-#include "Controllers/Display/eosFrameBuffer.h"
-#include "Controllers/Display/eosDisplayDriver.h"
 
 
 // Amplada de la imatge
@@ -35,6 +32,11 @@
 #endif
 
 
+#include "System/Graphics/eosColor.h"
+#include "Controllers/Display/eosFrameBuffer.h"
+#include "Controllers/Display/eosDisplayDriver.h"
+
+
 namespace eos {
 
 	class DisplayDriver_RGBLTDC: public IDisplayDriver {
@@ -42,14 +44,14 @@ namespace eos {
 			typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
 
 		private:
-			constexpr static const int _screenWidth         = DISPLAY_SCREEN_WIDTH;
-			constexpr static const int _screenHeight        = DISPLAY_SCREEN_HEIGHT;
-			constexpr static const int _imageBuffer         = DISPLAY_IMAGE_BUFFER;
-			constexpr static const bool _useDoubleBuffer    = DISPLAY_DOUBLEBUFFER;
+			constexpr static const int _screenWidth      = DISPLAY_SCREEN_WIDTH;
+			constexpr static const int _screenHeight     = DISPLAY_SCREEN_HEIGHT;
+			constexpr static const int _imageBuffer      = DISPLAY_IMAGE_BUFFER;
+			constexpr static const bool _useDoubleBuffer = DISPLAY_DOUBLEBUFFER;
 
     	private:
-    		FrameBuffer *_frontFrameBuffer;
-    		FrameBuffer *_backFrameBuffer;
+    		FrameBuffer* _frontFrameBuffer;
+    		FrameBuffer* _backFrameBuffer;
     		void* _frontImageBuffer;
     		void* _backImageBuffer;
 
