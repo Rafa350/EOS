@@ -43,6 +43,20 @@ void osalTaskDestroy(
 }
 
 
+void osalTaskSuspend(
+	HTask hTask) {
+
+	vTaskSuspend((TaskHandle_t) hTask);
+}
+
+
+void osalTaskResume(
+	HTask hTask) {
+
+	vTaskResume((TaskHandle_t) hTask);
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Canvia la prioritat de la tasca.
 /// \param    hTask: El handler de la tasca. NULL si es la tasca actual.

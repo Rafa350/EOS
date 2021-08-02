@@ -13,8 +13,8 @@ using namespace eos;
 ///
 Application::Application():
 
-	initialized(false),
-    taskEventCallback(this, &Application::taskEventHandler)
+	_initialized(false),
+    _taskEventCallback(this, &Application::taskEventHandler)
 #if Eos_ApplicationTickEnabled
     ,timerEventCallback(this, &Application::timerEventHandler),
     timer(true, &timerEventCallback, this)
@@ -31,8 +31,8 @@ Application::~Application() {
 	// Destrueix els serveis de la llista. El contenidor ja els
 	// destrueix automaticament
 	//
-	while (!services.isEmpty())
-		delete services.peekFront();
+	while (!_services.isEmpty())
+		delete _services.peekFront();
 }
 
 
@@ -68,7 +68,7 @@ void Application::timerEventHandler(
 ///
 void Application::run() {
 
-	initialized = true;
+	_initialized = true;
 
     // Notifica la inicialitzacio de l'aplicacio.
     //
@@ -117,10 +117,8 @@ void Application::initializeServices() {
 
     // Inicialitza els serveis de la llista, un a un.
     //
-    for (auto it = services.begin(); it != services.end(); it++) {
-        Service* service = *it;
+    for (auto service: _services)
         service->initialize();
-    }
 }
 
 
@@ -131,10 +129,8 @@ void Application::terminateServices() {
 
     // Finalitza els serveis de la llista, un a un.
     //
-    for (auto it = services.begin(); it != services.end(); it++) {
-        Service* service = *it;
+    for (auto service: _services)
         service->terminate();
-    }
 }
 
 
@@ -153,15 +149,14 @@ void Application::runServices() {
 
     // Crea una tasca per executar cada servei
     //
-    for (auto it = services.begin(); it != services.end(); it++) {
-        Service* service = *it;
+    for (auto service: _services) {
         Task* task = new Task(
             service->getStackSize(),
             service->getPriority(),
             service->getName(),
-            &taskEventCallback,
+            &_taskEventCallback,
             static_cast<void*>(service));
-        tasks.pushBack(task);
+        _tasks.pushBack(task);
     }
 
     // Executa les tasques
@@ -174,7 +169,7 @@ void Application::runServices() {
 
         // Executa la tasca de cada servei, un a un
         //
-    	for (auto service: services)
+    	for (auto service: _services)
     		service->task();
     }
 #endif
@@ -212,8 +207,8 @@ void Application::removeService(
 ///
 void Application::removeServices() {
 
-	while (!services.isEmpty())
-        removeService(services.peekFront());
+	while (!_services.isEmpty())
+        removeService(_services.peekFront());
 }
 
 
@@ -263,7 +258,7 @@ void eos::link(
 	eosAssert(application != nullptr);
     eosAssert(service->_application == nullptr);
 
-    application->services.pushBack(service);
+    application->_services.pushBack(service);
     service->_application = application;
 }
 
@@ -281,5 +276,5 @@ void eos::unlink(
     eosAssert(service->_application == application);
 
     service->_application = nullptr;
-    application->services.removeAt(application->services.indexOf(service));
+    application->_services.removeAt(application->_services.indexOf(service));
 }

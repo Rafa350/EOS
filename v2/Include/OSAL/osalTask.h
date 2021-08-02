@@ -39,6 +39,8 @@ typedef struct {                       // Parametres d'inicialitzacio
 
 HTask osalTaskCreate(const TaskInitializeInfo* info);
 void osalTaskDestroy(HTask hTask);
+void osalTaskSuspend(HTask hTask);
+void osalTaskResume(HTask hTask);
 void osalTaskSetPriority(HTask hTask, uint8_t priority);
 void osalTaskYield(void);
 

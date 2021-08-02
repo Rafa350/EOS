@@ -99,11 +99,11 @@ void DisplayDriver_RGBLTDC::displayOn() {
 
     // Activa el display
 	//
-	halGPIOSetPin(DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN);
+	_pinLCDE = 1;
 
 	// Activa el backlight
 	//
-	halGPIOSetPin(DISPLAY_BKE_PORT, DISPLAY_BKE_PIN);
+	_pinBKE = 1;
 }
 
 
@@ -114,11 +114,11 @@ void DisplayDriver_RGBLTDC::displayOff() {
 
 	// Desactiva el display
 	//
-	halGPIOClearPin(DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN);
+	_pinLCDE = 0;
 
 	// Desactiva el backlight
 	//
-	halGPIOClearPin(DISPLAY_BKE_PORT, DISPLAY_BKE_PIN);
+	_pinBKE = 0;
 
 	// Desactiva el modul LDTC
     //
@@ -287,14 +287,19 @@ void DisplayDriver_RGBLTDC::refresh() {
 ///
 void DisplayDriver_RGBLTDC::initializeGPIO() {
 
-	static const GPIOPinSettings gpioSettings[] = {
-		{DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
-		{DISPLAY_BKE_PORT, DISPLAY_BKE_PIN, HAL_GPIO_MODE_OUTPUT_PP, 0 },
+	_pinLCDE.initOutput(GpioSpeed::low, GpioDriver::pushPull, GpioState::clr);
+	_pinBKE.initOutput(GpioSpeed::low, GpioDriver::pushPull, GpioState::clr);
 
-		{DISPLAY_HSYNC_PORT, DISPLAY_HSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_HSYNC_AF},
-		{DISPLAY_VSYNC_PORT, DISPLAY_VSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_VSYNC_AF},
-		{DISPLAY_DOTCLK_PORT, DISPLAY_DOTCLK_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_DOTCLK_AF},
-		{DISPLAY_DE_PORT, DISPLAY_DE_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_DE_AF},
+	_pinHSYNC.initAlt(GpioSpeed::fast, GpioDriver::pushPull, _pinHSYNC.Function.ltdc_HSYNC);
+	_pinVSYNC.initAlt(GpioSpeed::fast, GpioDriver::pushPull, _pinVSYNC.Function.ltdc_VSYNC);
+	_pinDE.initAlt(GpioSpeed::fast, GpioDriver::pushPull, _pinDE.Function.ltdc_DE);
+	_pinDOTCLK.initAlt(GpioSpeed::fast, GpioDriver::pushPull, _pinDOTCLK.Function.ltdc_DOTCLK);
+
+	static const GPIOPinSettings gpioSettings[] = {
+		//{DISPLAY_HSYNC_PORT, DISPLAY_HSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_HSYNC_AF},
+		//{DISPLAY_VSYNC_PORT, DISPLAY_VSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_VSYNC_AF},
+		//{DISPLAY_DOTCLK_PORT, DISPLAY_DOTCLK_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_DOTCLK_AF},
+		//{DISPLAY_DE_PORT, DISPLAY_DE_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_DE_AF},
 
 		{DISPLAY_R0_PORT, DISPLAY_R0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R0_AF},
 		{DISPLAY_R1_PORT, DISPLAY_R1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R1_AF},

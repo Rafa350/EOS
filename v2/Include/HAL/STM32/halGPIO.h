@@ -90,7 +90,7 @@ typedef struct {
 #define HAL_GPIO_PIN_13           13
 #define HAL_GPIO_PIN_14           14
 #define HAL_GPIO_PIN_15           15
-#define HAL_GPIO_PIN_NONE         255
+#define HAL_GPIO_PIN_NONE         ((GPIOPin) -1)
 
 // Identificador de la funcio alternativa
 #define HAL_GPIO_AF_0             0
@@ -109,7 +109,7 @@ typedef struct {
 #define HAL_GPIO_AF_13            13
 #define HAL_GPIO_AF_14            14
 #define HAL_GPIO_AF_15            15
-#define HAL_GPIO_AF_NONE          HAL_GPIO_AF_0
+#define HAL_GPIO_AF_NONE          ((GPIOAlt) -1)
 
 
 // Mascara de posicio del pin
@@ -215,11 +215,12 @@ typedef struct {
 
 // Valor inicial de la sortida
 #define HAL_GPIO_INIT_pos         8
-#define HAL_GPIO_INIT_bits        0b1
+#define HAL_GPIO_INIT_bits        0b11
 #define HAL_GPIO_INIT_mask        (HAL_GPIO_INIT_bits << HAL_GPIO_INIT_pos)
 
-#define HAL_GPIO_INIT_CLR         (0 << HAL_GPIO_INIT_pos)
-#define HAL_GPIO_INIT_SET         (1 << HAL_GPIO_INIT_pos)
+#define GAL_GPIO_INIT_DEFAULT     (0 << HAL_GPIO_INIT_pos)
+#define HAL_GPIO_INIT_CLR         (1 << HAL_GPIO_INIT_pos)
+#define HAL_GPIO_INIT_SET         (2 << HAL_GPIO_INIT_pos)
 
 
 #define halGPIOInitializePinInput(port, pin) \
@@ -247,12 +248,7 @@ typedef struct {
 	((((GPIO_TypeDef*)port)->IDR & (((uint32_t) 1) << (pin))) != 0)
 
 #define halGPIOWritePin(port, pin, data) \
-	if (1) {                             \
-		if (data)                        \
-			halGPIOSetPin(port, pin);    \
-	    else                             \
-			halGPIOClearPin(port, pin);  \
-	}
+	((GPIO_TypeDef*)port)->BSRR = ((uint32_t) 1) << ((pin) + ((data) ? 0 : 16))
 
 // Lectura i escriptura del port
 //

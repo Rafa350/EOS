@@ -38,6 +38,7 @@
 #endif
 
 
+#include "HAL/halGPIOTpl.h"
 #include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosFrameBuffer.h"
 #include "Controllers/Display/eosDisplayDriver.h"
@@ -56,6 +57,13 @@ namespace eos {
 			constexpr static const bool _useDoubleBuffer = DISPLAY_DOUBLEBUFFER;
 
     	private:
+			GpioPinAdapter<DISPLAY_LCDE_PORT, DISPLAY_LCDE_PIN> _pinLCDE;
+			GpioPinAdapter<DISPLAY_BKE_PORT, DISPLAY_BKE_PIN> _pinBKE;
+			GpioPinAdapter<DISPLAY_HSYNC_PORT, DISPLAY_HSYNC_PIN> _pinHSYNC;
+			GpioPinAdapter<DISPLAY_VSYNC_PORT, DISPLAY_VSYNC_PIN> _pinVSYNC;
+			GpioPinAdapter<DISPLAY_DE_PORT, DISPLAY_DE_PIN> _pinDE;
+			GpioPinAdapter<DISPLAY_DOTCLK_PORT, DISPLAY_DOTCLK_PIN> _pinDOTCLK;
+
     		FrameBuffer* _frontFrameBuffer;
     		FrameBuffer* _backFrameBuffer;
     		void* _frontImageBuffer;

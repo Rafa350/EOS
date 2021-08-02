@@ -30,7 +30,6 @@ void osalSysTickHandler();
 
 #ifdef	__cplusplus
 }
-
 #endif
 
 

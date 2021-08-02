@@ -32,12 +32,12 @@ namespace eos {
             typedef CallbackP1<Application, const Timer::EventArgs&> TimerEventCallback;
 #endif
 
-            bool initialized;
-            ServiceList services;
-            TaskList tasks;
-            TaskEventCallback taskEventCallback;
+            bool _initialized;
+            ServiceList _services;
+            TaskList _tasks;
+            TaskEventCallback _taskEventCallback;
 #if Eos_ApplicationTickEnabled
-            TimerEventCallback timerEventCallback;
+            TimerEventCallback _timerEventCallback;
             Timer timer;
 #endif
 
@@ -74,7 +74,7 @@ namespace eos {
             void removeService(Service* service);
             void removeServices();
 
-            inline bool isInitialized() const { return initialized; }
+            inline bool isInitialized() const { return _initialized; }
 
         friend void link(Application* application, Service* service);
         friend void unlink(Application* application, Service* service);

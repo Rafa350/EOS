@@ -10,7 +10,7 @@ extern void xPortSysTickHandler(void);
 
 
 /// ----------------------------------------------------------------------
-/// \brief Entra en una seccio critica.
+/// \brief    Entra en una seccio critica.
 ///
 void osalEnterCritical() {
 
@@ -19,7 +19,7 @@ void osalEnterCritical() {
 
 
 /// ----------------------------------------------------------------------
-/// brief Surt d'una seccio critica.
+/// brief     Surt d'una seccio critica.
 ///
 void osalExitCritical() {
 
@@ -28,7 +28,7 @@ void osalExitCritical() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Posa en marxa el planificador de tasques.
+/// \brief    Posa en marxa el planificador de tasques.
 ///
 void osalStartScheduler() {
 
@@ -37,7 +37,7 @@ void osalStartScheduler() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Parada del planificador de tasques.
+/// \brief    Parada del planificador de tasques.
 ///
 void osalStopScheduler() {
 
@@ -46,7 +46,7 @@ void osalStopScheduler() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Posa en pausa totes les tasques excepte l'actual.
+/// \brief    Posa en pausa totes les tasques excepte l'actual.
 ///
 void osalSuspendAll() {
 
@@ -55,7 +55,7 @@ void osalSuspendAll() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Resumeix les tasques que estan en pausa.
+/// \brief    Resumeix les tasques que estan en pausa.
 ///
 void osalResumeAll() {
 
@@ -64,13 +64,15 @@ void osalResumeAll() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Suspen l'execucio de la tasca actual, durant un periode de temps.
-/// \param[in] time: Temps en ms.
+/// \brief    Suspen l'execucio de la tasca actual, durant un periode de temps.
+/// \param    time: Temps en ms.
 ///
 void osalDelay(
 	unsigned time) {
 
-    vTaskDelay((time ? time : time + 1) / portTICK_PERIOD_MS);
+	unsigned ticks = time / portTICK_PERIOD_MS;
+	if (ticks > 0)
+		vTaskDelay(ticks);
 }
 
 
@@ -78,14 +80,15 @@ void osalDelayUntil(
 	unsigned time,
 	unsigned* lastTick) {
 
-    if (time > 0)
-        vTaskDelayUntil((TickType_t*) lastTick, time / portTICK_PERIOD_MS);
+	unsigned ticks = time / portTICK_PERIOD_MS;
+    if (ticks > 0)
+        vTaskDelayUntil((TickType_t*) lastTick, ticks);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte el valor del contador de ticks.
-/// \retorn El valor del contador.
+/// \brief    Obte el valor del contador de ticks.
+/// \retorn   El valor del contador.
 ///
 unsigned osalGetTickCount() {
 
@@ -94,8 +97,8 @@ unsigned osalGetTickCount() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte el valor del contador de ticks en milisegons.
-/// \retorn El valor del contador.
+/// \brief    Obte el valor del contador de ticks en milisegons.
+/// \retorn   El valor del contador.
 ///
 unsigned osalGetTickTime() {
 
@@ -104,7 +107,7 @@ unsigned osalGetTickTime() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Procesa el tick del sistema.
+/// \brief    Procesa el tick del sistema.
 ///
 void osalSysTickHandler() {
 

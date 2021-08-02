@@ -23,10 +23,10 @@ LedService::LedService(
 void LedService::onSetup() {
 
 #ifdef EXIST_LEDS_LED1
-	led1.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
+	_pinLed1.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
 #endif
 #ifdef EXIST_LEDS_LED2
-	led2.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET);
+	_pinLed2.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET);
 #endif
 }
 
@@ -39,10 +39,10 @@ void LedService::onLoop() {
 	while (true) {
 
 #ifdef EXIST_LEDS_LED1
-		led1.toggle();
+		_pinLed1.toggle();
 #endif
 #ifdef EXIST_LEDS_LED2
-		led2.toggle();
+		_pinLed2.toggle();
 #endif
 
 		Task::delay(500);

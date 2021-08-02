@@ -78,6 +78,7 @@ static void enableDeviceClock(
 		default:
 			break;
 	}
+
 	__DSB();
 }
 
@@ -87,7 +88,7 @@ static void enableDeviceClock(
 /// \param    device: Device.
 /// \param    pin: Pun number.
 /// \param    options: Pin settings.
-/// \param    alt: Alternate piu function.
+/// \param    alt: Alternate pin function.
 ///
 static void setupDevicePin(
 	GPIO_TypeDef* device,
@@ -105,6 +106,7 @@ static void setupDevicePin(
 	temp = device->MODER;
 	temp &= ~(0b11 << (pin * 2));
 	switch (options & HAL_GPIO_MODE_mask) {
+
 		// Sortida digital
 		case HAL_GPIO_MODE_OUTPUT_PP:
 		case HAL_GPIO_MODE_OUTPUT_OD:
@@ -135,10 +137,12 @@ static void setupDevicePin(
 	//
 	if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_PP) ||
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_ALT_OD)) {
-	    temp = device->AFR[pin >> 3];
-	    temp &= ~(0x0F << ((uint32_t)(pin & 0x07) * 4)) ;
-        temp |= ((uint32_t)(alt) << (((uint32_t)pin & 0x07) * 4));
-        device->AFR[pin >> 3] = temp;
+		if (alt != HAL_GPIO_AF_NONE) {
+			temp = device->AFR[pin >> 3];
+			temp &= ~(0x0F << ((uint32_t)(pin & 0x07) * 4)) ;
+			temp |= ((uint32_t)(alt) << (((uint32_t)pin & 0x07) * 4));
+			device->AFR[pin >> 3] = temp;
+		}
 	}
 
 	// Configura el registre OSPEEDR (Output Speed Register)
@@ -209,10 +213,18 @@ static void setupDevicePin(
 		((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {
 
 		temp = device->BSRR;
-		if ((options & HAL_GPIO_INIT_mask) == HAL_GPIO_INIT_SET)
-			temp |= 1 << pin;
-		else
-			temp |= 1 << (pin + 16);
+		switch (options & HAL_GPIO_INIT_mask) {
+			case HAL_GPIO_INIT_SET:
+				temp |= 1 << pin;
+				break;
+
+			case HAL_GPIO_INIT_CLR:
+				temp |= 1 << (pin + 16);
+				break;
+
+			default:
+				break;
+		}
 		device->BSRR = temp;
 	}
 }
