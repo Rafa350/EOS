@@ -133,13 +133,6 @@ typedef struct {
 #define HAL_GPIO_POS_HI           0x0000FF00
 #define HAL_GPIO_POS_ALL          0x0000FFFF
 
-// Funcio alternativa AF4
-// -Funcio I2Cx
-#define HAL_GPIO_AF4_I2C1         GPIO_AF4_I2C1
-#define HAL_GPIO_AF4_I2C2         GPIO_AF4_I2C2
-#define HAL_GPIO_AF4_I2C3         GPIO_AF4_I2C3
-#define HAL_GPIO_AF4_I2C4         GPIO_AF4_I2C4
-
 // Funcio alternativa AF5
 // -Funcio SPIx
 #define HAL_GPIO_AF5_SPI1         GPIO_AF5_SPI1
@@ -152,10 +145,6 @@ typedef struct {
 // Funcio alternativa AF8
 // -Funcio USART
 #define HAL_GPIO_AF8_USART6       GPIO_AF8_USART6
-
-// Funcio alternativa AF9
-// -Funcio LTDC
-#define HAL_GPIO_AF9_LTDC         GPIO_AF9_LTDC
 
 // Funcio alternativa AF10
 // -Funcio OGTx
@@ -177,10 +166,6 @@ typedef struct {
 // Funcio alternativa AF13
 // -Funcio DCMI
 #define HAL_GPIO_AF13_DCMI        GPIO_AF13_DCMI
-
-// Funcio alternativa AF14
-// -Funcio LTDC
-#define HAL_GPIO_AF14_LTDC        GPIO_AF14_LTDC
 
 // Tipus de port
 #define HAL_GPIO_MODE_pos         0
@@ -218,7 +203,7 @@ typedef struct {
 #define HAL_GPIO_INIT_bits        0b11
 #define HAL_GPIO_INIT_mask        (HAL_GPIO_INIT_bits << HAL_GPIO_INIT_pos)
 
-#define GAL_GPIO_INIT_DEFAULT     (0 << HAL_GPIO_INIT_pos)
+#define HAL_GPIO_INIT_NOCHANGE    (0 << HAL_GPIO_INIT_pos)
 #define HAL_GPIO_INIT_CLR         (1 << HAL_GPIO_INIT_pos)
 #define HAL_GPIO_INIT_SET         (2 << HAL_GPIO_INIT_pos)
 

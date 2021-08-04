@@ -3,7 +3,6 @@
 
 #include "Controllers/TouchPad/Drivers/eosFT5336.h"
 #include "HAL/halTMR.h"
-#include "hal/halI2C.h"
 #include "hal/halGPIO.h"
 #ifdef TOUCHPAD_INT_PORT
 #include "HAL/STM32/halEXTI.h"
@@ -15,35 +14,35 @@
 using namespace eos;
 
 
-ITouchPadDriver *FT5336Driver::instance = nullptr;
+ITouchPadDriver* FT5336Driver::_instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte una instancia unica del driver.
-/// \return La instancia del driver.
+/// \brief    Obte una instancia unica del driver.
+/// \return   La instancia del driver.
 ///
-ITouchPadDriver *FT5336Driver::getInstance() {
+ITouchPadDriver* FT5336Driver::getInstance() {
 
-	if (instance == nullptr)
-		instance = new FT5336Driver();
-	return instance;
+	if (_instance == nullptr)
+		_instance = new FT5336Driver();
+	return _instance;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Contructor.
+/// \brief    Contructor.
 ///
 FT5336Driver::FT5336Driver():
 
-	addr(TOUCHPAD_I2C_ADDR),
-	padWidth(TOUCHPAD_PAD_WIDTH),
-	padHeight(TOUCHPAD_PAD_HEIGHT),
-	orientation(TouchPadOrientation::normal) {
+	_addr(TOUCHPAD_I2C_ADDR),
+	_padWidth(TOUCHPAD_PAD_WIDTH),
+	_padHeight(TOUCHPAD_PAD_HEIGHT),
+	_orientation(TouchPadOrientation::normal) {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el driver.
+/// \brief    Inicialitza el driver.
 ///
 void FT5336Driver::initialize() {
 
@@ -51,7 +50,7 @@ void FT5336Driver::initialize() {
 	// Trsi timing (Time of starting to report point after resetting) from FT5336GQQ datasheet
 	//
 	halTMRDelay(200);
-    ioInit();
+    initializeInterface();
 
 #ifdef TOUCHPAD_INT_PORT
     enableInt();
@@ -60,7 +59,7 @@ void FT5336Driver::initialize() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Finalitza el driver.
+/// \brief    Finalitza el driver.
 ///
 void FT5336Driver::shutdown() {
 
@@ -71,37 +70,37 @@ void FT5336Driver::shutdown() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief selecciona l'oeirntacio del touch pad
-/// \param orientation: La orientacio a seleccionar.
+/// \brief    Selecciona l'oeirntacio del touch pad
+/// \param    orientation: La orientacio a seleccionar.
 ///
 void FT5336Driver::setOrientation(
 	TouchPadOrientation orientation) {
 
-	this->orientation = orientation;
+	_orientation = orientation;
 
 	switch (orientation) {
 		case TouchPadOrientation::normal:
 		case TouchPadOrientation::rotate180:
-			padWidth = TOUCHPAD_PAD_WIDTH;
-			padHeight = TOUCHPAD_PAD_HEIGHT;
+			_padWidth = TOUCHPAD_PAD_WIDTH;
+			_padHeight = TOUCHPAD_PAD_HEIGHT;
 			break;
 
 		case TouchPadOrientation::rotate90:
 		case TouchPadOrientation::rotate270:
-			padWidth = TOUCHPAD_PAD_HEIGHT;
-			padHeight = TOUCHPAD_PAD_WIDTH;
+			_padWidth = TOUCHPAD_PAD_HEIGHT;
+			_padHeight = TOUCHPAD_PAD_WIDTH;
 			break;
 	}
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Comprova si hi ha accio.
-/// \return True si hi ha accio en el touchpad.
+/// \brief    Comprova si hi ha accio.
+/// \return   True si hi ha accio en el touchpad.
 ///
 int FT5336Driver::getTouchCount() {
 
-	int8_t numPoints = ioRead(FT5336_TD_STAT_REG) & FT5336_TD_STAT_MASK;
+	uint8_t numPoints = readRegister(FT5336_TD_STAT_REG) & FT5336_TD_STAT_MASK;
     if (numPoints > FT5336_MAX_DETECTABLE_TOUCH)
     	numPoints = 0;
     return numPoints;
@@ -109,15 +108,15 @@ int FT5336Driver::getTouchCount() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte l'estat del touchpad.
-/// \param state: Buffer on deixar el resultat.
-/// \return True si s'ha detectat contacte.
+/// \brief    Obte l'estat del touchpad.
+/// \param    state: Buffer on deixar el resultat.
+/// \return   True si s'ha detectat contacte.
 ///
 bool FT5336Driver::getState(
-	TouchPadState &state) {
+	TouchPadState& state) {
 
 	state.maxPoints = FT5336_MAX_DETECTABLE_TOUCH;
-	state.numPoints = ioRead(FT5336_TD_STAT_REG) & FT5336_TD_STAT_MASK;
+	state.numPoints = readRegister(FT5336_TD_STAT_REG) & FT5336_TD_STAT_MASK;
 	if (state.numPoints > state.maxPoints)
 		state.numPoints = 0;
 
@@ -206,28 +205,28 @@ bool FT5336Driver::getState(
 
 		// Posicio X [7:0]
 		//
-		readData = ioRead(regAddressXLow);
+		readData = readRegister(regAddressXLow);
 		tempX = (readData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
 
 		// Posicio X [11:8] i estat [15:12]
 		//
-		readData = ioRead(regAddressXHigh);
+		readData = readRegister(regAddressXHigh);
 		state.action[c] = (TouchPadAction) ((readData & FT5336_TOUCH_EVT_FLAG_MASK) >> FT5336_TOUCH_EVT_FLAG_SHIFT);
 		tempX |= ((readData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
 		// Posicio YLow [7:0]
 		//
-		readData = ioRead(regAddressYLow);
+		readData = readRegister(regAddressYLow);
 		tempY = (readData & FT5336_TOUCH_POS_LSB_MASK) >> FT5336_TOUCH_POS_LSB_SHIFT;
 
 		// Posicio YHigh [11:8]
 		//
-		readData = ioRead(regAddressYHigh);
+		readData = readRegister(regAddressYHigh);
 		tempY |= ((readData & FT5336_TOUCH_POS_MSB_MASK) >> FT5336_TOUCH_POS_MSB_SHIFT) << 8;
 
 		// Ajusta les coordinades a la orientacio
 		//
-		switch (orientation) {
+		switch (_orientation) {
 			case TouchPadOrientation::normal:
 				state.x[c] = tempX;
 				state.y[c] = tempY;
@@ -239,13 +238,13 @@ bool FT5336Driver::getState(
 				break;
 
 			case TouchPadOrientation::rotate180:
-				state.x[c] = padWidth - tempX;
-				state.y[c] = padHeight - tempY;
+				state.x[c] = _padWidth - tempX;
+				state.y[c] = _padHeight - tempY;
 				break;
 
 			case TouchPadOrientation::rotate270:
-				state.x[c] = padWidth - tempY;
-				state.y[c] = padHeight - tempX;
+				state.x[c] = _padWidth - tempY;
+				state.y[c] = _padHeight - tempX;
 				break;
 		}
 	}
@@ -255,35 +254,33 @@ bool FT5336Driver::getState(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Activa la generacio d'interrupcions pel pin INT
+/// \brief    Activa la generacio d'interrupcions pel pin INT
 ///
 void FT5336Driver::enableInt() {
 
-   uint8_t regValue = 0;
-   regValue = (FT5336_G_MODE_INTERRUPT_TRIGGER & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
+   uint8_t regValue = (FT5336_G_MODE_INTERRUPT_TRIGGER & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
 
    // Set interrupt trigger mode in FT5336_GMODE_REG
    //
-   ioWrite(FT5336_GMODE_REG, regValue);
+   writeRegister(FT5336_GMODE_REG, regValue);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Desactiva la generacio d'interrupcions pel pin INT
+/// \brief    Desactiva la generacio d'interrupcions pel pin INT
 ///
 void FT5336Driver::disableInt() {
 
-	uint8_t regValue = 0;
-	regValue = (FT5336_G_MODE_INTERRUPT_POLLING & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
+	uint8_t regValue = (FT5336_G_MODE_INTERRUPT_POLLING & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
 
 	// Set interrupt polling mode in FT5336_GMODE_REG
 	//
-	ioWrite(FT5336_GMODE_REG, regValue);
+	writeRegister(FT5336_GMODE_REG, regValue);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Borra la interrupcio generada
+/// \brief    Borra la interrupcio generada
 ///
 void FT5336Driver::clearInt() {
 
@@ -291,17 +288,9 @@ void FT5336Driver::clearInt() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza la comunicacio amb el driver.
+/// \brief    Inicialitza la comunicacio amb el driver.
 ///
-void FT5336Driver::ioInit() {
-
-	static GPIOPinSettings const gpioSettings[] = {
-#ifdef TOUCHPAD_INT_PORT
-		{TOUCHPAD_INT_PORT, TOUCHPAD_INT_PIN, HAL_GPIO_MODE_INPUT | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_UP, 0},
-#endif
-		{TOUCHPAD_SCL_PORT, TOUCHPAD_SCL_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_UP, TOUCHPAD_SCL_AF},
-		{TOUCHPAD_SDA_PORT, TOUCHPAD_SDA_PIN, HAL_GPIO_MODE_ALT_OD | HAL_GPIO_SPEED_FAST | HAL_GPIO_PULL_UP, TOUCHPAD_SCL_AF}
-	};
+void FT5336Driver::initializeInterface() {
 
 #ifdef TOUCHPAD_INT_PORT
 	static EXTIPinSettings const extiSettings[] = {
@@ -309,7 +298,11 @@ void FT5336Driver::ioInit() {
 	};
 #endif
 
-	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
+	// Inicialitza el pin d'interrupcio
+	//
+#ifdef TOUCHPAD_INT_PORT
+	_pinINT.initInput(GpioSpeed::fast, GpioPull::up);
+#endif
 
 #ifdef TOUCHPAD_INT_PORT
 	halEXTIInitializePins(extiSettings, sizeof(extiSettings) / sizeof(extiSettings[0]));
@@ -317,41 +310,43 @@ void FT5336Driver::ioInit() {
 	halINTEnableInterruptVector(TOUCHPAD_INT_IRQ);
 #endif
 
-	I2CMasterInitializeInfo i2cInfo;
-	i2cInfo.channel = TOUCHPAD_I2C_CHANNEL;
-	hI2C = halI2CMasterInitialize(&i2cData, &i2cInfo);
+	// Inicialitza el canal I2C
+	//
+	_i2c.setSCLPin(_pinSCL);
+	_i2c.setSDAPin(_pinSDA);
+	_i2c.initMaster();
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Esciu en un registre del driver.
-/// \param addr: Adressa I2C.
-/// \param reg: Numero de registre.
-/// \param value: El valor a escriure.
+/// \brief    Esciu en un registre del driver.
+/// \param    addr: Adressa I2C.
+/// \param    reg: Numero de registre.
+/// \param    value: El valor a escriure.
 ///
-void FT5336Driver::ioWrite(
+void FT5336Driver::writeRegister(
 	uint8_t reg,
 	uint8_t value) {
 
 	uint8_t buffer[1];
 
 	buffer[0] = value;
-	halI2CMasterWriteMultiple(hI2C, addr, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT, buffer, sizeof(buffer));
+	_i2c.send(_addr, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT, buffer, sizeof(buffer));
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief llegeix un valor d'un registre del driver.
-/// \param addr: L'adressa I2C.
-/// \param reg: Numero del registre.
-/// \return El valor del registre.
+/// \brief    Llegeix un valor d'un registre del driver.
+/// \param    addr: L'adressa I2C.
+/// \param    reg: Numero del registre.
+/// \return   El valor del registre.
 ///
-uint8_t FT5336Driver::ioRead(
+uint8_t FT5336Driver::readRegister(
 	uint8_t reg) {
 
 	uint8_t buffer[1];
 
-	halI2CMasterReadMultiple(hI2C, addr, reg, I2C_MEMADD_SIZE_8BIT, buffer, sizeof(buffer));
+	_i2c.read(_addr, reg, I2C_MEMADD_SIZE_8BIT, buffer, sizeof(buffer));
 
 	return buffer[0];
 }

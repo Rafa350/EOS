@@ -59,24 +59,22 @@ static void enableDeviceClock(
 	switch ((uint32_t) device) {
 		case I2C1_BASE:
             __set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_I2C1EN);
-			__DSB();
 			break;
 
 		case I2C2_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_I2C2EN);
-			__DSB();
 			break;
 
 		case I2C3_BASE:
             __set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_I2C3EN);
-            __DSB();
 			break;
 
 		case I2C4_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_I2C4EN);
-            __DSB();
 			break;
 	}
+
+	__DSB();
 }
 
 
@@ -121,7 +119,7 @@ static void setupDevice(
 ///
 I2CHandler halI2CMasterInitialize(
 	I2CData* data,
-	const I2CMasterInitializeInfo *info) {
+	const I2CMasterInitializeInfo* info) {
 
 	eosAssert(data != NULL);
 	eosAssert(info != NULL);
@@ -196,7 +194,7 @@ void halI2CMasterReadMultiple(
 	uint8_t addr,
 	uint16_t reg,
 	uint16_t memAddress,
-	uint8_t *buffer,
+	uint8_t* buffer,
 	uint16_t length) {
 
 	__VERIFY_HANDLER(handler);
@@ -218,13 +216,13 @@ void halI2CMasterWriteMultiple(
 	uint8_t addr,
 	uint16_t reg,
 	uint16_t memAddress,
-	uint8_t *buffer,
+	const uint8_t* buffer,
 	uint16_t length) {
 
 	__VERIFY_HANDLER(handler);
 
 	HAL_StatusTypeDef status = HAL_OK;
-	status = HAL_I2C_Mem_Write(&handler->handle, addr, (uint16_t)reg, memAddress, buffer, length, 1000);
+	status = HAL_I2C_Mem_Write(&handler->handle, addr, (uint16_t)reg, memAddress, (uint8_t*)buffer, length, 1000);
 
 	// Check the communication status
 	if (status != HAL_OK) {

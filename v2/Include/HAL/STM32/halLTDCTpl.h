@@ -11,6 +11,42 @@
 
 namespace eos {
 
+	enum class LtdcLayerNum: LTDCLayerNum {
+		layer0 = HAL_LTDC_LAYER_0,
+		layer1 = HAL_LTDC_LAYER_1
+	};
+
+    template <LtdcLayerNum layerNum>
+    class LtdcLayer {
+
+    	inline static void setWindow(int x, int y, int width, int height) {
+    		halLTDCLayerSetWindow(
+    			LTDCLayerNum(layerNum),
+				x, y,
+				width, height);
+    	}
+
+    	inline static void setFrameFormat(LTDCPixelFormat format, int width, int pitch, int lines) {
+    		halLTDCLayerSetFrameFormat(
+    			LTDCLayerNum(layerNum),
+    			format,
+				width,
+    			pitch,
+    			lines);
+    	}
+
+    	inline static void setFramBuffer(void* buffer) {
+			halLTDCLayerSetFrameBuffer(
+				LTDCLayerNum(layerNum),
+				buffer);
+    	}
+
+    	inline static void update() {
+    		halLTDCLayerUpdate(
+    			LTDCLayerNum(layerNum));
+    	}
+    };
+
     // Valors que depenen del format de color
     //
 	template <ColorFormat FORMAT>

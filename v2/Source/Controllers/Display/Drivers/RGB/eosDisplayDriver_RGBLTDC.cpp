@@ -287,49 +287,40 @@ void DisplayDriver_RGBLTDC::refresh() {
 ///
 void DisplayDriver_RGBLTDC::initializeGPIO() {
 
-	_pinLCDE.initOutput(GpioSpeed::low, GpioDriver::pushPull, GpioState::clr);
 	_pinBKE.initOutput(GpioSpeed::low, GpioDriver::pushPull, GpioState::clr);
 
-	_pinHSYNC.initAlt(GpioSpeed::fast, GpioDriver::pushPull, _pinHSYNC.Function.ltdc_HSYNC);
-	_pinVSYNC.initAlt(GpioSpeed::fast, GpioDriver::pushPull, _pinVSYNC.Function.ltdc_VSYNC);
-	_pinDE.initAlt(GpioSpeed::fast, GpioDriver::pushPull, _pinDE.Function.ltdc_DE);
-	_pinDOTCLK.initAlt(GpioSpeed::fast, GpioDriver::pushPull, _pinDOTCLK.Function.ltdc_DOTCLK);
+	_pinLCDE.initOutput(GpioSpeed::low, GpioDriver::pushPull, GpioState::clr);
+	_pinHSYNC.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinHSYNC::GpioAlt::ltdc_HSYNC);
+	_pinVSYNC.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinVSYNC::GpioAlt::ltdc_VSYNC);
+	_pinDE.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinDE::GpioAlt::ltdc_DE);
+	_pinDOTCLK.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinDOTCLK::GpioAlt::ltdc_DOTCLK);
 
-	static const GPIOPinSettings gpioSettings[] = {
-		//{DISPLAY_HSYNC_PORT, DISPLAY_HSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_HSYNC_AF},
-		//{DISPLAY_VSYNC_PORT, DISPLAY_VSYNC_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_VSYNC_AF},
-		//{DISPLAY_DOTCLK_PORT, DISPLAY_DOTCLK_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_DOTCLK_AF},
-		//{DISPLAY_DE_PORT, DISPLAY_DE_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_DE_AF},
+	_pinR0.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinR0::GpioAlt::ltdc_R0);
+	_pinR1.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinR1::GpioAlt::ltdc_R1);
+	_pinR2.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinR2::GpioAlt::ltdc_R2);
+	_pinR3.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinR3::GpioAlt::ltdc_R3);
+	_pinR4.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinR4::GpioAlt::ltdc_R4);
+	_pinR5.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinR5::GpioAlt::ltdc_R5);
+	_pinR6.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinR6::GpioAlt::ltdc_R6);
+	_pinR7.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinR7::GpioAlt::ltdc_R7);
 
-		{DISPLAY_R0_PORT, DISPLAY_R0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R0_AF},
-		{DISPLAY_R1_PORT, DISPLAY_R1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R1_AF},
-		{DISPLAY_R2_PORT, DISPLAY_R2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R2_AF},
-		{DISPLAY_R3_PORT, DISPLAY_R3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R3_AF},
-		{DISPLAY_R4_PORT, DISPLAY_R4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R4_AF},
-		{DISPLAY_R5_PORT, DISPLAY_R5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R5_AF},
-		{DISPLAY_R6_PORT, DISPLAY_R6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R6_AF},
-		{DISPLAY_R7_PORT, DISPLAY_R7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_R7_AF},
+	_pinG0.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinG0::GpioAlt::ltdc_G0);
+	_pinG1.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinG1::GpioAlt::ltdc_G1);
+	_pinG2.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinG2::GpioAlt::ltdc_G2);
+	_pinG3.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinG3::GpioAlt::ltdc_G3);
+	_pinG4.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinG4::GpioAlt::ltdc_G4);
+	_pinG5.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinG5::GpioAlt::ltdc_G5);
+	_pinG6.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinG6::GpioAlt::ltdc_G6);
+	_pinG7.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinG7::GpioAlt::ltdc_G7);
 
-		{DISPLAY_G0_PORT, DISPLAY_G0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G0_AF},
-		{DISPLAY_G1_PORT, DISPLAY_G1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G1_AF},
-		{DISPLAY_G2_PORT, DISPLAY_G2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G2_AF},
-		{DISPLAY_G3_PORT, DISPLAY_G3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G3_AF},
-		{DISPLAY_G4_PORT, DISPLAY_G4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G4_AF},
-		{DISPLAY_G5_PORT, DISPLAY_G5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G5_AF},
-		{DISPLAY_G6_PORT, DISPLAY_G6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G6_AF},
-		{DISPLAY_G7_PORT, DISPLAY_G7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_G7_AF},
-
-		{DISPLAY_B0_PORT, DISPLAY_B0_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B0_AF},
-		{DISPLAY_B1_PORT, DISPLAY_B1_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B1_AF},
-		{DISPLAY_B2_PORT, DISPLAY_B2_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B2_AF},
-		{DISPLAY_B3_PORT, DISPLAY_B3_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B3_AF},
-		{DISPLAY_B4_PORT, DISPLAY_B4_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B4_AF},
-		{DISPLAY_B5_PORT, DISPLAY_B5_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B5_AF},
-		{DISPLAY_B6_PORT, DISPLAY_B6_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B6_AF},
-		{DISPLAY_B7_PORT, DISPLAY_B7_PIN, HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_B7_AF}
-	};
-
-	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
+	_pinB0.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinB0::GpioAlt::ltdc_B0);
+	_pinB1.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinB1::GpioAlt::ltdc_B1);
+	_pinB2.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinB2::GpioAlt::ltdc_B2);
+	_pinB3.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinB3::GpioAlt::ltdc_B3);
+	_pinB4.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinB4::GpioAlt::ltdc_B4);
+	_pinB5.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinB5::GpioAlt::ltdc_B5);
+	_pinB6.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinB6::GpioAlt::ltdc_B6);
+	_pinB7.initAlt(GpioSpeed::fast, GpioDriver::pushPull, PinB7::GpioAlt::ltdc_B7);
 }
 
 

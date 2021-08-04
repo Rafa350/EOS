@@ -1,7 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HAL/halGPIO.h"
-#include "HAL/halSPI.h"
 #include "HAL/halTMR.h"
 #include "Controllers/Display/eosMonoFrameBuffer.h"
 #include "Controllers/Display/Drivers/SSD1306/eosDisplayDriver_SSD1306.h"
@@ -19,7 +17,7 @@ DisplayDriver_SSD1306::DisplayDriver_SSD1306() {
 		_displayWidth,
 		_displayHeight,
 		DisplayOrientation::normal,
-		(void*) DISPLAY_IMAGE_BUFFER,
+		(void*) _imageBuffer,
         _displayWidth);
 }
 
@@ -223,8 +221,6 @@ void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza modul GPIO
 	//
-	_pinSCK.initAlt(GpioSpeed::fast, GpioDriver::pushPull, _pinSCK.Function.spi2_SCK);
-	_pinMOSI.initAlt(GpioSpeed::fast, GpioDriver::pushPull, _pinMOSI.Function.spi2_MOSI);
 	_pinCS.initOutput(GpioSpeed::fast, GpioDriver::pushPull, GpioState::set);
 	_pinDC.initOutput(GpioSpeed::fast, GpioDriver::pushPull, GpioState::set);
 #ifdef DISPLAY_RST_PORT
@@ -234,6 +230,8 @@ void DisplayDriver_SSD1306::initializeInterface() {
 	// Inicialitza el modul SPI
 	//
 	_spi.initialize(HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_128);
+	_spi.setSCKPin(_pinSCK);
+	_spi.setMOSIPin(_pinMOSI);
 }
 #else
 #error "DISPLAY_SSD1306_INTERFACE"

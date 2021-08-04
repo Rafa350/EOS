@@ -5,7 +5,8 @@
 // EOS includes
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
-#include "HAL\halI2C.h"
+#include "HAL\halI2CTpl.h"
+#include "HAL\halGPIOTpl.h"
 
 
 // Adressa I2C
@@ -18,7 +19,7 @@
 #define FT5336_PAD_WIDTH               480
 #endif
 
-// Al�ada del pad
+// Alçada del pad
 #ifndef FT5336_PAD_HEIGHT
 #define FT5336_PAD_HEIGHT              272
 #endif
@@ -247,37 +248,49 @@ namespace eos {
 
 	class FT5336Driver: public ITouchPadDriver {
 		private:
-			static ITouchPadDriver *instance;
-			uint8_t addr;
-			int padWidth;
-			int padHeight;
-			TouchPadOrientation orientation;
-			I2CData i2cData;
-			I2CHandler hI2C;
+#ifdef TOUCHPAD_INT_PORT
+		    typedef GpioPinAdapter<GpioPort(TOUCHPAD_INT_PORT), GpioPin(TOUCHPAD_INT_PIN)> PinINT;
+#endif
+			typedef GpioPinAdapter<GpioPort(TOUCHPAD_SCL_PORT), GpioPin(TOUCHPAD_SCL_PIN)> PinSCL;
+			typedef GpioPinAdapter<GpioPort(TOUCHPAD_SDA_PORT), GpioPin(TOUCHPAD_SDA_PIN)> PinSDA;
+			typedef I2cAdapter<I2cChannel(TOUCHPAD_I2C_CHANNEL)> I2C;
+
+		private:
+			static ITouchPadDriver* _instance;
+			uint8_t _addr;
+			int _padWidth;
+			int _padHeight;
+			TouchPadOrientation _orientation;
+#ifdef TOUCHPAD_INT_PORT
+			PinINT _pinINT;
+#endif
+			PinSCL _pinSCL;
+			PinSDA _pinSDA;
+			I2C _i2c;
 
 		private:
 			FT5336Driver();
-			FT5336Driver(const FT5336Driver &other) = delete;
+			FT5336Driver(const FT5336Driver& other) = delete;
 
 		public:
-			static ITouchPadDriver *getInstance();
+			static ITouchPadDriver* getInstance();
 
 			void initialize();
 			void shutdown();
 
-			int getWidth() const { return padWidth; }
-			int getHeight() const { return padHeight; }
+			int getWidth() const override { return _padWidth; }
+			int getHeight() const override { return _padHeight; }
 			int getTouchCount();
-			bool getState(TouchPadState &state);
+			bool getState(TouchPadState& state);
 			void setOrientation(TouchPadOrientation orientation);
 			void enableInt();
 			void disableInt();
 			void clearInt();
 
 		private:
-			void ioInit();
-			uint8_t ioRead(uint8_t reg);
-			void ioWrite(uint8_t reg, uint8_t value);
+			void initializeInterface();
+			uint8_t readRegister(uint8_t reg);
+			void writeRegister(uint8_t reg, uint8_t value);
 	};
 }
 

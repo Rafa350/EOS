@@ -20,7 +20,7 @@ namespace app {
 	class LedService: public eos::AppLoopService {
 		private:
 #ifdef EXIST_LEDS_LED1
-			eos::GpioPinAdapter<LEDS_LED1_PORT, LEDS_LED1_PIN> _pinLed1;
+			eos::GpioPinAdapter<eos::GpioPort(LEDS_LED1_PORT), eos::GpioPin(LEDS_LED1_PIN)> _pinLed1;
 #endif
 #ifdef EXIST_LEDS_LED2
 			eos::GpioPinAdapter<LEDS_LED2_PORT, LEDS_LED2_PIN> _pinLed2;

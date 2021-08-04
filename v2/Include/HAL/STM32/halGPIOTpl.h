@@ -1,6 +1,8 @@
 #ifndef __STM32_halGPIOTpl__
 #define __STM32_halGPIOTpl__
 
+#ifdef __cplusplus
+
 
 // EOS includes
 //
@@ -10,9 +12,42 @@
 
 namespace eos {
 
-	template <GPIOPort port, GPIOPin pin>
-	struct GpioFunction {
-		enum class Value {
+	enum class GpioPort: GPIOPort {
+		portA = HAL_GPIO_PORT_A,
+		portB = HAL_GPIO_PORT_B,
+		portC = HAL_GPIO_PORT_C,
+		portD = HAL_GPIO_PORT_D,
+		portE = HAL_GPIO_PORT_E,
+		portF = HAL_GPIO_PORT_F,
+		portG = HAL_GPIO_PORT_G,
+		portH = HAL_GPIO_PORT_H,
+		portI = HAL_GPIO_PORT_I,
+		portJ = HAL_GPIO_PORT_J,
+		portK = HAL_GPIO_PORT_K
+	};
+
+	enum class GpioPin: GPIOPin {
+		pin0 = HAL_GPIO_PIN_0,
+		pin1 = HAL_GPIO_PIN_1,
+		pin2 = HAL_GPIO_PIN_2,
+		pin3 = HAL_GPIO_PIN_3,
+		pin4 = HAL_GPIO_PIN_4,
+		pin5 = HAL_GPIO_PIN_5,
+		pin6 = HAL_GPIO_PIN_6,
+		pin7 = HAL_GPIO_PIN_7,
+		pin8 = HAL_GPIO_PIN_8,
+		pin9 = HAL_GPIO_PIN_9,
+		pin10 = HAL_GPIO_PIN_10,
+		pin11 = HAL_GPIO_PIN_11,
+		pin12 = HAL_GPIO_PIN_12,
+		pin13 = HAL_GPIO_PIN_13,
+		pin14 = HAL_GPIO_PIN_14,
+		pin15 = HAL_GPIO_PIN_15
+	};
+
+	template <GpioPort port, GpioPin pin>
+	struct GpioPinInfo {
+		enum class GpioAlt: GPIOAlt {
 		};
 	};
 
@@ -35,18 +70,18 @@ namespace eos {
 	};
 
 	enum class GpioState: GPIOOptions {
-		noChange = 0,
+		noChange = HAL_GPIO_INIT_NOCHANGE,
 		set = HAL_GPIO_INIT_SET,
 		clr = HAL_GPIO_INIT_CLR
 	};
 
-	template <GPIOPort port, GPIOPin pin>
+	template <GpioPort port, GpioPin pin>
 	class GpioPinAdapter {
-		public:
-			typedef typename GpioFunction<port, pin>::Value FunctionValue;
+		private:
+			using PinInfo = GpioPinInfo<port, pin>;
 
 		public:
-			static const GpioFunction<port, pin> Function;
+			using GpioAlt = typename PinInfo::GpioAlt;
 
 		public:
 			inline static void initInput(GpioSpeed speed, GpioPull pull) {
@@ -54,7 +89,7 @@ namespace eos {
 					HAL_GPIO_MODE_INPUT |
 					GPIOOptions(speed) |
 					GPIOOptions(pull);
-				halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
+				halGPIOInitializePin(GPIOPort(port), GPIOPin(pin), options, HAL_GPIO_AF_NONE);
 			}
 
 			inline static void initOutput(GpioSpeed speed, GpioDriver driver, GpioState state) {
@@ -63,403 +98,517 @@ namespace eos {
 					GPIOOptions(speed) |
 					GPIOOptions(state) |
 					(driver == GpioDriver::pushPull ? HAL_GPIO_MODE_OUTPUT_PP : HAL_GPIO_MODE_OUTPUT_OD);
-				halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
+				halGPIOInitializePin(GPIOPort(port), GPIOPin(pin), options, HAL_GPIO_AF_NONE);
 			}
 
-			inline static void initAlt(GpioSpeed speed, GpioDriver driver, FunctionValue fv) {
+			inline static void initAlt(GpioSpeed speed, GpioDriver driver, GpioAlt alt) {
 				GPIOOptions options =
 					HAL_GPIO_MODE_INPUT |
 					GPIOOptions(speed) |
 					(driver == GpioDriver::pushPull ? HAL_GPIO_MODE_ALT_PP : HAL_GPIO_MODE_ALT_OD);
-				halGPIOInitializePin(port, pin, options, GPIOAlt(fv));
+				halGPIOInitializePin(GPIOPort(port), GPIOPin(pin), options, GPIOAlt(alt));
 			}
 
 			inline static void initialize(GPIOOptions options) {
-				halGPIOInitializePin(port, pin, options, HAL_GPIO_AF_NONE);
+				halGPIOInitializePin(GPIOPort(port), GPIOPin(pin), options, HAL_GPIO_AF_NONE);
 			}
 
 			inline static void initialize(GPIOOptions options, GPIOAlt alt) {
-				halGPIOInitializePin(port, pin, options, alt);
+				halGPIOInitializePin(GPIOPort(port), GPIOPin(pin), options, alt);
 			}
 
 			inline static void set() {
-				halGPIOSetPin(port, pin);
+				halGPIOSetPin(GPIOPort(port), GPIOPin(pin));
 			}
 
 			inline static void clear() {
-				halGPIOClearPin(port, pin);
+				halGPIOClearPin(GPIOPort(port), GPIOPin(pin));
 			}
 
 			inline static void toggle() {
-				halGPIOTogglePin(port, pin);
+				halGPIOTogglePin(GPIOPort(port), GPIOPin(pin));
 			}
 
 			inline static bool read() {
-				return halGPIOReadPin(port, pin);
+				return halGPIOReadPin(GPIOPort(port), GPIOPin(pin));
 			}
 
-			inline static GPIOPort getPort() {
+			inline static void write(bool b) {
+				halGPIOWritePin(GPIOPort(port), GPIOPin(pin), b);
+			}
+
+			inline static GpioPort getPort() {
 				return port;
 			}
 
-			inline static GPIOPin getPin() {
-				return port;
+			inline static GpioPin getPin() {
+				return pin;
 			}
 
 			inline GpioPinAdapter& operator = (bool b) {
-				halGPIOWritePin(port, pin, b);
+				halGPIOWritePin(GPIOPort(port), GPIOPin(pin), b);
 				return *this;
 			}
 	};
 
 
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_0> PA0;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_1> PA1;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_2> PA2;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_3> PA3;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_4> PA4;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_5> PA5;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_6> PA6;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_7> PA7;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_8> PA8;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_9> PA9;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_10> PA10;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_11> PA11;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_12> PA12;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_13> PA13;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_14> PA14;
-	typedef GpioPinAdapter<HAL_GPIO_PORT_A, HAL_GPIO_PIN_15> PA15;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin0> PA0;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin1> PA1;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin2> PA2;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin3> PA3;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin4> PA4;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin5> PA5;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin6> PA6;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin7> PA7;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin8> PA8;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin9> PA9;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin10> PA10;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin11> PA11;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin12> PA12;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin13> PA13;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin14> PA14;
+	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin15> PA15;
+
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin0> PB0;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin1> PB1;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin2> PB2;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin3> PB3;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin4> PB4;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin5> PB5;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin6> PB6;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin7> PB7;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin8> PB8;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin9> PB9;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin10> PB10;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin11> PB11;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin12> PB12;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin13> PB13;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin14> PB14;
+	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin15> PB15;
+
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin0> PC0;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin1> PC1;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin2> PC2;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin3> PC3;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin4> PC4;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin5> PC5;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin6> PC6;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin7> PC7;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin8> PC8;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin9> PC9;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin10> PC10;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin11> PC11;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin12> PC12;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin13> PC13;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin14> PC14;
+	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin15> PC15;
 
 
 #ifdef EOS_STM32F7
 
 	// PORT A ------------------------------------------------------------
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_A, HAL_GPIO_PIN_5> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portA, GpioPin::pin0> {
+		enum class GpioAlt: GPIOAlt {
+			usart2_CST = HAL_GPIO_AF_7,
+			uart4_TX = HAL_GPIO_AF_8
+		};
+		constexpr static GpioPort port = GpioPort::portA;
+		constexpr static GpioPin pin = GpioPin::pin0;
+	};
+
+	template <>
+	struct GpioPinInfo<GpioPort::portA, GpioPin::pin1> {
+		enum class GpioAlt: GPIOAlt {
+			usart2_RTS = HAL_GPIO_AF_7,
+			uart4_RX = HAL_GPIO_AF_8
+		};
+		constexpr static GpioPort port = GpioPort::portA;
+		constexpr static GpioPin pin = GpioPin::pin1;
+	};
+
+	template <>
+	struct GpioPinInfo<GpioPort::portA, GpioPin::pin5> {
+		enum class GpioAlt: GPIOAlt {
 			i2s1_CL = HAL_GPIO_AF_5,
 			spi1_SCK = HAL_GPIO_AF_5
 		};
-		constexpr static const Value i2s1_CL = Value::i2s1_CL;
-		constexpr static const Value spi1_SCK = Value::spi1_SCK;
+		constexpr static GpioPort port = GpioPort::portA;
+		constexpr static GpioPin pin = GpioPin::pin5;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_A, HAL_GPIO_PIN_6> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portA, GpioPin::pin6> {
+		enum class GpioAlt: GPIOAlt {
 			spi1_MISO = HAL_GPIO_AF_5
 		};
-		constexpr static const Value spi1_MISO = Value::spi1_MISO;
+		constexpr static GpioPort port = GpioPort::portA;
+		constexpr static GpioPin pin = GpioPin::pin6;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_A, HAL_GPIO_PIN_7> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portA, GpioPin::pin7> {
+		enum class GpioAlt: GPIOAlt {
 			i2s1_SD = HAL_GPIO_AF_5,
 			spi1_MOSI = HAL_GPIO_AF_5
 		};
-		constexpr static const Value i2s1_SD = Value::i2s1_SD;
-		constexpr static const Value spi1_MOSI = Value::spi1_MOSI;
+		constexpr static GpioPort port = GpioPort::portA;
+		constexpr static GpioPin pin = GpioPin::pin7;
 	};
 
 
 	// PORT B ------------------------------------------------------------
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_B, HAL_GPIO_PIN_8> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portB, GpioPin::pin8> {
+		enum class GpioAlt: GPIOAlt {
 			i2c1_SCL = HAL_GPIO_AF_4,
 			ltdc_B6 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value i2c1_SCL = Value::i2c1_SCL;
-		constexpr static const Value ltdc_B6 = Value::ltdc_B6;
+		constexpr static GpioPort port = GpioPort::portB;
+		constexpr static GpioPin pin = GpioPin::pin8;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_B, HAL_GPIO_PIN_9> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portB, GpioPin::pin9> {
+		enum class GpioAlt: GPIOAlt {
 			i2c1_SDA = HAL_GPIO_AF_4,
 			ltdc_B7 = HAL_GPIO_AF_14,
 			spi2_NSS = HAL_GPIO_AF_5
 		};
-		constexpr static const Value i2c1_SDA = Value::i2c1_SDA;
-		constexpr static const Value ltdc_B7 = Value::ltdc_B7;
-		constexpr static const Value spi2_NSS = Value::spi2_NSS;
+		constexpr static GpioPort port = GpioPort::portB;
+		constexpr static GpioPin pin = GpioPin::pin9;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_B, HAL_GPIO_PIN_10> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portB, GpioPin::pin10> {
+		enum class GpioAlt: GPIOAlt {
 			i2c2_SCL = HAL_GPIO_AF_4,
 			ltdc_G4 = HAL_GPIO_AF_14,
 			spi2_SCK = HAL_GPIO_AF_5
 		};
-		constexpr static const Value i2c2_SCL = Value::i2c2_SCL;
-		constexpr static const Value ltdc_G4 = Value::ltdc_G4;
-		constexpr static const Value spi2_SCK = Value::spi2_SCK;
+		constexpr static GpioPort port = GpioPort::portB;
+		constexpr static GpioPin pin = GpioPin::pin10;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_B, HAL_GPIO_PIN_15> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portB, GpioPin::pin15> {
+		enum class GpioAlt: GPIOAlt {
 			spi2_MOSI = HAL_GPIO_AF_5
 		};
-		constexpr static const Value spi2_MOSI = Value::spi2_MOSI;
+		constexpr static GpioPort port = GpioPort::portB;
+		constexpr static GpioPin pin = GpioPin::pin15;
 	};
 
 
 	// PORT D ------------------------------------------------------------
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_D, HAL_GPIO_PIN_6> {
-		constexpr static const GPIOAlt spi3_SCK = HAL_GPIO_AF_5;
-		constexpr static const GPIOAlt i2s3_SD = HAL_GPIO_AF_5;
+	struct GpioPinInfo<GpioPort::portD, GpioPin::pin6> {
+		enum class GpioAlt: GPIOAlt {
+			spi3_SCK = HAL_GPIO_AF_5,
+			i2s3_SD = HAL_GPIO_AF_5
+		};
+		constexpr static GpioPort port = GpioPort::portD;
+		constexpr static GpioPin pin = GpioPin::pin6;
 	};
 
 
 	// PORT E ------------------------------------------------------------
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_E, HAL_GPIO_PIN_4> {
-		constexpr static const GPIOAlt ltdc_B0 = HAL_GPIO_AF_14;
+	struct GpioPinInfo<GpioPort::portE, GpioPin::pin4> {
+		enum class GpioAlt: GPIOAlt {
+			ltdc_B0 = HAL_GPIO_AF_14
+		};
+		constexpr static GpioPort port = GpioPort::portE;
+		constexpr static GpioPin pin = GpioPin::pin4;
 	};
 
 
 	// PORT G ------------------------------------------------------------
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_G, HAL_GPIO_PIN_12> {
-		enum class Value {
+	struct GpioPinInfo<GpioPort::portG, GpioPin::pin12> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_B1 = HAL_GPIO_AF_14,
 			ltdc_B4 = HAL_GPIO_AF_9,
 			spi6_MISO = HAL_GPIO_AF_5,
 			usart6_RTS = HAL_GPIO_AF_8
 		};
-		constexpr static const Value ltdc_B4 = Value::ltdc_B4;
-		constexpr static const Value ltdc_B1 = Value::ltdc_B1;
-		constexpr static const Value spi6_MISO = Value::spi6_MISO;
-		constexpr static const Value usart6_RTS = Value::usart6_RTS;
+		constexpr static GpioPort port = GpioPort::portG;
+		constexpr static GpioPin pin = GpioPin::pin12;
+	};
+
+
+	// PORT H ------------------------------------------------------------
+	template <>
+	struct GpioPinInfo<GpioPort::portH, GpioPin::pin7> {
+		enum class GpioAlt: GPIOAlt {
+			i2c3_SCL = HAL_GPIO_AF_4
+		};
+		constexpr static GpioPort port = GpioPort::portH;
+		constexpr static GpioPin pin = GpioPin::pin7;
+	};
+
+	template <>
+	struct GpioPinInfo<GpioPort::portH, GpioPin::pin8> {
+		enum class GpioAlt: GPIOAlt {
+			i2c3_SDA = HAL_GPIO_AF_4,
+			ltdc_R2 = HAL_GPIO_AF_14
+		};
+		constexpr static GpioPort port = GpioPort::portH;
+		constexpr static GpioPin pin = GpioPin::pin8;
 	};
 
 
 	// PORT I ------------------------------------------------------------
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_I, HAL_GPIO_PIN_1> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portI, GpioPin::pin1> {
+		enum class GpioAlt: GPIOAlt {
 			spi2_SCK = HAL_GPIO_AF_5
 		};
-		constexpr static const Value spi2_SCK = Value::spi2_SCK;
+		constexpr static GpioPort port = GpioPort::portI;
+		constexpr static GpioPin pin = GpioPin::pin1;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_I, HAL_GPIO_PIN_9> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portI, GpioPin::pin9> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_VSYNC = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_VSYNC = Value::ltdc_VSYNC;
+		constexpr static GpioPort port = GpioPort::portI;
+		constexpr static GpioPin pin = GpioPin::pin9;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_I, HAL_GPIO_PIN_10> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portI, GpioPin::pin10> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_HSYNC = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_HSYNC = Value::ltdc_HSYNC;
+		constexpr static GpioPort port = GpioPort::portI;
+		constexpr static GpioPin pin = GpioPin::pin10;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_I, HAL_GPIO_PIN_14> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portI, GpioPin::pin14> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_DOTCLK = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_DOTCLK = Value::ltdc_DOTCLK;
+		constexpr static GpioPort port = GpioPort::portI;
+		constexpr static GpioPin pin = GpioPin::pin14;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_I, HAL_GPIO_PIN_15> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portI, GpioPin::pin15> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_R0 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_R0 = Value::ltdc_R0;
+		constexpr static GpioPort port = GpioPort::portI;
+		constexpr static GpioPin pin = GpioPin::pin15;
 	};
 
 
 	// PORT J ------------------------------------------------------------
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_0> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin0> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_R1 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_R1 = Value::ltdc_R1;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin0;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_1> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin1> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_R2 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_R2 = Value::ltdc_R2;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin1;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_2> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin2> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_R3 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_R3 = Value::ltdc_R3;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin2;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_3> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin3> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_R4 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_R4 = Value::ltdc_R4;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin3;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_4> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin4> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_R5 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_R5 = Value::ltdc_R5;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin4;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_5> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin5> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_R6 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_R6 = Value::ltdc_R6;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin5;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_6> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin6> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_R7 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_R7 = Value::ltdc_R7;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin6;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_7> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin7> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_G0 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_G0 = Value::ltdc_G0;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin7;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_8> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin8> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_G1 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_G1 = Value::ltdc_G1;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin8;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_9> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin9> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_G2 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_G2 = Value::ltdc_G2;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin9;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_10> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin10> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_G3 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_G3 = Value::ltdc_G3;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin10;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_11> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin11> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_G4 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_G4 = Value::ltdc_G4;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin11;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_13> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin13> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_B1 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_B1 = Value::ltdc_B1;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin13;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_14> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin14> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_B2 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_B2 = Value::ltdc_B2;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin14;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_J, HAL_GPIO_PIN_15> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portJ, GpioPin::pin15> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_B3 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_B3 = Value::ltdc_B3;
+		constexpr static GpioPort port = GpioPort::portJ;
+		constexpr static GpioPin pin = GpioPin::pin15;
 	};
 
 
 	// PORT K ------------------------------------------------------------
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_K, HAL_GPIO_PIN_0> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portK, GpioPin::pin0> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_G5 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_G5 = Value::ltdc_G5;
+		constexpr static GpioPort port = GpioPort::portK;
+		constexpr static GpioPin pin = GpioPin::pin0;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_K, HAL_GPIO_PIN_1> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portK, GpioPin::pin1> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_G6 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_G6 = Value::ltdc_G6;
+		constexpr static GpioPort port = GpioPort::portK;
+		constexpr static GpioPin pin = GpioPin::pin1;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_K, HAL_GPIO_PIN_2> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portK, GpioPin::pin2> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_G7 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_G7 = Value::ltdc_G7;
+		constexpr static GpioPort port = GpioPort::portK;
+		constexpr static GpioPin pin = GpioPin::pin2;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_K, HAL_GPIO_PIN_4> {
-		enum class Value: GPIOAlt {
-			ltdc_R5 = HAL_GPIO_AF_14
+	struct GpioPinInfo<GpioPort::portK, GpioPin::pin4> {
+		enum class GpioAlt: GPIOAlt {
+			ltdc_B5 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_B5 = Value::ltdc_R5;
+		constexpr static GpioPort port = GpioPort::portK;
+		constexpr static GpioPin pin = GpioPin::pin4;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_K, HAL_GPIO_PIN_5> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portK, GpioPin::pin5> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_B6 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_B6 = Value::ltdc_B6;
+		constexpr static GpioPort port = GpioPort::portK;
+		constexpr static GpioPin pin = GpioPin::pin5;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_K, HAL_GPIO_PIN_6> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portK, GpioPin::pin6> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_B7 = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_B7 = Value::ltdc_B7;
+		constexpr static GpioPort port = GpioPort::portK;
+		constexpr static GpioPin pin = GpioPin::pin6;
 	};
 
 	template <>
-	struct GpioFunction<HAL_GPIO_PORT_K, HAL_GPIO_PIN_7> {
-		enum class Value: GPIOAlt {
+	struct GpioPinInfo<GpioPort::portK, GpioPin::pin7> {
+		enum class GpioAlt: GPIOAlt {
 			ltdc_DE = HAL_GPIO_AF_14
 		};
-		constexpr static const Value ltdc_DE = Value::ltdc_DE;
+		constexpr static GpioPort port = GpioPort::portK;
+		constexpr static GpioPin pin = GpioPin::pin7;
 	};
 #endif
 }
 
+
+#endif // __cplusplus
 
 #endif // __STM32_halGPIOTpl__

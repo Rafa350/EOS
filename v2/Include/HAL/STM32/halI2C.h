@@ -56,8 +56,8 @@ I2CHandler halI2CMasterInitialize(I2CData* data, const I2CMasterInitializeInfo *
 void halI2CEnable(I2CHandler handler);
 void halI2CDisable(I2CHandler handler);
 
-void halI2CMasterWriteMultiple(I2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
-void halI2CMasterReadMultiple(I2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
+void halI2CMasterWriteMultiple(I2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t* buffer, uint16_t length);
+void halI2CMasterReadMultiple(I2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t* buffer, uint16_t length);
 
 
 #ifdef	__cplusplus

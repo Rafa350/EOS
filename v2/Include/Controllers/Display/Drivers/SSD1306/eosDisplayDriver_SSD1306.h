@@ -43,9 +43,7 @@
 #include "Controllers/Display/eosFrameBuffer.h"
 #include "System/Graphics/eosColor.h"
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-#include "HAL/halSPI.h"
 #include "HAL/halSPITpl.h"
-#include "HAL/halGPIO.h"
 #include "HAL/halGPIOTpl.h"
 #elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
 #include "HAL/halI2C.h"
@@ -58,20 +56,29 @@ namespace eos {
     	private:
 			constexpr static const int _displayWidth = DISPLAY_IMAGE_WIDTH;
 			constexpr static const int _displayHeight = DISPLAY_IMAGE_HEIGHT;
+			constexpr static const int _imageBuffer   = DISPLAY_IMAGE_BUFFER;
+
+    	private:
+#ifdef DISPLAY_RST_PORT
+			typedef GpioPinAdapter<GpioPort(DISPLAY_RST_PORT), GpioPin(DISPLAY_RST_PIN)> PinRST;
+#endif
+			typedef GpioPinAdapter<GpioPort(DISPLAY_CS_PORT), GpioPin(DISPLAY_CS_PIN)> PinCS;
+			typedef GpioPinAdapter<GpioPort(DISPLAY_DC_PORT), GpioPin(DISPLAY_DC_PIN)> PinDC;
+			typedef GpioPinAdapter<GpioPort(DISPLAY_SCK_PORT), GpioPin(DISPLAY_SCK_PIN)> PinSCK;
+			typedef GpioPinAdapter<GpioPort(DISPLAY_MOSI_PORT), GpioPin(DISPLAY_MOSI_PIN)> PinMOSI;
+			typedef SpiAdapter<SpiChannel(DISPLAY_SPI_CHANNEL)> Spi;
 
     	private:
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
 	#ifdef DISPLAY_RST_PORT
-			GpioPinAdapter<DISPLAY_RST_PORT, DISPLAY_RST_PIN> _pinRST;
+			PinRST _pinRST;
 	#endif
-			GpioPinAdapter<DISPLAY_CS_PORT, DISPLAY_CS_PIN> _pinCS;
-			GpioPinAdapter<DISPLAY_DC_PORT, DISPLAY_DC_PIN> _pinDC;
-			GpioPinAdapter<DISPLAY_SCK_PORT, DISPLAY_SCK_PIN> _pinSCK;
-			GpioPinAdapter<DISPLAY_MOSI_PORT, DISPLAY_MOSI_PIN> _pinMOSI;
-			SpiAdapter<DISPLAY_SPI_CHANNEL> _spi;
+			PinCS _pinCS;
+			PinDC _pinDC;
+			PinSCK _pinSCK;
+			PinMOSI _pinMOSI;
+			Spi _spi;
 #elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
-    		I2CData _i2cData;
-    		I2CHandler _hI2C;
 #endif
 
     		static IDisplayDriver* _instance;
