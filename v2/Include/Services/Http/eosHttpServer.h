@@ -5,7 +5,7 @@
 #include "eos.h"
 #include "System/eosString.h"
 #include "System/eosCallbacks.h"
-#include "System/Collections/eosDynamicArray.h"
+#include "System/Collections/eosVector.h"
 
 #include "lwip/api.h"
 #define CONNECTION_HANDLER struct netconn*
@@ -78,7 +78,7 @@ namespace eos {
     class HttpServer {
     	private:
             typedef CallbackP1R<HttpServer, HttpResponse, const HttpRequest&> ControllerCallback;
-		    typedef DynamicArray<HttpController*> ControllerList;
+		    typedef Vector<HttpController*> ControllerList;
     		typedef CONNECTION_HANDLER HConnection;
 
     	private:

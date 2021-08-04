@@ -454,16 +454,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosApplication.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/System/eosString.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosString.cpp</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/eosStringBuilder.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/eosStringBuilder.cpp</locationURI>
-		</link>
-		<link>
 			<name>src/Framework/STM32/BSP/stm32746g_discovery.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/BSP/STM32746G-Discovery/stm32746g_discovery.c</locationURI>
@@ -609,9 +599,19 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosColorFrameBuffer_DMA2D.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosColorFrameBuffer_DMA2D.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Controllers/Display/eosDisplayDriver.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosDisplayDriver.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Controllers/Display/eosFrameBuffer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/eosFrameBuffer.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers</name>
@@ -674,9 +674,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Http/httpserver.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/System/Collections/eosDynamicArray.h</name>
+			<name>inc/Framework/EOS/System/Collections/eosVector.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosDynamicArray.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosVector.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/Core/eosAllocator.h</name>
@@ -754,14 +754,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosColorFrameBuffer.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/eosColorFrameBuffer_DMA2D.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColorFrameBuffer.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosColorFrameBuffer_DMA2D.cpp</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer_RGB565_DAM2D.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/eosFrameBuffer.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer_RGB565_DAM2D.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/eosFrameBuffer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/TouchPad/Drivers</name>
@@ -857,11 +857,6 @@
 			<name>src/Framework/EOS/Services/Http/httpserver.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Http/httpserver.c</locationURI>
-		</link>
-		<link>
-			<name>src/Framework/EOS/System/Collections/eosContainer.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Collections/eosContainer.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Core/eosErrorHandler.cpp</name>
@@ -1139,9 +1134,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/LwIP/system/OS/sys_arch.c</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosRGBLTDC.h</name>
+			<name>inc/Framework/EOS/Controllers/Display/Drivers/eosDisplayDriver_RGBLTDC.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/eosRGBLTDC.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Controllers/TouchPad/Drivers/eosFT5336.h</name>
@@ -1149,7 +1144,7 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/TouchPad/Drivers/eosFT5336.h</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC</name>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/RGB</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -1254,9 +1249,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/LwIP/src/core/ipv4/ip4_frag.c</locationURI>
 		</link>
 		<link>
-			<name>src/Framework/EOS/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDC.cpp</name>
+			<name>src/Framework/EOS/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGBLTDC/eosRGBLTDC.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

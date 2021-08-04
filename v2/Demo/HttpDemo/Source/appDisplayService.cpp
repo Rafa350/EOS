@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "Controllers/Display/Drivers/eosRGBLTDC.h"
+#include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosGraphics.h"
 #include "appDisplayService.h"
@@ -27,7 +27,7 @@ DisplayService::DisplayService(
 ///
 void DisplayService::onSetup() {
 
-	driver = new RGBDirectDriver();
+	driver = new DisplayDriver_RGBLTDC();
     driver->initialize();
     driver->displayOn();
 

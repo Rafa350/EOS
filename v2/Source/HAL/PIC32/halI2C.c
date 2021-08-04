@@ -14,7 +14,7 @@
 ///
 I2CHandler halI2CMasterInitialize(
     I2CData* data,
-    const I2CMasterSettings *settings) {
+    const I2CMasterSettings* settings) {
 
     I2CHandler handler = data;
 

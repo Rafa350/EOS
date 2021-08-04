@@ -19,7 +19,7 @@ namespace eos {
 
 		protected:
 			void onInitialize() override;
-			void onTask() override;
+			void onTask(Task* task) override;
 
 		public:
             HTTPService(Application* application);

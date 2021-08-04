@@ -33,7 +33,8 @@ void HTTPService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    : Procesa la tasca del servei.
 ///
-void HTTPService::onTask() {
+void HTTPService::onTask(
+	Task* task) {
 
 	httpServer.run();
 }
