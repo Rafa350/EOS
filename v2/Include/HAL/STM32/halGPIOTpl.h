@@ -6,7 +6,6 @@
 
 // EOS includes
 //
-#include "HAL/hal.h"
 #include "HAL/STM32/halGPIO.h"
 
 
@@ -77,11 +76,8 @@ namespace eos {
 
 	template <GpioPort port, GpioPin pin>
 	class GpioPinAdapter {
-		private:
-			using PinInfo = GpioPinInfo<port, pin>;
-
 		public:
-			using GpioAlt = typename PinInfo::GpioAlt;
+			using GpioAlt = typename GpioPinInfo<port, pin>::GpioAlt;
 
 		public:
 			inline static void initInput(GpioSpeed speed, GpioPull pull) {
@@ -152,6 +148,7 @@ namespace eos {
 	};
 
 
+#ifdef HAL_GPIO_PORT_A
 	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin0> PA0;
 	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin1> PA1;
 	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin2> PA2;
@@ -168,7 +165,9 @@ namespace eos {
 	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin13> PA13;
 	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin14> PA14;
 	typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin15> PA15;
+#endif
 
+#ifdef HAL_GPIO_PORT_B
 	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin0> PB0;
 	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin1> PB1;
 	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin2> PB2;
@@ -185,7 +184,9 @@ namespace eos {
 	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin13> PB13;
 	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin14> PB14;
 	typedef GpioPinAdapter<GpioPort::portB, GpioPin::pin15> PB15;
+#endif
 
+#ifdef HAL_GPIO_PORT_C
 	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin0> PC0;
 	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin1> PC1;
 	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin2> PC2;
@@ -202,6 +203,26 @@ namespace eos {
 	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin13> PC13;
 	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin14> PC14;
 	typedef GpioPinAdapter<GpioPort::portC, GpioPin::pin15> PC15;
+#endif
+
+#ifdef HAL_GPIO_PORT_D
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin0> PD0;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin1> PD1;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin2> PD2;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin3> PD3;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin4> PD4;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin5> PD5;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin6> PD6;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin7> PD7;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin8> PD8;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin9> PD9;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin10> PD10;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin11> PD11;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin12> PD12;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin13> PD13;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin14> PD14;
+	typedef GpioPinAdapter<GpioPort::portD, GpioPin::pin15> PD15;
+#endif
 
 
 #ifdef EOS_STM32F7
@@ -210,11 +231,15 @@ namespace eos {
 	template <>
 	struct GpioPinInfo<GpioPort::portA, GpioPin::pin0> {
 		enum class GpioAlt: GPIOAlt {
-			usart2_CST = HAL_GPIO_AF_7,
-			uart4_TX = HAL_GPIO_AF_8
+			tim2_CH1 = HAL_GPIO_AF_1,
+			tim2_ETR = HAL_GPIO_AF_1,
+			tim5_CH1 = HAL_GPIO_AF_2,
+			tim8_ETR = HAL_GPIO_AF_3,
+			usart2_CTS = HAL_GPIO_AF_7,
+			uart4_TX = HAL_GPIO_AF_8,
 		};
-		constexpr static GpioPort port = GpioPort::portA;
-		constexpr static GpioPin pin = GpioPin::pin0;
+		constexpr static const GpioPort port = GpioPort::portA;
+		constexpr static const GpioPin pin = GpioPin::pin0;
 	};
 
 	template <>
@@ -223,8 +248,8 @@ namespace eos {
 			usart2_RTS = HAL_GPIO_AF_7,
 			uart4_RX = HAL_GPIO_AF_8
 		};
-		constexpr static GpioPort port = GpioPort::portA;
-		constexpr static GpioPin pin = GpioPin::pin1;
+		constexpr static const GpioPort port = GpioPort::portA;
+		constexpr static const GpioPin pin = GpioPin::pin1;
 	};
 
 	template <>
@@ -233,8 +258,8 @@ namespace eos {
 			i2s1_CL = HAL_GPIO_AF_5,
 			spi1_SCK = HAL_GPIO_AF_5
 		};
-		constexpr static GpioPort port = GpioPort::portA;
-		constexpr static GpioPin pin = GpioPin::pin5;
+		constexpr static const GpioPort port = GpioPort::portA;
+		constexpr static const GpioPin pin = GpioPin::pin5;
 	};
 
 	template <>
@@ -242,8 +267,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			spi1_MISO = HAL_GPIO_AF_5
 		};
-		constexpr static GpioPort port = GpioPort::portA;
-		constexpr static GpioPin pin = GpioPin::pin6;
+		constexpr static const GpioPort port = GpioPort::portA;
+		constexpr static const GpioPin pin = GpioPin::pin6;
 	};
 
 	template <>
@@ -252,8 +277,8 @@ namespace eos {
 			i2s1_SD = HAL_GPIO_AF_5,
 			spi1_MOSI = HAL_GPIO_AF_5
 		};
-		constexpr static GpioPort port = GpioPort::portA;
-		constexpr static GpioPin pin = GpioPin::pin7;
+		constexpr static const GpioPort port = GpioPort::portA;
+		constexpr static const GpioPin pin = GpioPin::pin7;
 	};
 
 
@@ -264,8 +289,8 @@ namespace eos {
 			i2c1_SCL = HAL_GPIO_AF_4,
 			ltdc_B6 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portB;
-		constexpr static GpioPin pin = GpioPin::pin8;
+		constexpr static const GpioPort port = GpioPort::portB;
+		constexpr static const GpioPin pin = GpioPin::pin8;
 	};
 
 	template <>
@@ -275,8 +300,8 @@ namespace eos {
 			ltdc_B7 = HAL_GPIO_AF_14,
 			spi2_NSS = HAL_GPIO_AF_5
 		};
-		constexpr static GpioPort port = GpioPort::portB;
-		constexpr static GpioPin pin = GpioPin::pin9;
+		constexpr static const GpioPort port = GpioPort::portB;
+		constexpr static const GpioPin pin = GpioPin::pin9;
 	};
 
 	template <>
@@ -286,8 +311,8 @@ namespace eos {
 			ltdc_G4 = HAL_GPIO_AF_14,
 			spi2_SCK = HAL_GPIO_AF_5
 		};
-		constexpr static GpioPort port = GpioPort::portB;
-		constexpr static GpioPin pin = GpioPin::pin10;
+		constexpr static const GpioPort port = GpioPort::portB;
+		constexpr static const GpioPin pin = GpioPin::pin10;
 	};
 
 	template <>
@@ -295,8 +320,30 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			spi2_MOSI = HAL_GPIO_AF_5
 		};
-		constexpr static GpioPort port = GpioPort::portB;
-		constexpr static GpioPin pin = GpioPin::pin15;
+		constexpr static const GpioPort port = GpioPort::portB;
+		constexpr static const GpioPin pin = GpioPin::pin15;
+	};
+
+
+	// PORT C ------------------------------------------------------------
+	template <>
+	struct GpioPinInfo<GpioPort::portC, GpioPin::pin6> {
+		enum class GpioAlt: GPIOAlt {
+			ltdc_HSYNC = HAL_GPIO_AF_14,
+			uart6_TX = HAL_CPIO_AF_8
+		};
+		constexpr static const GpioPort port = GpioPort::portC;
+		constexpr static const GpioPin pin = GpioPin::pin6;
+	};
+
+	template <>
+	struct GpioPinInfo<GpioPort::portC, GpioPin::pin7> {
+		enum class GpioAlt: GPIOAlt {
+			ltdc_G6 = HAL_LTDC_AF_14,
+			uart6_RX = HAL_CPIO_AF_8
+		};
+		constexpr static const GpioPort port = GpioPort::portC;
+		constexpr static const GpioPin pin = GpioPin::pin7;
 	};
 
 
@@ -307,8 +354,8 @@ namespace eos {
 			spi3_SCK = HAL_GPIO_AF_5,
 			i2s3_SD = HAL_GPIO_AF_5
 		};
-		constexpr static GpioPort port = GpioPort::portD;
-		constexpr static GpioPin pin = GpioPin::pin6;
+		constexpr static const GpioPort port = GpioPort::portD;
+		constexpr static const GpioPin pin = GpioPin::pin6;
 	};
 
 
@@ -318,8 +365,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_B0 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portE;
-		constexpr static GpioPin pin = GpioPin::pin4;
+		constexpr static const GpioPort port = GpioPort::portE;
+		constexpr static const GpioPin pin = GpioPin::pin4;
 	};
 
 
@@ -332,8 +379,8 @@ namespace eos {
 			spi6_MISO = HAL_GPIO_AF_5,
 			usart6_RTS = HAL_GPIO_AF_8
 		};
-		constexpr static GpioPort port = GpioPort::portG;
-		constexpr static GpioPin pin = GpioPin::pin12;
+		constexpr static const GpioPort port = GpioPort::portG;
+		constexpr static const GpioPin pin = GpioPin::pin12;
 	};
 
 
@@ -343,8 +390,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			i2c3_SCL = HAL_GPIO_AF_4
 		};
-		constexpr static GpioPort port = GpioPort::portH;
-		constexpr static GpioPin pin = GpioPin::pin7;
+		constexpr static const GpioPort port = GpioPort::portH;
+		constexpr static const GpioPin pin = GpioPin::pin7;
 	};
 
 	template <>
@@ -353,8 +400,8 @@ namespace eos {
 			i2c3_SDA = HAL_GPIO_AF_4,
 			ltdc_R2 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portH;
-		constexpr static GpioPin pin = GpioPin::pin8;
+		constexpr static const GpioPort port = GpioPort::portH;
+		constexpr static const GpioPin pin = GpioPin::pin8;
 	};
 
 
@@ -364,8 +411,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			spi2_SCK = HAL_GPIO_AF_5
 		};
-		constexpr static GpioPort port = GpioPort::portI;
-		constexpr static GpioPin pin = GpioPin::pin1;
+		constexpr static const GpioPort port = GpioPort::portI;
+		constexpr static const GpioPin pin = GpioPin::pin1;
 	};
 
 	template <>
@@ -373,8 +420,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_VSYNC = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portI;
-		constexpr static GpioPin pin = GpioPin::pin9;
+		constexpr static const GpioPort port = GpioPort::portI;
+		constexpr static const GpioPin pin = GpioPin::pin9;
 	};
 
 	template <>
@@ -382,8 +429,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_HSYNC = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portI;
-		constexpr static GpioPin pin = GpioPin::pin10;
+		constexpr static const GpioPort port = GpioPort::portI;
+		constexpr static const GpioPin pin = GpioPin::pin10;
 	};
 
 	template <>
@@ -391,8 +438,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_DOTCLK = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portI;
-		constexpr static GpioPin pin = GpioPin::pin14;
+		constexpr static const GpioPort port = GpioPort::portI;
+		constexpr static const GpioPin pin = GpioPin::pin14;
 	};
 
 	template <>
@@ -400,8 +447,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_R0 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portI;
-		constexpr static GpioPin pin = GpioPin::pin15;
+		constexpr static const GpioPort port = GpioPort::portI;
+		constexpr static const GpioPin pin = GpioPin::pin15;
 	};
 
 
@@ -411,8 +458,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_R1 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin0;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin0;
 	};
 
 	template <>
@@ -420,8 +467,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_R2 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin1;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin1;
 	};
 
 	template <>
@@ -429,8 +476,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_R3 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin2;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin2;
 	};
 
 	template <>
@@ -438,8 +485,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_R4 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin3;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin3;
 	};
 
 	template <>
@@ -447,8 +494,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_R5 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin4;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin4;
 	};
 
 	template <>
@@ -456,8 +503,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_R6 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin5;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin5;
 	};
 
 	template <>
@@ -465,8 +512,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_R7 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin6;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin6;
 	};
 
 	template <>
@@ -474,8 +521,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_G0 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin7;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin7;
 	};
 
 	template <>
@@ -483,8 +530,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_G1 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin8;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin8;
 	};
 
 	template <>
@@ -492,8 +539,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_G2 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin9;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin9;
 	};
 
 	template <>
@@ -501,8 +548,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_G3 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin10;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin10;
 	};
 
 	template <>
@@ -510,8 +557,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_G4 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin11;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin11;
 	};
 
 	template <>
@@ -519,8 +566,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_B1 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin13;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin13;
 	};
 
 	template <>
@@ -528,8 +575,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_B2 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin14;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin14;
 	};
 
 	template <>
@@ -537,8 +584,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_B3 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portJ;
-		constexpr static GpioPin pin = GpioPin::pin15;
+		constexpr static const GpioPort port = GpioPort::portJ;
+		constexpr static const GpioPin pin = GpioPin::pin15;
 	};
 
 
@@ -548,8 +595,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_G5 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portK;
-		constexpr static GpioPin pin = GpioPin::pin0;
+		constexpr static const GpioPort port = GpioPort::portK;
+		constexpr static const GpioPin pin = GpioPin::pin0;
 	};
 
 	template <>
@@ -557,8 +604,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_G6 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portK;
-		constexpr static GpioPin pin = GpioPin::pin1;
+		constexpr static const GpioPort port = GpioPort::portK;
+		constexpr static const GpioPin pin = GpioPin::pin1;
 	};
 
 	template <>
@@ -566,8 +613,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_G7 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portK;
-		constexpr static GpioPin pin = GpioPin::pin2;
+		constexpr static const GpioPort port = GpioPort::portK;
+		constexpr static const GpioPin pin = GpioPin::pin2;
 	};
 
 	template <>
@@ -575,8 +622,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_B5 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portK;
-		constexpr static GpioPin pin = GpioPin::pin4;
+		constexpr static const GpioPort port = GpioPort::portK;
+		constexpr static const GpioPin pin = GpioPin::pin4;
 	};
 
 	template <>
@@ -584,8 +631,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_B6 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portK;
-		constexpr static GpioPin pin = GpioPin::pin5;
+		constexpr static const GpioPort port = GpioPort::portK;
+		constexpr static const GpioPin pin = GpioPin::pin5;
 	};
 
 	template <>
@@ -593,8 +640,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_B7 = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portK;
-		constexpr static GpioPin pin = GpioPin::pin6;
+		constexpr static const GpioPort port = GpioPort::portK;
+		constexpr static const GpioPin pin = GpioPin::pin6;
 	};
 
 	template <>
@@ -602,8 +649,8 @@ namespace eos {
 		enum class GpioAlt: GPIOAlt {
 			ltdc_DE = HAL_GPIO_AF_14
 		};
-		constexpr static GpioPort port = GpioPort::portK;
-		constexpr static GpioPin pin = GpioPin::pin7;
+		constexpr static const GpioPort port = GpioPort::portK;
+		constexpr static const GpioPin pin = GpioPin::pin7;
 	};
 #endif
 }

@@ -4,7 +4,6 @@
 
 // EOS includes
 //
-#include "HAL/hal.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "System/Graphics/eosColor.h"
 

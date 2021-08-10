@@ -15,16 +15,6 @@
 // HAL includes
 #include "HAL/hal.h"
 
-// STM32 includes
-//
-#if defined(EOS_STM32F4)
-	#include "stm32f4xx_hal_gpio_ex.h"
-#elif defined(EOS_STM32F7)
-	#include "stm32f7xx_hal_gpio_ex.h"
-#else
-	#error Hardware no soportado
-#endif
-
 
 // Opcions del modul
 //
@@ -133,39 +123,6 @@ typedef struct {
 #define HAL_GPIO_POS_HI           0x0000FF00
 #define HAL_GPIO_POS_ALL          0x0000FFFF
 
-// Funcio alternativa AF5
-// -Funcio SPIx
-#define HAL_GPIO_AF5_SPI1         GPIO_AF5_SPI1
-#define HAL_GPIO_AF5_SPI2         GPIO_AF5_SPI2
-#define HAL_GPIO_AF5_SPI3         GPIO_AF5_SPI3
-#define HAL_GPIO_AF5_SPI4         GPIO_AF5_SPI4
-#define HAL_GPIO_AF5_SPI5         GPIO_AF5_SPI5
-#define HAL_GPIO_AF5_SPI6         GPIO_AF5_SPI6
-
-// Funcio alternativa AF8
-// -Funcio USART
-#define HAL_GPIO_AF8_USART6       GPIO_AF8_USART6
-
-// Funcio alternativa AF10
-// -Funcio OGTx
-#define HAL_GPIO_AF10_OGT1_FS     GPIO_AF10_OTG_FS
-#define HAL_GPIO_AF10_OGT2_HS     GPIO_AF10_OGT_HS
-
-// Funcio alternativa AF11
-// Funcio ETH
-#define HAL_GPIO_AF11_ETH         GPIO_AF11_ETH
-
-// Funcio alternativa AF12
-// -Funcio FMC
-#define HAL_GPIO_AF12_FMC         GPIO_AF12_FMC
-// -Funcio OGTx
-#define HAL_GPIO_AF12_OGT2_FS     GPIO_AF12_OTG_HS_FS
-// -Funcio SDMMC
-#define HAL_GPIO_AF12_SDMMC1      GPIO_AF12_SDMMC1
-
-// Funcio alternativa AF13
-// -Funcio DCMI
-#define HAL_GPIO_AF13_DCMI        GPIO_AF13_DCMI
 
 // Tipus de port
 #define HAL_GPIO_MODE_pos         0

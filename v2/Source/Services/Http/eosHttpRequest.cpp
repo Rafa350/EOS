@@ -12,7 +12,7 @@ using namespace eos;
 HttpRequest::HttpRequest(
 	const String& text):
 
-	pHeaders(nullptr) {
+	_pHeaders(nullptr) {
 
 	parseText(text);
 }
@@ -25,8 +25,8 @@ HttpRequest::HttpRequest(
 HttpRequest::HttpRequest(
 	const HttpRequest& other):
 
-	method(other.method),
-	uri(other.uri) {
+	_method(other._method),
+	_uri(other._uri) {
 
 }
 
@@ -43,14 +43,16 @@ void HttpRequest::parseText(
 	const char* p;
 	unsigned l;
 
-	for (auto it = text.begin(); it != text.end(); it++) {
+	for (int i = 0; i < text.getLength(); i++) {
+		char ch = text[i];
+
 		switch (state) {
 
 			// Espera l'inici del method
 			//
 			case 0:
-				if (!isspace(*it)) {
-					p = it;
+				if (!isspace(ch)) {
+					p =  it;
 					l = 1;
 					state = 1;
 				}
@@ -59,8 +61,8 @@ void HttpRequest::parseText(
 			// Captura el method
 			//
 			case 1:
-				if (isspace(*it)) {
-					method = String(p, 0, l);
+				if (isspace(ch)) {
+					_method = String(p, 0, l);
 					state = 2;
 				}
 				else
@@ -70,7 +72,7 @@ void HttpRequest::parseText(
 			// Espera l'inici del URI
 			//
 			case 2:
-				if (!isspace(*it)) {
+				if (!isspace(ch)) {
 					p = it;
 					l = 1;
 					state = 3;
@@ -80,8 +82,8 @@ void HttpRequest::parseText(
 			// Captura el URI
 			//
 			case 3:
-				if (isspace(*it)) {
-					uri = String(p, 0, l);
+				if (isspace(ch)) {
+					_uri = String(p, 0, l);
 					state = 4;
 				}
 				else
@@ -91,15 +93,15 @@ void HttpRequest::parseText(
 		    // Espera l'inici dels headers
 			//
 			case 4:
-				if (!isspace(*it)) {
-					pHeaders = it;
-					headersLength = 1;
+				if (!isspace(ch)) {
+					_pHeaders = it;
+					_headersLength = 1;
 					state = 5;
 				}
 				break;
 
 			case 5:
-				headersLength++;
+				_headersLength++;
 				break;
 		}
 	}
@@ -114,7 +116,7 @@ void HttpRequest::parseText(
 String HttpRequest::getHeader(
 	const String& header) const {
 
-	if (pHeaders != nullptr) {
+	if (_pHeaders != nullptr) {
 
 		uint8_t state = 0;
 
@@ -123,7 +125,7 @@ String HttpRequest::getHeader(
 		const char* pValue;
 		unsigned valueLength;
 
-		for (auto it = pHeaders; it < pHeaders + headersLength; it++) {
+		for (auto it = _pHeaders; it < _pHeaders + _headersLength; it++) {
 			switch (state) {
 
 				// Espara l'inici del nom

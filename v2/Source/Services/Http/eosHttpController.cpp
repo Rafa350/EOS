@@ -14,8 +14,8 @@ HttpController::HttpController(
 	const String& method,
 	ICallback* callback):
 
-	method(method),
-	callback(callback) {
+	_method(method),
+	_callback(callback) {
 }
 
 
@@ -28,7 +28,7 @@ HttpController::HttpController(
 bool HttpController::canProcess(
 	const HttpRequest& request) const {
 
-	return method == request.getMethod();
+	return _method == request.getMethod();
 }
 
 
@@ -39,8 +39,8 @@ bool HttpController::canProcess(
 HttpResponse HttpController::process(
 	const HttpRequest& request) {
 
-	if (callback != nullptr)
-		return callback->execute(request);
+	if (_callback != nullptr)
+		return _callback->execute(request);
 	else
 		return HttpResponse(400, "Error", "");
 }

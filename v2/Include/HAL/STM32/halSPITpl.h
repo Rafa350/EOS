@@ -1,8 +1,11 @@
 #ifndef __STM32_halSPITpl__
 #define __STM32_halSPITpl__
 
+#ifdef __cplusplus
 
-#include "HAL/hal.h"
+
+// EOS includes
+//
 #include "HAL/STM32/halSPI.h"
 #include "HAL/STM32/halGPIOTpl.h"
 
@@ -64,47 +67,121 @@ namespace eos {
 
 			template <GpioPort port, GpioPin pin>
 			inline static void setSCKPin(GpioPinAdapter<port, pin> pinAdapter) {
+				if constexpr (channel == SpiChannel::channel1)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi1_SCK);
+
 				if constexpr (channel == SpiChannel::channel2)
 					pinAdapter.initAlt(
 						GpioSpeed::fast,
 						GpioDriver::pushPull,
 						GpioPinAdapter<port, pin>::GpioAlt::spi2_SCK);
 
+				if constexpr (channel == SpiChannel::channel3)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi3_SCK);
+
+				if constexpr (channel == SpiChannel::channel4)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi4_SCK);
+
 				if constexpr (channel == SpiChannel::channel5)
 					pinAdapter.initAlt(
 						GpioSpeed::fast,
 						GpioDriver::pushPull,
 						GpioPinAdapter<port, pin>::GpioAlt::spi5_SCK);
+
+				if constexpr (channel == SpiChannel::channel6)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi6_SCK);
 			}
 
 			template <GpioPort port, GpioPin pin>
 			inline static void setMOSIPin(GpioPinAdapter<port, pin> pinAdapter) {
+				if constexpr (channel == SpiChannel::channel1)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi1_MOSI);
+
 				if constexpr (channel == SpiChannel::channel2)
 					pinAdapter.initAlt(
 						GpioSpeed::fast,
 						GpioDriver::pushPull,
 						GpioPinAdapter<port, pin>::GpioAlt::spi2_MOSI);
 
+				if constexpr (channel == SpiChannel::channel2)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi2_MOSI);
+
+				if constexpr (channel == SpiChannel::channel3)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi3_MOSI);
+
 				if constexpr (channel == SpiChannel::channel5)
 					pinAdapter.initAlt(
 						GpioSpeed::fast,
 						GpioDriver::pushPull,
 						GpioPinAdapter<port, pin>::GpioAlt::spi5_MOSI);
+
+				if constexpr (channel == SpiChannel::channel6)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi6_MOSI);
+
 			}
 
 			template <GpioPort port, GpioPin pin>
 			inline static void setMISOPin(GpioPinAdapter<port, pin> pinAdapter) {
+				if constexpr (channel == SpiChannel::channel1)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi1_MISO);
+
 				if constexpr (channel == SpiChannel::channel2)
 					pinAdapter.initAlt(
 						GpioSpeed::fast,
 						GpioDriver::pushPull,
 						GpioPinAdapter<port, pin>::GpioAlt::spi2_MISO);
 
+				if constexpr (channel == SpiChannel::channel2)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi2_MISO);
+
+				if constexpr (channel == SpiChannel::channel3)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi3_MISO);
+
 				if constexpr (channel == SpiChannel::channel5)
 					pinAdapter.initAlt(
 						GpioSpeed::fast,
 						GpioDriver::pushPull,
 						GpioPinAdapter<port, pin>::GpioAlt::spi5_MISO);
+
+				if constexpr (channel == SpiChannel::channel6)
+					pinAdapter.initAlt(
+						GpioSpeed::fast,
+						GpioDriver::pushPull,
+						GpioPinAdapter<port, pin>::GpioAlt::spi6_MISO);
+
 			}
 
 			inline void send(const uint8_t* data, int length) {
@@ -114,5 +191,7 @@ namespace eos {
 
 }
 
+
+#endif // __cplusplus
 
 #endif // __STM32_halSPITpl__

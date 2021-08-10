@@ -17,10 +17,10 @@ namespace eos {
     //
 	class HttpRequest {
 		private:
-			String method;
-			String uri;
-			const char* pHeaders;
-			unsigned headersLength;
+			String _method;
+			String _uri;
+			const char* _pHeaders;
+			unsigned _headersLength;
 
 		private:
 			void parseText(const String& text);
@@ -29,8 +29,8 @@ namespace eos {
 			HttpRequest(const String& text);
 			HttpRequest(const HttpRequest& other);
 
-			inline const String& getMethod() const { return method; }
-			inline const String& getUri() const { return uri; }
+			inline const String& getMethod() const { return _method; }
+			inline const String& getUri() const { return _uri; }
 			inline String getHeader(const String& name) const;
 	};
 
@@ -38,9 +38,9 @@ namespace eos {
 	///
 	class HttpResponse {
 		private:
-			unsigned statusCode;
-			String statusMessage;
-			String body;
+			unsigned _statusCode;
+			String _statusMessage;
+			String _body;
 
 		private:
 			String printText() const;
@@ -60,8 +60,8 @@ namespace eos {
         	typedef ICallbackP1R<HttpResponse, const HttpRequest&> ICallback;
 
 		private:
-			String method;
-			ICallback* callback;
+			String _method;
+			ICallback* _callback;
 
 		public:
 			HttpController(const String& method, ICallback* callback);
@@ -69,7 +69,7 @@ namespace eos {
 			bool canProcess(const HttpRequest& request) const;
 			HttpResponse process(const HttpRequest& request);
 
-			inline const String& getMethod() const { return method; }
+			inline const String& getMethod() const { return _method; }
 	};
 
 
@@ -82,11 +82,11 @@ namespace eos {
     		typedef CONNECTION_HANDLER HConnection;
 
     	private:
-    		ControllerList controllers;
-    		ControllerCallback getCallback;
-    		ControllerCallback headCallback;
-    		ControllerCallback postCallback;
-    		uint8_t port;
+    		ControllerList _controllers;
+    		ControllerCallback _getCallback;
+    		ControllerCallback _headCallback;
+    		ControllerCallback _postCallback;
+    		uint8_t _port;
 
     	private:
     		void error(HConnection hConnection);

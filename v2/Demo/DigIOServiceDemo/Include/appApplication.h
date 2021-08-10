@@ -21,9 +21,9 @@ namespace app {
             typedef CallbackP1<MyApplication, const DigInput::EventArgs&> DigInputEventCallback;
 
         private:
-            DigOutputService* digOutputService;
-            DigInputService* digInputService;
-            TimerService* timerService;
+            DigOutputService* _digOutputService;
+            DigInputService* _digInputService;
+            TimerService* _timerService;
 
     #ifdef EXIST_LEDS_LED1
             DigOutput* led1;
@@ -50,13 +50,13 @@ namespace app {
         public:
             MyApplication();
     #ifdef EXIST_SWITCHES_SW1
-            void sw1EventHandler(const DigInput::EventArgs &args);
+            void sw1EventHandler(const DigInput::EventArgs& args);
     #endif
     #ifdef EXIST_SWITCHES_SW2
-            void sw2EventHandler(const DigInput::EventArgs &args);
+            void sw2EventHandler(const DigInput::EventArgs& args);
     #endif
     #ifdef EXIST_SWITCHES_SW3
-            void sw3EventHandler(const DigInput::EventArgs &args);
+            void sw3EventHandler(const DigInput::EventArgs& args);
     #endif
 
         protected:

@@ -6,7 +6,6 @@
 
 // EOS includes
 //
-#include "HAL/hal.h"
 #include "HAL/STM32/halI2C.h"
 #include "HAL/STM32/halGPIOTpl.h"
 

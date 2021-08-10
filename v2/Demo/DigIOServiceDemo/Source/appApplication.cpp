@@ -67,8 +67,8 @@ void MyApplication::onInitialize() {
 	//
     DigInputService::Settings digInputServiceSettings;
     digInputServiceSettings.hTimer = hDigInputServiceTimer;
-    digInputService = new DigInputService(this, digInputServiceSettings);
-    digInputService->setPriority(Task::Priority::high);
+    _digInputService = new DigInputService(this, digInputServiceSettings);
+    _digInputService->setPriority(Task::Priority::high);
 
     DigInput::Settings digInputSettings;
     digInputSettings.eventParam = nullptr;
@@ -85,7 +85,7 @@ void MyApplication::onInitialize() {
     digInputSettings.port = SWITCHES_SW1_PORT;
     digInputSettings.pin = SWITCHES_SW1_PIN;
     digInputSettings.eventCallback = &sw1EventCallback;
-    sw1 = new DigInput(digInputService, digInputSettings);
+    sw1 = new DigInput(_digInputService, digInputSettings);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW2
@@ -98,7 +98,7 @@ void MyApplication::onInitialize() {
     digInputSettings.port = SWITCHES_SW2_PORT;
     digInputSettings.pin = SWITCHES_SW2_PIN;
     digInputSettings.eventCallback = &sw2EventCallback;
-    sw2 = new DigInput(digInputService, digInputSettings);
+    sw2 = new DigInput(_digInputService, digInputSettings);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW3
@@ -111,7 +111,7 @@ void MyApplication::onInitialize() {
     digInputSettings.port = SWITCHES_SW3_PORT;
     digInputSettings.pin = SWITCHES_SW3_PIN;
     digInputSettings.eventCallback = &sw3EventCallback;
-    sw3 = new DigInput(digInputService, digInputSettings);
+    sw3 = new DigInput(_digInputService, digInputSettings);
 #endif
 
     // Inicialitza el temporitzador pel servei de sortides digitals
@@ -138,7 +138,7 @@ void MyApplication::onInitialize() {
     //
     DigOutputService::Settings digOutputServiceSettings;
     digOutputServiceSettings.hTimer = hDigOutputServiceTimer;
-    digOutputService = new DigOutputService(this, digOutputServiceSettings);
+    _digOutputService = new DigOutputService(this, digOutputServiceSettings);
 
     DigOutput::Settings digOutputSettings;
 
@@ -150,7 +150,7 @@ void MyApplication::onInitialize() {
 
     digOutputSettings.port = LEDS_LED1_PORT;
     digOutputSettings.pin = LEDS_LED1_PIN;
-    led1 = new DigOutput(digOutputService, digOutputSettings);
+    led1 = new DigOutput(_digOutputService, digOutputSettings);
     led1->write(LEDS_STATE_OFF);
 #endif
 
@@ -162,7 +162,7 @@ void MyApplication::onInitialize() {
 
     digOutputSettings.port = LEDS_LED2_PORT;
     digOutputSettings.pin = LEDS_LED2_PIN;
-    led2 = new DigOutput(digOutputService, digOutputSettings);
+    led2 = new DigOutput(_digOutputService, digOutputSettings);
     led2->write(LEDS_STATE_OFF);
 #endif
 
@@ -174,12 +174,12 @@ void MyApplication::onInitialize() {
 
     digOutputSettings.port = LEDS_LED3_PORT;
     digOutputSettings.pin = LEDS_LED3_PIN;
-    led3 = new DigOutput(digOutputService, digOutputSettings);
+    led3 = new DigOutput(_digOutputService, digOutputSettings);
     led3->write(LEDS_STATE_OFF);
 #endif
 
-    timerService = new TimerService(this);
-    TimerCounter* timer = new TimerCounter(timerService, nullptr);
+    _timerService = new TimerService(this);
+    TimerCounter* timer = new TimerCounter(_timerService, nullptr);
     timer->start(10000);
 }
 

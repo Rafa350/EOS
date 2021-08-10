@@ -35,12 +35,12 @@ namespace eos {
                 public:
                     /// \brief Constructor per defecte.
                     ///
-                    StaticArray() {
+                    Array() {
                     }
 
                     /// \brief Constructor copia.
                     ///
-                    StaticArray(const StaticArray& other) {
+                    Array(const Array& other) {
                         memmove(elements, other.elements, size * sizeof(Value));
                     }
 
@@ -48,20 +48,20 @@ namespace eos {
                     /// \param first: Primer element del rang.
                     /// \param last: L'ultim element del rang.
                     ///
-                    StaticArray(Iterator first, Iterator last) {
+                    Array(Iterator first, Iterator last) {
                         for(auto it = first; it != last; it++)
                             pushBack(*it);
                     }
 
                     /// \brief Constructor a partir d'un array 'C'.
                     ///
-                    StaticArray(const Value array[], int arraySize = size) {
+                    Array(const Value array[], int arraySize = size) {
                         memmove(elements, array, Math::min(size, arraySize) * sizeof(Value));
                     }
 
                     /// \brief Destructor
                     ///
-                    ~StaticArray() {
+                    ~Array() {
                     }
 
                     /// \brief Obte el iterator al principi
@@ -99,7 +99,7 @@ namespace eos {
                     /// \param array: El array a asignar.
                     /// \return Una referencia a this.
                     ///
-                    StaticArray& operator = (const StaticArray& array) {
+                    Array& operator = (const Array& array) {
                         memmove(elements, array.elements, size * sizeof(Value));
                         return *this;
                     }

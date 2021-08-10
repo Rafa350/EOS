@@ -31,11 +31,14 @@
               <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halINT.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halGPIOTpl.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halI2CTpl.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halI2C.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
+            <itemPath>../../../Include/HAL/halI2CTpl.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalQueue.h</itemPath>

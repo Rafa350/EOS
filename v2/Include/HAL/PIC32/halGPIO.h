@@ -44,7 +44,7 @@ extern "C" {
 #ifdef _PORTG
 #define HAL_GPIO_PORT_G           (_PORTG_BASE_ADDRESS - 0x10)
 #endif
-#define HAL_GPIO_PORT_NONE        0xFFFFFFFF
+#define HAL_GPIO_PORT_NONE        ((GPIOPort) -1)
 
 // Identificador dels pins
 #define HAL_GPIO_PIN_0            0
@@ -63,7 +63,7 @@ extern "C" {
 #define HAL_GPIO_PIN_13           13
 #define HAL_GPIO_PIN_14           14
 #define HAL_GPIO_PIN_15           15
-#define HAL_GPIO_PIN_NONE         255
+#define HAL_GPIO_PIN_NONE         ((GPIOPin) -1)
 
 // Mascara de posicio dels pins
 #define HAL_GPIO_POS_0            (1 << HAL_GPIO_PIN_0)
