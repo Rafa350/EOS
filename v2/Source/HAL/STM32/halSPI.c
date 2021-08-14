@@ -1,14 +1,7 @@
 #include "HAL/hal.h"
-#include "HAL/STM32/halSPI.h"
 #include "HAL/STM32/halGPIO.h"
-
-#if defined(EOS_STM32F4)
-#include "stm32f4xx_hal.h"
-#elif defined(EOS_STM32F7)
-#include "stm32f7xx_hal.h"
-#else
-#error Hardware no soportado
-#endif
+#include "HAL/STM32/halSPI.h"
+#include "HAL/STM32/halSYS.h"
 
 
 #define __VERIFY_CHANNEL(chanel)  eosAssert((channel >= HAL_SPI_CHANNEL_1) && (channel <= HAL_SPI_CHANNEL_6))
@@ -123,43 +116,152 @@ static void disableDeviceClock(
 ///
 static void setupDevice(
 	SPI_TypeDef* device,
-	SPI_HandleTypeDef* handle,
 	halSPIOptions options) {
 
-	eosAssert(handle != NULL);
 	__VERIFY_DEVICE(device);
 
-	static uint32_t const baudRateTbl[] = {
-		SPI_BAUDRATEPRESCALER_2,
-		SPI_BAUDRATEPRESCALER_4,
-		SPI_BAUDRATEPRESCALER_8,
-		SPI_BAUDRATEPRESCALER_16,
-		SPI_BAUDRATEPRESCALER_32,
-		SPI_BAUDRATEPRESCALER_64,
-		SPI_BAUDRATEPRESCALER_128,
-		SPI_BAUDRATEPRESCALER_256
-	};
+	uint32_t temp;
 
-	// Configura el modul
+	// Descativa el modul
 	//
-	handle->Instance = device;
-	handle->Init.BaudRatePrescaler = baudRateTbl[(options & HAL_SPI_CLOCKDIV_mask) >> HAL_SPI_CLOCKDIV_pos];
-	handle->Init.Direction = SPI_DIRECTION_2LINES;
-	//handle->Init.Direction = SPI_DIRECTION_1LINE;
-	handle->Init.NSS = SPI_NSS_SOFT;
-	handle->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
-	handle->Init.TIMode = SPI_TIMODE_DISABLED;
-	handle->Init.Mode = ((options & HAL_SPI_MS_mask) == HAL_SPI_MS_MASTER) ? SPI_MODE_MASTER : SPI_MODE_SLAVE;
-	handle->Init.DataSize = ((options & HAL_SPI_SIZE_mask) == HAL_SPI_SIZE_8) ? SPI_DATASIZE_8BIT : SPI_DATASIZE_16BIT;
-	handle->Init.CLKPolarity = ((options & HAL_SPI_CPOL_mask) == HAL_SPI_CPOL_LOW) ? SPI_POLARITY_LOW : SPI_POLARITY_HIGH;
-	handle->Init.CLKPhase = ((options & HAL_SPI_CPHA_mask) == HAL_SPI_CPHA_EDGE1) ? SPI_PHASE_1EDGE : SPI_PHASE_2EDGE;
-	handle->Init.FirstBit = ((options & HAL_SPI_FIRSTBIT_mask) == HAL_SPI_FIRSTBIT_MSB) ? SPI_FIRSTBIT_MSB : SPI_FIRSTBIT_LSB;
+	__clear_bit_msk(device->CR1, SPI_CR1_SPE);
 
-	HAL_SPI_Init(handle);
+	// Configura el registre CR1
+	//
+	temp = device->CR1;
+	temp &= 0;
+
+	switch (options & HAL_SPI_CLOCKDIV_mask) {
+		case HAL_SPI_CLOCKDIV_4:
+			temp |= SPI_CR1_BR_0;
+			break;
+
+		case HAL_SPI_CLOCKDIV_8:
+			temp |= SPI_CR1_BR_1;
+			break;
+
+		case HAL_SPI_CLOCKDIV_16:
+			temp |= SPI_CR1_BR_1 | SPI_CR1_BR_0;
+			break;
+
+		case HAL_SPI_CLOCKDIV_32:
+			temp |= SPI_CR1_BR_2;
+			break;
+
+		case HAL_SPI_CLOCKDIV_64:
+			temp |= SPI_CR1_BR_2 | SPI_CR1_BR_0;
+			break;
+
+		case HAL_SPI_CLOCKDIV_128:
+			temp |= SPI_CR1_BR_2 | SPI_CR1_BR_1;
+			break;
+
+		case HAL_SPI_CLOCKDIV_256:
+			temp |= SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0;
+			break;
+	}
+
+	if ((options & HAL_SPI_MS_mask) == HAL_SPI_MS_MASTER)
+		temp |= SPI_CR1_MSTR | SPI_CR1_SSI;
+	if ((options & HAL_SPI_CPOL_mask) == HAL_SPI_CPOL_HIGH)
+		temp |= SPI_CR1_CPOL;
+	if ((options & HAL_SPI_CPHA_mask) == HAL_SPI_CPHA_EDGE2)
+		temp |= SPI_CR1_CPHA;
+	if ((options & HAL_SPI_FIRSTBIT_mask) == HAL_SPI_FIRSTBIT_LSB)
+		temp |= SPI_CR1_LSBFIRST;
+	temp |= SPI_CR1_SSI;
+	temp |= SPI_CR1_SSM;
+	device->CR1 = temp;
+
+	// Configura el registre CR2
+	//
+	temp = device->CR2;
+	temp &= 0;
+
+	switch (options & HAL_SPI_SIZE_mask) {
+		case HAL_SPI_SIZE_8:
+			temp |= SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
+			break;
+
+		case HAL_SPI_SIZE_16:
+			temp |= SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
+			break;
+	}
+	device->CR2 = temp;
 
 	// Activa el modul
 	//
 	__set_bit_msk(device->CR1, SPI_CR1_SPE);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera que el fifo de transmissio estigui buit.
+/// \param    handler: El handler del dispositiu.
+/// \param    startTime: Temps del inici de les operacions
+/// \param    blockTime: Temps maxim de bloqueig.
+///
+static void waitTxFifoEmpty(
+	halSPIHandler handler,
+	int startTime,
+	int blockTime) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
+	SPI_TypeDef* device = handler->device;
+
+	while ((device->SR & SPI_SR_FTLVL) != SPI_FTLVL_EMPTY) {
+		int time = halSYSGetTick();
+		if (__abs_diff(time, startTime) > blockTime) {
+
+		}
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera que el fifo de recepcio estigui buit.
+/// \param    handler: El handler del dispositiu.
+/// \param    startTime: Temps del inici de les operacions
+/// \param    blockTime: Temps maxim de bloqueig.
+///
+static void waitRxFifoEmpty(
+	halSPIHandler handler,
+	int startTime,
+	int blockTime) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
+	SPI_TypeDef* device = handler->device;
+
+	while ((device->SR & SPI_SR_FRLVL) != SPI_FRLVL_EMPTY) {
+		int time = halSYSGetTick();
+		if (__abs_diff(time, startTime) > blockTime) {
+
+		}
+
+		uint8_t dummy = *((__IO uint8_t *)&device->DR);
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Espera que el dispositiu estigui lliure
+/// \param    handler: El handler del dispositiu.
+///
+static void waitBusy(
+	halSPIHandler handler) {
+
+	__VERIFY_HANDLER(handler);
+	__VERIFY_DEVICE(handler->device);
+
+	SPI_TypeDef* device = handler->device;
+
+	while (__check_bit_pos(device->SR, SPI_SR_BSY_Pos)) {
+
+	}
 }
 
 
@@ -178,7 +280,7 @@ halSPIHandler halSPIInitialize(
 	SPI_TypeDef* device = getDevice(settings->channel);
 
 	enableDeviceClock(device);
-    setupDevice(device, &data->handle, settings->options);
+    setupDevice(device, settings->options);
 
     halSPIHandler handler = data;
     handler->device = device;
@@ -229,13 +331,49 @@ void halSPISetInterruptFunction(
 /// \param    handler: El handler del dispositiu.
 /// \param    data: Bloc de dades.
 /// \param    size: Longitut del bloc de dades.
+/// \param    blockTime: Temps maxim de bloqueig
 ///
 void halSPISendBuffer(
 	halSPIHandler handler,
 	const uint8_t* data,
-	int size) {
+	int size,
+	int blockTime) {
 
+	eosAssert(data != NULL);
+	eosAssert(size > 0);
 	__VERIFY_HANDLER(handler);
 
-	HAL_SPI_Transmit(&handler->handle, (uint8_t*) data, size, 100);
+
+	SPI_TypeDef* device = handler->device;
+
+	int count = size;
+	const uint8_t *p = data;
+	int startTime = halSYSGetTick();
+
+	while (count > 0) {
+
+		if (count > 1) {
+			// Acces com a 16 bits (Packing mode)
+			device->DR = *((uint16_t*)p);
+			p += sizeof(uint16_t);
+			count -= sizeof(uint16_t);
+		}
+		else {
+			// Access com a 8 bits
+			*((volatile uint8_t*)&device->DR) = *((uint8_t*)p);
+			p += sizeof(uint8_t);
+			count -= sizeof(uint8_t);
+		}
+
+		while (!__check_bit_pos(device->SR, SPI_SR_TXE_Pos)) {
+			int time = halSYSGetTick();
+			if (__abs_diff(time, startTime) > blockTime) {
+
+			}
+		}
+	}
+
+	waitTxFifoEmpty(handler, startTime, blockTime);
+	waitBusy(handler);
+	waitRxFifoEmpty(handler, startTime, blockTime);
 }

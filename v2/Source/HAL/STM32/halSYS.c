@@ -87,3 +87,12 @@ uint32_t halSYSGetTimerClock2Frequency() {
 		return(2 * f);
 }
 
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el tick del sistema.
+/// \return   El valor del tick.
+///
+int halSYSGetTick() {
+
+	return HAL_GetTick();
+}

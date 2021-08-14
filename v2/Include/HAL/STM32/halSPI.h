@@ -100,7 +100,6 @@ typedef void (*halSPIInterruptFunction)(halSPIHandler handler, void* params);
 
 struct __halSPIData {
 	SPI_TypeDef* device;
-	SPI_HandleTypeDef handle;
 	halSPIInterruptFunction isrFunction;
 	void* isrParams;
 };
@@ -120,7 +119,7 @@ void halSPIDeinitialize(halSPIHandler handler);
 
 bool halSPIIsBusy(halSPIHandler handler);
 
-void halSPISendBuffer(halSPIHandler handler, const uint8_t* data, int size);
+void halSPISendBuffer(halSPIHandler handler, const uint8_t* data, int size, int blockTime);
 void halSPIReceiveBuffer(halSPIHandler handler, uint8_t* data, int size);
 void halSPITransmitBuffer(halSPIHandler handler, uint8_t* txData, uint8_t* rxData, int size);
 

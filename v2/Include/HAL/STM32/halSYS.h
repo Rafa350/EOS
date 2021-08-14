@@ -30,6 +30,7 @@ uint32_t halSYSGetPeripheralClock2Frequency();
 uint32_t halSYSGetTimerClock1Frequency();
 uint32_t halSYSGetTimerClock2Frequency();
 
+int halSYSGetTick();
 
 #ifdef	__cplusplus
 }
