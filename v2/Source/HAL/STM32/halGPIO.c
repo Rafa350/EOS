@@ -13,7 +13,7 @@
 /// \return   El dispositiu.
 ///
 static inline GPIO_TypeDef* getDevice(
-	GPIOPort port) {
+	halGPIOPort port) {
 
 	__VERIFY_PORT(port);
 
@@ -74,9 +74,6 @@ static void enableDeviceClock(
 		case GPIOK_BASE:
 			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
 			break;
-
-		default:
-			break;
 	}
 
 	__DSB();
@@ -92,9 +89,9 @@ static void enableDeviceClock(
 ///
 static void setupDevicePin(
 	GPIO_TypeDef* device,
-	GPIOPin pin,
-	GPIOOptions options,
-	GPIOAlt alt) {
+	halGPIOPin pin,
+	halGPIOOptions options,
+	halGPIOAlt alt) {
 
 	__VERIFY_DEVICE(device);
 	__VERIFY_PIN(pin);
@@ -236,7 +233,7 @@ static void setupDevicePin(
 /// \param    count: Number of elements in table.
 ///
 void halGPIOInitializePins(
-	const GPIOPinSettings* settings,
+	const halGPIOPinSettings* settings,
 	int count) {
 
 	eosAssert(settings != NULL);
@@ -244,7 +241,7 @@ void halGPIOInitializePins(
 
 	for (int i = 0; i < count; i++) {
 
-		const GPIOPinSettings* p = &settings[i];
+		const halGPIOPinSettings* p = &settings[i];
 		GPIO_TypeDef* device = getDevice(p->port);
 
 		enableDeviceClock(device);
@@ -259,7 +256,7 @@ void halGPIOInitializePins(
 /// \param    count: Number of elements in table.
 ///
 void halGPIOInitializePorts(
-	const GPIOPortSettings* settings,
+	const halGPIOPortSettings* settings,
 	int count) {
 
 	eosAssert(settings != NULL);
@@ -267,12 +264,12 @@ void halGPIOInitializePorts(
 
 	for (int i = 0; i < count; i++) {
 
-		const GPIOPortSettings* p = &settings[i];
+		const halGPIOPortSettings* p = &settings[i];
 		GPIO_TypeDef* device = getDevice(p->port);
 
 		enableDeviceClock(device);
 
-		for (GPIOPin pin = 0; pin < 16; pin++)
+		for (halGPIOPin pin = 0; pin < 16; pin++)
 			if (p->mask & (1 << pin))
 				setupDevicePin(device, pin, p->options, p->alt);
 	}
@@ -287,10 +284,10 @@ void halGPIOInitializePorts(
 /// \param    alt: Pin alternate function.
 ///
 void halGPIOInitializePin(
-	GPIOPort port,
-	GPIOPin pin,
-	GPIOOptions options,
-	GPIOAlt alt) {
+	halGPIOPort port,
+	halGPIOPin pin,
+	halGPIOOptions options,
+	halGPIOAlt alt) {
 
 	__VERIFY_PORT(port);
 	__VERIFY_PIN(pin);

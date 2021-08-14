@@ -28,13 +28,13 @@ namespace app {
 			typedef eos::CallbackP1<MyApplication, const eos::VirtualKeyboard::EventArgs&> VirtualKeyboardEventCallback;
 
 		private:
-			LedService *ledService;
-			eos::GuiService *guiService;
+			LedService *_ledService;
+			eos::GuiService *_guiService;
 
-			eos::Panel *mainPanel;
+			eos::Panel *_mainPanel;
 
-			ButtonEventCallback buttonEventCallback;
-			VirtualKeyboardEventCallback virtualKeyboardEventCallback;
+			ButtonEventCallback _buttonEventCallback;
+			VirtualKeyboardEventCallback _virtualKeyboardEventCallback;
 
 		protected:
 			void onInitialize() override;

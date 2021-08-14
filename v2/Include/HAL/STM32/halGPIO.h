@@ -26,27 +26,27 @@ extern "C" {
 #endif
 
 
-typedef uint32_t GPIOPort;        ///< Port identifier.
-typedef uint32_t GPIOPin;         ///< Pin number.
-typedef uint32_t GPIOMask;        ///< Position pin mask.
-typedef uint32_t GPIOOptions;     ///< Pin options.
-typedef uint32_t GPIOAlt;         ///< Alternate pin function.
+typedef uint32_t halGPIOPort;        ///< Port identifier.
+typedef uint32_t halGPIOPin;         ///< Pin number.
+typedef uint32_t halGPIOMask;        ///< Position pin mask.
+typedef uint32_t halGPIOOptions;     ///< Pin options.
+typedef uint32_t halGPIOAlt;         ///< Alternate pin function.
 
 /// \brief GPIO pin initialization parameters.
 typedef struct {
-	GPIOPort port;                ///< Port identifier.
-	GPIOPin pin;                  ///< Pin identifier
-	GPIOOptions options;          ///< Options
-	GPIOAlt alt;                  ///< Alternate pin function
-} GPIOPinSettings;
+	halGPIOPort port;                ///< Port identifier.
+	halGPIOPin pin;                  ///< Pin identifier
+	halGPIOOptions options;          ///< Options
+	halGPIOAlt alt;                  ///< Alternate pin function
+} halGPIOPinSettings;
 
 /// \brief GPIO port initialization parameters
 typedef struct {
-	GPIOPort port;                ///< Port identifier.
-	GPIOMask mask;                ///< Selection pin mask.
-	GPIOOptions options;          ///< Options.
-	GPIOAlt alt;                  ///< Alternate pin function.
-} GPIOPortSettings;
+	halGPIOPort port;                ///< Port identifier.
+	halGPIOMask mask;                ///< Selection pin mask.
+	halGPIOOptions options;          ///< Options.
+	halGPIOAlt alt;                  ///< Alternate pin function.
+} halGPIOPortSettings;
 
 
 // Identificado del port
@@ -80,7 +80,7 @@ typedef struct {
 #define HAL_GPIO_PIN_13           13
 #define HAL_GPIO_PIN_14           14
 #define HAL_GPIO_PIN_15           15
-#define HAL_GPIO_PIN_NONE         ((GPIOPin) -1)
+#define HAL_GPIO_PIN_NONE         ((halGPIOPin) -1)
 
 // Identificador de la funcio alternativa
 #define HAL_GPIO_AF_0             0
@@ -99,7 +99,7 @@ typedef struct {
 #define HAL_GPIO_AF_13            13
 #define HAL_GPIO_AF_14            14
 #define HAL_GPIO_AF_15            15
-#define HAL_GPIO_AF_NONE          ((GPIOAlt) -1)
+#define HAL_GPIO_AF_NONE          ((halGPIOAlt) -1)
 
 
 // Mascara de posicio del pin
@@ -201,15 +201,15 @@ typedef struct {
 	((GPIO_TypeDef*)port)->IDR
 
 
-void halGPIOInitializePins(const GPIOPinSettings* settings, int count);
-void halGPIOInitializePorts(const GPIOPortSettings* settings, int count);
-void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
-void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
+void halGPIOInitializePins(const halGPIOPinSettings* settings, int count);
+void halGPIOInitializePorts(const halGPIOPortSettings* settings, int count);
+void halGPIOInitializePin(halGPIOPort port, halGPIOPin pin, halGPIOOptions options, halGPIOAlt alt);
+void halGPIOInitializePort(halGPIOPort port, halGPIOMask mask, halGPIOOptions options, halGPIOAlt alt);
 
 #if HAL_GPIO_INLINE == 0
-void halGPIOClearPin(GPIOPort port, GPIOPin pin);
-void halGPIOSetPin(GPIOPort port, GPIOPin pin);
-void halGPIOTogglePin(GPIOPort port, GPIOPin pin);
+void halGPIOClearPin(halGPIOPort port, halGPIOPin pin);
+void halGPIOSetPin(halGPIOPort port, halGPIOPin pin);
+void halGPIOTogglePin(halGPIOPort port, halGPIOPin pin);
 #endif
 
 

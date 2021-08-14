@@ -48,7 +48,7 @@ extern "C" {
 #define HAL_DMA2D_INT_DISABLE     (0u << HAL_DMA2D_INT_POS)
 #define HAL_DMA2D_INT_ENABLE      (1u << HAL_DMA2D_INT_POS)
 
-typedef uint32_t DMA2DOptions;
+typedef uint32_t halDMA2DOptions;
 
 
 void halDMA2DInitialize();
@@ -56,8 +56,8 @@ void halDMA2DDeinitialize();
 
 void halDMA2DConfigureCLUT();
 
-void halDMA2DStartFill(void* dst, int width, int height, int offset, DMA2DOptions options, uint32_t color);
-void halDMA2DStartCopy(void* dst, int width, int height, int offset, DMA2DOptions options, const void* src, int srcOffset);
+void halDMA2DStartFill(void* dst, int width, int height, int offset, halDMA2DOptions options, uint32_t color);
+void halDMA2DStartCopy(void* dst, int width, int height, int offset, halDMA2DOptions options, const void* src, int srcOffset);
 bool halDMA2DWaitForFinish();
 
 void halDMA2DInterruptHandler();

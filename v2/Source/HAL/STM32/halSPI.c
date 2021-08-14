@@ -22,7 +22,7 @@
 /// \return   El dispositiu.
 ///
 static inline SPI_TypeDef* getDevice(
-	SPIChannel channel) {
+	halSPIChannel channel) {
 
 	__VERIFY_CHANNEL(channel);
 
@@ -124,7 +124,7 @@ static void disableDeviceClock(
 static void setupDevice(
 	SPI_TypeDef* device,
 	SPI_HandleTypeDef* handle,
-	SPIOptions options) {
+	halSPIOptions options) {
 
 	eosAssert(handle != NULL);
 	__VERIFY_DEVICE(device);
@@ -168,9 +168,9 @@ static void setupDevice(
 /// \param    data: Buffer de dades.
 /// \param    settings: Parametres d'inicialitzacio.
 ///
-SPIHandler halSPIInitialize(
-	SPIData* data,
-	const SPISettings *settings) {
+halSPIHandler halSPIInitialize(
+	halSPIData* data,
+	const halSPISettings* settings) {
 
 	eosAssert(data != NULL);
 	eosAssert(settings != NULL);
@@ -180,7 +180,7 @@ SPIHandler halSPIInitialize(
 	enableDeviceClock(device);
     setupDevice(device, &data->handle, settings->options);
 
-    SPIHandler handler = data;
+    halSPIHandler handler = data;
     handler->device = device;
     handler->isrFunction = NULL;
     handler->isrParams = NULL;
@@ -194,7 +194,7 @@ SPIHandler halSPIInitialize(
 /// \param    handler: El handler del dispositiu.
 ///
 void halSPIDeinitialize(
-	SPIHandler handler) {
+	halSPIHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -213,8 +213,8 @@ void halSPIDeinitialize(
 /// \param    params: El parametres.
 ///
 void halSPISetInterruptFunction(
-	SPIHandler handler,
-	SPIInterruptFunction function,
+	halSPIHandler handler,
+	halSPIInterruptFunction function,
 	void* params) {
 
 	__VERIFY_HANDLER(handler);
@@ -231,7 +231,7 @@ void halSPISetInterruptFunction(
 /// \param    size: Longitut del bloc de dades.
 ///
 void halSPISendBuffer(
-	SPIHandler handler,
+	halSPIHandler handler,
 	const uint8_t* data,
 	int size) {
 

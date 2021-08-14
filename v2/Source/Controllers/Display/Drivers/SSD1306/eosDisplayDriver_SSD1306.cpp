@@ -221,10 +221,10 @@ void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza modul GPIO
 	//
-	_pinCS.initOutput(GpioSpeed::fast, GpioDriver::pushPull, GpioState::set);
-	_pinDC.initOutput(GpioSpeed::fast, GpioDriver::pushPull, GpioState::set);
+	_pinCS.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::set);
+	_pinDC.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::set);
 #ifdef DISPLAY_RST_PORT
-	_pinRST.initOutput(GpioSpeed::low, GpioDriver::pushPull, GpioState::clr);
+	_pinRST.initOutput(GPIOSpeed::low, GPIODriver::pushPull, GPIOState::clr);
 #endif
 
 	// Inicialitza el modul SPI

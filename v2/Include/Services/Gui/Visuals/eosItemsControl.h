@@ -9,11 +9,18 @@
 namespace eos {
 
 	class ItemsControl: public Control {
+		private:
+            Thickness _padding;
+            Visual* _active;
 
 		public:
 			ItemsControl();
 
-			void addItem(Visual *pNewItem);
+			void setPadding(const Thickness& value);
+            void setActive(Visual* item);
+			void addItem(Visual* item);
+
+			inline const Thickness& getPadding() const { return _padding; }
 	};
 }
 

@@ -12,12 +12,12 @@ extern "C" {
 #endif
 
 
-typedef uint8_t LTDCLayerNum;
-typedef uint8_t LTDCPixelFormat;
+typedef uint8_t halLTDCLayerNum;
+typedef uint8_t halLTDCPixelFormat;
 
-typedef struct __LDTCData *LTDCHandler;
+typedef struct __halLDTCData* halLTDCHandler;
 
-typedef void (*LTDCInterruptFunction)(void *params, uint32_t event);
+typedef void (*halLTDCInterruptFunction)(void* params, uint32_t event);
 
 typedef struct {
     uint16_t HSYNC;
@@ -34,43 +34,43 @@ typedef struct {
     } polarity;
     int width;               // Amplada
     int height;              // Alçada
-    LTDCInterruptFunction isrFunction;
+    halLTDCInterruptFunction isrFunction;
     void *isrParams;
-} LTDCSettings;
+} halLTDCSettings;
 
 
 // Identificados de les capes
-#define HAL_LTDC_LAYER_0          ((LTDCLayerNum) 0)
-#define HAL_LTDC_LAYER_1          ((LTDCLayerNum) 1)
+#define HAL_LTDC_LAYER_0          ((halLTDCLayerNum) 0)
+#define HAL_LTDC_LAYER_1          ((halLTDCLayerNum) 1)
 
 
 // Format de pixel
-#define HAL_LTDC_FORMAT_RGB888    ((LTDCPixelFormat) 0)
-#define HAL_LTDC_FORMAT_RGB565    ((LTDCPixelFormat) 1)
-#define HAL_LTDC_FORMAT_L8        ((LTDCPixelFormat) 2)
+#define HAL_LTDC_FORMAT_RGB888    ((halLTDCPixelFormat) 0)
+#define HAL_LTDC_FORMAT_RGB565    ((halLTDCPixelFormat) 1)
+#define HAL_LTDC_FORMAT_L8        ((halLTDCPixelFormat) 2)
 
 
-void halLTDCInitialize(const LTDCSettings *settings);
+void halLTDCInitialize(const halLTDCSettings *settings);
 void halLTDCDeinitialize();
 
 void halLTDCSetBackgroundColor(uint32_t rgb);
 
-void halLTDCLayerSetWindow(LTDCLayerNum layerNum, int x, int y, int width, int height);
-void halLTDCLayerSetDefaultColor(LTDCLayerNum layerNum, uint32_t argb);
-void halLTDCLayerSetKeyColor(LTDCLayerNum layerNum, uint32_t rgb);
-void halLTDCLayerDisableKeyColor(LTDCLayerNum layerNum);
-void halLTDCLayerSetFrameFormat(LTDCLayerNum layerNum, LTDCPixelFormat pixelFormat, int lineWidth, int linePitch, int numLines);
-void halLTDCLayerSetFrameBuffer(LTDCLayerNum layerNum, void *buffer);
-void halLTDCLayerUpdate(LTDCLayerNum layerNum);
+void halLTDCLayerSetWindow(halLTDCLayerNum layerNum, int x, int y, int width, int height);
+void halLTDCLayerSetDefaultColor(halLTDCLayerNum layerNum, uint32_t argb);
+void halLTDCLayerSetKeyColor(halLTDCLayerNum layerNum, uint32_t rgb);
+void halLTDCLayerDisableKeyColor(halLTDCLayerNum layerNum);
+void halLTDCLayerSetFrameFormat(halLTDCLayerNum layerNum, halLTDCPixelFormat pixelFormat, int lineWidth, int linePitch, int numLines);
+void halLTDCLayerSetFrameBuffer(halLTDCLayerNum layerNum, void *buffer);
+void halLTDCLayerUpdate(halLTDCLayerNum layerNum);
 
-int halLTDCGetPixelOffset(LTDCLayerNum layerNum, int x, int y);
-uint8_t halLTDCGetPixelBytes(LTDCPixelFormat pixelFormat);
+int halLTDCGetPixelOffset(halLTDCLayerNum layerNum, int x, int y);
+uint8_t halLTDCGetPixelBytes(halLTDCPixelFormat pixelFormat);
 
 #define halLTDCEnable()      __set_bit_msk(LTDC->GCR, LTDC_GCR_LTDCEN)
 #define halLTDCDisable()     __clear_bit_msk(LTDC->GCR, LTDC_GCR_LTDCEN)
 
 
-void halLTDCSetInterruptFunction(LTDCInterruptFunction function, void *params);
+void halLTDCSetInterruptFunction(halLTDCInterruptFunction function, void* params);
 void halLTDCInterruptHandler();
 
 void halLTDCEnableInterrupts();

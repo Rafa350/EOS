@@ -32,11 +32,11 @@ using namespace app;
 MyApplication::MyApplication():
 
 	Application(),
-	buttonEventCallback(this, &MyApplication::buttonEventHandler),
-	virtualKeyboardEventCallback(this, &MyApplication::virtualKeyboardEventHandler) {
+	_buttonEventCallback(this, &MyApplication::buttonEventHandler),
+	_virtualKeyboardEventCallback(this, &MyApplication::virtualKeyboardEventHandler) {
 
-	ledService = new LedService(this);
-	guiService = new GuiService(this);
+	_ledService = new LedService(this);
+	_guiService = new GuiService(this);
 }
 
 
@@ -80,11 +80,11 @@ void MyApplication::createMainPanel() {
 	kb->setMargin(Thickness(5, 0, 5, 5));
 	kb->setHorizontalAlignment(HorizontalAlignment::center);
 	kb->setVerticalAlignment(VerticalAlignment::center);
-	kb->setEventCallback(&virtualKeyboardEventCallback);
+	kb->setEventCallback(&_virtualKeyboardEventCallback);
 	sp->addChild(kb);
 
-	guiService->getScreen()->addChild(border);
-	guiService->setFocus(tb);
+	_guiService->getScreen()->addChild(border);
+	_guiService->setFocus(tb);
 }
 
 

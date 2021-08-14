@@ -301,7 +301,7 @@ void FT5336Driver::initializeInterface() {
 	// Inicialitza el pin d'interrupcio
 	//
 #ifdef TOUCHPAD_INT_PORT
-	_pinINT.initInput(GpioSpeed::fast, GpioPull::up);
+	_pinINT.initInput(GPIOSpeed::fast, GPIOPull::up);
 #endif
 
 #ifdef TOUCHPAD_INT_PORT

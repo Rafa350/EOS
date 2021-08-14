@@ -60,13 +60,13 @@ namespace eos {
 
     	private:
 #ifdef DISPLAY_RST_PORT
-			typedef GpioPinAdapter<GpioPort(DISPLAY_RST_PORT), GpioPin(DISPLAY_RST_PIN)> PinRST;
+			typedef GPIOPinAdapter<GPIOPort(DISPLAY_RST_PORT), GPIOPin(DISPLAY_RST_PIN)> PinRST;
 #endif
-			typedef GpioPinAdapter<GpioPort(DISPLAY_CS_PORT), GpioPin(DISPLAY_CS_PIN)> PinCS;
-			typedef GpioPinAdapter<GpioPort(DISPLAY_DC_PORT), GpioPin(DISPLAY_DC_PIN)> PinDC;
-			typedef GpioPinAdapter<GpioPort(DISPLAY_SCK_PORT), GpioPin(DISPLAY_SCK_PIN)> PinSCK;
-			typedef GpioPinAdapter<GpioPort(DISPLAY_MOSI_PORT), GpioPin(DISPLAY_MOSI_PIN)> PinMOSI;
-			typedef SpiAdapter<SpiChannel(DISPLAY_SPI_CHANNEL)> Spi;
+			typedef GPIOPinAdapter<GPIOPort(DISPLAY_CS_PORT), GPIOPin(DISPLAY_CS_PIN)> PinCS;
+			typedef GPIOPinAdapter<GPIOPort(DISPLAY_DC_PORT), GPIOPin(DISPLAY_DC_PIN)> PinDC;
+			typedef GPIOPinAdapter<GPIOPort(DISPLAY_SCK_PORT), GPIOPin(DISPLAY_SCK_PIN)> PinSCK;
+			typedef GPIOPinAdapter<GPIOPort(DISPLAY_MOSI_PORT), GPIOPin(DISPLAY_MOSI_PIN)> PinMOSI;
+			typedef SPIAdapter<SPIChannel(DISPLAY_SPI_CHANNEL)> Spi;
 
     	private:
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)

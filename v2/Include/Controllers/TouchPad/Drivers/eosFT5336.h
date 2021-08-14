@@ -249,11 +249,11 @@ namespace eos {
 	class FT5336Driver: public ITouchPadDriver {
 		private:
 #ifdef TOUCHPAD_INT_PORT
-		    typedef GpioPinAdapter<GpioPort(TOUCHPAD_INT_PORT), GpioPin(TOUCHPAD_INT_PIN)> PinINT;
+		    typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_INT_PORT), GPIOPin(TOUCHPAD_INT_PIN)> PinINT;
 #endif
-			typedef GpioPinAdapter<GpioPort(TOUCHPAD_SCL_PORT), GpioPin(TOUCHPAD_SCL_PIN)> PinSCL;
-			typedef GpioPinAdapter<GpioPort(TOUCHPAD_SDA_PORT), GpioPin(TOUCHPAD_SDA_PIN)> PinSDA;
-			typedef I2cAdapter<I2cChannel(TOUCHPAD_I2C_CHANNEL)> I2C;
+			typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_SCL_PORT), GPIOPin(TOUCHPAD_SCL_PIN)> PinSCL;
+			typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_SDA_PORT), GPIOPin(TOUCHPAD_SDA_PIN)> PinSDA;
+			typedef I2CAdapter<I2CChannel(TOUCHPAD_I2C_CHANNEL)> I2C;
 
 		private:
 			static ITouchPadDriver* _instance;

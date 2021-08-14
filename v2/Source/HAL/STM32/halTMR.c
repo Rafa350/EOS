@@ -13,7 +13,7 @@
 /// \return   El dispositiu.
 ///
 static inline TIM_TypeDef* getDevice(
-	TMRTimer timer) {
+	halTMRTimer timer) {
 
 	__VERIFY_TIMER(timer);
 
@@ -190,9 +190,9 @@ static void disableDeviceClock(
 /// \param    info: Parametres d'inicialitzacio.
 /// \return   El handler del temporitzador.
 ///
-TMRHandler halTMRInitialize(
-	TMRData* data,
-	const TMRSettings *settings) {
+halTMRHandler halTMRInitialize(
+	halTMRData* data,
+	const halTMRSettings *settings) {
 
 	eosAssert(data !=NULL);
 	eosAssert(settings != NULL);
@@ -237,7 +237,7 @@ TMRHandler halTMRInitialize(
 	//
 	device->ARR = settings->period;
 
-	TMRHandler handler = data;
+	halTMRHandler handler = data;
 	handler->device = device;
 	handler->isrFunction = NULL;
 	handler->isrParams = NULL;
@@ -251,7 +251,7 @@ TMRHandler halTMRInitialize(
 /// \param    handler: Handler del temporitzador.
 ///
 void halTMRDeinitialize(
-	TMRHandler handler) {
+	halTMRHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -268,7 +268,7 @@ void halTMRDeinitialize(
 /// \param    handler: Handler del temporitzador.
 ///
 void halTMRStartTimer(
-	TMRHandler handler) {
+	halTMRHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -282,7 +282,7 @@ void halTMRStartTimer(
 /// \param    handler: Handler del temporitzador.
 ///
 void halTMRStopTimer(
-	TMRHandler handler) {
+	halTMRHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -298,8 +298,8 @@ void halTMRStopTimer(
 /// \param    params: El parametre.
 ///
 void halTMRSetInterruptFunction(
-	TMRHandler handler,
-	TMRInterruptFunction function,
+	halTMRHandler handler,
+	halTMRInterruptFunction function,
 	void* params) {
 
 	__VERIFY_HANDLER(handler);
@@ -323,7 +323,7 @@ void halTMRSetInterruptFunction(
 /// \param    handler: Handler del temporitzador.
 ///
 void halTMRInterruptHandler(
-	TMRHandler handler) {
+	halTMRHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -362,7 +362,7 @@ void halTMRInterruptHandler(
 /// \param    events: Events a activar.
 ///
 void halTMREnableInterrupts(
-	TMRHandler handler,
+	halTMRHandler handler,
 	uint32_t events) {
 
 	__VERIFY_HANDLER(handler);
@@ -390,7 +390,7 @@ void halTMREnableInterrupts(
 /// \return   Els events previament actius.
 ///
 uint32_t halTMRDisableInterrupts(
-	TMRHandler handler,
+	halTMRHandler handler,
 	uint32_t events) {
 
 	__VERIFY_HANDLER(handler);
@@ -433,7 +433,7 @@ uint32_t halTMRDisableInterrupts(
 /// \return   Valor del indicador.
 ///
 void halTMRClearInterruptFlags(
-	TMRHandler handler,
+	halTMRHandler handler,
 	uint32_t events) {
 
 	__VERIFY_HANDLER(handler);
@@ -459,7 +459,7 @@ void halTMRClearInterruptFlags(
 /// \return   El valor del indicador.
 ///
 bool halTMRGetInterruptFlag(
-	TMRHandler handler,
+	halTMRHandler handler,
 	uint32_t event) {
 
 	__VERIFY_HANDLER(handler);

@@ -12,7 +12,7 @@
 #define HAL_I2C_CHANNEL_2         1
 #define HAL_I2C_CHANNEL_3         2
 #define HAL_I2C_CHANNEL_4         3
-#define HAL_I2C_CHANNEL_NONE      0xFFFFFFFF
+#define HAL_I2C_CHANNEL_NONE      ((I2CChannel) -1)
 
 
 // Opcions: Interrupcio activa
@@ -29,35 +29,35 @@ extern "C" {
 #endif
 
 
-typedef uint32_t I2CChannel;
-typedef uint32_t I2COptions;
-typedef struct __I2CData* I2CHandler;
-typedef void (*I2CInterruptFunction)(I2CHandler handler, void *params);
+typedef uint32_t halI2CChannel;
+typedef uint32_t halI2COptions;
+typedef struct __halI2CData* halI2CHandler;
+typedef void (*halI2CInterruptFunction)(halI2CHandler handler, void* params);
 
-struct __I2CData {
+struct __halI2CData {
 	I2C_TypeDef* device;
 	I2C_HandleTypeDef handle;
-	I2CInterruptFunction isrFunction;
+	halI2CInterruptFunction isrFunction;
 	void* isrParams;
 };
-typedef struct __I2CData I2CData;
+typedef struct __halI2CData halI2CData;
 
 typedef struct {
-	I2CChannel channel;
-	I2COptions options;
-	I2CInterruptFunction isrFunction;
+	halI2CChannel channel;
+	halI2COptions options;
+	halI2CInterruptFunction isrFunction;
 	void* isrParams;
-} I2CMasterInitializeInfo;
+} halI2CMasterInitializeInfo;
 
 
 
-I2CHandler halI2CMasterInitialize(I2CData* data, const I2CMasterInitializeInfo *info);
+halI2CHandler halI2CMasterInitialize(halI2CData* data, const halI2CMasterInitializeInfo* info);
 
-void halI2CEnable(I2CHandler handler);
-void halI2CDisable(I2CHandler handler);
+void halI2CEnable(halI2CHandler handler);
+void halI2CDisable(halI2CHandler handler);
 
-void halI2CMasterWriteMultiple(I2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t* buffer, uint16_t length);
-void halI2CMasterReadMultiple(I2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t* buffer, uint16_t length);
+void halI2CMasterWriteMultiple(halI2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t* buffer, uint16_t length);
+void halI2CMasterReadMultiple(halI2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t* buffer, uint16_t length);
 
 
 #ifdef	__cplusplus

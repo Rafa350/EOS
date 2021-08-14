@@ -12,24 +12,24 @@
 
 namespace eos {
 
-	enum class I2cChannel: I2CChannel {
+	enum class I2CChannel: halI2CChannel {
 		channel1 = HAL_I2C_CHANNEL_1,
 		channel2 = HAL_I2C_CHANNEL_2,
 		channel3 = HAL_I2C_CHANNEL_3,
 		channel4 = HAL_I2C_CHANNEL_4
 	};
 
-	template <I2cChannel channel>
-	class I2cAdapter {
+	template <I2CChannel channel>
+	class I2CAdapter {
 		private:
-			I2CData _data;
-			I2CHandler _handler;
+			halI2CData _data;
+			halI2CHandler _handler;
 
 		public:
 			inline void initMaster() {
 
-				I2CMasterInitializeInfo initInfo;
-				initInfo.channel = I2CChannel(channel);
+				halI2CMasterInitializeInfo initInfo;
+				initInfo.channel = halI2CChannel(channel);
 				_handler = halI2CMasterInitialize(&_data, &initInfo);
 			}
 
@@ -53,60 +53,65 @@ namespace eos {
 					sizeof(buffer));
 			}
 
-			template <GpioPort port, GpioPin pin>
-			inline static void setSCLPin(GpioPinAdapter<port, pin> pinAdapter) {
-				if constexpr (channel == I2cChannel::channel1)
+			template <GPIOPort port, GPIOPin pin>
+			inline static void setSCLPin(GPIOPinAdapter<port, pin> pinAdapter) {
+				if constexpr (channel == I2CChannel::channel1)
 					pinAdapter.initAlt(
-						GpioSpeed::fast,
-						GpioDriver::openDrain,
-						GpioPinAdapter<port, pin>::GpioAlt::i2c1_SCL);
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						GPIOPinAdapter<port, pin>::GPIOAlt::i2c1_SCL);
 
-				if constexpr (channel == I2cChannel::channel2)
+				if constexpr (channel == I2CChannel::channel2)
 					pinAdapter.initAlt(
-						GpioSpeed::fast,
-						GpioDriver::openDrain,
-						GpioPinAdapter<port, pin>::GpioAlt::i2c2_SCL);
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						GPIOPinAdapter<port, pin>::GPIOAlt::i2c2_SCL);
 
-				if constexpr (channel == I2cChannel::channel3)
+				if constexpr (channel == I2CChannel::channel3)
 					pinAdapter.initAlt(
-						GpioSpeed::fast,
-						GpioDriver::openDrain,
-						GpioPinAdapter<port, pin>::GpioAlt::i2c3_SCL);
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						GPIOPinAdapter<port, pin>::GPIOAlt::i2c3_SCL);
 
-				if constexpr (channel == I2cChannel::channel4)
+				if constexpr (channel == I2CChannel::channel4)
 					pinAdapter.initAlt(
-						GpioSpeed::fast,
-						GpioDriver::openDrain,
-						GpioPinAdapter<port, pin>::GpioAlt::i2c4_SCL);
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						GPIOPinAdapter<port, pin>::GPIOAlt::i2c4_SCL);
 			}
 
-			template <GpioPort port, GpioPin pin>
-			inline static void setSDAPin(GpioPinAdapter<port, pin> pinAdapter) {
-				if constexpr (channel == I2cChannel::channel1)
+			template <GPIOPort port, GPIOPin pin>
+			inline static void setSDAPin(GPIOPinAdapter<port, pin> pinAdapter) {
+				if constexpr (channel == I2CChannel::channel1)
 					pinAdapter.initAlt(
-						GpioSpeed::fast,
-						GpioDriver::openDrain,
-						GpioPinAdapter<port, pin>::GpioAlt::i2c1_SDA);
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						GPIOPinAdapter<port, pin>::GPIOAlt::i2c1_SDA);
 
-				if constexpr (channel == I2cChannel::channel2)
+				if constexpr (channel == I2CChannel::channel2)
 					pinAdapter.initAlt(
-						GpioSpeed::fast,
-						GpioDriver::openDrain,
-						GpioPinAdapter<port, pin>::GpioAlt::i2c2_SDA);
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						GPIOPinAdapter<port, pin>::GPIOAlt::i2c2_SDA);
 
-				if constexpr (channel == I2cChannel::channel3)
+				if constexpr (channel == I2CChannel::channel3)
 					pinAdapter.initAlt(
-						GpioSpeed::fast,
-						GpioDriver::openDrain,
-						GpioPinAdapter<port, pin>::GpioAlt::i2c3_SDA);
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						GPIOPinAdapter<port, pin>::GPIOAlt::i2c3_SDA);
 
-				if constexpr (channel == I2cChannel::channel4)
+				if constexpr (channel == I2CChannel::channel4)
 					pinAdapter.initAlt(
-						GpioSpeed::fast,
-						GpioDriver::openDrain,
-						GpioPinAdapter<port, pin>::GpioAlt::i2c4_SDA);
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						GPIOPinAdapter<port, pin>::GPIOAlt::i2c4_SDA);
 		}
 	};
+
+	typedef I2CAdapter<I2CChannel::channel1> I2C_1;
+	typedef I2CAdapter<I2CChannel::channel2> I2C_2;
+	typedef I2CAdapter<I2CChannel::channel3> I2C_3;
+	typedef I2CAdapter<I2CChannel::channel4> I2C_4;
 }
 
 

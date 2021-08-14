@@ -32,7 +32,7 @@
 /// \return   El dispositiu.
 ///
 static inline I2C_TypeDef* getDevice(
-	I2CChannel channel) {
+	halI2CChannel channel) {
 
 	__VERIFY_CHANNEL(channel);
 
@@ -87,7 +87,7 @@ static void enableDeviceClock(
 static void setupDevice(
 	I2C_TypeDef* device,
 	I2C_HandleTypeDef* handle,
-	I2COptions options) {
+	halI2COptions options) {
 
 	eosAssert(handle != NULL);
 	__VERIFY_DEVICE(device);
@@ -117,9 +117,9 @@ static void setupDevice(
 /// \param    data: Buffer de dades.
 /// \param    info: Els parametres d'inicialitzacio.
 ///
-I2CHandler halI2CMasterInitialize(
-	I2CData* data,
-	const I2CMasterInitializeInfo* info) {
+halI2CHandler halI2CMasterInitialize(
+	halI2CData* data,
+	const halI2CMasterInitializeInfo* info) {
 
 	eosAssert(data != NULL);
 	eosAssert(info != NULL);
@@ -130,7 +130,7 @@ I2CHandler halI2CMasterInitialize(
 
 	setupDevice(device, &data->handle, info->options);
 
-	I2CHandler handler = data;
+	halI2CHandler handler = data;
 	handler->device = device;
 
 	if (__check_bit_msk(info->options, HAL_I2C_INT_ENABLE)) {
@@ -153,7 +153,7 @@ I2CHandler halI2CMasterInitialize(
 /// \param    handler: Handler del dispositiu.
 ///
 void halI2CDeinitialize(
-	I2CHandler handler) {
+	halI2CHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 
@@ -166,7 +166,7 @@ void halI2CDeinitialize(
 /// \param    handler: Handler del dispositiu.
 ///
 void halI2CEnable(
-	I2CHandler handler) {
+	halI2CHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -180,7 +180,7 @@ void halI2CEnable(
 /// \param    handler: Handler del dispositiu.
 ///
 void halI2CDisable(
-	I2CHandler handler) {
+	halI2CHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -190,7 +190,7 @@ void halI2CDisable(
 
 
 void halI2CMasterReadMultiple(
-	I2CHandler handler,
+	halI2CHandler handler,
 	uint8_t addr,
 	uint16_t reg,
 	uint16_t memAddress,
@@ -212,7 +212,7 @@ void halI2CMasterReadMultiple(
 
 
 void halI2CMasterWriteMultiple(
-	I2CHandler handler,
+	halI2CHandler handler,
 	uint8_t addr,
 	uint16_t reg,
 	uint16_t memAddress,

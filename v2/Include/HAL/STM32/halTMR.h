@@ -72,42 +72,42 @@ extern "C" {
 #define HAL_TMR_EVENT_ALL         0x1F
 
 
-typedef uint32_t TMRTimer;
-typedef uint32_t TMROptions;
+typedef uint32_t halTMRTimer;
+typedef uint32_t halTMROptions;
 
-typedef struct __TMRData *TMRHandler;
+typedef struct __halTMRData* halTMRHandler;
 
-typedef void (*TMRInterruptFunction)(TMRHandler handler, void *params, uint32_t event);
+typedef void (*halTMRInterruptFunction)(halTMRHandler handler, void* params, uint32_t event);
 
-struct __TMRData {
+struct __halTMRData {
 	TIM_TypeDef* device;
-	TMRInterruptFunction isrFunction;
+	halTMRInterruptFunction isrFunction;
 	void* isrParams;
 };
-typedef struct __TMRData TMRData;
+typedef struct __halTMRData halTMRData;
 
 typedef struct {
-	TMRTimer timer;
+	halTMRTimer timer;
 	uint32_t prescaler;
 	uint32_t period;
-	TMROptions options;
-} TMRSettings;
+	halTMROptions options;
+} halTMRSettings;
 
 
-TMRHandler halTMRInitialize(TMRData* data, const TMRSettings *settings);
-void halTMRDeinitialize(TMRHandler handler);
+halTMRHandler halTMRInitialize(halTMRData* data, const halTMRSettings* settings);
+void halTMRDeinitialize(halTMRHandler handler);
 
-void halTMRStartTimer(TMRHandler handler);
-void halTMRStopTimer(TMRHandler handler);
+void halTMRStartTimer(halTMRHandler handler);
+void halTMRStopTimer(halTMRHandler handler);
 
-void halTMRSetInterruptFunction(TMRHandler handler, TMRInterruptFunction function, void* params);
-void halTMRInterruptHandler(TMRHandler handler);
+void halTMRSetInterruptFunction(halTMRHandler handler, halTMRInterruptFunction function, void* params);
+void halTMRInterruptHandler(halTMRHandler handler);
 
-void halTMREnableInterrupts(TMRHandler handler, uint32_t events);
-uint32_t halTMRDisableInterrupts(TMRHandler handler, uint32_t events);
+void halTMREnableInterrupts(halTMRHandler handler, uint32_t events);
+uint32_t halTMRDisableInterrupts(halTMRHandler handler, uint32_t events);
 
-bool halTMRGetInterruptFlag(TMRHandler handler, uint32_t event);
-void halTMRClearInterruptFlags(TMRHandler handler, uint32_t events);
+bool halTMRGetInterruptFlag(halTMRHandler handler, uint32_t event);
+void halTMRClearInterruptFlags(halTMRHandler handler, uint32_t events);
 
 
 #define halTMRDelay(time)         HAL_Delay(time)

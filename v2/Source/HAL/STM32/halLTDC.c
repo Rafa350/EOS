@@ -34,7 +34,7 @@ __attribute__((weak)) void configureLTDCDeviceClock() {
 /// \param    info: Informacio d'inicialitzacio.
 ///
 void halLTDCInitialize(
-	const LTDCSettings *settings) {
+	const halLTDCSettings* settings) {
 
 	eosAssert(settings != NULL);
 
@@ -128,7 +128,7 @@ void halLTDCSetBackgroundColor(
 /// \param    height: Alçada de la finestra.
 ///
 void halLTDCLayerSetWindow(
-	LTDCLayerNum layerNum,
+	halLTDCLayerNum layerNum,
 	int x,
 	int y,
 	int width,
@@ -168,7 +168,7 @@ void halLTDCLayerSetWindow(
 /// \param    argb: El color en format ARGB8888
 ///
 void halLTDCLayerSetDefaultColor(
-	LTDCLayerNum layerNum,
+	halLTDCLayerNum layerNum,
 	uint32_t argb) {
 
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
@@ -193,7 +193,7 @@ void halLTDCLayerSetDefaultColor(
 /// \param    rgb: Color en format rgb888.
 ///
 void halLTDCLayerSetKeyColor(
-	LTDCLayerNum layerNum,
+	halLTDCLayerNum layerNum,
 	uint32_t rgb) {
 
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
@@ -220,7 +220,7 @@ void halLTDCLayerSetKeyColor(
 /// \brief    Desactiva el color de transparencia.
 ///
 void halLTDCLayerDisableKeyColor(
-	LTDCLayerNum layerNum) {
+	halLTDCLayerNum layerNum) {
 
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
 
@@ -239,8 +239,8 @@ void halLTDCLayerDisableKeyColor(
 ///
 // TODO: Parametres en pixels i despres convertirlos a bytes;
 void halLTDCLayerSetFrameFormat(
-	LTDCLayerNum layerNum,
-	LTDCPixelFormat format,
+	halLTDCLayerNum layerNum,
+	halLTDCPixelFormat format,
 	int lineWidth,
 	int linePitch,
 	int numLines) {
@@ -305,7 +305,7 @@ void halLTDCLayerSetFrameFormat(
 /// \remarks  Si frame es nul, aleshores desactiva la capa.
 ///
 void halLTDCLayerSetFrameBuffer(
-	LTDCLayerNum layerNum,
+	halLTDCLayerNum layerNum,
 	void *buffer) {
 
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
@@ -326,7 +326,7 @@ void halLTDCLayerSetFrameBuffer(
 /// \param    layerNum: Identificador de la capa.
 ///
 void halLTDCLayerUpdate(
-	LTDCLayerNum layerNum) {
+	halLTDCLayerNum layerNum) {
 
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
 
@@ -354,7 +354,7 @@ void halLTDCLayerUpdate(
 /// \return   El offset calculat.
 ///
 int halLTDCGetPixelOffset(
-	LTDCLayerNum layerNum,
+	halLTDCLayerNum layerNum,
 	int x,
 	int y) {
 
@@ -386,7 +386,7 @@ int halLTDCGetPixelOffset(
 /// \return   El resultat.
 ///
 uint8_t halLTDCGetPixelBytes(
-	LTDCPixelFormat format) {
+	halLTDCPixelFormat format) {
 
 	switch (format) {
 		default:

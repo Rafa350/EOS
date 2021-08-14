@@ -37,7 +37,7 @@ void halDMA2DStartFill(
 	int width,
 	int height,
 	int offset,
-	DMA2DOptions options,
+	halDMA2DOptions options,
 	uint32_t color) {
 
 	// Selecciona el tipus de transferencia com a R2M
@@ -90,7 +90,7 @@ void halDMA2DStartCopy(
 	int width,
 	int height,
 	int offset,
-	DMA2DOptions options,
+	halDMA2DOptions options,
 	const void* src,
 	int srcOffset) {
 

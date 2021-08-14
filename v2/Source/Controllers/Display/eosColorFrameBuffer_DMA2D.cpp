@@ -96,7 +96,7 @@ void ColorFrameBuffer_DMA2D::fill(
 		pixel_t vPixel = toPixel(color);
 		pixel_t* pPixel = getPixelPtr(x, y);
 
-		DMA2DOptions options = DMA2DOptionsFor<CI::format>::DFMT;
+		halDMA2DOptions options = DMA2DOptionsFor<CI::format>::DFMT;
 
 		// Rellena la regio amb el valor de color del pixel. Hi ha que
 		// suministrar el color en format adecuat, ja que no es fa cap
@@ -143,7 +143,7 @@ void ColorFrameBuffer_DMA2D::copy(
 
 	pixel_t* pPixel = getPixelPtr(x, y);
 
-	DMA2DOptions options =
+	halDMA2DOptions options =
 		DMA2DOptionsFor<CI::format>::DFMT |           // Format desti
 		DMA2DOptionsFor<Color::CI::format>::SFMT;     // Format origen
 
@@ -177,7 +177,7 @@ void ColorFrameBuffer_DMA2D::write(
 
 	pixel_t* pPixel = getPixelPtr(x, y);
 
-	DMA2DOptions options = DMA2DOptionsFor<CI::format>::DFMT; // Format desti
+	halDMA2DOptions options = DMA2DOptionsFor<CI::format>::DFMT; // Format desti
 	switch (format) {
 		default:
 		case ColorFormat::argb8888:
