@@ -147,17 +147,17 @@
 //
 #define DISPLAY_SCK_PORT     HAL_GPIO_PORT_F
 #define DISPLAY_SCK_PIN      HAL_GPIO_PIN_7
-#define DISPLAY_SCK_AF       HAL_GPIO_AF_F7_SPI5_SCK
+#define DISPLAY_SCK_AF       HAL_GPIO_AF_5
 
 // Control del pin MOSI (CPU to Controller)
 //
 #define DISPLAY_MOSI_PORT    HAL_GPIO_PORT_F
 #define DISPLAY_MOSI_PIN     HAL_GPIO_PIN_9
-#define DISPLAY_MOSI_AF      HAL_GPIO_AF_F9_SPI5_MOSI
+#define DISPLAY_MOSI_AF      HAL_GPIO_AF_5
 
 // Modul SPI a utilitzar
 //
-#define DISPLAY_SPI_ID       HAL_SPI_CHANNEL_5
+#define DISPLAY_SPI_CHANNEL  HAL_SPI_CHANNEL_5
 
 #endif // DISPLAY_DRV_ILI9341
 
@@ -341,7 +341,7 @@
 
 // Control del modul SPI
 //
-#define DISPLAY_SPI_ID       HAL_SPI_CHANNEL_5
+#define DISPLAY_SPI_CHANNEL  HAL_SPI_CHANNEL_5
 
 #endif // DISPLAY_DRV_ILI9341LTDC
 

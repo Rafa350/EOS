@@ -3,8 +3,7 @@
 #include "Controllers/Display/Drivers/ILI9341/eosILI9341Defs.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HAL/halINT.h"
-#include "hAL/halTMR.h"
-#include "HAL/halGPIO.h"
+#include "HAL/halTMR.h"
 #include "HAL/STM32/halLTDCTpl.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "System/eosMath.h"
@@ -229,7 +228,7 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza el modul GPIO
 	//
-	static const GPIOPinSettings gpioSettings[] = {
+	static const halGPIOPinSettings gpioSettings[] = {
     	{ DISPLAY_DE_PORT,     DISPLAY_DE_PIN,
     		HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_DE_AF    },
 		{ DISPLAY_HSYNC_PORT,  DISPLAY_HSYNC_PIN,
@@ -274,32 +273,26 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B6_AF    },
 		{ DISPLAY_B7_PORT,     DISPLAY_B7_PIN,
 			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B7_AF    },
-#ifdef DISPLAY_RST_PIN
-		{ DISPLAY_RST_PORT,    DISPLAY_RST_PIN,
-			HAL_GPIO_MODE_OUTPUT | HAL_GPIO_INIT_CLR, 0 },
-#endif
-		{ DISPLAY_CS_PORT,     DISPLAY_CS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_SET, 0 },
-		{ DISPLAY_RS_PORT,     DISPLAY_RS_PIN,
-			HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_SPEED_FAST | HAL_GPIO_INIT_CLR, 0 },
-		{ DISPLAY_SCK_PORT,    DISPLAY_SCK_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_SCK_AF },
-		{ DISPLAY_MOSI_PORT,   DISPLAY_MOSI_PIN,
-			HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_FAST, DISPLAY_MOSI_AF}
 	};
 	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
 
+	// Inicialitza el modul GPIO
+	//
+	_pinCS.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::set);
+	_pinRS.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::clr);
+#ifdef DISPLAY_RTS_PIN
+	_pinRST.initOutput(GPIOSpeed::low, GPIODriver::pushPull, GPIOState::clr);
+#endif
+
 	// Inicialitza el modul SPI
 	//
-	static const SPISettings spiSettings = {
-		DISPLAY_SPI_ID,
-			HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16, 0, 0
-	};
-	_hSpi = halSPIInitialize(&_spiData, &spiSettings);
+	_spi.setSCKPin(_pinSCK);
+	_spi.setMOSIPin(_pinMOSI);
+	_spi.initialize(HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16);
 
 	// Inicialitza el modul LTDC
 	//
-	static const LTDCSettings ltdcSettings = {
+	static const halLTDCSettings ltdcSettings = {
 		.HSYNC = DISPLAY_HSYNC,
 		.VSYNC = DISPLAY_VSYNC,
 		.HBP = DISPLAY_HBP,
@@ -376,7 +369,7 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 
 #ifdef DISPLAY_RST_PORT
     halTMRDelay(10);
-	halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);
+    _pinRST = 1;
     halTMRDelay(120);
 #endif
 
@@ -406,7 +399,7 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 ///
 void DisplayDriver_ILI9341LTDC::open() {
 
-	halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+	_pinCS = 0;
 }
 
 
@@ -415,7 +408,7 @@ void DisplayDriver_ILI9341LTDC::open() {
 ///
 void DisplayDriver_ILI9341LTDC::close() {
 
-    halGPIOSetPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+	_pinCS = 1;
 }
 
 
@@ -426,8 +419,8 @@ void DisplayDriver_ILI9341LTDC::close() {
 void DisplayDriver_ILI9341LTDC::writeCommand(
 	uint8_t cmd) {
 
-	halGPIOClearPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(_hSpi, &cmd, sizeof(cmd));
+	_pinRS = 0;
+	_spi.send(&cmd, sizeof(cmd));
 }
 
 
@@ -438,6 +431,6 @@ void DisplayDriver_ILI9341LTDC::writeCommand(
 void DisplayDriver_ILI9341LTDC::writeData(
 	uint8_t data) {
 
-	halGPIOSetPin(DISPLAY_RS_PORT, DISPLAY_RS_PIN);
-	halSPISendBuffer(_hSpi, &data, sizeof(data));
+	_pinRS = 1;
+	_spi.send(&data, sizeof(data));
 }

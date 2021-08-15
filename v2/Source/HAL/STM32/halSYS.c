@@ -96,3 +96,19 @@ int halSYSGetTick() {
 
 	return HAL_GetTick();
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Verifica el temps.
+/// \param    startTime: Temps des del inici.
+/// \param    maxTime: Temps maxim.
+/// \return   Trus si ha passat el limit.
+///
+bool halSYSCheckTimeout(
+	int startTime,
+	int maxTime) {
+
+	int time = HAL_GetTick();
+	return ((__abs_diff(time, startTime) > maxTime) && (maxTime != -1)) || (maxTime == 0);
+}
+

@@ -45,8 +45,9 @@
 
 
 #if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
-#include "HAL/halSPI.h"
+#include "HAL/halSPITpl.h"
 #endif
+#include "HAL/halGPIOTpl.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "System/Graphics/eosColor.h"
 
@@ -57,15 +58,31 @@ namespace eos {
     	private:
     		typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
     		typedef CI::color_t pixel_t;
+#ifdef DISPLAY_RST_PIN
+    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_RST_PORT), GPIOPin(DISPLAY_RTT_PIN)> PinRTS;
+#endif
+    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_CS_PORT), GPIOPin(DISPLAY_CS_PIN)> PinCS;
+    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_RS_PORT), GPIOPin(DISPLAY_RS_PIN)> PinRS;
+#if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
+    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_SCK_PORT), GPIOPin(DISPLAY_SCK_PIN)> PinSCK;
+    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_MOSI_PORT), GPIOPin(DISPLAY_MOSI_PIN)> PinMOSI;
+    		typedef SPIAdapter<SPIChannel(DISPLAY_SPI_CHANNEL)> Spi;
+#endif
 
     	private:
     		constexpr static int _displayWidth = DISPLAY_IMAGE_WIDTH;
     		constexpr static int _displayHeight = DISPLAY_IMAGE_HEIGHT;
 
     	private:
+#ifdef DISPLAY_RST_PIN
+    		PinRST _pinRST;
+#endif
+    		PinCS _pinCS;
+    		PinRS _pinRS;
 #if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
-    		SPIData _spiData;
-    		SPIHandler _hSPI;
+    		PinSCK _pinSCK;
+    		PinMOSI _pinMOSI;
+    		Spi _spi;
 #endif
     		int _imageWidth;
     		int _imageHeight;

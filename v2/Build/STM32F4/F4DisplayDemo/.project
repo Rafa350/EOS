@@ -294,9 +294,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/halGPIOTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIOTpl.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/halSPI.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSPI.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/halSPITpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSPITpl.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
@@ -637,6 +647,11 @@
 			<name>inc/Framework/EOS/HAL/STM32/halSPI.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSPI.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL/STM32/halSPITpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSPITpl.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halTMR.h</name>

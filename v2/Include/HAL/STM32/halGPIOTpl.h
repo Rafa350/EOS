@@ -80,7 +80,7 @@ namespace eos {
 			using GPIOAlt = typename GPIOPinInfo<port, pin>::GPIOAlt;
 
 		public:
-			inline static void initInput(GPIOSpeed speed, GPIOPull pull) {
+			inline static void initInput(GPIOSpeed speed, GPIOPull pull = GPIOPull::none) {
 				halGPIOOptions options =
 					HAL_GPIO_MODE_INPUT |
 					halGPIOOptions(speed) |
@@ -88,7 +88,7 @@ namespace eos {
 				halGPIOInitializePin(halGPIOPort(port), halGPIOPin(pin), options, HAL_GPIO_AF_NONE);
 			}
 
-			inline static void initOutput(GPIOSpeed speed, GPIODriver driver, GPIOState state) {
+			inline static void initOutput(GPIOSpeed speed, GPIODriver driver, GPIOState state = GPIOState::noChange) {
 				halGPIOOptions options =
 					HAL_GPIO_MODE_INPUT |
 					halGPIOOptions(speed) |
@@ -243,13 +243,53 @@ namespace eos {
 	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin15> PIN_E15;
 #endif
 
+#ifdef HAL_GPIO_PORT_F
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin0> PIN_F0;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin1> PIN_F1;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin2> PIN_F2;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin3> PIN_F3;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin4> PIN_F4;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin5> PIN_F5;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin6> PIN_F6;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin7> PIN_F7;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin8> PIN_F8;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin9> PIN_F9;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin10> PIN_F10;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin11> PIN_F11;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin12> PIN_F12;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin13> PIN_F13;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin14> PIN_F14;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin15> PIN_F15;
+#endif
 
-#ifdef EOS_STM32F7
+#ifdef HAL_GPIO_PORT_G
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin0> PIN_G0;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin1> PIN_G1;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin2> PIN_G2;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin3> PIN_G3;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin4> PIN_G4;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin5> PIN_G5;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin6> PIN_G6;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin7> PIN_G7;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin8> PIN_G8;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin9> PIN_G9;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin10> PIN_G10;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin11> PIN_G11;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin12> PIN_G12;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin13> PIN_G13;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin14> PIN_G14;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin15> PIN_G15;
+#endif
+
 
 	// PORT A ------------------------------------------------------------
 	template <>
 	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin0> {
 		enum class GPIOAlt: halGPIOAlt {
+			eth_MII_CRS = HAL_GPIO_AF_11,
+#ifdef EOS_STM32F7
+			sai2_SD_B = HAL_GPIO_AF_10,
+#endif
 			tim2_CH1 = HAL_GPIO_AF_1,
 			tim2_ETR = HAL_GPIO_AF_1,
 			tim5_CH1 = HAL_GPIO_AF_2,
@@ -264,6 +304,12 @@ namespace eos {
 	template <>
 	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin1> {
 		enum class GPIOAlt: halGPIOAlt {
+			eth_MII_RX_CLK = HAL_GPIO_AF_11,
+#ifdef EOS_STM32F7
+			sai2_MCK_B = HAL_GPIO_AF_10,
+#endif
+			tim2_CH2 = HAL_GPIO_AF_2,
+			tim5_CH2 = HAL_GPIO_AF_3,
 			usart2_RTS = HAL_GPIO_AF_7,
 			uart4_RX = HAL_GPIO_AF_8
 		};
@@ -386,6 +432,30 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portE;
 		constexpr static const GPIOPin pin = GPIOPin::pin4;
+	};
+
+
+	// PORT F ------------------------------------------------------------
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin7> {
+		enum class GPIOAlt: halGPIOAlt {
+			spi5_SCK = HAL_GPIO_AF_5,
+			uart7_TX = HAL_GPIO_AF_8
+		};
+		constexpr static const GPIOPort port = GPIOPort::portF;
+		constexpr static const GPIOPin pin = GPIOPin::pin7;
+	};
+
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin9> {
+		enum class GPIOAlt: halGPIOAlt {
+			spi5_MOSI = HAL_GPIO_AF_5,
+#ifdef EOS_STM32F7
+			uart7_TX = HAL_GPIO_AF_8
+#endif
+		};
+		constexpr static const GPIOPort port = GPIOPort::portF;
+		constexpr static const GPIOPin pin = GPIOPin::pin9;
 	};
 
 
@@ -671,7 +741,6 @@ namespace eos {
 		constexpr static const GPIOPort port = GPIOPort::portK;
 		constexpr static const GPIOPin pin = GPIOPin::pin7;
 	};
-#endif
 }
 
 

@@ -128,9 +128,7 @@ static void setupDevice(
 
 	// Configura el registre CR1
 	//
-	temp = device->CR1;
-	temp &= 0;
-
+	temp = 0;
 	switch (options & HAL_SPI_CLOCKDIV_mask) {
 		case HAL_SPI_CLOCKDIV_4:
 			temp |= SPI_CR1_BR_0;
@@ -160,7 +158,10 @@ static void setupDevice(
 			temp |= SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0;
 			break;
 	}
-
+#ifdef EOS_STM32F4
+	if ((options & HAL_SPI_SIZE_mask) == HAL_SPI_SIZE_16)
+		temp |= SPI_CR1_DFF;
+#endif
 	if ((options & HAL_SPI_MS_mask) == HAL_SPI_MS_MASTER)
 		temp |= SPI_CR1_MSTR | SPI_CR1_SSI;
 	if ((options & HAL_SPI_CPOL_mask) == HAL_SPI_CPOL_HIGH)
@@ -175,9 +176,8 @@ static void setupDevice(
 
 	// Configura el registre CR2
 	//
-	temp = device->CR2;
-	temp &= 0;
-
+	temp = 0;
+#ifdef EOS_STM32F7
 	switch (options & HAL_SPI_SIZE_mask) {
 		case HAL_SPI_SIZE_8:
 			temp |= SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
@@ -187,6 +187,7 @@ static void setupDevice(
 			temp |= SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
 			break;
 	}
+#endif
 	device->CR2 = temp;
 
 	// Activa el modul
@@ -201,6 +202,7 @@ static void setupDevice(
 /// \param    startTime: Temps del inici de les operacions
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
+#ifdef EOS_STM32F7
 static void waitTxFifoEmpty(
 	halSPIHandler handler,
 	int startTime,
@@ -212,12 +214,12 @@ static void waitTxFifoEmpty(
 	SPI_TypeDef* device = handler->device;
 
 	while ((device->SR & SPI_SR_FTLVL) != SPI_FTLVL_EMPTY) {
-		int time = halSYSGetTick();
-		if (__abs_diff(time, startTime) > blockTime) {
+		if (halSYSCheckTimeout(startTime, blockTime)) {
 
 		}
 	}
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
@@ -226,6 +228,7 @@ static void waitTxFifoEmpty(
 /// \param    startTime: Temps del inici de les operacions
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
+#ifdef EOS_STM32F7
 static void waitRxFifoEmpty(
 	halSPIHandler handler,
 	int startTime,
@@ -237,22 +240,26 @@ static void waitRxFifoEmpty(
 	SPI_TypeDef* device = handler->device;
 
 	while ((device->SR & SPI_SR_FRLVL) != SPI_FRLVL_EMPTY) {
-		int time = halSYSGetTick();
-		if (__abs_diff(time, startTime) > blockTime) {
+		if (halSYSCheckTimeout(startTime, blockTime)) {
 
 		}
 
 		uint8_t dummy = *((__IO uint8_t *)&device->DR);
 	}
 }
+#endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Espera que el dispositiu estigui lliure
 /// \param    handler: El handler del dispositiu.
+/// \param    startTime: Temps del inici de les operacions
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 static void waitBusy(
-	halSPIHandler handler) {
+	halSPIHandler handler,
+	int startTime,
+	int blockTime) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -260,7 +267,8 @@ static void waitBusy(
 	SPI_TypeDef* device = handler->device;
 
 	while (__check_bit_pos(device->SR, SPI_SR_BSY_Pos)) {
-
+		if (halSYSCheckTimeout(startTime, blockTime)) {
+		}
 	}
 }
 
@@ -303,7 +311,7 @@ void halSPIDeinitialize(
 
 	SPI_TypeDef* device = handler->device;
 
-	__clear_bit_msk(device->CR1, ~SPI_CR1_SPE);
+	__clear_bit_msk(device->CR1, SPI_CR1_SPE);
 	disableDeviceClock(device);
 }
 
@@ -352,6 +360,12 @@ void halSPISendBuffer(
 
 	while (count > 0) {
 
+#if defined(EOS_STM32F4)
+		*((volatile uint8_t*)&device->DR) = *((uint8_t*)p);
+		p += sizeof(uint8_t);
+		count -= sizeof(uint8_t);
+
+#elif defined(EOS_STM32F7)
 		if (count > 1) {
 			// Acces com a 16 bits (Packing mode)
 			device->DR = *((uint16_t*)p);
@@ -364,16 +378,22 @@ void halSPISendBuffer(
 			p += sizeof(uint8_t);
 			count -= sizeof(uint8_t);
 		}
+#else
+#error "CPU no soportada."
+#endif
 
 		while (!__check_bit_pos(device->SR, SPI_SR_TXE_Pos)) {
-			int time = halSYSGetTick();
-			if (__abs_diff(time, startTime) > blockTime) {
+			if (halSYSCheckTimeout(startTime, blockTime)) {
 
 			}
 		}
 	}
 
+#ifdef EOS_STM32F7
 	waitTxFifoEmpty(handler, startTime, blockTime);
-	waitBusy(handler);
+#endif
+	waitBusy(handler, startTime, blockTime);
+#ifdef EOS_STM32F7
 	waitRxFifoEmpty(handler, startTime, blockTime);
+#endif
 }

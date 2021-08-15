@@ -33,25 +33,48 @@ namespace eos {
 		size16 = HAL_SPI_SIZE_16
 	};
 
+	enum class SPIFirstBit: halSPIOptions {
+		lsb = HAL_SPI_FIRSTBIT_LSB,
+		msb = HAL_SPI_FIRSTBIT_MSB
+	};
+
+	enum class SPIClockDivider: halSPIOptions {
+		clkdiv_2 = HAL_SPI_CLOCKDIV_2,
+		clkdiv_4 = HAL_SPI_CLOCKDIV_4,
+		clkdiv_8 = HAL_SPI_CLOCKDIV_8,
+		clkdiv_16 = HAL_SPI_CLOCKDIV_16,
+		clkdiv_32 = HAL_SPI_CLOCKDIV_32,
+		clkdiv_64 = HAL_SPI_CLOCKDIV_64,
+		clkdiv_128 = HAL_SPI_CLOCKDIV_128,
+		clkdiv_256 = HAL_SPI_CLOCKDIV_256
+	};
+
 	template <SPIChannel channel>
 	class SPIAdapter {
+		private:
+			constexpr static const int _defaultBlockTime = 1000;
+			constexpr static const SPISize _defaultSize = SPISize::size8;
+			constexpr static const SPIFirstBit _defaultFirstBit = SPIFirstBit::lsb;
+
 		private:
 		    halSPIData _data;
 			halSPIHandler _handler;
 
 		public:
-			inline void initMaster(SPIMode mode, SPISize size) {
+			inline void initMaster(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
 				halSPIOptions options =
 					HAL_SPI_MS_MASTER |
 					halSPIOptions(size) |
+					halSPIOptions(firstBit) |
 					halSPIOptions(mode);
 				initialize(options);
 			}
 
-			inline void initSlave(SPIMode mode, SPISize size) {
+			inline void initSlave(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
 				halSPIOptions options =
 					HAL_SPI_MS_SLAVE |
 					halSPIOptions(size) |
+					halSPIOptions(firstBit) |
 					halSPIOptions(mode);
 				initialize(options);
 			}
@@ -63,6 +86,14 @@ namespace eos {
 				settings.isrFunction = nullptr;
 				settings.isrParams = nullptr;
 				_handler = halSPIInitialize(&_data, &settings);
+			}
+
+			inline void setClock(SPIClockDivider clkdiv) {
+
+			}
+
+			inline void setISRFunction(halSPIInterruptFunction function, void* params) {
+
 			}
 
 			template <GPIOPort port, GPIOPin pin>
@@ -118,29 +149,29 @@ namespace eos {
 						GPIODriver::pushPull,
 						GPIOPinAdapter<port, pin>::GPIOAlt::spi2_MOSI);
 
-				if constexpr (channel == SPIChannel::channel2)
-					pinAdapter.initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi2_MOSI);
-
 				if constexpr (channel == SPIChannel::channel3)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
 						GPIOPinAdapter<port, pin>::GPIOAlt::spi3_MOSI);
 
+				if constexpr (channel == SPIChannel::channel4)
+					pinAdapter.initAlt(
+						GPIOSpeed::fast,
+						GPIODriver::pushPull,
+						GPIOPinAdapter<port, pin>::GPIOAlt::spi4_MOSI);
+
 				if constexpr (channel == SPIChannel::channel5)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GpioAlt::spi5_MOSI);
+						GPIOPinAdapter<port, pin>::GPIOAlt::spi5_MOSI);
 
 				if constexpr (channel == SPIChannel::channel6)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GpioAlt::spi6_MOSI);
+						GPIOPinAdapter<port, pin>::GPIOAlt::spi6_MOSI);
 
 			}
 
@@ -150,41 +181,41 @@ namespace eos {
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GpioAlt::spi1_MISO);
+						GPIOPinAdapter<port, pin>::GPIOAlt::spi1_MISO);
 
 				if constexpr (channel == SPIChannel::channel2)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GpioAlt::spi2_MISO);
+						GPIOPinAdapter<port, pin>::GPIOAlt::spi2_MISO);
 
 				if constexpr (channel == SPIChannel::channel2)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GpioAlt::spi2_MISO);
+						GPIOPinAdapter<port, pin>::GPIOAlt::spi2_MISO);
 
 				if constexpr (channel == SPIChannel::channel3)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GpioAlt::spi3_MISO);
+						GPIOPinAdapter<port, pin>::GPIOAlt::spi3_MISO);
 
 				if constexpr (channel == SPIChannel::channel5)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GpioAlt::spi5_MISO);
+						GPIOPinAdapter<port, pin>::GPIOAlt::spi5_MISO);
 
 				if constexpr (channel == SPIChannel::channel6)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GpioAlt::spi6_MISO);
+						GPIOPinAdapter<port, pin>::GPIOAlt::spi6_MISO);
 
 			}
 
-			inline void send(const uint8_t* data, int length, unsigned blockTime = 1000) {
+			inline void send(const uint8_t* data, int length, unsigned blockTime = _defaultBlockTime) {
 				halSPISendBuffer(_handler, data, length, blockTime);
 			}
 	};

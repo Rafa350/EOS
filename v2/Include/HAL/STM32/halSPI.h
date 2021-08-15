@@ -14,7 +14,7 @@
 #define HAL_SPI_CHANNEL_4         3
 #define HAL_SPI_CHANNEL_5         4
 #define HAL_SPI_CHANNEL_6         5
-#define HAL_SPI_CHANNEL_NONE      0xFFFFFFFF
+#define HAL_SPI_CHANNEL_NONE      ((HALspicHANNEL) -1)
 
 // Opcions: Polaritat del rellotge (CPOL)
 #define HAL_SPI_CPOL_pos          0

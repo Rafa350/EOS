@@ -32,7 +32,8 @@
 
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
-#include "HAL/halSPI.h"
+#include "HAL/halGPIOTpl.h"
+#include "HAL/halSPITpl.h"
 
 
 namespace eos {
@@ -40,6 +41,14 @@ namespace eos {
     class DisplayDriver_ILI9341LTDC: public IDisplayDriver {
     	private:
     		typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
+    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_CS_PORT), GPIOPin(DISPLAY_CS_PIN)> PinCS;
+    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_RS_PORT), GPIOPin(DISPLAY_RS_PIN)> PinRS;
+#ifdef DISPLAY_RTS_PIN
+    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_RST_PORT), GPIOPin(DISPLAY_RST_PIN)> PinRST;
+#endif
+    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_SCK_PORT), GPIOPin(DISPLAY_SCK_PIN)> PinSCK;
+    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_MOSI_PORT), GPIOPin(DISPLAY_MOSI_PIN)> PinMOSI;
+    		typedef SPIAdapter<SPIChannel(DISPLAY_SPI_CHANNEL)> Spi;
 
     	private:
     		constexpr static int _displayWidth = DISPLAY_IMAGE_WIDTH;
@@ -47,8 +56,14 @@ namespace eos {
     		constexpr static int _displayBuffer = DISPLAY_IMAGE_BUFFER;
 
         private:
-    		SPIData _spiData;
-    		SPIHandler _hSpi;
+    		PinCS _pinCS;
+    		PinRS _pinRS;
+#ifdef DISPLAY_RST_PIN
+    		PinRST _pinRST;1
+#endif
+    		PinSCK _pinSCK;
+    		PinMOSI _pinMOSI;
+    		Spi _spi;
             FrameBuffer* _frameBuffer;
 
         public:
