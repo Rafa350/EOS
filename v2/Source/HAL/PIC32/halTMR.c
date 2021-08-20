@@ -4,13 +4,13 @@
 #include "HAL/PIC32/halSYS.h"
 
 
-#define __getRegisterPtr(timer)        ((TMRRegisters*)(_TMR1_BASE_ADDRESS + (timer * 0x00000200)))
+#define __getRegisterPtr(timer)        ((halTMRRegisters*)(_TMR1_BASE_ADDRESS + (timer * 0x00000200)))
 
 #define __isTypeA(handler)             ((uint32_t) handler->regs == _TMR1_BASE_ADDRESS)
 #define __is32Bits(handler)            (handler->regs->TBxCON.T32 == 1)
 
 #define __getRegs16Ptr(handler)        handler->regs
-#define __getRegs32Ptr(handler)        ((TMRRegisters*)((uint32_t) handler->regs + 0x00000200))
+#define __getRegs32Ptr(handler)        ((halTMRRegisters*)((uint32_t) handler->regs + 0x00000200))
 
 
 /// ----------------------------------------------------------------------
@@ -21,13 +21,13 @@
 /// \remarks  El temporitzador queda configurat, pero no genera
 ///           interrupcions, i esta parat.
 ///
-TMRHandler halTMRInitialize(
-    TMRData* data,
-    const TMRSettings *settings) {
+halTMRHandler halTMRInitialize(
+    halTMRData* data,
+    const halTMRSettings* settings) {
 
     // Inicialitza el handler
     //
-    TMRHandler handler = data;
+    halTMRHandler handler = data;
     handler->regs = __getRegisterPtr(settings->timer);
 
     // Desactiva les interrupcions del temporitzador
@@ -86,7 +86,7 @@ TMRHandler halTMRInitialize(
 /// \param    handler: Handler del temporitzador.
 ///
 void halTMRShutdown(
-    TMRHandler handler) {
+    halTMRHandler handler) {
 
     eosAssert(handler != NULL);
 
@@ -101,13 +101,13 @@ void halTMRShutdown(
 /// \param    period: El valor del contador.
 ///
 void halTMRSetCounter(
-    TMRHandler handler,
+    halTMRHandler handler,
     uint32_t counter) {
 
     eosAssert(handler != NULL);
 
     if (!__isTypeA(handler) && __is32Bits(handler)) {
-        TMRRegisters* regs32 = __getRegs32Ptr(handler);
+        halTMRRegisters* regs32 = __getRegs32Ptr(handler);
         regs32->TMRx = (counter >> 16) & 0xFFFF;
     }
     handler->regs->TMRx = counter & 0xFFFF;
@@ -120,13 +120,13 @@ void halTMRSetCounter(
 /// \param    period: El valor del periode.
 ///
 void halTMRSetPeriod(
-    TMRHandler handler,
+    halTMRHandler handler,
     uint32_t period) {
 
     eosAssert(handler != NULL);
 
     if (!__isTypeA(handler) && __is32Bits(handler)) {
-        TMRRegisters* regs32 = __getRegs32Ptr(handler);
+        halTMRRegisters* regs32 = __getRegs32Ptr(handler);
         regs32->PRx = (period >> 16) & 0xFFFF;
     }
     handler->regs->PRx = period & 0xFFFF;
@@ -140,7 +140,7 @@ void halTMRSetPeriod(
 ///           estan activades.
 ///
 void halTMRStartTimer(
-    TMRHandler handler) {
+    halTMRHandler handler) {
 
     eosAssert(handler != NULL);
 
@@ -157,7 +157,7 @@ void halTMRStartTimer(
 /// \remarks  El contador deixa de contar.
 ///
 void halTMRStopTimer(
-    TMRHandler handler) {
+    halTMRHandler handler) {
 
     eosAssert(handler != NULL);
 
@@ -175,8 +175,8 @@ void halTMRStopTimer(
 /// \param    params: Els parametres.
 ///
 void halTMRSetInterruptFunction(
-    TMRHandler handler,
-    TMRInterruptFunction function,
+    halTMRHandler handler,
+    halTMRInterruptFunction function,
     void* params) {
 
     eosAssert(handler != NULL);
@@ -192,7 +192,7 @@ void halTMRSetInterruptFunction(
 /// \param   event: El event a activar.
 ///
 void halTMREnableInterrupts(
-    TMRHandler handler,
+    halTMRHandler handler,
     uint32_t event) {
 
     eosAssert(handler != NULL);
@@ -238,7 +238,7 @@ void halTMREnableInterrupts(
 /// \return   Diferent de zero si previament estava activada.
 ///
 uint32_t halTMRDisableInterrupts(
-    TMRHandler handler,
+    halTMRHandler handler,
     uint32_t event) {
 
     eosAssert(handler != NULL);
@@ -293,7 +293,7 @@ uint32_t halTMRDisableInterrupts(
 /// \return   El valor del flag.
 ///
 bool halTMRGetInterruptFlag(
-    TMRHandler handler,
+    halTMRHandler handler,
     uint32_t event) {
 
     switch ((uint32_t) handler->regs) {
@@ -334,7 +334,7 @@ bool halTMRGetInterruptFlag(
 /// \param    event: El event.
 ///
 void halTMRClearInterruptFlags(
-    TMRHandler handler,
+    halTMRHandler handler,
     uint32_t event) {
 
     switch ((uint32_t) handler->regs) {
@@ -377,7 +377,7 @@ void halTMRClearInterruptFlags(
 /// \param    event: L'event que ha generat la interrupcio.
 ///
 void halTMRInterruptHandler(
-    TMRHandler handler) {
+    halTMRHandler handler) {
 
     eosAssert(handler);
 

@@ -19,9 +19,9 @@ using namespace eos;
 using namespace app;
 
 
-TMRData digInputTimerData;   // Dades del TMR del servei DigInputService
-TMRData digOutputTimerData;  // Dades del TMR del servei DigOutputService
-UARTData uartData;           // Dades de la UART del servei UARTService
+halTMRData digInputTimerData;   // Dades del TMR del servei DigInputService
+halTMRData digOutputTimerData;  // Dades del TMR del servei DigOutputService
+halUARTData uartData;           // Dades de la UART del servei UARTService
 
 
 /// ----------------------------------------------------------------------
@@ -55,9 +55,9 @@ void MyApplication::onInitialize() {
 ///
 void MyApplication::initializeHardware() {
 
-	GPIOPinSettings gpioSettings;
-	UARTSettings uartSettings;
-	TMRSettings tmrSettings;
+	halGPIOPinSettings gpioSettings;
+	halUARTSettings uartSettings;
+	halTMRSettings tmrSettings;
 
 	// Inicialitza els pins SW1, SW2 i SW3 dels pulsadors
 	//
@@ -113,7 +113,7 @@ void MyApplication::initializeHardware() {
     // Inicialitza els pins TX/RX de la UART
 	//
 	gpioSettings.options = HAL_GPIO_MODE_ALT_PP | HAL_GPIO_SPEED_HIGH | HAL_GPIO_PULL_UP;
-	gpioSettings.alt = HAL_GPIO_AF8_USART6;
+	gpioSettings.alt = HAL_GPIO_AF_8;
 
 	gpioSettings.port = HAL_GPIO_PORT_C;
 	gpioSettings.pin = HAL_GPIO_PIN_6;

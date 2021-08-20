@@ -58,14 +58,14 @@ namespace eos {
             typedef DigOutputList::Iterator DigOutputIterator;
         public:
             struct Settings {       // Informacio d'inicialitzacio del servei
-                TMRHandler hTimer;  // -Temporitzador. Si es NULL utilitza el tick del sistema
+                halTMRHandler hTimer;  // -Temporitzador. Si es NULL utilitza el tick del sistema
             };
 
         private:
             const unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
             const unsigned _minDelay = DigOutputService_MinDelay;
             const unsigned _minWidth = DigOutputService_MinWidth;
-            TMRHandler _hTimer;
+            halTMRHandler _hTimer;
             CommandQueue _commandQueue;
             DigOutputList _outputs;
 
@@ -105,7 +105,7 @@ namespace eos {
             void delayedPulse(DigOutput* output, unsigned delay, unsigned width);
 
             void tmrInterruptFunction(uint32_t event);
-            static void tmrInterruptFunction(TMRHandler handler, void* params, uint32_t event);
+            static void tmrInterruptFunction(halTMRHandler handler, void* params, uint32_t event);
     };
 
     /// \brief Clase que implementa una sortida digital.

@@ -42,7 +42,7 @@
 #ifdef UART8
 #define HAL_UART_CHANNEL_8        7
 #endif
-#define HAL_UART_CHANNEL_NONE     0xFFFFFFFF
+#define HAL_UART_CHANNEL_NONE     ((halUARTChannel) -1)
 
 // Opcions: Rellotge
 #define HAL_UART_CLOCK_pos        0
@@ -138,39 +138,39 @@ extern "C" {
 #endif
 
 
-typedef uint32_t UARTChannel;
-typedef uint32_t UARTOptions;
-typedef struct __UARTData* UARTHandler;
-typedef void (*UARTInterruptFunction)(UARTHandler handler, void* params, uint32_t event);
+typedef uint32_t halUARTChannel;
+typedef uint32_t halUARTOptions;
+typedef struct __halUARTData* halUARTHandler;
+typedef void (*halUARTInterruptFunction)(halUARTHandler handler, void* params, uint32_t event);
 
-struct __UARTData {
+struct __halUARTData {
     USART_TypeDef* device;
-    UARTInterruptFunction isrFunction;
+    halUARTInterruptFunction isrFunction;
     void* isrParams;
 };
-typedef struct __UARTData UARTData;
+typedef struct __halUARTData halUARTData;
 
 typedef struct {
-    UARTChannel channel;
-    UARTOptions options;
+    halUARTChannel channel;
+    halUARTOptions options;
     uint32_t baud;
-} UARTSettings;
+} halUARTSettings;
 
 
-UARTHandler halUARTInitialize(UARTData* data, const UARTSettings *settings);
-void halUARTDeinitialize(UARTHandler handler);
+halUARTHandler halUARTInitialize(halUARTData* data, const halUARTSettings* settings);
+void halUARTDeinitialize(halUARTHandler handler);
 
-void halUARTSend(UARTHandler handler, uint8_t data);
-uint8_t halUARTReceive(UARTHandler handler);
+void halUARTSend(halUARTHandler handler, uint8_t data);
+uint8_t halUARTReceive(halUARTHandler handler);
 
-void halUARTSetInterruptFunction(UARTHandler handler, UARTInterruptFunction function, void *params);
-void halUARTInterruptHandler(UARTHandler handler);
+void halUARTSetInterruptFunction(halUARTHandler handler, halUARTInterruptFunction function, void* params);
+void halUARTInterruptHandler(halUARTHandler handler);
 
-void halUARTEnableInterrupts(UARTHandler handler, uint32_t events);
-uint32_t halUARTDisableInterrupts(UARTHandler handler, uint32_t events);
+void halUARTEnableInterrupts(halUARTHandler handler, uint32_t events);
+uint32_t halUARTDisableInterrupts(halUARTHandler handler, uint32_t events);
 
-bool halUARTGetInterruptFlag(UARTHandler handler, uint32_t event);
-void halUARTClearInterruptFlags(UARTHandler handler, uint32_t events);
+bool halUARTGetInterruptFlag(halUARTHandler handler, uint32_t event);
+void halUARTClearInterruptFlags(halUARTHandler handler, uint32_t events);
 
 
 #ifdef	__cplusplus

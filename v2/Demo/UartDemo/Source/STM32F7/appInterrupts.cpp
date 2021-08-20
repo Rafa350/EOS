@@ -8,7 +8,7 @@
 ///
 extern "C" void USART6_IRQHandler() {
 
-	extern UARTData uartData;
+	extern halUARTData uartData;
 
 	halUARTInterruptHandler(&uartData);
 }
@@ -19,7 +19,7 @@ extern "C" void USART6_IRQHandler() {
 ///
 extern "C" void TIM2_IRQHandler() {
 
-	extern TMRData digInputTimerData;
+	extern halTMRData digInputTimerData;
 
 	halTMRInterruptHandler(&digInputTimerData);
 }
@@ -30,7 +30,7 @@ extern "C" void TIM2_IRQHandler() {
 ///
 extern "C" void TIM3_IRQHandler() {
 
-	extern TMRData digOutputTimerData;
+	extern halTMRData digOutputTimerData;
 
 	halTMRInterruptHandler(&digOutputTimerData);
 }

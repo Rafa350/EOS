@@ -326,7 +326,7 @@ namespace eos {
 	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin5> PIN_H5;
 	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin6> PIN_H6;
 	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin7> PIN_H7;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin8> PIN_H8;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin8> PIN_H8;
 	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin9> PIN_H9;
 	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin10> PIN_H10;
 	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin11> PIN_H11;
@@ -334,6 +334,25 @@ namespace eos {
 	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin13> PIN_H13;
 	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin14> PIN_H14;
 	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin15> PIN_H15;
+#endif
+
+#ifdef HAL_GPIO_PORT_I
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin0> PIN_I0;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin1> PIN_I1;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin2> PIN_I2;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin3> PIN_I3;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin4> PIN_I4;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin5> PIN_I5;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin6> PIN_I6;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin7> PIN_I7;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin8> PIN_I8;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin9> PIN_I9;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin10> PIN_I10;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin11> PIN_I11;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin12> PIN_I12;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin13> PIN_I13;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin14> PIN_I14;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin15> PIN_I15;
 #endif
 
 

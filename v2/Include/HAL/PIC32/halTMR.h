@@ -34,7 +34,7 @@ extern "C" {
 #ifdef _TMR5
 #define HAL_TMR_TIMER_5           4
 #endif
-#define HAL_TMR_TIMER_NONE        0xFFFFFFFF
+#define HAL_TMR_TIMER_NONE        (halTMRTimer) -1)
 
 
 // Modus 16 o 32 bits
@@ -71,10 +71,10 @@ extern "C" {
 #define HAL_TMR_EVENT_ALL         0x1
 
 
-typedef uint32_t TMRTimer;
-typedef uint32_t TMROptions;
-typedef struct __TMRData* TMRHandler;
-typedef void (*TMRInterruptFunction)(TMRHandler hTimer, void* params, uint32_t event);
+typedef uint32_t halTMRTimer;
+typedef uint32_t halTMROptions;
+typedef struct __halTMRData* halTMRHandler;
+typedef void (*halTMRInterruptFunction)(halTMRHandler hTimer, void* params, uint32_t event);
 
 typedef struct  __attribute__((packed , aligned(4))) {
     union {
@@ -92,40 +92,40 @@ typedef struct  __attribute__((packed , aligned(4))) {
     volatile uint32_t PRxCLR;
     volatile uint32_t PRxSET;
     volatile uint32_t PRxINV;
-} TMRRegisters;
+} halTMRRegisters;
 
-struct __TMRData {
-    TMRRegisters* regs;
-    TMRInterruptFunction isrFunction;
+struct __halTMRData {
+    halTMRRegisters* regs;
+    halTMRInterruptFunction isrFunction;
     void* isrParams;
 };
-typedef struct __TMRData TMRData;
+typedef struct __halTMRData halTMRData;
 
 typedef struct {
-	TMRTimer timer;
+	halTMRTimer timer;
     uint32_t period;
-	TMROptions options;
-} TMRSettings;
+	halTMROptions options;
+} halTMRSettings;
 
 
-TMRHandler halTMRInitialize(TMRData* data, const TMRSettings *settings);
-void halTMRShutdown(TMRHandler hTimer);
+halTMRHandler halTMRInitialize(halTMRData* data, const halTMRSettings* settings);
+void halTMRShutdown(halTMRHandler hTimer);
 
-uint32_t halTMRGetCounter(TMRHandler handler);
-void halTMRSetCounter(TMRHandler handler, uint32_t counter);
-void halTMRSetPeriod(TMRHandler handler, uint32_t period);
+uint32_t halTMRGetCounter(halTMRHandler handler);
+void halTMRSetCounter(halTMRHandler handler, uint32_t counter);
+void halTMRSetPeriod(halTMRHandler handler, uint32_t period);
 
-void halTMRStartTimer(TMRHandler hTimer);
-void halTMRStopTimer(TMRHandler hTimer);
+void halTMRStartTimer(halTMRHandler hTimer);
+void halTMRStopTimer(halTMRHandler hTimer);
 
-void halTMRSetInterruptFunction(TMRHandler timer, TMRInterruptFunction function, void* params);
-void halTMRInterruptHandler(TMRHandler handler);
+void halTMRSetInterruptFunction(halTMRHandler timer, halTMRInterruptFunction function, void* params);
+void halTMRInterruptHandler(halTMRHandler handler);
 
-void halTMREnableInterrupts(TMRHandler timer, uint32_t events);
-uint32_t halTMRDisableInterrupts(TMRHandler timer, uint32_t events);
+void halTMREnableInterrupts(halTMRHandler timer, uint32_t events);
+uint32_t halTMRDisableInterrupts(halTMRHandler timer, uint32_t events);
 
-bool halTMRGetInterruptFlag(TMRHandler timer, uint32_t event);
-void halTMRClearInterruptFlags(TMRHandler timer, uint32_t events);
+bool halTMRGetInterruptFlag(halTMRHandler timer, uint32_t event);
+void halTMRClearInterruptFlags(halTMRHandler timer, uint32_t events);
 
 void halTMRDelay(unsigned time);
 

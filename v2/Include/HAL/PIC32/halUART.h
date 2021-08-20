@@ -33,7 +33,7 @@
 #ifdef _UART6
 #define HAL_UART_CHANNEL_6        5
 #endif
-#define HAL_UART_CHANNEL_NONE     0xFFFFFFFF
+#define HAL_UART_CHANNEL_NONE     ((halUARTChannel -1)
 
 
 // Opcions: Rellotge
@@ -136,9 +136,9 @@ extern "C" {
 #endif
 
 
-typedef uint32_t UARTChannel;
-typedef uint32_t UARTOptions;
-typedef struct __UARTData* UARTHandler;
+typedef uint32_t halUARTChannel;
+typedef uint32_t halUARTOptions;
+typedef struct __halUARTData* halUARTHandler;
 
 typedef struct __attribute__((packed , aligned(4))) {
     __U1MODEbits_t UxMODE;
@@ -154,25 +154,25 @@ typedef struct __attribute__((packed , aligned(4))) {
     volatile uint32_t UxRXREG;
     volatile uint32_t unused2[3];
     volatile uint32_t UxBRG;
-} UARTRegisters;
+} halUARTRegisters;
 
-struct __UARTData {
-    UARTRegisters regs;
+struct __halUARTData {
+    halUARTRegisters regs;
 };
-typedef struct __UARTData UARTData;
+typedef struct __halUARTData halUARTData;
 
 typedef struct {
-    UARTChannel channel;
-    UARTOptions options;
+    halUARTChannel channel;
+    halUARTOptions options;
     int baudRate;
-} UARTSettings;
+} halUARTSettings;
 
 
-UARTHandler halUARTInitialize(UARTData *data, const UARTSettings *settings);
-void halUARTDeinitialize(UARTHandler handler);
+halUARTHandler halUARTInitialize(halUARTData* data, const halUARTSettings* settings);
+void halUARTDeinitialize(halUARTHandler handler);
 
 
-void halUARTInterruptHandler(UARTHandler handler);
+void halUARTInterruptHandler(halUARTHandler handler);
 
 
 #ifdef	__cplusplus

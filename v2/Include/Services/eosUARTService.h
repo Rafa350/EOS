@@ -26,13 +26,13 @@ namespace eos {
 			};
 			typedef ICallbackP1<const EventArgs&> IEventCallback;
 			struct Settings {
-				UARTHandler hUART;
+				halUARTHandler hUART;
 				IEventCallback *eventCallback;
 				void *eventParams;
 			};
 
 		private:
-			UARTHandler hUART;
+			halUARTHandler hUART;
 			uint8_t *txBuffer;
 			unsigned txLength;
 			unsigned txCount;
@@ -54,7 +54,7 @@ namespace eos {
 			unsigned receive(uint8_t* data, unsigned size, unsigned blockTime);
 
 			void uartInterruptFunction(uint32_t event);
-            static void uartInterruptFunction(UARTHandler handler, void* params, uint32_t event);
+            static void uartInterruptFunction(halUARTHandler handler, void* params, uint32_t event);
 	};
 }
 

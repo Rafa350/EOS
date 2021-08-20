@@ -25,12 +25,12 @@ namespace eos {
             typedef DigInputList::Iterator DigInputIterator;
         public:
             struct Settings {       // Informacio d'inicialitzacio del servei.
-                TMRHandler hTimer;  // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema
+                halTMRHandler hTimer;  // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema
             };
 
         private:
             Semaphore _changes;
-            TMRHandler _hTimer;
+            halTMRHandler _hTimer;
             DigInputList _inputs;
 
         protected:
@@ -50,7 +50,7 @@ namespace eos {
             bool read(const DigInput* input) const;
 
             void tmrInterruptFunction(uint32_t event);
-            static void tmrInterruptFunction(TMRHandler handler, void* params, uint32_t event);
+            static void tmrInterruptFunction(halTMRHandler handler, void* params, uint32_t event);
     };
 
     /// \brief Clase que implementa una entrada digital

@@ -13,8 +13,8 @@ using namespace eos;
 /// \param    initParams: Parametres d'inicialitzacio.
 ///
 UARTService::UARTService(
-	Application *application,
-	const Settings &settings):
+	Application* application,
+	const Settings& settings):
 
 	Service(application),
 	hUART(settings.hUART) {
@@ -41,7 +41,7 @@ UARTService::~UARTService() {
 ///           la transmissio dels bytes que resten.
 ///
 unsigned UARTService::send(
-	uint8_t *data,
+	uint8_t* data,
 	unsigned length,
 	unsigned blockTime) {
 
@@ -196,7 +196,7 @@ void UARTService::uartInterruptFunction(
 /// \param    event: L'event que ha generat la interrupcio.
 ///
 void UARTService::uartInterruptFunction(
-	UARTHandler handler,
+	halUARTHandler handler,
 	void* params,
 	uint32_t event) {
 

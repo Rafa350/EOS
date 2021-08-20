@@ -26,7 +26,7 @@
 /// \return   El dispositiu.
 ///
 static inline USART_TypeDef* getDevice(
-	UARTChannel channel) {
+	halUARTChannel channel) {
 
 	__VERIFY_CHANNEL(channel);
 
@@ -57,44 +57,38 @@ static void enableDeviceClock(
     switch ((uint32_t) device) {
     	case USART1_BASE:
     		__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_USART1EN);
-			__DSB();
 			break;
 
     	case USART2_BASE:
 			__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_USART2EN);
-			__DSB();
     		break;
 
     	case USART3_BASE:
     		__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_USART3EN);
-			__DSB();
     		break;
 
     	case UART4_BASE:
     		__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_UART4EN);
-			__DSB();
     		break;
 
     	case UART5_BASE:
     		__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_UART5EN);
-			__DSB();
     		break;
 
     	case USART6_BASE:
     		__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_USART6EN);
-			__DSB();
 			break;
 
     	case UART7_BASE:
     		__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_UART7EN);
-			__DSB();
 			break;
 
     	case UART8_BASE:
     		__set_bit_msk(RCC->APB1ENR, RCC_APB1ENR_UART8EN);
-			__DSB();
 			break;
     }
+
+    __DSB();
 }
 
 
@@ -173,7 +167,7 @@ uint32_t getClockSourceOption(
 ///
 static void setupDevice(
 	USART_TypeDef* device,
-	UARTOptions options,
+	halUARTOptions options,
 	uint32_t baud) {
 
 	__VERIFY_DEVICE(device);
@@ -358,9 +352,9 @@ static void setupDevice(
 /// \param    data: Buffer de dades.
 /// \param    info: Parametres d'inicialitzacio.
 ///
-UARTHandler halUARTInitialize(
-    UARTData* data,
-    const UARTSettings *settings) {
+halUARTHandler halUARTInitialize(
+    halUARTData* data,
+    const halUARTSettings* settings) {
 
 	eosAssert(data != NULL);
 	eosAssert(settings != NULL);
@@ -376,7 +370,7 @@ UARTHandler halUARTInitialize(
     }
     setupDevice(device, options, settings->baud);
 
-    UARTHandler handler = data;
+    halUARTHandler handler = data;
     handler->device = device;
     handler->isrFunction = NULL;
     handler->isrParams = NULL;
@@ -390,7 +384,7 @@ UARTHandler halUARTInitialize(
 /// \param    handler: El handler del dispositiu.
 ///
 void halUARTDeinitialize(
-	UARTHandler handler) {
+	halUARTHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -408,7 +402,7 @@ void halUARTDeinitialize(
 /// \param    data: El byte a transmetre.
 ///
 void halUARTSend(
-	UARTHandler handler,
+	halUARTHandler handler,
 	uint8_t data) {
 
 	__VERIFY_HANDLER(handler);
@@ -424,7 +418,7 @@ void halUARTSend(
 /// \return   El byte lleigit.
 ///
 uint8_t halUARTReceive(
-	UARTHandler handler) {
+	halUARTHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -440,8 +434,8 @@ uint8_t halUARTReceive(
 /// \param    params: Els parametres.
 ///
 void halUARTSetInterruptFunction(
-	UARTHandler handler,
-	UARTInterruptFunction function,
+	halUARTHandler handler,
+	halUARTInterruptFunction function,
 	void* params) {
 
 	__VERIFY_HANDLER(handler);
@@ -457,7 +451,7 @@ void halUARTSetInterruptFunction(
 /// \param    events: Interrupcions a habilitar.
 ///
 void halUARTEnableInterrupts(
-	UARTHandler handler,
+	halUARTHandler handler,
 	uint32_t events) {
 
 	__VERIFY_HANDLER(handler);
@@ -502,7 +496,7 @@ void halUARTEnableInterrupts(
 /// \param    events: Interupcions a deshabilitar.
 ///
 uint32_t halUARTDisableInterrupts(
-	UARTHandler handler,
+	halUARTHandler handler,
 	uint32_t events) {
 
 	__VERIFY_HANDLER(handler);
@@ -576,7 +570,7 @@ uint32_t halUARTDisableInterrupts(
 /// \return   El valor del flag.
 ///
 bool halDMAGetInterruptFlag(
-	UARTHandler handler,
+	halUARTHandler handler,
 	uint32_t event) {
 
 	__VERIFY_HANDLER(handler);
@@ -618,7 +612,7 @@ bool halDMAGetInterruptFlag(
 /// \param    events: Els flags a borrar
 ///
 void halUARTClearInterruptFlags(
-	UARTHandler handler,
+	halUARTHandler handler,
 	uint32_t events) {
 
 	__VERIFY_HANDLER(handler);
@@ -643,7 +637,7 @@ void halUARTClearInterruptFlags(
 /// \param    handler: Handler del dispositiu.
 ///
 void halUARTInterruptHandler(
-	UARTHandler handler) {
+	halUARTHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);

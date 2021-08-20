@@ -23,8 +23,8 @@ using namespace eos;
 /// \params   settings: Conmfigurationparameters.
 ///
 DigInputService::DigInputService(
-    Application *application,
-    const Settings &settings):
+    Application* application,
+    const Settings& settings):
 
 	Service(application),
     _hTimer(settings.hTimer) {
@@ -283,7 +283,7 @@ void DigInputService::tmrInterruptFunction(
 /// \param    event: El event que ha generat la interrupcio.
 ///
 void DigInputService::tmrInterruptFunction(
-    TMRHandler handler,
+    halTMRHandler handler,
     void *params,
 	uint32_t event) {
 

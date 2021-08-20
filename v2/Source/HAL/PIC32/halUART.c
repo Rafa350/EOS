@@ -12,7 +12,7 @@
 /// \return   El identificador 'Harmony' del modul.
 ///
 static inline USART_MODULE_ID getHarmonyID(
-    UARTChannel module) {
+    halUARTChannel module) {
 
     static const USART_MODULE_ID idTable[] = {
         USART_ID_1,
@@ -52,11 +52,11 @@ static inline USART_MODULE_ID getHarmonyID(
 /// \param    data: Buffer de dades.
 /// \param    info: Parametres d'inicialitzacio..
 ///
-UARTHandler halUARTInitialize(
-    UARTData* data,
-    const UARTSettings *settings) {
+halUARTHandler halUARTInitialize(
+    halUARTData* data,
+    const halUARTSettings* settings) {
 
-    UARTHandler handler = data;
+    halUARTHandler handler = data;
 
     USART_MODULE_ID id = getHarmonyID(settings->channel);
 

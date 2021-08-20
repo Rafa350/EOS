@@ -551,7 +551,7 @@ void DigOutputService::tmrInterruptFunction(
 /// \param    event: L'event que ha generat la interrupcio.
 ///
 void DigOutputService::tmrInterruptFunction(
-	TMRHandler handler,
+	halTMRHandler handler,
 	void *params,
 	uint32_t event) {
 
