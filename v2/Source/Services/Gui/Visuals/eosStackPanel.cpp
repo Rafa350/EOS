@@ -22,7 +22,7 @@ StackPanel::StackPanel():
 /// \return   El tamany desitjat.
 ///
 Size StackPanel::measureOverride(
-	const Size &availableSize) const {
+	const Size& availableSize) const {
 
 	bool isHorizontal = _orientation == Orientation::horizontal;
 
@@ -36,7 +36,7 @@ Size StackPanel::measureOverride(
 	const VisualList &childs = getChilds();
 	for (auto it = childs.begin(); it != childs.end(); it++) {
 
-		Visual *child = *it;
+		Visual* child = *it;
 		eosAssert(child != nullptr);
 
 		if (child->isVisible()) {
@@ -67,7 +67,7 @@ Size StackPanel::measureOverride(
 /// \return   El tamany final obtingut.
 ///
 Size StackPanel::arrangeOverride(
-	const Size &finalSize) const {
+	const Size& finalSize) const {
 
 	bool isHorizontal = _orientation == Orientation::horizontal;
 

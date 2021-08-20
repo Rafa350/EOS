@@ -46,12 +46,15 @@
               <itemPath>../../../Include/HAL/PIC32/halGPIOTpl.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halTMR.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halSPITpl.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
             <itemPath>../../../Include/HAL/halSPI.h</itemPath>
+            <itemPath>../../../Include/HAL/halGPIOTpl.h</itemPath>
+            <itemPath>../../../Include/HAL/halSPITpl.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
@@ -147,7 +150,6 @@
           </logicalFolder>
           <logicalFolder name="f2" displayName="System" projectFiles="true">
             <logicalFolder name="f2" displayName="Collections" projectFiles="true">
-              <itemPath>../../../Source/System/Collections/eosContainer.cpp</itemPath>
             </logicalFolder>
             <logicalFolder name="f1" displayName="Core" projectFiles="true">
               <itemPath>../../../Source/System/Core/eosTask.cpp</itemPath>
@@ -184,10 +186,13 @@
               <itemPath>../../../Source/System/Graphics/eosPen.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosGraphics_Bitmap.cpp</itemPath>
               <itemPath>../../../Source/System/Graphics/eosBitmap.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Clipping.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_RoundRectangle.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosGraphics_Polygon.cpp</itemPath>
+              <itemPath>../../../Source/System/Graphics/eosColorMath.cpp</itemPath>
             </logicalFolder>
             <itemPath>../../../Source/System/eosApplication.cpp</itemPath>
             <itemPath>../../../Source/System/eosString.cpp</itemPath>
-            <itemPath>../../../Source/System/eosRefCounter.cpp</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f2" displayName="FreeRTOS" projectFiles="true">

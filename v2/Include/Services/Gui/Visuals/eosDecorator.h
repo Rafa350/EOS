@@ -3,20 +3,20 @@
 
 
 #include "eos.h"
-#include "Services/Gui/eosVisual.h"
+#include "Services/Gui/Visuals/eosControl.h"
 
 
 namespace eos {
 
-	class Decorator: public Visual {
+	class Decorator: public Control {
 		private:
-			Visual *_child;
+			Visual* _child;
 			Thickness _padding;
 
 		public:
 			Decorator();
 
-        	void setChild(Visual *value);
+        	void setChild(Visual* value);
         	void setPadding(Thickness value);
 
         	inline Visual* getChild() const { return _child; }

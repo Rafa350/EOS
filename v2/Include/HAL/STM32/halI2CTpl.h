@@ -33,6 +33,14 @@ namespace eos {
 				_handler = halI2CMasterInitialize(&_data, &initInfo);
 			}
 
+			inline void enable() {
+				halI2CEnable(_handler);
+			}
+
+			inline void disable() {
+				halI2CDisable(_handler);
+			}
+
 			inline void send(uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t* buffer, uint16_t length) {
 				halI2CMasterWriteMultiple(
 					_handler,

@@ -7,6 +7,7 @@
 #include "eos.h"
 #include "System/eosPointers.h"
 #include "System/Graphics/eosColor.h"
+#include "System/Graphics/eosPoint.h"
 
 
 #ifndef eosGraphics_MaxBitmaps
@@ -38,7 +39,9 @@ namespace eos {
 			Bitmap& operator = (const Bitmap& bitmap);
 
 			void setPixel(int x, int y, Color color);
+			inline void setPixel(const Point& point, Color color) { setPixel(point.getX(), point.getY(), color); }
 			Color getPixel(int x, int y);
+			inline Color getPixel(const Point& point) { return getPixel(point.getX(), point.getY()); }
 
 			int getWidth() const;
 			int getHeight() const;

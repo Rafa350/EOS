@@ -16,7 +16,7 @@ Decorator::Decorator() :
 
 /// ----------------------------------------------------------------------
 /// \brief    Assigna el control fill del decorador.
-/// \param    value: El conmtrol fill.
+/// \param    value: El control fill.
 ///
 void Decorator::setChild(
 	Visual *value) {

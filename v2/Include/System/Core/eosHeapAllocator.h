@@ -30,11 +30,14 @@ namespace eos {
             HeapAllocator() :
             	_allocator(size) {}
 
-            inline T *allocate() {
-                return static_cast<T*>(_allocator.allocate(sizeof(T)));
+            inline T* allocate() {
+                void* p = _allocator.allocate(sizeof(T));
+                eosAssert(p != nullptr);
+                return static_cast<T*>(p);
             }
 
             inline void deallocate(T* p) {
+            	eosAssert(p != nullptr);
                 _allocator.deallocate(p);
             }
     };

@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 #include "System/eosPointers.h"
+#include "System/eosSingleton.h"
 #include "System/Collections/eosVector.h"
 #include "System/Graphics/eosColor.h"
 
@@ -27,10 +28,9 @@ namespace eos {
 		private:
 			struct Impl;
 			typedef SharedPtr<Impl> ImplPtr;
-			typedef Vector<ImplPtr, eosGraphics_MaxBrushes, true> ImplPtrCache;
+			typedef Singleton<Vector<ImplPtr, eosGraphics_MaxBrushes, true>> ImplPtrCache;
 
 		private:
-			static ImplPtrCache _implCache;
 			ImplPtr _impl;
 
 		private:

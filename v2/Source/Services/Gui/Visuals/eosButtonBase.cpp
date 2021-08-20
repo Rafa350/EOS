@@ -50,8 +50,6 @@ void ButtonBase::onTouchPadPress(
 		onClick();
 
 	_pressed = true;
-
-	Visual::onTouchPadPress(position);
 }
 #endif
 
@@ -68,8 +66,6 @@ void ButtonBase::onTouchPadRelease() {
 		onClick();
 
 	_pressed = false;
-
-	Visual::onTouchPadRelease();
 }
 #endif
 
@@ -83,8 +79,6 @@ void ButtonBase::onTouchPadLeave() {
 	onRelease();
 
 	_pressed = false;
-
-	Visual::onTouchPadLeave();
 }
 #endif
 

@@ -4,6 +4,7 @@
 
 #include "eos.h"
 #include "eosAssert.h"
+#include "System/eosSingleton.h"
 
 
 namespace eos {
@@ -73,6 +74,7 @@ namespace eos {
             }
 
     		inline void deallocate(T* p) {
+    			eosAssert(p != nullptr);
             	_allocator.deallocate(p);
             }
     };
@@ -82,15 +84,23 @@ namespace eos {
     template <typename T, int maxBlocks>
     class PoolAllocatable {
     	private:
-    		inline static PoolAllocator<T, maxBlocks> _allocator = PoolAllocator<T, maxBlocks>();
+    		typedef Singleton<PoolAllocator<T, maxBlocks>> Allocator;
 
     	public:
         	void* operator new(unsigned size) {
-        		return _allocator.allocate();
+
+        		eosAssert(size == sizeof(T));
+
+        		auto& allocator = Allocator::instance();
+        		return allocator.allocate();
         	}
 
         	void operator delete(void* p) {
-        		_allocator.deallocate(static_cast<T*>(p));
+
+        		eosAssert(p != nullptr);
+
+        		auto& allocator = Allocator::instance();
+        		allocator.deallocate(static_cast<T*>(p));
         	}
     };
 }

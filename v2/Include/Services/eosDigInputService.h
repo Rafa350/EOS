@@ -63,16 +63,16 @@ namespace eos {
             };
         	typedef ICallbackP1<const EventArgs&> IEventCallback;
             struct Settings {    // Parametres de configuracio de l'entrada.
-                GPIOPort port;   // -El port
-                GPIOPin pin;     // -El pin
+                halGPIOPort port;   // -El port
+                halGPIOPin pin;     // -El pin
                 IEventCallback* eventCallback;
                 void* eventParam;
             };
 
         private:
             DigInputService* _service;
-            GPIOPort _port;
-            GPIOPin _pin;
+            halGPIOPort _port;
+            halGPIOPin _pin;
             IEventCallback* _eventCallback;
             void* _eventParam;
             uint32_t _pattern;

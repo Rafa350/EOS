@@ -17,8 +17,8 @@ using namespace eos;
 /// \param    ry: Radi y.
 ///
 void Graphics::paintRoundedRectangle(
-	const Pen &pen,
-	const Brush &brush,
+	const Pen& pen,
+	const Brush& brush,
 	const Rect& rect,
 	int rx, int ry) {
 

@@ -10,7 +10,7 @@
 
 namespace eos {
 
-	template <class T>
+	template <typename T>
 	class SharedPtr {
         private:
             T* _ptr;

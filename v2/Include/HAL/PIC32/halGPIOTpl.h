@@ -10,7 +10,7 @@
 
 namespace eos {
 
-    enum class GpioPort: GPIOPort {
+    enum class GPIOPort: halGPIOPort {
         portA = HAL_GPIO_PORT_A,
         portB = HAL_GPIO_PORT_B,
         portC = HAL_GPIO_PORT_C,
@@ -20,7 +20,7 @@ namespace eos {
         portG = HAL_GPIO_PORT_G
     };
 
-    enum class GpioPin: GPIOPin {
+    enum class GPIOPin: halGPIOPin {
         pin0 = HAL_GPIO_PIN_0,
         pin1 = HAL_GPIO_PIN_1,
         pin2 = HAL_GPIO_PIN_2,
@@ -39,52 +39,92 @@ namespace eos {
         pin15 = HAL_GPIO_PIN_15
     };
 
+    enum class GPIOSpeed: halGPIOOptions {
+        low = HAL_GPIO_SPEED_LOW,
+        medium = HAL_GPIO_SPEED_MEDIUM,
+        high = HAL_GPIO_SPEED_HIGH,
+        fast = HAL_GPIO_SPEED_FAST
+    };
 
-    template <GpioPort port, GpioPin pin>
-    class GpioPinAdapter {
+    enum class GPIODriver {
+        pushPull,
+        openDrain
+    };
+
+    enum class GPIOState: halGPIOOptions {
+        set = HAL_GPIO_INIT_SET,
+        clr = HAL_GPIO_INIT_CLR,
+        noChange = HAL_GPIO_INIT_NOCHANGE
+    };
+
+
+    template <GPIOPort port, GPIOPin pin>
+    class GPIOPinAdapter {
         public:
-            inline static void initialize(GPIOOptions options) {
-                halGPIOInitializePin(GPIOPort(port), GPIOPin(pin), options, HAL_GPIO_AF_NONE);
+            inline static void initOutput(GPIOSpeed speed, GPIODriver driver, GPIOState state) {
+                halGPIOOptions options =
+                    HAL_GPIO_MODE_OUTPUT_PP |
+                    halGPIOOptions(speed) |
+                    halGPIOOptions(driver) |
+                    halGPIOOptions(state);
+                halGPIOInitializePin(halGPIOPort(port), halGPIOPin(pin), options, HAL_GPIO_AF_NONE);
+            }
+
+            inline static void initialize(halGPIOOptions options) {
+                halGPIOInitializePin(halGPIOPort(port), halGPIOPin(pin), options, HAL_GPIO_AF_NONE);
             }
 
             inline static void set() {
-                halGPIOSetPin(GPIOPort(port), GPIOPin(pin));
+                halGPIOSetPin(halGPIOPort(port), halGPIOPin(pin));
             }
 
             inline static void clear() {
-                halGPIOClearPin(GPIOPort(port), GPIOPin(pin));
+                halGPIOClearPin(halGPIOPort(port), halGPIOPin(pin));
             }
 
             inline static void toggle() {
-                halGPIOTogglePin(GPIOPort(port), GPIOPin(pin));
+                halGPIOTogglePin(halGPIOPort(port), halGPIOPin(pin));
             }
 
             inline static void write(bool value) {
                 if (value)
-                    halGPIOSetPin(GPIOPort(port), GPIOPin(pin));
+                    halGPIOSetPin(halGPIOPort(port), halGPIOPin(pin));
                 else
-                    halGPIOClearPin(GPIOPort(port), GPIOPin(pin));
+                    halGPIOClearPin(halGPIOPort(port), halGPIOPin(pin));
             }
+
+			inline static GPIOPort getPort() {
+				return port;
+			}
+
+			inline static GPIOPin getPin() {
+				return pin;
+			}
+
+			inline GPIOPinAdapter& operator = (bool b) {
+				halGPIOWritePin(halGPIOPort(port), halGPIOPin(pin), b);
+				return *this;
+			}
     };
 
 
 #ifdef HAL_GPIO_PORT_A
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin0> PA0;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin1> PA1;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin2> PA2;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin3> PA3;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin4> PA4;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin5> PA5;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin6> PA6;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin7> PA7;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin8> PA8;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin9> PA9;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin10> PA10;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin11> PA11;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin12> PA12;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin13> PA13;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin14> PA14;
-    typedef GpioPinAdapter<GpioPort::portA, GpioPin::pin15> PA15;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin0> Pin_A0;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin1> Pin_A1;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin2> Pin_A2;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin3> Pin_A3;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin4> Pin_A4;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin5> Pin_A5;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin6> Pin_A6;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin7> Pin_A7;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin8> Pin_A8;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin9> Pin_A9;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin10> Pin_A10;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin11> Pin_A11;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin12> Pin_A12;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin13> Pin_A13;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin14> Pin_A14;
+    typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin15> Pin_A15;
 #endif
 
 #ifdef HAL_GPIO_PORT_B

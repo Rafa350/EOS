@@ -38,7 +38,8 @@
 #endif
 
 
-#include "HAL/halGPIOTpl.h"
+#include "HAL/STM32/halGPIOTpl.h"
+#include "HAL/STM32/halLTDCTpl.h"
 #include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosFrameBuffer.h"
 #include "Controllers/Display/eosDisplayDriver.h"
@@ -119,6 +120,7 @@ namespace eos {
 			PinB5 _pinB5;
 			PinB6 _pinB6;
 			PinB7 _pinB7;
+			LTDCAdapter _ltdc;
 
     		FrameBuffer* _frontFrameBuffer;
     		FrameBuffer* _backFrameBuffer;

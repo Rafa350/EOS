@@ -9,121 +9,129 @@
 
 namespace eos {
 
-    template <typename P1Type>
+    template <typename P1>
     class ICallbackP1 {
         public:
             virtual ~ICallbackP1() {
             }
 
-            virtual void execute(P1Type p1) const = 0;
+            virtual void execute(P1 p1) const = 0;
     };
 
-    template <class Class, typename P1Type>
-    class CallbackP1: public ICallbackP1<P1Type> {
+    template <typename C, typename P1>
+    class CallbackP1: public ICallbackP1<P1> {
         public:
-            typedef void (Class::*Method)(P1Type);
+            typedef void (C::*Method)(P1);
 
         private:
-            Class* instance;
+            C* instance;
             Method method;
 
         public:
-            CallbackP1(Class* instance, Method method): instance(instance), method(method) {
+            CallbackP1(C* instance, Method method):
+            	instance(instance),
+				method(method) {
             }
 
-            void execute(P1Type p1) const override {
+            void execute(P1 p1) const override {
                 if ((instance != nullptr) && (method != nullptr))
                     (instance->*method)(p1);
             }
     };
 
 
-    template <typename P1Type, typename P2Type>
+    template <typename P1, typename P2>
     class ICallbackP2 {
         public:
             virtual ~ICallbackP2() {
             }
 
-            virtual void execute(P1Type p1, P2Type p2) const = 0;
+            virtual void execute(P1 p1, P2 p2) const = 0;
     };
 
-    template <class Class, typename P1Type, typename P2Type>
-    class CallbackP2: public ICallbackP2<P1Type, P2Type> {
+    template <typename C, typename P1, typename P2>
+    class CallbackP2: public ICallbackP2<P1, P2> {
         public:
-            typedef void (Class::*Method)(P1Type, P2Type);
+            typedef void (C::*Method)(P1, P2);
 
         private:
-            Class* instance;
+            C* instance;
             Method method;
 
         public:
-            CallbackP2(Class* instance, Method method): instance(instance), method(method) {
+            CallbackP2(C* instance, Method method):
+            	instance(instance),
+				method(method) {
             }
 
-            void execute(P1Type p1, P2Type p2) const override {
+            void execute(P1 p1, P2 p2) const override {
                 if ((instance != nullptr) && (method != nullptr))
                     (instance->*method)(p1, p2);
             }
     };
 
 
-    template <typename RType, typename P1Type>
+    template <typename R, typename P1>
     class ICallbackP1R {
         public:
             virtual ~ICallbackP1R() {
             }
 
-            virtual RType execute(P1Type p1) const = 0;
+            virtual R execute(P1 p1) const = 0;
     };
 
-    template <class Class, typename RType, typename P1Type>
-    class CallbackP1R: public ICallbackP1R<RType, P1Type> {
+    template <typename C, typename R, typename P1>
+    class CallbackP1R: public ICallbackP1R<R, P1> {
         public:
-            typedef RType (Class::*Method)(P1Type);
+            typedef R (C::*Method)(P1);
 
         private:
-            Class* instance;
+            C* instance;
             Method method;
 
         public:
-            CallbackP1R(Class* instance, Method method): instance(instance), method(method) {
+            CallbackP1R(C* instance, Method method):
+            	instance(instance),
+				method(method) {
             }
 
-            RType execute(P1Type p1) const override {
+            R execute(P1 p1) const override {
                 if ((instance != nullptr) && (method != nullptr))
                     return (instance->*method)(p1);
                 else
-                    return RType();
+                    return R();
             }
     };
 
 
-    template <typename RType, typename P1Type, typename P2Type>
+    template <typename R, typename P1, typename P2>
     class ICallbackP2R {
         public:
             virtual ~ICallbackP2R() {
             }
-            virtual RType execute(P1Type p1, P2Type p2) const = 0;
+            virtual R execute(P1 p1, P2 p2) const = 0;
     };
 
-    template <class Class, typename RType, typename P1Type, typename P2Type>
-    class CallbackP2R: public ICallbackP2R<RType, P1Type, P2Type> {
+    template <typename C, typename R, typename P1, typename P2>
+    class CallbackP2R: public ICallbackP2R<R, P1, P2> {
         public:
-            typedef RType (Class::*Method)(P1Type, P2Type);
+            typedef R (C::*Method)(P1, P2);
 
         private:
-            Class* instance;
+            C* instance;
             Method method;
 
         public:
-            CallbackP2R(Class* instance, Method method): instance(instance), method(method) {
+            CallbackP2R(C* instance, Method method):
+            	instance(instance),
+				method(method) {
             }
 
-            RType execute(P1Type p1, P2Type p2) const override {
+            R execute(P1 p1, P2 p2) const override {
                 if ((instance != nullptr) && (method != nullptr))
                     return (instance->*method)(p1, p2);
                 return
-                    RType();
+                    R();
             }
     };
 

@@ -20,12 +20,9 @@ namespace eos {
     class TextBlock: public Control {
     	private:
     		Brush _foreground;
-			Brush _background;
+    		Font _font;
     		HorizontalTextAlign _horizontalTextAlign;
     		VerticalTextAlign _verticalTextAlign;
-    		String _fontName;
-    		int _fontHeight;
-    		FontStyle _fontStyle;
     		String _text;
 
     	protected:
@@ -39,16 +36,12 @@ namespace eos {
     		TextBlock();
 
             void setForeground(const Brush& value);
-            void setBackground(const Brush& value);
-            void setFontName(const String& value);
-            void setFontHeight(int value);
-            void setFontStyle(FontStyle value);
+            void setFont(const Font& value);
             void setText(const String& value);
             void setHorizontalTextAlign(HorizontalTextAlign value);
             void setVerticalTextAlign(VerticalTextAlign value);
 
             inline const Brush& getForeground() const { return _foreground; }
-            inline const Brush& getBackground() const { return _background; }
             inline const String& getText() const { return _text; }
     };
 }

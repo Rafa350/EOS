@@ -5,7 +5,7 @@
 using namespace eos;
 
 
-MsgQueue *MsgQueue::instance = nullptr;
+MsgQueue *MsgQueue::_instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
@@ -13,7 +13,7 @@ MsgQueue *MsgQueue::instance = nullptr;
 ///
 MsgQueue::MsgQueue():
 
-	queue(eosGuiService_MessageQueueSize) {
+	_queue(eosGuiService_MessageQueueSize) {
 }
 
 
@@ -23,9 +23,9 @@ MsgQueue::MsgQueue():
 ///
 MsgQueue* MsgQueue::getInstance() {
 
-	if (instance == nullptr)
-		instance = new MsgQueue();
-	return instance;
+	if (_instance == nullptr)
+		_instance = new MsgQueue();
+	return _instance;
 }
 
 
@@ -36,7 +36,7 @@ MsgQueue* MsgQueue::getInstance() {
 void MsgQueue::send(
 	const Message& msg) {
 
-	queue.push(msg, 0);
+	_queue.push(msg, 0);
 }
 
 
@@ -48,7 +48,7 @@ void MsgQueue::send(
 bool MsgQueue::receive(
 	Message& msg) {
 
-	return queue.pop(msg, eosGuiService_MessageQueueBlockTime);
+	return _queue.pop(msg, eosGuiService_MessageQueueBlockTime);
 }
 
 

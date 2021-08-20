@@ -2,6 +2,11 @@
 #define __eosMath__
 
 
+/// EOS includes
+//
+#include "eos.h"
+
+
 namespace eos {
 
     namespace Math {

@@ -5,6 +5,7 @@
 #include "Services/Gui/Visuals/eosStackPanel.h"
 #include "Services/Gui/Visuals/eosVirtualKeyboard.h"
 #include "System/eosString.h"
+#include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosSize.h"
 
 
@@ -32,12 +33,14 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	// Panell principal
 	//
 	StackPanel *sp = new StackPanel();
+	sp->setBackground(Brush(BrushStyle::solid, COLOR_Transparent));
 	sp->setOrientation(Orientation::vertical);
 	_visual->addChild(sp);
 
 	// Panell de la primera fila
 	//
 	StackPanel *sp1 = new StackPanel();
+	sp1->setBackground(Brush(BrushStyle::solid, COLOR_Transparent));
 	sp1->setOrientation(Orientation::horizontal);
 	sp->addChild(sp1);
 
@@ -63,6 +66,7 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	//
 	StackPanel *sp2 = new StackPanel();
 	sp2->setOrientation(Orientation::horizontal);
+	sp2->setBackground(Brush(BrushStyle::solid, COLOR_Transparent));
 	sp->addChild(sp2);
 
 	PushButton *pb21 = createPushButton("4", size);
@@ -81,6 +85,7 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	//
 	StackPanel *sp3 = new StackPanel();
 	sp3->setOrientation(Orientation::horizontal);
+	sp3->setBackground(Brush(BrushStyle::solid, COLOR_Transparent));
 	sp->addChild(sp3);
 
 	PushButton *pb31 = createPushButton("1", size);
@@ -99,6 +104,7 @@ void VirtualKeyboardTemplate::applyTemplate() {
 	//
 	StackPanel *sp4 = new StackPanel();
 	sp4->setOrientation(Orientation::horizontal);
+	sp4->setBackground(Brush(BrushStyle::solid, COLOR_Transparent));
 	sp->addChild(sp4);
 
 	PushButton *pb41 = createPushButton("0", size);
@@ -112,6 +118,8 @@ PushButton* VirtualKeyboardTemplate::createPushButton(
 	const Size& size) {
 
 	TextBlock *tb = new TextBlock();
+	tb->setBackground(Brush(BrushStyle::solid, COLOR_Transparent));
+	tb->setForeground(Brush(BrushStyle::solid, COLOR_Yellow));
 	tb->setText(text);
 
 	PushButton *pb = new PushButton();

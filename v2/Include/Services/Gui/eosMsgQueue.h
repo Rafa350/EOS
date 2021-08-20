@@ -70,7 +70,7 @@ namespace eos {
 
     struct MsgCommand {
     	int id;
-    	void *param;
+    	void* param;
     };
 
     enum class MsgId: uint8_t {
@@ -85,7 +85,7 @@ namespace eos {
 
     struct Message {
         MsgId msgId;
-        Visual *target;
+        Visual* target;
         union {
 #if eosGuiService_SelectorEnabled
             MsgSelector selector;
@@ -102,18 +102,18 @@ namespace eos {
 
     class MsgQueue {
     	private:
-    		static MsgQueue *instance;
-    		Queue<Message> queue;
+    		static MsgQueue* _instance;
+    		Queue<Message> _queue;
 
     	private:
     		MsgQueue();
 
     	public:
-    		void send(const Message &msg);
-    		bool receive(Message &msg);
+    		void send(const Message& msg);
+    		bool receive(Message& msg);
     		bool isEmpty() const;
 
-    		static MsgQueue *getInstance();
+    		static MsgQueue* getInstance();
     };
 
 }

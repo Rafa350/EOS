@@ -26,7 +26,7 @@ Screen::Screen() {
 /// \remarks  En aquest cas sempre retorna el tamany disponible.
 ///
 Size Screen::measureOverride(
-	const Size &availableSize) const {
+	const Size& availableSize) const {
 
 	if (isVisible()) {
 		Panel::measureOverride(availableSize);

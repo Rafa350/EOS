@@ -14,6 +14,7 @@
 namespace eos {
 
 	class GuiService;
+	class Visual;
 	class Panel;
 }
 
@@ -40,6 +41,7 @@ namespace app {
 			void onInitialize() override;
 
 			void createMainPanel();
+			eos::Visual* createKeyboardPanel();
 			void buttonEventHandler(const eos::ButtonBase::EventArgs& args);
 			void virtualKeyboardEventHandler(const eos::VirtualKeyboard::EventArgs& args);
 

@@ -65,7 +65,7 @@ namespace eos {
 			unsigned _id;
 
     	protected:
-    		virtual void onRender(RenderContext* context) = 0;
+    		virtual void onRender(RenderContext* context);
     		virtual void onDispatch(const Message& msg);
     		virtual void onActivate(Visual* visual);
     		virtual void onDeactivate(Visual* visual);
@@ -78,15 +78,15 @@ namespace eos {
     		virtual void onDispatchTouchPadEvent(const MsgTouchPad& msg);
     		virtual void onTouchPadEnter();
     		virtual void onTouchPadLeave();
-    		virtual void onTouchPadPress(const Point &position);
+    		virtual void onTouchPadPress(const Point& position);
     		virtual void onTouchPadRelease();
-    		virtual void onTouchPadMove(const Point &position);
+    		virtual void onTouchPadMove(const Point& position);
 #endif
-            virtual Size measureOverride(const Size &availableSize) const;
-            virtual Size arrangeOverride(const Size &finalSize) const;
+            virtual Size measureOverride(const Size& availableSize) const;
+            virtual Size arrangeOverride(const Size& finalSize) const;
 
-            void addVisual(Visual *visual);
-            void removeVisual(Visual *visual);
+            void addVisual(Visual* visual);
+            void removeVisual(Visual* visual);
             void removeVisuals();
 
         public:
@@ -105,9 +105,9 @@ namespace eos {
             // Setters
             void setId(unsigned id) { _id = id; }
             void setHorizontalAlignment(HorizontalAlignment value);
-            void setMargin(const Thickness &value);
-            void setMinSize(const Size &value);
-            void setSize(const Size &value);
+            void setMargin(const Thickness& value);
+            void setMinSize(const Size& value);
+            void setSize(const Size& value);
             void setVerticalAlignment(VerticalAlignment value);
             void setVisibility(Visibility value);
 

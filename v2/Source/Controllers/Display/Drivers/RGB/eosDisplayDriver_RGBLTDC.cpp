@@ -288,39 +288,8 @@ void DisplayDriver_RGBLTDC::refresh() {
 void DisplayDriver_RGBLTDC::initializeGPIO() {
 
 	_pinBKE.initOutput(GPIOSpeed::low, GPIODriver::pushPull, GPIOState::clr);
-
 	_pinLCDE.initOutput(GPIOSpeed::low, GPIODriver::pushPull, GPIOState::clr);
-	_pinHSYNC.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinHSYNC::GPIOAlt::ltdc_HSYNC);
-	_pinVSYNC.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinVSYNC::GPIOAlt::ltdc_VSYNC);
-	_pinDE.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinDE::GPIOAlt::ltdc_DE);
-	_pinDOTCLK.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinDOTCLK::GPIOAlt::ltdc_DOTCLK);
 
-	_pinR0.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinR0::GPIOAlt::ltdc_R0);
-	_pinR1.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinR1::GPIOAlt::ltdc_R1);
-	_pinR2.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinR2::GPIOAlt::ltdc_R2);
-	_pinR3.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinR3::GPIOAlt::ltdc_R3);
-	_pinR4.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinR4::GPIOAlt::ltdc_R4);
-	_pinR5.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinR5::GPIOAlt::ltdc_R5);
-	_pinR6.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinR6::GPIOAlt::ltdc_R6);
-	_pinR7.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinR7::GPIOAlt::ltdc_R7);
-
-	_pinG0.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinG0::GPIOAlt::ltdc_G0);
-	_pinG1.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinG1::GPIOAlt::ltdc_G1);
-	_pinG2.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinG2::GPIOAlt::ltdc_G2);
-	_pinG3.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinG3::GPIOAlt::ltdc_G3);
-	_pinG4.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinG4::GPIOAlt::ltdc_G4);
-	_pinG5.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinG5::GPIOAlt::ltdc_G5);
-	_pinG6.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinG6::GPIOAlt::ltdc_G6);
-	_pinG7.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinG7::GPIOAlt::ltdc_G7);
-
-	_pinB0.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinB0::GPIOAlt::ltdc_B0);
-	_pinB1.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinB1::GPIOAlt::ltdc_B1);
-	_pinB2.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinB2::GPIOAlt::ltdc_B2);
-	_pinB3.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinB3::GPIOAlt::ltdc_B3);
-	_pinB4.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinB4::GPIOAlt::ltdc_B4);
-	_pinB5.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinB5::GPIOAlt::ltdc_B5);
-	_pinB6.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinB6::GPIOAlt::ltdc_B6);
-	_pinB7.initAlt(GPIOSpeed::fast, GPIODriver::pushPull, PinB7::GPIOAlt::ltdc_B7);
 }
 
 
@@ -346,8 +315,16 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	ltdcSettings.polarity.PC = DISPLAY_PCPOL;
 	ltdcSettings.width = _imageWidth;
 	ltdcSettings.height = _imageHeight;
-	halLTDCInitialize(&ltdcSettings);
-	halLTDCSetBackgroundColor(0x000000FF);
+
+	_ltdc.setDOTCLKPin(_pinDOTCLK);
+	_ltdc.setHSYNCPin(_pinHSYNC);
+	_ltdc.setVSYNCPin(_pinVSYNC);
+	_ltdc.setDEPin(_pinDE);
+	_ltdc.setRPins(_pinR0, _pinR1, _pinR2, _pinR3, _pinR4, _pinR5, _pinR6, _pinR7);
+	_ltdc.setGPins(_pinG0, _pinG1, _pinG2, _pinG3, _pinG4, _pinG5, _pinG6, _pinG7);
+	_ltdc.setBPins(_pinB0, _pinB1, _pinB2, _pinB3, _pinB4, _pinB5, _pinB6, _pinB7);
+	_ltdc.initialize(ltdcSettings);
+	_ltdc.setBackgroundColor(COLOR_Blue);
 
 	// Inicialitza la capa 0
 	//

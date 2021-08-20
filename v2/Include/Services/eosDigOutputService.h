@@ -122,22 +122,22 @@ namespace eos {
             };
         public:
             struct Settings {
-                GPIOPort port;
-                GPIOPin pin;
+                halGPIOPort port;
+                halGPIOPin pin;
             };
 
             DigOutputService *_service;
-            GPIOPort _port;
-            GPIOPin _pin;
+            halGPIOPort _port;
+            halGPIOPin _pin;
             State _state;
             unsigned _delayCnt;
             unsigned _widthCnt;
 
         public:
-            DigOutput(DigOutputService *service, const Settings &settings);
+            DigOutput(DigOutputService* service, const Settings& settings);
             ~DigOutput();
 
-            inline DigOutputService *getService() const {
+            inline DigOutputService* getService() const {
                 return _service;
             }
 

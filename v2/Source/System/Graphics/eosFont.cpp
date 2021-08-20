@@ -38,9 +38,6 @@ class Font::Impl: public PoolAllocatable<Font::Impl, eosGraphics_MaxFonts> {
 };
 
 
-Font::ImplPtrCache Font::_implCache;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor. Crea el font per defecte.
 ///
@@ -92,18 +89,20 @@ Font::~Font() {
 Font::ImplPtr Font::makeImpl(
 	const uint8_t* fontResource) {
 
+	auto& cache = ImplPtrCache::instance();
+
 	eosAssert(fontResource != nullptr);
 
 	// Si ja esta en el cache, el reutilitza.
 	//
-	for (auto it = _implCache.begin(); it != _implCache.end(); it++) {
+	for (auto it = cache.begin(); it != cache.end(); it++) {
 		ImplPtr impl = *it;
 		if (impl->getFontResource() == fontResource)
 			return impl;
 	}
 
 	ImplPtr impl(new Font::Impl(fontResource));
-	_implCache.pushBack(impl);
+	cache.pushBack(impl);
 	return impl;
 }
 

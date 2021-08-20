@@ -13,10 +13,6 @@ namespace eos {
 	class ListBox: public ItemsControl {
 		private:
 			Panel* panel;
-
-		public:
-			void addItem();
-			void addItems();
 	};
 }
 

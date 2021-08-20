@@ -558,7 +558,7 @@ void DisplayService::testBitmaps() {
 	int height = (int) (data[2] | (data[3] << 8));
 	//int flags = (int) (data[4] | (data[5] << 8));
 
-	Bitmap* bitmap = new Bitmap(width, height, ColorFormat::rgb565, &data[6]);
+	Bitmap bitmap(width, height, ColorFormat::rgb565, &data[6]);
 
 	drawBackground("Bitmaps");
     Task::delay(250);
@@ -570,11 +570,9 @@ void DisplayService::testBitmaps() {
     int x = _screenWidth / 2;
     int y = _screenHeight / 2;
 	_graphics->drawBitmap(
-		x - bitmap->getWidth() / 2,
-		y - bitmap->getHeight() / 2,
+		x - bitmap.getWidth() / 2,
+		y - bitmap.getHeight() / 2,
 		bitmap);
-
-    delete bitmap;
 
     _bitmapTicks = Task::getTickCount() - ticks;
     Task::delay(1000);

@@ -6,7 +6,7 @@
 #include "HAL/PIC32/halSPI.h"
 
 
-#define __getRegisterPtr(spi)     ((SPIRegisters*)(_SPI1_BASE_ADDRESS + (spi * 0x00000200)))
+#define __getRegisterPtr(spi)     ((halSPIRegisters*)(_SPI1_BASE_ADDRESS + (spi * 0x00000200)))
 
 
 /// ----------------------------------------------------------------------
@@ -14,11 +14,11 @@
 /// \param    data: Buffer de dades.
 /// \param    settings: Parametres d'inicialitzacio.
 ///
-SPIHandler halSPIInitialize(
-    SPIData* data,
-    const SPISettings *settings) {
+halSPIHandler halSPIInitialize(
+    halSPIData* data,
+    const halSPISettings* settings) {
 
-    SPIHandler handler = data;
+    halSPIHandler handler = data;
     handler->regs = __getRegisterPtr(settings->channel);
     handler->isrFunction = NULL;
     handler->isrParams = NULL;
@@ -86,7 +86,7 @@ SPIHandler halSPIInitialize(
 /// \param    handler: El handler del modul.
 ///
 void halSPIDeinitialize(
-    SPIHandler handler) {
+    halSPIHandler handler) {
 
     handler->regs->SPIxCON.ON = 0;
 
@@ -99,7 +99,7 @@ void halSPIDeinitialize(
 /// \param    data: Les dasdes a transmetre.
 ///
 void halSendData(
-    SPIHandler handler,
+    halSPIHandler handler,
     uint8_t data) {
 
     handler->regs->SPIxBUF = data;
@@ -110,12 +110,14 @@ void halSendData(
 /// \brief    Transmitreix un buffer de bytes.
 /// \param    handler: El handler del modul.
 /// \param    data: El buffer de dades.
-/// \param    size: El tamany del buffer en bytes
+/// \param    size: El tamany del buffer en bytes.
+/// \param    blockTime: Temps maxim de bloqueig.
 ///
 void halSPISendBuffer(
-    SPIHandler handler,
-    uint8_t *data,
-    uint32_t size) {
+    halSPIHandler handler,
+    const uint8_t* data,
+    int size,
+    int blockTime) {
 
     while (size--) {
         while (!handler->regs->SPIxSTAT.SPITBE)

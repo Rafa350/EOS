@@ -31,7 +31,7 @@ namespace eos {
 #if Eos_ApplicationTickEnabled
             typedef CallbackP1<Application, const Timer::EventArgs&> TimerEventCallback;
 #endif
-
+        private:
             bool _initialized;
             ServiceList _services;
             TaskList _tasks;
@@ -79,7 +79,6 @@ namespace eos {
         friend void link(Application* application, Service* service);
         friend void unlink(Application* application, Service* service);
     };
-
 }
 
 

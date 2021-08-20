@@ -88,12 +88,24 @@ namespace eos {
 				_handler = halSPIInitialize(&_data, &settings);
 			}
 
+			inline void initialize(const halSPISettings& settings) {
+				_handler = halSPIInitialize(&_data, &settings);
+			}
+
 			inline void setClock(SPIClockDivider clkdiv) {
 
 			}
 
-			inline void setISRFunction(halSPIInterruptFunction function, void* params) {
+			inline void setInterruptFunction(halSPIInterruptFunction function, void* params) {
+				halSPISetInterruptFunction(_handler, function, params);
+			}
 
+			inline void enableInterrupts(uint32_t events) {
+				halSPIEnableInterrupts(_handler, event);
+			}
+
+			inline uint32_t disableInterrupts(uint32_t events) {
+				return halSPIDisableInterrupts(_handler, events);
 			}
 
 			template <GPIOPort port, GPIOPin pin>

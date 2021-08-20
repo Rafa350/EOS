@@ -16,7 +16,7 @@ namespace eos {
 		Rect getClip(Visual *visual);
 		Point getPosition(Visual *visual);
 		Visual *getVisual(Visual *visual, const Point &p);
-		Visual *getVisual(Visual *vosial, unsigned id);
+		Visual *getVisual(Visual *visual, unsigned id);
 	}
 
 }

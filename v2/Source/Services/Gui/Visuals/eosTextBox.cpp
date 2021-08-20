@@ -20,31 +20,14 @@ TextBox::TextBox():
 }
 
 
-/// ---------------------------------------------------------------------
-/// \brief    Asigna el text
-/// \param    text: El text.
-///
-void TextBox::setText(
-	const String& value) {
-
-	if (_text != value) {
-		_text = value;
-		invalidate();
-	}
-}
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Borra el text.
 ///
 void TextBox::clearText() {
 
-	if (!_text.isEmpty()) {
-		_text = "";
-		_visiblePos = 0;
-		_insertPos = 0;
-		invalidate();
-	}
+	setText("");
+	_visiblePos = 0;
+	_insertPos = 0;
 }
 
 
@@ -58,16 +41,19 @@ void TextBox::onKeyboardPress(
 	KeyFlags flags,
 	char ch) {
 
+	String text = getText();
+
 	switch (ch) {
 		default:
 			if (ch >= 0x30 && ch < 0x7F) {
-				_text.insert(_insertPos++, ch);
+				text.insert(_insertPos++, ch);
 				if (_insertPos > _visiblePos + _visibleLength)
 					_visiblePos++;
-				invalidate();
 			}
 			break;
 	}
+
+	setText(text);
 }
 
 
@@ -78,15 +64,5 @@ void TextBox::onKeyboardPress(
 void TextBox::onRender(
 	RenderContext* context) {
 
-	const Size s(getBounds().getSize());
-
-	Graphics& g = context->beginRender(this);
-
-	g.paintRectangle(Pen(), getBackground(), Rect(s));
-
-	g.setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::center);
-	g.drawText(0, s.getHeight() / 2, getForeground().getColor(),
-		_text, _visiblePos, _visibleLength);
-
-	context->endRender();
+	TextBlock::onRender(context);
 }

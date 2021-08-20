@@ -279,6 +279,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL/hal.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/hal.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/HAL/halGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
@@ -417,6 +422,11 @@
 			<name>inc/Framework/EOS/System/eosRefCounter.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosRefCounter.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/System/eosSingleton.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/eosSingleton.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/System/eosString.h</name>
@@ -1224,6 +1234,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosControl.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosControlItem.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosControlItem.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosDecorator.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosDecorator.h</locationURI>
@@ -1284,6 +1299,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosStackPanel.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosTabControl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosTabControl.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosTabControlItem.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosTabControlItem.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosTextBlock.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosTextBlock.h</locationURI>
@@ -1297,6 +1322,11 @@
 			<name>inc/Framework/EOS/Services/Gui/Visuals/eosVirtualKeyboard.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosVirtualKeyboard.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/Services/Gui/Visuals/eosWarpPanel.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Services/Gui/Visuals/eosWarpPanel.h</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Controllers/Display/Drivers/RGB</name>
@@ -1349,6 +1379,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosImage.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosItemsControl.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosItemsControl.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosMenu.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosMenu.cpp</locationURI>
@@ -1382,6 +1417,16 @@
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosStackPanel.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosStackPanel.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosTabControl.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosTabControl.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/Services/Gui/Visuals/eosTabControlItem.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Services/Gui/Visuals/eosTabControlItem.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/Services/Gui/Visuals/eosTextBlock.cpp</name>

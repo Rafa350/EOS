@@ -3,29 +3,21 @@
 
 
 #include "eos.h"
-#include "Services/Gui/eosVisual.h"
-#include "System/Graphics/eosBrush.h"
+#include "Services/Gui/Visuals/eosControl.h"
 
 
 namespace eos {
 
 	class RenderContext;
 
-	class Panel: public Visual {
-		private:
-			Brush _background;
-
+	class Panel: public Control {
 		protected:
 			void onRender(RenderContext* context) override;
 
 		public:
 			Panel();
 
-			inline void addChild(Visual *visual) { addVisual(visual); }
-
-			void setBackground(const Brush &value);
-
-			inline const Brush& getBackground() const { return _background; }
+			inline void addChild(Visual* visual) { addVisual(visual); }
 	};
 }
 

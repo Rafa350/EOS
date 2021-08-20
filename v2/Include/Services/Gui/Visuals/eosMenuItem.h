@@ -3,12 +3,12 @@
 
 
 #include "eos.h"
-#include "Services/Gui/Visuals/eosContentControl.h"
+#include "Services/Gui/Visuals/eosControlItem.h"
 
 
 namespace eos {
 
-	class MenuItem: public ContentControl {
+	class MenuItem: public ControlItem {
 
 	};
 }

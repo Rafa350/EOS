@@ -9,9 +9,9 @@
 
 
 #define HAL_RESULT_OK             0
-#define HAL_RESULT_ERROR          1
-#define HAL_RESULT_BUSY           2
-#define HAL_RESULT_TIMEOUT        3
+#define HAL_RESULT_ERROR         -1
+#define HAL_RESULT_BUSY          -2
+#define HAL_RESULT_TIMEOUT       -3
 
 typedef uint32_t halRESULT;
 

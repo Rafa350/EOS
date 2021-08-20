@@ -1,17 +1,17 @@
-#ifndef __eosListBox__
-#define __eosListBox__
+#ifndef __eosListBoxItem__
+#define __eosListBoxItem__
 
 
 #include "eos.h"
-#include "Services/Gui/Visuals/eosContentControl.h"
+#include "Services/Gui/Visuals/eosControlItem.h"
 
 
 namespace eos {
 
-	class ListBoxitem: public ContentControl {
+	class ListBoxitem: public ControlItem {
 
 	};
 }
 
 
-#endif // __eosListBox__
+#endif // __eosListBoxItem__

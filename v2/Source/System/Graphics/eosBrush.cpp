@@ -77,9 +77,6 @@ class Brush::Impl: public PoolAllocatable<Brush::Impl, eosGraphics_MaxBrushes> {
 };
 
 
-Brush::ImplPtrCache Brush::_implCache;
-
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 ///
@@ -129,10 +126,12 @@ Brush::Brush(
 ///
 Brush::~Brush() {
 
+	auto& cache = ImplPtrCache::instance();
+
 	if (_impl.uses() < 2) {
-		for (int index = 0; index < _implCache.getSize(); index++) {
-			if (_implCache[index] == _impl) {
-				_implCache.removeAt(index);
+		for (int index = 0; index < cache.getSize(); index++) {
+			if (cache[index] == _impl) {
+				cache.removeAt(index);
 				break;
 			}
 		}
@@ -179,9 +178,11 @@ Brush::ImplPtr Brush::makeImpl(
 	BrushStyle style,
 	Color color) {
 
+	auto& cache = ImplPtrCache::instance();
+
 	// Si ja esta en el cache, el reutilitza.
 	//
-	for (auto it = _implCache.begin(); it != _implCache.end(); it++) {
+	for (auto it = cache.begin(); it != cache.end(); it++) {
 		ImplPtr impl = *it;
 		if ((impl->getStyle() == style) &&
 			(impl->getColor() == color))
@@ -191,7 +192,7 @@ Brush::ImplPtr Brush::makeImpl(
 	// Si no el troba, en crea un de nou
 	//
 	ImplPtr impl(new Impl(style, color));
-	_implCache.pushBack(impl);
+	cache.pushBack(impl);
 	return impl;
 }
 

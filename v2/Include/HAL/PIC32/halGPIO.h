@@ -63,7 +63,7 @@ extern "C" {
 #define HAL_GPIO_PIN_13           13
 #define HAL_GPIO_PIN_14           14
 #define HAL_GPIO_PIN_15           15
-#define HAL_GPIO_PIN_NONE         ((GPIOPin) -1)
+#define HAL_GPIO_PIN_NONE         ((halGPIOPin) -1)
 
 // Mascara de posicio dels pins
 #define HAL_GPIO_POS_0            (1 << HAL_GPIO_PIN_0)
@@ -148,89 +148,85 @@ typedef struct __attribute__((packed , aligned(4))) {
     volatile uint32_t ODCxCLR;
     volatile uint32_t ODCxSET;
     volatile uint32_t ODCxINV;
-} GPIORegisters;
+} halGPIORegisters;
 
-typedef uint32_t GPIOPort;
-typedef uint32_t GPIOPin;
-typedef uint32_t GPIOMask;
-typedef uint32_t GPIOOptions;
-typedef uint32_t GPIOAlt;
+typedef uint32_t halGPIOPort;
+typedef uint32_t halGPIOPin;
+typedef uint32_t halGPIOMask;
+typedef uint32_t halGPIOOptions;
+typedef uint32_t halGPIOAlt;
 
 typedef struct {                  // Parametres d'inicialitzacio per pins
-	GPIOPort port;                // -Identificador del port
-	GPIOPin pin;                  // -Identificador del pin
-	GPIOOptions options;          // -Opcions
-	GPIOAlt alt;                  // -Funcio alternativa
-} GPIOPinSettings;
+	halGPIOPort port;             // -Identificador del port
+	halGPIOPin pin;               // -Identificador del pin
+	halGPIOOptions options;       // -Opcions
+	halGPIOAlt alt;               // -Funcio alternativa
+} halGPIOPinSettings;
 
 typedef struct {                  // Parametres d'inicialitzacio d'un port
-	GPIOPort port;                // -Identificador del port
-	GPIOMask mask;                // -Mascara de pins
-	GPIOOptions options;          // -Opcions
-	GPIOAlt alt;                  // -Funcio alternativa
-} GPIOPortSettings;
+	halGPIOPort port;             // -Identificador del port
+	halGPIOMask mask;             // -Mascara de pins
+	halGPIOOptions options;       // -Opcions
+	halGPIOAlt alt;               // -Funcio alternativa
+} halGPIOPortSettings;
 
 
 // Canvi d'entrada a sortida i viceversa
 //
 #define halGPIOModePinInput(port, pin) \
-    ((GPIORegisters*)port)->TRISxSET = 1 << (pin)
+    ((halGPIORegisters*)port)->TRISxSET = 1 << (pin)
 
 #define halGPIOModePinOutput(port, pin) \
-    ((GPIORegisters*)port)->TRISxCLR = 1 << (pin)
+    ((halGPIORegisters*)port)->TRISxCLR = 1 << (pin)
 
 #define halGPIOModePortInput(port, mask) \
-    ((GPIORegisters*)port)->TRISxSET = (mask)
+    ((halGPIORegisters*)port)->TRISxSET = (mask)
 
 #define halGPIOModePortOutput(port, mask) \
-    ((GPIORegisters*)port)->TRISxCLR = (mask)
+    ((halGPIORegisters*)port)->TRISxCLR = (mask)
 
 // Canvi del estat del pin
 //
 #define halGPIOSetPin(port, pin) \
-    ((GPIORegisters*)port)->LATxSET = 1 << (pin)
+    ((halGPIORegisters*)port)->LATxSET = 1 << (pin)
 
 #define halGPIOClearPin(port, pin) \
-    ((GPIORegisters*)port)->LATxCLR = 1 << (pin)
+    ((halGPIORegisters*)port)->LATxCLR = 1 << (pin)
 
 #define halGPIOTogglePin(port, pin) \
-    ((GPIORegisters*)port)->LATxINV = 1 << (pin)
+    ((halGPIORegisters*)port)->LATxINV = 1 << (pin)
 
 // Lectura i escriptura del pin
 //
 #define halGPIOReadPin(port, pin) \
-    ((((GPIORegisters*)port)->PORTx & (1 << (pin))) != 0)
+    ((((halGPIORegisters*)port)->PORTx & (1 << (pin))) != 0)
 
 #define halGPIOWritePin(port, pin, data) \
     if (1) { \
         if (data) \
-            ((GPIORegisters*)port)->LATxSET = 1 << (pin); \
+            ((halGPIORegisters*)port)->LATxSET = 1 << (pin); \
         else \
-            ((GPIORegisters*)port)->LATxCLR = 1 << (pin); \
+            ((halGPIORegisters*)port)->LATxCLR = 1 << (pin); \
     }
 
 // Lectura i escriptura del port
 //
 #define halGPIOWritePort(port, data) \
-    ((GPIORegisters*)port)->LATx = data
+    ((halGPIORegisters*)port)->LATx = data
 
 #define halGPIOReadPort(port) \
-    ((GPIORegisters*)port)->PORTx;
+    ((halGPIORegisters*)port)->PORTx;
 
 
-void halGPIOInitializePins(const GPIOPinSettings *settings, int count);
-void halGPIOInitializePin(GPIOPort port, GPIOPin pin, GPIOOptions options, GPIOAlt alt);
+void halGPIOInitializePins(const halGPIOPinSettings* settings, int count);
+void halGPIOInitializePin(halGPIOPort port, halGPIOPin pin, halGPIOOptions options, halGPIOAlt alt);
 
-void halGPIOInitializePorts(const GPIOPortSettings *settings, int count);
-void halGPIOInitializePort(GPIOPort port, GPIOMask mask, GPIOOptions options, GPIOAlt alt);
+void halGPIOInitializePorts(const halGPIOPortSettings* settings, int count);
+void halGPIOInitializePort(halGPIOPort port, halGPIOMask mask, halGPIOOptions options, halGPIOAlt alt);
 
 
 #ifdef	__cplusplus
 }
-#endif
-
-#ifdef __cplusplus
-    #include "HAL/PIC32/halGPIOTpl.h"
 #endif
 
 

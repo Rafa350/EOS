@@ -7,7 +7,7 @@
 /// @{
 /// \defgroup HAL_STM32_GPIO GPIO
 /// @{
-///
+
 #ifndef __STM32_halGPIO__
 #define	__STM32_halGPIO__
 
@@ -26,12 +26,16 @@ extern "C" {
 #endif
 
 
+/// \defgroup HAL_STM32_GPIO_TYPES Types
+/// @{
+
 typedef uint32_t halGPIOPort;        ///< Port identifier.
 typedef uint32_t halGPIOPin;         ///< Pin number.
 typedef uint32_t halGPIOMask;        ///< Position pin mask.
 typedef uint32_t halGPIOOptions;     ///< Pin options.
 typedef uint32_t halGPIOAlt;         ///< Alternate pin function.
 
+/// \struct halGPIOPinSettings
 /// \brief GPIO pin initialization parameters.
 typedef struct {
 	halGPIOPort port;                ///< Port identifier.
@@ -40,6 +44,7 @@ typedef struct {
 	halGPIOAlt alt;                  ///< Alternate pin function
 } halGPIOPinSettings;
 
+/// \struct halGPIOPortSettings
 /// \brief GPIO port initialization parameters
 typedef struct {
 	halGPIOPort port;                ///< Port identifier.
@@ -48,8 +53,13 @@ typedef struct {
 	halGPIOAlt alt;                  ///< Alternate pin function.
 } halGPIOPortSettings;
 
+/// @}
 
-// Identificado del port
+
+/// \defgroup HAL_STM32_GPIO_CONSTANT_MACROS Macro constant definitions
+/// @{
+
+// \brief Identificado del port
 #define HAL_GPIO_PORT_A           GPIOA_BASE
 #define HAL_GPIO_PORT_B           GPIOB_BASE
 #define HAL_GPIO_PORT_C           GPIOC_BASE
@@ -164,6 +174,11 @@ typedef struct {
 #define HAL_GPIO_INIT_CLR         (1 << HAL_GPIO_INIT_pos)
 #define HAL_GPIO_INIT_SET         (2 << HAL_GPIO_INIT_pos)
 
+/// @}
+
+
+/// \defgroup HAL_STM32_GPIO_FUNCTION_MACROS Macro function definitions
+/// @{
 
 #define halGPIOInitializePinInput(port, pin) \
 	halGPIOInitializePin(port, pin, HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
@@ -200,6 +215,11 @@ typedef struct {
 #define halGPIOReadPort(port) \
 	((GPIO_TypeDef*)port)->IDR
 
+/// @}
+
+
+/// \defgroup HAL_STM32_GPIO_FUNCTIONS Functions
+/// @{
 
 void halGPIOInitializePins(const halGPIOPinSettings* settings, int count);
 void halGPIOInitializePorts(const halGPIOPortSettings* settings, int count);
@@ -211,6 +231,8 @@ void halGPIOClearPin(halGPIOPort port, halGPIOPin pin);
 void halGPIOSetPin(halGPIOPort port, halGPIOPin pin);
 void halGPIOTogglePin(halGPIOPort port, halGPIOPin pin);
 #endif
+
+/// @}
 
 
 #ifdef	__cplusplus

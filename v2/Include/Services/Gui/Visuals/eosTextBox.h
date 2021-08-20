@@ -4,16 +4,15 @@
 
 #include "eos.h"
 #include "Services/Gui/eosMsgQueue.h"
-#include "Services/Gui/Visuals/eosControl.h"
+#include "Services/Gui/Visuals/eosTextBlock.h"
 #include "System/eosString.h"
 #include "System/Graphics/eosColor.h"
 
 
 namespace eos {
 
-	class TextBox: public Control {
+	class TextBox: public TextBlock {
 		private:
-			String _text;
 			int _visiblePos;
 			int _visibleLength;
 			int _insertPos;
@@ -28,10 +27,6 @@ namespace eos {
 			TextBox();
 
 			void clearText();
-
-			void setText(const String& value);
-
-			const String& getText() const { return _text; }
 	};
 }
 

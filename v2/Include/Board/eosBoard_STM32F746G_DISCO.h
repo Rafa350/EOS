@@ -361,47 +361,51 @@
 
 #define CAMERA_PIXCK_PORT         HAL_GPIO_PORT_A
 #define CAMERA_PIXCK_PIN          HAL_GPIO_PIN_6
-#define CAMERA_PIXCH_AF           HAL_GPIO_AF13_DCMI
+#define CAMERA_PIXCH_AF           HAL_GPIO_AF13
 
 #define CAMERA_HSYNC_PORT         HAL_GPIO_PORT_A
 #define CAMERA_HSYNC_PIN          HAL_GPIO_PIN_4
-#define CAMERA_HSYNC_AF           HAL_GPIO_AF13_DCMI
+#define CAMERA_HSYNC_AF           HAL_GPIO_AF13
 
 #define CAMERA_VSYNC_PORT         HAL_GPIO_PORT_G
 #define CAMERA_VSYNC_PIN          HAL_GPIO_PIN_9
-#define CAMERA_VSYNC_AF           HAL_GPIO_AF13_DCMI
+#define CAMERA_VSYNC_AF           HAL_GPIO_AF13
 
 #define CAMERA_D0_PORT            HAL_GPIO_PORT_H
 #define CAMERA_D0_PIN             HAL_GPIO_PIN_9
-#define CAMERA_D0_AF              HAL_GPIO_AF13_DCMI
+#define CAMERA_D0_AF              HAL_GPIO_AF13
 
 #define CAMERA_D1_PORT            HAL_GPIO_PORT_H
 #define CAMERA_D1_PIN             HAL_GPIO_PIN_10
-#define CAMERA_D1_AF              HAL_GPIO_AF13_DCMI
+#define CAMERA_D1_AF              HAL_GPIO_AF13
 
 #define CAMERA_D2_PORT            HAL_GPIO_PORT_H
 #define CAMERA_D2_PIN             HAL_GPIO_PIN_11
-#define CAMERA_D2_AF              HAL_GPIO_AF13_DCMI
+#define CAMERA_D2_AF              HAL_GPIO_AF13
 
 #define CAMERA_D3_PORT            HAL_GPIO_PORT_H
 #define CAMERA_D3_PIN             HAL_GPIO_PIN_12
-#define CAMERA_D3_AF              HAL_GPIO_AF13_DCMI
+#define CAMERA_D3_AF              HAL_GPIO_AF13
 
 #define CAMERA_D4_PORT            HAL_GPIO_PORT_H
 #define CAMERA_D4_PIN             HAL_GPIO_PIN_14
-#define CAMERA_D4_AF              HAL_GPIO_AF13_DCMI
+#define CAMERA_D4_AF              HAL_GPIO_AF13
 
 #define CAMERA_D5_PORT            HAL_GPIO_PORT_D
 #define CAMERA_D5_PIN             HAL_GPIO_PIN_3
-#define CAMERA_D5_AF              HAL_GPIO_AF13_DCMI
+#define CAMERA_D5_AF              HAL_GPIO_AF13
 
 #define CAMERA_D6_PORT            HAL_GPIO_PORT_E
 #define CAMERA_D6_PIN             HAL_GPIO_PIN_5
-#define CAMERA_D6_AF              HAL_GPIO_AF13_DCMI
+#define CAMERA_D6_AF              HAL_GPIO_AF13
 
 #define CAMERA_D7_PORT            HAL_GPIO_PORT_E
 #define CAMERA_D7_PIN             HAL_GPIO_PIN_6
-#define CAMERA_D7_AF              HAL_GPIO_AF13_DCMI
+#define CAMERA_D7_AF              HAL_GPIO_AF13
+
+#define CAMERA_PE_PORT            HAL_GPIO_PORT_H
+#define CAMERA_PE_PIN             HAL_GPIO_PIN_13
+
 
 #endif // USE_CAMERA
 

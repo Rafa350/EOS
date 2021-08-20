@@ -21,7 +21,7 @@
 #ifdef _SPI5
 #define HAL_SPI_CHANNEL_5         4
 #endif
-#define HAL_SPI_CHANNEL_NONE      0xFFFFFFFF
+#define HAL_SPI_CHANNEL_NONE      ((halSPIChannel) -1)
 
 
 // Opcions: Polaritat del rellotge (CPOL)
@@ -101,10 +101,10 @@
 extern "C" {
 #endif
 
-typedef uint32_t SPIChannel;
-typedef uint32_t SPIOptions;
-typedef struct __SPIData* SPIHandler;
-typedef void (*SPIInterruptFunction)(SPIHandler handler, void *params);
+typedef uint32_t halSPIChannel;
+typedef uint32_t halSPIOptions;
+typedef struct __halSPIData* halSPIHandler;
+typedef void (*halSPIInterruptFunction)(halSPIHandler handler, void* params);
 
 typedef struct  __attribute__((packed , aligned(4))) {
     __SPI2CONbits_t SPIxCON;
@@ -125,43 +125,43 @@ typedef struct  __attribute__((packed , aligned(4))) {
     volatile uint32_t SPIxCON2SET;
     volatile uint32_t SPIxCON2INV;
 #endif
-} SPIRegisters;
+} halSPIRegisters;
 
-struct __SPIData {
-    SPIRegisters *regs;
-    SPIInterruptFunction isrFunction;
+struct __halSPIData {
+    halSPIRegisters *regs;
+    halSPIInterruptFunction isrFunction;
     void* isrParams;
 };
-typedef struct __SPIData SPIData;
+typedef struct __halSPIData halSPIData;
 
 typedef struct {                       // Parametres d'inicialitzacio
-	SPIChannel channel;                // -Identificador del dispositiu.
-	SPIOptions options;                // -Opcions
+	halSPIChannel channel;             // -Identificador del dispositiu.
+	halSPIOptions options;             // -Opcions
     unsigned baudRate;                 // -Baudrate
-	SPIInterruptFunction isrFunction;  // -Funcio d'interrupcio
+	halSPIInterruptFunction isrFunction;  // -Funcio d'interrupcio
 	void *isrParams;                   // -Parametres de la funcio d'interrupcio
-} SPISettings;
+} halSPISettings;
 
 
 
-SPIHandler halSPIInitialize(SPIData* data, const SPISettings *settings);
-void halSPIDeinitialize(SPIHandler handler);
+halSPIHandler halSPIInitialize(halSPIData* data, const halSPISettings* settings);
+void halSPIDeinitialize(halSPIHandler handler);
 
-bool halSPIIsBusy(SPIHandler handler);
+bool halSPIIsBusy(halSPIHandler handler);
 
-void halSendData(SPIHandler handler, uint8_t data);
-void halSPISendBuffer(SPIHandler handler, uint8_t *data, uint32_t size);
-void halSPIReceiveBuffer(SPIHandler handler, uint8_t *data, uint32_t size);
-void halSPITransmitBuffer(SPIHandler handler, uint8_t *txData, uint8_t *rxData, uint32_t size);
+void halSendData(halSPIHandler handler, uint8_t data);
+void halSPISendBuffer(halSPIHandler handler, const uint8_t *data, int size, int blockTime);
+void halSPIReceiveBuffer(halSPIHandler handler, uint8_t *data, int size);
+void halSPITransmitBuffer(halSPIHandler handler, const uint8_t *txData, uint8_t *rxData, int size);
 
-void halSPISetInterruptFunction(SPIHandler handler, SPIInterruptFunction function, void* params);
-void halSPIInterruptHandler(SPIHandler handler);
+void halSPISetInterruptFunction(halSPIHandler handler, halSPIInterruptFunction function, void* params);
+void halSPIInterruptHandler(halSPIHandler handler);
 
-void halSPIEnableInterrupts(SPIHandler handler, uint32_t events);
-uint32_t halSPIDisableInterrupts(SPIHandler handler, uint32_t events);
+void halSPIEnableInterrupts(halSPIHandler handler, uint32_t events);
+uint32_t halSPIDisableInterrupts(halSPIHandler handler, uint32_t events);
 
-bool halSPIGetInterruptFlag(SPIHandler handler, uint32_t event);
-void halSPIClearInterruptFlags(SPIHandler handler, uint32_t events);
+bool halSPIGetInterruptFlag(halSPIHandler handler, uint32_t event);
+void halSPIClearInterruptFlags(halSPIHandler handler, uint32_t events);
 
 
 #ifdef	__cplusplus

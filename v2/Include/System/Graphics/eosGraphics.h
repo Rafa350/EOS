@@ -83,8 +83,8 @@ namespace eos {
             int getTextHeight(const String& text) const;
 
             void paintLine(const Pen& pen, const Point& p1, const Point& p2);
-            void paintRectangle(const Pen &pen, const Brush &brush, const Rect& rect);
-            void paintRoundedRectangle(const Pen &pen, const Brush &brush, const Rect& rect, int rx, int ry);
+            void paintRectangle(const Pen& pen, const Brush& brush, const Rect& rect);
+            void paintRoundedRectangle(const Pen& pen, const Brush& brush, const Rect& rect, int rx, int ry);
             void paintCircle(const Point& center, int radius);
             void paintEllipse(const Rect& rect);
 
@@ -96,7 +96,6 @@ namespace eos {
             void drawLine(int x1, int y1, int x2, int y2, int width, Color color);
             void drawHLine(int x1, int x2, int y, Color color) const;
             void drawVLine(int x, int y1, int y2, Color color) const;
-
 
             void drawRectangle(int x1, int y1, int x2, int y2, Color color) const;
             inline void drawRectangle(const Point& p1, const Point& p2, Color color) const { drawRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }
@@ -119,8 +118,8 @@ namespace eos {
 
             void drawPolygon(const Point* points, int numPoints, Color color);
 
-            void drawBitmap(int x, int y, const Bitmap* bitmap) const;
-            inline void drawBitmap(const Point& p, const Bitmap *bitmap) const { drawBitmap(p.getX(), p.getY(), bitmap); }
+            void drawBitmap(int x, int y, const Bitmap& bitmap) const;
+            inline void drawBitmap(const Point& p, const Bitmap& bitmap) const { drawBitmap(p.getX(), p.getY(), bitmap); }
 
             int drawChar(int x, int y, Color color, char c) const;
             int drawText(int x, int y, Color color, const String& text, int offset = 0, int length = -1) const;

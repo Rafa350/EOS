@@ -9,11 +9,11 @@
 /// \param    count: Numero de pins a inicialitzar;
 ///
 void halGPIOInitializePins(
-    const GPIOPinSettings *settings,
+    const halGPIOPinSettings *settings,
     int count) {
 
     for (int i = 0; i < count; i++) {
-        const GPIOPinSettings *p = &settings[i];
+        const halGPIOPinSettings *p = &settings[i];
         halGPIOInitializePin(p->port, p->pin, p->options, p->alt);
     }
 }
@@ -27,10 +27,10 @@ void halGPIOInitializePins(
 /// \param    alt: Funcio alternativa del pin.
 ///
 void halGPIOInitializePin(
-    GPIOPort port,
-    GPIOPin pin,
-    GPIOOptions options,
-    GPIOAlt alt) {
+    halGPIOPort port,
+    halGPIOPin pin,
+    halGPIOOptions options,
+    halGPIOAlt alt) {
 
     halGPIOInitializePort(port, 1 << pin, options, alt);
 }
@@ -42,11 +42,11 @@ void halGPIOInitializePin(
 /// \param    count: Numero de ports a inicialitzar.
 ///
 void halGPIOInitializePorts(
-    const GPIOPortSettings *settings,
+    const halGPIOPortSettings *settings,
     int count) {
 
     for (int i = 0; i < count; i++) {
-        const GPIOPortSettings *p = &settings[i];
+        const halGPIOPortSettings *p = &settings[i];
         halGPIOInitializePort(p->port, p->mask, p->options, p->alt);
     }
 }
@@ -60,12 +60,12 @@ void halGPIOInitializePorts(
 /// \param    alt: Funcio alternativa dels pins.
 ///
 void halGPIOInitializePort(
-    GPIOPort port,
-    GPIOMask mask,
-    GPIOOptions options,
-    GPIOAlt alt) {
+    halGPIOPort port,
+    halGPIOMask mask,
+    halGPIOOptions options,
+    halGPIOAlt alt) {
 
-    GPIORegisters* regs = (GPIORegisters*) port;
+    halGPIORegisters* regs = (halGPIORegisters*) port;
 
     if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
         ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {

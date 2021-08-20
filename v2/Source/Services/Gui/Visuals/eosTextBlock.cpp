@@ -13,7 +13,7 @@
 using namespace eos;
 
 
-struct LabelStyle {
+struct TextBlockStyle {
 	Color foregroundColor;
     Color backgroundColor;
 	const char *fontName;
@@ -21,15 +21,15 @@ struct LabelStyle {
 	FontStyle fontStyle;
 };
 
-static const LabelStyle style = {
-	.foregroundColor = COLOR_Yellow,
-	.backgroundColor = COLOR_Transparent,
+static const TextBlockStyle style = {
+	.foregroundColor = COLOR_Black,
+	.backgroundColor = COLOR_Yellow,
 	.fontName = "Tahoma",
 	.fontHeight = 12,
 	.fontStyle = FontStyle::regular
 };
 
-static const LabelStyle *pStyle = &style;
+static const TextBlockStyle *pStyle = &style;
 
 
 /// ----------------------------------------------------------------------
@@ -38,12 +38,9 @@ static const LabelStyle *pStyle = &style;
 TextBlock::TextBlock():
 
 	_foreground(Brush(BrushStyle::solid, pStyle->foregroundColor)),
-	_background(Brush(BrushStyle::solid, pStyle->backgroundColor)),
+	_font(Font(String(pStyle->fontName), pStyle->fontHeight, pStyle->fontStyle)),
 	_horizontalTextAlign(HorizontalTextAlign::center),
-	_verticalTextAlign(VerticalTextAlign::center),
-	_fontName(pStyle->fontName),
-	_fontHeight(pStyle->fontHeight),
-	_fontStyle(pStyle->fontStyle) {
+	_verticalTextAlign(VerticalTextAlign::center) {
 
 	setHorizontalAlignment(HorizontalAlignment::center);
 	setVerticalAlignment(VerticalAlignment::center);
@@ -63,12 +60,10 @@ Size TextBlock::measureOverride(
 
 	else {
 
-		Font font(_fontName, _fontHeight, _fontStyle);
-
 		int measuredWidth = 0;
 		for (int i = 0; _text[i]; i++)
-			measuredWidth += font.getCharAdvance(_text[i]);
-		int measuredHeight = font.getFontHeight();
+			measuredWidth += _font.getCharAdvance(_text[i]);
+		int measuredHeight = _font.getFontHeight();
 
 		return Size(measuredWidth, measuredHeight);
 	}
@@ -76,42 +71,14 @@ Size TextBlock::measureOverride(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el nom del font.
-/// \param    value: El nom del font.
+/// \brief    Asigna el font.
+/// \param    value: El font.
 ///
-void TextBlock::setFontName(
-	const String& value) {
+void TextBlock::setFont(
+	const Font& value) {
 
-	if (_fontName != value) {
-		_fontName = value;
-		invalidate();
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna el tamany del font.
-/// \param    value: El tamany del font.
-///
-void TextBlock::setFontHeight(
-	int value) {
-
-	if (_fontHeight != value) {
-		_fontHeight = value;
-		invalidate();
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna L'estil del font.
-/// \param    value: L'estil del font.
-///
-void TextBlock::setFontStyle(
-	FontStyle value) {
-
-	if (_fontStyle != value) {
-		_fontStyle = value;
+	if (_font != value) {
+		_font = value;
 		invalidate();
 	}
 }
@@ -126,20 +93,6 @@ void TextBlock::setForeground(
 
 	if (_foreground != value) {
 		_foreground = value;
-		invalidate();
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna la brotxa del fons.
-/// \param    value: La brotxa.
-///
-void TextBlock::setBackground(
-	const Brush& value) {
-
-	if (_background != value) {
-		_background = value;
 		invalidate();
 	}
 }
@@ -178,7 +131,7 @@ void TextBlock::setVerticalTextAlign(
 /// \param    value: El text.
 ///
 void TextBlock::setText(
-	const String &value) {
+	const String& value) {
 
 	if (_text != value) {
 		_text = value;
@@ -204,16 +157,13 @@ void TextBlock::onRender(
 	int width = s.getWidth();
 	int height = s.getHeight();
 
-	// Dibuixa el fons. Si es transparent optimitza i no el dibuixa.
+	// Dibuixa el fons.
 	//
-	if (!_background.isNull())
-		g.paintRectangle(Pen(), _background, Rect(0, 0, width, height));
+	g.paintRectangle(Pen(), getBackground(), Rect(0, 0, width, height));
 
 	// Dibuixa el text
 	//
-	Font font(_fontName, _fontHeight, _fontStyle);
-
-	g.setFont(font);
+	g.setFont(_font);
 	g.setTextAlign(_horizontalTextAlign, _verticalTextAlign);
 	g.drawText(width / 2, height / 2, _foreground.getColor(), _text, 0, -1);
 
@@ -229,7 +179,7 @@ void TextBlock::onRender(
 ///
 #if eosGuiService_TouchPadEnabled
 void TextBlock::onDispatch(
-	const Message &msg) {
+	const Message& msg) {
 
 	// Si es un missatge del touchpad, el retransmet al pare
 	//

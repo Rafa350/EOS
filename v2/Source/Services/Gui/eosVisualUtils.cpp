@@ -60,7 +60,7 @@ Rect VisualUtils::getClip(
 ///
 Visual *VisualUtils::getVisual(
 	Visual *visual,
-	const Point &p) {
+	const Point& p) {
 
 	if (visual->isVisible()) {
 
@@ -71,8 +71,7 @@ Visual *VisualUtils::getVisual(
 
 		if (testRect.contains(testPoint)) {
 			const Visual::VisualList& childs = visual->getChilds();
-			for (auto it = childs.begin(); it != childs.end(); it++) {
-				Visual* child = *it;
+			for (auto child: childs) {
 				Visual *result = getVisual(child, testPoint);
 				if (result != nullptr)
 					return result;
@@ -86,7 +85,7 @@ Visual *VisualUtils::getVisual(
 
 
 Visual *VisualUtils::getVisual(
-	Visual *visual,
+	Visual* visual,
 	unsigned id) {
 
 	if (visual->getId() == id)
@@ -94,9 +93,10 @@ Visual *VisualUtils::getVisual(
 
 	else {
 		const Visual::VisualList& childs = visual->getChilds();
-		for (auto it = childs.begin(); it != childs.end(); it++) {
-			Visual* child = *it;
-			return VisualUtils::getVisual(child, id);
+		for (auto child: childs) {
+			Visual* result = VisualUtils::getVisual(child, id);
+			if (result != nullptr)
+				return result;
 		}
 	}
 

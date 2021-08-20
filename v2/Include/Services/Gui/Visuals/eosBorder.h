@@ -17,7 +17,6 @@ namespace eos {
 
     class Border: public Decorator {
     	private:
-    		Brush _background;
     		Brush _borderBrush;
     		Thickness _borderThickness;
     		int _cornerRadius;
@@ -29,13 +28,11 @@ namespace eos {
         public:
     		Border();
 
-            void setBackground(const Brush &value);
             void setBorderBrush(const Brush &value);
             void setBorderThickness(int value);
             void setCornerRadius(int value);
 
             inline const Brush& getBorderBrush() const { return _borderBrush; }
-            inline const Brush& getBackground() const { return _background; }
             inline const Thickness& getBorderThickness() const { return _borderThickness; }
             inline int getCornerRadius() const { return _cornerRadius; }
     };

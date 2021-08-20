@@ -14,8 +14,7 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 Border::Border():
-	_background(Brush(BrushStyle::solid, COLOR_Black)),
-	_borderBrush(Brush(BrushStyle::solid, COLOR_White)),
+	_borderBrush(Brush(BrushStyle::solid, COLOR_Black)),
 	_borderThickness(1),
 	_cornerRadius(0) {
 
@@ -78,20 +77,6 @@ void Border::setCornerRadius(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna la brotxa del fons.
-/// \param    value: La brotxa.
-///
-void Border::setBackground(
-	const Brush &value) {
-
-	if (_background != value) {
-		_background = value;
-		invalidate();
-	}
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Renderitza la imatge..
 /// \param    context: El context de representacio.
 ///
@@ -103,7 +88,7 @@ void Border::onRender(
 	const Rect r(Point(0, 0), getBounds().getSize());
 
 	Pen pen(PenStyle::solid, _borderBrush.getColor(), _borderThickness.getLeft());
-	Brush brush(_background);
+	const Brush& brush = getBackground();
 
 	g.paintRoundedRectangle(pen, brush, r, _cornerRadius, _cornerRadius);
 

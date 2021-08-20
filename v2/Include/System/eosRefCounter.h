@@ -2,6 +2,8 @@
 #define __eosRefCounter__
 
 
+// EOS includes
+//
 #include "eos.h"
 #include "Core/eosPoolAllocator.h"
 

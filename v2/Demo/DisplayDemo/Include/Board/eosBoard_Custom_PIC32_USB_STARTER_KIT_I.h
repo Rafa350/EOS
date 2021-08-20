@@ -109,28 +109,26 @@
 
 #define DISPLAY_DRV_SSD1306
 
-#define DISPLAY_RS_PORT           HAL_GPIO_PORT_B
-#define DISPLAY_RS_PIN            HAL_GPIO_PIN_4
-#define DISPLAY_RS_AF             HAL_GPIO_AF_NONE
+#define FONT_USE_Tahoma12pt
+
+
+#define DISPLAY_DC_PORT           HAL_GPIO_PORT_B
+#define DISPLAY_DC_PIN            HAL_GPIO_PIN_4
+#define DISPLAY_DC_AF             HAL_GPIO_AF_NONE
 
 #define DISPLAY_CS_PORT           HAL_GPIO_PORT_B
 #define DISPLAY_CS_PIN            HAL_GPIO_PIN_7
 #define DISPLAY_CS_AF             HAL_GPIO_AF_NONE
 
-#define DISPLAY_CLK_PORT          HAL_GPIO_PORT_F
-#define DISPLAY_CLK_PIN           HAL_GPIO_PIN_7
-#define DISPLAY_CLK_AF			  HAL_GPIO_AF_NONE
+#define DISPLAY_SCK_PORT          HAL_GPIO_PORT_F
+#define DISPLAY_SCK_PIN           HAL_GPIO_PIN_7
+#define DISPLAY_SCK_AF			  HAL_GPIO_AF_NONE
 
 #define DISPLAY_MOSI_PORT         HAL_GPIO_PORT_F
 #define DISPLAY_MOSI_PIN          HAL_GPIO_PIN_9
 #define DISPLAY_MOSI_AF           HAL_GPIO_AF_NONE
 
-#define DISPLAY_MISO_PORT         HAL_GPIO_PORT_F
-#define DISPLAY_MISO_PIN          HAL_GPIO_PIN_8
-#define DISPLAY_MISO_AF           HAL_GPIO_AF_NONE
-
-
-#define DISPLAY_SPI_ID            HAL_SPI_CHANNEL_1
+#define DISPLAY_SPI_CHANNEL       HAL_SPI_CHANNEL_1
 #endif
 
 

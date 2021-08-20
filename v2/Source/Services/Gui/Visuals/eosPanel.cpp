@@ -13,23 +13,7 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
-Panel::Panel():
-	_background(Brush(BrushStyle::solid, RGB(0x3F, 0x3F, 0x3F))) {
-
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Assigna la brotxa de fons.
-/// \param    value: La brotxa.
-///
-void Panel::setBackground(
-	const Brush& value) {
-
-	if (_background != value) {
-		_background = value;
-		invalidate();
-	}
+Panel::Panel() {
 }
 
 
@@ -40,7 +24,9 @@ void Panel::setBackground(
 void Panel::onRender(
 	RenderContext* context) {
 
-	if (!_background.isNull()) {
+	const Brush& bkBrush = getBackground();
+
+	if (!bkBrush.isNull()) {
 
 		// Inicia el renderitzat.
 		//
@@ -54,7 +40,7 @@ void Panel::onRender(
 
 		// Dibuixa el fons.
 		//
-		g.paintRectangle(Pen(), _background, Rect(0, 0, width, height));
+		g.paintRectangle(Pen(), bkBrush, Rect(0, 0, width, height));
 
 		// Finalitza el renderitzat.
 		//

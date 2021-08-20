@@ -67,8 +67,7 @@ bool Visual::isRenderizable() const {
 		return true;
 
 	else {
-		for (auto it = _childs.begin(); it != _childs.end(); it++) {
-			const Visual *child = *it;
+		for (auto child: _childs) {
 			if (child->isRenderizable())
 				return true;
 		}
@@ -111,8 +110,7 @@ bool Visual::render(
 
 	// Continua amb els fills.
 	//
-	for (auto it = _childs.begin(); it != _childs.end(); it++) {
-		Visual *child = *it;
+	for (auto child: _childs) {
 		if (child->render(context))
 			renderized = true;
 	}
@@ -276,9 +274,6 @@ void Visual::arrange(
 			case VerticalAlignment::bottom:
 				y += deflatedFinalHeight - height;
 				break;
-
-			default:
-				break;
 		}
 
 		_bounds = Rect(x, y, width, height);
@@ -326,13 +321,9 @@ Size Visual::measureOverride(
 Size Visual::arrangeOverride(
 	const Size& finalSize) const {
 
-	for (auto it = _childs.begin(); it != _childs.end(); it++) {
-		Visual* child = *it;
-		eosAssert(child != nullptr);
-
+	for (auto child: _childs)
 		if (child->isVisible())
 			child->arrange(Rect(finalSize));
-	}
 
 	return finalSize;
 }
@@ -427,7 +418,7 @@ void Visual::setVerticalAlignment(
 /// \param    msg: El missatge a despatxar.
 ///
 void Visual::onDispatch(
-	const Message &msg) {
+	const Message& msg) {
 
 	switch (msg.msgId) {
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
@@ -446,6 +437,16 @@ void Visual::onDispatch(
 				_parent->onDispatch(msg);
 			break;
 	}
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Es crida quant s'ha de renderitzar el visual.
+/// \param    context: Context de renderitzat.
+///
+void Visual::onRender(
+	RenderContext* context) {
 
 }
 
@@ -500,7 +501,7 @@ void Visual::onDispatchKeyboardEvent(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el event press del teclat
+/// \brief    Procesa el event 'press' del teclat
 /// \param    keyCode: Codi de la tecla
 /// \param    flags: Indicadors de la trecla: shift, control, etc.
 /// \param    ch: Caracter de la tecla, 0 si no correspon a cap.
@@ -511,12 +512,14 @@ void Visual::onKeyboardPress(
 	KeyFlags flags,
 	char ch) {
 
+	if (_parent != nullptr)
+		_parent->onKeyboardPress(keyCode, flags, ch);
 }
 #endif
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el event release del teclat
+/// \brief    Procesa el event 'release' del teclat
 /// \param    keyCode: Codi de la tecla
 /// \param    flags: Indicadors de la trecla: shift, control, etc.
 /// \param    ch: Caracter de la tecla, 0 si no correspon a cap.
@@ -527,6 +530,8 @@ void Visual::onKeyboardRelease(
 	KeyFlags flags,
 	char ch) {
 
+	if (_parent != nullptr)
+		_parent->onKeyboardRelease(keyCode, flags, ch);
 }
 #endif
 
@@ -564,38 +569,64 @@ void Visual::onDispatchTouchPadEvent(
 #endif
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa l'event 'enter' del touchpad
+///
 #if eosGuiService_TouchPadEnabled
 void Visual::onTouchPadEnter() {
 
+	if (_parent != nullptr)
+		_parent->onTouchPadEnter();
 }
 #endif
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el event 'leave' del touchpad
+///
 #if eosGuiService_TouchPadEnabled
 void Visual::onTouchPadLeave() {
 
+	if (_parent != nullptr)
+		_parent->onTouchPadLeave();
 }
 #endif
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el event 'press' del touchpad.
+///
 #if eosGuiService_TouchPadEnabled
 void Visual::onTouchPadPress(
 	const Point &position) {
 
+	if (_parent != nullptr)
+		_parent->onTouchPadPress(position);
 }
 #endif
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el event 'release' del touchpad.
+//
 #if eosGuiService_TouchPadEnabled
 void Visual::onTouchPadRelease() {
 
+	if (_parent != nullptr)
+		_parent->onTouchPadRelease();
 }
 #endif
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Procesa el event 'move' del touchpad.
+/// \param    position: Posicio del punter.
+///
 #if eosGuiService_TouchPadEnabled
 void Visual::onTouchPadMove(
-	const Point &position) {
+	const Point& position) {
 
+	if (_parent != nullptr)
+		_parent->onTouchPadMove(position);
 }
 #endif
