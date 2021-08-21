@@ -9,6 +9,7 @@
 #include "System/eosString.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosFont.h"
+#include "System/Graphics/eosText.h"
 #include "System/Graphics/eosGraphics.h"
 
 
@@ -19,11 +20,7 @@ namespace eos {
 
     class TextBlock: public Control {
     	private:
-    		Brush _foreground;
-    		Font _font;
-    		HorizontalTextAlign _horizontalTextAlign;
-    		VerticalTextAlign _verticalTextAlign;
-    		String _text;
+    		Text _ft;
 
     	protected:
     		void onRender(RenderContext* context) override;
@@ -38,11 +35,11 @@ namespace eos {
             void setForeground(const Brush& value);
             void setFont(const Font& value);
             void setText(const String& value);
-            void setHorizontalTextAlign(HorizontalTextAlign value);
-            void setVerticalTextAlign(VerticalTextAlign value);
+            void setTextAlign(TextAlign value);
 
-            inline const Brush& getForeground() const { return _foreground; }
-            inline const String& getText() const { return _text; }
+            inline const Brush& getForeground() const { return _ft.getForeground(); }
+            inline const Font& getFont() const { return _ft.getFont(); }
+            inline const String& getText() const { return _ft.getText(); }
     };
 }
 

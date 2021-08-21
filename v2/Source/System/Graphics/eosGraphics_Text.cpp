@@ -2,10 +2,24 @@
 #include "eosAssert.h"
 #include "System/eosString.h"
 #include "System/Graphics/eosFont.h"
+#include "System/Graphics/eosText.h"
 #include "System/Graphics/eosGraphics.h"
 
 
 using namespace eos;
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa un text formatejat.
+/// \param    point: Posicio.
+/// \param    formatedText: El text formatejat.
+///
+void Graphics::paintText(
+	const Point& point,
+	Text& formatedText) {
+
+	formatedText.draw(this, point);
+}
 
 
 /// ----------------------------------------------------------------------
@@ -20,7 +34,7 @@ int Graphics::drawChar(
     int y,
 	Color color,
     char c) const {
-
+/*
     FontInfo fi;
     _font.getFontInfo(fi);
 
@@ -44,7 +58,7 @@ int Graphics::drawChar(
         return ci.advance;
     }
 
-    else
+    else*/
         return 0;
 }
 
@@ -67,7 +81,7 @@ int Graphics::drawText(
     const String& text,
     int offset,
     int length) const {
-
+/*
     if (_state.hAlign != HorizontalTextAlign::left) {
         int textWidth = getTextWidth(text, offset, length);
         if (_state.hAlign == HorizontalTextAlign::right)
@@ -89,6 +103,7 @@ int Graphics::drawText(
     for (int i = offset, j = length; j && text[i]; i++, j--)
         x += drawChar(x, y, color, text[i]);
 
-    return x - sx;
+    return x - sx;*/
+	return 0;
 }
 

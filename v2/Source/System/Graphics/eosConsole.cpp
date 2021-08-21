@@ -73,7 +73,7 @@ void Console::moveTo(
 void Console::put(
     char c) {
 
-    Font font = _graphics->getFont();
+	Font font;
 
     switch (_state) {
         case 0:

@@ -41,13 +41,22 @@ Rect VisualUtils::getClip(
 	Visual *visual) {
 
 	Rect clip(0, 0, INT32_MAX, INT32_MAX);
+
+#if 0
 	while (visual != nullptr) {
 		const Rect& bounds(visual->getBounds());
 		clip = clip.intersected(bounds.getSize());
 		clip = clip.translated(bounds.getPosition());
 		visual = visual->getParent();
 	}
-
+#else
+	while (visual != nullptr) {
+		const Rect& bounds(visual->getBounds());
+		Rect clipRect(getPosition(visual), bounds.getSize());
+		clip = clip.intersected(clipRect);
+		visual = visual->getParent();
+	}
+#endif
 	return clip;
 }
 

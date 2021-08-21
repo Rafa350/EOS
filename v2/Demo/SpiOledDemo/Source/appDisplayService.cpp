@@ -43,7 +43,7 @@ void DisplayService::onLoop() {
 
 	static int count = 0;
 
-	Task::delay(1000);
+	Task::delay(500);
 
 	_graphics->clear(COLOR_Black);
 

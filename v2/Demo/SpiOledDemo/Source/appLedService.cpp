@@ -37,11 +37,9 @@ void LedService::onSetup() {
 ///
 void LedService::onLoop() {
 
-	unsigned weakTime = Task::getTickCount();
-
 	while (true) {
 
-		Task::delay(500, weakTime);
+		Task::delay(1000);
 
 #ifdef EXIST_LEDS_LED1
 		led1.toggle();

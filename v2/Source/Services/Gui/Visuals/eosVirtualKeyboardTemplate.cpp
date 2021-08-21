@@ -121,6 +121,7 @@ PushButton* VirtualKeyboardTemplate::createPushButton(
 	tb->setBackground(Brush(BrushStyle::solid, COLOR_Transparent));
 	tb->setForeground(Brush(BrushStyle::solid, COLOR_Yellow));
 	tb->setText(text);
+	tb->setTextAlign(TextAlign::center);
 
 	PushButton *pb = new PushButton();
 	pb->setMargin(Thickness(2, 2, 2, 2));

@@ -18,7 +18,7 @@ using namespace eos;
 void Graphics::paintRectangle(
 	const Pen& pen,
 	const Brush& brush,
-	const Rect& rect) {
+	const Rect& rect) const {
 
 	bool penVisible = !pen.isNull();
 	bool brushVisible = !brush.isNull();

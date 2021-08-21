@@ -19,28 +19,13 @@
 namespace eos {
 
 	class Bitmap;
+	class Text;
 	class String;
-
-    /// \brief Aliniacio horitzontal del text.
-    enum class HorizontalTextAlign: uint8_t {
-        left,
-        center,
-        right
-    };
-
-    /// \brief Aliniacio vertical del text.
-    enum class VerticalTextAlign: uint8_t {
-        top,
-        center,
-        bottom
-    };
 
     /// \brief Superficie de dibuix.
     class Graphics {
     	private:
     		struct State {
-                HorizontalTextAlign hAlign;
-                VerticalTextAlign vAlign;
     			int clipX1;
     			int clipY1;
     			int clipX2;
@@ -51,7 +36,6 @@ namespace eos {
 
         private:
             IDisplayDriver* _driver;
-            Font _font;
             StateStack _stack;
             State _state;
 
@@ -64,10 +48,6 @@ namespace eos {
             inline int getHeight() const { return _driver->getImageHeight(); }
             void clear(Color color) const;
 
-            void setFont(const Font& font);
-            inline const Font& getFont() const { return _font; }
-            inline Font getFont() { return _font; }
-
             void setClip(int x1, int y1, int x2, int y2);
             inline void setClip(const Rect& r) { setClip(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY()); }
             void resetClip();
@@ -78,22 +58,20 @@ namespace eos {
             void push();
             void pop();
 
-            void setTextAlign(HorizontalTextAlign hAlign, VerticalTextAlign vAlign);
-            int getTextWidth(const String& text, int offset = 0, int length = -1) const;
-            int getTextHeight(const String& text) const;
-
-            void paintLine(const Pen& pen, const Point& p1, const Point& p2);
-            void paintRectangle(const Pen& pen, const Brush& brush, const Rect& rect);
-            void paintRoundedRectangle(const Pen& pen, const Brush& brush, const Rect& rect, int rx, int ry);
-            void paintCircle(const Point& center, int radius);
-            void paintEllipse(const Rect& rect);
+            void paintLine(const Pen& pen, const Point& p1, const Point& p2) const;
+            void paintRectangle(const Pen& pen, const Brush& brush, const Rect& rect) const;
+            void paintRoundedRectangle(const Pen& pen, const Brush& brush, const Rect& rect, int rx, int ry) const;
+            void paintCircle(const Point& center, int radius) const;
+            void paintEllipse(const Rect& rect) const;
+            void paintText(const Point& point, Text& formatedText);
 
             void drawPoint(int x, int y, Color color) const;
             inline void drawPoint(const Point& p, Color color) const { drawPoint(p.getX(), p.getY(), color); }
 
             void drawLine(int x1, int y1, int x2, int y2, Color color) const;
             inline void drawLine(const Point& p1, const Point& p2, Color color) const { drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }
-            void drawLine(int x1, int y1, int x2, int y2, int width, Color color);
+            void drawLine(int x1, int y1, int x2, int y2, int width, Color color) const;
+            inline void drawLine(const Point& p1, const Point& p2, int width, Color color) const { drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), width, color); }
             void drawHLine(int x1, int x2, int y, Color color) const;
             void drawVLine(int x, int y1, int y2, Color color) const;
 

@@ -1,8 +1,6 @@
 #ifndef __STM32_halSPITpl__
 #define __STM32_halSPITpl__
 
-#ifdef __cplusplus
-
 
 // EOS includes
 //
@@ -101,7 +99,7 @@ namespace eos {
 			}
 
 			inline void enableInterrupts(uint32_t events) {
-				halSPIEnableInterrupts(_handler, event);
+				halSPIEnableInterrupts(_handler, events);
 			}
 
 			inline uint32_t disableInterrupts(uint32_t events) {
@@ -242,7 +240,5 @@ namespace eos {
 
 }
 
-
-#endif // __cplusplus
 
 #endif // __STM32_halSPITpl__

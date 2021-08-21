@@ -7,7 +7,6 @@
 using namespace eos;
 
 
-
 /// ----------------------------------------------------------------------
 /// \brief    Dibuixa un rectangle amb cantonades arrodonides.
 /// \param    pen: El pen.
@@ -20,7 +19,7 @@ void Graphics::paintRoundedRectangle(
 	const Pen& pen,
 	const Brush& brush,
 	const Rect& rect,
-	int rx, int ry) {
+	int rx, int ry) const {
 
 	bool penVisible = !pen.isNull();
 	bool brushVisible = !brush.isNull();

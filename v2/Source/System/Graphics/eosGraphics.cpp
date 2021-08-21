@@ -22,9 +22,6 @@ Graphics::Graphics(
 
 	resetClip();
 	resetTransformation();
-    setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::bottom);
-
-    setFont(Font());
 }
 
 
@@ -33,32 +30,6 @@ Graphics::Graphics(
 ///
 Graphics::~Graphics() {
 
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona l'aliniacio del texte.
-/// \param    hAlign: Aliniacio horitzontal.
-/// \param    vAlign: Aliniacio vertical.
-///
-void Graphics::setTextAlign(
-    HorizontalTextAlign hAlign,
-    VerticalTextAlign vAlign) {
-
-    _state.hAlign = hAlign;
-    _state.vAlign = vAlign;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona el font per dibuixar caracters i cadenes de texte.
-/// \param    font: El font a seleccionar.
-/// \return   L'anterior font seleccionat.
-///
-void Graphics::setFont(
-    const Font& font) {
-
-    _font = font;
 }
 
 
@@ -142,39 +113,6 @@ void Graphics::drawPoint(
 
     if (clipPoint(x, y))
         _driver->setPixel(x, y, color);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte l'amplada d'una cadena de texte.
-/// \param    s: La cadena de texte.
-/// \param    offset: El primer caracter del text.
-/// \param    length: Numero de caracters a mesurar. -1 si es la longitut
-///           total del text.
-/// \return    L'amplada de la cadena en pixels.
-///
-int Graphics::getTextWidth(
-    const String& text,
-    int offset,
-    int length) const {
-
-    int w = 0;
-    for (int i = offset, j = length; (j != 0) && (text[i] != 0); i++, j--)
-        w += _font.getCharAdvance(text[i]);
-
-    return w;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte l'alçada d'una cadena de texte.
-/// \param    text: La cadena de texte.
-/// \return   L'al�ada de la cadena.
-///
-int Graphics::getTextHeight(
-    const String& text) const {
-
-    return _font.getFontHeight();
 }
 
 

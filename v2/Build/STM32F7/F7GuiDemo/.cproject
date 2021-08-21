@@ -44,10 +44,9 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\system\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM7\r0p1&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.498077442" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
 							</tool>
@@ -65,10 +64,9 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\system\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM7\r0p1&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols.625412738" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32"/>
@@ -98,10 +96,9 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\system\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM7\r0p1&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols.1361367592" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32"/>
@@ -185,10 +182,9 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\system\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM7\r0p1&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.635391951" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
 							</tool>
@@ -206,10 +202,9 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\system\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM7\r0p1&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols.1243731837" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32"/>
@@ -238,10 +233,9 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\system\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM7\r0p1&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols.1233456063" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32"/>

@@ -17,13 +17,10 @@
 #include "Services/Gui/Visuals/eosStackPanel.h"
 #include "Services/Gui/Visuals/eosTextBox.h"
 #include "Services/Gui/Visuals/eosVirtualKeyboard.h"
-#include "System/Graphics/eosBitmap.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "appApplication.h"
 #include "appLedService.h"
 
-
-//extern "C" const unsigned char bitmapBmpMain[];
 
 using namespace eos;
 using namespace app;
@@ -50,8 +47,6 @@ void MyApplication::onInitialize() {
 
 	// Carrega els recursos
 	//
-	//Bitmap *bitmap = new Bitmap(bitmapBmpMain);
-
 	createMainPanel();
 	Application::onInitialize();
 }
@@ -77,7 +72,7 @@ eos::Visual* MyApplication::createKeyboardPanel() {
 	TextBox* tb = new TextBox();
 	tb->setId(1000);
 	tb->setSize(Size(200, 30));
-	tb->setHorizontalTextAlign(HorizontalTextAlign::left);
+	tb->setTextAlign(TextAlign::left);
 	tb->setMargin(Thickness(5, 5, 5, 5));
 	tb->setHorizontalAlignment(HorizontalAlignment::center);
 	tb->setVerticalAlignment(VerticalAlignment::center);

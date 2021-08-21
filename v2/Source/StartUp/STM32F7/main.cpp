@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "System/eosDebug.h"
 
+
 /// ----------------------------------------------------------------------
 /// \brief Punt d'entrada a l'aplicacio.
 ///

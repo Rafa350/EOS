@@ -7,6 +7,7 @@
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosFont.h"
+#include "System/Graphics/eosText.h"
 #include "System/Graphics/eosGraphics.h"
 
 
@@ -37,10 +38,7 @@ static const TextBlockStyle *pStyle = &style;
 ///
 TextBlock::TextBlock():
 
-	_foreground(Brush(BrushStyle::solid, pStyle->foregroundColor)),
-	_font(Font(String(pStyle->fontName), pStyle->fontHeight, pStyle->fontStyle)),
-	_horizontalTextAlign(HorizontalTextAlign::center),
-	_verticalTextAlign(VerticalTextAlign::center) {
+	_ft(Font(String(pStyle->fontName), pStyle->fontHeight, pStyle->fontStyle), TextAlign::center) {
 
 	setHorizontalAlignment(HorizontalAlignment::center);
 	setVerticalAlignment(VerticalAlignment::center);
@@ -54,19 +52,7 @@ TextBlock::TextBlock():
 Size TextBlock::measureOverride(
 	const Size& availableSize) const {
 
-	if (_text.isEmpty())
-
-		return Size();
-
-	else {
-
-		int measuredWidth = 0;
-		for (int i = 0; _text[i]; i++)
-			measuredWidth += _font.getCharAdvance(_text[i]);
-		int measuredHeight = _font.getFontHeight();
-
-		return Size(measuredWidth, measuredHeight);
-	}
+	return _ft.getBounds();
 }
 
 
@@ -77,10 +63,8 @@ Size TextBlock::measureOverride(
 void TextBlock::setFont(
 	const Font& value) {
 
-	if (_font != value) {
-		_font = value;
-		invalidate();
-	}
+	if (_ft.getFont() != value)
+		_ft.setFont(value);
 }
 
 
@@ -91,8 +75,8 @@ void TextBlock::setFont(
 void TextBlock::setForeground(
 	const Brush& value) {
 
-	if (_foreground != value) {
-		_foreground = value;
+	if (_ft.getForeground() != value) {
+		_ft.setForeground(value);
 		invalidate();
 	}
 }
@@ -102,25 +86,11 @@ void TextBlock::setForeground(
 /// \brief    Asigna l'aliniacio horitzontal del text.
 /// \param    value: L'aliniacio.
 ///
-void TextBlock::setHorizontalTextAlign(
-	HorizontalTextAlign value) {
+void TextBlock::setTextAlign(
+	TextAlign value) {
 
-	if (_horizontalTextAlign != value) {
-		_horizontalTextAlign = value;
-		invalidate();
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Asigna l'aliniacio vertical del text.
-/// \param    value: L'aliniacio.
-///
-void TextBlock::setVerticalTextAlign(
-	VerticalTextAlign value) {
-
-	if (_verticalTextAlign != value) {
-		_verticalTextAlign = value;
+	if (_ft.getAlign() != value) {
+		_ft.setAlign(value);
 		invalidate();
 	}
 }
@@ -133,8 +103,8 @@ void TextBlock::setVerticalTextAlign(
 void TextBlock::setText(
 	const String& value) {
 
-	if (_text != value) {
-		_text = value;
+	if (_ft.getText() != value) {
+		_ft.setText(value);
 		invalidate();
 	}
 }
@@ -149,23 +119,15 @@ void TextBlock::onRender(
 
 	// Inicia el renderitzat
 	//
-	Graphics &g = context->beginRender(this);
-
-	// Obte les mides de l'area de dibuix
-	//
-	const Size &s = getBounds().getSize();
-	int width = s.getWidth();
-	int height = s.getHeight();
+	Graphics& g = context->beginRender(this);
 
 	// Dibuixa el fons.
 	//
-	g.paintRectangle(Pen(), getBackground(), Rect(0, 0, width, height));
+	g.paintRectangle(Pen(), getBackground(), Rect(getBounds().getSize()));
 
 	// Dibuixa el text
 	//
-	g.setFont(_font);
-	g.setTextAlign(_horizontalTextAlign, _verticalTextAlign);
-	g.drawText(width / 2, height / 2, _foreground.getColor(), _text, 0, -1);
+	g.paintText(Point(0, 0), _ft);
 
 	// Finalitza el renderitzat.
 	//

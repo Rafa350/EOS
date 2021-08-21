@@ -196,7 +196,7 @@ void Font::getCharInfo(
 
 
 /// ----------------------------------------------------------------------
-/// \brief Obte l'avan� deun caracter.
+/// \brief Obte l'avanç d,un caracter.
 /// \param ch: El caracter.
 /// \return L'avan� del caracter.
 ///

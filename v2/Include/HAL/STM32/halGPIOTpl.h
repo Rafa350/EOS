@@ -11,8 +11,6 @@
 #ifndef __STM32_halGPIOTpl__
 #define __STM32_halGPIOTpl__
 
-#ifdef __cplusplus
-
 
 // EOS includes
 //
@@ -353,6 +351,26 @@ namespace eos {
 	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin13> PIN_I13;
 	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin14> PIN_I14;
 	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin15> PIN_I15;
+#endif
+
+
+#ifdef HAL_GPIO_PORT_J
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin0> PIN_J0;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin1> PIN_J1;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin2> PIN_J2;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin3> PIN_J3;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin4> PIN_J4;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin5> PIN_J5;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin6> PIN_J6;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin7> PIN_J7;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin8> PIN_J8;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin9> PIN_J9;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin10> PIN_J10;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin11> PIN_J11;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin12> PIN_J12;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin13> PIN_J13;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin14> PIN_J14;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin15> PIN_J15;
 #endif
 
 
@@ -908,8 +926,6 @@ namespace eos {
 	};
 }
 
-
-#endif // __cplusplus
 
 #endif // __STM32_halGPIOTpl__
 

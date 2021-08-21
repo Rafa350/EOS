@@ -19,7 +19,7 @@ using namespace eos;
 void Graphics::paintLine(
 	const Pen& pen,
 	const Point& p1,
-	const Point& p2) {
+	const Point& p2) const {
 
 	if (!pen.isNull()) {
 
@@ -168,7 +168,7 @@ void Graphics::drawLine(
 	int x1,
 	int y1,
 	int thickness,
-	Color color) {
+	Color color) const {
 
 	// Transforma a coordinades fisiques
 	//

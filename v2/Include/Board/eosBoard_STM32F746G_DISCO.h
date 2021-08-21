@@ -6,7 +6,7 @@
 // Leds
 // -----------------------------------------------------------------------
 
-#ifdef USE_LEDS_LED1
+#if defined(USE_LEDS_LED1) && !defined(USE_ARDUINO)
 #define EXIST_LEDS_LED1
 
 #define LEDS_LED1_PORT            HAL_GPIO_PORT_I
