@@ -32,7 +32,8 @@ namespace eos {
         public:
     		TextBlock();
 
-            void setForeground(const Brush& value);
+            void setTextForeground(const Brush& value);
+            void setTextBackground(const Brush& value);
             void setFont(const Font& value);
             void setText(const String& value);
             void setTextAlign(TextAlign value);

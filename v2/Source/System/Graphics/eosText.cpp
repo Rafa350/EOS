@@ -7,12 +7,16 @@
 using namespace eos;
 
 
+#define COLOR_DefaultBackground COLOR_Transparent
+#define COLOR_DefaultForeground COLOR_Black
+
+
 Text::Text():
 
 	_text(""),
 	_font(Font()),
-	_background(Brush(BrushStyle::solid, COLOR_Transparent)),
-	_foreground(Brush(BrushStyle::solid, COLOR_Black)),
+	_background(Brush(BrushStyle::solid, COLOR_DefaultBackground)),
+	_foreground(Brush(BrushStyle::solid, COLOR_DefaultForeground)),
 	_align(TextAlign::center),
 	_width(0),
 	_height(0) {
@@ -30,8 +34,8 @@ Text::Text(
 
 	_text(""),
 	_font(font),
-	_background(Brush(BrushStyle::solid, COLOR_Transparent)),
-	_foreground(Brush(BrushStyle::solid, COLOR_Black)),
+	_background(Brush(BrushStyle::solid, COLOR_DefaultBackground)),
+	_foreground(Brush(BrushStyle::solid, COLOR_DefaultForeground)),
 	_align(align),
 	_width(0),
 	_height(0) {
@@ -52,8 +56,8 @@ Text::Text(
 
 	_text(text),
 	_font(font),
-	_background(Brush(BrushStyle::solid, COLOR_Transparent)),
-	_foreground(Brush(BrushStyle::solid, COLOR_Black)),
+	_background(Brush(BrushStyle::solid, COLOR_DefaultBackground)),
+	_foreground(Brush(BrushStyle::solid, COLOR_DefaultForeground)),
 	_align(align) {
 
 	recalcBounds();
@@ -88,6 +92,10 @@ void Text::setAlign(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la brotxa per pinter el fons
+/// \param    brush: La brotxa.
+///
 void Text::setBackground(
 	const Brush& brush) {
 
@@ -95,6 +103,10 @@ void Text::setBackground(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la brotxa per pinter els caracters
+/// \param    brush: La brotxa.
+///
 void Text::setForeground(
 	const Brush& brush) {
 
@@ -107,33 +119,23 @@ void Text::setForeground(
 ///
 void Text::recalcBounds() {
 
-	if (_text.isEmpty()) {
-		_width = 0;
-		_height = 0;
+	int i = _text.getLength();
+	const char* p = _text;
+
+	_width = 0;
+	_height = 0;
+
+	while(i > 1) {
+		_width += _font.getCharAdvance(*p++);
+		i--;
 	}
 
-	else {
-		FontInfo fi;
-		_font.getFontInfo(fi);
+	if (i > 0) {
+		CharInfo ci;
+		_font.getCharInfo(*p, ci);
+		_width += ci.left + ci.width;
 
-		_height = fi.height;
-
-		_width = 0;
-		for (int i = 0, j = _text.getLength(); j; i++, j--) {
-
-			char ch = _text[i];
-
-			if (j == 1) {
-
-				CharInfo ci;
-				_font.getCharInfo(ch, ci);
-
-				_width += ci.left + ci.width;
-			}
-			else
-				_width += _font.getCharAdvance(ch);
-		}
-
+		_height = _font.getFontHeight();
 	}
 }
 
@@ -142,23 +144,30 @@ void Text::draw(
 	Graphics* graphics,
 	const Point& position) {
 
-	FontInfo fi;
-	_font.getFontInfo(fi);
+	int l = _text.getLength();
+	const char* p = _text;
 
-	Color color = _foreground.getColor();
+	if (l > 0) {
 
-	int x = position.getX();
-	int y = position.getY() + fi.ascent;
+		Color bkColor = _background.getColor();
+		Color fgColor = _foreground.getColor();
 
-	for (int i = 0, j = _text.getLength(); j; i++, j--) {
+		int x = position.getX();
+		int y = position.getY();
 
-		char ch = _text[i];
+		graphics->drawRectangle(x, y, x + _width - 1, y + _height - 1, bkColor);
 
-        drawChar(graphics, x, y, color, ch);
+		y += _font.getFontAscent();
+		while (l > 0) {
 
-        x += _font.getCharAdvance(ch);
+			drawChar(graphics, x, y, fgColor, *p);
+
+			x += _font.getCharAdvance(*p);
+
+			l--;
+			p++;
+		}
 	}
-
 }
 
 

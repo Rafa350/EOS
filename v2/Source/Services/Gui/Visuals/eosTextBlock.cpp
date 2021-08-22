@@ -69,14 +69,28 @@ void TextBlock::setFont(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna la brotxa del primer pla.
+/// \brief    Asigna la brotxa del primer pla del font.
 /// \param    value: La brotxa.
 ///
-void TextBlock::setForeground(
+void TextBlock::setTextForeground(
 	const Brush& value) {
 
 	if (_ft.getForeground() != value) {
 		_ft.setForeground(value);
+		invalidate();
+	}
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna la brotxa del font del font.
+/// \param    value: La brotxa.
+///
+void TextBlock::setTextBackground(
+	const Brush& value) {
+
+	if (_ft.getBackground() != value) {
+		_ft.setBackground(value);
 		invalidate();
 	}
 }

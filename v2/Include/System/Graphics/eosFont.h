@@ -86,6 +86,8 @@ namespace eos {
             void getFontInfo(FontInfo& fi) const;
             void getCharInfo(char ch, CharInfo& ci) const;
             int getFontHeight() const;
+            int getFontAscent() const;
+            int getFontDescent() const;
             int getCharAdvance(char ch) const;
 
             static const uint8_t* getFontResource(const String& name, int height, FontStyle style);

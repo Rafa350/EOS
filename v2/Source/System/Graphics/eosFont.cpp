@@ -9,10 +9,16 @@ using namespace eos;
 
 
 #define FR_FONT_HEIGHT 1
-#define FR_FONT_ASCEND 2
-#define FR_FONT_DESCEND 3
+#define FR_FONT_ASCENT 2
+#define FR_FONT_DESCENT 3
 #define FR_FONT_FIRST 4
 #define FR_FONT_LAST 5
+
+#define FR_CHAR_WIDTH 0
+#define FR_CHAR_HEIGHT 1
+#define FR_CHAR_LEFT 2
+#define FR_CHAR_TOP 3
+#define FR_CHAR_ADVANCE 4
 
 
 class Font::Impl: public PoolAllocatable<Font::Impl, eosGraphics_MaxFonts> {
@@ -145,6 +151,28 @@ int Font::getFontHeight() const {
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Obte l'ascendent del font.
+/// \return   El resultat.
+///
+int Font::getFontAscent() const {
+
+	const uint8_t* fr = _impl->getFontResource();
+	return fr[FR_FONT_ASCENT];
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el descendent del font.
+/// \return   El resultat.
+///
+int Font::getFontDescent() const {
+
+	const uint8_t* fr = _impl->getFontResource();
+	return fr[FR_FONT_DESCENT];
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief Obte informacio del font
 /// \param fi: Destinacio de la informacio.
 ///
@@ -154,8 +182,8 @@ void Font::getFontInfo(
 	const uint8_t* fr = _impl->getFontResource();
 
 	fi.height = fr[FR_FONT_HEIGHT];
-    fi.ascent = fr[FR_FONT_ASCEND];
-    fi.descent = fr[FR_FONT_DESCEND];
+    fi.ascent = fr[FR_FONT_ASCENT];
+    fi.descent = fr[FR_FONT_DESCENT];
     fi.firstChar = fr[FR_FONT_FIRST];
     fi.lastChar = fr[FR_FONT_LAST];
 }
@@ -177,11 +205,11 @@ void Font::getCharInfo(
         int charInfoOffset = fr[offset] + fr[offset + 1] * 256;
         int charBitsOffset = fr[charInfoOffset + 5] + fr[charInfoOffset + 6] * 256;
 
-        ci.width = fr[charInfoOffset];
-        ci.height = fr[charInfoOffset + 1];
-        ci.left = fr[charInfoOffset + 2];
-        ci.top = fr[charInfoOffset + 3];
-        ci.advance = fr[charInfoOffset + 4];
+        ci.width = fr[charInfoOffset + FR_CHAR_WIDTH];
+        ci.height = fr[charInfoOffset + FR_CHAR_HEIGHT];
+        ci.left = fr[charInfoOffset + FR_CHAR_LEFT];
+        ci.top = fr[charInfoOffset + FR_CHAR_TOP];
+        ci.advance = fr[charInfoOffset + FR_CHAR_ADVANCE];
         ci.bitmap = (charBitsOffset == -1) ? nullptr : &fr[charBitsOffset];
     }
     else {
@@ -205,10 +233,10 @@ int Font::getCharAdvance(
 
 	const uint8_t* fr = _impl->getFontResource();
 
-    if ((ch >= fr[4]) && (ch <= fr[5])) {
+    if ((ch >= fr[FR_FONT_FIRST]) && (ch <= fr[FR_FONT_LAST])) {
 		int offset = fr[6] + fr[7] * 256 + (ch - fr[4]) * 2;
 		int charInfoOffset = fr[offset] + fr[offset + 1] * 256;
-		return fr[charInfoOffset + 4];
+		return fr[charInfoOffset + FR_CHAR_ADVANCE];
     }
     else
     	return 0;
