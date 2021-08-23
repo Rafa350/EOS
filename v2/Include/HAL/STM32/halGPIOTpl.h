@@ -14,6 +14,7 @@
 
 // EOS includes
 //
+#include "HAL/hal.h"
 #include "HAL/STM32/halGPIO.h"
 
 
@@ -163,11 +164,17 @@ namespace eos {
 				halGPIOWritePin(halGPIOPort(port), halGPIOPin(pin), b);
 			}
 
-			inline static GPIOPort getPort() {
+			/// \brief Retrieve the port
+			/// \return The port.
+			///
+			inline constexpr static GPIOPort getPort() {
 				return port;
 			}
 
-			inline static GPIOPin getPin() {
+			/// \brief Retrieve the pin.
+			/// \return The pin.
+			///
+			inline constexpr static GPIOPin getPin() {
 				return pin;
 			}
 
@@ -178,6 +185,10 @@ namespace eos {
 			inline GPIOPinAdapter& operator = (bool b) {
 				halGPIOWritePin(halGPIOPort(port), halGPIOPin(pin), b);
 				return *this;
+			}
+
+			inline operator bool () {
+				return halGPIOReadPin(halGPIOPort(port), halGPIOPin(pin));
 			}
 	};
 
@@ -371,6 +382,25 @@ namespace eos {
 	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin13> PIN_J13;
 	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin14> PIN_J14;
 	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin15> PIN_J15;
+#endif
+
+#ifdef HAL_GPIO_PORT_K
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin0> PIN_K0;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin1> PIN_K1;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin2> PIN_K2;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin3> PIN_K3;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin4> PIN_K4;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin5> PIN_K5;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin6> PIN_K6;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin7> PIN_K7;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin8> PIN_K8;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin9> PIN_K9;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin10> PIN_K10;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin11> PIN_K11;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin12> PIN_K12;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin13> PIN_K13;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin14> PIN_K14;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin15> PIN_K15;
 #endif
 
 

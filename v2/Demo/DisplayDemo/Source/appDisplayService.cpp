@@ -4,6 +4,7 @@
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosBitmap.h"
+#include "System/Graphics/eosText.h"
 #include "System/Graphics/eosGraphics.h"
 #if defined(DISPLAY_DRV_ILI9341LTDC)
 #include "Controllers/Display/Drivers/ILI9341/eosDisplayDriver_ILI9341LTDC.h"
@@ -75,7 +76,10 @@ DisplayService::DisplayService(
 	Application *application):
 
 	AppLoopService(application),
+	_text(Font("Consolas", 14, FontStyle::regular), TextAlign::left),
 	_orientation(0) {
+
+	_text.setForeground(Brush(BrushStyle::solid, COLOR_Yellow));
 }
 
 
@@ -109,10 +113,6 @@ void DisplayService::onSetup() {
     // Crea el controlador de grafics
     //
     _graphics = new eos::Graphics(_driver);
-
-    Font font("Consolas", 14, FontStyle::regular);
-    _graphics->setFont(font);
-    _graphics->setTextAlign(HorizontalTextAlign::left, VerticalTextAlign::top);
 }
 
 
@@ -170,31 +170,39 @@ void DisplayService::onLoop() {
     Task::delay(250);
 
     char lineBuffer[30];
-    int y = 50;
+    int y = 35;
 
     sprintf(lineBuffer, "Points        %d ms", _pointsTicks * 2);
-    _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
     sprintf(lineBuffer, "V. lines      %d ms", _verticalLinesTicks * 2);
-    _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
     sprintf(lineBuffer, "H. lines      %d ms", _horizontalLinesTicks * 2);
-    _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
     sprintf(lineBuffer, "Lines         %d ms", _linesTicks * 2);
-    _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
     sprintf(lineBuffer, "Rectangles    %d ms", _rectanglesTicks * 2);
-    _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
     sprintf(lineBuffer, "F. rectangles %d ms", _filledRectanglesTicks * 2);
-    _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
     sprintf(lineBuffer, "Ellipses      %d ms", _ellipsesTicks * 2);
-    _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
     sprintf(lineBuffer, "F. ellipses   %d ms", _filledEllipsesTicks * 2);
-    _graphics->drawText(10, y, COLOR_Yellow, lineBuffer, 0, -1); y += 20;
+    _text.setText(lineBuffer);
+    _graphics->paintText(Point(10, y), _text); y += 20;
 
     Task::delay(5000);
 #endif
@@ -211,7 +219,10 @@ void DisplayService::drawBackground(
     _graphics->clear(COLOR_Black);
     _graphics->drawRectangle(0, 0, _screenWidth - 1, _screenHeight - 1, COLOR_Red);
     _graphics->drawLine(_screenWidth - 1, 20, 0, 20, COLOR_Red);
-    _graphics->drawText(4, 16, COLOR_Yellow, title, 0, -1);
+
+    _text.setText(title);
+    _graphics->paintText(Point(4, 0), _text);
+
     _graphics->drawRectangle(7, 27, _screenWidth - 10, _screenHeight - 10, COLOR_Red);
 }
 
@@ -416,7 +427,7 @@ void DisplayService::testRectangles() {
 
     _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 1000; i++) {
         int x1 = __rand() % _screenWidth;
         int y1 = __rand() % _screenHeight;
         int x2 = x1 + __rand() % 150;
@@ -435,7 +446,7 @@ void DisplayService::testRectangles() {
 
     _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 1000; i++) {
         int x1 = __rand() % _screenWidth;
         int y1 = __rand() % _screenHeight;
         int x2 = x1 + __rand() % 150;
@@ -463,7 +474,7 @@ void DisplayService::testEllipses() {
 
     _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 1000; i++) {
         int cx = __rand() % _screenWidth;
         int cy = __rand() % _screenHeight;
         int rx = (__rand() % 60) + 3;
@@ -482,7 +493,7 @@ void DisplayService::testEllipses() {
 
     _graphics->setClip(8, 28, _screenWidth - 11, _screenHeight - 11);
     ticks = Task::getTickCount();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 1000; i++) {
         int cx = __rand() % _screenWidth;
         int cy = __rand() % _screenHeight;
         int rx = (__rand() % 60) + 3;

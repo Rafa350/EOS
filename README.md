@@ -3,6 +3,9 @@
 ## Features:
 * Verified targets STM32F4xx, STM32F7xx, PIC32MX.
 * FreeRTOS scheduler.
+* HAL module.
+  * Independent HAL C bare metal library. C99
+  * Independent HAL C++ template library zero overload. C++17
 * Graphic module.
   * Fonts (Conversion tool from TrueType/OpenType).
   * ARGB8888, RGB888, RGB565 color scheme.

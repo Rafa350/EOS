@@ -5,7 +5,7 @@
 /// EOS includes
 //
 #include "eos.h"
-#include "HAL/halUART.h"
+#include "HAL/halUARTTpl.h"
 #include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
 #include "Services/eosService.h"
@@ -32,15 +32,15 @@ namespace eos {
 			};
 
 		private:
-			halUARTHandler hUART;
-			uint8_t *txBuffer;
-			unsigned txLength;
-			unsigned txCount;
-			uint8_t *rxBuffer;
-			unsigned rxSize;
-			unsigned rxCount;
-			Semaphore txPending;
-			Semaphore rxPending;
+			UARTAttachedAdapter _uart;
+			uint8_t *_txBuffer;
+			unsigned _txLength;
+			unsigned _txCount;
+			uint8_t *_rxBuffer;
+			unsigned _rxSize;
+			unsigned _rxCount;
+			Semaphore _txPending;
+			Semaphore _rxPending;
 
 		public:
 			UARTService(Application *application, const Settings &settings);

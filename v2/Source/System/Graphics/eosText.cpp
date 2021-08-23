@@ -1,6 +1,8 @@
 #include "eos.h"
 #include "System/Graphics/eosColorDefinitions.h"
 #include "System/Graphics/eosBrush.h"
+#include "System/Graphics/eosGraphics.h"
+#include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosText.h"
 
 
@@ -11,6 +13,9 @@ using namespace eos;
 #define COLOR_DefaultForeground COLOR_Black
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Constructor del objecte amb els valors per defecte.
+///
 Text::Text():
 
 	_text(""),
@@ -140,9 +145,14 @@ void Text::recalcBounds() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa el text.
+/// \param    graphics: L'objecte grafics on dibuixar.
+/// \param    position: La Posicio.
+///
 void Text::draw(
-	Graphics* graphics,
-	const Point& position) {
+	const Graphics* graphics,
+	const Point& position) const {
 
 	int l = _text.getLength();
 	const char* p = _text;
@@ -172,11 +182,11 @@ void Text::draw(
 
 
 void Text::drawChar(
-	Graphics* graphics,
+	const Graphics* graphics,
 	int x,
 	int y,
 	Color color,
-	char ch) {
+	char ch) const {
 
 	FontInfo fi;
     _font.getFontInfo(fi);

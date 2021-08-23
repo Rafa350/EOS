@@ -92,7 +92,7 @@ uint32_t halSYSGetTimerClock2Frequency() {
 /// \brief    Obte el tick del sistema.
 /// \return   El valor del tick.
 ///
-int halSYSGetTick() {
+unsigned halSYSGetTick() {
 
 	return HAL_GetTick();
 }
@@ -105,8 +105,8 @@ int halSYSGetTick() {
 /// \return   Trus si ha passat el limit.
 ///
 bool halSYSCheckTimeout(
-	int startTime,
-	int maxTime) {
+	unsigned startTime,
+	unsigned maxTime) {
 
 	int time = HAL_GetTick();
 	return ((__abs_diff(time, startTime) > maxTime) && (maxTime != -1)) || (maxTime == 0);

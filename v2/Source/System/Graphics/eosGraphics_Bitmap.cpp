@@ -9,6 +9,21 @@ using namespace eos;
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Dibuixa un bitmap.
+/// \param    position: Posicio del bitmap.
+/// \param    bitmap: El bitmap.
+///
+void Graphics::paintBitmap(
+	const Point& position,
+	const Bitmap& bitmap) const {
+
+	//bitmap.draw(this, position);
+
+	drawBitmap(position.getX(), position.getY(), bitmap);
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Dibuixa un bitmap complert.
 /// \param    x: Coordinada X.
 /// \param    y: Coordinada Y.

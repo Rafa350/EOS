@@ -241,6 +241,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/HAL/halGPIOTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIOTpl.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/HAL/halINT.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halINT.h</locationURI>
@@ -418,32 +423,32 @@
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/list.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/list.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/queue.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/queue.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/tasks.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/tasks.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/FreeRTOS/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/timers.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/timers.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/STM32/HAL/stm32f7xx_hal.c</name>
@@ -519,6 +524,11 @@
 			<name>Inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/STM32/halGPIOTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halINT.h</name>

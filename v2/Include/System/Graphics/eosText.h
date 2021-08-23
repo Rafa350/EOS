@@ -6,12 +6,16 @@
 //
 #include "eos.h"
 #include "System/eosString.h"
-#include "System/Graphics/eosGraphics.h"
+//#include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosBrush.h"
 #include "System/Graphics/eosFont.h"
+#include "System/Graphics/eosSize.h"
 
 
 namespace eos {
+
+	class Graphics;
+	class Point;
 
 	enum class TextAlign {
 		left,
@@ -32,7 +36,7 @@ namespace eos {
 
 		private:
 			void recalcBounds();
-			void drawChar(Graphics* graphics, int x, int y, Color color, char ch);
+			void drawChar(const Graphics* graphics, int x, int y, Color color, char ch) const;
 
 		public:
 			Text();
@@ -52,7 +56,7 @@ namespace eos {
 			const Brush& getForeground() const { return _foreground; }
 			Size getBounds() const { return Size(_width, _height); }
 
-			void draw(Graphics* graphics, const Point& position);
+			void draw(const Graphics* graphics, const Point& position) const;
 	};
 }
 

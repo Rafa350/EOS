@@ -101,6 +101,8 @@ bool Visual::isVisible() const {
 bool Visual::render(
 	RenderContext* context) {
 
+	// TODO: revisar aixo
+
 	bool renderized = false;
 	_needRender = false;
 
@@ -252,6 +254,9 @@ void Visual::arrange(
 		int height = _verticalAlignment == VerticalAlignment::stretch ? deflatedFinalHeight : arrangedSize.getHeight();
 
 		switch (_horizontalAlignment) {
+			case HorizontalAlignment::left:
+				break;
+
 			case HorizontalAlignment::center:
 			case HorizontalAlignment::stretch:
 				x += (deflatedFinalWidth - width) / 2;
@@ -260,12 +265,12 @@ void Visual::arrange(
 			case HorizontalAlignment::right:
 				x += deflatedFinalWidth - width;
 				break;
-
-			default:
-				break;
 		}
 
 		switch (_verticalAlignment) {
+			case VerticalAlignment::top:
+				break;
+
 			case VerticalAlignment::center:
 			case VerticalAlignment::stretch:
 				y += (deflatedFinalHeight - height) / 2;
@@ -276,8 +281,11 @@ void Visual::arrange(
 				break;
 		}
 
-		_bounds = Rect(x, y, width, height);
-		invalidate();
+		Rect bounds(x, y, width, height);
+		if (bounds != _bounds) {
+			_bounds = bounds;
+			invalidate();
+		}
 	}
 }
 

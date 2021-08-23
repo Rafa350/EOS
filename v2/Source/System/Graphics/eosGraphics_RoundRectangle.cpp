@@ -18,7 +18,7 @@ using namespace eos;
 void Graphics::paintRoundedRectangle(
 	const Pen& pen,
 	const Brush& brush,
-	const Rect& rect,
+	const Rect& box,
 	int rx, int ry) const {
 
 	bool penVisible = !pen.isNull();
@@ -26,10 +26,10 @@ void Graphics::paintRoundedRectangle(
 
 	if (penVisible || brushVisible) {
 
-		int x1 = rect.getMinX();
-		int y1 = rect.getMinY();
-		int x2 = rect.getMaxX();
-		int y2 = rect.getMaxY();
+		int x1 = box.getMinX();
+		int y1 = box.getMinY();
+		int x2 = box.getMaxX();
+		int y2 = box.getMaxY();
 
 		if (brushVisible) {
 			Color color = brush.getColor();
@@ -63,7 +63,7 @@ void Graphics::drawRoundedRectangle(
 	int ry,
 	Color color) const {
 
-	if (rx == 0 || ry == 0)
+	if ((rx == 0) || (ry == 0))
 		drawRectangle(x1, y1, x2, y2, color);
 
 	else {
@@ -185,28 +185,28 @@ void Graphics::drawRoundedRectangle(
 		// Dibuixa les linies d'unio dels quadrants
 		//
 		xx1 = x1;
-		yy1 = yc1;
-		yy2 = yc2;
+		yy1 = yc1 + 1;
+		yy2 = yc2 - 1;
 		if (clipVLine(xx1, yy1, yy2))
-			_driver->setVPixels(xx1, yy1, yc2 - yc1 + 1, color);
+			_driver->setVPixels(xx1, yy1, yy2 - yy1 + 1, color);
 
 		xx1 = x2;
-		yy1 = yc1;
-		yy2 = yc2;
+		yy1 = yc1 + 1;
+		yy2 = yc2 - 1;
 		if (clipVLine(xx1, yy1, yy2))
-			_driver->setVPixels(xx1, yy1, yc2 - yc1 + 1, color);
+			_driver->setVPixels(xx1, yy1, yy2 - yy1 + 1, color);
 
-		xx1 = xc1;
-		xx2 = xc2;
+		xx1 = xc1 + 1;
+		xx2 = xc2 - 1;
 		yy1 = y1;
 		if (clipHLine(xx1, xx2, yy1))
-			_driver->setHPixels(xx1, yy1, xc2 - xc1 + 1, color);
+			_driver->setHPixels(xx1, yy1, xx2 - xx1 + 1, color);
 
-		xx1 = xc1;
-		xx2 = xc2;
+		xx1 = xc1 + 1;
+		xx2 = xc2 - 1;
 		yy1 = y2;
 		if (clipHLine(xx1, xx2, yy1))
-			_driver->setHPixels(xx1, yy1, xc2 - xc1 + 1, color);
+			_driver->setHPixels(xx1, yy1, xx2 - xx1 + 1, color);
 	}
 }
 
@@ -229,7 +229,7 @@ void Graphics::fillRoundedRectangle(
 	int ry,
 	Color color) const {
 
-	if (rx == 0 || ry == 0)
+	if ((rx == 0) || (ry == 0))
 		fillRectangle(x1, y1, x2, y2, color);
 
 	else {
@@ -335,9 +335,9 @@ void Graphics::fillRoundedRectangle(
 		// Dibuixa el rectangle central
 		//
 		xx1 = x1;
-		yy1 = yc1;
+		yy1 = yc1 + 1;
 		xx2 = x2;
-		yy2 = yc2;
+		yy2 = yc2 - 1;
 		if (clipRectangle(xx1, yy1, xx2, yy2))
 			_driver->setPixels(xx1, yy1, xx2 - xx1 + 1, yy2 - yy1 + 1, color);
 	}

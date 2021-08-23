@@ -205,8 +205,8 @@ static void setupDevice(
 #ifdef EOS_STM32F7
 static void waitTxFifoEmpty(
 	halSPIHandler handler,
-	int startTime,
-	int blockTime) {
+	unsigned startTime,
+	unsigned blockTime) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -231,8 +231,8 @@ static void waitTxFifoEmpty(
 #ifdef EOS_STM32F7
 static void waitRxFifoEmpty(
 	halSPIHandler handler,
-	int startTime,
-	int blockTime) {
+	unsigned startTime,
+	unsigned blockTime) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -258,8 +258,8 @@ static void waitRxFifoEmpty(
 ///
 static void waitBusy(
 	halSPIHandler handler,
-	int startTime,
-	int blockTime) {
+	unsigned startTime,
+	unsigned blockTime) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
@@ -345,7 +345,7 @@ void halSPISendBuffer(
 	halSPIHandler handler,
 	const uint8_t* data,
 	int size,
-	int blockTime) {
+	unsigned blockTime) {
 
 	eosAssert(data != NULL);
 	eosAssert(size > 0);
@@ -356,7 +356,7 @@ void halSPISendBuffer(
 
 	int count = size;
 	const uint8_t *p = data;
-	int startTime = halSYSGetTick();
+	unsigned startTime = halSYSGetTick();
 
 	while (count > 0) {
 

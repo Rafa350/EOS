@@ -31,14 +31,14 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.717361670" name="MCU GCC Assembler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler">
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.debuglevel.628779434" name="Debug level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.debuglevel" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.debuglevel.value.g3" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.includepaths.385336905" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_CORE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.definedsymbols.841455475" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F746xx"/>
@@ -61,18 +61,17 @@
 									<listOptionValue builtIn="false" value="HARDWARE_STM32F746G_DISCO"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.1939744295" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../Inc"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_CORE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
 								</option>
-								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.1998204151" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.gnu17" valueType="enumerated"/>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.1998204151" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.gnu17" valueType="enumerated"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1214385263" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.410344030" name="MCU G++ Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler">
@@ -90,16 +89,16 @@
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths.824907218" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_CORE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
 								</option>
-								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.966966979" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.value.gnupp17" valueType="enumerated"/>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.966966979" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.value.gnupp17" valueType="enumerated"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.1447748386" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
 							</tool>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.1695873269" name="MCU GCC Linker" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker">
@@ -161,14 +160,14 @@
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.debuglevel.87430614" name="Debug level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.debuglevel" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.debuglevel.value.g0" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.includepaths.368166295" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.includepaths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_CORE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.definedsymbols.1277603642" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.definedsymbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F746xx"/>
@@ -191,15 +190,16 @@
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.1373994299" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_CORE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
 								</option>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.201974290" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.gnu17" valueType="enumerated"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.2138091464" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.1565628695" name="MCU G++ Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler">
@@ -215,17 +215,17 @@
 									<listOptionValue builtIn="false" value="HARDWARE_STM32F746G_DISCO"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths.631060847" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../Inc"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_CORE\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\CMSIS_DEVICE\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\HAL\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Demo\UartDemo\Include\STM32F7&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\BSP\STM32746G-Discovery&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\portable\GCC\ARM_CM4F&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F4\FreeRTOS\Source\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\portable\GCC\ARM_CM4F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Library\STM32F7\FreeRTOS\FreeRTOS-Kernel\Include&quot;"/>
 								</option>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.1196457256" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.value.gnupp17" valueType="enumerated"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.529515695" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
 							</tool>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.1178764772" name="MCU GCC Linker" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker">

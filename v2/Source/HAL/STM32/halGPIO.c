@@ -7,6 +7,19 @@
 #define __VERIFY_PIN(pin)   	  eosAssert((pin >= 0) && (pin <= 15))
 
 
+static uint8_t __enableA = 0;
+static uint8_t __enableB = 0;
+static uint8_t __enableC = 0;
+static uint8_t __enableD = 0;
+static uint8_t __enableE = 0;
+static uint8_t __enableF = 0;
+static uint8_t __enableG = 0;
+static uint8_t __enableH = 0;
+static uint8_t __enableI = 0;
+static uint8_t __enableJ = 0;
+static uint8_t __enableK = 0;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Obte el dispositiu.
 /// \param    port: El identificador del dispositiu.
@@ -32,47 +45,58 @@ static void enableDeviceClock(
 
 	switch ((uint32_t) device) {
 		case GPIOA_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
+			if (__enableA++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
 			break;
 
 		case GPIOB_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
+			if (__enableB++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
 			break;
 
 		case GPIOC_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
+			if (__enableC++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
 			break;
 
 		case GPIOD_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
+			if (__enableD++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
 			break;
 
 		case GPIOE_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
+			if (__enableE++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
 			break;
 
 		case GPIOF_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
+			if (__enableF++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
 			break;
 
 		case GPIOG_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
+			if (__enableG++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
 			break;
 
 		case GPIOH_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
+			if (__enableH++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
 			break;
 
 		case GPIOI_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
+			if (__enableI++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
 			break;
 
 		case GPIOJ_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN);
+			if (__enableJ++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN);
 			break;
 
 		case GPIOK_BASE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
+			if (__enableK++ == 0)
+				__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
 			break;
 	}
 

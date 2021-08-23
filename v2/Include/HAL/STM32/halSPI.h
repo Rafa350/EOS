@@ -119,7 +119,7 @@ void halSPIDeinitialize(halSPIHandler handler);
 
 bool halSPIIsBusy(halSPIHandler handler);
 
-void halSPISendBuffer(halSPIHandler handler, const uint8_t* data, int size, int blockTime);
+void halSPISendBuffer(halSPIHandler handler, const uint8_t* data, int size, unsigned blockTime);
 void halSPIReceiveBuffer(halSPIHandler handler, uint8_t* data, int size);
 void halSPITransmitBuffer(halSPIHandler handler, uint8_t* txData, uint8_t* rxData, int size);
 

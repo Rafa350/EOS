@@ -141,7 +141,23 @@ void TextBlock::onRender(
 
 	// Dibuixa el text
 	//
-	g.paintText(Point(0, 0), _ft);
+	int x = 0;
+	int y;
+	switch (getVerticalAlignment()) {
+		case VerticalAlignment::top:
+		case VerticalAlignment::stretch:
+			y = 0;
+			break;
+
+		case VerticalAlignment::center:
+			y = (getBounds().getHeight() - _ft.getBounds().getHeight()) / 2;
+			break;
+
+		case VerticalAlignment::bottom:
+			y = getBounds().getHeight() - _ft.getBounds().getHeight();
+			break;
+	}
+	g.paintText(Point(x, y), _ft);
 
 	// Finalitza el renderitzat.
 	//

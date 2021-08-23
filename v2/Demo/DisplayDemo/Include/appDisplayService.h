@@ -6,6 +6,7 @@
 //
 #include "eos.h"
 #include "Services/eosAppLoopService.h"
+#include "System/Graphics/eosText.h"
 
 
 namespace eos {
@@ -22,6 +23,7 @@ namespace app {
 	    private:
 			eos::IDisplayDriver *_driver;
 	        eos::Graphics *_graphics;
+	        eos::Text _text;
 	        int _screenWidth;
 	        int _screenHeight;
 	        int _orientation;

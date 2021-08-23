@@ -20,7 +20,6 @@ namespace eos {
 
 	class Bitmap;
 	class Text;
-	class String;
 
     /// \brief Superficie de dibuix.
     class Graphics {
@@ -59,11 +58,12 @@ namespace eos {
             void pop();
 
             void paintLine(const Pen& pen, const Point& p1, const Point& p2) const;
-            void paintRectangle(const Pen& pen, const Brush& brush, const Rect& rect) const;
-            void paintRoundedRectangle(const Pen& pen, const Brush& brush, const Rect& rect, int rx, int ry) const;
+            void paintRectangle(const Pen& pen, const Brush& brush, const Rect& box) const;
+            void paintRoundedRectangle(const Pen& pen, const Brush& brush, const Rect& box, int rx, int ry) const;
             void paintCircle(const Point& center, int radius) const;
-            void paintEllipse(const Rect& rect) const;
-            void paintText(const Point& point, Text& formatedText);
+            void paintEllipse(const Rect& box) const;
+            void paintText(const Point& position, const Text& text) const;
+            void paintBitmap(const Point& position, const Bitmap& bitmap) const;
 
             void drawPoint(int x, int y, Color color) const;
             inline void drawPoint(const Point& p, Color color) const { drawPoint(p.getX(), p.getY(), color); }
@@ -96,11 +96,9 @@ namespace eos {
 
             void drawPolygon(const Point* points, int numPoints, Color color);
 
+            // TODO: Eliminar en favor de paintBitmap
             void drawBitmap(int x, int y, const Bitmap& bitmap) const;
             inline void drawBitmap(const Point& p, const Bitmap& bitmap) const { drawBitmap(p.getX(), p.getY(), bitmap); }
-
-            int drawChar(int x, int y, Color color, char c) const;
-            int drawText(int x, int y, Color color, const String& text, int offset = 0, int length = -1) const;
 
             void fillRectangle(int x1, int y1, int x2, int y2, Color color) const;
             inline void fillRectangle(const Point& p1, const Point& p2, Color color) const { fillRectangle(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color); }

@@ -18,17 +18,17 @@ using namespace eos;
 void Graphics::paintRectangle(
 	const Pen& pen,
 	const Brush& brush,
-	const Rect& rect) const {
+	const Rect& box) const {
 
 	bool penVisible = !pen.isNull();
 	bool brushVisible = !brush.isNull();
 
 	if (penVisible || brushVisible) {
 
-		int x1 = rect.getMinX();
-		int y1 = rect.getMinY();
-		int x2 = rect.getMaxX();
-		int y2 = rect.getMaxY();
+		int x1 = box.getMinX();
+		int y1 = box.getMinY();
+		int x2 = box.getMaxX();
+		int y2 = box.getMaxY();
 
 		if (brushVisible) {
 			Color c = brush.getColor();
@@ -68,12 +68,43 @@ void Graphics::drawRectangle(
     int y2,
 	Color color) const {
 
-	// Dibuixa el perfil com quatre linies independents
+    // Transforma a coordinades fisiques.
 	//
-   	drawHLine(x1, x2, y1, color);
-   	drawHLine(x1, x2, y2, color);
-   	drawVLine(x1, y1, y2, color);
-   	drawVLine(x2, y1, y2, color);
+	transform(x1, y1);
+	transform(x2, y2);
+
+	// Normalitza les coordinades.
+	//
+    if (x1 > x2)
+        Math::swap(x1, x2);
+    if (y1 > y2)
+        Math::swap(y1, y2);
+
+    int xx1, xx2, yy1, yy2;
+
+    xx1 = x1;
+    xx2 = x2;
+    yy1 = y1;
+    if (clipHLine(xx1, xx2, yy1))
+    	_driver->setHPixels(xx1, yy1, xx2 - xx1 + 1, color);
+
+    xx1 = x1;
+    xx2 = x2;
+    yy1 = y2;
+    if (clipHLine(xx1, xx2, yy1))
+    	_driver->setHPixels(xx1, yy1, xx2 - xx1 + 1, color);
+
+    xx1 = x1;
+    yy1 = y1;
+    yy2 = y2;
+    if (clipVLine(xx1, yy1, yy2))
+    	_driver->setVPixels(xx1, yy1, yy2 - yy1 + 1, color);
+
+    xx1 = x2;
+    yy1 = y1;
+    yy2 = y2;
+    if (clipVLine(xx1, yy1, yy2))
+    	_driver->setVPixels(xx1, yy1, yy2 - yy1 + 1, color);
 }
 
 

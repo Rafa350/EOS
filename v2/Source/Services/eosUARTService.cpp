@@ -17,9 +17,9 @@ UARTService::UARTService(
 	const Settings& settings):
 
 	Service(application),
-	hUART(settings.hUART) {
+	_uart(settings.hUART) {
 
-	rxPending.release();
+	_rxPending.release();
 }
 
 
@@ -50,27 +50,27 @@ unsigned UARTService::send(
 
 	// Inicialitza les variables per la transmissio
 	//
-	txBuffer = data;
-	txLength = length;
-	txCount = 0;
+	_txBuffer = data;
+	_txLength = length;
+	_txCount = 0;
 
 	// Activa la interrupcio TXE, i comença la transmissio.
 	//
-	halUARTEnableInterrupts(hUART, HAL_UART_EVENT_TXEMPTY);
+	_uart.enableInterrupts(HAL_UART_EVENT_TXEMPTY);
 
 	// Espera el final de la transmissio.
 	//
-	if (!txPending.wait(blockTime)) {
+	if (!_txPending.wait(blockTime)) {
 
 		// Si ha pasat el temps de bloqueig i no ha acabat, aborta
 		// la transmissio de dades
 		//
-		halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXEMPTY);
-		halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXCOMPLETE);
-		halUARTClearInterruptFlags(hUART, HAL_UART_EVENT_ALL);
+		_uart.disableInterrupts(HAL_UART_EVENT_TXEMPTY);
+		_uart.disableInterrupts(HAL_UART_EVENT_TXCOMPLETE);
+		_uart.clearInterruptFlags(HAL_UART_EVENT_ALL);
 	}
 
-	return txCount;
+	return _txCount;
 }
 
 
@@ -89,25 +89,25 @@ unsigned UARTService::receive(
 	eosAssert(data != nullptr);
 	eosAssert(size > 0);
 
-	rxBuffer = data;
-	rxSize = size;
-	rxCount = 0;
+	_rxBuffer = data;
+	_rxSize = size;
+	_rxCount = 0;
 
 	// Activa la interrupcio RXNE. A partir d'aquest moment,
 	// cada cop que el registre de recepcio no estigui buit,
 	// es genera una interrupcio.
 	//
-	halUARTEnableInterrupts(hUART, HAL_UART_EVENT_RXFULL);
+	_uart.enableInterrupts(HAL_UART_EVENT_RXFULL);
 
-	if (!rxPending.wait(blockTime)) {
-    	halUARTDisableInterrupts(hUART, HAL_UART_EVENT_RXFULL);
-		halUARTDisableInterrupts(hUART, HAL_UART_EVENT_PARITY);
-		halUARTDisableInterrupts(hUART, HAL_UART_EVENT_ERROR);
-		halUARTClearInterruptFlags(hUART, HAL_UART_EVENT_ALL);
-    	rxPending.release();
+	if (!_rxPending.wait(blockTime)) {
+		_uart.disableInterrupts(HAL_UART_EVENT_RXFULL);
+		_uart.disableInterrupts(HAL_UART_EVENT_PARITY);
+		_uart.disableInterrupts(HAL_UART_EVENT_ERROR);
+		_uart.clearInterruptFlags(HAL_UART_EVENT_ALL);
+    	_rxPending.release();
 	}
 
-	return rxCount;
+	return _rxCount;
 }
 
 
@@ -118,8 +118,8 @@ void UARTService::onInitialize() {
 
 	Service::onInitialize();
 
-	halUARTSetInterruptFunction(hUART, uartInterruptFunction, this);
-	halUARTClearInterruptFlags(hUART, HAL_UART_EVENT_ALL);
+	halUARTSetInterruptFunction(_uart, uartInterruptFunction, this);
+	halUARTClearInterruptFlags(_uart, HAL_UART_EVENT_ALL);
 }
 
 
@@ -128,7 +128,7 @@ void UARTService::onInitialize() {
 ///
 void UARTService::onTerminate() {
 
-	halUARTSetInterruptFunction(hUART, nullptr, nullptr);
+	halUARTSetInterruptFunction(_uart, nullptr, nullptr);
 
 	Service::onTerminate();
 }
@@ -157,33 +157,33 @@ void UARTService::uartInterruptFunction(
 		// RXNE (Reception data register not empty)
 		//
 		case HAL_UART_EVENT_RXFULL:
-			rxBuffer[rxCount++] = halUARTReceive(hUART);
-			if (rxCount == rxSize) {
-				halUARTDisableInterrupts(hUART, HAL_UART_EVENT_RXFULL);
-				halUARTDisableInterrupts(hUART, HAL_UART_EVENT_PARITY);
-				halUARTDisableInterrupts(hUART, HAL_UART_EVENT_ERROR);
-				rxPending.releaseISR();
+			_rxBuffer[_rxCount++] = _uart.receive();
+			if (_rxCount == _rxSize) {
+				_uart.disableInterrupts(HAL_UART_EVENT_RXFULL);
+				_uart.disableInterrupts(HAL_UART_EVENT_PARITY);
+				_uart.disableInterrupts(HAL_UART_EVENT_ERROR);
+				_rxPending.releaseISR();
 			}
 			break;
 
 		// TXE (Transmit data register empty)
 		//
 		case HAL_UART_EVENT_TXEMPTY: {
-			if (txCount == txLength) {
-				halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXEMPTY);
-				halUARTEnableInterrupts(hUART, HAL_UART_EVENT_TXCOMPLETE);
+			if (_txCount == _txLength) {
+				_uart.disableInterrupts(HAL_UART_EVENT_TXEMPTY);
+				_uart.enableInterrupts(HAL_UART_EVENT_TXCOMPLETE);
 			}
 			else
-				halUARTSend(hUART, txBuffer[txCount++]);
+				_uart.send(_txBuffer[_txCount++]);
 			break;
 		}
 
 		// Comprova un event TC (Transmit complete).
 		//
 		case HAL_UART_EVENT_TXCOMPLETE:
-			halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXEMPTY);
-			halUARTDisableInterrupts(hUART, HAL_UART_EVENT_TXCOMPLETE);
-			txPending.releaseISR();
+			_uart.disableInterrupts(HAL_UART_EVENT_TXEMPTY);
+			_uart.disableInterrupts(HAL_UART_EVENT_TXCOMPLETE);
+			_txPending.releaseISR();
 			break;
 	}
 }

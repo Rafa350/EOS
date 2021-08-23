@@ -1,6 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/Core/eosPoolAllocator.h"
+#include "System/Graphics/eosGraphics.h"
 #include "System/Graphics/eosBitmap.h"
 #include "OSAL/osalHeap.h"
 
@@ -284,3 +285,16 @@ int Bitmap::getBytesPerLine() const {
 
 	return ((_impl->width * getBytesPerPixel()) + 3) & ~0b11;
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Dibuixa el bitmap
+/// \param    graphics: L'objecte grafics per dibuixar.
+/// \param    position: La posicio.
+///
+void Bitmap::draw(
+	const Graphics* graphics,
+	const Point& position) const {
+
+}
+

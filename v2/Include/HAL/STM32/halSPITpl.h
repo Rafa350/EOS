@@ -4,6 +4,7 @@
 
 // EOS includes
 //
+#include "HAL/hal.h"
 #include "HAL/STM32/halSPI.h"
 #include "HAL/STM32/halGPIOTpl.h"
 
@@ -50,7 +51,7 @@ namespace eos {
 	template <SPIChannel channel>
 	class SPIAdapter {
 		private:
-			constexpr static const int _defaultBlockTime = 1000;
+			constexpr static const unsigned _defaultBlockTime = 1000;
 			constexpr static const SPISize _defaultSize = SPISize::size8;
 			constexpr static const SPIFirstBit _defaultFirstBit = SPIFirstBit::lsb;
 

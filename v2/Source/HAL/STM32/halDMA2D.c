@@ -2,6 +2,9 @@
 #include "HAL/STM32/halDMA2D.h"
 
 
+static uint8_t __enable;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el modul DMA2D
 ///
@@ -9,8 +12,10 @@ void halDMA2DInitialize() {
 
 	// Activa el modul DMA2D
 	//
-    __set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_DMA2DEN);
-    __DSB();
+	if (__enable++ == 0) {
+		__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_DMA2DEN);
+		__DSB();
+	}
 }
 
 
@@ -19,7 +24,8 @@ void halDMA2DInitialize() {
 ///
 void halDMA2DDeinitialize() {
 
-    __clear_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_DMA2DEN);
+	if (--__enable == 0)
+		__clear_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_DMA2DEN);
 }
 
 

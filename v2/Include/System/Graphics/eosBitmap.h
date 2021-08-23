@@ -17,6 +17,8 @@
 
 namespace eos {
 
+	class Graphics;
+
 	class Bitmap {
 		private:
 			struct Impl;
@@ -49,6 +51,8 @@ namespace eos {
 			ColorFormat getFormat() const;
 			int getBytesPerPixel() const;
 			int getBytesPerLine() const;
+
+			void draw(const Graphics* graphics, const Point& position) const;
 	};
 }
 

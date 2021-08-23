@@ -114,7 +114,7 @@ void Console::put(
                             return;
                         }
                     }
-                    _cx += _graphics->drawChar(_x + _cx, _y + _cy, _fgColor, c);
+                    //_cx += _graphics->drawChar(_x + _cx, _y + _cy, _fgColor, c);
                     break;
                 }
             }

@@ -124,38 +124,6 @@
 #include "Board/eosBoard.h"
 
 
-// Optional includes
-//
-#ifdef EOS_INC_BASE
-#include "Services/eosService.h"
-#include "System/eosApplication.h"
-#include "System/eosString.h"
-#endif
-
-#ifdef EOS_INC_CORE
-#include "System/Core/eosQueue.h"
-#include "System/Core/eosSemaphore.h"
-#include "System/Core/eosTask.h"
-#endif
-
-#ifdef EOS_INC_GRAPHICS
-#include "System/Graphics/eosBitmap.h"
-#include "System/Graphics/eosColor.h"
-#include "System/Graphics/eosFont.h"
-#include "System/Graphics/eosGraphics.h"
-#include "System/Graphics/eosPoint.h"
-#include "System/Graphics/eosRect.h"
-#include "System/Graphics/eosSize.h"
-#include "System/Graphics/eosTransformation.h"
-#endif
-
-#ifdef EOS_INC_FSM
-#endif
-
-#ifdef EOS_INC_GUI
-#endif
-
-
 // Base namespace declaration
 //
 #ifdef __cplusplus

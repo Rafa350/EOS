@@ -441,32 +441,32 @@
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/list.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/list.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/portable/GCC/ARM_CM7/r0p1/port.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/queue.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/queue.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/tasks.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/tasks.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/FreeRTOS/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/Source/timers.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/FreeRTOS/FreeRTOS-Kernel/timers.c</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/STM32/HAL/stm32f7xx_hal.c</name>
@@ -709,6 +709,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosPen.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/System/Graphics/eosText.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosText.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Graphics/eosTransformation.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Graphics/eosTransformation.h</locationURI>
@@ -909,6 +914,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Rectangle.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/System/Graphics/eosGraphics_RoundRectangle.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_RoundRectangle.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/System/Graphics/eosGraphics_Text.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosGraphics_Text.cpp</locationURI>
@@ -927,6 +937,11 @@
 			<name>src/Framework/EOS/System/Graphics/eosSize.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosSize.cpp</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/System/Graphics/eosText.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Graphics/eosText.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/System/Graphics/eosTransformation.cpp</name>

@@ -14,7 +14,7 @@
 
 // EOS includes
 //
-#include "eos.h"
+#include "HAL/hal.h"
 
 
 #ifdef	__cplusplus
@@ -30,8 +30,8 @@ uint32_t halSYSGetPeripheralClock2Frequency();
 uint32_t halSYSGetTimerClock1Frequency();
 uint32_t halSYSGetTimerClock2Frequency();
 
-int halSYSGetTick();
-bool halSYSCheckTimeout(int startTime, int blockTime);
+unsigned halSYSGetTick();
+bool halSYSCheckTimeout(unsigned startTime, unsigned blockTime);
 
 #ifdef	__cplusplus
 }
