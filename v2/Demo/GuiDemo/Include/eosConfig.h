@@ -34,7 +34,7 @@
 #define eosGuiService_MessageQueueSize                10
 #define eosGuiService_MessageQueueBlockTime           ((unsigned)-1)
 #ifdef USE_TOUCHPAD
-#define eosGuiService_TouchPadEnabled                 1
+#define eosGuiService_TouchpadEnabled                 1
 #endif
 
 //#define eosGuiService_KeyboardEnabled                 1

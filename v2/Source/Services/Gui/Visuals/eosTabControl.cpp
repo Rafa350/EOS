@@ -14,10 +14,18 @@ using namespace eos;
 /// \brief    Constructor del objecte.
 ///
 TabControl::TabControl():
-
+    _touchpadPressEventCallback(this, &TabControl::touchpadPressEventHandler),
+	_panel(nullptr),
 	_header(nullptr),
 	_content(nullptr) {
 
+}
+
+
+void TabControl::touchpadPressEventHandler(
+	const TouchpadPressEventArgs& args) {
+
+	Point p = args.position;
 }
 
 
@@ -30,12 +38,29 @@ void TabControl::onItemAdded(
 
 	TabControlItem* tabItem = static_cast<TabControlItem*>(item);
 
-	if (_header == nullptr) {
-		_header = createHeaderPanel();
-		addVisual(_header);
+	// Si cal, crea el panell base i l'afegeix al control
+	//
+	if (_panel == nullptr) {
+		_panel = createPanel();
+		addVisual(_panel);
 	}
 
-	_header->addChild(tabItem->getHeader());
+	// Si cal, crea el panell de la capcelera i l'afegeix al panell base
+	//
+	if (_header == nullptr) {
+		_header = createHeaderPanel();
+		_panel->addChild(_header);
+	}
+
+	// Afegeix l'element de la capcelera del item
+	//
+	Visual* headerItem = tabItem->getHeader();
+	headerItem->setTouchpadPressEventCallback(&_touchpadPressEventCallback);
+	_header->addChild(headerItem);
+
+	// Afegeix l'element del contingut del item
+	//
+	_panel->addChild(tabItem->getContent());
 }
 
 
@@ -61,6 +86,14 @@ void TabControl::onActiveItemChanged(
 }
 
 
+Panel* TabControl::createPanel() {
+
+	StackPanel* panel = new StackPanel();
+	panel->setOrientation(Orientation::vertical);
+	return panel;
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Crea el panell de la capcelera.
 /// \return   El panell creat.
@@ -72,7 +105,7 @@ Panel* TabControl::createHeaderPanel() {
 	StackPanel* panel = new StackPanel();
 	panel->setVerticalAlignment(VerticalAlignment::top);
 
-	panel->setBackground(Brush(BrushStyle::solid, COLOR_Green));
+	panel->setBackground(Brush(BrushStyle::solid, COLOR_Transparent));
 
 	panel->setOrientation(Orientation::horizontal);
 

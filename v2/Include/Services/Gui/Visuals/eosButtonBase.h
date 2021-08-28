@@ -36,10 +36,10 @@ namespace eos {
 			const IEventCallback *_eventCallback;
 
     	protected:
-#if eosGuiService_TouchPadEnabled
-		    void onTouchPadPress(const Point& position) override;
-		    void onTouchPadRelease() override;
-		    void onTouchPadLeave() override;
+#if eosGuiService_TouchpadEnabled
+		    void onTouchpadPress(const TouchpadPressEventArgs& args) override;
+		    void onTouchpadRelease(const TouchpadReleaseEventArgs& args) override;
+		    void onTouchpadLeave(const TouchpadLeaveEventArgs& args) override;
 #endif
 			virtual void onClick();
 			virtual void onPress();

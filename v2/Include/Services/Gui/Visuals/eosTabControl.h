@@ -8,6 +8,10 @@
 #include "Services/Gui/Visuals/eosPanel.h"
 #include "System/Collections/eosVector.h"
 
+#if eosGuiService_TouchPadEnabled
+	#include "Services/Gui/Events/eosTouchpadEvents.h"
+#endif
+
 
 namespace eos {
 
@@ -15,11 +19,15 @@ namespace eos {
 
 	class TabControl: public ItemsControl {
 		private:
+			TouchpadPressEventCallback<TabControl> _touchpadPressEventCallback;
+		    Panel* _panel;
 			Panel* _header;
 			ContentControl* _content;
 
 		private:
+			Panel* createPanel();
 			Panel* createHeaderPanel();
+			void touchpadPressEventHandler(const TouchpadPressEventArgs& args);
 
 		protected:
 			void onItemAdded(ControlItem* item) override;

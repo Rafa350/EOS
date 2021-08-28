@@ -13,7 +13,7 @@ using namespace eos;
 /// \param    application: Aplicacio on afeigir el servei
 /// \param    cfg: Parametres de configuracio.
 ///
-TouchPadService::TouchPadService(
+TouchpadService::TouchpadService(
 	Application* application) :
 
 	Service(application),
@@ -28,7 +28,7 @@ TouchPadService::TouchPadService(
 /// ---------------------------------------------------------------------
 /// \brief    Inicialitzacio abans del planificador.
 ///
-void TouchPadService::onInitialize() {
+void TouchpadService::onInitialize() {
 
     // Inicialitzacio del touch pad
     //
@@ -43,7 +43,7 @@ void TouchPadService::onInitialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Bucle d'execucio.
 ///
-void TouchPadService::onTask(
+void TouchpadService::onTask(
 	Task *task) {
 
 	if (_eventCallback != nullptr) {
@@ -114,7 +114,7 @@ void TouchPadService::onTask(
 /// ----------------------------------------------------------------------
 /// \brief    Procesa la interrupcio. Desbloqueja el process.
 ///
-void TouchPadService::interruptHandler() {
+void TouchpadService::interruptHandler() {
 
 	_lock.releaseISR();
 }
@@ -123,10 +123,10 @@ void TouchPadService::interruptHandler() {
 /// ----------------------------------------------------------------------
 /// \brief    Despatxa la interrupcio a la funcio membre.
 ///
-void TouchPadService::interruptHandler(
+void TouchpadService::interruptHandler(
 	EXTILine line,
 	void *param) {
 
-	TouchPadService* service = static_cast<TouchPadService*>(param);
+	TouchpadService* service = static_cast<TouchpadService*>(param);
 	service->interruptHandler();
 }

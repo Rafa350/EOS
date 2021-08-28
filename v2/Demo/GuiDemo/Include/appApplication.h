@@ -32,8 +32,6 @@ namespace app {
 			LedService *_ledService;
 			eos::GuiService *_guiService;
 
-			eos::Panel *_mainPanel;
-
 			ButtonEventCallback _buttonEventCallback;
 			VirtualKeyboardEventCallback _virtualKeyboardEventCallback;
 

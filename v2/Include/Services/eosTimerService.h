@@ -46,7 +46,7 @@ namespace eos {
 
         public:
             struct InitParams {
-                TMRTimer timer;
+                halTMRTimer timer;
                 unsigned period;
             };
 

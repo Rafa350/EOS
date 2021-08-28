@@ -7,10 +7,19 @@
 #include "eos.h"
 #include "Services/Gui/eosMsgQueue.h"
 #include "Services/Gui/eosThickness.h"
+#include "System/eosCallbacks.h"
 #include "System/Collections/eosVector.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
 #include "System/Graphics/eosSize.h"
+
+#if eosGuiService_TouchpadEnabled
+	#include "Services/Gui/Events/eosTouchpadEvents.h"
+#endif
+
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
+	#include "Services/Gui/Events/eosKeyboardEvents.h"
+#endif
 
 
 namespace eos {
@@ -50,6 +59,7 @@ namespace eos {
 			typedef typename VisualList::Iterator VisualIterator;
 
       	private:
+			MsgQueue& _msgQueue;
     		Visual* _parent;
     		VisualList _childs;
     		bool _needRender;
@@ -62,6 +72,10 @@ namespace eos {
 			Thickness _margin;
 			HorizontalAlignment _horizontalAlignment;
 			VerticalAlignment _verticalAlignment;
+#if eosGuiService_TouchpadEnabled
+			ITouchpadPressEventCallback* _touchpadPressEventCallback;
+			ITouchpadReleaseEventCallback* _touchpadReleaseEventCallback;
+#endif
 			unsigned _id;
 
     	protected:
@@ -71,16 +85,16 @@ namespace eos {
     		virtual void onDeactivate(Visual* visual);
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
     		virtual void onDispatchKeyboardEvent(const MsgKeyboard& msg);
-    		virtual void onKeyboardPress(KeyCode keyCode, KeyFlags flags, char ch);
-    		virtual void onKeyboardRelease(KeyCode keyCode, KeyFlags flags, char ch);
+    		virtual void onKeyboardPress(const KeyboardEventArgs& args);
+    		virtual void onKeyboardRelease(const KeyboardEventArgs& args);
 #endif
-#if eosGuiService_TouchPadEnabled
-    		virtual void onDispatchTouchPadEvent(const MsgTouchPad& msg);
-    		virtual void onTouchPadEnter();
-    		virtual void onTouchPadLeave();
-    		virtual void onTouchPadPress(const Point& position);
-    		virtual void onTouchPadRelease();
-    		virtual void onTouchPadMove(const Point& position);
+#if eosGuiService_TouchpadEnabled
+    		virtual void onDispatchTouchpadEvent(const MsgTouchpad& msg);
+    		virtual void onTouchpadEnter(const TouchpadEnterEventArgs& args);
+    		virtual void onTouchpadLeave(const TouchpadLeaveEventArgs& args);
+    		virtual void onTouchpadPress(const TouchpadPressEventArgs& args);
+    		virtual void onTouchpadRelease(const TouchpadReleaseEventArgs& args);
+    		virtual void onTouchpadMove(const TouchpadMoveEventArgs& args);
 #endif
             virtual Size measureOverride(const Size& availableSize) const;
             virtual Size arrangeOverride(const Size& finalSize) const;
@@ -110,6 +124,11 @@ namespace eos {
             void setSize(const Size& value);
             void setVerticalAlignment(VerticalAlignment value);
             void setVisibility(Visibility value);
+
+#if eosGuiService_TouchpadEnabled
+            inline void setTouchpadPressEventCallback(ITouchpadPressEventCallback* callback) { _touchpadPressEventCallback = callback; }
+            inline void setTouchpadReleaseEventCallback(ITouchpadReleaseEventCallback* callback) { _touchpadReleaseEventCallback = callback; }
+#endif
 
             // Getters
             inline const Rect& getBounds() const { return _bounds; }

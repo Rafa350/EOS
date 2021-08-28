@@ -13,7 +13,6 @@ ButtonBase::ButtonBase():
 	_pressed(false),
 	_clickMode(ClickMode::atRelease),
 	_eventCallback(nullptr) {
-
 }
 
 
@@ -38,11 +37,13 @@ void ButtonBase::setClickMode(ClickMode value) {
 
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quant es presiona el touchpad.
-/// \param    position: Posicio del toc.
+/// \param    args: Parametres del event.
 ///
-#if eosGuiService_TouchPadEnabled
-void ButtonBase::onTouchPadPress(
-	const Point& position) {
+#if eosGuiService_TouchpadEnabled
+void ButtonBase::onTouchpadPress(
+	const TouchpadPressEventArgs& args) {
+
+	Visual::onTouchpadPress(args);
 
 	onPress();
 
@@ -57,8 +58,9 @@ void ButtonBase::onTouchPadPress(
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quant es deixa de presionar el pad.
 ///
-#if eosGuiService_TouchPadEnabled
-void ButtonBase::onTouchPadRelease() {
+#if eosGuiService_TouchpadEnabled
+void ButtonBase::onTouchpadRelease(
+	const TouchpadReleaseEventArgs& args) {
 
 	onRelease();
 
@@ -73,8 +75,9 @@ void ButtonBase::onTouchPadRelease() {
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quant el pad ja no actua en el visual.
 ///
-#if eosGuiService_TouchPadEnabled
-void ButtonBase::onTouchPadLeave() {
+#if eosGuiService_TouchpadEnabled
+void ButtonBase::onTouchpadLeave(
+	const TouchpadLeaveEventArgs& args) {
 
 	onRelease();
 

@@ -27,7 +27,7 @@ namespace eos {
 
 	/// \brief Clase que implementa un servei de control del touchpad
 	///
-	class TouchPadService final: public Service {
+	class TouchpadService final: public Service {
 		public:
 			enum class EventType {
 				press,
@@ -59,7 +59,7 @@ namespace eos {
 			void onTask(Task *task) override;
 
 		public:
-			TouchPadService(Application *application);
+			TouchpadService(Application *application);
 			inline void setEventCallback(IEventCallback *callBack) { _eventCallback = callBack; }
 	};
 }

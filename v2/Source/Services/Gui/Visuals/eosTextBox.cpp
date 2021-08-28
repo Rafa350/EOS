@@ -37,16 +37,14 @@ void TextBox::clearText() {
 /// \param    ch: El caracter de la tecla.
 ///
 void TextBox::onKeyboardPress(
-	KeyCode keyCode,
-	KeyFlags flags,
-	char ch) {
+	const KeyboardEventArgs& args) {
 
 	String text = getText();
 
-	switch (ch) {
+	switch (args.ch) {
 		default:
-			if (ch >= 0x30 && ch < 0x7F) {
-				text.insert(_insertPos++, ch);
+			if (args.ch >= 0x30 && args.ch < 0x7F) {
+				text.insert(_insertPos++, args.ch);
 				if (_insertPos > _visiblePos + _visibleLength)
 					_visiblePos++;
 			}

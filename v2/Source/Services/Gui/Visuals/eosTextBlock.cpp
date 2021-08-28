@@ -25,8 +25,8 @@ struct TextBlockStyle {
 static const TextBlockStyle style = {
 	.foregroundColor = COLOR_Black,
 	.backgroundColor = COLOR_Yellow,
-	.fontName = "Tahoma",
-	.fontHeight = 12,
+	.fontName = "Consolas",
+	.fontHeight = 18,
 	.fontStyle = FontStyle::regular
 };
 
@@ -163,27 +163,3 @@ void TextBlock::onRender(
 	//
 	context->endRender();
 }
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Es crida quant hi ha que despatxar un missatge..
-/// \param    msg: El missatge a despatxar.
-///
-#if eosGuiService_TouchPadEnabled
-void TextBlock::onDispatch(
-	const Message& msg) {
-
-	// Si es un missatge del touchpad, el retransmet al pare
-	//
-	if (msg.msgId == MsgId::touchPadEvent) {
-		Visual *pParent = getParent();
-		if (pParent != nullptr)
-			pParent->dispatch(msg);
-	}
-
-	// En cas contrari els procesa normalment
-	//
-	else
-		Visual::onDispatch(msg);
-}
-#endif

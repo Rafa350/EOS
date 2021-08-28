@@ -38,9 +38,9 @@ extern "C" void isrTMR1Handler(void) {
 #ifdef _TMR2
 extern "C" void isrTMR2Handler(void) {
 
-    extern TMRData digInputTimer;
+    extern halTMRData digInputTimer;
 
-    halTMRInterruptHandler((TMRHandler)&digInputTimer);
+    halTMRInterruptHandler((halTMRHandler)&digInputTimer);
 }
 #endif
 
@@ -51,9 +51,9 @@ extern "C" void isrTMR2Handler(void) {
 #ifdef _TMR3
 extern "C" void isrTMR3Handler(void) {
 
-    extern TMRData digOutputTimer;
+    extern halTMRData digOutputTimer;
 
-    halTMRInterruptHandler((TMRHandler)&digOutputTimer);
+    halTMRInterruptHandler((halTMRHandler)&digOutputTimer);
 }
 #endif
 

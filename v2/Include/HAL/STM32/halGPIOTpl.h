@@ -364,7 +364,6 @@ namespace eos {
 	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin15> PIN_I15;
 #endif
 
-
 #ifdef HAL_GPIO_PORT_J
 	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin0> PIN_J0;
 	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin1> PIN_J1;

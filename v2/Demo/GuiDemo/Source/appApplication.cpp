@@ -93,18 +93,32 @@ eos::Visual* MyApplication::createKeyboardPanel() {
 void MyApplication::createMainPanel() {
 
 	TabControl* tabControl = new TabControl();
+	tabControl->setHorizontalAlignment(HorizontalAlignment::center);
+	tabControl->setVerticalAlignment(VerticalAlignment::center);
 
 	TextBlock* tab1 = new TextBlock();
 	tab1->setText("TAB1");
-	TabControlItem* tabItem1 = new TabControlItem(tab1, nullptr);
+	tab1->setMargin(Thickness(10, 5));
+	Panel* panel1 = new Panel();
+	panel1->setBackground(Brush(BrushStyle::solid, COLOR_Red));
+	panel1->setMinSize(Size(100, 30));
+	TabControlItem* tabItem1 = new TabControlItem(tab1, panel1);
 
 	TextBlock* tab2 = new TextBlock();
 	tab2->setText("TAB2");
-	TabControlItem* tabItem2 = new TabControlItem(tab2, nullptr);
+	tab2->setMargin(Thickness(10, 5));
+	Panel* panel2 = new Panel();
+	panel2->setMinSize(Size(100, 30));
+	panel2->setBackground(Brush(BrushStyle::solid, COLOR_Green));
+	TabControlItem* tabItem2 = new TabControlItem(tab2, panel2);
 
 	TextBlock* tab3 = new TextBlock();
 	tab3->setText("TAB3");
-	TabControlItem* tabItem3 = new TabControlItem(tab3, nullptr);
+	tab3->setMargin(Thickness(10, 5));
+	Panel* panel3 = new Panel();
+	panel3->setMinSize(Size(100, 30));
+	panel3->setBackground(Brush(BrushStyle::solid, COLOR_Blue));
+	TabControlItem* tabItem3 = new TabControlItem(tab3, panel3);
 
 	tabControl->addItem(tabItem1);
 	tabControl->addItem(tabItem2);
@@ -115,7 +129,6 @@ void MyApplication::createMainPanel() {
 	eos::Screen* screen = _guiService->getScreen();
 	screen->addChild(keyboardPanel);
 	//screen->addChild(tabControl);
-
 
 	eos::Visual* tb = VisualUtils::getVisual(screen,  1000);
 	_guiService->setFocus(tb);

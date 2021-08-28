@@ -3,8 +3,8 @@
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "Services/eosGuiService.h"
-#if eosGuiService_TouchPadEnabled
-#include "Services/eosTouchPadService.h"
+#if eosGuiService_TouchpadEnabled
+#include "Services/eosTouchpadService.h"
 #endif
 #if eosGuiService_SelectorEnabled
 #include "Services/eosSelectorService.h"
@@ -42,16 +42,16 @@ GuiService::GuiService(
 	_screen(new Screen()),
 	_active(nullptr),
 	_focus(nullptr),
-	_msgQueue(MsgQueue::getInstance())
-#if eosGuiService_TouchPadEnabled
-	, _touchPadEventCallback(this, &GuiService::touchPadEventHandler)
+	_msgQueue(MessageQueue::instance())
+#if eosGuiService_TouchpadEnabled
+	, _touchpadEventCallback(this, &GuiService::touchpadEventHandler)
 #endif
 	{
 
-#if eosGuiService_TouchPadEnabled
-	_touchPadService = new TouchPadService(application);
-	_touchPadService->setEventCallback(&_touchPadEventCallback);
-	_touchPadTarget = nullptr;
+#if eosGuiService_TouchpadEnabled
+	_touchpadService = new TouchpadService(application);
+	_touchpadService->setEventCallback(&_touchpadEventCallback);
+	_touchpadTarget = nullptr;
 #endif
 
 #if eosGuiService_SelectorEnabled
@@ -146,7 +146,7 @@ void GuiService::onTask(
 	// procesa els missatges.
 	//
 	Message msg;
-	if (_msgQueue->receive(msg)) {
+	if (_msgQueue.receive(msg)) {
 
 		if ((msg.msgId == MsgId::keyboardEvent) && (msg.target == nullptr))
 			msg.target = _focus;
@@ -162,12 +162,12 @@ void GuiService::onTask(
 ///           contexte del que crida a aquest metode.
 /// \param    args: Arguments del event.
 ///
-#if eosGuiService_TouchPadEnabled
-void GuiService::touchPadEventHandler(
-	const TouchPadService::EventArgs& args) {
+#if eosGuiService_TouchpadEnabled
+void GuiService::touchpadEventHandler(
+	const TouchpadService::EventArgs& args) {
 
 	Message msg;
-	msg.msgId = MsgId::touchPadEvent;
+	msg.msgId = MsgId::touchpadEvent;
 
 	// Obte el target.
 	//
@@ -175,46 +175,47 @@ void GuiService::touchPadEventHandler(
 
 	// Comprova si ha canviat el target.
 	//
-	if (_touchPadTarget != target) {
+	if (_touchpadTarget != target) {
 
 		// Si cal, notifica la sortida d'un visual.
 		//
-		if (_touchPadTarget != nullptr) {
-            msg.target = _touchPadTarget;
-            msg.touchPad.event = MsgTouchPadEvent::leave;
-            _msgQueue->send(msg);
+		if (_touchpadTarget != nullptr) {
+            msg.target = _touchpadTarget;
+            msg.touchpad.event = MsgTouchpadEvent::leave;
+            _msgQueue.send(msg);
 		}
 
-		_touchPadTarget = target;
+		_touchpadTarget = target;
 
 		// Si cal, notifica la entrada en un visual.
 		//
-		if (_touchPadTarget != nullptr) {
-            msg.target = _touchPadTarget;
-            msg.touchPad.event = MsgTouchPadEvent::enter;
-            _msgQueue->send(msg);
+		if (_touchpadTarget != nullptr) {
+            msg.target = _touchpadTarget;
+            msg.touchpad.event = MsgTouchpadEvent::enter;
+            _msgQueue.send(msg);
 		}
 	}
 
 	msg.target = target;
 	switch (args.event) {
-		case TouchPadService::EventType::press:
-			msg.touchPad.event = MsgTouchPadEvent::press;
-			msg.touchPad.x = args.x;
-			msg.touchPad.y = args.y;
+		case TouchpadService::EventType::press:
+			msg.touchpad.event = MsgTouchpadEvent::press;
+			msg.touchpad.x = args.x;
+			msg.touchpad.y = args.y;
 			break;
 
-		case TouchPadService::EventType::release:
-			msg.touchPad.event = MsgTouchPadEvent::release;
+		case TouchpadService::EventType::release:
+			msg.touchpad.event = MsgTouchpadEvent::release;
 			break;
 
-		case TouchPadService::EventType::move:
-			msg.touchPad.event = MsgTouchPadEvent::move;
-			msg.touchPad.x = args.x;
-			msg.touchPad.y = args.y;
+		case TouchpadService::EventType::move:
+			msg.touchpad.event = MsgTouchpadEvent::move;
+			msg.touchpad.x = args.x;
+			msg.touchpad.y = args.y;
 			break;
 	}
-	_msgQueue->send(msg);
+
+	_msgQueue.send(msg);
 }
 #endif
 

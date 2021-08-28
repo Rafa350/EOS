@@ -17,8 +17,8 @@ using namespace eos;
 using namespace app;
 
 
-TMRData digInputTimer;
-TMRData digOutputTimer;
+halTMRData digInputTimer;
+halTMRData digOutputTimer;
 
 
 /// ----------------------------------------------------------------------
@@ -44,7 +44,7 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el temporitzador pel servei d'entrades digitals
     //
-	TMRSettings tmrSettings;
+	halTMRSettings tmrSettings;
 	tmrSettings.timer = DigInputService_Timer;
 #if defined(EOS_PIC32)
     tmrSettings.options = HAL_TMR_MODE_16 | HAL_TMR_CLKDIV_64;
@@ -56,7 +56,7 @@ void MyApplication::onInitialize() {
 #else
     //#error CPU no soportada
 #endif
-    TMRHandler hDigInputServiceTimer = halTMRInitialize(&digInputTimer, &tmrSettings);
+    halTMRHandler hDigInputServiceTimer = halTMRInitialize(&digInputTimer, &tmrSettings);
 
     // Inicialitza les interrupcions
     //
@@ -127,7 +127,7 @@ void MyApplication::onInitialize() {
 #else
     //#error CPU no soportada
 #endif
-	TMRHandler hDigOutputServiceTimer = halTMRInitialize(&digOutputTimer, &tmrSettings);
+	halTMRHandler hDigOutputServiceTimer = halTMRInitialize(&digOutputTimer, &tmrSettings);
 
     // Inicialitza les interrupcions
     //

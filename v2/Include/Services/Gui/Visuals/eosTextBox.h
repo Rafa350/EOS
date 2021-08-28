@@ -19,7 +19,7 @@ namespace eos {
 
 		protected:
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
-			void onKeyboardPress(KeyCode keyCode, KeyFlags flags, char ch) override;
+			void onKeyboardPress(const KeyboardPressEventArgs& args) override;
 #endif
 			void onRender(RenderContext* context) override;
 

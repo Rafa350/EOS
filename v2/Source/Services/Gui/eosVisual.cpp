@@ -13,6 +13,7 @@ using namespace eos;
 /// \brief    Constructor de l'objecte.
 ///
 Visual::Visual():
+	_msgQueue(MessageQueue::instance()),
 	_parent(nullptr),
 	_needRender(false),
 	_visibility(Visibility::visible),
@@ -23,7 +24,12 @@ Visual::Visual():
 	_margin(0),
 	_horizontalAlignment(HorizontalAlignment::stretch),
 	_verticalAlignment(VerticalAlignment::stretch),
-	_id(0) {
+#if eosGuiService_TouchpadEnabled
+	_touchpadPressEventCallback(nullptr),
+	_touchpadReleaseEventCallback(nullptr),
+#endif
+	_id(0) 	{
+
 }
 
 
@@ -126,7 +132,7 @@ bool Visual::render(
 /// \param    msg: El missatge a despatchar.
 ///
 void Visual::dispatch(
-	const Message &msg) {
+	const Message& msg) {
 
 	onDispatch(msg);
 }
@@ -139,8 +145,7 @@ void Visual::dispatch(
 void Visual::send(
 	const Message& msg) {
 
-	MsgQueue* msgQueue = MsgQueue::getInstance();
-	msgQueue->send(msg);
+	_msgQueue.send(msg);
 }
 
 
@@ -356,7 +361,7 @@ void Visual::setVisibility(
 /// \param    value: El nou tamany.
 ///
 void Visual::setSize(
-	const Size &value) {
+	const Size& value) {
 
     if (_size != value) {
     	_size = value;
@@ -370,7 +375,7 @@ void Visual::setSize(
 /// \param    value: El nou tamany.
 ///
 void Visual::setMinSize(
-	const Size &value) {
+	const Size& value) {
 
 	if (_minSize != value) {
 		_minSize = value;
@@ -384,7 +389,7 @@ void Visual::setMinSize(
 /// \param    value: El nou marge.
 ///
 void Visual::setMargin(
-	const Thickness &value) {
+	const Thickness& value) {
 
 	if (_margin != value) {
 		_margin = value;
@@ -422,34 +427,6 @@ void Visual::setVerticalAlignment(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Es crida quant hi ha que despatxar un missatge.
-/// \param    msg: El missatge a despatxar.
-///
-void Visual::onDispatch(
-	const Message& msg) {
-
-	switch (msg.msgId) {
-#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
-		case MsgId::keyboardEvent:
-			onDispatchKeyboardEvent(msg.keyboard);
-			break;
-#endif
-#if eosGuiService_TouchPadEnabled
-		case MsgId::touchPadEvent:
-			onDispatchTouchPadEvent(msg.touchPad);
-			break;
-#endif
-		default:
-			// Si no el procesa, pasa al pare.
-			if (_parent != nullptr)
-				_parent->onDispatch(msg);
-			break;
-	}
-
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Es crida quant s'ha de renderitzar el visual.
 /// \param    context: Context de renderitzat.
 ///
@@ -482,8 +459,36 @@ void Visual::onDeactivate(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els events del teclat.
-/// \param    msg: L'event a procesat.
+/// \brief    Es crida quant hi ha que despatxar un missatge.
+/// \param    msg: El missatge a despatxar.
+///
+void Visual::onDispatch(
+	const Message& msg) {
+
+	switch (msg.msgId) {
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
+		case MsgId::keyboardEvent:
+			onDispatchKeyboardEvent(msg.keyboard);
+			break;
+#endif
+#if eosGuiService_TouchpadEnabled
+		case MsgId::touchpadEvent:
+			onDispatchTouchpadEvent(msg.touchpad);
+			break;
+#endif
+		default:
+			// Si no el procesa, pasa al pare.
+			if (_parent != nullptr)
+				_parent->onDispatch(msg);
+			break;
+	}
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Despatxa els missatges del teclat.
+/// \param    msg: El missatge a procesar.
 ///
 #if eosGuiService_KeyboardEnablked || eosGuiService_VirtualKeyboardEnabled
 void Visual::onDispatchKeyboardEvent(
@@ -497,11 +502,11 @@ void Visual::onDispatchKeyboardEvent(
 
 	switch (msg.event) {
 		case MsgKeyboardEvent::press:
-			onKeyboardPress(msg.keyCode, msg.keyFlags, ch);
+			onKeyboardPress(KeyboardPressEventArgs(this, msg.keyCode, msg.keyFlags, ch));
 			break;
 
 		case MsgKeyboardEvent::release:
-			onKeyboardRelease(msg.keyCode, msg.keyFlags, ch);
+			onKeyboardRelease(KeyboardReleaseEventArgs(this, msg.keyCode, msg.keyFlags, ch));
 			break;
 	}
 }
@@ -509,68 +514,60 @@ void Visual::onDispatchKeyboardEvent(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa el event 'press' del teclat
-/// \param    keyCode: Codi de la tecla
-/// \param    flags: Indicadors de la trecla: shift, control, etc.
-/// \param    ch: Caracter de la tecla, 0 si no correspon a cap.
+/// \brief    Procesa el event 'press' del teclat.
+/// \param    args: Els parametres del event.
 ///
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
 void Visual::onKeyboardPress(
-	KeyCode keyCode,
-	KeyFlags flags,
-	char ch) {
+	const KeyboardPressEventArgs& args) {
 
 	if (_parent != nullptr)
-		_parent->onKeyboardPress(keyCode, flags, ch);
+		_parent->onKeyboardPress(args);
 }
 #endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa el event 'release' del teclat
-/// \param    keyCode: Codi de la tecla
-/// \param    flags: Indicadors de la trecla: shift, control, etc.
-/// \param    ch: Caracter de la tecla, 0 si no correspon a cap.
+/// \param    args: El parametres del event.
 ///
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
 void Visual::onKeyboardRelease(
-	KeyCode keyCode,
-	KeyFlags flags,
-	char ch) {
+	const KeyboardReleaseEventArgs& args) {
 
 	if (_parent != nullptr)
-		_parent->onKeyboardRelease(keyCode, flags, ch);
+		_parent->onKeyboardRelease(args);
 }
 #endif
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa els events del touchpad
-/// \param    msg: L'event a procesar.
+/// \brief    Despatxa els missatges del touchpad.
+/// \param    msg: El missatge a procesar.
 ///
-#if eosGuiService_TouchPadEnabled
-void Visual::onDispatchTouchPadEvent(
-	const MsgTouchPad& msg) {
+#if eosGuiService_TouchpadEnabled
+void Visual::onDispatchTouchpadEvent(
+	const MsgTouchpad& msg) {
 
 	switch (msg.event) {
-		case MsgTouchPadEvent::enter:
-			onTouchPadEnter();
+		case MsgTouchpadEvent::enter:
+			onTouchpadEnter(TouchpadEnterEventArgs(this));
 			break;
 
-		case MsgTouchPadEvent::leave:
-			onTouchPadLeave();
+		case MsgTouchpadEvent::leave:
+			onTouchpadLeave(TouchpadLeaveEventArgs(this));
 			break;
 
-		case MsgTouchPadEvent::move:
-			onTouchPadMove(Point(msg.x, msg.y));
+		case MsgTouchpadEvent::move:
+			onTouchpadMove(TouchpadMoveEventArgs(this, Point(msg.x, msg.y)));
 			break;
 
-		case MsgTouchPadEvent::press:
-			onTouchPadPress(Point(msg.x, msg.y));
+		case MsgTouchpadEvent::press:
+			onTouchpadPress(TouchpadPressEventArgs(this, Point(msg.x, msg.y)));
 			break;
 
-		case MsgTouchPadEvent::release:
-			onTouchPadRelease();
+		case MsgTouchpadEvent::release:
+			onTouchpadRelease(TouchpadReleaseEventArgs(this));
 			break;
 	}
 }
@@ -579,62 +576,72 @@ void Visual::onDispatchTouchPadEvent(
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa l'event 'enter' del touchpad
+/// \param    args: Els parametres del event.
 ///
-#if eosGuiService_TouchPadEnabled
-void Visual::onTouchPadEnter() {
+#if eosGuiService_TouchpadEnabled
+void Visual::onTouchpadEnter(
+	const TouchpadEnterEventArgs& args) {
 
 	if (_parent != nullptr)
-		_parent->onTouchPadEnter();
+		_parent->onTouchpadEnter(args);
 }
 #endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa el event 'leave' del touchpad
+/// \param    args: Els parametres del event.
 ///
-#if eosGuiService_TouchPadEnabled
-void Visual::onTouchPadLeave() {
+#if eosGuiService_TouchpadEnabled
+void Visual::onTouchpadLeave(
+	const TouchpadLeaveEventArgs& args) {
 
 	if (_parent != nullptr)
-		_parent->onTouchPadLeave();
+		_parent->onTouchpadLeave(args);
 }
 #endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa el event 'press' del touchpad.
+/// \param    args: Els parametres del event.
 ///
-#if eosGuiService_TouchPadEnabled
-void Visual::onTouchPadPress(
-	const Point &position) {
+#if eosGuiService_TouchpadEnabled
+void Visual::onTouchpadPress(
+	const TouchpadPressEventArgs& args) {
+
+	if (_touchpadPressEventCallback != nullptr)
+		_touchpadPressEventCallback->execute(args);
 
 	if (_parent != nullptr)
-		_parent->onTouchPadPress(position);
+		_parent->onTouchpadPress(args);
 }
 #endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa el event 'release' del touchpad.
-//
-#if eosGuiService_TouchPadEnabled
-void Visual::onTouchPadRelease() {
+/// \param    args: Els parametres del event.
+///
+#if eosGuiService_TouchpadEnabled
+void Visual::onTouchpadRelease(
+	const TouchpadReleaseEventArgs& args) {
 
 	if (_parent != nullptr)
-		_parent->onTouchPadRelease();
+		_parent->onTouchpadRelease(args);
 }
 #endif
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Procesa el event 'move' del touchpad.
-/// \param    position: Posicio del punter.
+/// \param    args: Els parametrees del event.
 ///
-#if eosGuiService_TouchPadEnabled
-void Visual::onTouchPadMove(
-	const Point& position) {
+#if eosGuiService_TouchpadEnabled
+void Visual::onTouchpadMove(
+	const TouchpadMoveEventArgs& args) {
 
 	if (_parent != nullptr)
-		_parent->onTouchPadMove(position);
+		_parent->onTouchpadMove(args);
 }
 #endif

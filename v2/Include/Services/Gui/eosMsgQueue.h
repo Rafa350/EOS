@@ -3,6 +3,7 @@
 
 
 #include "eos.h"
+#include "System/eosSingleton.h"
 #include "System/Core/eosQueue.h"
 
 
@@ -50,9 +51,9 @@ namespace eos {
 
 #endif
 
-#if eosGuiService_TouchPadEnabled
+#if eosGuiService_TouchpadEnabled
 
-    enum class MsgTouchPadEvent: uint8_t {
+    enum class MsgTouchpadEvent: uint8_t {
     	press,
 		release,
 		move,
@@ -60,8 +61,8 @@ namespace eos {
 		leave
     };
 
-    struct MsgTouchPad {
-        MsgTouchPadEvent event;
+    struct MsgTouchpad {
+        MsgTouchpadEvent event;
         int x;
         int y;
     };
@@ -75,7 +76,7 @@ namespace eos {
 
     enum class MsgId: uint8_t {
     	null,
-    	touchPadEvent,
+    	touchpadEvent,
 		selectorEvent,
 		keyboardEvent,
 		commandEvent,
@@ -93,8 +94,8 @@ namespace eos {
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
             MsgKeyboard keyboard;
 #endif
-#if eosGuiService_TouchPadEnabled
-            MsgTouchPad touchPad;
+#if eosGuiService_TouchpadEnabled
+            MsgTouchpad touchpad;
 #endif
             MsgCommand command;
         };
@@ -102,20 +103,20 @@ namespace eos {
 
     class MsgQueue {
     	private:
-    		static MsgQueue* _instance;
     		Queue<Message> _queue;
 
-    	private:
-    		MsgQueue();
-
     	public:
+    		MsgQueue();
+    		MsgQueue(const MsgQueue&) = delete;
+
+    		MsgQueue& operator = (const MsgQueue&) = delete;
+
     		void send(const Message& msg);
     		bool receive(Message& msg);
     		bool isEmpty() const;
-
-    		static MsgQueue* getInstance();
     };
 
+    typedef Singleton<MsgQueue> MessageQueue;
 }
 
 

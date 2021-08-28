@@ -28,7 +28,7 @@ void VirtualKeyboard::buttonEventHandler(
 
 	if (args.event == ButtonBase::EventType::click) {
 
-		// Genera el missatge de teclat
+		// Genera el missatge de teclat, com si fos un teclat real
 		//
 		Message msg = {
 			.msgId = MsgId::keyboardEvent,
@@ -51,4 +51,4 @@ void VirtualKeyboard::buttonEventHandler(
 			_eventCallback->execute(vkArgs);
 		}
 	}
-}
+	}

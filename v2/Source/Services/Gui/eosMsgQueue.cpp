@@ -5,7 +5,7 @@
 using namespace eos;
 
 
-MsgQueue *MsgQueue::_instance = nullptr;
+//MsgQueue *MsgQueue::_instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
@@ -21,12 +21,12 @@ MsgQueue::MsgQueue():
 /// \brief    Obte una instancia unica del objecte.
 /// \return   La instancio del objecte.
 ///
-MsgQueue* MsgQueue::getInstance() {
+/*MsgQueue* MsgQueue::getInstance() {
 
 	if (_instance == nullptr)
 		_instance = new MsgQueue();
 	return _instance;
-}
+}*/
 
 
 /// ----------------------------------------------------------------------
