@@ -76,10 +76,10 @@ namespace eos {
 
     enum class MsgId: uint8_t {
     	null,
-    	touchpadEvent,
-		selectorEvent,
-		keyboardEvent,
-		commandEvent,
+    	touchpad,
+		selector,
+		keyboard,
+		command,
     };
 
     class Visual;

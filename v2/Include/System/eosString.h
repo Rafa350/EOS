@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #ifdef EOS_USE_STD_STRING
-	#include "System/Core/eosStdHeapAllocator.h"
+	#include "System/Collections/eosStdHeapAllocator.h"
     #include <string>
 #endif
 

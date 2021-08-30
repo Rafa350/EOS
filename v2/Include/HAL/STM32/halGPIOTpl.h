@@ -57,12 +57,6 @@ namespace eos {
 		pin15 = HAL_GPIO_PIN_15
 	};
 
-	template <GPIOPort port, GPIOPin pin>
-	struct GPIOPinInfo {
-		enum class GPIOAlt: halGPIOAlt {
-		};
-	};
-
 	/// \brief GPIO Driver type identifiers.
 	enum class GPIODriver {
 		pushPull,
@@ -90,13 +84,23 @@ namespace eos {
 		clr = HAL_GPIO_INIT_CLR
 	};
 
+	template <GPIOPort port_, GPIOPin pin_>
+	struct GPIOPinInfo {
+		enum class GPIOAlt: halGPIOAlt {
+		};
+	};
+
 	/// \class GPIOPinAdapter
 	/// \brief Adapter class form pins
 	///
-	template <GPIOPort port, GPIOPin pin>
+	template <GPIOPort port_, GPIOPin pin_>
 	class GPIOPinAdapter {
 		public:
-			using GPIOAlt = typename GPIOPinInfo<port, pin>::GPIOAlt;
+			using GPIOAlt = typename GPIOPinInfo<port_, pin_>::GPIOAlt;
+
+		public:
+			constexpr static const GPIOPort port = port_;
+			constexpr static const GPIOPin pin = pin_;
 
 		public:
 			inline static void initInput(GPIOSpeed speed, GPIOPull pull = GPIOPull::none) {
@@ -104,7 +108,7 @@ namespace eos {
 					HAL_GPIO_MODE_INPUT |
 					halGPIOOptions(speed) |
 					halGPIOOptions(pull);
-				halGPIOInitializePin(halGPIOPort(port), halGPIOPin(pin), options, HAL_GPIO_AF_NONE);
+				halGPIOInitializePin(halGPIOPort(port_), halGPIOPin(pin_), options, HAL_GPIO_AF_NONE);
 			}
 
 			inline static void initOutput(GPIOSpeed speed, GPIODriver driver, GPIOState state = GPIOState::noChange) {
@@ -113,7 +117,7 @@ namespace eos {
 					halGPIOOptions(speed) |
 					halGPIOOptions(state) |
 					(driver == GPIODriver::pushPull ? HAL_GPIO_MODE_OUTPUT_PP : HAL_GPIO_MODE_OUTPUT_OD);
-				halGPIOInitializePin(halGPIOPort(port), halGPIOPin(pin), options, HAL_GPIO_AF_NONE);
+				halGPIOInitializePin(halGPIOPort(port_), halGPIOPin(pin_), options, HAL_GPIO_AF_NONE);
 			}
 
 			inline static void initAlt(GPIOSpeed speed, GPIODriver driver, GPIOAlt alt) {
@@ -121,61 +125,47 @@ namespace eos {
 					HAL_GPIO_MODE_INPUT |
 					halGPIOOptions(speed) |
 					(driver == GPIODriver::pushPull ? HAL_GPIO_MODE_ALT_PP : HAL_GPIO_MODE_ALT_OD);
-				halGPIOInitializePin(halGPIOPort(port), halGPIOPin(pin), options, halGPIOAlt(alt));
+				halGPIOInitializePin(halGPIOPort(port_), halGPIOPin(pin_), options, halGPIOAlt(alt));
 			}
 
 			inline static void initialize(halGPIOOptions options) {
-				halGPIOInitializePin(halGPIOPort(port), halGPIOPin(pin), options, HAL_GPIO_AF_NONE);
+				halGPIOInitializePin(halGPIOPort(port_), halGPIOPin(pin_), options, HAL_GPIO_AF_NONE);
 			}
 
 			inline static void initialize(halGPIOOptions options, halGPIOAlt alt) {
-				halGPIOInitializePin(halGPIOPort(port), halGPIOPin(pin), options, alt);
+				halGPIOInitializePin(halGPIOPort(port_), halGPIOPin(pin_), options, alt);
 			}
 
 			/// \brief Set pin to ON state.
 			///
 			inline static void set() {
-				halGPIOSetPin(halGPIOPort(port), halGPIOPin(pin));
+				halGPIOSetPin(halGPIOPort(port_), halGPIOPin(pin_));
 			}
 
 			/// \brief Set pin to OFF state.
 			///
 			inline static void clear() {
-				halGPIOClearPin(halGPIOPort(port), halGPIOPin(pin));
+				halGPIOClearPin(halGPIOPort(port_), halGPIOPin(pin_));
 			}
 
 			/// \brief Toggle pin state.
 			///
 			inline static void toggle() {
-				halGPIOTogglePin(halGPIOPort(port), halGPIOPin(pin));
+				halGPIOTogglePin(halGPIOPort(port_), halGPIOPin(pin_));
 			}
 
 			/// \brief Read pin state
 			/// \return Pin state.
 			///
 			inline static bool read() {
-				return halGPIOReadPin(halGPIOPort(port), halGPIOPin(pin));
+				return halGPIOReadPin(halGPIOPort(port_), halGPIOPin(pin_));
 			}
 
 			/// \brief Write pin state.
 			/// \param b: State to write.
 			///
 			inline static void write(bool b) {
-				halGPIOWritePin(halGPIOPort(port), halGPIOPin(pin), b);
-			}
-
-			/// \brief Retrieve the port
-			/// \return The port.
-			///
-			inline constexpr static GPIOPort getPort() {
-				return port;
-			}
-
-			/// \brief Retrieve the pin.
-			/// \return The pin.
-			///
-			inline constexpr static GPIOPin getPin() {
-				return pin;
+				halGPIOWritePin(halGPIOPort(port_), halGPIOPin(pin_), b);
 			}
 
 			/// \brief Operator '='. Assign a state to pin.
@@ -183,12 +173,12 @@ namespace eos {
 			/// \return Reference to this.
 			///
 			inline GPIOPinAdapter& operator = (bool b) {
-				halGPIOWritePin(halGPIOPort(port), halGPIOPin(pin), b);
+				halGPIOWritePin(halGPIOPort(port_), halGPIOPin(pin_), b);
 				return *this;
 			}
 
 			inline operator bool () {
-				return halGPIOReadPin(halGPIOPort(port), halGPIOPin(pin));
+				return halGPIOReadPin(halGPIOPort(port_), halGPIOPin(pin_));
 			}
 	};
 

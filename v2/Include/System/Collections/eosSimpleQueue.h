@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Core/eosStdHeapAllocator.h"
+#include "System/Collections/eosStdHeapAllocator.h"
 
 
 namespace eos {
@@ -18,13 +18,13 @@ namespace eos {
             ///        com un buffer circular.
             /// \remarks El contenidor enmagatzema copies del element.
             ///
-            template <typename Element, int maxCapacity = 10>
+            template <typename Element_, int maxCapacity_ = 10>
             class SimpleQueue {
                 public:
-                    typedef Element Value;
-                    typedef Element& Reference;
-                    typedef const Element& CReference;
-                    typedef Element* Pointer;
+                    typedef Element_ Value;
+                    typedef Element_& Reference;
+                    typedef const Element_& CReference;
+                    typedef Element_* Pointer;
 
                 private:
                     Pointer _container;
@@ -37,7 +37,7 @@ namespace eos {
                     /// \brief Constructor per defecte.
                     ///
                     SimpleQueue() :
-                    	_container(new Value[maxCapacity]()),
+                    	_container(new Value[maxCapacity_]()),
 						_iput(0),
 						_iget(0),
 						_count(0) {
@@ -56,10 +56,10 @@ namespace eos {
                     /// \return True si tot es correcte.
                     ///
                     bool enqueue(CReference element) {
-                    	if (_count < maxCapacity) {
+                    	if (_count < maxCapacity_) {
                     		_container[_iput] = element;
                     		_count++;
-                    		if (++_iput == maxCapacity)
+                    		if (++_iput == maxCapacity_)
                     			_iput = 0;
                     		return true;
                     	}
@@ -73,7 +73,7 @@ namespace eos {
                     	eosAsert(_count > 0);
                    		Reference element = _container[_iget];
                     	_count--;
-                    	if (++_iget == maxCapacity)
+                    	if (++_iget == maxCapacity_)
                     		_iget = 0;
                     	return element;
                     }
@@ -97,7 +97,7 @@ namespace eos {
                     /// \return El valor.
                     ///
                     inline int getCapacity() const {
-                        return maxCapacity;
+                        return maxCapacity_;
                     }
 
                     /// \brief Indica si la cua es buida.
@@ -111,7 +111,7 @@ namespace eos {
                     /// \return True si es plena.
                     ///
                     inline bool isFull() const {
-                        return _count == maxCapacity;
+                        return _count == maxCapacity_;
                     }
             };
 

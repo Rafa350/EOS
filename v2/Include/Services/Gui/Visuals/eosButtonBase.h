@@ -22,13 +22,13 @@ namespace eos {
 
 	typedef ICallbackP1<const ButtonEventArgs&> IButtonEventCallback;
 
-	template <typename C>
-	class ButtonEventCallback: public CallbackP1<C, const ButtonEventArgs&> {
+	template <typename C_>
+	class ButtonEventCallback: public CallbackP1<C_, const ButtonEventArgs&> {
 		public:
-			using M = typename CallbackP1<C, const ButtonEventArgs&>::Method;
+			using M = typename CallbackP1<C_, const ButtonEventArgs&>::Method;
 		public:
-			inline ButtonEventCallback(C* instance, M handler):
-				CallbackP1<C, const ButtonEventArgs&>(instance, handler) {
+			inline ButtonEventCallback(C_* instance, M handler):
+				CallbackP1<C_, const ButtonEventArgs&>(instance, handler) {
 			}
 	};
 

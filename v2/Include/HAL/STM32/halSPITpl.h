@@ -48,7 +48,7 @@ namespace eos {
 		clkdiv_256 = HAL_SPI_CLOCKDIV_256
 	};
 
-	template <SPIChannel channel>
+	template <SPIChannel channel_>
 	class SPIAdapter {
 		private:
 			constexpr static const unsigned _defaultBlockTime = 1000;
@@ -58,6 +58,9 @@ namespace eos {
 		private:
 		    halSPIData _data;
 			halSPIHandler _handler;
+
+		public:
+			constexpr static const SPIChannel channel = channel_;
 
 		public:
 			inline void initMaster(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
@@ -80,7 +83,7 @@ namespace eos {
 
 			inline void initialize(halSPIOptions options) {
 				halSPISettings settings;
-				settings.channel = halSPIChannel(channel);
+				settings.channel = halSPIChannel(channel_);
 				settings.options = options;
 				settings.isrFunction = nullptr;
 				settings.isrParams = nullptr;
@@ -107,122 +110,122 @@ namespace eos {
 				return halSPIDisableInterrupts(_handler, events);
 			}
 
-			template <GPIOPort port, GPIOPin pin>
-			inline static void setSCKPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				if constexpr (channel == SPIChannel::channel1)
+			template <GPIOPort port_, GPIOPin pin_>
+			inline static void setSCKPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+				if constexpr (channel_ == SPIChannel::channel1)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi1_SCK);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi1_SCK);
 
-				if constexpr (channel == SPIChannel::channel2)
+				if constexpr (channel_ == SPIChannel::channel2)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi2_SCK);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi2_SCK);
 
-				if constexpr (channel == SPIChannel::channel3)
+				if constexpr (channel_ == SPIChannel::channel3)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi3_SCK);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi3_SCK);
 
-				if constexpr (channel == SPIChannel::channel4)
+				if constexpr (channel_ == SPIChannel::channel4)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi4_SCK);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi4_SCK);
 
-				if constexpr (channel == SPIChannel::channel5)
+				if constexpr (channel_ == SPIChannel::channel5)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi5_SCK);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi5_SCK);
 
-				if constexpr (channel == SPIChannel::channel6)
+				if constexpr (channel_ == SPIChannel::channel6)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi6_SCK);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi6_SCK);
 			}
 
-			template <GPIOPort port, GPIOPin pin>
-			inline static void setMOSIPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				if constexpr (channel == SPIChannel::channel1)
+			template <GPIOPort port_, GPIOPin pin_>
+			inline static void setMOSIPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+				if constexpr (channel_ == SPIChannel::channel1)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi1_MOSI);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi1_MOSI);
 
-				if constexpr (channel == SPIChannel::channel2)
+				if constexpr (channel_ == SPIChannel::channel2)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi2_MOSI);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi2_MOSI);
 
-				if constexpr (channel == SPIChannel::channel3)
+				if constexpr (channel_ == SPIChannel::channel3)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi3_MOSI);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi3_MOSI);
 
-				if constexpr (channel == SPIChannel::channel4)
+				if constexpr (channel_ == SPIChannel::channel4)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi4_MOSI);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi4_MOSI);
 
-				if constexpr (channel == SPIChannel::channel5)
+				if constexpr (channel_ == SPIChannel::channel5)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi5_MOSI);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi5_MOSI);
 
-				if constexpr (channel == SPIChannel::channel6)
+				if constexpr (channel_ == SPIChannel::channel6)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi6_MOSI);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi6_MOSI);
 
 			}
 
-			template <GPIOPort port, GPIOPin pin>
-			inline static void setMISOPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				if constexpr (channel == SPIChannel::channel1)
+			template <GPIOPort port_, GPIOPin pin_>
+			inline static void setMISOPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+				if constexpr (channel_ == SPIChannel::channel1)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi1_MISO);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi1_MISO);
 
-				if constexpr (channel == SPIChannel::channel2)
+				if constexpr (channel_ == SPIChannel::channel2)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi2_MISO);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi2_MISO);
 
-				if constexpr (channel == SPIChannel::channel2)
+				if constexpr (channel_ == SPIChannel::channel2)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi2_MISO);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi2_MISO);
 
-				if constexpr (channel == SPIChannel::channel3)
+				if constexpr (channel_ == SPIChannel::channel3)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi3_MISO);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi3_MISO);
 
-				if constexpr (channel == SPIChannel::channel5)
+				if constexpr (channel_ == SPIChannel::channel5)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi5_MISO);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi5_MISO);
 
-				if constexpr (channel == SPIChannel::channel6)
+				if constexpr (channel_ == SPIChannel::channel6)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::spi6_MISO);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi6_MISO);
 
 			}
 

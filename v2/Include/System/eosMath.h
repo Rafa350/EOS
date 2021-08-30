@@ -11,18 +11,18 @@ namespace eos {
 
     namespace Math {
 
-		template <typename T>
-		inline T min(T a, T b) {
+		template <typename T_>
+		inline T_ min(T_ a, T_ b) {
 			return a < b ? a : b;
 		}
 
-		template <typename T>
-		inline T max(T a, T b) {
+		template <typename T_>
+		inline T_ max(T_ a, T_ b) {
 			return a > b ? a : b;
 		}
 
-		template <typename T>
-		inline T abs(T a) {
+		template <typename T_>
+		inline T_ abs(T_ a) {
 			return a < 0 ? -a : a;
 		}
 
@@ -36,9 +36,9 @@ namespace eos {
 		/// \brief Intercambia dues variables A i B.
 		/// \param a: Variable A.
 		/// \param b: Variable B.
-		template <typename T>
-		inline void swap(T &a, T &b) {
-			T t = a;
+		template <typename T_>
+		inline void swap(T_ &a, T_ &b) {
+			T_ t = a;
 			a = b;
 			b = t;
 		}

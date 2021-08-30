@@ -59,23 +59,23 @@ namespace eos {
 	typedef ICallbackP1<const VisualEventArgs&> ITouchpadEnterEventCallback;
 	typedef ICallbackP1<const VisualEventArgs&> ITouchpadLeaveEventCallback;
 
-	template <typename C>
-	class TouchpadMoveEventCallback: public CallbackP1<C, const TouchpadMoveEventArgs&> {
+	template <typename C_>
+	class TouchpadMoveEventCallback: public CallbackP1<C_, const TouchpadMoveEventArgs&> {
 		public:
-			using M = typename CallbackP1<C, const TouchpadMoveEventArgs&>::Method;
+			using M = typename CallbackP1<C_, const TouchpadMoveEventArgs&>::Method;
 		public:
-			inline TouchpadMoveEventCallback(C* instance, M handler):
-				CallbackP1<C, const TouchpadMoveEventArgs&>(instance, handler) {
+			inline TouchpadMoveEventCallback(C_* instance, M handler):
+				CallbackP1<C_, const TouchpadMoveEventArgs&>(instance, handler) {
 			}
 	};
 
-	template <typename C>
-	class TouchpadPressEventCallback: public CallbackP1<C, const TouchpadPressEventArgs&> {
+	template <typename C_>
+	class TouchpadPressEventCallback: public CallbackP1<C_, const TouchpadPressEventArgs&> {
 		public:
-			using M = typename CallbackP1<C, const TouchpadPressEventArgs&>::Method;
+			using M = typename CallbackP1<C_, const TouchpadPressEventArgs&>::Method;
 		public:
-			inline TouchpadPressEventCallback(C* instance, M handler):
-				CallbackP1<C, const TouchpadPressEventArgs&>(instance, handler) {
+			inline TouchpadPressEventCallback(C_* instance, M handler):
+				CallbackP1<C_, const TouchpadPressEventArgs&>(instance, handler) {
 			}
 	};
 
@@ -101,23 +101,23 @@ namespace eos {
 	typedef ICallbackP1<const KeyboardPressEventArgs&> IKeyboardPressEventCallback;
 	typedef ICallbackP1<const KeyboardReleaseEventArgs&> IKeyboardReleaseEventCallback;
 
-	template <typename C>
-	class KeyboardPressEventCallback: public CallbackP1<C, const KeyboardPressEventArgs&> {
+	template <typename C_>
+	class KeyboardPressEventCallback: public CallbackP1<C_, const KeyboardPressEventArgs&> {
 		public:
-			using M = typename CallbackP1<C, const KeyboardPressEventArgs&>::Method;
+			using M = typename CallbackP1<C_, const KeyboardPressEventArgs&>::Method;
 		public:
-			inline KeyboardPressEventCallback(C* instance, M handler):
-				CallbackP1<C, const KeyboardPressEventArgs&>(instance, handler) {
+			inline KeyboardPressEventCallback(C_* instance, M handler):
+				CallbackP1<C_, const KeyboardPressEventArgs&>(instance, handler) {
 			}
 	};
 
-	template <typename C>
-	class KeyboardReleaseEventCallback: public CallbackP1<C, const KeyboardReleaseEventArgs&> {
+	template <typename C_>
+	class KeyboardReleaseEventCallback: public CallbackP1<C_, const KeyboardReleaseEventArgs&> {
 		public:
-			using M = typename CallbackP1<C, const KeyboardReleaseEventArgs&>::Method;
+			using M = typename CallbackP1<C_, const KeyboardReleaseEventArgs&>::Method;
 		public:
-			inline KeyboardReleaseEventCallback(C* instance, M handler):
-				CallbackP1<C, const KeyboardReleaseEventArgs&>(instance, handler) {
+			inline KeyboardReleaseEventCallback(C_* instance, M handler):
+				CallbackP1<C_, const KeyboardReleaseEventArgs&>(instance, handler) {
 			}
 	};
 #endif

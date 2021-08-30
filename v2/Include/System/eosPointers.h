@@ -10,19 +10,19 @@
 
 namespace eos {
 
-	template <typename T>
+	template <typename T_>
 	class SharedPtr {
         private:
-            T* _ptr;
+            T_* _ptr;
             RefCounter* _count;
 
         public:
-            SharedPtr(T* ptr):
+            SharedPtr(T_* ptr):
             	_ptr(ptr),
 				_count(new RefCounter(1)) {
             }
 
-            SharedPtr (const SharedPtr<T>& other):
+            SharedPtr (const SharedPtr<T_>& other):
                 _ptr(other._ptr),
                 _count(other._count) {
                 _count->inc();
@@ -38,7 +38,7 @@ namespace eos {
                 }
             }
 
-            SharedPtr<T>& operator = (const SharedPtr<T>& other) {
+            SharedPtr<T_>& operator = (const SharedPtr<T_>& other) {
                 if (this != &other) {
                     if (_count != nullptr) {
                         _count->dec();
@@ -70,19 +70,19 @@ namespace eos {
                 }
             }
 
-            inline bool operator == (const SharedPtr<T>& other) const  {
+            inline bool operator == (const SharedPtr<T_>& other) const  {
             	return _ptr == other._ptr;
             }
 
-            inline bool operator != (const SharedPtr<T>& other) const  {
+            inline bool operator != (const SharedPtr<T_>& other) const  {
             	return _ptr != other._ptr;
             }
 
-            inline T& operator * () const {
+            inline T_& operator * () const {
                 return *_ptr;
             }
 
-            inline T* operator -> () const {
+            inline T_* operator -> () const {
                 return _ptr;
             }
     };

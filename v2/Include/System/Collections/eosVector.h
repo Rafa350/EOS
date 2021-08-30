@@ -7,7 +7,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "System/eosMath.h"
-#include "System/Core/eosStdHeapAllocator.h"
+#include "System/Collections/eosStdHeapAllocator.h"
 
 // Std includes
 //
@@ -21,11 +21,11 @@ namespace eos {
         namespace Collections {
 #endif            
 
-            template <typename Element, int initialCapacity = 10, bool fixedCapacity = false>
+            template <typename Element_, int initialCapacity_ = 10, bool fixedCapacity_ = false>
             class Vector {
             	private:
-            		using Allocator = StdHeapAllocator<Element>;
-            		using Container = std::vector<Element, Allocator>;
+            		using Allocator = StdHeapAllocator<Element_>;
+            		using Container = std::vector<Element_, Allocator>;
 
             	public:
                     typedef typename Container::value_type Value;
@@ -44,8 +44,8 @@ namespace eos {
                     /// \brief Constructor per defecte
                     ///
                     Vector() {
-                    	if constexpr (initialCapacity > 0)
-                    		_c.reserve(initialCapacity);
+                    	if constexpr (initialCapacity_ > 0)
+                    		_c.reserve(initialCapacity_);
                     }
 
                     /// \brief Constructor copia
@@ -211,7 +211,7 @@ namespace eos {
                     /// \return True si es buit.
                     ///
                     inline bool isFull() const {
-                    	if constexpr (fixedCapacity)
+                    	if constexpr (fixedCapacity_)
                     		return _c.size() == _c.capacity();
                     	else
                     		return false;

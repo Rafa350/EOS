@@ -19,17 +19,19 @@ namespace eos {
 		channel4 = HAL_I2C_CHANNEL_4
 	};
 
-	template <I2CChannel channel>
+	template <I2CChannel channel_>
 	class I2CAdapter {
 		private:
 			halI2CData _data;
 			halI2CHandler _handler;
 
 		public:
-			inline void initMaster() {
+			constexpr static const I2CChannel channel = channel_;
 
+		public:
+			inline void initMaster() {
 				halI2CMasterInitializeInfo initInfo;
-				initInfo.channel = halI2CChannel(channel);
+				initInfo.channel = halI2CChannel(channel_);
 				_handler = halI2CMasterInitialize(&_data, &initInfo);
 			}
 
@@ -63,25 +65,25 @@ namespace eos {
 
 			template <GPIOPort port, GPIOPin pin>
 			inline static void setSCLPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				if constexpr (channel == I2CChannel::channel1)
+				if constexpr (channel_ == I2CChannel::channel1)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
 						GPIOPinAdapter<port, pin>::GPIOAlt::i2c1_SCL);
 
-				if constexpr (channel == I2CChannel::channel2)
+				if constexpr (channel_ == I2CChannel::channel2)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
 						GPIOPinAdapter<port, pin>::GPIOAlt::i2c2_SCL);
 
-				if constexpr (channel == I2CChannel::channel3)
+				if constexpr (channel_ == I2CChannel::channel3)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
 						GPIOPinAdapter<port, pin>::GPIOAlt::i2c3_SCL);
 
-				if constexpr (channel == I2CChannel::channel4)
+				if constexpr (channel_ == I2CChannel::channel4)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
@@ -90,25 +92,25 @@ namespace eos {
 
 			template <GPIOPort port, GPIOPin pin>
 			inline static void setSDAPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				if constexpr (channel == I2CChannel::channel1)
+				if constexpr (channel_ == I2CChannel::channel1)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
 						GPIOPinAdapter<port, pin>::GPIOAlt::i2c1_SDA);
 
-				if constexpr (channel == I2CChannel::channel2)
+				if constexpr (channel_ == I2CChannel::channel2)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
 						GPIOPinAdapter<port, pin>::GPIOAlt::i2c2_SDA);
 
-				if constexpr (channel == I2CChannel::channel3)
+				if constexpr (channel_ == I2CChannel::channel3)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
 						GPIOPinAdapter<port, pin>::GPIOAlt::i2c3_SDA);
 
-				if constexpr (channel == I2CChannel::channel4)
+				if constexpr (channel_ == I2CChannel::channel4)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,

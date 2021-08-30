@@ -474,12 +474,12 @@ void Visual::onDispatchMessage(
 
 	switch (msg.msgId) {
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
-		case MsgId::keyboardEvent:
+		case MsgId::keyboard:
 			onDispatchKeyboardMessage(msg.keyboard);
 			break;
 #endif
 #if eosGuiService_TouchpadEnabled
-		case MsgId::touchpadEvent:
+		case MsgId::touchpad:
 			onDispatchTouchpadMessage(msg.touchpad);
 			break;
 #endif

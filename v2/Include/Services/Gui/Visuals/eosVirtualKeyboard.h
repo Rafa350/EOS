@@ -26,13 +26,13 @@ namespace eos {
 
 	typedef ICallbackP1<const VirtualKeyboardEventArgs&> IVirtualKeyboardEventCallback;
 
-	template <typename C>
-	class VirtualKeyboardEventCallback: public CallbackP1<C, const VirtualKeyboardEventArgs&> {
+	template <typename C_>
+	class VirtualKeyboardEventCallback: public CallbackP1<C_, const VirtualKeyboardEventArgs&> {
 		public:
-			using M = typename CallbackP1<C, const VirtualKeyboardEventArgs&>::Method;
+			using M = typename CallbackP1<C_, const VirtualKeyboardEventArgs&>::Method;
 		public:
-			inline VirtualKeyboardEventCallback(C* instance, M handler):
-				CallbackP1<C, const VirtualKeyboardEventArgs&>(instance, handler) {
+			inline VirtualKeyboardEventCallback(C_* instance, M handler):
+				CallbackP1<C_, const VirtualKeyboardEventArgs&>(instance, handler) {
 			}
 	};
 

@@ -127,8 +127,8 @@ void MyApplication::createMainPanel() {
 	eos::Visual* keyboardPanel = createKeyboardPanel();
 
 	eos::Screen* screen = _guiService->getScreen();
-	//screen->addChild(keyboardPanel);
-	screen->addChild(tabControl);
+	screen->addChild(keyboardPanel);
+	//screen->addChild(tabControl);
 
 	eos::Visual* tb = VisualUtils::getVisual(screen,  1000);
 	_guiService->setFocus(tb);

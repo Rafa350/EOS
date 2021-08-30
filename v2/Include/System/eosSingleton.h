@@ -4,19 +4,16 @@
 
 namespace eos {
 
-	template <typename T>
-	class Singleton {
-		public:
-			typedef T Value;
-			typedef T& Reference;
 
+	template <typename T_>
+	class Singleton {
 		private:
 			Singleton() {}
 			~Singleton() {}
 
 		public:
-			static Reference instance() {
-				static Value s;
+			static T_& instance() {
+				static T_ s;
 				return s;
 			}
 
@@ -24,5 +21,6 @@ namespace eos {
 			Singleton& operator = (const Singleton&) = delete;
 	};
 }
+
 
 #endif // __eosSingleton__

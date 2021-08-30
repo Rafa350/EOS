@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Core/eosStdHeapAllocator.h"
+#include "System/Collections/eosStdHeapAllocator.h"
 
 
 /// Std includes
@@ -24,11 +24,11 @@ namespace eos {
 
             /// \brief Implementa una cua amb prioritat.
             ///
-            template <typename Element, typename Comparator, int initialCapacity = 0, bool fixedCapacity = false>
+            template <typename Element_, typename Comparator_, int initialCapacity_ = 0, bool fixedCapacity_ = false>
             class PriorityQueue {
                 private:
-                    using Allocator = StdHeapAllocator<Element>;
-                    using Container = std::vector<Element, Allocator>;
+                    using Allocator = StdHeapAllocator<Element_>;
+                    using Container = std::vector<Element_, Allocator>;
 
                 public:
                     typedef typename Container::value_type Value;
@@ -36,13 +36,13 @@ namespace eos {
                     typedef typename Container::const_reference CReference;
 
                 private:
-                    class Queue: public std::priority_queue<Element, Container, Comparator> {
+                    class Queue: public std::priority_queue<Element_, Container, Comparator_> {
                         public:
                             Queue() {
                             }
 
-                            Queue(Comparator comparator):
-                                std::priority_queue<Element, Container, Comparator>(comparator) {
+                            Queue(Comparator_ comparator):
+                                std::priority_queue<Element_, Container, Comparator_>(comparator) {
                             }
 
                             bool remove(CReference value) {
@@ -75,7 +75,7 @@ namespace eos {
                     /// \brief Contructor
                     /// \param comparator: El objecte comparador.
                     ///
-                    PriorityQueue(Comparator comparator) :
+                    PriorityQueue(Comparator_ comparator) :
                         _q(comparator) {
                     }
 
@@ -86,8 +86,8 @@ namespace eos {
                     /// \return True si tot es correcte.
                     ///
                     bool push(CReference element) {
-                        if constexpr (fixedCapacity)
-                            if (_q.size() == initialCapacity)
+                        if constexpr (fixedCapacity_)
+                            if (_q.size() == initialCapacity_)
                                 return false;
                         _q.push(element);
                         return true;
@@ -172,8 +172,8 @@ namespace eos {
                     /// \return True si es plena.
                     ///
                     inline bool isFull() const {
-                        if constexpr (fixedCapacity)
-                            return _q.size() == initialCapacity;
+                        if constexpr (fixedCapacity_)
+                            return _q.size() == initialCapacity_;
                         else
                             return false;
                     }

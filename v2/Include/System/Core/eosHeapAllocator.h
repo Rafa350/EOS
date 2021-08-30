@@ -21,22 +21,22 @@ namespace eos {
             int getSize() const;
     };
 
-    template <typename T, int size>
+    template <typename T_, int size_>
     class HeapAllocator {
         private:
             MemoryHeapAllocator _allocator;
 
         public:
             HeapAllocator() :
-            	_allocator(size) {}
+            	_allocator(size_) {}
 
-            inline T* allocate() {
-                void* p = _allocator.allocate(sizeof(T));
+            inline T_* allocate() {
+                void* p = _allocator.allocate(sizeof(T_));
                 eosAssert(p != nullptr);
-                return static_cast<T*>(p);
+                return static_cast<T_*>(p);
             }
 
-            inline void deallocate(T* p) {
+            inline void deallocate(T_* p) {
             	eosAssert(p != nullptr);
                 _allocator.deallocate(p);
             }

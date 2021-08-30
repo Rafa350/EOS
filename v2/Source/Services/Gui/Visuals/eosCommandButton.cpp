@@ -25,7 +25,7 @@ void CommandButton::onClick(
 
 	if (_id != -1) {
 		Message msg;
-		msg.msgId = MsgId::commandEvent;
+		msg.msgId = MsgId::command;
 		msg.target = (_target == nullptr) ? getParent() : _target;
 		msg.command.id = _id;
 		msg.command.param = _param;

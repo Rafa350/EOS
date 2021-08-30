@@ -55,7 +55,7 @@ namespace eos {
 
     /// \brief Pool de memoria
     ///
-    template <typename T, int maxBlocks>
+    template <typename T_, int maxBlocks_>
     class PoolAllocator {
 
     	private:
@@ -64,16 +64,16 @@ namespace eos {
     	public:
 
     		PoolAllocator():
-            	_allocator(sizeof(T), maxBlocks) {
+            	_allocator(sizeof(T_), maxBlocks_) {
             }
 
-    		inline T* allocate() {
+    		inline T_* allocate() {
     			void* p = _allocator.allocate();
     			eosAssert(p != nullptr);
-            	return static_cast<T*>(p);
+            	return static_cast<T_*>(p);
             }
 
-    		inline void deallocate(T* p) {
+    		inline void deallocate(T_* p) {
     			eosAssert(p != nullptr);
             	_allocator.deallocate(p);
             }
@@ -81,15 +81,15 @@ namespace eos {
 
     /// \brief Base pels objectes del pool de memoria
     ///
-    template <typename T, int maxBlocks>
+    template <typename T_, int maxBlocks_>
     class PoolAllocatable {
     	private:
-    		typedef Singleton<PoolAllocator<T, maxBlocks>> Allocator;
+    		typedef Singleton<PoolAllocator<T_, maxBlocks_>> Allocator;
 
     	public:
         	void* operator new(unsigned size) {
 
-        		eosAssert(size == sizeof(T));
+        		eosAssert(size == sizeof(T_));
 
         		auto& allocator = Allocator::instance();
         		return allocator.allocate();
@@ -100,7 +100,7 @@ namespace eos {
         		eosAssert(p != nullptr);
 
         		auto& allocator = Allocator::instance();
-        		allocator.deallocate(static_cast<T*>(p));
+        		allocator.deallocate(static_cast<T_*>(p));
         	}
     };
 }

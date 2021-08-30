@@ -10,12 +10,12 @@
 
 namespace eos {
 
-	template <typename Sender>
+	template <typename Sender_>
 	struct EventArgs {
 
-		Sender* sender;
+		Sender_* sender;
 
-		EventArgs(Sender* sender):
+		EventArgs(Sender_* sender):
 			sender(sender) {
 		}
 	};

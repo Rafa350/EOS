@@ -29,7 +29,7 @@ void VirtualKeyboard::buttonClickEventHandler(
 	// Genera el missatge de teclat, com si fos un teclat real
 	//
 	Message msg = {
-		.msgId = MsgId::keyboardEvent,
+		.msgId = MsgId::keyboard,
 		.target = nullptr,
 		.keyboard = {
 			.event = MsgKeyboardEvent::press,

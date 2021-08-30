@@ -148,7 +148,7 @@ void GuiService::onTask(
 	Message msg;
 	if (_msgQueue.receive(msg)) {
 
-		if ((msg.msgId == MsgId::keyboardEvent) && (msg.target == nullptr))
+		if ((msg.msgId == MsgId::keyboard) && (msg.target == nullptr))
 			msg.target = _focus;
 
 		if (msg.target != nullptr)
@@ -167,7 +167,7 @@ void GuiService::touchpadEventHandler(
 	const TouchpadService::EventArgs& args) {
 
 	Message msg;
-	msg.msgId = MsgId::touchpadEvent;
+	msg.msgId = MsgId::touchpad;
 
 	// Obte el target.
 	//

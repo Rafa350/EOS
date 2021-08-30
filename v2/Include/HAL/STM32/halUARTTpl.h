@@ -22,11 +22,14 @@ namespace eos {
 		channel8 = HAL_UART_CHANNEL_8,
 	};
 
-	template <UARTChannel channel>
+	template <UARTChannel channel_>
 	class UARTAdapter {
 		private:
 			halUARTData _data;
 			halUARTHandler _handler;
+
+		public:
+			constexpr static const UARTChannel channel = channel_;
 
 		public:
 			inline void initialize(const halUARTSettings& settings) {
@@ -37,30 +40,26 @@ namespace eos {
 				halUARTDeinitialize(_handler);
 			}
 
-			template <GPIOPort port, GPIOPin pin>
-			inline static void setTXPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				if constexpr (channel == UARTChannel::channel1)
+			template <GPIOPort port_, GPIOPin pin_>
+			inline static void setTXPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+				if constexpr (channel_ == UARTChannel::channel1)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::uart1_TX);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::uart1_TX);
 			}
 
-			template <GPIOPort port, GPIOPin pin>
-			inline static void setRXPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				if constexpr (channel == UARTChannel::channel1)
+			template <GPIOPort port_, GPIOPin pin_>
+			inline static void setRXPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+				if constexpr (channel_ == UARTChannel::channel1)
 					pinAdapter.initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port, pin>::GPIOAlt::uart1_RX);
+						GPIOPinAdapter<port_, pin_>::GPIOAlt::uart1_RX);
 			}
 
 			inline void send(uint8_t data) const {
 				halUARTSend(_handler, data);
-			}
-
-			inline constexpr static UARTChannel getChannel() {
-				return channel;
 			}
 
 			inline halUARTHandler getHandler() const {

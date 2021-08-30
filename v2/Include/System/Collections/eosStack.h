@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "eosAssert.h"
-#include "System/Core/eosStdHeapAllocator.h"
+#include "System/Collections/eosStdHeapAllocator.h"
 
 // Std includes
 //
@@ -22,11 +22,11 @@ namespace eos {
             /// \brief Implementa un contenidos FIFO de tamany fix o variable.
         	/// \remarks El contenidor enmagatzema copies del element.
             ///
-			template <typename Element, int initialCapacity = 0, bool fixedCapacity = false>
+			template <typename Element_, int initialCapacity_ = 0, bool fixedCapacity_ = false>
 			class Stack {
 				private:
-					using Allocator = StdHeapAllocator<Element>;
-					using Container = std::vector<Element, Allocator>;
+					using Allocator = StdHeapAllocator<Element_>;
+					using Container = std::vector<Element_, Allocator>;
 
 				public:
 					typedef typename Container::value_type Value;
@@ -41,8 +41,8 @@ namespace eos {
 					/// \brief Contructor per defecte
 					///
 					Stack() {
-						if constexpr (initialCapacity > 0)
-							_c.reserve(initialCapacity);
+						if constexpr (initialCapacity_ > 0)
+							_c.reserve(initialCapacity_);
 					}
 
 					/// \brief Constructor copia
@@ -53,7 +53,7 @@ namespace eos {
 					/// \param element: L'element a afeigir.
 					//
 					inline bool push(CReference element) {
-						if constexpr (fixedCapacity)
+						if constexpr (fixedCapacity_)
 							if (_c.size() == _c.capacity())
 								return false;
 						_c.push_back(element);
@@ -103,7 +103,7 @@ namespace eos {
 					/// \return: True si es plena.
 					///
 					inline bool isFull() const {
-						if constexpr (fixedCapacity)
+						if constexpr (fixedCapacity_)
 							return _c.size() == _c.capacity();
 						else
 							return false;
