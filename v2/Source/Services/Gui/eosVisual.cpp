@@ -24,9 +24,16 @@ Visual::Visual():
 	_margin(0),
 	_horizontalAlignment(HorizontalAlignment::stretch),
 	_verticalAlignment(VerticalAlignment::stretch),
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
+	_keyboardPressEventCallback(nullptr),
+	_keyboardReleaseEventCallback(nullptr),
+#endif
 #if eosGuiService_TouchpadEnabled
 	_touchpadPressEventCallback(nullptr),
 	_touchpadReleaseEventCallback(nullptr),
+	_touchpadEnterEventCallback(nullptr),
+	_touchpadLeaveEventCallback(nullptr),
+	_touchpadMoveEventCallback(nullptr),
 #endif
 	_id(0) 	{
 
@@ -134,7 +141,7 @@ bool Visual::render(
 void Visual::dispatch(
 	const Message& msg) {
 
-	onDispatch(msg);
+	onDispatchMessage(msg);
 }
 
 
@@ -462,24 +469,24 @@ void Visual::onDeactivate(
 /// \brief    Es crida quant hi ha que despatxar un missatge.
 /// \param    msg: El missatge a despatxar.
 ///
-void Visual::onDispatch(
+void Visual::onDispatchMessage(
 	const Message& msg) {
 
 	switch (msg.msgId) {
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
 		case MsgId::keyboardEvent:
-			onDispatchKeyboardEvent(msg.keyboard);
+			onDispatchKeyboardMessage(msg.keyboard);
 			break;
 #endif
 #if eosGuiService_TouchpadEnabled
 		case MsgId::touchpadEvent:
-			onDispatchTouchpadEvent(msg.touchpad);
+			onDispatchTouchpadMessage(msg.touchpad);
 			break;
 #endif
 		default:
 			// Si no el procesa, pasa al pare.
 			if (_parent != nullptr)
-				_parent->onDispatch(msg);
+				_parent->onDispatchMessage(msg);
 			break;
 	}
 
@@ -491,7 +498,7 @@ void Visual::onDispatch(
 /// \param    msg: El missatge a procesar.
 ///
 #if eosGuiService_KeyboardEnablked || eosGuiService_VirtualKeyboardEnabled
-void Visual::onDispatchKeyboardEvent(
+void Visual::onDispatchKeyboardMessage(
 	const MsgKeyboard& msg) {
 
 	char ch = 0;
@@ -521,6 +528,9 @@ void Visual::onDispatchKeyboardEvent(
 void Visual::onKeyboardPress(
 	const KeyboardPressEventArgs& args) {
 
+	if (_keyboardPressEventCallback != nullptr)
+		_keyboardPressEventCallback->execute(args);
+
 	if (_parent != nullptr)
 		_parent->onKeyboardPress(args);
 }
@@ -535,6 +545,9 @@ void Visual::onKeyboardPress(
 void Visual::onKeyboardRelease(
 	const KeyboardReleaseEventArgs& args) {
 
+	if (_keyboardReleaseEventCallback != nullptr)
+		_keyboardReleaseEventCallback->execute(args);
+
 	if (_parent != nullptr)
 		_parent->onKeyboardRelease(args);
 }
@@ -546,7 +559,7 @@ void Visual::onKeyboardRelease(
 /// \param    msg: El missatge a procesar.
 ///
 #if eosGuiService_TouchpadEnabled
-void Visual::onDispatchTouchpadEvent(
+void Visual::onDispatchTouchpadMessage(
 	const MsgTouchpad& msg) {
 
 	switch (msg.event) {
@@ -582,6 +595,9 @@ void Visual::onDispatchTouchpadEvent(
 void Visual::onTouchpadEnter(
 	const TouchpadEnterEventArgs& args) {
 
+	if (_touchpadEnterEventCallback != nullptr)
+		_touchpadEnterEventCallback->execute(args);
+
 	if (_parent != nullptr)
 		_parent->onTouchpadEnter(args);
 }
@@ -595,6 +611,9 @@ void Visual::onTouchpadEnter(
 #if eosGuiService_TouchpadEnabled
 void Visual::onTouchpadLeave(
 	const TouchpadLeaveEventArgs& args) {
+
+	if (_touchpadLeaveEventCallback != nullptr)
+		_touchpadLeaveEventCallback->execute(args);
 
 	if (_parent != nullptr)
 		_parent->onTouchpadLeave(args);
@@ -627,6 +646,9 @@ void Visual::onTouchpadPress(
 void Visual::onTouchpadRelease(
 	const TouchpadReleaseEventArgs& args) {
 
+	if (_touchpadReleaseEventCallback != nullptr)
+		_touchpadReleaseEventCallback->execute(args);
+
 	if (_parent != nullptr)
 		_parent->onTouchpadRelease(args);
 }
@@ -640,6 +662,9 @@ void Visual::onTouchpadRelease(
 #if eosGuiService_TouchpadEnabled
 void Visual::onTouchpadMove(
 	const TouchpadMoveEventArgs& args) {
+
+	if (_touchpadMoveEventCallback != nullptr)
+		_touchpadMoveEventCallback->execute(args);
 
 	if (_parent != nullptr)
 		_parent->onTouchpadMove(args);

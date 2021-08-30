@@ -5,6 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "SYstem/eosEvents.h"
 #include "System/eosString.h"
 #include "System/Core/eosTask.h"
 
@@ -12,6 +13,14 @@
 namespace eos {
 
     class Application;
+    class Service;
+
+    struct ServiceEventArgs: public EventArgs<Service> {
+
+    	inline ServiceEventArgs(Service* service):
+    		EventArgs(service) {
+    	}
+    };
 
     /// \brief Clase que representa un servei.
     ///

@@ -82,20 +82,22 @@ void PushButton::onRender(
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quant es prem el boto.
 ///
-void PushButton::onPress() {
+void PushButton::onPress(
+	const ButtonEventArgs& args) {
 
 	setState(State::pushed);
 
-	ButtonBase::onPress();
+	ButtonBase::onPress(args);
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quanrt es deixa anar el boto.
 ///
-void PushButton::onRelease() {
+void PushButton::onRelease(
+	const ButtonEventArgs& args) {
 
 	setState(State::normal);
 
-	ButtonBase::onRelease();
+	ButtonBase::onRelease(args);
 }

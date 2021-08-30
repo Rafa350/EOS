@@ -8,7 +8,6 @@
 
 namespace eos {
 
-	struct Message;
 	class RenderContext;
 
     class CheckButton: public ButtonBase {
@@ -23,7 +22,7 @@ namespace eos {
 
     	protected:
     		void onRender(RenderContext *context) override;
-    		void onClick() override;
+    		void onClick(const ButtonEventArgs& args) override;
 
     		void setState(State value);
 

@@ -8,21 +8,119 @@
 #include "Services/Gui/eosMsgQueue.h"
 #include "Services/Gui/eosThickness.h"
 #include "System/eosCallbacks.h"
+#include "System/eosEvents.h"
 #include "System/Collections/eosVector.h"
 #include "System/Graphics/eosPoint.h"
 #include "System/Graphics/eosRect.h"
 #include "System/Graphics/eosSize.h"
 
+
+namespace eos {
+
+	class Visual;
+
+	/// \brief Clase base pels parametres dels events generats per visuals
+	//
+	struct VisualEventArgs: public EventArgs<Visual> {
+
+		inline VisualEventArgs(Visual* visual):
+			EventArgs(visual) {
+		}
+	};
+
 #if eosGuiService_TouchpadEnabled
-	#include "Services/Gui/Events/eosTouchpadEvents.h"
+	struct TouchpadPressEventArgs: public VisualEventArgs {
+
+		Point position;
+
+		inline TouchpadPressEventArgs(Visual* visual, const Point& position):
+			VisualEventArgs(visual),
+			position(position) {
+		}
+	};
+
+	struct TouchpadMoveEventArgs: public VisualEventArgs {
+
+		Point position;
+
+		inline TouchpadMoveEventArgs(Visual* visual, const Point& position):
+			VisualEventArgs(visual),
+			position(position) {
+		}
+	};
+
+	typedef VisualEventArgs TouchpadReleaseEventArgs;
+	typedef VisualEventArgs TouchpadEnterEventArgs;
+	typedef VisualEventArgs TouchpadLeaveEventArgs;
+
+	typedef ICallbackP1<const TouchpadMoveEventArgs&> ITouchpadMoveEventCallback;
+	typedef ICallbackP1<const TouchpadPressEventArgs&> ITouchpadPressEventCallback;
+	typedef ICallbackP1<const VisualEventArgs&> ITouchpadReleaseEventCallback;
+	typedef ICallbackP1<const VisualEventArgs&> ITouchpadEnterEventCallback;
+	typedef ICallbackP1<const VisualEventArgs&> ITouchpadLeaveEventCallback;
+
+	template <typename C>
+	class TouchpadMoveEventCallback: public CallbackP1<C, const TouchpadMoveEventArgs&> {
+		public:
+			using M = typename CallbackP1<C, const TouchpadMoveEventArgs&>::Method;
+		public:
+			inline TouchpadMoveEventCallback(C* instance, M handler):
+				CallbackP1<C, const TouchpadMoveEventArgs&>(instance, handler) {
+			}
+	};
+
+	template <typename C>
+	class TouchpadPressEventCallback: public CallbackP1<C, const TouchpadPressEventArgs&> {
+		public:
+			using M = typename CallbackP1<C, const TouchpadPressEventArgs&>::Method;
+		public:
+			inline TouchpadPressEventCallback(C* instance, M handler):
+				CallbackP1<C, const TouchpadPressEventArgs&>(instance, handler) {
+			}
+	};
+
 #endif
 
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
-	#include "Services/Gui/Events/eosKeyboardEvents.h"
+	struct KeyboardEventArgs: public VisualEventArgs {
+		KeyCode keyCode;
+		KeyFlags keyFlags;
+		char ch;
+
+		inline KeyboardEventArgs(Visual* visual, KeyCode keyCode, KeyFlags keyFlags, char ch):
+			VisualEventArgs(visual),
+			keyCode(keyCode),
+			keyFlags(keyFlags),
+			ch(ch) {
+		}
+	};
+
+	typedef KeyboardEventArgs KeyboardPressEventArgs;
+	typedef KeyboardEventArgs KeyboardReleaseEventArgs;
+
+	typedef ICallbackP1<const KeyboardPressEventArgs&> IKeyboardPressEventCallback;
+	typedef ICallbackP1<const KeyboardReleaseEventArgs&> IKeyboardReleaseEventCallback;
+
+	template <typename C>
+	class KeyboardPressEventCallback: public CallbackP1<C, const KeyboardPressEventArgs&> {
+		public:
+			using M = typename CallbackP1<C, const KeyboardPressEventArgs&>::Method;
+		public:
+			inline KeyboardPressEventCallback(C* instance, M handler):
+				CallbackP1<C, const KeyboardPressEventArgs&>(instance, handler) {
+			}
+	};
+
+	template <typename C>
+	class KeyboardReleaseEventCallback: public CallbackP1<C, const KeyboardReleaseEventArgs&> {
+		public:
+			using M = typename CallbackP1<C, const KeyboardReleaseEventArgs&>::Method;
+		public:
+			inline KeyboardReleaseEventCallback(C* instance, M handler):
+				CallbackP1<C, const KeyboardReleaseEventArgs&>(instance, handler) {
+			}
+	};
 #endif
-
-
-namespace eos {
 
 	class RenderContext;
 
@@ -72,24 +170,31 @@ namespace eos {
 			Thickness _margin;
 			HorizontalAlignment _horizontalAlignment;
 			VerticalAlignment _verticalAlignment;
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
+			const IKeyboardPressEventCallback* _keyboardPressEventCallback;
+			const IKeyboardReleaseEventCallback* _keyboardReleaseEventCallback;
+#endif
 #if eosGuiService_TouchpadEnabled
-			ITouchpadPressEventCallback* _touchpadPressEventCallback;
-			ITouchpadReleaseEventCallback* _touchpadReleaseEventCallback;
+			const ITouchpadPressEventCallback* _touchpadPressEventCallback;
+			const ITouchpadReleaseEventCallback* _touchpadReleaseEventCallback;
+			const ITouchpadEnterEventCallback* _touchpadEnterEventCallback;
+			const ITouchpadLeaveEventCallback* _touchpadLeaveEventCallback;
+			const ITouchpadMoveEventCallback* _touchpadMoveEventCallback;
 #endif
 			unsigned _id;
 
     	protected:
     		virtual void onRender(RenderContext* context);
-    		virtual void onDispatch(const Message& msg);
+    		virtual void onDispatchMessage(const Message& msg);
     		virtual void onActivate(Visual* visual);
     		virtual void onDeactivate(Visual* visual);
 #if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
-    		virtual void onDispatchKeyboardEvent(const MsgKeyboard& msg);
+    		virtual void onDispatchKeyboardMessage(const MsgKeyboard& msg);
     		virtual void onKeyboardPress(const KeyboardEventArgs& args);
     		virtual void onKeyboardRelease(const KeyboardEventArgs& args);
 #endif
 #if eosGuiService_TouchpadEnabled
-    		virtual void onDispatchTouchpadEvent(const MsgTouchpad& msg);
+    		virtual void onDispatchTouchpadMessage(const MsgTouchpad& msg);
     		virtual void onTouchpadEnter(const TouchpadEnterEventArgs& args);
     		virtual void onTouchpadLeave(const TouchpadLeaveEventArgs& args);
     		virtual void onTouchpadPress(const TouchpadPressEventArgs& args);
@@ -125,9 +230,23 @@ namespace eos {
             void setVerticalAlignment(VerticalAlignment value);
             void setVisibility(Visibility value);
 
+#if eosGuiService_KeyboardEnabled || eosGuiService_VirtualKeyboardEnabled
+            inline void setKeyboardPressEventCallback(const IKeyboardPressEventCallback* callback) {
+            	_keyboardPressEventCallback = callback;
+            }
+
+            inline void setKayboardReleaseEventCallback(const IKeyboardReleaseEventCallback* callback) {
+            	_keyboardReleaseEventCallback = callback;
+            }
+#endif
 #if eosGuiService_TouchpadEnabled
-            inline void setTouchpadPressEventCallback(ITouchpadPressEventCallback* callback) { _touchpadPressEventCallback = callback; }
-            inline void setTouchpadReleaseEventCallback(ITouchpadReleaseEventCallback* callback) { _touchpadReleaseEventCallback = callback; }
+            inline void setTouchpadPressEventCallback(const ITouchpadPressEventCallback* callback) {
+            	_touchpadPressEventCallback = callback;
+            }
+
+            inline void setTouchpadReleaseEventCallback(const ITouchpadReleaseEventCallback* callback) {
+            	_touchpadReleaseEventCallback = callback;
+            }
 #endif
 
             // Getters

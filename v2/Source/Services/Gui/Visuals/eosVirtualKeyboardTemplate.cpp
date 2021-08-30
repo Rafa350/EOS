@@ -128,7 +128,7 @@ PushButton* VirtualKeyboardTemplate::createPushButton(
 	pb->setClickMode(ButtonBase::ClickMode::atPress);
 	pb->setSize(size);
 	pb->setContent(tb);
-	pb->setEventCallback(_visual->getButtonEventCallback());
+	pb->setClickEventCallback(_visual->getButtonClickEventCallback());
 
 	return pb;
 }

@@ -83,7 +83,7 @@ eos::Visual* MyApplication::createKeyboardPanel() {
 	kb->setMargin(Thickness(5, 0, 5, 5));
 	kb->setHorizontalAlignment(HorizontalAlignment::center);
 	kb->setVerticalAlignment(VerticalAlignment::center);
-	kb->setEventCallback(&_virtualKeyboardEventCallback);
+	kb->setVirtualKeyboardEventCallback(&_virtualKeyboardEventCallback);
 	sp->addChild(kb);
 
 	return border;
@@ -127,8 +127,8 @@ void MyApplication::createMainPanel() {
 	eos::Visual* keyboardPanel = createKeyboardPanel();
 
 	eos::Screen* screen = _guiService->getScreen();
-	screen->addChild(keyboardPanel);
-	//screen->addChild(tabControl);
+	//screen->addChild(keyboardPanel);
+	screen->addChild(tabControl);
 
 	eos::Visual* tb = VisualUtils::getVisual(screen,  1000);
 	_guiService->setFocus(tb);
@@ -136,12 +136,12 @@ void MyApplication::createMainPanel() {
 
 
 void MyApplication::buttonEventHandler(
-	const ButtonBase::EventArgs& args) {
+	const ButtonEventArgs& args) {
 
-	args.button->setVisibility(Visibility::hidden);
+	args.sender->setVisibility(Visibility::hidden);
 }
 
 
 void MyApplication::virtualKeyboardEventHandler(
-	const eos::VirtualKeyboard::EventArgs& args) {
+	const eos::VirtualKeyboardEventArgs& args) {
 }

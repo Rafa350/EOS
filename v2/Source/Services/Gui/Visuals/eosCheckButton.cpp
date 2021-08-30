@@ -78,7 +78,8 @@ void CheckButton::onRender(
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quant es fal click en el boto.
 ///
-void CheckButton::onClick() {
+void CheckButton::onClick(
+	const ButtonEventArgs& args) {
 
 	switch (_state) {
 		case State::unchecked:
@@ -93,6 +94,6 @@ void CheckButton::onClick() {
 			break;
 	}
 
-	ButtonBase::onClick();
+	ButtonBase::onClick(args);
 }
 

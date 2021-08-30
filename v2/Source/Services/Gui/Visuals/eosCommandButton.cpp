@@ -20,7 +20,8 @@ CommandButton::CommandButton():
 /// ----------------------------------------------------------------------
 /// \brief    Es crida quant es fa click. Genera una comanda.
 ///
-void CommandButton::onClick() {
+void CommandButton::onClick(
+	const ButtonEventArgs& args) {
 
 	if (_id != -1) {
 		Message msg;
@@ -31,5 +32,5 @@ void CommandButton::onClick() {
 		send(msg);
 	}
 
-	PushButton::onClick();
+	PushButton::onClick(args);
 }

@@ -2,6 +2,7 @@
 #include "eosAssert.h"
 #include "System/Graphics/eosBrush.h"
 #include "System/Graphics/eosColorDefinitions.h"
+#include "Services/Gui/eosVisualUtils.h"
 #include "Services/Gui/Visuals/eosStackPanel.h"
 #include "Services/Gui/Visuals/eosTabControl.h"
 #include "Services/Gui/Visuals/eosTabControlItem.h"
@@ -22,10 +23,17 @@ TabControl::TabControl():
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Handler del event 'TouchpadPress'
+/// \param    args: Parametres del event.
+///
 void TabControl::touchpadPressEventHandler(
 	const TouchpadPressEventArgs& args) {
 
-	Point p = args.position;
+	Visual* visual = VisualUtils::getVisual(this, args.position);
+	if (visual != nullptr) {
+		visual = nullptr;
+	}
 }
 
 

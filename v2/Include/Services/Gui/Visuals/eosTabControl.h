@@ -8,10 +8,6 @@
 #include "Services/Gui/Visuals/eosPanel.h"
 #include "System/Collections/eosVector.h"
 
-#if eosGuiService_TouchPadEnabled
-	#include "Services/Gui/Events/eosTouchpadEvents.h"
-#endif
-
 
 namespace eos {
 

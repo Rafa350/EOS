@@ -11,8 +11,8 @@ using namespace eos;
 /// \brief    Constructor.
 ///
 VirtualKeyboard::VirtualKeyboard():
-	_eventCallback(nullptr),
-	_buttonEventCallback(this, &VirtualKeyboard::buttonEventHandler) {
+	_virtualKeyboardEventCallback(nullptr),
+	_buttonClickEventCallback(this, &VirtualKeyboard::buttonClickEventHandler) {
 
 	VirtualKeyboardTemplate t(this);
 	t.applyTemplate();
@@ -23,32 +23,24 @@ VirtualKeyboard::VirtualKeyboard():
 /// \brief    Procesa els events dels botons.
 /// \param    args: Arguments del event.
 ///
-void VirtualKeyboard::buttonEventHandler(
-	const ButtonBase::EventArgs& args) {
+void VirtualKeyboard::buttonClickEventHandler(
+	const ButtonEventArgs& args) {
 
-	if (args.event == ButtonBase::EventType::click) {
-
-		// Genera el missatge de teclat, com si fos un teclat real
-		//
-		Message msg = {
-			.msgId = MsgId::keyboardEvent,
-			.target = nullptr,
-			.keyboard = {
-				.event = MsgKeyboardEvent::press,
-				.keyCode = KeyCode(args.id),
-				.keyFlags = 0
-			}
-		};
-		send(msg);
-
-		// Crida a la funcio callback
-		//
-		if (_eventCallback != nullptr) {
-			EventArgs vkArgs = {
-				.keyboard = this,
-				.keyCode = KeyCode(args.button->getId())
-			};
-			_eventCallback->execute(vkArgs);
+	// Genera el missatge de teclat, com si fos un teclat real
+	//
+	Message msg = {
+		.msgId = MsgId::keyboardEvent,
+		.target = nullptr,
+		.keyboard = {
+			.event = MsgKeyboardEvent::press,
+			.keyCode = KeyCode(args.id),
+			.keyFlags = 0
 		}
-	}
-	}
+	};
+	send(msg);
+
+	// Crida a la funcio callback
+	//
+	if (_virtualKeyboardEventCallback != nullptr)
+		_virtualKeyboardEventCallback->execute(VirtualKeyboardEventArgs(this, KeyCode(args.id)));
+}

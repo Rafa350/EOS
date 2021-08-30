@@ -15,7 +15,7 @@ namespace eos {
 			Visual* _target;
 
 		protected:
-			void onClick() override;
+			void onClick(const ButtonEventArgs& args) override;
 
 		public:
 			CommandButton();

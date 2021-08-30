@@ -21,6 +21,12 @@ using namespace eos;
 #define FR_CHAR_ADVANCE 4
 
 
+#ifdef EOS_DEBUG
+static int __allocatedFontCount = 0;
+static int __allocatedFontImplCount = 0;
+#endif
+
+
 class Font::Impl: public PoolAllocatable<Font::Impl, eosGraphics_MaxFonts> {
 	private:
     	const uint8_t* _fontResource;
@@ -28,6 +34,15 @@ class Font::Impl: public PoolAllocatable<Font::Impl, eosGraphics_MaxFonts> {
 	public:
     	Impl(const uint8_t* fontResource):
     		_fontResource(fontResource) {
+#ifdef EOS_DEBUG
+			__allocatedFontImplCount++;
+#endif
+    	}
+
+    	~Impl() {
+#ifdef EOS_DEBUG
+			__allocatedFontImplCount--;
+#endif
     	}
 
     	bool operator == (const Impl& other) const {
@@ -50,6 +65,9 @@ class Font::Impl: public PoolAllocatable<Font::Impl, eosGraphics_MaxFonts> {
 Font::Font() :
 	_impl(makeImpl(getFontResource(eosGraphics_DefFontName, eosGraphics_DefFontHeight, eosGraphics_DefFontStyle))) {
 
+#ifdef EOS_DEBUG
+	__allocatedFontCount++;
+#endif
 }
 
 
@@ -66,6 +84,9 @@ Font::Font(
 
 	_impl(makeImpl(getFontResource(name, height, style))) {
 
+#ifdef EOS_DEBUG
+	__allocatedFontCount++;
+#endif
 }
 
 
@@ -77,6 +98,10 @@ Font::Font(
 	const Font& font):
 
 	_impl(font._impl) {
+
+#ifdef EOS_DEBUG
+	__allocatedFontCount++;
+#endif
 }
 
 
@@ -85,6 +110,9 @@ Font::Font(
 ///
 Font::~Font() {
 
+#ifdef EOS_DEBUG
+	__allocatedFontCount--;
+#endif
 }
 
 

@@ -6,30 +6,44 @@
 #include "Services/Gui/eosTemplate.h"
 #include "Services/Gui/Visuals/eosPanel.h"
 #include "Services/Gui/Visuals/eosPushButton.h"
+#include "System/eosEvents.h"
 
 
 namespace eos {
 
 	class Size;
 	class String;
+	class VirtualKeyboard;
+
+	struct VirtualKeyboardEventArgs: public VisualEventArgs {
+		KeyCode keyCode;
+
+		inline VirtualKeyboardEventArgs(VirtualKeyboard* virtualKeyboard, KeyCode keyCode):
+			VisualEventArgs((Visual*)virtualKeyboard),
+			keyCode(keyCode) {
+		}
+	};
+
+	typedef ICallbackP1<const VirtualKeyboardEventArgs&> IVirtualKeyboardEventCallback;
+
+	template <typename C>
+	class VirtualKeyboardEventCallback: public CallbackP1<C, const VirtualKeyboardEventArgs&> {
+		public:
+			using M = typename CallbackP1<C, const VirtualKeyboardEventArgs&>::Method;
+		public:
+			inline VirtualKeyboardEventCallback(C* instance, M handler):
+				CallbackP1<C, const VirtualKeyboardEventArgs&>(instance, handler) {
+			}
+	};
 
 	class VirtualKeyboard: public Panel {
-		public:
-			struct EventArgs {
-				VirtualKeyboard* keyboard;
-				KeyCode keyCode;
-			};
-			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
 		private:
-			typedef CallbackP1<VirtualKeyboard, const ButtonBase::EventArgs&> ButtonEventCallback;
+			const IVirtualKeyboardEventCallback* _virtualKeyboardEventCallback;
+			ButtonEventCallback<VirtualKeyboard> _buttonClickEventCallback;
 
 		private:
-			const IEventCallback* _eventCallback;
-			ButtonEventCallback _buttonEventCallback;
-
-		private:
-			void buttonEventHandler(const ButtonBase::EventArgs& args);
+			void buttonClickEventHandler(const ButtonEventArgs& args);
 
 		protected:
 			void initializePanel();
@@ -37,12 +51,12 @@ namespace eos {
 		public:
 			VirtualKeyboard();
 
-			inline const ButtonEventCallback* getButtonEventCallback() const {
-				return &_buttonEventCallback;
+			inline const IButtonEventCallback* getButtonClickEventCallback() const {
+				return &_buttonClickEventCallback;
 			}
 
-			inline void setEventCallback(const IEventCallback* callback) {
-				_eventCallback = callback;
+			inline void setVirtualKeyboardEventCallback(const IVirtualKeyboardEventCallback* callback) {
+				_virtualKeyboardEventCallback = callback;
 			}
 	};
 

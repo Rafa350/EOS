@@ -4,36 +4,48 @@
 
 #include "eos.h"
 #include "Services/Gui/Visuals/eosContentControl.h"
-#include "System/eosCallbacks.h"
+#include "System/eosEvents.h"
 
 
 namespace eos {
 
-	struct Message;
 	class ButtonBase;
 
-    class ButtonBase: public ContentControl {
+	struct ButtonEventArgs: public VisualEventArgs {
+		unsigned id;
+
+		inline ButtonEventArgs(ButtonBase* button, unsigned id):
+			VisualEventArgs((Visual*)button),
+			id(id) {
+		}
+	};
+
+	typedef ICallbackP1<const ButtonEventArgs&> IButtonEventCallback;
+
+	template <typename C>
+	class ButtonEventCallback: public CallbackP1<C, const ButtonEventArgs&> {
+		public:
+			using M = typename CallbackP1<C, const ButtonEventArgs&>::Method;
+		public:
+			inline ButtonEventCallback(C* instance, M handler):
+				CallbackP1<C, const ButtonEventArgs&>(instance, handler) {
+			}
+	};
+
+
+	class ButtonBase: public ContentControl {
     	public:
 			enum class ClickMode {
 				atPress,
 				atRelease
 			};
-			enum class EventType {
-				press,
-				release,
-				click
-			};
-			struct EventArgs {
-				ButtonBase *button;
-				EventType event;
-				unsigned id;
-			};
-			typedef ICallbackP1<const EventArgs&> IEventCallback;
 
     	private:
 			bool _pressed;
 			ClickMode _clickMode;
-			const IEventCallback *_eventCallback;
+			const IButtonEventCallback* _clickEventCallback;
+			const IButtonEventCallback* _pressEventCallback;
+			const IButtonEventCallback* _releaseEventCallback;
 
     	protected:
 #if eosGuiService_TouchpadEnabled
@@ -41,9 +53,9 @@ namespace eos {
 		    void onTouchpadRelease(const TouchpadReleaseEventArgs& args) override;
 		    void onTouchpadLeave(const TouchpadLeaveEventArgs& args) override;
 #endif
-			virtual void onClick();
-			virtual void onPress();
-			virtual void onRelease();
+			virtual void onClick(const ButtonEventArgs& args);
+			virtual void onPress(const ButtonEventArgs& args);
+			virtual void onRelease(const ButtonEventArgs& args);
 
 			inline bool isPressed() const { return _pressed; }
 
@@ -55,8 +67,16 @@ namespace eos {
 
 			void click();
 
-			inline void setEventCallback(const IEventCallback *callback) {
-				_eventCallback = callback;
+			inline void setClickEventCallback(const IButtonEventCallback* callback) {
+				_clickEventCallback = callback;
+			}
+
+			inline void setPressEventCallback(const IButtonEventCallback* callback) {
+				_pressEventCallback = callback;
+			}
+
+			inline void setReleaseEventCallback(const IButtonEventCallback* callback) {
+				_releaseEventCallback = callback;
 			}
     };
 

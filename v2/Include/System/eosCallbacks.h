@@ -21,14 +21,15 @@ namespace eos {
     template <typename C, typename P1>
     class CallbackP1: public ICallbackP1<P1> {
         public:
+    	    typedef C* Instance;
             typedef void (C::*Method)(P1);
 
         private:
-            C* instance;
+            Instance instance;
             Method method;
 
         public:
-            CallbackP1(C* instance, Method method):
+            inline CallbackP1(Instance instance, Method method):
             	instance(instance),
 				method(method) {
             }
@@ -52,14 +53,15 @@ namespace eos {
     template <typename C, typename P1, typename P2>
     class CallbackP2: public ICallbackP2<P1, P2> {
         public:
-            typedef void (C::*Method)(P1, P2);
+    		typedef C* Instance;
+    	    typedef void (C::*Method)(P1, P2);
 
         private:
-            C* instance;
+            Instance instance;
             Method method;
 
         public:
-            CallbackP2(C* instance, Method method):
+            inline CallbackP2(Instance instance, Method method):
             	instance(instance),
 				method(method) {
             }
@@ -83,14 +85,15 @@ namespace eos {
     template <typename C, typename R, typename P1>
     class CallbackP1R: public ICallbackP1R<R, P1> {
         public:
+    		typedef C* Instance;
             typedef R (C::*Method)(P1);
 
         private:
-            C* instance;
+            Instance instance;
             Method method;
 
         public:
-            CallbackP1R(C* instance, Method method):
+            inline CallbackP1R(Instance instance, Method method):
             	instance(instance),
 				method(method) {
             }
@@ -115,14 +118,15 @@ namespace eos {
     template <typename C, typename R, typename P1, typename P2>
     class CallbackP2R: public ICallbackP2R<R, P1, P2> {
         public:
+    		typedef C* Instance;
             typedef R (C::*Method)(P1, P2);
 
         private:
-            C* instance;
+            Instance instance;
             Method method;
 
         public:
-            CallbackP2R(C* instance, Method method):
+            inline CallbackP2R(Instance instance, Method method):
             	instance(instance),
 				method(method) {
             }
@@ -130,8 +134,8 @@ namespace eos {
             R execute(P1 p1, P2 p2) const override {
                 if ((instance != nullptr) && (method != nullptr))
                     return (instance->*method)(p1, p2);
-                return
-                    R();
+                else
+                	return R();
             }
     };
 

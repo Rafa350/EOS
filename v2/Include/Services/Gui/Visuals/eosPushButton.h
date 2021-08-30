@@ -23,8 +23,8 @@ namespace eos {
 
         protected:
         	void onRender(RenderContext *context) override;
-            void onPress() override;
-            void onRelease() override;
+            void onPress(const ButtonEventArgs& args) override;
+            void onRelease(const ButtonEventArgs& args) override;
 
             void setState(State value);
 
