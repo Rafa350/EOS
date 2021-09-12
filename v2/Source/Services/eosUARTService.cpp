@@ -136,7 +136,7 @@ void UARTService::onTerminate() {
 
 /// ----------------------------------------------------------------------
 /// \brief    Tasca del servei.
-/// \param    task: L'objecte tTask que executa el servei.
+/// \param    task: L'objecte Task que executa el servei.
 ///
 void UARTService::onTask(
 	Task *task) {

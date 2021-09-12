@@ -1,12 +1,12 @@
-#ifndef __STM32_halUARTTpl__
-#define __STM32_halUARTTpl__
+#ifndef __PIC32_halUARTTpl__
+#define __PIC32_halUARTTpl__
 
 
 // EOS includes
 //
 #include "HAL/hal.h"
-#include "HAL/STM32/halUART.h"
-#include "HAL/STM32/halGPIOTpl.h"
+#include "HAL/PIC32/halUART.h"
+#include "HAL/PIC32/halGPIOTpl.h"
 
 
 namespace eos {
@@ -150,5 +150,5 @@ namespace eos {
 }
 
 
-#endif // __STM32_halUARTTpl__
+#endif // __PIC32_halUARTTpl__
 

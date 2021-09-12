@@ -171,6 +171,9 @@ typedef struct {
 halUARTHandler halUARTInitialize(halUARTData* data, const halUARTSettings* settings);
 void halUARTDeinitialize(halUARTHandler handler);
 
+void halUARTSend(halUARTHandler handler, uint8_t data);
+uint8_t halUARTReceive(halUARTHandler handler);
+
 
 void halUARTInterruptHandler(halUARTHandler handler);
 
