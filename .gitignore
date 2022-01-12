@@ -3,3 +3,4 @@ temp
 *.o
 *.elf
 *.chm
+Makefile-genesis.properties
