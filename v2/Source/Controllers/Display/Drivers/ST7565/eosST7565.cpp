@@ -23,7 +23,7 @@ using namespace eos;
 
 
 static uint8_t vRam[DISPLAY_SCREEN_WIDTH * DISPLAY_SCREEN_HEIGHT / 8];
-static uint8_t vFlags[DISPLAY_SCREEN_HEIGHT / 8];        
+static uint8_t vFlags[DISPLAY_SCREEN_HEIGHT / 8];
 
 
 /// ----------------------------------------------------------------------
@@ -33,7 +33,7 @@ ST7565Driver::ST7565Driver():
  	screenWidth(DISPLAY_SCREEN_WIDTH),
 	screenHeight(DISPLAY_SCREEN_HEIGHT),
 	orientation(DisplayOrientation::normal) {
-    
+
 }
 
 
@@ -41,8 +41,8 @@ ST7565Driver::ST7565Driver():
 /// \brief    Inicialitza el driver.
 ///
 void ST7565Driver::initialize() {
-    
-    static const GPIOInitializePinInfo gpioInit[] = {
+
+    static const halGPIOPinSettings gpioInit[] = {
         { DISPLAY_RST_PORT, DISPLAY_RST_PIN, HAL_GPIO_MODE_OUTPUT_PP },
         { DISPLAY_CS_PORT,  DISPLAY_CS_PIN,  HAL_GPIO_MODE_OUTPUT_PP },
         { DISPLAY_A0_PORT,  DISPLAY_A0_PIN,  HAL_GPIO_MODE_OUTPUT_PP }
@@ -61,26 +61,26 @@ void ST7565Driver::initialize() {
         0xAC, 0x00,                   // -Sense indicador static
         CMD_DISPLAY_ON                // -Activa el display
     };
-    
+
     // Inicialitza els pins
     //
     halGPIOInitializePins(gpioInit, sizeof(gpioInit) / sizeof(gpioInit[0]));
-        
+
     // Genera la senyal de reset
     //
     halGPIOClearPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);  // RST = 0
     halGPIOSetPin(DISPLAY_RST_PORT, DISPLAY_RST_PIN);  // RST = 1
-    
+
     // Envia la sequencia d'inicialitzacio al display
     //
     for (unsigned i = 0; i < sizeof(initTab) / sizeof(initTab[0]); i++)
-        writeCtrlRegister(initTab[i]);    
-    
+        writeCtrlRegister(initTab[i]);
+
     // Inicialitza la ram de video
     //
     for (unsigned i = 0; i < screenWidth * screenHeight / 8; i++)
         vRam[i] = 0x00;
-    for (unsigned i = 0; i < screenHeight / 8; i++) 
+    for (unsigned i = 0; i < screenHeight / 8; i++)
         vFlags[i] = 0xFF;
 }
 
@@ -94,20 +94,20 @@ void ST7565Driver::shutdown() {
 
 
 void ST7565Driver::displayOn() {
-    
+
 }
 
 
 void ST7565Driver::displayOff() {
-    
+
 }
 
 
 void ST7565Driver::setOrientation(
     DisplayOrientation orientation) {
-    
+
     if (this->orientation != orientation) {
-        
+
     }
 }
 
@@ -118,7 +118,7 @@ void ST7565Driver::setOrientation(
 ///
 void ST7565Driver::clear(
     const Color& color) {
-    
+
     uint8_t c = (color == (color_t)0) ? 0xFF : 0x00;
 
     for (unsigned i = 0; i < screenWidth * screenHeight / 8; i++)
@@ -138,11 +138,11 @@ void ST7565Driver::setPixel(
     int x,
     int y,
     const Color &color) {
-    
+
 	if ((x >= 0) && (x < screenWidth) && (y >= 0) && (y < screenHeight)) {
 
         int offset = ((y >> 3) * screenWidth) + x;
-        uint8_t pix = 1 << (y & 7);      
+        uint8_t pix = 1 << (y & 7);
         if (color == (color_t)0)
             vRam[offset] |= pix;
         else
@@ -168,7 +168,7 @@ void ST7565Driver::setHPixels(
 
     int x1 = x;
     int x2 = x + size - 1;
-    
+
     if ((y >= 0) && (y < screenHeight)) {
 
         if (x1 > x2)
@@ -220,10 +220,10 @@ void ST7565Driver::setVPixels(
     int y2 = y1 + size - 1;
 
     if ((x >= 0) && (x < screenWidth)) {
-        
+
         // Normalitza la coordinada
         //
-        if (y1 > y2) 
+        if (y1 > y2)
             Math::swap(y1, y2);
 
         // Retalla a la pantalla
@@ -264,59 +264,59 @@ void ST7565Driver::setPixels(
     int width,
     int height,
     const Color &color) {
-    
+
 }
 
 void ST7565Driver::writePixels(
-    int x, 
-    int y, 
-    int width, 
-    int height, 
-    const uint8_t *pixels, 
-    ColorFormat format, 
-    int dx, 
-    int dy, 
+    int x,
+    int y,
+    int width,
+    int height,
+    const uint8_t *pixels,
+    ColorFormat format,
+    int dx,
+    int dy,
     int pitch) {
-   
+
 }
 
 
 void ST7565Driver::readPixels(
-    int x, 
-    int y, 
-    int width, 
-    int height, 
-    uint8_t *pixels, 
-    ColorFormat format, 
-    int dx, 
-    int dy, 
+    int x,
+    int y,
+    int width,
+    int height,
+    uint8_t *pixels,
+    ColorFormat format,
+    int dx,
+    int dy,
     int pitch) {
-    
+
 }
 
 
 void ST7565Driver::vScroll(
-    int delta, 
-    int x, 
-    int y, 
-    int width, 
+    int delta,
+    int x,
+    int y,
+    int width,
     int height) {
-    
+
 }
 
 
 void ST7565Driver::hScroll(
-    int delta, 
-    int x, 
-    int y, 
-    int width, 
+    int delta,
+    int x,
+    int y,
+    int width,
     int height) {
-    
+
 }
 
 
 void ST7565Driver::refresh() {
-    
+
     // Transfereix les pagines modificades
     //
     for (unsigned page = 0; page < 8; page++) {
@@ -336,7 +336,7 @@ void ST7565Driver::refresh() {
             }
             vFlags[page] = 0b00000000;
         }
-    }   
+    }
 }
 
 
@@ -346,7 +346,7 @@ void ST7565Driver::refresh() {
 ///
 void ST7565Driver::setPage(
     uint8_t page) {
-    
+
     writeCtrlRegister((page & 0x07) | CMD_SET_PAGE);
 }
 
@@ -357,9 +357,9 @@ void ST7565Driver::setPage(
 ///
 void ST7565Driver::setColumn(
     uint8_t column) {
-    
+
     writeCtrlRegister((column & 0x0F) | CMD_SET_COLUMN_L);
-    writeCtrlRegister((column >> 4) | CMD_SET_COLUMN_H);    
+    writeCtrlRegister((column >> 4) | CMD_SET_COLUMN_H);
 }
 
 
@@ -369,7 +369,7 @@ void ST7565Driver::setColumn(
 ///
 void ST7565Driver::writeDataRegister(
     uint8_t data) {
-    
+
     halGPIOSetPin(DISPLAY_A0_PORT, DISPLAY_A0_PIN);
     halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
     writeRegister(data);
@@ -383,7 +383,7 @@ void ST7565Driver::writeDataRegister(
 ///
 void ST7565Driver::writeCtrlRegister(
     uint8_t cmd) {
-    
+
     halGPIOClearPin(DISPLAY_A0_PORT, DISPLAY_A0_PIN);
     halGPIOClearPin(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
     writeRegister(cmd);
@@ -393,17 +393,17 @@ void ST7565Driver::writeCtrlRegister(
     //
     uint8_t i;
     for (i = 0; i < 10; i++)
-        continue;    
+        continue;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Escriu un byte en el registre del controlador.
 /// \param    data: El byte a escriure.
-/// \remarks  El controlador ha d'estar configurat per 
+/// \remarks  El controlador ha d'estar configurat per
 ///           rebre el byte en el registre correcte.
 ///
 void ST7565Driver::writeRegister(
     uint8_t data) {
-    
+
 }

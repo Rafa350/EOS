@@ -15,18 +15,18 @@
 
 
 namespace eos {
-    
+
     class Color;
-    
+
     class ST7565Driver: public IDisplayDriver {
         private:
             int screenWidth;
             int screenHeight;
             DisplayOrientation orientation;
-            
+
         public:
             ST7565Driver();
-            
+
             void initialize() override;
             void shutdown() override;
             void displayOn() override;
@@ -44,7 +44,7 @@ namespace eos {
             void vScroll(int delta, int x, int y, int width, int height) override;
             void hScroll(int delta, int x, int y, int width, int height) override;
             void refresh() override;
-            
+
         private:
             void writePixel(Color color, unsigned count);
             void writePixel(const Color *colors, unsigned count);
@@ -52,7 +52,7 @@ namespace eos {
             void selectRegion(int x, int y, int width, int height);
             void startMemoryWrite();
             void startMemoryRead();
-            
+
         private:
             void setPage(uint8_t page);
             void setColumn(uint8_t column);

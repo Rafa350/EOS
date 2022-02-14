@@ -26,7 +26,7 @@ MonoFrameBuffer::MonoFrameBuffer(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu un pixel en lña posicio indicada.
+/// \brief    Escriu un pixel en la posicio indicada.
 /// \param    x: Coordinada x de la posicio
 /// \param    y: Coordinada y de la posicio
 /// \param    color: Colord el pixel.
