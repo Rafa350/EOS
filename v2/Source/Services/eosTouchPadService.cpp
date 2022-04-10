@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "HAL/STM32/halEXTI.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
-#include "Controllers/TouchPad/Drivers/eosFT5336.h"
+#include "Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.h"
 #include "Services/eosTouchPadService.h"
 
 
@@ -32,7 +32,7 @@ void TouchpadService::onInitialize() {
 
     // Inicialitzacio del touch pad
     //
-    _touchDriver = FT5336Driver::getInstance();
+    _touchDriver = TouchPadDriver_FT5336::getInstance();
     _touchDriver->initialize();
     _touchDriver->setOrientation(TouchPadOrientation::rotate90);
 

@@ -31,14 +31,14 @@ extern "C" {
 
 typedef uint32_t halI2CChannel;
 typedef uint32_t halI2COptions;
-typedef struct __halI2CData* halI2CHandler;
-typedef void (*halI2CInterruptFunction)(halI2CHandler handler, void* params);
+typedef struct __halI2CData *halI2CHandler;
+typedef void (*halI2CInterruptFunction)(halI2CHandler handler, void *params);
 
 struct __halI2CData {
 	I2C_TypeDef* device;
 	I2C_HandleTypeDef handle;
 	halI2CInterruptFunction isrFunction;
-	void* isrParams;
+	void *isrParams;
 };
 typedef struct __halI2CData halI2CData;
 
@@ -46,18 +46,21 @@ typedef struct {
 	halI2CChannel channel;
 	halI2COptions options;
 	halI2CInterruptFunction isrFunction;
-	void* isrParams;
+	void *isrParams;
 } halI2CMasterInitializeInfo;
 
 
 
-halI2CHandler halI2CMasterInitialize(halI2CData* data, const halI2CMasterInitializeInfo* info);
+halI2CHandler halI2CMasterInitialize(halI2CData *data, const halI2CMasterInitializeInfo *info);
 
 void halI2CEnable(halI2CHandler handler);
 void halI2CDisable(halI2CHandler handler);
 
-void halI2CMasterWriteMultiple(halI2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t* buffer, uint16_t length);
-void halI2CMasterReadMultiple(halI2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t* buffer, uint16_t length);
+void halI2CMasterSend(halI2CHandler handler, uint8_t addr, const uint8_t *data, int lenght, unsigned blockTime);
+void halI2CMasterReceive(halI2CHandler handler, uint8_t addr, uint8_t *data, int lenght, unsigned blockTime);
+
+void halI2CMasterWriteMultiple(halI2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t *buffer, uint16_t length);
+void halI2CMasterReadMultiple(halI2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
 
 
 #ifdef	__cplusplus

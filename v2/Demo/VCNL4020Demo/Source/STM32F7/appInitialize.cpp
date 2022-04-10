@@ -41,11 +41,14 @@ static void initializeCLK() {
 	// PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 192/5 = 38.4 Mhz
 	// LTDC clock frequency = PLLLCDCLK / LTDC_PLLSAI_DIVR_4 = 38.4/4 = 9.6Mhz
 	//
+#ifdef USE_DISPLAY
 	pclkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
 	pclkInit.PLLSAI.PLLSAIN = 192;
 	pclkInit.PLLSAI.PLLSAIR = DISPLAY_FDIV;
 	pclkInit.PLLSAIDivR = RCC_PLLSAIDIVR_4;
-	HAL_RCCEx_PeriphCLKConfig(&pclkInit);}
+	HAL_RCCEx_PeriphCLKConfig(&pclkInit);
+#endif
+}
 
 
 static void initializeSDRAM() {

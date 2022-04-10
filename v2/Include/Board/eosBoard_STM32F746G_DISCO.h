@@ -118,6 +118,9 @@
 #define ARDUINO_I2C_SDA_PIN       HAL_GPIO_PIN_9
 #define ARDUINO_I2C_SDA_AF        HAL_GPIO_AF_4
 
+#define ARDUINO_I2C_CHANNEL       HAL_I2C_CHANNEL_1
+
+
 #endif // USE_ARDUINO
 
 

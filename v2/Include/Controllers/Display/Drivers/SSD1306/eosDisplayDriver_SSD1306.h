@@ -26,7 +26,7 @@
 #error "DISPLAY_HEIGHT"
 #endif
 
-// Interficie amb el controlador
+// Tipus d'interficie amb el controlador
 //
 #define DISPLAY_SSD1306_INTERFACE_SPI  0
 #define DISPLAY_SSD1306_INTERFACE_I2C  1

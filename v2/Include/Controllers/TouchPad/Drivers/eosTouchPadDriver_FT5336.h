@@ -1,5 +1,5 @@
-#ifndef __eosFT5336__
-#define __eosFT5336__
+#ifndef __eosTouchPadDriver_FT5336__
+#define __eosTouchPadDriver_FT5336__
 
 
 // EOS includes
@@ -246,7 +246,7 @@
 
 namespace eos {
 
-	class FT5336Driver: public ITouchPadDriver {
+	class TouchPadDriver_FT5336: public ITouchPadDriver {
 		private:
 #ifdef TOUCHPAD_INT_PORT
 		    typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_INT_PORT), GPIOPin(TOUCHPAD_INT_PIN)> PinINT;
@@ -269,8 +269,8 @@ namespace eos {
 			I2C _i2c;
 
 		private:
-			FT5336Driver();
-			FT5336Driver(const FT5336Driver& other) = delete;
+			TouchPadDriver_FT5336();
+			TouchPadDriver_FT5336(const TouchPadDriver_FT5336 &other) = delete;
 
 		public:
 			static ITouchPadDriver* getInstance();
@@ -295,4 +295,4 @@ namespace eos {
 }
 
 
-#endif // __eosFT5336Driver__
+#endif // __eosTouchPadDriver_FT5336Driver__

@@ -122,10 +122,10 @@ namespace eos {
 			PinB7 _pinB7;
 			LTDCAdapter _ltdc;
 
-    		FrameBuffer* _frontFrameBuffer;
-    		FrameBuffer* _backFrameBuffer;
-    		void* _frontImageBuffer;
-    		void* _backImageBuffer;
+    		FrameBuffer *_frontFrameBuffer;
+    		FrameBuffer *_backFrameBuffer;
+    		void *_frontImageBuffer;
+    		void *_backImageBuffer;
 
         public:
     		DisplayDriver_RGBLTDC();

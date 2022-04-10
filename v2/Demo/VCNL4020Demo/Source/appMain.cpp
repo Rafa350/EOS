@@ -1,7 +1,9 @@
+#include "eos.h"
+#include "Controllers/Sensors/VCNL4020/eosVCNL4020Driver.h"
+#include "HAL/halSYS.h"
+#include "HAL/halGPIO.h"
 #include "System/eosApplication.h"
 #include "Services/eosAppLoopService.h"
-#include "hal/halSYS.h"
-#include "hal/halGPIO.h"
 
 
 using namespace eos;
@@ -74,6 +76,9 @@ void Led1LoopService::onLoop() {
 ///
 void VCNL4020LoopService::onSetup() {
 
+	VCNL4020Driver driver;
+
+	driver.initialize();
 }
 
 

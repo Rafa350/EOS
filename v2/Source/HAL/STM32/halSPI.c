@@ -341,7 +341,7 @@ void halSPISetInterruptFunction(
 /// \param    size: Longitut del bloc de dades.
 /// \param    blockTime: Temps maxim de bloqueig
 ///
-void halSPISendBuffer(
+void halSPISend(
 	halSPIHandler handler,
 	const uint8_t* data,
 	int size,

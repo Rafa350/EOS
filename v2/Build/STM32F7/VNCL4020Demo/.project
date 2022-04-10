@@ -51,9 +51,19 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Inc/App/Board</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Inc/App/eosConfig.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Demo/VCNL4020Demo/Include/eosConfig.h</location>
+		</link>
+		<link>
+			<name>Inc/Framework/Board</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS</name>
@@ -81,6 +91,36 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Inc/App/Board/eosBoard_Custom.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/VCNL4020Demo/Include/Board/eosBoard_Custom.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/App/Board/eosBoard_Custom_STM32F746G_DISCO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Demo/VCNL4020Demo/Include/Board/eosBoard_Custom_STM32F746G_DISCO.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/Board/eosBoard.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/Board/eosBoard_STM32F746G_DISCO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Board/eosBoard_STM32F746G_DISCO.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/Controllers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/Services</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -104,6 +144,11 @@
 			<name>Src/App/STM32F7/stm32f7xx_it.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Demo/VCNL4020Demo/Source/STM32F7/stm32f7xx_it.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Controllers</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HAL</name>
@@ -156,9 +201,49 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/Controllers/Sensors</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/hal.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/hal.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/halGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/halGPIOTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIOTpl.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/halI2C.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halI2C.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/halI2CTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halI2CTpl.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/Services/eosAppLoopService.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/Services/eosAppLoopService.h</location>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Controllers/Sensors</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HAL/STM32</name>
@@ -261,6 +346,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_gpio.c</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/STM32/HAL/stm32f7xx_hal_i2c.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_i2c.c</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/STM32/HAL/stm32f7xx_hal_rcc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_hal_rcc.c</locationURI>
@@ -291,6 +381,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_ll_fmc.c</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/STM32/HAL/stm32f7xx_ll_i2c.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/HAL/Src/stm32f7xx_ll_i2c.c</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/STM32/System/syscalls.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/system/Src/syscalls.c</locationURI>
@@ -304,6 +399,36 @@
 			<name>Src/Framework/STM32/System/system_stm32f7xx.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Library/STM32F7/CMSIS_DEVICE/Source/Templates/system_stm32f7xx.c</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/Controllers/Sensors/VCNL4020</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/STM32/halGPIOTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/STM32/halI2C.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2C.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/STM32/halI2CTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2CTpl.h</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Controllers/Sensors/VCNL4020</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/HAL/STM32/halGPIO.c</name>
@@ -364,6 +489,16 @@
 			<name>Src/Framework/EOS/System/Core/eosTask.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosTask.cpp</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/Controllers/Sensors/VCNL4020/eosVCNL4020Driver.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/Controllers/Sensors/VCNL4020/eosVCNL4020Driver.h</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/Controllers/Sensors/VCNL4020/eosVCNL4020Driver.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Controllers/Sensors/VCNL4020/eosVCNL4020Driver.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

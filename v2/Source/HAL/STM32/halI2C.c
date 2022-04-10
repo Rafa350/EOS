@@ -118,7 +118,7 @@ static void setupDevice(
 /// \param    info: Els parametres d'inicialitzacio.
 ///
 halI2CHandler halI2CMasterInitialize(
-	halI2CData* data,
+	halI2CData *data,
 	const halI2CMasterInitializeInfo* info) {
 
 	eosAssert(data != NULL);
@@ -189,6 +189,44 @@ void halI2CDisable(
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Transmiteix una sequencia de bytes.
+/// \param    handler: Handler del dispositiu.
+/// \param    addr: Adressa.
+/// \param    data: Bytes a transmetre.
+/// \param    length: Nombre de bytes a transmetre.
+/// \param    blockTime: Temps maxim de bloqueig.
+///
+void halI2CMasterSend(
+	halI2CHandler handler,
+	uint8_t addr,
+	const uint8_t *data,
+	int lenght,
+	unsigned blockTime) {
+
+	__VERIFY_HANDLER(handler);
+
+	HAL_StatusTypeDef status = HAL_OK;
+
+	status = HAL_I2C_Master_Transmit(&handler->handle, addr, data, lenght, blockTime);
+}
+
+
+void halI2CMasterReceive(
+	halI2CHandler handler,
+	uint8_t addr,
+	uint8_t *data,
+	int lenght,
+	unsigned blockTime) {
+
+	__VERIFY_HANDLER(handler);
+
+	HAL_StatusTypeDef status = HAL_OK;
+
+	status = HAL_I2C_Master_Receive(&handler->handle, addr, data, lenght, blockTime);
+}
+
+
 void halI2CMasterReadMultiple(
 	halI2CHandler handler,
 	uint8_t addr,
@@ -204,7 +242,7 @@ void halI2CMasterReadMultiple(
 	status = HAL_I2C_Mem_Read(&handler->handle, addr, (uint16_t)reg, memAddress, buffer, length, 1000);
 
 	// Check the communication status
-	if(status != HAL_OK) {
+	if (status != HAL_OK) {
 		HAL_I2C_DeInit(&handler->handle);
 		HAL_I2C_Init(&handler->handle);
 	}

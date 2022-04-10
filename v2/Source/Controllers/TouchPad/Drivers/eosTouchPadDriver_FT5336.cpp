@@ -1,7 +1,7 @@
 #include "eos.h"
 #if defined(USE_TOUCHPAD) && defined(TOUCHPAD_DRV_FT5336)
 
-#include "Controllers/TouchPad/Drivers/eosFT5336.h"
+#include "Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.h"
 #include "HAL/halTMR.h"
 #include "hal/halGPIO.h"
 #ifdef TOUCHPAD_INT_PORT
@@ -14,17 +14,17 @@
 using namespace eos;
 
 
-ITouchPadDriver* FT5336Driver::_instance = nullptr;
+ITouchPadDriver* TouchPadDriver_FT5336::_instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Obte una instancia unica del driver.
 /// \return   La instancia del driver.
 ///
-ITouchPadDriver* FT5336Driver::getInstance() {
+ITouchPadDriver* TouchPadDriver_FT5336::getInstance() {
 
 	if (_instance == nullptr)
-		_instance = new FT5336Driver();
+		_instance = new TouchPadDriver_FT5336();
 	return _instance;
 }
 
@@ -32,7 +32,7 @@ ITouchPadDriver* FT5336Driver::getInstance() {
 /// ----------------------------------------------------------------------
 /// \brief    Contructor.
 ///
-FT5336Driver::FT5336Driver():
+TouchPadDriver_FT5336::TouchPadDriver_FT5336():
 
 	_addr(TOUCHPAD_I2C_ADDR),
 	_padWidth(TOUCHPAD_PAD_WIDTH),
@@ -44,7 +44,7 @@ FT5336Driver::FT5336Driver():
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el driver.
 ///
-void FT5336Driver::initialize() {
+void TouchPadDriver_FT5336::initialize() {
 
 	// Wait at least 200ms after power up before accessing registers
 	// Trsi timing (Time of starting to report point after resetting) from FT5336GQQ datasheet
@@ -61,7 +61,7 @@ void FT5336Driver::initialize() {
 /// ----------------------------------------------------------------------
 /// \brief    Finalitza el driver.
 ///
-void FT5336Driver::shutdown() {
+void TouchPadDriver_FT5336::shutdown() {
 
 #ifdef TOUCHPAD_INT_PORT
 	disableInt();
@@ -73,7 +73,7 @@ void FT5336Driver::shutdown() {
 /// \brief    Selecciona l'oeirntacio del touch pad
 /// \param    orientation: La orientacio a seleccionar.
 ///
-void FT5336Driver::setOrientation(
+void TouchPadDriver_FT5336::setOrientation(
 	TouchPadOrientation orientation) {
 
 	_orientation = orientation;
@@ -98,7 +98,7 @@ void FT5336Driver::setOrientation(
 /// \brief    Comprova si hi ha accio.
 /// \return   True si hi ha accio en el touchpad.
 ///
-int FT5336Driver::getTouchCount() {
+int TouchPadDriver_FT5336::getTouchCount() {
 
 	uint8_t numPoints = readRegister(FT5336_TD_STAT_REG) & FT5336_TD_STAT_MASK;
     if (numPoints > FT5336_MAX_DETECTABLE_TOUCH)
@@ -112,7 +112,7 @@ int FT5336Driver::getTouchCount() {
 /// \param    state: Buffer on deixar el resultat.
 /// \return   True si s'ha detectat contacte.
 ///
-bool FT5336Driver::getState(
+bool TouchPadDriver_FT5336::getState(
 	TouchPadState& state) {
 
 	state.maxPoints = FT5336_MAX_DETECTABLE_TOUCH;
@@ -256,7 +256,7 @@ bool FT5336Driver::getState(
 /// ----------------------------------------------------------------------
 /// \brief    Activa la generacio d'interrupcions pel pin INT
 ///
-void FT5336Driver::enableInt() {
+void TouchPadDriver_FT5336::enableInt() {
 
    uint8_t regValue = (FT5336_G_MODE_INTERRUPT_TRIGGER & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
 
@@ -269,7 +269,7 @@ void FT5336Driver::enableInt() {
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva la generacio d'interrupcions pel pin INT
 ///
-void FT5336Driver::disableInt() {
+void TouchPadDriver_FT5336::disableInt() {
 
 	uint8_t regValue = (FT5336_G_MODE_INTERRUPT_POLLING & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
 
@@ -282,7 +282,7 @@ void FT5336Driver::disableInt() {
 /// ----------------------------------------------------------------------
 /// \brief    Borra la interrupcio generada
 ///
-void FT5336Driver::clearInt() {
+void TouchPadDriver_FT5336::clearInt() {
 
 }
 
@@ -290,7 +290,7 @@ void FT5336Driver::clearInt() {
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza la comunicacio amb el driver.
 ///
-void FT5336Driver::initializeInterface() {
+void TouchPadDriver_FT5336::initializeInterface() {
 
 #ifdef TOUCHPAD_INT_PORT
 	static EXTIPinSettings const extiSettings[] = {
@@ -324,7 +324,7 @@ void FT5336Driver::initializeInterface() {
 /// \param    reg: Numero de registre.
 /// \param    value: El valor a escriure.
 ///
-void FT5336Driver::writeRegister(
+void TouchPadDriver_FT5336::writeRegister(
 	uint8_t reg,
 	uint8_t value) {
 
@@ -341,7 +341,7 @@ void FT5336Driver::writeRegister(
 /// \param    reg: Numero del registre.
 /// \return   El valor del registre.
 ///
-uint8_t FT5336Driver::readRegister(
+uint8_t TouchPadDriver_FT5336::readRegister(
 	uint8_t reg) {
 
 	uint8_t buffer[1];

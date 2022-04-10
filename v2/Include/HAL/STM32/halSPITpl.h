@@ -229,8 +229,12 @@ namespace eos {
 
 			}
 
-			inline void send(const uint8_t* data, int length, unsigned blockTime = _defaultBlockTime) {
-				halSPISendBuffer(_handler, data, length, blockTime);
+			inline void send(const uint8_t data, unsigned blockTime = _defaultBlockTime) {
+				halSPISend(_handler, &data, sizeof(data), blockTime);
+			}
+
+			inline void send(const uint8_t *data, int length, unsigned blockTime = _defaultBlockTime) {
+				halSPISend(_handler, data, length, blockTime);
 			}
 	};
 
