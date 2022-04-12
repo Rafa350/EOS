@@ -46,22 +46,12 @@ namespace eos {
 				halI2CDisable(_handler);
 			}
 
-			inline void send(uint8_t addr, uint16_t reg, const uint8_t *buffer, uint16_t length, unsigned blockTime = _defaultBlockTime) {
-				halI2CMasterSend(
-					_handler,
-					addr,
-					buffer,
-					length,
-					blockTime);
+			inline void send(uint8_t addr, const uint8_t *buffer, int length, unsigned blockTime = _defaultBlockTime) {
+				halI2CMasterSend(_handler, addr, buffer, length, blockTime);
 			}
 
-			inline void send(uint8_t addr, uint16_t reg, uint8_t data, unsigned blockTime = _defaultBlockTime) {
-				halI2CMasterSend(
-					_handler,
-					addr,
-					&data,
-					sizeof(data),
-					blockTime);
+			inline void receive(uint8_t addr, uint8_t *buffer, int length, unsigned blockTime = _defaultBlockTime) {
+				halI2CMasterReceive(_handler, addr, buffer, length, blockTime);
 			}
 
 			inline void send(uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t *buffer, uint16_t length) {

@@ -24,8 +24,6 @@ THE SOFTWARE.
 #ifndef VCNL40x0_H
 #define VCNL40x0_H
 
-#include "mbed.h"
-
 // Library for the Vishay Proximity/Ambient Light Sensor VCNL4010/4020/3020
 // The VCNL4x00 is a I2C digital Proximity and Ambient Light Sensor in a small SMD package
 
@@ -140,7 +138,7 @@ typedef enum {
     VCNL40x0_ERROR_LAST
 } VCNL40x0Error_e;
 
-
+#if 0
 class VCNL40x0 {
 public:
 // Creates an instance of the class.
@@ -184,6 +182,7 @@ private:
     char _receive[2];
     
 };
+#endif
 
 #endif
 

@@ -21,6 +21,9 @@ class Led1LoopService: public AppLoopService {
 
 
 class VCNL4020LoopService: public AppLoopService {
+	private:
+		VCNL4020Driver *_driver;
+
 	public:
 		VCNL4020LoopService(Application *application):
 			AppLoopService(application) {}
@@ -76,10 +79,9 @@ void Led1LoopService::onLoop() {
 ///
 void VCNL4020LoopService::onSetup() {
 
-	VCNL4020Driver driver;
-
-	driver.initialize();
-}
+	_driver = new VCNL4020Driver();
+	_driver->initialize();
+ }
 
 
 /// ----------------------------------------------------------------------
@@ -87,6 +89,9 @@ void VCNL4020LoopService::onSetup() {
 ///
 void VCNL4020LoopService::onLoop() {
 
+	int proximity = _driver->getProximityValue();
+
+	Task::delay(1000);
 }
 
 

@@ -18,7 +18,6 @@
 	#error "No se especifico el producto"
 #endif
 
-//#include "board/board.h"
 
 #define USE_LEDS_LED1
 #define USE_LEDS_LED2
