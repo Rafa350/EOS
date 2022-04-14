@@ -1,7 +1,7 @@
 #include "eos.h"
 #include "Controllers/Sensors/VCNL4020/eosVCNL4020Driver.h"
 #include "HAL/halSYS.h"
-#include "HAL/halGPIO.h"
+#include "HAL/halGPIOTpl.h"
 #include "System/eosApplication.h"
 #include "Services/eosAppLoopService.h"
 
@@ -10,6 +10,9 @@ using namespace eos;
 
 
 class Led1LoopService: public AppLoopService {
+	private:
+		typedef GPIOPinAdapter<GPIOPort(LEDS_LED1_PORT), GPIOPin(LEDS_LED1_PIN)> PinLED;
+
 	public:
 		Led1LoopService(Application *application):
 			AppLoopService(application) {}
@@ -59,8 +62,8 @@ MyApplication::MyApplication() {
 ///
 void Led1LoopService::onSetup() {
 
-	halGPIOInitializePinOutput(LEDS_LED1_PORT, LEDS_LED1_PIN);
-	halGPIOSetPin(LEDS_LED1_PORT, LEDS_LED1_PIN);
+	PinLED::initOutput(GPIOSpeed::low, GPIODriver::pushPull);
+	PinLED::set();
 }
 
 
@@ -69,7 +72,7 @@ void Led1LoopService::onSetup() {
 ///
 void Led1LoopService::onLoop() {
 
-    halGPIOTogglePin(LEDS_LED1_PORT, LEDS_LED1_PIN);
+    PinLED::toggle();
 	Task::delay(500);
 }
 
@@ -80,7 +83,7 @@ void Led1LoopService::onLoop() {
 void VCNL4020LoopService::onSetup() {
 
 	_driver = new VCNL4020Driver();
-	_driver->initialize();
+	_driver->initialize(VCNL4020Driver::Mode::onDemand);
  }
 
 
@@ -90,6 +93,7 @@ void VCNL4020LoopService::onSetup() {
 void VCNL4020LoopService::onLoop() {
 
 	int proximity = _driver->getProximityValue();
+	int ambient = _driver->getAmbientValue();
 
 	Task::delay(1000);
 }

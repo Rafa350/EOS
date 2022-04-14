@@ -221,17 +221,17 @@ void DisplayDriver_SSD1306::initializeInterface() {
 
 	// Inicialitza modul GPIO
 	//
-	_pinCS.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::set);
-	_pinDC.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::set);
+	PinCS::initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::set);
+	PinDC::initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::set);
 #ifdef DISPLAY_RST_PORT
-	_pinRST.initOutput(GPIOSpeed::low, GPIODriver::pushPull, GPIOState::clr);
+	PinRST::initOutput(GPIOSpeed::low, GPIODriver::pushPull, GPIOState::clr);
 #endif
 
 	// Inicialitza el modul SPI
 	//
 	_spi.initialize(HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_128);
-	_spi.setSCKPin(_pinSCK);
-	_spi.setMOSIPin(_pinMOSI);
+	_spi.initSCKPin<PinSCK>();
+	_spi.initMOSIPin<PinMOSI>();
 }
 #else
 #error "DISPLAY_SSD1306_INTERFACE"
@@ -246,9 +246,9 @@ void DisplayDriver_SSD1306::initializeController() {
 	// Reseteja el controlador
 	//
 #ifdef DISPLAY_RST_PORT
-	_pinRST = 0;
+	PinRST::clear();
     halTMRDelay(10);
-    _pinRST = 1;
+    PinRST::set();
     halTMRDelay(150);
 #endif
 
@@ -317,10 +317,10 @@ void DisplayDriver_SSD1306::initializeController() {
 void DisplayDriver_SSD1306::writeCommand(
     uint8_t cmd) {
 
-	_pinCS = 0;
-	_pinDC = 0;
+	PinCS::clear();
+	PinDC::clear();
 	_spi.send(&cmd, sizeof(cmd));
-	_pinCS = 1;
+	PinCS::set();
 }
 #else
 #error "DISPLAY_SSD1306_INTERFACE"
@@ -337,10 +337,10 @@ void DisplayDriver_SSD1306::writeData(
     const uint8_t* data,
 	int length) {
 
-	_pinCS = 0;
-	_pinDC = 1;
+	PinCS::clear();
+	PinDC::set();
 	_spi.send(data, length);
-	_pinCS = 0;
+	PinCS::clear();
 }
 #else
 #error "DISPLAY_SSD1306_INTERFACE"

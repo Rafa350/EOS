@@ -124,7 +124,7 @@ void TouchpadService::interruptHandler() {
 /// \brief    Despatxa la interrupcio a la funcio membre.
 ///
 void TouchpadService::interruptHandler(
-	EXTILine line,
+	halEXTILine line,
 	void *param) {
 
 	TouchpadService* service = static_cast<TouchpadService*>(param);

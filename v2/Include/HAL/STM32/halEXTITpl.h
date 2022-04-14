@@ -1,0 +1,92 @@
+#ifndef __STM32_halEXTITpl__
+#define __STM32_halEXTITpl__
+
+
+// EOS includes
+//
+#include "HAL/hal.h"
+#include "HAL/STM32/halEXTI.h"
+
+
+namespace eos {
+
+	enum class EXTILine: halEXTILine {
+		line0 = HAL_EXTI_LINE_0,
+		line1 = HAL_EXTI_LINE_1,
+		line2 = HAL_EXTI_LINE_2,
+		line3 = HAL_EXTI_LINE_3,
+		line4 = HAL_EXTI_LINE_4,
+		line5 = HAL_EXTI_LINE_5,
+		line6 = HAL_EXTI_LINE_6,
+		line7 = HAL_EXTI_LINE_7,
+		line8 = HAL_EXTI_LINE_8,
+		line9 = HAL_EXTI_LINE_9,
+		line10 = HAL_EXTI_LINE_10,
+		line11 = HAL_EXTI_LINE_11,
+		line12 = HAL_EXTI_LINE_12,
+		line13 = HAL_EXTI_LINE_13,
+		line14 = HAL_EXTI_LINE_14,
+		line15 = HAL_EXTI_LINE_15
+	};
+
+	enum class EXTIPort: halEXTIOptions {
+		portA = HAL_EXTI_PORT_A,
+		portB = HAL_EXTI_PORT_B,
+		portC = HAL_EXTI_PORT_C,
+		portD = HAL_EXTI_PORT_D,
+		portE = HAL_EXTI_PORT_E,
+		portF = HAL_EXTI_PORT_F,
+		portG = HAL_EXTI_PORT_G,
+		portH = HAL_EXTI_PORT_H,
+		portI = HAL_EXTI_PORT_I,
+		portJ = HAL_EXTI_PORT_J,
+		portK = HAL_EXTI_PORT_K
+	};
+
+	enum class EXTIMode: halEXTIOptions {
+		none      = HAL_EXTI_MODE_NONE,
+		interrupt = HAL_EXTI_MODE_INT,
+		event     = HAL_EXTI_MODE_EVENT
+	};
+
+	enum class EXTITrigger: halEXTIOptions {
+		rissing  = HAL_EXTI_TRIGGER_RISING,
+		falling  = HAL_EXTI_TRIGGER_FALLING,
+		changing = HAL_EXTI_TRIGGER_CHANGING
+	};
+
+	template <EXTILine line_>
+	class EXTIAdapter {
+		public:
+			constexpr static const EXTILine line = line_;
+
+		public:
+			inline static void init(EXTIPort port, EXTIMode mode, EXTITrigger trigger) {
+				halEXTIInitializeLine(halEXTILine(line), halEXTIOptions(port) | halEXTIOptions(mode) | halEXTIOptions(trigger));
+			}
+
+			inline static void setInterruptFunction(halEXTIInterruptFunction function, void *params) {
+			    halEXTISetInterruptFunction(halEXTILine(line), function, params);
+			}
+	};
+
+	typedef EXTIAdapter<EXTILine::line0> EXTI_L0;
+	typedef EXTIAdapter<EXTILine::line1> EXTI_L1;
+	typedef EXTIAdapter<EXTILine::line2> EXTI_L2;
+	typedef EXTIAdapter<EXTILine::line3> EXTI_L3;
+	typedef EXTIAdapter<EXTILine::line4> EXTI_L4;
+	typedef EXTIAdapter<EXTILine::line5> EXTI_L5;
+	typedef EXTIAdapter<EXTILine::line6> EXTI_L6;
+	typedef EXTIAdapter<EXTILine::line7> EXTI_L7;
+	typedef EXTIAdapter<EXTILine::line8> EXTI_L8;
+	typedef EXTIAdapter<EXTILine::line9> EXTI_L9;
+	typedef EXTIAdapter<EXTILine::line10> EXTI_L10;
+	typedef EXTIAdapter<EXTILine::line11> EXTI_L11;
+	typedef EXTIAdapter<EXTILine::line12> EXTI_L12;
+	typedef EXTIAdapter<EXTILine::line13> EXTI_L13;
+	typedef EXTIAdapter<EXTILine::line14> EXTI_L14;
+	typedef EXTIAdapter<EXTILine::line15> EXTI_L15;
+}
+
+
+#endif // __STM32_halEXTITpl__

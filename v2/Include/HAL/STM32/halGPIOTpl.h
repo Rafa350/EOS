@@ -5,7 +5,7 @@
 /// @{
 /// \addtogroup HAL_STM32 STM32 Hardware Abstraction Layer
 /// @{
-/// \defgroup HAL_STM32_GPIOTpl GPIO C++ Templates
+/// \defgroup HAL_STM32_GPIOTpl GPIO++
 /// @{
 
 #ifndef __STM32_halGPIOTpl__

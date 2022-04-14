@@ -41,9 +41,19 @@
 #define HAL_INT_SUBPRIORITY_2          2
 #define HAL_INT_SUBPRIORITY_3          3
 
-// Vectord d'interrupcion
+// Vector d'interrupcion
 #define HAL_INT_VECTOR_DAC            TIM6_DAC_IRQn
 #define HAL_INT_VECTOR_DMA2D          DMA2D_IRQn
+#define HAL_INT_VECTOR_EXTI0          EXTI0_IRQn
+#define HAL_INT_VECTOR_EXTI1		  EXTI1_IRQn
+#define HAL_INT_VECTOR_EXTI2		  EXTI2_IRQn
+#define HAL_INT_VECTOR_EXTI3		  EXTI3_IRQn
+#define HAL_INT_VECTOR_EXTI4		  EXTI4_IRQn
+#define HAL_INT_VECTOR_EXTI5          EXTI9_5_IRQn
+#define HAL_INT_VECTOR_EXTI6          EXTI9_5_IRQn
+#define HAL_INT_VECTOR_EXTI7          EXTI9_5_IRQn
+#define HAL_INT_VECTOR_EXTI8          EXTI9_5_IRQn
+#define HAL_INT_VECTOR_EXTI9          EXTI9_5_IRQn
 #define HAL_INT_VECTOR_EXTI10         EXTI15_10_IRQn
 #define HAL_INT_VECTOR_EXTI11         EXTI15_10_IRQn
 #define HAL_INT_VECTOR_EXTI12         EXTI15_10_IRQn

@@ -78,24 +78,25 @@ extern "C" {
 #define HAL_EXTI_PORT_K           (10 << HAL_EXTI_PORT_pos)
 
 
-typedef uint32_t EXTILine;
-typedef uint32_t EXTIOptions;
+typedef uint32_t halEXTILine;
+typedef uint32_t halEXTIOptions;
 
-typedef void (*EXTIInterruptFunction)(EXTILine line, void *params);
+typedef void (*halEXTIInterruptFunction)(halEXTILine line, void *params);
 
 typedef struct {
-    EXTILine line;
-    EXTIOptions options;
-    EXTIInterruptFunction isrFunction;
+    halEXTILine line;
+    halEXTIOptions options;
+    halEXTIInterruptFunction isrFunction;
     void *isrParams;
-} EXTIPinSettings;
+} halEXTILineSettings;
 
 
-void halEXTIInitializePins(const EXTIPinSettings *settings, uint32_t count);
+void halEXTIInitializeLines(const halEXTILineSettings *settings, uint32_t count);
+void halEXTIInitializeLine(halEXTILine line, halEXTIOptions options);
 
-void halEXTISetInterruptFunction(EXTILine line, EXTIInterruptFunction function, void *params);
-void halEXTIEnableInterrupt(EXTILine line);
-bool halEXTIDisableInterrupt(EXTILine line);
+void halEXTISetInterruptFunction(halEXTILine line, halEXTIInterruptFunction function, void *params);
+void halEXTIEnableInterrupt(halEXTILine line);
+bool halEXTIDisableInterrupt(halEXTILine line);
 
 #ifdef __cplusplus
 }

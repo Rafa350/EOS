@@ -4,8 +4,10 @@
 #include "HAL/halGPIOTpl.h"
 #include "HAL/halI2CTpl.h"
 #ifdef EOS_STM32
-#include "HAL/STM32/halEXTI.h"
+#include "HAL/STM32/halEXTITpl.h"
+#include "HAL/STM32/halINT.h"
 #endif
+#include "System/eosMath.h"
 
 
 using namespace eos;
@@ -14,18 +16,36 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief Contructor.
 ///
-VCNL4020Driver::VCNL4020Driver() {
+VCNL4020Driver::VCNL4020Driver():
+	_mode(Mode::onDemand) {
 
-	_i2c.setSCLPin(_pinSCL);
-	_i2c.setSDAPin(_pinSDA);
+	// Configura la linia d'interrupcio externa
+	//
+	//PinINT::initInput(GPIOSpeed::fast, GPIOPull::up);
+	//LineINT::init(EXTIPort(VCNL4020_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
+    //LineINT::setInterruptFunction(interruptHandler, this);
+
+    // Configura el modul I2C
+    //
+    _i2c.initSCLPin<PinSCL>();
+	_i2c.initSDAPin<PinSDA>();
 	_i2c.initMaster();
+
+	// Configura les interrupcions
+	//
+	//halINTSetInterruptVectorPriority(VCNL4020_INT_IRQ, VCNL4020_INT_PRIORITY, VCNL4020_INT_SUBPRIORITY);
+	//halINTEnableInterruptVector(VCNL4020_INT_IRQ);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief Inicialitza el driver.
+/// \brief    Inicialitza el driver.
+/// \param    mode: NModus de treball (Continu o sota demanda)
 ///
-void VCNL4020Driver::initialize() {
+void VCNL4020Driver::initialize(
+	Mode mode) {
+
+	_mode = mode;
 
 	// Desactiva tot
 	//
@@ -33,7 +53,7 @@ void VCNL4020Driver::initialize() {
 
 	// Asigna el valor de la current del emisor
 	//
-	write8(REGISTER_PROX_CURRENT, 15);
+	//setIRCurrent(15);
 
 	// Asigna la velocitat de mesura.
 	//
@@ -45,11 +65,14 @@ void VCNL4020Driver::initialize() {
 
 	// Asigna els parametres de mesura
 	//
-	write8(REGISTER_INTERRUPT_CONTROL, 0x42);
+	//write8(REGISTER_INTERRUPT_CONTROL, 0x42);
+	write16(REGISTER_INTERRUPT_LOW_THRES, 0);
+	write16(REGISTER_INTERRUPT_HIGH_THRES, 0xFFFF);
 
 	// Inicia la lectura periodica
 	//
-	write8(REGISTER_COMMAND, COMMAND_PROX_ENABLE | COMMAND_AMBI_ENABLE | COMMAND_SELFTIMED_MODE_ENABLE);
+	if (mode == Mode::continous)
+		write8(REGISTER_COMMAND, COMMAND_PROX_ENABLE | COMMAND_AMBI_ENABLE | COMMAND_SELFTIMED_MODE_ENABLE);
 }
 
 
@@ -101,7 +124,7 @@ uint16_t VCNL4020Driver::read16(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu en un registre de 16 bits.
+/// \brief    Escriu en un registre de 8 bits.
 /// \param    reg: El numero de registre.
 /// \param    value: El valor a escriure.
 ///
@@ -118,24 +141,43 @@ void VCNL4020Driver::write8(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu en el registre de control d'interrupcions.
+/// \brief    Escriu en un registre de 16 bits.
+/// \param    reg: El numero de registre.
 /// \param    value: El valor a escriure.
 ///
-void VCNL4020Driver::setIntControl(
-	uint8_t value) {
+void VCNL4020Driver::write16(
+	uint8_t reg,
+	uint16_t value) {
 
-	write8(REGISTER_INTERRUPT_CONTROL, value);
+	uint8_t data[3];
+
+	data[0] = reg;
+	data[1] = (value & 0xFF00) >> 8;
+	data[2] = value & 0x00FF;
+	_i2c.send(VCNL40x0_ADDRESS, data, 3);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Escriu en el registre d'estat d'interrupcions.
-/// \param    value: El valor a escriure.
+/// \brief    Es crida en la interrupcio EXTI
+/// \param    line: La linia que genera la interrupcio.
+/// \param    params: Parametres de la interrupcio.
 ///
-void VCNL4020Driver::setIntStatus(
+void VCNL4020Driver::interruptHandler(
+	halEXTILine line,
+	void *params) {
+
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Asigna el valor de current del emisor IR.
+/// \param    value: El valor 0..20.
+///
+void VCNL4020Driver::setIRCurrent(
 	uint8_t value) {
 
-	write8(REGISTER_INTERRUPT_STATUS, value);
+	write8(REGISTER_PROX_CURRENT, Math::min((uint8_t)20, value));
 }
 
 
@@ -162,23 +204,56 @@ void VCNL4020Driver::setIntLowerThreshold(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Obte el valor de current del emisor IR.
+/// \return   El valor.
+///
+uint8_t VCNL4020Driver::getIRCurrent() {
+
+	return read8(REGISTER_PROX_CURRENT) & 0b00111111;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Obte el valor de proximitat
 /// \return   El valor.
 ///
 int VCNL4020Driver::getProximityValue() {
 
-	const int measures = 4;
-	int av = 0;
+	if (_mode == Mode::onDemand)
+		write8(REGISTER_COMMAND, COMMAND_PROX_ENABLE | COMMAND_PROX_ON_DEMAND);
 
-	for (int i = 0; i < measures; i++) {
+	uint8_t cr;
+	do {
+		cr = read8(REGISTER_COMMAND);
+	} while ((cr & COMMAND_MASK_PROX_DATA_READY) != COMMAND_MASK_PROX_DATA_READY);
 
-		uint8_t cr;
-		do {
-			cr = read8(REGISTER_COMMAND);
-		} while ((cr & COMMAND_MASK_PROX_DATA_READY) != COMMAND_MASK_PROX_DATA_READY);
+	int result = read16(REGISTER_PROX_VALUE);
 
-		av += read16(REGISTER_PROX_VALUE);
-	}
+	if (_mode == Mode::onDemand)
+		write8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
 
-	return av / measures;
+	return result;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el valor de ambient
+/// \return   El valor.
+///
+int VCNL4020Driver::getAmbientValue() {
+
+	if (_mode == Mode::onDemand)
+		write8(REGISTER_COMMAND, COMMAND_AMBI_ENABLE | COMMAND_AMBI_ON_DEMAND);
+
+	uint8_t cr;
+	do {
+		cr = read8(REGISTER_COMMAND);
+	} while ((cr & COMMAND_MASK_AMBI_DATA_READY) != COMMAND_MASK_AMBI_DATA_READY);
+
+	int result = read16(REGISTER_AMBI_VALUE);
+
+	if (_mode == Mode::onDemand)
+		write8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
+
+	return result;
 }

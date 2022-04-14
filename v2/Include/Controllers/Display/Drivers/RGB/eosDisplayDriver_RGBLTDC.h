@@ -90,38 +90,6 @@ namespace eos {
 			typedef GPIOPinAdapter<GPIOPort(DISPLAY_B7_PORT), GPIOPin(DISPLAY_B7_PIN)> PinB7;
 
     	private:
-			PinLCDE _pinLCDE;
-			PinBKE _pinBKE;
-			PinHSYNC _pinHSYNC;
-			PinVSYNC _pinVSYNC;
-			PinDE _pinDE;
-			PinDOTCLK _pinDOTCLK;
-			PinR0 _pinR0;
-			PinR1 _pinR1;
-			PinR2 _pinR2;
-			PinR3 _pinR3;
-			PinR4 _pinR4;
-			PinR5 _pinR5;
-			PinR6 _pinR6;
-			PinR7 _pinR7;
-			PinG0 _pinG0;
-			PinG1 _pinG1;
-			PinG2 _pinG2;
-			PinG3 _pinG3;
-			PinG4 _pinG4;
-			PinG5 _pinG5;
-			PinG6 _pinG6;
-			PinG7 _pinG7;
-			PinB0 _pinB0;
-			PinB1 _pinB1;
-			PinB2 _pinB2;
-			PinB3 _pinB3;
-			PinB4 _pinB4;
-			PinB5 _pinB5;
-			PinB6 _pinB6;
-			PinB7 _pinB7;
-			LTDCAdapter _ltdc;
-
     		FrameBuffer *_frontFrameBuffer;
     		FrameBuffer *_backFrameBuffer;
     		void *_frontImageBuffer;

@@ -49,7 +49,7 @@ namespace eos {
 	};
 
 	template <SPIChannel channel_>
-	class SPIAdapter {
+	class SPIModule {
 		private:
 			constexpr static const unsigned _defaultBlockTime = 1000;
 			constexpr static const SPISize _defaultSize = SPISize::size8;
@@ -110,123 +110,122 @@ namespace eos {
 				return halSPIDisableInterrupts(_handler, events);
 			}
 
-			template <GPIOPort port_, GPIOPin pin_>
-			inline static void setSCKPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+			template <typename pinAdapter_>
+			inline static void initSCKPin() {
 				if constexpr (channel_ == SPIChannel::channel1)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi1_SCK);
+						pinAdapter_::GPIOAlt::spi1_SCK);
 
 				if constexpr (channel_ == SPIChannel::channel2)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi2_SCK);
+						pinAdapter_::GPIOAlt::spi2_SCK);
 
 				if constexpr (channel_ == SPIChannel::channel3)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi3_SCK);
+						pinAdapter_::GPIOAlt::spi3_SCK);
 
 				if constexpr (channel_ == SPIChannel::channel4)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi4_SCK);
+						pinAdapter_::GPIOAlt::spi4_SCK);
 
 				if constexpr (channel_ == SPIChannel::channel5)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi5_SCK);
+						pinAdapter_::GPIOAlt::spi5_SCK);
 
 				if constexpr (channel_ == SPIChannel::channel6)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi6_SCK);
+						pinAdapter_::GPIOAlt::spi6_SCK);
 			}
 
-			template <GPIOPort port_, GPIOPin pin_>
-			inline static void setMOSIPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+			template <typename pinAdapter_>
+			inline static void initMOSIPin() {
 				if constexpr (channel_ == SPIChannel::channel1)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi1_MOSI);
+						pinAdapter_::GPIOAlt::spi1_MOSI);
 
 				if constexpr (channel_ == SPIChannel::channel2)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi2_MOSI);
+						pinAdapter_::GPIOAlt::spi2_MOSI);
 
 				if constexpr (channel_ == SPIChannel::channel3)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi3_MOSI);
+						pinAdapter_::GPIOAlt::spi3_MOSI);
 
 				if constexpr (channel_ == SPIChannel::channel4)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi4_MOSI);
+						pinAdapter_::GPIOAlt::spi4_MOSI);
 
 				if constexpr (channel_ == SPIChannel::channel5)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi5_MOSI);
+						pinAdapter_::GPIOAlt::spi5_MOSI);
 
 				if constexpr (channel_ == SPIChannel::channel6)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi6_MOSI);
+						pinAdapter_::GPIOAlt::spi6_MOSI);
 
 			}
 
-			template <GPIOPort port_, GPIOPin pin_>
-			inline static void setMISOPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+			template <typename pinAdapter_>
+			inline static void initMISOPin() {
 				if constexpr (channel_ == SPIChannel::channel1)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi1_MISO);
+						pinAdapter_::GPIOAlt::spi1_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel2)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi2_MISO);
+						pinAdapter_::GPIOAlt::spi2_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel2)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi2_MISO);
+						pinAdapter_::GPIOAlt::spi2_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel3)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi3_MISO);
+						pinAdapter_::GPIOAlt::spi3_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel5)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi5_MISO);
+						pinAdapter_::GPIOAlt::spi5_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel6)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::spi6_MISO);
-
+						pinAdapter_::GPIOAlt::spi6_MISO);
 			}
 
 			inline void send(const uint8_t data, unsigned blockTime = _defaultBlockTime) {
@@ -239,12 +238,12 @@ namespace eos {
 	};
 
 
-	typedef SPIAdapter<SPIChannel::channel1> SPI_1;
-	typedef SPIAdapter<SPIChannel::channel2> SPI_2;
-	typedef SPIAdapter<SPIChannel::channel3> SPI_3;
-	typedef SPIAdapter<SPIChannel::channel4> SPI_4;
-	typedef SPIAdapter<SPIChannel::channel5> SPI_5;
-	typedef SPIAdapter<SPIChannel::channel6> SPI_6;
+	typedef SPIModule<SPIChannel::channel1> SPI_1;
+	typedef SPIModule<SPIChannel::channel2> SPI_2;
+	typedef SPIModule<SPIChannel::channel3> SPI_3;
+	typedef SPIModule<SPIChannel::channel4> SPI_4;
+	typedef SPIModule<SPIChannel::channel5> SPI_5;
+	typedef SPIModule<SPIChannel::channel6> SPI_6;
 
 }
 

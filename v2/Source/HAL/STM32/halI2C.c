@@ -190,7 +190,7 @@ void halI2CDisable(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Transmiteix una sequencia de bytes.
+/// \brief    Transmeteix una sequencia de bytes.
 /// \param    handler: Handler del dispositiu.
 /// \param    addr: Adressa.
 /// \param    data: Bytes a transmetre.
@@ -208,10 +208,18 @@ void halI2CMasterSend(
 
 	HAL_StatusTypeDef status = HAL_OK;
 
-	status = HAL_I2C_Master_Transmit(&handler->handle, addr, data, lenght, blockTime);
+	status = HAL_I2C_Master_Transmit(&handler->handle, addr, (uint8_t*)data, lenght, blockTime);
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Reb una sequencia de bytes.
+/// \param    handler: Handler.
+/// \param    addr: Adressa.
+/// \param    data: Buffer de recepcio.
+/// \param    length: Tamany del buffer de recepcio en bytes.
+/// \param    blockParam: Temps maxim de bloqueig.
+///
 void halI2CMasterReceive(
 	halI2CHandler handler,
 	uint8_t addr,

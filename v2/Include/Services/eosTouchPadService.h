@@ -52,7 +52,7 @@ namespace eos {
         	int _oldPressed;
 
         	void interruptHandler();
-			static void interruptHandler(EXTILine line, void *param);
+			static void interruptHandler(halEXTILine line, void *param);
 
 		protected:
 			void onInitialize() override;

@@ -20,13 +20,13 @@ namespace eos {
 	};
 
 	template <I2CChannel channel_>
-	class I2CAdapter {
+	class I2CModule {
 		private:
 			constexpr static const unsigned _defaultBlockTime = 1000;
 
 		private:
-			halI2CData _data;
 			halI2CHandler _handler;
+			halI2CData _data;
 
 		public:
 			constexpr static const I2CChannel channel = channel_;
@@ -127,12 +127,66 @@ namespace eos {
 						GPIODriver::openDrain,
 						pinAdapter_::GPIOAlt::i2c4_SDA);
 			}
+
+			template <typename pinAdapter_>
+			inline static void initSCLPin() {
+				if constexpr (channel_ == I2CChannel::channel1)
+					pinAdapter_::initAlt(
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						pinAdapter_::GPIOAlt::i2c1_SCL);
+
+				if constexpr (channel_ == I2CChannel::channel2)
+					pinAdapter_::initAlt(
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						pinAdapter_::GPIOAlt::i2c2_SCL);
+
+				if constexpr (channel_ == I2CChannel::channel3)
+					pinAdapter_::initAlt(
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						pinAdapter_::GPIOAlt::i2c3_SCL);
+
+				if constexpr (channel_ == I2CChannel::channel4)
+					pinAdapter_::initAlt(
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						pinAdapter_::GPIOAlt::i2c4_SCL);
+			}
+
+			template <typename pinAdapter_>
+			inline static void initSDAPin() {
+				if constexpr (channel_ == I2CChannel::channel1)
+					pinAdapter_::initAlt(
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						pinAdapter_::GPIOAlt::i2c1_SDA);
+
+				if constexpr (channel_ == I2CChannel::channel2)
+					pinAdapter_::initAlt(
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						pinAdapter_::GPIOAlt::i2c2_SDA);
+
+				if constexpr (channel_ == I2CChannel::channel3)
+					pinAdapter_::initAlt(
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						pinAdapter_::GPIOAlt::i2c3_SDA);
+
+				if constexpr (channel_ == I2CChannel::channel4)
+					pinAdapter_::initAlt(
+						GPIOSpeed::fast,
+						GPIODriver::openDrain,
+						pinAdapter_::GPIOAlt::i2c4_SDA);
+			}
 	};
 
-	typedef I2CAdapter<I2CChannel::channel1> I2C_1;
-	typedef I2CAdapter<I2CChannel::channel2> I2C_2;
-	typedef I2CAdapter<I2CChannel::channel3> I2C_3;
-	typedef I2CAdapter<I2CChannel::channel4> I2C_4;
+	typedef I2CModule<I2CChannel::channel1> I2C_1;
+	typedef I2CModule<I2CChannel::channel2> I2C_2;
+	typedef I2CModule<I2CChannel::channel3> I2C_3;
+	typedef I2CModule<I2CChannel::channel4> I2C_4;
 }
 
 

@@ -3,10 +3,16 @@
 
 
 // EOS includes
+//
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
-#include "HAL\halI2CTpl.h"
-#include "HAL\halGPIOTpl.h"
+#include "HAL/halI2CTpl.h"
+#include "HAL/halGPIOTpl.h"
+#ifdef TOUCHPAD_INT_PORT
+#ifdef EOS_STM32
+#include "HAL/STM32/halEXTITpl.h"
+#endif
+#endif
 
 
 // Adressa I2C
@@ -253,7 +259,8 @@ namespace eos {
 #endif
 			typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_SCL_PORT), GPIOPin(TOUCHPAD_SCL_PIN)> PinSCL;
 			typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_SDA_PORT), GPIOPin(TOUCHPAD_SDA_PIN)> PinSDA;
-			typedef I2CAdapter<I2CChannel(TOUCHPAD_I2C_CHANNEL)> I2C;
+			typedef EXTIAdapter<EXTILine(TOUCHPAD_INT_EXTI_LINE)> LineINT;
+			typedef I2CModule<I2CChannel(TOUCHPAD_I2C_CHANNEL)> I2C;
 
 		private:
 			static ITouchPadDriver* _instance;
@@ -261,11 +268,6 @@ namespace eos {
 			int _padWidth;
 			int _padHeight;
 			TouchPadOrientation _orientation;
-#ifdef TOUCHPAD_INT_PORT
-			PinINT _pinINT;
-#endif
-			PinSCL _pinSCL;
-			PinSDA _pinSDA;
 			I2C _i2c;
 
 		private:

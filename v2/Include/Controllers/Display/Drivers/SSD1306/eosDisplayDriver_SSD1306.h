@@ -66,23 +66,19 @@ namespace eos {
 			typedef GPIOPinAdapter<GPIOPort(DISPLAY_DC_PORT), GPIOPin(DISPLAY_DC_PIN)> PinDC;
 			typedef GPIOPinAdapter<GPIOPort(DISPLAY_SCK_PORT), GPIOPin(DISPLAY_SCK_PIN)> PinSCK;
 			typedef GPIOPinAdapter<GPIOPort(DISPLAY_MOSI_PORT), GPIOPin(DISPLAY_MOSI_PIN)> PinMOSI;
-			typedef SPIAdapter<SPIChannel(DISPLAY_SPI_CHANNEL)> Spi;
+#if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
+			typedef SPIModule<SPIChannel(DISPLAY_SPI_CHANNEL)> Spi;
+#elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
+#endif
 
     	private:
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-	#ifdef DISPLAY_RST_PORT
-			PinRST _pinRST;
-	#endif
-			PinCS _pinCS;
-			PinDC _pinDC;
-			PinSCK _pinSCK;
-			PinMOSI _pinMOSI;
 			Spi _spi;
 #elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
 #endif
 
-    		static IDisplayDriver* _instance;
-    		FrameBuffer* _frameBuffer;
+    		static IDisplayDriver *_instance;
+    		FrameBuffer *_frameBuffer;
 
         public:
             DisplayDriver_SSD1306();

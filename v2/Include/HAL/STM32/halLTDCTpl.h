@@ -18,193 +18,169 @@ namespace eos {
 
 	class LTDCAdapter {
 		public:
-		    inline static void initialize(const halLTDCSettings& settings) {
+		    inline static void initialize(const halLTDCSettings &settings) {
 		    	halLTDCInitialize(&settings);
 		    }
 
-			template <GPIOPort port, GPIOPin pin>
-			inline static void setHSYNCPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				pinAdapter.initAlt(
+			template <typename pinAdapter_>
+			inline static void initHSYNCPin() {
+				pinAdapter_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port, pin>::GPIOAlt::ltdc_HSYNC);
+					pinAdapter_::GPIOAlt::ltdc_HSYNC);
 			}
 
-			template <GPIOPort port, GPIOPin pin>
-			inline static void setVSYNCPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				pinAdapter.initAlt(
+			template <typename pinAdapter_>
+			inline static void initVSYNCPin() {
+				pinAdapter_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port, pin>::GPIOAlt::ltdc_VSYNC);
+					pinAdapter_::GPIOAlt::ltdc_VSYNC);
 			}
 
-			template <GPIOPort port, GPIOPin pin>
-			inline static void setDOTCLKPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				pinAdapter.initAlt(
+			template <typename pinAdapter_>
+			inline static void initDOTCLKPin() {
+				pinAdapter_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port, pin>::GPIOAlt::ltdc_DOTCLK);
+					pinAdapter_::GPIOAlt::ltdc_DOTCLK);
 			}
 
-			template <GPIOPort port, GPIOPin pin>
-			inline static void setDEPin(GPIOPinAdapter<port, pin> pinAdapter) {
-				pinAdapter.initAlt(
+			template <typename pinAdapter_>
+			inline static void initDEPin() {
+				pinAdapter_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port, pin>::GPIOAlt::ltdc_DE);
+					pinAdapter_::GPIOAlt::ltdc_DE);
 			}
 
-			template <GPIOPort port0, GPIOPin pin0,
-			          GPIOPort port1, GPIOPin pin1,
-			          GPIOPort port2, GPIOPin pin2,
-			          GPIOPort port3, GPIOPin pin3,
-			          GPIOPort port4, GPIOPin pin4,
-			          GPIOPort port5, GPIOPin pin5,
-			          GPIOPort port6, GPIOPin pin6,
-			          GPIOPort port7, GPIOPin pin7>
-			inline static void setRPins(
-					GPIOPinAdapter<port0, pin0> pinR0Adapter,
-					GPIOPinAdapter<port1, pin1> pinR1Adapter,
-					GPIOPinAdapter<port2, pin2> pinR2Adapter,
-					GPIOPinAdapter<port3, pin3> pinR3Adapter,
-					GPIOPinAdapter<port4, pin4> pinR4Adapter,
-					GPIOPinAdapter<port5, pin5> pinR5Adapter,
-					GPIOPinAdapter<port6, pin6> pinR6Adapter,
-					GPIOPinAdapter<port7, pin7> pinR7Adapter) {
-				pinR0Adapter.initAlt(
+			template <typename pinAdapterR0_,
+			          typename pinAdapterR1_,
+					  typename pinAdapterR2_,
+					  typename pinAdapterR3_,
+					  typename pinAdapterR4_,
+					  typename pinAdapterR5_,
+					  typename pinAdapterR6_,
+					  typename pinAdapterR7_>
+			inline static void initRPins() {
+				pinAdapterR0_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port0, pin0>::GPIOAlt::ltdc_R0);
-				pinR1Adapter.initAlt(
+					pinAdapterR0_::GPIOAlt::ltdc_R0);
+				pinAdapterR1_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port1, pin1>::GPIOAlt::ltdc_R1);
-				pinR2Adapter.initAlt(
+					pinAdapterR1_::GPIOAlt::ltdc_R1);
+				pinAdapterR2_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port2, pin2>::GPIOAlt::ltdc_R2);
-				pinR3Adapter.initAlt(
+					pinAdapterR2_::GPIOAlt::ltdc_R2);
+				pinAdapterR3_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port3, pin3>::GPIOAlt::ltdc_R3);
-				pinR4Adapter.initAlt(
+					pinAdapterR3_::GPIOAlt::ltdc_R3);
+				pinAdapterR4_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port4, pin4>::GPIOAlt::ltdc_R4);
-				pinR5Adapter.initAlt(
+					pinAdapterR4_::GPIOAlt::ltdc_R4);
+				pinAdapterR5_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port5, pin5>::GPIOAlt::ltdc_R5);
-				pinR6Adapter.initAlt(
+					pinAdapterR5_::GPIOAlt::ltdc_R5);
+				pinAdapterR6_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port6, pin6>::GPIOAlt::ltdc_R6);
-				pinR7Adapter.initAlt(
+					pinAdapterR6_::GPIOAlt::ltdc_R6);
+				pinAdapterR7_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port7, pin7>::GPIOAlt::ltdc_R7);
+					pinAdapterR7_::GPIOAlt::ltdc_R7);
 			}
 
-			template <GPIOPort port0, GPIOPin pin0,
-			          GPIOPort port1, GPIOPin pin1,
-			          GPIOPort port2, GPIOPin pin2,
-			          GPIOPort port3, GPIOPin pin3,
-			          GPIOPort port4, GPIOPin pin4,
-			          GPIOPort port5, GPIOPin pin5,
-			          GPIOPort port6, GPIOPin pin6,
-			          GPIOPort port7, GPIOPin pin7>
-			inline static void setGPins(
-					GPIOPinAdapter<port0, pin0> pinG0Adapter,
-					GPIOPinAdapter<port1, pin1> pinG1Adapter,
-					GPIOPinAdapter<port2, pin2> pinG2Adapter,
-					GPIOPinAdapter<port3, pin3> pinG3Adapter,
-					GPIOPinAdapter<port4, pin4> pinG4Adapter,
-					GPIOPinAdapter<port5, pin5> pinG5Adapter,
-					GPIOPinAdapter<port6, pin6> pinG6Adapter,
-					GPIOPinAdapter<port7, pin7> pinG7Adapter) {
-				pinG0Adapter.initAlt(
+			template <typename pinAdapterG0_,
+                      typename pinAdapterG1_,
+					  typename pinAdapterG2_,
+					  typename pinAdapterG3_,
+					  typename pinAdapterG4_,
+					  typename pinAdapterG5_,
+					  typename pinAdapterG6_,
+					  typename pinAdapterG7_>
+			inline static void initGPins() {
+				pinAdapterG0_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port0, pin0>::GPIOAlt::ltdc_G0);
-				pinG1Adapter.initAlt(
+					pinAdapterG0_::GPIOAlt::ltdc_G0);
+				pinAdapterG1_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port1, pin1>::GPIOAlt::ltdc_G1);
-				pinG2Adapter.initAlt(
+					pinAdapterG1_::GPIOAlt::ltdc_G1);
+				pinAdapterG2_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port2, pin2>::GPIOAlt::ltdc_G2);
-				pinG3Adapter.initAlt(
+					pinAdapterG2_::GPIOAlt::ltdc_G2);
+				pinAdapterG3_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port3, pin3>::GPIOAlt::ltdc_G3);
-				pinG4Adapter.initAlt(
+					pinAdapterG3_::GPIOAlt::ltdc_G3);
+				pinAdapterG4_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port4, pin4>::GPIOAlt::ltdc_G4);
-				pinG5Adapter.initAlt(
+					pinAdapterG4_::GPIOAlt::ltdc_G4);
+				pinAdapterG5_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port5, pin5>::GPIOAlt::ltdc_G5);
-				pinG6Adapter.initAlt(
+					pinAdapterG5_::GPIOAlt::ltdc_G5);
+				pinAdapterG6_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port6, pin6>::GPIOAlt::ltdc_G6);
-				pinG7Adapter.initAlt(
+					pinAdapterG6_::GPIOAlt::ltdc_G6);
+				pinAdapterG7_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port7, pin7>::GPIOAlt::ltdc_G7);
+					pinAdapterG7_::GPIOAlt::ltdc_G7);
 			}
 
-			template <GPIOPort port0, GPIOPin pin0,
-			          GPIOPort port1, GPIOPin pin1,
-			          GPIOPort port2, GPIOPin pin2,
-			          GPIOPort port3, GPIOPin pin3,
-			          GPIOPort port4, GPIOPin pin4,
-			          GPIOPort port5, GPIOPin pin5,
-			          GPIOPort port6, GPIOPin pin6,
-			          GPIOPort port7, GPIOPin pin7>
-			inline static void setBPins(
-					GPIOPinAdapter<port0, pin0> pinB0Adapter,
-					GPIOPinAdapter<port1, pin1> pinB1Adapter,
-					GPIOPinAdapter<port2, pin2> pinB2Adapter,
-					GPIOPinAdapter<port3, pin3> pinB3Adapter,
-					GPIOPinAdapter<port4, pin4> pinB4Adapter,
-					GPIOPinAdapter<port5, pin5> pinB5Adapter,
-					GPIOPinAdapter<port6, pin6> pinB6Adapter,
-					GPIOPinAdapter<port7, pin7> pinB7Adapter) {
-				pinB0Adapter.initAlt(
+			template <typename pinAdapterB0_,
+					  typename pinAdapterB1_,
+					  typename pinAdapterB2_,
+					  typename pinAdapterB3_,
+					  typename pinAdapterB4_,
+					  typename pinAdapterB5_,
+					  typename pinAdapterB6_,
+					  typename pinAdapterB7_>
+			inline static void initBPins() {
+				pinAdapterB0_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port0, pin0>::GPIOAlt::ltdc_B0);
-				pinB1Adapter.initAlt(
+					pinAdapterB0_::GPIOAlt::ltdc_B0);
+				pinAdapterB1_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port1, pin1>::GPIOAlt::ltdc_B1);
-				pinB2Adapter.initAlt(
+					pinAdapterB1_::GPIOAlt::ltdc_B1);
+				pinAdapterB2_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port2, pin2>::GPIOAlt::ltdc_B2);
-				pinB3Adapter.initAlt(
+					pinAdapterB2_::GPIOAlt::ltdc_B2);
+				pinAdapterB3_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port3, pin3>::GPIOAlt::ltdc_B3);
-				pinB4Adapter.initAlt(
+					pinAdapterB3_::GPIOAlt::ltdc_B3);
+				pinAdapterB4_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port4, pin4>::GPIOAlt::ltdc_B4);
-				pinB5Adapter.initAlt(
+					pinAdapterB4_::GPIOAlt::ltdc_B4);
+				pinAdapterB5_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port5, pin5>::GPIOAlt::ltdc_B5);
-				pinB6Adapter.initAlt(
+					pinAdapterB5_::GPIOAlt::ltdc_B5);
+				pinAdapterB6_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port6, pin6>::GPIOAlt::ltdc_B6);
-				pinB7Adapter.initAlt(
+					pinAdapterB6_::GPIOAlt::ltdc_B6);
+				pinAdapterB7_::initAlt(
 					GPIOSpeed::fast,
 					GPIODriver::pushPull,
-					GPIOPinAdapter<port7, pin7>::GPIOAlt::ltdc_B7);
+					pinAdapterB7_::GPIOAlt::ltdc_B7);
 			}
 
 			inline static void setBackgroundColor(Color color) {
@@ -212,6 +188,9 @@ namespace eos {
 				halLTDCSetBackgroundColor(c);
 			}
 	};
+
+	typedef LTDCAdapter LTDC_1;
+
 
     template <LTDCLayerNum layerNum>
     class LTDCLayerAdapter {
@@ -232,7 +211,7 @@ namespace eos {
     			lines);
     	}
 
-    	inline static void setFramBuffer(void* buffer) {
+    	inline static void setFramBuffer(void *buffer) {
 			halLTDCLayerSetFrameBuffer(
 				halLTDCLayerNum(layerNum),
 				buffer);
@@ -243,6 +222,10 @@ namespace eos {
     			halLTDCLayerNum(layerNum));
     	}
     };
+
+    typedef LTDCLayerAdapter<LTDCLayerNum::layer0> LTDCLayer_L0;
+    typedef LTDCLayerAdapter<LTDCLayerNum::layer1> LTDCLayer_L1;
+
 
     // Valors que depenen del format de color
     //

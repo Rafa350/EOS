@@ -6,6 +6,7 @@
 #include "hal/halGPIO.h"
 #ifdef TOUCHPAD_INT_PORT
 #include "HAL/STM32/halEXTI.h"
+#include "HAL/STM32/halEXTITpl.h"
 #include "HAL/STM32/halINT.h"
 #endif
 #include "System/eosMath.h"
@@ -292,28 +293,21 @@ void TouchPadDriver_FT5336::clearInt() {
 ///
 void TouchPadDriver_FT5336::initializeInterface() {
 
-#ifdef TOUCHPAD_INT_PORT
-	static EXTIPinSettings const extiSettings[] = {
-		{TOUCHPAD_INT_EXTI_LINE, HAL_EXTI_MODE_INT | HAL_EXTI_TRIGGER_RISING | TOUCHPAD_INT_EXTI_PORT, nullptr, nullptr}
-	};
-#endif
-
 	// Inicialitza el pin d'interrupcio
 	//
 #ifdef TOUCHPAD_INT_PORT
-	_pinINT.initInput(GPIOSpeed::fast, GPIOPull::up);
-#endif
+	PinINT::initInput(GPIOSpeed::fast, GPIOPull::up);
 
-#ifdef TOUCHPAD_INT_PORT
-	halEXTIInitializePins(extiSettings, sizeof(extiSettings) / sizeof(extiSettings[0]));
+	LineINT::init(EXTIPort(TOUCHPAD_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
+
 	halINTSetInterruptVectorPriority(TOUCHPAD_INT_IRQ, TOUCHPAD_INT_PRIORITY, TOUCHPAD_INT_SUBPRIORITY);
 	halINTEnableInterruptVector(TOUCHPAD_INT_IRQ);
 #endif
 
 	// Inicialitza el canal I2C
 	//
-	_i2c.setSCLPin(_pinSCL);
-	_i2c.setSDAPin(_pinSDA);
+	_i2c.initSCLPin<PinSCL>();
+	_i2c.initSDAPin<PinSDA>();
 	_i2c.initMaster();
 }
 

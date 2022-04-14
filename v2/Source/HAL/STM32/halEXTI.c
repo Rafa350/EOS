@@ -7,11 +7,11 @@
 
 
 typedef struct {
-	EXTIInterruptFunction function;
+	halEXTIInterruptFunction function;
 	void *params;
-} EXTIData;
+} halEXTIData;
 
-static EXTIData callback[24] = {
+static halEXTIData callback[24] = {
 	{ NULL, NULL},
 	{ NULL, NULL},
 	{ NULL, NULL},
@@ -39,13 +39,13 @@ static EXTIData callback[24] = {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza un pin per que generi interrupcions
+/// \brief    Inicialitza una linia d'interrupcio externa.
 /// \param    line: La linia.
 /// \param    options: Opcions de configuracio.
 ///
-static void setupPin(
-	EXTILine line,
-	EXTIOptions options) {
+static void setupLine(
+	halEXTILine line,
+	halEXTIOptions options) {
 
 	__VERIFY_LINE(line);
 
@@ -101,12 +101,12 @@ static void setupPin(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza els pins per generar interrupcions o events.
+/// \brief    Inicialitza lin ies d'intedrrupcio externess.
 /// \param    info: Llista de configuracio.
 /// \param    count: Numero d'elements en la llista.
 ///
-void halEXTIInitializePins(
-	const EXTIPinSettings *settings,
+void halEXTIInitializeLines(
+	const halEXTILineSettings *settings,
 	uint32_t count) {
 
 	eosAssert(settings != NULL);
@@ -121,8 +121,8 @@ void halEXTIInitializePins(
 	//
 	for (int i = 0; i < count; i++) {
 
-		const EXTIPinSettings *p = &settings[i];
-		setupPin(p->line, p->options);
+		const halEXTILineSettings *p = &settings[i];
+		setupLine(p->line, p->options);
 
 		if ((p->options & HAL_EXTI_MODE_mask) == HAL_EXTI_MODE_INT) {
 			callback[p->line].function = p->isrFunction;
@@ -133,14 +133,34 @@ void halEXTIInitializePins(
 
 
 /// ----------------------------------------------------------------------
+/// \brief    Inicialitza una linia d'interrupcio externa.
+/// \param    line: La linia.
+/// \param    options: Les opcions.
+///
+void halEXTIInitializeLine(
+	halEXTILine line,
+	halEXTIOptions options) {
+
+	// Activa el clock del modul EXTI
+	//
+	__set_bit_msk(RCC->APB2ENR, RCC_APB2ENR_SYSCFGEN);
+    __DSB();
+
+    setupLine(line, options);
+	callback[line].function = NULL;
+	callback[line].params = NULL;
+}
+
+
+/// ----------------------------------------------------------------------
 /// \brief    Asigna la funcio callback per gestionar les interrupcions
 /// \param    line: Linea EXTI a configurar.
 /// \param    function: La funcio.
 /// \param    params: Parametres de la funcio.
 ///
 void halEXTISetInterruptFunction(
-	EXTILine line,
-	EXTIInterruptFunction function,
+	halEXTILine line,
+	halEXTIInterruptFunction function,
 	void *params) {
 
 	__VERIFY_LINE(line);
@@ -164,7 +184,7 @@ void halEXTISetInterruptFunction(
 /// \param    line: La linia.
 ///
 void halEXTIEnableInterrupt(
-	EXTILine line) {
+	halEXTILine line) {
 
 	__VERIFY_LINE(line);
 
@@ -178,7 +198,7 @@ void halEXTIEnableInterrupt(
 /// \retrurn  state: Estat previ de la interrupcio.
 ///
 bool halEXTIDisableInterrupt(
-	EXTILine line) {
+	halEXTILine line) {
 
 	__VERIFY_LINE(line);
 
@@ -195,7 +215,7 @@ bool halEXTIDisableInterrupt(
 /// \param line: Linea EXTI que ha generat la interrupcio.
 ///
 static inline void IRQHandler(
-	EXTILine line) {
+	halEXTILine line) {
 
 	__VERIFY_LINE(line);
 
