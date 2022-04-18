@@ -39,7 +39,7 @@ static inline GPIO_TypeDef* getDevice(
 /// \param    device: Device.
 ///
 static void enableDeviceClock(
-	GPIO_TypeDef* device) {
+	GPIO_TypeDef *device) {
 
 	__VERIFY_DEVICE(device);
 
@@ -112,7 +112,7 @@ static void enableDeviceClock(
 /// \param    alt: Alternate pin function.
 ///
 static void setupDevicePin(
-	GPIO_TypeDef* device,
+	GPIO_TypeDef *device,
 	halGPIOPin pin,
 	halGPIOOptions options,
 	halGPIOAlt alt) {
@@ -257,7 +257,7 @@ static void setupDevicePin(
 /// \param    count: Number of elements in table.
 ///
 void halGPIOInitializePins(
-	const halGPIOPinSettings* settings,
+	const halGPIOPinSettings *settings,
 	int count) {
 
 	eosAssert(settings != NULL);
@@ -265,8 +265,8 @@ void halGPIOInitializePins(
 
 	for (int i = 0; i < count; i++) {
 
-		const halGPIOPinSettings* p = &settings[i];
-		GPIO_TypeDef* device = getDevice(p->port);
+		const halGPIOPinSettings *p = &settings[i];
+		GPIO_TypeDef *device = getDevice(p->port);
 
 		enableDeviceClock(device);
 		setupDevicePin(device, p->pin, p->options, p->alt);
@@ -280,7 +280,7 @@ void halGPIOInitializePins(
 /// \param    count: Number of elements in table.
 ///
 void halGPIOInitializePorts(
-	const halGPIOPortSettings* settings,
+	const halGPIOPortSettings *settings,
 	int count) {
 
 	eosAssert(settings != NULL);
@@ -288,8 +288,8 @@ void halGPIOInitializePorts(
 
 	for (int i = 0; i < count; i++) {
 
-		const halGPIOPortSettings* p = &settings[i];
-		GPIO_TypeDef* device = getDevice(p->port);
+		const halGPIOPortSettings *p = &settings[i];
+		GPIO_TypeDef *device = getDevice(p->port);
 
 		enableDeviceClock(device);
 
@@ -316,7 +316,7 @@ void halGPIOInitializePin(
 	__VERIFY_PORT(port);
 	__VERIFY_PIN(pin);
 
-	GPIO_TypeDef* device = getDevice(port);
+	GPIO_TypeDef *device = getDevice(port);
 	enableDeviceClock(device);
 
 	setupDevicePin(device, pin, options, alt);
@@ -336,7 +336,7 @@ inline void halGPIOClearPin(
 	__VERIFY_PORT(port);
 	__VERIFY_PIN(pin);
 
-	GPIO_TypeDef* device = getDevice(port);
+	GPIO_TypeDef *device = getDevice(port);
 	device->BSRR = 1u << (pin + 16);
 
 }
@@ -356,7 +356,7 @@ inline void halGPIOSetPin(
 	__VERIFY_PORT(port);
 	__VERIFY_PIN(pin);
 
-	GPIO_TypeDef* device = getDevice(port);
+	GPIO_TypeDef *device = getDevice(port);
 	device->BSRR = 1u << pin;
 }
 #endif

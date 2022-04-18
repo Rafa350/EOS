@@ -20,41 +20,39 @@
 
 namespace eos {
 
-	/// \enum GPIOPort
 	/// \brief GPIO port identifiers.
 	enum class GPIOPort: halGPIOPort {
 		portA = HAL_GPIO_PORT_A,            ///< Identificador del port A
 		portB = HAL_GPIO_PORT_B,            ///< Identificador del port B
-		portC = HAL_GPIO_PORT_C,
-		portD = HAL_GPIO_PORT_D,
-		portE = HAL_GPIO_PORT_E,
-		portF = HAL_GPIO_PORT_F,
-		portG = HAL_GPIO_PORT_G,
-		portH = HAL_GPIO_PORT_H,
-		portI = HAL_GPIO_PORT_I,
-		portJ = HAL_GPIO_PORT_J,
-		portK = HAL_GPIO_PORT_K
+		portC = HAL_GPIO_PORT_C,            ///< Identificador del port C
+		portD = HAL_GPIO_PORT_D,			///< Identificador del port D
+		portE = HAL_GPIO_PORT_E,			///< Identificador del port E
+		portF = HAL_GPIO_PORT_F,			///< Identificador del port F
+		portG = HAL_GPIO_PORT_G,			///< Identificador del port G
+		portH = HAL_GPIO_PORT_H,			///< Identificador del port H
+		portI = HAL_GPIO_PORT_I,			///< Identificador del port I
+		portJ = HAL_GPIO_PORT_J,			///< Identificador del port J
+		portK = HAL_GPIO_PORT_K				///< Identificador del port K
 	};
 
-	/// \enum GPIOPin
 	/// \brief GPIO Pin identifiers.
 	enum class GPIOPin: halGPIOPin {
-		pin0 = HAL_GPIO_PIN_0,
-		pin1 = HAL_GPIO_PIN_1,
-		pin2 = HAL_GPIO_PIN_2,
-		pin3 = HAL_GPIO_PIN_3,
-		pin4 = HAL_GPIO_PIN_4,
-		pin5 = HAL_GPIO_PIN_5,
-		pin6 = HAL_GPIO_PIN_6,
-		pin7 = HAL_GPIO_PIN_7,
-		pin8 = HAL_GPIO_PIN_8,
-		pin9 = HAL_GPIO_PIN_9,
-		pin10 = HAL_GPIO_PIN_10,
-		pin11 = HAL_GPIO_PIN_11,
-		pin12 = HAL_GPIO_PIN_12,
-		pin13 = HAL_GPIO_PIN_13,
-		pin14 = HAL_GPIO_PIN_14,
-		pin15 = HAL_GPIO_PIN_15
+		pin0 = HAL_GPIO_PIN_0,				///< Identificador del pin 0
+		pin1 = HAL_GPIO_PIN_1,				///< Identificador del pin 1
+		pin2 = HAL_GPIO_PIN_2,				///< Identificador del pin 2
+		pin3 = HAL_GPIO_PIN_3,				///< Identificador del pin 3
+		pin4 = HAL_GPIO_PIN_4,				///< Identificador del pin 4
+		pin5 = HAL_GPIO_PIN_5,				///< Identificador del pin 5
+		pin6 = HAL_GPIO_PIN_6,				///< Identificador del pin 6
+		pin7 = HAL_GPIO_PIN_7,				///< Identificador del pin 7
+		pin8 = HAL_GPIO_PIN_8,				///< Identificador del pin 8
+		pin9 = HAL_GPIO_PIN_9,				///< Identificador del pin 9
+		pin10 = HAL_GPIO_PIN_10,			///< Identificador del pin 10
+		pin11 = HAL_GPIO_PIN_11,			///< Identificador del pin 11
+		pin12 = HAL_GPIO_PIN_12,			///< Identificador del pin 12
+		pin13 = HAL_GPIO_PIN_13,			///< Identificador del pin 13
+		pin14 = HAL_GPIO_PIN_14,			///< Identificador del pin 14
+		pin15 = HAL_GPIO_PIN_15				///< Identificador del pin 15
 	};
 
 	/// \brief GPIO Driver type identifiers.
@@ -78,6 +76,7 @@ namespace eos {
 		down = HAL_GPIO_PULL_DOWN
 	};
 
+	/// \brief GPIO Initial state identifier
 	enum class GPIOState: halGPIOOptions {
 		noChange = HAL_GPIO_INIT_NOCHANGE,
 		set = HAL_GPIO_INIT_SET,

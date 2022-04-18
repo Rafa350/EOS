@@ -46,86 +46,20 @@ namespace eos {
 				halI2CDisable(_handler);
 			}
 
-			inline void send(uint8_t addr, const uint8_t *buffer, int length, unsigned blockTime = _defaultBlockTime) {
-				halI2CMasterSend(_handler, addr, buffer, length, blockTime);
+			inline void send(uint8_t addr, const void *data, int length, unsigned blockTime = _defaultBlockTime) {
+				halI2CMasterSend(_handler, addr, data, length, blockTime);
 			}
 
-			inline void receive(uint8_t addr, uint8_t *buffer, int length, unsigned blockTime = _defaultBlockTime) {
-				halI2CMasterReceive(_handler, addr, buffer, length, blockTime);
+			inline void receive(uint8_t addr, void *data, int length, unsigned blockTime = _defaultBlockTime) {
+				halI2CMasterReceive(_handler, addr, data, length, blockTime);
 			}
 
 			inline void send(uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t *buffer, uint16_t length) {
-				halI2CMasterWriteMultiple(
-					_handler,
-					addr,
-					reg,
-					memAddress,
-					buffer,
-					length);
+				halI2CMasterWriteMultiple(_handler,	addr, reg, memAddress, buffer, length);
 			}
 
 			inline void read(uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length) {
-				halI2CMasterReadMultiple(
-					_handler,
-					addr,
-					reg,
-					I2C_MEMADD_SIZE_8BIT,
-					buffer,
-					sizeof(buffer));
-			}
-
-			template <typename pinAdapter_>
-			inline static void setSCLPin(pinAdapter_ pinAdapter) {
-				if constexpr (channel_ == I2CChannel::channel1)
-					pinAdapter_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c1_SCL);
-
-				if constexpr (channel_ == I2CChannel::channel2)
-					pinAdapter_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c2_SCL);
-
-				if constexpr (channel_ == I2CChannel::channel3)
-					pinAdapter_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c3_SCL);
-
-				if constexpr (channel_ == I2CChannel::channel4)
-					pinAdapter_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c4_SCL);
-			}
-
-			template <typename pinAdapter_>
-			inline static void setSDAPin(pinAdapter_ pinAdapter) {
-				if constexpr (channel_ == I2CChannel::channel1)
-					pinAdapter_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c1_SDA);
-
-				if constexpr (channel_ == I2CChannel::channel2)
-					pinAdapter_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c2_SDA);
-
-				if constexpr (channel_ == I2CChannel::channel3)
-					pinAdapter_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c3_SDA);
-
-				if constexpr (channel_ == I2CChannel::channel4)
-					pinAdapter_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c4_SDA);
+				halI2CMasterReadMultiple(_handler, addr, reg, I2C_MEMADD_SIZE_8BIT, buffer, sizeof(buffer));
 			}
 
 			template <typename pinAdapter_>

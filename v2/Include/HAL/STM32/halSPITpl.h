@@ -90,7 +90,7 @@ namespace eos {
 				_handler = halSPIInitialize(&_data, &settings);
 			}
 
-			inline void initialize(const halSPISettings& settings) {
+			inline void initialize(const halSPISettings &settings) {
 				_handler = halSPIInitialize(&_data, &settings);
 			}
 
@@ -98,7 +98,7 @@ namespace eos {
 
 			}
 
-			inline void setInterruptFunction(halSPIInterruptFunction function, void* params) {
+			inline void setInterruptFunction(halSPIInterruptFunction function, void *params) {
 				halSPISetInterruptFunction(_handler, function, params);
 			}
 
@@ -232,8 +232,8 @@ namespace eos {
 				halSPISend(_handler, &data, sizeof(data), blockTime);
 			}
 
-			inline void send(const uint8_t *data, int length, unsigned blockTime = _defaultBlockTime) {
-				halSPISend(_handler, data, length, blockTime);
+			inline void send(const void *data, int size, unsigned blockTime = _defaultBlockTime) {
+				halSPISend(_handler, data, size, blockTime);
 			}
 	};
 

@@ -35,10 +35,10 @@ namespace eos {
 
 		private:
 			static void interruptHandler(halEXTILine line, void *params);
-			void write8(uint8_t reg, uint8_t value);
-			void write16(uint8_t reg, uint16_t value);
-			uint8_t read8(uint8_t reg);
-			uint16_t read16(uint8_t reg);
+			void writeRegister8(uint8_t reg, uint8_t value);
+			void writeRegister16(uint8_t reg, uint16_t value);
+			uint8_t readRegister8(uint8_t reg);
+			uint16_t readRegister16(uint8_t reg);
 
 		public:
 			VCNL4020Driver();

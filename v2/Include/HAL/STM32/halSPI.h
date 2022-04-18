@@ -95,8 +95,8 @@ extern "C" {
 typedef uint32_t halSPIChannel;
 typedef uint32_t halSPIPin;
 typedef uint32_t halSPIOptions;
-typedef struct __halSPIData* halSPIHandler;
-typedef void (*halSPIInterruptFunction)(halSPIHandler handler, void* params);
+typedef struct __halSPIData *halSPIHandler;
+typedef void (*halSPIInterruptFunction)(halSPIHandler handler, void *params);
 
 struct __halSPIData {
 	SPI_TypeDef* device;
@@ -114,16 +114,16 @@ typedef struct {                            // Parametres d'inicialitzacio
 } halSPISettings;
 
 
-halSPIHandler halSPIInitialize(halSPIData* data, const halSPISettings* settings);
+halSPIHandler halSPIInitialize(halSPIData *data, const halSPISettings *settings);
 void halSPIDeinitialize(halSPIHandler handler);
 
 bool halSPIIsBusy(halSPIHandler handler);
 
-void halSPISend(halSPIHandler handler, const uint8_t *data, int size, unsigned blockTime);
-void halSPIReceive(halSPIHandler handler, uint8_t *data, int size);
-void halSPITransmit(halSPIHandler handler, uint8_t *txData, uint8_t *rxData, int size);
+void halSPISend(halSPIHandler handler, const void *data, int size, unsigned blockTime);
+void halSPIReceive(halSPIHandler handler, void *data, int size);
+void halSPITransmit(halSPIHandler handler, void *txData, void *rxData, int size);
 
-void halSPISetInterruptFunction(halSPIHandler handler, halSPIInterruptFunction function, void* params);
+void halSPISetInterruptFunction(halSPIHandler handler, halSPIInterruptFunction function, void *params);
 void halSPIInterruptHandler(halSPIHandler handler);
 
 void halSPIEnableInterrupts(halSPIHandler handler, uint32_t events);

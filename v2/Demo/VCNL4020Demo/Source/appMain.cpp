@@ -92,6 +92,7 @@ void VCNL4020LoopService::onSetup() {
 ///
 void VCNL4020LoopService::onLoop() {
 
+	int ir = _driver->getIRCurrent() * 10;
 	int proximity = _driver->getProximityValue();
 	int ambient = _driver->getAmbientValue();
 

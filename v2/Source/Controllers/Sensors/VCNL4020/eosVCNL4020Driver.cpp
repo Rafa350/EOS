@@ -49,30 +49,30 @@ void VCNL4020Driver::initialize(
 
 	// Desactiva tot
 	//
-	write8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
+	writeRegister8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
 
 	// Asigna el valor de la current del emisor
 	//
-	//setIRCurrent(15);
+	setIRCurrent(10);
 
 	// Asigna la velocitat de mesura.
 	//
-	write8(REGISTER_PROX_RATE, PROX_MEASUREMENT_RATE_2);
+	writeRegister8(REGISTER_PROX_RATE, PROX_MEASUREMENT_RATE_2);
 
 	// Asigna el modus d'operacio del sensor de llum ambiental
 	//
-	write8(REGISTER_AMBI_PARAMETER, 0x1D);
+	writeRegister8(REGISTER_AMBI_PARAMETER, 0x1D);
 
 	// Asigna els parametres de mesura
 	//
 	//write8(REGISTER_INTERRUPT_CONTROL, 0x42);
-	write16(REGISTER_INTERRUPT_LOW_THRES, 0);
-	write16(REGISTER_INTERRUPT_HIGH_THRES, 0xFFFF);
+	writeRegister16(REGISTER_INTERRUPT_LOW_THRES, 0);
+	writeRegister16(REGISTER_INTERRUPT_HIGH_THRES, 0xFFFF);
 
 	// Inicia la lectura periodica
 	//
 	if (mode == Mode::continous)
-		write8(REGISTER_COMMAND, COMMAND_PROX_ENABLE | COMMAND_AMBI_ENABLE | COMMAND_SELFTIMED_MODE_ENABLE);
+		writeRegister8(REGISTER_COMMAND, COMMAND_PROX_ENABLE | COMMAND_AMBI_ENABLE | COMMAND_SELFTIMED_MODE_ENABLE);
 }
 
 
@@ -83,7 +83,7 @@ void VCNL4020Driver::shutdown() {
 
 	// Desactiva tot
 	//
-	write8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
+	writeRegister8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
 }
 
 
@@ -92,7 +92,7 @@ void VCNL4020Driver::shutdown() {
 /// \param    reg: El numero de registre.
 /// \return   El valor del registre.
 ///
-uint8_t VCNL4020Driver::read8(
+uint8_t VCNL4020Driver::readRegister8(
 	uint8_t reg) {
 
 	uint8_t data[1];
@@ -110,7 +110,7 @@ uint8_t VCNL4020Driver::read8(
 /// \param    reg: El numero de registre.
 /// \return   El valor del registre.
 ///
-uint16_t VCNL4020Driver::read16(
+uint16_t VCNL4020Driver::readRegister16(
 	uint8_t reg) {
 
 	uint8_t data[2];
@@ -128,7 +128,7 @@ uint16_t VCNL4020Driver::read16(
 /// \param    reg: El numero de registre.
 /// \param    value: El valor a escriure.
 ///
-void VCNL4020Driver::write8(
+void VCNL4020Driver::writeRegister8(
 	uint8_t reg,
 	uint8_t value) {
 
@@ -145,7 +145,7 @@ void VCNL4020Driver::write8(
 /// \param    reg: El numero de registre.
 /// \param    value: El valor a escriure.
 ///
-void VCNL4020Driver::write16(
+void VCNL4020Driver::writeRegister16(
 	uint8_t reg,
 	uint16_t value) {
 
@@ -177,7 +177,7 @@ void VCNL4020Driver::interruptHandler(
 void VCNL4020Driver::setIRCurrent(
 	uint8_t value) {
 
-	write8(REGISTER_PROX_CURRENT, Math::min((uint8_t)20, value));
+	writeRegister8(REGISTER_PROX_CURRENT, Math::min((uint8_t)20, value));
 }
 
 
@@ -188,7 +188,7 @@ void VCNL4020Driver::setIRCurrent(
 void VCNL4020Driver::setIntUpperThreshold(
 	int value) {
 
-	write16(REGISTER_INTERRUPT_HIGH_THRES, value);
+	writeRegister16(REGISTER_INTERRUPT_HIGH_THRES, value);
 }
 
 
@@ -199,7 +199,7 @@ void VCNL4020Driver::setIntUpperThreshold(
 void VCNL4020Driver::setIntLowerThreshold(
 	int value) {
 
-	write16(REGISTER_INTERRUPT_LOW_THRES, value);
+	writeRegister16(REGISTER_INTERRUPT_LOW_THRES, value);
 }
 
 
@@ -209,7 +209,7 @@ void VCNL4020Driver::setIntLowerThreshold(
 ///
 uint8_t VCNL4020Driver::getIRCurrent() {
 
-	return read8(REGISTER_PROX_CURRENT) & 0b00111111;
+	return readRegister8(REGISTER_PROX_CURRENT) & 0b00111111;
 }
 
 
@@ -220,17 +220,17 @@ uint8_t VCNL4020Driver::getIRCurrent() {
 int VCNL4020Driver::getProximityValue() {
 
 	if (_mode == Mode::onDemand)
-		write8(REGISTER_COMMAND, COMMAND_PROX_ENABLE | COMMAND_PROX_ON_DEMAND);
+		writeRegister8(REGISTER_COMMAND, COMMAND_PROX_ENABLE | COMMAND_PROX_ON_DEMAND);
 
 	uint8_t cr;
 	do {
-		cr = read8(REGISTER_COMMAND);
+		cr = readRegister8(REGISTER_COMMAND);
 	} while ((cr & COMMAND_MASK_PROX_DATA_READY) != COMMAND_MASK_PROX_DATA_READY);
 
-	int result = read16(REGISTER_PROX_VALUE);
+	int result = readRegister16(REGISTER_PROX_VALUE);
 
 	if (_mode == Mode::onDemand)
-		write8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
+		writeRegister8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
 
 	return result;
 }
@@ -243,17 +243,17 @@ int VCNL4020Driver::getProximityValue() {
 int VCNL4020Driver::getAmbientValue() {
 
 	if (_mode == Mode::onDemand)
-		write8(REGISTER_COMMAND, COMMAND_AMBI_ENABLE | COMMAND_AMBI_ON_DEMAND);
+		writeRegister8(REGISTER_COMMAND, COMMAND_AMBI_ENABLE | COMMAND_AMBI_ON_DEMAND);
 
 	uint8_t cr;
 	do {
-		cr = read8(REGISTER_COMMAND);
+		cr = readRegister8(REGISTER_COMMAND);
 	} while ((cr & COMMAND_MASK_AMBI_DATA_READY) != COMMAND_MASK_AMBI_DATA_READY);
 
-	int result = read16(REGISTER_AMBI_VALUE);
+	int result = readRegister16(REGISTER_AMBI_VALUE);
 
 	if (_mode == Mode::onDemand)
-		write8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
+		writeRegister8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
 
 	return result;
 }

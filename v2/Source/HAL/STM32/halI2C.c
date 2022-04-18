@@ -193,22 +193,22 @@ void halI2CDisable(
 /// \brief    Transmeteix una sequencia de bytes.
 /// \param    handler: Handler del dispositiu.
 /// \param    addr: Adressa.
-/// \param    data: Bytes a transmetre.
-/// \param    length: Nombre de bytes a transmetre.
+/// \param    data: Bloc de dades transmetre.
+/// \param    size: Tamany del bloc en bytes.
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void halI2CMasterSend(
 	halI2CHandler handler,
 	uint8_t addr,
-	const uint8_t *data,
-	int lenght,
+	const void *data,
+	int size,
 	unsigned blockTime) {
 
 	__VERIFY_HANDLER(handler);
 
 	HAL_StatusTypeDef status = HAL_OK;
 
-	status = HAL_I2C_Master_Transmit(&handler->handle, addr, (uint8_t*)data, lenght, blockTime);
+	status = HAL_I2C_Master_Transmit(&handler->handle, addr, (uint8_t*)data, size, blockTime);
 }
 
 
@@ -217,21 +217,21 @@ void halI2CMasterSend(
 /// \param    handler: Handler.
 /// \param    addr: Adressa.
 /// \param    data: Buffer de recepcio.
-/// \param    length: Tamany del buffer de recepcio en bytes.
+/// \param    size: Tamany del buffer de recepcio en bytes.
 /// \param    blockParam: Temps maxim de bloqueig.
 ///
 void halI2CMasterReceive(
 	halI2CHandler handler,
 	uint8_t addr,
-	uint8_t *data,
-	int lenght,
+	void *data,
+	int size,
 	unsigned blockTime) {
 
 	__VERIFY_HANDLER(handler);
 
 	HAL_StatusTypeDef status = HAL_OK;
 
-	status = HAL_I2C_Master_Receive(&handler->handle, addr, data, lenght, blockTime);
+	status = HAL_I2C_Master_Receive(&handler->handle, addr, data, size, blockTime);
 }
 
 

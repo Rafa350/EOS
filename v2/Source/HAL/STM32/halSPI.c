@@ -325,7 +325,7 @@ void halSPIDeinitialize(
 void halSPISetInterruptFunction(
 	halSPIHandler handler,
 	halSPIInterruptFunction function,
-	void* params) {
+	void *params) {
 
 	__VERIFY_HANDLER(handler);
 
@@ -343,7 +343,7 @@ void halSPISetInterruptFunction(
 ///
 void halSPISend(
 	halSPIHandler handler,
-	const uint8_t* data,
+	const void *data,
 	int size,
 	unsigned blockTime) {
 
@@ -352,7 +352,7 @@ void halSPISend(
 	__VERIFY_HANDLER(handler);
 
 
-	SPI_TypeDef* device = handler->device;
+	SPI_TypeDef *device = handler->device;
 
 	int count = size;
 	const uint8_t *p = data;

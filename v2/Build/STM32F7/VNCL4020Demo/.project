@@ -241,6 +241,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halINT.h</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/HAL/halINTTpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halINTTpl.h</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/Services/eosAppLoopService.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/Services/eosAppLoopService.h</location>
@@ -439,6 +444,11 @@
 			<name>Inc/Framework/EOS/HAL/STM32/halI2CTpl.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2CTpl.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/HAL/STM32/halINT Tpl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT%20Tpl.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halINT.h</name>

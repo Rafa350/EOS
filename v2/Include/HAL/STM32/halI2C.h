@@ -35,7 +35,7 @@ typedef struct __halI2CData *halI2CHandler;
 typedef void (*halI2CInterruptFunction)(halI2CHandler handler, void *params);
 
 struct __halI2CData {
-	I2C_TypeDef* device;
+	I2C_TypeDef *device;
 	I2C_HandleTypeDef handle;
 	halI2CInterruptFunction isrFunction;
 	void *isrParams;
@@ -56,8 +56,8 @@ halI2CHandler halI2CMasterInitialize(halI2CData *data, const halI2CMasterInitial
 void halI2CEnable(halI2CHandler handler);
 void halI2CDisable(halI2CHandler handler);
 
-void halI2CMasterSend(halI2CHandler handler, uint8_t addr, const uint8_t *data, int lenght, unsigned blockTime);
-void halI2CMasterReceive(halI2CHandler handler, uint8_t addr, uint8_t *data, int lenght, unsigned blockTime);
+void halI2CMasterSend(halI2CHandler handler, uint8_t addr, const void *data, int size, unsigned blockTime);
+void halI2CMasterReceive(halI2CHandler handler, uint8_t addr, void *data, int size, unsigned blockTime);
 
 void halI2CMasterWriteMultiple(halI2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t *buffer, uint16_t length);
 void halI2CMasterReadMultiple(halI2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
