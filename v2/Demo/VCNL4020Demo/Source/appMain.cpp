@@ -1,7 +1,11 @@
 #include "eos.h"
-#include "Controllers/Sensors/VCNL4020/eosVCNL4020Driver.h"
+#include "Controllers/Sensors/Drivers/VCNL4020/eosSensorDriver_VCNL4020.h"
 #include "HAL/halSYS.h"
 #include "HAL/halGPIOTpl.h"
+#ifdef EOS_STM32
+#include "HAL/STM32/halINTTpl.h"
+#include "HAL/STM32/halEXTITpl.h"
+#endif
 #include "System/eosApplication.h"
 #include "Services/eosAppLoopService.h"
 
@@ -83,7 +87,14 @@ void Led1LoopService::onLoop() {
 void VCNL4020LoopService::onSetup() {
 
 	_driver = new VCNL4020Driver();
-	_driver->initialize(VCNL4020Driver::Mode::onDemand);
+	_driver->initialize(VCNL4020Driver::Mode::continous);
+	_driver->setLowerThreshold(0000);
+	_driver->setUpperThreshold(3300);
+	_driver->configureInterrupts(VCNL4020_INT_COUNT_4 | VCNL4020_INT_THRES_ENABLE);
+	_driver->clearInterruptFlags(0x0F);
+
+	INT::setInterruptVectorPriority(INTVector(VCNL4020_INT_IRQ), INTPriority(VCNL4020_INT_PRIORITY), INTSubPriority(VCNL4020_INT_SUBPRIORITY));
+	INT::enableInterruptVector(INTVector(VCNL4020_INT_IRQ));
  }
 
 
@@ -92,9 +103,11 @@ void VCNL4020LoopService::onSetup() {
 ///
 void VCNL4020LoopService::onLoop() {
 
-	int ir = _driver->getIRCurrent() * 10;
-	int proximity = _driver->getProximityValue();
-	int ambient = _driver->getAmbientValue();
+	int ir = _driver->getLedCurrent() * 10;
+	//int proximity = _driver->getProximityValue();
+	//int ambient = _driver->getAmbientValue();
+
+	bool intStatus = PIN_C7::read();
 
 	Task::delay(1000);
 }

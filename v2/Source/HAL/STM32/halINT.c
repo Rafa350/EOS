@@ -4,17 +4,17 @@
 
 /// ----------------------------------------------------------------------
 /// \brief    Asigna la prioritat d'una interrupcio.
-/// \param    source: Identificador de la interrupcio.
+/// \param    vector: Identificador de la interrupcio.
 /// \param    priority: La prioritat.
 /// \param    subPriority: La sub-prioritat.
 ///
 void halINTSetInterruptVectorPriority(
-	uint32_t source,
+	uint32_t vector,
 	uint32_t priority,
 	uint32_t subPriority) {
 
 	uint32_t priorityGroup = NVIC_GetPriorityGrouping();
-    NVIC_SetPriority((IRQn_Type) source, NVIC_EncodePriority(priorityGroup, priority, subPriority));
+    NVIC_SetPriority((IRQn_Type) vector, NVIC_EncodePriority(priorityGroup, priority, subPriority));
 }
 
 

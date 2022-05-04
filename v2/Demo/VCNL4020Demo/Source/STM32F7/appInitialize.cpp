@@ -6,6 +6,9 @@
 #include "stm32746g_discovery_sdram.h"
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza els rellotges del sistema i dels periferics.
+///
 static void initializeCLK() {
 
 	RCC_OscInitTypeDef oscInit;
@@ -35,6 +38,15 @@ static void initializeCLK() {
 	clkInit.APB2CLKDivider = RCC_HCLK_DIV2;
 	HAL_RCC_ClockConfig(&clkInit, FLASH_LATENCY_7);
 
+	// Configura el rellotge pel periferic I2Cx
+	//
+    pclkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1 | RCC_PERIPHCLK_I2C2 | RCC_PERIPHCLK_I2C3 | RCC_PERIPHCLK_I2C4;
+	pclkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
+	pclkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_PCLK1;
+	pclkInit.I2c3ClockSelection = RCC_I2C3CLKSOURCE_PCLK1;
+	pclkInit.I2c4ClockSelection = RCC_I2C4CLKSOURCE_PCLK1;
+	HAL_RCCEx_PeriphCLKConfig(&pclkInit);
+
 	// Configura el rellotge pel periferic LTDC
 	// PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
 	// PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 192 Mhz
@@ -51,6 +63,9 @@ static void initializeCLK() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza la SDRAM
+///
 static void initializeSDRAM() {
 
 	BSP_SDRAM_Init();
@@ -58,6 +73,9 @@ static void initializeSDRAM() {
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Habilita els caches
+///
 static void enableCache() {
 
     SCB_EnableICache();

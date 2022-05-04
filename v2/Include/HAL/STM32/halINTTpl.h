@@ -82,7 +82,7 @@ namespace eos {
 		vectorTMR9 = HAL_INT_VECTOR_TMR9,
 		vectorTMR10 = HAL_INT_VECTOR_TMR10,
 		vectorTMR11 = HAL_INT_VECTOR_TMR11,
-		vectorTMR13 = HAL_INT_VECTOR_TMR12,
+		vectorTMR12 = HAL_INT_VECTOR_TMR12,
 		vectorTMR13 = HAL_INT_VECTOR_TMR13,
 		vectorTMR14 = HAL_INT_VECTOR_TIM14,
 		vectorUART1 = HAL_INT_VECTOR_UART1,
@@ -97,13 +97,28 @@ namespace eos {
 
 	class INTAdapter {
 		public:
-			inline static void setInterruptVectorPriority(INTVector vector, INTPriority priority, INTSubPriority subPriority);
-			inline static void enableInterruptVector(INTVector vector);
+			inline static void setInterruptVectorPriority(INTVector vector, INTPriority priority, INTSubPriority subPriority) {
+				halINTSetInterruptVectorPriority((uint32_t)vector, (uint32_t) priority, (uint32_t) subPriority);
+			}
 
-			inline static void enableInterruptSource(uint32_t source);
-			inline static bool disableInterruptSource(uint32_t source);
-			inline static void restoreInterruptSource(uint32_t source, bool state);
+			inline static void enableInterruptVector(INTVector vector) {
+				halINTEnableInterruptVector((uint32_t)vector);
+			}
+
+			inline static void enableInterruptSource(uint32_t source) {
+				halINTEnableInterruptSource(source);
+			}
+
+			inline static bool disableInterruptSource(uint32_t source) {
+				return halINTDisableInterruptSource(source);
+			}
+
+			inline static void restoreInterruptSource(uint32_t source, bool state) {
+				halINTRestoreInterruptSource(source, state);
+			}
 	};
+
+	typedef INTAdapter INT;
 
 }
 

@@ -7,7 +7,7 @@
 #ifdef TOUCHPAD_INT_PORT
 #include "HAL/STM32/halEXTI.h"
 #include "HAL/STM32/halEXTITpl.h"
-#include "HAL/STM32/halINT.h"
+#include "HAL/STM32/halINTTpl.h"
 #endif
 #include "System/eosMath.h"
 
@@ -15,7 +15,7 @@
 using namespace eos;
 
 
-ITouchPadDriver* TouchPadDriver_FT5336::_instance = nullptr;
+ITouchPadDriver *TouchPadDriver_FT5336::_instance = nullptr;
 
 
 /// ----------------------------------------------------------------------
@@ -300,8 +300,8 @@ void TouchPadDriver_FT5336::initializeInterface() {
 
 	LineINT::init(EXTIPort(TOUCHPAD_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
 
-	halINTSetInterruptVectorPriority(TOUCHPAD_INT_IRQ, TOUCHPAD_INT_PRIORITY, TOUCHPAD_INT_SUBPRIORITY);
-	halINTEnableInterruptVector(TOUCHPAD_INT_IRQ);
+	INT::setInterruptVectorPriority(INTVector(TOUCHPAD_INT_IRQ), INTPriority(TOUCHPAD_INT_PRIORITY), INTSubPriority(TOUCHPAD_INT_SUBPRIORITY));
+	INT::enableInterruptVector(INTVector(TOUCHPAD_INT_IRQ));
 #endif
 
 	// Inicialitza el canal I2C

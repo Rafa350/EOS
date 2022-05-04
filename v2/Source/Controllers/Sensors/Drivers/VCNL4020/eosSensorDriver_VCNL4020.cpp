@@ -1,13 +1,12 @@
 #include "eos.h"
-#include "Controllers/Sensors/VCNL4020/eosVCNL4020Driver.h"
-#include "Controllers/Sensors/VCNL4020/VCNL40x0.h"
+#include "Controllers/Sensors/Drivers/VCNL4020/eosSensorDriver_VCNL4020.h"
+#include "Controllers/Sensors/Drivers/VCNL4020/VCNL40x0.h"
 #include "HAL/halGPIOTpl.h"
 #include "HAL/halI2CTpl.h"
 #ifdef EOS_STM32
+#include "HAL/STM32/halINTTpl.h"
 #include "HAL/STM32/halEXTITpl.h"
-#include "HAL/STM32/halINT.h"
 #endif
-#include "System/eosMath.h"
 
 
 using namespace eos;
@@ -17,13 +16,11 @@ using namespace eos;
 /// \brief Contructor.
 ///
 VCNL4020Driver::VCNL4020Driver():
-	_mode(Mode::onDemand) {
+	_mode(Mode::demand) {
 
-	// Configura la linia d'interrupcio externa
+	// Configura la linia d'interrupcio
 	//
-	//PinINT::initInput(GPIOSpeed::fast, GPIOPull::up);
-	//LineINT::init(EXTIPort(VCNL4020_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
-    //LineINT::setInterruptFunction(interruptHandler, this);
+	PinINT::initInput(GPIOSpeed::fast, GPIOPull::none);
 
     // Configura el modul I2C
     //
@@ -31,10 +28,8 @@ VCNL4020Driver::VCNL4020Driver():
 	_i2c.initSDAPin<PinSDA>();
 	_i2c.initMaster();
 
-	// Configura les interrupcions
-	//
-	//halINTSetInterruptVectorPriority(VCNL4020_INT_IRQ, VCNL4020_INT_PRIORITY, VCNL4020_INT_SUBPRIORITY);
-	//halINTEnableInterruptVector(VCNL4020_INT_IRQ);
+	LineINT::init(EXTIPort(VCNL4020_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::falling);
+    LineINT::setInterruptFunction(interruptHandler, this);
 }
 
 
@@ -49,30 +44,29 @@ void VCNL4020Driver::initialize(
 
 	// Desactiva tot
 	//
-	writeRegister8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
+	writeRegister8(VCNL4020_REG_COMMAND, COMMAND_ALL_DISABLE);
 
-	// Asigna el valor de la current del emisor
+	// Asigna el valor de la current del emisor IR
 	//
-	setIRCurrent(10);
+	setLedCurrent(15);
 
 	// Asigna la velocitat de mesura.
 	//
-	writeRegister8(REGISTER_PROX_RATE, PROX_MEASUREMENT_RATE_2);
+	writeRegister8(VCNL4020_REG_PROX_RATE, PROX_MEASUREMENT_RATE_31);
 
 	// Asigna el modus d'operacio del sensor de llum ambiental
 	//
-	writeRegister8(REGISTER_AMBI_PARAMETER, 0x1D);
+	writeRegister8(VCNL4020_REG_AMBI_PARAMETER, 0x1D);
 
-	// Asigna els parametres de mesura
+	// Asigna els limits de mesura
 	//
-	//write8(REGISTER_INTERRUPT_CONTROL, 0x42);
-	writeRegister16(REGISTER_INTERRUPT_LOW_THRES, 0);
-	writeRegister16(REGISTER_INTERRUPT_HIGH_THRES, 0xFFFF);
+	setLowerThreshold(0);
+	setUpperThreshold(0xFFFF);
 
 	// Inicia la lectura periodica
 	//
 	if (mode == Mode::continous)
-		writeRegister8(REGISTER_COMMAND, COMMAND_PROX_ENABLE | COMMAND_AMBI_ENABLE | COMMAND_SELFTIMED_MODE_ENABLE);
+		writeRegister8(VCNL4020_REG_COMMAND, COMMAND_PROX_ENABLE | COMMAND_AMBI_ENABLE | COMMAND_SELFTIMED_MODE_ENABLE);
 }
 
 
@@ -98,6 +92,7 @@ uint8_t VCNL4020Driver::readRegister8(
 	uint8_t data[1];
 
     data[0] = reg;
+
     _i2c.send(VCNL40x0_ADDRESS, data, 1);
     _i2c.receive(VCNL40x0_ADDRESS, data, 1);
 
@@ -116,6 +111,7 @@ uint16_t VCNL4020Driver::readRegister16(
 	uint8_t data[2];
 
     data[0] = reg;
+
     _i2c.send(VCNL40x0_ADDRESS, data, 1);
     _i2c.receive(VCNL40x0_ADDRESS, data, 2);
 
@@ -161,99 +157,104 @@ void VCNL4020Driver::writeRegister16(
 /// ----------------------------------------------------------------------
 /// \brief    Es crida en la interrupcio EXTI
 /// \param    line: La linia que genera la interrupcio.
-/// \param    params: Parametres de la interrupcio.
+/// \param    param: Parametres de la interrupcio.
 ///
 void VCNL4020Driver::interruptHandler(
 	halEXTILine line,
-	void *params) {
+	void *param) {
 
+	VCNL4020Driver *driver = static_cast<VCNL4020Driver*>(param);
+
+	uint8_t status = driver->getInterruptStatus();
+	if ((status & INTERRUPT_STATUS_THRES_HI) == INTERRUPT_STATUS_THRES_HI) {
+
+		driver->setUpperThreshold(0xFFFF);
+	}
+
+	if ((status & INTERRUPT_STATUS_THRES_LO) == INTERRUPT_STATUS_THRES_LO) {
+
+	}
+
+	driver->clearInterruptFlags(status);
+	driver->writeRegister8(VCNL4020_REG_COMMAND, COMMAND_PROX_ENABLE | COMMAND_AMBI_ENABLE | COMMAND_SELFTIMED_MODE_ENABLE);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Asigna el valor de current del emisor IR.
-/// \param    value: El valor 0..20.
+/// \brief    Espera que el valor de proximitat estigui disponible.
+/// \param    blockTime: Temps maxim de bloqueig.
+/// \return   True si esta disponible, false en cas contrari.
 ///
-void VCNL4020Driver::setIRCurrent(
-	uint8_t value) {
+bool VCNL4020Driver::waitProximityValue(
+	unsigned blockTime) {
 
-	writeRegister8(REGISTER_PROX_CURRENT, Math::min((uint8_t)20, value));
-}
+	uint8_t cr;
+	do {
+		cr = readRegister8(VCNL4020_REG_COMMAND);
+	} while ((cr & COMMAND_MASK_PROX_DATA_READY) != COMMAND_MASK_PROX_DATA_READY);
 
-
-/// ---------------------------------------------------------------------
-/// \build    Asigna el valor del limit superior per la interrupcio.
-/// \param    value: El valor.
-///
-void VCNL4020Driver::setIntUpperThreshold(
-	int value) {
-
-	writeRegister16(REGISTER_INTERRUPT_HIGH_THRES, value);
-}
-
-
-/// ---------------------------------------------------------------------
-/// \build    Asigna el valor del limit inferior per la interrupcio.
-/// \param    value: El valor.
-///
-void VCNL4020Driver::setIntLowerThreshold(
-	int value) {
-
-	writeRegister16(REGISTER_INTERRUPT_LOW_THRES, value);
+	return true;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el valor de current del emisor IR.
-/// \return   El valor.
-///
-uint8_t VCNL4020Driver::getIRCurrent() {
-
-	return readRegister8(REGISTER_PROX_CURRENT) & 0b00111111;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el valor de proximitat
+/// \brief    Obte el valor de proximitat.
 /// \return   El valor.
 ///
 int VCNL4020Driver::getProximityValue() {
 
-	if (_mode == Mode::onDemand)
-		writeRegister8(REGISTER_COMMAND, COMMAND_PROX_ENABLE | COMMAND_PROX_ON_DEMAND);
+	if (_mode == Mode::demand)
+		writeRegister8(VCNL4020_REG_COMMAND, COMMAND_PROX_ENABLE | COMMAND_PROX_ON_DEMAND);
 
 	uint8_t cr;
 	do {
-		cr = readRegister8(REGISTER_COMMAND);
+		cr = readRegister8(VCNL4020_REG_COMMAND);
 	} while ((cr & COMMAND_MASK_PROX_DATA_READY) != COMMAND_MASK_PROX_DATA_READY);
 
-	int result = readRegister16(REGISTER_PROX_VALUE);
+	int result = readRegister16(VCNL4020_REG_PROX_VALUE);
 
-	if (_mode == Mode::onDemand)
-		writeRegister8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
+	if (_mode == Mode::demand)
+		writeRegister8(VCNL4020_REG_COMMAND, COMMAND_ALL_DISABLE);
 
 	return result;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Obte el valor de ambient
+/// \brief    Espera que el valor de llum ambiental estigui disponible.
+/// \param    blockTime: Temps maxim de bloqueig.
+/// \return   True si esta disponible, false en cas contrari.
+///
+bool VCNL4020Driver::waitAmbiendValue(
+	unsigned blockTime) {
+
+	uint8_t cr;
+	do {
+		cr = readRegister8(VCNL4020_REG_COMMAND);
+	} while ((cr & COMMAND_MASK_AMBI_DATA_READY) != COMMAND_MASK_AMBI_DATA_READY);
+
+	return true;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Obte el valor de llum ambiental.
 /// \return   El valor.
 ///
 int VCNL4020Driver::getAmbientValue() {
 
-	if (_mode == Mode::onDemand)
-		writeRegister8(REGISTER_COMMAND, COMMAND_AMBI_ENABLE | COMMAND_AMBI_ON_DEMAND);
+	if (_mode == Mode::demand)
+		writeRegister8(VCNL4020_REG_COMMAND, COMMAND_AMBI_ENABLE | COMMAND_AMBI_ON_DEMAND);
 
 	uint8_t cr;
 	do {
-		cr = readRegister8(REGISTER_COMMAND);
+		cr = readRegister8(VCNL4020_REG_COMMAND);
 	} while ((cr & COMMAND_MASK_AMBI_DATA_READY) != COMMAND_MASK_AMBI_DATA_READY);
 
-	int result = readRegister16(REGISTER_AMBI_VALUE);
+	int result = readRegister16(VCNL4020_REG_AMBI_VALUE);
 
-	if (_mode == Mode::onDemand)
-		writeRegister8(REGISTER_COMMAND, COMMAND_ALL_DISABLE);
+	if (_mode == Mode::demand)
+		writeRegister8(VCNL4020_REG_COMMAND, COMMAND_ALL_DISABLE);
 
 	return result;
 }

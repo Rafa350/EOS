@@ -263,7 +263,7 @@ namespace eos {
 			typedef I2CModule<I2CChannel(TOUCHPAD_I2C_CHANNEL)> I2C;
 
 		private:
-			static ITouchPadDriver* _instance;
+			static ITouchPadDriver *_instance;
 			uint8_t _addr;
 			int _padWidth;
 			int _padHeight;
