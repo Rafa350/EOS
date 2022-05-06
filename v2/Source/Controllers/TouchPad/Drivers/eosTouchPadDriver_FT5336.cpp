@@ -322,10 +322,11 @@ void TouchPadDriver_FT5336::writeRegister(
 	uint8_t reg,
 	uint8_t value) {
 
-	uint8_t buffer[1];
+	uint8_t data[2];
+	data[0] = reg;
+	data[1] = value;
 
-	buffer[0] = value;
-	_i2c.send(_addr, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT, buffer, sizeof(buffer));
+	_i2c.send(_addr, data, sizeof(data));
 }
 
 
@@ -338,11 +339,12 @@ void TouchPadDriver_FT5336::writeRegister(
 uint8_t TouchPadDriver_FT5336::readRegister(
 	uint8_t reg) {
 
-	uint8_t buffer[1];
+	uint8_t value;
 
-	_i2c.read(_addr, reg, I2C_MEMADD_SIZE_8BIT, buffer, sizeof(buffer));
+	_i2c.send(_addr, &reg, 1);
+	_i2c.receive(_addr, &value, sizeof(value));
 
-	return buffer[0];
+	return value;
 }
 
 

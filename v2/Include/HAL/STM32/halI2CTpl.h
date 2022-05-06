@@ -19,6 +19,13 @@ namespace eos {
 		channel4 = HAL_I2C_CHANNEL_4
 	};
 
+	enum class I2CResult: halI2CResult {
+		ok = HAL_I2C_OK,
+	    error = HAL_I2C_ERR,
+		timeout = HAL_I2C_ERR_TIMEOUT,
+		busy = HAL_I2C_ERR_BUSY
+	};
+
 	template <I2CChannel channel_>
 	class I2CModule {
 		private:
@@ -32,34 +39,26 @@ namespace eos {
 			constexpr static const I2CChannel channel = channel_;
 
 		public:
-			inline void initMaster() {
+			inline I2CResult initMaster() {
 				halI2CMasterInitializeInfo initInfo;
 				initInfo.channel = halI2CChannel(channel_);
-				_handler = halI2CMasterInitialize(&_data, &initInfo);
+				return I2CResult(halI2CMasterInitialize(&_data, &initInfo, &_handler));
 			}
 
-			inline void enable() {
-				halI2CEnable(_handler);
+			inline I2CResult enable() {
+				return I2CResult(halI2CEnable(_handler));
 			}
 
-			inline void disable() {
-				halI2CDisable(_handler);
+			inline I2CResult disable() {
+				return I2CResult(halI2CDisable(_handler));
 			}
 
-			inline void send(uint8_t addr, const void *data, int size, unsigned blockTime = _defaultBlockTime) {
-				halI2CMasterSend(_handler, addr, data, size, blockTime);
+			inline I2CResult send(uint8_t addr, const void *data, int size, unsigned blockTime = _defaultBlockTime) {
+				return I2CResult(halI2CMasterSend(_handler, addr, data, size, blockTime));
 			}
 
-			inline void receive(uint8_t addr, void *data, int size, unsigned blockTime = _defaultBlockTime) {
-				halI2CMasterReceive(_handler, addr, data, size, blockTime);
-			}
-
-			inline void send(uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t *buffer, uint16_t length) {
-				halI2CMasterWriteMultiple(_handler,	addr, reg, memAddress, buffer, length);
-			}
-
-			inline void read(uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length) {
-				halI2CMasterReadMultiple(_handler, addr, reg, I2C_MEMADD_SIZE_8BIT, buffer, sizeof(buffer));
+			inline I2CResult receive(uint8_t addr, void *data, int size, unsigned blockTime = _defaultBlockTime) {
+				return I2CResult(halI2CMasterReceive(_handler, addr, data, size, blockTime));
 			}
 
 			template <typename pinAdapter_>

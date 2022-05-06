@@ -389,7 +389,7 @@ void halUARTDeinitialize(
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
 
-	USART_TypeDef* device = handler->device;
+	USART_TypeDef *device = handler->device;
 
 	__clear_bit_msk(device->CR1, USART_CR1_UE);
 	disableDeviceClock(device);
@@ -456,7 +456,7 @@ void halUARTEnableInterrupts(
 
 	__VERIFY_HANDLER(handler);
 
-	USART_TypeDef* device = handler->device;
+	USART_TypeDef *device = handler->device;
 
 	if (__check_bit_msk(events, HAL_UART_EVENT_CTS))
 		__set_bit_msk(device->CR3, USART_CR3_CTSIE);
@@ -501,7 +501,7 @@ uint32_t halUARTDisableInterrupts(
 
 	__VERIFY_HANDLER(handler);
 
-	USART_TypeDef* device = handler->device;
+	USART_TypeDef *device = handler->device;
 
 	uint32_t state = 0;
 
@@ -576,7 +576,7 @@ bool halDMAGetInterruptFlag(
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
 
-	USART_TypeDef* device = handler->device;
+	USART_TypeDef *device = handler->device;
 
 	switch (event) {
 		case HAL_UART_EVENT_RXFULL:

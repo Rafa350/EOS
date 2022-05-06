@@ -89,14 +89,12 @@ void VCNL4020Driver::shutdown() {
 uint8_t VCNL4020Driver::readRegister8(
 	uint8_t reg) {
 
-	uint8_t data[1];
+	uint8_t value;
 
-    data[0] = reg;
+    _i2c.send(VCNL40x0_ADDRESS, &reg, 1);
+    _i2c.receive(VCNL40x0_ADDRESS, &value, sizeof(value));
 
-    _i2c.send(VCNL40x0_ADDRESS, data, 1);
-    _i2c.receive(VCNL40x0_ADDRESS, data, 1);
-
-    return data[0];
+    return value;
 }
 
 
@@ -110,10 +108,8 @@ uint16_t VCNL4020Driver::readRegister16(
 
 	uint8_t data[2];
 
-    data[0] = reg;
-
-    _i2c.send(VCNL40x0_ADDRESS, data, 1);
-    _i2c.receive(VCNL40x0_ADDRESS, data, 2);
+    _i2c.send(VCNL40x0_ADDRESS, &reg, 1);
+    _i2c.receive(VCNL40x0_ADDRESS, data, sizeof(data));
 
 	return (data[0] << 8) | data[1];
 }
@@ -132,7 +128,7 @@ void VCNL4020Driver::writeRegister8(
 
 	data[0] = reg;
 	data[1] = value;
-	_i2c.send(VCNL40x0_ADDRESS, data, 2);
+	_i2c.send(VCNL40x0_ADDRESS, data, sizeof(data));
 }
 
 
@@ -150,7 +146,7 @@ void VCNL4020Driver::writeRegister16(
 	data[0] = reg;
 	data[1] = (value & 0xFF00) >> 8;
 	data[2] = value & 0x00FF;
-	_i2c.send(VCNL40x0_ADDRESS, data, 3);
+	_i2c.send(VCNL40x0_ADDRESS, data, sizeof(data));
 }
 
 
@@ -168,7 +164,7 @@ void VCNL4020Driver::interruptHandler(
 	uint8_t status = driver->getInterruptStatus();
 	if ((status & INTERRUPT_STATUS_THRES_HI) == INTERRUPT_STATUS_THRES_HI) {
 
-		driver->setUpperThreshold(0xFFFF);
+		//driver->setUpperThreshold(0xFFFF);
 	}
 
 	if ((status & INTERRUPT_STATUS_THRES_LO) == INTERRUPT_STATUS_THRES_LO) {

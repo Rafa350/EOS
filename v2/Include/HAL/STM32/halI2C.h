@@ -23,6 +23,12 @@
 #define HAL_I2C_INT_DISABLE       (0 << HAL_I2C_INT_pos)
 #define HAL_I2C_INT_ENABLE        (1 << HAL_I2C_INT_pos)
 
+// Resultats
+#define HAL_I2C_OK                0    // Tot correcte
+#define HAL_I2C_ERR               1    // Error generic
+#define HAL_I2C_ERR_TIMEOUT       2    // Superat el temps limit
+#define HAL_I2C_ERR_BUSY          3    // Ocupat
+
 
 #ifdef	__cplusplus
 extern "C" {
@@ -31,6 +37,7 @@ extern "C" {
 
 typedef uint32_t halI2CChannel;
 typedef uint32_t halI2COptions;
+typedef uint32_t halI2CResult;
 typedef struct __halI2CData *halI2CHandler;
 typedef void (*halI2CInterruptFunction)(halI2CHandler handler, void *params);
 
@@ -51,16 +58,14 @@ typedef struct {
 
 
 
-halI2CHandler halI2CMasterInitialize(halI2CData *data, const halI2CMasterInitializeInfo *info);
+halI2CResult halI2CMasterInitialize(halI2CData *data, const halI2CMasterInitializeInfo *info, halI2CHandler *handler);
+halI2CResult halI2CDeinitialize();
 
-void halI2CEnable(halI2CHandler handler);
-void halI2CDisable(halI2CHandler handler);
+halI2CResult halI2CEnable(halI2CHandler handler);
+halI2CResult halI2CDisable(halI2CHandler handler);
 
-void halI2CMasterSend(halI2CHandler handler, uint8_t addr, const void *data, int size, unsigned blockTime);
-void halI2CMasterReceive(halI2CHandler handler, uint8_t addr, void *data, int size, unsigned blockTime);
-
-void halI2CMasterWriteMultiple(halI2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, const uint8_t *buffer, uint16_t length);
-void halI2CMasterReadMultiple(halI2CHandler handler, uint8_t addr, uint16_t reg, uint16_t memAddress, uint8_t *buffer, uint16_t length);
+halI2CResult halI2CMasterSend(halI2CHandler handler, uint8_t addr, const void *data, int size, unsigned blockTime);
+halI2CResult halI2CMasterReceive(halI2CHandler handler, uint8_t addr, void *data, int size, unsigned blockTime);
 
 
 #ifdef	__cplusplus

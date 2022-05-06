@@ -116,76 +116,90 @@ static void setupDevice(
 /// \brief    Inicialitza un modul I2C.
 /// \param    data: Buffer de dades.
 /// \param    info: Els parametres d'inicialitzacio.
+/// \param    handler: El handler del modul.
+/// \return   El resultat de l'operacio.
 ///
-halI2CHandler halI2CMasterInitialize(
+halI2CResult halI2CMasterInitialize(
 	halI2CData *data,
-	const halI2CMasterInitializeInfo* info) {
+	const halI2CMasterInitializeInfo* info,
+	halI2CHandler *handler) {
 
 	eosAssert(data != NULL);
 	eosAssert(info != NULL);
 
-	I2C_TypeDef* device = getDevice(info->channel);
+	I2C_TypeDef *device = getDevice(info->channel);
 
 	enableDeviceClock(device);
 
 	setupDevice(device, &data->handle, info->options);
 
-	halI2CHandler handler = data;
-	handler->device = device;
+	halI2CHandler h = data;
+	h->device = device;
 
 	if (__check_bit_msk(info->options, HAL_I2C_INT_ENABLE)) {
-		handler->isrFunction = info->isrFunction;
-		handler->isrParams = info->isrParams;
+		h->isrFunction = info->isrFunction;
+		h->isrParams = info->isrParams;
 	}
 	else {
-		handler->isrFunction = NULL;
-		handler->isrParams = NULL;
+		h->isrFunction = NULL;
+		h->isrParams = NULL;
 	}
 
-    halI2CEnable(handler);
+    halI2CEnable(h);
 
-    return handler;
+    *handler = h;
+
+    return HAL_I2C_OK;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desinicialitza el modul.
 /// \param    handler: Handler del dispositiu.
+/// \param    El resultast de l'operacio
 ///
-void halI2CDeinitialize(
+halI2CResult halI2CDeinitialize(
 	halI2CHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 
 	halI2CDisable(handler);
+
+	return HAL_I2C_OK;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Activa el dispositiu.
 /// \param    handler: Handler del dispositiu.
+/// \return   El resultat de l'operacio.
 ///
-void halI2CEnable(
+halI2CResult halI2CEnable(
 	halI2CHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
 
 	__set_bit_msk(handler->device->CR1, I2C_CR1_PE);
+
+	return HAL_I2C_OK;
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva el dispositiu.
 /// \param    handler: Handler del dispositiu.
+/// \return   El resultat de l'operacio.
 ///
-void halI2CDisable(
+halI2CResult halI2CDisable(
 	halI2CHandler handler) {
 
 	__VERIFY_HANDLER(handler);
 	__VERIFY_DEVICE(handler->device);
 
 	__clear_bit_msk(handler->device->CR1, I2C_CR1_PE);
+
+	return HAL_I2C_OK;
 }
 
 
@@ -196,8 +210,9 @@ void halI2CDisable(
 /// \param    data: Bloc de dades transmetre.
 /// \param    size: Tamany del bloc en bytes.
 /// \param    blockTime: Temps maxim de bloqueig.
+/// \param    El resultat de l'operacio.
 ///
-void halI2CMasterSend(
+halI2CResult halI2CMasterSend(
 	halI2CHandler handler,
 	uint8_t addr,
 	const void *data,
@@ -206,10 +221,68 @@ void halI2CMasterSend(
 
 	__VERIFY_HANDLER(handler);
 
-	HAL_StatusTypeDef status = HAL_OK;
-
-	status = HAL_I2C_Master_Transmit(&handler->handle, addr, (uint8_t*)data, size, blockTime);
+	if (HAL_I2C_Master_Transmit(&handler->handle, addr, (uint8_t*)data, size, blockTime) == HAL_OK)
+		return HAL_I2C_OK;
+	else
+		return HAL_I2C_ERR;
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Transmeteix una sequencia de bytes.
+/// \param    handler: Handler del dispositiu.
+/// \param    addr: Adressa.
+/// \param    data: Bloc de dades transmetre.
+/// \param    size: Tamany del bloc en bytes.
+/// \param    blockTime: Temps maxim de bloqueig.
+/// \result   El resultat de l'operacio
+///
+halI2CResult __halI2CMasterSend(
+	halI2CHandler handler,
+	uint8_t addr,
+	const void *data,
+	int size,
+	unsigned blockTime) {
+
+	unsigned tickstart = HAL_GetTick();
+
+	// Espera el flag BUSY del registre ISR
+	//
+	while (handler->device->ISR & I2C_ISR_BUSY != 0) {
+		if (((HAL_GetTick() - tickstart) > blockTime) || (blockTime == 0))
+			return HAL_I2C_ERR_TIMEOUT;
+	}
+
+	uint32_t temp;
+
+	// Configura el registre CR2 (Control Register 2)
+	//
+	temp = handler->device->CR2;
+	temp &= ~(I2C_CR2_SADD | I2C_CR2_ADD10 | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | I2C_CR2_RD_WRN | I2C_CR2_START | I2C_CR2_STOP);
+	temp |= (addr << I2C_CR2_SADD_Pos) & I2C_CR2_SADD_Msk;
+	temp |= (size << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES_Msk;
+	temp |= 0x80000000 | I2C_CR2_START;
+	temp |= I2C_CR2_AUTOEND;
+	handler->device->CR2 = temp;
+
+	uint8_t *p = (uint8_t*) data;
+
+	while (size-- > 0) {
+
+		handler->device->TXDR = *p++;
+
+		// Espera el flag TXIS del registre ISR
+		//
+		while (handler->device->ISR & I2C_ISR_TXIS == 0) {
+
+			if (handler->device->ISR & I2C_ISR_NACKF)
+
+			if (((HAL_GetTick() - tickstart) > blockTime) || (blockTime == 0))
+				return HAL_I2C_ERR_TIMEOUT;
+		}
+	}
+}
+
 
 
 /// ----------------------------------------------------------------------
@@ -219,8 +292,9 @@ void halI2CMasterSend(
 /// \param    data: Buffer de recepcio.
 /// \param    size: Tamany del buffer de recepcio en bytes.
 /// \param    blockParam: Temps maxim de bloqueig.
+/// \return   El resultat de l'operacio.
 ///
-void halI2CMasterReceive(
+halI2CResult halI2CMasterReceive(
 	halI2CHandler handler,
 	uint8_t addr,
 	void *data,
@@ -229,50 +303,8 @@ void halI2CMasterReceive(
 
 	__VERIFY_HANDLER(handler);
 
-	HAL_StatusTypeDef status = HAL_OK;
-
-	status = HAL_I2C_Master_Receive(&handler->handle, addr, data, size, blockTime);
-}
-
-
-void halI2CMasterReadMultiple(
-	halI2CHandler handler,
-	uint8_t addr,
-	uint16_t reg,
-	uint16_t memAddress,
-	uint8_t* buffer,
-	uint16_t length) {
-
-	__VERIFY_HANDLER(handler);
-
-	HAL_StatusTypeDef status = HAL_OK;
-
-	status = HAL_I2C_Mem_Read(&handler->handle, addr, (uint16_t)reg, memAddress, buffer, length, 1000);
-
-	// Check the communication status
-	if (status != HAL_OK) {
-		HAL_I2C_DeInit(&handler->handle);
-		HAL_I2C_Init(&handler->handle);
-	}
-}
-
-
-void halI2CMasterWriteMultiple(
-	halI2CHandler handler,
-	uint8_t addr,
-	uint16_t reg,
-	uint16_t memAddress,
-	const uint8_t* buffer,
-	uint16_t length) {
-
-	__VERIFY_HANDLER(handler);
-
-	HAL_StatusTypeDef status = HAL_OK;
-	status = HAL_I2C_Mem_Write(&handler->handle, addr, (uint16_t)reg, memAddress, (uint8_t*)buffer, length, 1000);
-
-	// Check the communication status
-	if (status != HAL_OK) {
-		HAL_I2C_DeInit(&handler->handle);
-		HAL_I2C_Init(&handler->handle);
-	}
+	if (HAL_I2C_Master_Receive(&handler->handle, addr, data, size, blockTime) == HAL_OK)
+		return HAL_I2C_OK;
+	else
+		return HAL_I2C_ERR;
 }
