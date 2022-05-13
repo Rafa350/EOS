@@ -135,7 +135,7 @@ void GuiService::onInitialize() {
 /// \brief    Procesa la tasca del servei.
 ///
 void GuiService::onTask(
-	Task* task) {
+	Task *task) {
 
 	// Refresca la pantalla si cal
 	//
@@ -164,14 +164,14 @@ void GuiService::onTask(
 ///
 #if eosGuiService_TouchpadEnabled
 void GuiService::touchpadEventHandler(
-	const TouchpadService::EventArgs& args) {
+	const TouchpadService::EventArgs &args) {
 
 	Message msg;
 	msg.msgId = MsgId::touchpad;
 
 	// Obte el target.
 	//
-	Visual* target = getVisualAt(Point(args.x, args.y));
+	Visual *target = getVisualAt(Point(args.x, args.y));
 
 	// Comprova si ha canviat el target.
 	//
@@ -222,14 +222,14 @@ void GuiService::touchpadEventHandler(
 
 #if eosGuiService_KeyboardEnabled
 void GuiService::keyboardEventHandler(
-	const KeyboardEventArgs& args) {
+	const KeyboardEventArgs &args) {
 
 }
 #endif
 
 #if eosGuiService_SelectorEnabled
 void GuiService::selectorEventHandler(
-	const SelectorEventArgs& args) {
+	const SelectorEventArgs &args) {
 
 }
 #endif

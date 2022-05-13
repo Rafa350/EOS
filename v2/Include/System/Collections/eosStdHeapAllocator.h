@@ -33,7 +33,7 @@ namespace eos {
 
 		private:
 			void* alloc(int size) {
-			    void* p = osalHeapAlloc(NULL, size);
+			    void *p = osalHeapAlloc(NULL, size);
 			    eosAssert(p != nullptr);
 			    return p;
 			}

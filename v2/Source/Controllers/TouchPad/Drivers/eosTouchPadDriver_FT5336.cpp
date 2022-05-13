@@ -34,7 +34,6 @@ ITouchPadDriver* TouchPadDriver_FT5336::getInstance() {
 /// \brief    Contructor.
 ///
 TouchPadDriver_FT5336::TouchPadDriver_FT5336():
-
 	_addr(TOUCHPAD_I2C_ADDR),
 	_padWidth(TOUCHPAD_PAD_WIDTH),
 	_padHeight(TOUCHPAD_PAD_HEIGHT),
@@ -259,11 +258,11 @@ bool TouchPadDriver_FT5336::getState(
 ///
 void TouchPadDriver_FT5336::enableInt() {
 
-   uint8_t regValue = (FT5336_G_MODE_INTERRUPT_TRIGGER & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
+   uint8_t value = (FT5336_G_MODE_INTERRUPT_TRIGGER & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
 
    // Set interrupt trigger mode in FT5336_GMODE_REG
    //
-   writeRegister(FT5336_GMODE_REG, regValue);
+   writeRegister(FT5336_GMODE_REG, value);
 }
 
 
@@ -272,11 +271,11 @@ void TouchPadDriver_FT5336::enableInt() {
 ///
 void TouchPadDriver_FT5336::disableInt() {
 
-	uint8_t regValue = (FT5336_G_MODE_INTERRUPT_POLLING & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
+	uint8_t value = (FT5336_G_MODE_INTERRUPT_POLLING & (FT5336_G_MODE_INTERRUPT_MASK >> FT5336_G_MODE_INTERRUPT_SHIFT)) << FT5336_G_MODE_INTERRUPT_SHIFT;
 
 	// Set interrupt polling mode in FT5336_GMODE_REG
 	//
-	writeRegister(FT5336_GMODE_REG, regValue);
+	writeRegister(FT5336_GMODE_REG, value);
 }
 
 
@@ -298,7 +297,7 @@ void TouchPadDriver_FT5336::initializeInterface() {
 #ifdef TOUCHPAD_INT_PORT
 	PinINT::initInput(GPIOSpeed::fast, GPIOPull::up);
 
-	LineINT::init(EXTIPort(TOUCHPAD_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
+	ExtiINT::init(EXTIPort(TOUCHPAD_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
 
 	INT::setInterruptVectorPriority(INTVector(TOUCHPAD_INT_IRQ), INTPriority(TOUCHPAD_INT_PRIORITY), INTSubPriority(TOUCHPAD_INT_SUBPRIORITY));
 	INT::enableInterruptVector(INTVector(TOUCHPAD_INT_IRQ));

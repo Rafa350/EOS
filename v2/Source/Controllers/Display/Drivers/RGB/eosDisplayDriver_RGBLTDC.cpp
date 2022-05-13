@@ -95,7 +95,7 @@ void DisplayDriver_RGBLTDC::displayOn() {
 
     // Activa el modul LDTC
     //
-	halLTDCEnable();
+	_ltdc.enable();
 
     // Activa el display
 	//
@@ -122,7 +122,7 @@ void DisplayDriver_RGBLTDC::displayOff() {
 
 	// Desactiva el modul LDTC
     //
-	halLTDCDisable();
+	_ltdc.disable();
 }
 
 
@@ -276,8 +276,8 @@ void DisplayDriver_RGBLTDC::refresh() {
 
 		// Asigna l'adresa de la capa
 		//
-		halLTDCLayerSetFrameBuffer(HAL_LTDC_LAYER_0, _frontImageBuffer);
-		halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
+		LTDCLayer_0::setFramBuffer(_frontImageBuffer);
+		LTDCLayer_0::update();
 	}
 }
 
@@ -315,25 +315,24 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	ltdcSettings.width = _imageWidth;
 	ltdcSettings.height = _imageHeight;
 
-	LTDC_1::initDOTCLKPin<PinDOTCLK>();
-	LTDC_1::initHSYNCPin<PinHSYNC>();
-	LTDC_1::initVSYNCPin<PinVSYNC>();
-	LTDC_1::initDEPin<PinDE>();
-	LTDC_1::initRPins<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
-	LTDC_1::initGPins<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
-	LTDC_1::initBPins<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
-	LTDC_1::initialize(ltdcSettings);
-	LTDC_1::setBackgroundColor(COLOR_Blue);
+	_ltdc.initDOTCLKPin<PinDOTCLK>();
+	_ltdc.initHSYNCPin<PinHSYNC>();
+	_ltdc.initVSYNCPin<PinVSYNC>();
+	_ltdc.initDEPin<PinDE>();
+	_ltdc.initRPins<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
+	_ltdc.initGPins<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
+	_ltdc.initBPins<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+	_ltdc.initialize(ltdcSettings);
+	_ltdc.setBackgroundColor(COLOR_Blue);
 
 	// Inicialitza la capa 0
 	//
-	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, _imageWidth, _imageHeight);
-
-	halLTDCLayerSetFrameFormat(HAL_LTDC_LAYER_0,
+	_ltdc.layer0.setWindow(0, 0, _imageWidth, _imageHeight);
+	_ltdc.layer0.setFrameFormat(
 		LTDCPixelFormatFor<CI::format>::value,
 		_imageWidth * CI::bytes,
 		((_imageWidth * CI::bytes) + 63) & 0xFFFFFFC0,
 		_imageHeight);
-	halLTDCLayerSetFrameBuffer(HAL_LTDC_LAYER_0, _frontImageBuffer);
-	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
+	_ltdc.layer0.setFramBuffer(_frontImageBuffer);
+	_ltdc.layer0.update();
 }

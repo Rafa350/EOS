@@ -14,7 +14,7 @@ using namespace eos;
 /// \param    cfg: Parametres de configuracio.
 ///
 TouchpadService::TouchpadService(
-	Application* application) :
+	Application *application) :
 
 	Service(application),
 	_touchDriver(nullptr),
@@ -127,6 +127,6 @@ void TouchpadService::interruptHandler(
 	halEXTILine line,
 	void *param) {
 
-	TouchpadService* service = static_cast<TouchpadService*>(param);
+	TouchpadService *service = static_cast<TouchpadService*>(param);
 	service->interruptHandler();
 }

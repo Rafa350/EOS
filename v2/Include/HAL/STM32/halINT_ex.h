@@ -1,5 +1,5 @@
-#ifndef __STM32_halINTTpl__
-#define __STM32_halINTTpl__
+#ifndef __STM32_halINT_ex__
+#define __STM32_halINT_ex__
 
 
 #ifdef __cplusplus
@@ -125,4 +125,4 @@ namespace eos {
 #endif // __cplusplus
 
 
-#endif // __STM32_halINTTpl__
+#endif // __STM32_halINT_ex__

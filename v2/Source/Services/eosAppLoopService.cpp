@@ -10,7 +10,7 @@ using namespace eos;
 /// \param    application: Aplicacio on afeigir el servei.
 ///
 AppLoopService::AppLoopService(
-    Application* application):
+    Application *application):
 
 	Service(application),
     _initialized(false) {

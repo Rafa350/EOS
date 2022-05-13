@@ -57,6 +57,12 @@
 
 #define VCNL4020_I2C_CHANNEL      ARDUINO_I2C_CHANNEL
 
+#define VCNL4020_I2C              I2C_1
+#define VCNL4020_PIN_SCL          PIN_B8
+#define VCNL4020_PIN_SDA          PIN_B9
+#define VCNL4020_PIN_INT          PIN_C7
+#define VCNL4020_EXTI             EXTI_7
+
 
 #endif // __board_Custom_STM32F746G_DISCO__
 

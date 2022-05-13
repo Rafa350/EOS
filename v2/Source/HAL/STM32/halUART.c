@@ -97,7 +97,7 @@ static void enableDeviceClock(
 /// \param    device: El dispositiu.
 ///
 static void disableDeviceClock(
-	USART_TypeDef* device) {
+	USART_TypeDef *device) {
 
 	__VERIFY_DEVICE(device);
 }
@@ -109,7 +109,7 @@ static void disableDeviceClock(
 /// \return   La opcio corresponent al rellotge.
 ///
 uint32_t getClockSourceOption(
-	USART_TypeDef* device) {
+	USART_TypeDef *device) {
 
 	__VERIFY_DEVICE(device);
 
@@ -163,10 +163,10 @@ uint32_t getClockSourceOption(
 /// \brief    Inicialitza un dispositiu UART.
 /// \param    device: El dispositiu.
 /// \param    options: Opcions de configuracio.
-/// \param    rate: Valor pel calcul de la velocitat
+/// \param    rate: Valor pel calcul de la velocitat.
 ///
 static void setupDevice(
-	USART_TypeDef* device,
+	USART_TypeDef *device,
 	halUARTOptions options,
 	uint32_t baud) {
 
@@ -359,7 +359,7 @@ halUARTHandler halUARTInitialize(
 	eosAssert(data != NULL);
 	eosAssert(settings != NULL);
 
-    USART_TypeDef* device = getDevice(settings->channel);
+    USART_TypeDef *device = getDevice(settings->channel);
 
     enableDeviceClock(device);
 

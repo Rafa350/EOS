@@ -66,11 +66,11 @@ void halLTDCLayerUpdate(halLTDCLayerNum layerNum);
 int halLTDCGetPixelOffset(halLTDCLayerNum layerNum, int x, int y);
 uint8_t halLTDCGetPixelBytes(halLTDCPixelFormat pixelFormat);
 
-#define halLTDCEnable()      __set_bit_msk(LTDC->GCR, LTDC_GCR_LTDCEN)
-#define halLTDCDisable()     __clear_bit_msk(LTDC->GCR, LTDC_GCR_LTDCEN)
+#define halLTDCEnable()      __set_bit_pos(LTDC->GCR, LTDC_GCR_LTDCEN_Pos)
+#define halLTDCDisable()     __clear_bit_pos(LTDC->GCR, LTDC_GCR_LTDCEN_Pos)
 
 
-void halLTDCSetInterruptFunction(halLTDCInterruptFunction function, void* params);
+void halLTDCSetInterruptFunction(halLTDCInterruptFunction function, void *params);
 void halLTDCInterruptHandler();
 
 void halLTDCEnableInterrupts();

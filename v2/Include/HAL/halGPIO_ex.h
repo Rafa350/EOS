@@ -1,5 +1,5 @@
-#ifndef __halGPIOTpl__
-#define	__halGPIOTpl__
+#ifndef __halGPIO_ex__
+#define	__halGPIO_ex__
 
 
 // EOS includes
@@ -8,16 +8,16 @@
 
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
-	#include "HAL/PIC32/halGPIOTpl.h"
+	#include "HAL/PIC32/halGPIO_ex.h"
 
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-	#include "HAL/STM32/halGPIOTpl.h"
+	#include "HAL/STM32/halGPIO_ex.h"
 
 #elif defined(EOS_MSP432)
-    #include "HAL/MSP432/halGPIOTpl.h"
+    #include "HAL/MSP432/halGPIO_ex.h"
 
 #endif
 
 
-#endif // __halGPIOTpl__
+#endif // __halGPIO_ex__
 

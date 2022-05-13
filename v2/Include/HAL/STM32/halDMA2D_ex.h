@@ -12,7 +12,7 @@ namespace eos {
 
 	// Valors que depenen de format de color
 	//
-	template <ColorFormat FORMAT>
+	template <ColorFormat format_>
 	struct DMA2DOptionsFor {
 	};
 	template<>

@@ -12,7 +12,7 @@ using namespace app;
 /// \brief Contructor de l'objecte.
 ///
 LedService::LedService(
-	Application* application) :
+	Application *application) :
 
 	AppLoopService(application) {
 }
@@ -24,10 +24,10 @@ LedService::LedService(
 void LedService::onSetup() {
 
 #ifdef EXIST_LEDS_LED1
-	led1.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
+	_led1.initOutput(GPIOSpeed::low, GPIODriver::pushPull);
 #endif
 #ifdef EXIST_LEDS_LED2
-	led2.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET);
+	_led2.initOutput(GPIOSpeed::low, GPIODriver::pushPull);
 #endif
 }
 
@@ -40,10 +40,10 @@ void LedService::onLoop() {
 	while (true) {
 
 #ifdef EXIST_LEDS_LED1
-		led1.toggle();
+		_led1.toggle();
 #endif
 #ifdef EXIST_LEDS_LED2
-		led2.toggle();
+		_led2.toggle();
 #endif
 
 		Task::delay(500);

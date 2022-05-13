@@ -1,5 +1,5 @@
-#ifndef __STM32_halEXTITpl__
-#define __STM32_halEXTITpl__
+#ifndef __STM32_halEXTI_ex__
+#define __STM32_halEXTI_ex__
 
 
 // EOS includes
@@ -70,23 +70,23 @@ namespace eos {
 			}
 	};
 
-	typedef EXTIAdapter<EXTILine::line0> EXTI_L0;
-	typedef EXTIAdapter<EXTILine::line1> EXTI_L1;
-	typedef EXTIAdapter<EXTILine::line2> EXTI_L2;
-	typedef EXTIAdapter<EXTILine::line3> EXTI_L3;
-	typedef EXTIAdapter<EXTILine::line4> EXTI_L4;
-	typedef EXTIAdapter<EXTILine::line5> EXTI_L5;
-	typedef EXTIAdapter<EXTILine::line6> EXTI_L6;
-	typedef EXTIAdapter<EXTILine::line7> EXTI_L7;
-	typedef EXTIAdapter<EXTILine::line8> EXTI_L8;
-	typedef EXTIAdapter<EXTILine::line9> EXTI_L9;
-	typedef EXTIAdapter<EXTILine::line10> EXTI_L10;
-	typedef EXTIAdapter<EXTILine::line11> EXTI_L11;
-	typedef EXTIAdapter<EXTILine::line12> EXTI_L12;
-	typedef EXTIAdapter<EXTILine::line13> EXTI_L13;
-	typedef EXTIAdapter<EXTILine::line14> EXTI_L14;
-	typedef EXTIAdapter<EXTILine::line15> EXTI_L15;
+	typedef EXTIAdapter<EXTILine::line0> EXTI_0;
+	typedef EXTIAdapter<EXTILine::line1> EXTI_1;
+	typedef EXTIAdapter<EXTILine::line2> EXTI_2;
+	typedef EXTIAdapter<EXTILine::line3> EXTI_3;
+	typedef EXTIAdapter<EXTILine::line4> EXTI_4;
+	typedef EXTIAdapter<EXTILine::line5> EXTI_5;
+	typedef EXTIAdapter<EXTILine::line6> EXTI_6;
+	typedef EXTIAdapter<EXTILine::line7> EXTI_7;
+	typedef EXTIAdapter<EXTILine::line8> EXTI_8;
+	typedef EXTIAdapter<EXTILine::line9> EXTI_9;
+	typedef EXTIAdapter<EXTILine::line10> EXTI_10;
+	typedef EXTIAdapter<EXTILine::line11> EXTI_11;
+	typedef EXTIAdapter<EXTILine::line12> EXTI_12;
+	typedef EXTIAdapter<EXTILine::line13> EXTI_13;
+	typedef EXTIAdapter<EXTILine::line14> EXTI_14;
+	typedef EXTIAdapter<EXTILine::line15> EXTI_15;
 }
 
 
-#endif // __STM32_halEXTITpl__
+#endif // __STM32_halEXTI_ex__

@@ -4,12 +4,12 @@
 
 #include "eos.h"
 #include "HAL/halGPIO.h"
-#include "HAL/halGPIOTpl.h"
+#include "HAL/halGPIO_ex.h"
 #include "HAL/halI2C.h"
-#include "HAL/halI2CTpl.h"
+#include "HAL/halI2C_ex.h"
 #ifdef EOS_STM32
 #include "HAL/STM32/halEXTI.h"
-#include "HAL/STM32/halEXTITpl.h"
+#include "HAL/STM32/halEXTI_ex.h"
 #endif
 
 
@@ -62,15 +62,21 @@
 #define VCNL4020_INT_THRES_DISABLE     (0 << VCNL4020_INT_THRES_pos)
 #define VCNL4020_INT_THRES_ENABLE      (1 << VCNL4020_INT_THRES_pos)
 
+// Indicadors d'estat d'interrupcio
+//
+#define VCNL4020_INT_STATUS_PROX       0x08
+#define VCNL4020_INT_STATUS_AMBI       0x04
+#define VCNL4020_INT_STATUS_THLO       0x02
+#define VCNL4020_INT_STATUS_THHI       0x01
+
 
 namespace eos {
 
-	class VCNL4020Driver {
+	class SensorDriver_VCNL4020 {
 		private:
 			typedef GPIOPinAdapter<GPIOPort(VCNL4020_I2C_SCL_PORT), GPIOPin(VCNL4020_I2C_SCL_PIN)> PinSCL;
 			typedef GPIOPinAdapter<GPIOPort(VCNL4020_I2C_SDA_PORT), GPIOPin(VCNL4020_I2C_SDA_PIN)> PinSDA;
 			typedef GPIOPinAdapter<GPIOPort(VCNL4020_INT_PORT), GPIOPin(VCNL4020_INT_PIN)> PinINT;
-			typedef EXTIAdapter<EXTILine(VCNL4020_INT_EXTI_LINE) > LineINT;
 			typedef I2CModule<I2CChannel(VCNL4020_I2C_CHANNEL)> I2C;
 
 		public:
@@ -88,12 +94,11 @@ namespace eos {
 			void writeRegister16(uint8_t reg, uint16_t value);
 			uint8_t readRegister8(uint8_t reg);
 			uint16_t readRegister16(uint8_t reg);
-			static void interruptHandler(halEXTILine line, void *param);
 
 		public:
-			VCNL4020Driver();
+			SensorDriver_VCNL4020();
 
-			void initialize(Mode mode);
+			void initialize(Mode mode, uint8_t current);
 			void shutdown();
 
 			inline uint8_t getID() {
@@ -102,6 +107,18 @@ namespace eos {
 
 			inline uint8_t getLedCurrent() {
 				return readRegister8(VCNL4020_REG_PROX_CURRENT);
+			}
+
+			int getProximityValue();
+
+			int getAmbientValue();
+
+			inline unsigned getUpperThreshold() {
+				return readRegister16(VCNL4020_REG_INT_UPPER_THRES);
+			}
+
+			inline unsigned getLowerThreshold() {
+				return readRegister16(VCNL4020_REG_INT_LOWER_THRES);
 			}
 
 			inline void setLedCurrent(uint8_t value) {
@@ -120,18 +137,8 @@ namespace eos {
 				writeRegister16(VCNL4020_REG_INT_LOWER_THRES, value);
 			}
 
-			inline unsigned getUpperThreshold() {
-				return readRegister16(VCNL4020_REG_INT_UPPER_THRES);
-			}
-
-			inline unsigned getLowerThreshold() {
-				return readRegister16(VCNL4020_REG_INT_LOWER_THRES);
-			}
-
 			bool waitProximityValue(unsigned blockTime = 0xFFFF);
-			int getProximityValue();
-			bool waitAmbiendValue(unsigned blockTime = 0xFFFF);
-			int getAmbientValue();
+			bool waitAmbientValue(unsigned blockTime = 0xFFFF);
 
 			inline void configureInterrupts(uint8_t options) {
 				writeRegister8(VCNL4020_REG_INT_CONTROL, options);

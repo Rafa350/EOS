@@ -39,7 +39,7 @@ namespace eos {
 	};
 
 	template <UARTChannel channel_>
-	class UARTAdapter {
+	class UARTModule {
 		private:
 			halUARTData _data;
 			halUARTHandler _handler;
@@ -123,28 +123,28 @@ namespace eos {
 
 	typedef UARTAttachedAdapter UART;
 #ifdef HAL_UART_CHANNEL_1
-	typedef UARTAdapter<UARTChannel::channel1> UART_1;
+	typedef UARTModule<UARTChannel::channel1> UART_1;
 #endif
 #ifdef HAL_UART_CHANNEL_2
-	typedef UARTAdapter<UARTChannel::channel2> UART_2;
+	typedef UARTModule<UARTChannel::channel2> UART_2;
 #endif
 #ifdef HAL_UART_CHANNEL_3
-	typedef UARTAdapter<UARTChannel::channel3> UART_3;
+	typedef UARTModule<UARTChannel::channel3> UART_3;
 #endif
 #ifdef HAL_UART_CHANNEL_4
-	typedef UARTAdapter<UARTChannel::channel4> UART_4;
+	typedef UARTModule<UARTChannel::channel4> UART_4;
 #endif
 #ifdef HAL_UART_CHANNEL_5
-	typedef UARTAdapter<UARTChannel::channel5> UART_5;
+	typedef UARTModule<UARTChannel::channel5> UART_5;
 #endif
 #ifdef HAL_UART_CHANNEL_6
-	typedef UARTAdapter<UARTChannel::channel6> UART_6;
+	typedef UARTModule<UARTChannel::channel6> UART_6;
 #endif
 #ifdef HAL_UART_CHANNEL_7
-	typedef UARTAdapter<UARTChannel::channel7> UART_7;
+	typedef UARTModule<UARTChannel::channel7> UART_7;
 #endif
 #ifdef HAL_UART_CHANNEL_8
-	typedef UARTAdapter<UARTChannel::channel8> UART_8;
+	typedef UARTModule<UARTChannel::channel8> UART_8;
 #endif
 
 }

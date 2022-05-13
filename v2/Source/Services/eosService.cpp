@@ -12,7 +12,7 @@ using namespace eos;
 /// \param    application: Aplicacio al que pertany.
 ///
 Service::Service(
-	Application* application) :
+	Application *application) :
 
     _application(nullptr),
 	_stackSize(512),
@@ -82,7 +82,7 @@ void Service::tick() {
 /// \param    task: L'objecte Task que executa el servei.
 ///
 void Service::task(
-	Task* task) {
+	Task *task) {
 
     if (_initialized)
         onTask(task);
@@ -120,6 +120,6 @@ void Service::onTick() {
 /// \param    task: L'objecte task que executa el servei.
 ///
 void Service::onTask(
-	Task* task) {
+	Task *task) {
 
 }

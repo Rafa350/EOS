@@ -16,13 +16,60 @@ namespace eos {
 		layer1 = HAL_LTDC_LAYER_1
 	};
 
-	class LTDCAdapter {
+    template <LTDCLayerNum layerNum_>
+    class LTDCLayerAdapter {
+    	public:
+			inline static void setWindow(int x, int y, int width, int height) {
+				halLTDCLayerSetWindow(
+					halLTDCLayerNum(layerNum_),
+					x, y,
+					width, height);
+			}
+
+			inline static void setFrameFormat(halLTDCPixelFormat format, int width, int pitch, int lines) {
+				halLTDCLayerSetFrameFormat(
+					halLTDCLayerNum(layerNum_),
+					format,
+					width,
+					pitch,
+					lines);
+			}
+
+			inline static void setFramBuffer(void *buffer) {
+				halLTDCLayerSetFrameBuffer(
+					halLTDCLayerNum(layerNum_),
+					buffer);
+			}
+
+			inline static void update() {
+				halLTDCLayerUpdate(
+					halLTDCLayerNum(layerNum_));
+			}
+    };
+
+    typedef LTDCLayerAdapter<LTDCLayerNum::layer0> LTDCLayer_0;
+    typedef LTDCLayerAdapter<LTDCLayerNum::layer1> LTDCLayer_1;
+
+
+    class LTDCAdapter {
+		public:
+			static const LTDCLayer_0 layer0;
+			static const LTDCLayer_1 layer1;
+
 		public:
 		    inline static void initialize(const halLTDCSettings &settings) {
 		    	halLTDCInitialize(&settings);
 		    }
 
-			template <typename pinAdapter_>
+		    inline static void enable() {
+		    	halLTDCEnable();
+		    }
+
+		    inline static void disable() {
+		    	halLTDCDisable();
+		    }
+
+		    template <typename pinAdapter_>
 			inline static void initHSYNCPin() {
 				pinAdapter_::initAlt(
 					GPIOSpeed::fast,
@@ -192,44 +239,9 @@ namespace eos {
 	typedef LTDCAdapter LTDC_1;
 
 
-    template <LTDCLayerNum layerNum>
-    class LTDCLayerAdapter {
-
-    	inline static void setWindow(int x, int y, int width, int height) {
-    		halLTDCLayerSetWindow(
-    			halLTDCLayerNum(layerNum),
-				x, y,
-				width, height);
-    	}
-
-    	inline static void setFrameFormat(halLTDCPixelFormat format, int width, int pitch, int lines) {
-    		halLTDCLayerSetFrameFormat(
-    			halLTDCLayerNum(layerNum),
-    			format,
-				width,
-    			pitch,
-    			lines);
-    	}
-
-    	inline static void setFramBuffer(void *buffer) {
-			halLTDCLayerSetFrameBuffer(
-				halLTDCLayerNum(layerNum),
-				buffer);
-    	}
-
-    	inline static void update() {
-    		halLTDCLayerUpdate(
-    			halLTDCLayerNum(layerNum));
-    	}
-    };
-
-    typedef LTDCLayerAdapter<LTDCLayerNum::layer0> LTDCLayer_L0;
-    typedef LTDCLayerAdapter<LTDCLayerNum::layer1> LTDCLayer_L1;
-
-
-    // Valors que depenen del format de color
+	// Valors que depenen del format de color
     //
-	template <ColorFormat FORMAT>
+	template <ColorFormat format_>
 	struct LTDCPixelFormatFor {
 	};
 	template<>

@@ -79,7 +79,7 @@ namespace eos {
                         _q(comparator) {
                     }
 
-                    PriorityQueue(const PriorityQueue& other) = delete;
+                    PriorityQueue(const PriorityQueue &other) = delete;
 
                     /// \brief Afegeig un element a la cua.
                     /// \param element: L'element a afeigir.

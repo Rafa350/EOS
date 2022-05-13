@@ -1,5 +1,5 @@
-#ifndef __STM32_halI2CTpl__
-#define __STM32_halI2CTpl__
+#ifndef __STM32_halI2C_ex__
+#define __STM32_halI2C_ex__
 
 #ifdef __cplusplus
 
@@ -7,7 +7,7 @@
 // EOS includes
 //
 #include "HAL/STM32/halI2C.h"
-#include "HAL/STM32/halGPIOTpl.h"
+#include "HAL/STM32/halGPIO_ex.h"
 
 
 namespace eos {
@@ -37,6 +37,10 @@ namespace eos {
 
 		public:
 			constexpr static const I2CChannel channel = channel_;
+
+		public:
+			I2CModule() = default;
+			I2CModule(const I2CModule&) = delete;
 
 		public:
 			inline I2CResult initMaster() {
@@ -125,5 +129,5 @@ namespace eos {
 
 #endif // __cplusplus
 
-#endif // __STM32_halI2CTpl__
+#endif // __STM32_halI2C_ex__
 

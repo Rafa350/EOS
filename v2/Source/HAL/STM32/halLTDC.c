@@ -34,7 +34,7 @@ __attribute__((weak)) void configureLTDCDeviceClock() {
 /// \param    info: Informacio d'inicialitzacio.
 ///
 void halLTDCInitialize(
-	const halLTDCSettings* settings) {
+	const halLTDCSettings *settings) {
 
 	eosAssert(settings != NULL);
 
@@ -58,16 +58,16 @@ void halLTDCInitialize(
     //
     tmp = LTDC->SSCR;
     tmp &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
-    tmp |= ((settings->HSYNC - 1) & 0xFFF) << LTDC_SSCR_HSW_Pos;
-    tmp |= ((settings->VSYNC - 1) & 0x7FF) << LTDC_SSCR_VSH_Pos;
+    tmp |= ((settings->HSYNC - 1) << LTDC_SSCR_HSW_Pos) & LTDC_SSCR_HSW;
+    tmp |= ((settings->VSYNC - 1) << LTDC_SSCR_VSH_Pos) & LTDC_SSCR_VSH;
     LTDC->SSCR = tmp;
 
     // Configura el registre BPCR (Back Porch Configuration Register)
     //
     tmp = LTDC->BPCR;
     tmp &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
-    tmp |= ((settings->HSYNC + settings->HBP - 1) & 0xFFF) << LTDC_BPCR_AHBP_Pos;
-    tmp |= ((settings->VSYNC + settings->VBP - 1) & 0x7FF) << LTDC_BPCR_AVBP_Pos;
+    tmp |= ((settings->HSYNC + settings->HBP - 1) << LTDC_BPCR_AHBP_Pos) & LTDC_BPCR_AHBP;
+    tmp |= ((settings->VSYNC + settings->VBP - 1) << LTDC_BPCR_AVBP_Pos) & LTDC_BPCR_AVBP;
     LTDC->BPCR = tmp;
 
     // Configura el registre AWCR (Active Width Configuration Register)
@@ -76,8 +76,8 @@ void halLTDCInitialize(
     //
     tmp = LTDC->AWCR;
     tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
-    tmp |= ((settings->HSYNC + settings->HBP + (uint16_t)settings->width - 1) & 0xFFF) << LTDC_AWCR_AAW_Pos;
-    tmp |= ((settings->VSYNC + settings->VBP + (uint16_t)settings->height - 1) & 0x7FF)  << LTDC_AWCR_AAH_Pos;
+    tmp |= ((settings->HSYNC + settings->HBP + (uint16_t)settings->width - 1) << LTDC_AWCR_AAW_Pos) & LTDC_AWCR_AAW;
+    tmp |= ((settings->VSYNC + settings->VBP + (uint16_t)settings->height - 1) << LTDC_AWCR_AAH_Pos) & LTDC_AWCR_AAH;
     LTDC->AWCR = tmp;
 
     // Configura el registre TWCR (Total Width Configuration Register)
@@ -86,8 +86,8 @@ void halLTDCInitialize(
     //
     tmp = LTDC->TWCR;
     tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
-    tmp |= ((settings->HSYNC + settings->HBP + (uint16_t)settings->width + settings->HFP - 1) & 0xFFF) << LTDC_TWCR_TOTALW_Pos;
-    tmp |= ((settings->VSYNC + settings->VBP + (uint16_t)settings->height + settings->VFP - 1) & 0x7FF) << LTDC_TWCR_TOTALH_Pos;
+    tmp |= ((settings->HSYNC + settings->HBP + (uint16_t)settings->width + settings->HFP - 1) << LTDC_TWCR_TOTALW_Pos) & LTDC_TWCR_TOTALW;
+    tmp |= ((settings->VSYNC + settings->VBP + (uint16_t)settings->height + settings->VFP - 1) << LTDC_TWCR_TOTALH_Pos) & LTDC_TWCR_TOTALH;
     LTDC->TWCR = tmp;
 }
 
@@ -146,8 +146,8 @@ void halLTDCLayerSetWindow(
 	uint32_t ahbp = (LTDC->BPCR & LTDC_BPCR_AHBP) >> LTDC_BPCR_AHBP_Pos;
     tmp = layer->WHPCR;
     tmp &= ~(LTDC_LxWHPCR_WHSTPOS | LTDC_LxWHPCR_WHSPPOS);
-    tmp |= ((ahbp + x + 1) & 0xFFF) << LTDC_LxWHPCR_WHSTPOS_Pos;
-    tmp |= ((ahbp + width - x) & 0xFFF) << LTDC_LxWHPCR_WHSPPOS_Pos;
+    tmp |= ((ahbp + x + 1) << LTDC_LxWHPCR_WHSTPOS_Pos) & LTDC_LxWHPCR_WHSTPOS;
+    tmp |= ((ahbp + width - x) << LTDC_LxWHPCR_WHSPPOS_Pos) & LTDC_LxWHPCR_WHSPPOS;
     layer->WHPCR = tmp;
 
     // Configura Lx_WHPCR (Window Vertical Position Configuration Register)
@@ -156,8 +156,8 @@ void halLTDCLayerSetWindow(
 	uint32_t avbp = (LTDC->BPCR & LTDC_BPCR_AVBP) >> LTDC_BPCR_AVBP_Pos;
     tmp = layer->WVPCR;
     tmp &= ~(LTDC_LxWVPCR_WVSTPOS | LTDC_LxWVPCR_WVSPPOS);
-    tmp |= ((avbp + y + 1) & 0x7FF) << LTDC_LxWVPCR_WVSTPOS_Pos;
-    tmp |= ((avbp + height - y) & 0x7FF) << LTDC_LxWVPCR_WVSPPOS_Pos;
+    tmp |= ((avbp + y + 1) << LTDC_LxWVPCR_WVSTPOS_Pos) & LTDC_LxWVPCR_WVSTPOS;
+    tmp |= ((avbp + height - y) << LTDC_LxWVPCR_WVSPPOS_Pos) & LTDC_LxWVPCR_WVSPPOS;
     layer->WVPCR = tmp;
 }
 
@@ -212,7 +212,7 @@ void halLTDCLayerSetKeyColor(
 
     // Activa el color croma
     //
-    layer->CR |= 1 << LTDC_LxCR_COLKEN_Pos;
+    __set_bit_msk(layer->CR, LTDC_LxCR_COLKEN);
 }
 
 
@@ -224,8 +224,8 @@ void halLTDCLayerDisableKeyColor(
 
 	eosAssert((layerNum == HAL_LTDC_LAYER_0) || (layerNum == HAL_LTDC_LAYER_1));
 
-	LTDC_Layer_TypeDef* layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
-    layer->CR &= ~(1 << LTDC_LxCR_COLKEN_Pos);
+	LTDC_Layer_TypeDef *layer = layerNum == 0 ? LTDC_Layer1 : LTDC_Layer2;
+    __clear_bit_msk(layer->CR, LTDC_LxCR_COLKEN);
 }
 
 
@@ -293,7 +293,7 @@ void halLTDCLayerSetFrameFormat(
     //
     tmp = layer->CFBLNR;
     tmp  &= ~(LTDC_LxCFBLNR_CFBLNBR);
-    tmp |= numLines & 0x7FF;
+    tmp |= numLines & LTDC_LxCFBLNR_CFBLNBR;
     layer->CFBLNR = tmp;
 }
 

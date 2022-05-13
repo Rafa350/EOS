@@ -259,7 +259,7 @@ namespace eos {
 #endif
 			typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_SCL_PORT), GPIOPin(TOUCHPAD_SCL_PIN)> PinSCL;
 			typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_SDA_PORT), GPIOPin(TOUCHPAD_SDA_PIN)> PinSDA;
-			typedef EXTIAdapter<EXTILine(TOUCHPAD_INT_EXTI_LINE)> LineINT;
+			typedef EXTIAdapter<EXTILine(TOUCHPAD_INT_EXTI_LINE)> ExtiINT;
 			typedef I2CModule<I2CChannel(TOUCHPAD_I2C_CHANNEL)> I2C;
 
 		private:

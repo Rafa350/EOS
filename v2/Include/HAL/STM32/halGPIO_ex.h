@@ -1,4 +1,4 @@
-/// \file      halGPIOTpl.h
+/// \file      halGPIO_ex.h
 /// \author    Rafael Serrano (rsr.openware@gmail.com)
 /// \brief     GPIO module manager.
 /// \addtogroup HAL Hardware Abstraction Layer
@@ -8,8 +8,8 @@
 /// \defgroup HAL_STM32_GPIOTpl GPIO++
 /// @{
 
-#ifndef __STM32_halGPIOTpl__
-#define __STM32_halGPIOTpl__
+#ifndef __STM32_halGPIO_ex__
+#define __STM32_halGPIO_ex__
 
 
 // EOS includes
@@ -55,6 +55,25 @@ namespace eos {
 		pin15 = HAL_GPIO_PIN_15				///< Identificador del pin 15
 	};
 
+	enum class GPIOMask: halGPIOMask {
+		mask0 = HAL_GPIO_POS_0,             ///< Mascara del pin 0
+		mask1 = HAL_GPIO_POS_1,             ///< Mascara del pin 1
+		mask2 = HAL_GPIO_POS_2,             ///< Mascara del pin 2
+		mask3 = HAL_GPIO_POS_3,             ///< Mascara del pin 3
+		mask4 = HAL_GPIO_POS_4,             ///< Mascara del pin 4
+		mask5 = HAL_GPIO_POS_5,             ///< Mascara del pin 5
+		mask6 = HAL_GPIO_POS_6,             ///< Mascara del pin 6
+		mask7 = HAL_GPIO_POS_7,             ///< Mascara del pin 7
+		mask8 = HAL_GPIO_POS_8,             ///< Mascara del pin 8
+		mask9 = HAL_GPIO_POS_9,             ///< Mascara del pin 9
+		mask10 = HAL_GPIO_POS_10,           ///< Mascara del pin 10
+		mask11 = HAL_GPIO_POS_11,           ///< Mascara del pin 11
+		mask12 = HAL_GPIO_POS_12,           ///< Mascara del pin 12
+		mask13 = HAL_GPIO_POS_13,           ///< Mascara del pin 13
+		mask14 = HAL_GPIO_POS_14,           ///< Mascara del pin 14
+		mask15 = HAL_GPIO_POS_15,           ///< Mascara del pin 15
+	};
+
 	/// \brief GPIO Driver type identifiers.
 	enum class GPIODriver {
 		pushPull,
@@ -87,6 +106,9 @@ namespace eos {
 	struct GPIOPinInfo {
 		enum class GPIOAlt: halGPIOAlt {
 		};
+		static const GPIOPort port;
+		static const GPIOPin pin;
+		static const GPIOMask mask;
 	};
 
 	/// \class GPIOPinAdapter
@@ -100,6 +122,13 @@ namespace eos {
 		public:
 			constexpr static const GPIOPort port = port_;
 			constexpr static const GPIOPin pin = pin_;
+			constexpr static const GPIOMask mask = GPIOPinInfo<port_, pin_>::mask;
+
+		public:
+			GPIOPinAdapter() = default;
+			GPIOPinAdapter(const GPIOPinAdapter&) = delete;
+
+			GPIOPinAdapter& operator = (const GPIOPinAdapter&) = delete;
 
 		public:
 			inline static void initInput(GPIOSpeed speed, GPIOPull pull = GPIOPull::none) {
@@ -112,18 +141,16 @@ namespace eos {
 
 			inline static void initOutput(GPIOSpeed speed, GPIODriver driver, GPIOState state = GPIOState::noChange) {
 				halGPIOOptions options =
-					HAL_GPIO_MODE_INPUT |
+					(driver == GPIODriver::pushPull ? HAL_GPIO_MODE_OUTPUT_PP : HAL_GPIO_MODE_OUTPUT_OD) |
 					halGPIOOptions(speed) |
-					halGPIOOptions(state) |
-					(driver == GPIODriver::pushPull ? HAL_GPIO_MODE_OUTPUT_PP : HAL_GPIO_MODE_OUTPUT_OD);
+					halGPIOOptions(state);
 				halGPIOInitializePin(halGPIOPort(port_), halGPIOPin(pin_), options, HAL_GPIO_AF_NONE);
 			}
 
 			inline static void initAlt(GPIOSpeed speed, GPIODriver driver, GPIOAlt alt) {
 				halGPIOOptions options =
-					HAL_GPIO_MODE_INPUT |
-					halGPIOOptions(speed) |
-					(driver == GPIODriver::pushPull ? HAL_GPIO_MODE_ALT_PP : HAL_GPIO_MODE_ALT_OD);
+					(driver == GPIODriver::pushPull ? HAL_GPIO_MODE_ALT_PP : HAL_GPIO_MODE_ALT_OD) |
+					halGPIOOptions(speed);
 				halGPIOInitializePin(halGPIOPort(port_), halGPIOPin(pin_), options, halGPIOAlt(alt));
 			}
 
@@ -163,22 +190,33 @@ namespace eos {
 			/// \brief Write pin state.
 			/// \param b: State to write.
 			///
-			inline static void write(bool b) {
-				halGPIOWritePin(halGPIOPort(port_), halGPIOPin(pin_), b);
+			inline static void write(bool s) {
+				halGPIOWritePin(halGPIOPort(port_), halGPIOPin(pin_), s);
 			}
 
 			/// \brief Operator '='. Assign a state to pin.
 			/// \param b: State to assign.
 			/// \return Reference to this.
 			///
-			inline GPIOPinAdapter& operator = (bool b) {
-				halGPIOWritePin(halGPIOPort(port_), halGPIOPin(pin_), b);
+			inline GPIOPinAdapter& operator = (bool s) {
+				halGPIOWritePin(halGPIOPort(port_), halGPIOPin(pin_), s);
 				return *this;
 			}
 
 			inline operator bool () {
 				return halGPIOReadPin(halGPIOPort(port_), halGPIOPin(pin_));
 			}
+	};
+
+
+	/// \class GPIOPortAdapter
+	/// \brief Adapter class form ports
+	///
+	template <GPIOPort port_, uint16_t mask_>
+	class GPIOPortAdapter {
+		public:
+			constexpr static const GPIOPort port = port_;
+			constexpr static const uint16_t mask = mask_;
 	};
 
 
@@ -391,6 +429,10 @@ namespace eos {
 	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin15> PIN_K15;
 #endif
 
+	typedef GPIOPortAdapter<GPIOPort::portA, 0x00FF> PORT_ALo;
+	typedef GPIOPortAdapter<GPIOPort::portA, 0xFF00> PORT_AHi;
+	typedef GPIOPortAdapter<GPIOPort::portA, 0xFFFF> PORT_A;
+
 
 	// PORT A ------------------------------------------------------------
 	template <>
@@ -409,6 +451,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portA;
 		constexpr static const GPIOPin pin = GPIOPin::pin0;
+		constexpr static const GPIOMask mask = GPIOMask::mask0;
 	};
 
 	template <>
@@ -425,6 +468,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portA;
 		constexpr static const GPIOPin pin = GPIOPin::pin1;
+		constexpr static const GPIOMask mask = GPIOMask::mask1;
 	};
 
 	template <>
@@ -435,6 +479,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portA;
 		constexpr static const GPIOPin pin = GPIOPin::pin4;
+		constexpr static const GPIOMask mask = GPIOMask::mask4;
 	};
 
 	template <>
@@ -445,6 +490,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portA;
 		constexpr static const GPIOPin pin = GPIOPin::pin5;
+		constexpr static const GPIOMask mask = GPIOMask::mask5;
 	};
 
 	template <>
@@ -455,6 +501,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portA;
 		constexpr static const GPIOPin pin = GPIOPin::pin6;
+		constexpr static const GPIOMask mask = GPIOMask::mask6;
 	};
 
 	template <>
@@ -465,6 +512,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portA;
 		constexpr static const GPIOPin pin = GPIOPin::pin7;
+		constexpr static const GPIOMask mask = GPIOMask::mask7;
 	};
 
 
@@ -477,6 +525,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portB;
 		constexpr static const GPIOPin pin = GPIOPin::pin8;
+		constexpr static const GPIOMask mask = GPIOMask::mask8;
 	};
 
 	template <>
@@ -488,6 +537,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portB;
 		constexpr static const GPIOPin pin = GPIOPin::pin9;
+		constexpr static const GPIOMask mask = GPIOMask::mask9;
 	};
 
 	template <>
@@ -520,6 +570,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portC;
 		constexpr static const GPIOPin pin = GPIOPin::pin6;
+		constexpr static const GPIOMask mask = GPIOMask::mask6;
 	};
 
 	template <>
@@ -530,6 +581,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portC;
 		constexpr static const GPIOPin pin = GPIOPin::pin7;
+		constexpr static const GPIOMask mask = GPIOMask::mask7;
 	};
 
 
@@ -551,8 +603,20 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portD;
 		constexpr static const GPIOPin pin = GPIOPin::pin6;
+		constexpr static const GPIOMask mask = GPIOMask::mask6;
 	};
 
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin7> {
+		enum class GPIOAlt: halGPIOAlt {
+			fmc_NE1 = HAL_GPIO_AF_12,
+			usart2_CK = HAL_GPIO_AF_7,
+			spdifrx_IN0 = HAL_GPIO_AF_8
+		};
+		constexpr static const GPIOPort port = GPIOPort::portD;
+		constexpr static const GPIOPin pin = GPIOPin::pin7;
+		constexpr static const GPIOMask mask = GPIOMask::mask7;
+	};
 
 	// PORT E ------------------------------------------------------------
 	template <>
@@ -703,6 +767,7 @@ namespace eos {
 		};
 		constexpr static const GPIOPort port = GPIOPort::portI;
 		constexpr static const GPIOPin pin = GPIOPin::pin1;
+		constexpr static const GPIOMask mask = GPIOMask::mask1;
 	};
 
 	template <>
@@ -945,7 +1010,7 @@ namespace eos {
 }
 
 
-#endif // __STM32_halGPIOTpl__
+#endif // __STM32_halGPIO_ex__
 
 /// @}
 /// @}

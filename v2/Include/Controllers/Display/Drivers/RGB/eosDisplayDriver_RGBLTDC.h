@@ -90,6 +90,7 @@ namespace eos {
 			typedef GPIOPinAdapter<GPIOPort(DISPLAY_B7_PORT), GPIOPin(DISPLAY_B7_PIN)> PinB7;
 
     	private:
+			LTDC_1 _ltdc;
     		FrameBuffer *_frontFrameBuffer;
     		FrameBuffer *_backFrameBuffer;
     		void *_frontImageBuffer;

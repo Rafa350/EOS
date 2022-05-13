@@ -111,12 +111,22 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Inc/Framework/EOS/OSAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Inc/Framework/EOS/Services</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/StartUp</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/System</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -226,9 +236,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/halGPIOTpl.h</name>
+			<name>Inc/Framework/EOS/HAL/halGPIO_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIOTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO_ex.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/halI2C.h</name>
@@ -236,9 +246,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halI2C.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/halI2CTpl.h</name>
+			<name>Inc/Framework/EOS/HAL/halI2C_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halI2CTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halI2C_ex.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/halINT.h</name>
@@ -246,14 +256,24 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halINT.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/halINTTpl.h</name>
+			<name>Inc/Framework/EOS/HAL/halINT_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halINTTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halINT_ex.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/OSAL/osalSemaphore.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalSemaphore.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/Services/eosAppLoopService.h</name>
 			<type>1</type>
 			<location>C:/Users/Rafael/Documents/Projectes/Embedded/EOS/v2/Include/Services/eosAppLoopService.h</location>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/System/Core</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/Controllers/Sensors</name>
@@ -426,9 +446,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halEXTI.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halEXTITpl.h</name>
+			<name>Inc/Framework/EOS/HAL/STM32/halEXTI_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halEXTITpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halEXTI_ex.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
@@ -436,9 +456,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halGPIOTpl.h</name>
+			<name>Inc/Framework/EOS/HAL/STM32/halGPIO_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO_ex.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halI2C.h</name>
@@ -446,9 +466,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2C.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halI2CTpl.h</name>
+			<name>Inc/Framework/EOS/HAL/STM32/halI2C_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2CTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2C_ex.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halINT.h</name>
@@ -456,9 +476,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halINTTpl.h</name>
+			<name>Inc/Framework/EOS/HAL/STM32/halINT_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINTTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halINT_ex.h</locationURI>
+		</link>
+		<link>
+			<name>Inc/Framework/EOS/System/Core/eosSemaphore.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Core/eosSemaphore.h</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/Controllers/Sensors/Drivers</name>
@@ -506,6 +531,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalQueue.c</locationURI>
 		</link>
 		<link>
+			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalSemaphore.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalSemaphore.c</locationURI>
+		</link>
+		<link>
 			<name>Src/Framework/EOS/OSAL/FreeRTOS/osalTask.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalTask.c</locationURI>
@@ -529,6 +559,11 @@
 			<name>Src/Framework/EOS/System/Core/eosHeapAllocator.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosHeapAllocator.cpp</locationURI>
+		</link>
+		<link>
+			<name>Src/Framework/EOS/System/Core/eosSemaphore.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/System/Core/eosSemaphore.cpp</locationURI>
 		</link>
 		<link>
 			<name>Src/Framework/EOS/System/Core/eosTask.cpp</name>
