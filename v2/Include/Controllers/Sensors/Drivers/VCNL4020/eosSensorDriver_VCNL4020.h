@@ -129,11 +129,11 @@ namespace eos {
 				writeRegister8(VCNL4020_REG_PROX_RATE, value);
 			}
 
-			inline void setUpperThreshold(unsigned value) {
+			inline void setUpperThreshold(uint16_t value) {
 				writeRegister16(VCNL4020_REG_INT_UPPER_THRES, value);
 			}
 
-			inline void setLowerThreshold(unsigned value) {
+			inline void setLowerThreshold(uint16_t value) {
 				writeRegister16(VCNL4020_REG_INT_LOWER_THRES, value);
 			}
 

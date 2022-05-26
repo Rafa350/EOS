@@ -30,19 +30,12 @@ class Led1LoopService: public AppLoopService {
 
 class VCNL4020LoopService: public AppLoopService {
 	private:
-		enum class Detection {
-			undefined,
-			upper,
-			lower
-		};
-
-	private:
-		const int _hysteresis = 50;
+		uint16_t _histeresys;
+		uint16_t _threshold;
 		GPIOPinAdapter<GPIOPort(ARDUINO_D6_PORT), GPIOPin(ARDUINO_D6_PIN)> _led1;
 		GPIOPinAdapter<GPIOPort(ARDUINO_D7_PORT), GPIOPin(ARDUINO_D7_PIN)> _led2;
 		SensorDriver_VCNL4020 *_driver;
 		Semaphore _lock;
-		Detection _detection;
 
 	public:
 		VCNL4020LoopService(Application *application):
@@ -103,16 +96,18 @@ void Led1LoopService::onLoop() {
 ///
 void VCNL4020LoopService::onSetup() {
 
-	_detection = Detection::undefined;
-
 	_led1.initOutput(GPIOSpeed::low, GPIODriver::pushPull);
 	_led2.initOutput(GPIOSpeed::low, GPIODriver::pushPull);
 
 	_driver = new SensorDriver_VCNL4020();
 	_driver->initialize(SensorDriver_VCNL4020::Mode::continous, 15);
-	int proximity = _driver->getProximityValue();
+
+	_threshold = _driver->getProximityValue();
+	_histeresys = 5;
+
 	_driver->setLowerThreshold(0000);
-	_driver->setUpperThreshold(proximity + _hysteresis);
+	_driver->setUpperThreshold(_threshold + _histeresys);
+
 	_driver->configureInterrupts(VCNL4020_INT_COUNT_4 | VCNL4020_INT_THRES_ENABLE);
 	_driver->clearInterruptFlags(0x0F);
 
@@ -132,37 +127,36 @@ void VCNL4020LoopService::onLoop() {
 
 	if (_lock.wait(-1)) {
 
-		if (_detection != Detection::undefined) {
+		uint8_t status = _driver->getInterruptStatus();
 
-			int proximity = _driver->getProximityValue();
+		if ((status & (VCNL4020_INT_STATUS_THHI | VCNL4020_INT_STATUS_THLO)) != 0) {
 
-			if (_detection == Detection::upper) {
+			_driver->configureInterrupts(VCNL4020_INT_COUNT_4);
+
+			if ((status & VCNL4020_INT_STATUS_THHI) != 0) {
+
 				_driver->setUpperThreshold(0xFFFF);
-				_driver->setLowerThreshold(proximity - _hysteresis);
+				_driver->setLowerThreshold(_threshold - _histeresys);
+
 				_led1.set();
 			}
 
-			else if (_detection == Detection::lower) {
+			else if ((status & VCNL4020_INT_STATUS_THLO) != 0) {
+
 				_driver->setLowerThreshold(0);
-				_driver->setUpperThreshold(proximity + _hysteresis);
+				_driver->setUpperThreshold(_threshold + _histeresys);
+
 				_led1.clear();
 			}
+
+			_driver->clearInterruptFlags(VCNL4020_INT_STATUS_THHI | VCNL4020_INT_STATUS_THLO);
+			_driver->configureInterrupts(VCNL4020_INT_COUNT_4 | VCNL4020_INT_THRES_ENABLE);
 		}
 	}
 }
 
 
 void VCNL4020LoopService::interruptHandler() {
-
-	uint8_t status = _driver->getInterruptStatus();
-
-	if ((status & VCNL4020_INT_STATUS_THHI) != 0)
-		_detection = Detection::upper;
-
-	else if ((status & VCNL4020_INT_STATUS_THLO) != 0)
-		_detection = Detection::lower;
-
-	_driver->clearInterruptFlags(status);
 
 	_lock.releaseISR();
 }
