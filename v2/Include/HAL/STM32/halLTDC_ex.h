@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "HAL/STM32/halLTDC.h"
-#include "HAL/STM32/halGPIOTpl.h"
+#include "HAL/STM32/halGPIO_ex.h"
 #include "System/Graphics/eosColor.h"
 
 

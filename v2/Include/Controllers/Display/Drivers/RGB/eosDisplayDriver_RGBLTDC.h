@@ -38,8 +38,8 @@
 #endif
 
 
-#include "HAL/STM32/halGPIOTpl.h"
-#include "HAL/STM32/halLTDCTpl.h"
+#include "HAL/STM32/halGPIO_ex.h"
+#include "HAL/STM32/halLTDC_ex.h"
 #include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosFrameBuffer.h"
 #include "Controllers/Display/eosDisplayDriver.h"

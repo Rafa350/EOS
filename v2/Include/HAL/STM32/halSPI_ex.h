@@ -6,7 +6,7 @@
 //
 #include "HAL/hal.h"
 #include "HAL/STM32/halSPI.h"
-#include "HAL/STM32/halGPIOTpl.h"
+#include "HAL/STM32/halGPIO_ex.h"
 
 
 namespace eos {

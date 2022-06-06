@@ -13,7 +13,7 @@
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "HAL/STM32/halGPIO.h"
-#include "HAL/STM32/halLTDCTpl.h"
+#include "HAL/STM32/halLTDC_ex.h"
 #include "System/eosMath.h"
 #include "System/Graphics/eosColorDefinitions.h"
 

@@ -6,8 +6,8 @@
 #include "hal/halGPIO.h"
 #ifdef TOUCHPAD_INT_PORT
 #include "HAL/STM32/halEXTI.h"
-#include "HAL/STM32/halEXTITpl.h"
-#include "HAL/STM32/halINTTpl.h"
+#include "HAL/STM32/halEXTI_ex.h"
+#include "HAL/STM32/halINT_ex.h"
 #endif
 #include "System/eosMath.h"
 

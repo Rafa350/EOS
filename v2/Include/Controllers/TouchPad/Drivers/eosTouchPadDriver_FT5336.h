@@ -6,11 +6,11 @@
 //
 #include "eos.h"
 #include "Controllers/TouchPad/eosTouchPadDriver.h"
-#include "HAL/halI2CTpl.h"
-#include "HAL/halGPIOTpl.h"
+#include "HAL/halI2C_ex.h"
+#include "HAL/halGPIO_ex.h"
 #ifdef TOUCHPAD_INT_PORT
 #ifdef EOS_STM32
-#include "HAL/STM32/halEXTITpl.h"
+#include "HAL/STM32/halEXTI_ex.h"
 #endif
 #endif
 

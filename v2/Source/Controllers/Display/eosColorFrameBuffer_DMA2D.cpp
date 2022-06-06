@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
-#include "HAL/STM32/halDMA2DTpl.h"
+#include "HAL/STM32/halDMA2D_ex.h"
 #include "System/Graphics/eosColor.h"
 #include "System/Graphics/eosColorMath.h"
 

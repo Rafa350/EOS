@@ -165,33 +165,38 @@ namespace eos {
 			/// \brief Set pin to ON state.
 			///
 			inline static void set() {
-				halGPIOSetPin(halGPIOPort(port_), halGPIOPin(pin_));
+				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(port_);
+				regs->BSRR = 1 << (uint32_t)pin_;
 			}
 
 			/// \brief Set pin to OFF state.
 			///
 			inline static void clear() {
-				halGPIOClearPin(halGPIOPort(port_), halGPIOPin(pin_));
+				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(port_);
+				regs->BSRR = 1 << ((uint32_t)pin_ + 16);
 			}
 
 			/// \brief Toggle pin state.
 			///
 			inline static void toggle() {
-				halGPIOTogglePin(halGPIOPort(port_), halGPIOPin(pin_));
+				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(port_);
+				regs->ODR ^= 1 << (uint32_t)pin_;
 			}
 
 			/// \brief Read pin state
 			/// \return Pin state.
 			///
 			inline static bool read() {
-				return halGPIOReadPin(halGPIOPort(port_), halGPIOPin(pin_));
+				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(port_);
+				return regs->IDR & (1 << (uint32_t)pin_);
 			}
 
 			/// \brief Write pin state.
 			/// \param b: State to write.
 			///
 			inline static void write(bool s) {
-				halGPIOWritePin(halGPIOPort(port_), halGPIOPin(pin_), s);
+				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(port_);
+				regs->BSRR = 1 << ((uint32_t)pin_ + (s ? 0 : 16));
 			}
 
 			/// \brief Operator '='. Assign a state to pin.
@@ -199,12 +204,12 @@ namespace eos {
 			/// \return Reference to this.
 			///
 			inline GPIOPinAdapter& operator = (bool s) {
-				halGPIOWritePin(halGPIOPort(port_), halGPIOPin(pin_), s);
+				write(s);
 				return *this;
 			}
 
 			inline operator bool () {
-				return halGPIOReadPin(halGPIOPort(port_), halGPIOPin(pin_));
+				return read();
 			}
 	};
 
@@ -221,217 +226,226 @@ namespace eos {
 
 
 #ifdef HAL_GPIO_PORT_A
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin0> PIN_A0;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin1> PIN_A1;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin2> PIN_A2;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin3> PIN_A3;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin4> PIN_A4;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin5> PIN_A5;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin6> PIN_A6;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin7> PIN_A7;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin8> PIN_A8;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin9> PIN_A9;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin10> PIN_A10;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin11> PIN_A11;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin12> PIN_A12;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin13> PIN_A13;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin14> PIN_A14;
-	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin15> PIN_A15;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin0> GPIO_A0;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin1> GPIO_A1;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin2> GPIO_A2;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin3> GPIO_A3;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin4> GPIO_A4;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin5> GPIO_A5;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin6> GPIO_A6;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin7> GPIO_A7;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin8> GPIO_A8;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin9> GPIO_A9;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin10> GPIO_A10;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin11> GPIO_A11;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin12> GPIO_A12;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin13> GPIO_A13;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin14> GPIO_A14;
+	typedef GPIOPinAdapter<GPIOPort::portA, GPIOPin::pin15> GPIO_A15;
 #endif
 
 #ifdef HAL_GPIO_PORT_B
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin0> PIN_B0;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin1> PIN_B1;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin2> PIN_B2;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin3> PIN_B3;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin4> PIN_B4;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin5> PIN_B5;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin6> PIN_B6;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin7> PIN_B7;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin8> PIN_B8;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin9> PIN_B9;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin10> PIN_B10;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin11> PIN_B11;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin12> PIN_B12;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin13> PIN_B13;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin14> PIN_B14;
-	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin15> PIN_B15;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin0> GPIO_B0;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin1> GPIO_B1;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin2> GPIO_B2;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin3> GPIO_B3;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin4> GPIO_B4;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin5> GPIO_B5;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin6> GPIO_B6;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin7> GPIO_B7;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin8> GPIO_B8;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin9> GPIO_B9;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin10> GPIO_B10;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin11> GPIO_B11;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin12> GPIO_B12;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin13> GPIO_B13;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin14> GPIO_B14;
+	typedef GPIOPinAdapter<GPIOPort::portB, GPIOPin::pin15> GPIO_B15;
 #endif
 
 #ifdef HAL_GPIO_PORT_C
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin0> PIN_C0;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin1> PIN_C1;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin2> PIN_C2;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin3> PIN_C3;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin4> PIN_C4;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin5> PIN_C5;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin6> PIN_C6;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin7> PIN_C7;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin8> PIN_C8;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin9> PIN_C9;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin10> PIN_C10;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin11> PIN_C11;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin12> PIN_C12;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin13> PIN_C13;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin14> PIN_C14;
-	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin15> PIN_C15;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin0> GPIO_C0;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin1> GPIO_C1;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin2> GPIO_C2;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin3> GPIO_C3;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin4> GPIO_C4;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin5> GPIO_C5;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin6> GPIO_C6;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin7> GPIO_C7;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin8> GPIO_C8;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin9> GPIO_C9;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin10> GPIO_C10;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin11> GPIO_C11;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin12> GPIO_C12;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin13> GPIO_C13;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin14> GPIO_C14;
+	typedef GPIOPinAdapter<GPIOPort::portC, GPIOPin::pin15> GPIO_C15;
 #endif
 
 #ifdef HAL_GPIO_PORT_D
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin0> PIN_D0;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin1> PIN_D1;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin2> PIN_D2;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin3> PIN_D3;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin4> PIN_D4;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin5> PIN_D5;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin6> PIN_D6;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin7> PIN_D7;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin8> PIN_D8;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin9> PIN_D9;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin10> PIN_D10;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin11> PIN_D11;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin12> PIN_D12;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin13> PIN_D13;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin14> PIN_D14;
-	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin15> PIN_D15;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin0> GPIO_D0;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin1> GPIO_D1;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin2> GPIO_D2;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin3> GPIO_D3;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin4> GPIO_D4;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin5> GPIO_D5;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin6> GPIO_D6;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin7> GPIO_D7;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin8> GPIO_D8;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin9> GPIO_D9;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin10> GPIO_D10;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin11> GPIO_D11;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin12> GPIO_D12;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin13> GPIO_D13;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin14> GPIO_D14;
+	typedef GPIOPinAdapter<GPIOPort::portD, GPIOPin::pin15> GPIO_D15;
 #endif
 
 #ifdef HAL_GPIO_PORT_E
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin0> PIN_E0;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin1> PIN_E1;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin2> PIN_E2;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin3> PIN_E3;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin4> PIN_E4;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin5> PIN_E5;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin6> PIN_E6;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin7> PIN_E7;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin8> PIN_E8;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin9> PIN_E9;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin10> PIN_E10;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin11> PIN_E11;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin12> PIN_E12;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin13> PIN_E13;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin14> PIN_E14;
-	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin15> PIN_E15;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin0> GPIO_E0;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin1> GPIO_E1;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin2> GPIO_E2;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin3> GPIO_E3;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin4> GPIO_E4;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin5> GPIO_E5;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin6> GPIO_E6;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin7> GPIO_E7;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin8> GPIO_E8;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin9> GPIO_E9;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin10> GPIO_E10;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin11> GPIO_E11;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin12> GPIO_E12;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin13> GPIO_E13;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin14> GPIO_E14;
+	typedef GPIOPinAdapter<GPIOPort::portE, GPIOPin::pin15> GPIO_E15;
 #endif
 
 #ifdef HAL_GPIO_PORT_F
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin0> PIN_F0;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin1> PIN_F1;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin2> PIN_F2;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin3> PIN_F3;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin4> PIN_F4;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin5> PIN_F5;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin6> PIN_F6;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin7> PIN_F7;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin8> PIN_F8;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin9> PIN_F9;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin10> PIN_F10;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin11> PIN_F11;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin12> PIN_F12;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin13> PIN_F13;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin14> PIN_F14;
-	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin15> PIN_F15;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin0> GPIO_F0;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin1> GPIO_F1;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin2> GPIO_F2;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin3> GPIO_F3;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin4> GPIO_F4;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin5> GPIO_F5;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin6> GPIO_F6;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin7> GPIO_F7;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin8> GPIO_F8;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin9> GPIO_F9;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin10> GPIO_F10;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin11> GPIO_F11;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin12> GPIO_F12;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin13> GPIO_F13;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin14> GPIO_F14;
+	typedef GPIOPinAdapter<GPIOPort::portF, GPIOPin::pin15> GPIO_F15;
 #endif
 
 #ifdef HAL_GPIO_PORT_G
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin0> PIN_G0;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin1> PIN_G1;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin2> PIN_G2;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin3> PIN_G3;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin4> PIN_G4;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin5> PIN_G5;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin6> PIN_G6;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin7> PIN_G7;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin8> PIN_G8;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin9> PIN_G9;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin10> PIN_G10;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin11> PIN_G11;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin12> PIN_G12;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin13> PIN_G13;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin14> PIN_G14;
-	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin15> PIN_G15;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin0> GPIO_G0;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin1> GPIO_G1;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin2> GPIO_G2;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin3> GPIO_G3;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin4> GPIO_G4;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin5> GPIO_G5;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin6> GPIO_G6;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin7> GPIO_G7;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin8> GPIO_G8;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin9> GPIO_G9;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin10> GPIO_G10;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin11> GPIO_G11;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin12> GPIO_G12;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin13> GPIO_G13;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin14> GPIO_G14;
+	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin15> GPIO_G15;
 #endif
 
 #ifdef HAL_GPIO_PORT_H
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin0> PIN_H0;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin1> PIN_H1;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin2> PIN_H2;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin3> PIN_H3;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin4> PIN_H4;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin5> PIN_H5;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin6> PIN_H6;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin7> PIN_H7;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin8> PIN_H8;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin9> PIN_H9;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin10> PIN_H10;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin11> PIN_H11;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin12> PIN_H12;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin13> PIN_H13;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin14> PIN_H14;
-	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin15> PIN_H15;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin0> GPIO_H0;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin1> GPIO_H1;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin2> GPIO_H2;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin3> GPIO_H3;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin4> GPIO_H4;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin5> GPIO_H5;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin6> GPIO_H6;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin7> GPIO_H7;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin8> GPIO_H8;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin9> GPIO_H9;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin10> GPIO_H10;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin11> GPIO_H11;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin12> GPIO_H12;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin13> GPIO_H13;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin14> GPIO_H14;
+	typedef GPIOPinAdapter<GPIOPort::portH, GPIOPin::pin15> GPIO_H15;
 #endif
 
 #ifdef HAL_GPIO_PORT_I
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin0> PIN_I0;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin1> PIN_I1;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin2> PIN_I2;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin3> PIN_I3;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin4> PIN_I4;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin5> PIN_I5;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin6> PIN_I6;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin7> PIN_I7;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin8> PIN_I8;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin9> PIN_I9;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin10> PIN_I10;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin11> PIN_I11;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin12> PIN_I12;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin13> PIN_I13;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin14> PIN_I14;
-	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin15> PIN_I15;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin0> GPIO_I0;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin1> GPIO_I1;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin2> GPIO_I2;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin3> GPIO_I3;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin4> GPIO_I4;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin5> GPIO_I5;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin6> GPIO_I6;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin7> GPIO_I7;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin8> GPIO_I8;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin9> GPIO_I9;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin10> GPIO_I10;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin11> GPIO_I11;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin12> GPIO_I12;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin13> GPIO_I13;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin14> GPIO_I14;
+	typedef GPIOPinAdapter<GPIOPort::portI, GPIOPin::pin15> GPIO_I15;
 #endif
 
 #ifdef HAL_GPIO_PORT_J
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin0> PIN_J0;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin1> PIN_J1;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin2> PIN_J2;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin3> PIN_J3;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin4> PIN_J4;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin5> PIN_J5;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin6> PIN_J6;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin7> PIN_J7;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin8> PIN_J8;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin9> PIN_J9;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin10> PIN_J10;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin11> PIN_J11;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin12> PIN_J12;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin13> PIN_J13;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin14> PIN_J14;
-	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin15> PIN_J15;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin0> GPIO_J0;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin1> GPIO_J1;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin2> GPIO_J2;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin3> GPIO_J3;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin4> GPIO_J4;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin5> GPIO_J5;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin6> GPIO_J6;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin7> GPIO_J7;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin8> GPIO_J8;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin9> GPIO_J9;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin10> GPIO_J10;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin11> GPIO_J11;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin12> GPIO_J12;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin13> GPIO_J13;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin14> GPIO_J14;
+	typedef GPIOPinAdapter<GPIOPort::portJ, GPIOPin::pin15> GPIO_J15;
 #endif
 
 #ifdef HAL_GPIO_PORT_K
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin0> PIN_K0;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin1> PIN_K1;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin2> PIN_K2;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin3> PIN_K3;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin4> PIN_K4;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin5> PIN_K5;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin6> PIN_K6;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin7> PIN_K7;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin8> PIN_K8;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin9> PIN_K9;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin10> PIN_K10;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin11> PIN_K11;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin12> PIN_K12;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin13> PIN_K13;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin14> PIN_K14;
-	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin15> PIN_K15;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin0> GPIO_K0;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin1> GPIO_K1;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin2> GPIO_K2;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin3> GPIO_K3;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin4> GPIO_K4;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin5> GPIO_K5;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin6> GPIO_K6;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin7> GPIO_K7;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin8> GPIO_K8;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin9> GPIO_K9;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin10> GPIO_K10;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin11> GPIO_K11;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin12> GPIO_K12;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin13> GPIO_K13;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin14> GPIO_K14;
+	typedef GPIOPinAdapter<GPIOPort::portK, GPIOPin::pin15> GPIO_K15;
 #endif
 
-	typedef GPIOPortAdapter<GPIOPort::portA, 0x00FF> PORT_ALo;
-	typedef GPIOPortAdapter<GPIOPort::portA, 0xFF00> PORT_AHi;
-	typedef GPIOPortAdapter<GPIOPort::portA, 0xFFFF> PORT_A;
+
+#ifdef HAL_GPIO_PORT_A
+	typedef GPIOPortAdapter<GPIOPort::portA, 0x00FF> GPIO_ALo;
+	typedef GPIOPortAdapter<GPIOPort::portA, 0xFF00> GPIO_AHi;
+	typedef GPIOPortAdapter<GPIOPort::portA, 0xFFFF> GPIO_A;
+#endif
+
+#ifdef HAL_GPIO_PORT_B
+	typedef GPIOPortAdapter<GPIOPort::portB, 0x00FF> GPIO_BLo;
+	typedef GPIOPortAdapter<GPIOPort::portB, 0xFF00> GPIO_BHi;
+	typedef GPIOPortAdapter<GPIOPort::portB, 0xFFFF> GPIO_B;
+#endif
 
 
 	// PORT A ------------------------------------------------------------

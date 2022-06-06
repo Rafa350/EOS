@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "Services/eosAppLoopService.h"
-#include "HAL/halGPIOTpl.h"
+#include "HAL/halGPIO_ex.h"
 
 
 namespace eos {

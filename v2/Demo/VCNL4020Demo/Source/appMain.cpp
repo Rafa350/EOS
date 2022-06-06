@@ -30,7 +30,6 @@ class Led1LoopService: public AppLoopService {
 
 class VCNL4020LoopService: public AppLoopService {
 	private:
-		uint16_t _histeresys;
 		uint16_t _threshold;
 		GPIOPinAdapter<GPIOPort(ARDUINO_D6_PORT), GPIOPin(ARDUINO_D6_PIN)> _led1;
 		GPIOPinAdapter<GPIOPort(ARDUINO_D7_PORT), GPIOPin(ARDUINO_D7_PIN)> _led2;
@@ -102,11 +101,22 @@ void VCNL4020LoopService::onSetup() {
 	_driver = new SensorDriver_VCNL4020();
 	_driver->initialize(SensorDriver_VCNL4020::Mode::continous, 15);
 
-	_threshold = _driver->getProximityValue();
-	_histeresys = 5;
+	uint16_t min = 65535;
+	uint16_t max = 0;
+	for (int i = 0; i < 10; i++) {
+		uint16_t value = _driver->getProximityValue();
+
+		if (value < min)
+			min = value;
+		if (value > max)
+			max = value;
+	}
+	uint16_t avg = (min + max) / 2;
+
+	_threshold = max;
 
 	_driver->setLowerThreshold(0000);
-	_driver->setUpperThreshold(_threshold + _histeresys);
+	_driver->setUpperThreshold(_threshold);
 
 	_driver->configureInterrupts(VCNL4020_INT_COUNT_4 | VCNL4020_INT_THRES_ENABLE);
 	_driver->clearInterruptFlags(0x0F);
@@ -136,7 +146,7 @@ void VCNL4020LoopService::onLoop() {
 			if ((status & VCNL4020_INT_STATUS_THHI) != 0) {
 
 				_driver->setUpperThreshold(0xFFFF);
-				_driver->setLowerThreshold(_threshold - _histeresys);
+				_driver->setLowerThreshold(_threshold);
 
 				_led1.set();
 			}
@@ -144,7 +154,7 @@ void VCNL4020LoopService::onLoop() {
 			else if ((status & VCNL4020_INT_STATUS_THLO) != 0) {
 
 				_driver->setLowerThreshold(0);
-				_driver->setUpperThreshold(_threshold + _histeresys);
+				_driver->setUpperThreshold(_threshold);
 
 				_led1.clear();
 			}
