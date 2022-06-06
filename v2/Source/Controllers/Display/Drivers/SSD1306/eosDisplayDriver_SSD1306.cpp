@@ -11,7 +11,8 @@ using namespace eos;
 /// ----------------------------------------------------------------------
 /// \brief    Constructor
 ///
-DisplayDriver_SSD1306::DisplayDriver_SSD1306() {
+DisplayDriver_SSD1306::DisplayDriver_SSD1306() :
+	_spi(SPI::instance()) {
 
 	_frameBuffer = new MonoFrameBuffer(
 		_displayWidth,

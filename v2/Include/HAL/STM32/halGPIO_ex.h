@@ -126,9 +126,10 @@ namespace eos {
 
 		public:
 			GPIOPinAdapter() = default;
-			GPIOPinAdapter(const GPIOPinAdapter&) = delete;
-
-			GPIOPinAdapter& operator = (const GPIOPinAdapter&) = delete;
+			GPIOPinAdapter(const GPIOPinAdapter &) = delete;
+			GPIOPinAdapter(const GPIOPinAdapter &&) = delete;
+			GPIOPinAdapter& operator = (const GPIOPinAdapter &) = delete;
+			GPIOPinAdapter& operator = (const GPIOPinAdapter &&) = delete;
 
 		public:
 			inline static void initInput(GPIOSpeed speed, GPIOPull pull = GPIOPull::none) {

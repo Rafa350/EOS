@@ -26,7 +26,7 @@ namespace eos {
 		busy = HAL_I2C_ERR_BUSY
 	};
 
-	template <I2CChannel channel_>
+	template <I2CChannel channel_, typename sclPin_, typename sdaPin_, bool initPins_ = true>
 	class I2CModule {
 		private:
 			constexpr static const unsigned _defaultBlockTime = 1000;
@@ -38,12 +38,26 @@ namespace eos {
 		public:
 			constexpr static const I2CChannel channel = channel_;
 
-		public:
+		private:
 			I2CModule() = default;
-			I2CModule(const I2CModule&) = delete;
+			I2CModule(const I2CModule &) = delete;
+			I2CModule(const I2CModule &&) = delete;
+			I2CModule & operator = (const I2CModule &) = delete;
+			I2CModule & operator = (const I2CModule &&) = delete;
 
 		public:
+			inline static auto & instance() {
+				static I2CModule module;
+				return module;
+			}
+
 			inline I2CResult initMaster() {
+
+				if constexpr (initPins_) {
+					initSCLPin();
+					initSDAPin();
+				}
+
 				halI2CMasterInitializeInfo initInfo;
 				initInfo.channel = halI2CChannel(channel_);
 				return I2CResult(halI2CMasterInitialize(&_data, &initInfo, &_handler));
@@ -65,65 +79,70 @@ namespace eos {
 				return I2CResult(halI2CMasterReceive(_handler, addr, data, size, blockTime));
 			}
 
-			template <typename pinAdapter_>
 			inline static void initSCLPin() {
 				if constexpr (channel_ == I2CChannel::channel1)
-					pinAdapter_::initAlt(
+					sclPin_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c1_SCL);
+						sclPin_::GPIOAlt::i2c1_SCL);
 
 				if constexpr (channel_ == I2CChannel::channel2)
-					pinAdapter_::initAlt(
+					sclPin_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c2_SCL);
+						sclPin_::GPIOAlt::i2c2_SCL);
 
 				if constexpr (channel_ == I2CChannel::channel3)
-					pinAdapter_::initAlt(
+					sclPin_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c3_SCL);
+						sclPin_::GPIOAlt::i2c3_SCL);
 
 				if constexpr (channel_ == I2CChannel::channel4)
-					pinAdapter_::initAlt(
+					sclPin_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c4_SCL);
+						sclPin_::GPIOAlt::i2c4_SCL);
 			}
 
-			template <typename pinAdapter_>
 			inline static void initSDAPin() {
 				if constexpr (channel_ == I2CChannel::channel1)
-					pinAdapter_::initAlt(
+					sdaPin_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c1_SDA);
+						sdaPin_::GPIOAlt::i2c1_SDA);
 
 				if constexpr (channel_ == I2CChannel::channel2)
-					pinAdapter_::initAlt(
+					sdaPin_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c2_SDA);
+						sdaPin_::GPIOAlt::i2c2_SDA);
 
 				if constexpr (channel_ == I2CChannel::channel3)
-					pinAdapter_::initAlt(
+					sdaPin_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c3_SDA);
+						sdaPin_::GPIOAlt::i2c3_SDA);
 
 				if constexpr (channel_ == I2CChannel::channel4)
-					pinAdapter_::initAlt(
+					sdaPin_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::openDrain,
-						pinAdapter_::GPIOAlt::i2c4_SDA);
+						sdaPin_::GPIOAlt::i2c4_SDA);
 			}
 	};
 
-	typedef I2CModule<I2CChannel::channel1> I2C_1;
-	typedef I2CModule<I2CChannel::channel2> I2C_2;
-	typedef I2CModule<I2CChannel::channel3> I2C_3;
-	typedef I2CModule<I2CChannel::channel4> I2C_4;
+	template <typename sclPin_, typename sdaPin_>
+	using I2C_1 = I2CModule<I2CChannel::channel1, sclPin_, sdaPin_>;
+
+	template <typename sclPin_, typename sdaPin_>
+	using I2C_2 = I2CModule<I2CChannel::channel2, sclPin_, sdaPin_>;
+
+	template <typename sclPin_, typename sdaPin_>
+	using I2C_3 = I2CModule<I2CChannel::channel3, sclPin_, sdaPin_>;
+
+	template <typename sclPin_, typename sdaPin_>
+	using I2C_4 = I2CModule<I2CChannel::channel4, sclPin_, sdaPin_>;
 }
 
 

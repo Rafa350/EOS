@@ -16,16 +16,15 @@ using namespace eos;
 /// \brief Contructor.
 ///
 SensorDriver_VCNL4020::SensorDriver_VCNL4020():
-	_mode(Mode::demand) {
+	_mode(Mode::demand),
+	_i2c(I2C::instance()) {
 
 	// Configura la linia d'interrupcio
 	//
-	PinINT::initInput(GPIOSpeed::fast, GPIOPull::none);
+	_pinINT.initInput(GPIOSpeed::fast, GPIOPull::none);
 
     // Configura el modul I2C
     //
-    _i2c.initSCLPin<PinSCL>();
-	_i2c.initSDAPin<PinSDA>();
 	_i2c.initMaster();
 }
 

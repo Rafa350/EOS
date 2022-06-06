@@ -23,7 +23,7 @@ using namespace eos;
 /// \params   settings: Conmfigurationparameters.
 ///
 DigInputService::DigInputService(
-    Application* application,
+    Application *application,
     const Settings& settings):
 
 	Service(application),

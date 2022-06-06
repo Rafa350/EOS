@@ -74,10 +74,10 @@ namespace eos {
 
 	class SensorDriver_VCNL4020 {
 		private:
+			typedef GPIOPinAdapter<GPIOPort(VCNL4020_INT_PORT), GPIOPin(VCNL4020_INT_PIN)> PinINT;
 			typedef GPIOPinAdapter<GPIOPort(VCNL4020_I2C_SCL_PORT), GPIOPin(VCNL4020_I2C_SCL_PIN)> PinSCL;
 			typedef GPIOPinAdapter<GPIOPort(VCNL4020_I2C_SDA_PORT), GPIOPin(VCNL4020_I2C_SDA_PIN)> PinSDA;
-			typedef GPIOPinAdapter<GPIOPort(VCNL4020_INT_PORT), GPIOPin(VCNL4020_INT_PIN)> PinINT;
-			typedef I2CModule<I2CChannel(VCNL4020_I2C_CHANNEL)> I2C;
+			typedef I2CModule<I2CChannel(VCNL4020_I2C_CHANNEL), PinSCL, PinSDA> I2C;
 
 		public:
 			enum class Mode {
@@ -87,7 +87,8 @@ namespace eos {
 
 		private:
 			Mode _mode;
-			I2C _i2c;
+			PinINT _pinINT;
+			I2C &_i2c;
 
 		private:
 			void writeRegister8(uint8_t reg, uint8_t value);

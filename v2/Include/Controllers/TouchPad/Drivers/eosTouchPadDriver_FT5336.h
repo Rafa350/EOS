@@ -256,11 +256,11 @@ namespace eos {
 		private:
 #ifdef TOUCHPAD_INT_PORT
 		    typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_INT_PORT), GPIOPin(TOUCHPAD_INT_PIN)> PinINT;
+			typedef EXTIAdapter<EXTILine(TOUCHPAD_INT_EXTI_LINE)> ExtiINT;
 #endif
 			typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_SCL_PORT), GPIOPin(TOUCHPAD_SCL_PIN)> PinSCL;
 			typedef GPIOPinAdapter<GPIOPort(TOUCHPAD_SDA_PORT), GPIOPin(TOUCHPAD_SDA_PIN)> PinSDA;
-			typedef EXTIAdapter<EXTILine(TOUCHPAD_INT_EXTI_LINE)> ExtiINT;
-			typedef I2CModule<I2CChannel(TOUCHPAD_I2C_CHANNEL)> I2C;
+			typedef I2CModule<I2CChannel(TOUCHPAD_I2C_CHANNEL), PinSCL, PinSDA> I2C;
 
 		private:
 			static ITouchPadDriver *_instance;

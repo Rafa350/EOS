@@ -43,8 +43,8 @@
 #include "Controllers/Display/eosFrameBuffer.h"
 #include "System/Graphics/eosColor.h"
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-#include "HAL/halSPITpl.h"
-#include "HAL/halGPIOTpl.h"
+#include "HAL/halSPI_ex.h"
+#include "HAL/halGPIO_ex.h"
 #elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
 #include "HAL/halI2C.h"
 #endif
@@ -67,13 +67,13 @@ namespace eos {
 			typedef GPIOPinAdapter<GPIOPort(DISPLAY_SCK_PORT), GPIOPin(DISPLAY_SCK_PIN)> PinSCK;
 			typedef GPIOPinAdapter<GPIOPort(DISPLAY_MOSI_PORT), GPIOPin(DISPLAY_MOSI_PIN)> PinMOSI;
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-			typedef SPIModule<SPIChannel(DISPLAY_SPI_CHANNEL)> Spi;
+			typedef SPIModule<SPIChannel(DISPLAY_SPI_CHANNEL)> SPI;
 #elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
 #endif
 
     	private:
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-			Spi _spi;
+			SPI &_spi;
 #elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
 #endif
 

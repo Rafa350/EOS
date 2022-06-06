@@ -1,5 +1,5 @@
-#ifndef __STM32_halSPITpl__
-#define __STM32_halSPITpl__
+#ifndef __STM32_halSPI_ex__
+#define __STM32_halSPI_ex__
 
 
 // EOS includes
@@ -62,7 +62,19 @@ namespace eos {
 		public:
 			constexpr static const SPIChannel channel = channel_;
 
+		private:
+			SPIModule() = default;
+			SPIModule(const SPIModule &) = delete;
+			SPIModule(const SPIModule &&) = delete;
+			SPIModule & operator = (const SPIModule &) = delete;
+			SPIModule & operator = (const SPIModule &&) = delete;
+
 		public:
+			inline static auto & instance() {
+				static SPIModule module;
+				return module;
+			}
+
 			inline void initMaster(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
 				halSPIOptions options =
 					HAL_SPI_MS_MASTER |
@@ -248,4 +260,4 @@ namespace eos {
 }
 
 
-#endif // __STM32_halSPITpl__
+#endif // __STM32_halSPI_ex__
