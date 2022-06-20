@@ -65,7 +65,7 @@ void halGPIOInitializePort(
     halGPIOOptions options,
     halGPIOAlt alt) {
 
-    halGPIORegisters* regs = (halGPIORegisters*) port;
+    halGPIORegisters *regs = (halGPIORegisters*) port;
 
     if (((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_PP) ||
         ((options & HAL_GPIO_MODE_mask) == HAL_GPIO_MODE_OUTPUT_OD)) {

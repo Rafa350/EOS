@@ -104,6 +104,7 @@ void VCNL4020LoopService::onSetup() {
 	uint16_t min = 65535;
 	uint16_t max = 0;
 	for (int i = 0; i < 10; i++) {
+
 		uint16_t value = _driver->getProximityValue();
 
 		if (value < min)

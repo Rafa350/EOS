@@ -11,7 +11,7 @@
 #include "System/eosApplication.h"
 
 #include "appApplication.h"
-#include "HAL/PIC32/halGPIOTpl.h"
+#include "HAL/PIC32/halGPIO_ex.h"
 
 
 using namespace eos;

@@ -95,9 +95,9 @@ typedef struct  __attribute__((packed , aligned(4))) {
 } halTMRRegisters;
 
 struct __halTMRData {
-    halTMRRegisters* regs;
+    halTMRRegisters *regs;
     halTMRInterruptFunction isrFunction;
-    void* isrParams;
+    void *isrParams;
 };
 typedef struct __halTMRData halTMRData;
 
@@ -108,7 +108,7 @@ typedef struct {
 } halTMRSettings;
 
 
-halTMRHandler halTMRInitialize(halTMRData* data, const halTMRSettings* settings);
+halTMRHandler halTMRInitialize(halTMRData *data, const halTMRSettings *settings);
 void halTMRShutdown(halTMRHandler hTimer);
 
 uint32_t halTMRGetCounter(halTMRHandler handler);
@@ -118,7 +118,7 @@ void halTMRSetPeriod(halTMRHandler handler, uint32_t period);
 void halTMRStartTimer(halTMRHandler hTimer);
 void halTMRStopTimer(halTMRHandler hTimer);
 
-void halTMRSetInterruptFunction(halTMRHandler timer, halTMRInterruptFunction function, void* params);
+void halTMRSetInterruptFunction(halTMRHandler timer, halTMRInterruptFunction function, void *params);
 void halTMRInterruptHandler(halTMRHandler handler);
 
 void halTMREnableInterrupts(halTMRHandler timer, uint32_t events);
