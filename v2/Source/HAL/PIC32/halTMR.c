@@ -22,8 +22,8 @@
 ///           interrupcions, i esta parat.
 ///
 halTMRHandler halTMRInitialize(
-    halTMRData* data,
-    const halTMRSettings* settings) {
+    halTMRData *data,
+    const halTMRSettings *settings) {
 
     // Inicialitza el handler
     //
@@ -107,7 +107,7 @@ void halTMRSetCounter(
     eosAssert(handler != NULL);
 
     if (!__isTypeA(handler) && __is32Bits(handler)) {
-        halTMRRegisters* regs32 = __getRegs32Ptr(handler);
+        halTMRRegisters *regs32 = __getRegs32Ptr(handler);
         regs32->TMRx = (counter >> 16) & 0xFFFF;
     }
     handler->regs->TMRx = counter & 0xFFFF;

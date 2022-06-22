@@ -49,7 +49,7 @@ namespace eos {
             virtual void setHPixels(int x, int y, int length, Color color) = 0;
             virtual void setVPixels(int x, int y, int length, Color color) = 0;
             virtual void setPixels(int x, int y, int width, int height, Color color) = 0;
-            virtual void setPixels(int x, int y, int width, int height, const Color* colors, int pitch) = 0;
+            virtual void setPixels(int x, int y, int width, int height, const Color *colors, int pitch) = 0;
             virtual void setPixels(int x, int y, int width, int height, const void* pixels, ColorFormat format, int pitch) = 0;
 
             virtual void refresh() = 0;

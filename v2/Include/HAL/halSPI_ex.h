@@ -1,5 +1,5 @@
-#ifndef __halSPITpl__
-#define	__halSPITpl__
+#ifndef __halSPI_ex__
+#define	__halSPI_ex__
 
 
 // EOS includes
@@ -19,5 +19,5 @@
 #endif
 
 
-#endif // __halSPITpl__
+#endif // __halSPI_ex__
 

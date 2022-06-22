@@ -21,42 +21,42 @@ namespace app {
             typedef CallbackP1<MyApplication, const DigInput::EventArgs&> DigInputEventCallback;
 
         private:
-            DigOutputService* _digOutputService;
-            DigInputService* _digInputService;
-            TimerService* _timerService;
+            DigOutputService *_digOutputService;
+            DigInputService *_digInputService;
+            TimerService *_timerService;
 
     #ifdef EXIST_LEDS_LED1
-            DigOutput* led1;
+            DigOutput *led1;
     #endif
     #ifdef EXIST_LEDS_LED2
-            DigOutput* led2;
+            DigOutput *led2;
     #endif
     #ifdef EXIST_LEDS_LED3
-            DigOutput* led3;
+            DigOutput *led3;
     #endif
     #ifdef EXIST_SWITCHES_SW1
-            DigInput* sw1;
+            DigInput *sw1;
             DigInputEventCallback sw1EventCallback;
     #endif
     #ifdef EXIST_SWITCHES_SW2
-            DigInput* sw2;
+            DigInput *sw2;
             DigInputEventCallback sw2EventCallback;
     #endif
     #ifdef EXIST_SWITCHES_SW3
-            DigInput* sw3;
+            DigInput *sw3;
             DigInputEventCallback sw3EventCallback;
     #endif
 
         public:
             MyApplication();
     #ifdef EXIST_SWITCHES_SW1
-            void sw1EventHandler(const DigInput::EventArgs& args);
+            void sw1EventHandler(const DigInput::EventArgs &args);
     #endif
     #ifdef EXIST_SWITCHES_SW2
-            void sw2EventHandler(const DigInput::EventArgs& args);
+            void sw2EventHandler(const DigInput::EventArgs &args);
     #endif
     #ifdef EXIST_SWITCHES_SW3
-            void sw3EventHandler(const DigInput::EventArgs& args);
+            void sw3EventHandler(const DigInput::EventArgs &args);
     #endif
 
         protected:

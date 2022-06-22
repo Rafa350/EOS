@@ -5,7 +5,7 @@
 /// @{
 /// \addtogroup HAL_STM32 STM32 Hardware Abstraction Layer
 /// @{
-/// \defgroup HAL_STM32_GPIOTpl GPIO++
+/// \defgroup HAL_STM32_GPIO_ex GPIO++
 /// @{
 
 #ifndef __STM32_halGPIO_ex__
@@ -56,22 +56,22 @@ namespace eos {
 	};
 
 	enum class GPIOMask: halGPIOMask {
-		mask0 = HAL_GPIO_POS_0,             ///< Mascara del pin 0
-		mask1 = HAL_GPIO_POS_1,             ///< Mascara del pin 1
-		mask2 = HAL_GPIO_POS_2,             ///< Mascara del pin 2
-		mask3 = HAL_GPIO_POS_3,             ///< Mascara del pin 3
-		mask4 = HAL_GPIO_POS_4,             ///< Mascara del pin 4
-		mask5 = HAL_GPIO_POS_5,             ///< Mascara del pin 5
-		mask6 = HAL_GPIO_POS_6,             ///< Mascara del pin 6
-		mask7 = HAL_GPIO_POS_7,             ///< Mascara del pin 7
-		mask8 = HAL_GPIO_POS_8,             ///< Mascara del pin 8
-		mask9 = HAL_GPIO_POS_9,             ///< Mascara del pin 9
-		mask10 = HAL_GPIO_POS_10,           ///< Mascara del pin 10
-		mask11 = HAL_GPIO_POS_11,           ///< Mascara del pin 11
-		mask12 = HAL_GPIO_POS_12,           ///< Mascara del pin 12
-		mask13 = HAL_GPIO_POS_13,           ///< Mascara del pin 13
-		mask14 = HAL_GPIO_POS_14,           ///< Mascara del pin 14
-		mask15 = HAL_GPIO_POS_15,           ///< Mascara del pin 15
+		mask0 = HAL_GPIO_MASK_0,            ///< Mascara del pin 0
+		mask1 = HAL_GPIO_MASK_1,            ///< Mascara del pin 1
+		mask2 = HAL_GPIO_MASK_2,            ///< Mascara del pin 2
+		mask3 = HAL_GPIO_MASK_3,            ///< Mascara del pin 3
+		mask4 = HAL_GPIO_MASK_4,            ///< Mascara del pin 4
+		mask5 = HAL_GPIO_MASK_5,            ///< Mascara del pin 5
+		mask6 = HAL_GPIO_MASK_6,            ///< Mascara del pin 6
+		mask7 = HAL_GPIO_MASK_7,            ///< Mascara del pin 7
+		mask8 = HAL_GPIO_MASK_8,            ///< Mascara del pin 8
+		mask9 = HAL_GPIO_MASK_9,            ///< Mascara del pin 9
+		mask10 = HAL_GPIO_MASK_10,          ///< Mascara del pin 10
+		mask11 = HAL_GPIO_MASK_11,          ///< Mascara del pin 11
+		mask12 = HAL_GPIO_MASK_12,          ///< Mascara del pin 12
+		mask13 = HAL_GPIO_MASK_13,          ///< Mascara del pin 13
+		mask14 = HAL_GPIO_MASK_14,          ///< Mascara del pin 14
+		mask15 = HAL_GPIO_MASK_15,          ///< Mascara del pin 15
 	};
 
 	/// \brief GPIO Driver type identifiers.

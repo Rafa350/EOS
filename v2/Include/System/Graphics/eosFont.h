@@ -71,12 +71,12 @@ namespace eos {
     		ImplPtr _impl;
 
         private:
-            ImplPtr makeImpl(const uint8_t* fontResource);
+            ImplPtr makeImpl(const uint8_t *fontResource);
 
         public:
             Font();
-            Font(const String& name, int height, FontStyle style);
-            Font(const Font& font);
+            Font(const String &name, int height, FontStyle style);
+            Font(const Font &font);
             ~Font();
 
             Font& operator = (const Font& font);

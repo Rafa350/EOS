@@ -17,8 +17,8 @@ namespace eos {
     class Application;
     class Service;
 
-    void link(Application* application, Service* service);
-    void unlink(Application* application, Service* service);
+    void link(Application *application, Service *service);
+    void unlink(Application *application, Service *service);
 
     /// \brief Clase que representa l'aplicacio.
     ///
@@ -47,9 +47,9 @@ namespace eos {
             void initializeServices();
             void terminateServices();
             void runServices();
-            void taskEventHandler(const Task::EventArgs& args);
+            void taskEventHandler(const Task::EventArgs &args);
 #if Eos_ApplicationTickEnabled
-            void timerEventHandler(const Timer::EventArgs& args);
+            void timerEventHandler(const Timer::EventArgs &args);
 #endif
 
         protected:
@@ -67,17 +67,17 @@ namespace eos {
 #if Eos_ApplicationTickEnabled
             void tick();
             void tmrInterruptFunction();
-            static void tmrInterruptFunction(TMRHandler handler, void* params);
+            static void tmrInterruptFunction(TMRHandler handler, void  params);
 #endif
 
-            void addService(Service* service);
-            void removeService(Service* service);
+            void addService(Service *service);
+            void removeService(Service *service);
             void removeServices();
 
             inline bool isInitialized() const { return _initialized; }
 
-        friend void link(Application* application, Service* service);
-        friend void unlink(Application* application, Service* service);
+        friend void link(Application *application, Service *service);
+        friend void unlink(Application *application, Service *service);
     };
 }
 

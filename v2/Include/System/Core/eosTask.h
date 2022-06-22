@@ -18,8 +18,8 @@ namespace eos {
     class Task {
         public:
             struct EventArgs {
-                Task* task;
-                void* params;
+                Task *task;
+                void *params;
             };
 
         private:
@@ -33,7 +33,7 @@ namespace eos {
                 high
             };
 
-            Task(unsigned stackSize, Priority priority, const String& name, IEventCallback* eventCallback, void* eventParams);
+            Task(unsigned stackSize, Priority priority, const String &name, IEventCallback *eventCallback, void *eventParams);
             virtual ~Task();
 
             static void delay(unsigned time);
@@ -52,11 +52,11 @@ namespace eos {
 
         private:
             HTask hTask;
-            IEventCallback* eventCallback;
-            void* eventParams;
+            IEventCallback *eventCallback;
+            void *eventParams;
             unsigned weakTime;
 
-            static void function(void* params);
+            static void function(void *params);
     };
 
 }

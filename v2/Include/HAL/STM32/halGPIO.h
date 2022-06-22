@@ -113,25 +113,25 @@ typedef struct {
 
 
 // Mascara de posicio del pin
-#define HAL_GPIO_POS_0            (1 << 0)
-#define HAL_GPIO_POS_1            (1 << 1)
-#define HAL_GPIO_POS_2            (1 << 2)
-#define HAL_GPIO_POS_3            (1 << 3)
-#define HAL_GPIO_POS_4            (1 << 4)
-#define HAL_GPIO_POS_5            (1 << 5)
-#define HAL_GPIO_POS_6            (1 << 6)
-#define HAL_GPIO_POS_7            (1 << 7)
-#define HAL_GPIO_POS_8            (1 << 8)
-#define HAL_GPIO_POS_9            (1 << 9)
-#define HAL_GPIO_POS_10           (1 << 10)
-#define HAL_GPIO_POS_11           (1 << 11)
-#define HAL_GPIO_POS_12           (1 << 12)
-#define HAL_GPIO_POS_13           (1 << 13)
-#define HAL_GPIO_POS_14           (1 << 14)
-#define HAL_GPIO_POS_15           (1 << 15)
-#define HAL_GPIO_POS_LO           0x000000FF
-#define HAL_GPIO_POS_HI           0x0000FF00
-#define HAL_GPIO_POS_ALL          0x0000FFFF
+#define HAL_GPIO_MASK_0           (1 << 0)
+#define HAL_GPIO_MASK_1           (1 << 1)
+#define HAL_GPIO_MASK_2           (1 << 2)
+#define HAL_GPIO_MASK_3           (1 << 3)
+#define HAL_GPIO_MASK_4           (1 << 4)
+#define HAL_GPIO_MASK_5           (1 << 5)
+#define HAL_GPIO_MASK_6           (1 << 6)
+#define HAL_GPIO_MASK_7           (1 << 7)
+#define HAL_GPIO_MASK_8           (1 << 8)
+#define HAL_GPIO_MASK_9           (1 << 9)
+#define HAL_GPIO_MASK_10          (1 << 10)
+#define HAL_GPIO_MASK_11          (1 << 11)
+#define HAL_GPIO_MASK_12          (1 << 12)
+#define HAL_GPIO_MASK_13          (1 << 13)
+#define HAL_GPIO_MASK_14          (1 << 14)
+#define HAL_GPIO_MASK_15          (1 << 15)
+#define HAL_GPIO_MASK_LO          0x000000FF
+#define HAL_GPIO_MASK_HI          0x0000FF00
+#define HAL_GPIO_MASK_ALL         0x0000FFFF
 
 
 // Tipus de port

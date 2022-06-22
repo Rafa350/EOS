@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "HAL/halGPIO.h"
+#include "HAL/halGPIO_ex.h"
 #include "HAL/halINT.h"
 #include "HAL/halSYS.h"
 #ifdef EOS_PIC32
@@ -20,6 +21,7 @@ using namespace app;
 
 halTMRData digInputTimer;
 halTMRData digOutputTimer;
+
 
 
 /// ----------------------------------------------------------------------

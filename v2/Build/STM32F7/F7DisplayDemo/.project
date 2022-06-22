@@ -274,9 +274,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/halGPIOTpl.h</name>
+			<name>inc/Framework/EOS/HAL/halGPIO_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIOTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO_ex.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halI2C.h</name>
@@ -574,9 +574,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halDMA2DTpl.h</name>
+			<name>inc/Framework/EOS/HAL/STM32/halDMA2D_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2DTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D_ex.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
@@ -584,9 +584,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halGPIOTpl.h</name>
+			<name>inc/Framework/EOS/HAL/STM32/halGPIO_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO_ex.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halI2C.h</name>
@@ -604,9 +604,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halLTDC.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halLTDCTpl.h</name>
+			<name>inc/Framework/EOS/HAL/STM32/halLTDC_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halLTDCTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halLTDC_ex.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halRNG.h</name>

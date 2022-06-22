@@ -15,6 +15,7 @@
 
 namespace eos {
 
+    class DigInputService;
     class DigInput;
 
     /// \brief Clase que implementa el servei de gestio d'entrades digitals
@@ -36,21 +37,21 @@ namespace eos {
         protected:
             void onInitialize() override;
             void onTerminate() override;
-            void onTask(Task* task) override;
+            void onTask(Task *task) override;
 #if Eos_ApplicationTickEnabled
             void onTick();
 #endif
         public:
-            DigInputService(Application* application, const Settings& settings);
+            DigInputService(Application *application, const Settings &settings);
             ~DigInputService();
-            void addInput(DigInput* input);
-            void removeInput(DigInput* input);
+            void addInput(DigInput *input);
+            void removeInput(DigInput *input);
             void removeInputs();
 
-            bool read(const DigInput* input) const;
+            bool read(const DigInput *input) const;
 
             void tmrInterruptFunction(uint32_t event);
-            static void tmrInterruptFunction(halTMRHandler handler, void* params, uint32_t event);
+            static void tmrInterruptFunction(halTMRHandler handler, void *params, uint32_t event);
     };
 
     /// \brief Clase que implementa una entrada digital
@@ -58,29 +59,35 @@ namespace eos {
     class DigInput final {
         public:
             struct EventArgs {
-                DigInput* input;
-                void* param;
+                DigInput *input;
+                void *param;
             };
         	typedef ICallbackP1<const EventArgs&> IEventCallback;
-            struct Settings {    // Parametres de configuracio de l'entrada.
-                halGPIOPort port;   // -El port
-                halGPIOPin pin;     // -El pin
-                IEventCallback* eventCallback;
-                void* eventParam;
+            enum class ScanMode {    // Modus d'exploracio de la entrada
+                polling,             // -Polling
+                interrupt            // -Interrupcio
+            };
+            struct Settings {        // Parametres de configuracio de l'entrada.
+                halGPIOPort port;               // -El port
+                halGPIOPin pin;                 // -El pin
+                ScanMode scanMode;              // Modus d'escaneig de la entrada
+                IEventCallback *eventCallback;  // Funcio callback
+                void *eventParam;               // Parametres
             };
 
         private:
-            DigInputService* _service;
+            DigInputService *_service;
             halGPIOPort _port;
             halGPIOPin _pin;
-            IEventCallback* _eventCallback;
-            void* _eventParam;
+            ScanMode _scanMode;
+            IEventCallback *_eventCallback;
+            void *_eventParam;
             uint32_t _pattern;
             bool _value;
             bool _edge;
 
         public:
-            DigInput(DigInputService* service, const Settings& settings);
+            DigInput(DigInputService *service, const Settings &settings);
             ~DigInput();
 
             inline DigInputService* getService() const {

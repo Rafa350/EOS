@@ -24,7 +24,7 @@ using namespace eos;
 ///
 DigInputService::DigInputService(
     Application *application,
-    const Settings& settings):
+    const Settings &settings):
 
 	Service(application),
     _hTimer(settings.hTimer) {
@@ -118,7 +118,7 @@ void DigInputService::onInitialize() {
     // Inicialitza les entrades al valor actual
     //
     for (auto it = _inputs.begin(); it != _inputs.end(); it++) {
-        DigInput* input = *it;
+        DigInput *input = *it;
         input->_value = halGPIOReadPin(input->_port, input->_pin);
         input->_edge = false;
         input->_pattern = input->_value ? PATTERN_ON : PATTERN_OFF;
@@ -165,7 +165,7 @@ void DigInputService::onTerminate() {
 /// \param    task: La tasca que executa el servei.
 ///
 void DigInputService::onTask(
-	Task* task) {
+	Task *task) {
 
     // Espera que es notifiquin canvis en les entrades
     //
@@ -246,26 +246,29 @@ void DigInputService::tmrInterruptFunction(
 
         DigInput *input = *it;
 
-        // Actualitza el patro
-        //
-        input->_pattern <<= 1;
-        if (halGPIOReadPin(input->_port, input->_pin))
-            input->_pattern |= 1;
+        if (input->_scanMode == DigInput::ScanMode::polling) {
 
-        // Analitza el patro per detectar un flanc positiu
-        //
-        if ((input->_pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
-            input->_value = 1;
-            input->_edge = 1;
-            changed = true;
-        }
+            // Actualitza el patro
+            //
+            input->_pattern <<= 1;
+            if (halGPIOReadPin(input->_port, input->_pin))
+                input->_pattern |= 1;
 
-        // Analitza el patro per detectar un flanc negatiu
-        //
-        else if ((input->_pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
-            input->_value = 0;
-            input->_edge = 1;
-            changed = true;
+            // Analitza el patro per detectar un flanc positiu
+            //
+            if ((input->_pattern & PATTERN_MASK) == PATTERN_POSEDGE) {
+                input->_value = 1;
+                input->_edge = 1;
+                changed = true;
+            }
+
+            // Analitza el patro per detectar un flanc negatiu
+            //
+            else if ((input->_pattern & PATTERN_MASK) == PATTERN_NEGEDGE) {
+                input->_value = 0;
+                input->_edge = 1;
+                changed = true;
+            }
         }
     }
 
@@ -305,6 +308,8 @@ DigInput::DigInput(
 	_service(nullptr),
     _port(settings.port),
     _pin(settings.pin),
+    //_scanMode(settings.scanMode),
+    _scanMode(ScanMode::polling),
     _eventCallback(settings.eventCallback),
     _eventParam(settings.eventParam) {
 

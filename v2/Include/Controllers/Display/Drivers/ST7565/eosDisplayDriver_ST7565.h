@@ -16,8 +16,6 @@
 
 namespace eos {
 
-    class Color;
-
     class ST7565Driver: public IDisplayDriver {
         private:
             int screenWidth;
@@ -32,17 +30,16 @@ namespace eos {
             void displayOn() override;
             void displayOff() override;
             void setOrientation(DisplayOrientation orientation) override;
-            int getWidth() const override { return screenWidth; }
-            int getHeight() const override { return screenHeight; }
-            void clear(const Color &color) override;
-            void setPixel(int x, int y, const Color &color) override;
-            void setHPixels(int x, int y, int size, const Color &color) override;
-            void setVPixels(int x, int y, int size, const Color &color) override;
-            void setPixels(int x, int y, int width, int height, const Color &color);
-            void writePixels(int x, int y, int width, int height, const uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
-            void readPixels(int x, int y, int width, int height, uint8_t *pixels, ColorFormat format, int dx, int dy, int pitch) override;
-            void vScroll(int delta, int x, int y, int width, int height) override;
-            void hScroll(int delta, int x, int y, int width, int height) override;
+            int getImageWidth() const override { return screenWidth; }
+            int getImageHeight() const override { return screenHeight; }
+            void clear(Color color) override;
+            void setPixel(int x, int y, Color color) override;
+            void setHPixels(int x, int y, int size, Color color) override;
+            void setVPixels(int x, int y, int size, Color color) override;
+            void setPixels(int x, int y, int width, int height, Color color) override;
+            void setPixels(int x, int y, int width, int height, const Color *color, int pitch) override;
+            virtual void setPixels(int x, int y, int width, int height, const void* pixels, ColorFormat format, int pitch) override;
+
             void refresh() override;
 
         private:

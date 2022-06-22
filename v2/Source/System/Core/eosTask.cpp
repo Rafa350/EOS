@@ -23,9 +23,9 @@ using namespace eos;
 Task::Task(
     unsigned stackSize,
     Priority priority,
-    const String& name,
-    IEventCallback* eventCallback,
-    void* eventParams):
+    const String &name,
+    IEventCallback *eventCallback,
+    void *eventParams):
 
     eventCallback(eventCallback),
     eventParams(eventParams),
@@ -83,7 +83,7 @@ Task::~Task() {
 /// \remarks  No retorna mai.
 ///
 void Task::function(
-    void* params) {
+    void *params) {
 
     Task *task = reinterpret_cast<Task*>(params);
     if (task && task->eventCallback) {

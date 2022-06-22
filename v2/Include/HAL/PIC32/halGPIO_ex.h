@@ -63,6 +63,7 @@ namespace eos {
 		public:
 			constexpr static const GPIOPort port = port_;
 			constexpr static const GPIOPin pin = pin_;
+            constexpr static const uint32_t mask = 1u << (uint32_t)pin_;
 
         public:
             inline static void initOutput(GPIOSpeed speed, GPIODriver driver, GPIOState state) {
@@ -80,22 +81,22 @@ namespace eos {
 
             inline static void set() {
                 halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(port_);
-                regs->LATxSET = 1 << (uint32_t)pin_;
+                regs->LATxSET = mask;
             }
 
             inline static void clear() {
                 halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(port_);
-                regs->LATxCLR = 1 << (uint32_t)pin_;
+                regs->LATxCLR = mask;
             }
 
             inline static void toggle() {
                 halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(port_);
-                regs->LATxINV = 1 << (uint32_t)pin_;
+                regs->LATxINV = mask;
             }
 
             inline static bool read() {
                 halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(port_);
-                return (regs)->PORTx & (1 << (uint32_t)pin_) != 0;
+                return (regs->PORTx & mask) != 0;
             }
 
             inline static void write(bool value) {

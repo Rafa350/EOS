@@ -49,7 +49,7 @@ namespace eos {
             };
             struct Command {
                 OpCode opCode;
-                DigOutput* output;
+                DigOutput *output;
                 unsigned param1;
                 unsigned param2;
             };
@@ -70,42 +70,42 @@ namespace eos {
             DigOutputList _outputs;
 
         private:
-            void cmdClear(DigOutput* output);
-            void cmdSet(DigOutput* output);
-            void cmdToggle(DigOutput* output);
-            void cmdPulse(DigOutput* output, unsigned width);
-            void cmdDelayedSet(DigOutput* output, unsigned delay);
-            void cmdDelayedClear(DigOutput* output, unsigned delay);
-            void cmdDelayedToggle(DigOutput* output, unsigned delay);
-            void cmdDelayedPulse(DigOutput* output, unsigned delay, unsigned width);
+            void cmdClear(DigOutput *output);
+            void cmdSet(DigOutput *output);
+            void cmdToggle(DigOutput *output);
+            void cmdPulse(DigOutput *output, unsigned width);
+            void cmdDelayedSet(DigOutput *output, unsigned delay);
+            void cmdDelayedClear(DigOutput *output, unsigned delay);
+            void cmdDelayedToggle(DigOutput *output, unsigned delay);
+            void cmdDelayedPulse(DigOutput *output, unsigned delay, unsigned width);
             void cmdTimeOut(unsigned time);
         protected:
             void onInitialize() override;
             void onTerminate() override;
-            void onTask(Task* task) override;
+            void onTask(Task *task) override;
 #if Eos_ApplicationTickEnabled
             void onTick() override;
 #endif
         public:
-            DigOutputService(Application* application, const Settings& settings);
+            DigOutputService(Application *application, const Settings &settings);
             ~DigOutputService();
 
-            void addOutput(DigOutput* output);
-            void removeOutput(DigOutput* output);
+            void addOutput(DigOutput *output);
+            void removeOutput(DigOutput *output);
             void removeOutputs();
 
-            void set(DigOutput* output);
-            void clear(DigOutput* output);
-            void write(DigOutput* output, bool value);
-            void toggle(DigOutput* output);
-            void pulse(DigOutput* output, unsigned width);
-            void delayedSet(DigOutput* output, unsigned delay);
-            void delayedClear(DigOutput* output, unsigned delay);
-            void delayedToggle(DigOutput* output, unsigned delay);
-            void delayedPulse(DigOutput* output, unsigned delay, unsigned width);
+            void set(DigOutput *output);
+            void clear(DigOutput *output);
+            void write(DigOutput *output, bool value);
+            void toggle(DigOutput *output);
+            void pulse(DigOutput *output, unsigned width);
+            void delayedSet(DigOutput *output, unsigned delay);
+            void delayedClear(DigOutput *output, unsigned delay);
+            void delayedToggle(DigOutput *output, unsigned delay);
+            void delayedPulse(DigOutput *output, unsigned delay, unsigned width);
 
             void tmrInterruptFunction(uint32_t event);
-            static void tmrInterruptFunction(halTMRHandler handler, void* params, uint32_t event);
+            static void tmrInterruptFunction(halTMRHandler handler, void *params, uint32_t event);
     };
 
     /// \brief Clase que implementa una sortida digital.
@@ -134,7 +134,7 @@ namespace eos {
             unsigned _widthCnt;
 
         public:
-            DigOutput(DigOutputService* service, const Settings& settings);
+            DigOutput(DigOutputService *service, const Settings &settings);
             ~DigOutput();
 
             inline DigOutputService* getService() const {

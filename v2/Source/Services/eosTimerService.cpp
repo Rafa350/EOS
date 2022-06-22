@@ -122,7 +122,7 @@ void TimerService::removeTimers() {
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void TimerService::start(
-    TimerCounter* timer,
+    TimerCounter *timer,
     unsigned period,
     unsigned blockTime) {
 
@@ -147,7 +147,7 @@ void TimerService::start(
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void TimerService::stop(
-    TimerCounter* timer,
+    TimerCounter *timer,
     unsigned blockTime) {
 
     eosAssert(timer != nullptr);
@@ -166,7 +166,7 @@ void TimerService::stop(
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void TimerService::pause(
-    TimerCounter* timer,
+    TimerCounter *timer,
     unsigned blockTime) {
 
     eosAssert(timer != nullptr);
@@ -185,7 +185,7 @@ void TimerService::pause(
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
 void TimerService::resume(
-    TimerCounter* timer,
+    TimerCounter *timer,
     unsigned blockTime) {
 
     eosAssert(timer != nullptr);
@@ -203,7 +203,7 @@ void TimerService::resume(
 /// \param    args: Parametres del event.
 ///
 void TimerService::osTimerEventHandler(
-    const Timer::EventArgs& args) {
+    const Timer::EventArgs &args) {
 
     Command cmd;
     cmd.opCode = OpCode::timeOut;
@@ -227,7 +227,7 @@ void TimerService::onInitialize() {
 /// \brief    Procesa la tasca del servei.
 ///
 void TimerService::onTask(
-    Task* task) {
+    Task *task) {
 
     // Espera indefinidament que arribin comandes per procesar
     //
@@ -264,7 +264,7 @@ void TimerService::onTask(
 /// \param    timer: El temporitzador.
 ///
 void TimerService::cmdStart(
-    TimerCounter* timer) {
+    TimerCounter *timer) {
 
     // Calcula el temps d'expiracio.
     //
@@ -290,7 +290,7 @@ void TimerService::cmdStart(
 /// \param    timer: El temporitzador.
 ///
 void TimerService::cmdStop(
-    TimerCounter* timer) {
+    TimerCounter *timer) {
 
     // Elimina el contador de la llista de contadors actius.
     //
@@ -303,7 +303,7 @@ void TimerService::cmdStop(
 /// \param    timer: El temporitzador.
 ///
 void TimerService::cmdPause(
-    TimerCounter* timer) {
+    TimerCounter *timer) {
 
     // Elimina el contador de la llista de contadors actius.
     //
@@ -320,7 +320,7 @@ void TimerService::cmdPause(
 /// \param    timer: El temporitzador.
 ///
 void TimerService::cmdResume(
-    TimerCounter* timer) {
+    TimerCounter *timer) {
 
     // Recalcula el temps d'expiracio amb el periode ue resta.
     //
@@ -358,7 +358,7 @@ void TimerService::cmdTimeOut() {
             if (_activeQueue.isEmpty())
                 break;
 
-            TimerCounter* timer = _activeQueue.peek();
+            TimerCounter *timer = _activeQueue.peek();
             if (currentTime < timer->_expireTime)
                 break;
 
@@ -382,7 +382,7 @@ void TimerService::cmdTimeOut() {
 
             // Recalcula el temps d'expiracio.
             //
-            TimerCounter* timer = _activeQueue.peek();
+            TimerCounter *timer = _activeQueue.peek();
             _osPeriod = timer->_expireTime - currentTime;
 
             // Activa el temporitzador, per un nou cicle.
@@ -399,8 +399,8 @@ void TimerService::cmdTimeOut() {
 /// \param    callback: El callback dels events.
 ///
 TimerCounter::TimerCounter(
-    TimerService* service,
-    IEventCallback* callback):
+    TimerService *service,
+    IEventCallback *callback):
 
     _service(nullptr),
     _eventCallback(callback),
@@ -422,8 +422,8 @@ TimerCounter::~TimerCounter() {
 
 
 bool QueueComparator::operator () (
-    const TimerCounter* left,
-    const TimerCounter* right) {
+    const TimerCounter *left,
+    const TimerCounter *right) {
 
     return left->_expireTime < right->_expireTime;
 }

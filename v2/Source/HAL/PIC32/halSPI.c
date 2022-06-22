@@ -15,8 +15,8 @@
 /// \param    settings: Parametres d'inicialitzacio.
 ///
 halSPIHandler halSPIInitialize(
-    halSPIData* data,
-    const halSPISettings* settings) {
+    halSPIData *data,
+    const halSPISettings *settings) {
 
     halSPIHandler handler = data;
     handler->regs = __getRegisterPtr(settings->channel);

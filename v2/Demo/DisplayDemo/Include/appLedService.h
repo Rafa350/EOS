@@ -27,7 +27,7 @@ namespace app {
 #endif
 
 		public:
-			LedService(eos::Application* application);
+			LedService(eos::Application *application);
 
 		protected:
 			void onSetup();

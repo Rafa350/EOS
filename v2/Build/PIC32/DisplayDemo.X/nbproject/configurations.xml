@@ -43,18 +43,18 @@
               <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halINT.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halSPI.h</itemPath>
-              <itemPath>../../../Include/HAL/PIC32/halGPIOTpl.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halTMR.h</itemPath>
-              <itemPath>../../../Include/HAL/PIC32/halSPITpl.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halGPIO_ex.h</itemPath>
+              <itemPath>../../../Include/HAL/PIC32/halSPI_ex.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
             <itemPath>../../../Include/HAL/halSPI.h</itemPath>
-            <itemPath>../../../Include/HAL/halGPIOTpl.h</itemPath>
-            <itemPath>../../../Include/HAL/halSPITpl.h</itemPath>
+            <itemPath>../../../Include/HAL/halGPIO_ex.h</itemPath>
+            <itemPath>../../../Include/HAL/halSPI_ex.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
@@ -237,7 +237,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>noID</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>3.01</languageToolchainVersion>
+        <languageToolchainVersion>4.10</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -529,7 +529,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>noID</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>3.01</languageToolchainVersion>
+        <languageToolchainVersion>4.10</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -820,7 +820,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>noID</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>4.00</languageToolchainVersion>
+        <languageToolchainVersion>4.10</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>

@@ -215,17 +215,17 @@ namespace eos {
 						GPIODriver::pushPull,
 						pinAdapter_::GPIOAlt::spi2_MISO);
 
-				if constexpr (channel_ == SPIChannel::channel2)
-					pinAdapter_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull,
-						pinAdapter_::GPIOAlt::spi2_MISO);
-
 				if constexpr (channel_ == SPIChannel::channel3)
 					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
 						pinAdapter_::GPIOAlt::spi3_MISO);
+
+				if constexpr (channel_ == SPIChannel::channel4)
+					pinAdapter_::initAlt(
+						GPIOSpeed::fast,
+						GPIODriver::pushPull,
+						pinAdapter_::GPIOAlt::spi4_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel5)
 					pinAdapter_::initAlt(

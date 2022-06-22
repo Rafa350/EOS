@@ -5,10 +5,10 @@
 #include "System/Graphics/eosFont.h"
 #include "System/Graphics/eosGraphics.h"
 #if defined(DISPLAY_DRV_ST7565)
-#include "Controllers/Display/Drivers/eosST7565.h"
+#include "Controllers/Display/Drivers/ST7565/eosDisplayDriver_ST7565.h"
 #else
     #error "No se especifico DISPLAY_DRV_XXXX"
-#endif 
+#endif
 #include "HAl/STM32/halRNG.h"
 #include "appDisplayService.h"
 #include "stdio.h"
@@ -66,12 +66,12 @@ void DisplayService::onSetup() {
 	//
 #if defined(EOS_STM32F7) || defined(EOS_STM32F4)
 	halRNGInitialize();
-#endif    
+#endif
 
 #if defined(DISPLAY_DRV_ST7565)
 	//driver = ST7565Driver::getInstance();
     driver = new ST7565Driver();
-#else    
+#else
 	#error No se especifico DISPLAY_DRV_XXXX
 #endif
     driver->initialize();
