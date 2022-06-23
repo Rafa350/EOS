@@ -37,7 +37,8 @@ TouchPadDriver_FT5336::TouchPadDriver_FT5336():
 	_addr(TOUCHPAD_I2C_ADDR),
 	_padWidth(TOUCHPAD_PAD_WIDTH),
 	_padHeight(TOUCHPAD_PAD_HEIGHT),
-	_orientation(TouchPadOrientation::normal) {
+	_orientation(TouchPadOrientation::normal),
+	_i2c(I2C::instance()) {
 }
 
 

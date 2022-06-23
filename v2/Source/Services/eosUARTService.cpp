@@ -14,7 +14,7 @@ using namespace eos;
 ///
 UARTService::UARTService(
 	Application* application,
-	const Settings& settings):
+	const Settings &settings):
 
 	Service(application),
 	_uart(settings.hUART) {
@@ -41,7 +41,7 @@ UARTService::~UARTService() {
 ///           la transmissio dels bytes que resten.
 ///
 unsigned UARTService::send(
-	uint8_t* data,
+	uint8_t *data,
 	unsigned length,
 	unsigned blockTime) {
 

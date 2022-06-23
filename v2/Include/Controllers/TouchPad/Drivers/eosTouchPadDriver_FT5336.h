@@ -268,7 +268,7 @@ namespace eos {
 			int _padWidth;
 			int _padHeight;
 			TouchPadOrientation _orientation;
-			I2C _i2c;
+			I2C &_i2c;
 
 		private:
 			TouchPadDriver_FT5336();

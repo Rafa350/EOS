@@ -55,25 +55,6 @@ namespace eos {
 		pin15 = HAL_GPIO_PIN_15				///< Identificador del pin 15
 	};
 
-	enum class GPIOMask: halGPIOMask {
-		mask0 = HAL_GPIO_MASK_0,            ///< Mascara del pin 0
-		mask1 = HAL_GPIO_MASK_1,            ///< Mascara del pin 1
-		mask2 = HAL_GPIO_MASK_2,            ///< Mascara del pin 2
-		mask3 = HAL_GPIO_MASK_3,            ///< Mascara del pin 3
-		mask4 = HAL_GPIO_MASK_4,            ///< Mascara del pin 4
-		mask5 = HAL_GPIO_MASK_5,            ///< Mascara del pin 5
-		mask6 = HAL_GPIO_MASK_6,            ///< Mascara del pin 6
-		mask7 = HAL_GPIO_MASK_7,            ///< Mascara del pin 7
-		mask8 = HAL_GPIO_MASK_8,            ///< Mascara del pin 8
-		mask9 = HAL_GPIO_MASK_9,            ///< Mascara del pin 9
-		mask10 = HAL_GPIO_MASK_10,          ///< Mascara del pin 10
-		mask11 = HAL_GPIO_MASK_11,          ///< Mascara del pin 11
-		mask12 = HAL_GPIO_MASK_12,          ///< Mascara del pin 12
-		mask13 = HAL_GPIO_MASK_13,          ///< Mascara del pin 13
-		mask14 = HAL_GPIO_MASK_14,          ///< Mascara del pin 14
-		mask15 = HAL_GPIO_MASK_15,          ///< Mascara del pin 15
-	};
-
 	/// \brief GPIO Driver type identifiers.
 	enum class GPIODriver {
 		pushPull,
@@ -106,9 +87,8 @@ namespace eos {
 	struct GPIOPinInfo {
 		enum class GPIOAlt: halGPIOAlt {
 		};
-		static const GPIOPort port;
-		static const GPIOPin pin;
-		static const GPIOMask mask;
+		static const uint32_t baseAddr;
+		static const uint32_t pinNumber;
 	};
 
 	/// \class GPIOPinAdapter
@@ -119,19 +99,16 @@ namespace eos {
 		public:
 			using GPIOAlt = typename GPIOPinInfo<port_, pin_>::GPIOAlt;
 
-		public:
-			constexpr static const GPIOPort port = port_;
-			constexpr static const GPIOPin pin = pin_;
-			constexpr static const GPIOMask mask = GPIOPinInfo<port_, pin_>::mask;
+		private:
+			constexpr static const uint32_t _baseAddr = GPIOPinInfo<port_, pin_>::baseAddr;
+			constexpr static const uint32_t _pinNumber = GPIOPinInfo<port_, pin_>::pinNumber;
 
 		public:
 			GPIOPinAdapter() = default;
+
 			GPIOPinAdapter(const GPIOPinAdapter &) = delete;
 			GPIOPinAdapter(const GPIOPinAdapter &&) = delete;
-			GPIOPinAdapter& operator = (const GPIOPinAdapter &) = delete;
-			GPIOPinAdapter& operator = (const GPIOPinAdapter &&) = delete;
 
-		public:
 			inline static void initInput(GPIOSpeed speed, GPIOPull pull = GPIOPull::none) {
 				halGPIOOptions options =
 					HAL_GPIO_MODE_INPUT |
@@ -166,39 +143,42 @@ namespace eos {
 			/// \brief Set pin to ON state.
 			///
 			inline static void set() {
-				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(port_);
-				regs->BSRR = 1 << (uint32_t)pin_;
+				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_baseAddr);
+				regs->BSRR = 1 << _pinNumber;
 			}
 
 			/// \brief Set pin to OFF state.
 			///
 			inline static void clear() {
-				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(port_);
-				regs->BSRR = 1 << ((uint32_t)pin_ + 16);
+				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_baseAddr);
+				regs->BSRR = 1 << (_pinNumber + 16);
 			}
 
 			/// \brief Toggle pin state.
 			///
 			inline static void toggle() {
-				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(port_);
-				regs->ODR ^= 1 << (uint32_t)pin_;
+				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_baseAddr);
+				regs->ODR ^= 1 << _pinNumber;
 			}
 
 			/// \brief Read pin state
 			/// \return Pin state.
 			///
 			inline static bool read() {
-				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(port_);
-				return regs->IDR & (1 << (uint32_t)pin_);
+				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_baseAddr);
+				return regs->IDR & (1 << _pinNumber);
 			}
 
 			/// \brief Write pin state.
 			/// \param b: State to write.
 			///
 			inline static void write(bool s) {
-				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(port_);
-				regs->BSRR = 1 << ((uint32_t)pin_ + (s ? 0 : 16));
+				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_baseAddr);
+				regs->BSRR = 1 << (_pinNumber + (s ? 0 : 16));
 			}
+
+			GPIOPinAdapter& operator = (const GPIOPinAdapter &) = delete;
+			GPIOPinAdapter& operator = (const GPIOPinAdapter &&) = delete;
 
 			/// \brief Operator '='. Assign a state to pin.
 			/// \param b: State to assign.
@@ -209,6 +189,9 @@ namespace eos {
 				return *this;
 			}
 
+			/// \brief Operador bool. Read pin state.
+			/// \return Pin state.
+			//
 			inline operator bool () {
 				return read();
 			}
@@ -222,7 +205,7 @@ namespace eos {
 	class GPIOPortAdapter {
 		public:
 			constexpr static const GPIOPort port = port_;
-			constexpr static const uint16_t mask = mask_;
+			constexpr static const uint32_t mask = mask_;
 	};
 
 
@@ -464,9 +447,8 @@ namespace eos {
 			usart2_CTS = HAL_GPIO_AF_7,
 			uart4_TX = HAL_GPIO_AF_8,
 		};
-		constexpr static const GPIOPort port = GPIOPort::portA;
-		constexpr static const GPIOPin pin = GPIOPin::pin0;
-		constexpr static const GPIOMask mask = GPIOMask::mask0;
+		constexpr static const uint32_t baseAddr = GPIOA_BASE;
+		constexpr static const uint32_t pinNumber = 0;
 	};
 
 	template <>
@@ -481,9 +463,8 @@ namespace eos {
 			usart2_RTS = HAL_GPIO_AF_7,
 			uart4_RX = HAL_GPIO_AF_8
 		};
-		constexpr static const GPIOPort port = GPIOPort::portA;
-		constexpr static const GPIOPin pin = GPIOPin::pin1;
-		constexpr static const GPIOMask mask = GPIOMask::mask1;
+		constexpr static const uint32_t baseAddr = GPIOA_BASE;
+		constexpr static const uint32_t pinNumber = 1;
 	};
 
 	template <>
@@ -492,9 +473,8 @@ namespace eos {
 			dcmi_HSYNC = HAL_GPIO_AF_13,
 			usart2_CK = HAL_GPIO_AF_7,
 		};
-		constexpr static const GPIOPort port = GPIOPort::portA;
-		constexpr static const GPIOPin pin = GPIOPin::pin4;
-		constexpr static const GPIOMask mask = GPIOMask::mask4;
+		constexpr static const uint32_t baseAddr = GPIOA_BASE;
+		constexpr static const uint32_t pinNumber = 4;
 	};
 
 	template <>
@@ -503,9 +483,8 @@ namespace eos {
 			i2s1_CL = HAL_GPIO_AF_5,
 			spi1_SCK = HAL_GPIO_AF_5
 		};
-		constexpr static const GPIOPort port = GPIOPort::portA;
-		constexpr static const GPIOPin pin = GPIOPin::pin5;
-		constexpr static const GPIOMask mask = GPIOMask::mask5;
+		constexpr static const uint32_t baseAddr = GPIOA_BASE;
+		constexpr static const uint32_t pinNumber = 5;
 	};
 
 	template <>
@@ -514,9 +493,8 @@ namespace eos {
 			dcmi_PIXCK = HAL_GPIO_AF_13,
 			spi1_MISO = HAL_GPIO_AF_5
 		};
-		constexpr static const GPIOPort port = GPIOPort::portA;
-		constexpr static const GPIOPin pin = GPIOPin::pin6;
-		constexpr static const GPIOMask mask = GPIOMask::mask6;
+		constexpr static const uint32_t baseAddr = GPIOA_BASE;
+		constexpr static const uint32_t pinNumber = 6;
 	};
 
 	template <>
@@ -525,9 +503,8 @@ namespace eos {
 			i2s1_SD = HAL_GPIO_AF_5,
 			spi1_MOSI = HAL_GPIO_AF_5
 		};
-		constexpr static const GPIOPort port = GPIOPort::portA;
-		constexpr static const GPIOPin pin = GPIOPin::pin7;
-		constexpr static const GPIOMask mask = GPIOMask::mask7;
+		constexpr static const uint32_t baseAddr = GPIOA_BASE;
+		constexpr static const uint32_t pinNumber = 7;
 	};
 
 
@@ -538,9 +515,8 @@ namespace eos {
 			i2c1_SCL = HAL_GPIO_AF_4,
 			ltdc_B6 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portB;
-		constexpr static const GPIOPin pin = GPIOPin::pin8;
-		constexpr static const GPIOMask mask = GPIOMask::mask8;
+		constexpr static const uint32_t baseAddr = GPIOB_BASE;
+		constexpr static const uint32_t pinNumber = 8;
 	};
 
 	template <>
@@ -550,9 +526,8 @@ namespace eos {
 			ltdc_B7 = HAL_GPIO_AF_14,
 			spi2_NSS = HAL_GPIO_AF_5
 		};
-		constexpr static const GPIOPort port = GPIOPort::portB;
-		constexpr static const GPIOPin pin = GPIOPin::pin9;
-		constexpr static const GPIOMask mask = GPIOMask::mask9;
+		constexpr static const uint32_t baseAddr = GPIOB_BASE;
+		constexpr static const uint32_t pinNumber = 9;
 	};
 
 	template <>
@@ -562,8 +537,8 @@ namespace eos {
 			ltdc_G4 = HAL_GPIO_AF_14,
 			spi2_SCK = HAL_GPIO_AF_5
 		};
-		constexpr static const GPIOPort port = GPIOPort::portB;
-		constexpr static const GPIOPin pin = GPIOPin::pin10;
+		constexpr static const uint32_t baseAddr = GPIOB_BASE;
+		constexpr static const uint32_t pinNumber = 10;
 	};
 
 	template <>
@@ -571,8 +546,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			spi2_MOSI = HAL_GPIO_AF_5
 		};
-		constexpr static const GPIOPort port = GPIOPort::portB;
-		constexpr static const GPIOPin pin = GPIOPin::pin15;
+		constexpr static const uint32_t baseAddr = GPIOB_BASE;
+		constexpr static const uint32_t pinNumber = 15;
 	};
 
 
@@ -583,9 +558,8 @@ namespace eos {
 			ltdc_HSYNC = HAL_GPIO_AF_14,
 			uart6_TX = HAL_GPIO_AF_8
 		};
-		constexpr static const GPIOPort port = GPIOPort::portC;
-		constexpr static const GPIOPin pin = GPIOPin::pin6;
-		constexpr static const GPIOMask mask = GPIOMask::mask6;
+		constexpr static const uint32_t baseAddr = GPIOC_BASE;
+		constexpr static const uint32_t pinNumber = 6;
 	};
 
 	template <>
@@ -594,9 +568,8 @@ namespace eos {
 			ltdc_G6 = HAL_GPIO_AF_14,
 			uart6_RX = HAL_GPIO_AF_8
 		};
-		constexpr static const GPIOPort port = GPIOPort::portC;
-		constexpr static const GPIOPin pin = GPIOPin::pin7;
-		constexpr static const GPIOMask mask = GPIOMask::mask7;
+		constexpr static const uint32_t baseAddr = GPIOC_BASE;
+		constexpr static const uint32_t pinNumber = 7;
 	};
 
 
@@ -606,8 +579,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			dcmi_D5 = HAL_GPIO_AF_13
 		};
-		constexpr static const GPIOPort port = GPIOPort::portD;
-		constexpr static const GPIOPin pin = GPIOPin::pin3;
+		constexpr static const uint32_t baseAddr = GPIOD_BASE;
+		constexpr static const uint32_t pinNumber = 3;
 	};
 
 	template <>
@@ -616,9 +589,8 @@ namespace eos {
 			spi3_SCK = HAL_GPIO_AF_5,
 			i2s3_SD = HAL_GPIO_AF_5
 		};
-		constexpr static const GPIOPort port = GPIOPort::portD;
-		constexpr static const GPIOPin pin = GPIOPin::pin6;
-		constexpr static const GPIOMask mask = GPIOMask::mask6;
+		constexpr static const uint32_t baseAddr = GPIOD_BASE;
+		constexpr static const uint32_t pinNumber = 6;
 	};
 
 	template <>
@@ -628,9 +600,8 @@ namespace eos {
 			usart2_CK = HAL_GPIO_AF_7,
 			spdifrx_IN0 = HAL_GPIO_AF_8
 		};
-		constexpr static const GPIOPort port = GPIOPort::portD;
-		constexpr static const GPIOPin pin = GPIOPin::pin7;
-		constexpr static const GPIOMask mask = GPIOMask::mask7;
+		constexpr static const uint32_t baseAddr = GPIOD_BASE;
+		constexpr static const uint32_t pinNumber = 7;
 	};
 
 	// PORT E ------------------------------------------------------------
@@ -639,8 +610,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_B0 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portE;
-		constexpr static const GPIOPin pin = GPIOPin::pin4;
+		constexpr static const uint32_t baseAddr = GPIOE_BASE;
+		constexpr static const uint32_t pinNumber = 4;
 	};
 
 	template <>
@@ -648,8 +619,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			dcmi_D6 = HAL_GPIO_AF_13
 		};
-		constexpr static const GPIOPort port = GPIOPort::portE;
-		constexpr static const GPIOPin pin = GPIOPin::pin5;
+		constexpr static const uint32_t baseAddr = GPIOE_BASE;
+		constexpr static const uint32_t pinNumber = 5;
 	};
 
 	template <>
@@ -657,8 +628,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			dcmi_D7 = HAL_GPIO_AF_13
 		};
-		constexpr static const GPIOPort port = GPIOPort::portE;
-		constexpr static const GPIOPin pin = GPIOPin::pin6;
+		constexpr static const uint32_t baseAddr = GPIOE_BASE;
+		constexpr static const uint32_t pinNumber = 6;
 	};
 
 	// PORT F ------------------------------------------------------------
@@ -668,8 +639,8 @@ namespace eos {
 			spi5_SCK = HAL_GPIO_AF_5,
 			uart7_TX = HAL_GPIO_AF_8
 		};
-		constexpr static const GPIOPort port = GPIOPort::portF;
-		constexpr static const GPIOPin pin = GPIOPin::pin7;
+		constexpr static const uint32_t baseAddr = GPIOF_BASE;
+		constexpr static const uint32_t pinNumber = 7;
 	};
 
 	template <>
@@ -680,20 +651,28 @@ namespace eos {
 			uart7_TX = HAL_GPIO_AF_8
 #endif
 		};
-		constexpr static const GPIOPort port = GPIOPort::portF;
-		constexpr static const GPIOPin pin = GPIOPin::pin9;
+		constexpr static const uint32_t baseAddr = GPIOF_BASE;
+		constexpr static const uint32_t pinNumber = 9;
 	};
 
 
 	// PORT G ------------------------------------------------------------
+	template <>
+	struct GPIOPinInfo<GPIOPort::portG, GPIOPin::pin6> {
+		enum class GPIOAlt: halGPIOAlt {
+		};
+		constexpr static const uint32_t baseAddr = GPIOG_BASE;
+		constexpr static const uint32_t pinNumber = 6;
+	};
+
 	template <>
 	struct GPIOPinInfo<GPIOPort::portG, GPIOPin::pin9> {
 		enum class GPIOAlt: halGPIOAlt {
 			dcmi_VSYNC = HAL_GPIO_AF_13,
 			uart6_RX = HAL_GPIO_AF_8
 		};
-		constexpr static const GPIOPort port = GPIOPort::portG;
-		constexpr static const GPIOPin pin = GPIOPin::pin9;
+		constexpr static const uint32_t baseAddr = GPIOG_BASE;
+		constexpr static const uint32_t pinNumber = 9;
 	};
 
 	template <>
@@ -704,8 +683,8 @@ namespace eos {
 			spi6_MISO = HAL_GPIO_AF_5,
 			usart6_RTS = HAL_GPIO_AF_8
 		};
-		constexpr static const GPIOPort port = GPIOPort::portG;
-		constexpr static const GPIOPin pin = GPIOPin::pin12;
+		constexpr static const uint32_t baseAddr = GPIOG_BASE;
+		constexpr static const uint32_t pinNumber = 12;
 	};
 
 	// PORT H ------------------------------------------------------------
@@ -714,8 +693,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			i2c3_SCL = HAL_GPIO_AF_4
 		};
-		constexpr static const GPIOPort port = GPIOPort::portH;
-		constexpr static const GPIOPin pin = GPIOPin::pin7;
+		constexpr static const uint32_t baseAddr = GPIOH_BASE;
+		constexpr static const uint32_t pinNumber = 7;
 	};
 
 	template <>
@@ -724,8 +703,8 @@ namespace eos {
 			i2c3_SDA = HAL_GPIO_AF_4,
 			ltdc_R2 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portH;
-		constexpr static const GPIOPin pin = GPIOPin::pin8;
+		constexpr static const uint32_t baseAddr = GPIOH_BASE;
+		constexpr static const uint32_t pinNumber = 8;
 	};
 
 	template <>
@@ -733,8 +712,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			dcmi_D0 = HAL_GPIO_AF_13
 		};
-		constexpr static const GPIOPort port = GPIOPort::portH;
-		constexpr static const GPIOPin pin = GPIOPin::pin9;
+		constexpr static const uint32_t baseAddr = GPIOH_BASE;
+		constexpr static const uint32_t pinNumber = 9;
 	};
 
 	template <>
@@ -742,8 +721,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			dcmi_D1 = HAL_GPIO_AF_13
 		};
-		constexpr static const GPIOPort port = GPIOPort::portH;
-		constexpr static const GPIOPin pin = GPIOPin::pin10;
+		constexpr static const uint32_t baseAddr = GPIOH_BASE;
+		constexpr static const uint32_t pinNumber = 10;
 	};
 
 	template <>
@@ -751,8 +730,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			dcmi_D2 = HAL_GPIO_AF_13
 		};
-		constexpr static const GPIOPort port = GPIOPort::portH;
-		constexpr static const GPIOPin pin = GPIOPin::pin11;
+		constexpr static const uint32_t baseAddr = GPIOH_BASE;
+		constexpr static const uint32_t pinNumber = 11;
 	};
 
 	template <>
@@ -760,8 +739,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			dcmi_D3 = HAL_GPIO_AF_13
 		};
-		constexpr static const GPIOPort port = GPIOPort::portH;
-		constexpr static const GPIOPin pin = GPIOPin::pin12;
+		constexpr static const uint32_t baseAddr = GPIOH_BASE;
+		constexpr static const uint32_t pinNumber = 12;
 	};
 
 	template <>
@@ -769,8 +748,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			dcmi_D4 = HAL_GPIO_AF_13
 		};
-		constexpr static const GPIOPort port = GPIOPort::portH;
-		constexpr static const GPIOPin pin = GPIOPin::pin14;
+		constexpr static const uint32_t baseAddr = GPIOH_BASE;
+		constexpr static const uint32_t pinNumber = 14;
 	};
 
 
@@ -780,9 +759,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			spi2_SCK = HAL_GPIO_AF_5
 		};
-		constexpr static const GPIOPort port = GPIOPort::portI;
-		constexpr static const GPIOPin pin = GPIOPin::pin1;
-		constexpr static const GPIOMask mask = GPIOMask::mask1;
+		constexpr static const uint32_t baseAddr = GPIOI_BASE;
+		constexpr static const uint32_t pinNumber = 1;
 	};
 
 	template <>
@@ -790,8 +768,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_VSYNC = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portI;
-		constexpr static const GPIOPin pin = GPIOPin::pin9;
+		constexpr static const uint32_t baseAddr = GPIOI_BASE;
+		constexpr static const uint32_t pinNumber = 9;
 	};
 
 	template <>
@@ -799,8 +777,16 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_HSYNC = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portI;
-		constexpr static const GPIOPin pin = GPIOPin::pin10;
+		constexpr static const uint32_t baseAddr = GPIOI_BASE;
+		constexpr static const uint32_t pinNumber = 10;
+	};
+
+	template <>
+	struct GPIOPinInfo<GPIOPort::portI, GPIOPin::pin12> {
+		enum class GPIOAlt: halGPIOAlt {
+		};
+		constexpr static const uint32_t baseAddr = GPIOI_BASE;
+		constexpr static const uint32_t pinNumber = 12;
 	};
 
 	template <>
@@ -808,8 +794,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_DOTCLK = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portI;
-		constexpr static const GPIOPin pin = GPIOPin::pin14;
+		constexpr static const uint32_t baseAddr = GPIOI_BASE;
+		constexpr static const uint32_t pinNumber = 14;
 	};
 
 	template <>
@@ -817,8 +803,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_R0 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portI;
-		constexpr static const GPIOPin pin = GPIOPin::pin15;
+		constexpr static const uint32_t baseAddr = GPIOI_BASE;
+		constexpr static const uint32_t pinNumber = 15;
 	};
 
 
@@ -828,8 +814,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_R1 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin0;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 0;
 	};
 
 	template <>
@@ -837,8 +823,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_R2 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin1;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 1;
 	};
 
 	template <>
@@ -846,8 +832,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_R3 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin2;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 2;
 	};
 
 	template <>
@@ -855,8 +841,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_R4 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin3;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 3;
 	};
 
 	template <>
@@ -864,8 +850,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_R5 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin4;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 4;
 	};
 
 	template <>
@@ -873,8 +859,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_R6 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin5;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 5;
 	};
 
 	template <>
@@ -882,8 +868,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_R7 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin6;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 6;
 	};
 
 	template <>
@@ -891,8 +877,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_G0 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin7;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 7;
 	};
 
 	template <>
@@ -900,8 +886,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_G1 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin8;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 8;
 	};
 
 	template <>
@@ -909,8 +895,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_G2 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin9;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 9;
 	};
 
 	template <>
@@ -918,8 +904,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_G3 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin10;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 10;
 	};
 
 	template <>
@@ -927,8 +913,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_G4 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin11;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 11;
 	};
 
 	template <>
@@ -936,8 +922,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_B1 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin13;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 13;
 	};
 
 	template <>
@@ -945,8 +931,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_B2 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin14;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 14;
 	};
 
 	template <>
@@ -954,8 +940,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_B3 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portJ;
-		constexpr static const GPIOPin pin = GPIOPin::pin15;
+		constexpr static const uint32_t baseAddr = GPIOJ_BASE;
+		constexpr static const uint32_t pinNumber = 15;
 	};
 
 
@@ -965,8 +951,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_G5 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portK;
-		constexpr static const GPIOPin pin = GPIOPin::pin0;
+		constexpr static const uint32_t baseAddr = GPIOK_BASE;
+		constexpr static const uint32_t pinNumber = 0;
 	};
 
 	template <>
@@ -974,8 +960,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_G6 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portK;
-		constexpr static const GPIOPin pin = GPIOPin::pin1;
+		constexpr static const uint32_t baseAddr = GPIOK_BASE;
+		constexpr static const uint32_t pinNumber = 1;
 	};
 
 	template <>
@@ -983,8 +969,16 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_G7 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portK;
-		constexpr static const GPIOPin pin = GPIOPin::pin2;
+		constexpr static const uint32_t baseAddr = GPIOK_BASE;
+		constexpr static const uint32_t pinNumber = 2;
+	};
+
+	template <>
+	struct GPIOPinInfo<GPIOPort::portK, GPIOPin::pin3> {
+		enum class GPIOAlt: halGPIOAlt {
+		};
+		constexpr static const uint32_t baseAddr = GPIOK_BASE;
+		constexpr static const uint32_t pinNumber = 3;
 	};
 
 	template <>
@@ -992,8 +986,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_B5 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portK;
-		constexpr static const GPIOPin pin = GPIOPin::pin4;
+		constexpr static const uint32_t baseAddr = GPIOK_BASE;
+		constexpr static const uint32_t pinNumber = 4;
 	};
 
 	template <>
@@ -1001,8 +995,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_B6 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portK;
-		constexpr static const GPIOPin pin = GPIOPin::pin5;
+		constexpr static const uint32_t baseAddr = GPIOK_BASE;
+		constexpr static const uint32_t pinNumber = 5;
 	};
 
 	template <>
@@ -1010,8 +1004,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_B7 = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portK;
-		constexpr static const GPIOPin pin = GPIOPin::pin6;
+		constexpr static const uint32_t baseAddr = GPIOK_BASE;
+		constexpr static const uint32_t pinNumber = 6;
 	};
 
 	template <>
@@ -1019,8 +1013,8 @@ namespace eos {
 		enum class GPIOAlt: halGPIOAlt {
 			ltdc_DE = HAL_GPIO_AF_14
 		};
-		constexpr static const GPIOPort port = GPIOPort::portK;
-		constexpr static const GPIOPin pin = GPIOPin::pin7;
+		constexpr static const uint32_t baseAddr = GPIOK_BASE;
+		constexpr static const uint32_t pinNumber = 7;
 	};
 }
 

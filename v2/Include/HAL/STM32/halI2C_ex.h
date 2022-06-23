@@ -132,17 +132,17 @@ namespace eos {
 			}
 	};
 
-	template <typename sclPin_, typename sdaPin_>
-	using I2C_1 = I2CModule<I2CChannel::channel1, sclPin_, sdaPin_>;
+	template <typename sclPin_, typename sdaPin_, bool initPins_ = true>
+	using I2C_1 = I2CModule<I2CChannel::channel1, sclPin_, sdaPin_, initPins_>;
 
-	template <typename sclPin_, typename sdaPin_>
-	using I2C_2 = I2CModule<I2CChannel::channel2, sclPin_, sdaPin_>;
+	template <typename sclPin_, typename sdaPin_, bool initPins_ = true>
+	using I2C_2 = I2CModule<I2CChannel::channel2, sclPin_, sdaPin_, initPins_>;
 
-	template <typename sclPin_, typename sdaPin_>
-	using I2C_3 = I2CModule<I2CChannel::channel3, sclPin_, sdaPin_>;
+	template <typename sclPin_, typename sdaPin_, bool initPins_ = true>
+	using I2C_3 = I2CModule<I2CChannel::channel3, sclPin_, sdaPin_, initPins_>;
 
-	template <typename sclPin_, typename sdaPin_>
-	using I2C_4 = I2CModule<I2CChannel::channel4, sclPin_, sdaPin_>;
+	template <typename sclPin_, typename sdaPin_, bool initPins_ = true>
+	using I2C_4 = I2CModule<I2CChannel::channel4, sclPin_, sdaPin_, initPins_>;
 }
 
 

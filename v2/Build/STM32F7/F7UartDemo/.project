@@ -241,9 +241,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/halGPIOTpl.h</name>
+			<name>Inc/Framework/EOS/HAL/halGPIO_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIOTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO_ex.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/halINT.h</name>
@@ -266,9 +266,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halUART.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/halUARTTpl.h</name>
+			<name>Inc/Framework/EOS/HAL/halUART_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halUARTTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halUART_ex.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/OSAL/osalHeap.h</name>
@@ -526,9 +526,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halGPIOTpl.h</name>
+			<name>Inc/Framework/EOS/HAL/STM32/halGPIO_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIOTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO_ex.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/HAL/STM32/halINT.h</name>
@@ -551,9 +551,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halUART.h</locationURI>
 		</link>
 		<link>
-			<name>Inc/Framework/EOS/HAL/STM32/halUARTTpl.h</name>
+			<name>Inc/Framework/EOS/HAL/STM32/halUART_ex.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halUARTTpl.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halUART_ex.h</locationURI>
 		</link>
 		<link>
 			<name>Inc/Framework/EOS/System/Collections/eosFIFOContainer.h</name>

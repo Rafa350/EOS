@@ -63,9 +63,17 @@ namespace eos {
 		public:
 			constexpr static const GPIOPort port = port_;
 			constexpr static const GPIOPin pin = pin_;
-            constexpr static const uint32_t mask = 1u << (uint32_t)pin_;
+
+        private:
+            constexpr static const uint32_t _baseAddr = (uint32_t) port_;
+            constexpr static const uint32_t _pinNumber = (uint32_t) pin_;
 
         public:
+			GPIOPinAdapter() = default;
+
+			GPIOPinAdapter(const GPIOPinAdapter &) = delete;
+			GPIOPinAdapter(const GPIOPinAdapter &&) = delete;
+
             inline static void initOutput(GPIOSpeed speed, GPIODriver driver, GPIOState state) {
                 halGPIOOptions options =
                     HAL_GPIO_MODE_OUTPUT_PP |
@@ -80,23 +88,23 @@ namespace eos {
             }
 
             inline static void set() {
-                halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(port_);
-                regs->LATxSET = mask;
+                halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(_baseAddr);
+                regs->LATxSET = 1 << _pinNumber;
             }
 
             inline static void clear() {
-                halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(port_);
-                regs->LATxCLR = mask;
+                halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(_baseAddr);
+                regs->LATxCLR = 1 << _pinNumber;
             }
 
             inline static void toggle() {
-                halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(port_);
-                regs->LATxINV = mask;
+                halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(_baseAddr);
+                regs->LATxINV = 1 << _pinNumber;
             }
 
             inline static bool read() {
-                halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(port_);
-                return (regs->PORTx & mask) != 0;
+                halGPIORegisters *regs = reinterpret_cast<halGPIORegisters*>(_baseAddr);
+                return (regs->PORTx & (1 << _pinNumber)) != 0;
             }
 
             inline static void write(bool value) {
@@ -105,6 +113,9 @@ namespace eos {
                 else
                     clear();
             }
+
+			GPIOPinAdapter& operator = (const GPIOPinAdapter &) = delete;
+			GPIOPinAdapter& operator = (const GPIOPinAdapter &&) = delete;
 
 			inline GPIOPinAdapter& operator = (bool s) {
                 write(s);

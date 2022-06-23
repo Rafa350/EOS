@@ -6,7 +6,7 @@
 //
 #include "HAL/hal.h"
 #include "HAL/STM32/halUART.h"
-#include "HAL/STM32/halGPIOTpl.h"
+#include "HAL/STM32/halGPIO_ex.h"
 
 
 namespace eos {
@@ -47,8 +47,20 @@ namespace eos {
 		public:
 			constexpr static const UARTChannel channel = channel_;
 
+		private:
+			UARTModule() = default;
+			UARTModule(const UARTModule &) = delete;
+			UARTModule(const UARTModule &&) = delete;
+			UARTModule & operator = (const UARTModule &) = delete;
+			UARTModule & operator = (const UARTModule &&) = delete;
+
 		public:
-			inline void initialize(const halUARTSettings& settings) {
+			inline static auto & instance() {
+				static UARTModule module;
+				return module;
+			}
+
+			inline void initialize(const halUARTSettings &settings) {
 				_handler = halUARTInitialize(&_data, &settings);
 			}
 
@@ -56,22 +68,22 @@ namespace eos {
 				halUARTDeinitialize(_handler);
 			}
 
-			template <GPIOPort port_, GPIOPin pin_>
-			inline static void setTXPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+			template <typename pinAdapter_>
+			inline static void initTXPin() {
 				if constexpr (channel_ == UARTChannel::channel1)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::uart1_TX);
+						pinAdapter_::GPIOAlt::uart1_TX);
 			}
 
-			template <GPIOPort port_, GPIOPin pin_>
-			inline static void setRXPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+			template <typename pinAdapter_>
+			inline static void initRXPin() {
 				if constexpr (channel_ == UARTChannel::channel1)
-					pinAdapter.initAlt(
+					pinAdapter_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::uart1_RX);
+						pinAdapter_::GPIOAlt::uart1_RX);
 			}
 
 			inline void send(uint8_t data) const {

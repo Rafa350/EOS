@@ -139,7 +139,7 @@ typedef struct {
 #define HAL_GPIO_MODE_bits        0b1111
 #define HAL_GPIO_MODE_mask        (HAL_GPIO_MODE_bits << HAL_GPIO_MODE_pos)
 
-#define HAL_GPIO_MODE_INPUT       (0 << HAL_GPIO_MODE_pos) // -Entrada digital (Sempre es entrada
+#define HAL_GPIO_MODE_INPUT       (0 << HAL_GPIO_MODE_pos) // -Entrada digital
 #define HAL_GPIO_MODE_OUTPUT_PP   (1 << HAL_GPIO_MODE_pos) // -Sortida push-pull
 #define HAL_GPIO_MODE_OUTPUT_OD   (2 << HAL_GPIO_MODE_pos) // -Sortida open-drain
 #define HAL_GPIO_MODE_ALT_PP      (3 << HAL_GPIO_MODE_pos) // -Sortida alternativa push-pull

@@ -5,7 +5,7 @@
 /// EOS includes
 //
 #include "eos.h"
-#include "HAL/halUARTTpl.h"
+#include "HAL/halUART_ex.h"
 #include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
 #include "Services/eosService.h"
