@@ -52,7 +52,6 @@
             <itemPath>../../../Include/Services/eosI2CMasterService.h</itemPath>
             <itemPath>../../../Include/Services/eosDigInputService.h</itemPath>
             <itemPath>../../../Include/Services/eosAppLoopService.h</itemPath>
-            <itemPath>../../../Include/Services/eosTerminalService.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="System" projectFiles="true">
             <logicalFolder name="f3" displayName="Collections" projectFiles="true">
@@ -118,7 +117,6 @@
             <itemPath>../../../Source/Services/eosAppLoopService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosService.cpp</itemPath>
             <itemPath>../../../Source/Services/eosI2CMasterService.cpp</itemPath>
-            <itemPath>../../../Source/Services/eosTerminalService.cpp</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="StartUp" projectFiles="true">
             <itemPath>../../../Source/StartUp/PIC32/main.cpp</itemPath>
@@ -248,7 +246,8 @@
         <property key="exclude-floating-point-library" value="true"/>
         <property key="expand-macros" value="false"/>
         <property key="extra-include-directories-for-assembler" value=""/>
-        <property key="extra-include-directories-for-preprocessor" value=""/>
+        <property key="extra-include-directories-for-preprocessor"
+                  value="..\..\..\Demo\I2CDisplayDemo\Include;..\..\..\Include"/>
         <property key="false-conditionals" value="false"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>

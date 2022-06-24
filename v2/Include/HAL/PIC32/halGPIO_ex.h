@@ -57,6 +57,11 @@ namespace eos {
         noChange = HAL_GPIO_INIT_NOCHANGE
     };
 
+    template <GPIOPort port_, GPIOPin pin_>
+	struct GPIOPinInfo {
+		static const uint32_t baseAddr;
+		static const uint32_t pinNumber;
+	};
 
     template <GPIOPort port_, GPIOPin pin_>
     class GPIOPinAdapter {
@@ -65,8 +70,8 @@ namespace eos {
 			constexpr static const GPIOPin pin = pin_;
 
         private:
-            constexpr static const uint32_t _baseAddr = (uint32_t) port_;
-            constexpr static const uint32_t _pinNumber = (uint32_t) pin_;
+            constexpr static const uint32_t _baseAddr = GPIOPinInfo<port_, pin_>::baseAddr;
+            constexpr static const uint32_t _pinNumber = GPIOPinInfo<port_, pin_>::pinNumber;
 
         public:
 			GPIOPinAdapter() = default;
@@ -76,9 +81,8 @@ namespace eos {
 
             inline static void initOutput(GPIOSpeed speed, GPIODriver driver, GPIOState state) {
                 halGPIOOptions options =
-                    HAL_GPIO_MODE_OUTPUT_PP |
                     halGPIOOptions(speed) |
-                    halGPIOOptions(driver) |
+                    (driver == GPIODriver::openDrain ? HAL_GPIO_MODE_OUTPUT_OD : HAL_GPIO_MODE_OUTPUT_PP) |
                     halGPIOOptions(state);
                 halGPIOInitializePin(halGPIOPort(port_), halGPIOPin(pin_), options, HAL_GPIO_AF_NONE);
             }
@@ -257,6 +261,334 @@ namespace eos {
 	typedef GPIOPinAdapter<GPIOPort::portG, GPIOPin::pin15> GPIO_G15;
 #endif
 
+
+    // PORT A ------------------------------------------------------------
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin0> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 0;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin1> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 1;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin2> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 2;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin3> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 3;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin4> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 4;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin5> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 5;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin6> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 6;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin7> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 7;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin8> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 8;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin9> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 9;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin10> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 10;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin11> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 11;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin12> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 12;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin13> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 13;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin14> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 14;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portA, GPIOPin::pin15> {
+		constexpr static const uint32_t baseAddr = _PORTA_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 15;
+	};
+
+    // PORT B ------------------------------------------------------------
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin0> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 0;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin1> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 1;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin2> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 2;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin3> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 3;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin4> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 4;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin5> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 5;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin6> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 6;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin7> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 7;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin8> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 8;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin9> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 9;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin10> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 10;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin11> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 11;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin12> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 12;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin13> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 13;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin14> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 14;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portB, GPIOPin::pin15> {
+		constexpr static const uint32_t baseAddr = _PORTB_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 15;
+	};
+
+    // PORT D ------------------------------------------------------------
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin0> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 0;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin1> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 1;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin2> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 2;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin3> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 3;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin4> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 4;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin5> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 5;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin6> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 6;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin7> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 7;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin8> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 8;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin9> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 9;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin10> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 10;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin11> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 11;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin12> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 12;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin13> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 13;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin14> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 14;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin15> {
+		constexpr static const uint32_t baseAddr = _PORTD_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 15;
+	};
+
+    // PORT F ------------------------------------------------------------
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin0> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 0;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin1> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 1;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin2> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 2;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin3> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 3;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin4> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 4;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin5> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 5;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin6> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 6;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin7> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 7;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin8> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 8;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin9> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 9;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin10> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 10;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin11> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 11;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin12> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 12;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin13> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 13;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin14> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 14;
+	};
+	template <>
+	struct GPIOPinInfo<GPIOPort::portF, GPIOPin::pin15> {
+		constexpr static const uint32_t baseAddr = _PORTF_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pinNumber = 15;
+	};
 }
 
 
