@@ -56,8 +56,8 @@ void halDMA2DDeinitialize();
 
 void halDMA2DConfigureCLUT();
 
-void halDMA2DStartFill(void* dst, int width, int height, int offset, halDMA2DOptions options, uint32_t color);
-void halDMA2DStartCopy(void* dst, int width, int height, int offset, halDMA2DOptions options, const void* src, int srcOffset);
+void halDMA2DStartFill(void *dst, int width, int height, int offset, halDMA2DOptions options, uint32_t color);
+void halDMA2DStartCopy(void *dst, int width, int height, int offset, halDMA2DOptions options, const void *src, int srcOffset);
 bool halDMA2DWaitForFinish();
 
 void halDMA2DInterruptHandler();

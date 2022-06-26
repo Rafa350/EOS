@@ -1,5 +1,5 @@
-#ifndef __PIC32_halI2CTpl__
-#define __PIC32_halI2CTpl__
+#ifndef __PIC32_halI2C_ex__
+#define __PIC32_halI2C_ex__
 
 
 namespace eos {
@@ -12,23 +12,33 @@ namespace eos {
         channel5 = HAL_I2C_CHANNEL_5
     };
 
-    template <I2cChannel channel>
+    template <I2CChannel channel_>
+    struct I2CModuleInfo {
+        static const uint32_t baseAddr;
+    };
+
+    template <I2CChannel channel_, typename sclPin_, typename sdaPin_, bool initPins_ = true>
     class I2CModule {
 		private:
 			constexpr static const unsigned _defaultBlockTime = 1000;
 
-		private:
-			halI2CHandler _handler;
-			halI2CData _data;
-
 		public:
 			constexpr static const I2CChannel channel = channel_;
 
+        private:
+            constexpr static const uint32_t _baseAddr = I2CModuleInfo<channel_>::baseAddr;
+
+        private:
+			halI2CHandler _handler;
+			halI2CData _data;
+
 		private:
 			I2CModule() = default;
+
 			I2CModule(const I2CModule &) = delete;
 			I2CModule(const I2CModule &&) = delete;
-			I2CModule & operator = (const I2CModule &) = delete;
+
+            I2CModule & operator = (const I2CModule &) = delete;
 			I2CModule & operator = (const I2CModule &&) = delete;
 
 		public:
@@ -66,59 +76,33 @@ namespace eos {
 			}
 
 			inline static void initSCLPin() {
-				if constexpr (channel_ == I2CChannel::channel1)
-					sclPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						sclPin_::GPIOAlt::i2c1_SCL);
-
-				if constexpr (channel_ == I2CChannel::channel2)
-					sclPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						sclPin_::GPIOAlt::i2c2_SCL);
-
-				if constexpr (channel_ == I2CChannel::channel3)
-					sclPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						sclPin_::GPIOAlt::i2c3_SCL);
-
-				if constexpr (channel_ == I2CChannel::channel4)
-					sclPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						sclPin_::GPIOAlt::i2c4_SCL);
 			}
 
 			inline static void initSDAPin() {
-				if constexpr (channel_ == I2CChannel::channel1)
-					sdaPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						sdaPin_::GPIOAlt::i2c1_SDA);
-
-				if constexpr (channel_ == I2CChannel::channel2)
-					sdaPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						sdaPin_::GPIOAlt::i2c2_SDA);
-
-				if constexpr (channel_ == I2CChannel::channel3)
-					sdaPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						sdaPin_::GPIOAlt::i2c3_SDA);
-
-				if constexpr (channel_ == I2CChannel::channel4)
-					sdaPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
-						sdaPin_::GPIOAlt::i2c4_SDA);
 			}
+    };
+
+
+    template <typename sclPin_, typename sdaPin_, bool initPins_ = true>
+	using I2C_1 = I2CModule<I2CChannel::channel1, sclPin_, sdaPin_, initPins_>;
+
+	template <typename sclPin_, typename sdaPin_, bool initPins_ = true>
+	using I2C_2 = I2CModule<I2CChannel::channel2, sclPin_, sdaPin_, initPins_>;
+
+
+    // I2C 1
+    template <>
+    struct I2CModuleInfo<HAL_I2C_CHANNEL_1> {
+        static const uint32_t baseAddr = I2C1_BASE_ADDRESS;
+    };
+
+    // I2C 2
+    template <>
+    struct I2CModuleInfo<HAL_I2C_CHANNEL_2> {
+        static const uint32_t baseAddr = I2C2_BASE_ADDRESS;
     };
 }
 
 
-#endif // __PIC32_halI2CTpl__
+#endif // __PIC32_halI2C_ex__
 

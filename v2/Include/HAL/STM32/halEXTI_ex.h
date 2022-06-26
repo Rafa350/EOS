@@ -60,13 +60,35 @@ namespace eos {
 		public:
 			constexpr static const EXTILine line = line_;
 
+		private:
+			EXTIAdapter() = default;
+			EXTIAdapter(const EXTIAdapter &) = delete;
+			EXTIAdapter(const EXTIAdapter &&) = delete;
+			EXTIAdapter & operator = (const EXTIAdapter &) = delete;
+			EXTIAdapter & operator = (const EXTIAdapter &&) = delete;
+
 		public:
-			inline static void init(EXTIPort port, EXTIMode mode, EXTITrigger trigger) {
-				halEXTIInitializeLine(halEXTILine(line), halEXTIOptions(port) | halEXTIOptions(mode) | halEXTIOptions(trigger));
+			inline static auto & instance() {
+				static EXTIAdapter inst;
+				return inst;
+			}
+
+			inline static void initialize(EXTIPort port, EXTIMode mode, EXTITrigger trigger) {
+				halEXTIInitializeLine(halEXTILine(line_), halEXTIOptions(port) | halEXTIOptions(mode) | halEXTIOptions(trigger));
 			}
 
 			inline static void setInterruptFunction(halEXTIInterruptFunction function, void *params) {
-			    halEXTISetInterruptFunction(halEXTILine(line), function, params);
+			    halEXTISetInterruptFunction(halEXTILine(line_), function, params);
+			}
+
+			inline static void enableInterrupt() {
+				__set_bit_pos(EXTI->IMR, halEXTILine(line_));
+			}
+
+			inline static bool disableInterrupt() {
+				bool state = __check_bit_pos(EXTI->IMR, halEXTILine(line_));
+				__clear_bit_pos(EXTI->IMR, halEXTILine(line_));
+				return state;
 			}
 	};
 

@@ -13,8 +13,8 @@
 /// \param   info: Informacio d'inicialitzacio.
 ///
 I2CHandler halI2CMasterInitialize(
-    I2CData* data,
-    const I2CMasterSettings* settings) {
+    I2CData *data,
+    const I2CMasterSettings *settings) {
 
     I2CHandler handler = data;
 

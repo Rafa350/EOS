@@ -14,7 +14,14 @@ using namespace app;
 LedService::LedService(
 	Application *application) :
 
-	AppLoopService(application) {
+	AppLoopService(application)
+#ifdef EXIST_LEDS_LED1
+	, _pinLED1(PinLED1::instance())
+#endif
+#ifdef EXISTS_LEDS_LED2
+	, _pinLED2(PinLED2::instance())
+#endif
+{
 }
 
 
@@ -24,10 +31,10 @@ LedService::LedService(
 void LedService::onSetup() {
 
 #ifdef EXIST_LEDS_LED1
-	_led1.initOutput(GPIOSpeed::low, GPIODriver::pushPull);
+	_pinLED1.initOutput(GPIOSpeed::low, GPIODriver::pushPull);
 #endif
 #ifdef EXIST_LEDS_LED2
-	_led2.initOutput(GPIOSpeed::low, GPIODriver::pushPull);
+	_pinLED2.initOutput(GPIOSpeed::low, GPIODriver::pushPull);
 #endif
 }
 
@@ -40,10 +47,10 @@ void LedService::onLoop() {
 	while (true) {
 
 #ifdef EXIST_LEDS_LED1
-		_led1.toggle();
+		_pinLED1.toggle();
 #endif
 #ifdef EXIST_LEDS_LED2
-		_led2.toggle();
+		_pinLED2.toggle();
 #endif
 
 		Task::delay(500);

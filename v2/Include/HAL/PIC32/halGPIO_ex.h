@@ -75,9 +75,16 @@ namespace eos {
 
         public:
 			GPIOPinAdapter() = default;
-
-			GPIOPinAdapter(const GPIOPinAdapter &) = delete;
+            GPIOPinAdapter(const GPIOPinAdapter &) = delete;
 			GPIOPinAdapter(const GPIOPinAdapter &&) = delete;
+			GPIOPinAdapter& operator = (const GPIOPinAdapter &) = delete;
+			GPIOPinAdapter& operator = (const GPIOPinAdapter &&) = delete;
+
+        public:
+            /*inline static auto & instance() {
+                static GPIOPinAdapter pinAdapter;
+                return pinAdapter;
+            }*/
 
             inline static void initOutput(GPIOSpeed speed, GPIODriver driver, GPIOState state) {
                 halGPIOOptions options =
@@ -117,9 +124,6 @@ namespace eos {
                 else
                     clear();
             }
-
-			GPIOPinAdapter& operator = (const GPIOPinAdapter &) = delete;
-			GPIOPinAdapter& operator = (const GPIOPinAdapter &&) = delete;
 
 			inline GPIOPinAdapter& operator = (bool s) {
                 write(s);

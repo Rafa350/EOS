@@ -38,6 +38,10 @@ TouchPadDriver_FT5336::TouchPadDriver_FT5336():
 	_padWidth(TOUCHPAD_PAD_WIDTH),
 	_padHeight(TOUCHPAD_PAD_HEIGHT),
 	_orientation(TouchPadOrientation::normal),
+#ifdef TOUCHPAD_INT_PORT
+	_extiINT(ExtiINT::instance()),
+	_pinINT(PinINT::instance()),
+#endif
 	_i2c(I2C::instance()) {
 }
 
@@ -114,7 +118,7 @@ int TouchPadDriver_FT5336::getTouchCount() {
 /// \return   True si s'ha detectat contacte.
 ///
 bool TouchPadDriver_FT5336::getState(
-	TouchPadState& state) {
+	TouchPadState &state) {
 
 	state.maxPoints = FT5336_MAX_DETECTABLE_TOUCH;
 	state.numPoints = readRegister(FT5336_TD_STAT_REG) & FT5336_TD_STAT_MASK;
@@ -296,9 +300,8 @@ void TouchPadDriver_FT5336::initializeInterface() {
 	// Inicialitza el pin d'interrupcio
 	//
 #ifdef TOUCHPAD_INT_PORT
-	PinINT::initInput(GPIOSpeed::fast, GPIOPull::up);
-
-	ExtiINT::init(EXTIPort(TOUCHPAD_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
+	_pinINT.initInput(GPIOSpeed::fast, GPIOPull::up);
+	_extiINT.initialize(EXTIPort(TOUCHPAD_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
 
 	INT::setInterruptVectorPriority(INTVector(TOUCHPAD_INT_IRQ), INTPriority(TOUCHPAD_INT_PRIORITY), INTSubPriority(TOUCHPAD_INT_SUBPRIORITY));
 	INT::enableInterruptVector(INTVector(TOUCHPAD_INT_IRQ));

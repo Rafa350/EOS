@@ -56,6 +56,7 @@ namespace eos {
             typedef Queue<Command> CommandQueue;
             typedef Vector<DigOutput*> DigOutputList;
             typedef DigOutputList::Iterator DigOutputIterator;
+
         public:
             struct Settings {       // Informacio d'inicialitzacio del servei
                 halTMRHandler hTimer;  // -Temporitzador. Si es NULL utilitza el tick del sistema

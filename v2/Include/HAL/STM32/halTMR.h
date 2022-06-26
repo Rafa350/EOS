@@ -94,13 +94,13 @@ typedef struct {
 } halTMRSettings;
 
 
-halTMRHandler halTMRInitialize(halTMRData* data, const halTMRSettings* settings);
+halTMRHandler halTMRInitialize(halTMRData *data, const halTMRSettings *settings);
 void halTMRDeinitialize(halTMRHandler handler);
 
 void halTMRStartTimer(halTMRHandler handler);
 void halTMRStopTimer(halTMRHandler handler);
 
-void halTMRSetInterruptFunction(halTMRHandler handler, halTMRInterruptFunction function, void* params);
+void halTMRSetInterruptFunction(halTMRHandler handler, halTMRInterruptFunction function, void *params);
 void halTMRInterruptHandler(halTMRHandler handler);
 
 void halTMREnableInterrupts(halTMRHandler handler, uint32_t events);

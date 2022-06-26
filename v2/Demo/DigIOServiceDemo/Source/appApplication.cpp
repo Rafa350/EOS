@@ -23,7 +23,6 @@ halTMRData digInputTimer;
 halTMRData digOutputTimer;
 
 
-
 /// ----------------------------------------------------------------------
 /// \brief    Constructor del objecte.
 ///
@@ -36,7 +35,6 @@ MyApplication::MyApplication():
     , sw3EventCallback(this, &MyApplication::sw3EventHandler)
 #endif
 {
-
 }
 
 
@@ -148,6 +146,7 @@ void MyApplication::onInitialize() {
     // Inicialitza la sortida corresponent al led LED1
     //
 #ifdef EXIST_LEDS_LED1
+
     halGPIOInitializePin(LEDS_LED1_PORT, LEDS_LED1_PIN,
         HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
 

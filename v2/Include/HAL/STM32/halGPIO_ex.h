@@ -100,14 +100,22 @@ namespace eos {
 			using GPIOAlt = typename GPIOPinInfo<port_, pin_>::GPIOAlt;
 
 		private:
-			constexpr static const uint32_t _baseAddr = GPIOPinInfo<port_, pin_>::baseAddr;
-			constexpr static const uint32_t _pinNumber = GPIOPinInfo<port_, pin_>::pinNumber;
+			using PinInfo = GPIOPinInfo<port_, pin_>;
+			constexpr static const uint32_t _baseAddr = PinInfo::baseAddr;
+			constexpr static const uint32_t _pinNumber = PinInfo::pinNumber;
 
-		public:
+		private:
 			GPIOPinAdapter() = default;
-
 			GPIOPinAdapter(const GPIOPinAdapter &) = delete;
 			GPIOPinAdapter(const GPIOPinAdapter &&) = delete;
+			GPIOPinAdapter & operator = (const GPIOPinAdapter &) = delete;
+			GPIOPinAdapter & operator = (const GPIOPinAdapter &&) = delete;
+
+		public:
+			inline static auto & instance() {
+				static GPIOPinAdapter inst;
+				return inst;
+			}
 
 			inline static void initInput(GPIOSpeed speed, GPIOPull pull = GPIOPull::none) {
 				halGPIOOptions options =
@@ -176,9 +184,6 @@ namespace eos {
 				GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_baseAddr);
 				regs->BSRR = 1 << (_pinNumber + (s ? 0 : 16));
 			}
-
-			GPIOPinAdapter& operator = (const GPIOPinAdapter &) = delete;
-			GPIOPinAdapter& operator = (const GPIOPinAdapter &&) = delete;
 
 			/// \brief Operator '='. Assign a state to pin.
 			/// \param b: State to assign.

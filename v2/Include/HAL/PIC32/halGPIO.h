@@ -218,10 +218,10 @@ typedef struct {                  // Parametres d'inicialitzacio d'un port
     ((halGPIORegisters*)port)->PORTx;
 
 
-void halGPIOInitializePins(const halGPIOPinSettings* settings, int count);
+void halGPIOInitializePins(const halGPIOPinSettings *settings, int count);
 void halGPIOInitializePin(halGPIOPort port, halGPIOPin pin, halGPIOOptions options, halGPIOAlt alt);
 
-void halGPIOInitializePorts(const halGPIOPortSettings* settings, int count);
+void halGPIOInitializePorts(const halGPIOPortSettings *settings, int count);
 void halGPIOInitializePort(halGPIOPort port, halGPIOMask mask, halGPIOOptions options, halGPIOAlt alt);
 
 

@@ -117,7 +117,7 @@ static void enableDeviceClock(
 /// \param    device: El dispositiu.
 ///
 static void disableDeviceClock(
-	TIM_TypeDef* device) {
+	TIM_TypeDef *device) {
 
 	__VERIFY_DEVICE(device);
 
@@ -191,7 +191,7 @@ static void disableDeviceClock(
 /// \return   El handler del temporitzador.
 ///
 halTMRHandler halTMRInitialize(
-	halTMRData* data,
+	halTMRData *data,
 	const halTMRSettings *settings) {
 
 	eosAssert(data !=NULL);

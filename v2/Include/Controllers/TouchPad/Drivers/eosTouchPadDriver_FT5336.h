@@ -268,6 +268,10 @@ namespace eos {
 			int _padWidth;
 			int _padHeight;
 			TouchPadOrientation _orientation;
+#ifdef TOUCHPAD_INT_PORT
+			ExtiINT &_extiINT;
+			PinINT &_pinINT;
+#endif
 			I2C &_i2c;
 
 		private:
