@@ -89,7 +89,7 @@ void halCNInitializeLine(CNLine line, CNOptions options) {
 /// \param    count: Numero de linies en la llista.
 ///
 void halCNInitializeLines(
-    const CNInitializeLineInfo* info,
+    const CNInitializeLineInfo *info,
     uint32_t count) {
 
 	eosAssert(info != NULL);

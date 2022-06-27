@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HAL/halGPIO.h"
+#include "HAL2/halGPIO.h"
 #include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/Collections/eosVector.h"
@@ -122,20 +122,14 @@ namespace eos {
                 pulse
             };
         public:
-            struct Settings {
-                halGPIOPort port;
-                halGPIOPin pin;
-            };
-
             DigOutputService *_service;
-            halGPIOPort _port;
-            halGPIOPin _pin;
+            GPIO _gpio;
             State _state;
             unsigned _delayCnt;
             unsigned _widthCnt;
 
         public:
-            DigOutput(DigOutputService *service, const Settings &settings);
+            DigOutput(DigOutputService *service, const GPIO &gpio);
             ~DigOutput();
 
             inline DigOutputService* getService() const {

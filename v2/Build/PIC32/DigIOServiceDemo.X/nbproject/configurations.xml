@@ -24,14 +24,20 @@
               <itemPath>../../../Include/HAL/PIC32/halCN.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halINT.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
-              <itemPath>../../../Include/HAL/PIC32/halGPIO_ex.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
             <itemPath>../../../Include/HAL/hal.h</itemPath>
-            <itemPath>../../../Include/HAL/halGPIO_ex.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f6" displayName="HAL2" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Include/HAL2/PIC32/halGPIO.h</itemPath>
+              <itemPath>../../../Include/HAL2/PIC32/halCN.h</itemPath>
+            </logicalFolder>
+            <itemPath>../../../Include/HAL2/hal.h</itemPath>
+            <itemPath>../../../Include/HAL2/halGPIO.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
@@ -96,6 +102,12 @@
               <itemPath>../../../Source/HAL/PIC32/halCN.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halCNInterruptWrapper.S</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halINT.c</itemPath>
+            </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="f6" displayName="HAL2" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Source/HAL2/PIC32/halGPIO.cpp</itemPath>
+              <itemPath>../../../Source/HAL2/PIC32/halCN.cpp</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
@@ -168,6 +180,7 @@
     <Elem>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source</Elem>
     <Elem>../../../Source/StartUp/PIC32</Elem>
     <Elem>.</Elem>
+    <Elem>../../../Source/HAL2/PIC32</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

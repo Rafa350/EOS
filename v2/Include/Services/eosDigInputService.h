@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HAL/halGPIO.h"
+#include "HAL2/halGPIO.h"
 #include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
@@ -67,18 +67,10 @@ namespace eos {
                 polling,             // -Polling
                 interrupt            // -Interrupcio
             };
-            struct Settings {        // Parametres de configuracio de l'entrada.
-                halGPIOPort port;               // -El port
-                halGPIOPin pin;                 // -El pin
-                ScanMode scanMode;              // Modus d'escaneig de la entrada
-                IEventCallback *eventCallback;  // Funcio callback
-                void *eventParam;               // Parametres
-            };
 
         private:
             DigInputService *_service;
-            halGPIOPort _port;
-            halGPIOPin _pin;
+            GPIO _gpio;
             ScanMode _scanMode;
             IEventCallback *_eventCallback;
             void *_eventParam;
@@ -87,7 +79,7 @@ namespace eos {
             bool _edge;
 
         public:
-            DigInput(DigInputService *service, const Settings &settings);
+            DigInput(DigInputService *service, const GPIO &gpio);
             ~DigInput();
 
             inline DigInputService* getService() const {
@@ -96,6 +88,15 @@ namespace eos {
 
             inline bool read() const {
                 return _service->read(this);
+            }
+
+            inline void setScanMode(ScanMode scanMode) {
+                _scanMode = scanMode;
+            }
+
+            inline void setCallback(IEventCallback *callback, void *param) {
+                _eventCallback = callback;
+                _eventParam = param;
             }
 
         friend DigInputService;

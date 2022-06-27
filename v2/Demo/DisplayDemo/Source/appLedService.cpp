@@ -14,9 +14,9 @@ LedService::LedService(
 	Application *application) :
 
 	 AppLoopService(application),
-	_pinLED1(PinLED1::instance())
+	_gpioLED1(LEDS_LED1_PORT, LEDS_LED1_PIN)
 #ifdef EXISTS_LEDS_LED2
-	, _pinLED2(PinLED2::instance())
+	, _gpioLED2(LEDS_LED2_PORT, LEDS_LED2_PIN)
 #endif
 {
 }
@@ -28,10 +28,12 @@ LedService::LedService(
 void LedService::onSetup() {
 
 #ifdef EXIST_LEDS_LED1
-	_pinLED1.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR);
+	_gpioLED1.initialize(GPIOMode::output);
+	_gpioLED1.set();
 #endif
 #ifdef EXIST_LEDS_LED2
-	_pinLED2.initialize(HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_SET);
+	_gpioLED2.initialize(GPIOMode::output);
+	_gpioLED2.set();
 #endif
 }
 
@@ -44,10 +46,10 @@ void LedService::onLoop() {
 	while (true) {
 
 #ifdef EXIST_LEDS_LED1
-		_pinLED1.toggle();
+		_gpioLED1.toggle();
 #endif
 #ifdef EXIST_LEDS_LED2
-		_pinLED2.toggle();
+		_gpioLED2.toggle();
 #endif
 
 		Task::delay(500);

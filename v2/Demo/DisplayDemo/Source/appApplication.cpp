@@ -11,7 +11,6 @@ using namespace app;
 /// \brief Contructor.
 ///
 MyApplication::MyApplication():
-
 	eos::Application() {
 
 	ledService = new LedService(this);

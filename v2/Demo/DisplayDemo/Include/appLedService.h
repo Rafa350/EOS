@@ -6,7 +6,7 @@
 //
 #include "eos.h"
 #include "Services/eosAppLoopService.h"
-#include "HAL/halGPIO_ex.h"
+#include "HAL2/halGPIO.h"
 
 
 namespace eos {
@@ -20,12 +20,10 @@ namespace app {
 	class LedService: public eos::AppLoopService {
 		private:
 #ifdef EXIST_LEDS_LED1
-			typedef eos::GPIOPinAdapter<eos::GPIOPort(LEDS_LED1_PORT), eos::GPIOPin(LEDS_LED1_PIN)> PinLED1;
-			PinLED1 &_pinLED1;
+			eos::GPIO _gpioLED1;
 #endif
 #ifdef EXIST_LEDS_LED2
-			typedef eos::GPIOPinAdapter<eos::GPIOPort(LEDS_LED2_PORT), eos::GPIOPin(LEDS_LED2_PIN)> PinLED2;
-			PinLED2 &_pinLED2;
+			eos::GPIO _gpioLED2;
 #endif
 
 		public:

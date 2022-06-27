@@ -24,6 +24,7 @@
                 <sourceRootElem>../../../Library/PIC32/Harmony/third_party/rtos/FreeRTOS/Source</sourceRootElem>
                 <sourceRootElem>../../../Source/StartUp/PIC32</sourceRootElem>
                 <sourceRootElem>.</sourceRootElem>
+                <sourceRootElem>../../../Source/HAL2/PIC32</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

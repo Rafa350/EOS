@@ -1,10 +1,9 @@
 #include "eos.h"
-#include "HAL/halGPIO.h"
-#include "HAL/halGPIO_ex.h"
+#include "HAL2/halGPIO.h"
 #include "HAL/halINT.h"
 #include "HAL/halSYS.h"
 #ifdef EOS_PIC32
-#include "HAL/PIC32/halCN.h"
+//#include "HAL/PIC32/halCN.h"
 #endif
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"
@@ -12,7 +11,6 @@
 #include "System/eosApplication.h"
 
 #include "appApplication.h"
-#include "HAL/PIC32/halGPIO_ex.h"
 
 
 using namespace eos;
@@ -71,48 +69,39 @@ void MyApplication::onInitialize() {
     _digInputService = new DigInputService(this, digInputServiceSettings);
     _digInputService->setPriority(Task::Priority::high);
 
-    DigInput::Settings digInputSettings;
-    digInputSettings.eventParam = nullptr;
-
     // Inicialitza la entrada corresponent al switch SW1
     //
 #ifdef EXIST_SWITCHES_SW1
-    halGPIOInitializePin(SWITCHES_SW1_PORT, SWITCHES_SW1_PIN,
-        HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
+    GPIO gpioSW1(SWITCHES_SW1_PORT, SWITCHES_SW1_PIN);
+    gpioSW1.initialize(GPIOMode::input_PU);
 #ifdef EOS_PIC32
-    halCNInitializeLine(SWITCHES_SW1_CN, HAL_CN_PULL_UP);
+    //halCNInitializeLine(SWITCHES_SW1_CN, HAL_CN_PULL_UP);
 #endif
 
-    digInputSettings.port = SWITCHES_SW1_PORT;
-    digInputSettings.pin = SWITCHES_SW1_PIN;
-    digInputSettings.eventCallback = &sw1EventCallback;
-    sw1 = new DigInput(_digInputService, digInputSettings);
+    sw1 = new DigInput(_digInputService, gpioSW1);
+    sw1->setCallback(&sw1EventCallback, nullptr);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW2
     //
 #ifdef EXIST_SWITCHES_SW2
-    halGPIOInitializePin(SWITCHES_SW2_PORT, SWITCHES_SW2_PIN,
-        HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
-    halCNInitializeLine(SWITCHES_SW2_CN, HAL_CN_PULL_UP);
+    GPIO gpioSW2(SWITCHES_SW2_PORT, SWITCHES_SW2_PIN);
+    gpioSW2.initialize(GPIOMode::input_PU);
+    //halCNInitializeLine(SWITCHES_SW2_CN, HAL_CN_PULL_UP);
 
-    digInputSettings.port = SWITCHES_SW2_PORT;
-    digInputSettings.pin = SWITCHES_SW2_PIN;
-    digInputSettings.eventCallback = &sw2EventCallback;
-    sw2 = new DigInput(_digInputService, digInputSettings);
+    sw2 = new DigInput(_digInputService, gpioSW2);
+    sw2->setCallback(&sw2EventCallback, nullptr);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW3
     //
 #ifdef EXIST_SWITCHES_SW3
-    halGPIOInitializePin(SWITCHES_SW3_PORT, SWITCHES_SW3_PIN,
-        HAL_GPIO_MODE_INPUT, HAL_GPIO_AF_NONE);
-    halCNInitializeLine(SWITCHES_SW3_CN, HAL_CN_PULL_UP);
+    GPIO gpioSW3(SWITCHES_SW3_PORT, SWITCHES_SW3_PIN);
+    gpioSW3.initialize(GPIOMode::input_PU);
+    //halCNInitializeLine(SWITCHES_SW3_CN, HAL_CN_PULL_UP);
 
-    digInputSettings.port = SWITCHES_SW3_PORT;
-    digInputSettings.pin = SWITCHES_SW3_PIN;
-    digInputSettings.eventCallback = &sw3EventCallback;
-    sw3 = new DigInput(_digInputService, digInputSettings);
+    sw3 = new DigInput(_digInputService, gpioSW3);
+    sw3->setCallback(&sw3EventCallback, nullptr);
 #endif
 
     // Inicialitza el temporitzador pel servei de sortides digitals
@@ -141,47 +130,38 @@ void MyApplication::onInitialize() {
     digOutputServiceSettings.hTimer = hDigOutputServiceTimer;
     _digOutputService = new DigOutputService(this, digOutputServiceSettings);
 
-    DigOutput::Settings digOutputSettings;
-
     // Inicialitza la sortida corresponent al led LED1
     //
 #ifdef EXIST_LEDS_LED1
-
-    halGPIOInitializePin(LEDS_LED1_PORT, LEDS_LED1_PIN,
-        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
-
-    digOutputSettings.port = LEDS_LED1_PORT;
-    digOutputSettings.pin = LEDS_LED1_PIN;
-    led1 = new DigOutput(_digOutputService, digOutputSettings);
+    GPIO gpioLed1(LEDS_LED1_PORT, LEDS_LED1_PIN);
+    gpioLed1.initialize(GPIOMode::output);
+    gpioLed1.clear();
+    led1 = new DigOutput(_digOutputService, gpioLed1);
     led1->write(LEDS_STATE_OFF);
 #endif
 
     // Inicialitza la sortida corresponent al led LED2
     //
 #ifdef EXIST_LEDS_LED2
-    halGPIOInitializePin(LEDS_LED2_PORT, LEDS_LED2_PIN,
-        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
-
-    digOutputSettings.port = LEDS_LED2_PORT;
-    digOutputSettings.pin = LEDS_LED2_PIN;
-    led2 = new DigOutput(_digOutputService, digOutputSettings);
+    GPIO gpioLed2(LEDS_LED2_PORT, LEDS_LED2_PIN);
+    gpioLed2.initialize(GPIOMode::output);
+    gpioLed2.clear();
+    led2 = new DigOutput(_digOutputService, gpioLed2);
     led2->write(LEDS_STATE_OFF);
 #endif
 
     // Inicialitza la sortida corresponent al led LED3
     //
 #ifdef EXIST_LEDS_LED3
-    halGPIOInitializePin(LEDS_LED3_PORT, LEDS_LED3_PIN,
-        HAL_GPIO_MODE_OUTPUT_PP | HAL_GPIO_INIT_CLR, HAL_GPIO_AF_NONE);
-
-    digOutputSettings.port = LEDS_LED3_PORT;
-    digOutputSettings.pin = LEDS_LED3_PIN;
-    led3 = new DigOutput(_digOutputService, digOutputSettings);
+    GPIO gpioLed3(LEDS_LED3_PORT, LEDS_LED3_PIN);
+    gpioLed3.initialize(GPIOMode::output);
+    gpioLed3.clear();
+    led3 = new DigOutput(_digOutputService, gpioLed3);
     led3->write(LEDS_STATE_OFF);
 #endif
 
     _timerService = new TimerService(this);
-    TimerCounter* timer = new TimerCounter(_timerService, nullptr);
+    TimerCounter *timer = new TimerCounter(_timerService, nullptr);
     timer->start(10000);
 }
 

@@ -164,6 +164,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL2</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/OSAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -200,6 +205,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL2</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -304,6 +314,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halTMR.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL2/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HAL2/halGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL2/halGPIO.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/OSAL/osalHeap.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/OSAL/osalHeap.h</locationURI>
@@ -385,6 +405,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL2/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -624,6 +649,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HAL2/STM32/halGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL2/STM32/halGPIO.h</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/System/Collections/eosVector.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/System/Collections/eosVector.h</locationURI>
@@ -777,6 +807,11 @@
 			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HAL2/STM32/halGPIO.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL2/STM32/halGPIO.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>

@@ -119,7 +119,7 @@ void DigInputService::onInitialize() {
     //
     for (auto it = _inputs.begin(); it != _inputs.end(); it++) {
         DigInput *input = *it;
-        input->_value = halGPIOReadPin(input->_port, input->_pin);
+        input->_value = input->_gpio.read();
         input->_edge = false;
         input->_pattern = input->_value ? PATTERN_ON : PATTERN_OFF;
     }
@@ -251,7 +251,7 @@ void DigInputService::tmrInterruptFunction(
             // Actualitza el patro
             //
             input->_pattern <<= 1;
-            if (halGPIOReadPin(input->_port, input->_pin))
+            if (input->_gpio.read())
                 input->_pattern |= 1;
 
             // Analitza el patro per detectar un flanc positiu
@@ -299,19 +299,17 @@ void DigInputService::tmrInterruptFunction(
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    service: The service.
-/// \param    settings: Configuration settings
+/// \param    gpio: El GPIO
 ///
 DigInput::DigInput(
     DigInputService *service,
-    const Settings &settings):
+    const GPIO &gpio):
 
 	_service(nullptr),
-    _port(settings.port),
-    _pin(settings.pin),
-    //_scanMode(settings.scanMode),
+    _gpio(gpio),
     _scanMode(ScanMode::polling),
-    _eventCallback(settings.eventCallback),
-    _eventParam(settings.eventParam) {
+    _eventCallback(nullptr),
+    _eventParam(nullptr) {
 
     if (service != nullptr)
         service->addInput(this);
