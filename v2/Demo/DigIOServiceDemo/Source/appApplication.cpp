@@ -3,7 +3,7 @@
 #include "HAL/halINT.h"
 #include "HAL/halSYS.h"
 #ifdef EOS_PIC32
-//#include "HAL/PIC32/halCN.h"
+//#include "HAL2/PIC32/halCN.h"
 #endif
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"

@@ -15,7 +15,7 @@ GPIO::GPIO(
     Port port,
     Pin pin) :
 
-    _regs(getRegister(port)),
+    _regs(getRegisterPtr(port)),
     _mask(getMask(pin)) {
 }
 
@@ -41,6 +41,7 @@ void GPIO::initInput(
 
     _regs->TRISxSET = _mask;
 }
+
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el pin com sortida.
@@ -149,7 +150,7 @@ GPIO::operator bool() const {
 /// \brief    Obte el punter als registres asociats al port.
 /// \return   El punter.
 ///
-GPIO::Registers* GPIO::getRegister(
+GPIO::Registers* GPIO::getRegisterPtr(
     Port port) {
 
     uint32_t addr = 0;
@@ -171,7 +172,6 @@ GPIO::Registers* GPIO::getRegister(
 /// \brief    Obte la mascara associada al pin.
 /// \return   La mascara.
 ///
-
 uint32_t GPIO::getMask(
     Pin pin) {
 

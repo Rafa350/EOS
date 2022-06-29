@@ -10,7 +10,7 @@ using namespace hal;
 /// \param    line: La linia.
 ///
 CN::CN(
-    CNLine line) :
+    Line line) :
 
     _lineNumber(getLineNumber(line)) {
 
@@ -30,10 +30,10 @@ CN::CN(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    IniciaLITZACIO.
+/// \brief    Inicialitzacio.
 ///
 void CN::initialize(
-    CNTrigger trigger,
+    Trigger trigger,
     bool pullUp) {
 
     // Activa el modul

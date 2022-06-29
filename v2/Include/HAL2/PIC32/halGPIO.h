@@ -32,7 +32,12 @@ namespace hal {
 
         public:
             enum class Port: uint32_t {
-                portA, portB, portC, portD, portE, portF
+                portA,
+                portB,
+                portC,
+                portD,
+                portE,
+                portF
             };
 
             enum class Pin: uint32_t {
@@ -58,7 +63,7 @@ namespace hal {
 			GPIO(const GPIO &&) = delete;
 			GPIO & operator = (const GPIO &&) = delete;
 
-            static Registers *getRegister(Port port);
+            static Registers *getRegisterPtr(Port port);
             static uint32_t getMask(Pin pin);
 
 		public:

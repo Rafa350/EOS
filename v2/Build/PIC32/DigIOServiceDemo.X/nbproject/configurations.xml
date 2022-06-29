@@ -35,9 +35,11 @@
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Include/HAL2/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL2/PIC32/halCN.h</itemPath>
+              <itemPath>../../../Include/HAL2/PIC32/halTMR.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL2/hal.h</itemPath>
             <itemPath>../../../Include/HAL2/halGPIO.h</itemPath>
+            <itemPath>../../../Include/HAL2/halTMR.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
@@ -108,6 +110,7 @@
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Source/HAL2/PIC32/halGPIO.cpp</itemPath>
               <itemPath>../../../Source/HAL2/PIC32/halCN.cpp</itemPath>
+              <itemPath>../../../Source/HAL2/PIC32/halTMR.cpp</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
@@ -373,12 +376,6 @@
         <property key="lastid" value=""/>
         <property key="whatToProgram" value="all"/>
       </SKDEPIC32PlatformTool>
-      <Tool>
-        <property key="debugoptions.debug-startup" value="Use system settings"/>
-        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
-        <property key="lastid" value=""/>
-        <property key="whatToProgram" value="all"/>
-      </Tool>
     </conf>
     <conf name="PIC32_ETH_STARTER_KIT" type="2">
       <toolsSet>
