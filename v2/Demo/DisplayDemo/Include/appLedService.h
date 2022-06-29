@@ -20,10 +20,10 @@ namespace app {
 	class LedService: public eos::AppLoopService {
 		private:
 #ifdef EXIST_LEDS_LED1
-			eos::GPIO _gpioLED1;
+			hal::GPIO _gpioLED1;
 #endif
 #ifdef EXIST_LEDS_LED2
-			eos::GPIO _gpioLED2;
+			hal::GPIO _gpioLED2;
 #endif
 
 		public:

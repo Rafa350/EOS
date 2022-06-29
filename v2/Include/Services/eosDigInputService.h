@@ -70,7 +70,7 @@ namespace eos {
 
         private:
             DigInputService *_service;
-            GPIO _gpio;
+            hal::GPIO _gpio;
             ScanMode _scanMode;
             IEventCallback *_eventCallback;
             void *_eventParam;
@@ -79,7 +79,7 @@ namespace eos {
             bool _edge;
 
         public:
-            DigInput(DigInputService *service, const GPIO &gpio);
+            DigInput(DigInputService *service, const hal::GPIO &gpio);
             ~DigInput();
 
             inline DigInputService* getService() const {

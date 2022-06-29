@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HAL/halGPIO.h"
+#include "HAL2/halGPIO.h"
 #include "HAL/halINT.h"
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"
@@ -568,7 +568,7 @@ void DigOutputService::tmrInterruptFunction(
 ///
 DigOutput::DigOutput(
     DigOutputService *service,
-    const GPIO &gpio):
+    const hal::GPIO &gpio):
 
     _service(nullptr),
     _gpio(gpio),

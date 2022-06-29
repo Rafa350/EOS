@@ -72,8 +72,8 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW1
     //
 #ifdef EXIST_SWITCHES_SW1
-    GPIO gpioSW1(SWITCHES_SW1_PORT, SWITCHES_SW1_PIN);
-    gpioSW1.initialize(GPIOMode::input_PU);
+    hal::GPIO gpioSW1(SWITCHES_SW1_PORT, SWITCHES_SW1_PIN);
+    gpioSW1.initInput(hal::GPIO::InputMode::input_PU);
 #ifdef EOS_PIC32
     //halCNInitializeLine(SWITCHES_SW1_CN, HAL_CN_PULL_UP);
 #endif
@@ -85,8 +85,8 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW2
     //
 #ifdef EXIST_SWITCHES_SW2
-    GPIO gpioSW2(SWITCHES_SW2_PORT, SWITCHES_SW2_PIN);
-    gpioSW2.initialize(GPIOMode::input_PU);
+    hal::GPIO gpioSW2(SWITCHES_SW2_PORT, SWITCHES_SW2_PIN);
+    gpioSW2.initInput(hal::GPIO::InputMode::input_PU);
     //halCNInitializeLine(SWITCHES_SW2_CN, HAL_CN_PULL_UP);
 
     sw2 = new DigInput(_digInputService, gpioSW2);
@@ -96,8 +96,8 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW3
     //
 #ifdef EXIST_SWITCHES_SW3
-    GPIO gpioSW3(SWITCHES_SW3_PORT, SWITCHES_SW3_PIN);
-    gpioSW3.initialize(GPIOMode::input_PU);
+    hal::GPIO gpioSW3(SWITCHES_SW3_PORT, SWITCHES_SW3_PIN);
+    gpioSW3.initInput(hal::GPIO::InputMode::input_PU);
     //halCNInitializeLine(SWITCHES_SW3_CN, HAL_CN_PULL_UP);
 
     sw3 = new DigInput(_digInputService, gpioSW3);
@@ -133,8 +133,8 @@ void MyApplication::onInitialize() {
     // Inicialitza la sortida corresponent al led LED1
     //
 #ifdef EXIST_LEDS_LED1
-    GPIO gpioLed1(LEDS_LED1_PORT, LEDS_LED1_PIN);
-    gpioLed1.initialize(GPIOMode::output);
+    hal::GPIO gpioLed1(LEDS_LED1_PORT, LEDS_LED1_PIN);
+    gpioLed1.initOutput(hal::GPIO::OutputMode::output);
     gpioLed1.clear();
     led1 = new DigOutput(_digOutputService, gpioLed1);
     led1->write(LEDS_STATE_OFF);
@@ -143,8 +143,8 @@ void MyApplication::onInitialize() {
     // Inicialitza la sortida corresponent al led LED2
     //
 #ifdef EXIST_LEDS_LED2
-    GPIO gpioLed2(LEDS_LED2_PORT, LEDS_LED2_PIN);
-    gpioLed2.initialize(GPIOMode::output);
+    hal::GPIO gpioLed2(LEDS_LED2_PORT, LEDS_LED2_PIN);
+    gpioLed2.initOutput(hal::GPIO::OutputMode::output);
     gpioLed2.clear();
     led2 = new DigOutput(_digOutputService, gpioLed2);
     led2->write(LEDS_STATE_OFF);
@@ -153,8 +153,8 @@ void MyApplication::onInitialize() {
     // Inicialitza la sortida corresponent al led LED3
     //
 #ifdef EXIST_LEDS_LED3
-    GPIO gpioLed3(LEDS_LED3_PORT, LEDS_LED3_PIN);
-    gpioLed3.initialize(GPIOMode::output);
+    hal::GPIO gpioLed3(LEDS_LED3_PORT, LEDS_LED3_PIN);
+    gpioLed3.initOutput(hal::GPIO::OutputMode::output);
     gpioLed3.clear();
     led3 = new DigOutput(_digOutputService, gpioLed3);
     led3->write(LEDS_STATE_OFF);

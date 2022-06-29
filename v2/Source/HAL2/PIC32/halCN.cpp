@@ -2,7 +2,7 @@
 #include "HAL2/PIC32/halCN.h"
 
 
-using namespace eos;
+using namespace hal;
 
 
 /// ----------------------------------------------------------------------

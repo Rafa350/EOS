@@ -7,54 +7,7 @@
 #include "HAL2/hal.h"
 
 
-#define HAL_GPIO_PORT_A      eos::GPIOPort::portA
-#define HAL_GPIO_PORT_B      eos::GPIOPort::portB
-#define HAL_GPIO_PORT_C      eos::GPIOPort::portC
-#define HAL_GPIO_PORT_D      eos::GPIOPort::portD
-#define HAL_GPIO_PORT_E      eos::GPIOPort::portE
-#define HAL_GPIO_PORT_F      eos::GPIOPort::portF
-#define HAL_GPIO_PORT_G      eos::GPIOPort::portG
-#define HAL_GPIO_PORT_H      eos::GPIOPort::portH
-#define HAL_GPIO_PORT_I      eos::GPIOPort::portI
-#define HAL_GPIO_PORT_J      eos::GPIOPort::portJ
-#define HAL_GPIO_PORT_K      eos::GPIOPort::portK
-
-#define HAL_GPIO_PIN_0       eos::GPIOPin::pin0
-#define HAL_GPIO_PIN_1       eos::GPIOPin::pin1
-#define HAL_GPIO_PIN_2       eos::GPIOPin::pin2
-#define HAL_GPIO_PIN_3       eos::GPIOPin::pin3
-#define HAL_GPIO_PIN_4       eos::GPIOPin::pin4
-#define HAL_GPIO_PIN_5       eos::GPIOPin::pin5
-#define HAL_GPIO_PIN_6       eos::GPIOPin::pin6
-#define HAL_GPIO_PIN_7       eos::GPIOPin::pin7
-#define HAL_GPIO_PIN_8       eos::GPIOPin::pin8
-#define HAL_GPIO_PIN_9       eos::GPIOPin::pin9
-#define HAL_GPIO_PIN_10      eos::GPIOPin::pin10
-#define HAL_GPIO_PIN_11      eos::GPIOPin::pin11
-#define HAL_GPIO_PIN_12      eos::GPIOPin::pin12
-#define HAL_GPIO_PIN_13      eos::GPIOPin::pin13
-#define HAL_GPIO_PIN_14      eos::GPIOPin::pin14
-#define HAL_GPIO_PIN_15      eos::GPIOPin::pin15
-
-
-namespace eos {
-
-    enum class GPIOPort: uint32_t {
-        portA, portB, portC, portD, portE, portF
-    };
-
-    enum class GPIOPin: uint32_t {
-        pin0, pin1, pin2, pin3, pin4, pin5, pin6, pin7,
-        pin8, pin9, pin10, pin11, pin12, pin13, pin14, pin15
-    };
-
-    enum class GPIOMode {
-        input,
-        input_PU,
-        input_PD,
-        output,
-        output_OD
-    };
+namespace hal {
 
 	class GPIO {
         private:
@@ -77,6 +30,27 @@ namespace eos {
                 volatile uint32_t ODCxINV;
             } Registers;
 
+        public:
+            enum class Port: uint32_t {
+                portA, portB, portC, portD, portE, portF
+            };
+
+            enum class Pin: uint32_t {
+                pin0, pin1, pin2, pin3, pin4, pin5, pin6, pin7,
+                pin8, pin9, pin10, pin11, pin12, pin13, pin14, pin15
+            };
+
+            enum class InputMode {
+                input,
+                input_PU,
+                input_PD
+            };
+
+            enum class OutputMode {
+                output,
+                output_OD
+            };
+
 		private:
 			Registers *_regs;
             uint32_t _mask;
@@ -84,14 +58,15 @@ namespace eos {
 			GPIO(const GPIO &&) = delete;
 			GPIO & operator = (const GPIO &&) = delete;
 
-            static Registers* getRegister(GPIOPort port);
-            static uint32_t getMask(GPIOPin pin);
+            static Registers *getRegister(Port port);
+            static uint32_t getMask(Pin pin);
 
 		public:
-			GPIO(GPIOPort port, GPIOPin pin);
+			GPIO(Port port, Pin pin);
             GPIO(const GPIO &gpio);
 
-            void initialize(GPIOMode mode);
+            void initInput(InputMode mode);
+            void initOutput(OutputMode mode);
 
 			void set() const;
 			void clear() const;

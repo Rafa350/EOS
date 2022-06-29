@@ -14,6 +14,7 @@
           <itemPath>../../../Demo/DisplayDemo/Include/PIC32/FreeRTOSConfig.h</itemPath>
         </logicalFolder>
         <itemPath>../../../Demo/DisplayDemo/Include/eosConfig.h</itemPath>
+        <itemPath>../../../Demo/DisplayDemo/Include/appLedService.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
@@ -55,6 +56,12 @@
             <itemPath>../../../Include/HAL/halSPI.h</itemPath>
             <itemPath>../../../Include/HAL/halGPIO_ex.h</itemPath>
             <itemPath>../../../Include/HAL/halSPI_ex.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f7" displayName="HAL2" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Include/HAL2/PIC32/halGPIO.h</itemPath>
+            </logicalFolder>
+            <itemPath>../../../Include/HAL2/halGPIO.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
@@ -132,6 +139,8 @@
               <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halSPI.c</itemPath>
             </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="f7" displayName="HAL2" projectFiles="true">
           </logicalFolder>
           <logicalFolder name="f5" displayName="OSAL" projectFiles="true">
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">

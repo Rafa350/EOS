@@ -13,7 +13,7 @@
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "HAL/STM32/halGPIO.h"
-#include "HAL/STM32/halLTDC_ex.h"
+#include "HTL/STM32/htlLTDC.h"
 #include "System/eosMath.h"
 #include "System/Graphics/eosColorDefinitions.h"
 
@@ -276,8 +276,8 @@ void DisplayDriver_RGBLTDC::refresh() {
 
 		// Asigna l'adresa de la capa
 		//
-		LTDCLayer_0::setFramBuffer(_frontImageBuffer);
-		LTDCLayer_0::update();
+		htl::LTDCLayer_0::setFramBuffer(_frontImageBuffer);
+		htl::LTDCLayer_0::update();
 	}
 }
 
@@ -287,8 +287,8 @@ void DisplayDriver_RGBLTDC::refresh() {
 ///
 void DisplayDriver_RGBLTDC::initializeGPIO() {
 
-	PinBKE::initOutput(GPIOSpeed::low, GPIODriver::pushPull, GPIOState::clr);
-	PinLCDE::initOutput(GPIOSpeed::low, GPIODriver::pushPull, GPIOState::clr);
+	PinBKE::initOutput(htl::GPIOSpeed::low, htl::GPIODriver::pushPull, htl::GPIOState::clr);
+	PinLCDE::initOutput(htl::GPIOSpeed::low, htl::GPIODriver::pushPull, htl::GPIOState::clr);
 }
 
 
@@ -329,7 +329,7 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	//
 	_ltdc.layer0.setWindow(0, 0, _imageWidth, _imageHeight);
 	_ltdc.layer0.setFrameFormat(
-		LTDCPixelFormatFor<CI::format>::value,
+			htl::LTDCPixelFormatFor<CI::format>::value,
 		_imageWidth * CI::bytes,
 		((_imageWidth * CI::bytes) + 63) & 0xFFFFFFC0,
 		_imageHeight);

@@ -1,15 +1,18 @@
-#ifndef __STM32_halLTDCTpl__
-#define __STM32_halLTDCTpl__
+#ifndef __STM32_htlLTDC__
+#define __STM32_htlLTDC__
 
 
 // EOS includes
 //
 #include "HAL/STM32/halLTDC.h"
-#include "HAL/STM32/halGPIO_ex.h"
+#include "HTL/STM32/htlGPIO.h"
 #include "System/Graphics/eosColor.h"
 
 
-namespace eos {
+using namespace eos;
+
+
+namespace htl {
 
 	enum class LTDCLayerNum: halLTDCLayerNum {
 		layer0 = HAL_LTDC_LAYER_0,
@@ -264,4 +267,4 @@ namespace eos {
 }
 
 
-#endif
+#endif // __STM32_htlLTDC__

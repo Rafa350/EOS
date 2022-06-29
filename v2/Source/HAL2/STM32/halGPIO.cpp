@@ -2,10 +2,7 @@
 #include "HAL2/STM32/halGPIO.H"
 
 
-using namespace eos;
-
-
-#define __set_bit_msk(a, b)       ((a) |= (b))
+using namespace hal;
 
 
 /// ----------------------------------------------------------------------
@@ -14,8 +11,8 @@ using namespace eos;
 /// \param     pin: Identificador del pin.
 //
 GPIO::GPIO(
-	GPIOPort port,
-	GPIOPin pin) :
+	Port port,
+	Pin pin) :
 
     _regs(getRegister(port)),
     _pinNumber(getPinNumber(pin)) {
@@ -37,11 +34,40 @@ GPIO::GPIO(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitza el pin.
+/// \brief    Inicialitza el pin per entrada.
 /// \param    mode: Modus de treball del pin.
 ///
-void GPIO::initialize(
-	GPIOMode mode) {
+void GPIO::initInput(
+	InputMode mode) {
+
+	uint32_t temp;
+
+	// Configura el registre MODER (Mode Register)
+	//
+	temp = _regs->MODER;
+	temp &= ~(0b11 << (_pinNumber * 2));
+	if (mode == InputMode::analog)
+		temp |= 0b11 << (_pinNumber * 2);
+	_regs->MODER = temp;
+
+	// Configura el registre PUPDR (Pull Up/Down Register)
+	//
+	temp = _regs->PUPDR;
+	temp &= ~(0b11 << (_pinNumber * 2u));
+	if (mode == InputMode::input_PU)
+		temp |= 0b01 << (_pinNumber * 2);
+	else if (mode == InputMode::input_PD)
+		temp |= 0b10 << (_pinNumber * 2);
+	_regs->PUPDR = temp;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Inicialitza el pin per sortida.
+/// \param    mode: Modus de treball del pin.
+///
+void GPIO::initOutput(
+	OutputMode mode) {
 
 	uint32_t temp;
 
@@ -52,83 +78,54 @@ void GPIO::initialize(
 	switch (mode) {
 
 		// Sortida digital
-		case GPIOMode::output:
-		case GPIOMode::output_OD:
+		case OutputMode::output:
+		case OutputMode::output_OD:
 			temp |= 0b01 << (_pinNumber * 2);
 			break;
 
 		// Funcio alternativa
-		case GPIOMode::alt:
-		case GPIOMode::alt_OD:
+		case OutputMode::alt:
+		case OutputMode::alt_OD:
 			temp |= 0b10 << (_pinNumber * 2);
-			break;
-
-		// Entrada analogica
-		case GPIOMode::analog:
-			temp |= 0b11 << (_pinNumber * 2);
-			break;
-
-		// Entrada digital
-		case GPIOMode::input:
-		case GPIOMode::input_PU:
-		case GPIOMode::input_PD:
 			break;
 	}
 	_regs->MODER = temp;
 
 	// Configura el registre OTYPER (Output Type Register)
 	//
-	if ((mode == GPIOMode::output) ||
-		(mode == GPIOMode::output_OD) ||
-		(mode == GPIOMode::alt) ||
-		(mode == GPIOMode::alt_OD)) {
-
-		temp = _regs->OTYPER;
-		temp &= ~(1u << _pinNumber);
-		if ((mode == GPIOMode::output_OD) ||
-			(mode == GPIOMode::alt_OD))
-			temp |= 1 << _pinNumber;
-		_regs->OTYPER = temp;
-	}
-
-	// Configura el registre PUPDR (Pull Up/Down Register)
-	//
-	if ((mode == GPIOMode::input_PU) ||
-		(mode == GPIOMode::input_PD)) {
-
-		temp = _regs->PUPDR;
-		temp &= ~(0b11 << (_pinNumber * 2u));
-		if (mode == GPIOMode::input_PU)
-			temp |= 0b01 << (_pinNumber * 2);
-		else
-			temp |= 0b10 << (_pinNumber * 2);
-		_regs->PUPDR = temp;
-	}
+	temp = _regs->OTYPER;
+	temp &= ~(1u << _pinNumber);
+	if ((mode == OutputMode::output_OD) ||
+		(mode == OutputMode::alt_OD))
+		temp |= 1 << _pinNumber;
+	_regs->OTYPER = temp;
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona la vecocitat de conmutacio
-/// \param    speed: La velocitat.
+/// \brief    Selecciona la velocitat de conmutacio
+/// \param    speed: Velocitat.
 ///
 void GPIO::setSpeed(
-	GPIOSpeed speed) {
+	Speed speed) {
 
+	// Conmfigura el registre OSPEEDR (Output Speed Register)
+	//
 	uint32_t temp = _regs->OSPEEDR;
 	temp &= ~(0b11 << (_pinNumber * 2));
 	switch (speed) {
-		case GPIOSpeed::low:
+		case Speed::low:
 			break;
 
-		case GPIOSpeed::medium:
+		case Speed::medium:
 			temp |= 0b01 < (_pinNumber * 2);
 			break;
 
-		case GPIOSpeed::high:
+		case Speed::high:
 			temp |= 0b10 < (_pinNumber * 2);
 			break;
 
-		case GPIOSpeed::fast:
+		case Speed::fast:
 			temp |= 0b11u < (_pinNumber * 2);
 			break;
 	}
@@ -141,7 +138,7 @@ void GPIO::setSpeed(
 /// \param    alt: La funcio alternativa.
 ///
 void GPIO::setAlt(
-	uint32_t alt) {
+	Alt alt) {
 
 	// Configura el registre AFR (Alternate Funcion Register)
 	//
@@ -243,22 +240,22 @@ GPIO::operator bool() const {
 /// \return   El punter.
 ///
 GPIO_TypeDef* GPIO::getRegister(
-	GPIOPort port) {
+	Port port) {
 
     uint32_t addr = 0;
 
     switch (port) {
-        case GPIOPort::portA: addr = GPIOA_BASE; break;
-        case GPIOPort::portB: addr = GPIOB_BASE; break;
-        case GPIOPort::portC: addr = GPIOC_BASE; break;
-        case GPIOPort::portD: addr = GPIOD_BASE; break;
-        case GPIOPort::portE: addr = GPIOE_BASE; break;
-        case GPIOPort::portF: addr = GPIOF_BASE; break;
-        case GPIOPort::portG: addr = GPIOG_BASE; break;
-        case GPIOPort::portH: addr = GPIOH_BASE; break;
-        case GPIOPort::portI: addr = GPIOI_BASE; break;
-        case GPIOPort::portJ: addr = GPIOJ_BASE; break;
-        case GPIOPort::portK: addr = GPIOK_BASE; break;
+        case Port::portA: addr = GPIOA_BASE; break;
+        case Port::portB: addr = GPIOB_BASE; break;
+        case Port::portC: addr = GPIOC_BASE; break;
+        case Port::portD: addr = GPIOD_BASE; break;
+        case Port::portE: addr = GPIOE_BASE; break;
+        case Port::portF: addr = GPIOF_BASE; break;
+        case Port::portG: addr = GPIOG_BASE; break;
+        case Port::portH: addr = GPIOH_BASE; break;
+        case Port::portI: addr = GPIOI_BASE; break;
+        case Port::portJ: addr = GPIOJ_BASE; break;
+        case Port::portK: addr = GPIOK_BASE; break;
     }
 
     return reinterpret_cast<GPIO_TypeDef*>(addr);
@@ -272,27 +269,27 @@ GPIO_TypeDef* GPIO::getRegister(
 ///
 
 uint32_t GPIO::getPinNumber(
-	GPIOPin pin) {
+	Pin pin) {
 
 	uint32_t pinNumber = 0;
 
     switch (pin) {
-        case GPIOPin::pin0: pinNumber = 0; break;
-        case GPIOPin::pin1: pinNumber = 1; break;
-        case GPIOPin::pin2: pinNumber = 2; break;
-        case GPIOPin::pin3: pinNumber = 3; break;
-        case GPIOPin::pin4: pinNumber = 4; break;
-        case GPIOPin::pin5: pinNumber = 5; break;
-        case GPIOPin::pin6: pinNumber = 6; break;
-        case GPIOPin::pin7: pinNumber = 7; break;
-        case GPIOPin::pin8: pinNumber = 8; break;
-        case GPIOPin::pin9: pinNumber = 9; break;
-        case GPIOPin::pin10: pinNumber = 10; break;
-        case GPIOPin::pin11: pinNumber = 11; break;
-        case GPIOPin::pin12: pinNumber = 12; break;
-        case GPIOPin::pin13: pinNumber = 13; break;
-        case GPIOPin::pin14: pinNumber = 14; break;
-        case GPIOPin::pin15: pinNumber = 15; break;
+        case Pin::pin0: pinNumber = 0; break;
+        case Pin::pin1: pinNumber = 1; break;
+        case Pin::pin2: pinNumber = 2; break;
+        case Pin::pin3: pinNumber = 3; break;
+        case Pin::pin4: pinNumber = 4; break;
+        case Pin::pin5: pinNumber = 5; break;
+        case Pin::pin6: pinNumber = 6; break;
+        case Pin::pin7: pinNumber = 7; break;
+        case Pin::pin8: pinNumber = 8; break;
+        case Pin::pin9: pinNumber = 9; break;
+        case Pin::pin10: pinNumber = 10; break;
+        case Pin::pin11: pinNumber = 11; break;
+        case Pin::pin12: pinNumber = 12; break;
+        case Pin::pin13: pinNumber = 13; break;
+        case Pin::pin14: pinNumber = 14; break;
+        case Pin::pin15: pinNumber = 15; break;
     }
 
     return pinNumber;
@@ -304,51 +301,51 @@ uint32_t GPIO::getPinNumber(
 /// \param    port: El identificador del port.
 ///
 void GPIO::enableClock(
-	GPIOPort port) {
+	Port port) {
 
 	switch (port) {
-		case GPIOPort::portA:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
+		case Port::portA:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 			break;
 
-		case GPIOPort::portB:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
+		case Port::portB:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
 			break;
 
-		case GPIOPort::portC:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
+		case Port::portC:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
 			break;
 
-		case GPIOPort::portD:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
+		case Port::portD:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
 			break;
 
-		case GPIOPort::portE:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
+		case Port::portE:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
 			break;
 
-		case GPIOPort::portF:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
+		case Port::portF:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN;
 			break;
 
-		case GPIOPort::portG:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
+		case Port::portG:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
 			break;
 
-		case GPIOPort::portH:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
+		case Port::portH:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN;
 			break;
 
-		case GPIOPort::portI:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
+		case Port::portI:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
 			break;
 
-		case GPIOPort::portJ:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOJEN);
+		case Port::portJ:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN;
 			break;
 
-		case GPIOPort::portK:
-			__set_bit_msk(RCC->AHB1ENR, RCC_AHB1ENR_GPIOKEN);
+		case Port::portK:
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
 			break;
 	}
 

@@ -113,11 +113,11 @@ void halSendData(
 /// \param    size: El tamany del buffer en bytes.
 /// \param    blockTime: Temps maxim de bloqueig.
 ///
-void halSPISendBuffer(
+void halSPISend(
     halSPIHandler handler,
-    const uint8_t* data,
+    const uint8_t  *data,
     int size,
-    int blockTime) {
+    unsigned blockTime) {
 
     while (size--) {
         while (!handler->regs->SPIxSTAT.SPITBE)

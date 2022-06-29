@@ -123,13 +123,13 @@ namespace eos {
             };
         public:
             DigOutputService *_service;
-            GPIO _gpio;
+            hal::GPIO _gpio;
             State _state;
             unsigned _delayCnt;
             unsigned _widthCnt;
 
         public:
-            DigOutput(DigOutputService *service, const GPIO &gpio);
+            DigOutput(DigOutputService *service, const hal::GPIO &gpio);
             ~DigOutput();
 
             inline DigOutputService* getService() const {

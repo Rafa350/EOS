@@ -38,8 +38,8 @@
 #endif
 
 
-#include "HAL/STM32/halGPIO_ex.h"
-#include "HAL/STM32/halLTDC_ex.h"
+#include "HTL/STM32/htlGPIO.h"
+#include "HTL/STM32/htlLTDC.h"
 #include "System/Graphics/eosColor.h"
 #include "Controllers/Display/eosFrameBuffer.h"
 #include "Controllers/Display/eosDisplayDriver.h"
@@ -58,39 +58,39 @@ namespace eos {
 			constexpr static const bool _useDoubleBuffer = DISPLAY_DOUBLEBUFFER;
 
 		private:
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_BKE_PORT), GPIOPin(DISPLAY_BKE_PIN)> PinBKE;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_LCDE_PORT), GPIOPin(DISPLAY_LCDE_PIN)> PinLCDE;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_HSYNC_PORT), GPIOPin(DISPLAY_HSYNC_PIN)> PinHSYNC;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_VSYNC_PORT), GPIOPin(DISPLAY_VSYNC_PIN)> PinVSYNC;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_DE_PORT), GPIOPin(DISPLAY_DE_PIN)> PinDE;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_DOTCLK_PORT), GPIOPin(DISPLAY_DOTCLK_PIN)> PinDOTCLK;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_R0_PORT), GPIOPin(DISPLAY_R0_PIN)> PinR0;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_R1_PORT), GPIOPin(DISPLAY_R1_PIN)> PinR1;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_R2_PORT), GPIOPin(DISPLAY_R2_PIN)> PinR2;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_R3_PORT), GPIOPin(DISPLAY_R3_PIN)> PinR3;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_R4_PORT), GPIOPin(DISPLAY_R4_PIN)> PinR4;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_R5_PORT), GPIOPin(DISPLAY_R5_PIN)> PinR5;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_R6_PORT), GPIOPin(DISPLAY_R6_PIN)> PinR6;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_R7_PORT), GPIOPin(DISPLAY_R7_PIN)> PinR7;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_G0_PORT), GPIOPin(DISPLAY_G0_PIN)> PinG0;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_G1_PORT), GPIOPin(DISPLAY_G1_PIN)> PinG1;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_G2_PORT), GPIOPin(DISPLAY_G2_PIN)> PinG2;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_G3_PORT), GPIOPin(DISPLAY_G3_PIN)> PinG3;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_G4_PORT), GPIOPin(DISPLAY_G4_PIN)> PinG4;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_G5_PORT), GPIOPin(DISPLAY_G5_PIN)> PinG5;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_G6_PORT), GPIOPin(DISPLAY_G6_PIN)> PinG6;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_G7_PORT), GPIOPin(DISPLAY_G7_PIN)> PinG7;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_B0_PORT), GPIOPin(DISPLAY_B0_PIN)> PinB0;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_B1_PORT), GPIOPin(DISPLAY_B1_PIN)> PinB1;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_B2_PORT), GPIOPin(DISPLAY_B2_PIN)> PinB2;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_B3_PORT), GPIOPin(DISPLAY_B3_PIN)> PinB3;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_B4_PORT), GPIOPin(DISPLAY_B4_PIN)> PinB4;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_B5_PORT), GPIOPin(DISPLAY_B5_PIN)> PinB5;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_B6_PORT), GPIOPin(DISPLAY_B6_PIN)> PinB6;
-			typedef GPIOPinAdapter<GPIOPort(DISPLAY_B7_PORT), GPIOPin(DISPLAY_B7_PIN)> PinB7;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_BKE_PORT), htl::GPIOPin(DISPLAY_BKE_PIN)> PinBKE;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_LCDE_PORT), htl::GPIOPin(DISPLAY_LCDE_PIN)> PinLCDE;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_HSYNC_PORT), htl::GPIOPin(DISPLAY_HSYNC_PIN)> PinHSYNC;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_VSYNC_PORT), htl::GPIOPin(DISPLAY_VSYNC_PIN)> PinVSYNC;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_DE_PORT), htl::GPIOPin(DISPLAY_DE_PIN)> PinDE;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_DOTCLK_PORT), htl::GPIOPin(DISPLAY_DOTCLK_PIN)> PinDOTCLK;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_R0_PORT), htl::GPIOPin(DISPLAY_R0_PIN)> PinR0;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_R1_PORT), htl::GPIOPin(DISPLAY_R1_PIN)> PinR1;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_R2_PORT), htl::GPIOPin(DISPLAY_R2_PIN)> PinR2;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_R3_PORT), htl::GPIOPin(DISPLAY_R3_PIN)> PinR3;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_R4_PORT), htl::GPIOPin(DISPLAY_R4_PIN)> PinR4;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_R5_PORT), htl::GPIOPin(DISPLAY_R5_PIN)> PinR5;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_R6_PORT), htl::GPIOPin(DISPLAY_R6_PIN)> PinR6;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_R7_PORT), htl::GPIOPin(DISPLAY_R7_PIN)> PinR7;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_G0_PORT), htl::GPIOPin(DISPLAY_G0_PIN)> PinG0;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_G1_PORT), htl::GPIOPin(DISPLAY_G1_PIN)> PinG1;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_G2_PORT), htl::GPIOPin(DISPLAY_G2_PIN)> PinG2;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_G3_PORT), htl::GPIOPin(DISPLAY_G3_PIN)> PinG3;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_G4_PORT), htl::GPIOPin(DISPLAY_G4_PIN)> PinG4;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_G5_PORT), htl::GPIOPin(DISPLAY_G5_PIN)> PinG5;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_G6_PORT), htl::GPIOPin(DISPLAY_G6_PIN)> PinG6;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_G7_PORT), htl::GPIOPin(DISPLAY_G7_PIN)> PinG7;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_B0_PORT), htl::GPIOPin(DISPLAY_B0_PIN)> PinB0;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_B1_PORT), htl::GPIOPin(DISPLAY_B1_PIN)> PinB1;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_B2_PORT), htl::GPIOPin(DISPLAY_B2_PIN)> PinB2;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_B3_PORT), htl::GPIOPin(DISPLAY_B3_PIN)> PinB3;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_B4_PORT), htl::GPIOPin(DISPLAY_B4_PIN)> PinB4;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_B5_PORT), htl::GPIOPin(DISPLAY_B5_PIN)> PinB5;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_B6_PORT), htl::GPIOPin(DISPLAY_B6_PIN)> PinB6;
+			typedef htl::GPIOPinAdapter<htl::GPIOPort(DISPLAY_B7_PORT), htl::GPIOPin(DISPLAY_B7_PIN)> PinB7;
 
     	private:
-			LTDC_1 _ltdc;
+			htl::LTDC_1 _ltdc;
     		FrameBuffer *_frontFrameBuffer;
     		FrameBuffer *_backFrameBuffer;
     		void *_frontImageBuffer;

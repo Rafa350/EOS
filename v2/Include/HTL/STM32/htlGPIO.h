@@ -8,8 +8,8 @@
 /// \defgroup HAL_STM32_GPIO_ex GPIO++
 /// @{
 
-#ifndef __STM32_halGPIO_ex__
-#define __STM32_halGPIO_ex__
+#ifndef __STM32_htlGPIO__
+#define __STM32_htlGPIO__
 
 
 // EOS includes
@@ -18,7 +18,7 @@
 #include "HAL/STM32/halGPIO.h"
 
 
-namespace eos {
+namespace htl {
 
 	/// \brief GPIO port identifiers.
 	enum class GPIOPort: halGPIOPort {
@@ -1024,7 +1024,7 @@ namespace eos {
 }
 
 
-#endif // __STM32_halGPIO_ex__
+#endif // __STM32_htlGPIO__
 
 /// @}
 /// @}

@@ -1,5 +1,5 @@
-#ifndef __eosILI9341__
-#define	__eosILI9341__
+#ifndef __eosDisplayDriver_ILI9341__
+#define	__eosDisplayDriver_ILI9341__
 
 
 #include "eos.h"
@@ -45,9 +45,9 @@
 
 
 #if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
-#include "HAL/halSPITpl.h"
+#include "HAL/halSPI_ex.h"
 #endif
-#include "HAL/halGPIOTpl.h"
+#include "HAL/halGPIO_ex.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "System/Graphics/eosColor.h"
 
@@ -132,5 +132,5 @@ namespace eos {
 }
 
 
-#endif // __eosILI9341__
+#endif // __eosDisplayDriver_ILI9341__
 

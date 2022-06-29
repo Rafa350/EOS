@@ -150,9 +150,9 @@ void halSPIDeinitialize(halSPIHandler handler);
 bool halSPIIsBusy(halSPIHandler handler);
 
 void halSendData(halSPIHandler handler, uint8_t data);
-void halSPISendBuffer(halSPIHandler handler, const uint8_t *data, int size, int blockTime);
-void halSPIReceiveBuffer(halSPIHandler handler, uint8_t *data, int size);
-void halSPITransmitBuffer(halSPIHandler handler, const uint8_t *txData, uint8_t *rxData, int size);
+void halSPISend(halSPIHandler handler, const uint8_t *data, int size, int blockTime);
+void halSPIReceive(halSPIHandler handler, uint8_t *data, int size);
+void halSPITransmit(halSPIHandler handler, const uint8_t *txData, uint8_t *rxData, int size);
 
 void halSPISetInterruptFunction(halSPIHandler handler, halSPIInterruptFunction function, void* params);
 void halSPIInterruptHandler(halSPIHandler handler);
