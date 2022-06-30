@@ -5,12 +5,13 @@
 #ifdef EOS_PIC32
 //#include "HAL2/PIC32/halCN.h"
 #endif
-#include "HAL/halTMR.h"
+#include "HAL2/halTMR.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
 #include "System/eosApplication.h"
 
 #include "appApplication.h"
+#include "HAL2/PIC32/halTMR.h"
 
 
 using namespace eos;
@@ -43,6 +44,15 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el temporitzador pel servei d'entrades digitals
     //
+    hal::TMR tmr(DigInputService_Timer);
+#if defined(EOS_PIC32)
+    tmr.setClockSource(hal::TMR::ClockSource::pclk);
+    tmr.setClockDivider(hal::TMR::ClockDivider::div64);
+    tmr.setResolution(hal::TMR::Resolution::res32);
+    tmr.setPeriod((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1,
+#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
+#endif
+
 	halTMRSettings tmrSettings;
 	tmrSettings.timer = DigInputService_Timer;
 #if defined(EOS_PIC32)

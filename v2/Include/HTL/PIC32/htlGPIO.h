@@ -1,14 +1,14 @@
-#ifndef __PIC32_halGPIO_ex__
-#define __PIC32_halGPIO_ex__
+#ifndef __PIC32_htlGPIO_ex__
+#define __PIC32_htlGPIO_ex__
 
 
 // EOS includes
 //
 #include "eos.h"
-#include "HAL/halGPIO.h"
+#include "HTL/htlGPIO.h"
 
 
-namespace eos {
+namespace htl {
 
     enum class GPIOPort: halGPIOPort {
         portA = HAL_GPIO_PORT_A,
@@ -596,4 +596,4 @@ namespace eos {
 }
 
 
-#endif // __PIC32_halGPIO_ex__
+#endif // __PIC32_htlGPIO__

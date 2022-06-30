@@ -31,22 +31,40 @@ namespace hal {
 
         public:
             enum class Timer {
-                timer1,
-                timer2,
-                timer3,
-                timer4,
-                timer5
+                timer1 = 0,
+#ifdef _TMR2
+                timer2 = 1,
+#endif
+#ifdef _TMR3
+                timer3 = 2,
+#endif
+#ifdef _TMR4
+                timer4 = 3,
+#endif
+#ifdef _TMR5
+                timer5 = 4
+#endif
+            };
+
+            enum class Resolution {
+                res16,
+                res32
             };
 
             enum class ClockDivider {
                 div1,
-                dir2,
+                div2,
                 div4,
                 div8,
                 div16,
                 div32,
                 div64,
                 div256
+            };
+
+            enum class ClockSource {
+                pclk,
+                ext
             };
 
         private:
@@ -58,9 +76,16 @@ namespace hal {
             TMR(Timer timer);
             TMR(const TMR &tmr);
 
-            void initialize(ClockDivider clkDiv, uint32_t period, bool mode32);
+            void setClockDivider(ClockDivider divider);
+            void setClockSource(ClockSource source);
+            void setResolution(Resolution resolution);
             void setCounter(uint32_t counter);
             void setPeriod(uint32_t period);
+
+            void enableInterrupts(uint32_t event);
+            uint32_t disableInterrupts(uint32_t event);
+            bool getInterruptFlags(uint32_t event);
+            void clearInterruptFlags(uint32_t event);
 
             void start();
             void stop();
