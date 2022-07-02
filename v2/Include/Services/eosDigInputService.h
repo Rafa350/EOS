@@ -94,8 +94,8 @@ namespace eos {
                 _scanMode = scanMode;
             }
 
-            inline void setCallback(IEventCallback *callback, void *param) {
-                _eventCallback = callback;
+            inline void setCallback(IEventCallback &callback, void *param) {
+                _eventCallback = &callback;
                 _eventParam = param;
             }
 

@@ -5,7 +5,7 @@
 #ifdef EOS_PIC32
 //#include "HAL2/PIC32/halCN.h"
 #endif
-#include "HAL2/halTMR.h"
+#include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
 #include "System/eosApplication.h"
@@ -44,7 +44,7 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el temporitzador pel servei d'entrades digitals
     //
-    hal::TMR tmr(DigInputService_Timer);
+    /*hal::TMR tmr(DigInputService_Timer);
 #if defined(EOS_PIC32)
     tmr.setClockSource(hal::TMR::ClockSource::pclk);
     tmr.setClockDivider(hal::TMR::ClockDivider::div64);
@@ -52,7 +52,7 @@ void MyApplication::onInitialize() {
     tmr.setPeriod((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1,
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
 #endif
-
+*/
 	halTMRSettings tmrSettings;
 	tmrSettings.timer = DigInputService_Timer;
 #if defined(EOS_PIC32)
@@ -83,35 +83,35 @@ void MyApplication::onInitialize() {
     //
 #ifdef EXIST_SWITCHES_SW1
     hal::GPIO gpioSW1(SWITCHES_SW1_PORT, SWITCHES_SW1_PIN);
-    gpioSW1.initInput(hal::GPIO::InputMode::input_PU);
+    gpioSW1.setMode(hal::GPIO::InputMode::input_PU);
 #ifdef EOS_PIC32
     //halCNInitializeLine(SWITCHES_SW1_CN, HAL_CN_PULL_UP);
 #endif
 
     sw1 = new DigInput(_digInputService, gpioSW1);
-    sw1->setCallback(&sw1EventCallback, nullptr);
+    sw1->setCallback(sw1EventCallback, nullptr);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW2
     //
 #ifdef EXIST_SWITCHES_SW2
     hal::GPIO gpioSW2(SWITCHES_SW2_PORT, SWITCHES_SW2_PIN);
-    gpioSW2.initInput(hal::GPIO::InputMode::input_PU);
+    gpioSW2.setMode(hal::GPIO::InputMode::input_PU);
     //halCNInitializeLine(SWITCHES_SW2_CN, HAL_CN_PULL_UP);
 
     sw2 = new DigInput(_digInputService, gpioSW2);
-    sw2->setCallback(&sw2EventCallback, nullptr);
+    sw2->setCallback(sw2EventCallback, nullptr);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW3
     //
 #ifdef EXIST_SWITCHES_SW3
     hal::GPIO gpioSW3(SWITCHES_SW3_PORT, SWITCHES_SW3_PIN);
-    gpioSW3.initInput(hal::GPIO::InputMode::input_PU);
+    gpioSW3.setMode(hal::GPIO::InputMode::input_PU);
     //halCNInitializeLine(SWITCHES_SW3_CN, HAL_CN_PULL_UP);
 
     sw3 = new DigInput(_digInputService, gpioSW3);
-    sw3->setCallback(&sw3EventCallback, nullptr);
+    sw3->setCallback(sw3EventCallback, nullptr);
 #endif
 
     // Inicialitza el temporitzador pel servei de sortides digitals
@@ -144,7 +144,7 @@ void MyApplication::onInitialize() {
     //
 #ifdef EXIST_LEDS_LED1
     hal::GPIO gpioLed1(LEDS_LED1_PORT, LEDS_LED1_PIN);
-    gpioLed1.initOutput(hal::GPIO::OutputMode::output);
+    gpioLed1.setMode(hal::GPIO::OutputMode::output);
     gpioLed1.clear();
     led1 = new DigOutput(_digOutputService, gpioLed1);
     led1->write(LEDS_STATE_OFF);
@@ -154,7 +154,7 @@ void MyApplication::onInitialize() {
     //
 #ifdef EXIST_LEDS_LED2
     hal::GPIO gpioLed2(LEDS_LED2_PORT, LEDS_LED2_PIN);
-    gpioLed2.initOutput(hal::GPIO::OutputMode::output);
+    gpioLed2.setMode(hal::GPIO::OutputMode::output);
     gpioLed2.clear();
     led2 = new DigOutput(_digOutputService, gpioLed2);
     led2->write(LEDS_STATE_OFF);
@@ -164,7 +164,7 @@ void MyApplication::onInitialize() {
     //
 #ifdef EXIST_LEDS_LED3
     hal::GPIO gpioLed3(LEDS_LED3_PORT, LEDS_LED3_PIN);
-    gpioLed3.initOutput(hal::GPIO::OutputMode::output);
+    gpioLed3.setMode(hal::GPIO::OutputMode::output);
     gpioLed3.clear();
     led3 = new DigOutput(_digOutputService, gpioLed3);
     led3->write(LEDS_STATE_OFF);

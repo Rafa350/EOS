@@ -10,40 +10,21 @@
 namespace hal {
 
     class TMR {
-        private:
-            typedef struct  __attribute__((packed , aligned(4))) {
-                union {
-                    __T1CONbits_t TAxCON;
-                    __T2CONbits_t TBxCON;
-                };
-                volatile uint32_t TxCONCLR;
-                volatile uint32_t TxCONSET;
-                volatile uint32_t TxCONINV;
-                volatile uint32_t TMRx;
-                volatile uint32_t TMRxCLR;
-                volatile uint32_t TMRxSET;
-                volatile uint32_t TMRxINV;
-                volatile uint32_t PRx;
-                volatile uint32_t PRxCLR;
-                volatile uint32_t PRxSET;
-                volatile uint32_t PRxINV;
-            } Registers;
-
         public:
             enum class Timer {
-                timer1 = 0,
-#ifdef _TMR2
-                timer2 = 1,
-#endif
-#ifdef _TMR3
-                timer3 = 2,
-#endif
-#ifdef _TMR4
-                timer4 = 3,
-#endif
-#ifdef _TMR5
-                timer5 = 4
-#endif
+                timer1,
+                #ifdef _TMR2
+                    timer2,
+                #endif
+                #ifdef _TMR3
+                    timer3,
+                #endif
+                #ifdef _TMR4
+                    timer4,
+                #endif
+                #ifdef _TMR5
+                    timer5
+                #endif
             };
 
             enum class Resolution {
@@ -67,10 +48,12 @@ namespace hal {
                 ext
             };
 
-        private:
-            Registers *_regs;
+            enum class InterruptEvent {
+                update,
+            };
 
-            static Registers* getRegisterPtr(Timer timer);
+        private:
+            uint32_t _base;
 
         public:
             TMR(Timer timer);
@@ -82,10 +65,11 @@ namespace hal {
             void setCounter(uint32_t counter);
             void setPeriod(uint32_t period);
 
-            void enableInterrupts(uint32_t event);
-            uint32_t disableInterrupts(uint32_t event);
-            bool getInterruptFlags(uint32_t event);
-            void clearInterruptFlags(uint32_t event);
+            void enableInterrupt(InterruptEvent event);
+            bool disableInterrupt(InterruptEvent event);
+            bool getInterruptFlag(InterruptEvent event);
+            void clearInterruptFlag(InterruptEvent event);
+            void interruptHandler(InterruptEvent event);
 
             void start();
             void stop();

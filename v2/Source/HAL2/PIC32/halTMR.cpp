@@ -5,15 +5,33 @@
 using namespace hal;
 
 
+typedef struct  __attribute__((packed , aligned(4))) {
+    union {
+        __T1CONbits_t TAxCON;
+        __T2CONbits_t TBxCON;
+    };
+    volatile uint32_t TxCONCLR;
+    volatile uint32_t TxCONSET;
+    volatile uint32_t TxCONINV;
+    volatile uint32_t TMRx;
+    volatile uint32_t TMRxCLR;
+    volatile uint32_t TMRxSET;
+    volatile uint32_t TMRxINV;
+    volatile uint32_t PRx;
+    volatile uint32_t PRxCLR;
+    volatile uint32_t PRxSET;
+    volatile uint32_t PRxINV;
+} TMR_Registers;
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    timer: Identificador del temporitzador.
 ///
 TMR::TMR(
-    Timer timer):
+    Timer timer) {
 
-    _regs(getRegisterPtr(timer)) {
-
+    _base = _TMR1_BASE_ADDRESS + (static_cast<unsigned>(timer) * 0x200);
 }
 
 
@@ -24,7 +42,7 @@ TMR::TMR(
 TMR::TMR(
     const TMR &tmr):
 
-    _regs(tmr._regs) {
+    _base(tmr._base) {
 
 }
 
@@ -36,26 +54,24 @@ TMR::TMR(
 void TMR::setClockDivider(
     ClockDivider divider) {
 
-    // Desactiva les interrupcions del temporitzador
-    //
-    //halTMRDisableInterrupts(handler, HAL_TMR_EVENT_ALL);
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
 
-    if ((uint32_t)_regs == _TMR1_BASE_ADDRESS) {
+    if (_base == _TMR1_BASE_ADDRESS) {
         switch (divider) {
             case ClockDivider::div8:
-                _regs->TAxCON.TCKPS = 1;
+                regs->TAxCON.TCKPS = 1;
                 break;
 
             case ClockDivider::div64:
-                _regs->TAxCON.TCKPS = 2;
+                regs->TAxCON.TCKPS = 2;
                 break;
 
             case ClockDivider::div256:
-                _regs->TAxCON.TCKPS = 3;
+                regs->TAxCON.TCKPS = 3;
                 break;
 
             default:
-                _regs->TAxCON.TCKPS = 0;
+                regs->TAxCON.TCKPS = 0;
                 break;
         }
     }
@@ -63,35 +79,35 @@ void TMR::setClockDivider(
     else {
         switch (divider) {
             case ClockDivider::div1:
-                _regs->TBxCON.TCKPS = 0;
+                regs->TBxCON.TCKPS = 0;
                 break;
 
             case ClockDivider::div2:
-                _regs->TBxCON.TCKPS = 1;
+                regs->TBxCON.TCKPS = 1;
                 break;
 
             case ClockDivider::div4:
-                _regs->TBxCON.TCKPS = 2;
+                regs->TBxCON.TCKPS = 2;
                 break;
 
             case ClockDivider::div8:
-                _regs->TBxCON.TCKPS = 3;
+                regs->TBxCON.TCKPS = 3;
                 break;
 
             case ClockDivider::div16:
-                _regs->TBxCON.TCKPS = 4;
+                regs->TBxCON.TCKPS = 4;
                 break;
 
             case ClockDivider::div32:
-                _regs->TBxCON.TCKPS = 5;
+                regs->TBxCON.TCKPS = 5;
                 break;
 
             case ClockDivider::div64:
-                _regs->TBxCON.TCKPS = 6;
+                regs->TBxCON.TCKPS = 6;
                 break;
 
             case ClockDivider::div256:
-                _regs->TBxCON.TCKPS = 7;
+                regs->TBxCON.TCKPS = 7;
                 break;
         }
     }
@@ -105,12 +121,12 @@ void TMR::setClockDivider(
 void TMR::setClockSource(
     ClockSource source) {
 
-//#if defined(__32MX460F512L__)
-    if ((uint32_t)_regs == _TMR1_BASE_ADDRESS)
-        _regs->TAxCON.TCS = 0;
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+
+    if (_base == _TMR1_BASE_ADDRESS)
+        regs->TAxCON.TCS = 0;
     else
-        _regs->TBxCON.TCS = 0;
-//#endif
+        regs->TBxCON.TCS = 0;
 }
 
 
@@ -121,8 +137,10 @@ void TMR::setClockSource(
 void TMR::setResolution(
     Resolution resolution) {
 
-    if ((uint32_t)_regs != _TMR1_BASE_ADDRESS)
-        _regs->TBxCON.T32 = resolution == Resolution::res32;
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+
+    if (_base != _TMR1_BASE_ADDRESS)
+        regs->TBxCON.T32 = resolution == Resolution::res32;
 }
 
 
@@ -133,13 +151,14 @@ void TMR::setResolution(
 void TMR::setCounter(
     uint32_t counter) {
 
-    if (((uint32_t)_regs != _TMR1_BASE_ADDRESS) &&
-        (_regs->TBxCON.T32 == 1)) {
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
 
-        Registers *regs32 = reinterpret_cast<Registers*>((uint32_t)_regs + 0x200);
+    if ((_base != _TMR1_BASE_ADDRESS) && (regs->TBxCON.T32 == 1)) {
+
+        TMR_Registers *regs32 = reinterpret_cast<TMR_Registers*>(_base + 0x200);
         regs32->TMRx = (counter >> 16) & 0xFFFF;
     }
-    _regs->TMRx = counter & 0xFFFF;
+    regs->TMRx = counter & 0xFFFF;
 }
 
 
@@ -150,13 +169,14 @@ void TMR::setCounter(
 void TMR::setPeriod(
     uint32_t period) {
 
-    if (((uint32_t)_regs != _TMR1_BASE_ADDRESS) &&
-        (_regs->TBxCON.T32 == 1)) {
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
 
-        Registers *regs32 = reinterpret_cast<Registers*>((uint32_t)_regs + 0x200);
+    if ((_base != _TMR1_BASE_ADDRESS) && (regs->TBxCON.T32 == 1)) {
+
+        TMR_Registers *regs32 = reinterpret_cast<TMR_Registers*>(_base + 0x200);
         regs32->PRx = (period >> 16) & 0xFFFF;
     }
-    _regs->PRx = period & 0xFFFF;
+    regs->PRx = period & 0xFFFF;
 }
 
 
@@ -165,10 +185,12 @@ void TMR::setPeriod(
 ///
 void TMR::start() {
 
-    if ((uint32_t)_regs == _TMR1_BASE_ADDRESS)
-        _regs->TAxCON.ON = 1;
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+
+    if (_base == _TMR1_BASE_ADDRESS)
+        regs->TAxCON.ON = 1;
     else
-        _regs->TBxCON.ON = 1;
+        regs->TBxCON.ON = 1;
 }
 
 
@@ -177,10 +199,12 @@ void TMR::start() {
 ///
 void TMR::stop() {
 
-    if ((uint32_t)_regs == _TMR1_BASE_ADDRESS)
-        _regs->TAxCON.ON = 0;
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+
+    if (_base == _TMR1_BASE_ADDRESS)
+        regs->TAxCON.ON = 0;
     else
-        _regs->TBxCON.ON = 0;
+        regs->TBxCON.ON = 0;
 }
 
 
@@ -188,85 +212,87 @@ void TMR::stop() {
 /// \brief   Activa les interrupcions del temporitzador.
 /// \param   event: El event a activar.
 ///
-void TMR::enableInterrupts(
-    uint32_t event) {
+void TMR::enableInterrupt(
+    InterruptEvent event) {
 
-    switch ((uint32_t) handler->regs) {
-        case _TMR1_BASE_ADDRESS:
-            IEC0bits.T1IE = 1;
-            break;
+    if (event == InterruptEvent::update)
+        switch (_base) {
+            case _TMR1_BASE_ADDRESS:
+                IEC0bits.T1IE = 1;
+                break;
 
-#ifdef _TMR2
-        case _TMR2_BASE_ADDRESS:
-            IEC0bits.T2IE = 1;
-            break;
-#endif
+            #ifdef _TMR2
+            case _TMR2_BASE_ADDRESS:
+                IEC0bits.T2IE = 1;
+                break;
+            #endif
 
-#ifdef _TMR3
-        case _TMR3_BASE_ADDRESS:
-            IEC0bits.T3IE = 1;
-            break;
-#endif
+            #ifdef _TMR3
+            case _TMR3_BASE_ADDRESS:
+                IEC0bits.T3IE = 1;
+                break;
+            #endif
 
-#ifdef _TMR4
-        case _TMR4_BASE_ADDRESS:
-            IEC0bits.T4IE = 1;
-            break;
-#endif
+            #ifdef _TMR4
+            case _TMR4_BASE_ADDRESS:
+                IEC0bits.T4IE = 1;
+                break;
+            #endif
 
-#ifdef _TMR5
-        case _TMR5_BASE_ADDRESS:
-            IEC0bits.T5IE = 1;
-            break;
-#endif
-    }
+            #ifdef _TMR5
+            case _TMR5_BASE_ADDRESS:
+                IEC0bits.T5IE = 1;
+                break;
+            #endif
+        }
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Desactiva les interrupcions del temporitzador.
 /// \param    event: El event a desactivar.
-/// \return   Diferent de zero si previament estava activada.
+/// \return   True si previament estava activada.
 ///
-uint32_t TMR::disableInterrupts(
-    uint32_t event) {
+bool TMR::disableInterrupt(
+    InterruptEvent event) {
 
-    uint32_t state = 0;
+    bool state = false;
 
-    switch ((uint32_t) _regs) {
-        case _TMR1_BASE_ADDRESS:
-            state = IEC0bits.T1IE;
-            IEC0bits.T1IE = 0;
-            break;
+    if (event == InterruptEvent::update)
+        switch (_base) {
+            case _TMR1_BASE_ADDRESS:
+                state = IEC0bits.T1IE;
+                IEC0bits.T1IE = 0;
+                break;
 
-#ifdef _TMR2
-        case _TMR2_BASE_ADDRESS:
-            state = IEC0bits.T2IE;
-            IEC0bits.T2IE = 0;
-            break;
-#endif
+            #ifdef _TMR2
+            case _TMR2_BASE_ADDRESS:
+                state = IEC0bits.T2IE;
+                IEC0bits.T2IE = 0;
+                break;
+            #endif
 
-#ifdef _TMR3
-        case _TMR3_BASE_ADDRESS:
-            state = IEC0bits.T3IE;
-            IEC0bits.T3IE = 0;
-            break;
-#endif
+            #ifdef _TMR3
+            case _TMR3_BASE_ADDRESS:
+                state = IEC0bits.T3IE;
+                IEC0bits.T3IE = 0;
+                break;
+            #endif
 
-#ifdef _TMR4
-        case _TMR4_BASE_ADDRESS:
-            state = IEC0bits.T4IE;
-            IEC0bits.T4IE = 0;
-            break;
-#endif
+            #ifdef _TMR4
+            case _TMR4_BASE_ADDRESS:
+                state = IEC0bits.T4IE;
+                IEC0bits.T4IE = 0;
+                break;
+            #endif
 
-#ifdef _TMR5
-        case _TMR5_BASE_ADDRESS:
-            state = IEC0bits.T5IE;
-            IEC0bits.T5IE = 0;
-            break;
-#endif
-    }
+            #ifdef _TMR5
+            case _TMR5_BASE_ADDRESS:
+                state = IEC0bits.T5IE;
+                IEC0bits.T5IE = 0;
+                break;
+            #endif
+        }
 
     return state;
 }
@@ -277,36 +303,43 @@ uint32_t TMR::disableInterrupts(
 /// \param    event: El event.
 /// \return   El valor del flag.
 ///
-bool TMR::getInterruptFlags(
-    uint32_t event) {
+bool TMR::getInterruptFlag(
+    InterruptEvent event) {
 
-    switch ((uint32_t) _regs) {
-        case _TMR1_BASE_ADDRESS:
-            return IFS0bits.T1IF;
+    bool state = false;
 
-#ifdef _TMR2
-        case _TMR2_BASE_ADDRESS:
-            return IFS0bits.T2IF;
-#endif
+    if (event == InterruptEvent::update)
+        switch (_base) {
+            case _TMR1_BASE_ADDRESS:
+                state = IFS0bits.T1IF;
+                break;
 
-#ifdef _TMR3
-        case _TMR3_BASE_ADDRESS:
-            return IFS0bits.T3IF;
-#endif
+            #ifdef _TMR2
+            case _TMR2_BASE_ADDRESS:
+                state = IFS0bits.T2IF;
+                break;
+            #endif
 
-#ifdef _TMR4
-        case _TMR4_BASE_ADDRESS:
-            return IFS0bits.T4IF;
-#endif
+            #ifdef _TMR3
+            case _TMR3_BASE_ADDRESS:
+                state = IFS0bits.T3IF;
+                break;
+            #endif
 
-#ifdef _TMR5
-        case _TMR5_BASE_ADDRESS:
-            return IFS0bits.T5IF;
-#endif
+            #ifdef _TMR4
+            case _TMR4_BASE_ADDRESS:
+                state = IFS0bits.T4IF;
+                break;
+            #endif
 
-        default:
-            return false;
-    }
+            #ifdef _TMR5
+            case _TMR5_BASE_ADDRESS:
+                state = IFS0bits.T5IF;
+                break;
+            #endif
+        }
+
+    return state;
 }
 
 
@@ -315,47 +348,52 @@ bool TMR::getInterruptFlags(
 /// \param    handler: El handler del temporitzador.
 /// \param    event: El event.
 ///
-void TMR::clearInterruptFlags(
-    uint32_t event) {
+void TMR::clearInterruptFlag(
+    InterruptEvent event) {
 
-    switch ((uint32_t) _regs) {
-        case _TMR1_BASE_ADDRESS:
-            IFS0bits.T1IF = 0;
-            break;
+    if (event == InterruptEvent::update)
+        switch (_base) {
+            case _TMR1_BASE_ADDRESS:
+                IFS0bits.T1IF = 0;
+                break;
 
-#ifdef _TMR2
-        case _TMR2_BASE_ADDRESS:
-            IFS0bits.T2IF = 0;
-            break;
-#endif
+            #ifdef _TMR2
+            case _TMR2_BASE_ADDRESS:
+                IFS0bits.T2IF = 0;
+                break;
+            #endif
 
-#ifdef _TMR3
-        case _TMR3_BASE_ADDRESS:
-            IFS0bits.T3IF = 0;
-            break;
-#endif
+            #ifdef _TMR3
+            case _TMR3_BASE_ADDRESS:
+                IFS0bits.T3IF = 0;
+                break;
+            #endif
 
-#ifdef _TMR4
-        case _TMR4_BASE_ADDRESS:
-            IFS0bits.T4IF = 0;
-            break;
-#endif
+            #ifdef _TMR4
+            case _TMR4_BASE_ADDRESS:
+                IFS0bits.T4IF = 0;
+                break;
+            #endif
 
-#ifdef _TMR5
-        case _TMR5_BASE_ADDRESS:
-            IFS0bits.T5IF = 0;
-            break;
-#endif
-    }
+            #ifdef _TMR5
+            case _TMR5_BASE_ADDRESS:
+                IFS0bits.T5IF = 0;
+                break;
+            #endif
+        }
 }
 
-/// ----------------------------------------------------------------------
-/// \brief    Obte el punter als registres del temporitzador.
-/// \param    timer: Identificador del temporitzado.
-/// \return   Punter als registres.
-///
-TMR::Registers* TMR::getRegisterPtr(
-    Timer timer) {
 
-    return reinterpret_cast<Registers*>(_TMR1_BASE_ADDRESS + (timer * 0x00000200));
+/// ----------------------------------------------------------------------
+/// \brief    Gestio de la interrupcio.
+/// \param    event: Event que ha generat la interrupcio.
+///
+void TMR::interruptHandler(
+    InterruptEvent event) {
+
+}
+
+
+extern "C" void isrTMR1InterruptHandler(void) {
+
 }

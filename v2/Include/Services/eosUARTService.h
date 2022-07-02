@@ -5,7 +5,7 @@
 /// EOS includes
 //
 #include "eos.h"
-#include "HAL/halUART_ex.h"
+#include "HTL/htlUART.h"
 #include "System/eosCallbacks.h"
 #include "System/Core/eosSemaphore.h"
 #include "Services/eosService.h"
@@ -16,7 +16,7 @@ namespace eos {
 	class UARTService: public Service {
 		public:
 			enum class Event {
-				transmissionFiniched,
+				transmissionFinished,
 				receptionFinished
 			};
 			struct EventArgs {
@@ -32,7 +32,7 @@ namespace eos {
 			};
 
 		private:
-			UARTAttachedAdapter _uart;
+			htl::UARTAttachedAdapter _uart;
 			uint8_t *_txBuffer;
 			unsigned _txLength;
 			unsigned _txCount;

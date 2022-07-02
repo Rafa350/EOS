@@ -9,42 +9,6 @@
 
 namespace hal {
 
-    enum class GPIOPort {
-        portA, portB, portC, portD, portE, portF, portG, portH,
-        portI, portJ, portK
-    };
-
-    enum class GPIOPin {
-    	pin0, pin1, pin2, pin3, pin4, pin5, pin6, pin7,
-		pin8, pin9, pin10, pin11, pin12, pin13, pin14, pin15
-    };
-
-    enum class GPIOInputMode {
-        input,
-        input_PU,
-        input_PD,
-		analog
-    };
-
-    enum class GPIOOutputMode {
-        output,
-        output_OD,
-		alt,
-		alt_OD
-    };
-
-	enum class GPIOSpeed {
-		low,
-		medium,
-		high,
-		fast
-	};
-
-	enum class GPIOAlt {
-		alt0, alt1, alt2, alt3, alt4, alt5, alt6, alt7,
-		alt8, alt9, alt10, alt11, alt12, alt13, alt14, alt15
-	};
-
 	class GPIO {
 		public:
 			enum class Port {
@@ -67,8 +31,13 @@ namespace hal {
 			enum class OutputMode {
 				output,
 				output_OD,
-				alt,
-				alt_OD
+				output_OD_PU
+			};
+
+			enum class Alt {
+				alt0, alt1, alt2, alt3, alt4, alt5, alt6, alt7,
+				alt8, alt9, alt10, alt11, alt12, alt13, alt14, alt15,
+				altNone
 			};
 
 			enum class Speed {
@@ -78,31 +47,21 @@ namespace hal {
 				fast
 			};
 
-			enum class Alt {
-				alt0, alt1, alt2, alt3, alt4, alt5, alt6, alt7,
-				alt8, alt9, alt10, alt11, alt12, alt13, alt14, alt15
-			};
-
 		private:
-			GPIO_TypeDef *_regs;
-            uint32_t _pinNumber;
+			uint32_t _base;
+            uint32_t _pnum;
 
 			GPIO(const GPIO &&) = delete;
 			GPIO & operator = (const GPIO &&) = delete;
-
-            static GPIO_TypeDef* getRegister(Port port);
-            static uint32_t getPinNumber(Pin pin);
-            static void enableClock(Port port);
 
 		public:
 			GPIO(Port port, Pin pin);
             GPIO(const GPIO &gpio);
 
-            void initInput(InputMode mode);
-            void initOutput(OutputMode mode);
+            void setMode(InputMode mode);
+            void setMode(OutputMode mode, Alt alt = Alt::altNone);
 
             void setSpeed(Speed speed);
-            void setAlt(Alt alt);
 
 			void set() const;
 			void clear() const;
@@ -112,8 +71,9 @@ namespace hal {
 			bool read() const;
 
 			GPIO & operator = (const GPIO &gpio);
-            GPIO & operator = (bool s);
-			operator bool() const;
+
+			inline GPIO & operator = (bool s) { write(s); return *this; }
+            inline operator bool() const { return read(); }
 	};
 }
 

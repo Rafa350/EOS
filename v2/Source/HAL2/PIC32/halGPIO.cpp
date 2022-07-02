@@ -5,6 +5,25 @@
 using namespace hal;
 
 
+typedef struct __attribute__((packed , aligned(4))) {
+    volatile uint32_t TRISx;
+    volatile uint32_t TRISxCLR;
+    volatile uint32_t TRISxSET;
+    volatile uint32_t TRISxINV;
+    volatile uint32_t PORTx;
+    volatile uint32_t PORTxCLR;
+    volatile uint32_t PORTxSET;
+    volatile uint32_t PORTxINV;
+    volatile uint32_t LATx;
+    volatile uint32_t LATxCLR;
+    volatile uint32_t LATxSET;
+    volatile uint32_t LATxINV;
+    volatile uint32_t ODCx;
+    volatile uint32_t ODCxCLR;
+    volatile uint32_t ODCxSET;
+    volatile uint32_t ODCxINV;
+} GPIO_Registers;
+
 
 /// ----------------------------------------------------------------------
 /// \brief     Constructor.
@@ -13,10 +32,10 @@ using namespace hal;
 //
 GPIO::GPIO(
     Port port,
-    Pin pin) :
+    Pin pin) {
 
-    _regs(getRegisterPtr(port)),
-    _mask(getMask(pin)) {
+    _base = _PORTA_BASE_ADDRESS - 0x10 + (static_cast<unsigned>(port) * 0x40);
+    _mask = 1 << static_cast<unsigned>(pin);
 }
 
 
@@ -27,7 +46,7 @@ GPIO::GPIO(
 GPIO::GPIO(
     const GPIO &gpio) :
 
-    _regs(gpio._regs),
+    _base(gpio._base),
     _mask(gpio._mask) {
 }
 
@@ -36,10 +55,12 @@ GPIO::GPIO(
 /// \brief    Inicialitza el pin com entrada.
 /// \param    mode: Modus de treball del pin.
 ///
-void GPIO::initInput(
+void GPIO::setMode(
     InputMode mode) {
 
-    _regs->TRISxSET = _mask;
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+
+    regs->TRISxSET = _mask;
 }
 
 
@@ -47,14 +68,16 @@ void GPIO::initInput(
 /// \brief    Inicialitza el pin com sortida.
 /// \param    mode: Modus de treball del pin.
 ///
-void GPIO::initOutput(
+void GPIO::setMode(
     OutputMode mode) {
 
-    _regs->TRISxCLR = _mask;
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+
+    regs->TRISxCLR = _mask;
     if (mode == OutputMode::output_OD)
-        _regs->ODCxSET = _mask;
+        regs->ODCxSET = _mask;
     else
-        _regs->ODCxCLR = _mask;
+        regs->ODCxCLR = _mask;
 }
 
 
@@ -63,7 +86,9 @@ void GPIO::initOutput(
 ///
 void GPIO::set() const {
 
-    _regs->PORTxSET = _mask;
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+
+    regs->PORTxSET = _mask;
 }
 
 
@@ -72,7 +97,9 @@ void GPIO::set() const {
 ///
 void GPIO::clear() const {
 
-    _regs->PORTxCLR = _mask;
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+
+    regs->PORTxCLR = _mask;
 }
 
 
@@ -81,7 +108,8 @@ void GPIO::clear() const {
 ///
 void GPIO::toggle() const {
 
-    _regs->PORTxINV = _mask;
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+    regs->PORTxINV = _mask;
 }
 
 
@@ -92,10 +120,12 @@ void GPIO::toggle() const {
 void GPIO::write(
     bool s) const {
 
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+
     if (s)
-        _regs->PORTxSET = _mask;
+        regs->PORTxSET = _mask;
     else
-        _regs->PORTxCLR = _mask;
+        regs->PORTxCLR = _mask;
 }
 
 
@@ -105,7 +135,9 @@ void GPIO::write(
 ///
 bool GPIO::read() const {
 
-    return (_regs->PORTx & _mask) != 0;
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+
+    return (regs->PORTx & _mask) != 0;
 }
 
 
@@ -116,85 +148,8 @@ bool GPIO::read() const {
 GPIO & GPIO::operator = (
     const GPIO &gpio) {
 
-    _regs = gpio._regs;
+    _base = gpio._base;
     _mask = gpio._mask;
 
     return *this;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador =
-/// \param    s: El valor a signar.
-///
-GPIO & GPIO::operator = (
-    bool s) {
-
-    write(s);
-
-    return *this;
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Operador de conversio a bool
-/// \return   L'estat del pin.
-///
-GPIO::operator bool() const {
-
-    return read();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte el punter als registres asociats al port.
-/// \return   El punter.
-///
-GPIO::Registers* GPIO::getRegisterPtr(
-    Port port) {
-
-    uint32_t addr = 0;
-
-    switch (port) {
-        case Port::portA: addr = _PORTA_BASE_ADDRESS - 0x10; break;
-        case Port::portB: addr = _PORTB_BASE_ADDRESS - 0x10; break;
-        case Port::portC: addr = _PORTC_BASE_ADDRESS - 0x10; break;
-        case Port::portD: addr = _PORTD_BASE_ADDRESS - 0x10; break;
-        case Port::portE: addr = _PORTE_BASE_ADDRESS - 0x10; break;
-        case Port::portF: addr = _PORTF_BASE_ADDRESS - 0x10; break;
-    }
-
-    return reinterpret_cast<Registers*>(addr);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Obte la mascara associada al pin.
-/// \return   La mascara.
-///
-uint32_t GPIO::getMask(
-    Pin pin) {
-
-    uint32_t mask = 0;
-
-    switch (pin) {
-        case Pin::pin0: mask = 0x0001; break;
-        case Pin::pin1: mask = 0x0002; break;
-        case Pin::pin2: mask = 0x0004; break;
-        case Pin::pin3: mask = 0x0008; break;
-        case Pin::pin4: mask = 0x0010; break;
-        case Pin::pin5: mask = 0x0020; break;
-        case Pin::pin6: mask = 0x0040; break;
-        case Pin::pin7: mask = 0x0080; break;
-        case Pin::pin8: mask = 0x0100; break;
-        case Pin::pin9: mask = 0x0200; break;
-        case Pin::pin10: mask = 0x0400; break;
-        case Pin::pin11: mask = 0x0800; break;
-        case Pin::pin12: mask = 0x1000; break;
-        case Pin::pin13: mask = 0x2000; break;
-        case Pin::pin14: mask = 0x4000; break;
-        case Pin::pin15: mask = 0x8000; break;
-    }
-
-    return mask;
 }

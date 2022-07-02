@@ -10,37 +10,27 @@
 namespace hal {
 
 	class GPIO {
-        private:
-            typedef struct __attribute__((packed , aligned(4))) {
-                volatile uint32_t TRISx;
-                volatile uint32_t TRISxCLR;
-                volatile uint32_t TRISxSET;
-                volatile uint32_t TRISxINV;
-                volatile uint32_t PORTx;
-                volatile uint32_t PORTxCLR;
-                volatile uint32_t PORTxSET;
-                volatile uint32_t PORTxINV;
-                volatile uint32_t LATx;
-                volatile uint32_t LATxCLR;
-                volatile uint32_t LATxSET;
-                volatile uint32_t LATxINV;
-                volatile uint32_t ODCx;
-                volatile uint32_t ODCxCLR;
-                volatile uint32_t ODCxSET;
-                volatile uint32_t ODCxINV;
-            } Registers;
-
         public:
-            enum class Port: uint32_t {
+            enum class Port {
                 portA,
-                portB,
-                portC,
-                portD,
-                portE,
-                portF
+                #ifdef _PORTB
+                    portB,
+                #endif
+                #ifdef _PORTC
+                    portC,
+                #endif
+                #ifdef _PORTD
+                    portD,
+                #endif
+                #ifdef _PORTE
+                    portE,
+                #endif
+                #ifdef _PORTF
+                    portF
+                #endif
             };
 
-            enum class Pin: uint32_t {
+            enum class Pin {
                 pin0, pin1, pin2, pin3, pin4, pin5, pin6, pin7,
                 pin8, pin9, pin10, pin11, pin12, pin13, pin14, pin15
             };
@@ -57,21 +47,18 @@ namespace hal {
             };
 
 		private:
-			Registers *_regs;
+			uint32_t _base;
             uint32_t _mask;
 
 			GPIO(const GPIO &&) = delete;
 			GPIO & operator = (const GPIO &&) = delete;
 
-            static Registers *getRegisterPtr(Port port);
-            static uint32_t getMask(Pin pin);
-
 		public:
 			GPIO(Port port, Pin pin);
             GPIO(const GPIO &gpio);
 
-            void initInput(InputMode mode);
-            void initOutput(OutputMode mode);
+            void setMode(InputMode mode);
+            void setMode(OutputMode mode);
 
 			void set() const;
 			void clear() const;
@@ -81,8 +68,8 @@ namespace hal {
 			bool read() const;
 
 			GPIO & operator = (const GPIO &gpio);
-            GPIO & operator = (bool s);
-			operator bool() const;
+            inline GPIO & operator = (bool s) { write(s); return *this; }
+			inline operator bool() const { return read(); }
 	};
 }
 
