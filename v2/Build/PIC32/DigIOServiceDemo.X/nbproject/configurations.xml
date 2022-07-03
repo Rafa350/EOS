@@ -41,6 +41,12 @@
             <itemPath>../../../Include/HAL2/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL2/halTMR.h</itemPath>
           </logicalFolder>
+          <logicalFolder name="f7" displayName="HTL" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Include/HTL/PIC32/htlGPIO.h</itemPath>
+            </logicalFolder>
+            <itemPath>../../../Include/HTL/htlGPIO.h</itemPath>
+          </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
             <itemPath>../../../Include/OSAL/osalTask.h</itemPath>
@@ -354,7 +360,7 @@
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
         <property key="use-indirect-calls" value="false"/>
-        <appendMe value="-std=gnu++17"/>
+        <appendMe value="-std=gnu++17 "/>
       </C32CPP>
       <C32Global>
         <property key="common-include-directories"

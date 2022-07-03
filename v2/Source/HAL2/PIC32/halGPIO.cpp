@@ -31,10 +31,10 @@ typedef struct __attribute__((packed , aligned(4))) {
 /// \param     pin: Identificador del pin.
 //
 GPIO::GPIO(
-    Port port,
-    Pin pin) {
+    GPIOPort port,
+    GPIOPin pin) {
 
-    _base = _PORTA_BASE_ADDRESS - 0x10 + (static_cast<unsigned>(port) * 0x40);
+    _addr = _PORTA_BASE_ADDRESS - 0x10 + (static_cast<unsigned>(port) * 0x40);
     _mask = 1 << static_cast<unsigned>(pin);
 }
 
@@ -46,7 +46,7 @@ GPIO::GPIO(
 GPIO::GPIO(
     const GPIO &gpio) :
 
-    _base(gpio._base),
+    _addr(gpio._addr),
     _mask(gpio._mask) {
 }
 
@@ -56,9 +56,9 @@ GPIO::GPIO(
 /// \param    mode: Modus de treball del pin.
 ///
 void GPIO::setMode(
-    InputMode mode) {
+    InpMode mode) {
 
-    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_addr);
 
     regs->TRISxSET = _mask;
 }
@@ -69,12 +69,12 @@ void GPIO::setMode(
 /// \param    mode: Modus de treball del pin.
 ///
 void GPIO::setMode(
-    OutputMode mode) {
+    OutMode mode) {
 
-    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_addr);
 
     regs->TRISxCLR = _mask;
-    if (mode == OutputMode::output_OD)
+    if (mode == OutMode::output_OD)
         regs->ODCxSET = _mask;
     else
         regs->ODCxCLR = _mask;
@@ -86,7 +86,7 @@ void GPIO::setMode(
 ///
 void GPIO::set() const {
 
-    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_addr);
 
     regs->PORTxSET = _mask;
 }
@@ -97,7 +97,7 @@ void GPIO::set() const {
 ///
 void GPIO::clear() const {
 
-    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_addr);
 
     regs->PORTxCLR = _mask;
 }
@@ -108,7 +108,7 @@ void GPIO::clear() const {
 ///
 void GPIO::toggle() const {
 
-    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_addr);
     regs->PORTxINV = _mask;
 }
 
@@ -120,7 +120,7 @@ void GPIO::toggle() const {
 void GPIO::write(
     bool s) const {
 
-    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_addr);
 
     if (s)
         regs->PORTxSET = _mask;
@@ -135,7 +135,7 @@ void GPIO::write(
 ///
 bool GPIO::read() const {
 
-    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_base);
+    GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_addr);
 
     return (regs->PORTx & _mask) != 0;
 }
@@ -148,7 +148,7 @@ bool GPIO::read() const {
 GPIO & GPIO::operator = (
     const GPIO &gpio) {
 
-    _base = gpio._base;
+    _addr = gpio._addr;
     _mask = gpio._mask;
 
     return *this;

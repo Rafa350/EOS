@@ -3,7 +3,7 @@
 #include "HAL/halINT.h"
 #include "HAL/halSYS.h"
 #ifdef EOS_PIC32
-//#include "HAL2/PIC32/halCN.h"
+#include "HAL2/PIC32/halCN.h"
 #endif
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"
@@ -12,6 +12,7 @@
 
 #include "appApplication.h"
 #include "HAL2/PIC32/halTMR.h"
+#include "HAL2/PIC32/halGPIO.h"
 
 
 using namespace eos;
@@ -82,12 +83,15 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW1
     //
 #ifdef EXIST_SWITCHES_SW1
-    hal::GPIO gpioSW1(SWITCHES_SW1_PORT, SWITCHES_SW1_PIN);
-    gpioSW1.setMode(hal::GPIO::InputMode::input_PU);
-#ifdef EOS_PIC32
-    //halCNInitializeLine(SWITCHES_SW1_CN, HAL_CN_PULL_UP);
+    hal::GPIOPinInfo<SWITCHES_SW1_PORT, SWITCHES_SW1_PIN> sw1PinInfo;
+    hal::GPIO gpioSW1(sw1PinInfo);
+#if defined(EOS_PIC32)
+    gpioSW1.setMode(hal::GPIO::InpMode::input);
+    hal::CN cnSW1(sw1PinInfo);
+    cnSW1.setPullUp(true);
+#elif defined(EOS_STM32)
+    #error "Unsuported hardware"
 #endif
-
     sw1 = new DigInput(_digInputService, gpioSW1);
     sw1->setCallback(sw1EventCallback, nullptr);
 #endif
@@ -95,10 +99,15 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW2
     //
 #ifdef EXIST_SWITCHES_SW2
-    hal::GPIO gpioSW2(SWITCHES_SW2_PORT, SWITCHES_SW2_PIN);
-    gpioSW2.setMode(hal::GPIO::InputMode::input_PU);
-    //halCNInitializeLine(SWITCHES_SW2_CN, HAL_CN_PULL_UP);
-
+    hal::GPIOPinInfo<SWITCHES_SW2_PORT, SWITCHES_SW2_PIN> sw2PinInfo;
+    hal::GPIO gpioSW2(sw2PinInfo);
+#if defined(EOS_PIC32)
+    gpioSW2.setMode(hal::GPIO::InpMode::input);
+    hal::CN cnSW2(sw2PinInfo);
+    cnSW2.setPullUp(true);
+#elif defined(EOS_STM32)
+    #error "Unsuported hardware"
+#endif
     sw2 = new DigInput(_digInputService, gpioSW2);
     sw2->setCallback(sw2EventCallback, nullptr);
 #endif
@@ -106,10 +115,15 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW3
     //
 #ifdef EXIST_SWITCHES_SW3
-    hal::GPIO gpioSW3(SWITCHES_SW3_PORT, SWITCHES_SW3_PIN);
-    gpioSW3.setMode(hal::GPIO::InputMode::input_PU);
-    //halCNInitializeLine(SWITCHES_SW3_CN, HAL_CN_PULL_UP);
-
+    hal::GPIOPinInfo<SWITCHES_SW3_PORT, SWITCHES_SW3_PIN> sw3PinInfo;
+    hal::GPIO gpioSW3(sw3PinInfo);
+#if defined(EOS_PIC32)
+    gpioSW3.setMode(hal::GPIO::InpMode::input);
+    hal::CN cnSW3(sw2PinInfo);
+    cnSW3.setPullUp(true);
+#elif defined(EOS_STM32)
+    #error "Unsuported hardware"
+#endif
     sw3 = new DigInput(_digInputService, gpioSW3);
     sw3->setCallback(sw3EventCallback, nullptr);
 #endif
@@ -144,7 +158,7 @@ void MyApplication::onInitialize() {
     //
 #ifdef EXIST_LEDS_LED1
     hal::GPIO gpioLed1(LEDS_LED1_PORT, LEDS_LED1_PIN);
-    gpioLed1.setMode(hal::GPIO::OutputMode::output);
+    gpioLed1.setMode(hal::GPIO::OutMode::output);
     gpioLed1.clear();
     led1 = new DigOutput(_digOutputService, gpioLed1);
     led1->write(LEDS_STATE_OFF);
@@ -154,7 +168,7 @@ void MyApplication::onInitialize() {
     //
 #ifdef EXIST_LEDS_LED2
     hal::GPIO gpioLed2(LEDS_LED2_PORT, LEDS_LED2_PIN);
-    gpioLed2.setMode(hal::GPIO::OutputMode::output);
+    gpioLed2.setMode(hal::GPIO::OutMode::output);
     gpioLed2.clear();
     led2 = new DigOutput(_digOutputService, gpioLed2);
     led2->write(LEDS_STATE_OFF);
@@ -164,7 +178,7 @@ void MyApplication::onInitialize() {
     //
 #ifdef EXIST_LEDS_LED3
     hal::GPIO gpioLed3(LEDS_LED3_PORT, LEDS_LED3_PIN);
-    gpioLed3.setMode(hal::GPIO::OutputMode::output);
+    gpioLed3.setMode(hal::GPIO::OutMode::output);
     gpioLed3.clear();
     led3 = new DigOutput(_digOutputService, gpioLed3);
     led3->write(LEDS_STATE_OFF);

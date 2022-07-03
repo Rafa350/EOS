@@ -1,42 +1,42 @@
-#ifndef __PIC32_htlGPIO_ex__
-#define __PIC32_htlGPIO_ex__
+#ifndef __PIC32_htlGPIO__
+#define __PIC32_htlGPIO__
 
 
 // EOS includes
 //
 #include "eos.h"
-#include "HTL/htlGPIO.h"
+#include "HAL2/PIC32/halGPIO.h"
 
 
 namespace htl {
 
-    enum class GPIOPort: halGPIOPort {
-        portA = HAL_GPIO_PORT_A,
-        portB = HAL_GPIO_PORT_B,
-        portC = HAL_GPIO_PORT_C,
-        portD = HAL_GPIO_PORT_D,
-        portE = HAL_GPIO_PORT_E,
-        portF = HAL_GPIO_PORT_F,
-        portG = HAL_GPIO_PORT_G
+    enum class GPIOPort {
+        portA,
+        portB,
+        portC,
+        portD,
+        portE,
+        portF,
+        portG
     };
 
-    enum class GPIOPin: halGPIOPin {
-        pin0 = HAL_GPIO_PIN_0,
-        pin1 = HAL_GPIO_PIN_1,
-        pin2 = HAL_GPIO_PIN_2,
-        pin3 = HAL_GPIO_PIN_3,
-        pin4 = HAL_GPIO_PIN_4,
-        pin5 = HAL_GPIO_PIN_5,
-        pin6 = HAL_GPIO_PIN_6,
-        pin7 = HAL_GPIO_PIN_7,
-        pin8 = HAL_GPIO_PIN_8,
-        pin9 = HAL_GPIO_PIN_9,
-        pin10 = HAL_GPIO_PIN_10,
-        pin11 = HAL_GPIO_PIN_11,
-        pin12 = HAL_GPIO_PIN_12,
-        pin13 = HAL_GPIO_PIN_13,
-        pin14 = HAL_GPIO_PIN_14,
-        pin15 = HAL_GPIO_PIN_15
+    enum class GPIOPin {
+        pin0,
+        pin1,
+        pin2,
+        pin3,
+        pin4,
+        pin5,
+        pin6,
+        pin7,
+        pin8,
+        pin9,
+        pin10,
+        pin11,
+        pin12,
+        pin13,
+        pin14,
+        pin15
     };
 
     enum class GPIOSpeed: halGPIOOptions {

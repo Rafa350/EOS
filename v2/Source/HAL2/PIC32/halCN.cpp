@@ -10,10 +10,9 @@ using namespace hal;
 /// \param    line: La linia.
 ///
 CN::CN(
-    Line line) :
+    CNLine line) {
 
-    _lineNumber(getLineNumber(line)) {
-
+    _lineNumber = static_cast<unsigned>(line);
 }
 
 
@@ -30,15 +29,24 @@ CN::CN(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Inicialitzacio.
+/// \brief    Selecciona el trigger.
+/// \param    trigger: El trigger
 ///
-void CN::initialize(
-    Trigger trigger,
-    bool pullUp) {
+void CN::setTrigger(
+    Trigger trigger) {
 
     // Activa el modul
     //
     CNCONbits.ON = 1;
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Selecciona el pullup.
+/// \param    pullUp: True per activar elñ pull-up.
+///
+void CN::setPullUp(
+    bool pullUp) {
 
     // Activa pullup
     //
@@ -46,19 +54,21 @@ void CN::initialize(
         CNPUESET = 1 << _lineNumber;
     else
         CNPUECLR = 1 << _lineNumber;
-
-    // Desactiva interrupcions de la linia
-    //
-    CNENCLR = 1 << _lineNumber;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Habilita les interrupcions.
+///
 void CN::enableInterrupt() {
 
     CNENSET = 1 << _lineNumber;
 }
 
 
+/// ----------------------------------------------------------------------
+/// \brief    Deshabiklita les interrupcions.
+///
 void CN::disableInterrupt() {
 
     CNENCLR = 1 << _lineNumber;
