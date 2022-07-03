@@ -11,67 +11,67 @@ using namespace hal;
 /// \param     pin: Identificador del pin.
 //
 GPIO::GPIO(
-	Port port,
-	Pin pin) {
+	GPIOPort port,
+	GPIOPin pin) {
 
     switch (port) {
-        case Port::portA:
+        case GPIOPort::portA:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
         	_base = GPIOA_BASE;
         	break;
 
-        case Port::portB:
+        case GPIOPort::portB:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
         	_base = GPIOB_BASE;
         	break;
 
-        case Port::portC:
+        case GPIOPort::portC:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
         	_base = GPIOC_BASE;
         	break;
 
-        case Port::portD:
+        case GPIOPort::portD:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
         	_base = GPIOD_BASE;
         	break;
 
-        case Port::portE:
+        case GPIOPort::portE:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
         	_base = GPIOE_BASE;
         	break;
 
-        case Port::portF:
+        case GPIOPort::portF:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN;
         	_base = GPIOF_BASE;
         	break;
 
-        case Port::portG:
+        case GPIOPort::portG:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
         	_base = GPIOG_BASE;
         	break;
 
-        case Port::portH:
+        case GPIOPort::portH:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN;
         	_base = GPIOH_BASE;
         	break;
 
-        case Port::portI:
+        case GPIOPort::portI:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
         	_base = GPIOI_BASE;
         	break;
 
-        case Port::portJ:
+        case GPIOPort::portJ:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOJEN;
         	_base = GPIOJ_BASE;
         	break;
 
-        case Port::portK:
+        case GPIOPort::portK:
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOKEN;
         	_base = GPIOK_BASE;
         	break;
     }
 
-    _pnum = static_cast<unsigned>(pin);
+    _pnum = static_cast<int>(pin);
 }
 
 
@@ -92,7 +92,7 @@ GPIO::GPIO(
 /// \param    mode: Modus de treball del pin.
 ///
 void GPIO::setMode(
-	InputMode mode) {
+	InpMode mode) {
 
 	uint32_t temp;
 
@@ -102,7 +102,7 @@ void GPIO::setMode(
 	//
 	temp = regs->MODER;
 	temp &= ~(0b11 << (_pnum * 2));
-	if (mode == InputMode::analog)
+	if (mode == InpMode::analog)
 		temp |= 0b11 << (_pnum * 2);
 	regs->MODER = temp;
 
@@ -110,9 +110,9 @@ void GPIO::setMode(
 	//
 	temp = regs->PUPDR;
 	temp &= ~(0b11 << (_pnum * 2));
-	if (mode == InputMode::input_PU)
+	if (mode == InpMode::input_PU)
 		temp |= 0b01 << (_pnum * 2);
-	else if (mode == InputMode::input_PD)
+	else if (mode == InpMode::input_PD)
 		temp |= 0b10 << (_pnum * 2);
 	regs->PUPDR = temp;
 }
@@ -124,7 +124,7 @@ void GPIO::setMode(
 /// \param    alt: Funcio alternativa
 ///
 void GPIO::setMode(
-	OutputMode mode,
+	OutMode mode,
 	Alt alt) {
 
 	GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_base);
@@ -145,7 +145,7 @@ void GPIO::setMode(
 	//
 	temp = regs->OTYPER;
 	temp &= ~(1u << _pnum);
-	if (mode == OutputMode::output_OD)
+	if (mode == OutMode::output_OD)
 		temp |= 1 << _pnum;
 	regs->OTYPER = temp;
 
@@ -153,7 +153,7 @@ void GPIO::setMode(
 	//
 	temp = regs->PUPDR;
 	temp &= ~(0b11 << (_pnum * 2));
-	if (mode == OutputMode::output_OD_PU)
+	if (mode == OutMode::output_OD_PU)
 		temp |= 0b01 << (_pnum * 2);
 	regs->PUPDR = temp;
 

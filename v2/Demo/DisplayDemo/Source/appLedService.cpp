@@ -28,11 +28,11 @@ LedService::LedService(
 void LedService::onSetup() {
 
 #ifdef EXIST_LEDS_LED1
-	_gpioLED1.setMode(hal::GPIO::OutputMode::output);
+	_gpioLED1.setMode(hal::GPIO::OutMode::output);
 	_gpioLED1.set();
 #endif
 #ifdef EXIST_LEDS_LED2
-	_gpioLED2.setMode(hal::GPIO::OutputMode::output);
+	_gpioLED2.setMode(hal::GPIO::OutMode::output);
 	_gpioLED2.set();
 #endif
 }
