@@ -81,6 +81,12 @@ void GPIO::setMode(
 }
 
 
+void GPIO::setSpeed(
+    Speed speed) {
+
+}
+
+
 /// ----------------------------------------------------------------------
 /// \brief    Asigna el estat SET al pin.
 ///

@@ -111,32 +111,41 @@ namespace hal {
         cn19,
         cn20,
         cn21,
-        lineNone = -1
+        cnNone = -1
     };
 
     enum class ANALine {
         an0 = 0,
         an1,
+        an2,
+        an3,
+        an4,
+        an5,
+        an6,
+        an7,
+        an8,
+        an9,
+        an10,
+        an11,
         anNone = -1
-    };
-
-
-    template <GPIOPort port_, GPIOPin pin_>
-    struct GPIOPinInfo {
-        static const GPIOPort port;
-        static const GPIOPin pin;
-        static const CNLine cn;
     };
 
     class GPIO {
         public:
             enum class InpMode {
-                input,
+                input
             };
 
             enum class OutMode {
                 output,
                 output_OD
+            };
+
+            enum class Speed {
+                fastest,
+                fast,
+                slow,
+                slowest
             };
 
 		private:
@@ -153,6 +162,7 @@ namespace hal {
 
             void setMode(InpMode mode);
             void setMode(OutMode mode);
+            void setSpeed(Speed speed);
 
 			void set() const;
 			void clear() const;
@@ -166,13 +176,25 @@ namespace hal {
 			inline operator bool() const { return read(); }
 	};
 
+    template <typename Info_>
+    GPIO::GPIO(Info_ info) :
+       GPIO(info.port, info.pin) {
+    }
+
+
+    template <GPIOPort port_, GPIOPin pin_>
+    struct GPIOPinInfo {
+        static const GPIOPort port;
+        static const GPIOPin pin;
+        static const CNLine cn;
+    };
 
     template <>
     struct GPIOPinInfo<GPIOPort::portC, GPIOPin::pin13> {
         enum class OutMapping {
             none = 0
         };
-        static const GPIOPort port =  GPIOPort::portC;
+        static const GPIOPort port = GPIOPort::portC;
         static const GPIOPin pin = GPIOPin::pin13;
         static const CNLine cn = CNLine::cn1;
     };
@@ -216,12 +238,6 @@ namespace hal {
         static const GPIOPin pin = GPIOPin::pin13;
         static const CNLine cn = CNLine::cn19;
     };
-
-
-    template <typename Info_>
-    GPIO::GPIO(Info_ info) :
-       GPIO(info.port, info.pin) {
-    }
 
 }
 

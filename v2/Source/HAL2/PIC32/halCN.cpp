@@ -67,7 +67,7 @@ void CN::enableInterrupt() {
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Deshabiklita les interrupcions.
+/// \brief    Deshabilita les interrupcions.
 ///
 void CN::disableInterrupt() {
 

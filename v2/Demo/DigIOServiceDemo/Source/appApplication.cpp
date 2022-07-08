@@ -14,6 +14,7 @@
 #include "HAL2/PIC32/halTMR.h"
 #include "HAL2/PIC32/halGPIO.h"
 
+#include "HTL/PIC32/htlGPIO.h"
 
 using namespace eos;
 using namespace app;
@@ -35,6 +36,18 @@ MyApplication::MyApplication():
     , sw3EventCallback(this, &MyApplication::sw3EventHandler)
 #endif
 {
+
+    typedef htl::GPIO<htl::GPIOPort::portD, htl::GPIOPin::pin0> GPIO_LED1;
+    typedef htl::GPIO<htl::GPIOPort::portD, htl::GPIOPin::pin1> GPIO_LED2;
+    typedef htl::GPIO<htl::GPIOPort::portD, htl::GPIOPin::pin2> GPIO_LED3;
+
+    GPIO_LED1::setMode(htl::GPIOOutMode::output);
+    GPIO_LED2::setMode(htl::GPIOOutMode::output);
+    GPIO_LED3::setMode(htl::GPIOOutMode::output);
+
+    GPIO_LED1::set();
+    GPIO_LED2::set();
+    GPIO_LED3::set();
 }
 
 
