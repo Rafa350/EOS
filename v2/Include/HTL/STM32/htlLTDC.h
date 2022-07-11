@@ -72,165 +72,81 @@ namespace htl {
 		    	halLTDCDisable();
 		    }
 
-		    template <typename pinAdapter_>
+		    template <typename gpio_>
 			inline static void initHSYNCPin() {
-				pinAdapter_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapter_::GPIOAlt::ltdc_HSYNC);
+				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpio_::GPIOAlt::ltdc_HSYNC);
 			}
 
-			template <typename pinAdapter_>
+			template <typename gpio_>
 			inline static void initVSYNCPin() {
-				pinAdapter_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapter_::GPIOAlt::ltdc_VSYNC);
+				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpio_::GPIOAlt::ltdc_VSYNC);
 			}
 
-			template <typename pinAdapter_>
+			template <typename gpio_>
 			inline static void initDOTCLKPin() {
-				pinAdapter_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapter_::GPIOAlt::ltdc_DOTCLK);
+				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpio_::GPIOAlt::ltdc_DOTCLK);
 			}
 
-			template <typename pinAdapter_>
+			template <typename gpio_>
 			inline static void initDEPin() {
-				pinAdapter_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapter_::GPIOAlt::ltdc_DE);
+				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpio_::GPIOAlt::ltdc_DE);
 			}
 
-			template <typename pinAdapterR0_,
-			          typename pinAdapterR1_,
-					  typename pinAdapterR2_,
-					  typename pinAdapterR3_,
-					  typename pinAdapterR4_,
-					  typename pinAdapterR5_,
-					  typename pinAdapterR6_,
-					  typename pinAdapterR7_>
+			template <typename gpioR0_,
+			          typename gpioR1_,
+					  typename gpioR2_,
+					  typename gpioR3_,
+					  typename gpioR4_,
+					  typename gpioR5_,
+					  typename gpioR6_,
+					  typename gpioR7_>
 			inline static void initRPins() {
-				pinAdapterR0_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterR0_::GPIOAlt::ltdc_R0);
-				pinAdapterR1_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterR1_::GPIOAlt::ltdc_R1);
-				pinAdapterR2_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterR2_::GPIOAlt::ltdc_R2);
-				pinAdapterR3_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterR3_::GPIOAlt::ltdc_R3);
-				pinAdapterR4_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterR4_::GPIOAlt::ltdc_R4);
-				pinAdapterR5_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterR5_::GPIOAlt::ltdc_R5);
-				pinAdapterR6_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterR6_::GPIOAlt::ltdc_R6);
-				pinAdapterR7_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterR7_::GPIOAlt::ltdc_R7);
+				gpioR0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR0_::GPIOAlt::ltdc_R0);
+				gpioR1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR1_::GPIOAlt::ltdc_R1);
+				gpioR2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR2_::GPIOAlt::ltdc_R2);
+				gpioR3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR3_::GPIOAlt::ltdc_R3);
+				gpioR4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR4_::GPIOAlt::ltdc_R4);
+				gpioR5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR5_::GPIOAlt::ltdc_R5);
+				gpioR6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR6_::GPIOAlt::ltdc_R6);
+				gpioR7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR7_::GPIOAlt::ltdc_R7);
 			}
 
-			template <typename pinAdapterG0_,
-                      typename pinAdapterG1_,
-					  typename pinAdapterG2_,
-					  typename pinAdapterG3_,
-					  typename pinAdapterG4_,
-					  typename pinAdapterG5_,
-					  typename pinAdapterG6_,
-					  typename pinAdapterG7_>
+			template <typename gpioG0_,
+                      typename gpioG1_,
+					  typename gpioG2_,
+					  typename gpioG3_,
+					  typename gpioG4_,
+					  typename gpioG5_,
+					  typename gpioG6_,
+					  typename gpioG7_>
 			inline static void initGPins() {
-				pinAdapterG0_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterG0_::GPIOAlt::ltdc_G0);
-				pinAdapterG1_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterG1_::GPIOAlt::ltdc_G1);
-				pinAdapterG2_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterG2_::GPIOAlt::ltdc_G2);
-				pinAdapterG3_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterG3_::GPIOAlt::ltdc_G3);
-				pinAdapterG4_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterG4_::GPIOAlt::ltdc_G4);
-				pinAdapterG5_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterG5_::GPIOAlt::ltdc_G5);
-				pinAdapterG6_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterG6_::GPIOAlt::ltdc_G6);
-				pinAdapterG7_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterG7_::GPIOAlt::ltdc_G7);
+				gpioG0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG0_::GPIOAlt::ltdc_G0);
+				gpioG1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG1_::GPIOAlt::ltdc_G1);
+				gpioG2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG2_::GPIOAlt::ltdc_G2);
+				gpioG3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG3_::GPIOAlt::ltdc_G3);
+				gpioG4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG4_::GPIOAlt::ltdc_G4);
+				gpioG5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG5_::GPIOAlt::ltdc_G5);
+				gpioG6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG6_::GPIOAlt::ltdc_G6);
+				gpioG7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG7_::GPIOAlt::ltdc_G7);
 			}
 
-			template <typename pinAdapterB0_,
-					  typename pinAdapterB1_,
-					  typename pinAdapterB2_,
-					  typename pinAdapterB3_,
-					  typename pinAdapterB4_,
-					  typename pinAdapterB5_,
-					  typename pinAdapterB6_,
-					  typename pinAdapterB7_>
+			template <typename gpioB0_,
+					  typename gpioB1_,
+					  typename gpioB2_,
+					  typename gpioB3_,
+					  typename gpioB4_,
+					  typename gpioB5_,
+					  typename gpioB6_,
+					  typename gpioB7_>
 			inline static void initBPins() {
-				pinAdapterB0_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterB0_::GPIOAlt::ltdc_B0);
-				pinAdapterB1_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterB1_::GPIOAlt::ltdc_B1);
-				pinAdapterB2_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterB2_::GPIOAlt::ltdc_B2);
-				pinAdapterB3_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterB3_::GPIOAlt::ltdc_B3);
-				pinAdapterB4_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterB4_::GPIOAlt::ltdc_B4);
-				pinAdapterB5_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterB5_::GPIOAlt::ltdc_B5);
-				pinAdapterB6_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterB6_::GPIOAlt::ltdc_B6);
-				pinAdapterB7_::initAlt(
-					GPIOSpeed::fast,
-					GPIODriver::pushPull,
-					pinAdapterB7_::GPIOAlt::ltdc_B7);
+				gpioB0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB0_::GPIOAlt::ltdc_B0);
+				gpioB1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB1_::GPIOAlt::ltdc_B1);
+				gpioB2_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB2_::GPIOAlt::ltdc_B2);
+				gpioB3_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB3_::GPIOAlt::ltdc_B3);
+				gpioB4_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB4_::GPIOAlt::ltdc_B4);
+				gpioB5_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB5_::GPIOAlt::ltdc_B5);
+				gpioB6_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB6_::GPIOAlt::ltdc_B6);
+				gpioB7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB7_::GPIOAlt::ltdc_B7);
 			}
 
 			inline static void setBackgroundColor(Color color) {

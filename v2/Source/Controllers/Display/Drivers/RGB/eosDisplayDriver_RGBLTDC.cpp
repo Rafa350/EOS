@@ -99,11 +99,11 @@ void DisplayDriver_RGBLTDC::displayOn() {
 
     // Activa el display
 	//
-	PinLCDE::set();
+	GPIO_LCDE::set();
 
 	// Activa el backlight
 	//
-	PinBKE::set();
+	GPIO_BKE::set();
 }
 
 
@@ -114,11 +114,11 @@ void DisplayDriver_RGBLTDC::displayOff() {
 
 	// Desactiva el display
 	//
-	PinLCDE::clear();
+	GPIO_LCDE::clear();
 
 	// Desactiva el backlight
 	//
-	PinBKE::clear();
+	GPIO_BKE::clear();
 
 	// Desactiva el modul LDTC
     //
@@ -287,8 +287,8 @@ void DisplayDriver_RGBLTDC::refresh() {
 ///
 void DisplayDriver_RGBLTDC::initializeGPIO() {
 
-	PinBKE::initOutput(htl::GPIOSpeed::low, htl::GPIODriver::pushPull, htl::GPIOState::clr);
-	PinLCDE::initOutput(htl::GPIOSpeed::low, htl::GPIODriver::pushPull, htl::GPIOState::clr);
+	GPIO_BKE::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::low);
+	GPIO_LCDE::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::low);
 }
 
 
@@ -315,13 +315,13 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	ltdcSettings.width = _imageWidth;
 	ltdcSettings.height = _imageHeight;
 
-	_ltdc.initDOTCLKPin<PinDOTCLK>();
-	_ltdc.initHSYNCPin<PinHSYNC>();
-	_ltdc.initVSYNCPin<PinVSYNC>();
-	_ltdc.initDEPin<PinDE>();
-	_ltdc.initRPins<PinR0, PinR1, PinR2, PinR3, PinR4, PinR5, PinR6, PinR7>();
-	_ltdc.initGPins<PinG0, PinG1, PinG2, PinG3, PinG4, PinG5, PinG6, PinG7>();
-	_ltdc.initBPins<PinB0, PinB1, PinB2, PinB3, PinB4, PinB5, PinB6, PinB7>();
+	_ltdc.initDOTCLKPin<GPIO_DOTCLK>();
+	_ltdc.initHSYNCPin<GPIO_HSYNC>();
+	_ltdc.initVSYNCPin<GPIO_VSYNC>();
+	_ltdc.initDEPin<GPIO_DE>();
+	_ltdc.initRPins<GPIO_R0, GPIO_R1, GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
+	_ltdc.initGPins<GPIO_G0, GPIO_G1, GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
+	_ltdc.initBPins<GPIO_B0, GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
 	_ltdc.initialize(ltdcSettings);
 	_ltdc.setBackgroundColor(COLOR_Blue);
 

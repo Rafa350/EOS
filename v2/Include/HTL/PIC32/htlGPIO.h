@@ -11,22 +11,22 @@
 #define HTL_GPIO_PORT_A      htl::GPIOPort::portA
 #endif
 #ifdef _PORTB
-#define HTl_GPIO_PORT_B      htl::GPIOPort::portB
+#define HTL_GPIO_PORT_B      htl::GPIOPort::portB
 #endif
 #ifdef _PORTC
-#define Htl_GPIO_PORT_C      htl::GPIOPort::portC
+#define HTL_GPIO_PORT_C      htl::GPIOPort::portC
 #endif
 #ifdef _PORTD
-#define Htl_GPIO_PORT_D      htl::GPIOPort::portD
+#define HTL_GPIO_PORT_D      htl::GPIOPort::portD
 #endif
 #ifdef _PORTE
-#define Htl_GPIO_PORT_E      htl::GPIOPort::portE
+#define HTL_GPIO_PORT_E      htl::GPIOPort::portE
 #endif
 #ifdef _PORTF
-#define HTLGPIO_PORT_F      htl::GPIOPort::portF
+#define HTL_GPIO_PORT_F      htl::GPIOPort::portF
 #endif
 #ifdef _PORTG
-#define HTLGPIO_PORT_G      htl::GPIOPort::portG
+#define HTL_GPIO_PORT_G      htl::GPIOPort::portG
 #endif
 
 
@@ -107,10 +107,10 @@ namespace htl {
     };
 
     enum class GPIOSpeed {
-        fastest,
-        fast,
-        slow,
-        slowest
+        low,
+        medium,
+        hight,
+        fast
     };
 
     template <GPIOPort port_, GPIOPin pin_>
@@ -179,7 +179,7 @@ namespace htl {
                     AD1PCFGSET = 1 <<_an;
             }
 
-            inline static void initOutput(GPIODriver driver = GPIODriver::pushPull, GPIOSpeed speed = GPIOSpeed::slow) {
+            inline static void initOutput(GPIODriver driver = GPIODriver::pushPull, GPIOSpeed speed = GPIOSpeed::medium) {
                 Registers *regs = reinterpret_cast<Registers*>(_addr);
                 regs->TRISxCLR = 1 << _pn;
                 if (driver == GPIODriver::openDrain)

@@ -34,7 +34,11 @@
 	#if defined(STM32F4)
 		#define EOS_STM32F4
 	#elif defined(STM32F7)
-		#define EOS_STM32F7
+		#if defined(STM32F746xx) || defined(STM32F769xx)
+			#define EOS_STM32F7
+		#else
+            #error  "Unknown processor STM32Fxxx"
+		#endif
 	#else
 		#error "Unknown processor"
 	#endif
