@@ -1,5 +1,5 @@
 #include "eos.h"
-#include "HAL\halTMR.h"
+#include "HAL/halTMR.h"
 
 #include "sys/attribs.h"
 

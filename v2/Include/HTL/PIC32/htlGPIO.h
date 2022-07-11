@@ -7,11 +7,53 @@
 #include "eos.h"
 
 
+#ifdef _PORTA
+#define HTL_GPIO_PORT_A      htl::GPIOPort::portA
+#endif
+#ifdef _PORTB
+#define HTl_GPIO_PORT_B      htl::GPIOPort::portB
+#endif
+#ifdef _PORTC
+#define Htl_GPIO_PORT_C      htl::GPIOPort::portC
+#endif
+#ifdef _PORTD
+#define Htl_GPIO_PORT_D      htl::GPIOPort::portD
+#endif
+#ifdef _PORTE
+#define Htl_GPIO_PORT_E      htl::GPIOPort::portE
+#endif
+#ifdef _PORTF
+#define HTLGPIO_PORT_F      htl::GPIOPort::portF
+#endif
+#ifdef _PORTG
+#define HTLGPIO_PORT_G      htl::GPIOPort::portG
+#endif
+
+
+#define HTL_GPIO_PIN_0       htl::GPIOPin::pin0
+#define HTL_GPIO_PIN_1       htl::GPIOPin::pin1
+#define HTL_GPIO_PIN_2       htl::GPIOPin::pin2
+#define HTL_GPIO_PIN_3       htl::GPIOPin::pin3
+#define HTL_GPIO_PIN_4       htl::GPIOPin::pin4
+#define HTL_GPIO_PIN_5       htl::GPIOPin::pin5
+#define HTL_GPIO_PIN_6       htl::GPIOPin::pin6
+#define HTL_GPIO_PIN_7       htl::GPIOPin::pin7
+#define HTL_GPIO_PIN_8       htl::GPIOPin::pin8
+#define HTL_GPIO_PIN_9       htl::GPIOPin::pin9
+#define HTL_GPIO_PIN_10      htl::GPIOPin::pin10
+#define HTL_GPIO_PIN_11      htl::GPIOPin::pin11
+#define HTL_GPIO_PIN_12      htl::GPIOPin::pin12
+#define HTL_GPIO_PIN_13      htl::GPIOPin::pin13
+#define HTL_GPIO_PIN_14      htl::GPIOPin::pin14
+#define HTL_GPIO_PIN_15      htl::GPIOPin::pin15
+
+
+
 namespace htl {
 
     enum class GPIOPort {
         #ifdef _PORTA
-            portA = 0,
+            portA,
         #endif
         #ifdef _PORTB
             portB,
@@ -31,11 +73,11 @@ namespace htl {
         #ifdef _PORTG
             portG,
         #endif
-        portNone = -1
+        portNone
     };
 
     enum class GPIOPin {
-        pin0 = 0,
+        pin0,
         pin1,
         pin2,
         pin3,
@@ -51,18 +93,24 @@ namespace htl {
         pin13,
         pin14,
         pin15,
-        pinNone = -1
+        pinNone
     };
 
-    enum class GPIOInpMode {
-        analog,
-        input,
-        input_PU
+    enum class GPIOPull {
+        none,
+        up
     };
 
-    enum class GPIOOutMode {
-        output,
-        output_OD
+    enum class GPIODriver {
+        pushPull,
+        openDrain
+    };
+
+    enum class GPIOSpeed {
+        fastest,
+        fast,
+        slow,
+        slowest
     };
 
     template <GPIOPort port_, GPIOPin pin_>
@@ -75,12 +123,8 @@ namespace htl {
 
     template <GPIOPort port_, GPIOPin pin_>
     class GPIO {
-		public:
-			constexpr static const GPIOPort port = port_;
-			constexpr static const GPIOPin pin = pin_;
-
         private:
-            typedef struct __attribute__((packed , aligned(4))) {
+            struct __attribute__((packed , aligned(4))) Registers {
                 volatile uint32_t TRISx;
                 volatile uint32_t TRISxCLR;
                 volatile uint32_t TRISxSET;
@@ -97,51 +141,48 @@ namespace htl {
                 volatile uint32_t ODCxCLR;
                 volatile uint32_t ODCxSET;
                 volatile uint32_t ODCxINV;
-            } Registers;
+            };
             using Info = GPIOInfo<port_, pin_>;
+
+        public:
+            constexpr static const GPIOPort port = port_;
+			constexpr static const GPIOPin pin = pin_;
+            constexpr static const uint32_t hwPort = Info::addr;
+            constexpr static const uint32_t hwPin = Info::pn;
+
+        private:
             constexpr static const uint32_t _addr = Info::addr;
             constexpr static const uint32_t _pn = Info::pn;
             constexpr static const uint32_t _cn = Info::cn;
             constexpr static const uint32_t _an = Info::an;
 
-        public:
-			GPIO() = default;
+        private:
+			GPIO() = delete;
             GPIO(const GPIO &) = delete;
 			GPIO(const GPIO &&) = delete;
+            ~GPIO() = delete;
+
 			GPIO& operator = (const GPIO &) = delete;
 			GPIO& operator = (const GPIO &&) = delete;
 
         public:
-            inline static auto & instance() {
-                static GPIO inst;
-                return inst;
-            }
-
-            inline static void setMode(GPIOInpMode mode) {
-
+            inline static void initInput(GPIOPull pull = GPIOPull::none) {
                 Registers *regs = reinterpret_cast<Registers*>(_addr);
                 regs->TRISxSET = 1 << _pn;
-
                 if constexpr (_cn != -1) {
-                    if (mode == GPIOInpMode::input_PU)
+                    if (pull == GPIOPull::up)
                         CNPUESET = 1 << _cn;
                     else
                         CNPUECLR = 1 << _cn;
                 }
-                
-                if constexpr (_an != -1) {
-                    if (mode == GPIOInpMode::analog)
-                        AD1PCFGCLR = 1 <<_an;
-                    else
-                        AD1PCFGSET = 1 <<_an;
-                }
+                if constexpr (_an != -1)
+                    AD1PCFGSET = 1 <<_an;
             }
 
-            inline static void setMode(GPIOOutMode mode) {
-
+            inline static void initOutput(GPIODriver driver = GPIODriver::pushPull, GPIOSpeed speed = GPIOSpeed::slow) {
                 Registers *regs = reinterpret_cast<Registers*>(_addr);
                 regs->TRISxCLR = 1 << _pn;
-                if (mode == GPIOOutMode::output_OD)
+                if (driver == GPIODriver::openDrain)
                     regs->ODCxSET = 1 << _pn;
                 else
                     regs->ODCxCLR = 1 << _pn;
@@ -173,11 +214,6 @@ namespace htl {
                 else
                     clear();
             }
-
-			inline GPIO& operator = (bool s) {
-                write(s);
-				return *this;
-			}
     };
 
 
@@ -542,6 +578,121 @@ namespace htl {
         constexpr static const uint32_t cn = -1;
         constexpr static const uint32_t an = -1;
 	};
+
+    // PORT C ------------------------------------------------------------
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin0> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 0;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin1> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 1;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin2> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 2;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin3> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 3;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin4> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 4;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin5> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 5;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin6> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 6;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin7> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 7;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin8> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 8;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin9> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 9;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin10> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 10;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin11> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 11;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin12> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 12;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin13> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 13;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin14> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 14;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin15> {
+		constexpr static const uint32_t addr = _PORTC_BASE_ADDRESS - 0x10;
+		constexpr static const uint32_t pn = 15;
+        constexpr static const uint32_t cn = -1;
+        constexpr static const uint32_t an = -1;
+	};
+
 
     // PORT D ------------------------------------------------------------
 	template <>

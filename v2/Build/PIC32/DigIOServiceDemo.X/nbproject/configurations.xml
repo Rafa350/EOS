@@ -44,8 +44,11 @@
           <logicalFolder name="f7" displayName="HTL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Include/HTL/PIC32/htlGPIO.h</itemPath>
+              <itemPath>../../../Include/HTL/PIC32/htlCN.h</itemPath>
+              <itemPath>../../../Include/HTL/PIC32/htlTMR.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HTL/htlGPIO.h</itemPath>
+            <itemPath>../../../Include/HTL/htlTMR.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>
@@ -382,12 +385,6 @@
         <property key="lastid" value=""/>
         <property key="whatToProgram" value="all"/>
       </SKDEPIC32PlatformTool>
-      <Tool>
-        <property key="debugoptions.debug-startup" value="Use system settings"/>
-        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
-        <property key="lastid" value=""/>
-        <property key="whatToProgram" value="all"/>
-      </Tool>
     </conf>
     <conf name="PIC32_ETH_STARTER_KIT" type="2">
       <toolsSet>

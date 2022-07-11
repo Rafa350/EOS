@@ -53,7 +53,10 @@ namespace hal {
             };
 
         private:
-            uint32_t _base;
+            uint32_t _addr;
+
+			TMR(const TMR &&) = delete;
+			TMR & operator = (const TMR &&) = delete;
 
         public:
             TMR(Timer timer);
@@ -73,6 +76,8 @@ namespace hal {
 
             void start();
             void stop();
+
+            TMR & operator = (const TMR &tmr);
     };
 
 }

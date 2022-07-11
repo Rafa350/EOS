@@ -1,5 +1,5 @@
-#ifndef __halTMR_ex__
-#define	__halTMR_ex__
+#ifndef __htlTMR__
+#define	__htlTMR__
 
 
 // EOS includes
@@ -8,16 +8,16 @@
 
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
-	#include "HAL/PIC32/halTMR_ex.h"
+	#include "HTL/PIC32/htlTMR.h"
 
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-	#include "HAL/STM32/halTMR_ex.h"
+	#include "HTL/STM32/htlTMR.h"
 
 #elif defined(EOS_MSP432)
-    #include "HAL/MSP432/halTMR_ex.h"
+    #include "HTL/MSP432/htlTMR.h"
 
 #endif
 
 
-#endif // __halTMR_ex__
+#endif // __htlTMR__
 

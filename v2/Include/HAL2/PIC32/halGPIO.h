@@ -25,6 +25,9 @@
 #ifdef _PORTF
 #define HAL_GPIO_PORT_F      hal::GPIOPort::portF
 #endif
+#ifdef _PORTG
+#define HAL_GPIO_PORT_G      hal::GPIOPort::portG
+#endif
 
 
 #define HAL_GPIO_PIN_0       hal::GPIOPin::pin0
@@ -64,8 +67,12 @@ namespace hal {
             portE = 4,
         #endif
         #ifdef _PORTF
-            portF = 5
+            portF = 5,
         #endif
+        #ifdef _PORTG
+            portG = 6,
+        #endif
+        portNone = -1
     };
 
     enum class GPIOPin {
@@ -88,66 +95,24 @@ namespace hal {
         pinNone = -1
     };
 
-    enum class CNLine {
-        cn0 = 0,
-        cn1,
-        cn2,
-        cn3,
-        cn4,
-        cn5,
-        cn6,
-        cn7,
-        cn8,
-        cn9,
-        cn10,
-        cn11,
-        cn12,
-        cn13,
-        cn14,
-        cn15,
-        cn16,
-        cn17,
-        cn18,
-        cn19,
-        cn20,
-        cn21,
-        cnNone = -1
+    enum class GPIOPull {
+        none,
+        up
     };
 
-    enum class ANALine {
-        an0 = 0,
-        an1,
-        an2,
-        an3,
-        an4,
-        an5,
-        an6,
-        an7,
-        an8,
-        an9,
-        an10,
-        an11,
-        anNone = -1
+    enum class GPIODriver {
+        pushPull,
+        openDrain
+    };
+
+    enum class GPIOSpeed {
+        fastest,
+        fast,
+        slow,
+        slowest
     };
 
     class GPIO {
-        public:
-            enum class InpMode {
-                input
-            };
-
-            enum class OutMode {
-                output,
-                output_OD
-            };
-
-            enum class Speed {
-                fastest,
-                fast,
-                slow,
-                slowest
-            };
-
 		private:
 			uint32_t _addr;
             uint32_t _mask;
@@ -157,12 +122,10 @@ namespace hal {
 
 		public:
 			GPIO(GPIOPort port, GPIOPin pin);
-            template <typename Info_> GPIO(Info_ info);
             GPIO(const GPIO &gpio);
 
-            void setMode(InpMode mode);
-            void setMode(OutMode mode);
-            void setSpeed(Speed speed);
+            void initInput(GPIOPull pull = GPIOPull::none);
+            void initOutput(GPIODriver driver = GPIODriver::pushPull, GPIOSpeed speed = GPIOSpeed::slow);
 
 			void set() const;
 			void clear() const;
@@ -175,69 +138,6 @@ namespace hal {
             inline GPIO & operator = (bool s) { write(s); return *this; }
 			inline operator bool() const { return read(); }
 	};
-
-    template <typename Info_>
-    GPIO::GPIO(Info_ info) :
-       GPIO(info.port, info.pin) {
-    }
-
-
-    template <GPIOPort port_, GPIOPin pin_>
-    struct GPIOPinInfo {
-        static const GPIOPort port;
-        static const GPIOPin pin;
-        static const CNLine cn;
-    };
-
-    template <>
-    struct GPIOPinInfo<GPIOPort::portC, GPIOPin::pin13> {
-        enum class OutMapping {
-            none = 0
-        };
-        static const GPIOPort port = GPIOPort::portC;
-        static const GPIOPin pin = GPIOPin::pin13;
-        static const CNLine cn = CNLine::cn1;
-    };
-
-    template <>
-    struct GPIOPinInfo<GPIOPort::portC, GPIOPin::pin14> {
-        enum class OutMapping {
-            none = 0
-        };
-        static const GPIOPort port =  GPIOPort::portC;
-        static const GPIOPin pin = GPIOPin::pin14;
-        static const CNLine cn = CNLine::cn0;
-    };
-
-    template <>
-    struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin6> {
-        enum class OutMapping {
-            none = 0
-        };
-        static const GPIOPort port =  GPIOPort::portD;
-        static const GPIOPin pin = GPIOPin::pin6;
-        static const CNLine cn = CNLine::cn5;
-    };
-
-    template <>
-    struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin7> {
-        enum class OutMapping {
-            none = 0
-        };
-        static const GPIOPort port =  GPIOPort::portD;
-        static const GPIOPin pin = GPIOPin::pin7;
-        static const CNLine cn = CNLine::cn16;
-    };
-
-    template <>
-    struct GPIOPinInfo<GPIOPort::portD, GPIOPin::pin13> {
-        enum class OutMapping {
-            none = 0
-        };
-        static const GPIOPort port =  GPIOPort::portD;
-        static const GPIOPin pin = GPIOPin::pin13;
-        static const CNLine cn = CNLine::cn19;
-    };
 
 }
 

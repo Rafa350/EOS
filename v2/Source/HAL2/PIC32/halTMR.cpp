@@ -31,7 +31,7 @@ typedef struct  __attribute__((packed , aligned(4))) {
 TMR::TMR(
     Timer timer) {
 
-    _base = _TMR1_BASE_ADDRESS + (static_cast<unsigned>(timer) * 0x200);
+    _addr = _TMR1_BASE_ADDRESS + (static_cast<unsigned>(timer) * 0x200);
 }
 
 
@@ -42,7 +42,7 @@ TMR::TMR(
 TMR::TMR(
     const TMR &tmr):
 
-    _base(tmr._base) {
+    _addr(tmr._addr) {
 
 }
 
@@ -54,9 +54,9 @@ TMR::TMR(
 void TMR::setClockDivider(
     ClockDivider divider) {
 
-    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_addr);
 
-    if (_base == _TMR1_BASE_ADDRESS) {
+    if (_addr == _TMR1_BASE_ADDRESS) {
         switch (divider) {
             case ClockDivider::div8:
                 regs->TAxCON.TCKPS = 1;
@@ -121,9 +121,9 @@ void TMR::setClockDivider(
 void TMR::setClockSource(
     ClockSource source) {
 
-    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_addr);
 
-    if (_base == _TMR1_BASE_ADDRESS)
+    if (_addr == _TMR1_BASE_ADDRESS)
         regs->TAxCON.TCS = 0;
     else
         regs->TBxCON.TCS = 0;
@@ -137,9 +137,9 @@ void TMR::setClockSource(
 void TMR::setResolution(
     Resolution resolution) {
 
-    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_addr);
 
-    if (_base != _TMR1_BASE_ADDRESS)
+    if (_addr != _TMR1_BASE_ADDRESS)
         regs->TBxCON.T32 = resolution == Resolution::res32;
 }
 
@@ -151,11 +151,11 @@ void TMR::setResolution(
 void TMR::setCounter(
     uint32_t counter) {
 
-    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_addr);
 
-    if ((_base != _TMR1_BASE_ADDRESS) && (regs->TBxCON.T32 == 1)) {
+    if ((_addr != _TMR1_BASE_ADDRESS) && (regs->TBxCON.T32 == 1)) {
 
-        TMR_Registers *regs32 = reinterpret_cast<TMR_Registers*>(_base + 0x200);
+        TMR_Registers *regs32 = reinterpret_cast<TMR_Registers*>(_addr + 0x200);
         regs32->TMRx = (counter >> 16) & 0xFFFF;
     }
     regs->TMRx = counter & 0xFFFF;
@@ -169,11 +169,11 @@ void TMR::setCounter(
 void TMR::setPeriod(
     uint32_t period) {
 
-    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_addr);
 
-    if ((_base != _TMR1_BASE_ADDRESS) && (regs->TBxCON.T32 == 1)) {
+    if ((_addr != _TMR1_BASE_ADDRESS) && (regs->TBxCON.T32 == 1)) {
 
-        TMR_Registers *regs32 = reinterpret_cast<TMR_Registers*>(_base + 0x200);
+        TMR_Registers *regs32 = reinterpret_cast<TMR_Registers*>(_addr + 0x200);
         regs32->PRx = (period >> 16) & 0xFFFF;
     }
     regs->PRx = period & 0xFFFF;
@@ -185,9 +185,9 @@ void TMR::setPeriod(
 ///
 void TMR::start() {
 
-    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_addr);
 
-    if (_base == _TMR1_BASE_ADDRESS)
+    if (_addr == _TMR1_BASE_ADDRESS)
         regs->TAxCON.ON = 1;
     else
         regs->TBxCON.ON = 1;
@@ -199,9 +199,9 @@ void TMR::start() {
 ///
 void TMR::stop() {
 
-    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_base);
+    TMR_Registers *regs = reinterpret_cast<TMR_Registers*>(_addr);
 
-    if (_base == _TMR1_BASE_ADDRESS)
+    if (_addr == _TMR1_BASE_ADDRESS)
         regs->TAxCON.ON = 0;
     else
         regs->TBxCON.ON = 0;
@@ -216,7 +216,7 @@ void TMR::enableInterrupt(
     InterruptEvent event) {
 
     if (event == InterruptEvent::update)
-        switch (_base) {
+        switch (_addr) {
             case _TMR1_BASE_ADDRESS:
                 IEC0bits.T1IE = 1;
                 break;
@@ -259,7 +259,7 @@ bool TMR::disableInterrupt(
     bool state = false;
 
     if (event == InterruptEvent::update)
-        switch (_base) {
+        switch (_addr) {
             case _TMR1_BASE_ADDRESS:
                 state = IEC0bits.T1IE;
                 IEC0bits.T1IE = 0;
@@ -309,7 +309,7 @@ bool TMR::getInterruptFlag(
     bool state = false;
 
     if (event == InterruptEvent::update)
-        switch (_base) {
+        switch (_addr) {
             case _TMR1_BASE_ADDRESS:
                 state = IFS0bits.T1IF;
                 break;
@@ -352,7 +352,7 @@ void TMR::clearInterruptFlag(
     InterruptEvent event) {
 
     if (event == InterruptEvent::update)
-        switch (_base) {
+        switch (_addr) {
             case _TMR1_BASE_ADDRESS:
                 IFS0bits.T1IF = 0;
                 break;
@@ -392,6 +392,21 @@ void TMR::interruptHandler(
     InterruptEvent event) {
 
 }
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Operador d'asignacio.
+/// \param    tmr: L'objecte a asignar.
+///
+
+TMR & TMR::operator = (
+    const TMR &tmr) {
+
+    _addr = tmr._addr;
+
+    return  *this;
+}
+
 
 
 extern "C" void isrTMR1InterruptHandler(void) {

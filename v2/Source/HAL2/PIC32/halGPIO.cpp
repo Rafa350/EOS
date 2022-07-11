@@ -53,37 +53,38 @@ GPIO::GPIO(
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el pin com entrada.
-/// \param    mode: Modus de treball del pin.
+/// \param    pull: Tipus de pull d'entrada.
 ///
-void GPIO::setMode(
-    InpMode mode) {
+void GPIO::initInput(
+    GPIOPull pull) {
 
     GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_addr);
 
     regs->TRISxSET = _mask;
+
+    // TODO: Seleccio analogic/digital
+    //       Detectar quin AN correspon al PORT/PIN
+
+    // TODO: Seleccio pull up
+    //       Detectar quin CN correspon al PURT/PIN
 }
 
 
 /// ----------------------------------------------------------------------
 /// \brief    Inicialitza el pin com sortida.
-/// \param    mode: Modus de treball del pin.
+/// \param    driver: Tipus de driver de sortida.
 ///
-void GPIO::setMode(
-    OutMode mode) {
+void GPIO::initOutput(
+    GPIODriver driver,
+    GPIOSpeed speed) {
 
     GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_addr);
 
     regs->TRISxCLR = _mask;
-    if (mode == OutMode::output_OD)
+    if (driver == GPIODriver::openDrain)
         regs->ODCxSET = _mask;
     else
         regs->ODCxCLR = _mask;
-}
-
-
-void GPIO::setSpeed(
-    Speed speed) {
-
 }
 
 
@@ -115,6 +116,7 @@ void GPIO::clear() const {
 void GPIO::toggle() const {
 
     GPIO_Registers *regs = reinterpret_cast<GPIO_Registers*>(_addr);
+
     regs->PORTxINV = _mask;
 }
 

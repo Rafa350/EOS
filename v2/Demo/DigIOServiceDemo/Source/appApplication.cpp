@@ -3,7 +3,7 @@
 #include "HAL/halINT.h"
 #include "HAL/halSYS.h"
 #ifdef EOS_PIC32
-#include "HAL2/PIC32/halCN.h"
+#include "HTL/PIC32/htlCN.h"
 #endif
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"
@@ -13,8 +13,9 @@
 #include "appApplication.h"
 #include "HAL2/PIC32/halTMR.h"
 #include "HAL2/PIC32/halGPIO.h"
+#include "HTL/htlGPIO.h"
+#include "HTL/htlTMR.h"
 
-#include "HTL/PIC32/htlGPIO.h"
 
 using namespace eos;
 using namespace app;
@@ -36,18 +37,17 @@ MyApplication::MyApplication():
     , sw3EventCallback(this, &MyApplication::sw3EventHandler)
 #endif
 {
+    using namespace htl;
 
-    typedef htl::GPIO<htl::GPIOPort::portD, htl::GPIOPin::pin0> GPIO_LED1;
-    typedef htl::GPIO<htl::GPIOPort::portD, htl::GPIOPin::pin1> GPIO_LED2;
-    typedef htl::GPIO<htl::GPIOPort::portD, htl::GPIOPin::pin2> GPIO_LED3;
+    GPIO_D0::initOutput();
+    GPIO_D0::set();
 
-    GPIO_LED1::setMode(htl::GPIOOutMode::output);
-    GPIO_LED2::setMode(htl::GPIOOutMode::output);
-    GPIO_LED3::setMode(htl::GPIOOutMode::output);
+    GPIO_D1::initOutput();
+    GPIO_D1::set();
 
-    GPIO_LED1::set();
-    GPIO_LED2::set();
-    GPIO_LED3::set();
+    GPIO_D2::initOutput();
+    GPIO_D2::set();
+
 }
 
 
@@ -96,12 +96,10 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW1
     //
 #ifdef EXIST_SWITCHES_SW1
-    hal::GPIOPinInfo<SWITCHES_SW1_PORT, SWITCHES_SW1_PIN> sw1PinInfo;
-    hal::GPIO gpioSW1(sw1PinInfo);
+    hal::GPIO gpioSW1(SWITCHES_SW1_PORT, SWITCHES_SW1_PIN);
 #if defined(EOS_PIC32)
-    gpioSW1.setMode(hal::GPIO::InpMode::input);
-    hal::CN cnSW1(sw1PinInfo);
-    cnSW1.setPullUp(true);
+    gpioSW1.initInput();
+    htl::CN::init(SWITCHES_SW1_CN, htl::CNTrigger::none, htl::CNPull::up);
 #elif defined(EOS_STM32)
     #error "Unsuported hardware"
 #endif
@@ -112,12 +110,10 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW2
     //
 #ifdef EXIST_SWITCHES_SW2
-    hal::GPIOPinInfo<SWITCHES_SW2_PORT, SWITCHES_SW2_PIN> sw2PinInfo;
-    hal::GPIO gpioSW2(sw2PinInfo);
+    hal::GPIO gpioSW2(SWITCHES_SW2_PORT, SWITCHES_SW2_PIN);
 #if defined(EOS_PIC32)
-    gpioSW2.setMode(hal::GPIO::InpMode::input);
-    hal::CN cnSW2(sw2PinInfo);
-    cnSW2.setPullUp(true);
+    gpioSW2.initInput();
+    htl::CN::init(SWITCHES_SW2_CN, htl::CNTrigger::none, htl::CNPull::up);
 #elif defined(EOS_STM32)
     #error "Unsuported hardware"
 #endif
@@ -128,12 +124,10 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW3
     //
 #ifdef EXIST_SWITCHES_SW3
-    hal::GPIOPinInfo<SWITCHES_SW3_PORT, SWITCHES_SW3_PIN> sw3PinInfo;
-    hal::GPIO gpioSW3(sw3PinInfo);
+    hal::GPIO gpioSW3(SWITCHES_SW3_PORT, SWITCHES_SW3_PIN);
 #if defined(EOS_PIC32)
-    gpioSW3.setMode(hal::GPIO::InpMode::input);
-    hal::CN cnSW3(sw2PinInfo);
-    cnSW3.setPullUp(true);
+    gpioSW3.initInput();
+    htl::CN::init(SWITCHES_SW3_CN, htl::CNTrigger::none, htl::CNPull::up);
 #elif defined(EOS_STM32)
     #error "Unsuported hardware"
 #endif
@@ -171,7 +165,7 @@ void MyApplication::onInitialize() {
     //
 #ifdef EXIST_LEDS_LED1
     hal::GPIO gpioLed1(LEDS_LED1_PORT, LEDS_LED1_PIN);
-    gpioLed1.setMode(hal::GPIO::OutMode::output);
+    gpioLed1.initOutput();
     gpioLed1.clear();
     led1 = new DigOutput(_digOutputService, gpioLed1);
     led1->write(LEDS_STATE_OFF);
@@ -181,7 +175,7 @@ void MyApplication::onInitialize() {
     //
 #ifdef EXIST_LEDS_LED2
     hal::GPIO gpioLed2(LEDS_LED2_PORT, LEDS_LED2_PIN);
-    gpioLed2.setMode(hal::GPIO::OutMode::output);
+    gpioLed2.initOutput();
     gpioLed2.clear();
     led2 = new DigOutput(_digOutputService, gpioLed2);
     led2->write(LEDS_STATE_OFF);
@@ -191,7 +185,7 @@ void MyApplication::onInitialize() {
     //
 #ifdef EXIST_LEDS_LED3
     hal::GPIO gpioLed3(LEDS_LED3_PORT, LEDS_LED3_PIN);
-    gpioLed3.setMode(hal::GPIO::OutMode::output);
+    gpioLed3.initOutput();
     gpioLed3.clear();
     led3 = new DigOutput(_digOutputService, gpioLed3);
     led3->write(LEDS_STATE_OFF);

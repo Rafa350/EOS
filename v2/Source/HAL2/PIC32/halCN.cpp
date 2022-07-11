@@ -9,10 +9,7 @@ using namespace hal;
 /// \brief    Constructor.
 /// \param    line: La linia.
 ///
-CN::CN(
-    CNLine line) {
-
-    _lineNumber = static_cast<unsigned>(line);
+CN::CN() {
 }
 
 
@@ -21,55 +18,73 @@ CN::CN(
 /// \param    cn: El objecte a copiar.
 ///
 CN::CN(
-    const CN &cn):
-
-    _lineNumber(cn._lineNumber) {
-
+    const CN &cn) {
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Selecciona el trigger.
+/// \brief    Inivialitza.
+/// \param    line: La linia.
 /// \param    trigger: El trigger
+/// \param    pull: El modus pull
 ///
-void CN::setTrigger(
-    Trigger trigger) {
+void CN::init(
+    CNLine line,
+    CNTrigger trigger,
+    CNPull pull) {
 
-    // Activa el modul
-    //
     CNCONbits.ON = 1;
-}
 
-
-/// ----------------------------------------------------------------------
-/// \brief    Selecciona el pullup.
-/// \param    pullUp: True per activar elñ pull-up.
-///
-void CN::setPullUp(
-    bool pullUp) {
-
-    // Activa pullup
-    //
-    if (pullUp)
-        CNPUESET = 1 << _lineNumber;
+    if (pull == CNPull::up)
+        CNPUESET = 1 << static_cast<uint32_t>(line);
     else
-        CNPUECLR = 1 << _lineNumber;
+        CNPUECLR = 1 << static_cast<uint32_t>(line);
 }
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Habilita les interrupcions.
+/// \brief    Habilita la linia
+/// \param    line: La linia.
 ///
+void CN::enableLine(
+    CNLine line) {
+
+    CNENSET = 1 << static_cast<uint32_t>(line);
+}
+
+
+/// ----------------------------------------------------------------------
+/// \brief    Deshabilita la linia.
+/// \param    line: La linia.
+///
+void CN::disableLine(
+    CNLine line) {
+
+    CNENCLR = 1 << static_cast<uint32_t>(line);
+}
+
+
 void CN::enableInterrupt() {
 
-    CNENSET = 1 << _lineNumber;
+    IEC1bits.CNIE = 1;
 }
 
 
-/// ----------------------------------------------------------------------
-/// \brief    Deshabilita les interrupcions.
-///
-void CN::disableInterrupt() {
+bool CN::disableInterrupt() {
 
-    CNENCLR = 1 << _lineNumber;
+    bool state = IEC1bits.CNIE == 1;
+    IEC1bits.CNIE = 0;
+    return state;
+}
+
+
+bool CN::getInterruptFlag() {
+
+    return IFS1bits.CNIF != 0;
+}
+
+
+void CN::clearInterruptFlags() {
+
+    IFS1bits.CNIF = 0;
 }
