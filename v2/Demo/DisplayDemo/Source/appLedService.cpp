@@ -13,12 +13,7 @@ using namespace app;
 LedService::LedService(
 	Application *application) :
 
-	 AppLoopService(application),
-	_gpioLED1(LEDS_LED1_PORT, LEDS_LED1_PIN)
-#ifdef EXISTS_LEDS_LED2
-	, _gpioLED2(LEDS_LED2_PORT, LEDS_LED2_PIN)
-#endif
-{
+	 AppLoopService(application) {
 }
 
 
@@ -28,12 +23,12 @@ LedService::LedService(
 void LedService::onSetup() {
 
 #ifdef EXIST_LEDS_LED1
-	_gpioLED1.setMode(hal::GPIO::OutMode::output);
-	_gpioLED1.set();
+	GPIO_LED1::initOutput(htl::GPIODriver::pushPull);
+	GPIO_LED1::set();
 #endif
 #ifdef EXIST_LEDS_LED2
-	_gpioLED2.setMode(hal::GPIO::OutMode::output);
-	_gpioLED2.set();
+	GPIO_LED2::initOutput(htl::GPIODriver::pushPull);
+	GPIO_LED2::clear();
 #endif
 }
 
@@ -46,10 +41,10 @@ void LedService::onLoop() {
 	while (true) {
 
 #ifdef EXIST_LEDS_LED1
-		_gpioLED1.toggle();
+		GPIO_LED1::toggle();
 #endif
 #ifdef EXIST_LEDS_LED2
-		_gpioLED2.toggle();
+		GPIO_LED2::toggle();
 #endif
 
 		Task::delay(500);

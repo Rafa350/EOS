@@ -6,10 +6,10 @@
 //
 #include "HAL/hal.h"
 #include "HAL/STM32/halSPI.h"
-#include "HAL/STM32/halGPIO_ex.h"
+#include "HTL/STM32/htlGPIO.h"
 
 
-namespace eos {
+namespace htl {
 
 	enum class SPIChannel: halSPIChannel {
 		channel1 = HAL_SPI_CHANNEL_1,
@@ -48,34 +48,29 @@ namespace eos {
 		clkdiv_256 = HAL_SPI_CLOCKDIV_256
 	};
 
-	template <SPIChannel channel_, typename sckPin_, typename mosiPin_, typename misoPin_, bool initPins_ = true>
-	class SPIModule {
+	template <SPIChannel channel_>
+	class SPI_x {
 		private:
 			constexpr static const unsigned _defaultBlockTime = 1000;
 			constexpr static const SPISize _defaultSize = SPISize::size8;
 			constexpr static const SPIFirstBit _defaultFirstBit = SPIFirstBit::lsb;
 
 		private:
-		    halSPIData _data;
-			halSPIHandler _handler;
+		    static halSPIData _data;
+			static halSPIHandler _handler;
 
 		public:
 			constexpr static const SPIChannel channel = channel_;
 
 		private:
-			SPIModule() = default;
-			SPIModule(const SPIModule &) = delete;
-			SPIModule(const SPIModule &&) = delete;
-			SPIModule & operator = (const SPIModule &) = delete;
-			SPIModule & operator = (const SPIModule &&) = delete;
+			SPI_x() = delete;
+			SPI_x(const SPI_x &) = delete;
+			SPI_x(const SPI_x &&) = delete;
+			SPI_x & operator = (const SPI_x &) = delete;
+			SPI_x & operator = (const SPI_x &&) = delete;
 
 		public:
-			inline static auto & instance() {
-				static SPIModule module;
-				return module;
-			}
-
-			inline void initMaster(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
+			inline static void initMaster(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
 				halSPIOptions options =
 					HAL_SPI_MS_MASTER |
 					halSPIOptions(size) |
@@ -84,7 +79,7 @@ namespace eos {
 				initialize(options);
 			}
 
-			inline void initSlave(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
+			inline static void initSlave(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
 				halSPIOptions options =
 					HAL_SPI_MS_SLAVE |
 					halSPIOptions(size) |
@@ -93,7 +88,7 @@ namespace eos {
 				initialize(options);
 			}
 
-			inline void initialize(halSPIOptions options) {
+			inline static void initialize(halSPIOptions options) {
 				halSPISettings settings;
 				settings.channel = halSPIChannel(channel_);
 				settings.options = options;
@@ -102,169 +97,162 @@ namespace eos {
 				_handler = halSPIInitialize(&_data, &settings);
 			}
 
-			inline void initialize(const halSPISettings &settings) {
+			inline static void initialize(const halSPISettings &settings) {
 				_handler = halSPIInitialize(&_data, &settings);
 			}
 
-			inline void setClock(SPIClockDivider clkdiv) {
+			inline static void setClock(SPIClockDivider clkdiv) {
 
 			}
 
-			inline void setInterruptFunction(halSPIInterruptFunction function, void *params) {
+			inline static void setInterruptFunction(halSPIInterruptFunction function, void *params) {
 				halSPISetInterruptFunction(_handler, function, params);
 			}
 
-			inline void enableInterrupts(uint32_t events) {
+			inline static void enableInterrupts(uint32_t events) {
 				halSPIEnableInterrupts(_handler, events);
 			}
 
-			inline uint32_t disableInterrupts(uint32_t events) {
+			inline static uint32_t disableInterrupts(uint32_t events) {
 				return halSPIDisableInterrupts(_handler, events);
 			}
 
+			template <typename gpio_>
 			inline static void initSCKPin() {
 				if constexpr (channel_ == SPIChannel::channel1)
-					sckPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						sckPin_::GPIOAlt::spi1_SCK);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi1_SCK);
 
 				if constexpr (channel_ == SPIChannel::channel2)
-					sckPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						sckPin_::GPIOAlt::spi2_SCK);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi2_SCK);
 
 				if constexpr (channel_ == SPIChannel::channel3)
-					sckPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						sckPin_::GPIOAlt::spi3_SCK);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi3_SCK);
 
 				if constexpr (channel_ == SPIChannel::channel4)
-					sckPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						sckPin_::GPIOAlt::spi4_SCK);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi4_SCK);
 
 				if constexpr (channel_ == SPIChannel::channel5)
-					sckPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						sckPin_::GPIOAlt::spi5_SCK);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi5_SCK);
 
 				if constexpr (channel_ == SPIChannel::channel6)
-					sckPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						sckPin_::GPIOAlt::spi6_SCK);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi6_SCK);
 			}
 
+			template <typename gpio_>
 			inline static void initMOSIPin() {
 				if constexpr (channel_ == SPIChannel::channel1)
-					mosiPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						mosiPin_::GPIOAlt::spi1_MOSI);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi1_MOSI);
 
 				if constexpr (channel_ == SPIChannel::channel2)
-					mosiPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						mosiPin_::GPIOAlt::spi2_MOSI);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi2_MOSI);
 
 				if constexpr (channel_ == SPIChannel::channel3)
-					mosiPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						mosiPin_::GPIOAlt::spi3_MOSI);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi3_MOSI);
 
 				if constexpr (channel_ == SPIChannel::channel4)
-					mosiPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						mosiPin_::GPIOAlt::spi4_MOSI);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi4_MOSI);
 
 				if constexpr (channel_ == SPIChannel::channel5)
-					mosiPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						mosiPin_::GPIOAlt::spi5_MOSI);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi5_MOSI);
 
 				if constexpr (channel_ == SPIChannel::channel6)
-					mosiPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						mosiPin_::GPIOAlt::spi6_MOSI);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi6_MOSI);
 
 			}
 
+			template <typename gpio_>
 			inline static void initMISOPin() {
 				if constexpr (channel_ == SPIChannel::channel1)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi1_MISO);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi1_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel2)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi2_MISO);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi2_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel3)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi3_MISO);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi3_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel4)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi4_MISO);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi4_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel5)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi5_MISO);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi5_MISO);
 
 				if constexpr (channel_ == SPIChannel::channel6)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
+					gpio_::initAlt(
 						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi6_MISO);
+						GPIOSpeed::fast,
+						gpio_::GPIOAlt::spi6_MISO);
 			}
 
-			inline void send(const uint8_t data, unsigned blockTime = _defaultBlockTime) {
+			inline static void send(const uint8_t data, unsigned blockTime = _defaultBlockTime) {
 				halSPISend(_handler, &data, sizeof(data), blockTime);
 			}
 
-			inline void send(const void *data, int size, unsigned blockTime = _defaultBlockTime) {
+			inline static void send(const void *data, int size, unsigned blockTime = _defaultBlockTime) {
 				halSPISend(_handler, data, size, blockTime);
 			}
 	};
 
+	template <SPIChannel channel_> halSPIData SPI_x<channel_>::_data;
+	template <SPIChannel channel_> halSPIHandler SPI_x<channel_>::_handler;
 
-	template <typename sckPin_, typename mosiPin_, typename misoPin_, bool initPins_ = true>
-	using SPI_1 = SPIModule<SPIChannel::channel1, sckPin_, mosiPin_, misoPin_, initPins_>;
-
-	template <typename sckPin_, typename mosiPin_, typename misoPin_, bool initPins_ = true>
-	using SPI_2 = SPIModule<SPIChannel::channel2, sckPin_, mosiPin_, misoPin_, initPins_>;
-
-	template <typename sckPin_, typename mosiPin_, typename misoPin_, bool initPins_ = true>
-	using SPI_3 = SPIModule<SPIChannel::channel3, sckPin_, mosiPin_, misoPin_, initPins_>;
-
-	template <typename sckPin_, typename mosiPin_, typename misoPin_, bool initPins_ = true>
-	using SPI_4 = SPIModule<SPIChannel::channel4, sckPin_, mosiPin_, misoPin_, initPins_>;
-
-	template <typename sckPin_, typename mosiPin_, typename misoPin_, bool initPins_ = true>
-	using SPI_5 = SPIModule<SPIChannel::channel5, sckPin_, mosiPin_, misoPin_, initPins_>;
-
-	template <typename sckPin_, typename mosiPin_, typename misoPin_, bool initPins_ = true>
-	using SPI_6 = SPIModule<SPIChannel::channel6, sckPin_, mosiPin_, misoPin_, initPins_>;
-
+	using SPI_1 = SPI_x<SPIChannel::channel1>;
+	using SPI_2 = SPI_x<SPIChannel::channel2>;
+	using SPI_3 = SPI_x<SPIChannel::channel3>;
+	using SPI_4 = SPI_x<SPIChannel::channel4>;
+	using SPI_5 = SPI_x<SPIChannel::channel5>;
+	using SPI_6 = SPI_x<SPIChannel::channel6>;
 }
 
 

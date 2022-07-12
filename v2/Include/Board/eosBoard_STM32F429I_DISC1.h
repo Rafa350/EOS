@@ -10,12 +10,14 @@
 #define EXIST_LEDS_LED1
 #define LEDS_LED1_PORT            HAL_GPIO_PORT_G
 #define LEDS_LED1_PIN             HAL_GPIO_PIN_13
+#define LEDS_LED1_TYPE            htl::GPIO_G13
 #endif // USE_LEDS_LED1
 
 #ifdef USE_LEDS_LED2
 #define EXIST_LEDS_LED2
 #define LEDS_LED2_PORT            HAL_GPIO_PORT_G
 #define LEDS_LED2_PIN             HAL_GPIO_PIN_14
+#define LEDS_LED2_TYPE            htl::GPIO_G14
 #endif // USE_LEDS_LED2
 
 #define LEDS_STATE_ON             1
@@ -137,27 +139,32 @@
 //
 #define DISPLAY_CS_PORT      HAL_GPIO_PORT_C
 #define DISPLAY_CS_PIN       HAL_GPIO_PIN_2
+#define DISPLAY_CS_TYPE      htl::GPIO_C2
 
 // Control del pin RS (Register select)
 //
 #define DISPLAY_RS_PORT      HAL_GPIO_PORT_D
 #define DISPLAY_RS_PIN       HAL_GPIO_PIN_13
+#define DISPLAY_RS_TYPE      htl::GPIO_D13
 
 // Control del pin CLK (Serial clock)
 //
 #define DISPLAY_SCK_PORT     HAL_GPIO_PORT_F
 #define DISPLAY_SCK_PIN      HAL_GPIO_PIN_7
 #define DISPLAY_SCK_AF       HAL_GPIO_AF_5
+#define DISPLAY_SCK_TYPE     htl::GPIO_F7
 
 // Control del pin MOSI (CPU to Controller)
 //
 #define DISPLAY_MOSI_PORT    HAL_GPIO_PORT_F
 #define DISPLAY_MOSI_PIN     HAL_GPIO_PIN_9
 #define DISPLAY_MOSI_AF      HAL_GPIO_AF_5
+#define DISPLAY_MOSI_TYPE    htl::GPIO_F9
 
 // Modul SPI a utilitzar
 //
 #define DISPLAY_SPI_CHANNEL  HAL_SPI_CHANNEL_5
+#define DISPLAY_SPI_TYPE     htl::SPI_5
 
 #endif // DISPLAY_DRV_ILI9341
 
@@ -189,47 +196,55 @@
 //
 #define DISPLAY_CS_PORT      HAL_GPIO_PORT_C
 #define DISPLAY_CS_PIN       HAL_GPIO_PIN_2
+#define DISPLAY_CS_TYPE      htl::GPIO_C2
 
 // Control del pin RS (Register select)
 //
 #define DISPLAY_RS_PORT      HAL_GPIO_PORT_D
 #define DISPLAY_RS_PIN       HAL_GPIO_PIN_13
+#define DISPLAY_RS_TYPE      htl::GPIO_D13
 
 // Control del pin CLK (Serial clock)
 //
 #define DISPLAY_SCK_PORT     HAL_GPIO_PORT_F
 #define DISPLAY_SCK_PIN      HAL_GPIO_PIN_7
 #define DISPLAY_SCK_AF       HAL_GPIO_AF_5
+#define DISPLAY_SCK_TYPE     htl::GPIO_F7
 
 // Control del pin MOSI (CPU to controller)
 //
 #define DISPLAY_MOSI_PORT    HAL_GPIO_PORT_F
 #define DISPLAY_MOSI_PIN     HAL_GPIO_PIN_9
 #define DISPLAY_MOSI_AF      HAL_GPIO_AF_5
+#define DISPLAY_MOSI_TYPE    htl::GPIO_F9
 
 // Control del pin HSYNC (Horizontal sync)
 //
 #define DISPLAY_HSYNC_PORT   HAL_GPIO_PORT_C
 #define DISPLAY_HSYNC_PIN    HAL_GPIO_PIN_6
 #define DISPLAY_HSYNC_AF     HAL_GPIO_AF_14
+#define DISPLAY_HSYNC_TYPE   htl::GPIO_C6
 
 // Control del pin VSYNC (Vertical sync)
 //
 #define DISPLAY_VSYNC_PORT   HAL_GPIO_PORT_A
 #define DISPLAY_VSYNC_PIN    HAL_GPIO_PIN_4
 #define DISPLAY_VSYNC_AF     HAL_GPIO_AF_14
+#define DISPLAY_VSYNC_TYPE   htl::GPIO_A4
 
 // Control del pin DE (Display enable)
 //
 #define DISPLAY_DE_PORT      HAL_GPIO_PORT_F
 #define DISPLAY_DE_PIN       HAL_GPIO_PIN_10
 #define DISPLAY_DE_AF        HAL_GPIO_AF_14
+#define DISPLAY_DE_TYPE      htl::GPIO_F10
 
 // Control del pin DOTCLK (Dot clock)
 //
 #define DISPLAY_DOTCLK_PORT  HAL_GPIO_PORT_G
 #define DISPLAY_DOTCLK_PIN   HAL_GPIO_PIN_7
 #define DISPLAY_DOTCLK_AF    HAL_GPIO_AF_14
+#define DISPLAY_DOTCLK_TYPE  htl::GPIO_G7
 
 // Control del pin R2
 //
@@ -342,6 +357,7 @@
 // Control del modul SPI
 //
 #define DISPLAY_SPI_CHANNEL  HAL_SPI_CHANNEL_5
+#define DISPLAY_SPI_TYPE     htl::SPI_5
 
 #endif // DISPLAY_DRV_ILI9341LTDC
 

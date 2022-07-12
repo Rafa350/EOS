@@ -651,6 +651,15 @@ namespace htl {
 
 #ifdef GPIOC_BASE
 	template <>
+	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin2> {
+		enum class GPIOAlt {
+		};
+		constexpr static const uint32_t addr = GPIOC_BASE;
+		constexpr static const uint32_t pn = 2;
+		constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
+	};
+
+	template <>
 	struct GPIOInfo<GPIOPort::portC, GPIOPin::pin6> {
 		enum class GPIOAlt {
 			ltdc_HSYNC = 14,
@@ -704,6 +713,15 @@ namespace htl {
 		};
 		constexpr static const uint32_t addr = GPIOD_BASE;
 		constexpr static const uint32_t pn = 7;
+		constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIODEN;
+	};
+
+	template <>
+	struct GPIOInfo<GPIOPort::portD, GPIOPin::pin13> {
+		enum class GPIOAlt {
+		};
+		constexpr static const uint32_t addr = GPIOD_BASE;
+		constexpr static const uint32_t pn = 13;
 		constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIODEN;
 	};
 #endif
@@ -797,6 +815,24 @@ namespace htl {
 		};
 		constexpr static const uint32_t addr = GPIOG_BASE;
 		constexpr static const uint32_t pn = 12;
+		constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
+	};
+
+	template <>
+	struct GPIOInfo<GPIOPort::portG, GPIOPin::pin13> {
+		enum class GPIOAlt {
+		};
+		constexpr static const uint32_t addr = GPIOG_BASE;
+		constexpr static const uint32_t pn = 13;
+		constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
+	};
+
+	template <>
+	struct GPIOInfo<GPIOPort::portG, GPIOPin::pin14> {
+		enum class GPIOAlt {
+		};
+		constexpr static const uint32_t addr = GPIOG_BASE;
+		constexpr static const uint32_t pn = 14;
 		constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
 	};
 #endif

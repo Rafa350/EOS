@@ -4,7 +4,7 @@
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "HAL/halINT.h"
 #include "HAL/halTMR.h"
-#include "HAL/STM32/halLTDCTpl.h"
+#include "HTL/STM32/htlLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "System/eosMath.h"
 
@@ -278,17 +278,20 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza el modul GPIO
 	//
-	_pinCS.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::set);
-	_pinRS.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::clr);
+	GPIO_CS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	GPIO_CS::set();
+	GPIO_RS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	GPIO_RS::clear();
 #ifdef DISPLAY_RTS_PIN
-	_pinRST.initOutput(GPIOSpeed::low, GPIODriver::pushPull, GPIOState::clr);
+	GPIO_RST::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	GPIO_RST::clear();
 #endif
 
 	// Inicialitza el modul SPI
 	//
-	_spi.setSCKPin(_pinSCK);
-	_spi.setMOSIPin(_pinMOSI);
-	_spi.initialize(HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16);
+	SPI::initSCKPin<GPIO_SCK>();
+	SPI::initMOSIPin<GPIO_MOSI>();
+	SPI::initialize(HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16);
 
 	// Inicialitza el modul LTDC
 	//
@@ -399,7 +402,7 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 ///
 void DisplayDriver_ILI9341LTDC::open() {
 
-	_pinCS = 0;
+	GPIO_CS::clear();
 }
 
 
@@ -408,7 +411,7 @@ void DisplayDriver_ILI9341LTDC::open() {
 ///
 void DisplayDriver_ILI9341LTDC::close() {
 
-	_pinCS = 1;
+	GPIO_CS::set();
 }
 
 
@@ -419,8 +422,8 @@ void DisplayDriver_ILI9341LTDC::close() {
 void DisplayDriver_ILI9341LTDC::writeCommand(
 	uint8_t cmd) {
 
-	_pinRS = 0;
-	_spi.send(&cmd, sizeof(cmd));
+	GPIO_RS::clear();
+	SPI::send(&cmd, sizeof(cmd));
 }
 
 
@@ -431,6 +434,6 @@ void DisplayDriver_ILI9341LTDC::writeCommand(
 void DisplayDriver_ILI9341LTDC::writeData(
 	uint8_t data) {
 
-	_pinRS = 1;
-	_spi.send(&data, sizeof(data));
+	GPIO_RS::set();
+	SPI::send(&data, sizeof(data));
 }

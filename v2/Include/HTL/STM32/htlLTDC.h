@@ -20,7 +20,7 @@ namespace htl {
 	};
 
     template <LTDCLayerNum layerNum_>
-    class LTDCLayerAdapter {
+    class LTDCLayer_x {
     	public:
 			inline static void setWindow(int x, int y, int width, int height) {
 				halLTDCLayerSetWindow(
@@ -50,11 +50,11 @@ namespace htl {
 			}
     };
 
-    typedef LTDCLayerAdapter<LTDCLayerNum::layer0> LTDCLayer_0;
-    typedef LTDCLayerAdapter<LTDCLayerNum::layer1> LTDCLayer_1;
+    using LTDCLayer_0 = LTDCLayer_x<LTDCLayerNum::layer0>;
+    using LTDCLayer_1 = LTDCLayer_x<LTDCLayerNum::layer1>;
 
 
-    class LTDCAdapter {
+    class LTDC_x {
 		public:
 			static const LTDCLayer_0 layer0;
 			static const LTDCLayer_1 layer1;
@@ -92,14 +92,8 @@ namespace htl {
 				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpio_::GPIOAlt::ltdc_DE);
 			}
 
-			template <typename gpioR0_,
-			          typename gpioR1_,
-					  typename gpioR2_,
-					  typename gpioR3_,
-					  typename gpioR4_,
-					  typename gpioR5_,
-					  typename gpioR6_,
-					  typename gpioR7_>
+			template <typename gpioR0_, typename gpioR1_, typename gpioR2_, typename gpioR3_,
+					  typename gpioR4_, typename gpioR5_, typename gpioR6_, typename gpioR7_>
 			inline static void initRPins() {
 				gpioR0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR0_::GPIOAlt::ltdc_R0);
 				gpioR1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR1_::GPIOAlt::ltdc_R1);
@@ -111,14 +105,8 @@ namespace htl {
 				gpioR7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioR7_::GPIOAlt::ltdc_R7);
 			}
 
-			template <typename gpioG0_,
-                      typename gpioG1_,
-					  typename gpioG2_,
-					  typename gpioG3_,
-					  typename gpioG4_,
-					  typename gpioG5_,
-					  typename gpioG6_,
-					  typename gpioG7_>
+			template <typename gpioG0_, typename gpioG1_, typename gpioG2_, typename gpioG3_,
+					  typename gpioG4_, typename gpioG5_, typename gpioG6_, typename gpioG7_>
 			inline static void initGPins() {
 				gpioG0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG0_::GPIOAlt::ltdc_G0);
 				gpioG1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG1_::GPIOAlt::ltdc_G1);
@@ -130,14 +118,8 @@ namespace htl {
 				gpioG7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioG7_::GPIOAlt::ltdc_G7);
 			}
 
-			template <typename gpioB0_,
-					  typename gpioB1_,
-					  typename gpioB2_,
-					  typename gpioB3_,
-					  typename gpioB4_,
-					  typename gpioB5_,
-					  typename gpioB6_,
-					  typename gpioB7_>
+			template <typename gpioB0_, typename gpioB1_, typename gpioB2_, typename gpioB3_,
+					  typename gpioB4_, typename gpioB5_, typename gpioB6_, typename gpioB7_>
 			inline static void initBPins() {
 				gpioB0_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB0_::GPIOAlt::ltdc_B0);
 				gpioB1_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB1_::GPIOAlt::ltdc_B1);
@@ -155,7 +137,7 @@ namespace htl {
 			}
 	};
 
-	typedef LTDCAdapter LTDC_1;
+	using LTDC_1 = LTDC_x;
 
 
 	// Valors que depenen del format de color

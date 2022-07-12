@@ -17,16 +17,19 @@ void DisplayDriver_ILI9341::initializeInterface() {
 	// Inicialitza el modul GPIO
 	//
 #ifdef DISPLAY_RST_PIN
-	_pinRST.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::clr);
+	GPIO_RST.initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	GPIO_RST::clear();
 #endif
-	_pinCS.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::set);
-	_pinRS.initOutput(GPIOSpeed::fast, GPIODriver::pushPull, GPIOState::clr);
+	GPIO_CS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	GPIO_CS::set();
+	GPIO_RS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	GPIO_RS::clear();
 
 	// Inicialitza el modul SPI
     //
-	_spi.setSCKPin(_pinSCK);
-	_spi.setMOSIPin(_pinMOSI);
-	_spi.initialize(HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
+	SPI::initSCKPin<GPIO_SCK>();
+	SPI::initMOSIPin<GPIO_MOSI>();
+	SPI::initialize(HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
 			HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16);
 }
 
@@ -136,7 +139,7 @@ void DisplayDriver_ILI9341::initializeController() {
 ///
 void DisplayDriver_ILI9341::open() {
 
-	_pinCS = 0;
+	GPIO_CS::clear();
 }
 
 
@@ -145,7 +148,7 @@ void DisplayDriver_ILI9341::open() {
 ///
 void DisplayDriver_ILI9341::close() {
 
-	_pinCS = 1;
+	GPIO_CS::set();
 }
 
 
@@ -156,8 +159,8 @@ void DisplayDriver_ILI9341::close() {
 void DisplayDriver_ILI9341::writeCommand(
     uint8_t cmd) {
 
-	_pinRS = 0;
-    _spi.send(&cmd, sizeof(cmd));
+	GPIO_RS::clear();
+    SPI::send(&cmd, sizeof(cmd));
 }
 
 
@@ -168,8 +171,8 @@ void DisplayDriver_ILI9341::writeCommand(
 void DisplayDriver_ILI9341::writeData(
     uint8_t data) {
 
-	_pinRS = 1;
-    _spi.send(&data, sizeof(data));
+	GPIO_RS::set();
+    SPI::send(&data, sizeof(data));
 }
 
 
@@ -182,7 +185,7 @@ void DisplayDriver_ILI9341::writeData(
 	const uint8_t* data,
 	int length) {
 
-	_pinRS = 1;
-    _spi.send(data, length);
+	GPIO_RS::set();
+    SPI::send(data, length);
 }
 

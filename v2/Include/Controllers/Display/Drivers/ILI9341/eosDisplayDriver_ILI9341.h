@@ -45,9 +45,9 @@
 
 
 #if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
-#include "HAL/halSPI_ex.h"
+#include "HTL/htlSPI.h"
 #endif
-#include "HAL/halGPIO_ex.h"
+#include "HTL/htlGPIO.h"
 #include "Controllers/Display/eosDisplayDriver.h"
 #include "System/Graphics/eosColor.h"
 
@@ -59,14 +59,14 @@ namespace eos {
     		typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
     		typedef CI::color_t pixel_t;
 #ifdef DISPLAY_RST_PIN
-    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_RST_PORT), GPIOPin(DISPLAY_RTT_PIN)> PinRTS;
+    		typedef DISLAY_RST_TYPE GPIO_RST;
 #endif
-    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_CS_PORT), GPIOPin(DISPLAY_CS_PIN)> PinCS;
-    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_RS_PORT), GPIOPin(DISPLAY_RS_PIN)> PinRS;
+    		typedef DISPLAY_CS_TYPE GPIO_CS;
+    		typedef DISPLAY_RS_TYPE GPIO_RS;
 #if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
-    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_SCK_PORT), GPIOPin(DISPLAY_SCK_PIN)> PinSCK;
-    		typedef GPIOPinAdapter<GPIOPort(DISPLAY_MOSI_PORT), GPIOPin(DISPLAY_MOSI_PIN)> PinMOSI;
-    		typedef SPIAdapter<SPIChannel(DISPLAY_SPI_CHANNEL)> Spi;
+    		typedef DISPLAY_SCK_TYPE GPIO_SCK;
+    		typedef DISPLAY_MOSI_TYPE GPIO_MOSI;
+    		typedef DISPLAY_SPI_TYPE SPI;
 #endif
 
     	private:
@@ -74,16 +74,6 @@ namespace eos {
     		constexpr static int _displayHeight = DISPLAY_IMAGE_HEIGHT;
 
     	private:
-#ifdef DISPLAY_RST_PIN
-    		PinRST _pinRST;
-#endif
-    		PinCS _pinCS;
-    		PinRS _pinRS;
-#if (DISPLAY_ILI9341_INTERFACE == DISPLAY_ILI9341_INTERFACE_SPI)
-    		PinSCK _pinSCK;
-    		PinMOSI _pinMOSI;
-    		Spi _spi;
-#endif
     		int _imageWidth;
     		int _imageHeight;
 

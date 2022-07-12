@@ -1,7 +1,5 @@
-#ifndef __STM32_halI2C_ex__
-#define __STM32_halI2C_ex__
-
-#ifdef __cplusplus
+#ifndef __STM32_htlI2C__
+#define __STM32_htlI2C__
 
 
 // EOS includes
@@ -145,8 +143,5 @@ namespace eos {
 	using I2C_4 = I2CModule<I2CChannel::channel4, sclPin_, sdaPin_, initPins_>;
 }
 
-
-#endif // __cplusplus
-
-#endif // __STM32_halI2C_ex__
+#endif // __STM32_htlI2C__
 

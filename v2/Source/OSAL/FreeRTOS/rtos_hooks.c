@@ -9,7 +9,7 @@
 ///
 void vApplicationStackOverflowHook(
 	TaskHandle_t pxTask,
-	signed char *pcTaskName) {
+	char *pcTaskName) {
 
 	/* Run time task stack overflow checking is performed if
    	   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook	function is
