@@ -62,6 +62,8 @@ namespace htl {
 			TMR_x() = delete;
 			TMR_x(const TMR_x &) = delete;
 			TMR_x(const TMR_x &&) = delete;
+            ~TMR() = delete;
+            
 			TMR_x & operator = (const TMR_x &) = delete;
 			TMR_x & operator = (const TMR_x &&) = delete;
 

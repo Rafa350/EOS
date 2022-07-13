@@ -53,6 +53,9 @@ namespace eos {
             UART_x(const UART_X &&) = delete;
             ~UART_x() = delete;
 
+            UART_x & operator = (const UART_x &) = delete;
+            UART_x & operator = (const UART_x &&) = delete;
+
 		public:
 			inline static void init(const halUARTSettings& settings) {
 				_handler = halUARTInitialize(&_data, &settings);

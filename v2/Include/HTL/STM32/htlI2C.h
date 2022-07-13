@@ -41,6 +41,8 @@ namespace eos {
 			I2C_x() = delete;
 			I2C_x(const I2C_x &) = delete;
 			I2C_x(const I2C_x &&) = delete;
+            ~I2C() = delete;
+            
 			I2C_x & operator = (const I2C_x &) = delete;
 			I2C_x & operator = (const I2C_x &&) = delete;
 

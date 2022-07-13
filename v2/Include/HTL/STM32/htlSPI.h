@@ -66,6 +66,8 @@ namespace htl {
 			SPI_x() = delete;
 			SPI_x(const SPI_x &) = delete;
 			SPI_x(const SPI_x &&) = delete;
+            ~SPI() = delete;
+            
 			SPI_x & operator = (const SPI_x &) = delete;
 			SPI_x & operator = (const SPI_x &&) = delete;
 
