@@ -12,28 +12,28 @@
 namespace eos {
 
 	enum class UARTChannel {
-        #ifdef HAL_UART_CHANNEL_1
+        #ifdef _UART1
             channel1 = HAL_UART_CHANNEL_1,
         #endif
-        #ifdef HAL_UART_CHANNEL_2
+        #ifdef _UART2
             channel2 = HAL_UART_CHANNEL_2,
         #endif
-        #ifdef HAL_UART_CHANNEL_3
+        #ifdef _UART3
             channel3 = HAL_UART_CHANNEL_3,
         #endif
-        #ifdef HAL_UART_CHANNEL_4
+        #ifdef _UART4
             channel4 = HAL_UART_CHANNEL_4,
         #endif
-        #ifdef HAL_UART_CHANNEL_5
+        #ifdef _UART5
             channel5 = HAL_UART_CHANNEL_5,
         #endif
-        #ifdef HAL_UART_CHANNEL_6
+        #ifdef _UART6
             channel6 = HAL_UART_CHANNEL_6,
         #endif
-        #ifdef HAL_UART_CHANNEL_7
+        #ifdef _UART7
             channel7 = HAL_UART_CHANNEL_7,
         #endif
-        #ifdef HAL_UART_CHANNEL_8
+        #ifdef _UART8
             channel8 = HAL_UART_CHANNEL_8,
         #endif
 	};
@@ -90,28 +90,28 @@ namespace eos {
 	};
 
 
-    #ifdef HAL_UART_CHANNEL_1
+    #ifdef _UART1
         using UART_1 = UARTAdapter<UARTChannel::channel1>;
     #endif
-    #ifdef HAL_UART_CHANNEL_2
+    #ifdef _UART2
         using UART_2 = UARTAdapter<UARTChannel::channel2>;
     #endif
-    #ifdef HAL_UART_CHANNEL_3
+    #ifdef _UART3
         using UART_3 = UARTAdapter<UARTChannel::channel3>;
     #endif
-    #ifdef HAL_UART_CHANNEL_4
+    #ifdef _UART4
         using UART_4 = UARTAdapter<UARTChannel::channel4>;
     #endif
-    #ifdef HAL_UART_CHANNEL_5
+    #ifdef _UART5
         using UART_5 = UARTAdapter<UARTChannel::channel5>;
     #endif
-    #ifdef HAL_UART_CHANNEL_6
+    #ifdef _UART6
         using UART_6 = UARTAdapter<UARTChannel::channel6>;
     #endif
-    #ifdef HAL_UART_CHANNEL_7
+    #ifdef _UART7
         using UART_7 = UARTAdapter<UARTChannel::channel7>;
     #endif
-    #ifdef HAL_UART_CHANNEL_8
+    #ifdef _UART8
         using UART_8 = UARTAdapter<UARTChannel::channel8>;
     #endif
 

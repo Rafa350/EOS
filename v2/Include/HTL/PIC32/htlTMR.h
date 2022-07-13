@@ -223,24 +223,24 @@ namespace htl {
 
             inline static void enableInterrupt(TMREvent event) {
                 #ifdef _TMR1
-                if constexpr (timer_ == TMRTimer::timer1)
-                    IEC0bits.T1IE = 1;
+                    if constexpr (timer_ == TMRTimer::timer1)
+                        IEC0bits.T1IE = 1;
                 #endif
                 #ifdef _TMR2
-                if constexpr (timer_ == TMRTimer::timer2)
-                    IEC0bits.T2IE = 1;
+                    if constexpr (timer_ == TMRTimer::timer2)
+                        IEC0bits.T2IE = 1;
                 #endif
                 #ifdef _TMR3
-                if constexpr (timer_ == TMRTimer::timer3)
-                    IEC0bits.T3IE = 1;
+                    if constexpr (timer_ == TMRTimer::timer3)
+                        IEC0bits.T3IE = 1;
                 #endif
                 #ifdef _TMR4
-                if constexpr (timer_ == TMRTimer::timer4)
-                    IEC0bits.T4IE = 1;
+                    if constexpr (timer_ == TMRTimer::timer4)
+                        IEC0bits.T4IE = 1;
                 #endif
                 #ifdef _TMR5
-                if constexpr (timer_ == TMRTimer::timer5)
-                    IEC0bits.T5IE = 1;
+                    if constexpr (timer_ == TMRTimer::timer5)
+                        IEC0bits.T5IE = 1;
                 #endif
             }
 
@@ -249,29 +249,34 @@ namespace htl {
                 bool state = false;
 
                 #ifdef _TMR1
-                if constexpr (timer_ == TMRTimer::timer1)
-                    state = IEC0bits.T1IE;
-                    IEC0bits.T1IE = 1;
+                    if constexpr (timer_ == TMRTimer::timer1) {
+                        state = IEC0bits.T1IE;
+                        IEC0bits.T1IE = 1;
+                    }
                 #endif
                 #ifdef _TMR2
-                if constexpr (timer_ == TMRTimer::timer2)
-                    state = IEC0bits.T2IE;
-                    IEC0bits.T2IE = 1;
+                    if constexpr (timer_ == TMRTimer::timer2) {
+                        state = IEC0bits.T2IE;
+                        IEC0bits.T2IE = 1;
+                    }
                 #endif
                 #ifdef _TMR3
-                if constexpr (timer_ == TMRTimer::timer3)
-                    state = IEC0bits.T3IE;
-                    IEC0bits.T3IE = 1;
+                    if constexpr (timer_ == TMRTimer::timer3) {
+                        state = IEC0bits.T3IE;
+                        IEC0bits.T3IE = 1;
+                    }
                 #endif
                 #ifdef _TMR4
-                if constexpr (timer_ == TMRTimer::timer4)
-                    state = IEC0bits.T4IE;
-                    IEC0bits.T4IE = 1;
+                    if constexpr (timer_ == TMRTimer::timer4) {
+                        state = IEC0bits.T4IE;
+                        IEC0bits.T4IE = 1;
+                    }
                 #endif
                 #ifdef _TMR5
-                if constexpr (timer_ == TMRTimer::timer5)
-                    state = IEC0bits.T5IE;
-                    IEC0bits.T5IE = 1;
+                    if constexpr (timer_ == TMRTimer::timer5) {
+                        state = IEC0bits.T5IE;
+                        IEC0bits.T5IE = 1;
+                    }
                 #endif
 
                 return state;
@@ -279,47 +284,47 @@ namespace htl {
 
             inline static bool getInterruptFlag(TMREvent event) {
                 #ifdef _TMR1
-                if constexpr (timer_ == TMRTimer::timer1)
-                    return IFS0bits.T1IF;
+                    if constexpr (timer_ == TMRTimer::timer1)
+                        return IFS0bits.T1IF;
                 #endif
                 #ifdef _TMR2
-                if constexpr (timer_ == TMRTimer::timer2)
-                    return IFS0bits.T2IF;
+                    if constexpr (timer_ == TMRTimer::timer2)
+                        return IFS0bits.T2IF;
                 #endif
                 #ifdef _TMR3
-                if constexpr (timer_ == TMRTimer::timer3)
-                    return IFS0bits.T3IF;
+                    if constexpr (timer_ == TMRTimer::timer3)
+                        return IFS0bits.T3IF;
                 #endif
                 #ifdef _TMR4
-                if constexpr (timer_ == TMRTimer::timer4)
-                    return IFS0bits.T4IF;
+                    if constexpr (timer_ == TMRTimer::timer4)
+                        return IFS0bits.T4IF;
                 #endif
                 #ifdef _TMR5
-                if constexpr (timer_ == TMRTimer::timer5)
-                    return IFS0bits.T5IF;
+                    if constexpr (timer_ == TMRTimer::timer5)
+                        return IFS0bits.T5IF;
                 #endif
             }
 
             inline static void clearInterruptFlag(TMREvent event) {
                 #ifdef _TMR1
-                if constexpr (timer_ == TMRTimer::timer1)
-                    IFS0bits.T1IF = 0;
+                    if constexpr (timer_ == TMRTimer::timer1)
+                        IFS0bits.T1IF = 0;
                 #endif
                 #ifdef _TMR2
-                if constexpr (timer_ == TMRTimer::timer2)
-                    IFS0bits.T2IF = 0;
+                    if constexpr (timer_ == TMRTimer::timer2)
+                        IFS0bits.T2IF = 0;
                 #endif
                 #ifdef _TMR3
-                if constexpr (timer_ == TMRTimer::timer3)
-                    IFS0bits.T3IF = 0;
+                    if constexpr (timer_ == TMRTimer::timer3)
+                        IFS0bits.T3IF = 0;
                 #endif
                 #ifdef _TMR4
-                if constexpr (timer_ == TMRTimer::timer4)
-                    IFS0bits.T4IF = 0;
+                    if constexpr (timer_ == TMRTimer::timer4)
+                        IFS0bits.T4IF = 0;
                 #endif
                 #ifdef _TMR5
-                if constexpr (timer_ == TMRTimer::timer5)
-                    IFS0bits.T5IF = 0;
+                    if constexpr (timer_ == TMRTimer::timer5)
+                        IFS0bits.T5IF = 0;
                 #endif
             }
 

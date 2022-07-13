@@ -65,20 +65,24 @@ namespace eos {
 
 			template <typename gpio_>
 			inline static void initTXPin() {
-				if constexpr (channel_ == UARTChannel::channel1)
-					gpio_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull,
-						gpio_::GPIOAlt::uart1_TX);
+                #ifdef USART1
+                    if constexpr (channel_ == UARTChannel::channel1)
+                        gpio_::initAlt(
+                            GPIOSpeed::fast,
+                            GPIODriver::pushPull,
+                            gpio_::GPIOAlt::uart1_TX);
+                #endif                        
 			}
 
 			template <typename gpio_>
 			inline static void initRXPin() {
-				if constexpr (channel_ == UARTChannel::channel1)
-					gpio_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull,
-						gpio_::GPIOAlt::uart1_RX);
+                #ifdef USART1
+                    if constexpr (channel_ == UARTChannel::channel1)
+                        gpio_::initAlt(
+                            GPIOSpeed::fast,
+                            GPIODriver::pushPull,
+                            gpio_::GPIOAlt::uart1_RX);
+                #endif                        
 			}
 
 			inline static void send(uint8_t data) const {
@@ -94,28 +98,28 @@ namespace eos {
     template <typename UARTChannel> halUARTHandler UART_x::_handler;
 
 
-    #ifdef HAL_UART_CHANNEL_1
+    #ifdef USART1
         using UART_1 = UART_x<UARTChannel::channel1>;
     #endif
-    #ifdef HAL_UART_CHANNEL_2
+    #ifdef USART2
         using UART_2 = UART_x<UARTChannel::channel2>;
     #endif
-    #ifdef HAL_UART_CHANNEL_3
+    #ifdef USART3
         using UART_3 = UART_x<UARTChannel::channel3>;
     #endif
-    #ifdef HAL_UART_CHANNEL_4
+    #ifdef UART4
         using UART_4 = UART_x<UARTChannel::channel4>;
     #endif
-    #ifdef HAL_UART_CHANNEL_5
+    #ifdef UART5
         using UART_5 = UART_x<UARTChannel::channel5>;
     #endif
-    #ifdef HAL_UART_CHANNEL_6
+    #ifdef USART6
         using UART_6 = UART_x<UARTChannel::channel6>;
     #endif
-    #ifdef HAL_UART_CHANNEL_7
+    #ifdef UART7
         using UART_7 = UART_x<UARTChannel::channel7>;
     #endif
-    #ifdef HAL_UART_CHANNEL_8
+    #ifdef UART8
         using UART_8 = UART_x<UARTChannel::channel8>;
     #endif
 

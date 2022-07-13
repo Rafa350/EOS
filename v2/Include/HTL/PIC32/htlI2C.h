@@ -5,11 +5,21 @@
 namespace htl {
 
     enum class I2CChannel {
-        channel1 = HAL_I2C_CHANNEL_1,
-        channel2 = HAL_I2C_CHANNEL_2,
-        channel3 = HAL_I2C_CHANNEL_3,
-        channel4 = HAL_I2C_CHANNEL_4,
-        channel5 = HAL_I2C_CHANNEL_5
+        #ifdef _I2C1
+            channel1 = HAL_I2C_CHANNEL_1,
+        #endif
+        #ifdef _I2C2
+            channel2 = HAL_I2C_CHANNEL_2,
+        #endif
+        #ifdef _I2C3
+            channel3 = HAL_I2C_CHANNEL_3,
+        #endif
+        #ifdef _I2C4
+            channel4 = HAL_I2C_CHANNEL_4,
+        #endif
+        #ifdef _I2C5
+            channel5 = HAL_I2C_CHANNEL_5
+        #endif
     };
 
     template <I2CChannel channel_>
@@ -72,21 +82,27 @@ namespace htl {
     };
 
 
-	using I2C_1 = I2CModule<I2CChannel::channel1;
-	using I2C_2 = I2CModule<I2CChannel::channel2;
+    #ifdef _I2C1
+        using I2C_1 = I2C_x<I2CChannel::channel1;
+    #endif
+    #ifdef _I2C2
+        using I2C_2 = I2C_x<I2CChannel::channel2;
+    #endif
 
 
-    // I2C 1
-    template <>
-    struct I2CInfo<HAL_I2C_CHANNEL_1> {
-        static const uint32_t addr = I2C1_BASE_ADDRESS;
-    };
+    #ifdef _I2C1
+        template <>
+        struct I2CInfo<HAL_I2C_CHANNEL_1> {
+            static const uint32_t addr = I2C1_BASE_ADDRESS;
+        };
+    #endif
 
-    // I2C 2
-    template <>
-    struct I2CInfo<HAL_I2C_CHANNEL_2> {
-        static const uint32_t addr = I2C2_BASE_ADDRESS;
-    };
+    #ifdef _I2C1
+        template <>
+        struct I2CInfo<HAL_I2C_CHANNEL_2> {
+            static const uint32_t addr = I2C2_BASE_ADDRESS;
+        };
+    #endif
 }
 
 

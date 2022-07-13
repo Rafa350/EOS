@@ -12,22 +12,22 @@
 namespace eos {
 
 	enum class SPIChannel: halSPIChannel {
-        #ifdef HAL_SPI_CHANNEL_1
+        #ifdef _SPI1
             channel1 = HAL_SPI_CHANNEL_1,
         #endif
-        #ifdef HAL_SPI_CHANNEL_2
+        #ifdef _SPI2
             channel2 = HAL_SPI_CHANNEL_2,
         #endif
-        #ifdef HAL_SPI_CHANNEL_3
+        #ifdef _SPI3
             channel3 = HAL_SPI_CHANNEL_3,
         #endif
-        #ifdef HAL_SPI_CHANNEL_4
+        #ifdef _SPI4
             channel4 = HAL_SPI_CHANNEL_4,
         #endif
-        #ifdef HAL_SPI_CHANNEL_5
+        #ifdef _SPI5
             channel5 = HAL_SPI_CHANNEL_5,
         #endif
-        #ifdef HAL_SPI_CHANNEL_6
+        #ifdef _SPI6
             channel6 = HAL_SPI_CHANNEL_6
         #endif
 	};
@@ -124,42 +124,42 @@ namespace eos {
 
             template <typename gpio_>
 			inline static void initSCKPin() {
-                #ifdef HAL_SPI_CHANNEL_1
+                #ifdef _SPI1
                     if constexpr (channel_ == SPIChannel::channel1)
                         gpio_::initAlt(
                             GPIOSpeed::fast,
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::spi1_SCK);
                 #endif
-                #ifdef HAL_SPI_CHANNEL_2
+                #ifdef _SPI2
                     if constexpr (channel_ == SPIChannel::channel2)
                         gpio_::initAlt(
                             GPIOSpeed::fast,
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::spi2_SCK);
                 #endif
-                #ifdef HAL_SPI_CHANNEL_3
+                #ifdef _SPI3
                     if constexpr (channel_ == SPIChannel::channel3)
                         gpio_::initAlt(
                             GPIOSpeed::fast,
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::spi3_SCK);
                 #endif
-                #ifdef HAL_SPI_CHANNEL_4
+                #ifdef _SPI4
                     if constexpr (channel_ == SPIChannel::channel4)
                         gpio_::initAlt(
                             GPIOSpeed::fast,
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::spi4_SCK);
                 #endif
-                #ifdef HAL_SPI_CHANNEL_5
+                #ifdef _SPI5
                     if constexpr (channel_ == SPIChannel::channel5)
                         gpio_::initAlt(
                             GPIOSpeed::fast,
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::spi5_SCK);
                 #endif
-                #ifdef HAL_SPI_CHANNEL_6
+                #ifdef _SPI6
                     if constexpr (channel_ == SPIChannel::channel6)
                         gpio_::initAlt(
                             GPIOSpeed::fast,
@@ -170,42 +170,42 @@ namespace eos {
 
             template <typename gpio_>
 			inline static void initMOSIPin() {
-                #ifdef HAL_SPI_CHANNEL_1
+                #ifdef _SPI1
                     if constexpr (channel_ == SPIChannel::channel1)
                         gpio_::initAlt(
                             GPIOSpeed::fast,
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::spi1_MOSI);
                 #endif                        
-                #ifdef HAL_SPI_CHANNEL_2
+                #ifdef _SPI2
                     if constexpr (channel_ == SPIChannel::channel2)
                         gpio_::initAlt(
                             GPIOSpeed::fast,
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::spi2_MOSI);
                 #endif
-                #ifdef HAL_SPI_CHANNEL_3
+                #ifdef _SPI3
                     if constexpr (channel_ == SPIChannel::channel3)
                         gpio_::initAlt(
                             GPIOSpeed::fast,
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::spi3_MOSI);
                 #endif
-                #ifdef HAL_SPI_CHANNEL_4
+                #ifdef _SPI4
                     if constexpr (channel_ == SPIChannel::channel4)
                         gpio_::initAlt(
                             GPIOSpeed::fast,
                             GPIODriver::pushPull,
                             gpio_::GPIOAlt::spi4_MOSI);
                 #endif
-                #ifdef HAL_SPI_CHANEL_5
+                #ifdef _SPI5
                     if constexpr (channel_ == SPIChannel::channel5)
                         mosiPin_::initAlt(
                             GPIOSpeed::fast,
                             GPIODriver::pushPull,
                             mosiPin_::GPIOAlt::spi5_MOSI);
                 #endif
-                #ifdef HAL_SPI_CHANNEL_6
+                #ifdef _SPI6
                     if constexpr (channel_ == SPIChannel::channel6)
                         mosiPin_::initAlt(
                             GPIOSpeed::fast,
@@ -214,47 +214,50 @@ namespace eos {
                 #endif
 			}
 
+            template <typename gpio:>
 			inline static void initMISOPin() {
-				if constexpr (channel_ == SPIChannel::channel1)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi1_MISO);
-#ifdef HAL_SPI_CHANNEL_2
-				if constexpr (channel_ == SPIChannel::channel2)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi2_MISO);
-#endif
-#ifdef HAL_SPI_CHANNEL_3
-				if constexpr (channel_ == SPIChannel::channel3)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi3_MISO);
-#endif
-#ifdef HAL_SPI_CHANNEL_4
-				if constexpr (channel_ == SPIChannel::channel4)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi4_MISO);
-#endif
-#ifdef HAL_SPI_CHANNEL_5
-				if constexpr (channel_ == SPIChannel::channel5)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi5_MISO);
-#endif
-#ifdef HAL_SPI_CHANNEL_6
-				if constexpr (channel_ == SPIChannel::channel6)
-					misoPin_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::pushPull,
-						misoPin_::GPIOAlt::spi6_MISO);
-#endif
+                #ifdef _SPI1
+                    if constexpr (channel_ == SPIChannel::channel1)
+                        gpio_::initAlt(
+                            GPIOSpeed::fast,
+                            GPIODriver::pushPull,
+                            gpio_::GPIOAlt::spi1_MISO);
+                #endif
+                #ifdef _SPI2
+                    if constexpr (channel_ == SPIChannel::channel2)
+                        gpio_::initAlt(
+                            GPIOSpeed::fast,
+                            GPIODriver::pushPull,
+                            gpio_::GPIOAlt::spi2_MISO);
+                #endif
+                #ifdef _SPI3
+                    if constexpr (channel_ == SPIChannel::channel3)
+                        gpio_::initAlt(
+                            GPIOSpeed::fast,
+                            GPIODriver::pushPull,
+                            gpio_::GPIOAlt::spi3_MISO);
+                #endif
+                #ifdef _SPI4
+                    if constexpr (channel_ == SPIChannel::channel4)
+                        gpio_::initAlt(
+                            GPIOSpeed::fast,
+                            GPIODriver::pushPull,
+                            gpio_::GPIOAlt::spi4_MISO);
+                #endif
+                #ifdef _SPI5
+                    if constexpr (channel_ == SPIChannel::channel5)
+                        gpio_::initAlt(
+                            GPIOSpeed::fast,
+                            GPIODriver::pushPull,
+                            gpio_::GPIOAlt::spi5_MISO);
+                #endif
+                #ifdef _SPI6
+                    if constexpr (channel_ == SPIChannel::channel6)
+                        gpio_::initAlt(
+                            GPIOSpeed::fast,
+                            GPIODriver::pushPull,
+                            gpio_::GPIOAlt::spi6_MISO);
+                #endif
 			}
 
 			inline void send(const uint8_t data, unsigned blockTime = _defaultBlockTime) {
@@ -267,23 +270,23 @@ namespace eos {
 	};
 
 
-    #ifdef HAL_SPI_CHANNEL_1
-        typedef SPI_x<SPIChannel::channel1> SPI_1;
+    #ifdef _SPI1
+        using SPI_1 = SPI_x<SPIChannel::channel1>;
     #endif
-    #ifdef HAL_SPI_CHANNEL_2
-        typedef SPI_x<SPIChannel::channel2> SPI_2;
+    #ifdef _SPI2
+        using SPI_2 = SPI_x<SPIChannel::channel2>;
     #endif
-    #ifdef HAL_SPI_CHANNEL_3
-        typedef SPI_x<SPIChannel::channel3> SPI_3;
+    #ifdef _SPI3
+        using SPI_3 = SPI_x<SPIChannel::channel3>;
     #endif
-    #ifdef HAL_SPI_CHANNEL_4
-        typedef SPI_x<SPIChannel::channel4> SPI_4;
+    #ifdef _SPI4
+        using SPI_4 = SPI_x<SPIChannel::channel4>;
     #endif
-    #ifdef HAL_SPI_CHANNEL_5
-        typedef SPI_x<SPIChannel::channel5> SPI_5;
+    #ifdef _SPI5
+        using SPI_5 = SPI_x<SPIChannel::channel5>;
     #endif
-    #ifdef HAL_SPI_CHANNEL_6
-        typedef SPI_x<SPIChannel::channel6> SPI_6;
+    #ifdef _SPI6
+        using SPI_6 = SPI_x<SPIChannel::channel6>;
     #endif
 
 }
