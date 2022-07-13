@@ -66,7 +66,7 @@ namespace htl {
 			SPI_x() = delete;
 			SPI_x(const SPI_x &) = delete;
 			SPI_x(const SPI_x &&) = delete;
-            ~SPI() = delete;
+            ~SPI_x() = delete;
             
 			SPI_x & operator = (const SPI_x &) = delete;
 			SPI_x & operator = (const SPI_x &&) = delete;
@@ -78,7 +78,7 @@ namespace htl {
 					halSPIOptions(size) |
 					halSPIOptions(firstBit) |
 					halSPIOptions(mode);
-				initialize(options);
+				init(options);
 			}
 
 			inline static void initSlave(SPIMode mode, SPISize size = _defaultSize, SPIFirstBit firstBit = _defaultFirstBit) {
@@ -87,7 +87,7 @@ namespace htl {
 					halSPIOptions(size) |
 					halSPIOptions(firstBit) |
 					halSPIOptions(mode);
-				initialize(options);
+				init(options);
 			}
 
 			inline static void init(halSPIOptions options) {

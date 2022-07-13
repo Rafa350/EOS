@@ -96,7 +96,7 @@ void ColorFrameBuffer_DMA2D::fill(
 		pixel_t vPixel = toPixel(color);
 		pixel_t* pPixel = getPixelPtr(x, y);
 
-		halDMA2DOptions options = DMA2DOptionsFor<CI::format>::DFMT;
+		halDMA2DOptions options = htl::DMA2DOptionsFor<CI::format>::DFMT;
 
 		// Rellena la regio amb el valor de color del pixel. Hi ha que
 		// suministrar el color en format adecuat, ja que no es fa cap
@@ -144,8 +144,8 @@ void ColorFrameBuffer_DMA2D::copy(
 	pixel_t* pPixel = getPixelPtr(x, y);
 
 	halDMA2DOptions options =
-		DMA2DOptionsFor<CI::format>::DFMT |           // Format desti
-		DMA2DOptionsFor<Color::CI::format>::SFMT;     // Format origen
+		htl::DMA2DOptionsFor<CI::format>::DFMT |           // Format desti
+		htl::DMA2DOptionsFor<Color::CI::format>::SFMT;     // Format origen
 
 	// Rellena la regio amb el valor de color dels pixels. Aquesta funcio
 	// Converteix el format de pixels gracies als parametres DFMT i SFMT de
@@ -177,15 +177,15 @@ void ColorFrameBuffer_DMA2D::write(
 
 	pixel_t* pPixel = getPixelPtr(x, y);
 
-	halDMA2DOptions options = DMA2DOptionsFor<CI::format>::DFMT; // Format desti
+	halDMA2DOptions options = htl::DMA2DOptionsFor<CI::format>::DFMT; // Format desti
 	switch (format) {
 		default:
 		case ColorFormat::argb8888:
-			options |= DMA2DOptionsFor<ColorFormat::argb8888>::SFMT; // Format origen
+			options |= htl::DMA2DOptionsFor<ColorFormat::argb8888>::SFMT; // Format origen
 			break;
 
 		case ColorFormat::rgb565:
-			options |= DMA2DOptionsFor<ColorFormat::rgb565>::SFMT; // Format origen
+			options |= htl::DMA2DOptionsFor<ColorFormat::rgb565>::SFMT; // Format origen
 			break;
 	}
 

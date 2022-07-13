@@ -303,7 +303,7 @@ void DigInputService::tmrInterruptFunction(
 ///
 DigInput::DigInput(
     DigInputService *service,
-    const hal::GPIO &gpio):
+    const htl::GPIOAdapter &gpio):
 
 	_service(nullptr),
     _gpio(gpio),

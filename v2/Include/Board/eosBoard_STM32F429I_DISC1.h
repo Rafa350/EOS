@@ -251,108 +251,126 @@
 #define DISPLAY_R2_PORT      HAL_GPIO_PORT_C
 #define DISPLAY_R2_PIN       HAL_GPIO_PIN_10
 #define DISPLAY_R2_AF        HAL_GPIO_AF_14
+#define DISPLAY_R2_TYPE      htl::GPIO_C10
 
 // Control del pin R3
 //
 #define DISPLAY_R3_PORT      HAL_GPIO_PORT_B
 #define DISPLAY_R3_PIN       HAL_GPIO_PIN_0
 #define DISPLAY_R3_AF        HAL_GPIO_AF_9
+#define DISPLAY_R3_TYPE      htl::GPIO_B0
 
 // Control del pin R4
 //
 #define DISPLAY_R4_PORT      HAL_GPIO_PORT_A
 #define DISPLAY_R4_PIN       HAL_GPIO_PIN_11
 #define DISPLAY_R4_AF        HAL_GPIO_AF_14
+#define DISPLAY_R4_TYPE      htl::GPIO_A11
 
 // Control del pin R5
 //
 #define DISPLAY_R5_PORT      HAL_GPIO_PORT_A
 #define DISPLAY_R5_PIN       HAL_GPIO_PIN_12
 #define DISPLAY_R5_AF        HAL_GPIO_AF_14
+#define DISPLAY_R5_TYPE      htl::GPIO_A12
 
 // Control del pin R6
 //
 #define DISPLAY_R6_PORT      HAL_GPIO_PORT_B
 #define DISPLAY_R6_PIN       HAL_GPIO_PIN_1
 #define DISPLAY_R6_AF        HAL_GPIO_AF_9
+#define DISPLAY_R6_TYPE      htl::GPIO_B1
 
 // Control del pin R7
 //
 #define DISPLAY_R7_PORT      HAL_GPIO_PORT_G
 #define DISPLAY_R7_PIN       HAL_GPIO_PIN_6
 #define DISPLAY_R7_AF        HAL_GPIO_AF_14
+#define DISPLAY_R7_TYPE      htl::GPIO_G6
 
 // Control del pin G2
 //
 #define DISPLAY_G2_PORT      HAL_GPIO_PORT_A
 #define DISPLAY_G2_PIN       HAL_GPIO_PIN_6
 #define DISPLAY_G2_AF        HAL_GPIO_AF_14
+#define DISPLAY_G2_TYPE      htl::GPIO_A6
 
 // Control del pin G3
 //
 #define DISPLAY_G3_PORT      HAL_GPIO_PORT_G
 #define DISPLAY_G3_PIN       HAL_GPIO_PIN_10
 #define DISPLAY_G3_AF        HAL_GPIO_AF_9
+#define DISPLAY_G3_TYPE      htl::GPIO_G10
 
 // Control del pin G4
 //
 #define DISPLAY_G4_PORT      HAL_GPIO_PORT_B
 #define DISPLAY_G4_PIN       HAL_GPIO_PIN_10
 #define DISPLAY_G4_AF        HAL_GPIO_AF_14
+#define DISPLAY_G4_TYPE      htl::GPIO_B10
 
 // Control del pin G5
 //
 #define DISPLAY_G5_PORT      HAL_GPIO_PORT_B
 #define DISPLAY_G5_PIN       HAL_GPIO_PIN_11
 #define DISPLAY_G5_AF        HAL_GPIO_AF_14
+#define DISPLAY_G5_TYPE      htl::GPIO_B11
 
 // Control del pin G6
 //
 #define DISPLAY_G6_PORT      HAL_GPIO_PORT_C
 #define DISPLAY_G6_PIN       HAL_GPIO_PIN_7
 #define DISPLAY_G6_AF        HAL_GPIO_AF_14
+#define DISPLAY_G6_TYPE      htl::GPIO_C7
 
 // Control del pin G7
 //
 #define DISPLAY_G7_PORT      HAL_GPIO_PORT_D
 #define DISPLAY_G7_PIN       HAL_GPIO_PIN_3
 #define DISPLAY_G7_AF        HAL_GPIO_AF_14
+#define DISPLAY_G7_TYPE      htl::GPIO_D3
 
 // Control del pin B2
 //
 #define DISPLAY_B2_PORT      HAL_GPIO_PORT_D
 #define DISPLAY_B2_PIN       HAL_GPIO_PIN_6
 #define DISPLAY_B2_AF        HAL_GPIO_AF_14
+#define DISPLAY_B2_TYPE      htl::GPIO_D6
 
 // Control del pin B3
 //
 #define DISPLAY_B3_PORT      HAL_GPIO_PORT_G
 #define DISPLAY_B3_PIN       HAL_GPIO_PIN_11
 #define DISPLAY_B3_AF        HAL_GPIO_AF_14
+#define DISPLAY_B3_TYPE      htl::GPIO_G11
 
 // Control del pin B4
 //
 #define DISPLAY_B4_PORT      HAL_GPIO_PORT_G
 #define DISPLAY_B4_PIN       HAL_GPIO_PIN_12
 #define DISPLAY_B4_AF        HAL_GPIO_AF_9
+#define DISPLAY_B4_TYPE      htl::GPIO_G12
 
 // Control del pin B5
 //
 #define DISPLAY_B5_PORT      HAL_GPIO_PORT_A
 #define DISPLAY_B5_PIN       HAL_GPIO_PIN_3
 #define DISPLAY_B5_AF        HAL_GPIO_AF_14
+#define DISPLAY_B5_TYPE      htl::GPIO_A3
 
 // Control del pin B6
 //
 #define DISPLAY_B6_PORT      HAL_GPIO_PORT_B
 #define DISPLAY_B6_PIN       HAL_GPIO_PIN_8
 #define DISPLAY_B6_AF        HAL_GPIO_AF_14
+#define DISPLAY_B6_TYPE      htl::GPIO_B8
 
 // Control del pin B7
 //
 #define DISPLAY_B7_PORT      HAL_GPIO_PORT_B
 #define DISPLAY_B7_PIN       HAL_GPIO_PIN_9
 #define DISPLAY_B7_AF        HAL_GPIO_AF_14
+#define DISPLAY_B7_TYPE      htl::GPIO_B9
 
 // Control del modul SPI
 //

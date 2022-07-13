@@ -7,48 +7,6 @@
 #include "eos.h"
 
 
-#ifdef _PORTA
-    #define HTL_GPIO_PORT_A htl::GPIOPort::portA
-#endif
-#ifdef _PORTB
-    #define HTL_GPIO_PORT_B htl::GPIOPort::portB
-#endif
-#ifdef _PORTC
-    #define HTL_GPIO_PORT_C htl::GPIOPort::portC
-#endif
-#ifdef _PORTD
-    #define HTL_GPIO_PORT_D htl::GPIOPort::portD
-#endif
-#ifdef _PORTE
-    #define HTL_GPIO_PORT_E htl::GPIOPort::portE
-#endif
-#ifdef _PORTF
-    #define HTL_GPIO_PORT_F htl::GPIOPort::portF
-#endif
-#ifdef _PORTG
-    #define HTL_GPIO_PORT_G htl::GPIOPort::portG
-#endif
-
-
-#define HTL_GPIO_PIN_0 htl::GPIOPin::pin0
-#define HTL_GPIO_PIN_1 htl::GPIOPin::pin1
-#define HTL_GPIO_PIN_2 htl::GPIOPin::pin2
-#define HTL_GPIO_PIN_3 htl::GPIOPin::pin3
-#define HTL_GPIO_PIN_4 htl::GPIOPin::pin4
-#define HTL_GPIO_PIN_5 htl::GPIOPin::pin5
-#define HTL_GPIO_PIN_6 htl::GPIOPin::pin6
-#define HTL_GPIO_PIN_7 htl::GPIOPin::pin7
-#define HTL_GPIO_PIN_8 htl::GPIOPin::pin8
-#define HTL_GPIO_PIN_9 htl::GPIOPin::pin9
-#define HTL_GPIO_PIN_10 htl::GPIOPin::pin10
-#define HTL_GPIO_PIN_11 htl::GPIOPin::pin11
-#define HTL_GPIO_PIN_12 htl::GPIOPin::pin12
-#define HTL_GPIO_PIN_13 htl::GPIOPin::pin13
-#define HTL_GPIO_PIN_14 htl::GPIOPin::pin14
-#define HTL_GPIO_PIN_15 htl::GPIOPin::pin15
-
-
-
 namespace htl {
 
     enum class GPIOPort {
@@ -121,34 +79,70 @@ namespace htl {
         static const uint32_t an;
 	};
 
+    struct __attribute__((packed , aligned(4))) GPIORegisters {
+        volatile uint32_t TRISx;
+        volatile uint32_t TRISxCLR;
+        volatile uint32_t TRISxSET;
+        volatile uint32_t TRISxINV;
+        volatile uint32_t PORTx;
+        volatile uint32_t PORTxCLR;
+        volatile uint32_t PORTxSET;
+        volatile uint32_t PORTxINV;
+        volatile uint32_t LATx;
+        volatile uint32_t LATxCLR;
+        volatile uint32_t LATxSET;
+        volatile uint32_t LATxINV;
+        volatile uint32_t ODCx;
+        volatile uint32_t ODCxCLR;
+        volatile uint32_t ODCxSET;
+        volatile uint32_t ODCxINV;
+    };
+
+    class GPIOAdapter {
+        private:
+            uint32_t _addr;
+            uint32_t _mask;
+
+        public:
+            GPIOAdapter(uint32_t addr, uint32_t pn):
+                _addr(addr),
+                _mask(1 << pn) {
+            }
+
+            GPIOAdapter(const GPIOAdapter &other) :
+                _addr(other._addr),
+                _mask(other._mask) {
+            }
+
+            inline void set() const {
+                GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
+                regs->LATxSET = _mask;
+            }
+
+            inline void clear() const {
+                GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
+                regs->LATxCLR = _mask;
+            }
+
+            inline void toggle() const {
+                GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
+                regs->LATxINV = _mask;
+            }
+
+            inline bool read() const {
+                GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
+                return (regs->PORTx & _mask) != 0;
+            }
+    };
+
     template <GPIOPort port_, GPIOPin pin_>
     class GPIO_x {
         private:
-            struct __attribute__((packed , aligned(4))) Registers {
-                volatile uint32_t TRISx;
-                volatile uint32_t TRISxCLR;
-                volatile uint32_t TRISxSET;
-                volatile uint32_t TRISxINV;
-                volatile uint32_t PORTx;
-                volatile uint32_t PORTxCLR;
-                volatile uint32_t PORTxSET;
-                volatile uint32_t PORTxINV;
-                volatile uint32_t LATx;
-                volatile uint32_t LATxCLR;
-                volatile uint32_t LATxSET;
-                volatile uint32_t LATxINV;
-                volatile uint32_t ODCx;
-                volatile uint32_t ODCxCLR;
-                volatile uint32_t ODCxSET;
-                volatile uint32_t ODCxINV;
-            };
             using Info = GPIOInfo<port_, pin_>;
 
         public:
             constexpr static const GPIOPort port = port_;
 			constexpr static const GPIOPin pin = pin_;
-            constexpr static const uint32_t hwPort = Info::addr;
-            constexpr static const uint32_t hwPin = Info::pn;
 
         private:
             constexpr static const uint32_t _addr = Info::addr;
@@ -167,7 +161,7 @@ namespace htl {
 
         public:
             inline static void initInput(GPIOPull pull = GPIOPull::none) {
-                Registers *regs = reinterpret_cast<Registers*>(_addr);
+                GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 regs->TRISxSET = 1 << _pn;
                 if constexpr (_cn != -1) {
                     if (pull == GPIOPull::up)
@@ -180,7 +174,7 @@ namespace htl {
             }
 
             inline static void initOutput(GPIODriver driver = GPIODriver::pushPull, GPIOSpeed speed = GPIOSpeed::medium) {
-                Registers *regs = reinterpret_cast<Registers*>(_addr);
+                GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 regs->TRISxCLR = 1 << _pn;
                 if (driver == GPIODriver::openDrain)
                     regs->ODCxSET = 1 << _pn;
@@ -193,22 +187,22 @@ namespace htl {
             }
 
             inline static void set() {
-                Registers *regs = reinterpret_cast<Registers*>(_addr);
+                GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 regs->LATxSET = 1 << _pn;
             }
 
             inline static void clear() {
-                Registers *regs = reinterpret_cast<Registers*>(_addr);
+                GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 regs->LATxCLR = 1 << _pn;
             }
 
             inline static void toggle() {
-                Registers *regs = reinterpret_cast<Registers*>(_addr);
+                GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 regs->LATxINV = 1 << _pn;
             }
 
             inline static bool read() {
-                Registers *regs = reinterpret_cast<Registers*>(_addr);
+                GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 return (regs->PORTx & (1 << _pn)) != 0;
             }
 
@@ -220,6 +214,12 @@ namespace htl {
             }
     };
 
+    template <typename gpio_>
+    GPIOAdapter& getAdapter() {
+        using Info = GPIOInfo<gpio_::port, gpio_::pin>;
+        static GPIOAdapter adapter(Info::addr, Info::pn);
+        return adapter;
+    }
 
     #ifdef _PORTA
         typedef GPIO_x<GPIOPort::portA, GPIOPin::pin0> GPIO_A0;

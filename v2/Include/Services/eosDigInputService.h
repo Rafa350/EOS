@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HAL2/halGPIO.h"
+#include "HTL/htlGPIO.h"
 #include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
@@ -70,7 +70,7 @@ namespace eos {
 
         private:
             DigInputService *_service;
-            hal::GPIO _gpio;
+            const htl::GPIOAdapter &_gpio;
             ScanMode _scanMode;
             IEventCallback *_eventCallback;
             void *_eventParam;
@@ -79,7 +79,7 @@ namespace eos {
             bool _edge;
 
         public:
-            DigInput(DigInputService *service, const hal::GPIO &gpio);
+            DigInput(DigInputService *service, const htl::GPIOAdapter &gpio);
             ~DigInput();
 
             inline DigInputService* getService() const {

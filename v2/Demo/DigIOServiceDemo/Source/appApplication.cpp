@@ -15,6 +15,7 @@
 #include "HAL2/PIC32/halGPIO.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlTMR.h"
+#include "HTL/PIC32/htlGPIO.h"
 
 
 using namespace eos;
@@ -37,17 +38,6 @@ MyApplication::MyApplication():
     , sw3EventCallback(this, &MyApplication::sw3EventHandler)
 #endif
 {
-    using namespace htl;
-
-    GPIO_D0::initOutput();
-    GPIO_D0::set();
-
-    GPIO_D1::initOutput();
-    GPIO_D1::set();
-
-    GPIO_D2::initOutput();
-    GPIO_D2::set();
-
 }
 
 
@@ -96,42 +86,24 @@ void MyApplication::onInitialize() {
     // Inicialitza la entrada corresponent al switch SW1
     //
 #ifdef EXIST_SWITCHES_SW1
-    hal::GPIO gpioSW1(SWITCHES_SW1_PORT, SWITCHES_SW1_PIN);
-#if defined(EOS_PIC32)
-    gpioSW1.initInput();
-    htl::CN::init(SWITCHES_SW1_CN, htl::CNTrigger::none, htl::CNPull::up);
-#elif defined(EOS_STM32)
-    #error "Unsuported hardware"
-#endif
-    sw1 = new DigInput(_digInputService, gpioSW1);
+    GPIO_SW1::initInput(htl::GPIOPull::up);
+    sw1 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW1>());
     sw1->setCallback(sw1EventCallback, nullptr);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW2
     //
 #ifdef EXIST_SWITCHES_SW2
-    hal::GPIO gpioSW2(SWITCHES_SW2_PORT, SWITCHES_SW2_PIN);
-#if defined(EOS_PIC32)
-    gpioSW2.initInput();
-    htl::CN::init(SWITCHES_SW2_CN, htl::CNTrigger::none, htl::CNPull::up);
-#elif defined(EOS_STM32)
-    #error "Unsuported hardware"
-#endif
-    sw2 = new DigInput(_digInputService, gpioSW2);
+    GPIO_SW2::initInput(htl::GPIOPull::up);
+    sw2 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW2>());
     sw2->setCallback(sw2EventCallback, nullptr);
 #endif
 
     // Inicialitza la entrada corresponent al switch SW3
     //
 #ifdef EXIST_SWITCHES_SW3
-    hal::GPIO gpioSW3(SWITCHES_SW3_PORT, SWITCHES_SW3_PIN);
-#if defined(EOS_PIC32)
-    gpioSW3.initInput();
-    htl::CN::init(SWITCHES_SW3_CN, htl::CNTrigger::none, htl::CNPull::up);
-#elif defined(EOS_STM32)
-    #error "Unsuported hardware"
-#endif
-    sw3 = new DigInput(_digInputService, gpioSW3);
+    GPIO_SW3::initInput(htl::GPIOPull::up);
+    sw3 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW3>());
     sw3->setCallback(sw3EventCallback, nullptr);
 #endif
 
@@ -164,30 +136,27 @@ void MyApplication::onInitialize() {
     // Inicialitza la sortida corresponent al led LED1
     //
 #ifdef EXIST_LEDS_LED1
-    hal::GPIO gpioLed1(LEDS_LED1_PORT, LEDS_LED1_PIN);
-    gpioLed1.initOutput();
-    gpioLed1.clear();
-    led1 = new DigOutput(_digOutputService, gpioLed1);
+    GPIO_LED1::initOutput();
+    GPIO_LED1::clear();
+    led1 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED1>());
     led1->write(LEDS_STATE_OFF);
 #endif
 
     // Inicialitza la sortida corresponent al led LED2
     //
 #ifdef EXIST_LEDS_LED2
-    hal::GPIO gpioLed2(LEDS_LED2_PORT, LEDS_LED2_PIN);
-    gpioLed2.initOutput();
-    gpioLed2.clear();
-    led2 = new DigOutput(_digOutputService, gpioLed2);
+    GPIO_LED2::initOutput();
+    GPIO_LED2::clear();
+    led2 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED2>());
     led2->write(LEDS_STATE_OFF);
 #endif
 
     // Inicialitza la sortida corresponent al led LED3
     //
 #ifdef EXIST_LEDS_LED3
-    hal::GPIO gpioLed3(LEDS_LED3_PORT, LEDS_LED3_PIN);
-    gpioLed3.initOutput();
-    gpioLed3.clear();
-    led3 = new DigOutput(_digOutputService, gpioLed3);
+    GPIO_LED3::initOutput();
+    GPIO_LED3::clear();
+    led3 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED3>());
     led3->write(LEDS_STATE_OFF);
 #endif
 

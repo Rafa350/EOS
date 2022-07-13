@@ -33,12 +33,10 @@
           </logicalFolder>
           <logicalFolder name="f6" displayName="HAL2" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-              <itemPath>../../../Include/HAL2/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL2/PIC32/halCN.h</itemPath>
               <itemPath>../../../Include/HAL2/PIC32/halTMR.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HAL2/hal.h</itemPath>
-            <itemPath>../../../Include/HAL2/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL2/halTMR.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f7" displayName="HTL" projectFiles="true">
@@ -117,7 +115,6 @@
           </logicalFolder>
           <logicalFolder name="f6" displayName="HAL2" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-              <itemPath>../../../Source/HAL2/PIC32/halGPIO.cpp</itemPath>
               <itemPath>../../../Source/HAL2/PIC32/halCN.cpp</itemPath>
               <itemPath>../../../Source/HAL2/PIC32/halTMR.cpp</itemPath>
             </logicalFolder>

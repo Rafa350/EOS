@@ -19,6 +19,12 @@ namespace app {
     class MyApplication: public Application {
         private:
             typedef CallbackP1<MyApplication, const DigInput::EventArgs&> DigInputEventCallback;
+            typedef LEDS_LED1_TYPE GPIO_LED1;
+            typedef LEDS_LED2_TYPE GPIO_LED2;
+            typedef LEDS_LED3_TYPE GPIO_LED3;
+            typedef SWITCHES_SW1_TYPE GPIO_SW1;
+            typedef SWITCHES_SW2_TYPE GPIO_SW2;
+            typedef SWITCHES_SW3_TYPE GPIO_SW3;
 
         private:
             DigOutputService *_digOutputService;

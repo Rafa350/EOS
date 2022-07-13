@@ -5,6 +5,7 @@
 #include "HAL/halINT.h"
 #include "HAL/halTMR.h"
 #include "HTL/STM32/htlLTDC.h"
+#include "HTL/STM32/htlGPIO.h"
 #include "HAL/STM32/halDMA2D.h"
 #include "System/eosMath.h"
 
@@ -228,62 +229,38 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza el modul GPIO
 	//
-	static const halGPIOPinSettings gpioSettings[] = {
-    	{ DISPLAY_DE_PORT,     DISPLAY_DE_PIN,
-    		HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_DE_AF    },
-		{ DISPLAY_HSYNC_PORT,  DISPLAY_HSYNC_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_HSYNC_AF },
-		{ DISPLAY_VSYNC_PORT,  DISPLAY_VSYNC_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_VSYNC_AF },
-		{ DISPLAY_DOTCLK_PORT, DISPLAY_DOTCLK_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_DOTCLK_AF},
-		{ DISPLAY_R2_PORT,     DISPLAY_R2_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R2_AF    },
-		{ DISPLAY_R3_PORT,     DISPLAY_R3_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R3_AF    },
-		{ DISPLAY_R4_PORT,     DISPLAY_R4_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R4_AF    },
-		{ DISPLAY_R5_PORT,     DISPLAY_R5_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R5_AF    },
-		{ DISPLAY_R6_PORT,     DISPLAY_R6_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R6_AF    },
-		{ DISPLAY_R7_PORT,     DISPLAY_R7_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_R7_AF    },
-		{ DISPLAY_G2_PORT,     DISPLAY_G2_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G2_AF    },
-		{ DISPLAY_G3_PORT,     DISPLAY_G3_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G3_AF    },
-		{ DISPLAY_G4_PORT,     DISPLAY_G4_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G4_AF    },
-		{ DISPLAY_G5_PORT,     DISPLAY_G5_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G5_AF    },
-		{ DISPLAY_G6_PORT,     DISPLAY_G6_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G6_AF    },
-		{ DISPLAY_G7_PORT,     DISPLAY_G7_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_G7_AF    },
-		{ DISPLAY_B2_PORT,     DISPLAY_B2_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B2_AF    },
-		{ DISPLAY_B3_PORT,     DISPLAY_B3_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B3_AF    },
-		{ DISPLAY_B4_PORT,     DISPLAY_B4_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B4_AF    },
-		{ DISPLAY_B5_PORT,     DISPLAY_B5_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B5_AF    },
-		{ DISPLAY_B6_PORT,     DISPLAY_B6_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B6_AF    },
-		{ DISPLAY_B7_PORT,     DISPLAY_B7_PIN,
-			HAL_GPIO_SPEED_FAST | HAL_GPIO_MODE_ALT_PP, DISPLAY_B7_AF    },
-	};
-	halGPIOInitializePins(gpioSettings, sizeof(gpioSettings) / sizeof(gpioSettings[0]));
+	constexpr htl::GPIODriver pp = htl::GPIODriver::pushPull;
+	constexpr htl::GPIOSpeed fast = htl::GPIOSpeed::fast;
 
-	// Inicialitza el modul GPIO
-	//
-	GPIO_CS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	GPIO_DE::initAlt(pp, fast, GPIO_DE::GPIOAlt::ltdc_DE);
+	GPIO_HSYNC::initAlt(pp, fast, GPIO_HSYNC::GPIOAlt::ltdc_HSYNC);
+	GPIO_VSYNC::initAlt(pp, fast, GPIO_VSYNC::GPIOAlt::ltdc_VSYNC);
+	GPIO_DOTCLK::initAlt(pp, fast, GPIO_DOTCLK::GPIOAlt::ltdc_DOTCLK);
+	GPIO_R2::initAlt(pp, fast, GPIO_R2::GPIOAlt::ltdc_R2);
+	GPIO_R3::initAlt(pp, fast, GPIO_R3::GPIOAlt::ltdc_R3);
+	GPIO_R4::initAlt(pp, fast, GPIO_R4::GPIOAlt::ltdc_R4);
+	GPIO_R5::initAlt(pp, fast, GPIO_R5::GPIOAlt::ltdc_R5);
+	GPIO_R6::initAlt(pp, fast, GPIO_R6::GPIOAlt::ltdc_R6);
+	GPIO_R7::initAlt(pp, fast, GPIO_R7::GPIOAlt::ltdc_R7);
+	GPIO_G2::initAlt(pp, fast, GPIO_G2::GPIOAlt::ltdc_G2);
+	GPIO_G3::initAlt(pp, fast, GPIO_G3::GPIOAlt::ltdc_G3);
+	GPIO_G4::initAlt(pp, fast, GPIO_G4::GPIOAlt::ltdc_G4);
+	GPIO_G5::initAlt(pp, fast, GPIO_G5::GPIOAlt::ltdc_G5);
+	GPIO_G6::initAlt(pp, fast, GPIO_G6::GPIOAlt::ltdc_G6);
+	GPIO_G7::initAlt(pp, fast, GPIO_G7::GPIOAlt::ltdc_G7);
+	GPIO_B2::initAlt(pp, fast, GPIO_B2::GPIOAlt::ltdc_B2);
+	GPIO_B3::initAlt(pp, fast, GPIO_B3::GPIOAlt::ltdc_B3);
+	GPIO_B4::initAlt(pp, fast, GPIO_B4::GPIOAlt::ltdc_B4);
+	GPIO_B5::initAlt(pp, fast, GPIO_B5::GPIOAlt::ltdc_B5);
+	GPIO_B6::initAlt(pp, fast, GPIO_B6::GPIOAlt::ltdc_B6);
+	GPIO_B7::initAlt(pp, fast, GPIO_B7::GPIOAlt::ltdc_B7);
+
+	GPIO_CS::initOutput(pp, fast);
 	GPIO_CS::set();
-	GPIO_RS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	GPIO_RS::initOutput(pp, fast);
 	GPIO_RS::clear();
 #ifdef DISPLAY_RTS_PIN
-	GPIO_RST::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
+	GPIO_RST::initOutput(pp, fast);
 	GPIO_RST::clear();
 #endif
 
@@ -291,7 +268,7 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 	//
 	SPI::initSCKPin<GPIO_SCK>();
 	SPI::initMOSIPin<GPIO_MOSI>();
-	SPI::initialize(HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16);
+	SPI::init(HAL_SPI_MODE_0 | HAL_SPI_MS_MASTER | HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16);
 
 	// Inicialitza el modul LTDC
 	//
@@ -319,7 +296,7 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, _displayWidth, _displayHeight);
 
 	halLTDCLayerSetFrameFormat(HAL_LTDC_LAYER_0,
-		LTDCPixelFormatFor<CI::format>::value,
+		htl::LTDCPixelFormatFor<CI::format>::value,
 		_displayWidth * CI::bytes,
 		((_displayWidth * CI::bytes) + 63) & 0xFFFFFFC0,
 		_displayHeight);

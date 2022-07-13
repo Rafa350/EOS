@@ -7,7 +7,6 @@
 #include "System/Core/eosTask.h"
 
 
-
 using namespace eos;
 
 
@@ -568,7 +567,7 @@ void DigOutputService::tmrInterruptFunction(
 ///
 DigOutput::DigOutput(
     DigOutputService *service,
-    const hal::GPIO &gpio):
+    const htl::GPIOAdapter &gpio):
 
     _service(nullptr),
     _gpio(gpio),

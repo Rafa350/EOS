@@ -82,12 +82,12 @@ namespace htl {
     class CN {
         private:
             CN() = delete;
-            CN(const CN &cn) = delete;
-            CN(const CN &&cn) = delete;
+            CN(const CN &) = delete;
+            CN(const CN &&) = delete;
             ~CN() = delete;
 
-            CN & operator = (const CN &cn) = delete;
-            CN & operator = (const CN &&cn) = delete;
+            CN & operator = (const CN &) = delete;
+            CN & operator = (const CN &&) = delete;
 
         private:
             static CNInterruptFunction _isrFunction;

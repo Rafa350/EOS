@@ -29,7 +29,7 @@ void DisplayDriver_ILI9341::initializeInterface() {
     //
 	SPI::initSCKPin<GPIO_SCK>();
 	SPI::initMOSIPin<GPIO_MOSI>();
-	SPI::initialize(HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
+	SPI::init(HAL_SPI_MODE_0 | HAL_SPI_SIZE_8 | HAL_SPI_MS_MASTER |
 			HAL_SPI_FIRSTBIT_MSB | HAL_SPI_CLOCKDIV_16);
 }
 

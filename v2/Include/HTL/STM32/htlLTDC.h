@@ -140,23 +140,23 @@ namespace htl {
 
 	// Valors que depenen del format de color
     //
-	template <ColorFormat format_>
+	template <eos::ColorFormat format_>
 	struct LTDCPixelFormatFor {
 	};
 	template<>
-	struct LTDCPixelFormatFor<ColorFormat::rgb888> {
+	struct LTDCPixelFormatFor<eos::ColorFormat::rgb888> {
 		constexpr static const halLTDCPixelFormat value = HAL_LTDC_FORMAT_RGB888;
 	};
 	template<>
-	struct LTDCPixelFormatFor<ColorFormat::argb8888> {
+	struct LTDCPixelFormatFor<eos::ColorFormat::argb8888> {
 		constexpr static const halLTDCPixelFormat value = HAL_LTDC_FORMAT_RGB888;
 	};
 	template<>
-	struct LTDCPixelFormatFor<ColorFormat::rgb565> {
+	struct LTDCPixelFormatFor<eos::ColorFormat::rgb565> {
 		constexpr static const halLTDCPixelFormat value = HAL_LTDC_FORMAT_RGB565;
 	};
 	template<>
-	struct LTDCPixelFormatFor<ColorFormat::l8> {
+	struct LTDCPixelFormatFor<eos::ColorFormat::l8> {
 		constexpr static const halLTDCPixelFormat value = HAL_LTDC_FORMAT_L8;
 	};
 

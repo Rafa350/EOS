@@ -361,8 +361,8 @@ namespace htl {
             }
     };
 
-    template <TMRTimer timer_> TMRInterruptFunction TMR<timer_>::_isrFunction = nullptr;
-    template <TMRTimer timer_> TMRInterruptParam TMR<timer_>::_isrParam = nullptr;
+    template <TMRTimer timer_> TMRInterruptFunction TMR_x<timer_>::_isrFunction = nullptr;
+    template <TMRTimer timer_> TMRInterruptParam TMR_x<timer_>::_isrParam = nullptr;
 
 
     #ifdef _TMR1

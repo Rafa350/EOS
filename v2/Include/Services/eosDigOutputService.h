@@ -5,7 +5,7 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HAL2/halGPIO.h"
+#include "HTL/htlGPIO.h"
 #include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/Collections/eosVector.h"
@@ -123,13 +123,13 @@ namespace eos {
             };
         public:
             DigOutputService *_service;
-            hal::GPIO _gpio;
+            const htl::GPIOAdapter &_gpio;
             State _state;
             unsigned _delayCnt;
             unsigned _widthCnt;
 
         public:
-            DigOutput(DigOutputService *service, const hal::GPIO &gpio);
+            DigOutput(DigOutputService *service, const htl::GPIOAdapter &gpio);
             ~DigOutput();
 
             inline DigOutputService* getService() const {

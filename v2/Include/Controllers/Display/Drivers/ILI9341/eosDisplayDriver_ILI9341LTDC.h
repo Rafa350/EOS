@@ -49,6 +49,28 @@ namespace eos {
     		typedef DISPLAY_SCK_TYPE GPIO_SCK;
     		typedef DISPLAY_MOSI_TYPE GPIO_MOSI;
     		typedef DISPLAY_SPI_TYPE SPI;
+    		typedef DISPLAY_DE_TYPE GPIO_DE;
+    		typedef DISPLAY_HSYNC_TYPE GPIO_HSYNC;
+    		typedef DISPLAY_VSYNC_TYPE GPIO_VSYNC;
+    		typedef DISPLAY_DOTCLK_TYPE GPIO_DOTCLK;
+    		typedef DISPLAY_R2_TYPE GPIO_R2;
+    		typedef DISPLAY_R3_TYPE GPIO_R3;
+    		typedef DISPLAY_R4_TYPE GPIO_R4;
+    		typedef DISPLAY_R5_TYPE GPIO_R5;
+    		typedef DISPLAY_R6_TYPE GPIO_R6;
+    		typedef DISPLAY_R7_TYPE GPIO_R7;
+    		typedef DISPLAY_G2_TYPE GPIO_G2;
+    		typedef DISPLAY_G3_TYPE GPIO_G3;
+    		typedef DISPLAY_G4_TYPE GPIO_G4;
+    		typedef DISPLAY_G5_TYPE GPIO_G5;
+    		typedef DISPLAY_G6_TYPE GPIO_G6;
+    		typedef DISPLAY_G7_TYPE GPIO_G7;
+    		typedef DISPLAY_B2_TYPE GPIO_B2;
+    		typedef DISPLAY_B3_TYPE GPIO_B3;
+    		typedef DISPLAY_B4_TYPE GPIO_B4;
+    		typedef DISPLAY_B5_TYPE GPIO_B5;
+    		typedef DISPLAY_B6_TYPE GPIO_B6;
+    		typedef DISPLAY_B7_TYPE GPIO_B7;
 
     	private:
     		constexpr static int _displayWidth = DISPLAY_IMAGE_WIDTH;
