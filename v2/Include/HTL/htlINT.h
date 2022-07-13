@@ -1,5 +1,5 @@
-#ifndef __halINT_ex__
-#define __halINT_ex__
+#ifndef __htlINT__
+#define __htlINT__
 
 
 // EOS includes
@@ -8,12 +8,12 @@
 
 
 #if defined(EOS_PIC32MX) || defined(EOS_PIC32MZ)
-	#include "HAL/PIC32/halINT_ex.h"
+	#include "HTL/PIC32/htlINT.h"
 
 #elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-	#include "HAL/STM32/halINT_ex.h"
+	#include "HTL/STM32/htlINT.h"
 
 #endif
 
 
-#endif // __halINT_ex__
+#endif // __htlINT__

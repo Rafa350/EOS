@@ -1,9 +1,9 @@
 /// \file      halGPIO_ex.h
 /// \author    Rafael Serrano (rsr.openware@gmail.com)
-/// \brief     GPIO_x module manager.
+/// \brief     GPIO module manager.
 /// \addtogroup HTL HAL Template Library
 /// @{
-/// \addtogroup HTL_STM32 STM32 HAL emplate Library
+/// \addtogroup HTL_STM32 STM32
 /// @{
 /// \defgroup HTL_STM32_GPIO GPIO
 /// @{
