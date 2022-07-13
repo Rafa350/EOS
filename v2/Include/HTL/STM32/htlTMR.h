@@ -1,15 +1,15 @@
-#ifndef __STM32_halTMR_ex__
-#define __STM32_halTMR_ex__
+#ifndef __STM32_htlTMR__
+#define __STM32_htlTMR__
 
 
 // EOS includes
 //
-#include "HAL/hal.h"
+#include "eos.h"
 #include "HAL/STM32/halTMR.h"
 
 
-namespace eos {
-
+namespace htl {
+    
 	enum class TMRTimer {
 		timer1,
 		timer2,
@@ -44,129 +44,122 @@ namespace eos {
 	};
 
 	template <TMRTimer timer_>
-	struct TMRModuleInfo {
-		static const uint32_t baseAddr;
+	struct TMRInfo {
+		static const uint32_t addr;
 	};
 
 	template <TMRTimer timer_>
-	class TMRModule {
+	class TMR_x {
 		private:
-			using ModuleInfo = TMRModuleInfo<timer_>;
-			constexpr static const uint32_t _baseAddr = ModuleInfo::baseAddr;
+			using Info = TMRInfo<timer_>;
+			constexpr static const uint32_t _addr = Info::addr;
 
 		private:
-			halTMRData _data;
-			halTMRHandler _handler;
+			static halTMRData _data;
+			static halTMRHandler _handler;
 
 		private:
-			TMRModule() {
-			}
-
-			TMRModule(const TMRModule &) = delete;
-			TMRModule(const TMRModule &&) = delete;
-			TMRModule & operator = (const TMRModule &) = delete;
-			TMRModule & operator = (const TMRModule &&) = delete;
+			TMR_x() = delete;
+			TMR_x(const TMR_x &) = delete;
+			TMR_x(const TMR_x &&) = delete;
+			TMR_x & operator = (const TMR_x &) = delete;
+			TMR_x & operator = (const TMR_x &&) = delete;
 
 		public:
-			inline static auto & instance() {
-				static TMRModule inst;
-				return inst;
-			}
-
-			void initialize() {
+			inline static void init() {
 				_handler = halTMRInitialize(&_data, settings);
 			}
 
-			void deinitialize() {
+			inline static void deInit() {
 				halTMRDeinitialize(_handler);
 			}
 	};
 
-	typedef TMRModule<TMRTimer::timer1> TMR_1;
-	typedef TMRModule<TMRTimer::timer2> TMR_2;
-	typedef TMRModule<TMRTimer::timer3> TMR_3;
-	typedef TMRModule<TMRTimer::timer4> TMR_4;
-	typedef TMRModule<TMRTimer::timer5> TMR_5;
-	typedef TMRModule<TMRTimer::timer6> TMR_6;
-	typedef TMRModule<TMRTimer::timer7> TMR_7;
-	typedef TMRModule<TMRTimer::timer8> TMR_8;
-	typedef TMRModule<TMRTimer::timer9> TMR_9;
-	typedef TMRModule<TMRTimer::timer10> TMR_10;
-	typedef TMRModule<TMRTimer::timer11> TMR_11;
-	typedef TMRModule<TMRTimer::timer12> TMR_12;
-	typedef TMRModule<TMRTimer::timer13> TMR_13;
-	typedef TMRModule<TMRTimer::timer14> TMR_14;
+	using TMR_1 = TMR_x<TMRTimer::timer1>;
+	using TMR_2 = TMR_x<TMRTimer::timer2>;
+	using TMR_3 = TMR_x<TMRTimer::timer3>;
+	using TMR_4 = TMR_x<TMRTimer::timer4>;
+	using TMR_5 = TMR_x<TMRTimer::timer5>;
+	using TMR_6 = TMR_x<TMRTimer::timer6>;
+	using TMR_7 = TMR_x<TMRTimer::timer7>;
+	using TMR_8 = TMR_x<TMRTimer::timer8>;
+	using TMR_9 = TMR_x<TMRTimer::timer9>;
+	using TMR_10 = TMR_x<TMRTimer::timer10>;
+	using TMR_11 = TMR_x<TMRTimer::timer11>;
+	using TMR_12 = TMR_x<TMRTimer::timer12>;
+	using TMR_13 = TMR_x<TMRTimer::timer13>;
+	using TMR_14 = TMR_x<TMRTimer::timer14>;
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer1> {
-		static const uint32_t baseAddr = TIM1_BASE;
+	struct TMRInfo<TMRTimer::timer1> {
+		static const uint32_t addr = TIM1_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer2> {
-		static const uint32_t baseAddr = TIM2_BASE;
+	struct TMRInfo<TMRTimer::timer2> {
+		static const uint32_t addr = TIM2_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer3> {
-		static const uint32_t baseAddr = TIM3_BASE;
+	struct TMRInfo<TMRTimer::timer3> {
+		static const uint32_t addr = TIM3_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer4> {
-		static const uint32_t baseAddr = TIM4_BASE;
+	struct TMRInfo<TMRTimer::timer4> {
+		static const uint32_t addr = TIM4_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer5> {
-		static const uint32_t baseAddr = TIM5_BASE;
+	struct TMRInfo<TMRTimer::timer5> {
+		static const uint32_t addr = TIM5_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer6> {
-		static const uint32_t baseAddr = TIM6_BASE;
+	struct TMRInfo<TMRTimer::timer6> {
+		static const uint32_t addr = TIM6_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer7> {
-		static const uint32_t baseAddr = TIM7_BASE;
+	struct TMRInfo<TMRTimer::timer7> {
+		static const uint32_t addr = TIM7_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer8> {
-		static const uint32_t baseAddr = TIM8_BASE;
+	struct TMRInfo<TMRTimer::timer8> {
+		static const uint32_t addr = TIM8_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer9> {
-		static const uint32_t baseAddr = TIM9_BASE;
+	struct TMRInfo<TMRTimer::timer9> {
+		static const uint32_t addr = TIM9_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer10> {
-		static const uint32_t baseAddr = TIM10_BASE;
+	struct TMRInfo<TMRTimer::timer10> {
+		static const uint32_t addr = TIM10_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer11> {
-		static const uint32_t baseAddr = TIM11_BASE;
+	struct TMRInfo<TMRTimer::timer11> {
+		static const uint32_t addr = TIM11_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer12> {
-		static const uint32_t baseAddr = TIM12_BASE;
+	struct TMRInfo<TMRTimer::timer12> {
+		static const uint32_t addr = TIM12_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer13> {
-		static const uint32_t baseAddr = TIM13_BASE;
+	struct TMRInfo<TMRTimer::timer13> {
+		static const uint32_t addr = TIM13_BASE;
 	};
 
 	template <>
-	struct TMRModuleInfo<TMRTimer::timer14> {
-		static const uint32_t baseAddr = TIM14_BASE;
+	struct TMRInfo<TMRTimer::timer14> {
+		static const uint32_t addr = TIM14_BASE;
 	};
 }
 
 
-#endif // __STM32_halTMR_ex__
+#endif // __STM32_htlTMR__

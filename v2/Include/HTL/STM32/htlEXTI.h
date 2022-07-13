@@ -1,14 +1,14 @@
-#ifndef __STM32_halEXTI_ex__
-#define __STM32_halEXTI_ex__
+#ifndef __STM32_htlEXTI__
+#define __STM32_htlEXTI__
 
 
 // EOS includes
 //
-#include "HAL/hal.h"
+#include "eos.h"
 #include "HAL/STM32/halEXTI.h"
 
 
-namespace eos {
+namespace htl {
 
 	enum class EXTILine: halEXTILine {
 		line0 = HAL_EXTI_LINE_0,

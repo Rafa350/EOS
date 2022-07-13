@@ -64,7 +64,7 @@ namespace htl {
     };
 
     template <TMRTimer timer_>
-    class TMR {
+    class TMR_x {
         private:
             struct  __attribute__((packed , aligned(4))) RegistersT1 {
                 __T1CONbits_t T1xCON;
@@ -104,13 +104,13 @@ namespace htl {
             static TMRInterruptParam _isrParam;
 
         private:
-            TMR() = delete;
-            TMR(const TMR &tmr) = delete;
-            TMR(const TMR &&tmr) = delete;
-            ~TMR() = delete;
+            TMR_x() = delete;
+            TMR_x(const TMR_x &tmr) = delete;
+            TMR_x(const TMR_x &&tmr) = delete;
+            ~TMR_x() = delete;
 
-            TMR & operator = (const TMR &tmr) = delete;
-            TMR & operator = (const TMR &&tmr) = delete;
+            TMR_x & operator = (const TMR_x &tmr) = delete;
+            TMR_x & operator = (const TMR_x &&tmr) = delete;
 
         public:
 
@@ -363,62 +363,62 @@ namespace htl {
     TMRInterruptParam TMR<timer_>::_isrParam = nullptr;
 
 
-#ifdef _TMR1
-	typedef TMR<TMRTimer::timer1> TMR_1;
-#endif
-#ifdef _TMR2
-	typedef TMR<TMRTimer::timer2> TMR_2;
-#endif
-#ifdef _TMR3
-	typedef TMR<TMRTimer::timer3> TMR_3;
-#endif
-#ifdef _TMR4
-	typedef TMR<TMRTimer::timer4> TMR_4;
-#endif
-#ifdef _TMR5
-	typedef TMR<TMRTimer::timer5> TMR_5;
-#endif
+    #ifdef _TMR1
+        using TMR_1 = TMR_x<TMRTimer::timer1>;
+    #endif
+    #ifdef _TMR2
+        using TMR_2 = TMR_x<TMRTimer::timer2>;
+    #endif
+    #ifdef _TMR3
+        using TMR_3 = TMR_x<TMRTimer::timer3>;
+    #endif
+    #ifdef _TMR4
+        using TMR_4 = TMR_x<TMRTimer::timer4>;
+    #endif
+    #ifdef _TMR5
+        using TMR_5 = TMR_x<TMRTimer::timer5>;
+    #endif
 
 
-#ifdef _TMR1
-    template <>
-    struct TMRInfo<TMRTimer::timer1> {
-        constexpr static const uint32_t addr = _TMR1_BASE_ADDRESS;
-        constexpr static const bool isT1 = true;
-    };
-#endif
+    #ifdef _TMR1
+        template <>
+        struct TMRInfo<TMRTimer::timer1> {
+            constexpr static const uint32_t addr = _TMR1_BASE_ADDRESS;
+            constexpr static const bool isT1 = true;
+        };
+    #endif
 
-#ifdef _TMR2
-    template <>
-    struct TMRInfo<TMRTimer::timer2> {
-        constexpr static const uint32_t addr = _TMR2_BASE_ADDRESS;
-        constexpr static const bool isT1 = false;
-    };
-#endif
+    #ifdef _TMR2
+        template <>
+        struct TMRInfo<TMRTimer::timer2> {
+            constexpr static const uint32_t addr = _TMR2_BASE_ADDRESS;
+            constexpr static const bool isT1 = false;
+        };
+    #endif
 
-#ifdef _TMR3
-    template <>
-    struct TMRInfo<TMRTimer::timer3> {
-        constexpr static const uint32_t addr = _TMR3_BASE_ADDRESS;
-        constexpr static const bool isT1 = false;
-    };
-#endif
+    #ifdef _TMR3
+        template <>
+        struct TMRInfo<TMRTimer::timer3> {
+            constexpr static const uint32_t addr = _TMR3_BASE_ADDRESS;
+            constexpr static const bool isT1 = false;
+        };
+    #endif
 
-#ifdef _TMR4
-    template <>
-    struct TMRInfo<TMRTimer::timer4> {
-        constexpr static const uint32_t addr = _TMR4_BASE_ADDRESS;
-        constexpr static const bool isT1 = false;
-    };
-#endif
+    #ifdef _TMR4
+        template <>
+        struct TMRInfo<TMRTimer::timer4> {
+            constexpr static const uint32_t addr = _TMR4_BASE_ADDRESS;
+            constexpr static const bool isT1 = false;
+        };
+    #endif
 
-#ifdef _TMR5
-    template <>
-    struct TMRInfo<TMRTimer::timer5> {
-        constexpr static const uint32_t addr = _TMR5_BASE_ADDRESS;
-        constexpr static const bool isT1 = false;
-    };
-#endif
+    #ifdef _TMR5
+        template <>
+        struct TMRInfo<TMRTimer::timer5> {
+            constexpr static const uint32_t addr = _TMR5_BASE_ADDRESS;
+            constexpr static const bool isT1 = false;
+        };
+    #endif
 }
 
 

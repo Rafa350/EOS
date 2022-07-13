@@ -1,151 +1,119 @@
-#ifndef __PIC32_halUARTTpl__
-#define __PIC32_halUARTTpl__
+#ifndef __PIC32_htlUART__
+#define __PIC32_htlUART__
 
 
 // EOS includes
 //
-#include "HAL/hal.h"
+#include "eos.h"
 #include "HAL/PIC32/halUART.h"
-#include "HAL/PIC32/halGPIOTpl.h"
+#include "HTL/PIC32/htlGPIO.h"
 
 
 namespace eos {
 
 	enum class UARTChannel {
-#ifdef HAL_UART_CHANNEL_1
-		channel1 = HAL_UART_CHANNEL_1,
-#endif
-#ifdef HAL_UART_CHANNEL_2
-		channel2 = HAL_UART_CHANNEL_2,
-#endif
-#ifdef HAL_UART_CHANNEL_3
-		channel3 = HAL_UART_CHANNEL_3,
-#endif
-#ifdef HAL_UART_CHANNEL_4
-		channel4 = HAL_UART_CHANNEL_4,
-#endif
-#ifdef HAL_UART_CHANNEL_5
-		channel5 = HAL_UART_CHANNEL_5,
-#endif
-#ifdef HAL_UART_CHANNEL_6
-		channel6 = HAL_UART_CHANNEL_6,
-#endif
-#ifdef HAL_UART_CHANNEL_7
-		channel7 = HAL_UART_CHANNEL_7,
-#endif
-#ifdef HAL_UART_CHANNEL_8
-		channel8 = HAL_UART_CHANNEL_8,
-#endif
+        #ifdef HAL_UART_CHANNEL_1
+            channel1 = HAL_UART_CHANNEL_1,
+        #endif
+        #ifdef HAL_UART_CHANNEL_2
+            channel2 = HAL_UART_CHANNEL_2,
+        #endif
+        #ifdef HAL_UART_CHANNEL_3
+            channel3 = HAL_UART_CHANNEL_3,
+        #endif
+        #ifdef HAL_UART_CHANNEL_4
+            channel4 = HAL_UART_CHANNEL_4,
+        #endif
+        #ifdef HAL_UART_CHANNEL_5
+            channel5 = HAL_UART_CHANNEL_5,
+        #endif
+        #ifdef HAL_UART_CHANNEL_6
+            channel6 = HAL_UART_CHANNEL_6,
+        #endif
+        #ifdef HAL_UART_CHANNEL_7
+            channel7 = HAL_UART_CHANNEL_7,
+        #endif
+        #ifdef HAL_UART_CHANNEL_8
+            channel8 = HAL_UART_CHANNEL_8,
+        #endif
 	};
 
 	template <UARTChannel channel_>
-	class UARTAdapter {
+	class UART_x {
 		private:
-			halUARTData _data;
-			halUARTHandler _handler;
+			static halUARTData _data;
+			static halUARTHandler _handler;
 
 		public:
 			constexpr static const UARTChannel channel = channel_;
+            
+        private:
+            UART_x() = delete;
+            UART_x(const UART_X &) = delete;
+            UART_x(const UART_X &&) = delete;
+            ~UART_x() = delete;
 
 		public:
-			inline void initialize(const halUARTSettings& settings) {
+			inline static void init(const halUARTSettings& settings) {
 				_handler = halUARTInitialize(&_data, &settings);
 			}
 
-			inline void deinitialize() {
+			inline static void deInit() {
 				halUARTDeinitialize(_handler);
 			}
 
-			template <GPIOPort port_, GPIOPin pin_>
-			inline static void setTXPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
+			template <typename gpio_>
+			inline static void setTXPin() {
 				if constexpr (channel_ == UARTChannel::channel1)
-					pinAdapter.initAlt(
+					gpio_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::uart1_TX);
+						gpio_::GPIOAlt::uart1_TX);
 			}
 
-			template <GPIOPort port_, GPIOPin pin_>
+			template <typename gpio_>
 			inline static void setRXPin(GPIOPinAdapter<port_, pin_> pinAdapter) {
 				if constexpr (channel_ == UARTChannel::channel1)
-					pinAdapter.initAlt(
+					gpio_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						GPIOPinAdapter<port_, pin_>::GPIOAlt::uart1_RX);
+						gpio_::GPIOAlt::uart1_RX);
 			}
 
-			inline void send(uint8_t data) const {
+			inline static void send(uint8_t data) const {
 				halUARTSend(_handler, data);
 			}
 
-			inline halUARTHandler getHandler() const {
-				return _handler;
-			}
-
-			inline operator halUARTHandler () const {
+			inline static halUARTHandler getHandler() const {
 				return _handler;
 			}
 	};
 
-	class UARTAttachedAdapter {
-		private:
-			halUARTHandler _handler;
 
-		public:
-			UARTAttachedAdapter(halUARTHandler handler) {
-				_handler = handler;
-			}
-
-			inline void send(uint8_t data) const {
-				halUARTSend(_handler, data);
-			}
-
-			inline uint8_t receive() const {
-				return halUARTReceive(_handler);
-			}
-
-			inline void enableInterrupts(uint32_t events) const {
-				halUARTEnableInterrupts(_handler, events);
-			}
-
-			inline uint32_t disableInterrupts(uint32_t events) const {
-				return halUARTDisableInterrupts(_handler, events);
-			}
-
-			inline void clearInterruptFlags(uint32_t events) const {
-				halUARTClearInterruptFlags(_handler, events);
-			}
-
-			inline operator halUARTHandler () const {
-				return _handler;
-			}
-	};
-
-	typedef UARTAttachedAdapter UART;
-#ifdef HAL_UART_CHANNEL_1
-	typedef UARTAdapter<UARTChannel::channel1> UART_1;
-#endif
-#ifdef HAL_UART_CHANNEL_2
-	typedef UARTAdapter<UARTChannel::channel2> UART_2;
-#endif
-#ifdef HAL_UART_CHANNEL_3
-	typedef UARTAdapter<UARTChannel::channel3> UART_3;
-#endif
-#ifdef HAL_UART_CHANNEL_4
-	typedef UARTAdapter<UARTChannel::channel4> UART_4;
-#endif
-#ifdef HAL_UART_CHANNEL_5
-	typedef UARTAdapter<UARTChannel::channel5> UART_5;
-#endif
-#ifdef HAL_UART_CHANNEL_6
-	typedef UARTAdapter<UARTChannel::channel6> UART_6;
-#endif
-#ifdef HAL_UART_CHANNEL_7
-	typedef UARTAdapter<UARTChannel::channel7> UART_7;
-#endif
-#ifdef HAL_UART_CHANNEL_8
-	typedef UARTAdapter<UARTChannel::channel8> UART_8;
-#endif
+    #ifdef HAL_UART_CHANNEL_1
+        using UART_1 = UARTAdapter<UARTChannel::channel1>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_2
+        using UART_2 = UARTAdapter<UARTChannel::channel2>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_3
+        using UART_3 = UARTAdapter<UARTChannel::channel3>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_4
+        using UART_4 = UARTAdapter<UARTChannel::channel4>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_5
+        using UART_5 = UARTAdapter<UARTChannel::channel5>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_6
+        using UART_6 = UARTAdapter<UARTChannel::channel6>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_7
+        using UART_7 = UARTAdapter<UARTChannel::channel7>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_8
+        using UART_8 = UARTAdapter<UARTChannel::channel8>;
+    #endif
 
 }
 

@@ -1,10 +1,10 @@
-#ifndef __PIC32_halI2C_ex__
-#define __PIC32_halI2C_ex__
+#ifndef __PIC32_htlI2C__
+#define __PIC32_htlI2C__
 
 
-namespace eos {
+namespace htl {
 
-    enum class I2cChannel {
+    enum class I2CChannel {
         channel1 = HAL_I2C_CHANNEL_1,
         channel2 = HAL_I2C_CHANNEL_2,
         channel3 = HAL_I2C_CHANNEL_3,
@@ -13,12 +13,12 @@ namespace eos {
     };
 
     template <I2CChannel channel_>
-    struct I2CModuleInfo {
-        static const uint32_t baseAddr;
+    struct I2CInfo {
+        static const uint32_t addr;
     };
 
-    template <I2CChannel channel_, typename sclPin_, typename sdaPin_, bool initPins_ = true>
-    class I2CModule {
+    template <I2CChannel channel_>
+    class I2C_x {
 		private:
 			constexpr static const unsigned _defaultBlockTime = 1000;
 
@@ -26,52 +26,41 @@ namespace eos {
 			constexpr static const I2CChannel channel = channel_;
 
         private:
-            constexpr static const uint32_t _baseAddr = I2CModuleInfo<channel_>::baseAddr;
+            constexpr static const uint32_t _addr = I2CInfo<channel_>::addr;
 
         private:
-			halI2CHandler _handler;
-			halI2CData _data;
+			static halI2CHandler _handler;
+			static halI2CData _data;
 
 		private:
-			I2CModule() = default;
+			I2C_x() = delete;
+			I2C_x(const I2CModule &) = delete;
+			I2C_x(const I2CModule &&) = delete;
+            ~I2C() = delete;
 
-			I2CModule(const I2CModule &) = delete;
-			I2CModule(const I2CModule &&) = delete;
-
-            I2CModule & operator = (const I2CModule &) = delete;
-			I2CModule & operator = (const I2CModule &&) = delete;
+            I2C_x & operator = (const I2C_x &) = delete;
+			I2C_x & operator = (const I2C_x &&) = delete;
 
 		public:
-			inline static auto & instance() {
-				static I2CModule module;
-				return module;
-			}
-
-			inline I2CResult initMaster() {
-
-				if constexpr (initPins_) {
-					initSCLPin();
-					initSDAPin();
-				}
-
+			inline static I2CResult initMaster() {
 				halI2CMasterInitializeInfo initInfo;
 				initInfo.channel = halI2CChannel(channel_);
 				return I2CResult(halI2CMasterInitialize(&_data, &initInfo, &_handler));
 			}
 
-			inline I2CResult enable() {
+			inline static I2CResult enable() {
 				return I2CResult(halI2CEnable(_handler));
 			}
 
-			inline I2CResult disable() {
+			inline static I2CResult disable() {
 				return I2CResult(halI2CDisable(_handler));
 			}
 
-			inline I2CResult send(uint8_t addr, const void *data, int size, unsigned blockTime = _defaultBlockTime) {
+			inline static I2CResult send(uint8_t addr, const void *data, int size, unsigned blockTime = _defaultBlockTime) {
 				return I2CResult(halI2CMasterSend(_handler, addr, data, size, blockTime));
 			}
 
-			inline I2CResult receive(uint8_t addr, void *data, int size, unsigned blockTime = _defaultBlockTime) {
+			inline static I2CResult receive(uint8_t addr, void *data, int size, unsigned blockTime = _defaultBlockTime) {
 				return I2CResult(halI2CMasterReceive(_handler, addr, data, size, blockTime));
 			}
 
@@ -83,26 +72,23 @@ namespace eos {
     };
 
 
-    template <typename sclPin_, typename sdaPin_, bool initPins_ = true>
-	using I2C_1 = I2CModule<I2CChannel::channel1, sclPin_, sdaPin_, initPins_>;
-
-	template <typename sclPin_, typename sdaPin_, bool initPins_ = true>
-	using I2C_2 = I2CModule<I2CChannel::channel2, sclPin_, sdaPin_, initPins_>;
+	using I2C_1 = I2CModule<I2CChannel::channel1;
+	using I2C_2 = I2CModule<I2CChannel::channel2;
 
 
     // I2C 1
     template <>
-    struct I2CModuleInfo<HAL_I2C_CHANNEL_1> {
-        static const uint32_t baseAddr = I2C1_BASE_ADDRESS;
+    struct I2CInfo<HAL_I2C_CHANNEL_1> {
+        static const uint32_t addr = I2C1_BASE_ADDRESS;
     };
 
     // I2C 2
     template <>
-    struct I2CModuleInfo<HAL_I2C_CHANNEL_2> {
-        static const uint32_t baseAddr = I2C2_BASE_ADDRESS;
+    struct I2CInfo<HAL_I2C_CHANNEL_2> {
+        static const uint32_t addr = I2C2_BASE_ADDRESS;
     };
 }
 
 
-#endif // __PIC32_halI2C_ex__
+#endif // __PIC32_htlI2C__
 

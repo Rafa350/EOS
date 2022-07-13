@@ -4,12 +4,10 @@
 
 // EOS includes
 //
+#include "eos.h"
 #include "HAL/STM32/halLTDC.h"
 #include "HTL/STM32/htlGPIO.h"
 #include "System/Graphics/eosColor.h"
-
-
-using namespace eos;
 
 
 namespace htl {
@@ -131,7 +129,7 @@ namespace htl {
 				gpioB7_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpioB7_::GPIOAlt::ltdc_B7);
 			}
 
-			inline static void setBackgroundColor(Color color) {
+			inline static void setBackgroundColor(eos::Color color) {
 				uint32_t c = (color.getR() << 16) | (color.getG() << 8) | color.getB();
 				halLTDCSetBackgroundColor(c);
 			}

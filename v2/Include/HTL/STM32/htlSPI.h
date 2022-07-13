@@ -1,10 +1,10 @@
-#ifndef __STM32_halSPI_ex__
-#define __STM32_halSPI_ex__
+#ifndef __STM32_htlSPI__
+#define __STM32_htlSPI__
 
 
 // EOS includes
 //
-#include "HAL/hal.h"
+#include "eos.h"
 #include "HAL/STM32/halSPI.h"
 #include "HTL/STM32/htlGPIO.h"
 
@@ -88,7 +88,7 @@ namespace htl {
 				initialize(options);
 			}
 
-			inline static void initialize(halSPIOptions options) {
+			inline static void init(halSPIOptions options) {
 				halSPISettings settings;
 				settings.channel = halSPIChannel(channel_);
 				settings.options = options;
@@ -97,9 +97,12 @@ namespace htl {
 				_handler = halSPIInitialize(&_data, &settings);
 			}
 
-			inline static void initialize(const halSPISettings &settings) {
+			inline static void init(const halSPISettings &settings) {
 				_handler = halSPIInitialize(&_data, &settings);
 			}
+            
+            inline static void deInit() {
+            }
 
 			inline static void setClock(SPIClockDivider clkdiv) {
 
@@ -256,4 +259,4 @@ namespace htl {
 }
 
 
-#endif // __STM32_halSPI_ex__
+#endif // __STM32_htlSPI__

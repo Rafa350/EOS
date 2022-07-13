@@ -1,166 +1,126 @@
-#ifndef __STM32_halUARTTpl__
-#define __STM32_halUARTTpl__
+#ifndef __STM32_htlUART__
+#define __STM32_htlUART__
 
 
 // EOS includes
 //
-#include "HAL/hal.h"
+#include "eos.h"
 #include "HAL/STM32/halUART.h"
-#include "HAL/STM32/halGPIO_ex.h"
+#include "HTL/STM32/htlGPIO.h"
 
 
 namespace eos {
 
 	enum class UARTChannel {
-#ifdef HAL_UART_CHANNEL_1
-		channel1 = HAL_UART_CHANNEL_1,
-#endif
-#ifdef HAL_UART_CHANNEL_2
-		channel2 = HAL_UART_CHANNEL_2,
-#endif
-#ifdef HAL_UART_CHANNEL_3
-		channel3 = HAL_UART_CHANNEL_3,
-#endif
-#ifdef HAL_UART_CHANNEL_4
-		channel4 = HAL_UART_CHANNEL_4,
-#endif
-#ifdef HAL_UART_CHANNEL_5
-		channel5 = HAL_UART_CHANNEL_5,
-#endif
-#ifdef HAL_UART_CHANNEL_6
-		channel6 = HAL_UART_CHANNEL_6,
-#endif
-#ifdef HAL_UART_CHANNEL_7
-		channel7 = HAL_UART_CHANNEL_7,
-#endif
-#ifdef HAL_UART_CHANNEL_8
-		channel8 = HAL_UART_CHANNEL_8,
-#endif
+        #ifdef USART1
+            channel1 = HAL_UART_CHANNEL_1,
+        #endif
+        #ifdef USART2
+            channel2 = HAL_UART_CHANNEL_2,
+        #endif
+        #ifdef USART3
+            channel3 = HAL_UART_CHANNEL_3,
+        #endif
+        #ifdef UART4
+            channel4 = HAL_UART_CHANNEL_4,
+        #endif
+        #ifdef UART5
+            channel5 = HAL_UART_CHANNEL_5,
+        #endif
+        #ifdef USART6
+            channel6 = HAL_UART_CHANNEL_6,
+        #endif
+        #ifdef UART7
+            channel7 = HAL_UART_CHANNEL_7,
+        #endif
+        #ifdef UART8
+            channel8 = HAL_UART_CHANNEL_8,
+        #endif
 	};
 
 	template <UARTChannel channel_>
-	class UARTModule {
+	class UART_x {
 		private:
-			halUARTData _data;
-			halUARTHandler _handler;
+			static halUARTData _data;
+			static halUARTHandler _handler;
 
 		public:
 			constexpr static const UARTChannel channel = channel_;
 
 		private:
-			UARTModule() = default;
-			UARTModule(const UARTModule &) = delete;
-			UARTModule(const UARTModule &&) = delete;
-			UARTModule & operator = (const UARTModule &) = delete;
-			UARTModule & operator = (const UARTModule &&) = delete;
+			UART_x() = delete;
+			UART_x(const UART_x &) = delete;
+			UART_x(const UART_x &&) = delete;
+			UART_x & operator = (const UART_x &) = delete;
+			UART_x & operator = (const UART_x &&) = delete;
 
 		public:
-			inline static auto & instance() {
-				static UARTModule module;
-				return module;
-			}
-
-			inline void initialize(const halUARTSettings &settings) {
+			inline static void init(const halUARTSettings &settings) {
 				_handler = halUARTInitialize(&_data, &settings);
 			}
 
-			inline void deinitialize() {
+			inline static void deInit() {
 				halUARTDeinitialize(_handler);
 			}
 
-			template <typename pinAdapter_>
+			template <typename gpio_>
 			inline static void initTXPin() {
 				if constexpr (channel_ == UARTChannel::channel1)
-					pinAdapter_::initAlt(
+					gpio_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						pinAdapter_::GPIOAlt::uart1_TX);
+						gpio_::GPIOAlt::uart1_TX);
 			}
 
-			template <typename pinAdapter_>
+			template <typename gpio_>
 			inline static void initRXPin() {
 				if constexpr (channel_ == UARTChannel::channel1)
-					pinAdapter_::initAlt(
+					gpio_::initAlt(
 						GPIOSpeed::fast,
 						GPIODriver::pushPull,
-						pinAdapter_::GPIOAlt::uart1_RX);
+						gpio_::GPIOAlt::uart1_RX);
 			}
 
-			inline void send(uint8_t data) const {
+			inline static void send(uint8_t data) const {
 				halUARTSend(_handler, data);
 			}
 
-			inline halUARTHandler getHandler() const {
-				return _handler;
-			}
-
-			inline operator halUARTHandler () const {
+			inline static halUARTHandler getHandler() const {
 				return _handler;
 			}
 	};
+    
+    template <typename UARTChannel> halUARTData UART_x::_data;
+    template <typename UARTChannel> halUARTHandler UART_x::_handler;
 
-	class UARTAttachedAdapter {
-		private:
-			halUARTHandler _handler;
 
-		public:
-			UARTAttachedAdapter(halUARTHandler handler) {
-				_handler = handler;
-			}
-
-			inline void send(uint8_t data) const {
-				halUARTSend(_handler, data);
-			}
-
-			inline uint8_t receive() const {
-				return halUARTReceive(_handler);
-			}
-
-			inline void enableInterrupts(uint32_t events) const {
-				halUARTEnableInterrupts(_handler, events);
-			}
-
-			inline uint32_t disableInterrupts(uint32_t events) const {
-				return halUARTDisableInterrupts(_handler, events);
-			}
-
-			inline void clearInterruptFlags(uint32_t events) const {
-				halUARTClearInterruptFlags(_handler, events);
-			}
-
-			inline operator halUARTHandler () const {
-				return _handler;
-			}
-	};
-
-	typedef UARTAttachedAdapter UART;
-#ifdef HAL_UART_CHANNEL_1
-	typedef UARTModule<UARTChannel::channel1> UART_1;
-#endif
-#ifdef HAL_UART_CHANNEL_2
-	typedef UARTModule<UARTChannel::channel2> UART_2;
-#endif
-#ifdef HAL_UART_CHANNEL_3
-	typedef UARTModule<UARTChannel::channel3> UART_3;
-#endif
-#ifdef HAL_UART_CHANNEL_4
-	typedef UARTModule<UARTChannel::channel4> UART_4;
-#endif
-#ifdef HAL_UART_CHANNEL_5
-	typedef UARTModule<UARTChannel::channel5> UART_5;
-#endif
-#ifdef HAL_UART_CHANNEL_6
-	typedef UARTModule<UARTChannel::channel6> UART_6;
-#endif
-#ifdef HAL_UART_CHANNEL_7
-	typedef UARTModule<UARTChannel::channel7> UART_7;
-#endif
-#ifdef HAL_UART_CHANNEL_8
-	typedef UARTModule<UARTChannel::channel8> UART_8;
-#endif
+    #ifdef HAL_UART_CHANNEL_1
+        using UART_1 = UART_x<UARTChannel::channel1>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_2
+        using UART_2 = UART_x<UARTChannel::channel2>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_3
+        using UART_3 = UART_x<UARTChannel::channel3>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_4
+        using UART_4 = UART_x<UARTChannel::channel4>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_5
+        using UART_5 = UART_x<UARTChannel::channel5>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_6
+        using UART_6 = UART_x<UARTChannel::channel6>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_7
+        using UART_7 = UART_x<UARTChannel::channel7>;
+    #endif
+    #ifdef HAL_UART_CHANNEL_8
+        using UART_8 = UART_x<UARTChannel::channel8>;
+    #endif
 
 }
 
 
-#endif // __STM32_halUARTTpl__
+#endif // __STM32_htlUART__
 

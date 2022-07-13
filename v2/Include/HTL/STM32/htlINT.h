@@ -1,16 +1,14 @@
-#ifndef __STM32_halINT_ex__
-#define __STM32_halINT_ex__
-
-
-#ifdef __cplusplus
+#ifndef __STM32_htlINT__
+#define __STM32_htlINT__
 
 
 // HAL includes
 //
+#include "eos.h"
 #include "HAL/STM32/halINT.h"
 
 
-namespace eos {
+namespace htl {
 
 	enum class INTPriority {
 		priority0 = HAL_INT_PRIORITY_0,
@@ -122,7 +120,5 @@ namespace eos {
 
 }
 
-#endif // __cplusplus
 
-
-#endif // __STM32_halINT_ex__
+#endif // __STM32_htlINT__
