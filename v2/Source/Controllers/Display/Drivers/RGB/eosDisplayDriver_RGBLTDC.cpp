@@ -12,7 +12,7 @@
 #include "Controllers/Display/eosColorFrameBuffer_DMA2D.h"
 #include "Controllers/Display/Drivers/RGB/eosDisplayDriver_RGBLTDC.h"
 #include "HAL/STM32/halDMA2D.h"
-#include "HAL/STM32/halGPIO.h"
+#include "HTL/STM32/htlGPIO.h"
 #include "HTL/STM32/htlLTDC.h"
 #include "System/eosMath.h"
 #include "System/Graphics/eosColorDefinitions.h"
@@ -95,7 +95,7 @@ void DisplayDriver_RGBLTDC::displayOn() {
 
     // Activa el modul LDTC
     //
-	_ltdc.enable();
+	LCD::enable();
 
     // Activa el display
 	//
@@ -122,7 +122,7 @@ void DisplayDriver_RGBLTDC::displayOff() {
 
 	// Desactiva el modul LDTC
     //
-	_ltdc.disable();
+	LCD::disable();
 }
 
 
@@ -231,7 +231,7 @@ void DisplayDriver_RGBLTDC::setPixels(
 	int y,
 	int width,
 	int height,
-	const Color* colors,
+	const Color *colors,
 	int pitch) {
 
 	_backFrameBuffer->setPixels(x, y, width, height, colors, pitch);
@@ -276,8 +276,8 @@ void DisplayDriver_RGBLTDC::refresh() {
 
 		// Asigna l'adresa de la capa
 		//
-		htl::LTDCLayer_0::setFramBuffer(_frontImageBuffer);
-		htl::LTDCLayer_0::update();
+		LCDLayer::setFrameBuffer((void*)_frontImageBuffer);
+		LCD::update();
 	}
 }
 
@@ -301,38 +301,25 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 
 	// Inicialitza el modul LTDC
 	//
-	halLTDCSettings ltdcSettings;
-	ltdcSettings.HSYNC = DISPLAY_HSYNC;
-	ltdcSettings.VSYNC = DISPLAY_VSYNC;
-	ltdcSettings.HBP = DISPLAY_HBP;
-	ltdcSettings.HFP = DISPLAY_HFP;
-	ltdcSettings.VBP = DISPLAY_VBP;
-	ltdcSettings.VFP = DISPLAY_VFP;
-	ltdcSettings.polarity.HSYNC = DISPLAY_HSPOL;
-	ltdcSettings.polarity.VSYNC = DISPLAY_VSPOL;
-	ltdcSettings.polarity.DE = DISPLAY_DEPOL;
-	ltdcSettings.polarity.PC = DISPLAY_PCPOL;
-	ltdcSettings.width = _imageWidth;
-	ltdcSettings.height = _imageHeight;
+	LCD::initDOTCLKPin<GPIO_DOTCLK>(htl::LTDCPolarity::activeLow);
+	LCD::initHSYNCPin<GPIO_HSYNC>(htl::LTDCPolarity::activeLow);
+	LCD::initVSYNCPin<GPIO_VSYNC>(htl::LTDCPolarity::activeLow);
+	LCD::initDEPin<GPIO_DE>(htl::LTDCPolarity::activeLow);
+	LCD::initRPins<GPIO_R0, GPIO_R1, GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
+	LCD::initGPins<GPIO_G0, GPIO_G1, GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
+	LCD::initBPins<GPIO_B0, GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
+	LCD::init(_imageWidth, _imageHeight, DISPLAY_HSYNC, DISPLAY_VSYNC,
+		DISPLAY_HBP, DISPLAY_VBP, DISPLAY_HFP, DISPLAY_VFP);
+	LCD::setBackgroundColor(COLOR_Blue);
 
-	_ltdc.initDOTCLKPin<GPIO_DOTCLK>();
-	_ltdc.initHSYNCPin<GPIO_HSYNC>();
-	_ltdc.initVSYNCPin<GPIO_VSYNC>();
-	_ltdc.initDEPin<GPIO_DE>();
-	_ltdc.initRPins<GPIO_R0, GPIO_R1, GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
-	_ltdc.initGPins<GPIO_G0, GPIO_G1, GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
-	_ltdc.initBPins<GPIO_B0, GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
-	_ltdc.initialize(ltdcSettings);
-	_ltdc.setBackgroundColor(COLOR_Blue);
-
-	// Inicialitza la capa 0
+	// Inicialitza la capa 1
 	//
-	_ltdc.layer0.setWindow(0, 0, _imageWidth, _imageHeight);
-	_ltdc.layer0.setFrameFormat(
-			htl::LTDCPixelFormatFor<CI::format>::value,
+	LCDLayer::setWindow(0, 0, _imageWidth, _imageHeight);
+	LCDLayer::setFrameFormat(
+		htl::LTDCPixelFormatFor<CI::format>::value,
 		_imageWidth * CI::bytes,
 		((_imageWidth * CI::bytes) + 63) & 0xFFFFFFC0,
 		_imageHeight);
-	_ltdc.layer0.setFramBuffer(_frontImageBuffer);
-	_ltdc.layer0.update();
+	LCDLayer::setFrameBuffer((void*)_frontImageBuffer);
+	LCD::update();
 }

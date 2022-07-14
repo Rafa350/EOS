@@ -17,59 +17,6 @@
 #include "eos.h"
 
 
-#ifdef GPIOA_BASE
-    #define HTL_GPIO_PORT_A htl::GPIOPort::portA
-#endif
-#ifdef GPIOB_BASE
-    #define HTL_GPIO_PORT_B htl::GPIOPort::portB
-#endif
-#ifdef GPIOC_BASE
-    #define HTH_GPIO_PORT_C htl::GPIOPort::portC
-#endif
-#ifdef GPIOD_BASE
-    #define HTL_GPIO_PORT_D htl::GPIOPort::portD
-#endif
-#ifdef GPIOF_BASE
-    #define HTL_GPIO_PORT_E htl::GPIOPort::portE
-#endif
-#ifdef GPIOF_BASE
-    #define HTL_GPIO_PORT_F htl::GPIOPort::portF
-#endif
-#ifdef GPIOG_BASE
-    #define HTL_GPIO_PORT_G htl::GPIOPort::portG
-#endif
-#ifdef GPIOH_BASE
-    #define HTL_GPIO_PORT_H htl::GPIOPort::portH
-#endif
-#ifdef GPIOI_BASE
-    #define HTL_GPIO_PORT_I htl::GPIOPort::portI
-#endif
-#ifdef GPIOJ_BASE
-    #define HTL_GPIO_PORT_J htl::GPIOPort::portJ
-#endif
-#ifdef GPIOK_BASE
-    #define HTL_GPIO_PORT_K htl::GPIOPort::portK
-#endif
-
-
-#define HTL_GPIO_PIN_0 htl::GPIOPin::pin0
-#define HTL_GPIO_PIN_1 htl::GPIOPin::pin1
-#define HTL_GPIO_PIN_2 htl::GPIOPin::pin2
-#define HTL_GPIO_PIN_3 htl::GPIOPin::pin3
-#define HTL_GPIO_PIN_4 htl::GPIOPin::pin4
-#define HTL_GPIO_PIN_5 htl::GPIOPin::pin5
-#define HTL_GPIO_PIN_6 htl::GPIOPin::pin6
-#define HTL_GPIO_PIN_7 htl::GPIOPin::pin7
-#define HTL_GPIO_PIN_8 htl::GPIOPin::pin8
-#define HTL_GPIO_PIN_9 htl::GPIOPin::pin9
-#define HTL_GPIO_PIN_10 htl::GPIOPin::pin10
-#define HTL_GPIO_PIN_11 htl::GPIOPin::pin11
-#define HTL_GPIO_PIN_12 htl::GPIOPin::pin12
-#define HTL_GPIO_PIN_13 htl::GPIOPin::pin13
-#define HTL_GPIO_PIN_14 htl::GPIOPin::pin14
-#define HTL_GPIO_PIN_15 htl::GPIOPin::pin15
-
-
 namespace htl {
 
     /// \brief GPIO port identifiers.
@@ -1088,6 +1035,15 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOI_BASE;
             constexpr static const uint32_t pn = 12;
+            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOIEN;
+        };
+
+        template <>
+        struct GPIOInfo<GPIOPort::portI, GPIOPin::pin13> {
+            enum class GPIOAlt {
+            };
+            constexpr static const uint32_t addr = GPIOI_BASE;
+            constexpr static const uint32_t pn = 13;
             constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOIEN;
         };
 

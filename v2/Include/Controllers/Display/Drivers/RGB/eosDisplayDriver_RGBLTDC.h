@@ -51,13 +51,6 @@ namespace eos {
 		private:
 			typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
 
-		private:
-			constexpr static const int _imageWidth       = DISPLAY_IMAGE_WIDTH;
-			constexpr static const int _imageHeight      = DISPLAY_IMAGE_HEIGHT;
-			constexpr static const int _imageBuffer      = DISPLAY_IMAGE_BUFFER;
-			constexpr static const bool _useDoubleBuffer = DISPLAY_DOUBLEBUFFER;
-
-		private:
 			typedef DISPLAY_BKE_TYPE GPIO_BKE;
 			typedef DISPLAY_LCDE_TYPE GPIO_LCDE;
 			typedef DISPLAY_HSYNC_TYPE GPIO_HSYNC;
@@ -88,9 +81,16 @@ namespace eos {
 			typedef DISPLAY_B5_TYPE GPIO_B5;
 			typedef DISPLAY_B6_TYPE GPIO_B6;
 			typedef DISPLAY_B7_TYPE GPIO_B7;
+			typedef htl::LTDC_1 LCD;
+			typedef htl::LTDCLayer_1 LCDLayer;
+
+		private:
+			constexpr static const int _imageWidth       = DISPLAY_IMAGE_WIDTH;
+			constexpr static const int _imageHeight      = DISPLAY_IMAGE_HEIGHT;
+			constexpr static const int _imageBuffer      = DISPLAY_IMAGE_BUFFER;
+			constexpr static const bool _useDoubleBuffer = DISPLAY_DOUBLEBUFFER;
 
     	private:
-			htl::LTDC_1 _ltdc;
     		FrameBuffer *_frontFrameBuffer;
     		FrameBuffer *_backFrameBuffer;
     		void *_frontImageBuffer;

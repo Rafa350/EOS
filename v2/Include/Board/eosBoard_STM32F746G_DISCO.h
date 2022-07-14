@@ -11,6 +11,7 @@
 
 #define LEDS_LED1_PORT            HAL_GPIO_PORT_I
 #define LEDS_LED1_PIN             HAL_GPIO_PIN_1
+#define LEDS_LED1_TYPE            htl::GPIO_I1
 
 #endif // USE_LED_LED1
 
@@ -486,25 +487,31 @@
 #define TOUCHPAD_SCL_PORT           HAL_GPIO_PORT_H
 #define TOUCHPAD_SCL_PIN            HAL_GPIO_PIN_7
 #define TOUCHPAD_SCL_AF		        HAL_GPIO_AF_4
+#define TOUCHPAD_SCL_TYPE           htl::GPIO_H7
 
 // Control del pin SDA
 //
 #define TOUCHPAD_SDA_PORT           HAL_GPIO_PORT_H
 #define TOUCHPAD_SDA_PIN            HAL_GPIO_PIN_8
 #define TOUCHPAD_SDA_AF             HAL_GPIO_AF_4
+#define TOUCHPAD_SDA_TYPE           htl::GPIO_H8
 
 // Control del pin INT
 //
 #define TOUCHPAD_INT_PORT           HAL_GPIO_PORT_I
 #define TOUCHPAD_INT_PIN            HAL_GPIO_PIN_13
+#define TOUCHPAD_INT_TYPE           htl::GPIO_I13
 #define TOUCHPAD_INT_EXTI_LINE      HAL_EXTI_LINE_13
 #define TOUCHPAD_INT_EXTI_PORT      HAL_EXTI_PORT_I
+#define TOUCHPAD_INT_EXTI_TYPE      htl::EXTI_13
 #define TOUCHPAD_INT_IRQ            HAL_INT_VECTOR_EXTI13
 #define TOUCHPAD_INT_PRIORITY       HAL_INT_PRIORITY_15
 #define TOUCHPAD_INT_SUBPRIORITY    HAL_INT_SUBPRIORITY_0
 
 // Modul I2C de comunicacions
 #define TOUCHPAD_I2C_CHANNEL        HAL_I2C_CHANNEL_3
+#define TOUCHPAD_I2C_TYPE           htl::I2C_3
+
 
 #endif // USE_TOUCHPAD
 

@@ -9,7 +9,7 @@
 #include "HTL/STM32/htlGPIO.h"
 
 
-namespace eos {
+namespace htl {
 
 	enum class I2CChannel: halI2CChannel {
 		channel1 = HAL_I2C_CHANNEL_1,
@@ -41,13 +41,13 @@ namespace eos {
 			I2C_x() = delete;
 			I2C_x(const I2C_x &) = delete;
 			I2C_x(const I2C_x &&) = delete;
-            ~I2C() = delete;
+            ~I2C_x() = delete;
             
 			I2C_x & operator = (const I2C_x &) = delete;
 			I2C_x & operator = (const I2C_x &&) = delete;
 
 		public:
-			inline static I2CResult initMaster() {
+			static I2CResult initMaster() {
 
 				halI2CMasterInitializeInfo initInfo;
 				initInfo.channel = halI2CChannel(channel_);
@@ -75,65 +75,69 @@ namespace eos {
 			}
 
             template <typename gpio_>
-			inline static void initSCLPin() {
+			static void initSCLPin() {
 				if constexpr (channel_ == I2CChannel::channel1)
 					gpio_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
+						htl::GPIODriver::openDrain,
+						htl::GPIOSpeed::fast,
 						gpio_::GPIOAlt::i2c1_SCL);
 
 				if constexpr (channel_ == I2CChannel::channel2)
 					gpio_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
+						htl::GPIODriver::openDrain,
+						htl::GPIOSpeed::fast,
 						gpio_::GPIOAlt::i2c2_SCL);
 
 				if constexpr (channel_ == I2CChannel::channel3)
 					gpio_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
+						htl::GPIODriver::openDrain,
+						htl::GPIOSpeed::fast,
 						gpio_::GPIOAlt::i2c3_SCL);
 
 				if constexpr (channel_ == I2CChannel::channel4)
 					gpio_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
+						htl::GPIODriver::openDrain,
+						htl::GPIOSpeed::fast,
 						gpio_::GPIOAlt::i2c4_SCL);
 			}
 
             template <typename gpio_>
-			inline static void initSDAPin() {
+			static void initSDAPin() {
 				if constexpr (channel_ == I2CChannel::channel1)
 					gpio_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
+						htl::GPIODriver::openDrain,
+						htl::GPIOSpeed::fast,
 						gpio_::GPIOAlt::i2c1_SDA);
 
 				if constexpr (channel_ == I2CChannel::channel2)
 					gpio_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
+						htl::GPIODriver::openDrain,
+						htl::GPIOSpeed::fast,
 						gpio_::GPIOAlt::i2c2_SDA);
 
 				if constexpr (channel_ == I2CChannel::channel3)
 					gpio_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
+						htl::GPIODriver::openDrain,
+						htl::GPIOSpeed::fast,
 						gpio_::GPIOAlt::i2c3_SDA);
 
 				if constexpr (channel_ == I2CChannel::channel4)
 					gpio_::initAlt(
-						GPIOSpeed::fast,
-						GPIODriver::openDrain,
+						htl::GPIODriver::openDrain,
+						htl::GPIOSpeed::fast,
 						gpio_::GPIOAlt::i2c4_SDA);
 			}
 	};
+
+	template <I2CChannel channel_> halI2CHandler I2C_x<channel_>::_handler;
+	template <I2CChannel channel_> halI2CData I2C_x<channel_>::_data;
 
 	using I2C_1 = I2C_x<I2CChannel::channel1>;
 	using I2C_2 = I2C_x<I2CChannel::channel2>;
 	using I2C_3 = I2C_x<I2CChannel::channel3>;
 	using I2C_4 = I2C_x<I2CChannel::channel4>;
 }
+
 
 #endif // __STM32_htlI2C__
 

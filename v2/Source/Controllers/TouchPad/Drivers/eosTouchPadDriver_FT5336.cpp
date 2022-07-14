@@ -1,18 +1,17 @@
 #include "eos.h"
-#if defined(USE_TOUCHPAD) && defined(TOUCHPAD_DRV_FT5336)
-
 #include "Controllers/TouchPad/Drivers/eosTouchPadDriver_FT5336.h"
-#include "HAL/halTMR.h"
-#include "hal/halGPIO.h"
+#include "HTL/htlTMR.h"
+#include "HTL/htlGPIO.h"
+#include "HTL/htlI2C.h"
 #ifdef TOUCHPAD_INT_PORT
-#include "HAL/STM32/halEXTI.h"
-#include "HAL/STM32/halEXTI_ex.h"
-#include "HAL/STM32/halINT_ex.h"
+#include "HTL/STM32/htlEXTI.h"
+#include "HTL/STM32/htlINT.h"
 #endif
 #include "System/eosMath.h"
 
 
 using namespace eos;
+using namespace htl;
 
 
 ITouchPadDriver *TouchPadDriver_FT5336::_instance = nullptr;
@@ -37,12 +36,7 @@ TouchPadDriver_FT5336::TouchPadDriver_FT5336():
 	_addr(TOUCHPAD_I2C_ADDR),
 	_padWidth(TOUCHPAD_PAD_WIDTH),
 	_padHeight(TOUCHPAD_PAD_HEIGHT),
-	_orientation(TouchPadOrientation::normal),
-#ifdef TOUCHPAD_INT_PORT
-	_extiINT(ExtiINT::instance()),
-	_pinINT(PinINT::instance()),
-#endif
-	_i2c(I2C::instance()) {
+	_orientation(TouchPadOrientation::normal) {
 }
 
 
@@ -57,9 +51,9 @@ void TouchPadDriver_FT5336::initialize() {
 	halTMRDelay(200);
     initializeInterface();
 
-#ifdef TOUCHPAD_INT_PORT
-    enableInt();
-#endif
+	#ifdef TOUCHPAD_INT_PORT
+    	enableInt();
+	#endif
 }
 
 
@@ -68,9 +62,9 @@ void TouchPadDriver_FT5336::initialize() {
 ///
 void TouchPadDriver_FT5336::shutdown() {
 
-#ifdef TOUCHPAD_INT_PORT
-	disableInt();
-#endif
+	#ifdef TOUCHPAD_INT_PORT
+		disableInt();
+	#endif
 }
 
 
@@ -299,17 +293,19 @@ void TouchPadDriver_FT5336::initializeInterface() {
 
 	// Inicialitza el pin d'interrupcio
 	//
-#ifdef TOUCHPAD_INT_PORT
-	_pinINT.initInput(GPIOSpeed::fast, GPIOPull::up);
-	_extiINT.initialize(EXTIPort(TOUCHPAD_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
+	#ifdef TOUCHPAD_INT_PORT
+		GPIO_INT::initInput(GPIOPull::up);
+		EXTI_INT::init(EXTIPort(TOUCHPAD_INT_EXTI_PORT), EXTIMode::interrupt, EXTITrigger::rissing);
 
-	INT::setInterruptVectorPriority(INTVector(TOUCHPAD_INT_IRQ), INTPriority(TOUCHPAD_INT_PRIORITY), INTSubPriority(TOUCHPAD_INT_SUBPRIORITY));
-	INT::enableInterruptVector(INTVector(TOUCHPAD_INT_IRQ));
-#endif
+		INT::setInterruptVectorPriority(INTVector(TOUCHPAD_INT_IRQ), INTPriority(TOUCHPAD_INT_PRIORITY), INTSubPriority(TOUCHPAD_INT_SUBPRIORITY));
+		INT::enableInterruptVector(INTVector(TOUCHPAD_INT_IRQ));
+	#endif
 
 	// Inicialitza el canal I2C
 	//
-	_i2c.initMaster();
+	I2C::initSCLPin<GPIO_SCL>();
+	I2C::initSDAPin<GPIO_SDA>();
+	I2C::initMaster();
 }
 
 
@@ -327,7 +323,7 @@ void TouchPadDriver_FT5336::writeRegister(
 	data[0] = reg;
 	data[1] = value;
 
-	_i2c.send(_addr, data, sizeof(data));
+	I2C::send(_addr, data, sizeof(data));
 }
 
 
@@ -342,12 +338,9 @@ uint8_t TouchPadDriver_FT5336::readRegister(
 
 	uint8_t value;
 
-	_i2c.send(_addr, &reg, 1);
-	_i2c.receive(_addr, &value, sizeof(value));
+	I2C::send(_addr, &reg, 1);
+	I2C::receive(_addr, &value, sizeof(value));
 
 	return value;
 }
-
-
-#endif // defined(USE_TOUCHPAD) && defined(TOUCHPAD_DRV_FT5336)
 

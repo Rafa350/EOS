@@ -29,7 +29,7 @@ namespace htl {
 
 	enum class TMRMode: halTMROptions {
 		mode16 = HAL_TMR_MODE_16,
-		mode32 = HAL_TRM_MODE_32
+		mode32 = HAL_TMR_MODE_32
 	};
 
 	enum class TMRDirection: halTMROptions {
@@ -62,14 +62,14 @@ namespace htl {
 			TMR_x() = delete;
 			TMR_x(const TMR_x &) = delete;
 			TMR_x(const TMR_x &&) = delete;
-            ~TMR() = delete;
+            ~TMR_x() = delete;
             
 			TMR_x & operator = (const TMR_x &) = delete;
 			TMR_x & operator = (const TMR_x &&) = delete;
 
 		public:
-			inline static void init() {
-				_handler = halTMRInitialize(&_data, settings);
+			inline static void init(const halTMRSettings &settings) {
+				_handler = halTMRInitialize(&_data, &settings);
 			}
 
 			inline static void deInit() {

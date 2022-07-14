@@ -139,6 +139,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>inc/Framework/EOS/HTL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>inc/Framework/EOS/OSAL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -205,6 +210,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -289,19 +299,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/halGPIO_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halGPIO_ex.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/halI2C.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halI2C.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/halI2C_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halI2C_ex.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/halINT.h</name>
@@ -314,19 +314,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSPI.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/halSPI_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSPI_ex.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/halSYS.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halSYS.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/halTMR_ex.h</name>
+			<name>inc/Framework/EOS/HTL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/htlGPIO.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/halTMR_ex.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/htlI2C.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlI2C.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/htlTMR.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/htlTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/OSAL/osalHeap.h</name>
@@ -455,6 +465,11 @@
 		</link>
 		<link>
 			<name>src/Framework/EOS/HAL/STM32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -679,19 +694,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halDMA2D_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halDMA2D_ex.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halEXTI.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halEXTI.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halEXTI_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halEXTI_ex.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halGPIO.h</name>
@@ -699,19 +704,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halGPIO_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halGPIO_ex.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halI2C.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2C.h</locationURI>
-		</link>
-		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halI2C_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halI2C_ex.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halINT.h</name>
@@ -729,11 +724,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSPI.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halSPI_ex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSPI_ex.h</locationURI>
-		</link>
-		<link>
 			<name>inc/Framework/EOS/HAL/STM32/halSYS.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halSYS.h</locationURI>
@@ -744,9 +734,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR.h</locationURI>
 		</link>
 		<link>
-			<name>inc/Framework/EOS/HAL/STM32/halTMR_ex.h</name>
+			<name>inc/Framework/EOS/HTL/STM32/htlEXTI.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Include/HAL/STM32/halTMR_ex.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlEXTI.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlGPIO.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlGPIO.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlI2C.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlI2C.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlLTDC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlLTDC.h</locationURI>
+		</link>
+		<link>
+			<name>inc/Framework/EOS/HTL/STM32/htlTMR.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Include/HTL/STM32/htlTMR.h</locationURI>
 		</link>
 		<link>
 			<name>inc/Framework/EOS/Services/Gui/Visuals</name>
@@ -977,6 +987,11 @@
 			<name>src/Framework/EOS/HAL/STM32/halTMR.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HAL/STM32/halTMR.c</locationURI>
+		</link>
+		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlEXTI_InterruptHandler.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlEXTI_InterruptHandler.cpp</locationURI>
 		</link>
 		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>

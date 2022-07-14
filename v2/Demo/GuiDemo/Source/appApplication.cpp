@@ -1,8 +1,5 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HAL/halGPIO.h"
-#include "HAL/halINT.h"
-#include "HAL/STM32/halEXTI.h"
 #include "Services/eosGuiService.h"
 #include "Services/Gui/eosVisualUtils.h"
 #include "Services/Gui/eosThickness.h"

@@ -59,7 +59,7 @@ void DisplayDriver_ILI9341LTDC::shutdown() {
 ///
 void DisplayDriver_ILI9341LTDC::displayOn() {
 
-	halLTDCEnable();
+	htl::LTDC_1::enable();
 
 	open();
 	writeCommand(CMD_SLEEP_OUT);
@@ -80,7 +80,7 @@ void DisplayDriver_ILI9341LTDC::displayOff() {
 	halTMRDelay(120);
 	close();
 
-	halLTDCDisable();
+	htl::LTDC_1::disable();
 }
 
 
@@ -191,7 +191,7 @@ void DisplayDriver_ILI9341LTDC::setPixels(
 	int y,
 	int width,
 	int height,
-	const Color* colors,
+	const Color *colors,
 	int pitch) {
 
 	_frameBuffer->setPixels(x, y, width, height, colors, pitch);
@@ -203,7 +203,7 @@ void DisplayDriver_ILI9341LTDC::setPixels(
 	int y,
 	int width,
 	int height,
-	const void* pixels,
+	const void *pixels,
 	ColorFormat format,
 	int pitch) {
 
@@ -229,38 +229,12 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza el modul GPIO
 	//
-	constexpr htl::GPIODriver pp = htl::GPIODriver::pushPull;
-	constexpr htl::GPIOSpeed fast = htl::GPIOSpeed::fast;
-
-	GPIO_DE::initAlt(pp, fast, GPIO_DE::GPIOAlt::ltdc_DE);
-	GPIO_HSYNC::initAlt(pp, fast, GPIO_HSYNC::GPIOAlt::ltdc_HSYNC);
-	GPIO_VSYNC::initAlt(pp, fast, GPIO_VSYNC::GPIOAlt::ltdc_VSYNC);
-	GPIO_DOTCLK::initAlt(pp, fast, GPIO_DOTCLK::GPIOAlt::ltdc_DOTCLK);
-	GPIO_R2::initAlt(pp, fast, GPIO_R2::GPIOAlt::ltdc_R2);
-	GPIO_R3::initAlt(pp, fast, GPIO_R3::GPIOAlt::ltdc_R3);
-	GPIO_R4::initAlt(pp, fast, GPIO_R4::GPIOAlt::ltdc_R4);
-	GPIO_R5::initAlt(pp, fast, GPIO_R5::GPIOAlt::ltdc_R5);
-	GPIO_R6::initAlt(pp, fast, GPIO_R6::GPIOAlt::ltdc_R6);
-	GPIO_R7::initAlt(pp, fast, GPIO_R7::GPIOAlt::ltdc_R7);
-	GPIO_G2::initAlt(pp, fast, GPIO_G2::GPIOAlt::ltdc_G2);
-	GPIO_G3::initAlt(pp, fast, GPIO_G3::GPIOAlt::ltdc_G3);
-	GPIO_G4::initAlt(pp, fast, GPIO_G4::GPIOAlt::ltdc_G4);
-	GPIO_G5::initAlt(pp, fast, GPIO_G5::GPIOAlt::ltdc_G5);
-	GPIO_G6::initAlt(pp, fast, GPIO_G6::GPIOAlt::ltdc_G6);
-	GPIO_G7::initAlt(pp, fast, GPIO_G7::GPIOAlt::ltdc_G7);
-	GPIO_B2::initAlt(pp, fast, GPIO_B2::GPIOAlt::ltdc_B2);
-	GPIO_B3::initAlt(pp, fast, GPIO_B3::GPIOAlt::ltdc_B3);
-	GPIO_B4::initAlt(pp, fast, GPIO_B4::GPIOAlt::ltdc_B4);
-	GPIO_B5::initAlt(pp, fast, GPIO_B5::GPIOAlt::ltdc_B5);
-	GPIO_B6::initAlt(pp, fast, GPIO_B6::GPIOAlt::ltdc_B6);
-	GPIO_B7::initAlt(pp, fast, GPIO_B7::GPIOAlt::ltdc_B7);
-
-	GPIO_CS::initOutput(pp, fast);
+	GPIO_CS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
 	GPIO_CS::set();
-	GPIO_RS::initOutput(pp, fast);
+	GPIO_RS::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
 	GPIO_RS::clear();
 #ifdef DISPLAY_RTS_PIN
-	GPIO_RST::initOutput(pp, fast);
+	GPIO_RST::initOutput(htl::GPIODriver::pushPull, htl::GPIOSpeed::fast);
 	GPIO_RST::clear();
 #endif
 
@@ -272,37 +246,30 @@ void DisplayDriver_ILI9341LTDC::initializeInterface() {
 
 	// Inicialitza el modul LTDC
 	//
-	static const halLTDCSettings ltdcSettings = {
-		.HSYNC = DISPLAY_HSYNC,
-		.VSYNC = DISPLAY_VSYNC,
-		.HBP = DISPLAY_HBP,
-		.HFP = DISPLAY_HFP,
-		.VBP = DISPLAY_VBP,
-		.VFP = DISPLAY_VFP,
-		.polarity = {
-			.HSYNC = DISPLAY_HSPOL,
-			.VSYNC = DISPLAY_VSPOL,
-			.DE = DISPLAY_DEPOL,
-			.PC = DISPLAY_PCPOL,
-		 },
-		.width = _displayWidth,
-		.height = _displayHeight
-	};
-	halLTDCInitialize(&ltdcSettings);
-	halLTDCSetBackgroundColor(0x000000FF);
+	htl::LTDC_1::init(_displayWidth, _displayHeight, DISPLAY_HSYNC, DISPLAY_VSYNC,
+		DISPLAY_HBP, DISPLAY_VBP, DISPLAY_HFP, DISPLAY_VFP);
+	htl::LTDC_1::initDEPin<GPIO_DE>(htl::LTDCPolarity::activeLow);
+	htl::LTDC_1::initHSYNCPin<GPIO_HSYNC>(htl::LTDCPolarity::activeLow);
+	htl::LTDC_1::initVSYNCPin<GPIO_VSYNC>(htl::LTDCPolarity::activeLow);
+	htl::LTDC_1::initDOTCLKPin<GPIO_DOTCLK>(htl::LTDCPolarity::activeLow);
+	htl::LTDC_1::initRPins<GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
+	htl::LTDC_1::initGPins<GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
+	htl::LTDC_1::initBPins<GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
+	htl::LTDC_1::setBackgroundColor(RGB(0, 0, 255));
 
-	// Inicialitza la capa 0 del modul LTDC
+	// Inicialitza la capa 1 del modul LTDC
 	//
-	halLTDCLayerSetWindow(HAL_LTDC_LAYER_0, 0, 0, _displayWidth, _displayHeight);
-
-	halLTDCLayerSetFrameFormat(HAL_LTDC_LAYER_0,
+	htl::LTDCLayer_1::setWindow(0, 0, _displayWidth, _displayHeight);
+	htl::LTDCLayer_1::setFrameFormat(
 		htl::LTDCPixelFormatFor<CI::format>::value,
 		_displayWidth * CI::bytes,
 		((_displayWidth * CI::bytes) + 63) & 0xFFFFFFC0,
 		_displayHeight);
+	htl::LTDCLayer_1::setFrameBuffer(reinterpret_cast<void*>(_displayBuffer));
 
-	halLTDCLayerSetFrameBuffer(HAL_LTDC_LAYER_0, (void*) _displayBuffer);
-	halLTDCLayerUpdate(HAL_LTDC_LAYER_0);
+	// Actualitza despres de la reconfiguracio de les capes
+	//
+	htl::LTDC_1::update();
 }
 
 
@@ -349,7 +316,7 @@ void DisplayDriver_ILI9341LTDC::initializeController() {
 
 #ifdef DISPLAY_RST_PORT
     halTMRDelay(10);
-    _pinRST = 1;
+    GPIO_RST::set();
     halTMRDelay(120);
 #endif
 
