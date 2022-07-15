@@ -113,7 +113,6 @@ namespace htl {
             TMR_x & operator = (const TMR_x &&) = delete;
 
         public:
-
             static void setClockDivider(TMRClockDivider divider) {
                 if constexpr (_isT1) {
                     RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
@@ -173,7 +172,7 @@ namespace htl {
                 }
             }
 
-            inline static void setClockSource(TMRClockSource source) {
+            static void setClockSource(TMRClockSource source) {
                 if constexpr (_isT1) {
                     RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
                     regs->T1xCON.TCS = 0;
@@ -184,14 +183,14 @@ namespace htl {
                 }
             }
 
-            inline static void setResolution(TMRResolution resolution) {
+            static void setResolution(TMRResolution resolution) {
                 if constexpr (_isT2) {
                     RegistersT2 *regs = reinterpret_cast<RegistersT2*>(_addr);
                     regs->T2xCON.T32 = resolution == TMRResolution::res32;
                 }
             }
 
-            inline static void setCounter(uint32_t counter) {
+            static void setCounter(uint32_t counter) {
                 if constexpr (_isT1) {
                     RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
                     regs->TMRx = counter & 0xFFFF;
@@ -206,7 +205,7 @@ namespace htl {
                 }
             }
 
-            inline static void setPeriod(uint32_t period) {
+            static void setPeriod(uint32_t period) {
                 if constexpr (_isT1) {
                     RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
                     regs->PRx = period & 0xFFFF;
@@ -221,7 +220,7 @@ namespace htl {
                 }
             }
 
-            inline static void enableInterrupt(TMREvent event) {
+            static void enableInterrupt(TMREvent event) {
                 #ifdef _TMR1
                     if constexpr (timer_ == TMRTimer::timer1)
                         IEC0bits.T1IE = 1;
@@ -244,7 +243,7 @@ namespace htl {
                 #endif
             }
 
-            inline static bool disableInterrupt(TMREvent event) {
+            static bool disableInterrupt(TMREvent event) {
 
                 bool state = false;
 
@@ -333,12 +332,12 @@ namespace htl {
                 _isrParam = param;
             }
 
-            inline static void interruptHandler(TMREvent event) {
+            static void interruptHandler(TMREvent event) {
                 if (_isrFunction != nullptr)
                     _isrFunction(event, _isrParam);
             }
 
-            inline static void start() {
+            static void start() {
                 if constexpr (_isT1) {
                     RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
                     regs->T1xCON.ON = 1;
@@ -349,7 +348,7 @@ namespace htl {
                 }
             }
 
-            inline static void stop() {
+            static void stop() {
                 if constexpr (_isT1) {
                     RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
                     regs->T1xCON.ON = 0;

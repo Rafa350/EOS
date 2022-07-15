@@ -38,8 +38,17 @@
         #error "Hardware no soportado para RGBLTDC "
     #endif
     #define USE_DISPLAY
+	#define DISPLAY_DRV_RGBLTDC
     #define DISPLAY_DOUBLEBUFFER false
     //#define EOS_COLOR_FORMAT ColorFormat::l8
+	#define FONT_USE_Consolas8pt
+	#define FONT_USE_Consolas10pt
+	#define FONT_USE_Consolas12pt
+	#define FONT_USE_Consolas14pt
+	#define FONT_USE_Consolas18pt
+	#define FONT_USE_Consolas24pt
+	#define FONT_USE_Tahoma10pt
+	#define FONT_USE_Tahoma12pt
 
 #elif defined(BUILD_SSD1306)
     #define HARDWARE_CUSTOM

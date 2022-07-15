@@ -31,7 +31,6 @@ namespace htl {
         #ifdef _PORTG
             portG,
         #endif
-        portNone
     };
 
     enum class GPIOPin {
@@ -51,7 +50,6 @@ namespace htl {
         pin13,
         pin14,
         pin15,
-        pinNone
     };
 
     enum class GPIOPull {
@@ -160,7 +158,9 @@ namespace htl {
 			GPIO_x & operator = (const GPIO_x &&) = delete;
 
         public:
-            inline static void initInput(GPIOPull pull = GPIOPull::none) {
+            inline static void initInput(
+                GPIOPull pull = GPIOPull::none) {
+
                 GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 regs->TRISxSET = 1 << _pn;
                 if constexpr (_cn != -1) {
@@ -173,7 +173,10 @@ namespace htl {
                     AD1PCFGSET = 1 <<_an;
             }
 
-            inline static void initOutput(GPIODriver driver = GPIODriver::pushPull, GPIOSpeed speed = GPIOSpeed::medium) {
+            inline static void initOutput(
+                GPIODriver driver = GPIODriver::pushPull,
+                GPIOSpeed speed = GPIOSpeed::medium) {
+
                 GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 regs->TRISxCLR = 1 << _pn;
                 if (driver == GPIODriver::openDrain)
@@ -796,7 +799,7 @@ namespace htl {
 	struct GPIOInfo<GPIOPort::portD, GPIOPin::pin6> {
 		constexpr static const uint32_t addr = _PORTD_BASE_ADDRESS - 0x10;
 		constexpr static const uint32_t pn = 6;
-        constexpr static const uint32_t cn = 5;
+        constexpr static const uint32_t cn = 15;
         constexpr static const uint32_t an = -1;
 	};
 

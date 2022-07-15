@@ -10,14 +10,14 @@
 #define EXIST_LEDS_LED1
 #define LEDS_LED1_PORT            HAL_GPIO_PORT_G
 #define LEDS_LED1_PIN             HAL_GPIO_PIN_13
-#define LEDS_LED1_TYPE            htl::GPIO_G13
+#define GPIO_LED1_TYPE            htl::GPIO_G13
 #endif // USE_LEDS_LED1
 
 #ifdef USE_LEDS_LED2
 #define EXIST_LEDS_LED2
 #define LEDS_LED2_PORT            HAL_GPIO_PORT_G
 #define LEDS_LED2_PIN             HAL_GPIO_PIN_14
-#define LEDS_LED2_TYPE            htl::GPIO_G14
+#define GPIO_LED2_TYPE            htl::GPIO_G14
 #endif // USE_LEDS_LED2
 
 #define LEDS_STATE_ON             1
@@ -32,6 +32,8 @@
 #define EXIST_SWITCHES_SW1
 #define SWITCHES_SW1_PORT         HAL_GPIO_PORT_A
 #define SWITCHES_SW1_PIN          HAL_GPIO_PIN_0
+#define GPIO_SW1_TYPE             htl::GPIO_A0
+
 #endif // USE_SWITCHES_SW1
 
 #define SWITCHES_STATE_ON         1

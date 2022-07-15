@@ -19,25 +19,15 @@
           </logicalFolder>
           <logicalFolder name="f1" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-              <itemPath>../../../Include/HAL/PIC32/halGPIO.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halTMR.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halCN.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halINT.h</itemPath>
               <itemPath>../../../Include/HAL/PIC32/halSYS.h</itemPath>
             </logicalFolder>
-            <itemPath>../../../Include/HAL/halGPIO.h</itemPath>
             <itemPath>../../../Include/HAL/halTMR.h</itemPath>
             <itemPath>../../../Include/HAL/halINT.h</itemPath>
             <itemPath>../../../Include/HAL/halSYS.h</itemPath>
             <itemPath>../../../Include/HAL/hal.h</itemPath>
-          </logicalFolder>
-          <logicalFolder name="f6" displayName="HAL2" projectFiles="true">
-            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-              <itemPath>../../../Include/HAL2/PIC32/halCN.h</itemPath>
-              <itemPath>../../../Include/HAL2/PIC32/halTMR.h</itemPath>
-            </logicalFolder>
-            <itemPath>../../../Include/HAL2/hal.h</itemPath>
-            <itemPath>../../../Include/HAL2/halTMR.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f7" displayName="HTL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
@@ -104,19 +94,12 @@
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
           <logicalFolder name="f1" displayName="HAL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-              <itemPath>../../../Source/HAL/PIC32/halGPIO.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halSYS.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halTMR.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halTMRInterruptWrapper.S</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halCN.c</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halCNInterruptWrapper.S</itemPath>
               <itemPath>../../../Source/HAL/PIC32/halINT.c</itemPath>
-            </logicalFolder>
-          </logicalFolder>
-          <logicalFolder name="f6" displayName="HAL2" projectFiles="true">
-            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
-              <itemPath>../../../Source/HAL2/PIC32/halCN.cpp</itemPath>
-              <itemPath>../../../Source/HAL2/PIC32/halTMR.cpp</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">

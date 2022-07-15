@@ -19,11 +19,11 @@ namespace app {
 
 	class LedService: public eos::AppLoopService {
 		private:
-			#ifdef EXIST_LEDS_LED1
-				typedef LEDS_LED1_TYPE GPIO_LED1;
+			#ifdef EXIST_LED1
+				using GPIO_LED1 = board::led1::GPIO_LED;
 			#endif
-			#ifdef EXIST_LEDS_LED2
-				typedef LEDS_LED2_TYPE GPIO_LED2;
+			#ifdef EXIST_LED2
+				using GPIO_LED2 = board::led2::GPIO_LED;
 			#endif
 
 		public:

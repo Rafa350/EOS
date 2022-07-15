@@ -674,6 +674,16 @@ namespace htl {
         };
 
         template <>
+        struct GPIOInfo<GPIOPort::portB, GPIOPin::pin14> {
+            enum class GPIOAlt {
+                spi2_MISO = 5
+            };
+            constexpr static const uint32_t addr = GPIOB_BASE;
+            constexpr static const uint32_t pn = 14;
+            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
+        };
+
+        template <>
         struct GPIOInfo<GPIOPort::portB, GPIOPin::pin15> {
             enum class GPIOAlt {
                 spi2_MOSI = 5
@@ -1032,6 +1042,7 @@ namespace htl {
         template <>
         struct GPIOInfo<GPIOPort::portI, GPIOPin::pin12> {
             enum class GPIOAlt {
+            	ltdc_LCDE = 14
             };
             constexpr static const uint32_t addr = GPIOI_BASE;
             constexpr static const uint32_t pn = 12;

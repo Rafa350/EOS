@@ -7,34 +7,10 @@
 #include "eos.h"
 
 
-#define HAL_CN_LINE_0             htl::CNLine::cn0
-#define HAL_CN_LINE_1             htl::CNLine::cn1
-#define HAL_CN_LINE_2             htl::CNLine::cn2
-#define HAL_CN_LINE_3             htl::CNLine::cn3
-#define HAL_CN_LINE_4             htl::CNLine::cn4
-#define HAL_CN_LINE_5             htl::CNLine::cn5
-#define HAL_CN_LINE_6             htl::CNLine::cn6
-#define HAL_CN_LINE_7             htl::CNLine::cn7
-#define HAL_CN_LINE_8             htl::CNLine::cn8
-#define HAL_CN_LINE_9             htl::CNLine::cn9
-#define HAL_CN_LINE_10            htl::CNLine::cn10
-#define HAL_CN_LINE_11            htl::CNLine::cn11
-#define HAL_CN_LINE_12            htl::CNLine::cn12
-#define HAL_CN_LINE_13            htl::CNLine::cn13
-#define HAL_CN_LINE_14            htl::CNLine::cn14
-#define HAL_CN_LINE_15            htl::CNLine::cn15
-#define HAL_CN_LINE_16            htl::CNLine::cn16
-#define HAL_CN_LINE_17            htl::CNLine::cn17
-#define HAL_CN_LINE_18            htl::CNLine::cn18
-#define HAL_CN_LINE_19            htl::CNLine::cn19
-#define HAL_CN_LINE_20            htl::CNLine::cn20
-#define HAL_CN_LINE_21            htl::CNLine::cn21
-
-
 namespace htl {
 
     enum class CNLine {
-        cn0 = 0,
+        cn0,
         cn1,
         cn2,
         cn3,
@@ -56,7 +32,7 @@ namespace htl {
         cn19,
         cn20,
         cn21,
-        cnNone = -1
+        cnNone
     };
 
     enum class CNTrigger {
@@ -81,6 +57,10 @@ namespace htl {
 
     class CN {
         private:
+            static CNInterruptFunction _isrFunction;
+            static CNInterruptParam _isrParam;
+
+        private:
             CN() = delete;
             CN(const CN &) = delete;
             CN(const CN &&) = delete;
@@ -88,10 +68,6 @@ namespace htl {
 
             CN & operator = (const CN &) = delete;
             CN & operator = (const CN &&) = delete;
-
-        private:
-            static CNInterruptFunction _isrFunction;
-            static CNInterruptParam _isrParam;
 
         public:
             inline static void init(CNLine line, CNTrigger trigger = CNTrigger::none, CNPull pull = CNPull::none) {

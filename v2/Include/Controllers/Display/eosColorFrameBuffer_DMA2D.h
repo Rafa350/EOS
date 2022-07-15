@@ -12,11 +12,11 @@ namespace eos {
 	///
 	class ColorFrameBuffer_DMA2D: public FrameBuffer {
 		private:
-			typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
-			typedef CI::color_t pixel_t;
+			using CI = ColorInfo<board::display::colorFormat>;
+			using pixel_t = CI::color_t;
 
 		private:
-			pixel_t* _buffer;
+			pixel_t *_buffer;
 			int _bufferPitch;
 
 		private:

@@ -1,13 +1,13 @@
 #ifndef __eosConfig__
 #define __eosConfig__
 
-#define USE_LEDS_LED1
-#define USE_LEDS_LED2
-#define USE_LEDS_LED3
+#define USE_LED1
+#define USE_LED2
+#define USE_LED3
 
-#define USE_SWITCHES_SW1
-#define USE_SWITCHES_SW2
-#define USE_SWITCHES_SW3
+#define USE_SW1
+#define USE_SW2
+#define USE_SW3
 
 #define xUSE_APPLICATION_TICK
 #define APPLICATION_TICK_PERIOD     10

@@ -45,8 +45,8 @@ namespace eos {
 
 			virtual void initialize() = 0;
 			virtual void shutdown() = 0;
-			virtual int getWidth() const = 0;
-			virtual int getHeight() const = 0;
+			virtual int getPadWidth() const = 0;
+			virtual int getPadHeight() const = 0;
 			virtual void setOrientation(TouchPadOrientation orientation) = 0;
 			virtual int getTouchCount() = 0;
 			virtual bool getState(TouchPadState &state) = 0;

@@ -1,6 +1,6 @@
 #include "eos.h"
 #include "eosAssert.h"
-#include "HAL2/halGPIO.h"
+#include "HTL/htlGPIO.h"
 #include "HAL/halINT.h"
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"

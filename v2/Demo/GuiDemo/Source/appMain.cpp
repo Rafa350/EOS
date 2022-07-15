@@ -12,8 +12,6 @@ using namespace app;
 ///
 void appMain() {
 
-	LEDS_Led1Initialize();
-
     MyApplication* application = new MyApplication();
     application->run();
     delete application;

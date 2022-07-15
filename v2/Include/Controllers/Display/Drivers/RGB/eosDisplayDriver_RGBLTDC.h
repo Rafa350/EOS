@@ -1,43 +1,10 @@
 #ifndef __eosDisplayDriver_RGBLTDC__
-#define	__eosDIsplayDriver_RGBLTDC__
+#define	__eosDisplayDriver_RGBLTDC__
 
 
 // EOS includes
 //
 #include "eos.h"
-
-
-// Amplada de la imatge
-//
-#ifndef DISPLAY_IMAGE_WIDTH
-#define DISPLAY_IMAGE_WIDTH      480
-#endif
-#if (DISPLAY_IMAGE_WIDTH != 480)
-#error DISPLAY_IMAGE_WIDTH
-#endif
-
-// Alçada de la imatge
-//
-#ifndef DISPLAY_IMAGE_HEIGHT
-#define DISPLAY_IMAGE_HEIGHT     272
-#endif
-#if (DISPLAY_IMAGE_HEIGHT != 272)
-#error DISPLAY_IMAGE_WIDTH
-#endif
-
-// Format de color
-//
-#ifndef DISPLAY_COLOR_FORMAT
-#define DISPLAY_COLOR_FORMAT      ColorFormat::rgb565
-#endif
-
-// Activacio del doble buffer
-//
-#ifndef DISPLAY_DOUBLEBUFFER
-#define DISPLAY_DOUBLEBUFFER      false
-#endif
-
-
 #include "HTL/STM32/htlGPIO.h"
 #include "HTL/STM32/htlLTDC.h"
 #include "System/Graphics/eosColor.h"
@@ -49,48 +16,60 @@ namespace eos {
 
 	class DisplayDriver_RGBLTDC: public IDisplayDriver {
 		private:
-			typedef ColorInfo<DISPLAY_COLOR_FORMAT> CI;
+			using CI = ColorInfo<board::display::colorFormat>;
 
-			typedef DISPLAY_BKE_TYPE GPIO_BKE;
-			typedef DISPLAY_LCDE_TYPE GPIO_LCDE;
-			typedef DISPLAY_HSYNC_TYPE GPIO_HSYNC;
-			typedef DISPLAY_VSYNC_TYPE GPIO_VSYNC;
-			typedef DISPLAY_DE_TYPE GPIO_DE;
-			typedef DISPLAY_DOTCLK_TYPE GPIO_DOTCLK;
-			typedef DISPLAY_R0_TYPE GPIO_R0;
-			typedef DISPLAY_R1_TYPE GPIO_R1;
-			typedef DISPLAY_R2_TYPE GPIO_R2;
-			typedef DISPLAY_R3_TYPE GPIO_R3;
-			typedef DISPLAY_R4_TYPE GPIO_R4;
-			typedef DISPLAY_R5_TYPE GPIO_R5;
-			typedef DISPLAY_R6_TYPE GPIO_R6;
-			typedef DISPLAY_R7_TYPE GPIO_R7;
-			typedef DISPLAY_G0_TYPE GPIO_G0;
-			typedef DISPLAY_G1_TYPE GPIO_G1;
-			typedef DISPLAY_G2_TYPE GPIO_G2;
-			typedef DISPLAY_G3_TYPE GPIO_G3;
-			typedef DISPLAY_G4_TYPE GPIO_G4;
-			typedef DISPLAY_G5_TYPE GPIO_G5;
-			typedef DISPLAY_G6_TYPE GPIO_G6;
-			typedef DISPLAY_G7_TYPE GPIO_G7;
-			typedef DISPLAY_B0_TYPE GPIO_B0;
-			typedef DISPLAY_B1_TYPE GPIO_B1;
-			typedef DISPLAY_B2_TYPE GPIO_B2;
-			typedef DISPLAY_B3_TYPE GPIO_B3;
-			typedef DISPLAY_B4_TYPE GPIO_B4;
-			typedef DISPLAY_B5_TYPE GPIO_B5;
-			typedef DISPLAY_B6_TYPE GPIO_B6;
-			typedef DISPLAY_B7_TYPE GPIO_B7;
-			typedef htl::LTDC_1 LCD;
-			typedef htl::LTDCLayer_1 LCDLayer;
+			using GPIO_BKE = board::display::GPIO_BKE;
+			using GPIO_LCDE = board::display::GPIO_LCDE;
+
+			using GPIO_DE = board::display::GPIO_DE;
+			using GPIO_HSYNC = board::display::GPIO_HSYNC;
+			using GPIO_VSYNC = board::display::GPIO_VSYNC;
+			using GPIO_PC = board::display::GPIO_PC;
+			using GPIO_R0 = board::display::GPIO_R0;
+			using GPIO_R1 = board::display::GPIO_R1;
+			using GPIO_R2 = board::display::GPIO_R2;
+			using GPIO_R3 = board::display::GPIO_R3;
+			using GPIO_R4 = board::display::GPIO_R4;
+			using GPIO_R5 = board::display::GPIO_R5;
+			using GPIO_R6 = board::display::GPIO_R6;
+			using GPIO_R7 = board::display::GPIO_R7;
+			using GPIO_G0 = board::display::GPIO_G0;
+			using GPIO_G1 = board::display::GPIO_G1;
+			using GPIO_G2 = board::display::GPIO_G2;
+			using GPIO_G3 = board::display::GPIO_G3;
+			using GPIO_G4 = board::display::GPIO_G4;
+			using GPIO_G5 = board::display::GPIO_G5;
+			using GPIO_G6 = board::display::GPIO_G6;
+			using GPIO_G7 = board::display::GPIO_G7;
+			using GPIO_B0 = board::display::GPIO_B0;
+			using GPIO_B1 = board::display::GPIO_B1;
+			using GPIO_B2 = board::display::GPIO_B2;
+			using GPIO_B3 = board::display::GPIO_B3;
+			using GPIO_B4 = board::display::GPIO_B4;
+			using GPIO_B5 = board::display::GPIO_B5;
+			using GPIO_B6 = board::display::GPIO_B6;
+			using GPIO_B7 = board::display::GPIO_B7;
+
+			using LCD = htl::LTDC_1;
+			using LCDLayer = htl::LTDCLayer_1;
 
 		private:
-			constexpr static const int _imageWidth       = DISPLAY_IMAGE_WIDTH;
-			constexpr static const int _imageHeight      = DISPLAY_IMAGE_HEIGHT;
-			constexpr static const int _imageBuffer      = DISPLAY_IMAGE_BUFFER;
-			constexpr static const bool _useDoubleBuffer = DISPLAY_DOUBLEBUFFER;
+			constexpr static const uint16_t _hSync       = board::display::hSync;
+			constexpr static const uint16_t _vSync       = board::display::vSync;
+			constexpr static const uint16_t _hBP         = board::display::hBP;
+			constexpr static const uint16_t _vBP         = board::display::vBP;
+			constexpr static const uint16_t _hFP         = board::display::hFP;
+			constexpr static const uint16_t _vFP         = board::display::vFP;
+			constexpr static const htl::LTDCPolarity _hSyncPol = board::display::hSyncPol;
+			constexpr static const htl::LTDCPolarity _vSyncPol = board::display::vSyncPol;
+			constexpr static const htl::LTDCPolarity _dePol    = board::display::dePol;
+			constexpr static const htl::LTDCPolarity _pcPol    = board::display::pcPol;
+			constexpr static const uint16_t _width       = board::display::width;
+			constexpr static const uint16_t _height      = board::display::height;
+			constexpr static const uint32_t _buffer      = board::display::buffer;
+			constexpr static const bool _useDoubleBuffer = board::display::useDoubleBuffer;
 
-    	private:
+		private:
     		FrameBuffer *_frontFrameBuffer;
     		FrameBuffer *_backFrameBuffer;
     		void *_frontImageBuffer;

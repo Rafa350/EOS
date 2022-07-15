@@ -26,23 +26,23 @@ using namespace eos;
 ///
 DisplayDriver_RGBLTDC::DisplayDriver_RGBLTDC() {
 
-	constexpr const int frameBufferPitchBytes = (_imageWidth * CI::bytes + 63) & 0xFFFFFFC0;
+	constexpr const int frameBufferPitchBytes = (_width * CI::bytes + 63) & 0xFFFFFFC0;
 	constexpr const int frameBufferPitch = frameBufferPitchBytes / CI::bytes;
-	constexpr const int frameSize = frameBufferPitchBytes * _imageHeight;
+	constexpr const int frameSize = frameBufferPitchBytes * _height;
 
-	_frontImageBuffer = (void*)_imageBuffer;
+	_frontImageBuffer = reinterpret_cast<void*>(_buffer);
 	_frontFrameBuffer = new ColorFrameBuffer_DMA2D(
-		_imageWidth,
-		_imageHeight,
+		_width,
+		_height,
 		DisplayOrientation::normal,
 		_frontImageBuffer,
 		frameBufferPitch);
 
 	if constexpr (_useDoubleBuffer) {
-		_backImageBuffer = (void*)(_imageBuffer + frameSize);
+		_backImageBuffer = reinterpret_cast<void*>(_buffer + frameSize);
 		_backFrameBuffer = new ColorFrameBuffer_DMA2D(
-			_imageWidth,
-			_imageHeight,
+			_width,
+			_height,
 			DisplayOrientation::normal,
 			_backImageBuffer,
 			frameBufferPitch);
@@ -301,25 +301,25 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 
 	// Inicialitza el modul LTDC
 	//
-	LCD::initDOTCLKPin<GPIO_DOTCLK>(htl::LTDCPolarity::activeLow);
-	LCD::initHSYNCPin<GPIO_HSYNC>(htl::LTDCPolarity::activeLow);
-	LCD::initVSYNCPin<GPIO_VSYNC>(htl::LTDCPolarity::activeLow);
-	LCD::initDEPin<GPIO_DE>(htl::LTDCPolarity::activeLow);
+	LCD::initPCPin<GPIO_PC>(_pcPol);
+	LCD::initHSYNCPin<GPIO_HSYNC>(_hSyncPol);
+	LCD::initVSYNCPin<GPIO_VSYNC>(_vSyncPol);
+	LCD::initDEPin<GPIO_DE>(_dePol);
 	LCD::initRPins<GPIO_R0, GPIO_R1, GPIO_R2, GPIO_R3, GPIO_R4, GPIO_R5, GPIO_R6, GPIO_R7>();
 	LCD::initGPins<GPIO_G0, GPIO_G1, GPIO_G2, GPIO_G3, GPIO_G4, GPIO_G5, GPIO_G6, GPIO_G7>();
 	LCD::initBPins<GPIO_B0, GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
-	LCD::init(_imageWidth, _imageHeight, DISPLAY_HSYNC, DISPLAY_VSYNC,
-		DISPLAY_HBP, DISPLAY_VBP, DISPLAY_HFP, DISPLAY_VFP);
+	LCD::init(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
 	LCD::setBackgroundColor(COLOR_Blue);
 
 	// Inicialitza la capa 1
 	//
-	LCDLayer::setWindow(0, 0, _imageWidth, _imageHeight);
+	LCDLayer::setWindow(0, 0, _width, _height);
 	LCDLayer::setFrameFormat(
 		htl::LTDCPixelFormatFor<CI::format>::value,
-		_imageWidth * CI::bytes,
-		((_imageWidth * CI::bytes) + 63) & 0xFFFFFFC0,
-		_imageHeight);
+		_width * CI::bytes,
+		((_width * CI::bytes) + 63) & 0xFFFFFFC0,
+		_height);
+
 	LCDLayer::setFrameBuffer((void*)_frontImageBuffer);
 	LCD::update();
 }

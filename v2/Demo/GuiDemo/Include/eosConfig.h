@@ -9,19 +9,28 @@
 
 // Opcions dels leds integrats
 //
-#define USE_LEDS_LED1
-#define USE_LEDS_LED2
+#define USE_LED1
+#define USE_LED2
 
 // Opcions dels switches integrats
 //
-#define USE_SWITCHES_SW1
+#define USE_SW1
 
 // Opcions del display integrat
 //
 #define USE_DISPLAY
-#define DISPLAY_COLOR_FORMAT                          ColorFormat::rgb565
+#define DISPLAY_DRV_RGBLTDC
+#define DISPLAY_COLOR_FORMAT                          eos::ColorFormat::rgb565
 #define DISPLAY_DOUBLEBUFFER                          true
 #define OPT_DISPLAY_DoubleBuffer
+#define FONT_USE_Consolas8pt
+#define FONT_USE_Consolas10pt
+#define FONT_USE_Consolas12pt
+#define FONT_USE_Consolas14pt
+#define FONT_USE_Consolas18pt
+#define FONT_USE_Consolas24pt
+#define FONT_USE_Tahoma10pt
+#define FONT_USE_Tahoma12pt
 
 // Opcions del touchpad integrat
 //

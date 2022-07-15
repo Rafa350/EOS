@@ -20,16 +20,6 @@
 #define FT5336_I2C_ADDR                0x70
 #endif
 
-// Amplada del pad
-#ifndef FT5336_PAD_WIDTH
-#define FT5336_PAD_WIDTH               480
-#endif
-
-// Alçada del pad
-#ifndef FT5336_PAD_HEIGHT
-#define FT5336_PAD_HEIGHT              272
-#endif
-
 // Max detectable simultaneous touches
 #define FT5336_MAX_DETECTABLE_TOUCH         ((uint8_t)0x05)
 
@@ -255,23 +245,24 @@ namespace eos {
 	class TouchPadDriver_FT5336: public ITouchPadDriver {
 		private:
 			#ifdef TOUCHPAD_INT_PORT
-		    	typedef TOUCHPAD_INT_TYPE GPIO_INT;
-		    	typedef TOUCHPAD_INT_EXTI_TYPE EXTI_INT;
+		    	using GPIO_INT = board::touchpad::GPIO_INT;
+		    	using EXTI_INT = board::touchpad::EXTI_INT;
 			#endif
-			typedef TOUCHPAD_SCL_TYPE GPIO_SCL;
-			typedef TOUCHPAD_SDA_TYPE GPIO_SDA;
-			typedef TOUCHPAD_I2C_TYPE I2C;
+			using GPIO_SCL = board::touchpad::GPIO_SCL;
+			using GPIO_SDA = board::touchpad::GPIO_SDA;
+			using I2C = board::touchpad::I2C;
+
+			constexpr static const uint16_t _width = board::touchpad::width;
+     		constexpr static const uint16_t _height = board::touchpad::height;
+     		constexpr static const uint8_t _i2cAddr = board::touchpad::i2cAddr;
 
 		private:
 			static ITouchPadDriver *_instance;
-			uint8_t _addr;
-			int _padWidth;
-			int _padHeight;
 			TouchPadOrientation _orientation;
 
 		private:
 			TouchPadDriver_FT5336();
-			TouchPadDriver_FT5336(const TouchPadDriver_FT5336 &other) = delete;
+			TouchPadDriver_FT5336(const TouchPadDriver_FT5336 &) = delete;
 
 		public:
 			static ITouchPadDriver* getInstance();
@@ -279,8 +270,8 @@ namespace eos {
 			void initialize();
 			void shutdown();
 
-			int getWidth() const override { return _padWidth; }
-			int getHeight() const override { return _padHeight; }
+			int getPadWidth() const override { return _width; }
+			int getPadHeight() const override { return _height; }
 			int getTouchCount();
 			bool getState(TouchPadState& state);
 			void setOrientation(TouchPadOrientation orientation);

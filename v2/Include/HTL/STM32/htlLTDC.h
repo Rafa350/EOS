@@ -25,9 +25,6 @@ namespace htl {
     };
 
     class LTDC_x {
-    	private:
-    		constexpr static const uint32_t _addr = LTDC_BASE;
-
 		private:
 			LTDC_x() = delete;
 			LTDC_x(const LTDC_x &);
@@ -59,8 +56,6 @@ namespace htl {
 				uint16_t vFP) {
 
 		    	uint32_t tmp;
-				LTDC_TypeDef *regs = reinterpret_cast<LTDC_TypeDef*>(_addr);
-
 
 		    	// Activa el rellotge del dispositiu
 		    	//
@@ -68,43 +63,43 @@ namespace htl {
 
 		    	// Desactiva el dispositiu
 		    	//
-		    	regs->GCR &= ~LTDC_GCR_LTDCEN;
+		    	LTDC->GCR &= ~LTDC_GCR_LTDCEN;
 
 		    	// Configura el registre SSCR (Sinchronization Size Configuration Register)
 		        //
-		        tmp = regs->SSCR;
+		        tmp = LTDC->SSCR;
 		        tmp &= ~(LTDC_SSCR_HSW | LTDC_SSCR_VSH);
 		        tmp |= ((hSync - 1) << LTDC_SSCR_HSW_Pos) & LTDC_SSCR_HSW;
 		        tmp |= ((vSync - 1) << LTDC_SSCR_VSH_Pos) & LTDC_SSCR_VSH;
-		        regs->SSCR = tmp;
+		        LTDC->SSCR = tmp;
 
 		        // Configura el registre BPCR (Back Porch Configuration Register)
 		        //
-		        tmp = regs->BPCR;
+		        tmp = LTDC->BPCR;
 		        tmp &= ~(LTDC_BPCR_AVBP | LTDC_BPCR_AHBP);
 		        tmp |= ((hSync + hBP - 1) << LTDC_BPCR_AHBP_Pos) & LTDC_BPCR_AHBP;
 		        tmp |= ((vSync + vBP - 1) << LTDC_BPCR_AVBP_Pos) & LTDC_BPCR_AVBP;
-		        regs->BPCR = tmp;
+		        LTDC->BPCR = tmp;
 
 		        // Configura el registre AWCR (Active Width Configuration Register)
 		        // -AAW = HSYNC + HBP + WIDTH - 1
 		        // -AAH = VSYNC + VBP + HEIGHT - 1
 		        //
-		        tmp = regs->AWCR;
+		        tmp = LTDC->AWCR;
 		        tmp &= ~(LTDC_AWCR_AAW | LTDC_AWCR_AAH);
 		        tmp |= ((hSync + hBP + width - 1) << LTDC_AWCR_AAW_Pos) & LTDC_AWCR_AAW;
 		        tmp |= ((vSync + vBP + height - 1) << LTDC_AWCR_AAH_Pos) & LTDC_AWCR_AAH;
-		        regs->AWCR = tmp;
+		        LTDC->AWCR = tmp;
 
 		        // Configura el registre TWCR (Total Width Configuration Register)
 		        // -TOTALW = HSYNC + HBP + WIDTH + HFP - 1
 		        // -TOTALH = VSYNC + VBP + HEIGHT + VFP - 1
 		        //
-		        tmp = regs->TWCR;
+		        tmp = LTDC->TWCR;
 		        tmp &= ~(LTDC_TWCR_TOTALH | LTDC_TWCR_TOTALW);
 		        tmp |= ((hSync + hBP + width + hFP - 1) << LTDC_TWCR_TOTALW_Pos) & LTDC_TWCR_TOTALW;
 		        tmp |= ((vSync + vBP + height + vFP - 1) << LTDC_TWCR_TOTALH_Pos) & LTDC_TWCR_TOTALH;
-		        regs->TWCR = tmp;
+		        LTDC->TWCR = tmp;
 		    }
 
 		    static void deInit() {
@@ -115,14 +110,12 @@ namespace htl {
 
 		    inline static void enable() {
 
-				LTDC_TypeDef *regs = reinterpret_cast<LTDC_TypeDef*>(_addr);
-		    	regs->GCR |= LTDC_GCR_LTDCEN;
+		    	LTDC->GCR |= LTDC_GCR_LTDCEN;
 		    }
 
 		    inline static void disable() {
 
-				LTDC_TypeDef *regs = reinterpret_cast<LTDC_TypeDef*>(_addr);
-		    	regs->GCR &= ~LTDC_GCR_LTDCEN;
+		    	LTDC->GCR &= ~LTDC_GCR_LTDCEN;
 		    }
 
 		    template <typename gpio_>
@@ -142,11 +135,11 @@ namespace htl {
 			}
 
 			template <typename gpio_>
-			static void initDOTCLKPin(
+			static void initPCPin(
 				LTDCPolarity polarity = LTDCPolarity::noChange) {
 
 				gpio_::initAlt(GPIODriver::pushPull, GPIOSpeed::fast, gpio_::GPIOAlt::ltdc_DOTCLK);
-				setDOTCLKPolarity(polarity);
+				setPCPolarity(polarity);
 			}
 
 			template <typename gpio_>
@@ -238,71 +231,63 @@ namespace htl {
 			static void setHSYNCPolarity(
 				LTDCPolarity polarity) {
 
-				LTDC_TypeDef *regs = reinterpret_cast<LTDC_TypeDef*>(_addr);
 				if (polarity == LTDCPolarity::activeHigh)
-			    	regs->GCR |= LTDC_GCR_HSPOL;
+			    	LTDC->GCR |= LTDC_GCR_HSPOL;
 			    else if (polarity == LTDCPolarity::activeLow)
-				    regs->GCR &= ~LTDC_GCR_HSPOL;
+				    LTDC->GCR &= ~LTDC_GCR_HSPOL;
 			}
 
 			static void setVSYNCPolarity(
 				LTDCPolarity polarity) {
 
-				LTDC_TypeDef *regs = reinterpret_cast<LTDC_TypeDef*>(_addr);
 				if (polarity == LTDCPolarity::activeHigh)
-			    	regs->GCR |= LTDC_GCR_VSPOL;
+			    	LTDC->GCR |= LTDC_GCR_VSPOL;
 			    else if (polarity == LTDCPolarity::activeLow)
-				    regs->GCR &= ~LTDC_GCR_VSPOL;
+				    LTDC->GCR &= ~LTDC_GCR_VSPOL;
 			}
 
 			static void setDEPolarity(
 				LTDCPolarity polarity) {
 
-				LTDC_TypeDef *regs = reinterpret_cast<LTDC_TypeDef*>(_addr);
 				if (polarity == LTDCPolarity::activeHigh)
-			    	regs->GCR |= LTDC_GCR_DEPOL;
+			    	LTDC->GCR |= LTDC_GCR_DEPOL;
 			    else if (polarity == LTDCPolarity::activeLow)
-				    regs->GCR &= ~LTDC_GCR_DEPOL;
+				    LTDC->GCR &= ~LTDC_GCR_DEPOL;
 			}
 
-			static void setDOTCLKPolarity(
+			static void setPCPolarity(
 				LTDCPolarity polarity) {
 
-				LTDC_TypeDef *regs = reinterpret_cast<LTDC_TypeDef*>(_addr);
 				if (polarity == LTDCPolarity::activeHigh)
-			    	regs->GCR |= LTDC_GCR_PCPOL;
+			    	LTDC->GCR |= LTDC_GCR_PCPOL;
 			    else if (polarity == LTDCPolarity::activeLow)
-				    regs->GCR &= ~LTDC_GCR_PCPOL;
+				    LTDC->GCR &= ~LTDC_GCR_PCPOL;
 			}
 
 			static void setBackgroundColor(
 				uint32_t rgb) {
 
-				LTDC_TypeDef *regs = reinterpret_cast<LTDC_TypeDef*>(_addr);
-
 				// Configura el registre BCCR (Back Color Configuration Register)
 			    //
-			    uint32_t tmp = regs->BCCR;
+			    uint32_t tmp = LTDC->BCCR;
 			    tmp &= ~(LTDC_BCCR_BCRED | LTDC_BCCR_BCGREEN | LTDC_BCCR_BCBLUE);
 			    tmp |= ((rgb & 0x00FF0000) >> 16) << LTDC_BCCR_BCRED_Pos;
 			    tmp |= ((rgb & 0x0000FF00) >> 8) << LTDC_BCCR_BCGREEN_Pos;
 			    tmp |= (rgb & 0x000000FF) << LTDC_BCCR_BCBLUE_Pos;
-			    regs->BCCR = tmp;
+			    LTDC->BCCR = tmp;
 			}
 
 			static void update() {
 
-				LTDC_TypeDef *regs = reinterpret_cast<LTDC_TypeDef*>(_addr);
-
-				if ((regs->GCR & LTDC_GCR_LTDCEN) == 0)
-			    	regs->SRCR |= LTDC_SRCR_IMR;
+				if ((LTDC->GCR & LTDC_GCR_LTDCEN) == 0)
+			    	LTDC->SRCR |= LTDC_SRCR_IMR;
 
 			    // En cas contrari, fa l'actualitzacio durant la sincronitzacio
 			    // vertical, i espera que finalitzi.
 			    //
 			    else {
-			    	regs->SRCR |= LTDC_SRCR_VBR;
-					while ((regs->CDSR & LTDC_CDSR_VSYNCS) == 0)
+			    	LTDC->SRCR |= LTDC_SRCR_VBR;
+					while ((LTDC->CDSR & LTDC_CDSR_VSYNCS) == 0)
 						continue;
 			    }
 			}

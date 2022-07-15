@@ -8,38 +8,28 @@ void NMI_Handler(void) {
 
 void HardFault_Handler(void) {
 
-#ifdef EXISTS_LEDS_LED1
-	halGPIOSetPin(LEDS_LED1_PORT, LEDS_LED1_PIN);
-#endif
-#ifdef EXIST_LEDS_LED2
-	halGPIOSetPin(LEDS_LED2_PORT, LEDS_LED2_PIN);
-#endif
-#ifdef EXIST_LEDS_LED3
-	halGPIOSetPin(LEDS_LED3_PORT, LEDS_LED3_PIN);
-#endif
-
-	while (1) {
+	while (true) {
 	}
 }
 
 
 void MemManage_Handler(void) {
 
-	while (1) {
+	while (true) {
 	}
 }
 
 
 void BusFault_Handler(void) {
 
-	while (1) {
+	while (true) {
 	}
 }
 
 
 void UsageFault_Handler(void) {
 
-	while (1) {
+	while (true) {
 	}
 }
 

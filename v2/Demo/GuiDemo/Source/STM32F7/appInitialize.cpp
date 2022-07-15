@@ -58,7 +58,7 @@ static void initializeCLK() {
 	//
 	pclkInit.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
 	pclkInit.PLLSAI.PLLSAIN = 192;
-	pclkInit.PLLSAI.PLLSAIR = DISPLAY_FDIV;
+	pclkInit.PLLSAI.PLLSAIR = board::display::fdiv;
 	pclkInit.PLLSAIDivR = RCC_PLLSAIDIVR_4;
 	HAL_RCCEx_PeriphCLKConfig(&pclkInit);
 }

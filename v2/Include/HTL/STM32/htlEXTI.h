@@ -91,6 +91,14 @@ namespace htl {
 			EXTI_x & operator = (const EXTI_x &) = delete;
 			EXTI_x & operator = (const EXTI_x &&) = delete;
 
+			inline static void enableClock() {
+
+			}
+
+			inline static void disableClock() {
+
+			}
+
 		public:
 			static void init(
 				EXTIPort port,
@@ -99,7 +107,7 @@ namespace htl {
 
 				halEXTIInitializeLine(halEXTILine(line_), halEXTIOptions(port) | halEXTIOptions(mode) | halEXTIOptions(trigger));
 
-				EXTI_TypeDef *regs = reinterpret_cast<EXTI_TypeDef*>(_addr);
+				/*EXTI_TypeDef *regs = reinterpret_cast<EXTI_TypeDef*>(_addr);
 
 				// Configura el registre IMR (Interrupt Mask Register);
 				//
@@ -129,17 +137,17 @@ namespace htl {
 				else
 					regs->FTSR &= ~(1 << _ln);
 
-				XXXXXXXXXXXXXXXXXXXX
+				//XXXXXXXXXXXXXXXXXXXX*/
 			}
 
-			inline static void setInterruptFunction(
+			static void setInterruptFunction(
 				halEXTIInterruptFunction function,
 				void *params) {
 
 				halEXTISetInterruptFunction(halEXTILine(line_), function, params);
 			}
 
-			inline static void setInterruptFunction(
+			static void setInterruptFunction(
 				EXTIInterruptFunction function,
 				EXTIInterruptParam param = nullptr) {
 
@@ -147,14 +155,14 @@ namespace htl {
                 _isrParam = param;
             }
 
-			inline static void enableInterrupt() {
+			static void enableInterrupt() {
 
 				EXTI_TypeDef *regs = reinterpret_cast<EXTI_TypeDef*>(_addr);
 
 				regs->IMR |= 1 << _ln;
 			}
 
-			inline static bool disableInterrupt() {
+			static bool disableInterrupt() {
 
 				EXTI_TypeDef *regs = reinterpret_cast<EXTI_TypeDef*>(_addr);
 

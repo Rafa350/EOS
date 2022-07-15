@@ -1,21 +1,14 @@
 #include "eos.h"
-#include "HAL2/halGPIO.h"
 #include "HAL/halINT.h"
 #include "HAL/halSYS.h"
-#ifdef EOS_PIC32
-#include "HTL/PIC32/htlCN.h"
-#endif
 #include "HAL/halTMR.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
 #include "System/eosApplication.h"
 
 #include "appApplication.h"
-#include "HAL2/PIC32/halTMR.h"
-#include "HAL2/PIC32/halGPIO.h"
 #include "HTL/htlGPIO.h"
 #include "HTL/htlTMR.h"
-#include "HTL/PIC32/htlGPIO.h"
 
 
 using namespace eos;
@@ -31,10 +24,10 @@ halTMRData digOutputTimer;
 ///
 MyApplication::MyApplication():
     sw1EventCallback(this, &MyApplication::sw1EventHandler)
-#ifdef EXIST_SWITCHES_SW2
+#ifdef EXIST_SW2
     , sw2EventCallback(this, &MyApplication::sw2EventHandler)
 #endif
-#ifdef EXIST_SWITCHES_SW3
+#ifdef EXIST_SW3
     , sw3EventCallback(this, &MyApplication::sw3EventHandler)
 #endif
 {
@@ -85,7 +78,7 @@ void MyApplication::onInitialize() {
 
     // Inicialitza la entrada corresponent al switch SW1
     //
-#ifdef EXIST_SWITCHES_SW1
+#ifdef EXIST_SW1
     GPIO_SW1::initInput(htl::GPIOPull::up);
     sw1 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW1>());
     sw1->setCallback(sw1EventCallback, nullptr);
@@ -93,7 +86,7 @@ void MyApplication::onInitialize() {
 
     // Inicialitza la entrada corresponent al switch SW2
     //
-#ifdef EXIST_SWITCHES_SW2
+#ifdef EXIST_SW2
     GPIO_SW2::initInput(htl::GPIOPull::up);
     sw2 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW2>());
     sw2->setCallback(sw2EventCallback, nullptr);
@@ -101,7 +94,7 @@ void MyApplication::onInitialize() {
 
     // Inicialitza la entrada corresponent al switch SW3
     //
-#ifdef EXIST_SWITCHES_SW3
+#ifdef EXIST_SW3
     GPIO_SW3::initInput(htl::GPIOPull::up);
     sw3 = new DigInput(_digInputService, htl::getAdapter<GPIO_SW3>());
     sw3->setCallback(sw3EventCallback, nullptr);
@@ -135,29 +128,26 @@ void MyApplication::onInitialize() {
 
     // Inicialitza la sortida corresponent al led LED1
     //
-#ifdef EXIST_LEDS_LED1
+#ifdef EXIST_LED1
     GPIO_LED1::initOutput();
     GPIO_LED1::clear();
     led1 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED1>());
-    led1->write(LEDS_STATE_OFF);
 #endif
 
     // Inicialitza la sortida corresponent al led LED2
     //
-#ifdef EXIST_LEDS_LED2
+#ifdef EXIST_LED2
     GPIO_LED2::initOutput();
     GPIO_LED2::clear();
     led2 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED2>());
-    led2->write(LEDS_STATE_OFF);
 #endif
 
     // Inicialitza la sortida corresponent al led LED3
     //
-#ifdef EXIST_LEDS_LED3
+#ifdef EXIST_LED3
     GPIO_LED3::initOutput();
     GPIO_LED3::clear();
     led3 = new DigOutput(_digOutputService, htl::getAdapter<GPIO_LED3>());
-    led3->write(LEDS_STATE_OFF);
 #endif
 
     _timerService = new TimerService(this);
@@ -170,14 +160,14 @@ void MyApplication::onInitialize() {
 /// \brief    Procesa els events del switch 1.
 /// \param    args: Parametres del event.
 ///
-#ifdef EXIST_SWITCHES_SW1
+#ifdef EXIST_SW1
 void MyApplication::sw1EventHandler(
     const DigInput::EventArgs &args) {
 
-    if (sw1->read() == SWITCHES_STATE_ON) {
+    if (sw1->read()) {
         led1->pulse(500);
         led2->delayedPulse(250, 500);
-#ifdef EXIST_LEDS_LED3
+#ifdef EXIST_LED3
         led3->delayedPulse(500, 500);
 #endif
     }
@@ -189,15 +179,15 @@ void MyApplication::sw1EventHandler(
 /// \brief    Procesa els events de switch 2.
 /// \param    args: Parametres del event.
 ///
-#ifdef EXIST_SWITCHES_SW2
+#ifdef EXIST_SW2
 void MyApplication::sw2EventHandler(
     const DigInput::EventArgs &args) {
 
-    if (sw2->read() == SWITCHES_STATE_ON) {
-#ifdef EXIST_LEDS_LED3
+    if (sw2->read()) {
+#ifdef EXIST_LED3
         led3->pulse(500);
 #endif
-#ifdef EXIST_LEDS_LED2
+#ifdef EXIST_LED2
         led2->delayedPulse(250, 500);
 #endif
         led1->delayedPulse(500, 500);
@@ -210,16 +200,16 @@ void MyApplication::sw2EventHandler(
 /// \brief    Procesa els events del switch 3.
 /// \param    args: Parametres del event.
 ///
-#ifdef EXIST_SWITCHES_SW3
+#ifdef EXIST_SW3
 void MyApplication::sw3EventHandler(
     const DigInput::EventArgs &args) {
 
-    if (sw3->read() == SWITCHES_STATE_ON) {
+    if (sw3->read()) {
         led1->pulse(1000);
-#ifdef EXIST_LEDS_LED2
+#ifdef EXIST_LED2
         led2->pulse(2000);
 #endif
-#ifdef EXIST_LEDS_LED3
+#ifdef EXIST_LED3
         led3->pulse(3000);
 #endif
     }

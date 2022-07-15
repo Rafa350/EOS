@@ -15,7 +15,7 @@ using namespace eos;
 Screen::Screen() {
 
 	setBackground(Brush(BrushStyle::solid, RGB(0x50, 0x50, 0x50)));
-	setSize(Size(DISPLAY_IMAGE_WIDTH, DISPLAY_IMAGE_HEIGHT));
+	setSize(Size(board::display::width, board::display::height));
 }
 
 

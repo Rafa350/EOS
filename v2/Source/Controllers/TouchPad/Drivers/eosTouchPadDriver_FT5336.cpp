@@ -33,9 +33,6 @@ ITouchPadDriver* TouchPadDriver_FT5336::getInstance() {
 /// \brief    Contructor.
 ///
 TouchPadDriver_FT5336::TouchPadDriver_FT5336():
-	_addr(TOUCHPAD_I2C_ADDR),
-	_padWidth(TOUCHPAD_PAD_WIDTH),
-	_padHeight(TOUCHPAD_PAD_HEIGHT),
 	_orientation(TouchPadOrientation::normal) {
 }
 
@@ -76,20 +73,6 @@ void TouchPadDriver_FT5336::setOrientation(
 	TouchPadOrientation orientation) {
 
 	_orientation = orientation;
-
-	switch (orientation) {
-		case TouchPadOrientation::normal:
-		case TouchPadOrientation::rotate180:
-			_padWidth = TOUCHPAD_PAD_WIDTH;
-			_padHeight = TOUCHPAD_PAD_HEIGHT;
-			break;
-
-		case TouchPadOrientation::rotate90:
-		case TouchPadOrientation::rotate270:
-			_padWidth = TOUCHPAD_PAD_HEIGHT;
-			_padHeight = TOUCHPAD_PAD_WIDTH;
-			break;
-	}
 }
 
 
@@ -237,13 +220,13 @@ bool TouchPadDriver_FT5336::getState(
 				break;
 
 			case TouchPadOrientation::rotate180:
-				state.x[c] = _padWidth - tempX;
-				state.y[c] = _padHeight - tempY;
+				state.x[c] = _width - tempX;
+				state.y[c] = _height - tempY;
 				break;
 
 			case TouchPadOrientation::rotate270:
-				state.x[c] = _padWidth - tempY;
-				state.y[c] = _padHeight - tempX;
+				state.x[c] = _height - tempY;
+				state.y[c] = _width - tempX;
 				break;
 		}
 	}
@@ -323,7 +306,7 @@ void TouchPadDriver_FT5336::writeRegister(
 	data[0] = reg;
 	data[1] = value;
 
-	I2C::send(_addr, data, sizeof(data));
+	I2C::send(_i2cAddr, data, sizeof(data));
 }
 
 
@@ -338,8 +321,8 @@ uint8_t TouchPadDriver_FT5336::readRegister(
 
 	uint8_t value;
 
-	I2C::send(_addr, &reg, 1);
-	I2C::receive(_addr, &value, sizeof(value));
+	I2C::send(_i2cAddr, &reg, 1);
+	I2C::receive(_i2cAddr, &value, sizeof(value));
 
 	return value;
 }

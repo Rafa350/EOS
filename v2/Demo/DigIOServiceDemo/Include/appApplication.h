@@ -12,58 +12,56 @@
 
 namespace app {
 
-    using namespace eos;
-
     class LedLoopService;
 
-    class MyApplication: public Application {
+    class MyApplication: public eos::Application {
         private:
-            typedef CallbackP1<MyApplication, const DigInput::EventArgs&> DigInputEventCallback;
-            typedef LEDS_LED1_TYPE GPIO_LED1;
-            typedef LEDS_LED2_TYPE GPIO_LED2;
-            typedef LEDS_LED3_TYPE GPIO_LED3;
-            typedef SWITCHES_SW1_TYPE GPIO_SW1;
-            typedef SWITCHES_SW2_TYPE GPIO_SW2;
-            typedef SWITCHES_SW3_TYPE GPIO_SW3;
+            typedef eos::CallbackP1<MyApplication, const eos::DigInput::EventArgs&> DigInputEventCallback;
+            using GPIO_LED1 = board::led1::GPIO_LED;
+            using GPIO_LED2 = board::led2::GPIO_LED;
+            using GPIO_LED3 = board::led3::GPIO_LED;
+            using GPIO_SW1 = board::sw1::GPIO_SW;
+            using GPIO_SW2 = board::sw2::GPIO_SW;
+            using GPIO_SW3 = board::sw3::GPIO_SW;
 
         private:
-            DigOutputService *_digOutputService;
-            DigInputService *_digInputService;
-            TimerService *_timerService;
+            eos::DigOutputService *_digOutputService;
+            eos::DigInputService *_digInputService;
+            eos::TimerService *_timerService;
 
-    #ifdef EXIST_LEDS_LED1
-            DigOutput *led1;
-    #endif
-    #ifdef EXIST_LEDS_LED2
-            DigOutput *led2;
-    #endif
-    #ifdef EXIST_LEDS_LED3
-            DigOutput *led3;
-    #endif
-    #ifdef EXIST_SWITCHES_SW1
-            DigInput *sw1;
-            DigInputEventCallback sw1EventCallback;
-    #endif
-    #ifdef EXIST_SWITCHES_SW2
-            DigInput *sw2;
-            DigInputEventCallback sw2EventCallback;
-    #endif
-    #ifdef EXIST_SWITCHES_SW3
-            DigInput *sw3;
-            DigInputEventCallback sw3EventCallback;
-    #endif
+            #ifdef EXIST_LED1
+                eos::DigOutput *led1;
+            #endif
+            #ifdef EXIST_LED2
+                eos::DigOutput *led2;
+            #endif
+            #ifdef EXIST_LED3
+                eos::DigOutput *led3;
+            #endif
+            #ifdef EXIST_SW1
+                eos::DigInput *sw1;
+                DigInputEventCallback sw1EventCallback;
+            #endif
+            #ifdef EXIST_SW2
+                eos::DigInput *sw2;
+                DigInputEventCallback sw2EventCallback;
+            #endif
+            #ifdef EXIST_SW3
+                eos::DigInput *sw3;
+                DigInputEventCallback sw3EventCallback;
+            #endif
 
         public:
             MyApplication();
-    #ifdef EXIST_SWITCHES_SW1
-            void sw1EventHandler(const DigInput::EventArgs &args);
-    #endif
-    #ifdef EXIST_SWITCHES_SW2
-            void sw2EventHandler(const DigInput::EventArgs &args);
-    #endif
-    #ifdef EXIST_SWITCHES_SW3
-            void sw3EventHandler(const DigInput::EventArgs &args);
-    #endif
+            #ifdef EXIST_SW1
+                void sw1EventHandler(const eos::DigInput::EventArgs &args);
+            #endif
+            #ifdef EXIST_SW2
+                void sw2EventHandler(const eos::DigInput::EventArgs &args);
+            #endif
+            #ifdef EXIST_SW3
+                void sw3EventHandler(const eos::DigInput::EventArgs &args);
+            #endif
 
         protected:
             void onInitialize();

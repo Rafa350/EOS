@@ -12,10 +12,18 @@
 namespace htl {
 
 	enum class I2CChannel: halI2CChannel {
-		channel1 = HAL_I2C_CHANNEL_1,
-		channel2 = HAL_I2C_CHANNEL_2,
-		channel3 = HAL_I2C_CHANNEL_3,
-		channel4 = HAL_I2C_CHANNEL_4
+		#ifdef SPI1
+			channel1 = HAL_I2C_CHANNEL_1,
+		#endif
+		#ifdef SPI2
+			channel2 = HAL_I2C_CHANNEL_2,
+		#endif
+		#ifdef SPI3
+			channel3 = HAL_I2C_CHANNEL_3,
+		#endif
+		#ifdef SPI4
+			channel4 = HAL_I2C_CHANNEL_4
+		#endif
 	};
 
 	enum class I2CResult: halI2CResult {
@@ -26,11 +34,19 @@ namespace htl {
 	};
 
 	template <I2CChannel channel_>
+	class I2CInfo {
+		static const uint32_t addr;
+		static const uint32_t rccen;
+	};
+
+	template <I2CChannel channel_>
 	class I2C_x {
 		private:
+			using Info = I2CInfo<channel_>;
 			constexpr static const unsigned _defaultBlockTime = 1000;
+			constexpr static const uint32_t _addr = Info::addr;
+			constexpr static const uint32_t _rccen = Info::rccen;
 
-		private:
 			static halI2CHandler _handler;
 			static halI2CData _data;
 
@@ -46,6 +62,14 @@ namespace htl {
 			I2C_x & operator = (const I2C_x &) = delete;
 			I2C_x & operator = (const I2C_x &&) = delete;
 
+			inline static void enableClock() {
+                RCC->APB1ENR |= _rccen;
+            }
+
+            inline static void disableClock() {
+            	RCC->APB1ENR &= ~_rccen;
+            }
+
 		public:
 			static I2CResult initMaster() {
 
@@ -56,6 +80,7 @@ namespace htl {
             
             inline static void deInit() {
                 
+            	disableClock();
             }
 
 			inline static I2CResult enable() {
@@ -76,66 +101,113 @@ namespace htl {
 
             template <typename gpio_>
 			static void initSCLPin() {
-				if constexpr (channel_ == I2CChannel::channel1)
-					gpio_::initAlt(
-						htl::GPIODriver::openDrain,
-						htl::GPIOSpeed::fast,
-						gpio_::GPIOAlt::i2c1_SCL);
-
-				if constexpr (channel_ == I2CChannel::channel2)
-					gpio_::initAlt(
-						htl::GPIODriver::openDrain,
-						htl::GPIOSpeed::fast,
-						gpio_::GPIOAlt::i2c2_SCL);
-
-				if constexpr (channel_ == I2CChannel::channel3)
-					gpio_::initAlt(
-						htl::GPIODriver::openDrain,
-						htl::GPIOSpeed::fast,
-						gpio_::GPIOAlt::i2c3_SCL);
-
-				if constexpr (channel_ == I2CChannel::channel4)
-					gpio_::initAlt(
-						htl::GPIODriver::openDrain,
-						htl::GPIOSpeed::fast,
-						gpio_::GPIOAlt::i2c4_SCL);
+				#ifdef SPI1
+					if constexpr (channel_ == I2CChannel::channel1)
+						gpio_::initAlt(
+							htl::GPIODriver::openDrain,
+							htl::GPIOSpeed::fast,
+							gpio_::GPIOAlt::i2c1_SCL);
+				#endif
+				#ifdef SPI2
+					if constexpr (channel_ == I2CChannel::channel2)
+						gpio_::initAlt(
+							htl::GPIODriver::openDrain,
+							htl::GPIOSpeed::fast,
+							gpio_::GPIOAlt::i2c2_SCL);
+				#endif
+				#ifdef SPI3
+					if constexpr (channel_ == I2CChannel::channel3)
+						gpio_::initAlt(
+							htl::GPIODriver::openDrain,
+							htl::GPIOSpeed::fast,
+							gpio_::GPIOAlt::i2c3_SCL);
+				#endif
+				#ifdef SPI4
+					if constexpr (channel_ == I2CChannel::channel4)
+						gpio_::initAlt(
+							htl::GPIODriver::openDrain,
+							htl::GPIOSpeed::fast,
+							gpio_::GPIOAlt::i2c4_SCL);
+				#endif
 			}
 
             template <typename gpio_>
 			static void initSDAPin() {
-				if constexpr (channel_ == I2CChannel::channel1)
-					gpio_::initAlt(
-						htl::GPIODriver::openDrain,
-						htl::GPIOSpeed::fast,
-						gpio_::GPIOAlt::i2c1_SDA);
-
-				if constexpr (channel_ == I2CChannel::channel2)
-					gpio_::initAlt(
-						htl::GPIODriver::openDrain,
-						htl::GPIOSpeed::fast,
-						gpio_::GPIOAlt::i2c2_SDA);
-
-				if constexpr (channel_ == I2CChannel::channel3)
-					gpio_::initAlt(
-						htl::GPIODriver::openDrain,
-						htl::GPIOSpeed::fast,
-						gpio_::GPIOAlt::i2c3_SDA);
-
-				if constexpr (channel_ == I2CChannel::channel4)
-					gpio_::initAlt(
-						htl::GPIODriver::openDrain,
-						htl::GPIOSpeed::fast,
-						gpio_::GPIOAlt::i2c4_SDA);
+				#ifdef SPI1
+					if constexpr (channel_ == I2CChannel::channel1)
+						gpio_::initAlt(
+							htl::GPIODriver::openDrain,
+							htl::GPIOSpeed::fast,
+							gpio_::GPIOAlt::i2c1_SDA);
+				#endif
+				#ifdef SPI2
+					if constexpr (channel_ == I2CChannel::channel2)
+						gpio_::initAlt(
+							htl::GPIODriver::openDrain,
+							htl::GPIOSpeed::fast,
+							gpio_::GPIOAlt::i2c2_SDA);
+				#endif
+				#ifdef SPI3
+					if constexpr (channel_ == I2CChannel::channel3)
+						gpio_::initAlt(
+							htl::GPIODriver::openDrain,
+							htl::GPIOSpeed::fast,
+							gpio_::GPIOAlt::i2c3_SDA);
+				#endif
+				#ifdef SPI4
+					if constexpr (channel_ == I2CChannel::channel4)
+						gpio_::initAlt(
+							htl::GPIODriver::openDrain,
+							htl::GPIOSpeed::fast,
+							gpio_::GPIOAlt::i2c4_SDA);
+				#endif
 			}
 	};
 
 	template <I2CChannel channel_> halI2CHandler I2C_x<channel_>::_handler;
 	template <I2CChannel channel_> halI2CData I2C_x<channel_>::_data;
 
-	using I2C_1 = I2C_x<I2CChannel::channel1>;
-	using I2C_2 = I2C_x<I2CChannel::channel2>;
-	using I2C_3 = I2C_x<I2CChannel::channel3>;
-	using I2C_4 = I2C_x<I2CChannel::channel4>;
+	#ifdef SPI1
+		using I2C_1 = I2C_x<I2CChannel::channel1>;
+	#endif
+	#ifdef SPI2
+		using I2C_2 = I2C_x<I2CChannel::channel2>;
+	#endif
+	#ifdef SPI3
+		using I2C_3 = I2C_x<I2CChannel::channel3>;
+	#endif
+	#ifdef SPI4
+		using I2C_4 = I2C_x<I2CChannel::channel4>;
+	#endif
+
+	#ifdef SPI1
+		template <>
+		struct I2CInfo<I2CChannel::channel1> {
+			constexpr static const uint32_t addr = I2C1_BASE;
+			constexpr static const uint32_t rccen = RCC_APB1ENR_I2C1EN;
+		};
+	#endif
+	#ifdef SPI1
+		template <>
+		struct I2CInfo<I2CChannel::channel2> {
+			constexpr static const uint32_t addr = I2C2_BASE;
+			constexpr static const uint32_t rccen = RCC_APB1ENR_I2C2EN;
+		};
+	#endif
+	#ifdef SPI1
+		template <>
+		struct I2CInfo<I2CChannel::channel3> {
+			constexpr static const uint32_t addr = I2C3_BASE;
+			constexpr static const uint32_t rccen = RCC_APB1ENR_I2C3EN;
+		};
+	#endif
+	#ifdef SPI1
+		template <>
+		struct I2CInfo<I2CChannel::channel4> {
+			constexpr static const uint32_t addr = I2C4_BASE;
+			constexpr static const uint32_t rccen = RCC_APB1ENR_I2C4EN;
+		};
+	#endif
 }
 
 

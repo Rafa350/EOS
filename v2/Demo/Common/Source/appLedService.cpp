@@ -1,11 +1,9 @@
 #include "eos.h"
-#include "HTL/htlGPIO.h"
 #include "System/Core/eosTask.h"
 #include "appLedService.h"
 
 
 using namespace eos;
-using namespace htl;
 using namespace app;
 
 
@@ -15,7 +13,7 @@ using namespace app;
 LedService::LedService(
 	Application *application) :
 
-	AppLoopService(application) {
+	 AppLoopService(application) {
 }
 
 
@@ -24,11 +22,13 @@ LedService::LedService(
 ///
 void LedService::onSetup() {
 
-	#ifdef EXIST_LEDS_LED1
-		GPIO_LED1::initOutput(GPIODriver::pushPull, GPIOSpeed::low);
+	#ifdef EXIST_LED1
+		GPIO_LED1::initOutput(htl::GPIODriver::pushPull);
+		GPIO_LED1::set();
 	#endif
-	#ifdef EXIST_LEDS_LED2
-		GPIO_LED2::initOutput(GPIODriver::pushPull, GPIOSpeed::low);
+	#ifdef EXIST_LED2
+		GPIO_LED2::initOutput(htl::GPIODriver::pushPull);
+		GPIO_LED2::clear();
 	#endif
 }
 
@@ -40,13 +40,13 @@ void LedService::onLoop() {
 
 	while (true) {
 
-		#ifdef EXIST_LEDS_LED1
+		Task::delay(500);
+
+		#ifdef EXIST_LED1
 			GPIO_LED1::toggle();
 		#endif
-		#ifdef EXIST_LEDS_LED2
+		#ifdef EXIST_LED2
 			GPIO_LED2::toggle();
 		#endif
-
-		Task::delay(500);
 	}
 }
