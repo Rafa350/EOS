@@ -102,6 +102,12 @@
               <itemPath>../../../Source/HAL/PIC32/halINT.c</itemPath>
             </logicalFolder>
           </logicalFolder>
+          <logicalFolder name="f6" displayName="HTM" projectFiles="true">
+            <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
+              <itemPath>../../../Source/HTL/PIC32/htmCN_InterruptHandler.cpp</itemPath>
+              <itemPath>../../../Source/HTL/PIC32/htmTMR_InterruptHandler.cpp</itemPath>
+            </logicalFolder>
+          </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <logicalFolder name="f1" displayName="FreeRTOS" projectFiles="true">
               <itemPath>../../../Source/OSAL/FreeRTOS/rtos_hooks.c</itemPath>
@@ -173,6 +179,7 @@
     <Elem>../../../Source/StartUp/PIC32</Elem>
     <Elem>.</Elem>
     <Elem>../../../Source/HAL2/PIC32</Elem>
+    <Elem>../../../Source/HTL/PIC32</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

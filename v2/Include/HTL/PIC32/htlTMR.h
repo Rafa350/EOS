@@ -54,8 +54,8 @@ namespace htl {
         update
     };
 
-    typedef void *TMRInterruptParam;
-    typedef void (*TMRInterruptFunction)(TMREvent event, TMRInterruptParam param);
+    using TMRInterruptParam = void*;
+    using TMRInterruptFunction = void (*)(TMREvent event, TMRInterruptParam param);
 
     template <TMRTimer timer_>
     struct TMRInfo {
@@ -327,7 +327,7 @@ namespace htl {
                 #endif
             }
 
-            inline static void setInterruptFunction(TMRInterruptFunction function, TMRInterruptParam param = nullptr) {
+            static void setInterruptFunction(TMRInterruptFunction function, TMRInterruptParam param = nullptr) {
                 _isrFunction = function;
                 _isrParam = param;
             }
