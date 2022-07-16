@@ -55,19 +55,20 @@ namespace htl {
     typedef void *CNInterruptParam ;
     typedef void (*CNInterruptFunction)(CNEvent event, CNInterruptParam);
 
-    class CN {
+    template <int dummy_>
+    class CN_x {
         private:
             static CNInterruptFunction _isrFunction;
             static CNInterruptParam _isrParam;
 
         private:
-            CN() = delete;
-            CN(const CN &) = delete;
-            CN(const CN &&) = delete;
-            ~CN() = delete;
+            CN_x() = delete;
+            CN_x(const CN &) = delete;
+            CN_X(const CN &&) = delete;
+            ~CN_X() = delete;
 
-            CN & operator = (const CN &) = delete;
-            CN & operator = (const CN &&) = delete;
+            CN_x & operator = (const CN_X &) = delete;
+            CN_X & operator = (const CN_X &&) = delete;
 
         public:
             inline static void init(CNLine line, CNTrigger trigger = CNTrigger::none, CNPull pull = CNPull::none) {
@@ -115,8 +116,10 @@ namespace htl {
             }
     };
 
-    CNInterruptFunction CN::_isrFunction = nullptr;
-    CNInterruptParam CN::_isrParam = nullptr;
+    template <int dummy_> CNInterruptFunction CN<dummy_>::_isrFunction = nullptr;
+    template <int dummy_> CNInterruptParam CN<dummy_>::_isrParam = nullptr;
+
+    using CN_1 = CN_x<1>;
 }
 
 
