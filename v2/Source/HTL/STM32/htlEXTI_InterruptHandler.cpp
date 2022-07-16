@@ -1,5 +1,6 @@
 #include "eos.h"
 #include "HTL/STM32/htlEXTI.h"
+#include "HTL/STM32/htlEXTI_InterruptHandler.h"
 
 
 using namespace htl;

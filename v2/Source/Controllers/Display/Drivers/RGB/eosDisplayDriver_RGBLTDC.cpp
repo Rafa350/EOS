@@ -310,6 +310,7 @@ void DisplayDriver_RGBLTDC::initializeLTDC() {
 	LCD::initBPins<GPIO_B0, GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7>();
 	LCD::init(_width, _height, _hSync, _vSync, _hBP, _vBP, _hFP, _vFP);
 	LCD::setBackgroundColor(COLOR_Blue);
+	LCD::setInterruptFunction(nullptr, nullptr);
 
 	// Inicialitza la capa 1
 	//

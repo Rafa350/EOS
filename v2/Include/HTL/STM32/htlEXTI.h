@@ -8,8 +8,6 @@
 #include "HAL/STM32/halEXTI.h"
 
 
-#ifdef __cplusplus
-
 namespace htl {
 
 	enum class EXTILine: halEXTILine {
@@ -309,23 +307,5 @@ namespace htl {
 	using EXTI_15 = EXTI_x<EXTILine::line15>;
 }
 
-#endif
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-extern void EXTI_0_InterruptHandler();
-extern void EXTI_1_InterruptHandler();
-extern void EXTI_2_InterruptHandler();
-extern void EXTI_3_InterruptHandler();
-extern void EXTI_4_InterruptHandler();
-extern void EXTI_5_6_7_8_9_InterruptHandler();
-extern void EXTI_10_11_12_13_14_15_InterruptHandler();
-#ifdef __cplusplus
-}
-
-
-#endif
 
 #endif // __STM32_htlEXTI__

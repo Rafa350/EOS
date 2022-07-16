@@ -24,8 +24,22 @@ namespace htl {
 		l8
     };
 
+    enum class LTDCEvent {
+    	line = 0,
+		reload = 3,
+		fifoError = 1,
+		transferError = 2
+    };
+
+    using LTDCInterruptParam = void*;
+    using LTDCInterruptFunction = void (*)(LTDCEvent, LTDCInterruptParam);
+
+    template <int dummy_>
     class LTDC_x {
-		private:
+    	private:
+    		static LTDCInterruptFunction _isrFunction;
+    		static LTDCInterruptParam _isrParam;
+
 			LTDC_x() = delete;
 			LTDC_x(const LTDC_x &);
 			LTDC_x(const LTDC_x &&);
@@ -291,9 +305,46 @@ namespace htl {
 						continue;
 			    }
 			}
+
+			inline static void enableInterrrupt(
+				LTDCEvent event) {
+
+				LTDC->IER |= 1 << uint32_t(event);
+			}
+
+			inline static void disableInterrupt(
+				LTDCEvent event) {
+
+				LTDC->IER &= ~(1 << uint32_t(event));
+			}
+
+			inline static bool getInterruptFlag(
+				LTDCEvent event) {
+
+				return (LTDC->ISR & (1 << uint32_t(event))) != 0;
+			}
+
+			inline static void clearInterruptFlag(
+				LTDCEvent event) {
+
+				LTDC->ICR |= 1 << uint32_t(event);
+			}
+
+			inline static void setInterruptFunction(LTDCInterruptFunction function, LTDCInterruptParam param = nullptr) {
+                _isrFunction = function;
+                _isrParam = param;
+            }
+
+            inline static void interruptHandler(LTDCEvent event) {
+                if (_isrFunction != nullptr)
+                    _isrFunction(event, _isrParam);
+            }
 	};
 
-	using LTDC_1 = LTDC_x;
+    template<int dummy_> LTDCInterruptFunction LTDC_x<dummy_>::_isrFunction = nullptr;
+    template<int dummy_> LTDCInterruptParam LTDC_x<dummy_>::_isrParam = nullptr;
+
+	using LTDC_1 = LTDC_x<1>;
 
 
 	enum class LTDCLayerNum {
