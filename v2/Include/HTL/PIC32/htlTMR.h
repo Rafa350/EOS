@@ -113,6 +113,14 @@ namespace htl {
             TMR_x & operator = (const TMR_x &&) = delete;
 
         public:
+            static void init() {
+                stop();
+            }
+
+            static void deInit() {
+                stop();
+            }
+
             static void setClockDivider(TMRClockDivider divider) {
                 if constexpr (_isT1) {
                     RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);

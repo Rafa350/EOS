@@ -34,9 +34,11 @@
               <itemPath>../../../Include/HTL/PIC32/htlGPIO.h</itemPath>
               <itemPath>../../../Include/HTL/PIC32/htlCN.h</itemPath>
               <itemPath>../../../Include/HTL/PIC32/htlTMR.h</itemPath>
+              <itemPath>../../../Include/HTL/PIC32/htlINT.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HTL/htlGPIO.h</itemPath>
             <itemPath>../../../Include/HTL/htlTMR.h</itemPath>
+            <itemPath>../../../Include/HTL/htlINT.h</itemPath>
           </logicalFolder>
           <logicalFolder name="f4" displayName="OSAL" projectFiles="true">
             <itemPath>../../../Include/OSAL/osalTimer.h</itemPath>

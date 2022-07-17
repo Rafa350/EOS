@@ -218,7 +218,7 @@ namespace htl {
     };
 
     template <typename gpio_>
-    GPIOAdapter& getAdapter() {
+    const GPIOAdapter& getAdapter() {
         using Info = GPIOInfo<gpio_::port, gpio_::pin>;
         static GPIOAdapter adapter(Info::addr, Info::pn);
         return adapter;

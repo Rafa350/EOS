@@ -26,7 +26,6 @@
 #if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
 #define DigInputService_Timer					      HAL_TMR_TIMER_2
 #define DigInputService_TimerInterruptVector          HAL_INT_VECTOR_TMR2
-#define DigInputService_TimerInterruptSource          HAL_INT_SOURCE_TMR2
 #define DigInputService_TimerInterruptPriority        HAL_INT_PRIORITY_2
 #define DigInputService_TimerInterruptSubPriority     HAL_INT_SUBPRIORITY_0
 #elif defined(HARDWARE_STM32F429I_DISC1)

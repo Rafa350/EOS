@@ -2,13 +2,15 @@
 #include "HAL/halINT.h"
 #include "HAL/halSYS.h"
 #include "HAL/halTMR.h"
+#include "HTL/htlGPIO.h"
+#include "HTL/htlTMR.h"
+#include "htl/htlINT.h"
 #include "Services/eosDigOutputService.h"
 #include "Services/eosDigInputService.h"
 #include "System/eosApplication.h"
 
 #include "appApplication.h"
-#include "HTL/htlGPIO.h"
-#include "HTL/htlTMR.h"
+#include "HTL/PIC32/htlTMR.h"
 
 
 using namespace eos;
@@ -41,15 +43,11 @@ void MyApplication::onInitialize() {
 
     // Inicialitza el temporitzador pel servei d'entrades digitals
     //
-    /*hal::TMR tmr(DigInputService_Timer);
-#if defined(EOS_PIC32)
-    tmr.setClockSource(hal::TMR::ClockSource::pclk);
-    tmr.setClockDivider(hal::TMR::ClockDivider::div64);
-    tmr.setResolution(hal::TMR::Resolution::res32);
-    tmr.setPeriod((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1,
-#elif defined(EOS_STM32F4) || defined(EOS_STM32F7)
-#endif
-*/
+    //TMR_INP::setResolution(htl::TMRResolution::res16);
+    //TMR_INP::setClockDivider(htl::TMRClockDivider::div64);
+    //TMR_INP::setClockPeriod(((halSYSGetPeripheralClockFrequency() * DigInputService_TimerPeriod) / 64000) - 1);
+    //TMR_INP::init();
+
 	halTMRSettings tmrSettings;
 	tmrSettings.timer = DigInputService_Timer;
 #if defined(EOS_PIC32)
@@ -66,7 +64,11 @@ void MyApplication::onInitialize() {
 
     // Inicialitza les interrupcions
     //
-    halINTSetInterruptVectorPriority(DigInputService_TimerInterruptVector, DigInputService_TimerInterruptPriority, DigInputService_TimerInterruptSubPriority);
+    //halINTSetInterruptVectorPriority(DigInputService_TimerInterruptVector, DigInputService_TimerInterruptPriority, DigInputService_TimerInterruptSubPriority);
+    htl::INT_1::setInterruptVectorPriority(
+        htl::INTVector(DigInputService_TimerInterruptVector),
+        htl::INTPriority(DigInputService_TimerInterruptPriority),
+        htl::INTSubPriority(DigInputService_TimerInterruptSubPriority));
     halINTEnableInterruptVector(DigInputService_TimerInterruptVector);
 
     // Inicialitza el servei d'entrades digitals
@@ -117,7 +119,11 @@ void MyApplication::onInitialize() {
 
     // Inicialitza les interrupcions
     //
-    halINTSetInterruptVectorPriority(DigOutputService_TimerInterruptVector, DigOutputService_TimerInterruptPriority, DigOutputService_TimerInterruptSubPriority);
+    //halINTSetInterruptVectorPriority(DigOutputService_TimerInterruptVector, DigOutputService_TimerInterruptPriority, DigOutputService_TimerInterruptSubPriority);
+    htl::INT_1::setInterruptVectorPriority(
+        htl::INTVector(DigOutputService_TimerInterruptVector),
+        htl::INTPriority(DigOutputService_TimerInterruptPriority),
+        htl::INTSubPriority(DigOutputService_TimerInterruptSubPriority));
     halINTEnableInterruptVector(DigOutputService_TimerInterruptVector);
 
     // Inicialitza el servei de sortides digitals

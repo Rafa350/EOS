@@ -16,13 +16,15 @@ namespace app {
 
     class MyApplication: public eos::Application {
         private:
-            typedef eos::CallbackP1<MyApplication, const eos::DigInput::EventArgs&> DigInputEventCallback;
+            using DigInputEventCallback = eos::CallbackP1<MyApplication, const eos::DigInput::EventArgs&>;
             using GPIO_LED1 = board::led1::GPIO_LED;
             using GPIO_LED2 = board::led2::GPIO_LED;
             using GPIO_LED3 = board::led3::GPIO_LED;
             using GPIO_SW1 = board::sw1::GPIO_SW;
             using GPIO_SW2 = board::sw2::GPIO_SW;
             using GPIO_SW3 = board::sw3::GPIO_SW;
+            using TMR_INP = htl::TMR_2;
+            usint TMR_OUT = htl::TMR_3;
 
         private:
             eos::DigOutputService *_digOutputService;

@@ -4,7 +4,7 @@
 
 
 using namespace htl;
-
+/*
 
 #ifdef _TMR1
 extern "C" void __ISR(_TIMER_1_VECTOR, IPL2SOFT) isrTMR1Wrapper(void);
@@ -91,3 +91,4 @@ extern "C" void isrTMR5Handler(void) {
     }
 }
 #endif
+*/
