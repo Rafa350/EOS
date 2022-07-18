@@ -54,7 +54,6 @@ namespace htl {
         #ifdef GPIOK_BASE
             portK,
         #endif
-        portNone
     };
 
     /// \brief GPIO Pin identifiers.
@@ -74,8 +73,7 @@ namespace htl {
         pin12,
         pin13,
         pin14,
-        pin15,
-        pinNone
+        pin15
     };
 
     /// \brief GPIO Pull up/down mode identifier.
@@ -145,103 +143,45 @@ namespace htl {
                 RCC->AHB1ENR &= ~_rccen;
             }
 
-            static void setSpeed(GPIOSpeed speed) {
-
-                GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
-
-                // Configura el registre OSPEEDR (Output Speed Register)
-                //
-                uint32_t temp = regs->OSPEEDR;
-                temp &= ~(0b11 << (_pn * 2));
-                temp |= (uint32_t(speed) & 0b11) << (_pn * 2);
-                regs->OSPEEDR = temp;
-            }
-
-            static void setPull(GPIOPull pull) {
-
-                GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
-
-                // Configura el registre PUPDR (Pull Up/Down Register)
-                //
-                uint32_t temp = regs->PUPDR;
-                temp &= ~(0b11 << (_pn * 2));
-                temp |= (uint32_t(pull) & 0x11) << (_pn * 2);
-                regs->PUPDR = temp;
-            }
-
         public:
             static void initInput(GPIOPull pull = GPIOPull::none) {
 
-                uint32_t temp;
-                GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
+                void GPIO_initInput(GPIO_TypeDefs*, unsigned, unsigned);
 
                 enableClock();
-
-                // Configura el registre MODER (Mode Register)
-                //
-                temp = regs->MODER;
-                temp &= ~(0b11 << (_pn * 2));
-                regs->MODER = temp;
-
-                setPull(pull);
+                GPIO_initInput(
+                    reinterpret_cast<GPIO_TypeDef*>(_addr), 
+                    _pn,
+                    pull);
             }
 
             static void initOutput(GPIODriver driver, GPIOSpeed speed = GPIOSpeed::medium) {
 
-                uint32_t temp;
-                GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
+                void GPIO_initOutput(GPIO_TypeDefs*, unsigned, unsigned, unsigned);
 
                 enableClock();
-
-                // Configura el registre MODER (Mode Register)
-                //
-                temp = regs->MODER;
-                temp &= ~(0b11 << (_pn * 2));
-                temp |= 0b01 << (_pn * 2);
-                regs->MODER = temp;
-
-                // Configura el registre OTYPER (Output Type Register)
-                //
-                temp = regs->OTYPER;
-                temp &= ~(0b1 << _pn);
-                temp |= (uint32_t(driver) & 0b1) << _pn;
-                regs->OTYPER = temp;
-
-                setSpeed(speed);
+                GPIO_initOutput(
+                    reinterpret_cast<GPIO_TypeDef*>(_addr),
+                    _pn,
+                    driver,
+                    speed);
             }
 
             static void initAlt(GPIODriver driver, GPIOSpeed speed, GPIOAlt alt) {
-
-                uint32_t temp;
-                GPIO_TypeDef *regs = reinterpret_cast<GPIO_TypeDef*>(_addr);
-
+                
+                void GPIO_initAlt(GPIO_TypeDefs*, unsigned, unsigned, unsigned, unsigned);
+                
                 enableClock();
-
-                // Configura el registre MODER (Mode Register)
-                //
-                temp = regs->MODER;
-                temp &= ~(0b11 << (_pn * 2));
-                temp |= 0b10 << (_pn * 2);
-                regs->MODER = temp;
-
-                // Configura el registre OTYPER (Output Type Register)
-                //
-                temp = regs->OTYPER;
-                temp &= ~(0b1 << _pn);
-                temp |= (uint32_t(driver) & 0b1) << _pn;
-                regs->OTYPER = temp;
-
-                // Configura el registre AFR (Alternate Funcion Register)
-                //
-                temp = regs->AFR[_pn >> 3];
-                temp &= ~(0b1111 << ((_pn & 0x07) * 4)) ;
-                temp |= (uint32_t(alt) & 0b1111) << ((_pn & 0x07) * 4);
-                regs->AFR[_pn >> 3] = temp;
-
-                setSpeed(speed);
+                GPIO_initAlt(
+                    reinterpret_cast<GPIO_TypeDef*>(_addr),
+                    _pn,
+                    driver,
+                    speed,
+                    alt);
             }
 
             inline static void deInit() {
+                disableClock();
             }
 
             /// \brief Set pin to ON state.
