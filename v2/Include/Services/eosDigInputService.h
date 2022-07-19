@@ -6,7 +6,6 @@
 //
 #include "eos.h"
 #include "HTL/htlGPIO.h"
-#include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/eosCallbacks.h"
 #include "System/Collections/eosVector.h"
@@ -24,25 +23,19 @@ namespace eos {
         private:
             typedef Vector<DigInput*> DigInputList;
             typedef DigInputList::Iterator DigInputIterator;
-        public:
-            struct Settings {       // Informacio d'inicialitzacio del servei.
-                halTMRHandler hTimer;  // -Temporitzador. Si es HAL_TMR_TIMER_NONE utilitza el tick del sistema
-            };
 
         private:
             Semaphore _changes;
-            halTMRHandler _hTimer;
             DigInputList _inputs;
 
         protected:
             void onInitialize() override;
-            void onTerminate() override;
             void onTask(Task *task) override;
 #if Eos_ApplicationTickEnabled
             void onTick();
 #endif
         public:
-            DigInputService(Application *application, const Settings &settings);
+            DigInputService(Application *application);
             ~DigInputService();
             void addInput(DigInput *input);
             void removeInput(DigInput *input);
@@ -50,8 +43,7 @@ namespace eos {
 
             bool read(const DigInput *input) const;
 
-            void tmrInterruptFunction(uint32_t event);
-            static void tmrInterruptFunction(halTMRHandler handler, void *params, uint32_t event);
+            void tmrInterruptFunction();
     };
 
     /// \brief Clase que implementa una entrada digital

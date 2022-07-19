@@ -28,9 +28,9 @@
 #define FONT_USE_Tahoma12pt
 #define EOS_USE_STD_STRING
 #define USE_ARDUINO
-#define USE_LEDS_LED1
-#define USE_LEDS_LED2
-#define USE_SWITCHES_SW1
+#define USE_LED1
+#define USE_LED2
+#define USE_SW1
 
 
 #endif // __eosConfig__

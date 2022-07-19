@@ -6,7 +6,6 @@
 //
 #include "eos.h"
 #include "HTL/htlGPIO.h"
-#include "HAL/halTMR.h"
 #include "Services/eosService.h"
 #include "System/Collections/eosVector.h"
 #include "System/Core/eosQueue.h"
@@ -57,16 +56,10 @@ namespace eos {
             typedef Vector<DigOutput*> DigOutputList;
             typedef DigOutputList::Iterator DigOutputIterator;
 
-        public:
-            struct Settings {       // Informacio d'inicialitzacio del servei
-                halTMRHandler hTimer;  // -Temporitzador. Si es NULL utilitza el tick del sistema
-            };
-
         private:
             const unsigned _commandQueueSize = DigOutputService_CommandQueueSize;
             const unsigned _minDelay = DigOutputService_MinDelay;
             const unsigned _minWidth = DigOutputService_MinWidth;
-            halTMRHandler _hTimer;
             CommandQueue _commandQueue;
             DigOutputList _outputs;
 
@@ -82,13 +75,12 @@ namespace eos {
             void cmdTimeOut(unsigned time);
         protected:
             void onInitialize() override;
-            void onTerminate() override;
             void onTask(Task *task) override;
 #if Eos_ApplicationTickEnabled
             void onTick() override;
 #endif
         public:
-            DigOutputService(Application *application, const Settings &settings);
+            DigOutputService(Application *application);
             ~DigOutputService();
 
             void addOutput(DigOutput *output);
@@ -105,8 +97,7 @@ namespace eos {
             void delayedToggle(DigOutput *output, unsigned delay);
             void delayedPulse(DigOutput *output, unsigned delay, unsigned width);
 
-            void tmrInterruptFunction(uint32_t event);
-            static void tmrInterruptFunction(halTMRHandler handler, void *params, uint32_t event);
+            void tmrInterruptFunction();
     };
 
     /// \brief Clase que implementa una sortida digital.

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __htlTMR__
 #define	__htlTMR__
 

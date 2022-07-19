@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __htlGPIO__
 #define	__htlGPIO__
 

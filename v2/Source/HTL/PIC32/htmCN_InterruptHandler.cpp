@@ -12,7 +12,7 @@ extern void __ISR(_CHANGE_NOTICE_VECTOR, IPL2SOFT) isrCNWrapper(void);
 /// ----------------------------------------------------------------------
 /// \brief    Procesa el vector _CHANGE_NOTICE_VECTOR
 ///
-extern "C" void isrCNHandler() {
+extern "C" void CN_1_InterruptHandler() {
 
     if (IFS1bits.CNIF) {
         CN_1::interruptHandler(CNEvent::change);

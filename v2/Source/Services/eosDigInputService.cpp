@@ -1,8 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "HTL/htlGPIO.h"
-#include "HAL/halINT.h"
-#include "HAL/halTMR.h"
+#include "HTL/htlINT.h"
 #include "Services/eosDigInputService.h"
 #include "System/Core/eosTask.h"
 
@@ -15,6 +14,7 @@
 
 
 using namespace eos;
+using namespace htl;
 
 
 /// ----------------------------------------------------------------------
@@ -23,11 +23,9 @@ using namespace eos;
 /// \params   settings: Conmfigurationparameters.
 ///
 DigInputService::DigInputService(
-    Application *application,
-    const Settings &settings):
+    Application *application):
 
-	Service(application),
-    _hTimer(settings.hTimer) {
+	Service(application) {
 }
 
 
@@ -127,36 +125,6 @@ void DigInputService::onInitialize() {
     // Inicialitza el servei base
     //
     Service::onInitialize();
-
-    // Habilita les interrupcions del temporitzador
-    //
-    halTMRSetInterruptFunction(_hTimer, tmrInterruptFunction, this);
-    halTMRClearInterruptFlags(_hTimer, HAL_TMR_EVENT_UPDATE);
-    halTMREnableInterrupts(_hTimer, HAL_TMR_EVENT_UPDATE);
-
-    // Activa el temporitzador
-    //
-    halTMRStartTimer(_hTimer);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Finalitza el servei.
-///
-void DigInputService::onTerminate() {
-
-    // Desactiva el temporitzador
-    //
-    halTMRStopTimer(_hTimer);
-
-    // Deshabilita les interrupcions del temporitzador
-    //
-    halTMRSetInterruptFunction(_hTimer, NULL, NULL);
-    halTMRDisableInterrupts(_hTimer, HAL_TMR_EVENT_ALL);
-
-    // Finalitza el servei base
-    //
-    Service::onTerminate();
 }
 
 
@@ -178,13 +146,12 @@ void DigInputService::onTask(
 
 			if (input->_eventCallback != nullptr) {
 
-				uint32_t state = halTMRDisableInterrupts(_hTimer, HAL_TMR_EVENT_UPDATE);
+                bool state = INT_1::disableInterrupts();
 
 				bool edge = input->_edge;
 				input->_edge = false;
 
-				if (state)
-					halTMREnableInterrupts(_hTimer, state);
+                INT_1::restoreInterrupts(state);
 
 				if (edge) {
 
@@ -222,10 +189,9 @@ bool DigInputService::read(
     eosAssert(input != nullptr);
     eosAssert(input->_service == this);
 
-    uint32_t state = halTMRDisableInterrupts(_hTimer, HAL_TMR_EVENT_UPDATE);
+    bool state = INT_1::disableInterrupts();
     bool result = input->_value;
-    if (state)
-    	halTMREnableInterrupts(_hTimer, HAL_TMR_EVENT_UPDATE);
+    INT_1::restoreInterrupts(state);
     return result;
 }
 
@@ -235,8 +201,7 @@ bool DigInputService::read(
 /// \param    event: L'event que ha generat la interrupcio.
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
-void DigInputService::tmrInterruptFunction(
-	uint32_t event) {
+void DigInputService::tmrInterruptFunction() {
 
     bool changed = false;
 
@@ -280,30 +245,13 @@ void DigInputService::tmrInterruptFunction(
 
 
 /// ----------------------------------------------------------------------
-/// \brief    Procesa la interrupcio del temporitzador.
-/// \param    handler: Handler del temporitzador.
-/// \param    params: Handler del servei.
-/// \param    event: El event que ha generat la interrupcio.
-///
-void DigInputService::tmrInterruptFunction(
-    halTMRHandler handler,
-    void *params,
-	uint32_t event) {
-
-    DigInputService *service = static_cast<DigInputService*>(params);
-    if (service != nullptr)
-        service->tmrInterruptFunction(event);
-}
-
-
-/// ----------------------------------------------------------------------
 /// \brief    Constructor.
 /// \param    service: The service.
 /// \param    gpio: El GPIO
 ///
 DigInput::DigInput(
     DigInputService *service,
-    const htl::GPIOAdapter &gpio):
+    const GPIOAdapter &gpio):
 
 	_service(nullptr),
     _gpio(gpio),

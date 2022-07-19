@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __STM32_htlTMR__
 #define __STM32_htlTMR__
 
@@ -43,6 +44,13 @@ namespace htl {
 		clcDiv4 = HAL_TMR_CLKDIV_4
 	};
 
+	enum class TMREvent {
+		update
+	};
+
+	using TMRInterruptParam = void*;
+	using TMRInterruptFunction = void (*)(TMREvent, TMRInterruptParam);
+
 	template <TMRTimer timer_>
 	struct TMRInfo {
 		static const uint32_t addr;
@@ -74,6 +82,16 @@ namespace htl {
 
 			inline static void deInit() {
 				halTMRDeinitialize(_handler);
+			}
+
+			inline static void start() {
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				regs->CR1 |= TIM_CR1_CEN;
+			}
+
+			inline static void stop() {
+				TIM_TypeDef *regs = reinterpret_cast<TIM_TypeDef*>(_addr);
+				regs->CR1 &= ~TIM_CR1_CEN;
 			}
 	};
 

@@ -43,10 +43,10 @@
 #include "Controllers/Display/eosFrameBuffer.h"
 #include "System/Graphics/eosColor.h"
 #if (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_SPI)
-#include "HAL/halSPI_ex.h"
-#include "HAL/halGPIO_ex.h"
+#include "HTL/htlSPI.h"
+#include "HTL/hhlGPIO.h"
 #elif (DISPLAY_SSD1306_INTERFACE == DISPLAY_SSD1306_INTERFACE_I2C)
-#include "HAL/halI2C.h"
+#include "HTL/htlI2C.h"
 #endif
 
 

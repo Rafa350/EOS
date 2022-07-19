@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __STM32_htlEXTI_InterruptHandler__
 #define __STM32_htlEXTI_InterruptHandler__
 

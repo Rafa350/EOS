@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __STM32_htlLTDC__
 #define __STM32_htlLTDC__
 

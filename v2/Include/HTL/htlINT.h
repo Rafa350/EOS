@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __htlINT__
 #define __htlINT__
 

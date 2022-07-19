@@ -3,9 +3,10 @@
 
 
 #include "eos.h"
+#include "HTL/htlGPIO.h"
+#include "HTL/htlTMR.h"
 #include "Services/eosDigInputService.h"
 #include "Services/eosDigOutputService.h"
-#include "Services/eosTimerService.h"
 #include "System/eosApplication.h"
 #include "System/eosCallbacks.h"
 
@@ -23,13 +24,12 @@ namespace app {
             using GPIO_SW1 = board::sw1::GPIO_SW;
             using GPIO_SW2 = board::sw2::GPIO_SW;
             using GPIO_SW3 = board::sw3::GPIO_SW;
-            using TMR_INP = htl::TMR_2;
-            usint TMR_OUT = htl::TMR_3;
+            using TMR_INP = DigInputService_Timer;
+            using TMR_OUT = DigOutputService_Timer;
 
         private:
             eos::DigOutputService *_digOutputService;
             eos::DigInputService *_digInputService;
-            eos::TimerService *_timerService;
 
             #ifdef EXIST_LED1
                 eos::DigOutput *led1;
@@ -53,6 +53,11 @@ namespace app {
                 DigInputEventCallback sw3EventCallback;
             #endif
 
+        protected:
+            void onInitialize();
+            static void tmrInpInterruptFunction(htl::TMREvent, htl::TMRInterruptParam);
+            static void tmrOutInterruptFunction(htl::TMREvent, htl::TMRInterruptParam);
+
         public:
             MyApplication();
             #ifdef EXIST_SW1
@@ -64,9 +69,6 @@ namespace app {
             #ifdef EXIST_SW3
                 void sw3EventHandler(const eos::DigInput::EventArgs &args);
             #endif
-
-        protected:
-            void onInitialize();
     };
 
 }

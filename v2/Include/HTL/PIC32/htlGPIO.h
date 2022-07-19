@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __PIC32_htlGPIO__
 #define __PIC32_htlGPIO__
 
@@ -158,6 +159,9 @@ namespace htl {
 			GPIO_x & operator = (const GPIO_x &&) = delete;
 
         public:
+            /// \brief Inicialitza un pin com entrada.
+            /// \param pull: Les opcions pull.
+            ///
             inline static void initInput(
                 GPIOPull pull = GPIOPull::none) {
 
@@ -173,6 +177,10 @@ namespace htl {
                     AD1PCFGSET = 1 <<_an;
             }
 
+            /// \brief Inicialitza un pin com sortida.
+            /// \param driver: Les opcions del driver.
+            /// \param speed: Les opcions de velocitat.
+            ///
             inline static void initOutput(
                 GPIODriver driver = GPIODriver::pushPull,
                 GPIOSpeed speed = GPIOSpeed::medium) {
@@ -185,30 +193,44 @@ namespace htl {
                     regs->ODCxCLR = 1 << _pn;
             }
 
+            /// \bried Desinicialitza el pin.
+            ///
             inline static void deInit() {
 
             }
 
+            /// \brief Situa el pin a estat ON
+            ///
             inline static void set() {
                 GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 regs->LATxSET = 1 << _pn;
             }
 
+            /// \brief Situa el pin a estat OFF
+            ///
             inline static void clear() {
                 GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 regs->LATxCLR = 1 << _pn;
             }
 
+            /// \brief Canvia l'estat del pin
+            ///
             inline static void toggle() {
                 GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 regs->LATxINV = 1 << _pn;
             }
 
+            /// \brief  Llegeix l'estat del pin.
+            /// \return L'estat del pin
+            ///
             inline static bool read() {
                 GPIORegisters *regs = reinterpret_cast<GPIORegisters*>(_addr);
                 return (regs->PORTx & (1 << _pn)) != 0;
             }
 
+            /// \brief Escriu l'estat delñ pin.
+            /// \param state: EL nou estat.
+            ///
             inline static void write(bool value) {
                 if (value)
                     set();

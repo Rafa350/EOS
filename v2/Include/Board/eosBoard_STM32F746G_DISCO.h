@@ -188,14 +188,14 @@ namespace board {
 			using GPIO_D14 = htl::GPIO_B9;
 			using GPIO_D15 = htl::GPIO_B8;
 
-			using SCL = GPIO_B8;
-			using SDA = GPIO_B9;
-			using I2C = htm::I2C_1;
+			using SCL = htl::GPIO_B8;
+			using SDA = htl::GPIO_B9;
+			using I2C = htl::I2C_1;
 
-			using SCK = GPIO_I1;
-			using MISO = GPIO_B14;
-			using MOSI = GPIO_B15;
-			using SPI = SPI_2;
+			using SCK = htl::GPIO_I1;
+			using MISO = htl::GPIO_B14;
+			using MOSI = htl::GPIO_B15;
+			using SPI = htl::SPI_2;
 		}
 
 	#endif

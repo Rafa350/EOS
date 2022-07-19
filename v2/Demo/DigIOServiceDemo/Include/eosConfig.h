@@ -24,15 +24,15 @@
 #define DigInputService_SafeMode                      1    // Modus segur
 #define DigInputService_TimerPeriod                   5    // 5 ms de periode
 #if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
-#define DigInputService_Timer					      HAL_TMR_TIMER_2
-#define DigInputService_TimerInterruptVector          HAL_INT_VECTOR_TMR2
-#define DigInputService_TimerInterruptPriority        HAL_INT_PRIORITY_2
-#define DigInputService_TimerInterruptSubPriority     HAL_INT_SUBPRIORITY_0
+#define DigInputService_Timer					      htl::TMR_2
+#define DigInputService_TimerInterruptVector          htl::INTVector::TMR2
+#define DigInputService_TimerInterruptPriority        htl::INTPriority::p2
+#define DigInputService_TimerInterruptSubPriority     htl::INTSubPriority::s0
 #elif defined(HARDWARE_STM32F429I_DISC1)
-#define DigInputService_Timer					      HAL_TMR_TIMER_2
-#define DigInputService_TimerInterruptVector          HAL_INT_VECTOR_TMR2
-#define DigInputService_TimerInterruptPriority        HAL_INT_PRIORITY_5
-#define DigInputService_TimerInterruptSubPriority     HAL_INT_SUBPRIORITY_0
+#define DigInputService_Timer					      htl::TMR_2
+#define DigInputService_TimerInterruptVector          htl::INTVector::TMR2
+#define DigInputService_TimerInterruptPriority        htl::INTPriority::p5
+#define DigInputService_TimerInterruptSubPriority     htl::INTSubPriority::s0
 #endif
 
 // Configuracio del servei DigOutputs
@@ -42,11 +42,10 @@
 #define DigOutputService_SafeMode                     1    // Modus segur
 #define DigOutputService_TimerPeriod                  1    // 1 ms de periode
 #if defined(HARDWARE_PIC32_USB_STARTER_KIT_I)
-#define DigOutputService_Timer					      HAL_TMR_TIMER_3
-#define DigOutputService_TimerInterruptVector         HAL_INT_VECTOR_TMR3
-#define DigOutputService_TimerInterruptSource         HAL_INT_SOURCE_TMR3
-#define DigOutputService_TimerInterruptPriority       HAL_INT_PRIORITY_2
-#define DigOutputService_TimerInterruptSubPriority    HAL_INT_SUBPRIORITY_0
+#define DigOutputService_Timer					      htl::TMR_3
+#define DigOutputService_TimerInterruptVector         htl::INTVector::TMR3
+#define DigOutputService_TimerInterruptPriority       htl::INTPriority::p2
+#define DigOutputService_TimerInterruptSubPriority    htl::INTSubPriority::s0
 #elif defined(HARDWARE_STM32F429I_DISC1)
 #define DigOutputService_Timer                        HAL_TMR_TIMER_3
 #define DigOutputService_TimerInterruptVector         HAL_INT_VECTOR_TMR3

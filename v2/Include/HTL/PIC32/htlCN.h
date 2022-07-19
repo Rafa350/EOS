@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __PIC32_htlCN__
 #define __PIC32_htlCN__
 
@@ -31,8 +32,7 @@ namespace htl {
         cn18,
         cn19,
         cn20,
-        cn21,
-        cnNone
+        cn21
     };
 
     enum class CNTrigger {
@@ -48,12 +48,11 @@ namespace htl {
     };
 
     enum class CNEvent {
-        unknown,
         change
     };
 
-    typedef void *CNInterruptParam ;
-    typedef void (*CNInterruptFunction)(CNEvent event, CNInterruptParam);
+    using CNInterruptParam = void*;
+    using CNInterruptFunction = void (*)(CNEvent, CNInterruptParam);
 
     template <int dummy_>
     class CN_x {
@@ -71,7 +70,12 @@ namespace htl {
             CN_x & operator = (const CN_x &&) = delete;
 
         public:
-            inline static void init(CNLine line, CNTrigger trigger = CNTrigger::none, CNPull pull = CNPull::none) {
+            /// \brief Inicialitza una linia CN
+            /// \param line: La linia a inicialitzar.
+            /// \param trigger: Les opcions de trigger.
+            /// \param pull: Les opcions pull up/down
+            ///
+            inline static void initLine(CNLine line, CNTrigger trigger = CNTrigger::none, CNPull pull = CNPull::none) {
                 CNCONbits.ON = 1;
                 if (pull == CNPull::up)
                     CNPUESET = 1 << static_cast<uint32_t>(line);
@@ -79,37 +83,56 @@ namespace htl {
                     CNPUECLR = 1 << static_cast<uint32_t>(line);
             }
 
+            /// \brief  Activa una linia.
+            /// \praram line: La linia.
+            ///
             inline static void enableLine(CNLine line) {
                 CNENSET = 1 << static_cast<uint32_t>(line);
             }
 
+            /// \brief  Desactiva una linia.
+            /// \praram line: La linia.
+            ///
             inline static void disableLine(CNLine line) {
                 CNENCLR = 1 << static_cast<uint32_t>(line);
             }
 
-            inline static void enableInterrupt() {
+            /// \brief  Habilita les interrupcions pel event especificat.
+            /// \param  event: EL event.
+            ///
+            inline static void enableInterrupt(CNEvent event) {
                 IEC1bits.CNIE = 1;
             }
 
-            inline static bool disableInterrupt() {
+            /// \brief  Deshabilita les interrupcions pel event especificat.
+            /// \param  event: EL event.
+            ///
+            inline static bool disableInterrupt(CNEvent event) {
                 bool state = IEC1bits.CNIE == 1;
                 IEC1bits.CNIE = 0;
                 return state;
             }
 
-            inline static bool getInterruptFlag() {
+            inline static bool getInterruptFlag(CNEvent event) {
                 return IFS1bits.CNIF != 0;
             }
 
-            inline static void clearInterruptFlags() {
+            inline static void clearInterruptFlags(CNEvent event) {
                 IFS1bits.CNIF = 0;
             }
 
+            /// \brief Asigna la funcio d'interrupcio.
+            /// \param function: La funcio.
+            /// \param param: El parametre.
+            ///
             inline static void setInterruptFunction(CNInterruptFunction function, CNInterruptParam param = nullptr) {
                 _isrFunction = function;
                 _isrParam = param;
             }
 
+            /// \brief Invoca la funcio d'interrupcio.
+            /// \param event: El event.
+            ///
             inline static void interruptHandler(CNEvent event) {
                 if (_isrFunction != nullptr)
                     _isrFunction(event, _isrParam);
@@ -123,4 +146,4 @@ namespace htl {
 }
 
 
-#endif // __PIC32_thlCN__
+#endif // __PIC32_htlCN__

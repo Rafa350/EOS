@@ -1,3 +1,4 @@
+#pragma once
 /// \file      halGPIO_ex.h
 /// \author    Rafael Serrano (rsr.openware@gmail.com)
 /// \brief     GPIO module manager.
@@ -7,7 +8,6 @@
 /// @{
 /// \defgroup HTL_STM32_GPIO GPIO
 /// @{
-
 #ifndef __STM32_htlGPIO__
 #define __STM32_htlGPIO__
 
@@ -97,13 +97,31 @@ namespace htl {
         fast   = 3
     };
 
+    /*typedef uint32_t GPIOOptions;
+    constexpr const uint32_t GPIOPull_pos = 0;
+    constexpr const uint32_t GPIOPull_bits = 0b11;
+    constexpr const uint32_t GPIOPull_mask = GPIOPull_bits << GPIOPull_pos;
+    constexpr const uint32_t GPIODriver_pos = 2;
+    constexpr const uint32_t GPIODriver_bits = 0b1;
+    constexpr const uint32_t GPIODriver_mask = GPIODriver_bits << GPIODriver_pos;
+    constexpr const uint32_t GPIOSpeed_pos = 3;
+    constexpr const uint32_t GPIOSpeed_bits = 0b11;
+    constexpr const uint32_t GPIOSpeed_mask = GPIOSpeed_bits << GPIOSpeed_pos;
+    constexpr const uint32_t GPIOAlt_pos = 5;
+    constexpr const uint32_t GPIOAlt_bits = 0b1111;
+    constexpr const uint32_t GPIOAlt_mask = GPIOAlt_bits << GPIOAlt_pos;*/
+
+    void GPIO_initInput(GPIO_TypeDef*, uint32_t, GPIOPull);
+    void GPIO_initOutput(GPIO_TypeDef*, uint32_t, GPIODriver, GPIOSpeed);
+    void GPIO_initAlt(GPIO_TypeDef*, uint32_t, GPIODriver, GPIOSpeed, unsigned);
+    void GPIO_deInit(GPIO_TypeDef*, uint32_t);
+
     template <GPIOPort port_, GPIOPin pin_>
     struct GPIOInfo {
         enum class GPIOAlt {
         };
         static const uint32_t addr;
         static const uint32_t pn;
-        static const uint32_t rccen;
     };
 
     /// \class GPIO_x
@@ -118,13 +136,10 @@ namespace htl {
             using Info = GPIOInfo<port_, pin_>;
             constexpr static const uint32_t _addr = Info::addr;
             constexpr static const uint32_t _pn = Info::pn;
-            constexpr static const uint32_t _rccen = Info::rccen;
 
         public:
             constexpr static const GPIOPort port = port_;
             constexpr static const GPIOPin pin = pin_;
-            constexpr static const uint32_t hwPort = Info::addr;
-            constexpr static const uint32_t hwPin = Info::pn;
 
         private:
             GPIO_x() = delete;
@@ -135,20 +150,12 @@ namespace htl {
             GPIO_x & operator = (const GPIO_x &) = delete;
             GPIO_x & operator = (const GPIO_x &&) = delete;
 
-            inline static void enableClock() {
-                RCC->AHB1ENR |= _rccen;
-            }
-
-            inline static void disableClock() {
-                RCC->AHB1ENR &= ~_rccen;
-            }
-
         public:
             static void initInput(GPIOPull pull = GPIOPull::none) {
 
-                void GPIO_initInput(GPIO_TypeDefs*, unsigned, unsigned);
+            	/*GPIOOptions options =
+            		uint32_t(pull) << GPIOPull_pos;*/
 
-                enableClock();
                 GPIO_initInput(
                     reinterpret_cast<GPIO_TypeDef*>(_addr), 
                     _pn,
@@ -157,10 +164,11 @@ namespace htl {
 
             static void initOutput(GPIODriver driver, GPIOSpeed speed = GPIOSpeed::medium) {
 
-                void GPIO_initOutput(GPIO_TypeDefs*, unsigned, unsigned, unsigned);
+            	/*GPIOOptions options =
+            		(uint32_t(driver) << GPIODriver_pos) |
+					(uint32_t(speed) << GPIOSpeed_pos);*/
 
-                enableClock();
-                GPIO_initOutput(
+            	GPIO_initOutput(
                     reinterpret_cast<GPIO_TypeDef*>(_addr),
                     _pn,
                     driver,
@@ -169,19 +177,24 @@ namespace htl {
 
             static void initAlt(GPIODriver driver, GPIOSpeed speed, GPIOAlt alt) {
                 
-                void GPIO_initAlt(GPIO_TypeDefs*, unsigned, unsigned, unsigned, unsigned);
-                
-                enableClock();
-                GPIO_initAlt(
+            	/*GPIOOptions options =
+            		(uint32_t(driver) << GPIODriver_pos) |
+					(uint32_t(speed) << GPIOSpeed_pos) |
+					(uint32_t(alt) << GPIOAlt_pos);*/
+
+            	GPIO_initAlt(
                     reinterpret_cast<GPIO_TypeDef*>(_addr),
                     _pn,
                     driver,
                     speed,
-                    alt);
+                    unsigned(alt));
             }
 
             inline static void deInit() {
-                disableClock();
+
+            	GPIO_deInit(
+            		reinterpret_cast<GPIO_TypeDef*>(_addr),
+					_pn);
             }
 
             /// \brief Set pin to ON state.
@@ -450,7 +463,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOA_BASE;
             constexpr static const uint32_t pn = 0;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOAEN;
         };
 
         template <>
@@ -467,7 +479,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOA_BASE;
             constexpr static const uint32_t pn = 1;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOAEN;
         };
 
         template <>
@@ -477,7 +488,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOA_BASE;
             constexpr static const uint32_t pn = 3;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOAEN;
         };
 
         template <>
@@ -489,7 +499,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOA_BASE;
             constexpr static const uint32_t pn = 4;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOAEN;
         };
 
         template <>
@@ -500,7 +509,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOA_BASE;
             constexpr static const uint32_t pn = 5;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOAEN;
         };
 
         template <>
@@ -512,7 +520,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOA_BASE;
             constexpr static const uint32_t pn = 6;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOAEN;
         };
 
         template <>
@@ -523,7 +530,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOA_BASE;
             constexpr static const uint32_t pn = 7;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOAEN;
         };
 
         template <>
@@ -533,7 +539,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOA_BASE;
             constexpr static const uint32_t pn = 11;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOAEN;
         };
 
         template <>
@@ -543,7 +548,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOA_BASE;
             constexpr static const uint32_t pn = 12;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOAEN;
         };
     #endif
 
@@ -555,7 +559,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOB_BASE;
             constexpr static const uint32_t pn = 0;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
 
         template <>
@@ -565,7 +568,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOB_BASE;
             constexpr static const uint32_t pn = 1;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
 
         template <>
@@ -576,7 +578,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOB_BASE;
             constexpr static const uint32_t pn = 8;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
 
         template <>
@@ -588,7 +589,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOB_BASE;
             constexpr static const uint32_t pn = 9;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
 
         template <>
@@ -600,7 +600,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOB_BASE;
             constexpr static const uint32_t pn = 10;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
 
         template <>
@@ -610,7 +609,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOB_BASE;
             constexpr static const uint32_t pn = 11;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
 
         template <>
@@ -620,7 +618,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOB_BASE;
             constexpr static const uint32_t pn = 14;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
 
         template <>
@@ -630,7 +627,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOB_BASE;
             constexpr static const uint32_t pn = 15;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
     #endif
 
@@ -641,7 +637,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOC_BASE;
             constexpr static const uint32_t pn = 2;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
 
         template <>
@@ -652,7 +647,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOC_BASE;
             constexpr static const uint32_t pn = 6;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
 
         template <>
@@ -663,7 +657,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOC_BASE;
             constexpr static const uint32_t pn = 7;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
 
         template <>
@@ -673,7 +666,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOC_BASE;
             constexpr static const uint32_t pn = 10;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOBEN;
         };
     #endif
 
@@ -686,7 +678,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOD_BASE;
             constexpr static const uint32_t pn = 3;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIODEN;
         };
 
         template <>
@@ -698,7 +689,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOD_BASE;
             constexpr static const uint32_t pn = 6;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIODEN;
         };
 
         template <>
@@ -710,7 +700,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOD_BASE;
             constexpr static const uint32_t pn = 7;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIODEN;
         };
 
         template <>
@@ -719,7 +708,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOD_BASE;
             constexpr static const uint32_t pn = 13;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIODEN;
         };
     #endif
 
@@ -731,7 +719,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOE_BASE;
             constexpr static const uint32_t pn = 4;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOEEN;
         };
 
         template <>
@@ -741,7 +728,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOE_BASE;
             constexpr static const uint32_t pn = 5;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOEEN;
         };
 
         template <>
@@ -751,7 +737,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOE_BASE;
             constexpr static const uint32_t pn = 6;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOEEN;
         };
     #endif
 
@@ -764,7 +749,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOF_BASE;
             constexpr static const uint32_t pn = 7;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOFEN;
         };
 
         template <>
@@ -777,7 +761,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOF_BASE;
             constexpr static const uint32_t pn = 9;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOFEN;
         };
 
         template <>
@@ -787,7 +770,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOF_BASE;
             constexpr static const uint32_t pn = 10;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOFEN;
         };
     #endif
 
@@ -799,7 +781,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOG_BASE;
             constexpr static const uint32_t pn = 6;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
         };
 
         template <>
@@ -809,7 +790,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOG_BASE;
             constexpr static const uint32_t pn = 7;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
         };
 
         template <>
@@ -820,7 +800,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOG_BASE;
             constexpr static const uint32_t pn = 9;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
         };
 
         template <>
@@ -830,7 +809,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOG_BASE;
             constexpr static const uint32_t pn = 10;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
         };
 
         template <>
@@ -840,7 +818,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOG_BASE;
             constexpr static const uint32_t pn = 11;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
         };
 
         template <>
@@ -853,7 +830,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOG_BASE;
             constexpr static const uint32_t pn = 12;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
         };
 
         template <>
@@ -862,7 +838,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOG_BASE;
             constexpr static const uint32_t pn = 13;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
         };
 
         template <>
@@ -871,7 +846,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOG_BASE;
             constexpr static const uint32_t pn = 14;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOGEN;
         };
     #endif
 
@@ -883,7 +857,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOH_BASE;
             constexpr static const uint32_t pn = 7;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOHEN;
         };
 
         template <>
@@ -894,7 +867,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOH_BASE;
             constexpr static const uint32_t pn = 8;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOHEN;
         };
 
         template <>
@@ -904,7 +876,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOH_BASE;
             constexpr static const uint32_t pn = 9;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOHEN;
         };
 
         template <>
@@ -914,7 +885,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOH_BASE;
             constexpr static const uint32_t pn = 10;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOHEN;
         };
 
         template <>
@@ -924,7 +894,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOH_BASE;
             constexpr static const uint32_t pn = 11;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOHEN;
         };
 
         template <>
@@ -934,7 +903,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOH_BASE;
             constexpr static const uint32_t pn = 12;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOHEN;
         };
 
         template <>
@@ -944,7 +912,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOH_BASE;
             constexpr static const uint32_t pn = 14;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOHEN;
         };
     #endif
 
@@ -956,7 +923,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOI_BASE;
             constexpr static const uint32_t pn = 1;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOIEN;
         };
 
         template <>
@@ -966,7 +932,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOI_BASE;
             constexpr static const uint32_t pn = 9;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOIEN;
         };
 
         template <>
@@ -976,7 +941,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOI_BASE;
             constexpr static const uint32_t pn = 10;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOIEN;
         };
 
         template <>
@@ -986,7 +950,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOI_BASE;
             constexpr static const uint32_t pn = 12;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOIEN;
         };
 
         template <>
@@ -995,7 +958,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOI_BASE;
             constexpr static const uint32_t pn = 13;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOIEN;
         };
 
         template <>
@@ -1005,7 +967,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOI_BASE;
             constexpr static const uint32_t pn = 14;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOIEN;
         };
 
         template <>
@@ -1015,7 +976,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOI_BASE;
             constexpr static const uint32_t pn = 15;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOIEN;
         };
     #endif
 
@@ -1027,7 +987,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 0;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1037,7 +996,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 1;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1047,7 +1005,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 2;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1057,7 +1014,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 3;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1067,7 +1023,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 4;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1077,7 +1032,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 5;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1087,7 +1041,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 6;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1097,7 +1050,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 7;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1107,7 +1059,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 8;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1117,7 +1068,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 9;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1127,7 +1077,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 10;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1137,7 +1086,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 11;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1147,7 +1095,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 13;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1157,7 +1104,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 14;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
 
         template <>
@@ -1167,7 +1113,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOJ_BASE;
             constexpr static const uint32_t pn = 15;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOJEN;
         };
     #endif
 
@@ -1179,7 +1124,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOK_BASE;
             constexpr static const uint32_t pn = 0;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOKEN;
         };
 
         template <>
@@ -1189,7 +1133,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOK_BASE;
             constexpr static const uint32_t pn = 1;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOKEN;
         };
 
         template <>
@@ -1199,7 +1142,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOK_BASE;
             constexpr static const uint32_t pn = 2;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOKEN;
         };
 
         template <>
@@ -1208,7 +1150,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOK_BASE;
             constexpr static const uint32_t pn = 3;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOKEN;
         };
 
         template <>
@@ -1218,7 +1159,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOK_BASE;
             constexpr static const uint32_t pn = 4;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOKEN;
         };
 
         template <>
@@ -1228,7 +1168,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOK_BASE;
             constexpr static const uint32_t pn = 5;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOKEN;
         };
 
         template <>
@@ -1238,7 +1177,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOK_BASE;
             constexpr static const uint32_t pn = 6;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOKEN;
         };
 
         template <>
@@ -1248,7 +1186,6 @@ namespace htl {
             };
             constexpr static const uint32_t addr = GPIOK_BASE;
             constexpr static const uint32_t pn = 7;
-            constexpr static const uint32_t rccen = RCC_AHB1ENR_GPIOKEN;
         };
     #endif
 

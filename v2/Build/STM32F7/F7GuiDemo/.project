@@ -999,6 +999,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlEXTI_InterruptHandler.cpp</locationURI>
 		</link>
 		<link>
+			<name>src/Framework/EOS/HTL/STM32/htlGPIO_Init.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/HTL/STM32/htlGPIO_Init.cpp</locationURI>
+		</link>
+		<link>
 			<name>src/Framework/EOS/OSAL/FreeRTOS/osalHeap.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Source/OSAL/FreeRTOS/osalHeap.c</locationURI>

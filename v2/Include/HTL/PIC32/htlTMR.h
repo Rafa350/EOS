@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __PIC32_htlTMR__
 #define __PIC32_htlTMR__
 
@@ -50,8 +51,37 @@ namespace htl {
     };
 
     enum class TMREvent {
-        unknown,
         update
+    };
+
+    struct  __attribute__((packed , aligned(4))) TMRRegistersT1 {
+        __T1CONbits_t T1xCON;
+        volatile uint32_t TxCONCLR;
+        volatile uint32_t TxCONSET;
+        volatile uint32_t TxCONINV;
+        volatile uint32_t TMRx;
+        volatile uint32_t TMRxCLR;
+        volatile uint32_t TMRxSET;
+        volatile uint32_t TMRxINV;
+        volatile uint32_t PRx;
+        volatile uint32_t PRxCLR;
+        volatile uint32_t PRxSET;
+        volatile uint32_t PRxINV;
+    };
+
+    struct  __attribute__((packed , aligned(4))) TMRRegistersT2 {
+        __T2CONbits_t T2xCON;
+        volatile uint32_t TxCONCLR;
+        volatile uint32_t TxCONSET;
+        volatile uint32_t TxCONINV;
+        volatile uint32_t TMRx;
+        volatile uint32_t TMRxCLR;
+        volatile uint32_t TMRxSET;
+        volatile uint32_t TMRxINV;
+        volatile uint32_t PRx;
+        volatile uint32_t PRxCLR;
+        volatile uint32_t PRxSET;
+        volatile uint32_t PRxINV;
     };
 
     using TMRInterruptParam = void*;
@@ -66,34 +96,6 @@ namespace htl {
     template <TMRTimer timer_>
     class TMR_x {
         private:
-            struct  __attribute__((packed , aligned(4))) RegistersT1 {
-                __T1CONbits_t T1xCON;
-                volatile uint32_t TxCONCLR;
-                volatile uint32_t TxCONSET;
-                volatile uint32_t TxCONINV;
-                volatile uint32_t TMRx;
-                volatile uint32_t TMRxCLR;
-                volatile uint32_t TMRxSET;
-                volatile uint32_t TMRxINV;
-                volatile uint32_t PRx;
-                volatile uint32_t PRxCLR;
-                volatile uint32_t PRxSET;
-                volatile uint32_t PRxINV;
-            };
-            struct  __attribute__((packed , aligned(4))) RegistersT2 {
-                __T2CONbits_t T2xCON;
-                volatile uint32_t TxCONCLR;
-                volatile uint32_t TxCONSET;
-                volatile uint32_t TxCONINV;
-                volatile uint32_t TMRx;
-                volatile uint32_t TMRxCLR;
-                volatile uint32_t TMRxSET;
-                volatile uint32_t TMRxINV;
-                volatile uint32_t PRx;
-                volatile uint32_t PRxCLR;
-                volatile uint32_t PRxSET;
-                volatile uint32_t PRxINV;
-            };
             using Info = TMRInfo<timer_>;
 
         private:
@@ -123,7 +125,7 @@ namespace htl {
 
             static void setClockDivider(TMRClockDivider divider) {
                 if constexpr (_isT1) {
-                    RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
+                    TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     switch (divider) {
                         case TMRClockDivider::div8:
                             regs->T1xCON.TCKPS = 1;
@@ -143,7 +145,7 @@ namespace htl {
                     }
                 }
                 else {
-                    RegistersT2 *regs = reinterpret_cast<RegistersT2*>(_addr);
+                    TMRRegistersT2 *regs = reinterpret_cast<TMRRegistersT2*>(_addr);
                     switch (divider) {
                         case TMRClockDivider::div2:
                             regs->T2xCON.TCKPS = 1;
@@ -182,32 +184,32 @@ namespace htl {
 
             static void setClockSource(TMRClockSource source) {
                 if constexpr (_isT1) {
-                    RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
+                    TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     regs->T1xCON.TCS = 0;
                 }
                 else {
-                    RegistersT2 *regs = reinterpret_cast<RegistersT2*>(_addr);
+                    TMRRegistersT2 *regs = reinterpret_cast<TMRRegistersT2*>(_addr);
                     regs->T2xCON.TCS = 0;
                 }
             }
 
             static void setResolution(TMRResolution resolution) {
                 if constexpr (_isT2) {
-                    RegistersT2 *regs = reinterpret_cast<RegistersT2*>(_addr);
+                    TMRRegistersT2 *regs = reinterpret_cast<TMRRegistersT2*>(_addr);
                     regs->T2xCON.T32 = resolution == TMRResolution::res32;
                 }
             }
 
             static void setCounter(uint32_t counter) {
                 if constexpr (_isT1) {
-                    RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
+                    TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     regs->TMRx = counter & 0xFFFF;
                 }
                 else {
-                    RegistersT2 *regs = reinterpret_cast<RegistersT2*>(_addr);
+                    TMRRegistersT2 *regs = reinterpret_cast<TMRRegistersT2*>(_addr);
                     regs->TMRx = counter & 0xFFFF;
                     if (regs->T2xCON.T32 == 1) {
-                        RegistersT2 *regs32 = reinterpret_cast<RegistersT2*>(_addr + 0x200);
+                        TMRRegistersT2 *regs32 = reinterpret_cast<TMRRegistersT2*>(_addr + 0x200);
                         regs32->TMRx = (counter >> 16) & 0xFFFF;
                     }
                 }
@@ -215,16 +217,38 @@ namespace htl {
 
             static void setPeriod(uint32_t period) {
                 if constexpr (_isT1) {
-                    RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
+                    TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
                     regs->PRx = period & 0xFFFF;
                 }
                 else {
-                    RegistersT2 *regs = reinterpret_cast<RegistersT2*>(_addr);
+                    TMRRegistersT2 *regs = reinterpret_cast<TMRRegistersT2*>(_addr);
                     regs->PRx = period & 0xFFFF;
                     if (regs->T2xCON.T32 == 1) {
-                        RegistersT2 *regs32 = reinterpret_cast<RegistersT2*>(_addr + 0x200);
+                        TMRRegistersT2 *regs32 = reinterpret_cast<TMRRegistersT2*>(_addr + 0x200);
                         regs32->PRx = (period >> 16) & 0xFFFF;
                     }
+                }
+            }
+
+            static void start() {
+                if constexpr (_isT1) {
+                    TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
+                    regs->T1xCON.ON = 1;
+                }
+                else {
+                    TMRRegistersT2 *regs = reinterpret_cast<TMRRegistersT2*>(_addr);
+                    regs->T2xCON.ON = 1;
+                }
+            }
+
+            static void stop() {
+                if constexpr (_isT1) {
+                    TMRRegistersT1 *regs = reinterpret_cast<TMRRegistersT1*>(_addr);
+                    regs->T1xCON.ON = 0;
+                }
+                else {
+                    TMRRegistersT2 *regs = reinterpret_cast<TMRRegistersT2*>(_addr);
+                    regs->T2xCON.ON = 0;
                 }
             }
 
@@ -343,28 +367,6 @@ namespace htl {
             static void interruptHandler(TMREvent event) {
                 if (_isrFunction != nullptr)
                     _isrFunction(event, _isrParam);
-            }
-
-            static void start() {
-                if constexpr (_isT1) {
-                    RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
-                    regs->T1xCON.ON = 1;
-                }
-                else {
-                    RegistersT2 *regs = reinterpret_cast<RegistersT2*>(_addr);
-                    regs->T2xCON.ON = 1;
-                }
-            }
-
-            static void stop() {
-                if constexpr (_isT1) {
-                    RegistersT1 *regs = reinterpret_cast<RegistersT1*>(_addr);
-                    regs->T1xCON.ON = 0;
-                }
-                else {
-                    RegistersT2 *regs = reinterpret_cast<RegistersT2*>(_addr);
-                    regs->T2xCON.ON = 0;
-                }
             }
     };
 

@@ -1,8 +1,7 @@
 #include "eos.h"
 #include "eosAssert.h"
 #include "HTL/htlGPIO.h"
-#include "HAL/halINT.h"
-#include "HAL/halTMR.h"
+#include "HTL/htlINT.h"
 #include "Services/eosDigOutputService.h"
 #include "System/Core/eosTask.h"
 
@@ -16,11 +15,9 @@ using namespace eos;
 /// \param    settings: Configuration parameters.
 ///
 DigOutputService::DigOutputService(
-    Application *application,
-    const Settings &settings):
+    Application *application):
 
 	Service(application),
-    _hTimer(settings.hTimer),
 	_commandQueue(_commandQueueSize) {
 
 }
@@ -237,35 +234,6 @@ void DigOutputService::onInitialize() {
     // Inicialitza el servei base.
     //
     Service::onInitialize();
-
-    // Habilita les interrupcions del temporitzador.
-    //
-    halTMRSetInterruptFunction(_hTimer, tmrInterruptFunction, this);
-    halTMRClearInterruptFlags(_hTimer, HAL_TMR_EVENT_UPDATE);
-    halTMREnableInterrupts(_hTimer, HAL_TMR_EVENT_UPDATE);
-
-    // Activa el temporitzador.
-    //
-    halTMRStartTimer(_hTimer);
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Finalitza el servei.
-///
-void DigOutputService::onTerminate() {
-
-    // Desactiva el temporitzador
-    //
-    halTMRStopTimer(_hTimer);
-
-    // Desabilita les interrupcions del temporitzador
-    //
-    halTMRDisableInterrupts(_hTimer, HAL_TMR_EVENT_ALL);
-
-    // Finalitza el servei base
-    //
-    Service::onTerminate();
 }
 
 
@@ -530,33 +498,13 @@ void DigOutputService::cmdTimeOut(
 /// \param    event: L'event que ha generat la interrupcio.
 /// \remarks  ATENCIO: Es procesa d'ins d'una interrupcio.
 ///
-void DigOutputService::tmrInterruptFunction(
-	uint32_t event) {
+void DigOutputService::tmrInterruptFunction() {
 
-	if (event == HAL_TMR_EVENT_UPDATE) {
-		Command cmd = {
-            .opCode = OpCode::timeOut,
-            .param1 = 1
-        };
-		_commandQueue.pushISR(cmd);
-	}
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Procesa la interrupcio del temporitzador.
-/// \param    handler: Handler del temporitzador.
-/// \param    param: El handler del servei.
-/// \param    event: L'event que ha generat la interrupcio.
-///
-void DigOutputService::tmrInterruptFunction(
-	halTMRHandler handler,
-	void *params,
-	uint32_t event) {
-
-	DigOutputService *service = static_cast<DigOutputService*>(params);
-    if (service != nullptr)
-        service->tmrInterruptFunction(event);
+    Command cmd = {
+        .opCode = OpCode::timeOut,
+        .param1 = 1
+    };
+    _commandQueue.pushISR(cmd);
 }
 
 
