@@ -32,14 +32,67 @@ namespace htl {
         #endif
 	};
 
+    enum class UARTMode {
+        send,
+        receive,
+        bidirectional,
+    };
+
+    enum class UARTParity {
+        none,
+        even,
+        odd
+    };
+
+    enum class UARTStop {
+        s1,
+        s2
+    };
+
+    enum class UARTLength {
+        l8,
+        l9
+    };
+
+    enum class UARTBaud {
+        b110,
+        b300,
+        b1200,
+        b2400,
+        b4800,
+        b9600,
+        b19200,
+        b38400,
+        b56800,
+    };
+
     enum class UARTEvent {
         error,
         transmit,
         receive
     };
 
+    struct __attribute__((packed , aligned(4))) UARTRegisters {
+        __U1MODEbits_t    UxMODE;
+        volatile uint32_t UxMODECLR;
+        volatile uint32_t UxMODESET;
+        volatile uint32_t UxMODEINV;
+        __U1STAbits_t     UxSTA;
+        volatile uint32_t UxSTACLR;
+        volatile uint32_t UxSTASET;
+        volatile uint32_t UxSTAINV;
+        volatile uint32_t UxTXREG;
+        volatile uint32_t offset1[3];
+        volatile uint32_t UxRXREG;
+        volatile uint32_t offset2[3];
+        volatile uint32_t UxBRG;
+    };
+
     using UARTInterruptParam = void*;
     using UARTInterruptFunction = void (*)(UARTEvent, UARTInterruptParam);
+
+    void UART_init(UARTRegisters*, UARTBaud, UARTLength, UARTParity, UARTStop, UARTMode);
+    void UART_deInit(UARTRegisters*);
 
     template <UARTChannel channel_>
     struct UARTInfo {
@@ -70,10 +123,21 @@ namespace htl {
             UART_x & operator = (const UART_x &&) = delete;
 
 		public:
-			inline static void init() {
+			static void init(
+                UARTBaud baud,
+                UARTLength length,
+                UARTParity parity,
+                UARTStop stop,
+                UARTMode mode = UARTMode::bidirectional) {
+
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                UART_init(regs, baud, length, parity, stop, mode);
 			}
 
-			inline static void deInit() {
+			static void deInit() {
+
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                UART_deInit(regs);
 			}
 
 			template <typename gpio_>
@@ -91,6 +155,8 @@ namespace htl {
 			}
 
 			inline static void send(uint8_t data) {
+                UARTRegisters *regs = reinterpret_cast<UARTRegisters*>(_addr);
+                regs->UxTXREG = data;
 			}
 
             static void enableInterrupt(UARTEvent event) {
@@ -312,10 +378,43 @@ namespace htl {
                         }
                 #endif
                 #ifdef _UART3
+                    if constexpr (channel_ == UARTChannel::channel3)
+                        switch(event) {
+                            case UARTEvent::error:
+                                return IFS1bits.U3EIF;
+
+                            case UARTEvent::transmit:
+                                return IFS1bits.U3TXIF;
+
+                            case UARTEvent::receive:
+                                return IFS1bits.U3RXIF;
+                        }
                 #endif
                 #ifdef _UART4
+                    if constexpr (channel_ == UARTChannel::channel4)
+                        switch(event) {
+                            case UARTEvent::error:
+                                return IFS2bits.U4EIF;
+
+                            case UARTEvent::transmit:
+                                return IFS2bits.U4TXIF;
+
+                            case UARTEvent::receive:
+                                return IFS2bits.U4RXIF;
+                        }
                 #endif
                 #ifdef _UART5
+                    if constexpr (channel_ == UARTChannel::channel5)
+                        switch(event) {
+                            case UARTEvent::error:
+                                return IFS2bits.U5EIF;
+
+                            case UARTEvent::transmit:
+                                return IFS2bits.U5TXIF;
+
+                            case UARTEvent::receive:
+                                return IFS2bits.U5RXIF;
+                        }
                 #endif
             }
 
@@ -347,10 +446,43 @@ namespace htl {
                         }
                 #endif
                 #ifdef _UART3
+                    if constexpr (channel_ == UARTChannel::channel3)
+                        switch(event) {
+                            case UARTEvent::error:
+                                IFS1bits.U3EIF = 0;
+
+                            case UARTEvent::transmit:
+                                IFS1bits.U3TXIF = 0;
+
+                            case UARTEvent::receive:
+                                IFS1bits.U3RXIF = 0;
+                        }
                 #endif
                 #ifdef _UART4
+                    if constexpr (channel_ == UARTChannel::channel4)
+                        switch(event) {
+                            case UARTEvent::error:
+                                IFS2bits.U4EIF = 0;
+
+                            case UARTEvent::transmit:
+                                IFS2bits.U4TXIF = 0;
+
+                            case UARTEvent::receive:
+                                IFS2bits.U4RXIF = 0;
+                        }
                 #endif
                 #ifdef _UART5
+                    if constexpr (channel_ == UARTChannel::channel5)
+                        switch(event) {
+                            case UARTEvent::error:
+                                IFS2bits.U5EIF = 0;
+
+                            case UARTEvent::transmit:
+                                IFS2bits.U5TXIF = 0;
+
+                            case UARTEvent::receive:
+                                IFS2bits.U5RXIF = 0;
+                        }
                 #endif
             }
 

@@ -5,7 +5,6 @@
 // EOS includes
 //
 #include "eos.h"
-#include "HAL/PIC32/halSPI.h"
 #include "HTL/PIC32/htlGPIO.h"
 
 
@@ -13,22 +12,22 @@ namespace eos {
 
 	enum class SPIChannel: halSPIChannel {
         #ifdef _SPI1
-            channel1 = HAL_SPI_CHANNEL_1,
+            channel1,
         #endif
         #ifdef _SPI2
-            channel2 = HAL_SPI_CHANNEL_2,
+            channel2,
         #endif
         #ifdef _SPI3
-            channel3 = HAL_SPI_CHANNEL_3,
+            channel3,
         #endif
         #ifdef _SPI4
-            channel4 = HAL_SPI_CHANNEL_4,
+            channel4,
         #endif
         #ifdef _SPI5
-            channel5 = HAL_SPI_CHANNEL_5,
+            channel5,
         #endif
         #ifdef _SPI6
-            channel6 = HAL_SPI_CHANNEL_6
+            channel6
         #endif
 	};
 
@@ -102,7 +101,7 @@ namespace eos {
 				initialize(options);
 			}
 
-			inline static void initi(halSPIOptions options) {
+			inline static void init(halSPIOptions options) {
 				halSPISettings settings;
 				settings.channel = halSPIChannel(channel);
 				settings.options = options;

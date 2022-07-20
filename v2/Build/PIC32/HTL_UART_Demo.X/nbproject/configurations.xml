@@ -13,6 +13,11 @@
       </logicalFolder>
       <logicalFolder name="f2" displayName="Framework" projectFiles="true">
         <logicalFolder name="f1" displayName="EOS" projectFiles="true">
+          <logicalFolder name="f2" displayName="Board" projectFiles="true">
+            <itemPath>../../../Include/Board/eosBoard.h</itemPath>
+            <itemPath>../../../Include/Board/eosBoard_PIC32_ETH_STARTER_KIT.h</itemPath>
+            <itemPath>../../../Include/Board/eosBoard_PIC32_USB_STARTER_KIT_I.h</itemPath>
+          </logicalFolder>
           <logicalFolder name="f1" displayName="HTL" projectFiles="true">
             <logicalFolder name="f1" displayName="PIC32" projectFiles="true">
               <itemPath>../../../Include/HTL/PIC32/htlGPIO.h</itemPath>
@@ -48,6 +53,7 @@
               <itemPath>../../../Source/HTL/PIC32/htlUART_InterruptHandler.cpp</itemPath>
               <itemPath>../../../Source/HTL/PIC32/htlTMR_InterruptHandler.cpp</itemPath>
               <itemPath>../../../Source/HTL/PIC32/htlTMR_InterruptVector.S</itemPath>
+              <itemPath>../../../Source/HTL/PIC32/htlUART_Init.cpp</itemPath>
             </logicalFolder>
           </logicalFolder>
         </logicalFolder>
