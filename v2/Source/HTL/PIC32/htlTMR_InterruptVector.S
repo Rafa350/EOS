@@ -11,11 +11,11 @@
 	.extern TMR_4_InterruptHandler
 	.extern TMR_5_InterruptHandler
 
-	.global	isrTMR1Wrapper
-	.global	isrTMR2Wrapper
-	.global	isrTMR3Wrapper
-	.global	isrTMR4Wrapper
-	.global	isrTMR5Wrapper
+	.global	TMR_1_InterruptVector
+	.global	TMR_2_InterruptVector
+	.global	TMR_3_InterruptVector
+	.global	TMR_4_InterruptVector
+	.global	TMR_5_InterruptVector
 
 	.set	noreorder
 	.set 	noat
@@ -26,17 +26,17 @@
  *       Punt d'entrada del del vector de interrupcio _TIMER_1_VECTOR
  *
  *       Funcio:
- *           isrTMR1Wrapper
+ *           TMR_1_InterruptVector
  *
  *************************************************************************/
 
-	.ent	isrTMR1Wrapper
-isrTMR1Wrapper:
+	.ent	TMR_1_InterruptVector
+TMR_1_InterruptVector:
 	portSAVE_CONTEXT
 	jal	TMR_1_InterruptHandler
 	nop
 	portRESTORE_CONTEXT
-	.end	isrTMR1Wrapper
+	.end	TMR_1_InterruptVector
 
 
 /*************************************************************************
@@ -44,18 +44,18 @@ isrTMR1Wrapper:
  *       Punt d'entrada del del vector de interrupcio _TIMER_2_VECTOR
  *
  *       Funcio:
- *           isrTMR2Wrapper
+ *           TMR_2_InterruptVector
  *
  *************************************************************************/
 
 #ifdef _TMR2
-	.ent	isrTMR2Wrapper
-isrTMR2Wrapper:
+	.ent	TMR_2_InterruptVector
+TMR_2_InterruptVector:
 	portSAVE_CONTEXT
 	jal	TMR_2_InterruptHandler
 	nop
 	portRESTORE_CONTEXT
-	.end	isrTMR2Wrapper
+	.end	TMR_2_InterruptVector
 #endif
 
 
@@ -64,18 +64,18 @@ isrTMR2Wrapper:
  *       Punt d'entrada del del vector de interrupcio _TIMER_3_VECTOR
  *
  *       Funcio:
- *           isrTMR3Wrapper
+ *           TMR_3_InterruptVector
  *
  *************************************************************************/
 
 #ifdef _TMR3
-	.ent	isrTMR3Wrapper
-isrTMR3Wrapper:
+	.ent	TMR_3_InterruptVector
+TMR_3_InterruptVector:
 	portSAVE_CONTEXT
 	jal	TMR_3_InterruptHandler
 	nop
 	portRESTORE_CONTEXT
-	.end	isrTMR3Wrapper
+	.end	TMR_3_InterruptVector
 #endif
 
 
@@ -84,18 +84,18 @@ isrTMR3Wrapper:
  *       Punt d'entrada del del vector de interrupcio _TIMER_4_VECTOR
  *
  *       Funcio:
- *           isrTMR4Wrapper
+ *           TMR_4_InterruptVector
  *
  *************************************************************************/
 
 #ifdef _TMR4
-	.ent	isrTMR4Wrapper
-isrTMR4Wrapper:
+	.ent	TMR_4_InterruptVector
+TMR_4_InterruptVector:
 	portSAVE_CONTEXT
 	jal	TMR_4_InterruptHandler
 	nop
 	portRESTORE_CONTEXT
-	.end	isrTMR4Wrapper
+	.end	TMR_4_InterruptVector
 #endif
 
 
@@ -104,16 +104,16 @@ isrTMR4Wrapper:
  *       Punt d'entrada del del vector de interrupcio _TIMER_5_VECTOR
  *
  *       Funcio:
- *           isrTMR5Wrapper
+ *           TMR_5_InterruptVector
  *
  *************************************************************************/
 
 #ifdef _TMR5
-	.ent	isrTMR5Wrapper
-isrTMR5Wrapper:
+	.ent	TMR_5_InterruptVector
+TMR_5_InterruptVector:
 	portSAVE_CONTEXT
 	jal	TMR_5_InterruptHandler
 	nop
 	portRESTORE_CONTEXT
-	.end	isrTMR5Wrapper
+	.end	TMR_5_InterruptVector
 #endif

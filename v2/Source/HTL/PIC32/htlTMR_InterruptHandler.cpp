@@ -7,19 +7,19 @@ using namespace htl;
 
 
 #ifdef _TMR1x
-extern "C" void __ISR(_TIMER_1_VECTOR, IPL2SOFT) isrTMR1Wrapper(void);
+extern "C" void __ISR(_TIMER_1_VECTOR, IPL2SOFT) TMR_1_InterruptVector(void);
 #endif
 #ifdef _TMR2
-extern "C" void __ISR(_TIMER_2_VECTOR, IPL2SOFT) isrTMR2Wrapper(void);
+extern "C" void __ISR(_TIMER_2_VECTOR, IPL2SOFT) TMR_2_InterruptVector(void);
 #endif
 #ifdef _TMR3
-extern "C" void __ISR(_TIMER_3_VECTOR, IPL2SOFT) isrTMR3Wrapper(void);
+extern "C" void __ISR(_TIMER_3_VECTOR, IPL2SOFT) TMR_3_InterruptVector(void);
 #endif
 #ifdef _TMR4
-extern "C" void __ISR(_TIMER_4_VECTOR, IPL2SOFT) isrTMR4Wrapper(void);
+extern "C" void __ISR(_TIMER_4_VECTOR, IPL2SOFT) TMR_4_InterruptVector(void);
 #endif
 #ifdef _TMR5
-extern "C" void __ISR(_TIMER_5_VECTOR, IPL2SOFT) isrTMR5Wrapper(void);
+extern "C" void __ISR(_TIMER_5_VECTOR, IPL2SOFT) TMR_5_InterruptVector(void);
 #endif
 
 

@@ -6,7 +6,7 @@
 using namespace htl;
 
 
-extern void __ISR(_CHANGE_NOTICE_VECTOR, IPL2SOFT) isrCNWrapper(void);
+extern void __ISR(_CHANGE_NOTICE_VECTOR, IPL2SOFT) CN_1_InterruptVector(void);
 
 
 /// ----------------------------------------------------------------------

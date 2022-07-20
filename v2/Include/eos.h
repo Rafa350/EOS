@@ -7,8 +7,11 @@
 
 	// Platform definitions
 	#if defined(__PIC32MX)
-        #if defined(__32MX460F512L__) || defined(__32MX795F512L__)
-            #define EOS_PIC32MX
+        #define EOS_PIC32MX
+        #if defined(__32MX460F512L__)
+            #define EOS_PIC32MX4xx
+        #elif defined(__32MX795F512L__)
+            #define EOS_PIC32MX7xx
         #else
             #error  "Unknown processor PIC32MX"
         #endif
@@ -34,6 +37,7 @@
 	#if defined(STM32F4)
 		#define EOS_STM32F4
 	#elif defined(STM32F7)
+		#define EOS_STM32F7
 		#if defined(STM32F746xx) || defined(STM32F769xx)
 			#define EOS_STM32F7
 		#else

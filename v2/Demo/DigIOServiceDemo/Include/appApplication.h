@@ -17,7 +17,6 @@ namespace app {
 
     class MyApplication: public eos::Application {
         private:
-            using DigInputEventCallback = eos::CallbackP1<MyApplication, const eos::DigInput::EventArgs&>;
             using GPIO_LED1 = board::led1::GPIO_LED;
             using GPIO_LED2 = board::led2::GPIO_LED;
             using GPIO_LED3 = board::led3::GPIO_LED;
@@ -26,6 +25,8 @@ namespace app {
             using GPIO_SW3 = board::sw3::GPIO_SW;
             using TMR_INP = DigInputService_Timer;
             using TMR_OUT = DigOutputService_Timer;
+
+            using DigInputEventCallback = eos::CallbackP1<MyApplication, const eos::DigInput::EventArgs&>;
 
         private:
             eos::DigOutputService *_digOutputService;

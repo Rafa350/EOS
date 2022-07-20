@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __htlUART__
 #define	__htlUART__
 

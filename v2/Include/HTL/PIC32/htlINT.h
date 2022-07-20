@@ -53,10 +53,10 @@ namespace htl {
             UART4 = _UART_4_VECTOR,
         #endif
         #ifdef _UART5
-            UART5 = _UART_5_VECTOR
+            UART5 = _UART_5_VECTOR,
         #endif
         #ifdef _UART6
-            UART6 = _UART_6_VECTOR
+            UART6 = _UART_6_VECTOR,
         #endif
     };
 

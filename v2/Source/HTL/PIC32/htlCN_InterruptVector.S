@@ -5,14 +5,14 @@
 	.set	nomips16
 	.set 	noreorder
 
-	.extern isrCNHandler
+	.extern CN_1_InterruptHandler
 
-	.global	isrCNWrapper
+	.global	CN_1_InterruptVector
 
 	.set	noreorder
 	.set 	noat
-		
-	
+
+
 /*************************************************************************
  *
  *       Punt d'entrada del del vector de interrupcio _CHANGE_NOTICE_VECTOR
@@ -21,11 +21,11 @@
  *           isrCNWrapper
  *
  *************************************************************************/
-	
-	.ent	isrCNWrapper
-isrCNWrapper:
+
+	.ent	CN_1_InterruptVector
+CN_1_InterruptVector:
 	portSAVE_CONTEXT
-	jal	isrCNHandler
+	jal	CN_1_InterruptHandler
 	nop
 	portRESTORE_CONTEXT
-	.end	isrCNWrapper
+	.end	CN_1_InterruptVector
