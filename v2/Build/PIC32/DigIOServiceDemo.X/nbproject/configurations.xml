@@ -30,6 +30,7 @@
               <itemPath>../../../Include/HTL/PIC32/htlCN.h</itemPath>
               <itemPath>../../../Include/HTL/PIC32/htlTMR.h</itemPath>
               <itemPath>../../../Include/HTL/PIC32/htlINT.h</itemPath>
+              <itemPath>../../../Include/HTL/PIC32/htlRegisters.h</itemPath>
             </logicalFolder>
             <itemPath>../../../Include/HTL/htlGPIO.h</itemPath>
             <itemPath>../../../Include/HTL/htlTMR.h</itemPath>
@@ -204,7 +205,7 @@
         </archiverTool>
         <loading>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
-          <parseOnProdLoad>true</parseOnProdLoad>
+          <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
         <subordinates>

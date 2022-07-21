@@ -6,6 +6,7 @@
 // EOS includes
 //
 #include "eos.h"
+#include "htlRegisters.h"
 
 
 namespace htl {
@@ -88,20 +89,20 @@ namespace htl {
     using TMRInterruptFunction = void (*)(TMREvent event, TMRInterruptParam param);
 
     template <TMRTimer timer_>
-    struct TMRInfo {
-        static const uint32_t addr;
-        static const bool isT1;
+    struct TMRTimerTrait {
     };
 
     template <TMRTimer timer_>
     class TMR_x {
         private:
-            using Info = TMRInfo<timer_>;
+            using TimerTrait = TMRTimerTrait<timer_>;
+            using IF = typename TimerTrait::IF;
+            using IE = typename TimerTrait::IE;
 
         private:
-            constexpr static const uint32_t _addr = Info::addr;
-            constexpr static const bool _isT1 = Info::isT1;
-            constexpr static const bool _isT2 = !Info::isT1;
+            constexpr static const uint32_t _addr = TimerTrait::addr;
+            constexpr static const bool _isT1 = TimerTrait::isT1;
+            constexpr static const bool _isT2 = !TimerTrait::isT1;
             static TMRInterruptFunction _isrFunction;
             static TMRInterruptParam _isrParam;
 
@@ -253,110 +254,21 @@ namespace htl {
             }
 
             static void enableInterrupt(TMREvent event) {
-                #ifdef _TMR1
-                    if constexpr (timer_ == TMRTimer::timer1)
-                        IEC0bits.T1IE = 1;
-                #endif
-                #ifdef _TMR2
-                    if constexpr (timer_ == TMRTimer::timer2)
-                        IEC0bits.T2IE = 1;
-                #endif
-                #ifdef _TMR3
-                    if constexpr (timer_ == TMRTimer::timer3)
-                        IEC0bits.T3IE = 1;
-                #endif
-                #ifdef _TMR4
-                    if constexpr (timer_ == TMRTimer::timer4)
-                        IEC0bits.T4IE = 1;
-                #endif
-                #ifdef _TMR5
-                    if constexpr (timer_ == TMRTimer::timer5)
-                        IEC0bits.T5IE = 1;
-                #endif
+                IE::set();
             }
 
             static bool disableInterrupt(TMREvent event) {
-
-                bool state = false;
-
-                #ifdef _TMR1
-                    if constexpr (timer_ == TMRTimer::timer1) {
-                        state = IEC0bits.T1IE;
-                        IEC0bits.T1IE = 1;
-                    }
-                #endif
-                #ifdef _TMR2
-                    if constexpr (timer_ == TMRTimer::timer2) {
-                        state = IEC0bits.T2IE;
-                        IEC0bits.T2IE = 1;
-                    }
-                #endif
-                #ifdef _TMR3
-                    if constexpr (timer_ == TMRTimer::timer3) {
-                        state = IEC0bits.T3IE;
-                        IEC0bits.T3IE = 1;
-                    }
-                #endif
-                #ifdef _TMR4
-                    if constexpr (timer_ == TMRTimer::timer4) {
-                        state = IEC0bits.T4IE;
-                        IEC0bits.T4IE = 1;
-                    }
-                #endif
-                #ifdef _TMR5
-                    if constexpr (timer_ == TMRTimer::timer5) {
-                        state = IEC0bits.T5IE;
-                        IEC0bits.T5IE = 1;
-                    }
-                #endif
-
+                bool state = IE::value();
+                IE::clr();
                 return state;
             }
 
             inline static bool getInterruptFlag(TMREvent event) {
-                #ifdef _TMR1
-                    if constexpr (timer_ == TMRTimer::timer1)
-                        return IFS0bits.T1IF;
-                #endif
-                #ifdef _TMR2
-                    if constexpr (timer_ == TMRTimer::timer2)
-                        return IFS0bits.T2IF;
-                #endif
-                #ifdef _TMR3
-                    if constexpr (timer_ == TMRTimer::timer3)
-                        return IFS0bits.T3IF;
-                #endif
-                #ifdef _TMR4
-                    if constexpr (timer_ == TMRTimer::timer4)
-                        return IFS0bits.T4IF;
-                #endif
-                #ifdef _TMR5
-                    if constexpr (timer_ == TMRTimer::timer5)
-                        return IFS0bits.T5IF;
-                #endif
+                return IF::value();
             }
 
             inline static void clearInterruptFlag(TMREvent event) {
-                #ifdef _TMR1
-                    if constexpr (timer_ == TMRTimer::timer1)
-                        IFS0bits.T1IF = 0;
-                #endif
-                #ifdef _TMR2
-                    if constexpr (timer_ == TMRTimer::timer2)
-                        IFS0bits.T2IF = 0;
-                #endif
-                #ifdef _TMR3
-                    if constexpr (timer_ == TMRTimer::timer3)
-                        IFS0bits.T3IF = 0;
-                #endif
-                #ifdef _TMR4
-                    if constexpr (timer_ == TMRTimer::timer4)
-                        IFS0bits.T4IF = 0;
-                #endif
-                #ifdef _TMR5
-                    if constexpr (timer_ == TMRTimer::timer5)
-                        IFS0bits.T5IF = 0;
-                #endif
+                IF::clr();
             }
 
             static void setInterruptFunction(TMRInterruptFunction function, TMRInterruptParam param = nullptr) {
@@ -393,41 +305,51 @@ namespace htl {
 
     #ifdef _TMR1
         template <>
-        struct TMRInfo<TMRTimer::timer1> {
-            constexpr static const uint32_t addr = _TMR1_BASE_ADDRESS;
-            constexpr static const bool isT1 = true;
+        struct TMRTimerTrait<TMRTimer::timer1> {
+            using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T1IF_POSITION>;
+            using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T1IE_POSITION>;
+            static const uint32_t addr = _TMR1_BASE_ADDRESS;
+            static const bool isT1 = true;
         };
     #endif
 
     #ifdef _TMR2
         template <>
-        struct TMRInfo<TMRTimer::timer2> {
-            constexpr static const uint32_t addr = _TMR2_BASE_ADDRESS;
-            constexpr static const bool isT1 = false;
+        struct TMRTimerTrait<TMRTimer::timer2> {
+            using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T2IF_POSITION>;
+            using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T2IE_POSITION>;
+            static const uint32_t addr = _TMR2_BASE_ADDRESS;
+            static const bool isT1 = false;
         };
     #endif
 
     #ifdef _TMR3
         template <>
-        struct TMRInfo<TMRTimer::timer3> {
-            constexpr static const uint32_t addr = _TMR3_BASE_ADDRESS;
-            constexpr static const bool isT1 = false;
+        struct TMRTimerTrait<TMRTimer::timer3> {
+            using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T3IF_POSITION>;
+            using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T3IE_POSITION>;
+            static const uint32_t addr = _TMR3_BASE_ADDRESS;
+            static const bool isT1 = false;
         };
     #endif
 
     #ifdef _TMR4
         template <>
-        struct TMRInfo<TMRTimer::timer4> {
-            constexpr static const uint32_t addr = _TMR4_BASE_ADDRESS;
-            constexpr static const bool isT1 = false;
+        struct TMRTimerTrait<TMRTimer::timer4> {
+            using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T4IF_POSITION>;
+            using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T4IE_POSITION>;
+            static const uint32_t addr = _TMR4_BASE_ADDRESS;
+            static const bool isT1 = false;
         };
     #endif
 
     #ifdef _TMR5
         template <>
-        struct TMRInfo<TMRTimer::timer5> {
-            constexpr static const uint32_t addr = _TMR5_BASE_ADDRESS;
-            constexpr static const bool isT1 = false;
+        struct TMRTimerTrait<TMRTimer::timer5> {
+            using IF = FLAG_CSI<uint32_t, &IFS0, _IFS0_T5IF_POSITION>;
+            using IE = FLAG_CSI<uint32_t, &IEC0, _IEC0_T5IE_POSITION>;
+            static const uint32_t addr = _TMR5_BASE_ADDRESS;
+            static const bool isT1 = false;
         };
     #endif
 }
